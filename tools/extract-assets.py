@@ -15,6 +15,7 @@ from lib.chopper import extract_chopper
 from lib.levels import extract_levels, find_level_table, read_level_table
 from lib.rnc import extract_rnc_corpus, is_rnc, parse_header
 from lib.rnc_assets import classify_rnc_corpus
+from lib.rnc_refs import scan_rnc_references, write_rnc_references
 
 
 def _animation_module():
@@ -157,6 +158,17 @@ def main() -> int:
             "classification": "rnc/classification.json",
             "tile_candidates": classification["tile_candidates"],
             "families": len(classification["families"]),
+        })
+        pointer_references = scan_rnc_references(data, rnc_result)
+        pointer_references.update({
+            "rom": rom_identity,
+            "corpus": "rnc/manifest.json",
+        })
+        write_rnc_references(output / "rnc/pointer_references.json", pointer_references)
+        manifest["assets"]["rnc"].update({
+            "pointer_references": "rnc/pointer_references.json",
+            "pointer_reference_count": pointer_references["reference_count"],
+            "pointer_tables": pointer_references["pointer_table_count"],
         })
     except (OSError, ValueError) as error:
         manifest["warnings"].append(f"rnc: {error}")

@@ -100,6 +100,29 @@ def main() -> int:
     if missing_renders:
         raise SystemExit(f"RNC classification renders missing: {missing_renders[:5]}")
 
+    references_path = root / "rnc/pointer_references.json"
+    if not references_path.exists():
+        raise SystemExit(f"RNC pointer report not found: {references_path}")
+    pointer_report = json.loads(references_path.read_text(encoding="utf-8"))
+    pointer_identity = pointer_report.get("rom", {})
+    for key in ("size", "crc32", "sha1", "sha256"):
+        if pointer_identity.get(key) != actual[key]:
+            raise SystemExit(
+                f"RNC pointer report ROM {key} mismatch: "
+                f"manifest={pointer_identity.get(key)} actual={actual[key]}"
+            )
+    if pointer_report.get("target_count") != len(blocks):
+        raise SystemExit(
+            f"RNC pointer target mismatch: report={pointer_report.get('target_count')} "
+            f"corpus={len(blocks)}"
+        )
+    if pointer_report.get("unassigned_target_count") != rnc.get("unassigned_count"):
+        raise SystemExit(
+            f"RNC pointer unassigned-target mismatch: "
+            f"report={pointer_report.get('unassigned_target_count')} "
+            f"corpus={rnc.get('unassigned_count')}"
+        )
+
     print(f"validated ROM identity: {actual['sha1']}")
     print(f"validated levels: {levels['count']} entries, {rendered_levels} rendered")
     print(f"validated Chopper sprites: {frame_count} frames, {len(tile_files)} tile sets")
@@ -110,6 +133,10 @@ def main() -> int:
     print(
         f"validated RNC classification: {classification.get('tile_candidates', 0)} "
         f"tile candidates, {len(classification.get('families', []))} families"
+    )
+    print(
+        f"validated RNC pointers: {pointer_report.get('reference_count', 0)} references, "
+        f"{pointer_report.get('pointer_table_count', 0)} tables"
     )
     return 0
 

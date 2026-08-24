@@ -24,6 +24,12 @@ ROM again:
 python tools/classify-rnc-assets.py
 ```
 
+To scan for ROM pointer tables that reference the decompressed corpus:
+
+```bash
+python tools/find-rnc-references.py
+```
+
 Generated files are written under `build/assets/` and are intentionally
 ignored by Git:
 
@@ -40,6 +46,7 @@ build/assets/
     ├── manifest.json    # every RNC block, hashes, consumers, and failures
     ├── classification.json # tile candidates and contiguous block families
     ├── classified/       # contact sheets for likely Genesis tile data
+    ├── pointer_references.json # 68000 pointer and table candidates
     └── blocks/          # decompressed block data named by ROM offset
 ```
 
