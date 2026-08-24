@@ -153,6 +153,31 @@ def main() -> int:
     ):
         raise SystemExit("RNC family-analysis storage-family mismatch")
 
+    loader_path = root / "rnc/loader_analysis.json"
+    if not loader_path.exists():
+        raise SystemExit(f"RNC loader analysis not found: {loader_path}")
+    loader_analysis = json.loads(loader_path.read_text(encoding="utf-8"))
+    loader_identity = loader_analysis.get("rom", {})
+    for key in ("size", "crc32", "sha1", "sha256"):
+        if loader_identity.get(key) != actual[key]:
+            raise SystemExit(
+                f"RNC loader-analysis ROM {key} mismatch: "
+                f"manifest={loader_identity.get(key)} actual={actual[key]}"
+            )
+    resolved_loader_calls = [
+        call for call in loader_analysis.get("calls", [])
+        if call.get("status") == "resolved_rnc"
+    ]
+    if not resolved_loader_calls:
+        raise SystemExit("RNC loader analysis found no resolved uploads")
+    missing_loader_blocks = [
+        call["block"]["offset"]
+        for call in resolved_loader_calls
+        if call.get("block", {}).get("offset") not in {block["offset"] for block in blocks}
+    ]
+    if missing_loader_blocks:
+        raise SystemExit(f"RNC loader references missing corpus blocks: {missing_loader_blocks[:5]}")
+
     print(f"validated ROM identity: {actual['sha1']}")
     print(f"validated levels: {levels['count']} entries, {rendered_levels} rendered")
     print(f"validated Chopper sprites: {frame_count} frames, {len(tile_files)} tile sets")
@@ -173,6 +198,35 @@ def main() -> int:
         f"{family_analysis.get('summary', {}).get('storage_family_count', 0)} storage families, "
         f"{family_analysis.get('summary', {}).get('code_cluster_count', 0)} code clusters"
     )
+    print(
+        f"validated RNC loaders: {loader_analysis.get('summary', {}).get('rnc_loader_call_count', 0)} "
+        f"uploads, {loader_analysis.get('summary', {}).get('resolved_destination_count', 0)} destinations"
+    )
+    runtime_path = root / "rnc/runtime_analysis.json"
+    if runtime_path.exists():
+        runtime_analysis = json.loads(runtime_path.read_text(encoding="utf-8"))
+        runtime_identity = runtime_analysis.get("rom", {})
+        for key in ("size", "crc32", "sha1", "sha256"):
+            if runtime_identity.get(key) != actual[key]:
+                raise SystemExit(
+                    f"RNC runtime-analysis ROM {key} mismatch: "
+                    f"manifest={runtime_identity.get(key)} actual={actual[key]}"
+                )
+        missing_runtime_renders = [
+            render["file"]
+            for asset in runtime_analysis.get("assets", [])
+            for render in asset.get("rendered", [])
+            if not (root / "rnc" / render["file"]).exists()
+        ]
+        if missing_runtime_renders:
+            raise SystemExit(
+                f"RNC runtime palette previews missing: {missing_runtime_renders[:5]}"
+            )
+        print(
+            f"validated RNC runtime correlation: "
+            f"{runtime_analysis.get('summary', {}).get('exact_match_count', 0)} exact VRAM matches, "
+            f"{runtime_analysis.get('summary', {}).get('palette_preview_count', 0)} palette previews"
+        )
     return 0
 
 

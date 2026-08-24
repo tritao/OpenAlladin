@@ -37,6 +37,22 @@ To group the unassigned blocks by contiguous compressed storage and nearby
 python tools/analyze-rnc-families.py
 ```
 
+To recover every direct RNC-to-VDP upload call and its VRAM destination:
+
+```bash
+python tools/analyze-rnc-loaders.py
+```
+
+To correlate those uploads with a captured MAME VRAM/CRAM trace and render
+palette candidates:
+
+```bash
+python tools/analyze-rnc-runtime.py --trace build/re/actor-gameplay
+```
+
+The same runtime step can be included in the full extraction command with
+`--runtime-trace`.
+
 Generated files are written under `build/assets/` and are intentionally
 ignored by Git:
 
@@ -55,6 +71,9 @@ build/assets/
     ├── classified/       # contact sheets for likely Genesis tile data
     ├── pointer_references.json # 68000 pointer and table candidates
     ├── family_analysis.json # storage families, code clusters, and previews
+    ├── loader_analysis.json # RNC-to-VDP call sites and destinations
+    ├── runtime_analysis.json # optional VRAM/CRAM matches and palette evidence
+    ├── runtime/          # optional palette-aware rendered previews
     └── blocks/          # decompressed block data named by ROM offset
 ```
 
@@ -76,3 +95,8 @@ compressed block sizes, pointer locations, a small local 68000 instruction
 window, optional containing function names from `build/re/functions.csv`, and
 the existing evidence-palette preview. Its `unknown_graphics` and
 `genesis_tile_candidate` labels are hypotheses, not final asset names.
+
+`loader_analysis.json` confirms the semantics of helper `0x1B3416`: `A0` is
+an RNC source and `A1` is a VDP VRAM byte address. `runtime_analysis.json`
+only promotes a palette to observed evidence when the captured CRAM at the
+same VRAM match is non-empty; otherwise the palette remains unknown.

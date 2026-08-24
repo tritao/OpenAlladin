@@ -16,6 +16,8 @@ from lib.levels import extract_levels, find_level_table, read_level_table
 from lib.rnc import extract_rnc_corpus, is_rnc, parse_header
 from lib.rnc_assets import classify_rnc_corpus
 from lib.rnc_families import analyze_rnc_families
+from lib.rnc_loaders import analyze_rnc_loaders
+from lib.rnc_runtime import analyze_rnc_runtime
 from lib.rnc_refs import scan_rnc_references, write_rnc_references
 
 
@@ -106,6 +108,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--no-levels", action="store_true", help="skip level extraction")
     parser.add_argument("--no-sprites", action="store_true", help="skip Chopper sprite extraction")
     parser.add_argument("--no-animations", action="store_true", help="skip animation stream extraction")
+    parser.add_argument(
+        "--runtime-trace",
+        type=Path,
+        help="optional MAME trace directory for VRAM/CRAM correlation and palette previews",
+    )
     return parser.parse_args()
 
 
@@ -182,6 +189,24 @@ def main() -> int:
             "storage_families": family_analysis["summary"]["storage_family_count"],
             "code_clusters": family_analysis["summary"]["code_cluster_count"],
         })
+        loader_analysis = analyze_rnc_loaders(
+            data,
+            output / "rnc",
+            rom_identity=rom_identity,
+            functions_path=ROOT / "build/re/functions.csv",
+        )
+        manifest["assets"]["rnc"].update({
+            "loader_analysis": "rnc/loader_analysis.json",
+            "loader_calls": loader_analysis["summary"]["rnc_loader_call_count"],
+            "loader_destinations": loader_analysis["summary"]["resolved_destination_count"],
+        })
+        if args.runtime_trace:
+            runtime_analysis = analyze_rnc_runtime(output / "rnc", args.runtime_trace.resolve())
+            manifest["assets"]["rnc"].update({
+                "runtime_analysis": "rnc/runtime_analysis.json",
+                "runtime_exact_matches": runtime_analysis["summary"]["exact_match_count"],
+                "runtime_palette_previews": runtime_analysis["summary"]["palette_preview_count"],
+            })
     except (OSError, ValueError) as error:
         manifest["warnings"].append(f"rnc: {error}")
 
