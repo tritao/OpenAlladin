@@ -1,0 +1,4 @@
+# Keep only hand-curated, ROM-independent traces in Git.
+raw/
+*.raw
+*.sav
