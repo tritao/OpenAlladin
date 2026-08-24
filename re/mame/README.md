@@ -15,9 +15,16 @@ With the MAME submodule built and the local ROM at the repository root:
 The command writes generated output under `build/re/traces/`:
 
 - `trace_boot.jsonl` contains reset-vector, register, input, and per-frame RAM
-  metadata.
+  metadata, plus the current VDP address/code/register state and checksums.
 - `ram_frames.bin` contains one raw 64 KiB `0xff0000`-`0xffffff` Genesis RAM
   image for each recorded frame, starting with frame zero.
+- `vdp_vram_frames.bin`, `vdp_cram_frames.bin`, and `vdp_vsram_frames.bin`
+  contain the complete MAME VDP memories for each frame, encoded as
+  big-endian Genesis words.
+- `vdp_regs_frames.bin` contains the 32 saved VDP register words per frame.
+- `vdp_writes.jsonl` records every 68000 write to the VDP ports with frame and
+  program-counter context.  The stream is enough to reconstruct VDP command
+  pairs and DMA requests.
 
 The default is 120 frames.  Override it with `OPENALADDIN_TRACE_FRAMES`.
 Input can be supplied as comma-separated frame tokens, for example:
@@ -79,6 +86,20 @@ OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 \
 
 Write events appear as `{"type":"write", ...}` records in
 `trace_boot.jsonl`.
+
+To compare the captured VDP memories and DMA stream with the native assets
+already extracted from the ROM:
+
+```sh
+python3 tools/compare-runtime-assets.py
+```
+
+The report is written to `build/re/vdp_asset_comparison.json`.  Exact matches
+mean a native binary is present contiguously in captured VDP memory; sample
+matches locate a 64-byte portion of larger or partially loaded assets.  This
+is an observation report, not a replacement for the tracked asset parsers.
+
+Set `OPENALADDIN_CAPTURE_VDP=0` when only the original RAM trace is wanted.
 
 If a memory tap does not observe a candidate, enable MAME’s native debugger
 watchpoint fallback:

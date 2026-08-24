@@ -45,9 +45,19 @@ end
 
 local trace_path = join_path(trace_dir, "trace_boot.jsonl")
 local ram_path = join_path(trace_dir, "ram_frames.bin")
+local vdp_vram_path = join_path(trace_dir, "vdp_vram_frames.bin")
+local vdp_cram_path = join_path(trace_dir, "vdp_cram_frames.bin")
+local vdp_vsram_path = join_path(trace_dir, "vdp_vsram_frames.bin")
+local vdp_regs_path = join_path(trace_dir, "vdp_regs_frames.bin")
+local vdp_writes_path = join_path(trace_dir, "vdp_writes.jsonl")
 
 local trace = assert(io.open(trace_path, "wb"))
 local ram = assert(io.open(ram_path, "wb"))
+local vdp_vram = assert(io.open(vdp_vram_path, "wb"))
+local vdp_cram = assert(io.open(vdp_cram_path, "wb"))
+local vdp_vsram = assert(io.open(vdp_vsram_path, "wb"))
+local vdp_regs = assert(io.open(vdp_regs_path, "wb"))
+local vdp_writes = assert(io.open(vdp_writes_path, "wb"))
 
 local function json_escape(value)
     return value:gsub("[\\\"\n\r\t]", function(char)
@@ -98,6 +108,130 @@ end
 
 local function read_u32(address)
     return space:read_u32(address) & 0xffffffff
+end
+
+local function find_device(tag, shortname)
+    local device = machine.devices[tag]
+    if device then
+        return device
+    end
+    for candidate_tag, candidate in pairs(machine.devices) do
+        if (shortname and candidate.shortname == shortname)
+            or (candidate_tag:find("gen_vdp", 1, true) ~= nil) then
+            return candidate
+        end
+    end
+    return nil
+end
+
+local vdp_device = find_device(":gen_vdp", "sega315_5313")
+
+local function find_save_item(device, name)
+    if not device then
+        return nil
+    end
+    local index = device.items[name] or device.items["0/" .. name]
+    if index == nil then
+        for item_name, item_index in pairs(device.items) do
+            if item_name:match("/" .. name .. "$") then
+                index = item_index
+                break
+            end
+        end
+    end
+    if index == nil then
+        return nil
+    end
+    return emu.item(index)
+end
+
+local vdp_vram_item = find_save_item(vdp_device, "m_vram")
+local vdp_cram_item = find_save_item(vdp_device, "m_cram")
+local vdp_vsram_item = find_save_item(vdp_device, "m_vsram")
+local vdp_regs_item = find_save_item(vdp_device, "m_regs")
+local vdp_address_item = find_save_item(vdp_device, "m_vdp_address")
+local vdp_code_item = find_save_item(vdp_device, "m_vdp_code")
+local vdp_command_pending_item = find_save_item(vdp_device, "m_command_pending")
+local capture_vdp = os.getenv("OPENALADDIN_CAPTURE_VDP") ~= "0"
+
+local function item_word(item, index)
+    if not item then
+        return 0
+    end
+    return (item:read(index) or 0) & 0xffff
+end
+
+local function dump_item_words(item, count, output)
+    local chunks = {}
+    for index = 0, count - 1 do
+        chunks[#chunks + 1] = string.pack(">I2", item_word(item, index))
+    end
+    output:write(table.concat(chunks))
+end
+
+local function fnv1a_item(item, count)
+    local hash = 2166136261
+    for index = 0, count - 1 do
+        local value = item_word(item, index)
+        hash = (hash ~ ((value >> 8) & 0xff)) & 0xffffffff
+        hash = (hash * 16777619) & 0xffffffff
+        hash = (hash ~ (value & 0xff)) & 0xffffffff
+        hash = (hash * 16777619) & 0xffffffff
+    end
+    return hash
+end
+
+local function vdp_registers_json()
+    if not vdp_regs_item then
+        return "[]"
+    end
+    local values = {}
+    for index = 0, 31 do
+        values[#values + 1] = tostring(item_word(vdp_regs_item, index) & 0xff)
+    end
+    return "[" .. table.concat(values, ",") .. "]"
+end
+
+local function vdp_state_json()
+    if not capture_vdp or not vdp_device then
+        return "null"
+    end
+    return json_object({
+        { "device", json_string(vdp_device.tag) },
+        { "address", tostring(item_word(vdp_address_item, 0)) },
+        { "code", tostring(item_word(vdp_code_item, 0)) },
+        { "command_pending", tostring(item_word(vdp_command_pending_item, 0)) },
+        { "registers", vdp_registers_json() },
+        { "vram_fnv1a", tostring(fnv1a_item(vdp_vram_item, 0x10000 / 2)) },
+        { "cram_fnv1a", tostring(fnv1a_item(vdp_cram_item, 0x80 / 2)) },
+        { "vsram_fnv1a", tostring(fnv1a_item(vdp_vsram_item, 0x80 / 2)) }
+    })
+end
+
+local function vdp_items_json()
+    if not vdp_device then
+        return "[]"
+    end
+    local names = {}
+    for name in pairs(vdp_device.items) do
+        names[#names + 1] = json_string(name)
+    end
+    table.sort(names)
+    return json_array(names)
+end
+
+local function dump_vdp()
+    if not capture_vdp or not (vdp_vram_item and vdp_cram_item and vdp_vsram_item and vdp_regs_item) then
+        return
+    end
+    dump_item_words(vdp_vram_item, 0x10000 / 2, vdp_vram)
+    dump_item_words(vdp_cram_item, 0x80 / 2, vdp_cram)
+    dump_item_words(vdp_vsram_item, 0x80 / 2, vdp_vsram)
+    dump_item_words(vdp_regs_item, 0x40 / 2, vdp_regs)
+    vdp_vram:flush()
+    vdp_cram:flush()
+    vdp_vsram:flush()
+    vdp_regs:flush()
 end
 
 local function read_register(name)
@@ -271,6 +405,7 @@ end
 
 local function capture(frame, input_token)
     dump_ram()
+    dump_vdp()
     local input_port_value = controller_port and controller_port:read() or 0
     write_record({
         { "type", json_string("frame") },
@@ -282,7 +417,8 @@ local function capture(frame, input_token)
         { "registers", register_json() },
         { "ram_start", tostring(ram_start) },
         { "ram_size", tostring(ram_size) },
-        { "ram_fnv1a", tostring(fnv1a_ram()) }
+        { "ram_fnv1a", tostring(fnv1a_ram()) },
+        { "vdp", vdp_state_json() }
     })
 end
 
@@ -312,10 +448,17 @@ local function parse_hex_address(value)
 end
 
 local watch_taps = {}
+local vdp_taps = {}
 local watched_addresses = {}
 local current_frame = 0
 local watch_list = os.getenv("OPENALADDIN_WATCH_ADDRESSES") or ""
 local debugger_watch = os.getenv("OPENALADDIN_DEBUG_WATCH") == "1"
+local trace_actors = os.getenv("OPENALADDIN_TRACE_ACTORS") == "1"
+local actor_table_base = 0xff7e40
+local actor_stride = 0x42
+local actor_slot_count = math.max(0, math.floor(env_number("OPENALADDIN_ACTOR_SLOTS", 32)))
+local actor_active_offset = 0x00
+local actor_animation_pc_offset = 0x20
 
 for item in watch_list:gmatch("[^,]+") do
     local address = parse_hex_address(item)
@@ -344,6 +487,91 @@ for item in watch_list:gmatch("[^,]+") do
     end
 end
 
+if trace_actors then
+    for slot = 0, actor_slot_count - 1 do
+        local actor_slot = slot
+        local record = actor_table_base + actor_slot * actor_stride
+        local active_address = record + actor_active_offset
+        local animation_pc_address = record + actor_animation_pc_offset
+
+        watched_addresses[#watched_addresses + 1] = animation_pc_address
+        watch_taps[#watch_taps + 1] = space:install_write_tap(
+            animation_pc_address,
+            animation_pc_address + 3,
+            string.format("openaladdin_actor_%02d_animation_pc", actor_slot),
+            function(offset, data, mem_mask)
+                write_record({
+                    { "type", json_string("actor_write") },
+                    { "frame", tostring(current_frame) },
+                    { "slot", tostring(actor_slot) },
+                    { "field", json_string("animation_pc") },
+                    { "record", tostring(record) },
+                    { "address", tostring(offset) },
+                    { "data", tostring(data) },
+                    { "mask", tostring(mem_mask) },
+                    { "value", tostring(read_u32(animation_pc_address)) },
+                    { "active", tostring(read_u8(active_address)) },
+                    { "pc", tostring(read_register("PC") or 0) }
+                })
+            end)
+
+        watched_addresses[#watched_addresses + 1] = active_address
+        watch_taps[#watch_taps + 1] = space:install_write_tap(
+            active_address,
+            active_address + 1,
+            string.format("openaladdin_actor_%02d_active", actor_slot),
+            function(offset, data, mem_mask)
+                write_record({
+                    { "type", json_string("actor_write") },
+                    { "frame", tostring(current_frame) },
+                    { "slot", tostring(actor_slot) },
+                    { "field", json_string("active") },
+                    { "record", tostring(record) },
+                    { "address", tostring(offset) },
+                    { "data", tostring(data) },
+                    { "mask", tostring(mem_mask) },
+                    { "value", tostring(read_u8(active_address)) },
+                    { "animation_pc", tostring(read_u32(animation_pc_address)) },
+                    { "pc", tostring(read_register("PC") or 0) }
+                })
+            end)
+
+        if debugger_watch then
+            local animation_action = string.format(
+                "printf \"OPENALADDIN_ACTOR_PC SLOT=%d ADDR=%08X DATA=%08X\\n\",wpaddr,wpdata ; g",
+                actor_slot)
+            cpu.debug:wpset(
+                space,
+                "w",
+                animation_pc_address,
+                4,
+                "",
+                animation_action)
+        end
+    end
+end
+
+if vdp_device and capture_vdp then
+    local function install_vdp_tap(base, suffix)
+        vdp_taps[#vdp_taps + 1] = space:install_write_tap(
+            base,
+            base + 0x1f,
+            "openaladdin_vdp_writes_" .. suffix,
+            function(offset, data, mem_mask)
+                vdp_writes:write(json_object({
+                    { "frame", tostring(current_frame) },
+                    { "address", tostring(offset) },
+                    { "data", tostring(data & 0xffff) },
+                    { "mask", tostring(mem_mask & 0xffff) },
+                    { "pc", tostring(read_register("PC") or 0) }
+                }), "\n")
+                vdp_writes:flush()
+            end)
+    end
+    install_vdp_tap(0xc00000, "c00000")
+    install_vdp_tap(0xd00000, "d00000")
+end
+
 local function port_tags_json()
     local tags = {}
     for tag in pairs(machine.ioport.ports) do
@@ -367,6 +595,12 @@ write_record({
     { "ram_size", tostring(ram_size) },
     { "reset_ssp", tostring(read_u32(0)) },
     { "reset_pc", tostring(read_u32(4)) },
+    { "vdp_device", vdp_device and json_string(vdp_device.tag) or "null" },
+    { "vdp_vram_bytes", tostring(capture_vdp and vdp_vram_item and 0x10000 or 0) },
+    { "vdp_cram_bytes", tostring(capture_vdp and vdp_cram_item and 0x80 or 0) },
+    { "vdp_vsram_bytes", tostring(capture_vdp and vdp_vsram_item and 0x80 or 0) },
+    { "vdp_regs_bytes", tostring(capture_vdp and vdp_regs_item and 0x40 or 0) },
+    { "vdp_items", vdp_items_json() },
     { "input_ports", port_tags_json() },
     { "player1_input_fields", input_fields_json() },
     { "watched_addresses", json_array((function ()
@@ -375,7 +609,12 @@ write_record({
             values[index] = tostring(address)
         end
         return values
-    end)()) }
+    end)()) },
+    { "actor_trace", json_bool(trace_actors) },
+    { "actor_table_base", tostring(actor_table_base) },
+    { "actor_stride", tostring(actor_stride) },
+    { "actor_slot_count", tostring(actor_slot_count) },
+    { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) }
 })
 
 capture(0, apply_input(0))
@@ -386,6 +625,11 @@ emu.register_frame_done(function ()
     if current_frame > frame_limit then
         trace:close()
         ram:close()
+        vdp_vram:close()
+        vdp_cram:close()
+        vdp_vsram:close()
+        vdp_regs:close()
+        vdp_writes:close()
         machine:exit()
         return
     end
@@ -396,6 +640,11 @@ emu.register_frame_done(function ()
     if current_frame == frame_limit then
         trace:close()
         ram:close()
+        vdp_vram:close()
+        vdp_cram:close()
+        vdp_vsram:close()
+        vdp_regs:close()
+        vdp_writes:close()
         machine:exit()
     end
 end)
