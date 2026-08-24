@@ -46,6 +46,13 @@
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - mame_actor_initializer_trace
+0x001AE372:
+  name: Actor_ClearOwnedResources
+  confidence: confirmed
+  description: Clears the actor-owned resource/link list at actor offset 0x2A using the template-owned count at offset 0x29, then releases the list pointers.
+  evidence:
+    - ghidra_actor_cleanup_001AE372
+    - mame_guard_sword_hit_trace
 0x001B3416:
   name: RNC_To_VDP_Loader
   confidence: confirmed

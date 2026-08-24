@@ -409,6 +409,14 @@
     - ghidra_actor_template_initializer_001AE30A
     - mame_natural_actor_type_2D_trace
 
+0x00122FA2:
+  name: ACTOR_ANIM_DEATH_122FA2
+  confidence: confirmed
+  description: Shared type 0x84 terminal actor animation; a successful sword hit converts the type 0x0A guard in place to this 43-frame sequence before the actor record is cleared.
+  evidence:
+    - ghidra_actor_death_transition_001AC4B0
+    - mame_guard_sword_hit_trace
+
 0x0012542A:
   name: ACTOR_ANIM_GUARD_ATTACK
   confidence: confirmed
@@ -465,6 +473,15 @@
     - ghidra_actor_template_initializer_001AE30A
     - mame_natural_actor_type_2D_trace
     - mame_type_2D_spawn_trace_1800
+
+0x001B7940:
+  name: ACTOR_TEMPLATE_DEATH_84
+  confidence: confirmed
+  description: Shared terminal actor template with type byte 0x84, cleanup/resource count 6, and animation stream ACTOR_ANIM_DEATH_122FA2; the guard sword-hit path installs it in the guard's existing record.
+  evidence:
+    - ghidra_actor_death_transition_001AC4B0
+    - ghidra_actor_template_initializer_001AE30A
+    - mame_guard_sword_hit_trace
 
 0x001B80AC:
   name: ACTOR_TEMPLATE_GUARD

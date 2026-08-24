@@ -13,10 +13,22 @@ fields:
     name: y
     type: u16
     description: World Y coordinate written by the animation VM spawn/copy handler and consumed by common actor movement/rendering.
+  0x09:
+    name: facing_x_flip
+    type: u8
+    description: Horizontal facing/flip byte used by animation and movement state streams; the common animation VM copies it to spawned children.
   0x0a:
     name: movement_pc
     type: u32
     description: Movement state-stream cursor consumed by the common movement update; the template initializer copies its source long word into this field.
+  0x18:
+    name: velocity_x
+    type: u16
+    description: Horizontal movement accumulator integrated by the common actor movement update.
+  0x1a:
+    name: velocity_y
+    type: u16
+    description: Vertical movement accumulator integrated by the common actor movement update.
   0x14:
     name: frame_ptr
     type: u32
@@ -25,6 +37,18 @@ fields:
     name: animation_pc
     type: u32
     description: ROM pointer to the current animation stream position.
+  0x29:
+    name: resource_count
+    type: u8
+    description: Template-owned resource/cleanup count consumed by the actor cleanup helper; the guard template initializes it to 9 and the shared type 0x84 death template to 6.
+  0x35:
+    name: facing_y_flip
+    type: u8
+    description: Vertical-facing/flip byte used by movement and animation state streams; the common animation VM copies it to spawned children.
+  0x3c:
+    name: flags
+    type: u8
+    description: Common actor behavior flags. The movement and animation code use individual bits for integration, parent/child linkage, and interaction state.
   0x37:
     name: animation_timer
     type: u8

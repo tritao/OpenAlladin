@@ -148,6 +148,32 @@ animation uses sprite frames `1338-1345`, identifying it as the guard's sword
 attack child.  At frame 1639, the child record had `x=0x0512`, `y=0x0333`,
 and frame pointer `0x001FDDB4` (Chopper frame 1338).
 
+The same scene provides a complete guard damage/death trace.  With the player
+approaching on `right` and timed `a` presses, slot 5 (`0x00FF7F8A`) remains a
+type `0x0A` guard from frames 1596-1667 at fixed position
+`x=0x0530,y=0x0340`; its movement cursor is zero while its animation cursor
+walks through `0x0012542A`-`0x00125486`.  At frame 1668, the sword hit replaces
+that record in place with type `0x84`, selects animation `0x00122FA2`, and
+advances through 43 terminal frames before the type byte clears at frame 1711.
+The type `0x84` sequence is shared/unnamed beyond its confirmed terminal role;
+the guard-specific evidence is the in-place transition and the matching
+`0x001B7940` template selected by the 68K path around `0x001AC4B0`.
+
+Reproduce the probe with:
+
+```sh
+OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 \
+OPENALADDIN_TRACE_FRAMES=1690 \
+OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*390,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*100' \
+OPENALADDIN_TRACE_DIR=build/re/guard-death \
+  ./tools/mame-trace.sh
+```
+
+The actor initializer at `0x001AE30A` also establishes the confirmed runtime
+fields used by this slice: position at `+0x02/+0x04`, movement cursor at
+`+0x0A`, velocity accumulators at `+0x18/+0x1A`, animation cursor at `+0x20`,
+resource count at `+0x29`, and behavior flags at `+0x3C`.
+
 Write taps can record the 68000 PC responsible for a candidate address:
 
 ```sh
