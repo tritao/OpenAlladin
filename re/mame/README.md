@@ -193,6 +193,38 @@ python3 tools/analyze-rnc-runtime.py \
 The debugger breakpoint is optional and is enabled only by
 `OPENALADDIN_TRACE_RNC_LOADS=1`; ordinary traces remain unaffected.
 
+## Runtime capture matrix
+
+For repeatable multi-scene coverage, edit the controller schedules in
+`re/mame/capture_matrix.yml` and run:
+
+```sh
+python3 tools/run-mame-capture-matrix.py Disneys_Aladdin_U_p1.bin
+```
+
+Each scenario gets its own ignored directory under
+`build/re/rnc-capture-matrix/`.  The runner saves that scenario's debugger log,
+parses its RNC loader executions, merges all RAM/VRAM/CRAM frames, and updates
+the normal RNC runtime report from the combined trace.  The merged report is
+available at:
+
+```text
+build/re/rnc-capture-matrix/combined/rnc_loads.json
+build/assets/rnc/runtime_analysis.json
+```
+
+Run only selected scenarios while iterating:
+
+```sh
+python3 tools/run-mame-capture-matrix.py \
+  --scenario first-gameplay \
+  --scenario gameplay-progression
+```
+
+The matrix manifest and merged trace retain both `scenario` and
+`scenario_frame` fields, so runtime observations can be attributed back to a
+specific scripted experiment.
+
 Set `OPENALADDIN_CAPTURE_VDP=0` when only the original RAM trace is wanted.
 
 If a memory tap does not observe a candidate, enable MAME’s native debugger

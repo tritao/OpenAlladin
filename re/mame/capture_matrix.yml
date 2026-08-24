@@ -1,0 +1,26 @@
+# Repeatable runtime coverage scenarios for the local USA/NTSC ROM.
+#
+# Inputs are frame tokens understood by trace_boot.lua.  Keep this file
+# ROM-independent: it describes controller actions, not copyrighted data.
+
+version: 1
+
+defaults:
+  capture_vdp: true
+  trace_rnc_loads: true
+
+scenarios:
+  - name: title-menu
+    description: Boot and advance through the opening menu screens.
+    frames: 360
+    input: "none*120,start*5,none*120,start*5,none*110"
+
+  - name: first-gameplay
+    description: Enter the first stage and hold right long enough to load gameplay assets.
+    frames: 720
+    input: "none*30,start*90,none*60,right*120,none*420"
+
+  - name: gameplay-progression
+    description: Exercise repeated start transitions and a long movement interval.
+    frames: 1550
+    input: "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*1400,none*255"
