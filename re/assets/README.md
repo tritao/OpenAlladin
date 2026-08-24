@@ -43,6 +43,21 @@ To recover every direct RNC-to-VDP upload call and its VRAM destination:
 python tools/analyze-rnc-loaders.py
 ```
 
+To decompile only the unresolved loader clusters and their surrounding scene
+setup code through the local Ghidra project:
+
+```bash
+python tools/decompile-rnc-loaders.py \
+  --extra-address 0x1B4B28 \
+  --extra-address 0x1B4B5E \
+  --extra-address 0x1B21F6
+```
+
+The report is written to `build/re/rnc_targeted_decompile.json`.  The default
+targets are the confirmed loader at `0x1B3416` and loader-containing functions
+that still have no dynamic asset evidence.  `--extra-address` adds a known
+scene-dispatch or post-load function without broadening the decompile pass.
+
 To correlate those uploads with a captured MAME VRAM/CRAM trace and render
 palette candidates:
 
@@ -110,3 +125,10 @@ the existing evidence-palette preview. Its `unknown_graphics` and
 an RNC source and `A1` is a VDP VRAM byte address. `runtime_analysis.json`
 only promotes a palette to observed evidence when the captured CRAM at the
 same VRAM match is non-empty; otherwise the palette remains unknown.
+
+The targeted pass currently shows that the contiguous unresolved stubs at
+`0x1B498A` through `0x1B4A52` each select a different RNC source, call the
+common loader, and then share post-load routine `0x1B4B28`.  Scene setup at
+`0x1B0F66` dispatches these resource paths from the state byte at
+`0xFF7E26`, giving the next MAME experiments specific state transitions to
+exercise.

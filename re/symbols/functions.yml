@@ -46,3 +46,10 @@
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - mame_actor_initializer_trace
+0x001B3416:
+  name: RNC_To_VDP_Loader
+  confidence: confirmed
+  description: Decompresses an RNC method-1 block at A0 and streams the result to the VDP VRAM byte address in A1.
+  evidence:
+    - ghidra_rnc_loader_analysis
+    - mame_rnc_loader_trace
