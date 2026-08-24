@@ -15,6 +15,7 @@ from lib.chopper import extract_chopper
 from lib.levels import extract_levels, find_level_table, read_level_table
 from lib.rnc import extract_rnc_corpus, is_rnc, parse_header
 from lib.rnc_assets import classify_rnc_corpus
+from lib.rnc_families import analyze_rnc_families
 from lib.rnc_refs import scan_rnc_references, write_rnc_references
 
 
@@ -169,6 +170,17 @@ def main() -> int:
             "pointer_references": "rnc/pointer_references.json",
             "pointer_reference_count": pointer_references["reference_count"],
             "pointer_tables": pointer_references["pointer_table_count"],
+        })
+        family_analysis = analyze_rnc_families(
+            data,
+            output / "rnc",
+            rom_identity=rom_identity,
+            functions_path=ROOT / "build/re/functions.csv",
+        )
+        manifest["assets"]["rnc"].update({
+            "family_analysis": "rnc/family_analysis.json",
+            "storage_families": family_analysis["summary"]["storage_family_count"],
+            "code_clusters": family_analysis["summary"]["code_cluster_count"],
         })
     except (OSError, ValueError) as error:
         manifest["warnings"].append(f"rnc: {error}")

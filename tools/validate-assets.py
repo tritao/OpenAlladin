@@ -121,7 +121,37 @@ def main() -> int:
             f"RNC pointer unassigned-target mismatch: "
             f"report={pointer_report.get('unassigned_target_count')} "
             f"corpus={rnc.get('unassigned_count')}"
+            )
+
+    family_path = root / "rnc/family_analysis.json"
+    if not family_path.exists():
+        raise SystemExit(f"RNC family analysis not found: {family_path}")
+    family_analysis = json.loads(family_path.read_text(encoding="utf-8"))
+    family_identity = family_analysis.get("rom", {})
+    for key in ("size", "crc32", "sha1", "sha256"):
+        if family_identity.get(key) != actual[key]:
+            raise SystemExit(
+                f"RNC family-analysis ROM {key} mismatch: "
+                f"manifest={family_identity.get(key)} actual={actual[key]}"
+            )
+    family_blocks = family_analysis.get("blocks", [])
+    if len(family_blocks) != rnc.get("unassigned_count"):
+        raise SystemExit(
+            f"RNC family-analysis block mismatch: report={len(family_blocks)} "
+            f"corpus={rnc.get('unassigned_count')}"
         )
+    if family_analysis.get("summary", {}).get("reference_count") != pointer_report.get(
+        "unassigned_reference_count"
+    ):
+        raise SystemExit(
+            "RNC family-analysis reference mismatch: "
+            f"report={family_analysis.get('summary', {}).get('reference_count')} "
+            f"pointers={pointer_report.get('unassigned_reference_count')}"
+        )
+    if family_analysis.get("summary", {}).get("storage_family_count") != len(
+        classification.get("families", [])
+    ):
+        raise SystemExit("RNC family-analysis storage-family mismatch")
 
     print(f"validated ROM identity: {actual['sha1']}")
     print(f"validated levels: {levels['count']} entries, {rendered_levels} rendered")
@@ -137,6 +167,11 @@ def main() -> int:
     print(
         f"validated RNC pointers: {pointer_report.get('reference_count', 0)} references, "
         f"{pointer_report.get('pointer_table_count', 0)} tables"
+    )
+    print(
+        f"validated RNC family analysis: "
+        f"{family_analysis.get('summary', {}).get('storage_family_count', 0)} storage families, "
+        f"{family_analysis.get('summary', {}).get('code_cluster_count', 0)} code clusters"
     )
     return 0
 

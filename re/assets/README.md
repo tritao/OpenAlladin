@@ -30,6 +30,13 @@ To scan for ROM pointer tables that reference the decompressed corpus:
 python tools/find-rnc-references.py
 ```
 
+To group the unassigned blocks by contiguous compressed storage and nearby
+68000 code references:
+
+```bash
+python tools/analyze-rnc-families.py
+```
+
 Generated files are written under `build/assets/` and are intentionally
 ignored by Git:
 
@@ -47,6 +54,7 @@ build/assets/
     ├── classification.json # tile candidates and contiguous block families
     ├── classified/       # contact sheets for likely Genesis tile data
     ├── pointer_references.json # 68000 pointer and table candidates
+    ├── family_analysis.json # storage families, code clusters, and previews
     └── blocks/          # decompressed block data named by ROM offset
 ```
 
@@ -62,3 +70,9 @@ preserved in `rnc/blocks/` and listed as unassigned discovery targets.
 The output is evidence, not canonical knowledge. Once an address or format is
 confirmed, record it under `re/assets/` or the existing `re/symbols/` files;
 do not commit the ROM or generated copyrighted assets.
+
+`family_analysis.json` is intentionally a review report. It records the
+compressed block sizes, pointer locations, a small local 68000 instruction
+window, optional containing function names from `build/re/functions.csv`, and
+the existing evidence-palette preview. Its `unknown_graphics` and
+`genesis_tile_candidate` labels are hypotheses, not final asset names.
