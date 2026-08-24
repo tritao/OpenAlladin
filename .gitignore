@@ -1,0 +1,30 @@
+# Local ROMs and emulator state
+/*.bin
+/*.gen
+rom/*.bin
+rom/*.gen
+rom/*.md
+nvram/
+snap/
+cfg/
+debug.log
+
+# Downloaded/build tools
+.tools/
+build/
+
+# Ghidra projects and generated analysis exports
+re/ghidra/project/
+re/ghidra/*.gpr
+re/ghidra/*.rep
+re/traces/raw/
+re/traces/*.log
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Local editor/OS files
+.DS_Store
+.vscode/
+.idea/
