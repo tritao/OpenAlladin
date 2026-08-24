@@ -64,6 +64,8 @@ def analyze_load_trace(log_path: Path, loader_path: Path) -> dict[str, Any]:
         row = {
             **event,
             "static_call_match": static is not None,
+            "static_loader_function": static.get("function", {}).get("address") if static else None,
+            "static_loader_name": static.get("function", {}).get("name") if static else None,
             "static_source": static.get("source", {}).get("target") if static else None,
             "static_destination": static.get("destination", {}).get("target") if static else None,
             "block": source_block,

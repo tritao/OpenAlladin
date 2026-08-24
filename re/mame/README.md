@@ -263,6 +263,27 @@ python3 tools/analyze-rnc-runtime.py \
 The debugger breakpoint is optional and is enabled only by
 `OPENALADDIN_TRACE_RNC_LOADS=1`; ordinary traces remain unaffected.
 
+To confirm the static scene-resource map at runtime, also trace writes to the
+dispatcher state byte `0xFF7E26`:
+
+```sh
+OPENALADDIN_TRACE_RNC_LOADS=1 OPENALADDIN_TRACE_SCENE_STATES=1 \
+  OPENALADDIN_TRACE_FRAMES=1550 \
+  OPENALADDIN_TRACE_DIR=build/re/rnc-loader-gameplay \
+  ./tools/mame-trace.sh
+python3 tools/analyze-rnc-load-trace.py \
+  --log debug.log \
+  --output build/re/rnc-loader-gameplay/rnc_loads.json
+python3 tools/analyze-scene-state-trace.py \
+  --trace build/re/rnc-loader-gameplay \
+  --load-trace build/re/rnc-loader-gameplay/rnc_loads.json
+```
+
+The scene report attributes each dynamic upload to the most recent observed
+state and checks it against `re/assets/scene_resources.yml`.  The capture
+matrix enables this trace automatically and writes the combined report to
+`build/re/rnc-capture-matrix/combined/scene_state_runtime.json`.
+
 ## Runtime capture matrix
 
 For repeatable multi-scene coverage, edit the controller schedules in

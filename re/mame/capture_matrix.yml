@@ -8,6 +8,7 @@ version: 1
 defaults:
   capture_vdp: true
   trace_rnc_loads: true
+  trace_scene_states: true
 
 scenarios:
   - name: title-menu

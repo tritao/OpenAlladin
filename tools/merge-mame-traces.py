@@ -119,10 +119,11 @@ def _append_binary(source: Path, target) -> None:
 def _merge_trace_data(
     scenarios: list[dict[str, Any]],
     output: Path,
-) -> tuple[list[dict[str, Any]], dict[str, int]]:
+) -> tuple[list[dict[str, Any]], dict[str, int], list[dict[str, Any]]]:
     output.mkdir(parents=True, exist_ok=True)
     first_header: dict[str, Any] | None = None
     merged_frames: list[dict[str, Any]] = []
+    merged_events: list[dict[str, Any]] = []
     frame_offsets: dict[str, int] = {}
     total_frames = 0
 
@@ -151,6 +152,15 @@ def _merge_trace_data(
                 merged["scenario"] = scenario["name"]
                 merged["scenario_frame"] = int(frame.get("frame", local_index))
                 merged_frames.append(merged)
+            for record in records:
+                if record.get("type") != "scene_state":
+                    continue
+                merged = dict(record)
+                local_frame = int(record.get("frame", 0))
+                merged["frame"] = total_frames + local_frame
+                merged["scenario"] = scenario["name"]
+                merged["scenario_frame"] = local_frame
+                merged_events.append(merged)
 
             for filename, size_key in TRACE_FILES:
                 source = trace_dir / filename
@@ -185,9 +195,14 @@ def _merge_trace_data(
     first_header["capture_scenario_count"] = len(scenarios)
     with (output / "trace_boot.jsonl").open("w", encoding="utf-8") as stream:
         stream.write(json.dumps(first_header, separators=(",", ":")) + "\n")
-        for frame in merged_frames:
-            stream.write(json.dumps(frame, separators=(",", ":")) + "\n")
-    return merged_frames, frame_offsets
+        records = merged_frames + merged_events
+        records.sort(key=lambda record: (
+            int(record.get("frame", 0)),
+            0 if record.get("type") == "scene_state" else 1,
+        ))
+        for record in records:
+            stream.write(json.dumps(record, separators=(",", ":")) + "\n")
+    return merged_frames, frame_offsets, merged_events
 
 
 def merge_matrix(matrix_path: Path, output: Path) -> dict[str, Any]:
@@ -200,7 +215,7 @@ def merge_matrix(matrix_path: Path, output: Path) -> dict[str, Any]:
         for path in output.iterdir():
             if path.is_file():
                 path.unlink()
-    frames, frame_offsets = _merge_trace_data(scenarios, output)
+    frames, frame_offsets, scene_events = _merge_trace_data(scenarios, output)
     load_report = _merge_load_reports(scenarios, output, frame_offsets)
     result = {
         "format": "openaladdin-mame-capture-matrix-v1",
@@ -208,6 +223,7 @@ def merge_matrix(matrix_path: Path, output: Path) -> dict[str, Any]:
         "output": str(output),
         "scenarios": [scenario["name"] for scenario in scenarios],
         "frame_count": len(frames),
+        "scene_state_events": len(scene_events),
         "loader_events": load_report["summary"]["event_count"],
         "observed_blocks": load_report["summary"]["known_block_count"],
     }

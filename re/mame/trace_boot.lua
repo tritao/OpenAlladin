@@ -153,6 +153,9 @@ local vdp_address_item = find_save_item(vdp_device, "m_vdp_address")
 local vdp_code_item = find_save_item(vdp_device, "m_vdp_code")
 local vdp_command_pending_item = find_save_item(vdp_device, "m_command_pending")
 local capture_vdp = os.getenv("OPENALADDIN_CAPTURE_VDP") ~= "0"
+local trace_scene_states = os.getenv("OPENALADDIN_TRACE_SCENE_STATES") == "1"
+local scene_state_address = 0xff7e26
+local scene_state_last = read_u8(scene_state_address)
 
 local function item_word(item, index)
     if not item then
@@ -404,6 +407,21 @@ local function input_fields_json()
 end
 
 local function capture(frame, input_token)
+    if trace_scene_states then
+        local value = read_u8(scene_state_address)
+        if value ~= scene_state_last then
+            write_record({
+                { "type", json_string("scene_state") },
+                { "frame", tostring(frame) },
+                { "address", tostring(scene_state_address) },
+                { "previous", tostring(scene_state_last) },
+                { "value", tostring(value) },
+                { "pc", tostring(read_register("PC") or 0) },
+                { "reason", json_string("frame_poll") }
+            })
+            scene_state_last = value
+        end
+    end
     dump_ram()
     dump_vdp()
     local input_port_value = controller_port and controller_port:read() or 0
@@ -498,6 +516,31 @@ for item in watch_list:gmatch("[^,]+") do
             cpu.debug:wpset(space, "w", address, 2, "", action)
         end
     end
+end
+
+if trace_scene_states then
+    watched_addresses[#watched_addresses + 1] = scene_state_address
+    watch_taps[#watch_taps + 1] = space:install_write_tap(
+        scene_state_address,
+        scene_state_address + 1,
+        "openaladdin_scene_state",
+        function(offset, data, mem_mask)
+            local value = read_u8(scene_state_address)
+            if value ~= scene_state_last then
+                write_record({
+                    { "type", json_string("scene_state") },
+                    { "frame", tostring(current_frame) },
+                    { "address", tostring(scene_state_address) },
+                    { "previous", tostring(scene_state_last) },
+                    { "value", tostring(value) },
+                    { "data", tostring(data) },
+                    { "mask", tostring(mem_mask) },
+                    { "pc", tostring(read_register("PC") or 0) },
+                    { "reason", json_string("write") }
+                })
+                scene_state_last = value
+            end
+        end)
 end
 
 if trace_actors then
@@ -679,12 +722,25 @@ write_record({
     { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) },
     { "actor_initializer_trace", json_bool(trace_actor_initializers) },
     { "rnc_loader_trace", json_bool(trace_rnc_loads) },
+    { "scene_state_trace", json_bool(trace_scene_states) },
+    { "scene_state_address", tostring(scene_state_address) },
     { "actor_injection_frame", tostring(inject_actor_frame) },
     { "actor_injection_slot", tostring(inject_actor_slot) },
     { "actor_injection_type", tostring(inject_actor_type) },
     { "actor_injection_pc", tostring(inject_actor_pc) },
     { "actor_injection_template", tostring(inject_actor_template) }
 })
+
+if trace_scene_states then
+    write_record({
+        { "type", json_string("scene_state") },
+        { "frame", "0" },
+        { "address", tostring(scene_state_address) },
+        { "value", tostring(scene_state_last) },
+        { "pc", tostring(read_register("PC") or 0) },
+        { "reason", json_string("initial") }
+    })
+end
 
 inject_actor(0)
 capture(0, apply_input(0))

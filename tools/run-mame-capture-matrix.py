@@ -82,6 +82,7 @@ def _run_scenario(
         "OPENALADDIN_INPUT",
         "OPENALADDIN_CAPTURE_VDP",
         "OPENALADDIN_TRACE_RNC_LOADS",
+        "OPENALADDIN_TRACE_SCENE_STATES",
         "OPENALADDIN_TRACE_ACTORS",
         "OPENALADDIN_TRACE_ACTOR_INIT",
         "OPENALADDIN_LOAD_STATE",
@@ -97,6 +98,7 @@ def _run_scenario(
         "OPENALADDIN_INPUT": str(scenario["input"]),
         "OPENALADDIN_CAPTURE_VDP": _bool_env(scenario.get("capture_vdp"), True),
         "OPENALADDIN_TRACE_RNC_LOADS": _bool_env(scenario.get("trace_rnc_loads"), True),
+        "OPENALADDIN_TRACE_SCENE_STATES": _bool_env(scenario.get("trace_scene_states"), True),
     })
     for key, env_name in (
         ("load_state", "OPENALADDIN_LOAD_STATE"),
@@ -190,6 +192,16 @@ def main() -> int:
         str(matrix_path),
         "--output",
         str(combined),
+    ], cwd=ROOT, check=True)
+    subprocess.run([
+        sys.executable,
+        str(ROOT / "tools/analyze-scene-state-trace.py"),
+        "--trace",
+        str(combined),
+        "--load-trace",
+        str(combined / "rnc_loads.json"),
+        "--output",
+        str(combined / "scene_state_runtime.json"),
     ], cwd=ROOT, check=True)
     subprocess.run([
         sys.executable,
