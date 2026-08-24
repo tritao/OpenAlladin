@@ -218,6 +218,43 @@ addresses are now recorded in `re/symbols/functions.yml`; mid-dispatch
 addresses such as `0x001AC4B0` remain documented as blocks rather than being
 invented as standalone functions.
 
+The next collision-focused request is tracked at
+`re/ghidra/collision-damage-targets.json` and can be regenerated with:
+
+```sh
+./.tools/ghidra-12.1.3/support/pyghidraRun \
+  -H re/ghidra/project aladdin -process -readOnly \
+  -scriptPath re/ghidra/scripts \
+  -postScript ExportTargetedDecompile.py \
+  re/ghidra/collision-damage-targets.json \
+  build/re/collision-damage-targeted-decompile.json
+```
+
+That pass recovers the dispatch chain.  The main frame loop calls
+`0x001ABB40` before the actor animation VM; this routine scans the player
+collision rectangle against the 24 records at `0x00FF7E82` and dispatches by
+actor type through the ROM table at `0x001CBE`.  The type-`0x0A` guard entry at
+`0x001CE6` points to `0x001AE9C6`, which calls the shared response block at
+`0x001AEC00` and then `0x001AE4F8` for player interaction-state handling.
+
+`0x001ABD7E` is a separate seven-record actor-to-actor pass using the handler
+table at `0x001EBA`.  The two routines at `0x001AE3FC` and `0x001AE47E` consume
+non-zero values from `0x00FFAE87` and dispatch them through the ROM handler
+table at `0x004154`.  The guard trace's collision dispatch writes the shared
+collision flag at `0x001ABC8A`; the subsequent observed guard transition is
+the already-confirmed clear at `0x001AC4B2` followed by the type-`0x84`
+initializer write at `0x001AE30E`.
+
+For a live watchpoint run, reuse the guard input schedule above and add:
+
+```sh
+OPENALADDIN_DEBUG_WATCH=1 \
+OPENALADDIN_WATCH_ADDRESSES=0xFF7F8A,0xFF7FBC,0xFF7FBE,0xFFE1C2,0xFFF0D8,0xFFF0F4,0xFF7E60 \
+OPENALADDIN_TRACE_FRAMES=1690 \
+OPENALADDIN_TRACE_DIR=build/re/guard-collision-watch \
+./tools/mame-trace.sh
+```
+
 Write taps can record the 68000 PC responsible for a candidate address:
 
 ```sh

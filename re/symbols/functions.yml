@@ -33,6 +33,65 @@
   evidence:
     - ghidra_disassembly_001ACBF2
     - ghidra_decompile_actor_combat_targets
+0x001ABB40:
+  name: Actor_PlayerCollisionPass
+  confidence: confirmed
+  description: Per-frame player collision pass. It derives the player collision bounds, scans 24 actor records at 0x00FF7E82 with stride 0x42, checks their frame rectangles, and dispatches a hit through the handler table at ROM address 0x001CBE.
+  evidence:
+    - ghidra_decompile_collision_damage_targets
+    - ghidra_disassembly_001ABB40
+    - mame_guard_collision_watchpoint
+0x001ABD7E:
+  name: Actor_ActorCollisionPass
+  confidence: confirmed
+  description: Scans seven records at 0x00FF84B2 against the 24 records at 0x00FF7E82, performs frame-rectangle overlap tests, and dispatches the receiving actor through the handler table at ROM address 0x001EBA.
+  evidence:
+    - ghidra_decompile_collision_damage_targets
+    - ghidra_disassembly_001ABD7E
+0x001ABE8A:
+  name: Actor_HandleType2DInteraction
+  confidence: confirmed
+  description: Handles the type-0x2D interaction branch and reinitializes the actor from the shared template at 0x001B7E40, preserving the actor position and applying the player-facing bit when required.
+  evidence:
+    - ghidra_decompile_collision_damage_targets
+    - ghidra_disassembly_001ABE8A
+0x001AE3FC:
+  name: InteractionTable_ProcessRowsA
+  confidence: confirmed
+  description: Processes 16 interaction-table entries from the current scene row. Non-zero values from 0x00FFAE87 select a four-byte handler from the table at ROM address 0x004154.
+  evidence:
+    - ghidra_decompile_collision_damage_targets
+    - ghidra_disassembly_001AE3FC
+0x001AE47E:
+  name: InteractionTable_ProcessRowsB
+  confidence: confirmed
+  description: Processes the second interaction-table row group, scanning 23 entries from 0x00FFAE87 and dispatching non-zero values through the same ROM handler table at 0x004154.
+  evidence:
+    - ghidra_decompile_collision_damage_targets
+    - ghidra_disassembly_001AE47E
+0x001AE4F8:
+  name: Player_ProcessInteractionState
+  confidence: confirmed
+  description: Gates player interaction-state recovery on the global collision flags, selects player animation streams 0x001226CE or 0x001226B2, and invokes the player interaction helper at 0x001B03F2.
+  evidence:
+    - ghidra_decompile_collision_damage_targets
+    - ghidra_disassembly_001AE4F8
+0x001AE9C6:
+  name: ActorType0A_PlayerCollisionHandler
+  confidence: confirmed
+  description: Handler-table entry for actor type 0x0A at ROM pointer-table address 0x001CE6. It calls the shared actor response block at 0x001AEC00 and then processes player interaction state through 0x001AE4F8.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AE9C6
+    - ghidra_decompile_collision_damage_targets
+0x001AEC00:
+  name: Actor_HandlePlayerCollisionBlock
+  confidence: confirmed
+  description: Shared player-collision response block. It checks the active collision state and actor-side position, decrements the actor timer at +0x01 when present, and routes terminal actor states through type-0x84 cleanup/initialization branches.
+  evidence:
+    - ghidra_disassembly_001AEC00
+    - ghidra_decompile_collision_damage_targets
+    - mame_guard_collision_watchpoint
 0x001AE0B0:
   name: Actor_CullAndRemoveLinked
   confidence: confirmed
