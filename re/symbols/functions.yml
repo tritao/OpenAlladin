@@ -25,3 +25,10 @@
   evidence:
     - ghidra_disassembly_001AC784
     - mame_player_state_trace
+0x001AE30A:
+  name: Actor_InitializeFromTemplate
+  confidence: confirmed
+  description: Copies a 0x42-byte actor template into a destination actor record; A5 is the destination and A6 is the source template.
+  evidence:
+    - ghidra_actor_template_initializer_001AE30A
+    - mame_actor_initializer_trace

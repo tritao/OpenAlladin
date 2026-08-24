@@ -53,7 +53,7 @@ MAME_ARGS=(
     -nothrottle
 )
 
-if [[ "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" ]]; then
+if [[ "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" ]]; then
     MAME_ARGS+=(
         -debug
         -debugscript "${ROOT_DIR}/re/mame/continue-debugger.txt"

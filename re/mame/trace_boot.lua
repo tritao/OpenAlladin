@@ -453,6 +453,7 @@ local watched_addresses = {}
 local current_frame = 0
 local watch_list = os.getenv("OPENALADDIN_WATCH_ADDRESSES") or ""
 local debugger_watch = os.getenv("OPENALADDIN_DEBUG_WATCH") == "1"
+local trace_actor_initializers = os.getenv("OPENALADDIN_TRACE_ACTOR_INIT") == "1"
 local trace_actors = os.getenv("OPENALADDIN_TRACE_ACTORS") == "1"
 local actor_table_base = 0xff7e40
 local actor_stride = 0x42
@@ -560,6 +561,12 @@ if trace_actors then
     end
 end
 
+if trace_actor_initializers then
+    local initializer_action =
+        "printf \"OPENALADDIN_ACTOR_INIT DEST=%08X SOURCE=%08X PC=%08X RETURN=%08X\\n\",a5,a6,pc,d@sp ; g"
+    cpu.debug:bpset(0x1ae30a, "", initializer_action)
+end
+
 if vdp_device and capture_vdp then
     local function install_vdp_tap(base, suffix)
         vdp_taps[#vdp_taps + 1] = space:install_write_tap(
@@ -655,6 +662,7 @@ write_record({
     { "actor_type_offset", tostring(actor_type_offset) },
     { "actor_active_offset", tostring(actor_type_offset) },
     { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) },
+    { "actor_initializer_trace", json_bool(trace_actor_initializers) },
     { "actor_injection_frame", tostring(inject_actor_frame) },
     { "actor_injection_slot", tostring(inject_actor_slot) },
     { "actor_injection_type", tostring(inject_actor_type) },

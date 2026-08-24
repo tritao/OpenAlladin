@@ -111,6 +111,27 @@ The captured record reaches `0x00125952` with type `0x7D`; the common helper
 then follows its short branch path and retires the synthetic record.  This is a
 state-stream probe, not a replacement for a naturally spawned gameplay actor.
 
+To inventory naturally created actors, enable the initializer breakpoint.  MAME
+writes records to `debug.log`; the return address is the caller of the common
+initializer at `0x001AE30A`:
+
+```sh
+OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTOR_INIT=1 \
+OPENALADDIN_TRACE_FRAMES=2880 \
+OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*1400,none*255' \
+OPENALADDIN_TRACE_DIR=build/re/actor-init-gameplay \
+  ./tools/mame-trace.sh
+python3 tools/analyze-actor-initializers.py \
+  --log debug.log \
+  --output build/re/actor-init-gameplay/actor_initializers.json
+```
+
+The analyzer resolves each source template against the ROM and reports its
+type byte, animation pointer at `+0x20`, movement-pointer candidate at `+0x34`,
+destination slots, and initializer callers.  A recent gameplay run captured
+119 initializer calls spanning 26 distinct templates; these are observations
+to classify before assigning semantic actor names.
+
 Write taps can record the 68000 PC responsible for a candidate address:
 
 ```sh
