@@ -454,6 +454,7 @@ local current_frame = 0
 local watch_list = os.getenv("OPENALADDIN_WATCH_ADDRESSES") or ""
 local debugger_watch = os.getenv("OPENALADDIN_DEBUG_WATCH") == "1"
 local trace_actor_initializers = os.getenv("OPENALADDIN_TRACE_ACTOR_INIT") == "1"
+local trace_rnc_loads = os.getenv("OPENALADDIN_TRACE_RNC_LOADS") == "1"
 local trace_actors = os.getenv("OPENALADDIN_TRACE_ACTORS") == "1"
 local actor_table_base = 0xff7e40
 local actor_stride = 0x42
@@ -568,6 +569,12 @@ if trace_actor_initializers then
     cpu.debug:bpset(0x1ae30a, "", initializer_action)
 end
 
+if trace_rnc_loads then
+    local rnc_loader_action =
+        "printf \"OPENALADDIN_RNC_LOAD PC=%08X RETURN=%08X SOURCE=%08X DEST=%08X FRAME=%08X\\n\",pc,d@sp,a0,a1,frame ; g"
+    cpu.debug:bpset(0x1b3416, "", rnc_loader_action)
+end
+
 if vdp_device and capture_vdp then
     local function install_vdp_tap(base, suffix)
         vdp_taps[#vdp_taps + 1] = space:install_write_tap(
@@ -665,6 +672,7 @@ write_record({
     { "actor_movement_pc_offset", tostring(actor_movement_pc_offset) },
     { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) },
     { "actor_initializer_trace", json_bool(trace_actor_initializers) },
+    { "rnc_loader_trace", json_bool(trace_rnc_loads) },
     { "actor_injection_frame", tostring(inject_actor_frame) },
     { "actor_injection_slot", tostring(inject_actor_slot) },
     { "actor_injection_type", tostring(inject_actor_type) },

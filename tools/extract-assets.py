@@ -113,6 +113,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         help="optional MAME trace directory for VRAM/CRAM correlation and palette previews",
     )
+    parser.add_argument(
+        "--runtime-load-trace",
+        type=Path,
+        help="optional parsed RNC loader breakpoint report to merge with runtime evidence",
+    )
     return parser.parse_args()
 
 
@@ -201,7 +206,14 @@ def main() -> int:
             "loader_destinations": loader_analysis["summary"]["resolved_destination_count"],
         })
         if args.runtime_trace:
-            runtime_analysis = analyze_rnc_runtime(output / "rnc", args.runtime_trace.resolve())
+            load_trace = None
+            if args.runtime_load_trace:
+                load_trace = json.loads(args.runtime_load_trace.resolve().read_text(encoding="utf-8"))
+            runtime_analysis = analyze_rnc_runtime(
+                output / "rnc",
+                args.runtime_trace.resolve(),
+                load_trace=load_trace,
+            )
             manifest["assets"]["rnc"].update({
                 "runtime_analysis": "rnc/runtime_analysis.json",
                 "runtime_exact_matches": runtime_analysis["summary"]["exact_match_count"],

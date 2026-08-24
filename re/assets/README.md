@@ -50,6 +50,15 @@ palette candidates:
 python tools/analyze-rnc-runtime.py --trace build/re/actor-gameplay
 ```
 
+When a MAME loader breakpoint report is available, merge it as dynamic
+evidence:
+
+```bash
+python tools/analyze-rnc-runtime.py \
+  --trace build/re/rnc-loader-gameplay \
+  --load-trace build/re/rnc-loader-gameplay/rnc_loads.json
+```
+
 The same runtime step can be included in the full extraction command with
 `--runtime-trace`.
 

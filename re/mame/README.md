@@ -162,6 +162,29 @@ mean a native binary is present contiguously in captured VDP memory; sample
 matches locate a 64-byte portion of larger or partially loaded assets.  This
 is an observation report, not a replacement for the tracked asset parsers.
 
+To log every execution of the RNC-to-VDP helper at `0x001B3416`, including the
+source ROM address, VRAM destination, caller return address, and MAME frame:
+
+```sh
+OPENALADDIN_TRACE_RNC_LOADS=1 OPENALADDIN_TRACE_FRAMES=1550 \
+  OPENALADDIN_TRACE_DIR=build/re/rnc-loader-gameplay \
+  ./tools/mame-trace.sh
+python3 tools/analyze-rnc-load-trace.py \
+  --log debug.log \
+  --output build/re/rnc-loader-gameplay/rnc_loads.json
+```
+
+Merge the parsed execution evidence into the runtime asset report:
+
+```sh
+python3 tools/analyze-rnc-runtime.py \
+  --trace build/re/rnc-loader-gameplay \
+  --load-trace build/re/rnc-loader-gameplay/rnc_loads.json
+```
+
+The debugger breakpoint is optional and is enabled only by
+`OPENALADDIN_TRACE_RNC_LOADS=1`; ordinary traces remain unaffected.
+
 Set `OPENALADDIN_CAPTURE_VDP=0` when only the original RAM trace is wanted.
 
 If a memory tap does not observe a candidate, enable MAME’s native debugger

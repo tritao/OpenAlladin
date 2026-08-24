@@ -66,6 +66,7 @@ def analyze_rnc_runtime(
     corpus_root: Path,
     trace_root: Path,
     output_root: Path | None = None,
+    load_trace: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Match loader assets to VDP snapshots and render CRAM palette variants."""
 
@@ -94,6 +95,10 @@ def analyze_rnc_runtime(
         block = call.get("block")
         if block:
             calls_by_block.setdefault(block["offset"], []).append(call)
+    dynamic_by_block: dict[str, list[dict[str, Any]]] = {}
+    for event in (load_trace or {}).get("events", []):
+        if event.get("block"):
+            dynamic_by_block.setdefault(event["source"], []).append(event)
 
     asset_rows: list[dict[str, Any]] = []
     for offset, calls in sorted(calls_by_block.items(), key=lambda item: int(item[0], 16)):
@@ -141,6 +146,8 @@ def analyze_rnc_runtime(
             "exact_matches": exact_matches[:16],
             "status": "exact" if selected else "not_found",
             "selected_match": selected,
+            "dynamic_load_count": len(dynamic_by_block.get(offset, [])),
+            "dynamic_loads": dynamic_by_block.get(offset, []),
         }
         if selected and int(selected["frame"]) < len(cram_frames):
             frame = int(selected["frame"])
@@ -205,12 +212,23 @@ def analyze_rnc_runtime(
             "cram_frames": len(cram_frames),
             "vdp_device": header.get("vdp_device"),
         },
+        "dynamic_loader_trace": {
+            "present": load_trace is not None,
+            "log": (load_trace or {}).get("log"),
+            "event_count": (load_trace or {}).get("summary", {}).get("event_count", 0),
+        },
         "summary": {
             "loader_asset_count": len(asset_rows),
             "exact_match_count": len(exact),
             "sample_match_count": sum(row["status"] == "sample" for row in asset_rows),
             "not_found_count": sum(row["status"] == "not_found" for row in asset_rows),
             "palette_preview_count": sum(bool(row.get("rendered")) for row in asset_rows),
+            "dynamic_event_count": sum(len(events) for events in dynamic_by_block.values()),
+            "dynamic_block_count": len(dynamic_by_block),
+            "dynamic_executed_without_vram_match": sum(
+                bool(dynamic_by_block.get(row["offset"])) and row["status"] == "not_found"
+                for row in asset_rows
+            ),
         },
         "families": families,
         "assets": asset_rows,
