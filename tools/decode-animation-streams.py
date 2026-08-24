@@ -10,6 +10,8 @@ checked directly against the ROM.
 This is intentionally a decoder, not an interpreter.  Conditional and
 state-dependent commands are represented with their raw operands and any
 statically visible branch target; no game state is guessed during conversion.
+With --discover-streams it also scans 68K absolute-long references for likely
+animation entry points outside the six named player streams.
 """
 
 from __future__ import annotations
@@ -36,6 +38,12 @@ PLAYER_STREAMS = {
 }
 
 VM_DISPATCH_TABLE = 0x00004954
+
+# The animation data is in the 0x12xxxx ROM area for this revision.  These
+# ranges are defaults for discovery only; callers can override them when
+# analyzing another revision or a larger data set.
+DEFAULT_STREAM_REGION = (0x00120000, 0x00130000)
+DEFAULT_FRAME_REGION = (0x001E0000, 0x00200000)
 
 
 def hex_address(value: int | None) -> str | None:
@@ -339,6 +347,152 @@ class AnimationDecoder:
         }
 
 
+def parse_range(value: str) -> tuple[int, int]:
+    try:
+        start, end = value.split(":", 1)
+        parsed = int(start, 0), int(end, 0)
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(
+            f"range must be START:END, got {value!r}"
+        ) from error
+    if parsed[0] < 0 or parsed[1] <= parsed[0]:
+        raise argparse.ArgumentTypeError(f"invalid range {value!r}")
+    return parsed
+
+
+def pointer_prefix(rom: RomReader, address: int) -> str | None:
+    """Classify common 68K instructions carrying an absolute long pointer."""
+    if address < 2 or not rom.has(address - 2, 2):
+        return None
+    opcode = rom.u16(address - 2)
+
+    # LEA An,xxx.L and MOVEA.L #xxx,An encode the 32-bit value immediately
+    # after the two-byte opcode.  The other forms are common absolute-long
+    # pointer uses seen around the animation state tables.
+    if opcode & 0xF1FF == 0x41F9:
+        return "lea_abs_l"
+    if opcode & 0xF1FF == 0x207C:
+        return "movea_imm_l"
+    if opcode & 0xF1FF == 0x203C:
+        return "move_imm_l"
+    if opcode in (0x23FC, 0x2F3C, 0x4879, 0x4EB9, 0x4EF9):
+        return f"opcode_0x{opcode:04X}"
+    return None
+
+
+def discover_stream_entries(
+    rom: RomReader,
+    decoder: AnimationDecoder,
+    stream_region: tuple[int, int],
+    frame_region: tuple[int, int],
+) -> list[dict[str, Any]]:
+    """Find likely animation entry points referenced by 68K code.
+
+    This deliberately discovers *entry points*, not every internal label.
+    Command branches inside the stream area are ignored as roots because they
+    do not have an absolute-long code reference prefix.  A candidate must
+    start with a real frame pointer and keep its first probe records aligned;
+    this filters out adjacent text, tile, and compressed data that happens to
+    contain values from the frame pointer table.
+    """
+    stream_start, stream_end = stream_region
+    frame_start, frame_end = frame_region
+    references: dict[int, list[dict[str, Any]]] = {}
+
+    for address in range(0, len(rom.data) - 3):
+        target = rom.u32(address)
+        if target & 1 or not stream_start <= target < stream_end:
+            continue
+        prefix = pointer_prefix(rom, address)
+        if prefix is None:
+            continue
+        if stream_start <= address < stream_end:
+            continue
+        references.setdefault(target, []).append(
+            {
+                "address": hex_address(address),
+                "instruction": hex_address(address - 2),
+                "kind": prefix,
+            }
+        )
+
+    known_names = {address: name for name, address in PLAYER_STREAMS.items()}
+    discovered: list[dict[str, Any]] = []
+
+    for entry, refs in references.items():
+        probe = decoder.decode_stream(entry, 32, 256, True)
+        instructions = probe["instructions"]
+        if not instructions or instructions[0]["kind"] != "frame_ref":
+            continue
+
+        first_pointer = instructions[0].get("resolved_frame")
+        if first_pointer is None:
+            continue
+        first_pointer_value = int(first_pointer, 16)
+        if not frame_start <= first_pointer_value < frame_end:
+            continue
+
+        probe_window = instructions[: min(8, len(instructions))]
+        aligned = True
+        for instruction in probe_window:
+            if instruction["kind"] == "error":
+                aligned = False
+                break
+            if instruction["kind"] == "frame_ref":
+                pointer = instruction.get("resolved_frame")
+                if pointer is None or not frame_start <= int(pointer, 16) < frame_end:
+                    aligned = False
+                    break
+        if not aligned:
+            continue
+
+        frame_count = sum(
+            1
+            for instruction in instructions
+            if instruction["kind"] == "frame_ref"
+            and instruction.get("resolved_frame") is not None
+        )
+        command_count = sum(
+            1 for instruction in instructions if instruction["kind"] == "command"
+        )
+        if frame_count < 2 or command_count < 1:
+            continue
+
+        score = min(len(refs), 8) * 10 + min(frame_count, 24) + min(command_count, 24) * 2
+        discovered.append(
+            {
+                "name": known_names.get(entry, f"ANIM_STREAM_{entry:06X}"),
+                "entry": hex_address(entry),
+                "score": score,
+                "references": sorted(refs, key=lambda item: item["address"]),
+                "probe": {
+                    "instructions": len(instructions),
+                    "frames": frame_count,
+                    "commands": command_count,
+                    "stopped_reason": probe["stopped_reason"],
+                },
+            }
+        )
+
+    # Known roots remain visible even if a future ROM revision changes the
+    # code reference form used to select them.
+    known_entries = {entry["entry"] for entry in discovered}
+    for name, address in PLAYER_STREAMS.items():
+        if hex_address(address) in known_entries:
+            continue
+        discovered.append(
+            {
+                "name": name,
+                "entry": hex_address(address),
+                "score": 0,
+                "references": [],
+                "probe": {"instructions": 0, "frames": 0, "commands": 0},
+            }
+        )
+
+    return sorted(discovered, key=lambda item: int(item["entry"], 16))
+
+
 def build_dispatch_table(rom: RomReader) -> dict[str, str | None]:
     result: dict[str, str | None] = {}
     for opcode in range(COMMAND_FIRST, COMMAND_LAST + 1):
@@ -368,6 +522,25 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-instructions", type=int, default=256)
     parser.add_argument("--max-bytes", type=int, default=4096)
     parser.add_argument(
+        "--discover-streams",
+        action="store_true",
+        help="discover and decode additional animation roots referenced by 68K code",
+    )
+    parser.add_argument(
+        "--stream-region",
+        type=parse_range,
+        default=DEFAULT_STREAM_REGION,
+        metavar="START:END",
+        help="ROM range to search for stream roots",
+    )
+    parser.add_argument(
+        "--frame-region",
+        type=parse_range,
+        default=DEFAULT_FRAME_REGION,
+        metavar="START:END",
+        help="ROM range expected for resolved sprite frame data",
+    )
+    parser.add_argument(
         "--follow-control-flow",
         action="store_true",
         help="follow direct EA/FC targets; otherwise stop at unconditional control flow",
@@ -383,15 +556,33 @@ def main() -> int:
     rom = RomReader(data)
     decoder = AnimationDecoder(rom)
 
-    streams = {
-        name: decoder.decode_stream(
-            address,
-            args.max_instructions,
-            args.max_bytes,
-            args.follow_control_flow,
+    discovery = None
+    if args.discover_streams:
+        discovery = discover_stream_entries(
+            rom,
+            decoder,
+            args.stream_region,
+            args.frame_region,
         )
-        for name, address in PLAYER_STREAMS.items()
-    }
+        streams = {
+            candidate["name"]: decoder.decode_stream(
+                int(candidate["entry"], 16),
+                args.max_instructions,
+                args.max_bytes,
+                args.follow_control_flow,
+            )
+            for candidate in discovery
+        }
+    else:
+        streams = {
+            name: decoder.decode_stream(
+                address,
+                args.max_instructions,
+                args.max_bytes,
+                args.follow_control_flow,
+            )
+            for name, address in PLAYER_STREAMS.items()
+        }
     output = {
         "rom": {
             "path": str(rom_path),
@@ -408,6 +599,13 @@ def main() -> int:
         },
         "streams": streams,
     }
+    if discovery is not None:
+        output["discovery"] = {
+            "stream_region": [hex_address(value) for value in args.stream_region],
+            "frame_region": [hex_address(value) for value in args.frame_region],
+            "candidate_count": len(discovery),
+            "candidates": discovery,
+        }
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(output, indent=2) + "\n", encoding="utf-8")
