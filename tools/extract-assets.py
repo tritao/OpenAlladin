@@ -12,8 +12,8 @@ from typing import Any
 
 from common import ROOT, hashes
 from lib.chopper import extract_chopper
-from lib.levels import extract_levels
-from lib.rnc import is_rnc, parse_header
+from lib.levels import extract_levels, find_level_table, read_level_table
+from lib.rnc import extract_rnc_corpus, is_rnc, parse_header
 
 
 def _animation_module():
@@ -78,6 +78,24 @@ def inventory_rnc(data: bytes) -> list[dict[str, Any]]:
     return result
 
 
+def level_rnc_references(data: bytes) -> dict[int, list[str]]:
+    """Associate known level-table RNC pointers with human-readable consumers."""
+
+    references: dict[int, list[str]] = {}
+    try:
+        table_offset = find_level_table(data)
+        table = read_level_table(data, table_offset)
+    except ValueError:
+        return references
+
+    for index, (_, entry, _) in enumerate(table):
+        for field in ("floor", "chars", "map", "parallax"):
+            address = int(getattr(entry, field))
+            if address and is_rnc(data, address):
+                references.setdefault(address, []).append(f"level{index:02d}.{field}")
+    return references
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("rom", nargs="?", type=Path, help="raw Genesis ROM; defaults to the configured local dump")
@@ -104,9 +122,10 @@ def main() -> int:
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
 
+    rom_identity = {"path": str(rom_path), **hashes(rom_path)}
     manifest: dict[str, Any] = {
         "format": "openaladdin-assets-v1",
-        "rom": {"path": str(rom_path), **hashes(rom_path)},
+        "rom": rom_identity,
         "pipeline": {
             "levels": not args.no_levels,
             "sprites": not args.no_sprites,
@@ -116,6 +135,24 @@ def main() -> int:
         "assets": {},
         "warnings": [],
     }
+
+    try:
+        rnc_result = extract_rnc_corpus(
+            data,
+            output / "rnc",
+            references=level_rnc_references(data),
+            rom_identity=rom_identity,
+        )
+        manifest["inventory"]["rnc_blocks"] = rnc_result["blocks"]
+        manifest["assets"]["rnc"] = {
+            "file": "rnc/manifest.json",
+            "block_count": rnc_result["block_count"],
+            "decoded_count": rnc_result["decoded_count"],
+            "assigned_count": rnc_result["assigned_count"],
+            "unassigned_count": rnc_result["unassigned_count"],
+        }
+    except (OSError, ValueError) as error:
+        manifest["warnings"].append(f"rnc: {error}")
 
     if not args.no_levels:
         try:

@@ -9,6 +9,10 @@ length so callers can preserve exact ROM provenance in their manifests.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
 import struct
 
 
@@ -205,3 +209,103 @@ def decompress_at(data: bytes, offset: int = 0, verify: bool = True) -> RncBlock
 
 def is_rnc(data: bytes, offset: int = 0) -> bool:
     return offset >= 0 and offset + 4 <= len(data) and data[offset:offset + 4] == b"RNC\x01"
+
+
+def scan_rnc_offsets(data: bytes) -> list[int]:
+    """Return every RNC signature in ROM order.
+
+    RNC blocks are self-describing, but the game contains tables and other
+    data between blocks, so a full-ROM signature scan is the least-assumptive
+    way to build the initial corpus.
+    """
+
+    offsets: list[int] = []
+    offset = 0
+    while True:
+        offset = data.find(b"RNC\x01", offset)
+        if offset < 0:
+            return offsets
+        offsets.append(offset)
+        offset += 4
+
+
+def _digest(data: bytes) -> dict[str, str]:
+    return {
+        "sha1": hashlib.sha1(data).hexdigest().upper(),
+        "sha256": hashlib.sha256(data).hexdigest(),
+    }
+
+
+def extract_rnc_corpus(
+    data: bytes,
+    output_root: Path,
+    references: dict[int, list[str]] | None = None,
+    rom_identity: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Decode every RNC block found in *data* and write a provenance manifest.
+
+    The output directory contains one decompressed binary per ROM offset.  A
+    caller may provide known consumers, such as ``level03.chars``; blocks
+    without a consumer are retained and explicitly marked as unassigned for
+    subsequent format discovery.
+    """
+
+    output_root = output_root.resolve()
+    blocks_root = output_root / "blocks"
+    blocks_root.mkdir(parents=True, exist_ok=True)
+    references = references or {}
+    blocks: list[dict[str, Any]] = []
+
+    for offset in scan_rnc_offsets(data):
+        entry: dict[str, Any] = {
+            "offset": f"0x{offset:06X}",
+            "references": sorted(references.get(offset, [])),
+        }
+        try:
+            header = parse_header(data, offset)
+            entry.update({
+                "method": header.method,
+                "packed_bytes": header.packed_size,
+                "unpacked_bytes": header.unpacked_size,
+                "total_bytes": header.total_size,
+                # Keep the original inventory field names alongside the more
+                # explicit corpus names for downstream report compatibility.
+                "compressed_bytes": header.total_size,
+                "decompressed_bytes": header.unpacked_size,
+                "end": f"0x{offset + header.total_size:06X}",
+                "packed_crc16": f"0x{header.packed_crc:04X}",
+                "unpacked_crc16": f"0x{header.unpacked_crc:04X}",
+            })
+            block = decompress_at(data, offset)
+            output_path = blocks_root / f"{offset:06X}.bin"
+            output_path.write_bytes(block.data)
+            entry.update({
+                "decoded": True,
+                "file": str(output_path.relative_to(output_root)),
+                **_digest(block.data),
+            })
+        except RncError as error:
+            entry.update({"decoded": False, "error": str(error)})
+        blocks.append(entry)
+
+    decoded = [entry for entry in blocks if entry.get("decoded")]
+    unassigned = [
+        entry["offset"]
+        for entry in decoded
+        if not entry.get("references")
+    ]
+    result: dict[str, Any] = {
+        "format": "openaladdin-rnc-corpus-v1",
+        "rom": rom_identity or {},
+        "block_count": len(blocks),
+        "decoded_count": len(decoded),
+        "failed_count": len(blocks) - len(decoded),
+        "assigned_count": len(decoded) - len(unassigned),
+        "unassigned_count": len(unassigned),
+        "unassigned_offsets": unassigned,
+        "blocks": blocks,
+    }
+    (output_root / "manifest.json").write_text(
+        json.dumps(result, indent=2) + "\n", encoding="utf-8"
+    )
+    return result

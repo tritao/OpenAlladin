@@ -47,9 +47,46 @@ def main() -> int:
             f"metadata={frame_count} png={len(frame_files)} tiles={len(tile_files)}"
         )
 
+    rnc_manifest_path = root / "rnc/manifest.json"
+    if not rnc_manifest_path.exists():
+        raise SystemExit(f"RNC corpus manifest not found: {rnc_manifest_path}")
+    rnc = json.loads(rnc_manifest_path.read_text(encoding="utf-8"))
+    rnc_identity = rnc.get("rom", {})
+    for key in ("size", "crc32", "sha1", "sha256"):
+        if rnc_identity.get(key) != actual[key]:
+            raise SystemExit(
+                f"RNC corpus ROM {key} mismatch: "
+                f"manifest={rnc_identity.get(key)} actual={actual[key]}"
+            )
+    blocks = rnc.get("blocks", [])
+    decoded = [block for block in blocks if block.get("decoded")]
+    if not blocks or len(decoded) != len(blocks) or rnc.get("failed_count", 0):
+        raise SystemExit(
+            f"RNC corpus incomplete: blocks={len(blocks)} "
+            f"decoded={len(decoded)} failed={rnc.get('failed_count')}"
+        )
+    missing_rnc = [
+        block.get("offset")
+        for block in decoded
+        if not (root / "rnc" / block["file"]).exists()
+    ]
+    if missing_rnc:
+        raise SystemExit(f"RNC decompressed files missing: {missing_rnc[:5]}")
+    for block in decoded:
+        block_path = root / "rnc" / block["file"]
+        block_hashes = hashes(block_path)
+        if block_hashes["size"] != block.get("unpacked_bytes"):
+            raise SystemExit(f"RNC size mismatch for {block['offset']}: {block_path}")
+        if block_hashes["sha1"] != block.get("sha1") or block_hashes["sha256"] != block.get("sha256"):
+            raise SystemExit(f"RNC digest mismatch for {block['offset']}: {block_path}")
+
     print(f"validated ROM identity: {actual['sha1']}")
     print(f"validated levels: {levels['count']} entries, {rendered_levels} rendered")
     print(f"validated Chopper sprites: {frame_count} frames, {len(tile_files)} tile sets")
+    print(
+        f"validated RNC corpus: {len(blocks)} blocks, "
+        f"{rnc.get('unassigned_count', 0)} currently unassigned"
+    )
     return 0
 
 
