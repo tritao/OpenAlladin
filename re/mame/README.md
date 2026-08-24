@@ -107,9 +107,11 @@ python3 tools/analyze-actor-animation-trace.py \
   --output build/re/actor-injection-template/actor_animation_inventory.json
 ```
 
-The captured record reaches `0x00125952` with type `0x7D`; the common helper
-then follows its short branch path and retires the synthetic record.  This is a
-state-stream probe, not a replacement for a naturally spawned gameplay actor.
+The captured record reaches the injected animation cursor with type `0x7D`; the
+common helper then follows its short branch path and retires the synthetic
+record.  This is a state-stream probe, not a replacement for a naturally
+spawned gameplay actor; the injector overrides the cursor after copying the
+record image.
 
 To inventory naturally created actors, enable the initializer breakpoint.  MAME
 writes records to `debug.log`; the return address is the caller of the common
@@ -126,11 +128,17 @@ python3 tools/analyze-actor-initializers.py \
   --output build/re/actor-init-gameplay/actor_initializers.json
 ```
 
-The analyzer resolves each source template against the ROM and reports its
-type byte, animation pointer at `+0x20`, movement-pointer candidate at `+0x34`,
-destination slots, and initializer callers.  A recent gameplay run captured
-119 initializer calls spanning 26 distinct templates; these are observations
-to classify before assigning semantic actor names.
+The analyzer resolves each compact source template against the ROM and reports
+its type byte, movement cursor copied from source `+0x06` to actor `+0x0A`,
+animation cursor copied from source `+0x0C` to actor `+0x20`, destination slots,
+and initializer callers.  A recent gameplay run captured 119 initializer calls
+spanning 26 distinct templates; these are observations to classify before
+assigning semantic actor names.
+
+The same RAM trace exposes movement cursors alongside animation cursors.  In a
+natural run, type `0x2D` appeared in slot 3 with movement cursor
+`0x0011F6D4` and animation cursor `0x00123EE8`; the movement cursor advanced to
+`0x0011F6DE` and `0x0011F6E6` as the actor state stream was consumed.
 
 Write taps can record the 68000 PC responsible for a candidate address:
 
