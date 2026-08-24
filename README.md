@@ -5,7 +5,8 @@ Open-source reimplementation work for Disney's Aladdin on Sega Genesis.
 ## Reverse-engineering setup
 
 The canonical reverse-engineering knowledge lives in Git. Ghidra projects and
-the ROM remain local and ignored.
+generated analysis remain local and ignored. The publisher-authorized ROM dump
+used by the reproducible tooling is committed at the repository root.
 
 After cloning, initialize the pinned submodules and run:
 
@@ -34,5 +35,6 @@ vectors, symbols, and structures.
 
 Generated exports are written to `build/re/`; edit files under `re/` instead.
 
-The current local dump is accepted as a recorded, unverified local identity.
-Use `--allow-unverified` when experimenting with a different image.
+The committed dump is recorded as the canonical local identity in
+`re/config/roms.yml`. Use `--allow-unverified` when experimenting with a
+different image.

@@ -97,7 +97,8 @@ preserved in `rnc/blocks/` and listed as unassigned discovery targets.
 
 The output is evidence, not canonical knowledge. Once an address or format is
 confirmed, record it under `re/assets/` or the existing `re/symbols/` files;
-do not commit the ROM or generated copyrighted assets.
+generated assets remain ignored. Other ROM images should remain uncommitted
+unless their redistribution is authorized.
 
 `family_analysis.json` is intentionally a review report. It records the
 compressed block sizes, pointer locations, a small local 68000 instruction
