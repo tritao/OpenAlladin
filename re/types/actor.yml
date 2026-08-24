@@ -5,10 +5,22 @@ fields:
     name: type
     type: u8
     description: Actor type/state byte copied from the object template; zero marks a free record and non-zero values are processed by common actor logic.
+  0x02:
+    name: x
+    type: u16
+    description: World X coordinate written by the animation VM spawn/copy handler and consumed by common actor movement/rendering.
+  0x04:
+    name: y
+    type: u16
+    description: World Y coordinate written by the animation VM spawn/copy handler and consumed by common actor movement/rendering.
   0x0a:
     name: movement_pc
     type: u32
     description: Movement state-stream cursor consumed by the common movement update; the template initializer copies its source long word into this field.
+  0x14:
+    name: frame_ptr
+    type: u32
+    description: Current Chopper sprite-frame pointer written by the animation VM; for type 0x2D it resolves to the guard sword-attack frame sequence.
   0x20:
     name: animation_pc
     type: u32

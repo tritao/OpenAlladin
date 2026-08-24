@@ -460,7 +460,10 @@ local actor_table_base = 0xff7e40
 local actor_stride = 0x42
 local actor_slot_count = math.max(0, math.floor(env_number("OPENALADDIN_ACTOR_SLOTS", 32)))
 local actor_type_offset = 0x00
+local actor_x_offset = 0x02
+local actor_y_offset = 0x04
 local actor_movement_pc_offset = 0x0a
+local actor_frame_ptr_offset = 0x14
 local actor_animation_pc_offset = 0x20
 local inject_actor_frame = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FRAME", -1))
 local inject_actor_slot = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_SLOT", 31))
@@ -565,7 +568,7 @@ end
 
 if trace_actor_initializers then
     local initializer_action =
-        "printf \"OPENALADDIN_ACTOR_INIT DEST=%08X SOURCE=%08X PC=%08X RETURN=%08X\\n\",a5,a6,pc,d@sp ; g"
+        "printf \"OPENALADDIN_ACTOR_INIT DEST=%08X SOURCE=%08X A2=%08X PC=%08X RETURN=%08X\\n\",a5,a6,a2,pc,d@sp ; g"
     cpu.debug:bpset(0x1ae30a, "", initializer_action)
 end
 
@@ -669,7 +672,10 @@ write_record({
     { "actor_slot_count", tostring(actor_slot_count) },
     { "actor_type_offset", tostring(actor_type_offset) },
     { "actor_active_offset", tostring(actor_type_offset) },
+    { "actor_x_offset", tostring(actor_x_offset) },
+    { "actor_y_offset", tostring(actor_y_offset) },
     { "actor_movement_pc_offset", tostring(actor_movement_pc_offset) },
+    { "actor_frame_ptr_offset", tostring(actor_frame_ptr_offset) },
     { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) },
     { "actor_initializer_trace", json_bool(trace_actor_initializers) },
     { "rnc_loader_trace", json_bool(trace_rnc_loads) },

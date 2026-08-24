@@ -404,10 +404,18 @@
 0x00123EE8:
   name: ACTOR_ANIM_STATE_123EE8
   confidence: confirmed
-  description: Natural type 0x2D actor animation state-stream entry copied into the actor-table animation_pc field at offset 0x20.
+  description: Guard sword-attack child animation state stream for natural actor type 0x2D; it cycles sprite frames 1338-1345 and plays sound 0x20.
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - mame_natural_actor_type_2D_trace
+
+0x0012542A:
+  name: ACTOR_ANIM_GUARD_ATTACK
+  confidence: confirmed
+  description: Type 0x0A guard animation stream; its F5 spawn records create the type 0x2D guard sword-attack child.
+  evidence:
+    - mame_type_2D_spawn_trace_1800
+    - ghidra_animation_vm_spawn_handler_001AD00E
 
 0x001258D2:
   name: PLAYER_ANIM_STATE_1258D2
@@ -450,12 +458,21 @@
     - animation_stream_classifier
 
 0x001B7CB0:
-  name: ACTOR_TEMPLATE_TYPE_2D
+  name: ACTOR_TEMPLATE_GUARD_SWORD_ATTACK
   confidence: confirmed
-  description: Compact common actor template observed during natural gameplay; its type byte is 0x2D, movement stream pointer is 0x0011F6D4, and animation stream pointer is 0x00123EE8.
+  description: Compact actor template for the guard sword-attack child; its type byte is 0x2D, movement stream pointer is 0x0011F6D4, and animation stream pointer is 0x00123EE8. It is spawned by the type 0x0A guard animation through the F5 handler.
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - mame_natural_actor_type_2D_trace
+    - mame_type_2D_spawn_trace_1800
+
+0x001B80AC:
+  name: ACTOR_TEMPLATE_GUARD
+  confidence: confirmed
+  description: Compact common actor template for type 0x0A; its animation stream is ACTOR_ANIM_GUARD_ATTACK and its natural animation spawns ACTOR_TEMPLATE_GUARD_SWORD_ATTACK.
+  evidence:
+    - ghidra_actor_template_initializer_001AE30A
+    - mame_type_2D_spawn_trace_1800
 
 0x001B81D8:
   name: ACTOR_TEMPLATE_TYPE_7D

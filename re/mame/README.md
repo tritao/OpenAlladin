@@ -140,6 +140,14 @@ natural run, type `0x2D` appeared in slot 3 with movement cursor
 `0x0011F6D4` and animation cursor `0x00123EE8`; the movement cursor advanced to
 `0x0011F6DE` and `0x0011F6E6` as the actor state stream was consumed.
 
+The initializer trace also captures `A2`.  When the return address is
+`0x001AD0AC`, `A2` points at the signed spawn-offset payload consumed by the
+animation VM's `F5` spawn/copy handler.  In a targeted 1800-frame run, type
+`0x2D` was spawned by the type `0x0A` guard stream at `0x0012542A`; its child
+animation uses sprite frames `1338-1345`, identifying it as the guard's sword
+attack child.  At frame 1639, the child record had `x=0x0512`, `y=0x0333`,
+and frame pointer `0x001FDDB4` (Chopper frame 1338).
+
 Write taps can record the 68000 PC responsible for a candidate address:
 
 ```sh

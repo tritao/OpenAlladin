@@ -47,6 +47,10 @@ def read_u8(data: bytes, offset: int) -> int:
     return data[offset]
 
 
+def read_u16(data: bytes, offset: int) -> int:
+    return struct.unpack_from(">H", data, offset)[0]
+
+
 def read_u32(data: bytes, offset: int) -> int:
     return struct.unpack_from(">I", data, offset)[0]
 
@@ -171,7 +175,10 @@ def main() -> int:
     type_offset = int(
         header.get("actor_type_offset", header.get("actor_active_offset", 0x00))
     )
+    x_offset = int(header.get("actor_x_offset", 0x02))
+    y_offset = int(header.get("actor_y_offset", 0x04))
     movement_pc_offset = int(header.get("actor_movement_pc_offset", 0x0A))
+    frame_ptr_offset = int(header.get("actor_frame_ptr_offset", 0x14))
     animation_pc_offset = int(header.get("actor_animation_pc_offset", 0x20))
     table_offset = table_base - ram_start
 
@@ -262,6 +269,10 @@ def main() -> int:
                     "first_frame": frame_index,
                     "actor_type": actor_type,
                     "active": actor_type,
+                    "first_x": None,
+                    "first_y": None,
+                    "first_nonzero_frame_ptr": None,
+                    "first_nonzero_frame_ptr_frame": None,
                     "first_nonzero_movement_pc": None,
                     "first_nonzero_movement_frame": None,
                     "first_nonzero_animation_pc": None,
@@ -271,6 +282,22 @@ def main() -> int:
             if current is not None and current["first_nonzero_animation_pc"] is None and animation_pc:
                 current["first_nonzero_animation_pc"] = hex_address(animation_pc)
                 current["first_nonzero_frame"] = frame_index
+            if current is not None and current["first_x"] is None and actor_type:
+                current["first_x"] = read_u16(
+                    ram,
+                    frame_offset + record_offset + x_offset,
+                )
+                current["first_y"] = read_u16(
+                    ram,
+                    frame_offset + record_offset + y_offset,
+                )
+            frame_ptr = read_u32(
+                ram,
+                frame_offset + record_offset + frame_ptr_offset,
+            )
+            if current is not None and current["first_nonzero_frame_ptr"] is None and frame_ptr:
+                current["first_nonzero_frame_ptr"] = hex_address(frame_ptr)
+                current["first_nonzero_frame_ptr_frame"] = frame_index
             if current is not None and current["first_nonzero_movement_pc"] is None and movement_pc:
                 current["first_nonzero_movement_pc"] = hex_address(movement_pc)
                 current["first_nonzero_movement_frame"] = frame_index
@@ -335,6 +362,10 @@ def main() -> int:
                     "actor_type": interval["actor_type"],
                     "active": interval["actor_type"],
                     "first_frame": interval["first_frame"],
+                    "x": interval["first_x"],
+                    "y": interval["first_y"],
+                    "frame_ptr": interval["first_nonzero_frame_ptr"],
+                    "frame_ptr_frame": interval["first_nonzero_frame_ptr_frame"],
                     "first_nonzero_movement_frame": interval["first_nonzero_movement_frame"],
                     "movement_pc": interval["first_nonzero_movement_pc"],
                     "first_nonzero_frame": interval["first_nonzero_frame"],
@@ -364,7 +395,10 @@ def main() -> int:
             "slot_count": slot_count,
             "type_offset": type_offset,
             "active_offset": type_offset,
+            "x_offset": x_offset,
+            "y_offset": y_offset,
             "movement_pc_offset": movement_pc_offset,
+            "frame_ptr_offset": frame_ptr_offset,
             "animation_pc_offset": animation_pc_offset,
         },
         "static_streams": static_streams,

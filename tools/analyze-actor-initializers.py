@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Resolve common actor initializer records emitted by the MAME debugger."""
+"""Resolve common actor initializer records emitted by the MAME debugger.
+
+When the initializer is reached from the animation VM's spawn/copy handler,
+the optional A2 field points at the signed spawn-offset payload immediately
+after the template pointer.
+"""
 
 from __future__ import annotations
 
@@ -25,6 +30,7 @@ INIT_RE = re.compile(
     r"OPENALADDIN_ACTOR_INIT"
     r" DEST=(?P<dest>[0-9A-Fa-f]+)"
     r" SOURCE=(?P<source>[0-9A-Fa-f]+)"
+    r"(?: A2=(?P<a2>[0-9A-Fa-f]+))?"
     r" PC=(?P<pc>[0-9A-Fa-f]+)"
     r" RETURN=(?P<return>[0-9A-Fa-f]+)"
 )
@@ -58,6 +64,7 @@ def main() -> int:
             "slots": set(),
             "callers": set(),
             "breakpoint_pcs": set(),
+            "a2_addresses": set(),
         }
     )
 
@@ -68,6 +75,8 @@ def main() -> int:
         row = {key: int(value, 16) for key, value in match.groupdict().items()}
         row["destination"] = hex_address(row.pop("dest"))
         row["source"] = hex_address(row.pop("source"))
+        if row.get("a2") is not None:
+            row["a2"] = hex_address(row["a2"])
         row["pc"] = hex_address(row["pc"])
         row["return"] = hex_address(row["return"])
         records.append(row)
@@ -80,6 +89,8 @@ def main() -> int:
         entry["destinations"].add(destination)
         entry["callers"].add(int(row["return"], 16))
         entry["breakpoint_pcs"].add(int(row["pc"], 16))
+        if row.get("a2") is not None:
+            entry["a2_addresses"].add(int(row["a2"], 16))
         relative = destination - ACTOR_TABLE_BASE
         if 0 <= relative < ACTOR_STRIDE * ACTOR_SLOTS and relative % ACTOR_STRIDE == 0:
             entry["slots"].add(relative // ACTOR_STRIDE)
@@ -94,6 +105,7 @@ def main() -> int:
         entry["slots"] = sorted(entry["slots"])
         entry["callers"] = sorted(hex_address(value) for value in entry["callers"])
         entry["breakpoint_pcs"] = sorted(hex_address(value) for value in entry["breakpoint_pcs"])
+        entry["a2_addresses"] = sorted(hex_address(value) for value in entry["a2_addresses"])
         entry["source"] = hex_address(source)
         entry["type"] = rom[source]
         entry["movement_pc"] = hex_address(read_u32(rom, source + 0x06))
@@ -120,6 +132,9 @@ def main() -> int:
             "animation_source_offset": "0x0C",
             "movement_actor_offset": "0x0A",
             "animation_actor_offset": "0x20",
+            "spawn_payload_register": "A2",
+            "spawn_payload_handler": "0x001AD00E",
+            "spawn_payload_return": "0x001AD0AC",
         },
         "records": records,
         "templates": templates,
