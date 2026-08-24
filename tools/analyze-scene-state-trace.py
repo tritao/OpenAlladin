@@ -33,10 +33,22 @@ def _resource_map(metadata: dict[str, Any]) -> dict[int, dict[str, Any]]:
     result: dict[int, dict[str, Any]] = {}
     for state in metadata.get("states", []):
         value = _value(state["value"])
+        resources = []
+        for resource in state.get("resources", []):
+            normalized = dict(resource)
+            for field in ("selector_function", "loader_function", "source", "destination"):
+                if field in normalized:
+                    normalized[field] = _hex(_value(normalized[field]))
+            if "selector_functions" in normalized:
+                normalized["selector_functions"] = [
+                    _hex(_value(value))
+                    for value in normalized["selector_functions"]
+                ]
+            resources.append(normalized)
         result[value] = {
             "label": state.get("label"),
             "confidence": state.get("confidence"),
-            "resources": state.get("resources", []),
+            "resources": resources,
         }
     return result
 
