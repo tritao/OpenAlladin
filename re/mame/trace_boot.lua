@@ -457,8 +457,15 @@ local trace_actors = os.getenv("OPENALADDIN_TRACE_ACTORS") == "1"
 local actor_table_base = 0xff7e40
 local actor_stride = 0x42
 local actor_slot_count = math.max(0, math.floor(env_number("OPENALADDIN_ACTOR_SLOTS", 32)))
-local actor_active_offset = 0x00
+local actor_type_offset = 0x00
 local actor_animation_pc_offset = 0x20
+local inject_actor_frame = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FRAME", -1))
+local inject_actor_slot = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_SLOT", 31))
+local inject_actor_type = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_TYPE", 0x7d))
+local inject_actor_pc = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_PC", 0x125952))
+local inject_actor_template = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_TEMPLATE", 0x1b81d8))
+local inject_actor_x = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_X", -1))
+local inject_actor_y = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_Y", -1))
 
 for item in watch_list:gmatch("[^,]+") do
     local address = parse_hex_address(item)
@@ -491,7 +498,7 @@ if trace_actors then
     for slot = 0, actor_slot_count - 1 do
         local actor_slot = slot
         local record = actor_table_base + actor_slot * actor_stride
-        local active_address = record + actor_active_offset
+        local type_address = record + actor_type_offset
         local animation_pc_address = record + actor_animation_pc_offset
 
         watched_addresses[#watched_addresses + 1] = animation_pc_address
@@ -510,27 +517,29 @@ if trace_actors then
                     { "data", tostring(data) },
                     { "mask", tostring(mem_mask) },
                     { "value", tostring(read_u32(animation_pc_address)) },
-                    { "active", tostring(read_u8(active_address)) },
+                    { "actor_type", tostring(read_u8(type_address)) },
+                    { "active", tostring(read_u8(type_address)) },
                     { "pc", tostring(read_register("PC") or 0) }
                 })
             end)
 
-        watched_addresses[#watched_addresses + 1] = active_address
+        watched_addresses[#watched_addresses + 1] = type_address
         watch_taps[#watch_taps + 1] = space:install_write_tap(
-            active_address,
-            active_address + 1,
-            string.format("openaladdin_actor_%02d_active", actor_slot),
+            type_address,
+            type_address + 1,
+            string.format("openaladdin_actor_%02d_type", actor_slot),
             function(offset, data, mem_mask)
                 write_record({
                     { "type", json_string("actor_write") },
                     { "frame", tostring(current_frame) },
                     { "slot", tostring(actor_slot) },
-                    { "field", json_string("active") },
+                    { "field", json_string("type") },
                     { "record", tostring(record) },
                     { "address", tostring(offset) },
                     { "data", tostring(data) },
                     { "mask", tostring(mem_mask) },
-                    { "value", tostring(read_u8(active_address)) },
+                    { "value", tostring(read_u8(type_address)) },
+                    { "active", tostring(read_u8(type_address)) },
                     { "animation_pc", tostring(read_u32(animation_pc_address)) },
                     { "pc", tostring(read_register("PC") or 0) }
                 })
@@ -570,6 +579,35 @@ if vdp_device and capture_vdp then
     end
     install_vdp_tap(0xc00000, "c00000")
     install_vdp_tap(0xd00000, "d00000")
+end
+
+local function inject_actor(frame)
+    if frame ~= inject_actor_frame then
+        return
+    end
+    if inject_actor_slot < 0 or inject_actor_slot >= actor_slot_count then
+        error("OPENALADDIN_INJECT_ACTOR_SLOT is outside the traced actor table")
+    end
+
+    local record = actor_table_base + inject_actor_slot * actor_stride
+    local x = inject_actor_x >= 0 and inject_actor_x or read_u16(0xff7dfa)
+    local y = inject_actor_y >= 0 and inject_actor_y or read_u16(0xff7dfc)
+
+    for offset = 0, actor_stride - 1 do
+        space:write_u8(record + offset, space:read_u8(inject_actor_template + offset))
+    end
+    space:write_u8(record + actor_type_offset, inject_actor_type & 0xff)
+    space:write_u16(record + 0x02, x & 0xffff)
+    space:write_u16(record + 0x04, y & 0xffff)
+    space:write_u32(record + actor_animation_pc_offset, inject_actor_pc & 0xffffffff)
+    space:write_u8(record + 0x37, 0)
+
+    print(string.format(
+        "OpenAladdin: injected actor slot %d type %02X pc %08X at frame %d",
+        inject_actor_slot,
+        inject_actor_type & 0xff,
+        inject_actor_pc & 0xffffffff,
+        frame))
 end
 
 local function port_tags_json()
@@ -614,10 +652,17 @@ write_record({
     { "actor_table_base", tostring(actor_table_base) },
     { "actor_stride", tostring(actor_stride) },
     { "actor_slot_count", tostring(actor_slot_count) },
-    { "actor_active_offset", tostring(actor_active_offset) },
-    { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) }
+    { "actor_type_offset", tostring(actor_type_offset) },
+    { "actor_active_offset", tostring(actor_type_offset) },
+    { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) },
+    { "actor_injection_frame", tostring(inject_actor_frame) },
+    { "actor_injection_slot", tostring(inject_actor_slot) },
+    { "actor_injection_type", tostring(inject_actor_type) },
+    { "actor_injection_pc", tostring(inject_actor_pc) },
+    { "actor_injection_template", tostring(inject_actor_template) }
 })
 
+inject_actor(0)
 capture(0, apply_input(0))
 capture_artifacts(0)
 
@@ -635,6 +680,7 @@ emu.register_frame_done(function ()
         return
     end
 
+    inject_actor(current_frame)
     capture(current_frame, apply_input(current_frame))
     capture_artifacts(current_frame)
 

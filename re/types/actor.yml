@@ -2,9 +2,9 @@ name: Actor
 size: 0x42
 fields:
   0x00:
-    name: active
+    name: type
     type: u8
-    description: Non-zero records are processed by the common actor animation VM.
+    description: Actor type/state byte copied from the object template; zero marks a free record and non-zero values are processed by common actor logic.
   0x20:
     name: animation_pc
     type: u32

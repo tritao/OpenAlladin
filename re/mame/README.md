@@ -79,8 +79,7 @@ The output is only a list of candidates.  Confirmed addresses will be added to
 
 To inventory the common actor table, enable tracing for all 32 records.  The
 trace adds the table layout to its header; the analyzer reads the captured RAM
-snapshots and reports active intervals, cursor positions, and ROM-decoder
-probes:
+snapshots and reports type intervals, cursor positions, and ROM-decoder probes:
 
 ```sh
 OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_FRAMES=1550 \
@@ -92,6 +91,25 @@ python3 tools/analyze-actor-animation-trace.py
 The generated `build/re/actor_animation_inventory.json` is intentionally
 ignored.  Actor `animation_pc` is a moving ROM cursor, so a cursor observed in
 RAM is evidence of stream membership, not automatically a stream entry point.
+
+For a deterministic probe of a statically identified actor template, clone the
+0x42-byte type-0x7D template at `0x001B81D8` into an unused slot and override its
+animation cursor:
+
+```sh
+OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 \
+OPENALADDIN_TRACE_FRAMES=240 OPENALADDIN_INJECT_ACTOR_FRAME=2 \
+OPENALADDIN_INJECT_ACTOR_SLOT=31 OPENALADDIN_INJECT_ACTOR_TYPE=125 \
+OPENALADDIN_TRACE_DIR=build/re/actor-injection-template \
+  ./tools/mame-trace.sh
+python3 tools/analyze-actor-animation-trace.py \
+  --trace-dir build/re/actor-injection-template \
+  --output build/re/actor-injection-template/actor_animation_inventory.json
+```
+
+The captured record reaches `0x00125952` with type `0x7D`; the common helper
+then follows its short branch path and retires the synthetic record.  This is a
+state-stream probe, not a replacement for a naturally spawned gameplay actor.
 
 Write taps can record the 68000 PC responsible for a candidate address:
 

@@ -401,12 +401,23 @@
     - ghidra_player_animation_pc_assignment
     - animation_stream_classifier
 
+0x00125952:
+  name: ACTOR_ANIM_STATE_125952
+  confidence: confirmed
+  description: Common actor animation stream entry stored in the type 0x7D template at 0x001B81D8; its helper-selected branch state is ACTOR_ANIM_STATE_125966.
+  evidence:
+    - ghidra_actor_template_001B81D8
+    - ghidra_common_actor_animation_helper_001ACBF2
+    - mame_actor_injection_trace
+
 0x00125966:
   name: ACTOR_ANIM_STATE_125966
-  confidence: provisional
-  description: Common actor animation stream root; concrete actor type is not yet identified.
+  confidence: confirmed
+  description: Common actor branch state selected by the helper at 0x001ACBF2 from ACTOR_ANIM_STATE_125952 for actor type 0x7D.
   evidence:
-    - ghidra_common_actor_animation_selection
+    - ghidra_actor_template_001B81D8
+    - ghidra_common_actor_animation_helper_001ACBF2
+    - mame_actor_injection_trace
     - animation_stream_classifier
 
 0x00125C52:
@@ -424,3 +435,12 @@
   evidence:
     - ghidra_player_animation_selector_001AD150
     - animation_stream_classifier
+
+0x001B81D8:
+  name: ACTOR_TEMPLATE_TYPE_7D
+  confidence: confirmed
+  description: 0x42-byte common actor template whose type byte is 0x7D and animation pointer at offset 0x20 is ACTOR_ANIM_STATE_125952.
+  evidence:
+    - ghidra_actor_template_initializer_001AE30A
+    - ghidra_actor_template_001B81D8
+    - mame_actor_injection_trace

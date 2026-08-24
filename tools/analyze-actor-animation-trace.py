@@ -168,7 +168,9 @@ def main() -> int:
     table_base = int(header.get("actor_table_base", 0xFF7E40))
     stride = int(header.get("actor_stride", 0x42))
     slot_count = int(header.get("actor_slot_count", 32))
-    active_offset = int(header.get("actor_active_offset", 0x00))
+    type_offset = int(
+        header.get("actor_type_offset", header.get("actor_active_offset", 0x00))
+    )
     animation_pc_offset = int(header.get("actor_animation_pc_offset", 0x20))
     table_offset = table_base - ram_start
 
@@ -196,27 +198,28 @@ def main() -> int:
 
     for slot in range(slot_count):
         state_frames: dict[tuple[int, int], list[int]] = defaultdict(list)
-        active_values: set[int] = set()
+        type_values: set[int] = set()
         for frame_index, _ in enumerate(frame_records):
             record_offset = table_offset + slot * stride
             frame_offset = frame_index * ram_size
-            active = read_u8(ram, frame_offset + record_offset + active_offset)
+            actor_type = read_u8(ram, frame_offset + record_offset + type_offset)
             animation_pc = read_u32(
                 ram,
                 frame_offset + record_offset + animation_pc_offset,
             )
-            active_values.add(active)
-            state_frames[(active, animation_pc)].append(frame_index)
+            type_values.add(actor_type)
+            state_frames[(actor_type, animation_pc)].append(frame_index)
             if animation_pc:
                 all_pc_frames[animation_pc].append(frame_index)
                 all_pc_slots[animation_pc].add(slot)
 
         states = []
-        for (active, animation_pc), frames in sorted(
+        for (actor_type, animation_pc), frames in sorted(
             state_frames.items(), key=lambda item: (item[1][0], item[0][0], item[0][1])
         ):
             state: dict[str, Any] = {
-                "active": active,
+                "actor_type": actor_type,
+                "active": actor_type,
                 "animation_pc": hex_address(animation_pc),
                 "frames": frame_ranges(frames),
             }
@@ -225,27 +228,28 @@ def main() -> int:
             states.append(state)
 
         intervals = []
-        previous_active = None
+        previous_type = None
         current: dict[str, Any] | None = None
         for frame_index, _ in enumerate(frame_records):
             record_offset = table_offset + slot * stride
             frame_offset = frame_index * ram_size
-            active = read_u8(ram, frame_offset + record_offset + active_offset)
+            actor_type = read_u8(ram, frame_offset + record_offset + type_offset)
             animation_pc = read_u32(
                 ram,
                 frame_offset + record_offset + animation_pc_offset,
             )
-            if active != previous_active:
+            if actor_type != previous_type:
                 if current is not None:
                     current["last_frame"] = frame_index - 1
                     intervals.append(current)
                 current = {
                     "first_frame": frame_index,
-                    "active": active,
+                    "actor_type": actor_type,
+                    "active": actor_type,
                     "first_nonzero_animation_pc": None,
                     "first_nonzero_frame": None,
                 }
-                previous_active = active
+                previous_type = actor_type
             if current is not None and current["first_nonzero_animation_pc"] is None and animation_pc:
                 current["first_nonzero_animation_pc"] = hex_address(animation_pc)
                 current["first_nonzero_frame"] = frame_index
@@ -257,7 +261,8 @@ def main() -> int:
             {
                 "slot": slot,
                 "record": hex_address(table_base + slot * stride),
-                "active_values": sorted(active_values),
+                "actor_type_values": sorted(type_values),
+                "active_values": sorted(type_values),
                 "states": states,
                 "active_intervals": intervals,
             }
@@ -285,7 +290,7 @@ def main() -> int:
     roots = []
     for slot in slot_rows:
         for interval in slot["active_intervals"]:
-            if interval["active"] == 0:
+            if interval["actor_type"] == 0:
                 continue
             pointer = interval["first_nonzero_animation_pc"]
             if pointer is None:
@@ -294,7 +299,8 @@ def main() -> int:
             roots.append(
                 {
                     "slot": slot["slot"],
-                    "active": interval["active"],
+                    "actor_type": interval["actor_type"],
+                    "active": interval["actor_type"],
                     "first_frame": interval["first_frame"],
                     "first_nonzero_frame": interval["first_nonzero_frame"],
                     "animation_pc": pointer,
@@ -321,7 +327,8 @@ def main() -> int:
             "base": hex_address(table_base),
             "stride": stride,
             "slot_count": slot_count,
-            "active_offset": active_offset,
+            "type_offset": type_offset,
+            "active_offset": type_offset,
             "animation_pc_offset": animation_pc_offset,
         },
         "static_streams": static_streams,
