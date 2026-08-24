@@ -80,12 +80,36 @@ def main() -> int:
         if block_hashes["sha1"] != block.get("sha1") or block_hashes["sha256"] != block.get("sha256"):
             raise SystemExit(f"RNC digest mismatch for {block['offset']}: {block_path}")
 
+    classification_path = root / "rnc/classification.json"
+    if not classification_path.exists():
+        raise SystemExit(f"RNC classification not found: {classification_path}")
+    classification = json.loads(classification_path.read_text(encoding="utf-8"))
+    classified_blocks = classification.get("blocks", [])
+    if len(classified_blocks) != rnc.get("unassigned_count", 0):
+        raise SystemExit(
+            f"RNC classification count mismatch: "
+            f"classified={len(classified_blocks)} "
+            f"unassigned={rnc.get('unassigned_count')}"
+        )
+    missing_renders = [
+        block["offset"]
+        for block in classified_blocks
+        if block.get("rendered")
+        and not (root / "rnc" / block["rendered"]["file"]).exists()
+    ]
+    if missing_renders:
+        raise SystemExit(f"RNC classification renders missing: {missing_renders[:5]}")
+
     print(f"validated ROM identity: {actual['sha1']}")
     print(f"validated levels: {levels['count']} entries, {rendered_levels} rendered")
     print(f"validated Chopper sprites: {frame_count} frames, {len(tile_files)} tile sets")
     print(
         f"validated RNC corpus: {len(blocks)} blocks, "
         f"{rnc.get('unassigned_count', 0)} currently unassigned"
+    )
+    print(
+        f"validated RNC classification: {classification.get('tile_candidates', 0)} "
+        f"tile candidates, {len(classification.get('families', []))} families"
     )
     return 0
 

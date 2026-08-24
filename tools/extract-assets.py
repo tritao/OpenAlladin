@@ -14,6 +14,7 @@ from common import ROOT, hashes
 from lib.chopper import extract_chopper
 from lib.levels import extract_levels, find_level_table, read_level_table
 from lib.rnc import extract_rnc_corpus, is_rnc, parse_header
+from lib.rnc_assets import classify_rnc_corpus
 
 
 def _animation_module():
@@ -151,6 +152,12 @@ def main() -> int:
             "assigned_count": rnc_result["assigned_count"],
             "unassigned_count": rnc_result["unassigned_count"],
         }
+        classification = classify_rnc_corpus(output / "rnc")
+        manifest["assets"]["rnc"].update({
+            "classification": "rnc/classification.json",
+            "tile_candidates": classification["tile_candidates"],
+            "families": len(classification["families"]),
+        })
     except (OSError, ValueError) as error:
         manifest["warnings"].append(f"rnc: {error}")
 

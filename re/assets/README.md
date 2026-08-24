@@ -17,6 +17,13 @@ To run only the compression corpus pass:
 python tools/extract-rnc.py Disneys_Aladdin_U_p1.bin
 ```
 
+To re-run classification/contact-sheet generation without decompressing the
+ROM again:
+
+```bash
+python tools/classify-rnc-assets.py
+```
+
 Generated files are written under `build/assets/` and are intentionally
 ignored by Git:
 
@@ -31,6 +38,8 @@ build/assets/
 ├── animations.json      # known animation stream records
 └── rnc/
     ├── manifest.json    # every RNC block, hashes, consumers, and failures
+    ├── classification.json # tile candidates and contiguous block families
+    ├── classified/       # contact sheets for likely Genesis tile data
     └── blocks/          # decompressed block data named by ROM offset
 ```
 
