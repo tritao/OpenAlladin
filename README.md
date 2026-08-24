@@ -16,6 +16,16 @@ python tools/import-rom.py Disneys_Aladdin_U_p1.bin
 ./tools/ghidra.sh
 ```
 
+To extract the known Genesis graphics and animation data:
+
+```bash
+python tools/extract-assets.py Disneys_Aladdin_U_p1.bin
+```
+
+The generated asset manifest and renders are under `build/assets/` and are
+not committed. See [`re/assets/README.md`](re/assets/README.md) for the
+current format coverage.
+
 `setup-ghidra.py` downloads Ghidra 12.1.3, verifies its SHA-256, installs
 PyGhidra into `.tools/venv`, builds the Genesis loader submodule, and installs
 the resulting extension locally. `import-rom.py` uses the built-in 68000 raw

@@ -15,3 +15,10 @@ python tools/import-rom.py Disneys_Aladdin_U_p1.bin
 The importer uses the built-in Ghidra 68000 language, defines the Genesis
 address map, parses the vector table, applies tracked symbols, and writes
 machine-readable exports to `build/re/`.
+
+Native asset extraction is separate from the Ghidra project and writes
+generated graphics under `build/assets/`:
+
+```bash
+python tools/extract-assets.py Disneys_Aladdin_U_p1.bin
+```
