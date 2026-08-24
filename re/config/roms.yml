@@ -1,0 +1,11 @@
+default: aladdin_local
+
+aladdin_local:
+  description: "Disney's Aladdin - existing local Genesis dump"
+  expected_filename: "Disneys_Aladdin_U_p1.bin"
+  size: 2097152
+  crc32: "247D6AA0"
+  sha1: "FF344F516B6F783CF7BC4332D2F4543C2A152C29"
+  sha256: "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  identity: "local_dump"
+  verified: false

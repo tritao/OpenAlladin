@@ -1,0 +1,21 @@
+diff --git a/src/main/java/sega/SegaLoader.java b/src/main/java/sega/SegaLoader.java
+index 46b1cc0..c7d7c15 100644
+--- a/src/main/java/sega/SegaLoader.java
++++ b/src/main/java/sega/SegaLoader.java
+@@ -25,4 +25,5 @@ import ghidra.app.util.bin.BinaryReader;
+ import ghidra.app.util.bin.ByteProvider;
+ import ghidra.app.util.importer.MessageLog;
+ import ghidra.app.util.opinion.AbstractLibrarySupportLoader;
++import ghidra.app.util.opinion.Loader.ImporterSettings;
+ import ghidra.app.util.opinion.LoadSpec;
+@@ -88,4 +88,9 @@ public class SegaLoader extends AbstractLibrarySupportLoader {
+ 	@Override
+-	protected void load(ByteProvider provider, LoadSpec loadSpec, List<Option> options, Program program, TaskMonitor monitor, MessageLog log) throws IOException {
++	protected void load(Program program, ImporterSettings settings) throws IOException {
++		ByteProvider provider = settings.provider();
++		LoadSpec loadSpec = settings.loadSpec();
++		List<Option> options = settings.options();
++		TaskMonitor monitor = settings.monitor();
++		MessageLog log = settings.log();
+ 
+ 		monitor.setMessage(String.format("%s : Start loading", getName()));

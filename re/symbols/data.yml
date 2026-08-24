@@ -1,0 +1,31 @@
+# Address-keyed data knowledge. Hardware names are deliberately explicit so
+# both Ghidra and MAME can use the same names.
+0xA10003:
+  name: IO_PORT1_DATA
+  type: u8
+  confidence: confirmed
+  description: Controller port 1 data register
+
+0xA11100:
+  name: Z80_BUS_REQUEST
+  type: u16
+  confidence: confirmed
+  description: Z80 bus request register
+
+0xA11200:
+  name: Z80_RESET
+  type: u16
+  confidence: confirmed
+  description: Z80 reset register
+
+0xC00000:
+  name: VDP_DATA
+  type: u16
+  confidence: confirmed
+  description: VDP data port
+
+0xC00004:
+  name: VDP_CONTROL
+  type: u16
+  confidence: confirmed
+  description: VDP control port

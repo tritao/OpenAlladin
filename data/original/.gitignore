@@ -1,0 +1,6 @@
+# Original Aladdin source, ROMs, and extracted assets are local research inputs.
+# They are intentionally never committed to this repository.
+*
+!.gitignore
+!README.md
+

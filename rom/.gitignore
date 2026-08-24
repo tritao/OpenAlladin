@@ -1,0 +1,7 @@
+# Copyrighted ROM images must never be committed.
+*.bin
+*.gen
+*.smd
+*
+!.gitignore
+!README.md

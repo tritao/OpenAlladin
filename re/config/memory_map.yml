@@ -1,0 +1,58 @@
+address_width: 32
+
+blocks:
+  - name: ROM
+    start: 0x000000
+    end: rom_end
+    read: true
+    write: false
+    execute: true
+    description: Cartridge ROM
+
+  - name: Z80_RAM
+    start: 0xA00000
+    end: 0xA0FFFF
+    read: true
+    write: true
+    execute: false
+    description: Z80 address area
+
+  - name: IO
+    start: 0xA10000
+    end: 0xA1001F
+    read: true
+    write: true
+    execute: false
+    description: Genesis controller and I/O registers
+
+  - name: Z80_BUS_REQUEST
+    start: 0xA11100
+    end: 0xA11101
+    read: true
+    write: true
+    execute: false
+    description: Z80 bus request register
+
+  - name: Z80_RESET
+    start: 0xA11200
+    end: 0xA11201
+    read: true
+    write: true
+    execute: false
+    description: Z80 reset register
+
+  - name: VDP
+    start: 0xC00000
+    end: 0xC0001F
+    read: true
+    write: true
+    execute: false
+    description: Video Display Processor registers
+
+  - name: WORK_RAM
+    start: 0xFF0000
+    end: 0xFFFFFF
+    read: true
+    write: true
+    execute: false
+    description: 68000 work RAM

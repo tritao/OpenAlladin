@@ -1,0 +1,7 @@
+# Address-keyed function knowledge. Keep confidence/evidence with every fact.
+# Example:
+# 0x017C92:
+#   name: Actor_ApplyHorizontalMovement
+#   confidence: provisional
+#   evidence: [mame_trace_run_right]
+{}
