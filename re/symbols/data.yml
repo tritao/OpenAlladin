@@ -77,3 +77,350 @@
   evidence:
     - ghidra_disassembly_001AA112
     - mame_player_animation_trace
+
+# Additional animation roots classified from their 68K selection context.
+# PLAYER_ANIMATION_PC assignments are confirmed as player-owned; common actor
+# roots remain provisional until an actor-slot trace identifies their type.
+0x00121964:
+  name: PLAYER_ANIM_STATE_121964
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121AD8:
+  name: PLAYER_ANIM_STATE_121AD8
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121BB6:
+  name: PLAYER_ANIM_STATE_121BB6
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121C62:
+  name: PLAYER_ANIM_STATE_121C62
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121D5A:
+  name: PLAYER_ANIM_STATE_121D5A
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121D88:
+  name: PLAYER_ANIM_STATE_121D88
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121F6A:
+  name: PLAYER_ANIM_STATE_121F6A
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121F74:
+  name: PLAYER_ANIM_STATE_121F74
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121F84:
+  name: PLAYER_ANIM_STATE_121F84
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121FA0:
+  name: PLAYER_ANIM_STATE_121FA0
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121FA6:
+  name: PLAYER_ANIM_STATE_121FA6
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00121FD4:
+  name: PLAYER_ANIM_STATE_121FD4
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00122080:
+  name: PLAYER_ANIM_STATE_122080
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001220B8:
+  name: PLAYER_ANIM_STATE_1220B8
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001220F0:
+  name: PLAYER_ANIM_STATE_1220F0
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x0012214E:
+  name: PLAYER_ANIM_STATE_12214E
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001221B8:
+  name: PLAYER_ANIM_STATE_1221B8
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x0012222E:
+  name: PLAYER_ANIM_STATE_12222E
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00122236:
+  name: PLAYER_ANIM_STATE_122236
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00122298:
+  name: ACTOR_ANIM_STATE_122298
+  confidence: provisional
+  description: Common actor animation stream root; concrete actor type is not yet identified.
+  evidence:
+    - ghidra_common_actor_animation_selection
+    - animation_stream_classifier
+
+0x001222D2:
+  name: PLAYER_ANIM_STATE_1222D2
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x0012231E:
+  name: ACTOR_ANIM_STATE_12231E
+  confidence: provisional
+  description: Common actor animation stream root; concrete actor type is not yet identified.
+  evidence:
+    - ghidra_common_actor_animation_selection
+    - animation_stream_classifier
+
+0x00122336:
+  name: PLAYER_ANIM_STATE_122336
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00122350:
+  name: PLAYER_ANIM_STATE_122350
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001223A2:
+  name: PLAYER_ANIM_STATE_1223A2
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00122470:
+  name: PLAYER_ANIM_STATE_122470
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00122504:
+  name: PLAYER_ANIM_STATE_122504
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001225A2:
+  name: PLAYER_ANIM_STATE_1225A2
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x0012262A:
+  name: PLAYER_ANIM_STATE_12262A
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001226B2:
+  name: PLAYER_ANIM_STATE_1226B2
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001226CE:
+  name: PLAYER_ANIM_STATE_1226CE
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001226E4:
+  name: PLAYER_ANIM_STATE_1226E4
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001227C2:
+  name: PLAYER_ANIM_STATE_1227C2
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001227D2:
+  name: PLAYER_ANIM_STATE_1227D2
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001228A0:
+  name: PLAYER_ANIM_STATE_1228A0
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001228AC:
+  name: PLAYER_ANIM_STATE_1228AC
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x0012295E:
+  name: PLAYER_ANIM_STATE_12295E
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00122A10:
+  name: PLAYER_ANIM_STATE_122A10
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00122AF6:
+  name: PLAYER_ANIM_STATE_122AF6
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x001258D2:
+  name: PLAYER_ANIM_STATE_1258D2
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00125966:
+  name: ACTOR_ANIM_STATE_125966
+  confidence: provisional
+  description: Common actor animation stream root; concrete actor type is not yet identified.
+  evidence:
+    - ghidra_common_actor_animation_selection
+    - animation_stream_classifier
+
+0x00125C52:
+  name: PLAYER_ANIM_STATE_125C52
+  confidence: confirmed
+  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  evidence:
+    - ghidra_player_animation_pc_assignment
+    - animation_stream_classifier
+
+0x00125E72:
+  name: ACTOR_ANIM_STATE_125E72
+  confidence: provisional
+  description: Common actor animation stream root; concrete actor type is not yet identified.
+  evidence:
+    - ghidra_common_actor_animation_selection
+    - animation_stream_classifier
