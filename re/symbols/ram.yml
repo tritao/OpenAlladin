@@ -1,2 +1,10 @@
 # Address-keyed RAM knowledge. Entries can be consumed by both Ghidra and MAME.
-{}
+0xFF7E28:
+  name: PLAYER_X
+  type: u16
+  format: fixed8_8
+  confidence: confirmed
+  description: Aladdin's world X coordinate; advances by 0x0100 per walking frame in the controlled right-input experiment
+  evidence:
+    - mame_controlled_boot_right_trace
+    - mame_debug_watch_pc_001B3EB2
