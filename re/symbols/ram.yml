@@ -8,3 +8,21 @@
   evidence:
     - mame_controlled_boot_right_trace
     - mame_debug_watch_pc_001B3EB2
+0xFF7DFC:
+  name: PLAYER_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Aladdin's world Y coordinate; the vertical movement routine updates it from PLAYER_VY and the jump trace follows the expected up/down arc
+  evidence:
+    - mame_controlled_boot_jump_trace
+    - mame_debug_watch_pc_001A9C2A_001A9C5C
+0xFF7E5A:
+  name: PLAYER_VY
+  type: i16
+  format: fixed8_8
+  confidence: confirmed
+  description: Aladdin's vertical velocity; jump initialization writes -0x0200 and the physics routine applies signed acceleration in 0x003C increments
+  evidence:
+    - mame_controlled_boot_jump_trace
+    - mame_debug_watch_pc_001A976E_001A97F2_001A9C32_001A9C64

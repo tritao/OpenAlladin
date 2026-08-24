@@ -4,4 +4,17 @@
 #   name: Actor_ApplyHorizontalMovement
 #   confidence: provisional
 #   evidence: [mame_trace_run_right]
-{}
+0x001A9716:
+  name: Player_HandleJumpAndVerticalState
+  confidence: confirmed
+  description: Handles the player's jump/vertical state and initializes PLAYER_VY for a jump.
+  evidence:
+    - ghidra_disassembly_001A9716
+    - mame_debug_watch_player_vy
+0x001A9B90:
+  name: Player_IntegrateMotion
+  confidence: confirmed
+  description: Integrates horizontal and vertical player motion; its vertical path updates PLAYER_Y from PLAYER_VY.
+  evidence:
+    - ghidra_disassembly_001A9B90
+    - mame_debug_watch_player_y
