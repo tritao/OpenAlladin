@@ -18,3 +18,10 @@
   evidence:
     - ghidra_disassembly_001A9B90
     - mame_debug_watch_player_y
+0x001AC784:
+  name: AnimationVM_TickActors
+  confidence: confirmed
+  description: Common actor animation interpreter; starts at the actor table and advances each record by 0x42 bytes.
+  evidence:
+    - ghidra_disassembly_001AC784
+    - mame_player_state_trace

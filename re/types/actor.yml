@@ -1,3 +1,15 @@
 name: Actor
-size: 0x40
-fields: {}
+size: 0x42
+fields:
+  0x00:
+    name: active
+    type: u8
+    description: Non-zero records are processed by the common actor animation VM.
+  0x20:
+    name: animation_pc
+    type: u32
+    description: ROM pointer to the current animation stream position.
+  0x37:
+    name: animation_timer
+    type: u8
+    description: Animation delay counter consumed before the next stream command.

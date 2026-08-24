@@ -1,3 +1,12 @@
 name: Player
-size: 0x40
-fields: {}
+size: 0x42
+fields:
+  0x00:
+    name: active
+    type: u8
+  0x20:
+    name: animation_pc
+    type: u32
+  0x37:
+    name: animation_timer
+    type: u8

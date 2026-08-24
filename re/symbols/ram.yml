@@ -35,3 +35,21 @@
   evidence:
     - mame_controlled_boot_right_trace
     - mame_debug_watch_pc_001A9BCE_001A9BD6
+0xFF7E60:
+  name: PLAYER_ANIMATION_PC
+  type: u32
+  format: rom_pointer
+  confidence: confirmed
+  description: Player actor animation stream cursor; points into the ROM state stream and advances as the animation VM consumes frames and commands
+  evidence:
+    - mame_player_state_trace
+    - ghidra_animation_vm_001AC784
+0xFF7E77:
+  name: PLAYER_ANIMATION_TIMER
+  type: u8
+  format: integer
+  confidence: confirmed
+  description: Player actor animation delay counter consumed by the common animation VM
+  evidence:
+    - mame_player_state_trace
+    - ghidra_animation_vm_001AC816

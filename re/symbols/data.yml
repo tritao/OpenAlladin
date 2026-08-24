@@ -29,3 +29,51 @@
   type: u16
   confidence: confirmed
   description: VDP control port
+
+0x00121D9A:
+  name: PLAYER_ANIM_IDLE
+  confidence: confirmed
+  description: Player idle animation stream entry.
+  evidence:
+    - ghidra_player_animation_stream
+    - mame_player_state_trace
+
+0x00122006:
+  name: PLAYER_ANIM_RUN
+  confidence: confirmed
+  description: Player running animation stream entry selected by the player state logic.
+  evidence:
+    - ghidra_disassembly_001B1FFE
+    - mame_player_animation_trace
+
+0x001221B0:
+  name: PLAYER_ANIM_JUMP
+  confidence: confirmed
+  description: Player jump animation stream entry selected with the jump vertical state.
+  evidence:
+    - ghidra_disassembly_001A9716
+    - mame_player_animation_trace
+
+0x001223DA:
+  name: PLAYER_ANIM_THROW_APPLE
+  confidence: confirmed
+  description: Player apple-throw animation stream entry.
+  evidence:
+    - ghidra_disassembly_001A9430
+    - mame_player_animation_trace
+
+0x0012271A:
+  name: PLAYER_ANIM_SWORD
+  confidence: confirmed
+  description: Player sword animation stream entry.
+  evidence:
+    - ghidra_disassembly_001A96FC
+    - mame_player_animation_trace
+
+0x001232E0:
+  name: PLAYER_ANIM_BRAKE
+  confidence: confirmed
+  description: Player braking/deceleration animation stream entry selected after horizontal input is released.
+  evidence:
+    - ghidra_disassembly_001AA112
+    - mame_player_animation_trace
