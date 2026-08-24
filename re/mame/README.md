@@ -174,6 +174,50 @@ fields used by this slice: position at `+0x02/+0x04`, movement cursor at
 `+0x0A`, velocity accumulators at `+0x18/+0x1A`, animation cursor at `+0x20`,
 resource count at `+0x29`, and behavior flags at `+0x3C`.
 
+## Targeted combat/state decompilation
+
+The focused Ghidra request is tracked at
+`re/ghidra/actor-combat-targets.json`.  Re-run it from the repository root
+with the existing read-only Ghidra project:
+
+```sh
+./.tools/ghidra-12.1.3/support/pyghidraRun \
+  -H re/ghidra/project aladdin -process -readOnly \
+  -scriptPath re/ghidra/scripts \
+  -postScript ExportTargetedDecompile.py \
+  re/ghidra/actor-combat-targets.json \
+  build/re/actor-combat-targeted-decompile.json
+```
+
+The JSON report is generated output under `build/re/` and is intentionally
+ignored.  The current target pass establishes these boundaries:
+
+- `0x001A9502` is the player action-animation selector.  It resets the player
+  animation timer and assigns `0x0012271A` for the sword branch.
+- `0x001AC0D2` is a callable type-`0x84` transition block: it clears the
+  current actor type, releases owned resources, runs common cleanup, and
+  installs animation `0x0012319C`.
+- `0x001AC3F2` toggles the actor horizontal-facing byte `+0x09`, guarded by
+  actor flag bit 6 at `+0x06`.
+- `0x001AC4B0` is the guard-hit terminal replacement block.  It clears the
+  existing record, cleans the A2-owned resources, and initializes the same
+  record from template `0x001B7940`; the initializer writes type `0x84` at
+  `0x001AE30E`.
+- `0x001ACBF2` selects animation stream `0x00125966` from the actor position
+  and global direction-state checks.
+- `0x001AE0B0` is the actor cull/remove helper.  It clears the actor, releases
+  its resource list, publishes interaction state when required, and repeats
+  the operation for a linked actor at `+0x3E`.
+- `0x001AE6BC` and `0x001AE6DE` publish actor byte `+0x34` into the global
+  interaction table at `0x00FFAE87`, indexed by actor word `+0x32`.
+
+The exact guard-hit write was also confirmed with the MAME debugger watchpoint
+on `0x00FF7F8A`: the existing type is cleared in the `0x001AC4B0` path and the
+subsequent `Actor_InitializeFromTemplate` write installs `0x84`.  These
+addresses are now recorded in `re/symbols/functions.yml`; mid-dispatch
+addresses such as `0x001AC4B0` remain documented as blocks rather than being
+invented as standalone functions.
+
 Write taps can record the 68000 PC responsible for a candidate address:
 
 ```sh

@@ -4,6 +4,57 @@
 #   name: Actor_ApplyHorizontalMovement
 #   confidence: provisional
 #   evidence: [mame_trace_run_right]
+0x001A9502:
+  name: Player_SelectActionAnimation
+  confidence: confirmed
+  description: Selects the player's action animation stream from the global player-state flags, resets PLAYER_ANIMATION_TIMER, and arms the ten-frame action delay; the sword branch assigns PLAYER_ANIM_SWORD at 0x0012271A.
+  evidence:
+    - ghidra_decompile_actor_combat_targets
+    - ghidra_disassembly_001A9502
+    - mame_player_state_trace
+0x001AC0D2:
+  name: Actor_EnterType84Animation12319C
+  confidence: confirmed
+  description: Shared actor transition block that clears the current type, releases owned resources, performs the common actor cleanup, then installs type 0x84 with animation stream 0x0012319C and clears the animation timer.
+  evidence:
+    - ghidra_disassembly_001AC0D2
+    - ghidra_decompile_actor_combat_targets
+0x001AC3F2:
+  name: Actor_ToggleHorizontalFacing
+  confidence: confirmed
+  description: If actor flag bit 6 at offset 0x06 is clear, sets that bit and XORs the actor horizontal-facing byte at offset 0x09 with 0xFF.
+  evidence:
+    - ghidra_decompile_actor_combat_targets
+    - ghidra_disassembly_001AC3F2
+0x001ACBF2:
+  name: Actor_SelectDirectionalAnimation
+  confidence: confirmed
+  description: Compares actor position field +0x02 against the global word at 0x00FF7E02 and, subject to 0x00FF7E49, loads animation stream 0x00125966 into A2.
+  evidence:
+    - ghidra_disassembly_001ACBF2
+    - ghidra_decompile_actor_combat_targets
+0x001AE0B0:
+  name: Actor_CullAndRemoveLinked
+  confidence: confirmed
+  description: Clears an actor record, releases its owned resources, publishes its interaction value when required, and repeats the removal for a linked actor at offset 0x3E.
+  evidence:
+    - ghidra_decompile_actor_combat_targets
+    - ghidra_disassembly_001AE0B0
+    - ghidra_disassembly_001ADEDE
+0x001AE6BC:
+  name: Actor_PublishInteractionValueA2
+  confidence: confirmed
+  description: If actor register A2 has a non-zero value at offset 0x34, publishes it to the global interaction table at 0x00FFAE87 indexed by the actor word at offset 0x32.
+  evidence:
+    - ghidra_disassembly_001AE6BC
+    - ghidra_decompile_actor_combat_targets
+0x001AE6DE:
+  name: Actor_PublishInteractionValue
+  confidence: confirmed
+  description: If actor register A1 has a non-zero value at offset 0x34, publishes it to the global interaction table at 0x00FFAE87 indexed by the actor word at offset 0x32.
+  evidence:
+    - ghidra_decompile_actor_combat_targets
+    - ghidra_disassembly_001AE6DE
 0x001A9716:
   name: Player_HandleJumpAndVerticalState
   confidence: confirmed
