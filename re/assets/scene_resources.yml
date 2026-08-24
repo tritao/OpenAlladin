@@ -1,0 +1,183 @@
+# Static scene/resource evidence recovered from the targeted Ghidra pass.
+# State meanings are intentionally left unnamed until MAME confirms them.
+
+format: openaladdin-scene-resources-v1
+
+dispatcher:
+  address: 0x001B0F66
+  state_address: 0x00FF7E26
+  confidence: confirmed
+  evidence:
+    - ghidra_targeted_decompile_001B0F66
+
+post_load:
+  address: 0x001B4B28
+  confidence: probable
+  description: Common VDP preparation/finalization called after the compact RNC loader stubs.
+  evidence:
+    - ghidra_targeted_decompile_001B4B28
+
+states:
+  - value: 0x00
+    label: state_00
+    confidence: probable
+    resources:
+      - selector_function: 0x001B48C4
+        loader_function: 0x001B48C4
+        source: 0x00132F8E
+        destination: 0x000000
+      - selector_function: 0x001B48C4
+        loader_function: 0x001B48C4
+        source: 0x0012E4BE
+        destination: 0x00E000
+      - selector_function: 0x001B4C28
+        loader_function: 0x001B49DA
+        source: 0x0012DD76
+        destination: 0x00C000
+
+  - value: 0x01
+    label: state_01
+    confidence: probable
+    resources:
+      - selector_function: 0x001B4920
+        loader_function: 0x001B4920
+        source: 0x00132F8E
+        destination: 0x000000
+      - selector_function: 0x001B4920
+        loader_function: 0x001B4920
+        source: 0x0012E7EA
+        destination: 0x00E000
+      - selector_function: 0x001B4BB8
+        loader_function: 0x001B4A52
+        source: 0x0012E34A
+        destination: 0x00C000
+      - selector_function: 0x001B4BDC
+        loader_function: 0x001B4A2A
+        source: 0x0012E176
+        destination: 0x00C000
+
+  - value: 0x03
+    label: state_03
+    confidence: probable
+    resources:
+      - selector_function: 0x001B4920
+        loader_function: 0x001B4920
+        source: 0x00132F8E
+        destination: 0x000000
+      - selector_function: 0x001B4920
+        loader_function: 0x001B4920
+        source: 0x0012E7EA
+        destination: 0x00E000
+      - selector_function: 0x001B4896
+        loader_function: 0x001B4896
+        source: 0x00132F8E
+        destination: 0x000000
+      - selector_function: 0x001B4896
+        loader_function: 0x001B4896
+        source: 0x0012D654
+        destination: 0x00E000
+      - selector_function: 0x001B4C02
+        loader_function: 0x001B49DA
+        source: 0x0012DD76
+        destination: 0x00C000
+
+  - value: 0x04
+    label: state_04
+    confidence: probable
+    resources:
+      - selector_function: 0x001B4920
+        loader_function: 0x001B4920
+        source: 0x00132F8E
+        destination: 0x000000
+      - selector_function: 0x001B4920
+        loader_function: 0x001B4920
+        source: 0x0012E7EA
+        destination: 0x00E000
+      - selector_function: 0x001B4C4E
+        loader_function: 0x001B49B2
+        source: 0x0012DA04
+        destination: 0x00C000
+
+  - value: 0x05
+    label: state_05
+    confidence: probable
+    resources:
+      - selector_function: 0x001B4C74
+        selector_functions:
+          - 0x001B4C74
+          - 0x001B4C9A
+        loader_function: 0x001B49DA
+        source: 0x0012DD76
+        destination: 0x00C000
+        load_count: 2
+        notes: The dispatcher invokes the same compact loader path twice through 0x001B4C74 and 0x001B4C9A.
+
+  - value: 0x07
+    label: state_07
+    confidence: probable
+    resources:
+      - selector_function: 0x001B4896
+        loader_function: 0x001B4896
+        source: 0x00132F8E
+        destination: 0x000000
+      - selector_function: 0x001B4896
+        loader_function: 0x001B4896
+        source: 0x0012D654
+        destination: 0x00E000
+      - selector_function: 0x001B4CC0
+        loader_function: 0x001B498A
+        source: 0x0012D870
+        destination: 0x00C000
+
+  - value: 0x09
+    label: state_09
+    confidence: probable
+    resources:
+      - selector_function: 0x001B4920
+        loader_function: 0x001B4920
+        source: 0x00132F8E
+        destination: 0x000000
+      - selector_function: 0x001B4920
+        loader_function: 0x001B4920
+        source: 0x0012E7EA
+        destination: 0x00E000
+      - selector_function: 0x001B4EDC
+        loader_function: 0x001B4EDC
+        source: 0x0012D0FA
+        destination: 0x00C000
+
+  - value: 0x0A
+    label: state_0A
+    confidence: probable
+    resources:
+      - selector_function: 0x001B48F2
+        loader_function: 0x001B48F2
+        source: 0x00136912
+        destination: 0x000000
+      - selector_function: 0x001B48F2
+        loader_function: 0x001B48F2
+        source: 0x0012D0FA
+        destination: 0x00E000
+
+  - value: 0x0B
+    label: state_0B
+    confidence: probable
+    resources:
+      - selector_function: 0x001B4920
+        loader_function: 0x001B4920
+        source: 0x00132F8E
+        destination: 0x000000
+      - selector_function: 0x001B4920
+        loader_function: 0x001B4920
+        source: 0x0012E7EA
+        destination: 0x00E000
+      - selector_function: 0x001B4DD2
+        loader_function: 0x001B4A02
+        source: 0x0012DF6C
+        destination: 0x00C000
+
+unmapped_states:
+  - 0x02
+  - 0x06
+  - 0x08
+  - 0x0C

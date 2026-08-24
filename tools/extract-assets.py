@@ -19,6 +19,7 @@ from lib.rnc_families import analyze_rnc_families
 from lib.rnc_loaders import analyze_rnc_loaders
 from lib.rnc_runtime import analyze_rnc_runtime
 from lib.rnc_refs import scan_rnc_references, write_rnc_references
+from lib.scene_resources import validate_scene_resources
 
 
 def _animation_module():
@@ -205,6 +206,24 @@ def main() -> int:
             "loader_calls": loader_analysis["summary"]["rnc_loader_call_count"],
             "loader_destinations": loader_analysis["summary"]["resolved_destination_count"],
         })
+        scene_metadata = ROOT / "re/assets/scene_resources.yml"
+        if scene_metadata.is_file():
+            scene_resources = validate_scene_resources(
+                scene_metadata,
+                output / "rnc/loader_analysis.json",
+                output / "rnc/scene_resources.json",
+            )
+            if scene_resources["errors"]:
+                raise ValueError(
+                    "scene resource metadata has {} static mismatches".format(
+                        len(scene_resources["errors"])
+                    )
+                )
+            manifest["assets"]["rnc"].update({
+                "scene_resources": "rnc/scene_resources.json",
+                "scene_states": scene_resources["summary"]["state_count"],
+                "scene_resource_count": scene_resources["summary"]["resource_count"],
+            })
         if args.runtime_trace:
             load_trace = None
             if args.runtime_load_trace:

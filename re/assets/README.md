@@ -96,6 +96,7 @@ build/assets/
     ├── pointer_references.json # 68000 pointer and table candidates
     ├── family_analysis.json # storage families, code clusters, and previews
     ├── loader_analysis.json # RNC-to-VDP call sites and destinations
+    ├── scene_resources.json # static state-to-resource map validation
     ├── runtime_analysis.json # optional VRAM/CRAM matches and palette evidence
     ├── runtime/          # optional palette-aware rendered previews
     └── blocks/          # decompressed block data named by ROM offset
@@ -132,3 +133,11 @@ common loader, and then share post-load routine `0x1B4B28`.  Scene setup at
 `0x1B0F66` dispatches these resource paths from the state byte at
 `0xFF7E26`, giving the next MAME experiments specific state transitions to
 exercise.
+
+That mapping is tracked in `re/assets/scene_resources.yml` and checked against
+the static loader report during `extract-assets.py`.  Run the check directly
+with:
+
+```bash
+python tools/validate-scene-resources.py
+```
