@@ -19,7 +19,7 @@ DEFAULT_OUTPUT = ROOT / "build/re/actor_initializers.json"
 ACTOR_TABLE_BASE = 0xFF7E40
 ACTOR_STRIDE = 0x42
 ACTOR_SLOTS = 32
-TEMPLATE_SIZE = 0x42
+TEMPLATE_PREFIX_SIZE = 0x13
 
 INIT_RE = re.compile(
     r"OPENALADDIN_ACTOR_INIT"
@@ -87,7 +87,7 @@ def main() -> int:
     templates = []
     invalid_sources = []
     for source, entry in sorted(by_source.items()):
-        if source < 0 or source + TEMPLATE_SIZE > len(rom):
+        if source < 0 or source + TEMPLATE_PREFIX_SIZE > len(rom):
             invalid_sources.append(hex_address(source))
             continue
         entry["destinations"] = sorted(hex_address(value) for value in entry["destinations"])
@@ -96,9 +96,12 @@ def main() -> int:
         entry["breakpoint_pcs"] = sorted(hex_address(value) for value in entry["breakpoint_pcs"])
         entry["source"] = hex_address(source)
         entry["type"] = rom[source]
-        entry["animation_pointer"] = hex_address(read_u32(rom, source + 0x20))
-        entry["movement_pointer_candidate"] = hex_address(read_u32(rom, source + 0x34))
-        entry["template_size"] = TEMPLATE_SIZE
+        entry["movement_pc"] = hex_address(read_u32(rom, source + 0x06))
+        entry["animation_pc"] = hex_address(read_u32(rom, source + 0x0C))
+        entry["actor_field_29"] = rom[source + 0x10]
+        entry["actor_field_35"] = rom[source + 0x11]
+        entry["actor_field_3C"] = rom[source + 0x12]
+        entry["template_prefix_size"] = TEMPLATE_PREFIX_SIZE
         templates.append(entry)
 
     result = {
@@ -112,9 +115,11 @@ def main() -> int:
         },
         "initializer": {
             "address": "0x001AE30A",
-            "template_size": TEMPLATE_SIZE,
-            "animation_pointer_offset": "0x20",
-            "movement_pointer_candidate_offset": "0x34",
+            "template_prefix_size": TEMPLATE_PREFIX_SIZE,
+            "movement_source_offset": "0x06",
+            "animation_source_offset": "0x0C",
+            "movement_actor_offset": "0x0A",
+            "animation_actor_offset": "0x20",
         },
         "records": records,
         "templates": templates,

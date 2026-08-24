@@ -25,6 +25,13 @@
   evidence:
     - ghidra_disassembly_001AC784
     - mame_player_state_trace
+0x001ADE36:
+  name: MovementVM_TickActors
+  confidence: confirmed
+  description: Common actor movement interpreter; iterates actor records and consumes each non-null movement_pc stream at actor offset 0x0A.
+  evidence:
+    - ghidra_disassembly_001ADE36
+    - mame_natural_actor_type_2D_trace
 0x001AE30A:
   name: Actor_InitializeFromTemplate
   confidence: confirmed

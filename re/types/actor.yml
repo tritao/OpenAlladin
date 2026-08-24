@@ -5,6 +5,10 @@ fields:
     name: type
     type: u8
     description: Actor type/state byte copied from the object template; zero marks a free record and non-zero values are processed by common actor logic.
+  0x0a:
+    name: movement_pc
+    type: u32
+    description: Movement state-stream cursor consumed by the common movement update; the template initializer copies its source long word into this field.
   0x20:
     name: animation_pc
     type: u32

@@ -459,6 +459,7 @@ local actor_table_base = 0xff7e40
 local actor_stride = 0x42
 local actor_slot_count = math.max(0, math.floor(env_number("OPENALADDIN_ACTOR_SLOTS", 32)))
 local actor_type_offset = 0x00
+local actor_movement_pc_offset = 0x0a
 local actor_animation_pc_offset = 0x20
 local inject_actor_frame = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FRAME", -1))
 local inject_actor_slot = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_SLOT", 31))
@@ -661,6 +662,7 @@ write_record({
     { "actor_slot_count", tostring(actor_slot_count) },
     { "actor_type_offset", tostring(actor_type_offset) },
     { "actor_active_offset", tostring(actor_type_offset) },
+    { "actor_movement_pc_offset", tostring(actor_movement_pc_offset) },
     { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) },
     { "actor_initializer_trace", json_bool(trace_actor_initializers) },
     { "actor_injection_frame", tostring(inject_actor_frame) },

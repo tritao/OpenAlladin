@@ -30,6 +30,14 @@
   confidence: confirmed
   description: VDP control port
 
+0x0011F6D4:
+  name: ACTOR_MOVE_STATE_11F6D4
+  confidence: confirmed
+  description: Natural type 0x2D actor movement state-stream entry copied into the actor-table movement_pc field at offset 0x0A and advanced by the common movement VM.
+  evidence:
+    - ghidra_actor_movement_vm_001ADE36
+    - mame_natural_actor_type_2D_trace
+
 0x00121D9A:
   name: PLAYER_ANIM_IDLE
   confidence: confirmed
@@ -393,6 +401,14 @@
     - ghidra_player_animation_pc_assignment
     - animation_stream_classifier
 
+0x00123EE8:
+  name: ACTOR_ANIM_STATE_123EE8
+  confidence: confirmed
+  description: Natural type 0x2D actor animation state-stream entry copied into the actor-table animation_pc field at offset 0x20.
+  evidence:
+    - ghidra_actor_template_initializer_001AE30A
+    - mame_natural_actor_type_2D_trace
+
 0x001258D2:
   name: PLAYER_ANIM_STATE_1258D2
   confidence: confirmed
@@ -404,20 +420,17 @@
 0x00125952:
   name: ACTOR_ANIM_STATE_125952
   confidence: confirmed
-  description: Common actor animation stream entry stored in the type 0x7D template at 0x001B81D8; its helper-selected branch state is ACTOR_ANIM_STATE_125966.
+  description: Common actor animation branch stream used by the helper at 0x001ACBF2; its helper-selected branch state is ACTOR_ANIM_STATE_125966.
   evidence:
-    - ghidra_actor_template_001B81D8
     - ghidra_common_actor_animation_helper_001ACBF2
-    - mame_actor_injection_trace
+    - animation_stream_classifier
 
 0x00125966:
   name: ACTOR_ANIM_STATE_125966
   confidence: confirmed
   description: Common actor branch state selected by the helper at 0x001ACBF2 from ACTOR_ANIM_STATE_125952 for actor type 0x7D.
   evidence:
-    - ghidra_actor_template_001B81D8
     - ghidra_common_actor_animation_helper_001ACBF2
-    - mame_actor_injection_trace
     - animation_stream_classifier
 
 0x00125C52:
@@ -436,11 +449,18 @@
     - ghidra_player_animation_selector_001AD150
     - animation_stream_classifier
 
+0x001B7CB0:
+  name: ACTOR_TEMPLATE_TYPE_2D
+  confidence: confirmed
+  description: Compact common actor template observed during natural gameplay; its type byte is 0x2D, movement stream pointer is 0x0011F6D4, and animation stream pointer is 0x00123EE8.
+  evidence:
+    - ghidra_actor_template_initializer_001AE30A
+    - mame_natural_actor_type_2D_trace
+
 0x001B81D8:
   name: ACTOR_TEMPLATE_TYPE_7D
   confidence: confirmed
-  description: 0x42-byte common actor template whose type byte is 0x7D and animation pointer at offset 0x20 is ACTOR_ANIM_STATE_125952.
+  description: Compact common actor template whose type byte is 0x7D, movement stream pointer at source offset 0x06 is 0x001211C4, and animation stream pointer at source offset 0x0C is 0x00125940.
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - ghidra_actor_template_001B81D8
-    - mame_actor_injection_trace
