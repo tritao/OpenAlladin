@@ -79,8 +79,8 @@
     - mame_player_animation_trace
 
 # Additional animation roots classified from their 68K selection context.
-# PLAYER_ANIMATION_PC assignments are confirmed as player-owned; common actor
-# roots remain provisional until an actor-slot trace identifies their type.
+# PLAYER_ANIMATION_PC assignments and the player selector are confirmed as
+# player-owned; the generic actor helper root remains provisional.
 0x00121964:
   name: PLAYER_ANIM_STATE_121964
   confidence: confirmed
@@ -234,11 +234,11 @@
     - animation_stream_classifier
 
 0x00122298:
-  name: ACTOR_ANIM_STATE_122298
-  confidence: provisional
-  description: Common actor animation stream root; concrete actor type is not yet identified.
+  name: PLAYER_ANIM_STATE_122298
+  confidence: confirmed
+  description: Player animation state stream returned by the player animation selector at 0x001AD150.
   evidence:
-    - ghidra_common_actor_animation_selection
+    - ghidra_player_animation_selector_001AD150
     - animation_stream_classifier
 
 0x001222D2:
@@ -250,11 +250,11 @@
     - animation_stream_classifier
 
 0x0012231E:
-  name: ACTOR_ANIM_STATE_12231E
-  confidence: provisional
-  description: Common actor animation stream root; concrete actor type is not yet identified.
+  name: PLAYER_ANIM_STATE_12231E
+  confidence: confirmed
+  description: Player animation state stream returned by the player animation selector at 0x001AD150.
   evidence:
-    - ghidra_common_actor_animation_selection
+    - ghidra_player_animation_selector_001AD150
     - animation_stream_classifier
 
 0x00122336:
@@ -418,9 +418,9 @@
     - animation_stream_classifier
 
 0x00125E72:
-  name: ACTOR_ANIM_STATE_125E72
-  confidence: provisional
-  description: Common actor animation stream root; concrete actor type is not yet identified.
+  name: PLAYER_ANIM_STATE_125E72
+  confidence: confirmed
+  description: Player animation state stream returned by the player animation selector at 0x001AD150.
   evidence:
-    - ghidra_common_actor_animation_selection
+    - ghidra_player_animation_selector_001AD150
     - animation_stream_classifier

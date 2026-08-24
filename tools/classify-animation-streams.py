@@ -20,6 +20,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAYER_ANIMATION_PC = 0xFF7E60
+PLAYER_ANIMATION_SELECTOR = 0x001AD150
 
 
 def load_decoder():
@@ -94,6 +95,7 @@ def classify(
         entry = int(candidate["entry"], 16)
         references = []
         player_evidence = []
+        player_selector_evidence = []
         selecting_functions = {}
 
         for reference in candidate["references"]:
@@ -106,25 +108,46 @@ def classify(
                 row["function"] = function["name"]
                 row["function_address"] = function["address"]
                 selecting_functions[function["name"]] = function["address"]
+                if int(function["address"], 16) == PLAYER_ANIMATION_SELECTOR:
+                    row["player_evidence"] = {
+                        "kind": "player_animation_selector_returns_stream",
+                        "function": function["address"],
+                        "caller_assignments": f"0x{PLAYER_ANIMATION_PC:08X}",
+                    }
+                    player_selector_evidence.append(row)
             if evidence is not None:
                 row["player_evidence"] = evidence
                 player_evidence.append(row)
             references.append(row)
 
-        is_player = entry in known_player_entries or bool(player_evidence)
+        is_player = (
+            entry in known_player_entries
+            or bool(player_evidence)
+            or bool(player_selector_evidence)
+        )
         if is_player:
             classification = "player_animation"
             confidence = "confirmed"
             name = f"PLAYER_ANIM_STATE_{entry:06X}"
             if entry in known_player_entries:
                 name = known_player_names[entry]
-            evidence = [
-                "player_animation_pc_assignment",
-                *[
-                    f"callsite_{row['instruction']}"
-                    for row in player_evidence
-                ],
-            ]
+            evidence = []
+            if player_evidence:
+                evidence.extend(
+                    [
+                        "player_animation_pc_assignment",
+                        *[
+                            f"callsite_{row['instruction']}"
+                            for row in player_evidence
+                        ],
+                    ]
+                )
+            evidence.extend(
+                f"player_selector_{row['instruction']}"
+                for row in player_selector_evidence
+            )
+            if not evidence:
+                evidence.append("known_player_stream")
         else:
             classification = "common_actor_animation"
             confidence = "provisional"

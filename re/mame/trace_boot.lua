@@ -538,7 +538,7 @@ if trace_actors then
 
         if debugger_watch then
             local animation_action = string.format(
-                "printf \"OPENALADDIN_ACTOR_PC SLOT=%d ADDR=%08X DATA=%08X\\n\",wpaddr,wpdata ; g",
+                "printf \"OPENALADDIN_ACTOR_PC SLOT=%d ADDR=%%08X DATA=%%08X PC=%%08X\\n\",wpaddr,wpdata,pc ; g",
                 actor_slot)
             cpu.debug:wpset(
                 space,
@@ -614,6 +614,7 @@ write_record({
     { "actor_table_base", tostring(actor_table_base) },
     { "actor_stride", tostring(actor_stride) },
     { "actor_slot_count", tostring(actor_slot_count) },
+    { "actor_active_offset", tostring(actor_active_offset) },
     { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) }
 })
 
