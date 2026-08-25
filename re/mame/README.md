@@ -334,6 +334,13 @@ are the same cursors written back to actor field `+0x0A`; conditional command
 paths remain state-dependent and are listed as branch targets rather than
 being guessed statically.
 
+The targeted decompile of `MovementVM_TickActors` also confirms that signed
+delta X/Y are mirrored by actor fields `+0x09`/`+0x35`, and that field `+0x36`
+is the movement delay counter. Shared command `0x84` masks bit 7 from its
+operand before storing the counter in movement mode. The native slot-19
+fixture and `tests/native_actor_movement.py` exercise this confirmed path
+against MAME frames 361..381.
+
 ## Player movement and terrain collision
 
 The player movement/terrain request is tracked at
