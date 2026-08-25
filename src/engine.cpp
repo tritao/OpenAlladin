@@ -14,6 +14,13 @@ namespace {
 constexpr int kScreenWidth = 320;
 constexpr int kScreenHeight = 224;
 constexpr int kTerrainVisualOffsetY = 0xF0;
+// The extracted level image is the VDP plane-A nametable in world space. At
+// the synchronized gameplay checkpoint, the VDP's plane origin is one tile
+// ahead of WORLD_CAMERA in both axes.
+constexpr int kBackgroundPlaneOriginOffset = 0x10;
+// Plane B's captured HScroll word is 0x187, which selects source x 0x79 from
+// the 512-pixel extracted parallax strip at the visual checkpoint.
+constexpr int kLevel01ParallaxSourceX = 0x79;
 // The player frame origin is one 16-pixel tile above the terrain query
 // origin. The ROM keeps these coordinate systems distinct: terrain probes use
 // WORLD_Y - 0xF0, while the VDP sprite origin uses WORLD_Y - 0x100.
@@ -214,6 +221,19 @@ void Level::load(const std::string& asset_root, const std::string& rom_path) {
     background_height_ = background.height;
     background_rgba_ = background.rgba;
 
+    const std::string parallax_path = asset_root + "/parallax.ppm";
+    std::ifstream parallax_file(parallax_path, std::ios::binary);
+    if (parallax_file.good()) {
+        const auto parallax = read_ppm(parallax_path);
+        parallax_width_ = parallax.width;
+        parallax_height_ = parallax.height;
+        parallax_rgba_ = parallax.rgba;
+    } else {
+        parallax_width_ = 0;
+        parallax_height_ = 0;
+        parallax_rgba_.clear();
+    }
+
     const auto map_bytes = read_file(asset_root + "/raw/map.bin");
     terrain_words_ = read_be_words(map_bytes);
     if (terrain_words_.size() != static_cast<std::size_t>(map_width_ * map_height_)) {
@@ -247,6 +267,27 @@ void Level::load(const std::string& asset_root, const std::string& rom_path) {
         };
         palette_.push_back(SDL_Color{channel(word, 1), channel(word, 5), channel(word, 9), 255});
     }
+}
+
+bool Level::is_vdp_transparent(
+    std::uint8_t red,
+    std::uint8_t green,
+    std::uint8_t blue
+) const {
+    // A Genesis plane pixel with color index zero is transparent. The
+    // extracted PPMs preserve the selected palette line, so compare against
+    // color zero from each of the four palette lines rather than a single
+    // RGB key.
+    for (int line = 0; line < 4; ++line) {
+        const std::size_t index = static_cast<std::size_t>(line * 16);
+        if (index < palette_.size()
+            && palette_[index].r == red
+            && palette_[index].g == green
+            && palette_[index].b == blue) {
+            return true;
+        }
+    }
+    return false;
 }
 
 std::uint8_t Level::terrain_behavior(int column, int row) const {
@@ -2415,15 +2456,45 @@ void Engine::render(SDL_Renderer* renderer) {
     camera_render_y_ = std::clamp(camera_.y, 0, std::max(0, level_.background_height() - kScreenHeight));
 
     const auto& background = level_.background_rgba();
+    const auto& parallax = level_.parallax_rgba();
+    const auto& palette = level_.palette();
+    const std::uint32_t backdrop = palette.empty()
+        ? rgba(10, 10, 18)
+        : rgba(palette[0].r, palette[0].g, palette[0].b);
+    const int background_source_x = std::clamp(
+        camera_.x + kBackgroundPlaneOriginOffset,
+        0,
+        std::max(0, level_.background_width() - kScreenWidth)
+    );
+    const int background_source_y = std::clamp(
+        camera_.y + kBackgroundPlaneOriginOffset,
+        0,
+        std::max(0, level_.background_height() - kScreenHeight)
+    );
     for (int y = 0; y < kScreenHeight; ++y) {
         for (int x = 0; x < kScreenWidth; ++x) {
-            const int source_x = camera_render_x_ + x;
-            const int source_y = camera_render_y_ + y;
-            std::uint32_t pixel = rgba(10, 10, 18);
-            if (source_x >= 0 && source_x < level_.background_width() &&
-                source_y >= 0 && source_y < level_.background_height()) {
-                const std::size_t source = static_cast<std::size_t>((source_y * level_.background_width() + source_x) * 4);
-                pixel = rgba(background[source], background[source + 1], background[source + 2]);
+            std::uint32_t pixel = backdrop;
+            if (level_.parallax_width() > 0 && level_.parallax_height() > 0) {
+                const int source_x = (kLevel01ParallaxSourceX + x) % level_.parallax_width();
+                const int source_y = y % level_.parallax_height();
+                const std::size_t source = static_cast<std::size_t>(
+                    (source_y * level_.parallax_width() + source_x) * 4
+                );
+                if (!level_.is_vdp_transparent(
+                        parallax[source], parallax[source + 1], parallax[source + 2])) {
+                    pixel = rgba(parallax[source], parallax[source + 1], parallax[source + 2]);
+                }
+            }
+            if (!background.empty()) {
+                const int source_x = background_source_x + x;
+                const int source_y = background_source_y + y;
+                const std::size_t source = static_cast<std::size_t>(
+                    (source_y * level_.background_width() + source_x) * 4
+                );
+                if (!level_.is_vdp_transparent(
+                        background[source], background[source + 1], background[source + 2])) {
+                    pixel = rgba(background[source], background[source + 1], background[source + 2]);
+                }
             }
             framebuffer_[static_cast<std::size_t>(y * kScreenWidth + x)] = pixel;
         }

@@ -182,9 +182,13 @@ public:
     int background_width() const { return background_width_; }
     int background_height() const { return background_height_; }
     const std::vector<std::uint8_t>& background_rgba() const { return background_rgba_; }
+    int parallax_width() const { return parallax_width_; }
+    int parallax_height() const { return parallax_height_; }
+    const std::vector<std::uint8_t>& parallax_rgba() const { return parallax_rgba_; }
     const std::vector<std::uint16_t>& terrain_words() const { return terrain_words_; }
     const std::vector<std::uint8_t>& floor_data() const { return floor_data_; }
     const std::vector<SDL_Color>& palette() const { return palette_; }
+    bool is_vdp_transparent(std::uint8_t red, std::uint8_t green, std::uint8_t blue) const;
     int map_width() const { return map_width_; }
     int map_height() const { return map_height_; }
     int start_x() const { return start_x_; }
@@ -240,6 +244,9 @@ private:
     int background_width_ = 0;
     int background_height_ = 0;
     std::vector<std::uint8_t> background_rgba_;
+    int parallax_width_ = 0;
+    int parallax_height_ = 0;
+    std::vector<std::uint8_t> parallax_rgba_;
     std::vector<std::uint16_t> terrain_words_;
     std::vector<std::uint8_t> floor_data_;
     std::vector<std::uint8_t> contour_table_;
