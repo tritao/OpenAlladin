@@ -514,6 +514,10 @@ response state, selects animation stream `0x00121964`, aligns the player to
 The `0x2D` fixture reaches `0x001B56B6`, applies `PLAYER_VX=-0x400` and
 `PLAYER_VY=0x0200`, selects stream `0x00121AD8`, and exposes post-integrator
 velocity `(-984,452)` at `(83,418)`.
+The `0x2A` fixture reaches `0x001B55D8`, adds one pixel to `PLAYER_X`, and
+subtracts `0x46` from `PLAYER_VX`; with zero incoming velocity the normal
+integrator exposes `(PLAYER_X, PLAYER_VX)=(87,-30)` after the same-frame
+`+1`/`-1` displacement pair.
 The surface-mode fixtures confirm the shared `0x001B5492`/`0x001B549C`
 blocks: behaviors `0x01` through `0x04` write `TERRAIN_SURFACE_MODE=0`, while
 behaviors `0x05` through `0x07` write it to `1`.

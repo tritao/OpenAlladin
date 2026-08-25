@@ -15,6 +15,7 @@ SPECIAL_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/special-state.jso
 SPAWN_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/spawn-state.jsonl"
 LANDING_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/landing-handler-state.jsonl"
 HANDLER_2B_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2b-state.jsonl"
+HANDLER_2A_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2a-state.jsonl"
 HANDLER_29_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-29-state.jsonl"
 HANDLER_28_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-28-state.jsonl"
 HANDLER_2D_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2d-state.jsonl"
@@ -203,6 +204,39 @@ def main() -> int:
     assert handler_2b["player"]["y"] == 408
     assert handler_2b["player"]["vy"] == 180
     assert handler_2b["player"]["animation_pc"] == 0x0012181A
+
+    # Behavior 0x2A applies the diagonal correction before the regular
+    # integrator: PLAYER_X receives +1, then the -0x46 velocity's high byte
+    # contributes -1, leaving the observed local X unchanged and V X=-30.
+    handler_2a_command = [
+        str(ROOT / "build/openaladdin"),
+        "--no-window",
+        "--frames",
+        "2",
+        "--state-output",
+        str(HANDLER_2A_OUTPUT),
+        "--actor-records",
+        "/dev/null",
+        "--checkpoint-player",
+        "87,416,0,0,1",
+        "--checkpoint-terrain-behavior",
+        "0x2A",
+        "--checkpoint-camera",
+        "16,464,16,464,0,0,1",
+    ]
+    subprocess.run(handler_2a_command, cwd=ROOT, env=environment, check=True)
+    with HANDLER_2A_OUTPUT.open(encoding="utf-8") as stream:
+        handler_2a_states = {
+            record["frame"]: record
+            for record in map(json.loads, stream)
+            if record.get("type") == "state"
+        }
+    handler_2a = handler_2a_states[1]
+    assert handler_2a["terrain"]["behavior"] == 0x2A
+    assert handler_2a["player"]["x"] == 87
+    assert handler_2a["player"]["y"] == 416
+    assert handler_2a["player"]["vx"] == -30
+    assert handler_2a["player"]["vy"] == 0
 
     # Behavior 0x29 launches from a clear response state. The ROM writes the
     # launch velocities, clears the vertical/timer latches, and leaves the

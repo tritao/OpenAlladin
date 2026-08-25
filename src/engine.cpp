@@ -1561,6 +1561,13 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_response_timer_state = 0;
         player_.terrain_response_active = 0xFF;
         break;
+    case 0x2A:  // TerrainHandler_DiagonalCorrection (0x001B55D8)
+        // Exact ROM body: ADDQ.W #1,PLAYER_X; ADDI.W #-0x46,PLAYER_VX.
+        // The normal integrator consumes the resulting high-byte displacement
+        // later in the same frame, so the visible net X change can be zero.
+        player_.x += 1;
+        player_.vx = static_cast<std::int16_t>(player_.vx - 0x46);
+        break;
     case 0x2B:  // TerrainHandler_StopAndAlignPlayer (0x001B5502)
         // The ROM ignores this response while the animation gate is set, VY
         // is negative, or the landing state is already active. The fixture
