@@ -119,6 +119,7 @@ struct ActorState {
     std::uint8_t flags = 0;
     std::uint8_t terminal_timer = 0;
     std::uint8_t movement_command_timer = 0;
+    std::uint8_t animation_timer = 0;
 };
 
 class Level {
@@ -277,6 +278,7 @@ private:
     void load_actor_timeline(const std::string& path);
     void apply_actor_timeline(int frame);
     void update_actor_movement();
+    void update_actor_animations();
     void update_actor_interactions(const InputState& input, bool was_grounded);
     CollisionBox read_collision_box(
         std::uint32_t frame_pointer,
@@ -293,6 +295,7 @@ private:
     CameraState camera_;
     SpriteDatabase sprites_;
     PlayerAnimationVm animation_;
+    std::array<PlayerAnimationVm, 32> actor_animations_{};
     std::array<ActorState, 32> actor_templates_{};
     std::array<ActorState, 32> actors_{};
     std::map<int, std::array<ActorState, 32>> actor_timeline_;

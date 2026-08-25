@@ -202,6 +202,29 @@ void PlayerAnimationVm::sync_context(const AnimationContext& context) {
     write_memory8(9, facing_left_ ? 0xFF : 0);
 }
 
+void PlayerAnimationVm::sync_actor_context(
+    const ActorAnimationState& actor,
+    const AnimationContext& context
+) {
+    write_memory16(0xFF7DFA, as_u16(context.player_x));
+    write_memory16(0xFF7DFC, as_u16(context.player_y));
+    write_memory16(0xFF7E02, as_u16(context.world_x));
+    write_memory16(0xFF7E04, as_u16(context.world_y));
+    write_memory16(0xFF7E58, as_u16(context.player_vx));
+    write_memory16(0xFF7E5A, as_u16(context.player_vy));
+    write_memory8(0xFFF0C1, context.grounded ? 1 : 0);
+    write_memory8(0xFFF0CC, context.grounded
+        ? std::max<std::uint8_t>(context.terrain_response_timer_state, 1)
+        : context.terrain_response_timer_state);
+    write_memory8(0xFF7E28, actor.type);
+    write_memory16(2, actor.x);
+    write_memory16(4, actor.y);
+    write_memory8(9, actor.facing_x_flip);
+    write_memory8(0x35, actor.facing_y_flip);
+    write_memory8(0x3C, actor.flags);
+    write_memory8(0x37, actor.animation_timer);
+}
+
 std::uint32_t PlayerAnimationVm::dynamic_stream(const AnimationContext& context) const {
     // Player branch of AnimationVM_SelectState (0x001AD150). Landing is
     // selected by the recovered native physics boundary; the remaining tests
@@ -395,6 +418,40 @@ void PlayerAnimationVm::tick_rom(const AnimationContext& context) {
     throw std::runtime_error("animation VM command loop exceeded 1024 instructions");
 }
 
+void PlayerAnimationVm::tick_actor_rom(
+    const AnimationContext& context,
+    const ActorAnimationState& actor
+) {
+    if (animation_pc_ == 0 || rom_.empty()) return;
+    sync_actor_context(actor, context);
+    std::uint32_t cursor = animation_pc_;
+    const std::uint16_t reference = read_rom16(cursor);
+    cursor += 2;
+    frame_pointer_ = read_rom32(reference);
+    actor_[0x14] = static_cast<std::uint8_t>(frame_pointer_ >> 24);
+    actor_[0x15] = static_cast<std::uint8_t>(frame_pointer_ >> 16);
+    actor_[0x16] = static_cast<std::uint8_t>(frame_pointer_ >> 8);
+    actor_[0x17] = static_cast<std::uint8_t>(frame_pointer_);
+    if (timer_ != 0) {
+        --timer_;
+        actor_[0x37] = timer_;
+        return;
+    }
+
+    for (int instruction = 0; instruction < 1024; ++instruction) {
+        const std::uint8_t opcode = read_rom8(cursor);
+        if (!is_command(opcode)) {
+            animation_pc_ = cursor;
+            return;
+        }
+        if (command(opcode, cursor, context)) {
+            animation_pc_ = cursor;
+            return;
+        }
+    }
+    throw std::runtime_error("actor animation VM command loop exceeded 1024 instructions");
+}
+
 bool PlayerAnimationVm::set_frame(int sprite_frame) {
     if (rom_mode_) return false;
     for (SpritePose candidate : {SpritePose::Idle, SpritePose::Run, SpritePose::Brake, SpritePose::Jump, SpritePose::Landing}) {
@@ -426,6 +483,45 @@ void PlayerAnimationVm::set_animation_state(std::uint32_t animation_pc, int time
     timer_ = std::clamp(timer, 0, 0x7F);
     actor_[0x37] = static_cast<std::uint8_t>(timer_);
     landing_finished_ = false;
+}
+
+void PlayerAnimationVm::update_actor(
+    ActorAnimationState& actor,
+    const AnimationContext& context
+) {
+    if (!rom_mode_ || actor.animation_pc == 0) return;
+
+    animation_pc_ = actor.animation_pc;
+    timer_ = actor.animation_timer;
+    actor_[0] = actor.type;
+    actor_[2] = static_cast<std::uint8_t>(actor.x >> 8);
+    actor_[3] = static_cast<std::uint8_t>(actor.x);
+    actor_[4] = static_cast<std::uint8_t>(actor.y >> 8);
+    actor_[5] = static_cast<std::uint8_t>(actor.y);
+    actor_[9] = actor.facing_x_flip;
+    actor_[0x14] = static_cast<std::uint8_t>(actor.frame_ptr >> 24);
+    actor_[0x15] = static_cast<std::uint8_t>(actor.frame_ptr >> 16);
+    actor_[0x16] = static_cast<std::uint8_t>(actor.frame_ptr >> 8);
+    actor_[0x17] = static_cast<std::uint8_t>(actor.frame_ptr);
+    actor_[0x20] = static_cast<std::uint8_t>(actor.animation_pc >> 24);
+    actor_[0x21] = static_cast<std::uint8_t>(actor.animation_pc >> 16);
+    actor_[0x22] = static_cast<std::uint8_t>(actor.animation_pc >> 8);
+    actor_[0x23] = static_cast<std::uint8_t>(actor.animation_pc);
+    actor_[0x35] = actor.facing_y_flip;
+    actor_[0x37] = actor.animation_timer;
+    actor_[0x3C] = actor.flags;
+
+    tick_actor_rom(context, actor);
+
+    actor.type = actor_[0];
+    actor.x = read_memory16(2);
+    actor.y = read_memory16(4);
+    actor.facing_x_flip = actor_[9];
+    actor.facing_y_flip = actor_[0x35];
+    actor.flags = actor_[0x3C];
+    actor.animation_pc = animation_pc_;
+    actor.frame_ptr = frame_pointer_;
+    actor.animation_timer = actor_[0x37];
 }
 
 void PlayerAnimationVm::select_stream_entry(std::uint32_t stream_entry) {

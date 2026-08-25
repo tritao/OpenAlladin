@@ -47,6 +47,18 @@ struct AnimationContext {
     AnimationSelectorState selector{};
 };
 
+struct ActorAnimationState {
+    std::uint8_t type = 0;
+    std::uint16_t x = 0;
+    std::uint16_t y = 0;
+    std::uint8_t facing_x_flip = 0;
+    std::uint8_t facing_y_flip = 0;
+    std::uint8_t flags = 0;
+    std::uint32_t animation_pc = 0;
+    std::uint32_t frame_ptr = 0;
+    std::uint8_t animation_timer = 0;
+};
+
 // PlayerAnimationVm is the player-facing slice of the original common actor
 // animation VM at 0x001AC784. With a ROM loaded it executes the original
 // frame-reference stream and command bytecode directly. The small Clip table
@@ -72,6 +84,7 @@ public:
     bool set_frame(int sprite_frame);
     void set_frame_pointer(std::uint32_t frame_pointer);
     void set_animation_state(std::uint32_t animation_pc, int timer);
+    void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     void select_stream_entry(std::uint32_t stream_entry);
     bool finished() const;
     bool select_player_interaction_state(const AnimationContext& context);
@@ -93,6 +106,7 @@ private:
     void select(SpritePose pose);
     void select_rom_stream(SpritePose pose, bool execute_now);
     void tick_rom(const AnimationContext& context);
+    void tick_actor_rom(const AnimationContext& context, const ActorAnimationState& actor);
     std::uint32_t dynamic_stream(const AnimationContext& context) const;
     std::uint8_t read_rom8(std::uint32_t address) const;
     std::uint16_t read_rom16(std::uint32_t address) const;
@@ -107,6 +121,7 @@ private:
     bool compare_command(std::uint32_t& cursor);
     bool flag_command(std::uint32_t& cursor);
     void sync_context(const AnimationContext& context);
+    void sync_actor_context(const ActorAnimationState& actor, const AnimationContext& context);
 
     SpritePose pose_ = SpritePose::Idle;
     std::size_t step_ = 0;

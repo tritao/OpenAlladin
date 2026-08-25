@@ -421,6 +421,9 @@ void Engine::load(
     sprites_.set_palette(level_.palette());
     if (!rom_path.empty()) {
         animation_.load_rom(rom_path);
+        for (auto& actor_animation : actor_animations_) {
+            actor_animation.load_rom(rom_path);
+        }
         std::ifstream rom_file(rom_path, std::ios::binary);
         if (!rom_file) {
             throw std::runtime_error("cannot open actor VM ROM: " + rom_path);
@@ -719,6 +722,14 @@ void Engine::update_actor_movement() {
                 actor.facing_x_flip = player_world_x() < static_cast<int>(actor.x) ? 0xFF : 0;
                 cursor += 2;
                 continue;
+            case 0x8E:  // Movement_SelectDynamicStream.
+                // FUN_001AD150 returns the default actor stream in the
+                // no-player-state path used by the controlled probe. The
+                // remaining global-state selector branches need their own
+                // RAM fixtures before they can be mirrored safely.
+                actor.movement_pc = 0x00121AD8;
+                cursor_committed = true;
+                break;
             case 0x91:  // Movement_PushParameter; no positional effect yet.
                 cursor += 6;
                 continue;
@@ -786,6 +797,49 @@ void Engine::update_actor_movement() {
         if (!cursor_committed) {
             actor.movement_pc = cursor;
         }
+    }
+}
+
+void Engine::update_actor_animations() {
+    if (rom_bytes_.empty()) return;
+
+    const AnimationContext context{
+        player_.x,
+        player_.y,
+        player_world_x(),
+        player_world_y(),
+        player_.vx,
+        player_.vy,
+        player_.grounded,
+        player_.terrain_response_timer_state,
+    };
+    for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
+        ActorState& actor = actors_[slot];
+        if (actor.type == 0 || actor.animation_pc == 0 || actor.terminal_timer != 0) {
+            continue;
+        }
+
+        ActorAnimationState animation_state;
+        animation_state.type = actor.type;
+        animation_state.x = actor.x;
+        animation_state.y = actor.y;
+        animation_state.facing_x_flip = actor.facing_x_flip;
+        animation_state.facing_y_flip = actor.facing_y_flip;
+        animation_state.flags = actor.flags;
+        animation_state.animation_pc = actor.animation_pc;
+        animation_state.frame_ptr = actor.frame_ptr;
+        animation_state.animation_timer = actor.animation_timer;
+        actor_animations_[slot].update_actor(animation_state, context);
+
+        actor.type = animation_state.type;
+        actor.x = animation_state.x;
+        actor.y = animation_state.y;
+        actor.facing_x_flip = animation_state.facing_x_flip;
+        actor.facing_y_flip = animation_state.facing_y_flip;
+        actor.flags = animation_state.flags;
+        actor.animation_pc = animation_state.animation_pc;
+        actor.frame_ptr = animation_state.frame_ptr;
+        actor.animation_timer = animation_state.animation_timer;
     }
 }
 
@@ -987,6 +1041,9 @@ void Engine::reset() {
     last_ground_direction_ = 0;
     quit_ = false;
     animation_.reset();
+    for (auto& actor_animation : actor_animations_) {
+        actor_animation.reset();
+    }
 }
 
 void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded) {
@@ -1515,6 +1572,7 @@ void Engine::update(const InputState& input) {
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
     update_actor_movement();
     update_actor_interactions(input, was_grounded);
+    update_actor_animations();
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
         && last_ground_direction_ != 0 && player_.vx == 0;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
@@ -1809,6 +1867,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"movement_loop_pc\":" << actor.movement_loop_pc
                << ",\"movement_loop_timer\":" << static_cast<unsigned>(actor.movement_loop_timer)
                << ",\"frame_ptr\":" << actor.frame_ptr
+               << ",\"animation_timer\":" << static_cast<unsigned>(actor.animation_timer)
                << ",\"collision_box\":" << collision_box_json(actor_box)
                << ",\"animation_pc\":" << actor.animation_pc
                << ",\"movement_pc\":" << actor.movement_pc
