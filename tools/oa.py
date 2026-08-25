@@ -306,6 +306,13 @@ def command_trace(args: argparse.Namespace) -> int:
     return status
 
 
+def command_audio_driver(args: argparse.Namespace) -> int:
+    return run_tool(
+        "openaladdin/mame/z80_sound.py",
+        [str(resolve(args.rom)), "--output", str(resolve(args.output))],
+    )
+
+
 def load_state_trace(path: Path) -> tuple[dict[str, Any], dict[int, dict[str, Any]], list[dict[str, Any]]]:
     header: dict[str, Any] | None = None
     states: dict[int, dict[str, Any]] = {}
@@ -1010,6 +1017,19 @@ def build_parser() -> argparse.ArgumentParser:
     trace.add_argument("--audio-read-frame", action="append", help="hex frame to inspect for Z80 mailbox reads")
     trace.add_argument("--audio-commands", action="store_true", help="trace ROM music/SFX command dispatches in MAME debug.log")
     trace.set_defaults(function=command_trace)
+
+    audio_driver = commands.add_parser(
+        "audio-driver",
+        help="extract and map the ROM-resident Genesis Z80 sound driver",
+    )
+    add_rom_argument(audio_driver)
+    audio_driver.add_argument(
+        "--output",
+        type=Path,
+        default=Path("build/re/z80-sound-driver"),
+        help="output directory for driver.bin and driver.json",
+    )
+    audio_driver.set_defaults(function=command_audio_driver)
 
     regression = commands.add_parser("regression", help="differentially compare MAME and native gameplay")
     regression.add_argument("scenario")
