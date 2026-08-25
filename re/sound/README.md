@@ -9,6 +9,32 @@ python3 tools/oa.py audio-driver
 ```
 
 The driver consumes the shared 64-byte queue at Z80 `$1B40`, using cursor bytes
-`$36` and `$37`. Its command dispatcher is at Z80 `$0945`; the tracked handler
-addresses are the next target for recovering music and sound-effect data
-formats.
+`$36` and `$37`. Its command dispatcher is at Z80 `$0945`. Command `$10`
+selects a sound ID from the 16-bit little-endian table at ROM `$1BAF6F`, copies
+a 33-byte header, and initializes up to sixteen channel records at `$1B80`
+with 24-bit ROM stream pointers. The header is one track-count byte followed
+by sixteen little-endian track offsets relative to `$1BAF6F`.
+
+The stream interpreter is at Z80 `$04BC` and reads through `$03EF`. Its byte
+classes are notes `$00–$5F`, control opcodes `$60–$7F`, and two six-bit-group
+signed operand encodings `$80–$BF` and `$C0–$FF`, stored in separate channel
+state fields. Each channel maintains a 16-byte cached ROM window while its
+cursor advances through the 24-bit stream.
+
+Regenerate the map, including the decoded music/SFX table, with:
+
+```sh
+python3 tools/oa.py audio-driver
+```
+
+To capture the live pointer/header/channel state while a title-menu trace is
+running, pair the existing audio trace with the gated driver dump:
+
+```sh
+OPENALADDIN_TRACE_AUDIO_DRIVER=1 python3 tools/oa.py trace title-menu \
+  --audio --audio-mailbox --audio-commands \
+  --trace-dir build/re/traces/audio-driver-state
+```
+
+This writes `z80_driver_state.jsonl` beside the normal trace files. The dump is
+disabled unless the environment variable is explicitly set.

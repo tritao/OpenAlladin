@@ -25,6 +25,13 @@ QUEUE_SIZE = 0x40
 QUEUE_CONSUMER = 0x01D1
 COMMAND_DISPATCH = 0x0945
 
+# Command 0x10 reads a 16-bit entry from this ROM-resident table, then copies
+# the selected 33-byte header into Z80 RAM at 0x0BBD.  The table is bounded by
+# the first header: its first entry is 0x00E4, so there are 0x72 two-byte IDs.
+SEQUENCE_TABLE_BASE = 0x001BAF6F
+SEQUENCE_HEADER_SIZE = 0x21
+SEQUENCE_TRACK_COUNT = 16
+
 COMMAND_HANDLERS = {
     0x00: 0x09D6,
     0x01: 0x09EA,
@@ -65,6 +72,61 @@ def find_all(data: bytes, pattern: bytes) -> list[int]:
     ]
 
 
+def read_u16_le(data: bytes, address: int) -> int:
+    if address < 0 or address + 2 > len(data):
+        raise SystemExit(f"ROM read outside image at {address:#x}")
+    return int.from_bytes(data[address:address + 2], "little")
+
+
+def sequence_table_report(image: bytes) -> dict[str, Any]:
+    """Decode the ROM pointer table consumed by Z80 command 0x10."""
+    first_header_offset = read_u16_le(image, SEQUENCE_TABLE_BASE)
+    if first_header_offset == 0 or first_header_offset % 2:
+        raise SystemExit("sequence table has no even first-header offset")
+    entry_count = first_header_offset // 2
+    entries: dict[str, Any] = {}
+    for sound_id in range(entry_count):
+        table_address = SEQUENCE_TABLE_BASE + sound_id * 2
+        header_offset = read_u16_le(image, table_address)
+        header_address = SEQUENCE_TABLE_BASE + header_offset
+        if header_address + SEQUENCE_HEADER_SIZE > len(image):
+            raise SystemExit(
+                f"sequence header for ID {sound_id:#x} exceeds ROM at {header_address:#x}"
+            )
+        track_count = image[header_address]
+        if track_count > SEQUENCE_TRACK_COUNT:
+            raise SystemExit(
+                f"sequence header for ID {sound_id:#x} has {track_count} tracks"
+            )
+        track_offsets = [
+            read_u16_le(image, header_address + 1 + index * 2)
+            for index in range(SEQUENCE_TRACK_COUNT)
+        ]
+        entries[f"0x{sound_id:02X}"] = {
+            "table_address": hex_address(table_address),
+            "header_offset": hex_address(header_offset),
+            "header_address": hex_address(header_address),
+            "track_count": track_count,
+            "track_offsets": [hex_address(offset) for offset in track_offsets[:track_count]],
+            "track_addresses": [
+                hex_address(SEQUENCE_TABLE_BASE + offset)
+                for offset in track_offsets[:track_count]
+            ],
+        }
+    return {
+        "table_address": hex_address(SEQUENCE_TABLE_BASE),
+        "entry_width": 2,
+        "entry_count": entry_count,
+        "entry_endianness": "little",
+        "header_size": SEQUENCE_HEADER_SIZE,
+        "track_count_offset": 0,
+        "track_offsets_offset": 1,
+        "track_offset_count": SEQUENCE_TRACK_COUNT,
+        "track_offset_endianness": "little",
+        "entries": entries,
+    }
+
+
 def build_report(rom: Path) -> tuple[dict[str, Any], bytes]:
     knowledge = load_yaml(ROOT / "re/sound/z80-driver.yml") or {}
     copy_map = knowledge.get("rom_copy", {})
@@ -81,6 +143,13 @@ def build_report(rom: Path) -> tuple[dict[str, Any], bytes]:
     }
     if knowledge_handlers != COMMAND_HANDLERS:
         raise SystemExit("re/sound/z80-driver.yml command handler map is stale")
+    knowledge_sequence = knowledge.get("sequence_table", {}) or {}
+    if (
+        parse_int(knowledge_sequence.get("address")) != SEQUENCE_TABLE_BASE
+        or parse_int(knowledge_sequence.get("entry_count")) != 0x72
+        or parse_int(knowledge_sequence.get("header_size")) != SEQUENCE_HEADER_SIZE
+    ):
+        raise SystemExit("re/sound/z80-driver.yml sequence table map is stale")
 
     image = rom.read_bytes()
     end = DRIVER_ROM_END + 1
@@ -138,6 +207,7 @@ def build_report(rom: Path) -> tuple[dict[str, Any], bytes]:
                 for offset in find_all(driver, bytes.fromhex("21 11 7F"))
             ],
         },
+        "sequence_table": sequence_table_report(image),
         "evidence": {
             "68k_copy_routine": "0x001E573A",
             "queue_trace": "mame_audio_mailbox_queue_trace",

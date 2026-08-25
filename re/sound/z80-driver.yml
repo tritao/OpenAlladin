@@ -48,6 +48,50 @@ command_handlers:
   0x1F: 0x0BA8
   0x20: 0x0BB4
 
+sequence_table:
+  address: 0x001BAF6F
+  entry_width: 2
+  entry_count: 0x72
+  entry_endianness: little
+  header_buffer: 0x0BBD
+  header_size: 0x21
+  track_count_offset: 0
+  track_offsets_offset: 1
+  track_offset_count: 16
+  track_offset_endianness: little
+  base_address_is: 24-bit ROM address used by the banked read helper
+
+channel_state:
+  base: 0x1B80
+  stride: 0x20
+  count: 16
+  stream_cache_window_offsets: [0, 1, 2]
+  stream_pointer_offsets: [3, 4, 5]
+  event_timer_offsets: [7, 8]
+  signed_operand_a_offsets: [9, 10]
+  signed_operand_b_offsets: [0x0B, 0x0C]
+  sound_id_offset: 0x0E
+  channel_index_offset: 0x0F
+
+stream:
+  event_dispatch: 0x04BC
+  cached_byte_reader: 0x03EF
+  cache_base_pointer: 0x0454
+  cache_stride: 0x10
+  cache_window_size: 0x10
+  note_range: 0x00..0x5F
+  control_range: 0x60..0x7F
+  signed_operand_a_range: 0xC0..0xFF
+  signed_operand_b_range: 0x80..0xBF
+  signed_operand_group_bits: 6
+
+rom_window:
+  bank_register: 0x6000
+  window_start: 0x8000
+  window_end: 0xFFFF
+  read_helper: 0x01F9
+  bank_copy_helper: 0x023D
+
 evidence:
   - ghidra_audio_queue_decompile
   - mame_audio_mailbox_queue_trace

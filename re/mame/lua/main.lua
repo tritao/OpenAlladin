@@ -163,6 +163,7 @@ local audio = dofile(root .. "/re/mame/lua/audio.lua")({
     main_space = space,
     main_cpu = cpu,
     writes = capture_streams.sound_writes,
+    trace_dir = trace_dir,
     current_frame = function () return current_frame end
 })
 
@@ -694,6 +695,7 @@ local function shutdown()
         return
     end
     shutdown_complete = true
+    if audio.close then audio.close() end
     capture_streams.close()
 end
 
@@ -832,6 +834,7 @@ if preload_state == "" then
     apply_memory_pokes(0)
 end
 capture(0, apply_input(0), true)
+if audio.dump_driver then audio.dump_driver(0, "initial") end
 capture_artifacts(0)
 
 emu.register_frame_done(function ()
@@ -851,6 +854,7 @@ emu.register_frame_done(function ()
     actors.inject(current_frame)
     apply_memory_pokes(current_frame)
     capture(current_frame, apply_input(current_frame), not state_sync)
+    if audio.dump_driver then audio.dump_driver(current_frame, "frame") end
     capture_artifacts(current_frame)
 
     if current_frame == frame_limit then
