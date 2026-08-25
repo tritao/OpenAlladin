@@ -744,15 +744,25 @@ void Engine::update(const InputState& input) {
         camera_.update_delay = 7;
     }
     if (!reference_rebased) {
+        const int camera_x_before_follow = camera_.x;
         update_camera();
         if (camera_.horizontal_rebase_followup) {
-            // Camera_UpdateFollow plus the tile-update dispatcher produce a
-            // one-frame +3 world-coordinate catch-up after a horizontal
-            // reference rebase: local X advances by one while the camera
-            // origin advances by two.
-            ++player_.x;
-            camera_.x += 2;
-            camera_.scroll_x += 2;
+            // After a horizontal 16-pixel reference rebase, the tile-update
+            // dispatcher performs one deferred three-pixel ground step on
+            // the next frame. Camera_UpdateFollow has already consumed the
+            // same dampening delta for this frame, so preserve that split:
+            // the remaining local movement is (3 - |delta|), and the camera
+            // consumes the matching |delta|. This is why the ROM exposes
+            // local +1/camera +2 at one rebase and local +0/camera +3 at the
+            // next; the result is always another three world pixels.
+            const int camera_delta = camera_.x - camera_x_before_follow;
+            const int direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+            const int camera_step = std::abs(camera_delta);
+            if (direction != 0) {
+                player_.x += direction * std::max(0, 3 - camera_step);
+                camera_.x += direction * camera_step;
+                camera_.scroll_x += direction * camera_step;
+            }
             camera_.horizontal_rebase_followup = false;
         }
     }
