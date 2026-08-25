@@ -81,6 +81,10 @@ python tools/oa.py trace player-run --frames 1400 \
 The selected Z80 shared-RAM reads are included in `audio_summary.json` as
 `sound_mailbox_reads`; unrestricted polling is intentionally not enabled by
 default because the sound driver reads its command cell continuously.
+The same report decodes the 68000 queue at `$A01B40` into
+`sound_mailbox_packets`. Each observed packet is `FF`, a queue opcode, and the
+optional sound command ID; `0x12` is the prepare packet, `0x10` is the send
+packet, and `0x16` is a two-byte control packet.
 
 For a repeatable gameplay checkpoint, schedule a state and screenshot after
 the scripted input has had time to enter the game:

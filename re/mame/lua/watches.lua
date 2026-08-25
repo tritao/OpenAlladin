@@ -144,6 +144,19 @@ return function(options)
             "frame > 10",
             "printf \"OPENALADDIN_AUDIO_MAILBOX ADDR=%08X DATA=%08X PC=%08X FRAME=%08X D0=%08X A0=%08X\\n\",wpaddr,wpdata,pc,frame,d0,a0 ; g")
 
+        -- The cursor above indexes the 64-byte sound command queue at
+        -- $A01B40. The command helpers write a marker and one or more
+        -- operands into that queue before publishing the updated cursor.
+        -- Watch the queue itself so the native decoder can recover packet
+        -- boundaries instead of inferring them from cursor changes alone.
+        cpu.debug:wpset(
+            space,
+            "w",
+            0x00A01B40,
+            0x40,
+            "frame > 10",
+            "printf \"OPENALADDIN_AUDIO_MAILBOX_DATA ADDR=%08X DATA=%08X PC=%08X FRAME=%08X D0=%08X D1=%08X A0=%08X A1=%08X\\n\",wpaddr,wpdata,pc,frame,d0,d1,a0,a1 ; g")
+
         if trace_audio_mailbox_reads then
             local read_frames = os.getenv("OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES") or ""
             if read_frames == "" then

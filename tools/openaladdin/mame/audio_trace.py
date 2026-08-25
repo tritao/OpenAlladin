@@ -22,6 +22,13 @@ MAILBOX_RE = re.compile(
     r"FRAME=(?P<frame>[0-9A-Fa-f]+) D0=(?P<d0>[0-9A-Fa-f]+) "
     r"A0=(?P<a0>[0-9A-Fa-f]+)"
 )
+MAILBOX_DATA_RE = re.compile(
+    r"OPENALADDIN_AUDIO_MAILBOX_DATA ADDR=(?P<address>[0-9A-Fa-f]+) "
+    r"DATA=(?P<data>[0-9A-Fa-f]+) PC=(?P<pc>[0-9A-Fa-f]+) "
+    r"FRAME=(?P<frame>[0-9A-Fa-f]+) D0=(?P<d0>[0-9A-Fa-f]+) "
+    r"D1=(?P<d1>[0-9A-Fa-f]+) A0=(?P<a0>[0-9A-Fa-f]+) "
+    r"A1=(?P<a1>[0-9A-Fa-f]+)"
+)
 MAILBOX_READ_RE = re.compile(
     r"OPENALADDIN_AUDIO_MAILBOX_READ ADDR=(?P<address>[0-9A-Fa-f]+) "
     r"DATA=(?P<data>[0-9A-Fa-f]+) VISIBLE_PC=(?P<visible_pc>[0-9A-Fa-f]+) "
@@ -34,6 +41,15 @@ DISPATCH_RE = re.compile(
     r"A0=(?P<a0>[0-9A-Fa-f]+) A1=(?P<a1>[0-9A-Fa-f]+) "
     r"A2=(?P<a2>[0-9A-Fa-f]+)"
 )
+
+
+QUEUE_BASE = 0xA01B40
+QUEUE_SIZE = 0x40
+QUEUE_PACKET_OPCODES = {
+    0x10: "send",
+    0x12: "prepare",
+    0x16: "control_no_id",
+}
 
 
 def read_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -98,6 +114,89 @@ def read_mailbox(path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def read_mailbox_data(path: Path) -> list[dict[str, Any]]:
+    if not path.is_file():
+        return []
+    records = []
+    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        match = MAILBOX_DATA_RE.search(line)
+        if not match:
+            continue
+        records.append({
+            "type": "sound_mailbox_data",
+            "kind": "z80_ram",
+            "source": "maincpu",
+            "address": int(match.group("address"), 16),
+            "offset": int(match.group("address"), 16) - 0xA00000,
+            "data": int(match.group("data"), 16),
+            "byte": int(match.group("data"), 16) & 0xff,
+            "pc": int(match.group("pc"), 16),
+            "frame": int(match.group("frame"), 16),
+            "d0": int(match.group("d0"), 16),
+            "d1": int(match.group("d1"), 16),
+            "a0": int(match.group("a0"), 16),
+            "a1": int(match.group("a1"), 16),
+            "line": line_number,
+            "raw": line,
+        })
+    return records
+
+
+def next_queue_address(address: int) -> int:
+    offset = (address - QUEUE_BASE + 1) & (QUEUE_SIZE - 1)
+    return QUEUE_BASE + offset
+
+
+def decode_mailbox_packets(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Decode the observed FF/opcode/id records emitted by the 68K queue helpers."""
+    packets = []
+    index = 0
+    while index + 1 < len(records):
+        marker = records[index]
+        opcode = records[index + 1]
+        adjacent = (
+            marker.get("byte") == 0xFF
+            and opcode.get("address") == next_queue_address(marker["address"])
+        )
+        if adjacent and opcode["byte"] == 0x16:
+            packets.append({
+                "type": "sound_mailbox_packet",
+                "frame": marker["frame"],
+                "address": marker["address"],
+                "offset": marker["address"] - QUEUE_BASE,
+                "marker": marker["byte"],
+                "opcode": opcode["byte"],
+                "opcode_name": QUEUE_PACKET_OPCODES[opcode["byte"]],
+                "command_id": None,
+                "bytes": [marker["byte"], opcode["byte"]],
+                "pc": marker["pc"],
+                "write_lines": [marker["line"], opcode["line"]],
+            })
+            index += 2
+        elif adjacent and index + 2 < len(records):
+            command = records[index + 2]
+            if command.get("address") != next_queue_address(opcode["address"]):
+                index += 1
+                continue
+            packets.append({
+                "type": "sound_mailbox_packet",
+                "frame": marker["frame"],
+                "address": marker["address"],
+                "offset": marker["address"] - QUEUE_BASE,
+                "marker": marker["byte"],
+                "opcode": opcode["byte"],
+                "opcode_name": QUEUE_PACKET_OPCODES.get(opcode["byte"], "unknown"),
+                "command_id": command["byte"],
+                "bytes": [marker["byte"], opcode["byte"], command["byte"]],
+                "pc": marker["pc"],
+                "write_lines": [marker["line"], opcode["line"], command["line"]],
+            })
+            index += 3
+        else:
+            index += 1
+    return packets
+
+
 def read_dispatches(path: Path) -> list[dict[str, Any]]:
     if not path.is_file():
         return []
@@ -148,6 +247,8 @@ def summarize(trace_dir: Path) -> dict[str, Any]:
     mailbox = read_jsonl(trace_dir / "sound_mailbox.jsonl")
     if not mailbox or any("kind" not in record or "source" not in record for record in mailbox):
         mailbox = read_mailbox(trace_dir / "debug.log")
+    mailbox_data = read_mailbox_data(trace_dir / "debug.log")
+    mailbox_packets = decode_mailbox_packets(mailbox_data)
     commands = read_commands(trace_dir / "debug.log")
     dispatches = read_dispatches(trace_dir / "debug.log")
     mailbox_reads = read_mailbox_reads(trace_dir / "debug.log")
@@ -171,6 +272,13 @@ def summarize(trace_dir: Path) -> dict[str, Any]:
     )
     mailbox_kinds = Counter(str(record.get("kind", "unknown")) for record in mailbox)
     mailbox_sources = Counter(str(record.get("source", "unknown")) for record in mailbox)
+    mailbox_data_addresses = Counter(f"{int(record['address']):08X}" for record in mailbox_data)
+    mailbox_packet_opcodes = Counter(f"{int(record['opcode']):02X}" for record in mailbox_packets)
+    mailbox_packet_ids = Counter(
+        f"{int(record['command_id']):02X}"
+        for record in mailbox_packets
+        if record.get("command_id") is not None
+    )
     mailbox_read_addresses = Counter(f"{int(record['address']):04X}" for record in mailbox_reads)
 
     return {
@@ -178,6 +286,8 @@ def summarize(trace_dir: Path) -> dict[str, Any]:
         "trace_dir": str(trace_dir),
         "sound_writes": writes,
         "sound_mailbox": mailbox,
+        "sound_mailbox_data": mailbox_data,
+        "sound_mailbox_packets": mailbox_packets,
         "sound_mailbox_reads": mailbox_reads,
         "commands": commands,
         "dispatches": dispatches,
@@ -189,6 +299,11 @@ def summarize(trace_dir: Path) -> dict[str, Any]:
             "sound_mailbox_count": len(mailbox),
             "sound_mailbox_kinds": dict(sorted(mailbox_kinds.items())),
             "sound_mailbox_sources": dict(sorted(mailbox_sources.items())),
+            "sound_mailbox_data_count": len(mailbox_data),
+            "sound_mailbox_data_addresses": dict(sorted(mailbox_data_addresses.items())),
+            "sound_mailbox_packet_count": len(mailbox_packets),
+            "sound_mailbox_packet_opcodes": dict(sorted(mailbox_packet_opcodes.items())),
+            "sound_mailbox_packet_ids": dict(sorted(mailbox_packet_ids.items())),
             "sound_mailbox_read_count": len(mailbox_reads),
             "sound_mailbox_read_addresses": dict(sorted(mailbox_read_addresses.items())),
             "command_count": len(commands),
@@ -222,6 +337,8 @@ def main() -> int:
     print(f"audio commands: {report['summary']['command_count']}")
     print(f"audio dispatches: {report['summary']['dispatch_count']}")
     print(f"audio mailbox writes: {report['summary']['sound_mailbox_count']}")
+    print(f"audio mailbox data writes: {report['summary']['sound_mailbox_data_count']}")
+    print(f"audio mailbox packets: {report['summary']['sound_mailbox_packet_count']}")
     print(f"summary: {output}")
     return 0
 

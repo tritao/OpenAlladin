@@ -18,6 +18,24 @@
   confidence: confirmed
   description: Z80 bus request register
 
+0xA00036:
+  name: Z80_SOUND_QUEUE_CURSOR
+  type: u8
+  confidence: confirmed
+  description: 64-byte Z80 sound-command queue cursor updated by the 68000 audio send helpers.
+  evidence:
+    - ghidra_audio_queue_decompile
+    - mame_audio_mailbox_queue_trace
+
+0xA01B40:
+  name: Z80_SOUND_COMMAND_QUEUE
+  type: u8[64]
+  confidence: confirmed
+  description: Shared Z80 sound-command ring buffer. Entries begin with 0xFF, followed by a queue opcode and an 8-bit sound command ID.
+  evidence:
+    - ghidra_audio_queue_decompile
+    - mame_audio_mailbox_queue_trace
+
 0xA11200:
   name: Z80_RESET
   type: u16

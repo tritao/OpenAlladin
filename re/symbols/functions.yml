@@ -392,6 +392,62 @@
   evidence:
     - ghidra_actor_cleanup_001AE372
     - mame_guard_sword_hit_trace
+
+0x001E57AC:
+  name: Audio_QueueBegin
+  confidence: confirmed
+  description: Acquires the Z80 bus, prepares the shared sound-command cursor at 0x00A00036 and the 64-byte queue at 0x00A01B40, then leaves the protected queue transaction ready for a packet write.
+  evidence:
+    - ghidra_audio_queue_decompile
+    - mame_audio_mailbox_queue_trace
+
+0x001E57E2:
+  name: Audio_QueueEnd
+  confidence: confirmed
+  description: Releases the Z80 bus and restores the saved 68000 status/register frame after a sound-command queue transaction.
+  evidence:
+    - ghidra_audio_queue_decompile
+
+0x001E57F4:
+  name: Audio_QueueWriteMarker
+  confidence: confirmed
+  description: Writes the 0xFF packet marker and a data byte into the shared 64-byte sound-command queue, advancing the masked queue cursor.
+  evidence:
+    - ghidra_audio_queue_decompile
+    - mame_audio_mailbox_queue_trace
+
+0x001E5800:
+  name: Audio_QueueWriteByte
+  confidence: confirmed
+  description: Writes one data byte into the shared sound-command queue and advances the masked queue cursor.
+  evidence:
+    - ghidra_audio_queue_decompile
+    - mame_audio_mailbox_queue_trace
+
+0x001E589A:
+  name: Audio_SendCommand
+  confidence: confirmed
+  description: Queues a three-byte sound packet with opcode 0x10 and the command ID supplied in the caller frame.
+  evidence:
+    - ghidra_audio_queue_decompile
+    - mame_audio_mailbox_queue_trace
+
+0x001E58B8:
+  name: Audio_PrepareCommand
+  confidence: confirmed
+  description: Queues a three-byte sound packet with opcode 0x12 and the command ID supplied in the caller frame.
+  evidence:
+    - ghidra_audio_queue_decompile
+    - mame_audio_mailbox_queue_trace
+
+0x001E58F4:
+  name: Audio_QueueControlCommand
+  confidence: confirmed
+  description: Queues the two-byte 0xFF,0x16 sound control packet without an additional command ID.
+  evidence:
+    - ghidra_audio_queue_decompile
+    - mame_audio_mailbox_queue_trace
+
 0x001B3416:
   name: RNC_To_VDP_Loader
   confidence: confirmed
