@@ -61,7 +61,24 @@
       },
       "description": "A timed jump to the left dismounts from the upper rope stop onto the upper platform. A symmetric jump to the right falls into the lower band."
     },
+    "upper_platform_probe": {
+      "trace": "build/re/codex-upper-platform-bounce-probe-20260825",
+      "nearby_actor": {
+        "slot": 20,
+        "type": "0x36",
+        "world": [2016, 688],
+        "observed_effect": "The actor disappears when approached; PLAYER_VY follows the ordinary jump sequence and does not receive the bounce impulse."
+      },
+      "jump_timing_sweep": {
+        "trace": "build/re/codex-upper-platform-rope-timing-20260825",
+        "input_shape": "right*N,c+right*3,right*70,none*50",
+        "N": "30..62 step 2",
+        "furthest_world_x": 2176,
+        "scene_state_08_observed": false,
+        "description": "All tested timings either stop at the rope around X=2104 or fall to the lower floor around X=2176; none reaches the forward upper edge."
+      }
+    },
     "unresolved": "The transfer returns to the already-known upper platform; the forward path beyond that platform still reaches the non-landing upper edge rather than the scene transition corridor."
   },
-  "next_action": "Use the rope-top state as the next controlled experiment: test dismount timing and nearby handhold/platform collision while watching PLAYER_WORLD_X/Y, terrain behavior, and scene gates."
+  "next_action": "Search the earlier bounce/handhold branch around world X 0x0540-0x0678; this rope/upper-platform branch is locally exhausted without reaching the forward scene-transition corridor."
 }
