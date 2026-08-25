@@ -292,6 +292,7 @@ void Engine::reset() {
     player_.terrain_behavior = initial_cell.valid ? initial_cell.behavior : 0;
     player_.terrain_landing_state = player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
+    last_ground_direction_ = 0;
     quit_ = false;
 }
 
@@ -429,14 +430,19 @@ void Engine::resolve_terrain(int previous_world_y) {
     const bool has_handler = cell->valid && cell->behavior != 0
         && (cell->handler != kTerrainNoOpHandler || cell->behavior == 0x11);
     if (!has_handler) {
-        player_.grounded = false;
+        // A zero-behavior cell is a no-op for the current terrain state. In
+        // particular, the ROM does not turn a grounded player airborne merely
+        // because the resolved row has no handler; the landing flag remains
+        // latched until an actual vertical transition changes it.
         return;
     }
 
     if (player_.vy >= 0) {
         player_.y = cell->row * 16 + kTerrainVisualOffsetY - camera_.y;
         player_.vy = 0;
-        player_.vx = 0;
+        if (!player_.grounded || player_.vx == 0) {
+            player_.vx = 0;
+        }
         player_.grounded = true;
         player_.terrain_landing_state = 1;
         player_.terrain_vertical_stop = 0;
@@ -514,7 +520,6 @@ bool Engine::terrain_side_blocked(int direction) const {
 void Engine::apply_ground_movement(const InputState& input) {
     const int direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
     if (direction == 0) {
-        player_.vx = 0;
         return;
     }
 
@@ -543,14 +548,12 @@ bool Engine::rebase_camera_reference() {
             camera_.scroll_left_pending = false;
             camera_.scroll_right_pending = false;
             reference_rebased = true;
-            camera_.horizontal_rebase_followup = true;
         } else if (camera_.scroll_x < -0x0F) {
             camera_.scroll_x += 0x10;
             camera_.reference_x -= 0x10;
             camera_.scroll_left_pending = false;
             camera_.scroll_right_pending = false;
             reference_rebased = true;
-            camera_.horizontal_rebase_followup = true;
         }
     }
     if (camera_.scroll_up_pending || camera_.scroll_down_pending) {
@@ -684,9 +687,11 @@ void Engine::update(const InputState& input) {
         ++frame_;
         return;
     }
-    const bool reference_rebased = rebase_camera_reference();
     update_terrain_input(input);
     const bool was_grounded = player_.grounded;
+    const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+    const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
+        && last_ground_direction_ != 0 && player_.vx == 0;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
     const bool start_jump = input.jump_pressed && was_grounded;
 
@@ -698,11 +703,7 @@ void Engine::update(const InputState& input) {
                 camera_.update_delay = 7;
             }
         }
-        if (!reference_rebased) {
-            apply_ground_movement(input);
-        } else {
-            player_.vx = 0;
-        }
+        apply_ground_movement(input);
     } else if (input.left && !input.right) {
         player_.vx = player_.vx >= 0 ? static_cast<std::int16_t>(-0x300)
                                      : std::max<std::int16_t>(player_.vx, -0x300);
@@ -743,28 +744,23 @@ void Engine::update(const InputState& input) {
         camera_.vertical_threshold = 0x170;
         camera_.update_delay = 7;
     }
-    if (!reference_rebased) {
-        const int camera_x_before_follow = camera_.x;
-        update_camera();
-        if (camera_.horizontal_rebase_followup) {
-            // After a horizontal 16-pixel reference rebase, the tile-update
-            // dispatcher performs one deferred three-pixel ground step on
-            // the next frame. Camera_UpdateFollow has already consumed the
-            // same dampening delta for this frame, so preserve that split:
-            // the remaining local movement is (3 - |delta|), and the camera
-            // consumes the matching |delta|. This is why the ROM exposes
-            // local +1/camera +2 at one rebase and local +0/camera +3 at the
-            // next; the result is always another three world pixels.
-            const int camera_delta = camera_.x - camera_x_before_follow;
-            const int direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
-            const int camera_step = std::abs(camera_delta);
-            if (direction != 0) {
-                player_.x += direction * std::max(0, 3 - camera_step);
-                camera_.x += direction * camera_step;
-                camera_.scroll_x += direction * camera_step;
-            }
-            camera_.horizontal_rebase_followup = false;
-        }
+    // The ROM updates the follow camera before the tile-update dispatcher
+    // consumes a pending 16-pixel reference shift. Keeping the rebase at the
+    // end of the frame makes the externally visible state match that order:
+    // local movement, damped camera movement, then reference/scroll repair.
+    update_camera();
+    rebase_camera_reference();
+    if (ground_release) {
+        // The first no-input frame enters the ROM's inertial ground path after
+        // the position/camera work. The exposed velocity is 0x038C (or its
+        // signed mirror), then the normal integrator decays it by 0x28.
+        player_.vx = static_cast<std::int16_t>(last_ground_direction_ * 0x038C);
+        last_ground_direction_ = 0;
+    }
+    if (was_grounded && player_.grounded && input_direction != 0) {
+        last_ground_direction_ = input_direction;
+    } else if (!player_.grounded) {
+        last_ground_direction_ = 0;
     }
     ++frame_;
 }

@@ -61,7 +61,7 @@ MAME_ARGS=(
     -nothrottle
 )
 
-if [[ "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" || "${OPENALADDIN_TRACE_RNC_LOADS:-0}" == "1" ]]; then
+if [[ "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" || "${OPENALADDIN_TRACE_RNC_LOADS:-0}" == "1" ]]; then
     MAME_ARGS+=(
         -debug
         -debugscript "${ROOT_DIR}/re/mame/lua/continue-debugger.txt"
@@ -79,6 +79,10 @@ fi
 
 if [[ "${HEADLESS}" == "1" ]]; then
     MAME_ARGS+=( -nowindow )
+fi
+
+if [[ "${OPENALADDIN_STATE_SYNC:-0}" == "1" ]]; then
+    cd "${TRACE_DIR}"
 fi
 
 if [[ -n "${LOAD_STATE}" ]]; then

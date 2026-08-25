@@ -4,6 +4,12 @@
 #   name: Actor_ApplyHorizontalMovement
 #   confidence: provisional
 #   evidence: [mame_trace_run_right]
+0x001A8C16:
+  name: Game_FrameUpdateLoop
+  confidence: confirmed
+  description: Stable entry point for the game's per-frame update loop; the debugger state synchronizer samples player and camera RAM here before the next frame's gameplay work.
+  evidence:
+    - mame_player_run_frame_boundary_trace
 0x001A8E3E:
   name: SceneScript_AdvanceState
   confidence: probable

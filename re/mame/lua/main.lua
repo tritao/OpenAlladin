@@ -51,6 +51,7 @@ if capture_profile ~= "state" and capture_profile ~= "ram"
 end
 local capture_ram = capture_profile == "ram" or capture_profile == "full"
 local capture_vdp = capture_profile == "vdp" or capture_profile == "full"
+local state_sync = os.getenv("OPENALADDIN_STATE_SYNC") == "1"
 
 local state_output = capture_profile == "state" or os.getenv("OPENALADDIN_STATE_OUTPUT") == "1"
 local capture_streams = dofile(root .. "/re/mame/lua/capture.lua")({
@@ -258,7 +259,10 @@ local function input_fields_json()
     return input.fields_json()
 end
 
-local function capture(frame, input_token)
+local function capture(frame, input_token, emit_state)
+    if emit_state == nil then
+        emit_state = true
+    end
     if trace_scene_states then
         local value = read_u8(scene_state_address)
         if value ~= scene_state_last then
@@ -292,7 +296,7 @@ local function capture(frame, input_token)
         { "terrain", terrain_runtime_json() },
         { "vdp", vdp_state_json() }
     })
-    if state then
+    if state and emit_state then
         local actors = {}
         for slot = 0, actor_slot_count - 1 do
             local record = actor_table_base + slot * actor_stride
@@ -347,6 +351,43 @@ local function capture(frame, input_token)
             { "actors", json_array(actors) }
         })
     end
+end
+
+-- frame_done runs at the video boundary, which can interrupt the 68000 in
+-- the middle of Player_Update/Camera_UpdateFollow. In synchronized mode the
+-- debugger records the semantic RAM state at the game's update-loop boundary;
+-- tools/oa.py folds those records back into state.jsonl after MAME exits.
+if state_sync then
+    if not cpu.debug then
+        error("OPENALADDIN_STATE_SYNC requires MAME debugger support")
+    end
+    local function sync_memory(width, name)
+        return string.format(":maincpu.%s@$%06X", width, symbol(name))
+    end
+    local sync_action = string.format(
+        "printf \"OPENALADDIN_SYNC frame=%%d pc=%%08X x=%%04X y=%%04X wx=%%04X wy=%%04X vx=%%04X vy=%%04X grounded=%%02X camx=%%04X camy=%%04X refx=%%04X refy=%%04X sx=%%04X sy=%%04X thx=%%04X thy=%%04X delay=%%02X special=%%02X\\n\",frame,pc,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s ; g",
+        sync_memory("w", "PLAYER_X"),
+        sync_memory("w", "PLAYER_Y"),
+        sync_memory("w", "PLAYER_WORLD_X"),
+        sync_memory("w", "PLAYER_WORLD_Y"),
+        sync_memory("w", "PLAYER_VX"),
+        sync_memory("w", "PLAYER_VY"),
+        sync_memory("b", "TERRAIN_LANDING_STATE"),
+        sync_memory("w", "WORLD_CAMERA_X"),
+        sync_memory("w", "WORLD_CAMERA_Y"),
+        sync_memory("w", "CAMERA_REFERENCE_X"),
+        sync_memory("w", "CAMERA_REFERENCE_Y"),
+        sync_memory("w", "CAMERA_SCROLL_X"),
+        sync_memory("w", "CAMERA_SCROLL_Y"),
+        sync_memory("w", "CAMERA_HORIZONTAL_THRESHOLD"),
+        sync_memory("w", "CAMERA_VERTICAL_THRESHOLD"),
+        sync_memory("b", "CAMERA_UPDATE_DELAY"),
+        sync_memory("b", "CAMERA_SPECIAL_MODE")
+    )
+    cpu.debug:bpset(
+        symbol("Game_FrameUpdateLoop"),
+        "",
+        sync_action)
 end
 
 local function capture_artifacts(frame)
@@ -625,7 +666,7 @@ actors.inject(0)
 if preload_state == "" then
     apply_memory_pokes(0)
 end
-capture(0, apply_input(0))
+capture(0, apply_input(0), true)
 capture_artifacts(0)
 
 emu.register_frame_done(function ()
@@ -644,7 +685,7 @@ emu.register_frame_done(function ()
     end
     actors.inject(current_frame)
     apply_memory_pokes(current_frame)
-    capture(current_frame, apply_input(current_frame))
+    capture(current_frame, apply_input(current_frame), not state_sync)
     capture_artifacts(current_frame)
 
     if current_frame == frame_limit then

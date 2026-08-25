@@ -242,6 +242,7 @@ def command_trace(args: argparse.Namespace) -> int:
         "OPENALADDIN_LOAD_STATE",
         "OPENALADDIN_CAPTURE_VDP",
         "OPENALADDIN_EXPERIMENT_ACTIONS",
+        "OPENALADDIN_STATE_SYNC",
     ):
         environment.pop(key, None)
     environment.update({
@@ -267,9 +268,14 @@ def command_trace(args: argparse.Namespace) -> int:
         environment["OPENALADDIN_LOAD_STATE"] = args.load_state
     if args.capture_vdp is not None:
         environment["OPENALADDIN_CAPTURE_VDP"] = "1" if args.capture_vdp else "0"
+    if args.state_sync:
+        environment["OPENALADDIN_STATE_SYNC"] = "1"
+        environment["OPENALADDIN_STATE_OUTPUT"] = "1"
 
     status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
     if status == 0:
+        if args.state_sync:
+            synchronize_state_trace(trace_dir)
         print(f"trace: {trace_dir}")
         if args.state_output:
             print(f"state: {trace_dir / 'state.jsonl'}")
@@ -299,6 +305,156 @@ def load_state_trace(path: Path) -> tuple[dict[str, Any], dict[int, dict[str, An
     if not states:
         raise SystemExit(f"{path}: state trace has no state records")
     return header, states, markers
+
+
+SYNC_PATTERN = re.compile(
+    r"OPENALADDIN_SYNC frame=(?P<frame>\d+) pc=(?P<pc>[0-9A-F]+) "
+    r"x=(?P<x>[0-9A-F]+) y=(?P<y>[0-9A-F]+) "
+    r"wx=(?P<world_x>[0-9A-F]+) wy=(?P<world_y>[0-9A-F]+) "
+    r"vx=(?P<vx>[0-9A-F]+) vy=(?P<vy>[0-9A-F]+) "
+    r"grounded=(?P<grounded>[0-9A-F]+) "
+    r"camx=(?P<camera_x>[0-9A-F]+) camy=(?P<camera_y>[0-9A-F]+) "
+    r"refx=(?P<reference_x>[0-9A-F]+) refy=(?P<reference_y>[0-9A-F]+) "
+    r"sx=(?P<scroll_x>[0-9A-F]+) sy=(?P<scroll_y>[0-9A-F]+) "
+    r"thx=(?P<horizontal_threshold>[0-9A-F]+) "
+    r"thy=(?P<vertical_threshold>[0-9A-F]+) "
+    r"delay=(?P<update_delay>[0-9A-F]+) special=(?P<special_mode>[0-9A-F]+)"
+)
+
+
+def _signed_u16(value: int) -> int:
+    return value - 0x10000 if value & 0x8000 else value
+
+
+def _sync_record(match: re.Match[str]) -> dict[str, int]:
+    values = {
+        name: int(value, 10 if name == "frame" else 16)
+        for name, value in match.groupdict().items()
+    }
+    values["vx"] = _signed_u16(values["vx"])
+    values["vy"] = _signed_u16(values["vy"])
+    values["scroll_x"] = _signed_u16(values["scroll_x"])
+    values["scroll_y"] = _signed_u16(values["scroll_y"])
+    return values
+
+
+def synchronize_state_trace(trace_dir: Path) -> int:
+    """Replace video-boundary state samples with stable game-loop samples.
+
+    MAME's frame_done callback is tied to the video device, not the game's
+    update loop. It can therefore observe player/camera RAM between two
+    instructions. The debugger breakpoint is placed at the start of the
+    game's per-frame update and reports the completed state for the following
+    trace frame. The +1 mapping below is intentional and is part of the
+    openaladdin-frame-state-v1 capture contract.
+    """
+
+    state_path = trace_dir / "state.jsonl"
+    debug_path = trace_dir / "debug.log"
+    frame_trace_path = trace_dir / "trace_boot.jsonl"
+    if not state_path.is_file():
+        raise SystemExit(f"{state_path}: synchronized capture has no state trace")
+    if not debug_path.is_file():
+        raise SystemExit(f"{debug_path}: synchronized capture has no MAME debugger log")
+
+    records: list[dict[str, Any]] = []
+    header: dict[str, Any] | None = None
+    states: dict[int, dict[str, Any]] = {}
+    for line_number, line in enumerate(state_path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError as error:
+            raise SystemExit(f"{state_path}:{line_number}: invalid JSON: {error}") from error
+        records.append(record)
+        if record.get("type") == "header":
+            header = record
+        elif record.get("type") in (None, "state", "frame_state") and "frame" in record:
+            states[int(record["frame"])] = record
+    if header is None:
+        raise SystemExit(f"{state_path}: synchronized capture has no state header")
+
+    frame_metadata: dict[int, dict[str, Any]] = {}
+    if frame_trace_path.is_file():
+        for line_number, line in enumerate(frame_trace_path.read_text(encoding="utf-8").splitlines(), 1):
+            if not line.strip():
+                continue
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError as error:
+                raise SystemExit(f"{frame_trace_path}:{line_number}: invalid JSON: {error}") from error
+            if record.get("type") == "frame" and "frame" in record:
+                frame_metadata[int(record["frame"])] = record
+
+    synchronized: dict[int, dict[str, int]] = {}
+    for line in debug_path.read_text(encoding="utf-8").splitlines():
+        match = SYNC_PATTERN.search(line)
+        if match:
+            parsed = _sync_record(match)
+            synchronized[parsed["frame"] + 1] = parsed
+    if not synchronized:
+        raise SystemExit(f"{debug_path}: no OPENALADDIN_SYNC records found")
+
+    all_frames = set(states)
+    all_frames.update(synchronized)
+    for frame in sorted(synchronized):
+        sync = synchronized[frame]
+        previous = max((candidate for candidate in states if candidate < frame), default=None)
+        base = states.get(frame) or states.get(previous or 0)
+        if base is None:
+            raise SystemExit(f"{state_path}: cannot construct synchronized frame {frame}")
+        record = json.loads(json.dumps(base))
+        record["type"] = "state"
+        record["frame"] = frame
+
+        metadata = frame_metadata.get(frame)
+        if metadata is not None:
+            if "input" in metadata:
+                record["input"] = metadata["input"]
+            if isinstance(metadata.get("scene"), dict):
+                record["scene"] = metadata["scene"]
+            if isinstance(metadata.get("terrain"), dict):
+                record["terrain"] = metadata["terrain"]
+
+        player = record.setdefault("player", {})
+        for name in ("x", "y", "world_x", "world_y", "vx", "vy"):
+            player[name] = sync[name]
+        # Lua's canonical state schema treats TERRAIN_LANDING_STATE == 1 as
+        # grounded.  0xFF is the active response latch during the jump
+        # transition, not the externally reported grounded boolean.
+        player["grounded"] = sync["grounded"] == 1
+
+        camera = record.setdefault("camera", {})
+        for name in (
+            "camera_x",
+            "camera_y",
+            "reference_x",
+            "reference_y",
+            "scroll_x",
+            "scroll_y",
+            "horizontal_threshold",
+            "vertical_threshold",
+            "update_delay",
+            "special_mode",
+        ):
+            camera[name.removeprefix("camera_")] = sync[name]
+        camera["state_08"] = sync["special_mode"] != 0
+        states[frame] = record
+
+    # Keep the header and marker records, but emit the completed state stream
+    # in frame order so downstream tools do not need to know how the debugger
+    # records were merged.
+    markers = [record for record in records if record.get("type") == "marker"]
+    with state_path.open("w", encoding="utf-8") as output:
+        output.write(json.dumps(header, separators=(",", ":")) + "\n")
+        for frame in sorted(all_frames | set(states)):
+            if frame in states:
+                output.write(json.dumps(states[frame], separators=(",", ":")) + "\n")
+            for marker in markers:
+                if int(marker.get("frame", -1)) == frame:
+                    output.write(json.dumps(marker, separators=(",", ":")) + "\n")
+    return len(synchronized)
 
 
 def aligned_trace(
@@ -386,14 +542,20 @@ def command_regression(args: argparse.Namespace) -> int:
         "OPENALADDIN_LOAD_STATE",
         "OPENALADDIN_CAPTURE_VDP",
         "OPENALADDIN_EXPERIMENT_ACTIONS",
+        "OPENALADDIN_STATE_SYNC",
     ):
         environment.pop(key, None)
+    state_sync = os.environ.get("OPENALADDIN_STATE_SYNC", "1") == "1"
     environment.update({
         "OPENALADDIN_TRACE_DIR": str(mame_trace),
-        "OPENALADDIN_TRACE_FRAMES": str(frame_limit),
+        # The synchronized breakpoint reports the state for the following
+        # frame, so capture one extra frame to cover the requested endpoint.
+        "OPENALADDIN_TRACE_FRAMES": str(frame_limit + 1 if state_sync else frame_limit),
         "OPENALADDIN_CAPTURE": "state",
         "OPENALADDIN_ROM_SHA256": hashes(rom)["sha256"],
     })
+    if state_sync:
+        environment["OPENALADDIN_STATE_SYNC"] = "1"
     protocol = experiment_action_protocol(experiment)
     if protocol:
         environment["OPENALADDIN_EXPERIMENT_ACTIONS"] = protocol
@@ -402,6 +564,8 @@ def command_regression(args: argparse.Namespace) -> int:
     status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
     if status:
         return status
+    if state_sync:
+        synchronize_state_trace(mame_trace)
 
     mame_source = mame_trace / "state.jsonl"
     compare_frames, checkpoint_frame, checkpoint = aligned_trace(mame_source, aligned, marker_name, fields)
@@ -699,6 +863,7 @@ def build_parser() -> argparse.ArgumentParser:
     trace.add_argument("--actors", action="store_true")
     trace.add_argument("--load-state")
     trace.add_argument("--capture-vdp", action=argparse.BooleanOptionalAction, default=None)
+    trace.add_argument("--state-sync", action="store_true", help="sample state at the stable game-loop boundary")
     trace.set_defaults(function=command_trace)
 
     regression = commands.add_parser("regression", help="differentially compare MAME and native gameplay")

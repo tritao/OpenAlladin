@@ -46,8 +46,9 @@ def main() -> int:
     assert states[1]["camera"]["horizontal_threshold"] == 112
     assert states[1]["camera"]["update_delay"] == 6
     assert states[13]["camera"]["x"] == 17
-    assert states[25]["camera"]["reference_x"] == 32
-    assert states[25]["camera"]["scroll_x"] == 0
+    assert states[24]["camera"]["reference_x"] == 32
+    assert states[24]["camera"]["scroll_x"] == 0
+    assert states[25]["camera"]["x"] == 34
     assert states[26]["camera"]["x"] == 36
     assert states[26]["player"]["x"] == 145
     assert states[30]["camera"]["x"] == 45

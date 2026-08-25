@@ -44,9 +44,6 @@ struct CameraState {
     bool scroll_right_pending = false;
     bool scroll_up_pending = false;
     bool scroll_down_pending = false;
-    // The ROM's tile-update path applies one extra horizontal follow step on
-    // the frame immediately after a 16-pixel reference rebase.
-    bool horizontal_rebase_followup = false;
 };
 
 struct PlayerState {
@@ -203,6 +200,7 @@ private:
     PlayerState player_;
     CameraState camera_;
     int frame_ = 0;
+    int last_ground_direction_ = 0;
     bool quit_ = false;
     std::vector<std::uint32_t> framebuffer_;
     SDL_Texture* texture_ = nullptr;
