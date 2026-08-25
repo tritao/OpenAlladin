@@ -349,6 +349,10 @@ local function capture(frame, input_token, emit_state)
                 { "animation_timer", tostring(read_u8(symbol("PLAYER_ANIMATION_TIMER"))) },
                 { "actor_flags", tostring(read_u8(symbol("PLAYER_ACTOR_FLAGS"))) },
                 { "actor_flag_bit5", json_bool((read_u8(symbol("PLAYER_ACTOR_FLAGS")) & 0x20) ~= 0) },
+                -- Player_Update arms FFEFFF with the ten-frame action delay
+                -- when the sword selector chooses PLAYER_ANIM_SWORD.
+                { "attack_timer", tostring(read_u8(symbol("PLAYER_INTERACTION_PENDING"))) },
+                { "attack_active", json_bool(read_u8(symbol("PLAYER_INTERACTION_PENDING")) ~= 0) },
                 -- TERRAIN_LANDING_STATE is the ROM's explicit grounded/landing
                 -- state. PLAYER_VY can be zero during an airborne vertical
                 -- stop, so it is not a safe grounded predicate.

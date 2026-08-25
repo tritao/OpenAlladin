@@ -76,6 +76,8 @@ void apply_scheduled_token(const std::string& token, openaladdin::InputState& in
             input.left = true;
         } else if (part == "right") {
             input.right = true;
+        } else if (part == "a" || part == "attack") {
+            input.attack_pressed = true;
         } else if (part == "c" || part == "jump" || part == "space") {
             input.jump_pressed = true;
         }
@@ -258,6 +260,7 @@ int main(int argc, char** argv) {
         }
 
         bool previous_jump = false;
+        bool previous_attack = false;
         const std::vector<std::string> scheduled_inputs = split_schedule(options.input_schedule);
         int rendered_frames = 0;
         while (!engine.quit_requested() && (options.frames < 0 || rendered_frames < options.frames)) {
@@ -277,8 +280,11 @@ int main(int argc, char** argv) {
             input.left = keys[SDL_SCANCODE_LEFT] || keys[SDL_SCANCODE_A];
             input.right = keys[SDL_SCANCODE_RIGHT] || keys[SDL_SCANCODE_D];
             const bool jump = keys[SDL_SCANCODE_SPACE] || keys[SDL_SCANCODE_C];
+            const bool attack = keys[SDL_SCANCODE_X] || keys[SDL_SCANCODE_Z];
             input.jump_pressed = jump && !previous_jump;
+            input.attack_pressed = attack && !previous_attack;
             previous_jump = jump;
+            previous_attack = attack;
             std::string input_token;
 
             if (!options.input_schedule.empty()) {
@@ -301,6 +307,8 @@ int main(int argc, char** argv) {
                 input_token = "none";
                 if (input.jump_pressed) {
                     input_token = "jump";
+                } else if (input.attack_pressed) {
+                    input_token = "a";
                 } else if (input.left && !input.right) {
                     input_token = "left";
                 } else if (input.right && !input.left) {

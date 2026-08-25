@@ -1,0 +1,5 @@
+# openaladdin-actor-table-v1
+# Fixed level-01 guard collision fixture from the confirmed type-0x0A
+# player/actor dispatch at 0x001ABB40.
+# slot type x y movement_pc frame_ptr animation_pc flags
+5 0x0A 0x0530 0x0340 0x0 0x0 0x0012542A 0x0

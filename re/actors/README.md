@@ -18,6 +18,10 @@ The columns are `slot type x y movement_pc frame_ptr animation_pc flags`.
 The native runtime loads this file by default; use `--actor-records FILE` to
 select a different snapshot explicitly.
 
+The focused guard collision fixture is `guard-collision.tsv`. It contains the
+confirmed level-01 type-`0x0A` record at world `(0x0530, 0x0340)` and is used by
+`tests/native_actor_collision.py` to exercise the `0x0A -> 0x84` terminal path.
+
 For a frame-accurate replay slice, export a range from the same state trace:
 
 ```bash

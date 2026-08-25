@@ -758,6 +758,52 @@ def validate_knowledge(rom: Path) -> list[str]:
                     occupied[byte] = str((field or {}).get("name", raw_offset))
         except (OSError, TypeError, ValueError) as error:
             errors.append(f"{type_path.relative_to(ROOT)}: {error}")
+
+    for actor_path in sorted((ROOT / "re/actors").glob("*.tsv")):
+        current_frame: int | None = None
+        seen_slots: set[tuple[int | None, int]] = set()
+        records = 0
+        try:
+            for line_number, line in enumerate(actor_path.read_text(encoding="utf-8").splitlines(), 1):
+                stripped = line.strip()
+                if not stripped or stripped.startswith("#"):
+                    continue
+                fields = stripped.split()
+                if fields[0] == "@frame":
+                    if len(fields) != 2:
+                        errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: invalid frame marker")
+                        continue
+                    current_frame = int(fields[1], 0)
+                    continue
+                if len(fields) != 8:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: expected 8 actor fields")
+                    continue
+                if "timeline" in actor_path.name and current_frame is None:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: record precedes frame marker")
+                values = [int(value, 0) for value in fields]
+                slot, actor_type, x, y, movement_pc, frame_ptr, animation_pc, flags = values
+                if not 0 <= slot < 32:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: slot outside 0..31")
+                for name, value, maximum in (
+                    ("type", actor_type, 0xFF),
+                    ("x", x, 0xFFFF),
+                    ("y", y, 0xFFFF),
+                    ("movement_pc", movement_pc, 0xFFFFFF),
+                    ("frame_ptr", frame_ptr, 0xFFFFFF),
+                    ("animation_pc", animation_pc, 0xFFFFFF),
+                    ("flags", flags, 0xFF),
+                ):
+                    if not 0 <= value <= maximum:
+                        errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: {name} outside range")
+                key = (current_frame, slot)
+                if key in seen_slots:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: duplicate slot {slot}")
+                seen_slots.add(key)
+                records += 1
+            if records == 0:
+                errors.append(f"{actor_path.relative_to(ROOT)}: no actor records")
+        except (OSError, TypeError, ValueError) as error:
+            errors.append(f"{actor_path.relative_to(ROOT)}: {error}")
     return errors
 
 
@@ -866,6 +912,8 @@ def command_validate(args: argparse.Namespace) -> int:
             print(f"ERROR {error}")
         return 1
     print("validated symbols, types, and ROM identity")
+    actor_records = sorted((ROOT / "re/actors").glob("*.tsv"))
+    print(f"validated actor records: {len(actor_records)} files")
 
     if not args.skip_assets:
         status = run_tool("openaladdin/assets/validate.py", ["--assets", str(resolve(args.assets)), "--rom", str(rom)])

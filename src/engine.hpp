@@ -92,6 +92,7 @@ struct PlayerState {
     std::uint8_t terrain_state = 0;
     std::uint8_t terrain_response_latch = 0;
     std::uint8_t terrain_terminal_transition = 0;
+    std::uint8_t attack_timer = 0;
 };
 
 struct InputState {
@@ -100,6 +101,7 @@ struct InputState {
     bool left = false;
     bool right = false;
     bool jump_pressed = false;
+    bool attack_pressed = false;
 };
 
 struct ActorState {
@@ -110,6 +112,7 @@ struct ActorState {
     std::uint32_t frame_ptr = 0;
     std::uint32_t animation_pc = 0;
     std::uint8_t flags = 0;
+    std::uint8_t terminal_timer = 0;
 };
 
 class Level {

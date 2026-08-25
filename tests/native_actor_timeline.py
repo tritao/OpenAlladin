@@ -52,7 +52,10 @@ def main() -> int:
 
     native = load_states(OUTPUT)
     for relative in range(FRAME_COUNT + 1):
-        expected = source[SOURCE_START + relative]["actors"]
+        expected = [
+            {**actor, "terminal_timer": 0}
+            for actor in source[SOURCE_START + relative]["actors"]
+        ]
         actual = native[relative]["actors"]
         assert actual == expected, f"actor divergence at relative frame {relative}"
 

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -16,6 +17,11 @@ constexpr int kTerrainVisualOffsetY = 0xF0;
 constexpr int kTerrainContourRomOffset = 0x2FD2;
 constexpr int kTerrainContourRomSize = 0x1000;
 constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
+constexpr std::uint8_t kActorGuardType = 0x0A;
+constexpr std::uint8_t kActorTerminalType = 0x84;
+constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
+constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
+constexpr std::uint8_t kActorDeathFrames = 43;
 
 // Camera_UpdateFollow (0x001AA90C) indexes these fixed-ROM byte tables by
 // the absolute local-coordinate error. The horizontal table occupies ROM
@@ -541,6 +547,13 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
     const int world_y = player_world_y();
 
     for (ActorState& actor : actors_) {
+        if (actor.terminal_timer != 0) {
+            --actor.terminal_timer;
+            if (actor.terminal_timer == 0) {
+                actor = ActorState{};
+            }
+            continue;
+        }
         if (actor.type == 0) continue;
 
         // Type 0x1F is the first-level interaction actor observed in the
@@ -563,6 +576,25 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
         } else if ((actor.flags & kInteractionFlag) != 0) {
             actor.flags = static_cast<std::uint8_t>(actor.flags & ~kInteractionFlag);
         }
+
+        // Player/actor collision entry 0x001ABB40 dispatches the actor type
+        // after the player and actor rectangles overlap. The fixed-ROM guard
+        // handler replaces type 0x0A in place with the shared type-0x84
+        // terminal template. The actor collision pointers at +0x14 are not
+        // yet part of ActorState, so this fixed-ROM guard span is explicit.
+        const bool sword_active = was_grounded
+            && (input.attack_pressed || player_.attack_timer != 0);
+        const bool guard_overlap = actor.type == kActorGuardType
+            && std::abs(world_x - static_cast<int>(actor.x)) <= 0x30
+            && std::abs(world_y - static_cast<int>(actor.y)) <= 0x20;
+        if (sword_active && guard_overlap) {
+            actor.type = kActorTerminalType;
+            actor.movement_pc = 0;
+            actor.animation_pc = kActorDeathAnimationStream;
+            actor.frame_ptr = 0;
+            actor.flags = 0;
+            actor.terminal_timer = kActorDeathFrames;
+        }
     }
 }
 
@@ -583,6 +615,7 @@ void Engine::reset() {
     camera_.level_height = level_.map_height() * 16;
     camera_.scene_state = 1;
     player_.grounded = true;
+    player_.attack_timer = 0;
     initialize_camera_alignment();
     const auto initial_cell = level_.resolve_player_cell(player_world_x(), player_world_y());
     player_.terrain_behavior = initial_cell.valid ? initial_cell.behavior : 0;
@@ -599,6 +632,7 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     player_.vx = vx;
     player_.vy = vy;
     player_.grounded = grounded;
+    player_.attack_timer = 0;
     const auto checkpoint_cell = level_.resolve_player_cell(player_world_x(), player_world_y());
     player_.terrain_behavior = checkpoint_cell.valid ? checkpoint_cell.behavior : 0;
     player_.terrain_landing_state = grounded && player_.terrain_behavior != 0 ? 1 : 0;
@@ -1099,6 +1133,12 @@ void Engine::update(const InputState& input) {
     apply_floor_contour();
     const bool was_grounded = player_.grounded;
     const bool just_landed = !grounded_before_contour && player_.grounded;
+    if (player_.attack_timer != 0) {
+        --player_.attack_timer;
+    }
+    if (input.attack_pressed && was_grounded) {
+        player_.attack_timer = 10;
+    }
     const auto collision = level_.query_player_collision(
         player_world_x(), player_world_y(), was_grounded);
     player_.terrain_stop_left_motion = collision.stop_left ? 0xFF : 0;
@@ -1246,6 +1286,9 @@ void Engine::update(const InputState& input) {
                 : std::max<std::uint8_t>(player_.terrain_response_timer_state, 1);
         animation_.select_player_interaction_state(selector_context);
     }
+    if (input.attack_pressed && was_grounded && animation_.rom_loaded()) {
+        animation_.select_stream_entry(kPlayerSwordAnimationStream);
+    }
     apply_actor_timeline(frame_ + 1);
     ++frame_;
 }
@@ -1292,6 +1335,8 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                ? animation_.frame_pointer()
                : sprites_.frame(animation_.sprite_frame()).address)
            << ",\"facing_left\":" << (animation_.facing_left() ? "true" : "false")
+           << ",\"attack_timer\":" << static_cast<unsigned>(player_.attack_timer)
+           << ",\"attack_active\":" << (player_.attack_timer != 0 ? "true" : "false")
            << ",\"grounded\":" << (trace_grounded ? "true" : "false") << "}"
            << ",\"scene\":{\"state\":" << camera_.scene_state
            << ",\"script_cursor\":0"
@@ -1370,6 +1415,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"movement_pc\":" << actor.movement_pc
                << ",\"flags\":" << static_cast<unsigned>(actor.flags)
                << ",\"flag_bit5\":" << ((actor.flags & 0x20) != 0 ? "true" : "false")
+               << ",\"terminal_timer\":" << static_cast<unsigned>(actor.terminal_timer)
                << "}";
     }
     output << "]}\n";
