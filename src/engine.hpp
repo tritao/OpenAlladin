@@ -108,11 +108,14 @@ struct ActorState {
     std::uint8_t type = 0;
     std::uint16_t x = 0;
     std::uint16_t y = 0;
+    std::uint8_t facing_x_flip = 0;
+    std::uint8_t facing_y_flip = 0;
     std::uint32_t movement_pc = 0;
     std::uint32_t frame_ptr = 0;
     std::uint32_t animation_pc = 0;
     std::uint8_t flags = 0;
     std::uint8_t terminal_timer = 0;
+    std::uint8_t movement_command_timer = 0;
 };
 
 class Level {
@@ -244,6 +247,14 @@ public:
     const std::array<ActorState, 32>& actors() const { return actors_; }
 
 private:
+    struct CollisionBox {
+        bool valid = false;
+        int left = 0;
+        int top = 0;
+        int right = 0;
+        int bottom = 0;
+    };
+
     void integrate_motion();
     void update_terrain_input(const InputState& input);
     void apply_floor_contour();
@@ -257,7 +268,14 @@ private:
     void load_actor_records(const std::string& path);
     void load_actor_timeline(const std::string& path);
     void apply_actor_timeline(int frame);
+    void update_actor_movement();
     void update_actor_interactions(const InputState& input, bool was_grounded);
+    CollisionBox read_collision_box(
+        std::uint32_t frame_pointer,
+        int origin_x,
+        int origin_y,
+        bool facing_left
+    ) const;
     SpritePose sprite_pose() const;
     int visual_x() const;
     int visual_y() const;
@@ -270,6 +288,7 @@ private:
     std::array<ActorState, 32> actor_templates_{};
     std::array<ActorState, 32> actors_{};
     std::map<int, std::array<ActorState, 32>> actor_timeline_;
+    std::vector<std::uint8_t> rom_bytes_;
     int frame_ = 0;
     int last_ground_direction_ = 0;
     bool quit_ = false;

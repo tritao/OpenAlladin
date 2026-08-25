@@ -420,6 +420,28 @@ void Engine::load(
     sprites_.set_palette(level_.palette());
     if (!rom_path.empty()) {
         animation_.load_rom(rom_path);
+        std::ifstream rom_file(rom_path, std::ios::binary);
+        if (!rom_file) {
+            throw std::runtime_error("cannot open actor VM ROM: " + rom_path);
+        }
+        rom_file.seekg(0, std::ios::end);
+        const auto rom_size = rom_file.tellg();
+        if (rom_size < 0) {
+            throw std::runtime_error("cannot size actor VM ROM: " + rom_path);
+        }
+        rom_file.seekg(0, std::ios::beg);
+        rom_bytes_.resize(static_cast<std::size_t>(rom_size));
+        if (!rom_bytes_.empty()) {
+            rom_file.read(
+                reinterpret_cast<char*>(rom_bytes_.data()),
+                static_cast<std::streamsize>(rom_bytes_.size())
+            );
+        }
+        if (!rom_file) {
+            throw std::runtime_error("cannot read actor VM ROM: " + rom_path);
+        }
+    } else {
+        rom_bytes_.clear();
     }
     actor_templates_.fill({});
     if (!actor_records_path.empty()) {
@@ -470,6 +492,9 @@ void Engine::load_actor_timeline(const std::string& path) {
         std::string frame_ptr;
         std::string animation_pc;
         std::string flags;
+        std::string facing_x_flip;
+        std::string facing_y_flip;
+        std::string movement_command_timer;
         const int slot = std::stoi(first, nullptr, 0);
         if (!(row >> type >> x >> y >> movement_pc >> frame_ptr >> animation_pc >> flags)
             || slot < 0 || slot >= static_cast<int>(actor_timeline_[current_frame].size())) {
@@ -487,6 +512,15 @@ void Engine::load_actor_timeline(const std::string& path) {
         actor.frame_ptr = static_cast<std::uint32_t>(parse(frame_ptr));
         actor.animation_pc = static_cast<std::uint32_t>(parse(animation_pc));
         actor.flags = static_cast<std::uint8_t>(parse(flags));
+        actor.facing_x_flip = (row >> facing_x_flip)
+            ? static_cast<std::uint8_t>(parse(facing_x_flip))
+            : 0;
+        actor.facing_y_flip = (row >> facing_y_flip)
+            ? static_cast<std::uint8_t>(parse(facing_y_flip))
+            : 0;
+        actor.movement_command_timer = (row >> movement_command_timer)
+            ? static_cast<std::uint8_t>(parse(movement_command_timer))
+            : 0;
     }
     if (actor_timeline_.empty()) {
         throw std::runtime_error("actor timeline is empty: " + path);
@@ -497,6 +531,89 @@ void Engine::apply_actor_timeline(int frame) {
     const auto found = actor_timeline_.find(frame);
     if (found != actor_timeline_.end()) {
         actors_ = found->second;
+    }
+}
+
+void Engine::update_actor_movement() {
+    if (rom_bytes_.empty()) return;
+
+    const auto read_u8 = [&](std::uint32_t address) -> std::uint8_t {
+        if (address >= rom_bytes_.size()) return 0;
+        return rom_bytes_[address];
+    };
+    const auto read_u32 = [&](std::uint32_t address) -> std::uint32_t {
+        if (address + 3 >= rom_bytes_.size()) return 0;
+        return (static_cast<std::uint32_t>(read_u8(address)) << 24)
+            | (static_cast<std::uint32_t>(read_u8(address + 1)) << 16)
+            | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
+            | read_u8(address + 3);
+    };
+
+    for (ActorState& actor : actors_) {
+        if (actor.type == 0 || actor.terminal_timer != 0 || actor.movement_pc == 0) {
+            continue;
+        }
+        if (actor.movement_command_timer != 0) {
+            --actor.movement_command_timer;
+            continue;
+        }
+
+        std::uint32_t cursor = actor.movement_pc;
+        if (cursor + 1 >= rom_bytes_.size()) continue;
+        int delta_x = static_cast<std::int8_t>(read_u8(cursor));
+        int delta_y = static_cast<std::int8_t>(read_u8(cursor + 1));
+        if (actor.facing_x_flip != 0) delta_x = -delta_x;
+        if (actor.facing_y_flip != 0) delta_y = -delta_y;
+        actor.x = static_cast<std::uint16_t>(static_cast<int>(actor.x) + delta_x);
+        actor.y = static_cast<std::uint16_t>(static_cast<int>(actor.y) + delta_y);
+        cursor += 2;
+
+        bool cursor_committed = false;
+        for (int command_count = 0; command_count < 32; ++command_count) {
+            const std::uint8_t opcode = read_u8(cursor);
+            if (opcode < 0x80 || opcode > 0x94) break;
+
+            switch (opcode) {
+            case 0x80:  // Movement_Jump: absolute long target.
+                actor.movement_pc = read_u32(cursor + 2);
+                cursor_committed = true;
+                break;
+            case 0x81:  // Movement_ToggleFacing.
+                actor.facing_x_flip = static_cast<std::uint8_t>(actor.facing_x_flip ^ 0xFF);
+                cursor += 2;
+                continue;
+            case 0x82:  // Movement_ClearCursor.
+                actor.movement_pc = 0;
+                cursor_committed = true;
+                break;
+            case 0x84:  // Movement_SetCommandTimer.
+                // MovementVM dispatches this shared handler in movement mode;
+                // bit 7 selects the movement timer and is not part of it.
+                actor.movement_command_timer = static_cast<std::uint8_t>(read_u8(cursor + 1) & 0x7F);
+                actor.movement_pc = cursor + 2;
+                cursor_committed = true;
+                break;
+            case 0x85:  // Movement_RewindAfterTimer; loop semantics are pending.
+                // The stream cursor is still advanced deterministically. A
+                // future pass will model the separate loop cursor/timer RAM.
+                cursor += 2;
+                continue;
+            case 0x91:  // Movement_PushParameter; no positional effect yet.
+                cursor += 6;
+                continue;
+            default:
+                // Conditional, RAM-write, spawn, and velocity commands are
+                // intentionally not guessed. Leave the cursor at the command
+                // so a trace can identify the next missing handler.
+                actor.movement_pc = cursor;
+                cursor_committed = true;
+                break;
+            }
+            break;
+        }
+        if (!cursor_committed) {
+            actor.movement_pc = cursor;
+        }
     }
 }
 
@@ -520,6 +637,9 @@ void Engine::load_actor_records(const std::string& path) {
         std::string frame_ptr;
         std::string animation_pc;
         std::string flags;
+        std::string facing_x_flip;
+        std::string facing_y_flip;
+        std::string movement_command_timer;
         if (!(row >> slot >> type >> x >> y >> movement_pc >> frame_ptr >> animation_pc >> flags)
             || slot < 0 || slot >= static_cast<int>(actor_templates_.size())) {
             throw std::runtime_error(
@@ -536,7 +656,50 @@ void Engine::load_actor_records(const std::string& path) {
         actor.frame_ptr = static_cast<std::uint32_t>(parse(frame_ptr));
         actor.animation_pc = static_cast<std::uint32_t>(parse(animation_pc));
         actor.flags = static_cast<std::uint8_t>(parse(flags));
+        actor.facing_x_flip = (row >> facing_x_flip)
+            ? static_cast<std::uint8_t>(parse(facing_x_flip))
+            : 0;
+        actor.facing_y_flip = (row >> facing_y_flip)
+            ? static_cast<std::uint8_t>(parse(facing_y_flip))
+            : 0;
+        actor.movement_command_timer = (row >> movement_command_timer)
+            ? static_cast<std::uint8_t>(parse(movement_command_timer))
+            : 0;
     }
+}
+
+Engine::CollisionBox Engine::read_collision_box(
+    std::uint32_t frame_pointer,
+    int origin_x,
+    int origin_y,
+    bool facing_left
+) const {
+    CollisionBox box;
+    if (frame_pointer == 0 || static_cast<std::size_t>(frame_pointer) + 5 >= rom_bytes_.size()) {
+        return box;
+    }
+
+    const auto byte = [&](std::size_t offset) {
+        return rom_bytes_[static_cast<std::size_t>(frame_pointer) + offset];
+    };
+    const auto signed_byte = [](std::uint8_t value) {
+        return static_cast<int>(static_cast<std::int8_t>(value));
+    };
+
+    // FUN_001ABB40 reads the four bounds from the current animation frame
+    // record at +2..+5. Facing uses signed mirrored offsets exactly as the
+    // 68000 byte loads do; the unmirrored path uses the raw unsigned bytes.
+    box.top = origin_y + byte(3);
+    box.bottom = origin_y + byte(5);
+    if (!facing_left) {
+        box.left = origin_x + byte(2);
+        box.right = origin_x + byte(4);
+    } else {
+        box.left = origin_x - signed_byte(byte(4));
+        box.right = origin_x - signed_byte(byte(2));
+    }
+    box.valid = true;
+    return box;
 }
 
 void Engine::update_actor_interactions(const InputState& input, bool was_grounded) {
@@ -578,15 +741,31 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
         }
 
         // Player/actor collision entry 0x001ABB40 dispatches the actor type
-        // after the player and actor rectangles overlap. The fixed-ROM guard
-        // handler replaces type 0x0A in place with the shared type-0x84
-        // terminal template. The actor collision pointers at +0x14 are not
-        // yet part of ActorState, so this fixed-ROM guard span is explicit.
+        // after the player and actor rectangles overlap. Both rectangles are
+        // addressed by the current animation frame pointer at actor +0x14;
+        // this is the same pointer the animation VM writes before the next
+        // collision pass. The fixed-ROM guard handler then replaces type
+        // 0x0A in place with the shared type-0x84 terminal template.
         const bool sword_active = was_grounded
             && (input.attack_pressed || player_.attack_timer != 0);
-        const bool guard_overlap = actor.type == kActorGuardType
-            && std::abs(world_x - static_cast<int>(actor.x)) <= 0x30
-            && std::abs(world_y - static_cast<int>(actor.y)) <= 0x20;
+        const CollisionBox player_box = read_collision_box(
+            animation_.frame_pointer(),
+            world_x,
+            world_y,
+            animation_.facing_left()
+        );
+        const CollisionBox actor_box = read_collision_box(
+            actor.frame_ptr,
+            static_cast<int>(actor.x),
+            static_cast<int>(actor.y),
+            actor.facing_x_flip != 0
+        );
+        const bool boxes_overlap = player_box.valid && actor_box.valid
+            && actor_box.left <= player_box.right
+            && actor_box.top <= player_box.bottom
+            && player_box.left < actor_box.right
+            && player_box.top < actor_box.bottom;
+        const bool guard_overlap = actor.type == kActorGuardType && boxes_overlap;
         if (sword_active && guard_overlap) {
             actor.type = kActorTerminalType;
             actor.movement_pc = 0;
@@ -1149,6 +1328,7 @@ void Engine::update(const InputState& input) {
     player_.terrain_right_inner_probe = collision.right_inner ? 0xFF : 0;
     player_.terrain_right_outer_probe = collision.right_outer ? 0xFF : 0;
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+    update_actor_movement();
     update_actor_interactions(input, was_grounded);
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
         && last_ground_direction_ != 0 && player_.vx == 0;
@@ -1410,11 +1590,14 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"type\":" << static_cast<unsigned>(actor.type)
                << ",\"x\":" << actor.x
                << ",\"y\":" << actor.y
+               << ",\"facing_x_flip\":" << static_cast<unsigned>(actor.facing_x_flip)
+               << ",\"facing_y_flip\":" << static_cast<unsigned>(actor.facing_y_flip)
                << ",\"frame_ptr\":" << actor.frame_ptr
                << ",\"animation_pc\":" << actor.animation_pc
                << ",\"movement_pc\":" << actor.movement_pc
                << ",\"flags\":" << static_cast<unsigned>(actor.flags)
                << ",\"flag_bit5\":" << ((actor.flags & 0x20) != 0 ? "true" : "false")
+               << ",\"movement_command_timer\":" << static_cast<unsigned>(actor.movement_command_timer)
                << ",\"terminal_timer\":" << static_cast<unsigned>(actor.terminal_timer)
                << "}";
     }

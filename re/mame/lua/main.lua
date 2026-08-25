@@ -86,9 +86,16 @@ local actor_slot_count = math.max(0, math.floor(env_number("OPENALADDIN_ACTOR_SL
 local actor_type_offset = 0x00
 local actor_x_offset = 0x02
 local actor_y_offset = 0x04
+local actor_facing_x_flip_offset = 0x09
 local actor_movement_pc_offset = 0x0a
+local actor_movement_loop_pc_offset = 0x0e
+local actor_movement_loop_timer_offset = 0x12
 local actor_frame_ptr_offset = 0x14
 local actor_animation_pc_offset = 0x20
+local actor_facing_y_flip_offset = 0x35
+local actor_movement_command_timer_offset = 0x36
+local actor_animation_timer_offset = 0x37
+local actor_movement_return_pc_offset = 0x38
 local actor_flags_offset = 0x3c
 local current_frame = 0
 
@@ -321,9 +328,16 @@ local function capture(frame, input_token, emit_state)
                     { "type", tostring(actor_type) },
                     { "x", tostring(read_u16(record + actor_x_offset)) },
                     { "y", tostring(read_u16(record + actor_y_offset)) },
+                    { "facing_x_flip", tostring(read_u8(record + actor_facing_x_flip_offset)) },
                     { "frame_ptr", tostring(read_u32(record + actor_frame_ptr_offset)) },
                     { "animation_pc", tostring(read_u32(record + actor_animation_pc_offset)) },
                     { "movement_pc", tostring(read_u32(record + actor_movement_pc_offset)) },
+                    { "movement_loop_pc", tostring(read_u32(record + actor_movement_loop_pc_offset)) },
+                    { "movement_loop_timer", tostring(read_u8(record + actor_movement_loop_timer_offset)) },
+                    { "facing_y_flip", tostring(read_u8(record + actor_facing_y_flip_offset)) },
+                    { "movement_command_timer", tostring(read_u8(record + actor_movement_command_timer_offset)) },
+                    { "animation_timer", tostring(read_u8(record + actor_animation_timer_offset)) },
+                    { "movement_return_pc", tostring(read_u32(record + actor_movement_return_pc_offset)) },
                     { "flags", tostring(actor_flags) },
                     { "flag_bit5", json_bool((actor_flags & 0x20) ~= 0) }
                 })

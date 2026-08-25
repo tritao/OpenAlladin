@@ -45,10 +45,10 @@ def main() -> int:
         "# openaladdin-actor-table-v1",
         f"# Captured level-01 actor snapshot, MAME state frame {args.frame}.",
         "# This is a data-driven interaction seed, not a complete actor spawner.",
-        "# slot type x y movement_pc frame_ptr animation_pc flags",
+        "# slot type x y movement_pc frame_ptr animation_pc flags [facing_x_flip [facing_y_flip [movement_command_timer]]]",
     ]
     for actor in actors:
-        lines.append(
+        line = (
             "{slot} {type} {x} {y} {movement_pc:#x} {frame_ptr:#x} {animation_pc:#x} {flags:#x}".format(
                 slot=int(actor["slot"]),
                 type=int(actor.get("type", 0)),
@@ -60,6 +60,13 @@ def main() -> int:
                 flags=int(actor.get("flags", 0)),
             )
         )
+        if "facing_x_flip" in actor:
+            line += f" {int(actor.get('facing_x_flip', 0)):#x}"
+        if "facing_y_flip" in actor:
+            line += f" {int(actor.get('facing_y_flip', 0)):#x}"
+        if "movement_command_timer" in actor:
+            line += f" {int(actor.get('movement_command_timer', 0)):#x}"
+        lines.append(line)
     args.output.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"exported {len(actors)} actors from frame {args.frame} to {args.output}")
     return 0

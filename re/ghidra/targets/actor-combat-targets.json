@@ -18,6 +18,7 @@
     { "address": "0x001AE6DE", "name": "Actor interaction publish (A1)" },
     { "address": "0x001AC784", "name": "Actor animation VM" },
     { "address": "0x001AD00E", "name": "Actor animation spawn/copy opcode" },
+    { "address": "0x001AC8E0", "name": "Movement VM command 0x84 timer handler" },
     { "address": "0x001ADE36", "name": "Actor movement VM" }
   ]
 }

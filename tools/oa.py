@@ -775,13 +775,13 @@ def validate_knowledge(rom: Path) -> list[str]:
                         continue
                     current_frame = int(fields[1], 0)
                     continue
-                if len(fields) != 8:
-                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: expected 8 actor fields")
+                if len(fields) < 8 or len(fields) > 11:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: expected 8..11 actor fields")
                     continue
                 if "timeline" in actor_path.name and current_frame is None:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: record precedes frame marker")
                 values = [int(value, 0) for value in fields]
-                slot, actor_type, x, y, movement_pc, frame_ptr, animation_pc, flags = values
+                slot, actor_type, x, y, movement_pc, frame_ptr, animation_pc, flags = values[:8]
                 if not 0 <= slot < 32:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: slot outside 0..31")
                 for name, value, maximum in (
@@ -795,6 +795,12 @@ def validate_knowledge(rom: Path) -> list[str]:
                 ):
                     if not 0 <= value <= maximum:
                         errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: {name} outside range")
+                if len(values) >= 9 and not 0 <= values[8] <= 0xFF:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: facing_x_flip outside range")
+                if len(values) >= 10 and not 0 <= values[9] <= 0xFF:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: facing_y_flip outside range")
+                if len(values) >= 11 and not 0 <= values[10] <= 0xFF:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_command_timer outside range")
                 key = (current_frame, slot)
                 if key in seen_slots:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: duplicate slot {slot}")

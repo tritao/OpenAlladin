@@ -16,3 +16,6 @@ python3 tests/native_actor_collision.py
 ```
 
 Generated traces and extracted assets remain under `build/`.
+`native_actor_movement.py` compares the native signed-delta actor movement VM
+against the captured slot-19 type-`0x84` stream, including its `0x84` timer
+command handoff.

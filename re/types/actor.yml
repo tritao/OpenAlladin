@@ -38,9 +38,9 @@ fields:
     type: u16
     description: Vertical movement accumulator integrated by the common actor movement update.
   0x14:
-    name: frame_ptr
+    name: collision_frame_ptr
     type: u32
-    description: Current Chopper sprite-frame pointer written by the animation VM; for type 0x2D it resolves to the guard sword-attack frame sequence.
+    description: Current animation-frame/collision-record pointer written by the animation VM. Player/actor collision reads bounds from bytes +2..+5 of this record; the guard fixture resolves to ROM 0x001F6500.
   0x20:
     name: animation_pc
     type: u32

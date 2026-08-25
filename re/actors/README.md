@@ -14,12 +14,16 @@ python3 tools/openaladdin/analysis/export_actor_records.py \
   --output re/actors/level01.tsv
 ```
 
-The columns are `slot type x y movement_pc frame_ptr animation_pc flags`.
+The columns are `slot type x y movement_pc collision_frame_ptr animation_pc flags`,
+with optional `facing_x_flip`, `facing_y_flip`, and `movement_command_timer`
+columns for movement VM fixtures.
 The native runtime loads this file by default; use `--actor-records FILE` to
 select a different snapshot explicitly.
 
 The focused guard collision fixture is `guard-collision.tsv`. It contains the
-confirmed level-01 type-`0x0A` record at world `(0x0530, 0x0340)` and is used by
+confirmed level-01 type-`0x0A` record at world `(0x0530, 0x0340)` and its live
+collision-frame pointer `0x001F6500`. The four box bytes at `+2..+5` are read
+from the fixed ROM by the native collision pass. The fixture is used by
 `tests/native_actor_collision.py` to exercise the `0x0A -> 0x84` terminal path.
 
 For a frame-accurate replay slice, export a range from the same state trace:
@@ -34,3 +38,8 @@ python3 tools/openaladdin/analysis/export_actor_timeline.py \
 
 Run it with `--actor-timeline FILE`. Timeline frames are rebased to zero and
 replace the actor table at each captured frame, including inactive slots.
+
+The focused movement fixture `actor-movement.tsv` starts slot 19 at the
+captured `0x00120360` stream. `tests/native_actor_movement.py` compares its
+signed position deltas, movement cursor, and timer-command handoff against
+MAME frames 361..381.
