@@ -27,6 +27,78 @@
     },
     "description": "Past the upper walkway edge, the player enters a non-landing terrain band and falls into the lower/death area; no scene transition occurs."
   },
+  "targeted_edge_trace": {
+    "trace": "build/re/edge-terrain-trace-2-20260825",
+    "input": "right*55,b+right*50,right*15,none*20,right*30,none*100",
+    "windows": [
+      {
+        "frames": "1-120",
+        "world_x": "1917..2271",
+        "world_y": 530,
+        "terrain_behavior": "0x00",
+        "landing_state": 3,
+        "player_vy": 0,
+        "description": "The player walks across the upper walkway while the ROM keeps the grounded response state."
+      },
+      {
+        "frames": "121-141",
+        "world_x": 2274,
+        "world_y": 530,
+        "terrain_behavior": "0x86",
+        "horizontal_response": 0,
+        "landing_state": 3,
+        "player_vy": 0,
+        "description": "The edge blocks horizontal progress; local PLAYER_X retreats while world X remains fixed."
+      },
+      {
+        "frame": 142,
+        "world": [2277, 530],
+        "terrain_behavior": "0x86",
+        "horizontal_response": 3,
+        "description": "Horizontal motion resumes at the edge."
+      },
+      {
+        "frames": "143-145",
+        "world_x": "2280..2286",
+        "world_y": 530,
+        "terrain_behavior": "0x86",
+        "landing_state": 0,
+        "player_vy": "0x0078..0x00F0",
+        "description": "The player leaves the landing state and the vertical integrator begins increasing PLAYER_VY by 0x003C per frame."
+      },
+      {
+        "frames": "146-151",
+        "world_x": "2289..2304",
+        "world_y": "530..536",
+        "terrain_behavior": "0x85",
+        "player_vy": "0x012C..0x0258",
+        "description": "The next special terrain behavior is observed during the initial descent, but it does not establish a landing."
+      },
+      {
+        "frames": "152-213",
+        "world_x": "2307..2364",
+        "world_y": "538..911",
+        "terrain_behavior": "0x00",
+        "landing_state": 0,
+        "description": "The player continues through the open lower band without a supporting surface."
+      },
+      {
+        "frame": 214,
+        "world": [2364, 920],
+        "landing_state": 9,
+        "player_vy": 0,
+        "description": "The lower/death-band response stops the fall; the scene remains state 0x01."
+      }
+    ],
+    "debugger": {
+      "terrain_resolver": "0x001B1E38",
+      "player_terrain_response": "0x001A9D98",
+      "player_integrator": "0x001A9B90",
+      "scene_state_write_observed": false,
+      "exit_gate_writes_observed": false,
+      "description": "The targeted run repeatedly executes the terrain/vertical path and reaches the lower stop without entering the scene transition path."
+    }
+  },
   "terrain_context": {
     "map_file": "build/assets/levels/level01/raw/map.bin",
     "floor_file": "build/assets/levels/level01/raw/floor.bin",
@@ -40,5 +112,5 @@
   },
   "natural_exit_confirmed": false,
   "scene_state_08_observed": false,
-  "next_action": "Trace the floor-contour query and player vertical response while crossing the edge near world X 0x08E0, then use that result to choose the intended jump or descent route."
+    "next_action": "Decode the behavior 0x86/0x85 floor-contour path around world X 0x08E0 and determine whether the intended continuation is a jump/transfer or a lower-band descent; do not treat this edge as a natural exit."
 }
