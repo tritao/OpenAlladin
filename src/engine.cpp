@@ -590,6 +590,7 @@ void Engine::update_actor_movement() {
             const auto byte = static_cast<std::uint8_t>(value);
             switch (offset) {
             case 0x00: actor.type = byte; break;
+            case 0x06: actor.movement_flags = byte; break;
             case 0x09: actor.facing_x_flip = byte; break;
             case 0x12: actor.movement_loop_timer = byte; break;
             case 0x35: actor.facing_y_flip = byte; break;
@@ -617,7 +618,8 @@ void Engine::update_actor_movement() {
     };
 
     for (ActorState& actor : actors_) {
-        if (actor.type == 0 || actor.terminal_timer != 0 || actor.movement_pc == 0) {
+        if (actor.type == 0 || actor.type == kActorTerminalType
+            || actor.terminal_timer != 0 || actor.movement_pc == 0) {
             continue;
         }
 
@@ -872,6 +874,36 @@ void Engine::update_actor_movement() {
     }
 }
 
+void Engine::update_terminal_actor_motion(ActorState& actor) {
+    // MovementVM_TickActors integrates an active actor after its animation
+    // pass. The scene-state-5 record has no movement cursor, but its template
+    // sets actor +0x06 bit 6, which enables the same vertical accumulator.
+    if (actor.frame_ptr == 0) return;
+    if ((actor.movement_flags & 0x40) != 0) {
+        actor.movement_word_1a = static_cast<std::int16_t>(actor.movement_word_1a + 0x78);
+    }
+
+    actor.x = static_cast<std::uint16_t>(
+        static_cast<int>(actor.x) + (actor.movement_word_18 >> 8));
+    actor.y = static_cast<std::uint16_t>(
+        static_cast<int>(actor.y) + (actor.movement_word_1a >> 8));
+    const auto decay_velocity = [](std::int16_t& velocity, std::int16_t step) {
+        if (velocity < 0) {
+            if (velocity > static_cast<std::int16_t>(-step)) {
+                velocity = 0;
+            } else {
+                velocity = static_cast<std::int16_t>(velocity + step);
+            }
+        } else if (velocity < step) {
+            velocity = 0;
+        } else {
+            velocity = static_cast<std::int16_t>(velocity - step);
+        }
+    };
+    decay_velocity(actor.movement_word_18, 0x28);
+    decay_velocity(actor.movement_word_1a, 0x3C);
+}
+
 void Engine::update_actor_animations() {
     if (rom_bytes_.empty()) return;
 
@@ -887,12 +919,23 @@ void Engine::update_actor_animations() {
     };
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         ActorState& actor = actors_[slot];
-        // The shared actor VM skips the terminal template type 0x84. The
-        // scene-5 terrain response installs that type with a deferred stream
-        // pointer; it remains an unadvanced record until another ROM path
-        // consumes it.
-        if (actor.type == 0 || actor.type == kActorTerminalType
-            || actor.animation_pc == 0 || actor.terminal_timer != 0) {
+        if (actor.type == 0 || actor.animation_pc == 0 || actor.terminal_timer != 0) {
+            continue;
+        }
+        // The scene-state-5 terrain response installs the terminal template
+        // two VBlank passes before AnimationVM begins servicing it. Death
+        // records also use type 0x84, but their terminal_timer guard above
+        // keeps them on their independent cleanup path.
+        if (actor.type == kActorTerminalType && actor.animation_defer_ticks != 0) {
+            --actor.animation_defer_ticks;
+            continue;
+        }
+        // AnimationVM_TickActors is guarded by the ROM's byte at FF7E28 and
+        // only services actor records on its odd phase.  The scene-state-5
+        // response is the first native path that exposes this shared cadence
+        // after allocation; use the engine frame as that emulated phase.
+        if (actor.type == kActorTerminalType && (frame_ & 1) != 0) {
+            update_terminal_actor_motion(actor);
             continue;
         }
 
@@ -929,6 +972,9 @@ void Engine::update_actor_animations() {
         actor.animation_pc = animation_state.animation_pc;
         actor.frame_ptr = animation_state.frame_ptr;
         actor.animation_timer = animation_state.animation_timer;
+        if (actor.type == kActorTerminalType) {
+            update_terminal_actor_motion(actor);
+        }
     }
 }
 
@@ -1627,10 +1673,16 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         };
         ActorState spawned;
         spawned.type = read_rom_u8(kTerrainScene5SpawnTemplate);
+        // The template source byte is clear, but the terrain response's
+        // runtime initializer enables actor-motion bit 6 before the record is
+        // next observed in RAM (confirmed at +0x06 in the MAME capture).
+        spawned.movement_flags = static_cast<std::uint8_t>(
+            read_rom_u8(kTerrainScene5SpawnTemplate + 0x06) | 0x40);
         spawned.movement_pc = read_rom_u32(kTerrainScene5SpawnTemplate + 6);
         spawned.animation_pc = read_rom_u32(kTerrainScene5SpawnTemplate + 0x0C);
         spawned.facing_y_flip = read_rom_u8(kTerrainScene5SpawnTemplate + 0x11);
         spawned.flags = read_rom_u8(kTerrainScene5SpawnTemplate + 0x12);
+        spawned.animation_defer_ticks = 1;
         spawned.x = static_cast<std::uint16_t>(
             terrain_input_world_x_ + static_cast<int>(random_value & 7U) - 3);
         spawned.y = static_cast<std::uint16_t>(terrain_input_world_y_ - 0x2A);
@@ -2330,6 +2382,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"type\":" << static_cast<unsigned>(actor.type)
                << ",\"x\":" << actor.x
                << ",\"y\":" << actor.y
+               << ",\"movement_flags\":" << static_cast<unsigned>(actor.movement_flags)
                << ",\"facing_x_flip\":" << static_cast<unsigned>(actor.facing_x_flip)
                << ",\"facing_y_flip\":" << static_cast<unsigned>(actor.facing_y_flip)
                << ",\"movement_loop_pc\":" << actor.movement_loop_pc

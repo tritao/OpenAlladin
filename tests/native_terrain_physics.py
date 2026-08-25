@@ -149,7 +149,7 @@ def main() -> int:
         str(ROOT / "build/openaladdin"),
         "--no-window",
         "--frames",
-        "3",
+        "11",
         "--state-output",
         str(SCENE5_SPAWN_OUTPUT),
         "--actor-records",
@@ -161,7 +161,7 @@ def main() -> int:
         "--checkpoint-camera",
         "16,464,16,464,0,0,5",
         "--input-schedule",
-        "left*2,none",
+        "left*2,none*9",
     ]
     subprocess.run(scene5_spawn_command, cwd=ROOT, env=environment, check=True)
     with SCENE5_SPAWN_OUTPUT.open(encoding="utf-8") as stream:
@@ -184,6 +184,27 @@ def main() -> int:
     assert scene5_actor_next["y"] == 838
     assert scene5_actor_next["animation_pc"] == 0x001250CE
     assert scene5_actor_next["frame_ptr"] == 0
+
+    # The ROM gates AnimationVM_TickActors through FF7E28. The scene-state-5
+    # record is installed late in the first frame, deferred for one complete
+    # pass, and then serviced on the alternating actor-VM phase.
+    expected_scene5 = {
+        3: (0x001250D4, 0x001F010A, 0, 839, 0x003C),
+        4: (0x001250D4, 0x001F010A, 0, 839, 0x0078),
+        5: (0x001250CE, 0x001F011C, 0xFF, 839, 0x00B4),
+        6: (0x001250CE, 0x001F011C, 0xFF, 840, 0x00F0),
+        7: (0x001250D4, 0x001F010A, 0xFF, 842, 0x012C),
+    }
+    for frame, expected in expected_scene5.items():
+        actor = next(actor for actor in scene5_spawn_states[frame]["actors"] if actor["slot"] == 3)
+        assert (
+            actor["animation_pc"],
+            actor["frame_ptr"],
+            actor["facing_x_flip"],
+            actor["y"],
+            actor["movement_word_1a"],
+        ) == expected
+        assert actor["movement_flags"] == 0x40
 
     # The fixed-ROM level has no ordinary 0x30 cell, so exercise the handler
     # through the native checkpoint fixture that mirrors the MAME runtime

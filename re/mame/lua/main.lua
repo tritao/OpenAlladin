@@ -401,6 +401,7 @@ local function capture(frame, input_token, emit_state)
                     { "type", tostring(actor_type) },
                     { "x", tostring(actor_x) },
                     { "y", tostring(actor_y) },
+                    { "movement_flags", tostring(read_u8(record + 0x06)) },
                     { "facing_x_flip", tostring(facing_x_flip) },
                     { "frame_ptr", tostring(frame_pointer) },
                     { "collision_box", collision_box_json(

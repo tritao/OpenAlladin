@@ -109,6 +109,10 @@ struct ActorState {
     std::uint8_t type = 0;
     std::uint16_t x = 0;
     std::uint16_t y = 0;
+    // Actor +0x06 controls common motion integration. Bit 6 enables the
+    // fixed-point vertical gravity step used by the scene-state-5 type 0x84
+    // response, even when its movement stream cursor is null.
+    std::uint8_t movement_flags = 0;
     std::uint8_t facing_x_flip = 0;
     std::uint8_t facing_y_flip = 0;
     std::uint32_t movement_pc = 0;
@@ -126,6 +130,9 @@ struct ActorState {
     std::uint8_t terminal_timer = 0;
     std::uint8_t movement_command_timer = 0;
     std::uint8_t animation_timer = 0;
+    // Scene-state-5 actors are installed by the terrain handler two VBlank
+    // passes before the shared animation VM begins servicing the record.
+    std::uint8_t animation_defer_ticks = 0;
     // The live sword animation stream is serviced on its first two actor
     // ticks, then on alternating ticks. This is native scheduler state, not
     // a field in the 0x42-byte Genesis actor record.
@@ -293,6 +300,7 @@ private:
     void load_actor_timeline(const std::string& path);
     void apply_actor_timeline(int frame);
     void update_actor_movement();
+    void update_terminal_actor_motion(ActorState& actor);
     void update_actor_animations();
     void apply_animation_spawns();
     void update_actor_actor_collisions();
