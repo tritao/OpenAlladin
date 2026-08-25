@@ -1060,7 +1060,42 @@ def build_parser() -> argparse.ArgumentParser:
     compare = commands.add_parser("compare", help="find the first divergent frame in two state traces")
     compare.add_argument("genesis", type=Path)
     compare.add_argument("openaladdin", type=Path)
-    compare.set_defaults(function=lambda args: run_tool("openaladdin/mame/compare_state.py", [str(resolve(args.genesis)), str(resolve(args.openaladdin))]))
+    compare.add_argument(
+        "--field",
+        action="append",
+        dest="fields",
+        help="compare only this dotted state field; repeat for multiple fields",
+    )
+    compare.set_defaults(function=lambda args: run_tool(
+        "openaladdin/mame/compare_state.py",
+        [str(resolve(args.genesis)), str(resolve(args.openaladdin))]
+        + sum((["--field", field] for field in (args.fields or [])), []),
+    ))
+
+    compare_collision = commands.add_parser(
+        "compare-collision",
+        help="compare resolved player/actor collision boxes and transition frames",
+    )
+    compare_collision.add_argument("genesis", type=Path)
+    compare_collision.add_argument("openaladdin", type=Path)
+    compare_collision.add_argument(
+        "--actor-slot",
+        action="append",
+        type=lambda value: int(value, 0),
+        dest="actor_slots",
+        help="compare this actor slot; repeat for multiple slots",
+    )
+    compare_collision.add_argument(
+        "--transition-type",
+        type=lambda value: int(value, 0),
+        help="report/check the first frame where each selected actor reaches this type",
+    )
+    compare_collision.set_defaults(function=lambda args: run_tool(
+        "openaladdin/mame/compare_collision.py",
+        [str(resolve(args.genesis)), str(resolve(args.openaladdin))]
+        + sum((["--actor-slot", str(slot)] for slot in (args.actor_slots or [])), [])
+        + (["--transition-type", str(args.transition_type)] if args.transition_type is not None else []),
+    ))
 
     coverage = commands.add_parser("coverage", help="merge and import dynamic MAME execution observations")
     coverage_commands = coverage.add_subparsers(dest="coverage_command", required=True)

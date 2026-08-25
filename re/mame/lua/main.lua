@@ -104,6 +104,38 @@ local actor_movement_return_pc_offset = 0x38
 local actor_flags_offset = 0x3c
 local current_frame = 0
 
+local function signed_u8(value)
+    value = value & 0xff
+    return value >= 0x80 and value - 0x100 or value
+end
+
+-- FUN_001ABB40 reads the current animation record's bounds at +2..+5.
+-- The normal path uses the raw byte offsets; the X-flipped path mirrors the
+-- signed X offsets around the actor origin. Keep this in the MAME trace so
+-- native comparisons can validate the resolved geometry, not just pointers.
+local function collision_box_json(frame_pointer, origin_x, origin_y, facing_left)
+    if frame_pointer == 0 then
+        return "null"
+    end
+    local left
+    local right
+    if facing_left then
+        left = origin_x - signed_u8(read_u8(frame_pointer + 4))
+        right = origin_x - signed_u8(read_u8(frame_pointer + 2))
+    else
+        left = origin_x + read_u8(frame_pointer + 2)
+        right = origin_x + read_u8(frame_pointer + 4)
+    end
+    local top = origin_y + read_u8(frame_pointer + 3)
+    local bottom = origin_y + read_u8(frame_pointer + 5)
+    return json_object({
+        { "left", tostring(left) },
+        { "top", tostring(top) },
+        { "right", tostring(right) },
+        { "bottom", tostring(bottom) }
+    })
+end
+
 local vdp_device = core.find_device(":gen_vdp", "sega315_5313")
 local vdp = dofile(root .. "/re/mame/lua/vdp.lua")({
     core = core,
@@ -174,9 +206,20 @@ local function scene_runtime_json()
 end
 
 local function terrain_runtime_json()
+    local world_x = read_u16(symbol("PLAYER_WORLD_X"))
+    local world_y = read_u16(symbol("PLAYER_WORLD_Y"))
+    local collision_y = world_y - 0x110
     return json_object({
-        { "world_x", tostring(read_u16(symbol("PLAYER_WORLD_X"))) },
-        { "world_y", tostring(read_u16(symbol("PLAYER_WORLD_Y"))) },
+        { "world_x", tostring(world_x) },
+        { "world_y", tostring(world_y) },
+        { "collision_probe_row", tostring(math.floor(collision_y / 16)) },
+        { "collision_probe_column", tostring(world_x >> 4) },
+        { "collision_probe_right_base_column", tostring((world_x >> 4) + 2) },
+        { "collision_probe_ceiling_column", tostring((world_x >> 4) + 1) },
+        { "collision_probe_landing_state", tostring(read_u8(symbol("TERRAIN_LANDING_STATE"))) },
+        { "query_callback_a", tostring(read_u32(symbol("TERRAIN_QUERY_CALLBACK_A"))) },
+        { "query_callback_b", tostring(read_u32(symbol("TERRAIN_QUERY_CALLBACK_B"))) },
+        { "query_callback_c", tostring(read_u32(symbol("TERRAIN_QUERY_CALLBACK_C"))) },
         { "query_result", tostring(read_u8(symbol("TERRAIN_QUERY_FLAGS"))) },
         { "push_right", tostring(read_u8(symbol("TERRAIN_PUSH_RIGHT"))) },
         { "push_left", tostring(read_u8(symbol("TERRAIN_PUSH_LEFT"))) },
@@ -336,13 +379,23 @@ local function capture(frame, input_token, emit_state)
             local actor_type = read_u8(record + actor_type_offset)
             local actor_flags = read_u8(record + actor_flags_offset)
             if actor_type ~= 0 or actor_flags ~= 0 then
+                local actor_x = read_u16(record + actor_x_offset)
+                local actor_y = read_u16(record + actor_y_offset)
+                local facing_x_flip = read_u8(record + actor_facing_x_flip_offset)
+                local frame_pointer = read_u32(record + actor_frame_ptr_offset)
                 actors[#actors + 1] = json_object({
                     { "slot", tostring(slot) },
                     { "type", tostring(actor_type) },
-                    { "x", tostring(read_u16(record + actor_x_offset)) },
-                    { "y", tostring(read_u16(record + actor_y_offset)) },
-                    { "facing_x_flip", tostring(read_u8(record + actor_facing_x_flip_offset)) },
-                    { "frame_ptr", tostring(read_u32(record + actor_frame_ptr_offset)) },
+                    { "x", tostring(actor_x) },
+                    { "y", tostring(actor_y) },
+                    { "facing_x_flip", tostring(facing_x_flip) },
+                    { "frame_ptr", tostring(frame_pointer) },
+                    { "collision_box", collision_box_json(
+                        frame_pointer,
+                        actor_x,
+                        actor_y,
+                        facing_x_flip ~= 0
+                    ) },
                     { "animation_pc", tostring(read_u32(record + actor_animation_pc_offset)) },
                     { "movement_pc", tostring(read_u32(record + actor_movement_pc_offset)) },
                     { "movement_loop_pc", tostring(read_u32(record + actor_movement_loop_pc_offset)) },
@@ -356,6 +409,11 @@ local function capture(frame, input_token, emit_state)
                 })
             end
         end
+        local player_record = actor_table_base
+        local player_origin_x = read_u16(player_record + actor_x_offset)
+        local player_origin_y = read_u16(player_record + actor_y_offset)
+        local player_facing_x_flip = read_u8(player_record + actor_facing_x_flip_offset)
+        local player_frame_pointer = read_u32(player_record + actor_frame_ptr_offset)
         write_state({
             { "type", json_string("state") },
             { "format", json_string("openaladdin-frame-state-v1") },
@@ -372,7 +430,13 @@ local function capture(frame, input_token, emit_state)
                 -- Player slot zero shares the common actor frame-pointer
                 -- field. This is the runtime sprite identity used by the
                 -- native animation differential test.
-                { "frame_ptr", tostring(read_u32(actor_table_base + actor_frame_ptr_offset)) },
+                { "frame_ptr", tostring(player_frame_pointer) },
+                { "collision_box", collision_box_json(
+                    player_frame_pointer,
+                    player_origin_x,
+                    player_origin_y,
+                    player_facing_x_flip ~= 0
+                ) },
                 { "animation_timer", tostring(read_u8(symbol("PLAYER_ANIMATION_TIMER"))) },
                 { "actor_flags", tostring(read_u8(symbol("PLAYER_ACTOR_FLAGS"))) },
                 { "actor_flag_bit5", json_bool((read_u8(symbol("PLAYER_ACTOR_FLAGS")) & 0x20) ~= 0) },

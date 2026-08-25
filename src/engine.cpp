@@ -282,7 +282,7 @@ Level::TerrainQuery Level::query_player(int world_x, int world_y) const {
 Level::TerrainCollisionFlags Level::query_player_collision(
     int world_x,
     int world_y,
-    bool grounded
+    std::uint8_t landing_state
 ) const {
     TerrainCollisionFlags flags;
 
@@ -294,7 +294,7 @@ Level::TerrainCollisionFlags Level::query_player_collision(
     const int row = collision_y >> 4;
     const int column = world_x >> 4;
     if (collision_y < 0 || row < 0 || row >= map_height_ - 3
-        || column < 0 || column + 2 >= map_width_) {
+        || column < 0 || column + 4 >= map_width_) {
         return flags;
     }
 
@@ -318,19 +318,20 @@ Level::TerrainCollisionFlags Level::query_player_collision(
         flags.left_inner = blocking(column - 1, row + 1);
         flags.left_outer = blocking(column - 2, row + 1);
         flags.stop_left = blocking(column, row + 2)
-            || (!grounded && blocking(column, row + 3));
+            || (landing_state == 0 && blocking(column, row + 3));
     } else {
         flags.stop_left = true;
     }
 
-    // Right side mirrors the ROM's second half of the probe, starting one
-    // terrain word to the right of the left-side base pointer.
-    const bool right_passable = !blocking(column + 1, row) && !blocking(column + 1, row + 1);
+    // The ROM restores the base pointer and advances it by four bytes before
+    // the right-side pass. That is two terrain words, not one: the right
+    // group begins at column + 2 and its inner/outer probes are +3/+4.
+    const bool right_passable = !blocking(column + 2, row) && !blocking(column + 2, row + 1);
     if (right_passable) {
-        flags.right_inner = blocking(column + 2, row + 1);
-        flags.right_outer = blocking(column + 3, row + 1);
-        flags.stop_right = blocking(column + 1, row + 2)
-            || (!grounded && blocking(column + 1, row + 3));
+        flags.right_inner = blocking(column + 3, row + 1);
+        flags.right_outer = blocking(column + 4, row + 1);
+        flags.stop_right = blocking(column + 2, row + 2)
+            || (landing_state == 0 && blocking(column + 2, row + 3));
     } else {
         flags.stop_right = true;
     }
@@ -1502,7 +1503,8 @@ void Engine::update(const InputState& input) {
         player_.attack_timer = 10;
     }
     const auto collision = level_.query_player_collision(
-        player_world_x(), player_world_y(), was_grounded);
+        player_world_x(), player_world_y(),
+        player_.terrain_landing_state);
     player_.terrain_stop_left_motion = collision.stop_left ? 0xFF : 0;
     player_.terrain_stop_right_motion = collision.stop_right ? 0xFF : 0;
     player_.terrain_stop_upward_motion = collision.stop_upward ? 0xFF : 0;
@@ -1674,6 +1676,22 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
         );
     }
     if (state_sprite_frame < 0) state_sprite_frame = SpriteDatabase::kIdleFrame;
+    const int collision_probe_row = (player_world_y() - 0x110) >> 4;
+    const int collision_probe_column = player_world_x() >> 4;
+
+    const auto collision_box_json = [](const CollisionBox& box) {
+        if (!box.valid) return std::string("null");
+        return std::string("{\"left\":") + std::to_string(box.left)
+            + ",\"top\":" + std::to_string(box.top)
+            + ",\"right\":" + std::to_string(box.right)
+            + ",\"bottom\":" + std::to_string(box.bottom) + "}";
+    };
+    const CollisionBox player_box = read_collision_box(
+        animation_.frame_pointer(),
+        player_world_x(),
+        player_world_y(),
+        animation_.facing_left()
+    );
 
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v1\""
            << ",\"frame\":" << frame_
@@ -1697,6 +1715,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"frame_ptr\":" << (animation_.rom_loaded()
                ? animation_.frame_pointer()
                : sprites_.frame(animation_.sprite_frame()).address)
+           << ",\"collision_box\":" << collision_box_json(player_box)
            << ",\"facing_left\":" << (animation_.facing_left() ? "true" : "false")
            << ",\"attack_timer\":" << static_cast<unsigned>(player_.attack_timer)
            << ",\"attack_active\":" << (player_.attack_timer != 0 ? "true" : "false")
@@ -1738,6 +1757,12 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"scroll_down_pending\":" << (camera_.scroll_down_pending ? 255 : 0) << "}"
            << ",\"terrain\":{\"world_x\":" << visual_x()
            << ",\"world_y\":" << player_world_y()
+           << ",\"collision_probe_row\":" << collision_probe_row
+           << ",\"collision_probe_column\":" << collision_probe_column
+           << ",\"collision_probe_right_base_column\":" << (collision_probe_column + 2)
+           << ",\"collision_probe_ceiling_column\":" << (collision_probe_column + 1)
+           << ",\"collision_probe_landing_state\":"
+           << static_cast<unsigned>(player_.terrain_landing_state)
            << ",\"query_result\":" << static_cast<unsigned>(player_.terrain_query_result)
            << ",\"push_right\":" << static_cast<unsigned>(player_.terrain_push_right)
            << ",\"push_left\":" << static_cast<unsigned>(player_.terrain_push_left)
@@ -1769,6 +1794,12 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
         if (actor.type == 0 && actor.flags == 0) continue;
         if (!first_actor) output << ",";
         first_actor = false;
+        const CollisionBox actor_box = read_collision_box(
+            actor.frame_ptr,
+            static_cast<int>(actor.x),
+            static_cast<int>(actor.y),
+            actor.facing_x_flip != 0
+        );
         output << "{\"slot\":" << slot
                << ",\"type\":" << static_cast<unsigned>(actor.type)
                << ",\"x\":" << actor.x
@@ -1778,6 +1809,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"movement_loop_pc\":" << actor.movement_loop_pc
                << ",\"movement_loop_timer\":" << static_cast<unsigned>(actor.movement_loop_timer)
                << ",\"frame_ptr\":" << actor.frame_ptr
+               << ",\"collision_box\":" << collision_box_json(actor_box)
                << ",\"animation_pc\":" << actor.animation_pc
                << ",\"movement_pc\":" << actor.movement_pc
                << ",\"movement_return_pc\":" << actor.movement_return_pc

@@ -189,8 +189,13 @@ public:
 
     // Exact fixed-ROM equivalent of Player_TerrainCollisionProbe at
     // 0x001AD632. This is not a rectangle scan and does not use behavior
-    // handler dispatch.
-    TerrainCollisionFlags query_player_collision(int world_x, int world_y, bool grounded) const;
+    // handler dispatch. The landing-state byte controls whether the probe
+    // performs its extra downward row check.
+    TerrainCollisionFlags query_player_collision(
+        int world_x,
+        int world_y,
+        std::uint8_t landing_state
+    ) const;
 
     // Exact fixed-ROM equivalent of Player_FloorContour at 0x001AD7B4.
     // The routine checks the selected row and the next two rows, then uses

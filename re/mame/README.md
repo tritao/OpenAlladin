@@ -162,11 +162,23 @@ python tools/oa.py trace player-jump --capture state
 
 This writes `build/re/traces/player-jump/state.jsonl` using the
 `openaladdin-frame-state-v1` format. It contains the player position and 8.8
-velocities, animation cursor, scene state, camera, and active actor cursors.
+velocities, animation cursor, scene state, camera, active actor cursors, and
+the resolved collision rectangle for every non-zero animation frame pointer.
+The rectangle is derived from the frame record's bytes at `+2..+5`, including
+the original X-flipped signed-byte path; a missing or zero pointer emits
+`null`.
 The first differing field between two implementations is reported by:
 
 ```sh
 python tools/oa.py compare genesis.jsonl openaladdin.jsonl
+```
+
+For collision work, compare only the resolved geometry and report the first
+requested actor transition without requiring unrelated state fields to match:
+
+```sh
+python tools/oa.py compare-collision genesis.jsonl openaladdin.jsonl \
+  --actor-slot 5 --transition-type 0x84
 ```
 
 For a deterministic probe of a statically identified actor template, clone the
@@ -439,6 +451,13 @@ test its direction bits and `SEQ` writes the resulting pressed-direction
 flags to `0x00FFF07C-0x00FFF07F` before the resolver runs. The callback
 pointers observed in the gameplay trace are `0x001B3244`, `0x001B323A`, and
 `0x001B324E`.
+
+The horizontal/ceiling probe at `0x001AD632` is a separate exact pass. It
+uses `WORLD_CAMERA_Y + PLAYER_Y - 0x110`, treats behavior bytes above `0xDF`
+as blocking, probes the left group from `column` and the right group from
+`column + 2`, and gates each extra downward-row test on
+`TERRAIN_LANDING_STATE == 0`. The native mirror and regression now use those
+addresses and conditions directly.
 
 The motion routine at `0x001A9B90` is explicitly 8.8 fixed-point: horizontal
 velocity consumes its signed high byte and accelerates by `0x28`, while

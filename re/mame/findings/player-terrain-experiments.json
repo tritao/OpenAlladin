@@ -18,6 +18,25 @@
       "terrain_word": "big-endian map word",
       "behavior": "floor[2 + (terrain_word >> 1)]",
       "dispatch": "TERRAIN_RESPONSE_HANDLER_TABLE[behavior]"
+    },
+    "collision_probe": {
+      "function": "0x001AD632",
+      "probe_y": "WORLD_CAMERA_Y + PLAYER_Y - 0x0110",
+      "base_column": "(WORLD_CAMERA_X + PLAYER_X) >> 4",
+      "solid_test": "behavior > 0xDF",
+      "left_group": {
+        "base": "column",
+        "inner": "column - 1 at row + 1",
+        "outer": "column - 2 at row + 1",
+        "stop": "column at row + 2, and row + 3 only when TERRAIN_LANDING_STATE == 0"
+      },
+      "right_group": {
+        "base": "column + 2",
+        "inner": "column + 3 at row + 1",
+        "outer": "column + 4 at row + 1",
+        "stop": "column + 2 at row + 2, and row + 3 only when TERRAIN_LANDING_STATE == 0"
+      },
+      "ceiling": "column + 1 at the base row"
     }
   },
   "experiments": {

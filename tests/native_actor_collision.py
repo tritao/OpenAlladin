@@ -54,10 +54,24 @@ def main() -> int:
     assert first["input"] == "a"
     assert first["player"]["attack_active"] is True
     assert states[0]["player"]["frame_ptr"] == 0x001EA794
+    assert states[0]["player"]["collision_box"] == {
+        "left": 1444,
+        "top": 930,
+        "right": 1468,
+        "bottom": 973,
+    }
     assert first["player"]["frame_ptr"] != 0
-    assert next(actor for actor in states[0]["actors"] if actor["slot"] == 5)["frame_ptr"] == 0x001F6500
+    initial_guard = next(actor for actor in states[0]["actors"] if actor["slot"] == 5)
+    assert initial_guard["frame_ptr"] == 0x001F6500
+    assert initial_guard["collision_box"] == {
+        "left": 1448,
+        "top": 917,
+        "right": 1462,
+        "bottom": 974,
+    }
     assert first["player"]["animation_pc"] == 0x0012271A
     assert guard["type"] == 0x84
+    assert guard["collision_box"] is None
     assert guard["animation_pc"] == 0x00122FA2
     assert guard["terminal_timer"] == 43
 
@@ -91,7 +105,9 @@ def main() -> int:
         ]
         subprocess.run(boundary_command, cwd=ROOT, env=environment, check=True, stdout=subprocess.DEVNULL)
         boundary_states = load_states(boundary_output)
+        boundary_initial = next(actor for actor in boundary_states[0]["actors"] if actor["slot"] == 5)
         boundary_guard = next(actor for actor in boundary_states[1]["actors"] if actor["slot"] == 5)
+        assert boundary_initial["collision_box"] == initial_guard["collision_box"]
         assert boundary_guard["type"] == expected_type, (
             f"hitbox boundary mismatch at local X {local_x}: "
             f"got 0x{boundary_guard['type']:02X}, expected 0x{expected_type:02X}"
