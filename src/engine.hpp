@@ -5,6 +5,7 @@
 #include "animation.hpp"
 #include "sprites.hpp"
 
+#include <array>
 #include <cstdint>
 #include <iosfwd>
 #include <string>

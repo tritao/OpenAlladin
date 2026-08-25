@@ -16,6 +16,7 @@ STOP_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/stop-state.jsonl"
 COLLISION_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/collision-state.jsonl"
 CEILING_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/ceiling-state.jsonl"
 CONTOUR_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/contour-state.jsonl"
+FLAT_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/flat-state.jsonl"
 
 
 def main() -> int:
@@ -194,6 +195,34 @@ def main() -> int:
     assert contour["player"]["grounded"] is True
     assert contour["terrain"]["landing_state"] == 16
 
+    # The same lookup must retain the ordinary flat-ground result: the next
+    # row contains raw floor type 1, whose contour byte is 1 at every X
+    # fraction, producing the unchanged world-Y target 912.
+    flat_command = [
+        str(ROOT / "build/openaladdin"),
+        "--no-window",
+        "--frames",
+        "2",
+        "--state-output",
+        str(FLAT_OUTPUT),
+        "--checkpoint-player",
+        "104,416,0,0,1",
+        "--checkpoint-camera",
+        "2000,496,2000,496,0,0,1",
+    ]
+    subprocess.run(flat_command, cwd=ROOT, env=environment, check=True)
+    with FLAT_OUTPUT.open(encoding="utf-8") as stream:
+        flat_states = {
+            record["frame"]: record
+            for record in map(json.loads, stream)
+            if record.get("type") == "state"
+        }
+    flat = flat_states[1]
+    assert flat["player"]["world_y"] == 912
+    assert flat["player"]["y"] == 416
+    assert flat["player"]["grounded"] is True
+    assert flat["terrain"]["landing_state"] == 1
+
     # MAME's first-level type-0x1F actor raises flag bit 5 when the player
     # reaches world X=0x2A4 at the ground line. The selector then arms the
     # seven-frame camera delay; update_camera consumes one count immediately.
@@ -223,6 +252,10 @@ def main() -> int:
     assert gate["player"]["x"] == 151
     assert gate["camera"]["x"] == 528
     assert gate["camera"]["update_delay"] == 6
+    actor4 = next(actor for actor in gate["actors"] if actor["slot"] == 4)
+    assert actor4["type"] == 0x1F
+    assert actor4["flags"] == 0x20
+    assert actor4["flag_bit5"] is True
 
     print("native terrain physics: ok")
     return 0

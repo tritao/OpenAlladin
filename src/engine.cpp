@@ -400,23 +400,11 @@ Level::TerrainContour Level::query_player_contour(
     return result;
 }
 
-bool Level::player_interaction_camera_gate(int world_x, int world_y) const {
-    // MAME actor-table capture: slot 4/type 0x1F is at (0x02B2, 0x0370)
-    // when its flag bit 5 is raised by the player-collision path. The player
-    // reaches the handler's left edge at actor_x - 0x0E (world X 0x02A4).
-    constexpr int kActorX = 0x02B2;
-    constexpr int kActorY = 0x0370;
-    constexpr int kInteractionLeft = 0x0E;
-    constexpr int kInteractionRight = 0x10;
-    return world_y == kActorY
-        && world_x >= kActorX - kInteractionLeft
-        && world_x < kActorX + kInteractionRight;
-}
-
 void Engine::load(
     const std::string& asset_root,
     const std::string& sprite_root,
-    const std::string& rom_path
+    const std::string& rom_path,
+    const std::string& actor_records_path
 ) {
     level_.load(asset_root, rom_path);
     sprites_.load(sprite_root.empty() ? asset_root + "/../../sprites" : sprite_root);
@@ -426,12 +414,89 @@ void Engine::load(
     if (!rom_path.empty()) {
         animation_.load_rom(rom_path);
     }
+    actor_templates_.fill({});
+    if (!actor_records_path.empty()) {
+        load_actor_records(actor_records_path);
+    }
     framebuffer_.resize(static_cast<std::size_t>(kScreenWidth * kScreenHeight));
     reset();
 }
 
+void Engine::load_actor_records(const std::string& path) {
+    std::ifstream input(path);
+    if (!input) {
+        throw std::runtime_error("cannot open actor records: " + path);
+    }
+
+    std::string line;
+    int line_number = 0;
+    while (std::getline(input, line)) {
+        ++line_number;
+        if (line.empty() || line[0] == '#') continue;
+        std::istringstream row(line);
+        int slot = -1;
+        std::string type;
+        std::string x;
+        std::string y;
+        std::string movement_pc;
+        std::string frame_ptr;
+        std::string animation_pc;
+        std::string flags;
+        if (!(row >> slot >> type >> x >> y >> movement_pc >> frame_ptr >> animation_pc >> flags)
+            || slot < 0 || slot >= static_cast<int>(actor_templates_.size())) {
+            throw std::runtime_error(
+                "invalid actor record at " + path + ":" + std::to_string(line_number));
+        }
+        auto parse = [](const std::string& value) {
+            return std::stoul(value, nullptr, 0);
+        };
+        ActorState& actor = actor_templates_[static_cast<std::size_t>(slot)];
+        actor.type = static_cast<std::uint8_t>(parse(type));
+        actor.x = static_cast<std::uint16_t>(parse(x));
+        actor.y = static_cast<std::uint16_t>(parse(y));
+        actor.movement_pc = static_cast<std::uint32_t>(parse(movement_pc));
+        actor.frame_ptr = static_cast<std::uint32_t>(parse(frame_ptr));
+        actor.animation_pc = static_cast<std::uint32_t>(parse(animation_pc));
+        actor.flags = static_cast<std::uint8_t>(parse(flags));
+    }
+}
+
+void Engine::update_actor_interactions(const InputState& input, bool was_grounded) {
+    constexpr std::uint8_t kInteractionFlag = 0x20;
+    constexpr int kInteractionLeft = 0x0E;
+    constexpr int kInteractionRight = 0x10;
+    const int world_x = player_world_x();
+    const int world_y = player_world_y();
+
+    for (ActorState& actor : actors_) {
+        if (actor.type == 0) continue;
+
+        // Type 0x1F is the first-level interaction actor observed in the
+        // common actor table. Its collision handler raises actor flag bit 5
+        // while the player overlaps the actor's horizontal interaction span.
+        const bool overlaps_type_1f = actor.type == 0x1F
+            && was_grounded
+            && input.right && !input.left
+            && world_y == actor.y
+            && world_x >= static_cast<int>(actor.x) - kInteractionLeft
+            && world_x < static_cast<int>(actor.x) + kInteractionRight;
+        if (overlaps_type_1f) {
+            if ((actor.flags & kInteractionFlag) == 0) {
+                actor.flags = static_cast<std::uint8_t>(actor.flags | kInteractionFlag);
+                // The selector clears FFF0CC and Player_Update arms a
+                // seven-frame camera delay on the following pass. The camera
+                // routine consumes one count during this same native update.
+                camera_.update_delay = 7;
+            }
+        } else if ((actor.flags & kInteractionFlag) != 0) {
+            actor.flags = static_cast<std::uint8_t>(actor.flags & ~kInteractionFlag);
+        }
+    }
+}
+
 void Engine::reset() {
     player_ = PlayerState{};
+    actors_ = actor_templates_;
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -451,7 +516,6 @@ void Engine::reset() {
     player_.terrain_landing_state = player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
     last_ground_direction_ = 0;
-    actor_interaction_gate_active_ = false;
     quit_ = false;
     animation_.reset();
 }
@@ -957,8 +1021,10 @@ void Engine::update(const InputState& input) {
         return;
     }
     update_terrain_input(input);
+    const bool grounded_before_contour = player_.grounded;
     apply_floor_contour();
     const bool was_grounded = player_.grounded;
+    const bool just_landed = !grounded_before_contour && player_.grounded;
     const auto collision = level_.query_player_collision(
         player_world_x(), player_world_y(), was_grounded);
     player_.terrain_stop_left_motion = collision.stop_left ? 0xFF : 0;
@@ -969,19 +1035,7 @@ void Engine::update(const InputState& input) {
     player_.terrain_right_inner_probe = collision.right_inner ? 0xFF : 0;
     player_.terrain_right_outer_probe = collision.right_outer ? 0xFF : 0;
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
-    const bool actor_interaction_gate = was_grounded
-        && input.right && !input.left
-        && level_.player_interaction_camera_gate(player_world_x(), player_world_y());
-    if (!actor_interaction_gate) {
-        actor_interaction_gate_active_ = false;
-    } else if (!actor_interaction_gate_active_) {
-        // The ROM's actor flag path clears FFF0CC, then Player_Update sees the
-        // clear on the following pass and writes CAMERA_UPDATE_DELAY=7. The
-        // follow routine consumes one count immediately, exposing 6 in the
-        // stable frame trace.
-        camera_.update_delay = 7;
-        actor_interaction_gate_active_ = true;
-    }
+    update_actor_interactions(input, was_grounded);
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
         && last_ground_direction_ != 0 && player_.vx == 0;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
@@ -1074,7 +1128,7 @@ void Engine::update(const InputState& input) {
 
     const SpritePose desired_pose = !player_.grounded
         ? SpritePose::Jump
-        : (!was_grounded
+        : (just_landed
             ? SpritePose::Landing
             : (animation_.pose() == SpritePose::Landing && !animation_.finished()
                 ? SpritePose::Landing
@@ -1094,7 +1148,7 @@ void Engine::update(const InputState& input) {
     // selector outside the common actor VM. Build its post-physics RAM view
     // after the actor tick so the native path owns the same boundary as the
     // ROM's interaction caller.
-    if (animation_.rom_loaded()) {
+    if (animation_.rom_loaded() && !just_landed && desired_pose != SpritePose::Landing) {
         AnimationContext selector_context = animation_context;
         selector_context.player_x = player_.x;
         selector_context.player_y = player_.y;
@@ -1123,9 +1177,9 @@ void Engine::update(const InputState& input) {
 
 void Engine::write_state(std::ostream& output, const std::string& input_token) const {
     // Keep this stream deliberately aligned with re/mame/lua/main.lua. It is
-    // intentionally a small, valid subset of the shared schema: scene and
-    // actor emulation do not exist in the vertical slice yet, but the player
-    // and camera fields mirror the fixed-ROM coordinate model.
+    // intentionally a small, valid subset of the shared schema: scene logic
+    // is still a vertical slice, while actor records mirror the captured
+    // first-level table and expose the interaction flag used by the camera.
     // The ROM keeps its landing flag asserted for the launch-impulse frame,
     // even though the gameplay handler has already left its internal grounded
     // path. Mirror that externally visible state in the shared trace without
@@ -1225,7 +1279,25 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"query_state_b\":" << static_cast<unsigned>(player_.terrain_query_state_b)
            << ",\"state\":" << static_cast<unsigned>(player_.terrain_state)
            << ",\"response_latch\":" << static_cast<unsigned>(player_.terrain_response_latch) << "}"
-           << ",\"actors\":[]}\n";
+           << ",\"actors\":[";
+    bool first_actor = true;
+    for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
+        const ActorState& actor = actors_[slot];
+        if (actor.type == 0 && actor.flags == 0) continue;
+        if (!first_actor) output << ",";
+        first_actor = false;
+        output << "{\"slot\":" << slot
+               << ",\"type\":" << static_cast<unsigned>(actor.type)
+               << ",\"x\":" << actor.x
+               << ",\"y\":" << actor.y
+               << ",\"frame_ptr\":" << actor.frame_ptr
+               << ",\"animation_pc\":" << actor.animation_pc
+               << ",\"movement_pc\":" << actor.movement_pc
+               << ",\"flags\":" << static_cast<unsigned>(actor.flags)
+               << ",\"flag_bit5\":" << ((actor.flags & 0x20) != 0 ? "true" : "false")
+               << "}";
+    }
+    output << "]}\n";
 }
 
 void Engine::render(SDL_Renderer* renderer) {
