@@ -533,12 +533,22 @@
   evidence:
     - ghidra_disassembly_001B537A
     - ghidra_disassembly_001A9D98
-0xFFF0C2:
+0xFFF0A4:
   name: TERRAIN_SURFACE_MODE
+  type: u16
+  format: integer
+  confidence: confirmed
+  description: Surface-mode word toggled by the behavior 0x47 handler and consumed by terrain/actor interaction code.
+  evidence:
+    - ghidra_disassembly_001B5470
+    - ghidra_disassembly_001B5492
+    - ghidra_disassembly_001B549C
+0xFFF0C2:
+  name: TERRAIN_SURFACE_LATCH
   type: u8
   format: boolean
   confidence: confirmed
-  description: Surface mode toggled by behavior 0x47 and cleared for other resolver behaviors.
+  description: One-shot latch set by the behavior 0x47 handler; the resolver clears it for every other behavior.
   evidence:
     - ghidra_disassembly_001B1E38
     - ghidra_disassembly_001B5470

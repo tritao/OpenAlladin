@@ -397,6 +397,11 @@ on every frame in `state.jsonl`; the captured findings and the remaining
 unhit ceiling/slope/special cases are recorded in
 `re/mame/findings/player-terrain-experiments.json`.
 
+The focused matrix is complemented by deterministic handler probes at the
+fixed level-01 cells for behaviors `0x2B` and `0x47`. The latter confirms that
+`0xFFF0A4` is the toggled surface-mode word and `0xFFF0C2` is the handler's
+one-shot latch; the native trace exposes both fields separately.
+
 The native vertical slice now mirrors this fixed-ROM lookup in
 `Level::resolve_player_cell`/`Level::query_player`. `support_row()` and the
 rectangle-based `horizontal_blocked()` path have been removed. The native

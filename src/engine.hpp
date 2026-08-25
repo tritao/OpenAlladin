@@ -67,7 +67,12 @@ struct PlayerState {
     std::uint8_t terrain_response_active = 0;
     std::uint8_t terrain_vertical_stop = 0;
     std::uint8_t terrain_landing_state = 0;
-    std::uint8_t terrain_surface_mode = 0;
+    // The ROM keeps two distinct fields here: FFF0A4 is the surface-mode
+    // word toggled by handler 0x47, while FFF0C2 is that handler's one-shot
+    // latch. Keeping them separate matters for terrain cells that are
+    // revisited on consecutive frames.
+    std::uint16_t terrain_surface_mode = 0;
+    std::uint8_t terrain_surface_latch = 0;
     std::uint8_t terrain_stop_left_motion = 0;
     std::uint8_t terrain_stop_right_motion = 0;
     std::uint8_t terrain_stop_upward_motion = 0;
@@ -76,6 +81,7 @@ struct PlayerState {
     std::uint8_t terrain_query_state_b = 0;
     std::uint8_t terrain_state = 0;
     std::uint8_t terrain_response_latch = 0;
+    std::uint8_t terrain_terminal_transition = 0;
 };
 
 struct InputState {

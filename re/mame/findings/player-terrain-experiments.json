@@ -65,10 +65,51 @@
       "observed_special_handler": false
     }
   },
+  "targeted_handler_probes": {
+    "terrain-handler-0x2B": {
+      "trace": "build/re/terrain-target-2b-v3/state.jsonl",
+      "cell": {
+        "row": 30,
+        "column": 182,
+        "world_x": 2902,
+        "world_y": 720,
+        "terrain_word": "0x6008",
+        "behavior": "0x2B",
+        "handler": "0x001B5502"
+      },
+      "observed": {
+        "first_frame": 1301,
+        "horizontal_velocity": 0,
+        "vertical_velocity_continues": true,
+        "surface_mode": 0,
+        "surface_latch": 0
+      }
+    },
+    "terrain-handler-0x47": {
+      "trace": "build/re/terrain-target-47-v3/state.jsonl",
+      "cell": {
+        "row": 31,
+        "column": 142,
+        "world_x": 2256,
+        "world_y": 736,
+        "terrain_word": "0x60C0",
+        "behavior": "0x47",
+        "handler": "0x001B5470"
+      },
+      "observed": {
+        "first_frame": 1301,
+        "surface_mode_word": 1,
+        "surface_latch": 255,
+        "latch_persists_while_behavior_is_0x47": true
+      }
+    }
+  },
   "native_implementation": {
     "source": "src/engine.cpp",
     "query": "Level::resolve_player_cell and Level::query_player",
-    "handler_table": "fixed 0x004554 entries used by the vertical slice",
+    "handler_table": "exact 0x004554 table, 0x48 entries",
+    "dispatch": "handler is called on every resolver pass; handler-local guards/latches control repetition",
+    "surface_mode": "FFF0A4 is the toggled mode word; FFF0C2 is the 0x47 one-shot latch",
     "removed_heuristics": ["nearby support-row search", "behavior < 0xE0 solid test", "player-sized horizontal rectangle scan"]
   }
 }

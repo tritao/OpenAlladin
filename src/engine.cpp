@@ -62,12 +62,18 @@ constexpr std::array<std::uint32_t, 0x48> kTerrainHandlers = {
     0x001B65BE, 0x001B54F4, 0x001B5320, 0x001B54F4,
     0x001B54F4, 0x001B65BE, 0x001B65BE, 0x001B65BE,
     0x001B5450, 0x001B65BE, 0x001B56F4, 0x001B65BE,
-    0x001B65BE, 0x001B65BE, 0x001B5460, 0x001B5468,
-    0x001B65BE, 0x001B65BE, 0x001B54D8, 0x001B54D8,
+    0x001B65BE, 0x001B65BE, 0x001B5458, 0x001B5460,
+    0x001B5468, 0x001B65BE, 0x001B65BE, 0x001B575C,
+    0x001B5764, 0x001B576C, 0x001B65BE, 0x001B5774,
+    0x001B5318, 0x001B65BE, 0x001B54D8, 0x001B54D8,
     0x001B54D2, 0x001B54E0, 0x001B65BE, 0x001B54A6,
     0x001B55E8, 0x001B557E, 0x001B55D8, 0x001B5502,
     0x001B65BE, 0x001B56B6, 0x001B65BE, 0x001B65BE,
-    0x001B65BE, 0x001B536C, 0x001B53A2, 0x001B65BE,
+    0x001B537A, 0x001B65BE, 0x001B65BE, 0x001B65BE,
+    0x001B65BE, 0x001B65BE, 0x001B65BE, 0x001B65BE,
+    0x001B65BE, 0x001B65BE, 0x001B65BE, 0x001B65BE,
+    0x001B65BE, 0x001B65BE, 0x001B65BE, 0x001B65BE,
+    0x001B536C, 0x001B53A2, 0x001B65BE, 0x001B65BE,
     0x001B65BE, 0x001B65BE, 0x001B65BE, 0x001B5470
 };
 
@@ -455,7 +461,6 @@ void Engine::resolve_terrain(int previous_world_y) {
     const Level::TerrainQuery query = level_.query_player(player_world_x(), player_world_y());
     const Level::TerrainCell previous_down_probe =
         level_.resolve_player_cell(player_world_x(), previous_world_y + 8);
-    const std::uint8_t previous_behavior = player_.terrain_behavior;
     const Level::TerrainCell* cell = &query.resolver;
     if (player_.vy >= 0 && !query.has_resolver_handler()
         && previous_down_probe.valid && previous_down_probe.behavior != 0
@@ -469,6 +474,17 @@ void Engine::resolve_terrain(int previous_world_y) {
     }
     player_.terrain_behavior = cell->valid ? cell->behavior : 0;
     player_.terrain_horizontal_response = 0;
+    // Terrain_ResolvePlayerCell clears these scratch fields before it looks
+    // up the selected behavior. FFF0C2 is deliberately cleared only when
+    // the resolved behavior is not 0x47; the 0x47 handler uses it as a
+    // one-shot latch on consecutive frames.
+    player_.terrain_query_state_a = 0;
+    player_.terrain_query_state_b = 0;
+    player_.terrain_response_latch = 0;
+    player_.terrain_state = 0;
+    if (player_.terrain_behavior != 0x47) {
+        player_.terrain_surface_latch = 0;
+    }
 
     // The original resolver dispatches the behavior selected by the exact
     // cell. A zero behavior returns without changing motion; it does not
@@ -483,7 +499,13 @@ void Engine::resolve_terrain(int previous_world_y) {
         return;
     }
 
-    if (player_.vy >= 0) {
+    // Only the ordinary surface handlers observed in the opening room
+    // perform the floor snap. Special cells (for example 0x2B and 0x47)
+    // dispatch their own response without converting a falling player into
+    // a grounded player; the ROM handler at 0x001B5502 notably leaves VY
+    // untouched.
+    const bool floor_behavior = cell->behavior == 0x0A || cell->behavior == 0x11;
+    if (floor_behavior && player_.vy >= 0) {
         player_.y = cell->row * 16 + kTerrainVisualOffsetY - camera_.y;
         player_.vy = 0;
         if (!player_.grounded || player_.vx == 0) {
@@ -493,20 +515,21 @@ void Engine::resolve_terrain(int previous_world_y) {
         player_.terrain_landing_state = 1;
         player_.terrain_vertical_stop = 0;
         player_.terrain_response_timer_state = 0;
-    } else if (query.up.valid && query.up.behavior != 0
+    } else if (player_.vy < 0 && query.up.valid && query.up.behavior != 0
                && (query.up.handler != kTerrainNoOpHandler || query.up.behavior == 0x11)) {
         player_.terrain_stop_upward_motion = 0xFF;
     }
 
-    if (previous_behavior != cell->behavior) {
-        apply_terrain_behavior(*cell);
-    }
+    // The ROM dispatches the handler on every resolver pass. Individual
+    // handlers carry their own guards/latches; dispatching only on behavior
+    // transitions loses those semantics for special terrain cells.
+    apply_terrain_behavior(*cell);
 }
 
 void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
     switch (cell.behavior) {
     case 0x20:  // TerrainHandler_SetTerminalCollision (0x001B5318)
-        player_.terrain_response_latch = 0xFF;
+        player_.terrain_terminal_transition = 0xFF;
         break;
     case 0x28:  // TerrainHandler_StopAndAlign (0x001B55E8)
         player_.vx = 0;
@@ -525,10 +548,9 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         break;
     case 0x2B:  // TerrainHandler_StopAndAlignPlayer (0x001B5502)
         player_.vx = 0;
-        player_.vy = 0;
-        player_.grounded = true;
+        player_.terrain_response_active = 0;
+        player_.terrain_response_timer_state = 0;
         player_.x = ((visual_x() & ~0x0F) - camera_.x) + 6;
-        player_.terrain_response_timer_state = 1;
         break;
     case 0x2D:  // TerrainHandler_BouncePlayerBlock (0x001B56B6)
         player_.vx = static_cast<std::int16_t>(-0x400);
@@ -550,7 +572,10 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_horizontal_response = 0;
         break;
     case 0x47:  // TerrainHandler_ToggleSurfaceMode (0x001B5470)
-        player_.terrain_surface_mode = player_.terrain_surface_mode == 0 ? 1 : 0;
+        if (player_.terrain_surface_latch == 0) {
+            player_.terrain_surface_latch = 0xFF;
+            player_.terrain_surface_mode ^= 1;
+        }
         break;
     default:
         break;
@@ -920,7 +945,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"player_gate\":0"
            << ",\"player_lock\":0"
            << ",\"player_countdown\":0"
-           << ",\"player_terminal\":0}"
+           << ",\"player_terminal\":" << static_cast<unsigned>(player_.terrain_terminal_transition) << "}"
            << ",\"camera\":{\"x\":" << camera_.x
            << ",\"y\":" << camera_.y
            << ",\"reference_x\":" << camera_.reference_x
@@ -955,6 +980,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"vertical_stop\":" << static_cast<unsigned>(player_.terrain_vertical_stop)
            << ",\"landing_state\":" << static_cast<unsigned>(player_.terrain_landing_state)
            << ",\"surface_mode\":" << static_cast<unsigned>(player_.terrain_surface_mode)
+           << ",\"surface_latch\":" << static_cast<unsigned>(player_.terrain_surface_latch)
            << ",\"stop_left_motion\":" << static_cast<unsigned>(player_.terrain_stop_left_motion)
            << ",\"stop_right_motion\":" << static_cast<unsigned>(player_.terrain_stop_right_motion)
            << ",\"stop_upward_motion\":" << static_cast<unsigned>(player_.terrain_stop_upward_motion)
