@@ -8,6 +8,8 @@ TRACE_FRAMES="${OPENALADDIN_TRACE_FRAMES:-120}"
 TRACE_DIR="${OPENALADDIN_TRACE_DIR:-${ROOT_DIR}/build/re/traces}"
 SDL2_LIB_DIR="${ROOT_DIR}/build/deps/sdl2/sysroot/usr/lib/x86_64-linux-gnu"
 VIDEO_MODE="${OPENALADDIN_MAME_VIDEO:-none}"
+HEADLESS="${OPENALADDIN_MAME_HEADLESS:-1}"
+DEBUG_UI="${OPENALADDIN_MAME_DEBUG_UI:-0}"
 
 if [[ ! -x "${MAME_BIN}" ]]; then
     echo "MAME executable not found: ${MAME_BIN}" >&2
@@ -37,6 +39,12 @@ if [[ "${MAME_XVFB:-0}" == "1" && "${VIDEO_MODE}" == "none" ]]; then
     VIDEO_MODE="soft"
 fi
 
+if [[ "${HEADLESS}" == "1" ]]; then
+    # Scripted analysis must not inherit a visible window/fullscreen setting
+    # from a host MAME configuration.
+    VIDEO_MODE="none"
+fi
+
 LOAD_STATE="${OPENALADDIN_LOAD_STATE:-}"
 
 MAME_ARGS=(
@@ -59,8 +67,18 @@ if [[ "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:
         -debugscript "${ROOT_DIR}/re/mame/lua/continue-debugger.txt"
         -debuglog
     )
+fi
+
+if [[ "${DEBUG_UI}" == "1" && "${HEADLESS}" != "1" ]]; then
+    echo "OpenAladdin: MAME debugger UI enabled" >&2
 else
+    # Debug scripts and Lua write taps still work without opening a debugger
+    # window during automated analysis.
     MAME_ARGS+=( -debugger none )
+fi
+
+if [[ "${HEADLESS}" == "1" ]]; then
+    MAME_ARGS+=( -nowindow )
 fi
 
 if [[ -n "${LOAD_STATE}" ]]; then

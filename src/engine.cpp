@@ -390,7 +390,13 @@ void Engine::integrate_motion() {
             player_.vy = 0;
         }
     } else if (player_.vy > 0x3B) {
-        player_.y += static_cast<std::int8_t>(fixed_high_byte(player_.vy));
+        // The ROM's positive branch reloads D0 after the vertical-state
+        // handoff. The native handoff below contributes 0x0078 before the
+        // next state is published, so the exposed position step uses that
+        // post-handoff velocity (the ascent branch already matches the direct
+        // pre-step form above).
+        const auto next_velocity = static_cast<std::int16_t>(player_.vy + 0x0078);
+        player_.y += static_cast<std::int8_t>(fixed_high_byte(next_velocity));
         player_.vy = static_cast<std::int16_t>(player_.vy - 0x3C);
     } else {
         player_.terrain_vertical_stop = 0xFF;
@@ -398,23 +404,37 @@ void Engine::integrate_motion() {
     }
 }
 
-void Engine::resolve_terrain() {
+void Engine::resolve_terrain(int previous_world_y) {
     const Level::TerrainQuery query = level_.query_player(player_world_x(), player_world_y());
+    const Level::TerrainCell previous_down_probe =
+        level_.resolve_player_cell(player_world_x(), previous_world_y + 8);
     const std::uint8_t previous_behavior = player_.terrain_behavior;
-    const Level::TerrainCell& cell = query.resolver;
-    player_.terrain_behavior = cell.valid ? cell.behavior : 0;
+    const Level::TerrainCell* cell = &query.resolver;
+    if (player_.vy >= 0 && !query.has_resolver_handler()
+        && previous_down_probe.valid && previous_down_probe.behavior != 0
+        && (previous_down_probe.handler != kTerrainNoOpHandler
+            || previous_down_probe.behavior == 0x11)) {
+        // Terrain_ResolvePlayerCell probes the row immediately below the
+        // player on the descending path. This catches the floor crossing
+        // before PLAYER_Y reaches the floor row itself, matching the ROM's
+        // landing snap at the first frame over the surface.
+        cell = &previous_down_probe;
+    }
+    player_.terrain_behavior = cell->valid ? cell->behavior : 0;
     player_.terrain_horizontal_response = 0;
 
     // The original resolver dispatches the behavior selected by the exact
     // cell. A zero behavior returns without changing motion; it does not
     // search forward for a nearby floor row and it does not add gravity.
-    if (!query.has_resolver_handler()) {
+    const bool has_handler = cell->valid && cell->behavior != 0
+        && (cell->handler != kTerrainNoOpHandler || cell->behavior == 0x11);
+    if (!has_handler) {
         player_.grounded = false;
         return;
     }
 
     if (player_.vy >= 0) {
-        player_.y = cell.row * 16 + kTerrainVisualOffsetY - camera_.y;
+        player_.y = cell->row * 16 + kTerrainVisualOffsetY - camera_.y;
         player_.vy = 0;
         player_.vx = 0;
         player_.grounded = true;
@@ -426,8 +446,8 @@ void Engine::resolve_terrain() {
         player_.terrain_stop_upward_motion = 0xFF;
     }
 
-    if (previous_behavior != cell.behavior) {
-        apply_terrain_behavior(cell);
+    if (previous_behavior != cell->behavior) {
+        apply_terrain_behavior(*cell);
     }
 }
 
@@ -691,8 +711,9 @@ void Engine::update(const InputState& input) {
                                      : std::min<std::int16_t>(player_.vx, 0x300);
     }
 
+    const int previous_world_y = player_world_y();
     integrate_motion();
-    resolve_terrain();
+    resolve_terrain(previous_world_y);
     if (!player_.grounded && player_.terrain_behavior == 0
         && (vertical_stop_before_frame || player_.terrain_response_timer_state != 0)) {
         // This is the post-integrator jump/vertical-state handoff. It is

@@ -188,7 +188,7 @@ public:
 private:
     void integrate_motion();
     void update_terrain_input(const InputState& input);
-    void resolve_terrain();
+    void resolve_terrain(int previous_world_y);
     void update_camera();
     void initialize_camera_alignment();
     bool rebase_camera_reference();
