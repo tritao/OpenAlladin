@@ -416,11 +416,22 @@ const SpriteFrame& SpriteDatabase::frame(int index) const {
     return *it;
 }
 
+int SpriteDatabase::frame_index_for_address(int address) const {
+    for (const SpriteFrame& candidate : frames_) {
+        if (candidate.address == address) {
+            return candidate.index;
+        }
+    }
+    return -1;
+}
+
 const SpriteFrame& SpriteDatabase::frame_for(SpritePose pose) const {
     switch (pose) {
     case SpritePose::Idle: return frame(kIdleFrame);
     case SpritePose::Run: return frame(kRunFrame);
+    case SpritePose::Brake: return frame(kBrakeFrame);
     case SpritePose::Jump: return frame(kJumpFrame);
+    case SpritePose::Landing: return frame(kLandingFrame);
     }
     throw std::runtime_error("unknown sprite pose");
 }

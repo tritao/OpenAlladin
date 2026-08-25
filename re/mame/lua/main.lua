@@ -313,6 +313,7 @@ local function capture(frame, input_token, emit_state)
                     { "type", tostring(actor_type) },
                     { "x", tostring(read_u16(record + actor_x_offset)) },
                     { "y", tostring(read_u16(record + actor_y_offset)) },
+                    { "frame_ptr", tostring(read_u32(record + actor_frame_ptr_offset)) },
                     { "animation_pc", tostring(read_u32(record + actor_animation_pc_offset)) },
                     { "movement_pc", tostring(read_u32(record + actor_movement_pc_offset)) }
                 })
@@ -331,6 +332,11 @@ local function capture(frame, input_token, emit_state)
                 { "vx", tostring(signed_u16(read_u16(symbol("PLAYER_VX")))) },
                 { "vy", tostring(signed_u16(read_u16(symbol("PLAYER_VY")))) },
                 { "animation_pc", tostring(read_u32(symbol("PLAYER_ANIMATION_PC"))) },
+                -- Player slot zero shares the common actor frame-pointer
+                -- field. This is the runtime sprite identity used by the
+                -- native animation differential test.
+                { "frame_ptr", tostring(read_u32(actor_table_base + actor_frame_ptr_offset)) },
+                { "animation_timer", tostring(read_u8(symbol("PLAYER_ANIMATION_TIMER"))) },
                 -- TERRAIN_LANDING_STATE is the ROM's explicit grounded/landing
                 -- state. PLAYER_VY can be zero during an airborne vertical
                 -- stop, so it is not a safe grounded predicate.
@@ -371,7 +377,7 @@ if state_sync then
         return string.format(":maincpu.%s@$%06X", width, symbol(name))
     end
     local sync_action = string.format(
-        "printf \"OPENALADDIN_SYNC frame=%%d pc=%%08X x=%%04X y=%%04X wx=%%04X wy=%%04X vx=%%04X vy=%%04X grounded=%%02X camx=%%04X camy=%%04X refx=%%04X refy=%%04X sx=%%04X sy=%%04X thx=%%04X thy=%%04X delay=%%02X special=%%02X\\n\",frame,pc,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s ; g",
+        "printf \"OPENALADDIN_SYNC frame=%%d pc=%%08X x=%%04X y=%%04X wx=%%04X wy=%%04X vx=%%04X vy=%%04X grounded=%%02X frameptr=%%08X animtimer=%%02X camx=%%04X camy=%%04X refx=%%04X refy=%%04X sx=%%04X sy=%%04X thx=%%04X thy=%%04X delay=%%02X special=%%02X\\n\",frame,pc,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s ; g",
         sync_memory("w", "PLAYER_X"),
         sync_memory("w", "PLAYER_Y"),
         sync_memory("w", "PLAYER_WORLD_X"),
@@ -379,6 +385,8 @@ if state_sync then
         sync_memory("w", "PLAYER_VX"),
         sync_memory("w", "PLAYER_VY"),
         sync_memory("b", "TERRAIN_LANDING_STATE"),
+        sync_memory("d", "PLAYER_FRAME_PTR"),
+        sync_memory("b", "PLAYER_ANIMATION_TIMER"),
         sync_memory("w", "WORLD_CAMERA_X"),
         sync_memory("w", "WORLD_CAMERA_Y"),
         sync_memory("w", "CAMERA_REFERENCE_X"),
@@ -390,8 +398,13 @@ if state_sync then
         sync_memory("b", "CAMERA_UPDATE_DELAY"),
         sync_memory("b", "CAMERA_SPECIAL_MODE")
     )
+    -- Gameplay and title/scene modes use different outer loops. VBlankInterrupt
+    -- is hit once per emulated frame after the gameplay work
+    -- has completed. Allow a targeted run to place the semantic checkpoint at
+    -- another boundary when a narrower experiment needs it.
+    local sync_pc = math.floor(env_number("OPENALADDIN_SYNC_PC", symbol("VBlankInterrupt")))
     cpu.debug:bpset(
-        symbol("Game_FrameUpdateLoop"),
+        sync_pc,
         "",
         sync_action)
 end

@@ -1,0 +1,49 @@
+# Minimal native player animation VM slice.
+#
+# Entries and frame order come from build/assets/animations.json. Dwell values
+# were checked against MAME's live player frame pointer at the actor-table
+# frame pointer field (ACTOR_TABLE_BASE + 0x14). This is not yet the complete
+# VM: F4/F0 conditional branches, F8 dynamic state selection, and action
+# streams remain explicit follow-up work.
+
+streams:
+  idle:
+    entry: 0x00121D9A
+    frames: [201, 282, 283, 284, 283, 285, 286, 287]
+    durations: [34, 2, 4, 60, 2, 4, 4, 43]
+    loop: true
+    confidence: probable
+
+  run:
+    entry: 0x00122006
+    frames: [201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214]
+    durations: [4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 2, 4, 4, 4, 4, 2, 4, 4, 4, 4, 2, 4, 4, 4]
+    loop_start: 14
+    loop: true
+    confidence: confirmed
+
+  jump:
+    entry: 0x001221B0
+    frames: [161, 162, 163, 164, 165]
+    durations: [4, 4, 2, 2, 6]
+    loop: false
+    confidence: confirmed
+
+  landing:
+    entry: 0x00121F84
+    frames: [171, 161]
+    durations: [6, 6]
+    loop: false
+    confidence: probable
+
+  brake:
+    entry: 0x001232E0
+    frames: [233, 234, 235, 236, 237, 238, 316, 317, 318, 319]
+    durations: [4, 4, 4, 4, 4, 4, 4, 2, 4, 4]
+    loop: false
+    confidence: probable
+
+evidence:
+  - build_assets_animations_PLAYER_ANIM_IDLE_RUN_JUMP
+  - mame_actor_table_frame_pointer_capture
+  - mame_player_animation_timer_capture

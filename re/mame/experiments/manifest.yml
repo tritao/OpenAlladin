@@ -17,6 +17,15 @@ experiments:
   - name: player-run
     description: Enter the first stage and hold right during the initial run.
     frames: 1400
+    regression:
+      checkpoint: gameplay_checkpoint
+      fields:
+        - player.x
+        - player.y
+        - player.vx
+        - player.vy
+        - player.grounded
+        - player.frame_ptr
     boot:
       scenario: first-level
     setup:
@@ -48,6 +57,7 @@ experiments:
         - player.vx
         - player.vy
         - player.grounded
+        - player.frame_ptr
         - camera.x
         - camera.y
     boot:

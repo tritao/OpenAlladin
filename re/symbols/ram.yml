@@ -8,6 +8,15 @@
   evidence:
     - ghidra_actor_table_layout
     - mame_actor_animation_trace
+0xFF7E54:
+  name: PLAYER_FRAME_PTR
+  type: u32
+  format: rom_pointer
+  confidence: confirmed
+  description: Player actor slot frame-record pointer consumed by the sprite renderer and animation VM.
+  evidence:
+    - mame_actor_table_frame_pointer_capture
+    - actor_table_layout
 0xFF7E22:
   name: SCENE_RESOURCE_STATUS
   type: u8

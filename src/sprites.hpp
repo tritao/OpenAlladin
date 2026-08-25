@@ -11,7 +11,9 @@ namespace openaladdin {
 enum class SpritePose {
     Idle,
     Run,
+    Brake,
     Jump,
+    Landing,
 };
 
 struct SpritePart {
@@ -49,16 +51,18 @@ public:
     void load(const std::string& sprite_root);
 
     const SpriteFrame& frame(int index) const;
+    int frame_index_for_address(int address) const;
     const SpriteFrame& frame_for(SpritePose pose) const;
     const std::vector<SDL_Color>& palette() const { return palette_; }
     void set_palette(const std::vector<SDL_Color>& palette) { palette_ = palette; }
 
-    // These are deliberately fixed frame selections. They are references to
-    // the first concrete player frames recovered from the decoded animation
-    // streams, not an animation interpreter.
+    // Representative frame IDs from the recovered player streams. The
+    // animation VM selects among these records at runtime.
     static constexpr int kIdleFrame = 201;
     static constexpr int kRunFrame = 202;
+    static constexpr int kBrakeFrame = 233;
     static constexpr int kJumpFrame = 161;
+    static constexpr int kLandingFrame = 171;
     static constexpr int kPlayerPaletteLine = 2;
 
 private:

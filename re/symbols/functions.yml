@@ -10,6 +10,13 @@
   description: Stable entry point for the game's per-frame update loop; the debugger state synchronizer samples player and camera RAM here before the next frame's gameplay work.
   evidence:
     - mame_player_run_frame_boundary_trace
+0x001B246E:
+  name: VBlankInterrupt
+  confidence: confirmed
+  description: Genesis level-6 vertical-blank interrupt entry; it executes once per emulated video frame and is the stable post-gameplay synchronization boundary.
+  evidence:
+    - m68k_vector_table
+    - mame_vblank_state_synchronization
 0x001A8E3E:
   name: SceneScript_AdvanceState
   confidence: probable

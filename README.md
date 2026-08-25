@@ -48,9 +48,9 @@ python tools/oa.py regression player-jump
 
 This runs the MAME experiment, finds its gameplay_checkpoint marker, replays
 the exact post-checkpoint input tokens in the native slice, aligns both traces
-at frame 0, and compares only the implemented player fields
-(x, y, vx, vy, and grounded). It reports the first divergence while ignoring
-native placeholders for scene, animation, camera, and actors.
+at frame 0, and compares the implemented player physics fields plus the
+decoded player frame pointer. It reports the first divergence while ignoring
+native placeholders for scene and actors.
 
 The experiment manifest is `re/mame/experiments/manifest.yml`. It supports boot
 scenarios, input actions, and direct memory/PC wait conditions; the MAME Lua
@@ -97,11 +97,12 @@ map and `floor.bin` behavior table, and implements the recovered player 8.8
 motion integrator, jump impulse, gravity miss path, and surface snapping.
 The player now uses the extracted Chopper sprite database. The native runtime
 decodes `build/assets/sprites/frames.json` and its `.SEG` tile sets into
-palette-indexed multipart frames. Animation VM logic is intentionally not part
-of this slice: idle, run, and jump hard-select frames 201, 202, and 161,
-respectively. Chopper's 0x80/0x80 frame origin, part offsets, source-order
-layering, palette lines, and renderer X/Y flips are covered by the pure sprite
-renderer test.
+palette-indexed multipart frames. A minimal data-driven player animation VM
+now advances the recovered idle, run, brake, jump, and landing streams; it is
+deliberately limited to the observed frame sequences and dwell times, not yet
+the complete conditional ROM VM. Chopper's 0x80/0x80 frame origin, part
+offsets, source-order layering, palette lines, and renderer X/Y flips are
+covered by the pure sprite renderer test.
 
 Regenerate the runtime-friendly PPM render and build it with:
 
@@ -114,6 +115,7 @@ Run the focused sprite checks with:
 
 ```bash
 make -C src test-sprites
+make -C src test-animation
 python3 tests/native_sprites.py
 ```
 

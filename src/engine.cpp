@@ -296,7 +296,7 @@ void Engine::reset() {
     frame_ = 0;
     last_ground_direction_ = 0;
     quit_ = false;
-    sprite_run_ = false;
+    animation_.reset();
 }
 
 void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded) {
@@ -310,7 +310,17 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     player_.terrain_landing_state = grounded && player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
     quit_ = false;
-    sprite_run_ = false;
+    animation_.reset();
+    if (!grounded) {
+        animation_.update(SpritePose::Jump, false);
+    }
+}
+
+void Engine::set_checkpoint_frame_ptr(int address) {
+    const int frame = sprites_.frame_index_for_address(address);
+    if (frame < 0 || !animation_.set_frame(frame)) {
+        animation_.reset();
+    }
 }
 
 void Engine::set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state) {
@@ -334,10 +344,7 @@ int Engine::visual_y() const {
 }
 
 SpritePose Engine::sprite_pose() const {
-    if (!player_.grounded) {
-        return SpritePose::Jump;
-    }
-    return sprite_run_ ? SpritePose::Run : SpritePose::Idle;
+    return animation_.pose();
 }
 
 void Engine::update_terrain_input(const InputState& input) {
@@ -694,14 +701,11 @@ void Engine::update_state08(const InputState& input) {
 
 void Engine::update(const InputState& input) {
     if (camera_.scene_state == 8) {
-        sprite_run_ = false;
         update_state08(input);
+        animation_.update(SpritePose::Idle, input.left && !input.right);
         ++frame_;
         return;
     }
-    // This is only a hard pose selector for the graphics slice. It does not
-    // advance or interpret the animation VM stream.
-    sprite_run_ = player_.grounded && input.left != input.right;
     update_terrain_input(input);
     const bool was_grounded = player_.grounded;
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
@@ -777,6 +781,17 @@ void Engine::update(const InputState& input) {
     } else if (!player_.grounded) {
         last_ground_direction_ = 0;
     }
+    const SpritePose desired_pose = !player_.grounded
+        ? SpritePose::Jump
+        : (!was_grounded
+            ? SpritePose::Landing
+            : (animation_.pose() == SpritePose::Landing && !animation_.finished()
+                ? SpritePose::Landing
+                : (input.left != input.right
+                    ? SpritePose::Run
+                    : (animation_.pose() == SpritePose::Run || animation_.pose() == SpritePose::Brake
+                        ? SpritePose::Brake : SpritePose::Idle))));
+    animation_.update(desired_pose, input.left && !input.right);
     ++frame_;
 }
 
@@ -802,7 +817,17 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"vx\":" << player_.vx
            << ",\"vy\":" << player_.vy
            << ",\"animation_pc\":0"
-           << ",\"sprite_frame\":" << sprites_.frame_for(sprite_pose()).index
+           << ",\"animation_state\":\""
+           << (animation_.pose() == SpritePose::Idle ? "idle"
+               : animation_.pose() == SpritePose::Run ? "run"
+               : animation_.pose() == SpritePose::Brake ? "brake"
+               : animation_.pose() == SpritePose::Jump ? "jump" : "landing")
+           << "\""
+           << ",\"animation_timer\":" << animation_.timer()
+           << ",\"animation_stream_entry\":" << animation_.stream_entry()
+           << ",\"sprite_frame\":" << animation_.sprite_frame()
+           << ",\"frame_ptr\":" << sprites_.frame(animation_.sprite_frame()).address
+           << ",\"facing_left\":" << (animation_.facing_left() ? "true" : "false")
            << ",\"grounded\":" << (trace_grounded ? "true" : "false") << "}"
            << ",\"scene\":{\"state\":" << camera_.scene_state
            << ",\"script_cursor\":0"
@@ -897,7 +922,7 @@ void Engine::render(SDL_Renderer* renderer) {
         kScreenHeight,
         visual_x() - camera_render_x_,
         visual_y() - camera_render_y_,
-        false,
+        animation_.facing_left(),
         false,
         SpriteDatabase::kPlayerPaletteLine
     );

@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 
+#include "animation.hpp"
 #include "sprites.hpp"
 
 #include <cstdint>
@@ -172,6 +173,7 @@ public:
     void load(const std::string& asset_root, const std::string& sprite_root = {});
     void reset();
     void set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded);
+    void set_checkpoint_frame_ptr(int address);
     void set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state);
     void update(const InputState& input);
     void render(SDL_Renderer* renderer);
@@ -203,7 +205,7 @@ private:
     PlayerState player_;
     CameraState camera_;
     SpriteDatabase sprites_;
-    bool sprite_run_ = false;
+    PlayerAnimationVm animation_;
     int frame_ = 0;
     int last_ground_direction_ = 0;
     bool quit_ = false;

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Smoke-test hard-selected Chopper player frames in the native runtime."""
+"""Smoke-test the native player animation VM and Chopper frame database."""
 
 from __future__ import annotations
 
@@ -12,14 +12,14 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run_case(name: str, checkpoint: str, schedule: str) -> list[dict]:
+def run_case(name: str, checkpoint: str, schedule: str, frames: int = 2) -> list[dict]:
     output = ROOT / "build/re/tests/native-sprites" / f"{name}.jsonl"
     output.parent.mkdir(parents=True, exist_ok=True)
     command = [
         str(ROOT / "build/openaladdin"),
         "--no-window",
         "--frames",
-        "2",
+        str(frames),
         "--state-output",
         str(output),
         "--checkpoint-player",
@@ -42,11 +42,17 @@ def main() -> int:
     idle = run_case("idle", "103,416,0,0,1", "none*2")
     assert idle[0]["player"]["sprite_frame"] == 201
 
-    running = run_case("run", "103,416,0,0,1", "right*2")
-    assert running[-1]["player"]["sprite_frame"] == 202
+    running = run_case("run", "103,416,0,0,1", "right*7", frames=7)
+    run_frames = [record["player"]["sprite_frame"] for record in running]
+    assert run_frames[:5] == [201, 201, 201, 201, 201]
+    assert 202 in run_frames
+    assert running[-1]["player"]["animation_state"] == "run"
 
-    jumping = run_case("jump", "103,416,0,-512,0", "none*2")
-    assert jumping[-1]["player"]["sprite_frame"] == 161
+    jumping = run_case("jump", "103,416,0,-512,0", "none*7", frames=7)
+    jump_frames = [record["player"]["sprite_frame"] for record in jumping]
+    assert jump_frames[:5] == [161, 161, 161, 161, 162]
+    assert jumping[-1]["player"]["sprite_frame"] == 162
+    assert jumping[-1]["player"]["animation_state"] == "jump"
 
     print("native sprites: ok")
     return 0

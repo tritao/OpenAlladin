@@ -316,6 +316,7 @@ SYNC_PATTERN = re.compile(
     r"wx=(?P<world_x>[0-9A-F]+) wy=(?P<world_y>[0-9A-F]+) "
     r"vx=(?P<vx>[0-9A-F]+) vy=(?P<vy>[0-9A-F]+) "
     r"grounded=(?P<grounded>[0-9A-F]+) "
+    r"frameptr=(?P<frame_ptr>[0-9A-F]+) animtimer=(?P<animation_timer>[0-9A-F]+) "
     r"camx=(?P<camera_x>[0-9A-F]+) camy=(?P<camera_y>[0-9A-F]+) "
     r"refx=(?P<reference_x>[0-9A-F]+) refy=(?P<reference_y>[0-9A-F]+) "
     r"sx=(?P<scroll_x>[0-9A-F]+) sy=(?P<scroll_y>[0-9A-F]+) "
@@ -379,6 +380,7 @@ def synchronize_state_trace(trace_dir: Path) -> int:
         raise SystemExit(f"{state_path}: synchronized capture has no state header")
 
     frame_metadata: dict[int, dict[str, Any]] = {}
+    frame_markers: list[dict[str, Any]] = []
     if frame_trace_path.is_file():
         for line_number, line in enumerate(frame_trace_path.read_text(encoding="utf-8").splitlines(), 1):
             if not line.strip():
@@ -389,6 +391,8 @@ def synchronize_state_trace(trace_dir: Path) -> int:
                 raise SystemExit(f"{frame_trace_path}:{line_number}: invalid JSON: {error}") from error
             if record.get("type") == "frame" and "frame" in record:
                 frame_metadata[int(record["frame"])] = record
+            elif record.get("type") == "marker":
+                frame_markers.append(record)
 
     synchronized: dict[int, dict[str, int]] = {}
     for line in debug_path.read_text(encoding="utf-8").splitlines():
@@ -421,7 +425,7 @@ def synchronize_state_trace(trace_dir: Path) -> int:
                 record["terrain"] = metadata["terrain"]
 
         player = record.setdefault("player", {})
-        for name in ("x", "y", "world_x", "world_y", "vx", "vy"):
+        for name in ("x", "y", "world_x", "world_y", "vx", "vy", "frame_ptr", "animation_timer"):
             player[name] = sync[name]
         # Lua's canonical state schema treats TERRAIN_LANDING_STATE == 1 as
         # grounded.  0xFF is the active response latch during the jump
@@ -449,6 +453,11 @@ def synchronize_state_trace(trace_dir: Path) -> int:
     # in frame order so downstream tools do not need to know how the debugger
     # records were merged.
     markers = [record for record in records if record.get("type") == "marker"]
+    known_markers = {(record.get("frame"), record.get("name")) for record in markers}
+    markers.extend(
+        record for record in frame_markers
+        if (record.get("frame"), record.get("name")) not in known_markers
+    )
     with state_path.open("w", encoding="utf-8") as output:
         output.write(json.dumps(header, separators=(",", ":")) + "\n")
         for frame in sorted(all_frames | set(states)):

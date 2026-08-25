@@ -22,6 +22,7 @@ struct Options {
     std::string state_output;
     std::string input_schedule;
     std::string checkpoint_player;
+    std::string checkpoint_frame_ptr;
     std::string checkpoint_camera;
 };
 
@@ -127,12 +128,15 @@ Options parse_options(int argc, char** argv) {
             options.input_schedule = argv[++i];
         } else if (argument == "--checkpoint-player" && i + 1 < argc) {
             options.checkpoint_player = argv[++i];
+        } else if (argument == "--checkpoint-frame-ptr" && i + 1 < argc) {
+            options.checkpoint_frame_ptr = argv[++i];
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
             std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--frames N] [--no-window] [--demo]\n"
                          "       [--state-output PATH] [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
+                         "       [--checkpoint-frame-ptr ADDRESS]\n"
                          "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n";
             std::exit(0);
         } else {
@@ -165,6 +169,9 @@ int main(int argc, char** argv) {
                 static_cast<std::int16_t>(checkpoint[3]),
                 checkpoint.size() < 5 || checkpoint[4] != 0
             );
+        }
+        if (!options.checkpoint_frame_ptr.empty()) {
+            engine.set_checkpoint_frame_ptr(std::stoi(options.checkpoint_frame_ptr, nullptr, 0));
         }
         if (!options.checkpoint_camera.empty()) {
             const auto checkpoint = parse_camera_checkpoint(options.checkpoint_camera);
