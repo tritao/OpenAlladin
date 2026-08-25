@@ -51,6 +51,10 @@ if capture_profile ~= "state" and capture_profile ~= "ram"
 end
 local capture_ram = capture_profile == "ram" or capture_profile == "full"
 local capture_vdp = capture_profile == "vdp" or capture_profile == "full"
+local trace_audio = os.getenv("OPENALADDIN_TRACE_AUDIO") == "1"
+local trace_audio_mailbox = os.getenv("OPENALADDIN_TRACE_AUDIO_MAILBOX") == "1"
+local trace_audio_mailbox_reads = os.getenv("OPENALADDIN_TRACE_AUDIO_MAILBOX_READS") == "1"
+local trace_audio_commands = os.getenv("OPENALADDIN_TRACE_AUDIO_COMMANDS") == "1"
 local state_sync = os.getenv("OPENALADDIN_STATE_SYNC") == "1"
 
 local state_output = capture_profile == "state" or os.getenv("OPENALADDIN_STATE_OUTPUT") == "1"
@@ -60,6 +64,7 @@ local capture_streams = dofile(root .. "/re/mame/lua/capture.lua")({
     profile = capture_profile,
     capture_ram = capture_ram,
     capture_vdp = capture_vdp,
+    trace_audio = trace_audio,
     state_output = state_output,
     ram_start = ram_start,
     ram_size = ram_size,
@@ -119,6 +124,14 @@ vdp.set_outputs({
     cram = vdp_cram,
     vsram = vdp_vsram,
     regs = vdp_regs
+})
+
+local audio = dofile(root .. "/re/mame/lua/audio.lua")({
+    core = core,
+    main_space = space,
+    main_cpu = cpu,
+    writes = capture_streams.sound_writes,
+    current_frame = function () return current_frame end
 })
 
 local function vdp_state_json()
@@ -566,7 +579,10 @@ local watches = dofile(root .. "/re/mame/lua/watches.lua")({
     get_scene_state_last = function () return scene_state_last end,
     set_scene_state_last = function (value) scene_state_last = value end,
     trace_actor_initializers = trace_actor_initializers,
-    trace_rnc_loads = trace_rnc_loads
+    trace_rnc_loads = trace_rnc_loads,
+    trace_audio_commands = trace_audio_commands,
+    trace_audio_mailbox = trace_audio_mailbox,
+    trace_audio_mailbox_reads = trace_audio_mailbox_reads
 })
 local watched_addresses = watches.watched_addresses
 
@@ -627,6 +643,10 @@ write_record({
     { "program_address_mask", tostring(space.address_mask) },
     { "frame_limit", tostring(frame_limit) },
     { "capture_profile", json_string(capture_profile) },
+    { "audio_trace", json_bool(trace_audio) },
+    { "audio_mailbox_trace", json_bool(trace_audio_mailbox) },
+    { "audio_mailbox_read_trace", json_bool(trace_audio_mailbox_reads) },
+    { "audio_command_trace", json_bool(trace_audio_commands) },
     { "ram_start", tostring(ram_start) },
     { "ram_size", tostring(capture_ram and ram_size or 0) },
     { "reset_ssp", tostring(read_u32(0)) },

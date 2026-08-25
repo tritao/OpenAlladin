@@ -36,6 +36,9 @@ return function(options)
     local watch_list = os.getenv("OPENALADDIN_WATCH_ADDRESSES") or ""
     local debugger_watch = os.getenv("OPENALADDIN_DEBUG_WATCH") == "1"
     local breakpoint_list = os.getenv("OPENALADDIN_BREAKPOINTS") or ""
+    local trace_audio_commands = options.trace_audio_commands
+    local trace_audio_mailbox = options.trace_audio_mailbox
+    local trace_audio_mailbox_reads = options.trace_audio_mailbox_reads
     local trace_scene_states = options.trace_scene_states
     local trace_selector = options.trace_selector
     local trace_actors = options.trace_actors
@@ -81,6 +84,99 @@ return function(options)
         if address then
             local action = "printf \"OPENALADDIN_BREAK PC=%08X FRAME=%08X\\n\",pc,frame ; g"
             cpu.debug:bpset(address, "", action)
+        end
+    end
+
+    if trace_audio_commands then
+        if not cpu.debug then
+            error("OPENALADDIN_TRACE_AUDIO_COMMANDS requires MAME debugger support")
+        end
+
+        -- At 0x1AC9D8 the shared F3 handler has loaded its byte operand into
+        -- D0. A2 is the stream cursor after that operand and A1 is the actor
+        -- record receiving the animation command.
+        cpu.debug:bpset(
+            0x001AC9D8,
+            "",
+            "printf \"OPENALADDIN_AUDIO_COMMAND KIND=SFX ID=%08X PC=%08X FRAME=%08X ACTOR=%08X STREAM=%08X SCENE_FLAG=%02X\\n\",d0,pc,frame,a1,a2,:maincpu.b@$FFF57D ; g")
+
+        -- The level music selector has loaded the level-table word at +0x1A
+        -- into D0 at this instruction, before checking the transition gate.
+        cpu.debug:bpset(
+            0x001AE1F2,
+            "",
+            "printf \"OPENALADDIN_AUDIO_COMMAND KIND=MUSIC ID=%08X PC=%08X FRAME=%08X LEVEL=%02X SCENE_FLAG=%02X\\n\",d0,pc,frame,:maincpu.b@$FF7E26,:maincpu.b@$FFF57F ; g")
+
+        -- Player interaction setup queues the fixed sound/event 0x31 through
+        -- the same shared audio dispatch path.
+        cpu.debug:bpset(
+            0x001AE5AA,
+            "",
+            "printf \"OPENALADDIN_AUDIO_COMMAND KIND=EVENT ID=00000031 PC=%08X FRAME=%08X SCENE_FLAG=%02X\\n\",pc,frame,:maincpu.b@$FFF57D ; g")
+
+        -- These are the two common routines reached by the level-music and
+        -- animation F3 paths. Their register state tells us whether the ROM
+        -- command was converted into a Z80 mailbox operation.
+        cpu.debug:bpset(
+            0x001E58B8,
+            "",
+            "printf \"OPENALADDIN_AUDIO_DISPATCH KIND=PREP PC=%08X FRAME=%08X D0=%08X D1=%08X A0=%08X A1=%08X A2=%08X\\n\",pc,frame,d0,d1,a0,a1,a2 ; g")
+        cpu.debug:bpset(
+            0x001E589A,
+            "",
+            "printf \"OPENALADDIN_AUDIO_DISPATCH KIND=SEND PC=%08X FRAME=%08X D0=%08X D1=%08X A0=%08X A1=%08X A2=%08X\\n\",pc,frame,d0,d1,a0,a1,a2 ; g")
+    end
+
+    if trace_audio_mailbox then
+        if not cpu.debug then
+            error("OPENALADDIN_TRACE_AUDIO_MAILBOX requires MAME debugger support")
+        end
+
+        -- The common send routine presents the Z80 shared-RAM command cell at
+        -- A0 == $A00036. A debugger watchpoint observes the write without
+        -- replacing the Genesis Z80-RAM handler (a broad Lua memory tap would
+        -- prevent the boot-time Z80 program upload in this MAME driver).
+        cpu.debug:wpset(
+            space,
+            "w",
+            0x00A00036,
+            2,
+            "frame > 10",
+            "printf \"OPENALADDIN_AUDIO_MAILBOX ADDR=%08X DATA=%08X PC=%08X FRAME=%08X D0=%08X A0=%08X\\n\",wpaddr,wpdata,pc,frame,d0,a0 ; g")
+
+        if trace_audio_mailbox_reads then
+            local read_frames = os.getenv("OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES") or ""
+            if read_frames == "" then
+                error("OPENALADDIN_TRACE_AUDIO_MAILBOX_READS requires OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES")
+            end
+            local conditions = {}
+            for item in read_frames:gmatch("[^,]+") do
+                local value = parse_hex_address(item)
+                if value then
+                    -- MAME debugger numeric literals are hexadecimal.
+                    conditions[#conditions + 1] = string.format("frame == %X", value)
+                end
+            end
+            if #conditions == 0 then
+                error("OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES contains no valid frame values")
+            end
+
+            -- On the Z80 side the 68K address $A00036 is the adjacent byte in
+            -- the shared program-RAM view. Restrict reads to selected command
+            -- frames; the sound driver polls this cell continuously.
+            local z80 = core.machine.devices[":genesis_snd_z80"]
+            local z80_space = z80 and z80.spaces["program"] or nil
+            if z80 and z80.debug and z80_space then
+                z80.debug:wpset(
+                    z80_space,
+                    "r",
+                    0x0030,
+                    0x10,
+                    table.concat(conditions, " || "),
+                    "printf \"OPENALADDIN_AUDIO_MAILBOX_READ ADDR=%08X DATA=%08X VISIBLE_PC=%08X FRAME=%08X\\n\",wpaddr,wpdata,pc,frame ; g")
+            else
+                error("OPENALADDIN_TRACE_AUDIO_MAILBOX_READS requires a debuggable Genesis Z80")
+            end
         end
     end
 

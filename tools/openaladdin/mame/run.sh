@@ -8,6 +8,7 @@ TRACE_FRAMES="${OPENALADDIN_TRACE_FRAMES:-120}"
 TRACE_DIR="${OPENALADDIN_TRACE_DIR:-${ROOT_DIR}/build/re/traces}"
 SDL2_LIB_DIR="${ROOT_DIR}/build/deps/sdl2/sysroot/usr/lib/x86_64-linux-gnu"
 VIDEO_MODE="${OPENALADDIN_MAME_VIDEO:-none}"
+SOUND_MODE="${OPENALADDIN_MAME_SOUND:-none}"
 HEADLESS="${OPENALADDIN_MAME_HEADLESS:-1}"
 DEBUG_UI="${OPENALADDIN_MAME_DEBUG_UI:-0}"
 MAME_XVFB="${MAME_XVFB:-0}"
@@ -81,7 +82,7 @@ MAME_ARGS=(
     -snapsize auto
     -skip_gameinfo
     -video "${VIDEO_MODE}"
-    -sound none
+    -sound "${SOUND_MODE}"
     -nothrottle
 )
 
@@ -94,7 +95,7 @@ if [[ -n "${TRACE_SECONDS}" && -z "${OPENALADDIN_LOAD_STATE:-}" ]]; then
     MAME_ARGS+=( -seconds_to_run "${TRACE_SECONDS}" )
 fi
 
-if [[ "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" || "${OPENALADDIN_TRACE_RNC_LOADS:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" == "1" ]]; then
+if [[ "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" || "${OPENALADDIN_TRACE_RNC_LOADS:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" == "1" || "${OPENALADDIN_TRACE_AUDIO_COMMANDS:-0}" == "1" ]]; then
     MAME_ARGS+=(
         -debug
         -debugscript "${ROOT_DIR}/re/mame/lua/continue-debugger.txt"

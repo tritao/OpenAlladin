@@ -10,6 +10,7 @@ return function(options)
     local capture_profile = options.profile
     local capture_ram = options.capture_ram
     local capture_vdp = options.capture_vdp
+    local trace_audio = options.trace_audio
     local state_output = options.state_output
     local ram_start = options.ram_start
     local ram_size = options.ram_size
@@ -21,12 +22,14 @@ return function(options)
     local vdp_vsram = capture_vdp and assert(io.open(join_path(trace_dir, "vdp_vsram_frames.bin"), "wb")) or nil
     local vdp_regs = capture_vdp and assert(io.open(join_path(trace_dir, "vdp_regs_frames.bin"), "wb")) or nil
     local vdp_writes = capture_vdp and assert(io.open(join_path(trace_dir, "vdp_writes.jsonl"), "wb")) or nil
+    local sound_writes = trace_audio and assert(io.open(join_path(trace_dir, "sound_writes.jsonl"), "wb")) or nil
     local state = state_output and assert(io.open(join_path(trace_dir, "state.jsonl"), "wb")) or nil
 
     local result = {
         profile = capture_profile,
         capture_ram = capture_ram,
         capture_vdp = capture_vdp,
+        trace_audio = trace_audio,
         state_output = state_output,
         trace = trace,
         ram = ram,
@@ -35,6 +38,7 @@ return function(options)
         vdp_vsram = vdp_vsram,
         vdp_regs = vdp_regs,
         vdp_writes = vdp_writes,
+        sound_writes = sound_writes,
         state = state
     }
 
@@ -84,6 +88,7 @@ return function(options)
         if vdp_vsram then vdp_vsram:close() end
         if vdp_regs then vdp_regs:close() end
         if vdp_writes then vdp_writes:close() end
+        if sound_writes then sound_writes:close() end
         if state then state:close() end
     end
 

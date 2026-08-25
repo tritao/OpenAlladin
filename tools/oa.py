@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 from typing import Any, Iterable
@@ -244,6 +245,11 @@ def command_trace(args: argparse.Namespace) -> int:
         "OPENALADDIN_EXPERIMENT_ACTIONS",
         "OPENALADDIN_STATE_SYNC",
         "OPENALADDIN_TRACE_EDGES",
+        "OPENALADDIN_TRACE_AUDIO",
+        "OPENALADDIN_TRACE_AUDIO_MAILBOX",
+        "OPENALADDIN_TRACE_AUDIO_MAILBOX_READS",
+        "OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES",
+        "OPENALADDIN_TRACE_AUDIO_COMMANDS",
     ):
         environment.pop(key, None)
     environment.update({
@@ -274,9 +280,24 @@ def command_trace(args: argparse.Namespace) -> int:
         environment["OPENALADDIN_STATE_OUTPUT"] = "1"
     if args.edges:
         environment["OPENALADDIN_TRACE_EDGES"] = "1"
+    if args.audio or args.audio_mailbox or args.audio_mailbox_reads or args.audio_read_frame:
+        environment["OPENALADDIN_TRACE_AUDIO"] = "1"
+    if args.audio_mailbox or args.audio_mailbox_reads or args.audio_read_frame:
+        environment["OPENALADDIN_TRACE_AUDIO_MAILBOX"] = "1"
+    if args.audio_mailbox_reads or args.audio_read_frame:
+        environment["OPENALADDIN_TRACE_AUDIO_MAILBOX_READS"] = "1"
+    if args.audio_read_frame:
+        environment["OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES"] = ",".join(args.audio_read_frame)
+    if args.audio_commands:
+        environment["OPENALADDIN_TRACE_AUDIO_COMMANDS"] = "1"
 
     status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
     if status == 0:
+        if args.audio_commands:
+            debug_log = ROOT / "debug.log"
+            if debug_log.is_file():
+                trace_dir.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(debug_log, trace_dir / "debug.log")
         if args.state_sync:
             synchronize_state_trace(trace_dir)
         print(f"trace: {trace_dir}")
@@ -983,6 +1004,11 @@ def build_parser() -> argparse.ArgumentParser:
     trace.add_argument("--capture-vdp", action=argparse.BooleanOptionalAction, default=None)
     trace.add_argument("--state-sync", action="store_true", help="sample state at the stable game-loop boundary")
     trace.add_argument("--edges", action="store_true", help="capture indirect dispatch targets in MAME debug.log")
+    trace.add_argument("--audio", action="store_true", help="capture YM2612/PSG register writes to sound_writes.jsonl")
+    trace.add_argument("--audio-mailbox", action="store_true", help="also capture 68000 writes to the Z80 sound mailbox")
+    trace.add_argument("--audio-mailbox-reads", action="store_true", help="trace selected Z80 mailbox-read frames; pair with --audio-read-frame")
+    trace.add_argument("--audio-read-frame", action="append", help="hex frame to inspect for Z80 mailbox reads")
+    trace.add_argument("--audio-commands", action="store_true", help="trace ROM music/SFX command dispatches in MAME debug.log")
     trace.set_defaults(function=command_trace)
 
     regression = commands.add_parser("regression", help="differentially compare MAME and native gameplay")

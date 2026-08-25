@@ -41,6 +41,47 @@ python tools/oa.py trace player-jump --capture state
 python tools/oa.py trace player-jump --capture full
 ```
 
+## Audio-bus trace
+
+The original sound path can be captured without recording host-dependent WAV
+output.  `--audio` records deterministic YM2612 and PSG writes from both the
+68000 and the Genesis Z80 to `sound_writes.jsonl`.  `--audio-commands` also
+logs the ROM's level-music selector and shared animation SFX command path in
+`debug.log`:
+
+```sh
+python tools/oa.py trace title-menu --frames 360 \
+  --audio --audio-commands --capture state \
+  --trace-dir build/re/traces/audio-title
+
+PYTHONPATH=tools python tools/openaladdin/mame/audio_trace.py \
+  build/re/traces/audio-title
+```
+
+The bus trace covers 68000 YM2612 `$A04000-$A04003`, 68000 PSG ports behind
+the VDP map, Z80 YM2612 `$4000-$4003`, and Z80 PSG `$7F00-$7FFF`.  It is
+intended to recover the original command protocol and channel behavior before
+adding a native mixer.  The command log currently identifies animation `F3`
+SFX operands, level-table music IDs, and the fixed interaction event `0x31`.
+The focused 68000 writes to the Z80 command cell at `$A00036` are saved
+separately in `sound_mailbox.jsonl`; this distinguishes a dispatched command
+from a command that never reaches the shared sound state. Enable that stream
+explicitly with `--audio-mailbox` when using the unified CLI.
+For a focused consumption check, add selected hexadecimal command frames after
+the first command trace identifies them:
+
+```sh
+python tools/oa.py trace player-run --frames 1400 \
+  --audio --audio-mailbox --audio-commands \
+  --audio-read-frame 0x496 --audio-read-frame 0x55D \
+  --audio-read-frame 0x56B --audio-read-frame 0x56D \
+  --trace-dir build/re/traces/audio-targeted-reads
+```
+
+The selected Z80 shared-RAM reads are included in `audio_summary.json` as
+`sound_mailbox_reads`; unrestricted polling is intentionally not enabled by
+default because the sound driver reads its command cell continuously.
+
 For a repeatable gameplay checkpoint, schedule a state and screenshot after
 the scripted input has had time to enter the game:
 

@@ -87,6 +87,11 @@ def _run_scenario(
         "OPENALADDIN_TRACE_SCENE_STATES",
         "OPENALADDIN_TRACE_ACTORS",
         "OPENALADDIN_TRACE_ACTOR_INIT",
+        "OPENALADDIN_TRACE_AUDIO",
+        "OPENALADDIN_TRACE_AUDIO_MAILBOX",
+        "OPENALADDIN_TRACE_AUDIO_MAILBOX_READS",
+        "OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES",
+        "OPENALADDIN_TRACE_AUDIO_COMMANDS",
         "OPENALADDIN_LOAD_STATE",
         "OPENALADDIN_SAVE_FRAME",
         "OPENALADDIN_SNAPSHOT_FRAME",
@@ -102,6 +107,10 @@ def _run_scenario(
         "OPENALADDIN_CAPTURE_VDP": _bool_env(scenario.get("capture_vdp"), True),
         "OPENALADDIN_TRACE_RNC_LOADS": _bool_env(scenario.get("trace_rnc_loads"), True),
         "OPENALADDIN_TRACE_SCENE_STATES": _bool_env(scenario.get("trace_scene_states"), True),
+        "OPENALADDIN_TRACE_AUDIO": _bool_env(scenario.get("trace_audio"), False),
+        "OPENALADDIN_TRACE_AUDIO_MAILBOX": _bool_env(scenario.get("trace_audio_mailbox"), False),
+        "OPENALADDIN_TRACE_AUDIO_MAILBOX_READS": _bool_env(scenario.get("trace_audio_mailbox_reads"), False),
+        "OPENALADDIN_TRACE_AUDIO_COMMANDS": _bool_env(scenario.get("trace_audio_commands"), False),
     })
     for key, env_name in (
         ("load_state", "OPENALADDIN_LOAD_STATE"),
