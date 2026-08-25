@@ -36,6 +36,7 @@ return function(options)
     local watch_list = os.getenv("OPENALADDIN_WATCH_ADDRESSES") or ""
     local debugger_watch = os.getenv("OPENALADDIN_DEBUG_WATCH") == "1"
     local breakpoint_list = os.getenv("OPENALADDIN_BREAKPOINTS") or ""
+    local breakpoint_registers = os.getenv("OPENALADDIN_BREAKPOINT_REGISTERS") == "1"
     local trace_audio_commands = options.trace_audio_commands
     local trace_audio_mailbox = options.trace_audio_mailbox
     local trace_audio_mailbox_reads = options.trace_audio_mailbox_reads
@@ -82,7 +83,12 @@ return function(options)
     for item in breakpoint_list:gmatch("[^,]+") do
         local address = parse_hex_address(item)
         if address then
-            local action = "printf \"OPENALADDIN_BREAK PC=%08X FRAME=%08X\\n\",pc,frame ; g"
+            local action
+            if breakpoint_registers then
+                action = "printf \"OPENALADDIN_BREAK_REGS PC=%08X FRAME=%08X D0=%08X D1=%08X D2=%08X D3=%08X D4=%08X D5=%08X D6=%08X D7=%08X A0=%08X A1=%08X A2=%08X A3=%08X A4=%08X A5=%08X A6=%08X F003=%02X F57D=%02X\\n\",pc,frame,d0,d1,d2,d3,d4,d5,d6,d7,a0,a1,a2,a3,a4,a5,a6,:maincpu.b@$FFF003,:maincpu.b@$FFF57D ; g"
+            else
+                action = "printf \"OPENALADDIN_BREAK PC=%08X FRAME=%08X\\n\",pc,frame ; g"
+            end
             cpu.debug:bpset(address, "", action)
         end
     end

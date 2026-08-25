@@ -59,6 +59,29 @@
       },
       "result": "The timed jump reaches the wall approach but never crosses x=2177. The type-0x34 actor remains beyond the collision wall, so this probe does not establish a playable transfer.",
       "player_survives_trace": true
+    },
+    "controlled_handler_probe": {
+      "checkpoint": "build/re/codex-type34-approach-save-20260825c/states/genesis/wall-approach.sta",
+      "trace": "build/re/codex-type34-handler-overlap-regs-20260825/state.jsonl",
+      "debug_log": "build/re/codex-type34-handler-overlap-regs-20260825/handler-debug.log",
+      "input": "none*12",
+      "setup": "At frame 1, replace actor slot 13 with type 0x34 at the player's wall-approach position (2177,854), using movement root 0x001217B4, animation root 0x00122C1E, frame 0x001F3DEE, and template 0x001B7CD8.",
+      "handler_trace": {
+        "entry_pc": "0x001AF4DA",
+        "interaction_counter_write": "0xFFF003: 0x01 -> 0x02 at 0x001AF4E0",
+        "event_operand": "0x69",
+        "event_gate": "0xFFF57D was 0x01, so the 0x69 dispatch path ran",
+        "template_call": "0x001AF502 continues into Actor_InitializeFromTemplate at 0x001AE30A with A5=0x00FF819A and A6=0x001B7CD8"
+      },
+      "post_collision_actor": {
+        "slot": 13,
+        "type": "0x8D",
+        "animation_pc": "0x001240D0",
+        "movement_pc": "0x00000000",
+        "frame_ptr": "0x001EF4D4"
+      },
+      "meaning": "The type-0x34 actor is an interaction trigger/effect, not a traversable platform: on player overlap it queues event/sound 0x69 and is replaced in-place by a non-moving type-0x8D response actor. This closes the natural-route hypothesis that the actor carries Aladdin across the wall.",
+      "natural_route_confirmed": false
     }
   },
   "controlled_exit_geometry": {
@@ -69,5 +92,5 @@
     "meaning": "Confirms the required exit-height corridor, not natural route completion."
   },
   "natural_exit_confirmed": false,
-  "next_action": "Decode the type-0x34 actor and its wall-side collision/interaction path before attempting another natural crossing; do not treat the behavior-0x47 tower as a climbable rope without a confirmed actor or platform transfer."
+  "next_action": "Search the pre-wall route for a different transfer trigger or hidden collision opening; the type-0x34 actor is now classified as a one-shot interaction effect and the behavior-0x47 tower remains unconfirmed as a climbable route."
 }

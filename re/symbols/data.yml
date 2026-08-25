@@ -265,6 +265,20 @@
   evidence:
     - actor_type_34_stream_decode
 
+0x001240CE:
+  name: ACTOR_ANIM_TYPE_8D_WALL_RESPONSE
+  confidence: probable
+  description: Animation stream installed when the type-0x34 wall actor collides with the player; the runtime actor changes to type 0x8D and begins at this response stream.
+  evidence:
+    - mame_type_34_handler_overlap_trace
+
+0x001EF4D4:
+  name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
+  confidence: probable
+  description: First runtime frame pointer observed after ActorType34_PlayerCollisionHandler replaces the wall actor with type 0x8D.
+  evidence:
+    - mame_type_34_handler_overlap_trace
+
 0x00121D9A:
   name: PLAYER_ANIM_IDLE
   confidence: confirmed
@@ -725,3 +739,11 @@
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - ghidra_actor_template_001B81D8
+
+0x001B7CD8:
+  name: ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE
+  confidence: probable
+  description: Compact actor response template selected by the type-0x34 player-collision handler; its type byte is 0x8D and its initialized animation begins at ACTOR_ANIM_TYPE_8D_WALL_RESPONSE.
+  evidence:
+    - ghidra_actor_template_initializer_001AE30A
+    - mame_type_34_handler_overlap_trace

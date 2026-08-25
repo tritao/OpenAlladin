@@ -163,12 +163,13 @@
     - ghidra_decompile_collision_damage_targets
 0x001AF4D8:
   name: ActorType34_PlayerCollisionHandler
-  confidence: provisional
-  description: Player-collision dispatch target for actor type 0x34, observed on the wall-side actor at world (2272,880) during the natural level-01 approach.
+  confidence: confirmed
+  description: Player-collision dispatch target for actor type 0x34. It increments the global interaction counter, conditionally queues event/sound 0x69, runs the two actor-response helpers at 0x001B016A and 0x001ABE6E, then replaces the destination actor with ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE through Actor_InitializeFromTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - mame_type_34_wall_actor_probe
     - actor_type_34_stream_decode
+    - mame_type_34_handler_overlap_trace
 0x001AEC00:
   name: Actor_HandlePlayerCollisionBlock
   confidence: confirmed
