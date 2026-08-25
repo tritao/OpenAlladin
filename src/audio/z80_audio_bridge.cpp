@@ -27,13 +27,18 @@ constexpr std::array<std::uint16_t, 64> kPsgPeriodTable{
     0x0040, 0x003C, 0x0039, 0x0035, 0x0032, 0x002F, 0x002D, 0x002A,
     0x0028, 0x0026, 0x0023, 0x0021, 0x0020, 0x001E, 0x001C, 0x001C,
 };
+// Z80 driver route records at $1791/$17BC. Values are the hardware channel
+// selectors, not dense native voice indices: $04/$05/$06 select YM port 2.
+constexpr std::array<std::uint8_t, 6> kYmChannelOrder{0, 1, 4, 5, 6, 2};
 
-std::uint8_t ym_port(std::size_t voice) {
-    return voice >= 3 ? 2 : 0;
+std::uint8_t ym_port(std::uint8_t hardware_channel) {
+    return hardware_channel >= 4 ? 2 : 0;
 }
 
-std::uint8_t ym_channel(std::size_t voice) {
-    return static_cast<std::uint8_t>(voice % 3);
+std::uint8_t ym_channel(std::uint8_t hardware_channel) {
+    return hardware_channel >= 4
+        ? static_cast<std::uint8_t>(hardware_channel - 4)
+        : hardware_channel;
 }
 
 }  // namespace
@@ -43,13 +48,16 @@ Z80AudioBridge::Z80AudioBridge(Bus bus)
 }
 
 void Z80AudioBridge::reset() {
-    for (std::size_t voice = 0; voice < kYmVoiceCount; ++voice) {
-        key_off_ym(voice);
+    for (const std::uint8_t hardware_channel : kYmChannelOrder) {
+        key_off_ym(hardware_channel);
     }
     for (std::size_t voice = 0; voice < 4; ++voice) {
         mute_psg(voice);
     }
     ym_keyed_.fill(false);
+    ym_channel_in_use_.fill(false);
+    has_ym_channel_for_stream_.fill(false);
+    ym_channel_for_stream_.fill(0);
     has_ym_patch_.fill(false);
     for (auto& patch : ym_patches_) {
         patch.fill(0);
@@ -75,50 +83,57 @@ void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
 
     if (event.opcode == 0x60) {
         if (event.channel < kYmVoiceCount) {
-            key_off_ym(event.channel);
+            release_ym_channel(event.channel);
         } else {
             mute_psg(event.channel % 4);
         }
     }
 }
 
-void Z80AudioBridge::write_ym_register(std::size_t voice,
+void Z80AudioBridge::write_ym_register(std::uint8_t hardware_channel,
                                        std::uint8_t address,
                                        std::uint8_t data) {
     if (!bus_.write_ym2612) {
         return;
     }
-    const std::uint8_t port = ym_port(voice);
+    const std::uint8_t port = ym_port(hardware_channel);
     bus_.write_ym2612(port, address);
     bus_.write_ym2612(static_cast<std::uint8_t>(port + 1), data);
 }
 
-void Z80AudioBridge::configure_ym_voice(std::size_t voice) {
+void Z80AudioBridge::configure_ym_voice(std::uint8_t hardware_channel) {
     // One simple algorithm-7 patch: all operators are active, with the first
     // three acting as quiet modulators and the fourth as the carrier.
-    const std::uint8_t channel = ym_channel(voice);
+    const std::uint8_t channel = ym_channel(hardware_channel);
     constexpr std::array<std::uint8_t, 4> kOperatorSlots{0, 4, 8, 12};
     for (std::size_t operator_index = 0;
          operator_index < kOperatorSlots.size();
          ++operator_index) {
         const std::uint8_t offset = static_cast<std::uint8_t>(
             kOperatorSlots[operator_index] + channel);
-        write_ym_register(voice, static_cast<std::uint8_t>(0x30 + offset), 0x01);
+        write_ym_register(hardware_channel,
+                          static_cast<std::uint8_t>(0x30 + offset), 0x01);
         write_ym_register(
-            voice,
+            hardware_channel,
             static_cast<std::uint8_t>(0x40 + offset),
             operator_index == 3 ? 0x00 : 0x7F);
-        write_ym_register(voice, static_cast<std::uint8_t>(0x50 + offset), 0x1F);
-        write_ym_register(voice, static_cast<std::uint8_t>(0x60 + offset), 0x00);
-        write_ym_register(voice, static_cast<std::uint8_t>(0x70 + offset), 0x00);
-        write_ym_register(voice, static_cast<std::uint8_t>(0x80 + offset), 0x0F);
+        write_ym_register(hardware_channel,
+                          static_cast<std::uint8_t>(0x50 + offset), 0x1F);
+        write_ym_register(hardware_channel,
+                          static_cast<std::uint8_t>(0x60 + offset), 0x00);
+        write_ym_register(hardware_channel,
+                          static_cast<std::uint8_t>(0x70 + offset), 0x00);
+        write_ym_register(hardware_channel,
+                          static_cast<std::uint8_t>(0x80 + offset), 0x0F);
     }
-    write_ym_register(voice, static_cast<std::uint8_t>(0xB0 + channel), 0x07);
-    write_ym_register(voice, static_cast<std::uint8_t>(0xB4 + channel), 0xC0);
+    write_ym_register(hardware_channel,
+                      static_cast<std::uint8_t>(0xB0 + channel), 0x07);
+    write_ym_register(hardware_channel,
+                      static_cast<std::uint8_t>(0xB4 + channel), 0xC0);
 }
 
 void Z80AudioBridge::configure_ym_patch(
-    std::size_t voice,
+    std::uint8_t hardware_channel,
     const Z80SoundDriver::PatchState& patch_state) {
     // The 0x61 state loader copies a three-byte per-voice prefix followed by
     // the 32-byte YM patch payload. The payload is B0/B4, then four groups of
@@ -129,10 +144,12 @@ void Z80AudioBridge::configure_ym_patch(
     constexpr std::array<std::uint8_t, 4> kPayloadGroups{0, 2, 1, 3};
     constexpr std::array<std::uint8_t, 6> kOperatorRegisters{
         0x30, 0x40, 0x50, 0x60, 0x70, 0x80};
-    const std::uint8_t channel = ym_channel(voice);
-    write_ym_register(voice, static_cast<std::uint8_t>(0xB0 + channel),
+    const std::uint8_t channel = ym_channel(hardware_channel);
+    write_ym_register(hardware_channel,
+                      static_cast<std::uint8_t>(0xB0 + channel),
                       patch_state[kPayloadOffset]);
-    write_ym_register(voice, static_cast<std::uint8_t>(0xB4 + channel),
+    write_ym_register(hardware_channel,
+                      static_cast<std::uint8_t>(0xB4 + channel),
                       patch_state[kPayloadOffset + 1]);
 
     for (std::size_t operator_index = 0;
@@ -144,34 +161,38 @@ void Z80AudioBridge::configure_ym_patch(
         for (std::size_t register_index = 0;
              register_index < kOperatorRegisters.size(); ++register_index) {
             write_ym_register(
-                voice,
+                hardware_channel,
                 static_cast<std::uint8_t>(
                     kOperatorRegisters[register_index] + offset),
                 patch_state[payload_index + register_index]);
         }
         // The ROM format has no ninth per-operator byte; the original driver
         // clears the 0x90-series registers while applying a patch.
-        write_ym_register(voice, static_cast<std::uint8_t>(0x90 + offset), 0);
+        write_ym_register(hardware_channel,
+                          static_cast<std::uint8_t>(0x90 + offset), 0);
     }
 }
 
-void Z80AudioBridge::handle_ym_note(std::size_t voice, std::uint8_t note) {
-    if (ym_keyed_[voice]) {
-        key_off_ym(voice);
+void Z80AudioBridge::handle_ym_note(std::size_t stream_channel,
+                                    std::uint8_t note) {
+    const std::uint8_t hardware_channel = allocate_ym_channel(stream_channel);
+    if (ym_keyed_[hardware_channel]) {
+        key_off_ym(hardware_channel);
     }
 
-    if (has_ym_patch_[voice]) {
-        configure_ym_patch(voice, ym_patches_[voice]);
+    if (has_ym_patch_[stream_channel]) {
+        configure_ym_patch(hardware_channel, ym_patches_[stream_channel]);
     } else {
-        configure_ym_voice(voice);
+        configure_ym_voice(hardware_channel);
     }
 
     const auto [block, fnum] = ym_frequency(note);
-    const std::uint8_t channel = ym_channel(voice);
-    write_ym_register(voice, static_cast<std::uint8_t>(0xA0 + channel),
+    const std::uint8_t channel = ym_channel(hardware_channel);
+    write_ym_register(hardware_channel,
+                      static_cast<std::uint8_t>(0xA0 + channel),
                       static_cast<std::uint8_t>(fnum));
     write_ym_register(
-        voice,
+        hardware_channel,
         static_cast<std::uint8_t>(0xA4 + channel),
         static_cast<std::uint8_t>((block << 3) | (fnum >> 8)));
     if (bus_.write_ym2612) {
@@ -179,9 +200,9 @@ void Z80AudioBridge::handle_ym_note(std::size_t voice, std::uint8_t note) {
         bus_.write_ym2612(
             1,
             static_cast<std::uint8_t>(0xF0 | channel
-                                       | (voice >= 3 ? 0x04 : 0x00)));
+                                       | (hardware_channel >= 4 ? 0x04 : 0x00)));
     }
-    ym_keyed_[voice] = true;
+    ym_keyed_[hardware_channel] = true;
 }
 
 void Z80AudioBridge::handle_psg_note(std::size_t voice, std::uint8_t note) {
@@ -195,15 +216,46 @@ void Z80AudioBridge::handle_psg_note(std::size_t voice, std::uint8_t note) {
     bus_.write_psg(static_cast<std::uint8_t>(0x90 | (voice << 5)));
 }
 
-void Z80AudioBridge::key_off_ym(std::size_t voice) {
+void Z80AudioBridge::key_off_ym(std::uint8_t hardware_channel) {
     if (bus_.write_ym2612) {
         bus_.write_ym2612(0, 0x28);
         bus_.write_ym2612(
             1,
-            static_cast<std::uint8_t>(ym_channel(voice)
-                                       | (voice >= 3 ? 0x04 : 0x00)));
+            static_cast<std::uint8_t>(ym_channel(hardware_channel)
+                                       | (hardware_channel >= 4 ? 0x04 : 0x00)));
     }
-    ym_keyed_[voice] = false;
+    ym_keyed_[hardware_channel] = false;
+}
+
+std::uint8_t Z80AudioBridge::allocate_ym_channel(std::size_t stream_channel) {
+    if (has_ym_channel_for_stream_[stream_channel]) {
+        return ym_channel_for_stream_[stream_channel];
+    }
+
+    for (const std::uint8_t hardware_channel : kYmChannelOrder) {
+        if (!ym_channel_in_use_[hardware_channel]) {
+            ym_channel_for_stream_[stream_channel] = hardware_channel;
+            has_ym_channel_for_stream_[stream_channel] = true;
+            ym_channel_in_use_[hardware_channel] = true;
+            return hardware_channel;
+        }
+    }
+
+    // The original allocator has six FM slots. If a malformed or unusually
+    // dense native event stream exceeds that limit, keep the stream audible
+    // by reusing its numeric slot deterministically.
+    return kYmChannelOrder[stream_channel % kYmChannelOrder.size()];
+}
+
+void Z80AudioBridge::release_ym_channel(std::size_t stream_channel) {
+    if (!has_ym_channel_for_stream_[stream_channel]) {
+        return;
+    }
+    const std::uint8_t hardware_channel =
+        ym_channel_for_stream_[stream_channel];
+    key_off_ym(hardware_channel);
+    ym_channel_in_use_[hardware_channel] = false;
+    has_ym_channel_for_stream_[stream_channel] = false;
 }
 
 void Z80AudioBridge::mute_psg(std::size_t voice) {

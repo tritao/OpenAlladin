@@ -130,6 +130,24 @@ int main() {
     assert(has_ym_write(0xA0, 0xD3));
     assert(has_ym_write(0xA4, 0x1A));
 
+    bridge.reset();
+    ym.clear();
+    psg.clear();
+    const Z80SoundDriver::SoundEvent second_stream_note{
+        Z80SoundDriver::SoundEvent::Kind::Note,
+        2,
+        0x2D,
+        0,
+        0,
+        0,
+        false,
+        0,
+    };
+    bridge.handle(ym_note);
+    bridge.handle(second_stream_note);
+    assert(ym.back().port == 1);
+    assert(ym.back().data == 0xF1);
+
     const Z80SoundDriver::SoundEvent psg_note{
         Z80SoundDriver::SoundEvent::Kind::Note,
         6,
