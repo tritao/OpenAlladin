@@ -1511,13 +1511,23 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_terminal_transition = 0xFF;
         break;
     case 0x28:  // TerrainHandler_StopAndAlign (0x001B55E8)
+        // The ROM ignores the response while the animation gate or another
+        // terrain response is active. The accepted branch clears velocity
+        // and response state, selects the stop stream, snaps to the aligned
+        // world tile, and arms the four-frame transition countdown.
+        if (player_.terrain_response_active != 0) {
+            break;
+        }
         player_.vx = 0;
         player_.vy = 0;
         player_.terrain_horizontal_response = 0;
+        player_.terrain_response_timer_state = 0;
+        player_.terrain_transition_countdown = 4;
         player_.terrain_response_active = 0;
         player_.grounded = true;
-        player_.x = ((visual_x() & ~0x0F) - camera_.x) - 4;
-        player_.y = ((player_world_y() & ~0x0F) - camera_.y) + 2;
+        player_.x = ((player_world_x() | 0x1F) - camera_.x) - 8;
+        player_.y = ((player_world_y() & ~0x0F) - camera_.y) + 4;
+        animation_.set_animation_state(0x00121964, 0);
         break;
     case 0x29:  // TerrainHandler_LaunchPlayerBlock (0x001B557E)
         // Launch is accepted only when the previous terrain response has
@@ -1800,6 +1810,8 @@ void Engine::update(const InputState& input) {
     }
     update_terrain_input(input);
     const bool grounded_before_contour = player_.grounded;
+    const bool stable_terrain_handler_fixture = checkpoint_terrain_behavior_override_
+        && (checkpoint_terrain_behavior_ == 0x28 || checkpoint_terrain_behavior_ == 0x29);
     // The normal slice uses the recovered contour pass. Handler fixtures are
     // deliberately staged at the ROM's resolver boundary instead: the
     // original frame calls Terrain_ResolvePlayerCell/handler before the
@@ -1832,7 +1844,7 @@ void Engine::update(const InputState& input) {
     // The launch fixture reaches the ROM handler before its animation pass;
     // keeping the seeded player cursor stable preserves the observed frame
     // state while the native animation VM remains intentionally separate.
-    if (!(checkpoint_terrain_behavior_override_ && checkpoint_terrain_behavior_ == 0x29)) {
+    if (!stable_terrain_handler_fixture) {
         update_actor_animations();
     }
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
@@ -1950,7 +1962,7 @@ void Engine::update(const InputState& input) {
     // The original actor VM runs before the player movement update reaches
     // the stable frame boundary. Feed it the pre-integration state so its
     // F4/F2 conditions see the same velocity and landing fields as MAME.
-    if (!(checkpoint_terrain_behavior_override_ && checkpoint_terrain_behavior_ == 0x29)) {
+    if (!stable_terrain_handler_fixture) {
         animation_.update(
             desired_pose,
             input.left && !input.right,
@@ -1961,7 +1973,7 @@ void Engine::update(const InputState& input) {
     // selector outside the common actor VM. Build its post-physics RAM view
     // after the actor tick so the native path owns the same boundary as the
     // ROM's interaction caller.
-    if (!(checkpoint_terrain_behavior_override_ && checkpoint_terrain_behavior_ == 0x29)
+    if (!stable_terrain_handler_fixture
         && animation_.rom_loaded() && !just_landed && desired_pose != SpritePose::Landing) {
         AnimationContext selector_context = animation_context;
         selector_context.player_x = player_.x;
@@ -2138,6 +2150,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"right_inner_probe\":" << static_cast<unsigned>(player_.terrain_right_inner_probe)
            << ",\"right_outer_probe\":" << static_cast<unsigned>(player_.terrain_right_outer_probe)
            << ",\"response_timer_state\":" << static_cast<unsigned>(player_.terrain_response_timer_state)
+           << ",\"transition_countdown\":" << static_cast<unsigned>(player_.terrain_transition_countdown)
            << ",\"query_state_a\":" << static_cast<unsigned>(player_.terrain_query_state_a)
            << ",\"query_state_b\":" << static_cast<unsigned>(player_.terrain_query_state_b)
            << ",\"state\":" << static_cast<unsigned>(player_.terrain_state)

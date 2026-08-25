@@ -508,6 +508,9 @@ The `0x29` fixture uses the same opening-ground cell, reaches
 response-active flag. The following integrator frames expose
 `(-984,-1220)` and `(-944,-1160)` while the landing pass keeps the player
 grounded with `TERRAIN_LANDING_STATE=1`.
+The `0x28` fixture reaches `0x001B55E8` on frame 1301, clears velocity and
+response state, selects animation stream `0x00121964`, aligns the player to
+`(103,420)`, and sets the four-frame transition countdown.
 The `0x47` probe confirms that `0xFFF0A4` is the toggled surface-mode word
 and `0xFFF0C2` is the handler's one-shot latch; the native trace exposes both
 fields separately.
@@ -528,6 +531,12 @@ Run the launch fixture with:
 
 ```sh
 python3 tools/oa.py trace terrain-handler-29 --state-output --edges
+```
+
+Run the stop-and-align fixture with:
+
+```sh
+python3 tools/oa.py trace terrain-handler-28 --state-output --edges
 ```
 
 The native vertical slice now mirrors this fixed-ROM lookup in

@@ -194,6 +194,45 @@
         "sound_parameter": "0x001221B8"
       }
     },
+    "terrain-handler-0x28": {
+      "trace": "build/re/traces/terrain-handler-28-v1/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-28-v1/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x28",
+        "handler": "0x001B55E8"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x28",
+        "camera": [16, 464],
+        "player": [87, 416, 0, 0],
+        "world": [103, 880],
+        "response_active": 0,
+        "landing_state": 0
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "position": [103, 420],
+        "velocity": [0, 0],
+        "response_active": 0,
+        "response_timer_state": 0,
+        "transition_countdown": 4,
+        "landing_state": 1,
+        "grounded": true,
+        "animation_stream": "0x00121964",
+        "alignment": {
+          "world_x_or_0x1F_minus_camera_then_minus_8": 103,
+          "world_y_floor_minus_camera_plus_4": 420
+        }
+      }
+    },
     "terrain-handler-0x47": {
       "trace": "build/re/terrain-target-47-v3/state.jsonl",
       "cell": {

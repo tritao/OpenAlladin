@@ -87,6 +87,7 @@ struct PlayerState {
     std::uint8_t terrain_right_inner_probe = 0;
     std::uint8_t terrain_right_outer_probe = 0;
     std::uint8_t terrain_response_timer_state = 0;
+    std::uint8_t terrain_transition_countdown = 0;
     std::uint8_t terrain_query_state_a = 0;
     std::uint8_t terrain_query_state_b = 0;
     std::uint8_t terrain_state = 0;

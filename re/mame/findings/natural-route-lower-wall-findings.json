@@ -33,6 +33,24 @@
       "result": "The left-face response exposes a lower landing near X=2599/Y=907 with behavior 0 and landing state 0x0C; moving left follows the staircase back to X=2269/Y=832, while moving right returns to the 0x47 tower.",
       "trace": "build/re/third-wall-left-ledge-left-20260825/state.jsonl",
       "snapshot": "build/re/third-wall-left-ledge-inspect-20260825/snapshots/left-ledge.png"
+    },
+    "first_wall_actor_probe": {
+      "trace": "build/re/codex-lower-wall-jump-n40-20260825",
+      "input": "right*60,c+right*20,right*140,right*40,c+right*10,right*150",
+      "checkpoint_world": [1346, 832],
+      "wall_approach": {
+        "player_max_world_x": 2177,
+        "player_world_y": 912,
+        "scene_state": "0x01"
+      },
+      "spawned_actor": {
+        "slot": 13,
+        "type": "0x34",
+        "initial_world": [2272, 880],
+        "observed_world_y_range": [880, 888]
+      },
+      "result": "The timed jump reaches the wall approach but never crosses x=2177. The type-0x34 actor remains beyond the collision wall, so this probe does not establish a playable transfer.",
+      "player_survives_trace": true
     }
   },
   "controlled_exit_geometry": {
@@ -43,5 +61,5 @@
     "meaning": "Confirms the required exit-height corridor, not natural route completion."
   },
   "natural_exit_confirmed": false,
-  "next_action": "Return to the natural upper-route branch and identify how it reaches the behavior-0x25 row; do not spend further time treating the behavior-0x47 tower as a climbable rope."
+  "next_action": "Decode the type-0x34 actor and its wall-side collision/interaction path before attempting another natural crossing; do not treat the behavior-0x47 tower as a climbable rope without a confirmed actor or platform transfer."
 }
