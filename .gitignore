@@ -1,10 +1,10 @@
 # Local ROMs and emulator state
 /*.bin
-!/Disneys_Aladdin_U_p1.bin
 /*.gen
 rom/*.bin
 rom/*.gen
 rom/*.md
+!rom/Disneys_Aladdin_U_p1.bin
 nvram/
 snap/
 cfg/

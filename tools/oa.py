@@ -21,21 +21,20 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
-from common import hashes, load_yaml, normalize_symbols, parse_int, rom_entries  # noqa: E402
+from openaladdin.common import hashes, load_yaml, normalize_symbols, parse_int, rom_entries  # noqa: E402
 
 
-EXPERIMENTS = ROOT / "re/mame/experiments.yml"
+EXPERIMENTS = ROOT / "re/mame/experiments/manifest.yml"
 GHIDRA_CONFIG = ROOT / "re/config/ghidra.yml"
-ROM_DEFAULT = ROOT / "Disneys_Aladdin_U_p1.bin"
+ROM_DEFAULT = ROOT / "rom/Disneys_Aladdin_U_p1.bin"
 
 
 def default_rom() -> Path:
     _, expected, _ = rom_entries()
-    configured = ROOT / str(expected.get("expected_filename", ROM_DEFAULT.name))
+    configured = ROOT / str(expected.get("expected_filename", "rom/Disneys_Aladdin_U_p1.bin"))
     if configured.is_file():
         return configured
-    fallback = ROOT / "rom" / str(expected.get("expected_filename", "aladdin-usa.bin"))
-    return fallback
+    return ROOT / "rom/aladdin-usa.bin"
 
 
 def tool_path(name: str) -> Path:
@@ -44,7 +43,10 @@ def tool_path(name: str) -> Path:
 
 def run_tool(name: str, args: Iterable[str] = (), *, env: dict[str, str] | None = None) -> int:
     command = [sys.executable, str(tool_path(name)), *map(str, args)]
-    return subprocess.run(command, cwd=ROOT, env=env, check=False).returncode
+    environment = dict(env or os.environ)
+    python_path = environment.get("PYTHONPATH")
+    environment["PYTHONPATH"] = str(SCRIPT_DIR) + (os.pathsep + python_path if python_path else "")
+    return subprocess.run(command, cwd=ROOT, env=environment, check=False).returncode
 
 
 def run_shell_tool(name: str, args: Iterable[str] = (), *, env: dict[str, str] | None = None) -> int:
@@ -64,8 +66,7 @@ def resolve(path: Path) -> Path:
 
 
 def command_setup(args: argparse.Namespace) -> int:
-    forwarded = ["--skip-loader"] if args.skip_loader else []
-    return run_tool("setup-ghidra.py", forwarded)
+    return run_tool("openaladdin/ghidra/setup.py")
 
 
 def command_verify(args: argparse.Namespace) -> int:
@@ -73,7 +74,7 @@ def command_verify(args: argparse.Namespace) -> int:
     forwarded = [str(rom)]
     if args.allow_unverified:
         forwarded.append("--allow-unverified")
-    return run_tool("verify-rom.py", forwarded)
+    return run_tool("openaladdin/ghidra/verify.py", forwarded)
 
 
 def command_ghidra_rebuild(args: argparse.Namespace) -> int:
@@ -81,7 +82,7 @@ def command_ghidra_rebuild(args: argparse.Namespace) -> int:
     verify_args = [str(rom)]
     if args.allow_unverified:
         verify_args.append("--allow-unverified")
-    status = run_tool("verify-rom.py", verify_args)
+    status = run_tool("openaladdin/ghidra/verify.py", verify_args)
     if status:
         return status
 
@@ -89,7 +90,7 @@ def command_ghidra_rebuild(args: argparse.Namespace) -> int:
     for flag in ("--allow-unverified", "--reuse-project", "--no-analysis"):
         if getattr(args, flag[2:].replace("-", "_")):
             forwarded.append(flag)
-    status = run_tool("import-rom.py", forwarded)
+    status = run_tool("openaladdin/ghidra/import_rom.py", forwarded)
     if status:
         return status
     errors = validate_knowledge(rom)
@@ -263,7 +264,7 @@ def command_trace(args: argparse.Namespace) -> int:
     if args.capture_vdp is not None:
         environment["OPENALADDIN_CAPTURE_VDP"] = "1" if args.capture_vdp else "0"
 
-    status = run_shell_tool("mame-trace.sh", [str(rom)], env=environment)
+    status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
     if status == 0:
         print(f"trace: {trace_dir}")
         if args.state_output:
@@ -293,10 +294,10 @@ def command_decode(args: argparse.Namespace, kind: str) -> int:
         if args.max_bytes is not None:
             forwarded.extend(["--max-bytes", str(args.max_bytes)])
 
-    status = run_tool(f"decode-{kind}-streams.py", forwarded)
+    status = run_tool(f"openaladdin/vm/{kind}.py", forwarded)
     if status or not args.verify:
         return status
-    return run_tool("verify-vm-roundtrip.py", [kind, str(rom), str(output)])
+    return run_tool("openaladdin/vm/verify.py", [kind, str(rom), str(output)])
 
 
 def command_assets(args: argparse.Namespace) -> int:
@@ -311,7 +312,7 @@ def command_assets(args: argparse.Namespace) -> int:
     for flag in ("--no-levels", "--no-sprites", "--no-animations"):
         if getattr(args, flag[2:].replace("-", "_")):
             forwarded.append(flag)
-    return run_tool("extract-assets.py", forwarded)
+    return run_tool("openaladdin/assets/extract.py", forwarded)
 
 
 def _field_size(type_name: str) -> int:
@@ -469,20 +470,20 @@ def command_validate(args: argparse.Namespace) -> int:
     print("validated symbols, types, and ROM identity")
 
     if not args.skip_assets:
-        status = run_tool("validate-assets.py", ["--assets", str(resolve(args.assets)), "--rom", str(rom)])
+        status = run_tool("openaladdin/assets/validate.py", ["--assets", str(resolve(args.assets)), "--rom", str(rom)])
         if status:
             return status
     if not args.skip_scene:
         loader = ROOT / "build/assets/rnc/loader_analysis.json"
         if loader.is_file():
-            status = run_tool("validate-scene-resources.py")
+            status = run_tool("openaladdin/assets/validate_scene_resources.py")
             if status:
                 return status
         else:
             print("scene resources: skipped (asset extraction is not present)")
     for kind, path in (("animation", ROOT / "build/re/animation_streams.json"), ("movement", ROOT / "build/re/movement_streams.json")):
         if path.is_file():
-            status = run_tool("verify-vm-roundtrip.py", [kind, str(rom), str(path)])
+            status = run_tool("openaladdin/vm/verify.py", [kind, str(rom), str(path)])
             if status:
                 return status
         else:
@@ -495,7 +496,6 @@ def build_parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
 
     setup = commands.add_parser("setup", help="install the pinned Ghidra toolchain")
-    setup.add_argument("--skip-loader", action="store_true")
     setup.set_defaults(function=command_setup)
 
     verify = commands.add_parser("verify", help="verify the configured ROM identity")
@@ -566,7 +566,7 @@ def build_parser() -> argparse.ArgumentParser:
     compare = commands.add_parser("compare", help="find the first divergent frame in two state traces")
     compare.add_argument("genesis", type=Path)
     compare.add_argument("openaladdin", type=Path)
-    compare.set_defaults(function=lambda args: run_tool("compare-frame-state.py", [str(resolve(args.genesis)), str(resolve(args.openaladdin))]))
+    compare.set_defaults(function=lambda args: run_tool("openaladdin/mame/compare_state.py", [str(resolve(args.genesis)), str(resolve(args.openaladdin))]))
 
     status = commands.add_parser("status", help="show repository and RE progress status")
     add_rom_argument(status)

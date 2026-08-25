@@ -7,47 +7,47 @@ is not required by the pipeline and is Windows-only.
 Run it against the local ROM with:
 
 ```bash
-python tools/extract-assets.py Disneys_Aladdin_U_p1.bin
-python tools/validate-assets.py
+python tools/oa.py assets
+python tools/oa.py validate
 ```
 
 To run only the compression corpus pass:
 
 ```bash
-python tools/extract-rnc.py Disneys_Aladdin_U_p1.bin
+PYTHONPATH=tools python tools/openaladdin/assets/rnc_extract.py rom/Disneys_Aladdin_U_p1.bin
 ```
 
 To re-run classification/contact-sheet generation without decompressing the
 ROM again:
 
 ```bash
-python tools/classify-rnc-assets.py
+PYTHONPATH=tools python tools/openaladdin/assets/classify.py
 ```
 
 To scan for ROM pointer tables that reference the decompressed corpus:
 
 ```bash
-python tools/find-rnc-references.py
+PYTHONPATH=tools python tools/openaladdin/assets/references.py
 ```
 
 To group the unassigned blocks by contiguous compressed storage and nearby
 68000 code references:
 
 ```bash
-python tools/analyze-rnc-families.py
+PYTHONPATH=tools python tools/openaladdin/assets/rnc_families_cli.py
 ```
 
 To recover every direct RNC-to-VDP upload call and its VRAM destination:
 
 ```bash
-python tools/analyze-rnc-loaders.py
+PYTHONPATH=tools python tools/openaladdin/assets/rnc_loaders_cli.py
 ```
 
 To decompile only the unresolved loader clusters and their surrounding scene
 setup code through the local Ghidra project:
 
 ```bash
-python tools/decompile-rnc-loaders.py \
+PYTHONPATH=tools python tools/openaladdin/assets/decompile.py \
   --extra-address 0x1B4B28 \
   --extra-address 0x1B4B5E \
   --extra-address 0x1B21F6
@@ -62,14 +62,14 @@ To correlate those uploads with a captured MAME VRAM/CRAM trace and render
 palette candidates:
 
 ```bash
-python tools/analyze-rnc-runtime.py --trace build/re/actor-gameplay
+PYTHONPATH=tools python tools/openaladdin/assets/rnc_runtime_cli.py --trace build/re/actor-gameplay
 ```
 
 When a MAME loader breakpoint report is available, merge it as dynamic
 evidence:
 
 ```bash
-python tools/analyze-rnc-runtime.py \
+PYTHONPATH=tools python tools/openaladdin/assets/rnc_runtime_cli.py \
   --trace build/re/rnc-loader-gameplay \
   --load-trace build/re/rnc-loader-gameplay/rnc_loads.json
 ```
@@ -140,11 +140,11 @@ the static loader report during `extract-assets.py`.  Run the check directly
 with:
 
 ```bash
-python tools/validate-scene-resources.py
+PYTHONPATH=tools python tools/openaladdin/assets/validate_scene_resources.py
 ```
 
 The scene-transition pass is driven by `re/assets/scene_transitions.yml`. It
 decodes the five 6-byte records used by `0x001B3B96` at ROM `0x004B04` and the
 14 four-byte records around the runtime script cursor at `0x00004082`.
-`tools/extract-assets.py` writes the generated report to
+`tools/oa.py assets` writes the generated report to
 `build/assets/scene_transitions.json`.

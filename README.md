@@ -5,16 +5,15 @@ Open-source reimplementation work for Disney's Aladdin on Sega Genesis.
 ## Reverse-engineering setup
 
 The canonical reverse-engineering knowledge lives in Git. Ghidra projects and
-generated analysis remain local and ignored. The publisher-authorized ROM dump
-used by the reproducible tooling is committed at the repository root.
+generated analysis remain local and ignored. The configured ROM input is
+`rom/Disneys_Aladdin_U_p1.bin`.
 
 After cloning, initialize the pinned submodules and run:
 
 ```bash
 git submodule update --init --recursive
-python tools/setup-ghidra.py
-python tools/import-rom.py Disneys_Aladdin_U_p1.bin
-./tools/ghidra.sh
+python tools/oa.py setup
+python tools/oa.py ghidra rebuild
 ```
 
 The supported workflow frontend is:
@@ -41,27 +40,38 @@ capture also needs semantic state. Compare two implementations with:
 python tools/oa.py compare genesis.jsonl openaladdin.jsonl
 ```
 
-The experiment manifest is `re/mame/experiments.yml`. It supports boot
+The experiment manifest is `re/mame/experiments/manifest.yml`. It supports boot
 scenarios, input actions, and direct memory/PC wait conditions; the MAME Lua
 harness evaluates those waits while the emulator runs.
 
 To extract the known Genesis graphics and animation data:
 
 ```bash
-python tools/extract-assets.py Disneys_Aladdin_U_p1.bin
+python tools/oa.py assets
 ```
 
 The generated asset manifest and renders are under `build/assets/` and are
 not committed. See [`re/assets/README.md`](re/assets/README.md) for the
 current format coverage.
 
-`setup-ghidra.py` downloads Ghidra 12.1.3, verifies its SHA-256, installs
-PyGhidra into `.tools/venv`, builds the Genesis loader submodule, and installs
-the resulting extension locally. `import-rom.py` uses the built-in 68000 raw
+`oa setup` downloads Ghidra 12.1.3, verifies its SHA-256, and installs
+PyGhidra into `.tools/venv`. `oa ghidra rebuild` uses the built-in 68000 raw
 loader for deterministic imports, then applies the tracked Genesis memory map,
 vectors, symbols, and structures.
 
 Generated exports are written to `build/re/`; edit files under `re/` instead.
+
+The repository boundaries are:
+
+```text
+src/       native OpenAladdin implementation
+tests/     native/tooling tests
+tools/     Python workflow implementation (`tools/oa.py` is the frontend)
+re/        tracked reverse-engineering knowledge and MAME/Ghidra inputs
+rom/       ROM inputs
+external/  source dependencies and developer tools
+build/     ignored generated output
+```
 
 The committed dump is recorded as the canonical local identity in
 `re/config/roms.yml`. Use `--allow-unverified` when experimenting with a

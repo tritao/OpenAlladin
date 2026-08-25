@@ -13,7 +13,3 @@ java:
 
 python:
   recommended: "3.12"
-
-submodules:
-  ghidra_source: "third_party/ghidra"
-  genesis_loader: "third_party/ghidra_sega_ldr"

@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "actor-combat-and-state-path",
+    "purpose": "Trace player sword damage through guard death, actor initialization, cleanup, interaction, and state dispatch."
+  },
+  "targets": [
+    { "address": "0x001A96FC", "name": "Player sword-state selection" },
+    { "address": "0x001AC0D2", "name": "Actor type-0x84 transition block" },
+    { "address": "0x001AC3F2", "name": "Actor horizontal-facing toggle" },
+    { "address": "0x001AC4B0", "name": "Actor terminal-template replacement block" },
+    { "address": "0x001ACBF2", "name": "Actor directional animation selector" },
+    { "address": "0x001AE0B0", "name": "Actor cull/remove-linked helper" },
+    { "address": "0x001AE30A", "name": "Actor template initializer" },
+    { "address": "0x001AE372", "name": "Actor owned-resource cleanup" },
+    { "address": "0x001AE6BC", "name": "Actor interaction publish (A2)" },
+    { "address": "0x001AE6DE", "name": "Actor interaction publish (A1)" },
+    { "address": "0x001AC784", "name": "Actor animation VM" },
+    { "address": "0x001AD00E", "name": "Actor animation spawn/copy opcode" },
+    { "address": "0x001ADE36", "name": "Actor movement VM" }
+  ]
+}

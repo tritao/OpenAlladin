@@ -9,7 +9,7 @@ knowledge; edit the YAML sources instead.
 With the MAME submodule built and the local ROM at the repository root:
 
 ```sh
-./tools/mame-trace.sh
+./tools/openaladdin/mame/run.sh
 ```
 
 The command writes generated output under `build/re/traces/`:
@@ -31,7 +31,7 @@ Input can be supplied as comma-separated frame tokens, for example:
 
 ```sh
 OPENALADDIN_TRACE_FRAMES=90 OPENALADDIN_INPUT='none,right*60,none' \
-  ./tools/mame-trace.sh
+  ./tools/openaladdin/mame/run.sh
 ```
 
 The unified frontend exposes the same profiles directly:
@@ -48,7 +48,7 @@ the scripted input has had time to enter the game:
 OPENALADDIN_TRACE_FRAMES=360 \
 OPENALADDIN_INPUT='none*30,start*90,none*60,right*120,none*60' \
 OPENALADDIN_SAVE_FRAME=300 OPENALADDIN_SNAPSHOT_FRAME=300 \
-  ./tools/mame-trace.sh
+  ./tools/openaladdin/mame/run.sh
 ```
 
 State files and PNG snapshots are written below `build/re/traces/states/` and
@@ -58,14 +58,14 @@ An existing state can be loaded by its MAME state name:
 
 ```sh
 OPENALADDIN_LOAD_STATE=gameplay MAME_XVFB=1 \
-  OPENALADDIN_TRACE_FRAMES=180 ./tools/mame-trace.sh
+  OPENALADDIN_TRACE_FRAMES=180 ./tools/openaladdin/mame/run.sh
 ```
 
 The normal trace mode is fully headless (`-video none`).  If SDL needs a real
 display, run through Xvfb instead:
 
 ```sh
-MAME_XVFB=1 OPENALADDIN_TRACE_FRAMES=120 ./tools/mame-trace.sh
+MAME_XVFB=1 OPENALADDIN_TRACE_FRAMES=120 ./tools/openaladdin/mame/run.sh
 ```
 
 This uses a virtual 1024×768 X11 display and MAME's software renderer.  Set
@@ -79,7 +79,7 @@ frame counts for those checkpoints.
 To rank changing 16-bit words from a controlled interval:
 
 ```sh
-python3 tools/analyze-mame-trace.py build/re/traces --input right
+PYTHONPATH=tools python3 tools/openaladdin/mame/analyze_trace.py build/re/traces --input right
 ```
 
 The output is only a list of candidates.  Confirmed addresses will be added to
@@ -92,8 +92,8 @@ snapshots and reports type intervals, cursor positions, and ROM-decoder probes:
 ```sh
 OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_FRAMES=1550 \
   OPENALADDIN_TRACE_DIR=build/re/actor-gameplay \
-  ./tools/mame-trace.sh
-python3 tools/analyze-actor-animation-trace.py
+  ./tools/openaladdin/mame/run.sh
+PYTHONPATH=tools python3 tools/openaladdin/analysis/actors.py
 ```
 
 The generated `build/re/actor_animation_inventory.json` is intentionally
@@ -126,8 +126,8 @@ OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 \
 OPENALADDIN_TRACE_FRAMES=240 OPENALADDIN_INJECT_ACTOR_FRAME=2 \
 OPENALADDIN_INJECT_ACTOR_SLOT=31 OPENALADDIN_INJECT_ACTOR_TYPE=125 \
 OPENALADDIN_TRACE_DIR=build/re/actor-injection-template \
-  ./tools/mame-trace.sh
-python3 tools/analyze-actor-animation-trace.py \
+  ./tools/openaladdin/mame/run.sh
+PYTHONPATH=tools python3 tools/openaladdin/analysis/actors.py \
   --trace-dir build/re/actor-injection-template \
   --output build/re/actor-injection-template/actor_animation_inventory.json
 ```
@@ -147,8 +147,8 @@ OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTOR_INIT=1 \
 OPENALADDIN_TRACE_FRAMES=2880 \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*1400,none*255' \
 OPENALADDIN_TRACE_DIR=build/re/actor-init-gameplay \
-  ./tools/mame-trace.sh
-python3 tools/analyze-actor-initializers.py \
+  ./tools/openaladdin/mame/run.sh
+PYTHONPATH=tools python3 tools/openaladdin/analysis/actor_initializers.py \
   --log debug.log \
   --output build/re/actor-init-gameplay/actor_initializers.json
 ```
@@ -191,7 +191,7 @@ OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 \
 OPENALADDIN_TRACE_FRAMES=1690 \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*390,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*100' \
 OPENALADDIN_TRACE_DIR=build/re/guard-death \
-  ./tools/mame-trace.sh
+  ./tools/openaladdin/mame/run.sh
 ```
 
 The actor initializer at `0x001AE30A` also establishes the confirmed runtime
@@ -202,7 +202,7 @@ resource count at `+0x29`, and behavior flags at `+0x3C`.
 ## Targeted combat/state decompilation
 
 The focused Ghidra request is tracked at
-`re/ghidra/actor-combat-targets.json`.  Re-run it from the repository root
+`re/ghidra/targets/actor-combat-targets.json`.  Re-run it from the repository root
 with the existing read-only Ghidra project:
 
 ```sh
@@ -210,7 +210,7 @@ with the existing read-only Ghidra project:
   -H re/ghidra/project aladdin -process -readOnly \
   -scriptPath re/ghidra/scripts \
   -postScript ExportTargetedDecompile.py \
-  re/ghidra/actor-combat-targets.json \
+  re/ghidra/targets/actor-combat-targets.json \
   build/re/actor-combat-targeted-decompile.json
 ```
 
@@ -244,14 +244,14 @@ addresses such as `0x001AC4B0` remain documented as blocks rather than being
 invented as standalone functions.
 
 The next collision-focused request is tracked at
-`re/ghidra/collision-damage-targets.json` and can be regenerated with:
+`re/ghidra/targets/collision-damage-targets.json` and can be regenerated with:
 
 ```sh
 ./.tools/ghidra-12.1.3/support/pyghidraRun \
   -H re/ghidra/project aladdin -process -readOnly \
   -scriptPath re/ghidra/scripts \
   -postScript ExportTargetedDecompile.py \
-  re/ghidra/collision-damage-targets.json \
+  re/ghidra/targets/collision-damage-targets.json \
   build/re/collision-damage-targeted-decompile.json
 ```
 
@@ -277,14 +277,14 @@ OPENALADDIN_DEBUG_WATCH=1 \
 OPENALADDIN_WATCH_ADDRESSES=0xFF7F8A,0xFF7FBC,0xFF7FBE,0xFFE1C2,0xFFF0D8,0xFFF0F4,0xFF7E60 \
 OPENALADDIN_TRACE_FRAMES=1690 \
 OPENALADDIN_TRACE_DIR=build/re/guard-collision-watch \
-./tools/mame-trace.sh
+./tools/openaladdin/mame/run.sh
 ```
 
 Write taps can record the 68000 PC responsible for a candidate address:
 
 ```sh
 OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 \
-  OPENALADDIN_TRACE_FRAMES=20 ./tools/mame-trace.sh
+  OPENALADDIN_TRACE_FRAMES=20 ./tools/openaladdin/mame/run.sh
 ```
 
 Write events appear as `{"type":"write", ...}` records in
@@ -311,8 +311,8 @@ The decoder preserves each step, raw command bytes, shared opcode, operands,
 and statically visible branch targets:
 
 ```sh
-python3 tools/decode-movement-streams.py \
-  Disneys_Aladdin_U_p1.bin \
+PYTHONPATH=tools python3 tools/openaladdin/vm/movement.py \
+  rom/Disneys_Aladdin_U_p1.bin \
   --output build/re/movement_streams.json
 ```
 
@@ -326,14 +326,14 @@ being guessed statically.
 ## Player movement and terrain collision
 
 The player movement/terrain request is tracked at
-`re/ghidra/player-movement-collision-targets.json` and can be regenerated with:
+`re/ghidra/targets/player-movement-collision-targets.json` and can be regenerated with:
 
 ```sh
 ./.tools/ghidra-12.1.3/support/pyghidraRun \
   -H re/ghidra/project aladdin -process -readOnly \
   -scriptPath re/ghidra/scripts \
   -postScript ExportTargetedDecompile.py \
-  re/ghidra/player-movement-collision-targets.json \
+  re/ghidra/targets/player-movement-collision-targets.json \
   build/re/player-movement-collision-targeted-decompile.json
 ```
 
@@ -374,13 +374,13 @@ OPENALADDIN_CAPTURE_VDP=0 \
 OPENALADDIN_TRACE_FRAMES=1700 \
 OPENALADDIN_TRACE_DIR=build/re/player-jump-c-watch \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55,right*80,c*2,none*55,right*80,c*2,none*180' \
-  ./tools/mame-trace.sh
+  ./tools/openaladdin/mame/run.sh
 ```
 
 ## Level-transition state tracing
 
 The level-transition request is tracked at
-`re/ghidra/level-transition-targets.json` and includes both code targets and
+`re/ghidra/targets/level-transition-targets.json` and includes both code targets and
 references to the RAM state/transition flags. Regenerate its focused report
 with:
 
@@ -389,7 +389,7 @@ with:
   -H re/ghidra/project aladdin -process -readOnly \
   -scriptPath re/ghidra/scripts \
   -postScript ExportTargetedDecompile.py \
-  re/ghidra/level-transition-targets.json \
+  re/ghidra/targets/level-transition-targets.json \
   build/re/level-transition-targeted-decompile.json
 ```
 
@@ -422,7 +422,7 @@ Regenerate the machine-readable table/script report with the normal asset
 extractor:
 
 ```sh
-python tools/extract-assets.py Disneys_Aladdin_U_p1.bin --no-levels --no-sprites --no-animations
+python tools/oa.py assets --rom rom/Disneys_Aladdin_U_p1.bin --no-levels --no-sprites --no-animations
 ```
 
 It writes `build/assets/scene_transitions.json` and records it in the asset
@@ -438,8 +438,8 @@ OPENALADDIN_WATCH_ADDRESSES=0xFF7E26,0xFF7E22,0xFFF57C,0xFFF57E,0xFFF0D0,0xFFF0D
 OPENALADDIN_TRACE_FRAMES=5000 \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right+a*3755' \
 OPENALADDIN_TRACE_DIR=build/re/level-transition-watch \
-  ./tools/mame-trace.sh Disneys_Aladdin_U_p1.bin
-python3 tools/analyze-transition-watch.py \
+  ./tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin
+PYTHONPATH=tools python3 tools/openaladdin/analysis/transition_watch.py \
   --log debug.log \
   --output build/re/level-transition-watch/transition_watch.json
 ```
@@ -451,7 +451,7 @@ repeatable traversal experiment, but the next useful runtime experiment should
 target a level-exit trigger rather than simply extend right-input playback.
 
 The machine-readable result is recorded in
-`re/mame/level-transition-findings.json`. It deliberately keeps the dynamic
+`re/mame/findings/level-transition-findings.json`. It deliberately keeps the dynamic
 claim narrow: state `0x08` is statically recovered, while the captured
 title-to-level run verifies only the reset-to-state-1 path.
 
@@ -476,13 +476,13 @@ cell at frame 1159: the player probe was at world `(481, 880)`, the resolver
 read row 40/column 31 (`0x6C58`), produced behavior `0x0A`, and selected the
 handler-table entry `0x001B5320`. Behavior `0x0A` remained active while the
 player crossed the adjacent surface cells. The complete machine-readable
-finding is recorded in `re/mame/player-terrain-findings.json`.
+finding is recorded in `re/mame/findings/player-terrain-findings.json`.
 
 To compare the captured VDP memories and DMA stream with the native assets
 already extracted from the ROM:
 
 ```sh
-python3 tools/compare-runtime-assets.py
+PYTHONPATH=tools python3 tools/openaladdin/assets/compare_runtime.py
 ```
 
 The report is written to `build/re/vdp_asset_comparison.json`.  Exact matches
@@ -496,8 +496,8 @@ source ROM address, VRAM destination, caller return address, and MAME frame:
 ```sh
 OPENALADDIN_TRACE_RNC_LOADS=1 OPENALADDIN_TRACE_FRAMES=1550 \
   OPENALADDIN_TRACE_DIR=build/re/rnc-loader-gameplay \
-  ./tools/mame-trace.sh
-python3 tools/analyze-rnc-load-trace.py \
+  ./tools/openaladdin/mame/run.sh
+PYTHONPATH=tools python3 tools/openaladdin/assets/rnc_load_trace.py \
   --log debug.log \
   --output build/re/rnc-loader-gameplay/rnc_loads.json
 ```
@@ -505,7 +505,7 @@ python3 tools/analyze-rnc-load-trace.py \
 Merge the parsed execution evidence into the runtime asset report:
 
 ```sh
-python3 tools/analyze-rnc-runtime.py \
+PYTHONPATH=tools python3 tools/openaladdin/assets/rnc_runtime_cli.py \
   --trace build/re/rnc-loader-gameplay \
   --load-trace build/re/rnc-loader-gameplay/rnc_loads.json
 ```
@@ -520,11 +520,11 @@ dispatcher state byte `0xFF7E26`:
 OPENALADDIN_TRACE_RNC_LOADS=1 OPENALADDIN_TRACE_SCENE_STATES=1 \
   OPENALADDIN_TRACE_FRAMES=1550 \
   OPENALADDIN_TRACE_DIR=build/re/rnc-loader-gameplay \
-  ./tools/mame-trace.sh
-python3 tools/analyze-rnc-load-trace.py \
+  ./tools/openaladdin/mame/run.sh
+PYTHONPATH=tools python3 tools/openaladdin/assets/rnc_load_trace.py \
   --log debug.log \
   --output build/re/rnc-loader-gameplay/rnc_loads.json
-python3 tools/analyze-scene-state-trace.py \
+PYTHONPATH=tools python3 tools/openaladdin/analysis/scenes.py \
   --trace build/re/rnc-loader-gameplay \
   --load-trace build/re/rnc-loader-gameplay/rnc_loads.json
 ```
@@ -537,10 +537,10 @@ matrix enables this trace automatically and writes the combined report to
 ## Runtime capture matrix
 
 For repeatable multi-scene coverage, edit the controller schedules in
-`re/mame/capture_matrix.yml` and run:
+`re/mame/experiments/capture_matrix.yml` and run:
 
 ```sh
-python3 tools/run-mame-capture-matrix.py Disneys_Aladdin_U_p1.bin
+PYTHONPATH=tools python3 tools/openaladdin/mame/capture_matrix.py rom/Disneys_Aladdin_U_p1.bin
 ```
 
 Each scenario gets its own ignored directory under
@@ -557,7 +557,7 @@ build/assets/rnc/runtime_analysis.json
 Run only selected scenarios while iterating:
 
 ```sh
-python3 tools/run-mame-capture-matrix.py \
+PYTHONPATH=tools python3 tools/openaladdin/mame/capture_matrix.py \
   --scenario first-gameplay \
   --scenario gameplay-progression
 ```
@@ -588,7 +588,7 @@ watchpoint fallback:
 
 ```sh
 OPENALADDIN_DEBUG_WATCH=1 OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 \
-  ./tools/mame-trace.sh
+  ./tools/openaladdin/mame/run.sh
 ```
 
 Debugger output is written to MAME's `debug.log` in the working directory.

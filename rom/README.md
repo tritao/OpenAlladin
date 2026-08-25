@@ -1,15 +1,14 @@
 # ROM input
 
 Place a legally obtained ROM dump here, or pass an existing path to
-`tools/import-rom.py`.
+`tools/oa.py verify` or another `oa` command.
 
-The repository contains the publisher-authorized canonical dump at the
-root-level `Disneys_Aladdin_U_p1.bin` path used by the analysis tools.
+The configured canonical dump is `rom/Disneys_Aladdin_U_p1.bin`.
 
 Check an image before importing it:
 
 ```bash
-python tools/verify-rom.py Disneys_Aladdin_U_p1.bin
+python tools/oa.py verify
 ```
 
 The verifier records size, CRC32, SHA-1, and SHA-256. The configured local
