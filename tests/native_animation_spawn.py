@@ -29,7 +29,7 @@ def main() -> int:
         str(ROOT / "build/openaladdin"),
         "--no-window",
         "--frames",
-        "1",
+        "2",
         "--state-output",
         str(OUTPUT),
         "--actor-records",
@@ -59,6 +59,14 @@ def main() -> int:
     assert spawned["animation_pc"] == 0x00122B58
     assert spawned["frame_ptr"] == 0
     assert spawned["flags"] == 0x08
+
+    moved = next(actor for actor in states[2]["actors"] if actor["slot"] == 25)
+    assert moved["x"] == 1143
+    assert moved["y"] == 844
+    assert moved["movement_pc"] == 0x0011F6DE
+    assert moved["movement_loop_pc"] == 0x0011F6D8
+    assert moved["movement_loop_timer"] == 0x2C
+    assert moved["movement_word_1a"] == 0x006E
 
     print("native animation F5 spawn: ok")
     return 0

@@ -684,13 +684,19 @@ void Engine::update_actor_movement() {
                 // command initializes the separate loop cursor/timer pair.
                 if ((read_u8(cursor + 1) & 0x80) != 0) {
                     actor.movement_command_timer = static_cast<std::uint8_t>(read_u8(cursor + 1) & 0x7F);
+                    actor.movement_pc = cursor + 2;
+                    cursor_committed = true;
+                    break;
                 } else {
                     actor.movement_loop_timer = read_u8(cursor + 1);
                     actor.movement_loop_pc = cursor + 2;
                 }
-                actor.movement_pc = cursor + 2;
-                cursor_committed = true;
-                break;
+                // A loop timer is setup inline with the current movement
+                // step. The interpreter continues through the rest of that
+                // step, so a following arithmetic command is consumed now
+                // rather than being mistaken for the next signed delta.
+                cursor += 2;
+                continue;
             case 0x85:  // Movement_RewindAfterTimer.
                 // The original handler consumes one loop count and the
                 // interpreter rewinds to the saved loop cursor whenever the
@@ -716,6 +722,31 @@ void Engine::update_actor_movement() {
                     actor.y = static_cast<std::uint16_t>(static_cast<int>(actor.y) + mirrored);
                 }
                 cursor += 4;
+                continue;
+            }
+            case 0x90: {  // Movement_AddOrSubtractActorWord.
+                const std::uint8_t mode = read_u8(cursor + 1);
+                const std::uint16_t offset = read_u16(cursor + 2);
+                const auto value = static_cast<std::int16_t>(read_u16(cursor + 4));
+                const std::uint8_t width = static_cast<std::uint8_t>(mode & 0x3F);
+
+                // The confirmed sword stream uses actor-relative word
+                // arithmetic (mode 0x42, offset +0x1A). Keep the other
+                // address/width variants consumed but inert until their RAM
+                // targets are identified from a trace.
+                if ((mode & 0x40) != 0 && width == 2) {
+                    std::int16_t* target = nullptr;
+                    if (offset == 0x18) target = &actor.movement_word_18;
+                    if (offset == 0x1A) target = &actor.movement_word_1a;
+                    if (target != nullptr) {
+                        if ((mode & 0x80) != 0) {
+                            *target = static_cast<std::int16_t>(*target - value);
+                        } else {
+                            *target = static_cast<std::int16_t>(*target + value);
+                        }
+                    }
+                }
+                cursor += 6;
                 continue;
             }
             case 0x8C:  // Movement_ClearActor.
@@ -2103,6 +2134,8 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"facing_y_flip\":" << static_cast<unsigned>(actor.facing_y_flip)
                << ",\"movement_loop_pc\":" << actor.movement_loop_pc
                << ",\"movement_loop_timer\":" << static_cast<unsigned>(actor.movement_loop_timer)
+               << ",\"movement_word_18\":" << actor.movement_word_18
+               << ",\"movement_word_1a\":" << actor.movement_word_1a
                << ",\"frame_ptr\":" << actor.frame_ptr
                << ",\"animation_timer\":" << static_cast<unsigned>(actor.animation_timer)
                << ",\"collision_box\":" << collision_box_json(actor_box)

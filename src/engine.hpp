@@ -113,6 +113,11 @@ struct ActorState {
     std::uint32_t movement_pc = 0;
     std::uint32_t movement_loop_pc = 0;
     std::uint8_t movement_loop_timer = 0;
+    // The movement VM's actor-relative arithmetic command addresses the
+    // 68000 actor record directly. These are the two signed words at +0x18
+    // and +0x1A used by the recovered movement streams.
+    std::int16_t movement_word_18 = 0;
+    std::int16_t movement_word_1a = 0;
     std::uint32_t frame_ptr = 0;
     std::uint32_t animation_pc = 0;
     std::uint32_t movement_return_pc = 0;
