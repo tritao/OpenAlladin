@@ -89,6 +89,7 @@ local actor_y_offset = 0x04
 local actor_movement_pc_offset = 0x0a
 local actor_frame_ptr_offset = 0x14
 local actor_animation_pc_offset = 0x20
+local actor_flags_offset = 0x3c
 local current_frame = 0
 
 local vdp_device = core.find_device(":gen_vdp", "sega315_5313")
@@ -313,7 +314,7 @@ local function capture(frame, input_token, emit_state)
         for slot = 0, actor_slot_count - 1 do
             local record = actor_table_base + slot * actor_stride
             local actor_type = read_u8(record + actor_type_offset)
-            local actor_flags = read_u8(record + 0x3C)
+            local actor_flags = read_u8(record + actor_flags_offset)
             if actor_type ~= 0 or actor_flags ~= 0 then
                 actors[#actors + 1] = json_object({
                     { "slot", tostring(slot) },
@@ -536,6 +537,7 @@ local watches = dofile(root .. "/re/mame/lua/watches.lua")({
     actor_slot_count = actor_slot_count,
     actor_type_offset = actor_type_offset,
     actor_animation_pc_offset = actor_animation_pc_offset,
+    actor_flags_offset = actor_flags_offset,
     scene_state_address = scene_state_address,
     get_scene_state_last = function () return scene_state_last end,
     set_scene_state_last = function (value) scene_state_last = value end,
@@ -625,6 +627,7 @@ write_record({
     { "actor_movement_pc_offset", tostring(actor_movement_pc_offset) },
     { "actor_frame_ptr_offset", tostring(actor_frame_ptr_offset) },
     { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) },
+    { "actor_flags_offset", tostring(actor_flags_offset) },
     { "actor_initializer_trace", json_bool(trace_actor_initializers) },
     { "rnc_loader_trace", json_bool(trace_rnc_loads) },
     { "scene_state_trace", json_bool(trace_scene_states) },

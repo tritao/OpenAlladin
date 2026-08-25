@@ -100,6 +100,16 @@ struct InputState {
     bool jump_pressed = false;
 };
 
+struct ActorState {
+    std::uint8_t type = 0;
+    std::uint16_t x = 0;
+    std::uint16_t y = 0;
+    std::uint32_t movement_pc = 0;
+    std::uint32_t frame_ptr = 0;
+    std::uint32_t animation_pc = 0;
+    std::uint8_t flags = 0;
+};
+
 class Level {
 public:
     struct TerrainCell {
@@ -129,7 +139,16 @@ public:
         bool right_outer = false;
     };
 
-    void load(const std::string& asset_root);
+    struct TerrainContour {
+        bool valid = false;
+        int row = -1;
+        int column = -1;
+        int target_world_y = 0;
+        std::uint8_t floor_type = 0;
+        std::uint8_t contour = 0;
+    };
+
+    void load(const std::string& asset_root, const std::string& rom_path = {});
 
     int background_width() const { return background_width_; }
     int background_height() const { return background_height_; }
@@ -162,6 +181,16 @@ public:
     // handler dispatch.
     TerrainCollisionFlags query_player_collision(int world_x, int world_y, bool grounded) const;
 
+    // Exact fixed-ROM equivalent of Player_FloorContour at 0x001AD7B4.
+    // The routine checks the selected row and the next two rows, then uses
+    // the ROM contour table to turn a floor type and X fraction into a
+    // pixel-accurate target Y.
+    TerrainContour query_player_contour(
+        int world_x,
+        int world_y,
+        std::uint16_t surface_mode
+    ) const;
+
 private:
     int map_width_ = 300;
     int map_height_ = 45;
@@ -179,6 +208,7 @@ private:
     std::vector<std::uint8_t> background_rgba_;
     std::vector<std::uint16_t> terrain_words_;
     std::vector<std::uint8_t> floor_data_;
+    std::vector<std::uint8_t> contour_table_;
     std::vector<SDL_Color> palette_;
 };
 
@@ -187,7 +217,8 @@ public:
     void load(
         const std::string& asset_root,
         const std::string& sprite_root = {},
-        const std::string& rom_path = {}
+        const std::string& rom_path = {},
+        const std::string& actor_records_path = {}
     );
     void reset();
     void set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded);
@@ -204,10 +235,12 @@ public:
     int player_world_y() const { return camera_.y + player_.y; }
     int frame() const { return frame_; }
     bool grounded() const { return player_.grounded; }
+    const std::array<ActorState, 32>& actors() const { return actors_; }
 
 private:
     void integrate_motion();
     void update_terrain_input(const InputState& input);
+    void apply_floor_contour();
     void resolve_terrain(int previous_world_y);
     void update_camera();
     void initialize_camera_alignment();
@@ -215,6 +248,8 @@ private:
     void update_state08(const InputState& input);
     void apply_ground_movement(const InputState& input);
     void apply_terrain_behavior(const Level::TerrainCell& cell);
+    void load_actor_records(const std::string& path);
+    void update_actor_interactions(const InputState& input, bool was_grounded);
     SpritePose sprite_pose() const;
     int visual_x() const;
     int visual_y() const;
@@ -224,6 +259,8 @@ private:
     CameraState camera_;
     SpriteDatabase sprites_;
     PlayerAnimationVm animation_;
+    std::array<ActorState, 32> actor_templates_{};
+    std::array<ActorState, 32> actors_{};
     int frame_ = 0;
     int last_ground_direction_ = 0;
     bool quit_ = false;

@@ -22,10 +22,9 @@
   type: u8
   format: bitfield
   confidence: confirmed
-  description: Player actor slot behavior flags at actor-table offset +0x3C; bit 5 gates the interaction-state selector caller.
+  description: Player actor slot (slot 0) behavior flags at actor-table offset +0x3C.
   evidence:
-    - ghidra_disassembly_001AE862
-    - mame_player_interaction_selector_trace
+    - ghidra_actor_table_layout
 0xFF7E22:
   name: SCENE_RESOURCE_STATUS
   type: u8

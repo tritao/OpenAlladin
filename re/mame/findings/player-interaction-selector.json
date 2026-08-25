@@ -7,6 +7,18 @@
     "return_address": "0x001AE870",
     "guard": "actor_flags_bit_5"
   },
+  "actor_evidence": {
+    "slot": 4,
+    "type": "0x1F",
+    "record": "0x00FF7F48",
+    "flags_address": "0x00FF7F84",
+    "world_x": "0x02B2",
+    "world_y": "0x0370",
+    "flag_set_pc": "0x001ACC18",
+    "flag_clear_pc": "0x001ACC20",
+    "first_set_machine_frame": "0x0000059B",
+    "first_selector_machine_frame": "0x0000059C"
+  },
   "observed": {
     "experiment": "terrain-walk-off-edge",
     "machine_frame": 1436,

@@ -12,6 +12,13 @@ HEADLESS="${OPENALADDIN_MAME_HEADLESS:-1}"
 DEBUG_UI="${OPENALADDIN_MAME_DEBUG_UI:-0}"
 MAME_XVFB="${MAME_XVFB:-0}"
 
+# State-synchronized runs change into TRACE_DIR before launching MAME. Make a
+# caller-supplied relative path absolute first so OPENALADDIN_TRACE_DIR does
+# not become accidentally relative to itself after that directory change.
+if [[ "${TRACE_DIR}" != /* ]]; then
+    TRACE_DIR="${ROOT_DIR}/${TRACE_DIR}"
+fi
+
 # MAME's non-rendering backend expects an emulated time limit.  Keep it a
 # little longer than the Lua frame limit so the harness remains authoritative,
 # while still bounding a failed or stalled experiment.

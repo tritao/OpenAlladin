@@ -44,6 +44,7 @@ return function(options)
     local actor_slot_count = options.actor_slot_count
     local actor_type_offset = options.actor_type_offset
     local actor_animation_pc_offset = options.actor_animation_pc_offset
+    local actor_flags_offset = options.actor_flags_offset
     local scene_state_address = options.scene_state_address
     local get_scene_state_last = options.get_scene_state_last
     local set_scene_state_last = options.set_scene_state_last
@@ -113,6 +114,7 @@ return function(options)
             local record = actor_table_base + actor_slot * actor_stride
             local type_address = record + actor_type_offset
             local animation_pc_address = record + actor_animation_pc_offset
+            local flags_address = record + actor_flags_offset
 
             add_address(animation_pc_address)
             add_write_tap(
@@ -152,6 +154,29 @@ return function(options)
                         { "mask", tostring(mem_mask) },
                         { "value", tostring(read_u8(type_address)) },
                         { "active", tostring(read_u8(type_address)) },
+                        { "animation_pc", tostring(read_u32(animation_pc_address)) },
+                        { "pc", tostring(read_register("PC") or 0) }
+                    })
+                end)
+
+            add_address(flags_address)
+            add_write_tap(
+                flags_address,
+                string.format("openaladdin_actor_%02d_flags", actor_slot),
+                function(offset, data, mem_mask)
+                    local value = read_u8(flags_address)
+                    write_record({
+                        { "type", json_string("actor_write") },
+                        { "frame", tostring(current_frame()) },
+                        { "slot", tostring(actor_slot) },
+                        { "field", json_string("flags") },
+                        { "record", tostring(record) },
+                        { "address", tostring(offset) },
+                        { "data", tostring(data) },
+                        { "mask", tostring(mem_mask) },
+                        { "value", tostring(value) },
+                        { "flag_bit5", tostring((value & 0x20) ~= 0) },
+                        { "actor_type", tostring(read_u8(type_address)) },
                         { "animation_pc", tostring(read_u32(animation_pc_address)) },
                         { "pc", tostring(read_register("PC") or 0) }
                     })

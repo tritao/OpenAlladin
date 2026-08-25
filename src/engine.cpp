@@ -13,6 +13,8 @@ namespace {
 constexpr int kScreenWidth = 320;
 constexpr int kScreenHeight = 224;
 constexpr int kTerrainVisualOffsetY = 0xF0;
+constexpr int kTerrainContourRomOffset = 0x2FD2;
+constexpr int kTerrainContourRomSize = 0x1000;
 constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
 
 // Camera_UpdateFollow (0x001AA90C) indexes these fixed-ROM byte tables by
@@ -187,7 +189,7 @@ std::uint32_t rgba(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t 
 
 }  // namespace
 
-void Level::load(const std::string& asset_root) {
+void Level::load(const std::string& asset_root, const std::string& rom_path) {
     const auto background = read_ppm(asset_root + "/background.ppm");
     background_width_ = background.width;
     background_height_ = background.height;
@@ -200,6 +202,16 @@ void Level::load(const std::string& asset_root) {
     }
 
     floor_data_ = read_file(asset_root + "/raw/floor.bin");
+    contour_table_.clear();
+    if (!rom_path.empty()) {
+        const auto rom = read_file(rom_path);
+        if (rom.size() >= static_cast<std::size_t>(kTerrainContourRomOffset + kTerrainContourRomSize)) {
+            contour_table_.assign(
+                rom.begin() + kTerrainContourRomOffset,
+                rom.begin() + kTerrainContourRomOffset + kTerrainContourRomSize
+            );
+        }
+    }
     const auto palette_bytes = read_file(asset_root + "/raw/palette.bin");
     if (palette_bytes.size() < 32) {
         throw std::runtime_error("level palette is too short");
@@ -325,12 +337,88 @@ Level::TerrainCollisionFlags Level::query_player_collision(
     return flags;
 }
 
+Level::TerrainContour Level::query_player_contour(
+    int world_x,
+    int world_y,
+    std::uint16_t surface_mode
+) const {
+    TerrainContour result;
+    if (contour_table_.size() < static_cast<std::size_t>(kTerrainContourRomSize)) {
+        return result;
+    }
+
+    // Player_FloorContour bounds its source lookup with:
+    //   (WORLD_CAMERA_Y + PLAYER_Y) - 0x100
+    //   < LEVEL_HEIGHT_PIXELS - 0x20
+    // FF98C4 is one 16-pixel row ahead of the resolver's FF9884 table, so
+    // the first candidate is the same row selected by the 0xF0 resolver.
+    const int lookup_y = world_y - 0x100;
+    if (lookup_y < 0 || lookup_y >= map_height_ * 16 - 0x20) {
+        return result;
+    }
+
+    const int base_row = (world_y - kTerrainVisualOffsetY) >> 4;
+    const int column = (world_x + 16) >> 4;
+    if (base_row < 0 || base_row + 2 >= map_height_
+        || column < 0 || column >= map_width_) {
+        return result;
+    }
+
+    const int x_fraction = world_x & 0x0F;
+    for (int candidate = 0; candidate < 3; ++candidate) {
+        const int row = base_row + candidate;
+        const std::uint16_t word = terrain_words_[static_cast<std::size_t>(row * map_width_ + column)];
+        const std::size_t floor_index = static_cast<std::size_t>(word >> 1)
+            + static_cast<std::size_t>(surface_mode);
+        if (floor_index >= floor_data_.size()) {
+            continue;
+        }
+
+        const std::uint8_t floor_type = floor_data_[floor_index];
+        const int fraction = candidate == 2 ? 2 : x_fraction;
+        const std::size_t contour_index = static_cast<std::size_t>(floor_type) * 16
+            + static_cast<std::size_t>(fraction);
+        if (contour_index >= contour_table_.size()) {
+            continue;
+        }
+
+        const std::uint8_t contour = static_cast<std::uint8_t>(contour_table_[contour_index] & 0x3F);
+        if (contour == 0) {
+            continue;
+        }
+
+        const int candidate_y = world_y - 16 + candidate * 16;
+        result.valid = true;
+        result.row = row;
+        result.column = column;
+        result.target_world_y = (candidate_y & ~0x0F) + contour - 1;
+        result.floor_type = floor_type;
+        result.contour = contour;
+        return result;
+    }
+
+    return result;
+}
+
+bool Level::player_interaction_camera_gate(int world_x, int world_y) const {
+    // MAME actor-table capture: slot 4/type 0x1F is at (0x02B2, 0x0370)
+    // when its flag bit 5 is raised by the player-collision path. The player
+    // reaches the handler's left edge at actor_x - 0x0E (world X 0x02A4).
+    constexpr int kActorX = 0x02B2;
+    constexpr int kActorY = 0x0370;
+    constexpr int kInteractionLeft = 0x0E;
+    constexpr int kInteractionRight = 0x10;
+    return world_y == kActorY
+        && world_x >= kActorX - kInteractionLeft
+        && world_x < kActorX + kInteractionRight;
+}
+
 void Engine::load(
     const std::string& asset_root,
     const std::string& sprite_root,
     const std::string& rom_path
 ) {
-    level_.load(asset_root);
+    level_.load(asset_root, rom_path);
     sprites_.load(sprite_root.empty() ? asset_root + "/../../sprites" : sprite_root);
     // Level-01 captures show the player using CRAM line 2. Reuse the exact
     // extracted scene palette instead of the Chopper preview fallback.
@@ -363,6 +451,7 @@ void Engine::reset() {
     player_.terrain_landing_state = player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
     last_ground_direction_ = 0;
+    actor_interaction_gate_active_ = false;
     quit_ = false;
     animation_.reset();
 }
@@ -512,6 +601,48 @@ void Engine::integrate_motion() {
     }
 }
 
+void Engine::apply_floor_contour() {
+    const Level::TerrainContour contour = level_.query_player_contour(
+        player_world_x(), player_world_y(), player_.terrain_surface_mode);
+    if (!contour.valid) {
+        // Player_FloorContour clears FFF0C1 when all three contour probes are
+        // empty. The following state machine then treats the player as
+        // airborne and the normal integrator supplies gravity.
+        player_.terrain_landing_state = 0;
+        player_.grounded = false;
+        return;
+    }
+
+    // During the upward response phase the ROM deliberately keeps the
+    // contour from re-grounding the player on the launch tile. Once the
+    // vertical stop is armed, the same contour becomes eligible for landing.
+    if ((player_.terrain_response_active != 0 && player_.terrain_vertical_stop == 0)
+        || (!player_.grounded && player_.vy < 0 && player_.terrain_vertical_stop == 0)) {
+        player_.terrain_landing_state = 0;
+        player_.grounded = false;
+        return;
+    }
+
+    const int target_y = contour.target_world_y - camera_.y;
+    const int delta = target_y - player_.y;
+    if (delta < -8 || delta > 8) {
+        player_.terrain_landing_state = 0;
+        player_.grounded = false;
+        return;
+    }
+
+    // The original writes the contour-adjusted local Y only when the player
+    // is within eight pixels of the target. The contour byte itself is the
+    // grounded/landing value (flat ground is 1; sloped surfaces retain their
+    // ROM value).
+    player_.y = target_y;
+    player_.vy = 0;
+    player_.grounded = true;
+    player_.terrain_landing_state = contour.contour;
+    player_.terrain_response_active = 0;
+    player_.terrain_response_timer_state = 0;
+}
+
 void Engine::resolve_terrain(int previous_world_y) {
     const Level::TerrainQuery query = level_.query_player(player_world_x(), player_world_y());
     const Level::TerrainCell previous_down_probe =
@@ -555,24 +686,6 @@ void Engine::resolve_terrain(int previous_world_y) {
         // because the resolved row has no handler; the landing flag remains
         // latched until an actual vertical transition changes it.
         return;
-    }
-
-    // Only the ordinary surface handlers observed in the opening room
-    // perform the floor snap. Special cells (for example 0x2B and 0x47)
-    // dispatch their own response without converting a falling player into
-    // a grounded player; the ROM handler at 0x001B5502 notably leaves VY
-    // untouched.
-    const bool floor_behavior = cell->behavior == 0x0A || cell->behavior == 0x11;
-    if (floor_behavior && player_.vy >= 0) {
-        player_.y = cell->row * 16 + kTerrainVisualOffsetY - camera_.y;
-        player_.vy = 0;
-        if (!player_.grounded || player_.vx == 0) {
-            player_.vx = 0;
-        }
-        player_.grounded = true;
-        player_.terrain_landing_state = 1;
-        player_.terrain_vertical_stop = 0;
-        player_.terrain_response_timer_state = 0;
     }
 
     // The ROM dispatches the handler on every resolver pass. Individual
@@ -844,6 +957,7 @@ void Engine::update(const InputState& input) {
         return;
     }
     update_terrain_input(input);
+    apply_floor_contour();
     const bool was_grounded = player_.grounded;
     const auto collision = level_.query_player_collision(
         player_world_x(), player_world_y(), was_grounded);
@@ -855,6 +969,19 @@ void Engine::update(const InputState& input) {
     player_.terrain_right_inner_probe = collision.right_inner ? 0xFF : 0;
     player_.terrain_right_outer_probe = collision.right_outer ? 0xFF : 0;
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+    const bool actor_interaction_gate = was_grounded
+        && input.right && !input.left
+        && level_.player_interaction_camera_gate(player_world_x(), player_world_y());
+    if (!actor_interaction_gate) {
+        actor_interaction_gate_active_ = false;
+    } else if (!actor_interaction_gate_active_) {
+        // The ROM's actor flag path clears FFF0CC, then Player_Update sees the
+        // clear on the following pass and writes CAMERA_UPDATE_DELAY=7. The
+        // follow routine consumes one count immediately, exposing 6 in the
+        // stable frame trace.
+        camera_.update_delay = 7;
+        actor_interaction_gate_active_ = true;
+    }
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
         && last_ground_direction_ != 0 && player_.vx == 0;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
@@ -902,7 +1029,9 @@ void Engine::update(const InputState& input) {
         } else if (player_.vy < 0x800) {
             player_.vy = static_cast<std::int16_t>(player_.vy + 0x0078);
         }
-        player_.terrain_vertical_stop = 0;
+        // FFF0C0 remains set after the residual-upward stop. The original
+        // contour routine uses that latched bit to distinguish the later
+        // falling/landing phase while FFF0BE is still active.
     }
     if (start_jump && player_.grounded) {
         // The recovered frame order applies the jump handler after motion and
