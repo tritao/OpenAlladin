@@ -1,0 +1,9 @@
+# openaladdin-actor-table-v1
+# Focused actor-to-actor collision fixture from the live guard encounter.
+# Slot 5 is the type-0x0A guard. Slot 26 is the temporary type-0x80 sword
+# actor observed at MAME frame 1667. The actor scan compares the raw frame
+# offsets, so the guard's facing byte is intentionally 0xFF but does not
+# participate in this pass.
+# slot type x y movement_pc frame_ptr animation_pc flags [facing_x_flip [facing_y_flip [movement_command_timer [movement_loop_pc [movement_loop_timer [movement_return_pc]]]]]]
+5 0x0A 0x0530 0x0340 0x0 0x001F67BE 0x00125486 0x0 0xFF
+26 0x80 0x0521 0x032C 0x0 0x001FD478 0x00122B5A 0x8 0x0

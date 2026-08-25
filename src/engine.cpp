@@ -18,12 +18,15 @@ constexpr int kTerrainContourRomOffset = 0x2FD2;
 constexpr int kTerrainContourRomSize = 0x1000;
 constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
 constexpr std::uint8_t kActorGuardType = 0x0A;
+constexpr std::uint8_t kActorSwordType = 0x80;
 constexpr std::uint8_t kActorTerminalType = 0x84;
 constexpr std::uint8_t kTerrainSpawnActorType = 0x8C;
 constexpr std::uint32_t kTerrainSpawnAnimationStream = 0x00124408;
 constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
 constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
+constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
 constexpr std::uint8_t kActorDeathFrames = 43;
+constexpr std::uint8_t kActorSwordTerminalFrames = 19;
 
 // Camera_UpdateFollow (0x001AA90C) indexes these fixed-ROM byte tables by
 // the absolute local-coordinate error. The horizontal table occupies ROM
@@ -845,6 +848,79 @@ void Engine::update_actor_animations() {
     }
 }
 
+void Engine::update_actor_actor_collisions() {
+    if (rom_bytes_.empty()) return;
+
+    // FUN_001ABD7E scans the seven auxiliary records (slots 25..31) as
+    // collision sources and the 24 gameplay records (slots 0..23) as
+    // targets. This is deliberately separate from the player/actor pass:
+    // the player sword is itself an actor by the time the guard handler runs.
+    const auto terminalize = [](ActorState& actor, std::uint32_t animation_stream, std::uint8_t frames) {
+        actor.type = kActorTerminalType;
+        actor.movement_pc = 0;
+        actor.animation_pc = animation_stream;
+        actor.frame_ptr = 0;
+        actor.flags = 0;
+        actor.facing_x_flip = 0;
+        actor.facing_y_flip = 0;
+        actor.terminal_timer = frames;
+    };
+
+    for (std::size_t source_slot = 25; source_slot < 32; ++source_slot) {
+        ActorState& source = actors_[source_slot];
+        if (source.type == 0 || source.type >= 0x83 || source.frame_ptr == 0) {
+            continue;
+        }
+
+        // The actor-to-actor routine does not consult either facing byte.
+        // It adds the raw +2..+5 frame bytes to each actor origin. Do not
+        // substitute the player-facing collision helper here: left-facing
+        // guard records intentionally have reversed displayed bounds, while
+        // this ROM pass compares the raw unsigned values.
+        const CollisionBox source_box = read_collision_box(
+            source.frame_ptr,
+            static_cast<int>(source.x),
+            static_cast<int>(source.y),
+            false
+        );
+        if (!source_box.valid) continue;
+
+        for (std::size_t target_slot = 0; target_slot < 24; ++target_slot) {
+            ActorState& target = actors_[target_slot];
+            if (target.type == 0 || target.type >= 0x32 || target.frame_ptr == 0) {
+                continue;
+            }
+            const CollisionBox target_box = read_collision_box(
+                target.frame_ptr,
+                static_cast<int>(target.x),
+                static_cast<int>(target.y),
+                false
+            );
+            if (!target_box.valid) continue;
+
+            // This is the four unsigned half-open comparisons in the
+            // decompiled 0x001ABD7E routine, written in terms of the same
+            // raw boxes for readability.
+            const bool overlap = target_box.left <= source_box.right
+                && target_box.top <= source_box.bottom
+                && source_box.left < target_box.right
+                && source_box.top < target_box.bottom;
+            if (!overlap) continue;
+
+            // The live guard encounter dispatches target type 0x0A through
+            // the actor-to-actor table and replaces both the guard and its
+            // temporary sword actor with the shared terminal type. The two
+            // streams are distinct in the ROM (0x122FA2 vs 0x122DD8), and
+            // their cleanup lifetimes are distinct as well: 43 frames for
+            // the guard, 19 for the one-frame sword actor.
+            if (source.type == kActorSwordType && target.type == kActorGuardType) {
+                terminalize(target, kActorDeathAnimationStream, kActorDeathFrames);
+                terminalize(source, kActorSwordDeathAnimationStream, kActorSwordTerminalFrames);
+            }
+        }
+    }
+}
+
 void Engine::load_actor_records(const std::string& path) {
     std::ifstream input(path);
     if (!input) {
@@ -1015,6 +1091,12 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
             actor.terminal_timer = kActorDeathFrames;
         }
     }
+
+    // The actor-to-actor collision pass follows the player/actor dispatch in
+    // the frame loop. Keeping it after the legacy direct-player fixture also
+    // preserves the existing isolated guard regression while allowing the
+    // real type-0x80 sword actor path to drive the same transition.
+    update_actor_actor_collisions();
 }
 
 void Engine::reset() {
