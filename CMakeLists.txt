@@ -144,6 +144,22 @@ target_compile_features(openaladdin_audio PUBLIC cxx_std_20)
 target_link_libraries(openaladdin_audio PUBLIC openaladdin_ymfm)
 openaladdin_enable_warnings(openaladdin_audio)
 
+add_library(openaladdin_audio_sdl STATIC
+    src/audio/sdl_audio.cpp
+    src/audio/sdl_audio.hpp
+)
+target_include_directories(openaladdin_audio_sdl
+    PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+        ${SDL2_INCLUDE_DIRS}
+)
+target_compile_features(openaladdin_audio_sdl PUBLIC cxx_std_20)
+target_link_libraries(openaladdin_audio_sdl PUBLIC
+    openaladdin_audio
+    ${OPENALADDIN_SDL2_TARGET}
+)
+openaladdin_enable_warnings(openaladdin_audio_sdl)
+
 add_library(openaladdin_engine STATIC
     src/engine.cpp
     src/engine.hpp
@@ -207,6 +223,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(mixer_test)
     openaladdin_enable_test_assertions(mixer_test)
 
+    add_executable(sdl_audio_test tests/sdl_audio.cpp)
+    target_link_libraries(sdl_audio_test PRIVATE openaladdin_audio_sdl)
+    target_compile_features(sdl_audio_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(sdl_audio_test)
+    openaladdin_enable_test_assertions(sdl_audio_test)
+
     add_test(NAME sprite_renderer COMMAND sprite_renderer_test)
     set_tests_properties(sprite_renderer PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -225,6 +247,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME mixer COMMAND mixer_test)
     set_tests_properties(mixer PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME sdl_audio COMMAND sdl_audio_test)
+    set_tests_properties(sdl_audio PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     find_package(Python3 COMPONENTS Interpreter QUIET)
