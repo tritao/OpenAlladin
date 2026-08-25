@@ -1583,11 +1583,14 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.x = ((player_world_x() & ~0x0F) + 8) - camera_.x;
         break;
     case 0x40:  // TerrainHandler_MovePlayerRight (0x001B536C)
+        // Exact ROM body: ADDQ.W #8,PLAYER_X; CLR.W,FFF0B0.
         player_.x += 8;
         player_.terrain_horizontal_response = 0;
         break;
     case 0x41:  // TerrainHandler_HorizontalResponseBlock (0x001B53A2)
-        player_.x = std::max(0x14, player_.x - 8);
+        // Exact ROM body: SUBQ.W #8,PLAYER_X; CLR.W,FFF0B0. There is no
+        // native lower-bound clamp in this handler.
+        player_.x -= 8;
         player_.terrain_horizontal_response = 0;
         break;
     case 0x47:  // TerrainHandler_ToggleSurfaceMode (0x001B5470)

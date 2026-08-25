@@ -268,6 +268,62 @@
         "animation_stream": "0x00121AD8"
       }
     },
+    "terrain-handler-0x40": {
+      "trace": "build/re/traces/terrain-handler-40-v1/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-40-v1/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x40",
+        "handler": "0x001B536C"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x40",
+        "camera": [16, 464],
+        "player": [87, 416, 0, 0],
+        "world": [103, 880]
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "player_x_delta": 8,
+        "position": [95, 416],
+        "horizontal_response": 0
+      }
+    },
+    "terrain-handler-0x41": {
+      "trace": "build/re/traces/terrain-handler-41-v1/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-41-v1/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x41",
+        "handler": "0x001B53A2"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x41",
+        "camera": [16, 464],
+        "player": [87, 416, 0, 0],
+        "world": [103, 880]
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "player_x_delta": -8,
+        "position": [79, 416],
+        "horizontal_response": 0
+      }
+    },
     "terrain-handler-0x47": {
       "trace": "build/re/terrain-target-47-v3/state.jsonl",
       "cell": {

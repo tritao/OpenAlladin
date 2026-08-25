@@ -418,6 +418,96 @@ experiments:
           value: 45
           width: u8
 
+  - name: terrain-handler-40
+    description: Exercise the exact rightward terrain correction through an opening-ground runtime table fixture.
+    frames: 1310
+    boot:
+      scenario: first-level
+    pokes:
+      frame: 1300
+      memory:
+        - symbol: WORLD_CAMERA_X
+          value: 16
+          width: u16
+        - symbol: WORLD_CAMERA_Y
+          value: 464
+          width: u16
+        - symbol: PLAYER_X
+          value: 87
+          width: u16
+        - symbol: PLAYER_Y
+          value: 416
+          width: u16
+        - symbol: PLAYER_WORLD_X
+          value: 103
+          width: u16
+        - symbol: PLAYER_WORLD_Y
+          value: 880
+          width: u16
+        - symbol: PLAYER_VX
+          value: 0
+          width: u16
+        - symbol: PLAYER_VY
+          value: 0
+          width: u16
+        - symbol: TERRAIN_HORIZONTAL_RESPONSE
+          value: 0
+          width: u16
+        - symbol: SCENE_STATE
+          value: 1
+          width: u8
+        # Row 40/column 7 contains map word 0x6C20, so the resolver indexes
+        # TERRAIN_BEHAVIOR_INDEX_TABLE + (0x6C20 >> 1) = +0x3610.
+        - symbol: TERRAIN_BEHAVIOR_INDEX_TABLE
+          offset: 0x3610
+          value: 64
+          width: u8
+
+  - name: terrain-handler-41
+    description: Exercise the exact leftward terrain correction through an opening-ground runtime table fixture.
+    frames: 1310
+    boot:
+      scenario: first-level
+    pokes:
+      frame: 1300
+      memory:
+        - symbol: WORLD_CAMERA_X
+          value: 16
+          width: u16
+        - symbol: WORLD_CAMERA_Y
+          value: 464
+          width: u16
+        - symbol: PLAYER_X
+          value: 87
+          width: u16
+        - symbol: PLAYER_Y
+          value: 416
+          width: u16
+        - symbol: PLAYER_WORLD_X
+          value: 103
+          width: u16
+        - symbol: PLAYER_WORLD_Y
+          value: 880
+          width: u16
+        - symbol: PLAYER_VX
+          value: 0
+          width: u16
+        - symbol: PLAYER_VY
+          value: 0
+          width: u16
+        - symbol: TERRAIN_HORIZONTAL_RESPONSE
+          value: 0
+          width: u16
+        - symbol: SCENE_STATE
+          value: 1
+          width: u8
+        # Row 40/column 7 contains map word 0x6C20, so the resolver indexes
+        # TERRAIN_BEHAVIOR_INDEX_TABLE + (0x6C20 >> 1) = +0x3610.
+        - symbol: TERRAIN_BEHAVIOR_INDEX_TABLE
+          offset: 0x3610
+          value: 65
+          width: u8
+
   - name: terrain-wall-left
     description: Approach the left edge from inside the opening room and capture horizontal correction flags.
     frames: 1400
