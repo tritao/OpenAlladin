@@ -381,6 +381,38 @@ void Engine::update(const InputState& input) {
     ++frame_;
 }
 
+void Engine::write_state(std::ostream& output, const std::string& input_token) const {
+    // Keep this stream deliberately aligned with re/mame/lua/main.lua. It is
+    // intentionally a small, valid subset of the shared schema: scene and
+    // actor emulation do not exist in the vertical slice yet, so those fields
+    // remain at their deterministic zero/empty values.
+    output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v1\""
+           << ",\"frame\":" << frame_
+           << ",\"input\":\"" << input_token << "\""
+           << ",\"player\":{\"x\":" << player_.x
+           << ",\"y\":" << player_.y
+           << ",\"vx\":" << player_.vx
+           << ",\"vy\":" << player_.vy
+           << ",\"animation_pc\":0}"
+           << ",\"scene\":{\"state\":0"
+           << ",\"script_cursor\":0"
+           << ",\"script_data_cursor\":0"
+           << ",\"table_index\":0"
+           << ",\"script_pending\":0"
+           << ",\"vdp_update\":0"
+           << ",\"vdp_clear\":0"
+           << ",\"transition_event\":0"
+           << ",\"script_countdown\":0"
+           << ",\"script_gate\":0"
+           << ",\"player_gate\":0"
+           << ",\"player_lock\":0"
+           << ",\"player_countdown\":0"
+           << ",\"player_terminal\":0}"
+           << ",\"camera\":{\"x\":" << level_.camera_x()
+           << ",\"y\":" << level_.camera_y() << "}"
+           << ",\"actors\":[]}\n";
+}
+
 void Engine::render(SDL_Renderer* renderer) {
     if (framebuffer_.size() != static_cast<std::size_t>(kScreenWidth * kScreenHeight)) {
         return;

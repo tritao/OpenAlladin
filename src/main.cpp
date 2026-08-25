@@ -3,6 +3,8 @@
 #include <SDL.h>
 
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -14,6 +16,7 @@ struct Options {
     int frames = -1;
     bool no_window = false;
     bool demo = false;
+    std::string state_output;
 };
 
 Options parse_options(int argc, char** argv) {
@@ -28,8 +31,10 @@ Options parse_options(int argc, char** argv) {
             options.no_window = true;
         } else if (argument == "--demo") {
             options.demo = true;
+        } else if (argument == "--state-output" && i + 1 < argc) {
+            options.state_output = argv[++i];
         } else if (argument == "--help") {
-            std::cout << "usage: openaladdin [--assets DIR] [--frames N] [--no-window] [--demo]\n";
+            std::cout << "usage: openaladdin [--assets DIR] [--frames N] [--no-window] [--demo] [--state-output PATH]\n";
             std::exit(0);
         } else {
             throw std::runtime_error("unknown argument: " + argument);
@@ -52,6 +57,20 @@ int main(int argc, char** argv) {
 
         openaladdin::Engine engine;
         engine.load(options.assets);
+
+        std::ofstream state_file;
+        if (!options.state_output.empty()) {
+            const std::filesystem::path state_path(options.state_output);
+            if (state_path.has_parent_path()) {
+                std::filesystem::create_directories(state_path.parent_path());
+            }
+            state_file.open(state_path);
+            if (!state_file) {
+                throw std::runtime_error("cannot open state output: " + options.state_output);
+            }
+            state_file << "{\"type\":\"header\",\"format\":\"openaladdin-frame-state-v1\",\"rom\":\"openaladdin\",\"rom_sha256\":\"\"}\n";
+            engine.write_state(state_file, "none");
+        }
 
         SDL_Window* window = nullptr;
         SDL_Renderer* renderer = nullptr;
@@ -113,7 +132,19 @@ int main(int argc, char** argv) {
                 input.jump_pressed = rendered_frames == 30;
             }
 
+            std::string input_token = "none";
+            if (input.jump_pressed) {
+                input_token = "jump";
+            } else if (input.left && !input.right) {
+                input_token = "left";
+            } else if (input.right && !input.left) {
+                input_token = "right";
+            }
+
             engine.update(input);
+            if (state_file) {
+                engine.write_state(state_file, input_token);
+            }
             engine.render(renderer);
             ++rendered_frames;
             if (options.no_window) {

@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include <cstdint>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -69,6 +70,7 @@ public:
     void reset();
     void update(const InputState& input);
     void render(SDL_Renderer* renderer);
+    void write_state(std::ostream& output, const std::string& input_token) const;
 
     const PlayerState& player() const { return player_; }
     int frame() const { return frame_; }

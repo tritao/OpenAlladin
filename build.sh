@@ -4,6 +4,9 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROM_PATH="${OPENALADDIN_ROM:-${ROOT_DIR}/Disneys_Aladdin_U_p1.bin}"
+if [[ -z "${OPENALADDIN_ROM:-}" && ! -f "${ROM_PATH}" && -f "${ROOT_DIR}/rom/Disneys_Aladdin_U_p1.bin" ]]; then
+    ROM_PATH="${ROOT_DIR}/rom/Disneys_Aladdin_U_p1.bin"
+fi
 ASSET_DIR="${OPENALADDIN_ASSETS:-${ROOT_DIR}/build/assets/levels/level01}"
 
 if [[ ! -f "${ROM_PATH}" ]]; then
@@ -15,7 +18,11 @@ fi
 # checkout or when the runtime-friendly level render is missing.
 if [[ ! -f "${ASSET_DIR}/background.ppm" ]]; then
     echo "build.sh: extracting assets from ${ROM_PATH}"
-    python3 "${ROOT_DIR}/tools/extract-assets.py" "${ROM_PATH}"
+    EXTRACTOR="${ROOT_DIR}/tools/extract-assets.py"
+    if [[ ! -f "${EXTRACTOR}" ]]; then
+        EXTRACTOR="${ROOT_DIR}/tools/openaladdin/assets/extract.py"
+    fi
+    python3 "${EXTRACTOR}" "${ROM_PATH}"
 fi
 
 echo "build.sh: building OpenAladdin"
