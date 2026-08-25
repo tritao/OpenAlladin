@@ -312,6 +312,12 @@ private:
     std::array<ActorState, 32> actor_templates_{};
     std::array<ActorState, 32> actors_{};
     std::map<int, std::array<ActorState, 32>> actor_timeline_;
+    // FUN_001B3032 is the fixed-ROM scene-5 response PRNG. Keep its state
+    // deterministic in the native slice so controlled terrain fixtures can
+    // reproduce the ROM's allocation/animation selection.
+    std::uint32_t terrain_random_state_ = 0;
+    int terrain_input_world_x_ = 0;
+    int terrain_input_world_y_ = 0;
     bool checkpoint_terrain_behavior_override_ = false;
     std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;

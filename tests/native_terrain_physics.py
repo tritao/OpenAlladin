@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "build/re/tests/native-terrain-physics/state.jsonl"
 SPECIAL_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/special-state.jsonl"
 SPAWN_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/spawn-state.jsonl"
+SCENE5_SPAWN_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/scene5-spawn-state.jsonl"
 LANDING_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/landing-handler-state.jsonl"
 HANDLER_2B_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2b-state.jsonl"
 HANDLER_2A_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2a-state.jsonl"
@@ -139,6 +140,50 @@ def main() -> int:
     advanced = next(actor for actor in spawn_states[2]["actors"] if actor["slot"] == 3)
     assert advanced["animation_pc"] == 0x0012440C
     assert advanced["frame_ptr"] != 0
+
+    # Behavior 0x25's scene-state-5 branch advances the fixed-ROM PRNG and,
+    # for the deterministic zero seed, allocates the first free common actor
+    # record from template 0x001B805C. The handler runs before the input
+    # movement step, so the actor uses the pre-input world position.
+    scene5_spawn_command = [
+        str(ROOT / "build/openaladdin"),
+        "--no-window",
+        "--frames",
+        "3",
+        "--state-output",
+        str(SCENE5_SPAWN_OUTPUT),
+        "--actor-records",
+        "/dev/null",
+        "--checkpoint-player",
+        "87,416,0,0,1",
+        "--checkpoint-terrain-behavior",
+        "0x25",
+        "--checkpoint-camera",
+        "16,464,16,464,0,0,5",
+        "--input-schedule",
+        "left*2,none",
+    ]
+    subprocess.run(scene5_spawn_command, cwd=ROOT, env=environment, check=True)
+    with SCENE5_SPAWN_OUTPUT.open(encoding="utf-8") as stream:
+        scene5_spawn_states = {
+            record["frame"]: record
+            for record in map(json.loads, stream)
+            if record.get("type") == "state"
+        }
+    scene5_spawn = scene5_spawn_states[1]
+    scene5_actor = next(actor for actor in scene5_spawn["actors"] if actor["slot"] == 3)
+    assert scene5_spawn["terrain"]["behavior"] == 0x25
+    assert scene5_spawn["terrain"]["state"] == 0xFF
+    assert scene5_actor["type"] == 0x84
+    assert scene5_actor["x"] == 107
+    assert scene5_actor["y"] == 838
+    assert scene5_actor["animation_pc"] == 0x001250CE
+    assert scene5_actor["frame_ptr"] == 0
+    scene5_actor_next = next(actor for actor in scene5_spawn_states[2]["actors"] if actor["slot"] == 3)
+    assert scene5_actor_next["x"] == 107
+    assert scene5_actor_next["y"] == 838
+    assert scene5_actor_next["animation_pc"] == 0x001250CE
+    assert scene5_actor_next["frame_ptr"] == 0
 
     # The fixed-ROM level has no ordinary 0x30 cell, so exercise the handler
     # through the native checkpoint fixture that mirrors the MAME runtime

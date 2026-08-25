@@ -354,6 +354,27 @@
   evidence:
     - ghidra_disassembly_001B54E0
     - rom_terrain_handler_table_004554
+0x001B56F4:
+  name: TerrainScene5SpawnResponse
+  confidence: confirmed
+  description: Scene-state-5 terrain response that advances the 13x+7 PRNG, allocates the first free actor slot 3..22 when the low byte is below 0x28, copies template 0x001B805C, places the type-0x84 actor relative to PLAYER_WORLD_X/Y, and selects one of three animation streams.
+  evidence:
+    - ghidra_disassembly_001B54E0
+    - mame_terrain_handler_25_scene5_spawn_trace
+0x001B3032:
+  name: TerrainScene5RandomStep
+  confidence: confirmed
+  description: Fixed-ROM pseudo-random step used by the scene-state-5 terrain response; updates the 32-bit state at 0x00FF7DEA with state = state * 13 + 7 and returns its low word in D7.
+  evidence:
+    - ghidra_disassembly_001B3032
+    - mame_terrain_handler_25_scene5_spawn_trace
+0x001AE262:
+  name: Actor_FindFreeSlot
+  confidence: confirmed
+  description: Scans common actor records 3..22 at 0x00FF7F06 with stride 0x42 and returns the first zero-type record while preserving the free/not-free condition.
+  evidence:
+    - ghidra_disassembly_001AE262
+    - mame_terrain_handler_25_scene5_spawn_trace
 0x001B5502:
   name: TerrainHandler_StopAndAlignPlayerBlock
   confidence: confirmed

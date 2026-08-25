@@ -26,6 +26,10 @@ constexpr std::uint8_t kActorSwordType = 0x80;
 constexpr std::uint8_t kActorTerminalType = 0x84;
 constexpr std::uint8_t kTerrainSpawnActorType = 0x8C;
 constexpr std::uint32_t kTerrainSpawnAnimationStream = 0x00124408;
+constexpr std::uint32_t kTerrainScene5SpawnTemplate = 0x001B805C;
+constexpr std::uint32_t kTerrainScene5SpawnAnimationDefault = 0x001250BA;
+constexpr std::uint32_t kTerrainScene5SpawnAnimationLow = 0x001250CE;
+constexpr std::uint32_t kTerrainScene5SpawnAnimationHigh = 0x001250DE;
 constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
 constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
 constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
@@ -858,7 +862,12 @@ void Engine::update_actor_animations() {
     };
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         ActorState& actor = actors_[slot];
-        if (actor.type == 0 || actor.animation_pc == 0 || actor.terminal_timer != 0) {
+        // The shared actor VM skips the terminal template type 0x84. The
+        // scene-5 terrain response installs that type with a deferred stream
+        // pointer; it remains an unadvanced record until another ROM path
+        // consumes it.
+        if (actor.type == 0 || actor.type == kActorTerminalType
+            || actor.animation_pc == 0 || actor.terminal_timer != 0) {
             continue;
         }
 
@@ -1199,6 +1208,9 @@ void Engine::reset() {
     player_ = PlayerState{};
     actors_ = actor_templates_;
     apply_actor_timeline(0);
+    terrain_random_state_ = 0;
+    terrain_input_world_x_ = 0;
+    terrain_input_world_y_ = 0;
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -1537,11 +1549,64 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_query_state_b = 0xFF;
         player_.terrain_query_state_a = 0xFF;
         break;
-    case 0x25:  // TerrainHandler_SetTerrainStateBlock (0x001B54E0)
-        // The common body writes FFF0D6. Its scene-state-5 branch targets a
-        // separate transition routine and remains outside this state mirror.
+    case 0x25: {  // TerrainHandler_SetTerrainStateBlock (0x001B54E0)
         player_.terrain_state = 0xFF;
+        if (camera_.scene_state != 5
+            || (player_.terrain_push_left == 0 && player_.terrain_push_right == 0)) {
+            break;
+        }
+
+        // FUN_001B3032: the scene-5 branch advances the shared 32-bit state
+        // with state = state * 13 + 7, then uses the low byte as D7. The ROM
+        // only allocates when that byte is below 0x28.
+        terrain_random_state_ = terrain_random_state_ * 13U + 7U;
+        const std::uint8_t random_value = static_cast<std::uint8_t>(terrain_random_state_);
+        if (random_value >= 0x28) {
+            break;
+        }
+
+        // Actor_FindFreeSlot (0x001AE262) scans the common records at slots
+        // 3..22. Actor_InitializeFromTemplate copies the fixed template at
+        // 0x001B805C into the selected record.
+        std::size_t free_slot = actors_.size();
+        for (std::size_t slot = 3; slot <= 22 && slot < actors_.size(); ++slot) {
+            if (actors_[slot].type == 0) {
+                free_slot = slot;
+                break;
+            }
+        }
+        if (free_slot == actors_.size()) {
+            break;
+        }
+
+        const auto read_rom_u8 = [this](std::uint32_t address) -> std::uint8_t {
+            return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
+        };
+        const auto read_rom_u32 = [&read_rom_u8](std::uint32_t address) -> std::uint32_t {
+            return (static_cast<std::uint32_t>(read_rom_u8(address)) << 24)
+                | (static_cast<std::uint32_t>(read_rom_u8(address + 1)) << 16)
+                | (static_cast<std::uint32_t>(read_rom_u8(address + 2)) << 8)
+                | read_rom_u8(address + 3);
+        };
+        ActorState spawned;
+        spawned.type = read_rom_u8(kTerrainScene5SpawnTemplate);
+        spawned.movement_pc = read_rom_u32(kTerrainScene5SpawnTemplate + 6);
+        spawned.animation_pc = read_rom_u32(kTerrainScene5SpawnTemplate + 0x0C);
+        spawned.facing_y_flip = read_rom_u8(kTerrainScene5SpawnTemplate + 0x11);
+        spawned.flags = read_rom_u8(kTerrainScene5SpawnTemplate + 0x12);
+        spawned.x = static_cast<std::uint16_t>(
+            terrain_input_world_x_ + static_cast<int>(random_value & 7U) - 3);
+        spawned.y = static_cast<std::uint16_t>(terrain_input_world_y_ - 0x2A);
+        if (random_value < 0x1B) {
+            spawned.animation_pc = random_value < 0x0D
+                ? kTerrainScene5SpawnAnimationLow
+                : kTerrainScene5SpawnAnimationHigh;
+        } else {
+            spawned.animation_pc = kTerrainScene5SpawnAnimationDefault;
+        }
+        actors_[free_slot] = spawned;
         break;
+    }
     case 0x27:  // TerrainHandler_TransitionResponse (0x001B54A6)
         // Exact ROM body: set FFF0CF, SUBI.W #$50,PLAYER_Y, select the
         // transition stream, clear its timer, set FFF0E7, and clear FFF0CC.
@@ -1860,6 +1925,8 @@ void Engine::update(const InputState& input) {
         return;
     }
     update_terrain_input(input);
+    terrain_input_world_x_ = player_world_x();
+    terrain_input_world_y_ = player_world_y();
     const bool grounded_before_contour = player_.grounded;
     const bool stable_terrain_handler_fixture = checkpoint_terrain_behavior_override_
         && (checkpoint_terrain_behavior_ == 0x28

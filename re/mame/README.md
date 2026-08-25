@@ -525,8 +525,12 @@ The `0x27` transition fixture reaches `0x001B54A6`, subtracts `0x50` from
 `PLAYER_Y`, selects animation `0x001223D0`, sets the response-active flag, and
 clears the response timer before camera follow exposes local `(87,346)`.
 The `0x25` fixture reaches `0x001B54E0` and sets `TERRAIN_STATE=0xFF`; with
-`SCENE_STATE=5`, the handler dispatches to `0x001B56F4`, which is recorded as
-a separate transition target for follow-up decoding.
+`SCENE_STATE=5` and a push flag, the handler dispatches to `0x001B56F4`.
+That response advances the `0x00FF7DEA` PRNG with `13x+7`, allocates the first
+free common actor slot 3..22 when the low byte is below `0x28`, copies template
+`0x001B805C`, and selects the type-`0x84` actor's `0x001250CE`, `0x001250DE`,
+or template `0x001250BA` animation stream. The deterministic seed-0 fixture is
+`terrain-handler-25-scene5-spawn`.
 The surface-mode fixtures confirm the shared `0x001B5492`/`0x001B549C`
 blocks: behaviors `0x01` through `0x04` write `TERRAIN_SURFACE_MODE=0`, while
 behaviors `0x05` through `0x07` write it to `1`.
