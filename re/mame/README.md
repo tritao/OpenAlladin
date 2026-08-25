@@ -14,24 +14,31 @@ With the MAME submodule built and the local ROM at the repository root:
 
 The command writes generated output under `build/re/traces/`:
 
-- `trace_boot.jsonl` contains reset-vector, register, input, and per-frame RAM
-  metadata, plus the current VDP address/code/register state and checksums.
-- `ram_frames.bin` contains one raw 64 KiB `0xff0000`-`0xffffff` Genesis RAM
-  image for each recorded frame, starting with frame zero.
-- `vdp_vram_frames.bin`, `vdp_cram_frames.bin`, and `vdp_vsram_frames.bin`
-  contain the complete MAME VDP memories for each frame, encoded as
-  big-endian Genesis words.
-- `vdp_regs_frames.bin` contains the 32 saved VDP register words per frame.
-- `vdp_writes.jsonl` records every 68000 write to the VDP ports with frame and
-  program-counter context.  The stream is enough to reconstruct VDP command
-  pairs and DMA requests.
+- `trace_boot.jsonl` contains run metadata, register/input records, and the
+  current VDP state/checksums when that capture profile includes VDP data.
+- `state.jsonl` contains the normal semantic `openaladdin-frame-state-v1`
+  stream: player motion, scene state, camera, and active actor cursors.
+- `ram_frames.bin` contains one raw 64 KiB work-RAM image per frame when the
+  `ram` or `full` profile is selected.
+- `vdp_vram_frames.bin`, `vdp_cram_frames.bin`, `vdp_vsram_frames.bin`,
+  `vdp_regs_frames.bin`, and `vdp_writes.jsonl` are emitted only by the `vdp`
+  or `full` profiles.
 
-The default is 120 frames.  Override it with `OPENALADDIN_TRACE_FRAMES`.
+The default is 120 frames and the default capture profile is `state`.  Select
+deeper captures explicitly with `OPENALADDIN_CAPTURE=ram`, `vdp`, or `full`.
+Override the frame count with `OPENALADDIN_TRACE_FRAMES`.
 Input can be supplied as comma-separated frame tokens, for example:
 
 ```sh
 OPENALADDIN_TRACE_FRAMES=90 OPENALADDIN_INPUT='none,right*60,none' \
   ./tools/mame-trace.sh
+```
+
+The unified frontend exposes the same profiles directly:
+
+```sh
+python tools/oa.py trace player-jump --capture state
+python tools/oa.py trace player-jump --capture full
 ```
 
 For a repeatable gameplay checkpoint, schedule a state and screenshot after
@@ -64,9 +71,10 @@ MAME_XVFB=1 OPENALADDIN_TRACE_FRAMES=120 ./tools/mame-trace.sh
 This uses a virtual 1024×768 X11 display and MAME's software renderer.  Set
 `OPENALADDIN_MAME_VIDEO` to choose another MAME video backend.
 
-This harness deliberately has no game-specific addresses yet.  Its first job
-is to establish repeatable emulator observations before we identify player and
-actor RAM symbols.
+The harness also accepts declarative experiment actions compiled by
+`tools/oa.py`. Boot schedules, input actions, and waits on tracked symbols or
+68000 PCs are evaluated inside MAME, so gameplay captures do not need guessed
+frame counts for those checkpoints.
 
 To rank changing 16-bit words from a controlled interval:
 
@@ -91,6 +99,23 @@ python3 tools/analyze-actor-animation-trace.py
 The generated `build/re/actor_animation_inventory.json` is intentionally
 ignored.  Actor `animation_pc` is a moving ROM cursor, so a cursor observed in
 RAM is evidence of stream membership, not automatically a stream entry point.
+
+## Canonical frame-state trace
+
+The unified frontend can request a stable gameplay state stream:
+
+```sh
+python tools/oa.py trace player-jump --capture state
+```
+
+This writes `build/re/traces/player-jump/state.jsonl` using the
+`openaladdin-frame-state-v1` format. It contains the player position and 8.8
+velocities, animation cursor, scene state, camera, and active actor cursors.
+The first differing field between two implementations is reported by:
+
+```sh
+python tools/oa.py compare genesis.jsonl openaladdin.jsonl
+```
 
 For a deterministic probe of a statically identified actor template, clone the
 0x42-byte type-0x7D template at `0x001B81D8` into an unused slot and override its
@@ -385,6 +410,24 @@ state `0x01` after a script terminates. State `0x08` is special: the player
 movement routine switches to a camera/transition branch instead of normal
 player integration.
 
+The table is a five-entry, six-byte record array at ROM `0x004B04`. Its state
+byte is at record offset `+4`; entry 1 is at `0x004B0A` and contains state
+`0x08` at `0x004B0E`. The state write instruction in the selector is
+`0x001B3F0A`. The compact script region decoded by the asset pipeline spans
+`0x004080` through `0x0040B8`; the live cursor observed in the first level is
+`0x004082`, midway through the first record. The script-side state move is at
+`0x001A8ED2`.
+
+Regenerate the machine-readable table/script report with the normal asset
+extractor:
+
+```sh
+python tools/extract-assets.py Disneys_Aladdin_U_p1.bin --no-levels --no-sprites --no-animations
+```
+
+It writes `build/assets/scene_transitions.json` and records it in the asset
+manifest.
+
 To capture the actual state setter PC during a gameplay experiment:
 
 ```sh
@@ -537,7 +580,8 @@ autoplayer can finish the stage. If it still observes only scene state `0x01`,
 the next experiment should target the level-exit/transition condition instead
 of making the input schedule longer.
 
-Set `OPENALADDIN_CAPTURE_VDP=0` when only the original RAM trace is wanted.
+Set `OPENALADDIN_CAPTURE=ram` when only the raw work-RAM trace is wanted.
+`OPENALADDIN_CAPTURE_VDP=0` remains accepted as a compatibility alias.
 
 If a memory tap does not observe a candidate, enable MAME’s native debugger
 watchpoint fallback:

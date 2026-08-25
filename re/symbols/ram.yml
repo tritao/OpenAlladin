@@ -1,4 +1,13 @@
 # Address-keyed RAM knowledge. Entries can be consumed by both Ghidra and MAME.
+0xFF7E40:
+  name: ACTOR_TABLE_BASE
+  type: actor_table
+  format: address
+  confidence: confirmed
+  description: Base address of the 32-record common actor table; records are 0x42 bytes each.
+  evidence:
+    - ghidra_actor_table_layout
+    - mame_actor_animation_trace
 0xFF7E22:
   name: SCENE_RESOURCE_STATUS
   type: u8

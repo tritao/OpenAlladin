@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .png import write_rgba
+from .png import write_ppm, write_rgba
 
 
 TILE_BYTES = 32
@@ -53,6 +53,7 @@ def render_tilemap(
     palettes: bytes,
     output: Path,
     default_palette: int = 0,
+    ppm_output: Path | None = None,
 ) -> None:
     if len(words) < width * height:
         raise ValueError("tilemap is shorter than its declared dimensions")
@@ -74,6 +75,8 @@ def render_tilemap(
                     dest = ((map_y * 8 + y) * out_width + map_x * 8 + x) * 4
                     pixels[dest:dest + 4] = bytes(color)
     write_rgba(output, out_width, height * 8, pixels)
+    if ppm_output is not None:
+        write_ppm(ppm_output, out_width, height * 8, pixels)
 
 
 def render_tileset(tile_data: bytes, palette_data: bytes, output: Path, columns: int = 16) -> None:

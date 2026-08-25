@@ -27,3 +27,18 @@ def write_rgba(path: Path, width: int, height: int, pixels: bytes | bytearray) -
     payload += chunk(b"IEND", b"")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(payload)
+
+
+def write_ppm(path: Path, width: int, height: int, pixels: bytes | bytearray) -> None:
+    """Write the same RGBA buffer as a dependency-free binary PPM image."""
+
+    expected = width * height * 4
+    if len(pixels) != expected:
+        raise ValueError(f"RGBA buffer has {len(pixels)} bytes; expected {expected}")
+    rgb = bytearray(width * height * 3)
+    for source in range(0, expected, 4):
+        destination = (source // 4) * 3
+        rgb[destination:destination + 3] = pixels[source:source + 3]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    header = f"P6\n{width} {height}\n255\n".encode("ascii")
+    path.write_bytes(header + rgb)

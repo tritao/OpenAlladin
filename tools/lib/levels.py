@@ -150,7 +150,15 @@ def _render_parallax(char_data: bytes, palette_data: bytes, parallax_data: bytes
     height = len(words) // width
     if height <= 0:
         raise ValueError("parallax data has no complete tiles")
-    render_tilemap(char_data, words[:width * height], width, height, palette_data, output)
+    render_tilemap(
+        char_data,
+        words[:width * height],
+        width,
+        height,
+        palette_data,
+        output,
+        ppm_output=output.with_suffix(".ppm"),
+    )
     return {"width_tiles": width, "height_tiles": height}
 
 
@@ -211,7 +219,15 @@ def extract_level(data: bytes, index: int, table_offset: int, entry_offset: int,
         words = _compose_background(data, entry, map_data)
         width = entry.block_width * 2
         height = entry.block_height * 2
-        render_tilemap(chars_data, words, width, height, palette_data, level_dir / "background.png")
+        render_tilemap(
+            chars_data,
+            words,
+            width,
+            height,
+            palette_data,
+            level_dir / "background.png",
+            ppm_output=level_dir / "background.ppm",
+        )
         metadata["rendered"] = {"background": {"width_tiles": width, "height_tiles": height}}
         if entry.parallax:
             try:

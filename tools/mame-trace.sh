@@ -42,7 +42,7 @@ LOAD_STATE="${OPENALADDIN_LOAD_STATE:-}"
 MAME_ARGS=(
     genesis
     -cart "${ROM_FILE}"
-    -autoboot_script "${ROOT_DIR}/re/mame/trace_boot.lua"
+    -autoboot_script "${ROOT_DIR}/re/mame/main.lua"
     -autoboot_delay 0
     -state_directory "${TRACE_DIR}/states"
     -snapshot_directory "${TRACE_DIR}/snapshots"

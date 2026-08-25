@@ -1,0 +1,64 @@
+# Small, directly runnable experiments exposed by `python tools/oa.py trace`.
+# These are intentionally frame schedules for now. Conditional waits belong in
+# the next harness layer and can be added without changing the CLI contract.
+version: 1
+
+boot_scenarios:
+  first-level:
+    input: "none*30,start*90,none*60"
+
+experiments:
+  - name: title-menu
+    description: Boot and advance through the opening menu screens.
+    frames: 360
+    input: "none*120,start*5,none*120,start*5,none*110"
+
+  - name: player-run
+    description: Enter the first stage and hold right during the initial run.
+    frames: 360
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: SCENE_STATE
+          equals: 1
+          timeout: 180
+    actions:
+      - input:
+          right: true
+          frames: 120
+      - capture:
+          until:
+            symbol: PLAYER_X
+            greater_than: 0
+          timeout: 120
+
+  - name: player-jump
+    description: Enter the first stage, run briefly, press jump, and capture the arc.
+    frames: 420
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: SCENE_STATE
+          equals: 1
+          timeout: 180
+    actions:
+      - input:
+          right: true
+          frames: 30
+      - input:
+          right: true
+          a: true
+          frames: 1
+      - wait:
+          condition:
+            symbol: PLAYER_VY
+            less_than: 0
+          timeout: 30
+      - marker: jump_started
+      - capture:
+          until:
+            symbol: PLAYER_VY
+            equals: 0
+          timeout: 120

@@ -1,5 +1,11 @@
 # Address-keyed data knowledge. Hardware names are deliberately explicit so
 # both Ghidra and MAME can use the same names.
+0xFF0000:
+  name: WORK_RAM_BASE
+  type: address
+  confidence: confirmed
+  description: Base address of the 68000 work RAM window.
+
 0xA10003:
   name: IO_PORT1_DATA
   type: u8
