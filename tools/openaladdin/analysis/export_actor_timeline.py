@@ -44,7 +44,7 @@ def main() -> int:
         "# openaladdin-actor-timeline-v1",
         f"# Source state frames {args.start_frame}..{args.end_frame} (inclusive).",
         "# Frame numbers are rebased to zero for native replay.",
-        "# @frame N followed by: slot type x y movement_pc frame_ptr animation_pc flags [facing_x_flip [facing_y_flip [movement_command_timer]]]",
+        "# @frame N followed by: slot type x y movement_pc frame_ptr animation_pc flags [facing_x_flip [facing_y_flip [movement_command_timer [movement_loop_pc [movement_loop_timer [movement_return_pc]]]]]]",
     ]
     for relative, source_frame in enumerate(range(args.start_frame, args.end_frame + 1)):
         lines.append(f"@frame {relative}")
@@ -68,6 +68,12 @@ def main() -> int:
                 line += f" {int(actor.get('facing_y_flip', 0)):#x}"
             if "movement_command_timer" in actor:
                 line += f" {int(actor.get('movement_command_timer', 0)):#x}"
+            if "movement_loop_pc" in actor:
+                line += f" {int(actor.get('movement_loop_pc', 0)):#x}"
+            if "movement_loop_timer" in actor:
+                line += f" {int(actor.get('movement_loop_timer', 0)):#x}"
+            if "movement_return_pc" in actor:
+                line += f" {int(actor.get('movement_return_pc', 0)):#x}"
             lines.append(line)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)

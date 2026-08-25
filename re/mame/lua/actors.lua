@@ -31,6 +31,11 @@ return function(options)
     local injection_template = options.injection_template
     local injection_x = options.injection_x
     local injection_y = options.injection_y
+    local injection_movement_pc = options.injection_movement_pc
+    local injection_facing_x = options.injection_facing_x
+    local injection_facing_y = options.injection_facing_y
+    local injection_flags = options.injection_flags
+    local injection_movement_timer = options.injection_movement_timer
 
     function actor.inject(frame)
         if frame ~= injection_frame then
@@ -51,6 +56,21 @@ return function(options)
         space:write_u16(record + actor_x_offset, x & 0xffff)
         space:write_u16(record + actor_y_offset, y & 0xffff)
         space:write_u32(record + actor_animation_pc_offset, injection_pc & 0xffffffff)
+        if injection_movement_pc >= 0 then
+            space:write_u32(record + options.actor_movement_pc_offset, injection_movement_pc & 0xffffffff)
+        end
+        if injection_facing_x >= 0 then
+            space:write_u8(record + 0x09, injection_facing_x & 0xff)
+        end
+        if injection_facing_y >= 0 then
+            space:write_u8(record + 0x35, injection_facing_y & 0xff)
+        end
+        if injection_flags >= 0 then
+            space:write_u8(record + 0x3c, injection_flags & 0xff)
+        end
+        if injection_movement_timer >= 0 then
+            space:write_u8(record + 0x36, injection_movement_timer & 0xff)
+        end
         space:write_u8(record + 0x37, 0)
 
         print(string.format(

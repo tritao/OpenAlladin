@@ -111,8 +111,11 @@ struct ActorState {
     std::uint8_t facing_x_flip = 0;
     std::uint8_t facing_y_flip = 0;
     std::uint32_t movement_pc = 0;
+    std::uint32_t movement_loop_pc = 0;
+    std::uint8_t movement_loop_timer = 0;
     std::uint32_t frame_ptr = 0;
     std::uint32_t animation_pc = 0;
+    std::uint32_t movement_return_pc = 0;
     std::uint8_t flags = 0;
     std::uint8_t terminal_timer = 0;
     std::uint8_t movement_command_timer = 0;

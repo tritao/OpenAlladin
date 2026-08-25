@@ -15,8 +15,9 @@ python3 tools/openaladdin/analysis/export_actor_records.py \
 ```
 
 The columns are `slot type x y movement_pc collision_frame_ptr animation_pc flags`,
-with optional `facing_x_flip`, `facing_y_flip`, and `movement_command_timer`
-columns for movement VM fixtures.
+with optional `facing_x_flip`, `facing_y_flip`, `movement_command_timer`,
+`movement_loop_pc`, `movement_loop_timer`, and `movement_return_pc` columns for
+movement VM fixtures.
 The native runtime loads this file by default; use `--actor-records FILE` to
 select a different snapshot explicitly.
 

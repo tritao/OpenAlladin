@@ -775,8 +775,8 @@ def validate_knowledge(rom: Path) -> list[str]:
                         continue
                     current_frame = int(fields[1], 0)
                     continue
-                if len(fields) < 8 or len(fields) > 11:
-                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: expected 8..11 actor fields")
+                if len(fields) < 8 or len(fields) > 14:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: expected 8..14 actor fields")
                     continue
                 if "timeline" in actor_path.name and current_frame is None:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: record precedes frame marker")
@@ -789,8 +789,8 @@ def validate_knowledge(rom: Path) -> list[str]:
                     ("x", x, 0xFFFF),
                     ("y", y, 0xFFFF),
                     ("movement_pc", movement_pc, 0xFFFFFF),
-                    ("frame_ptr", frame_ptr, 0xFFFFFF),
-                    ("animation_pc", animation_pc, 0xFFFFFF),
+                    ("frame_ptr", frame_ptr, 0xFFFFFFFF),
+                    ("animation_pc", animation_pc, 0xFFFFFFFF),
                     ("flags", flags, 0xFF),
                 ):
                     if not 0 <= value <= maximum:
@@ -801,6 +801,12 @@ def validate_knowledge(rom: Path) -> list[str]:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: facing_y_flip outside range")
                 if len(values) >= 11 and not 0 <= values[10] <= 0xFF:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_command_timer outside range")
+                if len(values) >= 12 and not 0 <= values[11] <= 0xFFFFFFFF:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_loop_pc outside range")
+                if len(values) >= 13 and not 0 <= values[12] <= 0xFF:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_loop_timer outside range")
+                if len(values) >= 14 and not 0 <= values[13] <= 0xFFFFFFFF:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_return_pc outside range")
                 key = (current_frame, slot)
                 if key in seen_slots:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: duplicate slot {slot}")

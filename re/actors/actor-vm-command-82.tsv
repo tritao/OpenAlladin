@@ -1,0 +1,5 @@
+# openaladdin-actor-table-v1
+# Controlled movement-VM probe: 0x0011F728 consumes 0x82 00 and clears
+# the movement cursor.
+# slot type x y movement_pc frame_ptr animation_pc flags facing_x_flip facing_y_flip movement_command_timer movement_loop_pc movement_loop_timer movement_return_pc
+31 0x7D 150 416 0x0011F728 0x0C012100 0x00125952 0 0 0 0 0x59401500 0x10 0x800

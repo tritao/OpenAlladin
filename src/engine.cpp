@@ -489,8 +489,11 @@ void Engine::load_actor_timeline(const std::string& path) {
         std::string x;
         std::string y;
         std::string movement_pc;
+        std::string movement_loop_pc;
+        std::string movement_loop_timer;
         std::string frame_ptr;
         std::string animation_pc;
+        std::string movement_return_pc;
         std::string flags;
         std::string facing_x_flip;
         std::string facing_y_flip;
@@ -520,6 +523,15 @@ void Engine::load_actor_timeline(const std::string& path) {
             : 0;
         actor.movement_command_timer = (row >> movement_command_timer)
             ? static_cast<std::uint8_t>(parse(movement_command_timer))
+            : 0;
+        actor.movement_loop_pc = (row >> movement_loop_pc)
+            ? static_cast<std::uint32_t>(parse(movement_loop_pc))
+            : 0;
+        actor.movement_loop_timer = (row >> movement_loop_timer)
+            ? static_cast<std::uint8_t>(parse(movement_loop_timer))
+            : 0;
+        actor.movement_return_pc = (row >> movement_return_pc)
+            ? static_cast<std::uint32_t>(parse(movement_return_pc))
             : 0;
     }
     if (actor_timeline_.empty()) {
@@ -553,10 +565,6 @@ void Engine::update_actor_movement() {
         if (actor.type == 0 || actor.terminal_timer != 0 || actor.movement_pc == 0) {
             continue;
         }
-        if (actor.movement_command_timer != 0) {
-            --actor.movement_command_timer;
-            continue;
-        }
 
         std::uint32_t cursor = actor.movement_pc;
         if (cursor + 1 >= rom_bytes_.size()) continue;
@@ -567,6 +575,14 @@ void Engine::update_actor_movement() {
         actor.x = static_cast<std::uint16_t>(static_cast<int>(actor.x) + delta_x);
         actor.y = static_cast<std::uint16_t>(static_cast<int>(actor.y) + delta_y);
         cursor += 2;
+
+        // The ROM applies the signed delta on every tick. The command timer
+        // gates only the command dispatch that follows it, so a delayed
+        // stream continues moving along the current step each frame.
+        if (actor.movement_command_timer != 0) {
+            --actor.movement_command_timer;
+            continue;
+        }
 
         bool cursor_committed = false;
         for (int command_count = 0; command_count < 32; ++command_count) {
@@ -579,23 +595,72 @@ void Engine::update_actor_movement() {
                 cursor_committed = true;
                 break;
             case 0x81:  // Movement_ToggleFacing.
-                actor.facing_x_flip = static_cast<std::uint8_t>(actor.facing_x_flip ^ 0xFF);
+                if (read_u8(cursor + 1) != 0) {
+                    actor.facing_y_flip = static_cast<std::uint8_t>(actor.facing_y_flip ^ 0xFF);
+                } else {
+                    actor.facing_x_flip = static_cast<std::uint8_t>(actor.facing_x_flip ^ 0xFF);
+                }
                 cursor += 2;
                 continue;
             case 0x82:  // Movement_ClearCursor.
-                actor.movement_pc = 0;
-                cursor_committed = true;
-                break;
+                if (read_u8(cursor + 1) == 0) {
+                    actor.movement_pc = 0;
+                    cursor_committed = true;
+                    break;
+                }
+                actor.animation_pc = 0;
+                cursor += 2;
+                continue;
             case 0x84:  // Movement_SetCommandTimer.
-                // MovementVM dispatches this shared handler in movement mode;
-                // bit 7 selects the movement timer and is not part of it.
-                actor.movement_command_timer = static_cast<std::uint8_t>(read_u8(cursor + 1) & 0x7F);
+                // In movement mode the shared handler uses the high bit to
+                // select the per-frame command timer. Without it, the
+                // command initializes the separate loop cursor/timer pair.
+                if ((read_u8(cursor + 1) & 0x80) != 0) {
+                    actor.movement_command_timer = static_cast<std::uint8_t>(read_u8(cursor + 1) & 0x7F);
+                } else {
+                    actor.movement_loop_timer = read_u8(cursor + 1);
+                    actor.movement_loop_pc = cursor + 2;
+                }
                 actor.movement_pc = cursor + 2;
                 cursor_committed = true;
                 break;
-            case 0x85:  // Movement_RewindAfterTimer; loop semantics are pending.
-                // The stream cursor is still advanced deterministically. A
-                // future pass will model the separate loop cursor/timer RAM.
+            case 0x85:  // Movement_RewindAfterTimer.
+                // The original handler consumes one loop count and the
+                // interpreter rewinds to the saved loop cursor whenever the
+                // counter was non-zero on entry. This includes the final
+                // decrement to zero; the next pass then falls through.
+                if (actor.movement_loop_timer != 0) {
+                    --actor.movement_loop_timer;
+                    actor.movement_pc = actor.movement_loop_pc;
+                    cursor_committed = true;
+                    break;
+                }
+                cursor += 2;
+                continue;
+            case 0x87: {  // Movement_AddSignedActorOffset.
+                const int delta = static_cast<std::int16_t>(
+                    (static_cast<std::uint16_t>(read_u8(cursor + 2)) << 8)
+                    | read_u8(cursor + 3));
+                if (read_u8(cursor + 1) == 0) {
+                    const int mirrored = actor.facing_x_flip != 0 ? -delta : delta;
+                    actor.x = static_cast<std::uint16_t>(static_cast<int>(actor.x) + mirrored);
+                } else {
+                    const int mirrored = actor.facing_y_flip != 0 ? -delta : delta;
+                    actor.y = static_cast<std::uint16_t>(static_cast<int>(actor.y) + mirrored);
+                }
+                cursor += 4;
+                continue;
+            }
+            case 0x8C:  // Movement_ClearActor.
+                if (read_u8(cursor + 1) == 0 && (actor.flags & 0x04) == 0) {
+                    actor = ActorState{};
+                    cursor_committed = true;
+                    break;
+                }
+                cursor += 2;
+                continue;
+            case 0x8D:  // Movement_FacePlayer.
+                actor.facing_x_flip = player_world_x() < static_cast<int>(actor.x) ? 0xFF : 0;
                 cursor += 2;
                 continue;
             case 0x91:  // Movement_PushParameter; no positional effect yet.
@@ -634,8 +699,11 @@ void Engine::load_actor_records(const std::string& path) {
         std::string x;
         std::string y;
         std::string movement_pc;
+        std::string movement_loop_pc;
+        std::string movement_loop_timer;
         std::string frame_ptr;
         std::string animation_pc;
+        std::string movement_return_pc;
         std::string flags;
         std::string facing_x_flip;
         std::string facing_y_flip;
@@ -664,6 +732,15 @@ void Engine::load_actor_records(const std::string& path) {
             : 0;
         actor.movement_command_timer = (row >> movement_command_timer)
             ? static_cast<std::uint8_t>(parse(movement_command_timer))
+            : 0;
+        actor.movement_loop_pc = (row >> movement_loop_pc)
+            ? static_cast<std::uint32_t>(parse(movement_loop_pc))
+            : 0;
+        actor.movement_loop_timer = (row >> movement_loop_timer)
+            ? static_cast<std::uint8_t>(parse(movement_loop_timer))
+            : 0;
+        actor.movement_return_pc = (row >> movement_return_pc)
+            ? static_cast<std::uint32_t>(parse(movement_return_pc))
             : 0;
     }
 }
@@ -1592,9 +1669,12 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"y\":" << actor.y
                << ",\"facing_x_flip\":" << static_cast<unsigned>(actor.facing_x_flip)
                << ",\"facing_y_flip\":" << static_cast<unsigned>(actor.facing_y_flip)
+               << ",\"movement_loop_pc\":" << actor.movement_loop_pc
+               << ",\"movement_loop_timer\":" << static_cast<unsigned>(actor.movement_loop_timer)
                << ",\"frame_ptr\":" << actor.frame_ptr
                << ",\"animation_pc\":" << actor.animation_pc
                << ",\"movement_pc\":" << actor.movement_pc
+               << ",\"movement_return_pc\":" << actor.movement_return_pc
                << ",\"flags\":" << static_cast<unsigned>(actor.flags)
                << ",\"flag_bit5\":" << ((actor.flags & 0x20) != 0 ? "true" : "false")
                << ",\"movement_command_timer\":" << static_cast<unsigned>(actor.movement_command_timer)

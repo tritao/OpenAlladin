@@ -536,6 +536,11 @@ local inject_actor_pc = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_PC", sym
 local inject_actor_template = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_TEMPLATE", symbol("ACTOR_TEMPLATE_TYPE_7D")))
 local inject_actor_x = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_X", -1))
 local inject_actor_y = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_Y", -1))
+local inject_actor_movement_pc = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_MOVEMENT_PC", -1))
+local inject_actor_facing_x = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FACING_X", -1))
+local inject_actor_facing_y = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FACING_Y", -1))
+local inject_actor_flags = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FLAGS", -1))
+local inject_actor_movement_timer = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_MOVEMENT_TIMER", -1))
 
 local watches = dofile(root .. "/re/mame/lua/watches.lua")({
     core = core,
@@ -583,7 +588,12 @@ local actors = dofile(root .. "/re/mame/lua/actors.lua")({
     injection_pc = inject_actor_pc,
     injection_template = inject_actor_template,
     injection_x = inject_actor_x,
-    injection_y = inject_actor_y
+    injection_y = inject_actor_y,
+    injection_movement_pc = inject_actor_movement_pc,
+    injection_facing_x = inject_actor_facing_x,
+    injection_facing_y = inject_actor_facing_y,
+    injection_flags = inject_actor_flags,
+    injection_movement_timer = inject_actor_movement_timer
 })
 
 local function port_tags_json()
@@ -643,8 +653,14 @@ write_record({
     { "actor_x_offset", tostring(actor_x_offset) },
     { "actor_y_offset", tostring(actor_y_offset) },
     { "actor_movement_pc_offset", tostring(actor_movement_pc_offset) },
+    { "actor_movement_loop_pc_offset", tostring(actor_movement_loop_pc_offset) },
+    { "actor_movement_loop_timer_offset", tostring(actor_movement_loop_timer_offset) },
     { "actor_frame_ptr_offset", tostring(actor_frame_ptr_offset) },
     { "actor_animation_pc_offset", tostring(actor_animation_pc_offset) },
+    { "actor_facing_x_flip_offset", tostring(actor_facing_x_flip_offset) },
+    { "actor_facing_y_flip_offset", tostring(actor_facing_y_flip_offset) },
+    { "actor_movement_command_timer_offset", tostring(actor_movement_command_timer_offset) },
+    { "actor_movement_return_pc_offset", tostring(actor_movement_return_pc_offset) },
     { "actor_flags_offset", tostring(actor_flags_offset) },
     { "actor_initializer_trace", json_bool(trace_actor_initializers) },
     { "rnc_loader_trace", json_bool(trace_rnc_loads) },

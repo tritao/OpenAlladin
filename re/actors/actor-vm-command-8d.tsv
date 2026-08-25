@@ -1,0 +1,5 @@
+# openaladdin-actor-table-v1
+# Controlled movement-VM probe: 0x0012171C faces toward the player, then
+# initializes the movement loop timer with 0x84 03.
+# slot type x y movement_pc frame_ptr animation_pc flags facing_x_flip facing_y_flip movement_command_timer movement_loop_pc movement_loop_timer movement_return_pc
+31 0x7D 150 416 0x0012171C 0x0C012100 0x00125952 0 0 0 0 0x59401500 0x10 0x800

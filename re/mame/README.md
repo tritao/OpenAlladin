@@ -176,6 +176,27 @@ natural run, type `0x2D` appeared in slot 3 with movement cursor
 `0x0011F6D4` and animation cursor `0x00123EE8`; the movement cursor advanced to
 `0x0011F6DE` and `0x0011F6E6` as the actor state stream was consumed.
 
+For a reproducible command-level movement probe, seed an actor at a known ROM
+stream after entering the gameplay loop:
+
+```sh
+OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 \
+OPENALADDIN_TRACE_FRAMES=381 OPENALADDIN_INPUT='none*320,start*5,none*55' \
+OPENALADDIN_INJECT_ACTOR_FRAME=361 OPENALADDIN_INJECT_ACTOR_SLOT=31 \
+OPENALADDIN_INJECT_ACTOR_TYPE=125 OPENALADDIN_INJECT_ACTOR_MOVEMENT_PC=0x11f730 \
+OPENALADDIN_INJECT_ACTOR_X=150 OPENALADDIN_INJECT_ACTOR_Y=416 \
+OPENALADDIN_INJECT_ACTOR_FACING_X=0 OPENALADDIN_INJECT_ACTOR_FACING_Y=0 \
+OPENALADDIN_INJECT_ACTOR_MOVEMENT_TIMER=0 \
+OPENALADDIN_TRACE_DIR=build/re/actor-vm-command-81 \
+  ./tools/openaladdin/mame/run.sh
+python3 tests/native_actor_vm_commands.py
+```
+
+The checked-in command fixtures cover streams at `0x0011F730` (`0x81`),
+`0x0011F728` (`0x82`), and `0x0012171C` (`0x8D`, `0x84`, and `0x85`). The
+comparison selects only fields implemented by the native movement slice;
+animation-owned type/frame fields are deliberately excluded.
+
 The initializer trace also captures `A2`.  When the return address is
 `0x001AD0AC`, `A2` points at the signed spawn-offset payload consumed by the
 animation VM's `F5` spawn/copy handler.  In a targeted 1800-frame run, type
