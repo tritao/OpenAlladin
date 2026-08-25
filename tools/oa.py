@@ -288,6 +288,7 @@ def command_trace(args: argparse.Namespace) -> int:
         "OPENALADDIN_TRACE_AUDIO_COMMANDS",
         "OPENALADDIN_POKE_FRAME",
         "OPENALADDIN_POKE_MEMORY",
+        "OPENALADDIN_CHECKPOINTS",
     ):
         environment.pop(key, None)
     environment.update({
@@ -315,6 +316,8 @@ def command_trace(args: argparse.Namespace) -> int:
         environment["OPENALADDIN_TRACE_ACTORS"] = "1"
     if args.load_state:
         environment["OPENALADDIN_LOAD_STATE"] = args.load_state
+    if args.checkpoints:
+        environment["OPENALADDIN_CHECKPOINTS"] = args.checkpoints
     if args.capture_vdp is not None:
         environment["OPENALADDIN_CAPTURE_VDP"] = "1" if args.capture_vdp else "0"
     if args.state_sync:
@@ -1050,6 +1053,10 @@ def build_parser() -> argparse.ArgumentParser:
     trace.add_argument("--state-output", action="store_true")
     trace.add_argument("--actors", action="store_true")
     trace.add_argument("--load-state")
+    trace.add_argument(
+        "--checkpoints",
+        help="named MAME save states as frame=name pairs, e.g. 0=boot,1245=level01-entry",
+    )
     trace.add_argument("--capture-vdp", action=argparse.BooleanOptionalAction, default=None)
     trace.add_argument("--state-sync", action="store_true", help="sample state at the stable game-loop boundary")
     trace.add_argument("--edges", action="store_true", help="capture indirect dispatch targets in MAME debug.log")

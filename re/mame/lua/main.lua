@@ -37,6 +37,17 @@ local poke_frame = math.floor(env_number("OPENALADDIN_POKE_FRAME", -1))
 local preload_state = os.getenv("OPENALADDIN_PRELOAD_STATE") or ""
 local save_name = os.getenv("OPENALADDIN_SAVE_NAME") or "gameplay"
 local snapshot_name = os.getenv("OPENALADDIN_SNAPSHOT_NAME") or "gameplay.png"
+local checkpoint_spec = os.getenv("OPENALADDIN_CHECKPOINTS") or ""
+local checkpoints = {}
+for item in checkpoint_spec:gmatch("[^,]+") do
+    local frame_text, name = item:match("^%s*(%-?%d+)%s*=%s*(.-)%s*$")
+    local frame = frame_text and tonumber(frame_text) or nil
+    if frame and name and name ~= "" then
+        checkpoints[math.floor(frame)] = name
+    elseif item:match("%S") then
+        error("OPENALADDIN_CHECKPOINTS entries must use frame=name: " .. item)
+    end
+end
 local ram_start = symbol("WORK_RAM_BASE")
 local ram_size = 0x10000
 local requested_capture = os.getenv("OPENALADDIN_CAPTURE")
@@ -522,6 +533,30 @@ if state_sync then
 end
 
 local function capture_artifacts(frame)
+    local checkpoint_name = checkpoints[frame]
+    if checkpoint_name then
+        machine:save(checkpoint_name)
+        write_record({
+            { "type", json_string("checkpoint") },
+            { "frame", tostring(frame) },
+            { "name", json_string(checkpoint_name) },
+            { "state", json_string("states/genesis/" .. checkpoint_name .. ".sta") }
+        })
+        if state then
+            write_state({
+                { "type", json_string("checkpoint") },
+                { "format", json_string("openaladdin-frame-state-v1") },
+                { "frame", tostring(frame) },
+                { "name", json_string(checkpoint_name) },
+                { "state", json_string("states/genesis/" .. checkpoint_name .. ".sta") }
+            })
+        end
+        print(string.format(
+            "OpenAladdin: checkpoint %q saved at frame %d",
+            checkpoint_name,
+            frame))
+    end
+
     if frame == save_frame then
         machine:save(save_name)
         print(string.format("OpenAladdin: scheduled save state %q at frame %d", save_name, frame))
@@ -773,6 +808,7 @@ write_record({
     { "scene_state_address", tostring(scene_state_address) },
     { "memory_poke_frame", tostring(poke_frame) },
     { "memory_poke_spec", json_string(memory_poke_spec) },
+    { "checkpoint_spec", json_string(checkpoint_spec) },
     { "preload_state", json_string(preload_state) },
     { "breakpoint_list", json_string(breakpoint_list) },
     { "edge_trace", json_bool(edge_tracer.enabled) },

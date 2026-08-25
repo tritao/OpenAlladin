@@ -103,8 +103,25 @@ An existing state can be loaded by its MAME state name:
 
 ```sh
 OPENALADDIN_LOAD_STATE=gameplay MAME_XVFB=1 \
-  OPENALADDIN_TRACE_FRAMES=180 ./tools/openaladdin/mame/run.sh
+OPENALADDIN_TRACE_FRAMES=180 ./tools/openaladdin/mame/run.sh
 ```
+
+For a provenance-controlled campaign, save several named checkpoints in one
+run.  The value is a comma-separated list of `frame=name` pairs.  Each name
+produces a replayable MAME state below the trace directory's
+`states/genesis/`, and both JSONL streams receive a checkpoint record:
+
+```sh
+OPENALADDIN_CHECKPOINTS='0=boot,1245=level01-entry,1300=opening-ground' \
+  OPENALADDIN_TRACE_FRAMES=1400 \
+  OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*155' \
+  OPENALADDIN_TRACE_DIR=build/re/campaigns/example/boot-route \
+  ./tools/openaladdin/mame/run.sh
+```
+
+The unified frontend exposes the same option as `--checkpoints`.  Checkpoint
+names should describe observed events, not merely arbitrary frame numbers;
+keep the input schedule and ROM hash beside the resulting trace manifest.
 
 The normal trace mode is fully headless: the wrapper forces SDL's `dummy`
 video driver and does not inherit an interactive desktop display.  MAME's
