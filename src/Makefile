@@ -14,7 +14,8 @@ LDLIBS += $(SDL2_LIBDIR)/libSDL2.a -lm -l:libasound.so.2 -ldl -lpthread -l:libpu
 	-l:libwayland-cursor.so.0 -l:libxkbcommon.so.0 -l:libdecor-0.so.0
 
 TARGET := $(ROOT)/build/openaladdin
-OBJECTS := $(BUILD_DIR)/engine.o $(BUILD_DIR)/sprites.o $(BUILD_DIR)/animation.o $(BUILD_DIR)/main.o
+OBJECTS := $(BUILD_DIR)/engine.o $(BUILD_DIR)/sprites.o $(BUILD_DIR)/animation.o \
+	$(BUILD_DIR)/audio_sn76489.o $(BUILD_DIR)/main.o
 SPRITE_TEST := $(ROOT)/build/sprite_renderer_test
 ANIMATION_TEST := $(ROOT)/build/player_animation_test
 
@@ -32,6 +33,9 @@ $(BUILD_DIR)/sprites.o: sprites.cpp sprites.hpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -I. -MMD -MP -c $< -o $@
 
 $(BUILD_DIR)/animation.o: animation.cpp animation.hpp sprites.hpp | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -I. -MMD -MP -c $< -o $@
+
+$(BUILD_DIR)/audio_sn76489.o: audio/sn76489.cpp audio/sn76489.hpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -I. -MMD -MP -c $< -o $@
 
 $(BUILD_DIR)/main.o: main.cpp engine.hpp | $(BUILD_DIR)

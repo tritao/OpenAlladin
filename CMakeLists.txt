@@ -114,13 +114,25 @@ target_include_directories(openaladdin_core
 target_compile_features(openaladdin_core PUBLIC cxx_std_20)
 openaladdin_enable_warnings(openaladdin_core)
 
+add_library(openaladdin_audio STATIC
+    src/audio/sn76489.cpp
+    src/audio/sn76489.hpp
+)
+target_include_directories(openaladdin_audio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_compile_features(openaladdin_audio PUBLIC cxx_std_20)
+openaladdin_enable_warnings(openaladdin_audio)
+
 add_library(openaladdin_engine STATIC
     src/engine.cpp
     src/engine.hpp
 )
 target_include_directories(openaladdin_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_features(openaladdin_engine PUBLIC cxx_std_20)
-target_link_libraries(openaladdin_engine PUBLIC openaladdin_core ${OPENALADDIN_SDL2_TARGET})
+target_link_libraries(openaladdin_engine PUBLIC
+    openaladdin_core
+    openaladdin_audio
+    ${OPENALADDIN_SDL2_TARGET}
+)
 openaladdin_enable_warnings(openaladdin_engine)
 
 add_executable(openaladdin src/main.cpp)
@@ -155,12 +167,22 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(player_animation_test)
     openaladdin_enable_test_assertions(player_animation_test)
 
+    add_executable(psg_test tests/psg.cpp)
+    target_link_libraries(psg_test PRIVATE openaladdin_audio)
+    target_compile_features(psg_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(psg_test)
+    openaladdin_enable_test_assertions(psg_test)
+
     add_test(NAME sprite_renderer COMMAND sprite_renderer_test)
     set_tests_properties(sprite_renderer PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME player_animation COMMAND player_animation_test)
     set_tests_properties(player_animation PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME psg COMMAND psg_test)
+    set_tests_properties(psg PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     find_package(Python3 COMPONENTS Interpreter QUIET)
