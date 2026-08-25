@@ -111,6 +111,20 @@ Regenerate the runtime-friendly PPM render and build it with:
 ./run.sh
 ```
 
+The native build is also available directly through CMake. CMake detects the
+repository-local SDL2 sysroot under `build/deps/sdl2` when it exists, or a
+system SDL2 installation otherwise:
+
+```bash
+cmake -S . -B build
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+Set `-DOPENALADDIN_SDL2_ROOT=/path/to/sdl2` when SDL2 is installed in a
+non-standard prefix. The legacy `src/Makefile` remains available for focused
+manual builds.
+
 Run the focused sprite checks with:
 
 ```bash

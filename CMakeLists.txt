@@ -1,0 +1,192 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(OpenAladdin VERSION 0.1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+option(OPENALADDIN_BUILD_TESTS "Build OpenAladdin tests" ON)
+set(OPENALADDIN_SDL2_ROOT
+    "${CMAKE_CURRENT_SOURCE_DIR}/build/deps/sdl2/sysroot/usr"
+    CACHE PATH "SDL2 installation prefix")
+
+# The repository's native build currently uses a local SDL2 sysroot. Prefer
+# its CMake package when present, but also allow a system SDL2 installation.
+if(IS_DIRECTORY "${OPENALADDIN_SDL2_ROOT}")
+    list(PREPEND CMAKE_PREFIX_PATH "${OPENALADDIN_SDL2_ROOT}")
+endif()
+
+find_package(SDL2 CONFIG QUIET)
+if(NOT SDL2_FOUND)
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(SDL2 REQUIRED IMPORTED_TARGET sdl2)
+        add_library(SDL2::SDL2 ALIAS PkgConfig::SDL2)
+    else()
+        message(FATAL_ERROR
+            "SDL2 was not found. Install SDL2 development files or set "
+            "OPENALADDIN_SDL2_ROOT to an SDL2 installation prefix.")
+    endif()
+endif()
+
+if(NOT SDL2_INCLUDE_DIRS)
+    get_target_property(_openaladdin_sdl2_includes SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)
+    set(SDL2_INCLUDE_DIRS "${_openaladdin_sdl2_includes}")
+endif()
+
+# Debian-style SDL2 packages keep the generated SDL_config.h in a
+# multiarch include directory. The repository-local package's CMake metadata
+# does not list it, although sdl2-config does, so add it when present.
+if(CMAKE_LIBRARY_ARCHITECTURE
+   AND IS_DIRECTORY "${OPENALADDIN_SDL2_ROOT}/include/${CMAKE_LIBRARY_ARCHITECTURE}")
+    list(APPEND SDL2_INCLUDE_DIRS
+        "${OPENALADDIN_SDL2_ROOT}/include/${CMAKE_LIBRARY_ARCHITECTURE}")
+endif()
+
+# Prefer SDL2's shared target. The repository-local SDL2 sysroot contains the
+# runtime sonames but not development symlinks for every transitive static
+# dependency, so the static target cannot be linked on a minimal checkout.
+set(OPENALADDIN_SDL2_TARGET SDL2::SDL2)
+
+# The checked-in build environment may contain SDL2's static archive while
+# its shared-library symlink is intentionally absent. Recreate the explicit
+# soname link list used by src/Makefile in that case, avoiding a dependency on
+# uninstalled development symlinks such as libsamplerate.so.
+if(UNIX AND NOT APPLE
+   AND DEFINED SDL2_LIBDIR
+   AND TARGET SDL2::SDL2-static
+   AND EXISTS "${SDL2_LIBDIR}/libSDL2.a"
+   AND NOT EXISTS "${SDL2_LIBDIR}/libSDL2.so")
+    add_library(openaladdin_sdl2 INTERFACE)
+    target_link_libraries(openaladdin_sdl2 INTERFACE
+        "${SDL2_LIBDIR}/libSDL2.a"
+        -lm
+        "-Wl,-l:libasound.so.2"
+        -ldl
+        -lpthread
+        "-Wl,-l:libpulse.so.0"
+        "-Wl,-l:libsamplerate.so.0"
+        "-Wl,-l:libX11.so.6"
+        "-Wl,-l:libXext.so.6"
+        "-Wl,-l:libXcursor.so.1"
+        "-Wl,-l:libXi.so.6"
+        "-Wl,-l:libXfixes.so.3"
+        "-Wl,-l:libXrandr.so.2"
+        "-Wl,-l:libXss.so.1"
+        "-Wl,-l:libdrm.so.2"
+        "-Wl,-l:libgbm.so.1"
+        "-Wl,-l:libwayland-egl.so.1"
+        "-Wl,-l:libwayland-client.so.0"
+        "-Wl,-l:libwayland-cursor.so.0"
+        "-Wl,-l:libxkbcommon.so.0"
+        "-Wl,-l:libdecor-0.so.0")
+    set(OPENALADDIN_SDL2_TARGET openaladdin_sdl2)
+endif()
+
+function(openaladdin_enable_warnings target)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+        target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
+    elseif(MSVC)
+        target_compile_options(${target} PRIVATE /W4)
+    endif()
+endfunction()
+
+function(openaladdin_enable_test_assertions target)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+        target_compile_options(${target} PRIVATE -UNDEBUG)
+    elseif(MSVC)
+        target_compile_options(${target} PRIVATE /UNDEBUG)
+    endif()
+endfunction()
+
+add_library(openaladdin_core STATIC
+    src/animation.cpp
+    src/animation.hpp
+    src/sprites.cpp
+    src/sprites.hpp
+)
+target_include_directories(openaladdin_core
+    PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+        ${SDL2_INCLUDE_DIRS}
+)
+target_compile_features(openaladdin_core PUBLIC cxx_std_20)
+openaladdin_enable_warnings(openaladdin_core)
+
+add_library(openaladdin_engine STATIC
+    src/engine.cpp
+    src/engine.hpp
+)
+target_include_directories(openaladdin_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_compile_features(openaladdin_engine PUBLIC cxx_std_20)
+target_link_libraries(openaladdin_engine PUBLIC openaladdin_core ${OPENALADDIN_SDL2_TARGET})
+openaladdin_enable_warnings(openaladdin_engine)
+
+add_executable(openaladdin src/main.cpp)
+target_compile_features(openaladdin PRIVATE cxx_std_20)
+target_link_libraries(openaladdin PRIVATE openaladdin_engine)
+openaladdin_enable_warnings(openaladdin)
+
+# Keep locally supplied SDL2 discoverable when the executable is launched
+# directly after a CMake build (for example by CTest or run.sh).
+if(TARGET SDL2::SDL2)
+    get_target_property(_openaladdin_sdl2_location
+        SDL2::SDL2 IMPORTED_LOCATION)
+endif()
+if(_openaladdin_sdl2_location)
+    get_filename_component(_openaladdin_sdl2_library_dir
+        "${_openaladdin_sdl2_location}" DIRECTORY)
+    set_property(TARGET openaladdin APPEND PROPERTY BUILD_RPATH
+        "${_openaladdin_sdl2_library_dir}")
+endif()
+
+include(CTest)
+if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
+    add_executable(sprite_renderer_test tests/sprite_renderer.cpp)
+    target_link_libraries(sprite_renderer_test PRIVATE openaladdin_core)
+    target_compile_features(sprite_renderer_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(sprite_renderer_test)
+    openaladdin_enable_test_assertions(sprite_renderer_test)
+
+    add_executable(player_animation_test tests/animation_vm.cpp)
+    target_link_libraries(player_animation_test PRIVATE openaladdin_core)
+    target_compile_features(player_animation_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(player_animation_test)
+    openaladdin_enable_test_assertions(player_animation_test)
+
+    add_test(NAME sprite_renderer COMMAND sprite_renderer_test)
+    set_tests_properties(sprite_renderer PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME player_animation COMMAND player_animation_test)
+    set_tests_properties(player_animation PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    find_package(Python3 COMPONENTS Interpreter QUIET)
+    if(Python3_Interpreter_FOUND)
+        set(_openaladdin_python_environment
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/tools")
+
+        add_test(
+            NAME coverage_gaps
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/coverage_gaps.py")
+        set_tests_properties(coverage_gaps PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
+            NAME runtime_coverage
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/runtime_coverage.py")
+        set_tests_properties(runtime_coverage PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
+            NAME mame_headless
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/mame_headless.py")
+        set_tests_properties(mame_headless PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+    endif()
+endif()

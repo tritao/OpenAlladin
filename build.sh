@@ -6,6 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROM_PATH="${OPENALADDIN_ROM:-${ROOT_DIR}/rom/Disneys_Aladdin_U_p1.bin}"
 ASSET_DIR="${OPENALADDIN_ASSETS:-${ROOT_DIR}/build/assets/levels/level01}"
 SPRITE_DIR="${OPENALADDIN_SPRITES:-${ROOT_DIR}/build/assets/sprites}"
+BUILD_DIR="${OPENALADDIN_BUILD_DIR:-${ROOT_DIR}/build}"
 
 if [[ ! -f "${ROM_PATH}" ]]; then
     echo "build.sh: ROM not found: ${ROM_PATH}" >&2
@@ -22,5 +23,6 @@ if [[ ! -f "${ASSET_DIR}/background.ppm" || ! -f "${SPRITE_DIR}/frames.json" ]] 
 fi
 
 echo "build.sh: building OpenAladdin"
-make -C "${ROOT_DIR}/src"
-echo "build.sh: build complete: ${ROOT_DIR}/build/openaladdin"
+cmake -S "${ROOT_DIR}" -B "${BUILD_DIR}"
+cmake --build "${BUILD_DIR}" --target openaladdin
+echo "build.sh: build complete: ${BUILD_DIR}/openaladdin"

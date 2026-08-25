@@ -3,7 +3,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BINARY="${ROOT_DIR}/build/openaladdin"
+BUILD_DIR="${OPENALADDIN_BUILD_DIR:-${ROOT_DIR}/build}"
+BINARY="${BUILD_DIR}/openaladdin"
 ASSET_DIR="${OPENALADDIN_ASSETS:-${ROOT_DIR}/build/assets/levels/level01}"
 SPRITE_DIR="${OPENALADDIN_SPRITES:-${ROOT_DIR}/build/assets/sprites}"
 
