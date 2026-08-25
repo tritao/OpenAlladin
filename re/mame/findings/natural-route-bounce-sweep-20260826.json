@@ -1,0 +1,102 @@
+{
+  "format": "openaladdin-natural-route-bounce-sweep-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "purpose": "Test the unresolved moving-platform/bounce transfer from the confirmed lower-gap checkpoint while preserving every deterministic input variant.",
+  "checkpoint": "build/re/campaigns/20260825-level01-canonical-v1/gap-rope-route-v1/states/genesis/gap-entrance.sta",
+  "base_input": "none*1,right*60,c+right*20",
+  "trace_contract": "openaladdin-frame-state-v1",
+  "sweeps": [
+    {
+      "trace": "build/re/campaigns/20260825-level01-canonical-v1/bounce-sweep-right20",
+      "tail_input": "right20,none80",
+      "max_world": [1586, 851],
+      "min_world_y": 766,
+      "end_world": [1586, 856],
+      "result": "remains in the bounce band; no transfer"
+    },
+    {
+      "trace": "build/re/campaigns/20260825-level01-canonical-v1/bounce-sweep-left20",
+      "tail_input": "left20,none80",
+      "max_world": [1586, 851],
+      "min_world_y": 766,
+      "end_world": [1586, 856],
+      "result": "remains in the bounce band; no transfer"
+    },
+    {
+      "trace": "build/re/campaigns/20260825-level01-canonical-v1/bounce-sweep-right40jump",
+      "tail_input": "right40,c+right*10,right80",
+      "max_world": [1616, 781],
+      "min_world_y": 708,
+      "end_world": [1616, 904],
+      "result": "reaches the handhold/platform band, then falls"
+    },
+    {
+      "trace": "build/re/campaigns/20260825-level01-canonical-v1/bounce-sweep-left40jump",
+      "tail_input": "left40,c+left*10,left80",
+      "max_world": [1586, 851],
+      "min_world_y": 749,
+      "end_world": [1556, 845],
+      "result": "left steering does not reach the high platform"
+    },
+    {
+      "trace": "build/re/campaigns/20260825-level01-canonical-v1/bounce-sweep-up_right",
+      "tail_input": "up+right*80",
+      "max_world": [1826, 904],
+      "min_world_y": 766,
+      "end_world": [1826, 904],
+      "result": "crosses the lower band but does not climb"
+    },
+    {
+      "trace": "build/re/campaigns/20260825-level01-canonical-v1/bounce-steering-bounce-left-rejump",
+      "tail_input": "left35,c+left*20,left100",
+      "max_world": [1586, 851],
+      "min_world_y": 749,
+      "end_world": [1538, 904],
+      "result": "touches the platform-height band and falls"
+    },
+    {
+      "trace": "build/re/campaigns/20260825-level01-canonical-v1/bounce-steering-bounce-right-rejump",
+      "tail_input": "right35,c+right*20,right100",
+      "max_world": [1646, 733],
+      "min_world_y": 708,
+      "end_world": [1646, 904],
+      "result": "reaches the handhold side, then falls"
+    },
+    {
+      "trace": "build/re/campaigns/20260825-level01-canonical-v1/bounce-climb-bounce-up",
+      "tail_input": "up80",
+      "max_world": [1586, 851],
+      "min_world_y": 766,
+      "end_world": [1586, 825],
+      "result": "Up does not attach to a climbable surface from the bounce"
+    },
+    {
+      "trace": "build/re/campaigns/20260825-level01-canonical-v1/bounce-climb-bounce-up-left",
+      "tail_input": "up+left*80",
+      "max_world": [1586, 851],
+      "min_world_y": 766,
+      "end_world": [1346, 832],
+      "result": "returns to the lower-gap checkpoint"
+    },
+    {
+      "trace": "build/re/campaigns/20260825-level01-canonical-v1/bounce-climb-bounce-c-up",
+      "tail_input": "c+up*80",
+      "max_world": [1586, 851],
+      "min_world_y": 693,
+      "end_world": [1586, 844],
+      "result": "reaches the handhold height but does not climb"
+    }
+  ],
+  "runtime_table_probe": {
+    "trace": "build/re/campaigns/20260825-level01-canonical-v1/runtime-gap-map-v1",
+    "checkpoint": "gap-entrance-runtime-map",
+    "map_ram": "0x00FF0000",
+    "floor_ram": "0x00FFAE84",
+    "observed": [
+      { "world": [2104, 747], "probe_row": 29, "probe_column": 131, "runtime_map_word": "0x5198", "terrain_behavior": "0x22" },
+      { "world": [103, 880], "probe_row": 38, "probe_column": 6, "runtime_map_word": "0x4038", "terrain_behavior": "0x11" }
+    ],
+    "interpretation": "The runtime map bytes match the extracted map, while the 0x22 rope behavior is an actor/interaction response rather than the static floor-table byte at the selected map cell. Static asset decoding alone cannot identify this transfer."
+  },
+  "conclusion": "The tested bounce steering family is exhausted without reaching the high walkway. The next probe should target actor/platform collision or a different approach to the vertical platform chain, not more minor timing changes to this same bounce."
+}
