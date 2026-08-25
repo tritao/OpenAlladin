@@ -10,6 +10,15 @@ SDL2_LIB_DIR="${ROOT_DIR}/build/deps/sdl2/sysroot/usr/lib/x86_64-linux-gnu"
 VIDEO_MODE="${OPENALADDIN_MAME_VIDEO:-none}"
 HEADLESS="${OPENALADDIN_MAME_HEADLESS:-1}"
 DEBUG_UI="${OPENALADDIN_MAME_DEBUG_UI:-0}"
+MAME_XVFB="${MAME_XVFB:-0}"
+
+# MAME's non-rendering backend expects an emulated time limit.  Keep it a
+# little longer than the Lua frame limit so the harness remains authoritative,
+# while still bounding a failed or stalled experiment.
+TRACE_SECONDS=""
+if [[ "${TRACE_FRAMES}" =~ ^[0-9]+$ ]]; then
+    TRACE_SECONDS=$(( (TRACE_FRAMES + 59) / 60 + 1 ))
+fi
 
 if [[ ! -x "${MAME_BIN}" ]]; then
     echo "MAME executable not found: ${MAME_BIN}" >&2
@@ -35,13 +44,15 @@ fi
 
 export LD_LIBRARY_PATH="${SDL2_LIB_DIR}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
 
-if [[ "${MAME_XVFB:-0}" == "1" && "${VIDEO_MODE}" == "none" ]]; then
-    VIDEO_MODE="soft"
-fi
-
-if [[ "${HEADLESS}" == "1" ]]; then
-    # Scripted analysis must not inherit a visible window/fullscreen setting
-    # from a host MAME configuration.
+if [[ "${MAME_XVFB}" == "1" ]]; then
+    # Xvfb is an isolated display, so a real renderer is useful for captures
+    # that need one without exposing a window on the developer's desktop.
+    if [[ "${VIDEO_MODE}" == "none" ]]; then
+        VIDEO_MODE="soft"
+    fi
+elif [[ "${HEADLESS}" == "1" ]]; then
+    # MAME's "none" renderer still creates an SDL host window.  The dummy
+    # SDL driver below is what makes the normal trace path truly headless.
     VIDEO_MODE="none"
 fi
 
@@ -61,6 +72,10 @@ MAME_ARGS=(
     -nothrottle
 )
 
+if [[ -n "${TRACE_SECONDS}" ]]; then
+    MAME_ARGS+=( -seconds_to_run "${TRACE_SECONDS}" )
+fi
+
 if [[ "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" || "${OPENALADDIN_TRACE_RNC_LOADS:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" == "1" ]]; then
     MAME_ARGS+=(
         -debug
@@ -77,10 +92,6 @@ else
     MAME_ARGS+=( -debugger none )
 fi
 
-if [[ "${HEADLESS}" == "1" ]]; then
-    MAME_ARGS+=( -nowindow )
-fi
-
 if [[ "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" == "1" ]]; then
     cd "${TRACE_DIR}"
 fi
@@ -89,13 +100,20 @@ if [[ -n "${LOAD_STATE}" ]]; then
     MAME_ARGS+=( -state "${LOAD_STATE}" )
 fi
 
-if [[ "${MAME_XVFB:-0}" == "1" ]]; then
+if [[ "${MAME_XVFB}" == "1" ]]; then
     if ! command -v xvfb-run >/dev/null 2>&1; then
         echo "MAME_XVFB=1 requested, but xvfb-run is not installed" >&2
         exit 1
     fi
     exec xvfb-run -a -s "${MAME_XVFB_SERVER_ARGS:--screen 0 1024x768x24}" \
         env SDL_VIDEODRIVER=x11 "${MAME_BIN}" "${MAME_ARGS[@]}"
+fi
+
+if [[ "${HEADLESS}" == "1" ]]; then
+    # Do not inherit SDL_VIDEODRIVER=x11 (or another interactive backend)
+    # from a desktop/debugging shell.  This is the actual no-window switch;
+    # MAME's -nowindow option means fullscreen, not headless operation.
+    exec env SDL_VIDEODRIVER=dummy "${MAME_BIN}" "${MAME_ARGS[@]}"
 fi
 
 exec "${MAME_BIN}" "${MAME_ARGS[@]}"

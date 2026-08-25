@@ -61,15 +61,26 @@ OPENALADDIN_LOAD_STATE=gameplay MAME_XVFB=1 \
   OPENALADDIN_TRACE_FRAMES=180 ./tools/openaladdin/mame/run.sh
 ```
 
-The normal trace mode is fully headless (`-video none`).  If SDL needs a real
-display, run through Xvfb instead:
+The normal trace mode is fully headless: the wrapper forces SDL's `dummy`
+video driver and does not inherit an interactive desktop display.  MAME's
+`-nowindow` option is deliberately not used because in MAME it means
+fullscreen, not no-window.  If SDL needs a real display, run through Xvfb
+instead:
 
 ```sh
 MAME_XVFB=1 OPENALADDIN_TRACE_FRAMES=120 ./tools/openaladdin/mame/run.sh
 ```
 
-This uses a virtual 1024×768 X11 display and MAME's software renderer.  Set
+This uses a virtual 1024×768 X11 display and MAME's software renderer; the
+window remains inside Xvfb and is not shown on the desktop.  Set
 `OPENALADDIN_MAME_VIDEO` to choose another MAME video backend.
+
+An interactive MAME/debugger window is opt-in:
+
+```sh
+OPENALADDIN_MAME_HEADLESS=0 OPENALADDIN_MAME_DEBUG_UI=1 \
+  ./tools/openaladdin/mame/run.sh
+```
 
 The harness also accepts declarative experiment actions compiled by
 `tools/oa.py`. Boot schedules, input actions, and waits on tracked symbols or
