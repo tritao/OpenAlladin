@@ -1,0 +1,55 @@
+{
+  "campaign": "20260826-level01-fresh-baseline-v1",
+  "status": "recorded",
+  "purpose": "Fresh-power-on provenance baseline for continuing level-one exploration without discarding prior evidence",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "59c7258",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "59c7258",
+  "working_tree_note": "The pre-existing concurrent changes were preserved and not staged by this campaign. This run uses the working-tree harness; the exact tracked paths present before recording are listed below.",
+  "working_tree_paths": [
+    "CMakeLists.txt",
+    "re/mame/experiments/manifest.yml",
+    "re/mame/lua/main.lua",
+    "src/engine.cpp",
+    "src/engine.hpp",
+    "src/main.cpp",
+    "tests/README.md",
+    "tests/native_visual_layers.py",
+    "tools/oa.py",
+    "tools/openaladdin/mame/compare_state.py"
+  ],
+  "capture_contract": "openaladdin-frame-state-v1",
+  "command": "OPENALADDIN_ROM_SHA256=8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6 OPENALADDIN_TRACE_FRAMES=1500 OPENALADDIN_INPUT=none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c*1,right*120,none*60 OPENALADDIN_CAPTURE=state OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_CHECKPOINTS=0=boot,1245=level01-entry,1300=opening-ground,1360=first-run,1400=jump-window,1480=post-jump tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+  "segments": [
+    {
+      "id": "fresh-boot",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-baseline-v1/fresh-boot",
+      "frames": 1500,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c*1,right*120,none*60",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "start_condition": "MAME genesis machine booted from power-on with no loaded state",
+      "checkpoints": [
+        { "frame": 0, "name": "boot", "state": "fresh-boot/states/genesis/boot.sta" },
+        { "frame": 1245, "name": "level01-entry", "state": "fresh-boot/states/genesis/level01-entry.sta" },
+        { "frame": 1300, "name": "opening-ground", "state": "fresh-boot/states/genesis/opening-ground.sta" },
+        { "frame": 1360, "name": "first-run", "state": "fresh-boot/states/genesis/first-run.sta" },
+        { "frame": 1400, "name": "jump-window", "state": "fresh-boot/states/genesis/jump-window.sta" },
+        { "frame": 1480, "name": "post-jump", "state": "fresh-boot/states/genesis/post-jump.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "boot", "segment": "fresh-boot", "frame": 0 },
+    { "id": "level01-entry", "segment": "fresh-boot", "frame": 1245, "scene_state": 1 },
+    { "id": "opening-ground", "segment": "fresh-boot", "frame": 1300, "scene_state": 1, "grounded": true },
+    { "id": "first-run", "segment": "fresh-boot", "frame": 1360, "scene_state": 1, "grounded": true },
+    { "id": "jump-window", "segment": "fresh-boot", "frame": 1400, "scene_state": 1 },
+    { "id": "post-jump", "segment": "fresh-boot", "frame": 1480, "scene_state": 1 }
+  ],
+  "next": "Use fresh-boot/opening-ground.sta as the canonical starting point for new natural-route experiments; preserve every branch, failure, interaction, death/reset, and transition as a separate segment and named checkpoint."
+}
