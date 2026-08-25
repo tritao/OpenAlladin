@@ -1,4 +1,138 @@
 # Address-keyed RAM knowledge. Entries can be consumed by both Ghidra and MAME.
+0xFF7E22:
+  name: SCENE_RESOURCE_STATUS
+  type: u8
+  format: integer
+  confidence: probable
+  description: Scene resource/status byte checked by the scene dispatcher while a resource group is being prepared.
+  evidence:
+    - ghidra_memory_reference_scene_resource_status
+0xFF7E23:
+  name: SCENE_RESOURCE_ERROR
+  type: u8
+  format: integer
+  confidence: probable
+  description: Scene resource status/error byte initialized to 0xFF by SceneResource_ResetStatus and cleared by the completion helper.
+  evidence:
+    - ghidra_targeted_decompile_001B3258
+    - mame_level_transition_watch
+0xFF7E26:
+  name: SCENE_STATE
+  type: u8
+  format: integer
+  confidence: confirmed
+  description: Scene state selector consumed by SceneResource_Dispatch; state 8 takes the special player/camera transition path.
+  evidence:
+    - ghidra_targeted_decompile_001B0F66
+    - ghidra_level_transition_targeted_decompile
+    - mame_level_transition_watch
+0xFFF572:
+  name: SCENE_SCRIPT_CURSOR
+  type: rom_pointer
+  confidence: probable
+  description: Cursor into the scene script records consumed by SceneScript_AdvanceState.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+0xFFF576:
+  name: SCENE_SCRIPT_DATA
+  type: rom_pointer
+  confidence: probable
+  description: Active scene script byte cursor consumed by SceneScript_CompleteToState1.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+0xFFF57A:
+  name: SCENE_TABLE_INDEX
+  type: u8
+  format: integer
+  confidence: probable
+  description: Index into the ROM scene transition table used by SceneTable_SelectNextState.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+0xFFF57C:
+  name: SCENE_SCRIPT_PENDING
+  type: u8
+  format: integer
+  confidence: probable
+  description: Indicates that SceneScript_CompleteToState1 should consume the pending scene script.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+0xFFF57D:
+  name: SCENE_VDP_UPDATE_FLAG
+  type: u8
+  format: integer
+  confidence: probable
+  description: Scene/VDP update flag observed by the dispatcher and transition setup paths.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+0xFFF57E:
+  name: SCENE_VDP_CLEAR_FLAG
+  type: u8
+  format: integer
+  confidence: probable
+  description: Scene/VDP clear flag used by the transition setup path.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+    - mame_level_transition_watch
+0xFFF57F:
+  name: SCENE_TRANSITION_EVENT
+  type: u8
+  format: integer
+  confidence: probable
+  description: Scene transition event flag used by scene setup and resource loading paths.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+0xFFF0D0:
+  name: PLAYER_TRANSITION_GATE
+  type: u8
+  format: integer
+  confidence: probable
+  description: Player movement transition gate consulted by the scene/player update path.
+  evidence:
+    - ghidra_memory_reference_player_movement_transition_gate
+    - mame_level_transition_watch
+0xFFF0DB:
+  name: PLAYER_TRANSITION_LOCK
+  type: u8
+  format: integer
+  confidence: probable
+  description: Player transition lock byte used by the scene/player update path.
+  evidence:
+    - ghidra_memory_reference_player_transition_lock
+    - mame_level_transition_watch
+0xFFF0DC:
+  name: PLAYER_TRANSITION_COUNTDOWN
+  type: u8
+  format: integer
+  confidence: probable
+  description: Countdown byte used while the player is held in a transition path.
+  evidence:
+    - ghidra_memory_reference_player_transition_countdown
+    - mame_level_transition_watch
+0xFFF0E6:
+  name: PLAYER_TERMINAL_TRANSITION
+  type: u8
+  format: integer
+  confidence: probable
+  description: Terminal player transition flag checked by the scene/player update path.
+  evidence:
+    - ghidra_memory_reference_player_terminal_transition
+    - mame_level_transition_watch
+0xFFF0E9:
+  name: SCENE_SCRIPT_COUNTDOWN
+  type: u8
+  format: integer
+  confidence: probable
+  description: Scene-script delay/countdown gate consumed by SceneScript_AdvanceState.
+  evidence:
+    - ghidra_targeted_decompile_001A8E3E
+0xFFF176:
+  name: SCENE_SCRIPT_GATE
+  type: u8
+  format: integer
+  confidence: probable
+  description: Scene-script execution gate tested before non-control script words are processed.
+  evidence:
+    - ghidra_targeted_decompile_001A8E3E
 0xFF7DD2:
   name: TERRAIN_QUERY_CALLBACK_A
   type: rom_pointer

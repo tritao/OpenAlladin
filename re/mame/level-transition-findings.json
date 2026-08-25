@@ -1,0 +1,126 @@
+{
+  "format": "openaladdin-level-transition-finding-v1",
+  "rom": "Disneys_Aladdin_U_p1.bin",
+  "ghidra_report": "build/re/level-transition-targeted-decompile.json",
+  "static_recovery": {
+    "script_state_setter": {
+      "address": "0x001A8E3E",
+      "name": "SceneScript_AdvanceState",
+      "behavior": "Consumes scene-script words from SCENE_SCRIPT_CURSOR and stores the next state byte in SCENE_STATE when a terminator record is reached."
+    },
+    "resource_dispatcher": {
+      "address": "0x001B0F66",
+      "name": "SceneResource_Dispatch",
+      "states_seen": [
+        "0x00",
+        "0x01",
+        "0x03",
+        "0x04",
+        "0x05",
+        "0x07",
+        "0x08",
+        "0x09",
+        "0x0A",
+        "0x0B"
+      ],
+      "behavior": "Selects state-specific resource/event work, then performs the common VDP/resource rebuild. State 0x08 reaches the common path and is also tested by the player transition handler."
+    },
+    "player_transition_handler": {
+      "address": "0x001A9D98",
+      "behavior": "Branches on SCENE_STATE == 0x08 before normal player integration, providing the camera/transition path."
+    },
+    "scene_script_completion": {
+      "address": "0x001B315C",
+      "behavior": "When a pending scene script reaches its terminator, sets SCENE_STATE to 0x01 and rebuilds the active scene."
+    },
+    "scene_table_selector": {
+      "address": "0x001B3B96",
+      "behavior": "Advances SCENE_TABLE_INDEX, loads a script pointer from the ROM scene table, and loads the entry state byte."
+    },
+    "state_zero_reset": {
+      "address": "0x001B4F7C",
+      "behavior": "Reinitializes the scene system and explicitly sets SCENE_STATE to 0x00."
+    },
+    "vdp_clear": {
+      "address": "0x001B1432",
+      "behavior": "Clears the transition VDP pattern/name-table regions used by the common scene rebuild."
+    }
+  },
+  "ram_roles": {
+    "scene_state": "0x00FF7E26",
+    "scene_resource_status": "0x00FF7E22",
+    "scene_script_cursor": "0x00FFF572",
+    "scene_script_data": "0x00FFF576",
+    "scene_table_index": "0x00FFF57A",
+    "scene_script_pending": "0x00FFF57C",
+    "scene_vdp_update": "0x00FFF57D",
+    "scene_vdp_clear": "0x00FFF57E",
+    "scene_transition_event": "0x00FFF57F",
+    "scene_script_countdown": "0x00FFF0E9",
+    "scene_script_gate": "0x00FFF176",
+    "player_transition_gate": "0x00FFF0D0",
+    "player_transition_lock": "0x00FFF0DB",
+    "player_transition_countdown": "0x00FFF0DC",
+    "player_terminal_transition": "0x00FFF0E6"
+  },
+  "mame_trace": {
+    "trace_directory": "build/re/level-transition-watch",
+    "frames": 1300,
+    "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55",
+    "watched_addresses": [
+      "0x00FF7E26",
+      "0x00FF7E22",
+      "0x00FFF57D",
+      "0x00FFF57F",
+      "0x00FFF0D0",
+      "0x00FFF0DB",
+      "0x00FFF0DC",
+      "0x00FFF0E6"
+    ],
+    "state_writes": [
+      {
+        "frame": 1,
+        "pc": "0x0000027A",
+        "value": "0x00"
+      },
+      {
+        "frame": 4,
+        "pc": "0x001AA3A2",
+        "value": "0x01"
+      },
+      {
+        "frame": 4,
+        "pc": "0x001AA452",
+        "value": "0x01"
+      }
+    ],
+    "startup_resource_writes": [
+      {
+        "frame": 4,
+        "pc": "0x001AA400",
+        "address": "0x00FFF57D",
+        "value": "0x01"
+      },
+      {
+        "frame": 4,
+        "pc": "0x001AA408",
+        "address": "0x00FFF57F",
+        "value": "0x01"
+      },
+      {
+        "frame": 6,
+        "pc": "0x001B3260",
+        "address": "0x00FF7E23",
+        "value": "0xFF"
+      }
+    ],
+    "observed_state_values": [
+      "0x00",
+      "0x01"
+    ]
+  },
+  "limitations": [
+    "The captured title-to-first-level run did not reach a level-exit trigger, so no dynamic state-0x08 write is claimed yet.",
+    "The scene-table ROM entries are identified statically by their use at 0x001B3B96; entry-to-level names still require a targeted exit or level-selection experiment."
+  ]
+}

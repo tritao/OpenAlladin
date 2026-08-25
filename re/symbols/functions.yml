@@ -4,6 +4,69 @@
 #   name: Actor_ApplyHorizontalMovement
 #   confidence: provisional
 #   evidence: [mame_trace_run_right]
+0x001A8E3E:
+  name: SceneScript_AdvanceState
+  confidence: probable
+  description: Consumes the scene script at SCENE_SCRIPT_CURSOR; when a record terminator is reached, loads the next scene-state byte into SCENE_STATE and re-enters the common scene/resource initialization path.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+    - ghidra_memory_reference_scene_state
+0x001B0F66:
+  name: SceneResource_Dispatch
+  confidence: confirmed
+  description: Dispatches the compact scene resource loaders from SCENE_STATE and finalizes the VDP scene setup.
+  evidence:
+    - ghidra_targeted_decompile_001B0F66
+    - scene_resources_static_map
+0x001B1432:
+  name: Scene_VDP_ClearTransitionPlane
+  confidence: confirmed
+  description: Clears the transition VDP pattern/name-table regions used by the common scene/resource rebuild.
+  evidence:
+    - ghidra_targeted_decompile_001B1432
+    - ghidra_level_transition_targeted_decompile
+0x001B2ACE:
+  name: Scene_EnterTransitionMode
+  confidence: probable
+  description: Enters the VDP transition mode, resets transition display state, and invokes the common transition helpers.
+  evidence:
+    - ghidra_targeted_decompile_001B2ACE
+    - ghidra_level_transition_targeted_decompile
+0x001B315C:
+  name: SceneScript_CompleteToState1
+  confidence: probable
+  description: Completes a scene script and resets SCENE_STATE to 1 before rebuilding the active scene.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+    - ghidra_memory_reference_scene_state
+0x001B3258:
+  name: SceneResource_ResetStatus
+  confidence: confirmed
+  description: Initializes scene resource status by setting SCENE_RESOURCE_ERROR to 0xFF, SCENE_RESOURCE_STATUS to 0, and the related scene marker to 0xFF.
+  evidence:
+    - ghidra_targeted_decompile_001B3258
+    - mame_level_transition_watch
+0x001B326C:
+  name: SceneResource_ClearStatus
+  confidence: confirmed
+  description: Clears the scene resource error and status bytes after scene resource preparation completes.
+  evidence:
+    - ghidra_targeted_decompile_001B326C
+    - mame_level_transition_watch
+0x001B3B96:
+  name: SceneTable_SelectNextState
+  confidence: probable
+  description: Advances the scene-table index and selects SCENE_STATE plus the next scene script pointer from the ROM transition table.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+    - ghidra_memory_reference_scene_state
+0x001B4F7C:
+  name: Scene_ResetToState0
+  confidence: confirmed
+  description: Reinitializes the scene system and explicitly sets SCENE_STATE to 0 before loading the initial scene resources.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+    - ghidra_memory_reference_scene_state
 0x001A9502:
   name: Player_SelectActionAnimation
   confidence: confirmed
@@ -132,9 +195,10 @@
 0x001A9D98:
   name: Player_TerrainResponseStateMachine
   confidence: confirmed
-  description: Applies the terrain flags produced earlier in the frame, calls Player_IntegrateMotion, updates the world-relative player position, and selects the run/stop/landing animation and horizontal response paths.
+  description: Applies the terrain flags produced earlier in the frame, calls Player_IntegrateMotion, updates the world-relative player position, and selects the run/stop/landing animation and horizontal response paths. Scene state 8 uses a dedicated camera/transition branch instead of normal player integration.
   evidence:
     - ghidra_decompile_player_movement_collision_targets
+    - ghidra_level_transition_targeted_decompile
     - ghidra_disassembly_001A9D98
     - mame_player_run_trace
     - mame_player_jump_trace

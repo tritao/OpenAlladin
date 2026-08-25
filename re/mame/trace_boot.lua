@@ -496,9 +496,10 @@ for item in watch_list:gmatch("[^,]+") do
     if address then
         watched_addresses[#watched_addresses + 1] = address
         local name = string.format("openaladdin_watch_%06X", address)
+        local tap_start = address & 0xfffffe
         watch_taps[#watch_taps + 1] = space:install_write_tap(
-            address,
-            address + 1,
+            tap_start,
+            tap_start + 1,
             name,
             function(offset, data, mem_mask)
                 write_record({
@@ -512,8 +513,8 @@ for item in watch_list:gmatch("[^,]+") do
             end)
 
         if debugger_watch then
-            local action = "printf \"OPENALADDIN_WRITE PC=%08X ADDR=%08X DATA=%08X\\n\",pc,wpaddr,wpdata ; g"
-            cpu.debug:wpset(space, "w", address, 2, "", action)
+            local action = "printf \"OPENALADDIN_WRITE PC=%08X ADDR=%08X DATA=%08X FRAME=%08X\\n\",pc,wpaddr,wpdata,frame ; g"
+            cpu.debug:wpset(space, "w", tap_start, 2, "", action)
         end
     end
 end

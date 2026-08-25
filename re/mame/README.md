@@ -265,6 +265,39 @@ OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 \
 Write events appear as `{"type":"write", ...}` records in
 `trace_boot.jsonl`.
 
+## Actor movement VM and stream decoder
+
+The actor movement interpreter is `MovementVM_TickActors` at `0x001ADE36`.
+It walks 32 records at `0x00FF7E40` with stride `0x42`, consumes the movement
+cursor at record offset `+0x0A`, and integrates velocity accumulators at
+`+0x18/+0x1A`.
+
+Movement streams use the following format:
+
+```text
+signed delta_x
+signed delta_y
+zero or more commands 0x80..0x94
+```
+
+The command bytes reuse the animation handlers through the mapping
+`0x80 -> 0xEA` through `0x94 -> 0xFE` in the shared table at `0x004954`.
+The decoder preserves each step, raw command bytes, shared opcode, operands,
+and statically visible branch targets:
+
+```sh
+python3 tools/decode-movement-streams.py \
+  Disneys_Aladdin_U_p1.bin \
+  --output build/re/movement_streams.json
+```
+
+The currently confirmed movement roots include `0x0011F6D4` for the natural
+type-`0x2D` guard child and `0x0011F6FE` for the looping type-`0x84` stream.
+The existing actor trace inventory confirms that the decoded step addresses
+are the same cursors written back to actor field `+0x0A`; conditional command
+paths remain state-dependent and are listed as branch targets rather than
+being guessed statically.
+
 ## Player movement and terrain collision
 
 The player movement/terrain request is tracked at
@@ -318,6 +351,66 @@ OPENALADDIN_TRACE_DIR=build/re/player-jump-c-watch \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55,right*80,c*2,none*55,right*80,c*2,none*180' \
   ./tools/mame-trace.sh
 ```
+
+## Level-transition state tracing
+
+The level-transition request is tracked at
+`re/ghidra/level-transition-targets.json` and includes both code targets and
+references to the RAM state/transition flags. Regenerate its focused report
+with:
+
+```sh
+./.tools/ghidra-12.1.3/support/pyghidraRun \
+  -H re/ghidra/project aladdin -process -readOnly \
+  -scriptPath re/ghidra/scripts \
+  -postScript ExportTargetedDecompile.py \
+  re/ghidra/level-transition-targets.json \
+  build/re/level-transition-targeted-decompile.json
+```
+
+The recovered state path is:
+
+```text
+scene script terminator
+  -> SceneScript_AdvanceState (0x001A8E3E)
+  -> SCENE_STATE (0x00FF7E26)
+  -> SceneResource_Dispatch (0x001B0F66)
+  -> VDP/resource rebuild
+```
+
+`SceneTable_SelectNextState` at `0x001B3B96` selects a state and script pointer
+from the ROM transition table using `SCENE_TABLE_INDEX` at `0x00FFF57A`.
+`SceneScript_CompleteToState1` at `0x001B315C` returns the active scene to
+state `0x01` after a script terminates. State `0x08` is special: the player
+movement routine switches to a camera/transition branch instead of normal
+player integration.
+
+To capture the actual state setter PC during a gameplay experiment:
+
+```sh
+OPENALADDIN_CAPTURE_VDP=0 \
+OPENALADDIN_TRACE_SCENE_STATES=1 \
+OPENALADDIN_DEBUG_WATCH=1 \
+OPENALADDIN_WATCH_ADDRESSES=0xFF7E26,0xFF7E22,0xFFF57C,0xFFF57E,0xFFF0D0,0xFFF0DA,0xFFF0DC,0xFFF0E6 \
+OPENALADDIN_TRACE_FRAMES=5000 \
+OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right+a*3755' \
+OPENALADDIN_TRACE_DIR=build/re/level-transition-watch \
+  ./tools/mame-trace.sh Disneys_Aladdin_U_p1.bin
+python3 tools/analyze-transition-watch.py \
+  --log debug.log \
+  --output build/re/level-transition-watch/transition_watch.json
+```
+
+The completed title-to-first-level trace covered 1,300 frames and wrote
+`SCENE_STATE` only during startup (`0x00` to `0x01`); it did not reach the
+level-exit script. The longer 5,000-frame command above is retained as a
+repeatable traversal experiment, but the next useful runtime experiment should
+target a level-exit trigger rather than simply extend right-input playback.
+
+The machine-readable result is recorded in
+`re/mame/level-transition-findings.json`. It deliberately keeps the dynamic
+claim narrow: state `0x08` is statically recovered, while the captured
+title-to-level run verifies only the reset-to-state-1 path.
 
 The initial level-01 runtime tables are matched byte-for-byte to the extracted
 assets. `level01/raw/map.bin` is loaded at `0x00FF0000` and has 27,000 bytes;
