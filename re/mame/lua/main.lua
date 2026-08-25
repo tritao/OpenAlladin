@@ -402,6 +402,8 @@ local function capture(frame, input_token, emit_state)
                     { "movement_pc", tostring(read_u32(record + actor_movement_pc_offset)) },
                     { "movement_loop_pc", tostring(read_u32(record + actor_movement_loop_pc_offset)) },
                     { "movement_loop_timer", tostring(read_u8(record + actor_movement_loop_timer_offset)) },
+                    { "movement_word_18", tostring(signed_u16(read_u16(record + 0x18))) },
+                    { "movement_word_1a", tostring(signed_u16(read_u16(record + 0x1a))) },
                     { "facing_y_flip", tostring(read_u8(record + actor_facing_y_flip_offset)) },
                     { "movement_command_timer", tostring(read_u8(record + actor_movement_command_timer_offset)) },
                     { "animation_timer", tostring(read_u8(record + actor_animation_timer_offset)) },
@@ -615,10 +617,16 @@ local inject_actor_pc = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_PC", sym
 local inject_actor_template = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_TEMPLATE", symbol("ACTOR_TEMPLATE_TYPE_7D")))
 local inject_actor_x = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_X", -1))
 local inject_actor_y = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_Y", -1))
+local inject_actor_frame_ptr = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FRAME_PTR", -1))
+local inject_actor_word_18 = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_WORD_18", -0x10000))
+local inject_actor_word_1a = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_WORD_1A", -0x10000))
 local inject_actor_movement_pc = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_MOVEMENT_PC", -1))
+local inject_actor_loop_pc = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_MOVEMENT_LOOP_PC", -1))
+local inject_actor_loop_timer = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_MOVEMENT_LOOP_TIMER", -1))
 local inject_actor_facing_x = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FACING_X", -1))
 local inject_actor_facing_y = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FACING_Y", -1))
 local inject_actor_flags = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FLAGS", -1))
+local inject_actor_runtime_flags = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_RUNTIME_FLAGS", -1))
 local inject_actor_movement_timer = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_MOVEMENT_TIMER", -1))
 local inject_actor_return_pc = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_RETURN_PC", -1))
 
@@ -672,10 +680,16 @@ local actors = dofile(root .. "/re/mame/lua/actors.lua")({
     injection_template = inject_actor_template,
     injection_x = inject_actor_x,
     injection_y = inject_actor_y,
+    injection_frame_ptr = inject_actor_frame_ptr,
+    injection_word_18 = inject_actor_word_18,
+    injection_word_1a = inject_actor_word_1a,
     injection_movement_pc = inject_actor_movement_pc,
+    injection_loop_pc = inject_actor_loop_pc,
+    injection_loop_timer = inject_actor_loop_timer,
     injection_facing_x = inject_actor_facing_x,
     injection_facing_y = inject_actor_facing_y,
     injection_flags = inject_actor_flags,
+    injection_runtime_flags = inject_actor_runtime_flags,
     injection_movement_timer = inject_actor_movement_timer,
     injection_return_pc = inject_actor_return_pc
 })

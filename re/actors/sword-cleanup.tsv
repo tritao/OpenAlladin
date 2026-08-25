@@ -1,0 +1,5 @@
+# openaladdin-actor-table-v1
+# One-step movement VM cleanup probe. The actor starts at the final signed
+# delta before 0x85/0x8C; zero loop count falls through to 0x8C immediately.
+# slot type x y movement_pc frame_ptr animation_pc flags [facing_x_flip [facing_y_flip [movement_command_timer [movement_loop_pc [movement_loop_timer [movement_return_pc]]]]]]
+25 0x80 0x0096 0x01A0 0x0011F6E6 0x001FD478 0x00000000 0x0A 0x00 0x00 0x00 0x0011F6D8 0x00 0x00000000

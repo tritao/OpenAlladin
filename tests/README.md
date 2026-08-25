@@ -14,12 +14,16 @@ The trace-backed actor replay check is run with:
 python3 tests/native_actor_timeline.py
 python3 tests/native_actor_collision.py
 python3 tests/native_actor_actor_collision.py
+python3 tests/native_sword_lifecycle.py
 ```
 
 Generated traces and extracted assets remain under `build/`.
 `native_actor_movement.py` compares the native signed-delta actor movement VM
 against the captured slot-19 type-`0x84` stream, including its `0x84` timer
 command handoff.
+`native_sword_lifecycle.py` runs a headless MAME injection and a native replay
+with the same checkpoint, then reports the first divergent sword field across
+50 frames. It also exercises the one-step `0x85`/`0x8C` cleanup path.
 
 ## Visual audit
 

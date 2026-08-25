@@ -31,10 +31,16 @@ return function(options)
     local injection_template = options.injection_template
     local injection_x = options.injection_x
     local injection_y = options.injection_y
+    local injection_frame_ptr = options.injection_frame_ptr
+    local injection_word_18 = options.injection_word_18
+    local injection_word_1a = options.injection_word_1a
     local injection_movement_pc = options.injection_movement_pc
+    local injection_loop_pc = options.injection_loop_pc
+    local injection_loop_timer = options.injection_loop_timer
     local injection_facing_x = options.injection_facing_x
     local injection_facing_y = options.injection_facing_y
     local injection_flags = options.injection_flags
+    local injection_runtime_flags = options.injection_runtime_flags
     local injection_movement_timer = options.injection_movement_timer
     local injection_return_pc = options.injection_return_pc
 
@@ -53,12 +59,37 @@ return function(options)
         for offset = 0, actor_stride - 1 do
             space:write_u8(record + offset, space:read_u8(injection_template + offset))
         end
+        -- Mirror Actor_InitializeFromTemplate's runtime reset instead of
+        -- exposing stale template bytes as live VM state. The compact source
+        -- record carries pointers/flags, but the destination actor starts
+        -- with no frame, loop cursor, timers, return PC, or 0x90 words.
+        space:write_u32(record + 0x0e, 0)
+        space:write_u32(record + 0x14, 0)
+        space:write_u16(record + 0x18, 0)
+        space:write_u16(record + 0x1a, 0)
+        space:write_u32(record + 0x38, 0)
+        space:write_u8(record + 0x12, 0)
+        space:write_u8(record + 0x06, 0)
+        space:write_u8(record + 0x36, 0)
+        space:write_u8(record + 0x37, 0)
         space:write_u8(record + actor_type_offset, injection_type & 0xff)
         space:write_u16(record + actor_x_offset, x & 0xffff)
         space:write_u16(record + actor_y_offset, y & 0xffff)
+        if injection_frame_ptr >= 0 then
+            space:write_u32(record + 0x14, injection_frame_ptr & 0xffffffff)
+        end
+        if injection_word_18 >= -0x8000 then
+            space:write_u16(record + 0x18, injection_word_18 & 0xffff)
+        end
+        if injection_word_1a >= -0x8000 then
+            space:write_u16(record + 0x1a, injection_word_1a & 0xffff)
+        end
         space:write_u32(record + actor_animation_pc_offset, injection_pc & 0xffffffff)
         if injection_movement_pc >= 0 then
             space:write_u32(record + options.actor_movement_pc_offset, injection_movement_pc & 0xffffffff)
+        end
+        if injection_loop_pc >= 0 then
+            space:write_u32(record + 0x0e, injection_loop_pc & 0xffffffff)
         end
         if injection_facing_x >= 0 then
             space:write_u8(record + 0x09, injection_facing_x & 0xff)
@@ -69,8 +100,14 @@ return function(options)
         if injection_flags >= 0 then
             space:write_u8(record + 0x3c, injection_flags & 0xff)
         end
+        if injection_runtime_flags >= 0 then
+            space:write_u8(record + 0x06, injection_runtime_flags & 0xff)
+        end
         if injection_movement_timer >= 0 then
             space:write_u8(record + 0x36, injection_movement_timer & 0xff)
+        end
+        if injection_loop_timer >= 0 then
+            space:write_u8(record + 0x12, injection_loop_timer & 0xff)
         end
         if injection_return_pc >= 0 then
             space:write_u32(record + 0x38, injection_return_pc & 0xffffffff)

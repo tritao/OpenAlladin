@@ -623,6 +623,31 @@ void Engine::update_actor_movement() {
 
         std::uint32_t cursor = actor.movement_pc;
         if (cursor + 1 >= rom_bytes_.size()) continue;
+
+        // MovementVM_TickActors integrates the two actor velocity words
+        // before consuming the next signed-delta step. The words are 8.8
+        // fixed-point values: the ROM-visible pixel coordinate receives the
+        // signed high byte, while the full word remains as the accumulator.
+        actor.x = static_cast<std::uint16_t>(
+            static_cast<int>(actor.x) + (actor.movement_word_18 >> 8));
+        actor.y = static_cast<std::uint16_t>(
+            static_cast<int>(actor.y) + (actor.movement_word_1a >> 8));
+        const auto decay_velocity = [](std::int16_t& velocity, std::int16_t step) {
+            if (velocity < 0) {
+                if (velocity > static_cast<std::int16_t>(-step)) {
+                    velocity = 0;
+                } else {
+                    velocity = static_cast<std::int16_t>(velocity + step);
+                }
+            } else if (velocity < step) {
+                velocity = 0;
+            } else {
+                velocity = static_cast<std::int16_t>(velocity - step);
+            }
+        };
+        decay_velocity(actor.movement_word_18, 0x28);
+        decay_velocity(actor.movement_word_1a, 0x3C);
+
         int delta_x = static_cast<std::int8_t>(read_u8(cursor));
         int delta_y = static_cast<std::int8_t>(read_u8(cursor + 1));
         if (actor.facing_x_flip != 0) delta_x = -delta_x;
@@ -708,13 +733,13 @@ void Engine::update_actor_movement() {
             case 0x85:  // Movement_RewindAfterTimer.
                 // The original handler consumes one loop count and the
                 // interpreter rewinds to the saved loop cursor whenever the
-                // counter was non-zero on entry. This includes the final
-                // decrement to zero; the next pass then falls through.
+                // counter was non-zero on entry. Re-enter the command loop
+                // immediately: the saved cursor points at the inline 0x90
+                // command, not at a fresh signed-delta step.
                 if (actor.movement_loop_timer != 0) {
                     --actor.movement_loop_timer;
-                    actor.movement_pc = actor.movement_loop_pc;
-                    cursor_committed = true;
-                    break;
+                    cursor = actor.movement_loop_pc;
+                    continue;
                 }
                 cursor += 2;
                 continue;
@@ -869,6 +894,18 @@ void Engine::update_actor_animations() {
         if (actor.type == 0 || actor.type == kActorTerminalType
             || actor.animation_pc == 0 || actor.terminal_timer != 0) {
             continue;
+        }
+
+        // The sword's common actor animation stream is initially serviced on
+        // two consecutive VBlank passes, then every other pass. Preserve the
+        // recovered cadence here while the global actor-animation gate and
+        // its per-frame scheduler are still being modelled separately.
+        const bool sword_animation_cadence = actor.type == 0x80;
+        if (sword_animation_cadence) {
+            const bool hold = actor.animation_tick_phase >= 2
+                && (actor.animation_tick_phase & 1U) == 0;
+            ++actor.animation_tick_phase;
+            if (hold) continue;
         }
 
         ActorAnimationState animation_state;

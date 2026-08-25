@@ -126,6 +126,10 @@ struct ActorState {
     std::uint8_t terminal_timer = 0;
     std::uint8_t movement_command_timer = 0;
     std::uint8_t animation_timer = 0;
+    // The live sword animation stream is serviced on its first two actor
+    // ticks, then on alternating ticks. This is native scheduler state, not
+    // a field in the 0x42-byte Genesis actor record.
+    std::uint8_t animation_tick_phase = 0;
 };
 
 class Level {
