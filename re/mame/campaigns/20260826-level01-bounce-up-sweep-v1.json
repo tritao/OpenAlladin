@@ -1,0 +1,129 @@
+{
+  "campaign": "20260826-level01-bounce-up-sweep-v1",
+  "status": "recorded",
+  "purpose": "Close the timed-up-input hypothesis for grabbing the level-one handhold during the lower bounce launch",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "6c84fde",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "49f95cf",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta",
+  "variants": {
+    "up-early": "none*1,c+right*1,right*10,up*8,right*60,none*80",
+    "up-mid": "none*1,c+right*1,right*18,up*8,right*60,none*72",
+    "up-apex": "none*1,c+right*1,right*24,up*8,right*60,none*66",
+    "up-late": "none*1,c+right*1,right*30,up*8,right*60,none*60",
+    "left-up": "none*1,c+right*1,right*20,up+left*8,right*60,none*72"
+  },
+  "segments": [
+    {
+      "id": "up-early",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-up-sweep/up-early",
+      "frames": 160,
+      "input": "none*1,c+right*1,right*10,up*8,right*60,none*80",
+      "load_state": "bounce-approach",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "approach-loaded", "state": "up-early/states/genesis/approach-loaded.sta" },
+        { "frame": 2, "name": "bounce-command", "state": "up-early/states/genesis/bounce-command.sta" },
+        { "frame": 32, "name": "bounce-contact", "state": "up-early/states/genesis/bounce-contact.sta" },
+        { "frame": 42, "name": "bounce-apex", "state": "up-early/states/genesis/bounce-apex.sta" },
+        { "frame": 55, "name": "handhold-window", "state": "up-early/states/genesis/handhold-window.sta" },
+        { "frame": 100, "name": "transfer-settled", "state": "up-early/states/genesis/transfer-settled.sta" },
+        { "frame": 160, "name": "probe-end", "state": "up-early/states/genesis/probe-end.sta" }
+      ]
+    },
+    {
+      "id": "up-mid",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-up-sweep/up-mid",
+      "frames": 160,
+      "input": "none*1,c+right*1,right*18,up*8,right*60,none*72",
+      "load_state": "bounce-approach",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "approach-loaded", "state": "up-mid/states/genesis/approach-loaded.sta" },
+        { "frame": 2, "name": "bounce-command", "state": "up-mid/states/genesis/bounce-command.sta" },
+        { "frame": 32, "name": "bounce-contact", "state": "up-mid/states/genesis/bounce-contact.sta" },
+        { "frame": 42, "name": "bounce-apex", "state": "up-mid/states/genesis/bounce-apex.sta" },
+        { "frame": 55, "name": "handhold-window", "state": "up-mid/states/genesis/handhold-window.sta" },
+        { "frame": 100, "name": "transfer-settled", "state": "up-mid/states/genesis/transfer-settled.sta" },
+        { "frame": 160, "name": "probe-end", "state": "up-mid/states/genesis/probe-end.sta" }
+      ]
+    },
+    {
+      "id": "up-apex",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-up-sweep/up-apex",
+      "frames": 160,
+      "input": "none*1,c+right*1,right*24,up*8,right*60,none*66",
+      "load_state": "bounce-approach",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "approach-loaded", "state": "up-apex/states/genesis/approach-loaded.sta" },
+        { "frame": 2, "name": "bounce-command", "state": "up-apex/states/genesis/bounce-command.sta" },
+        { "frame": 32, "name": "bounce-contact", "state": "up-apex/states/genesis/bounce-contact.sta" },
+        { "frame": 42, "name": "bounce-apex", "state": "up-apex/states/genesis/bounce-apex.sta" },
+        { "frame": 55, "name": "handhold-window", "state": "up-apex/states/genesis/handhold-window.sta" },
+        { "frame": 100, "name": "transfer-settled", "state": "up-apex/states/genesis/transfer-settled.sta" },
+        { "frame": 160, "name": "probe-end", "state": "up-apex/states/genesis/probe-end.sta" }
+      ]
+    },
+    {
+      "id": "up-late",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-up-sweep/up-late",
+      "frames": 160,
+      "input": "none*1,c+right*1,right*30,up*8,right*60,none*60",
+      "load_state": "bounce-approach",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "approach-loaded", "state": "up-late/states/genesis/approach-loaded.sta" },
+        { "frame": 2, "name": "bounce-command", "state": "up-late/states/genesis/bounce-command.sta" },
+        { "frame": 32, "name": "bounce-contact", "state": "up-late/states/genesis/bounce-contact.sta" },
+        { "frame": 42, "name": "bounce-apex", "state": "up-late/states/genesis/bounce-apex.sta" },
+        { "frame": 55, "name": "handhold-window", "state": "up-late/states/genesis/handhold-window.sta" },
+        { "frame": 100, "name": "transfer-settled", "state": "up-late/states/genesis/transfer-settled.sta" },
+        { "frame": 160, "name": "probe-end", "state": "up-late/states/genesis/probe-end.sta" }
+      ]
+    },
+    {
+      "id": "left-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-up-sweep/left-up",
+      "frames": 160,
+      "input": "none*1,c+right*1,right*20,up+left*8,right*60,none*72",
+      "load_state": "bounce-approach",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "approach-loaded", "state": "left-up/states/genesis/approach-loaded.sta" },
+        { "frame": 2, "name": "bounce-command", "state": "left-up/states/genesis/bounce-command.sta" },
+        { "frame": 32, "name": "bounce-contact", "state": "left-up/states/genesis/bounce-contact.sta" },
+        { "frame": 42, "name": "bounce-apex", "state": "left-up/states/genesis/bounce-apex.sta" },
+        { "frame": 55, "name": "handhold-window", "state": "left-up/states/genesis/handhold-window.sta" },
+        { "frame": 100, "name": "transfer-settled", "state": "left-up/states/genesis/transfer-settled.sta" },
+        { "frame": 160, "name": "probe-end", "state": "left-up/states/genesis/probe-end.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "bounce-contact", "frame": 32, "actor_type": "0x66", "result": "all variants enter the bounce response" },
+    { "id": "handhold-window", "frame": 55, "actor_type": "0x6A", "result": "no variant changes the handhold to type 0x6B" },
+    { "id": "transfer-closed", "frame": 160, "result": "all tested schedules settle in the lower band; no handhold grab or upper-route transfer occurs" }
+  ],
+  "conclusion": "The missing transfer is not caused by a short up-input timing window during the lower bounce. Search for the intended transfer trigger or a different route state instead of repeating these timings.",
+  "next": "Trace the type-0x6A handler and the surrounding level object/scene script at the lower chamber, then test the exact trigger conditions from a saved bounce checkpoint."
+}
