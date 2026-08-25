@@ -105,23 +105,17 @@ public:
 
     struct TerrainQuery {
         TerrainCell resolver;
-        TerrainCell left;
-        TerrainCell right;
-        TerrainCell up;
-        TerrainCell down;
 
-        bool has_resolver_handler() const {
-            return resolver.valid && resolver.behavior != 0
-                && (resolver.handler != 0x001B65BE || resolver.behavior == 0x11);
-        }
-        bool side_blocks_left() const {
-            return left.valid && left.behavior != 0
-                && (left.handler != 0x001B65BE || left.behavior == 0x11);
-        }
-        bool side_blocks_right() const {
-            return right.valid && right.behavior != 0
-                && (right.handler != 0x001B65BE || right.behavior == 0x11);
-        }
+    };
+
+    struct TerrainCollisionFlags {
+        // FFF0C5/FFF0C8/FFF0CB from Player_TerrainCollisionProbe
+        // (0x001AD632). These are separate from the resolver result: the
+        // original probe uses the collision map's >=0xE0 criterion and runs
+        // before Player_IntegrateMotion.
+        bool stop_left = false;
+        bool stop_right = false;
+        bool stop_upward = false;
     };
 
     void load(const std::string& asset_root);
@@ -149,10 +143,13 @@ public:
     // the terrain-word -> behavior-table lookup. No nearby-row search occurs.
     TerrainCell resolve_player_cell(int world_x, int world_y) const;
 
-    // Canonical player probes used by the native terrain response. The
-    // resolver probe is the original one; side probes are single-cell probes
-    // at the player collision edges rather than a rectangle scan.
+    // Canonical player probe used by the native terrain response.
     TerrainQuery query_player(int world_x, int world_y) const;
+
+    // Exact fixed-ROM equivalent of Player_TerrainCollisionProbe at
+    // 0x001AD632. This is not a rectangle scan and does not use behavior
+    // handler dispatch.
+    TerrainCollisionFlags query_player_collision(int world_x, int world_y, bool grounded) const;
 
 private:
     int map_width_ = 300;
@@ -205,7 +202,6 @@ private:
     void initialize_camera_alignment();
     bool rebase_camera_reference();
     void update_state08(const InputState& input);
-    bool terrain_side_blocked(int direction) const;
     void apply_ground_movement(const InputState& input);
     void apply_terrain_behavior(const Level::TerrainCell& cell);
     SpritePose sprite_pose() const;

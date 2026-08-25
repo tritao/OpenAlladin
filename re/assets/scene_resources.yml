@@ -58,7 +58,10 @@ states:
 
   - value: 0x03
     label: state_03
-    confidence: probable
+    confidence: confirmed
+    description: Runtime boundary trace confirms the five compact resource loads selected after the scene script advances to state 0x03.
+    evidence:
+      - mame_state03_transition_trace
     resources:
       - selector_function: 0x001B4920
         loader_function: 0x001B4920

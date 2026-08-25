@@ -13,6 +13,8 @@ constexpr std::uint32_t kRunStream = 0x00122006;
 constexpr std::uint32_t kBrakeStream = 0x001232E0;
 constexpr std::uint32_t kJumpStream = 0x001221B0;
 constexpr std::uint32_t kLandingStream = 0x00121F84;
+constexpr std::uint32_t kInteractionStopStream = 0x001226CE;
+constexpr std::uint32_t kInteractionSpecialStream = 0x001226B2;
 
 const PlayerAnimationVm::Clip kIdleClip{
     kIdleStream,
@@ -433,6 +435,60 @@ void PlayerAnimationVm::select_stream_entry(std::uint32_t stream_entry) {
     timer_ = 0;
     landing_finished_ = false;
     landing_reselect_pending_ = false;
+}
+
+bool PlayerAnimationVm::select_player_interaction_state(const AnimationContext& context) {
+    if (!rom_mode_) return false;
+
+    // This is the control flow of Player_ProcessInteractionState at
+    // 0x001AE4F8. The caller-side write that clears FFF0CC is represented by
+    // selector.response_timer; it is intentionally not inferred from the
+    // VM's bytecode scratch memory because FFF0CC has two distinct roles in
+    // the ROM.
+    const AnimationSelectorState& state = context.selector;
+    if (state.animation_gate != 0
+        || state.terminal_transition != 0
+        || state.scene_script_countdown != 0
+        || state.interaction_lock != 0) {
+        return false;
+    }
+
+    const bool normal_path = state.response_active == 0
+        && state.landing_state != 0
+        && state.transition_gate == 0
+        && state.transition_lock == 0
+        && state.transition_mode == 0
+        && state.transition_response == 0;
+    if (normal_path) {
+        if (state.camera_special_mode != 0) {
+            if (stream_entry_ != kInteractionSpecialStream) {
+                select_stream_entry(kInteractionSpecialStream);
+                timer_ = 0;
+            }
+            write_memory8(0xFFF0E7, 0xFF);
+            write_memory8(0xFFF0E9, 0x32);
+            write_memory8(0xFFEFFF, 1);
+            return true;
+        }
+        if (state.response_timer == 0
+            && state.interaction_pending == 0
+            && state.state_lock == 0) {
+            if (stream_entry_ != kInteractionStopStream) {
+                select_stream_entry(kInteractionStopStream);
+                timer_ = 0;
+            }
+        }
+    }
+
+    // Both the selected stop state and the ordinary FFF0CC response path
+    // converge at 0x001AE58E. The ROM clears these fields before dispatching
+    // the interaction helper at 0x001B03F2.
+    write_memory16(0xFFF0B0, 0);
+    write_memory8(0xFFF0CC, 0);
+    return normal_path && state.camera_special_mode == 0
+        && state.response_timer == 0
+        && state.interaction_pending == 0
+        && state.state_lock == 0;
 }
 
 bool PlayerAnimationVm::finished() const {

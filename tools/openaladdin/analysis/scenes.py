@@ -56,9 +56,10 @@ def _resource_map(metadata: dict[str, Any]) -> dict[int, dict[str, Any]]:
 def _state_for_event(
     state_events: list[dict[str, Any]],
     event: dict[str, Any],
+    machine_frame_offset: int = 0,
 ) -> dict[str, Any] | None:
     scenario = event.get("scenario")
-    frame = int(event.get("global_frame", event.get("frame", 0)))
+    frame = int(event.get("global_frame", event.get("frame", 0))) - machine_frame_offset
     candidates = [
         state
         for state in state_events
@@ -83,14 +84,18 @@ def _matches(
     source = event.get("source")
     destination = event.get("destination")
     function = event.get("static_loader_function")
-    matches = []
+    payload_matches = []
+    function_matches = []
     for resource in state_entry.get("resources", []):
         if resource.get("source") != source or resource.get("destination") != destination:
             continue
-        if function and resource.get("loader_function") != function:
-            continue
-        matches.append(resource)
-    return matches
+        payload_matches.append(resource)
+        if not function or resource.get("loader_function") == function:
+            function_matches.append(resource)
+    # Prefer the exact wrapper match, but accept a source/destination match
+    # when the static function inventory names the enclosing dispatcher
+    # instead of the short scene-loader wrapper.
+    return function_matches or payload_matches
 
 
 def analyze_scene_state_trace(
@@ -98,6 +103,7 @@ def analyze_scene_state_trace(
     load_trace_path: Path,
     metadata_path: Path,
     output_path: Path | None = None,
+    machine_frame_offset: int = 0,
 ) -> dict[str, Any]:
     records = _read_jsonl(trace_dir / "trace_boot.jsonl")
     load_trace = json.loads(load_trace_path.read_text(encoding="utf-8"))
@@ -119,12 +125,14 @@ def analyze_scene_state_trace(
     correlated = []
     by_state: dict[str, dict[str, Any]] = {}
     for event in loader_events:
-        state_event = _state_for_event(state_events, event)
+        runtime_frame = int(event.get("global_frame", event.get("frame", 0))) - machine_frame_offset
+        state_event = _state_for_event(state_events, event, machine_frame_offset)
         state_value = _value(state_event["value"]) if state_event else None
         state_entry = states.get(state_value) if state_value is not None else None
         matches = _matches(event, state_entry)
         row = {
             **event,
+            "trace_frame": runtime_frame,
             "scene_state": _hex(state_value) if state_value is not None else None,
             "scene_label": state_entry.get("label") if state_entry else None,
             "scene_state_confidence": state_entry.get("confidence") if state_entry else None,
@@ -154,6 +162,10 @@ def analyze_scene_state_trace(
         "trace": str(trace_dir),
         "load_trace": str(load_trace_path),
         "metadata": str(metadata_path),
+        "frame_alignment": {
+            "machine_frame_offset": machine_frame_offset,
+            "description": "Subtract this machine-frame offset from loader events before correlating with trace_boot.jsonl frames.",
+        },
         "dispatcher": metadata.get("dispatcher", {}),
         "summary": {
             "scene_state_event_count": len(state_events),
@@ -188,12 +200,19 @@ def main() -> int:
         type=Path,
         default=ROOT / "build/re/scene_state_runtime.json",
     )
+    parser.add_argument(
+        "--machine-frame-offset",
+        type=int,
+        default=0,
+        help="subtract this MAME machine-frame offset from loader events when matching trace frames",
+    )
     args = parser.parse_args()
     report = analyze_scene_state_trace(
         args.trace.resolve(),
         args.load_trace.resolve(),
         args.metadata.resolve(),
         args.output.resolve(),
+        args.machine_frame_offset,
     )
     for key, value in report["summary"].items():
         print(f"{key.replace('_', ' ')}: {value}")

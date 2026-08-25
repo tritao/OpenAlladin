@@ -37,6 +37,7 @@ return function(options)
     local debugger_watch = os.getenv("OPENALADDIN_DEBUG_WATCH") == "1"
     local breakpoint_list = os.getenv("OPENALADDIN_BREAKPOINTS") or ""
     local trace_scene_states = options.trace_scene_states
+    local trace_selector = options.trace_selector
     local trace_actors = options.trace_actors
     local actor_table_base = options.actor_table_base
     local actor_stride = options.actor_stride
@@ -175,6 +176,30 @@ return function(options)
         local rnc_loader_action =
             "printf \"OPENALADDIN_RNC_LOAD PC=%08X RETURN=%08X SOURCE=%08X DEST=%08X FRAME=%08X\\n\",pc,d@sp,a0,a1,frame ; g"
         cpu.debug:bpset(symbol("RNC_To_VDP_Loader"), "", rnc_loader_action)
+    end
+
+    if trace_selector then
+        local selector_action = string.format(
+            "printf \"OPENALADDIN_SELECTOR FRAME=%%08X PC=%%08X E7=%%02X E6=%%02X E9=%%02X F2=%%02X BE=%%02X C1=%%02X D0=%%02X D7=%%02X CD=%%02X D4=%%02X F173=%%02X CC=%%02X EFFF=%%02X F11F=%%02X D8=%%02X RET=%%08X ANIMPC=%%08X TIMER=%%02X VX=%%04X\\n\",frame,pc,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,:maincpu.b@$%06X,d@sp,:maincpu.d@$%06X,:maincpu.b@$%06X,:maincpu.w@$%06X ; g",
+            symbol("PLAYER_INTERACTION_ANIMATION_GATE"),
+            symbol("PLAYER_TERMINAL_TRANSITION"),
+            symbol("SCENE_SCRIPT_COUNTDOWN"),
+            symbol("PLAYER_INTERACTION_LOCK"),
+            symbol("TERRAIN_RESPONSE_ACTIVE"),
+            symbol("TERRAIN_LANDING_STATE"),
+            symbol("PLAYER_TRANSITION_GATE"),
+            symbol("PLAYER_INTERACTION_TRANSITION_LOCK"),
+            symbol("PLAYER_INTERACTION_MODE"),
+            symbol("PLAYER_INTERACTION_RESPONSE"),
+            symbol("CAMERA_SPECIAL_MODE"),
+            symbol("TERRAIN_RESPONSE_TIMER_STATE"),
+            symbol("PLAYER_INTERACTION_PENDING"),
+            symbol("PLAYER_INTERACTION_STATE_LOCK"),
+            0xFFF0D8,
+            symbol("PLAYER_ANIMATION_PC"),
+            symbol("PLAYER_ANIMATION_TIMER"),
+            symbol("PLAYER_VX"))
+        cpu.debug:bpset(symbol("Player_ProcessInteractionState"), "", selector_action)
     end
 
     return {

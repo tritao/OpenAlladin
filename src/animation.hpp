@@ -14,6 +14,27 @@ struct AnimationStep {
     int duration = 1;
 };
 
+// The global RAM inputs consumed by Player_ProcessInteractionState at
+// 0x001AE4F8. Keep these separate from the VM's bytecode scratch memory:
+// FFF0CC is cleared by the caller immediately before some selector calls,
+// while the animation streams also inspect it as a running-state latch.
+struct AnimationSelectorState {
+    std::uint8_t animation_gate = 0;            // FFF0E7
+    std::uint8_t terminal_transition = 0;       // FFF0E6
+    std::uint8_t scene_script_countdown = 0;    // FFF0E9
+    std::uint8_t interaction_lock = 0;          // FFF0F2
+    std::uint8_t response_active = 0;           // FFF0BE
+    std::uint8_t landing_state = 0;             // FFF0C1
+    std::uint8_t transition_gate = 0;           // FFF0D0
+    std::uint8_t transition_lock = 0;           // FFF0D7
+    std::uint8_t transition_mode = 0;           // FFF0CD
+    std::uint8_t transition_response = 0;       // FFF0D4
+    std::uint8_t camera_special_mode = 0;       // FFF173
+    std::uint8_t response_timer = 0;            // FFF0CC
+    std::uint8_t interaction_pending = 0;       // FFEFFF
+    std::uint8_t state_lock = 0;                // FFF11F
+};
+
 struct AnimationContext {
     int player_x = 0;
     int player_y = 0;
@@ -23,6 +44,7 @@ struct AnimationContext {
     std::int16_t player_vy = 0;
     bool grounded = false;
     std::uint8_t terrain_response_timer_state = 0;
+    AnimationSelectorState selector{};
 };
 
 // PlayerAnimationVm is the player-facing slice of the original common actor
@@ -52,6 +74,7 @@ public:
     void set_animation_state(std::uint32_t animation_pc, int timer);
     void select_stream_entry(std::uint32_t stream_entry);
     bool finished() const;
+    bool select_player_interaction_state(const AnimationContext& context);
 
     SpritePose pose() const { return pose_; }
     int sprite_frame() const;

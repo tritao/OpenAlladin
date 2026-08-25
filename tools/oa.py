@@ -693,6 +693,15 @@ def command_coverage_import_ghidra(args: argparse.Namespace) -> int:
     return run_tool("openaladdin/ghidra/import_coverage.py", forwarded)
 
 
+def command_coverage_gaps(args: argparse.Namespace) -> int:
+    forwarded = [
+        str(resolve(args.coverage)),
+        "--rom", str(resolve(args.rom)),
+        "--output", str(resolve(args.output)),
+    ]
+    return run_tool("openaladdin/mame/coverage_gaps.py", forwarded)
+
+
 def _field_size(type_name: str) -> int:
     normalized = type_name.strip().lower()
     if normalized in {"u8", "i8", "s8", "byte", "bool"}:
@@ -979,6 +988,11 @@ def build_parser() -> argparse.ArgumentParser:
     coverage_import.add_argument("--output", type=Path, default=ROOT / "build/re/coverage-ghidra.json")
     coverage_import.add_argument("--project-dir", type=Path)
     coverage_import.set_defaults(function=command_coverage_import_ghidra)
+    coverage_gaps = coverage_commands.add_parser("gaps", help="report unobserved indirect-dispatch table entries")
+    coverage_gaps.add_argument("coverage", nargs="?", type=Path, default=ROOT / "build/re/coverage.json")
+    add_rom_argument(coverage_gaps)
+    coverage_gaps.add_argument("--output", type=Path, default=ROOT / "build/re/coverage-gaps.json")
+    coverage_gaps.set_defaults(function=command_coverage_gaps)
 
     status = commands.add_parser("status", help="show repository and RE progress status")
     add_rom_argument(status)

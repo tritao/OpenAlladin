@@ -10,3 +10,7 @@ fields:
   0x37:
     name: animation_timer
     type: u8
+  0x3c:
+    name: flags
+    type: u8
+    description: Common actor flags; bit 5 gates the Player_ProcessInteractionState caller at 0x001AE86C.

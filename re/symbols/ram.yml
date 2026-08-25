@@ -108,6 +108,30 @@
   evidence:
     - ghidra_memory_reference_player_movement_transition_gate
     - mame_level_transition_watch
+0xFFF0D7:
+  name: PLAYER_INTERACTION_TRANSITION_LOCK
+  type: u8
+  format: boolean
+  confidence: probable
+  description: Interaction-state transition lock tested by Player_ProcessInteractionState before selecting a recovery animation stream.
+  evidence:
+    - ghidra_disassembly_001AE4F8
+0xFFF0CD:
+  name: PLAYER_INTERACTION_MODE
+  type: u8
+  format: integer
+  confidence: probable
+  description: Interaction-state mode byte tested by Player_ProcessInteractionState before selecting a recovery animation stream.
+  evidence:
+    - ghidra_disassembly_001AE4F8
+0xFFF0D4:
+  name: PLAYER_INTERACTION_RESPONSE
+  type: u8
+  format: boolean
+  confidence: probable
+  description: Interaction response gate tested by Player_ProcessInteractionState before selecting a recovery animation stream.
+  evidence:
+    - ghidra_disassembly_001AE4F8
 0xFFF0DB:
   name: PLAYER_TRANSITION_LOCK
   type: u8
@@ -135,6 +159,22 @@
   evidence:
     - ghidra_memory_reference_player_terminal_transition
     - mame_level_transition_watch
+0xFFF0E7:
+  name: PLAYER_INTERACTION_ANIMATION_GATE
+  type: u8
+  format: boolean
+  confidence: probable
+  description: Animation/interaction gate checked by Player_ProcessInteractionState and asserted by its special-mode branch.
+  evidence:
+    - ghidra_disassembly_001AE4F8
+0xFFF0F2:
+  name: PLAYER_INTERACTION_LOCK
+  type: u8
+  format: boolean
+  confidence: probable
+  description: Interaction lock checked by Player_ProcessInteractionState before selecting a recovery animation stream.
+  evidence:
+    - ghidra_disassembly_001AE4F8
 0xFFF0E9:
   name: SCENE_SCRIPT_COUNTDOWN
   type: u8
@@ -592,11 +632,29 @@
   type: u8
   format: integer
   confidence: probable
-  description: Terrain response state byte cleared by the principal landing, stop, launch, and bounce handlers.
+  description: Shared response latch cleared by the principal terrain handlers and by Player_ProcessInteractionState; Player_Update re-establishes it on the ordinary ground movement path.
   evidence:
     - ghidra_disassembly_001B537A
     - ghidra_disassembly_001B5502
     - ghidra_disassembly_001B557E
+    - ghidra_disassembly_001AE4F8
+    - mame_player_interaction_selector_trace
+0xFFEFFF:
+  name: PLAYER_INTERACTION_PENDING
+  type: u8
+  format: boolean
+  confidence: probable
+  description: Pending interaction marker tested by Player_ProcessInteractionState and set by its special-mode branch.
+  evidence:
+    - ghidra_disassembly_001AE4F8
+0xFFF11F:
+  name: PLAYER_INTERACTION_STATE_LOCK
+  type: u8
+  format: boolean
+  confidence: probable
+  description: Secondary interaction-state lock tested before the player recovery stream is selected.
+  evidence:
+    - ghidra_disassembly_001AE4F8
 0xFFF0CE:
   name: TERRAIN_QUERY_STATE_A
   type: u8

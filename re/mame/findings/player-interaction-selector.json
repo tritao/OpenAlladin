@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-player-interaction-selector-finding-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "function": "0x001AE4F8",
+  "caller": {
+    "address": "0x001AE86C",
+    "return_address": "0x001AE870",
+    "guard": "actor_flags_bit_5"
+  },
+  "observed": {
+    "experiment": "terrain-walk-off-edge",
+    "machine_frame": 1436,
+    "selector": {
+      "FFF0E7": "0x00",
+      "FFF0E6": "0x00",
+      "FFF0E9": "0x00",
+      "FFF0F2": "0x00",
+      "FFF0BE": "0x00",
+      "FFF0C1": "0x01",
+      "FFF0D0": "0x00",
+      "FFF0D7": "0x00",
+      "FFF0CD": "0x00",
+      "FFF0D4": "0x00",
+      "FFF173": "0x00",
+      "FFF0CC_before_call": "0x01",
+      "PLAYER_ANIMATION_PC": "0x001220A0",
+      "PLAYER_VX": "0x0000"
+    },
+    "follow_up_writes": [
+      {
+        "pc": "0x001A9EAA",
+        "address": "0x00FFF0CC",
+        "value": "0x01"
+      },
+      {
+        "pc": "0x001AA90A",
+        "address": "0x00FFF167",
+        "value": "0x06",
+        "meaning": "CAMERA_UPDATE_DELAY was armed to 0x07 immediately before the decrement"
+      }
+    ]
+  },
+  "conclusion": "The selector is called from the actor-flag-bit-5 path, not at every run-stream boundary. FFF0CC is cleared by the selector's 0x001AE58E path and then re-established by Player_Update at 0x001A9EAA, which also arms the camera delay. The animation PC alone is therefore insufficient as a native camera-delay predicate."
+}

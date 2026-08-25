@@ -152,6 +152,7 @@
   evidence:
     - ghidra_decompile_collision_damage_targets
     - ghidra_disassembly_001AE4F8
+    - mame_player_interaction_selector_trace
 0x001AE9C6:
   name: ActorType0A_PlayerCollisionHandler
   confidence: confirmed

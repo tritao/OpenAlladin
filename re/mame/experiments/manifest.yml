@@ -114,6 +114,18 @@ experiments:
   - name: terrain-walk-off-edge
     description: Hold right long enough to leave the opening surface and record the falling transition.
     frames: 1800
+    regression:
+      checkpoint: walk_off_start
+      fields:
+        - player.x
+        - player.y
+        - player.world_x
+        - player.world_y
+        - player.vx
+        - player.vy
+        - player.grounded
+        - camera.x
+        - camera.y
     boot:
       scenario: first-level
     setup:
@@ -122,6 +134,7 @@ experiments:
           greater_than: 0
           timeout: 180
     actions:
+      - marker: walk_off_start
       - input:
           right: true
           frames: 240
@@ -133,6 +146,18 @@ experiments:
   - name: terrain-jump-land
     description: Capture jump ascent, apex, fall, and the exact landing handler state.
     frames: 1500
+    regression:
+      checkpoint: jump_test_start
+      fields:
+        - player.x
+        - player.y
+        - player.world_x
+        - player.world_y
+        - player.vx
+        - player.vy
+        - player.grounded
+        - camera.x
+        - camera.y
     boot:
       scenario: first-level
     setup:
@@ -141,6 +166,7 @@ experiments:
           greater_than: 0
           timeout: 180
     actions:
+      - marker: jump_test_start
       - input:
           right: true
           frames: 30
@@ -167,6 +193,18 @@ experiments:
   - name: terrain-wall-left
     description: Approach the left edge from inside the opening room and capture horizontal correction flags.
     frames: 1400
+    regression:
+      checkpoint: wall_left_start
+      fields:
+        - player.x
+        - player.y
+        - player.world_x
+        - player.world_y
+        - player.vx
+        - player.vy
+        - player.grounded
+        - camera.x
+        - camera.y
     boot:
       scenario: first-level
     setup:
@@ -175,6 +213,7 @@ experiments:
           greater_than: 0
           timeout: 180
     actions:
+      - marker: wall_left_start
       - input:
           left: true
           frames: 120
@@ -183,6 +222,18 @@ experiments:
   - name: terrain-wall-right
     description: Approach the first right-side obstruction and capture horizontal correction flags.
     frames: 1800
+    regression:
+      checkpoint: wall_right_start
+      fields:
+        - player.x
+        - player.y
+        - player.world_x
+        - player.world_y
+        - player.vx
+        - player.vy
+        - player.grounded
+        - camera.x
+        - camera.y
     boot:
       scenario: first-level
     setup:
@@ -191,6 +242,7 @@ experiments:
           greater_than: 0
           timeout: 180
     actions:
+      - marker: wall_right_start
       - input:
           right: true
           frames: 260

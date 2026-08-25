@@ -75,6 +75,7 @@ local write_record = capture_streams.write_record
 local write_state = capture_streams.write_state
 
 local trace_scene_states = os.getenv("OPENALADDIN_TRACE_SCENE_STATES") == "1"
+local trace_selector = os.getenv("OPENALADDIN_TRACE_SELECTOR") == "1"
 local scene_state_address = symbol("SCENE_STATE")
 local scene_state_last = read_u8(scene_state_address)
 local preload_applied = false
@@ -519,6 +520,7 @@ local watches = dofile(root .. "/re/mame/lua/watches.lua")({
     read_register = read_register,
     current_frame = function () return current_frame end,
     trace_scene_states = trace_scene_states,
+    trace_selector = trace_selector,
     trace_actors = trace_actors,
     actor_table_base = actor_table_base,
     actor_stride = actor_stride,

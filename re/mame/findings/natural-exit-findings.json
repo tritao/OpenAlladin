@@ -1,0 +1,151 @@
+{
+  "format": "openaladdin-natural-exit-finding-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "purpose": "Exercise the level boundary using controller input only, while tracing the player world coordinates, scene state, transition gates, and resource loads.",
+  "exit_predicate": {
+    "routine": "0x001B5B4A",
+    "world_x": "> 0x1287",
+    "world_y": "< 0x01D6"
+  },
+  "natural_boot_trace": {
+    "trace_directory": "build/re/natural-exit-final",
+    "frames": 6000,
+    "memory_pokes": false,
+    "input_pattern": "first-level boot, then right*80,c,none*15 repeated 50 times",
+    "scene_states": ["0x00", "0x01"],
+    "first_vertical_checkpoint": {
+      "machine_frame": 2067,
+      "world_x": 2176,
+      "world_y": 912,
+      "push_right": 255,
+      "stop_right_motion": 255
+    },
+    "maximum_world_x": 2176,
+    "minimum_world_y_after_gameplay_start": 816,
+    "state08_observed": false,
+    "natural_exit_confirmed": false
+  },
+  "controller_only_route": {
+    "checkpoint_state": "build/re/natural-wall-checkpoint-debug/states/genesis/natural-wall.sta",
+    "rope_trace": {
+      "start_state": "build/re/natural-wall-checkpoint-debug/states/genesis/natural-wall.sta",
+      "input": "left*30,c*30,up*250",
+      "world_x": 2104,
+      "world_y": 648,
+      "scene_state": "0x01"
+    },
+    "upper_walkway_trace": {
+      "start_state": "build/re/natural-wall-checkpoint-debug/states/genesis/rope-top.sta",
+      "input": "up*60,c+left*100,none*40",
+      "save_state": "build/re/natural-wall-checkpoint-debug/states/genesis/upper-left-ledge.sta",
+      "world_x": 1862,
+      "world_y": 690,
+      "scene_state": "0x01"
+    }
+  },
+  "natural_route_progress": {
+    "lower_guard": {
+      "start_state": "build/re/natural-wall-checkpoint-debug/states/genesis/upper-left-ledge.sta",
+      "input": "none*30,right*10,b,none*10,b,none*10,b,none*20,right*120",
+      "actor_slot": 7,
+      "actor_type_before": "0x1D",
+      "actor_type_after": "0x84",
+      "checkpoint_state": "build/re/natural-wall-checkpoint-debug/states/genesis/guard-cleared-rope.sta",
+      "player_world": [2104, 721],
+      "scene_state": "0x01"
+    },
+    "upper_guard": {
+      "start_state": "build/re/natural-wall-checkpoint-debug/states/genesis/rope-top-after-guard.sta",
+      "input": "c*10,none*3,b+right,none*100",
+      "actor_slot": 8,
+      "actor_type_before": "0x1D",
+      "actor_type_after": "0x84",
+      "checkpoint_state": "build/re/natural-wall-checkpoint-debug/states/genesis/upper-guard-defeated-clean.sta",
+      "player_world": [2104, 648],
+      "scene_state": "0x01"
+    },
+    "juggler_and_first_gap": {
+      "start_state": "build/re/natural-wall-checkpoint-debug/states/genesis/upper-left-ledge.sta",
+      "input": "left*30,right+b*50,left*45,c+left*40,none*10,left*30,c+left*40,none*10,left*30,c+left*40,none*150",
+      "trace_directory": "build/re/gap-edge-timing-20260825/e45",
+      "juggler": {
+        "actor_slot": 7,
+        "actor_type_before": "0x1D",
+        "cleared_by_machine_frame": 80
+      },
+      "gap_checkpoint": {
+        "machine_frame": 360,
+        "player_world": [1346, 832],
+        "scene_state": "0x01",
+        "nearby_guard": {
+          "actor_type": "0x0A",
+          "world": [1328, 832]
+        }
+      },
+      "result": "The edge-timed jump crosses the first gap and reaches the lower platform section. Continuing left without a platform-specific jump sequence causes a death/reset before the next stable checkpoint."
+    },
+    "next_unresolved_action": "Cross the lower moving-platform chain after the guard at world (1328,832); the natural exit predicate remains untriggered."
+  },
+  "static_disambiguation": {
+    "type_50_spawn_routine": "0x001B614C",
+    "type_50_level_table_index": 9,
+    "type_50_level_enter_function": "0x001B614C",
+    "level01_table_index": 1,
+    "level01_enter_function": "0x001B5B4A",
+    "meaning": "The type-0x50 spawn/handhold routine belongs to level-table entry 9 and is not expected in the level-01 natural-exit route."
+  },
+  "controller_only_autoplay_probes": {
+    "trace_directory": "build/re/natural-autoplay-search-20260825",
+    "patterns": ["right+c", "right+a+c", "right+b+c"],
+    "frames_each": 6000,
+    "maximum_world_x": 2177,
+    "scene_states": ["0x00", "0x01"],
+    "state08_observed": false
+  },
+  "boundary_runtime_probe": {
+    "trace_directory": "build/re/natural-boundary-transition-20260825",
+    "preloaded_state": "build/re/clean-upper-platform-save-20260825/states/genesis/clean-upper-platform.sta",
+    "coordinate_setup": {
+      "frame": 1,
+      "memory_pokes": {
+        "PLAYER_WORLD_X": "0x1288",
+        "PLAYER_WORLD_Y": "0x0100"
+      },
+      "controller_input_only": false
+    },
+    "exit_write": {
+      "pc": "0x001B5B66",
+      "address": "0x00FFF0E9",
+      "value": "0xFF",
+      "machine_frame": 3248
+    },
+    "transition_gate_writes": {
+      "FFF0D0": {
+        "pc": "0x001AA720",
+        "action": "cleared"
+      },
+      "FFF0DB": {
+        "pc": "0x001AA720",
+        "action": "cleared"
+      },
+      "FFF0DC": {
+        "pc": "0x001AA720",
+        "action": "cleared"
+      },
+      "FFF0E6": {
+        "pc": "0x001AA720",
+        "action": "cleared"
+      }
+    },
+    "follow_on_scene_write": {
+      "pc": "0x001A8ED8",
+      "address": "0x00FF7E26",
+      "value": "0x03",
+      "machine_frame": 3652,
+      "relative_trace_frame": 404
+    },
+    "state08_observed": false,
+    "meaning": "The player boundary predicate writes the countdown gate, which later advances the scene script to state 0x03 in this controlled probe; it does not directly write state 0x08."
+  },
+  "conclusion": "The natural controller-only traversal remains reproducible but has not reached the level-01 exit predicate. The controlled boundary probe now closes the ROM-owned write path: 0x001B5B66 writes FFF0E9=FF, the countdown clears the transition gates, and 0x001A8ED8 advances SCENE_STATE to 0x03. State 0x08 remains a separate controlled selector result recorded in level-transition-findings.json."
+}

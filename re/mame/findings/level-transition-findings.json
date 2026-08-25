@@ -214,6 +214,42 @@
         { "frame": 1774, "loader": "0x001B0F66", "source": "0x0012F12E", "destination": "0x00C000" },
         { "frame": 1776, "loader": "0x001B0F66", "source": "0x00136912", "destination": "0x000000" }
       ]
+    },
+    "state03_runtime": {
+      "observed": true,
+      "trace_directory": "build/re/state03-transition-final-20260825",
+      "frames": 1200,
+      "controlled_setup": {
+        "description": "Loaded the clean upper-platform checkpoint and supplied the boundary coordinates through the existing MAME memory-poke harness; the ROM then executed the exit countdown and scene script.",
+        "preloaded_state": "build/re/clean-upper-platform-save-20260825/states/genesis/clean-upper-platform.sta",
+        "memory_pokes": {
+          "PLAYER_WORLD_X": "0x1288",
+          "PLAYER_WORLD_Y": "0x0100"
+        }
+      },
+      "boundary": {
+        "machine_frame": 3248,
+        "pc": "0x001B5B66",
+        "address": "0x00FFF0E9",
+        "value": "0xFF"
+      },
+      "script": {
+        "script_cursor_write_pc": "0x001A8ED2",
+        "state_write_pc": "0x001A8ED8",
+        "scene_state": "0x03",
+        "scene_script_cursor_before": "0x00004082",
+        "scene_script_cursor_after": "0x0000408A",
+        "scene_table_index": "0x00",
+        "machine_frame": 3652
+      },
+      "resources": [
+        { "machine_frame": 3763, "loader": "0x001B4920", "source": "0x00132F8E", "destination": "0x000000" },
+        { "machine_frame": 3818, "loader": "0x001B4920", "source": "0x0012E7EA", "destination": "0x00E000" },
+        { "machine_frame": 4138, "loader": "0x001B4896", "source": "0x00132F8E", "destination": "0x000000" },
+        { "machine_frame": 4193, "loader": "0x001B4896", "source": "0x0012D654", "destination": "0x00E000" },
+        { "machine_frame": 4195, "loader": "0x001B49F0", "source": "0x0012DD76", "destination": "0x00C000" }
+      ],
+      "resource_report": "build/re/state03-transition-final-20260825/scene_state_runtime.json"
     }
   },
   "limitations": [

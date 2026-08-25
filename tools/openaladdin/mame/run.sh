@@ -72,7 +72,12 @@ MAME_ARGS=(
     -nothrottle
 )
 
-if [[ -n "${TRACE_SECONDS}" ]]; then
+# A saved MAME machine state also restores the scheduler timers.  Restoring
+# the external -seconds_to_run timer can therefore make a freshly loaded
+# checkpoint exit on its first frame.  The Lua harness already has its own
+# exact frame-limit shutdown, so loaded checkpoints do not need this second
+# wall-clock bound.
+if [[ -n "${TRACE_SECONDS}" && -z "${OPENALADDIN_LOAD_STATE:-}" ]]; then
     MAME_ARGS+=( -seconds_to_run "${TRACE_SECONDS}" )
 fi
 

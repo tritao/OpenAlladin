@@ -26,6 +26,7 @@ def validate_scene_resources(
     loader = json.loads(loader_path.read_text(encoding="utf-8"))
     calls = loader.get("calls", [])
     index: dict[tuple[int, int, int], list[dict[str, Any]]] = {}
+    payload_index: dict[tuple[int, int], list[dict[str, Any]]] = {}
     for call in calls:
         function = call.get("function")
         source = call.get("source")
@@ -38,6 +39,7 @@ def validate_scene_resources(
             _value(destination["target"]),
         )
         index.setdefault(key, []).append(call)
+        payload_index.setdefault(key[1:], []).append(call)
 
     states = []
     errors = []
@@ -54,6 +56,14 @@ def validate_scene_resources(
                 _value(resource["destination"]),
             )
             matches = index.get(key, [])
+            match_mode = "function_source_destination"
+            if not matches:
+                # The static function inventory can collapse short scene
+                # loader wrappers into their enclosing dispatcher.  The ROM
+                # source/destination pair remains unambiguous and is the
+                # stronger asset identity for this validation.
+                matches = payload_index.get(key[1:], [])
+                match_mode = "source_destination"
             if not matches:
                 errors.append({
                     "state": _hex(state_value),
@@ -67,6 +77,8 @@ def validate_scene_resources(
                 "loader_function": _hex(key[0]),
                 "source": _hex(key[1]),
                 "destination": _hex(key[2]),
+                "static_match_mode": match_mode,
+                "static_function_match": match_mode == "function_source_destination",
                 "static_call_addresses": [call["call_address"] for call in matches],
                 "static_block": matches[0].get("block"),
             })
@@ -90,6 +102,18 @@ def validate_scene_resources(
             "state_count": len(states),
             "resource_count": resource_count,
             "matched_resource_count": matched_count,
+            "exact_function_match_count": sum(
+                1
+                for state_row in states
+                for resource_row in state_row["resources"]
+                if resource_row.get("static_function_match")
+            ),
+            "payload_fallback_match_count": sum(
+                1
+                for state_row in states
+                for resource_row in state_row["resources"]
+                if resource_row.get("static_match_mode") == "source_destination"
+            ),
             "error_count": len(errors),
         },
         "errors": errors,

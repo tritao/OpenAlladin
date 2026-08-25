@@ -524,6 +524,13 @@ The machine-readable result is recorded in
 write PC, all four transition-gate observations, and the five RNC uploads
 observed after dispatching state `0x08`.
 
+The natural-exit experiment is recorded separately in
+`re/mame/findings/natural-exit-findings.json`. It uses controller input only,
+reaches the first rope and upper walkway, clears both guards on that route, and
+confirms that the level-01 exit predicate is not reached by the current
+6,000-frame route; no direct scene or player-memory setup is used in that
+trace.
+
 The initial level-01 runtime tables are matched byte-for-byte to the extracted
 assets. `level01/raw/map.bin` is loaded at `0x00FF0000` and has 27,000 bytes;
 the active level end marker is `0x00FF725C`, or `0x6978` bytes from the RAM
@@ -596,6 +603,18 @@ PYTHONPATH=tools python3 tools/openaladdin/assets/rnc_load_trace.py \
 PYTHONPATH=tools python3 tools/openaladdin/analysis/scenes.py \
   --trace build/re/rnc-loader-gameplay \
   --load-trace build/re/rnc-loader-gameplay/rnc_loads.json
+```
+
+Checkpoint-loaded traces have a MAME machine-frame offset because the saved
+state restores the emulated frame counter.  Pass that offset when correlating
+the loader log with the Lua trace, for example:
+
+```sh
+PYTHONPATH=tools python3 tools/openaladdin/analysis/scenes.py \
+  --trace build/re/state03-transition-final-20260825 \
+  --load-trace build/re/state03-transition-final-20260825/rnc_loads.json \
+  --machine-frame-offset 3247 \
+  --output build/re/state03-transition-final-20260825/scene_state_runtime.json
 ```
 
 The scene report attributes each dynamic upload to the most recent observed

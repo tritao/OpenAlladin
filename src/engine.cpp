@@ -258,16 +258,75 @@ Level::TerrainCell Level::resolve_player_cell(int world_x, int world_y) const {
 Level::TerrainQuery Level::query_player(int world_x, int world_y) const {
     TerrainQuery query;
     query.resolver = resolve_player_cell(world_x, world_y);
-
-    // These are the four single-cell edge probes used by the native response
-    // path. They deliberately do not search neighboring rows or scan a
-    // player-sized rectangle. The resolver's own probe remains the canonical
-    // floor/contour lookup above.
-    query.left = resolve_player_cell(world_x - 8, world_y - 8);
-    query.right = resolve_player_cell(world_x + 8, world_y - 8);
-    query.up = resolve_player_cell(world_x, world_y - 24);
-    query.down = resolve_player_cell(world_x, world_y + 8);
     return query;
+}
+
+Level::TerrainCollisionFlags Level::query_player_collision(
+    int world_x,
+    int world_y,
+    bool grounded
+) const {
+    TerrainCollisionFlags flags;
+
+    // Player_TerrainCollisionProbe uses WORLD_CAMERA_Y + PLAYER_Y - 0x110
+    // as a pixel-space row selector and WORLD_CAMERA_X + PLAYER_X as the
+    // column selector. The ROM's row pointers are equivalent to these
+    // fixed-size level-01 indices.
+    const int collision_y = world_y - 0x110;
+    const int row = collision_y >> 4;
+    const int column = world_x >> 4;
+    if (collision_y < 0 || row < 0 || row >= map_height_ - 3
+        || column < 0 || column + 2 >= map_width_) {
+        return flags;
+    }
+
+    const auto blocking = [this](int test_column, int test_row) {
+        if (test_column < 0 || test_column >= map_width_
+            || test_row < 0 || test_row >= map_height_) {
+            return false;
+        }
+        // The collision probe deliberately uses a different interpretation
+        // from Terrain_ResolvePlayerCell: bytes >= 0xE0 are blocking geometry,
+        // while ordinary floor behavior 0x11 remains traversable here.
+        return terrain_behavior(test_column, test_row) >= 0xE0;
+    };
+
+    // Left side: the ROM first requires the two cells under the player's
+    // left column to be traversable, then records the two adjacent probes and
+    // the deeper wall condition. Only the terminal stop bit is consumed by
+    // the player motion path, but the complete condition is retained here.
+    const bool left_passable = !blocking(column, row) && !blocking(column, row + 1);
+    if (left_passable) {
+        const bool left_inner = blocking(column - 1, row + 1);
+        const bool left_outer = blocking(column - 2, row + 1);
+        (void)left_inner;
+        (void)left_outer;
+        flags.stop_left = blocking(column, row + 2)
+            || (!grounded && blocking(column, row + 3));
+    } else {
+        flags.stop_left = true;
+    }
+
+    // Right side mirrors the ROM's second half of the probe, starting one
+    // terrain word to the right of the left-side base pointer.
+    const bool right_passable = !blocking(column + 1, row) && !blocking(column + 1, row + 1);
+    if (right_passable) {
+        const bool right_inner = blocking(column + 2, row + 1);
+        const bool right_outer = blocking(column + 3, row + 1);
+        (void)right_inner;
+        (void)right_outer;
+        flags.stop_right = blocking(column + 1, row + 2)
+            || (!grounded && blocking(column + 1, row + 3));
+    } else {
+        flags.stop_right = true;
+    }
+
+    // FFF0CB is the ceiling bit: the word immediately to the right of the
+    // base pointer at the probe row must be blocking. The ROM bounds-checks
+    // this pointer before testing it; the column bounds above provide the
+    // same protection for the fixed level map.
+    flags.stop_upward = blocking(column + 1, row);
+    return flags;
 }
 
 void Engine::load(
@@ -598,7 +657,11 @@ void Engine::apply_ground_movement(const InputState& input) {
     // (DAT_FFF0B0=3) and leaves PLAYER_VX clear. This is distinct from the
     // fixed-point velocity used for airborne motion and terrain launches.
     if (!terrain_side_blocked(direction)) {
-        player_.x = std::clamp(player_.x + direction * 3, 0x14, 0x130);
+        // The left-edge branch in Player_Update admits PLAYER_X=0x12 before
+        // the next input frame is held.  The 0x14 clamp used here was two
+        // pixels too conservative and made the wall-left differential stop
+        // early.
+        player_.x = std::clamp(player_.x + direction * 3, 0x12, 0x130);
     }
     player_.vx = 0;
 }
@@ -773,6 +836,11 @@ void Engine::update(const InputState& input) {
         return;
     }
     update_terrain_input(input);
+    const auto collision = level_.query_player_collision(
+        player_world_x(), player_world_y(), player_.grounded);
+    player_.terrain_stop_left_motion = collision.stop_left ? 0xFF : 0;
+    player_.terrain_stop_right_motion = collision.stop_right ? 0xFF : 0;
+    player_.terrain_stop_upward_motion = collision.stop_upward ? 0xFF : 0;
     const bool was_grounded = player_.grounded;
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
@@ -839,6 +907,7 @@ void Engine::update(const InputState& input) {
         camera_.vertical_threshold = 0x170;
         camera_.update_delay = 7;
     }
+
     // The ROM updates the follow camera before the tile-update dispatcher
     // consumes a pending 16-pixel reference shift. Keeping the rebase at the
     // end of the frame makes the externally visible state match that order:
@@ -857,6 +926,7 @@ void Engine::update(const InputState& input) {
     } else if (!player_.grounded) {
         last_ground_direction_ = 0;
     }
+
     const SpritePose desired_pose = !player_.grounded
         ? SpritePose::Jump
         : (!was_grounded
@@ -875,16 +945,31 @@ void Engine::update(const InputState& input) {
         input.left && !input.right,
         animation_context
     );
-    // Movement's stop transition (the zero-velocity branch at 0x001AE4F8)
-    // replaces the brake stream with the short deceleration stream. It is a
-    // gameplay-state write to FF7E60, not an F8 bytecode operation, so apply
-    // it after the actor VM tick just as the original frame does.
-    if (animation_.rom_loaded()
-        && desired_pose == SpritePose::Brake
-        && animation_.pose() == SpritePose::Brake
-        && player_.vx == 0
-        && animation_.stream_entry() != 0x001226CE) {
-        animation_.select_stream_entry(0x001226CE);
+    // Player_ProcessInteractionState at 0x001AE4F8 is a RAM-driven stream
+    // selector outside the common actor VM. Build its post-physics RAM view
+    // after the actor tick so the native path owns the same boundary as the
+    // ROM's interaction caller.
+    if (animation_.rom_loaded()) {
+        AnimationContext selector_context = animation_context;
+        selector_context.player_x = player_.x;
+        selector_context.player_y = player_.y;
+        selector_context.world_x = player_world_x();
+        selector_context.world_y = player_world_y();
+        selector_context.player_vx = player_.vx;
+        selector_context.player_vy = player_.vy;
+        selector_context.grounded = player_.grounded;
+        auto& selector = selector_context.selector;
+        selector.response_active = player_.terrain_response_active;
+        selector.landing_state = player_.terrain_landing_state;
+        selector.camera_special_mode = static_cast<std::uint8_t>(camera_.special_mode);
+        // The release path clears FFF0CC before entering 0x001AE4F8. The
+        // native terrain mirror still exposes its one-frame response value,
+        // so make this caller-side clear explicit in the selector state.
+        selector.response_timer =
+            desired_pose == SpritePose::Brake
+                ? 0
+                : std::max<std::uint8_t>(player_.terrain_response_timer_state, 1);
+        animation_.select_player_interaction_state(selector_context);
     }
     ++frame_;
 }
