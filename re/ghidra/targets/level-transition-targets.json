@@ -20,6 +20,7 @@
     { "address": "0x001B28A6", "name": "Scene transition state helper" },
     { "address": "0x001B3258", "name": "Scene transition status helper" },
     { "address": "0x001B326C", "name": "Scene transition completion helper" },
+    { "address": "0x001B56F4", "name": "Behavior-0x25 scene-state-5 transition branch" },
     { "address": "0x001B315C", "name": "Scene-script completion setter" },
     { "address": "0x001B3B96", "name": "Scene table state selector" },
     { "address": "0x001B3F0A", "name": "Scene table state-byte write" },
