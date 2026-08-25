@@ -1,0 +1,46 @@
+{
+  "campaign": "20260826-level01-fresh-route-probe-v1",
+  "status": "recorded",
+  "purpose": "Fresh-baseline natural-route probe from the recorded opening-ground state",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "d96db08",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "d96db08",
+  "working_tree_note": "The concurrent worktree changes were preserved and not staged by this campaign; the harness was run from that working tree.",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "command": "OPENALADDIN_ROM_SHA256=8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6 OPENALADDIN_TRACE_FRAMES=520 OPENALADDIN_INPUT=none*1,right*60,c+right*20,right*100,up+right*40,right*25,c+right*10,up*80,none*40,none*144 OPENALADDIN_CAPTURE=state OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_CHECKPOINTS=1=opening-ground-loaded,61=lower-run,81=jump-start,181=lower-crossing,221=lower-floor,261=rope-approach,341=rope-climb,520=route-stall OPENALADDIN_LOAD_STATE=build/re/campaigns/20260826-level01-fresh-baseline-v1/fresh-boot/states/genesis/opening-ground.sta tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+  "segments": [
+    {
+      "id": "straight-route",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/straight-route",
+      "frames": 520,
+      "input": "none*1,right*60,c+right*20,right*100,up+right*40,right*25,c+right*10,up*80,none*40,none*144",
+      "load_state": "opening-ground",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-baseline-v1/fresh-boot/states/genesis/opening-ground.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "opening-ground-loaded", "state": "straight-route/states/genesis/opening-ground-loaded.sta" },
+        { "frame": 61, "name": "lower-run", "state": "straight-route/states/genesis/lower-run.sta" },
+        { "frame": 81, "name": "jump-start", "state": "straight-route/states/genesis/jump-start.sta" },
+        { "frame": 181, "name": "lower-crossing", "state": "straight-route/states/genesis/lower-crossing.sta" },
+        { "frame": 221, "name": "lower-floor", "state": "straight-route/states/genesis/lower-floor.sta" },
+        { "frame": 261, "name": "rope-approach", "state": "straight-route/states/genesis/rope-approach.sta" },
+        { "frame": 341, "name": "rope-climb", "state": "straight-route/states/genesis/rope-climb.sta" },
+        { "frame": 520, "name": "route-stall", "state": "straight-route/states/genesis/route-stall.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "opening-ground-loaded", "segment": "straight-route", "frame": 1, "world": [268, 880], "grounded": true },
+    { "id": "lower-run", "segment": "straight-route", "frame": 61, "world": [445, 880], "grounded": true },
+    { "id": "jump-start", "segment": "straight-route", "frame": 81, "world": [505, 822], "vy": -404, "grounded": false },
+    { "id": "lower-crossing", "segment": "straight-route", "frame": 181, "world": [805, 880], "grounded": true },
+    { "id": "rope-approach", "segment": "straight-route", "frame": 261, "world": [1033, 836], "vy": -704, "grounded": false },
+    { "id": "route-stall", "segment": "straight-route", "frame": 520, "world": [1033, 880], "grounded": true, "result": "input schedule exhausted without advancing past the lower obstacle" }
+  ],
+  "next": "Use route-stall.sta to inspect the blocking actor/terrain interaction and test only recorded input variations from this exact state; do not discard the failed schedule."
+}
