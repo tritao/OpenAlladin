@@ -5,6 +5,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROM_PATH="${OPENALADDIN_ROM:-${ROOT_DIR}/rom/Disneys_Aladdin_U_p1.bin}"
 ASSET_DIR="${OPENALADDIN_ASSETS:-${ROOT_DIR}/build/assets/levels/level01}"
+SPRITE_DIR="${OPENALADDIN_SPRITES:-${ROOT_DIR}/build/assets/sprites}"
 
 if [[ ! -f "${ROM_PATH}" ]]; then
     echo "build.sh: ROM not found: ${ROM_PATH}" >&2
@@ -12,8 +13,10 @@ if [[ ! -f "${ROM_PATH}" ]]; then
 fi
 
 # Generated assets are ignored by Git. Recreate them automatically on a fresh
-# checkout or when the runtime-friendly level render is missing.
-if [[ ! -f "${ASSET_DIR}/background.ppm" ]]; then
+# checkout, when the runtime-friendly level render is missing, or when an old
+# pre-frame-origin sprite manifest is still present locally.
+if [[ ! -f "${ASSET_DIR}/background.ppm" || ! -f "${SPRITE_DIR}/frames.json" ]] \
+    || ! rg -q '"offset_pixels"' "${SPRITE_DIR}/frames.json"; then
     echo "build.sh: extracting assets from ${ROM_PATH}"
     python3 "${ROOT_DIR}/tools/oa.py" assets --rom "${ROM_PATH}"
 fi

@@ -2,6 +2,8 @@
 
 #include <SDL.h>
 
+#include "sprites.hpp"
+
 #include <cstdint>
 #include <iosfwd>
 #include <string>
@@ -167,7 +169,7 @@ private:
 
 class Engine {
 public:
-    void load(const std::string& asset_root);
+    void load(const std::string& asset_root, const std::string& sprite_root = {});
     void reset();
     void set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded);
     void set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state);
@@ -193,12 +195,15 @@ private:
     bool terrain_side_blocked(int direction) const;
     void apply_ground_movement(const InputState& input);
     void apply_terrain_behavior(const Level::TerrainCell& cell);
+    SpritePose sprite_pose() const;
     int visual_x() const;
     int visual_y() const;
 
     Level level_;
     PlayerState player_;
     CameraState camera_;
+    SpriteDatabase sprites_;
+    bool sprite_run_ = false;
     int frame_ = 0;
     int last_ground_direction_ = 0;
     bool quit_ = false;

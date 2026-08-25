@@ -95,14 +95,26 @@ The first runtime slice is now buildable from the extracted level-01 assets.
 It renders the exact Genesis background pixels, loads the big-endian terrain
 map and `floor.bin` behavior table, and implements the recovered player 8.8
 motion integrator, jump impulse, gravity miss path, and surface snapping.
-The player is intentionally a diagnostic silhouette until the recovered player
-sprite-frame format is connected to the animation VM.
+The player now uses the extracted Chopper sprite database. The native runtime
+decodes `build/assets/sprites/frames.json` and its `.SEG` tile sets into
+palette-indexed multipart frames. Animation VM logic is intentionally not part
+of this slice: idle, run, and jump hard-select frames 201, 202, and 161,
+respectively. Chopper's 0x80/0x80 frame origin, part offsets, source-order
+layering, palette lines, and renderer X/Y flips are covered by the pure sprite
+renderer test.
 
 Regenerate the runtime-friendly PPM render and build it with:
 
 ```bash
 ./build.sh
 ./run.sh
+```
+
+Run the focused sprite checks with:
+
+```bash
+make -C src test-sprites
+python3 tests/native_sprites.py
 ```
 
 For a deterministic headless smoke test:
@@ -115,5 +127,5 @@ Use `--demo` with that command to run a deterministic right-and-jump input
 sequence for smoke testing.
 
 Arrow keys or A/D apply horizontal input; Space or C jumps. The next runtime
-slice should replace the silhouette with the already-extracted player frame
-streams, then add the confirmed animation and movement VM interpreters.
+slice can add confirmed animation and movement VM interpreters without mixing
+those questions with graphics-format decoding.

@@ -12,8 +12,6 @@ namespace {
 
 constexpr int kScreenWidth = 320;
 constexpr int kScreenHeight = 224;
-constexpr int kPlayerHeight = 24;
-constexpr int kPlayerWidth = 16;
 constexpr int kTerrainVisualOffsetY = 0xF0;
 constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
 
@@ -266,8 +264,12 @@ Level::TerrainQuery Level::query_player(int world_x, int world_y) const {
     return query;
 }
 
-void Engine::load(const std::string& asset_root) {
+void Engine::load(const std::string& asset_root, const std::string& sprite_root) {
     level_.load(asset_root);
+    sprites_.load(sprite_root.empty() ? asset_root + "/../../sprites" : sprite_root);
+    // Level-01 captures show the player using CRAM line 2. Reuse the exact
+    // extracted scene palette instead of the Chopper preview fallback.
+    sprites_.set_palette(level_.palette());
     framebuffer_.resize(static_cast<std::size_t>(kScreenWidth * kScreenHeight));
     reset();
 }
@@ -294,6 +296,7 @@ void Engine::reset() {
     frame_ = 0;
     last_ground_direction_ = 0;
     quit_ = false;
+    sprite_run_ = false;
 }
 
 void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded) {
@@ -307,6 +310,7 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     player_.terrain_landing_state = grounded && player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
     quit_ = false;
+    sprite_run_ = false;
 }
 
 void Engine::set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state) {
@@ -327,6 +331,13 @@ int Engine::visual_x() const {
 int Engine::visual_y() const {
     // The terrain resolver indexes rows from WORLD_CAMERA_Y + PLAYER_Y - 0xF0.
     return player_world_y() - kTerrainVisualOffsetY;
+}
+
+SpritePose Engine::sprite_pose() const {
+    if (!player_.grounded) {
+        return SpritePose::Jump;
+    }
+    return sprite_run_ ? SpritePose::Run : SpritePose::Idle;
 }
 
 void Engine::update_terrain_input(const InputState& input) {
@@ -683,10 +694,14 @@ void Engine::update_state08(const InputState& input) {
 
 void Engine::update(const InputState& input) {
     if (camera_.scene_state == 8) {
+        sprite_run_ = false;
         update_state08(input);
         ++frame_;
         return;
     }
+    // This is only a hard pose selector for the graphics slice. It does not
+    // advance or interpret the animation VM stream.
+    sprite_run_ = player_.grounded && input.left != input.right;
     update_terrain_input(input);
     const bool was_grounded = player_.grounded;
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
@@ -787,6 +802,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"vx\":" << player_.vx
            << ",\"vy\":" << player_.vy
            << ",\"animation_pc\":0"
+           << ",\"sprite_frame\":" << sprites_.frame_for(sprite_pose()).index
            << ",\"grounded\":" << (trace_grounded ? "true" : "false") << "}"
            << ",\"scene\":{\"state\":" << camera_.scene_state
            << ",\"script_cursor\":0"
@@ -872,22 +888,19 @@ void Engine::render(SDL_Renderer* renderer) {
         }
     }
 
-    const int player_screen_x = visual_x() - camera_render_x_ - kPlayerWidth / 2;
-    const int player_screen_y = visual_y() - camera_render_y_ - kPlayerHeight;
-    SDL_Color body = level_.palette().size() > 14 ? level_.palette()[14] : SDL_Color{255, 180, 40, 255};
-    SDL_Color outline = level_.palette().size() > 15 ? level_.palette()[15] : SDL_Color{255, 255, 255, 255};
-    for (int y = 0; y < kPlayerHeight; ++y) {
-        for (int x = 0; x < kPlayerWidth; ++x) {
-            const int screen_x = player_screen_x + x;
-            const int screen_y = player_screen_y + y;
-            if (screen_x < 0 || screen_x >= kScreenWidth || screen_y < 0 || screen_y >= kScreenHeight) {
-                continue;
-            }
-            const bool edge = x == 0 || x == kPlayerWidth - 1 || y == 0 || y == kPlayerHeight - 1;
-            const SDL_Color color = edge ? outline : body;
-            framebuffer_[static_cast<std::size_t>(screen_y * kScreenWidth + screen_x)] = rgba(color.r, color.g, color.b);
-        }
-    }
+    const SpriteFrame& player_frame = sprites_.frame_for(sprite_pose());
+    SpriteRenderer::draw(
+        player_frame,
+        sprites_.palette(),
+        framebuffer_,
+        kScreenWidth,
+        kScreenHeight,
+        visual_x() - camera_render_x_,
+        visual_y() - camera_render_y_,
+        false,
+        false,
+        SpriteDatabase::kPlayerPaletteLine
+    );
 
     if (texture_ == nullptr) {
         // RGBA32 means RGBA byte order on the host. RGBA8888 is a packed

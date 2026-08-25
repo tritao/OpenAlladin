@@ -108,6 +108,11 @@ Aladdin level-dump tool: the level table, RNC/ProPack method 1 data, Genesis
 character tiles, block maps, parallax tiles, and palettes. The sprite path
 implements the Aladdin Chopper runtime frame and tile tables.
 
+The current native graphics slice hard-selects the player frame records in
+`re/assets/player_sprite.yml`. It uses no animation VM timing yet. The
+0x80/0x80 Chopper frame origin is normalized into pixel offsets by the
+extractor, and level-01's observed CRAM palette line 2 is used for the player.
+
 The RNC path scans the entire ROM, decodes every valid `RNC\x01` block, and
 records known level-table consumers. Blocks without a known consumer are
 preserved in `rnc/blocks/` and listed as unassigned discovery targets.

@@ -1,0 +1,17 @@
+# Hard-selected graphics slice. This is intentionally not an animation VM.
+# Frame indices come from the first concrete references in animations.json:
+# idle/run use the standard player stream and jump uses the jump stream.
+origin: [0x80, 0x80]
+palette_line: 2
+
+frames:
+  idle: 201
+  run: 202
+  jump: 161
+
+confidence: probable
+evidence:
+  - build_assets_animations_PLAYER_ANIM_IDLE
+  - build_assets_animations_PLAYER_ANIM_RUN
+  - build_assets_animations_PLAYER_ANIM_JUMP
+  - mame_level01_cram_palette_line_2

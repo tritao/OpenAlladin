@@ -14,9 +14,10 @@ LDLIBS += $(SDL2_LIBDIR)/libSDL2.a -lm -l:libasound.so.2 -ldl -lpthread -l:libpu
 	-l:libwayland-cursor.so.0 -l:libxkbcommon.so.0 -l:libdecor-0.so.0
 
 TARGET := $(ROOT)/build/openaladdin
-OBJECTS := $(BUILD_DIR)/engine.o $(BUILD_DIR)/main.o
+OBJECTS := $(BUILD_DIR)/engine.o $(BUILD_DIR)/sprites.o $(BUILD_DIR)/main.o
+SPRITE_TEST := $(ROOT)/build/sprite_renderer_test
 
-.PHONY: all clean
+.PHONY: all clean test-sprites
 
 all: $(TARGET)
 
@@ -26,11 +27,20 @@ $(BUILD_DIR):
 $(BUILD_DIR)/engine.o: engine.cpp engine.hpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -I. -MMD -MP -c $< -o $@
 
+$(BUILD_DIR)/sprites.o: sprites.cpp sprites.hpp | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -I. -MMD -MP -c $< -o $@
+
 $(BUILD_DIR)/main.o: main.cpp engine.hpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -I. -MMD -MP -c $< -o $@
 
 $(TARGET): $(OBJECTS)
 	$(CXX) $(LDFLAGS) $(OBJECTS) $(LDLIBS) -o $@
+
+test-sprites: $(SPRITE_TEST)
+	$(SPRITE_TEST)
+
+$(SPRITE_TEST): ../tests/sprite_renderer.cpp sprites.cpp sprites.hpp
+	$(CXX) $(CXXFLAGS) -I. ../tests/sprite_renderer.cpp sprites.cpp -o $@
 
 -include $(OBJECTS:.o=.d)
 

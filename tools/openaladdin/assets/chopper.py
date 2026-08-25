@@ -16,6 +16,7 @@ BANK_OFFSETS = (0x9500, 0x9600, 0x9700)
 REQUIRED_MATCH_COUNT = 8
 MAX_VALID_PART_COUNT = 128
 MAX_TILE_SIZE = 16
+FRAME_ORIGIN = 0x80
 
 # The same default palette documented by the Noesis Chopper script.  Runtime
 # palette association is game-state dependent, so it is kept explicit in the
@@ -36,10 +37,6 @@ def _u16(data: bytes, offset: int) -> int:
 
 def _u32(data: bytes, offset: int) -> int:
     return int.from_bytes(data[offset:offset + 4], "big")
-
-
-def _signed8(value: int) -> int:
-    return value - 256 if value & 0x80 else value
 
 
 @dataclass
@@ -72,15 +69,36 @@ class ChopperPart:
     info: ChopperTileInfo
     tile_index: int | None = None
 
+    @property
+    def offset_pixels(self) -> tuple[int, int]:
+        """Return the part offset relative to Chopper's 0x80 frame origin.
+
+        The Genesis export stores coordinates in a 256-pixel frame plane.  A
+        byte value of 0x80 is the frame origin; the bytes are not ordinary
+        signed 8-bit values.  Treating 0x74 as +116 instead of -12 was the
+        reason the first extracted player renders were hundreds of pixels
+        wide.
+        """
+        return (self.offset_raw[0] - FRAME_ORIGIN, self.offset_raw[1] - FRAME_ORIGIN)
+
     def as_json(self) -> dict[str, Any]:
+        offset_pixels = self.offset_pixels
         return {
             "info_address": f"0x{self.info_address:06X}",
             "offset": list(self.offset_raw),
-            "offset_signed": [_signed8(v) for v in self.offset_raw],
+            "offset_signed": list(offset_pixels),
+            "offset_pixels": list(offset_pixels),
+            "origin": [FRAME_ORIGIN, FRAME_ORIGIN],
             "tile_address": f"0x{self.tile_address:06X}",
             "tile_size": self.tile_size,
             "tile_set": self.info.key,
             "tile_index": self.tile_index,
+            # Chopper's Genesis frame records do not carry VDP palette or
+            # flip flags.  Keep the runtime defaults explicit so consumers
+            # do not have to infer them from missing JSON fields.
+            "palette_line": 0,
+            "flip_x": False,
+            "flip_y": False,
             "tile_info": {
                 "address": f"0x{self.info.address:06X}",
                 "memory_size": self.info.memory_size,
@@ -103,9 +121,15 @@ class ChopperFrame:
         return {
             "address": f"0x{self.address:06X}",
             "struct_size": self.struct_size,
+            "origin": [FRAME_ORIGIN, FRAME_ORIGIN],
             "collision_min": list(self.collision_min),
             "collision_max": list(self.collision_max),
-            "parts": [part.as_json() for part in self.parts],
+            "collision_min_pixels": [value - FRAME_ORIGIN for value in self.collision_min],
+            "collision_max_pixels": [value - FRAME_ORIGIN for value in self.collision_max],
+            "parts": [
+                {**part.as_json(), "layer": layer}
+                for layer, part in enumerate(self.parts)
+            ],
         }
 
 
@@ -222,7 +246,7 @@ def _default_palette() -> list[tuple[int, int, int, int]]:
 def _render_frame(frame: ChopperFrame, tile_sets: dict[str, _TileSet], output: Path) -> None:
     bounds = []
     for part in frame.parts:
-        x, y = (_signed8(part.offset_raw[0]), _signed8(part.offset_raw[1]))
+        x, y = part.offset_pixels
         bounds.append((x, y, x + part.info.pixel_width, y + part.info.pixel_height))
     if not bounds:
         return
@@ -238,8 +262,8 @@ def _render_frame(frame: ChopperFrame, tile_sets: dict[str, _TileSet], output: P
         tile_set = tile_sets[part.info.key]
         assert part.tile_index is not None
         base = part.tile_index * tile_set.tile_bytes
-        x0 = _signed8(part.offset_raw[0]) - min_x
-        y0 = _signed8(part.offset_raw[1]) - min_y
+        x0 = part.offset_pixels[0] - min_x
+        y0 = part.offset_pixels[1] - min_y
         for ty in range(part.info.tile_height):
             for tx in range(part.info.tile_width):
                 tile_offset = base + (ty * part.info.tile_width + tx) * 32

@@ -15,6 +15,7 @@ namespace {
 
 struct Options {
     std::string assets = "build/assets/levels/level01";
+    std::string sprites = "build/assets/sprites";
     int frames = -1;
     bool no_window = false;
     bool demo = false;
@@ -112,6 +113,8 @@ Options parse_options(int argc, char** argv) {
         const std::string argument = argv[i];
         if (argument == "--assets" && i + 1 < argc) {
             options.assets = argv[++i];
+        } else if (argument == "--sprites" && i + 1 < argc) {
+            options.sprites = argv[++i];
         } else if (argument == "--frames" && i + 1 < argc) {
             options.frames = std::stoi(argv[++i]);
         } else if (argument == "--no-window") {
@@ -127,7 +130,7 @@ Options parse_options(int argc, char** argv) {
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
-            std::cout << "usage: openaladdin [--assets DIR] [--frames N] [--no-window] [--demo]\n"
+            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--frames N] [--no-window] [--demo]\n"
                          "       [--state-output PATH] [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
                          "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n";
@@ -152,7 +155,7 @@ int main(int argc, char** argv) {
         }
 
         openaladdin::Engine engine;
-        engine.load(options.assets);
+        engine.load(options.assets, options.sprites);
         if (!options.checkpoint_player.empty()) {
             const auto checkpoint = parse_checkpoint(options.checkpoint_player);
             engine.set_checkpoint(
