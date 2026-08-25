@@ -243,6 +243,7 @@ def command_trace(args: argparse.Namespace) -> int:
         "OPENALADDIN_CAPTURE_VDP",
         "OPENALADDIN_EXPERIMENT_ACTIONS",
         "OPENALADDIN_STATE_SYNC",
+        "OPENALADDIN_TRACE_EDGES",
     ):
         environment.pop(key, None)
     environment.update({
@@ -271,6 +272,8 @@ def command_trace(args: argparse.Namespace) -> int:
     if args.state_sync:
         environment["OPENALADDIN_STATE_SYNC"] = "1"
         environment["OPENALADDIN_STATE_OUTPUT"] = "1"
+    if args.edges:
+        environment["OPENALADDIN_TRACE_EDGES"] = "1"
 
     status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
     if status == 0:
@@ -543,6 +546,7 @@ def command_regression(args: argparse.Namespace) -> int:
         "OPENALADDIN_CAPTURE_VDP",
         "OPENALADDIN_EXPERIMENT_ACTIONS",
         "OPENALADDIN_STATE_SYNC",
+        "OPENALADDIN_TRACE_EDGES",
     ):
         environment.pop(key, None)
     state_sync = os.environ.get("OPENALADDIN_STATE_SYNC", "1") == "1"
@@ -813,7 +817,8 @@ def print_status(rom: Path) -> int:
         summary = coverage.get("summary") or {}
         print(
             f"Runtime coverage    {summary.get('unique_pc_count', 0)} PCs / "
-            f"{summary.get('scenario_count', 0)} scenarios"
+            f"{summary.get('scenario_count', 0)} scenarios / "
+            f"{summary.get('unique_edge_count', 0)} edges"
         )
     except (OSError, TypeError, ValueError, json.JSONDecodeError):
         print("Runtime coverage    missing")
@@ -891,6 +896,7 @@ def build_parser() -> argparse.ArgumentParser:
     trace.add_argument("--load-state")
     trace.add_argument("--capture-vdp", action=argparse.BooleanOptionalAction, default=None)
     trace.add_argument("--state-sync", action="store_true", help="sample state at the stable game-loop boundary")
+    trace.add_argument("--edges", action="store_true", help="capture indirect dispatch targets in MAME debug.log")
     trace.set_defaults(function=command_trace)
 
     regression = commands.add_parser("regression", help="differentially compare MAME and native gameplay")

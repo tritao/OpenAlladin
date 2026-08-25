@@ -126,6 +126,12 @@ end
 
 local vdp_taps = vdp.install_taps(space, symbol("VDP_DATA"))
 
+local edge_tracer = dofile(root .. "/re/mame/lua/edges.lua")({
+    cpu = cpu,
+    symbol = symbol,
+    read_u32 = read_u32
+})
+
 local function scene_runtime_json()
     return json_object({
         { "state", tostring(read_u8(symbol("SCENE_STATE"))) },
@@ -603,6 +609,9 @@ write_record({
     { "memory_poke_spec", json_string(memory_poke_spec) },
     { "preload_state", json_string(preload_state) },
     { "breakpoint_list", json_string(breakpoint_list) },
+    { "edge_trace", json_bool(edge_tracer.enabled) },
+    { "edge_target_count", tostring(edge_tracer.target_count) },
+    { "edge_table_count", tostring(edge_tracer.table_count) },
     { "actor_injection_frame", tostring(inject_actor_frame) },
     { "actor_injection_slot", tostring(inject_actor_slot) },
     { "actor_injection_type", tostring(inject_actor_type) },

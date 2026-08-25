@@ -7,6 +7,7 @@ from ghidra.program.model.listing import BookmarkType
 
 
 CATEGORY = "OpenAladdin Runtime Coverage"
+EDGE_CATEGORY = "OpenAladdin Runtime Edges"
 
 
 def address_value(address):
@@ -18,7 +19,7 @@ def clear_old_bookmarks(bookmark_manager):
     stale = []
     while iterator.hasNext():
         bookmark = iterator.next()
-        if bookmark.getCategory() == CATEGORY:
+        if bookmark.getCategory() in (CATEGORY, EDGE_CATEGORY):
             stale.append(bookmark)
     for bookmark in stale:
         bookmark_manager.removeBookmark(bookmark)
@@ -32,13 +33,17 @@ def run():
     output_path = arguments[1]
     with open(coverage_path, "r") as stream:
         coverage = json.load(stream)
-    if coverage.get("format") != "openaladdin-runtime-coverage-v1":
+    if coverage.get("format") not in (
+        "openaladdin-runtime-coverage-v1",
+        "openaladdin-runtime-coverage-v2",
+    ):
         raise RuntimeError("unsupported runtime coverage format")
 
     bookmark_manager = currentProgram.getBookmarkManager()
     clear_old_bookmarks(bookmark_manager)
     function_manager = currentProgram.getFunctionManager()
     rows = []
+    edge_rows = []
     skipped = []
     functions = {}
     for raw_address, observation in sorted(coverage.get("pcs", {}).items()):
@@ -68,11 +73,33 @@ def run():
             functions[function_key]["pc_count"] += 1
         rows.append({"address": raw_address, "function": function_key, "scenarios": scenarios})
 
+    for edge in coverage.get("edges", []):
+        target_value = int(edge["target"], 0)
+        target = currentProgram.getAddressFactory().getDefaultAddressSpace().getAddress(target_value)
+        block = currentProgram.getMemory().getBlock(target)
+        if block is None or not block.isExecute():
+            continue
+        comment = "source={} tables={} scenarios={} samples={}".format(
+            edge.get("source"),
+            ",".join(edge.get("tables", [])),
+            ",".join(edge.get("scenarios", [])),
+            edge.get("sample_count", 0),
+        )
+        bookmark_manager.setBookmark(target, BookmarkType.NOTE, EDGE_CATEGORY, comment)
+        edge_rows.append({
+            "source": edge.get("source"),
+            "target": edge.get("target"),
+            "tables": edge.get("tables", []),
+            "scenarios": edge.get("scenarios", []),
+        })
+
     report = {
-        "format": "openaladdin-ghidra-runtime-coverage-v1",
+        "format": "openaladdin-ghidra-runtime-coverage-v2",
         "coverage": os.path.abspath(coverage_path),
         "bookmark_category": CATEGORY,
         "bookmark_count": len(rows),
+        "edge_bookmark_category": EDGE_CATEGORY,
+        "edge_bookmark_count": len(edge_rows),
         "skipped": skipped,
         "functions": {
             key: {
@@ -83,6 +110,7 @@ def run():
             for key, value in sorted(functions.items())
         },
         "pcs": rows,
+        "edges": edge_rows,
     }
     with open(output_path, "w") as stream:
         json.dump(report, stream, indent=2, sort_keys=True)
