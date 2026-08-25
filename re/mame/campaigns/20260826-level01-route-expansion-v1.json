@@ -1,0 +1,182 @@
+{
+  "campaign": "20260826-level01-route-expansion-v1",
+  "status": "in-progress",
+  "purpose": "Replayable lower-gap, handhold, rope, ledge, and upper-guard route exploration",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "ead99907c876d7b6ab27480a489a0948e9805f21",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "natural-lower-route-v1",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/natural-lower-route-v1",
+      "frames": 520,
+      "input": "none*1,right*60,c+right*20,right*100,up+right*40,right*25,c+right*10,up*80,none*40,none*144",
+      "load_state": "level01-entry",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/boot-route/states/genesis/level01-entry.sta",
+      "result": "stalled at world (868,880); retained as a failed timing hypothesis",
+      "checkpoints": [
+        { "frame": 1, "name": "level01-entry-loaded" },
+        { "frame": 62, "name": "first-run-segment" },
+        { "frame": 82, "name": "first-gap-jump" },
+        { "frame": 182, "name": "middle-run" },
+        { "frame": 222, "name": "upper-transfer" },
+        { "frame": 247, "name": "upper-platform" },
+        { "frame": 257, "name": "second-jump" },
+        { "frame": 337, "name": "gap-approach" },
+        { "frame": 377, "name": "gap-branch" },
+        { "frame": 450, "name": "lower-route-settled" },
+        { "frame": 520, "name": "route-end" }
+      ]
+    },
+    {
+      "id": "gap-rope-route-v1",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/gap-rope-route-v1",
+      "frames": 375,
+      "input": "none*1,right*60,c+right*20,right*100,up+right*40,right*25,c+right*10,up*80,none*39",
+      "load_state": "gap-entrance",
+      "loaded_state_source": "build/re/natural-gap-branch-base-20260825/states/genesis/gap-entrance.sta",
+      "result": "confirmed lower-gap crossing, lower floor, and rope climb; scene remains 0x01",
+      "checkpoints": [
+        { "frame": 1, "name": "gap-entrance-loaded" },
+        { "frame": 61, "name": "lower-gap-run" },
+        { "frame": 181, "name": "lower-gap-crossing" },
+        { "frame": 221, "name": "lower-floor" },
+        { "frame": 261, "name": "rope-approach" },
+        { "frame": 321, "name": "rope-climb" },
+        { "frame": 341, "name": "rope-top" },
+        { "frame": 375, "name": "rope-top-settled" }
+      ]
+    },
+    {
+      "id": "gap-handhold-branch-v2",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/gap-handhold-branch-v2",
+      "frames": 240,
+      "input": "none*1,right*60,c+right*20,c*10,right*110,none*38",
+      "load_state": "gap-entrance",
+      "loaded_state_source": "build/re/natural-gap-branch-base-20260825/states/genesis/gap-entrance.sta",
+      "result": "confirmed type 0x6A spawn and exact type 0x6A to 0x6B handhold grab at frame 119",
+      "checkpoints": [
+        { "frame": 1, "name": "gap-entrance-loaded" },
+        { "frame": 44, "name": "handhold-spawned" },
+        { "frame": 119, "name": "handhold-grabbed" },
+        { "frame": 181, "name": "handhold-fall" },
+        { "frame": 240, "name": "handhold-branch-end" }
+      ]
+    },
+    {
+      "id": "handhold-rope-loop-v1",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/handhold-rope-loop-v1",
+      "frames": 560,
+      "input": "none*1,c+right*120,right*30,up*100,c+left*12,left*60,none*237",
+      "load_state": "handhold-grabbed",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/gap-handhold-branch-v2/states/genesis/handhold-grabbed.sta",
+      "result": "confirmed closed handhold-to-upper-platform-to-rope loop; scene remains 0x01",
+      "checkpoints": [
+        { "frame": 1, "name": "handhold-grabbed-loaded" },
+        { "frame": 122, "name": "upper-platform-spring" },
+        { "frame": 152, "name": "rope-base" },
+        { "frame": 252, "name": "rope-upper-stop" },
+        { "frame": 264, "name": "dismount-start" },
+        { "frame": 324, "name": "upper-platform-return" },
+        { "frame": 560, "name": "loop-settled" }
+      ]
+    },
+    {
+      "id": "rope-upper-transfer-v1",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/rope-upper-transfer-v1",
+      "frames": 180,
+      "input": "none*1,up*100,c+left*12,left*60,none*7",
+      "load_state": "rope-top",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/gap-rope-route-v1/states/genesis/rope-top.sta",
+      "result": "confirmed upper rope stop at (2104,655) and dismount to (1946,690)",
+      "checkpoints": [
+        { "frame": 1, "name": "rope-top-loaded" },
+        { "frame": 101, "name": "upper-rope-stop" },
+        { "frame": 113, "name": "upper-dismount" },
+        { "frame": 173, "name": "upper-platform" },
+        { "frame": 180, "name": "upper-platform-settled" }
+      ]
+    },
+    {
+      "id": "upper-to-handhold-v1",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/upper-to-handhold-v1",
+      "frames": 180,
+      "input": "none*1,left*120,none*59",
+      "load_state": "upper-platform",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/rope-upper-transfer-v1/states/genesis/upper-platform-settled.sta",
+      "result": "failed branch: direct left run falls to lower band before the handhold",
+      "checkpoints": [
+        { "frame": 1, "name": "upper-platform-loaded" },
+        { "frame": 61, "name": "upper-left-run" },
+        { "frame": 101, "name": "handhold-approach" },
+        { "frame": 121, "name": "handhold-contact" },
+        { "frame": 180, "name": "handhold-route-end" }
+      ]
+    },
+    {
+      "id": "upper-left-ledge-route-v1",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/upper-left-ledge-route-v1",
+      "frames": 210,
+      "input": "none*1,up*60,c+left*100,none*40,none*9",
+      "load_state": "upper-rope-stop",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/rope-upper-transfer-v1/states/genesis/upper-rope-stop.sta",
+      "result": "confirmed upper-left ledge at world (1865,690), scene 0x01",
+      "checkpoints": [
+        { "frame": 1, "name": "upper-rope-stop-loaded" },
+        { "frame": 61, "name": "upper-rope-climb" },
+        { "frame": 161, "name": "left-transfer" },
+        { "frame": 201, "name": "upper-left-ledge" },
+        { "frame": 210, "name": "ledge-settled" }
+      ]
+    },
+    {
+      "id": "upper-left-ledge-guard-v1",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/upper-left-ledge-guard-v1",
+      "frames": 262,
+      "input": "none*1,none*30,right*10,b*1,none*10,b*1,none*10,b*1,none*20,right*120,none*58",
+      "load_state": "upper-left-ledge",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/upper-left-ledge-route-v1/states/genesis/left-transfer.sta",
+      "result": "confirmed sword sequence and return to rope base at (2104,721)",
+      "checkpoints": [
+        { "frame": 1, "name": "upper-left-ledge-loaded" },
+        { "frame": 31, "name": "guard-approach" },
+        { "frame": 41, "name": "guard-sword-1" },
+        { "frame": 52, "name": "guard-sword-2" },
+        { "frame": 63, "name": "guard-sword-3" },
+        { "frame": 83, "name": "guard-cleared" },
+        { "frame": 203, "name": "rope-base-approach" },
+        { "frame": 262, "name": "guard-route-end" }
+      ]
+    },
+    {
+      "id": "upper-guard-route-v1",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/upper-guard-route-v1",
+      "frames": 210,
+      "input": "none*1,right*55,b+right*50,right*100,none*4",
+      "load_state": "high-platform-right-edge",
+      "loaded_state_source": "build/re/high-platform-right-edge-checkpoint-20260825/states/genesis/high-platform-right-edge.sta",
+      "result": "controlled upper-walkway branch: guard clears, then edge falls to lower band; no scene transition",
+      "checkpoints": [
+        { "frame": 1, "name": "high-platform-loaded" },
+        { "frame": 56, "name": "guard-approach" },
+        { "frame": 91, "name": "guard-cleared" },
+        { "frame": 141, "name": "upper-walkway" },
+        { "frame": 210, "name": "upper-edge-fall" }
+      ]
+    }
+  ],
+  "significant_events": [
+    "lower-gap crossing",
+    "type-0x6A handhold spawn and type-0x6B grab",
+    "handhold-to-rope closed loop",
+    "upper rope stop and dismount",
+    "upper-left ledge",
+    "sword-cleared guard route",
+    "upper walkway edge fall",
+    "natural route timing hypothesis stalled at world x=868"
+  ],
+  "next": "Use the saved lower-gap and upper-left-ledge states to trace the missing moving-platform/high-walkway transfer and then resume the natural level-01 exit search."
+}
