@@ -57,6 +57,7 @@ def decode_scene_table(data: bytes, table: dict[str, Any]) -> dict[str, Any]:
     pointer_offset = parse_int(table["pointer_offset"])
     state_offset = parse_int(table["state_offset"])
     metadata_offset = parse_int(table["metadata_offset"])
+    table_end = address + entry_size * count
     entries = []
     for index in range(count):
         entry_address = address + index * entry_size
@@ -72,6 +73,7 @@ def decode_scene_table(data: bytes, table: dict[str, Any]) -> dict[str, Any]:
             "metadata": _hex(metadata, 2),
             "pointer_in_rom": in_rom,
             "pointer_alignment": pointer & 1,
+            "pointer_overlaps_table": address <= pointer < table_end,
             "pointer_preview": _preview(data, pointer) if in_rom else "",
         })
     return {
