@@ -277,6 +277,51 @@ experiments:
           value: 43
           width: u8
 
+  - name: terrain-handler-29
+    description: Exercise the launch terrain handler through an opening-ground runtime table fixture.
+    frames: 1310
+    boot:
+      scenario: first-level
+    pokes:
+      frame: 1300
+      memory:
+        - symbol: WORLD_CAMERA_X
+          value: 16
+          width: u16
+        - symbol: WORLD_CAMERA_Y
+          value: 464
+          width: u16
+        - symbol: PLAYER_X
+          value: 87
+          width: u16
+        - symbol: PLAYER_Y
+          value: 416
+          width: u16
+        - symbol: PLAYER_WORLD_X
+          value: 103
+          width: u16
+        - symbol: PLAYER_WORLD_Y
+          value: 880
+          width: u16
+        - symbol: PLAYER_VY
+          value: 0
+          width: u16
+        - symbol: TERRAIN_RESPONSE_ACTIVE
+          value: 0
+          width: u8
+        - symbol: TERRAIN_LANDING_STATE
+          value: 0
+          width: u8
+        - symbol: SCENE_STATE
+          value: 1
+          width: u8
+        # Row 40/column 7 contains map word 0x6C20, so the resolver indexes
+        # TERRAIN_BEHAVIOR_INDEX_TABLE + (0x6C20 >> 1) = +0x3610.
+        - symbol: TERRAIN_BEHAVIOR_INDEX_TABLE
+          offset: 0x3610
+          value: 41
+          width: u8
+
   - name: terrain-wall-left
     description: Approach the left edge from inside the opening room and capture horizontal correction flags.
     frames: 1400

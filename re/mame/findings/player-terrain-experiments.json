@@ -155,6 +155,45 @@
         }
       }
     },
+    "terrain-handler-0x29": {
+      "trace": "build/re/traces/terrain-handler-29-v2/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-29-v2/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x29",
+        "handler": "0x001B557E"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x29",
+        "camera": [16, 464],
+        "player": [87, 416, 0, 0],
+        "world": [103, 880],
+        "response_active": 0,
+        "landing_state": 0
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "launch_velocity_writes": {
+          "PLAYER_VX": -1024,
+          "PLAYER_VY": -1280
+        },
+        "post_integrator_velocity_sequence": [[-984, -1220], [-944, -1160]],
+        "response_active": 255,
+        "vertical_stop": 0,
+        "response_timer_state": 0,
+        "landing_state": 1,
+        "grounded": true,
+        "animation_stream_unchanged": "0x00121E46",
+        "sound_parameter": "0x001221B8"
+      }
+    },
     "terrain-handler-0x47": {
       "trace": "build/re/terrain-target-47-v3/state.jsonl",
       "cell": {
@@ -200,6 +239,7 @@
     "dispatch": "handler is called on every resolver pass; handler-local guards/latches control repetition",
     "surface_mode": "FFF0A4 is the toggled mode word; FFF0C2 is the 0x47 one-shot latch",
     "landing_response": "behavior 0x30 subtracts 0x7C from PLAYER_VY, clears FFF0B0/FFF0CC, arms FFF0C1, and aligns PLAYER_X through 0x001A99C6",
+    "launch_response": "behavior 0x29 requires FFF0BE clear, writes PLAYER_VX=-0x400 and PLAYER_VY=-0x500, clears FFF0C0/FFF0CC, and sets FFF0BE",
     "removed_heuristics": ["nearby support-row search", "behavior < 0xE0 solid test", "player-sized horizontal rectangle scan"]
   }
 }

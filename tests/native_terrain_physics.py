@@ -15,6 +15,7 @@ SPECIAL_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/special-state.jso
 SPAWN_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/spawn-state.jsonl"
 LANDING_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/landing-handler-state.jsonl"
 HANDLER_2B_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2b-state.jsonl"
+HANDLER_29_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-29-state.jsonl"
 STOP_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/stop-state.jsonl"
 COLLISION_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/collision-state.jsonl"
 RIGHT_PROBE_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/right-probe-state.jsonl"
@@ -196,6 +197,46 @@ def main() -> int:
     assert handler_2b["player"]["y"] == 408
     assert handler_2b["player"]["vy"] == 180
     assert handler_2b["player"]["animation_pc"] == 0x0012181A
+
+    # Behavior 0x29 launches from a clear response state. The ROM writes the
+    # launch velocities, clears the vertical/timer latches, and leaves the
+    # current animation stream unchanged while the landing pass keeps the
+    # player grounded for this frame.
+    handler_29_command = [
+        str(ROOT / "build/openaladdin"),
+        "--no-window",
+        "--frames",
+        "2",
+        "--state-output",
+        str(HANDLER_29_OUTPUT),
+        "--actor-records",
+        "/dev/null",
+        "--checkpoint-player",
+        "87,416,0,0,1",
+        "--checkpoint-terrain-behavior",
+        "0x29",
+        "--checkpoint-animation",
+        "0x121E46,0",
+        "--checkpoint-camera",
+        "16,464,16,464,0,0,1",
+    ]
+    subprocess.run(handler_29_command, cwd=ROOT, env=environment, check=True)
+    with HANDLER_29_OUTPUT.open(encoding="utf-8") as stream:
+        handler_29_states = {
+            record["frame"]: record
+            for record in map(json.loads, stream)
+            if record.get("type") == "state"
+        }
+    handler_29 = handler_29_states[1]
+    assert handler_29["terrain"]["behavior"] == 0x29
+    assert handler_29["terrain"]["response_active"] == 0xFF
+    assert handler_29["terrain"]["vertical_stop"] == 0
+    assert handler_29["terrain"]["response_timer_state"] == 0
+    assert handler_29["terrain"]["landing_state"] == 1
+    assert handler_29["player"]["vx"] == -0x3D8
+    assert handler_29["player"]["vy"] == -0x4C4
+    assert handler_29["player"]["grounded"] is True
+    assert handler_29["player"]["animation_pc"] == 0x00121E46
 
     stop_command = [
         str(ROOT / "build/openaladdin"),

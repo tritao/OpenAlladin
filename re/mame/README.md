@@ -502,6 +502,12 @@ from `0x11` to `0x30`, and reaches `0x001B537A` on frame 1301. The handler
 subtracts `0x7C` from `PLAYER_VY`, clears the horizontal/response state,
 arms `TERRAIN_LANDING_STATE=0xFF`, and aligns local X through
 `0x001A99C6`.
+The `0x29` fixture uses the same opening-ground cell, reaches
+`0x001B557E` on frame 1301, writes `PLAYER_VX=-0x400` and
+`PLAYER_VY=-0x500`, clears the vertical-stop/timer latches, and sets the
+response-active flag. The following integrator frames expose
+`(-984,-1220)` and `(-944,-1160)` while the landing pass keeps the player
+grounded with `TERRAIN_LANDING_STATE=1`.
 The `0x47` probe confirms that `0xFFF0A4` is the toggled surface-mode word
 and `0xFFF0C2` is the handler's one-shot latch; the native trace exposes both
 fields separately.
@@ -516,6 +522,12 @@ Run the accepted stop-and-align fixture with:
 
 ```sh
 python3 tools/oa.py trace terrain-handler-2b --state-output --edges
+```
+
+Run the launch fixture with:
+
+```sh
+python3 tools/oa.py trace terrain-handler-29 --state-output --edges
 ```
 
 The native vertical slice now mirrors this fixed-ROM lookup in

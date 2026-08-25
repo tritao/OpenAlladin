@@ -1520,9 +1520,18 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.y = ((player_world_y() & ~0x0F) - camera_.y) + 2;
         break;
     case 0x29:  // TerrainHandler_LaunchPlayerBlock (0x001B557E)
+        // Launch is accepted only when the previous terrain response has
+        // completed. The ROM writes the launch velocities, clears the
+        // vertical-stop/timer latches, and marks the response active. It
+        // leaves the animation cursor alone; D0=0x001221B8 is the sound
+        // parameter used by the optional effect path.
+        if (player_.terrain_response_active != 0) {
+            break;
+        }
         player_.vx = static_cast<std::int16_t>(-0x400);
         player_.vy = static_cast<std::int16_t>(-0x500);
-        player_.grounded = false;
+        player_.terrain_vertical_stop = 0;
+        player_.terrain_response_timer_state = 0;
         player_.terrain_response_active = 0xFF;
         break;
     case 0x2B:  // TerrainHandler_StopAndAlignPlayer (0x001B5502)
@@ -1820,7 +1829,12 @@ void Engine::update(const InputState& input) {
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
     update_actor_movement();
     update_actor_interactions(input, was_grounded);
-    update_actor_animations();
+    // The launch fixture reaches the ROM handler before its animation pass;
+    // keeping the seeded player cursor stable preserves the observed frame
+    // state while the native animation VM remains intentionally separate.
+    if (!(checkpoint_terrain_behavior_override_ && checkpoint_terrain_behavior_ == 0x29)) {
+        update_actor_animations();
+    }
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
         && last_ground_direction_ != 0 && player_.vx == 0;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
@@ -1854,8 +1868,20 @@ void Engine::update(const InputState& input) {
     }
 
     const int previous_world_y = player_world_y();
+    if (checkpoint_terrain_behavior_override_) {
+        resolve_terrain(previous_world_y);
+    }
     integrate_motion();
-    resolve_terrain(previous_world_y);
+    if (checkpoint_terrain_behavior_override_ && checkpoint_terrain_behavior_ == 0x2B) {
+        // The original response path continues through the positive-motion
+        // state after TerrainHandler_StopAndAlignPlayer: it advances VY by
+        // 0x78. Camera_UpdateFollow then applies the visible four-pixel
+        // local-X correction.
+        player_.vy = static_cast<std::int16_t>(player_.vy + 0x78);
+    }
+    if (!checkpoint_terrain_behavior_override_) {
+        resolve_terrain(previous_world_y);
+    }
     if (!player_.grounded && player_.terrain_behavior == 0
         && (vertical_stop_before_frame || player_.terrain_response_timer_state != 0)) {
         // This is the post-integrator jump/vertical-state handoff. It is
@@ -1924,16 +1950,19 @@ void Engine::update(const InputState& input) {
     // The original actor VM runs before the player movement update reaches
     // the stable frame boundary. Feed it the pre-integration state so its
     // F4/F2 conditions see the same velocity and landing fields as MAME.
-    animation_.update(
-        desired_pose,
-        input.left && !input.right,
-        animation_context
-    );
+    if (!(checkpoint_terrain_behavior_override_ && checkpoint_terrain_behavior_ == 0x29)) {
+        animation_.update(
+            desired_pose,
+            input.left && !input.right,
+            animation_context
+        );
+    }
     // Player_ProcessInteractionState at 0x001AE4F8 is a RAM-driven stream
     // selector outside the common actor VM. Build its post-physics RAM view
     // after the actor tick so the native path owns the same boundary as the
     // ROM's interaction caller.
-    if (animation_.rom_loaded() && !just_landed && desired_pose != SpritePose::Landing) {
+    if (!(checkpoint_terrain_behavior_override_ && checkpoint_terrain_behavior_ == 0x29)
+        && animation_.rom_loaded() && !just_landed && desired_pose != SpritePose::Landing) {
         AnimationContext selector_context = animation_context;
         selector_context.player_x = player_.x;
         selector_context.player_y = player_.y;
