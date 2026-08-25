@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-natural-route-platform-finding-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "checkpoint": {
+    "state": "build/re/natural-gap-branch-base-20260825/states/genesis/gap-entrance.sta",
+    "world": [1346, 832],
+    "scene_state": "0x01",
+    "nearby_guard": {
+      "slot": 5,
+      "type": "0x0A",
+      "world": [1328, 832]
+    }
+  },
+  "interactions": {
+    "bounce": {
+      "actor_type": "0x65",
+      "initial_slot": 20,
+      "world": [1576, 900],
+      "player_collision_handler": "0x001AFBF4",
+      "observed_effect": "When the falling player overlaps the actor, the actor changes to type 0x66 and PLAYER_VY is set to -0x0500; the actor later returns to type 0x65.",
+      "trace": "build/re/gap-bounce-ram-20260825"
+    },
+    "handhold": {
+      "actor_type": "0x6A",
+      "slot": 24,
+      "world": [1656, 703],
+      "flags_plus_06": "0x30",
+      "player_collision_handler": "0x001AF978",
+      "condition": "The actor flag bit 0x10 must be set and the player must be within 0x0C pixels of the handler's local Y target.",
+      "observed_effect": "The handler aligns PLAYER_Y to actor_y - WORLD_CAMERA_Y - 8, then changes type 0x69/0x68 to 0x6B and publishes interaction state.",
+      "trace": "build/re/gap-bounce-visual-20260825"
+    }
+  },
+  "controller_only_probes": [
+    {
+      "input": "right*60,c+right*20,none*100",
+      "result": "The player reaches the type-0x65 actor and repeatedly bounces in place; no scene transition occurs."
+    },
+    {
+      "input": "right*60,c+right*20,right*100",
+      "result": "The first bounce is reached, but the player misses the next vertical route and falls into the lower death area near world X 0x06A4."
+    },
+    {
+      "input": "right*60,c+right*20,right*20,none*100",
+      "result": "Releasing horizontal input after the first bounce still misses the next route; the player remains below the valid floor band."
+    }
+  ],
+  "next_action": "Find the controller timing that transfers from the type-0x65 bounce to the type-0x6A handhold, then continue the same state trace toward PLAYER_WORLD_X > 0x1287 and PLAYER_WORLD_Y < 0x01D6.",
+  "natural_exit_confirmed": false,
+  "scene_state_08_observed": false
+}

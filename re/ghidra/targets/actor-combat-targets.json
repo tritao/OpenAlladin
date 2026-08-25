@@ -6,6 +6,16 @@
     "purpose": "Trace player sword damage through guard death, actor initialization, cleanup, interaction, and state dispatch."
   },
   "targets": [
+    { "address": "0x001AC850", "name": "Movement VM command 0x80 jump" },
+    { "address": "0x001AC856", "name": "Movement VM command 0x81 facing" },
+    { "address": "0x001AC86C", "name": "Movement VM command 0x82 clear" },
+    { "address": "0x001AC89A", "name": "Movement VM command 0x83 write" },
+    { "address": "0x001AC926", "name": "Movement VM command 0x85 loop delay" },
+    { "address": "0x001AC950", "name": "Movement VM command 0x86 random branch" },
+    { "address": "0x001AC968", "name": "Movement VM command 0x87 actor offset" },
+    { "address": "0x001AC98E", "name": "Movement VM command 0x88 flag test" },
+    { "address": "0x001AC9D2", "name": "Movement VM command 0x89 event" },
+    { "address": "0x001ACA14", "name": "Movement VM command 0x8A compare" },
     { "address": "0x001A96FC", "name": "Player sword-state selection" },
     { "address": "0x001AC0D2", "name": "Actor type-0x84 transition block" },
     { "address": "0x001AC3F2", "name": "Actor horizontal-facing toggle" },
@@ -16,9 +26,20 @@
     { "address": "0x001AE372", "name": "Actor owned-resource cleanup" },
     { "address": "0x001AE6BC", "name": "Actor interaction publish (A2)" },
     { "address": "0x001AE6DE", "name": "Actor interaction publish (A1)" },
+    { "address": "0x001AFBF4", "name": "Actor type-0x65 bounce handler" },
+    { "address": "0x001AF978", "name": "Actor type-0x6A handhold alignment handler" },
     { "address": "0x001AC784", "name": "Actor animation VM" },
     { "address": "0x001AD00E", "name": "Actor animation spawn/copy opcode" },
     { "address": "0x001AC8E0", "name": "Movement VM command 0x84 timer handler" },
+    { "address": "0x001AD0FC", "name": "Movement VM command 0x8C clear actor" },
+    { "address": "0x001AD138", "name": "Movement VM command 0x8D face player" },
+    { "address": "0x001AD150", "name": "Movement VM command 0x8E select stream" },
+    { "address": "0x001AD2DC", "name": "Movement VM command 0x8F velocity or position" },
+    { "address": "0x001AD314", "name": "Movement VM command 0x90 arithmetic" },
+    { "address": "0x001AD372", "name": "Movement VM command 0x91 parameter" },
+    { "address": "0x001AD378", "name": "Movement VM command 0x92 call return" },
+    { "address": "0x001AD392", "name": "Movement VM command 0x93 player X condition" },
+    { "address": "0x001AD3C2", "name": "Movement VM command 0x94 player Y condition" },
     { "address": "0x001ADE36", "name": "Actor movement VM" }
   ]
 }
