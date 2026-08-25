@@ -32,6 +32,108 @@
         { "frame": 341, "name": "rope-climb", "state": "straight-route/states/genesis/rope-climb.sta" },
         { "frame": 520, "name": "route-stall", "state": "straight-route/states/genesis/route-stall.sta" }
       ]
+    },
+    {
+      "id": "natural-guard-attack",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/natural-guard-attack",
+      "frames": 650,
+      "input": "none*1,right*390,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*100",
+      "load_state": "opening-ground",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-baseline-v1/fresh-boot/states/genesis/opening-ground.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "opening-ground-loaded", "state": "natural-guard-attack/states/genesis/opening-ground-loaded.sta" },
+        { "frame": 391, "name": "guard-approach", "state": "natural-guard-attack/states/genesis/guard-approach.sta" },
+        { "frame": 393, "name": "sword-1", "state": "natural-guard-attack/states/genesis/sword-1.sta" },
+        { "frame": 411, "name": "sword-1-recovery", "state": "natural-guard-attack/states/genesis/sword-1-recovery.sta" },
+        { "frame": 431, "name": "sword-2", "state": "natural-guard-attack/states/genesis/sword-2.sta" },
+        { "frame": 449, "name": "sword-2-recovery", "state": "natural-guard-attack/states/genesis/sword-2-recovery.sta" },
+        { "frame": 469, "name": "sword-3", "state": "natural-guard-attack/states/genesis/sword-3.sta" },
+        { "frame": 487, "name": "sword-3-recovery", "state": "natural-guard-attack/states/genesis/sword-3-recovery.sta" },
+        { "frame": 507, "name": "sword-4", "state": "natural-guard-attack/states/genesis/sword-4.sta" },
+        { "frame": 525, "name": "sword-5", "state": "natural-guard-attack/states/genesis/sword-5.sta" },
+        { "frame": 650, "name": "attack-route-end", "state": "natural-guard-attack/states/genesis/attack-route-end.sta" }
+      ]
+    },
+    {
+      "id": "ledge-jump-probe",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/ledge-jump-probe",
+      "frames": 182,
+      "input": "none*1,c+right*1,right*40,none*20,c+right*1,right*60,none*60",
+      "load_state": "guard-approach",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/natural-guard-attack/states/genesis/guard-approach.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "guard-approach-loaded", "state": "ledge-jump-probe/states/genesis/guard-approach-loaded.sta" },
+        { "frame": 2, "name": "ledge-jump", "state": "ledge-jump-probe/states/genesis/ledge-jump.sta" },
+        { "frame": 42, "name": "ledge-jump-apex", "state": "ledge-jump-probe/states/genesis/ledge-jump-apex.sta" },
+        { "frame": 62, "name": "ledge-fall", "state": "ledge-jump-probe/states/genesis/ledge-fall.sta" },
+        { "frame": 63, "name": "ledge-rejump", "state": "ledge-jump-probe/states/genesis/ledge-rejump.sta" },
+        { "frame": 103, "name": "ledge-rejump-apex", "state": "ledge-jump-probe/states/genesis/ledge-rejump-apex.sta" },
+        { "frame": 163, "name": "ledge-route-settled", "state": "ledge-jump-probe/states/genesis/ledge-route-settled.sta" },
+        { "frame": 182, "name": "ledge-route-end", "state": "ledge-jump-probe/states/genesis/ledge-route-end.sta" }
+      ]
+    },
+    {
+      "id": "lower-chamber-probe",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/lower-chamber-probe",
+      "frames": 292,
+      "input": "none*1,right*80,none*30,c+right*1,right*100,none*80",
+      "load_state": "ledge-route-end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/ledge-jump-probe/states/genesis/ledge-route-end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "lower-chamber-loaded", "state": "lower-chamber-probe/states/genesis/lower-chamber-loaded.sta" },
+        { "frame": 81, "name": "lower-right-edge", "state": "lower-chamber-probe/states/genesis/lower-right-edge.sta" },
+        { "frame": 111, "name": "lower-right-settled", "state": "lower-chamber-probe/states/genesis/lower-right-settled.sta" },
+        { "frame": 112, "name": "next-jump", "state": "lower-chamber-probe/states/genesis/next-jump.sta" },
+        { "frame": 212, "name": "next-jump-apex", "state": "lower-chamber-probe/states/genesis/next-jump-apex.sta" },
+        { "frame": 292, "name": "next-route-end", "state": "lower-chamber-probe/states/genesis/next-route-end.sta" }
+      ]
+    },
+    {
+      "id": "left-handhold-probe",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/left-handhold-probe",
+      "frames": 212,
+      "input": "none*1,left*50,c+left*1,left*60,none*100",
+      "load_state": "ledge-route-end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/ledge-jump-probe/states/genesis/ledge-route-end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "lower-chamber-loaded", "state": "left-handhold-probe/states/genesis/lower-chamber-loaded.sta" },
+        { "frame": 51, "name": "left-approach", "state": "left-handhold-probe/states/genesis/left-approach.sta" },
+        { "frame": 52, "name": "left-jump", "state": "left-handhold-probe/states/genesis/left-jump.sta" },
+        { "frame": 92, "name": "left-jump-apex", "state": "left-handhold-probe/states/genesis/left-jump-apex.sta" },
+        { "frame": 112, "name": "left-landing", "state": "left-handhold-probe/states/genesis/left-landing.sta" },
+        { "frame": 212, "name": "left-route-end", "state": "left-handhold-probe/states/genesis/left-route-end.sta" }
+      ]
+    },
+    {
+      "id": "bounce-transfer-probe",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe",
+      "frames": 201,
+      "input": "none*1,right*20,c+right*1,right*50,none*130",
+      "load_state": "left-route-end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/left-handhold-probe/states/genesis/left-route-end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "left-route-loaded", "state": "bounce-transfer-probe/states/genesis/left-route-loaded.sta" },
+        { "frame": 21, "name": "bounce-approach", "state": "bounce-transfer-probe/states/genesis/bounce-approach.sta" },
+        { "frame": 22, "name": "bounce-jump", "state": "bounce-transfer-probe/states/genesis/bounce-jump.sta" },
+        { "frame": 42, "name": "bounce-apex", "state": "bounce-transfer-probe/states/genesis/bounce-apex.sta" },
+        { "frame": 72, "name": "bounce-fall", "state": "bounce-transfer-probe/states/genesis/bounce-fall.sta" },
+        { "frame": 201, "name": "bounce-route-end", "state": "bounce-transfer-probe/states/genesis/bounce-route-end.sta" }
+      ]
     }
   ],
   "events": [
@@ -40,7 +142,12 @@
     { "id": "jump-start", "segment": "straight-route", "frame": 81, "world": [505, 822], "vy": -404, "grounded": false },
     { "id": "lower-crossing", "segment": "straight-route", "frame": 181, "world": [805, 880], "grounded": true },
     { "id": "rope-approach", "segment": "straight-route", "frame": 261, "world": [1033, 836], "vy": -704, "grounded": false },
-    { "id": "route-stall", "segment": "straight-route", "frame": 520, "world": [1033, 880], "grounded": true, "result": "input schedule exhausted without advancing past the lower obstacle" }
+    { "id": "route-stall", "segment": "straight-route", "frame": 520, "world": [1033, 880], "grounded": true, "result": "input schedule exhausted without advancing past the lower obstacle" },
+    { "id": "guard-approach", "segment": "natural-guard-attack", "frame": 391, "world": [1435, 816], "actor_types": ["0x0A", "0x2D", "0x65"], "result": "upper ledge reached; repeated right-facing attacks do not clear the obstruction" },
+    { "id": "sword-child", "segment": "natural-guard-attack", "frame": 411, "world": [1438, 816], "actor_slot": 25, "actor_type": "0x80", "result": "player sword child spawned" },
+    { "id": "ledge-to-lower-chamber", "segment": "ledge-jump-probe", "frame": 182, "world": [1775, 904], "terrain_behavior": "0x11", "result": "jump transfer reaches the lower chamber" },
+    { "id": "lower-wall", "segment": "lower-chamber-probe", "frame": 212, "world": [2178, 912], "result": "rightward route reaches the previously documented wall" },
+    { "id": "bounce-actor", "segment": "bounce-transfer-probe", "frame": 33, "world": [1595, 886], "actor_slot": 20, "actor_type_before": "0x65", "actor_type_after": "0x66", "player_vy": -1220, "result": "bounce launch confirmed; transfer peaks below the upper handhold and settles at world x=1715" }
   ],
-  "next": "Use route-stall.sta to inspect the blocking actor/terrain interaction and test only recorded input variations from this exact state; do not discard the failed schedule."
+  "next": "Use the lower-wall and bounce checkpoints to recover the missing handhold/upper-route transfer. The natural path is now recorded from fresh boot through the upper ledge, lower chamber, wall, handhold vicinity, and bounce response; preserve each new transfer or failure as another segment."
 }
