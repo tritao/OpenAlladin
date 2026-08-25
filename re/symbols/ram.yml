@@ -186,6 +186,24 @@
     - ghidra_decompile_player_movement_collision_targets
     - ghidra_disassembly_001B1E38
     - mame_player_run_trace
+0xFF7DFE:
+  name: CAMERA_HORIZONTAL_THRESHOLD
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Local player X threshold used by Camera_UpdateFollow; the horizontal dampening table follows the signed difference between PLAYER_X and this field.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_disassembly_001AA484
+0xFF7E00:
+  name: CAMERA_VERTICAL_THRESHOLD
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Local player Y threshold used by Camera_UpdateFollow; the vertical dampening table follows the signed difference between PLAYER_Y and this field.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_disassembly_001AA484
 0xFF7DFA:
   name: PLAYER_X
   type: u16
@@ -215,6 +233,92 @@
     - ghidra_decompile_player_movement_collision_targets
     - ghidra_disassembly_001A9D18
     - mame_player_run_trace
+0xFF7E06:
+  name: CAMERA_REFERENCE_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Horizontal camera reference/base used with CAMERA_SCROLL_X to enforce the camera's left and right limits.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_disassembly_001AA724
+    - ghidra_disassembly_001AA484
+0xFF7E08:
+  name: CAMERA_REFERENCE_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Vertical camera reference/base used with CAMERA_SCROLL_Y to enforce the camera's top and bottom limits.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_disassembly_001AA724
+    - ghidra_disassembly_001AA484
+0xFF7E0A:
+  name: PLAYER_CAMERA_PIXEL_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Pixel-aligned player X derived from WORLD_CAMERA_X low bits plus PLAYER_X for VDP/asset positioning.
+  evidence:
+    - ghidra_disassembly_001B0490
+0xFF7E0C:
+  name: PLAYER_CAMERA_PIXEL_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Pixel-aligned player Y derived from WORLD_CAMERA_Y low bits plus PLAYER_Y for VDP/asset positioning.
+  evidence:
+    - ghidra_disassembly_001B0490
+0xFF7E0E:
+  name: CAMERA_TILE_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Horizontal camera origin rounded down to a 16-pixel tile boundary.
+  evidence:
+    - ghidra_disassembly_001B0490
+0xFF7E10:
+  name: CAMERA_TILE_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Vertical camera origin rounded down to a 16-pixel tile boundary.
+  evidence:
+    - ghidra_disassembly_001B0490
+0xFF7DB6:
+  name: LEVEL_WIDTH_TILES
+  type: u16
+  format: tiles
+  confidence: confirmed
+  description: Active level width in 16-pixel blocks; level initialization derives LEVEL_WIDTH_PIXELS by multiplying this by 16.
+  evidence:
+    - ghidra_disassembly_001AA484
+0xFF7DB8:
+  name: LEVEL_WIDTH_PIXELS
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Active level width in pixels used by the camera's horizontal right limit.
+  evidence:
+    - ghidra_disassembly_001AA724
+    - ghidra_disassembly_001AA90C
+0xFF7DBA:
+  name: LEVEL_HEIGHT_TILES
+  type: u16
+  format: tiles
+  confidence: confirmed
+  description: Active level height in 16-pixel blocks; level initialization derives LEVEL_HEIGHT_PIXELS by multiplying this by 16.
+  evidence:
+    - ghidra_disassembly_001AA484
+0xFF7DBC:
+  name: LEVEL_HEIGHT_PIXELS
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Active level height in pixels used by the camera's vertical bottom limit.
+  evidence:
+    - ghidra_disassembly_001AA724
+    - ghidra_disassembly_001AA90C
 0xFF7DFC:
   name: PLAYER_Y
   type: u16
@@ -305,6 +409,93 @@
   description: Horizontal terrain response delta consumed by the player terrain state machine; the recovered ground paths use three pixels and then add or subtract this value from PLAYER_X.
   evidence:
     - ghidra_disassembly_001A9D98
+0xFFF0B2:
+  name: CAMERA_SCROLL_X
+  type: i16
+  format: pixels
+  confidence: confirmed
+  description: Horizontal camera follow accumulator paired with CAMERA_REFERENCE_X; it moves opposite to WORLD_CAMERA_X as the player is kept near the horizontal threshold.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_disassembly_001AA724
+0xFFF0B4:
+  name: CAMERA_SCROLL_Y
+  type: i16
+  format: pixels
+  confidence: confirmed
+  description: Vertical camera follow accumulator paired with CAMERA_REFERENCE_Y; it moves opposite to WORLD_CAMERA_Y as the player is kept near the vertical threshold.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_disassembly_001AA724
+0xFFF0B9:
+  name: CAMERA_SCROLL_LEFT_PENDING
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Pending leftward horizontal camera tile update set by Camera_UpdateFollow.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_disassembly_001AAA2A
+0xFFF0BA:
+  name: CAMERA_SCROLL_RIGHT_PENDING
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Pending rightward horizontal camera tile update set by Camera_UpdateFollow.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_disassembly_001AAA2A
+0xFFF0BB:
+  name: CAMERA_SCROLL_UP_PENDING
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Pending upward vertical camera tile update set by Camera_UpdateFollow.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_disassembly_001AAA2A
+0xFFF0BC:
+  name: CAMERA_SCROLL_DOWN_PENDING
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Pending downward vertical camera tile update set by Camera_UpdateFollow.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_disassembly_001AAA2A
+0xFFF167:
+  name: CAMERA_UPDATE_DELAY
+  type: u8
+  format: integer
+  confidence: confirmed
+  description: Camera/VDP update delay decremented before Camera_UpdateFollow is entered.
+  evidence:
+    - ghidra_disassembly_001AA8FA
+0xFFF173:
+  name: CAMERA_SPECIAL_MODE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Special camera/transition mode gate; when nonzero Camera_UpdateFollow skips normal threshold following.
+  evidence:
+    - ghidra_disassembly_001AA90C
+    - ghidra_level_transition_targeted_decompile
+0xFFF174:
+  name: CAMERA_SCROLL_APPLY_GATE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Gate checked by the camera tile/VDP update dispatcher before applying pending scroll flags.
+  evidence:
+    - ghidra_disassembly_001AAA2A
+0xFFF175:
+  name: CAMERA_UPDATE_ACTIVE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Camera/VDP update-active marker set while the chunked camera update path is rebuilding tile data.
+  evidence:
+    - ghidra_disassembly_001AA724
 0xFFF0BE:
   name: TERRAIN_RESPONSE_ACTIVE
   type: u8

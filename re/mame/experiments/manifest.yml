@@ -43,9 +43,13 @@ experiments:
       fields:
         - player.x
         - player.y
+        - player.world_x
+        - player.world_y
         - player.vx
         - player.vy
         - player.grounded
+        - camera.x
+        - camera.y
     boot:
       scenario: first-level
     setup:

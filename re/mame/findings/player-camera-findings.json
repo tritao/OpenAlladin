@@ -1,0 +1,82 @@
+{
+  "format": "openaladdin-player-camera-finding-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "coordinate_pipeline": {
+    "local_player": {
+      "x": "0x00FF7DFA",
+      "y": "0x00FF7DFC"
+    },
+    "camera": {
+      "x": "0x00FF7DF6",
+      "y": "0x00FF7DF8"
+    },
+    "world_player": {
+      "x": "0x00FF7E02 = WORLD_CAMERA_X + PLAYER_X",
+      "y": "0x00FF7E04 = WORLD_CAMERA_Y + PLAYER_Y"
+    },
+    "visual_terrain_y": "PLAYER_WORLD_Y - 0x00F0"
+  },
+  "follow": {
+    "routine": "0x001AA90C",
+    "horizontal_table": "0x00002A52",
+    "vertical_table": "0x00002BA4",
+    "horizontal_threshold": "0x00FF7DFE",
+    "vertical_threshold": "0x00FF7E00",
+    "reference_x": "0x00FF7E06",
+    "reference_y": "0x00FF7E08",
+    "scroll_x": "0x00FFF0B2",
+    "scroll_y": "0x00FFF0B4",
+    "algorithm": [
+      "delta = dampening_table[abs(local - threshold)]",
+      "local below threshold: local += delta, camera -= delta, scroll -= delta",
+      "local above threshold: local -= delta, camera += delta, scroll += delta",
+      "horizontal effective position is reference_x + scroll_x",
+      "vertical effective position is reference_y + scroll_y"
+    ],
+    "limits": {
+      "left_or_top": 17,
+      "right": "LEVEL_WIDTH_PIXELS - 0x0161",
+      "bottom": "LEVEL_HEIGHT_PIXELS - 0x00F1"
+    },
+    "delay": "0x00FFF167 is decremented before follow; threshold changes commonly arm it to 7"
+  },
+  "level_initialization": {
+    "routine": "0x001AA484",
+    "table_base": "0x00002C78",
+    "entry_stride": "0x42",
+    "fields": {
+      "camera_x": "+0x00",
+      "camera_y": "+0x02",
+      "player_x": "+0x04",
+      "player_y": "+0x06"
+    },
+    "level_dimensions": {
+      "width_pixels": "LEVEL_WIDTH_TILES * 16",
+      "height_pixels": "LEVEL_HEIGHT_TILES * 16"
+    }
+  },
+  "state_08": {
+    "scene_selector": "0x00FF7E26",
+    "player_branch": "0x001A9D18",
+    "normal_follow_gate": "0x00FFF173",
+    "behavior": [
+      "normal terrain integration is bypassed",
+      "controller fallback moves local X/Y in 8-pixel steps",
+      "local X is bounded by 0x10..0x130 and local Y by 0x10..0x1E0",
+      "transition movement can add FFF086 to local X and rebase camera X to world_x - 0x78"
+    ]
+  },
+  "runtime_validation": {
+    "trace": "build/re/traces/camera-research-jump/state.jsonl",
+    "scenarios": [
+      "terrain-flat-ground",
+      "terrain-walk-off-edge",
+      "terrain-jump-land",
+      "terrain-wall-left",
+      "terrain-wall-right",
+      "terrain-ceiling",
+      "terrain-slope",
+      "terrain-special"
+    ]
+  }
+}

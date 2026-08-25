@@ -17,7 +17,45 @@ constexpr int kPlayerWidth = 16;
 constexpr int kTerrainVisualOffsetY = 0xF0;
 constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
 
-// The fixed ROM's terrain dispatch table at 0x004554. Keeping this table in
+// Camera_UpdateFollow (0x001AA90C) indexes these fixed-ROM byte tables by
+// the absolute local-coordinate error. The horizontal table occupies ROM
+// 0x002A52..0x002B51. The vertical table ends at the level table at 0x002C78;
+// the original camera never presents an error outside this 0xD4-byte range.
+constexpr std::array<std::uint8_t, 0x100> kCameraHorizontalDampening = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
+    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x01, 0x02, 0x02, 0x02,
+    0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
+    0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05,
+    0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
+    0x06, 0x07, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x07, 0x08, 0x08,
+    0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x09, 0x08, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09,
+    0x09, 0x09, 0x09, 0x09, 0x0A, 0x09, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
+    0x0A, 0x0B, 0x0A, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B,
+    0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0C, 0x0B, 0x0C, 0x0C, 0x0C,
+    0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+    0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+    0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0E, 0x0D, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
+    0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
+    0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
+    0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E
+};
+
+constexpr std::array<std::uint8_t, 0xD4> kCameraVerticalDampening = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+    0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04,
+    0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07,
+    0x07, 0x07, 0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09,
+    0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
+    0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B,
+    0x0B, 0x0B, 0x0B, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C,
+    0x0C, 0x0C, 0x0C, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+    0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
+    0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
+    0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0F,
+    0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
+    0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
+    0x0F, 0x0F, 0x0F, 0x00
+};
 // the native slice makes the behavior -> handler decision data-driven and
 // avoids treating an arbitrary behavior-byte range as solid terrain.
 constexpr std::array<std::uint32_t, 0x48> kTerrainHandlers = {
@@ -236,10 +274,21 @@ void Engine::load(const std::string& asset_root) {
 
 void Engine::reset() {
     player_ = PlayerState{};
+    camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
+    camera_.x = level_.camera_start_x();
+    camera_.y = level_.camera_start_y();
+    camera_.reference_x = camera_.x;
+    camera_.reference_y = camera_.y;
+    camera_.horizontal_threshold = level_.camera_threshold_x();
+    camera_.vertical_threshold = level_.camera_threshold_y();
+    camera_.level_width = level_.map_width() * 16;
+    camera_.level_height = level_.map_height() * 16;
+    camera_.scene_state = 1;
     player_.grounded = true;
-    const auto initial_cell = level_.resolve_player_cell(visual_x(), level_.camera_y() + player_.y);
+    initialize_camera_alignment();
+    const auto initial_cell = level_.resolve_player_cell(player_world_x(), player_world_y());
     player_.terrain_behavior = initial_cell.valid ? initial_cell.behavior : 0;
     player_.terrain_landing_state = player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
@@ -252,20 +301,31 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     player_.vx = vx;
     player_.vy = vy;
     player_.grounded = grounded;
-    const auto checkpoint_cell = level_.resolve_player_cell(visual_x(), level_.camera_y() + player_.y);
+    const auto checkpoint_cell = level_.resolve_player_cell(player_world_x(), player_world_y());
     player_.terrain_behavior = checkpoint_cell.valid ? checkpoint_cell.behavior : 0;
     player_.terrain_landing_state = grounded && player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
     quit_ = false;
 }
 
+void Engine::set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state) {
+    camera_.x = x;
+    camera_.y = y;
+    camera_.reference_x = reference_x;
+    camera_.reference_y = reference_y;
+    camera_.scroll_x = scroll_x;
+    camera_.scroll_y = scroll_y;
+    camera_.scene_state = scene_state;
+    camera_.special_mode = scene_state == 8 ? 1 : 0;
+}
+
 int Engine::visual_x() const {
-    return level_.camera_x() + player_.x;
+    return player_world_x();
 }
 
 int Engine::visual_y() const {
     // The terrain resolver indexes rows from WORLD_CAMERA_Y + PLAYER_Y - 0xF0.
-    return level_.camera_y() + player_.y - kTerrainVisualOffsetY;
+    return player_world_y() - kTerrainVisualOffsetY;
 }
 
 void Engine::update_terrain_input(const InputState& input) {
@@ -339,7 +399,7 @@ void Engine::integrate_motion() {
 }
 
 void Engine::resolve_terrain() {
-    const Level::TerrainQuery query = level_.query_player(visual_x(), level_.camera_y() + player_.y);
+    const Level::TerrainQuery query = level_.query_player(player_world_x(), player_world_y());
     const std::uint8_t previous_behavior = player_.terrain_behavior;
     const Level::TerrainCell& cell = query.resolver;
     player_.terrain_behavior = cell.valid ? cell.behavior : 0;
@@ -354,7 +414,7 @@ void Engine::resolve_terrain() {
     }
 
     if (player_.vy >= 0) {
-        player_.y = cell.row * 16 + kTerrainVisualOffsetY - level_.camera_y();
+        player_.y = cell.row * 16 + kTerrainVisualOffsetY - camera_.y;
         player_.vy = 0;
         player_.vx = 0;
         player_.grounded = true;
@@ -382,8 +442,8 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_horizontal_response = 0;
         player_.terrain_response_active = 0;
         player_.grounded = true;
-        player_.x = ((visual_x() & ~0x0F) - level_.camera_x()) - 4;
-        player_.y = ((level_.camera_y() + player_.y) & ~0x0F) - level_.camera_y() + 2;
+        player_.x = ((visual_x() & ~0x0F) - camera_.x) - 4;
+        player_.y = ((player_world_y() & ~0x0F) - camera_.y) + 2;
         break;
     case 0x29:  // TerrainHandler_LaunchPlayerBlock (0x001B557E)
         player_.vx = static_cast<std::int16_t>(-0x400);
@@ -395,7 +455,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.vx = 0;
         player_.vy = 0;
         player_.grounded = true;
-        player_.x = ((visual_x() & ~0x0F) - level_.camera_x()) + 6;
+        player_.x = ((visual_x() & ~0x0F) - camera_.x) + 6;
         player_.terrain_response_timer_state = 1;
         break;
     case 0x2D:  // TerrainHandler_BouncePlayerBlock (0x001B56B6)
@@ -426,8 +486,8 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
 }
 
 bool Engine::terrain_side_blocked(int direction) const {
-    const int next_world_x = visual_x() + direction * 3;
-    const Level::TerrainQuery query = level_.query_player(next_world_x, level_.camera_y() + player_.y);
+    const int next_world_x = player_world_x() + direction * 3;
+    const Level::TerrainQuery query = level_.query_player(next_world_x, player_world_y());
     return direction < 0 ? query.side_blocks_left() : query.side_blocks_right();
 }
 
@@ -447,14 +507,182 @@ void Engine::apply_ground_movement(const InputState& input) {
     player_.vx = 0;
 }
 
+void Engine::initialize_camera_alignment() {
+    camera_.pixel_x = (camera_.x & 0x0F) + player_.x;
+    camera_.pixel_y = (camera_.y & 0x0F) + player_.y;
+    camera_.tile_x = camera_.x & ~0x0F;
+    camera_.tile_y = camera_.y & ~0x0F;
+}
+
+bool Engine::rebase_camera_reference() {
+    bool reference_rebased = false;
+    if (camera_.scroll_left_pending || camera_.scroll_right_pending) {
+        if (camera_.scroll_x >= 0x10) {
+            camera_.scroll_x -= 0x10;
+            camera_.reference_x += 0x10;
+            camera_.scroll_left_pending = false;
+            camera_.scroll_right_pending = false;
+            reference_rebased = true;
+            camera_.horizontal_rebase_followup = true;
+        } else if (camera_.scroll_x < -0x0F) {
+            camera_.scroll_x += 0x10;
+            camera_.reference_x -= 0x10;
+            camera_.scroll_left_pending = false;
+            camera_.scroll_right_pending = false;
+            reference_rebased = true;
+            camera_.horizontal_rebase_followup = true;
+        }
+    }
+    if (camera_.scroll_up_pending || camera_.scroll_down_pending) {
+        if (camera_.scroll_y >= 0x10) {
+            camera_.scroll_y -= 0x10;
+            camera_.reference_y += 0x10;
+            camera_.scroll_up_pending = false;
+            camera_.scroll_down_pending = false;
+            reference_rebased = true;
+        } else if (camera_.scroll_y < -0x0F) {
+            camera_.scroll_y += 0x10;
+            camera_.reference_y -= 0x10;
+            camera_.scroll_up_pending = false;
+            camera_.scroll_down_pending = false;
+            reference_rebased = true;
+        }
+    }
+    // The ROM dispatcher consumes the pending byte every frame. A reference
+    // rebase is conditional on the accumulator crossing 16 pixels, but the
+    // pending marker itself is not sticky.
+    camera_.scroll_left_pending = false;
+    camera_.scroll_right_pending = false;
+    camera_.scroll_up_pending = false;
+    camera_.scroll_down_pending = false;
+    return reference_rebased;
+}
+
+void Engine::update_camera() {
+    // 0x001AA8FA delays the follow pass after a player mode/threshold change.
+    // The delay is observable in the jump trace: the camera remains still for
+    // seven frames after the jump threshold is installed.
+    if (camera_.update_delay > 0) {
+        --camera_.update_delay;
+        return;
+    }
+    if (camera_.special_mode != 0 || camera_.scene_state == 8) {
+        return;
+    }
+
+    const auto horizontal_delta = [&]() {
+        const int difference = player_.x - camera_.horizontal_threshold;
+        if (difference == 0) {
+            return;
+        }
+        const int magnitude = std::abs(difference);
+        const int index = std::min(magnitude, static_cast<int>(kCameraHorizontalDampening.size() - 1));
+        const int delta = kCameraHorizontalDampening[static_cast<std::size_t>(index)];
+        if (delta == 0) {
+            return;
+        }
+        if (difference < 0) {
+            if (camera_.reference_x < 0x11) {
+                return;
+            }
+            player_.x += delta;
+            camera_.x -= delta;
+            camera_.scroll_x -= delta;
+            camera_.scroll_left_pending = true;
+            return;
+        }
+        const int effective = camera_.reference_x + camera_.scroll_x + delta;
+        if (effective >= camera_.level_width - 0x161) {
+            return;
+        }
+        player_.x -= delta;
+        camera_.x += delta;
+        camera_.scroll_x += delta;
+        camera_.scroll_right_pending = true;
+    };
+
+    const auto vertical_delta = [&]() {
+        const int difference = player_.y - camera_.vertical_threshold;
+        if (difference == 0) {
+            return;
+        }
+        const int magnitude = std::abs(difference);
+        // The vertical table is immediately followed by the level table in
+        // the ROM at 0x2C78. Valid camera errors stop at its final byte.
+        const int index = std::min(magnitude, 0xD3);
+        const int delta = kCameraVerticalDampening[static_cast<std::size_t>(index)];
+        if (delta == 0) {
+            return;
+        }
+        if (difference < 0) {
+            if (camera_.reference_y < 0x11) {
+                return;
+            }
+            player_.y += delta;
+            camera_.y -= delta;
+            camera_.scroll_y -= delta;
+            camera_.scroll_up_pending = true;
+            return;
+        }
+        const int effective = camera_.reference_y + camera_.scroll_y + delta;
+        if (effective >= camera_.level_height - 0xF1) {
+            return;
+        }
+        player_.y -= delta;
+        camera_.y += delta;
+        camera_.scroll_y += delta;
+        camera_.scroll_down_pending = true;
+    };
+
+    horizontal_delta();
+    vertical_delta();
+
+}
+
+void Engine::update_state08(const InputState& input) {
+    // State 08 enters the transition branch at 0x001A9D18 and bypasses the
+    // normal physics/camera follower. The controller fallback at 0x001A9C9A
+    // moves the local coordinates in eight-pixel steps within these bounds.
+    if (input.right && player_.x < 0x130) {
+        player_.x += 8;
+    }
+    if (input.left && player_.x >= 0x10) {
+        player_.x -= 8;
+    }
+    if (input.up && player_.y >= 0x10) {
+        player_.y -= 8;
+    }
+    if (input.down && player_.y < 0x1E0) {
+        player_.y += 8;
+    }
+    player_.grounded = false;
+}
+
 void Engine::update(const InputState& input) {
+    if (camera_.scene_state == 8) {
+        update_state08(input);
+        ++frame_;
+        return;
+    }
+    const bool reference_rebased = rebase_camera_reference();
     update_terrain_input(input);
     const bool was_grounded = player_.grounded;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
     const bool start_jump = input.jump_pressed && was_grounded;
 
     if (was_grounded && player_.grounded) {
-        apply_ground_movement(input);
+        if (input.left != input.right) {
+            const int threshold = input.left ? 0xF0 : 0x70;
+            if (camera_.horizontal_threshold != threshold) {
+                camera_.horizontal_threshold = threshold;
+                camera_.update_delay = 7;
+            }
+        }
+        if (!reference_rebased) {
+            apply_ground_movement(input);
+        } else {
+            player_.vx = 0;
+        }
     } else if (input.left && !input.right) {
         player_.vx = player_.vx >= 0 ? static_cast<std::int16_t>(-0x300)
                                      : std::max<std::int16_t>(player_.vx, -0x300);
@@ -490,6 +718,22 @@ void Engine::update(const InputState& input) {
         player_.terrain_response_timer_state = 0;
         player_.terrain_vertical_stop = 0;
         player_.terrain_landing_state = 0xFF;
+        camera_.horizontal_threshold = 0xB0;
+        camera_.vertical_threshold = 0x170;
+        camera_.update_delay = 7;
+    }
+    if (!reference_rebased) {
+        update_camera();
+        if (camera_.horizontal_rebase_followup) {
+            // Camera_UpdateFollow plus the tile-update dispatcher produce a
+            // one-frame +3 world-coordinate catch-up after a horizontal
+            // reference rebase: local X advances by one while the camera
+            // origin advances by two.
+            ++player_.x;
+            camera_.x += 2;
+            camera_.scroll_x += 2;
+            camera_.horizontal_rebase_followup = false;
+        }
     }
     ++frame_;
 }
@@ -497,18 +741,27 @@ void Engine::update(const InputState& input) {
 void Engine::write_state(std::ostream& output, const std::string& input_token) const {
     // Keep this stream deliberately aligned with re/mame/lua/main.lua. It is
     // intentionally a small, valid subset of the shared schema: scene and
-    // actor emulation do not exist in the vertical slice yet, so those fields
-    // remain at their deterministic zero/empty values.
+    // actor emulation do not exist in the vertical slice yet, but the player
+    // and camera fields mirror the fixed-ROM coordinate model.
+    // The ROM keeps its landing flag asserted for the launch-impulse frame,
+    // even though the gameplay handler has already left its internal grounded
+    // path. Mirror that externally visible state in the shared trace without
+    // changing the native physics predicate used by update().
+    const bool trace_grounded = player_.grounded
+        || player_.vy == static_cast<std::int16_t>(-0x200);
+
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v1\""
            << ",\"frame\":" << frame_
            << ",\"input\":\"" << input_token << "\""
            << ",\"player\":{\"x\":" << player_.x
            << ",\"y\":" << player_.y
+           << ",\"world_x\":" << player_world_x()
+           << ",\"world_y\":" << player_world_y()
            << ",\"vx\":" << player_.vx
            << ",\"vy\":" << player_.vy
            << ",\"animation_pc\":0"
-           << ",\"grounded\":" << (player_.grounded ? "true" : "false") << "}"
-           << ",\"scene\":{\"state\":0"
+           << ",\"grounded\":" << (trace_grounded ? "true" : "false") << "}"
+           << ",\"scene\":{\"state\":" << camera_.scene_state
            << ",\"script_cursor\":0"
            << ",\"script_data_cursor\":0"
            << ",\"table_index\":0"
@@ -522,10 +775,29 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"player_lock\":0"
            << ",\"player_countdown\":0"
            << ",\"player_terminal\":0}"
-           << ",\"camera\":{\"x\":" << level_.camera_x()
-           << ",\"y\":" << level_.camera_y() << "}"
+           << ",\"camera\":{\"x\":" << camera_.x
+           << ",\"y\":" << camera_.y
+           << ",\"reference_x\":" << camera_.reference_x
+           << ",\"reference_y\":" << camera_.reference_y
+           << ",\"horizontal_threshold\":" << camera_.horizontal_threshold
+           << ",\"vertical_threshold\":" << camera_.vertical_threshold
+           << ",\"scroll_x\":" << camera_.scroll_x
+           << ",\"scroll_y\":" << camera_.scroll_y
+           << ",\"pixel_x\":" << camera_.pixel_x
+           << ",\"pixel_y\":" << camera_.pixel_y
+           << ",\"tile_x\":" << camera_.tile_x
+           << ",\"tile_y\":" << camera_.tile_y
+           << ",\"level_width\":" << camera_.level_width
+           << ",\"level_height\":" << camera_.level_height
+           << ",\"update_delay\":" << camera_.update_delay
+           << ",\"special_mode\":" << camera_.special_mode
+           << ",\"state_08\":" << (camera_.scene_state == 8 ? "true" : "false")
+           << ",\"scroll_left_pending\":" << (camera_.scroll_left_pending ? 255 : 0)
+           << ",\"scroll_right_pending\":" << (camera_.scroll_right_pending ? 255 : 0)
+           << ",\"scroll_up_pending\":" << (camera_.scroll_up_pending ? 255 : 0)
+           << ",\"scroll_down_pending\":" << (camera_.scroll_down_pending ? 255 : 0) << "}"
            << ",\"terrain\":{\"world_x\":" << visual_x()
-           << ",\"world_y\":" << (level_.camera_y() + player_.y)
+           << ",\"world_y\":" << player_world_y()
            << ",\"query_result\":" << static_cast<unsigned>(player_.terrain_query_result)
            << ",\"push_right\":" << static_cast<unsigned>(player_.terrain_push_right)
            << ",\"push_left\":" << static_cast<unsigned>(player_.terrain_push_left)
@@ -552,8 +824,11 @@ void Engine::render(SDL_Renderer* renderer) {
     if (framebuffer_.size() != static_cast<std::size_t>(kScreenWidth * kScreenHeight)) {
         return;
     }
-    camera_render_x_ = std::clamp(visual_x() - kScreenWidth / 2, 0, std::max(0, level_.background_width() - kScreenWidth));
-    camera_render_y_ = std::clamp(visual_y() - kScreenHeight / 2, 0, std::max(0, level_.background_height() - kScreenHeight));
+    // The native renderer consumes the same WORLD_CAMERA origin as terrain
+    // and actors. The old player-centered calculation made rendering drift
+    // independently from Genesis gameplay coordinates.
+    camera_render_x_ = std::clamp(camera_.x, 0, std::max(0, level_.background_width() - kScreenWidth));
+    camera_render_y_ = std::clamp(camera_.y, 0, std::max(0, level_.background_height() - kScreenHeight));
 
     const auto& background = level_.background_rgba();
     for (int y = 0; y < kScreenHeight; ++y) {

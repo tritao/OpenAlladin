@@ -414,6 +414,12 @@ def command_regression(args: argparse.Namespace) -> int:
     player = checkpoint.get("player") or {}
     checkpoint_spec = ",".join(str(int(player.get(name, 0))) for name in ("x", "y", "vx", "vy"))
     checkpoint_spec += "," + ("1" if player.get("grounded", int(player.get("vy", 0)) == 0) else "0")
+    camera = checkpoint.get("camera") or {}
+    camera_spec = ",".join(
+        str(int(camera.get(name, 0)))
+        for name in ("x", "y", "reference_x", "reference_y", "scroll_x", "scroll_y")
+    )
+    camera_spec += "," + str(int((checkpoint.get("scene") or {}).get("state", 1)))
     native_environment = os.environ.copy()
     native_environment["SDL_VIDEODRIVER"] = "dummy"
     native_command = [
@@ -423,6 +429,7 @@ def command_regression(args: argparse.Namespace) -> int:
         "--state-output", str(native_trace),
         "--input-schedule", compress_input_schedule(input_tokens),
         "--checkpoint-player", checkpoint_spec,
+        "--checkpoint-camera", camera_spec,
     ]
     print(f"regression: checkpoint {marker_name} at MAME frame {checkpoint_frame}")
     print(f"regression: replaying {compare_frames} post-checkpoint frame(s) natively")

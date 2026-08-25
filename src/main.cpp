@@ -21,6 +21,7 @@ struct Options {
     std::string state_output;
     std::string input_schedule;
     std::string checkpoint_player;
+    std::string checkpoint_camera;
 };
 
 std::vector<std::string> split_schedule(const std::string& schedule) {
@@ -92,6 +93,19 @@ std::vector<int> parse_checkpoint(const std::string& value) {
     return fields;
 }
 
+std::vector<int> parse_camera_checkpoint(const std::string& value) {
+    std::vector<int> fields;
+    std::stringstream stream(value);
+    std::string item;
+    while (std::getline(stream, item, ',')) {
+        fields.push_back(std::stoi(item));
+    }
+    if (fields.size() != 2 && fields.size() != 7) {
+        throw std::runtime_error("--checkpoint-camera expects x,y[,reference_x,reference_y,scroll_x,scroll_y,scene_state]");
+    }
+    return fields;
+}
+
 Options parse_options(int argc, char** argv) {
     Options options;
     for (int i = 1; i < argc; ++i) {
@@ -110,10 +124,13 @@ Options parse_options(int argc, char** argv) {
             options.input_schedule = argv[++i];
         } else if (argument == "--checkpoint-player" && i + 1 < argc) {
             options.checkpoint_player = argv[++i];
+        } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
+            options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
             std::cout << "usage: openaladdin [--assets DIR] [--frames N] [--no-window] [--demo]\n"
                          "       [--state-output PATH] [--input-schedule SCHEDULE]\n"
-                         "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n";
+                         "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
+                         "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n";
             std::exit(0);
         } else {
             throw std::runtime_error("unknown argument: " + argument);
@@ -144,6 +161,18 @@ int main(int argc, char** argv) {
                 static_cast<std::int16_t>(checkpoint[2]),
                 static_cast<std::int16_t>(checkpoint[3]),
                 checkpoint.size() < 5 || checkpoint[4] != 0
+            );
+        }
+        if (!options.checkpoint_camera.empty()) {
+            const auto checkpoint = parse_camera_checkpoint(options.checkpoint_camera);
+            engine.set_checkpoint_camera(
+                checkpoint[0],
+                checkpoint[1],
+                checkpoint.size() == 7 ? checkpoint[2] : checkpoint[0],
+                checkpoint.size() == 7 ? checkpoint[3] : checkpoint[1],
+                checkpoint.size() == 7 ? checkpoint[4] : 0,
+                checkpoint.size() == 7 ? checkpoint[5] : 0,
+                checkpoint.size() == 7 ? checkpoint[6] : 1
             );
         }
 

@@ -395,6 +395,41 @@ regression can be run after building with:
 python tests/native_terrain_physics.py
 ```
 
+## Player camera model
+
+The camera recovery is recorded in
+`re/mame/findings/player-camera-findings.json`. The fixed-ROM coordinate
+pipeline is:
+
+```text
+PLAYER_X/Y (local)
+  + WORLD_CAMERA_X/Y
+  = PLAYER_WORLD_X/Y
+  -> PLAYER_WORLD_Y - 0x00F0 for terrain visual coordinates
+```
+
+`Camera_UpdateFollow` at `0x001AA90C` compares the local player against
+`CAMERA_HORIZONTAL_THRESHOLD`/`CAMERA_VERTICAL_THRESHOLD`, indexes the ROM
+dampening tables at `0x2A52` and `0x2BA4`, and moves local player and camera
+coordinates by equal and opposite deltas. `CAMERA_REFERENCE_X/Y` plus the
+signed `CAMERA_SCROLL_X/Y` accumulators preserve the 16-pixel tile-update
+state. The limits are `LEVEL_WIDTH_PIXELS - 0x161` and
+`LEVEL_HEIGHT_PIXELS - 0xF1`, with a minimum effective coordinate of `0x11`.
+
+Scene state `0x08` bypasses normal follow and enters the transition branch at
+`0x001A9D18`; the native slice exposes that mode in `CameraState` and keeps
+the controller fallback's eight-pixel local-coordinate bounds.
+
+The native renderer consumes the same `CameraState.x/y` used by terrain and
+world-coordinate calculations. Camera fields, local/world player positions,
+thresholds, accumulators, limits, and state-08 mode are emitted in the shared
+`openaladdin-frame-state-v1` JSONL trace. Differential replay can include the
+camera coordinates directly:
+
+```sh
+python tools/oa.py regression player-jump --field player.world_x --field player.world_y --field camera.x --field camera.y
+```
+
 ## Level-transition state tracing
 
 The level-transition request is tracked at

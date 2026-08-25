@@ -9,6 +9,46 @@
 
 namespace openaladdin {
 
+struct CameraState {
+    // WORLD_CAMERA_X/Y: the actual Genesis world origin. PLAYER_X/Y remain
+    // local to this origin; their sum is the world position.
+    int x = 0;
+    int y = 464;
+
+    // CAMERA_REFERENCE_X/Y and CAMERA_SCROLL_X/Y are the state used by the
+    // original camera limit and tile-update path. Keeping them explicit is
+    // important: camera x/y alone is not sufficient to resume a trace.
+    int reference_x = 0;
+    int reference_y = 464;
+    int scroll_x = 0;
+    int scroll_y = 0;
+
+    // PLAYER_X/Y are followed toward these local thresholds. The ROM changes
+    // them for movement, jump, and transition modes.
+    int horizontal_threshold = 103;
+    int vertical_threshold = 416;
+
+    int level_width = 4800;
+    int level_height = 720;
+    // 0xFF7E0A..0xFF7E10 are startup/VDP alignment fields written by
+    // Player_CameraAlign (0x001B0490), not live aliases of x/y.
+    int pixel_x = 0;
+    int pixel_y = 0;
+    int tile_x = 0;
+    int tile_y = 0;
+
+    int update_delay = 0;
+    int special_mode = 0;
+    int scene_state = 1;
+    bool scroll_left_pending = false;
+    bool scroll_right_pending = false;
+    bool scroll_up_pending = false;
+    bool scroll_down_pending = false;
+    // The ROM's tile-update path applies one extra horizontal follow step on
+    // the frame immediately after a 16-pixel reference rebase.
+    bool horizontal_rebase_followup = false;
+};
+
 struct PlayerState {
     // These are the same local coordinates and 8.8 velocity fields recovered
     // from the Genesis RAM map (PLAYER_X/Y, PLAYER_VX/VY).
@@ -90,8 +130,10 @@ public:
     int map_height() const { return map_height_; }
     int start_x() const { return start_x_; }
     int start_y() const { return start_y_; }
-    int camera_x() const { return camera_x_; }
-    int camera_y() const { return camera_y_; }
+    int camera_start_x() const { return camera_start_x_; }
+    int camera_start_y() const { return camera_start_y_; }
+    int camera_threshold_x() const { return camera_threshold_x_; }
+    int camera_threshold_y() const { return camera_threshold_y_; }
 
     // This is the recovered FF9884/FFAE86 lookup in local, file-backed form.
     std::uint8_t terrain_behavior(int column, int row) const;
@@ -109,13 +151,15 @@ public:
 private:
     int map_width_ = 300;
     int map_height_ = 45;
-    // Level-01 runtime state: local player (103, 416), camera (0, 464).
-    // These are the values observed in the loaded MAME state; the extracted
-    // level-table fields use the opposite-looking start/offset naming.
+    // Level-01 fixed-ROM startup fields: camera (0, 464), local player
+    // (103, 416). They are configuration only; Engine owns mutable runtime
+    // camera state.
     int start_x_ = 103;
     int start_y_ = 416;
-    int camera_x_ = 0;
-    int camera_y_ = 464;
+    int camera_start_x_ = 0;
+    int camera_start_y_ = 464;
+    int camera_threshold_x_ = 103;
+    int camera_threshold_y_ = 416;
     int background_width_ = 0;
     int background_height_ = 0;
     std::vector<std::uint8_t> background_rgba_;
@@ -129,11 +173,15 @@ public:
     void load(const std::string& asset_root);
     void reset();
     void set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded);
+    void set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state);
     void update(const InputState& input);
     void render(SDL_Renderer* renderer);
     void write_state(std::ostream& output, const std::string& input_token) const;
 
     const PlayerState& player() const { return player_; }
+    const CameraState& camera() const { return camera_; }
+    int player_world_x() const { return camera_.x + player_.x; }
+    int player_world_y() const { return camera_.y + player_.y; }
     int frame() const { return frame_; }
     bool grounded() const { return player_.grounded; }
 
@@ -141,6 +189,10 @@ private:
     void integrate_motion();
     void update_terrain_input(const InputState& input);
     void resolve_terrain();
+    void update_camera();
+    void initialize_camera_alignment();
+    bool rebase_camera_reference();
+    void update_state08(const InputState& input);
     bool terrain_side_blocked(int direction) const;
     void apply_ground_movement(const InputState& input);
     void apply_terrain_behavior(const Level::TerrainCell& cell);
@@ -149,6 +201,7 @@ private:
 
     Level level_;
     PlayerState player_;
+    CameraState camera_;
     int frame_ = 0;
     bool quit_ = false;
     std::vector<std::uint32_t> framebuffer_;

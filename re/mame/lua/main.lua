@@ -170,6 +170,33 @@ local function terrain_runtime_json()
     })
 end
 
+local function camera_runtime_json()
+    local special_mode = read_u8(symbol("CAMERA_SPECIAL_MODE"))
+    return json_object({
+        { "x", tostring(read_u16(symbol("WORLD_CAMERA_X"))) },
+        { "y", tostring(read_u16(symbol("WORLD_CAMERA_Y"))) },
+        { "reference_x", tostring(read_u16(symbol("CAMERA_REFERENCE_X"))) },
+        { "reference_y", tostring(read_u16(symbol("CAMERA_REFERENCE_Y"))) },
+        { "horizontal_threshold", tostring(read_u16(symbol("CAMERA_HORIZONTAL_THRESHOLD"))) },
+        { "vertical_threshold", tostring(read_u16(symbol("CAMERA_VERTICAL_THRESHOLD"))) },
+        { "scroll_x", tostring(signed_u16(read_u16(symbol("CAMERA_SCROLL_X")))) },
+        { "scroll_y", tostring(signed_u16(read_u16(symbol("CAMERA_SCROLL_Y")))) },
+        { "pixel_x", tostring(read_u16(symbol("PLAYER_CAMERA_PIXEL_X"))) },
+        { "pixel_y", tostring(read_u16(symbol("PLAYER_CAMERA_PIXEL_Y"))) },
+        { "tile_x", tostring(read_u16(symbol("CAMERA_TILE_X"))) },
+        { "tile_y", tostring(read_u16(symbol("CAMERA_TILE_Y"))) },
+        { "level_width", tostring(read_u16(symbol("LEVEL_WIDTH_PIXELS"))) },
+        { "level_height", tostring(read_u16(symbol("LEVEL_HEIGHT_PIXELS"))) },
+        { "update_delay", tostring(read_u8(symbol("CAMERA_UPDATE_DELAY"))) },
+        { "scroll_left_pending", tostring(read_u8(symbol("CAMERA_SCROLL_LEFT_PENDING"))) },
+        { "scroll_right_pending", tostring(read_u8(symbol("CAMERA_SCROLL_RIGHT_PENDING"))) },
+        { "scroll_up_pending", tostring(read_u8(symbol("CAMERA_SCROLL_UP_PENDING"))) },
+        { "scroll_down_pending", tostring(read_u8(symbol("CAMERA_SCROLL_DOWN_PENDING"))) },
+        { "special_mode", tostring(special_mode) },
+        { "state_08", json_bool(read_u8(symbol("SCENE_STATE")) == 8) }
+    })
+end
+
 local function preload_machine_state()
     if preload_state == "" or preload_applied then
         return
@@ -289,14 +316,15 @@ local function capture(frame, input_token)
             { "player", json_object({
                 { "x", tostring(read_u16(symbol("PLAYER_X"))) },
                 { "y", tostring(read_u16(symbol("PLAYER_Y"))) },
+                { "world_x", tostring(read_u16(symbol("PLAYER_WORLD_X"))) },
+                { "world_y", tostring(read_u16(symbol("PLAYER_WORLD_Y"))) },
                 { "vx", tostring(signed_u16(read_u16(symbol("PLAYER_VX")))) },
                 { "vy", tostring(signed_u16(read_u16(symbol("PLAYER_VY")))) },
                 { "animation_pc", tostring(read_u32(symbol("PLAYER_ANIMATION_PC"))) },
-                -- A dedicated grounded byte is not yet tracked in the shared
-                -- RAM map. For the initial differential slice, zero vertical
-                -- velocity is the observable grounded state; terrain landing
-                -- and jump transitions make this reliable for the probe.
-                { "grounded", json_bool(read_u16(symbol("PLAYER_VY")) == 0) }
+                -- TERRAIN_LANDING_STATE is the ROM's explicit grounded/landing
+                -- state. PLAYER_VY can be zero during an airborne vertical
+                -- stop, so it is not a safe grounded predicate.
+                { "grounded", json_bool(read_u8(symbol("TERRAIN_LANDING_STATE")) == 1) }
             }) },
             { "scene", json_object({
                 { "state", tostring(read_u8(symbol("SCENE_STATE"))) },
@@ -314,10 +342,7 @@ local function capture(frame, input_token)
                 { "player_countdown", tostring(read_u8(symbol("PLAYER_TRANSITION_COUNTDOWN"))) },
                 { "player_terminal", tostring(read_u8(symbol("PLAYER_TERMINAL_TRANSITION"))) }
             }) },
-            { "camera", json_object({
-                { "x", tostring(read_u16(symbol("WORLD_CAMERA_X"))) },
-                { "y", tostring(read_u16(symbol("WORLD_CAMERA_Y"))) }
-            }) },
+            { "camera", camera_runtime_json() },
             { "terrain", terrain_runtime_json() },
             { "actors", json_array(actors) }
         })
