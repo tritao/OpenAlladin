@@ -242,6 +242,44 @@
         "query_state_b": 255
       }
     },
+    "terrain-handler-0x27": {
+      "trace": "build/re/traces/terrain-handler-27-v2/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-27-v2/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x27",
+        "handler": "0x001B54A6"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x27",
+        "camera": [16, 464],
+        "player": [87, 416, 0, 0],
+        "world": [103, 880]
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "direct_writes": {
+          "TERRAIN_QUERY_STATE_B": 255,
+          "PLAYER_Y": 336,
+          "PLAYER_ANIMATION_PC": "0x001223D0",
+          "PLAYER_ANIMATION_TIMER": 0,
+          "TERRAIN_RESPONSE_ACTIVE": 255,
+          "TERRAIN_RESPONSE_TIMER_STATE": 0
+        },
+        "post_camera_state": {
+          "camera": [16, 454],
+          "player": [87, 346, 0, 0],
+          "world": [103, 800]
+        }
+      }
+    },
     "terrain-handler-0x29": {
       "trace": "build/re/traces/terrain-handler-29-v2/state.jsonl",
       "edge_trace": "build/re/traces/terrain-handler-29-v2/debug.log",
@@ -513,6 +551,7 @@
     "surface_mode": "FFF0A4 is written to 0 by behaviors 0x01..0x04, to 1 by behaviors 0x05..0x07, and toggled by 0x47; FFF0C2 is the 0x47 one-shot latch",
     "diagonal_response": "behavior 0x2A adds one pixel to PLAYER_X and subtracts 0x46 from PLAYER_VX before the normal integrator",
     "query_state_handlers": "behaviors 0x22..0x23 set FFF0CE; behavior 0x24 sets FFF0CF and falls through to set FFF0CE",
+    "transition_response": "behavior 0x27 sets FFF0CF, subtracts 0x50 from PLAYER_Y, selects animation 0x001223D0, sets FFF0E7, and clears FFF0CC",
     "landing_response": "behavior 0x30 subtracts 0x7C from PLAYER_VY, clears FFF0B0/FFF0CC, arms FFF0C1, and aligns PLAYER_X through 0x001A99C6",
     "launch_response": "behavior 0x29 requires FFF0BE clear, writes PLAYER_VX=-0x400 and PLAYER_VY=-0x500, clears FFF0C0/FFF0CC, and sets FFF0BE",
     "removed_heuristics": ["nearby support-row search", "behavior < 0xE0 solid test", "player-sized horizontal rectangle scan"]

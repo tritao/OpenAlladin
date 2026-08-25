@@ -18,6 +18,7 @@ HANDLER_2B_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2b-sta
 HANDLER_2A_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2a-state.jsonl"
 QUERY_STATE_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/query-state.jsonl"
 QUERY_STATE_AB_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/query-state-ab.jsonl"
+HANDLER_27_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-27-state.jsonl"
 HANDLER_29_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-29-state.jsonl"
 HANDLER_28_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-28-state.jsonl"
 HANDLER_2D_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2d-state.jsonl"
@@ -273,6 +274,42 @@ def main() -> int:
         assert query_state["terrain"]["behavior"] == int(behavior, 16)
         assert query_state["terrain"]["query_state_a"] == expected_a
         assert query_state["terrain"]["query_state_b"] == expected_b
+
+    # Behavior 0x27 is the transition response: it subtracts 0x50 from the
+    # local Y coordinate before camera follow, selects 0x001223D0, sets the
+    # response-active flag, and clears the response timer state.
+    handler_27_command = [
+        str(ROOT / "build/openaladdin"),
+        "--no-window",
+        "--frames",
+        "2",
+        "--state-output",
+        str(HANDLER_27_OUTPUT),
+        "--actor-records",
+        "/dev/null",
+        "--checkpoint-player",
+        "87,416,0,0,1",
+        "--checkpoint-terrain-behavior",
+        "0x27",
+        "--checkpoint-animation",
+        "0x121E46,0",
+        "--checkpoint-camera",
+        "16,464,16,464,0,0,1",
+    ]
+    subprocess.run(handler_27_command, cwd=ROOT, env=environment, check=True)
+    with HANDLER_27_OUTPUT.open(encoding="utf-8") as stream:
+        handler_27_states = {
+            record["frame"]: record
+            for record in map(json.loads, stream)
+            if record.get("type") == "state"
+        }
+    handler_27 = handler_27_states[1]
+    assert handler_27["terrain"]["behavior"] == 0x27
+    assert handler_27["terrain"]["query_state_b"] == 0xFF
+    assert handler_27["terrain"]["response_active"] == 0xFF
+    assert handler_27["terrain"]["response_timer_state"] == 0
+    assert handler_27["player"]["y"] == 346
+    assert handler_27["player"]["animation_pc"] == 0x001223D0
 
     # Behavior 0x29 launches from a clear response state. The ROM writes the
     # launch velocities, clears the vertical/timer latches, and leaves the

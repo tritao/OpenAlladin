@@ -1537,6 +1537,15 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_query_state_b = 0xFF;
         player_.terrain_query_state_a = 0xFF;
         break;
+    case 0x27:  // TerrainHandler_TransitionResponse (0x001B54A6)
+        // Exact ROM body: set FFF0CF, SUBI.W #$50,PLAYER_Y, select the
+        // transition stream, clear its timer, set FFF0E7, and clear FFF0CC.
+        player_.terrain_query_state_b = 0xFF;
+        player_.y -= 0x50;
+        animation_.set_animation_state(0x001223D0, 0);
+        player_.terrain_response_active = 0xFF;
+        player_.terrain_response_timer_state = 0;
+        break;
     case 0x28:  // TerrainHandler_StopAndAlign (0x001B55E8)
         // The ROM ignores the response while the animation gate or another
         // terrain response is active. The accepted branch clears velocity
@@ -1850,7 +1859,8 @@ void Engine::update(const InputState& input) {
     const bool stable_terrain_handler_fixture = checkpoint_terrain_behavior_override_
         && (checkpoint_terrain_behavior_ == 0x28
             || checkpoint_terrain_behavior_ == 0x29
-            || checkpoint_terrain_behavior_ == 0x2D);
+            || checkpoint_terrain_behavior_ == 0x2D
+            || checkpoint_terrain_behavior_ == 0x27);
     // The normal slice uses the recovered contour pass. Handler fixtures are
     // deliberately staged at the ROM's resolver boundary instead: the
     // original frame calls Terrain_ResolvePlayerCell/handler before the
