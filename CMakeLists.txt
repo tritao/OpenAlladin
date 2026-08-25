@@ -134,6 +134,8 @@ target_compile_features(openaladdin_ymfm PUBLIC cxx_std_20)
 add_library(openaladdin_audio STATIC
     src/audio/sn76489.cpp
     src/audio/sn76489.hpp
+    src/audio/mixer.cpp
+    src/audio/mixer.hpp
     src/audio/ym2612.cpp
     src/audio/ym2612.hpp
 )
@@ -199,6 +201,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(ym2612_test)
     openaladdin_enable_test_assertions(ym2612_test)
 
+    add_executable(mixer_test tests/mixer.cpp)
+    target_link_libraries(mixer_test PRIVATE openaladdin_audio)
+    target_compile_features(mixer_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(mixer_test)
+    openaladdin_enable_test_assertions(mixer_test)
+
     add_test(NAME sprite_renderer COMMAND sprite_renderer_test)
     set_tests_properties(sprite_renderer PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -213,6 +221,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME ym2612 COMMAND ym2612_test)
     set_tests_properties(ym2612 PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME mixer COMMAND mixer_test)
+    set_tests_properties(mixer PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     find_package(Python3 COMPONENTS Interpreter QUIET)
