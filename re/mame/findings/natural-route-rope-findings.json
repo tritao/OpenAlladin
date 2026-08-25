@@ -1,7 +1,7 @@
 {
   "format": "openaladdin-natural-route-rope-finding-v1",
   "rom": "rom/Disneys_Aladdin_U_p1.bin",
-  "purpose": "Record the playable lower-gap route that reaches the first vertical rope and separate it from the unresolved rope-top transfer.",
+  "purpose": "Record the playable lower-gap route, its handhold-to-rope loop, and separate it from the unresolved forward scene transition.",
   "checkpoint": {
     "state": "build/re/natural-gap-branch-base-20260825/states/genesis/gap-entrance.sta",
     "world": [1346, 832],
@@ -77,6 +77,45 @@
         "scene_state_08_observed": false,
         "description": "All tested timings either stop at the rope around X=2104 or fall to the lower floor around X=2176; none reaches the forward upper edge."
       }
+    },
+    "handhold_to_rope_loop": {
+      "grab_trace": "build/re/codex-handhold-confirm-20260825",
+      "grab_input": "right*60,c+right*20,c*10,right*110",
+      "handhold": {
+        "actor_slot": 24,
+        "before_type": "0x6A",
+        "after_type": "0x6B",
+        "frame": 119,
+        "world": [1667, 695],
+        "description": "The actor at world (1656,703) changes from type 0x6A to 0x6B when the player crosses its handhold height."
+      },
+      "post_grab_checkpoint": {
+        "state": "build/re/codex-handhold-grab-save-20260825b/states/genesis/codex-hh-grab-verified.sta",
+        "world": [1667, 695],
+        "actor_type": "0x6B"
+      },
+      "complete_trace": "build/re/codex-hh-complete-rope-loop-20260825",
+      "complete_input": "c+right*120,right*30,up*100,c+left*12,left*60,none*308",
+      "milestones": [
+        {
+          "world": [2024, 690],
+          "description": "C+Right from the verified handhold state springs the player onto the upper platform."
+        },
+        {
+          "world": [2104, 721],
+          "description": "Continuing right reaches the wall/rope base."
+        },
+        {
+          "world": [2104, 655],
+          "description": "Holding Up climbs the wall rope to its upper stop."
+        },
+        {
+          "world": [1946, 690],
+          "description": "C+Left followed by Left dismounts back onto the upper platform."
+        }
+      ],
+      "scene_state": "0x01",
+      "description": "The handhold route and the wall-rope transfer form a closed local loop; no scene transition or state 0x08 occurs."
     },
     "unresolved": "The transfer returns to the already-known upper platform; the forward path beyond that platform still reaches the non-landing upper edge rather than the scene transition corridor."
   },
