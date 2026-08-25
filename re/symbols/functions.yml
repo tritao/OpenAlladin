@@ -80,6 +80,28 @@
   evidence:
     - ghidra_level_transition_targeted_decompile
     - ghidra_memory_reference_scene_state
+0x001B5B4A:
+  name: Level01_EnterRoutine
+  confidence: confirmed
+  description: Level-table entry-1 per-frame boundary predicate; when PLAYER_WORLD_X exceeds 0x1287 and PLAYER_WORLD_Y is below 0x01D6 it arms SCENE_SCRIPT_COUNTDOWN with 0xFF, then decrements the shared level timer at 0x00FFF103.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+    - level_table_entry_1
+0x001B6406:
+  name: Level01_ExitRoutine
+  confidence: confirmed
+  description: Level-table entry-1 exit callback; writes VDP control word 0x8B02 and invokes the common transition helper at 0x001B2E9A.
+  evidence:
+    - ghidra_level_transition_targeted_decompile
+    - level_table_entry_1
+    - controlled_level01_transition_campaign
+0x001B56B6:
+  name: TerrainHandler_BouncePlayerBlock
+  confidence: confirmed
+  description: Terrain behavior handler that launches the player with PLAYER_VX=-0x0400 and PLAYER_VY=0x0200, selects the bounce animation stream, and queues event 0x27 when the VDP update flag is active.
+  evidence:
+    - ghidra_decompile_actor_platform_handlers
+    - terrain_response_handler_table_004554
 0x001A9502:
   name: Player_SelectActionAnimation
   confidence: confirmed
