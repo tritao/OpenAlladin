@@ -114,12 +114,32 @@ target_include_directories(openaladdin_core
 target_compile_features(openaladdin_core PUBLIC cxx_std_20)
 openaladdin_enable_warnings(openaladdin_core)
 
+set(OPENALADDIN_YMFM_ROOT
+    "${CMAKE_CURRENT_SOURCE_DIR}/external/mame/3rdparty/ymfm/src")
+if(NOT EXISTS "${OPENALADDIN_YMFM_ROOT}/ymfm_opn.cpp")
+    message(FATAL_ERROR
+        "ymfm was not found. Initialize the external/mame submodule before "
+        "configuring the native build.")
+endif()
+
+add_library(openaladdin_ymfm STATIC
+    "${OPENALADDIN_YMFM_ROOT}/ymfm_opn.cpp"
+    "${OPENALADDIN_YMFM_ROOT}/ymfm_adpcm.cpp"
+    "${OPENALADDIN_YMFM_ROOT}/ymfm_pcm.cpp"
+    "${OPENALADDIN_YMFM_ROOT}/ymfm_ssg.cpp"
+)
+target_include_directories(openaladdin_ymfm PUBLIC "${OPENALADDIN_YMFM_ROOT}")
+target_compile_features(openaladdin_ymfm PUBLIC cxx_std_20)
+
 add_library(openaladdin_audio STATIC
     src/audio/sn76489.cpp
     src/audio/sn76489.hpp
+    src/audio/ym2612.cpp
+    src/audio/ym2612.hpp
 )
 target_include_directories(openaladdin_audio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_features(openaladdin_audio PUBLIC cxx_std_20)
+target_link_libraries(openaladdin_audio PUBLIC openaladdin_ymfm)
 openaladdin_enable_warnings(openaladdin_audio)
 
 add_library(openaladdin_engine STATIC
@@ -173,6 +193,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(psg_test)
     openaladdin_enable_test_assertions(psg_test)
 
+    add_executable(ym2612_test tests/ym2612.cpp)
+    target_link_libraries(ym2612_test PRIVATE openaladdin_audio)
+    target_compile_features(ym2612_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(ym2612_test)
+    openaladdin_enable_test_assertions(ym2612_test)
+
     add_test(NAME sprite_renderer COMMAND sprite_renderer_test)
     set_tests_properties(sprite_renderer PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -183,6 +209,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME psg COMMAND psg_test)
     set_tests_properties(psg PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME ym2612 COMMAND ym2612_test)
+    set_tests_properties(ym2612 PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     find_package(Python3 COMPONENTS Interpreter QUIET)
