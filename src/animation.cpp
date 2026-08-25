@@ -107,6 +107,7 @@ void PlayerAnimationVm::reset() {
     // The player traces use the low branch of the F0E0 idle embellishment;
     // keep this deterministic until the shared game RNG is modelled.
     random_value_ = 0x00;
+    spawn_request_ = {};
     update_count_ = 0;
     landing_finished_ = false;
     landing_reselect_pending_ = false;
@@ -347,7 +348,23 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         return false;
     case 0xF3: cursor += 2; return false;
     case 0xF4: compare_command(cursor); return false;
-    case 0xF5: cursor += 16; return false;
+    case 0xF5:
+        // AnimationVM_SpawnOrCopyActor (0x001AD00E) consumes a fixed 16-byte
+        // record. Keep the request lossless here; Engine applies the ROM
+        // template to the live actor table after the VM tick.
+        spawn_request_.valid = true;
+        spawn_request_.mode = read_rom8(cursor + 1);
+        spawn_request_.template_address = read_rom32(cursor + 2);
+        spawn_request_.offset_x = static_cast<std::int8_t>(read_rom8(cursor + 6));
+        spawn_request_.offset_y = static_cast<std::int8_t>(read_rom8(cursor + 7));
+        spawn_request_.animation_override = read_rom32(cursor + 8);
+        spawn_request_.movement_override = read_rom32(cursor + 12);
+        spawn_request_.source_world_x = context.world_x;
+        spawn_request_.source_world_y = context.world_y;
+        spawn_request_.source_facing_x_flip = actor_[9];
+        spawn_request_.source_facing_y_flip = actor_[0x35];
+        cursor += 16;
+        return false;
     case 0xF6: cursor += 2; return false;
     case 0xF7:
         actor_[9] = 0;
@@ -522,6 +539,13 @@ void PlayerAnimationVm::update_actor(
     actor.animation_pc = animation_pc_;
     actor.frame_ptr = frame_pointer_;
     actor.animation_timer = actor_[0x37];
+}
+
+bool PlayerAnimationVm::take_spawn_request(AnimationSpawnRequest& request) {
+    if (!spawn_request_.valid) return false;
+    request = spawn_request_;
+    spawn_request_ = {};
+    return true;
 }
 
 void PlayerAnimationVm::select_stream_entry(std::uint32_t stream_entry) {

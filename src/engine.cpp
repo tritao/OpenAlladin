@@ -848,6 +848,64 @@ void Engine::update_actor_animations() {
     }
 }
 
+void Engine::apply_animation_spawns() {
+    AnimationSpawnRequest request;
+    while (animation_.take_spawn_request(request)) {
+        // Mode 3 is the player weapon/effect allocation path recovered from
+        // the live sword stream. Other F5 modes select linked/common records
+        // whose ownership rules are not yet represented by this native table;
+        // leaving them queued-free avoids inventing an allocation policy.
+        if (!request.valid || request.mode != 3) continue;
+
+        const auto read_u8 = [&](std::uint32_t address) -> std::uint8_t {
+            return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
+        };
+        const auto read_u32 = [&](std::uint32_t address) -> std::uint32_t {
+            if (address + 3 >= rom_bytes_.size()) return 0;
+            return (static_cast<std::uint32_t>(read_u8(address)) << 24)
+                | (static_cast<std::uint32_t>(read_u8(address + 1)) << 16)
+                | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
+                | read_u8(address + 3);
+        };
+        if (request.template_address + 0x12 >= rom_bytes_.size()) continue;
+
+        // The compact template layout is the one consumed by
+        // Actor_InitializeFromTemplate at 0x001AE30A:
+        // type +0, movement pointer +6, animation pointer +0xC, resource
+        // count +0x10, facing-Y +0x11, flags +0x12.
+        ActorState spawned;
+        spawned.type = read_u8(request.template_address);
+        spawned.movement_pc = read_u32(request.template_address + 6);
+        spawned.animation_pc = read_u32(request.template_address + 0x0C);
+        spawned.flags = read_u8(request.template_address + 0x12);
+        spawned.facing_x_flip = request.source_facing_x_flip;
+        spawned.facing_y_flip = request.source_facing_y_flip;
+        if (request.animation_override != 0) {
+            spawned.animation_pc = request.animation_override;
+        }
+        if (request.movement_override != 0) {
+            spawned.movement_pc = request.movement_override;
+        }
+
+        int offset_x = request.offset_x;
+        int offset_y = request.offset_y;
+        if (request.source_facing_x_flip != 0) offset_x = -offset_x;
+        if (request.source_facing_y_flip != 0) offset_y = -offset_y;
+        spawned.x = static_cast<std::uint16_t>(request.source_world_x + offset_x);
+        spawned.y = static_cast<std::uint16_t>(request.source_world_y + offset_y);
+
+        // Mode 3 allocates from the seven auxiliary records scanned by the
+        // actor-to-actor collision pass (0x001ABD7E). The ROM chooses the
+        // first free record in this pool.
+        for (std::size_t slot = 25; slot < 32; ++slot) {
+            if (actors_[slot].type != 0) continue;
+            actors_[slot] = spawned;
+            actor_animations_[slot].reset();
+            break;
+        }
+    }
+}
+
 void Engine::update_actor_actor_collisions() {
     if (rom_bytes_.empty()) return;
 
@@ -1826,6 +1884,7 @@ void Engine::update(const InputState& input) {
     if (input.attack_pressed && was_grounded && animation_.rom_loaded()) {
         animation_.select_stream_entry(kPlayerSwordAnimationStream);
     }
+    apply_animation_spawns();
     apply_actor_timeline(frame_ + 1);
     ++frame_;
 }

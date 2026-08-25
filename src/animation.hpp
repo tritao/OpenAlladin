@@ -59,6 +59,22 @@ struct ActorAnimationState {
     std::uint8_t animation_timer = 0;
 };
 
+// A decoded animation-VM F5 request. The VM owns the bytecode cursor, while
+// Engine owns the 32 live actor records and performs the actual allocation.
+struct AnimationSpawnRequest {
+    bool valid = false;
+    std::uint8_t mode = 0;
+    std::uint32_t template_address = 0;
+    std::int8_t offset_x = 0;
+    std::int8_t offset_y = 0;
+    std::uint32_t animation_override = 0;
+    std::uint32_t movement_override = 0;
+    int source_world_x = 0;
+    int source_world_y = 0;
+    std::uint8_t source_facing_x_flip = 0;
+    std::uint8_t source_facing_y_flip = 0;
+};
+
 // PlayerAnimationVm is the player-facing slice of the original common actor
 // animation VM at 0x001AC784. With a ROM loaded it executes the original
 // frame-reference stream and command bytecode directly. The small Clip table
@@ -86,6 +102,7 @@ public:
     void set_animation_state(std::uint32_t animation_pc, int timer);
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
+    bool take_spawn_request(AnimationSpawnRequest& request);
     void select_stream_entry(std::uint32_t stream_entry);
     bool finished() const;
     bool select_player_interaction_state(const AnimationContext& context);
@@ -137,6 +154,7 @@ private:
     std::uint32_t stream_entry_ = 0;
     std::uint32_t return_pc_ = 0;
     std::uint8_t random_value_ = 0xFF;
+    AnimationSpawnRequest spawn_request_{};
     unsigned update_count_ = 0;
     bool landing_finished_ = false;
     bool landing_reselect_pending_ = false;
