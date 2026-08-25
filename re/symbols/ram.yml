@@ -17,6 +17,15 @@
   evidence:
     - mame_actor_table_frame_pointer_capture
     - actor_table_layout
+0xFF7E7C:
+  name: PLAYER_ACTOR_FLAGS
+  type: u8
+  format: bitfield
+  confidence: confirmed
+  description: Player actor slot behavior flags at actor-table offset +0x3C; bit 5 gates the interaction-state selector caller.
+  evidence:
+    - ghidra_disassembly_001AE862
+    - mame_player_interaction_selector_trace
 0xFF7E22:
   name: SCENE_RESOURCE_STATUS
   type: u8
@@ -610,6 +619,22 @@
   evidence:
     - ghidra_disassembly_001A9B90
     - ghidra_disassembly_001A9D98
+0xFFF0C6:
+  name: TERRAIN_LEFT_INNER_PROBE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Adjacent left-side terrain probe recorded by Player_TerrainCollisionProbe before the terminal left-motion flag.
+  evidence:
+    - ghidra_disassembly_001AD632
+0xFFF0C7:
+  name: TERRAIN_LEFT_OUTER_PROBE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Outer adjacent left-side terrain probe recorded by Player_TerrainCollisionProbe.
+  evidence:
+    - ghidra_disassembly_001AD632
 0xFFF0C8:
   name: TERRAIN_STOP_RIGHT_MOTION
   type: u8
@@ -619,6 +644,22 @@
   evidence:
     - ghidra_disassembly_001A9B90
     - ghidra_disassembly_001A9D98
+0xFFF0C9:
+  name: TERRAIN_RIGHT_INNER_PROBE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Adjacent right-side terrain probe recorded by Player_TerrainCollisionProbe before the terminal right-motion flag.
+  evidence:
+    - ghidra_disassembly_001AD632
+0xFFF0CA:
+  name: TERRAIN_RIGHT_OUTER_PROBE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Outer adjacent right-side terrain probe recorded by Player_TerrainCollisionProbe.
+  evidence:
+    - ghidra_disassembly_001AD632
 0xFFF0CB:
   name: TERRAIN_STOP_UPWARD_MOTION
   type: u8

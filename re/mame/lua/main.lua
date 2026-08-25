@@ -169,7 +169,11 @@ local function terrain_runtime_json()
         { "surface_mode", tostring(read_u16(symbol("TERRAIN_SURFACE_MODE"))) },
         { "surface_latch", tostring(read_u8(symbol("TERRAIN_SURFACE_LATCH"))) },
         { "stop_left_motion", tostring(read_u8(symbol("TERRAIN_STOP_LEFT_MOTION"))) },
+        { "left_inner_probe", tostring(read_u8(symbol("TERRAIN_LEFT_INNER_PROBE"))) },
+        { "left_outer_probe", tostring(read_u8(symbol("TERRAIN_LEFT_OUTER_PROBE"))) },
         { "stop_right_motion", tostring(read_u8(symbol("TERRAIN_STOP_RIGHT_MOTION"))) },
+        { "right_inner_probe", tostring(read_u8(symbol("TERRAIN_RIGHT_INNER_PROBE"))) },
+        { "right_outer_probe", tostring(read_u8(symbol("TERRAIN_RIGHT_OUTER_PROBE"))) },
         { "stop_upward_motion", tostring(read_u8(symbol("TERRAIN_STOP_UPWARD_MOTION"))) },
         { "response_timer_state", tostring(read_u8(symbol("TERRAIN_RESPONSE_TIMER_STATE"))) },
         { "query_state_a", tostring(read_u8(symbol("TERRAIN_QUERY_STATE_A"))) },
@@ -309,7 +313,8 @@ local function capture(frame, input_token, emit_state)
         for slot = 0, actor_slot_count - 1 do
             local record = actor_table_base + slot * actor_stride
             local actor_type = read_u8(record + actor_type_offset)
-            if actor_type ~= 0 then
+            local actor_flags = read_u8(record + 0x3C)
+            if actor_type ~= 0 or actor_flags ~= 0 then
                 actors[#actors + 1] = json_object({
                     { "slot", tostring(slot) },
                     { "type", tostring(actor_type) },
@@ -317,7 +322,9 @@ local function capture(frame, input_token, emit_state)
                     { "y", tostring(read_u16(record + actor_y_offset)) },
                     { "frame_ptr", tostring(read_u32(record + actor_frame_ptr_offset)) },
                     { "animation_pc", tostring(read_u32(record + actor_animation_pc_offset)) },
-                    { "movement_pc", tostring(read_u32(record + actor_movement_pc_offset)) }
+                    { "movement_pc", tostring(read_u32(record + actor_movement_pc_offset)) },
+                    { "flags", tostring(actor_flags) },
+                    { "flag_bit5", json_bool((actor_flags & 0x20) ~= 0) }
                 })
             end
         end
@@ -339,6 +346,8 @@ local function capture(frame, input_token, emit_state)
                 -- native animation differential test.
                 { "frame_ptr", tostring(read_u32(actor_table_base + actor_frame_ptr_offset)) },
                 { "animation_timer", tostring(read_u8(symbol("PLAYER_ANIMATION_TIMER"))) },
+                { "actor_flags", tostring(read_u8(symbol("PLAYER_ACTOR_FLAGS"))) },
+                { "actor_flag_bit5", json_bool((read_u8(symbol("PLAYER_ACTOR_FLAGS")) & 0x20) ~= 0) },
                 -- TERRAIN_LANDING_STATE is the ROM's explicit grounded/landing
                 -- state. PLAYER_VY can be zero during an airborne vertical
                 -- stop, so it is not a safe grounded predicate.
@@ -664,7 +673,11 @@ if state then
                 { "surface_mode", tostring(symbol("TERRAIN_SURFACE_MODE")) },
                 { "surface_latch", tostring(symbol("TERRAIN_SURFACE_LATCH")) },
                 { "stop_left_motion", tostring(symbol("TERRAIN_STOP_LEFT_MOTION")) },
+                { "left_inner_probe", tostring(symbol("TERRAIN_LEFT_INNER_PROBE")) },
+                { "left_outer_probe", tostring(symbol("TERRAIN_LEFT_OUTER_PROBE")) },
                 { "stop_right_motion", tostring(symbol("TERRAIN_STOP_RIGHT_MOTION")) },
+                { "right_inner_probe", tostring(symbol("TERRAIN_RIGHT_INNER_PROBE")) },
+                { "right_outer_probe", tostring(symbol("TERRAIN_RIGHT_OUTER_PROBE")) },
                 { "stop_upward_motion", tostring(symbol("TERRAIN_STOP_UPWARD_MOTION")) },
                 { "response_timer_state", tostring(symbol("TERRAIN_RESPONSE_TIMER_STATE")) },
                 { "query_state_a", tostring(symbol("TERRAIN_QUERY_STATE_A")) },

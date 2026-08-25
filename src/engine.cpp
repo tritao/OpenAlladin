@@ -297,10 +297,8 @@ Level::TerrainCollisionFlags Level::query_player_collision(
     // the player motion path, but the complete condition is retained here.
     const bool left_passable = !blocking(column, row) && !blocking(column, row + 1);
     if (left_passable) {
-        const bool left_inner = blocking(column - 1, row + 1);
-        const bool left_outer = blocking(column - 2, row + 1);
-        (void)left_inner;
-        (void)left_outer;
+        flags.left_inner = blocking(column - 1, row + 1);
+        flags.left_outer = blocking(column - 2, row + 1);
         flags.stop_left = blocking(column, row + 2)
             || (!grounded && blocking(column, row + 3));
     } else {
@@ -311,10 +309,8 @@ Level::TerrainCollisionFlags Level::query_player_collision(
     // terrain word to the right of the left-side base pointer.
     const bool right_passable = !blocking(column + 1, row) && !blocking(column + 1, row + 1);
     if (right_passable) {
-        const bool right_inner = blocking(column + 2, row + 1);
-        const bool right_outer = blocking(column + 3, row + 1);
-        (void)right_inner;
-        (void)right_outer;
+        flags.right_inner = blocking(column + 2, row + 1);
+        flags.right_outer = blocking(column + 3, row + 1);
         flags.stop_right = blocking(column + 1, row + 2)
             || (!grounded && blocking(column + 1, row + 3));
     } else {
@@ -521,7 +517,11 @@ void Engine::resolve_terrain(int previous_world_y) {
     const Level::TerrainCell previous_down_probe =
         level_.resolve_player_cell(player_world_x(), previous_world_y + 8);
     const Level::TerrainCell* cell = &query.resolver;
-    if (player_.vy >= 0 && !query.has_resolver_handler()
+    const bool resolver_has_handler = query.resolver.valid
+        && query.resolver.behavior != 0
+        && (query.resolver.handler != kTerrainNoOpHandler
+            || query.resolver.behavior == 0x11);
+    if (player_.vy >= 0 && !resolver_has_handler
         && previous_down_probe.valid && previous_down_probe.behavior != 0
         && (previous_down_probe.handler != kTerrainNoOpHandler
             || previous_down_probe.behavior == 0x11)) {
@@ -532,7 +532,6 @@ void Engine::resolve_terrain(int previous_world_y) {
         cell = &previous_down_probe;
     }
     player_.terrain_behavior = cell->valid ? cell->behavior : 0;
-    player_.terrain_horizontal_response = 0;
     // Terrain_ResolvePlayerCell clears these scratch fields before it looks
     // up the selected behavior. FFF0C2 is deliberately cleared only when
     // the resolved behavior is not 0x47; the 0x47 handler uses it as a
@@ -574,9 +573,6 @@ void Engine::resolve_terrain(int previous_world_y) {
         player_.terrain_landing_state = 1;
         player_.terrain_vertical_stop = 0;
         player_.terrain_response_timer_state = 0;
-    } else if (player_.vy < 0 && query.up.valid && query.up.behavior != 0
-               && (query.up.handler != kTerrainNoOpHandler || query.up.behavior == 0x11)) {
-        player_.terrain_stop_upward_motion = 0xFF;
     }
 
     // The ROM dispatches the handler on every resolver pass. Individual
@@ -641,28 +637,40 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
     }
 }
 
-bool Engine::terrain_side_blocked(int direction) const {
-    const int next_world_x = player_world_x() + direction * 3;
-    const Level::TerrainQuery query = level_.query_player(next_world_x, player_world_y());
-    return direction < 0 ? query.side_blocks_left() : query.side_blocks_right();
-}
-
 void Engine::apply_ground_movement(const InputState& input) {
     const int direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
     if (direction == 0) {
+        // FFF0B0 is retained for the first release frame; the following idle
+        // frame clears it when the ROM's ground-response state is idle.
+        if (last_ground_direction_ == 0) {
+            player_.terrain_horizontal_response = 0;
+        }
         return;
     }
 
     // The recovered ground response path uses a three-pixel movement step
     // (DAT_FFF0B0=3) and leaves PLAYER_VX clear. This is distinct from the
     // fixed-point velocity used for airborne motion and terrain launches.
-    if (!terrain_side_blocked(direction)) {
+    const bool blocked = direction < 0
+        ? player_.terrain_stop_left_motion != 0
+        : player_.terrain_stop_right_motion != 0;
+    if (!blocked) {
         // The left-edge branch in Player_Update admits PLAYER_X=0x12 before
         // the next input frame is held.  The 0x14 clamp used here was two
         // pixels too conservative and made the wall-left differential stop
         // early.
-        player_.x = std::clamp(player_.x + direction * 3, 0x12, 0x130);
+        if (direction < 0) {
+            if (player_.x >= 0x14) {
+                player_.x -= 3;
+            }
+        } else if (player_.x < 0x130) {
+            player_.x += 3;
+        }
     }
+    // The response amount is published while a direction is held, including
+    // the terminal wall frame. It is a state-machine value, not the actual
+    // collision displacement.
+    player_.terrain_horizontal_response = 3;
     player_.vx = 0;
 }
 
@@ -836,12 +844,16 @@ void Engine::update(const InputState& input) {
         return;
     }
     update_terrain_input(input);
+    const bool was_grounded = player_.grounded;
     const auto collision = level_.query_player_collision(
-        player_world_x(), player_world_y(), player_.grounded);
+        player_world_x(), player_world_y(), was_grounded);
     player_.terrain_stop_left_motion = collision.stop_left ? 0xFF : 0;
     player_.terrain_stop_right_motion = collision.stop_right ? 0xFF : 0;
     player_.terrain_stop_upward_motion = collision.stop_upward ? 0xFF : 0;
-    const bool was_grounded = player_.grounded;
+    player_.terrain_left_inner_probe = collision.left_inner ? 0xFF : 0;
+    player_.terrain_left_outer_probe = collision.left_outer ? 0xFF : 0;
+    player_.terrain_right_inner_probe = collision.right_inner ? 0xFF : 0;
+    player_.terrain_right_outer_probe = collision.right_outer ? 0xFF : 0;
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
         && last_ground_direction_ != 0 && player_.vx == 0;
@@ -907,6 +919,9 @@ void Engine::update(const InputState& input) {
         camera_.vertical_threshold = 0x170;
         camera_.update_delay = 7;
     }
+    if (player_.ground_braking && player_.vx == 0) {
+        player_.ground_braking = false;
+    }
 
     // The ROM updates the follow camera before the tile-update dispatcher
     // consumes a pending 16-pixel reference shift. Keeping the rebase at the
@@ -919,6 +934,7 @@ void Engine::update(const InputState& input) {
         // the position/camera work. The exposed velocity is 0x038C (or its
         // signed mirror), then the normal integrator decays it by 0x28.
         player_.vx = static_cast<std::int16_t>(last_ground_direction_ * 0x038C);
+        player_.ground_braking = true;
         last_ground_direction_ = 0;
     }
     if (was_grounded && player_.grounded && input_direction != 0) {
@@ -966,7 +982,9 @@ void Engine::update(const InputState& input) {
         // native terrain mirror still exposes its one-frame response value,
         // so make this caller-side clear explicit in the selector state.
         selector.response_timer =
-            desired_pose == SpritePose::Brake
+            player_.ground_braking
+                ? 1
+                : desired_pose == SpritePose::Brake
                 ? 0
                 : std::max<std::uint8_t>(player_.terrain_response_timer_state, 1);
         animation_.select_player_interaction_state(selector_context);
@@ -1069,6 +1087,10 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"stop_left_motion\":" << static_cast<unsigned>(player_.terrain_stop_left_motion)
            << ",\"stop_right_motion\":" << static_cast<unsigned>(player_.terrain_stop_right_motion)
            << ",\"stop_upward_motion\":" << static_cast<unsigned>(player_.terrain_stop_upward_motion)
+           << ",\"left_inner_probe\":" << static_cast<unsigned>(player_.terrain_left_inner_probe)
+           << ",\"left_outer_probe\":" << static_cast<unsigned>(player_.terrain_left_outer_probe)
+           << ",\"right_inner_probe\":" << static_cast<unsigned>(player_.terrain_right_inner_probe)
+           << ",\"right_outer_probe\":" << static_cast<unsigned>(player_.terrain_right_outer_probe)
            << ",\"response_timer_state\":" << static_cast<unsigned>(player_.terrain_response_timer_state)
            << ",\"query_state_a\":" << static_cast<unsigned>(player_.terrain_query_state_a)
            << ",\"query_state_b\":" << static_cast<unsigned>(player_.terrain_query_state_b)

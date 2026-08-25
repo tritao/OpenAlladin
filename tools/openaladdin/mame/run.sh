@@ -31,6 +31,12 @@ if [[ ! -f "${ROM_FILE}" ]]; then
     exit 1
 fi
 
+# The Lua harness consumes a generated symbol table, while the YAML files are
+# the canonical source. Regenerate this small derived file on every run so a
+# clone with new tracked RAM symbols does not depend on a prior Ghidra import.
+PYTHONPATH="${ROOT_DIR}/tools${PYTHONPATH:+:${PYTHONPATH}}" \
+    python3 -c 'from openaladdin.common import ROOT, normalize_symbols, write_mame_symbols; write_mame_symbols(ROOT / "build/re/mame_symbols.lua", normalize_symbols())'
+
 mkdir -p "${TRACE_DIR}"
 mkdir -p "${TRACE_DIR}/states" "${TRACE_DIR}/snapshots"
 

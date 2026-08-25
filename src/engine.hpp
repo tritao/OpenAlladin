@@ -56,6 +56,10 @@ struct PlayerState {
     int y = 0;
     std::int16_t vx = 0;
     std::int16_t vy = 0;
+    // Explicit inertial ground state. The ROM keeps the brake stream active
+    // while the release impulse decays; selector dispatch must use this state
+    // rather than re-testing the numeric velocity at the animation boundary.
+    bool ground_braking = false;
     bool grounded = false;
     std::uint8_t terrain_behavior = 0;
     std::uint8_t terrain_query_result = 0x7F;
@@ -76,6 +80,10 @@ struct PlayerState {
     std::uint8_t terrain_stop_left_motion = 0;
     std::uint8_t terrain_stop_right_motion = 0;
     std::uint8_t terrain_stop_upward_motion = 0;
+    std::uint8_t terrain_left_inner_probe = 0;
+    std::uint8_t terrain_left_outer_probe = 0;
+    std::uint8_t terrain_right_inner_probe = 0;
+    std::uint8_t terrain_right_outer_probe = 0;
     std::uint8_t terrain_response_timer_state = 0;
     std::uint8_t terrain_query_state_a = 0;
     std::uint8_t terrain_query_state_b = 0;
@@ -105,7 +113,6 @@ public:
 
     struct TerrainQuery {
         TerrainCell resolver;
-
     };
 
     struct TerrainCollisionFlags {
@@ -116,6 +123,10 @@ public:
         bool stop_left = false;
         bool stop_right = false;
         bool stop_upward = false;
+        bool left_inner = false;
+        bool left_outer = false;
+        bool right_inner = false;
+        bool right_outer = false;
     };
 
     void load(const std::string& asset_root);
