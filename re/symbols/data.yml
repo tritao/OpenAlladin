@@ -108,10 +108,93 @@
 0x0011F6D4:
   name: ACTOR_MOVE_STATE_11F6D4
   confidence: confirmed
-  description: Natural type 0x2D actor movement state-stream entry copied into the actor-table movement_pc field at offset 0x0A and advanced by the common movement VM.
+  description: Natural type 0x2D actor movement state-stream entry copied into the actor-table movement_pc field at offset 0x0A and advanced by the common movement VM. It contains signed per-step deltas followed by shared movement commands and loops through 0x0011F6FE.
   evidence:
     - ghidra_actor_movement_vm_001ADE36
     - mame_natural_actor_type_2D_trace
+    - movement_stream_decoder
+
+0x0011F6FE:
+  name: ACTOR_MOVE_STATE_11F6FE
+  confidence: confirmed
+  description: Actor movement state-stream root containing the signed delta sequence used by the type-0x84 transition actor; it loops back to its entry through movement command 0x80.
+  evidence:
+    - ghidra_actor_movement_vm_001ADE36
+    - mame_actor_movement_cursor_trace
+    - movement_stream_decoder
+
+0x0011F728:
+  name: ACTOR_MOVE_STATE_11F728
+  confidence: probable
+  description: Actor movement state-stream root observed in natural gameplay; it applies a short scripted delta/command sequence and loops through a ROM pointer.
+  evidence:
+    - mame_actor_movement_cursor_trace
+    - movement_stream_decoder
+
+0x00120360:
+  name: ACTOR_MOVE_STATE_120360
+  confidence: probable
+  description: Actor movement state-stream root observed in scene actor templates; it contains signed deltas and shared movement command handlers.
+  evidence:
+    - ghidra_actor_movement_vm_001ADE36
+    - actor_template_runtime_trace
+    - movement_stream_decoder
+
+0x001203C0:
+  name: ACTOR_MOVE_STATE_1203C0
+  confidence: probable
+  description: Short actor movement state-stream subroutine observed in the runtime movement cursor inventory.
+  evidence:
+    - mame_actor_movement_cursor_trace
+    - movement_stream_decoder
+
+0x00120432:
+  name: ACTOR_MOVE_STATE_120432
+  confidence: probable
+  description: Actor movement state-stream root containing player-distance, flag, and value comparisons before looping.
+  evidence:
+    - mame_actor_movement_cursor_trace
+    - movement_stream_decoder
+
+0x0012046C:
+  name: ACTOR_MOVE_STATE_12046C
+  confidence: probable
+  description: Conditional movement substream reached from ACTOR_MOVE_STATE_120432 through a player-distance branch.
+  evidence:
+    - mame_actor_movement_cursor_trace
+    - movement_stream_decoder
+
+0x001204E2:
+  name: ACTOR_MOVE_STATE_1204E2
+  confidence: probable
+  description: Actor movement state-stream root with conditional value tests and a looping pointer path.
+  evidence:
+    - mame_actor_movement_cursor_trace
+    - movement_stream_decoder
+
+0x00120F76:
+  name: ACTOR_MOVE_STATE_120F76
+  confidence: probable
+  description: Actor movement state-stream root selected by a scene actor template and decoded with the shared movement command set.
+  evidence:
+    - actor_template_runtime_trace
+    - movement_stream_decoder
+
+0x00121240:
+  name: ACTOR_MOVE_STATE_121240
+  confidence: probable
+  description: Actor movement state-stream root containing conditional player-distance and flag tests.
+  evidence:
+    - actor_template_runtime_trace
+    - movement_stream_decoder
+
+0x001217B4:
+  name: ACTOR_MOVE_STATE_1217B4
+  confidence: probable
+  description: Actor movement state-stream root containing directional signed deltas and a looping command path.
+  evidence:
+    - actor_template_runtime_trace
+    - movement_stream_decoder
 
 0x00121D9A:
   name: PLAYER_ANIM_IDLE

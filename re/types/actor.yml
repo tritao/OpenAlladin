@@ -21,6 +21,14 @@ fields:
     name: movement_pc
     type: u32
     description: Movement state-stream cursor consumed by the common movement update; the template initializer copies its source long word into this field.
+  0x0e:
+    name: movement_loop_pc
+    type: u32
+    description: Movement-stream continuation cursor used by the shared loop/delay command handler.
+  0x12:
+    name: movement_loop_timer
+    type: u8
+    description: Movement-stream loop/delay counter consumed by the shared movement command handler.
   0x18:
     name: velocity_x
     type: u16
@@ -45,10 +53,18 @@ fields:
     name: facing_y_flip
     type: u8
     description: Vertical-facing/flip byte used by movement and animation state streams; the common animation VM copies it to spawned children.
+  0x36:
+    name: movement_command_timer
+    type: u8
+    description: Movement-stream command delay counter; the movement VM decrements it instead of consuming another command while it is non-zero.
   0x3c:
     name: flags
     type: u8
     description: Common actor behavior flags. The movement and animation code use individual bits for integration, parent/child linkage, and interaction state.
+  0x38:
+    name: movement_return_pc
+    type: u32
+    description: Return cursor used by movement-stream call/return command 0x92.
   0x37:
     name: animation_timer
     type: u8

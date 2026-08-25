@@ -359,10 +359,11 @@
 0x001ADE36:
   name: MovementVM_TickActors
   confidence: confirmed
-  description: Common actor movement interpreter; iterates actor records and consumes each non-null movement_pc stream at actor offset 0x0A.
+  description: Common actor movement interpreter; iterates 32 actor records, consumes each non-null movement_pc stream at actor offset 0x0A, applies signed per-step deltas, and dispatches movement commands 0x80-0x94 through the shared table at 0x004954 (mapped to animation handlers 0xEA-0xFE).
   evidence:
     - ghidra_disassembly_001ADE36
     - mame_natural_actor_type_2D_trace
+    - movement_stream_decoder
 0x001AE30A:
   name: Actor_InitializeFromTemplate
   confidence: confirmed

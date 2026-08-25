@@ -25,3 +25,18 @@ scenarios:
     description: Exercise repeated start transitions and a long movement interval.
     frames: 1550
     input: "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*1400,none*255"
+
+  - name: story-to-first-level
+    description: Replay the confirmed opening cadence through the first-level story/title sequence.
+    frames: 1245
+    input: "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180"
+
+  - name: combat-and-death
+    description: Enter the first stage, traverse into the guard encounter, and exercise the confirmed sword-hit/death path.
+    frames: 1690
+    input: "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*390,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*100"
+
+  - name: long-gameplay-traversal
+    description: Long low-level traversal probe with repeated attack input; useful for discovering later scene/resource transitions.
+    frames: 5000
+    input: "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right+a*3755"
