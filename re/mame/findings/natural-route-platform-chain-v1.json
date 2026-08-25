@@ -1,0 +1,64 @@
+{
+  "format": "openaladdin-natural-route-platform-chain-finding-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "purpose": "Classify the apparent moving-platform chain near the unresolved lower-gap transfer.",
+  "checkpoint": {
+    "state": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta",
+    "world": [1502, 904],
+    "scene_state": "0x01"
+  },
+  "ram_probe": {
+    "trace": "build/re/analysis/platform-chain-probe-v2",
+    "frames": 160,
+    "capture": "ram + actors + actor initializers + scene states",
+    "command": "OPENALADDIN_TRACE_FRAMES=160 OPENALADDIN_INPUT=none*160 OPENALADDIN_CAPTURE=ram OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_TRACE_DIR=build/re/analysis/platform-chain-probe-v2 OPENALADDIN_LOAD_STATE=build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin"
+  },
+  "actors": [
+    {
+      "slot": 6,
+      "type": "0x2D",
+      "observed": {
+        "world_start": [1428, 699],
+        "movement_pc": "0x0012124E",
+        "animation_pc": "0x00123F06",
+        "frame_ptr": "0x001FDE8C",
+        "flags": "0x08"
+      },
+      "transition": {
+        "first_frame": 1,
+        "terminal_type": "0x84",
+        "terminal_frame": 4,
+        "terminal_animation_pc": "0x0012449A",
+        "cleared_by_frame": 20
+      },
+      "classification": "guard sword-attack child, not a platform"
+    },
+    {
+      "slot": 7,
+      "type": "0x34",
+      "observed": {
+        "world_start": [1648, 658],
+        "frame_ptr": "0x001F3DEE",
+        "animation_pc": "0x00122C24",
+        "movement_pc": "0x001217BE",
+        "movement_loop_pc": "0x0011F6D8",
+        "collision_box_world": [1761, 760, 1794, 805]
+      },
+      "movement": {
+        "stream": "0x001217B4",
+        "pattern": "vertical signed deltas with 0x84 timing values 0x80..0x84, then a loop to 0x001217B4",
+        "observed_range": "approximately world Y 656..664"
+      },
+      "classification": "oscillating type-0x34 interaction actor; not a traversable platform or transfer"
+    }
+  ],
+  "conclusion": [
+    "The apparent actor chain around world X 0x0540..0x0678 is not the missing high-route transfer.",
+    "The type-0x2D record is the already-confirmed guard sword child.",
+    "The type-0x34 record matches the previously classified one-shot interaction path and remains on the inaccessible upper/right side.",
+    "The bounce and handhold branches remain locally exhausted without a scene transition."
+  ],
+  "next_action": "Search the pre-wall level-script/object route for the missing transfer or exit condition; do not repeat type-0x34 platform probes."
+}

@@ -85,6 +85,9 @@ elif [[ "${HEADLESS}" == "1" ]]; then
 fi
 
 LOAD_STATE="${OPENALADDIN_LOAD_STATE:-}"
+if [[ -n "${LOAD_STATE}" && "${LOAD_STATE}" != /* ]]; then
+    LOAD_STATE="${ROOT_DIR}/${LOAD_STATE}"
+fi
 
 MAME_ARGS=(
     genesis
