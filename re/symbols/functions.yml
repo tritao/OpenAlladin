@@ -124,10 +124,152 @@
 0x001A9B90:
   name: Player_IntegrateMotion
   confidence: confirmed
-  description: Integrates horizontal and vertical player motion; its vertical path updates PLAYER_Y from PLAYER_VY.
+  description: Integrates horizontal and vertical player motion. It consumes the signed high byte of the 8.8 velocities, accelerates horizontal velocity by 0x28 and vertical velocity by 0x3C, and updates PLAYER_X/PLAYER_Y.
   evidence:
     - ghidra_disassembly_001A9B90
+    - ghidra_decompile_player_movement_collision_targets
     - mame_debug_watch_player_y
+0x001A9D98:
+  name: Player_TerrainResponseStateMachine
+  confidence: confirmed
+  description: Applies the terrain flags produced earlier in the frame, calls Player_IntegrateMotion, updates the world-relative player position, and selects the run/stop/landing animation and horizontal response paths.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001A9D98
+    - mame_player_run_trace
+    - mame_player_jump_trace
+0x001B1E38:
+  name: Terrain_ResolvePlayerCell
+  confidence: confirmed
+  description: Resolves the player's current terrain cell from camera-relative X/Y, the row-pointer table at 0x00FF9884, and the terrain behavior index table at 0x00FFAE86; it dispatches the selected behavior through the ROM handler table at 0x004554.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001B1E38
+    - rom_terrain_handler_table_004554
+    - mame_player_run_trace
+0x001B31DE:
+  name: Terrain_QueryCallbackA
+  confidence: confirmed
+  description: Calls the terrain query callback pointer stored at 0x00FF7DD2.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001B31DE
+    - mame_player_run_trace
+0x001B31EC:
+  name: Terrain_QueryCallbackB
+  confidence: confirmed
+  description: Calls the terrain query callback pointer stored at 0x00FF7DD6.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001B31EC
+    - mame_player_run_trace
+0x001B31FA:
+  name: Terrain_QueryCallbackC
+  confidence: confirmed
+  description: Calls the terrain query callback pointer stored at 0x00FF7DDA.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001B31FA
+    - mame_player_run_trace
+0x001B3212:
+  name: Terrain_TestQueryFlag0
+  confidence: confirmed
+  description: Tests bit 0 of the terrain query result word at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07E.
+  evidence:
+    - ghidra_disassembly_001B3212
+    - ghidra_decompile_player_movement_collision_targets
+0x001B321C:
+  name: Terrain_TestQueryFlag1
+  confidence: confirmed
+  description: Tests bit 1 of the terrain query result word at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07F.
+  evidence:
+    - ghidra_disassembly_001B321C
+    - ghidra_decompile_player_movement_collision_targets
+0x001B3226:
+  name: Terrain_TestQueryFlag2
+  confidence: confirmed
+  description: Tests bit 2 of the terrain query result word at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07D.
+  evidence:
+    - ghidra_disassembly_001B3226
+    - ghidra_decompile_player_movement_collision_targets
+0x001B3230:
+  name: Terrain_TestQueryFlag3
+  confidence: confirmed
+  description: Tests bit 3 of the terrain query result word at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07C.
+  evidence:
+    - ghidra_disassembly_001B3230
+    - ghidra_decompile_player_movement_collision_targets
+0x001B5318:
+  name: TerrainHandler_SetTerminalCollisionBlock
+  confidence: confirmed
+  description: Terrain behavior handler selected from the 0x20 entry of the 0x004554 table; sets the terminal terrain-response flag at 0x00FFF0E6.
+  evidence:
+    - ghidra_disassembly_001B5318
+    - rom_terrain_handler_table_004554
+0x001B537A:
+  name: TerrainHandler_LandingResponseBlock
+  confidence: confirmed
+  description: Terrain behavior handler that subtracts 0x7C from PLAYER_VY, clears the horizontal response accumulator, arms the grounded state, and refreshes the player-facing animation state.
+  evidence:
+    - ghidra_disassembly_001B537A
+    - rom_terrain_handler_table_004554
+    - mame_player_jump_trace
+0x001B53A2:
+  name: TerrainHandler_HorizontalResponseBlock
+  confidence: confirmed
+  description: Terrain behavior handler that moves PLAYER_X left by eight pixels and clears the horizontal response accumulator.
+  evidence:
+    - ghidra_disassembly_001B53A2
+    - rom_terrain_handler_table_004554
+0x001B5492:
+  name: TerrainHandler_ClearSurfaceModeBlock
+  confidence: confirmed
+  description: Terrain behavior handler that clears the surface-mode word at 0x00FFF0A4.
+  evidence:
+    - ghidra_disassembly_001B5492
+    - rom_terrain_handler_table_004554
+0x001B549C:
+  name: TerrainHandler_SetSurfaceModeBlock
+  confidence: confirmed
+  description: Terrain behavior handler that sets the surface-mode word at 0x00FFF0A4 to one.
+  evidence:
+    - ghidra_disassembly_001B549C
+    - rom_terrain_handler_table_004554
+0x001B54E0:
+  name: TerrainHandler_SetTerrainStateBlock
+  confidence: confirmed
+  description: Terrain behavior handler that sets the terrain-state flag at 0x00FFF0D6, with a special branch for player state 5.
+  evidence:
+    - ghidra_disassembly_001B54E0
+    - rom_terrain_handler_table_004554
+0x001B5502:
+  name: TerrainHandler_StopAndAlignPlayerBlock
+  confidence: confirmed
+  description: Terrain behavior handler that stops player velocities, clears the response accumulator, and aligns PLAYER_X/PLAYER_Y and animation state when the terrain blocks movement.
+  evidence:
+    - ghidra_disassembly_001B5502
+    - rom_terrain_handler_table_004554
+0x001B557E:
+  name: TerrainHandler_LaunchPlayerBlock
+  confidence: confirmed
+  description: Terrain behavior handler that launches the player with PLAYER_VY=-0x0500 and PLAYER_VX=-0x0400, selects animation 0x001221B8, and arms the airborne state.
+  evidence:
+    - ghidra_disassembly_001B557E
+    - rom_terrain_handler_table_004554
+0x001B55E8:
+  name: TerrainHandler_SnapToGridBlock
+  confidence: confirmed
+  description: Terrain behavior handler that snaps PLAYER_X/PLAYER_Y to the 16-pixel terrain grid, applies a small collision offset, and arms a short terrain-response timer.
+  evidence:
+    - ghidra_disassembly_001B55E8
+    - rom_terrain_handler_table_004554
+0x001B56B6:
+  name: TerrainHandler_BouncePlayerBlock
+  confidence: confirmed
+  description: Terrain behavior handler that sets PLAYER_VX=-0x0400 and PLAYER_VY=0x0200 and selects animation 0x00121AD8.
+  evidence:
+    - ghidra_disassembly_001B56B6
+    - rom_terrain_handler_table_004554
 0x001AC784:
   name: AnimationVM_TickActors
   confidence: confirmed

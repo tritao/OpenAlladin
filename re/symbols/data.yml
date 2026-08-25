@@ -30,6 +30,43 @@
   confidence: confirmed
   description: VDP control port
 
+0x004554:
+  name: TERRAIN_RESPONSE_HANDLER_TABLE
+  type: rom_pointer_table
+  confidence: confirmed
+  description: 72-entry four-byte table indexed by the terrain behavior byte read from TERRAIN_BEHAVIOR_INDEX_TABLE; handlers update terrain flags, player velocity, alignment, animation, and actor spawns.
+  evidence:
+    - rom_terrain_handler_table_004554
+    - ghidra_disassembly_001B1E38
+
+0xFF9884:
+  name: TERRAIN_ROW_POINTER_TABLE
+  type: ram_pointer_table
+  confidence: confirmed
+  description: Runtime row-pointer table used by Terrain_ResolvePlayerCell to locate terrain words from camera-relative Y.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001B1E38
+
+0xFFAE86:
+  name: TERRAIN_BEHAVIOR_INDEX_TABLE
+  type: ram_table
+  confidence: confirmed
+  description: Runtime terrain behavior lookup indexed by the current terrain word shifted right by one; its byte result selects TERRAIN_RESPONSE_HANDLER_TABLE.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001B1E38
+
+0xFFF156:
+  name: TERRAIN_QUERY_FLAGS
+  type: u8
+  confidence: confirmed
+  description: Terrain query result bits tested by Terrain_TestQueryFlag0 through Terrain_TestQueryFlag3 before the frame's terrain resolver runs.
+  evidence:
+    - ghidra_disassembly_001B3212
+    - ghidra_disassembly_001B3230
+    - mame_player_run_trace
+
 0x001CBE:
   name: PLAYER_COLLISION_HANDLER_TABLE
   type: rom_pointer_table

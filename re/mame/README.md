@@ -265,6 +265,60 @@ OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 \
 Write events appear as `{"type":"write", ...}` records in
 `trace_boot.jsonl`.
 
+## Player movement and terrain collision
+
+The player movement/terrain request is tracked at
+`re/ghidra/player-movement-collision-targets.json` and can be regenerated with:
+
+```sh
+./.tools/ghidra-12.1.3/support/pyghidraRun \
+  -H re/ghidra/project aladdin -process -readOnly \
+  -scriptPath re/ghidra/scripts \
+  -postScript ExportTargetedDecompile.py \
+  re/ghidra/player-movement-collision-targets.json \
+  build/re/player-movement-collision-targeted-decompile.json
+```
+
+The verified per-frame order is:
+
+```text
+MovementVM / actor updates
+  -> player-vs-actor collision pass at 0x001ABB40
+  -> terrain query flags 0x00FFF07C-0x00FFF07F
+  -> terrain resolver at 0x001B1E38
+  -> player terrain response at 0x001A9D98
+  -> jump/vertical-state handler at 0x001A9716
+  -> animation and remaining actor passes
+```
+
+`0x001B1E38` computes a row from `WORLD_CAMERA_Y + PLAYER_Y`, selects a
+terrain word through `0x00FF9884`, maps that word through `0x00FFAE86`, and
+dispatches the resulting behavior byte through the ROM handler table at
+`0x004554`. The callback pointers observed in the gameplay trace are
+`0x001B3244`, `0x001B323A`, and `0x001B324E`; the four query helpers test bits
+of `0x00FFF156` and convert them into the four terrain flags before the
+resolver runs.
+
+The motion routine at `0x001A9B90` is explicitly 8.8 fixed-point: horizontal
+velocity consumes its signed high byte and accelerates by `0x28`, while
+vertical velocity consumes its signed high byte and accelerates by `0x3C`.
+`0x001A9D18` derives `PLAYER_WORLD_X/Y` from the local player coordinates and
+the camera origin.
+
+A controlled C-button trace confirms the jump path: frame 1326 writes
+`PLAYER_VY=0xFE00`, then the vertical integrator advances it by `0x3C` per
+frame while `PLAYER_Y` follows the ascent/descent arc; landing returns the
+velocity to zero and arms the grounded response state. Reproduce that trace
+with:
+
+```sh
+OPENALADDIN_CAPTURE_VDP=0 \
+OPENALADDIN_TRACE_FRAMES=1700 \
+OPENALADDIN_TRACE_DIR=build/re/player-jump-c-watch \
+OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55,right*80,c*2,none*55,right*80,c*2,none*180' \
+  ./tools/mame-trace.sh
+```
+
 To compare the captured VDP memories and DMA stream with the native assets
 already extracted from the ROM:
 
@@ -352,6 +406,20 @@ python3 tools/run-mame-capture-matrix.py \
 The matrix manifest and merged trace retain both `scenario` and
 `scenario_frame` fields, so runtime observations can be attributed back to a
 specific scripted experiment.
+
+The checked-in matrix includes three progression-focused probes in addition to
+the short menu/gameplay smoke tests:
+
+- `story-to-first-level` isolates the known opening/menu cadence and first-level
+  story/title assets.
+- `combat-and-death` replays the confirmed guard collision and sword-hit path.
+- `long-gameplay-traversal` keeps the emulator in a long attack/movement window
+  to catch later resource loads if ordinary input reaches another scene.
+
+The long probe is deliberately an observation run, not a claim that a simple
+autoplayer can finish the stage. If it still observes only scene state `0x01`,
+the next experiment should target the level-exit/transition condition instead
+of making the input schedule longer.
 
 Set `OPENALADDIN_CAPTURE_VDP=0` when only the original RAM trace is wanted.
 

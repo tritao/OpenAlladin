@@ -1,4 +1,48 @@
 # Address-keyed RAM knowledge. Entries can be consumed by both Ghidra and MAME.
+0xFF7DD2:
+  name: TERRAIN_QUERY_CALLBACK_A
+  type: rom_pointer
+  confidence: confirmed
+  description: Terrain-query callback pointer used by Terrain_QueryCallbackA.
+  evidence:
+    - ghidra_disassembly_001B31DE
+    - mame_player_run_trace
+0xFF7DD6:
+  name: TERRAIN_QUERY_CALLBACK_B
+  type: rom_pointer
+  confidence: confirmed
+  description: Terrain-query callback pointer used by Terrain_QueryCallbackB.
+  evidence:
+    - ghidra_disassembly_001B31EC
+    - mame_player_run_trace
+0xFF7DDA:
+  name: TERRAIN_QUERY_CALLBACK_C
+  type: rom_pointer
+  confidence: confirmed
+  description: Terrain-query callback pointer used by Terrain_QueryCallbackC.
+  evidence:
+    - ghidra_disassembly_001B31FA
+    - mame_player_run_trace
+0xFF7DF6:
+  name: WORLD_CAMERA_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Horizontal world/camera origin added to PLAYER_X to form PLAYER_WORLD_X.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001A9D18
+    - mame_player_run_trace
+0xFF7DF8:
+  name: WORLD_CAMERA_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Vertical world/camera origin used by Terrain_ResolvePlayerCell.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001B1E38
+    - mame_player_run_trace
 0xFF7DFA:
   name: PLAYER_X
   type: u16
@@ -8,6 +52,26 @@
   evidence:
     - mame_controlled_boot_right_trace
     - mame_debug_watch_pc_001A9ECC_001AA994
+0xFF7E02:
+  name: PLAYER_WORLD_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Player world X coordinate derived from WORLD_CAMERA_X plus PLAYER_X and consumed by actor/collision logic.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001A9D18
+    - mame_player_run_trace
+0xFF7E04:
+  name: PLAYER_WORLD_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Player world Y coordinate derived from WORLD_CAMERA_Y plus PLAYER_Y and consumed by actor/collision logic.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - ghidra_disassembly_001A9D18
+    - mame_player_run_trace
 0xFF7DFC:
   name: PLAYER_Y
   type: u16
