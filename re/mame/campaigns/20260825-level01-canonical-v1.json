@@ -1,0 +1,58 @@
+{
+  "campaign": "20260825-level01-canonical-v1",
+  "status": "in-progress",
+  "purpose": "Canonical, replayable level-01 entry and first movement-event capture",
+  "recorded_at": "2026-08-25",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "3e22b8000c7b4b53db9cee0de252d3c41b9d83a6",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "boot-route",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/boot-route",
+      "frames": 1500,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c*1,right*120,none*60",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 0, "name": "boot", "state": "boot-route/states/genesis/boot.sta" },
+        { "frame": 1245, "name": "level01-entry", "state": "boot-route/states/genesis/level01-entry.sta" },
+        { "frame": 1300, "name": "opening-ground", "state": "boot-route/states/genesis/opening-ground.sta" },
+        { "frame": 1360, "name": "first-run", "state": "boot-route/states/genesis/first-run.sta" },
+        { "frame": 1400, "name": "jump-window", "state": "boot-route/states/genesis/jump-window.sta" },
+        { "frame": 1480, "name": "post-jump", "state": "boot-route/states/genesis/post-jump.sta" }
+      ]
+    },
+    {
+      "id": "jump-route-v2",
+      "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/jump-route-v2",
+      "frames": 90,
+      "input": "none*1,c+right*1,right*40,none*48",
+      "load_state": "opening-ground",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/boot-route/states/genesis/opening-ground.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "opening-ground-loaded", "state": "jump-route-v2/states/genesis/opening-ground-loaded.sta" },
+        { "frame": 2, "name": "jump-command", "state": "jump-route-v2/states/genesis/jump-command.sta" },
+        { "frame": 3, "name": "jump-ascent", "state": "jump-route-v2/states/genesis/jump-ascent.sta" },
+        { "frame": 11, "name": "jump-apex", "state": "jump-route-v2/states/genesis/jump-apex.sta" },
+        { "frame": 20, "name": "jump-landed", "state": "jump-route-v2/states/genesis/jump-landed.sta" },
+        { "frame": 40, "name": "post-jump", "state": "jump-route-v2/states/genesis/post-jump.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "level01-entry", "segment": "boot-route", "frame": 1245, "scene_state": 1, "world": [103, 880] },
+    { "id": "opening-ground", "segment": "boot-route", "frame": 1300, "scene_state": 1, "world": [268, 880], "grounded": true },
+    { "id": "first-run", "segment": "boot-route", "frame": 1360, "scene_state": 1, "world": [445, 880], "grounded": true },
+    { "id": "jump-ascent", "segment": "jump-route-v2", "frame": 3, "world_y": 878, "vy": -452, "grounded": false },
+    { "id": "jump-apex", "segment": "jump-route-v2", "frame": 11, "world_y": 867, "vy": 0, "grounded": false },
+    { "id": "jump-landed", "segment": "jump-route-v2", "frame": 20, "world_y": 880, "vy": 0, "grounded": true }
+  ],
+  "next": "Continue the natural route from opening-ground and retain every stable traversal, interaction, death/reset, and scene transition as a named checkpoint."
+}

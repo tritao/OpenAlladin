@@ -122,6 +122,12 @@ OPENALADDIN_CHECKPOINTS='0=boot,1245=level01-entry,1300=opening-ground' \
 The unified frontend exposes the same option as `--checkpoints`.  Checkpoint
 names should describe observed events, not merely arbitrary frame numbers;
 keep the input schedule and ROM hash beside the resulting trace manifest.
+Recorded campaigns can be checked with:
+
+```sh
+python tools/openaladdin/mame/campaign.py verify \
+  re/mame/campaigns/20260825-level01-canonical-v1.json
+```
 
 The normal trace mode is fully headless: the wrapper forces SDL's `dummy`
 video driver and does not inherit an interactive desktop display.  MAME's
