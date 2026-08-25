@@ -9,7 +9,14 @@ from pathlib import Path
 import subprocess
 import sys
 
-from openaladdin.analysis.visual_diff import compare, parse_region, read_image, write_ppm
+from openaladdin.analysis.visual_diff import (
+    compare,
+    compare_masked,
+    parse_region,
+    read_alpha,
+    read_image,
+    write_ppm,
+)
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -123,6 +130,81 @@ def _sprite_bounds(frame_manifest: Path, frame_pointer: int) -> tuple[int, int, 
     return None
 
 
+def _sprite_mask(
+    checkpoint: dict[str, object],
+    image_width: int,
+    image_height: int,
+    frame_manifest: Path,
+) -> tuple[int, int, bytes, dict[str, object]] | None:
+    """Build a framebuffer-sized mask from the captured frame pointer's PNG."""
+    player = checkpoint["player"]
+    camera = checkpoint["camera"]
+    frame_pointer = int(player["frame_ptr"])
+    if not frame_manifest.exists():
+        return None
+    try:
+        document = json.loads(frame_manifest.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    frame_record = None
+    for candidate in document.get("frames", []):
+        address = candidate.get("address")
+        if isinstance(address, str):
+            try:
+                address = int(address, 0)
+            except ValueError:
+                continue
+        if int(address or -1) == frame_pointer:
+            frame_record = candidate
+            break
+    if frame_record is None:
+        return None
+
+    frame_index = int(frame_record["index"])
+    frame_png = frame_manifest.parent / "frames" / f"frame{frame_index:04d}.png"
+    frame_width, frame_height, alpha = read_alpha(frame_png)
+    parts = frame_record.get("parts", [])
+    if not parts:
+        return None
+    min_x = min(int((part.get("offset_signed") or part.get("offset_pixels"))[0]) for part in parts)
+    min_y = min(int((part.get("offset_signed") or part.get("offset_pixels"))[1]) for part in parts)
+    max_x = max(
+        int((part.get("offset_signed") or part.get("offset_pixels"))[0])
+        + int(part["tile_info"]["pixel_width"])
+        for part in parts
+    )
+    player_world_x = int(player.get("world_x", int(player["x"]) + int(camera["x"])))
+    player_world_y = int(player.get("world_y", int(player["y"]) + int(camera["y"])))
+    origin_x = player_world_x - int(camera["x"])
+    origin_y = player_world_y - GENESIS_PLAYER_VISUAL_Y_OFFSET - int(camera["y"])
+    player_actor = next(
+        (actor for actor in checkpoint.get("actors", []) if actor.get("slot") == 0),
+        {},
+    )
+    flip_x = bool(player_actor.get("facing_x_flip", 0))
+    canvas_x = origin_x - max_x if flip_x else origin_x + min_x
+    canvas_y = origin_y + min_y
+    mask = bytearray(image_width * image_height)
+    for y in range(frame_height):
+        for x in range(frame_width):
+            if alpha[y * frame_width + x] == 0:
+                continue
+            screen_x = canvas_x + (frame_width - 1 - x if flip_x else x)
+            screen_y = canvas_y + y
+            if 0 <= screen_x < image_width and 0 <= screen_y < image_height:
+                mask[screen_y * image_width + screen_x] = 255
+    metadata = {
+        "frame_index": frame_index,
+        "frame_pointer": hex(frame_pointer),
+        "frame_png": str(frame_png),
+        "canvas_origin": [canvas_x, canvas_y],
+        "canvas_size": [frame_width, frame_height],
+        "flip_x": flip_x,
+        "opaque_pixels": sum(value != 0 for value in mask),
+    }
+    return image_width, image_height, bytes(mask), metadata
+
+
 def player_region(
     checkpoint: dict[str, object],
     image_width: int,
@@ -222,6 +304,7 @@ def main() -> int:
     native_output = output_dir / "native.ppm"
     overlay_output = output_dir / "diff.ppm"
     report_output = output_dir / "report.json"
+    frame_manifest = ROOT / "build/assets/sprites/frames.json"
 
     try:
         checkpoint = load_checkpoint(trace_dir, args.frame)
@@ -249,7 +332,7 @@ def main() -> int:
                 expected[0],
                 expected[1],
                 args.player_padding,
-                ROOT / "build/assets/sprites/frames.json",
+                frame_manifest,
             )
         else:
             region = parse_region(args.region, expected[0], expected[1])
@@ -275,6 +358,26 @@ def main() -> int:
                 "overlay": str(player_overlay_output),
                 "diff": player_report,
             }
+            sprite_mask = _sprite_mask(
+                checkpoint,
+                expected[0],
+                expected[1],
+                frame_manifest,
+            )
+            if sprite_mask is not None:
+                sprite_report = compare_masked(expected, actual, sprite_mask[:3])
+                sprite_overlay_pixels = sprite_report.pop("overlay_pixels")
+                sprite_overlay_crop = crop_image(
+                    (expected[0], expected[1], sprite_overlay_pixels),
+                    region,
+                )
+                sprite_overlay_output = output_dir / "player-sprite-diff.ppm"
+                write_ppm(sprite_overlay_output, *sprite_overlay_crop)
+                player_diff["sprite"] = {
+                    "mask": sprite_mask[3],
+                    "overlay": str(sprite_overlay_output),
+                    "diff": sprite_report,
+                }
         report = {
             "format": "openaladdin-visual-audit-v1",
             "trace_dir": str(trace_dir),
@@ -303,11 +406,24 @@ def main() -> int:
                 f"different={focused['different_pixels']}/{focused['compared_pixels']} "
                 f"bbox={focused['bounding_box']}"
             )
+            sprite = player_diff.get("sprite")
+            if sprite is not None:
+                focused_sprite = sprite["diff"]
+                print(
+                    "player sprite audit: "
+                    f"frame={sprite['mask']['frame_index']} "
+                    f"different={focused_sprite['different_pixels']}/"
+                    f"{focused_sprite['compared_pixels']} "
+                    f"bbox={focused_sprite['bounding_box']}"
+                )
         if args.report_only:
             return 0
+        validation_diff = diff
+        if player_diff is not None and player_diff.get("sprite") is not None:
+            validation_diff = player_diff["sprite"]["diff"]
         if (
-            diff["different_pixels"] > args.max_different_pixels
-            or diff["max_channel_delta"] > args.max_channel_error
+            validation_diff["different_pixels"] > args.max_different_pixels
+            or validation_diff["max_channel_delta"] > args.max_channel_error
         ):
             return 1
         return 0

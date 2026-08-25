@@ -71,6 +71,8 @@
         "interaction_counter_write": "0xFFF003: 0x01 -> 0x02 at 0x001AF4E0",
         "event_operand": "0x69",
         "event_gate": "0xFFF57D was 0x01, so the 0x69 dispatch path ran",
+        "response_counter": "0xFFF14E: +0x19 through helper 0x001B016A",
+        "resource_cleanup": "0x001ABE6E clears the actor type and owned resources, including a linked record when present",
         "template_call": "0x001AF502 continues into Actor_InitializeFromTemplate at 0x001AE30A with A5=0x00FF819A and A6=0x001B7CD8"
       },
       "post_collision_actor": {
@@ -80,7 +82,7 @@
         "movement_pc": "0x00000000",
         "frame_ptr": "0x001EF4D4"
       },
-      "meaning": "The type-0x34 actor is an interaction trigger/effect, not a traversable platform: on player overlap it queues event/sound 0x69 and is replaced in-place by a non-moving type-0x8D response actor. This closes the natural-route hypothesis that the actor carries Aladdin across the wall.",
+      "meaning": "The type-0x34 actor is an interaction trigger/effect, not a traversable platform: on player overlap it queues event/sound 0x69, advances the shared response counter, clears its own resources, and is replaced in-place by a non-moving type-0x8D response actor. This closes the natural-route hypothesis that the actor carries Aladdin across the wall.",
       "natural_route_confirmed": false
     }
   },

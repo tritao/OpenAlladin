@@ -1,0 +1,16 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "type-34-wall-interaction",
+    "purpose": "Recover the helper calls and template replacement path used when the lower-wall type-0x34 actor collides with the player."
+  },
+  "targets": [
+    { "address": "0x001AF4D8", "name": "Type-0x34 player-collision handler" },
+    { "address": "0x001B016A", "name": "Type-0x34 pre-template helper A" },
+    { "address": "0x001ABE6E", "name": "Type-0x34 pre-template helper B" },
+    { "address": "0x001AE30A", "name": "Actor template initializer" },
+    { "address": "0x001B7CD8", "name": "Type-0x8D response template" },
+    { "address": "0x001240CE", "name": "Type-0x8D response animation" }
+  ]
+}

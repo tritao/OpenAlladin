@@ -164,12 +164,13 @@
 0x001AF4D8:
   name: ActorType34_PlayerCollisionHandler
   confidence: confirmed
-  description: Player-collision dispatch target for actor type 0x34. It increments the global interaction counter, conditionally queues event/sound 0x69, runs the two actor-response helpers at 0x001B016A and 0x001ABE6E, then replaces the destination actor with ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE through Actor_InitializeFromTemplate.
+  description: Player-collision dispatch target for actor type 0x34. It increments the global interaction counter at 0x00FFF003, conditionally queues event/sound 0x69, advances the response counter at 0x00FFF14E by 0x19, clears the actor and owned resources through 0x001ABE6E, then replaces the destination record with ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE through Actor_InitializeFromTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - mame_type_34_wall_actor_probe
     - actor_type_34_stream_decode
     - mame_type_34_handler_overlap_trace
+    - ghidra_type34_handler_decompile
 0x001AEC00:
   name: Actor_HandlePlayerCollisionBlock
   confidence: confirmed

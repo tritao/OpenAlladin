@@ -707,6 +707,14 @@
   description: Secondary interaction-state lock tested before the player recovery stream is selected.
   evidence:
     - ghidra_disassembly_001AE4F8
+0xFFF14E:
+  name: ACTOR_RESPONSE_COUNTER
+  type: u8
+  format: integer
+  confidence: probable
+  description: Shared actor-response counter advanced by 0x19 when the type-0x34 wall actor is consumed by its player-collision handler.
+  evidence:
+    - ghidra_type34_handler_decompile
 0xFFF0CE:
   name: TERRAIN_QUERY_STATE_A
   type: u8

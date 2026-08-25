@@ -12,6 +12,7 @@ import zlib
 
 
 RGBImage = tuple[int, int, bytes]
+AlphaImage = tuple[int, int, bytes]
 
 
 def _ppm(path: Path, data: bytes) -> RGBImage:
@@ -68,7 +69,7 @@ def _paeth(left: int, up: int, upper_left: int) -> int:
     return upper_left
 
 
-def _png(path: Path, data: bytes) -> RGBImage:
+def _png(path: Path, data: bytes) -> tuple[int, int, bytes, bytes | None]:
     signature = b"\x89PNG\r\n\x1a\n"
     if not data.startswith(signature):
         raise ValueError(f"{path}: expected PNG or P6 PPM")
@@ -139,22 +140,40 @@ def _png(path: Path, data: bytes) -> RGBImage:
 
     if color_type == 2:
         pixels = b"".join(rows)
+        alpha = None
     else:
+        rgba = b"".join(rows)
         rgb = bytearray(width * height * 3)
+        alpha = bytearray(width * height)
         destination = 0
-        for row in rows:
-            for index in range(0, len(row), 4):
-                rgb[destination:destination + 3] = row[index:index + 3]
-                destination += 3
+        alpha_destination = 0
+        for index in range(0, len(rgba), 4):
+            rgb[destination:destination + 3] = rgba[index:index + 3]
+            alpha[alpha_destination] = rgba[index + 3]
+            destination += 3
+            alpha_destination += 1
         pixels = bytes(rgb)
-    return width, height, pixels
+        alpha = bytes(alpha)
+    return width, height, pixels, alpha
 
 
 def read_image(path: Path) -> RGBImage:
     data = path.read_bytes()
     if data.startswith(b"P6"):
         return _ppm(path, data)
-    return _png(path, data)
+    width, height, pixels, _ = _png(path, data)
+    return width, height, pixels
+
+
+def read_alpha(path: Path) -> AlphaImage:
+    """Read an 8-bit alpha plane from a PNG, treating RGB PNGs as opaque."""
+    data = path.read_bytes()
+    if data.startswith(b"P6"):
+        raise ValueError(f"{path}: alpha masks require a PNG")
+    width, height, _, alpha = _png(path, data)
+    if alpha is None:
+        alpha = bytes([255]) * (width * height)
+    return width, height, alpha
 
 
 def parse_region(value: str | None, width: int, height: int) -> tuple[int, int, int, int]:
@@ -222,6 +241,69 @@ def compare(expected: RGBImage, actual: RGBImage, region: tuple[int, int, int, i
         "difference_ratio": difference_count / compared_pixels,
         "channel_delta_sum": channel_delta_sum,
         "mean_channel_delta": channel_delta_sum / (compared_pixels * 3),
+        "max_channel_delta": max_channel_delta,
+        "bounding_box": bounding_box,
+        "overlay_pixels": bytes(overlay),
+    }
+
+
+def compare_masked(expected: RGBImage, actual: RGBImage, mask: AlphaImage) -> dict[str, object]:
+    """Compare only pixels selected by an alpha mask."""
+    expected_width, expected_height, expected_pixels = expected
+    actual_width, actual_height, actual_pixels = actual
+    mask_width, mask_height, mask_pixels = mask
+    if (expected_width, expected_height) != (actual_width, actual_height):
+        raise ValueError(
+            "image dimensions differ: "
+            f"expected {expected_width}x{expected_height}, actual {actual_width}x{actual_height}"
+        )
+    if (mask_width, mask_height) != (expected_width, expected_height):
+        raise ValueError(
+            "mask dimensions differ: "
+            f"image is {expected_width}x{expected_height}, mask is {mask_width}x{mask_height}"
+        )
+    if len(mask_pixels) != expected_width * expected_height:
+        raise ValueError("alpha mask has an unexpected size")
+
+    selected_pixels = sum(value != 0 for value in mask_pixels)
+    difference_count = 0
+    channel_delta_sum = 0
+    max_channel_delta = 0
+    bounding_box: list[int] | None = None
+    overlay = bytearray(actual_pixels)
+    for offset, selected in enumerate(mask_pixels):
+        if selected == 0:
+            continue
+        x = offset % expected_width
+        y = offset // expected_width
+        image_offset = offset * 3
+        expected_pixel = expected_pixels[image_offset:image_offset + 3]
+        actual_pixel = actual_pixels[image_offset:image_offset + 3]
+        deltas = [abs(left - right) for left, right in zip(expected_pixel, actual_pixel)]
+        if not any(deltas):
+            continue
+        difference_count += 1
+        channel_delta_sum += sum(deltas)
+        max_channel_delta = max(max_channel_delta, *deltas)
+        if bounding_box is None:
+            bounding_box = [x, y, x, y]
+        else:
+            bounding_box[0] = min(bounding_box[0], x)
+            bounding_box[1] = min(bounding_box[1], y)
+            bounding_box[2] = max(bounding_box[2], x)
+            bounding_box[3] = max(bounding_box[3], y)
+        overlay[image_offset:image_offset + 3] = b"\xff\x00\xff"
+
+    denominator = max(selected_pixels, 1)
+    return {
+        "format": "openaladdin-visual-mask-diff-v1",
+        "width": expected_width,
+        "height": expected_height,
+        "compared_pixels": selected_pixels,
+        "different_pixels": difference_count,
+        "difference_ratio": difference_count / denominator,
+        "channel_delta_sum": channel_delta_sum,
+        "mean_channel_delta": channel_delta_sum / (denominator * 3),
         "max_channel_delta": max_channel_delta,
         "bounding_box": bounding_box,
         "overlay_pixels": bytes(overlay),
