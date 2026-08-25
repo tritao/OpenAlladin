@@ -45,7 +45,7 @@
       "result": "Releasing horizontal input after the first bounce still misses the next route; the player remains below the valid floor band."
     }
   ],
-  "next_action": "Find the controller timing that transfers from the type-0x65 bounce to the type-0x6A handhold, then continue the same state trace toward PLAYER_WORLD_X > 0x1287 and PLAYER_WORLD_Y < 0x01D6.",
+  "next_action": "The lower bounce/handhold branch remains unresolved; the current forward upper-route checkpoint and post-edge collision evidence are recorded in natural-route-upper-findings.json.",
   "natural_exit_confirmed": false,
   "scene_state_08_observed": false
 }

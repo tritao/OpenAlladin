@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-natural-route-upper-finding-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "checkpoint": {
+    "state": "build/re/high-platform-right-edge-checkpoint-20260825/states/genesis/high-platform-right-edge.sta",
+    "world": [1917, 530],
+    "scene_state": "0x01",
+    "description": "The upper walkway after the high-platform climb, before the next forward guard."
+  },
+  "forward_guard": {
+    "trace": "build/re/high-edge-guard-attack1-20260825",
+    "slot": 4,
+    "type_before": "0x1D",
+    "world_observed": [2206, 530],
+    "input": "right*55,b+right*50,right*100",
+    "type_after": "0x84",
+    "first_cleared_frame": 90,
+    "description": "The sword input clears the guard and the player continues across the upper walkway."
+  },
+  "post_guard_edge": {
+    "trace": "build/re/high-edge-guard-attack1-20260825",
+    "walkway_world": [2271, 530],
+    "drop_observed": {
+      "first_world": [2301, 534],
+      "lower_band_world_y": 920,
+      "maximum_world_x": 2529
+    },
+    "description": "Past the upper walkway edge, the player enters a non-landing terrain band and falls into the lower/death area; no scene transition occurs."
+  },
+  "terrain_context": {
+    "map_file": "build/assets/levels/level01/raw/map.bin",
+    "floor_file": "build/assets/levels/level01/raw/floor.bin",
+    "edge_column": 142,
+    "edge_cells": [
+      { "row": 20, "terrain_word": "0x59B8", "behavior": "0x85", "handler": "0x001B5448" },
+      { "row": 31, "terrain_word": "0x60C0", "behavior": "0x47", "handler": "0x001B5470" },
+      { "row": 39, "terrain_word": "0x6AB0", "behavior": "0x86", "handler": "0x001B5440" }
+    ],
+    "description": "The relevant map column contains special behavior cells, but the controller trace does not produce a landing state on the forward route."
+  },
+  "natural_exit_confirmed": false,
+  "scene_state_08_observed": false,
+  "next_action": "Trace the floor-contour query and player vertical response while crossing the edge near world X 0x08E0, then use that result to choose the intended jump or descent route."
+}
