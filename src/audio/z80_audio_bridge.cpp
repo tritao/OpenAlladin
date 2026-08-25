@@ -33,8 +33,11 @@ void Z80AudioBridge::reset() {
     for (std::size_t voice = 0; voice < 4; ++voice) {
         mute_psg(voice);
     }
-    ym_initialized_ = false;
     ym_keyed_.fill(false);
+    has_ym_patch_.fill(false);
+    for (auto& patch : ym_patches_) {
+        patch.fill(0);
+    }
 }
 
 void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
@@ -44,6 +47,13 @@ void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
         } else {
             handle_psg_note(event.channel % 4, event.opcode);
         }
+        return;
+    }
+
+    if (event.opcode == 0x61 && event.channel < kYmVoiceCount
+        && event.has_patch_state && is_ym_patch(event.patch_state)) {
+        ym_patches_[event.channel] = event.patch_state;
+        has_ym_patch_[event.channel] = true;
         return;
     }
 
@@ -91,16 +101,53 @@ void Z80AudioBridge::configure_ym_voice(std::size_t voice) {
     write_ym_register(voice, static_cast<std::uint8_t>(0xB4 + channel), 0xC0);
 }
 
-void Z80AudioBridge::handle_ym_note(std::size_t voice, std::uint8_t note) {
-    if (!ym_initialized_) {
-        for (std::size_t index = 0; index < kYmVoiceCount; ++index) {
-            configure_ym_voice(index);
-        }
-        ym_initialized_ = true;
-    }
+void Z80AudioBridge::configure_ym_patch(
+    std::size_t voice,
+    const Z80SoundDriver::PatchState& patch_state) {
+    // The 0x61 state loader copies a three-byte per-voice prefix followed by
+    // the 32-byte YM patch payload. The payload is B0/B4, then four groups of
+    // six operator values (MUL, TL, AR, D1R, D2R, SL/RR). The hardware emits
+    // operators in the YM slot order 0, 2, 1, 3.
+    constexpr std::size_t kPayloadOffset = 3;
+    constexpr std::array<std::uint8_t, 4> kOperatorOffsets{0, 8, 4, 12};
+    constexpr std::array<std::uint8_t, 4> kPayloadGroups{0, 2, 1, 3};
+    constexpr std::array<std::uint8_t, 6> kOperatorRegisters{
+        0x30, 0x40, 0x50, 0x60, 0x70, 0x80};
+    const std::uint8_t channel = ym_channel(voice);
+    write_ym_register(voice, static_cast<std::uint8_t>(0xB0 + channel),
+                      patch_state[kPayloadOffset]);
+    write_ym_register(voice, static_cast<std::uint8_t>(0xB4 + channel),
+                      patch_state[kPayloadOffset + 1]);
 
+    for (std::size_t operator_index = 0;
+         operator_index < kOperatorOffsets.size(); ++operator_index) {
+        const std::size_t payload_index = kPayloadOffset + 2
+            + kPayloadGroups[operator_index] * kOperatorRegisters.size();
+        const std::uint8_t offset = static_cast<std::uint8_t>(
+            kOperatorOffsets[operator_index] + channel);
+        for (std::size_t register_index = 0;
+             register_index < kOperatorRegisters.size(); ++register_index) {
+            write_ym_register(
+                voice,
+                static_cast<std::uint8_t>(
+                    kOperatorRegisters[register_index] + offset),
+                patch_state[payload_index + register_index]);
+        }
+        // The ROM format has no ninth per-operator byte; the original driver
+        // clears the 0x90-series registers while applying a patch.
+        write_ym_register(voice, static_cast<std::uint8_t>(0x90 + offset), 0);
+    }
+}
+
+void Z80AudioBridge::handle_ym_note(std::size_t voice, std::uint8_t note) {
     if (ym_keyed_[voice]) {
         key_off_ym(voice);
+    }
+
+    if (has_ym_patch_[voice]) {
+        configure_ym_patch(voice, ym_patches_[voice]);
+    } else {
+        configure_ym_voice(voice);
     }
 
     const auto [block, fnum] = ym_frequency(note);
@@ -177,6 +224,14 @@ std::uint16_t Z80AudioBridge::psg_period(std::uint8_t note) {
     const double period = kPsgClockHz / (32.0 * frequency);
     return static_cast<std::uint16_t>(std::clamp(
         static_cast<int>(std::lround(period)), 1, 1023));
+}
+
+bool Z80AudioBridge::is_ym_patch(
+    const Z80SoundDriver::PatchState& patch_state) {
+    // Patch-state records selected by the 0x61 handler use the YM record
+    // shape: a 0x0A format byte at offset one, followed by B0/B4 at offset
+    // three. Other 0x27-byte states are PSG/sample controls.
+    return patch_state[1] == 0x0A && patch_state[2] == 0x00;
 }
 
 }  // namespace openaladdin::audio

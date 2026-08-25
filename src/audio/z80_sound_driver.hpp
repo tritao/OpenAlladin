@@ -17,8 +17,12 @@ namespace openaladdin::audio {
 class Z80SoundDriver {
 public:
     static constexpr std::uint32_t kSequenceTableBase = 0x1BAF6F;
+    static constexpr std::uint32_t kPatchTableBase = 0x1B9D06;
+    static constexpr std::size_t kPatchStateSize = 0x27;
     static constexpr std::size_t kChannelCount = 16;
     static constexpr std::size_t kCommandQueueCapacity = 64;
+
+    using PatchState = std::array<std::uint8_t, kPatchStateSize>;
 
     struct SoundEvent {
         enum class Kind {
@@ -34,6 +38,8 @@ public:
         std::int16_t operand_b;
         bool has_control_argument;
         std::uint8_t control_argument;
+        bool has_patch_state = false;
+        PatchState patch_state{};
     };
 
     struct ChannelState {
@@ -44,6 +50,8 @@ public:
         std::int16_t operand_a = 0;
         std::int16_t operand_b = 0;
         std::uint16_t event_timer = 0;
+        bool has_patch_state = false;
+        PatchState patch_state{};
     };
 
     using EventHandler = std::function<void(const SoundEvent&)>;
@@ -75,12 +83,15 @@ public:
     [[nodiscard]] const ChannelState& channel(std::size_t index) const;
 
 private:
+    static constexpr std::uint8_t kCommandMarker = 0xFF;
+
     static std::size_t command_argument_count(std::uint8_t opcode) noexcept;
 
     void process_command(std::uint8_t opcode,
                          std::span<const std::uint8_t> args);
     void start_sound(std::uint8_t sound_id);
     void stop_sound(std::uint8_t sound_id);
+    void load_patch_state(ChannelState& channel, std::uint8_t patch_id);
     void process_channel(std::size_t index);
     SoundEvent read_event(std::size_t index);
     std::uint8_t read_stream_byte(ChannelState& channel);
@@ -94,6 +105,7 @@ private:
     std::size_t queue_write_ = 0;
     std::size_t queue_size_ = 0;
     std::size_t queue_command_count_ = 0;
+    std::uint32_t patch_table_base_ = 0;
     std::array<ChannelState, kChannelCount> channels_{};
     EventHandler event_handler_;
 };

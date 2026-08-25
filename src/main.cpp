@@ -296,6 +296,26 @@ int main(int argc, char** argv) {
                             audio_bridge.handle(event);
                         }
                     );
+                    // This is the same four-pointer setup issued by the
+                    // original 68K audio initializer before it starts a
+                    // sound. The third pointer is the sequence table; the
+                    // first one supplies the per-channel patch states.
+                    constexpr std::array<std::uint32_t, 4> audio_tables{
+                        openaladdin::audio::Z80SoundDriver::kPatchTableBase,
+                        0x1BAF46,
+                        openaladdin::audio::Z80SoundDriver::kSequenceTableBase,
+                        0x1C73CB,
+                    };
+                    std::array<std::uint8_t, 12> audio_setup{};
+                    for (std::size_t index = 0; index < audio_tables.size(); ++index) {
+                        audio_setup[index * 3] =
+                            static_cast<std::uint8_t>(audio_tables[index]);
+                        audio_setup[index * 3 + 1] = static_cast<std::uint8_t>(
+                            audio_tables[index] >> 8);
+                        audio_setup[index * 3 + 2] = static_cast<std::uint8_t>(
+                            audio_tables[index] >> 16);
+                    }
+                    sound_driver->command(0x0B, audio_setup);
                     const std::array<std::uint8_t, 1> startup_sound{0};
                     sound_driver->command(0x10, startup_sound);
                 } catch (const std::exception& error) {

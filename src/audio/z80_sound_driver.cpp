@@ -38,6 +38,7 @@ void Z80SoundDriver::reset() {
     queue_size_ = 0;
     queue_command_count_ = 0;
     sequence_table_base_ = kSequenceTableBase;
+    patch_table_base_ = 0;
     channels_ = {};
 }
 
@@ -94,7 +95,7 @@ void Z80SoundDriver::enqueue_command(std::uint8_t opcode,
         throw std::invalid_argument("wrong Z80 sound command argument count");
     }
 
-    const std::size_t packet_size = args.size() + 1;
+    const std::size_t packet_size = args.size() + 2;
     if (packet_size > kCommandQueueCapacity - 1
         || queue_size_ > kCommandQueueCapacity - 1 - packet_size) {
         throw std::overflow_error("Z80 sound command queue is full");
@@ -105,6 +106,7 @@ void Z80SoundDriver::enqueue_command(std::uint8_t opcode,
         queue_write_ = (queue_write_ + 1) % kCommandQueueCapacity;
         ++queue_size_;
     };
+    push(kCommandMarker);
     push(opcode);
     for (const std::uint8_t arg : args) {
         push(arg);
@@ -121,6 +123,9 @@ void Z80SoundDriver::tick() {
             return value;
         };
 
+        if (queue_size_ < 2 || pop() != kCommandMarker) {
+            throw std::runtime_error("Z80 sound command queue packet marker is invalid");
+        }
         const std::uint8_t opcode = pop();
         const std::size_t argument_count = command_argument_count(opcode);
         if (argument_count == kUnknownCommand
@@ -153,9 +158,16 @@ void Z80SoundDriver::process_command(std::uint8_t opcode,
                                      std::span<const std::uint8_t> args) {
     switch (opcode) {
     case 0x0B:
+        patch_table_base_ = static_cast<std::uint32_t>(args[0])
+            | (static_cast<std::uint32_t>(args[1]) << 8)
+            | (static_cast<std::uint32_t>(args[2]) << 16);
         sequence_table_base_ = static_cast<std::uint32_t>(args[6])
             | (static_cast<std::uint32_t>(args[7]) << 8)
             | (static_cast<std::uint32_t>(args[8]) << 16);
+        if (patch_table_base_ >= rom_.size()) {
+            throw std::out_of_range(
+                "Z80 sound command selected a patch table outside the ROM");
+        }
         if (sequence_table_base_ >= rom_.size()) {
             throw std::out_of_range(
                 "Z80 sound command selected a sequence table outside the ROM");
@@ -249,6 +261,28 @@ void Z80SoundDriver::stop_sound(std::uint8_t sound_id) {
     }
 }
 
+void Z80SoundDriver::load_patch_state(ChannelState& channel,
+                                       std::uint8_t patch_id) {
+    if (patch_table_base_ == 0) {
+        return;
+    }
+
+    const std::size_t pointer_address =
+        static_cast<std::size_t>(patch_table_base_) + patch_id * 2;
+    const std::uint32_t patch_offset = read_u16(rom_, pointer_address);
+    const std::size_t patch_address =
+        static_cast<std::size_t>(patch_table_base_) + patch_offset;
+    if (patch_address >= rom_.size()
+        || rom_.size() - patch_address < kPatchStateSize) {
+        throw std::out_of_range("Z80 sound patch state is outside the ROM");
+    }
+
+    std::copy_n(rom_.begin() + static_cast<std::ptrdiff_t>(patch_address),
+                kPatchStateSize,
+                channel.patch_state.begin());
+    channel.has_patch_state = true;
+}
+
 void Z80SoundDriver::process_channel(std::size_t index) {
     ChannelState& channel = channels_[index];
     if (!channel.active) {
@@ -326,6 +360,11 @@ Z80SoundDriver::SoundEvent Z80SoundDriver::read_event(std::size_t index) {
     } else if (control_has_argument(opcode)) {
         event.has_control_argument = true;
         event.control_argument = read_stream_byte(channel);
+        if (opcode == 0x61) {
+            load_patch_state(channel, event.control_argument);
+            event.has_patch_state = channel.has_patch_state;
+            event.patch_state = channel.patch_state;
+        }
     }
 
     return event;

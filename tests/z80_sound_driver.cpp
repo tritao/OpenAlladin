@@ -20,6 +20,8 @@ struct Fixture {
         constexpr std::size_t base = Z80SoundDriver::kSequenceTableBase;
         constexpr std::size_t header_offset = 0x20;
         constexpr std::size_t stream_offset = 0x40;
+        constexpr std::size_t patch_table = base + 0x80;
+        constexpr std::size_t patch_data = base + 0xA0;
 
         // Sound 0 points to a one-track header, whose track points at a
         // stream containing the same operand/control patterns seen in the
@@ -40,12 +42,24 @@ struct Fixture {
         for (std::size_t i = 0; i < stream.size(); ++i) {
             rom[base + stream_offset + i] = stream[i];
         }
+
+        // A recovered 0x61 patch-state entry: the native decoder copies the
+        // 0x27-byte state from table + little-endian offset.
+        rom[patch_table] = 0x20;
+        rom[patch_table + 1] = 0x00;
+        rom[patch_data + 1] = 0x0A;
+        rom[patch_data + 3] = 0x34;
+        rom[patch_data + 4] = 0xE1;
     }
 };
 
 std::array<std::uint8_t, 12> init_args() {
     constexpr std::uint32_t base = Z80SoundDriver::kSequenceTableBase;
     std::array<std::uint8_t, 12> args{};
+    constexpr std::uint32_t patch_table = base + 0x80;
+    args[0] = static_cast<std::uint8_t>(patch_table);
+    args[1] = static_cast<std::uint8_t>(patch_table >> 8);
+    args[2] = static_cast<std::uint8_t>(patch_table >> 16);
     args[6] = static_cast<std::uint8_t>(base);
     args[7] = static_cast<std::uint8_t>(base >> 8);
     args[8] = static_cast<std::uint8_t>(base >> 16);
@@ -75,6 +89,9 @@ int main() {
     assert(!events[1].has_control_argument);
     assert(events[2].opcode == 0x61);
     assert(events[2].control_argument == 0);
+    assert(events[2].has_patch_state);
+    assert(events[2].patch_state[1] == 0x0A);
+    assert(events[2].patch_state[3] == 0x34);
     assert(events[3].kind == Z80SoundDriver::SoundEvent::Kind::Note);
     assert(events[3].opcode == 0x30);
     assert(events[3].operand_b == -0x618);
