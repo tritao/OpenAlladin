@@ -206,6 +206,14 @@
   evidence:
     - ghidra_disassembly_001B5318
     - rom_terrain_handler_table_004554
+0x001B5320:
+  name: TerrainHandler_SurfaceInteractionBlock
+  confidence: confirmed
+  description: Terrain behavior handler selected by the live level-01 behavior 0x0A cell; gates surface interaction on player state and terrain flags, then copies PLAYER_WORLD_X/Y into the active interaction record when the surface interaction is accepted.
+  evidence:
+    - ghidra_disassembly_001B5320
+    - rom_terrain_handler_table_004554
+    - mame_player_terrain_rightjump_trace_frame_1159
 0x001B537A:
   name: TerrainHandler_LandingResponseBlock
   confidence: confirmed

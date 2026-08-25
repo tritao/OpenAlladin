@@ -47,6 +47,7 @@
   evidence:
     - ghidra_decompile_player_movement_collision_targets
     - ghidra_disassembly_001B1E38
+    - mame_level01_map_runtime_match
 
 0xFFAE86:
   name: TERRAIN_BEHAVIOR_INDEX_TABLE
@@ -56,6 +57,7 @@
   evidence:
     - ghidra_decompile_player_movement_collision_targets
     - ghidra_disassembly_001B1E38
+    - mame_level01_floor_runtime_match
 
 0xFFF156:
   name: TERRAIN_QUERY_FLAGS

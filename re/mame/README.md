@@ -319,6 +319,29 @@ OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,s
   ./tools/mame-trace.sh
 ```
 
+The initial level-01 runtime tables are matched byte-for-byte to the extracted
+assets. `level01/raw/map.bin` is loaded at `0x00FF0000` and has 27,000 bytes;
+the active level end marker is `0x00FF725C`, or `0x6978` bytes from the RAM
+base. Its row pointers at `0x00FF9884` select 16-pixel Y bands, and the loaded
+rows advance by `0x258` bytes (300 big-endian terrain words) per band.
+
+`level01/raw/floor.bin` is initially loaded byte-for-byte at `0x00FFAE84`,
+including the two-byte offset before `TERRAIN_BEHAVIOR_INDEX_TABLE` at
+`0x00FFAE86`. The resolver's `terrain_word >> 1` lookup therefore indexes the
+extracted floor data directly. Later gameplay can mutate three entries in
+that region through the shared interaction workspace; the terrain entries
+used by this trace remain unchanged.
+This gives a reproducible static map of non-flat behavior cells, including
+behavior `0x2B` at row 30/column 182 (`0x6008`) and behavior `0x47` at
+row 31/column 142 (`0x60C0`).
+
+The focused trace `build/re/player-terrain-rightjump` reached a live non-flat
+cell at frame 1159: the player probe was at world `(481, 880)`, the resolver
+read row 40/column 31 (`0x6C58`), produced behavior `0x0A`, and selected the
+handler-table entry `0x001B5320`. Behavior `0x0A` remained active while the
+player crossed the adjacent surface cells. The complete machine-readable
+finding is recorded in `re/mame/player-terrain-findings.json`.
+
 To compare the captured VDP memories and DMA stream with the native assets
 already extracted from the ROM:
 

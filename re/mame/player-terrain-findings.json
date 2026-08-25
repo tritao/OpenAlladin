@@ -1,0 +1,65 @@
+{
+  "format": "openaladdin-player-terrain-finding-v1",
+  "level": 1,
+  "runtime_assets": {
+    "map": {
+      "file": "build/assets/levels/level01/raw/map.bin",
+      "ram_address": "0x00FF0000",
+      "bytes": 27000,
+      "active_end_address": "0x00FF725C",
+      "row_pointer_table": "0x00FF9884",
+      "row_band_pixels": 16,
+      "row_stride_bytes": 600,
+      "terrain_word_endian": "big"
+    },
+    "floor": {
+      "file": "build/assets/levels/level01/raw/floor.bin",
+      "ram_address": "0x00FFAE84",
+      "bytes": 16080,
+      "behavior_table": "0x00FFAE86",
+      "lookup": "behavior = floor[2 + (terrain_word >> 1)]",
+      "initial_exact_frame": 1100,
+      "later_runtime_mutations": [
+        "0x00FFE04F",
+        "0x00FFE107",
+        "0x00FFE10B"
+      ]
+    }
+  },
+  "static_cells": [
+    {
+      "row": 30,
+      "column": 182,
+      "terrain_word": "0x6008",
+      "behavior": "0x2B",
+      "handler": "0x001B5502"
+    },
+    {
+      "row": 31,
+      "column": 142,
+      "terrain_word": "0x60C0",
+      "behavior": "0x47",
+      "handler": "0x001B5470"
+    }
+  ],
+  "mame_trace": {
+    "directory": "build/re/player-terrain-rightjump",
+    "frame": 1159,
+    "world_probe": {
+      "x": 481,
+      "y": 880,
+      "row": 40,
+      "column": 31
+    },
+    "terrain_word": "0x6C58",
+    "behavior": "0x0A",
+    "handler": "0x001B5320",
+    "player_terrain_behavior_ram": "0x00FFF0C3",
+    "query_flags_ram": "0x00FFF156",
+    "observed_behaviors": [
+      "0x00",
+      "0x0A",
+      "0x11"
+    ]
+  }
+}
