@@ -24,6 +24,8 @@
     { "address": "0x001B5320", "name": "Terrain handler: spawn or resolve obstacle" },
     { "address": "0x001B537A", "name": "Terrain handler: landing response" },
     { "address": "0x001B53A2", "name": "Terrain handler: horizontal response" },
+    { "address": "0x001B5440", "name": "Terrain handler: clear surface transition flag" },
+    { "address": "0x001B5448", "name": "Terrain handler: set surface transition flag" },
     { "address": "0x001B5492", "name": "Terrain handler: clear surface mode" },
     { "address": "0x001B549C", "name": "Terrain handler: set surface mode" },
     { "address": "0x001B54E0", "name": "Terrain handler: set terrain state" },

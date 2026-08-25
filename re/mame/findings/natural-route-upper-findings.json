@@ -110,7 +110,31 @@
     ],
     "description": "The relevant map column contains special behavior cells, but the controller trace does not produce a landing state on the forward route."
   },
+  "special_surface_handlers": {
+    "flag_address": "0x00FFF0BD",
+    "behavior_0x86": {
+      "handler": "0x001B5440",
+      "effect": "CLR.B 0x00FFF0BD; RTS"
+    },
+    "behavior_0x85": {
+      "handler": "0x001B5448",
+      "effect": "ST.B 0x00FFF0BD; RTS"
+    },
+    "behavior_0x47_interaction": {
+      "handler": "0x001B5470",
+      "effect": "Tests 0x00FFF0BD; a set flag takes the clear-surface-mode path, while a clear flag can arm 0x00FFF0C2 and set the surface-mode bit."
+    },
+    "mame_trace": {
+      "trace": "build/re/upper-edge-special-handlers-20260825",
+      "observed": [
+        "Upper-edge behavior 0x86 dispatches to 0x001B5440 and leaves 0x00FFF0BD clear.",
+        "Initial descent behavior 0x85 dispatches to 0x001B5448 and sets 0x00FFF0BD to 0xFF.",
+        "No scene-state write or exit-gate write occurs in this run."
+      ]
+    },
+    "conclusion": "The 0x85/0x86 pair is a surface-contour flag path used by terrain handling, not a scene transfer. The upper edge remains a fall into the lower/death band unless another route reaches a supporting surface."
+  },
   "natural_exit_confirmed": false,
   "scene_state_08_observed": false,
-    "next_action": "Decode the behavior 0x86/0x85 floor-contour path around world X 0x08E0 and determine whether the intended continuation is a jump/transfer or a lower-band descent; do not treat this edge as a natural exit."
+    "next_action": "Trace the next playable route from the upper checkpoint or return to the lower wall/rope branch; the 0x85/0x86 edge path is decoded and is not a natural exit."
 }

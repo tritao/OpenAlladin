@@ -520,6 +520,18 @@
   evidence:
     - ghidra_disassembly_001AA90C
     - ghidra_disassembly_001AAA2A
+0xFFF0BD:
+  name: TERRAIN_SURFACE_TRANSITION_FLAG
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Terrain contour flag set by behavior 0x85 at 0x001B5448 and cleared by behavior 0x86 at 0x001B5440; behavior 0x47 consumes it when selecting the surface-mode response.
+  evidence:
+    - ghidra_upper_edge_surface_targeted_decompile
+    - rom_disassembly_001B5440
+    - rom_disassembly_001B5448
+    - rom_disassembly_001B5470
+    - mame_upper_edge_special_handler_trace
 0xFFF167:
   name: CAMERA_UPDATE_DELAY
   type: u8
