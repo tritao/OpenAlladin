@@ -171,6 +171,22 @@
     - actor_type_34_stream_decode
     - mame_type_34_handler_overlap_trace
     - ghidra_type34_handler_decompile
+0x001AF978:
+  name: ActorType6A_PlayerCollisionHandler
+  confidence: confirmed
+  description: Player-collision handler for handhold actors. When terrain response is idle or vertically stopped and actor flags bit 0x10 is set, it aligns PLAYER_Y to actor Y minus WORLD_CAMERA_Y minus 8 when the local Y difference is below 0x0C, changes type 0x69/0x6A to type 0x6B, resets the animation timer, and publishes the actor interaction value.
+  evidence:
+    - ghidra_decompile_actor_combat_targets
+    - mame_handhold_actor_type_transition
+    - mame_campaign_handhold_grab_checkpoint
+0x001AFBF4:
+  name: ActorType65_PlayerCollisionHandler
+  confidence: confirmed
+  description: Player-collision handler for the bounce actor type 0x65. On a falling player overlap, it changes the actor to type 0x66, selects the bounce animation, and when the player interaction gate is clear launches PLAYER_VY at -0x0500 while arming the terrain response state and clearing the vertical stop/timer fields.
+  evidence:
+    - ghidra_decompile_actor_combat_targets
+    - mame_bounce_actor_collision_trace
+    - mame_campaign_bounce_sweep
 0x001AEC00:
   name: Actor_HandlePlayerCollisionBlock
   confidence: confirmed
