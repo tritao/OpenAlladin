@@ -6,8 +6,10 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace {
 
@@ -17,7 +19,74 @@ struct Options {
     bool no_window = false;
     bool demo = false;
     std::string state_output;
+    std::string input_schedule;
+    std::string checkpoint_player;
 };
+
+std::vector<std::string> split_schedule(const std::string& schedule) {
+    std::vector<std::string> result;
+    std::size_t start = 0;
+    while (start <= schedule.size()) {
+        const std::size_t end = schedule.find(',', start);
+        std::string item = schedule.substr(start, end == std::string::npos ? std::string::npos : end - start);
+        const auto first = item.find_first_not_of(" \t");
+        const auto last = item.find_last_not_of(" \t");
+        if (first != std::string::npos) {
+            item = item.substr(first, last - first + 1);
+        } else {
+            item.clear();
+        }
+        std::size_t separator = item.find_last_of("*:");
+        int repeat = 1;
+        if (separator != std::string::npos && separator + 1 < item.size()) {
+            const std::string count = item.substr(separator + 1);
+            if (count.find_first_not_of("0123456789") == std::string::npos) {
+                repeat = std::stoi(count);
+                item.resize(separator);
+            }
+        }
+        for (int i = 0; i < repeat; ++i) {
+            result.push_back(item.empty() ? "none" : item);
+        }
+        if (end == std::string::npos) {
+            break;
+        }
+        start = end + 1;
+    }
+    return result;
+}
+
+void apply_scheduled_token(const std::string& token, openaladdin::InputState& input) {
+    std::size_t start = 0;
+    while (start <= token.size()) {
+        const std::size_t end = token.find('+', start);
+        const std::string part = token.substr(start, end == std::string::npos ? std::string::npos : end - start);
+        if (part == "left") {
+            input.left = true;
+        } else if (part == "right") {
+            input.right = true;
+        } else if (part == "c" || part == "jump" || part == "space") {
+            input.jump_pressed = true;
+        }
+        if (end == std::string::npos) {
+            break;
+        }
+        start = end + 1;
+    }
+}
+
+std::vector<int> parse_checkpoint(const std::string& value) {
+    std::vector<int> fields;
+    std::stringstream stream(value);
+    std::string item;
+    while (std::getline(stream, item, ',')) {
+        fields.push_back(std::stoi(item));
+    }
+    if (fields.size() != 4 && fields.size() != 5) {
+        throw std::runtime_error("--checkpoint-player expects x,y,vx,vy[,grounded]");
+    }
+    return fields;
+}
 
 Options parse_options(int argc, char** argv) {
     Options options;
@@ -33,8 +102,14 @@ Options parse_options(int argc, char** argv) {
             options.demo = true;
         } else if (argument == "--state-output" && i + 1 < argc) {
             options.state_output = argv[++i];
+        } else if (argument == "--input-schedule" && i + 1 < argc) {
+            options.input_schedule = argv[++i];
+        } else if (argument == "--checkpoint-player" && i + 1 < argc) {
+            options.checkpoint_player = argv[++i];
         } else if (argument == "--help") {
-            std::cout << "usage: openaladdin [--assets DIR] [--frames N] [--no-window] [--demo] [--state-output PATH]\n";
+            std::cout << "usage: openaladdin [--assets DIR] [--frames N] [--no-window] [--demo]\n"
+                         "       [--state-output PATH] [--input-schedule SCHEDULE]\n"
+                         "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n";
             std::exit(0);
         } else {
             throw std::runtime_error("unknown argument: " + argument);
@@ -57,6 +132,16 @@ int main(int argc, char** argv) {
 
         openaladdin::Engine engine;
         engine.load(options.assets);
+        if (!options.checkpoint_player.empty()) {
+            const auto checkpoint = parse_checkpoint(options.checkpoint_player);
+            engine.set_checkpoint(
+                checkpoint[0],
+                checkpoint[1],
+                static_cast<std::int16_t>(checkpoint[2]),
+                static_cast<std::int16_t>(checkpoint[3]),
+                checkpoint.size() < 5 || checkpoint[4] != 0
+            );
+        }
 
         std::ofstream state_file;
         if (!options.state_output.empty()) {
@@ -107,6 +192,7 @@ int main(int argc, char** argv) {
         }
 
         bool previous_jump = false;
+        const std::vector<std::string> scheduled_inputs = split_schedule(options.input_schedule);
         int rendered_frames = 0;
         while (!engine.quit_requested() && (options.frames < 0 || rendered_frames < options.frames)) {
             openaladdin::InputState input;
@@ -125,6 +211,17 @@ int main(int argc, char** argv) {
             const bool jump = keys[SDL_SCANCODE_SPACE] || keys[SDL_SCANCODE_C];
             input.jump_pressed = jump && !previous_jump;
             previous_jump = jump;
+            std::string input_token;
+
+            if (!options.input_schedule.empty()) {
+                input = openaladdin::InputState{};
+                input_token = rendered_frames < static_cast<int>(scheduled_inputs.size())
+                    ? scheduled_inputs[static_cast<std::size_t>(rendered_frames)]
+                    : "none";
+                apply_scheduled_token(input_token, input);
+                input.jump_pressed = input.jump_pressed && !previous_jump;
+                previous_jump = input.jump_pressed;
+            }
 
             if (options.demo) {
                 // Deterministic run/jump input for headless regression checks.
@@ -132,13 +229,15 @@ int main(int argc, char** argv) {
                 input.jump_pressed = rendered_frames == 30;
             }
 
-            std::string input_token = "none";
-            if (input.jump_pressed) {
-                input_token = "jump";
-            } else if (input.left && !input.right) {
-                input_token = "left";
-            } else if (input.right && !input.left) {
-                input_token = "right";
+            if (options.input_schedule.empty()) {
+                input_token = "none";
+                if (input.jump_pressed) {
+                    input_token = "jump";
+                } else if (input.left && !input.right) {
+                    input_token = "left";
+                } else if (input.right && !input.left) {
+                    input_token = "right";
+                }
             }
 
             engine.update(input);

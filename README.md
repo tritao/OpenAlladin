@@ -40,6 +40,18 @@ capture also needs semantic state. Compare two implementations with:
 python tools/oa.py compare genesis.jsonl openaladdin.jsonl
 ```
 
+Run a checkpointed MAME-to-native differential probe with:
+
+```bash
+python tools/oa.py regression player-jump
+```
+
+This runs the MAME experiment, finds its gameplay_checkpoint marker, replays
+the exact post-checkpoint input tokens in the native slice, aligns both traces
+at frame 0, and compares only the implemented player fields
+(x, y, vx, vy, and grounded). It reports the first divergence while ignoring
+native placeholders for scene, animation, camera, and actors.
+
 The experiment manifest is `re/mame/experiments/manifest.yml`. It supports boot
 scenarios, input actions, and direct memory/PC wait conditions; the MAME Lua
 harness evaluates those waits while the emulator runs.

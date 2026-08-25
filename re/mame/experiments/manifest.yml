@@ -5,7 +5,7 @@ version: 1
 
 boot_scenarios:
   first-level:
-    input: "none*30,start*90,none*60"
+    input: "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180"
 
 experiments:
   - name: title-menu
@@ -15,14 +15,15 @@ experiments:
 
   - name: player-run
     description: Enter the first stage and hold right during the initial run.
-    frames: 360
+    frames: 1400
     boot:
       scenario: first-level
     setup:
       - wait:
-          symbol: SCENE_STATE
-          equals: 1
-          timeout: 180
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 120
+      - marker: gameplay_checkpoint
     actions:
       - input:
           right: true
@@ -35,21 +36,29 @@ experiments:
 
   - name: player-jump
     description: Enter the first stage, run briefly, press jump, and capture the arc.
-    frames: 420
+    frames: 1400
+    regression:
+      checkpoint: gameplay_checkpoint
+      fields:
+        - player.x
+        - player.y
+        - player.vx
+        - player.vy
+        - player.grounded
     boot:
       scenario: first-level
     setup:
       - wait:
-          symbol: SCENE_STATE
-          equals: 1
-          timeout: 180
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 120
+      - marker: gameplay_checkpoint
     actions:
       - input:
           right: true
           frames: 30
       - input:
-          right: true
-          a: true
+          c: true
           frames: 1
       - wait:
           condition:

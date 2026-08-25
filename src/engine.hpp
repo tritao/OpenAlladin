@@ -68,6 +68,7 @@ class Engine {
 public:
     void load(const std::string& asset_root);
     void reset();
+    void set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded);
     void update(const InputState& input);
     void render(SDL_Renderer* renderer);
     void write_state(std::ostream& output, const std::string& input_token) const;

@@ -209,7 +209,11 @@ def experiment_action_protocol(experiment: dict[str, Any]) -> str | None:
                 continue
             if "wait" in item or "capture" in item:
                 wait_spec = item.get("wait") or item.get("capture") or {}
-                condition = wait_spec.get("condition") or wait_spec.get("until") or wait_spec
+                if any(key in wait_spec for key in ("symbol", "memory", "pc")):
+                    condition = dict(wait_spec)
+                    condition.pop("timeout", None)
+                else:
+                    condition = wait_spec.get("condition") or wait_spec.get("until") or wait_spec
                 timeout = int(wait_spec.get("timeout", 120))
                 actions.append(_condition_action(condition, timeout, symbols))
                 continue
@@ -269,6 +273,171 @@ def command_trace(args: argparse.Namespace) -> int:
         print(f"trace: {trace_dir}")
         if args.state_output:
             print(f"state: {trace_dir / 'state.jsonl'}")
+    return status
+
+
+def load_state_trace(path: Path) -> tuple[dict[str, Any], dict[int, dict[str, Any]], list[dict[str, Any]]]:
+    header: dict[str, Any] | None = None
+    states: dict[int, dict[str, Any]] = {}
+    markers: list[dict[str, Any]] = []
+    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError as error:
+            raise SystemExit(f"{path}:{line_number}: invalid JSON: {error}") from error
+        if record.get("type") == "header":
+            header = record
+        elif record.get("type") == "marker":
+            markers.append(record)
+        elif record.get("type") in (None, "state", "frame_state"):
+            if "frame" in record:
+                states[int(record["frame"])] = record
+    if header is None:
+        raise SystemExit(f"{path}: state trace has no header")
+    if not states:
+        raise SystemExit(f"{path}: state trace has no state records")
+    return header, states, markers
+
+
+def aligned_trace(
+    source: Path,
+    destination: Path,
+    marker_name: str,
+    fields: list[str],
+) -> tuple[int, int, dict[str, Any]]:
+    header, states, markers = load_state_trace(source)
+    matching = [marker for marker in markers if marker.get("name") == marker_name]
+    if not matching:
+        known = ", ".join(str(marker.get("name")) for marker in markers) or "none"
+        raise SystemExit(f"{source}: checkpoint marker {marker_name!r} not found (markers: {known})")
+    checkpoint_frame = int(matching[0]["frame"])
+    if checkpoint_frame not in states:
+        raise SystemExit(f"{source}: checkpoint marker frame {checkpoint_frame} has no state record")
+
+    selected = sorted(frame for frame in states if frame >= checkpoint_frame)
+    if not selected or selected[0] != checkpoint_frame:
+        raise SystemExit(f"{source}: no state records at or after checkpoint frame {checkpoint_frame}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    aligned_header = dict(header)
+    aligned_header["frame_limit"] = len(selected) - 1
+    aligned_header["alignment"] = {
+        "marker": marker_name,
+        "source_frame": checkpoint_frame,
+        "fields": fields,
+    }
+    with destination.open("w", encoding="utf-8") as output:
+        output.write(json.dumps(aligned_header, separators=(",", ":")) + "\n")
+        for relative_frame, source_frame in enumerate(selected):
+            record = json.loads(json.dumps(states[source_frame]))
+            record["type"] = "state"
+            record["frame"] = relative_frame
+            player = record.setdefault("player", {})
+            if "grounded" not in player:
+                player["grounded"] = int(player.get("vy", 0)) == 0
+            output.write(json.dumps(record, separators=(",", ":")) + "\n")
+    return len(selected) - 1, checkpoint_frame, states[checkpoint_frame]
+
+
+def compress_input_schedule(tokens: list[str]) -> str:
+    if not tokens:
+        return "none"
+    result: list[str] = []
+    start = 0
+    while start < len(tokens):
+        end = start + 1
+        while end < len(tokens) and tokens[end] == tokens[start]:
+            end += 1
+        result.append(f"{tokens[start]}*{end - start}")
+        start = end
+    return ",".join(result)
+
+
+def command_regression(args: argparse.Namespace) -> int:
+    experiment = load_experiment(args.scenario)
+    regression = experiment.get("regression") or {}
+    marker_name = str(regression.get("checkpoint", "gameplay_checkpoint"))
+    fields = list(args.fields or regression.get("fields") or [
+        "player.x",
+        "player.y",
+        "player.vx",
+        "player.vy",
+        "player.grounded",
+    ])
+    rom = resolve(args.rom)
+    if not rom.is_file():
+        raise SystemExit(f"ROM not found: {rom}")
+
+    root_trace = resolve(args.trace_dir) if args.trace_dir else ROOT / "build/re/regression" / args.scenario
+    mame_trace = root_trace / "mame"
+    aligned = root_trace / "mame-aligned.jsonl"
+    native_trace = root_trace / "native.jsonl"
+    frame_limit = int(args.frames or experiment["frames"])
+
+    environment = os.environ.copy()
+    for key in (
+        "OPENALADDIN_TRACE_DIR",
+        "OPENALADDIN_TRACE_FRAMES",
+        "OPENALADDIN_INPUT",
+        "OPENALADDIN_STATE_OUTPUT",
+        "OPENALADDIN_CAPTURE",
+        "OPENALADDIN_TRACE_ACTORS",
+        "OPENALADDIN_LOAD_STATE",
+        "OPENALADDIN_CAPTURE_VDP",
+        "OPENALADDIN_EXPERIMENT_ACTIONS",
+    ):
+        environment.pop(key, None)
+    environment.update({
+        "OPENALADDIN_TRACE_DIR": str(mame_trace),
+        "OPENALADDIN_TRACE_FRAMES": str(frame_limit),
+        "OPENALADDIN_CAPTURE": "state",
+        "OPENALADDIN_ROM_SHA256": hashes(rom)["sha256"],
+    })
+    protocol = experiment_action_protocol(experiment)
+    if protocol:
+        environment["OPENALADDIN_EXPERIMENT_ACTIONS"] = protocol
+
+    print(f"regression: running MAME experiment {args.scenario}")
+    status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
+    if status:
+        return status
+
+    mame_source = mame_trace / "state.jsonl"
+    compare_frames, checkpoint_frame, checkpoint = aligned_trace(mame_source, aligned, marker_name, fields)
+    _, mame_states, _ = load_state_trace(mame_source)
+    input_tokens = [
+        str(mame_states[checkpoint_frame + relative].get("input", "none"))
+        for relative in range(compare_frames)
+    ]
+
+    player = checkpoint.get("player") or {}
+    checkpoint_spec = ",".join(str(int(player.get(name, 0))) for name in ("x", "y", "vx", "vy"))
+    checkpoint_spec += "," + ("1" if player.get("grounded", int(player.get("vy", 0)) == 0) else "0")
+    native_environment = os.environ.copy()
+    native_environment["SDL_VIDEODRIVER"] = "dummy"
+    native_command = [
+        str(ROOT / "run.sh"),
+        "--no-window",
+        "--frames", str(compare_frames),
+        "--state-output", str(native_trace),
+        "--input-schedule", compress_input_schedule(input_tokens),
+        "--checkpoint-player", checkpoint_spec,
+    ]
+    print(f"regression: checkpoint {marker_name} at MAME frame {checkpoint_frame}")
+    print(f"regression: replaying {compare_frames} post-checkpoint frame(s) natively")
+    status = subprocess.run(native_command, cwd=ROOT, env=native_environment, check=False).returncode
+    if status:
+        return status
+
+    print(f"regression: comparing fields {', '.join(fields)}")
+    compare_args: list[str] = [str(aligned), str(native_trace)]
+    for field in fields:
+        compare_args.extend(["--field", field])
+    status = run_tool("openaladdin/mame/compare_state.py", compare_args)
+    print(f"regression: MAME trace {mame_trace}")
+    print(f"regression: aligned trace {aligned}")
+    print(f"regression: native trace {native_trace}")
     return status
 
 
@@ -513,7 +682,7 @@ def build_parser() -> argparse.ArgumentParser:
     rebuild.set_defaults(function=command_ghidra_rebuild)
 
     trace = commands.add_parser("trace", help="run a named repeatable MAME experiment")
-    trace.add_argument("scenario", choices=["title-menu", "player-run", "player-jump"])
+    trace.add_argument("scenario", help="experiment name from re/mame/experiments/manifest.yml")
     add_rom_argument(trace)
     trace.add_argument("--frames", type=int)
     trace.add_argument("--input")
@@ -524,6 +693,14 @@ def build_parser() -> argparse.ArgumentParser:
     trace.add_argument("--load-state")
     trace.add_argument("--capture-vdp", action=argparse.BooleanOptionalAction, default=None)
     trace.set_defaults(function=command_trace)
+
+    regression = commands.add_parser("regression", help="differentially compare MAME and native gameplay")
+    regression.add_argument("scenario")
+    add_rom_argument(regression)
+    regression.add_argument("--frames", type=int)
+    regression.add_argument("--trace-dir", type=Path)
+    regression.add_argument("--field", dest="fields", action="append")
+    regression.set_defaults(function=command_regression)
 
     decode = commands.add_parser("decode", help="decode a VM stream family")
     decode_commands = decode.add_subparsers(dest="decode_kind", required=True)

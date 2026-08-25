@@ -264,7 +264,12 @@ local function capture(frame, input_token)
                 { "y", tostring(read_u16(symbol("PLAYER_Y"))) },
                 { "vx", tostring(signed_u16(read_u16(symbol("PLAYER_VX")))) },
                 { "vy", tostring(signed_u16(read_u16(symbol("PLAYER_VY")))) },
-                { "animation_pc", tostring(read_u32(symbol("PLAYER_ANIMATION_PC"))) }
+                { "animation_pc", tostring(read_u32(symbol("PLAYER_ANIMATION_PC"))) },
+                -- A dedicated grounded byte is not yet tracked in the shared
+                -- RAM map. For the initial differential slice, zero vertical
+                -- velocity is the observable grounded state; terrain landing
+                -- and jump transitions make this reliable for the probe.
+                { "grounded", json_bool(read_u16(symbol("PLAYER_VY")) == 0) }
             }) },
             { "scene", json_object({
                 { "state", tostring(read_u8(symbol("SCENE_STATE"))) },

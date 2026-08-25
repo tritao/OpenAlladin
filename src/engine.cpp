@@ -178,6 +178,17 @@ void Engine::reset() {
     quit_ = false;
 }
 
+void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded) {
+    player_.x = x;
+    player_.y = y;
+    player_.vx = vx;
+    player_.vy = vy;
+    player_.grounded = grounded;
+    player_.terrain_behavior = 0;
+    frame_ = 0;
+    quit_ = false;
+}
+
 int Engine::visual_x() const {
     return level_.camera_x() + player_.x;
 }
@@ -360,11 +371,7 @@ void Engine::apply_ground_movement(const InputState& input) {
 
 void Engine::update(const InputState& input) {
     const bool was_grounded = player_.grounded;
-    if (input.jump_pressed && was_grounded) {
-        // Confirmed jump initialization at 0x001A9716.
-        player_.vy = static_cast<std::int16_t>(-0x200);
-        player_.grounded = false;
-    }
+    const bool start_jump = input.jump_pressed && was_grounded;
 
     if (was_grounded && player_.grounded) {
         apply_ground_movement(input);
@@ -378,6 +385,14 @@ void Engine::update(const InputState& input) {
 
     integrate_motion();
     resolve_terrain();
+    if (start_jump && player_.grounded) {
+        // The recovered frame order applies the jump handler after motion and
+        // terrain resolution (Player_Update -> Terrain_Resolve -> jump
+        // handler). This leaves the impulse visible for the next frame before
+        // the integrator consumes it.
+        player_.vy = static_cast<std::int16_t>(-0x200);
+        player_.grounded = false;
+    }
     ++frame_;
 }
 
@@ -393,7 +408,8 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"y\":" << player_.y
            << ",\"vx\":" << player_.vx
            << ",\"vy\":" << player_.vy
-           << ",\"animation_pc\":0}"
+           << ",\"animation_pc\":0"
+           << ",\"grounded\":" << (player_.grounded ? "true" : "false") << "}"
            << ",\"scene\":{\"state\":0"
            << ",\"script_cursor\":0"
            << ",\"script_data_cursor\":0"

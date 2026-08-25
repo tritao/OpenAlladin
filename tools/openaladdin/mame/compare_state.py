@@ -67,10 +67,41 @@ def first_difference(left: Any, right: Any, path: str = "") -> tuple[str, Any, A
     return None if left == right else (path or "$", left, right)
 
 
+def field_value(record: dict[str, Any], field: str) -> Any:
+    value: Any = record
+    for component in field.split("."):
+        if not isinstance(value, dict) or component not in value:
+            raise KeyError(field)
+        value = value[component]
+    return value
+
+
+def selected_difference(left: dict[str, Any], right: dict[str, Any], fields: list[str]) -> tuple[str, Any, Any] | None:
+    for field in fields:
+        try:
+            left_value = field_value(left, field)
+        except KeyError:
+            left_value = None
+        try:
+            right_value = field_value(right, field)
+        except KeyError:
+            right_value = None
+        difference = first_difference(left_value, right_value, field)
+        if difference:
+            return difference
+    return None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("genesis", type=Path)
     parser.add_argument("openaladdin", type=Path)
+    parser.add_argument(
+        "--field",
+        action="append",
+        dest="fields",
+        help="compare only this dotted state field; repeat for multiple fields",
+    )
     args = parser.parse_args()
     left_header, left = load_states(args.genesis.resolve())
     right_header, right = load_states(args.openaladdin.resolve())
@@ -90,7 +121,11 @@ def main() -> int:
             previous = [candidate for candidate in frames if candidate < frame and candidate in left and candidate in right]
             print(f"Previous matching frame: {previous[-1] if previous else 'none'}")
             return 1
-        difference = first_difference(left[frame], right[frame])
+        difference = (
+            selected_difference(left[frame], right[frame], args.fields)
+            if args.fields
+            else first_difference(left[frame], right[frame])
+        )
         if difference:
             path, genesis_value, openaladdin_value = difference
             print(f"First divergence: frame {frame}")
