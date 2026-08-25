@@ -22,16 +22,28 @@
     { "address": "0x001B326C", "name": "Scene transition completion helper" },
     { "address": "0x001B315C", "name": "Scene-script completion setter" },
     { "address": "0x001B3B96", "name": "Scene table state selector" },
-    { "address": "0x001B4F7C", "name": "Scene reset/state-zero path" }
+    { "address": "0x001B3F0A", "name": "Scene table state-byte write" },
+    { "address": "0x001A8ED2", "name": "Scene script state-byte write" },
+    { "address": "0x001B4F7C", "name": "Scene reset/state-zero path" },
+    { "address": "0x001B4666", "name": "Scene table wrap/reset helper" },
+    { "address": "0x001B5B4A", "name": "Level-01 enter routine" },
+    { "address": "0x001B6406", "name": "Level-01 exit routine" },
+    { "address": "0x001B5B66", "name": "Level-00 enter routine" },
+    { "address": "0x001B63EA", "name": "Level-00 exit routine" }
   ],
   "memory_references": [
     { "address": "0x00FF7E26", "name": "Scene state byte" },
     { "address": "0x00FF7E22", "name": "Scene resource status byte" },
+    { "address": "0x00FFF572", "name": "Scene script cursor" },
+    { "address": "0x00FFF576", "name": "Scene script data cursor" },
+    { "address": "0x00FFF57A", "name": "Scene table index" },
+    { "address": "0x00FFF57C", "name": "Scene script pending" },
     { "address": "0x00FFF57D", "name": "Scene VDP update flag" },
     { "address": "0x00FFF57F", "name": "Scene transition event flag" },
     { "address": "0x00FFF0D0", "name": "Player movement transition gate" },
     { "address": "0x00FFF0DB", "name": "Player transition lock A" },
     { "address": "0x00FFF0DC", "name": "Player transition countdown" },
-    { "address": "0x00FFF0E6", "name": "Player terminal transition flag" }
+    { "address": "0x00FFF0E6", "name": "Player terminal transition flag" },
+    { "address": "0x00004B04", "name": "ROM scene transition table" }
   ]
 }

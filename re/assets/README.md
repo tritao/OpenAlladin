@@ -89,6 +89,7 @@ build/assets/
 ├── sprites/             # SEG-equivalent tile sets and frame PNGs
 │   └── frames.json      # detailed frame/part metadata
 ├── animations.json      # known animation stream records
+├── scene_transitions.json # ROM scene table and compact transition script records
 └── rnc/
     ├── manifest.json    # every RNC block, hashes, consumers, and failures
     ├── classification.json # tile candidates and contiguous block families
@@ -141,3 +142,9 @@ with:
 ```bash
 python tools/validate-scene-resources.py
 ```
+
+The scene-transition pass is driven by `re/assets/scene_transitions.yml`. It
+decodes the five 6-byte records used by `0x001B3B96` at ROM `0x004B04` and the
+14 four-byte records around the runtime script cursor at `0x00004082`.
+`tools/extract-assets.py` writes the generated report to
+`build/assets/scene_transitions.json`.

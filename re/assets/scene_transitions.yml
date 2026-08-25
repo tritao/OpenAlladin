@@ -1,0 +1,25 @@
+# Static scene-transition table/script metadata recovered from the ROM and
+# the targeted scene-script decompilation.
+
+format: openaladdin-scene-transitions-v1
+
+table:
+  address: 0x00004B04
+  entry_size: 6
+  count: 5
+  pointer_offset: 0
+  state_offset: 4
+  metadata_offset: 5
+  evidence:
+    - ghidra_targeted_decompile_001B3B96
+    - rom_bytes_00004B04
+
+scripts:
+  - name: initial_scene_transition_script
+    address: 0x00004080
+    cursor: 0x00004082
+    end: 0x000040B8
+    record_size: 4
+    evidence:
+      - ram_scene_script_cursor_0x00004082
+      - ghidra_targeted_decompile_001A8E3E

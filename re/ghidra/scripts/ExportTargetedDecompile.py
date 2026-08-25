@@ -4,6 +4,7 @@ import json
 import os
 
 from ghidra.app.decompiler import DecompInterface
+from ghidra.program.model.symbol import SourceType
 from ghidra.util.task import ConsoleTaskMonitor
 
 
@@ -48,6 +49,23 @@ def decompile_row(function, target, decompiler, monitor):
         row["status"] = "decompile_failed"
         row["error"] = result.getErrorMessage()
     return row
+
+
+def function_for_target(address, target, function_manager):
+    function = function_manager.getFunctionContaining(address)
+    if function is not None:
+        return function
+    # Level enter/exit pointers are often reached indirectly and are not
+    # seeded by the normal analysis.  Seed those code targets so the focused
+    # report can still decompile the actual routine the level table names.
+    disassemble(address)
+    function = function_manager.getFunctionAt(address)
+    if function is None:
+        function = createFunction(address, None)
+    if function is not None and target.get("name"):
+        name = target["name"].replace("-", "_").replace(" ", "_")
+        function.setName(name, SourceType.USER_DEFINED)
+    return function
 
 
 def memory_reference_row(target, function_manager, reference_manager, decompiler, monitor, by_function):
@@ -111,7 +129,7 @@ def run():
         address = currentProgram.getAddressFactory().getDefaultAddressSpace().getAddress(
             int(target["address"], 0)
         )
-        function = function_manager.getFunctionContaining(address)
+        function = function_for_target(address, target, function_manager)
         if function is None:
             targets.append({
                 "address": target["address"],

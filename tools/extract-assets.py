@@ -20,6 +20,7 @@ from lib.rnc_loaders import analyze_rnc_loaders
 from lib.rnc_runtime import analyze_rnc_runtime
 from lib.rnc_refs import scan_rnc_references, write_rnc_references
 from lib.scene_resources import validate_scene_resources
+from lib.scene_transitions import extract_scene_transitions
 
 
 def _animation_module():
@@ -224,6 +225,21 @@ def main() -> int:
                 "scene_states": scene_resources["summary"]["state_count"],
                 "scene_resource_count": scene_resources["summary"]["resource_count"],
             })
+        scene_transition_metadata = ROOT / "re/assets/scene_transitions.yml"
+        if scene_transition_metadata.is_file():
+            scene_transitions = extract_scene_transitions(
+                data,
+                scene_transition_metadata,
+                output / "scene_transitions.json",
+            )
+            manifest["assets"]["scene_transitions"] = {
+                "file": "scene_transitions.json",
+                "table_entries": scene_transitions["table"]["count"],
+                "script_count": len(scene_transitions["scripts"]),
+                "script_record_count": sum(
+                    len(script["records"]) for script in scene_transitions["scripts"]
+                ),
+            }
         if args.runtime_trace:
             load_trace = None
             if args.runtime_load_trace:
