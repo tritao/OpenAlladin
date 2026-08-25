@@ -20,6 +20,8 @@ HANDLER_28_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-28-sta
 HANDLER_2D_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2d-state.jsonl"
 HANDLER_40_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-40-state.jsonl"
 HANDLER_41_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-41-state.jsonl"
+SURFACE_CLEAR_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/surface-clear-state.jsonl"
+SURFACE_SET_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/surface-set-state.jsonl"
 STOP_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/stop-state.jsonl"
 COLLISION_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/collision-state.jsonl"
 RIGHT_PROBE_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/right-probe-state.jsonl"
@@ -359,6 +361,39 @@ def main() -> int:
         assert horizontal["player"]["y"] == 416
         assert horizontal["player"]["vx"] == 0
         assert horizontal["player"]["vy"] == 0
+
+    # Behaviors 0x01..0x04 and 0x05..0x07 share exact ROM blocks that clear
+    # and set the terrain surface-mode word respectively.
+    for behavior, output_path, expected_mode in (
+        ("0x01", SURFACE_CLEAR_OUTPUT, 0),
+        ("0x05", SURFACE_SET_OUTPUT, 1),
+    ):
+        surface_command = [
+            str(ROOT / "build/openaladdin"),
+            "--no-window",
+            "--frames",
+            "2",
+            "--state-output",
+            str(output_path),
+            "--actor-records",
+            "/dev/null",
+            "--checkpoint-player",
+            "87,416,0,0,1",
+            "--checkpoint-terrain-behavior",
+            behavior,
+            "--checkpoint-camera",
+            "16,464,16,464,0,0,1",
+        ]
+        subprocess.run(surface_command, cwd=ROOT, env=environment, check=True)
+        with output_path.open(encoding="utf-8") as stream:
+            surface_states = {
+                record["frame"]: record
+                for record in map(json.loads, stream)
+                if record.get("type") == "state"
+            }
+        surface = surface_states[1]
+        assert surface["terrain"]["behavior"] == int(behavior, 16)
+        assert surface["terrain"]["surface_mode"] == expected_mode
 
     stop_command = [
         str(ROOT / "build/openaladdin"),

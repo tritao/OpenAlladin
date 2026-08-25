@@ -514,6 +514,9 @@ response state, selects animation stream `0x00121964`, aligns the player to
 The `0x2D` fixture reaches `0x001B56B6`, applies `PLAYER_VX=-0x400` and
 `PLAYER_VY=0x0200`, selects stream `0x00121AD8`, and exposes post-integrator
 velocity `(-984,452)` at `(83,418)`.
+The surface-mode fixtures confirm the shared `0x001B5492`/`0x001B549C`
+blocks: behaviors `0x01` through `0x04` write `TERRAIN_SURFACE_MODE=0`, while
+behaviors `0x05` through `0x07` write it to `1`.
 The `0x40` and `0x41` fixtures confirm the exact eight-pixel horizontal
 corrections at `0x001B536C` and `0x001B53A2`: local X moves from `87` to
 `95` or `79`, and `TERRAIN_HORIZONTAL_RESPONSE` is cleared in both cases.
@@ -556,6 +559,13 @@ Run the horizontal response fixtures with:
 ```sh
 python3 tools/oa.py trace terrain-handler-40 --state-output --edges
 python3 tools/oa.py trace terrain-handler-41 --state-output --edges
+```
+
+Run the surface-mode fixtures with:
+
+```sh
+python3 tools/oa.py trace terrain-handler-surface-clear --state-output --edges
+python3 tools/oa.py trace terrain-handler-surface-set --state-output --edges
 ```
 
 The native vertical slice now mirrors this fixed-ROM lookup in

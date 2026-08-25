@@ -1481,6 +1481,19 @@ void Engine::resolve_terrain(int previous_world_y) {
 
 void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
     switch (cell.behavior) {
+    case 0x01:  // TerrainHandler_ClearSurfaceModeBlock (0x001B5492)
+    case 0x02:
+    case 0x03:
+    case 0x04:
+        // The four low surface behaviors share the ROM clear block.
+        player_.terrain_surface_mode = 0;
+        break;
+    case 0x05:  // TerrainHandler_SetSurfaceModeBlock (0x001B549C)
+    case 0x06:
+    case 0x07:
+        // The three upper surface behaviors share the ROM set block.
+        player_.terrain_surface_mode = 1;
+        break;
     case 0x0A:  // TerrainHandler_SurfaceInteraction (0x001B5320).
         // The handler first looks for an existing type-0x8C record, then
         // allocates the first free common actor slot (the ROM scans slots

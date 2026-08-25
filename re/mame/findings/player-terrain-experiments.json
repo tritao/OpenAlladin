@@ -268,6 +268,62 @@
         "animation_stream": "0x00121AD8"
       }
     },
+    "terrain-handler-surface-clear": {
+      "trace": "build/re/traces/terrain-handler-surface-clear-v1/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-surface-clear-v1/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x01",
+        "handler": "0x001B5492"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x01",
+        "surface_mode_before": 1,
+        "camera": [16, 464],
+        "player": [87, 416, 0, 0],
+        "world": [103, 880]
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "surface_mode_after": 0,
+        "surface_latch": 0
+      }
+    },
+    "terrain-handler-surface-set": {
+      "trace": "build/re/traces/terrain-handler-surface-set-v1/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-surface-set-v1/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x05",
+        "handler": "0x001B549C"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x05",
+        "surface_mode_before": 0,
+        "camera": [16, 464],
+        "player": [87, 416, 0, 0],
+        "world": [103, 880]
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "surface_mode_after": 1,
+        "surface_latch": 0
+      }
+    },
     "terrain-handler-0x40": {
       "trace": "build/re/traces/terrain-handler-40-v1/state.jsonl",
       "edge_trace": "build/re/traces/terrain-handler-40-v1/debug.log",
@@ -367,7 +423,7 @@
     "query": "Level::resolve_player_cell and Level::query_player",
     "handler_table": "exact 0x004554 table, 0x48 entries",
     "dispatch": "handler is called on every resolver pass; handler-local guards/latches control repetition",
-    "surface_mode": "FFF0A4 is the toggled mode word; FFF0C2 is the 0x47 one-shot latch",
+    "surface_mode": "FFF0A4 is written to 0 by behaviors 0x01..0x04, to 1 by behaviors 0x05..0x07, and toggled by 0x47; FFF0C2 is the 0x47 one-shot latch",
     "landing_response": "behavior 0x30 subtracts 0x7C from PLAYER_VY, clears FFF0B0/FFF0CC, arms FFF0C1, and aligns PLAYER_X through 0x001A99C6",
     "launch_response": "behavior 0x29 requires FFF0BE clear, writes PLAYER_VX=-0x400 and PLAYER_VY=-0x500, clears FFF0C0/FFF0CC, and sets FFF0BE",
     "removed_heuristics": ["nearby support-row search", "behavior < 0xE0 solid test", "player-sized horizontal rectangle scan"]
