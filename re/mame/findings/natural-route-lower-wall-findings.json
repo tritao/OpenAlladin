@@ -49,6 +49,14 @@
         "initial_world": [2272, 880],
         "observed_world_y_range": [880, 888]
       },
+      "rom_decode": {
+        "player_collision_handler": "0x001AF4D8",
+        "movement_root": "0x001217B4",
+        "movement_effect": "Zero horizontal delta; one-pixel vertical steps with a short +Y/-Y loop controlled by opcode 0x84, then opcode 0x80 loops back to the root.",
+        "animation_root": "0x00122C1E",
+        "animation_effect": "Uses frame reference 0x12E2 (frame 0x001F3DEE), briefly changes the frame field with EE commands, takes an F0 random branch, and loops through frames 0x12E2/0x12E6/0x12EA/0x12EE.",
+        "classification": "Animated vertically oscillating actor; not yet proven to be a traversable platform."
+      },
       "result": "The timed jump reaches the wall approach but never crosses x=2177. The type-0x34 actor remains beyond the collision wall, so this probe does not establish a playable transfer.",
       "player_survives_trace": true
     }
