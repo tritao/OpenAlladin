@@ -188,6 +188,60 @@
         }
       }
     },
+    "terrain-handler-query-state": {
+      "trace": "build/re/traces/terrain-handler-query-state-v1/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-query-state-v1/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x22",
+        "handler": "0x001B54D8"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x22",
+        "camera": [16, 464],
+        "player": [87, 416, 0, 0],
+        "world": [103, 880]
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "query_state_a": 255,
+        "query_state_b": 0
+      }
+    },
+    "terrain-handler-query-state-alt": {
+      "trace": "build/re/traces/terrain-handler-query-state-alt-v1/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-query-state-alt-v1/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x24",
+        "handler": "0x001B54D2"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x24",
+        "camera": [16, 464],
+        "player": [87, 416, 0, 0],
+        "world": [103, 880]
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "query_state_a": 255,
+        "query_state_b": 255
+      }
+    },
     "terrain-handler-0x29": {
       "trace": "build/re/traces/terrain-handler-29-v2/state.jsonl",
       "edge_trace": "build/re/traces/terrain-handler-29-v2/debug.log",
@@ -458,6 +512,7 @@
     "dispatch": "handler is called on every resolver pass; handler-local guards/latches control repetition",
     "surface_mode": "FFF0A4 is written to 0 by behaviors 0x01..0x04, to 1 by behaviors 0x05..0x07, and toggled by 0x47; FFF0C2 is the 0x47 one-shot latch",
     "diagonal_response": "behavior 0x2A adds one pixel to PLAYER_X and subtracts 0x46 from PLAYER_VX before the normal integrator",
+    "query_state_handlers": "behaviors 0x22..0x23 set FFF0CE; behavior 0x24 sets FFF0CF and falls through to set FFF0CE",
     "landing_response": "behavior 0x30 subtracts 0x7C from PLAYER_VY, clears FFF0B0/FFF0CC, arms FFF0C1, and aligns PLAYER_X through 0x001A99C6",
     "launch_response": "behavior 0x29 requires FFF0BE clear, writes PLAYER_VX=-0x400 and PLAYER_VY=-0x500, clears FFF0C0/FFF0CC, and sets FFF0BE",
     "removed_heuristics": ["nearby support-row search", "behavior < 0xE0 solid test", "player-sized horizontal rectangle scan"]

@@ -1527,6 +1527,16 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
     case 0x20:  // TerrainHandler_SetTerminalCollision (0x001B5318)
         player_.terrain_terminal_transition = 0xFF;
         break;
+    case 0x22:  // TerrainHandler_SetQueryStateA (0x001B54D8)
+    case 0x23:
+        player_.terrain_query_state_a = 0xFF;
+        break;
+    case 0x24:  // TerrainHandler_SetQueryStateAB (0x001B54D2)
+        // The ROM writes FFF0CF and falls through to 0x001B54D8, which writes
+        // FFF0CE before returning.
+        player_.terrain_query_state_b = 0xFF;
+        player_.terrain_query_state_a = 0xFF;
+        break;
     case 0x28:  // TerrainHandler_StopAndAlign (0x001B55E8)
         // The ROM ignores the response while the animation gate or another
         // terrain response is active. The accepted branch clears velocity
