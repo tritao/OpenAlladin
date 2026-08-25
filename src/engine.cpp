@@ -1200,6 +1200,9 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     player_.attack_timer = 0;
     const auto checkpoint_cell = level_.resolve_player_cell(player_world_x(), player_world_y());
     player_.terrain_behavior = checkpoint_cell.valid ? checkpoint_cell.behavior : 0;
+    if (checkpoint_terrain_behavior_override_) {
+        player_.terrain_behavior = checkpoint_terrain_behavior_;
+    }
     player_.terrain_landing_state = grounded && player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
     quit_ = false;
@@ -1220,6 +1223,13 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
             }
         );
     }
+}
+
+void Engine::set_checkpoint_terrain_behavior(std::uint8_t behavior) {
+    checkpoint_terrain_behavior_override_ = true;
+    checkpoint_terrain_behavior_ = behavior;
+    player_.terrain_behavior = behavior;
+    player_.terrain_landing_state = behavior != 0 ? 1 : 0;
 }
 
 void Engine::set_checkpoint_frame_ptr(int address) {
@@ -1384,7 +1394,11 @@ void Engine::apply_floor_contour() {
 }
 
 void Engine::resolve_terrain(int previous_world_y) {
-    const Level::TerrainQuery query = level_.query_player(player_world_x(), player_world_y());
+    Level::TerrainQuery query = level_.query_player(player_world_x(), player_world_y());
+    if (checkpoint_terrain_behavior_override_ && query.resolver.valid) {
+        query.resolver.behavior = checkpoint_terrain_behavior_;
+        query.resolver.handler = terrain_handler(checkpoint_terrain_behavior_);
+    }
     const Level::TerrainCell previous_down_probe =
         level_.resolve_player_cell(player_world_x(), previous_world_y + 8);
     const Level::TerrainCell* cell = &query.resolver;
@@ -1481,10 +1495,24 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_response_active = 0xFF;
         break;
     case 0x2B:  // TerrainHandler_StopAndAlignPlayer (0x001B5502)
+        // The ROM ignores this response while the animation gate is set, VY
+        // is negative, or the landing state is already active. The fixture
+        // exposes the accepted branch; the normal path has the same guards
+        // represented by these native state fields.
+        if (player_.vy < 0 || player_.terrain_landing_state != 0) {
+            break;
+        }
         player_.vx = 0;
         player_.terrain_response_active = 0;
         player_.terrain_response_timer_state = 0;
+        player_.terrain_horizontal_response = 0;
+        player_.terrain_landing_state = 0;
         player_.x = ((visual_x() & ~0x0F) - camera_.x) + 6;
+        animation_.set_animation_state(0x0012181A, 0);
+        if (player_.vy < 8) {
+            player_.vy = static_cast<std::int16_t>(player_.vy + 0x78);
+        }
+        player_.grounded = false;
         break;
     case 0x2D:  // TerrainHandler_BouncePlayerBlock (0x001B56B6)
         player_.vx = static_cast<std::int16_t>(-0x400);
@@ -1492,10 +1520,17 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.grounded = false;
         break;
     case 0x30:  // TerrainHandler_LandingResponseBlock (0x001B537A)
+        // The ROM subtracts 0x7C from PLAYER_VY, clears FFF0B0, arms the
+        // landing state, then calls 0x001A99C6 to align PLAYER_X to the
+        // current world tile plus eight pixels. The animation selector call
+        // is intentionally left to the normal selector pass; the handler
+        // itself writes no animation stream directly.
         player_.vy = static_cast<std::int16_t>(player_.vy - 0x7C);
         player_.terrain_horizontal_response = 0;
         player_.terrain_landing_state = 0xFF;
-        player_.grounded = player_.vy >= 0;
+        player_.terrain_response_timer_state = 0;
+        player_.grounded = false;
+        player_.x = ((player_world_x() & ~0x0F) + 8) - camera_.x;
         break;
     case 0x40:  // TerrainHandler_MovePlayerRight (0x001B536C)
         player_.x += 8;
@@ -1725,7 +1760,14 @@ void Engine::update(const InputState& input) {
     }
     update_terrain_input(input);
     const bool grounded_before_contour = player_.grounded;
-    apply_floor_contour();
+    // The normal slice uses the recovered contour pass. Handler fixtures are
+    // deliberately staged at the ROM's resolver boundary instead: the
+    // original frame calls Terrain_ResolvePlayerCell/handler before the
+    // 0x001A9D98 movement integrator, and the fixture supplies the already
+    // resolved landing state that the ROM would have in RAM.
+    if (!checkpoint_terrain_behavior_override_) {
+        apply_floor_contour();
+    }
     const bool was_grounded = player_.grounded;
     const bool just_landed = !grounded_before_contour && player_.grounded;
     if (player_.attack_timer != 0) {

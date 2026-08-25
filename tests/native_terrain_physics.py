@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "build/re/tests/native-terrain-physics/state.jsonl"
 SPECIAL_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/special-state.jsonl"
 SPAWN_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/spawn-state.jsonl"
+LANDING_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/landing-handler-state.jsonl"
+HANDLER_2B_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2b-state.jsonl"
 STOP_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/stop-state.jsonl"
 COLLISION_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/collision-state.jsonl"
 RIGHT_PROBE_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/right-probe-state.jsonl"
@@ -125,6 +127,75 @@ def main() -> int:
     advanced = next(actor for actor in spawn_states[2]["actors"] if actor["slot"] == 3)
     assert advanced["animation_pc"] == 0x0012440C
     assert advanced["frame_ptr"] != 0
+
+    # The fixed-ROM level has no ordinary 0x30 cell, so exercise the handler
+    # through the native checkpoint fixture that mirrors the MAME runtime
+    # floor-table poke. This protects the direct ROM writes independently of
+    # the opening-room terrain distribution.
+    landing_command = [
+        str(ROOT / "build/openaladdin"),
+        "--no-window",
+        "--frames",
+        "2",
+        "--state-output",
+        str(LANDING_OUTPUT),
+        "--checkpoint-player",
+        "87,416,0,0,1",
+        "--checkpoint-terrain-behavior",
+        "0x30",
+        "--checkpoint-camera",
+        "16,464,16,464,0,0,1",
+    ]
+    subprocess.run(landing_command, cwd=ROOT, env=environment, check=True)
+    with LANDING_OUTPUT.open(encoding="utf-8") as stream:
+        landing_states = {
+            record["frame"]: record
+            for record in map(json.loads, stream)
+            if record.get("type") == "state"
+        }
+    landing = landing_states[1]
+    assert landing["terrain"]["behavior"] == 0x30
+    assert landing["terrain"]["landing_state"] == 0xFF
+    assert landing["terrain"]["horizontal_response"] == 0
+    assert landing["player"]["x"] == 88
+    assert landing["player"]["vy"] == -0x40
+    assert landing["player"]["grounded"] is False
+
+    # Behavior 0x2B's accepted branch requires a clear landing state. It
+    # aligns local X, selects the ROM stop stream, clears response fields,
+    # and enters the positive vertical state seen in the forced MAME trace.
+    handler_2b_command = [
+        str(ROOT / "build/openaladdin"),
+        "--no-window",
+        "--frames",
+        "2",
+        "--state-output",
+        str(HANDLER_2B_OUTPUT),
+        "--actor-records",
+        "/dev/null",
+        "--checkpoint-player",
+        "162,408,0,0,0",
+        "--checkpoint-terrain-behavior",
+        "0x2B",
+        "--checkpoint-camera",
+        "2740,312,2740,312,0,0,1",
+    ]
+    subprocess.run(handler_2b_command, cwd=ROOT, env=environment, check=True)
+    with HANDLER_2B_OUTPUT.open(encoding="utf-8") as stream:
+        handler_2b_states = {
+            record["frame"]: record
+            for record in map(json.loads, stream)
+            if record.get("type") == "state"
+        }
+    handler_2b = handler_2b_states[1]
+    assert handler_2b["terrain"]["behavior"] == 0x2B
+    assert handler_2b["terrain"]["landing_state"] == 0
+    assert handler_2b["terrain"]["horizontal_response"] == 0
+    assert handler_2b["terrain"]["response_active"] == 0
+    assert handler_2b["player"]["x"] == 158
+    assert handler_2b["player"]["y"] == 408
+    assert handler_2b["player"]["vy"] == 180
+    assert handler_2b["player"]["animation_pc"] == 0x0012181A
 
     stop_command = [
         str(ROOT / "build/openaladdin"),

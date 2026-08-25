@@ -28,6 +28,7 @@ struct Options {
     int framebuffer_frame = -1;
     std::string input_schedule;
     std::string checkpoint_player;
+    std::string checkpoint_terrain_behavior;
     std::string checkpoint_frame_ptr;
     std::string checkpoint_animation;
     std::string checkpoint_facing_x_flip;
@@ -150,6 +151,8 @@ Options parse_options(int argc, char** argv) {
             options.input_schedule = argv[++i];
         } else if (argument == "--checkpoint-player" && i + 1 < argc) {
             options.checkpoint_player = argv[++i];
+        } else if (argument == "--checkpoint-terrain-behavior" && i + 1 < argc) {
+            options.checkpoint_terrain_behavior = argv[++i];
         } else if (argument == "--checkpoint-frame-ptr" && i + 1 < argc) {
             options.checkpoint_frame_ptr = argv[++i];
         } else if (argument == "--checkpoint-animation" && i + 1 < argc) {
@@ -163,6 +166,7 @@ Options parse_options(int argc, char** argv) {
                          "       [--state-output PATH] [--framebuffer-out PATH] [--framebuffer-frame N]\n"
                          "       [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
+                         "       [--checkpoint-terrain-behavior BYTE]\n"
                          "       [--checkpoint-frame-ptr ADDRESS]\n"
                          "       [--checkpoint-animation PC,TIMER]\n"
                          "       [--checkpoint-facing-x-flip VALUE]\n"
@@ -189,6 +193,11 @@ int main(int argc, char** argv) {
 
         openaladdin::Engine engine;
         engine.load(options.assets, options.sprites, options.rom, options.actor_records, options.actor_timeline);
+        if (!options.checkpoint_terrain_behavior.empty()) {
+            engine.set_checkpoint_terrain_behavior(
+                static_cast<std::uint8_t>(std::stoul(options.checkpoint_terrain_behavior, nullptr, 0))
+            );
+        }
         if (!options.checkpoint_player.empty()) {
             const auto checkpoint = parse_checkpoint(options.checkpoint_player);
             engine.set_checkpoint(

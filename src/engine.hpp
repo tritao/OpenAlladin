@@ -240,6 +240,7 @@ public:
     );
     void reset();
     void set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded);
+    void set_checkpoint_terrain_behavior(std::uint8_t behavior);
     void set_checkpoint_frame_ptr(int address);
     void set_checkpoint_animation(std::uint32_t animation_pc, int timer);
     void set_checkpoint_facing_x_flip(bool facing_x_flip);
@@ -305,6 +306,8 @@ private:
     std::array<ActorState, 32> actor_templates_{};
     std::array<ActorState, 32> actors_{};
     std::map<int, std::array<ActorState, 32>> actor_timeline_;
+    bool checkpoint_terrain_behavior_override_ = false;
+    std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;
     int frame_ = 0;
     int last_ground_direction_ = 0;

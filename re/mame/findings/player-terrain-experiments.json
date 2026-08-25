@@ -86,8 +86,35 @@
     }
   },
   "targeted_handler_probes": {
+    "terrain-handler-0x30": {
+      "trace": "build/re/traces/terrain-handler-30-v1/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-30-v1/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x30",
+        "handler": "0x001B537A"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x30"
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "vertical_velocity_sequence": [512, 328, 144],
+        "landing_state": 255,
+        "horizontal_response": 0,
+        "aligned_local_x": 88
+      }
+    },
     "terrain-handler-0x2B": {
-      "trace": "build/re/terrain-target-2b-v3/state.jsonl",
+      "trace": "build/re/traces/terrain-handler-2b-v1/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-2b-v1/debug.log",
       "cell": {
         "row": 30,
         "column": 182,
@@ -97,12 +124,35 @@
         "behavior": "0x2B",
         "handler": "0x001B5502"
       },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3004",
+        "source_behavior": "0x2B",
+        "fixture_behavior": "0x2B",
+        "camera": [2740, 312],
+        "player": [162, 408, 0, 0],
+        "world": [2902, 720],
+        "landing_state": 0
+      },
       "observed": {
-        "first_frame": 1301,
+        "first_handler_frame": 1301,
         "horizontal_velocity": 0,
-        "vertical_velocity_continues": true,
+        "vertical_velocity_sequence": [0, 180, 240],
+        "position_sequence": [[162, 408], [158, 408], [154, 409]],
+        "animation_stream": "0x0012181A",
+        "landing_state": 0,
+        "response_active": 0,
+        "horizontal_response": 0,
         "surface_mode": 0,
-        "surface_latch": 0
+        "surface_latch": 0,
+        "direct_writes": {
+          "PLAYER_VX": 0,
+          "TERRAIN_RESPONSE_ACTIVE": 0,
+          "TERRAIN_RESPONSE_TIMER_STATE": 0,
+          "TERRAIN_HORIZONTAL_RESPONSE": 0,
+          "PLAYER_ANIMATION_PC": "0x0012181A",
+          "PLAYER_VY_INCREMENT_IF_BELOW_8": "0x0078"
+        }
       }
     },
     "terrain-handler-0x47": {
@@ -149,6 +199,7 @@
     "handler_table": "exact 0x004554 table, 0x48 entries",
     "dispatch": "handler is called on every resolver pass; handler-local guards/latches control repetition",
     "surface_mode": "FFF0A4 is the toggled mode word; FFF0C2 is the 0x47 one-shot latch",
+    "landing_response": "behavior 0x30 subtracts 0x7C from PLAYER_VY, clears FFF0B0/FFF0CC, arms FFF0C1, and aligns PLAYER_X through 0x001A99C6",
     "removed_heuristics": ["nearby support-row search", "behavior < 0xE0 solid test", "player-sized horizontal rectangle scan"]
   }
 }

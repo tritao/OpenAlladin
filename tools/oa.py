@@ -225,6 +225,42 @@ def experiment_action_protocol(experiment: dict[str, Any]) -> str | None:
     return ";".join(actions)
 
 
+def experiment_memory_pokes(experiment: dict[str, Any]) -> tuple[int, str] | None:
+    """Compile a named experiment's deterministic RAM fixture into Lua pokes."""
+    fixture = experiment.get("pokes") or {}
+    if not fixture:
+        return None
+    if not isinstance(fixture, dict):
+        raise SystemExit("experiment pokes must be a mapping with frame and memory")
+    if "frame" not in fixture or "memory" not in fixture:
+        raise SystemExit("experiment pokes require frame and memory")
+
+    symbols = _symbol_index()
+    entries: list[str] = []
+    for item in fixture["memory"] or []:
+        if not isinstance(item, dict):
+            raise SystemExit(f"experiment memory poke must be a mapping: {item!r}")
+        if "symbol" in item:
+            symbol_name = str(item["symbol"])
+            symbol = symbols.get(symbol_name)
+            if symbol is None:
+                raise SystemExit(f"experiment poke references unknown symbol {symbol_name!r}")
+            address = int(symbol["address"])
+        elif "address" in item:
+            address = parse_int(item["address"])
+        else:
+            raise SystemExit(f"experiment poke has no symbol or address: {item!r}")
+        address += parse_int(item.get("offset", 0))
+        value = parse_int(item.get("value", 0))
+        width = str(item.get("width", "u8")).lower()
+        if width not in ("u8", "u16", "u32"):
+            raise SystemExit(f"experiment poke has unsupported width {width!r}")
+        entries.append(f"0x{address:06X}={value}:{width}")
+    if not entries:
+        raise SystemExit("experiment pokes memory list is empty")
+    return parse_int(fixture["frame"]), ",".join(entries)
+
+
 def command_trace(args: argparse.Namespace) -> int:
     experiment = load_experiment(args.scenario)
     rom = resolve(args.rom)
@@ -250,6 +286,8 @@ def command_trace(args: argparse.Namespace) -> int:
         "OPENALADDIN_TRACE_AUDIO_MAILBOX_READS",
         "OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES",
         "OPENALADDIN_TRACE_AUDIO_COMMANDS",
+        "OPENALADDIN_POKE_FRAME",
+        "OPENALADDIN_POKE_MEMORY",
     ):
         environment.pop(key, None)
     environment.update({
@@ -261,6 +299,10 @@ def command_trace(args: argparse.Namespace) -> int:
     protocol = experiment_action_protocol(experiment)
     if protocol:
         environment["OPENALADDIN_EXPERIMENT_ACTIONS"] = protocol
+    memory_pokes = experiment_memory_pokes(experiment)
+    if memory_pokes:
+        environment["OPENALADDIN_POKE_FRAME"] = str(memory_pokes[0])
+        environment["OPENALADDIN_POKE_MEMORY"] = memory_pokes[1]
     capture = args.capture
     if args.capture_vdp is True and capture == "state":
         capture = "full"

@@ -490,9 +490,33 @@ unhit ceiling/slope/special cases are recorded in
 `re/mame/findings/player-terrain-experiments.json`.
 
 The focused matrix is complemented by deterministic handler probes at the
-fixed level-01 cells for behaviors `0x2B` and `0x47`. The latter confirms that
-`0xFFF0A4` is the toggled surface-mode word and `0xFFF0C2` is the handler's
-one-shot latch; the native trace exposes both fields separately.
+fixed level-01 cells for behaviors `0x2B` and `0x47`, plus a runtime table
+fixture for behavior `0x30`. The `0x2B` fixture starts at row 30/column 182
+(`0x6008`) with `PLAYER_VY=0` and a clear landing state, reaches
+`0x001B5502` on frame 1301, clears the horizontal/response fields, selects
+animation stream `0x0012181A`, aligns local X from `162` to `158`, and then
+continues through the positive vertical sequence `0, 180, 240`. The `0x30`
+fixture uses the opening-ground cell
+at row 40/column 7 (`0x6C20`), temporarily changes its behavior-table byte
+from `0x11` to `0x30`, and reaches `0x001B537A` on frame 1301. The handler
+subtracts `0x7C` from `PLAYER_VY`, clears the horizontal/response state,
+arms `TERRAIN_LANDING_STATE=0xFF`, and aligns local X through
+`0x001A99C6`.
+The `0x47` probe confirms that `0xFFF0A4` is the toggled surface-mode word
+and `0xFFF0C2` is the handler's one-shot latch; the native trace exposes both
+fields separately.
+
+Run the landing fixture through the unified frontend with:
+
+```sh
+python3 tools/oa.py trace terrain-handler-30 --state-output --edges
+```
+
+Run the accepted stop-and-align fixture with:
+
+```sh
+python3 tools/oa.py trace terrain-handler-2b --state-output --edges
+```
 
 The native vertical slice now mirrors this fixed-ROM lookup in
 `Level::resolve_player_cell`/`Level::query_player`. `support_row()` and the
