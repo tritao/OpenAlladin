@@ -151,13 +151,73 @@
       }
     },
     "state08_runtime": {
-      "observed": false,
+      "observed": true,
+      "trace_directory": "build/re/unified-state08-natural-selector",
+      "frames": 1900,
+      "controlled_setup": {
+        "description": "Started the verified USA/NTSC ROM under MAME and set SCENE_TABLE_INDEX to 1 immediately before the selector's delayed commit. The ROM's own selector and dispatcher performed the state transition; SCENE_STATE was not directly poked.",
+        "index_poke_frame": 1640,
+        "index_poke_address": "0x00FFF57A",
+        "index_poke_value": "0x0001"
+      },
       "selector_entry_breakpoint": "0x001B3B96",
-      "note": "The focused startup/first-level traces reached the selector entry and the boundary gate, but did not complete the table selector's state-08 write before returning to the normal VBlank path."
+      "selector_state_write_instruction": "0x001B3F0A",
+      "dynamic_write": {
+        "machine_frame": 1647,
+        "trace_frame": 1650,
+        "pc_after_instruction": "0x001B3F0C",
+        "address": "0x00FF7E26",
+        "previous_value": "0x01",
+        "value": "0x08",
+        "table_index_before": 1,
+        "table_index_after": 2,
+        "table_entry_address": "0x00004B0A",
+        "table_state_address": "0x00004B0E"
+      },
+      "dispatcher": {
+        "address": "0x001B0F66",
+        "state": "0x08",
+        "trace_frame": 1650,
+        "player_transition_handler": "0x001A9D98"
+      },
+      "transition_gates": [
+        {
+          "address": "0x00FFF0D0",
+          "pc": "0x001AA720",
+          "value": "0x00",
+          "machine_frame": 1647
+        },
+        {
+          "address": "0x00FFF0DB",
+          "pc": "0x001AA720",
+          "value": "0x00",
+          "machine_frame": 1647
+        },
+        {
+          "address": "0x00FFF0DC",
+          "pc": "0x001AA720",
+          "value": "0x00",
+          "machine_frame": 1647
+        },
+        {
+          "address": "0x00FFF0E6",
+          "pc": "0x001AA720",
+          "value": "0x00",
+          "machine_frame": 1647
+        }
+      ],
+      "rnc_load_trace": "build/re/unified-state08-natural-selector/rnc_loads.json",
+      "resources": [
+        { "frame": 1664, "loader": "0x001B1486", "source": "0x0012EA12", "destination": "0x00E000" },
+        { "frame": 1668, "loader": "0x001B1486", "source": "0x001319EC", "destination": "0x000000" },
+        { "frame": 1773, "loader": "0x001B0F66", "source": "0x0012F39E", "destination": "0x00E000" },
+        { "frame": 1774, "loader": "0x001B0F66", "source": "0x0012F12E", "destination": "0x00C000" },
+        { "frame": 1776, "loader": "0x001B0F66", "source": "0x00136912", "destination": "0x000000" }
+      ]
     }
   },
   "limitations": [
-    "The focused level-01 checkpoint confirmed the exit predicate and its FFF0E9 gate write, but did not produce a natural dynamic SCENE_STATE=0x08 event.",
-    "The ROM table and script records are decoded into the asset pipeline; entry-to-level names still require a targeted exit or level-selection experiment."
+    "The state-08 runtime proof uses a save-state-controlled table-index setup because the full player-driven level exit still needs a longer gameplay traversal.",
+    "The ROM table and script records are decoded into the asset pipeline; entry-to-level names still require a complete natural exit experiment."
   ]
 }

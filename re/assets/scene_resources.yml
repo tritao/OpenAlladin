@@ -129,6 +129,35 @@ states:
         source: 0x0012D870
         destination: 0x00C000
 
+  - value: 0x08
+    label: state_08_transition
+    confidence: confirmed
+    description: Transition/camera scene selected by ROM table entry 1 and handled by the player transition branch.
+    evidence:
+      - mame_state08_selector_trace
+      - ghidra_player_transition_handler
+    resources:
+      - selector_function: 0x001B1486
+        loader_function: 0x001B1486
+        source: 0x0012EA12
+        destination: 0x00E000
+      - selector_function: 0x001B1486
+        loader_function: 0x001B1486
+        source: 0x001319EC
+        destination: 0x000000
+      - selector_function: 0x001B0F66
+        loader_function: 0x001B0F66
+        source: 0x0012F39E
+        destination: 0x00E000
+      - selector_function: 0x001B0F66
+        loader_function: 0x001B0F66
+        source: 0x0012F12E
+        destination: 0x00C000
+      - selector_function: 0x001B0F66
+        loader_function: 0x001B0F66
+        source: 0x00136912
+        destination: 0x000000
+
   - value: 0x09
     label: state_09
     confidence: probable
@@ -179,5 +208,4 @@ states:
 unmapped_states:
   - 0x02
   - 0x06
-  - 0x08
   - 0x0C

@@ -445,15 +445,15 @@ PYTHONPATH=tools python3 tools/openaladdin/analysis/transition_watch.py \
 ```
 
 The completed title-to-first-level trace covered 1,300 frames and wrote
-`SCENE_STATE` only during startup (`0x00` to `0x01`); it did not reach the
-level-exit script. The longer 5,000-frame command above is retained as a
-repeatable traversal experiment, but the next useful runtime experiment should
-target a level-exit trigger rather than simply extend right-input playback.
+`SCENE_STATE` only during startup (`0x00` to `0x01`). A save-state-controlled
+selector probe now also confirms the ROM's dynamic table-entry-1 write to
+`SCENE_STATE=0x08`; the full player-driven level exit remains a separate
+longer traversal experiment.
 
 The machine-readable result is recorded in
-`re/mame/findings/level-transition-findings.json`. It deliberately keeps the dynamic
-claim narrow: state `0x08` is statically recovered, while the captured
-title-to-level run verifies only the reset-to-state-1 path.
+`re/mame/findings/level-transition-findings.json`. It includes the selector
+write PC, all four transition-gate observations, and the five RNC uploads
+observed after dispatching state `0x08`.
 
 The initial level-01 runtime tables are matched byte-for-byte to the extracted
 assets. `level01/raw/map.bin` is loaded at `0x00FF0000` and has 27,000 bytes;
@@ -576,9 +576,8 @@ the short menu/gameplay smoke tests:
   to catch later resource loads if ordinary input reaches another scene.
 
 The long probe is deliberately an observation run, not a claim that a simple
-autoplayer can finish the stage. If it still observes only scene state `0x01`,
-the next experiment should target the level-exit/transition condition instead
-of making the input schedule longer.
+autoplayer can finish the stage. The focused state-`0x08` selector evidence is
+tracked separately in `re/mame/findings/level-transition-findings.json`.
 
 Set `OPENALADDIN_CAPTURE=ram` when only the raw work-RAM trace is wanted.
 `OPENALADDIN_CAPTURE_VDP=0` remains accepted as a compatibility alias.
