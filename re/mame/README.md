@@ -646,6 +646,16 @@ handler-table entry `0x001B5320`. Behavior `0x0A` remained active while the
 player crossed the adjacent surface cells. The complete machine-readable
 finding is recorded in `re/mame/findings/player-terrain-findings.json`.
 
+The common `0x001B5320` handler is now mirrored in the native slice for the
+observed path. When the landing state is non-zero and no type-`0x8C` actor
+exists, it scans actor slots 3 through 22, copies the template at
+`0x001B7E2C`, and writes the player's world position. The template selects
+animation stream `0x00124408`; the first animation cursor advance occurs on
+the next frame. The exact ROM guard and allocator details are recorded in
+`re/mame/findings/player-terrain-experiments.json`. Ceiling, slope, and other
+special handlers remain unhit by the generic opening-room routes and still
+need controlled fixtures.
+
 To compare the captured VDP memories and DMA stream with the native assets
 already extracted from the ROM:
 

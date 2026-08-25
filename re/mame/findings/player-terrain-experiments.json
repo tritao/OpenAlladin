@@ -79,9 +79,10 @@
       "observed_slope_handler": false
     },
     "terrain-special": {
-      "trace": "build/re/traces/terrain-special-v2/state.jsonl",
+      "trace": "build/re/traces/terrain-handler-special-init-20260825/state.jsonl",
       "observed_behaviors": ["0x00", "0x0A", "0x11"],
-      "observed_special_handler": false
+      "observed_special_handler": false,
+      "observed_common_surface_handler": "0x001B5320"
     }
   },
   "targeted_handler_probes": {
@@ -120,6 +121,25 @@
         "surface_mode_word": 1,
         "surface_latch": 255,
         "latch_persists_while_behavior_is_0x47": true
+      }
+    },
+    "terrain-handler-0x0A": {
+      "trace": "build/re/traces/terrain-handler-special-init-20260825/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-special-init-20260825/debug.log",
+      "cell": {
+        "behavior": "0x0A",
+        "handler": "0x001B5320"
+      },
+      "observed": {
+        "first_handler_frame": 1370,
+        "landing_state_required": true,
+        "existing_type_guard": "type 0x8C",
+        "spawn_template": "0x001B7E2C",
+        "spawn_type": "0x8C",
+        "spawn_world_position": true,
+        "animation_stream": "0x00124408",
+        "allocator_slots": "3..22",
+        "spawn_slots": [5, 7, 9]
       }
     }
   },

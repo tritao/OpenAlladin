@@ -12,6 +12,7 @@ import os
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "build/re/tests/native-terrain-physics/state.jsonl"
 SPECIAL_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/special-state.jsonl"
+SPAWN_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/spawn-state.jsonl"
 STOP_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/stop-state.jsonl"
 COLLISION_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/collision-state.jsonl"
 RIGHT_PROBE_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/right-probe-state.jsonl"
@@ -86,6 +87,44 @@ def main() -> int:
     assert special["terrain"]["behavior"] == 0x47
     assert special["terrain"]["surface_mode"] == 1
     assert special["terrain"]["surface_latch"] == 0xFF
+
+    # Terrain behavior 0x0A dispatches the ROM's common surface-interaction
+    # handler. On a landing result it scans actor slots 3..22, copies the
+    # type-0x8C template at 0x001B7E2C, and places the new actor at the
+    # player's world position. The animation VM advances its stream on the
+    # following frame, so frame 1 must still have a clear frame pointer.
+    spawn_command = [
+        str(ROOT / "build/openaladdin"),
+        "--no-window",
+        "--frames",
+        "3",
+        "--state-output",
+        str(SPAWN_OUTPUT),
+        "--actor-records",
+        "/dev/null",
+        "--checkpoint-player",
+        "103,416,0,0,1",
+        "--checkpoint-camera",
+        "378,464,378,464,0,0,1",
+    ]
+    subprocess.run(spawn_command, cwd=ROOT, env=environment, check=True)
+    with SPAWN_OUTPUT.open(encoding="utf-8") as stream:
+        spawn_states = {
+            record["frame"]: record
+            for record in map(json.loads, stream)
+            if record.get("type") == "state"
+        }
+    spawn = spawn_states[1]
+    spawned = next(actor for actor in spawn["actors"] if actor["slot"] == 3)
+    assert spawn["terrain"]["behavior"] == 0x0A
+    assert spawned["type"] == 0x8C
+    assert spawned["x"] == 481
+    assert spawned["y"] == 880
+    assert spawned["animation_pc"] == 0x00124408
+    assert spawned["frame_ptr"] == 0
+    advanced = next(actor for actor in spawn_states[2]["actors"] if actor["slot"] == 3)
+    assert advanced["animation_pc"] == 0x0012440C
+    assert advanced["frame_ptr"] != 0
 
     stop_command = [
         str(ROOT / "build/openaladdin"),

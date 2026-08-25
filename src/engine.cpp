@@ -19,6 +19,8 @@ constexpr int kTerrainContourRomSize = 0x1000;
 constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
 constexpr std::uint8_t kActorGuardType = 0x0A;
 constexpr std::uint8_t kActorTerminalType = 0x84;
+constexpr std::uint8_t kTerrainSpawnActorType = 0x8C;
+constexpr std::uint32_t kTerrainSpawnAnimationStream = 0x00124408;
 constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
 constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
 constexpr std::uint8_t kActorDeathFrames = 43;
@@ -1287,6 +1289,32 @@ void Engine::resolve_terrain(int previous_world_y) {
 
 void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
     switch (cell.behavior) {
+    case 0x0A:  // TerrainHandler_SurfaceInteraction (0x001B5320).
+        // The handler first looks for an existing type-0x8C record, then
+        // allocates the first free common actor slot (the ROM scans slots
+        // 3..22, starting at 0x00FF7F06). It only accepts a non-zero
+        // landing/contour result and copies the player's world position into
+        // the new record. The animation VM advances the stream on the next
+        // frame, so leave frame_ptr clear here just like 0x001AE30A does.
+        if (player_.terrain_landing_state == 0) {
+            break;
+        }
+        if (std::any_of(actors_.begin(), actors_.end(), [](const ActorState& actor) {
+                return actor.type == kTerrainSpawnActorType;
+            })) {
+            break;
+        }
+        for (std::size_t slot = 3; slot <= 22 && slot < actors_.size(); ++slot) {
+            if (actors_[slot].type != 0) continue;
+            ActorState spawned;
+            spawned.type = kTerrainSpawnActorType;
+            spawned.x = static_cast<std::uint16_t>(player_world_x());
+            spawned.y = static_cast<std::uint16_t>(player_world_y());
+            spawned.animation_pc = kTerrainSpawnAnimationStream;
+            actors_[slot] = spawned;
+            break;
+        }
+        break;
     case 0x20:  // TerrainHandler_SetTerminalCollision (0x001B5318)
         player_.terrain_terminal_transition = 0xFF;
         break;
