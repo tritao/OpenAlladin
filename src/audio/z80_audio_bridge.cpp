@@ -2,20 +2,30 @@
 
 #include <algorithm>
 #include <array>
-#include <cmath>
 #include <cstddef>
 
 namespace openaladdin::audio {
 namespace {
 
-constexpr double kPsgClockHz = 3'579'545.0;
-constexpr double kSemitone = 1.0594630943592953;
 // Z80 ROM $1168, little-endian. These are the normalized YM FNUM values
 // selected by the driver's twelve-step note interpolation path.
 constexpr std::array<std::uint16_t, 12> kYmFnumTable{
     0x0284, 0x02AA, 0x02D3, 0x02FE,
     0x032B, 0x035B, 0x038E, 0x03C5,
     0x03FE, 0x043B, 0x047B, 0x04BF,
+};
+// Z80 ROM $1182, little-endian. The PSG path subtracts $21 from the
+// transformed note and uses the result as a direct index into this table.
+constexpr std::uint8_t kPsgFirstNote = 0x21;
+constexpr std::array<std::uint16_t, 64> kPsgPeriodTable{
+    0x03F9, 0x03C0, 0x038A, 0x0357, 0x0327, 0x02FA, 0x02CF, 0x02A7,
+    0x0281, 0x025D, 0x023B, 0x021B, 0x01FC, 0x01E0, 0x01C5, 0x01AC,
+    0x0194, 0x017D, 0x0168, 0x0153, 0x0140, 0x012E, 0x011D, 0x010D,
+    0x00FE, 0x00F0, 0x00E2, 0x00D6, 0x00CA, 0x00BE, 0x00B4, 0x00AA,
+    0x00A0, 0x0097, 0x008F, 0x0087, 0x007F, 0x0078, 0x0071, 0x006B,
+    0x0065, 0x005F, 0x005A, 0x0055, 0x0050, 0x004C, 0x0047, 0x0043,
+    0x0040, 0x003C, 0x0039, 0x0035, 0x0032, 0x002F, 0x002D, 0x002A,
+    0x0028, 0x0026, 0x0023, 0x0021, 0x0020, 0x001E, 0x001C, 0x001C,
 };
 
 std::uint8_t ym_port(std::size_t voice) {
@@ -211,11 +221,11 @@ std::pair<std::uint8_t, std::uint16_t> Z80AudioBridge::ym_frequency(
 }
 
 std::uint16_t Z80AudioBridge::psg_period(std::uint8_t note) {
-    const double frequency = 65.40639132514966
-        * std::pow(kSemitone, static_cast<double>(note));
-    const double period = kPsgClockHz / (32.0 * frequency);
-    return static_cast<std::uint16_t>(std::clamp(
-        static_cast<int>(std::lround(period)), 1, 1023));
+    const std::size_t index = std::clamp<std::size_t>(
+        note < kPsgFirstNote ? 0 : note - kPsgFirstNote,
+        0,
+        kPsgPeriodTable.size() - 1);
+    return kPsgPeriodTable[index];
 }
 
 bool Z80AudioBridge::is_ym_patch(

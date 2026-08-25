@@ -144,7 +144,39 @@ int main() {
     assert(psg.size() == 3);
     assert((psg[0] & 0x80) != 0);
     assert((psg[0] & 0x60) == 0x40);
+    assert(psg[0] == 0xC7);  // ROM $1182[$24 - $21] = $0357
+    assert(psg[1] == 0x35);
     assert(psg[2] == 0xD0);
+
+    psg.clear();
+    const Z80SoundDriver::SoundEvent psg_low_note{
+        Z80SoundDriver::SoundEvent::Kind::Note,
+        6,
+        0x21,
+        0,
+        0,
+        0,
+        false,
+        0,
+    };
+    bridge.handle(psg_low_note);
+    assert(psg[0] == 0xC9);
+    assert(psg[1] == 0x3F);
+
+    psg.clear();
+    const Z80SoundDriver::SoundEvent psg_high_note{
+        Z80SoundDriver::SoundEvent::Kind::Note,
+        6,
+        0x60,
+        0,
+        0,
+        0,
+        false,
+        0,
+    };
+    bridge.handle(psg_high_note);
+    assert(psg[0] == 0xCC);
+    assert(psg[1] == 0x01);
 
     const Z80SoundDriver::SoundEvent psg_stop{
         Z80SoundDriver::SoundEvent::Kind::Control,
