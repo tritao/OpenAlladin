@@ -1,0 +1,47 @@
+{
+  "format": "openaladdin-natural-route-lower-wall-finding-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "purpose": "Trace the lower-room tower reached after the first gap and separate its surface interaction from a natural exit route.",
+  "static_map": {
+    "level": 1,
+    "behavior": "0x47",
+    "handler": "0x001B5470",
+    "handler_effect": "Sets the surface-mode word to one and leaves the 0x00FFF0C2 surface latch armed while behavior 0x47 remains active.",
+    "tower_cells": "Level-01 behavior 0x47 occupies approximately columns 166-174 in rows 35-42.",
+    "world_band": "The lower approach is around world Y 0x0398 (920)."
+  },
+  "reconnaissance": {
+    "checkpoint": "build/re/third-rope-base-checkpoint-20260825/states/genesis/third-rope-base.sta",
+    "checkpoint_world": [2716, 920],
+    "right_face": {
+      "input": "c+right",
+      "result": "The player moves to approximately X=2770, performs one shallow wall response, and settles back at Y=920 with behavior 0x47. Up and further right input do not climb the tower.",
+      "trace": "build/re/third-rope-cright-20260825/state.jsonl"
+    },
+    "repeated_right_taps": {
+      "input": "c+right*8,none*8 repeated",
+      "result": "Repeated taps do not accumulate height; the player oscillates between Y=920 and approximately Y=868-899, then returns to the lower floor.",
+      "trace": "build/re/third-wall-jump-pulses-20260825/state.jsonl"
+    },
+    "alternating_faces": {
+      "input": "alternating c+right and c+left taps",
+      "result": "The player remains in the same shallow response band and settles at X=2713/Y=920; alternating wall taps is not a climb.",
+      "trace": "build/re/third-wall-jump-alternate-20260825/state.jsonl"
+    },
+    "left_face": {
+      "input": "c+left taps",
+      "result": "The left-face response exposes a lower landing near X=2599/Y=907 with behavior 0 and landing state 0x0C; moving left follows the staircase back to X=2269/Y=832, while moving right returns to the 0x47 tower.",
+      "trace": "build/re/third-wall-left-ledge-left-20260825/state.jsonl",
+      "snapshot": "build/re/third-wall-left-ledge-inspect-20260825/snapshots/left-ledge.png"
+    }
+  },
+  "controlled_exit_geometry": {
+    "input": "right across the upper behavior-0x25 row",
+    "setup": "Controlled memory placement at world X=4500/Y=400.",
+    "result": "The player traverses the upper row to X=4744/Y=466, satisfying the ROM boundary coordinates, but a teleported state does not execute the natural transition path.",
+    "trace": "build/re/teleport-upper-row-neutral-20260825/state.jsonl",
+    "meaning": "Confirms the required exit-height corridor, not natural route completion."
+  },
+  "natural_exit_confirmed": false,
+  "next_action": "Return to the natural upper-route branch and identify how it reaches the behavior-0x25 row; do not spend further time treating the behavior-0x47 tower as a climbable rope."
+}
