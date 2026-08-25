@@ -1,0 +1,16 @@
+{
+  "format": "openaladdin-natural-route-wall-input-sweep-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "purpose": "Close the remaining controller-input hypotheses at the world-x=2177 wall and type-0x34 trigger.",
+  "checkpoint": "build/re/codex-type34-approach-save-20260825c/states/genesis/wall-approach.sta",
+  "base_input": "none*1",
+  "frames": 160,
+  "results": [
+    { "trace": "build/re/campaigns/20260825-level01-canonical-v1/wall-input-right-v1", "input": "right*120", "max_world": [2177, 852], "end_world": [2177, 912], "scene_state": 1 },
+    { "trace": "build/re/campaigns/20260825-level01-canonical-v1/wall-input-jump-v1", "input": "c+right*120", "max_world": [2177, 852], "end_world": [2177, 912], "scene_state": 1 },
+    { "trace": "build/re/campaigns/20260825-level01-canonical-v1/wall-input-sword-v1", "input": "b+right*120", "max_world": [2177, 852], "end_world": [2177, 912], "scene_state": 1 },
+    { "trace": "build/re/campaigns/20260825-level01-canonical-v1/wall-input-apple-v1", "input": "a+right*120", "max_world": [2177, 852], "end_world": [2177, 912], "scene_state": 1 },
+    { "trace": "build/re/campaigns/20260825-level01-canonical-v1/wall-input-all-v1", "input": "a+b+c+right*120", "max_world": [2177, 852], "end_world": [2177, 912], "scene_state": 1 }
+  ],
+  "conclusion": "The wall blocks all tested controller combinations. The type-0x34 interaction remains unreachable from the natural side and is not the missing crossing mechanism. The next route search must identify a different transfer or a level-script condition before the wall."
+}
