@@ -44,9 +44,24 @@
     "confirmed": [
       "The lower gap is a playable route, not an automatic death transition.",
       "The vertical rope at world X 0x0838 is reached by a timed jump from the lower floor.",
-      "The rope climb is driven by terrain behavior 0x22 and stops at world Y 0x02EB."
+      "The rope climb is driven by terrain behavior 0x22 and reaches the upper rope stop."
     ],
-    "unresolved": "The transfer from the rope top to the next upper platform/route has not yet been reproduced from controller input."
+    "transfer": {
+      "trace": "build/re/codex-rope-upper-transfer-visual-20260825",
+      "input": "up*100,c+left*12,left*60,none*8",
+      "from": {
+        "world": [2104, 654],
+        "terrain_behavior": "0x24"
+      },
+      "to": {
+        "world": [1946, 690],
+        "terrain_behavior": "0x00",
+        "landing_state": 3,
+        "scene_state": "0x01"
+      },
+      "description": "A timed jump to the left dismounts from the upper rope stop onto the upper platform. A symmetric jump to the right falls into the lower band."
+    },
+    "unresolved": "The transfer returns to the already-known upper platform; the forward path beyond that platform still reaches the non-landing upper edge rather than the scene transition corridor."
   },
   "next_action": "Use the rope-top state as the next controlled experiment: test dismount timing and nearby handhold/platform collision while watching PLAYER_WORLD_X/Y, terrain behavior, and scene gates."
 }
