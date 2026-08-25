@@ -115,6 +115,21 @@ int main() {
     assert(has_ym_write(0x34, 0x51));
     assert(has_ym_write(0x3C, 0x50));
 
+    ym.clear();
+    const Z80SoundDriver::SoundEvent traced_note{
+        Z80SoundDriver::SoundEvent::Kind::Note,
+        0,
+        0x2D,
+        0,
+        0,
+        0,
+        false,
+        0,
+    };
+    bridge.handle(traced_note);
+    assert(has_ym_write(0xA0, 0xD3));
+    assert(has_ym_write(0xA4, 0x1A));
+
     const Z80SoundDriver::SoundEvent psg_note{
         Z80SoundDriver::SoundEvent::Kind::Note,
         6,

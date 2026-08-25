@@ -8,9 +8,15 @@
 namespace openaladdin::audio {
 namespace {
 
-constexpr double kYmClockHz = 7'670'454.0;
 constexpr double kPsgClockHz = 3'579'545.0;
 constexpr double kSemitone = 1.0594630943592953;
+// Z80 ROM $1168, little-endian. These are the normalized YM FNUM values
+// selected by the driver's twelve-step note interpolation path.
+constexpr std::array<std::uint16_t, 12> kYmFnumTable{
+    0x0284, 0x02AA, 0x02D3, 0x02FE,
+    0x032B, 0x035B, 0x038E, 0x03C5,
+    0x03FE, 0x043B, 0x047B, 0x04BF,
+};
 
 std::uint8_t ym_port(std::size_t voice) {
     return voice >= 3 ? 2 : 0;
@@ -198,24 +204,10 @@ void Z80AudioBridge::mute_psg(std::size_t voice) {
 
 std::pair<std::uint8_t, std::uint16_t> Z80AudioBridge::ym_frequency(
     std::uint8_t note) {
-    // Treat the stream's 0..95 note range as a chromatic scale starting at
-    // MIDI C2. The exact table is part of the pending instrument recovery;
-    // this formula keeps the bridge stable and musically useful meanwhile.
-    const double frequency = 65.40639132514966
-        * std::pow(kSemitone, static_cast<double>(note));
-    const double scale = frequency * 144.0 * (1u << 20) / kYmClockHz;
-    std::uint8_t block = 0;
-    double fnum = scale;
-    while (fnum > 2047.0 && block < 7) {
-        fnum /= 2.0;
-        ++block;
-    }
-    while (fnum < 1.0 && block > 0) {
-        fnum *= 2.0;
-        --block;
-    }
-    return {block, static_cast<std::uint16_t>(std::clamp(
-        static_cast<int>(std::lround(fnum)), 1, 2047))};
+    const std::uint8_t clamped_note = std::min<std::uint8_t>(note, 0x5F);
+    const std::uint8_t block = static_cast<std::uint8_t>(clamped_note / 12);
+    const std::size_t table_index = 11 - (clamped_note % 12);
+    return {block, kYmFnumTable[table_index]};
 }
 
 std::uint16_t Z80AudioBridge::psg_period(std::uint8_t note) {
