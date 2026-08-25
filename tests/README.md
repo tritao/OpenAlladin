@@ -74,6 +74,10 @@ PYTHONPATH=tools python3 tools/openaladdin/analysis/audit_visual.py \
 camera origin, frame pointer, and the native multipart-frame manifest. The
 report directory contains the full-frame `native.ppm`/`diff.ppm` pair plus
 `player-reference.ppm`, `player-native.ppm`, and `player-diff.ppm` for the
-focused comparison. Use `--player-padding N` to enlarge that crop.
+focused comparison. It also derives an opaque-pixel mask from the captured
+frame pointer's PNG and reports `player sprite audit`; strict mode validates
+that mask, so background differences do not hide sprite parity. The masked
+overlay is written as `player-sprite-diff.ppm`. Use `--player-padding N` to
+enlarge the contextual crop.
 
 Remove `--report-only` once a checkpoint is expected to match exactly.
