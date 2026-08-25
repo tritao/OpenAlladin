@@ -14,6 +14,7 @@ The trace-backed actor replay check is run with:
 python3 tests/native_actor_timeline.py
 python3 tests/native_actor_collision.py
 python3 tests/native_actor_actor_collision.py
+python3 tests/native_animation_spawn.py
 python3 tests/native_sword_lifecycle.py
 ```
 

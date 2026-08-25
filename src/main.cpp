@@ -121,8 +121,10 @@ std::vector<int> parse_camera_checkpoint(const std::string& value) {
     while (std::getline(stream, item, ',')) {
         fields.push_back(std::stoi(item));
     }
-    if (fields.size() != 2 && fields.size() != 7) {
-        throw std::runtime_error("--checkpoint-camera expects x,y[,reference_x,reference_y,scroll_x,scroll_y,scene_state]");
+    if (fields.size() != 2 && fields.size() != 7 && fields.size() != 10) {
+        throw std::runtime_error(
+            "--checkpoint-camera expects x,y[,reference_x,reference_y,scroll_x,scroll_y,scene_state[,horizontal_threshold,vertical_threshold,update_delay]]"
+        );
     }
     return fields;
 }
@@ -267,7 +269,10 @@ int main(int argc, char** argv) {
                 checkpoint.size() == 7 ? checkpoint[3] : checkpoint[1],
                 checkpoint.size() == 7 ? checkpoint[4] : 0,
                 checkpoint.size() == 7 ? checkpoint[5] : 0,
-                checkpoint.size() == 7 ? checkpoint[6] : 1
+                checkpoint.size() >= 7 ? checkpoint[6] : 1,
+                checkpoint.size() == 10 ? checkpoint[7] : -1,
+                checkpoint.size() == 10 ? checkpoint[8] : -1,
+                checkpoint.size() == 10 ? checkpoint[9] : -1
             );
         }
 

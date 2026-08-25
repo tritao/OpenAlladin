@@ -268,7 +268,18 @@ public:
     void set_checkpoint_frame_ptr(int address);
     void set_checkpoint_animation(std::uint32_t animation_pc, int timer);
     void set_checkpoint_facing_x_flip(bool facing_x_flip);
-    void set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state);
+    void set_checkpoint_camera(
+        int x,
+        int y,
+        int reference_x,
+        int reference_y,
+        int scroll_x,
+        int scroll_y,
+        int scene_state,
+        int horizontal_threshold = -1,
+        int vertical_threshold = -1,
+        int update_delay = -1
+    );
     void update(const InputState& input);
     void render(SDL_Renderer* renderer);
     // Write the last rendered native framebuffer without SDL window scaling.
@@ -310,7 +321,7 @@ private:
     void update_terminal_actor_motion(ActorState& actor);
     void update_actor_animations();
     void apply_animation_spawns();
-    void update_actor_actor_collisions();
+    void update_actor_actor_collisions(bool pre_motion = false);
     void update_actor_interactions(const InputState& input, bool was_grounded);
     CollisionBox read_collision_box(
         std::uint32_t frame_pointer,

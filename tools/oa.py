@@ -641,6 +641,8 @@ def command_regression(args: argparse.Namespace) -> int:
         "OPENALADDIN_CAPTURE": "state",
         "OPENALADDIN_ROM_SHA256": hashes(rom)["sha256"],
     })
+    if any(field.startswith("actors[") for field in fields):
+        environment["OPENALADDIN_TRACE_ACTORS"] = "1"
     if state_sync:
         environment["OPENALADDIN_STATE_SYNC"] = "1"
     protocol = experiment_action_protocol(experiment)
@@ -657,8 +659,13 @@ def command_regression(args: argparse.Namespace) -> int:
     mame_source = mame_trace / "state.jsonl"
     compare_frames, checkpoint_frame, checkpoint = aligned_trace(mame_source, aligned, marker_name, fields)
     _, mame_states, _ = load_state_trace(mame_source)
+    # The native state file contains an initial checkpoint record at frame 0
+    # before its first update.  MAME's frame record includes the input that
+    # produced that state, so the first native update must consume MAME's next
+    # frame token.  Keeping this one-frame offset is what makes the aligned
+    # state 0 a true pre-input checkpoint rather than a duplicated update.
     input_tokens = [
-        str(mame_states[checkpoint_frame + relative].get("input", "none"))
+        str(mame_states[checkpoint_frame + relative + 1].get("input", "none"))
         for relative in range(compare_frames)
     ]
 
@@ -671,6 +678,11 @@ def command_regression(args: argparse.Namespace) -> int:
         for name in ("x", "y", "reference_x", "reference_y", "scroll_x", "scroll_y")
     )
     camera_spec += "," + str(int((checkpoint.get("scene") or {}).get("state", 1)))
+    if all(name in camera for name in ("horizontal_threshold", "vertical_threshold", "update_delay")):
+        camera_spec += "," + ",".join(
+            str(int(camera[name]))
+            for name in ("horizontal_threshold", "vertical_threshold", "update_delay")
+        )
     native_environment = os.environ.copy()
     native_environment["SDL_VIDEODRIVER"] = "dummy"
     native_command = [
@@ -689,6 +701,9 @@ def command_regression(args: argparse.Namespace) -> int:
             "--checkpoint-animation",
             f"{int(player['animation_pc'])},{int(player.get('animation_timer', 0))}",
         ])
+    actor_records = regression.get("actor_records")
+    if actor_records:
+        native_command.extend(["--actor-records", str(resolve(Path(actor_records)))])
     print(f"regression: checkpoint {marker_name} at MAME frame {checkpoint_frame}")
     print(f"regression: replaying {compare_frames} post-checkpoint frame(s) natively")
     status = subprocess.run(native_command, cwd=ROOT, env=native_environment, check=False).returncode

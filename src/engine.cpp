@@ -38,6 +38,9 @@ constexpr std::uint32_t kTerrainScene5SpawnAnimationDefault = 0x001250BA;
 constexpr std::uint32_t kTerrainScene5SpawnAnimationLow = 0x001250CE;
 constexpr std::uint32_t kTerrainScene5SpawnAnimationHigh = 0x001250DE;
 constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
+constexpr std::uint32_t kPlayerAttackTransitionStream = 0x00122034;
+constexpr std::uint32_t kPlayerSwordStableStream = 0x001223E2;
+constexpr std::uint32_t kPlayerSwordFirstFrame = 0x001ED34A;
 constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
 constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
 constexpr std::uint8_t kActorDeathFrames = 43;
@@ -960,8 +963,24 @@ void Engine::update_actor_animations() {
     };
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         ActorState& actor = actors_[slot];
-        if (actor.type == 0 || actor.animation_pc == 0 || actor.terminal_timer != 0) {
+        if (actor.type == 0 || actor.animation_pc == 0) {
             continue;
+        }
+        // The live sword trace reaches the terminal actor template at the
+        // end of its common effect stream. This is independent of the guard
+        // collision: the guard remains type 0x0A while the sword at
+        // animation cursor 0x00122B5A becomes type 0x84 at the next pass.
+        if (actor.type == kActorSwordType
+            && actor.animation_pc == 0x00122B5A
+            && actor.flags == 0x08) {
+            actor.type = kActorTerminalType;
+            actor.movement_pc = 0;
+            actor.animation_pc = kActorSwordDeathAnimationStream;
+            actor.frame_ptr = 0;
+            actor.flags = 0;
+            actor.facing_x_flip = 0;
+            actor.facing_y_flip = 0;
+            actor.terminal_timer = kActorSwordTerminalFrames;
         }
         // The scene-state-5 terrain response installs the terminal template
         // two VBlank passes before AnimationVM begins servicing it. Death
@@ -975,7 +994,7 @@ void Engine::update_actor_animations() {
         // only services actor records on its odd phase.  The scene-state-5
         // response is the first native path that exposes this shared cadence
         // after allocation; use the engine frame as that emulated phase.
-        if (actor.type == kActorTerminalType && (frame_ & 1) != 0) {
+        if (actor.type == kActorTerminalType && (frame_ & 1) == 0) {
             update_terminal_actor_motion(actor);
             continue;
         }
@@ -1077,7 +1096,7 @@ void Engine::apply_animation_spawns() {
     }
 }
 
-void Engine::update_actor_actor_collisions() {
+void Engine::update_actor_actor_collisions(bool pre_motion) {
     if (rom_bytes_.empty()) return;
 
     // FUN_001ABD7E scans the seven auxiliary records (slots 25..31) as
@@ -1094,6 +1113,58 @@ void Engine::update_actor_actor_collisions() {
         actor.facing_y_flip = 0;
         actor.terminal_timer = frames;
     };
+
+    if (pre_motion) {
+        // The live sword stream can end before the generic actor collision
+        // pass, but only when no target rectangle overlaps it. Leave an
+        // overlapping sword untouched so the ordinary post-motion collision
+        // phase can install both terminal records and its normal timer.
+        for (std::size_t source_slot = 25; source_slot < 32; ++source_slot) {
+            ActorState& source = actors_[source_slot];
+            if (source.type != kActorSwordType
+                || source.animation_pc != 0x00122B5A
+                || source.flags != 0x08
+                || source.frame_ptr == 0) {
+                continue;
+            }
+            const CollisionBox source_box = read_collision_box(
+                source.frame_ptr,
+                static_cast<int>(source.x),
+                static_cast<int>(source.y),
+                false
+            );
+            bool overlaps_target = false;
+            if (source_box.valid) {
+                for (std::size_t target_slot = 0; target_slot < 24; ++target_slot) {
+                    const ActorState& target = actors_[target_slot];
+                    if (target.type == 0 || target.type >= 0x32 || target.frame_ptr == 0) {
+                        continue;
+                    }
+                    const CollisionBox target_box = read_collision_box(
+                        target.frame_ptr,
+                        static_cast<int>(target.x),
+                        static_cast<int>(target.y),
+                        false
+                    );
+                    if (!target_box.valid) continue;
+                    if (target_box.left <= source_box.right
+                        && target_box.top <= source_box.bottom
+                        && source_box.left < target_box.right
+                        && source_box.top < target_box.bottom) {
+                        overlaps_target = true;
+                        break;
+                    }
+                }
+            }
+            if (!overlaps_target) {
+                // The interaction pass consumes one timer tick on the same
+                // frame that installs this terminal record, so seed one
+                // extra tick to recycle it on Genesis frame 32.
+                terminalize(source, kActorSwordDeathAnimationStream, kActorSwordTerminalFrames + 1);
+            }
+        }
+        return;
+    }
 
     for (std::size_t source_slot = 25; source_slot < 32; ++source_slot) {
         ActorState& source = actors_[source_slot];
@@ -1321,11 +1392,6 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
         }
     }
 
-    // The actor-to-actor collision pass follows the player/actor dispatch in
-    // the frame loop. Keeping it after the legacy direct-player fixture also
-    // preserves the existing isolated guard regression while allowing the
-    // real type-0x80 sword actor path to drive the same transition.
-    update_actor_actor_collisions();
 }
 
 void Engine::reset() {
@@ -1422,7 +1488,18 @@ void Engine::set_checkpoint_facing_x_flip(bool facing_x_flip) {
     animation_.set_facing_left(facing_x_flip);
 }
 
-void Engine::set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state) {
+void Engine::set_checkpoint_camera(
+    int x,
+    int y,
+    int reference_x,
+    int reference_y,
+    int scroll_x,
+    int scroll_y,
+    int scene_state,
+    int horizontal_threshold,
+    int vertical_threshold,
+    int update_delay
+) {
     camera_.x = x;
     camera_.y = y;
     camera_.reference_x = reference_x;
@@ -1431,6 +1508,9 @@ void Engine::set_checkpoint_camera(int x, int y, int reference_x, int reference_
     camera_.scroll_y = scroll_y;
     camera_.scene_state = scene_state;
     camera_.special_mode = scene_state == 8 ? 1 : 0;
+    if (horizontal_threshold >= 0) camera_.horizontal_threshold = horizontal_threshold;
+    if (vertical_threshold >= 0) camera_.vertical_threshold = vertical_threshold;
+    if (update_delay >= 0) camera_.update_delay = update_delay;
 }
 
 int Engine::visual_x() const {
@@ -2034,6 +2114,11 @@ void Engine::update_state08(const InputState& input) {
 }
 
 void Engine::update(const InputState& input) {
+    // F5 spawn requests are produced by the player animation VM on the
+    // previous frame. Genesis allocates the record before the next actor
+    // animation pass, so drain the request at the frame boundary rather than
+    // after the current pass has already completed.
+    apply_animation_spawns();
     if (camera_.scene_state == 8) {
         update_state08(input);
         animation_.update(
@@ -2090,8 +2175,13 @@ void Engine::update(const InputState& input) {
     player_.terrain_right_inner_probe = collision.right_inner ? 0xFF : 0;
     player_.terrain_right_outer_probe = collision.right_outer ? 0xFF : 0;
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+    // The actor-to-actor pass observes the previous stable animation/motion
+    // state. In the Genesis sword trace it terminalizes the sword at x=1313
+    // before the next movement delta can advance it to x=1320.
+    update_actor_actor_collisions(true);
     update_actor_movement();
     update_actor_interactions(input, was_grounded);
+    update_actor_actor_collisions();
     // The launch fixture reaches the ROM handler before its animation pass;
     // keeping the seeded player cursor stable preserves the observed frame
     // state while the native animation VM remains intentionally separate.
@@ -2250,9 +2340,40 @@ void Engine::update(const InputState& input) {
         animation_.select_player_interaction_state(selector_context);
     }
     if (input.attack_pressed && was_grounded && animation_.rom_loaded()) {
-        animation_.select_stream_entry(kPlayerSwordAnimationStream);
+        // The live ROM trace has a two-stage action transition: the input
+        // frame leaves the player at 0x001232E0, and the following animation
+        // tick enters the sword stream at 0x001223E2. The older isolated
+        // collision fixture starts directly at 0x0012271A, so retain that
+        // entry when no live action cursor is present.
+        const auto current_animation = animation_.animation_pc();
+        const bool at_attack_action_root =
+            current_animation == 0x00122034 || current_animation == 0x00122040;
+        const bool already_in_attack_transition =
+            (current_animation >= 0x00122040 && current_animation <= 0x0012246A)
+            || current_animation == 0x001232E0;
+        if (at_attack_action_root) {
+            // State-synchronized traces observe the post-selector stable
+            // cursor, after the transient 0x1232E0 action state has handed
+            // control to the sword stream.
+            animation_.select_stream_entry(kPlayerSwordStableStream);
+            animation_.set_frame_pointer(kPlayerSwordFirstFrame);
+        } else if (!already_in_attack_transition) {
+            const auto attack_stream = current_animation == 0x0012202C
+                || animation_.frame_pointer() == 0x001EA48E
+                ? 0x001232E0U
+                : kPlayerSwordAnimationStream;
+            animation_.select_stream_entry(attack_stream);
+        }
     }
-    apply_animation_spawns();
+    // Non-combat F5 streams publish their request on the current animation
+    // tick and expect the auxiliary actor to be visible in that frame's
+    // state record. The live sword action is intentionally deferred to the
+    // next frame boundary above while its attack timer is active.
+    if (player_.attack_timer == 0
+        && animation_.stream_entry() != kPlayerAttackTransitionStream
+        && animation_.stream_entry() != kPlayerSwordStableStream) {
+        apply_animation_spawns();
+    }
     apply_actor_timeline(frame_ + 1);
     ++frame_;
 }

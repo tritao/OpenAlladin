@@ -91,6 +91,49 @@ experiments:
             equals: 0
           timeout: 120
 
+  - name: player-attack
+    description: Reach the first guard encounter, perform a real player attack, and capture its sword child.
+    frames: 1680
+    regression:
+      checkpoint: player_attack_checkpoint
+      actor_records: re/actors/player-attack-checkpoint.tsv
+      fields:
+        - player.x
+        - player.y
+        - player.world_x
+        - player.world_y
+        - player.vx
+        - player.vy
+        - player.grounded
+        - player.frame_ptr
+        - player.animation_pc
+        - actors[25].type
+        - actors[25].x
+        - actors[25].y
+        - actors[25].movement_pc
+        - actors[25].movement_loop_pc
+        - actors[25].movement_loop_timer
+        - actors[25].animation_pc
+        - actors[25].frame_ptr
+        - actors[25].flags
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+      - input:
+          right: true
+          frames: 390
+      - marker: player_attack_checkpoint
+    actions:
+      - input:
+          a: true
+          frames: 2
+      - input:
+          frames: 45
+
   - name: terrain-flat-ground
     description: Capture the resolver and response state while standing on the opening ground.
     frames: 1400

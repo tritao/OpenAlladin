@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -70,9 +71,21 @@ def first_difference(left: Any, right: Any, path: str = "") -> tuple[str, Any, A
 def field_value(record: dict[str, Any], field: str) -> Any:
     value: Any = record
     for component in field.split("."):
-        if not isinstance(value, dict) or component not in value:
+        match = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_]*)(?:\[(\d+)\])?", component)
+        if match is None:
             raise KeyError(field)
-        value = value[component]
+        name, index = match.groups()
+        if not isinstance(value, dict) or name not in value:
+            raise KeyError(field)
+        value = value[name]
+        if index is not None:
+            if not isinstance(value, list):
+                raise KeyError(field)
+            slot = int(index)
+            matches = [item for item in value if isinstance(item, dict) and item.get("slot") == slot]
+            if not matches:
+                raise KeyError(field)
+            value = matches[0]
     return value
 
 

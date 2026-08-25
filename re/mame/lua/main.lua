@@ -904,7 +904,11 @@ emu.register_frame_done(function ()
     end
     actors.inject(current_frame)
     apply_memory_pokes(current_frame)
-    capture(current_frame, apply_input(current_frame), not state_sync)
+    -- Synchronized player fields are merged from the debugger boundary, but
+    -- actor records are not part of the compact OPENALADDIN_SYNC line. Keep a
+    -- frame-state sample when actor tracing is requested so the merge can
+    -- preserve the live slot table for differential combat probes.
+    capture(current_frame, apply_input(current_frame), not state_sync or trace_actors)
     if audio.dump_driver then audio.dump_driver(current_frame, "frame") end
     capture_artifacts(current_frame)
 
