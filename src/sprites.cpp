@@ -294,8 +294,12 @@ std::vector<std::uint8_t> decode_part(const TileSet& tile_set, int tile_index, i
         for (int x = 0; x < width; ++x) {
             const int tile_x = x / 8;
             const int tile_y = y / 8;
+            // Chopper stores the tiles in each multipart sprite column-first
+            // (all rows of a column precede the next column), rather than
+            // the row-major order used by a normal linear tilemap.
+            const int tile_index = tile_x * tile_set.height_tiles + tile_y;
             const std::size_t tile_offset = base
-                + static_cast<std::size_t>((tile_y * tile_set.width_tiles + tile_x) * 32);
+                + static_cast<std::size_t>(tile_index * 32);
             const std::size_t row = tile_offset + static_cast<std::size_t>((y & 7) * 4);
             const std::uint8_t packed = tile_set.bytes[row + static_cast<std::size_t>((x & 7) / 2)];
             pixels[static_cast<std::size_t>(y * width + x)] = (x & 1) == 0

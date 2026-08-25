@@ -17,7 +17,8 @@ fi
 # checkout, when the runtime-friendly level render is missing, or when an old
 # pre-frame-origin sprite manifest is still present locally.
 if [[ ! -f "${ASSET_DIR}/background.ppm" || ! -f "${SPRITE_DIR}/frames.json" ]] \
-    || ! rg -q '"offset_pixels"' "${SPRITE_DIR}/frames.json"; then
+    || ! rg -q '"offset_pixels"' "${SPRITE_DIR}/frames.json" \
+    || ! rg -q '"tile_order": "column-major"' "${SPRITE_DIR}/frames.json"; then
     echo "build.sh: extracting assets from ${ROM_PATH}"
     python3 "${ROOT_DIR}/tools/oa.py" assets --rom "${ROM_PATH}"
 fi

@@ -266,7 +266,8 @@ def _render_frame(frame: ChopperFrame, tile_sets: dict[str, _TileSet], output: P
         y0 = part.offset_pixels[1] - min_y
         for ty in range(part.info.tile_height):
             for tx in range(part.info.tile_width):
-                tile_offset = base + (ty * part.info.tile_width + tx) * 32
+                # Chopper stores each multipart sprite column-first.
+                tile_offset = base + (tx * part.info.tile_height + ty) * 32
                 tile = decode_tile(bytes(tile_set.data[tile_offset:tile_offset + 32]), 0)
                 for y in range(8):
                     for x in range(8):
@@ -324,6 +325,7 @@ def extract_chopper(rom: bytes, output_root: Path) -> dict[str, Any]:
         "frame_struct_size": struct_size,
         "frame_count": len(frames),
         "tile_sets": sets_json,
+        "tile_order": "column-major",
         "default_palette_words": [f"0x{word:03X}" for word in DEFAULT_PALETTE_WORDS],
         "frames": frame_json,
     }
