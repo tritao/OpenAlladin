@@ -117,7 +117,47 @@
       "scene_state": "0x01",
       "description": "The handhold route and the wall-rope transfer form a closed local loop; no scene transition or state 0x08 occurs."
     },
-    "unresolved": "The transfer returns to the already-known upper platform; the forward path beyond that platform still reaches the non-landing upper edge rather than the scene transition corridor."
+    "unresolved": "The transfer returns to the already-known upper platform; the forward path beyond that platform still reaches the non-landing upper edge rather than the scene transition corridor.",
+    "followup_route_probes": {
+      "handhold_checkpoint": "build/re/codex-handhold-grab-save-20260825b/states/genesis/codex-hh-grab-verified.sta",
+      "handhold_direction_sweep": {
+        "traces": [
+          "build/re/codex-handhold-direction-left-20260825",
+          "build/re/codex-handhold-direction-neutral-20260825",
+          "build/re/codex-handhold-direction-right-20260825",
+          "build/re/codex-handhold-direction-left-regrab-20260825",
+          "build/re/codex-handhold-up-up-20260825",
+          "build/re/codex-handhold-up-up-c-20260825",
+          "build/re/codex-handhold-up-up-right-20260825",
+          "build/re/codex-handhold-up-up-c-right-20260825"
+        ],
+        "inputs": [
+          "c+left*120",
+          "c*120",
+          "c+right*120",
+          "c+left*20,left*60,c+left*30",
+          "up*120",
+          "up+c*120",
+          "up+right*120",
+          "up+c+right*120"
+        ],
+        "result": "The opposite, neutral, and upward variants either fall back to the lower band or repeat the same upper-platform spring. None reaches the high walkway at world Y=530 or exceeds world X=2058 from this checkpoint."
+      },
+      "rope_top_direction_sweep": {
+        "checkpoint": "build/re/natural-wall-checkpoint-debug/states/genesis/rope-top.sta",
+        "traces": [
+          "build/re/codex-rope-top-route-right-20260825",
+          "build/re/codex-rope-top-route-up-right-20260825",
+          "build/re/codex-rope-top-route-c-up-right-20260825",
+          "build/re/codex-rope-top-route-up-left-20260825",
+          "build/re/codex-rope-top-route-c-up-left-20260825",
+          "build/re/codex-rope-top-route-left-20260825",
+          "build/re/codex-rope-top-route-down-right-20260825",
+          "build/re/codex-rope-top-route-c-only-20260825"
+        ],
+        "result": "No rope-top direction reaches the high walkway. The best controlled jump reaches world Y=587 before returning to the rope or falling to the lower band; the local rope branch is exhausted."
+      }
+    }
   },
-  "next_action": "Search the earlier bounce/handhold branch around world X 0x0540-0x0678; this rope/upper-platform branch is locally exhausted without reaching the forward scene-transition corridor."
+  "next_action": "Trace the earlier moving-platform chain around world X 0x0540-0x0678 and correlate its terrain behavior-0x25/scene-state-5 branch with the route; the handhold and rope direction sweeps are locally exhausted."
 }
