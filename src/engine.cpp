@@ -404,7 +404,8 @@ void Engine::load(
     const std::string& asset_root,
     const std::string& sprite_root,
     const std::string& rom_path,
-    const std::string& actor_records_path
+    const std::string& actor_records_path,
+    const std::string& actor_timeline_path
 ) {
     level_.load(asset_root, rom_path);
     sprites_.load(sprite_root.empty() ? asset_root + "/../../sprites" : sprite_root);
@@ -418,8 +419,79 @@ void Engine::load(
     if (!actor_records_path.empty()) {
         load_actor_records(actor_records_path);
     }
+    actor_timeline_.clear();
+    if (!actor_timeline_path.empty()) {
+        load_actor_timeline(actor_timeline_path);
+    }
     framebuffer_.resize(static_cast<std::size_t>(kScreenWidth * kScreenHeight));
     reset();
+}
+
+void Engine::load_actor_timeline(const std::string& path) {
+    std::ifstream input(path);
+    if (!input) {
+        throw std::runtime_error("cannot open actor timeline: " + path);
+    }
+
+    int current_frame = -1;
+    std::string line;
+    int line_number = 0;
+    while (std::getline(input, line)) {
+        ++line_number;
+        if (line.empty() || line[0] == '#') continue;
+        std::istringstream row(line);
+        std::string first;
+        row >> first;
+        if (first == "@frame") {
+            std::string frame_value;
+            if (!(row >> frame_value)) {
+                throw std::runtime_error(
+                    "invalid actor timeline frame at " + path + ":" + std::to_string(line_number));
+            }
+            current_frame = static_cast<int>(std::stoul(frame_value, nullptr, 0));
+            actor_timeline_[current_frame].fill({});
+            continue;
+        }
+        if (current_frame < 0) {
+            throw std::runtime_error(
+                "actor record precedes a frame marker at " + path + ":" + std::to_string(line_number));
+        }
+
+        std::string type;
+        std::string x;
+        std::string y;
+        std::string movement_pc;
+        std::string frame_ptr;
+        std::string animation_pc;
+        std::string flags;
+        const int slot = std::stoi(first, nullptr, 0);
+        if (!(row >> type >> x >> y >> movement_pc >> frame_ptr >> animation_pc >> flags)
+            || slot < 0 || slot >= static_cast<int>(actor_timeline_[current_frame].size())) {
+            throw std::runtime_error(
+                "invalid actor timeline record at " + path + ":" + std::to_string(line_number));
+        }
+        auto parse = [](const std::string& value) {
+            return std::stoul(value, nullptr, 0);
+        };
+        ActorState& actor = actor_timeline_[current_frame][static_cast<std::size_t>(slot)];
+        actor.type = static_cast<std::uint8_t>(parse(type));
+        actor.x = static_cast<std::uint16_t>(parse(x));
+        actor.y = static_cast<std::uint16_t>(parse(y));
+        actor.movement_pc = static_cast<std::uint32_t>(parse(movement_pc));
+        actor.frame_ptr = static_cast<std::uint32_t>(parse(frame_ptr));
+        actor.animation_pc = static_cast<std::uint32_t>(parse(animation_pc));
+        actor.flags = static_cast<std::uint8_t>(parse(flags));
+    }
+    if (actor_timeline_.empty()) {
+        throw std::runtime_error("actor timeline is empty: " + path);
+    }
+}
+
+void Engine::apply_actor_timeline(int frame) {
+    const auto found = actor_timeline_.find(frame);
+    if (found != actor_timeline_.end()) {
+        actors_ = found->second;
+    }
 }
 
 void Engine::load_actor_records(const std::string& path) {
@@ -497,6 +569,7 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
 void Engine::reset() {
     player_ = PlayerState{};
     actors_ = actor_templates_;
+    apply_actor_timeline(0);
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -1017,6 +1090,7 @@ void Engine::update(const InputState& input) {
                 player_.terrain_response_timer_state,
             }
         );
+        apply_actor_timeline(frame_ + 1);
         ++frame_;
         return;
     }
@@ -1172,6 +1246,7 @@ void Engine::update(const InputState& input) {
                 : std::max<std::uint8_t>(player_.terrain_response_timer_state, 1);
         animation_.select_player_interaction_state(selector_context);
     }
+    apply_actor_timeline(frame_ + 1);
     ++frame_;
 }
 

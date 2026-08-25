@@ -18,6 +18,7 @@ struct Options {
     std::string sprites = "build/assets/sprites";
     std::string rom = "rom/Disneys_Aladdin_U_p1.bin";
     std::string actor_records = "re/actors/level01.tsv";
+    std::string actor_timeline;
     int frames = -1;
     bool no_window = false;
     bool demo = false;
@@ -123,6 +124,8 @@ Options parse_options(int argc, char** argv) {
             options.rom = argv[++i];
         } else if (argument == "--actor-records" && i + 1 < argc) {
             options.actor_records = argv[++i];
+        } else if (argument == "--actor-timeline" && i + 1 < argc) {
+            options.actor_timeline = argv[++i];
         } else if (argument == "--frames" && i + 1 < argc) {
             options.frames = std::stoi(argv[++i]);
         } else if (argument == "--no-window") {
@@ -142,7 +145,7 @@ Options parse_options(int argc, char** argv) {
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
-            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--frames N] [--no-window] [--demo]\n"
+            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--demo]\n"
                          "       [--state-output PATH] [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
                          "       [--checkpoint-frame-ptr ADDRESS]\n"
@@ -169,7 +172,7 @@ int main(int argc, char** argv) {
         }
 
         openaladdin::Engine engine;
-        engine.load(options.assets, options.sprites, options.rom, options.actor_records);
+        engine.load(options.assets, options.sprites, options.rom, options.actor_records, options.actor_timeline);
         if (!options.checkpoint_player.empty()) {
             const auto checkpoint = parse_checkpoint(options.checkpoint_player);
             engine.set_checkpoint(

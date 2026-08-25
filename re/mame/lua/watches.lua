@@ -64,6 +64,7 @@ return function(options)
                         { "address", tostring(offset) },
                         { "data", tostring(data) },
                         { "mask", tostring(mem_mask) },
+                        { "value", tostring(read_u8(address)) },
                         { "pc", tostring(read_register("PC") or 0) }
                     })
                 end)

@@ -8,6 +8,7 @@
 #include <array>
 #include <cstdint>
 #include <iosfwd>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -219,7 +220,8 @@ public:
         const std::string& asset_root,
         const std::string& sprite_root = {},
         const std::string& rom_path = {},
-        const std::string& actor_records_path = {}
+        const std::string& actor_records_path = {},
+        const std::string& actor_timeline_path = {}
     );
     void reset();
     void set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded);
@@ -250,6 +252,8 @@ private:
     void apply_ground_movement(const InputState& input);
     void apply_terrain_behavior(const Level::TerrainCell& cell);
     void load_actor_records(const std::string& path);
+    void load_actor_timeline(const std::string& path);
+    void apply_actor_timeline(int frame);
     void update_actor_interactions(const InputState& input, bool was_grounded);
     SpritePose sprite_pose() const;
     int visual_x() const;
@@ -262,6 +266,7 @@ private:
     PlayerAnimationVm animation_;
     std::array<ActorState, 32> actor_templates_{};
     std::array<ActorState, 32> actors_{};
+    std::map<int, std::array<ActorState, 32>> actor_timeline_;
     int frame_ = 0;
     int last_ground_direction_ = 0;
     bool quit_ = false;
