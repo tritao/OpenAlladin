@@ -283,6 +283,7 @@ private:
     void apply_actor_timeline(int frame);
     void update_actor_movement();
     void update_actor_animations();
+    void apply_animation_spawns();
     void update_actor_actor_collisions();
     void update_actor_interactions(const InputState& input, bool was_grounded);
     CollisionBox read_collision_box(
