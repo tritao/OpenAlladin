@@ -1567,7 +1567,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
     case 0x2D:  // TerrainHandler_BouncePlayerBlock (0x001B56B6)
         player_.vx = static_cast<std::int16_t>(-0x400);
         player_.vy = static_cast<std::int16_t>(0x200);
-        player_.grounded = false;
+        animation_.set_animation_state(0x00121AD8, 0);
         break;
     case 0x30:  // TerrainHandler_LandingResponseBlock (0x001B537A)
         // The ROM subtracts 0x7C from PLAYER_VY, clears FFF0B0, arms the
@@ -1811,7 +1811,9 @@ void Engine::update(const InputState& input) {
     update_terrain_input(input);
     const bool grounded_before_contour = player_.grounded;
     const bool stable_terrain_handler_fixture = checkpoint_terrain_behavior_override_
-        && (checkpoint_terrain_behavior_ == 0x28 || checkpoint_terrain_behavior_ == 0x29);
+        && (checkpoint_terrain_behavior_ == 0x28
+            || checkpoint_terrain_behavior_ == 0x29
+            || checkpoint_terrain_behavior_ == 0x2D);
     // The normal slice uses the recovered contour pass. Handler fixtures are
     // deliberately staged at the ROM's resolver boundary instead: the
     // original frame calls Terrain_ResolvePlayerCell/handler before the

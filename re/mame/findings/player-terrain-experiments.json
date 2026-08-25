@@ -233,6 +233,41 @@
         }
       }
     },
+    "terrain-handler-0x2D": {
+      "trace": "build/re/traces/terrain-handler-2d-v1/state.jsonl",
+      "edge_trace": "build/re/traces/terrain-handler-2d-v1/debug.log",
+      "cell": {
+        "row": 40,
+        "column": 7,
+        "world_x": 103,
+        "world_y": 880,
+        "terrain_word": "0x6C20",
+        "behavior": "0x2D",
+        "handler": "0x001B56B6"
+      },
+      "fixture": {
+        "poke_frame": 1300,
+        "behavior_table_offset": "0x3610",
+        "source_behavior": "0x11",
+        "fixture_behavior": "0x2D",
+        "camera": [16, 464],
+        "player": [87, 416, 0, 0],
+        "world": [103, 880],
+        "landing_state": 0
+      },
+      "observed": {
+        "first_handler_frame": 1301,
+        "launch_velocity_writes": {
+          "PLAYER_VX": -1024,
+          "PLAYER_VY": 512
+        },
+        "post_integrator_velocity": [-984, 452],
+        "position": [83, 418],
+        "landing_state": 1,
+        "grounded": true,
+        "animation_stream": "0x00121AD8"
+      }
+    },
     "terrain-handler-0x47": {
       "trace": "build/re/terrain-target-47-v3/state.jsonl",
       "cell": {

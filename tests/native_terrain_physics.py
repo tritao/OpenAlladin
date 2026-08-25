@@ -17,6 +17,7 @@ LANDING_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/landing-handler-s
 HANDLER_2B_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2b-state.jsonl"
 HANDLER_29_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-29-state.jsonl"
 HANDLER_28_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-28-state.jsonl"
+HANDLER_2D_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/handler-2d-state.jsonl"
 STOP_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/stop-state.jsonl"
 COLLISION_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/collision-state.jsonl"
 RIGHT_PROBE_OUTPUT = ROOT / "build/re/tests/native-terrain-physics/right-probe-state.jsonl"
@@ -280,6 +281,45 @@ def main() -> int:
     assert handler_28["player"]["vy"] == 0
     assert handler_28["player"]["grounded"] is True
     assert handler_28["player"]["animation_pc"] == 0x00121964
+
+    # Behavior 0x2D applies the fixed bounce impulse and selects stream
+    # 0x00121AD8. It does not clear the landing flag itself; the frame's
+    # integrator therefore exposes the grounded state and post-step velocity
+    # seen in the MAME fixture.
+    handler_2d_command = [
+        str(ROOT / "build/openaladdin"),
+        "--no-window",
+        "--frames",
+        "2",
+        "--state-output",
+        str(HANDLER_2D_OUTPUT),
+        "--actor-records",
+        "/dev/null",
+        "--checkpoint-player",
+        "87,416,0,0,1",
+        "--checkpoint-terrain-behavior",
+        "0x2D",
+        "--checkpoint-animation",
+        "0x121E46,0",
+        "--checkpoint-camera",
+        "16,464,16,464,0,0,1",
+    ]
+    subprocess.run(handler_2d_command, cwd=ROOT, env=environment, check=True)
+    with HANDLER_2D_OUTPUT.open(encoding="utf-8") as stream:
+        handler_2d_states = {
+            record["frame"]: record
+            for record in map(json.loads, stream)
+            if record.get("type") == "state"
+        }
+    handler_2d = handler_2d_states[1]
+    assert handler_2d["terrain"]["behavior"] == 0x2D
+    assert handler_2d["terrain"]["landing_state"] == 1
+    assert handler_2d["player"]["x"] == 83
+    assert handler_2d["player"]["y"] == 418
+    assert handler_2d["player"]["vx"] == -984
+    assert handler_2d["player"]["vy"] == 452
+    assert handler_2d["player"]["grounded"] is True
+    assert handler_2d["player"]["animation_pc"] == 0x00121AD8
 
     stop_command = [
         str(ROOT / "build/openaladdin"),
