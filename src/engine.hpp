@@ -170,10 +170,15 @@ private:
 
 class Engine {
 public:
-    void load(const std::string& asset_root, const std::string& sprite_root = {});
+    void load(
+        const std::string& asset_root,
+        const std::string& sprite_root = {},
+        const std::string& rom_path = {}
+    );
     void reset();
     void set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded);
     void set_checkpoint_frame_ptr(int address);
+    void set_checkpoint_animation(std::uint32_t animation_pc, int timer);
     void set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state);
     void update(const InputState& input);
     void render(SDL_Renderer* renderer);

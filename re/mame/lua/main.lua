@@ -377,7 +377,7 @@ if state_sync then
         return string.format(":maincpu.%s@$%06X", width, symbol(name))
     end
     local sync_action = string.format(
-        "printf \"OPENALADDIN_SYNC frame=%%d pc=%%08X x=%%04X y=%%04X wx=%%04X wy=%%04X vx=%%04X vy=%%04X grounded=%%02X frameptr=%%08X animtimer=%%02X camx=%%04X camy=%%04X refx=%%04X refy=%%04X sx=%%04X sy=%%04X thx=%%04X thy=%%04X delay=%%02X special=%%02X\\n\",frame,pc,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s ; g",
+        "printf \"OPENALADDIN_SYNC frame=%%d pc=%%08X x=%%04X y=%%04X wx=%%04X wy=%%04X vx=%%04X vy=%%04X grounded=%%02X frameptr=%%08X animpc=%%08X animtimer=%%02X camx=%%04X camy=%%04X refx=%%04X refy=%%04X sx=%%04X sy=%%04X thx=%%04X thy=%%04X delay=%%02X special=%%02X\\n\",frame,pc,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s ; g",
         sync_memory("w", "PLAYER_X"),
         sync_memory("w", "PLAYER_Y"),
         sync_memory("w", "PLAYER_WORLD_X"),
@@ -386,6 +386,7 @@ if state_sync then
         sync_memory("w", "PLAYER_VY"),
         sync_memory("b", "TERRAIN_LANDING_STATE"),
         sync_memory("d", "PLAYER_FRAME_PTR"),
+        sync_memory("d", "PLAYER_ANIMATION_PC"),
         sync_memory("b", "PLAYER_ANIMATION_TIMER"),
         sync_memory("w", "WORLD_CAMERA_X"),
         sync_memory("w", "WORLD_CAMERA_Y"),

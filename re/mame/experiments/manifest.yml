@@ -26,6 +26,8 @@ experiments:
         - player.vy
         - player.grounded
         - player.frame_ptr
+        - player.animation_pc
+        - player.animation_timer
     boot:
       scenario: first-level
     setup:
@@ -58,6 +60,8 @@ experiments:
         - player.vy
         - player.grounded
         - player.frame_ptr
+        - player.animation_pc
+        - player.animation_timer
         - camera.x
         - camera.y
     boot:

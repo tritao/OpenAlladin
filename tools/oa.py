@@ -316,7 +316,8 @@ SYNC_PATTERN = re.compile(
     r"wx=(?P<world_x>[0-9A-F]+) wy=(?P<world_y>[0-9A-F]+) "
     r"vx=(?P<vx>[0-9A-F]+) vy=(?P<vy>[0-9A-F]+) "
     r"grounded=(?P<grounded>[0-9A-F]+) "
-    r"frameptr=(?P<frame_ptr>[0-9A-F]+) animtimer=(?P<animation_timer>[0-9A-F]+) "
+    r"frameptr=(?P<frame_ptr>[0-9A-F]+) animpc=(?P<animation_pc>[0-9A-F]+) "
+    r"animtimer=(?P<animation_timer>[0-9A-F]+) "
     r"camx=(?P<camera_x>[0-9A-F]+) camy=(?P<camera_y>[0-9A-F]+) "
     r"refx=(?P<reference_x>[0-9A-F]+) refy=(?P<reference_y>[0-9A-F]+) "
     r"sx=(?P<scroll_x>[0-9A-F]+) sy=(?P<scroll_y>[0-9A-F]+) "
@@ -425,7 +426,7 @@ def synchronize_state_trace(trace_dir: Path) -> int:
                 record["terrain"] = metadata["terrain"]
 
         player = record.setdefault("player", {})
-        for name in ("x", "y", "world_x", "world_y", "vx", "vy", "frame_ptr", "animation_timer"):
+        for name in ("x", "y", "world_x", "world_y", "vx", "vy", "frame_ptr", "animation_pc", "animation_timer"):
             player[name] = sync[name]
         # Lua's canonical state schema treats TERRAIN_LANDING_STATE == 1 as
         # grounded.  0xFF is the active response latch during the jump
@@ -608,6 +609,13 @@ def command_regression(args: argparse.Namespace) -> int:
         "--checkpoint-player", checkpoint_spec,
         "--checkpoint-camera", camera_spec,
     ]
+    if player.get("frame_ptr"):
+        native_command.extend(["--checkpoint-frame-ptr", str(int(player["frame_ptr"]))])
+    if player.get("animation_pc"):
+        native_command.extend([
+            "--checkpoint-animation",
+            f"{int(player['animation_pc'])},{int(player.get('animation_timer', 0))}",
+        ])
     print(f"regression: checkpoint {marker_name} at MAME frame {checkpoint_frame}")
     print(f"regression: replaying {compare_frames} post-checkpoint frame(s) natively")
     status = subprocess.run(native_command, cwd=ROOT, env=native_environment, check=False).returncode

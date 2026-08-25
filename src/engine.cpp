@@ -264,12 +264,19 @@ Level::TerrainQuery Level::query_player(int world_x, int world_y) const {
     return query;
 }
 
-void Engine::load(const std::string& asset_root, const std::string& sprite_root) {
+void Engine::load(
+    const std::string& asset_root,
+    const std::string& sprite_root,
+    const std::string& rom_path
+) {
     level_.load(asset_root);
     sprites_.load(sprite_root.empty() ? asset_root + "/../../sprites" : sprite_root);
     // Level-01 captures show the player using CRAM line 2. Reuse the exact
     // extracted scene palette instead of the Chopper preview fallback.
     sprites_.set_palette(level_.palette());
+    if (!rom_path.empty()) {
+        animation_.load_rom(rom_path);
+    }
     framebuffer_.resize(static_cast<std::size_t>(kScreenWidth * kScreenHeight));
     reset();
 }
@@ -312,15 +319,36 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     quit_ = false;
     animation_.reset();
     if (!grounded) {
-        animation_.update(SpritePose::Jump, false);
+        animation_.update(
+            SpritePose::Jump,
+            false,
+            AnimationContext{
+                player_.x,
+                player_.y,
+                player_world_x(),
+                player_world_y(),
+                player_.vx,
+                player_.vy,
+                grounded,
+                player_.terrain_response_timer_state,
+            }
+        );
     }
 }
 
 void Engine::set_checkpoint_frame_ptr(int address) {
+    if (animation_.rom_loaded()) {
+        animation_.set_frame_pointer(static_cast<std::uint32_t>(address));
+        return;
+    }
     const int frame = sprites_.frame_index_for_address(address);
     if (frame < 0 || !animation_.set_frame(frame)) {
         animation_.reset();
     }
+}
+
+void Engine::set_checkpoint_animation(std::uint32_t animation_pc, int timer) {
+    animation_.set_animation_state(animation_pc, timer);
 }
 
 void Engine::set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state) {
@@ -702,7 +730,20 @@ void Engine::update_state08(const InputState& input) {
 void Engine::update(const InputState& input) {
     if (camera_.scene_state == 8) {
         update_state08(input);
-        animation_.update(SpritePose::Idle, input.left && !input.right);
+        animation_.update(
+            SpritePose::Idle,
+            input.left && !input.right,
+            AnimationContext{
+                player_.x,
+                player_.y,
+                player_world_x(),
+                player_world_y(),
+                player_.vx,
+                player_.vy,
+                player_.grounded,
+                player_.terrain_response_timer_state,
+            }
+        );
         ++frame_;
         return;
     }
@@ -713,6 +754,16 @@ void Engine::update(const InputState& input) {
         && last_ground_direction_ != 0 && player_.vx == 0;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
     const bool start_jump = input.jump_pressed && was_grounded;
+    const AnimationContext animation_context{
+        player_.x,
+        player_.y,
+        player_world_x(),
+        player_world_y(),
+        player_.vx,
+        player_.vy,
+        was_grounded,
+        player_.terrain_response_timer_state,
+    };
 
     if (was_grounded && player_.grounded) {
         if (input.left != input.right) {
@@ -791,7 +842,25 @@ void Engine::update(const InputState& input) {
                     ? SpritePose::Run
                     : (animation_.pose() == SpritePose::Run || animation_.pose() == SpritePose::Brake
                         ? SpritePose::Brake : SpritePose::Idle))));
-    animation_.update(desired_pose, input.left && !input.right);
+    // The original actor VM runs before the player movement update reaches
+    // the stable frame boundary. Feed it the pre-integration state so its
+    // F4/F2 conditions see the same velocity and landing fields as MAME.
+    animation_.update(
+        desired_pose,
+        input.left && !input.right,
+        animation_context
+    );
+    // Movement's stop transition (the zero-velocity branch at 0x001AE4F8)
+    // replaces the brake stream with the short deceleration stream. It is a
+    // gameplay-state write to FF7E60, not an F8 bytecode operation, so apply
+    // it after the actor VM tick just as the original frame does.
+    if (animation_.rom_loaded()
+        && desired_pose == SpritePose::Brake
+        && animation_.pose() == SpritePose::Brake
+        && player_.vx == 0
+        && animation_.stream_entry() != 0x001226CE) {
+        animation_.select_stream_entry(0x001226CE);
+    }
     ++frame_;
 }
 
@@ -806,6 +875,13 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     // changing the native physics predicate used by update().
     const bool trace_grounded = player_.grounded
         || player_.vy == static_cast<std::int16_t>(-0x200);
+    int state_sprite_frame = animation_.sprite_frame();
+    if (state_sprite_frame < 0 || animation_.rom_loaded()) {
+        state_sprite_frame = sprites_.frame_index_for_address(
+            static_cast<int>(animation_.frame_pointer())
+        );
+    }
+    if (state_sprite_frame < 0) state_sprite_frame = SpriteDatabase::kIdleFrame;
 
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v1\""
            << ",\"frame\":" << frame_
@@ -816,7 +892,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"world_y\":" << player_world_y()
            << ",\"vx\":" << player_.vx
            << ",\"vy\":" << player_.vy
-           << ",\"animation_pc\":0"
+           << ",\"animation_pc\":" << animation_.animation_pc()
            << ",\"animation_state\":\""
            << (animation_.pose() == SpritePose::Idle ? "idle"
                : animation_.pose() == SpritePose::Run ? "run"
@@ -825,8 +901,10 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << "\""
            << ",\"animation_timer\":" << animation_.timer()
            << ",\"animation_stream_entry\":" << animation_.stream_entry()
-           << ",\"sprite_frame\":" << animation_.sprite_frame()
-           << ",\"frame_ptr\":" << sprites_.frame(animation_.sprite_frame()).address
+           << ",\"sprite_frame\":" << state_sprite_frame
+           << ",\"frame_ptr\":" << (animation_.rom_loaded()
+               ? animation_.frame_pointer()
+               : sprites_.frame(animation_.sprite_frame()).address)
            << ",\"facing_left\":" << (animation_.facing_left() ? "true" : "false")
            << ",\"grounded\":" << (trace_grounded ? "true" : "false") << "}"
            << ",\"scene\":{\"state\":" << camera_.scene_state
@@ -913,7 +991,16 @@ void Engine::render(SDL_Renderer* renderer) {
         }
     }
 
-    const SpriteFrame& player_frame = sprites_.frame_for(sprite_pose());
+    int player_frame_index = animation_.sprite_frame();
+    if (player_frame_index < 0 || animation_.rom_loaded()) {
+        player_frame_index = sprites_.frame_index_for_address(
+            static_cast<int>(animation_.frame_pointer())
+        );
+    }
+    if (player_frame_index < 0) {
+        player_frame_index = SpriteDatabase::kIdleFrame;
+    }
+    const SpriteFrame& player_frame = sprites_.frame(player_frame_index);
     SpriteRenderer::draw(
         player_frame,
         sprites_.palette(),
