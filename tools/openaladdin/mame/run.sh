@@ -13,6 +13,12 @@ HEADLESS="${OPENALADDIN_MAME_HEADLESS:-1}"
 DEBUG_UI="${OPENALADDIN_MAME_DEBUG_UI:-0}"
 MAME_XVFB="${MAME_XVFB:-0}"
 
+# State-synchronized runs change into TRACE_DIR below. Normalize caller input
+# first so a relative ROM path remains valid after that directory change.
+if [[ "${ROM_FILE}" != /* ]]; then
+    ROM_FILE="${ROOT_DIR}/${ROM_FILE}"
+fi
+
 # State-synchronized runs change into TRACE_DIR before launching MAME. Make a
 # caller-supplied relative path absolute first so OPENALADDIN_TRACE_DIR does
 # not become accidentally relative to itself after that directory change.
@@ -38,6 +44,14 @@ if [[ ! -f "${ROM_FILE}" ]]; then
     echo "ROM file not found: ${ROM_FILE}" >&2
     exit 1
 fi
+
+# Every trace header should carry the ROM identity, including direct
+# run.sh invocations that bypass tools/oa.py. Allow an explicit value for
+# controlled fixtures, but derive the verified hash by default.
+if [[ -z "${OPENALADDIN_ROM_SHA256:-}" ]]; then
+    OPENALADDIN_ROM_SHA256="$(sha256sum "${ROM_FILE}" | awk '{print $1}')"
+fi
+export OPENALADDIN_ROM_SHA256
 
 # The Lua harness consumes a generated symbol table, while the YAML files are
 # the canonical source. Regenerate this small derived file on every run so a
