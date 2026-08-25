@@ -138,6 +138,8 @@ add_library(openaladdin_audio STATIC
     src/audio/mixer.hpp
     src/audio/ym2612.cpp
     src/audio/ym2612.hpp
+    src/audio/z80_sound_driver.cpp
+    src/audio/z80_sound_driver.hpp
 )
 target_include_directories(openaladdin_audio PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_features(openaladdin_audio PUBLIC cxx_std_20)
@@ -229,6 +231,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(sdl_audio_test)
     openaladdin_enable_test_assertions(sdl_audio_test)
 
+    add_executable(z80_sound_driver_test tests/z80_sound_driver.cpp)
+    target_link_libraries(z80_sound_driver_test PRIVATE openaladdin_audio)
+    target_compile_features(z80_sound_driver_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(z80_sound_driver_test)
+    openaladdin_enable_test_assertions(z80_sound_driver_test)
+
     add_test(NAME sprite_renderer COMMAND sprite_renderer_test)
     set_tests_properties(sprite_renderer PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -251,6 +259,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME sdl_audio COMMAND sdl_audio_test)
     set_tests_properties(sdl_audio PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME z80_sound_driver COMMAND z80_sound_driver_test)
+    set_tests_properties(z80_sound_driver PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     find_package(Python3 COMPONENTS Interpreter QUIET)
