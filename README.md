@@ -122,14 +122,10 @@ ctest --test-dir build --output-on-failure
 ```
 
 Set `-DOPENALADDIN_SDL2_ROOT=/path/to/sdl2` when SDL2 is installed in a
-non-standard prefix. The legacy `src/Makefile` remains available for focused
-manual builds.
-
-Run the focused sprite checks with:
+non-standard prefix. Run the focused sprite checks with:
 
 ```bash
-make -C src test-sprites
-make -C src test-animation
+ctest --test-dir build -R 'sprite_renderer|player_animation' --output-on-failure
 python3 tests/native_sprites.py
 ```
 

@@ -51,8 +51,8 @@ set(OPENALADDIN_SDL2_TARGET SDL2::SDL2)
 
 # The checked-in build environment may contain SDL2's static archive while
 # its shared-library symlink is intentionally absent. Recreate the explicit
-# soname link list used by src/Makefile in that case, avoiding a dependency on
-# uninstalled development symlinks such as libsamplerate.so.
+# soname link list used by the native build in that case, avoiding a dependency
+# on uninstalled development symlinks such as libsamplerate.so.
 if(UNIX AND NOT APPLE
    AND DEFINED SDL2_LIBDIR
    AND TARGET SDL2::SDL2-static
