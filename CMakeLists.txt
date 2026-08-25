@@ -136,6 +136,8 @@ add_library(openaladdin_audio STATIC
     src/audio/sn76489.hpp
     src/audio/mixer.cpp
     src/audio/mixer.hpp
+    src/audio/z80_audio_bridge.cpp
+    src/audio/z80_audio_bridge.hpp
     src/audio/ym2612.cpp
     src/audio/ym2612.hpp
     src/audio/z80_sound_driver.cpp
@@ -177,7 +179,10 @@ openaladdin_enable_warnings(openaladdin_engine)
 
 add_executable(openaladdin src/main.cpp)
 target_compile_features(openaladdin PRIVATE cxx_std_20)
-target_link_libraries(openaladdin PRIVATE openaladdin_engine)
+target_link_libraries(openaladdin PRIVATE
+    openaladdin_engine
+    openaladdin_audio_sdl
+)
 openaladdin_enable_warnings(openaladdin)
 
 # Keep locally supplied SDL2 discoverable when the executable is launched
@@ -237,6 +242,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(z80_sound_driver_test)
     openaladdin_enable_test_assertions(z80_sound_driver_test)
 
+    add_executable(z80_audio_bridge_test tests/z80_audio_bridge.cpp)
+    target_link_libraries(z80_audio_bridge_test PRIVATE openaladdin_audio)
+    target_compile_features(z80_audio_bridge_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(z80_audio_bridge_test)
+    openaladdin_enable_test_assertions(z80_audio_bridge_test)
+
     add_test(NAME sprite_renderer COMMAND sprite_renderer_test)
     set_tests_properties(sprite_renderer PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -263,6 +274,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME z80_sound_driver COMMAND z80_sound_driver_test)
     set_tests_properties(z80_sound_driver PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME z80_audio_bridge COMMAND z80_audio_bridge_test)
+    set_tests_properties(z80_audio_bridge PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     find_package(Python3 COMPONENTS Interpreter QUIET)

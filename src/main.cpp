@@ -2,14 +2,21 @@
 
 #include <SDL.h>
 
+#include <array>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+#include "audio/mixer.hpp"
+#include "audio/sdl_audio.hpp"
+#include "audio/z80_audio_bridge.hpp"
+#include "audio/z80_sound_driver.hpp"
 
 namespace {
 
@@ -21,6 +28,7 @@ struct Options {
     std::string actor_timeline;
     int frames = -1;
     bool no_window = false;
+    bool no_audio = false;
     bool demo = false;
     bool render_only = false;
     std::string state_output;
@@ -137,6 +145,8 @@ Options parse_options(int argc, char** argv) {
             options.frames = std::stoi(argv[++i]);
         } else if (argument == "--no-window") {
             options.no_window = true;
+        } else if (argument == "--no-audio") {
+            options.no_audio = true;
         } else if (argument == "--demo") {
             options.demo = true;
         } else if (argument == "--render-checkpoint") {
@@ -162,7 +172,7 @@ Options parse_options(int argc, char** argv) {
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
-            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--demo] [--render-checkpoint]\n"
+            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--demo] [--render-checkpoint]\n"
                          "       [--state-output PATH] [--framebuffer-out PATH] [--framebuffer-frame N]\n"
                          "       [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
@@ -177,6 +187,28 @@ Options parse_options(int argc, char** argv) {
         }
     }
     return options;
+}
+
+std::vector<std::uint8_t> read_binary_file(const std::string& path) {
+    std::ifstream input(path, std::ios::binary);
+    if (!input) {
+        throw std::runtime_error("cannot open audio ROM: " + path);
+    }
+    input.seekg(0, std::ios::end);
+    const auto size = input.tellg();
+    if (size < 0) {
+        throw std::runtime_error("cannot size audio ROM: " + path);
+    }
+    input.seekg(0, std::ios::beg);
+    std::vector<std::uint8_t> bytes(static_cast<std::size_t>(size));
+    if (!bytes.empty()) {
+        input.read(reinterpret_cast<char*>(bytes.data()),
+                   static_cast<std::streamsize>(bytes.size()));
+    }
+    if (!input) {
+        throw std::runtime_error("cannot read audio ROM: " + path);
+    }
+    return bytes;
 }
 
 }  // namespace
@@ -237,6 +269,41 @@ int main(int argc, char** argv) {
                 checkpoint.size() == 7 ? checkpoint[5] : 0,
                 checkpoint.size() == 7 ? checkpoint[6] : 1
             );
+        }
+
+        openaladdin::audio::Mixer mixer;
+        openaladdin::audio::SdlAudioOutput audio_output(mixer);
+        openaladdin::audio::Z80AudioBridge audio_bridge({
+            [&audio_output](std::uint8_t data) {
+                audio_output.write_psg(data);
+            },
+            [&audio_output](std::uint8_t port, std::uint8_t data) {
+                audio_output.write_ym2612(port, data);
+            },
+        });
+        std::unique_ptr<openaladdin::audio::Z80SoundDriver> sound_driver;
+        if (!options.no_audio && !options.render_only) {
+            if (SDL_InitSubSystem(SDL_INIT_AUDIO) != 0) {
+                std::cerr << "openaladdin: audio disabled: " << SDL_GetError() << '\n';
+            } else {
+                try {
+                    audio_output.open();
+                    audio_bridge.reset();
+                    const auto audio_rom = read_binary_file(options.rom);
+                    sound_driver = std::make_unique<openaladdin::audio::Z80SoundDriver>(
+                        audio_rom,
+                        [&audio_bridge](const auto& event) {
+                            audio_bridge.handle(event);
+                        }
+                    );
+                    const std::array<std::uint8_t, 1> startup_sound{0};
+                    sound_driver->command(0x10, startup_sound);
+                } catch (const std::exception& error) {
+                    std::cerr << "openaladdin: audio disabled: " << error.what() << '\n';
+                    sound_driver.reset();
+                    audio_output.close();
+                }
+            }
         }
 
         std::ofstream state_file;
@@ -358,6 +425,16 @@ int main(int argc, char** argv) {
             }
 
             engine.update(input);
+            if (sound_driver) {
+                try {
+                    sound_driver->tick();
+                } catch (const std::exception& error) {
+                    std::cerr << "openaladdin: sound driver stopped: "
+                              << error.what() << '\n';
+                    sound_driver.reset();
+                    audio_output.reset();
+                }
+            }
             if (state_file) {
                 engine.write_state(state_file, input_token);
             }
@@ -405,6 +482,7 @@ int main(int argc, char** argv) {
 
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
+        audio_output.close();
         SDL_Quit();
         return 0;
     } catch (const std::exception& error) {
