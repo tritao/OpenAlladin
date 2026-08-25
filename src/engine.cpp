@@ -560,6 +560,41 @@ void Engine::update_actor_movement() {
             | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
             | read_u8(address + 3);
     };
+    const auto read_u16 = [&](std::uint32_t address) -> std::uint16_t {
+        return static_cast<std::uint16_t>(
+            (static_cast<std::uint16_t>(read_u8(address)) << 8)
+            | read_u8(address + 1));
+    };
+    const auto write_actor_value = [](ActorState& actor, std::uint16_t offset, int size, std::uint32_t value) {
+        if (size == 1) {
+            const auto byte = static_cast<std::uint8_t>(value);
+            switch (offset) {
+            case 0x00: actor.type = byte; break;
+            case 0x09: actor.facing_x_flip = byte; break;
+            case 0x12: actor.movement_loop_timer = byte; break;
+            case 0x35: actor.facing_y_flip = byte; break;
+            case 0x36: actor.movement_command_timer = byte; break;
+            case 0x3C: actor.flags = byte; break;
+            default: break;
+            }
+        } else if (size == 2) {
+            const auto word = static_cast<std::uint16_t>(value);
+            switch (offset) {
+            case 0x02: actor.x = word; break;
+            case 0x04: actor.y = word; break;
+            default: break;
+            }
+        } else {
+            switch (offset) {
+            case 0x0A: actor.movement_pc = value; break;
+            case 0x0E: actor.movement_loop_pc = value; break;
+            case 0x14: actor.frame_ptr = value; break;
+            case 0x20: actor.animation_pc = value; break;
+            case 0x38: actor.movement_return_pc = value; break;
+            default: break;
+            }
+        }
+    };
 
     for (ActorState& actor : actors_) {
         if (actor.type == 0 || actor.terminal_timer != 0 || actor.movement_pc == 0) {
@@ -591,9 +626,13 @@ void Engine::update_actor_movement() {
 
             switch (opcode) {
             case 0x80:  // Movement_Jump: absolute long target.
-                actor.movement_pc = read_u32(cursor + 2);
-                cursor_committed = true;
-                break;
+                cursor = read_u32(cursor + 2);
+                if (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94) {
+                    actor.movement_pc = cursor;
+                    cursor_committed = true;
+                    break;
+                }
+                continue;
             case 0x81:  // Movement_ToggleFacing.
                 if (read_u8(cursor + 1) != 0) {
                     actor.facing_y_flip = static_cast<std::uint8_t>(actor.facing_y_flip ^ 0xFF);
@@ -611,6 +650,22 @@ void Engine::update_actor_movement() {
                 actor.animation_pc = 0;
                 cursor += 2;
                 continue;
+            case 0x83: {  // Movement_WriteActorOrRamValue.
+                const std::uint8_t operand = read_u8(cursor + 1);
+                const int size = (operand & 0x0F) == 1 || (operand & 0x0F) == 2 ? 2 : 4;
+                const std::uint16_t offset = read_u16(cursor + 2);
+                const std::uint32_t value = size == 2
+                    ? read_u16(cursor + 4)
+                    : read_u32(cursor + 4);
+                // Absolute work-RAM writes need a RAM model. Actor-relative
+                // writes are safe to mirror now and cover the confirmed
+                // movement streams that update animation/state cursors.
+                if ((operand & 0x10) != 0) {
+                    write_actor_value(actor, offset, size, value);
+                }
+                cursor += static_cast<std::uint32_t>(4 + size);
+                continue;
+            }
             case 0x84:  // Movement_SetCommandTimer.
                 // In movement mode the shared handler uses the high bit to
                 // select the per-frame command timer. Without it, the
@@ -666,9 +721,60 @@ void Engine::update_actor_movement() {
             case 0x91:  // Movement_PushParameter; no positional effect yet.
                 cursor += 6;
                 continue;
+            case 0x92: {  // Movement_CallOrReturn.
+                const std::uint8_t operand = read_u8(cursor + 1);
+                if ((operand & 0x80) != 0) {
+                    cursor = actor.movement_return_pc;
+                } else {
+                    actor.movement_return_pc = cursor + 6;
+                    cursor = read_u32(cursor + 2);
+                }
+                if (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94) {
+                    actor.movement_pc = cursor;
+                    cursor_committed = true;
+                    break;
+                }
+                continue;
+            }
+            case 0x93: {  // Movement_PlayerWithinX.
+                const int threshold = read_u8(cursor + 1) == 0xFF
+                    ? 0x140
+                    : read_u8(cursor + 1);
+                const int distance = std::abs(player_world_x() - static_cast<int>(actor.x));
+                if (distance <= threshold) {
+                    cursor = read_u32(cursor + 2);
+                    if (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94) {
+                        actor.movement_pc = cursor;
+                        cursor_committed = true;
+                        break;
+                    }
+                    continue;
+                }
+                // A failed condition retries the same step on the next tick.
+                cursor_committed = true;
+                break;
+            }
+            case 0x94: {  // Movement_PlayerWithinY.
+                const int threshold = read_u8(cursor + 1);
+                const int distance = std::abs(player_world_y() - static_cast<int>(actor.y));
+                if (distance <= threshold) {
+                    cursor = read_u32(cursor + 2);
+                    if (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94) {
+                        actor.movement_pc = cursor;
+                        cursor_committed = true;
+                        break;
+                    }
+                    continue;
+                }
+                // The original Y condition falls through when the player is
+                // outside the threshold; the inline jump after the command
+                // handles the alternate path.
+                cursor += 6;
+                continue;
+            }
             default:
-                // Conditional, RAM-write, spawn, and velocity commands are
-                // intentionally not guessed. Leave the cursor at the command
+                // Other conditional, RAM-write, spawn, and velocity commands
+                // are intentionally not guessed. Leave the cursor at the command
                 // so a trace can identify the next missing handler.
                 actor.movement_pc = cursor;
                 cursor_committed = true;

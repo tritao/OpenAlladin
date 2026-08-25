@@ -541,6 +541,7 @@ local inject_actor_facing_x = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FA
 local inject_actor_facing_y = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FACING_Y", -1))
 local inject_actor_flags = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FLAGS", -1))
 local inject_actor_movement_timer = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_MOVEMENT_TIMER", -1))
+local inject_actor_return_pc = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_RETURN_PC", -1))
 
 local watches = dofile(root .. "/re/mame/lua/watches.lua")({
     core = core,
@@ -593,7 +594,8 @@ local actors = dofile(root .. "/re/mame/lua/actors.lua")({
     injection_facing_x = inject_actor_facing_x,
     injection_facing_y = inject_actor_facing_y,
     injection_flags = inject_actor_flags,
-    injection_movement_timer = inject_actor_movement_timer
+    injection_movement_timer = inject_actor_movement_timer,
+    injection_return_pc = inject_actor_return_pc
 })
 
 local function port_tags_json()

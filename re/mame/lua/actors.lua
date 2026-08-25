@@ -36,6 +36,7 @@ return function(options)
     local injection_facing_y = options.injection_facing_y
     local injection_flags = options.injection_flags
     local injection_movement_timer = options.injection_movement_timer
+    local injection_return_pc = options.injection_return_pc
 
     function actor.inject(frame)
         if frame ~= injection_frame then
@@ -70,6 +71,9 @@ return function(options)
         end
         if injection_movement_timer >= 0 then
             space:write_u8(record + 0x36, injection_movement_timer & 0xff)
+        end
+        if injection_return_pc >= 0 then
+            space:write_u32(record + 0x38, injection_return_pc & 0xffffffff)
         end
         space:write_u8(record + 0x37, 0)
 

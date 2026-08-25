@@ -13,16 +13,15 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_START = 361
 FRAME_COUNT = 20
 SLOT = 31
-FIELDS = (
+MOVEMENT_FIELDS = (
     "x",
     "y",
-    "facing_x_flip",
-    "facing_y_flip",
     "movement_pc",
     "movement_loop_pc",
     "movement_loop_timer",
     "movement_command_timer",
 )
+FACING_FIELDS = ("facing_x_flip", "facing_y_flip")
 
 
 def load_states(path: Path) -> dict[int, dict]:
@@ -39,11 +38,18 @@ def actor_at(states: dict[int, dict], frame: int) -> dict:
     return next(actor for actor in states[frame]["actors"] if actor["slot"] == SLOT)
 
 
-def project(actor: dict) -> dict:
-    return {field: actor.get(field, 0) for field in FIELDS}
+def project(actor: dict, include_facing: bool) -> dict:
+    fields = MOVEMENT_FIELDS + (FACING_FIELDS if include_facing else ())
+    return {field: actor.get(field, 0) for field in fields}
 
 
-def capture_mame(trace: Path, movement_pc: str) -> None:
+def capture_mame(
+    trace: Path,
+    movement_pc: str,
+    x: int = 150,
+    y: int = 416,
+    return_pc: str | None = None,
+) -> None:
     trace.mkdir(parents=True, exist_ok=True)
     environment = dict(os.environ)
     environment.update(
@@ -58,14 +64,17 @@ def capture_mame(trace: Path, movement_pc: str) -> None:
             "OPENALADDIN_INJECT_ACTOR_TYPE": "125",
             "OPENALADDIN_INJECT_ACTOR_PC": "0x125952",
             "OPENALADDIN_INJECT_ACTOR_MOVEMENT_PC": movement_pc,
-            "OPENALADDIN_INJECT_ACTOR_X": "150",
-            "OPENALADDIN_INJECT_ACTOR_Y": "416",
+            "OPENALADDIN_INJECT_ACTOR_X": str(x),
+            "OPENALADDIN_INJECT_ACTOR_Y": str(y),
             "OPENALADDIN_INJECT_ACTOR_FACING_X": "0",
             "OPENALADDIN_INJECT_ACTOR_FACING_Y": "0",
             "OPENALADDIN_INJECT_ACTOR_FLAGS": "0",
             "OPENALADDIN_INJECT_ACTOR_MOVEMENT_TIMER": "0",
         }
     )
+    environment.pop("OPENALADDIN_INJECT_ACTOR_RETURN_PC", None)
+    if return_pc is not None:
+        environment["OPENALADDIN_INJECT_ACTOR_RETURN_PC"] = return_pc
     subprocess.run(
         [str(ROOT / "tools/openaladdin/mame/run.sh")],
         cwd=ROOT,
@@ -77,13 +86,17 @@ def capture_mame(trace: Path, movement_pc: str) -> None:
 
 def main() -> int:
     probes = (
-        ("81", "0x11f730"),
-        ("82", "0x11f728"),
-        ("8d", "0x12171c"),
+        ("81", "0x11f730", 150, 416, None),
+        ("82", "0x11f728", 150, 416, None),
+        ("8d", "0x12171c", 150, 416, None),
+        ("92-return", "0x1209ba", 150, 416, "0x1209be"),
+        ("93-far", "0x120432", 150, 416, None),
+        ("93-near", "0x120432", 32, 416, None),
+        ("94-far", "0x1204ee", 150, 416, None),
     )
-    for name, movement_pc in probes:
+    for name, movement_pc, x, y, return_pc in probes:
         trace = ROOT / f"build/re/actor-vm-command-{name}"
-        capture_mame(trace, movement_pc)
+        capture_mame(trace, movement_pc, x, y, return_pc)
         source = load_states(trace / "state.jsonl")
 
         native_output = trace / "native-state.jsonl"
@@ -112,8 +125,9 @@ def main() -> int:
         native = load_states(native_output)
 
         for relative in range(FRAME_COUNT + 1):
-            expected = project(actor_at(source, SOURCE_START + relative))
-            actual = project(actor_at(native, relative))
+            include_facing = name in {"81", "8d"}
+            expected = project(actor_at(source, SOURCE_START + relative), include_facing)
+            actual = project(actor_at(native, relative), include_facing)
             assert actual == expected, (
                 f"movement command {name} divergence at relative frame {relative}: "
                 f"native={actual} mame={expected}"
