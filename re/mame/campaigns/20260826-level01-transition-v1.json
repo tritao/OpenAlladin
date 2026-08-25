@@ -1,0 +1,39 @@
+{
+  "campaign": "20260826-level01-transition-v1",
+  "status": "controlled-proof",
+  "purpose": "Replayable proof of the level-01 exit predicate, countdown gate, and scene-script advance",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "ead99907c876d7b6ab27480a489a0948e9805f21",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [{
+    "id": "controlled-scene-transition-v1",
+    "trace_dir": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1",
+    "frames": 1200,
+    "input": "none*1200",
+    "load_state": "clean-upper-platform",
+    "loaded_state_source": "build/re/clean-upper-platform-save-20260825/states/genesis/clean-upper-platform.sta",
+    "memory_pokes": [
+      { "frame": 1, "address": "0xFF7E02", "name": "PLAYER_WORLD_X", "value": "0x1288", "width": "u16" },
+      { "frame": 1, "address": "0xFF7E04", "name": "PLAYER_WORLD_Y", "value": "0x0100", "width": "u16" }
+    ],
+    "checkpoints": [
+      { "frame": 1, "name": "boundary-seeded", "state": "states/genesis/boundary-seeded.sta", "scene_state": 1, "world": [4744, 256] },
+      { "frame": 50, "name": "exit-countdown", "state": "states/genesis/exit-countdown.sta", "scene_state": 1 },
+      { "frame": 404, "name": "scene-script-advanced", "state": "states/genesis/scene-script-advanced.sta", "scene_state": 1 },
+      { "frame": 500, "name": "scene3-active", "state": "states/genesis/scene3-active.sta", "scene_state": 3, "script_cursor": "0x408A" },
+      { "frame": 1200, "name": "transition-settled", "state": "states/genesis/transition-settled.sta", "scene_state": 3 }
+    ]
+  }],
+  "write_path": [
+    { "frame": 1, "pc": "0x001B5B66", "address": "0xFFF0E9", "value": "0xFF", "meaning": "exit countdown armed" },
+    { "frame": 406, "pc": "0x001A8ED8", "address": "0xFF7E26", "value": "0x03", "meaning": "scene script advances SCENE_STATE" },
+    { "frame": 408, "pc": "0x001AA720", "address": "0xFFF0D0", "value": "0x00", "meaning": "transition gate clear" },
+    { "frame": 408, "pc": "0x001AA720", "address": "0xFFF0DB", "value": "0x00", "meaning": "transition lock clear" },
+    { "frame": 408, "pc": "0x001AA720", "address": "0xFFF0DC", "value": "0x00", "meaning": "transition countdown clear" },
+    { "frame": 408, "pc": "0x001AA720", "address": "0xFFF0E6", "value": "0x00", "meaning": "terminal transition clear" }
+  ],
+  "limitation": "This is a controlled boundary proof, not evidence that the current natural controller route reaches the boundary."
+}
