@@ -655,6 +655,23 @@ def command_assets(args: argparse.Namespace) -> int:
     return run_tool("openaladdin/assets/extract.py", forwarded)
 
 
+def command_coverage_merge(args: argparse.Namespace) -> int:
+    forwarded: list[str] = []
+    if args.trace_dirs:
+        forwarded.extend(str(resolve(path)) for path in args.trace_dirs)
+    else:
+        forwarded.extend(["--trace-root", str(resolve(args.trace_root))])
+    forwarded.extend(["--output", str(resolve(args.output))])
+    return run_tool("openaladdin/mame/coverage.py", forwarded)
+
+
+def command_coverage_import_ghidra(args: argparse.Namespace) -> int:
+    forwarded = [str(resolve(args.coverage)), "--output", str(resolve(args.output))]
+    if args.project_dir:
+        forwarded.extend(["--project-dir", str(resolve(args.project_dir))])
+    return run_tool("openaladdin/ghidra/import_coverage.py", forwarded)
+
+
 def _field_size(type_name: str) -> int:
     normalized = type_name.strip().lower()
     if normalized in {"u8", "i8", "s8", "byte", "bool"}:
@@ -790,6 +807,16 @@ def print_status(rom: Path) -> int:
     print(f"Actor fields        {actor_fields} named / {parse_int(actor.get('size', 0)) if actor else 0} bytes")
     print(f"Animation opcodes   {animation_count}/{animation_total}")
     print(f"Movement opcodes    {movement_count}/{movement_total}")
+    coverage_path = ROOT / "build/re/coverage.json"
+    try:
+        coverage = json.loads(coverage_path.read_text(encoding="utf-8"))
+        summary = coverage.get("summary") or {}
+        print(
+            f"Runtime coverage    {summary.get('unique_pc_count', 0)} PCs / "
+            f"{summary.get('scenario_count', 0)} scenarios"
+        )
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        print("Runtime coverage    missing")
     if actual is None:
         print(f"ROM identity        {default_name}: unavailable")
     else:
@@ -916,6 +943,19 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("genesis", type=Path)
     compare.add_argument("openaladdin", type=Path)
     compare.set_defaults(function=lambda args: run_tool("openaladdin/mame/compare_state.py", [str(resolve(args.genesis)), str(resolve(args.openaladdin))]))
+
+    coverage = commands.add_parser("coverage", help="merge and import dynamic MAME execution observations")
+    coverage_commands = coverage.add_subparsers(dest="coverage_command", required=True)
+    coverage_merge = coverage_commands.add_parser("merge", help="merge sampled frame PCs from MAME traces")
+    coverage_merge.add_argument("trace_dirs", nargs="*", type=Path)
+    coverage_merge.add_argument("--trace-root", type=Path, default=ROOT / "build/re/traces")
+    coverage_merge.add_argument("--output", type=Path, default=ROOT / "build/re/coverage.json")
+    coverage_merge.set_defaults(function=command_coverage_merge)
+    coverage_import = coverage_commands.add_parser("import-ghidra", help="bookmark observed PCs in Ghidra")
+    coverage_import.add_argument("coverage", nargs="?", type=Path, default=ROOT / "build/re/coverage.json")
+    coverage_import.add_argument("--output", type=Path, default=ROOT / "build/re/coverage-ghidra.json")
+    coverage_import.add_argument("--project-dir", type=Path)
+    coverage_import.set_defaults(function=command_coverage_import_ghidra)
 
     status = commands.add_parser("status", help="show repository and RE progress status")
     add_rom_argument(status)
