@@ -2,7 +2,7 @@
 # Frame indices come from the first concrete references in animations.json:
 # idle/run use the standard player stream and jump uses the jump stream.
 origin: [0x80, 0x80]
-palette_line: 2
+palette_line: 3
 
 frames:
   idle: 201
@@ -14,4 +14,4 @@ evidence:
   - build_assets_animations_PLAYER_ANIM_IDLE
   - build_assets_animations_PLAYER_ANIM_RUN
   - build_assets_animations_PLAYER_ANIM_JUMP
-  - mame_level01_cram_palette_line_2
+  - mame_level01_cram_palette_line_3

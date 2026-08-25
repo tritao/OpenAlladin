@@ -14,6 +14,10 @@ namespace {
 constexpr int kScreenWidth = 320;
 constexpr int kScreenHeight = 224;
 constexpr int kTerrainVisualOffsetY = 0xF0;
+// The player frame origin is one 16-pixel tile above the terrain query
+// origin. The ROM keeps these coordinate systems distinct: terrain probes use
+// WORLD_Y - 0xF0, while the VDP sprite origin uses WORLD_Y - 0x100.
+constexpr int kPlayerVisualOffsetY = 0x100;
 constexpr int kTerrainContourRomOffset = 0x2FD2;
 constexpr int kTerrainContourRomSize = 0x1000;
 constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
@@ -424,7 +428,7 @@ void Engine::load(
 ) {
     level_.load(asset_root, rom_path);
     sprites_.load(sprite_root.empty() ? asset_root + "/../../sprites" : sprite_root);
-    // Level-01 captures show the player using CRAM line 2. Reuse the exact
+    // Level-01 captures show the player using CRAM line 3. Reuse the exact
     // extracted scene palette instead of the Chopper preview fallback.
     sprites_.set_palette(level_.palette());
     if (!rom_path.empty()) {
@@ -1298,8 +1302,8 @@ int Engine::visual_x() const {
 }
 
 int Engine::visual_y() const {
-    // The terrain resolver indexes rows from WORLD_CAMERA_Y + PLAYER_Y - 0xF0.
-    return player_world_y() - kTerrainVisualOffsetY;
+    // The sprite origin is one tile above the terrain resolver's visual row.
+    return player_world_y() - kPlayerVisualOffsetY;
 }
 
 SpritePose Engine::sprite_pose() const {

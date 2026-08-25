@@ -63,7 +63,10 @@ public:
     static constexpr int kBrakeFrame = 233;
     static constexpr int kJumpFrame = 161;
     static constexpr int kLandingFrame = 171;
-    static constexpr int kPlayerPaletteLine = 2;
+    // The level-01 gameplay checkpoint uses CRAM entries 0x30..0x3F,
+    // palette line 3. The frame metadata keeps its local indices; rendering
+    // applies this runtime line to the player multipart frame.
+    static constexpr int kPlayerPaletteLine = 3;
 
 private:
     std::vector<SpriteFrame> frames_;

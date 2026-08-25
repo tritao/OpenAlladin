@@ -13,7 +13,9 @@ from openaladdin.analysis.visual_diff import compare, parse_region, read_image, 
 
 
 ROOT = Path(__file__).resolve().parents[3]
-GENESIS_PLAYER_VISUAL_Y_OFFSET = 0xF0
+# Terrain probes use WORLD_Y - 0xF0, but the VDP player frame origin is one
+# 16-pixel tile above that coordinate system.
+GENESIS_PLAYER_VISUAL_Y_OFFSET = 0x100
 
 
 def load_checkpoint(trace_dir: Path, frame_number: int) -> dict[str, object]:

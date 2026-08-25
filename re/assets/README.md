@@ -114,7 +114,7 @@ The current native graphics slice uses the player frame records in
 idle, run, brake, jump, and landing streams; conditional branches and dynamic
 action selection remain follow-up work. The 0x80/0x80 Chopper frame origin is
 normalized into pixel offsets by the extractor, and level-01's observed CRAM
-palette line 2 is used for the player.
+palette line 3 is used for the player.
 
 The RNC path scans the entire ROM, decodes every valid `RNC\x01` block, and
 records known level-table consumers. Blocks without a known consumer are
