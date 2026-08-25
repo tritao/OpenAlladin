@@ -524,6 +524,8 @@ fall-through pair at `0x001B54D2`/`0x001B54D8`.
 The `0x27` transition fixture reaches `0x001B54A6`, subtracts `0x50` from
 `PLAYER_Y`, selects animation `0x001223D0`, sets the response-active flag, and
 clears the response timer before camera follow exposes local `(87,346)`.
+The `0x25` fixture reaches `0x001B54E0` and sets `TERRAIN_STATE=0xFF`; its
+scene-state-5 branch is recorded separately for a later transition probe.
 The surface-mode fixtures confirm the shared `0x001B5492`/`0x001B549C`
 blocks: behaviors `0x01` through `0x04` write `TERRAIN_SURFACE_MODE=0`, while
 behaviors `0x05` through `0x07` write it to `1`.

@@ -1537,6 +1537,11 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_query_state_b = 0xFF;
         player_.terrain_query_state_a = 0xFF;
         break;
+    case 0x25:  // TerrainHandler_SetTerrainStateBlock (0x001B54E0)
+        // The common body writes FFF0D6. Its scene-state-5 branch targets a
+        // separate transition routine and remains outside this state mirror.
+        player_.terrain_state = 0xFF;
+        break;
     case 0x27:  // TerrainHandler_TransitionResponse (0x001B54A6)
         // Exact ROM body: set FFF0CF, SUBI.W #$50,PLAYER_Y, select the
         // transition stream, clear its timer, set FFF0E7, and clear FFF0CC.
