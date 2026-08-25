@@ -13,6 +13,7 @@ from openaladdin.analysis.visual_diff import compare, parse_region, read_image, 
 
 
 ROOT = Path(__file__).resolve().parents[3]
+GENESIS_PLAYER_VISUAL_Y_OFFSET = 0xF0
 
 
 def load_checkpoint(trace_dir: Path, frame_number: int) -> dict[str, object]:
@@ -76,6 +77,106 @@ def checkpoint_command(
     return command
 
 
+def _sprite_bounds(frame_manifest: Path, frame_pointer: int) -> tuple[int, int, int, int] | None:
+    """Return the visible multipart-frame bounds relative to its draw origin."""
+    if not frame_manifest.exists():
+        return None
+    try:
+        document = json.loads(frame_manifest.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    for frame in document.get("frames", []):
+        address = frame.get("address")
+        if isinstance(address, str):
+            try:
+                address = int(address, 0)
+            except ValueError:
+                continue
+        if int(address or -1) != frame_pointer:
+            continue
+        bounds: list[int] | None = None
+        for part in frame.get("parts", []):
+            offset = part.get("offset_signed") or part.get("offset_pixels")
+            tile_info = part.get("tile_info", {})
+            width = tile_info.get("pixel_width")
+            height = tile_info.get("pixel_height")
+            if not offset or not width or not height:
+                continue
+            part_bounds = [
+                int(offset[0]),
+                int(offset[1]),
+                int(offset[0]) + int(width),
+                int(offset[1]) + int(height),
+            ]
+            if bounds is None:
+                bounds = part_bounds
+            else:
+                bounds[0] = min(bounds[0], part_bounds[0])
+                bounds[1] = min(bounds[1], part_bounds[1])
+                bounds[2] = max(bounds[2], part_bounds[2])
+                bounds[3] = max(bounds[3], part_bounds[3])
+        if bounds is not None:
+            return tuple(bounds)
+        return None
+    return None
+
+
+def player_region(
+    checkpoint: dict[str, object],
+    image_width: int,
+    image_height: int,
+    padding: int,
+    frame_manifest: Path,
+) -> tuple[tuple[int, int, int, int], dict[str, object]]:
+    """Map the ROM player origin and multipart frame to a screenshot crop."""
+    if padding < 0:
+        raise ValueError("--player-padding must be non-negative")
+    player = checkpoint["player"]
+    camera = checkpoint["camera"]
+    world_x = int(player.get("world_x", int(player["x"]) + int(camera["x"])))
+    world_y = int(player.get("world_y", int(player["y"]) + int(camera["y"])))
+    origin_x = world_x - int(camera["x"])
+    origin_y = world_y - GENESIS_PLAYER_VISUAL_Y_OFFSET - int(camera["y"])
+    frame_pointer = int(player["frame_ptr"])
+    bounds = _sprite_bounds(frame_manifest, frame_pointer)
+    if bounds is None:
+        # Fallback for traces captured before frames.json recorded the frame.
+        bounds = (-32, -48, 32, 24)
+    raw = (
+        origin_x + bounds[0] - padding,
+        origin_y + bounds[1] - padding,
+        origin_x + bounds[2] + padding,
+        origin_y + bounds[3] + padding,
+    )
+    x0 = max(0, raw[0])
+    y0 = max(0, raw[1])
+    x1 = min(image_width, raw[2])
+    y1 = min(image_height, raw[3])
+    if x1 <= x0 or y1 <= y0:
+        raise ValueError(f"player sprite is outside the {image_width}x{image_height} snapshot")
+    region = (x0, y0, x1 - x0, y1 - y0)
+    metadata = {
+        "screen_origin": [origin_x, origin_y],
+        "sprite_bounds": list(bounds),
+        "raw_region": list(raw),
+        "region": list(region),
+        "padding": padding,
+        "visual_y_offset": GENESIS_PLAYER_VISUAL_Y_OFFSET,
+        "frame_manifest": str(frame_manifest),
+    }
+    return region, metadata
+
+
+def crop_image(image: tuple[int, int, bytes], region: tuple[int, int, int, int]) -> tuple[int, int, bytes]:
+    width, height, pixels = image
+    x0, y0, crop_width, crop_height = region
+    rows = []
+    for y in range(y0, y0 + crop_height):
+        start = (y * width + x0) * 3
+        rows.append(pixels[start:start + crop_width * 3])
+    return crop_width, crop_height, b"".join(rows)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--trace-dir", type=Path, required=True)
@@ -84,6 +185,17 @@ def main() -> int:
     parser.add_argument("--native-binary", type=Path, default=ROOT / "build/openaladdin")
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--region", help="only compare x,y,width,height")
+    parser.add_argument(
+        "--player-region",
+        action="store_true",
+        help="derive a crop from the MAME player origin, camera, and frame manifest",
+    )
+    parser.add_argument(
+        "--player-padding",
+        type=int,
+        default=4,
+        help="pixels around the derived player sprite bounds (default: 4)",
+    )
     parser.add_argument("--max-different-pixels", type=int, default=0)
     parser.add_argument("--max-channel-error", type=int, default=0)
     parser.add_argument(
@@ -126,10 +238,41 @@ def main() -> int:
 
         expected = read_image(reference)
         actual = read_image(native_output)
-        region = parse_region(args.region, expected[0], expected[1])
+        if args.region and args.player_region:
+            raise ValueError("--region and --player-region are mutually exclusive")
+        player_metadata = None
+        if args.player_region:
+            region, player_metadata = player_region(
+                checkpoint,
+                expected[0],
+                expected[1],
+                args.player_padding,
+                ROOT / "build/assets/sprites/frames.json",
+            )
+        else:
+            region = parse_region(args.region, expected[0], expected[1])
         diff = compare(expected, actual, region)
         overlay_pixels = diff.pop("overlay_pixels")
         write_ppm(overlay_output, expected[0], expected[1], overlay_pixels)
+        player_diff = None
+        if player_metadata is not None:
+            expected_crop = crop_image(expected, region)
+            actual_crop = crop_image(actual, region)
+            player_overlay_output = output_dir / "player-diff.ppm"
+            player_reference_output = output_dir / "player-reference.ppm"
+            player_native_output = output_dir / "player-native.ppm"
+            player_report = compare(expected_crop, actual_crop, (0, 0, region[2], region[3]))
+            player_overlay_pixels = player_report.pop("overlay_pixels")
+            write_ppm(player_reference_output, *expected_crop)
+            write_ppm(player_native_output, *actual_crop)
+            write_ppm(player_overlay_output, region[2], region[3], player_overlay_pixels)
+            player_diff = {
+                "region": player_metadata,
+                "reference": str(player_reference_output),
+                "native": str(player_native_output),
+                "overlay": str(player_overlay_output),
+                "diff": player_report,
+            }
         report = {
             "format": "openaladdin-visual-audit-v1",
             "trace_dir": str(trace_dir),
@@ -141,6 +284,8 @@ def main() -> int:
             "checkpoint": checkpoint,
             "diff": diff,
         }
+        if player_metadata is not None:
+            report["player"] = player_diff
         report_output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
         print(
             f"visual audit: frame={args.frame} "
@@ -148,6 +293,14 @@ def main() -> int:
             f"max_channel_delta={diff['max_channel_delta']} "
             f"bbox={diff['bounding_box']}"
         )
+        if player_diff is not None:
+            focused = player_diff["diff"]
+            print(
+                "player audit: "
+                f"region={player_metadata['region']} "
+                f"different={focused['different_pixels']}/{focused['compared_pixels']} "
+                f"bbox={focused['bounding_box']}"
+            )
         if args.report_only:
             return 0
         if (

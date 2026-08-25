@@ -264,7 +264,10 @@ std::vector<std::uint8_t> read_binary(const std::string& path) {
 
 SDL_Color genesis_color(std::uint16_t word) {
     const auto channel = [](std::uint16_t value, int shift) {
-        return static_cast<std::uint8_t>(((value >> shift) & 7) * 255 / 7);
+        static constexpr std::uint8_t levels[8] = {
+            0, 52, 87, 116, 144, 172, 206, 255,
+        };
+        return levels[(value >> shift) & 7];
     };
     return SDL_Color{channel(word, 1), channel(word, 5), channel(word, 9), 255};
 }

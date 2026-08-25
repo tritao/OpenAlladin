@@ -66,9 +66,14 @@ PYTHONPATH=tools python3 tools/openaladdin/analysis/audit_visual.py \
   --trace-dir build/re/visual-audit/mame \
   --frame 1300 \
   --reference build/re/visual-audit/mame/snapshots/gameplay.png \
-  --region 40,100,160,100 \
+  --player-region \
   --report-only
 ```
 
-The report directory contains `native.ppm`, `diff.ppm`, and `report.json`.
+`--player-region` derives the crop from the MAME player's world position,
+camera origin, frame pointer, and the native multipart-frame manifest. The
+report directory contains the full-frame `native.ppm`/`diff.ppm` pair plus
+`player-reference.ppm`, `player-native.ppm`, and `player-diff.ppm` for the
+focused comparison. Use `--player-padding N` to enlarge that crop.
+
 Remove `--report-only` once a checkpoint is expected to match exactly.

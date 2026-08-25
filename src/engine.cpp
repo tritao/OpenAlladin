@@ -232,7 +232,10 @@ void Level::load(const std::string& asset_root, const std::string& rom_path) {
     for (std::size_t i = 0; i + 1 < palette_bytes.size(); i += 2) {
         const std::uint16_t word = static_cast<std::uint16_t>(palette_bytes[i] << 8 | palette_bytes[i + 1]);
         const auto channel = [](std::uint16_t value, int shift) {
-            return static_cast<std::uint8_t>(((value >> shift) & 7) * 255 / 7);
+            static constexpr std::uint8_t levels[8] = {
+                0, 52, 87, 116, 144, 172, 206, 255,
+            };
+            return levels[(value >> shift) & 7];
         };
         palette_.push_back(SDL_Color{channel(word, 1), channel(word, 5), channel(word, 9), 255});
     }

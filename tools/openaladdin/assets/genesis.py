@@ -24,7 +24,10 @@ def decode_tile(tile_data: bytes, tile_index: int) -> list[list[int]]:
 
 
 def genesis_color(word: int) -> tuple[int, int, int, int]:
-    return tuple(((word >> shift) & 7) * 255 // 7 for shift in (1, 5, 9)) + (255,)
+    # Match MAME's Sega VDP DAC table rather than linearly stretching the
+    # three-bit CRAM channels. This is observable in captured screenshots.
+    levels = (0, 52, 87, 116, 144, 172, 206, 255)
+    return tuple(levels[(word >> shift) & 7] for shift in (1, 5, 9)) + (255,)
 
 
 def decode_palette(data: bytes, palette_index: int = 0) -> list[tuple[int, int, int, int]]:
