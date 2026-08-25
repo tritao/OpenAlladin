@@ -84,6 +84,7 @@ public:
     bool set_frame(int sprite_frame);
     void set_frame_pointer(std::uint32_t frame_pointer);
     void set_animation_state(std::uint32_t animation_pc, int timer);
+    void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     void select_stream_entry(std::uint32_t stream_entry);
     bool finished() const;

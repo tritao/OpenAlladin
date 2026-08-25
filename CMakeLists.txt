@@ -188,5 +188,13 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
                     ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/mame_headless.py")
         set_tests_properties(mame_headless PROPERTIES
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
+            NAME native_framebuffer
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_framebuffer.py"
+                    "$<TARGET_FILE:openaladdin>")
+        set_tests_properties(native_framebuffer PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
     endif()
 endif()

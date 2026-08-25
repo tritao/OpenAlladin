@@ -22,11 +22,15 @@ struct Options {
     int frames = -1;
     bool no_window = false;
     bool demo = false;
+    bool render_only = false;
     std::string state_output;
+    std::string framebuffer_output;
+    int framebuffer_frame = -1;
     std::string input_schedule;
     std::string checkpoint_player;
     std::string checkpoint_frame_ptr;
     std::string checkpoint_animation;
+    std::string checkpoint_facing_x_flip;
     std::string checkpoint_camera;
 };
 
@@ -134,8 +138,14 @@ Options parse_options(int argc, char** argv) {
             options.no_window = true;
         } else if (argument == "--demo") {
             options.demo = true;
+        } else if (argument == "--render-checkpoint") {
+            options.render_only = true;
         } else if (argument == "--state-output" && i + 1 < argc) {
             options.state_output = argv[++i];
+        } else if (argument == "--framebuffer-out" && i + 1 < argc) {
+            options.framebuffer_output = argv[++i];
+        } else if (argument == "--framebuffer-frame" && i + 1 < argc) {
+            options.framebuffer_frame = std::stoi(argv[++i]);
         } else if (argument == "--input-schedule" && i + 1 < argc) {
             options.input_schedule = argv[++i];
         } else if (argument == "--checkpoint-player" && i + 1 < argc) {
@@ -144,14 +154,18 @@ Options parse_options(int argc, char** argv) {
             options.checkpoint_frame_ptr = argv[++i];
         } else if (argument == "--checkpoint-animation" && i + 1 < argc) {
             options.checkpoint_animation = argv[++i];
+        } else if (argument == "--checkpoint-facing-x-flip" && i + 1 < argc) {
+            options.checkpoint_facing_x_flip = argv[++i];
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
-            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--demo]\n"
-                         "       [--state-output PATH] [--input-schedule SCHEDULE]\n"
+            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--demo] [--render-checkpoint]\n"
+                         "       [--state-output PATH] [--framebuffer-out PATH] [--framebuffer-frame N]\n"
+                         "       [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
                          "       [--checkpoint-frame-ptr ADDRESS]\n"
                          "       [--checkpoint-animation PC,TIMER]\n"
+                         "       [--checkpoint-facing-x-flip VALUE]\n"
                          "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n";
             std::exit(0);
         } else {
@@ -196,6 +210,11 @@ int main(int argc, char** argv) {
             engine.set_checkpoint_animation(
                 static_cast<std::uint32_t>(std::stoul(options.checkpoint_animation.substr(0, separator), nullptr, 0)),
                 std::stoi(options.checkpoint_animation.substr(separator + 1), nullptr, 0)
+            );
+        }
+        if (!options.checkpoint_facing_x_flip.empty()) {
+            engine.set_checkpoint_facing_x_flip(
+                std::stoi(options.checkpoint_facing_x_flip, nullptr, 0) != 0
             );
         }
         if (!options.checkpoint_camera.empty()) {
@@ -263,7 +282,20 @@ int main(int argc, char** argv) {
         bool previous_attack = false;
         const std::vector<std::string> scheduled_inputs = split_schedule(options.input_schedule);
         int rendered_frames = 0;
-        while (!engine.quit_requested() && (options.frames < 0 || rendered_frames < options.frames)) {
+        bool framebuffer_written = false;
+        if (options.render_only) {
+            engine.render(renderer);
+            if (!options.framebuffer_output.empty()
+                && (options.framebuffer_frame < 0 || engine.frame() == options.framebuffer_frame)) {
+                const std::filesystem::path framebuffer_path(options.framebuffer_output);
+                if (framebuffer_path.has_parent_path()) {
+                    std::filesystem::create_directories(framebuffer_path.parent_path());
+                }
+                engine.write_framebuffer_ppm(options.framebuffer_output);
+                framebuffer_written = true;
+            }
+        } else {
+            while (!engine.quit_requested() && (options.frames < 0 || rendered_frames < options.frames)) {
             openaladdin::InputState input;
             SDL_Event event{};
             while (SDL_PollEvent(&event)) {
@@ -322,10 +354,35 @@ int main(int argc, char** argv) {
             }
             engine.render(renderer);
             ++rendered_frames;
+            if (!options.framebuffer_output.empty()
+                && options.framebuffer_frame >= 0
+                && engine.frame() == options.framebuffer_frame) {
+                const std::filesystem::path framebuffer_path(options.framebuffer_output);
+                if (framebuffer_path.has_parent_path()) {
+                    std::filesystem::create_directories(framebuffer_path.parent_path());
+                }
+                engine.write_framebuffer_ppm(options.framebuffer_output);
+                framebuffer_written = true;
+            }
             if (options.no_window) {
                 // Keep --no-window deterministic and fast for CI/smoke tests.
                 SDL_RenderPresent(renderer);
             }
+            }
+        }
+
+        if (!options.framebuffer_output.empty() && !framebuffer_written) {
+            if (options.framebuffer_frame >= 0) {
+                throw std::runtime_error(
+                    "requested framebuffer frame was not rendered: "
+                    + std::to_string(options.framebuffer_frame)
+                );
+            }
+            const std::filesystem::path framebuffer_path(options.framebuffer_output);
+            if (framebuffer_path.has_parent_path()) {
+                std::filesystem::create_directories(framebuffer_path.parent_path());
+            }
+            engine.write_framebuffer_ppm(options.framebuffer_output);
         }
 
         const auto& player = engine.player();

@@ -1094,6 +1094,10 @@ void Engine::set_checkpoint_animation(std::uint32_t animation_pc, int timer) {
     animation_.set_animation_state(animation_pc, timer);
 }
 
+void Engine::set_checkpoint_facing_x_flip(bool facing_x_flip) {
+    animation_.set_facing_left(facing_x_flip);
+}
+
 void Engine::set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state) {
     camera_.x = x;
     camera_.y = y;
@@ -1742,6 +1746,25 @@ void Engine::update(const InputState& input) {
     }
     apply_actor_timeline(frame_ + 1);
     ++frame_;
+}
+
+void Engine::write_framebuffer_ppm(const std::string& path) const {
+    if (framebuffer_.size() != static_cast<std::size_t>(kScreenWidth * kScreenHeight)) {
+        throw std::runtime_error("native framebuffer is not initialized");
+    }
+    std::ofstream file(path, std::ios::binary);
+    if (!file) {
+        throw std::runtime_error("cannot open framebuffer output: " + path);
+    }
+    file << "P6\n" << kScreenWidth << ' ' << kScreenHeight << "\n255\n";
+    for (const std::uint32_t pixel : framebuffer_) {
+        file.put(static_cast<char>(pixel & 0xFF));
+        file.put(static_cast<char>((pixel >> 8) & 0xFF));
+        file.put(static_cast<char>((pixel >> 16) & 0xFF));
+    }
+    if (!file) {
+        throw std::runtime_error("cannot write framebuffer output: " + path);
+    }
 }
 
 void Engine::write_state(std::ostream& output, const std::string& input_token) const {

@@ -242,9 +242,13 @@ public:
     void set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded);
     void set_checkpoint_frame_ptr(int address);
     void set_checkpoint_animation(std::uint32_t animation_pc, int timer);
+    void set_checkpoint_facing_x_flip(bool facing_x_flip);
     void set_checkpoint_camera(int x, int y, int reference_x, int reference_y, int scroll_x, int scroll_y, int scene_state);
     void update(const InputState& input);
     void render(SDL_Renderer* renderer);
+    // Write the last rendered native framebuffer without SDL window scaling.
+    // This is the format used by the visual differential audit tools.
+    void write_framebuffer_ppm(const std::string& path) const;
     void write_state(std::ostream& output, const std::string& input_token) const;
 
     const PlayerState& player() const { return player_; }
