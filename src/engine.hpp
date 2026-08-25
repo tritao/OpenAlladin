@@ -18,9 +18,29 @@ struct PlayerState {
     std::int16_t vy = 0;
     bool grounded = false;
     std::uint8_t terrain_behavior = 0;
+    std::uint8_t terrain_query_result = 0x7F;
+    std::uint8_t terrain_push_right = 0;
+    std::uint8_t terrain_push_left = 0;
+    std::uint8_t terrain_push_up = 0;
+    std::uint8_t terrain_push_down = 0;
+    std::int16_t terrain_horizontal_response = 0;
+    std::uint8_t terrain_response_active = 0;
+    std::uint8_t terrain_vertical_stop = 0;
+    std::uint8_t terrain_landing_state = 0;
+    std::uint8_t terrain_surface_mode = 0;
+    std::uint8_t terrain_stop_left_motion = 0;
+    std::uint8_t terrain_stop_right_motion = 0;
+    std::uint8_t terrain_stop_upward_motion = 0;
+    std::uint8_t terrain_response_timer_state = 0;
+    std::uint8_t terrain_query_state_a = 0;
+    std::uint8_t terrain_query_state_b = 0;
+    std::uint8_t terrain_state = 0;
+    std::uint8_t terrain_response_latch = 0;
 };
 
 struct InputState {
+    bool up = false;
+    bool down = false;
     bool left = false;
     bool right = false;
     bool jump_pressed = false;
@@ -28,6 +48,36 @@ struct InputState {
 
 class Level {
 public:
+    struct TerrainCell {
+        bool valid = false;
+        int column = -1;
+        int row = -1;
+        std::uint16_t terrain_word = 0;
+        std::uint8_t behavior = 0;
+        std::uint32_t handler = 0;
+    };
+
+    struct TerrainQuery {
+        TerrainCell resolver;
+        TerrainCell left;
+        TerrainCell right;
+        TerrainCell up;
+        TerrainCell down;
+
+        bool has_resolver_handler() const {
+            return resolver.valid && resolver.behavior != 0
+                && (resolver.handler != 0x001B65BE || resolver.behavior == 0x11);
+        }
+        bool side_blocks_left() const {
+            return left.valid && left.behavior != 0
+                && (left.handler != 0x001B65BE || left.behavior == 0x11);
+        }
+        bool side_blocks_right() const {
+            return right.valid && right.behavior != 0
+                && (right.handler != 0x001B65BE || right.behavior == 0x11);
+        }
+    };
+
     void load(const std::string& asset_root);
 
     int background_width() const { return background_width_; }
@@ -45,6 +95,16 @@ public:
 
     // This is the recovered FF9884/FFAE86 lookup in local, file-backed form.
     std::uint8_t terrain_behavior(int column, int row) const;
+
+    // Exact fixed-ROM equivalent of Terrain_ResolvePlayerCell's address math:
+    // the resolver selects one 16-pixel row band and one column, then applies
+    // the terrain-word -> behavior-table lookup. No nearby-row search occurs.
+    TerrainCell resolve_player_cell(int world_x, int world_y) const;
+
+    // Canonical player probes used by the native terrain response. The
+    // resolver probe is the original one; side probes are single-cell probes
+    // at the player collision edges rather than a rectangle scan.
+    TerrainQuery query_player(int world_x, int world_y) const;
 
 private:
     int map_width_ = 300;
@@ -79,13 +139,13 @@ public:
 
 private:
     void integrate_motion();
+    void update_terrain_input(const InputState& input);
     void resolve_terrain();
-    bool horizontal_blocked(int direction) const;
+    bool terrain_side_blocked(int direction) const;
     void apply_ground_movement(const InputState& input);
-    void apply_terrain_behavior(std::uint8_t behavior, int surface_y);
+    void apply_terrain_behavior(const Level::TerrainCell& cell);
     int visual_x() const;
     int visual_y() const;
-    int support_row(int visual_y, int visual_x) const;
 
     Level level_;
     PlayerState player_;

@@ -260,3 +260,166 @@
   evidence:
     - mame_player_state_trace
     - ghidra_animation_vm_001AC816
+
+0xFFF07C:
+  name: TERRAIN_PUSH_RIGHT
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Terrain response flag that moves PLAYER_X eight pixels right during the directional correction path.
+  evidence:
+    - ghidra_disassembly_001A9C9A
+    - ghidra_disassembly_001A9D98
+0xFFF07D:
+  name: TERRAIN_PUSH_LEFT
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Terrain response flag that moves PLAYER_X eight pixels left during the directional correction path.
+  evidence:
+    - ghidra_disassembly_001A9C9A
+    - ghidra_disassembly_001A9D98
+0xFFF07E:
+  name: TERRAIN_PUSH_UP
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Terrain response flag that moves PLAYER_Y eight pixels up during the directional correction path.
+  evidence:
+    - ghidra_disassembly_001A9C9A
+    - ghidra_disassembly_001A9D98
+0xFFF07F:
+  name: TERRAIN_PUSH_DOWN
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Terrain response flag that moves PLAYER_Y eight pixels down during the directional correction path.
+  evidence:
+    - ghidra_disassembly_001A9C9A
+    - ghidra_disassembly_001A9D98
+0xFFF0B0:
+  name: TERRAIN_HORIZONTAL_RESPONSE
+  type: i16
+  format: pixels
+  confidence: confirmed
+  description: Horizontal terrain response delta consumed by the player terrain state machine; the recovered ground paths use three pixels and then add or subtract this value from PLAYER_X.
+  evidence:
+    - ghidra_disassembly_001A9D98
+0xFFF0BE:
+  name: TERRAIN_RESPONSE_ACTIVE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Active terrain response state tested by landing, stop, bounce, and launch handlers.
+  evidence:
+    - ghidra_disassembly_001B537A
+    - ghidra_disassembly_001B5502
+    - ghidra_disassembly_001B557E
+0xFFF0C0:
+  name: TERRAIN_VERTICAL_STOP
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Vertical integrator stop marker set when PLAYER_VY is stopped and cleared by launch/bounce paths.
+  evidence:
+    - ghidra_disassembly_001A9B90
+    - ghidra_disassembly_001B557E
+0xFFF0C1:
+  name: TERRAIN_LANDING_STATE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Landing/grounded state set by the landing response handler and checked by the terrain state machine.
+  evidence:
+    - ghidra_disassembly_001B537A
+    - ghidra_disassembly_001A9D98
+0xFFF0C2:
+  name: TERRAIN_SURFACE_MODE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Surface mode toggled by behavior 0x47 and cleared for other resolver behaviors.
+  evidence:
+    - ghidra_disassembly_001B1E38
+    - ghidra_disassembly_001B5470
+0xFFF0C3:
+  name: TERRAIN_BEHAVIOR
+  type: u8
+  format: integer
+  confidence: confirmed
+  description: Behavior byte loaded from TERRAIN_BEHAVIOR_INDEX_TABLE for the single cell selected by Terrain_ResolvePlayerCell.
+  evidence:
+    - ghidra_disassembly_001B1E38
+    - mame_level01_floor_runtime_match
+0xFFF0C5:
+  name: TERRAIN_STOP_LEFT_MOTION
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Horizontal motion stop flag tested before integrating negative PLAYER_VX.
+  evidence:
+    - ghidra_disassembly_001A9B90
+    - ghidra_disassembly_001A9D98
+0xFFF0C8:
+  name: TERRAIN_STOP_RIGHT_MOTION
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Horizontal motion stop flag tested before integrating positive PLAYER_VX.
+  evidence:
+    - ghidra_disassembly_001A9B90
+    - ghidra_disassembly_001A9D98
+0xFFF0CB:
+  name: TERRAIN_STOP_UPWARD_MOTION
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Upward motion stop flag tested before integrating negative PLAYER_VY.
+  evidence:
+    - ghidra_disassembly_001A9B90
+0xFFF0CC:
+  name: TERRAIN_RESPONSE_TIMER_STATE
+  type: u8
+  format: integer
+  confidence: probable
+  description: Terrain response state byte cleared by the principal landing, stop, launch, and bounce handlers.
+  evidence:
+    - ghidra_disassembly_001B537A
+    - ghidra_disassembly_001B5502
+    - ghidra_disassembly_001B557E
+0xFFF0CE:
+  name: TERRAIN_QUERY_STATE_A
+  type: u8
+  format: integer
+  confidence: probable
+  description: Terrain interaction state cleared by Terrain_ResolvePlayerCell and set by one terrain handler.
+  evidence:
+    - ghidra_disassembly_001B1E38
+    - ghidra_disassembly_001B54D2
+0xFFF0CF:
+  name: TERRAIN_QUERY_STATE_B
+  type: u8
+  format: integer
+  confidence: probable
+  description: Terrain interaction state cleared by Terrain_ResolvePlayerCell and set by terrain transition handlers.
+  evidence:
+    - ghidra_disassembly_001B1E38
+    - ghidra_disassembly_001B54A6
+0xFFF0D6:
+  name: TERRAIN_STATE
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Terrain state marker cleared before cell lookup and set by the terrain-state handler.
+  evidence:
+    - ghidra_disassembly_001B1E38
+    - ghidra_disassembly_001B54E0
+0xFFF115:
+  name: TERRAIN_RESPONSE_LATCH
+  type: u8
+  format: boolean
+  confidence: probable
+  description: Terrain response latch cleared by Terrain_ResolvePlayerCell and set by landing response paths.
+  evidence:
+    - ghidra_disassembly_001B1E38
+    - ghidra_disassembly_001B537A

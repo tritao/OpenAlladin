@@ -15,6 +15,29 @@ constexpr int kScreenHeight = 224;
 constexpr int kPlayerHeight = 24;
 constexpr int kPlayerWidth = 16;
 constexpr int kTerrainVisualOffsetY = 0xF0;
+constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
+
+// The fixed ROM's terrain dispatch table at 0x004554. Keeping this table in
+// the native slice makes the behavior -> handler decision data-driven and
+// avoids treating an arbitrary behavior-byte range as solid terrain.
+constexpr std::array<std::uint32_t, 0x48> kTerrainHandlers = {
+    0x001B65BE, 0x001B5492, 0x001B5492, 0x001B5492,
+    0x001B5492, 0x001B549C, 0x001B549C, 0x001B549C,
+    0x001B65BE, 0x001B54F4, 0x001B5320, 0x001B54F4,
+    0x001B54F4, 0x001B65BE, 0x001B65BE, 0x001B65BE,
+    0x001B5450, 0x001B65BE, 0x001B56F4, 0x001B65BE,
+    0x001B65BE, 0x001B65BE, 0x001B5460, 0x001B5468,
+    0x001B65BE, 0x001B65BE, 0x001B54D8, 0x001B54D8,
+    0x001B54D2, 0x001B54E0, 0x001B65BE, 0x001B54A6,
+    0x001B55E8, 0x001B557E, 0x001B55D8, 0x001B5502,
+    0x001B65BE, 0x001B56B6, 0x001B65BE, 0x001B65BE,
+    0x001B65BE, 0x001B536C, 0x001B53A2, 0x001B65BE,
+    0x001B65BE, 0x001B65BE, 0x001B65BE, 0x001B5470
+};
+
+std::uint32_t terrain_handler(std::uint8_t behavior) {
+    return behavior < kTerrainHandlers.size() ? kTerrainHandlers[behavior] : kTerrainNoOpHandler;
+}
 
 std::vector<std::uint8_t> read_file(const std::string& path) {
     std::ifstream file(path, std::ios::binary);
@@ -162,6 +185,49 @@ std::uint8_t Level::terrain_behavior(int column, int row) const {
     return floor_data_[behavior_index];
 }
 
+Level::TerrainCell Level::resolve_player_cell(int world_x, int world_y) const {
+    TerrainCell cell;
+    const int terrain_y = world_y - kTerrainVisualOffsetY;
+    if (terrain_y < 0 || terrain_y >= map_height_ * 16) {
+        return cell;
+    }
+
+    const int row = terrain_y >> 4;
+    const int column = (world_x + 16) >> 4;
+    if (column < 0 || column >= map_width_ || row < 0 || row >= map_height_) {
+        return cell;
+    }
+
+    const std::uint16_t word = terrain_words_[static_cast<std::size_t>(row * map_width_ + column)];
+    const std::size_t behavior_index = 2 + (word >> 1);
+    if (behavior_index >= floor_data_.size()) {
+        return cell;
+    }
+
+    cell.valid = true;
+    cell.column = column;
+    cell.row = row;
+    cell.terrain_word = word;
+    cell.behavior = floor_data_[behavior_index];
+    cell.handler = terrain_handler(cell.behavior);
+    return cell;
+}
+
+Level::TerrainQuery Level::query_player(int world_x, int world_y) const {
+    TerrainQuery query;
+    query.resolver = resolve_player_cell(world_x, world_y);
+
+    // These are the four single-cell edge probes used by the native response
+    // path. They deliberately do not search neighboring rows or scan a
+    // player-sized rectangle. The resolver's own probe remains the canonical
+    // floor/contour lookup above.
+    query.left = resolve_player_cell(world_x - 8, world_y - 8);
+    query.right = resolve_player_cell(world_x + 8, world_y - 8);
+    query.up = resolve_player_cell(world_x, world_y - 24);
+    query.down = resolve_player_cell(world_x, world_y + 8);
+    return query;
+}
+
 void Engine::load(const std::string& asset_root) {
     level_.load(asset_root);
     framebuffer_.resize(static_cast<std::size_t>(kScreenWidth * kScreenHeight));
@@ -173,7 +239,9 @@ void Engine::reset() {
     player_.x = level_.start_x();
     player_.y = level_.start_y();
     player_.grounded = true;
-    player_.terrain_behavior = 0;
+    const auto initial_cell = level_.resolve_player_cell(visual_x(), level_.camera_y() + player_.y);
+    player_.terrain_behavior = initial_cell.valid ? initial_cell.behavior : 0;
+    player_.terrain_landing_state = player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
     quit_ = false;
 }
@@ -184,7 +252,9 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     player_.vx = vx;
     player_.vy = vy;
     player_.grounded = grounded;
-    player_.terrain_behavior = 0;
+    const auto checkpoint_cell = level_.resolve_player_cell(visual_x(), level_.camera_y() + player_.y);
+    player_.terrain_behavior = checkpoint_cell.valid ? checkpoint_cell.behavior : 0;
+    player_.terrain_landing_state = grounded && player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
     quit_ = false;
 }
@@ -198,18 +268,21 @@ int Engine::visual_y() const {
     return level_.camera_y() + player_.y - kTerrainVisualOffsetY;
 }
 
-int Engine::support_row(int visual_y_position, int visual_x_position) const {
-    const int column = (visual_x_position + 16) >> 4;
-    const int first_row = std::max(0, visual_y_position >> 4);
-    for (int row = first_row; row <= first_row + 3 && row < level_.map_height(); ++row) {
-        const std::uint8_t behavior = level_.terrain_behavior(column, row);
-        // Zero is the empty behavior in the recovered resolver. Values below
-        // E0 are the surface/interaction family; E0+ are non-solid entries.
-        if (behavior != 0 && behavior < 0xE0) {
-            return row;
-        }
-    }
-    return -1;
+void Engine::update_terrain_input(const InputState& input) {
+    // FFF156 is the active-low controller/query byte consumed by the four
+    // Terrain_TestQueryFlag helpers. The main loop turns direction bits into
+    // FFF07C..FFF07F with SEQ, so a pressed direction is represented by 0xFF.
+    player_.terrain_query_result = 0x7F;
+    if (input.up) player_.terrain_query_result &= static_cast<std::uint8_t>(~0x01);
+    if (input.down) player_.terrain_query_result &= static_cast<std::uint8_t>(~0x02);
+    if (input.left) player_.terrain_query_result &= static_cast<std::uint8_t>(~0x04);
+    if (input.right) player_.terrain_query_result &= static_cast<std::uint8_t>(~0x08);
+    if (input.jump_pressed) player_.terrain_query_result &= static_cast<std::uint8_t>(~0x20);
+
+    player_.terrain_push_right = input.right ? 0xFF : 0;
+    player_.terrain_push_left = input.left ? 0xFF : 0;
+    player_.terrain_push_up = input.up ? 0xFF : 0;
+    player_.terrain_push_down = input.down ? 0xFF : 0;
 }
 
 void Engine::integrate_motion() {
@@ -217,13 +290,15 @@ void Engine::integrate_motion() {
     // high byte of each 8.8 velocity, then damp by 0x28/0x3C.
     if (player_.vx != 0) {
         if (player_.vx < 0) {
-            if (player_.x < 0x14 || static_cast<std::uint16_t>(-player_.vx) < 0x28) {
+            if (player_.terrain_stop_left_motion != 0
+                || player_.x < 0x14
+                || static_cast<std::uint16_t>(-player_.vx) < 0x28) {
                 player_.vx = 0;
             } else {
                 player_.x += static_cast<std::int8_t>(fixed_high_byte(player_.vx));
                 player_.vx = static_cast<std::int16_t>(player_.vx + 0x28);
             }
-        } else if (player_.vx < 0x28) {
+        } else if (player_.vx < 0x28 || player_.terrain_stop_right_motion != 0) {
             player_.vx = 0;
         } else {
             if (player_.x < 0x130) {
@@ -238,86 +313,90 @@ void Engine::integrate_motion() {
     }
     if (player_.vy < 0) {
         const std::int16_t magnitude = static_cast<std::int16_t>(-player_.vy);
-        if (player_.y < 0x14 || magnitude <= 0x3B) {
+        if (player_.y < 0x14) {
             player_.vy = static_cast<std::int16_t>(player_.vy + 0x3C);
-        } else {
+        } else if (player_.terrain_stop_upward_motion != 0) {
+            player_.terrain_response_active = 0;
+            player_.terrain_vertical_stop = 0xFF;
+            player_.terrain_response_latch = 0;
+            player_.vy = 0;
+        } else if (magnitude > 0x3B) {
             player_.y += static_cast<std::int8_t>(fixed_high_byte(player_.vy));
             player_.vy = static_cast<std::int16_t>(player_.vy + 0x3C);
+        } else {
+            // 0x001A9C8C: the original integrator clears the small residual
+            // velocity and arms the following downward-state handler.
+            player_.terrain_vertical_stop = 0xFF;
+            player_.vy = 0;
         }
     } else if (player_.vy > 0x3B) {
         player_.y += static_cast<std::int8_t>(fixed_high_byte(player_.vy));
         player_.vy = static_cast<std::int16_t>(player_.vy - 0x3C);
     } else {
+        player_.terrain_vertical_stop = 0xFF;
         player_.vy = 0;
     }
 }
 
 void Engine::resolve_terrain() {
-    const int current_visual_y = visual_y();
-    const int current_visual_x = visual_x();
-    const int row = support_row(current_visual_y, current_visual_x);
-    if (row >= 0 && player_.vy >= 0) {
-        const int surface_y = row * 16;
-        if (current_visual_y >= surface_y - 2 && current_visual_y <= surface_y + 12) {
-            const int column = (current_visual_x + 16) >> 4;
-            const std::uint8_t behavior = level_.terrain_behavior(column, row);
-            player_.y = surface_y + kTerrainVisualOffsetY - level_.camera_y();
-            player_.vy = 0;
-            player_.vx = 0;
-            player_.grounded = true;
-            apply_terrain_behavior(behavior, surface_y);
-            return;
-        }
+    const Level::TerrainQuery query = level_.query_player(visual_x(), level_.camera_y() + player_.y);
+    const std::uint8_t previous_behavior = player_.terrain_behavior;
+    const Level::TerrainCell& cell = query.resolver;
+    player_.terrain_behavior = cell.valid ? cell.behavior : 0;
+    player_.terrain_horizontal_response = 0;
+
+    // The original resolver dispatches the behavior selected by the exact
+    // cell. A zero behavior returns without changing motion; it does not
+    // search forward for a nearby floor row and it does not add gravity.
+    if (!query.has_resolver_handler()) {
+        player_.grounded = false;
+        return;
     }
 
-    player_.grounded = false;
-    player_.terrain_behavior = 0;
-    // The terrain miss path applies gravity before the next call to the
-    // recovered integrator. The observed implementation caps it at 0x800.
-    if (player_.vy < 0x800) {
-        player_.vy = static_cast<std::int16_t>(std::min<int>(0x800, player_.vy + 0x78));
+    if (player_.vy >= 0) {
+        player_.y = cell.row * 16 + kTerrainVisualOffsetY - level_.camera_y();
+        player_.vy = 0;
+        player_.vx = 0;
+        player_.grounded = true;
+        player_.terrain_landing_state = 1;
+        player_.terrain_vertical_stop = 0;
+        player_.terrain_response_timer_state = 0;
+    } else if (query.up.valid && query.up.behavior != 0
+               && (query.up.handler != kTerrainNoOpHandler || query.up.behavior == 0x11)) {
+        player_.terrain_stop_upward_motion = 0xFF;
     }
 
-    if (row >= 0 && player_.vy > 0) {
-        const int surface_y = row * 16;
-        if (current_visual_y >= surface_y - 2 && current_visual_y <= surface_y + 20) {
-            const int column = (current_visual_x + 16) >> 4;
-            const std::uint8_t behavior = level_.terrain_behavior(column, row);
-            player_.y = surface_y + kTerrainVisualOffsetY - level_.camera_y();
-            player_.vy = 0;
-            player_.vx = 0;
-            player_.grounded = true;
-            apply_terrain_behavior(behavior, surface_y);
-        }
+    if (previous_behavior != cell.behavior) {
+        apply_terrain_behavior(cell);
     }
 }
 
-void Engine::apply_terrain_behavior(std::uint8_t behavior, int surface_y) {
-    if (behavior == 0 || behavior >= 0xE0) {
-        player_.terrain_behavior = 0;
-        return;
-    }
-
-    const bool entered_behavior = player_.terrain_behavior != behavior;
-    player_.terrain_behavior = behavior;
-    if (!entered_behavior) {
-        return;
-    }
-
-    // These values are the behavior indices resolved through the ROM table at
-    // 0x004554. The corresponding handlers are recovered in the RE notes:
-    // 0x29=launch, 0x2B=stop/align, 0x2D=bounce, 0x30=landing, 0x41=left.
-    switch (behavior) {
+void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
+    switch (cell.behavior) {
+    case 0x20:  // TerrainHandler_SetTerminalCollision (0x001B5318)
+        player_.terrain_response_latch = 0xFF;
+        break;
+    case 0x28:  // TerrainHandler_StopAndAlign (0x001B55E8)
+        player_.vx = 0;
+        player_.vy = 0;
+        player_.terrain_horizontal_response = 0;
+        player_.terrain_response_active = 0;
+        player_.grounded = true;
+        player_.x = ((visual_x() & ~0x0F) - level_.camera_x()) - 4;
+        player_.y = ((level_.camera_y() + player_.y) & ~0x0F) - level_.camera_y() + 2;
+        break;
     case 0x29:  // TerrainHandler_LaunchPlayerBlock (0x001B557E)
         player_.vx = static_cast<std::int16_t>(-0x400);
         player_.vy = static_cast<std::int16_t>(-0x500);
         player_.grounded = false;
+        player_.terrain_response_active = 0xFF;
         break;
     case 0x2B:  // TerrainHandler_StopAndAlignPlayer (0x001B5502)
         player_.vx = 0;
         player_.vy = 0;
         player_.grounded = true;
-        player_.y = surface_y + kTerrainVisualOffsetY - level_.camera_y();
+        player_.x = ((visual_x() & ~0x0F) - level_.camera_x()) + 6;
+        player_.terrain_response_timer_state = 1;
         break;
     case 0x2D:  // TerrainHandler_BouncePlayerBlock (0x001B56B6)
         player_.vx = static_cast<std::int16_t>(-0x400);
@@ -326,31 +405,30 @@ void Engine::apply_terrain_behavior(std::uint8_t behavior, int surface_y) {
         break;
     case 0x30:  // TerrainHandler_LandingResponseBlock (0x001B537A)
         player_.vy = static_cast<std::int16_t>(player_.vy - 0x7C);
-        player_.grounded = false;
+        player_.terrain_horizontal_response = 0;
+        player_.terrain_landing_state = 0xFF;
+        player_.grounded = player_.vy >= 0;
+        break;
+    case 0x40:  // TerrainHandler_MovePlayerRight (0x001B536C)
+        player_.x += 8;
+        player_.terrain_horizontal_response = 0;
         break;
     case 0x41:  // TerrainHandler_HorizontalResponseBlock (0x001B53A2)
         player_.x = std::max(0x14, player_.x - 8);
-        player_.vx = 0;
+        player_.terrain_horizontal_response = 0;
+        break;
+    case 0x47:  // TerrainHandler_ToggleSurfaceMode (0x001B5470)
+        player_.terrain_surface_mode = player_.terrain_surface_mode == 0 ? 1 : 0;
         break;
     default:
         break;
     }
 }
 
-bool Engine::horizontal_blocked(int direction) const {
-    const int next_visual_x = visual_x() + direction * 3;
-    const int edge_x = next_visual_x + (direction > 0 ? 16 : 0);
-    const int body_top = visual_y() - kPlayerHeight + 4;
-    const int body_bottom = visual_y() - 4;
-    for (int sample_y = body_top; sample_y <= body_bottom; sample_y += 8) {
-        const int row = sample_y >> 4;
-        const int column = edge_x >> 4;
-        const std::uint8_t behavior = level_.terrain_behavior(column, row);
-        if (behavior != 0 && behavior < 0xE0) {
-            return true;
-        }
-    }
-    return false;
+bool Engine::terrain_side_blocked(int direction) const {
+    const int next_world_x = visual_x() + direction * 3;
+    const Level::TerrainQuery query = level_.query_player(next_world_x, level_.camera_y() + player_.y);
+    return direction < 0 ? query.side_blocks_left() : query.side_blocks_right();
 }
 
 void Engine::apply_ground_movement(const InputState& input) {
@@ -363,14 +441,16 @@ void Engine::apply_ground_movement(const InputState& input) {
     // The recovered ground response path uses a three-pixel movement step
     // (DAT_FFF0B0=3) and leaves PLAYER_VX clear. This is distinct from the
     // fixed-point velocity used for airborne motion and terrain launches.
-    if (!horizontal_blocked(direction)) {
+    if (!terrain_side_blocked(direction)) {
         player_.x = std::clamp(player_.x + direction * 3, 0x14, 0x130);
     }
     player_.vx = 0;
 }
 
 void Engine::update(const InputState& input) {
+    update_terrain_input(input);
     const bool was_grounded = player_.grounded;
+    const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
     const bool start_jump = input.jump_pressed && was_grounded;
 
     if (was_grounded && player_.grounded) {
@@ -385,6 +465,20 @@ void Engine::update(const InputState& input) {
 
     integrate_motion();
     resolve_terrain();
+    if (!player_.grounded && player_.terrain_behavior == 0
+        && (vertical_stop_before_frame || player_.terrain_response_timer_state != 0)) {
+        // This is the post-integrator jump/vertical-state handoff. It is
+        // intentionally after resolve_terrain: the original frame where the
+        // residual upward velocity is cleared still exposes VY=0; the next
+        // frame starts the positive phase at 0x003C.
+        if (player_.terrain_response_timer_state == 0) {
+            player_.vy = 0x003C;
+            player_.terrain_response_timer_state = 1;
+        } else if (player_.vy < 0x800) {
+            player_.vy = static_cast<std::int16_t>(player_.vy + 0x0078);
+        }
+        player_.terrain_vertical_stop = 0;
+    }
     if (start_jump && player_.grounded) {
         // The recovered frame order applies the jump handler after motion and
         // terrain resolution (Player_Update -> Terrain_Resolve -> jump
@@ -392,6 +486,10 @@ void Engine::update(const InputState& input) {
         // the integrator consumes it.
         player_.vy = static_cast<std::int16_t>(-0x200);
         player_.grounded = false;
+        player_.terrain_response_active = 0xFF;
+        player_.terrain_response_timer_state = 0;
+        player_.terrain_vertical_stop = 0;
+        player_.terrain_landing_state = 0xFF;
     }
     ++frame_;
 }
@@ -426,6 +524,27 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"player_terminal\":0}"
            << ",\"camera\":{\"x\":" << level_.camera_x()
            << ",\"y\":" << level_.camera_y() << "}"
+           << ",\"terrain\":{\"world_x\":" << visual_x()
+           << ",\"world_y\":" << (level_.camera_y() + player_.y)
+           << ",\"query_result\":" << static_cast<unsigned>(player_.terrain_query_result)
+           << ",\"push_right\":" << static_cast<unsigned>(player_.terrain_push_right)
+           << ",\"push_left\":" << static_cast<unsigned>(player_.terrain_push_left)
+           << ",\"push_up\":" << static_cast<unsigned>(player_.terrain_push_up)
+           << ",\"push_down\":" << static_cast<unsigned>(player_.terrain_push_down)
+           << ",\"behavior\":" << static_cast<unsigned>(player_.terrain_behavior)
+           << ",\"horizontal_response\":" << player_.terrain_horizontal_response
+           << ",\"response_active\":" << static_cast<unsigned>(player_.terrain_response_active)
+           << ",\"vertical_stop\":" << static_cast<unsigned>(player_.terrain_vertical_stop)
+           << ",\"landing_state\":" << static_cast<unsigned>(player_.terrain_landing_state)
+           << ",\"surface_mode\":" << static_cast<unsigned>(player_.terrain_surface_mode)
+           << ",\"stop_left_motion\":" << static_cast<unsigned>(player_.terrain_stop_left_motion)
+           << ",\"stop_right_motion\":" << static_cast<unsigned>(player_.terrain_stop_right_motion)
+           << ",\"stop_upward_motion\":" << static_cast<unsigned>(player_.terrain_stop_upward_motion)
+           << ",\"response_timer_state\":" << static_cast<unsigned>(player_.terrain_response_timer_state)
+           << ",\"query_state_a\":" << static_cast<unsigned>(player_.terrain_query_state_a)
+           << ",\"query_state_b\":" << static_cast<unsigned>(player_.terrain_query_state_b)
+           << ",\"state\":" << static_cast<unsigned>(player_.terrain_state)
+           << ",\"response_latch\":" << static_cast<unsigned>(player_.terrain_response_latch) << "}"
            << ",\"actors\":[]}\n";
 }
 

@@ -349,13 +349,16 @@ MovementVM / actor updates
   -> animation and remaining actor passes
 ```
 
-`0x001B1E38` computes a row from `WORLD_CAMERA_Y + PLAYER_Y`, selects a
-terrain word through `0x00FF9884`, maps that word through `0x00FFAE86`, and
-dispatches the resulting behavior byte through the ROM handler table at
-`0x004554`. The callback pointers observed in the gameplay trace are
-`0x001B3244`, `0x001B323A`, and `0x001B324E`; the four query helpers test bits
-of `0x00FFF156` and convert them into the four terrain flags before the
-resolver runs.
+`0x001B1E38` computes `WORLD_CAMERA_Y + PLAYER_Y - 0x00F0`, selects one
+16-pixel row band through `0x00FF9884`, computes the single column
+`(WORLD_CAMERA_X + PLAYER_X + 0x10) >> 4`, maps that terrain word through
+`0x00FFAE86`, and dispatches the resulting behavior byte through the ROM
+handler table at `0x004554`. It does not search nearby rows. The byte at
+`0x00FFF156` is active-low controller/query state: the four query helpers
+test its direction bits and `SEQ` writes the resulting pressed-direction
+flags to `0x00FFF07C-0x00FFF07F` before the resolver runs. The callback
+pointers observed in the gameplay trace are `0x001B3244`, `0x001B323A`, and
+`0x001B324E`.
 
 The motion routine at `0x001A9B90` is explicitly 8.8 fixed-point: horizontal
 velocity consumes its signed high byte and accelerates by `0x28`, while
@@ -375,6 +378,21 @@ OPENALADDIN_TRACE_FRAMES=1700 \
 OPENALADDIN_TRACE_DIR=build/re/player-jump-c-watch \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55,right*80,c*2,none*55,right*80,c*2,none*180' \
   ./tools/openaladdin/mame/run.sh
+```
+
+The focused terrain probes are declared in
+`re/mame/experiments/manifest.yml`. They emit the semantic terrain RAM fields
+on every frame in `state.jsonl`; the captured findings and the remaining
+unhit ceiling/slope/special cases are recorded in
+`re/mame/findings/player-terrain-experiments.json`.
+
+The native vertical slice now mirrors this fixed-ROM lookup in
+`Level::resolve_player_cell`/`Level::query_player`. `support_row()` and the
+rectangle-based `horizontal_blocked()` path have been removed. The native
+regression can be run after building with:
+
+```sh
+python tests/native_terrain_physics.py
 ```
 
 ## Level-transition state tracing

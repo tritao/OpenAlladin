@@ -144,6 +144,32 @@ local function scene_runtime_json()
     })
 end
 
+local function terrain_runtime_json()
+    return json_object({
+        { "world_x", tostring(read_u16(symbol("PLAYER_WORLD_X"))) },
+        { "world_y", tostring(read_u16(symbol("PLAYER_WORLD_Y"))) },
+        { "query_result", tostring(read_u8(symbol("TERRAIN_QUERY_FLAGS"))) },
+        { "push_right", tostring(read_u8(symbol("TERRAIN_PUSH_RIGHT"))) },
+        { "push_left", tostring(read_u8(symbol("TERRAIN_PUSH_LEFT"))) },
+        { "push_up", tostring(read_u8(symbol("TERRAIN_PUSH_UP"))) },
+        { "push_down", tostring(read_u8(symbol("TERRAIN_PUSH_DOWN"))) },
+        { "behavior", tostring(read_u8(symbol("TERRAIN_BEHAVIOR"))) },
+        { "horizontal_response", tostring(signed_u16(read_u16(symbol("TERRAIN_HORIZONTAL_RESPONSE")))) },
+        { "response_active", tostring(read_u8(symbol("TERRAIN_RESPONSE_ACTIVE"))) },
+        { "vertical_stop", tostring(read_u8(symbol("TERRAIN_VERTICAL_STOP"))) },
+        { "landing_state", tostring(read_u8(symbol("TERRAIN_LANDING_STATE"))) },
+        { "surface_mode", tostring(read_u8(symbol("TERRAIN_SURFACE_MODE"))) },
+        { "stop_left_motion", tostring(read_u8(symbol("TERRAIN_STOP_LEFT_MOTION"))) },
+        { "stop_right_motion", tostring(read_u8(symbol("TERRAIN_STOP_RIGHT_MOTION"))) },
+        { "stop_upward_motion", tostring(read_u8(symbol("TERRAIN_STOP_UPWARD_MOTION"))) },
+        { "response_timer_state", tostring(read_u8(symbol("TERRAIN_RESPONSE_TIMER_STATE"))) },
+        { "query_state_a", tostring(read_u8(symbol("TERRAIN_QUERY_STATE_A"))) },
+        { "query_state_b", tostring(read_u8(symbol("TERRAIN_QUERY_STATE_B"))) },
+        { "state", tostring(read_u8(symbol("TERRAIN_STATE"))) },
+        { "response_latch", tostring(read_u8(symbol("TERRAIN_RESPONSE_LATCH"))) }
+    })
+end
+
 local function preload_machine_state()
     if preload_state == "" or preload_applied then
         return
@@ -236,6 +262,7 @@ local function capture(frame, input_token)
         { "ram_size", tostring(capture_ram and ram_size or 0) },
         { "ram_fnv1a", tostring(capture_streams.fnv1a_ram()) },
         { "scene", scene_runtime_json() },
+        { "terrain", terrain_runtime_json() },
         { "vdp", vdp_state_json() }
     })
     if state then
@@ -291,6 +318,7 @@ local function capture(frame, input_token)
                 { "x", tostring(read_u16(symbol("WORLD_CAMERA_X"))) },
                 { "y", tostring(read_u16(symbol("WORLD_CAMERA_Y"))) }
             }) },
+            { "terrain", terrain_runtime_json() },
             { "actors", json_array(actors) }
         })
     end
@@ -529,6 +557,27 @@ if state then
                 { "vx", tostring(symbol("PLAYER_VX")) },
                 { "vy", tostring(symbol("PLAYER_VY")) },
                 { "animation_pc", tostring(symbol("PLAYER_ANIMATION_PC")) }
+        }) },
+        { "terrain_ram", json_object({
+                { "query_result", tostring(symbol("TERRAIN_QUERY_FLAGS")) },
+                { "push_right", tostring(symbol("TERRAIN_PUSH_RIGHT")) },
+                { "push_left", tostring(symbol("TERRAIN_PUSH_LEFT")) },
+                { "push_up", tostring(symbol("TERRAIN_PUSH_UP")) },
+                { "push_down", tostring(symbol("TERRAIN_PUSH_DOWN")) },
+                { "behavior", tostring(symbol("TERRAIN_BEHAVIOR")) },
+                { "horizontal_response", tostring(symbol("TERRAIN_HORIZONTAL_RESPONSE")) },
+                { "response_active", tostring(symbol("TERRAIN_RESPONSE_ACTIVE")) },
+                { "vertical_stop", tostring(symbol("TERRAIN_VERTICAL_STOP")) },
+                { "landing_state", tostring(symbol("TERRAIN_LANDING_STATE")) },
+                { "surface_mode", tostring(symbol("TERRAIN_SURFACE_MODE")) },
+                { "stop_left_motion", tostring(symbol("TERRAIN_STOP_LEFT_MOTION")) },
+                { "stop_right_motion", tostring(symbol("TERRAIN_STOP_RIGHT_MOTION")) },
+                { "stop_upward_motion", tostring(symbol("TERRAIN_STOP_UPWARD_MOTION")) },
+                { "response_timer_state", tostring(symbol("TERRAIN_RESPONSE_TIMER_STATE")) },
+                { "query_state_a", tostring(symbol("TERRAIN_QUERY_STATE_A")) },
+                { "query_state_b", tostring(symbol("TERRAIN_QUERY_STATE_B")) },
+                { "state", tostring(symbol("TERRAIN_STATE")) },
+                { "response_latch", tostring(symbol("TERRAIN_RESPONSE_LATCH")) }
         }) },
         { "actor_table_base", tostring(actor_table_base) },
         { "actor_stride", tostring(actor_stride) }

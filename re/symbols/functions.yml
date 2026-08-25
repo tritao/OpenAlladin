@@ -238,28 +238,28 @@
 0x001B3212:
   name: Terrain_TestQueryFlag0
   confidence: confirmed
-  description: Tests bit 0 of the terrain query result word at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07E.
+  description: Tests bit 0 of the active-low direction/query byte at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07E.
   evidence:
     - ghidra_disassembly_001B3212
     - ghidra_decompile_player_movement_collision_targets
 0x001B321C:
   name: Terrain_TestQueryFlag1
   confidence: confirmed
-  description: Tests bit 1 of the terrain query result word at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07F.
+  description: Tests bit 1 of the active-low direction/query byte at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07F.
   evidence:
     - ghidra_disassembly_001B321C
     - ghidra_decompile_player_movement_collision_targets
 0x001B3226:
   name: Terrain_TestQueryFlag2
   confidence: confirmed
-  description: Tests bit 2 of the terrain query result word at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07D.
+  description: Tests bit 2 of the active-low direction/query byte at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07D.
   evidence:
     - ghidra_disassembly_001B3226
     - ghidra_decompile_player_movement_collision_targets
 0x001B3230:
   name: Terrain_TestQueryFlag3
   confidence: confirmed
-  description: Tests bit 3 of the terrain query result word at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07C.
+  description: Tests bit 3 of the active-low direction/query byte at 0x00FFF156; the caller converts the condition code into terrain flag 0x00FFF07C.
   evidence:
     - ghidra_disassembly_001B3230
     - ghidra_decompile_player_movement_collision_targets

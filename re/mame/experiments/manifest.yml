@@ -1,6 +1,7 @@
 # Small, directly runnable experiments exposed by `python tools/oa.py trace`.
-# These are intentionally frame schedules for now. Conditional waits belong in
-# the next harness layer and can be added without changing the CLI contract.
+# These are intentionally small, deterministic probes. The state capture is
+# the normal output; use --capture ram/full only when a probe needs forensic
+# memory or VDP data.
 version: 1
 
 boot_scenarios:
@@ -71,3 +72,167 @@ experiments:
             symbol: PLAYER_VY
             equals: 0
           timeout: 120
+
+  - name: terrain-flat-ground
+    description: Capture the resolver and response state while standing on the opening ground.
+    frames: 1400
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+    actions:
+      - input:
+          frames: 1
+      - input:
+          right: true
+          frames: 1
+      - input:
+          frames: 48
+      - marker: flat_ground
+
+  - name: terrain-walk-off-edge
+    description: Hold right long enough to leave the opening surface and record the falling transition.
+    frames: 1800
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+    actions:
+      - input:
+          right: true
+          frames: 240
+      - marker: walked_off_edge
+      - input:
+          right: true
+          frames: 80
+
+  - name: terrain-jump-land
+    description: Capture jump ascent, apex, fall, and the exact landing handler state.
+    frames: 1500
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+    actions:
+      - input:
+          right: true
+          frames: 30
+      - input:
+          right: true
+          c: true
+          frames: 1
+      - wait:
+          symbol: PLAYER_VY
+          condition: negative
+          timeout: 60
+      - marker: jump_started
+      - wait:
+          symbol: PLAYER_VY
+          greater_equal: 0
+          timeout: 120
+      - marker: jump_apex
+      - wait:
+          symbol: TERRAIN_LANDING_STATE
+          equals: 1
+          timeout: 120
+      - marker: jump_landed
+
+  - name: terrain-wall-left
+    description: Approach the left edge from inside the opening room and capture horizontal correction flags.
+    frames: 1400
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+    actions:
+      - input:
+          left: true
+          frames: 120
+      - marker: wall_left
+
+  - name: terrain-wall-right
+    description: Approach the first right-side obstruction and capture horizontal correction flags.
+    frames: 1800
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+    actions:
+      - input:
+          right: true
+          frames: 260
+      - marker: wall_right
+
+  - name: terrain-ceiling
+    description: Jump while moving right and capture upward-stop behavior at any low ceiling.
+    frames: 1600
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+    actions:
+      - input:
+          right: true
+          frames: 50
+      - input:
+          right: true
+          c: true
+          frames: 1
+      - wait:
+          symbol: PLAYER_VY
+          condition: negative
+          timeout: 60
+      - marker: ceiling_jump
+      - input:
+          right: true
+          frames: 100
+
+  - name: terrain-slope
+    description: Traverse the opening terrain while recording cell and response changes.
+    frames: 2000
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+    actions:
+      - input:
+          right: true
+          frames: 320
+      - marker: slope_traversal
+
+  - name: terrain-special
+    description: Traverse the opening level while recording non-zero and special behavior tiles.
+    frames: 2200
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+    actions:
+      - input:
+          right: true
+          frames: 400
+      - marker: special_behavior

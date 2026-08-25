@@ -1,0 +1,74 @@
+{
+  "format": "openaladdin-player-terrain-experiments-v1",
+  "rom_scope": "fixed Disneys_Aladdin_U_p1.bin",
+  "state_trace_format": "openaladdin-frame-state-v1",
+  "pipeline": {
+    "input_query_byte": "0x00FFF156",
+    "direction_flags": {
+      "0x00FFF07C": "!bit3(input_query_byte), right pressed",
+      "0x00FFF07D": "!bit2(input_query_byte), left pressed",
+      "0x00FFF07E": "!bit0(input_query_byte), up pressed",
+      "0x00FFF07F": "!bit1(input_query_byte), down pressed"
+    },
+    "resolver": {
+      "function": "0x001B1E38",
+      "terrain_y": "WORLD_CAMERA_Y + PLAYER_Y - 0x00F0",
+      "row": "terrain_y >> 4 through TERRAIN_ROW_POINTER_TABLE",
+      "column": "(WORLD_CAMERA_X + PLAYER_X + 0x0010) >> 4",
+      "terrain_word": "big-endian map word",
+      "behavior": "floor[2 + (terrain_word >> 1)]",
+      "dispatch": "TERRAIN_RESPONSE_HANDLER_TABLE[behavior]"
+    }
+  },
+  "experiments": {
+    "terrain-flat-ground": {
+      "trace": "build/re/traces/terrain-flat-ground-v2/state.jsonl",
+      "observed_behaviors": ["0x00", "0x11"],
+      "observed_direction_query": ["0x7F", "0x77"]
+    },
+    "terrain-walk-off-edge": {
+      "trace": "build/re/traces/terrain-walk-off-edge-v2/state.jsonl",
+      "observed_behaviors": ["0x00", "0x0A", "0x11"],
+      "observed_direction_query": ["0x7F", "0x77"]
+    },
+    "terrain-jump-land": {
+      "trace": "build/re/traces/terrain-jump-land-v2/state.jsonl",
+      "jump_frame": 1276,
+      "apex_frame": 1285,
+      "landing_frame": 1294,
+      "observed_behaviors": ["0x00", "0x11"],
+      "observed_vertical_sequence": ["-0x0200", "-0x01C4", "...", "-0x0020", "0x0000", "0x003C"]
+    },
+    "terrain-wall-left": {
+      "trace": "build/re/traces/terrain-wall-left-v2/state.jsonl",
+      "observed_direction_query": ["0x7B", "0x7F"],
+      "observed_flag": "TERRAIN_PUSH_LEFT"
+    },
+    "terrain-wall-right": {
+      "trace": "build/re/traces/terrain-wall-right-v2/state.jsonl",
+      "observed_direction_query": ["0x77", "0x7F"],
+      "observed_flag": "TERRAIN_PUSH_RIGHT"
+    },
+    "terrain-ceiling": {
+      "trace": "build/re/traces/terrain-ceiling-v2/state.jsonl",
+      "observed_upward_stop": false,
+      "note": "The deterministic opening-room probe did not reach a ceiling handler."
+    },
+    "terrain-slope": {
+      "trace": "build/re/traces/terrain-slope-v2/state.jsonl",
+      "observed_behaviors": ["0x00", "0x0A", "0x11"],
+      "observed_slope_handler": false
+    },
+    "terrain-special": {
+      "trace": "build/re/traces/terrain-special-v2/state.jsonl",
+      "observed_behaviors": ["0x00", "0x0A", "0x11"],
+      "observed_special_handler": false
+    }
+  },
+  "native_implementation": {
+    "source": "src/engine.cpp",
+    "query": "Level::resolve_player_cell and Level::query_player",
+    "handler_table": "fixed 0x004554 entries used by the vertical slice",
+    "removed_heuristics": ["nearby support-row search", "behavior < 0xE0 solid test", "player-sized horizontal rectangle scan"]
+  }
+}

@@ -61,7 +61,11 @@ void apply_scheduled_token(const std::string& token, openaladdin::InputState& in
     while (start <= token.size()) {
         const std::size_t end = token.find('+', start);
         const std::string part = token.substr(start, end == std::string::npos ? std::string::npos : end - start);
-        if (part == "left") {
+        if (part == "up") {
+            input.up = true;
+        } else if (part == "down") {
+            input.down = true;
+        } else if (part == "left") {
             input.left = true;
         } else if (part == "right") {
             input.right = true;
@@ -206,6 +210,8 @@ int main(int argc, char** argv) {
                 }
             }
             const std::uint8_t* keys = SDL_GetKeyboardState(nullptr);
+            input.up = keys[SDL_SCANCODE_UP] || keys[SDL_SCANCODE_W];
+            input.down = keys[SDL_SCANCODE_DOWN] || keys[SDL_SCANCODE_S];
             input.left = keys[SDL_SCANCODE_LEFT] || keys[SDL_SCANCODE_A];
             input.right = keys[SDL_SCANCODE_RIGHT] || keys[SDL_SCANCODE_D];
             const bool jump = keys[SDL_SCANCODE_SPACE] || keys[SDL_SCANCODE_C];
