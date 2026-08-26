@@ -1544,6 +1544,107 @@ def _sync_record(match: re.Match[str]) -> dict[str, int]:
     return values
 
 
+def _animation_state_records(state: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
+    """Return animation records exposed by the shared frame-state schema."""
+    records: list[tuple[str, dict[str, Any]]] = []
+    player = state.get("player")
+    if isinstance(player, dict):
+        records.append(("player", player))
+    actors = state.get("actors")
+    if isinstance(actors, list):
+        for actor in actors:
+            if not isinstance(actor, dict) or "slot" not in actor:
+                continue
+            records.append((f"actors[{actor['slot']}]", actor))
+    return records
+
+
+def _normalize_animation_write_order(states: dict[int, dict[str, Any]]) -> int:
+    """Repair samples taken between the VM's frame-pointer and cursor writes.
+
+    The original common animation VM writes the decoded frame pointer before
+    storing the advanced animation cursor and before completing a timer
+    decrement. A video/debugger boundary can therefore observe one sample
+    with the new ``frame_ptr`` and an old cursor or timer. That is not a
+    distinct game state: the next sample has the completed fields. Normalize
+    only these strict three-sample signatures so intentional stream roots and
+    duplicate frame references remain untouched.
+    """
+    normalized = 0
+    frames = sorted(states)
+    for previous_frame, frame, next_frame in zip(frames, frames[1:], frames[2:]):
+        if previous_frame + 1 != frame or frame + 1 != next_frame:
+            continue
+        previous = dict(_animation_state_records(states[previous_frame]))
+        current = dict(_animation_state_records(states[frame]))
+        following = dict(_animation_state_records(states[next_frame]))
+        for key, record in current.items():
+            before = previous.get(key)
+            after = following.get(key)
+            if before is None or after is None:
+                continue
+            if not all(
+                field in record and field in before and field in after
+                for field in ("animation_pc", "frame_ptr")
+            ):
+                continue
+            pointer_boundary = (
+                record["animation_pc"] != 0
+                and record["animation_pc"] == before["animation_pc"]
+                and record["frame_ptr"] != before["frame_ptr"]
+                and after["frame_ptr"] == record["frame_ptr"]
+            )
+            if pointer_boundary and after["animation_pc"] != record["animation_pc"]:
+                record["animation_pc"] = after["animation_pc"]
+                normalized += 1
+            if (
+                pointer_boundary
+                and all(
+                    field in record and field in before and field in after
+                    for field in ("animation_timer",)
+                )
+                and record["animation_timer"] != after["animation_timer"]
+                and after["animation_timer"] == max(record["animation_timer"] - 1, 0)
+            ):
+                record["animation_timer"] = after["animation_timer"]
+                normalized += 1
+    return normalized
+
+
+def normalize_animation_state_trace(path: Path) -> int:
+    """Normalize a captured state trace in place and return repaired samples."""
+    records: list[dict[str, Any]] = []
+    header: dict[str, Any] | None = None
+    states: dict[int, dict[str, Any]] = {}
+    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError as error:
+            raise SystemExit(f"{path}:{line_number}: invalid JSON: {error}") from error
+        records.append(record)
+        if record.get("type") == "header":
+            header = record
+        elif record.get("type") in (None, "state", "frame_state") and "frame" in record:
+            states[int(record["frame"])] = record
+    if header is None or not states:
+        return 0
+
+    normalized = _normalize_animation_write_order(states)
+    if normalized == 0:
+        return 0
+    with path.open("w", encoding="utf-8") as output:
+        output.write(json.dumps(header, separators=(",", ":")) + "\n")
+        for record in records:
+            if record.get("type") == "header":
+                continue
+            if record.get("type") in (None, "state", "frame_state") and "frame" in record:
+                record = states[int(record["frame"])]
+            output.write(json.dumps(record, separators=(",", ":")) + "\n")
+    return normalized
+
+
 def synchronize_state_trace(trace_dir: Path) -> int:
     """Replace video-boundary state samples with stable game-loop samples.
 
@@ -1665,6 +1766,8 @@ def synchronize_state_trace(trace_dir: Path) -> int:
             camera[name.removeprefix("camera_")] = sync[name]
         camera["state_08"] = sync["special_mode"] != 0
         states[frame] = record
+
+    _normalize_animation_write_order(states)
 
     # Keep the header and marker records, but emit the completed state stream
     # in frame order so downstream tools do not need to know how the debugger
@@ -1802,6 +1905,9 @@ def _finish_record_manifest(
     else:
         valid = False
         print(f"record: missing {input_path}", file=sys.stderr)
+    state_path = run_dir / "state.jsonl"
+    if status == 0 and state_path.is_file():
+        normalize_animation_state_trace(state_path)
     event_count = 0
     segment_count = 0
     if valid:
@@ -2102,6 +2208,7 @@ def command_replay(args: argparse.Namespace) -> int:
                     print("replay: segment reference or replay state trace is missing", file=sys.stderr)
                     status = 1
                 else:
+                    normalize_animation_state_trace(trace)
                     _rebase_state_trace_in_place(
                         trace,
                         1,
@@ -2146,6 +2253,7 @@ def command_replay(args: argparse.Namespace) -> int:
                 print("replay: original or replay state trace is missing", file=sys.stderr)
                 status = 1
             else:
+                normalize_animation_state_trace(trace)
                 if input_header and input_header.get("controller_mapping") is None:
                     _relabel_state_trace_inputs(
                         trace,

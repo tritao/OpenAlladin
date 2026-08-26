@@ -8,6 +8,10 @@
 namespace openaladdin {
 namespace {
 
+// Player_ProcessInteractionState dispatches this fixed event through the
+// shared 68K-to-Z80 audio path at 0x001AE5A6.
+constexpr std::uint8_t kInteractionEventSoundId = 0x31;
+
 constexpr std::uint32_t kIdleStream = 0x00121D9A;
 constexpr std::uint32_t kRunStream = 0x00122006;
 constexpr std::uint32_t kBrakeStream = 0x001232E0;
@@ -127,6 +131,7 @@ void PlayerAnimationVm::reset() {
     random_value_ = 0x00;
     actor_tick_ = false;
     animation_phase_delay_ = 0;
+    pending_animation_pc_ = 0;
     spawn_request_ = {};
     sound_requests_.clear();
     update_count_ = 0;
@@ -261,6 +266,12 @@ void PlayerAnimationVm::sync_context(const AnimationContext& context) {
     write_memory16(0xFF7E04, as_u16(context.world_y));
     write_memory16(0xFF7E58, as_u16(context.player_vx));
     write_memory16(0xFF7E5A, as_u16(context.player_vy));
+    write_memory16(0xFF7E00, context.camera_vertical_threshold);
+    // The player record's actor-relative movement words are inputs to F2/F9
+    // branches in the jump streams.  The byte at +0x1A is the integral/high
+    // byte of the vertical word, not an independent VM scratch byte.
+    write_memory16(0x18, as_u16(context.player_vx));
+    write_memory16(0x1A, as_u16(context.player_vy));
     write_memory8(0xFFF0C3, context.terrain_behavior);
     sync_selector_context(context.selector, context.grounded);
     write_memory8(0xFF7E28, 1);
@@ -424,7 +435,13 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         sound_requests_.push_back(read_rom8(cursor + 1));
         cursor += 2;
         return false;
-    case 0xF4: compare_command(cursor); return false;
+    case 0xF4:
+        // Conditional branches publish their target as the next animation
+        // cursor.  The ROM resumes at that target on the following actor
+        // tick; executing a second command from the target in this pass
+        // collapses two animation phases into one.
+        compare_command(cursor);
+        return true;
     case 0xF5:
         // AnimationVM_SpawnOrCopyActor (0x001AD00E) consumes a fixed 16-byte
         // record. Keep the request lossless here; Engine applies the ROM
@@ -587,6 +604,7 @@ void PlayerAnimationVm::set_frame_pointer(std::uint32_t frame_pointer) {
 
 void PlayerAnimationVm::set_animation_state(std::uint32_t animation_pc, int timer) {
     if (!rom_mode_) return;
+    pending_animation_pc_ = 0;
     animation_pc_ = animation_pc;
     if (is_response_stream_cursor(animation_pc)) {
         stream_entry_ = animation_pc < kResponseStream
@@ -605,6 +623,21 @@ void PlayerAnimationVm::set_animation_phase_delay(int ticks) {
         throw std::runtime_error("animation phase delay must be non-negative");
     }
     animation_phase_delay_ = ticks;
+}
+
+void PlayerAnimationVm::republish_stream_root() {
+    if (!rom_mode_ || stream_entry_ == 0 || stream_kind_ != AnimationStreamKind::Locomotion) {
+        return;
+    }
+    if (animation_pc_ != stream_entry_) {
+        // The VM pass may already have advanced the cursor before the
+        // gameplay selector writes the root. Restore that cursor after the
+        // one-frame root publication so scheduler phase is not disturbed.
+        pending_animation_pc_ = animation_pc_;
+    }
+    animation_pc_ = stream_entry_;
+    const std::uint16_t reference = read_rom16(stream_entry_);
+    set_frame_pointer(read_rom32(reference));
 }
 
 void PlayerAnimationVm::update_actor(
@@ -670,6 +703,14 @@ void PlayerAnimationVm::select_stream_entry(std::uint32_t stream_entry) {
     timer_ = 0;
     landing_finished_ = false;
     landing_reselect_pending_ = false;
+}
+
+void PlayerAnimationVm::select_locomotion_stream(
+    SpritePose pose,
+    const AnimationContext& context
+) {
+    if (!rom_mode_) return;
+    select_rom_stream(pose, false, &context);
 }
 
 void PlayerAnimationVm::select_response_stream(std::uint32_t stream_entry, int timer) {
@@ -761,6 +802,9 @@ bool PlayerAnimationVm::select_player_interaction_state(const AnimationContext& 
     // the interaction helper at 0x001B03F2.
     write_memory16(0xFFF0B0, 0);
     write_memory8(0xFFF0CC, 0);
+    if (context.scene_vdp_update_flag != 0) {
+        sound_requests_.push_back(kInteractionEventSoundId);
+    }
     return normal_path && state.camera_special_mode == 0
         && state.response_timer == 0
         && state.interaction_pending == 0
@@ -778,6 +822,10 @@ void PlayerAnimationVm::update(
     HorizontalDirection horizontal_direction,
     const AnimationContext& context
 ) {
+    if (pending_animation_pc_ != 0) {
+        animation_pc_ = pending_animation_pc_;
+        pending_animation_pc_ = 0;
+    }
     if (horizontal_direction == HorizontalDirection::Left) {
         facing_left_ = true;
     } else if (horizontal_direction == HorizontalDirection::Right) {

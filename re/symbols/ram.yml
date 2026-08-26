@@ -609,6 +609,15 @@
     - ghidra_disassembly_001B537A
     - ghidra_disassembly_001B5502
     - ghidra_disassembly_001B557E
+0xFFF0BF:
+  name: TERRAIN_JUMP_RESPONSE_COUNTER
+  type: u8
+  format: integer
+  confidence: confirmed
+  description: Initial active-response jump counter used by Player_HandleJumpAndVerticalState.
+  evidence:
+    - ghidra_decompile_player_movement_collision_targets
+    - mame_level01_jump_trace
 0xFFF0C0:
   name: TERRAIN_VERTICAL_STOP
   type: u8

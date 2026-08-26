@@ -86,6 +86,7 @@ constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
 constexpr std::uint32_t kPlayerAttackTransitionStream = 0x00122034;
 constexpr std::uint32_t kPlayerSwordStableStream = 0x001223E2;
 constexpr std::uint32_t kPlayerSwordFirstFrame = 0x001ED34A;
+constexpr std::uint32_t kPlayerUpAnimationStream = 0x00122236;
 constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
 constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
 constexpr std::uint8_t kActorDeathFrames = 43;
@@ -1099,8 +1100,11 @@ void Engine::sync_player_actor() {
     actor.y = static_cast<std::uint16_t>(player_world_y());
     actor.movement_flags = 0;
     actor.movement_pc = 0;
+    actor.movement_word_18 = player_.vx;
+    actor.movement_word_1a = player_.vy;
     actor.frame_ptr = animation_.frame_pointer();
     actor.animation_pc = animation_.animation_pc();
+    actor.animation_timer = static_cast<std::uint8_t>(animation_.timer());
     actor.flags = 0;
     actor.terminal_timer = 0;
     actor.spawned_by_interaction = false;
@@ -1459,6 +1463,10 @@ AnimationContext Engine::player_animation_context(bool grounded) const {
         player_.terrain_response_timer_state,
         player_.terrain_behavior,
     };
+    context.camera_vertical_threshold =
+        static_cast<std::uint16_t>(camera_.vertical_threshold);
+    context.scene_vdp_update_flag =
+        static_cast<std::uint8_t>(camera_.vdp_update);
     context.selector = player_.animation_selector;
     // The context is also used by const trace serialization. The VM is the
     // only consumer that mutates this engine-owned shared state.
@@ -1606,6 +1614,7 @@ void Engine::update_actor_animations() {
             // player boundary; F6 00 is the later record cleanup and is not
             // the player-animation trigger.
             surface_interaction_pending_ = true;
+            interaction_selector_pending_ = true;
             surface_interaction_active_ = true;
         }
         if (actor.type == kActorTerminalType) {
@@ -1947,6 +1956,7 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
         if (overlaps_type_1f) {
             if ((actor.flags & kInteractionFlag) == 0) {
                 actor.flags = static_cast<std::uint8_t>(actor.flags | kInteractionFlag);
+                interaction_selector_pending_ = true;
                 // The selector clears FFF0CC and Player_Update arms a
                 // seven-frame camera delay on the following pass. The camera
                 // routine consumes one count during this same native update.
@@ -2003,6 +2013,7 @@ void Engine::reset() {
     player_ = PlayerState{};
     interaction_map_.reset();
     interaction_scan_initialized_ = false;
+    interaction_selector_pending_ = false;
     checkpoint_animation_selector_pending_ = false;
     surface_interaction_pending_ = false;
     surface_interaction_active_ = false;
@@ -2030,6 +2041,7 @@ void Engine::reset() {
     camera_.level_width = level_.map_width() * 16;
     camera_.level_height = level_.map_height() * 16;
     camera_.scene_state = 1;
+    camera_.vdp_update = 1;
     player_.grounded = true;
     player_.attack_timer = 0;
     initialize_camera_alignment();
@@ -2221,6 +2233,7 @@ void Engine::set_checkpoint_camera(
     interaction_scan_initialized_ = false;
     camera_.scene_state = scene_state;
     camera_.special_mode = scene_state == 8 ? 1 : 0;
+    camera_.vdp_update = scene_state == 8 ? 0 : 1;
     if (horizontal_threshold >= 0) camera_.horizontal_threshold = horizontal_threshold;
     if (vertical_threshold >= 0) camera_.vertical_threshold = vertical_threshold;
     if (update_delay >= 0) camera_.update_delay = update_delay;
@@ -2478,6 +2491,7 @@ void Engine::update_terrain_connector_response() {
         player_.vy = 0;
         player_.terrain_horizontal_response = 0;
         player_.terrain_response_active = 0;
+        player_.terrain_jump_response_counter = 0;
         player_.terrain_response_timer_state = 0;
         player_.terrain_transition_gate = 0xFF;
         return;
@@ -2583,6 +2597,7 @@ void Engine::apply_floor_contour() {
     player_.grounded = true;
     player_.terrain_landing_state = contour.contour;
     player_.terrain_response_active = 0;
+    player_.terrain_jump_response_counter = 0;
     player_.terrain_response_timer_state = 0;
 }
 
@@ -3096,6 +3111,8 @@ void Engine::update_state08(const InputState& input) {
 }
 
 void Engine::update(const InputState& input) {
+    const bool interaction_selector_pending_at_start =
+        interaction_selector_pending_;
     const bool arm_surface_interaction = surface_interaction_pending_;
     surface_interaction_pending_ = false;
     if (player_.animation_selector.interaction_lock != 0) {
@@ -3249,6 +3266,14 @@ void Engine::update(const InputState& input) {
         }
     }
     integrate_motion();
+    if (player_.terrain_response_active != 0
+        && player_.terrain_jump_response_counter != 0
+        && player_.terrain_jump_response_counter < 10) {
+        // Player_HandleJumpAndVerticalState applies this extra impulse after
+        // Player_IntegrateMotion during the first nine active-response ticks.
+        ++player_.terrain_jump_response_counter;
+        player_.vy = static_cast<std::int16_t>(player_.vy - 0x006C);
+    }
     if (checkpoint_terrain_behavior_override_ && checkpoint_terrain_behavior_ == 0x2B) {
         // The original response path continues through the positive-motion
         // state after TerrainHandler_StopAndAlignPlayer: it advances VY by
@@ -3300,6 +3325,11 @@ void Engine::update(const InputState& input) {
         player_.vy = static_cast<std::int16_t>(-0x200);
         player_.grounded = false;
         player_.terrain_response_active = 0xFF;
+        // The live ROM's ten-step counter is observable when a jump follows
+        // a terrain-selected action stream. Keep direct locomotion fixtures
+        // on the ordinary integrator path used by their checkpoints.
+        player_.terrain_jump_response_counter =
+            animation_.stream_kind() == AnimationStreamKind::Action ? 1 : 0;
         player_.terrain_response_timer_state = 0;
         player_.terrain_vertical_stop = 0;
         player_.terrain_landing_state = 0xFF;
@@ -3323,6 +3353,21 @@ void Engine::update(const InputState& input) {
         player_.ground_braking = true;
         last_ground_direction_ = 0;
     }
+
+    const bool release_up_animation =
+        !input.up && player_.animation_selector.transition_state_df != 0;
+    if (release_up_animation) {
+        // This clear belongs to Player_TerrainResponseStateMachine, before
+        // Camera_UpdateFollow. The selected action stream remains active.
+        player_.animation_selector.transition_state_df = 0;
+        camera_.vertical_threshold = 0x170;
+        animation_context.selector.transition_state_df = 0;
+    }
+    // Terrain and selector handlers above can write the shared camera RAM
+    // before the actor VM tick. Refresh the VM view after those writes so it
+    // does not restore the earlier pre-handler threshold.
+    animation_context.camera_vertical_threshold =
+        static_cast<std::uint16_t>(camera_.vertical_threshold);
 
     // The ROM consumes a pending 16-pixel reference shift at the beginning
     // of the next follow pass. This leaves the boundary frame externally
@@ -3355,15 +3400,56 @@ void Engine::update(const InputState& input) {
                && (animation_.pose() == SpritePose::Run || animation_.pose() == SpritePose::Brake)) {
         desired_pose = SpritePose::Brake;
     }
-    // The original actor VM runs before the player movement update reaches
-    // the stable frame boundary. Feed it the pre-integration state so its
-    // F4/F2 conditions see the same velocity and landing fields as MAME.
+    // The common actor VM normally sees the pre-integration state. During the
+    // active-response jump, however, the ROM's vertical handler has already
+    // updated PLAYER_VY before the jump stream's F4 branch is evaluated. Keep
+    // that one shared RAM value at the post-integration boundary so the
+    // signed threshold transition at 0x001221B8 follows the ROM.
+    AnimationContext vm_context = animation_context;
+    if (desired_pose == SpritePose::Jump && player_.terrain_response_active != 0) {
+        vm_context.player_vy = player_.vy;
+    }
     if (!stable_terrain_handler_fixture) {
         animation_.update(
             desired_pose,
             horizontal_direction(input),
-            animation_context
+            vm_context
         );
+        if (animation_.rom_loaded()) {
+            camera_.vertical_threshold = animation_.camera_vertical_threshold();
+        }
+        if (ground_release && desired_pose == SpritePose::Idle) {
+            // Player_TerrainResponseStateMachine writes the idle root after
+            // the common VM pass on this boundary. Keep that root visible for
+            // one frame, then resume the cursor reached by the pass.
+            animation_.republish_stream_root();
+        }
+
+        // The grounded Up branch at 0x001AA0AE is a post-VM selector. It
+        // publishes the action root and FFF0DF after the current animation
+        // pass; the next frame is the first one that consumes that root.
+        const bool can_select_up_animation =
+            input.up
+            && !input.left
+            && !input.right
+            && player_.grounded
+            && player_.terrain_landing_state != 0
+            && player_.vy == 0
+            && player_.terrain_response_timer_state == 0
+            && player_.terrain_transition_gate == 0
+            && player_.animation_selector.transition_state_df == 0
+            && camera_.special_mode == 0;
+        if (can_select_up_animation) {
+            animation_.select_stream_entry(kPlayerUpAnimationStream);
+            player_.animation_selector.transition_state_df = 0xFF;
+            player_.terrain_response_timer_state = 0;
+        }
+        if (start_jump) {
+            // Player_HandleJumpAndVerticalState publishes the jump root after
+            // the common VM pass. This remains a locomotion stream even when
+            // the preceding stream was a terrain-selected action stream.
+            animation_.select_locomotion_stream(SpritePose::Jump, vm_context);
+        }
     }
     // Player_ProcessInteractionState at 0x001AE4F8 is a RAM-driven stream
     // selector outside the common actor VM. Build its post-physics RAM view
@@ -3371,7 +3457,8 @@ void Engine::update(const InputState& input) {
     // ROM's interaction caller.
     if (!stable_terrain_handler_fixture
         && animation_.rom_loaded() && !landing_event && desired_pose != SpritePose::Landing
-        && player_.animation_selector.interaction_lock != 0) {
+        && (interaction_selector_pending_at_start
+            || player_.animation_selector.interaction_lock != 0)) {
         AnimationContext selector_context = animation_context;
         selector_context.player_x = player_.x;
         selector_context.player_y = player_.y;
@@ -3381,6 +3468,12 @@ void Engine::update(const InputState& input) {
         selector_context.player_vy = player_.vy;
         selector_context.grounded = player_.grounded;
         auto& selector = selector_context.selector;
+        if (interaction_selector_pending_at_start) {
+            // The native lock is a post-call timer used by the animation
+            // pass. The ROM caller reaches Player_ProcessInteractionState
+            // with FFF0F2 clear on the frame after the actor flag edge.
+            selector.interaction_lock = 0;
+        }
         selector.terminal_transition = player_.terrain_terminal_transition;
         selector.response_active = player_.terrain_response_active;
         // FFF0C1 is an explicit selector input. Leave it at the value carried
@@ -3401,6 +3494,9 @@ void Engine::update(const InputState& input) {
                     ? 1
                     : 0);
         animation_.select_player_interaction_state(selector_context);
+        if (interaction_selector_pending_at_start) {
+            interaction_selector_pending_ = false;
+        }
     }
     if (input.attack_pressed && was_grounded && animation_.rom_loaded()) {
         // The live ROM trace has a two-stage action transition: the input
@@ -3585,7 +3681,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"script_data_cursor\":0"
            << ",\"table_index\":0"
            << ",\"script_pending\":0"
-           << ",\"vdp_update\":0"
+           << ",\"vdp_update\":" << camera_.vdp_update
            << ",\"vdp_clear\":0"
            << ",\"transition_event\":0"
            << ",\"script_countdown\":0"
@@ -3631,6 +3727,8 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"behavior\":" << static_cast<unsigned>(player_.terrain_behavior)
            << ",\"horizontal_response\":" << player_.terrain_horizontal_response
            << ",\"response_active\":" << static_cast<unsigned>(player_.terrain_response_active)
+           << ",\"jump_response_counter\":"
+           << static_cast<unsigned>(player_.terrain_jump_response_counter)
            << ",\"vertical_stop\":" << static_cast<unsigned>(player_.terrain_vertical_stop)
            << ",\"landing_state\":" << static_cast<unsigned>(player_.terrain_landing_state)
            << ",\"surface_mode\":" << static_cast<unsigned>(player_.terrain_surface_mode)

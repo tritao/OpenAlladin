@@ -75,7 +75,7 @@ int main() {
 
     // F3 carries a ROM sound-table ID. Verify that the native VM exposes it
     // to the engine instead of silently consuming the command.
-    std::vector<std::uint8_t> rom(0x20010, 0);
+    std::vector<std::uint8_t> rom(0x200000, 0);
     rom[0] = 0x00;
     rom[1] = 0x02;
     rom[2] = 0x00;
@@ -99,6 +99,38 @@ int main() {
     assert(sound_requests.size() == 1);
     assert(sound_requests.front() == 0x4C);
     assert(sound_vm.take_sound_requests().empty());
+
+    // Player_ProcessInteractionState emits the fixed 0x31 event from its
+    // common non-special convergence block, including the FFF0CC response
+    // handoff. The native caller supplies the scene VDP gate separately from
+    // the animation VM's selector bytes.
+    PlayerAnimationVm interaction_vm;
+    interaction_vm.load_rom(test_rom);
+    AnimationContext interaction_context;
+    interaction_context.scene_vdp_update_flag = 1;
+    interaction_context.selector.landing_state = 1;
+    interaction_context.selector.response_timer = 1;
+    assert(!interaction_vm.select_player_interaction_state(interaction_context));
+    const auto interaction_requests = interaction_vm.take_sound_requests();
+    assert(interaction_requests.size() == 1);
+    assert(interaction_requests.front() == 0x31);
+
+    interaction_context.scene_vdp_update_flag = 0;
+    assert(!interaction_vm.select_player_interaction_state(interaction_context));
+    assert(interaction_vm.take_sound_requests().empty());
+
+    // A gameplay selector can publish a new locomotion root after the VM has
+    // already advanced it. The root is visible for that frame; the advanced
+    // cursor resumes on the next update without changing scheduler phase.
+    PlayerAnimationVm boundary_vm;
+    boundary_vm.load_rom(test_rom);
+    boundary_vm.update(SpritePose::Idle, HorizontalDirection::None);
+    const auto advanced_cursor = boundary_vm.animation_pc();
+    assert(advanced_cursor != 0);
+    boundary_vm.republish_stream_root();
+    assert(boundary_vm.animation_pc() == 0x00121D9A);
+    boundary_vm.update(SpritePose::Idle, HorizontalDirection::None);
+    assert(boundary_vm.animation_pc() == advanced_cursor);
     std::remove(test_rom);
     return 0;
 }

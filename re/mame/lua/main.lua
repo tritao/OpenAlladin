@@ -263,6 +263,7 @@ local function terrain_runtime_json()
         { "right_inner_probe", tostring(read_u8(symbol("TERRAIN_RIGHT_INNER_PROBE"))) },
         { "right_outer_probe", tostring(read_u8(symbol("TERRAIN_RIGHT_OUTER_PROBE"))) },
         { "stop_upward_motion", tostring(read_u8(symbol("TERRAIN_STOP_UPWARD_MOTION"))) },
+        { "jump_response_counter", tostring(read_u8(symbol("TERRAIN_JUMP_RESPONSE_COUNTER"))) },
         { "response_timer_state", tostring(read_u8(symbol("TERRAIN_RESPONSE_TIMER_STATE"))) },
         { "query_state_a", tostring(read_u8(symbol("TERRAIN_QUERY_STATE_A"))) },
         { "query_state_b", tostring(read_u8(symbol("TERRAIN_QUERY_STATE_B"))) },

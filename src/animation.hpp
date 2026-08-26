@@ -75,6 +75,8 @@ struct AnimationContext {
     bool grounded = false;
     std::uint8_t terrain_response_timer_state = 0;
     std::uint8_t terrain_behavior = 0;          // FFF0C3
+    std::uint16_t camera_vertical_threshold = 0; // FF7E00
+    std::uint8_t scene_vdp_update_flag = 0;     // FFF57D
     AnimationSelectorState selector{};
     // The ROM animation F0 command calls the same shared PRNG as the terrain
     // response code. Engine owns the state; every VM sees the same sequence.
@@ -136,11 +138,18 @@ public:
     void set_frame_pointer(std::uint32_t frame_pointer);
     void set_animation_state(std::uint32_t animation_pc, int timer);
     void set_animation_phase_delay(int ticks);
+    // Publish a selector-written stream root after the VM pass. The cursor
+    // reached by that pass is restored at the next update boundary.
+    void republish_stream_root();
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
     std::vector<std::uint8_t> take_sound_requests();
     void select_stream_entry(std::uint32_t stream_entry);
+    void select_locomotion_stream(
+        SpritePose pose,
+        const AnimationContext& context = {}
+    );
     void select_response_stream(std::uint32_t stream_entry, int timer = 0);
     bool finished() const;
     bool select_player_interaction_state(const AnimationContext& context);
@@ -152,6 +161,9 @@ public:
     AnimationStreamKind stream_kind() const { return stream_kind_; }
     std::uint32_t animation_pc() const { return animation_pc_; }
     std::uint32_t frame_pointer() const { return frame_pointer_; }
+    std::uint16_t camera_vertical_threshold() const {
+        return read_memory16(0xFF7E00);
+    }
 
     // Original ROM stream entry for the currently selected pose. This is a
     // stream identity, not the live cursor (which is the next VM field to
@@ -209,6 +221,7 @@ private:
     // this separate delay restores the VM scheduler phase that is not stored
     // in the captured RAM fields.
     int animation_phase_delay_ = 0;
+    std::uint32_t pending_animation_pc_ = 0;
     AnimationSpawnRequest spawn_request_{};
     std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;

@@ -36,6 +36,9 @@ struct CameraState {
 
     int level_width = 4800;
     int level_height = 720;
+    // SCENE_VDP_UPDATE_FLAG gates fixed event dispatch from the player
+    // interaction selector.
+    int vdp_update = 1;
     // 0xFF7E0A..0xFF7E10 are startup/VDP alignment fields written by
     // Player_CameraAlign (0x001B0490), not live aliases of x/y.
     int pixel_x = 0;
@@ -88,6 +91,9 @@ struct PlayerState {
     std::uint8_t terrain_right_inner_probe = 0;
     std::uint8_t terrain_right_outer_probe = 0;
     std::uint8_t terrain_response_timer_state = 0;
+    // FFF0BF counts the initial active-response jump phase. The ROM applies
+    // an extra -0x6C vertical impulse until this counter reaches ten.
+    std::uint8_t terrain_jump_response_counter = 0;
     std::uint8_t terrain_transition_countdown = 0;
     std::uint8_t terrain_query_state_a = 0;
     std::uint8_t terrain_query_state_b = 0;
@@ -451,6 +457,7 @@ private:
     std::map<int, std::array<ActorState, 32>> actor_timeline_;
     bool actor_snapshot_mode_ = false;
     bool interaction_scan_initialized_ = false;
+    bool interaction_selector_pending_ = false;
     bool checkpoint_animation_selector_pending_ = false;
     bool surface_interaction_pending_ = false;
     bool surface_interaction_active_ = false;

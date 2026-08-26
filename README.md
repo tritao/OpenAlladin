@@ -151,6 +151,13 @@ python tools/oa.py parity level01-good-run
 python tools/oa.py inputs summarize build/runs/level01-good-run/input.jsonl
 ```
 
+The recorder normalizes the one instruction-level boundary where Genesis
+writes an animation frame pointer before its advanced cursor. A frame-state
+sample is considered complete only when both fields belong to the same VM
+pass; the normalizer requires the matching cursor advance and unchanged frame
+pointer in the immediately following sample. This keeps parity traces stable
+without treating duplicate frame references as extra animation frames.
+
 Detected segments can be replayed without rerunning the menu or earlier
 gameplay. A MAME segment replay starts from the save state captured at the
 event boundary; the native client starts from the stable checkpoint values at

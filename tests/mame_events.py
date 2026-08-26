@@ -26,6 +26,29 @@ def main() -> int:
         {"controller_mapping": oa.INPUT_MAPPING}, ["a+b", "c"]
     ) == ["a+b", "c"]
 
+    animation_states = {
+        0: {"player": {"animation_pc": 0x122028, "frame_ptr": 0x1EA3C2}},
+        1: {"player": {"animation_pc": 0x122028, "frame_ptr": 0x1EA410}},
+        2: {"player": {"animation_pc": 0x12202A, "frame_ptr": 0x1EA410}},
+    }
+    assert oa._normalize_animation_write_order(animation_states) == 1
+    assert animation_states[1]["player"]["animation_pc"] == 0x12202A
+
+    timer_states = {
+        0: {"player": {"animation_pc": 0x12227C, "frame_ptr": 0x1E9F24, "animation_timer": 3}},
+        1: {"player": {"animation_pc": 0x12227C, "frame_ptr": 0x1E9F7E, "animation_timer": 3}},
+        2: {"player": {"animation_pc": 0x12227C, "frame_ptr": 0x1E9F7E, "animation_timer": 2}},
+    }
+    assert oa._normalize_animation_write_order(timer_states) == 1
+    assert timer_states[1]["player"]["animation_timer"] == 2
+
+    duplicate_frame_states = {
+        0: {"player": {"animation_pc": 0x122026, "frame_ptr": 0x1EA3C2}},
+        1: {"player": {"animation_pc": 0x122028, "frame_ptr": 0x1EA3C2}},
+        2: {"player": {"animation_pc": 0x12202A, "frame_ptr": 0x1EA410}},
+    }
+    assert oa._normalize_animation_write_order(duplicate_frame_states) == 0
+
     with tempfile.TemporaryDirectory(prefix="openaladdin-events-test-") as name:
         run_dir = Path(name)
         checkpoint = run_dir / "checkpoints/genesis/level01-entry.sta"
