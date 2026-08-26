@@ -207,6 +207,13 @@
   evidence:
     - ghidra_far_transfer_targeted_decompile_v1
     - mame_handhold_far_transfer_trace
+0x001B5256:
+  name: InteractionHandler_0x40_Helper
+  confidence: confirmed
+  description: Allocates and initializes an actor from an interaction-row payload, writes the payload word/byte fields at actor offsets 0x32/0x34, positions it from the global interaction coordinates, and consumes the interaction byte.
+  evidence:
+    - ghidra_far_transfer_targeted_decompile_v1
+    - ghidra_level01_interaction_handler_targeted_decompile
 0x001ABE6E:
   name: Actor_ClearAndRelease
   confidence: confirmed

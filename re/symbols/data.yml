@@ -130,6 +130,24 @@
     - rom_handler_table_decode
     - mame_guard_collision_watchpoint
 
+0x001D92:
+  name: PLAYER_COLLISION_HANDLER_TYPE_35
+  type: rom_pointer
+  confidence: confirmed
+  description: Player-collision dispatch pointer for actor type 0x35; its big-endian ROM value is 0x001AF468.
+  evidence:
+    - rom_handler_table_decode
+    - ghidra_far_transfer_targeted_decompile_v1
+
+0x001DBE:
+  name: PLAYER_COLLISION_HANDLER_TYPE_40
+  type: rom_pointer
+  confidence: confirmed
+  description: Player-collision dispatch pointer for actor type 0x40; its big-endian ROM value is 0x001AF468.
+  evidence:
+    - rom_handler_table_decode
+    - mame_type40_far_transfer_trace
+
 0x001D8E:
   name: PLAYER_COLLISION_HANDLER_TYPE_34
   type: rom_pointer

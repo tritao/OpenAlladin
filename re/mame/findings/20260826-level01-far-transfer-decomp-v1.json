@@ -34,7 +34,37 @@
       "breakpoints": ["0x001AF468", "0x001B0336", "0x001AE9C6", "0x001AE9D4", "0x001AEC00", "0x001AE4F8"],
       "observed_pc_sequence": ["0x001AE9C8", "0x001AEC02", "0x001AE9D6", "0x001AE4FA"],
       "result": "The loaded guard-window fixture repeatedly follows the type-0x0A shared-block and interaction-recovery chain without entering the far-transfer helper."
+    },
+    {
+      "id": "type40-raw-interaction-fields",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v4/type40-interaction-inspect",
+      "load_state": "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v2/handhold-grab/states/genesis/lower-handhold-grabbed.sta",
+      "input": "none*3",
+      "capture": "raw-RAM plus debugger breakpoints",
+      "breakpoints": ["0x001AF468", "0x001B0336", "0x001B5256"],
+      "observed": {
+        "actor_slot": 3,
+        "actor_type_before": "0x40",
+        "actor_world": [4224, 688],
+        "actor_word_32": "0x2F68",
+        "actor_byte_34": "0x60",
+        "counter_before": "0x3234",
+        "counter_after": "0x3235",
+        "actor_type_after": "0x84",
+        "published_interaction_byte": "0x00",
+        "published_interaction_address": "0xFFDDEF"
+      },
+      "result": "The 0x001AF468 path does not publish the actor interaction because the counter is not 0x3939; it only advances the counter and clears/reinitializes the type-0x40 actor. The interaction handler helper at 0x001B5256 is not entered."
     }
+  ],
+  "handler_table_resolution": [
+    { "actor_type": "0x35", "table_entry": "0x001D92", "handler": "0x001AF468" },
+    { "actor_type": "0x40", "table_entry": "0x001DBE", "handler": "0x001AF468" },
+    { "actor_type": "0x0A", "table_entry": "0x001CE6", "handler": "0x001AE9C6" },
+    { "actor_type": "0x1E", "table_entry": "0x001D36", "handler": "0x001AE796" },
+    { "actor_type": "0x2D", "table_entry": "0x001D32", "handler": "0x001AEE40" },
+    { "actor_type": "0x65", "table_entry": "0x001E56", "handler": "0x001AFBF4" },
+    { "actor_type": "0x6A", "table_entry": "0x001E6A", "handler": "0x001AF978" }
   ],
   "verified_static_findings": [
     {
@@ -119,19 +149,25 @@
       "address": "0x001B56B6",
       "name": "TerrainHandler_0x2D_Bounce",
       "result": "Sets PLAYER_VX=0xFC00 (-0x0400) and PLAYER_VY=0x0200, selects animation 0x00121AD8, and optionally queues event 0x27. It does not itself arm SCENE_STATE=0x08."
+    },
+    {
+      "address": "0x001B5256",
+      "name": "InteractionHandler_0x40_Helper",
+      "result": "Allocates an actor/template when the free-slot helper succeeds, writes the interaction-derived word and byte fields at actor offsets 0x32 and 0x34, positions the actor from the global interaction coordinates, and clears the consumed interaction byte. The type-0x40 raw probe did not reach this helper because the 0x001AF468 publish gate was false."
     }
   ],
   "scene_exit_assessment": {
     "scene_state_address": "0x00FF7E26",
     "terminal_transition_address": "0x00FFF0E6",
     "known_exit_writer": "0x001B5B4A",
-    "result": "None of the 15 targeted functions writes SCENE_STATE=0x08. The natural far-transfer problem remains an unresolved actor/terrain interaction or route-input issue, not evidence that the exit writer is missing from the ROM."
+    "result": "None of the 16 targeted functions writes SCENE_STATE=0x08. The natural far-transfer problem remains an unresolved actor/terrain interaction or route-input issue, not evidence that the exit writer is missing from the ROM."
   },
   "conclusions": [
     "Starting over would discard useful replay and negative evidence; the v4 campaign remains the canonical baseline.",
-    "The next natural replay should instrument the actor records and input conditions that reach 0x001AF468, rather than search blindly for a scene-state write. Its helper is only a counter plus actor cleanup/reinitialization.",
+    "The natural type-0x40 collision is now classified as a cleanup/reinitialization branch, not a route transfer: the publish gate is false and no interaction-row spawn follows it.",
+    "The next natural replay should move past the type-0x40 negative and focus on the type-0x65/0x29 launch family, type-0x2D bounce family, and the type-0x1E actor above the guard band.",
     "The guard fixture's 0x001AE9C6 → 0x001AEC00 → 0x001AE9D4 → 0x001AE4F8 chain is a real interaction-recovery path, but its observed branch does not select the scene transition.",
     "The 0x29 launch and 0x2D bounce handlers are now decoded enough to classify future traces by actual velocity injection and animation selection."
   ],
-  "next_action": "Add targeted traces for 0x001AF468, 0x001B0336, and the 0x001AE9C6 guard path, then replay the far rope from the saved v4 checkpoints with controller-only inputs and checkpoint every launch, spring, handhold attachment, dismount, reset, and scene-gate change."
+  "next_action": "Replay the far rope from the saved v4 checkpoints with controller-only inputs while tracing actor types 0x65, 0x2D, and 0x1E, and checkpoint every launch, spring, handhold attachment, dismount, reset, and scene-gate change."
 }
