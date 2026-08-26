@@ -966,7 +966,8 @@ def _write_segments(run_dir: Path, frame_count: int) -> tuple[int, int]:
         "format": SEGMENTS_FORMAT,
         "source": "events.jsonl",
         "frame_count": frame_count,
-        "frame_semantics": "segment frame N is the controller state consumed by logical game frame N",
+        "frame_contract": "S[N] = synchronized state at boundary N; I[N] = input for the transition S[N] -> S[N+1]",
+        "frame_semantics": "segment frame N is state boundary S[N] and its input is transition input I[N]",
         "boundary_semantics": (
             "event_frame is the detector sample; start_frame is the first "
             "replayable post-event state and MAME checkpoint boundary; "
@@ -1030,13 +1031,19 @@ def _new_run_manifest(args: argparse.Namespace, run_dir: Path, rom: Path) -> dic
         "event_format": EVENT_FORMAT,
         "segments_format": SEGMENTS_FORMAT,
         "frame_semantics": (
-            "frame N is the controller state consumed by logical game frame N"
+            "S[N] is the synchronized state at boundary N; I[N] is the controller input used for the transition S[N] -> S[N+1]"
         ),
         "artifacts": {
             "input": "input.jsonl",
             "state": "state.jsonl",
+            "raw_state": "raw/state.jsonl",
+            "raw_state_compat": "state.raw.jsonl",
+            "synchronized_state": "state.synced.jsonl",
             "events": "events.jsonl",
+            "event_source": "state.jsonl",
             "segments": "segments.json",
+            "quality": "trace-quality.json",
+            "capture_input": "capture-input.jsonl",
             "mame_input": "mame.inp",
             "checkpoints": "checkpoints/",
         },
@@ -1239,7 +1246,17 @@ def event_detector_protocol() -> str | None:
         stable_for = int(detector.get("stable_for", 1))
         if stable_for < 1:
             raise SystemExit(f"event detector {name!r} stable_for must be positive")
-        once = "0" if detector.get("repeatable", False) else "1"
+        emit = detector.get("emit")
+        if emit is None:
+            # Preserve the old manifest spelling while making its actual
+            # behavior explicit: repeatable detectors fire once per stable
+            # active interval, while the default fires once per run.
+            emit = "every_stable_interval" if detector.get("repeatable", False) else "once"
+        emit = str(emit).lower()
+        if emit not in {"once", "rising_edge", "every_stable_interval"}:
+            raise SystemExit(
+                f"event detector {name!r} has unsupported emit mode {emit!r}"
+            )
         conditions: list[str] = []
         for condition in detector.get("conditions") or []:
             condition = condition or {}
@@ -1279,10 +1296,226 @@ def event_detector_protocol() -> str | None:
             level,
             checkpoint,
             str(stable_for),
-            once,
+            emit,
             "~".join(conditions),
         )))
     return ";".join(encoded_detectors)
+
+
+EVENT_STATE_FIELDS = {
+    "PLAYER_X": "player.x",
+    "PLAYER_Y": "player.y",
+    "PLAYER_WORLD_X": "player.world_x",
+    "PLAYER_WORLD_Y": "player.world_y",
+    "PLAYER_VX": "player.vx",
+    "PLAYER_VY": "player.vy",
+    "PLAYER_ANIMATION_PC": "player.animation_pc",
+    "PLAYER_FRAME_PTR": "player.frame_ptr",
+    "PLAYER_ANIMATION_TIMER": "player.animation_timer",
+    "TERRAIN_LANDING_STATE": "terrain.landing_state",
+    "TERRAIN_BEHAVIOR": "terrain.behavior",
+    "SCENE_STATE": "scene.state",
+    "WORLD_CAMERA_X": "camera.x",
+    "WORLD_CAMERA_Y": "camera.y",
+}
+
+
+def _event_condition_value(state: dict[str, Any], condition: dict[str, Any]) -> Any:
+    """Resolve a manifest event predicate against the canonical state view."""
+    if "field" in condition:
+        field = str(condition["field"])
+    elif "symbol" in condition:
+        symbol_name = str(condition["symbol"])
+        field = EVENT_STATE_FIELDS.get(symbol_name)
+        if field is None:
+            raise SystemExit(
+                f"event condition {symbol_name!r} is not exposed by the semantic state trace"
+            )
+    elif "pc" in condition:
+        return state.get("pc")
+    else:
+        raise SystemExit(f"event condition has no field, symbol, or pc: {condition}")
+    return _state_path_value(state, field)
+
+
+def _event_condition_compare(actual: Any, condition: dict[str, Any]) -> tuple[bool, dict[str, Any]]:
+    operators = {
+        "equals": "eq",
+        "equal": "eq",
+        "not_equals": "ne",
+        "less_than": "lt",
+        "less_equal": "le",
+        "greater_than": "gt",
+        "greater_equal": "ge",
+    }
+    operation = "eq"
+    expected: Any = None
+    for key, encoded in operators.items():
+        if key in condition:
+            operation = encoded
+            expected = parse_int(condition[key])
+            break
+    else:
+        raise SystemExit(f"event condition has no comparison: {condition}")
+    try:
+        actual_value = None if actual is None else int(actual)
+    except (TypeError, ValueError) as error:
+        raise SystemExit(f"event condition value is not numeric: {actual!r}") from error
+    met = _readiness_compare(actual_value, operation, expected)
+    return met, {
+        "kind": "state",
+        "field": str(condition.get("field", condition.get("symbol", condition.get("pc", "pc")))),
+        "operation": operation,
+        "expected": expected,
+        "actual": actual_value,
+    }
+
+
+def derive_events_from_state(
+    state_path: Path,
+    destination: Path,
+    *,
+    end_frame: int | None = None,
+) -> list[dict[str, Any]]:
+    """Interpret synchronized state in Python and write the canonical events."""
+    _, states, _ = load_state_trace(state_path)
+    definitions = _event_detector_definitions()
+    events: list[dict[str, Any]] = []
+    runtime: dict[str, dict[str, Any]] = {}
+    for name, detector in definitions.items():
+        emit = str(detector.get("emit") or (
+            "every_stable_interval" if detector.get("repeatable", False) else "once"
+        )).lower()
+        if emit not in {"once", "rising_edge", "every_stable_interval"}:
+            raise SystemExit(f"event detector {name!r} has unsupported emit mode {emit!r}")
+        stable_for = int(detector.get("stable_for", 1))
+        if stable_for < 1:
+            raise SystemExit(f"event detector {name!r} stable_for must be positive")
+        runtime[name] = {
+            "active_frames": 0,
+            "onset_frame": None,
+            "emitted": False,
+            "emit": emit,
+            "stable_for": stable_for,
+        }
+
+    for frame in sorted(states):
+        if end_frame is not None and frame >= end_frame:
+            break
+        state = states[frame]
+        for name, detector in definitions.items():
+            status = runtime[name]
+            evidence: list[dict[str, Any]] = []
+            active = True
+            for condition in detector.get("conditions") or []:
+                met, item = _event_condition_compare(
+                    _event_condition_value(state, condition), condition
+                )
+                evidence.append(item)
+                active = active and met
+            if active:
+                if status["active_frames"] == 0:
+                    status["onset_frame"] = frame
+                status["active_frames"] += 1
+            else:
+                status["active_frames"] = 0
+                status["onset_frame"] = None
+                if status["emit"] != "once":
+                    status["emitted"] = False
+            if active and status["active_frames"] >= status["stable_for"] and not status["emitted"]:
+                checkpoint = str(detector.get("checkpoint") or name)
+                events.append({
+                    "type": "event",
+                    "format": EVENT_FORMAT,
+                    "frame": frame,
+                    "onset_frame": status["onset_frame"],
+                    "confirmed_frame": frame,
+                    "stable_for": status["stable_for"],
+                    "emit": status["emit"],
+                    "name": name,
+                    "event": str(detector.get("event", name)),
+                    "phase": str(detector.get("phase", "unknown")),
+                    "level": str(detector.get("level", "")),
+                    "checkpoint": checkpoint,
+                    "state": "",
+                    "evidence": evidence,
+                })
+                status["emitted"] = True
+
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    header = {
+        "type": "header",
+        "format": EVENT_FORMAT,
+        "frame_contract": "S[N] = synchronized state at boundary N; I[N] = input for S[N] -> S[N+1]",
+        "frame_semantics": "event predicate E[N] is evaluated against synchronized state S[N]",
+        "source_artifact": state_path.name,
+        "evaluator": {"name": "openaladdin-python-event-engine", "version": 1},
+        "detectors": sorted(definitions),
+    }
+    with destination.open("w", encoding="utf-8") as output:
+        output.write(json.dumps(header, separators=(",", ":")) + "\n")
+        for event in events:
+            output.write(json.dumps(event, separators=(",", ":")) + "\n")
+    return events
+
+
+def _checkpoint_name(event: dict[str, Any], index: int, used: dict[str, int]) -> str:
+    base = str(event.get("checkpoint") or event.get("name") or f"event-{index}")
+    used[base] = used.get(base, 0) + 1
+    return base if used[base] == 1 else f"{base}-{used[base]}"
+
+
+def capture_event_checkpoints(
+    run_dir: Path,
+    rom: Path,
+    manifest: dict[str, Any],
+    events_path: Path,
+) -> int:
+    """Materialize Python-derived event boundaries with one fast replay."""
+    header, events = load_event_timeline(events_path)
+    if not events:
+        return 0
+    used: dict[str, int] = {}
+    checkpoint_items: list[str] = []
+    for index, event in enumerate(events):
+        name = _checkpoint_name(event, index, used)
+        event["checkpoint"] = name
+        event["state"] = f"checkpoints/genesis/{name}.sta"
+        checkpoint_items.append(f"{int(event['confirmed_frame'])}={name}")
+    checkpoint_dir = run_dir / "raw" / "checkpoint-capture"
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    environment = _clean_mame_environment()
+    environment.update({
+        "OPENALADDIN_TRACE_DIR": str(checkpoint_dir),
+        "OPENALADDIN_TRACE_FRAMES": str(max(int(event["confirmed_frame"]) for event in events)),
+        "OPENALADDIN_CAPTURE": "none",
+        "OPENALADDIN_INPUT_MODE": "playback",
+        "OPENALADDIN_PLAYBACK_FILE": str(run_dir / "mame.inp"),
+        "OPENALADDIN_CHECKPOINTS": ",".join(checkpoint_items),
+        "OPENALADDIN_STATE_DIRECTORY": str(run_dir / "checkpoints"),
+        "OPENALADDIN_CHECKPOINT_REFERENCE": "checkpoints",
+        "OPENALADDIN_MAME_HEADLESS": "1",
+        "OPENALADDIN_MAME_VIDEO": "none",
+        "OPENALADDIN_MAME_SOUND": "none",
+        "OPENALADDIN_EXECUTION_PROFILE": "analysis",
+        "OPENALADDIN_ROM_SHA256": manifest["rom_sha256"],
+    })
+    _apply_run_start(environment, manifest)
+    status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
+    if status != 0:
+        raise SystemExit(f"record: event checkpoint replay failed with status {status}")
+    for event in events:
+        checkpoint = _event_state_path(run_dir, str(event["state"]))
+        if not checkpoint.is_file():
+            raise SystemExit(f"record: event checkpoint not found: {checkpoint}")
+        event["state_sha256"] = hashes(checkpoint)["sha256"]
+    with events_path.open("w", encoding="utf-8") as output:
+        if header is not None:
+            output.write(json.dumps(header, separators=(",", ":")) + "\n")
+        for event in events:
+            output.write(json.dumps(event, separators=(",", ":")) + "\n")
+    _copy_artifact(events_path, run_dir / "events.jsonl")
+    return len(events)
 
 
 def experiment_memory_pokes(experiment: dict[str, Any]) -> tuple[int, str] | None:
@@ -1352,12 +1585,16 @@ def command_trace(args: argparse.Namespace) -> int:
         "OPENALADDIN_POKE_FRAME",
         "OPENALADDIN_POKE_MEMORY",
         "OPENALADDIN_CHECKPOINTS",
+        "OPENALADDIN_EXECUTION_PROFILE",
+        "OPENALADDIN_MAME_SOUND",
     ):
         environment.pop(key, None)
     environment.update({
         "OPENALADDIN_TRACE_DIR": str(trace_dir),
         "OPENALADDIN_TRACE_FRAMES": str(args.frames or experiment["frames"]),
         "OPENALADDIN_INPUT": str(args.input or experiment.get("input", "none")),
+        "OPENALADDIN_EXECUTION_PROFILE": "analysis",
+        "OPENALADDIN_MAME_SOUND": "none",
         "OPENALADDIN_ROM_SHA256": hashes(rom)["sha256"],
     })
     protocol = experiment_action_protocol(experiment)
@@ -1615,8 +1852,15 @@ def _normalize_animation_write_order(states: dict[int, dict[str, Any]]) -> int:
     return normalized
 
 
-def normalize_animation_state_trace(path: Path) -> int:
-    """Normalize a captured state trace in place and return repaired samples."""
+def normalize_animation_state_trace(path: Path, destination: Path | None = None) -> int:
+    """Write a normalized state trace without modifying the observation.
+
+    ``path`` is an observation produced by MAME.  Repairs belong in a
+    separate derived artifact so a later investigation can distinguish a
+    debugger/video sample from an interpretation applied by this tool.
+    """
+    if destination is None:
+        destination = path.with_name(f"{path.stem}.semantic{path.suffix}")
     records: list[dict[str, Any]] = []
     header: dict[str, Any] | None = None
     states: dict[int, dict[str, Any]] = {}
@@ -1634,15 +1878,19 @@ def normalize_animation_state_trace(path: Path) -> int:
             states[int(record["frame"])] = record
     if header is None or not states:
         return 0
-    if header.get("animation_write_order_normalized"):
-        return 0
 
     normalized = _normalize_animation_write_order(states)
-    if normalized == 0:
-        return 0
     header = dict(header)
-    header["animation_write_order_normalized"] = True
-    with path.open("w", encoding="utf-8") as output:
+    header["source_artifact"] = path.name
+    header["transformations"] = list(header.get("transformations") or [])
+    header["transformations"].append({
+        "name": "animation-write-order",
+        "version": 1,
+        "repaired_samples": normalized,
+    })
+    header["animation_write_order_normalized"] = normalized > 0
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with destination.open("w", encoding="utf-8") as output:
         output.write(json.dumps(header, separators=(",", ":")) + "\n")
         for record in records:
             if record.get("type") == "header":
@@ -1653,8 +1901,17 @@ def normalize_animation_state_trace(path: Path) -> int:
     return normalized
 
 
-def synchronize_state_trace(trace_dir: Path) -> int:
-    """Replace video-boundary state samples with stable game-loop samples.
+def normalize_derived_state_trace(path: Path) -> int:
+    """Normalize a generated replay artifact in place.
+
+    Replay traces are already derived outputs, so unlike a MAME observation
+    it is safe for callers to request the same path as the destination.
+    """
+    return normalize_animation_state_trace(path, path)
+
+
+def synchronize_state_trace(trace_dir: Path, destination_dir: Path | None = None) -> int:
+    """Derive synchronized and semantic traces from a raw MAME capture.
 
     MAME's frame_done callback is tied to the video device, not the game's
     update loop. It can therefore observe player/camera RAM between two
@@ -1665,6 +1922,10 @@ def synchronize_state_trace(trace_dir: Path) -> int:
     """
 
     state_path = trace_dir / "state.jsonl"
+    destination_dir = destination_dir or trace_dir
+    destination_dir.mkdir(parents=True, exist_ok=True)
+    synced_path = destination_dir / "state.synced.jsonl"
+    semantic_path = destination_dir / "state.jsonl"
     debug_path = trace_dir / "debug.log"
     frame_trace_path = trace_dir / "trace_boot.jsonl"
     if not state_path.is_file():
@@ -1690,6 +1951,13 @@ def synchronize_state_trace(trace_dir: Path) -> int:
     if header is None:
         raise SystemExit(f"{state_path}: synchronized capture has no state header")
 
+    # Preserve the exact video-boundary observation before creating the
+    # compatibility ``state.jsonl`` semantic view in the same directory.
+    if semantic_path == state_path:
+        raw_copy = trace_dir / "state.raw.jsonl"
+        if not raw_copy.is_file():
+            shutil.copyfile(state_path, raw_copy)
+
     frame_metadata: dict[int, dict[str, Any]] = {}
     frame_markers: list[dict[str, Any]] = []
     if frame_trace_path.is_file():
@@ -1705,14 +1973,38 @@ def synchronize_state_trace(trace_dir: Path) -> int:
             elif record.get("type") == "marker":
                 frame_markers.append(record)
 
-    synchronized: dict[int, dict[str, int]] = {}
+    synchronized_records: list[dict[str, int]] = []
     for line in debug_path.read_text(encoding="utf-8").splitlines():
         match = SYNC_PATTERN.search(line)
         if match:
-            parsed = _sync_record(match)
-            synchronized[parsed["frame"] + 1] = parsed
-    if not synchronized:
+            synchronized_records.append(_sync_record(match))
+    if not synchronized_records:
         raise SystemExit(f"{debug_path}: no OPENALADDIN_SYNC records found")
+
+    # MAME's debugger ``frame`` variable is restored from a save state and is
+    # therefore not always the logical frame counter maintained by the Lua
+    # harness.  Fresh power-on runs line up directly; loaded-state runs are
+    # aligned by the ordered raw frame stream when the absolute labels do not
+    # overlap it. This keeps the state contract logical and explicit without
+    # baking a checkpoint-specific frame offset into callers.
+    direct = {
+        parsed["frame"] + 1: parsed for parsed in synchronized_records
+    }
+    overlap = sum(frame in states for frame in direct)
+    if overlap >= max(1, len(direct) // 2):
+        synchronized = direct
+        sync_mapping = "debugger frame F -> logical state S[F+1]"
+    else:
+        logical_frames = sorted(frame for frame in states if frame > 0)
+        synchronized = {
+            logical_frames[index]: parsed
+            for index, parsed in enumerate(synchronized_records)
+            if index < len(logical_frames)
+        }
+        sync_mapping = (
+            "ordered debugger samples aligned to logical raw frames after "
+            "save-state restore"
+        )
 
     all_frames = set(states)
     all_frames.update(synchronized)
@@ -1725,6 +2017,7 @@ def synchronize_state_trace(trace_dir: Path) -> int:
         record = json.loads(json.dumps(base))
         record["type"] = "state"
         record["frame"] = frame
+        record["pc"] = sync["pc"]
 
         metadata = frame_metadata.get(frame)
         if metadata is not None:
@@ -1776,9 +2069,20 @@ def synchronize_state_trace(trace_dir: Path) -> int:
         states[frame] = record
 
     normalized = _normalize_animation_write_order(states)
-    if normalized:
-        header = dict(header)
-        header["animation_write_order_normalized"] = True
+    header = dict(header)
+    header["source_artifact"] = state_path.name
+    header["state_boundary"] = "game-loop-sync"
+    header["sync"] = {
+        "boundary": "VBlankInterrupt",
+        "coverage": len(synchronized) / max(len(all_frames), 1),
+        "mapping": sync_mapping,
+    }
+    header["transformations"] = list(header.get("transformations") or [])
+    header["transformations"].append({
+        "name": "game-loop-sync",
+        "version": 1,
+        "synchronized_frames": len(synchronized),
+    })
 
     # Keep the header and marker records, but emit the completed state stream
     # in frame order so downstream tools do not need to know how the debugger
@@ -1789,7 +2093,7 @@ def synchronize_state_trace(trace_dir: Path) -> int:
         record for record in frame_markers
         if (record.get("frame"), record.get("name")) not in known_markers
     )
-    with state_path.open("w", encoding="utf-8") as output:
+    with synced_path.open("w", encoding="utf-8") as output:
         output.write(json.dumps(header, separators=(",", ":")) + "\n")
         for frame in sorted(all_frames | set(states)):
             if frame in states:
@@ -1797,6 +2101,7 @@ def synchronize_state_trace(trace_dir: Path) -> int:
             for marker in markers:
                 if int(marker.get("frame", -1)) == frame:
                     output.write(json.dumps(marker, separators=(",", ":")) + "\n")
+    normalize_animation_state_trace(synced_path, semantic_path)
     return len(synchronized)
 
 
@@ -1888,6 +2193,8 @@ MAME_RUN_ENVIRONMENT = (
     "OPENALADDIN_MAME_HEADLESS",
     "OPENALADDIN_MAME_VIDEO",
     "OPENALADDIN_MAME_DEBUG_UI",
+    "OPENALADDIN_MAME_SOUND",
+    "OPENALADDIN_EXECUTION_PROFILE",
 )
 
 
@@ -1898,10 +2205,134 @@ def _clean_mame_environment() -> dict[str, str]:
     return environment
 
 
+def _copy_artifact(source: Path, destination: Path) -> bool:
+    """Copy one completed capture artifact, reporting whether it existed."""
+    if not source.is_file():
+        return False
+    if source.resolve() == destination.resolve():
+        return True
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(source, destination)
+    return True
+
+
+def _materialize_record_capture(run_dir: Path, capture_dir: Path) -> int:
+    """Turn a raw post-recording capture into compatibility artifacts.
+
+    MAME writes only below ``capture_dir``.  The raw files remain untouched;
+    the root-level files are the established semantic compatibility view used
+    by the existing replay and analysis commands.
+    """
+    raw_state = capture_dir / "state.jsonl"
+    if not raw_state.is_file():
+        raise SystemExit(f"record: missing raw synchronized capture {raw_state}")
+    _copy_artifact(raw_state, run_dir / "state.raw.jsonl")
+    sync_count = synchronize_state_trace(capture_dir, run_dir)
+
+    raw_events = capture_dir / "events.jsonl"
+    if raw_events.is_file():
+        _copy_artifact(raw_events, run_dir / "events.raw.jsonl")
+
+    raw_trace = capture_dir / "trace_boot.jsonl"
+    if raw_trace.is_file():
+        _copy_artifact(raw_trace, run_dir / "trace_boot.raw.jsonl")
+        _copy_artifact(raw_trace, run_dir / "trace_boot.jsonl")
+    raw_input = capture_dir / "input.jsonl"
+    if raw_input.is_file():
+        _copy_artifact(raw_input, run_dir / "capture-input.jsonl")
+    return sync_count
+
+
+def _write_trace_quality(
+    run_dir: Path,
+    frames: int,
+    *,
+    capture_status: str,
+) -> dict[str, Any]:
+    """Summarize continuity, synchronization, and provenance for a run."""
+    state_path = run_dir / "state.jsonl"
+    state_frames = 0
+    missing_state: list[int] = []
+    sync: dict[str, Any] = {
+        "boundary": "unavailable",
+        "coverage": 0.0,
+    }
+    normalization: list[dict[str, Any]] = []
+    if state_path.is_file():
+        header, states, _ = load_state_trace(state_path)
+        state_frames = len(states)
+        missing_state = [frame for frame in range(frames) if frame not in states]
+        sync = dict(header.get("sync") or sync)
+        normalization = list(header.get("transformations") or [])
+
+    input_replay = "unavailable"
+    captured_input = run_dir / "capture-input.jsonl"
+    if captured_input.is_file() and (run_dir / "input.jsonl").is_file():
+        try:
+            _, source_records = load_input_timeline(run_dir / "input.jsonl")
+            _, replay_records = load_input_timeline(captured_input)
+            input_replay = (
+                "pass"
+                if [record["mask"] for record in source_records]
+                == [record["mask"] for record in replay_records[:frames]]
+                else "fail"
+            )
+        except SystemExit:
+            input_replay = "fail"
+
+    events_count = 0
+    checkpoint_count = 0
+    checkpoint_hashes = 0
+    events_path = run_dir / "events.jsonl"
+    if events_path.is_file():
+        _, events = load_event_timeline(events_path)
+        events_count = len(events)
+        for event in events:
+            state_reference = str(event.get("state", ""))
+            checkpoint = _event_state_path(run_dir, state_reference) if state_reference else None
+            if checkpoint is not None:
+                checkpoint_count += 1
+                if checkpoint.is_file():
+                    event["state_sha256"] = hashes(checkpoint)["sha256"]
+                    checkpoint_hashes += 1
+
+    quality = "recorded"
+    if capture_status == "pass":
+        quality = "captured"
+        if not missing_state and sync.get("coverage", 0) >= 1.0:
+            quality = "deterministic"
+        if quality == "deterministic" and input_replay == "pass" and checkpoint_hashes == checkpoint_count:
+            quality = "semantic-verified"
+    report = {
+        "format": "openaladdin-trace-quality-v1",
+        "input_frames": frames,
+        "state_frames": state_frames,
+        "missing_state_frames": missing_state,
+        "sync": sync,
+        "normalization": normalization,
+        "events": {
+            "count": events_count,
+            "invalid": 0,
+        },
+        "checkpoints": {
+            "count": checkpoint_count,
+            "hash_verified": checkpoint_hashes,
+        },
+        "determinism": {
+            "mame_inp_replay": capture_status,
+            "json_input_replay": input_replay,
+        },
+        "quality": quality,
+    }
+    _write_json(run_dir / "trace-quality.json", report)
+    return report
+
+
 def _finish_record_manifest(
     run_dir: Path,
     manifest: dict[str, Any],
     status: int,
+    capture_dir: Path | None = None,
 ) -> tuple[int, bool]:
     input_path = run_dir / "input.jsonl"
     valid = True
@@ -1917,8 +2348,32 @@ def _finish_record_manifest(
         valid = False
         print(f"record: missing {input_path}", file=sys.stderr)
     state_path = run_dir / "state.jsonl"
-    if status == 0 and state_path.is_file():
-        normalize_animation_state_trace(state_path)
+    if status == 0 and capture_dir is not None:
+        try:
+            sync_count = _materialize_record_capture(run_dir, capture_dir)
+            manifest["capture"] = {
+                "status": "complete",
+                "execution_profile": "analysis",
+                "raw_directory": "raw/",
+                "synchronized_frames": sync_count,
+            }
+        except SystemExit as error:
+            print(str(error), file=sys.stderr)
+            valid = False
+    elif status == 0 and state_path.is_file():
+        # Legacy/direct callers can still finalize an already materialized
+        # trace, but retain its original bytes before deriving a normalized
+        # view. New recordings always use _materialize_record_capture above.
+        raw_state = run_dir / "state.raw.jsonl"
+        if not raw_state.is_file():
+            _copy_artifact(state_path, raw_state)
+            semantic = run_dir / "state.semantic.jsonl"
+            normalize_animation_state_trace(state_path, semantic)
+            if semantic.is_file():
+                _copy_artifact(semantic, state_path)
+    elif status == 0:
+        valid = False
+        print(f"record: missing {state_path}", file=sys.stderr)
     event_count = 0
     segment_count = 0
     if valid:
@@ -1930,6 +2385,13 @@ def _finish_record_manifest(
     manifest["events"] = event_count
     manifest["segments"] = segment_count
     manifest["frames"] = frames
+    quality = _write_trace_quality(
+        run_dir,
+        frames,
+        capture_status="pass" if status == 0 and valid else "fail",
+    )
+    manifest["quality"] = quality["quality"]
+    manifest.setdefault("artifacts", {})["quality"] = "trace-quality.json"
     manifest["status"] = "complete" if status == 0 and valid and frames > 0 else "failed"
     manifest["ended_at"] = datetime.now(timezone.utc).isoformat()
     _write_json(run_dir / "run.json", manifest)
@@ -1948,7 +2410,16 @@ def command_record(args: argparse.Namespace) -> int:
 
     run_dir.mkdir(parents=True)
     (run_dir / "checkpoints").mkdir()
+    raw_dir = run_dir / "raw"
+    raw_dir.mkdir()
     manifest = _new_run_manifest(args, run_dir, rom)
+    manifest["recording_pipeline"] = "interactive-input-then-analysis-capture-v1"
+    manifest["recording"] = {
+        "execution_profile": "interactive",
+        "trace": "trace_boot.recording.jsonl",
+        "input": "input.jsonl",
+        "mame_input": "mame.inp",
+    }
     _write_json(run_dir / "run.json", manifest)
 
     environment = _clean_mame_environment()
@@ -1956,27 +2427,95 @@ def command_record(args: argparse.Namespace) -> int:
     environment.update({
         "OPENALADDIN_TRACE_DIR": str(run_dir),
         "OPENALADDIN_TRACE_FRAMES": str(frame_limit),
-        "OPENALADDIN_CAPTURE": "state",
+        "OPENALADDIN_CAPTURE": "none",
         "OPENALADDIN_INPUT_MODE": "record",
         "OPENALADDIN_INPUT_OUTPUT": str(run_dir / "input.jsonl"),
-        "OPENALADDIN_EVENT_OUTPUT": str(run_dir / "events.jsonl"),
-        "OPENALADDIN_EVENT_SPEC": event_detector_protocol() or "",
         "OPENALADDIN_RECORD_FILE": str(run_dir / "mame.inp"),
-        "OPENALADDIN_STATE_DIRECTORY": str(run_dir / "checkpoints"),
-        "OPENALADDIN_CHECKPOINT_REFERENCE": "checkpoints",
         "OPENALADDIN_MAME_HEADLESS": "0",
         "OPENALADDIN_MAME_VIDEO": "soft",
+        "OPENALADDIN_EXECUTION_PROFILE": "interactive",
+        "OPENALADDIN_MAME_SOUND": "sdl",
         "OPENALADDIN_ROM_SHA256": manifest["rom_sha256"],
     })
     if args.load_state:
         environment["OPENALADDIN_LOAD_STATE"] = str(resolve(Path(args.load_state)))
-    if args.checkpoints:
-        environment["OPENALADDIN_CHECKPOINTS"] = args.checkpoints
 
     print(f"record: interactive MAME session for {args.name}")
     print(f"record: quit MAME when the run is complete; output will be {run_dir}")
-    status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
-    final_status, valid = _finish_record_manifest(run_dir, manifest, status)
+    recording_status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
+    if recording_status != 0:
+        final_status, valid = _finish_record_manifest(run_dir, manifest, recording_status)
+    else:
+        _copy_artifact(run_dir / "trace_boot.jsonl", run_dir / "trace_boot.recording.jsonl")
+        try:
+            _, input_records = load_input_timeline(run_dir / "input.jsonl")
+        except SystemExit as error:
+            print(f"record: cannot start analysis capture: {error}", file=sys.stderr)
+            final_status, valid = _finish_record_manifest(run_dir, manifest, 1)
+        else:
+            mame_input = run_dir / "mame.inp"
+            if not mame_input.is_file():
+                print(f"record: missing MAME input recording {mame_input}", file=sys.stderr)
+                final_status, valid = _finish_record_manifest(run_dir, manifest, 1)
+            else:
+                capture_environment = _clean_mame_environment()
+                capture_environment.update({
+                    "OPENALADDIN_TRACE_DIR": str(raw_dir),
+                    # Capture S[0] through S[N] so I[N] has an explicit
+                    # destination state even though the final state is not
+                    # needed by the native segment replayer.
+                    "OPENALADDIN_TRACE_FRAMES": str(len(input_records)),
+                    "OPENALADDIN_CAPTURE": "state",
+                    "OPENALADDIN_INPUT_MODE": "playback",
+                    "OPENALADDIN_INPUT_OUTPUT": str(raw_dir / "input.jsonl"),
+                    "OPENALADDIN_PLAYBACK_FILE": str(mame_input),
+                    "OPENALADDIN_STATE_SYNC": "1",
+                    "OPENALADDIN_STATE_DIRECTORY": str(run_dir / "checkpoints"),
+                    "OPENALADDIN_CHECKPOINT_REFERENCE": "checkpoints",
+                    "OPENALADDIN_MAME_HEADLESS": "1",
+                    "OPENALADDIN_MAME_VIDEO": "none",
+                    "OPENALADDIN_MAME_SOUND": "none",
+                    "OPENALADDIN_EXECUTION_PROFILE": "analysis",
+                    "OPENALADDIN_ROM_SHA256": manifest["rom_sha256"],
+                })
+                if args.load_state:
+                    capture_environment["OPENALADDIN_LOAD_STATE"] = str(resolve(Path(args.load_state)))
+                if args.checkpoints:
+                    capture_environment["OPENALADDIN_CHECKPOINTS"] = args.checkpoints
+                print("record: deterministic analysis capture from mame.inp")
+                capture_status = run_shell_tool(
+                    "openaladdin/mame/run.sh", [str(rom)], env=capture_environment
+                )
+                if capture_status != 0:
+                    final_status, valid = _finish_record_manifest(
+                        run_dir, manifest, capture_status
+                    )
+                else:
+                    try:
+                        sync_count = _materialize_record_capture(run_dir, raw_dir)
+                        manifest["capture"] = {
+                            "status": "complete",
+                            "execution_profile": "analysis",
+                            "raw_directory": "raw/",
+                            "synchronized_frames": sync_count,
+                            "event_evaluator": "openaladdin-python-event-engine-v1",
+                        }
+                        derive_events_from_state(
+                            run_dir / "state.jsonl",
+                            run_dir / "events.jsonl",
+                            end_frame=len(input_records),
+                        )
+                        capture_event_checkpoints(
+                            run_dir, rom, manifest, run_dir / "events.jsonl"
+                        )
+                        final_status, valid = _finish_record_manifest(
+                            run_dir, manifest, 0
+                        )
+                    except SystemExit as error:
+                        print(str(error), file=sys.stderr)
+                        final_status, valid = _finish_record_manifest(
+                            run_dir, manifest, 1
+                        )
     if valid:
         print(f"record: {run_dir}")
         print(f"record: frames {manifest['frames']}")
@@ -2011,6 +2550,8 @@ def command_mame(args: argparse.Namespace) -> int:
         "OPENALADDIN_EVENT_SPEC": event_detector_protocol() or "",
         "OPENALADDIN_MAME_HEADLESS": "1" if args.headless else "0",
         "OPENALADDIN_MAME_VIDEO": args.video,
+        "OPENALADDIN_EXECUTION_PROFILE": "analysis" if args.headless else "interactive",
+        "OPENALADDIN_MAME_SOUND": "none" if args.headless else "sdl",
         "OPENALADDIN_MAME_DEBUG_UI": "1" if args.debug_ui else "0",
         "OPENALADDIN_INPUT_MODE": "inject" if args.input else "record",
         "OPENALADDIN_ROM_SHA256": hashes(rom)["sha256"],
@@ -2136,7 +2677,7 @@ def _prepare_segment_replay(
     )
     # Keep derived segment references on the same stable VM boundary as the
     # recorder, including runs recorded before the normalizer was introduced.
-    normalize_animation_state_trace(reference)
+    normalize_derived_state_trace(reference)
     _write_sliced_input(
         replay_dir / "input.jsonl",
         input_header,
@@ -2222,7 +2763,7 @@ def command_replay(args: argparse.Namespace) -> int:
                     print("replay: segment reference or replay state trace is missing", file=sys.stderr)
                     status = 1
                 else:
-                    normalize_animation_state_trace(trace)
+                    normalize_derived_state_trace(trace)
                     _rebase_state_trace_in_place(
                         trace,
                         1,
@@ -2267,7 +2808,7 @@ def command_replay(args: argparse.Namespace) -> int:
                 print("replay: original or replay state trace is missing", file=sys.stderr)
                 status = 1
             else:
-                normalize_animation_state_trace(trace)
+                normalize_derived_state_trace(trace)
                 if input_header and input_header.get("controller_mapping") is None:
                     _relabel_state_trace_inputs(
                         trace,
@@ -2358,7 +2899,11 @@ def command_parity(args: argparse.Namespace) -> int:
     if not native.is_file():
         suffix = f" --segment {args.segment}" if args.segment else ""
         raise SystemExit(f"native replay not found: {native}; run replay {args.name} --client native{suffix}")
-    normalize_animation_state_trace(genesis)
+    genesis_header, _, _ = load_state_trace(genesis)
+    if not genesis_header.get("transformations"):
+        semantic = genesis.with_name(f"{genesis.stem}.semantic{genesis.suffix}")
+        normalize_animation_state_trace(genesis, semantic)
+        genesis = semantic
     fields = args.fields or DEFAULT_PARITY_FIELDS
     forwarded = [str(genesis), str(native)]
     for field in fields:

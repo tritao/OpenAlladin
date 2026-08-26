@@ -19,6 +19,7 @@ def main() -> int:
     assert protocol is not None
     assert "level01-entry" in protocol
     assert "scene-state-08" in protocol
+    assert "|once|" in protocol
     assert oa._client_input_tokens(None, ["a+b", "c", "right"]) == [
         "b+c", "a", "right"
     ]
@@ -89,7 +90,7 @@ def main() -> int:
                     "vy": 0,
                     "grounded": True,
                     "frame_ptr": 0x123456,
-                    "animation_pc": 0x12542A if frame < 18 else 0x12542C,
+                    "animation_pc": 0 if frame < 1 else (0x12542A if frame < 18 else 0x12542C),
                     "animation_timer": 2,
                     "facing_x_flip": 0,
                 },
@@ -108,6 +109,13 @@ def main() -> int:
             "\n".join(json.dumps(record) for record in state_records) + "\n",
             encoding="utf-8",
         )
+        raw_bytes = (run_dir / "state.jsonl").read_bytes()
+        semantic = run_dir / "state.semantic.jsonl"
+        assert oa.normalize_animation_state_trace(run_dir / "state.jsonl", semantic) == 0
+        assert (run_dir / "state.jsonl").read_bytes() == raw_bytes
+        derived_header, derived_states, _ = oa.load_state_trace(semantic)
+        assert derived_states[0]["frame"] == 0
+        assert derived_header["source_artifact"] == "state.jsonl"
         input_records = [
             {"type": "header", "format": oa.INPUT_FORMAT},
             *[
@@ -167,6 +175,10 @@ def main() -> int:
         # A loaded MAME checkpoint has one discarded pre-emulation sample; the
         # first real emulated frame must consume the first segment token.
         assert oa._mame_segment_input_tokens(["right", "none"]) == ["right", "none"]
+
+        derived_events = run_dir / "derived-events.jsonl"
+        events = oa.derive_events_from_state(run_dir / "state.jsonl", derived_events)
+        assert [(event["onset_frame"], event["confirmed_frame"]) for event in events] == [(1, 3)]
 
     print("MAME semantic events: ok")
     return 0

@@ -8,7 +8,18 @@ TRACE_FRAMES="${OPENALADDIN_TRACE_FRAMES:-120}"
 TRACE_DIR="${OPENALADDIN_TRACE_DIR:-${ROOT_DIR}/build/re/traces}"
 SDL2_LIB_DIR="${ROOT_DIR}/build/deps/sdl2/sysroot/usr/lib/x86_64-linux-gnu"
 VIDEO_MODE="${OPENALADDIN_MAME_VIDEO:-none}"
-SOUND_MODE="${OPENALADDIN_MAME_SOUND:-none}"
+EXECUTION_PROFILE="${OPENALADDIN_EXECUTION_PROFILE:-analysis}"
+if [[ "${EXECUTION_PROFILE}" != "analysis" && "${EXECUTION_PROFILE}" != "interactive" ]]; then
+    echo "OPENALADDIN_EXECUTION_PROFILE must be analysis or interactive" >&2
+    exit 1
+fi
+if [[ -n "${OPENALADDIN_MAME_SOUND:-}" ]]; then
+    SOUND_MODE="${OPENALADDIN_MAME_SOUND}"
+elif [[ "${EXECUTION_PROFILE}" == "interactive" ]]; then
+    SOUND_MODE="sdl"
+else
+    SOUND_MODE="none"
+fi
 HEADLESS="${OPENALADDIN_MAME_HEADLESS:-1}"
 DEBUG_UI="${OPENALADDIN_MAME_DEBUG_UI:-0}"
 MAME_XVFB="${MAME_XVFB:-0}"
@@ -146,8 +157,11 @@ MAME_ARGS=(
     -skip_gameinfo
     -video "${VIDEO_MODE}"
     -sound "${SOUND_MODE}"
-    -nothrottle
 )
+
+if [[ "${EXECUTION_PROFILE}" == "analysis" ]]; then
+    MAME_ARGS+=( -nothrottle )
+fi
 
 if [[ -n "${RECORD_FILE}" ]]; then
     MAME_ARGS+=( -input_directory "${INPUT_DIRECTORY}" -record "${RECORD_FILE}" )

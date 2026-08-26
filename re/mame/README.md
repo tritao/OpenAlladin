@@ -16,17 +16,30 @@ The command writes generated output under `build/re/traces/`:
 
 - `trace_boot.jsonl` contains run metadata, register/input records, and the
   current VDP state/checksums when that capture profile includes VDP data.
-- `state.jsonl` contains the normal semantic `openaladdin-frame-state-v1`
-  stream: player motion, scene state, camera, and active actor cursors.
+- `state.jsonl` contains the semantic `openaladdin-frame-state-v1` stream:
+  player motion, scene state, camera, and active actor cursors. A synchronized
+  run also preserves the original video-boundary observation as
+  `state.raw.jsonl` and writes the pre-normalization synchronized view to
+  `state.synced.jsonl`.
 - `ram_frames.bin` contains one raw 64 KiB work-RAM image per frame when the
   `ram` or `full` profile is selected.
 - `vdp_vram_frames.bin`, `vdp_cram_frames.bin`, `vdp_vsram_frames.bin`,
   `vdp_regs_frames.bin`, and `vdp_writes.jsonl` are emitted only by the `vdp`
   or `full` profiles.
 
-The default is 120 frames and the default capture profile is `state`.  Select
+The default is 120 frames and the default capture profile is `state`. Select
 deeper captures explicitly with `OPENALADDIN_CAPTURE=ram`, `vdp`, or `full`.
 Override the frame count with `OPENALADDIN_TRACE_FRAMES`.
+
+The MAME wrapper has two execution profiles. `analysis` (the default) uses
+`-nothrottle`, no sound, and a headless renderer. `interactive` enables normal
+speed, visible video, and sound; the unified `oa record` command uses it only
+for the live input pass, then automatically performs an `analysis` playback
+from the recorded `.inp` for forensic capture.
+
+The frame contract is explicit: `S[N]` is the state at synchronization
+boundary `N`, `I[N]` is the controller input used for the transition
+`S[N] -> S[N+1]`, and `E[N]` is an event predicate evaluated against `S[N]`.
 Input can be supplied as comma-separated frame tokens, for example:
 
 ```sh

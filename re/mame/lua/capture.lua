@@ -120,7 +120,8 @@ return function(options)
         events:write(json_object({
             { "type", json_string("header") },
             { "format", json_string("openaladdin-event-v1") },
-            { "frame_semantics", json_string("event observed at the logical state boundary for frame N") },
+            { "frame_semantics", json_string("event predicate E[N] is evaluated against synchronized state S[N]") },
+            { "frame_contract", json_string("S[N] = synchronized state at boundary N; I[N] = input for S[N] -> S[N+1]") },
             { "detectors", json_string(event_spec) }
         }), "\n")
         events:flush()

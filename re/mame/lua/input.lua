@@ -138,8 +138,9 @@ return function(options)
                 return values
             end)()) },
             { "frame_semantics", json_string(
-                "controller values consumed by logical game frame; sampled at the input.apply frame boundary"
+                "I[N] is the controller input used for the transition S[N] -> S[N+1] at synchronization boundary N"
             ) },
+            { "frame_contract", json_string("S[N] = synchronized state at boundary N; I[N] = input for S[N] -> S[N+1]") },
             { "mode", json_string(mode) }
         })
     end

@@ -9,6 +9,7 @@ detectors:
     level: level01
     checkpoint: level01-entry
     stable_for: 3
+    emit: once
     conditions:
       - symbol: PLAYER_ANIMATION_PC
         width: u32
@@ -41,6 +42,7 @@ detectors:
     level: level01
     checkpoint: scene-state-08
     stable_for: 1
+    emit: once
     conditions:
       - symbol: SCENE_STATE
         width: u8

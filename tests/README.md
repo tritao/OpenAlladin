@@ -18,6 +18,17 @@ python3 tests/native_animation_spawn.py
 python3 tests/native_sword_lifecycle.py
 ```
 
+The input/state frame contract can be calibrated against a real MAME gameplay
+checkpoint with:
+
+```bash
+python3 tests/mame_input_phase.py --load-state path/to/gameplay.sta
+```
+
+It verifies that a one-frame `RIGHT` edge is labelled as `I[N]` and that the
+first observed player-velocity response occurs at a later synchronized state
+boundary.
+
 Generated traces and extracted assets remain under `build/`.
 `native_actor_movement.py` compares the native signed-delta actor movement VM
 against the captured slot-19 type-`0x84` stream, including its `0x84` timer

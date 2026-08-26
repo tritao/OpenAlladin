@@ -102,6 +102,14 @@ def main() -> int:
         assert record["argv"][record["argv"].index("-video") + 1] == "none"
         assert record["argv"][record["argv"].index("-seconds_to_run") + 1] == "3"
 
+        interactive_environment = dict(base_environment(fake_mame, log, directory / "interactive-trace"))
+        interactive_environment["OPENALADDIN_MAME_HEADLESS"] = "0"
+        interactive_environment["OPENALADDIN_EXECUTION_PROFILE"] = "interactive"
+        record = run_wrapper(interactive_environment, directory)
+        assert record["sdl_video_driver"] == "x11"
+        assert "-nothrottle" not in record["argv"]
+        assert record["argv"][record["argv"].index("-sound") + 1] == "sdl"
+
         debug_environment = base_environment(fake_mame, log, directory / "debug-trace")
         debug_environment["OPENALADDIN_STATE_SYNC"] = "1"
         record = run_wrapper(debug_environment, directory)

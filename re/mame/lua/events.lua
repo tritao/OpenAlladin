@@ -67,9 +67,11 @@ return function(options)
                     level = fields[4],
                     checkpoint = fields[5],
                     stable_for = stable_for,
-                    once = fields[7] ~= "0",
+                    emit = fields[7] == "0" and "every_stable_interval"
+                        or (fields[7] == "1" and "once" or fields[7]),
                     conditions = conditions,
                     active_frames = 0,
+                    onset_frame = nil,
                     emitted = false
                 }
             end
@@ -100,14 +102,18 @@ return function(options)
         return actual == expected
     end
 
-    local function detector_event(detector, frame, evidence)
+    local function detector_event(detector, onset_frame, confirmed_frame, evidence)
         local checkpoint = detector.checkpoint ~= "" and detector.checkpoint or detector.name
         local state_path = save_checkpoint and save_checkpoint(checkpoint) or ""
         local evidence_json = json_array(evidence)
         local event_fields = {
             { "type", json_string("event") },
             { "format", json_string("openaladdin-event-v1") },
-            { "frame", tostring(frame) },
+            { "frame", tostring(confirmed_frame) },
+            { "onset_frame", tostring(onset_frame) },
+            { "confirmed_frame", tostring(confirmed_frame) },
+            { "stable_for", tostring(detector.stable_for) },
+            { "emit", json_string(detector.emit) },
             { "name", json_string(detector.name) },
             { "event", json_string(detector.event) },
             { "phase", json_string(detector.phase) },
@@ -123,7 +129,9 @@ return function(options)
         -- richer record; these mirrors keep old consumers working.
         local marker_fields = {
             { "type", json_string("marker") },
-            { "frame", tostring(frame) },
+            { "frame", tostring(confirmed_frame) },
+            { "onset_frame", tostring(onset_frame) },
+            { "confirmed_frame", tostring(confirmed_frame) },
             { "name", json_string(detector.name) },
             { "event", json_string(detector.event) },
             { "phase", json_string(detector.phase) },
@@ -137,7 +145,9 @@ return function(options)
             local state_marker = {
                 { "type", json_string("marker") },
                 { "format", json_string("openaladdin-frame-state-v1") },
-                { "frame", tostring(frame) },
+                { "frame", tostring(confirmed_frame) },
+                { "onset_frame", tostring(onset_frame) },
+                { "confirmed_frame", tostring(confirmed_frame) },
                 { "name", json_string(detector.name) },
                 { "event", json_string(detector.event) },
                 { "phase", json_string(detector.phase) },
@@ -179,16 +189,22 @@ return function(options)
             end
 
             if active then
+                if detector.active_frames == 0 then
+                    detector.onset_frame = frame
+                end
                 detector.active_frames = detector.active_frames + 1
             else
                 detector.active_frames = 0
-                detector.emitted = false
+                detector.onset_frame = nil
+                if detector.emit ~= "once" then
+                    detector.emitted = false
+                end
             end
 
             if active
                 and detector.active_frames >= detector.stable_for
-                and (not detector.once or not detector.emitted) then
-                detector_event(detector, frame, evidence)
+                and not detector.emitted then
+                detector_event(detector, detector.onset_frame or frame, frame, evidence)
                 detector.emitted = true
             end
         end

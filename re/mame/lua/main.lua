@@ -61,9 +61,9 @@ if not requested_capture then
     requested_capture = legacy_vdp == nil and "state" or (legacy_vdp == "0" and "state" or "full")
 end
 local capture_profile = requested_capture:lower()
-if capture_profile ~= "state" and capture_profile ~= "ram"
+if capture_profile ~= "none" and capture_profile ~= "state" and capture_profile ~= "ram"
     and capture_profile ~= "vdp" and capture_profile ~= "full" then
-    error("OPENALADDIN_CAPTURE must be state, ram, vdp, or full")
+    error("OPENALADDIN_CAPTURE must be none, state, ram, vdp, or full")
 end
 local capture_ram = capture_profile == "ram" or capture_profile == "full"
 local capture_vdp = capture_profile == "vdp" or capture_profile == "full"
@@ -467,7 +467,9 @@ local function capture(frame, input_token, emit_state)
             { "type", json_string("state") },
             { "format", json_string("openaladdin-frame-state-v1") },
             { "frame", tostring(frame) },
+            { "pc", tostring(read_register("PC") or 0) },
             { "input", json_string(input_token or "none") },
+            { "input_role", json_string("I[N]: transition from S[N] to S[N+1]") },
             { "player", json_object({
                 { "x", tostring(read_u16(symbol("PLAYER_X"))) },
                 { "y", tostring(read_u16(symbol("PLAYER_Y"))) },
@@ -900,6 +902,8 @@ write_record({
     { "state_trace", json_bool(state_output) },
     { "experiment_actions", json_string(experiment_action_spec) },
     { "event_detectors", json_string(event_spec) },
+    { "frame_contract", json_string("S[N] = synchronized state at boundary N; I[N] = input for S[N] -> S[N+1]") },
+    { "execution_profile", json_string(os.getenv("OPENALADDIN_EXECUTION_PROFILE") or "analysis") },
     { "scene_state_address", tostring(scene_state_address) },
     { "memory_poke_frame", tostring(poke_frame) },
     { "memory_poke_spec", json_string(memory_poke_spec) },
@@ -920,6 +924,10 @@ if state then
     state:write(json_object({
         { "type", json_string("header") },
         { "format", json_string("openaladdin-frame-state-v1") },
+        { "frame_contract", json_string("S[N] = synchronized state at boundary N; I[N] = input for S[N] -> S[N+1]") },
+        -- This file is always the raw frame_done observation. Synchronized
+        -- and semantic boundary labels are assigned by the post-processor.
+        { "state_boundary", json_string("video-frame-done") },
         { "rom", json_string(emu.romname()) },
         { "rom_sha256", json_string(os.getenv("OPENALADDIN_ROM_SHA256") or "") },
         { "frame_limit", tostring(frame_limit) },
@@ -1003,11 +1011,10 @@ emu.register_frame_done(function ()
     end
     actors.inject(current_frame)
     apply_memory_pokes(current_frame)
-    -- Synchronized player fields are merged from the debugger boundary, but
-    -- actor records are not part of the compact OPENALADDIN_SYNC line. Keep a
-    -- frame-state sample when actor tracing is requested so the merge can
-    -- preserve the live slot table for differential combat probes.
-    capture(current_frame, apply_input(current_frame), not state_sync or trace_actors)
+    -- Keep the video-boundary observation even when a synchronized sample is
+    -- also requested. Python derives the synchronized/semantic stream from
+    -- both sources; the raw observation must remain available for auditing.
+    capture(current_frame, apply_input(current_frame), true)
     events.poll(current_frame)
     if audio.dump_driver then audio.dump_driver(current_frame, "frame") end
     capture_artifacts(current_frame)

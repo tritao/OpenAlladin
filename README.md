@@ -105,24 +105,29 @@ Record a normal interactive MAME session with:
 python tools/oa.py record level01-good-run
 ```
 
-Quit MAME when the session is complete. The run is written below
-`build/runs/level01-good-run/` with a provenance manifest, per-frame
-`input.jsonl`, semantic `state.jsonl`, semantic `events.jsonl`, derived
-`segments.json`, MAME's native `mame.inp`, and a `checkpoints/` state directory.
-The canonical input mask is active-high and
-uses `up=1`, `down=2`, `left=4`, `right=8`, `a=16`, `b=32`, `c=64`, and
-`start=128`. Each input record's frame number means the controller state at
-the input boundary for that logical game frame; it is not a host key event.
+Quit MAME when the session is complete. Recording is deliberately two-stage:
+the live pass writes the per-frame `input.jsonl` and MAME's native `mame.inp`,
+then an automatic headless `.inp` playback performs synchronized capture and
+event extraction. The run is written below `build/runs/level01-good-run/` with
+the provenance manifest, `raw/state.jsonl`, synchronized `state.synced.jsonl`,
+semantic `state.jsonl`, semantic `events.jsonl`, derived `segments.json`, and
+the `checkpoints/` state directory.
+The canonical input mask is active-high and uses `up=1`, `down=2`, `left=4`,
+`right=8`, `a=16`, `b=32`, `c=64`, and `start=128`. The formal frame contract
+is `S[N] = state at synchronization boundary N` and `I[N] = input used for
+the transition S[N] -> S[N+1]`; it is not a host key event.
 
-During recording, passive MAME detectors emit semantic boundaries such as
-`level_entry` without changing controller input. The detectors currently mark
-the Level 01 gameplay entry and the confirmed `SCENE_STATE=0x08` transition;
-the latter is intentionally named `scene-state-08` until a natural exit run
-proves its route meaning. Each event saves a corresponding
-`checkpoints/genesis/*.sta`. `segments.json` indexes the first replayable frame
-after each detected event and retains both the detector's `event_frame` and the
-segment's `start_frame`; the complete timelines remain the source of truth.
-Detector definitions live in `re/mame/events/manifest.yml`.
+The post-recording Python event engine evaluates the tracked detector
+definitions against synchronized states. It records both `onset_frame` and
+`confirmed_frame` (the latter is used for the replay checkpoint), and a fast
+second playback materializes `checkpoints/genesis/*.sta`. `segments.json`
+indexes the first replayable frame after each detected event and retains both
+the detector's `event_frame` and the segment's `start_frame`; the complete
+timelines remain the source of truth. Detector definitions live in
+`re/mame/events/manifest.yml`.
+Detector `emit` modes are explicit: `once` means once per run,
+`rising_edge` means once per active interval after confirmation, and
+`every_stable_interval` retains the repeatable per-interval behavior.
 
 MAME and native parity intentionally have separate boundaries. `start_frame`
 is the exact post-event MAME save-state boundary. A detector may also declare
@@ -151,12 +156,13 @@ python tools/oa.py parity level01-good-run
 python tools/oa.py inputs summarize build/runs/level01-good-run/input.jsonl
 ```
 
-The recorder normalizes the one instruction-level boundary where Genesis
-writes an animation frame pointer before its advanced cursor. A frame-state
-sample is considered complete only when both fields belong to the same VM
-pass; the normalizer requires the matching cursor advance and unchanged frame
-pointer in the immediately following sample. This keeps parity traces stable
-without treating duplicate frame references as extra animation frames.
+The recorder never rewrites raw observations. The synchronized semantic
+pipeline records its transformations in the state header, including the
+narrow animation-write-order repair where Genesis writes a frame pointer
+before its advanced cursor. `trace-quality.json` reports input/state
+continuity, synchronization coverage, normalization counts, checkpoint hash
+verification, and the current quality stage (`recorded`, `captured`,
+`deterministic`, or `semantic-verified`).
 
 Detected segments can be replayed without rerunning the menu or earlier
 gameplay. A MAME segment replay starts from the save state captured at the
