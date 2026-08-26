@@ -1,0 +1,99 @@
+{
+  "campaign": "20260826-level01-recording-frontier-v1",
+  "status": "recorded-frontier",
+  "purpose": "Current-harness replay of the first level's lower-gap to upper-rope route, with named checkpoints for every significant interaction",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "4463c6d",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "4463c6d",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "handhold",
+      "trace_dir": "build/re/campaigns/20260826-level01-recording-frontier-v1/handhold",
+      "frames": 240,
+      "input": "right*60,c+right*20,c*10,right*110,none*50",
+      "load_state": "gap-entrance-loaded",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/gap-handhold-branch-v2/states/genesis/gap-entrance-loaded.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "gap-entrance", "state": "handhold/states/genesis/gap-entrance.sta" },
+        { "frame": 44, "name": "handhold-spawned", "state": "handhold/states/genesis/handhold-spawned.sta" },
+        { "frame": 119, "name": "handhold-grabbed", "state": "handhold/states/genesis/handhold-grabbed.sta" },
+        { "frame": 181, "name": "handhold-fall", "state": "handhold/states/genesis/handhold-fall.sta" },
+        { "frame": 240, "name": "handhold-end", "state": "handhold/states/genesis/handhold-end.sta" }
+      ]
+    },
+    {
+      "id": "rope-loop",
+      "trace_dir": "build/re/campaigns/20260826-level01-recording-frontier-v1/rope-loop",
+      "frames": 560,
+      "input": "c+right*120,right*30,up*100,c+left*12,left*60,none*237",
+      "load_state": "handhold-grabbed",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-frontier-v1/handhold/states/genesis/handhold-grabbed.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "handhold-loaded", "state": "rope-loop/states/genesis/handhold-loaded.sta" },
+        { "frame": 122, "name": "upper-platform-spring", "state": "rope-loop/states/genesis/upper-platform-spring.sta" },
+        { "frame": 152, "name": "rope-base", "state": "rope-loop/states/genesis/rope-base.sta" },
+        { "frame": 252, "name": "rope-upper-stop", "state": "rope-loop/states/genesis/rope-upper-stop.sta" },
+        { "frame": 264, "name": "dismount-start", "state": "rope-loop/states/genesis/dismount-start.sta" },
+        { "frame": 324, "name": "upper-platform-return", "state": "rope-loop/states/genesis/upper-platform-return.sta" },
+        { "frame": 560, "name": "loop-settled", "state": "rope-loop/states/genesis/loop-settled.sta" }
+      ]
+    },
+    {
+      "id": "top-dismount",
+      "trace_dir": "build/re/campaigns/20260826-level01-recording-frontier-v1/top-dismount",
+      "frames": 180,
+      "input": "c+left*12,left*60,none*108",
+      "load_state": "rope-upper-stop",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-frontier-v1/rope-loop/states/genesis/rope-upper-stop.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "rope-top-loaded", "state": "top-dismount/states/genesis/rope-top-loaded.sta" },
+        { "frame": 12, "name": "dismount-start", "state": "top-dismount/states/genesis/dismount-start.sta" },
+        { "frame": 42, "name": "airborne", "state": "top-dismount/states/genesis/airborne.sta" },
+        { "frame": 72, "name": "upper-platform", "state": "top-dismount/states/genesis/upper-platform.sta" },
+        { "frame": 180, "name": "platform-settled", "state": "top-dismount/states/genesis/platform-settled.sta" }
+      ]
+    },
+    {
+      "id": "left-ledge",
+      "trace_dir": "build/re/campaigns/20260826-level01-recording-frontier-v1/left-ledge",
+      "frames": 180,
+      "input": "c+left*60,none*120",
+      "load_state": "platform-settled",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-frontier-v1/top-dismount/states/genesis/platform-settled.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "platform-loaded", "state": "left-ledge/states/genesis/platform-loaded.sta" },
+        { "frame": 20, "name": "jump-start", "state": "left-ledge/states/genesis/jump-start.sta" },
+        { "frame": 42, "name": "apex", "state": "left-ledge/states/genesis/apex.sta" },
+        { "frame": 60, "name": "left-ledge", "state": "left-ledge/states/genesis/left-ledge.sta" },
+        { "frame": 180, "name": "ledge-settled", "state": "left-ledge/states/genesis/ledge-settled.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "handhold-spawned", "segment": "handhold", "frame": 44, "world": [1472, 816], "actor_type": "0x6A" },
+    { "id": "handhold-grabbed", "segment": "handhold", "frame": 119, "world": [1667, 695], "actor_type": "0x6B" },
+    { "id": "upper-platform-spring", "segment": "rope-loop", "frame": 122, "world": [2030, 690] },
+    { "id": "rope-base", "segment": "rope-loop", "frame": 152, "world": [2104, 721] },
+    { "id": "rope-upper-stop", "segment": "rope-loop", "frame": 252, "world": [2104, 655] },
+    { "id": "upper-platform-return", "segment": "rope-loop", "frame": 324, "world": [1946, 690] },
+    { "id": "left-ledge-falls-lower", "segment": "left-ledge", "frame": 180, "world": [1761, 904] }
+  ],
+  "result": "The chain is replayable under the current ROM/MAME/harness baseline. It confirms the lower-gap handhold interaction and the upper-platform-to-rope loop, but does not yet reach scene state 0x08 or the level exit.",
+  "next": "Use the recorded upper-platform and terrain map to identify the next climbable connector toward the level-01 exit corridor; retain negative input branches as separate evidence."
+}

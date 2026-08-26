@@ -70,6 +70,10 @@ the finding or commit message.
 - `477f5c1`: apparent pre-wall platform chain classified as guard-sword child
   (`0x2D`) and oscillating interaction actor (`0x34`), not a traversable
   moving-platform transfer.
+- `20260826-level01-recording-frontier-v1`: current-harness replay of the
+  lower-gap → handhold → upper-platform → wall-rope chain, with 22 verified
+  named checkpoints. The associated frontier matrix records the direct wall,
+  upper-rope, upper-platform, and spring negative branches.
 
 ### Scene and exit work
 
@@ -106,6 +110,8 @@ for every newly reached surface, interaction, or boundary.
 | --- | --- | --- |
 | `20260825-level01-canonical-v1` | in progress | original canonical route record |
 | `20260826-level01-fresh-baseline-v1` | recorded | fresh boot baseline |
+| `20260826-level01-recording-baseline-v1` | recorded | fresh boot baseline at the ledger commit |
+| `20260826-level01-recording-frontier-v1` | recorded-frontier | current-harness route chain and upper-route frontier |
 | `20260826-level01-fresh-route-probe-v1` | recorded | natural route and handhold probes |
 | `20260826-level01-bounce-up-sweep-v1` | recorded | bounce timing sweep |
 | `20260826-level01-route-expansion-v1` | in progress | route expansion and unresolved exit search |

@@ -1,0 +1,81 @@
+{
+  "format": "openaladdin-natural-route-recording-frontier-v1",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "harness_commit": "4463c6d",
+  "purpose": "Record the current-harness frontier search after establishing a clean fresh-boot baseline.",
+  "positive_route": {
+    "campaign": "re/mame/campaigns/20260826-level01-recording-frontier-v1.json",
+    "segments": [
+      {
+        "id": "handhold",
+        "trace": "build/re/campaigns/20260826-level01-recording-frontier-v1/handhold",
+        "events": [
+          { "frame": 1, "world": [1346, 832], "meaning": "lower-gap route entry" },
+          { "frame": 44, "world": [1472, 816], "actor_type": "0x6A", "meaning": "handhold appears" },
+          { "frame": 119, "world": [1667, 695], "actor_type": "0x6B", "meaning": "handhold grab" },
+          { "frame": 181, "world": [1853, 904], "meaning": "missed continuation falls to lower band" }
+        ]
+      },
+      {
+        "id": "rope-loop",
+        "trace": "build/re/campaigns/20260826-level01-recording-frontier-v1/rope-loop",
+        "events": [
+          { "frame": 122, "world": [2030, 690], "meaning": "handhold spring reaches upper platform" },
+          { "frame": 152, "world": [2104, 721], "meaning": "wall rope base" },
+          { "frame": 252, "world": [2104, 655], "meaning": "upper rope stop" },
+          { "frame": 324, "world": [1946, 690], "meaning": "left dismount returns to upper platform" },
+          { "frame": 560, "world": [1946, 690], "meaning": "closed loop remains in scene state 0x01" }
+        ]
+      }
+    ]
+  },
+  "frontier_matrix": {
+    "wall_checkpoint": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/lower-chamber-probe/states/genesis/next-route-end.sta",
+    "wall_trace_root": "build/re/campaigns/20260826-level01-wall-interaction-matrix-v1",
+    "result": "All direct Up, Up+Right, attack+Up, and right-facing interaction branches remain at world X=2178/Y=912 with scene state 0x01. The left-facing interaction branch climbs to X=2104/Y=711 and exposes the upper rope network.",
+    "left_interaction": {
+      "trace": "build/re/campaigns/20260826-level01-wall-interaction-matrix-v1/left-interact",
+      "input": "c+left*30,up+left*90,left*60,none*60",
+      "events": [
+        { "frame": 30, "world": [2104, 846], "meaning": "vertical interaction begins" },
+        { "frame": 60, "world": [2104, 804], "actor_type": "0x36", "meaning": "upper interaction actor is present" },
+        { "frame": 120, "world": [2104, 714], "meaning": "climb reaches upper rope band" },
+        { "frame": 240, "world": [2104, 711], "meaning": "stable upper rope/interaction checkpoint" }
+      ]
+    },
+    "upper_rope_matrix": {
+      "trace_root": "build/re/campaigns/20260826-level01-upper-rope-exploration-v1",
+      "result": "Up reaches the upper stop at Y=655. Right-facing dismount falls back to the wall at X=2176/Y=912; left-facing dismount reaches the upper platform near X=1949/Y=690. Holding horizontal input while attached does not advance beyond the rope.",
+      "scene_state_08_observed": false
+    },
+    "upper_platform_matrix": {
+      "trace_root": "build/re/campaigns/20260826-level01-upper-platform-cjump-v1",
+      "control_correction": "C is the jump input in the MAME harness; B is the sword input.",
+      "result": "A real C jump from the upper platform reaches only Y≈634 and either returns to the X=1777 ledge on the left or the X=2104 rope base on the right. It does not reach the high walkway around Y=530.",
+      "scene_state_08_observed": false
+    },
+    "spring_matrix": {
+      "trace_root": "build/re/campaigns/20260826-level01-spring-launch-v1",
+      "checkpoint": "build/re/campaigns/20260825-level01-canonical-v1/handhold-rope-loop-v1/states/genesis/upper-platform-spring.sta",
+      "actor": { "type": "0x7F", "world": [2004, 669], "flags": "0x40", "meaning": "spring-like actor hypothesis; not yet proven to be the high-walkway transfer" },
+      "result": "Isolated C, Up, and directional inputs produce the ordinary upper-platform jump/fall and do not reach Y=530 or scene state 0x08.",
+      "scene_state_08_observed": false
+    }
+  },
+  "static_geometry": {
+    "source": "build/assets/levels/level01/raw/map.bin + floor.bin",
+    "map_dimensions": [300, 45],
+    "known_behavior_0x22_connectors": [
+      { "x_pixels": 1568, "rows": [14, 23], "world_y_band": [496, 640] },
+      { "x_pixels": 2112, "rows": [25, 42], "world_y_band": [672, 944] },
+      { "x_pixels": 2720, "rows": [10, 22], "world_y_band": [432, 624] },
+      { "x_pixels": 4736, "rows": [26, 42], "world_y_band": [688, 944] }
+    ],
+    "exit_corridor": { "world_x_greater_than": 4743, "world_y_less_than": 470, "routine": "0x001B6406" }
+  },
+  "conclusion": "The fresh recording phase is working and the current frontier is reproducible. The lower gap, handhold, upper platform, wall rope, and upper rope stop are verified, but they form a local loop. The next missing route is the high-walkway transfer or another object/script route; repeating direct wall and upper-rope inputs is not productive.",
+  "next_action": "Trace actor initialization and terrain/script activity around the high-walkway actors near world Y=530 and decode the level-01 object/resource records that can place or activate that connector."
+}
