@@ -96,6 +96,13 @@ the finding or commit message.
   route in one continuous no-sync segment. It records 16 named checkpoints
   from power-on through the upper-edge frontier, with the ROM and harness
   provenance captured at the current commit.
+- `20260826-level01-canonical-recording-v3`: current-state clean replay and
+  loaded-state continuation. It records the power-on route, lower-tower
+  reversal/crossing, a guarded far-floor branch, and the positive far vertical
+  rope approach/climb at world X≈4728. The route remains in scene state `0x01`.
+- `re/mame/findings/20260826-level01-canonical-recording-v3.json`: separates
+  verified positive route evidence from guard/reset and horizontal-line
+  negative branches and records the next upper-transfer frontier.
 - `20260826-level01-tower-negative-v1`: loaded-state recording from the clean
   upper-edge checkpoint through the lower tower. It verifies the 0x47 surface
   mode/latch behavior, identifies the resident 0x43 lamp and 0x20 enemy, and
@@ -138,12 +145,12 @@ geometry/object investigation. The extracted level package is available at
 - exit routine: `0x1B6406`.
 
 The immediate question is now narrower: what natural interaction or terrain
-response bridges the verified lower support/tower band to the separate 0x22
-rope around world `x=2704`, `y=580`? The controlled support route is not being
-treated as proof of the intended route. The next campaign must start from a
-natural lower-band state, trace the 0x47 response and nearby interactions, and
-save a checkpoint for every launch, wall transfer, rope attachment, reset, or
-scene gate.
+response transfers the verified far vertical rope around world `x=4728`,
+`y=671` to the upper platform/exit corridor above `y=470`? The controlled
+support route is not being treated as proof of the intended route. The next
+campaign must start from the current `rope-top-frontier` checkpoint, trace the
+handhold/line transfer and nearby actors, and save a checkpoint for every
+launch, wall transfer, rope attachment, dismount, reset, or scene gate.
 
 ## Campaign index
 
@@ -162,6 +169,7 @@ scene gate.
 | `20260826-level01-recording-fresh-v2` | recorded-frontier | clean power-on replay through the upper-edge frontier |
 | `20260826-level01-tower-negative-v1` | recorded-negative | lower-tower surface/actor branch from the clean upper-edge checkpoint |
 | `20260826-level01-tower-support-exploration-v1` | recorded-frontier | controlled lower support chain, rope gap, rope fixture, and natural negative |
+| `20260826-level01-canonical-recording-v3` | recorded-frontier | current power-on record through lower-tower crossing and far vertical-rope frontier |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

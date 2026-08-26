@@ -1,0 +1,205 @@
+{
+  "campaign": "20260826-level01-canonical-recording-v3",
+  "status": "recorded-frontier",
+  "purpose": "Current-state canonical recording of the level-01 route from power-on through the lower tower and the far vertical-rope frontier, with guard/reset branches retained as explicit exploratory evidence.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "9419fb1",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "9419fb1",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "timing_note": "The power-on segment and all loaded-state branches use OPENALADDIN_STATE_SYNC=0. Loaded-state branches identify their exact parent checkpoint; branches that reset or stall are not promoted to the positive route.",
+  "segments": [
+    {
+      "id": "fresh-to-frontier",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v3/fresh-to-frontier",
+      "frames": 2296,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right*1,right*99,right*50,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c*1,right*195,b+right*50,right*100,none*19",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "start_condition": "MAME genesis machine booted from power-on with no loaded state",
+      "checkpoints": [
+        { "frame": 0, "name": "power-on", "state": "fresh-to-frontier/states/genesis/power-on.sta" },
+        { "frame": 1245, "name": "level01-entry", "state": "fresh-to-frontier/states/genesis/level01-entry.sta" },
+        { "frame": 1665, "name": "gap-entrance", "state": "fresh-to-frontier/states/genesis/gap-entrance.sta" },
+        { "frame": 1704, "name": "handhold-spawned", "state": "fresh-to-frontier/states/genesis/handhold-spawned.sta" },
+        { "frame": 1776, "name": "handhold-grabbed", "state": "fresh-to-frontier/states/genesis/handhold-grabbed.sta" },
+        { "frame": 1811, "name": "high-rope-attached", "state": "fresh-to-frontier/states/genesis/high-rope-attached.sta" },
+        { "frame": 1876, "name": "high-rope-climb", "state": "fresh-to-frontier/states/genesis/high-rope-climb.sta" },
+        { "frame": 1908, "name": "high-walkway-height", "state": "fresh-to-frontier/states/genesis/high-walkway-height.sta" },
+        { "frame": 1936, "name": "high-rope-top", "state": "fresh-to-frontier/states/genesis/high-rope-top.sta" },
+        { "frame": 1937, "name": "high-rope-dismount", "state": "fresh-to-frontier/states/genesis/high-rope-dismount.sta" },
+        { "frame": 1996, "name": "high-walkway-entry", "state": "fresh-to-frontier/states/genesis/high-walkway-entry.sta" },
+        { "frame": 2076, "name": "high-walkway-mid", "state": "fresh-to-frontier/states/genesis/high-walkway-mid.sta" },
+        { "frame": 2131, "name": "guard-approach", "state": "fresh-to-frontier/states/genesis/guard-approach.sta" },
+        { "frame": 2166, "name": "guard-cleared", "state": "fresh-to-frontier/states/genesis/guard-cleared.sta" },
+        { "frame": 2281, "name": "upper-edge-fall", "state": "fresh-to-frontier/states/genesis/upper-edge-fall.sta" },
+        { "frame": 2296, "name": "frontier-end", "state": "fresh-to-frontier/states/genesis/frontier-end.sta" }
+      ]
+    },
+    {
+      "id": "frontier-to-tower",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v3/frontier-to-tower",
+      "frames": 181,
+      "input": "right*52,none*129",
+      "load_state": "upper-edge-fall",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v3/fresh-to-frontier/states/genesis/upper-edge-fall.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "upper-edge-loaded", "state": "frontier-to-tower/states/genesis/upper-edge-loaded.sta" },
+        { "frame": 52, "name": "tower-approach", "state": "frontier-to-tower/states/genesis/tower-approach.sta" },
+        { "frame": 80, "name": "tower-base", "state": "frontier-to-tower/states/genesis/tower-base.sta" },
+        { "frame": 181, "name": "tower-blocked", "state": "frontier-to-tower/states/genesis/tower-blocked.sta" }
+      ]
+    },
+    {
+      "id": "tower-reversal",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v3/tower-reversal",
+      "frames": 421,
+      "input": "c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,left*180,none*129",
+      "load_state": "tower-blocked",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v3/frontier-to-tower/states/genesis/tower-blocked.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "tower-blocked-loaded", "state": "tower-reversal/states/genesis/tower-blocked-loaded.sta" },
+        { "frame": 64, "name": "reversal-pulse", "state": "tower-reversal/states/genesis/reversal-pulse.sta" },
+        { "frame": 112, "name": "staircase-entry", "state": "tower-reversal/states/genesis/staircase-entry.sta" },
+        { "frame": 180, "name": "staircase-mid", "state": "tower-reversal/states/genesis/staircase-mid.sta" },
+        { "frame": 292, "name": "staircase-rest", "state": "tower-reversal/states/genesis/staircase-rest.sta" },
+        { "frame": 421, "name": "staircase-end", "state": "tower-reversal/states/genesis/staircase-end.sta" }
+      ]
+    },
+    {
+      "id": "tower-cross",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v3/tower-cross",
+      "frames": 561,
+      "input": "right*180,b+right*60,right*120,none*201",
+      "load_state": "staircase-end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v3/tower-reversal/states/genesis/staircase-end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "staircase-loaded", "state": "tower-cross/states/genesis/staircase-loaded.sta" },
+        { "frame": 60, "name": "staircase-run", "state": "tower-cross/states/genesis/staircase-run.sta" },
+        { "frame": 180, "name": "tower-approach", "state": "tower-cross/states/genesis/tower-approach.sta" },
+        { "frame": 240, "name": "tower-attack", "state": "tower-cross/states/genesis/tower-attack.sta" },
+        { "frame": 300, "name": "attack", "state": "tower-cross/states/genesis/attack.sta" },
+        { "frame": 360, "name": "enemy-crossed", "state": "tower-cross/states/genesis/enemy-crossed.sta" },
+        { "frame": 440, "name": "far-side", "state": "tower-cross/states/genesis/far-side.sta" },
+        { "frame": 561, "name": "far-floor-entry", "state": "tower-cross/states/genesis/far-floor-entry.sta" }
+      ]
+    },
+    {
+      "id": "far-floor-sword-branch",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v3/far-floor-sword",
+      "frames": 721,
+      "input": "b+right*520,none*201",
+      "load_state": "far-floor-entry",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v3/tower-cross/states/genesis/far-floor-entry.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative",
+      "checkpoints": [
+        { "frame": 1, "name": "far-floor-entry", "state": "far-floor-sword/states/genesis/far-floor-entry.sta" },
+        { "frame": 60, "name": "first-guard", "state": "far-floor-sword/states/genesis/first-guard.sta" },
+        { "frame": 120, "name": "far-floor-early", "state": "far-floor-sword/states/genesis/far-floor-early.sta" },
+        { "frame": 240, "name": "far-floor-mid", "state": "far-floor-sword/states/genesis/far-floor-mid.sta" },
+        { "frame": 360, "name": "rope-approach", "state": "far-floor-sword/states/genesis/rope-approach.sta" },
+        { "frame": 420, "name": "rope-window", "state": "far-floor-sword/states/genesis/rope-window.sta" },
+        { "frame": 480, "name": "far-rope-edge", "state": "far-floor-sword/states/genesis/far-rope-edge.sta" },
+        { "frame": 520, "name": "far-floor-edge", "state": "far-floor-sword/states/genesis/far-floor-edge.sta" },
+        { "frame": 721, "name": "far-floor-end", "state": "far-floor-sword/states/genesis/far-floor-end.sta" }
+      ]
+    },
+    {
+      "id": "far-floor-guard-branch",
+      "trace_dir": "build/re/analysis/20260826-canonical-recording-v3/far-guard-clear/duck-sword",
+      "frames": 320,
+      "input": "down+b+right*80,b+right*160,right*100,none*61",
+      "load_state": "first-guard",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v3/far-floor-sword/states/genesis/first-guard.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-positive",
+      "checkpoints": [
+        { "frame": 1, "name": "guard-loaded", "state": "far-floor-guard-branch/states/genesis/guard-loaded.sta" },
+        { "frame": 30, "name": "guard-contact", "state": "far-floor-guard-branch/states/genesis/guard-contact.sta" },
+        { "frame": 60, "name": "guard-branch", "state": "far-floor-guard-branch/states/genesis/guard-branch.sta" },
+        { "frame": 120, "name": "guard-mid", "state": "far-floor-guard-branch/states/genesis/guard-mid.sta" },
+        { "frame": 180, "name": "post-guard", "state": "far-floor-guard-branch/states/genesis/post-guard.sta" },
+        { "frame": 240, "name": "far-floor", "state": "far-floor-guard-branch/states/genesis/far-floor.sta" },
+        { "frame": 320, "name": "end", "state": "far-floor-guard-branch/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-vertical-rope-approach",
+      "trace_dir": "build/re/analysis/20260826-canonical-recording-v3/far-forward-sweep/forward-apple-sword",
+      "frames": 450,
+      "input": "a+right*60,c+right*20,b+right*160,right*140,none*70",
+      "load_state": "far-floor",
+      "loaded_state_source": "build/re/analysis/20260826-canonical-recording-v3/far-guard-clear/duck-sword/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-positive",
+      "checkpoints": [
+        { "frame": 1, "name": "far-forward-loaded", "state": "far-vertical-rope-approach/states/genesis/far-forward-loaded.sta" },
+        { "frame": 30, "name": "jump-start", "state": "far-vertical-rope-approach/states/genesis/jump-start.sta" },
+        { "frame": 80, "name": "first-obstacle", "state": "far-vertical-rope-approach/states/genesis/first-obstacle.sta" },
+        { "frame": 160, "name": "mid-forward", "state": "far-vertical-rope-approach/states/genesis/mid-forward.sta" },
+        { "frame": 240, "name": "rope-approach", "state": "far-vertical-rope-approach/states/genesis/rope-approach.sta" },
+        { "frame": 320, "name": "late-forward", "state": "far-vertical-rope-approach/states/genesis/late-forward.sta" },
+        { "frame": 450, "name": "end", "state": "far-vertical-rope-approach/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-vertical-rope-climb",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v3/far-rope-forward",
+      "frames": 260,
+      "input": "up*200,none*60",
+      "load_state": "lower-rope-end",
+      "loaded_state_source": "build/re/analysis/20260826-canonical-recording-v3/far-forward-sweep/forward-apple-sword/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-positive",
+      "checkpoints": [
+        { "frame": 1, "name": "lower-rope-loaded", "state": "far-vertical-rope-climb/states/genesis/lower-rope-loaded.sta" },
+        { "frame": 40, "name": "rope-climb-start", "state": "far-vertical-rope-climb/states/genesis/rope-climb-start.sta" },
+        { "frame": 100, "name": "rope-mid", "state": "far-vertical-rope-climb/states/genesis/rope-mid.sta" },
+        { "frame": 160, "name": "rope-high", "state": "far-vertical-rope-climb/states/genesis/rope-high.sta" },
+        { "frame": 220, "name": "rope-top", "state": "far-vertical-rope-climb/states/genesis/rope-top.sta" },
+        { "frame": 260, "name": "end", "state": "far-vertical-rope-climb/states/genesis/end.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "power-on", "segment": "fresh-to-frontier", "frame": 0, "scene_state": "0x00", "meaning": "fresh deterministic machine start" },
+    { "id": "level01-entry", "segment": "fresh-to-frontier", "frame": 1245, "world": [103, 880], "scene_state": "0x01", "meaning": "fresh level-01 entry" },
+    { "id": "handhold-grabbed", "segment": "fresh-to-frontier", "frame": 1776, "world": [1663, 693], "actor_type": "0x6B", "meaning": "opening handhold transfer" },
+    { "id": "high-walkway-entry", "segment": "fresh-to-frontier", "frame": 1996, "world": [1703, 530], "meaning": "upper walkway reached" },
+    { "id": "guard-cleared", "segment": "fresh-to-frontier", "frame": 2166, "world": [2213, 530], "actor_type": "0x1D", "meaning": "upper walkway guard cleared" },
+    { "id": "upper-edge-fall", "segment": "fresh-to-frontier", "frame": 2281, "world": [2558, 920], "landing_state": 9, "meaning": "upper walkway ends in lower-band fall" },
+    { "id": "tower-surface", "segment": "frontier-to-tower", "frame": 52, "world": [2711, 920], "terrain_behavior": "0x47", "meaning": "lower tower surface-mode band" },
+    { "id": "staircase-rest", "segment": "tower-reversal", "frame": 292, "world": [2271, 832], "terrain_behavior": "0x47", "meaning": "reproducible reversal onto lower staircase" },
+    { "id": "far-floor-entry", "segment": "tower-cross", "frame": 561, "world": [3346, 912], "terrain_behavior": "0x11", "meaning": "tower crossed after sword attack" },
+    { "id": "far-floor-guard-branch", "segment": "far-floor-guard-branch", "frame": 320, "world": [4444, 881], "meaning": "jump/sword branch clears the first far-floor obstacle and reaches the forward floor" },
+    { "id": "lower-rope-attached", "segment": "far-vertical-rope-approach", "frame": 160, "world": [4728, 809], "terrain_behavior": "0x22", "meaning": "far vertical connector reached from the lower floor" },
+    { "id": "far-rope-top", "segment": "far-vertical-rope-climb", "frame": 220, "world": [4728, 671], "terrain_behavior": "0x24", "meaning": "far vertical connector upper stop" }
+  ],
+  "result": "The current ROM and harness now have a reproducible power-on record through the opening handhold/high-walkway route, the lower tower reversal and crossing, and a positive far-floor branch that reaches and climbs the vertical connector at world X≈4728. The scene remains 0x01 and the level exit predicate is not yet satisfied.",
+  "negative_evidence": [
+    "The plain far-floor right-run stalls at the first live guard and later resets; it is retained under build/re/analysis rather than promoted as a route.",
+    "The far horizontal behavior-0x25 line releases the player into the lower band under one-frame jump inputs; no upper-platform transfer or scene state 0x08 was observed in the current release sweep."
+  ],
+  "next": "Branch from far-vertical-rope-climb/rope-top-frontier and trace the handhold/upper-platform transfer toward world Y<470, retaining a checkpoint for every dismount, spring, guard, reset, and scene-gate write."
+}

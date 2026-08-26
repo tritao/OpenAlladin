@@ -1,0 +1,53 @@
+{
+  "format": "openaladdin-level01-canonical-recording-finding-v3",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "harness_commit": "9419fb1",
+  "campaign": "re/mame/campaigns/20260826-level01-canonical-recording-v3.json",
+  "purpose": "Record the clean baseline and the first current-state positive continuation beyond the previously known upper-edge frontier without treating reset branches as route progress.",
+  "verified": [
+    {
+      "trace": "build/re/campaigns/20260826-level01-canonical-recording-v3/fresh-to-frontier",
+      "result": "A no-sync power-on replay reaches the opening handhold, the high walkway, the guard encounter, and the upper-edge fall with 16 named checkpoints."
+    },
+    {
+      "trace": "build/re/campaigns/20260826-level01-canonical-recording-v3/frontier-to-tower",
+      "result": "The lower tower is reached at behavior 0x47 and remains a surface-mode/latch branch in scene state 0x01."
+    },
+    {
+      "trace": "build/re/campaigns/20260826-level01-canonical-recording-v3/tower-reversal",
+      "result": "The recorded reversal pulses leave the terminal lower tower and settle at the staircase around world (2271,832)."
+    },
+    {
+      "trace": "build/re/campaigns/20260826-level01-canonical-recording-v3/tower-cross",
+      "result": "The staircase-to-tower run crosses the resident enemy sequence and reaches the far lower floor around world (3346,912)."
+    },
+    {
+      "trace": "build/re/analysis/20260826-canonical-recording-v3/far-forward-sweep/forward-apple-sword",
+      "result": "A guarded forward branch using apples, a jump, and sword attacks reaches the lower end of the far vertical connector at world (4728,809), behavior 0x22."
+    },
+    {
+      "trace": "build/re/campaigns/20260826-level01-canonical-recording-v3/far-rope-forward",
+      "result": "Holding Up on that connector climbs to world (4728,671), behavior 0x24, where the next transfer remains unresolved."
+    }
+  ],
+  "negative_evidence": [
+    {
+      "trace_root": "build/re/analysis/20260826-canonical-recording-v3/horizontal-rope-release",
+      "result": "One-frame and held jump releases from the far behavior-0x25 line descend into the lower band; none reaches the upper actors around Y=466 or scene state 0x08."
+    },
+    {
+      "trace_root": "build/re/analysis/20260826-canonical-recording-v3/far-guard-clear",
+      "result": "The plain right-run and several sword/jump timing families hit a live far-floor guard or reset. The successful duck/sword branch is retained as a loaded-state exploratory parent for the verified rope approach."
+    }
+  ],
+  "exit_status": {
+    "scene_state": "0x01",
+    "exit_routine": "0x001B6406",
+    "predicate": "PLAYER_WORLD_X > 0x1287 and PLAYER_WORLD_Y < 0x01D6",
+    "observed": "not satisfied"
+  },
+  "next_action": "Start from far-rope-forward/rope-top-frontier and test the precise upper-platform/handhold transfer. Preserve separate checkpoints for horizontal-line attachment, jump release, high-platform landing, guard clearance, reset, and any write to SCENE_SCRIPT_COUNTDOWN."
+}
