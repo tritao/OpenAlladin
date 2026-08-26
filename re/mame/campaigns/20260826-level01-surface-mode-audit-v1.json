@@ -1,0 +1,87 @@
+{
+  "campaign": "20260826-level01-surface-mode-audit-v1",
+  "status": "recorded-static-correlation",
+  "purpose": "Correlate the Level 01 behavior-0x47 surface-mode toggle with the landing resolver's active terrain-resource address.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "f929e23",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "f929e23",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "ghidra": {
+    "target_request": "re/ghidra/targets/level01-surface-mode-consumer-targets.json",
+    "report": "build/re/level01-surface-mode-consumer-targeted-decompile-v2.json",
+    "targets": ["0x001AD7B4", "0x001ADB36", "0x001AF53E", "0x001AF54A", "0x001B5470", "0x001B6546", "0x001B3434", "0x001B3818"]
+  },
+  "instrumentation": {
+    "watched_addresses": ["0xFFF0A4", "0xFFF0C2"],
+    "resolver_breakpoint": "0x001AD85C",
+    "breakpoint_context": "registers plus terrain context",
+    "note": "Debugger output is retained as selected event records in the finding; state.jsonl and RAM captures are the replay artifacts."
+  },
+  "segments": [
+    {
+      "id": "tower-frontier-replay",
+      "trace_dir": "build/re/campaigns/20260826-level01-surface-mode-audit-v1/tower-frontier-replay",
+      "frames": 300,
+      "input": "none*1,right*60,c+right*30,right*100,none*109",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/upper-edge-fall.sta",
+      "capture": "state",
+      "debug_watch": "0xFFF0A4,0xFFF0C2",
+      "checkpoints": [
+        { "frame": 1, "name": "upper-edge-loaded" },
+        { "frame": 60, "name": "tower-approach" },
+        { "frame": 90, "name": "tower-jump" },
+        { "frame": 160, "name": "tower-surface" },
+        { "frame": 300, "name": "frontier-end" }
+      ]
+    },
+    {
+      "id": "resolver-offset",
+      "trace_dir": "build/re/campaigns/20260826-level01-surface-mode-audit-v1/resolver-offset",
+      "frames": 70,
+      "input": "none*1,right*60,c+right*9",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/upper-edge-fall.sta",
+      "capture": "state",
+      "breakpoint": "0x001AD85C",
+      "breakpoint_context": "registers plus terrain context",
+      "checkpoints": [
+        { "frame": 31, "name": "surface-mode-active" },
+        { "frame": 70, "name": "resolver-end" }
+      ]
+    },
+    {
+      "id": "terrain-table-live",
+      "trace_dir": "build/re/campaigns/20260826-level01-surface-mode-audit-v1/terrain-table-live",
+      "frames": 1,
+      "input": "none*1",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-surface-mode-audit-v1/tower-frontier-replay/states/genesis/tower-approach.sta",
+      "capture": "ram",
+      "checkpoints": [
+        { "frame": 1, "name": "surface-loaded" }
+      ]
+    },
+    {
+      "id": "tower-surface-toggle-preliminary",
+      "trace_dir": "build/re/campaigns/20260826-level01-surface-mode-audit-v1/tower-surface-toggle",
+      "frames": 240,
+      "input": "up+right*60,right*60,none*120",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "debug_watch": "0xFFF0A4,0xFFF0C2",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "climb" },
+        { "frame": 120, "name": "upper" },
+        { "frame": 240, "name": "end" }
+      ],
+      "result": "This alternate tower-lamp fixture did not enter behavior 0x47; retained as a negative preliminary branch."
+    }
+  ],
+  "result": "The authoritative frontier replay enters behavior 0x47 at harness frame 31, writes the latch and mode, and the resolver breakpoint changes from A1=0x00FFAE84 to A1=0x00FFAE85. Scene state remains 0x01 and no scene gate changes."
+}

@@ -394,6 +394,44 @@
     - ghidra_disassembly_001B1E38
     - rom_terrain_handler_table_004554
     - mame_player_run_trace
+0x001AD7B4:
+  name: Player_TerrainLandingResolver
+  confidence: confirmed
+  description: Resolves the player's landing contour from the dedicated row-pointer table at 0x00FF98C4 and the decompressed terrain contour resource at 0x00FFAE84; it adds TERRAIN_SURFACE_MODE to the resource base before reading the contour index and applies landing, response, or gravity behavior.
+  evidence:
+    - ghidra_level01_surface_mode_consumer_targeted_decompile
+    - ghidra_disassembly_001AD7B4
+    - mame_level01_surface_mode_resolver_offset
+0x001ADB34:
+  name: Terrain_ResolverNoOpReturn
+  confidence: confirmed
+  description: Empty return reached by the landing resolver after it has selected the active terrain resource base; it does not return or modify a contour pointer.
+  evidence:
+    - ghidra_level01_surface_mode_consumer_targeted_decompile
+    - ghidra_disassembly_001ADB34
+0x001ADB36:
+  name: Terrain_TemporaryLookupHelper
+  confidence: provisional
+  description: Separate helper that temporarily replaces the word at A0 with FF7E28 shifted left by three, calls 0x001AA81A, and restores the word; the landing resolver's direct calls target the preceding no-op at 0x001ADB34 instead.
+  evidence:
+    - ghidra_level01_surface_mode_consumer_targeted_decompile
+    - ghidra_disassembly_001ADB36
+0x001B3434:
+  name: TerrainBehaviorTable_LoadForLevel
+  confidence: confirmed
+  description: Selects the active level record from ROM table 0x002C78 and passes its +0x08 RNC resource pointer to the terrain behavior-table decoder with destination 0x00FFAE84.
+  evidence:
+    - ghidra_level01_surface_mode_consumer_targeted_decompile
+    - ghidra_disassembly_001B3434
+    - rom_level_table_002C78
+0x001B3818:
+  name: TerrainBehaviorTable_Decode
+  confidence: confirmed
+  description: Decodes the packed terrain resource stream into the destination supplied in A1; Level 01 supplies the RNC method-1 block at ROM 0x001434C4 and destination 0x00FFAE84.
+  evidence:
+    - ghidra_level01_surface_mode_consumer_targeted_decompile
+    - ghidra_disassembly_001B3818
+    - rom_rnc_level01_001434C4
 0x001B31DE:
   name: Terrain_QueryCallbackA
   confidence: confirmed

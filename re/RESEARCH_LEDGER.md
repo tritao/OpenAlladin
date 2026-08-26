@@ -552,6 +552,20 @@ rerun uses only the single countdown watch and is the authoritative runtime
 result. These generic combat producers are therefore not the current missing
 Level 01 boundary path.
 
+The next static/runtime correlation is recorded in
+`re/mame/findings/20260826-level01-surface-mode-consumer-v1.json` and
+`re/mame/campaigns/20260826-level01-surface-mode-audit-v1.json`. The landing
+resolver at `0x001AD7B4` adds `TERRAIN_SURFACE_MODE` to the decoded terrain
+resource base at `0x00FFAE84`: mode 0 uses `0x00FFAE84`, while mode 1 uses
+`0x00FFAE85`. A natural frontier replay reaches behavior `0x47` at harness
+frame 31, writes `FFF0C2=FF`, toggles `FFF0A4=1`, and the resolver breakpoint
+observes the one-byte base shift. The Level 01 resource is selected at
+`0x001B3434` from the record at `0x002C78 + 0x42 * level` and decoded by
+`0x001B3818` into `0x00FFAE84`. This establishes the tower as a terrain
+resource-mode switch, not a connector or scene writer. It also corrects the
+older `0x001ADB34` label: that address is an empty return; the distinct
+routine at `0x001ADB36` is not the landing resolver's direct callback.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -598,6 +612,7 @@ Level 01 boundary path.
 | `20260826-level01-scene-writer-controlled-current-v1` | recorded-controlled-boundary-write | current-frontier boundary write and negative follow-on writer trace |
 | `20260826-level01-scene-table-index-call-path-v1` | recorded-static-correlation | call path separating the state-08 table cycle from the level-01 boundary writer |
 | `20260826-level01-countdown-producer-audit-v1` | recorded-negative | static and narrow runtime audit of generic actor-collision scene-countdown producers |
+| `20260826-level01-surface-mode-audit-v1` | recorded-static-correlation | behavior-0x47 terrain-resource mode toggle and landing-resolver offset correlation |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

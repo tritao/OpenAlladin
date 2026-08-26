@@ -12,7 +12,7 @@
     { "address": "0x001B32F0", "name": "Terrain_QueryCallbackSetup" },
     { "address": "0x001B319C", "name": "Terrain_QueryFlagDispatcher" },
     { "address": "0x001B1E38", "name": "Terrain_ResolvePlayerCell" },
-    { "address": "0x001ADB34", "name": "Terrain_ResolveContourRecord" },
+    { "address": "0x001ADB34", "name": "Terrain_ResolverNoOpReturn" },
     { "address": "0x001AD7B4", "name": "Player_TerrainLandingResolver" },
     { "address": "0x001B5470", "name": "Behavior_0x47_SurfaceModeHandler" },
     { "address": "0x001B5492", "name": "TerrainHandler_ClearSurfaceMode" },

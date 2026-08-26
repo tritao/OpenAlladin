@@ -628,6 +628,25 @@
     - ghidra_disassembly_001B5470
     - ghidra_disassembly_001B5492
     - ghidra_disassembly_001B549C
+0xFF98C4:
+  name: TERRAIN_LANDING_ROW_POINTERS
+  type: pointer_table
+  format: array of 32-bit pointers
+  confidence: confirmed
+  description: Row-pointer table used by Player_TerrainLandingResolver at 0x001AD7B4 for landing-contour lookup; it is distinct from the general terrain row table at 0x00FF9884.
+  evidence:
+    - ghidra_level01_surface_mode_consumer_targeted_decompile
+    - ghidra_disassembly_001AD7B4
+0xFFAE84:
+  name: TERRAIN_CONTOUR_RESOURCE
+  type: byte_array
+  format: decompressed level terrain resource
+  confidence: confirmed
+  description: Destination of the Level 01 terrain-resource decoder; Player_TerrainLandingResolver selects the base byte at this address or the adjacent byte at +1 according to TERRAIN_SURFACE_MODE.
+  evidence:
+    - ghidra_level01_surface_mode_consumer_targeted_decompile
+    - ghidra_disassembly_001B3434
+    - mame_level01_surface_mode_resolver_offset
 0xFFF0C2:
   name: TERRAIN_SURFACE_LATCH
   type: u8

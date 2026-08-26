@@ -1,0 +1,90 @@
+{
+  "format": "openaladdin-level01-surface-mode-consumer-v1",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level01-surface-mode-consumer-targets.json",
+  "decompile_artifact": "build/re/level01-surface-mode-consumer-targeted-decompile-v2.json",
+  "static_recovery": {
+    "landing_resolver": {
+      "address": "0x001AD7B4",
+      "name": "Player_TerrainLandingResolver",
+      "effect": "Builds a landing lookup from the dedicated row-pointer table at 0x00FF98C4, then reads the decoded contour resource through A1. At 0x001AD856 the ROM adds TERRAIN_SURFACE_MODE to the 0x00FFAE84 resource base before reading the contour index."
+    },
+    "resource_load": {
+      "selector": "0x001B3434",
+      "decoder": "0x001B3818",
+      "level_record": "ROM 0x002C78 + 0x42 * level_index",
+      "level01_source": "ROM 0x001434C4, RNC\\x01 method-1 block from the Level 01 record +0x08",
+      "destination": "RAM 0x00FFAE84"
+    },
+    "mode_layout": {
+      "mode_0": "A1=0x00FFAE84",
+      "mode_1": "A1=0x00FFAE85",
+      "meaning": "The mode is a one-byte layout selector for the decoded contour resource, not a separate collision test."
+    },
+    "producers": [
+      {
+        "address": "0x001B5470",
+        "meaning": "Behavior 0x47 sets TERRAIN_SURFACE_LATCH once and toggles TERRAIN_SURFACE_MODE."
+      },
+      {
+        "address": "0x001B5492",
+        "meaning": "Dedicated terrain handler writes TERRAIN_SURFACE_MODE=0."
+      },
+      {
+        "address": "0x001B549C",
+        "meaning": "Dedicated terrain handler writes TERRAIN_SURFACE_MODE=1."
+      },
+      {
+        "address": "0x001AF53E",
+        "meaning": "Embedded shared-response entry writes mode 0, then branches to the common continuation at 0x001AF4A0."
+      },
+      {
+        "address": "0x001AF54A",
+        "meaning": "Embedded shared-response entry writes mode 1, then branches to the common continuation at 0x001AF4A0."
+      },
+      {
+        "address": "0x001B6546",
+        "meaning": "Level-specific entry writes mode 1 and calls 0x001B2E9A."
+      }
+    ],
+    "no_op_correction": {
+      "address": "0x001ADB34",
+      "effect": "RTS only. The separate routine at 0x001ADB36 temporarily rewrites the word at A0, calls 0x001AA81A, and restores it, but the landing resolver's direct calls target 0x001ADB34."
+    }
+  },
+  "runtime": {
+    "campaign": "re/mame/campaigns/20260826-level01-surface-mode-audit-v1.json",
+    "source_checkpoint": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/upper-edge-fall.sta",
+    "input": "none*1,right*60,c+right*30,right*100,none*109",
+    "natural_toggle": {
+      "harness_frame": 31,
+      "world": [2645, 920],
+      "terrain_behavior": "0x47",
+      "surface_mode": 1,
+      "surface_latch": 255,
+      "scene_state": 1,
+      "debug_machine_frame": "0x0906",
+      "watch_events": [
+        { "address": "0xFFF0C2", "data": "0xFF", "reported_pc": "0x001B548A", "static_write": "0x001B5482" },
+        { "address": "0xFFF0A4", "data": "0x0001", "reported_pc": "0x001B5492", "static_write": "0x001B5488" }
+      ]
+    },
+    "resolver_offset": {
+      "breakpoint": "0x001AD85C",
+      "reported_pc": "0x001AD85E",
+      "before_toggle": { "harness_frame": 30, "a1": "0x00FFAE84", "surface_mode": 0 },
+      "after_toggle": { "harness_frame": 31, "a1": "0x00FFAE85", "surface_mode": 1 },
+      "interpretation": "The resolver consumes the alternate resource byte immediately after the behavior-0x47 toggle."
+    },
+    "table_dump": {
+      "trace": "build/re/campaigns/20260826-level01-surface-mode-audit-v1/terrain-table-live",
+      "checkpoint": "tower-approach.sta",
+      "capture": "RAM dump contains the decoded resource at 0x00FFAE84; the mode-1 base is the next byte."
+    }
+  },
+  "conclusion": "The lower tower's behavior-0x47 path is a real terrain-resource mode switch. It arms a one-shot latch, toggles the collision-resource base by one byte, and leaves scene state at 0x01. It does not itself create a connector or scene transition. The prior 0x001ADB34 contour-helper interpretation is corrected: that address is an empty return."
+}

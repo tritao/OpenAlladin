@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-surface-mode-consumer",
+    "purpose": "Decode how TERRAIN_SURFACE_MODE changes the ground collision lookup and identify the routines that set or clear it around the Level 01 tower connector."
+  },
+  "targets": [
+    { "address": "0x001AD7B4", "name": "Player_TerrainLandingResolver" },
+    { "address": "0x001ADB36", "name": "Terrain_ContourLookupHelper" },
+    { "address": "0x001AF53E", "name": "TerrainHandler_ClearSurfaceModeEntry" },
+    { "address": "0x001AF54A", "name": "TerrainHandler_SetSurfaceModeEntry" },
+    { "address": "0x001B5470", "name": "Behavior_0x47_SurfaceModeHandler" },
+    { "address": "0x001B6546", "name": "LevelSpecific_SurfaceModeSet" },
+    { "address": "0x001B3434", "name": "TerrainBehaviorTable_LoadForLevel" },
+    { "address": "0x001B3818", "name": "TerrainBehaviorTable_Decode" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0A4", "name": "TERRAIN_SURFACE_MODE" },
+    { "address": "0x00FFAE84", "name": "TERRAIN_BEHAVIOR_INDEX_TABLE" },
+    { "address": "0x00FF98C4", "name": "TERRAIN_CONTOUR_ROW_POINTERS" },
+    { "address": "0x00FFF0BD", "name": "TERRAIN_SURFACE_TRANSITION_FLAG" }
+  ]
+}
