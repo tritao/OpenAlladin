@@ -524,6 +524,16 @@ world `(4748,460)`, native watchpoints reproduce
 current-fixture negative follow-on result; the older controlled state-03
 campaign remains the authoritative observed script-writer path.
 
+The scene-table index call path is recorded in
+`re/mame/findings/20260826-level01-scene-table-index-call-path-v1.json`.
+Static decompilation shows that `SCENE_TABLE_INDEX` is incremented only by
+`SceneTable_SelectNextState`, reached from the pending-script terminator in
+`SceneScript_CompleteToState1`. The level-01 boundary instead arms the
+countdown and takes the script writer to state `0x03` with table index `0`.
+The state-`0x08` table entry is the second selector-cycle result at index `1`,
+so it remains a separate scene-table/resource proof rather than the direct
+natural level-01 exit target.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -568,6 +578,7 @@ campaign remains the authoritative observed script-writer path.
 | `20260826-level01-behavior47-collision-edge-trace-v1` | recorded-negative-frontier | indirect edge trace of the natural lower-tower Type-0x20 contact and cleanup path |
 | `20260826-level01-tower-plain-c-edge-trace-v1` | recorded-negative-frontier | plain-C/Up edge trace from the natural lower-tower lamp checkpoint |
 | `20260826-level01-scene-writer-controlled-current-v1` | recorded-controlled-boundary-write | current-frontier boundary write and negative follow-on writer trace |
+| `20260826-level01-scene-table-index-call-path-v1` | recorded-static-correlation | call path separating the state-08 table cycle from the level-01 boundary writer |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

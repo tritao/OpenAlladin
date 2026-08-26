@@ -1,0 +1,61 @@
+{
+  "format": "openaladdin-level01-scene-table-index-call-path-finding-v1",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_analysis": "7a74ba7",
+  "static_sources": {
+    "decompile_report": "build/re/level-transition-targeted-decompile-v2.json",
+    "function_symbols": "re/symbols/functions.yml",
+    "transition_finding": "re/mame/findings/level-transition-findings.json"
+  },
+  "call_path": [
+    {
+      "address": "0x001A8E3E",
+      "name": "SceneScript_AdvanceState",
+      "condition": "SCENE_SCRIPT_COUNTDOWN reaches zero or is 0xFF",
+      "action": "Consumes SCENE_SCRIPT_CURSOR and may write SCENE_STATE; later calls SceneScript_CompleteToState1."
+    },
+    {
+      "address": "0x001B315C",
+      "name": "SceneScript_CompleteToState1",
+      "condition": "SCENE_SCRIPT_PENDING is set and SCENE_SCRIPT_DATA reaches a zero terminator",
+      "action": "Writes SCENE_STATE=0x01, clears SCENE_SCRIPT_PENDING, and calls SceneTable_SelectNextState."
+    },
+    {
+      "address": "0x001B3B96",
+      "name": "SceneTable_SelectNextState",
+      "condition": "Called by the pending-script completion path",
+      "action": "Loads the table entry at SCENE_TABLE_INDEX, then increments SCENE_TABLE_INDEX; wraps after entry 4."
+    },
+    {
+      "address": "0x001B3F0A",
+      "name": "Scene table state-byte write",
+      "condition": "Inside SceneTable_SelectNextState",
+      "action": "Copies ROM table state byte at 0x004B04 + index*6 + 4 into SCENE_STATE."
+    }
+  ],
+  "state08_table_sequence": {
+    "initial_index": "0x00",
+    "first_selector_result": { "index": 0, "state": "0x00", "next_index": "0x01" },
+    "second_selector_result": { "index": 1, "state": "0x08", "next_index": "0x02" },
+    "state08_rom_source": "0x004B0E"
+  },
+  "level01_exit_path": {
+    "boundary_routine": "0x001B5B4A",
+    "boundary_write": "0x001B5B66 -> 0xFFF0E9=0xFF",
+    "controlled_script_result": "0x001A8ED8 -> SCENE_STATE=0x03 with SCENE_TABLE_INDEX=0x00",
+    "selector_called_by_boundary": false,
+    "meaning": "The recovered level-01 boundary path does not directly advance the scene-table index or select table entry 1."
+  },
+  "conclusion": {
+    "verified": [
+      "SCENE_TABLE_INDEX changes only in the recovered SceneTable_SelectNextState body among the decompiled transition targets.",
+      "The state-08 table entry is reached on the second selector cycle when the index is already 1.",
+      "The level-01 boundary proof takes the script-state path to state 0x03 and leaves the table index at 0."
+    ],
+    "interpretation": "State 0x08 is a separate scene-table transition state. It should remain documented and replayable, but it is not the required direct target for proving the natural level-01 exit.",
+    "unresolved": "The full natural level-01 route still needs to reach the boundary and then complete its own state-03 transition under controller-only input."
+  },
+  "next_action": "Return the main effort to the natural level-01 route and preserve the state-03 boundary path as the expected exit result; use state-08 only for separate scene-table/resource validation."
+}
