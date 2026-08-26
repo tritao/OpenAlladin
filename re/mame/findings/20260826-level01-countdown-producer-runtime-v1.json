@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-level01-countdown-producer-runtime-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-countdown-producer-audit-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "decomp_finding": "re/mame/findings/20260826-level01-countdown-producer-static-v1.json",
+  "trace_outputs": [
+    "build/re/campaigns/20260826-level01-countdown-producer-audit-v1/far-floor-guard-watch",
+    "build/re/campaigns/20260826-level01-countdown-producer-audit-v1/natural-juggler-watch-v2"
+  ],
+  "observations": [
+    {
+      "segment": "far-floor-guard-watch",
+      "frames": 320,
+      "input": "down+b+right*80,b+right*160,right*100,none*61",
+      "countdown_nonzero_frames": 0,
+      "countdown_watch_events": 0,
+      "observed_types": ["0x00", "0x06", "0x0A", "0x1D", "0x1E", "0x2A", "0x2D", "0x34", "0x40", "0x43", "0x6A", "0x7F", "0x83", "0x84"]
+    },
+    {
+      "segment": "natural-juggler-watch-v2",
+      "frames": 360,
+      "input": "left*80,b*20,left*260",
+      "countdown_nonzero_frames": 0,
+      "countdown_watch_events": 0,
+      "juggler_transition": "slot 5 type 0x0A -> type 0x84 at frame 99",
+      "observed_types": ["0x00", "0x06", "0x0A", "0x14", "0x15", "0x1D", "0x1E", "0x1F", "0x20", "0x21", "0x2A", "0x2D", "0x34", "0x36", "0x3A", "0x40", "0x43", "0x44", "0x65", "0x66", "0x6A", "0x6B", "0x7B", "0x7F", "0x80", "0x82", "0x83", "0x84", "0x85", "0x8A", "0x8C", "0x8D"]
+    }
+  ],
+  "corpus_scan": {
+    "scope": "All available build/re/campaigns/**/state.jsonl actor records at analysis time",
+    "result": "No recorded actor record has type 0x10, 0x11, or 0x13."
+  },
+  "conclusion": "The generic actor-collision countdown producers are not the missing natural Level 01 exit mechanism in the recorded route corpus. The unresolved route remains a geometry/interaction/scene-resource problem that must reach the level-01 boundary predicate itself."
+}

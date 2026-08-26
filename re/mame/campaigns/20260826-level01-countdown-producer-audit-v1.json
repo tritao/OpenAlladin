@@ -1,0 +1,67 @@
+{
+  "campaign": "20260826-level01-countdown-producer-audit-v1",
+  "status": "recorded-negative",
+  "purpose": "Verify whether the generic actor-collision handlers that can arm SCENE_SCRIPT_COUNTDOWN are exercised by the known Level 01 guard and juggler branches.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "c1f0cbe",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "c1f0cbe",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "watch_contract": {
+    "address": "0xFFF0E9",
+    "width": 2,
+    "mode": "MAME debugger write watchpoint plus state capture",
+    "meaning": "SCENE_SCRIPT_COUNTDOWN byte and adjacent byte; any writer would be logged with its PC."
+  },
+  "segments": [
+    {
+      "id": "far-floor-guard-watch",
+      "trace_dir": "build/re/campaigns/20260826-level01-countdown-producer-audit-v1/far-floor-guard-watch",
+      "frames": 320,
+      "input": "down+b+right*80,b+right*160,right*100,none*61",
+      "load_state": "first-guard",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-floor-sword/states/genesis/first-guard.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "debug_watch": true,
+      "checkpoints": [
+        { "frame": 1, "name": "guard-loaded", "state": "far-floor-guard-watch/states/genesis/guard-loaded.sta" },
+        { "frame": 30, "name": "guard-contact", "state": "far-floor-guard-watch/states/genesis/guard-contact.sta" },
+        { "frame": 60, "name": "guard-branch", "state": "far-floor-guard-watch/states/genesis/guard-branch.sta" },
+        { "frame": 120, "name": "guard-mid", "state": "far-floor-guard-watch/states/genesis/guard-mid.sta" },
+        { "frame": 180, "name": "post-guard", "state": "far-floor-guard-watch/states/genesis/post-guard.sta" },
+        { "frame": 240, "name": "far-floor", "state": "far-floor-guard-watch/states/genesis/far-floor.sta" },
+        { "frame": 320, "name": "end", "state": "far-floor-guard-watch/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "natural-juggler-watch-v2",
+      "trace_dir": "build/re/campaigns/20260826-level01-countdown-producer-audit-v1/natural-juggler-watch-v2",
+      "frames": 360,
+      "input": "left*80,b*20,left*260",
+      "load_state": "line-baseline",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/natural-horizontal-line/states/genesis/line-baseline.sta",
+      "capture": "state",
+      "actors": false,
+      "scene_state_trace": true,
+      "debug_watch": true,
+      "checkpoints": [
+        { "frame": 1, "name": "line-loaded", "state": "natural-juggler-watch-v2/states/genesis/line-loaded.sta" },
+        { "frame": 80, "name": "line-edge", "state": "natural-juggler-watch-v2/states/genesis/line-edge.sta" },
+        { "frame": 90, "name": "sword-window", "state": "natural-juggler-watch-v2/states/genesis/sword-window.sta" },
+        { "frame": 99, "name": "juggler-defeated", "state": "natural-juggler-watch-v2/states/genesis/juggler-defeated.sta" },
+        { "frame": 100, "name": "defeat-followthrough", "state": "natural-juggler-watch-v2/states/genesis/defeat-followthrough.sta" },
+        { "frame": 120, "name": "lower-band", "state": "natural-juggler-watch-v2/states/genesis/lower-band.sta" },
+        { "frame": 180, "name": "gap-approach", "state": "natural-juggler-watch-v2/states/genesis/gap-approach.sta" },
+        { "frame": 240, "name": "gap-window", "state": "natural-juggler-watch-v2/states/genesis/gap-window.sta" },
+        { "frame": 300, "name": "post-gap", "state": "natural-juggler-watch-v2/states/genesis/post-gap.sta" },
+        { "frame": 360, "name": "end", "state": "natural-juggler-watch-v2/states/genesis/end.sta" }
+      ]
+    }
+  ],
+  "result": "Both narrow-watch segments completed with no MAME write-watch event for 0xFFF0E9 and no nonzero SCENE_SCRIPT_COUNTDOWN in state capture. The guard branch uses the observed Level 01 types, and the juggler branch confirms the natural type-0x0A terminal replacement; neither reaches the type-0x10/0x11/0x13 countdown-capable receiving entries.",
+  "discarded_attempt": "A first juggler run enabled the optional actor-field debugger watch expansion and exited at frame 5. It is retained only as a harness limitation: actor-field debugger watches are too broad for this fixture. The v2 segment disables that expansion and watches only 0xFFF0E9."
+}
