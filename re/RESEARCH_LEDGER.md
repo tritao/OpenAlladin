@@ -746,6 +746,17 @@ predicate; the run stalls below the required upper-band Y condition. This
 closes selector `0x12` as the direct transition source while retaining the
 named checkpoints as provenance anchors.
 
+The scene-countdown writer audit is recorded in
+`re/mame/findings/20260826-level01-scene-countdown-writers-v1.json` and
+`re/mame/campaigns/20260826-level01-scene-countdown-writers-v1.json`. The
+targeted Ghidra pass covers the remaining countdown stores, and a fresh natural
+route watchpoint run observes no gameplay write to `SCENE_SCRIPT_COUNTDOWN`.
+The Level 01 exit predicate at `0x001B5B4A` executes repeatedly but its
+`X>0x1287, Y<0x1D6` condition remains false; `SCENE_STATE` stays `0x01`.
+The other changing gates are terrain or death bookkeeping, so the missing
+work is the upper transfer that must satisfy the exit predicate, not another
+countdown producer.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -810,6 +821,7 @@ named checkpoints as provenance anchors.
 | `20260826-level01-type1f-settle-v1` | recorded-negative | 600-frame no-input settle of the lower-tower type-0x1F proximity actor; no vertical transfer or scene transition |
 | `20260826-level01-type21-settle-v1` | recorded-negative | 600-frame no-input settle of the selector-0x1A high-walkway type-0x21 actor; no movement or scene transition |
 | `20260826-level01-selector12-dispatch-v1` | recorded-negative-frontier | fresh natural selector-0x12 dispatch trace; generic route actors only, no scene transition |
+| `20260826-level01-scene-countdown-writers-v1` | recorded-negative-natural | complete countdown-writer static/runtime audit; no gameplay countdown or scene-state write |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-scene-countdown-writers",
+    "purpose": "Decompile every remaining ROM site that writes SCENE_SCRIPT_COUNTDOWN and classify whether it can be reached by the natural Level 01 route."
+  },
+  "targets": [
+    { "address": "0x001B5B3A", "name": "Level01 boundary countdown write" },
+    { "address": "0x001B5BFC", "name": "Level01 boundary countdown consumer" },
+    { "address": "0x001B5C18", "name": "Level01 boundary terminal countdown write" },
+    { "address": "0x001B624E", "name": "Level01 exit helper countdown write" },
+    { "address": "0x001B7830", "name": "Actor resource countdown write" },
+    { "address": "0x001AC4A2", "name": "Actor collision countdown write" },
+    { "address": "0x001AED04", "name": "Player collision countdown write" },
+    { "address": "0x001B02AC", "name": "Actor collision terminal countdown write" },
+    { "address": "0x001B0B38", "name": "Scene resource countdown write" },
+    { "address": "0x001B5B4A", "name": "Level01 exit predicate context" },
+    { "address": "0x001AC1D0", "name": "Actor collision type13 context" },
+    { "address": "0x001AC2BC", "name": "Actor collision type10 context" },
+    { "address": "0x001AC4E8", "name": "Actor collision type11 context" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0E9", "name": "SCENE_SCRIPT_COUNTDOWN" },
+    { "address": "0x00FF7E26", "name": "SCENE_STATE" },
+    { "address": "0x00FFF0E6", "name": "PLAYER_TERMINAL_TRANSITION" },
+    { "address": "0x00FFF0DC", "name": "PLAYER_TRANSITION_COUNTDOWN" }
+  ]
+}

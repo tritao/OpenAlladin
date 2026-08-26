@@ -1,0 +1,71 @@
+{
+  "format": "openaladdin-level01-scene-countdown-writers-finding-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Classify the remaining ROM scene-countdown writers and their reachability in a fresh natural Level 01 route.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "b97df67",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260826-level01-scene-countdown-writers-v1.json",
+  "static_report": "build/re/level01-scene-countdown-writers-targeted-decompile-v1.json",
+  "static_classification": {
+    "0x001B5B3A": "indirect helper: writes SCENE_SCRIPT_COUNTDOWN=0x01 and FFF005=0xFF",
+    "0x001B5BFC": "separate predicate: when countdown is zero, writes 0xFF only for X>0x8D8 and Y<0x1EA",
+    "0x001B5C18": "branch target within the 0x001B5BFC predicate; not a separate caller",
+    "0x001B624E": "indirect helper: writes SCENE_SCRIPT_COUNTDOWN=0x01",
+    "0x001B7830": "indirect actor/resource helper: writes SCENE_SCRIPT_COUNTDOWN=0xC8 and FFF570=0xFF",
+    "0x001AC4A2": "actor-collision replacement path: writes SCENE_SCRIPT_COUNTDOWN=0x20 before initializing type-0x84",
+    "0x001AEC00": "player-collision block: writes 0x20 only for receiving actor types 0x10, 0x11, or 0x13",
+    "0x001B02AC": "global terminal/resource path: writes 0xB4 only after its scene/resource conditions, including SCENE_STATE>0x13",
+    "0x001B0A46": "scene-resource helper containing a countdown store; not a direct Level 01 interaction handler",
+    "0x001B5B4A": "Level 01 exit predicate: writes SCENE_SCRIPT_COUNTDOWN=0xFF when X>0x1287 and Y<0x1D6"
+  },
+  "runtime": {
+    "trace": "build/re/campaigns/20260826-level01-scene-countdown-writers-v1/fresh-natural-route-watchpoint",
+    "frames": 4635,
+    "scene_state_values": [0, 1],
+    "gameplay_scene_state": "0x01",
+    "scene_state_changes_during_gameplay": 0,
+    "scene_countdown_non_initial_writes": 0,
+    "scene_countdown_initialization_writes": [
+      { "frame": 0, "pc": "0x0000027A", "address": "0x00FFF0E8" },
+      { "frame": 6, "pc": "0x001AA720", "address": "0x00FFF0E8" },
+      { "frame": 6, "pc": "0x001AA720", "address": "0x00FFF0E9" },
+      { "frame": 337, "pc": "0x001AA720", "address": "0x00FFF0E8" },
+      { "frame": 337, "pc": "0x001AA720", "address": "0x00FFF0E9" },
+      { "frame": 1124, "pc": "0x001AA720", "address": "0x00FFF0E8" },
+      { "frame": 1124, "pc": "0x001AA720", "address": "0x00FFF0E9" },
+      { "frame": 3685, "pc": "0x001AA720", "address": "0x00FFF0E8" },
+      { "frame": 3685, "pc": "0x001AA720", "address": "0x00FFF0E9" }
+    ],
+    "exit_predicate_execution": {
+      "requested": "0x001B5B4A",
+      "reported_post_instruction_pc": "0x001B5B4C",
+      "hits": 3320,
+      "frame_range": [1190, 4633],
+      "result": "The routine executes throughout the gameplay portion of this route, but no countdown write follows; the X/Y predicate is never satisfied in this run."
+    },
+    "player_collision_execution": {
+      "requested": "0x001AEC00",
+      "reported_post_instruction_pc": "0x001AEC02",
+      "hits": 32,
+      "receiving_actor_types_observed": ["0x0A", "0x1D", "0x20"],
+      "result": "The natural collisions do not enter the type-0x10/0x11/0x13 countdown branch."
+    },
+    "gate_writes": {
+      "0x00FFF0D0": { "non_initial_writes": 3325, "pcs": ["0x001A98C8", "0x001A9972", "0x001A997A"], "interpretation": "terrain/player movement gate values, not scene countdown" },
+      "0x00FFF0DB": { "non_initial_writes": 3339, "pcs": ["0x001B1E6E", "0x001B556A"], "interpretation": "terrain resolver and stop-align lock" },
+      "0x00FFF0DC": { "non_initial_writes": 0, "interpretation": "no gameplay transition countdown write" },
+      "0x00FFF0E6": { "non_initial_writes": 24, "pcs": ["0x001A8F3C", "0x001A8F46", "0x001B0432"], "interpretation": "terminal/death timer activity; it returns to zero without scene transition" }
+    },
+    "route_extent": {
+      "maximum_player_world_x": 4290,
+      "maximum_player_world_x_frame": 4324,
+      "exit_predicate_not_reached": true
+    }
+  },
+  "conclusion": "The remaining scene-countdown writer set is now statically covered and dynamically audited on the natural route. The Level 01 exit predicate is repeatedly executed but does not satisfy its X/Y condition; no gameplay write to SCENE_SCRIPT_COUNTDOWN or SCENE_STATE=0x08 occurs. Actor collisions exercise types 0x0A, 0x1D, and 0x20, not the countdown-capable 0x10/0x11/0x13 receiving types. The observed FFF0D0/FFF0DB/FFF0E6 changes are local terrain or terminal/death bookkeeping.",
+  "next_action": "Keep the exit predicate as the final transition gate, but shift route work to the unresolved far-right upper transfer that can produce world Y<0x1D6; do not repeat countdown-writer or direct gate timing probes."
+}

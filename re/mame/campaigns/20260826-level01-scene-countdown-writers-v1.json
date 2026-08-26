@@ -1,0 +1,47 @@
+{
+  "campaign": "20260826-level01-scene-countdown-writers-v1",
+  "status": "recorded-negative-natural",
+  "purpose": "Audit the remaining ROM scene-countdown writers and trace their reachability during the fresh natural Level 01 route.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "b97df67",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "b97df67",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "static_report": "build/re/level01-scene-countdown-writers-targeted-decompile-v1.json",
+  "breakpoint_trace": "build/re/campaigns/20260826-level01-scene-countdown-writers-v1/fresh-natural-route/debug.log",
+  "breakpoint_targets": [
+    "0x001B5B3A",
+    "0x001B5BFC",
+    "0x001B624E",
+    "0x001B7830",
+    "0x001AC4A2",
+    "0x001AEC00",
+    "0x001B02AC",
+    "0x001B0A46",
+    "0x001B5B4A"
+  ],
+  "watched_addresses": [
+    "0x00FFF0E9",
+    "0x00FFF0E6",
+    "0x00FFF0DC",
+    "0x00FFF0D0",
+    "0x00FFF0DB"
+  ],
+  "segments": [
+    {
+      "id": "fresh-natural-route",
+      "trace_dir": "build/re/campaigns/20260826-level01-scene-countdown-writers-v1/fresh-natural-route-watchpoint",
+      "frames": 4635,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right*1,right*99,right*50,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c*1,right*195,b+right*50,right*100,none*19,right*52,none*129,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,left*180,none*129,right*180,b+right*60,right*120,none*201,b+right*60,down+b+right*80,b+right*160,right*100,none*61,a+right*60,c+right*20,b+right*160,right*140,none*70,up*200,none*60",
+      "start_condition": "MAME Genesis machine booted from power-on with no loaded state",
+      "capture": "state",
+      "scene_state_trace": true,
+      "debug_watchpoints": true,
+      "checkpoints": [
+        { "frame": 4635, "name": "route-end", "state": "states/genesis/route-end.sta" }
+      ]
+    }
+  ]
+}
