@@ -32,6 +32,8 @@ GHIDRA_CONFIG = ROOT / "re/config/ghidra.yml"
 ROM_DEFAULT = ROOT / "rom/Disneys_Aladdin_U_p1.bin"
 
 INPUT_FORMAT = "openaladdin-input-v1"
+EVENT_FORMAT = "openaladdin-event-v1"
+SEGMENTS_FORMAT = "openaladdin-segments-v1"
 RUN_FORMAT = "openaladdin-input-run-v1"
 INPUT_BUTTONS = ("up", "down", "left", "right", "a", "b", "c", "start")
 INPUT_MASKS = {name: 1 << index for index, name in enumerate(INPUT_BUTTONS)}
@@ -177,6 +179,78 @@ def load_input_timeline(path: Path) -> tuple[dict[str, Any] | None, list[dict[st
     return header, records
 
 
+def load_event_timeline(path: Path) -> tuple[dict[str, Any] | None, list[dict[str, Any]]]:
+    """Load the low-volume semantic events emitted by the MAME harness."""
+    header: dict[str, Any] | None = None
+    events: list[dict[str, Any]] = []
+    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError as error:
+            raise SystemExit(f"{path}:{line_number}: invalid JSON: {error}") from error
+        if not isinstance(record, dict):
+            raise SystemExit(f"{path}:{line_number}: event record must be an object")
+        if record.get("type") == "header":
+            header = record
+            if header.get("format") not in (None, EVENT_FORMAT):
+                raise SystemExit(f"{path}: unsupported event format {header.get('format')!r}")
+            continue
+        if record.get("type") != "event":
+            raise SystemExit(f"{path}:{line_number}: expected an event record")
+        if "frame" not in record or "name" not in record:
+            raise SystemExit(f"{path}:{line_number}: event requires frame and name")
+        events.append(record)
+    return header, events
+
+
+def _event_state_path(run_dir: Path, reference: str) -> Path:
+    path = Path(reference)
+    return path if path.is_absolute() else run_dir / path
+
+
+def _write_segments(run_dir: Path, frame_count: int) -> tuple[int, int]:
+    """Materialize semantic event boundaries as derived parity segments."""
+    events_path = run_dir / "events.jsonl"
+    if not events_path.is_file():
+        raise SystemExit(f"record: missing {events_path}")
+    _, events = load_event_timeline(events_path)
+    segments: list[dict[str, Any]] = []
+    used_ids: dict[str, int] = {}
+    for index, event in enumerate(events):
+        start_frame = int(event["frame"])
+        next_frame = int(events[index + 1]["frame"]) if index + 1 < len(events) else frame_count
+        segment_id = str(event["name"])
+        used_ids[segment_id] = used_ids.get(segment_id, 0) + 1
+        if used_ids[segment_id] > 1:
+            segment_id = f"{segment_id}-{used_ids[str(event['name'])]}"
+        state_reference = str(event.get("state", ""))
+        state_path = _event_state_path(run_dir, state_reference) if state_reference else None
+        segment: dict[str, Any] = {
+            "id": segment_id,
+            "start_frame": start_frame,
+            "end_frame": max(start_frame, min(frame_count - 1, next_frame - 1)),
+            "event": str(event.get("event", "")),
+            "detector": str(event.get("name", "")),
+            "phase": str(event.get("phase", "unknown")),
+            "level": str(event.get("level", "")),
+            "checkpoint": str(event.get("checkpoint", "")),
+            "mame_state": state_reference,
+        }
+        if state_path and state_path.is_file():
+            segment["mame_state_sha256"] = hashes(state_path)["sha256"]
+        segments.append(segment)
+    _write_json(run_dir / "segments.json", {
+        "format": SEGMENTS_FORMAT,
+        "source": "events.jsonl",
+        "frame_count": frame_count,
+        "frame_semantics": "segment frame N is the controller state consumed by logical game frame N",
+        "segments": segments,
+    })
+    return len(events), len(segments)
+
+
 def input_tokens(records: list[dict[str, Any]]) -> list[str]:
     return [token_for_mask(int(record["mask"])) for record in records]
 
@@ -225,12 +299,16 @@ def _new_run_manifest(args: argparse.Namespace, run_dir: Path, rom: Path) -> dic
         "frames": 0,
         "status": "recording",
         "input_format": INPUT_FORMAT,
+        "event_format": EVENT_FORMAT,
+        "segments_format": SEGMENTS_FORMAT,
         "frame_semantics": (
             "frame N is the controller state consumed by logical game frame N"
         ),
         "artifacts": {
             "input": "input.jsonl",
             "state": "state.jsonl",
+            "events": "events.jsonl",
+            "segments": "segments.json",
             "mame_input": "mame.inp",
             "checkpoints": "checkpoints/",
         },
@@ -960,6 +1038,16 @@ def _finish_record_manifest(
     else:
         valid = False
         print(f"record: missing {input_path}", file=sys.stderr)
+    event_count = 0
+    segment_count = 0
+    if valid:
+        try:
+            event_count, segment_count = _write_segments(run_dir, frames)
+        except SystemExit as error:
+            print(f"record: invalid event timeline: {error}", file=sys.stderr)
+            valid = False
+    manifest["events"] = event_count
+    manifest["segments"] = segment_count
     manifest["frames"] = frames
     manifest["status"] = "complete" if status == 0 and valid and frames > 0 else "failed"
     manifest["ended_at"] = datetime.now(timezone.utc).isoformat()
