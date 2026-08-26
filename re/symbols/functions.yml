@@ -193,6 +193,34 @@
     - actor_type_34_stream_decode
     - mame_type_34_handler_overlap_trace
     - ghidra_type34_handler_decompile
+0x001AF468:
+  name: Actor_FarTransferPlayerCollisionHandler
+  confidence: confirmed
+  description: Player-collision handler reached by the far-band dispatch path. It optionally publishes the actor interaction value, calls the shared interaction helper at 0x001B0336, optionally queues event 0x0B, clears the actor through 0x001ABE6E, and reinitializes the actor from a template. It does not directly write SCENE_STATE.
+  evidence:
+    - ghidra_far_transfer_targeted_decompile_v1
+    - mame_handhold_dispatch_trace
+0x001B0336:
+  name: FarTransfer_InteractionCounterStep
+  confidence: confirmed
+  description: Bounded counter helper used by the far-band player-collision handler. Unless 0x00FFEFE0 is 0x3939, it increments the low byte and rolls the low byte from 0x3A through 0x3F back to 0x30 while incrementing the high byte.
+  evidence:
+    - ghidra_far_transfer_targeted_decompile_v1
+    - mame_handhold_far_transfer_trace
+0x001ABE6E:
+  name: Actor_ClearAndRelease
+  confidence: confirmed
+  description: Clears the current actor type, releases its owned resources, and clears/releases a linked actor through the record link at offset 0x3E.
+  evidence:
+    - ghidra_far_transfer_targeted_decompile_v1
+    - ghidra_decompile_collision_damage_targets
+0x001B03F2:
+  name: Player_InteractionHelper
+  confidence: confirmed
+  description: Under scene/terminal/interaction gates, arms PLAYER_TERMINAL_TRANSITION or decrements the interaction counter and arms PLAYER_INTERACTION_LOCK. It does not write SCENE_STATE.
+  evidence:
+    - ghidra_far_transfer_targeted_decompile_v1
+    - ghidra_decompile_collision_damage_targets
 0x001AF978:
   name: ActorType6A_PlayerCollisionHandler
   confidence: confirmed
@@ -419,6 +447,13 @@
   description: Terrain behavior handler that stops player velocities, clears the response accumulator, and aligns PLAYER_X/PLAYER_Y and animation state when the terrain blocks movement.
   evidence:
     - ghidra_disassembly_001B5502
+    - rom_terrain_handler_table_004554
+0x001B54D8:
+  name: TerrainHandler_QueryStateA
+  confidence: confirmed
+  description: Terrain behavior 0x22/0x23 handler that raises TERRAIN_QUERY_STATE_A; it does not perform a player launch or scene transition.
+  evidence:
+    - ghidra_far_transfer_targeted_decompile_v1
     - rom_terrain_handler_table_004554
 0x001B557E:
   name: TerrainHandler_LaunchPlayerBlock

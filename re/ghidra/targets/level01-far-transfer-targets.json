@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-far-transfer",
+    "purpose": "Recover the player/actor collision and terrain-response paths exercised by the natural far-rope line, lower handhold, guard band, and continuous launch checkpoints.",
+    "fixtures": [
+      "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v2/handhold-grab/states/genesis/lower-handhold-grabbed.sta",
+      "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v5/continuous-edge-n73-recorded/states/genesis/apex.sta",
+      "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v7/sword-delay-20/states/genesis/guard-window.sta"
+    ]
+  },
+  "targets": [
+    { "address": "0x001ABB40", "name": "PlayerCollisionPass" },
+    { "address": "0x001AE4F8", "name": "Player_ProcessInteractionState" },
+    { "address": "0x001AE9C6", "name": "ActorType0A_PlayerCollisionHandler" },
+    { "address": "0x001AE9D4", "name": "ActorType0A_PlayerCollisionAlternateEntry" },
+    { "address": "0x001AEC00", "name": "Actor_HandlePlayerCollisionBlock" },
+    { "address": "0x001AF468", "name": "FarTransfer_PlayerCollisionHandler_1AF468" },
+    { "address": "0x001AF978", "name": "ActorType6A_PlayerCollisionHandler" },
+    { "address": "0x001AFBF4", "name": "Type65BouncePlayerCollisionHandler" },
+    { "address": "0x001A9716", "name": "Player_HandleJumpAndVerticalState" },
+    { "address": "0x001A9D98", "name": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001B54D8", "name": "TerrainHandler_0x22_0x23" },
+    { "address": "0x001B557E", "name": "TerrainHandler_0x29_Launch" },
+    { "address": "0x001B56B6", "name": "TerrainHandler_0x2D_Bounce" },
+    { "address": "0x001B0336", "name": "FarTransfer_InteractionHelper" },
+    { "address": "0x001ABE6E", "name": "Actor_ClearAndRelease" },
+    { "address": "0x001B03F2", "name": "Player_InteractionHelper" }
+  ]
+}

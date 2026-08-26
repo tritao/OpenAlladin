@@ -129,6 +129,14 @@ the finding or commit message.
   toggles `TERRAIN_SURFACE_MODE` and arms `TERRAIN_SURFACE_LATCH`; behavior
   0x22/0x23 dispatches to `0x001B54D8`, which raises `TERRAIN_QUERY_STATE_A`.
   Neither handler itself creates a missing actor or scene transition.
+- `re/mame/findings/20260826-level01-far-transfer-decomp-v1.json` records the
+  far-band collision/terrain decompilation. The 0x6A handhold handler confirms
+  the observed 0x6A→0x6B interaction, the 0x0A guard path flows through the
+  shared collision block and interaction-state recovery, and 0x1AF468 clears
+  and reinitializes an actor after an optional interaction publish. The 0x29
+  launch and 0x2D bounce handlers are decoded. None of the 12 targets writes
+  `SCENE_STATE=0x08`; the v4 natural-transfer frontier therefore remains the
+  correct replay baseline.
 
 ### Scene and exit work
 
