@@ -288,6 +288,27 @@
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AE9C6
     - ghidra_decompile_collision_damage_targets
+0x001AE978:
+  name: ActorType15_PlayerCollisionHandler
+  confidence: confirmed
+  description: Player-collision handler for runtime actor type 0x15. It recovers player interaction state and selects animation stream 0x001226CE while converting the source actor to type 0x14; it does not write player coordinates, velocity, or scene state.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_observed_unknown_player_collision_decompile
+0x001AF228:
+  name: ActorType3A_PlayerCollisionHandler
+  confidence: confirmed
+  description: Player-collision handler for runtime actor type 0x3A. It optionally publishes an interaction value, queues event 0x0D, and clears/reinitializes the effect actor; it does not launch the player or write scene state.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_observed_unknown_player_collision_decompile
+0x001AF516:
+  name: ActorType36_PlayerCollisionHandler
+  confidence: confirmed
+  description: Player-collision handler for runtime actor type 0x36. When eligible, it replaces the source with a type-0x82 animation/effect record and clears the original slot; it does not write player coordinates, velocity, or scene state.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_observed_unknown_player_collision_decompile
 0x001AE796:
   name: ActorType1E_PlayerCollisionHandler
   confidence: confirmed

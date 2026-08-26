@@ -198,6 +198,10 @@ the finding or commit message.
   type-`0x84` replacement paths. They contain no player launch, connector, or
   scene-state write; the observed Level 01 type-`0x2D` path is therefore not
   the missing vertical transfer.
+- `re/mame/findings/20260826-level01-observed-unknown-player-collision-v1.json`
+  closes the remaining observed player-collision targets for types `0x15`,
+  `0x36`, and `0x3A`. They select interaction/effect responses or replace an
+  actor record, with no player velocity/coordinate injection and no scene gate.
 
 ### Scene and exit work
 

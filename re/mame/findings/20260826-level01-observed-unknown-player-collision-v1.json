@@ -1,0 +1,58 @@
+{
+  "format": "openaladdin-level01-observed-unknown-player-collision-finding-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Classify the remaining Level 01 actor types present in MAME traces whose player-collision handlers were not yet named, with emphasis on player launch, interaction publish, and scene-transition effects.",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "ffa9d6d",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level01-observed-unknown-player-collision-targets.json",
+  "decompile_artifact": "build/re/level01-observed-unknown-player-collision-targeted-decompile-v1.json",
+  "dispatch_table": {
+    "rom_base": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "runtime_type": "0x15", "pointer": "0x001D12", "handler": "0x001AE978" },
+      { "runtime_type": "0x36", "pointer": "0x001D96", "handler": "0x001AF516" },
+      { "runtime_type": "0x3A", "pointer": "0x001DA6", "handler": "0x001AF228" }
+    ]
+  },
+  "static_handlers": [
+    {
+      "address": "0x001AE978",
+      "runtime_types": ["0x15"],
+      "effect": "Calls the shared player-collision response, then when PLAYER_INTERACTION_GATE is clear invokes the interaction recovery helper three times, changes the source actor to type 0x14, and selects player animation stream 0x001226CE while clearing the animation timer.",
+      "player_motion": "No PLAYER_X, PLAYER_Y, PLAYER_VX, or PLAYER_VY write.",
+      "scene_effect": "No SCENE_STATE or SCENE_SCRIPT_COUNTDOWN write."
+    },
+    {
+      "address": "0x001AF228",
+      "runtime_types": ["0x3A"],
+      "effect": "When the interaction counter gate is 0x3939, publishes the actor interaction value; advances the shared interaction helper, optionally queues event 0x0D, resets an effect counter, clears the actor/resources, and reinitializes the record.",
+      "player_motion": "No player velocity or coordinate write.",
+      "scene_effect": "No SCENE_STATE or SCENE_SCRIPT_COUNTDOWN write."
+    },
+    {
+      "address": "0x001AF516",
+      "runtime_types": ["0x36"],
+      "effect": "If the collision eligibility check succeeds, converts the source actor to type 0x82, installs animation stream 0x00125710, copies the actor record, and clears the original slot.",
+      "player_motion": "No PLAYER_X, PLAYER_Y, PLAYER_VX, or PLAYER_VY write.",
+      "scene_effect": "No SCENE_STATE or SCENE_SCRIPT_COUNTDOWN write."
+    }
+  ],
+  "level01_trace_intersection": {
+    "source": "All retained build/re/campaigns/level01 state.jsonl actor records",
+    "observed_types": ["0x15", "0x36", "0x3A"],
+    "type15_range": { "world_x": [2862, 2954], "world_y": [674, 674] },
+    "type36_range": { "world_x": [2016, 3072], "world_y": [672, 784] },
+    "type3A_range": { "world_x": [2352, 2720], "world_y": [512, 912] },
+    "result": "The three handlers are present in the explored Level 01 route corpus, but none injects player motion or changes the scene state. Type 0x36 is the only one near the lower connector frontier and is an actor replacement/effect path rather than a traversal object."
+  },
+  "negative_evidence": [
+    "No handler writes PLAYER_VY with a launch impulse.",
+    "No handler writes PLAYER_X or PLAYER_Y to create a transfer.",
+    "No handler writes SCENE_STATE=0x08 or arms SCENE_SCRIPT_COUNTDOWN."
+  ],
+  "conclusion": "The remaining observed Level 01 player-collision targets are interaction, effect, or actor-replacement paths. They do not explain the missing transfer from the reachable lower/0x47 band to the upper exit corridor. Future route work should prioritize the terrain/resource condition that creates a launch or changes the player's terrain response, not these three handlers."
+}

@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-observed-unknown-player-collision-family",
+    "purpose": "Classify player-collision handlers used by Level 01 actor types 0x15, 0x36, and 0x3A and determine whether any can launch or transfer the player."
+  },
+  "targets": [
+    { "address": "0x001AE978", "name": "PlayerCollisionHandler_Type15" },
+    { "address": "0x001AF228", "name": "PlayerCollisionHandler_Type3A" },
+    { "address": "0x001AF516", "name": "PlayerCollisionHandler_Type36" },
+    { "address": "0x001AEC00", "name": "PlayerCollision_SharedResponse" },
+    { "address": "0x001AE4F8", "name": "Player_ProcessInteractionState" },
+    { "address": "0x001B0336", "name": "Player_InteractionCounterStep" },
+    { "address": "0x001AE2DA", "name": "Actor_CollisionEligibilityCheck" },
+    { "address": "0x001ABE6E", "name": "Actor_ClearAndRelease" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E58", "name": "PLAYER_VX" },
+    { "address": "0x00FF7E5A", "name": "PLAYER_VY" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FFF0D8", "name": "PLAYER_INTERACTION_GATE" },
+    { "address": "0x00FFF0E9", "name": "SCENE_SCRIPT_COUNTDOWN" },
+    { "address": "0x00FFEFE2", "name": "INTERACTION_COUNTER_WORD" }
+  ]
+}
