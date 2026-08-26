@@ -1,0 +1,17 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-upper-actor-response",
+    "purpose": "Recover the actor-collision dispatch and shared Type-0x20 response for the pair created by the upper interaction rows."
+  },
+  "targets": [
+    { "address": "0x001ABD7E", "name": "ActorActorCollisionPass" },
+    { "address": "0x001ABE3E", "name": "ActorActorCollisionDispatch" },
+    { "address": "0x001AC318", "name": "ActorCollisionHandler_Type1E" },
+    { "address": "0x001AC350", "name": "ActorCollisionHandler_Type20" },
+    { "address": "0x001AE796", "name": "PlayerCollisionHandler_Type1E" },
+    { "address": "0x001F32", "name": "ActorCollisionHandlerTable_Type1E" },
+    { "address": "0x001F3A", "name": "ActorCollisionHandlerTable_Type20" }
+  ]
+}
