@@ -2030,6 +2030,7 @@ void Engine::reset() {
     terrain_input_world_x_ = 0;
     terrain_input_world_y_ = 0;
     deferred_animation_spawn_.reset();
+    camera_follow_catch_up_ = false;
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -3403,13 +3404,38 @@ void Engine::update(const InputState& input) {
     // of the next follow pass. This leaves the boundary frame externally
     // visible with scroll == 16, then exposes the rebased reference on the
     // following frame.
-    const bool camera_reference_rebased = rebase_camera_reference();
-    // During a vertical connector climb the ROM's reference-tile rebase is
-    // the whole camera pass for that frame. The follow lookup resumes on the
-    // next frame; running it immediately would add an extra two-pixel camera
-    // step at each 16-pixel scroll boundary.
-    if (!(camera_reference_rebased && player_.terrain_transition_gate != 0)) {
+    const int camera_reference_y_before_rebase = camera_.reference_y;
+    rebase_camera_reference();
+    const bool camera_vertical_reference_rebased =
+        camera_.reference_y != camera_reference_y_before_rebase;
+    // Camera_UpdateFollow's vertical reference-tile rebase is the whole
+    // camera pass for that frame. The follow lookup resumes on the next
+    // frame; running it immediately would add a damped step on the same
+    // boundary and drift the local player by the rebase cadence. This applies
+    // to both directions: upward rebases receive two follow services on the
+    // next frame, while a downward rebase is followed by one service and a
+    // post-follow tile rebase.
+    const bool camera_follow_deferred = camera_vertical_reference_rebased;
+    const bool camera_follow_catch_up_after_rebase =
+        camera_vertical_reference_rebased
+        && camera_.reference_y < camera_reference_y_before_rebase;
+    const bool camera_follow_catch_up = camera_follow_catch_up_;
+    camera_follow_catch_up_ = false;
+    if (camera_follow_deferred) {
+        camera_follow_catch_up_ = camera_follow_catch_up_after_rebase;
+    } else {
         update_camera();
+        if (camera_follow_catch_up) {
+            update_camera();
+        }
+        // A downward follow step can land exactly on the next camera tile
+        // boundary. The ROM applies that reference update after the follow
+        // pass; an earlier sub-tile crossing remains pending for the next
+        // camera pass.
+        if (camera_.y >= camera_.reference_y + 0x10
+            && (camera_.y & 0x0F) == 0) {
+            rebase_camera_reference();
+        }
     }
     if (was_grounded && player_.grounded && input_direction != 0) {
         last_ground_direction_ = input_direction;
@@ -3473,7 +3499,11 @@ void Engine::update(const InputState& input) {
         player_.terrain_response_timer_state = 0;
         vm_context.selector.transition_state_df = 0xFF;
     }
-    if (!stable_terrain_handler_fixture) {
+    // The camera tile-update boundary also suppresses this frame's player
+    // animation service in the observed ROM loop. The following frame
+    // resumes the normal VM cadence after the camera pass has caught up.
+    const bool defer_player_animation_tick = camera_follow_deferred;
+    if (!stable_terrain_handler_fixture && !defer_player_animation_tick) {
         animation_.update(
             landing_approach ? SpritePose::Jump : desired_pose,
             horizontal_direction(input),

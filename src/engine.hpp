@@ -470,6 +470,9 @@ private:
     int terrain_input_world_x_ = 0;
     int terrain_input_world_y_ = 0;
     std::optional<AnimationSpawnRequest> deferred_animation_spawn_;
+    // A vertical camera-reference rebase consumes this frame's follow pass;
+    // the ROM services the deferred follow twice on the next frame.
+    bool camera_follow_catch_up_ = false;
     bool checkpoint_terrain_behavior_override_ = false;
     std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;
