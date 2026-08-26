@@ -310,14 +310,6 @@ void Z80SoundDriver::process_channel(std::size_t index) {
             break;
         }
 
-        // Most control handlers return to the stream dispatcher immediately.
-        // The patch loader (0x61) is the exception: the original handler
-        // shares the note tail and applies operand A as its delay before the
-        // next event.
-        if (event.kind != SoundEvent::Kind::Note && event.opcode != 0x61) {
-            continue;
-        }
-
         const std::int32_t operand = channel.operand_a;
         if (operand != 0) {
             const std::int32_t duration = operand < 0 ? -operand : operand;

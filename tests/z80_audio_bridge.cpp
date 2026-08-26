@@ -59,6 +59,17 @@ int main() {
     assert(ym.back().port == 1);
     assert(ym.back().data == 0);
 
+    const auto has_ym_write = [&ym](std::uint8_t address,
+                                    std::uint8_t data) {
+        for (std::size_t index = 0; index + 1 < ym.size(); index += 2) {
+            if (ym[index].port == 0 && ym[index].data == address
+                && ym[index + 1].port == 1 && ym[index + 1].data == data) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     Z80SoundDriver::PatchState patch{};
     patch[1] = 0x0A;
     patch[3] = 0x34;
@@ -98,16 +109,6 @@ int main() {
     ym.clear();
 
     bridge.handle(ym_note);
-    const auto has_ym_write = [&ym](std::uint8_t address,
-                                     std::uint8_t data) {
-        for (std::size_t index = 0; index + 1 < ym.size(); index += 2) {
-            if (ym[index].port == 0 && ym[index].data == address
-                && ym[index + 1].port == 1 && ym[index + 1].data == data) {
-                return true;
-            }
-        }
-        return false;
-    };
     assert(has_ym_write(0xB0, 0x34));
     assert(has_ym_write(0xB4, 0xE1));
     assert(has_ym_write(0x30, 0x24));
@@ -127,8 +128,12 @@ int main() {
         0,
     };
     bridge.handle(traced_note);
-    assert(has_ym_write(0xA0, 0xD3));
-    assert(has_ym_write(0xA4, 0x1A));
+    assert(has_ym_write(0xA0, 0x3B));
+    assert(has_ym_write(0xA4, 0x1C));
+    assert(ym[ym.size() - 6].port == 0);
+    assert(ym[ym.size() - 6].data == 0xA4);
+    assert(ym[ym.size() - 4].port == 0);
+    assert(ym[ym.size() - 4].data == 0xA0);
 
     bridge.reset();
     ym.clear();

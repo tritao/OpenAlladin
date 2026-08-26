@@ -193,12 +193,11 @@ void Z80AudioBridge::handle_ym_note(std::size_t stream_channel,
     const auto [block, fnum] = ym_frequency(note);
     const std::uint8_t channel = ym_channel(hardware_channel);
     write_ym_register(hardware_channel,
-                      static_cast<std::uint8_t>(0xA0 + channel),
-                      static_cast<std::uint8_t>(fnum));
-    write_ym_register(
-        hardware_channel,
         static_cast<std::uint8_t>(0xA4 + channel),
         static_cast<std::uint8_t>((block << 3) | (fnum >> 8)));
+    write_ym_register(hardware_channel,
+                      static_cast<std::uint8_t>(0xA0 + channel),
+                      static_cast<std::uint8_t>(fnum));
     if (bus_.write_ym2612) {
         bus_.write_ym2612(0, 0x28);
         bus_.write_ym2612(
@@ -272,7 +271,7 @@ std::pair<std::uint8_t, std::uint16_t> Z80AudioBridge::ym_frequency(
     std::uint8_t note) {
     const std::uint8_t clamped_note = std::min<std::uint8_t>(note, 0x5F);
     const std::uint8_t block = static_cast<std::uint8_t>(clamped_note / 12);
-    const std::size_t table_index = 11 - (clamped_note % 12);
+    const std::size_t table_index = clamped_note % 12;
     return {block, kYmFnumTable[table_index]};
 }
 
