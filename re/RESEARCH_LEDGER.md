@@ -101,6 +101,10 @@ the finding or commit message.
   mode/latch behavior, identifies the resident 0x43 lamp and 0x20 enemy, and
   records the tower as a terminal lower/death-band branch rather than a route
   connector.
+- `20260826-level01-tower-support-exploration-v1`: phase-1 controlled-frontier
+  recording layered on the clean route. It verifies the lower support contour,
+  bounds the empty lower-to-rope gap, re-records the known 0x22 rope climb with
+  checkpoints, and preserves the natural edge timing as negative evidence.
 
 ### Terrain/connector decompilation
 
@@ -133,11 +137,13 @@ geometry/object investigation. The extracted level package is available at
 - enter routine: `0x1B5B4A`;
 - exit routine: `0x1B6406`.
 
-The immediate question is whether the wall at approximately world `x=2178`
-is a genuine route boundary or whether a geometry/object/script transition
-before it has not yet been identified. The next campaign must compare the
-decoded terrain/floor records with actor/object traces and save a checkpoint
-for every newly reached surface, interaction, or boundary.
+The immediate question is now narrower: what natural interaction or terrain
+response bridges the verified lower support/tower band to the separate 0x22
+rope around world `x=2704`, `y=580`? The controlled support route is not being
+treated as proof of the intended route. The next campaign must start from a
+natural lower-band state, trace the 0x47 response and nearby interactions, and
+save a checkpoint for every launch, wall transfer, rope attachment, reset, or
+scene gate.
 
 ## Campaign index
 
@@ -155,6 +161,7 @@ for every newly reached surface, interaction, or boundary.
 | `20260826-level01-fresh-route-high-transfer-v1` | recorded-frontier | fresh handhold-to-high-walkway transfer and upper guard |
 | `20260826-level01-recording-fresh-v2` | recorded-frontier | clean power-on replay through the upper-edge frontier |
 | `20260826-level01-tower-negative-v1` | recorded-negative | lower-tower surface/actor branch from the clean upper-edge checkpoint |
+| `20260826-level01-tower-support-exploration-v1` | recorded-frontier | controlled lower support chain, rope gap, rope fixture, and natural negative |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

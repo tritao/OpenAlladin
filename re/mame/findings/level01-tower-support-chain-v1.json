@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-level01-tower-support-chain-finding-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "e8de346",
+  "campaign": "re/mame/campaigns/20260826-level01-tower-support-exploration-v1.json",
+  "recording_phase": {
+    "name": "phase-1-controlled-frontier",
+    "relationship_to_prior_work": "Phase-0 clean power-on and frontier campaigns remain unchanged and are reused as loaded-state sources."
+  },
+  "geometry": {
+    "level_package": "build/assets/levels/level01/",
+    "support_samples": [
+      { "world": [2352, 816], "meaning": "first controlled lower support" },
+      { "world": [2409, 804], "meaning": "lower contour step" },
+      { "world": [2466, 790], "meaning": "lower contour step" },
+      { "world": [2529, 776], "meaning": "lower contour step" },
+      { "world": [2589, 768], "meaning": "upper end of the lower support chain" },
+      { "world": [2704, 580], "terrain_behavior": "0x22", "meaning": "vertical rope/connector band" },
+      { "world": [2704, 770], "terrain_behavior": "0x00", "meaning": "empty at the lower tower height" }
+    ],
+    "tower_band": "Behavior 0x47 occupies the lower tower terrain band around columns 166-174, while the 0x22 rope occupies column 169 around rows 10-22."
+  },
+  "runtime": {
+    "controlled_platform_trace": "build/re/analysis/20260826-controlled-platform-route-v1/platform-jump-right",
+    "controlled_gap_trace": "build/re/analysis/20260826-controlled-rope-approach-v1/x2704-up",
+    "controlled_rope_trace": "build/re/analysis/20260826-tower-rope-fixture-v2/rope-at-x2704-v2",
+    "natural_negative_trace": "build/re/analysis/20260826-lower-platform-landing-sweep-v1/right46-right1-left1",
+    "actor_init_trace": "build/re/analysis/20260826-upper-frontier-actor-init-v1",
+    "actor_init_inventory": "build/re/upper-frontier-actor-initializers-v1.json"
+  },
+  "observations": [
+    "The controlled platform route starts at x=2352,y=816 and reaches x=2589,y=768 by frame 120, then approaches the lower tower edge and stops around x=2683,y=770.",
+    "At x=2704,y=770, terrain behavior is zero and Up does not produce a query or rope attachment.",
+    "At x=2704,y=580, terrain behavior 0x22 raises TERRAIN_QUERY_STATE_A and Up moves the player vertically along the connector.",
+    "Natural edge timing near x=2350 enters the terminal fall path and ends at landing_state=9; it does not perform an ordinary landing on the controlled support window.",
+    "Actor initialization inventory and the upper-frontier actor trace show effects/interactions and enemies, but no new traversal-platform actor that explains the gap."
+  ],
+  "conclusion": {
+    "verified": [
+      "The lower support chain and the upper rope are separate, real terrain systems.",
+      "The missing progression is the transfer between them, not missing rope decoding.",
+      "The natural upper-edge branch is a reproducible negative path."
+    ],
+    "hypothesis": "The intended route likely uses a specific 0x47 surface response, launch/wall interaction, or scripted actor state that has not been reached from the current natural checkpoint.",
+    "not_proven": "This campaign does not prove that the controlled support route is the intended player route; it only bounds the geometry and response behavior."
+  },
+  "next_action": "Start from a natural lower-band checkpoint near the 0x47 handler, trace its memory response and interaction actors, and preserve the first checkpoint that produces a launch, wall transfer, rope query, reset, or scene transition."
+}

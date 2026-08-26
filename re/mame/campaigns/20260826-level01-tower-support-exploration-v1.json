@@ -1,0 +1,125 @@
+{
+  "campaign": "20260826-level01-tower-support-exploration-v1",
+  "status": "recorded-frontier",
+  "purpose": "Record the controlled lower support chain, the lower-to-rope gap, the known rope response, and the natural negative branch without discarding the clean route baseline.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "e8de346",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "e8de346",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "recording_phase": "phase-1-controlled-frontier; phase-0 clean power-on evidence remains authoritative",
+  "timing_note": "Loaded-state segments use normal no-sync gameplay timing. Controlled fixtures apply memory pokes at frame 1 and begin measuring the resulting state from frame 2.",
+  "command": "See each segment for its exact input schedule and loaded-state provenance; all runs use tools/openaladdin/mame/run.sh with OPENALADDIN_CAPTURE=state.",
+  "segments": [
+    {
+      "id": "controlled-platform-route",
+      "trace_dir": "build/re/analysis/20260826-controlled-platform-route-v1/platform-jump-right",
+      "frames": 200,
+      "input": "c+right*1,right*100,none*99",
+      "load_state": "guard-cleared",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/guard-cleared.sta",
+      "capture": "state",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "controlled-platform-route/states/genesis/loaded.sta" },
+        { "frame": 2, "name": "platform-start", "state": "controlled-platform-route/states/genesis/platform-start.sta" },
+        { "frame": 30, "name": "jump-or-run", "state": "controlled-platform-route/states/genesis/jump-or-run.sta" },
+        { "frame": 60, "name": "first-step", "state": "controlled-platform-route/states/genesis/first-step.sta" },
+        { "frame": 120, "name": "upper-step", "state": "controlled-platform-route/states/genesis/upper-step.sta" },
+        { "frame": 200, "name": "end", "state": "controlled-platform-route/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "lower-to-rope-gap",
+      "trace_dir": "build/re/analysis/20260826-controlled-rope-approach-v1/x2704-up",
+      "frames": 180,
+      "input": "up*100,none*80",
+      "load_state": "guard-cleared",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/guard-cleared.sta",
+      "capture": "state",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "lower-to-rope-gap/states/genesis/loaded.sta" },
+        { "frame": 2, "name": "fixture-start", "state": "lower-to-rope-gap/states/genesis/fixture-start.sta" },
+        { "frame": 30, "name": "approach", "state": "lower-to-rope-gap/states/genesis/approach.sta" },
+        { "frame": 60, "name": "rope-window", "state": "lower-to-rope-gap/states/genesis/rope-window.sta" },
+        { "frame": 100, "name": "climb-check", "state": "lower-to-rope-gap/states/genesis/climb-check.sta" },
+        { "frame": 180, "name": "end", "state": "lower-to-rope-gap/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "rope-fixture",
+      "trace_dir": "build/re/analysis/20260826-tower-rope-fixture-v2/rope-at-x2704-v2",
+      "frames": 120,
+      "input": "up*100,none*20",
+      "load_state": "guard-cleared",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/guard-cleared.sta",
+      "capture": "state",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "rope-fixture/states/genesis/loaded.sta" },
+        { "frame": 2, "name": "rope-start", "state": "rope-fixture/states/genesis/rope-start.sta" },
+        { "frame": 10, "name": "climb-start", "state": "rope-fixture/states/genesis/climb-start.sta" },
+        { "frame": 30, "name": "climb-mid", "state": "rope-fixture/states/genesis/climb-mid.sta" },
+        { "frame": 80, "name": "climb-high", "state": "rope-fixture/states/genesis/climb-high.sta" },
+        { "frame": 120, "name": "end", "state": "rope-fixture/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "natural-platform-miss",
+      "trace_dir": "build/re/analysis/20260826-lower-platform-landing-sweep-v1/right46-right1-left1",
+      "frames": 180,
+      "input": "right*46,right*1,left*1,none*132",
+      "load_state": "guard-cleared",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/guard-cleared.sta",
+      "capture": "state",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "natural-platform-miss/states/genesis/loaded.sta" },
+        { "frame": 40, "name": "edge", "state": "natural-platform-miss/states/genesis/edge.sta" },
+        { "frame": 70, "name": "descent", "state": "natural-platform-miss/states/genesis/descent.sta" },
+        { "frame": 82, "name": "platform-window", "state": "natural-platform-miss/states/genesis/platform-window.sta" },
+        { "frame": 95, "name": "landing-or-ground", "state": "natural-platform-miss/states/genesis/landing-or-ground.sta" },
+        { "frame": 180, "name": "end", "state": "natural-platform-miss/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "upper-frontier-actor-init",
+      "trace_dir": "build/re/analysis/20260826-upper-frontier-actor-init-v1",
+      "frames": 2296,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,c+right*240,c+right*1,right*99,right*50,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c*1,right*195,b+right*50,right*100,none*19",
+      "capture": "state",
+      "actors": true,
+      "actor_init_trace": true,
+      "scene_state_trace": true,
+      "start_condition": "MAME genesis machine booted from power-on with no loaded state",
+      "checkpoints": [
+        { "frame": 1245, "name": "level01-entry", "state": "upper-frontier-actor-init/states/genesis/level01-entry.sta" },
+        { "frame": 1996, "name": "high-walkway-entry", "state": "upper-frontier-actor-init/states/genesis/high-walkway-entry.sta" },
+        { "frame": 2166, "name": "guard-cleared", "state": "upper-frontier-actor-init/states/genesis/guard-cleared.sta" },
+        { "frame": 2281, "name": "upper-edge-fall", "state": "upper-frontier-actor-init/states/genesis/upper-edge-fall.sta" },
+        { "frame": 2296, "name": "frontier-end", "state": "upper-frontier-actor-init/states/genesis/frontier-end.sta" }
+      ],
+      "derived_analysis": "build/re/upper-frontier-actor-initializers-v1.json"
+    }
+  ],
+  "events": [
+    { "id": "lower-support-window", "segment": "controlled-platform-route", "frame": 2, "world": [2352, 816], "terrain_behavior": "0x00", "landing_state": 1, "meaning": "controlled fixture begins on the first lower support" },
+    { "id": "support-chain-progress", "segment": "controlled-platform-route", "frame": 120, "world": [2589, 768], "terrain_behavior": "0x00", "landing_state": 1, "meaning": "the lower support contour carries the player toward the tower edge" },
+    { "id": "lower-rope-gap", "segment": "lower-to-rope-gap", "frame": 60, "world": [2725, 770], "terrain_behavior": "0x00", "landing_state": 3, "meaning": "the lower tower height is empty at the rope X; Up cannot attach" },
+    { "id": "rope-query", "segment": "rope-fixture", "frame": 2, "world": [2704, 580], "terrain_behavior": "0x22", "query_state_a": 255, "meaning": "the known vertical connector raises the terrain query" },
+    { "id": "rope-climb", "segment": "rope-fixture", "frame": 80, "world": [2712, 385], "terrain_behavior": "0x22", "push_up": 255, "meaning": "the player climbs the controlled rope fixture" },
+    { "id": "natural-miss", "segment": "natural-platform-miss", "frame": 82, "world": [2351, 827], "landing_state": 9, "meaning": "natural edge timing passes the support window and enters the terminal fall path" },
+    { "id": "actor-inventory", "segment": "upper-frontier-actor-init", "frame": 2166, "meaning": "the retained actor initializer inventory distinguishes interaction/effect records from traversal terrain; no hidden platform spawner was found in the upper frontier actors" }
+  ],
+  "result": "The lower support contour is real and can be traversed from a controlled fixture, but the ordinary natural edge branch misses it because the upper-edge transition flag selects the terminal fall path. The rope at x=2704 is real only around y=580 (terrain behavior 0x22); at the lower tower height around y=770 the same column is empty. The remaining gameplay question is the missing launch, wall, or script-mediated transfer between the lower support/tower band and the rope, not whether the rope data exists.",
+  "verified": [
+    "A controlled player placed at x=2352,y=816 advances across the lower support contour to approximately x=2683,y=770.",
+    "A controlled player placed at x=2704,y=580 climbs the 0x22 connector and reaches approximately y=385 under Up.",
+    "The actor initializer trace resolves 162 records across 32 templates; resident upper-frontier actors do not identify a missing traversal-platform spawner.",
+    "The natural edge timing family remains negative and ends in landing_state=9 rather than normal support collision."
+  ],
+  "unresolved": [
+    "The natural route or interaction that bridges the lower support/tower band to the x=2704 rope remains unidentified.",
+    "The meaning of the lower tower 0x47 surface-mode/latch response in the intended route needs a trace from the correct approach state."
+  ],
+  "next": "Trace the natural lower-band approach around the 0x47 tower response and test the known interaction actors while preserving checkpoints for any launch, wall transfer, rope attachment, death/reset, or scene gate."
+}
