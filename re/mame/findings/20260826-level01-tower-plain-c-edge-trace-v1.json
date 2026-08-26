@@ -1,0 +1,59 @@
+{
+  "format": "openaladdin-level01-tower-plain-c-edge-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-tower-plain-c-edge-trace-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "158abc50b23efc7582eb3682021b22e35624f9e7",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "source_checkpoint": {
+    "path": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+    "world": [2715, 770],
+    "terrain_behavior": "0x00",
+    "terrain_row": 31,
+    "scene_state": "0x01"
+  },
+  "route_result": {
+    "input": "c*1,up*120,none*119",
+    "checkpoints": [
+      { "frame": 1, "world": [2715, 770], "vx": 0, "vy": 0, "terrain_behavior": "0x00", "scene_state": "0x01" },
+      { "frame": 20, "world": [2718, 770], "vx": 0, "vy": 0, "terrain_behavior": "0x00", "scene_state": "0x01" },
+      { "frame": 60, "world": [2718, 770], "vx": 0, "vy": 0, "terrain_behavior": "0x00", "scene_state": "0x01" },
+      { "frame": 120, "world": [2718, 770], "vx": 0, "vy": 0, "terrain_behavior": "0x00", "scene_state": "0x01" },
+      { "frame": 240, "world": [2718, 770], "vx": 0, "vy": 0, "terrain_behavior": "0x00", "scene_state": "0x01" }
+    ]
+  },
+  "edge_results": [
+    {
+      "table": "actor_vm+interaction+player_collision+terrain",
+      "target": "0x001B557E",
+      "hits": 0,
+      "meaning": "The behavior-0x29 launch handler is never reached during the plain-C/Up window."
+    },
+    {
+      "table": "actor_vm+interaction+player_collision+terrain",
+      "target": "0x001B56B6",
+      "hits": 0,
+      "meaning": "The behavior-0x2D bounce handler is never reached during the plain-C/Up window."
+    }
+  ],
+  "negative_targets": {
+    "scene_state": "remains 0x01",
+    "exit_gates": "no transition to 0x08 and no natural exit gate write",
+    "player_motion": "plain C does not start a jump from this checkpoint"
+  },
+  "conclusion": {
+    "verified": [
+      "The plain-C branch does not move the player into the behavior-0x22 connector or an upper band.",
+      "The branch remains stationary at the lower-tower behavior-0x00 surface after the initial three-pixel alignment step.",
+      "The launch and bounce edge targets are absent from the 240-frame trace."
+    ],
+    "negative_evidence": [
+      "Plain C at the lamp-window checkpoint is not the missing lower-tower bridge.",
+      "Repeating this exact C/Up timing family is not justified by the recorded behavior."
+    ],
+    "unresolved": "The dynamic player response or interaction that can reach the X≈2720 behavior-0x22 connector remains unidentified."
+  },
+  "next_action": "Use static SCENE_STATE/countdown writer coverage and inspect the unresolved Type-0x1E interaction family before choosing another natural route probe."
+}

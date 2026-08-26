@@ -1,0 +1,40 @@
+{
+  "campaign": "20260826-level01-tower-plain-c-edge-trace-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Test the remaining plain-C launch hypothesis from the natural lower-tower lamp checkpoint with indirect edge tracing.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "158abc50b23efc7582eb3682021b22e35624f9e7",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+  "instrumentation": {
+    "indirect_tables": ["terrain", "actor_vm", "player_collision", "actor_collision", "interaction"],
+    "edge_target_count": 282,
+    "breakpoint_targets": ["0x001B557E", "0x001B56B6"]
+  },
+  "segments": [
+    {
+      "id": "plain-c-up-window",
+      "trace_dir": "build/re/diagnostics/tower-plain-c-edge-trace-v1",
+      "frames": 240,
+      "input": "c*1,up*120,none*119",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "edge_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "jump-start" },
+        { "frame": 20, "name": "jump-window" },
+        { "frame": 60, "name": "apex-window" },
+        { "frame": 120, "name": "upper-window" },
+        { "frame": 240, "name": "settled" }
+      ],
+      "debug_log": "build/re/diagnostics/tower-plain-c-edge-trace-v1/debug.log"
+    }
+  ]
+}

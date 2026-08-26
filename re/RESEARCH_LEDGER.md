@@ -492,6 +492,16 @@ behavior-0x29 launch target `0x1B557E` nor the behavior-0x2D bounce target
 contact family as a route explanation and makes the launch/bounce families and
 the unresolved Type-0x1E actor the next natural targets.
 
+The plain-C edge trace is recorded in
+`re/mame/campaigns/20260826-level01-tower-plain-c-edge-trace-v1.json` and
+`re/mame/findings/20260826-level01-tower-plain-c-edge-trace-v1.json`.
+From the same lamp-window checkpoint, `c*1,up*120,none*119` only aligns the
+player from X=`2715` to X=`2718`; it produces no jump, launch, bounce, or
+scene-gate write across 240 frames. The launch target `0x001B557E` and bounce
+target `0x001B56B6` are both absent. This closes the plain-C timing family at
+this checkpoint and moves the investigation back to static scene-writer
+coverage and the unresolved Type-0x1E interaction family.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -534,6 +544,7 @@ the unresolved Type-0x1E actor the next natural targets.
 | `20260826-level01-connector2112-trace-v1` | recorded-negative-frontier | natural column-132 connector climb and upper-stop handler trace |
 | `20260826-level01-connector2112-upper-stop-v1` | recorded-negative-frontier | column-132 endpoint and left/right/neutral dismount matrix |
 | `20260826-level01-behavior47-collision-edge-trace-v1` | recorded-negative-frontier | indirect edge trace of the natural lower-tower Type-0x20 contact and cleanup path |
+| `20260826-level01-tower-plain-c-edge-trace-v1` | recorded-negative-frontier | plain-C/Up edge trace from the natural lower-tower lamp checkpoint |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
