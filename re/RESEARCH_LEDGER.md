@@ -634,6 +634,19 @@ coordinate gate as the remaining prerequisite. The direct far-rope action
 hypothesis is closed; the unresolved route search now returns upstream to the
 level-object/resource activation path around the row-10 upper platform.
 
+The row-10 upper-platform selector `0x87` dispatch is recorded in
+`re/mame/findings/20260826-level01-upper-platform-selector87-v1.json` and
+`re/mame/campaigns/20260826-level01-upper-platform-selector87-v1.json`. In a
+continuous power-on replay, the live refill boundary was redirected to the
+exact source word `0x52E8` at `FF22C2`, with runtime selector byte `0x87` at
+`FFD7FB`. The row processor reached `0x001B74D6`, entered the generic spawn
+allocator at `0x001B525E`, and initialized slot 20 from template `0x001B7A30`
+as runtime Type `0x01` at `(4240,384)` with animation `0x00122D92`. The
+interaction cell was cleared and scene state remained `0x01`. This proves the
+row-10 record is an actor-spawn resource, not a direct scene transition; the
+natural approach and the object/resource activation that makes the upper route
+reachable remain open.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -687,6 +700,7 @@ level-object/resource activation path around the row-10 upper platform.
 | `20260826-level01-upper-frontier-left-v1` | recorded-negative | four left-side branches from world (4372,628), all falling to the lower floor |
 | `20260826-level01-lower-floor-frontier-v1` | recorded-negative | eight jump/sword branches at the lower-floor wall; no wall crossing or exit gate |
 | `20260826-level01-upper-action-frontier-v1` | recorded-negative-frontier | ten direct-action branches and a breakpoint audit at the far connector; no transfer or scene exit |
+| `20260826-level01-upper-platform-selector87-v1` | recorded-controlled | exact row-10 selector-0x87 dispatch, generic spawn, and Type-0x01 actor initialization |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

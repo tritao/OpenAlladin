@@ -1,0 +1,53 @@
+{
+  "format": "openaladdin-level01-upper-platform-selector87-finding-v1",
+  "recorded_at": "2026-08-26",
+  "status": "exact-record-controlled-dispatch",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_capture": "417f8df",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260826-level01-upper-platform-selector87-v1.json",
+  "static_record": {
+    "map_cell": [267, 10],
+    "world": [4272, 400],
+    "map_word": "0x52E8",
+    "interaction_index": "0x2974",
+    "interaction_table_cell": "0x00FFD7FB",
+    "interaction_id": "0x87",
+    "handler": "0x001B74D6",
+    "adjacent_behavior": "0x25 upper platform begins at map column 275 on row 10"
+  },
+  "evidence": {
+    "trace": "build/re/diagnostics/actual87-exact-dispatch-v8",
+    "state_trace": "build/re/diagnostics/actual87-exact-dispatch-v8/state.jsonl",
+    "breakpoint_log": "debug.log:2547-2559",
+    "row_pointer": "0x00FF7DAC -> 0x00FF22C2",
+    "source_word": "0x00FF22C2 = 0x52E8",
+    "machine_frame": "0x04DD"
+  },
+  "dispatch": {
+    "handler_pc_after_entry": "0x001B74D8",
+    "generic_spawn": "0x001B525E",
+    "actor_initializer": "0x001AE30A",
+    "template": "0x001B7A30",
+    "runtime_actor_slot": 20,
+    "runtime_actor_address": "0x00FF8368",
+    "runtime_actor_type": "0x01",
+    "runtime_actor_world": [4240, 384],
+    "runtime_actor_animation": "0x00122D92",
+    "interaction_clear": "0x001B529E -> 0x00FFD7FB=0x00"
+  },
+  "scene_observation": {
+    "scene_state": "0x01",
+    "scene_countdown": 0,
+    "scene_writer_observed": false
+  },
+  "interpretation": [
+    "Selector 0x87 is a generic level-object spawn record, not a scene-transition opcode.",
+    "The 0x52E8 record's runtime effect is a Type-0x01 actor with a -32,-16 placement offset relative to the controlled source-cell coordinates.",
+    "The controlled run uses the live refill boundary and exact source word, but does not establish that the natural route reaches this record."
+  ],
+  "next_action": "Use a natural lower-route checkpoint to trace activation around the row-10 platform and compare any naturally created actor against the Type-0x01 reference above."
+}
