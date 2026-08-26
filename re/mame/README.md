@@ -60,9 +60,9 @@ PYTHONPATH=tools python tools/openaladdin/mame/audio_trace.py \
 
 The bus trace covers 68000 YM2612 `$A04000-$A04003`, 68000 PSG ports behind
 the VDP map, Z80 YM2612 `$4000-$4003`, and Z80 PSG `$7F00-$7FFF`.  It is
-intended to recover the original command protocol and channel behavior before
-adding a native mixer.  The command log currently identifies animation `F3`
-SFX operands, level-table music IDs, and the fixed interaction event `0x31`.
+intended to recover the original command protocol and channel behavior. The
+command log currently identifies animation `F3` SFX operands, level-table
+music IDs, and the fixed interaction event `0x31`.
 The focused 68000 writes to the Z80 command cell at `$A00036` are saved
 separately in `sound_mailbox.jsonl`; this distinguishes a dispatched command
 from a command that never reaches the shared sound state. Enable that stream
@@ -85,6 +85,29 @@ The same report decodes the 68000 queue at `$A01B40` into
 `sound_mailbox_packets`. Each observed packet is `FF`, a queue opcode, and the
 optional sound command ID; `0x12` is the prepare packet, `0x10` is the send
 packet, and `0x16` is a two-byte control packet.
+
+The native executable can emit the matching deterministic command/event/bus
+stream with `--audio-trace`; it records one native sound tick per game frame
+and never includes host audio samples:
+
+```sh
+SDL_AUDIODRIVER=dummy ./build/openaladdin --no-window --frames 360 \
+  --audio-trace build/re/traces/audio-native.jsonl
+```
+
+Compare the native Z80 bus writes with a MAME capture, and optionally compare
+decoded command IDs when MAME's command breakpoints produced records:
+
+```sh
+python tools/oa.py audio-parity \
+  build/re/traces/audio-title build/re/traces/audio-native.jsonl \
+  --section all
+```
+
+The comparator reports the first differing frame, chip port, and byte. Native
+`driver_event` records are retained in the trace for diagnosing stream and
+channel behavior even though MAME currently exposes the corresponding state
+through bus writes and driver-state snapshots.
 
 For a repeatable gameplay checkpoint, schedule a state and screenshot after
 the scripted input has had time to enter the game:

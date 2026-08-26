@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Smoke-test native audio trace emission through the real executable."""
+
+from __future__ import annotations
+
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+
+
+ROOT = Path(__file__).resolve().parents[1]
+BINARY = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "build/openaladdin"
+
+
+def main() -> int:
+    with tempfile.TemporaryDirectory(prefix="openaladdin-native-audio-") as directory:
+        trace = Path(directory) / "audio.jsonl"
+        environment = dict(os.environ)
+        environment["SDL_VIDEODRIVER"] = "dummy"
+        environment["SDL_AUDIODRIVER"] = "dummy"
+        result = subprocess.run(
+            [
+                str(BINARY),
+                "--no-window",
+                "--frames",
+                "8",
+                "--audio-trace",
+                str(trace),
+            ],
+            cwd=ROOT,
+            env=environment,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, result.stderr
+        records = [json.loads(line) for line in trace.read_text(encoding="utf-8").splitlines()]
+
+    assert records[0]["type"] == "header"
+    assert records[0]["format"] == "openaladdin-native-audio-trace-v1"
+    commands = [record for record in records if record["type"] == "audio_command"]
+    events = [record for record in records if record["type"] == "driver_event"]
+    writes = [record for record in records if record["type"] == "audio_write"]
+    assert any(record["opcode"] == 0x0B for record in commands)
+    assert any(record["opcode"] == 0x10 and record["sound_id"] == 0x49 for record in commands)
+    assert events
+    assert writes
+    assert all(record["source"] == "z80" for record in writes)
+    assert [record["sequence"] for record in records[1:]] == list(range(len(records) - 1))
+
+    print("native audio trace: ok")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

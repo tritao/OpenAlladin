@@ -2918,6 +2918,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     audio_driver.set_defaults(function=command_audio_driver)
 
+    audio_parity = commands.add_parser(
+        "audio-parity",
+        help="compare normalized MAME and native audio traces",
+    )
+    audio_parity.add_argument("mame_trace", type=Path)
+    audio_parity.add_argument("native_trace", type=Path)
+    audio_parity.add_argument("--section", choices=("writes", "commands", "all"), default="all")
+    audio_parity.add_argument("--mame-source", default="z80")
+    audio_parity.add_argument("--native-frame-offset", type=int, default=0)
+    audio_parity.set_defaults(function=lambda args: run_tool(
+        "openaladdin/mame/audio_parity.py",
+        [str(resolve(args.mame_trace)), str(resolve(args.native_trace)),
+         "--section", args.section,
+         "--mame-source", args.mame_source,
+         "--native-frame-offset", str(args.native_frame_offset)],
+    ))
+
     regression = commands.add_parser("regression", help="differentially compare MAME and native gameplay")
     regression.add_argument("scenario")
     add_rom_argument(regression)

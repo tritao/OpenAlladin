@@ -43,3 +43,14 @@ OPENALADDIN_TRACE_AUDIO_DRIVER=1 python3 tools/oa.py trace title-menu \
 
 This writes `z80_driver_state.jsonl` beside the normal trace files. The dump is
 disabled unless the environment variable is explicitly set.
+
+Native runs can produce the counterpart trace with:
+
+```sh
+SDL_AUDIODRIVER=dummy ./build/openaladdin --no-window --frames 360 \
+  --audio-trace build/re/traces/audio-native.jsonl
+```
+
+Use `python tools/oa.py audio-parity` to compare normalized Z80 bus writes and
+decoded command IDs. The native trace also includes decoded driver events for
+investigating stream timing and channel allocation.

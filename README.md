@@ -233,6 +233,15 @@ SDL_AUDIODRIVER=pulse ./run.sh --sound-id 0x4C --frames 600
 The currently confirmed IDs are Level 01 music `0x49`, animation SFX `0x4C`,
 and interaction event `0x31`.
 
+For deterministic audio parity captures, add `--audio-trace PATH`; this writes
+native command, decoded-driver-event, and YM2612/PSG bus records as JSONL.
+Compare it with a MAME trace using:
+
+```bash
+python tools/oa.py audio-parity \
+  build/re/traces/audio-title build/re/traces/audio-native.jsonl
+```
+
 The native build is also available directly through CMake. CMake detects the
 repository-local SDL2 sysroot under `build/deps/sdl2` when it exists, or a
 system SDL2 installation otherwise:

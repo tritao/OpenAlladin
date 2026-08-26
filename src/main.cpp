@@ -11,10 +11,12 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "audio/mixer.hpp"
 #include "audio/sdl_audio.hpp"
+#include "audio/trace.hpp"
 #include "audio/z80_audio_bridge.hpp"
 #include "audio/z80_sound_driver.hpp"
 
@@ -33,6 +35,7 @@ struct Options {
     bool no_window = false;
     bool no_audio = false;
     int sound_id = -1;
+    std::string audio_trace;
     bool demo = false;
     bool render_only = false;
     std::string state_output;
@@ -134,6 +137,20 @@ std::uint8_t parse_sound_id(const std::string& value) {
     return static_cast<std::uint8_t>(parsed);
 }
 
+std::string_view sound_command_kind(std::uint8_t sound_id) {
+    using Driver = openaladdin::audio::Z80SoundDriver;
+    if (sound_id == Driver::kLevel01MusicSoundId) {
+        return "MUSIC";
+    }
+    if (sound_id == Driver::kAnimationSfxSoundId) {
+        return "SFX";
+    }
+    if (sound_id == Driver::kInteractionEventSoundId) {
+        return "EVENT";
+    }
+    return "SOUND";
+}
+
 std::vector<int> parse_camera_checkpoint(const std::string& value) {
     std::vector<int> fields;
     std::stringstream stream(value);
@@ -212,6 +229,8 @@ Options parse_options(int argc, char** argv) {
             options.no_audio = true;
         } else if (argument == "--sound-id" && i + 1 < argc) {
             options.sound_id = parse_sound_id(argv[++i]);
+        } else if (argument == "--audio-trace" && i + 1 < argc) {
+            options.audio_trace = argv[++i];
         } else if (argument == "--demo") {
             options.demo = true;
         } else if (argument == "--render-checkpoint") {
@@ -246,7 +265,7 @@ Options parse_options(int argc, char** argv) {
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
-            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--sound-id ID] [--demo] [--render-checkpoint]\n"
+            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--sound-id ID] [--audio-trace PATH] [--demo] [--render-checkpoint]\n"
                          "       [--state-output PATH] [--framebuffer-out PATH] [--framebuffer-frame N]\n"
                          "       [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
@@ -259,7 +278,8 @@ Options parse_options(int argc, char** argv) {
                          "       [--checkpoint-facing-x-flip VALUE]\n"
                          "       [--checkpoint-vdp TRACE_DIR FRAME]\n"
                          "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n"
-                         "       --sound-id ID selects a ROM sound sequence (default: Level 01 music 0x49)\n";
+                         "       --sound-id ID selects a ROM sound sequence (default: Level 01 music 0x49)\n"
+                         "       --audio-trace PATH writes a deterministic native command/event/bus trace\n";
             std::exit(0);
         } else {
             throw std::runtime_error("unknown argument: " + argument);
@@ -371,13 +391,30 @@ int main(int argc, char** argv) {
             );
         }
 
+        std::unique_ptr<openaladdin::audio::AudioTrace> audio_trace;
+        if (!options.audio_trace.empty()) {
+            const std::filesystem::path trace_path(options.audio_trace);
+            if (trace_path.has_parent_path()) {
+                std::filesystem::create_directories(trace_path.parent_path());
+            }
+            audio_trace = std::make_unique<openaladdin::audio::AudioTrace>(
+                options.audio_trace);
+            audio_trace->begin_frame(0);
+        }
+
         openaladdin::audio::Mixer mixer;
         openaladdin::audio::SdlAudioOutput audio_output(mixer);
         openaladdin::audio::Z80AudioBridge audio_bridge({
-            [&audio_output](std::uint8_t data) {
+            [&audio_output, &audio_trace](std::uint8_t data) {
+                if (audio_trace) {
+                    audio_trace->record_psg_write(data);
+                }
                 audio_output.write_psg(data);
             },
-            [&audio_output](std::uint8_t port, std::uint8_t data) {
+            [&audio_output, &audio_trace](std::uint8_t port, std::uint8_t data) {
+                if (audio_trace) {
+                    audio_trace->record_ym_write(port, data);
+                }
                 audio_output.write_ym2612(port, data);
             },
         });
@@ -392,7 +429,10 @@ int main(int argc, char** argv) {
                     const auto audio_rom = read_binary_file(options.rom);
                     sound_driver = std::make_unique<openaladdin::audio::Z80SoundDriver>(
                         audio_rom,
-                        [&audio_bridge](const auto& event) {
+                        [&audio_bridge, &audio_trace](const auto& event) {
+                            if (audio_trace) {
+                                audio_trace->record_event(event);
+                            }
                             audio_bridge.handle(event);
                         }
                     );
@@ -415,12 +455,24 @@ int main(int argc, char** argv) {
                         audio_setup[index * 3 + 2] = static_cast<std::uint8_t>(
                             audio_tables[index] >> 16);
                     }
+                    if (audio_trace) {
+                        audio_trace->record_command(
+                            0x0B, audio_setup, "INIT", "immediate");
+                    }
                     sound_driver->command(0x0B, audio_setup);
                     const std::array<std::uint8_t, 1> selected_sound{
                         options.sound_id >= 0
                             ? static_cast<std::uint8_t>(options.sound_id)
                             : openaladdin::audio::Z80SoundDriver::kLevel01MusicSoundId
                     };
+                    if (audio_trace) {
+                        audio_trace->record_command(
+                            0x10,
+                            selected_sound,
+                            sound_command_kind(selected_sound[0]),
+                            "immediate",
+                            selected_sound[0]);
+                    }
                     sound_driver->command(0x10, selected_sound);
                 } catch (const std::exception& error) {
                     std::cerr << "openaladdin: audio disabled: " << error.what() << '\n';
@@ -496,6 +548,9 @@ int main(int argc, char** argv) {
             }
         } else {
             while (!engine.quit_requested() && (options.frames < 0 || rendered_frames < options.frames)) {
+            if (audio_trace) {
+                audio_trace->begin_frame(static_cast<std::uint64_t>(rendered_frames));
+            }
             openaladdin::InputState input;
             SDL_Event event{};
             while (SDL_PollEvent(&event)) {
@@ -554,6 +609,14 @@ int main(int argc, char** argv) {
                 try {
                     for (const std::uint8_t sound_id : sound_requests) {
                         const std::array<std::uint8_t, 1> sound_command{sound_id};
+                        if (audio_trace) {
+                            audio_trace->record_command(
+                                0x10,
+                                sound_command,
+                                sound_command_kind(sound_id),
+                                "enqueue",
+                                sound_id);
+                        }
                         sound_driver->enqueue_command(0x10, sound_command);
                     }
                     audio_bridge.tick();

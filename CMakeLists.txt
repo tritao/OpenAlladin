@@ -136,6 +136,8 @@ add_library(openaladdin_audio STATIC
     src/audio/sn76489.hpp
     src/audio/mixer.cpp
     src/audio/mixer.hpp
+    src/audio/trace.cpp
+    src/audio/trace.hpp
     src/audio/z80_audio_bridge.cpp
     src/audio/z80_audio_bridge.hpp
     src/audio/ym2612.cpp
@@ -304,6 +306,21 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
             COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
                     ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/mame_headless.py")
         set_tests_properties(mame_headless PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
+            NAME audio_parity
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/audio_parity.py")
+        set_tests_properties(audio_parity PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
+            NAME native_audio_trace
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_audio_trace.py"
+                    "$<TARGET_FILE:openaladdin>")
+        set_tests_properties(native_audio_trace PROPERTIES
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
         add_test(
