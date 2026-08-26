@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-terrain-handler-inventory",
+    "purpose": "Decode the adjacent Level 01 terrain behavior handlers, especially the 0x24 upper-stop gate and the launch/bounce neighbors, and recover their caller context before the next natural route probe."
+  },
+  "targets": [
+    { "address": "0x001B54A6", "name": "TerrainHandler_QueryStateB" },
+    { "address": "0x001B54D2", "name": "TerrainHandler_QueryStateBUpperStop" },
+    { "address": "0x001B54F4", "name": "TerrainHandler_Unknown09_0B_0C" },
+    { "address": "0x001B55D8", "name": "TerrainHandler_Unknown2A" },
+    { "address": "0x001B56F4", "name": "TerrainHandler_Unknown12" },
+    { "address": "0x001B536C", "name": "TerrainHandler_Unknown40" },
+    { "address": "0x001B53A2", "name": "TerrainHandler_Unknown41" },
+    { "address": "0x001B1F28", "name": "PlayerTerrainResponseCaller" },
+    { "address": "0x001A986E", "name": "PlayerTerrainVerticalResponse" },
+    { "address": "0x001A99F0", "name": "PlayerTerrainGroundResponse" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0CE", "name": "TERRAIN_QUERY_STATE_A" },
+    { "address": "0x00FFF0CF", "name": "TERRAIN_QUERY_STATE_B" },
+    { "address": "0x00FFF0D6", "name": "TERRAIN_STATE" },
+    { "address": "0x00FFF0E6", "name": "PLAYER_TERMINAL_TRANSITION" },
+    { "address": "0x00FFF0BE", "name": "TERRAIN_RESPONSE_ACTIVE" },
+    { "address": "0x00FFF0C0", "name": "TERRAIN_VERTICAL_STOP" }
+  ]
+}

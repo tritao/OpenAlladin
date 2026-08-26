@@ -677,6 +677,23 @@ injection confirms the child at `(4262,372)` from the parent at `(4240,384)`;
 scene state remains `0x01` and no scene/exit writer fires. This removes the
 row-10 Type-0x01 chain from the missing lift/exit hypotheses.
 
+The adjacent terrain-handler inventory is recorded in
+`re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
+behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
+bytes and therefore blocks upward continuation; behavior-0x27 at
+`0x001B54A6` is the distinct one-shot `PLAYER_Y -= 0x50` interaction response,
+while behavior-0x2A at `0x001B55D8` only nudges `PLAYER_X` and subtracts from
+`PLAYER_VX`. The player response routines consume these flags but do not write
+scene state. This separates the static upper-stop/vertical-response family
+from the unresolved route transfer.
+
+The Type-0x2A collision classification is recorded in
+`re/mame/findings/20260826-level01-actor-type2a-decomp-v1.json`. Its player
+collision-table entry at `0x001D66` points to `0x001AEBFE`, which is an empty
+return. The vertically moving Type-0x2A object observed in the upper-route
+inventory is consequently non-collidable scenery/effect data, not the missing
+traversal connector.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |

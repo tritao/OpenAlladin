@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-level01-actor-type2a-decomp-finding-v1",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra": {
+    "target_manifest": "re/ghidra/targets/actor-type2a-targets.json",
+    "decompile_artifact": "build/re/actor-type2a-targeted-decompile.json",
+    "program": "re/ghidra/project/aladdin",
+    "report_format": "openaladdin-targeted-decompile-v1"
+  },
+  "static_recovery": {
+    "player_collision_table": {
+      "rom_address": "0x001CBE",
+      "type": "0x2A",
+      "entry_address": "0x001D66",
+      "handler": "0x001AEBFE"
+    },
+    "handler": {
+      "address": "0x001AEBFE",
+      "name": "ActorType2A_PlayerCollisionHandler",
+      "effect": "RTS with no state, position, velocity, interaction, actor, or scene writes"
+    },
+    "template": {
+      "address": "0x001B7AF8",
+      "runtime_type": "0x2A",
+      "movement_stream": "0x00120F76",
+      "animation_stream": "0x001231DC"
+    }
+  },
+  "runtime_correlation": {
+    "source": "re/mame/findings/upper-route-object-decoding-v1.json",
+    "observed_object": "The Type-0x2A moving object travels vertically near the upper-route frontier, approximately world (1861,769) to (1888,863), then resets.",
+    "route_classification": "non-collidable moving scenery/effect actor; not the missing traversal connector"
+  },
+  "conclusion": "Runtime Type 0x2A cannot provide the unresolved Level 01 vertical transfer through player collision: its dispatch target is an empty return. The upper-route search should focus on handhold/bounce actors, terrain response, or an unobserved resource branch rather than this object."
+}
