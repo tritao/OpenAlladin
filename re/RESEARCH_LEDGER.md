@@ -611,6 +611,14 @@ unresolved.
 The next experiment is therefore to preserve a natural camera scroll across
 the `(249,14)` window and trace the handler's generic spawn plus `FFF104` effect.
 
+That side-effect trace is recorded in
+`re/mame/findings/20260826-level01-actual-80-spawn-side-effects-v1.json`.
+At machine frame `0x04DE`, selector `0x80` writes `FFF104=0`, enters the shared
+spawn routine at `0x001B525E`, and initializes actor slot 20 (`FF8368`) as
+runtime type `0x87` at `(3952,464)`. This confirms that the record creates an
+actor rather than advancing the scene; the remaining Level 01 objective is
+still a natural traversal to the exit predicate and subsequent scene change.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -660,6 +668,7 @@ the `(249,14)` window and trace the handler's generic spawn plus `FFF104` effect
 | `20260826-level01-surface-mode-audit-v1` | recorded-static-correlation | behavior-0x47 terrain-resource mode toggle and landing-resolver offset correlation |
 | `20260826-level01-canonical-recording-v11` | recorded-negative | ten complete hold-jump transfer-delay traces from the far-rope checkpoint |
 | `20260826-level01-actual-80-activation-v1` | recorded-controlled | exact-row controlled dispatch proof for the sole Level 01 interaction selector 0x80; natural activation unresolved |
+| `20260826-level01-actual-80-spawn-side-effects-v1` | recorded-controlled | selector 0x80 flag clear, generic spawn, and runtime actor-type proof |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
