@@ -347,6 +347,11 @@ ignored.  The current target pass establishes these boundaries:
   the operation for a linked actor at `+0x3E`.
 - `0x001AE6BC` and `0x001AE6DE` publish actor byte `+0x34` into the global
   interaction table at `0x00FFAE87`, indexed by actor word `+0x32`.
+- `0x001AC458` is the actor-to-actor collision handler selected for receiving
+  type `0x0A` through the table at `0x001EBA`. It clears the source actor,
+  processes the shared type-`0x2D` interaction branch, and replaces the
+  receiving actor with the type-`0x84` terminal template; selected target
+  types can arm `SCENE_SCRIPT_COUNTDOWN=0x20`.
 
 The exact guard-hit write was also confirmed with the MAME debugger watchpoint
 on `0x00FF7F8A`: the existing type is cleared in the `0x001AC4B0` path and the

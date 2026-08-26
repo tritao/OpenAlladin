@@ -40,6 +40,7 @@
     { "address": "0x001AD378", "name": "Movement VM command 0x92 call return" },
     { "address": "0x001AD392", "name": "Movement VM command 0x93 player X condition" },
     { "address": "0x001AD3C2", "name": "Movement VM command 0x94 player Y condition" },
-    { "address": "0x001ADE36", "name": "Actor movement VM" }
+    { "address": "0x001ADE36", "name": "Actor movement VM" },
+    { "address": "0x001AC458", "name": "ActorType0A_ActorCollisionHandler" }
   ]
 }
