@@ -38,6 +38,8 @@ python tools/oa.py record level01-good-run
 python tools/oa.py replay level01-good-run --client mame
 python tools/oa.py replay level01-good-run --client native
 python tools/oa.py parity level01-good-run
+python tools/oa.py replay level01-good-run --client native --segment level01-entry
+python tools/oa.py parity level01-good-run --segment level01-entry
 python tools/oa.py decode animation --verify
 python tools/oa.py decode movement --verify
 python tools/oa.py assets
@@ -105,11 +107,31 @@ python tools/oa.py record level01-good-run
 
 Quit MAME when the session is complete. The run is written below
 `build/runs/level01-good-run/` with a provenance manifest, per-frame
-`input.jsonl`, semantic `state.jsonl`, MAME's native `mame.inp`, and a
-`checkpoints/` state directory. The canonical input mask is active-high and
+`input.jsonl`, semantic `state.jsonl`, semantic `events.jsonl`, derived
+`segments.json`, MAME's native `mame.inp`, and a `checkpoints/` state directory.
+The canonical input mask is active-high and
 uses `up=1`, `down=2`, `left=4`, `right=8`, `a=16`, `b=32`, `c=64`, and
 `start=128`. Each input record's frame number means the controller state at
 the input boundary for that logical game frame; it is not a host key event.
+
+During recording, passive MAME detectors emit semantic boundaries such as
+`level_entry` without changing controller input. The detectors currently mark
+the Level 01 gameplay entry and the confirmed `SCENE_STATE=0x08` transition;
+the latter is intentionally named `scene-state-08` until a natural exit run
+proves its route meaning. Each event saves a corresponding
+`checkpoints/genesis/*.sta`. `segments.json` indexes the first replayable frame
+after each detected event and retains both the detector's `event_frame` and the
+segment's `start_frame`; the complete timelines remain the source of truth.
+Detector definitions live in `re/mame/events/manifest.yml`.
+
+MAME and native parity intentionally have separate boundaries. `start_frame`
+is the exact post-event MAME save-state boundary. A detector may also declare
+`native_ready` predicates; `native_start_frame` is discovered from the
+captured state trace as the first frame whose predicates remain true for the
+configured stable window. This handles transient entry/transition state
+without baking a frame offset into the tooling. A segment without a stable
+native boundary remains valid for MAME replay but is reported as unavailable
+for native parity.
 
 MAME replay uses the native `.inp` as its authoritative replay artifact and
 automatically compares the regenerated state trace with the recording:
@@ -126,6 +148,15 @@ python tools/oa.py replay level01-good-run --client native
 python tools/oa.py parity level01-good-run
 python tools/oa.py inputs summarize build/runs/level01-good-run/input.jsonl
 ```
+
+Detected segments can be replayed without rerunning the menu or earlier
+gameplay. A MAME segment replay starts from the save state captured at the
+event boundary; the native client starts from the stable checkpoint values at
+`native_start_frame` materialized in `segments.json`. Segment artifacts live under
+`replay/<client>/<segment>/`, including rebased `genesis.jsonl` and
+`input.jsonl`. The full-run MAME replay remains the `.inp` determinism check;
+segment MAME replay uses the canonical input schedule because MAME's native
+`.inp` format does not provide a portable seek operation.
 
 To extract the known Genesis graphics and animation data:
 

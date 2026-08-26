@@ -42,6 +42,7 @@ local save_name = os.getenv("OPENALADDIN_SAVE_NAME") or "gameplay"
 local snapshot_name = os.getenv("OPENALADDIN_SNAPSHOT_NAME") or "gameplay.png"
 local checkpoint_spec = os.getenv("OPENALADDIN_CHECKPOINTS") or ""
 local checkpoint_reference = os.getenv("OPENALADDIN_CHECKPOINT_REFERENCE") or "states"
+local preload_before_capture = os.getenv("OPENALADDIN_PRELOAD_BEFORE_CAPTURE") == "1"
 local checkpoints = {}
 for item in checkpoint_spec:gmatch("[^,]+") do
     local frame_text, name = item:match("^%s*(%-?%d+)%s*=%s*(.-)%s*$")
@@ -974,6 +975,9 @@ if trace_scene_states then
 end
 
 actors.inject(0)
+if preload_before_capture then
+    preload_machine_state()
+end
 if preload_state == "" then
     apply_memory_pokes(0)
 end
@@ -990,7 +994,7 @@ emu.register_frame_done(function ()
         return
     end
 
-    if current_frame == 1 then
+    if current_frame == 1 and not preload_before_capture then
         preload_machine_state()
         if preload_state ~= "" then
             apply_memory_pokes(0)

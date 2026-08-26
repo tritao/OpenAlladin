@@ -13,3 +13,33 @@ detectors:
       - symbol: PLAYER_ANIMATION_PC
         width: u32
         greater_than: 0
+    # The event checkpoint is exact for MAME replay, but the transition can
+    # still expose stale world-coordinate/frame-pointer fields for a few
+    # frames. Native parity starts at the first stable, representable state.
+    native_ready:
+      stable_for: 3
+      conditions:
+        - derived: player.world_x == camera.x + player.x
+        - derived: player.world_y == camera.y + player.y
+        - derived: camera.reference_x == camera.x
+        - derived: camera.reference_y == camera.y
+        - field: camera.scroll_x
+          equals: 0
+        - field: camera.scroll_y
+          equals: 0
+        - field: player.frame_ptr
+          not_equals: 0
+
+  # SCENE_STATE=0x08 is a confirmed special player/camera transition state.
+  # Keep the event name deliberately state-oriented until a natural Level 01
+  # exit recording proves which transition it represents in the full route.
+  - name: scene-state-08
+    event: scene_state
+    phase: transition
+    level: level01
+    checkpoint: scene-state-08
+    stable_for: 1
+    conditions:
+      - symbol: SCENE_STATE
+        width: u8
+        equals: 8

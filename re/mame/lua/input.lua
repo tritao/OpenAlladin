@@ -87,9 +87,25 @@ return function(options)
         button_masks[name] = 1 << (index - 1)
     end
 
+    -- The Mega Drive input port is not laid out in canonical button order:
+    -- B is bit 4, C is bit 5, and A is bit 6. Keep the portable timeline in
+    -- Genesis order while deriving the physical masks from MAME's fields.
+    local port_masks = {}
+    for _, name in ipairs(button_order) do
+        local field = controls[name]
+        port_masks[name] = field and field.mask or button_masks[name]
+    end
+
     local function canonical_mask()
         local raw = controller_port and controller_port:read() or 0xff
-        return (~raw) & 0xff
+        local mask = 0
+        for _, name in ipairs(button_order) do
+            local port_mask = port_masks[name]
+            if port_mask and (raw & port_mask) == 0 then
+                mask = mask | button_masks[name]
+            end
+        end
+        return mask
     end
 
     local function token_for_mask(mask)
@@ -106,6 +122,7 @@ return function(options)
         write_input({
             { "type", json_string("header") },
             { "format", json_string("openaladdin-input-v1") },
+            { "controller_mapping", json_string("mame-genesis-3button-v1") },
             { "buttons", json_array((function ()
                 local values = {}
                 for index, name in ipairs(button_order) do
