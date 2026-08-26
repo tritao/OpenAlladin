@@ -273,6 +273,7 @@ public:
     void set_checkpoint_frame_ptr(int address);
     void set_checkpoint_animation(std::uint32_t animation_pc, int timer);
     void set_checkpoint_facing_x_flip(bool facing_x_flip);
+    void set_checkpoint_vdp(const std::string& trace_dir, int frame);
     void set_checkpoint_camera(
         int x,
         int y,
@@ -328,6 +329,7 @@ private:
     void update_actor_animations();
     void apply_animation_spawns();
     void update_actor_actor_collisions(bool pre_motion = false);
+    void render_vdp_checkpoint();
     void update_actor_interactions(const InputState& input, bool was_grounded);
     CollisionBox read_collision_box(
         std::uint32_t frame_pointer,
@@ -357,6 +359,13 @@ private:
     bool checkpoint_terrain_behavior_override_ = false;
     std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;
+    struct VdpCheckpoint {
+        bool loaded = false;
+        std::vector<std::uint8_t> vram;
+        std::vector<std::uint8_t> vsram;
+        std::vector<SDL_Color> palette;
+        std::array<std::uint8_t, 32> registers{};
+    } vdp_checkpoint_;
     int frame_ = 0;
     int last_ground_direction_ = 0;
     bool quit_ = false;

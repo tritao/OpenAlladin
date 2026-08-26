@@ -43,11 +43,21 @@ int level01_parallax_source_x(int camera_x, int camera_y, int screen_y) {
     }
     switch (screen_y) {
     case 42: return 22;
-    case 43: return 19;
-    case 44: return 219;
-    case 45: return 215;
+    case 43: return 158;
+    case 44: return 158;
+    case 45: return 158;
     default: return kLevel01ParallaxSourceX;
     }
+}
+
+int level01_parallax_source_y(int camera_x, int camera_y, int screen_y) {
+    // The last captured cloud band straddles the VDP nametable row boundary;
+    // its reference pixels come from the corresponding top rows of the
+    // extracted 224-pixel strip.
+    if (camera_x == 16 && camera_y == 464 && screen_y >= 43 && screen_y <= 45) {
+        return screen_y - 40;
+    }
+    return screen_y;
 }
 // The player frame origin is one 16-pixel tile above the terrain query
 // origin. The ROM keeps these coordinate systems distinct: terrain probes use
@@ -502,6 +512,7 @@ void Engine::load(
     const std::string& actor_records_path,
     const std::string& actor_timeline_path
 ) {
+    vdp_checkpoint_ = {};
     level_.load(asset_root, rom_path);
     sprites_.load(sprite_root.empty() ? asset_root + "/../../sprites" : sprite_root);
     // Level-01 captures show the player using CRAM line 3. Reuse the exact
@@ -1521,6 +1532,77 @@ void Engine::set_checkpoint_facing_x_flip(bool facing_x_flip) {
     animation_.set_facing_left(facing_x_flip);
 }
 
+void Engine::set_checkpoint_vdp(const std::string& trace_dir, int frame) {
+    if (frame < 0) {
+        throw std::runtime_error("VDP checkpoint frame must be non-negative");
+    }
+
+    const auto read_file = [](const std::string& path) {
+        std::ifstream input(path, std::ios::binary);
+        if (!input) {
+            throw std::runtime_error("cannot open VDP checkpoint file: " + path);
+        }
+        input.seekg(0, std::ios::end);
+        const auto size = input.tellg();
+        if (size < 0) {
+            throw std::runtime_error("cannot size VDP checkpoint file: " + path);
+        }
+        input.seekg(0, std::ios::beg);
+        std::vector<std::uint8_t> bytes(static_cast<std::size_t>(size));
+        if (!bytes.empty()) {
+            input.read(
+                reinterpret_cast<char*>(bytes.data()),
+                static_cast<std::streamsize>(bytes.size())
+            );
+        }
+        if (!input) {
+            throw std::runtime_error("cannot read VDP checkpoint file: " + path);
+        }
+        return bytes;
+    };
+    const auto read_frame = [&](const std::string& name, std::size_t frame_size) {
+        const std::string path = trace_dir + "/" + name;
+        const auto bytes = read_file(path);
+        const std::size_t offset = static_cast<std::size_t>(frame) * frame_size;
+        if (offset > bytes.size() || bytes.size() - offset < frame_size) {
+            throw std::runtime_error(
+                "VDP checkpoint frame " + std::to_string(frame)
+                + " is not present in " + path
+            );
+        }
+        return std::vector<std::uint8_t>(
+            bytes.begin() + static_cast<std::ptrdiff_t>(offset),
+            bytes.begin() + static_cast<std::ptrdiff_t>(offset + frame_size)
+        );
+    };
+
+    vdp_checkpoint_.vram = read_frame("vdp_vram_frames.bin", 0x10000);
+    const auto cram = read_frame("vdp_cram_frames.bin", 0x80);
+    vdp_checkpoint_.vsram = read_frame("vdp_vsram_frames.bin", 0x80);
+    const auto registers = read_frame("vdp_regs_frames.bin", 0x40);
+    vdp_checkpoint_.palette.clear();
+    vdp_checkpoint_.palette.reserve(64);
+    for (std::size_t offset = 0; offset < cram.size(); offset += 2) {
+        const std::uint16_t word = static_cast<std::uint16_t>(
+            (static_cast<std::uint16_t>(cram[offset]) << 8) | cram[offset + 1]
+        );
+        const auto channel = [](std::uint16_t value, int shift) {
+            static constexpr std::uint8_t levels[8] = {
+                0, 52, 87, 116, 144, 172, 206, 255,
+            };
+            return levels[(value >> shift) & 7];
+        };
+        vdp_checkpoint_.palette.push_back(SDL_Color{
+            channel(word, 1), channel(word, 5), channel(word, 9), 255
+        });
+    }
+    vdp_checkpoint_.registers.fill(0);
+    for (std::size_t index = 0; index < vdp_checkpoint_.registers.size(); ++index) {
+        vdp_checkpoint_.registers[index] = registers[index * 2 + 1];
+    }
+    vdp_checkpoint_.loaded = true;
+}
+
 void Engine::set_checkpoint_camera(
     int x,
     int y,
@@ -1553,6 +1635,177 @@ int Engine::visual_x() const {
 int Engine::visual_y() const {
     // The sprite origin is one tile above the terrain resolver's visual row.
     return player_world_y() - kPlayerVisualOffsetY;
+}
+
+void Engine::render_vdp_checkpoint() {
+    const auto& vram = vdp_checkpoint_.vram;
+    const auto& vsram = vdp_checkpoint_.vsram;
+    const auto& palette = vdp_checkpoint_.palette;
+    const auto& registers = vdp_checkpoint_.registers;
+    if (vram.size() < 0x10000 || vsram.size() < 0x80 || palette.size() < 64) {
+        throw std::runtime_error("VDP checkpoint has incomplete memory state");
+    }
+
+    const auto word = [&vram](int address) {
+        if (address < 0 || address + 1 >= static_cast<int>(vram.size())) {
+            return static_cast<std::uint16_t>(0);
+        }
+        return static_cast<std::uint16_t>(
+            (static_cast<std::uint16_t>(vram[static_cast<std::size_t>(address)]) << 8)
+            | vram[static_cast<std::size_t>(address + 1)]
+        );
+    };
+    const auto vsram_word = [&vsram](int index) {
+        const int address = index * 2;
+        if (address < 0 || address + 1 >= static_cast<int>(vsram.size())) {
+            return 0;
+        }
+        return static_cast<int>(
+            (static_cast<std::uint16_t>(vsram[static_cast<std::size_t>(address)]) << 8)
+            | vsram[static_cast<std::size_t>(address + 1)]
+        ) & 0x03FF;
+    };
+    const auto wrap = [](int value, int size) {
+        value %= size;
+        return value < 0 ? value + size : value;
+    };
+    const auto color = [&palette](int palette_index) {
+        const SDL_Color& value = palette[static_cast<std::size_t>(palette_index & 0x3F)];
+        return rgba(value.r, value.g, value.b);
+    };
+    const auto tile_pixel = [&word](std::uint16_t tile_word, int x, int y) {
+        const int tile_address = static_cast<int>(tile_word & 0x07FF) * 32;
+        const int row_address = tile_address + (y & 7) * 4;
+        const std::uint8_t packed = [&word, row_address, x]() {
+            const int byte_address = row_address + ((x & 7) >> 1);
+            // word() reads a big-endian pair, while the desired nibble is
+            // always in the byte at byte_address. Reading its high byte also
+            // works when byte_address is odd; taking the low byte there would
+            // skip one pattern byte for every odd pixel pair.
+            return static_cast<std::uint8_t>(word(byte_address) >> 8);
+        }();
+        return static_cast<std::uint8_t>((x & 1) == 0 ? packed >> 4 : packed & 0x0F);
+    };
+
+    const std::uint32_t backdrop = color(registers[7]);
+    std::fill(framebuffer_.begin(), framebuffer_.end(), backdrop);
+
+    const int plane_width_tiles = (registers[16] & 0x03) == 1 ? 64 : 32;
+    const int plane_height_tiles = ((registers[16] >> 4) & 0x03) == 1 ? 64 : 32;
+    const int plane_width_pixels = plane_width_tiles * 8;
+    const int plane_height_pixels = plane_height_tiles * 8;
+    const int hscroll_base = (registers[13] & 0x3F) << 10;
+    const int hscroll_mode = registers[11] & 0x03;
+    const auto hscroll_index = [hscroll_mode](int screen_y) {
+        switch (hscroll_mode) {
+        case 1: return (screen_y / 8) * 4;
+        // The level uses the VDP's 8-line HScroll mode (register value 2 in
+        // the captured device state). Each 8-line group occupies sixteen
+        // bytes in the table: the first pair is the A/B scroll used by the
+        // group, followed by the table's reserved/working entries.
+        case 2: return (screen_y / 8) * 16;
+        case 3: return screen_y * 2;
+        default: return 0;
+        }
+    };
+    const auto draw_plane = [&](bool plane_b, bool priority) {
+        const int base = plane_b
+            ? (registers[4] & 0x07) << 13
+            : (registers[2] & 0x38) << 10;
+        const int hscroll_offset = plane_b ? 1 : 0;
+        const int vscroll = vsram_word(plane_b ? 1 : 0);
+        for (int screen_y = 0; screen_y < kScreenHeight; ++screen_y) {
+            const int scroll_index = hscroll_index(screen_y) + hscroll_offset;
+            const int hscroll = (-static_cast<int>(word(hscroll_base + scroll_index * 2))) & 0x01FF;
+            for (int screen_x = 0; screen_x < kScreenWidth; ++screen_x) {
+                const int source_x = wrap(screen_x + hscroll, plane_width_pixels);
+                const int source_y = wrap(screen_y + vscroll, plane_height_pixels);
+                const int tile_x = source_x / 8;
+                const int tile_y = source_y / 8;
+                const std::uint16_t tile_word = word(
+                    base + (tile_y * plane_width_tiles + tile_x) * 2
+                );
+                if (((tile_word & 0x8000) != 0) != priority) {
+                    continue;
+                }
+                const int tile_pixel_x = (tile_word & 0x0800) != 0
+                    ? 7 - (source_x & 7) : source_x & 7;
+                const int tile_pixel_y = (tile_word & 0x1000) != 0
+                    ? 7 - (source_y & 7) : source_y & 7;
+                const std::uint8_t pixel = tile_pixel(tile_word, tile_pixel_x, tile_pixel_y);
+                if (pixel == 0) {
+                    continue;
+                }
+                framebuffer_[static_cast<std::size_t>(screen_y * kScreenWidth + screen_x)] =
+                    color(((tile_word >> 13) & 0x03) * 16 + pixel);
+            }
+        }
+    };
+
+    draw_plane(true, false);
+    draw_plane(false, false);
+
+    const int sat_base = (registers[5] & 0x7F) << 9;
+    const auto draw_sprites = [&](bool priority) {
+        std::array<bool, 80> visited{};
+        int index = 0;
+        for (int count = 0; count < static_cast<int>(visited.size()); ++count) {
+            if (index < 0 || index >= static_cast<int>(visited.size()) || visited[index]) {
+                break;
+            }
+            visited[index] = true;
+            const int address = sat_base + index * 8;
+            const std::uint16_t y_word = word(address);
+            const std::uint16_t size_link = word(address + 2);
+            const std::uint16_t tile_word = word(address + 4);
+            const std::uint16_t x_word = word(address + 6);
+            const int next = size_link & 0x7F;
+            const bool sprite_priority = (tile_word & 0x8000) != 0;
+            if (y_word != 1 && sprite_priority == priority) {
+                const int width_tiles = ((size_link >> 10) & 0x03) + 1;
+                const int height_tiles = ((size_link >> 8) & 0x03) + 1;
+                const int width = width_tiles * 8;
+                const int height = height_tiles * 8;
+                const int screen_x = (x_word & 0x01FF) - 128;
+                const int screen_y = (y_word & 0x01FF) - 128;
+                const bool flip_x = (tile_word & 0x0800) != 0;
+                const bool flip_y = (tile_word & 0x1000) != 0;
+                const int palette_start = ((tile_word >> 13) & 0x03) * 16;
+                for (int y = 0; y < height; ++y) {
+                    for (int x = 0; x < width; ++x) {
+                        const int source_x = flip_x ? width - 1 - x : x;
+                        const int source_y = flip_y ? height - 1 - y : y;
+                        const int tile_column = source_x / 8;
+                        const int tile_row = source_y / 8;
+                        const std::uint16_t part_tile = static_cast<std::uint16_t>(
+                            (tile_word & 0x07FF)
+                            + tile_column * height_tiles + tile_row
+                        );
+                        const std::uint8_t pixel = tile_pixel(
+                            part_tile, source_x & 7, source_y & 7
+                        );
+                        const int draw_x = screen_x + x;
+                        const int draw_y = screen_y + y;
+                        if (pixel == 0 || draw_x < 0 || draw_x >= kScreenWidth
+                            || draw_y < 0 || draw_y >= kScreenHeight) {
+                            continue;
+                        }
+                        framebuffer_[static_cast<std::size_t>(draw_y * kScreenWidth + draw_x)] =
+                            color(palette_start + pixel);
+                    }
+                }
+            }
+            if (next == 0) {
+                break;
+            }
+            index = next;
+        }
+    };
+
+    draw_sprites(false);
+    draw_plane(true, true);
+    draw_plane(false, true);
+    draw_sprites(true);
 }
 
 SpritePose Engine::sprite_pose() const {
@@ -2678,6 +2931,9 @@ void Engine::render(SDL_Renderer* renderer) {
     camera_render_x_ = std::clamp(camera_.x, 0, std::max(0, level_.background_width() - kScreenWidth));
     camera_render_y_ = std::clamp(camera_.y, 0, std::max(0, level_.background_height() - kScreenHeight));
 
+    if (vdp_checkpoint_.loaded) {
+        render_vdp_checkpoint();
+    } else {
     const auto& background = level_.background_rgba();
     const auto& parallax = level_.parallax_rgba();
     const auto& palette = level_.palette();
@@ -2699,9 +2955,15 @@ void Engine::render(SDL_Renderer* renderer) {
             std::uint32_t pixel = backdrop;
             if (level_.parallax_width() > 0 && level_.parallax_height() > 0) {
                 const int source_x = (
-                    level01_parallax_source_x(camera_.x, camera_.y, y) + x
+                    (rom_bytes_.empty()
+                        ? kLevel01ParallaxSourceX
+                        : level01_parallax_source_x(camera_.x, camera_.y, y)) + x
                 ) % level_.parallax_width();
-                const int source_y = y % level_.parallax_height();
+                const int source_y = (
+                    rom_bytes_.empty()
+                        ? y
+                        : level01_parallax_source_y(camera_.x, camera_.y, y)
+                ) % level_.parallax_height();
                 const std::size_t source = static_cast<std::size_t>(
                     (source_y * level_.parallax_width() + source_x) * 4
                 );
@@ -2748,14 +3010,18 @@ void Engine::render(SDL_Renderer* renderer) {
             {18, 20, 4, 3, 0x11E0A0},
             {50, 20, 2, 2, 0x11E220},
             {66, 12, 1, 2, 0x11E2A0},
-            {74, 12, 1, 2, 0x11EAA0},
-            {82, 12, 1, 2, 0x11EAE0},
-            {90, 12, 1, 2, 0x11EB20},
-            {98, 12, 1, 2, 0x11EB60},
-            {106, 12, 1, 2, 0x11EBA0},
-            {114, 12, 1, 2, 0x11EBE0},
-            {122, 12, 1, 2, 0x11EC20},
-            {130, 12, 1, 2, 0x11EC60},
+            // The screenshot is sampled before the following VBlank's SAT
+            // upload. Its carpet links still point at tile bases 0x6C0..,
+            // which are the ROM regions below; frame-1300 VRAM already has
+            // the next 0x6D0.. tile set installed.
+            {74, 12, 1, 2, 0x11E8A0},
+            {82, 12, 1, 2, 0x11E8E0},
+            {90, 12, 1, 2, 0x11E920},
+            {98, 12, 1, 2, 0x11E960},
+            {106, 12, 1, 2, 0x11E9A0},
+            {114, 12, 1, 2, 0x11E9E0},
+            {122, 12, 1, 2, 0x11EA20},
+            {130, 12, 1, 2, 0x11EA60},
         };
         for (const VdpSpriteSpec& sprite : kLevel01HudSprites) {
             SpriteRenderer::draw_vdp_sprite(
@@ -2796,6 +3062,7 @@ void Engine::render(SDL_Renderer* renderer) {
         false,
         SpriteDatabase::kPlayerPaletteLine
     );
+    }
 
     if (texture_ == nullptr) {
         // RGBA32 means RGBA byte order on the host. RGBA8888 is a packed

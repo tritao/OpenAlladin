@@ -40,6 +40,8 @@ struct Options {
     std::string checkpoint_frame_ptr;
     std::string checkpoint_animation;
     std::string checkpoint_facing_x_flip;
+    std::string checkpoint_vdp;
+    int checkpoint_vdp_frame = -1;
     std::string checkpoint_camera;
 };
 
@@ -171,6 +173,9 @@ Options parse_options(int argc, char** argv) {
             options.checkpoint_animation = argv[++i];
         } else if (argument == "--checkpoint-facing-x-flip" && i + 1 < argc) {
             options.checkpoint_facing_x_flip = argv[++i];
+        } else if (argument == "--checkpoint-vdp" && i + 2 < argc) {
+            options.checkpoint_vdp = argv[++i];
+            options.checkpoint_vdp_frame = std::stoi(argv[++i]);
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
@@ -182,6 +187,7 @@ Options parse_options(int argc, char** argv) {
                          "       [--checkpoint-frame-ptr ADDRESS]\n"
                          "       [--checkpoint-animation PC,TIMER]\n"
                          "       [--checkpoint-facing-x-flip VALUE]\n"
+                         "       [--checkpoint-vdp TRACE_DIR FRAME]\n"
                          "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n";
             std::exit(0);
         } else {
@@ -259,6 +265,9 @@ int main(int argc, char** argv) {
             engine.set_checkpoint_facing_x_flip(
                 std::stoi(options.checkpoint_facing_x_flip, nullptr, 0) != 0
             );
+        }
+        if (!options.checkpoint_vdp.empty()) {
+            engine.set_checkpoint_vdp(options.checkpoint_vdp, options.checkpoint_vdp_frame);
         }
         if (!options.checkpoint_camera.empty()) {
             const auto checkpoint = parse_camera_checkpoint(options.checkpoint_camera);

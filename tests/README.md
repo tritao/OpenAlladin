@@ -86,3 +86,21 @@ overlay is written as `player-sprite-diff.ppm`. Use `--player-padding N` to
 enlarge the contextual crop.
 
 Remove `--report-only` once a checkpoint is expected to match exactly.
+
+For a capture with raw VDP streams, add `--vdp-trace-dir` to make the native
+checkpoint renderer consume the captured VRAM, CRAM, VSRAM, SAT, and HScroll
+state. VDP memory is sampled immediately after the rendered frame, so the
+audit helper uses frame `N-1` by default for a screenshot captured at frame
+`N`; override it with `--vdp-frame` when the capture timing differs:
+
+```bash
+PYTHONPATH=tools python3 tools/openaladdin/analysis/audit_visual.py \
+  --trace-dir build/re/visual-audit/mame \
+  --frame 1300 \
+  --reference build/re/visual-audit/mame/snapshots/gameplay.png \
+  --vdp-trace-dir build/re/visual-audit/mame
+```
+
+Running that command for several synchronized frames audits palette changes,
+animated SAT links, and raster scroll without baking those values into the
+normal native renderer.

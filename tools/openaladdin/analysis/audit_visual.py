@@ -268,6 +268,16 @@ def main() -> int:
     parser.add_argument("--reference", type=Path)
     parser.add_argument("--native-binary", type=Path, default=ROOT / "build/openaladdin")
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument(
+        "--vdp-trace-dir",
+        type=Path,
+        help="use captured VRAM/CRAM/register state from this trace for rendering",
+    )
+    parser.add_argument(
+        "--vdp-frame",
+        type=int,
+        help="VDP memory frame to use (defaults to visual frame - 1)",
+    )
     parser.add_argument("--region", help="only compare x,y,width,height")
     parser.add_argument(
         "--player-region",
@@ -309,6 +319,13 @@ def main() -> int:
     try:
         checkpoint = load_checkpoint(trace_dir, args.frame)
         command = checkpoint_command(args.native_binary.resolve(), checkpoint, native_output)
+        if args.vdp_trace_dir is not None:
+            vdp_frame = args.vdp_frame if args.vdp_frame is not None else max(args.frame - 1, 0)
+            command.extend([
+                "--checkpoint-vdp",
+                str(args.vdp_trace_dir.resolve()),
+                str(vdp_frame),
+            ])
         result = subprocess.run(
             command,
             cwd=ROOT,
