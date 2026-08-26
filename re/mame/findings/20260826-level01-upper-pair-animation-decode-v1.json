@@ -1,0 +1,132 @@
+{
+  "format": "openaladdin-level01-upper-pair-animation-decode-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Decode the animation-state streams for the Level 01 upper Type-0x1E/Type-0x20 interaction pair and determine whether either stream can produce a scene transition.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_analysis": "de224c1",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "runtime_provenance": {
+    "finding": "re/mame/findings/20260826-level01-upper-activation-v1.json",
+    "campaign": "re/mame/campaigns/20260826-level01-upper-activation-v1.json",
+    "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/end.sta",
+    "input": "right*158,up*120,none*42",
+    "activation_absolute_mame_frame": "0x1353",
+    "scene_state_at_activation": "0x01"
+  },
+  "method": {
+    "decoder": "tools/openaladdin/vm/animation.py",
+    "scope": "Direct ROM stream decode from the runtime animation cursors captured when the upper pair materializes.",
+    "encoding": "Frame references and EA-FE animation commands are decoded to semantic operations; dynamic FC calls are followed manually at their concrete branch targets.",
+    "scene_write_audit": "The decoded instruction ranges were cross-checked against the static scene-state writer inventory in build/re/level01-exit-data-references.json."
+  },
+  "streams": [
+    {
+      "runtime_type": "0x1E",
+      "root": "0x00123614",
+      "activation_frame_pointer": "0x001F286A",
+      "instructions": [
+        { "pc": "0x00123614", "op": "frame", "value": "0x11E2", "frame_pointer": "0x001F286A" },
+        { "pc": "0x00123616", "op": "F7", "meaning": "face_or_clear_flip" },
+        { "pc": "0x00123618", "op": "F4", "meaning": "compare actor field/offset against 0x46", "raw": "F491003D0046001237C6" },
+        { "pc": "0x00123622", "op": "FE", "meaning": "if player is within Y distance", "operand": "0x40", "branch": "0x00123634" },
+        { "pc": "0x00123628", "op": "FC", "meaning": "call/return animation substream", "branch": "0x0012355A" }
+      ],
+      "secondary_streams": [
+        {
+          "root": "0x0012355A",
+          "instructions": [
+            { "pc": "0x0012355A", "op": "frame", "value": "0x1102" },
+            { "pc": "0x0012355C", "op": "F7", "meaning": "face_or_clear_flip" },
+            { "pc": "0x0012355E", "op": "frame", "value": "0x1102" },
+            { "pc": "0x00123560", "op": "frame", "value": "0x1106" },
+            { "pc": "0x00123562", "op": "FE", "meaning": "if player is within Y distance", "operand": "0x78", "branch": "0x00123570" },
+            { "pc": "0x00123568", "op": "EA", "meaning": "jump", "branch": "0x00123572" }
+          ]
+        },
+        {
+          "root": "0x00123634",
+          "instructions": [
+            { "pc": "0x00123634", "op": "FD", "meaning": "if player is within X distance", "operand": "0x73", "branch": "0x00123730" },
+            { "pc": "0x0012363A", "op": "F2", "meaning": "test actor flag bit", "branch": "0x00123652" },
+            { "pc": "0x00123640", "op": "F4", "meaning": "compare actor field and return to root", "branch": "0x00123614" },
+            { "pc": "0x0012364A", "op": "EA", "meaning": "jump", "branch": "0x0012365C" }
+          ]
+        },
+        {
+          "root": "0x00123730",
+          "instructions": [
+            { "pc": "0x00123730", "op": "frame", "value": "0x11E2" },
+            { "pc": "0x00123732", "op": "FE", "meaning": "if player is within Y distance", "operand": "0x30", "branch": "0x0012373E" },
+            { "pc": "0x00123738", "op": "EA", "meaning": "jump", "branch": "0x00123614" }
+          ]
+        },
+        {
+          "root": "0x001237C6",
+          "instructions": [
+            { "pc": "0x001237C6", "op": "frame_sequence", "meaning": "extended interaction animation" },
+            { "pc": "0x001237D8", "op": "ED", "meaning": "write opaque animation-side value", "target": "0x0012046C" },
+            { "pc": "0x001237E0", "op": "FB", "meaning": "push parameter", "target": "0x001ACC5E" },
+            { "pc": "0x001237E6", "op": "FC", "meaning": "call/return animation substream", "operand": "0x80" }
+          ]
+        },
+        {
+          "root": "0x00123570",
+          "instructions": [
+            { "pc": "0x00123570", "op": "sound", "value": "0x3E" },
+            { "pc": "0x00123572", "op": "timer", "value": "0x02" },
+            { "pc": "0x00123574", "op": "frame_sequence", "meaning": "short interaction animation" },
+            { "pc": "0x00123582", "op": "FC", "meaning": "return", "operand": "0x80" }
+          ]
+        }
+      ]
+    },
+    {
+      "runtime_type": "0x20",
+      "root": "0x0012337A",
+      "activation_frame_pointer": "0x001F1ABA",
+      "instructions": [
+        { "pc": "0x0012337A", "op": "frame", "value": "0x113A", "frame_pointer": "0x001F1ABA" },
+        { "pc": "0x0012337C", "op": "F7", "meaning": "face_or_clear_flip" },
+        { "pc": "0x0012337E", "op": "frame", "value": "0x113A" },
+        { "pc": "0x00123380", "op": "FD", "meaning": "if player is within X distance", "operand": "0x78", "branch": "0x00123392" },
+        { "pc": "0x00123386", "op": "FC", "meaning": "call/return animation substream", "branch": "0x00123358" }
+      ],
+      "secondary_streams": [
+        {
+          "root": "0x00123392",
+          "instructions": [
+            { "pc": "0x00123392", "op": "FE", "meaning": "if player is within Y distance", "operand": "0x30", "branch": "0x0012339E" },
+            { "pc": "0x00123398", "op": "EA", "meaning": "jump", "branch": "0x0012337A" }
+          ]
+        }
+      ]
+    }
+  ],
+  "scene_transition_audit": {
+    "scene_state_writer": "0x001A8ED2",
+    "scene_table_writer": "0x001B3F0A",
+    "scene_script_countdown_writers": ["0x001B5B3A", "0x001B5C18", "0x001B624E", "0x001B7830", "0x001AC4A2", "0x001AE600", "0x001AED04", "0x001B02AC", "0x001B0B38"],
+    "decoded_stream_result": "No decoded instruction is a scene-state write, scene-table selection, scene-script countdown write, or call into the scene transition dispatcher.",
+    "runtime_result": "The activation trace remains SCENE_STATE=0x01 through the retained response probes; none of the Type-0x1E, Type-0x20, or player Type-0x1E collision handlers is entered."
+  },
+  "conclusion": {
+    "verified": [
+      "The Type-0x1E stream is a proximity/interaction state machine with actor-field, player-Y, player-X, and flag tests.",
+      "The Type-0x20 stream is a proximity/interaction loop with player-X and player-Y tests.",
+      "The pair's visible activation and follow-on animation branches do not contain the Level 01 scene transition mechanism.",
+      "The upper pair is not the missing connector by itself; its interaction-row setup remains a separate upper resource/actor path."
+    ],
+    "negative_evidence": [
+      "The pair does not write SCENE_STATE=0x08 directly.",
+      "The pair does not reach the scene-state writer in the captured activated-pair response probes."
+    ],
+    "unresolved": [
+      "The exact terrain/resource condition that transfers the player from the far vertical connector to the upper exit corridor remains unresolved.",
+      "The meaning of the extended Type-0x1E ED/FB interaction side effects requires a separate data/handler trace."
+    ]
+  },
+  "next_action": "Trace the earlier connector/resource path and the Level 01 boundary caller with breakpoints on 0x001B54D8, 0x001B54D2, 0x001B5318, 0x001B53B8, 0x001B5B4A, and 0x001A8ED2; do not repeat direct upper-pair timing probes."
+}
