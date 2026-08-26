@@ -659,13 +659,13 @@ def command_regression(args: argparse.Namespace) -> int:
     mame_source = mame_trace / "state.jsonl"
     compare_frames, checkpoint_frame, checkpoint = aligned_trace(mame_source, aligned, marker_name, fields)
     _, mame_states, _ = load_state_trace(mame_source)
-    # The native state file contains an initial checkpoint record at frame 0
-    # before its first update.  MAME's frame record includes the input that
-    # produced that state, so the first native update must consume MAME's next
-    # frame token.  Keeping this one-frame offset is what makes the aligned
-    # state 0 a true pre-input checkpoint rather than a duplicated update.
+    # MAME's frame-state record labels the input that is consumed by the
+    # following stable update boundary. The native file begins with the
+    # checkpoint record before its first update, so replay the token at the
+    # same aligned index; this keeps a one-frame edge (such as jump launch)
+    # from being applied before the state that carries its input.
     input_tokens = [
-        str(mame_states[checkpoint_frame + relative + 1].get("input", "none"))
+        str(mame_states[checkpoint_frame + relative].get("input", "none"))
         for relative in range(compare_frames)
     ]
 
