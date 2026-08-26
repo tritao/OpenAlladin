@@ -1,0 +1,57 @@
+{
+  "format": "openaladdin-player-collision-table-correction-finding-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Correct the Type-0x2A/Type-0x2B player-collision dispatch attribution after independently decoding the ROM table bytes.",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "91fc497",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-type2a-targets.json",
+  "decompile_artifact": "build/re/actor-type2a-targeted-decompile.json",
+  "table": {
+    "base": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      {
+        "runtime_type": "0x2A",
+        "entry_address": "0x001D66",
+        "raw_bytes": "E9C6001A",
+        "handler": "0x001AE9C6",
+        "classification": "shared player-collision response"
+      },
+      {
+        "runtime_type": "0x2B",
+        "entry_address": "0x001D6A",
+        "raw_bytes": "EBFE001A",
+        "handler": "0x001AEBFE",
+        "classification": "empty return"
+      },
+      {
+        "runtime_type": "0x2C",
+        "entry_address": "0x001D6E",
+        "raw_bytes": "EECA001A",
+        "handler": "0x001AEECA",
+        "classification": "interaction-gated handler"
+      },
+      {
+        "runtime_type": "0x2D",
+        "entry_address": "0x001D72",
+        "raw_bytes": "EE40001A",
+        "handler": "0x001AEE40",
+        "classification": "transient cleanup/spawn handler"
+      }
+    ]
+  },
+  "impact": {
+    "superseded_claim": "The prior Type-0x2A finding incorrectly attributed the empty handler 0x001AEBFE to table entry 0x001D66.",
+    "corrected_claim": "Type 0x2A shares 0x001AE9C6 with Type 0x0A/0x1D/0x20. The empty return at 0x001AEBFE belongs to Type 0x2B.",
+    "route_effect": "This reopens only the possibility of a shared interaction response when Type 0x2A overlaps the player. It does not establish a launch: 0x001AE9C6 delegates to the common collision/interaction path, which has no direct PLAYER_VY impulse."
+  },
+  "verification": {
+    "method": "Direct big-endian reads from the verified ROM at 0x001CBE + (runtime_type * 4), cross-checked against the raw hexdump and the corrected Ghidra target run.",
+    "raw_hexdump": "rom/Disneys_Aladdin_U_p1.bin at 0x001D40..0x001D7F",
+    "result": "confirmed"
+  },
+  "conclusion": "The Type-0x2A table attribution is corrected. Future runtime probes must trace 0x001AE9C6 for Type 0x2A and reserve 0x001AEBFE for Type 0x2B."
+}

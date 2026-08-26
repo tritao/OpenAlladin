@@ -15,12 +15,18 @@
       "rom_address": "0x001CBE",
       "type": "0x2A",
       "entry_address": "0x001D66",
-      "handler": "0x001AEBFE"
+      "handler": "0x001AE9C6"
     },
     "handler": {
-      "address": "0x001AEBFE",
-      "name": "ActorType2A_PlayerCollisionHandler",
-      "effect": "RTS with no state, position, velocity, interaction, actor, or scene writes"
+      "address": "0x001AE9C6",
+      "name": "ActorShared_PlayerCollisionHandler",
+      "effect": "Shared player-collision response used by runtime types 0x0A, 0x1D, 0x20, and 0x2A. It enters the common collision block and interaction-state recovery path; it has no direct player launch or SCENE_STATE assignment."
+    },
+    "adjacent_correction": {
+      "type": "0x2B",
+      "entry_address": "0x001D6A",
+      "handler": "0x001AEBFE",
+      "effect": "Empty return with no state, position, velocity, interaction, actor, or scene writes"
     },
     "template": {
       "address": "0x001B7AF8",
@@ -32,7 +38,8 @@
   "runtime_correlation": {
     "source": "re/mame/findings/upper-route-object-decoding-v1.json",
     "observed_object": "The Type-0x2A moving object travels vertically near the upper-route frontier, approximately world (1861,769) to (1888,863), then resets.",
-    "route_classification": "non-collidable moving scenery/effect actor; not the missing traversal connector"
+    "route_classification": "The Type-0x2A object uses the shared collision response rather than an empty handler. Existing traces do not show an overlapping player collision with this object, and the shared response has no direct launch; the object is still not established as the missing traversal connector."
   },
-  "conclusion": "Runtime Type 0x2A cannot provide the unresolved Level 01 vertical transfer through player collision: its dispatch target is an empty return. The upper-route search should focus on handhold/bounce actors, terrain response, or an unobserved resource branch rather than this object."
+  "correction": "The original finding had an off-by-one dispatch-table attribution: 0x001D66 contains 0x001AE9C6, while 0x001D6A contains 0x001AEBFE. The empty-return conclusion applies to Type 0x2B, not Type 0x2A.",
+  "conclusion": "Runtime Type 0x2A is routed through the shared player-collision response, not an empty return. That shared path does not directly inject a launch or assign SCENE_STATE, and the retained Level 01 traces do not show a Type-0x2A overlap. The object remains a lower-priority traversal hypothesis, while Type 0x2B is the empty-return entry."
 }

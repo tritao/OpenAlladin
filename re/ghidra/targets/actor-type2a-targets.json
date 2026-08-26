@@ -6,13 +6,16 @@
     "purpose": "Decode the player-collision handler for runtime actor type 0x2A, the moving upper-route object observed in the level-01 actor inventory, and determine whether it can provide traversal or only a local response."
   },
   "targets": [
-    { "address": "0x001AEBFE", "name": "ActorType2A_PlayerCollisionHandler" },
+    { "address": "0x001AE9C6", "name": "ActorShared_PlayerCollisionHandler_Type2A" },
+    { "address": "0x001AEBFE", "name": "ActorType2B_PlayerCollisionHandler" },
     { "address": "0x001ABB40", "name": "PlayerCollisionPass" },
     { "address": "0x001AE4F8", "name": "PlayerProcessInteractionState" },
     { "address": "0x001B7AF8", "name": "ActorTemplateType2A" }
   ],
   "memory_references": [
     { "address": "0x001CBE", "name": "PLAYER_COLLISION_HANDLER_TABLE" },
+    { "address": "0x001D66", "name": "PLAYER_COLLISION_HANDLER_TYPE_2A" },
+    { "address": "0x001D6A", "name": "PLAYER_COLLISION_HANDLER_TYPE_2B" },
     { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },
     { "address": "0x00FFF0D8", "name": "PLAYER_INTERACTION_GATE" },
     { "address": "0x00FFF0F5", "name": "PLAYER_INTERACTION_MODE" }

@@ -158,6 +158,42 @@
     - rom_handler_table_decode
     - mame_type_34_wall_actor_probe
 
+0x001D66:
+  name: PLAYER_COLLISION_HANDLER_TYPE_2A
+  type: rom_pointer
+  confidence: confirmed
+  description: Player-collision dispatch pointer for actor type 0x2A; its big-endian ROM value is 0x001AE9C6, the shared player-collision response handler.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_table_correction
+
+0x001D6A:
+  name: PLAYER_COLLISION_HANDLER_TYPE_2B
+  type: rom_pointer
+  confidence: confirmed
+  description: Player-collision dispatch pointer for actor type 0x2B; its big-endian ROM value is 0x001AEBFE, an empty return.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_table_correction
+
+0x001D6E:
+  name: PLAYER_COLLISION_HANDLER_TYPE_2C
+  type: rom_pointer
+  confidence: confirmed
+  description: Player-collision dispatch pointer for actor type 0x2C; its big-endian ROM value is 0x001AEECA, an interaction-gated handler entry.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_table_correction
+
+0x001D72:
+  name: PLAYER_COLLISION_HANDLER_TYPE_2D
+  type: rom_pointer
+  confidence: confirmed
+  description: Player-collision dispatch pointer for actor type 0x2D; its big-endian ROM value is 0x001AEE40, the transient cleanup/spawn handler.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_table_correction
+
 0x001EBA:
   name: ACTOR_COLLISION_HANDLER_TABLE
   type: rom_pointer_table

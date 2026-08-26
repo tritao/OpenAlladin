@@ -719,11 +719,13 @@ scene state. This separates the static upper-stop/vertical-response family
 from the unresolved route transfer.
 
 The Type-0x2A collision classification is recorded in
-`re/mame/findings/20260826-level01-actor-type2a-decomp-v1.json`. Its player
-collision-table entry at `0x001D66` points to `0x001AEBFE`, which is an empty
-return. The vertically moving Type-0x2A object observed in the upper-route
-inventory is consequently non-collidable scenery/effect data, not the missing
-traversal connector.
+`re/mame/findings/20260826-level01-actor-type2a-decomp-v1.json`. A later table
+audit corrected its dispatch attribution: entry `0x001D66` contains
+`0x001AE9C6`, the shared handler used by Types `0x0A`, `0x1D`, and `0x20`,
+while the empty return `0x001AEBFE` belongs to Type `0x2B` at `0x001D6A`.
+`re/mame/findings/20260826-player-collision-table-correction-v1.json` records
+the raw-byte cross-check. Type `0x2A` remains unproven as a traversal object,
+but it must not be classified as statically non-collidable.
 
 The integrated upper-frontier boundary replay is recorded in
 `re/mame/findings/20260826-level01-integrated-natural-exit-v1.json` and
