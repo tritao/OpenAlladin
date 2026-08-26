@@ -1,0 +1,55 @@
+{
+  "format": "openaladdin-level01-route-geometry-audit-finding-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-route-geometry-audit-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "65426f7",
+  "static_decompilation": {
+    "target": "re/ghidra/targets/level01-special-cell-targets.json",
+    "report": "build/re/level01-special-cell-targeted-decompile.json",
+    "behavior_0x80_0x81": { "handler": "0x001B65BE", "result": "no-op return" },
+    "behavior_0x85": { "handler": "0x001B5448", "result": "sets TERRAIN_SURFACE_TRANSITION_FLAG=0xFF" },
+    "behavior_0x86": { "handler": "0x001B5440", "result": "clears TERRAIN_SURFACE_TRANSITION_FLAG" }
+  },
+  "observed": [
+    {
+      "branch": "high-walkway-continuation",
+      "source": "build/re/campaigns/20260826-level01-high-walkway-continuation-probes-v1",
+      "result": "The replayable high walkway starts near (1703,530), crosses the guard region, and drops through the 0x85/0x86 contour around X≈2290-2420. Rightward and jump-assisted variants reach the lower band, never Y<470, and remain SCENE_STATE=0x01."
+    },
+    {
+      "branch": "lower-edge-rope-alignment",
+      "source": "build/re/campaigns/20260826-level01-far-edge-rope-alignment-v1",
+      "result": "From the lower far edge near (4748,874), left input settles around X≈4733-4736 and Up never attaches to the rope. The verified rope entrance remains the preceding approach checkpoint at (4728,808)."
+    },
+    {
+      "branch": "far-rope-top",
+      "source": "build/re/campaigns/20260826-level01-far-rope-top-dismount-v1",
+      "result": "The exact rope-top state is (4728,671). Lateral input alone leaves it fixed; C+Right falls to the lower edge; C+Left enters the middle-band shaft around Y=628 but does not produce a normal landing."
+    },
+    {
+      "branch": "far-shaft",
+      "source": "build/re/campaigns/20260826-level01-far-shaft-climb-probes-v1",
+      "result": "Jump-left followed by Up, Up+Left, attack, and repeat-jump variants either remain on the 0x25/0x37 contour near Y=628 or fall to the lower band. No branch reaches the row-10 platform or exit height."
+    },
+    {
+      "branch": "lower-floor-jump",
+      "source": "build/re/campaigns/20260826-level01-lower-floor-middle-platform-v1",
+      "result": "Ordinary lower-floor jumps near X=4444 reach only about Y=827 and return to the lower floor; they do not bridge the approximately 250-pixel gap to the middle platform at Y≈624."
+    },
+    {
+      "branch": "row10-plain-jump",
+      "source": "build/re/campaigns/20260826-level01-row10-platform-jump-v1",
+      "result": "A plain C jump from the far upper contour near X=4408 does not launch upward because the player is in the non-landing contour state; it falls to the lower band. The previously tested C+Up negative result is therefore not the only jump family, but the missing ordinary jump is negative too."
+    },
+    {
+      "branch": "dismount-settle",
+      "source": "build/re/campaigns/20260826-level01-far-rope-dismount-settle-v1",
+      "result": "Releasing controls after C+Left dismount does not restore a grounded state. The player remains in terrain state 0xFF with landing_state=0 while on the 0x37 contour, confirming the shaft branch is an edge response rather than a normal platform."
+    }
+  ],
+  "conclusion": "The special row-15 cells at the upper corridor are inert, the high walkway is a reproducible optional/drop branch, and the far rope is a one-way lower-to-middle connector whose ordinary dismount does not expose the row-10 platform. The natural level-01 exit route remains unresolved; the remaining high-value target is the interaction/resource path that creates or enables the next upper connector, rather than more repetitions of these direct controller families.",
+  "next_action": "Trace level-01 scene/object resource records and interaction callbacks around the row-10 platform, the far rope dismount, and the level exit resource; preserve a natural checkpoint whenever a callback changes PLAYER_INTERACTION_MODE, TERRAIN_STATE, or a scene gate."
+}

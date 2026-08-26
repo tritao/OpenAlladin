@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-special-cell-response",
+    "purpose": "Decode the behavior-0x80/0x81 cells at the upper exit corridor and correlate their generic handler with the 0x85/0x86 upper-edge contour path."
+  },
+  "targets": [
+    { "address": "0x001B65BE", "name": "Behavior-0x80/0x81 special-cell handler" },
+    { "address": "0x001B5440", "name": "Behavior-0x86 upper-edge contour handler" },
+    { "address": "0x001B5448", "name": "Behavior-0x85 upper-edge contour handler" },
+    { "address": "0x001A9D98", "name": "Player terrain response state machine" },
+    { "address": "0x001B5B4A", "name": "Level-01 enter routine" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0BD", "name": "TERRAIN_SURFACE_TRANSITION_FLAG" },
+    { "address": "0x00FFF0CE", "name": "TERRAIN_QUERY_STATE_A" },
+    { "address": "0x00FFF0CF", "name": "TERRAIN_QUERY_STATE_B" },
+    { "address": "0x00FFF0D6", "name": "TERRAIN_STATE" },
+    { "address": "0x00FFF0E9", "name": "SCENE_SCRIPT_COUNTDOWN" }
+  ]
+}

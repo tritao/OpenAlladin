@@ -408,6 +408,18 @@ probe is recorded in
 `re/mame/campaigns/20260826-level01-upper-x4412-up-matrix-v1.json`; six
 Up/C+Up/directional branches near x≈4412 likewise remain negative.
 
+The consolidated route-geometry audit is recorded in
+`re/mame/campaigns/20260826-level01-route-geometry-audit-v1.json`, with the
+full result in
+`re/mame/findings/20260826-level01-route-geometry-audit-v1.json`. It preserves
+the replayable high-walkway drop, exact lower-edge rope-alignment attempts,
+far-rope-top dismounts, shaft climb variants, lower-floor jump attempts, and
+the previously missing plain-C jump near the row-10 platform. The new static
+special-cell target also decompiles behavior `0x80/0x81` at `0x001B65BE` as a
+no-op; behaviors `0x85/0x86` only set/clear the contour flag. These branches
+remain in scene state `0x01` and do not reach the exit height, closing the
+special-cell and direct-dismount hypotheses while preserving all checkpoints.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -444,6 +456,7 @@ Up/C+Up/directional branches near x≈4412 likewise remain negative.
 | `20260826-level01-upper-exact-opening-alignment-v2` | recorded-negative | exact Type-1E/Type-20 alignment and Up/C/directional/attack response matrix |
 | `20260826-level01-upper-pair-y-alignment-v1` | recorded-negative-controlled | controlled player-Y alignment with the upper Type-1E/Type-20 pair |
 | `20260826-level01-upper-x4412-up-matrix-v1` | recorded-negative | Up/C+Up matrix near the row-15 special cell between upper surfaces |
+| `20260826-level01-route-geometry-audit-v1` | recorded-negative-frontier | consolidated high-walkway, far-rope, shaft, and upper-platform geometry audit |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
