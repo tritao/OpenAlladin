@@ -121,6 +121,15 @@ the finding or commit message.
 - `re/mame/findings/20260826-level01-canonical-recording-v5.json`: records the
   63 named v5 checkpoints and significant route events, ending at world
   `(4728,671)` on terrain behavior `0x24` with `SCENE_STATE=0x01`.
+- The v5 campaign is now extended with a fresh horizontal-line segment, the
+  natural far-juggler defeat, and a timed lower-platform sweep. The juggler
+  transition is checkpointed at frame 99 (`0x0A→0x84`); continued left movement
+  reaches the gap band at world `(4121,912)`, and three C-jump pulses reach a
+  stable lower checkpoint near `(3296,912)` without yet opening the upper route.
+- `re/mame/findings/20260826-level01-actor-collision-decomp-v1.json` records
+  the static `0x001AC458` actor-to-actor handler and its natural confirmation in
+  the v5 juggler-defeat trace. Apple timing branches remain retained as
+  negative evidence because their projectile collision band misses the juggler.
 - `20260826-level01-tower-negative-v1`: loaded-state recording from the clean
   upper-edge checkpoint through the lower tower. It verifies the 0x47 surface
   mode/latch behavior, identifies the resident 0x43 lamp and 0x20 enemy, and
@@ -150,6 +159,10 @@ the finding or commit message.
   interaction-row publish branch, and replaces the actor with type 0x84. None
   of the 17 targets writes `SCENE_STATE=0x08`; the v4 natural-transfer
   frontier therefore remains the correct replay baseline.
+- `re/mame/findings/20260826-level01-actor-collision-decomp-v1.json` confirms
+  the receiving type-0x0A actor collision path at `0x001AC458`: it clears the
+  source, installs the type-0x84 terminal template, and does not write
+  `SCENE_STATE`.
 
 ### Scene and exit work
 

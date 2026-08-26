@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-level01-actor-collision-decomp-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-canonical-recording-v5.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-combat-targets.json",
+  "decompile_artifact": "build/re/actor-combat-targeted-decompile.json",
+  "runtime_fixture": "build/re/campaigns/20260826-level01-canonical-recording-v5/natural-juggler-defeat",
+  "target": {
+    "address": "0x001AC458",
+    "name": "ActorType0A_ActorCollisionHandler",
+    "dispatch_table": "0x001EBA",
+    "result": "The actor-to-actor collision handler for receiving type 0x0A clears the colliding source actor, processes the shared type-0x2D interaction branch, and replaces the receiving actor with the type-0x84 terminal template. Target types 0x10, 0x11, and 0x13 can arm SCENE_SCRIPT_COUNTDOWN=0x20; this path does not directly assign SCENE_STATE.",
+    "confidence": "confirmed-static"
+  },
+  "runtime_confirmation": {
+    "checkpoint": "natural-juggler-defeat:juggler-defeated",
+    "input": "left*80,b*20,left*260",
+    "actor_slot": 5,
+    "actor_type_before": "0x0A",
+    "actor_type_after": "0x84",
+    "transition_frame": 99,
+    "result": "The natural far-band sword attack produces the expected in-place terminal replacement. The scene remains 0x01 and the player continues into the lower gap/platform band."
+  },
+  "collision_geometry": {
+    "juggler_frame": "0x001F6614",
+    "juggler_collision_min_pixels": [-8, -43],
+    "juggler_collision_max_pixels": [6, 14],
+    "projectile_frame": "0x001FD478",
+    "projectile_collision_min_pixels": [-7, -5],
+    "projectile_collision_max_pixels": [7, 9],
+    "result": "The recorded apple branches miss the juggler's vertical collision band; the successful sword branch is the first natural far-band actor transition in the v5 campaign."
+  },
+  "conclusion": "The actor collision/death path is now both statically decoded and naturally confirmed. It is an actor terminal replacement, not the missing scene transition or upper launch."
+}

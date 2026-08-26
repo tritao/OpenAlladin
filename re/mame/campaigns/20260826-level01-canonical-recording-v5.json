@@ -190,6 +190,74 @@
         { "frame": 220, "name": "rope-top", "state": "far-vertical-rope-climb/states/genesis/rope-top.sta" },
         { "frame": 260, "name": "end", "state": "far-vertical-rope-climb/states/genesis/end.sta" }
       ]
+    },
+    {
+      "id": "natural-horizontal-line",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v5/natural-horizontal-line",
+      "frames": 120,
+      "input": "c+left*20,left*90,none*10",
+      "load_state": "end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v5/far-vertical-rope-climb/states/genesis/end.sta",
+      "recording_commit": "60bb229e5f99f33389a2c7cd52db2cb5ff49f3f1",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-frontier",
+      "checkpoints": [
+        { "frame": 1, "name": "rope-top-loaded", "state": "natural-horizontal-line/states/genesis/rope-top-loaded.sta" },
+        { "frame": 20, "name": "jump-release", "state": "natural-horizontal-line/states/genesis/jump-release.sta" },
+        { "frame": 40, "name": "line-approach", "state": "natural-horizontal-line/states/genesis/line-approach.sta" },
+        { "frame": 60, "name": "line-attached", "state": "natural-horizontal-line/states/genesis/line-attached.sta" },
+        { "frame": 100, "name": "line-left", "state": "natural-horizontal-line/states/genesis/line-left.sta" },
+        { "frame": 120, "name": "line-baseline", "state": "natural-horizontal-line/states/genesis/line-baseline.sta" }
+      ]
+    },
+    {
+      "id": "natural-juggler-defeat",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v5/natural-juggler-defeat",
+      "frames": 360,
+      "input": "left*80,b*20,left*260",
+      "load_state": "line-baseline",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v5/natural-horizontal-line/states/genesis/line-baseline.sta",
+      "recording_commit": "60bb229e5f99f33389a2c7cd52db2cb5ff49f3f1",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-positive-frontier",
+      "checkpoints": [
+        { "frame": 1, "name": "line-loaded", "state": "natural-juggler-defeat/states/genesis/line-loaded.sta" },
+        { "frame": 80, "name": "line-edge", "state": "natural-juggler-defeat/states/genesis/line-edge.sta" },
+        { "frame": 90, "name": "sword-window", "state": "natural-juggler-defeat/states/genesis/sword-window.sta" },
+        { "frame": 99, "name": "juggler-defeated", "state": "natural-juggler-defeat/states/genesis/juggler-defeated.sta" },
+        { "frame": 100, "name": "defeat-followthrough", "state": "natural-juggler-defeat/states/genesis/defeat-followthrough.sta" },
+        { "frame": 120, "name": "lower-band", "state": "natural-juggler-defeat/states/genesis/lower-band.sta" },
+        { "frame": 180, "name": "gap-approach", "state": "natural-juggler-defeat/states/genesis/gap-approach.sta" },
+        { "frame": 240, "name": "gap-window", "state": "natural-juggler-defeat/states/genesis/gap-window.sta" },
+        { "frame": 300, "name": "post-gap", "state": "natural-juggler-defeat/states/genesis/post-gap.sta" },
+        { "frame": 360, "name": "end", "state": "natural-juggler-defeat/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "natural-platform-three-pulses",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v5/platform-three-pulses",
+      "frames": 300,
+      "input": "left*30,c+left*20,left*50,c+left*20,left*50,c+left*20,left*130",
+      "load_state": "gap-approach",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v5/natural-juggler-defeat/states/genesis/gap-approach.sta",
+      "recording_commit": "60bb229e5f99f33389a2c7cd52db2cb5ff49f3f1",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-unresolved",
+      "checkpoints": [
+        { "frame": 1, "name": "gap-loaded", "state": "platform-three-pulses/states/genesis/gap-loaded.sta" },
+        { "frame": 30, "name": "early", "state": "platform-three-pulses/states/genesis/early.sta" },
+        { "frame": 60, "name": "jump-window", "state": "platform-three-pulses/states/genesis/jump-window.sta" },
+        { "frame": 120, "name": "mid", "state": "platform-three-pulses/states/genesis/mid.sta" },
+        { "frame": 180, "name": "platform-band", "state": "platform-three-pulses/states/genesis/platform-band.sta" },
+        { "frame": 240, "name": "late", "state": "platform-three-pulses/states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "platform-three-pulses/states/genesis/end.sta" }
+      ]
     }
   ]
 }

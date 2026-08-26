@@ -12,9 +12,9 @@
     "power_on_trace": "build/re/campaigns/20260826-level01-canonical-recording-v5/power-on-to-frontier-correct",
     "reference_trace": "build/re/campaigns/20260826-level01-canonical-recording-v4/fresh-to-frontier",
     "power_on_result": "exact-match across 2297 state frames",
-    "continuation_segments": 7,
-    "continuation_result": "all seven v5 loaded-state traces match their v4 counterparts frame-for-frame",
-    "recorded_checkpoint_count": 63
+    "continuation_segments": 10,
+    "continuation_result": "all seven inherited v5 loaded-state traces match their v4 counterparts frame-for-frame; three new natural-extension segments are recorded from v5-owned checkpoints",
+    "recorded_checkpoint_count": 86
   },
   "significant_events": [
     {
@@ -75,6 +75,36 @@
       "world": [4728, 671],
       "terrain_behavior": "0x24",
       "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "natural-horizontal-line:line-baseline",
+      "event": "The far vertical connector dismounts onto the horizontal line and reaches its left edge.",
+      "world": [4512, 628],
+      "terrain_behavior": "0x25",
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "natural-juggler-defeat:juggler-defeated",
+      "event": "Holding sword while leaving the line changes the far sword juggler in place from type 0x0A to terminal type 0x84.",
+      "world": [4354, 681],
+      "actor_slot": 5,
+      "actor_type_before": "0x0A",
+      "actor_type_after": "0x84",
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "natural-juggler-defeat:gap-approach",
+      "event": "After the juggler defeat, continued left movement reaches the lower platform/gap band without a scene reset.",
+      "world": [4121, 912],
+      "terrain_behavior": "0x11",
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "natural-platform-three-pulses:end",
+      "event": "Three timed C-jump pulses traverse the lower band to a stable lower-floor checkpoint; no upper transfer is produced.",
+      "world": [3296, 912],
+      "terrain_behavior": "0x11",
+      "scene_state": "0x01"
     }
   ],
   "frontier": {
@@ -87,7 +117,9 @@
   "conclusions": [
     "A clean recording pass is feasible without discarding the existing research: v5 is a fresh power-on record, while v3/v4 remain preserved historical evidence.",
     "The v5 power-on segment and every continuation are independently replayable from v5-owned checkpoints.",
-    "The route remains in SCENE_STATE=0x01 at the far-rope frontier; no natural transition to SCENE_STATE=0x08 has been observed."
+    "The route remains in SCENE_STATE=0x01 at the far-rope frontier; no natural transition to SCENE_STATE=0x08 has been observed.",
+    "The far juggler is naturally cleared by the sword input while the player leaves the horizontal line: actor slot 5 changes from 0x0A to 0x84 at frame 99. The earlier apple branches are retained as negative timing/vertical-band evidence.",
+    "The post-juggler route reaches the lower platform band. Timed C pulses can carry the player to world X≈3296, but the tested family does not yet reach the upper pole/transfer."
   ],
-  "next_action": "Use the v5 far-rope and far-floor checkpoints for controller-only weapon/transfer searches, recording each new launch, collision response, actor transition, death, and scene-gate change as a new named checkpoint."
+  "next_action": "Continue from natural-platform-three-pulses:end and the type-0x1E/type-0x20 actor checkpoints, testing pole/upper-platform inputs and recording every jump landing, actor transition, death, and scene-gate change."
 }
