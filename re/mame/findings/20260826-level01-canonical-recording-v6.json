@@ -1,0 +1,133 @@
+{
+  "format": "openaladdin-level01-canonical-recording-v6-finding-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-canonical-recording-v6.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "827d12d",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "827d12d",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "purpose": "Maintain the clean v6 power-on record while recording every meaningful frontier experiment, including the Type1E wall opening, far-rope transfer, and bounded upper-connector probes.",
+  "verification": {
+    "campaign_verifier": "python3 tools/openaladdin/mame/campaign.py verify re/mame/campaigns/20260826-level01-canonical-recording-v6.json",
+    "power_on_and_inherited_chain": "The v6 power-on trace and all ten inherited continuation segments match their v5 counterparts frame-for-frame.",
+    "total_segments": 27,
+    "total_checkpoint_count": 183,
+    "new_segments_over_v5": 16,
+    "new_checkpoint_count_over_v5": 97,
+    "scene_state": "0x01 throughout the recorded v6 continuation and frontier probes"
+  },
+  "type1e_wall_opening": {
+    "fixture": "build/re/campaigns/20260826-level01-canonical-recording-v6/type1e-sword-open",
+    "loaded_state": "build/re/campaigns/20260826-level01-canonical-recording-v6/platform-three-pulses/states/genesis/late.sta",
+    "input": "none*40,b+left*60,none*80",
+    "actor_slot": 7,
+    "actor_address": "0x00FF800E",
+    "actor_type": "0x1E",
+    "player_collision_handler": "0x001AE796",
+    "interaction_gate": "0x00FFF0D8",
+    "debug_context": "At the successful handler entry A1=0x00FF800E, A1X=0x0CD6, A1TYPE=0x1E, A1FLAGS=0x00, F7E49=0xFF, and F0D8=0x01.",
+    "checkpoints": [
+      { "frame": 40, "event": "sword attack starts before the wall" },
+      { "frame": 42, "event": "interaction gate is active" },
+      { "frame": 58, "event": "player/Type1E collision window" },
+      { "frame": 64, "event": "actor slot 7 changes 0x1E -> 0x84" },
+      { "frame": 66, "event": "actor stream returns through the original Type1E record" },
+      { "frame": 80, "event": "player has crossed the wall at world X=3287" }
+    ],
+    "conclusion": "The wall is passable through a precisely timed sword interaction. This is a confirmed actor response, not a scene transition; no write to SCENE_STATE=0x08 occurs."
+  },
+  "next_frontier": {
+    "fixture": "build/re/campaigns/20260826-level01-canonical-recording-v6/wall-crossed-probes/jump-left",
+    "loaded_state": "build/re/campaigns/20260826-level01-canonical-recording-v6/type1e-sword-open/states/genesis/wall-crossed.sta",
+    "input": "c+left*20,left*160,none*80",
+    "checkpoints": [
+      { "frame": 20, "world": [3230, 856], "event": "jump clears the opened wall" },
+      { "frame": 60, "world": [3110, 912], "event": "lower band crossed" },
+      { "frame": 120, "world": [2930, 912], "event": "approach to next object band" },
+      { "frame": 180, "world": [2846, 912], "event": "movement reaches the next solid boundary" },
+      { "frame": 220, "world": [2846, 912], "event": "stable frontier checkpoint" }
+    ],
+    "actors": "The type-0x43 object at world (2720,768) transitions to type 0x8A while the player approaches; ordinary left, jump, sword, apple, and direction-change probes do not pass the boundary.",
+    "conclusion": "The lower wall is a solid terrain boundary around world X=2846, with a type-0x8A object at (2720,768); it is not the current route frontier. The main route has now advanced through the far rope-top jump to a sword-cleared upper frontier at world (4372,628), recorded in the far-rope-sword-jump segment."
+  },
+  "far_rope_upper_transfer": {
+    "source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-vertical-rope-climb/states/genesis/end.sta",
+    "untimed_fixture": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-jump-left",
+    "untimed_input": "c+left*20,left*100,none*60",
+    "untimed_result": "The jump reaches the upper band at world (4492,628), but the player later loses the active frame state against the behavior-0x25/upper-actor cluster.",
+    "sword_fixture": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump",
+    "sword_input": "c+b+left*20,b+left*160,none*60",
+    "sword_checkpoints": [
+      { "frame": 20, "world": [4694,615], "event": "sword jump begins" },
+      { "frame": 60, "world": [4614,628], "event": "upper platform band reached" },
+      { "frame": 120, "world": [4494,628], "event": "upper actor cluster crossed" },
+      { "frame": 180, "world": [4374,628], "event": "sword-cleared upper corridor" },
+      { "frame": 240, "world": [4372,628], "event": "stable upper frontier" }
+    ],
+    "conclusion": "Sword timing changes the branch from an upper-band terminal collision into a replayable frontier at world (4372,628), still in SCENE_STATE=0x01."
+  },
+  "far_upper_connector_probes": {
+    "source": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4654-jump-up-right/states/genesis/end.sta",
+    "source_world": [4728, 671],
+    "source_behavior": "0x24",
+    "fixtures": [
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-up-v1",
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-up-right-v1",
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-up-left-v1",
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-jump-up-v1",
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-jump-right-v1",
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-jump-left-v1"
+    ],
+    "results": [
+      { "input": "up*240", "terminal_world": [4728, 671], "behavior": "0x24" },
+      { "input": "up+right*180,none*60", "terminal_world": [4728, 671], "behavior": "0x24" },
+      { "input": "up+left*180,none*60", "terminal_world": [4728, 671], "behavior": "0x24" },
+      { "input": "c+up*20,up*160,none*60", "peak_world": [4728, 604], "terminal_world": [4728, 628], "behavior": "0x25" },
+      { "input": "c+right*20,right*160,none*60", "peak_world": [4750, 604], "terminal_world": [4750, 874], "landing_state": "0x0B" },
+      { "input": "c+left*20,left*160,none*60", "peak_world": [4694, 604], "terminal_world": [4374, 628], "behavior": "0x25" }
+    ],
+    "conclusion": "The behavior-0x24 endpoint is the upper stop of the far vertical connector, not a climbable continuation. Direct Up and horizontal inputs leave it fixed; a fresh jump reaches only Y=604 and returns to the 0x25 band or lower floor. No exit-gate write or SCENE_STATE change occurred."
+  },
+  "far_marker_probe_matrix": {
+    "source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+    "source_world": [4372, 628],
+    "candidate_marker": { "actor_slot": 3, "actor_type": "0x40", "world": [4656, 672] },
+    "fixtures": [
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-rope4688-right-up",
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-rope4688-up-right-up",
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-rope4688-left-up",
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-rope4688-right-c-up",
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-rope4688-sword-up"
+    ],
+    "results": [
+      { "input": "right*158,up*120,none*42", "handoff_world": [4686, 628], "result": "stays on behavior 0x25" },
+      { "input": "up+right*158,up*120,none*42", "handoff_world": [4686, 628], "result": "stays on behavior 0x25" },
+      { "input": "right*158,up+left*20,up*100,none*42", "handoff_world": [4646, 628], "result": "stays on behavior 0x25" },
+      { "input": "right*158,c*20,up*100,none*42", "handoff_world": [4686, 754], "result": "C dismounts/falls; no climb" },
+      { "input": "b+right*158,up*120,none*42", "handoff_world": [4686, 628], "result": "stays on behavior 0x25" }
+    ],
+    "actor_effect": "In the C dismount trace the nearby type-0x40 marker changes to type 0x84 after the player falls through the interaction window; this is a transient actor response, not a vertical connector or scene gate.",
+    "conclusion": "The visible x≈4688 feature and marker actor do not provide a second climb route. The five controller-only branches remain in SCENE_STATE=0x01 and produce no write to SCENE_STATE=0x08 or the natural-exit gate."
+  },
+  "negative_evidence": [
+    {
+      "fixture": "build/re/campaigns/20260826-level01-canonical-recording-v6/post-type1e-left-route",
+      "result": "The post-crossing state is a terminal/death animation and resets to the checkpoint; it is not a valid continuation source."
+    },
+    {
+      "fixture": "build/re/campaigns/20260826-level01-canonical-recording-v6/lamp-frontier-probes",
+      "result": "Eight ordinary control families leave the player at world (2846,912); this bounds the lamp/object branch without treating it as a completed route."
+    },
+    {
+      "fixture": "build/re/campaigns/20260826-level01-canonical-recording-v6/frontier-terrain-probe-v2",
+      "result": "At world (2846,912), the left terrain probe reaches map row 40/column 177 (word 0x2450), whose floor/behavior byte is 0xFF. The ROM sets TERRAIN_STOP_LEFT_MOTION=0xFF at 0x001AD6B0 and the player remains stationary for 40 frames; no scene or actor gate is involved."
+    },
+    {
+      "fixture": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper-platform-left",
+      "result": "Ordinary movement from the upper landing advances only to world (4484,628) and the active player frame later clears; this branch is retained as upper-band negative evidence."
+    }
+  ],
+  "conclusion": "The v6 campaign remains the canonical append-only continuation record. It verifies the Type1E wall opening, the far-rope sword transfer, and the complete bounded probe set around the behavior-0x24 endpoint and x≈4688 marker. Those local branches are now classified as exhausted negative evidence; the level remains in SCENE_STATE=0x01 and the natural exit is unresolved. The next productive work is static/decompiler tracing of the remaining upper-route actor or launch condition, not another identical Up/rope sweep."
+}

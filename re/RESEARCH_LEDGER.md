@@ -121,6 +121,26 @@ the finding or commit message.
 - `re/mame/findings/20260826-level01-canonical-recording-v5.json`: records the
   63 named v5 checkpoints and significant route events, ending at world
   `(4728,671)` on terrain behavior `0x24` with `SCENE_STATE=0x01`.
+- `20260826-level01-canonical-recording-v6`: clean power-on baseline and
+  self-contained replay chain extending v5. It adds a precisely timed Type1E
+  sword opening at the lower wall (`0x1E→0x84` at frame 64) and a valid
+  jump-left continuation to a stable lower-band frontier at world `(2846,912)`.
+- `re/mame/findings/20260826-level01-canonical-recording-v6.json`: records the
+  Type1E handler context, successful wall crossing, type-0x8A object observed
+  at `(2720,768)`, and negative ordinary-control probes from the new frontier.
+- The v6 route now also records the far-rope upper transfer. An untimed jump
+  reaches `(4492,628)` but dies in the upper actor cluster; holding sword
+  during the jump carries the player through it to a stable frontier at
+  `(4372,628)`, still in `SCENE_STATE=0x01`.
+- The v6 frontier archive now records six controller families from the
+  behavior-`0x24` endpoint at `(4728,671)`. Direct Up/horizontal input leaves
+  the player fixed; a fresh jump peaks at `(4728,604)` and returns to the
+  behavior-`0x25` band or the lower floor. This endpoint is therefore the
+  upper stop of the connector, not an untested climb continuation.
+- A five-branch probe of the visible x≈4688 feature records the nearby type
+  `0x40` marker and its C-triggered transient `0x40→0x84` response. The
+  marker does not attach the player, launch him, or write a scene gate; all
+  branches remain in `SCENE_STATE=0x01`.
 - The v5 campaign is now extended with a fresh horizontal-line segment, the
   natural far-juggler defeat, and a timed lower-platform sweep. The juggler
   transition is checkpointed at frame 99 (`0x0A→0x84`); continued left movement
@@ -197,6 +217,23 @@ states to decode the far-band object/collision path, then resume controller-only
 replay and save a checkpoint for every launch, spring, handhold, rope
 attachment, dismount, reset, or scene gate.
 
+The v6 continuation adds a second replayable frontier: after the Type1E sword
+opening, a jump-left branch reaches world `(2846,912)` and stops against a
+boundary while a type-0x43 object at `(2720,768)` becomes type `0x8A`.
+Ordinary movement, jump, sword, apple, and direction-change probes remain
+negative there. The next trace should instrument the terrain response path at
+`0x001A9D98` and `0x001B1E38` while replaying that saved frontier, then test
+whether the boundary is geometry, a hidden connector, or an unobserved
+interaction gate.
+
+The active main-route frontier remains the sword-cleared upper corridor at
+`(4372,628)`, reached from the far rope with
+`c+b+left*20,b+left*160,none*60`. The local behavior-`0x24` endpoint and
+x≈4688 marker branches are now bounded, so the next productive step is to
+trace the remaining upper-route actor/launch condition in the ROM and target
+its initializer or collision handler. Repeating the same direct Up/rope
+inputs is no longer an open question.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -217,6 +254,7 @@ attachment, dismount, reset, or scene gate.
 | `20260826-level01-canonical-recording-v3` | recorded-frontier | current power-on record through lower-tower crossing and far vertical-rope frontier |
 | `20260826-level01-canonical-recording-v4` | recorded-frontier | fresh exact-match power-on record, owned continuation to far rope, and natural upper-transfer experiments |
 | `20260826-level01-canonical-recording-v5` | recorded-frontier | clean power-on recording and self-contained replay chain through the far vertical-rope frontier |
+| `20260826-level01-canonical-recording-v6` | recording-frontier | clean v5 replay, Type1E wall opening, far-rope transfer, and bounded upper-frontier probes |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

@@ -270,6 +270,347 @@
         { "frame": 240, "name": "late", "state": "platform-three-pulses/states/genesis/late.sta" },
         { "frame": 300, "name": "end", "state": "platform-three-pulses/states/genesis/end.sta" }
       ]
+    },
+    {
+      "id": "type1e-sword-open",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/type1e-sword-open",
+      "frames": 180,
+      "input": "none*40,b+left*60,none*80",
+      "load_state": "late",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/platform-three-pulses/states/genesis/late.sta",
+      "recording_commit": "827d12d",
+      "capture": "ram",
+      "actors": true,
+      "scene_state_trace": true,
+      "breakpoints": ["0x001AE796", "0x001AC318"],
+      "breakpoint_register_context": true,
+      "branch_class": "exploratory-positive",
+      "checkpoints": [
+        { "frame": 1, "name": "wall-loaded", "state": "type1e-sword-open/states/genesis/wall-loaded.sta" },
+        { "frame": 40, "name": "attack-start", "state": "type1e-sword-open/states/genesis/attack-start.sta" },
+        { "frame": 42, "name": "gate-window", "state": "type1e-sword-open/states/genesis/gate-window.sta" },
+        { "frame": 58, "name": "collision-window", "state": "type1e-sword-open/states/genesis/collision-window.sta" },
+        { "frame": 64, "name": "actor-type84", "state": "type1e-sword-open/states/genesis/actor-type84.sta" },
+        { "frame": 66, "name": "actor-stream-return", "state": "type1e-sword-open/states/genesis/actor-stream-return.sta" },
+        { "frame": 80, "name": "wall-crossed", "state": "type1e-sword-open/states/genesis/wall-crossed.sta" },
+        { "frame": 120, "name": "post-crossing", "state": "type1e-sword-open/states/genesis/post-crossing.sta" },
+        { "frame": 180, "name": "end", "state": "type1e-sword-open/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "wall-crossed-jump-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/wall-crossed-probes/jump-left",
+      "frames": 260,
+      "input": "c+left*20,left*160,none*80",
+      "load_state": "wall-crossed",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/type1e-sword-open/states/genesis/wall-crossed.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-positive-frontier",
+      "checkpoints": [
+        { "frame": 1, "name": "wall-crossed-loaded", "state": "wall-crossed-probes/jump-left/states/genesis/wall-crossed-loaded.sta" },
+        { "frame": 20, "name": "post-open", "state": "wall-crossed-probes/jump-left/states/genesis/post-open.sta" },
+        { "frame": 60, "name": "platform-approach", "state": "wall-crossed-probes/jump-left/states/genesis/platform-approach.sta" },
+        { "frame": 120, "name": "mid", "state": "wall-crossed-probes/jump-left/states/genesis/mid.sta" },
+        { "frame": 180, "name": "late", "state": "wall-crossed-probes/jump-left/states/genesis/late.sta" },
+        { "frame": 220, "name": "stable", "state": "wall-crossed-probes/jump-left/states/genesis/stable.sta" },
+        { "frame": 260, "name": "end", "state": "wall-crossed-probes/jump-left/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "frontier-terrain-probe",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/frontier-terrain-probe-v2",
+      "frames": 40,
+      "input": "left*40",
+      "load_state": "stable-frontier",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/wall-crossed-probes/jump-left/states/genesis/stable.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "breakpoints": ["0x001AD632", "0x001AD7B4", "0x001B1E38"],
+      "watched_addresses": ["0xFFF0C1", "0xFFF0C5", "0xFFF0C6", "0xFFF0C7", "0xFFF0C8", "0xFFF0C9", "0xFFF0CA", "0xFFF0CB", "0xFFF0D0", "0xFFF0DB", "0xFFF0DC", "0xFFF0E6"],
+      "branch_class": "exploratory-negative-geometry",
+      "checkpoints": [
+        { "frame": 1, "name": "stable-frontier", "state": "frontier-terrain-probe-v2/states/genesis/stable-frontier.sta" },
+        { "frame": 3, "name": "first-left-block", "state": "frontier-terrain-probe-v2/states/genesis/first-left-block.sta" },
+        { "frame": 10, "name": "wall-held", "state": "frontier-terrain-probe-v2/states/genesis/wall-held.sta" },
+        { "frame": 40, "name": "end", "state": "frontier-terrain-probe-v2/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-rope-jump-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-jump-left",
+      "frames": 180,
+      "input": "c+left*20,left*100,none*60",
+      "load_state": "end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-vertical-rope-climb/states/genesis/end.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-positive-frontier",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "far-rope-jump-left/states/genesis/loaded.sta" },
+        { "frame": 20, "name": "jump", "state": "far-rope-jump-left/states/genesis/jump.sta" },
+        { "frame": 60, "name": "mid", "state": "far-rope-jump-left/states/genesis/mid.sta" },
+        { "frame": 120, "name": "late", "state": "far-rope-jump-left/states/genesis/late.sta" },
+        { "frame": 180, "name": "frontier", "state": "far-rope-jump-left/states/genesis/frontier.sta" }
+      ]
+    },
+    {
+      "id": "far-rope-sword-jump",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump",
+      "frames": 240,
+      "input": "c+b+left*20,b+left*160,none*60",
+      "load_state": "end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-vertical-rope-climb/states/genesis/end.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-positive-frontier",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "far-rope-sword-jump/states/genesis/loaded.sta" },
+        { "frame": 20, "name": "jump", "state": "far-rope-sword-jump/states/genesis/jump.sta" },
+        { "frame": 60, "name": "upper-platform", "state": "far-rope-sword-jump/states/genesis/mid.sta" },
+        { "frame": 120, "name": "upper-band", "state": "far-rope-sword-jump/states/genesis/late.sta" },
+        { "frame": 180, "name": "sword-clear", "state": "far-rope-sword-jump/states/genesis/frontier.sta" },
+        { "frame": 240, "name": "upper-frontier", "state": "far-rope-sword-jump/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-upper-probe-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-up-v1",
+      "frames": 240,
+      "input": "up*240",
+      "load_state": "end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4654-jump-up-right/states/genesis/end.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-connector",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4728-up-v1/states/genesis/loaded.sta" },
+        { "frame": 20, "name": "jump", "state": "upper4728-up-v1/states/genesis/jump.sta" },
+        { "frame": 60, "name": "mid", "state": "upper4728-up-v1/states/genesis/mid.sta" },
+        { "frame": 120, "name": "late", "state": "upper4728-up-v1/states/genesis/late.sta" },
+        { "frame": 180, "name": "frontier", "state": "upper4728-up-v1/states/genesis/frontier.sta" },
+        { "frame": 240, "name": "end", "state": "upper4728-up-v1/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-upper-probe-up-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-up-right-v1",
+      "frames": 240,
+      "input": "up+right*180,none*60",
+      "load_state": "end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4654-jump-up-right/states/genesis/end.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-connector",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4728-up-right-v1/states/genesis/loaded.sta" },
+        { "frame": 20, "name": "jump", "state": "upper4728-up-right-v1/states/genesis/jump.sta" },
+        { "frame": 60, "name": "mid", "state": "upper4728-up-right-v1/states/genesis/mid.sta" },
+        { "frame": 120, "name": "late", "state": "upper4728-up-right-v1/states/genesis/late.sta" },
+        { "frame": 180, "name": "frontier", "state": "upper4728-up-right-v1/states/genesis/frontier.sta" },
+        { "frame": 240, "name": "end", "state": "upper4728-up-right-v1/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-upper-probe-up-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-up-left-v1",
+      "frames": 240,
+      "input": "up+left*180,none*60",
+      "load_state": "end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4654-jump-up-right/states/genesis/end.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-connector",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4728-up-left-v1/states/genesis/loaded.sta" },
+        { "frame": 20, "name": "jump", "state": "upper4728-up-left-v1/states/genesis/jump.sta" },
+        { "frame": 60, "name": "mid", "state": "upper4728-up-left-v1/states/genesis/mid.sta" },
+        { "frame": 120, "name": "late", "state": "upper4728-up-left-v1/states/genesis/late.sta" },
+        { "frame": 180, "name": "frontier", "state": "upper4728-up-left-v1/states/genesis/frontier.sta" },
+        { "frame": 240, "name": "end", "state": "upper4728-up-left-v1/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-upper-probe-jump-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-jump-up-v1",
+      "frames": 240,
+      "input": "c+up*20,up*160,none*60",
+      "load_state": "end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4654-jump-up-right/states/genesis/end.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-connector",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4728-jump-up-v1/states/genesis/loaded.sta" },
+        { "frame": 20, "name": "jump", "state": "upper4728-jump-up-v1/states/genesis/jump.sta" },
+        { "frame": 60, "name": "mid", "state": "upper4728-jump-up-v1/states/genesis/mid.sta" },
+        { "frame": 120, "name": "late", "state": "upper4728-jump-up-v1/states/genesis/late.sta" },
+        { "frame": 180, "name": "frontier", "state": "upper4728-jump-up-v1/states/genesis/frontier.sta" },
+        { "frame": 240, "name": "end", "state": "upper4728-jump-up-v1/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-upper-probe-jump-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-jump-right-v1",
+      "frames": 240,
+      "input": "c+right*20,right*160,none*60",
+      "load_state": "end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4654-jump-up-right/states/genesis/end.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-connector",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4728-jump-right-v1/states/genesis/loaded.sta" },
+        { "frame": 20, "name": "jump", "state": "upper4728-jump-right-v1/states/genesis/jump.sta" },
+        { "frame": 60, "name": "mid", "state": "upper4728-jump-right-v1/states/genesis/mid.sta" },
+        { "frame": 120, "name": "late", "state": "upper4728-jump-right-v1/states/genesis/late.sta" },
+        { "frame": 180, "name": "frontier", "state": "upper4728-jump-right-v1/states/genesis/frontier.sta" },
+        { "frame": 240, "name": "end", "state": "upper4728-jump-right-v1/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-upper-probe-jump-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4728-jump-left-v1",
+      "frames": 240,
+      "input": "c+left*20,left*160,none*60",
+      "load_state": "end",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4654-jump-up-right/states/genesis/end.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-connector",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4728-jump-left-v1/states/genesis/loaded.sta" },
+        { "frame": 20, "name": "jump", "state": "upper4728-jump-left-v1/states/genesis/jump.sta" },
+        { "frame": 60, "name": "mid", "state": "upper4728-jump-left-v1/states/genesis/mid.sta" },
+        { "frame": 120, "name": "late", "state": "upper4728-jump-left-v1/states/genesis/late.sta" },
+        { "frame": 180, "name": "frontier", "state": "upper4728-jump-left-v1/states/genesis/frontier.sta" },
+        { "frame": 240, "name": "end", "state": "upper4728-jump-left-v1/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-marker-second-rope-right-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-rope4688-right-up",
+      "frames": 320,
+      "input": "right*158,up*120,none*42",
+      "load_state": "upper-frontier",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-marker",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4372-rope4688-right-up/states/genesis/loaded.sta" },
+        { "frame": 100, "name": "approach", "state": "upper4372-rope4688-right-up/states/genesis/approach.sta" },
+        { "frame": 158, "name": "rope4688", "state": "upper4372-rope4688-right-up/states/genesis/rope4688.sta" },
+        { "frame": 178, "name": "handoff", "state": "upper4372-rope4688-right-up/states/genesis/handoff.sta" },
+        { "frame": 260, "name": "climb", "state": "upper4372-rope4688-right-up/states/genesis/climb.sta" },
+        { "frame": 320, "name": "end", "state": "upper4372-rope4688-right-up/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-marker-second-rope-up-right-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-rope4688-up-right-up",
+      "frames": 320,
+      "input": "up+right*158,up*120,none*42",
+      "load_state": "upper-frontier",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-marker",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4372-rope4688-up-right-up/states/genesis/loaded.sta" },
+        { "frame": 100, "name": "approach", "state": "upper4372-rope4688-up-right-up/states/genesis/approach.sta" },
+        { "frame": 158, "name": "rope4688", "state": "upper4372-rope4688-up-right-up/states/genesis/rope4688.sta" },
+        { "frame": 178, "name": "handoff", "state": "upper4372-rope4688-up-right-up/states/genesis/handoff.sta" },
+        { "frame": 260, "name": "climb", "state": "upper4372-rope4688-up-right-up/states/genesis/climb.sta" },
+        { "frame": 320, "name": "end", "state": "upper4372-rope4688-up-right-up/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-marker-second-rope-left-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-rope4688-left-up",
+      "frames": 320,
+      "input": "right*158,up+left*20,up*100,none*42",
+      "load_state": "upper-frontier",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-marker",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4372-rope4688-left-up/states/genesis/loaded.sta" },
+        { "frame": 100, "name": "approach", "state": "upper4372-rope4688-left-up/states/genesis/approach.sta" },
+        { "frame": 158, "name": "rope4688", "state": "upper4372-rope4688-left-up/states/genesis/rope4688.sta" },
+        { "frame": 178, "name": "handoff", "state": "upper4372-rope4688-left-up/states/genesis/handoff.sta" },
+        { "frame": 260, "name": "climb", "state": "upper4372-rope4688-left-up/states/genesis/climb.sta" },
+        { "frame": 320, "name": "end", "state": "upper4372-rope4688-left-up/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-marker-second-rope-right-c-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-rope4688-right-c-up",
+      "frames": 320,
+      "input": "right*158,c*20,up*100,none*42",
+      "load_state": "upper-frontier",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-marker",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4372-rope4688-right-c-up/states/genesis/loaded.sta" },
+        { "frame": 100, "name": "approach", "state": "upper4372-rope4688-right-c-up/states/genesis/approach.sta" },
+        { "frame": 158, "name": "rope4688", "state": "upper4372-rope4688-right-c-up/states/genesis/rope4688.sta" },
+        { "frame": 178, "name": "handoff", "state": "upper4372-rope4688-right-c-up/states/genesis/handoff.sta" },
+        { "frame": 260, "name": "climb", "state": "upper4372-rope4688-right-c-up/states/genesis/climb.sta" },
+        { "frame": 320, "name": "end", "state": "upper4372-rope4688-right-c-up/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-marker-second-rope-sword-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-rope4688-sword-up",
+      "frames": 320,
+      "input": "b+right*158,up*120,none*42",
+      "load_state": "upper-frontier",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "827d12d",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-marker",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4372-rope4688-sword-up/states/genesis/loaded.sta" },
+        { "frame": 100, "name": "approach", "state": "upper4372-rope4688-sword-up/states/genesis/approach.sta" },
+        { "frame": 158, "name": "rope4688", "state": "upper4372-rope4688-sword-up/states/genesis/rope4688.sta" },
+        { "frame": 178, "name": "handoff", "state": "upper4372-rope4688-sword-up/states/genesis/handoff.sta" },
+        { "frame": 260, "name": "climb", "state": "upper4372-rope4688-sword-up/states/genesis/climb.sta" },
+        { "frame": 320, "name": "end", "state": "upper4372-rope4688-sword-up/states/genesis/end.sta" }
+      ]
     }
   ]
 }
