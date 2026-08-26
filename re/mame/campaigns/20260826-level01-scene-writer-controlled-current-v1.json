@@ -1,0 +1,43 @@
+{
+  "campaign": "20260826-level01-scene-writer-controlled-current-v1",
+  "status": "recorded-controlled-boundary-write",
+  "purpose": "Reproduce the current-checkout level-01 boundary write and observe whether the loaded upper-frontier fixture reaches the follow-on scene-script/table writer.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "c49871b57db8cccffe1e44dee35d9b00f371cd49",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "instrumentation": {
+    "watched_addresses": ["0xFF7E26", "0xFFF572", "0xFFF57A", "0xFFF0E9", "0xFFF0D0", "0xFFF0DB", "0xFFF0DC", "0xFFF0E6"],
+    "native_watchpoints": true,
+    "scene_state_trace": true,
+    "state_sync": true,
+    "debug_log": "build/re/diagnostics/scene-writer-controlled-current-v3/debug.log"
+  },
+  "segments": [
+    {
+      "id": "current-frontier-boundary-followup",
+      "trace_dir": "build/re/diagnostics/scene-writer-controlled-current-v3",
+      "frames": 500,
+      "input": "none*500",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "memory_pokes": [
+        { "frame": 1, "address": "0xFF7DFA", "value": "0x0219", "width": "u16", "meaning": "local player X; world X becomes 0x128C" },
+        { "frame": 1, "address": "0xFF7DFC", "value": "0x00B0", "width": "u16", "meaning": "local player Y; world Y becomes 0x01CC" },
+        { "frame": 1, "address": "0xFF7E58", "value": "0x0000", "width": "u16" },
+        { "frame": 1, "address": "0xFF7E5A", "value": "0x0000", "width": "u16" }
+      ],
+      "checkpoints": [
+        { "frame": 1, "name": "boundary-seeded" },
+        { "frame": 50, "name": "exit-countdown" },
+        { "frame": 404, "name": "scene-script-advanced" },
+        { "frame": 500, "name": "settled" }
+      ],
+      "debug_log": "build/re/diagnostics/scene-writer-controlled-current-v3/debug.log"
+    }
+  ]
+}

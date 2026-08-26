@@ -514,6 +514,16 @@ state-08 selector writes `0x08` only after table index `1` is selected. The
 remaining natural question is therefore how normal level progression reaches
 that selector/index state.
 
+The current-checkout boundary follow-up is recorded in
+`re/mame/campaigns/20260826-level01-scene-writer-controlled-current-v1.json`
+and `re/mame/findings/20260826-level01-scene-writer-controlled-current-v1.json`.
+Using the current upper-frontier checkpoint and local fields that produce
+world `(4748,460)`, native watchpoints reproduce
+`0x001B5B66 -> FFF0E9=FF`, but no writer reaches `SCENE_STATE`,
+`SCENE_SCRIPT_CURSOR`, or `SCENE_TABLE_INDEX` within 500 frames. This is a
+current-fixture negative follow-on result; the older controlled state-03
+campaign remains the authoritative observed script-writer path.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -557,6 +567,7 @@ that selector/index state.
 | `20260826-level01-connector2112-upper-stop-v1` | recorded-negative-frontier | column-132 endpoint and left/right/neutral dismount matrix |
 | `20260826-level01-behavior47-collision-edge-trace-v1` | recorded-negative-frontier | indirect edge trace of the natural lower-tower Type-0x20 contact and cleanup path |
 | `20260826-level01-tower-plain-c-edge-trace-v1` | recorded-negative-frontier | plain-C/Up edge trace from the natural lower-tower lamp checkpoint |
+| `20260826-level01-scene-writer-controlled-current-v1` | recorded-controlled-boundary-write | current-frontier boundary write and negative follow-on writer trace |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

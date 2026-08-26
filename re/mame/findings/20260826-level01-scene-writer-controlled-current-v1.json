@@ -1,0 +1,58 @@
+{
+  "format": "openaladdin-level01-scene-writer-controlled-current-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-scene-writer-controlled-current-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "c49871b57db8cccffe1e44dee35d9b00f371cd49",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "source_checkpoint": {
+    "path": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+    "world_after_poke": [4748, 460],
+    "scene_state": "0x01",
+    "table_index": "0x00",
+    "script_cursor": "0x4082"
+  },
+  "write_results": [
+    {
+      "address": "0xFFF0E9",
+      "pc": "0x001B5B66",
+      "value": "0xFF",
+      "machine_frame": "0x12A0",
+      "meaning": "Level01_EnterRoutine arms the scene-script countdown."
+    },
+    {
+      "address": "0xFFF0DB",
+      "pc": "0x001B1E6E",
+      "value": "0x00",
+      "machine_frame": "0x12A0",
+      "meaning": "Terrain resolver clears the player transition lock."
+    },
+    {
+      "address": "0xFFF0DA",
+      "pc": "0x001AC7AA",
+      "value": "0x00",
+      "machine_frame_range": "0x12E7-0x14D5",
+      "meaning": "Word-aligned native watch for odd byte FFF0DB also reports the adjacent lock-clear word."
+    }
+  ],
+  "negative_results": {
+    "scene_state_writer": "No write to 0xFF7E26 was observed.",
+    "scene_script_cursor": "No write to 0xFFF572 was observed.",
+    "scene_table_index": "No write to 0xFFF57A was observed.",
+    "player_transition_countdown": "No write to 0xFFF0DC was observed.",
+    "player_terminal_transition": "No write to 0xFFF0E6 was observed.",
+    "scene_state": "Remains 0x01 in the current-frontier fixture."
+  },
+  "conclusion": {
+    "verified": [
+      "The current harness and current MAME replay the local-coordinate boundary predicate at world (4748,460).",
+      "The boundary write is still the ROM-owned 0x001B5B66 -> 0xFFF0E9 path.",
+      "This current-frontier fixture does not enter the follow-on script-state writer within 500 frames."
+    ],
+    "relationship_to_prior_evidence": "The historical controlled scene-03 proof remains the authoritative observed script-state writer path; this current replay records the separate negative follow-on result and does not replace it.",
+    "unresolved": "A natural or correctly staged pending-script completion that reaches SceneTable_SelectNextState with SCENE_TABLE_INDEX=1 is still required for the state-08 path."
+  },
+  "next_action": "Use the historical controlled transition state immediately before its script writer as the next static/runtime anchor, then identify the condition that stages SCENE_TABLE_INDEX=1 rather than repeating the boundary predicate."
+}
