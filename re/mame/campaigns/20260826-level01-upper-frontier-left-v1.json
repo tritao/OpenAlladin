@@ -1,0 +1,50 @@
+{
+  "campaign": "20260826-level01-upper-frontier-left-v1",
+  "status": "recorded-negative",
+  "purpose": "Test the unexamined left-side continuation from the established upper frontier toward the Level 01 target/exit area.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "c52aa53",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "c52aa53",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "source_world": [4372, 628],
+  "branches": [
+    {
+      "id": "left",
+      "trace_dir": "build/re/diagnostics/upper-frontier-left-v1/left",
+      "frames": 240,
+      "input": "left*240",
+      "terminal_world": [3749, 912],
+      "behavior": "0x11"
+    },
+    {
+      "id": "jump-left",
+      "trace_dir": "build/re/diagnostics/upper-frontier-left-v1/jump-left",
+      "frames": 240,
+      "input": "c+left*20,left*220",
+      "terminal_world": [3747, 912],
+      "behavior": "0x11"
+    },
+    {
+      "id": "up-left",
+      "trace_dir": "build/re/diagnostics/upper-frontier-left-v1/up-left",
+      "frames": 240,
+      "input": "up+left*180,left*60",
+      "terminal_world": [4199, 912],
+      "behavior": "0x11"
+    },
+    {
+      "id": "jump-up-left",
+      "trace_dir": "build/re/diagnostics/upper-frontier-left-v1/jump-up-left",
+      "frames": 240,
+      "input": "c+left*20,up+left*120,left*100",
+      "terminal_world": [3747, 912],
+      "behavior": "0x11"
+    }
+  ],
+  "result": "Every branch leaves the upper band and lands on the lower floor. No branch reaches world y<470, arms FFF0E9, or changes scene state from 0x01.",
+  "next": "Search the lower-floor connector/object chain with targeted platform and interaction traces instead of repeating unrestricted left movement."
+}

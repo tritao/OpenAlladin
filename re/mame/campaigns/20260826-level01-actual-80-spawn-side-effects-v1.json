@@ -1,0 +1,52 @@
+{
+  "campaign": "20260826-level01-actual-80-spawn-side-effects-v1",
+  "status": "recorded-controlled",
+  "purpose": "Trace the exact Level 01 0x80 interaction through its flag clear, generic spawn allocator, and actor initialization.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "afe4bec",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "afe4bec",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v5/power-on-to-frontier-correct/states/genesis/level01-entry.sta",
+  "trace_dir": "build/re/diagnostics/actual80-spawn-side-effects-v1",
+  "input": "none*30",
+  "memory_pokes": [
+    "FFD99F=0x80:u8",
+    "FF7E06=3984:u16",
+    "FF7E08=224:u16",
+    "FF7DF6=3971:u16",
+    "FF7DF8=223:u16",
+    "FF7E42=3984:u16",
+    "FF7E44=464:u16",
+    "FF7DFA=13:u16",
+    "FF7DFC=241:u16",
+    "FF7E02=3984:u16",
+    "FF7E04=464:u16",
+    "FF7E58=0:u16",
+    "FF7E5A=0:u16",
+    "FFF0B2=0xFFE0:u16"
+  ],
+  "breakpoint_writes": ["FF7DAC=FF22C2:u32"],
+  "breakpoints": [
+    "0x001AE3FC",
+    "0x001B6F0C",
+    "0x001B525E",
+    "0x001AE30A"
+  ],
+  "observed": {
+    "machine_frame": "0x04DE",
+    "selector": "0x80",
+    "handler": "0x001B6F0C",
+    "fff104_write": "0x001B6F14 -> FFF104=0x00",
+    "spawn_routine": "0x001B525E",
+    "initializer": "0x001AE30A",
+    "actor_slot": 20,
+    "actor_address": "0x00FF8368",
+    "actor_type": "0x87",
+    "actor_world": [3952, 464]
+  },
+  "result": "The exact 0x5630 source record dispatches to selector 0x80, clears FFF104, and creates runtime actor type 0x87. Scene state remains 0x01; this is not a scene-transition path.",
+  "next": "Preserve the natural route frontier while searching for the upper exit predicate; use this trace as the semantic reference for any natural 0x80 encounter."
+}
