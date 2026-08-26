@@ -1162,7 +1162,8 @@ void Engine::update_actor_movement() {
             continue;
         }
 
-        std::uint32_t cursor = actor.movement_pc;
+        const std::uint32_t step_pc = actor.movement_pc;
+        std::uint32_t cursor = step_pc;
         if (cursor + 1 >= rom_bytes_.size()) continue;
 
         // MovementVM_TickActors integrates the two actor velocity words
@@ -1375,7 +1376,10 @@ void Engine::update_actor_movement() {
                     }
                     continue;
                 }
-                // A failed condition retries the same step on the next tick.
+                // A failed condition retries the same signed-delta step on
+                // the next tick. Keep the cursor at the step start; the
+                // command itself is not a new movement record.
+                actor.movement_pc = step_pc;
                 cursor_committed = true;
                 break;
             }
@@ -1456,6 +1460,9 @@ AnimationContext Engine::player_animation_context(bool grounded) const {
         player_.terrain_behavior,
     };
     context.selector = player_.animation_selector;
+    // The context is also used by const trace serialization. The VM is the
+    // only consumer that mutates this engine-owned shared state.
+    context.random_state = const_cast<std::uint32_t*>(&random_state_);
     if (checkpoint_animation_selector_pending_) {
         return context;
     }
@@ -1464,7 +1471,9 @@ AnimationContext Engine::player_animation_context(bool grounded) const {
     selector.response_active = player_.terrain_response_active;
     selector.transition_gate = player_.terrain_transition_gate;
     selector.camera_special_mode = static_cast<std::uint8_t>(camera_.special_mode);
-    if (selector.response_timer == 0 && grounded) {
+    if (selector.response_timer == 0
+        && (player_.terrain_response_active != 0
+            || (grounded && player_.terrain_vertical_stop == 0))) {
         selector.response_timer = std::max<std::uint8_t>(
             player_.terrain_response_timer_state,
             1
@@ -1543,17 +1552,28 @@ void Engine::update_actor_animations() {
         animation_state.type = actor.type;
         animation_state.x = actor.x;
         animation_state.y = actor.y;
+        animation_state.movement_pc = actor.movement_pc;
         animation_state.facing_x_flip = actor.facing_x_flip;
         animation_state.facing_y_flip = actor.facing_y_flip;
         animation_state.flags = actor.flags;
         animation_state.animation_pc = actor.animation_pc;
         animation_state.frame_ptr = actor.frame_ptr;
         animation_state.animation_timer = actor.animation_timer;
-        actor_animations_[slot].update_actor(animation_state, context);
+        // The checkpointed native slice reconstructs interaction actors from
+        // the visible map, while MAME carries the complete pre-checkpoint
+        // actor table. Do not let those reconstructed actors consume the
+        // player's shared animation RNG sequence until actor checkpoints are
+        // serialized as part of the replay state.
+        AnimationContext actor_context = context;
+        if (!actor_snapshot_mode_) {
+            actor_context.random_state = nullptr;
+        }
+        actor_animations_[slot].update_actor(animation_state, actor_context);
 
         actor.type = animation_state.type;
         actor.x = animation_state.x;
         actor.y = animation_state.y;
+        actor.movement_pc = animation_state.movement_pc;
         actor.facing_x_flip = animation_state.facing_x_flip;
         actor.facing_y_flip = animation_state.facing_y_flip;
         actor.flags = animation_state.flags;
@@ -1903,6 +1923,11 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
                 // seven-frame camera delay on the following pass. The camera
                 // routine consumes one count during this same native update.
                 camera_.update_delay = 7;
+                // The same interaction path starts the 0x28-frame selector
+                // lock before the next player animation dispatch. Keeping it
+                // in the selector state makes the run stream restart at the
+                // same boundary as the Genesis actor-flag path.
+                player_.animation_selector.interaction_lock = 0x28;
             }
         } else if ((actor.flags & kInteractionFlag) != 0) {
             actor.flags = static_cast<std::uint8_t>(actor.flags & ~kInteractionFlag);
@@ -1959,7 +1984,7 @@ void Engine::reset() {
     } else {
         actors_.fill({});
     }
-    terrain_random_state_ = 0;
+    random_state_ = 0;
     terrain_input_world_x_ = 0;
     terrain_input_world_y_ = 0;
     deferred_animation_spawn_.reset();
@@ -2631,8 +2656,10 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         // FUN_001B3032: the scene-5 branch advances the shared 32-bit state
         // with state = state * 13 + 7, then uses the low byte as D7. The ROM
         // only allocates when that byte is below 0x28.
-        terrain_random_state_ = terrain_random_state_ * 13U + 7U;
-        const std::uint8_t random_value = static_cast<std::uint8_t>(terrain_random_state_);
+        random_state_ = random_state_ * 13U + 7U;
+        const std::uint8_t random_value = static_cast<std::uint8_t>(
+            random_state_ ^ (random_state_ >> 16)
+        );
         if (random_value >= 0x28) {
             break;
         }
@@ -2983,6 +3010,9 @@ void Engine::update_state08(const InputState& input) {
 }
 
 void Engine::update(const InputState& input) {
+    if (player_.animation_selector.interaction_lock != 0) {
+        --player_.animation_selector.interaction_lock;
+    }
     // F5 spawn requests are produced by the player animation VM on the
     // previous frame. Genesis allocates the record before the next actor
     // animation pass, so drain the request at the frame boundary rather than
@@ -3056,7 +3086,9 @@ void Engine::update(const InputState& input) {
         && last_ground_direction_ != 0 && player_.vx == 0;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
     const bool start_jump = input.jump_pressed && was_grounded;
-    const AnimationContext animation_context = player_animation_context(was_grounded);
+    AnimationContext animation_context = player_animation_context(was_grounded);
+    animation_context.selector.interaction_lock =
+        player_.animation_selector.interaction_lock;
 
     if (was_grounded && player_.grounded) {
         if (input.left != input.right) {
@@ -3079,6 +3111,33 @@ void Engine::update(const InputState& input) {
     if (checkpoint_terrain_behavior_override_) {
         resolve_terrain(previous_world_y);
     }
+    bool landed_during_frame = false;
+    if (checkpoint_terrain_behavior_override_
+        && !was_grounded
+        && !player_.grounded
+        && player_.terrain_response_active != 0
+        && player_.terrain_vertical_stop != 0
+        && player_.vy >= 0) {
+        // The fixture uses the recovered resolver behavior but still needs
+        // the ROM's contour landing before the next motion integration. This
+        // keeps the row-crossing frame airborne and lands on the following
+        // pass, matching the original resolver's ordering.
+        const auto contour = level_.query_player_contour(
+            player_world_x(), player_world_y(), player_.terrain_surface_mode);
+        if (contour.valid) {
+            const int target_y = contour.target_world_y - camera_.y;
+            if (std::abs(target_y - player_.y) <= 8) {
+                player_.y = target_y;
+                player_.vy = 0;
+                player_.grounded = true;
+                player_.terrain_landing_state = contour.contour;
+                player_.terrain_response_active = 0;
+                player_.terrain_response_timer_state = 0;
+                player_.terrain_horizontal_response = 0;
+                landed_during_frame = true;
+            }
+        }
+    }
     integrate_motion();
     if (checkpoint_terrain_behavior_override_ && checkpoint_terrain_behavior_ == 0x2B) {
         // The original response path continues through the positive-motion
@@ -3089,6 +3148,13 @@ void Engine::update(const InputState& input) {
     }
     if (!checkpoint_terrain_behavior_override_) {
         resolve_terrain(previous_world_y);
+    }
+    if (!player_.grounded && player_.terrain_response_active != 0
+        && vertical_stop_before_frame) {
+        // The ROM clears the launch tile's behavior before entering the
+        // positive vertical phase. Keep the terrain response active for the
+        // published RAM state, but let the post-integrator handoff run.
+        player_.terrain_behavior = 0;
     }
     if (!player_.grounded && player_.terrain_behavior == 0
         && (vertical_stop_before_frame || player_.terrain_response_timer_state != 0)) {
@@ -3158,9 +3224,10 @@ void Engine::update(const InputState& input) {
         last_ground_direction_ = 0;
     }
 
+    const bool landing_event = just_landed || landed_during_frame;
     const SpritePose desired_pose = !player_.grounded
         ? SpritePose::Jump
-        : (just_landed
+        : (landing_event
             ? SpritePose::Landing
             : (animation_.pose() == SpritePose::Landing && !animation_.finished()
                 ? SpritePose::Landing
@@ -3183,7 +3250,8 @@ void Engine::update(const InputState& input) {
     // after the actor tick so the native path owns the same boundary as the
     // ROM's interaction caller.
     if (!stable_terrain_handler_fixture
-        && animation_.rom_loaded() && !just_landed && desired_pose != SpritePose::Landing) {
+        && animation_.rom_loaded() && !landing_event && desired_pose != SpritePose::Landing
+        && player_.animation_selector.interaction_lock != 0) {
         AnimationContext selector_context = animation_context;
         selector_context.player_x = player_.x;
         selector_context.player_y = player_.y;
@@ -3210,7 +3278,10 @@ void Engine::update(const InputState& input) {
                 ? 1
                 : desired_pose == SpritePose::Brake
                 ? 0
-                : std::max<std::uint8_t>(player_.terrain_response_timer_state, 1);
+                : (player_.terrain_response_active != 0
+                    || (player_.grounded && player_.terrain_vertical_stop == 0)
+                    ? 1
+                    : 0);
         animation_.select_player_interaction_state(selector_context);
     }
     if (input.attack_pressed && was_grounded && animation_.rom_loaded()) {

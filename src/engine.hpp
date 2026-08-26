@@ -445,10 +445,10 @@ private:
     bool checkpoint_animation_selector_pending_ = false;
     int interaction_reference_x_ = 0;
     int interaction_reference_y_ = 0;
-    // FUN_001B3032 is the fixed-ROM scene-5 response PRNG. Keep its state
-    // deterministic in the native slice so controlled terrain fixtures can
-    // reproduce the ROM's allocation/animation selection.
-    std::uint32_t terrain_random_state_ = 0;
+    // FUN_001B3032 is the shared fixed-ROM PRNG used by terrain responses and
+    // animation F0 branches. Keep its state in one place so VM consumers do
+    // not silently diverge from the Genesis sequence.
+    std::uint32_t random_state_ = 0;
     int terrain_input_world_x_ = 0;
     int terrain_input_world_y_ = 0;
     std::optional<AnimationSpawnRequest> deferred_animation_spawn_;

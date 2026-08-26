@@ -76,12 +76,16 @@ struct AnimationContext {
     std::uint8_t terrain_response_timer_state = 0;
     std::uint8_t terrain_behavior = 0;          // FFF0C3
     AnimationSelectorState selector{};
+    // The ROM animation F0 command calls the same shared PRNG as the terrain
+    // response code. Engine owns the state; every VM sees the same sequence.
+    std::uint32_t* random_state = nullptr;
 };
 
 struct ActorAnimationState {
     std::uint8_t type = 0;
     std::uint16_t x = 0;
     std::uint16_t y = 0;
+    std::uint32_t movement_pc = 0;
     std::uint8_t facing_x_flip = 0;
     std::uint8_t facing_y_flip = 0;
     std::uint8_t flags = 0;
@@ -155,7 +159,11 @@ public:
 private:
     static const Clip& clip(SpritePose pose);
     void select(SpritePose pose);
-    void select_rom_stream(SpritePose pose, bool execute_now);
+    void select_rom_stream(
+        SpritePose pose,
+        bool execute_now,
+        const AnimationContext* context = nullptr
+    );
     void tick_rom(const AnimationContext& context);
     void tick_actor_rom(const AnimationContext& context, const ActorAnimationState& actor);
     std::uint32_t dynamic_stream(const AnimationContext& context) const;
@@ -172,11 +180,7 @@ private:
     bool compare_command(std::uint32_t& cursor);
     bool flag_command(std::uint32_t& cursor);
     void sync_context(const AnimationContext& context);
-    void sync_selector_context(
-        const AnimationSelectorState& selector,
-        bool grounded,
-        std::uint8_t timer_state
-    );
+    void sync_selector_context(const AnimationSelectorState& selector, bool grounded);
     void sync_actor_context(const ActorAnimationState& actor, const AnimationContext& context);
     bool response_stream_needs_recovery() const;
 

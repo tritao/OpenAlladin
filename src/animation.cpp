@@ -12,6 +12,7 @@ constexpr std::uint32_t kIdleStream = 0x00121D9A;
 constexpr std::uint32_t kRunStream = 0x00122006;
 constexpr std::uint32_t kBrakeStream = 0x001232E0;
 constexpr std::uint32_t kJumpStream = 0x001221B0;
+constexpr std::uint32_t kJumpTimedStream = 0x0012214E;
 constexpr std::uint32_t kLandingStream = 0x00121F84;
 constexpr std::uint32_t kResponseStream = 0x00121FA6;
 constexpr std::uint32_t kResponseRecoveryStream = 0x00121FA0;
@@ -121,8 +122,8 @@ void PlayerAnimationVm::reset() {
     frame_pointer_ = 0;
     stream_entry_ = rom_mode_ ? kIdleStream : clip(pose_).stream_entry;
     return_pc_ = 0;
-    // The player traces use the low branch of the F0E0 idle embellishment;
-    // keep this deterministic until the shared game RNG is modelled.
+    // The engine supplies the shared ROM RNG through AnimationContext. Keep
+    // the standalone VM deterministic when it is used without an engine.
     random_value_ = 0x00;
     spawn_request_ = {};
     update_count_ = 0;
@@ -139,10 +140,22 @@ void PlayerAnimationVm::select(SpritePose pose) {
     timer_ = clip(pose_).steps.front().duration;
 }
 
-void PlayerAnimationVm::select_rom_stream(SpritePose pose, bool execute_now) {
+void PlayerAnimationVm::select_rom_stream(
+    SpritePose pose,
+    bool execute_now,
+    const AnimationContext* context
+) {
     pose_ = pose;
     stream_kind_ = AnimationStreamKind::Locomotion;
-    stream_entry_ = clip(pose).stream_entry;
+    // Player_HandleJumpAndVerticalState selects the alternate jump stream
+    // when the terrain response timer is already armed. This is common after
+    // a grounded run and is distinct from the ordinary 0x1221B0 jump root.
+    stream_entry_ = pose == SpritePose::Jump
+        && context != nullptr
+        && (context->terrain_response_timer_state != 0
+            || context->selector.response_timer != 0)
+        ? kJumpTimedStream
+        : clip(pose).stream_entry;
     animation_pc_ = stream_entry_;
     timer_ = 0;
     landing_finished_ = false;
@@ -202,8 +215,7 @@ void PlayerAnimationVm::write_memory32(std::uint32_t address, std::uint32_t valu
 
 void PlayerAnimationVm::sync_selector_context(
     const AnimationSelectorState& selector,
-    bool grounded,
-    std::uint8_t timer_state
+    bool grounded
 ) {
     // These bytes are inputs to the player stream selector, not VM-local
     // scratch. Synchronize the complete selector surface at every actor
@@ -234,9 +246,7 @@ void PlayerAnimationVm::sync_selector_context(
     write_memory8(0xFFF0F0, selector.response_state_f0);
     write_memory8(0xFFF101, selector.response_state_101);
     write_memory16(0xFFF0B0, as_u16(selector.horizontal_response));
-    write_memory8(0xFFF0CC, selector.response_timer != 0
-        ? selector.response_timer
-        : grounded ? std::max<std::uint8_t>(timer_state, 1) : timer_state);
+    write_memory8(0xFFF0CC, selector.response_timer);
     write_memory8(0xFFEFFF, selector.interaction_pending);
     write_memory8(0xFFF11F, selector.state_lock);
 }
@@ -249,11 +259,7 @@ void PlayerAnimationVm::sync_context(const AnimationContext& context) {
     write_memory16(0xFF7E58, as_u16(context.player_vx));
     write_memory16(0xFF7E5A, as_u16(context.player_vy));
     write_memory8(0xFFF0C3, context.terrain_behavior);
-    sync_selector_context(
-        context.selector,
-        context.grounded,
-        context.terrain_response_timer_state
-    );
+    sync_selector_context(context.selector, context.grounded);
     write_memory8(0xFF7E28, 1);
     write_memory16(2, as_u16(context.player_x));
     write_memory16(4, as_u16(context.player_y));
@@ -271,12 +277,9 @@ void PlayerAnimationVm::sync_actor_context(
     write_memory16(0xFF7E58, as_u16(context.player_vx));
     write_memory16(0xFF7E5A, as_u16(context.player_vy));
     write_memory8(0xFFF0C3, context.terrain_behavior);
-    sync_selector_context(
-        context.selector,
-        context.grounded,
-        context.terrain_response_timer_state
-    );
+    sync_selector_context(context.selector, context.grounded);
     write_memory8(0xFF7E28, actor.type);
+    write_memory32(0x0A, actor.movement_pc);
     write_memory16(2, actor.x);
     write_memory16(4, actor.y);
     write_memory8(9, actor.facing_x_flip);
@@ -390,6 +393,11 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         return false;
     case 0xF0: {
         const std::uint8_t threshold = read_rom8(cursor + 1);
+        if (context.random_state != nullptr) {
+            *context.random_state = *context.random_state * 13U + 7U;
+            const std::uint32_t state = *context.random_state;
+            random_value_ = static_cast<std::uint8_t>(state ^ (state >> 16));
+        }
         cursor += 2;
         cursor = random_value_ < threshold ? read_rom32(cursor) : cursor + 4;
         return false;
@@ -466,7 +474,9 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         if (limit == 0xFF) limit = 0x140;
         const int distance = std::abs(context.world_x - static_cast<int>(read_memory16(2)));
         cursor += 2;
-        cursor = limit >= distance ? cursor + 4 : read_rom32(cursor);
+        // The inline path is the far-away approach behavior; the target path
+        // is the near-enough idle behavior used by the interaction actor.
+        cursor = limit >= distance ? read_rom32(cursor) : cursor + 4;
         return false;
     }
     case 0xFE: {
@@ -612,6 +622,7 @@ void PlayerAnimationVm::update_actor(
     actor.animation_pc = animation_pc_;
     actor.frame_ptr = frame_pointer_;
     actor.animation_timer = actor_[0x37];
+    actor.movement_pc = read_memory32(0x0A);
 }
 
 bool PlayerAnimationVm::take_spawn_request(AnimationSpawnRequest& request) {
@@ -765,11 +776,18 @@ void PlayerAnimationVm::update(
     }
     horizontal_direction_ = horizontal_direction;
     sync_context(context);
+    if (stream_kind_ == AnimationStreamKind::Locomotion
+        && desired_pose == SpritePose::Run
+        && context.selector.interaction_lock == 0x28) {
+        // Actor flag bit 5 starts the same 0x28-frame interaction lock that
+        // restarts the Genesis run stream at the camera-boundary frame.
+        select_rom_stream(SpritePose::Run, false, &context);
+    }
     if (response_stream_needs_recovery()) {
-        select_rom_stream(desired_pose, false);
+        select_rom_stream(desired_pose, false, &context);
     } else if (stream_kind_ == AnimationStreamKind::Locomotion
         && (desired_pose != pose_ || animation_pc_ == 0)) {
-        select_rom_stream(desired_pose, false);
+        select_rom_stream(desired_pose, false, &context);
     }
     if (pose_ == SpritePose::Landing && landing_reselect_pending_ && (update_count_ & 1U) != 0) {
         // The gameplay state selector writes the landing root again on the
