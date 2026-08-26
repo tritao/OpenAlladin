@@ -479,6 +479,19 @@ None installs a hidden behavior-0x22 connector or writes a scene state. The
 X≈2720 gap is therefore still a dynamic behavior-0x47 response/interaction
 question, not an unresolved static resource table entry.
 
+The indirect edge trace for the natural behavior-0x47 branch is recorded in
+`re/mame/campaigns/20260826-level01-behavior47-collision-edge-trace-v1.json`
+and `re/mame/findings/20260826-level01-behavior47-collision-edge-trace-v1.json`.
+From the tower-lamp checkpoint, `up+right*60,none*60` reaches the resident
+Type-0x20 actor at approximately `(2804,818)`, then follows the shared
+player-collision path through the transient Type-0x2D/Type-0x84 cleanup chain
+before settling on the ordinary lower floor. The indirect breakpoint table
+reaches the interaction and collision helpers but reaches neither the
+behavior-0x29 launch target `0x1B557E` nor the behavior-0x2D bounce target
+`0x1B56B6`; `SCENE_STATE` remains `0x01`. This closes the resident Type-0x20
+contact family as a route explanation and makes the launch/bounce families and
+the unresolved Type-0x1E actor the next natural targets.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -520,6 +533,7 @@ question, not an unresolved static resource table entry.
 | `20260826-level01-natural-tower-response-trace-v1` | recorded-negative-frontier | natural lower-tower terrain, interaction-row, and scene-gate trace |
 | `20260826-level01-connector2112-trace-v1` | recorded-negative-frontier | natural column-132 connector climb and upper-stop handler trace |
 | `20260826-level01-connector2112-upper-stop-v1` | recorded-negative-frontier | column-132 endpoint and left/right/neutral dismount matrix |
+| `20260826-level01-behavior47-collision-edge-trace-v1` | recorded-negative-frontier | indirect edge trace of the natural lower-tower Type-0x20 contact and cleanup path |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

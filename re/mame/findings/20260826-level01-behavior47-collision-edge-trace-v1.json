@@ -1,0 +1,98 @@
+{
+  "format": "openaladdin-level01-behavior47-collision-edge-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-behavior47-collision-edge-trace-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "4e4a9b1769014a7fe1d5b280a2b1e662b534e1e8",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "source_checkpoint": {
+    "path": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+    "world": [2715, 770],
+    "terrain_behavior": "0x00",
+    "scene_state": "0x01"
+  },
+  "route_result": {
+    "input": "up+right*60,none*60",
+    "checkpoints": [
+      { "frame": 1, "world": [2715, 770], "scene_state": "0x01" },
+      { "frame": 35, "world": [2804, 818], "actor_type": "0x20", "terrain_behavior": "0x00" },
+      { "frame": 60, "world": [2879, 828], "actor_type": "0x2D", "terrain_behavior": "0x00" },
+      { "frame": 120, "world": [2882, 912], "terrain_behavior": "0x11", "scene_state": "0x01" }
+    ]
+  },
+  "edge_results": [
+    {
+      "table": "interaction",
+      "target": "0x001B735E",
+      "hits": 3,
+      "relative_frames": [2],
+      "meaning": "Initial level interaction dispatch; it does not create a scene transition in this branch."
+    },
+    {
+      "table": "interaction",
+      "target": "0x001B6E7A",
+      "hits": 1,
+      "relative_frames": [24],
+      "meaning": "Interaction dispatch immediately before the Type-0x20 contact window; exact handler semantics remain secondary to the collision result."
+    },
+    {
+      "table": "player_collision",
+      "target": "0x001AE9C6",
+      "hits": 22,
+      "relative_frames": [25, 46],
+      "return": "0x001ABCA0",
+      "meaning": "Shared player-collision path while Aladdin overlaps the resident Type-0x20 actor; the selector arms PLAYER_INTERACTION_LOCK but no launch follows."
+    },
+    {
+      "table": "player_collision",
+      "target": "0x001AE9D4",
+      "hits": 22,
+      "relative_frames": [25, 46],
+      "return": "0x001ABCA0",
+      "meaning": "The alternate entry/return inside the same Type-0x20 collision path."
+    },
+    {
+      "table": "player_collision",
+      "target": "0x001AF468",
+      "hits": 2,
+      "relative_frames": [61, 62],
+      "meaning": "A later Type-0x40 actor cleanup/reinitialization path; the actor becomes Type-0x84 and the player continues falling."
+    },
+    {
+      "table": "interaction",
+      "target": "0x001B700C",
+      "hits": 1,
+      "relative_frames": [65],
+      "meaning": "Interaction dispatch during the lower-band cleanup sequence; no scene or vertical transfer follows."
+    },
+    {
+      "table": "actor_collision+interaction+player_collision+terrain",
+      "target": "0x001B65BE",
+      "hits": 42,
+      "relative_frames": [78, 119],
+      "meaning": "The known behavior-0x80/0x81 no-op/default target is reached after landing in the ordinary lower band; it is not a launch handler."
+    }
+  ],
+  "negative_targets": {
+    "behavior_0x29_launch": "0x001B557E not reached",
+    "behavior_0x2D_bounce": "0x001B56B6 not reached",
+    "scene_state": "remains 0x01",
+    "exit_gates": "no transition to 0x08 and no natural exit gate write"
+  },
+  "conclusion": {
+    "verified": [
+      "The natural Up+Right branch contacts the resident Type-0x20 actor at approximately (2804,818).",
+      "That contact follows the shared player-collision/interaction recovery chain and produces a Type-0x2D transient actor, not a traversal launch.",
+      "The later Type-0x40 path is cleanup/reinitialization; the player falls to the ordinary behavior-0x11 lower floor.",
+      "Neither the behavior-0x29 launch nor behavior-0x2D bounce handler is reached."
+    ],
+    "negative_evidence": [
+      "The resident tower actor chain is not the missing bridge to the X≈2720 behavior-0x22 connector.",
+      "No indirect edge in this branch writes SCENE_STATE=0x08 or selects a vertical transfer."
+    ],
+    "unresolved": "The dynamic launch/interaction condition that can move the player from the lower tower into the X≈2720 connector remains unidentified."
+  },
+  "next_action": "Prioritize the remaining natural actor/terrain source that can reach a launch or bounce target; use the edge-trace table as the stop condition and do not repeat the Type-0x20 contact family."
+}

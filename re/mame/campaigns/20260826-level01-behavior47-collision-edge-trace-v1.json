@@ -1,0 +1,39 @@
+{
+  "campaign": "20260826-level01-behavior47-collision-edge-trace-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Trace indirect collision and interaction targets while the natural lower-tower branch passes the resident Type-0x20 actor and enters the lower continuation.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "4e4a9b1769014a7fe1d5b280a2b1e662b534e1e8",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+  "instrumentation": {
+    "indirect_tables": ["terrain", "actor_vm", "player_collision", "actor_collision", "interaction"],
+    "edge_target_count": 282,
+    "breakpoint_targets": ["0x001B5470", "0x001B557E", "0x001B56B6"]
+  },
+  "segments": [
+    {
+      "id": "up-right-actor-contact",
+      "trace_dir": "build/re/diagnostics/behavior47-edge-trace-v1",
+      "frames": 120,
+      "input": "up+right*60,none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "edge_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 35, "name": "actor-contact" },
+        { "frame": 60, "name": "branch-end" },
+        { "frame": 120, "name": "settled" }
+      ],
+      "debug_log": "build/re/diagnostics/behavior47-edge-trace-v1/debug.log"
+    }
+  ]
+}
