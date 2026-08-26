@@ -384,15 +384,18 @@ scene transition. This closes the remaining direct lamp interaction
 hypothesis without deleting the reusable pre-conversion checkpoint; see
 `re/mame/findings/20260826-level01-tower-type43-interaction-v1.json`.
 
-The upper opening alignment matrix is recorded in
-`re/mame/campaigns/20260826-level01-upper-actor-alignment-v1.json`. Six
-same-checkpoint branches align the player with the dynamic Type-0x1E opening
-at X=`4512` and Type-0x20 opening at X=`4688`, then test Up, C, and leftward
-variants. Up never transfers the player from the behavior-0x25 band; C at
-the left opening falls to the lower band; and no branch enters a player
-collision handler or scene state `0x08`. The static handler interpretation
-and complete result are in
-`re/mame/findings/20260826-level01-upper-actor-alignment-v1.json`.
+The first upper opening alignment matrix is recorded in
+`re/mame/campaigns/20260826-level01-upper-actor-alignment-v1.json`. Its six
+same-checkpoint branches were approximate probes near the dynamic Type-0x1E
+and Type-0x20 actors, not exact-coordinate tests. The authoritative exact
+matrix is recorded in
+`re/mame/campaigns/20260826-level01-upper-exact-opening-alignment-v2.json`.
+It reaches Type-1E X=`4512` with `right*73` and Type-20 X=`4688` with
+`right*160`, then tests Up, C, directional, and attack variants. No branch
+enters the player collision handlers or scene state `0x08`; C falls normally
+where applicable, while Up does not transfer from the behavior-0x25 band.
+The complete exact result is in
+`re/mame/findings/20260826-level01-upper-exact-opening-alignment-v2.json`.
 
 ## Campaign index
 
@@ -426,7 +429,8 @@ and complete result are in
 | `20260826-level01-tower-control-matrix-v1` | recorded-negative | eight same-checkpoint control branches over the behavior-47 lower tower |
 | `20260826-level01-lower-continuation-v1` | recorded-negative-frontier | sustained and jump-assisted traversal from the lower tower continuation |
 | `20260826-level01-tower-type43-interaction-v1` | recorded-negative | pre-conversion type-0x43 lamp interaction branches |
-| `20260826-level01-upper-actor-alignment-v1` | recorded-negative | exact opening alignment and Up/C response matrix for the upper Type-1E/Type-20 pair |
+| `20260826-level01-upper-actor-alignment-v1` | recorded-negative | approximate opening alignment and Up/C response matrix for the upper Type-1E/Type-20 pair |
+| `20260826-level01-upper-exact-opening-alignment-v2` | recorded-negative | exact Type-1E/Type-20 alignment and Up/C/directional/attack response matrix |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

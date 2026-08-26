@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-level01-upper-exact-opening-alignment-finding-v2",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-upper-exact-opening-alignment-v2.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "726f9b4",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "static_references": [
+    "build/re/level01-upper-interaction-targeted-decompile.json",
+    "build/re/level01-upper-actor-response-targeted-decompile.json",
+    "build/re/level01-type1e-targeted-decompile.json",
+    "build/re/level01-next-connector-targeted-decompile-v4.json"
+  ],
+  "observed": [
+    { "branch": "type1e-up", "result": "At the exact Type-1E horizontal coordinate, player world X is 4512 at frame 73 and settles at X=4514 on the behavior-0x25 band; Up produces no upper transfer, no player-collision handler entry, and scene state remains 0x01." },
+    { "branch": "type1e-c", "result": "At exact Type-1E alignment, a one-frame C press causes the ordinary fall from Y=628 into the lower band; no upper transfer or scene transition occurs." },
+    { "branch": "type1e-up-left/type1e-up-attack", "result": "Directional and attack variants at exact Type-1E alignment produce no transfer; the directional branch retreats and all branches remain in scene 0x01." },
+    { "branch": "type20-up", "result": "At exact Type-0x20 horizontal alignment, player world X=4688 and Y=628 remain stable under Up; the dynamic Type-1E/Type-20 pair later materializes at (4512,466)/(4688,466), but no player-collision handler or scene transition is entered." },
+    { "branch": "type20-c/type20-up-attack", "result": "C and attack+Up variants at exact Type-0x20 alignment either fall to the lower band or remain on the upper band; no scene transition occurs." }
+  ],
+  "static_result": "The exact-coordinate experiments do not activate the Type-1E/Type-20 player collision paths or the scene transition path. The pair is a dynamic upper-scene resource, but it is not the direct connector from player Y=628 to the exit predicate Y<470.",
+  "conclusion": "The direct opening alignment hypothesis is closed with exact coordinates. Future work should trace the resource/terrain linkage that makes the row-10 upper platform reachable, or identify a different route branch that activates the level exit.",
+  "next_action": "Decode the behavior-0x25/row-10 resource linkage and use the saved upper-frontier checkpoint to search for the missing vertical connector without assuming the visible actor pair is interactive."
+}

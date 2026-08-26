@@ -13,13 +13,13 @@
     "build/re/level01-type1e-targeted-decompile.json"
   ],
   "observed": [
-    { "branch": "left-up", "result": "At the left opening alignment, Up leaves the player at world (4462,628); no player-collision handler is entered and the scene stays 0x01." },
-    { "branch": "right-up", "result": "At the right opening alignment, Up leaves the player at world (4576,628); no upper transfer occurs and the scene stays 0x01." },
-    { "branch": "left-c-up", "result": "A C press at the left opening falls into the lower band, reaching world (4460,880)." },
-    { "branch": "right-c-up", "result": "A C press at the right opening does not raise the player; the player remains on the upper band around world (4576,628)." },
+    { "branch": "left-up", "result": "Near the left opening, Up leaves the player at world (4462,628); no player-collision handler is entered and the scene stays 0x01." },
+    { "branch": "right-up", "result": "Near the right opening, Up leaves the player at world (4576,628); no upper transfer occurs and the scene stays 0x01." },
+    { "branch": "left-c-up", "result": "A C press near the left opening falls into the lower band, reaching world (4460,880)." },
+    { "branch": "right-c-up", "result": "A C press near the right opening does not raise the player; the player remains on the upper band around world (4576,628)." },
     { "branch": "left-up-left/right-up-left", "result": "Adding leftward input during the Up interval retreats or falls to the lower band; it does not attach to either opening." }
   ],
   "static_result": "The Type-0x1E and Type-0x20 player collision handlers are collision/cleanup paths with interaction-state gates; the upper interaction-row spawn path creates the pair but does not itself assign SCENE_STATE or a vertical transfer.",
-  "conclusion": "Exact alignment closes the remaining direct opening/Up hypothesis. The upper actor pair is a dynamic resource in the upper scene band, not the missing connector from world Y=628 to the exit band below Y=470.",
+  "conclusion": "Approximate alignment does not activate the remaining direct opening/Up hypothesis. The upper actor pair is a dynamic resource in the upper scene band, not established as the missing connector from world Y=628 to the exit band below Y=470.",
   "next_action": "Decode the object/resource record that links the behavior-0x25 band to the upper row-10 platform, or trace a route branch that activates that resource before the actor pair appears."
 }
