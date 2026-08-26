@@ -317,6 +317,18 @@ and terrain flags at `0x001AD87E`, `0x001AD886`, and `0x001AD904`. The tower
 crossing trace shows behavior `0x47` at the staircase/tower surface and lower
 band responses afterward, but no scene-gate write.
 
+The focused tower connector audit is recorded in
+`re/mame/campaigns/20260826-level01-tower-connector-audit-v1.json`. From an
+exact `(2715,770)` lamp-window checkpoint, eight Up/jump/sword/delayed-wall
+timing families all remain in scene state `0x01`; the best delayed jump only
+reaches world Y=`719`. The upper Type-1F actor is at Y=`658` with collision top
+`739`, while the player collision top is `868`. The player dispatch table also
+identifies runtime Type-0x20's handler at `0x001AE9C6`; a neutral and corrected
+one-frame-C audit from the activated upper pair enters none of
+`0x001AC318`, `0x001AC350`, `0x001AE796`, or `0x001AE9C6`. This closes the
+direct lamp/collision hypothesis and moves the search back to the behavior-47
+surface's object/connector source.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -341,6 +353,7 @@ band responses afterward, but no scene-gate write.
 | `20260826-level01-upper-activation-v1` | recorded-static-correlation | initializer and interaction-row traces for the Type1E/Type20 pair materialized at the upper x≈4688 feature |
 | `20260826-level01-reproducibility-v1` | recorded-frontier | current-checkout exact replay of the clean power-on route through the established frontier |
 | `20260826-level01-reproducibility-extension-v1` | recorded-frontier | current-checkout continuation with 160 checkpoints through the tower, far rope, wall opening, and upper actor setup |
+| `20260826-level01-tower-connector-audit-v1` | recorded-negative | exact lamp-window timing sweep and four-handler upper actor response audit |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-level01-tower-connector-audit-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-tower-connector-audit-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "60ff2dbddf9588ecc95273d6086567594afe74d1",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "tower_window": {
+    "checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+    "player": [2715, 770],
+    "terrain_behavior": "0x00",
+    "upper_actor": { "slot": 3, "type": "0x1F", "world": [2684, 658], "collision_top": 739, "collision_bottom": 800 },
+    "lamp": { "slot": 24, "type_before": "0x43", "type_after": "0x8A", "world": [2720, 768] },
+    "observation": "At the exact lamp window the player's collision top is 868, leaving a 68-pixel vertical gap to the upper actor's collision top. The lamp transition is an actor response, not a scene transition."
+  },
+  "timing_probes": [
+    { "id": "lamp-up", "input": "up*120,none*60", "min_world_y": 770, "endpoint": [2718,770], "scene_state": "0x01" },
+    { "id": "lamp-c", "input": "c*1,none*179", "min_world_y": 770, "endpoint": [2749,770], "scene_state": "0x01" },
+    { "id": "lamp-c-right", "input": "c+right*1,right*60,none*119", "min_world_y": 770, "endpoint": [2888,912], "scene_state": "0x01" },
+    { "id": "lamp-c-left", "input": "c+left*1,left*60,none*119", "min_world_y": 768, "endpoint": [2485,784], "scene_state": "0x01" },
+    { "id": "lamp-cb-right", "input": "c+b+right*1,right*60,none*119", "min_world_y": 770, "endpoint": [2888,912], "scene_state": "0x01" },
+    { "id": "lamp-b", "input": "b*1,none*179", "min_world_y": 770, "endpoint": [2749,770], "scene_state": "0x01" },
+    { "id": "lamp-delayed-right", "input": "c+right*10,right*50,c*1,right*50,none*69", "min_world_y": 719, "endpoint": [2943,912], "scene_state": "0x01" },
+    { "id": "lamp-delayed-left", "input": "c+left*10,left*50,c*1,left*50,none*69", "min_world_y": 719, "endpoint": [2444,793], "scene_state": "0x01" }
+  ],
+  "player_dispatch_audit": {
+    "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-activation-canonical/states/genesis/actor-pair.sta",
+    "runtime_type_0x20_player_handler": "0x001AE9C6",
+    "other_targets": ["0x001AC318", "0x001AC350", "0x001AE796"],
+    "neutral_trace": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-response-audit-neutral/debug.log",
+    "corrected_c_trace": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-response-audit-c/debug.log",
+    "handler_hits": { "neutral": [], "corrected_c": [] },
+    "endpoint_both": [4684, 628],
+    "scene_state_both": "0x01"
+  },
+  "conclusion": "The behavior-0x47 tower/lamp window is not crossed by the tested Up, jump, sword, or delayed wall-jump timing families. The upper Type-1F actor remains vertically out of range, and the runtime Type-0x20 player handler is not entered from the activated pair checkpoint. This closes the current direct tower-lamp and upper-collision hypotheses without claiming that the level route is complete.",
+  "next_action": "Decode the behavior-0x47 surface's associated map rows and object records for a launch/connector trigger, then search for the next interaction source rather than expanding the same lamp timing family."
+}

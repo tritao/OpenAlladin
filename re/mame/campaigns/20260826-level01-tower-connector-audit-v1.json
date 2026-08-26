@@ -1,0 +1,478 @@
+{
+  "campaign": "20260826-level01-tower-connector-audit-v1",
+  "status": "recorded-negative",
+  "purpose": "Timing-aware audit of the behavior-0x47 tower/lamp window and all four upper Type-1E/Type-20 collision dispatch targets.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "60ff2dbddf9588ecc95273d6086567594afe74d1",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "60ff2dbddf9588ecc95273d6086567594afe74d1",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_campaign": "re/mame/campaigns/20260826-level01-reproducibility-extension-v1.json",
+  "timing_note": "All segments use OPENALADDIN_STATE_SYNC=0 and load states owned by the current reproducibility tree.",
+  "segments": [
+    {
+      "id": "tower-lamp-window",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window",
+      "frames": 150,
+      "input": "right*150",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-reversal/states/genesis/staircase-end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "staircase-loaded",
+          "state": "states/genesis/staircase-loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "tower-run",
+          "state": "states/genesis/tower-run.sta"
+        },
+        {
+          "frame": 120,
+          "name": "tower-window-approach",
+          "state": "states/genesis/tower-window-approach.sta"
+        },
+        {
+          "frame": 140,
+          "name": "lamp-approach",
+          "state": "states/genesis/lamp-approach.sta"
+        },
+        {
+          "frame": 150,
+          "name": "tower-lamp-window",
+          "state": "states/genesis/tower-lamp-window.sta"
+        }
+      ]
+    },
+    {
+      "id": "lamp-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/lamp-up",
+      "frames": 180,
+      "input": "up*120,none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "lamp-loaded",
+          "state": "states/genesis/lamp-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "takeoff",
+          "state": "states/genesis/takeoff.sta"
+        },
+        {
+          "frame": 40,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "actor-window",
+          "state": "states/genesis/actor-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "landing-window",
+          "state": "states/genesis/landing-window.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "lamp-c",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/lamp-c",
+      "frames": 180,
+      "input": "c*1,none*179",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "lamp-loaded",
+          "state": "states/genesis/lamp-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "takeoff",
+          "state": "states/genesis/takeoff.sta"
+        },
+        {
+          "frame": 40,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "actor-window",
+          "state": "states/genesis/actor-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "landing-window",
+          "state": "states/genesis/landing-window.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "lamp-c-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/lamp-c-right",
+      "frames": 180,
+      "input": "c+right*1,right*60,none*119",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "lamp-loaded",
+          "state": "states/genesis/lamp-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "takeoff",
+          "state": "states/genesis/takeoff.sta"
+        },
+        {
+          "frame": 40,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "actor-window",
+          "state": "states/genesis/actor-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "landing-window",
+          "state": "states/genesis/landing-window.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "lamp-c-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/lamp-c-left",
+      "frames": 180,
+      "input": "c+left*1,left*60,none*119",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "lamp-loaded",
+          "state": "states/genesis/lamp-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "takeoff",
+          "state": "states/genesis/takeoff.sta"
+        },
+        {
+          "frame": 40,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "actor-window",
+          "state": "states/genesis/actor-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "landing-window",
+          "state": "states/genesis/landing-window.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "lamp-cb-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/lamp-cb-right",
+      "frames": 180,
+      "input": "c+b+right*1,right*60,none*119",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "lamp-loaded",
+          "state": "states/genesis/lamp-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "takeoff",
+          "state": "states/genesis/takeoff.sta"
+        },
+        {
+          "frame": 40,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "actor-window",
+          "state": "states/genesis/actor-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "landing-window",
+          "state": "states/genesis/landing-window.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "lamp-b",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/lamp-b",
+      "frames": 180,
+      "input": "b*1,none*179",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "lamp-loaded",
+          "state": "states/genesis/lamp-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "takeoff",
+          "state": "states/genesis/takeoff.sta"
+        },
+        {
+          "frame": 40,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "actor-window",
+          "state": "states/genesis/actor-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "landing-window",
+          "state": "states/genesis/landing-window.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "lamp-delayed-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/lamp-delayed-right",
+      "frames": 180,
+      "input": "c+right*10,right*50,c*1,right*50,none*69",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "lamp-loaded",
+          "state": "states/genesis/lamp-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "takeoff",
+          "state": "states/genesis/takeoff.sta"
+        },
+        {
+          "frame": 40,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "actor-window",
+          "state": "states/genesis/actor-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "landing-window",
+          "state": "states/genesis/landing-window.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "lamp-delayed-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/lamp-delayed-left",
+      "frames": 180,
+      "input": "c+left*10,left*50,c*1,left*50,none*69",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "lamp-loaded",
+          "state": "states/genesis/lamp-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "takeoff",
+          "state": "states/genesis/takeoff.sta"
+        },
+        {
+          "frame": 40,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "actor-window",
+          "state": "states/genesis/actor-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "landing-window",
+          "state": "states/genesis/landing-window.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "upper-response-audit-neutral",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-response-audit-neutral",
+      "frames": 180,
+      "input": "none*180",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-activation-canonical/states/genesis/actor-pair.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "actor-pair-loaded",
+          "state": "states/genesis/actor-pair-loaded.sta"
+        },
+        {
+          "frame": 34,
+          "name": "response-window",
+          "state": "states/genesis/response-window.sta"
+        },
+        {
+          "frame": 90,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ],
+      "debug_log": "debug.log",
+      "breakpoints": [
+        "0x001AC318",
+        "0x001AC350",
+        "0x001AE796",
+        "0x001AE9C6"
+      ]
+    },
+    {
+      "id": "upper-response-audit-c",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-response-audit-c",
+      "frames": 180,
+      "input": "none*1,c*1,none*178",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-activation-canonical/states/genesis/actor-pair.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "actor-pair-loaded",
+          "state": "states/genesis/actor-pair-loaded.sta"
+        },
+        {
+          "frame": 34,
+          "name": "response-window",
+          "state": "states/genesis/response-window.sta"
+        },
+        {
+          "frame": 90,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ],
+      "debug_log": "debug.log",
+      "breakpoints": [
+        "0x001AC318",
+        "0x001AC350",
+        "0x001AE796",
+        "0x001AE9C6"
+      ]
+    }
+  ]
+}
