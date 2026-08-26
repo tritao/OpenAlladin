@@ -656,6 +656,15 @@ scene-table writer fires; selector `0x51` is not reached. This closes the
 tested upper-wall dismount family as a local connector interaction and leaves
 the natural object/resource activation upstream as the next route question.
 
+The lower-wall terrain response is recorded in
+`re/mame/findings/20260826-level01-lower-frontier-terrain-response-v1.json`.
+At world `(2846,912)`, the edge probe `0x001AD632` sees map row 40/column 177
+word `0x2450` and a blocking behavior byte `0xFF`, then sets
+`TERRAIN_STOP_LEFT_MOTION=0xFF`. Neutral and held-left traces remain fixed at
+the wall with `SCENE_STATE=0x01`; no actor, scene-script, scene-state, or exit
+writer fires. This closes the lower-wall input family as geometry and returns
+the route search to the upstream resource/object activation path.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -713,6 +722,7 @@ the natural object/resource activation upstream as the next route question.
 | `20260826-level01-exit-data-reference-audit-v1` | recorded-static-audit | complete Ghidra write inventory for scene state, script cursor/data/index, and player transition gates |
 | `20260826-level01-natural-gate-audit-v1` | recorded-negative-natural | far-floor actor terminal countdown and terrain-lock writes are local responses; no scene transition |
 | `20260826-level01-controlled-rope-wall-interaction-v1` | recorded-negative-controlled | far-rope upper-wall dismount reaches selector 0x60 and returns to the connector; no scene transition |
+| `20260826-level01-lower-frontier-terrain-response-v1` | recorded-negative-frontier | lower frontier stop-left behavior is a solid geometry probe; no scene or actor transition |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

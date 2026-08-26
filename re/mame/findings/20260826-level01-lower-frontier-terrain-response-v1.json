@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-level01-lower-frontier-terrain-response-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-lower-frontier-terrain-response-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "trace": "build/re/diagnostics/20260826-level01-lower-frontier-terrain-response-v3",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/frontier-terrain-probe-v2/states/genesis/stable-frontier.sta",
+  "static_decompile": "build/re/level01-lower-frontier-terrain-targeted-decompile-v1.json",
+  "observation": {
+    "world": [2846, 912],
+    "map_row": 40,
+    "map_column": 177,
+    "map_word": "0x2450",
+    "blocking_behavior_byte": "0xFF"
+  },
+  "runtime": {
+    "neutral_trace": {
+      "frames": 120,
+      "input": "none*120",
+      "world_end": [2846, 912],
+      "scene_state": "0x01"
+    },
+    "held_left_trace": {
+      "frames": 80,
+      "input": "left*80",
+      "world_end": [2846, 912],
+      "terrain_stop_left_motion": "0xFF",
+      "terrain_push_left": "0xFF",
+      "landing_state": "0x01",
+      "scene_state": "0x01"
+    }
+  },
+  "interpretation": "0x001AD632 performs the edge probe and detects the blocking neighboring behavior byte; 0x001A9D98 consumes the resulting stop flag. No actor, scene-script, scene-state, or transition-gate path is entered.",
+  "not_observed": [
+    "0x001B5B3A Level 01 boundary writer",
+    "0x001A8ED2 scene-script state writer",
+    "0x001AC458 actor collision handler",
+    "0x001AD6B0 as an independent live write site"
+  ],
+  "conclusion": "The (2846,912) frontier is confirmed as geometry, not a hidden route trigger. The lower-wall probe family is exhausted."
+}

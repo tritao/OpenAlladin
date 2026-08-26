@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-lower-frontier-terrain-response",
+    "purpose": "Classify the solid lower-wall response at world (2846,912) and separate geometry probes from hidden interaction or scene-transition paths."
+  },
+  "targets": [
+    { "address": "0x001AD632", "name": "Player_TerrainEdgeProbe" },
+    { "address": "0x001AD6B0", "name": "Player_TerrainStopLeftCandidate" },
+    { "address": "0x001AD7B4", "name": "Player_TerrainLandingResolver" },
+    { "address": "0x001A9D98", "name": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001B1E38", "name": "Terrain_ResolvePlayerCell" },
+    { "address": "0x001B5B3A", "name": "Level01_BoundaryWriter" },
+    { "address": "0x001A8ED2", "name": "SceneScript_AdvanceState" },
+    { "address": "0x001AC458", "name": "Actor_CollisionHandler" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF07F", "name": "TERRAIN_PUSH_LEFT" },
+    { "address": "0x00FFF0A0", "name": "TERRAIN_STOP_LEFT_MOTION" },
+    { "address": "0x00FFF0A1", "name": "TERRAIN_LEFT_INNER_PROBE" },
+    { "address": "0x00FFF0A2", "name": "TERRAIN_LEFT_OUTER_PROBE" }
+  ]
+}
