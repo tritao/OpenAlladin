@@ -184,7 +184,7 @@
 0x001B6E90:
   name: InteractionSpawn_Type1E
   confidence: confirmed
-  description: Interaction handler gated by INTERACTION_GATE_TYPE1E at 0x00FFF107; it selects actor template 0x001B7C24 and enters the level-object spawn entry.
+  description: Direct interaction-table spawn body entered at 0x001B6E90; it selects actor template 0x001B7C24 and enters the level-object spawn entry. The adjacent gate-test wrapper begins at 0x001B6E86 and is not executed by this direct target.
   evidence:
     - ghidra_upper_interaction_targeted_decompile
     - mame_upper_activation_edge_trace

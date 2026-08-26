@@ -36,10 +36,16 @@
   },
   "interaction_dispatch_trace": {
     "artifact": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-edges/debug.log",
+    "gate_ram_trace": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-gate-ram-v1/ram_frames.bin",
+    "gate_values_throughout_trace": {
+      "0xFFF105": "0x00",
+      "0xFFF106": "0x00",
+      "0xFFF107": "0x00"
+    },
     "absolute_mame_frame": "0x1353",
     "caller": "0x001AE4EA",
     "targets": [
-      { "handler": "0x001B6E90", "meaning": "INTERACTION_GATE_TYPE1E -> template 0x001B7C24" },
+      { "handler": "0x001B6E90", "meaning": "direct spawn body after the adjacent 0x001B6E86 gate-test bytes -> template 0x001B7C24" },
       { "handler": "0x001B6EB2", "meaning": "template 0x001B7C10 -> runtime type 0x20 / animation 0x0012337A" }
     ],
     "following_actor_vm_targets": [
@@ -48,7 +54,7 @@
       "0x001AD3C2",
       "0x001AD378"
     ],
-    "conclusion": "The upper pair is created by the interaction-row dispatch while Up is held; it is not created by the vertical connector handler."
+    "conclusion": "The upper pair is created by the interaction-row dispatch while Up is held; it is not created by the vertical connector handler. The adjacent 0xFFF107 gate-test wrapper is not the entry used by this dispatch."
   },
   "runtime_checkpoints": [
     {
@@ -80,5 +86,5 @@
       "scene_state": "0x01"
     }
   ],
-  "conclusion": "Holding Up at the x≈4688 feature does not reveal a rope climb or scene gate. It causes the level-object dispatcher to initialize the Type-0x1E template and the Type-0x1D template in the same emulated frame; the latter is observed as runtime Type 0x20 with animation cursor 0x0012337A. The pair appears at y≈464 while the scene remains 0x01 through frame 240. The Type-0x1E actor is now a concrete upper-route interaction candidate; the next step is to decode its collision/animation condition rather than repeat the connector sweep."
+  "conclusion": "Holding Up at the x≈4688 feature does not reveal a rope climb or scene gate. It causes the interaction-row dispatch to enter the direct spawn bodies at 0x001B6E90 and 0x001B6EB2 in the same emulated frame; the adjacent 0xFFF107 gate-test wrapper is bypassed on this path. The first body initializes the Type-0x1E template and the second initializes the Type-0x1D template, which is then observed as runtime Type 0x20 with animation cursor 0x0012337A. The pair appears at y≈464 while the scene remains 0x01 through frame 240. The Type-0x1E actor is now a concrete upper-route interaction candidate; the next step is to decode its collision/animation condition rather than repeat the connector sweep."
 }
