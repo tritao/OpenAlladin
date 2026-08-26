@@ -79,6 +79,34 @@
       "breakpoint_registers": true,
       "breakpoint_row_context": true,
       "branch_class": "exploratory-interaction-row-provenance"
+    },
+    {
+      "id": "upper-actor-response-none",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-activation-v1/upper-actor-response-none-v1",
+      "frames": 180,
+      "input": "none*180",
+      "load_state": "upper-actor-pair-activation",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation/states/genesis/activation.sta",
+      "recording_commit": "9d9f32f",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "breakpoints": ["0x001ABD7E", "0x001AC318", "0x001AC350", "0x001AE796"],
+      "branch_class": "exploratory-collision-negative"
+    },
+    {
+      "id": "upper-actor-response-c-jump",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-activation-v1/upper-actor-response-c-jump-v2",
+      "frames": 180,
+      "input": "none*1,c*1,none*178",
+      "load_state": "upper-actor-pair-activation",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation/states/genesis/activation.sta",
+      "recording_commit": "9d9f32f",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "breakpoints": ["0x001AC318", "0x001AC350", "0x001AE796"],
+      "branch_class": "exploratory-collision-negative"
     }
   ]
 }

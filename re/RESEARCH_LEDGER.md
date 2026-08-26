@@ -274,6 +274,17 @@ and handler-table entry `0x0041C0` to `0x001B6EB2`. This turns the actor-pair
 correlation into a concrete level-row/resource observation while preserving
 the full register context in the trace artifact.
 
+The response pass is also now classified. Static handler-table decoding maps
+runtime Type `0x20` to `0x001AC350`, alongside Type `0x1E` at `0x001AC318`
+and the player Type-`0x1E` handler at `0x001AE796`. From the activated pair
+checkpoint, a neutral 180-frame replay executes the actor-collision pass but
+enters none of those three handlers. A corrected one-frame C-button jump
+(`none*1,c*1,none*178`) likewise leaves the player at `(4684,628)` with the
+landing state clear and produces no collision-handler entry. The pair is
+therefore still above the reachable collision band from this checkpoint; the
+next route search should target the level geometry/connector that can place the
+player near y≈466 rather than repeat direct collision probes.
+
 The first collision reachability probe from the activated pair
 (`c+left*20,left*70,none*90`) falls into the lower band instead of reaching
 the actors above. The pair clears by relative frame 34, and the player lands
