@@ -1,0 +1,63 @@
+{
+  "campaign": "20260826-level01-type1f-settle-v1",
+  "status": "recorded-negative",
+  "purpose": "Let the Level 01 type-0x1F proximity actor complete its interaction cycle from the lower-tower checkpoint and test for a delayed vertical transfer or scene transition.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "fd8a81518441f3b94dce04c36faaa7e20857a82e",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "fd8a81518441f3b94dce04c36faaa7e20857a82e",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "tower-type1f-wait",
+      "trace_dir": "build/re/campaigns/20260826-level01-type1f-settle-v1/tower-wait",
+      "frames": 600,
+      "input": "none*600",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "approach" },
+        { "frame": 120, "name": "actor-stopped" },
+        { "frame": 180, "name": "flag-cycle" },
+        { "frame": 300, "name": "settled" },
+        { "frame": 600, "name": "end" }
+      ]
+    }
+  ],
+  "target": {
+    "actor_slot": 3,
+    "actor_type": "0x1F",
+    "player_collision_table_entry": "0x001D3A -> 0x001AE796",
+    "actor_collision_table_entry": "0x001F36 -> 0x001AC2E0",
+    "animation_root": "0x00123900",
+    "proximity_movement_root": "0x00120432",
+    "actor_world_start": [2712, 658],
+    "player_world_start": [2715, 770]
+  },
+  "observed": {
+    "player_world_end": [2749, 770],
+    "actor_world_end": [2684, 658],
+    "actor_y_values": [658],
+    "actor_movement_pc_after_settle": "0x00000000",
+    "actor_animation_behavior": "The actor remains type 0x1F and cycles the 0x00123900 proximity animation, including flag-bit-0x20 intervals; it does not acquire a vertical movement state.",
+    "scene_state_values": ["0x01"],
+    "scene_state_changes": 0,
+    "exit_countdown_writes": 0,
+    "transition_gate_changes": 0,
+    "named_checkpoints": ["loaded", "approach", "actor-stopped", "flag-cycle", "settled", "end"]
+  },
+  "static_interpretation": {
+    "player_handler": "The shared 0x001AE796 handler is collision/cleanup logic and only reaches Player_ProcessInteractionState when its horizontal eligibility and actor flag conditions are met.",
+    "actor_handler": "The 0x001AC2E0 handler clears/reinitializes actor resources and can arm a local scene countdown for selected receiving types; it does not assign SCENE_STATE or inject a player launch.",
+    "animation": "The 0x00123900 stream installs movement 0x00120432 inside the 0x4B X proximity window and clears it outside the 0x40 window. The movement root begins with horizontal deltas and its branch writes another animation stream; it contains no evidence of a vertical connector.",
+    "classification": "The tower type-0x1F object is a proximity-driven actor/interaction effect, not the missing lower-to-upper route transfer."
+  },
+  "conclusion": "A clean 600-frame no-input replay from the tower-lamp checkpoint lets the type-0x1F actor finish and repeat its proximity cycle. The actor remains at Y=658, the player remains on the lower tower band at Y=770, no launch or connector state appears, and SCENE_STATE remains 0x01. This closes the delayed type-0x1F tower hypothesis.",
+  "next_action": "Search the remaining reachable Level 01 object/resource activation path for a transfer from the far rope or middle band into the row-10/row-14 exit corridor; do not repeat type-0x1F timing variants."
+}

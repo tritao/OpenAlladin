@@ -716,6 +716,16 @@ satisfied, but the required `Y<470` half is not. The player falls to
 interpretation of the pair-Y fixture, whose `(4688,466)` position depended on
 an explicit `PLAYER_Y/PLAYER_VY` poke; it is controlled evidence only.
 
+The type-0x1F lower-tower settle trace is recorded in
+`re/mame/findings/20260826-level01-type1f-settle-v1.json` and
+`re/mame/campaigns/20260826-level01-type1f-settle-v1.json`. From the clean
+tower-lamp checkpoint, 600 frames of no input let the proximity actor complete
+and repeat its animation cycle. It moves only horizontally from `(2712,658)`
+to `(2684,658)`, cycles flag bit `0x20`, and never acquires a vertical movement
+state or changes `SCENE_STATE` from `0x01`. The shared player handler and actor
+cleanup handler contain no launch or scene-transition path, so this closes the
+delayed type-0x1F tower hypothesis.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -777,6 +787,7 @@ an explicit `PLAYER_Y/PLAYER_VY` poke; it is controlled evidence only.
 | `20260826-level01-lower-frontier-terrain-response-v1` | recorded-negative-frontier | lower frontier stop-left behavior is a solid geometry probe; no scene or actor transition |
 | `20260826-type01-child-chain-v1` | recorded-controlled-static-correlation | Type-0x01 upper resource F5 child decode and corrected runtime placement check |
 | `20260826-level01-integrated-natural-exit-v1` | recorded-negative-natural | controller-only upper-frontier replay reaches the X boundary but falls before the Y exit condition |
+| `20260826-level01-type1f-settle-v1` | recorded-negative | 600-frame no-input settle of the lower-tower type-0x1F proximity actor; no vertical transfer or scene transition |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

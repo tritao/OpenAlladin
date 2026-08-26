@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-level01-type1f-settle-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-type1f-settle-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "fd8a81518441f3b94dce04c36faaa7e20857a82e",
+  "trace": "build/re/campaigns/20260826-level01-type1f-settle-v1/tower-wait",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+  "actor": {
+    "slot": 3,
+    "type": "0x1F",
+    "initial_world": [2712, 658],
+    "final_world": [2684, 658],
+    "animation_root": "0x00123900",
+    "movement_root": "0x00120432",
+    "player_collision_handler": "0x001AE796",
+    "actor_collision_handler": "0x001AC2E0"
+  },
+  "runtime": {
+    "frames": 600,
+    "input": "none*600",
+    "player_end": [2749, 770],
+    "actor_y_values": [658],
+    "movement_pc_after_settle": "0x00000000",
+    "flag_bit_0x20": "cycles in the actor state snapshots without changing the actor's Y coordinate",
+    "scene_state": "0x01 throughout",
+    "scene_state_changes": 0,
+    "exit_countdown_writes": 0,
+    "transition_gate_changes": 0
+  },
+  "static_result": {
+    "player_table": "ROM 0x001D3A contains 0x001AE796, the same player collision handler used by type 0x1E.",
+    "actor_table": "ROM 0x001F36 contains 0x001AC2E0, a cleanup/reinitialization handler rather than a player-transfer routine.",
+    "proximity_stream": "0x00123900 uses X thresholds 0x4B/0x40 to install or clear movement stream 0x00120432. The movement stream starts with horizontal deltas and branches through animation/resource state; no vertical displacement is present in this trigger path."
+  },
+  "conclusion": "The type-0x1F actor beside the lower tower is not a delayed lift, launch, or scene-transition source. Its complete clean cycle is now archived and the hypothesis is closed."
+}
