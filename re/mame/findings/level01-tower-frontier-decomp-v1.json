@@ -1,0 +1,71 @@
+{
+  "format": "openaladdin-level01-tower-frontier-decomp-finding-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb",
+  "ghidra": {
+    "target_request": "re/ghidra/targets/level01-next-connector-targets.json",
+    "report": "build/re/level01-next-connector-targeted-decompile-v4.json",
+    "program": "re/ghidra/project/aladdin",
+    "report_format": "openaladdin-targeted-decompile-v1"
+  },
+  "static_recovery": {
+    "behavior_table": "ROM 0x4554 maps behavior 0x47 to 0x001B5470 and behavior 0x22/0x23 to 0x001B54D8.",
+    "behavior_0x47": {
+      "address": "0x001B5470",
+      "name": "Behavior_0x47_lower_tower_terrain_handler",
+      "effect": "When 0x00FFF0BD is clear and TERRAIN_SURFACE_LATCH is clear, writes 0xFF to TERRAIN_SURFACE_LATCH and toggles TERRAIN_SURFACE_MODE.",
+      "classification": "surface-mode/latch handler, not an actor spawn or scene transition"
+    },
+    "behavior_0x22_0x23": {
+      "address": "0x001B54D8",
+      "name": "Behavior_0x22_0x23_vertical_connector_handler",
+      "effect": "Writes 0xFF to TERRAIN_QUERY_STATE_A; the player terrain response state machine consumes the resulting query.",
+      "classification": "terrain query trigger"
+    },
+    "player_response": {
+      "address": "0x001A9D98",
+      "name": "Player_TerrainResponseStateMachine",
+      "related_resolver": "0x001B1E38",
+      "effect": "Resolves the current terrain behavior, clears query/latch state for ordinary cells, and applies the player response or normal vertical integration. Scene state 0x08 bypasses this path."
+    },
+    "other_handlers": [
+      { "address": "0x001B5502", "behavior": "0x2B", "effect": "stop/alignment response" },
+      { "address": "0x001B557E", "behavior": "0x29", "effect": "launch response" },
+      { "address": "0x001B56B6", "behavior": "0x2D", "effect": "bounce response" }
+    ],
+    "tower_geometry": {
+      "map": "build/assets/levels/level01/raw/map.bin",
+      "floor": "build/assets/levels/level01/raw/floor.bin",
+      "behavior_0x47_cells": "Columns 166-171, rows 35-37 and columns 166-174, rows 38-42 (world x approximately 2656-2784; lower band)."
+    }
+  },
+  "runtime_evidence": {
+    "campaign": "re/mame/campaigns/20260826-level01-tower-negative-v1.json",
+    "trace": "build/re/campaigns/20260826-level01-tower-negative-v1/tower-frontier-v2",
+    "source_checkpoint": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/upper-edge-fall.sta",
+    "observed": [
+      "At frame 60 the player reaches x=2735,y=920 on behavior 0x47 with surface_mode=1 and surface_latch=0xFF.",
+      "At frame 90 a held jump reaches x=2768,y=854 and does not attach to a vertical connector.",
+      "At frame 160 and frame 300 the player is back at x=2768,y=920 with landing_state=9.",
+      "Scene state remains 0x01 for the full 300-frame branch."
+    ],
+    "resident_actors": [
+      { "type": "0x43", "world": [2720, 768], "classification": "lamp/interaction object; handler converts it on player overlap and plays event 99" },
+      { "type": "0x20", "world": [2816, 818], "classification": "enemy animation/movement actor" }
+    ]
+  },
+  "conclusion": {
+    "verified": [
+      "The former 0x47 target was corrected to the actual lower-tower handler at 0x001B5470.",
+      "The handler's semantics are surface-mode/latch state, not a missing platform or scene transition.",
+      "The recorded upper-edge-to-tower branch is a negative frontier from the current checkpoint."
+    ],
+    "unresolved": [
+      "The playable route to the far-right level-01 exit remains unidentified.",
+      "The exact callback records installed for each 0x22 connector still need mapping to the higher-level player response states."
+    ]
+  },
+  "next_action": "Branch from earlier playable checkpoints and trace TERRAIN_QUERY_CALLBACK_A/B/C plus TERRAIN_QUERY_STATE_A/B around the known 0x22 connectors; preserve a checkpoint whenever a new connector, landing, death/reset, or scene gate is observed."
+}

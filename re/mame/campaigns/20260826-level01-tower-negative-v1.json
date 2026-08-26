@@ -1,0 +1,48 @@
+{
+  "campaign": "20260826-level01-tower-negative-v1",
+  "status": "recorded-negative",
+  "purpose": "Record the lower-tower branch from the clean upper-edge checkpoint and test whether the tower surface or resident actors provide the next playable connector.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "5bad5fb",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "timing_note": "The branch uses normal no-sync gameplay timing. The loaded source is the clean power-on campaign's named upper-edge-fall checkpoint.",
+  "command": "OPENALADDIN_STATE_SYNC=0 OPENALADDIN_TRACE_FRAMES=300 OPENALADDIN_LOAD_STATE=build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/upper-edge-fall.sta OPENALADDIN_INPUT=none*1,right*60,c+right*30,right*100,none*109 OPENALADDIN_CAPTURE=state OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_CHECKPOINTS=1=upper-edge-loaded,60=tower-approach,90=tower-jump,160=tower-surface,300=frontier-end OPENALADDIN_TRACE_DIR=build/re/campaigns/20260826-level01-tower-negative-v1/tower-frontier-v2 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+  "segments": [
+    {
+      "id": "tower-frontier-v2",
+      "trace_dir": "build/re/campaigns/20260826-level01-tower-negative-v1/tower-frontier-v2",
+      "frames": 300,
+      "input": "none*1,right*60,c+right*30,right*100,none*109",
+      "load_state": "upper-edge-fall",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/upper-edge-fall.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "upper-edge-loaded", "state": "tower-frontier-v2/states/genesis/upper-edge-loaded.sta" },
+        { "frame": 60, "name": "tower-approach", "state": "tower-frontier-v2/states/genesis/tower-approach.sta" },
+        { "frame": 90, "name": "tower-jump", "state": "tower-frontier-v2/states/genesis/tower-jump.sta" },
+        { "frame": 160, "name": "tower-surface", "state": "tower-frontier-v2/states/genesis/tower-surface.sta" },
+        { "frame": 300, "name": "frontier-end", "state": "tower-frontier-v2/states/genesis/frontier-end.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "upper-edge-loaded", "segment": "tower-frontier-v2", "frame": 1, "world": [2561, 920], "scene_state": "0x01", "landing_state": 9, "meaning": "loaded from the clean upper-walkway fall checkpoint" },
+    { "id": "tower-approach", "segment": "tower-frontier-v2", "frame": 60, "world": [2735, 920], "terrain_behavior": "0x47", "meaning": "lower-tower terrain band reached; surface mode is armed" },
+    { "id": "tower-jump", "segment": "tower-frontier-v2", "frame": 90, "world": [2768, 854], "terrain_behavior": "0x47", "surface_mode": 1, "surface_latch": 255, "meaning": "held jump reaches the maximum observed height but does not attach to a connector" },
+    { "id": "tower-surface", "segment": "tower-frontier-v2", "frame": 160, "world": [2768, 920], "terrain_behavior": "0x47", "landing_state": 9, "meaning": "player returns to the lower/death-band stop" },
+    { "id": "frontier-end", "segment": "tower-frontier-v2", "frame": 300, "world": [2768, 920], "scene_state": "0x01", "landing_state": 9, "meaning": "no forward progress or scene transition after the branch" }
+  ],
+  "result": "The lower-tower branch is reproducibly terminal from upper-edge-fall. The player reaches world x=2768, y=920, remains in scene state 0x01, and cannot cross or climb the 0x47 tower band with the recorded right/jump input. Actor type 0x43 at x=2720,y=768 is a lamp/interaction object, and type 0x20 at x=2816,y=818 is an enemy, not a traversal connector.",
+  "negative_evidence": [
+    "No scene-state write or exit-gate transition occurs in the 300-frame branch.",
+    "The player remains at landing_state=9 after returning from the jump, identifying this checkpoint as a lower/death-band frontier rather than a normal platform.",
+    "The 0x47 handler toggles TERRAIN_SURFACE_MODE and arms TERRAIN_SURFACE_LATCH; it does not create an actor, move the player, or select a scene script."
+  ],
+  "next": "Resume from high-walkway-entry, guard-approach, or the earlier 0x22 rope checkpoints and search for a route that reaches the level's far-right exit corridor without entering the 0x85/0x86 fall band."
+}

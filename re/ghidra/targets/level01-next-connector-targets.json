@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-next-connector",
+    "purpose": "Recover the player/terrain handlers behind the lower tower and its type-0x43 connector actor."
+  },
+  "targets": [
+    { "address": "0x001AE64C", "name": "Type-0x43 player interaction handler" },
+    { "address": "0x001B5470", "name": "Behavior-0x47 lower tower terrain handler" },
+    { "address": "0x001B54D8", "name": "Behavior-0x22/0x23 vertical connector handler" },
+    { "address": "0x001B5502", "name": "Behavior-0x2B stop-and-align handler" },
+    { "address": "0x001B56B6", "name": "Behavior-0x2D bounce response handler" },
+    { "address": "0x001B557E", "name": "Behavior-0x29 launch response handler" },
+    { "address": "0x001A9D98", "name": "Player terrain response state machine" },
+    { "address": "0x001AF228", "name": "Type-0x3A player collision handler" },
+    { "address": "0x001AE9C6", "name": "Shared player collision handler" },
+    { "address": "0x001AC458", "name": "Actor collision handler" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0A4", "name": "TERRAIN_SURFACE_MODE" },
+    { "address": "0x00FFF0C2", "name": "TERRAIN_SURFACE_LATCH" },
+    { "address": "0x00FF7DD2", "name": "TERRAIN_QUERY_CALLBACK_A" },
+    { "address": "0x00FF7DD6", "name": "TERRAIN_QUERY_CALLBACK_B" },
+    { "address": "0x00FF7DDA", "name": "TERRAIN_QUERY_CALLBACK_C" }
+  ]
+}

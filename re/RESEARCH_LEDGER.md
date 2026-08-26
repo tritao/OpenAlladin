@@ -96,6 +96,19 @@ the finding or commit message.
   route in one continuous no-sync segment. It records 16 named checkpoints
   from power-on through the upper-edge frontier, with the ROM and harness
   provenance captured at the current commit.
+- `20260826-level01-tower-negative-v1`: loaded-state recording from the clean
+  upper-edge checkpoint through the lower tower. It verifies the 0x47 surface
+  mode/latch behavior, identifies the resident 0x43 lamp and 0x20 enemy, and
+  records the tower as a terminal lower/death-band branch rather than a route
+  connector.
+
+### Terrain/connector decompilation
+
+- `re/mame/findings/level01-tower-frontier-decomp-v1.json` records the corrected
+  Ghidra target mapping. Behavior 0x47 dispatches to `0x001B5470`, where it
+  toggles `TERRAIN_SURFACE_MODE` and arms `TERRAIN_SURFACE_LATCH`; behavior
+  0x22/0x23 dispatches to `0x001B54D8`, which raises `TERRAIN_QUERY_STATE_A`.
+  Neither handler itself creates a missing actor or scene transition.
 
 ### Scene and exit work
 
@@ -141,6 +154,7 @@ for every newly reached surface, interaction, or boundary.
 | `20260826-level01-fresh-route-canonical-v2` | recorded-frontier | fresh no-sync route record through the upper-left guard |
 | `20260826-level01-fresh-route-high-transfer-v1` | recorded-frontier | fresh handhold-to-high-walkway transfer and upper guard |
 | `20260826-level01-recording-fresh-v2` | recorded-frontier | clean power-on replay through the upper-edge frontier |
+| `20260826-level01-tower-negative-v1` | recorded-negative | lower-tower surface/actor branch from the clean upper-edge checkpoint |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
