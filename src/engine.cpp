@@ -1973,35 +1973,36 @@ void Engine::initialize_camera_alignment() {
 
 bool Engine::rebase_camera_reference() {
     bool reference_rebased = false;
-    if (camera_.scroll_left_pending || camera_.scroll_right_pending) {
-        if (camera_.scroll_x >= 0x10) {
-            camera_.scroll_x -= 0x10;
-            camera_.reference_x += 0x10;
-            camera_.scroll_left_pending = false;
-            camera_.scroll_right_pending = false;
-            reference_rebased = true;
-        } else if (camera_.scroll_x < -0x0F) {
-            camera_.scroll_x += 0x10;
-            camera_.reference_x -= 0x10;
-            camera_.scroll_left_pending = false;
-            camera_.scroll_right_pending = false;
-            reference_rebased = true;
-        }
+    // The ROM consumes the accumulated scroll on the next update pass, not
+    // immediately after the pass that reaches a 16-pixel boundary.  The
+    // pending flags are video/update bookkeeping and are cleared at the end
+    // of the native frame, so the accumulator itself is the authoritative
+    // condition here.
+    if (camera_.scroll_x >= 0x10) {
+        camera_.scroll_x -= 0x10;
+        camera_.reference_x += 0x10;
+        camera_.scroll_left_pending = false;
+        camera_.scroll_right_pending = false;
+        reference_rebased = true;
+    } else if (camera_.scroll_x < -0x0F) {
+        camera_.scroll_x += 0x10;
+        camera_.reference_x -= 0x10;
+        camera_.scroll_left_pending = false;
+        camera_.scroll_right_pending = false;
+        reference_rebased = true;
     }
-    if (camera_.scroll_up_pending || camera_.scroll_down_pending) {
-        if (camera_.scroll_y >= 0x10) {
-            camera_.scroll_y -= 0x10;
-            camera_.reference_y += 0x10;
-            camera_.scroll_up_pending = false;
-            camera_.scroll_down_pending = false;
-            reference_rebased = true;
-        } else if (camera_.scroll_y < -0x0F) {
-            camera_.scroll_y += 0x10;
-            camera_.reference_y -= 0x10;
-            camera_.scroll_up_pending = false;
-            camera_.scroll_down_pending = false;
-            reference_rebased = true;
-        }
+    if (camera_.scroll_y >= 0x10) {
+        camera_.scroll_y -= 0x10;
+        camera_.reference_y += 0x10;
+        camera_.scroll_up_pending = false;
+        camera_.scroll_down_pending = false;
+        reference_rebased = true;
+    } else if (camera_.scroll_y < -0x0F) {
+        camera_.scroll_y += 0x10;
+        camera_.reference_y -= 0x10;
+        camera_.scroll_up_pending = false;
+        camera_.scroll_down_pending = false;
+        reference_rebased = true;
     }
     // The ROM dispatcher consumes the pending byte every frame. A reference
     // rebase is conditional on the accumulator crossing 16 pixels, but the
@@ -2270,12 +2271,19 @@ void Engine::update(const InputState& input) {
         player_.ground_braking = false;
     }
 
-    // The ROM updates the follow camera before the tile-update dispatcher
-    // consumes a pending 16-pixel reference shift. Keeping the rebase at the
-    // end of the frame makes the externally visible state match that order:
-    // local movement, damped camera movement, then reference/scroll repair.
-    update_camera();
+    // The ROM consumes a pending 16-pixel reference shift at the beginning
+    // of the next follow pass. This leaves the boundary frame externally
+    // visible with scroll == 16, then exposes the rebased reference on the
+    // following frame.
     rebase_camera_reference();
+    update_camera();
+    // Pending bytes are transient dispatcher state and are cleared before
+    // the stable trace boundary. The scroll accumulator survives to the next
+    // frame, where rebase_camera_reference() consumes it.
+    camera_.scroll_left_pending = false;
+    camera_.scroll_right_pending = false;
+    camera_.scroll_up_pending = false;
+    camera_.scroll_down_pending = false;
     if (ground_release) {
         // The first no-input frame enters the ROM's inertial ground path after
         // the position/camera work. The exposed velocity is 0x038C (or its

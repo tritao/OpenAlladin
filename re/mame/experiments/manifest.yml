@@ -28,6 +28,17 @@ experiments:
         - player.frame_ptr
         - player.animation_pc
         - player.animation_timer
+        - camera.x
+        - camera.y
+        - camera.reference_x
+        - camera.reference_y
+        - camera.scroll_x
+        - camera.scroll_y
+        - camera.horizontal_threshold
+        - camera.vertical_threshold
+        - camera.update_delay
+        - camera.special_mode
+        - camera.state_08
     boot:
       scenario: first-level
     setup:
@@ -64,6 +75,15 @@ experiments:
         - player.animation_timer
         - camera.x
         - camera.y
+        - camera.reference_x
+        - camera.reference_y
+        - camera.scroll_x
+        - camera.scroll_y
+        - camera.horizontal_threshold
+        - camera.vertical_threshold
+        - camera.update_delay
+        - camera.special_mode
+        - camera.state_08
     boot:
       scenario: first-level
     setup:
@@ -169,6 +189,15 @@ experiments:
         - player.grounded
         - camera.x
         - camera.y
+        - camera.reference_x
+        - camera.reference_y
+        - camera.scroll_x
+        - camera.scroll_y
+        - camera.horizontal_threshold
+        - camera.vertical_threshold
+        - camera.update_delay
+        - camera.special_mode
+        - camera.state_08
     boot:
       scenario: first-level
     setup:
@@ -201,6 +230,15 @@ experiments:
         - player.grounded
         - camera.x
         - camera.y
+        - camera.reference_x
+        - camera.reference_y
+        - camera.scroll_x
+        - camera.scroll_y
+        - camera.horizontal_threshold
+        - camera.vertical_threshold
+        - camera.update_delay
+        - camera.special_mode
+        - camera.state_08
     boot:
       scenario: first-level
     setup:
