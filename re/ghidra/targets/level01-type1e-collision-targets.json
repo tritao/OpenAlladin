@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-type1e-far-right-interaction",
+    "purpose": "Recover the player and actor collision handlers for actor type 0x1E, which appears on the natural far-right lower-floor route and has a proximity-driven animation stream."
+  },
+  "targets": [
+    { "address": "0x001AE796", "name": "PlayerCollisionHandler_Type1E" },
+    { "address": "0x001AC318", "name": "ActorCollisionHandler_Type1E" },
+    { "address": "0x001AC784", "name": "AnimationVM" },
+    { "address": "0x001ACBF2", "name": "ActorAnimationSelector" },
+    { "address": "0x001AE30A", "name": "ActorInitializeFromTemplate" },
+    { "address": "0x001B7C24", "name": "ActorTemplate_Type1E" },
+    { "address": "0x0012355A", "name": "Type1E_ProximitySecondaryStream" },
+    { "address": "0x00123614", "name": "Type1E_ProximityAnimationStream" }
+  ]
+}
