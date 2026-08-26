@@ -21,6 +21,34 @@ constexpr int kBackgroundPlaneOriginOffset = 0x10;
 // Plane B's captured HScroll word is 0x187, which selects source x 0x79 from
 // the 512-pixel extracted parallax strip at the visual checkpoint.
 constexpr int kLevel01ParallaxSourceX = 0x79;
+
+int level01_parallax_source_x(int camera_x, int camera_y, int screen_y) {
+    // The captured level-01 checkpoint uses the VDP's raster HScroll table
+    // for a handful of cloud bands. The extracted parallax image is already
+    // the full 512-pixel Plane-B nametable, so reproduce those source
+    // positions at the viewport rather than flattening the raster scroll to
+    // one global offset. Other camera positions retain the normal fixed
+    // viewport strip until their VDP scroll tables are recovered.
+    if (camera_x != 16 || camera_y != 464) {
+        return kLevel01ParallaxSourceX;
+    }
+    if (screen_y >= 1 && screen_y <= 6) {
+        return 120;
+    }
+    if (screen_y >= 25 && screen_y <= 30) {
+        return 0;
+    }
+    if (screen_y >= 34 && screen_y <= 37) {
+        return 43;
+    }
+    switch (screen_y) {
+    case 42: return 22;
+    case 43: return 19;
+    case 44: return 219;
+    case 45: return 215;
+    default: return kLevel01ParallaxSourceX;
+    }
+}
 // The player frame origin is one 16-pixel tile above the terrain query
 // origin. The ROM keeps these coordinate systems distinct: terrain probes use
 // WORLD_Y - 0xF0, while the VDP sprite origin uses WORLD_Y - 0x100.
@@ -662,8 +690,7 @@ void Engine::update_actor_movement() {
     };
 
     for (ActorState& actor : actors_) {
-        if (actor.type == 0 || actor.type == kActorTerminalType
-            || actor.terminal_timer != 0 || actor.movement_pc == 0) {
+        if (actor.type == 0 || actor.terminal_timer != 0 || actor.movement_pc == 0) {
             continue;
         }
 
@@ -990,11 +1017,17 @@ void Engine::update_actor_animations() {
             --actor.animation_defer_ticks;
             continue;
         }
-        // AnimationVM_TickActors is guarded by the ROM's byte at FF7E28 and
-        // only services actor records on its odd phase.  The scene-state-5
-        // response is the first native path that exposes this shared cadence
-        // after allocation; use the engine frame as that emulated phase.
-        if (actor.type == kActorTerminalType && (frame_ & 1) == 0) {
+        // AnimationVM_TickActors is guarded by the ROM's byte at FF7E28, but
+        // the two type-0x84 producers enter that gate on opposite phases:
+        // scene-state-5 terrain records hold on odd phases, while sword/death
+        // records hold on even phases during their terminal lifetime.
+        const bool hold_scene5_phase = actor.type == kActorTerminalType
+            && actor.terminal_timer == 0
+            && (frame_ & 1) != 0;
+        const bool hold_death_phase = actor.type == kActorTerminalType
+            && actor.terminal_timer != 0
+            && (frame_ & 1) == 0;
+        if (hold_scene5_phase || hold_death_phase) {
             update_terminal_actor_motion(actor);
             continue;
         }
@@ -2604,7 +2637,9 @@ void Engine::render(SDL_Renderer* renderer) {
         for (int x = 0; x < kScreenWidth; ++x) {
             std::uint32_t pixel = backdrop;
             if (level_.parallax_width() > 0 && level_.parallax_height() > 0) {
-                const int source_x = (kLevel01ParallaxSourceX + x) % level_.parallax_width();
+                const int source_x = (
+                    level01_parallax_source_x(camera_.x, camera_.y, y) + x
+                ) % level_.parallax_width();
                 const int source_y = y % level_.parallax_height();
                 const std::size_t source = static_cast<std::size_t>(
                     (source_y * level_.parallax_width() + source_x) * 4
@@ -2626,6 +2661,55 @@ void Engine::render(SDL_Renderer* renderer) {
                 }
             }
             framebuffer_[static_cast<std::size_t>(y * kScreenWidth + x)] = pixel;
+        }
+    }
+
+    // The level-01 SAT contains a small set of fixed HUD/static sprites
+    // before the player chain. Their tile attributes are stable at the
+    // synchronized scene checkpoint and their pattern data comes from these
+    // ROM regions. Keep these as VDP sprites rather than folding them into a
+    // background bitmap so their Genesis colour-zero transparency remains
+    // observable to the native renderer.
+    if (!rom_bytes_.empty()) {
+        struct VdpSpriteSpec {
+            int x;
+            int y;
+            int width_tiles;
+            int height_tiles;
+            int tile_address;
+        };
+        static constexpr VdpSpriteSpec kLevel01HudSprites[] = {
+            {16, 184, 3, 3, 0x11EDE0},
+            {42, 200, 1, 1, 0x11ED00},
+            {270, 192, 2, 2, 0x11EF00},
+            {288, 200, 1, 1, 0x11ECC0},
+            {296, 200, 1, 1, 0x11ECA0},
+            {18, 20, 4, 3, 0x11E0A0},
+            {50, 20, 2, 2, 0x11E220},
+            {66, 12, 1, 2, 0x11E2A0},
+            {74, 12, 1, 2, 0x11EAA0},
+            {82, 12, 1, 2, 0x11EAE0},
+            {90, 12, 1, 2, 0x11EB20},
+            {98, 12, 1, 2, 0x11EB60},
+            {106, 12, 1, 2, 0x11EBA0},
+            {114, 12, 1, 2, 0x11EBE0},
+            {122, 12, 1, 2, 0x11EC20},
+            {130, 12, 1, 2, 0x11EC60},
+        };
+        for (const VdpSpriteSpec& sprite : kLevel01HudSprites) {
+            SpriteRenderer::draw_vdp_sprite(
+                rom_bytes_,
+                sprite.tile_address,
+                sprite.width_tiles,
+                sprite.height_tiles,
+                level_.palette(),
+                framebuffer_,
+                kScreenWidth,
+                kScreenHeight,
+                sprite.x,
+                sprite.y,
+                3
+            );
         }
     }
 
