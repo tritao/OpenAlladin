@@ -20,6 +20,14 @@ return function(options)
         return tonumber(digits, 16)
     end
 
+    local function parse_integer(value)
+        local trimmed = value:gsub("^%s+", ""):gsub("%s+$", "")
+        if trimmed:match("^0[xX]") then
+            return tonumber(trimmed:sub(3), 16)
+        end
+        return tonumber(trimmed)
+    end
+
     local function add_address(address)
         watched_addresses[#watched_addresses + 1] = address
     end
@@ -39,6 +47,7 @@ return function(options)
     local breakpoint_registers = os.getenv("OPENALADDIN_BREAKPOINT_REGISTERS") == "1"
     local breakpoint_row_context = os.getenv("OPENALADDIN_BREAKPOINT_ROW_CONTEXT") == "1"
     local breakpoint_terrain_context = os.getenv("OPENALADDIN_BREAKPOINT_TERRAIN_CONTEXT") == "1"
+    local breakpoint_write_commands = {}
     local trace_audio_commands = options.trace_audio_commands
     local trace_audio_mailbox = options.trace_audio_mailbox
     local trace_audio_mailbox_reads = options.trace_audio_mailbox_reads
@@ -54,6 +63,48 @@ return function(options)
     local scene_state_address = options.scene_state_address
     local get_scene_state_last = options.get_scene_state_last
     local set_scene_state_last = options.set_scene_state_last
+
+    -- Optional debugger-side writes run at each configured execution
+    -- breakpoint, after the breakpoint instruction has been reached and
+    -- before the action continues. This is useful for targeted RE probes
+    -- where a camera refill reconstructs a row/table slot after the normal
+    -- frame-boundary poke has already run.
+    local breakpoint_write_spec = os.getenv("OPENALADDIN_BREAKPOINT_WRITES") or ""
+    for item in breakpoint_write_spec:gmatch("[^,]+") do
+        local address_text, rhs = item:match("^%s*([^=]+)%s*=%s*(.-)%s*$")
+        if address_text and rhs then
+            local value_text, width = rhs:match("^%s*([^:]+)%s*:%s*([uU]%d+)%s*$")
+            if width then
+                width = width:lower()
+            else
+                value_text = rhs
+                width = "u8"
+            end
+            local address = parse_hex_address(address_text)
+            local value = parse_integer(value_text)
+            if address and value and (width == "u8" or width == "u16" or width == "u32") then
+                local operator = width == "u8" and "b" or (width == "u16" and "w" or "d")
+                breakpoint_write_commands[#breakpoint_write_commands + 1] = string.format(
+                    ":maincpu.%s@$%06X=%X",
+                    operator,
+                    address,
+                    value & (width == "u8" and 0xff or (width == "u16" and 0xffff or 0xffffffff)))
+            end
+        end
+    end
+
+    local function append_breakpoint_writes(action)
+        if #breakpoint_write_commands == 0 then
+            return action
+        end
+        local continue_suffix = " ; g"
+        if action:sub(-#continue_suffix) == continue_suffix then
+            action = action:sub(1, #action - #continue_suffix)
+                .. "; " .. table.concat(breakpoint_write_commands, "; ")
+                .. continue_suffix
+        end
+        return action
+    end
 
     for item in watch_list:gmatch("[^,]+") do
         local address = parse_hex_address(item)
@@ -97,7 +148,7 @@ return function(options)
             else
                 action = "printf \"OPENALADDIN_BREAK PC=%08X FRAME=%08X\\n\",pc,frame ; g"
             end
-            cpu.debug:bpset(address, "", action)
+            cpu.debug:bpset(address, "", append_breakpoint_writes(action))
         end
     end
 
