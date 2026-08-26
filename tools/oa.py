@@ -27,6 +27,7 @@ from openaladdin.common import hashes, load_yaml, normalize_symbols, parse_int, 
 
 
 EXPERIMENTS = ROOT / "re/mame/experiments/manifest.yml"
+EVENTS = ROOT / "re/mame/events/manifest.yml"
 GHIDRA_CONFIG = ROOT / "re/config/ghidra.yml"
 ROM_DEFAULT = ROOT / "rom/Disneys_Aladdin_U_p1.bin"
 
@@ -396,6 +397,86 @@ def experiment_action_protocol(experiment: dict[str, Any]) -> str | None:
     return ";".join(actions)
 
 
+def _event_field(value: Any, label: str) -> str:
+    text = str(value)
+    if not text or any(character in text for character in "|;~,\\"):
+        raise SystemExit(f"event {label} contains a reserved protocol character: {text!r}")
+    return text
+
+
+def event_detector_protocol() -> str | None:
+    """Compile passive semantic event detectors into the Lua protocol."""
+    document = load_yaml(EVENTS) or {}
+    detectors = document.get("detectors") or []
+    if not detectors:
+        return None
+    symbols = _symbol_index()
+    operators = {
+        "equals": "eq",
+        "equal": "eq",
+        "not_equals": "ne",
+        "less_than": "lt",
+        "less_equal": "le",
+        "greater_than": "gt",
+        "greater_equal": "ge",
+    }
+    encoded_detectors: list[str] = []
+    for detector in detectors:
+        detector = detector or {}
+        name = _event_field(detector.get("name"), "name")
+        event = _event_field(detector.get("event", name), "event")
+        phase = _event_field(detector.get("phase", "unknown"), "phase")
+        level = _event_field(detector.get("level", ""), "level")
+        checkpoint = _event_field(detector.get("checkpoint", name), "checkpoint")
+        stable_for = int(detector.get("stable_for", 1))
+        if stable_for < 1:
+            raise SystemExit(f"event detector {name!r} stable_for must be positive")
+        once = "0" if detector.get("repeatable", False) else "1"
+        conditions: list[str] = []
+        for condition in detector.get("conditions") or []:
+            condition = condition or {}
+            if "pc" in condition:
+                target_name = str(condition["pc"])
+                target = symbols.get(target_name)
+                expected = int(target["address"]) if target else parse_int(target_name)
+                conditions.append(f"pc,{_event_field(target_name, 'pc')},u32,eq,{expected}")
+                continue
+            symbol_name = condition.get("symbol")
+            if symbol_name is None:
+                raise SystemExit(f"event detector {name!r} condition has no symbol or pc")
+            symbol_name = str(symbol_name)
+            if symbol_name not in symbols:
+                raise SystemExit(f"event detector {name!r} references unknown symbol {symbol_name!r}")
+            width = str(condition.get("width", condition.get("type", symbols[symbol_name].get("type", "u8")))).lower()
+            if width not in ("u8", "u16", "u32", "i16", "s16"):
+                raise SystemExit(f"event detector {name!r} has unsupported width {width!r}")
+            operation = "eq"
+            value: Any = 0
+            for key, encoded_operation in operators.items():
+                if key in condition:
+                    operation = encoded_operation
+                    value = condition[key]
+                    break
+            else:
+                raise SystemExit(f"event detector {name!r} condition has no comparison")
+            conditions.append(
+                f"symbol,{_event_field(symbol_name, 'symbol')},{width},{operation},{parse_int(value)}"
+            )
+        if not conditions:
+            raise SystemExit(f"event detector {name!r} has no conditions")
+        encoded_detectors.append("|".join((
+            name,
+            event,
+            phase,
+            level,
+            checkpoint,
+            str(stable_for),
+            once,
+            "~".join(conditions),
+        )))
+    return ";".join(encoded_detectors)
+
+
 def experiment_memory_pokes(experiment: dict[str, Any]) -> tuple[int, str] | None:
     """Compile a named experiment's deterministic RAM fixture into Lua pokes."""
     fixture = experiment.get("pokes") or {}
@@ -574,6 +655,44 @@ SYNC_PATTERN = re.compile(
 
 def _signed_u16(value: int) -> int:
     return value - 0x10000 if value & 0x8000 else value
+
+
+ANIMATION_SELECTOR_FIELDS = (
+    "animation_gate",
+    "terminal_transition",
+    "scene_script_countdown",
+    "interaction_lock",
+    "response_active",
+    "landing_state",
+    "transition_gate",
+    "transition_lock",
+    "transition_state",
+    "transition_mode",
+    "transition_flag",
+    "transition_response",
+    "transition_state_de",
+    "transition_state_df",
+    "camera_special_mode",
+    "response_latch",
+    "response_animation",
+    "response_state_ee",
+    "response_state_ef",
+    "response_state_f0",
+    "response_state_101",
+    "horizontal_response",
+    "response_timer",
+    "interaction_pending",
+    "state_lock",
+)
+
+
+def animation_selector_spec(player: dict[str, Any]) -> str | None:
+    selector = player.get("animation_selector")
+    if not isinstance(selector, dict):
+        return None
+    if any(field not in selector for field in ANIMATION_SELECTOR_FIELDS):
+        return None
+    return ",".join(str(int(selector[field])) for field in ANIMATION_SELECTOR_FIELDS)
 
 
 def _sync_record(match: re.Match[str]) -> dict[str, int]:
@@ -785,6 +904,8 @@ MAME_RUN_ENVIRONMENT = (
     "OPENALADDIN_INPUT",
     "OPENALADDIN_INPUT_MODE",
     "OPENALADDIN_INPUT_OUTPUT",
+    "OPENALADDIN_EVENT_OUTPUT",
+    "OPENALADDIN_EVENT_SPEC",
     "OPENALADDIN_STATE_OUTPUT",
     "OPENALADDIN_CAPTURE",
     "OPENALADDIN_CAPTURE_VDP",
@@ -810,6 +931,7 @@ MAME_RUN_ENVIRONMENT = (
     "OPENALADDIN_PLAYBACK_FILE",
     "OPENALADDIN_MAME_HEADLESS",
     "OPENALADDIN_MAME_VIDEO",
+    "OPENALADDIN_MAME_DEBUG_UI",
 )
 
 
@@ -868,6 +990,8 @@ def command_record(args: argparse.Namespace) -> int:
         "OPENALADDIN_CAPTURE": "state",
         "OPENALADDIN_INPUT_MODE": "record",
         "OPENALADDIN_INPUT_OUTPUT": str(run_dir / "input.jsonl"),
+        "OPENALADDIN_EVENT_OUTPUT": str(run_dir / "events.jsonl"),
+        "OPENALADDIN_EVENT_SPEC": event_detector_protocol() or "",
         "OPENALADDIN_RECORD_FILE": str(run_dir / "mame.inp"),
         "OPENALADDIN_STATE_DIRECTORY": str(run_dir / "checkpoints"),
         "OPENALADDIN_CHECKPOINT_REFERENCE": "checkpoints",
@@ -888,6 +1012,54 @@ def command_record(args: argparse.Namespace) -> int:
         print(f"record: {run_dir}")
         print(f"record: frames {manifest['frames']}")
     return final_status
+
+
+def command_mame(args: argparse.Namespace) -> int:
+    """Launch a general interactive MAME session through the project wrapper."""
+    rom = resolve(args.rom)
+    if not rom.is_file():
+        raise SystemExit(f"ROM not found: {rom}")
+    if args.frames is not None and args.frames < 1:
+        raise SystemExit("--frames must be positive when supplied")
+    if args.mame_record and args.mame_playback:
+        raise SystemExit("--mame-record and --mame-playback are mutually exclusive")
+    if args.input and args.mame_playback:
+        raise SystemExit("--input cannot be combined with --mame-playback")
+
+    trace_dir = resolve(args.trace_dir) if args.trace_dir else ROOT / "build/re/mame-session"
+    environment = _clean_mame_environment()
+    environment.update({
+        "OPENALADDIN_TRACE_DIR": str(trace_dir),
+        # The interactive launcher should not stop after the wrapper's normal
+        # 120-frame trace default. A supplied count means that many captured
+        # logical frames, including frame zero.
+        "OPENALADDIN_TRACE_FRAMES": (
+            "-1" if args.frames is None else str(args.frames - 1)
+        ),
+        "OPENALADDIN_CAPTURE": args.capture,
+        "OPENALADDIN_STATE_OUTPUT": "1",
+        "OPENALADDIN_EVENT_OUTPUT": str(trace_dir / "events.jsonl"),
+        "OPENALADDIN_EVENT_SPEC": event_detector_protocol() or "",
+        "OPENALADDIN_MAME_HEADLESS": "1" if args.headless else "0",
+        "OPENALADDIN_MAME_VIDEO": args.video,
+        "OPENALADDIN_MAME_DEBUG_UI": "1" if args.debug_ui else "0",
+        "OPENALADDIN_INPUT_MODE": "inject" if args.input else "record",
+        "OPENALADDIN_ROM_SHA256": hashes(rom)["sha256"],
+    })
+    if args.input:
+        environment["OPENALADDIN_INPUT"] = args.input
+    if args.load_state:
+        environment["OPENALADDIN_LOAD_STATE"] = str(resolve(Path(args.load_state)))
+    if args.checkpoints:
+        environment["OPENALADDIN_CHECKPOINTS"] = args.checkpoints
+    if args.mame_record:
+        environment["OPENALADDIN_RECORD_FILE"] = str(resolve(Path(args.mame_record)))
+    if args.mame_playback:
+        environment["OPENALADDIN_PLAYBACK_FILE"] = str(resolve(Path(args.mame_playback)))
+
+    print(f"mame: launching {rom}")
+    print(f"mame: trace output {trace_dir}")
+    return run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
 
 
 def _load_run_manifest(name: str) -> tuple[Path, dict[str, Any]]:
@@ -1075,6 +1247,8 @@ def command_regression(args: argparse.Namespace) -> int:
         "OPENALADDIN_EXPERIMENT_ACTIONS",
         "OPENALADDIN_STATE_SYNC",
         "OPENALADDIN_TRACE_EDGES",
+        "OPENALADDIN_POKE_FRAME",
+        "OPENALADDIN_POKE_MEMORY",
     ):
         environment.pop(key, None)
     state_sync = os.environ.get("OPENALADDIN_STATE_SYNC", "1") == "1"
@@ -1086,13 +1260,17 @@ def command_regression(args: argparse.Namespace) -> int:
         "OPENALADDIN_CAPTURE": "state",
         "OPENALADDIN_ROM_SHA256": hashes(rom)["sha256"],
     })
-    if any(field.startswith("actors[") for field in fields):
+    if any(field == "actors" or field.startswith("actors[") for field in fields):
         environment["OPENALADDIN_TRACE_ACTORS"] = "1"
     if state_sync:
         environment["OPENALADDIN_STATE_SYNC"] = "1"
     protocol = experiment_action_protocol(experiment)
     if protocol:
         environment["OPENALADDIN_EXPERIMENT_ACTIONS"] = protocol
+    memory_pokes = experiment_memory_pokes(experiment)
+    if memory_pokes:
+        environment["OPENALADDIN_POKE_FRAME"] = str(memory_pokes[0])
+        environment["OPENALADDIN_POKE_MEMORY"] = memory_pokes[1]
 
     print(f"regression: running MAME experiment {args.scenario}")
     status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
@@ -1146,6 +1324,12 @@ def command_regression(args: argparse.Namespace) -> int:
             "--checkpoint-animation",
             f"{int(player['animation_pc'])},{int(player.get('animation_timer', 0))}",
         ])
+    selector_spec = animation_selector_spec(player)
+    if selector_spec is not None:
+        native_command.extend([
+            "--checkpoint-animation-selector",
+            selector_spec,
+        ])
     if "facing_x_flip" in player:
         native_command.extend([
             "--checkpoint-facing-x-flip",
@@ -1160,11 +1344,23 @@ def command_regression(args: argparse.Namespace) -> int:
     if status:
         return status
 
+    actor_table_compare = "actors" in fields
+    state_fields = [field for field in fields if field != "actors"]
     print(f"regression: comparing fields {', '.join(fields)}")
-    compare_args: list[str] = [str(aligned), str(native_trace)]
-    for field in fields:
-        compare_args.extend(["--field", field])
-    status = run_tool("openaladdin/mame/compare_state.py", compare_args)
+    actor_status = 0
+    if actor_table_compare:
+        actor_args: list[str] = [str(aligned), str(native_trace)]
+        for field in regression.get("actor_fields") or []:
+            actor_args.extend(["--field", str(field)])
+        actor_status = run_tool("openaladdin/mame/compare_actors.py", actor_args)
+
+    state_status = 0
+    if state_fields:
+        compare_args: list[str] = [str(aligned), str(native_trace)]
+        for field in state_fields:
+            compare_args.extend(["--field", field])
+        state_status = run_tool("openaladdin/mame/compare_state.py", compare_args)
+    status = actor_status or state_status
     print(f"regression: MAME trace {mame_trace}")
     print(f"regression: aligned trace {aligned}")
     print(f"regression: native trace {native_trace}")
@@ -1522,6 +1718,27 @@ def build_parser() -> argparse.ArgumentParser:
     )
     record.add_argument("--controller", default="P1 Mega Drive pad")
     record.set_defaults(function=command_record)
+
+    mame = commands.add_parser(
+        "mame",
+        help="launch an interactive MAME session through the project wrapper",
+    )
+    add_rom_argument(mame)
+    mame.add_argument("--frames", type=int, help="optional frame count; otherwise run until MAME exits")
+    mame.add_argument("--trace-dir", type=Path)
+    mame.add_argument("--capture", choices=("state", "ram", "vdp", "full"), default="state")
+    mame.add_argument("--input", help="optional deterministic input schedule; disables passive input observation")
+    mame.add_argument("--load-state")
+    mame.add_argument(
+        "--checkpoints",
+        help="named MAME save states as frame=name pairs, e.g. 0=boot,1245=level01-entry",
+    )
+    mame.add_argument("--headless", action="store_true", help="run without a visible MAME window")
+    mame.add_argument("--video", default="soft", help="MAME video backend (default: soft)")
+    mame.add_argument("--debug-ui", action="store_true", help="show the MAME debugger UI")
+    mame.add_argument("--mame-record", type=Path, help="write MAME's native input recording to this file")
+    mame.add_argument("--mame-playback", type=Path, help="play MAME's native input recording from this file")
+    mame.set_defaults(function=command_mame)
 
     replay = commands.add_parser(
         "replay",

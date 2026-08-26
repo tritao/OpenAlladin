@@ -3,6 +3,7 @@
 return function(options)
     local core = options.core
     local join_path = core.join_path
+    local json_string = core.json_string
     local json_object = core.json_object
     local read_u8 = options.read_u8
 
@@ -13,6 +14,8 @@ return function(options)
     local trace_audio = options.trace_audio
     local state_output = options.state_output
     local input_output = options.input_output
+    local event_output = options.event_output
+    local event_spec = options.event_spec or ""
     local ram_start = options.ram_start
     local ram_size = options.ram_size
 
@@ -26,6 +29,7 @@ return function(options)
     local sound_writes = trace_audio and assert(io.open(join_path(trace_dir, "sound_writes.jsonl"), "wb")) or nil
     local state = state_output and assert(io.open(join_path(trace_dir, "state.jsonl"), "wb")) or nil
     local input = input_output and assert(io.open(input_output, "wb")) or nil
+    local events = event_output and assert(io.open(event_output, "wb")) or nil
 
     local result = {
         profile = capture_profile,
@@ -42,7 +46,8 @@ return function(options)
         vdp_writes = vdp_writes,
         sound_writes = sound_writes,
         state = state,
-        input = input
+        input = input,
+        events = events
     }
 
     function result.write_record(fields)
@@ -61,6 +66,13 @@ return function(options)
         if input then
             input:write(json_object(fields), "\n")
             input:flush()
+        end
+    end
+
+    function result.write_event(fields)
+        if events then
+            events:write(json_object(fields), "\n")
+            events:flush()
         end
     end
 
@@ -101,6 +113,17 @@ return function(options)
         if sound_writes then sound_writes:close() end
         if state then state:close() end
         if input then input:close() end
+        if events then events:close() end
+    end
+
+    if events then
+        events:write(json_object({
+            { "type", json_string("header") },
+            { "format", json_string("openaladdin-event-v1") },
+            { "frame_semantics", json_string("event observed at the logical state boundary for frame N") },
+            { "detectors", json_string(event_spec) }
+        }), "\n")
+        events:flush()
     end
 
     return result

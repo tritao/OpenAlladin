@@ -99,6 +99,10 @@ struct PlayerState {
     // publishes this gate for the following state-machine calls.
     std::uint8_t terrain_transition_gate = 0;
     std::uint8_t terrain_terminal_transition = 0;
+    // Selector bytes that are not yet folded into the native terrain model
+    // still travel with the checkpoint. This keeps response/action stream
+    // selection reproducible instead of reconstructing it from a pose.
+    AnimationSelectorState animation_selector{};
     std::uint8_t attack_timer = 0;
 };
 
@@ -150,6 +154,10 @@ struct ActorState {
     std::uint16_t interaction_resource_offset = 0;
     std::uint8_t interaction_selector = 0;
     bool spawned_by_interaction = false;
+    // F5-created actors use the common animation scheduler immediately. This
+    // distinguishes them from the scene-state-5 type-0x84 terminal record,
+    // which has its own phase gate and deferred first tick.
+    bool spawned_by_animation = false;
 };
 
 enum class ActorAllocationPool {
@@ -343,6 +351,7 @@ public:
     void set_checkpoint_terrain_behavior(std::uint8_t behavior);
     void set_checkpoint_frame_ptr(int address);
     void set_checkpoint_animation(std::uint32_t animation_pc, int timer);
+    void set_checkpoint_animation_selector(const AnimationSelectorState& selector);
     void set_checkpoint_facing_x_flip(bool facing_x_flip);
     void set_checkpoint_vdp(const std::string& trace_dir, int frame);
     void set_checkpoint_camera(
@@ -398,7 +407,8 @@ private:
     void update_actor_movement();
     void update_terminal_actor_motion(ActorState& actor);
     void update_actor_animations();
-    void apply_animation_spawns();
+    void apply_animation_spawns(bool defer_player_spawns = false);
+    void apply_animation_spawn_request(const AnimationSpawnRequest& request);
     void scan_interaction_refill_window();
     void dispatch_interaction(const Level::InteractionRecord& record, int base_x, int base_y);
     std::optional<SpawnDescriptor> spawn_descriptor(std::uint8_t selector) const;
@@ -409,6 +419,7 @@ private:
     void update_actor_actor_collisions(bool pre_motion = false);
     void render_vdp_checkpoint();
     void update_actor_interactions(const InputState& input, bool was_grounded);
+    AnimationContext player_animation_context(bool grounded) const;
     CollisionBox read_collision_box(
         std::uint32_t frame_pointer,
         int origin_x,
@@ -431,6 +442,7 @@ private:
     std::map<int, std::array<ActorState, 32>> actor_timeline_;
     bool actor_snapshot_mode_ = false;
     bool interaction_scan_initialized_ = false;
+    bool checkpoint_animation_selector_pending_ = false;
     int interaction_reference_x_ = 0;
     int interaction_reference_y_ = 0;
     // FUN_001B3032 is the fixed-ROM scene-5 response PRNG. Keep its state
@@ -439,6 +451,7 @@ private:
     std::uint32_t terrain_random_state_ = 0;
     int terrain_input_world_x_ = 0;
     int terrain_input_world_y_ = 0;
+    std::optional<AnimationSpawnRequest> deferred_animation_spawn_;
     bool checkpoint_terrain_behavior_override_ = false;
     std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;

@@ -12,7 +12,13 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run_case(name: str, checkpoint: str, schedule: str, frames: int = 2) -> list[dict]:
+def run_case(
+    name: str,
+    checkpoint: str,
+    schedule: str,
+    frames: int = 2,
+    animation: str | None = None,
+) -> list[dict]:
     output = ROOT / "build/re/tests/native-sprites" / f"{name}.jsonl"
     output.parent.mkdir(parents=True, exist_ok=True)
     command = [
@@ -27,6 +33,8 @@ def run_case(name: str, checkpoint: str, schedule: str, frames: int = 2) -> list
         "--input-schedule",
         schedule,
     ]
+    if animation is not None:
+        command.extend(["--checkpoint-animation", animation])
     environment = dict(os.environ)
     environment["SDL_VIDEODRIVER"] = "dummy"
     subprocess.run(command, cwd=ROOT, env=environment, check=True, stdout=subprocess.DEVNULL)
@@ -58,6 +66,21 @@ def main() -> int:
     assert jump_frames[:5] == [161, 161, 161, 161, 162]
     assert jumping[-1]["player"]["sprite_frame"] == 162
     assert jumping[-1]["player"]["animation_state"] == "jump"
+
+    # A response stream is gameplay-owned state, not an alternate idle pose.
+    # With its selector gates inactive it must hand control back to
+    # locomotion immediately instead of leaving the hurt-looking stream
+    # running because the player is grounded and has no input.
+    recovered = run_case(
+        "response-recovery",
+        "103,416,0,0,1",
+        "none*2",
+        frames=2,
+        animation="0x00121FA6,0",
+    )
+    assert recovered[1]["player"]["animation_state"] == "idle"
+    assert recovered[1]["player"]["animation_stream_entry"] == 0x00121D9A
+    assert recovered[1]["player"]["frame_ptr"] == 0x001EA34A
 
     print("native sprites: ok")
     return 0

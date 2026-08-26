@@ -23,6 +23,16 @@ enum class HorizontalDirection {
     Right,
 };
 
+// A stream selected by gameplay is not necessarily the same thing as the
+// locomotion pose currently preferred by physics. Keeping this distinction
+// explicit prevents a response/action cursor from being mistaken for idle
+// merely because the player has no horizontal input.
+enum class AnimationStreamKind {
+    Locomotion,
+    Response,
+    Action,
+};
+
 // The global RAM inputs consumed by Player_ProcessInteractionState at
 // 0x001AE4F8. Keep these separate from the VM's bytecode scratch memory:
 // FFF0CC is cleared by the caller immediately before some selector calls,
@@ -36,9 +46,20 @@ struct AnimationSelectorState {
     std::uint8_t landing_state = 0;             // FFF0C1
     std::uint8_t transition_gate = 0;           // FFF0D0
     std::uint8_t transition_lock = 0;           // FFF0D7
+    std::uint8_t transition_state = 0;          // FFF0DB
     std::uint8_t transition_mode = 0;           // FFF0CD
+    std::uint8_t transition_flag = 0;           // FFF0D2
     std::uint8_t transition_response = 0;       // FFF0D4
+    std::uint8_t transition_state_de = 0;       // FFF0DE
+    std::uint8_t transition_state_df = 0;       // FFF0DF
     std::uint8_t camera_special_mode = 0;       // FFF173
+    std::uint8_t response_latch = 0;             // FFF115
+    std::uint8_t response_animation = 0;         // FFF0ED
+    std::uint8_t response_state_ee = 0;         // FFF0EE
+    std::uint8_t response_state_ef = 0;         // FFF0EF
+    std::uint8_t response_state_f0 = 0;         // FFF0F0
+    std::uint8_t response_state_101 = 0;        // FFF101
+    std::int16_t horizontal_response = 0;       // FFF0B0
     std::uint8_t response_timer = 0;            // FFF0CC
     std::uint8_t interaction_pending = 0;       // FFEFFF
     std::uint8_t state_lock = 0;                // FFF11F
@@ -53,6 +74,7 @@ struct AnimationContext {
     std::int16_t player_vy = 0;
     bool grounded = false;
     std::uint8_t terrain_response_timer_state = 0;
+    std::uint8_t terrain_behavior = 0;          // FFF0C3
     AnimationSelectorState selector{};
 };
 
@@ -113,6 +135,7 @@ public:
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
     void select_stream_entry(std::uint32_t stream_entry);
+    void select_response_stream(std::uint32_t stream_entry, int timer = 0);
     bool finished() const;
     bool select_player_interaction_state(const AnimationContext& context);
 
@@ -120,6 +143,7 @@ public:
     int sprite_frame() const;
     int timer() const { return timer_; }
     bool facing_left() const { return facing_left_; }
+    AnimationStreamKind stream_kind() const { return stream_kind_; }
     std::uint32_t animation_pc() const { return animation_pc_; }
     std::uint32_t frame_pointer() const { return frame_pointer_; }
 
@@ -148,13 +172,20 @@ private:
     bool compare_command(std::uint32_t& cursor);
     bool flag_command(std::uint32_t& cursor);
     void sync_context(const AnimationContext& context);
+    void sync_selector_context(
+        const AnimationSelectorState& selector,
+        bool grounded,
+        std::uint8_t timer_state
+    );
     void sync_actor_context(const ActorAnimationState& actor, const AnimationContext& context);
+    bool response_stream_needs_recovery() const;
 
     SpritePose pose_ = SpritePose::Idle;
     std::size_t step_ = 0;
     int timer_ = 1;
     bool facing_left_ = false;
     HorizontalDirection horizontal_direction_ = HorizontalDirection::None;
+    AnimationStreamKind stream_kind_ = AnimationStreamKind::Locomotion;
     bool rom_mode_ = false;
     std::vector<std::uint8_t> rom_;
     std::array<std::uint8_t, 0x10000> memory_{};

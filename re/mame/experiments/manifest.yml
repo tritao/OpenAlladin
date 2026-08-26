@@ -113,6 +113,48 @@ experiments:
             equals: 0
           timeout: 120
 
+  - name: level01-actor-boot
+    description: Enter Level 01, walk through the opening refill window, and compare actor slots.
+    # first-level is 1245 frames; the 600-frame walk reaches the first
+    # scene-created actors and the first interaction-map refill candidates.
+    frames: 1845
+    regression:
+      checkpoint: level01_actor_checkpoint
+      fields:
+        - player.x
+        - player.y
+        - player.world_x
+        - player.world_y
+        - player.vx
+        - player.vy
+        - player.grounded
+        - player.facing_x_flip
+        - player.frame_ptr
+        - player.animation_pc
+        - player.animation_timer
+        - camera.x
+        - camera.y
+        - camera.reference_x
+        - camera.reference_y
+        - camera.scroll_x
+        - camera.scroll_y
+        - camera.horizontal_threshold
+        - camera.vertical_threshold
+        - camera.update_delay
+        - actors
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+      - marker: level01_actor_checkpoint
+    actions:
+      - input:
+          right: true
+          frames: 600
+
   - name: player-direction-reversal
     description: Hold left and then right to verify player facing and sprite identity across a reversal.
     # Stop immediately after the reversal segment. The following neutral
@@ -131,6 +173,8 @@ experiments:
         - player.grounded
         - player.facing_x_flip
         - player.frame_ptr
+        - player.animation_pc
+        - player.animation_timer
     boot:
       scenario: first-level
     setup:
@@ -146,6 +190,40 @@ experiments:
       - input:
           right: true
           frames: 30
+
+  - name: player-response-recovery
+    description: Seed the ROM response stream and verify that cleared selector state recovers to locomotion.
+    frames: 1246
+    regression:
+      checkpoint: response_start
+      fields:
+        - player.x
+        - player.y
+        - player.frame_ptr
+        - player.animation_pc
+        - player.animation_timer
+        - player.animation_selector.response_active
+        - player.animation_selector.response_animation
+        - player.animation_selector.landing_state
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+      - marker: response_start
+    pokes:
+      # Apply at the gameplay checkpoint so the next update sees the
+      # recovered 0x121FA6 response stream with its selector gates cleared.
+      frame: 1245
+      memory:
+        - address: 0xFF7E60
+          value: 0x00121FA6
+          width: u32
+        - address: 0xFF7E77
+          value: 0
+          width: u8
 
   - name: player-attack
     description: Reach the first guard encounter, perform a real player attack, and capture its sword child.
@@ -164,6 +242,7 @@ experiments:
         - player.facing_x_flip
         - player.frame_ptr
         - player.animation_pc
+        - player.animation_timer
         - actors[25].type
         - actors[25].x
         - actors[25].y
@@ -225,6 +304,9 @@ experiments:
         - player.vy
         - player.grounded
         - player.facing_x_flip
+        - player.frame_ptr
+        - player.animation_pc
+        - player.animation_timer
         - camera.x
         - camera.y
         - camera.reference_x
@@ -267,6 +349,9 @@ experiments:
         - player.vy
         - player.grounded
         - player.facing_x_flip
+        - player.frame_ptr
+        - player.animation_pc
+        - player.animation_timer
         - camera.x
         - camera.y
         - camera.reference_x
@@ -1054,6 +1139,9 @@ experiments:
         - player.vy
         - player.grounded
         - player.facing_x_flip
+        - player.frame_ptr
+        - player.animation_pc
+        - player.animation_timer
         - camera.x
         - camera.y
     boot:
@@ -1084,6 +1172,9 @@ experiments:
         - player.vy
         - player.grounded
         - player.facing_x_flip
+        - player.frame_ptr
+        - player.animation_pc
+        - player.animation_timer
         - camera.x
         - camera.y
     boot:

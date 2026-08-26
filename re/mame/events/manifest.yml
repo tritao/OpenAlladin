@@ -1,0 +1,15 @@
+# Passive semantic event detectors used while recording interactive MAME runs.
+# These observe emulated state only; they never inject controller input.
+version: 1
+
+detectors:
+  - name: level01-entry
+    event: level_entry
+    phase: gameplay
+    level: level01
+    checkpoint: level01-entry
+    stable_for: 3
+    conditions:
+      - symbol: PLAYER_ANIMATION_PC
+        width: u32
+        greater_than: 0

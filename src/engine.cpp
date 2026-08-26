@@ -1443,19 +1443,42 @@ void Engine::update_terminal_actor_motion(ActorState& actor) {
     decay_velocity(actor.movement_word_1a, 0x3C);
 }
 
-void Engine::update_actor_animations() {
-    if (rom_bytes_.empty()) return;
-
-    const AnimationContext context{
+AnimationContext Engine::player_animation_context(bool grounded) const {
+    AnimationContext context{
         player_.x,
         player_.y,
         player_world_x(),
         player_world_y(),
         player_.vx,
         player_.vy,
-        player_.grounded,
+        grounded,
         player_.terrain_response_timer_state,
+        player_.terrain_behavior,
     };
+    context.selector = player_.animation_selector;
+    if (checkpoint_animation_selector_pending_) {
+        return context;
+    }
+    auto& selector = context.selector;
+    selector.terminal_transition = player_.terrain_terminal_transition;
+    selector.response_active = player_.terrain_response_active;
+    selector.transition_gate = player_.terrain_transition_gate;
+    selector.camera_special_mode = static_cast<std::uint8_t>(camera_.special_mode);
+    if (selector.response_timer == 0 && grounded) {
+        selector.response_timer = std::max<std::uint8_t>(
+            player_.terrain_response_timer_state,
+            1
+        );
+    }
+    selector.response_latch = player_.terrain_response_latch;
+    selector.horizontal_response = player_.terrain_horizontal_response;
+    return context;
+}
+
+void Engine::update_actor_animations() {
+    if (rom_bytes_.empty()) return;
+
+    const AnimationContext context = player_animation_context(player_.grounded);
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         ActorState& actor = actors_[slot];
         if (!actor_snapshot_mode_ && slot == 0) {
@@ -1493,6 +1516,7 @@ void Engine::update_actor_animations() {
         // scene-state-5 terrain records hold on odd phases, while sword/death
         // records hold on even phases during their terminal lifetime.
         const bool hold_scene5_phase = actor.type == kActorTerminalType
+            && !actor.spawned_by_animation
             && actor.terminal_timer == 0
             && (frame_ & 1) != 0;
         const bool hold_death_phase = actor.type == kActorTerminalType
@@ -1542,14 +1566,12 @@ void Engine::update_actor_animations() {
     }
 }
 
-void Engine::apply_animation_spawns() {
-    AnimationSpawnRequest request;
-    while (animation_.take_spawn_request(request)) {
-        // Mode 3 is the player weapon/effect allocation path recovered from
-        // the live sword stream. Other F5 modes select linked/common records
-        // whose ownership rules are not yet represented by this native table;
-        // leaving them queued-free avoids inventing an allocation policy.
-        if (!request.valid || request.mode != 3) continue;
+void Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request) {
+        // The recovered F5 allocator has two paths used by the live Level 01
+        // slice. Mode 0 is the common actor path (the opening player stream
+        // uses it to create the type-0x84 actor in slot 3); mode 3 is the
+        // auxiliary weapon/effect path used by the sword stream.
+        if (!request.valid || (request.mode != 0 && request.mode != 3)) return;
 
         const auto read_u8 = [&](std::uint32_t address) -> std::uint8_t {
             return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
@@ -1561,7 +1583,7 @@ void Engine::apply_animation_spawns() {
                 | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
                 | read_u8(address + 3);
         };
-        if (request.template_address + 0x12 >= rom_bytes_.size()) continue;
+        if (request.template_address + 0x12 >= rom_bytes_.size()) return;
 
         // The compact template layout is the one consumed by
         // Actor_InitializeFromTemplate at 0x001AE30A:
@@ -1574,6 +1596,7 @@ void Engine::apply_animation_spawns() {
         spawned.flags = read_u8(request.template_address + 0x12);
         spawned.facing_x_flip = request.source_facing_x_flip;
         spawned.facing_y_flip = request.source_facing_y_flip;
+        spawned.spawned_by_animation = true;
         if (request.animation_override != 0) {
             spawned.animation_pc = request.animation_override;
         }
@@ -1585,18 +1608,43 @@ void Engine::apply_animation_spawns() {
         int offset_y = request.offset_y;
         if (request.source_facing_x_flip != 0) offset_x = -offset_x;
         if (request.source_facing_y_flip != 0) offset_y = -offset_y;
-        spawned.x = static_cast<std::uint16_t>(request.source_world_x + offset_x);
-        spawned.y = static_cast<std::uint16_t>(request.source_world_y + offset_y);
+        const int source_world_x = request.mode == 0
+            ? player_world_x()
+            : request.source_world_x;
+        const int source_world_y = request.mode == 0
+            ? player_world_y()
+            : request.source_world_y;
+        spawned.x = static_cast<std::uint16_t>(source_world_x + offset_x);
+        spawned.y = static_cast<std::uint16_t>(source_world_y + offset_y);
 
-        // Mode 3 allocates from the seven auxiliary records scanned by the
-        // actor-to-actor collision pass (0x001ABD7E). The ROM chooses the
-        // first free record in this pool.
-        for (std::size_t slot = 25; slot < 32; ++slot) {
-            if (actors_[slot].type != 0) continue;
-            actors_[slot] = spawned;
-            actor_animations_[slot].reset();
+        const int first_slot = request.mode == 0 ? 3 : 25;
+        const int last_slot = request.mode == 0 ? 22 : 31;
+        // Mode 0 scans the common records 3..22. Mode 3 scans the seven
+        // auxiliary records used by the actor-to-actor collision pass. Both
+        // paths select the first free record, matching the shared allocator
+        // behavior observed at 0x001AD00E.
+        for (int slot = first_slot; slot <= last_slot; ++slot) {
+            if (actors_[static_cast<std::size_t>(slot)].type != 0) continue;
+            actors_[static_cast<std::size_t>(slot)] = spawned;
+            actor_animations_[static_cast<std::size_t>(slot)].reset();
             break;
         }
+}
+
+void Engine::apply_animation_spawns(bool defer_player_spawns) {
+    if (deferred_animation_spawn_) {
+        apply_animation_spawn_request(*deferred_animation_spawn_);
+        deferred_animation_spawn_.reset();
+    }
+
+    AnimationSpawnRequest request;
+    while (animation_.take_spawn_request(request)) {
+        if (!request.valid || (request.mode != 0 && request.mode != 3)) continue;
+        if (request.mode == 0 && defer_player_spawns) {
+            deferred_animation_spawn_ = request;
+            continue;
+        }
+        apply_animation_spawn_request(request);
     }
 }
 
@@ -1902,6 +1950,7 @@ void Engine::reset() {
     player_ = PlayerState{};
     interaction_map_.reset();
     interaction_scan_initialized_ = false;
+    checkpoint_animation_selector_pending_ = false;
     interaction_reference_x_ = 0;
     interaction_reference_y_ = 0;
     if (actor_snapshot_mode_) {
@@ -1913,6 +1962,7 @@ void Engine::reset() {
     terrain_random_state_ = 0;
     terrain_input_world_x_ = 0;
     terrain_input_world_y_ = 0;
+    deferred_animation_spawn_.reset();
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -1954,6 +2004,7 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
         player_.terrain_behavior = checkpoint_terrain_behavior_;
     }
     player_.terrain_landing_state = grounded && player_.terrain_behavior != 0 ? 1 : 0;
+    checkpoint_animation_selector_pending_ = false;
     frame_ = 0;
     quit_ = false;
     animation_.reset();
@@ -1961,16 +2012,7 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
         animation_.update(
             SpritePose::Jump,
             HorizontalDirection::None,
-            AnimationContext{
-                player_.x,
-                player_.y,
-                player_world_x(),
-                player_world_y(),
-                player_.vx,
-                player_.vy,
-                grounded,
-                player_.terrain_response_timer_state,
-            }
+            player_animation_context(grounded)
         );
     }
     sync_player_actor();
@@ -1999,6 +2041,11 @@ void Engine::set_checkpoint_frame_ptr(int address) {
 void Engine::set_checkpoint_animation(std::uint32_t animation_pc, int timer) {
     animation_.set_animation_state(animation_pc, timer);
     sync_player_actor();
+}
+
+void Engine::set_checkpoint_animation_selector(const AnimationSelectorState& selector) {
+    player_.animation_selector = selector;
+    checkpoint_animation_selector_pending_ = true;
 }
 
 void Engine::set_checkpoint_facing_x_flip(bool facing_x_flip) {
@@ -2103,6 +2150,10 @@ void Engine::set_checkpoint_camera(
     if (horizontal_threshold >= 0) camera_.horizontal_threshold = horizontal_threshold;
     if (vertical_threshold >= 0) camera_.vertical_threshold = vertical_threshold;
     if (update_delay >= 0) camera_.update_delay = update_delay;
+    // set_checkpoint() is applied before the camera checkpoint by the CLI.
+    // Re-publish slot zero after the camera origin changes so actor-table
+    // comparisons observe the same world-space player coordinate as MAME.
+    sync_player_actor();
 }
 
 int Engine::visual_x() const {
@@ -2639,7 +2690,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         // transition stream, clear its timer, set FFF0E7, and clear FFF0CC.
         player_.terrain_query_state_b = 0xFF;
         player_.y -= 0x50;
-        animation_.set_animation_state(0x001223D0, 0);
+        animation_.select_response_stream(0x001223D0);
         player_.terrain_response_active = 0xFF;
         player_.terrain_response_timer_state = 0;
         break;
@@ -2660,7 +2711,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.grounded = true;
         player_.x = ((player_world_x() | 0x1F) - camera_.x) - 8;
         player_.y = ((player_world_y() & ~0x0F) - camera_.y) + 4;
-        animation_.set_animation_state(0x00121964, 0);
+        animation_.select_response_stream(0x00121964);
         break;
     case 0x29:  // TerrainHandler_LaunchPlayerBlock (0x001B557E)
         // Launch is accepted only when the previous terrain response has
@@ -2698,7 +2749,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_horizontal_response = 0;
         player_.terrain_landing_state = 0;
         player_.x = ((visual_x() & ~0x0F) - camera_.x) + 6;
-        animation_.set_animation_state(0x0012181A, 0);
+        animation_.select_response_stream(0x0012181A);
         if (player_.vy < 8) {
             player_.vy = static_cast<std::int16_t>(player_.vy + 0x78);
         }
@@ -2707,7 +2758,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
     case 0x2D:  // TerrainHandler_BouncePlayerBlock (0x001B56B6)
         player_.vx = static_cast<std::int16_t>(-0x400);
         player_.vy = static_cast<std::int16_t>(0x200);
-        animation_.set_animation_state(0x00121AD8, 0);
+        animation_.select_response_stream(0x00121AD8);
         break;
     case 0x30:  // TerrainHandler_LandingResponseBlock (0x001B537A)
         // The ROM subtracts 0x7C from PLAYER_VY, clears FFF0B0, arms the
@@ -2943,19 +2994,11 @@ void Engine::update(const InputState& input) {
         animation_.update(
             SpritePose::Idle,
             horizontal_direction(input),
-            AnimationContext{
-                player_.x,
-                player_.y,
-                player_world_x(),
-                player_world_y(),
-                player_.vx,
-                player_.vy,
-                player_.grounded,
-                player_.terrain_response_timer_state,
-            }
+            player_animation_context(player_.grounded)
         );
         sync_player_actor();
         apply_actor_timeline(frame_ + 1);
+        checkpoint_animation_selector_pending_ = false;
         ++frame_;
         return;
     }
@@ -3013,16 +3056,7 @@ void Engine::update(const InputState& input) {
         && last_ground_direction_ != 0 && player_.vx == 0;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
     const bool start_jump = input.jump_pressed && was_grounded;
-    const AnimationContext animation_context{
-        player_.x,
-        player_.y,
-        player_world_x(),
-        player_world_y(),
-        player_.vx,
-        player_.vy,
-        was_grounded,
-        player_.terrain_response_timer_state,
-    };
+    const AnimationContext animation_context = player_animation_context(was_grounded);
 
     if (was_grounded && player_.grounded) {
         if (input.left != input.right) {
@@ -3159,9 +3193,15 @@ void Engine::update(const InputState& input) {
         selector_context.player_vy = player_.vy;
         selector_context.grounded = player_.grounded;
         auto& selector = selector_context.selector;
+        selector.terminal_transition = player_.terrain_terminal_transition;
         selector.response_active = player_.terrain_response_active;
-        selector.landing_state = player_.terrain_landing_state;
+        // FFF0C1 is an explicit selector input. Leave it at the value carried
+        // by the checkpoint/context; the VM synchronizer supplies the basic
+        // grounded fallback only to its private RAM view.
+        selector.transition_gate = player_.terrain_transition_gate;
         selector.camera_special_mode = static_cast<std::uint8_t>(camera_.special_mode);
+        selector.response_latch = player_.terrain_response_latch;
+        selector.horizontal_response = player_.terrain_horizontal_response;
         // The release path clears FFF0CC before entering 0x001AE4F8. The
         // native terrain mirror still exposes its one-frame response value,
         // so make this caller-side clear explicit in the selector state.
@@ -3206,11 +3246,12 @@ void Engine::update(const InputState& input) {
     if (player_.attack_timer == 0
         && animation_.stream_entry() != kPlayerAttackTransitionStream
         && animation_.stream_entry() != kPlayerSwordStableStream) {
-        apply_animation_spawns();
+        apply_animation_spawns(true);
     }
     update_dynamic_actor_culling();
     sync_player_actor();
     apply_actor_timeline(frame_ + 1);
+    checkpoint_animation_selector_pending_ = false;
     ++frame_;
 }
 
@@ -3267,6 +3308,8 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
         player_world_y(),
         animation_.facing_left()
     );
+    const AnimationSelectorState animation_selector =
+        player_animation_context(player_.grounded).selector;
 
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v1\""
            << ",\"frame\":" << frame_
@@ -3279,13 +3322,65 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"vy\":" << player_.vy
            << ",\"animation_pc\":" << animation_.animation_pc()
            << ",\"animation_state\":\""
-           << (animation_.pose() == SpritePose::Idle ? "idle"
+           << (animation_.stream_kind() == AnimationStreamKind::Response ? "response"
+               : animation_.stream_kind() == AnimationStreamKind::Action ? "action"
+               : animation_.pose() == SpritePose::Idle ? "idle"
                : animation_.pose() == SpritePose::Run ? "run"
                : animation_.pose() == SpritePose::Brake ? "brake"
-               : animation_.pose() == SpritePose::Jump ? "jump" : "landing")
+           : animation_.pose() == SpritePose::Jump ? "jump" : "landing")
            << "\""
            << ",\"animation_timer\":" << animation_.timer()
            << ",\"animation_stream_entry\":" << animation_.stream_entry()
+           << ",\"animation_selector\":{\"animation_gate\":"
+           << static_cast<unsigned>(animation_selector.animation_gate)
+           << ",\"terminal_transition\":"
+           << static_cast<unsigned>(animation_selector.terminal_transition)
+           << ",\"scene_script_countdown\":"
+           << static_cast<unsigned>(animation_selector.scene_script_countdown)
+           << ",\"interaction_lock\":"
+           << static_cast<unsigned>(animation_selector.interaction_lock)
+           << ",\"response_active\":"
+           << static_cast<unsigned>(animation_selector.response_active)
+           << ",\"landing_state\":"
+           << static_cast<unsigned>(animation_selector.landing_state)
+           << ",\"transition_gate\":"
+           << static_cast<unsigned>(animation_selector.transition_gate)
+           << ",\"transition_lock\":"
+           << static_cast<unsigned>(animation_selector.transition_lock)
+           << ",\"transition_state\":"
+           << static_cast<unsigned>(animation_selector.transition_state)
+           << ",\"transition_mode\":"
+           << static_cast<unsigned>(animation_selector.transition_mode)
+           << ",\"transition_flag\":"
+           << static_cast<unsigned>(animation_selector.transition_flag)
+           << ",\"transition_response\":"
+           << static_cast<unsigned>(animation_selector.transition_response)
+           << ",\"transition_state_de\":"
+           << static_cast<unsigned>(animation_selector.transition_state_de)
+           << ",\"transition_state_df\":"
+           << static_cast<unsigned>(animation_selector.transition_state_df)
+           << ",\"camera_special_mode\":"
+           << static_cast<unsigned>(animation_selector.camera_special_mode)
+           << ",\"response_latch\":"
+           << static_cast<unsigned>(animation_selector.response_latch)
+           << ",\"response_animation\":"
+           << static_cast<unsigned>(animation_selector.response_animation)
+           << ",\"response_state_ee\":"
+           << static_cast<unsigned>(animation_selector.response_state_ee)
+           << ",\"response_state_ef\":"
+           << static_cast<unsigned>(animation_selector.response_state_ef)
+           << ",\"response_state_f0\":"
+           << static_cast<unsigned>(animation_selector.response_state_f0)
+           << ",\"response_state_101\":"
+           << static_cast<unsigned>(animation_selector.response_state_101)
+           << ",\"horizontal_response\":"
+           << animation_selector.horizontal_response
+           << ",\"response_timer\":"
+           << static_cast<unsigned>(animation_selector.response_timer)
+           << ",\"interaction_pending\":"
+           << static_cast<unsigned>(animation_selector.interaction_pending)
+           << ",\"state_lock\":"
+           << static_cast<unsigned>(animation_selector.state_lock) << "}"
            << ",\"sprite_frame\":" << state_sprite_frame
            << ",\"frame_ptr\":" << (animation_.rom_loaded()
                ? animation_.frame_pointer()

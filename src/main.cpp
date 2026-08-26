@@ -42,6 +42,7 @@ struct Options {
     std::string checkpoint_terrain_behavior;
     std::string checkpoint_frame_ptr;
     std::string checkpoint_animation;
+    std::string checkpoint_animation_selector;
     std::string checkpoint_facing_x_flip;
     std::string checkpoint_vdp;
     int checkpoint_vdp_frame = -1;
@@ -134,6 +135,47 @@ std::vector<int> parse_camera_checkpoint(const std::string& value) {
     return fields;
 }
 
+openaladdin::AnimationSelectorState parse_animation_selector(const std::string& value) {
+    std::vector<int> fields;
+    std::stringstream stream(value);
+    std::string item;
+    while (std::getline(stream, item, ',')) {
+        fields.push_back(std::stoi(item));
+    }
+    if (fields.size() != 25) {
+        throw std::runtime_error(
+            "--checkpoint-animation-selector expects 25 comma-separated fields"
+        );
+    }
+    openaladdin::AnimationSelectorState selector;
+    selector.animation_gate = static_cast<std::uint8_t>(fields[0]);
+    selector.terminal_transition = static_cast<std::uint8_t>(fields[1]);
+    selector.scene_script_countdown = static_cast<std::uint8_t>(fields[2]);
+    selector.interaction_lock = static_cast<std::uint8_t>(fields[3]);
+    selector.response_active = static_cast<std::uint8_t>(fields[4]);
+    selector.landing_state = static_cast<std::uint8_t>(fields[5]);
+    selector.transition_gate = static_cast<std::uint8_t>(fields[6]);
+    selector.transition_lock = static_cast<std::uint8_t>(fields[7]);
+    selector.transition_state = static_cast<std::uint8_t>(fields[8]);
+    selector.transition_mode = static_cast<std::uint8_t>(fields[9]);
+    selector.transition_flag = static_cast<std::uint8_t>(fields[10]);
+    selector.transition_response = static_cast<std::uint8_t>(fields[11]);
+    selector.transition_state_de = static_cast<std::uint8_t>(fields[12]);
+    selector.transition_state_df = static_cast<std::uint8_t>(fields[13]);
+    selector.camera_special_mode = static_cast<std::uint8_t>(fields[14]);
+    selector.response_latch = static_cast<std::uint8_t>(fields[15]);
+    selector.response_animation = static_cast<std::uint8_t>(fields[16]);
+    selector.response_state_ee = static_cast<std::uint8_t>(fields[17]);
+    selector.response_state_ef = static_cast<std::uint8_t>(fields[18]);
+    selector.response_state_f0 = static_cast<std::uint8_t>(fields[19]);
+    selector.response_state_101 = static_cast<std::uint8_t>(fields[20]);
+    selector.horizontal_response = static_cast<std::int16_t>(fields[21]);
+    selector.response_timer = static_cast<std::uint8_t>(fields[22]);
+    selector.interaction_pending = static_cast<std::uint8_t>(fields[23]);
+    selector.state_lock = static_cast<std::uint8_t>(fields[24]);
+    return selector;
+}
+
 Options parse_options(int argc, char** argv) {
     Options options;
     for (int i = 1; i < argc; ++i) {
@@ -174,6 +216,8 @@ Options parse_options(int argc, char** argv) {
             options.checkpoint_frame_ptr = argv[++i];
         } else if (argument == "--checkpoint-animation" && i + 1 < argc) {
             options.checkpoint_animation = argv[++i];
+        } else if (argument == "--checkpoint-animation-selector" && i + 1 < argc) {
+            options.checkpoint_animation_selector = argv[++i];
         } else if (argument == "--checkpoint-facing-x-flip" && i + 1 < argc) {
             options.checkpoint_facing_x_flip = argv[++i];
         } else if (argument == "--checkpoint-vdp" && i + 2 < argc) {
@@ -189,6 +233,7 @@ Options parse_options(int argc, char** argv) {
                          "       [--checkpoint-terrain-behavior BYTE]\n"
                          "       [--checkpoint-frame-ptr ADDRESS]\n"
                          "       [--checkpoint-animation PC,TIMER]\n"
+                         "       [--checkpoint-animation-selector FIELDS]\n"
                          "       [--checkpoint-facing-x-flip VALUE]\n"
                          "       [--checkpoint-vdp TRACE_DIR FRAME]\n"
                          "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n";
@@ -262,6 +307,11 @@ int main(int argc, char** argv) {
             engine.set_checkpoint_animation(
                 static_cast<std::uint32_t>(std::stoul(options.checkpoint_animation.substr(0, separator), nullptr, 0)),
                 std::stoi(options.checkpoint_animation.substr(separator + 1), nullptr, 0)
+            );
+        }
+        if (!options.checkpoint_animation_selector.empty()) {
+            engine.set_checkpoint_animation_selector(
+                parse_animation_selector(options.checkpoint_animation_selector)
             );
         }
         if (!options.checkpoint_facing_x_flip.empty()) {

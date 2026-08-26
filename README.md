@@ -19,9 +19,18 @@ python tools/oa.py ghidra rebuild
 The supported workflow frontend is:
 
 ```bash
+./oa.sh status
+./oa.sh mame
+```
+
+The root `oa.sh` wrapper forwards all arguments to `tools/oa.py`. The direct
+Python form remains equivalent:
+
+```bash
 python tools/oa.py status
 python tools/oa.py verify
 python tools/oa.py ghidra rebuild
+python tools/oa.py mame
 python tools/oa.py trace title-menu --capture state
 python tools/oa.py trace player-run --capture state
 python tools/oa.py trace player-jump --capture state
@@ -57,11 +66,36 @@ decoded player frame pointer. Scene state remains outside this focused
 comparison; native Level 01 actor state is now refilled from the interaction
 map rather than a default snapshot.
 
+The first native-vs-MAME actor-table probe is:
+
+```bash
+python tools/oa.py regression level01-actor-boot \
+  --trace-dir build/re/level01-actor-boot
+```
+
+It boots through the real menu sequence, aligns at the first gameplay frame,
+walks through the opening refill window with no actor fixture, and compares
+shared actor-table fields by slot. The actor comparator ignores slot 0 by
+default because player parity is reported separately; use
+`tools/openaladdin/mame/compare_actors.py --include-player` when needed. Until
+scene-created actors are recovered, this probe intentionally reports the first
+remaining actor-spawn divergence and exits non-zero.
+
 The experiment manifest is `re/mame/experiments/manifest.yml`. It supports boot
 scenarios, input actions, and direct memory/PC wait conditions; the MAME Lua
 harness evaluates those waits while the emulator runs.
 
 ## Recorded gameplay runs
+
+Launch a general interactive MAME session through the project wrapper with:
+
+```bash
+python tools/oa.py mame
+```
+
+It runs until MAME exits and writes semantic state under
+`build/re/mame-session/`. Use `--headless --frames N` for bounded automated
+sessions, or `--input SCHEDULE` to inject a deterministic schedule.
 
 Record a normal interactive MAME session with:
 

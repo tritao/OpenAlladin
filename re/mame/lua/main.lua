@@ -73,6 +73,8 @@ local trace_audio_commands = os.getenv("OPENALADDIN_TRACE_AUDIO_COMMANDS") == "1
 local state_sync = os.getenv("OPENALADDIN_STATE_SYNC") == "1"
 
 local state_output = capture_profile == "state" or os.getenv("OPENALADDIN_STATE_OUTPUT") == "1"
+local event_output = os.getenv("OPENALADDIN_EVENT_OUTPUT")
+local event_spec = os.getenv("OPENALADDIN_EVENT_SPEC") or ""
 local capture_streams = dofile(root .. "/re/mame/lua/capture.lua")({
     core = core,
     trace_dir = trace_dir,
@@ -82,6 +84,8 @@ local capture_streams = dofile(root .. "/re/mame/lua/capture.lua")({
     trace_audio = trace_audio,
     state_output = state_output,
     input_output = os.getenv("OPENALADDIN_INPUT_OUTPUT"),
+    event_output = event_output,
+    event_spec = event_spec,
     ram_start = ram_start,
     ram_size = ram_size,
     read_u8 = read_u8
@@ -94,6 +98,7 @@ local vdp_writes = capture_streams.vdp_writes
 local state = capture_streams.state
 local write_record = capture_streams.write_record
 local write_state = capture_streams.write_state
+local write_event = capture_streams.write_event
 
 local trace_scene_states = os.getenv("OPENALADDIN_TRACE_SCENE_STATES") == "1"
 local trace_selector = os.getenv("OPENALADDIN_TRACE_SELECTOR") == "1"
@@ -346,6 +351,24 @@ local input = dofile(root .. "/re/mame/lua/input.lua")({
 })
 local experiment_action_spec = input.action_spec()
 
+local events = dofile(root .. "/re/mame/lua/events.lua")({
+    core = core,
+    symbol = symbol,
+    read_u8 = read_u8,
+    read_u16 = read_u16,
+    read_u32 = read_u32,
+    signed_u16 = signed_u16,
+    read_register = function () return read_register("PC") end,
+    write_event = write_event,
+    write_record = write_record,
+    write_state = write_state,
+    current_frame = function () return current_frame end,
+    save_checkpoint = function (name)
+        machine:save(name)
+        return checkpoint_reference .. "/genesis/" .. name .. ".sta"
+    end
+})
+
 local function apply_input()
     return input.apply()
 end
@@ -466,6 +489,33 @@ local function capture(frame, input_token, emit_state)
                     player_facing_x_flip ~= 0
                 ) },
                 { "animation_timer", tostring(read_u8(symbol("PLAYER_ANIMATION_TIMER"))) },
+                { "animation_selector", json_object({
+                    { "animation_gate", tostring(read_u8(0xFFF0E7)) },
+                    { "terminal_transition", tostring(read_u8(0xFFF0E6)) },
+                    { "scene_script_countdown", tostring(read_u8(0xFFF0E9)) },
+                    { "interaction_lock", tostring(read_u8(0xFFF0F2)) },
+                    { "response_active", tostring(read_u8(0xFFF0BE)) },
+                    { "landing_state", tostring(read_u8(0xFFF0C1)) },
+                    { "transition_gate", tostring(read_u8(0xFFF0D0)) },
+                    { "transition_lock", tostring(read_u8(0xFFF0D7)) },
+                    { "transition_state", tostring(read_u8(0xFFF0DB)) },
+                    { "transition_mode", tostring(read_u8(0xFFF0CD)) },
+                    { "transition_flag", tostring(read_u8(0xFFF0D2)) },
+                    { "transition_response", tostring(read_u8(0xFFF0D4)) },
+                    { "transition_state_de", tostring(read_u8(0xFFF0DE)) },
+                    { "transition_state_df", tostring(read_u8(0xFFF0DF)) },
+                    { "camera_special_mode", tostring(read_u8(0xFFF173)) },
+                    { "response_latch", tostring(read_u8(0xFFF115)) },
+                    { "response_animation", tostring(read_u8(0xFFF0ED)) },
+                    { "response_state_ee", tostring(read_u8(0xFFF0EE)) },
+                    { "response_state_ef", tostring(read_u8(0xFFF0EF)) },
+                    { "response_state_f0", tostring(read_u8(0xFFF0F0)) },
+                    { "response_state_101", tostring(read_u8(0xFFF101)) },
+                    { "horizontal_response", tostring(signed_u16(read_u16(0xFFF0B0))) },
+                    { "response_timer", tostring(read_u8(0xFFF0CC)) },
+                    { "interaction_pending", tostring(read_u8(0xFFEFFF)) },
+                    { "state_lock", tostring(read_u8(0xFFF11F)) }
+                }) },
                 { "actor_flags", tostring(read_u8(symbol("PLAYER_ACTOR_FLAGS"))) },
                 { "actor_flag_bit5", json_bool((read_u8(symbol("PLAYER_ACTOR_FLAGS")) & 0x20) ~= 0) },
                 -- Player_Update arms FFEFFF with the ten-frame action delay
@@ -819,6 +869,7 @@ write_record({
     { "scene_state_trace", json_bool(trace_scene_states) },
     { "state_trace", json_bool(state_output) },
     { "experiment_actions", json_string(experiment_action_spec) },
+    { "event_detectors", json_string(event_spec) },
     { "scene_state_address", tostring(scene_state_address) },
     { "memory_poke_frame", tostring(poke_frame) },
     { "memory_poke_spec", json_string(memory_poke_spec) },
@@ -842,6 +893,7 @@ if state then
         { "rom", json_string(emu.romname()) },
         { "rom_sha256", json_string(os.getenv("OPENALADDIN_ROM_SHA256") or "") },
         { "frame_limit", tostring(frame_limit) },
+        { "event_detectors", json_string(event_spec) },
         { "player_ram", json_object({
                 { "x", tostring(symbol("PLAYER_X")) },
                 { "y", tostring(symbol("PLAYER_Y")) },
@@ -898,6 +950,7 @@ if preload_state == "" then
     apply_memory_pokes(0)
 end
 capture(0, apply_input(0), true)
+events.poll(0)
 if audio.dump_driver then audio.dump_driver(0, "initial") end
 capture_artifacts(0)
 
@@ -922,6 +975,7 @@ emu.register_frame_done(function ()
     -- frame-state sample when actor tracing is requested so the merge can
     -- preserve the live slot table for differential combat probes.
     capture(current_frame, apply_input(current_frame), not state_sync or trace_actors)
+    events.poll(current_frame)
     if audio.dump_driver then audio.dump_driver(current_frame, "frame") end
     capture_artifacts(current_frame)
 
