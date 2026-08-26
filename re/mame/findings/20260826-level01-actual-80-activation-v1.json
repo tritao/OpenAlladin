@@ -1,0 +1,58 @@
+{
+  "format": "openaladdin-level01-actual-80-activation-v1",
+  "recorded_at": "2026-08-26",
+  "status": "partial-negative",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_capture": "995bc5031a587c2af0d463510bef96507d10fc1e",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "995bc5031a587c2af0d463510bef96507d10fc1e",
+  "static_source": "re/mame/findings/20260826-level01-interaction-inventory-v1.json",
+  "target_record": {
+    "map_cell": [249, 14],
+    "world": [3984, 464],
+    "map_word": "0x5630",
+    "interaction_table": "0x00FFAE87 + (0x5630 >> 1) = 0x00FFD99F",
+    "interaction_id": "0x80",
+    "handler": "0x001B6F0C",
+    "static_effect": "Clears FFF104, then calls the reverse generic actor-spawn allocator through 0x001B525E."
+  },
+  "controlled_setup": {
+    "campaign": "build/re/campaigns/20260826-level01-row15-activation-v1",
+    "traces": [
+      "build/re/campaigns/20260826-level01-row15-activation-v1/actual-80",
+      "build/re/campaigns/20260826-level01-row15-activation-v1/actual-80-targeted-v2"
+    ],
+    "memory_pokes": [
+      "FF7DAC=FF22C2:u32",
+      "FF7E06=3984:u16",
+      "FF7E08=224:u16",
+      "FF7DF6=3971:u16",
+      "FF7DF8=223:u16",
+      "FF7E42=3984:u16",
+      "FF7E44=464:u16",
+      "FF7DFA=13:u16",
+      "FF7DFC=241:u16",
+      "FF7E02=3984:u16",
+      "FF7E04=464:u16",
+      "FF7E58=0:u16",
+      "FF7E5A=0:u16"
+    ],
+    "runtime_byte_confirmation": "actual-80-targeted-v2/ram_frames.bin records 0x80 at 0x00FFD99F during frames 1-12."
+  },
+  "runtime_observation": {
+    "scene_states_observed": ["0x01"],
+    "scene_countdown_nonzero": false,
+    "expected_handler_dispatch_observed": false,
+    "other_interaction_observed": "The broad actual-80 trace reports an interaction edge to 0x001B735E (selector 0x60 path), not the expected 0x001B6F0C target.",
+    "targeted_endpoint": {
+      "trace": "build/re/campaigns/20260826-level01-row15-activation-v1/actual-80-targeted-v2",
+      "frames": 12,
+      "final_world": [3950, 466],
+      "final_scene_state": "0x01"
+    }
+  },
+  "conclusion": "The runtime table byte can be forced at the intended Level 01 record, but these runs do not prove that the row processor dispatched selector 0x80 or that the handler is globally inactive. The setup likely needs the exact row-processor activation context or a narrower trace around callers 0x001AB446 and 0x001AB770. Keep this as a partial negative, not closure of the record."
+}

@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-level01-superjump-delay-matrix-v1",
+  "recorded_at": "2026-08-26",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260826-level01-canonical-recording-v11.json",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-vertical-rope-climb/states/genesis/rope-top.sta",
+  "hypothesis": "The next upper transfer may require holding jump through a precise delay between the initial rope launch and the second transfer.",
+  "tested_delays": [18, 20, 22, 24, 26, 28, 30, 32, 35, 40],
+  "common_trace": {
+    "frames": 480,
+    "input_prefix": "c+left*20,left*90,none*10,left*73,c+left*10",
+    "input_suffix": "c+right*20,right*(257-DELAY),none",
+    "checkpoints": [120, 193, 203, 219, 250, 270, 360, 480]
+  },
+  "observations": {
+    "peak_world": [4316, 561],
+    "peak_frame": 219,
+    "scene_states_observed": ["0x01"],
+    "scene_countdown_nonzero": false,
+    "boundary_write_observed": false,
+    "state_08_observed": false
+  },
+  "conclusion": "This timing family is a recorded negative. Delays 18 through 35 recover to the lower upper-frontier geometry, while delay 40 falls back to the lower route; none reaches the suspected upper row-14 transfer or the Level 01 scene boundary. The next search should change the geometry or interaction hypothesis rather than repeat this delay family."
+}

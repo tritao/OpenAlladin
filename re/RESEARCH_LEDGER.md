@@ -582,6 +582,22 @@ no interaction selectors. Neither direct handler writes `SCENE_STATE=0x08` or
 the scene countdown. The remaining high-value test is controlled activation
 of the actual `0x80` record followed by tracing the actor it creates.
 
+The transfer-delay matrix is recorded in
+`re/mame/findings/20260826-level01-superjump-delay-matrix-v1.json` and
+`re/mame/campaigns/20260826-level01-canonical-recording-v11.json`. Ten complete
+traces vary the second hold-jump delay from 18 through 40 frames. Every branch
+remains in scene state `0x01`; the common peak is world `(4316,561)` at frame
+219, and no branch arms `FFF0E9` or reaches the upper row-14 transfer. This
+closes that specific timing family as a negative route result.
+
+The controlled activation attempt for the sole Level 01 interaction selector
+`0x80` is recorded in
+`re/mame/findings/20260826-level01-actual-80-activation-v1.json`. The runtime
+byte at `0x00FFD99F` was confirmed as `0x80` after the controlled memory setup,
+but the expected handler `0x001B6F0C` was not observed; a separate `0x60`
+interaction edge was. This is therefore a partial negative and points to the
+row-dispatch callers at `0x001AB446` and `0x001AB770` as the next static target.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -629,6 +645,8 @@ of the actual `0x80` record followed by tracing the actor it creates.
 | `20260826-level01-scene-table-index-call-path-v1` | recorded-static-correlation | call path separating the state-08 table cycle from the level-01 boundary writer |
 | `20260826-level01-countdown-producer-audit-v1` | recorded-negative | static and narrow runtime audit of generic actor-collision scene-countdown producers |
 | `20260826-level01-surface-mode-audit-v1` | recorded-static-correlation | behavior-0x47 terrain-resource mode toggle and landing-resolver offset correlation |
+| `20260826-level01-canonical-recording-v11` | recorded-negative | ten complete hold-jump transfer-delay traces from the far-rope checkpoint |
+| `20260826-level01-actual-80-activation-v1` | partial-negative | forced runtime activation attempt for the sole Level 01 interaction selector 0x80 |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
