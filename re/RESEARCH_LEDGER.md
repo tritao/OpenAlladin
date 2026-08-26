@@ -592,11 +592,21 @@ closes that specific timing family as a negative route result.
 
 The controlled activation attempt for the sole Level 01 interaction selector
 `0x80` is recorded in
-`re/mame/findings/20260826-level01-actual-80-activation-v1.json`. The runtime
-byte at `0x00FFD99F` was confirmed as `0x80` after the controlled memory setup,
-but the expected handler `0x001B6F0C` was not observed; a separate `0x60`
-interaction edge was. This is therefore a partial negative and points to the
-row-dispatch callers at `0x001AB446` and `0x001AB770` as the next static target.
+`re/mame/findings/20260826-level01-actual-80-activation-v1.json`. The first
+fixed-cell runs confirmed the runtime byte at `0x00FFD99F` but did not observe
+`0x001B6F0C`; they also stayed inside the camera-refill deadband. The targeted
+caller decompilation is recorded in
+`re/mame/findings/20260826-level01-interaction-dispatch-callers-v1.json` and
+shows that these row processors are refill-triggered, not unconditional
+per-frame scans. A follow-up controlled refill run then observed the edge
+`0x001AE46E -> 0x001B6F0C` at machine frame `0x118F`, proving the selector's
+handler is live. Because that run used artificial camera state and dispatched
+row word `0x1180` rather than the target map word `0x5630`, it proves path
+activation but not a natural Level 01 activation at `(3984,464)`.
+
+The next experiment is therefore to preserve a natural camera scroll across
+the `(249,14)` window, or reproduce the exact row-pointer/index context at a
+refill boundary, and trace the handler's generic spawn plus `FFF104` effect.
 
 ## Campaign index
 

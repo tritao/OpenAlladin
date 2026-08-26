@@ -1,0 +1,85 @@
+{
+  "format": "openaladdin-level01-interaction-dispatch-callers-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Decode the callers that activate the Level 01 interaction-row processors and explain why a forced interaction-table byte does not dispatch until the camera refill path runs.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_analysis": "484250d",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "target_manifest": "re/ghidra/targets/level01-interaction-dispatch-callers-targets.json",
+  "targeted_decompile": "build/re/level01-interaction-dispatch-callers-targeted-decompile-v1.json",
+  "static_findings": {
+    "horizontal_camera_refill": {
+      "function": "0x001AB34E-0x001AB44B",
+      "requested_interior_target": "0x001AB446",
+      "camera_field": "CAMERA_SCROLL_X",
+      "deadband": "If (u16(CAMERA_SCROLL_X + 0x100) < 0x110) and the adjusted value is > 0xF0, return without processing a row.",
+      "refill_effect": "Outside the deadband, move CAMERA_SCROLL_X and CAMERA_REFERENCE_X by 0x10, compute the terrain row pointer from CAMERA_REFERENCE_Y and CAMERA_REFERENCE_X, refill the VDP row, then call 0x001AE3FC.",
+      "row_pointer_formula": "2 * (CAMERA_REFERENCE_X >> 4) + TERRAIN_ROW_POINTER_TABLE[(CAMERA_REFERENCE_Y & 0xFFF0) * 4]",
+      "processor": "0x001AE3FC -> 0x001AE406"
+    },
+    "vertical_camera_refill": {
+      "function": "0x001AB66C-0x001AB775",
+      "requested_interior_target": "0x001AB770",
+      "camera_field": "CAMERA_SCROLL_Y",
+      "deadband": "If (u16(CAMERA_SCROLL_Y + 0x100) < 0x110) and the adjusted value is > 0xF0, return without processing a row.",
+      "refill_effect": "Outside the deadband, move CAMERA_SCROLL_Y and CAMERA_REFERENCE_Y by 0x10, compute the terrain row pointer from CAMERA_REFERENCE_Y and CAMERA_REFERENCE_X, refill the VDP column, then call 0x001AE47E.",
+      "processor": "0x001AE47E -> 0x001AE488"
+    },
+    "horizontal_processor": {
+      "wrapper": "0x001AE3FC",
+      "body": "0x001AE406",
+      "window": "16 entries",
+      "interaction_read": "c = [0x00FFAE87 + (row_word >> 1)]",
+      "dispatch": "Nonzero c selects INTERACTION_HANDLER_TABLE + (c << 2), then passes the map index and interaction byte to the handler.",
+      "runtime_fields": ["0x00FF7DAC", "0x00FF7DB4", "0x00FFAE87"]
+    },
+    "vertical_processor": {
+      "wrapper": "0x001AE47E",
+      "body": "0x001AE488",
+      "window": "23 entries",
+      "interaction_read": "c = [0x00FFAE87 + (row_word >> 1)]",
+      "dispatch": "Nonzero c selects INTERACTION_HANDLER_TABLE + (c << 2), then passes the map index and interaction byte to the handler.",
+      "runtime_fields": ["0x00FF7DAC", "0x00FF7DB4", "0x00FFAE87"]
+    },
+    "direct_refill_variants": [
+      {
+        "function": "0x001AB44C",
+        "processor": "0x001AE406",
+        "meaning": "Direct horizontal row processor with the 0x150 by 0xF0 interaction window."
+      },
+      {
+        "function": "0x001AB55A",
+        "processor": "0x001AE488",
+        "meaning": "Direct vertical row processor with the 0xF0 by 0x1E0 interaction window."
+      }
+    ]
+  },
+  "runtime_correlation": {
+    "negative_fixed_cell_run": "build/re/campaigns/20260826-level01-row15-activation-v1/actual-80-targeted-v2",
+    "dispatch_proof_run": "build/re/diagnostics/actual80-refill-v5",
+    "dispatch_proof": {
+      "machine_frame": "0x118F",
+      "row_refill_breakpoint": "0x001AB66E",
+      "row_word": "0x1180",
+      "interaction": "0x80",
+      "handler": "0x001B6F0C",
+      "handler_return": "0x001AE46E",
+      "log": "build/re/diagnostics/actual80-refill-v5/debug.log:11-13",
+      "scene_state": "0x01"
+    }
+  },
+  "interpretation": [
+    "The interaction table is not generically scanned every simulation frame by these routines; the row processors are reached through camera refill paths.",
+    "The earlier forced 0x80 byte run kept the relevant camera field inside the return deadband, so observing the byte in RAM did not imply handler dispatch.",
+    "The controlled refill run crosses the caller path and reaches 0x001B6F0C, proving that the handler is live and that the missing activation is a row-pointer/camera-context problem rather than a globally inactive handler."
+  ],
+  "limitations": [
+    "The dispatch-proof run intentionally pokes camera and player fields and then drifts from the natural route.",
+    "Its row word 0x1180 and logged runtime index 0x2FB4 are not the expected Level 01 map record 0x5630/index 0x2B18.",
+    "No natural Level 01 route has yet been shown to dispatch the sole map-cell (249,14) selector 0x80."
+  ],
+  "next_action": "Capture a natural camera scroll across the map-cell (249,14) window, or reproduce the exact terrain-row pointer and interaction index 0x2B18 at a refill boundary; then trace 0x001B6F0C through 0x001B525E, actor allocation, and FFF104."
+}

@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-interaction-dispatch-callers",
+    "purpose": "Decode the callers that enter the vertical and horizontal interaction-row processors, with emphasis on the conditions that determine which row and direction are processed."
+  },
+  "targets": [
+    { "address": "0x001AB446", "name": "LevelInteraction_UpdateCallerA" },
+    { "address": "0x001AB770", "name": "LevelInteraction_UpdateCallerB" },
+    { "address": "0x001AE3FC", "name": "InteractionRowProcessorVerticalWrapper" },
+    { "address": "0x001AE47E", "name": "InteractionRowProcessorHorizontalWrapper" },
+    { "address": "0x001AE406", "name": "InteractionRowProcessorA" },
+    { "address": "0x001AE488", "name": "InteractionRowProcessorB" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7DAC", "name": "INTERACTION_ROW_POINTER" },
+    { "address": "0x00FF7DB4", "name": "INTERACTION_ROW_STRIDE" },
+    { "address": "0x00FFAE87", "name": "INTERACTION_TABLE_RUNTIME" }
+  ]
+}
