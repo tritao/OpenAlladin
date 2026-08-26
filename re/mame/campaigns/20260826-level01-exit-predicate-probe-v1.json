@@ -1,0 +1,76 @@
+{
+  "campaign": "20260826-level01-exit-predicate-probe-v1",
+  "status": "recorded-controlled-boundary-write",
+  "purpose": "Record the current-harness boundary predicate write while keeping it separate from the older authoritative scene-state transition proof.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "47a0d3f",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "instrumentation": {
+    "breakpoints": ["0x001B5B4A", "0x001A8ED2", "0x001B6406"],
+    "watched_addresses": ["0xFFF0D0", "0xFFF0DB", "0xFFF0DC", "0xFFF0E6", "0xFFF0E9"],
+    "trace_logs": "build/re/campaigns/20260826-level01-exit-predicate-probe-v1/*/debug.log"
+  },
+  "segments": [
+    {
+      "id": "local-coordinate-boundary-write",
+      "trace_dir": "build/re/campaigns/20260826-level01-exit-predicate-probe-v1/x4748-y460",
+      "frames": 30,
+      "input": "none*30",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "memory_pokes": [
+        { "frame": 1, "address": "0xFF7DFA", "value": "0x0219", "width": "u16", "meaning": "local player X" },
+        { "frame": 1, "address": "0xFF7DFC", "value": "0x00B0", "width": "u16", "meaning": "local player Y" },
+        { "frame": 1, "address": "0xFF7E58", "value": "0x0000", "width": "u16" },
+        { "frame": 1, "address": "0xFF7E5A", "value": "0x0000", "width": "u16" }
+      ],
+      "observations": [
+        { "frame": 2, "world": [4748, 460], "scene_state": "0x01", "script_countdown": "0xFF" },
+        { "frame": 12, "pc": "0x001B5B66", "address": "0xFFF0E9", "value": "0xFF", "meaning": "exit countdown armed" }
+      ]
+    },
+    {
+      "id": "extended-boundary-write",
+      "trace_dir": "build/re/campaigns/20260826-level01-exit-predicate-probe-v1/x4748-y460-extended",
+      "frames": 360,
+      "input": "none*360",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "memory_pokes": [
+        { "frame": 1, "address": "0xFF7DFA", "value": "0x0219", "width": "u16" },
+        { "frame": 1, "address": "0xFF7DFC", "value": "0x00B0", "width": "u16" },
+        { "frame": 1, "address": "0xFF7E58", "value": "0x0000", "width": "u16" },
+        { "frame": 1, "address": "0xFF7E5A", "value": "0x0000", "width": "u16" }
+      ],
+      "result": "SCENE_STATE remains 0x01; SCENE_SCRIPT_CURSOR remains 0x4082; no follow-on scene-state write is observed in this current-frontier fixture."
+    },
+    {
+      "id": "world-coordinate-control",
+      "trace_dir": "build/re/campaigns/20260826-level01-exit-predicate-probe-v1/current-frontier-world-fields",
+      "frames": 30,
+      "input": "none*30",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "memory_pokes": [
+        { "frame": 1, "address": "0xFF7E02", "value": "0x1288", "width": "u16", "meaning": "world X control" },
+        { "frame": 1, "address": "0xFF7E04", "value": "0x0100", "width": "u16", "meaning": "world Y control" }
+      ],
+      "result": "The normal position update overwrites the direct world-field poke before the boundary predicate can be reproduced; no exit-gate write is observed."
+    }
+  ],
+  "conclusion": {
+    "verified": [
+      "The current harness can satisfy the level-01 enter predicate through the local player-coordinate fields.",
+      "The predicate writes 0xFF to 0xFFF0E9 from PC 0x001B5B66.",
+      "The watched transition gates remain unchanged in the current-frontier extended run."
+    ],
+    "limitation": "This campaign is a controlled boundary-write probe, not a natural controller route and not a replacement for the authoritative scene-state transition proof in re/mame/campaigns/20260826-level01-transition-v1.json.",
+    "unresolved": "The natural route still does not reach the exit-height predicate, and the current command-line load of the historical clean-upper-platform fixture does not reproduce its follow-on scene-03 write."
+  },
+  "next_action": "Keep the historical controlled transition proof as the reference write path, and return to the natural lower-tower/resource interaction search rather than treating the predicate as the missing gameplay mechanism."
+}

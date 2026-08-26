@@ -430,6 +430,14 @@ the static map therefore does not support a hidden connector-cell explanation
 for the lower-tower gap. The remaining bridge must be a player response,
 interaction/resource event, or a different route branch.
 
+The current-harness boundary test is recorded in
+`re/mame/campaigns/20260826-level01-exit-predicate-probe-v1.json`. A local
+coordinate probe at world `(4748,460)` arms `0xFFF0E9=0xFF` from
+`0x001B5B66`, but the extended current-frontier run stays in scene state
+`0x01` with script cursor `0x4082`. This is boundary-write evidence only; the
+authoritative follow-on scene-state write remains the older controlled proof in
+`20260826-level01-transition-v1`.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -467,6 +475,7 @@ interaction/resource event, or a different route branch.
 | `20260826-level01-upper-pair-y-alignment-v1` | recorded-negative-controlled | controlled player-Y alignment with the upper Type-1E/Type-20 pair |
 | `20260826-level01-upper-x4412-up-matrix-v1` | recorded-negative | Up/C+Up matrix near the row-15 special cell between upper surfaces |
 | `20260826-level01-route-geometry-audit-v1` | recorded-negative-frontier | consolidated high-walkway, far-rope, shaft, and upper-platform geometry audit |
+| `20260826-level01-exit-predicate-probe-v1` | recorded-controlled-boundary-write | current-harness boundary predicate and gate observation |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
