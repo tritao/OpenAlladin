@@ -74,6 +74,10 @@ the finding or commit message.
   initialization and animation trace. It records `0x7F` as a transient
   spawn/clear effect and `0x2A` as a falling/resetting movement-stream actor;
   the `0x1E` player-proximity actor remains unresolved.
+- `20260826-level01-recording-high-walkway-v1`: current-baseline replay of the
+  retained high-platform route. The `0x1D` guard is sword-cleared and the
+  upper walkway is reached, but its right edge falls back to the lower band;
+  the current replay has a small coordinate drift from the older trace.
 - `20260826-level01-recording-frontier-v1`: current-harness replay of the
   lower-gap → handhold → upper-platform → wall-rope chain, with 22 verified
   named checkpoints. The associated frontier matrix records the direct wall,

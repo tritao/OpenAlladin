@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-upper-walkway-recording-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Current-baseline replay of the retained high-platform guard route.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "harness_commit": "d243b34",
+  "campaign": "re/mame/campaigns/20260826-level01-recording-high-walkway-v1.json",
+  "trace": "build/re/campaigns/20260826-level01-recording-high-walkway-v1/upper-guard",
+  "input": "none*1,right*55,b+right*50,right*100,none*4",
+  "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/upper-guard-route-v1/states/genesis/high-platform-loaded.sta",
+  "verified_events": [
+    { "frame": 1, "world": [1917, 530], "meaning": "high platform loaded" },
+    { "frame": 56, "world": [2107, 530], "actor_type": "0x1D", "meaning": "guard approach" },
+    { "frame": 91, "world": [2212, 530], "meaning": "guard absent after sword sequence" },
+    { "frame": 210, "world": [2560, 920], "meaning": "upper edge fall" }
+  ],
+  "scene_state_08_observed": false,
+  "conclusion": "The retained high-platform route is confirmed under the current recording baseline. It is a real upper walkway with a sword-clearable 0x1D guard, but the right edge returns to the lower band and does not itself perform the scene transition.",
+  "coordinate_drift": "The current replay differs from the older trace by approximately 28 world pixels at the guard checkpoints; preserve both traces and do not treat the older coordinates as the current canonical values.",
+  "next_action": "Search the post-guard upper-walkway object/script branch and the left/right edge interaction separately, beginning from the new named checkpoints."
+}

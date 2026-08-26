@@ -1,0 +1,45 @@
+{
+  "campaign": "20260826-level01-recording-high-walkway-v1",
+  "status": "recorded-frontier",
+  "purpose": "Re-record the retained high-platform guard and upper-walkway branch under the current ROM/MAME/harness baseline.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "d243b34",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "d243b34",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "upper-guard",
+      "trace_dir": "build/re/campaigns/20260826-level01-recording-high-walkway-v1/upper-guard",
+      "frames": 210,
+      "input": "none*1,right*55,b+right*50,right*100,none*4",
+      "load_state": "high-platform-loaded",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/upper-guard-route-v1/states/genesis/high-platform-loaded.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "high-platform-loaded", "state": "upper-guard/states/genesis/high-platform-loaded.sta" },
+        { "frame": 56, "name": "guard-approach", "state": "upper-guard/states/genesis/guard-approach.sta" },
+        { "frame": 91, "name": "guard-cleared", "state": "upper-guard/states/genesis/guard-cleared.sta" },
+        { "frame": 141, "name": "upper-walkway", "state": "upper-guard/states/genesis/upper-walkway.sta" },
+        { "frame": 210, "name": "upper-edge-fall", "state": "upper-guard/states/genesis/upper-edge-fall.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "high-platform-loaded", "segment": "upper-guard", "frame": 1, "world": [1917, 530], "meaning": "retained upper-platform checkpoint loaded" },
+    { "id": "guard-approach", "segment": "upper-guard", "frame": 56, "world": [2107, 530], "actor_type": "0x1D", "meaning": "upper-walkway guard present" },
+    { "id": "guard-cleared", "segment": "upper-guard", "frame": 91, "world": [2212, 530], "actor_type": "0x1D", "meaning": "sword sequence removes the guard" },
+    { "id": "upper-walkway-fall", "segment": "upper-guard", "frame": 210, "world": [2560, 920], "meaning": "right edge drops to the lower band" }
+  ],
+  "comparison": {
+    "older_campaign": "20260826-level01-route-expansion-v1 / upper-guard-route-v1",
+    "behavior": "guard appears, is sword-cleared, and right edge falls to lower band",
+    "coordinate_note": "Current replay is approximately 28 pixels farther right by the approach/clear checkpoints than the older trace; this is retained as a current-harness behavioral confirmation, not an exact coordinate match."
+  },
+  "result": "The known upper-walkway branch is reproducible from a retained checkpoint under the current baseline. It does not enter scene state 0x08 or reach the level exit.",
+  "next": "Use the re-recorded upper-walkway checkpoint as the starting point for the next branch search, while preserving the older coordinate-different trace as historical evidence."
+}
