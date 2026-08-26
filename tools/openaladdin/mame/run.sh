@@ -162,7 +162,7 @@ fi
 # checkpoint exit on its first frame.  The Lua harness already has its own
 # exact frame-limit shutdown, so loaded checkpoints do not need this second
 # wall-clock bound.
-if [[ -n "${TRACE_SECONDS}" && -z "${OPENALADDIN_LOAD_STATE:-}" ]]; then
+if [[ -n "${TRACE_SECONDS}" && -z "${OPENALADDIN_LOAD_STATE:-}" && -z "${OPENALADDIN_PRELOAD_STATE:-}" ]]; then
     MAME_ARGS+=( -seconds_to_run "${TRACE_SECONDS}" )
 fi
 
@@ -187,7 +187,14 @@ if [[ "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" =
 fi
 
 if [[ -n "${LOAD_STATE}" ]]; then
-    MAME_ARGS+=( -state "${LOAD_STATE}" )
+    if [[ -f "${LOAD_STATE}" ]]; then
+        # MAME's -state option takes a state name, not a filesystem path.
+        # Load an explicit checkpoint through the Lua API at frame 1 so the
+        # trace can use paths outside MAME's state directory as well.
+        export OPENALADDIN_PRELOAD_STATE="${LOAD_STATE}"
+    else
+        MAME_ARGS+=( -state "${LOAD_STATE}" )
+    fi
 fi
 
 if [[ "${MAME_XVFB}" == "1" ]]; then
