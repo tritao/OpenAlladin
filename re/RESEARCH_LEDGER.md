@@ -694,6 +694,16 @@ return. The vertically moving Type-0x2A object observed in the upper-route
 inventory is consequently non-collidable scenery/effect data, not the missing
 traversal connector.
 
+The integrated upper-frontier boundary replay is recorded in
+`re/mame/findings/20260826-level01-integrated-natural-exit-v1.json` and
+`re/mame/campaigns/20260826-level01-integrated-natural-exit-v1.json`. With
+`right*160,up*120,none*40,right*40,none*600` and no memory pokes, the player
+reaches world `(4746,628)`: the X half of the Level 01 boundary predicate is
+satisfied, but the required `Y<470` half is not. The player falls to
+`(4750,874)` and `SCENE_STATE` remains `0x01`. This corrects the earlier
+interpretation of the pair-Y fixture, whose `(4688,466)` position depended on
+an explicit `PLAYER_Y/PLAYER_VY` poke; it is controlled evidence only.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -753,6 +763,7 @@ traversal connector.
 | `20260826-level01-controlled-rope-wall-interaction-v1` | recorded-negative-controlled | far-rope upper-wall dismount reaches selector 0x60 and returns to the connector; no scene transition |
 | `20260826-level01-lower-frontier-terrain-response-v1` | recorded-negative-frontier | lower frontier stop-left behavior is a solid geometry probe; no scene or actor transition |
 | `20260826-type01-child-chain-v1` | recorded-controlled-static-correlation | Type-0x01 upper resource F5 child decode and corrected runtime placement check |
+| `20260826-level01-integrated-natural-exit-v1` | recorded-negative-natural | controller-only upper-frontier replay reaches the X boundary but falls before the Y exit condition |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

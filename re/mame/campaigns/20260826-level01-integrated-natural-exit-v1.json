@@ -1,0 +1,51 @@
+{
+  "campaign": "20260826-level01-integrated-natural-exit-v1",
+  "status": "recorded-negative-natural",
+  "purpose": "Replay the upper-frontier to far-boundary route with controller input only, testing whether the activated upper interaction pair and the boundary predicate complete the Level 01 exit without a state poke.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "fec3f39d4cab6f5421159fb9dedae0c1a2350dba",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "input_schedule": "right*160,up*120,none*40,right*40,none*600",
+  "instrumentation": {
+    "breakpoints": ["0x001B5B4A", "0x001B5B66", "0x001A8ED2", "0x001B3F0A", "0x001B315C", "0x001B3B96"],
+    "watched_addresses": ["0xFFF0D0", "0xFFF0DB", "0xFFF0DC", "0xFFF0E6", "0xFFF0E9", "0xFF7E26", "0xFFF572", "0xFFF576", "0xFFF57A", "0xFFF005", "0xFFF176"],
+    "scene_state_trace": true,
+    "actor_trace": true,
+    "memory_pokes": false
+  },
+  "trace": {
+    "directory": "build/re/analysis/20260826-level01-integrated-natural-exit-v1",
+    "state_log": "build/re/analysis/20260826-level01-integrated-natural-exit-v1/state.jsonl",
+    "input_log": "build/re/analysis/20260826-level01-integrated-natural-exit-v1/input.jsonl",
+    "debug_log": "build/re/analysis/20260826-level01-integrated-natural-exit-v1/debug.log",
+    "checkpoints": [
+      { "frame": 1, "name": "loaded" },
+      { "frame": 160, "name": "pair-window" },
+      { "frame": 280, "name": "aligned" },
+      { "frame": 320, "name": "boundary-window" },
+      { "frame": 360, "name": "post-boundary" },
+      { "frame": 600, "name": "wait" },
+      { "frame": 960, "name": "end" }
+    ]
+  },
+  "observed": [
+    { "frame": 160, "world": [4688, 628], "meaning": "The upper interaction feature is reached, but the player remains on the behavior-0x25 middle band." },
+    { "frame": 280, "world": [4688, 628], "meaning": "Holding Up changes camera-relative coordinates but does not produce the y≈466 alignment created by the prior explicit PLAYER_Y poke." },
+    { "frame": 350, "world": [4746, 628], "meaning": "Rightward input crosses the boundary X threshold, but the player is still above the required world-Y threshold." },
+    { "frame": 360, "world": [4750, 649], "meaning": "The player leaves the behavior-0x25 surface and begins falling at the far edge." },
+    { "frame": 960, "world": [4750, 874], "meaning": "The player settles in the lower band; SCENE_STATE remains 0x01." }
+  ],
+  "scene_result": {
+    "scene_state": "0x01 throughout",
+    "scene_state_changes": 0,
+    "natural_exit_countdown_writes": 0,
+    "scene_state_08_writes": 0,
+    "terminal_gate_writes": 0
+  },
+  "conclusion": "The upper-frontier to far-boundary replay is not a controller-only exit route. The boundary predicate's X condition is reachable, but the player cannot reach its Y<470 condition from this checkpoint with the tested Up interval; the route falls from world (4750,628) to the lower band. The earlier aligned pair fixture must remain classified as controlled evidence, not a natural route.",
+  "next_action": "Search the earlier lower-gap/handhold/launch chain for the missing transfer to the row-10 upper corridor; do not treat the Type-1E/Type-20 pair checkpoint as a natural exit route."
+}
