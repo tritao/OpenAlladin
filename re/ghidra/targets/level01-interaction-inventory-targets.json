@@ -24,8 +24,6 @@
     { "address": "0x001B735E", "name": "InteractionHandler_0x60" },
     { "address": "0x001B670C", "name": "InteractionHandler_0x74" },
     { "address": "0x001B6F0C", "name": "InteractionHandler_0x80" },
-    { "address": "0x001B6CB4", "name": "InteractionHandler_0x81" },
-    { "address": "0x001B2650", "name": "InteractionHandler_0x81_PostSpawn" },
     { "address": "0x001B74D6", "name": "InteractionHandler_0x87" },
     { "address": "0x001B744A", "name": "InteractionHandler_0xAB" },
     { "address": "0x001B728E", "name": "InteractionHandler_0xC8" },
@@ -39,8 +37,10 @@
     { "address": "0x001AE2AA", "name": "ActorSpawnAllocator_OffsetC" },
     { "address": "0x001AE262", "name": "ActorSlotAllocator" },
     { "address": "0x001AE30A", "name": "ActorInitializeFromTemplate" },
-    { "address": "0x001AE406", "name": "InteractionRowProcessor" },
-    { "address": "0x001AE47E", "name": "InteractionRowProcessorDispatch" },
+    { "address": "0x001AE3FC", "name": "InteractionRowProcessorVerticalWrapper" },
+    { "address": "0x001AE406", "name": "InteractionRowProcessorA" },
+    { "address": "0x001AE47E", "name": "InteractionRowProcessorHorizontalWrapper" },
+    { "address": "0x001AE488", "name": "InteractionRowProcessorB" },
     { "address": "0x001B3F0C", "name": "SceneTable_State08Writer" }
   ],
   "memory_references": [

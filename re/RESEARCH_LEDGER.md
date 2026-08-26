@@ -566,17 +566,21 @@ resource-mode switch, not a connector or scene writer. It also corrects the
 older `0x001ADB34` label: that address is an empty return; the distinct
 routine at `0x001ADB36` is not the landing resolver's direct callback.
 
-The complete Level 01 interaction inventory is recorded in
-`re/mame/findings/20260826-level01-interaction-inventory-v1.json`. Static
-decoding of the 300x45 map finds 147 interaction records and 24 unique
-selectors. The runtime row processor at `0x001AE47E` consumes the upper
-row-14 records at map cells `(283,14)` and `(294,14)`, selectors `0x11` and
-`0x1B`, producing the previously observed Type-0x1E/Type-0x20 pair. The
-nearby row-15 selectors `0x80` and `0x81` resolve to actor allocation paths:
-`0x80` clears `FFF104`, while `0x81` performs a 16-word VDP upload through
-`0x001B2650`. Neither direct handler writes `SCENE_STATE=0x08` or the scene
-countdown. The remaining high-value test is controlled activation of those
-row-15 records followed by tracing the actors/resources they create.
+The corrected Level 01 interaction inventory is recorded in
+`re/mame/findings/20260826-level01-interaction-inventory-v1.json`. The live
+interaction table is read at `0x00FFAE87`, which is resource offset 3 plus
+`(map_word >> 1)`; the earlier offset-2 scan had conflated terrain behavior
+bytes `0x80/0x81` with interaction selectors. Under the corrected decode the
+300x45 map contains 175 interaction records and 22 unique selectors. The
+runtime row processors, entered through wrappers at `0x001AE3FC` and
+`0x001AE47E` and implemented at `0x001AE406` and `0x001AE488`, consume the upper
+row-14 records at
+map cells `(283,14)` and `(294,14)`, selectors `0x11` and `0x1B`, producing
+the previously observed Type-0x1E/Type-0x20 pair. The only Level 01 `0x80`
+interaction record is a separate actor-spawn path at `(249,14)`; row 15 has
+no interaction selectors. Neither direct handler writes `SCENE_STATE=0x08` or
+the scene countdown. The remaining high-value test is controlled activation
+of the actual `0x80` record followed by tracing the actor it creates.
 
 ## Campaign index
 
