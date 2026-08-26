@@ -61,6 +61,13 @@ sequence_table:
   track_offset_endianness: little
   base_address_is: 24-bit ROM address used by the banked read helper
 
+# IDs confirmed by the Level 01 MAME command trace. The native runtime uses
+# the level music ID when no --sound-id override is supplied.
+sound_ids:
+  level01_music: 0x49
+  animation_sfx: 0x4C
+  interaction_event: 0x31
+
 channel_state:
   base: 0x1B80
   stride: 0x20

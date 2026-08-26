@@ -21,6 +21,11 @@ signed operand encodings `$80–$BF` and `$C0–$FF`, stored in separate channel
 state fields. Each channel maintains a 16-byte cached ROM window while its
 cursor advances through the 24-bit stream.
 
+The currently confirmed Level 01 command IDs are music `0x49`, animation F3
+effects `0x4C`, and the fixed interaction event `0x31`. The native runtime
+can audition any sequence-table entry with `--sound-id ID`; IDs are valid from
+`0x00` through `0x71`.
+
 Regenerate the map, including the decoded music/SFX table, with:
 
 ```sh

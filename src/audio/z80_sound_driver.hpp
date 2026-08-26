@@ -18,6 +18,10 @@ class Z80SoundDriver {
 public:
     static constexpr std::uint32_t kSequenceTableBase = 0x1BAF6F;
     static constexpr std::uint32_t kPatchTableBase = 0x1B9D06;
+    static constexpr std::uint8_t kSoundSequenceCount = 0x72;
+    static constexpr std::uint8_t kLevel01MusicSoundId = 0x49;
+    static constexpr std::uint8_t kAnimationSfxSoundId = 0x4C;
+    static constexpr std::uint8_t kInteractionEventSoundId = 0x31;
     static constexpr std::size_t kPatchStateSize = 0x27;
     static constexpr std::size_t kChannelCount = 16;
     static constexpr std::size_t kCommandQueueCapacity = 64;

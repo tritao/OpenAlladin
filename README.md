@@ -215,6 +215,17 @@ Regenerate the runtime-friendly PPM render and build it with:
 ./run.sh
 ```
 
+Audio is enabled by default. The native Level 01 music sequence is `0x49`;
+use `--sound-id ID` to audition any recovered ROM sequence (`0x00` through
+`0x71`), for example:
+
+```bash
+SDL_AUDIODRIVER=pulse ./run.sh --sound-id 0x4C --frames 600
+```
+
+The currently confirmed IDs are Level 01 music `0x49`, animation SFX `0x4C`,
+and interaction event `0x31`.
+
 The native build is also available directly through CMake. CMake detects the
 repository-local SDL2 sysroot under `build/deps/sdl2` when it exists, or a
 system SDL2 installation otherwise:

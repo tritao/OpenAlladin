@@ -32,6 +32,7 @@ struct Options {
     int frames = -1;
     bool no_window = false;
     bool no_audio = false;
+    int sound_id = -1;
     bool demo = false;
     bool render_only = false;
     std::string state_output;
@@ -122,6 +123,17 @@ std::vector<int> parse_checkpoint(const std::string& value) {
     return fields;
 }
 
+std::uint8_t parse_sound_id(const std::string& value) {
+    std::size_t consumed = 0;
+    const unsigned long parsed = std::stoul(value, &consumed, 0);
+    if (consumed != value.size()
+        || parsed >= openaladdin::audio::Z80SoundDriver::kSoundSequenceCount) {
+        throw std::runtime_error(
+            "--sound-id expects a ROM sound ID from 0 through 0x71");
+    }
+    return static_cast<std::uint8_t>(parsed);
+}
+
 std::vector<int> parse_camera_checkpoint(const std::string& value) {
     std::vector<int> fields;
     std::stringstream stream(value);
@@ -198,6 +210,8 @@ Options parse_options(int argc, char** argv) {
             options.no_window = true;
         } else if (argument == "--no-audio") {
             options.no_audio = true;
+        } else if (argument == "--sound-id" && i + 1 < argc) {
+            options.sound_id = parse_sound_id(argv[++i]);
         } else if (argument == "--demo") {
             options.demo = true;
         } else if (argument == "--render-checkpoint") {
@@ -232,7 +246,7 @@ Options parse_options(int argc, char** argv) {
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
-            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--demo] [--render-checkpoint]\n"
+            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--sound-id ID] [--demo] [--render-checkpoint]\n"
                          "       [--state-output PATH] [--framebuffer-out PATH] [--framebuffer-frame N]\n"
                          "       [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
@@ -244,7 +258,8 @@ Options parse_options(int argc, char** argv) {
                          "       [--checkpoint-animation-selector FIELDS]\n"
                          "       [--checkpoint-facing-x-flip VALUE]\n"
                          "       [--checkpoint-vdp TRACE_DIR FRAME]\n"
-                         "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n";
+                         "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n"
+                         "       --sound-id ID selects a ROM sound sequence (default: Level 01 music 0x49)\n";
             std::exit(0);
         } else {
             throw std::runtime_error("unknown argument: " + argument);
@@ -401,8 +416,12 @@ int main(int argc, char** argv) {
                             audio_tables[index] >> 16);
                     }
                     sound_driver->command(0x0B, audio_setup);
-                    const std::array<std::uint8_t, 1> startup_sound{0};
-                    sound_driver->command(0x10, startup_sound);
+                    const std::array<std::uint8_t, 1> selected_sound{
+                        options.sound_id >= 0
+                            ? static_cast<std::uint8_t>(options.sound_id)
+                            : openaladdin::audio::Z80SoundDriver::kLevel01MusicSoundId
+                    };
+                    sound_driver->command(0x10, selected_sound);
                 } catch (const std::exception& error) {
                     std::cerr << "openaladdin: audio disabled: " << error.what() << '\n';
                     sound_driver.reset();
@@ -530,8 +549,13 @@ int main(int argc, char** argv) {
             }
 
             engine.update(input);
+            const auto sound_requests = engine.take_sound_requests();
             if (sound_driver) {
                 try {
+                    for (const std::uint8_t sound_id : sound_requests) {
+                        const std::array<std::uint8_t, 1> sound_command{sound_id};
+                        sound_driver->enqueue_command(0x10, sound_command);
+                    }
                     audio_bridge.tick();
                     sound_driver->tick();
                 } catch (const std::exception& error) {

@@ -1,6 +1,9 @@
 #include "animation.hpp"
 
 #include <cassert>
+#include <cstdio>
+#include <fstream>
+#include <vector>
 
 int main() {
     using namespace openaladdin;
@@ -69,5 +72,33 @@ int main() {
         vm.update(SpritePose::Brake, HorizontalDirection::None);
     }
     assert(vm.sprite_frame() == 319);
+
+    // F3 carries a ROM sound-table ID. Verify that the native VM exposes it
+    // to the engine instead of silently consuming the command.
+    std::vector<std::uint8_t> rom(0x20010, 0);
+    rom[0] = 0x00;
+    rom[1] = 0x02;
+    rom[2] = 0x00;
+    rom[3] = 0x00;
+    constexpr std::size_t sound_stream = 0x12000;
+    rom[sound_stream + 2] = 0xF3;
+    rom[sound_stream + 3] = 0x4C;
+    const char* test_rom = "/tmp/openaladdin-animation-sound-test.bin";
+    {
+        std::ofstream output(test_rom, std::ios::binary);
+        output.write(
+            reinterpret_cast<const char*>(rom.data()),
+            static_cast<std::streamsize>(rom.size())
+        );
+    }
+    PlayerAnimationVm sound_vm;
+    sound_vm.load_rom(test_rom);
+    sound_vm.select_stream_entry(static_cast<std::uint32_t>(sound_stream));
+    sound_vm.update(SpritePose::Idle, HorizontalDirection::None);
+    const auto sound_requests = sound_vm.take_sound_requests();
+    assert(sound_requests.size() == 1);
+    assert(sound_requests.front() == 0x4C);
+    assert(sound_vm.take_sound_requests().empty());
+    std::remove(test_rom);
     return 0;
 }

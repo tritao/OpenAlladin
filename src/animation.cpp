@@ -128,6 +128,7 @@ void PlayerAnimationVm::reset() {
     actor_tick_ = false;
     animation_phase_delay_ = 0;
     spawn_request_ = {};
+    sound_requests_.clear();
     update_count_ = 0;
     landing_finished_ = false;
     landing_reselect_pending_ = false;
@@ -419,7 +420,10 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
     case 0xF2:
         flag_command(cursor);
         return false;
-    case 0xF3: cursor += 2; return false;
+    case 0xF3:
+        sound_requests_.push_back(read_rom8(cursor + 1));
+        cursor += 2;
+        return false;
     case 0xF4: compare_command(cursor); return false;
     case 0xF5:
         // AnimationVM_SpawnOrCopyActor (0x001AD00E) consumes a fixed 16-byte
@@ -650,6 +654,12 @@ bool PlayerAnimationVm::take_spawn_request(AnimationSpawnRequest& request) {
     request = spawn_request_;
     spawn_request_ = {};
     return true;
+}
+
+std::vector<std::uint8_t> PlayerAnimationVm::take_sound_requests() {
+    std::vector<std::uint8_t> requests;
+    requests.swap(sound_requests_);
+    return requests;
 }
 
 void PlayerAnimationVm::select_stream_entry(std::uint32_t stream_entry) {

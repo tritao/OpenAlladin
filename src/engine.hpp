@@ -369,6 +369,9 @@ public:
         int update_delay = -1
     );
     void update(const InputState& input);
+    // Return sound IDs emitted by the player and actor animation VMs since
+    // the previous call. The caller submits them to the recovered Z80 driver.
+    std::vector<std::uint8_t> take_sound_requests();
     void render(SDL_Renderer* renderer);
     // Write the last rendered native framebuffer without SDL window scaling.
     // This is the format used by the visual differential audit tools.

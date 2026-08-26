@@ -139,6 +139,7 @@ public:
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
+    std::vector<std::uint8_t> take_sound_requests();
     void select_stream_entry(std::uint32_t stream_entry);
     void select_response_stream(std::uint32_t stream_entry, int timer = 0);
     bool finished() const;
@@ -209,6 +210,7 @@ private:
     // in the captured RAM fields.
     int animation_phase_delay_ = 0;
     AnimationSpawnRequest spawn_request_{};
+    std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;
     bool landing_finished_ = false;
     bool landing_reselect_pending_ = false;

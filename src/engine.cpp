@@ -2075,6 +2075,15 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     sync_player_actor();
 }
 
+std::vector<std::uint8_t> Engine::take_sound_requests() {
+    std::vector<std::uint8_t> requests = animation_.take_sound_requests();
+    for (auto& actor_animation : actor_animations_) {
+        auto actor_requests = actor_animation.take_sound_requests();
+        requests.insert(requests.end(), actor_requests.begin(), actor_requests.end());
+    }
+    return requests;
+}
+
 void Engine::set_checkpoint_terrain_behavior(std::uint8_t behavior) {
     checkpoint_terrain_behavior_override_ = true;
     checkpoint_terrain_behavior_ = behavior;
