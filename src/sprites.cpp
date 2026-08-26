@@ -503,4 +503,68 @@ void SpriteRenderer::draw(
     }
 }
 
+void SpriteRenderer::draw_vdp_sprite(
+    const std::vector<std::uint8_t>& rom,
+    int tile_address,
+    int width_tiles,
+    int height_tiles,
+    const std::vector<SDL_Color>& palette,
+    std::vector<std::uint32_t>& framebuffer,
+    int framebuffer_width,
+    int framebuffer_height,
+    int screen_x,
+    int screen_y,
+    int palette_line,
+    bool flip_x,
+    bool flip_y
+) {
+    if (width_tiles <= 0 || height_tiles <= 0 || tile_address < 0
+        || palette_line < 0
+        || framebuffer_width <= 0 || framebuffer_height <= 0
+        || framebuffer.size() < static_cast<std::size_t>(framebuffer_width * framebuffer_height)) {
+        throw std::runtime_error("invalid VDP sprite dimensions or framebuffer");
+    }
+    const int width = width_tiles * 8;
+    const int height = height_tiles * 8;
+    const std::size_t required = static_cast<std::size_t>(width_tiles * height_tiles) * 32;
+    if (static_cast<std::size_t>(tile_address) + required > rom.size()) {
+        throw std::runtime_error("VDP sprite tile data is outside the ROM");
+    }
+
+    const int palette_start = palette_line * 16;
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            const int source_x = flip_x ? width - 1 - x : x;
+            const int source_y = flip_y ? height - 1 - y : y;
+            const int tile_column = source_x / 8;
+            const int tile_row = source_y / 8;
+            const int tile_index = tile_column * height_tiles + tile_row;
+            const std::size_t tile_offset = static_cast<std::size_t>(tile_address)
+                + static_cast<std::size_t>(tile_index * 32);
+            const std::size_t row_offset = tile_offset + static_cast<std::size_t>((source_y & 7) * 4);
+            const std::uint8_t packed = rom[row_offset + static_cast<std::size_t>((source_x & 7) / 2)];
+            const std::uint8_t color_index = (source_x & 1) == 0
+                ? static_cast<std::uint8_t>(packed >> 4)
+                : static_cast<std::uint8_t>(packed & 0x0F);
+            if (color_index == 0) {
+                continue;
+            }
+
+            const int draw_x = screen_x + x;
+            const int draw_y = screen_y + y;
+            if (draw_x < 0 || draw_x >= framebuffer_width
+                || draw_y < 0 || draw_y >= framebuffer_height) {
+                continue;
+            }
+            const int palette_index = palette_start + color_index;
+            if (palette_index < 0 || palette_index >= static_cast<int>(palette.size())) {
+                throw std::runtime_error("VDP sprite palette index is outside the loaded palette");
+            }
+            framebuffer[static_cast<std::size_t>(draw_y * framebuffer_width + draw_x)] = pack_rgba(
+                palette[palette_index]
+            );
+        }
+    }
+}
+
 }  // namespace openaladdin

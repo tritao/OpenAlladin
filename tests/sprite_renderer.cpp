@@ -89,5 +89,33 @@ int main() {
     assert(framebuffer[4 * 8 + 2] == rgba(1, 33, 65));
     assert(framebuffer[4 * 8 + 3] == rgba(2, 34, 66));
 
+    // Genesis VDP sprites use a column-first tile sequence. Four solid
+    // tiles make the layout and colour-zero transparency easy to verify
+    // without depending on the extracted asset tree.
+    std::vector<std::uint8_t> vdp_rom(4 * 32, 0);
+    std::fill(vdp_rom.begin() + 0 * 32, vdp_rom.begin() + 1 * 32, 0x11);
+    std::fill(vdp_rom.begin() + 1 * 32, vdp_rom.begin() + 2 * 32, 0x22);
+    std::fill(vdp_rom.begin() + 2 * 32, vdp_rom.begin() + 3 * 32, 0x33);
+    std::fill(vdp_rom.begin() + 3 * 32, vdp_rom.begin() + 4 * 32, 0x44);
+    std::vector<std::uint32_t> vdp_framebuffer(16 * 16, 0);
+    SpriteRenderer::draw_vdp_sprite(
+        vdp_rom,
+        0,
+        2,
+        2,
+        palette,
+        vdp_framebuffer,
+        16,
+        16,
+        0,
+        0,
+        0
+    );
+    // Top-left/bottom-left are tiles 0/1; top-right/bottom-right are 2/3.
+    assert(vdp_framebuffer[0 * 16 + 0] == rgba(1, 33, 65));
+    assert(vdp_framebuffer[8 * 16 + 0] == rgba(2, 34, 66));
+    assert(vdp_framebuffer[0 * 16 + 8] == rgba(3, 35, 67));
+    assert(vdp_framebuffer[8 * 16 + 8] == rgba(4, 36, 68));
+
     return 0;
 }

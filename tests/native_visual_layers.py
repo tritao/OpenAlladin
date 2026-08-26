@@ -61,6 +61,11 @@ def main() -> int:
             [
                 str(BINARY),
                 "--no-window",
+                # This test isolates the two extracted planes. VDP SAT/HUD
+                # coverage has its own renderer regression; omitting the ROM
+                # keeps those sprites out of this plane-only fixture.
+                "--rom",
+                "",
                 "--render-checkpoint",
                 "--checkpoint-player",
                 "10000,416,0,0,1",

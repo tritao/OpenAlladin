@@ -90,6 +90,27 @@ public:
         bool flip_y = false,
         int palette_line_override = -1
     );
+
+    // Draw a native Genesis VDP sprite whose tile data is stored linearly in
+    // the ROM. The VDP lays a multipart sprite out column-first: all tiles in
+    // a column precede the next column. This is separate from Chopper's
+    // multipart frame format, but uses the same decoded palette indices and
+    // transparent colour-zero convention.
+    static void draw_vdp_sprite(
+        const std::vector<std::uint8_t>& rom,
+        int tile_address,
+        int width_tiles,
+        int height_tiles,
+        const std::vector<SDL_Color>& palette,
+        std::vector<std::uint32_t>& framebuffer,
+        int framebuffer_width,
+        int framebuffer_height,
+        int screen_x,
+        int screen_y,
+        int palette_line,
+        bool flip_x = false,
+        bool flip_y = false
+    );
 };
 
 }  // namespace openaladdin
