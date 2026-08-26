@@ -30,6 +30,27 @@
         { "frame": 300, "name": "right-settled", "state": "upper-platform-init/states/genesis/right-settled.sta" },
         { "frame": 360, "name": "end", "state": "upper-platform-init/states/genesis/end.sta" }
       ]
+    },
+    {
+      "id": "fresh-route-flags",
+      "trace_dir": "build/re/campaigns/20260826-level01-object-trace-frontier-v1/fresh-route-flags",
+      "frames": 1500,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c*1,right*120,none*60",
+      "load_state": null,
+      "loaded_state_source": null,
+      "capture": "state",
+      "actors": true,
+      "debug_watch_addresses": ["0xFFF105", "0xFFF106", "0xFFF107"],
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 0, "name": "boot", "state": "fresh-route-flags/states/genesis/boot.sta" },
+        { "frame": 1245, "name": "level01-entry", "state": "fresh-route-flags/states/genesis/level01-entry.sta" },
+        { "frame": 1300, "name": "opening-ground", "state": "fresh-route-flags/states/genesis/opening-ground.sta" },
+        { "frame": 1360, "name": "first-run", "state": "fresh-route-flags/states/genesis/first-run.sta" },
+        { "frame": 1400, "name": "jump-window", "state": "fresh-route-flags/states/genesis/jump-window.sta" },
+        { "frame": 1480, "name": "post-jump", "state": "fresh-route-flags/states/genesis/post-jump.sta" },
+        { "frame": 1500, "name": "end", "state": "fresh-route-flags/states/genesis/end.sta" }
+      ]
     }
   ],
   "events": [
@@ -37,7 +58,8 @@
     { "id": "type-127-effect", "segment": "upper-platform-init", "frame": 2, "world": [2010, 688], "actor_type": "0x7F", "meaning": "transient effect begins" },
     { "id": "type-127-effect-end", "segment": "upper-platform-init", "frame": 47, "world": [1880, 722], "actor_type": "0x7F", "meaning": "transient effect leaves/clears" },
     { "id": "type-42-cycle", "segment": "upper-platform-init", "frame": 82, "world": [1863, 769], "actor_type": "0x2A", "meaning": "looping object animation becomes visible" },
-    { "id": "type-42-downward-branch", "segment": "upper-platform-init", "frame": 111, "world": [1888, 863], "actor_type": "0x2A", "meaning": "object follows the movement stream downward" }
+    { "id": "type-42-downward-branch", "segment": "upper-platform-init", "frame": 111, "world": [1888, 863], "actor_type": "0x2A", "meaning": "object follows the movement stream downward" },
+    { "id": "fresh-route-flag-reset", "segment": "fresh-route-flags", "frame": 6, "pc": "0x001AA720", "meaning": "event flags 0xFFF105-0xFFF107 are cleared; no natural-route set is observed through frame 1500" }
   ],
   "result": "The trace is replayable and identifies the upper-platform actors without conflating them with the missing route. Actor 0x7F is a transient animation/effect: its stream spawns or copies helper actors, plays sound 0x2A, and destroys or clears itself. Actor 0x2A uses movement stream 0x120F76 and animation stream 0x1231DC; its observed cycle is a falling/resetting object, not a verified climbable transfer. Actor 0x1E is a remaining unresolved candidate: its initializer is at ROM 0x1B7C24 and its animation stream 0x123614 contains player-proximity checks, but it was not instantiated in this segment.",
   "negative_evidence": [

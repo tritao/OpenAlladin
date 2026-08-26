@@ -10,6 +10,7 @@
   "harness_commit": "1d10043",
   "campaign": "re/mame/campaigns/20260826-level01-object-trace-frontier-v1.json",
   "trace": "build/re/campaigns/20260826-level01-object-trace-frontier-v1/upper-platform-init",
+  "fresh_route_flag_trace": "build/re/campaigns/20260826-level01-object-trace-frontier-v1/fresh-route-flags",
   "decoder_inputs": {
     "actor_initializer_log": "build/re/campaigns/20260826-level01-object-trace-frontier-v1/upper-platform-init/debug.log",
     "initializer_decoder": "python3 tools/openaladdin/analysis/actor_initializers.py --log <debug.log> --rom rom/Disneys_Aladdin_U_p1.bin",
@@ -41,5 +42,11 @@
     }
   ],
   "conclusion": "The current actor trace narrows the route search. The visible 0x7F effect and 0x2A falling/resetting object should not be treated as the missing high-walkway transfer. The 0x1E object's placement and activation remain worth tracing because its animation has explicit player-proximity logic, but no route claim is made until a replay reaches it.",
+  "natural_route_flag_watch": {
+    "addresses": ["0xFFF105", "0xFFF106", "0xFFF107"],
+    "frames": 1500,
+    "observed_writes": "Only clears were observed, including the route reset at PC 0x001AA720; no set of 0xFFF105, 0xFFF106, or 0xFFF107 occurred in the recorded fresh-route schedule.",
+    "meaning": "The 0x1E initializer is not naturally activated by the currently recorded opening route."
+  },
   "next_action": "Locate 0x1E placement records or its initializer call sites in the level-01 object/script data and run a targeted activation trace with named checkpoints."
 }
