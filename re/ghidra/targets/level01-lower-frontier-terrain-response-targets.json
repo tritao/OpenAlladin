@@ -17,8 +17,8 @@
   ],
   "memory_references": [
     { "address": "0x00FFF07F", "name": "TERRAIN_PUSH_LEFT" },
-    { "address": "0x00FFF0A0", "name": "TERRAIN_STOP_LEFT_MOTION" },
-    { "address": "0x00FFF0A1", "name": "TERRAIN_LEFT_INNER_PROBE" },
-    { "address": "0x00FFF0A2", "name": "TERRAIN_LEFT_OUTER_PROBE" }
+    { "address": "0x00FFF0C5", "name": "TERRAIN_STOP_LEFT_MOTION" },
+    { "address": "0x00FFF0C6", "name": "TERRAIN_LEFT_INNER_PROBE" },
+    { "address": "0x00FFF0C7", "name": "TERRAIN_LEFT_OUTER_PROBE" }
   ]
 }
