@@ -132,6 +132,8 @@ void PlayerAnimationVm::reset() {
     actor_tick_ = false;
     animation_phase_delay_ = 0;
     pending_animation_pc_ = 0;
+    force_tick_after_service_ = false;
+    force_tick_next_update_ = false;
     spawn_request_ = {};
     sound_requests_.clear();
     update_count_ = 0;
@@ -689,12 +691,33 @@ std::vector<std::uint8_t> PlayerAnimationVm::take_sound_requests() {
     return requests;
 }
 
-void PlayerAnimationVm::select_stream_entry(std::uint32_t stream_entry) {
+void PlayerAnimationVm::select_stream_entry(
+    std::uint32_t stream_entry,
+    bool publish_frame_pointer,
+    bool defer_first_tick,
+    bool force_following_tick
+) {
     if (!rom_mode_) return;
     stream_kind_ = AnimationStreamKind::Action;
     stream_entry_ = stream_entry;
     animation_pc_ = stream_entry;
     timer_ = 0;
+    if (publish_frame_pointer) {
+        const std::uint16_t reference = read_rom16(stream_entry);
+        set_frame_pointer(read_rom32(reference));
+    }
+    if (defer_first_tick) {
+        // A terrain selector can publish a root immediately before the
+        // scheduler's service slot. Move the phase once so this root remains
+        // observable for one frame and the following update takes the tick.
+        ++update_count_;
+    }
+    if (force_following_tick) {
+        // The terrain selector's first action transition services the new
+        // root on the following update and then services one additional
+        // command boundary before returning to the alternating cadence.
+        force_tick_after_service_ = true;
+    }
     landing_finished_ = false;
     landing_reselect_pending_ = false;
 }
@@ -889,7 +912,19 @@ void PlayerAnimationVm::update(
         ++update_count_;
         return;
     }
-    if ((update_count_++ & 1U) == 0) tick_rom(context);
+    if ((update_count_++ & 1U) == 0) {
+        tick_rom(context);
+        if (force_tick_after_service_) {
+            force_tick_after_service_ = false;
+            force_tick_next_update_ = true;
+        }
+    } else if (force_tick_next_update_) {
+        force_tick_next_update_ = false;
+        tick_rom(context);
+        // The forced service occupies the otherwise idle slot. Preserve the
+        // alternating cadence for the update after it.
+        ++update_count_;
+    }
 }
 
 int PlayerAnimationVm::sprite_frame() const {

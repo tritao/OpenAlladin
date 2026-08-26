@@ -145,7 +145,12 @@ public:
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
     std::vector<std::uint8_t> take_sound_requests();
-    void select_stream_entry(std::uint32_t stream_entry);
+    void select_stream_entry(
+        std::uint32_t stream_entry,
+        bool publish_frame_pointer = false,
+        bool defer_first_tick = false,
+        bool force_following_tick = false
+    );
     void select_locomotion_stream(
         SpritePose pose,
         const AnimationContext& context = {}
@@ -222,6 +227,8 @@ private:
     // in the captured RAM fields.
     int animation_phase_delay_ = 0;
     std::uint32_t pending_animation_pc_ = 0;
+    bool force_tick_after_service_ = false;
+    bool force_tick_next_update_ = false;
     AnimationSpawnRequest spawn_request_{};
     std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;

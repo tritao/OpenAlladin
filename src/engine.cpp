@@ -87,6 +87,7 @@ constexpr std::uint32_t kPlayerAttackTransitionStream = 0x00122034;
 constexpr std::uint32_t kPlayerSwordStableStream = 0x001223E2;
 constexpr std::uint32_t kPlayerSwordFirstFrame = 0x001ED34A;
 constexpr std::uint32_t kPlayerUpAnimationStream = 0x00122236;
+constexpr std::uint32_t kPlayerDownAnimationStream = 0x001222D2;
 constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
 constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
 constexpr std::uint8_t kActorDeathFrames = 43;
@@ -3363,6 +3364,35 @@ void Engine::update(const InputState& input) {
         camera_.vertical_threshold = 0x170;
         animation_context.selector.transition_state_df = 0;
     }
+    const bool select_down_animation =
+        input.down
+        && player_.grounded
+        && player_.terrain_landing_state != 0
+        && player_.vy == 0
+        && player_.animation_selector.transition_state_de == 0
+        && player_.animation_selector.transition_state_df == 0;
+    if (select_down_animation) {
+        // Player_TerrainResponseStateMachine selects the down stream before
+        // the common VM tick. Its root is 0x001222D2; the tick then publishes
+        // the first data cursor at 0x001222D4.
+        animation_.select_stream_entry(kPlayerDownAnimationStream);
+        player_.animation_selector.transition_state_de = 0xFF;
+        player_.animation_selector.response_animation = 0;
+        player_.animation_selector.state_lock = 0;
+        animation_context.selector.transition_state_de = 0xFF;
+        animation_context.selector.response_animation = 0;
+        animation_context.selector.state_lock = 0;
+    }
+    const bool release_down_animation =
+        !input.down && player_.animation_selector.transition_state_de != 0;
+    if (release_down_animation) {
+        // The same terrain state machine clears the down latch after the
+        // held-down stream has had its final frame; the stream itself owns
+        // the later F8 handoff back to locomotion.
+        player_.animation_selector.transition_state_de = 0;
+        camera_.vertical_threshold = 0x170;
+        animation_context.selector.transition_state_de = 0;
+    }
     // Terrain and selector handlers above can write the shared camera RAM
     // before the actor VM tick. Refresh the VM view after those writes so it
     // does not restore the earlier pre-handler threshold.
@@ -3421,10 +3451,31 @@ void Engine::update(const InputState& input) {
         // resolution, so keep the VM's selector input at the ROM value.
         vm_context.selector.landing_state = 0;
     }
-    const std::uint32_t frame_pointer_before_landing_selection = animation_.frame_pointer();
+    // The grounded Up branch at 0x001AA0AE runs before the common VM. It
+    // publishes the action root and FFF0DF, then the next animation tick
+    // consumes that root.
+    const bool can_select_up_animation =
+        input.up
+        && !input.left
+        && !input.right
+        && player_.grounded
+        && player_.terrain_landing_state != 0
+        && player_.vy == 0
+        && player_.terrain_response_timer_state == 0
+        && player_.terrain_transition_gate == 0
+        && player_.animation_selector.transition_state_df == 0
+        && camera_.special_mode == 0;
+    const bool select_up_before_vm =
+        can_select_up_animation && player_.terrain_vertical_stop != 0;
+    if (select_up_before_vm) {
+        animation_.select_stream_entry(kPlayerUpAnimationStream, true, true, true);
+        player_.animation_selector.transition_state_df = 0xFF;
+        player_.terrain_response_timer_state = 0;
+        vm_context.selector.transition_state_df = 0xFF;
+    }
     if (!stable_terrain_handler_fixture) {
         animation_.update(
-            desired_pose,
+            landing_approach ? SpritePose::Jump : desired_pose,
             horizontal_direction(input),
             vm_context
         );
@@ -3444,28 +3495,17 @@ void Engine::update(const InputState& input) {
             // jump frame until the next actor tick consumes the landing
             // stream.
             animation_.select_locomotion_stream(SpritePose::Landing, vm_context);
-            animation_.set_frame_pointer(frame_pointer_before_landing_selection);
         }
 
-        // The grounded Up branch at 0x001AA0AE is a post-VM selector. It
-        // publishes the action root and FFF0DF after the current animation
-        // pass; the next frame is the first one that consumes that root.
-        const bool can_select_up_animation =
-            input.up
-            && !input.left
-            && !input.right
-            && player_.grounded
-            && player_.terrain_landing_state != 0
-            && player_.vy == 0
-            && player_.terrain_response_timer_state == 0
-            && player_.terrain_transition_gate == 0
-            && player_.animation_selector.transition_state_df == 0
-            && camera_.special_mode == 0;
-        if (can_select_up_animation) {
+        if (can_select_up_animation && !select_up_before_vm) {
+            // The ordinary grounded Up path publishes its action root after
+            // the current VM pass. Keep this ordering for a fresh ground
+            // state; the vertical-stop path above is the pre-pass variant.
             animation_.select_stream_entry(kPlayerUpAnimationStream);
             player_.animation_selector.transition_state_df = 0xFF;
             player_.terrain_response_timer_state = 0;
         }
+
         if (start_jump) {
             // Player_HandleJumpAndVerticalState publishes the jump root after
             // the common VM pass. This remains a locomotion stream even when
