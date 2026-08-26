@@ -3563,7 +3563,6 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"flags\":" << static_cast<unsigned>(actor.flags)
                << ",\"flag_bit5\":" << ((actor.flags & 0x20) != 0 ? "true" : "false")
                << ",\"movement_command_timer\":" << static_cast<unsigned>(actor.movement_command_timer)
-               << ",\"terminal_timer\":" << static_cast<unsigned>(actor.terminal_timer)
                << "}";
     }
     output << "]}\n";
