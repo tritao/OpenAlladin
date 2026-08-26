@@ -1,0 +1,66 @@
+{
+  "format": "openaladdin-level01-actual-80-animation-decode-v1",
+  "recorded_at": "2026-08-26",
+  "status": "controlled-animation-proof",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_analysis": "848ccda",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "source_finding": "re/mame/findings/20260826-level01-actual-80-spawn-side-effects-v1.json",
+  "decoder": "tools/openaladdin/vm/animation.py",
+  "actor": {
+    "type": "0x87",
+    "slot": 20,
+    "world": [3952, 464],
+    "animation_entry": "0x00123AC4"
+  },
+  "stream": {
+    "bytes_decoded": 60,
+    "stopped_reason": "dynamic_return",
+    "instructions": [
+      { "address": "0x00123AC4", "raw": "18C2", "kind": "frame", "resolved_frame": "0x001FA1DE" },
+      { "address": "0x00123AC6", "raw": "EE87", "kind": "command", "name": "set_frame_timer_or_field", "value": "0x87" },
+      { "address": "0x00123AC8", "raw": "18C2", "kind": "frame", "resolved_frame": "0x001FA1DE" },
+      { "address": "0x00123ACA", "raw": "186A", "kind": "frame", "resolved_frame": "0x001F98D2" },
+      { "address": "0x00123ACC", "raw": "186A", "kind": "frame", "resolved_frame": "0x001F98D2" },
+      { "address": "0x00123ACE", "raw": "186E", "kind": "frame", "resolved_frame": "0x001F9914" },
+      { "address": "0x00123AD0", "raw": "186E", "kind": "frame", "resolved_frame": "0x001F9914" },
+      { "address": "0x00123AD2", "raw": "EE02", "kind": "command", "name": "set_frame_timer_or_field", "value": "0x02" },
+      { "address": "0x00123AD4", "raw": "1872", "kind": "frame", "resolved_frame": "0x001F9956" },
+      { "address": "0x00123AD6", "raw": "1872", "kind": "frame", "resolved_frame": "0x001F9956" },
+      { "address": "0x00123AD8", "raw": "1876", "kind": "frame", "resolved_frame": "0x001F99A4" },
+      { "address": "0x00123ADA", "raw": "1876", "kind": "frame", "resolved_frame": "0x001F99A4" },
+      { "address": "0x00123ADC", "raw": "187A", "kind": "frame", "resolved_frame": "0x001F99F2" },
+      { "address": "0x00123ADE", "raw": "187A", "kind": "frame", "resolved_frame": "0x001F99F2" },
+      { "address": "0x00123AE0", "raw": "187E", "kind": "frame", "resolved_frame": "0x001F9A28" },
+      { "address": "0x00123AE2", "raw": "187E", "kind": "frame", "resolved_frame": "0x001F9A28" },
+      { "address": "0x00123AE4", "raw": "187A", "kind": "frame", "resolved_frame": "0x001F99F2" },
+      { "address": "0x00123AE6", "raw": "187A", "kind": "frame", "resolved_frame": "0x001F99F2" },
+      { "address": "0x00123AE8", "raw": "1876", "kind": "frame", "resolved_frame": "0x001F99A4" },
+      { "address": "0x00123AEA", "raw": "1876", "kind": "frame", "resolved_frame": "0x001F99A4" },
+      { "address": "0x00123AEC", "raw": "EF00", "kind": "command", "name": "advance_frame_delay" },
+      { "address": "0x00123AEE", "raw": "1872", "kind": "frame", "resolved_frame": "0x001F9956" },
+      { "address": "0x00123AF0", "raw": "1872", "kind": "frame", "resolved_frame": "0x001F9956" },
+      { "address": "0x00123AF2", "raw": "186E", "kind": "frame", "resolved_frame": "0x001F9914" },
+      { "address": "0x00123AF4", "raw": "186E", "kind": "frame", "resolved_frame": "0x001F9914" },
+      { "address": "0x00123AF6", "raw": "186A", "kind": "frame", "resolved_frame": "0x001F98D2" },
+      { "address": "0x00123AF8", "raw": "186A", "kind": "frame", "resolved_frame": "0x001F98D2" },
+      { "address": "0x00123AFA", "raw": "18C2", "kind": "frame", "resolved_frame": "0x001FA1DE" },
+      { "address": "0x00123AFC", "raw": "18C2", "kind": "frame", "resolved_frame": "0x001FA1DE" },
+      { "address": "0x00123AFE", "raw": "FC80", "kind": "command", "name": "call_or_return_stream", "control_flow": "dynamic_return" }
+    ]
+  },
+  "movement_audit": {
+    "movement_opcodes_present": [],
+    "movement_state_selection_present": false,
+    "interpretation": "The stream only selects frames, adjusts the animation timer/field, delays, and returns. It contains no F1/FA movement operation or state-selection command."
+  },
+  "scene_transition_audit": {
+    "scene_state_write_present": false,
+    "scene_countdown_write_present": false,
+    "interpretation": "The selector-0x80 actor is not a scene-transition mechanism."
+  },
+  "conclusion": "The Level 01 selector-0x80 record creates a stationary timed visual actor of type 0x87. This closes the selector-0x80 lift/connector hypothesis; the remaining route search should follow the x≈2720 connector and its neighboring resource records upstream."
+}
