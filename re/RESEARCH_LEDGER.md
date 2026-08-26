@@ -397,6 +397,17 @@ where applicable, while Up does not transfer from the behavior-0x25 band.
 The complete exact result is in
 `re/mame/findings/20260826-level01-upper-exact-opening-alignment-v2.json`.
 
+The exact pair-y reachability control is recorded in
+`re/mame/campaigns/20260826-level01-upper-pair-y-alignment-v1.json`. After
+normal Up activation, the harness placed `PLAYER_Y` into the pair's y≈466
+band at frame 200. The Type-1E proximity animation then cleared the pair;
+neutral, Up, and attack branches produced no player/actor collision handler,
+scene write, or exit gate. This is controlled evidence only, but it closes
+the pair as the direct vertical connector. The nearby row-15 special-cell
+probe is recorded in
+`re/mame/campaigns/20260826-level01-upper-x4412-up-matrix-v1.json`; six
+Up/C+Up/directional branches near x≈4412 likewise remain negative.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -431,6 +442,8 @@ The complete exact result is in
 | `20260826-level01-tower-type43-interaction-v1` | recorded-negative | pre-conversion type-0x43 lamp interaction branches |
 | `20260826-level01-upper-actor-alignment-v1` | recorded-negative | approximate opening alignment and Up/C response matrix for the upper Type-1E/Type-20 pair |
 | `20260826-level01-upper-exact-opening-alignment-v2` | recorded-negative | exact Type-1E/Type-20 alignment and Up/C/directional/attack response matrix |
+| `20260826-level01-upper-pair-y-alignment-v1` | recorded-negative-controlled | controlled player-Y alignment with the upper Type-1E/Type-20 pair |
+| `20260826-level01-upper-x4412-up-matrix-v1` | recorded-negative | Up/C+Up matrix near the row-15 special cell between upper surfaces |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

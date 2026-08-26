@@ -1,0 +1,29 @@
+{
+  "campaign": "20260826-level01-upper-x4412-up-matrix-v1",
+  "status": "recorded-negative",
+  "purpose": "Test Up and combined inputs near the special terrain/object cell around world x≈4412 between the row-24 band and row-10 platform.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "d49221d",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "d49221d",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "terrain_context": {
+    "map_column": 276,
+    "world_x_approx": 4412,
+    "special_cell": { "row": 15, "behavior": "0x80" },
+    "upper_band": { "row": 24, "behavior": "0x25" },
+    "upper_platform": { "row": 10, "behavior": "0x25" }
+  },
+  "timing_note": "right*20 places the player at world x=4408 at the named checkpoint; this is the nearest stable no-sync probe to the row-15 special cell.",
+  "segments": [
+    { "id": "x4412-up", "trace_dir": "build/re/campaigns/20260826-level01-upper-x4412-up-matrix-v1/x4412-up", "frames": 240, "input": "right*20,up*120,none*100", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 20, "name": "x4412" }, { "frame": 60, "name": "vertical-window" }, { "frame": 140, "name": "settled" }, { "frame": 240, "name": "end" }] },
+    { "id": "x4412-up-left", "trace_dir": "build/re/campaigns/20260826-level01-upper-x4412-up-matrix-v1/x4412-up-left", "frames": 240, "input": "right*20,up+left*120,left*20,none*80", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 20, "name": "x4412" }, { "frame": 60, "name": "vertical-window" }, { "frame": 140, "name": "settled" }, { "frame": 240, "name": "end" }] },
+    { "id": "x4412-up-right", "trace_dir": "build/re/campaigns/20260826-level01-upper-x4412-up-matrix-v1/x4412-up-right", "frames": 240, "input": "right*20,up+right*120,right*20,none*80", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 20, "name": "x4412" }, { "frame": 60, "name": "vertical-window" }, { "frame": 140, "name": "settled" }, { "frame": 240, "name": "end" }] },
+    { "id": "x4412-c-up", "trace_dir": "build/re/campaigns/20260826-level01-upper-x4412-up-matrix-v1/x4412-c-up", "frames": 240, "input": "right*20,c+up*20,up*100,none*80", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 20, "name": "x4412" }, { "frame": 60, "name": "vertical-window" }, { "frame": 140, "name": "settled" }, { "frame": 240, "name": "end" }] },
+    { "id": "x4412-down-up", "trace_dir": "build/re/campaigns/20260826-level01-upper-x4412-up-matrix-v1/x4412-down-up", "frames": 240, "input": "right*20,down*20,up*120,none*60", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 20, "name": "x4412" }, { "frame": 60, "name": "vertical-window" }, { "frame": 140, "name": "settled" }, { "frame": 240, "name": "end" }] },
+    { "id": "x4412-sword-up", "trace_dir": "build/re/campaigns/20260826-level01-upper-x4412-up-matrix-v1/x4412-sword-up", "frames": 240, "input": "right*20,b+up*30,up*100,none*70", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 20, "name": "x4412" }, { "frame": 60, "name": "vertical-window" }, { "frame": 140, "name": "settled" }, { "frame": 240, "name": "end" }] }
+  ]
+}

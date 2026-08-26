@@ -1,0 +1,78 @@
+{
+  "campaign": "20260826-level01-upper-pair-y-alignment-v1",
+  "status": "recorded-negative-controlled",
+  "purpose": "Controlled reachability test for the dynamic Type-1E/Type-20 pair by placing the player into the pair's y≈466 interaction band after normal pair activation.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "d49221d",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "d49221d",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "controlled_setup": {
+    "activation_input": "right*160,up*120",
+    "poke_frame": 200,
+    "memory_pokes": [
+      { "address": "0x00FF7DFC", "name": "PLAYER_Y", "value": "0x00B6", "width": "u16" },
+      { "address": "0x00FF7E5A", "name": "PLAYER_VY", "value": "0x0000", "width": "u16" }
+    ],
+    "purpose": "Set local PLAYER_Y so the camera-relative world position enters the actor pair's y≈466 band; this is not a natural route claim."
+  },
+  "segments": [
+    {
+      "id": "pair-y-aligned-neutral",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-pair-y-alignment-v1/pair-y-aligned-neutral",
+      "frames": 300,
+      "input": "right*160,up*120,none*40",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 160, "name": "pair-activation" },
+        { "frame": 200, "name": "y-aligned" },
+        { "frame": 220, "name": "interaction-window" },
+        { "frame": 300, "name": "end" }
+      ]
+    },
+    {
+      "id": "pair-y-aligned-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-pair-y-alignment-v1/pair-y-aligned-up",
+      "frames": 300,
+      "input": "right*160,up*120,up*40",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 160, "name": "pair-activation" },
+        { "frame": 200, "name": "y-aligned" },
+        { "frame": 220, "name": "interaction-window" },
+        { "frame": 300, "name": "end" }
+      ]
+    },
+    {
+      "id": "pair-y-aligned-attack",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-pair-y-alignment-v1/pair-y-aligned-attack",
+      "frames": 300,
+      "input": "right*160,up*120,b*1,none*39",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 160, "name": "pair-activation" },
+        { "frame": 200, "name": "y-aligned" },
+        { "frame": 220, "name": "interaction-window" },
+        { "frame": 300, "name": "end" }
+      ]
+    }
+  ]
+}

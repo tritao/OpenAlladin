@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-level01-upper-pair-y-alignment-finding-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-upper-pair-y-alignment-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "d49221d",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "static_references": [
+    "build/re/level01-type1e-targeted-decompile.json",
+    "build/re/type1e-collision-targeted-decompile-v1.json"
+  ],
+  "observed": [
+    { "branch": "pair-y-aligned-neutral", "result": "At poke frame 200 the player enters world Y≈386–466 while horizontally aligned with Type-0x20. The pair clears by frame 212; no player/actor collision handler or scene transition is observed." },
+    { "branch": "pair-y-aligned-up", "result": "The same controlled Y alignment with Up held produces no transfer. The pair clears, the player settles at world (4688,466), and SCENE_STATE remains 0x01." },
+    { "branch": "pair-y-aligned-attack", "result": "The attack variant also produces no scene or exit response; the pair clears during the proximity window and SCENE_STATE remains 0x01." }
+  ],
+  "animation_result": "The Type-1E proximity animation's y-distance condition becomes reachable under the poke, but its secondary stream clears the pair rather than invoking a level transition.",
+  "conclusion": "The actor pair is not the missing vertical connector even when the player is artificially placed in its y interaction band. This controlled evidence closes the pair as a direct scene-exit mechanism; it does not replace natural-route evidence.",
+  "next_action": "Return to the earlier moving-platform and launch-object chain and locate the natural transfer to the row-10/high-walkway corridor."
+}

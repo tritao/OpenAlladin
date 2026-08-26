@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-level01-upper-x4412-up-finding-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-upper-x4412-up-matrix-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "d49221d",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "observed": [
+    { "branch": "x4412-up", "result": "The player remains at world (4408,628) under Up; no special-cell handler or vertical transfer is observed." },
+    { "branch": "x4412-up-left", "result": "The player retreats/falls toward the lower band; scene state remains 0x01." },
+    { "branch": "x4412-up-right", "result": "The player traverses the existing behavior-0x25 band toward the known upper actor setup; it does not climb to row 10." },
+    { "branch": "x4412-c-up/x4412-down-up/x4412-sword-up", "result": "Combined jump, down/up, and sword/up variants either fall to lower geometry or remain on the row-24 band; none reaches world Y<470 or writes a scene gate." }
+  ],
+  "conclusion": "The row-15 behavior-0x80 vicinity is not activated by the tested controller verbs from the upper band. It is not yet identified as a playable connector, but this direct input family is negative.",
+  "next_action": "Search the earlier moving-platform and launch-object chain for the natural route to the high walkway; retain the upper-frontier checkpoint as a negative boundary."
+}
