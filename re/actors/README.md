@@ -1,9 +1,9 @@
-# Actor snapshots
+# Actor snapshots and interaction spawning
 
 `level01.tsv` is a small, reviewable actor seed exported from a synchronized
-MAME state trace. It provides the native vertical slice with stable actor
-records while actor spawning, movement streams, and lifetime management are
-still being recovered.
+MAME state trace. It remains available as a compatibility fixture, but the
+native Level 01 runtime now starts without it and builds actors from the
+decoded interaction map in `floor.bin`.
 
 Regenerate it from another captured state with:
 
@@ -18,8 +18,15 @@ The columns are `slot type x y movement_pc collision_frame_ptr animation_pc flag
 with optional `facing_x_flip`, `facing_y_flip`, `movement_command_timer`,
 `movement_loop_pc`, `movement_loop_timer`, and `movement_return_pc` columns for
 movement VM fixtures.
-The native runtime loads this file by default; use `--actor-records FILE` to
-select a different snapshot explicitly.
+The native runtime loads no snapshot by default. Use `--actor-records FILE` to
+select this or another snapshot explicitly for a replay fixture.
+
+The live interaction table is `floor.bin[3 + (map_word >> 1)]`. Level 01 has
+175 records and 22 selectors. Camera refill edges dispatch selectors through
+the recovered ROM handler templates, allocate the matching actor slot pool,
+initialize the actor from its compact ROM template, and consume the runtime
+selector. Interaction-created actors are then subject to the native actor VM
+and camera culling/cleanup path.
 
 The focused guard collision fixture is `guard-collision.tsv`. It contains the
 confirmed level-01 type-`0x0A` record at world `(0x0530, 0x0340)` and its live

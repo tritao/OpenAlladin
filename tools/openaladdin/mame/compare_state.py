@@ -105,6 +105,19 @@ def selected_difference(left: dict[str, Any], right: dict[str, Any], fields: lis
     return None
 
 
+def print_divergence_context(
+    frame: int,
+    left: dict[int, dict[str, Any]],
+    right: dict[int, dict[str, Any]],
+    frames: list[int],
+) -> None:
+    left_record = left.get(frame, {})
+    right_record = right.get(frame, {})
+    print(f"Input: Genesis={left_record.get('input', 'none')} OpenAladdin={right_record.get('input', 'none')}")
+    previous = [candidate for candidate in frames if candidate < frame and candidate in left and candidate in right]
+    print(f"Previous matching frame: {previous[-1] if previous else 'none'}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("genesis", type=Path)
@@ -131,8 +144,7 @@ def main() -> int:
             print("state record")
             print(f"  Genesis:      {'present' if frame in left else 'missing'}")
             print(f"  OpenAladdin:  {'present' if frame in right else 'missing'}")
-            previous = [candidate for candidate in frames if candidate < frame and candidate in left and candidate in right]
-            print(f"Previous matching frame: {previous[-1] if previous else 'none'}")
+            print_divergence_context(frame, left, right, frames)
             return 1
         difference = (
             selected_difference(left[frame], right[frame], args.fields)
@@ -145,8 +157,7 @@ def main() -> int:
             print(path)
             print(f"  Genesis:      {json.dumps(genesis_value, sort_keys=True)}")
             print(f"  OpenAladdin:  {json.dumps(openaladdin_value, sort_keys=True)}")
-            previous = [candidate for candidate in frames if candidate < frame and candidate in left and candidate in right]
-            print(f"Previous matching frame: {previous[-1] if previous else 'none'}")
+            print_divergence_context(frame, left, right, frames)
             return 1
 
     print(f"Traces match for {len(frames)} frame(s).")

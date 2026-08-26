@@ -4,8 +4,15 @@ return function(options)
     local core = options.core
     local machine = core.machine
     local json_string = core.json_string
+    local json_array = core.json_array
+    local json_object = core.json_object
     local current_frame = options.current_frame
     local root = options.root or "."
+    local mode = (os.getenv("OPENALADDIN_INPUT_MODE") or "inject"):lower()
+    if mode ~= "inject" and mode ~= "record" and mode ~= "playback" then
+        error("OPENALADDIN_INPUT_MODE must be inject, record, or playback")
+    end
+    local write_input = options.write_input
 
     local function split(value, separator)
         local result = {}
@@ -70,6 +77,56 @@ return function(options)
         start = find_field({ "start" })
     }
 
+    -- MAME exposes the Mega Drive pad as an active-low eight-bit port.  The
+    -- input-run format deliberately exposes the same logical order as the
+    -- Genesis controller, but with active-high bits so it is readable and
+    -- portable across clients.
+    local button_order = { "up", "down", "left", "right", "a", "b", "c", "start" }
+    local button_masks = {}
+    for index, name in ipairs(button_order) do
+        button_masks[name] = 1 << (index - 1)
+    end
+
+    local function canonical_mask()
+        local raw = controller_port and controller_port:read() or 0xff
+        return (~raw) & 0xff
+    end
+
+    local function token_for_mask(mask)
+        local pressed = {}
+        for index, name in ipairs(button_order) do
+            if (mask & button_masks[name]) ~= 0 then
+                pressed[#pressed + 1] = name
+            end
+        end
+        return #pressed == 0 and "none" or table.concat(pressed, "+")
+    end
+
+    if write_input then
+        write_input({
+            { "type", json_string("header") },
+            { "format", json_string("openaladdin-input-v1") },
+            { "buttons", json_array((function ()
+                local values = {}
+                for index, name in ipairs(button_order) do
+                    values[index] = json_string(name)
+                end
+                return values
+            end)()) },
+            { "mask_bits", json_object((function ()
+                local values = {}
+                for _, name in ipairs(button_order) do
+                    values[#values + 1] = { name, tostring(button_masks[name]) }
+                end
+                return values
+            end)()) },
+            { "frame_semantics", json_string(
+                "controller values consumed by logical game frame; sampled at the input.apply frame boundary"
+            ) },
+            { "mode", json_string(mode) }
+        })
+    end
+
     local function expand_schedule(value)
         local result = {}
         for _, item in ipairs(split(value, ",")) do
@@ -108,6 +165,27 @@ return function(options)
     end
 
     function input.apply()
+        if mode == "record" or mode == "playback" then
+            local mask = canonical_mask()
+            local token = token_for_mask(mask)
+            if write_input then
+                write_input({
+                    { "frame", tostring(current_frame()) },
+                    { "mask", tostring(mask) },
+                    { "buttons", json_array((function ()
+                        local values = {}
+                        for index, name in ipairs(button_order) do
+                            if (mask & button_masks[name]) ~= 0 then
+                                values[#values + 1] = json_string(name)
+                            end
+                        end
+                        return values
+                    end)()) }
+                })
+            end
+            return token
+        end
+
         clear()
         if experiment.has_actions() then return experiment.tick() end
         local token = schedule_tokens[current_frame() + 1] or "none"
@@ -121,6 +199,10 @@ return function(options)
 
     function input.controller_value()
         return controller_port and controller_port:read() or 0
+    end
+
+    function input.canonical_mask()
+        return canonical_mask()
     end
 
     function input.action_spec()

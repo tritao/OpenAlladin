@@ -48,6 +48,11 @@ def main() -> int:
     assert 202 in run_frames
     assert running[-1]["player"]["animation_state"] == "run"
 
+    reversal = run_case("reversal", "103,416,0,0,1", "left*4,right*4", frames=8)
+    assert [record["player"]["facing_x_flip"] for record in reversal] == [
+        0, 255, 255, 255, 255, 0, 0, 0, 0
+    ]
+
     jumping = run_case("jump", "103,416,0,-512,0", "none*7", frames=7)
     jump_frames = [record["player"]["sprite_frame"] for record in jumping]
     assert jump_frames[:5] == [161, 161, 161, 161, 162]

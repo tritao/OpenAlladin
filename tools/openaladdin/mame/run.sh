@@ -12,6 +12,15 @@ SOUND_MODE="${OPENALADDIN_MAME_SOUND:-none}"
 HEADLESS="${OPENALADDIN_MAME_HEADLESS:-1}"
 DEBUG_UI="${OPENALADDIN_MAME_DEBUG_UI:-0}"
 MAME_XVFB="${MAME_XVFB:-0}"
+STATE_DIRECTORY="${OPENALADDIN_STATE_DIRECTORY:-${TRACE_DIR}/states}"
+RECORD_FILE="${OPENALADDIN_RECORD_FILE:-}"
+PLAYBACK_FILE="${OPENALADDIN_PLAYBACK_FILE:-}"
+INPUT_DIRECTORY="${OPENALADDIN_INPUT_DIRECTORY:-}"
+
+if [[ -n "${RECORD_FILE}" && -n "${PLAYBACK_FILE}" ]]; then
+    echo "OPENALADDIN_RECORD_FILE and OPENALADDIN_PLAYBACK_FILE are mutually exclusive" >&2
+    exit 1
+fi
 
 # State-synchronized runs change into TRACE_DIR below. Normalize caller input
 # first so a relative ROM path remains valid after that directory change.
@@ -24,6 +33,39 @@ fi
 # not become accidentally relative to itself after that directory change.
 if [[ "${TRACE_DIR}" != /* ]]; then
     TRACE_DIR="${ROOT_DIR}/${TRACE_DIR}"
+fi
+
+if [[ "${STATE_DIRECTORY}" != /* ]]; then
+    STATE_DIRECTORY="${ROOT_DIR}/${STATE_DIRECTORY}"
+fi
+
+if [[ -n "${RECORD_FILE}" && "${RECORD_FILE}" != /* ]]; then
+    RECORD_FILE="${ROOT_DIR}/${RECORD_FILE}"
+fi
+
+if [[ -n "${PLAYBACK_FILE}" && "${PLAYBACK_FILE}" != /* ]]; then
+    PLAYBACK_FILE="${ROOT_DIR}/${PLAYBACK_FILE}"
+fi
+
+# MAME resolves -record/-playback through its input directory and treats the
+# argument as a filename.  Keep the public environment API path-shaped while
+# passing MAME a directory plus basename.
+if [[ -n "${RECORD_FILE}" || -n "${PLAYBACK_FILE}" ]]; then
+    if [[ -z "${INPUT_DIRECTORY}" ]]; then
+        if [[ -n "${RECORD_FILE}" ]]; then
+            INPUT_DIRECTORY="$(dirname "${RECORD_FILE}")"
+        else
+            INPUT_DIRECTORY="$(dirname "${PLAYBACK_FILE}")"
+        fi
+    elif [[ "${INPUT_DIRECTORY}" != /* ]]; then
+        INPUT_DIRECTORY="${ROOT_DIR}/${INPUT_DIRECTORY}"
+    fi
+    if [[ -n "${RECORD_FILE}" ]]; then
+        RECORD_FILE="$(basename "${RECORD_FILE}")"
+    fi
+    if [[ -n "${PLAYBACK_FILE}" ]]; then
+        PLAYBACK_FILE="$(basename "${PLAYBACK_FILE}")"
+    fi
 fi
 
 # MAME's non-rendering backend expects an emulated time limit.  Keep it a
@@ -64,7 +106,7 @@ PYTHONPATH="${ROOT_DIR}/tools${PYTHONPATH:+:${PYTHONPATH}}" \
     && mv -f "${SYMBOL_TEMP}" "${SYMBOL_FILE}"
 
 mkdir -p "${TRACE_DIR}"
-mkdir -p "${TRACE_DIR}/states" "${TRACE_DIR}/snapshots"
+mkdir -p "${STATE_DIRECTORY}" "${TRACE_DIR}/snapshots"
 
 export OPENALADDIN_ROOT="${ROOT_DIR}"
 export OPENALADDIN_TRACE_DIR="${TRACE_DIR}"
@@ -98,7 +140,7 @@ MAME_ARGS=(
     -cart "${ROM_FILE}"
     -autoboot_script "${ROOT_DIR}/re/mame/lua/main.lua"
     -autoboot_delay 0
-    -state_directory "${TRACE_DIR}/states"
+    -state_directory "${STATE_DIRECTORY}"
     -snapshot_directory "${TRACE_DIR}/snapshots"
     -snapsize auto
     -skip_gameinfo
@@ -106,6 +148,14 @@ MAME_ARGS=(
     -sound "${SOUND_MODE}"
     -nothrottle
 )
+
+if [[ -n "${RECORD_FILE}" ]]; then
+    MAME_ARGS+=( -input_directory "${INPUT_DIRECTORY}" -record "${RECORD_FILE}" )
+fi
+
+if [[ -n "${PLAYBACK_FILE}" ]]; then
+    MAME_ARGS+=( -input_directory "${INPUT_DIRECTORY}" -playback "${PLAYBACK_FILE}" )
+fi
 
 # A saved MAME machine state also restores the scheduler timers.  Restoring
 # the external -seconds_to_run timer can therefore make a freshly loaded

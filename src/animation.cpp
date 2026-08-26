@@ -100,6 +100,7 @@ void PlayerAnimationVm::reset() {
     step_ = 0;
     timer_ = rom_mode_ ? 0 : clip(pose_).steps.front().duration;
     facing_left_ = false;
+    horizontal_direction_ = HorizontalDirection::None;
     animation_pc_ = rom_mode_ ? kIdleStream : 0;
     frame_pointer_ = 0;
     stream_entry_ = rom_mode_ ? kIdleStream : clip(pose_).stream_entry;
@@ -617,8 +618,16 @@ bool PlayerAnimationVm::finished() const {
     return !current.loop && step_ + 1 == current.steps.size() && timer_ <= 1;
 }
 
-void PlayerAnimationVm::update(SpritePose desired_pose, bool face_left_input, const AnimationContext& context) {
-    if (face_left_input) facing_left_ = true;
+void PlayerAnimationVm::update(
+    SpritePose desired_pose,
+    HorizontalDirection horizontal_direction,
+    const AnimationContext& context
+) {
+    if (horizontal_direction == HorizontalDirection::Left) {
+        facing_left_ = true;
+    } else if (horizontal_direction == HorizontalDirection::Right) {
+        facing_left_ = false;
+    }
     if (!rom_mode_) {
         if (desired_pose != pose_) { select(desired_pose); return; }
         const Clip& current = clip(pose_);
@@ -629,6 +638,18 @@ void PlayerAnimationVm::update(SpritePose desired_pose, bool face_left_input, co
         timer_ = current.steps[step_].duration;
         return;
     }
+    // The ROM restarts the run stream when a held direction reverses. The
+    // facing byte and the animation cursor are separate actor fields, so
+    // updating only facing leaves the native sprite one or more frames ahead
+    // of the original immediately after a left-to-right (or right-to-left)
+    // reversal.
+    if (desired_pose == SpritePose::Run
+        && horizontal_direction != HorizontalDirection::None
+        && horizontal_direction_ != HorizontalDirection::None
+        && horizontal_direction != horizontal_direction_) {
+        select_rom_stream(SpritePose::Run, false);
+    }
+    horizontal_direction_ = horizontal_direction;
     sync_context(context);
     if (desired_pose != pose_) select_rom_stream(desired_pose, false);
     if (pose_ == SpritePose::Landing && landing_reselect_pending_ && (update_count_ & 1U) != 0) {

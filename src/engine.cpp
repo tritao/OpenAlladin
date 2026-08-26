@@ -59,6 +59,13 @@ int level01_parallax_source_y(int camera_x, int camera_y, int screen_y) {
     }
     return screen_y;
 }
+
+HorizontalDirection horizontal_direction(const InputState& input) {
+    if (input.left && !input.right) return HorizontalDirection::Left;
+    if (input.right && !input.left) return HorizontalDirection::Right;
+    return HorizontalDirection::None;
+}
+
 // The player frame origin is one 16-pixel tile above the terrain query
 // origin. The ROM keeps these coordinate systems distinct: terrain probes use
 // WORLD_Y - 0xF0, while the VDP sprite origin uses WORLD_Y - 0x100.
@@ -282,6 +289,30 @@ void Level::load(const std::string& asset_root, const std::string& rom_path) {
     }
 
     floor_data_ = read_file(asset_root + "/raw/floor.bin");
+    interaction_records_.clear();
+    // Level-01's interaction resource is the fourth byte-oriented table in
+    // floor.bin. The map word is a 16-bit resource reference, so both the
+    // terrain and interaction lookups share the same (word >> 1) index.
+    for (int row = 0; row < map_height_; ++row) {
+        for (int column = 0; column < map_width_; ++column) {
+            const std::uint16_t terrain_word = terrain_words_[
+                static_cast<std::size_t>(row * map_width_ + column)];
+            const std::uint16_t resource_offset = static_cast<std::uint16_t>(terrain_word >> 1);
+            const std::size_t selector_index = static_cast<std::size_t>(3 + resource_offset);
+            if (selector_index >= floor_data_.size() || floor_data_[selector_index] == 0) {
+                continue;
+            }
+            interaction_records_.push_back(InteractionRecord{
+                column,
+                row,
+                terrain_word,
+                resource_offset,
+                floor_data_[selector_index],
+                column * 16,
+                row * 16 + kTerrainVisualOffsetY,
+            });
+        }
+    }
     contour_table_.clear();
     if (!rom_path.empty()) {
         const auto rom = read_file(rom_path);
@@ -308,6 +339,67 @@ void Level::load(const std::string& asset_root, const std::string& rom_path) {
         };
         palette_.push_back(SDL_Color{channel(word, 1), channel(word, 5), channel(word, 9), 255});
     }
+}
+
+std::uint8_t Level::interaction_selector(int column, int row) const {
+    if (column < 0 || column >= map_width_ || row < 0 || row >= map_height_) {
+        return 0;
+    }
+    const std::uint16_t terrain_word = terrain_words_[
+        static_cast<std::size_t>(row * map_width_ + column)];
+    const std::size_t selector_index = static_cast<std::size_t>(3 + (terrain_word >> 1));
+    return selector_index < floor_data_.size() ? floor_data_[selector_index] : 0;
+}
+
+void InteractionMap::load(const Level& level) {
+    records_ = level.interaction_records();
+    selectors_.assign(level.floor_data().size(), 0);
+    for (const Level::InteractionRecord& record : records_) {
+        const std::size_t index = static_cast<std::size_t>(3 + record.resource_offset);
+        if (index < selectors_.size()) {
+            selectors_[index] = record.selector;
+        }
+    }
+}
+
+void InteractionMap::reset() {
+    for (const Level::InteractionRecord& record : records_) {
+        const std::size_t index = static_cast<std::size_t>(3 + record.resource_offset);
+        if (index < selectors_.size()) {
+            selectors_[index] = record.selector;
+        }
+    }
+}
+
+std::uint8_t InteractionMap::selector(int column, int row) const {
+    for (const Level::InteractionRecord& record : records_) {
+        if (record.column == column && record.row == row) {
+            return selector(record);
+        }
+    }
+    return 0;
+}
+
+std::uint8_t InteractionMap::selector(const Level::InteractionRecord& record) const {
+    const std::size_t index = static_cast<std::size_t>(3 + record.resource_offset);
+    return index < selectors_.size() ? selectors_[index] : 0;
+}
+
+bool InteractionMap::consume(std::uint16_t resource_offset) {
+    const std::size_t index = static_cast<std::size_t>(3 + resource_offset);
+    if (index >= selectors_.size() || selectors_[index] == 0) {
+        return false;
+    }
+    selectors_[index] = 0;
+    return true;
+}
+
+std::size_t InteractionMap::active_record_count() const {
+    std::size_t count = 0;
+    for (const Level::InteractionRecord& record : records_) {
+        if (selector(record) != 0) ++count;
+    }
+    return count;
 }
 
 bool Level::is_vdp_transparent(
@@ -514,6 +606,7 @@ void Engine::load(
 ) {
     vdp_checkpoint_ = {};
     level_.load(asset_root, rom_path);
+    interaction_map_.load(level_);
     sprites_.load(sprite_root.empty() ? asset_root + "/../../sprites" : sprite_root);
     // Level-01 captures show the player using CRAM line 3. Reuse the exact
     // extracted scene palette instead of the Chopper preview fallback.
@@ -546,6 +639,7 @@ void Engine::load(
     } else {
         rom_bytes_.clear();
     }
+    actor_snapshot_mode_ = !actor_records_path.empty() || !actor_timeline_path.empty();
     actor_templates_.fill({});
     if (!actor_records_path.empty()) {
         load_actor_records(actor_records_path);
@@ -647,6 +741,369 @@ void Engine::apply_actor_timeline(int frame) {
     if (found != actor_timeline_.end()) {
         actors_ = found->second;
     }
+}
+
+std::optional<SpawnDescriptor> Engine::spawn_descriptor(std::uint8_t selector) const {
+    // These are the compact templates selected by the Level-01 interaction
+    // handlers. The addresses are ROM addresses, and therefore also file
+    // offsets for the flat extracted cartridge image.
+    SpawnDescriptor descriptor;
+    descriptor.valid = true;
+    descriptor.selector = selector;
+    switch (selector) {
+    case 0x0D:
+        descriptor.template_address = 0x001B7D8C;
+        descriptor.allocation_pool = ActorAllocationPool::GameplayReverse;
+        descriptor.post_offset_x = 8;
+        descriptor.post_offset_y = -1;
+        break;
+    case 0x10:
+        descriptor.template_address = 0x001B7C38;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        break;
+    case 0x11:
+        descriptor.template_address = 0x001B7C24;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        break;
+    case 0x12:
+        descriptor.template_address = 0x001B7C10;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        break;
+    case 0x13:
+        descriptor.template_address = 0x001B7F30;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        break;
+    case 0x14:
+        descriptor.template_address = 0x001B80AC;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        break;
+    case 0x1A:
+        descriptor.template_address = 0x001B7C24;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        descriptor.override_type = true;
+        descriptor.type = 0x21;
+        descriptor.override_movement = true;
+        descriptor.movement_pc = 0;
+        descriptor.override_animation = true;
+        descriptor.animation_pc = 0x001235AC;
+        break;
+    case 0x1B:
+        descriptor.template_address = 0x001B7C10;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        descriptor.override_type = true;
+        descriptor.type = 0x20;
+        descriptor.override_movement = true;
+        descriptor.movement_pc = 0;
+        descriptor.override_animation = true;
+        descriptor.animation_pc = 0x0012337A;
+        break;
+    case 0x40:
+        descriptor.template_address = 0x001B79E0;
+        descriptor.allocation_pool = ActorAllocationPool::GameplayReverse;
+        break;
+    case 0x50:
+        descriptor.template_address = 0x001B79B8;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        descriptor.override_type = true;
+        descriptor.type = 0x44;
+        descriptor.override_animation = true;
+        descriptor.animation_pc = 0x00122C40;
+        descriptor.override_resource_count = true;
+        descriptor.resource_count = 1;
+        break;
+    case 0x51:
+        descriptor.template_address = 0x001B79B8;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        descriptor.override_type = true;
+        descriptor.type = 0x3A;
+        descriptor.override_animation = true;
+        descriptor.animation_pc = 0x00122BD8;
+        descriptor.override_resource_count = true;
+        descriptor.resource_count = 1;
+        break;
+    case 0x53:
+        descriptor.template_address = 0x001B79B8;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        descriptor.override_type = true;
+        descriptor.type = 0x34;
+        descriptor.override_animation = true;
+        descriptor.animation_pc = 0x00122C1E;
+        descriptor.override_movement = true;
+        descriptor.movement_pc = 0x001217B4;
+        descriptor.override_resource_count = true;
+        descriptor.resource_count = 6;
+        break;
+    case 0x55:
+        descriptor.template_address = 0x001B79CC;
+        descriptor.allocation_pool = ActorAllocationPool::GameplayForward;
+        break;
+    case 0x5C:
+        descriptor.template_address = 0x001B7B34;
+        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
+        descriptor.post_offset_x = 9;
+        descriptor.post_offset_y = 7;
+        break;
+    case 0x60:
+        descriptor.template_address = 0x001B79B8;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        descriptor.override_type = true;
+        descriptor.type = 0x40;
+        descriptor.override_animation = true;
+        descriptor.animation_pc = 0x00122C12;
+        descriptor.override_resource_count = true;
+        descriptor.resource_count = 0;
+        break;
+    case 0x74:
+        descriptor.template_address = 0x001B7E54;
+        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
+        descriptor.post_offset_x = -8;
+        descriptor.post_offset_y = 4;
+        break;
+    case 0x80:
+        descriptor.template_address = 0x001B7C4C;
+        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
+        // This handler's controlled Level 01 dispatch writes x=0x0F70 for
+        // source cell (249,14), one additional tile before the common
+        // vertical-row seed (0x0F80).
+        descriptor.post_offset_x = -0x10;
+        break;
+    case 0x87:
+        descriptor.template_address = 0x001B7A30;
+        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
+        break;
+    case 0xC8:
+        descriptor.template_address = 0x001B79B8;
+        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
+        descriptor.override_type = true;
+        descriptor.type = 0x41;
+        descriptor.override_animation = true;
+        descriptor.animation_pc = 0x00125D7E;
+        descriptor.override_resource_count = true;
+        descriptor.resource_count = 2;
+        break;
+    case 0xEA:
+        descriptor.template_address = 0x001B80FC;
+        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
+        break;
+    case 0xFF:
+        descriptor.template_address = 0x001B79E0;
+        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
+        descriptor.override_type = true;
+        descriptor.type = 0x8A;
+        descriptor.override_animation = true;
+        descriptor.animation_pc = 0x00124494;
+        break;
+    default:
+        descriptor.valid = false;
+        break;
+    }
+    if (!descriptor.valid) return std::nullopt;
+    return descriptor;
+}
+
+std::optional<std::size_t> Engine::allocate_actor_slot(ActorAllocationPool pool) const {
+    auto free_slot = [this](int slot) -> std::optional<std::size_t> {
+        if (slot < 0 || slot >= static_cast<int>(actors_.size())) return std::nullopt;
+        return actors_[static_cast<std::size_t>(slot)].type == 0
+            ? std::optional<std::size_t>(static_cast<std::size_t>(slot))
+            : std::nullopt;
+    };
+
+    switch (pool) {
+    case ActorAllocationPool::CommonForward:
+        for (int slot = 3; slot <= 22; ++slot) {
+            if (auto found = free_slot(slot)) return found;
+        }
+        break;
+    case ActorAllocationPool::CommonReverse:
+        for (int slot = 20; slot >= 1; --slot) {
+            if (auto found = free_slot(slot)) return found;
+        }
+        break;
+    case ActorAllocationPool::GameplayForward:
+        for (int slot = 1; slot <= 23; ++slot) {
+            if (auto found = free_slot(slot)) return found;
+        }
+        break;
+    case ActorAllocationPool::GameplayReverse:
+        for (int slot = 23; slot >= 1; --slot) {
+            if (auto found = free_slot(slot)) return found;
+        }
+        break;
+    }
+    return std::nullopt;
+}
+
+ActorState Engine::actor_from_template(std::uint32_t template_address) const {
+    ActorState actor;
+    const auto read_u8 = [this](std::uint32_t address) -> std::uint8_t {
+        return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
+    };
+    const auto read_u32 = [&read_u8](std::uint32_t address) -> std::uint32_t {
+        return (static_cast<std::uint32_t>(read_u8(address)) << 24)
+            | (static_cast<std::uint32_t>(read_u8(address + 1)) << 16)
+            | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
+            | read_u8(address + 3);
+    };
+    if (template_address + 0x12 >= rom_bytes_.size()) return actor;
+    actor.type = read_u8(template_address);
+    actor.movement_flags = read_u8(template_address + 2);
+    actor.facing_x_flip = read_u8(template_address + 5);
+    actor.movement_pc = read_u32(template_address + 6);
+    actor.animation_pc = read_u32(template_address + 0x0C);
+    actor.resource_count = read_u8(template_address + 0x10);
+    actor.facing_y_flip = read_u8(template_address + 0x11);
+    actor.flags = read_u8(template_address + 0x12);
+    return actor;
+}
+
+void Engine::dispatch_interaction(
+    const Level::InteractionRecord& record,
+    int base_x,
+    int base_y
+) {
+    const std::uint8_t selector = interaction_map_.selector(record);
+    if (selector == 0) return;
+
+    // 0xAB is gated by the scene's FFF16F latch. That latch is not yet
+    // surfaced by the native scene-script slice; leaving the entry live is
+    // equivalent to the original failed conditional dispatch and allows a
+    // later scene-state implementation to activate it.
+    if (selector == 0xAB) return;
+
+    const auto descriptor = spawn_descriptor(selector);
+    if (!descriptor || rom_bytes_.empty()) return;
+    const auto slot = allocate_actor_slot(descriptor->allocation_pool);
+    if (!slot) return;
+
+    ActorState actor = actor_from_template(descriptor->template_address);
+    if (actor.type == 0) return;
+    if (descriptor->override_type) actor.type = descriptor->type;
+    if (descriptor->override_animation) actor.animation_pc = descriptor->animation_pc;
+    if (descriptor->override_movement) actor.movement_pc = descriptor->movement_pc;
+    if (descriptor->override_resource_count) actor.resource_count = descriptor->resource_count;
+    actor.x = static_cast<std::uint16_t>(base_x + descriptor->post_offset_x);
+    actor.y = static_cast<std::uint16_t>(base_y + descriptor->post_offset_y);
+    actor.interaction_resource_offset = record.resource_offset;
+    actor.interaction_selector = selector;
+    actor.spawned_by_interaction = true;
+    actors_[*slot] = actor;
+    actor_animations_[*slot].reset();
+    interaction_map_.consume(record.resource_offset);
+}
+
+void Engine::scan_interaction_refill_window() {
+    if (actor_snapshot_mode_ || rom_bytes_.empty()) return;
+
+    // The four original refill callers process one 16-row/23-column edge at
+    // the camera's tile reference. Their source rows are terrain-space rows;
+    // adding 0xF0 converts them to actor world coordinates. The first pass
+    // fills the initial camera window; subsequent passes process only the
+    // newly crossed edge, matching the camera-refill call sites instead of
+    // rescanning the interaction table every simulation frame.
+    const int reference_x = camera_.reference_x & ~0x0F;
+    const int reference_y = camera_.reference_y & ~0x0F;
+
+    auto scan_vertical_edge = [this](int edge_reference_x, int edge_reference_y, bool right) {
+        const int reference_column = edge_reference_x >> 4;
+        const int reference_row = edge_reference_y >> 4;
+        const int column = right ? reference_column + 22 : reference_column;
+        const int base_x = right ? edge_reference_x + 0x150 : edge_reference_x - 0x10;
+        if (column < 0 || column >= level_.map_width()) return;
+        for (int index = 0; index < 16; ++index) {
+            const int scan_row = reference_row + index;
+            if (scan_row < 0 || scan_row >= level_.map_height()) continue;
+            for (const Level::InteractionRecord& record : interaction_map_.records()) {
+                if (record.column == column && record.row == scan_row) {
+                    dispatch_interaction(record, base_x, (scan_row * 16) + kTerrainVisualOffsetY);
+                    break;
+                }
+            }
+        }
+    };
+    auto scan_horizontal_edge = [this](int edge_reference_x, int edge_reference_y, bool down) {
+        const int reference_column = edge_reference_x >> 4;
+        const int reference_row = edge_reference_y >> 4;
+        const int row = reference_row + (down ? 15 : 0);
+        if (row < 0 || row >= level_.map_height()) return;
+        for (const Level::InteractionRecord& record : interaction_map_.records()) {
+            if (record.row != row || record.column < reference_column
+                || record.column >= reference_column + 23) {
+                continue;
+            }
+            // ProcessRowsB seeds FF7DB0 at the source column and the generic
+            // spawn helper applies FFF150 (-0x10) before initialization.
+            dispatch_interaction(record, record.world_x - 0x10, record.world_y);
+        }
+    };
+
+    if (!interaction_scan_initialized_) {
+        scan_vertical_edge(reference_x, reference_y, false);
+        scan_vertical_edge(reference_x, reference_y, true);
+        scan_horizontal_edge(reference_x, reference_y, false);
+        scan_horizontal_edge(reference_x, reference_y, true);
+        interaction_scan_initialized_ = true;
+        interaction_reference_x_ = reference_x;
+        interaction_reference_y_ = reference_y;
+        return;
+    }
+
+    const auto scan_x_edges = [&](int target_x) {
+        while (interaction_reference_x_ < target_x) {
+            interaction_reference_x_ += 0x10;
+            scan_vertical_edge(interaction_reference_x_, interaction_reference_y_, true);
+        }
+        while (interaction_reference_x_ > target_x) {
+            interaction_reference_x_ -= 0x10;
+            scan_vertical_edge(interaction_reference_x_, interaction_reference_y_, false);
+        }
+    };
+    const auto scan_y_edges = [&](int target_y) {
+        while (interaction_reference_y_ < target_y) {
+            interaction_reference_y_ += 0x10;
+            scan_horizontal_edge(interaction_reference_x_, interaction_reference_y_, true);
+        }
+        while (interaction_reference_y_ > target_y) {
+            interaction_reference_y_ -= 0x10;
+            scan_horizontal_edge(interaction_reference_x_, interaction_reference_y_, false);
+        }
+    };
+    scan_x_edges(reference_x);
+    scan_y_edges(reference_y);
+}
+
+void Engine::update_dynamic_actor_culling() {
+    if (actor_snapshot_mode_) return;
+    const int left = camera_.x - 0x120;
+    const int right = camera_.x + kScreenWidth + 0x120;
+    const int top = camera_.y - 0x120;
+    const int bottom = camera_.y + kScreenHeight + 0x120;
+    for (std::size_t slot = 1; slot < actors_.size(); ++slot) {
+        ActorState& actor = actors_[slot];
+        if (!actor.spawned_by_interaction || actor.type == 0 || actor.terminal_timer != 0) {
+            continue;
+        }
+        if (static_cast<int>(actor.x) < left || static_cast<int>(actor.x) > right
+            || static_cast<int>(actor.y) < top || static_cast<int>(actor.y) > bottom) {
+            actor = ActorState{};
+            actor_animations_[slot].reset();
+        }
+    }
+}
+
+void Engine::sync_player_actor() {
+    if (actor_snapshot_mode_) return;
+    ActorState& actor = actors_[0];
+    actor.type = 0x83;
+    actor.x = static_cast<std::uint16_t>(player_world_x());
+    actor.y = static_cast<std::uint16_t>(player_world_y());
+    actor.movement_flags = 0;
+    actor.movement_pc = 0;
+    actor.frame_ptr = animation_.frame_pointer();
+    actor.animation_pc = animation_.animation_pc();
+    actor.flags = 0;
+    actor.terminal_timer = 0;
+    actor.spawned_by_interaction = false;
 }
 
 void Engine::update_actor_movement() {
@@ -1001,6 +1458,9 @@ void Engine::update_actor_animations() {
     };
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         ActorState& actor = actors_[slot];
+        if (!actor_snapshot_mode_ && slot == 0) {
+            continue;
+        }
         if (actor.type == 0 || actor.animation_pc == 0) {
             continue;
         }
@@ -1440,8 +1900,16 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
 
 void Engine::reset() {
     player_ = PlayerState{};
-    actors_ = actor_templates_;
-    apply_actor_timeline(0);
+    interaction_map_.reset();
+    interaction_scan_initialized_ = false;
+    interaction_reference_x_ = 0;
+    interaction_reference_y_ = 0;
+    if (actor_snapshot_mode_) {
+        actors_ = actor_templates_;
+        apply_actor_timeline(0);
+    } else {
+        actors_.fill({});
+    }
     terrain_random_state_ = 0;
     terrain_input_world_x_ = 0;
     terrain_input_world_y_ = 0;
@@ -1470,6 +1938,7 @@ void Engine::reset() {
     for (auto& actor_animation : actor_animations_) {
         actor_animation.reset();
     }
+    sync_player_actor();
 }
 
 void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded) {
@@ -1491,7 +1960,7 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     if (!grounded) {
         animation_.update(
             SpritePose::Jump,
-            false,
+            HorizontalDirection::None,
             AnimationContext{
                 player_.x,
                 player_.y,
@@ -1504,6 +1973,7 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
             }
         );
     }
+    sync_player_actor();
 }
 
 void Engine::set_checkpoint_terrain_behavior(std::uint8_t behavior) {
@@ -1516,16 +1986,19 @@ void Engine::set_checkpoint_terrain_behavior(std::uint8_t behavior) {
 void Engine::set_checkpoint_frame_ptr(int address) {
     if (animation_.rom_loaded()) {
         animation_.set_frame_pointer(static_cast<std::uint32_t>(address));
+        sync_player_actor();
         return;
     }
     const int frame = sprites_.frame_index_for_address(address);
     if (frame < 0 || !animation_.set_frame(frame)) {
         animation_.reset();
     }
+    sync_player_actor();
 }
 
 void Engine::set_checkpoint_animation(std::uint32_t animation_pc, int timer) {
     animation_.set_animation_state(animation_pc, timer);
+    sync_player_actor();
 }
 
 void Engine::set_checkpoint_facing_x_flip(bool facing_x_flip) {
@@ -1621,6 +2094,10 @@ void Engine::set_checkpoint_camera(
     camera_.reference_y = reference_y;
     camera_.scroll_x = scroll_x;
     camera_.scroll_y = scroll_y;
+    // A checkpoint represents a freshly entered camera window. Let the next
+    // frame perform its initial interaction refill against the supplied
+    // reference coordinates.
+    interaction_scan_initialized_ = false;
     camera_.scene_state = scene_state;
     camera_.special_mode = scene_state == 8 ? 1 : 0;
     if (horizontal_threshold >= 0) camera_.horizontal_threshold = horizontal_threshold;
@@ -2460,11 +2937,12 @@ void Engine::update(const InputState& input) {
     // animation pass, so drain the request at the frame boundary rather than
     // after the current pass has already completed.
     apply_animation_spawns();
+    scan_interaction_refill_window();
     if (camera_.scene_state == 8) {
         update_state08(input);
         animation_.update(
             SpritePose::Idle,
-            input.left && !input.right,
+            horizontal_direction(input),
             AnimationContext{
                 player_.x,
                 player_.y,
@@ -2476,6 +2954,7 @@ void Engine::update(const InputState& input) {
                 player_.terrain_response_timer_state,
             }
         );
+        sync_player_actor();
         apply_actor_timeline(frame_ + 1);
         ++frame_;
         return;
@@ -2661,7 +3140,7 @@ void Engine::update(const InputState& input) {
     if (!stable_terrain_handler_fixture) {
         animation_.update(
             desired_pose,
-            input.left && !input.right,
+            horizontal_direction(input),
             animation_context
         );
     }
@@ -2729,6 +3208,8 @@ void Engine::update(const InputState& input) {
         && animation_.stream_entry() != kPlayerSwordStableStream) {
         apply_animation_spawns();
     }
+    update_dynamic_actor_culling();
+    sync_player_actor();
     apply_actor_timeline(frame_ + 1);
     ++frame_;
 }
@@ -2809,6 +3290,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"frame_ptr\":" << (animation_.rom_loaded()
                ? animation_.frame_pointer()
                : sprites_.frame(animation_.sprite_frame()).address)
+           << ",\"facing_x_flip\":" << (animation_.facing_left() ? 255 : 0)
            << ",\"collision_box\":" << collision_box_json(player_box)
            << ",\"facing_left\":" << (animation_.facing_left() ? "true" : "false")
            << ",\"attack_timer\":" << static_cast<unsigned>(player_.attack_timer)

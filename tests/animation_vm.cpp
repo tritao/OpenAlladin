@@ -12,54 +12,61 @@ int main() {
     assert(vm.stream_entry() == 0x00121D9A);
 
     // Selecting a new pose starts its first frame without consuming a tick.
-    vm.update(SpritePose::Run, false);
+    vm.update(SpritePose::Run, HorizontalDirection::None);
     assert(vm.pose() == SpritePose::Run);
     assert(vm.sprite_frame() == 201);
     assert(vm.timer() == 4);
-    vm.update(SpritePose::Run, false);
-    vm.update(SpritePose::Run, false);
-    vm.update(SpritePose::Run, false);
+    vm.update(SpritePose::Run, HorizontalDirection::None);
+    vm.update(SpritePose::Run, HorizontalDirection::None);
+    vm.update(SpritePose::Run, HorizontalDirection::None);
     assert(vm.sprite_frame() == 201);
-    vm.update(SpritePose::Run, false);
+    vm.update(SpritePose::Run, HorizontalDirection::None);
     assert(vm.sprite_frame() == 202);
 
-    vm.update(SpritePose::Run, true);
+    vm.update(SpritePose::Run, HorizontalDirection::Left);
     assert(vm.facing_left());
 
-    vm.update(SpritePose::Jump, false);
+    // Facing is retained while idle, but an exclusive right input must
+    // immediately clear the horizontal flip for a left-to-right reversal.
+    vm.update(SpritePose::Idle, HorizontalDirection::None);
+    assert(vm.facing_left());
+    vm.update(SpritePose::Run, HorizontalDirection::Right);
+    assert(!vm.facing_left());
+
+    vm.update(SpritePose::Jump, HorizontalDirection::None);
     assert(vm.pose() == SpritePose::Jump);
     assert(vm.sprite_frame() == 161);
     assert(vm.stream_entry() == 0x001221B0);
-    vm.update(SpritePose::Jump, false);
-    vm.update(SpritePose::Jump, false);
-    vm.update(SpritePose::Jump, false);
-    vm.update(SpritePose::Jump, false);
+    vm.update(SpritePose::Jump, HorizontalDirection::None);
+    vm.update(SpritePose::Jump, HorizontalDirection::None);
+    vm.update(SpritePose::Jump, HorizontalDirection::None);
+    vm.update(SpritePose::Jump, HorizontalDirection::None);
     assert(vm.sprite_frame() == 162);
 
     // The non-looping jump clip holds its last frame until physics selects a
     // grounded pose again.
     for (int i = 0; i < 40; ++i) {
-        vm.update(SpritePose::Jump, false);
+        vm.update(SpritePose::Jump, HorizontalDirection::None);
     }
     assert(vm.sprite_frame() == 165);
 
-    vm.update(SpritePose::Landing, false);
+    vm.update(SpritePose::Landing, HorizontalDirection::None);
     assert(vm.pose() == SpritePose::Landing);
     assert(vm.sprite_frame() == 171);
     for (int i = 0; i < 6; ++i) {
-        vm.update(SpritePose::Landing, false);
+        vm.update(SpritePose::Landing, HorizontalDirection::None);
     }
     assert(vm.sprite_frame() == 161);
 
-    vm.update(SpritePose::Idle, false);
+    vm.update(SpritePose::Idle, HorizontalDirection::None);
     assert(vm.pose() == SpritePose::Idle);
     assert(vm.sprite_frame() == 201);
 
-    vm.update(SpritePose::Brake, false);
+    vm.update(SpritePose::Brake, HorizontalDirection::None);
     assert(vm.pose() == SpritePose::Brake);
     assert(vm.sprite_frame() == 233);
     for (int i = 0; i < 40; ++i) {
-        vm.update(SpritePose::Brake, false);
+        vm.update(SpritePose::Brake, HorizontalDirection::None);
     }
     assert(vm.sprite_frame() == 319);
     return 0;

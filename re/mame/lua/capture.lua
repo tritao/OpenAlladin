@@ -12,6 +12,7 @@ return function(options)
     local capture_vdp = options.capture_vdp
     local trace_audio = options.trace_audio
     local state_output = options.state_output
+    local input_output = options.input_output
     local ram_start = options.ram_start
     local ram_size = options.ram_size
 
@@ -24,6 +25,7 @@ return function(options)
     local vdp_writes = capture_vdp and assert(io.open(join_path(trace_dir, "vdp_writes.jsonl"), "wb")) or nil
     local sound_writes = trace_audio and assert(io.open(join_path(trace_dir, "sound_writes.jsonl"), "wb")) or nil
     local state = state_output and assert(io.open(join_path(trace_dir, "state.jsonl"), "wb")) or nil
+    local input = input_output and assert(io.open(input_output, "wb")) or nil
 
     local result = {
         profile = capture_profile,
@@ -39,7 +41,8 @@ return function(options)
         vdp_regs = vdp_regs,
         vdp_writes = vdp_writes,
         sound_writes = sound_writes,
-        state = state
+        state = state,
+        input = input
     }
 
     function result.write_record(fields)
@@ -51,6 +54,13 @@ return function(options)
         if state then
             state:write(json_object(fields), "\n")
             state:flush()
+        end
+    end
+
+    function result.write_input(fields)
+        if input then
+            input:write(json_object(fields), "\n")
+            input:flush()
         end
     end
 
@@ -90,6 +100,7 @@ return function(options)
         if vdp_writes then vdp_writes:close() end
         if sound_writes then sound_writes:close() end
         if state then state:close() end
+        if input then input:close() end
     end
 
     return result

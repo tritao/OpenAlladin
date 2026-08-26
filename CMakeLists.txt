@@ -343,6 +343,13 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
         add_test(
+            NAME native_interaction_spawner
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_interaction_spawner.py")
+        set_tests_properties(native_interaction_spawner PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
             NAME native_sword_lifecycle
             COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
                     ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_sword_lifecycle.py")

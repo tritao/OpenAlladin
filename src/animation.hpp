@@ -14,6 +14,15 @@ struct AnimationStep {
     int duration = 1;
 };
 
+// Horizontal input is separate from the retained facing state: no input
+// leaves the current facing unchanged, while either exclusive direction
+// updates it for the next rendered frame.
+enum class HorizontalDirection {
+    None,
+    Left,
+    Right,
+};
+
 // The global RAM inputs consumed by Player_ProcessInteractionState at
 // 0x001AE4F8. Keep these separate from the VM's bytecode scratch memory:
 // FFF0CC is cleared by the caller immediately before some selector calls,
@@ -94,7 +103,7 @@ public:
     void reset();
     void update(
         SpritePose desired_pose,
-        bool face_left_input,
+        HorizontalDirection horizontal_direction,
         const AnimationContext& context = {}
     );
     bool set_frame(int sprite_frame);
@@ -145,6 +154,7 @@ private:
     std::size_t step_ = 0;
     int timer_ = 1;
     bool facing_left_ = false;
+    HorizontalDirection horizontal_direction_ = HorizontalDirection::None;
     bool rom_mode_ = false;
     std::vector<std::uint8_t> rom_;
     std::array<std::uint8_t, 0x10000> memory_{};

@@ -9,6 +9,7 @@ provides one discoverable entry point and a small amount of orchestration.
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -28,6 +29,30 @@ from openaladdin.common import hashes, load_yaml, normalize_symbols, parse_int, 
 EXPERIMENTS = ROOT / "re/mame/experiments/manifest.yml"
 GHIDRA_CONFIG = ROOT / "re/config/ghidra.yml"
 ROM_DEFAULT = ROOT / "rom/Disneys_Aladdin_U_p1.bin"
+
+INPUT_FORMAT = "openaladdin-input-v1"
+RUN_FORMAT = "openaladdin-input-run-v1"
+INPUT_BUTTONS = ("up", "down", "left", "right", "a", "b", "c", "start")
+INPUT_MASKS = {name: 1 << index for index, name in enumerate(INPUT_BUTTONS)}
+DEFAULT_PARITY_FIELDS = [
+    "player.x",
+    "player.y",
+    "player.world_x",
+    "player.world_y",
+    "player.vx",
+    "player.vy",
+    "player.animation_pc",
+    "player.frame_ptr",
+    "player.facing_x_flip",
+    "player.animation_timer",
+    "player.grounded",
+    "scene.state",
+    "camera.x",
+    "camera.y",
+    "camera.scroll_x",
+    "camera.scroll_y",
+    "actors",
+]
 
 
 def default_rom() -> Path:
@@ -64,6 +89,152 @@ def add_rom_argument(parser: argparse.ArgumentParser, *, positional: bool = Fals
 
 def resolve(path: Path) -> Path:
     return path if path.is_absolute() else (ROOT / path)
+
+
+def _relative_to_root(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(ROOT))
+    except ValueError:
+        return str(path.resolve())
+
+
+def _git_revision(path: Path) -> str:
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(path), "rev-parse", "HEAD"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return ""
+    return result.stdout.strip() if result.returncode == 0 else ""
+
+
+def _write_json(path: Path, value: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+
+
+def run_directory(name: str) -> Path:
+    """Resolve a user-facing run name without allowing path escape."""
+    if not name or Path(name).is_absolute():
+        raise SystemExit("run name must be a non-empty relative path")
+    base = (ROOT / "build/runs").resolve()
+    directory = (base / name).resolve()
+    if directory != base and base not in directory.parents:
+        raise SystemExit(f"run name escapes {base}: {name!r}")
+    return directory
+
+
+def buttons_for_mask(mask: int) -> list[str]:
+    if mask < 0 or mask > 0xFF:
+        raise SystemExit(f"input mask out of range: {mask}")
+    return [name for name in INPUT_BUTTONS if mask & INPUT_MASKS[name]]
+
+
+def token_for_mask(mask: int) -> str:
+    buttons = buttons_for_mask(mask)
+    return "+".join(buttons) if buttons else "none"
+
+
+def load_input_timeline(path: Path) -> tuple[dict[str, Any] | None, list[dict[str, Any]]]:
+    header: dict[str, Any] | None = None
+    records: list[dict[str, Any]] = []
+    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError as error:
+            raise SystemExit(f"{path}:{line_number}: invalid JSON: {error}") from error
+        if not isinstance(record, dict):
+            raise SystemExit(f"{path}:{line_number}: input record must be an object")
+        if record.get("type") == "header":
+            header = record
+            if header.get("format") not in (None, INPUT_FORMAT):
+                raise SystemExit(f"{path}: unsupported input format {header.get('format')!r}")
+            continue
+        if "frame" not in record or "mask" not in record:
+            raise SystemExit(f"{path}:{line_number}: input record requires frame and mask")
+        frame = int(record["frame"])
+        if frame != len(records):
+            raise SystemExit(
+                f"{path}:{line_number}: expected frame {len(records)}, got {frame}"
+            )
+        mask = int(record["mask"])
+        expected_buttons = buttons_for_mask(mask)
+        buttons = record.get("buttons")
+        if buttons is not None and list(buttons) != expected_buttons:
+            raise SystemExit(
+                f"{path}:{line_number}: mask/buttons mismatch: {mask} != {buttons!r}"
+            )
+        records.append({"frame": frame, "mask": mask, "buttons": expected_buttons})
+    if not records:
+        raise SystemExit(f"{path}: input timeline has no frame records")
+    return header, records
+
+
+def input_tokens(records: list[dict[str, Any]]) -> list[str]:
+    return [token_for_mask(int(record["mask"])) for record in records]
+
+
+def readable_input_schedule(tokens: list[str]) -> str:
+    if not tokens:
+        return ""
+    parts: list[str] = []
+    start = 0
+    while start < len(tokens):
+        end = start + 1
+        while end < len(tokens) and tokens[end] == tokens[start]:
+            end += 1
+        count = end - start
+        parts.append(tokens[start] if count == 1 else f"{tokens[start]}*{count}")
+        start = end
+    return ",".join(parts)
+
+
+def _record_start(args: argparse.Namespace) -> dict[str, Any]:
+    if not args.load_state:
+        return {"type": "power_on"}
+    state = resolve(Path(args.load_state))
+    result: dict[str, Any] = {
+        "type": "save_state",
+        "name": state.stem,
+        "path": _relative_to_root(state),
+    }
+    if state.is_file():
+        result["sha256"] = hashes(state)["sha256"]
+    return result
+
+
+def _new_run_manifest(args: argparse.Namespace, run_dir: Path, rom: Path) -> dict[str, Any]:
+    return {
+        "format": RUN_FORMAT,
+        "name": args.name,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "rom": rom.name,
+        "rom_path": _relative_to_root(rom),
+        "rom_sha256": hashes(rom)["sha256"],
+        "repository_commit": _git_revision(ROOT),
+        "mame_commit": _git_revision(ROOT / "external/mame"),
+        "controller": args.controller,
+        "start": _record_start(args),
+        "frames": 0,
+        "status": "recording",
+        "input_format": INPUT_FORMAT,
+        "frame_semantics": (
+            "frame N is the controller state consumed by logical game frame N"
+        ),
+        "artifacts": {
+            "input": "input.jsonl",
+            "state": "state.jsonl",
+            "mame_input": "mame.inp",
+            "checkpoints": "checkpoints/",
+        },
+        "replays": {},
+    }
 
 
 def command_setup(args: argparse.Namespace) -> int:
@@ -389,7 +560,8 @@ SYNC_PATTERN = re.compile(
     r"wx=(?P<world_x>[0-9A-F]+) wy=(?P<world_y>[0-9A-F]+) "
     r"vx=(?P<vx>[0-9A-F]+) vy=(?P<vy>[0-9A-F]+) "
     r"grounded=(?P<grounded>[0-9A-F]+) "
-    r"frameptr=(?P<frame_ptr>[0-9A-F]+) animpc=(?P<animation_pc>[0-9A-F]+) "
+    r"frameptr=(?P<frame_ptr>[0-9A-F]+) facing=(?P<facing_x_flip>[0-9A-F]+) "
+    r"animpc=(?P<animation_pc>[0-9A-F]+) "
     r"animtimer=(?P<animation_timer>[0-9A-F]+) "
     r"camx=(?P<camera_x>[0-9A-F]+) camy=(?P<camera_y>[0-9A-F]+) "
     r"refx=(?P<reference_x>[0-9A-F]+) refy=(?P<reference_y>[0-9A-F]+) "
@@ -499,7 +671,18 @@ def synchronize_state_trace(trace_dir: Path) -> int:
                 record["terrain"] = metadata["terrain"]
 
         player = record.setdefault("player", {})
-        for name in ("x", "y", "world_x", "world_y", "vx", "vy", "frame_ptr", "animation_pc", "animation_timer"):
+        for name in (
+            "x",
+            "y",
+            "world_x",
+            "world_y",
+            "vx",
+            "vy",
+            "frame_ptr",
+            "facing_x_flip",
+            "animation_pc",
+            "animation_timer",
+        ):
             player[name] = sync[name]
         # Lua's canonical state schema treats TERRAIN_LANDING_STATE == 1 as
         # grounded.  0xFF is the active response latch during the jump
@@ -596,6 +779,267 @@ def compress_input_schedule(tokens: list[str]) -> str:
     return ",".join(result)
 
 
+MAME_RUN_ENVIRONMENT = (
+    "OPENALADDIN_TRACE_DIR",
+    "OPENALADDIN_TRACE_FRAMES",
+    "OPENALADDIN_INPUT",
+    "OPENALADDIN_INPUT_MODE",
+    "OPENALADDIN_INPUT_OUTPUT",
+    "OPENALADDIN_STATE_OUTPUT",
+    "OPENALADDIN_CAPTURE",
+    "OPENALADDIN_CAPTURE_VDP",
+    "OPENALADDIN_TRACE_ACTORS",
+    "OPENALADDIN_TRACE_ACTOR_INIT",
+    "OPENALADDIN_TRACE_RNC_LOADS",
+    "OPENALADDIN_STATE_SYNC",
+    "OPENALADDIN_TRACE_EDGES",
+    "OPENALADDIN_TRACE_AUDIO",
+    "OPENALADDIN_TRACE_AUDIO_MAILBOX",
+    "OPENALADDIN_TRACE_AUDIO_MAILBOX_READS",
+    "OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES",
+    "OPENALADDIN_TRACE_AUDIO_COMMANDS",
+    "OPENALADDIN_DEBUG_WATCH",
+    "OPENALADDIN_BREAKPOINTS",
+    "OPENALADDIN_LOAD_STATE",
+    "OPENALADDIN_PRELOAD_STATE",
+    "OPENALADDIN_CHECKPOINTS",
+    "OPENALADDIN_CHECKPOINT_REFERENCE",
+    "OPENALADDIN_STATE_DIRECTORY",
+    "OPENALADDIN_INPUT_DIRECTORY",
+    "OPENALADDIN_RECORD_FILE",
+    "OPENALADDIN_PLAYBACK_FILE",
+    "OPENALADDIN_MAME_HEADLESS",
+    "OPENALADDIN_MAME_VIDEO",
+)
+
+
+def _clean_mame_environment() -> dict[str, str]:
+    environment = os.environ.copy()
+    for key in MAME_RUN_ENVIRONMENT:
+        environment.pop(key, None)
+    return environment
+
+
+def _finish_record_manifest(
+    run_dir: Path,
+    manifest: dict[str, Any],
+    status: int,
+) -> tuple[int, bool]:
+    input_path = run_dir / "input.jsonl"
+    valid = True
+    frames = 0
+    if input_path.is_file():
+        try:
+            _, records = load_input_timeline(input_path)
+            frames = len(records)
+        except SystemExit as error:
+            print(f"record: invalid input timeline: {error}", file=sys.stderr)
+            valid = False
+    else:
+        valid = False
+        print(f"record: missing {input_path}", file=sys.stderr)
+    manifest["frames"] = frames
+    manifest["status"] = "complete" if status == 0 and valid and frames > 0 else "failed"
+    manifest["ended_at"] = datetime.now(timezone.utc).isoformat()
+    _write_json(run_dir / "run.json", manifest)
+    return (0 if status == 0 and valid and frames > 0 else (status or 1), valid)
+
+
+def command_record(args: argparse.Namespace) -> int:
+    rom = resolve(args.rom)
+    if not rom.is_file():
+        raise SystemExit(f"ROM not found: {rom}")
+    run_dir = run_directory(args.name)
+    if run_dir.exists():
+        raise SystemExit(f"run directory already exists: {run_dir}")
+    if args.frames is not None and args.frames < 1:
+        raise SystemExit("--frames must be positive when supplied")
+
+    run_dir.mkdir(parents=True)
+    (run_dir / "checkpoints").mkdir()
+    manifest = _new_run_manifest(args, run_dir, rom)
+    _write_json(run_dir / "run.json", manifest)
+
+    environment = _clean_mame_environment()
+    frame_limit = -1 if args.frames is None else args.frames - 1
+    environment.update({
+        "OPENALADDIN_TRACE_DIR": str(run_dir),
+        "OPENALADDIN_TRACE_FRAMES": str(frame_limit),
+        "OPENALADDIN_CAPTURE": "state",
+        "OPENALADDIN_INPUT_MODE": "record",
+        "OPENALADDIN_INPUT_OUTPUT": str(run_dir / "input.jsonl"),
+        "OPENALADDIN_RECORD_FILE": str(run_dir / "mame.inp"),
+        "OPENALADDIN_STATE_DIRECTORY": str(run_dir / "checkpoints"),
+        "OPENALADDIN_CHECKPOINT_REFERENCE": "checkpoints",
+        "OPENALADDIN_MAME_HEADLESS": "0",
+        "OPENALADDIN_MAME_VIDEO": "soft",
+        "OPENALADDIN_ROM_SHA256": manifest["rom_sha256"],
+    })
+    if args.load_state:
+        environment["OPENALADDIN_LOAD_STATE"] = str(resolve(Path(args.load_state)))
+    if args.checkpoints:
+        environment["OPENALADDIN_CHECKPOINTS"] = args.checkpoints
+
+    print(f"record: interactive MAME session for {args.name}")
+    print(f"record: quit MAME when the run is complete; output will be {run_dir}")
+    status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
+    final_status, valid = _finish_record_manifest(run_dir, manifest, status)
+    if valid:
+        print(f"record: {run_dir}")
+        print(f"record: frames {manifest['frames']}")
+    return final_status
+
+
+def _load_run_manifest(name: str) -> tuple[Path, dict[str, Any]]:
+    run_dir = run_directory(name)
+    manifest_path = run_dir / "run.json"
+    if not manifest_path.is_file():
+        raise SystemExit(f"run manifest not found: {manifest_path}")
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise SystemExit(f"{manifest_path}: invalid JSON: {error}") from error
+    if manifest.get("format") != RUN_FORMAT:
+        raise SystemExit(f"{manifest_path}: unsupported run format {manifest.get('format')!r}")
+    return run_dir, manifest
+
+
+def _run_rom(args: argparse.Namespace, manifest: dict[str, Any]) -> Path:
+    if args.rom is not None:
+        rom = resolve(args.rom)
+    else:
+        rom_path = Path(str(manifest.get("rom_path", "")))
+        rom = resolve(rom_path) if not rom_path.is_absolute() else rom_path
+    if not rom.is_file():
+        raise SystemExit(f"ROM not found: {rom}")
+    expected = manifest.get("rom_sha256")
+    actual = hashes(rom)["sha256"]
+    if expected and actual != expected:
+        raise SystemExit(f"ROM mismatch for run: expected {expected}, got {actual}")
+    return rom
+
+
+def _update_replay_manifest(
+    run_dir: Path,
+    manifest: dict[str, Any],
+    client: str,
+    trace: Path,
+    status: int,
+) -> None:
+    replays = manifest.setdefault("replays", {})
+    replays[client] = {
+        "status": "complete" if status == 0 else "failed",
+        "trace": _relative_to_root(trace),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+    _write_json(run_dir / "run.json", manifest)
+
+
+def _apply_run_start(environment: dict[str, str], manifest: dict[str, Any]) -> None:
+    start = manifest.get("start") or {}
+    if start.get("type") != "save_state":
+        return
+    state_path = Path(str(start.get("path", "")))
+    state = resolve(state_path) if not state_path.is_absolute() else state_path
+    if not state.is_file():
+        raise SystemExit(f"recorded start state not found: {state}")
+    expected = start.get("sha256")
+    if expected:
+        actual = hashes(state)["sha256"]
+        if actual != expected:
+            raise SystemExit(
+                f"recorded start state mismatch: expected {expected}, got {actual}"
+            )
+    environment["OPENALADDIN_LOAD_STATE"] = str(state)
+
+
+def command_replay(args: argparse.Namespace) -> int:
+    run_dir, manifest = _load_run_manifest(args.name)
+    rom = _run_rom(args, manifest)
+    _, records = load_input_timeline(run_dir / "input.jsonl")
+    frame_count = len(records)
+    replay_dir = run_dir / "replay" / args.client
+    replay_dir.mkdir(parents=True, exist_ok=True)
+
+    if args.client == "mame":
+        mame_input = run_dir / "mame.inp"
+        if not mame_input.is_file():
+            raise SystemExit(f"MAME input recording not found: {mame_input}")
+        trace = replay_dir / "state.jsonl"
+        environment = _clean_mame_environment()
+        environment.update({
+            "OPENALADDIN_TRACE_DIR": str(replay_dir),
+            "OPENALADDIN_TRACE_FRAMES": str(max(frame_count - 1, 0)),
+            "OPENALADDIN_CAPTURE": "state",
+            "OPENALADDIN_INPUT_MODE": "playback",
+            "OPENALADDIN_INPUT_OUTPUT": str(replay_dir / "input.jsonl"),
+            "OPENALADDIN_PLAYBACK_FILE": str(mame_input),
+            "OPENALADDIN_STATE_DIRECTORY": str(replay_dir / "checkpoints"),
+            "OPENALADDIN_CHECKPOINT_REFERENCE": "checkpoints",
+            "OPENALADDIN_MAME_HEADLESS": "1",
+            "OPENALADDIN_MAME_VIDEO": "none",
+            "OPENALADDIN_ROM_SHA256": manifest["rom_sha256"],
+        })
+        _apply_run_start(environment, manifest)
+        status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
+        if status == 0:
+            original = run_dir / "state.jsonl"
+            if not original.is_file() or not trace.is_file():
+                print("replay: original or replay state trace is missing", file=sys.stderr)
+                status = 1
+            else:
+                status = run_tool(
+                    "openaladdin/mame/compare_state.py",
+                    [str(original), str(trace)],
+                )
+        _update_replay_manifest(run_dir, manifest, args.client, trace, status)
+        if status == 0:
+            print(f"replay: MAME PASS ({frame_count} frame(s))")
+        else:
+            print(f"replay: MAME failed; trace {trace}", file=sys.stderr)
+        return status
+
+    trace = replay_dir / "state.jsonl"
+    native_command = [
+        str(ROOT / "run.sh"),
+        "--no-window",
+        "--no-audio",
+        "--rom", str(rom),
+        "--frames", str(frame_count),
+        "--state-output", str(trace),
+        "--input-schedule", readable_input_schedule(input_tokens(records)),
+    ]
+    native_environment = os.environ.copy()
+    native_environment["SDL_VIDEODRIVER"] = "dummy"
+    status = subprocess.run(native_command, cwd=ROOT, env=native_environment, check=False).returncode
+    _update_replay_manifest(run_dir, manifest, args.client, trace, status)
+    if status == 0:
+        print(f"replay: native trace {trace}")
+    return status
+
+
+def command_parity(args: argparse.Namespace) -> int:
+    run_dir, _ = _load_run_manifest(args.name)
+    genesis = run_dir / "state.jsonl"
+    native = run_dir / "replay" / "native" / "state.jsonl"
+    if not genesis.is_file():
+        raise SystemExit(f"recorded state trace not found: {genesis}")
+    if not native.is_file():
+        raise SystemExit(f"native replay not found: {native}; run replay {args.name} --client native")
+    fields = args.fields or DEFAULT_PARITY_FIELDS
+    forwarded = [str(genesis), str(native)]
+    for field in fields:
+        forwarded.extend(["--field", field])
+    return run_tool("openaladdin/mame/compare_state.py", forwarded)
+
+
+def command_inputs_summarize(args: argparse.Namespace) -> int:
+    path = resolve(args.input)
+    _, records = load_input_timeline(path)
+    print(readable_input_schedule(input_tokens(records)))
+    return 0
+
+
 def command_regression(args: argparse.Namespace) -> int:
     experiment = load_experiment(args.scenario)
     regression = experiment.get("regression") or {}
@@ -606,6 +1050,7 @@ def command_regression(args: argparse.Namespace) -> int:
         "player.vx",
         "player.vy",
         "player.grounded",
+        "player.facing_x_flip",
     ])
     rom = resolve(args.rom)
     if not rom.is_file():
@@ -700,6 +1145,11 @@ def command_regression(args: argparse.Namespace) -> int:
         native_command.extend([
             "--checkpoint-animation",
             f"{int(player['animation_pc'])},{int(player.get('animation_timer', 0))}",
+        ])
+    if "facing_x_flip" in player:
+        native_command.extend([
+            "--checkpoint-facing-x-flip",
+            str(int(player["facing_x_flip"])),
         ])
     actor_records = regression.get("actor_records")
     if actor_records:
@@ -1057,6 +1507,44 @@ def build_parser() -> argparse.ArgumentParser:
     rebuild.add_argument("--reuse-project", action="store_true")
     rebuild.add_argument("--no-analysis", action="store_true")
     rebuild.set_defaults(function=command_ghidra_rebuild)
+
+    record = commands.add_parser(
+        "record",
+        help="record an interactive MAME run as a canonical input/state corpus",
+    )
+    record.add_argument("name", help="run name stored below build/runs/")
+    add_rom_argument(record)
+    record.add_argument("--frames", type=int, help="optional frame count for automated/smoke recording")
+    record.add_argument("--load-state", help="start from a MAME save-state file")
+    record.add_argument(
+        "--checkpoints",
+        help="named MAME save states as frame=name pairs, e.g. 0=boot,1245=level01-entry",
+    )
+    record.add_argument("--controller", default="P1 Mega Drive pad")
+    record.set_defaults(function=command_record)
+
+    replay = commands.add_parser(
+        "replay",
+        help="replay a recorded run with MAME's native input or OpenAladdin",
+    )
+    replay.add_argument("name")
+    replay.add_argument("--client", choices=("mame", "native"), default="mame")
+    replay.add_argument("--rom", type=Path)
+    replay.set_defaults(function=command_replay)
+
+    parity = commands.add_parser(
+        "parity",
+        help="compare a recorded MAME state trace with its native replay",
+    )
+    parity.add_argument("name")
+    parity.add_argument("--field", dest="fields", action="append")
+    parity.set_defaults(function=command_parity)
+
+    inputs = commands.add_parser("inputs", help="inspect canonical input timelines")
+    input_commands = inputs.add_subparsers(dest="inputs_command", required=True)
+    summarize = input_commands.add_parser("summarize", help="render JSONL input as an RLE schedule")
+    summarize.add_argument("input", type=Path)
+    summarize.set_defaults(function=command_inputs_summarize)
 
     trace = commands.add_parser("trace", help="run a named repeatable MAME experiment")
     trace.add_argument("scenario", help="experiment name from re/mame/experiments/manifest.yml")

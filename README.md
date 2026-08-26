@@ -25,6 +25,10 @@ python tools/oa.py ghidra rebuild
 python tools/oa.py trace title-menu --capture state
 python tools/oa.py trace player-run --capture state
 python tools/oa.py trace player-jump --capture state
+python tools/oa.py record level01-good-run
+python tools/oa.py replay level01-good-run --client mame
+python tools/oa.py replay level01-good-run --client native
+python tools/oa.py parity level01-good-run
 python tools/oa.py decode animation --verify
 python tools/oa.py decode movement --verify
 python tools/oa.py assets
@@ -49,12 +53,45 @@ python tools/oa.py regression player-jump
 This runs the MAME experiment, finds its gameplay_checkpoint marker, replays
 the exact post-checkpoint input tokens in the native slice, aligns both traces
 at frame 0, and compares the implemented player physics fields plus the
-decoded player frame pointer. It reports the first divergence while ignoring
-native placeholders for scene and actors.
+decoded player frame pointer. Scene state remains outside this focused
+comparison; native Level 01 actor state is now refilled from the interaction
+map rather than a default snapshot.
 
 The experiment manifest is `re/mame/experiments/manifest.yml`. It supports boot
 scenarios, input actions, and direct memory/PC wait conditions; the MAME Lua
 harness evaluates those waits while the emulator runs.
+
+## Recorded gameplay runs
+
+Record a normal interactive MAME session with:
+
+```bash
+python tools/oa.py record level01-good-run
+```
+
+Quit MAME when the session is complete. The run is written below
+`build/runs/level01-good-run/` with a provenance manifest, per-frame
+`input.jsonl`, semantic `state.jsonl`, MAME's native `mame.inp`, and a
+`checkpoints/` state directory. The canonical input mask is active-high and
+uses `up=1`, `down=2`, `left=4`, `right=8`, `a=16`, `b=32`, `c=64`, and
+`start=128`. Each input record's frame number means the controller state at
+the input boundary for that logical game frame; it is not a host key event.
+
+MAME replay uses the native `.inp` as its authoritative replay artifact and
+automatically compares the regenerated state trace with the recording:
+
+```bash
+python tools/oa.py replay level01-good-run --client mame
+```
+
+The canonical JSONL timeline can also drive the native runtime, after which
+the first semantic divergence is reported with:
+
+```bash
+python tools/oa.py replay level01-good-run --client native
+python tools/oa.py parity level01-good-run
+python tools/oa.py inputs summarize build/runs/level01-good-run/input.jsonl
+```
 
 To extract the known Genesis graphics and animation data:
 

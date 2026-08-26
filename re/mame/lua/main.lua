@@ -30,7 +30,10 @@ local signed_u16 = core.signed_u16
 local read_register = core.read_register
 
 local trace_dir = os.getenv("OPENALADDIN_TRACE_DIR") or "build/re/traces"
-local frame_limit = math.max(0, math.floor(env_number("OPENALADDIN_TRACE_FRAMES", 120)))
+-- A negative frame limit means interactive/unbounded mode.  The normal trace
+-- frontend continues to pass a non-negative limit; record mode lets the user
+-- quit MAME when the session is complete.
+local frame_limit = math.floor(env_number("OPENALADDIN_TRACE_FRAMES", 120))
 local save_frame = math.floor(env_number("OPENALADDIN_SAVE_FRAME", -1))
 local snapshot_frame = math.floor(env_number("OPENALADDIN_SNAPSHOT_FRAME", -1))
 local poke_frame = math.floor(env_number("OPENALADDIN_POKE_FRAME", -1))
@@ -38,6 +41,7 @@ local preload_state = os.getenv("OPENALADDIN_PRELOAD_STATE") or ""
 local save_name = os.getenv("OPENALADDIN_SAVE_NAME") or "gameplay"
 local snapshot_name = os.getenv("OPENALADDIN_SNAPSHOT_NAME") or "gameplay.png"
 local checkpoint_spec = os.getenv("OPENALADDIN_CHECKPOINTS") or ""
+local checkpoint_reference = os.getenv("OPENALADDIN_CHECKPOINT_REFERENCE") or "states"
 local checkpoints = {}
 for item in checkpoint_spec:gmatch("[^,]+") do
     local frame_text, name = item:match("^%s*(%-?%d+)%s*=%s*(.-)%s*$")
@@ -77,6 +81,7 @@ local capture_streams = dofile(root .. "/re/mame/lua/capture.lua")({
     capture_vdp = capture_vdp,
     trace_audio = trace_audio,
     state_output = state_output,
+    input_output = os.getenv("OPENALADDIN_INPUT_OUTPUT"),
     ram_start = ram_start,
     ram_size = ram_size,
     read_u8 = read_u8
@@ -336,6 +341,7 @@ local input = dofile(root .. "/re/mame/lua/input.lua")({
     root = root,
     write_record = write_record,
     write_state = write_state,
+    write_input = capture_streams.input and capture_streams.write_input or nil,
     current_frame = function () return current_frame end
 })
 local experiment_action_spec = input.action_spec()
@@ -370,11 +376,13 @@ local function capture(frame, input_token, emit_state)
     capture_streams.dump_ram()
     dump_vdp()
     local input_port_value = input.controller_value()
+    local input_mask = input.canonical_mask()
     write_record({
         { "type", json_string("frame") },
         { "frame", tostring(frame) },
         { "input", json_string(input_token or "none") },
         { "input_port_value", tostring(input_port_value) },
+        { "input_mask", tostring(input_mask) },
         { "pc", tostring(read_register("PC") or 0) },
         { "sr", tostring(read_register("SR") or 0) },
         { "registers", register_json() },
@@ -447,6 +455,10 @@ local function capture(frame, input_token, emit_state)
                 -- field. This is the runtime sprite identity used by the
                 -- native animation differential test.
                 { "frame_ptr", tostring(player_frame_pointer) },
+                -- The player is actor-table slot zero; expose its raw
+                -- horizontal flip byte alongside the frame pointer so
+                -- native parity covers the rendered facing state too.
+                { "facing_x_flip", tostring(player_facing_x_flip) },
                 { "collision_box", collision_box_json(
                     player_frame_pointer,
                     player_origin_x,
@@ -500,7 +512,7 @@ if state_sync then
         return string.format(":maincpu.%s@$%06X", width, symbol(name))
     end
     local sync_action = string.format(
-        "printf \"OPENALADDIN_SYNC frame=%%d pc=%%08X x=%%04X y=%%04X wx=%%04X wy=%%04X vx=%%04X vy=%%04X grounded=%%02X frameptr=%%08X animpc=%%08X animtimer=%%02X camx=%%04X camy=%%04X refx=%%04X refy=%%04X sx=%%04X sy=%%04X thx=%%04X thy=%%04X delay=%%02X special=%%02X\\n\",frame,pc,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s ; g",
+        "printf \"OPENALADDIN_SYNC frame=%%d pc=%%08X x=%%04X y=%%04X wx=%%04X wy=%%04X vx=%%04X vy=%%04X grounded=%%02X frameptr=%%08X facing=%%02X animpc=%%08X animtimer=%%02X camx=%%04X camy=%%04X refx=%%04X refy=%%04X sx=%%04X sy=%%04X thx=%%04X thy=%%04X delay=%%02X special=%%02X\\n\",frame,pc,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s ; g",
         sync_memory("w", "PLAYER_X"),
         sync_memory("w", "PLAYER_Y"),
         sync_memory("w", "PLAYER_WORLD_X"),
@@ -509,6 +521,7 @@ if state_sync then
         sync_memory("w", "PLAYER_VY"),
         sync_memory("b", "TERRAIN_LANDING_STATE"),
         sync_memory("d", "PLAYER_FRAME_PTR"),
+        sync_memory("b", "PLAYER_FACING_X_FLIP"),
         sync_memory("d", "PLAYER_ANIMATION_PC"),
         sync_memory("b", "PLAYER_ANIMATION_TIMER"),
         sync_memory("w", "WORLD_CAMERA_X"),
@@ -541,7 +554,7 @@ local function capture_artifacts(frame)
             { "type", json_string("checkpoint") },
             { "frame", tostring(frame) },
             { "name", json_string(checkpoint_name) },
-            { "state", json_string("states/genesis/" .. checkpoint_name .. ".sta") }
+            { "state", json_string(checkpoint_reference .. "/genesis/" .. checkpoint_name .. ".sta") }
         })
         if state then
             write_state({
@@ -549,7 +562,7 @@ local function capture_artifacts(frame)
                 { "format", json_string("openaladdin-frame-state-v1") },
                 { "frame", tostring(frame) },
                 { "name", json_string(checkpoint_name) },
-                { "state", json_string("states/genesis/" .. checkpoint_name .. ".sta") }
+                { "state", json_string(checkpoint_reference .. "/genesis/" .. checkpoint_name .. ".sta") }
             })
         end
         print(string.format(
@@ -890,7 +903,7 @@ capture_artifacts(0)
 
 emu.register_frame_done(function ()
     current_frame = current_frame + 1
-    if current_frame > frame_limit then
+    if frame_limit >= 0 and current_frame > frame_limit then
         shutdown()
         machine:exit()
         return
@@ -912,7 +925,7 @@ emu.register_frame_done(function ()
     if audio.dump_driver then audio.dump_driver(current_frame, "frame") end
     capture_artifacts(current_frame)
 
-    if current_frame == frame_limit then
+    if frame_limit >= 0 and current_frame == frame_limit then
         shutdown()
         machine:exit()
     end

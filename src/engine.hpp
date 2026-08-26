@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -142,10 +143,51 @@ struct ActorState {
     // ticks, then on alternating ticks. This is native scheduler state, not
     // a field in the 0x42-byte Genesis actor record.
     std::uint8_t animation_tick_phase = 0;
+    // Compact template byte +0x10 copied by Actor_InitializeFromTemplate.
+    std::uint8_t resource_count = 0;
+    // Interaction sources retain their resource offset so culling/cleanup can
+    // remain separate from the one-shot map selector state.
+    std::uint16_t interaction_resource_offset = 0;
+    std::uint8_t interaction_selector = 0;
+    bool spawned_by_interaction = false;
+};
+
+enum class ActorAllocationPool {
+    CommonForward,       // slots 3..22, FUN_001AE262
+    CommonReverse,       // slots 20..1, FUN_001AE2AA
+    GameplayForward,     // slots 1..23, FUN_001AE27A
+    GameplayReverse,     // slots 23..1, FUN_001AE292
+};
+
+struct SpawnDescriptor {
+    bool valid = false;
+    std::uint8_t selector = 0;
+    std::uint32_t template_address = 0;
+    ActorAllocationPool allocation_pool = ActorAllocationPool::CommonForward;
+    int post_offset_x = 0;
+    int post_offset_y = 0;
+    bool override_type = false;
+    std::uint8_t type = 0;
+    bool override_animation = false;
+    std::uint32_t animation_pc = 0;
+    bool override_movement = false;
+    std::uint32_t movement_pc = 0;
+    bool override_resource_count = false;
+    std::uint8_t resource_count = 0;
 };
 
 class Level {
 public:
+    struct InteractionRecord {
+        int column = -1;
+        int row = -1;
+        std::uint16_t terrain_word = 0;
+        std::uint16_t resource_offset = 0;
+        std::uint8_t selector = 0;
+        int world_x = 0;
+        int world_y = 0;
+    };
+
     struct TerrainCell {
         bool valid = false;
         int column = -1;
@@ -192,6 +234,9 @@ public:
     const std::vector<std::uint8_t>& parallax_rgba() const { return parallax_rgba_; }
     const std::vector<std::uint16_t>& terrain_words() const { return terrain_words_; }
     const std::vector<std::uint8_t>& floor_data() const { return floor_data_; }
+    const std::vector<InteractionRecord>& interaction_records() const {
+        return interaction_records_;
+    }
     const std::vector<SDL_Color>& palette() const { return palette_; }
     bool is_vdp_transparent(std::uint8_t red, std::uint8_t green, std::uint8_t blue) const;
     int map_width() const { return map_width_; }
@@ -205,6 +250,11 @@ public:
 
     // This is the recovered FF9884/FFAE86 lookup in local, file-backed form.
     std::uint8_t terrain_behavior(int column, int row) const;
+
+    // Resource offset 3 is the Level-01 interaction selector table. It is
+    // indexed by the same terrain-word resource offset used by the ROM's
+    // row scanner: floor[3 + (map_word >> 1)].
+    std::uint8_t interaction_selector(int column, int row) const;
 
     // Exact fixed-ROM equivalent of Terrain_ResolvePlayerCell's address math:
     // the resolver selects one 16-pixel row band and one column, then applies
@@ -254,8 +304,29 @@ private:
     std::vector<std::uint8_t> parallax_rgba_;
     std::vector<std::uint16_t> terrain_words_;
     std::vector<std::uint8_t> floor_data_;
+    std::vector<InteractionRecord> interaction_records_;
     std::vector<std::uint8_t> contour_table_;
     std::vector<SDL_Color> palette_;
+};
+
+// The Level-01 interaction table is mutable at runtime. The original clears
+// the selector at its resource offset after a successful allocation, which
+// makes the map a one-shot source while still allowing failed allocations to
+// be retried by a later camera refill pass.
+class InteractionMap {
+public:
+    void load(const Level& level);
+    void reset();
+
+    std::uint8_t selector(int column, int row) const;
+    std::uint8_t selector(const Level::InteractionRecord& record) const;
+    bool consume(std::uint16_t resource_offset);
+    const std::vector<Level::InteractionRecord>& records() const { return records_; }
+    std::size_t active_record_count() const;
+
+private:
+    std::vector<Level::InteractionRecord> records_;
+    std::vector<std::uint8_t> selectors_;
 };
 
 class Engine {
@@ -328,6 +399,13 @@ private:
     void update_terminal_actor_motion(ActorState& actor);
     void update_actor_animations();
     void apply_animation_spawns();
+    void scan_interaction_refill_window();
+    void dispatch_interaction(const Level::InteractionRecord& record, int base_x, int base_y);
+    std::optional<SpawnDescriptor> spawn_descriptor(std::uint8_t selector) const;
+    std::optional<std::size_t> allocate_actor_slot(ActorAllocationPool pool) const;
+    ActorState actor_from_template(std::uint32_t template_address) const;
+    void update_dynamic_actor_culling();
+    void sync_player_actor();
     void update_actor_actor_collisions(bool pre_motion = false);
     void render_vdp_checkpoint();
     void update_actor_interactions(const InputState& input, bool was_grounded);
@@ -347,9 +425,14 @@ private:
     SpriteDatabase sprites_;
     PlayerAnimationVm animation_;
     std::array<PlayerAnimationVm, 32> actor_animations_{};
+    InteractionMap interaction_map_;
     std::array<ActorState, 32> actor_templates_{};
     std::array<ActorState, 32> actors_{};
     std::map<int, std::array<ActorState, 32>> actor_timeline_;
+    bool actor_snapshot_mode_ = false;
+    bool interaction_scan_initialized_ = false;
+    int interaction_reference_x_ = 0;
+    int interaction_reference_y_ = 0;
     // FUN_001B3032 is the fixed-ROM scene-5 response PRNG. Keep its state
     // deterministic in the native slice so controlled terrain fixtures can
     // reproduce the ROM's allocation/animation selection.

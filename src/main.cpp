@@ -24,7 +24,10 @@ struct Options {
     std::string assets = "build/assets/levels/level01";
     std::string sprites = "build/assets/sprites";
     std::string rom = "rom/Disneys_Aladdin_U_p1.bin";
-    std::string actor_records = "re/actors/level01.tsv";
+    // Native Level 01 actors are refilled from the ROM interaction map. The
+    // TSV remains available as an explicit compatibility/replay fixture via
+    // --actor-records.
+    std::string actor_records;
     std::string actor_timeline;
     int frames = -1;
     bool no_window = false;

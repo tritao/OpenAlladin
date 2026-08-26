@@ -17,6 +17,15 @@
   evidence:
     - mame_actor_table_frame_pointer_capture
     - actor_table_layout
+0xFF7E49:
+  name: PLAYER_FACING_X_FLIP
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Player actor horizontal sprite flip byte consumed by the VDP sprite submission path.
+  evidence:
+    - actor_table_layout
+    - mame_player_direction_reversal_trace
 0xFF7E7C:
   name: PLAYER_ACTOR_FLAGS
   type: u8
