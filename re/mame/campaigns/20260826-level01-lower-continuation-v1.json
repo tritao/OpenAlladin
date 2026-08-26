@@ -1,0 +1,84 @@
+{
+  "campaign": "20260826-level01-lower-continuation-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Follow the lower continuation exposed by the tower control matrix and test whether sustained traversal or jump assistance reaches the level-01 exit.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "eb85739ddb58eaa53ef47e64d009bc4e04c84639",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "eb85739ddb58eaa53ef47e64d009bc4e04c84639",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/up-right/states/genesis/end.sta",
+  "timing_note": "All branches use OPENALADDIN_STATE_SYNC=0 and the same lower-continuation checkpoint.",
+  "segments": [
+    {
+      "id": "right",
+      "trace_dir": "build/re/campaigns/20260826-level01-lower-continuation-v1/right",
+      "frames": 600,
+      "input": "right*600",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/up-right/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 120, "name": "early" },
+        { "frame": 300, "name": "mid" },
+        { "frame": 600, "name": "end" }
+      ]
+    },
+    {
+      "id": "jump-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-lower-continuation-v1/jump-right",
+      "frames": 600,
+      "input": "right*120,c+right*20,right*460",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/up-right/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 120, "name": "early" },
+        { "frame": 300, "name": "mid" },
+        { "frame": 600, "name": "end" }
+      ]
+    },
+    {
+      "id": "jump-pulse-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-lower-continuation-v1/jump-pulse-right",
+      "frames": 600,
+      "input": "c+right*1,right*60,c+right*1,right*60,right*478",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/up-right/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 120, "name": "early" },
+        { "frame": 300, "name": "mid" },
+        { "frame": 600, "name": "end" }
+      ]
+    },
+    {
+      "id": "left-return",
+      "trace_dir": "build/re/campaigns/20260826-level01-lower-continuation-v1/left-return",
+      "frames": 600,
+      "input": "left*600",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/up-right/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 120, "name": "early" },
+        { "frame": 300, "name": "mid" },
+        { "frame": 600, "name": "end" }
+      ]
+    }
+  ]
+}

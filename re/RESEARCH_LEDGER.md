@@ -356,6 +356,34 @@ This closes the upper pair's dispatch path as a connector hypothesis. The
 remaining work is the actual behavior-22/24 connector or a different route
 branch that can bring the player into the pair's vertical interaction band.
 
+The tower control matrix is recorded in
+`re/mame/campaigns/20260826-level01-tower-control-matrix-v1.json` with eight
+same-checkpoint branches and 32 named checkpoints. Neutral, attack, jump,
+and Down variants remain on the behavior-0x47 lower-tower surface. Up-left
+retreats to the previous lower band; Up-right exposes a real lower
+continuation at world `(3039,912)`; and Down+lateral input settles near
+`(2755,818)`. None reaches `SCENE_STATE=0x08` or writes the watched exit
+gates. The finding is preserved in
+`re/mame/findings/20260826-level01-tower-control-matrix-v1.json`.
+
+The lower continuation is separately recorded in
+`re/mame/campaigns/20260826-level01-lower-continuation-v1.json`. Sustained
+rightward and jump-assisted branches traverse to the far-right lower edge
+around `(4748,874)`, while the return branch reaches the known lower solid
+boundary near `(2847,912)`. This is ordinary level traversal, not the exit:
+the static exit predicate still requires world Y below `470`. The complete
+negative/frontier result is in
+`re/mame/findings/20260826-level01-lower-continuation-v1.json`.
+
+The earlier `lamp-approach` checkpoint was also reopened in
+`re/mame/campaigns/20260826-level01-tower-type43-interaction-v1.json`. It
+starts with the actual type-0x43 object at `(2720,768)` before its local
+conversion to type `0x8A`. Seven controller branches preserve this
+conversion and the indirect edge trace to `0x001AE64C`, but no branch enters a
+scene transition. This closes the remaining direct lamp interaction
+hypothesis without deleting the reusable pre-conversion checkpoint; see
+`re/mame/findings/20260826-level01-tower-type43-interaction-v1.json`.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -385,6 +413,9 @@ branch that can bring the player into the pair's vertical interaction band.
 | `20260826-level01-upper-platform-jump-sweep-v1` | recorded-negative | eleven fixed-position ordinary-C probes across the behavior-25 upper band |
 | `20260826-level01-upper-actor-jump-v1` | recorded-negative | eleven directional-C and C+B probes at the upper actor line |
 | `20260826-level01-upper-dispatch-trace-v1` | recorded-static-correlation | full replay and breakpoint trace of the upper interaction-row spawn path |
+| `20260826-level01-tower-control-matrix-v1` | recorded-negative | eight same-checkpoint control branches over the behavior-47 lower tower |
+| `20260826-level01-lower-continuation-v1` | recorded-negative-frontier | sustained and jump-assisted traversal from the lower tower continuation |
+| `20260826-level01-tower-type43-interaction-v1` | recorded-negative | pre-conversion type-0x43 lamp interaction branches |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

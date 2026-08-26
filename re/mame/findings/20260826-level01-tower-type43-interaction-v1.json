@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-level01-tower-type43-interaction-finding-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-tower-type43-interaction-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "eb85739ddb58eaa53ef47e64d009bc4e04c84639",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/lamp-approach.sta",
+  "static_handler": {
+    "address": "0x001AE64C",
+    "name": "Type0x43PlayerInteractionHandler",
+    "semantics": "When TERRAIN_LANDING_STATE is nonzero, temporarily aligns PLAYER_X to the actor, converts the actor from type 0x43 to 0x8A, installs animation data, arms the event-99 flag, and restores PLAYER_X."
+  },
+  "runtime_observed": [
+    "At frame 1 the pre-conversion checkpoint contains actor slot 24, type 0x43, at world (2720,768).",
+    "With neutral, Up, C, A, B, C+Right, and C+Left branches, the actor is type 0x8A by the early checkpoint while SCENE_STATE remains 0x01.",
+    "The indirect player-collision trace reaches target 0x001AE64C once in the neutral branch; the explicit register breakpoint did not emit a breakpoint line, so this is retained as edge-trace evidence rather than a timing claim.",
+    "No tested branch writes the scene gates or enters SCENE_STATE=0x08."
+  ],
+  "conclusion": "The type-0x43 object is a one-shot local interaction/resource conversion, not the missing level-exit connector. The pre-conversion checkpoint is now preserved for future event-99/audio correlation, but repeating controller variants here is low value.",
+  "next_action": "Trace the behavior-0x22/0x24 connector's complete player response and identify the resource that raises the player into the upper exit band."
+}

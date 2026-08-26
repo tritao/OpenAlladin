@@ -1,0 +1,157 @@
+{
+  "campaign": "20260826-level01-tower-control-matrix-v1",
+  "status": "recorded-negative",
+  "purpose": "Replay a compact controller matrix from the exact lower-tower lamp checkpoint while tracing terrain behavior, actor state, and scene-gate writes.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "eb85739ddb58eaa53ef47e64d009bc4e04c84639",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "eb85739ddb58eaa53ef47e64d009bc4e04c84639",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+  "timing_note": "All branches use OPENALADDIN_STATE_SYNC=0 and the same loaded checkpoint. Debugger terrain context is observational; no-sync state traces remain authoritative for route timing.",
+  "instrumentation": {
+    "terrain_breakpoints": ["0x001AD87E", "0x001AD886", "0x001AD904"],
+    "watched_addresses": ["0xFFF0CE", "0xFFF0CF", "0xFFF0C1", "0xFFF0BE", "0xFFF0E6", "0xFFF105", "0xFFF106", "0xFFF107"],
+    "trace_logs": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/*/debug.log"
+  },
+  "segments": [
+    {
+      "id": "down",
+      "trace_dir": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/down",
+      "frames": 240,
+      "input": "down*60,none*180",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "mid" },
+        { "frame": 120, "name": "mid-late" },
+        { "frame": 240, "name": "end" }
+      ]
+    },
+    {
+      "id": "a",
+      "trace_dir": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/a",
+      "frames": 240,
+      "input": "a*1,none*239",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "mid" },
+        { "frame": 120, "name": "mid-late" },
+        { "frame": 240, "name": "end" }
+      ]
+    },
+    {
+      "id": "b",
+      "trace_dir": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/b",
+      "frames": 240,
+      "input": "b*1,none*239",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "mid" },
+        { "frame": 120, "name": "mid-late" },
+        { "frame": 240, "name": "end" }
+      ]
+    },
+    {
+      "id": "c-a",
+      "trace_dir": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/c-a",
+      "frames": 240,
+      "input": "c+a*1,none*239",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "mid" },
+        { "frame": 120, "name": "mid-late" },
+        { "frame": 240, "name": "end" }
+      ]
+    },
+    {
+      "id": "c-b",
+      "trace_dir": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/c-b",
+      "frames": 240,
+      "input": "c+b*1,none*239",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "mid" },
+        { "frame": 120, "name": "mid-late" },
+        { "frame": 240, "name": "end" }
+      ]
+    },
+    {
+      "id": "up-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/up-left",
+      "frames": 240,
+      "input": "up+left*60,left*60,none*120",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "mid" },
+        { "frame": 120, "name": "mid-late" },
+        { "frame": 240, "name": "end" }
+      ]
+    },
+    {
+      "id": "up-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/up-right",
+      "frames": 240,
+      "input": "up+right*60,right*60,none*120",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "mid" },
+        { "frame": 120, "name": "mid-late" },
+        { "frame": 240, "name": "end" }
+      ]
+    },
+    {
+      "id": "down-lateral",
+      "trace_dir": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/down-lateral",
+      "frames": 240,
+      "input": "down+left*60,down+right*60,none*120",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "mid" },
+        { "frame": 120, "name": "mid-late" },
+        { "frame": 240, "name": "end" }
+      ]
+    }
+  ]
+}

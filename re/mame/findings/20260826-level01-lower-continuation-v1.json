@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-level01-lower-continuation-finding-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-lower-continuation-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "eb85739ddb58eaa53ef47e64d009bc4e04c84639",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-tower-control-matrix-v1/up-right/states/genesis/end.sta",
+  "observed": [
+    {
+      "branch": "right",
+      "endpoint": [4704, 874],
+      "result": "Sustained rightward movement traverses the lower band and reaches the far-right lower edge; the player frame later clears, with scene state still 0x01."
+    },
+    {
+      "branch": "jump-right",
+      "endpoint": [4748, 874],
+      "result": "Jump assistance reaches the same far-right lower edge; the exit requires world Y below 470, so this is not the natural exit."
+    },
+    {
+      "branch": "jump-pulse-right",
+      "endpoint": [4749, 874],
+      "result": "Two early jump pulses do not change the lower-band endpoint or enter a connector."
+    },
+    {
+      "branch": "left-return",
+      "endpoint": [2847, 912],
+      "result": "Leftward movement returns to the known solid lower boundary near the tower."
+    }
+  ],
+  "scene_result": "All four branches remain in SCENE_STATE=0x01, never set the camera state-0x08 flag, and do not satisfy the natural exit predicate (world X>=4744 and world Y<470).",
+  "conclusion": "The lower continuation is a real traversable band connecting the tower region to the far-right lower edge, but it is not the missing vertical exit. The far-right route must use the behavior-0x22/0x24 rope or another connector before the lower edge is reached.",
+  "next_action": "Resume from the verified far-rope and upper-frontier checkpoints; prioritize static/object decoding over more sustained lower-band movement."
+}

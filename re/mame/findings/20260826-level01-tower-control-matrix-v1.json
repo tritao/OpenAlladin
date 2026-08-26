@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-level01-tower-control-matrix-finding-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-tower-control-matrix-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "eb85739ddb58eaa53ef47e64d009bc4e04c84639",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+  "observed": [
+    {
+      "branch": "neutral/a/b/c-a/c-b/down",
+      "result": "The player remains on the lower tower around world X=2718-2749,Y=770. Terrain state stays ordinary after the behavior-0x47 pass, scene state remains 0x01, and no watched scene-gate write occurs."
+    },
+    {
+      "branch": "up-left",
+      "result": "The player retreats through the earlier lower band to world X=2311,Y=824; this is a neighboring traversal branch, not an upward connector."
+    },
+    {
+      "branch": "up-right",
+      "result": "The player drops through the lower continuation to world X=3039,Y=912. This endpoint is retained as the source of the separate lower-continuation campaign."
+    },
+    {
+      "branch": "down-lateral",
+      "result": "The player reaches the lower floor around world X=2755,Y=818 and remains in scene state 0x01."
+    }
+  ],
+  "terrain_result": {
+    "breakpoints": ["0x001AD87E", "0x001AD886", "0x001AD904"],
+    "behavior_0x47": "The context trace confirms the lower tower's behavior-0x47 surface/latch path; it does not raise the scene transition state.",
+    "scene_exit": "No branch reaches SCENE_STATE=0x08 or the natural-exit predicate."
+  },
+  "conclusion": "The compact tower control matrix closes the remaining obvious control-only hypotheses from the activated lamp window. The only positive result is ordinary traversal into the lower continuation; the tower itself is not the missing scene connector.",
+  "next_action": "Continue from the lower continuation and decode the behavior-0x22/0x24 connector records or a different upper-route resource."
+}

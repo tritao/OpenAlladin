@@ -1,0 +1,27 @@
+{
+  "campaign": "20260826-level01-tower-type43-interaction-v1",
+  "status": "recorded-negative",
+  "purpose": "Reopen the pre-conversion lamp checkpoint and test neutral, directional, jump, sword, and apple inputs against the type-0x43 interaction object.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "eb85739ddb58eaa53ef47e64d009bc4e04c84639",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "eb85739ddb58eaa53ef47e64d009bc4e04c84639",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/lamp-approach.sta",
+  "timing_note": "All branches use OPENALADDIN_STATE_SYNC=0 and the same pre-conversion checkpoint. The type-0x43 player-collision target is included in the debugger trace.",
+  "instrumentation": {
+    "breakpoints": ["0x001AE64C"],
+    "trace_logs": "build/re/campaigns/20260826-level01-tower-type43-interaction-v1/*/debug.log"
+  },
+  "segments": [
+    { "id": "neutral", "trace_dir": "build/re/campaigns/20260826-level01-tower-type43-interaction-v1/neutral", "frames": 180, "input": "none*180", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/lamp-approach.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 30, "name": "early" }, { "frame": 90, "name": "interaction-window" }, { "frame": 180, "name": "end" }] },
+    { "id": "up", "trace_dir": "build/re/campaigns/20260826-level01-tower-type43-interaction-v1/up", "frames": 180, "input": "up*60,none*120", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/lamp-approach.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 30, "name": "early" }, { "frame": 90, "name": "interaction-window" }, { "frame": 180, "name": "end" }] },
+    { "id": "c", "trace_dir": "build/re/campaigns/20260826-level01-tower-type43-interaction-v1/c", "frames": 180, "input": "c*1,none*179", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/lamp-approach.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 30, "name": "early" }, { "frame": 90, "name": "interaction-window" }, { "frame": 180, "name": "end" }] },
+    { "id": "a", "trace_dir": "build/re/campaigns/20260826-level01-tower-type43-interaction-v1/a", "frames": 180, "input": "a*1,none*179", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/lamp-approach.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 30, "name": "early" }, { "frame": 90, "name": "interaction-window" }, { "frame": 180, "name": "end" }] },
+    { "id": "b", "trace_dir": "build/re/campaigns/20260826-level01-tower-type43-interaction-v1/b", "frames": 180, "input": "b*1,none*179", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/lamp-approach.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 30, "name": "early" }, { "frame": 90, "name": "interaction-window" }, { "frame": 180, "name": "end" }] },
+    { "id": "c-right", "trace_dir": "build/re/campaigns/20260826-level01-tower-type43-interaction-v1/c-right", "frames": 180, "input": "c+right*1,right*60,none*119", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/lamp-approach.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 30, "name": "early" }, { "frame": 90, "name": "interaction-window" }, { "frame": 180, "name": "end" }] },
+    { "id": "c-left", "trace_dir": "build/re/campaigns/20260826-level01-tower-type43-interaction-v1/c-left", "frames": 180, "input": "c+left*1,left*60,none*119", "load_state": true, "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/lamp-approach.sta", "capture": "state", "actors": true, "scene_state_trace": true, "checkpoints": [{ "frame": 1, "name": "loaded" }, { "frame": 30, "name": "early" }, { "frame": 90, "name": "interaction-window" }, { "frame": 180, "name": "end" }] }
+  ]
+}
