@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-scene-countdown-producers",
+    "purpose": "Recover the actor-collision handlers whose receiving actor types can arm SCENE_SCRIPT_COUNTDOWN=0x20, then compare them with the Level 01 actor inventory."
+  },
+  "targets": [
+    { "address": "0x001AC1D0", "name": "ActorCollisionHandler_Type13" },
+    { "address": "0x001AC2BC", "name": "ActorCollisionHandler_Type10" },
+    { "address": "0x001AC4E8", "name": "ActorCollisionHandler_Type11" },
+    { "address": "0x001AC102", "name": "ActorCollisionHandler_SharedTerminal" },
+    { "address": "0x001AC2E0", "name": "ActorCollisionHandler_Type1D" },
+    { "address": "0x001AC350", "name": "ActorCollisionHandler_Type20" },
+    { "address": "0x001AC458", "name": "ActorCollisionHandler_Type0A" },
+    { "address": "0x001AEC00", "name": "PlayerCollisionBlock" },
+    { "address": "0x001ABD7E", "name": "ActorActorCollisionPass" },
+    { "address": "0x001ABB40", "name": "PlayerActorCollisionPass" },
+    { "address": "0x001AE30A", "name": "ActorInitializeFromTemplate" }
+  ]
+}

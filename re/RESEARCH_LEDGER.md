@@ -534,6 +534,24 @@ The state-`0x08` table entry is the second selector-cycle result at index `1`,
 so it remains a separate scene-table/resource proof rather than the direct
 natural level-01 exit target.
 
+The countdown-producer static audit is recorded in
+`re/mame/findings/20260826-level01-countdown-producer-static-v1.json`. The
+actor-collision table entries for receiving types `0x10`, `0x11`, and `0x13`
+resolve to `0x001AC2BC`, `0x001AC4E8`, and `0x001AC1D0`; the first arms
+`SCENE_SCRIPT_COUNTDOWN=0x20`, the second arms `0x14` after its timed cleanup,
+and the third has no direct scene-countdown or scene-state assignment. The
+known Level 01 runtime inventory contains none of those actor types.
+
+The narrow runtime confirmation is recorded in
+`re/mame/campaigns/20260826-level01-countdown-producer-audit-v1.json`.
+Controller-only guard and juggler branches both complete with no write to
+`0xFFF0E9`, no nonzero scene countdown, and no occurrence of types `0x10`,
+`0x11`, or `0x13`. An initial actor-field watch attempt exited early because
+the optional actor trace expands into a large debugger watch set; the clean
+rerun uses only the single countdown watch and is the authoritative runtime
+result. These generic combat producers are therefore not the current missing
+Level 01 boundary path.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -579,6 +597,7 @@ natural level-01 exit target.
 | `20260826-level01-tower-plain-c-edge-trace-v1` | recorded-negative-frontier | plain-C/Up edge trace from the natural lower-tower lamp checkpoint |
 | `20260826-level01-scene-writer-controlled-current-v1` | recorded-controlled-boundary-write | current-frontier boundary write and negative follow-on writer trace |
 | `20260826-level01-scene-table-index-call-path-v1` | recorded-static-correlation | call path separating the state-08 table cycle from the level-01 boundary writer |
+| `20260826-level01-countdown-producer-audit-v1` | recorded-negative | static and narrow runtime audit of generic actor-collision scene-countdown producers |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

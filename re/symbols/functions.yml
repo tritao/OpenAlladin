@@ -146,6 +146,27 @@
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_actor_combat_targeted_decompile
+0x001AC2BC:
+  name: ActorType10_ActorCollisionHandler
+  confidence: confirmed
+  description: Actor-to-actor collision dispatch target for receiving actor type 0x10 at ROM pointer-table address 0x001EFA. Its terminal branch clears the source and receiving actor resources, arms SCENE_SCRIPT_COUNTDOWN=0x20, and installs the type-0x84 terminal template.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_level01_countdown_producer_decompile
+0x001AC4E8:
+  name: ActorType11_ActorCollisionHandler
+  confidence: confirmed
+  description: Actor-to-actor collision dispatch target for receiving actor type 0x11 at ROM pointer-table address 0x001EFE. Its timed cleanup branch arms SCENE_SCRIPT_COUNTDOWN=0x14 and does not directly assign SCENE_STATE.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_level01_countdown_producer_decompile
+0x001AC1D0:
+  name: ActorType13_ActorCollisionHandler
+  confidence: confirmed
+  description: Actor-to-actor collision dispatch target for receiving actor type 0x13 at ROM pointer-table address 0x001F06. Its recovered special cleanup path has no direct SCENE_SCRIPT_COUNTDOWN or SCENE_STATE assignment.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_level01_countdown_producer_decompile
 0x001AC318:
   name: ActorType1E_ActorCollisionHandler
   confidence: confirmed

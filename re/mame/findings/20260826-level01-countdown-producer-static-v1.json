@@ -1,0 +1,53 @@
+{
+  "format": "openaladdin-level01-countdown-producer-static-v1",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level01-countdown-producer-targets.json",
+  "decompile_artifact": "build/re/level01-countdown-producer-targeted-decompile.json",
+  "dispatch_table": {
+    "address": "0x001EBA",
+    "indexing": "Four-byte pointers indexed by the receiving actor type byte during Actor_ActorCollisionPass at 0x001ABD7E.",
+    "entries": [
+      {
+        "actor_type": "0x10",
+        "entry": "0x001EFA",
+        "target": "0x001AC2BC",
+        "result": "The terminal branch clears the source, processes the shared type-0x2D interaction, and arms SCENE_SCRIPT_COUNTDOWN=0x20 before replacing the receiving record with the type-0x84 terminal template."
+      },
+      {
+        "actor_type": "0x11",
+        "entry": "0x001EFE",
+        "target": "0x001AC4E8",
+        "result": "The special cleanup path emits its response and, after the receiving actor timer reaches zero, arms SCENE_SCRIPT_COUNTDOWN=0x14. It does not directly assign SCENE_STATE."
+      },
+      {
+        "actor_type": "0x13",
+        "entry": "0x001F06",
+        "target": "0x001AC1D0",
+        "result": "The special cleanup path clears/reinitializes the receiving record and has no direct SCENE_SCRIPT_COUNTDOWN or SCENE_STATE assignment in the recovered body."
+      }
+    ]
+  },
+  "shared_producers": [
+    {
+      "address": "0x001AC102",
+      "result": "Arms SCENE_SCRIPT_COUNTDOWN=0x20 after its receiving actor timer expires, then installs the type-0x84 terminal template."
+    },
+    {
+      "address": "0x001AC350",
+      "result": "Arms SCENE_SCRIPT_COUNTDOWN=0x20 on its terminal branch when the receiving actor type is 0x10, 0x11, or 0x13."
+    },
+    {
+      "address": "0x001AC458",
+      "result": "Arms SCENE_SCRIPT_COUNTDOWN=0x20 on its terminal branch when the receiving actor type is 0x10, 0x11, or 0x13."
+    },
+    {
+      "address": "0x001AEC00",
+      "result": "The player-collision block arms SCENE_SCRIPT_COUNTDOWN=0x20 for receiving actor types 0x10 or 0x11, excluding type 0x18 and taking type 0x13 through a separate handler."
+    }
+  ],
+  "static_conclusion": "The actor-collision countdown producers are generic combat/terminal paths. The type-0x10, type-0x11, and type-0x13 dispatch entries are distinct from the Level 01 actors observed so far, and none of these handlers directly writes SCENE_STATE."
+}
