@@ -502,6 +502,18 @@ target `0x001B56B6` are both absent. This closes the plain-C timing family at
 this checkpoint and moves the investigation back to static scene-writer
 coverage and the unresolved Type-0x1E interaction family.
 
+The scene-writer coverage is recorded in
+`re/mame/findings/20260826-level01-scene-writer-coverage-v1.json`. The
+recovered writer set separates the level-01 boundary predicate at
+`0x001B5B4A` (which only arms `FFF0E9=FF`) from the script writer at
+`0x001A8ED2` and the table-state writer at `0x001B3F0A`. The initial script
+record range contains no `0x08` state operand; the recovered `SCENE_STATE=08`
+source is the scene-table entry at index 1, ROM `0x004B0E`. The controlled
+boundary proof writes state `0x03` with table index `0`, while the controlled
+state-08 selector writes `0x08` only after table index `1` is selected. The
+remaining natural question is therefore how normal level progression reaches
+that selector/index state.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |

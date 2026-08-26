@@ -1,0 +1,93 @@
+{
+  "format": "openaladdin-level01-scene-writer-coverage-finding-v1",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_analysis": "b15e381",
+  "static_sources": {
+    "decompile_report": "build/re/level-transition-targeted-decompile-v2.json",
+    "scene_table_report": "build/re/scene_transitions.json",
+    "scene_table_metadata": "re/assets/scene_transitions.yml",
+    "target_request": "re/ghidra/targets/level-transition-targets.json"
+  },
+  "scene_state_writers": [
+    {
+      "address": "0x001A8ED2",
+      "name": "SceneScript_AdvanceState state-byte write",
+      "source": "SCENE_SCRIPT_CURSOR",
+      "effect": "Consumes the current script record and stores its following word/byte as SCENE_STATE when the opcode gate accepts it."
+    },
+    {
+      "address": "0x001B3F0A",
+      "name": "SceneTable_SelectNextState table-state write",
+      "source": "ROM 0x004B04 + SCENE_TABLE_INDEX * 6 + 4",
+      "effect": "Loads the selected scene-table entry state byte and increments SCENE_TABLE_INDEX."
+    },
+    {
+      "address": "0x001B315C",
+      "name": "SceneScript_CompleteToState1",
+      "source": "constant",
+      "value": "0x01",
+      "effect": "Completes a pending script and restores the active scene state before selecting the next table record."
+    },
+    {
+      "address": "0x001B4F7C",
+      "name": "Scene_ResetToState0",
+      "source": "constant",
+      "value": "0x00",
+      "effect": "Resets the scene system to the initial state."
+    }
+  ],
+  "level01_boundary": {
+    "routine": "0x001B5B4A",
+    "predicate": "PLAYER_WORLD_X > 0x1287 && PLAYER_WORLD_Y < 0x01D6",
+    "write": {
+      "address": "0x00FFF0E9",
+      "value": "0xFF",
+      "pc": "0x001B5B66",
+      "meaning": "Arms the scene-script countdown; it does not assign SCENE_STATE."
+    }
+  },
+  "transition_table": {
+    "address": "0x004B04",
+    "entry_size": 6,
+    "entries": [
+      { "index": 0, "pointer": "0x004B1C", "state": "0x00" },
+      { "index": 1, "pointer": "0x005930", "state": "0x08" },
+      { "index": 2, "pointer": "0x005226", "state": "0x02" },
+      { "index": 3, "pointer": "0x00603A", "state": "0x04" }
+    ],
+    "state08_source": "entry index 1, ROM address 0x004B0E"
+  },
+  "initial_script": {
+    "rom_range": "0x004080-0x0040B7",
+    "cursor_at_level01_boundary": "0x004082",
+    "state_values_recovered_from_records": ["0x00", "0x01", "0xFF"],
+    "state08_operand_present": false,
+    "meaning": "The recovered initial script contains control opcodes and state operands, but no state-0x08 operand."
+  },
+  "runtime_correlation": {
+    "controlled_boundary_probe": {
+      "countdown_write": "0x001B5B66 -> FFF0E9=0xFF",
+      "script_state_write": "0x001A8ED8 -> SCENE_STATE=0x03",
+      "scene_table_index": "0x00",
+      "source": "re/mame/findings/level-transition-findings.json"
+    },
+    "controlled_state08_selector": {
+      "setup": "SCENE_TABLE_INDEX=1 before the selector's delayed commit",
+      "table_state_write": "0x001B3F0C -> SCENE_STATE=0x08",
+      "table_index_after": "0x02",
+      "source": "re/mame/findings/level-transition-findings.json"
+    }
+  },
+  "conclusion": {
+    "verified": [
+      "The level-01 boundary predicate and the SCENE_STATE writer are separate operations.",
+      "The natural boundary's recovered script path writes state 0x03 in the controlled boundary proof, not state 0x08.",
+      "Within the recovered scene-table/script path, state 0x08 is supplied by table entry index 1 at ROM 0x004B0E.",
+      "The four requested player exit-gate bytes are transition inputs/cleanup state, not the direct state-08 source."
+    ],
+    "unresolved": "The gameplay condition that causes SCENE_TABLE_INDEX to reach 1 in the full level progression is still not observed from controller-only traversal."
+  },
+  "next_action": "Trace SCENE_TABLE_INDEX and SCENE_SCRIPT_CURSOR across the first level boundary and the pending-script completion path; prioritize any natural call to SceneTable_SelectNextState rather than more launch-button guessing."
+}
