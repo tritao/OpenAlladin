@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-upper-frontier-spawn-dispatch",
+    "purpose": "Decode the scene/object dispatch path that selects the static actor records observed near world x=4512..4688 and identify the remaining upper-route launch or interaction condition."
+  },
+  "targets": [
+    { "address": "0x001B5270", "name": "LevelObjectSpawnDispatcher" },
+    { "address": "0x001B5266", "name": "LevelObjectSpawnEntry" },
+    { "address": "0x001B535A", "name": "LevelObjectType140Dispatcher" },
+    { "address": "0x001B3E22", "name": "SceneActorSpawnEntry" },
+    { "address": "0x001B3C0E", "name": "SceneActorLoadEntry" },
+    { "address": "0x001B3C2A", "name": "SceneActorLoadEntry2" },
+    { "address": "0x001AD00E", "name": "AnimationVM_SpawnOrCopyActor" },
+    { "address": "0x001AF4D6", "name": "ActorType132InteractionSpawn" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },
+    { "address": "0x00FFAE87", "name": "INTERACTION_TABLE_RUNTIME" }
+  ]
+}

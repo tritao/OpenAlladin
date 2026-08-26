@@ -309,7 +309,7 @@ return function(options)
 
     if options.trace_actor_initializers then
         local initializer_action =
-            "printf \"OPENALADDIN_ACTOR_INIT DEST=%08X SOURCE=%08X A2=%08X PC=%08X RETURN=%08X\\n\",a5,a6,a2,pc,d@sp ; g"
+            "printf \"OPENALADDIN_ACTOR_INIT DEST=%08X SOURCE=%08X A2=%08X PC=%08X RETURN=%08X FRAME=%08X\\n\",a5,a6,a2,pc,d@sp,frame ; g"
         cpu.debug:bpset(symbol("Actor_InitializeFromTemplate"), "", initializer_action)
     end
 
