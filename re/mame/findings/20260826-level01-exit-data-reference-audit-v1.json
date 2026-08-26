@@ -1,0 +1,114 @@
+{
+  "format": "openaladdin-level01-exit-data-reference-audit-finding-v1",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_analysis": "f23946c",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "method": {
+    "script": "re/ghidra/scripts/ExportDataReferences.py",
+    "request": "re/ghidra/targets/level01-exit-data-reference-request.json",
+    "report": "build/re/level01-exit-data-references.json",
+    "decompile_report": "build/re/exit-gate-write-decompile-current.json",
+    "reference_count": 138,
+    "scope": "All Ghidra code/data references to the scene, player-transition, and scene-script RAM symbols used by the Level 01 exit investigation."
+  },
+  "write_references": {
+    "PLAYER_TRANSITION_GATE_0xFFF0D0": [
+      { "pc": "0x001A98C0", "function": "FUN_001a986e", "instruction": "st (0x00fff0d0).l" },
+      { "pc": "0x001A9922", "function": "FUN_001a986e", "instruction": "st (0x00fff0d0).l" },
+      { "pc": "0x001A996A", "function": "FUN_001a986e", "instruction": "st (0x00fff0d0).l" },
+      { "pc": "0x001A9972", "function": "FUN_001a986e", "instruction": "clr.b (0x00fff0d0).l" },
+      { "pc": "0x001B539A", "function": "TerrainHandler_LandingResponseBlock", "instruction": "st (0x00fff0d0).l" }
+    ],
+    "PLAYER_TRANSITION_LOCK_0xFFF0DB": [
+      { "pc": "0x001B1E66", "function": "Terrain_ResolvePlayerCell", "instruction": "clr.b (0x00fff0db).l" },
+      { "pc": "0x001B5562", "function": "TerrainHandler_StopAndAlignPlayerBlock", "instruction": "move.b #0x1,(0x00fff0db).l" }
+    ],
+    "PLAYER_TRANSITION_COUNTDOWN_0xFFF0DC": [
+      { "pc": "0x001B1E74", "function": "Terrain_ResolvePlayerCell", "instruction": "subq.b #0x1,(0x00fff0dc).l" },
+      { "pc": "0x001B569C", "function": "TerrainHandler_SnapToGridBlock", "instruction": "move.b #0x4,(0x00fff0dc).l" }
+    ],
+    "PLAYER_TERMINAL_TRANSITION_0xFFF0E6": [
+      { "pc": "0x001A8F34", "function": "FUN_001a8f0c", "instruction": "subq.b #0x1,(0x00fff0e6).l" },
+      { "pc": "0x001A8F3E", "function": "FUN_001a8f0c", "instruction": "clr.b (0x00fff0e6).l" },
+      { "pc": "0x001A8F7A", "function": "FUN_001a8f0c", "instruction": "clr.b (0x00fff0e6).l" },
+      { "pc": "0x001A9020", "function": "FUN_001a8f0c", "instruction": "clr.b (0x00fff0e6).l" },
+      { "pc": "0x001B042A", "function": "FUN_001b03f2", "instruction": "move.b #0xa,(0x00fff0e6).l" },
+      { "pc": "0x001B5318", "function": "TerrainHandler_SetTerminalCollisionBlock", "instruction": "st (0x00fff0e6).l" },
+      { "pc": "0x001B53B8", "function": "FUN_001b53b8", "instruction": "move.b #0x20,(0x00fff0e6).l" }
+    ],
+    "SCENE_SCRIPT_COUNTDOWN_0xFFF0E9": [
+      { "pc": "0x001A8E52", "function": "SceneScript_AdvanceState", "instruction": "subq.b #0x1,(0x00fff0e9).l" },
+      { "pc": "0x001A8F74", "function": "FUN_001a8f0c", "instruction": "st (0x00fff0e9).l" },
+      { "pc": "0x001A9026", "function": "FUN_001a8f0c", "instruction": "st (0x00fff0e9).l" },
+      { "pc": "0x001AC4A2", "function": "FUN_001ac4a2", "instruction": "move.b #0x20,(0x00fff0e9).l" },
+      { "pc": "0x001AE600", "function": "Player_ProcessInteractionState", "instruction": "move.b #0x32,(0x00fff0e9).l" },
+      { "pc": "0x001AED04", "function": "Actor_HandlePlayerCollisionBlock", "instruction": "move.b #0x20,(0x00fff0e9).l" },
+      { "pc": "0x001B02AC", "function": "FUN_001b01ac", "instruction": "move.b #-0x4c,(0x00fff0e9).l" },
+      { "pc": "0x001B0B38", "function": "FUN_001b0a46", "instruction": "st (0x00fff0e9).l" },
+      { "pc": "0x001B5B3A", "function": null, "instruction": "move.b #0x1,(0x00fff0e9).l" },
+      { "pc": "0x001B5C18", "function": null, "instruction": "st (0x00fff0e9).l" },
+      { "pc": "0x001B624E", "function": null, "instruction": "move.b #0x1,(0x00fff0e9).l" },
+      { "pc": "0x001B7830", "function": null, "instruction": "move.b #-0x38,(0x00fff0e9).l" }
+    ],
+    "SCENE_STATE_0xFF7E26": [
+      { "pc": "0x001A8ED2", "function": "SceneScript_AdvanceState", "instruction": "move.b D0b,(0x00ff7e26).l" },
+      { "pc": "0x001AA39A", "function": "FUN_001aa344", "instruction": "move.b #0x1,(0x00ff7e26).l" },
+      { "pc": "0x001AA44A", "function": "FUN_001aa41c", "instruction": "move.b #0x1,(0x00ff7e26).l" },
+      { "pc": "0x001B0588", "function": "FUN_001a8f0c", "instruction": "move.b #0x1,(0x00ff7e26).l" },
+      { "pc": "0x001B2DB8", "function": "Scene_EnterTransitionMode", "instruction": "move.b D0b,(0x00ff7e26).l" },
+      { "pc": "0x001B2DD8", "function": "Scene_EnterTransitionMode", "instruction": "move.b D0b,(0x00ff7e26).l" },
+      { "pc": "0x001B318E", "function": "SceneScript_CompleteToState1", "instruction": "move.b #0x1,(0x00ff7e26).l" },
+      { "pc": "0x001B3F0A", "function": "SceneTable_SelectNextState", "instruction": "move.b (0x4,A0,D7w*0x1),(0x00ff7e26).l" },
+      { "pc": "0x001B4FDC", "function": "Scene_ResetToState0", "instruction": "clr.b (0x00ff7e26).l" }
+    ],
+    "SCENE_SCRIPT_CURSOR_0xFFF572": [
+      { "pc": "0x001A8ECC", "function": "SceneScript_AdvanceState", "instruction": "move.l A0,(0x00fff572).l" },
+      { "pc": "0x001AA440", "function": "FUN_001aa41c", "instruction": "move.l #0x4082,(0x00fff572).l" }
+    ],
+    "SCENE_SCRIPT_DATA_0xFFF576": [
+      { "pc": "0x001B3178", "function": "SceneScript_CompleteToState1", "instruction": "move.l A0,(0x00fff576).l" },
+      { "pc": "0x001B3F02", "function": "SceneTable_SelectNextState", "instruction": "move.l (0x0,A0,D7w*0x1),(0x00fff576).l" }
+    ],
+    "SCENE_TABLE_INDEX_0xFFF57A": [
+      { "pc": "0x001AA394", "function": "FUN_001aa344", "instruction": "clr.w (0x00fff57a).l" },
+      { "pc": "0x001B3F1C", "function": "SceneTable_SelectNextState", "instruction": "move.w D7w,(0x00fff57a).l" },
+      { "pc": "0x001B3F2E", "function": "SceneTable_SelectNextState", "instruction": "clr.w (0x00fff57a).l" }
+    ],
+    "SCENE_SCRIPT_PENDING_0xFFF57C": [
+      { "pc": "0x001A8B24", "function": "Reset", "instruction": "move.b #0x0,(0x00fff57c).l" },
+      { "pc": "0x001AA38C", "function": "FUN_001aa344", "instruction": "move.b #0x0,(0x00fff57c).l" },
+      { "pc": "0x001B3EEC", "function": "SceneTable_SelectNextState", "instruction": "move.b #0x1,(0x00fff57c).l" }
+    ],
+    "SCENE_SCRIPT_WAIT_0xFFF005": [
+      { "pc": "0x001B5B42", "function": null, "instruction": "st (0x00fff005).l" }
+    ]
+  },
+  "negative_static_results": [
+    "No code reference in the exported set writes SCENE_SCRIPT_GATE at 0xFFF176.",
+    "No direct code write to SCENE_STATE=0x08 exists; the only static source for 0x08 is the scene table byte at ROM 0x004B0E, consumed by SceneTable_SelectNextState.",
+    "SCENE_TABLE_INDEX is initialized at boot and changed only by SceneTable_SelectNextState in the analyzed program.",
+    "SCENE_SCRIPT_CURSOR is written only by SceneScript_AdvanceState and boot initialization; there is no separate Level 01 exit cursor writer.",
+    "SCENE_SCRIPT_DATA is written only by SceneScript_CompleteToState1 and SceneTable_SelectNextState."
+  ],
+  "correlation_with_runtime": {
+    "natural_boundary_writer": "0x001B5B66 -> SCENE_SCRIPT_COUNTDOWN=0xFF when Level 01 world X is beyond 0x1287 and world Y is below 0x1D6.",
+    "controlled_boundary_result": "The clean-upper-platform controlled replay subsequently observed 0x001A8ED2 -> SCENE_STATE=0x03 while SCENE_TABLE_INDEX remained 0x00.",
+    "state03_resource_order": "The state-03 replay enters the visual transition path at 0x001B1486 and performs transition RNC loads; it does not call SceneTable_SelectNextState or the state-03 SceneResource_Dispatch entry in that replay.",
+    "current_frontier_result": "The current upper-frontier fixture observed the boundary countdown write but did not reach a follow-on SCENE_STATE writer within its capture window."
+  },
+  "conclusion": {
+    "verified": [
+      "The exit investigation now has a complete static write inventory for all requested scene and transition variables.",
+      "The Level 01 boundary path and the scene-table state-08 path are distinct mechanisms in the recovered ROM.",
+      "Terrain, interaction, and terminal-transition handlers are the remaining candidate producers for transition gates, but static references alone do not establish that any of them is the natural Level 01 boundary path."
+    ],
+    "not_yet_proven": [
+      "A controller-only natural run reaching the Level 01 boundary and completing the state-03 transition.",
+      "The runtime conditions that cause SCENE_TABLE_INDEX to become 1 in a real game flow.",
+      "Whether any terminal-transition handler is involved in a normal Level 01 exit rather than death, collision, or scripted interaction."
+    ]
+  },
+  "next_action": "Use the static write inventory to instrument the natural Level 01 route once more, with breakpoints on Scene_EnterTransitionMode and the terminal-transition producers, while treating the known 0x001B5B66 -> 0x001A8ED2 -> SCENE_STATE=0x03 sequence as the expected boundary signature."
+}

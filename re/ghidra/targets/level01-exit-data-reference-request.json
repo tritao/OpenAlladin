@@ -1,0 +1,17 @@
+{
+  "output": "/home/joao/dev/OpenAlladin/build/re/level01-exit-data-references.json",
+  "targets": [
+    { "address": "0x00FFF0D0", "name": "PLAYER_TRANSITION_GATE" },
+    { "address": "0x00FFF0DB", "name": "PLAYER_TRANSITION_LOCK" },
+    { "address": "0x00FFF0DC", "name": "PLAYER_TRANSITION_COUNTDOWN" },
+    { "address": "0x00FFF0E6", "name": "PLAYER_TERMINAL_TRANSITION" },
+    { "address": "0x00FFF0E9", "name": "SCENE_SCRIPT_COUNTDOWN" },
+    { "address": "0x00FF7E26", "name": "SCENE_STATE" },
+    { "address": "0x00FFF572", "name": "SCENE_SCRIPT_CURSOR" },
+    { "address": "0x00FFF576", "name": "SCENE_SCRIPT_DATA" },
+    { "address": "0x00FFF57A", "name": "SCENE_TABLE_INDEX" },
+    { "address": "0x00FFF57C", "name": "SCENE_SCRIPT_PENDING" },
+    { "address": "0x00FFF005", "name": "SCENE_SCRIPT_WAIT" },
+    { "address": "0x00FFF176", "name": "SCENE_SCRIPT_GATE" }
+  ]
+}
