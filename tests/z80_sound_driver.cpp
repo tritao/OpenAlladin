@@ -36,7 +36,7 @@ struct Fixture {
             0xC0, 0x6A, 0x4B,  // operand A = 0, control 6A(arg 4B)
             0x6D,              // no-argument control
             0x61, 0x00,        // control 61(arg 00)
-            0x98, 0xD8, 0x30,  // operand B = -0x618, note 30
+            0x98, 0x98, 0x30,  // operand B = -0x618, note 30
             0x60,              // end track
         };
         for (std::size_t i = 0; i < stream.size(); ++i) {
