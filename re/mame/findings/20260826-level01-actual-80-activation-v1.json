@@ -6,9 +6,9 @@
     "path": "rom/Disneys_Aladdin_U_p1.bin",
     "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
   },
-  "repository_commit_at_capture": "995bc5031a587c2af0d463510bef96507d10fc1e",
+  "repository_commit_at_capture": "afe4bec",
   "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
-  "trace_harness_commit": "995bc5031a587c2af0d463510bef96507d10fc1e",
+  "trace_harness_commit": "afe4bec",
   "static_source": "re/mame/findings/20260826-level01-interaction-inventory-v1.json",
   "target_record": {
     "map_cell": [249, 14],
@@ -45,13 +45,30 @@
   "runtime_observation": {
     "scene_states_observed": ["0x01"],
     "scene_countdown_nonzero": false,
-    "expected_handler_dispatch_observed": false,
+    "natural_handler_dispatch_observed": false,
+    "controlled_handler_dispatch_observed": true,
     "other_interaction_observed": "The broad actual-80 trace reports an interaction edge to 0x001B735E (selector 0x60 path), not the expected 0x001B6F0C target.",
     "targeted_endpoint": {
       "trace": "build/re/campaigns/20260826-level01-row15-activation-v1/actual-80-targeted-v2",
       "frames": 12,
       "final_world": [3950, 466],
       "final_scene_state": "0x01"
+    },
+    "exact_row_pointer_dispatch": {
+      "trace": "build/re/diagnostics/actual80-breakpoint-pointer-v2",
+      "setup": "Loaded the Level 01 entry state, positioned the player/camera fields at the target record, and redirected the live row pointer at the refill breakpoint to FF22C2, whose source map word is 0x5630.",
+      "refill_breakpoint": "0x001AE3FC",
+      "breakpoint_write": "FF7DAC=FF22C2:u32",
+      "source_row_word": "FF22C2=0x5630",
+      "selector_cell": "FFD99F=0x80",
+      "machine_frame": "0x04DE",
+      "handler": "0x001B6F0C",
+      "handler_pc_after_entry": "0x001B6F0E",
+      "handler_return": "0x001AE46E",
+      "handler_a0": "0x00FF22C2",
+      "runtime_interaction": "0x80",
+      "log_evidence": "build/re/diagnostics/actual80-breakpoint-pointer-v2/debug.log:7-9",
+      "meaning": "The row processor consumed the exact Level 01 source word through the redirected live row pointer and dispatched selector 0x80 to its handler. The player/camera state remains controlled, so this upgrades the result to an exact-record controlled dispatch proof; it is still not a natural-route observation."
     }
   },
   "dispatch_proof": {
@@ -81,5 +98,5 @@
     "scene_countdown_nonzero": false,
     "meaning": "The interaction handler table and row-refill path can dispatch selector 0x80 to 0x001B6F0C. The row word/index in this artificial run is not the Level 01 map record 0x5630/0x2B18, so this is a path-activation proof rather than proof of a natural dispatch at world (3984,464)."
   },
-  "conclusion": "The intended Level 01 table byte is present at 0x00FFD99F, and the earlier fixed-cell attempt did not activate the handler because it did not cross the camera-refill caller's deadband. Static caller analysis and the controlled camera-refill trace now prove that selector 0x80 reaches 0x001B6F0C. The natural route and exact map-record activation remain unresolved; the next experiment must preserve a natural camera scroll/refill or directly reproduce the exact row-pointer context for map word 0x5630, then trace the generic actor spawn and FFF104 effect."
+  "conclusion": "The intended Level 01 table byte is present at 0x00FFD99F. Static caller analysis and the controlled camera-refill trace prove that selector 0x80 reaches 0x001B6F0C, and the exact-row-pointer probe reproduces the 0x5630 source record at the live dispatch boundary. The natural route and natural map-record activation remain unresolved; the next experiment should preserve a natural camera scroll/refill and trace the generic actor spawn plus FFF104 effect."
 }

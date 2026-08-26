@@ -600,13 +600,16 @@ caller decompilation is recorded in
 shows that these row processors are refill-triggered, not unconditional
 per-frame scans. A follow-up controlled refill run then observed the edge
 `0x001AE46E -> 0x001B6F0C` at machine frame `0x118F`, proving the selector's
-handler is live. Because that run used artificial camera state and dispatched
-row word `0x1180` rather than the target map word `0x5630`, it proves path
-activation but not a natural Level 01 activation at `(3984,464)`.
+handler is live. The reproducible probe
+`build/re/diagnostics/actual80-breakpoint-pointer-v2` then redirected
+`INTERACTION_ROW_POINTER` (`FF7DAC`) to `FF22C2`, whose source word is the exact
+target `0x5630`, and observed handler entry at machine frame `0x04DE` with
+selector `0x80`. This is now an exact-record controlled dispatch proof, while
+the natural Level 01 route and natural activation at `(3984,464)` remain
+unresolved.
 
 The next experiment is therefore to preserve a natural camera scroll across
-the `(249,14)` window, or reproduce the exact row-pointer/index context at a
-refill boundary, and trace the handler's generic spawn plus `FFF104` effect.
+the `(249,14)` window and trace the handler's generic spawn plus `FFF104` effect.
 
 ## Campaign index
 
@@ -656,7 +659,7 @@ refill boundary, and trace the handler's generic spawn plus `FFF104` effect.
 | `20260826-level01-countdown-producer-audit-v1` | recorded-negative | static and narrow runtime audit of generic actor-collision scene-countdown producers |
 | `20260826-level01-surface-mode-audit-v1` | recorded-static-correlation | behavior-0x47 terrain-resource mode toggle and landing-resolver offset correlation |
 | `20260826-level01-canonical-recording-v11` | recorded-negative | ten complete hold-jump transfer-delay traces from the far-rope checkpoint |
-| `20260826-level01-actual-80-activation-v1` | partial-negative | forced runtime activation attempt for the sole Level 01 interaction selector 0x80 |
+| `20260826-level01-actual-80-activation-v1` | recorded-controlled | exact-row controlled dispatch proof for the sole Level 01 interaction selector 0x80; natural activation unresolved |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
