@@ -435,13 +435,7 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         sound_requests_.push_back(read_rom8(cursor + 1));
         cursor += 2;
         return false;
-    case 0xF4:
-        // Conditional branches publish their target as the next animation
-        // cursor.  The ROM resumes at that target on the following actor
-        // tick; executing a second command from the target in this pass
-        // collapses two animation phases into one.
-        compare_command(cursor);
-        return true;
+    case 0xF4: compare_command(cursor); return false;
     case 0xF5:
         // AnimationVM_SpawnOrCopyActor (0x001AD00E) consumes a fixed 16-byte
         // record. Keep the request lossless here; Engine applies the ROM

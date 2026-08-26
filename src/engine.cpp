@@ -3387,10 +3387,18 @@ void Engine::update(const InputState& input) {
         last_ground_direction_ = 0;
     }
 
+    const auto landing_contour = level_.query_player_contour(
+        player_world_x(), player_world_y(), player_.terrain_surface_mode);
+    const bool landing_approach =
+        !player_.grounded
+        && player_.vy > 0
+        && player_.terrain_vertical_stop != 0
+        && landing_contour.valid
+        && std::abs(landing_contour.target_world_y - player_world_y()) <= 8;
     const bool landing_event = just_landed || landed_during_frame;
     SpritePose desired_pose = SpritePose::Idle;
     if (!player_.grounded) {
-        desired_pose = SpritePose::Jump;
+        desired_pose = landing_approach ? SpritePose::Landing : SpritePose::Jump;
     } else if (landing_event
                || (animation_.pose() == SpritePose::Landing && !animation_.finished())) {
         desired_pose = SpritePose::Landing;
@@ -3408,7 +3416,12 @@ void Engine::update(const InputState& input) {
     AnimationContext vm_context = animation_context;
     if (desired_pose == SpritePose::Jump && player_.terrain_response_active != 0) {
         vm_context.player_vy = player_.vy;
+        // FFF0C1 is cleared while the active-response jump is airborne. The
+        // native terrain mirror retains the launch contour for landing
+        // resolution, so keep the VM's selector input at the ROM value.
+        vm_context.selector.landing_state = 0;
     }
+    const std::uint32_t frame_pointer_before_landing_selection = animation_.frame_pointer();
     if (!stable_terrain_handler_fixture) {
         animation_.update(
             desired_pose,
@@ -3423,6 +3436,15 @@ void Engine::update(const InputState& input) {
             // the common VM pass on this boundary. Keep that root visible for
             // one frame, then resume the cursor reached by the pass.
             animation_.republish_stream_root();
+        }
+
+        if (landing_approach) {
+            // The ROM selects the landing root after the common VM pass. The
+            // root is visible immediately, but its frame pointer is still the
+            // jump frame until the next actor tick consumes the landing
+            // stream.
+            animation_.select_locomotion_stream(SpritePose::Landing, vm_context);
+            animation_.set_frame_pointer(frame_pointer_before_landing_selection);
         }
 
         // The grounded Up branch at 0x001AA0AE is a post-VM selector. It
