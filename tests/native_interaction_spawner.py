@@ -45,7 +45,14 @@ def main() -> int:
     captured = states(OUTPUT)
     assert [actor["slot"] for actor in captured[0]["actors"]] == [0]
 
-    actor = next(actor for actor in captured[1]["actors"] if actor["slot"] == 20)
+    # Interaction refill runs after the current actor-animation traversal, so
+    # the newly allocated record exposes its template root for one boundary.
+    first_visible = next(actor for actor in captured[1]["actors"] if actor["slot"] == 20)
+    assert first_visible["animation_pc"] == 0x00123B38
+
+    # The following shared traversal performs the actor's first animation
+    # tick, entering the stream decoded by the MAME side-effect finding.
+    actor = next(actor for actor in captured[2]["actors"] if actor["slot"] == 20)
     assert actor["type"] == 0x87
     assert actor["x"] == 3952
     assert actor["y"] == 464
