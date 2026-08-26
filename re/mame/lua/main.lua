@@ -561,8 +561,11 @@ if state_sync then
     local function sync_memory(width, name)
         return string.format(":maincpu.%s@$%06X", width, symbol(name))
     end
+    local function sync_address(width, address)
+        return string.format(":maincpu.%s@$%06X", width, address)
+    end
     local sync_action = string.format(
-        "printf \"OPENALADDIN_SYNC frame=%%d pc=%%08X x=%%04X y=%%04X wx=%%04X wy=%%04X vx=%%04X vy=%%04X grounded=%%02X frameptr=%%08X facing=%%02X animpc=%%08X animtimer=%%02X camx=%%04X camy=%%04X refx=%%04X refy=%%04X sx=%%04X sy=%%04X thx=%%04X thy=%%04X delay=%%02X special=%%02X\\n\",frame,pc,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s ; g",
+        "printf \"OPENALADDIN_SYNC frame=%%d pc=%%08X x=%%04X y=%%04X wx=%%04X wy=%%04X vx=%%04X vy=%%04X grounded=%%02X frameptr=%%08X facing=%%02X animpc=%%08X animtimer=%%02X camx=%%04X camy=%%04X refx=%%04X refy=%%04X sx=%%04X sy=%%04X thx=%%04X thy=%%04X delay=%%02X special=%%02X selgate=%%02X selterminal=%%02X selcountdown=%%02X sellock=%%02X selresponse=%%02X sellanding=%%02X selgate2=%%02X seltranslock=%%02X selstate=%%02X selmode=%%02X selflag=%%02X seltransresponse=%%02X selde=%%02X seldf=%%02X selspecial=%%02X sellatch=%%02X selanimation=%%02X selee=%%02X selef=%%02X self0=%%02X sel101=%%02X selhresponse=%%04X seltimer=%%02X selpending=%%02X sellock2=%%02X\\n\",frame,pc,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s ; g",
         sync_memory("w", "PLAYER_X"),
         sync_memory("w", "PLAYER_Y"),
         sync_memory("w", "PLAYER_WORLD_X"),
@@ -583,7 +586,32 @@ if state_sync then
         sync_memory("w", "CAMERA_HORIZONTAL_THRESHOLD"),
         sync_memory("w", "CAMERA_VERTICAL_THRESHOLD"),
         sync_memory("b", "CAMERA_UPDATE_DELAY"),
-        sync_memory("b", "CAMERA_SPECIAL_MODE")
+        sync_memory("b", "CAMERA_SPECIAL_MODE"),
+        sync_address("b", 0xFFF0E7),
+        sync_address("b", 0xFFF0E6),
+        sync_address("b", 0xFFF0E9),
+        sync_address("b", 0xFFF0F2),
+        sync_address("b", 0xFFF0BE),
+        sync_address("b", 0xFFF0C1),
+        sync_address("b", 0xFFF0D0),
+        sync_address("b", 0xFFF0D7),
+        sync_address("b", 0xFFF0DB),
+        sync_address("b", 0xFFF0CD),
+        sync_address("b", 0xFFF0D2),
+        sync_address("b", 0xFFF0D4),
+        sync_address("b", 0xFFF0DE),
+        sync_address("b", 0xFFF0DF),
+        sync_address("b", 0xFFF173),
+        sync_address("b", 0xFFF115),
+        sync_address("b", 0xFFF0ED),
+        sync_address("b", 0xFFF0EE),
+        sync_address("b", 0xFFF0EF),
+        sync_address("b", 0xFFF0F0),
+        sync_address("b", 0xFFF101),
+        sync_address("w", 0xFFF0B0),
+        sync_address("b", 0xFFF0CC),
+        sync_address("b", 0xFFEFFF),
+        sync_address("b", 0xFFF11F)
     )
     -- Gameplay and title/scene modes use different outer loops. VBlankInterrupt
     -- is hit once per emulated frame after the gameplay work

@@ -15,6 +15,7 @@ constexpr std::uint32_t kJumpStream = 0x001221B0;
 constexpr std::uint32_t kLandingStream = 0x00121F84;
 constexpr std::uint32_t kResponseStream = 0x00121FA6;
 constexpr std::uint32_t kResponseRecoveryStream = 0x00121FA0;
+constexpr std::uint32_t kResponseStreamEnd = 0x00121FD4;
 constexpr std::uint32_t kInteractionStopStream = 0x001226CE;
 constexpr std::uint32_t kInteractionSpecialStream = 0x001226B2;
 
@@ -77,6 +78,14 @@ bool is_command(std::uint8_t value) { return value >= 0xEA && value <= 0xFE; }
 
 bool is_response_root(std::uint32_t stream_entry) {
     return stream_entry == kResponseStream || stream_entry == kResponseRecoveryStream;
+}
+
+bool is_response_stream_cursor(std::uint32_t cursor) {
+    // 0x121FA0 is the short recovery stream and 0x121FA6 is the extended
+    // response/hurt loop. The latter advances through 0x121FD2 before the
+    // next player stream begins at 0x121FD4, so a checkpoint can legitimately
+    // contain any even cursor in this interval rather than only a root.
+    return cursor >= kResponseRecoveryStream && cursor < kResponseStreamEnd;
 }
 
 std::uint16_t as_u16(int value) { return static_cast<std::uint16_t>(value & 0xFFFF); }
@@ -554,8 +563,9 @@ void PlayerAnimationVm::set_frame_pointer(std::uint32_t frame_pointer) {
 void PlayerAnimationVm::set_animation_state(std::uint32_t animation_pc, int timer) {
     if (!rom_mode_) return;
     animation_pc_ = animation_pc;
-    if (is_response_root(animation_pc)) {
-        stream_entry_ = animation_pc;
+    if (is_response_stream_cursor(animation_pc)) {
+        stream_entry_ = animation_pc < kResponseStream
+            ? kResponseRecoveryStream : kResponseStream;
         stream_kind_ = AnimationStreamKind::Response;
     } else if (animation_pc == 0) {
         stream_kind_ = AnimationStreamKind::Locomotion;
@@ -685,7 +695,17 @@ bool PlayerAnimationVm::select_player_interaction_state(const AnimationContext& 
             write_memory8(0xFFEFFF, 1);
             return true;
         }
-        if (state.response_timer == 0
+        // The ordinary stop selector is only an idle/run handoff. A brake
+        // cursor is already the ROM's selected stopping animation, and
+        // replacing it with the interaction stream changes the rendered
+        // frame exactly at a wall stop. Likewise, response/action streams
+        // must remain owned by their initiating gameplay state.
+        const bool can_enter_stop_stream =
+            stream_kind_ == AnimationStreamKind::Locomotion
+            && pose_ != SpritePose::Brake
+            && (stream_entry_ == kIdleStream || stream_entry_ == kRunStream);
+        if (can_enter_stop_stream
+            && state.response_timer == 0
             && state.interaction_pending == 0
             && state.state_lock == 0) {
             if (stream_entry_ != kInteractionStopStream) {

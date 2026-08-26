@@ -727,7 +727,32 @@ SYNC_PATTERN = re.compile(
     r"sx=(?P<scroll_x>[0-9A-F]+) sy=(?P<scroll_y>[0-9A-F]+) "
     r"thx=(?P<horizontal_threshold>[0-9A-F]+) "
     r"thy=(?P<vertical_threshold>[0-9A-F]+) "
-    r"delay=(?P<update_delay>[0-9A-F]+) special=(?P<special_mode>[0-9A-F]+)"
+    r"delay=(?P<update_delay>[0-9A-F]+) special=(?P<special_mode>[0-9A-F]+) "
+    r"selgate=(?P<animation_gate>[0-9A-F]+) "
+    r"selterminal=(?P<terminal_transition>[0-9A-F]+) "
+    r"selcountdown=(?P<scene_script_countdown>[0-9A-F]+) "
+    r"sellock=(?P<interaction_lock>[0-9A-F]+) "
+    r"selresponse=(?P<response_active>[0-9A-F]+) "
+    r"sellanding=(?P<landing_state>[0-9A-F]+) "
+    r"selgate2=(?P<transition_gate>[0-9A-F]+) "
+    r"seltranslock=(?P<transition_lock>[0-9A-F]+) "
+    r"selstate=(?P<transition_state>[0-9A-F]+) "
+    r"selmode=(?P<transition_mode>[0-9A-F]+) "
+    r"selflag=(?P<transition_flag>[0-9A-F]+) "
+    r"seltransresponse=(?P<transition_response>[0-9A-F]+) "
+    r"selde=(?P<transition_state_de>[0-9A-F]+) "
+    r"seldf=(?P<transition_state_df>[0-9A-F]+) "
+    r"selspecial=(?P<camera_special_mode>[0-9A-F]+) "
+    r"sellatch=(?P<response_latch>[0-9A-F]+) "
+    r"selanimation=(?P<response_animation>[0-9A-F]+) "
+    r"selee=(?P<response_state_ee>[0-9A-F]+) "
+    r"selef=(?P<response_state_ef>[0-9A-F]+) "
+    r"self0=(?P<response_state_f0>[0-9A-F]+) "
+    r"sel101=(?P<response_state_101>[0-9A-F]+) "
+    r"selhresponse=(?P<horizontal_response>[0-9A-F]+) "
+    r"seltimer=(?P<response_timer>[0-9A-F]+) "
+    r"selpending=(?P<interaction_pending>[0-9A-F]+) "
+    r"sellock2=(?P<state_lock>[0-9A-F]+)"
 )
 
 
@@ -782,6 +807,7 @@ def _sync_record(match: re.Match[str]) -> dict[str, int]:
     values["vy"] = _signed_u16(values["vy"])
     values["scroll_x"] = _signed_u16(values["scroll_x"])
     values["scroll_y"] = _signed_u16(values["scroll_y"])
+    values["horizontal_response"] = _signed_u16(values["horizontal_response"])
     return values
 
 
@@ -885,6 +911,10 @@ def synchronize_state_trace(trace_dir: Path) -> int:
         # grounded.  0xFF is the active response latch during the jump
         # transition, not the externally reported grounded boolean.
         player["grounded"] = sync["grounded"] == 1
+        player["animation_selector"] = {
+            name: sync[name]
+            for name in ANIMATION_SELECTOR_FIELDS
+        }
 
         camera = record.setdefault("camera", {})
         for name in (

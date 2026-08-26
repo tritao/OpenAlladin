@@ -18,6 +18,7 @@ def run_case(
     schedule: str,
     frames: int = 2,
     animation: str | None = None,
+    animation_selector: str | None = None,
 ) -> list[dict]:
     output = ROOT / "build/re/tests/native-sprites" / f"{name}.jsonl"
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -35,6 +36,8 @@ def run_case(
     ]
     if animation is not None:
         command.extend(["--checkpoint-animation", animation])
+    if animation_selector is not None:
+        command.extend(["--checkpoint-animation-selector", animation_selector])
     environment = dict(os.environ)
     environment["SDL_VIDEODRIVER"] = "dummy"
     subprocess.run(command, cwd=ROOT, env=environment, check=True, stdout=subprocess.DEVNULL)
@@ -81,6 +84,41 @@ def main() -> int:
     assert recovered[1]["player"]["animation_state"] == "idle"
     assert recovered[1]["player"]["animation_stream_entry"] == 0x00121D9A
     assert recovered[1]["player"]["frame_ptr"] == 0x001EA34A
+
+    recovered_inside = run_case(
+        "response-recovery-inside",
+        "103,416,0,0,1",
+        "none*2",
+        frames=2,
+        animation="0x00121FA8,0",
+    )
+    assert recovered_inside[1]["player"]["animation_state"] == "idle"
+    assert recovered_inside[1]["player"]["animation_stream_entry"] == 0x00121D9A
+
+    # The same response stream remains response-owned while its selector
+    # gates are active. This guards the opposite failure mode: an ordinary
+    # locomotion update must not overwrite a live hurt response with idle.
+    active = run_case(
+        "response-active",
+        "103,416,0,0,1",
+        "none*2",
+        frames=2,
+        animation="0x00121FA6,0",
+        animation_selector="0,0,0,0,255,1,0,0,0,0,0,0,0,0,0,0,255,0,0,0,0,0,0,0,0",
+    )
+    assert active[1]["player"]["animation_state"] == "response"
+    assert active[1]["player"]["animation_stream_entry"] == 0x00121FA6
+
+    active_inside = run_case(
+        "response-active-inside",
+        "103,416,0,0,1",
+        "none*2",
+        frames=2,
+        animation="0x00121FA8,0",
+        animation_selector="0,0,0,0,255,1,0,0,0,0,0,0,0,0,0,0,255,0,0,0,0,0,0,0,0",
+    )
+    assert active_inside[1]["player"]["animation_state"] == "response"
+    assert active_inside[1]["player"]["animation_stream_entry"] == 0x00121FA6
 
     print("native sprites: ok")
     return 0

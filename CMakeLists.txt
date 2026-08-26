@@ -322,6 +322,14 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
         add_test(
+            NAME native_sprites
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    SDL_VIDEODRIVER=dummy
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_sprites.py")
+        set_tests_properties(native_sprites PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
             NAME native_connector_response
             COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
                     ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_connector_response.py")
