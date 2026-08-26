@@ -1,0 +1,82 @@
+{
+  "campaign": "20260826-level01-lower-floor-frontier-v1",
+  "status": "recorded-negative",
+  "purpose": "Test jump and attack traversal at the lower-floor wall reached from the upper-frontier left drop.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "e19bd42",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "afe4bec",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/diagnostics/upper-frontier-bottom-v1/bottom-right/states/genesis/bottom.sta",
+  "source_world": [3749, 912],
+  "branches": [
+    {
+      "id": "sword-right",
+      "trace_dir": "build/re/diagnostics/lower-floor-frontier-v1/sword-right",
+      "frames": 300,
+      "input": "b+right*300",
+      "terminal_world": [3216, 912],
+      "result": "dies/resets to the earlier lower section"
+    },
+    {
+      "id": "sword-jump-right",
+      "trace_dir": "build/re/diagnostics/lower-floor-frontier-v1/sword-jump-right",
+      "frames": 300,
+      "input": "c+b+right*20,b+right*280",
+      "terminal_world": [3216, 912],
+      "result": "dies/resets to the earlier lower section"
+    },
+    {
+      "id": "jump-right",
+      "trace_dir": "build/re/diagnostics/lower-floor-frontier-v1/jump-right",
+      "frames": 300,
+      "input": "c+right*20,right*280",
+      "terminal_world": [2720, 770],
+      "result": "returns through the lower section; no wall crossing"
+    },
+    {
+      "id": "sword-jump-left",
+      "trace_dir": "build/re/diagnostics/lower-floor-frontier-v1/sword-jump-left",
+      "frames": 300,
+      "input": "c+b+left*20,b+left*280",
+      "terminal_world": [2270, 832],
+      "result": "moves back into the known lower route"
+    },
+    {
+      "id": "long-jump-right",
+      "trace_dir": "build/re/diagnostics/lower-floor-long-jump-v1/long-jump-right",
+      "frames": 300,
+      "input": "c+right*60,right*240",
+      "terminal_world": [2720, 770],
+      "result": "dies/resets"
+    },
+    {
+      "id": "very-long-jump-right",
+      "trace_dir": "build/re/diagnostics/lower-floor-long-jump-v1/very-long-jump-right",
+      "frames": 300,
+      "input": "c+right*100,right*200",
+      "terminal_world": [3228, 912],
+      "result": "returns to lower section"
+    },
+    {
+      "id": "long-sword-jump-right",
+      "trace_dir": "build/re/diagnostics/lower-floor-long-jump-v1/long-sword-jump-right",
+      "frames": 300,
+      "input": "c+b+right*60,b+right*240",
+      "terminal_world": [3216, 912],
+      "result": "dies/resets"
+    },
+    {
+      "id": "long-a-right",
+      "trace_dir": "build/re/diagnostics/lower-floor-long-jump-v1/long-a-right",
+      "frames": 300,
+      "input": "a+right*60,right*240",
+      "terminal_world": [2720, 770],
+      "result": "dies/resets"
+    }
+  ],
+  "result": "No branch crosses the lower-floor wall, reaches world y<470, arms FFF0E9, or changes scene state from 0x01.",
+  "next": "Use collision/object tracing at the wall and the known lower-floor actor cluster to identify the required platform or interaction sequence."
+}
