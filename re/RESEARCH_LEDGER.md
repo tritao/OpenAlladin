@@ -438,6 +438,17 @@ coordinate probe at world `(4748,460)` arms `0xFFF0E9=0xFF` from
 authoritative follow-on scene-state write remains the older controlled proof in
 `20260826-level01-transition-v1`.
 
+The natural lower-tower response trace is recorded in
+`re/mame/campaigns/20260826-level01-natural-tower-response-trace-v1.json` and
+summarized in
+`re/mame/findings/20260826-level01-natural-tower-response-trace-v1.json`.
+From the natural lamp-window checkpoint, `up+right*60,right*60,none*120`
+reaches `(3039,912)` on the ordinary lower floor. The only unusual terrain
+event is a short behavior-`0x2B` window at `(2902,849..885)` that sets
+`PLAYER_TRANSITION_LOCK` for eight frames. Interaction rows `0x5610` and
+`0x6C78` then create lower-band Type-0x20/Type-0x1E actors; no connector
+handler, scene-resource rebuild, or exit gate is reached.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -476,6 +487,7 @@ authoritative follow-on scene-state write remains the older controlled proof in
 | `20260826-level01-upper-x4412-up-matrix-v1` | recorded-negative | Up/C+Up matrix near the row-15 special cell between upper surfaces |
 | `20260826-level01-route-geometry-audit-v1` | recorded-negative-frontier | consolidated high-walkway, far-rope, shaft, and upper-platform geometry audit |
 | `20260826-level01-exit-predicate-probe-v1` | recorded-controlled-boundary-write | current-harness boundary predicate and gate observation |
+| `20260826-level01-natural-tower-response-trace-v1` | recorded-negative-frontier | natural lower-tower terrain, interaction-row, and scene-gate trace |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

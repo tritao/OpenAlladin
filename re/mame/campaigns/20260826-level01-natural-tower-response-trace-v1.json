@@ -1,0 +1,75 @@
+{
+  "campaign": "20260826-level01-natural-tower-response-trace-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Trace the natural lower-tower continuation with terrain, interaction-row, actor, and scene-gate instrumentation after the static connector inventory ruled out a hidden connector cell.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "ee1eff5e3596a19f1bdbe0ad8cbe93b05d4aa2fd",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+  "input_schedule": "up+right*60,right*60,none*120",
+  "timing_note": "All segments are loaded from the same current-checkout natural checkpoint. State traces are no-sync gameplay captures; debugger logs are observational and use the same input schedule.",
+  "instrumentation": {
+    "terrain_breakpoints": ["0x001A9D98", "0x001B1E38"],
+    "candidate_connector_breakpoints": ["0x001B54D8", "0x001B5470", "0x001B56B6", "0x001B5320"],
+    "interaction_breakpoints": ["0x001AE4E4", "0x001AE4EA", "0x001B6E90", "0x001B6EB2", "0x001B5266", "0x001B5270", "0x001AC458", "0x001AE64C"],
+    "scene_resource_breakpoints": ["0x001B0F66", "0x001B4920", "0x001B4BB8", "0x001B4BDC"],
+    "watched_addresses": ["0xFFF0D0", "0xFFF0DB", "0xFFF0DC", "0xFFF0E6", "0xFFF0E9", "0xFF7DD2", "0xFF7DD6", "0xFF7DDA", "0xFFF0CE", "0xFFF0CF", "0xFFF0C1", "0xFFF0BE"]
+  },
+  "segments": [
+    {
+      "id": "up-right-dispatch",
+      "trace_dir": "build/re/campaigns/20260826-level01-natural-tower-response-trace-v1/up-right-dispatch",
+      "frames": 240,
+      "input": "up+right*60,right*60,none*120",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "up-right-end" },
+        { "frame": 120, "name": "right-end" },
+        { "frame": 240, "name": "settled" }
+      ],
+      "debug_log": "build/re/campaigns/20260826-level01-natural-tower-response-trace-v1/up-right-dispatch/debug.log"
+    },
+    {
+      "id": "up-right-terrain-context",
+      "trace_dir": "build/re/campaigns/20260826-level01-natural-tower-response-trace-v1/up-right-terrain-context-safe",
+      "frames": 240,
+      "input": "up+right*60,right*60,none*120",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "up-right-end" },
+        { "frame": 120, "name": "right-end" },
+        { "frame": 240, "name": "settled" }
+      ],
+      "debug_log": "build/re/campaigns/20260826-level01-natural-tower-response-trace-v1/up-right-terrain-context-safe/debug.log"
+    },
+    {
+      "id": "up-right-row-context",
+      "trace_dir": "build/re/campaigns/20260826-level01-natural-tower-response-trace-v1/up-right-row-context",
+      "frames": 140,
+      "input": "up+right*60,right*60,none*80",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "up-right-end" },
+        { "frame": 120, "name": "right-end" },
+        { "frame": 140, "name": "settled" }
+      ],
+      "debug_log": "build/re/campaigns/20260826-level01-natural-tower-response-trace-v1/up-right-row-context/debug.log"
+    }
+  ]
+}

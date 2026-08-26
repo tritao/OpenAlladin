@@ -1,0 +1,79 @@
+{
+  "format": "openaladdin-level01-natural-tower-response-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-natural-tower-response-trace-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "source_checkpoint": {
+    "path": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+    "world": [2715, 770],
+    "terrain_behavior": "0x47",
+    "scene_state": "0x01"
+  },
+  "route_result": {
+    "input": "up+right*60,right*60,none*120",
+    "endpoint": { "frame": 240, "world": [3039, 912], "terrain_behavior": "0x11", "scene_state": "0x01" },
+    "meaning": "The branch traverses the lower continuation and settles on the ordinary lower floor; it does not approach a static 0x22/0x24 connector or the exit height."
+  },
+  "terrain_response": {
+    "breakpoint_hits": {
+      "0x001A9D98": 239,
+      "0x001B1E38": 239,
+      "candidate_connector_handlers": 0
+    },
+    "behavior_0x2B_window": {
+      "frames": "67-74",
+      "world": "(2902,849..885)",
+      "player_transition_lock": "0xFFF0DB=0x01",
+      "write_pc": "0x001B556A",
+      "interpretation": "A transient terrain/interaction response during the descent; the lock clears before the player lands at Y=912."
+    },
+    "static_correlation": "The behavior-0x2B window is on the lower continuation, not within any of the four static behavior-0x22/0x24 connector bands listed in the static connector inventory."
+  },
+  "interaction_rows": [
+    {
+      "frame": 110,
+      "row_word": "0x5610",
+      "runtime_row_index": "0x3078",
+      "interaction": "0x1B",
+      "handler": "0x001B6EB2",
+      "template": "0x001B7C10",
+      "observed_result": "A Type-0x20 actor appears in slot 12 around (3184,736), with a Type-0x40 support/effect actor in slot 13 at (3184,848)."
+    },
+    {
+      "frame": 132,
+      "row_word": "0x6C78",
+      "runtime_row_index": "0x3B1C",
+      "interaction": "0x11",
+      "handler": "0x001B6E90",
+      "template": "0x001B7C24",
+      "observed_result": "A Type-0x1E actor appears in slot 3 around (3232,912), on the lower floor rather than in the upper connector band."
+    }
+  ],
+  "resource_result": {
+    "scene_resource_dispatch_hits": 0,
+    "meaning": "The ordinary lower-continuation branch does not rebuild scene resources or invoke the level-state loader path. Its dynamic actors come from interaction-row dispatch, not SceneResource_Dispatch."
+  },
+  "scene_gates": {
+    "scene_state": "0x01 throughout",
+    "scene_script_countdown": "0x00 throughout",
+    "scene_exit_countdown": "0xFFF0E9 remains 0x00",
+    "terminal_gate": "0xFFF0E6 remains 0x00"
+  },
+  "conclusion": {
+    "verified": [
+      "The natural Up+Right lower-tower branch reaches the known lower continuation at (3039,912).",
+      "The transient behavior-0x2B response sets PLAYER_TRANSITION_LOCK briefly but does not launch, attach, or change scene state.",
+      "The branch's dynamic row events create ordinary lower-band actors at rows 0x5610 and 0x6C78; neither is the missing connector.",
+      "No candidate behavior-0x22/0x47 connector handler, SceneResource_Dispatch path, or scene gate is entered."
+    ],
+    "negative_evidence": [
+      "This input family does not expose a hidden runtime bridge between the lower tower and the connector bands.",
+      "The interaction rows seen on the lower continuation do not place actors in the upper exit band."
+    ],
+    "unresolved": "The natural route to the behavior-0x22 connector at X≈2720 or the alternate upper route remains unidentified."
+  },
+  "next_action": "Use the saved lower-continuation state and the decoded row records to trace the adjacent interaction/resource stream, then search the reachable behavior-0x11/0x2B band for a launch or handoff without repeating the already-closed direct tower timing family."
+}
