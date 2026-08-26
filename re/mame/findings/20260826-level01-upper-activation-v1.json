@@ -7,7 +7,7 @@
     "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
   },
   "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
-  "harness_commit": "69b3dbe",
+  "harness_commit": "7c16480",
   "campaign": "re/mame/campaigns/20260826-level01-upper-activation-v1.json",
   "trace": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation",
   "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/end.sta",
@@ -78,6 +78,42 @@
       "0x001AD378"
     ],
     "conclusion": "The upper pair is created by the interaction-row dispatch while Up is held; it is not created by the vertical connector handler. The adjacent 0xFFF107 gate-test wrapper is not the entry used by this dispatch."
+  },
+  "interaction_row_trace": {
+    "artifact": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-row-boundary-v4/mame-debug.log",
+    "trace": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-row-boundary-v4",
+    "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/end.sta",
+    "input": "right*158,up*120,none*42",
+    "absolute_mame_frame": "0x1353",
+    "row_processor": "0x001AE47E",
+    "breakpoint_instruction": "0x001AE4E4",
+    "observed_breakpoint_pc": "0x001AE4E6",
+    "indirect_call_instruction": "0x001AE4E8",
+    "handler_table": "0x00004154",
+    "records": [
+      {
+        "row_pointer_after_postincrement": "0x00FF2308",
+        "row_word_address": "0x00FF2306",
+        "row_word": "0x5658",
+        "runtime_interaction_index": "0x2B2C",
+        "interaction_byte": "0x11",
+        "handler_table_entry": "0x00004198",
+        "handler": "0x001B6E90",
+        "template": "0x001B7C24"
+      },
+      {
+        "row_pointer_after_postincrement": "0x00FF231E",
+        "row_word_address": "0x00FF231C",
+        "row_word": "0x5668",
+        "runtime_interaction_index": "0x2B34",
+        "interaction_byte": "0x1B",
+        "handler_table_entry": "0x000041C0",
+        "handler": "0x001B6EB2",
+        "template": "0x001B7C10"
+      }
+    ],
+    "register_context": "The complete D0-D7/A0-A6 context is preserved in the artifact's OPENALADDIN_BREAK_ROW records; D4 is 0x10 and 0x05 respectively, D6 is 0x000311B0 and 0x00031260, and A5/A6 are 0x00002018/0x001AC8E0 for both calls.",
+    "conclusion": "The upper pair is selected by two concrete interaction-row records. Runtime interaction-table entries 0x2B2C and 0x2B34 contain handler selectors 0x11 and 0x1B, which resolve through the ROM pointer table at 0x004154 to the two observed spawn bodies."
   },
   "runtime_checkpoints": [
     {

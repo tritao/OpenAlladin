@@ -248,8 +248,8 @@ target, not evidence of a climb or scene transition.
 
 The companion edge trace identifies the interaction source. At the same
 absolute MAME frame `0x1353`, the interaction-row caller `0x001AE4EA`
-dispatches to `0x001B6E90` and `0x001B6EB2`. The former is gated by
-selects template `0x001B7C24` directly; the adjacent gate-test bytes at
+dispatches to `0x001B6E90` and `0x001B6EB2`. The former selects template
+`0x001B7C24` directly; the adjacent gate-test bytes at
 `0x001B6E86` are bypassed by this table target. The latter enters the same
 level-object spawn entry with `0x001B7C10`, then assigns animation
 `0x0012337A` and runtime type `0x20`. The three candidate gate bytes remain
@@ -263,6 +263,16 @@ The paired no-Up control (`right*158,none*82`) remains at the same x≈4684
 frontier without creating either actor and dispatches no interaction-table
 edge. The actor pair is therefore conditioned on the Up-triggered interaction
 path, not merely on reaching the horizontal coordinate.
+
+The row-boundary trace is now recorded in the same upper-activation campaign.
+At `0x001AE4E4` immediately before the indirect call at `0x001AE4E8`, the
+second interaction-row processor has consumed row word `0x5658` at
+`0x00FF2306`, producing runtime index `0x2B2C` and interaction byte `0x11`,
+which resolves through handler-table entry `0x004198` to `0x001B6E90`. The
+next active row is word `0x5668` at `0x00FF231C`, index `0x2B34`, byte `0x1B`,
+and handler-table entry `0x0041C0` to `0x001B6EB2`. This turns the actor-pair
+correlation into a concrete level-row/resource observation while preserving
+the full register context in the trace artifact.
 
 The first collision reachability probe from the activated pair
 (`c+left*20,left*70,none*90`) falls into the lower band instead of reaching
@@ -291,7 +301,7 @@ evidence, not a collision result.
 | `20260826-level01-canonical-recording-v4` | recorded-frontier | fresh exact-match power-on record, owned continuation to far rope, and natural upper-transfer experiments |
 | `20260826-level01-canonical-recording-v5` | recorded-frontier | clean power-on recording and self-contained replay chain through the far vertical-rope frontier |
 | `20260826-level01-canonical-recording-v6` | recording-frontier | clean v5 replay, Type1E wall opening, far-rope transfer, and bounded upper-frontier probes |
-| `20260826-level01-upper-activation-v1` | recorded-static-correlation | initializer trace for the Type1E/Type20 pair materialized at the upper x≈4688 feature |
+| `20260826-level01-upper-activation-v1` | recorded-static-correlation | initializer and interaction-row traces for the Type1E/Type20 pair materialized at the upper x≈4688 feature |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

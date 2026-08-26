@@ -6,7 +6,7 @@
   "rom": "rom/Disneys_Aladdin_U_p1.bin",
   "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
   "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
-  "trace_harness_commit": "69b3dbe",
+  "trace_harness_commit": "7c16480",
   "capture_contract": "openaladdin-frame-state-v1",
   "segments": [
     {
@@ -63,6 +63,22 @@
         { "frame": 100, "name": "land", "state": "upper-type1e-jump-left-v1/states/genesis/land.sta" },
         { "frame": 180, "name": "end", "state": "upper-type1e-jump-left-v1/states/genesis/end.sta" }
       ]
+    },
+    {
+      "id": "upper-connector-interaction-row-boundary",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-row-boundary-v4",
+      "frames": 240,
+      "input": "right*158,up*120,none*42",
+      "load_state": "upper-frontier",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/end.sta",
+      "recording_commit": "7c16480",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "breakpoint": "0x001AE4E4",
+      "breakpoint_registers": true,
+      "breakpoint_row_context": true,
+      "branch_class": "exploratory-interaction-row-provenance"
     }
   ]
 }
