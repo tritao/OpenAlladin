@@ -1576,6 +1576,60 @@ void Engine::update_terrain_input(const InputState& input) {
     player_.terrain_push_down = input.down ? 0xFF : 0;
 }
 
+void Engine::update_terrain_connector_response() {
+    // FUN_001A986E is the response half of the behavior-0x22/0x23 query
+    // path. The terrain handler only raises QUERY_STATE_A; on the following
+    // frame this prepass consumes that latched byte and performs the small
+    // one/two-pixel local-Y step while Up is held. The resolver later in the
+    // same frame clears and re-raises QUERY_STATE_A for the next step.
+    if (camera_.scene_state == 8 || player_.terrain_query_state_a == 0) {
+        player_.terrain_transition_gate = 0;
+        return;
+    }
+    if (player_.terrain_terminal_transition != 0) return;
+
+    if (player_.vy <= 0) {
+        if (player_.terrain_response_active == 0) {
+            if (player_.terrain_push_up != 0) {
+                if (player_.terrain_stop_upward_motion == 0
+                    && player_.terrain_query_state_b == 0) {
+                    const int step = (frame_ & 1U) != 0 ? 2 : 1;
+                    player_.y -= step;
+                    camera_.vertical_threshold = 400;
+                    camera_.update_delay = 0;
+                }
+                player_.terrain_transition_gate = 0xFF;
+                return;
+            }
+            if (player_.terrain_push_down != 0) {
+                if (player_.terrain_landing_state != 0) {
+                    player_.terrain_transition_gate = 0;
+                    return;
+                }
+                player_.y += 2;
+                camera_.vertical_threshold = 0x150;
+                camera_.update_delay = 0;
+                player_.terrain_transition_gate = 0xFF;
+                return;
+            }
+        } else if (player_.terrain_vertical_stop == 0) {
+            player_.terrain_transition_gate = 0;
+            return;
+        }
+    }
+
+    if (player_.terrain_stop_upward_motion == 0) {
+        player_.vx = 0;
+        player_.vy = 0;
+        player_.terrain_horizontal_response = 0;
+        player_.terrain_response_active = 0;
+        player_.terrain_response_timer_state = 0;
+        player_.terrain_transition_gate = 0xFF;
+        return;
+    }
+    player_.terrain_transition_gate = 0;
+}
+
 void Engine::integrate_motion() {
     // This follows Player_IntegrateMotion at 0x001A9B90: move by the signed
     // high byte of each 8.8 velocity, then damp by 0x28/0x3C.
@@ -2208,6 +2262,7 @@ void Engine::update(const InputState& input) {
     player_.terrain_left_outer_probe = collision.left_outer ? 0xFF : 0;
     player_.terrain_right_inner_probe = collision.right_inner ? 0xFF : 0;
     player_.terrain_right_outer_probe = collision.right_outer ? 0xFF : 0;
+    update_terrain_connector_response();
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
     // The actor-to-actor pass observes the previous stable animation/motion
     // state. In the Genesis sword trace it terminalizes the sword at x=1313
@@ -2308,8 +2363,14 @@ void Engine::update(const InputState& input) {
     // of the next follow pass. This leaves the boundary frame externally
     // visible with scroll == 16, then exposes the rebased reference on the
     // following frame.
-    rebase_camera_reference();
-    update_camera();
+    const bool camera_reference_rebased = rebase_camera_reference();
+    // During a vertical connector climb the ROM's reference-tile rebase is
+    // the whole camera pass for that frame. The follow lookup resumes on the
+    // next frame; running it immediately would add an extra two-pixel camera
+    // step at each 16-pixel scroll boundary.
+    if (!(camera_reference_rebased && player_.terrain_transition_gate != 0)) {
+        update_camera();
+    }
     // Pending bytes are transient dispatcher state and are cleared before
     // the stable trace boundary. The scroll accumulator survives to the next
     // frame, where rebase_camera_reference() consumes it.
@@ -2510,7 +2571,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"transition_event\":0"
            << ",\"script_countdown\":0"
            << ",\"script_gate\":0"
-           << ",\"player_gate\":0"
+           << ",\"player_gate\":" << static_cast<unsigned>(player_.terrain_transition_gate)
            << ",\"player_lock\":0"
            << ",\"player_countdown\":0"
            << ",\"player_terminal\":" << static_cast<unsigned>(player_.terrain_terminal_transition) << "}"

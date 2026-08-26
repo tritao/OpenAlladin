@@ -1,0 +1,15 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-connector-response",
+    "purpose": "Recover the helper that changes PLAYER_Y during a behavior-0x22/0x24 connector climb."
+  },
+  "targets": [
+    { "address": "0x001A986E", "name": "Player_TerrainVerticalPrepass" },
+    { "address": "0x001A99F0", "name": "Player_TerrainPushState" },
+    { "address": "0x001A9B38", "name": "Player_TerrainPositionAdjust" },
+    { "address": "0x001AA8FA", "name": "Player_PostTerrainPositionUpdate" },
+    { "address": "0x001A8E0C", "name": "Player_WorldCoordinateUpdate" }
+  ]
+}

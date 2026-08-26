@@ -92,6 +92,11 @@ struct PlayerState {
     std::uint8_t terrain_query_state_b = 0;
     std::uint8_t terrain_state = 0;
     std::uint8_t terrain_response_latch = 0;
+    // FFF0D0 is asserted by the connector prepass while a vertical query is
+    // actively moving the player. It is separate from TERRAIN_QUERY_STATE_A:
+    // the resolver clears the latter every pass, while the movement response
+    // publishes this gate for the following state-machine calls.
+    std::uint8_t terrain_transition_gate = 0;
     std::uint8_t terrain_terminal_transition = 0;
     std::uint8_t attack_timer = 0;
 };
@@ -306,6 +311,7 @@ private:
 
     void integrate_motion();
     void update_terrain_input(const InputState& input);
+    void update_terrain_connector_response();
     void apply_floor_contour();
     void resolve_terrain(int previous_world_y);
     void update_camera();
