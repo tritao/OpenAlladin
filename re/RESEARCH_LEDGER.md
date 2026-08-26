@@ -726,6 +726,16 @@ state or changes `SCENE_STATE` from `0x01`. The shared player handler and actor
 cleanup handler contain no launch or scene-transition path, so this closes the
 delayed type-0x1F tower hypothesis.
 
+The selector-0x1A type-0x21 high-walkway settle trace is recorded in
+`re/mame/findings/20260826-level01-type21-settle-v1.json` and
+`re/mame/campaigns/20260826-level01-type21-settle-v1.json`. From the verified
+high-walkway entry, 600 frames of no input leave the actor fixed at
+`(1712,530)` with movement PC zero. Its proximity animation cycles flag bit
+`0x20`, clears around frame 302, and never changes the gameplay scene state
+from `0x01`. Static decoding maps selector `0x1A` to the type-0x21 spawn
+handler, whose player/actor collision entries are shared cleanup paths; this
+actor is not the missing connector or scene-transition source.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -788,6 +798,7 @@ delayed type-0x1F tower hypothesis.
 | `20260826-type01-child-chain-v1` | recorded-controlled-static-correlation | Type-0x01 upper resource F5 child decode and corrected runtime placement check |
 | `20260826-level01-integrated-natural-exit-v1` | recorded-negative-natural | controller-only upper-frontier replay reaches the X boundary but falls before the Y exit condition |
 | `20260826-level01-type1f-settle-v1` | recorded-negative | 600-frame no-input settle of the lower-tower type-0x1F proximity actor; no vertical transfer or scene transition |
+| `20260826-level01-type21-settle-v1` | recorded-negative | 600-frame no-input settle of the selector-0x1A high-walkway type-0x21 actor; no movement or scene transition |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

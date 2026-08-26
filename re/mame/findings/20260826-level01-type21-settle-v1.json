@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-level01-type21-settle-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-type21-settle-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "1cd3362498e8b0b69af6e4b8fe7c97077a947816",
+  "target_manifest": "re/ghidra/targets/level01-type21-targets.json",
+  "decompile_artifact": "build/re/type21-targeted-decompile.json",
+  "trace": "build/re/campaigns/20260826-level01-type21-settle-v1/high-walkway-wait",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/handhold-to-high-walkway/states/genesis/high-walkway-entry.sta",
+  "actor": {
+    "slot": 21,
+    "type": "0x21",
+    "interaction_selector": "0x1A",
+    "initial_world": [1712, 530],
+    "final_world_before_clear": [1712, 530],
+    "animation_root": "0x001235AC",
+    "secondary_animation_stream": "0x0012355A",
+    "player_collision_handler": "0x001AE796",
+    "actor_collision_handler": "0x001AC334"
+  },
+  "runtime": {
+    "frames": 600,
+    "input": "none*600",
+    "actor_present_frames": "1-301",
+    "actor_y_values": [530],
+    "movement_pc_values": ["0x00000000"],
+    "flag_bit_0x20": "appears in the actor state snapshots during the proximity cycle without changing position",
+    "scene_state": "0x01 throughout gameplay; the initial load marker is 0x00 before the first frame poll",
+    "scene_state_changes_during_gameplay": 0,
+    "exit_countdown_writes": 0,
+    "transition_gate_changes": 0,
+    "player_reset": "By frame 580 the loaded player has reset to the opening death/reset coordinates; this is not a scene transition."
+  },
+  "static_result": {
+    "spawn_handler": "0x001B6ED0 calls 0x001B5266 and assigns type 0x21 plus animation 0x001235AC.",
+    "collision_table": "The player table maps type 0x21 at ROM 0x001D42 to 0x001AE796; the actor table maps it at ROM 0x001F3E to 0x001AC334.",
+    "proximity_stream": "0x001235AC begins with frame 0x11E2, performs a player-Y-within-0x40 call to 0x0012355A, and uses the secondary stream's player-Y-within-0x78 branch. There is no movement-state assignment in this trigger path."
+  },
+  "conclusion": "The type-0x21 actor on the high walkway is a timed/proximity visual or interaction effect. It neither moves vertically nor writes a scene transition, so it is removed from the missing-route hypotheses."
+}

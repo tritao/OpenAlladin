@@ -1,0 +1,63 @@
+{
+  "campaign": "20260826-level01-type21-settle-v1",
+  "status": "recorded-negative",
+  "purpose": "Let the Level 01 selector-0x1A type-0x21 high-walkway actor complete its proximity animation cycle and test for movement, player transfer, or scene transition.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "1cd3362498e8b0b69af6e4b8fe7c97077a947816",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "1cd3362498e8b0b69af6e4b8fe7c97077a947816",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "high-walkway-type21-wait",
+      "trace_dir": "build/re/campaigns/20260826-level01-type21-settle-v1/high-walkway-wait",
+      "frames": 600,
+      "input": "none*600",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/handhold-to-high-walkway/states/genesis/high-walkway-entry.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "approach" },
+        { "frame": 120, "name": "settled" },
+        { "frame": 300, "name": "cycle" },
+        { "frame": 600, "name": "end" }
+      ]
+    }
+  ],
+  "target": {
+    "actor_slot": 21,
+    "actor_type": "0x21",
+    "interaction_selector": "0x1A",
+    "interaction_handler": "0x001B6ED0",
+    "animation_root": "0x001235AC",
+    "secondary_animation_stream": "0x0012355A",
+    "actor_world_start": [1712, 530],
+    "player_world_start": [1706, 530]
+  },
+  "observed": {
+    "actor_world_end_before_clear": [1712, 530],
+    "actor_y_values": [530],
+    "actor_movement_pc_values": ["0x00000000"],
+    "actor_animation_behavior": "The actor cycles 0x001235AC and its secondary proximity stream, including flag-bit-0x20 intervals, then clears around frame 302 without acquiring a movement stream.",
+    "player_world_end": [103, 880],
+    "player_reset_observed": true,
+    "scene_state_values_during_gameplay": ["0x01"],
+    "scene_state_changes_during_gameplay": 0,
+    "exit_countdown_writes": 0,
+    "transition_gate_changes": 0,
+    "named_checkpoints": ["loaded", "approach", "settled", "cycle", "end"]
+  },
+  "static_interpretation": {
+    "interaction_handler": "ROM 0x001B6ED0 calls the generic interaction spawn entry, then assigns runtime type 0x21 and animation stream 0x001235AC.",
+    "player_handler": "The player collision table entry for type 0x21 points to the shared 0x001AE796 collision/interaction recovery path; it does not write SCENE_STATE.",
+    "actor_handler": "The actor collision table entry for type 0x21 points to 0x001AC334, which clears/reinitializes the actor through the shared type-0x2D interaction cleanup family and does not inject a vertical transfer.",
+    "animation": "The 0x001235AC stream uses player-Y proximity checks and calls 0x0012355A for additional frames; neither stream installs actor movement or writes a scene gate."
+  },
+  "conclusion": "The selector-0x1A type-0x21 high-walkway object is a timed/proximity visual or interaction actor, not the missing vertical connector or scene-transition source. Its clean cycle and eventual clear are now archived.",
+  "next_action": "Search the still-unclassified terrain/object route that can raise the player from the far middle band to the row-10 exit platform; do not repeat type-0x21 timing variants."
+}

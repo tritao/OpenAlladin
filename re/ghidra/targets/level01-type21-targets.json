@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-type21-interaction-actor",
+    "purpose": "Classify the Level 01 selector-0x1A actor observed on the high walkway and determine whether it can provide a route transfer or scene transition."
+  },
+  "targets": [
+    { "address": "0x001B6ED0", "name": "InteractionHandler_Type21" },
+    { "address": "0x001B5266", "name": "InteractionSpawnEntry" },
+    { "address": "0x001AC334", "name": "ActorCollisionHandler_Type21" },
+    { "address": "0x001AE796", "name": "PlayerCollisionHandler_SharedType21" },
+    { "address": "0x001235AC", "name": "Type21_ProximityAnimationStream" },
+    { "address": "0x0012355A", "name": "Type21_ProximitySecondaryStream" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },
+    { "address": "0x00FFAE87", "name": "INTERACTION_TABLE_RUNTIME" }
+  ]
+}

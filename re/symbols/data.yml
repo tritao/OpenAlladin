@@ -269,6 +269,15 @@
     - mame_actor_movement_cursor_trace
     - movement_stream_decoder
 
+0x001235AC:
+  name: ACTOR_ANIM_TYPE_21_PROXIMITY
+  confidence: probable
+  description: Selector-0x1A type-0x21 animation stream; it performs player-Y proximity checks and calls the secondary stream at 0x0012355A without installing actor movement.
+  evidence:
+    - ghidra_type21_targeted_decompile
+    - animation_stream_decoder
+    - mame_type21_settle_trace
+
 0x00120F76:
   name: ACTOR_MOVE_STATE_120F76
   confidence: probable
