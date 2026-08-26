@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-tower-actor-path",
+    "purpose": "Identify the non-player actor initializers and collision paths present around the lower tower so they are not mistaken for traversal platforms."
+  },
+  "targets": [
+    { "address": "0x001AD066", "name": "ActorInitializerCaller_1AD066" },
+    { "address": "0x001AD0AC", "name": "ActorInitializerCaller_1AD0AC" },
+    { "address": "0x001AF4D6", "name": "Type0x3AInitializerCaller" },
+    { "address": "0x001B5270", "name": "TerrainHandler_0x0AInteractionSpawnCaller" },
+    { "address": "0x001AFBF4", "name": "Type0x65BouncePlayerCollisionHandler" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
+    { "address": "0x001AE64C", "name": "Type0x43PlayerInteractionHandler" },
+    { "address": "0x001AE6BC", "name": "Actor_PublishInteractionValueA2" },
+    { "address": "0x001AEC00", "name": "Actor_HandlePlayerCollisionBlock" },
+    { "address": "0x001ABD7E", "name": "Actor_ActorCollisionPass" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFAE87", "name": "INTERACTION_TABLE_RUNTIME" },
+    { "address": "0x00FFF003", "name": "PLAYER_INTERACTION_COUNTER" },
+    { "address": "0x00FFF14E", "name": "PLAYER_INTERACTION_VALUE_SUM" }
+  ]
+}

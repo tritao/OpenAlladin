@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-terrain-query-callbacks",
+    "purpose": "Decode the callback records used around behavior 0x22/0x47 and determine which input/query flags can turn the tower surface mode into a player response."
+  },
+  "targets": [
+    { "address": "0x001B323A", "name": "Terrain_QueryCallbackB_Impl" },
+    { "address": "0x001B3244", "name": "Terrain_QueryCallbackA_Impl" },
+    { "address": "0x001B324E", "name": "Terrain_QueryCallbackC_Impl" },
+    { "address": "0x001B32F0", "name": "Terrain_QueryCallbackSetup" },
+    { "address": "0x001B319C", "name": "Terrain_QueryFlagDispatcher" },
+    { "address": "0x001B1E38", "name": "Terrain_ResolvePlayerCell" },
+    { "address": "0x001ADB34", "name": "Terrain_ResolveContourRecord" },
+    { "address": "0x001AD7B4", "name": "Player_TerrainLandingResolver" },
+    { "address": "0x001B5470", "name": "Behavior_0x47_SurfaceModeHandler" },
+    { "address": "0x001B5492", "name": "TerrainHandler_ClearSurfaceMode" },
+    { "address": "0x001B549C", "name": "TerrainHandler_SetSurfaceMode" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF156", "name": "TERRAIN_QUERY_FLAGS" },
+    { "address": "0x00FFF07C", "name": "TERRAIN_PUSH_DOWN" },
+    { "address": "0x00FFF07D", "name": "TERRAIN_PUSH_UP" },
+    { "address": "0x00FFF07E", "name": "TERRAIN_PUSH_RIGHT" },
+    { "address": "0x00FFF07F", "name": "TERRAIN_PUSH_LEFT" }
+  ]
+}

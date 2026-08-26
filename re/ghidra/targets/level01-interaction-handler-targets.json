@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-interaction-handlers",
+    "purpose": "Recover the interaction-table handlers responsible for the actor records surrounding the tower and identify any unclassified traversal object."
+  },
+  "targets": [
+    { "address": "0x001B7232", "name": "InteractionHandler_0x40" },
+    { "address": "0x001B7454", "name": "InteractionHandler_0x50" },
+    { "address": "0x001B7262", "name": "InteractionHandler_0x51" },
+    { "address": "0x001B735E", "name": "InteractionHandler_0x60" },
+    { "address": "0x001B728E", "name": "InteractionHandler_0xC8" },
+    { "address": "0x001B73F2", "name": "InteractionHandler_0x41" },
+    { "address": "0x001B738A", "name": "InteractionHandler_0x42" },
+    { "address": "0x001B72FC", "name": "InteractionHandler_0x61" },
+    { "address": "0x001B74D6", "name": "InteractionHandler_0x87" },
+    { "address": "0x001B7494", "name": "InteractionHandler_0x8E" },
+    { "address": "0x001B74B2", "name": "InteractionHandler_0x90" },
+    { "address": "0x001B74C4", "name": "InteractionHandler_0x91" }
+  ]
+}
