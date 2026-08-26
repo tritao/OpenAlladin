@@ -1,0 +1,95 @@
+{
+  "campaign": "20260826-level01-connector2112-upper-stop-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Classify the upper endpoint of the level-01 column-132 connector from a current-harness climb checkpoint.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "e3cc36105a2c5f7e834f3fc650d1ac49b6c4f2b0",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-connector2112-trace-v1/natural-left-interaction/states/genesis/climb-upper.sta",
+  "instrumentation": {
+    "breakpoints": ["0x001B54D8", "0x001A9D98", "0x001B5B4A", "0x001B6406"],
+    "watched_addresses": ["0xFFF0D0", "0xFFF0DB", "0xFFF0DC", "0xFFF0E6", "0xFFF0E9"]
+  },
+  "segments": [
+    {
+      "id": "continue-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-connector2112-upper-stop-v1/continue-up",
+      "frames": 220,
+      "input": "up*120,none*100",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-connector2112-trace-v1/natural-left-interaction/states/genesis/climb-upper.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "climb-mid" },
+        { "frame": 120, "name": "up-end" },
+        { "frame": 180, "name": "interaction" },
+        { "frame": 220, "name": "settled" }
+      ],
+      "debug_log": "build/re/campaigns/20260826-level01-connector2112-upper-stop-v1/continue-up/debug.log"
+    },
+    {
+      "id": "up-left-dismount",
+      "trace_dir": "build/re/campaigns/20260826-level01-connector2112-upper-stop-v1/up-left-dismount",
+      "frames": 220,
+      "input": "up*100,c+left*12,left*60,none*68",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-connector2112-trace-v1/natural-left-interaction/states/genesis/climb-upper.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "climb-mid" },
+        { "frame": 120, "name": "up-end" },
+        { "frame": 180, "name": "interaction" },
+        { "frame": 220, "name": "settled" }
+      ],
+      "debug_log": "build/re/campaigns/20260826-level01-connector2112-upper-stop-v1/up-left-dismount/debug.log"
+    },
+    {
+      "id": "up-right-dismount",
+      "trace_dir": "build/re/campaigns/20260826-level01-connector2112-upper-stop-v1/up-right-dismount",
+      "frames": 220,
+      "input": "up*100,c+right*12,right*60,none*68",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-connector2112-trace-v1/natural-left-interaction/states/genesis/climb-upper.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "climb-mid" },
+        { "frame": 120, "name": "up-end" },
+        { "frame": 180, "name": "interaction" },
+        { "frame": 220, "name": "settled" }
+      ],
+      "debug_log": "build/re/campaigns/20260826-level01-connector2112-upper-stop-v1/up-right-dismount/debug.log"
+    },
+    {
+      "id": "up-neutral-c",
+      "trace_dir": "build/re/campaigns/20260826-level01-connector2112-upper-stop-v1/up-neutral-c",
+      "frames": 220,
+      "input": "up*100,c*20,none*80",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-connector2112-trace-v1/natural-left-interaction/states/genesis/climb-upper.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "climb-mid" },
+        { "frame": 120, "name": "up-end" },
+        { "frame": 180, "name": "interaction" },
+        { "frame": 220, "name": "settled" }
+      ],
+      "debug_log": "build/re/campaigns/20260826-level01-connector2112-upper-stop-v1/up-neutral-c/debug.log"
+    }
+  ]
+}

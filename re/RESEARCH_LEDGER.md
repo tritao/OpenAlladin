@@ -461,6 +461,15 @@ Type-0x36 actor is not a direct transition trigger in this branch;
 `0xFFF0E9`. This closes the recorded left/up/left timing family at the
 connector's upper stop while preserving its checkpoints for dismount tests.
 
+The endpoint matrix is recorded in
+`re/mame/campaigns/20260826-level01-connector2112-upper-stop-v1.json` and
+`re/mame/findings/20260826-level01-connector2112-upper-stop-v1.json`.
+Continuing Up reaches the actual behavior-`0x24` endpoint at `(2104,654)`;
+C+Left returns to `(1946,690)`, C+Right falls to `(2176,912)`, and neutral C
+returns to the endpoint. All four branches remain in scene state `0x01` and
+write none of the scene exit gates, closing this connector as a local loop for
+the tested dismount family.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -501,6 +510,7 @@ connector's upper stop while preserving its checkpoints for dismount tests.
 | `20260826-level01-exit-predicate-probe-v1` | recorded-controlled-boundary-write | current-harness boundary predicate and gate observation |
 | `20260826-level01-natural-tower-response-trace-v1` | recorded-negative-frontier | natural lower-tower terrain, interaction-row, and scene-gate trace |
 | `20260826-level01-connector2112-trace-v1` | recorded-negative-frontier | natural column-132 connector climb and upper-stop handler trace |
+| `20260826-level01-connector2112-upper-stop-v1` | recorded-negative-frontier | column-132 endpoint and left/right/neutral dismount matrix |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

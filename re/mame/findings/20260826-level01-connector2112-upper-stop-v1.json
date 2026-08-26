@@ -1,0 +1,62 @@
+{
+  "format": "openaladdin-level01-connector2112-upper-stop-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-connector2112-upper-stop-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "e3cc36105a2c5f7e834f3fc650d1ac49b6c4f2b0",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "source_checkpoint": {
+    "path": "build/re/campaigns/20260826-level01-connector2112-trace-v1/natural-left-interaction/states/genesis/climb-upper.sta",
+    "world": [2104, 714],
+    "terrain_behavior": "0x22",
+    "scene_state": "0x01"
+  },
+  "branches": [
+    {
+      "id": "continue-up",
+      "input": "up*120,none*100",
+      "endpoint": { "world": [2104, 654], "terrain_behavior": "0x24", "scene_state": "0x01" },
+      "meaning": "Up reaches the real behavior-0x24 upper endpoint and then holds there."
+    },
+    {
+      "id": "up-left-dismount",
+      "input": "up*100,c+left*12,left*60,none*68",
+      "endpoint": { "world": [1946, 690], "terrain_behavior": "0x00", "scene_state": "0x01" },
+      "meaning": "C+Left dismounts back onto the upper platform."
+    },
+    {
+      "id": "up-right-dismount",
+      "input": "up*100,c+right*12,right*60,none*68",
+      "endpoint": { "world": [2176, 912], "terrain_behavior": "0x00", "scene_state": "0x01" },
+      "meaning": "C+Right falls through the forward side and returns to the lower floor."
+    },
+    {
+      "id": "up-neutral-c",
+      "input": "up*100,c*20,none*80",
+      "endpoint": { "world": [2104, 648], "terrain_behavior": "0x24", "scene_state": "0x01" },
+      "meaning": "Neutral C produces only a local jump/response and returns to the endpoint."
+    }
+  ],
+  "handler_observations": {
+    "behavior_0x22_0x23_handler": "Requested 0x001B54D8, observed at 0x001B54DA for 219/219/105/181 frames in the four branches respectively.",
+    "scene_state": "0x01 in all branches",
+    "scene_exit_handlers": "No transition to SCENE_STATE=0x08 and no writes to 0xFFF0DC, 0xFFF0E6, or 0xFFF0E9.",
+    "player_transition_field": "0xFFF0D0 is set while attached and clears on dismount; it is not the scene state."
+  },
+  "conclusion": {
+    "verified": [
+      "The column-132 connector's upper endpoint is behavior 0x24 at approximately (2104,654).",
+      "The left dismount returns to the known upper-platform loop.",
+      "The right dismount returns to the known lower-floor frontier.",
+      "Neutral C does not reveal a hidden launch or scene transition."
+    ],
+    "negative_evidence": [
+      "This connector is a closed local route under the tested dismount directions.",
+      "No tested branch writes SCENE_STATE=0x08 or any watched exit gate."
+    ],
+    "unresolved": "A separate object/resource route may still transfer from the lower tower to the X≈2720 connector; the column-132 endpoint itself does not provide that transfer."
+  },
+  "next_action": "Trace the known controlled X≈2720 connector fixture and compare its terrain-response fields against the natural lower-tower checkpoint, then search for the missing launch/interaction condition rather than more column-132 timing."
+}
