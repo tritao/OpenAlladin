@@ -1,0 +1,53 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-interaction-inventory",
+    "purpose": "Decode every interaction handler referenced by the extracted Level 01 interaction table, with emphasis on traversal, gate, and scene-related records."
+  },
+  "targets": [
+    { "address": "0x001B6802", "name": "InteractionHandler_0x0D" },
+    { "address": "0x001B6EA6", "name": "InteractionHandler_0x10" },
+    { "address": "0x001B6E90", "name": "InteractionHandler_0x11" },
+    { "address": "0x001B6E7A", "name": "InteractionHandler_0x12" },
+    { "address": "0x001B6D84", "name": "InteractionHandler_0x13" },
+    { "address": "0x001B6F76", "name": "InteractionHandler_0x14" },
+    { "address": "0x001B6ED0", "name": "InteractionHandler_0x1A" },
+    { "address": "0x001B6EB2", "name": "InteractionHandler_0x1B" },
+    { "address": "0x001B7232", "name": "InteractionHandler_0x40" },
+    { "address": "0x001B7454", "name": "InteractionHandler_0x50" },
+    { "address": "0x001B7262", "name": "InteractionHandler_0x51" },
+    { "address": "0x001B72D4", "name": "InteractionHandler_0x53" },
+    { "address": "0x001B65BE", "name": "InteractionHandler_0x54" },
+    { "address": "0x001B7434", "name": "InteractionHandler_0x55" },
+    { "address": "0x001B6870", "name": "InteractionHandler_0x5C" },
+    { "address": "0x001B735E", "name": "InteractionHandler_0x60" },
+    { "address": "0x001B670C", "name": "InteractionHandler_0x74" },
+    { "address": "0x001B6F0C", "name": "InteractionHandler_0x80" },
+    { "address": "0x001B6CB4", "name": "InteractionHandler_0x81" },
+    { "address": "0x001B2650", "name": "InteractionHandler_0x81_PostSpawn" },
+    { "address": "0x001B74D6", "name": "InteractionHandler_0x87" },
+    { "address": "0x001B744A", "name": "InteractionHandler_0xAB" },
+    { "address": "0x001B728E", "name": "InteractionHandler_0xC8" },
+    { "address": "0x001B700C", "name": "InteractionHandler_0xEA" },
+    { "address": "0x001B723E", "name": "InteractionHandler_0xFF" },
+    { "address": "0x001B5266", "name": "LevelObjectSpawnEntry" },
+    { "address": "0x001B524E", "name": "LevelObjectSpawnEntry_OffsetA" },
+    { "address": "0x001B525E", "name": "LevelObjectSpawnEntry_OffsetB" },
+    { "address": "0x001AE27A", "name": "ActorSpawnAllocator_OffsetA" },
+    { "address": "0x001AE292", "name": "ActorSpawnAllocator_OffsetB" },
+    { "address": "0x001AE2AA", "name": "ActorSpawnAllocator_OffsetC" },
+    { "address": "0x001AE262", "name": "ActorSlotAllocator" },
+    { "address": "0x001AE30A", "name": "ActorInitializeFromTemplate" },
+    { "address": "0x001AE406", "name": "InteractionRowProcessor" },
+    { "address": "0x001AE47E", "name": "InteractionRowProcessorDispatch" },
+    { "address": "0x001B3F0C", "name": "SceneTable_State08Writer" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7DAC", "name": "INTERACTION_ROW_POINTER" },
+    { "address": "0x00FF7DB4", "name": "INTERACTION_ROW_STRIDE" },
+    { "address": "0x00FFAE87", "name": "INTERACTION_TABLE_RUNTIME" },
+    { "address": "0x00FF7E26", "name": "SCENE_STATE" },
+    { "address": "0x00FFF0E9", "name": "SCENE_SCRIPT_COUNTDOWN" }
+  ]
+}

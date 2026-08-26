@@ -706,3 +706,59 @@
   evidence:
     - ghidra_rnc_loader_analysis
     - mame_rnc_loader_trace
+
+0x001B2650:
+  name: InteractionHandler_StreamVDPWords
+  confidence: confirmed
+  description: Sets VDP control to 0xC0400000 and streams 16 words from A0 to the VDP data port; used by Level 01 interaction handler 0x81 and not a scene-state writer.
+  evidence:
+    - ghidra_level01_interaction_inventory_targeted_decompile
+
+0x001B524E:
+  name: InteractionSpawn_ForwardSlot
+  confidence: confirmed
+  description: Allocates an interaction actor through the forward slot scan at 0x001AE27A, initializes payload fields at actor offsets 0x32/0x34, positions it from global interaction coordinates, and consumes the interaction byte.
+  evidence:
+    - ghidra_level01_interaction_inventory_targeted_decompile
+
+0x001B525E:
+  name: InteractionSpawn_ReverseSlot
+  confidence: confirmed
+  description: Allocates an interaction actor through the reverse slot scan at 0x001AE2AA, initializes payload fields at actor offsets 0x32/0x34, positions it from global interaction coordinates, and consumes the interaction byte.
+  evidence:
+    - ghidra_level01_interaction_inventory_targeted_decompile
+
+0x001AE27A:
+  name: Actor_FindFreeSlotForward
+  confidence: confirmed
+  description: Scans 23 actor records forward from 0x00FF7E82 with stride 0x42 for a zero-type slot.
+  evidence:
+    - ghidra_level01_interaction_inventory_targeted_decompile
+
+0x001AE292:
+  name: Actor_FindFreeSlotBackward
+  confidence: confirmed
+  description: Scans 23 actor records backward from 0x00FF8470 with stride 0x42 for a zero-type slot.
+  evidence:
+    - ghidra_level01_interaction_inventory_targeted_decompile
+
+0x001AE2AA:
+  name: Actor_FindFreeSlotReverse20
+  confidence: confirmed
+  description: Scans 20 actor records backward from 0x00FF8368 with stride 0x42 for a zero-type slot.
+  evidence:
+    - ghidra_level01_interaction_inventory_targeted_decompile
+
+0x001B6F0C:
+  name: InteractionHandler_0x80
+  confidence: confirmed
+  description: Clears the interaction-side flag at 0x00FFF104 and allocates an actor through InteractionSpawn_ReverseSlot.
+  evidence:
+    - ghidra_level01_interaction_inventory_targeted_decompile
+
+0x001B6CB4:
+  name: InteractionHandler_0x81
+  confidence: confirmed
+  description: Allocates an interaction actor through the common spawn path and, on success, streams 16 words to the VDP through InteractionHandler_StreamVDPWords.
+  evidence:
+    - ghidra_level01_interaction_inventory_targeted_decompile

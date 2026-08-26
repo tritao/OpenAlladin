@@ -566,6 +566,18 @@ resource-mode switch, not a connector or scene writer. It also corrects the
 older `0x001ADB34` label: that address is an empty return; the distinct
 routine at `0x001ADB36` is not the landing resolver's direct callback.
 
+The complete Level 01 interaction inventory is recorded in
+`re/mame/findings/20260826-level01-interaction-inventory-v1.json`. Static
+decoding of the 300x45 map finds 147 interaction records and 24 unique
+selectors. The runtime row processor at `0x001AE47E` consumes the upper
+row-14 records at map cells `(283,14)` and `(294,14)`, selectors `0x11` and
+`0x1B`, producing the previously observed Type-0x1E/Type-0x20 pair. The
+nearby row-15 selectors `0x80` and `0x81` resolve to actor allocation paths:
+`0x80` clears `FFF104`, while `0x81` performs a 16-word VDP upload through
+`0x001B2650`. Neither direct handler writes `SCENE_STATE=0x08` or the scene
+countdown. The remaining high-value test is controlled activation of those
+row-15 records followed by tracing the actors/resources they create.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
