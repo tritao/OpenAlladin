@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-level01-natural-gate-audit-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-natural-gate-audit-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "trace": "build/re/diagnostics/20260826-level01-natural-gate-audit-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-cross/states/genesis/far-floor-entry.sta",
+  "key_observations": [
+    {
+      "writer": "0x001B042A",
+      "target": "0xFFF0E6",
+      "value": "0x0A",
+      "actor_type": "0x1E",
+      "trace_frames": [79, 133],
+      "interpretation": "A far-floor actor collision/interaction arms the terminal-transition countdown."
+    },
+    {
+      "writer": "0x001B5562",
+      "target": "0xFFF0DB",
+      "value": "0x01",
+      "trace_frames": [329, 330, 331, 332, 333, 334, 335, 336],
+      "interpretation": "Terrain stop-and-align locks the player during collision resolution."
+    }
+  ],
+  "terminal_countdown": {
+    "first": { "trace_frame": 79, "value": "0x0A", "world": [3568, 912] },
+    "reaches_zero": { "trace_frame": 88, "world": [3568, 912] },
+    "second": { "trace_frame": 133, "value": "0x0A", "world": [3700, 912] },
+    "second_reaches_zero": { "trace_frame": 142, "world": [3700, 912] },
+    "scene_state_during_both": "0x01"
+  },
+  "not_observed": [
+    "Scene_EnterTransitionMode writes at 0x001B2DB8 and 0x001B2DD8",
+    "Level 01 boundary writer 0x001B5B3A",
+    "SceneScript_AdvanceState state write at 0x001A8ED2",
+    "SceneTable_SelectNextState at 0x001B3B96/0x001B3F0A",
+    "Player transition gate 0xFFF0D0, countdown 0xFFF0DC, and scene-script countdown 0xFFF0E9 writes"
+  ],
+  "conclusion": "The static candidates at 0x001B042A and 0x001B5562 are confirmed as local actor-contact and terrain-alignment behavior in a natural Level 01 segment. They are not sufficient evidence for a scene transition and should not be used as the exit trigger in the native port.",
+  "next_action": "Use the pre-far-floor route checkpoints to search for the resource/object interaction that moves the player into the Level 01 boundary predicate."
+}

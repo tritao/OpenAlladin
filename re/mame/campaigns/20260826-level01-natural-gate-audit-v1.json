@@ -1,0 +1,104 @@
+{
+  "campaign": "20260826-level01-natural-gate-audit-v1",
+  "status": "recorded-negative-natural",
+  "purpose": "Trace a natural Level 01 far-floor continuation with the complete scene and player-transition write inventory installed as execution breakpoints.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "97750ce",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-cross/states/genesis/far-floor-entry.sta",
+  "trace_dir": "build/re/diagnostics/20260826-level01-natural-gate-audit-v1",
+  "frames": 721,
+  "input_schedule": "b+right*520,none*201",
+  "instrumentation": {
+    "breakpoints": [
+      "0x001B5B3A", "0x001B5B4A", "0x001B5C18", "0x001B624E", "0x001B7830",
+      "0x001B2DB8", "0x001B2DD8", "0x001B042A", "0x001B5318", "0x001B53B8",
+      "0x001B539A", "0x001B5562", "0x001B569C", "0x001A8ED2", "0x001B3F0A",
+      "0x001B3B96", "0x001B318E"
+    ],
+    "watch_addresses": [
+      "0xFFF0D0", "0xFFF0DB", "0xFFF0DC", "0xFFF0E6", "0xFFF0E9",
+      "0xFF7E26", "0xFFF572", "0xFFF576", "0xFFF57A", "0xFFF57C"
+    ],
+    "breakpoint_registers": true,
+    "actor_trace": true,
+    "scene_state_trace": true
+  },
+  "observed_breakpoint_histogram": {
+    "0x001B042C": 2,
+    "0x001B5564": 8,
+    "0x001B5B4C": 597
+  },
+  "events": [
+    {
+      "trace_frame": 79,
+      "machine_frame": "0x0DCF",
+      "pc_after_write": "0x001B042C",
+      "write_pc": "0x001B042A",
+      "address": "0xFFF0E6",
+      "value": "0x0A",
+      "actor_type": "0x1E",
+      "world": [3568, 912],
+      "meaning": "Actor collision/interaction path arms the player terminal-transition countdown."
+    },
+    {
+      "trace_frame_range": [79, 88],
+      "address": "0xFFF0E6",
+      "values": ["0x09", "0x08", "0x07", "0x06", "0x05", "0x04", "0x03", "0x02", "0x01", "0x00"],
+      "world": [3568, 912],
+      "meaning": "The terminal-transition value counts down to zero while scene state remains 0x01."
+    },
+    {
+      "trace_frame": 133,
+      "machine_frame": "0x0E05",
+      "pc_after_write": "0x001B042C",
+      "write_pc": "0x001B042A",
+      "address": "0xFFF0E6",
+      "value": "0x0A",
+      "actor_type": "0x1E",
+      "world": [3700, 912],
+      "meaning": "The same actor collision/interaction path repeats."
+    },
+    {
+      "trace_frame_range": [133, 142],
+      "address": "0xFFF0E6",
+      "values": ["0x09", "0x08", "0x07", "0x06", "0x05", "0x04", "0x03", "0x02", "0x01", "0x00"],
+      "world": [3700, 912],
+      "meaning": "The repeated terminal-transition countdown also returns to zero without a scene transition."
+    },
+    {
+      "trace_frame_range": [329, 336],
+      "pc_after_write": "0x001B5564",
+      "write_pc": "0x001B5562",
+      "address": "0xFFF0DB",
+      "value": "0x01",
+      "world_start": [2902, 849],
+      "world_end": [2904, 891],
+      "meaning": "Terrain stop-and-align sets the player transition lock during a later collision response."
+    }
+  ],
+  "final_state": {
+    "trace_frame": 721,
+    "world": [3453, 912],
+    "scene_state": "0x01",
+    "scene_script_cursor": "0x4082",
+    "scene_table_index": "0x00",
+    "scene_script_pending": "0x00",
+    "scene_script_countdown": "0x00",
+    "player_transition_gate": "0x00",
+    "player_transition_lock": "0x00",
+    "player_transition_countdown": "0x00",
+    "player_terminal_transition": "0x00"
+  },
+  "negative_results": [
+    "No hit at Scene_EnterTransitionMode 0x001B2DB8 or 0x001B2DD8.",
+    "No hit at the Level 01 boundary writer 0x001B5B3A or its follow-on scene-script writer 0x001A8ED2.",
+    "No hit at SceneTable_SelectNextState or any direct SCENE_STATE table writer.",
+    "The observed terminal-transition and terrain-lock writes do not advance scene state in this natural far-floor segment."
+  ],
+  "conclusion": "The newly identified terminal-transition family is active during ordinary far-floor actor contact, but it is a local player response path rather than the Level 01 exit path. The remaining natural-route problem is reaching the upper Level 01 boundary band, not decoding these terminal writes as scene transitions.",
+  "next_action": "Return to the earliest unresolved route branch before the far-floor checkpoint and trace which interaction or terrain resource makes the upper exit band reachable; retain this campaign as the terminal-path control."
+}
