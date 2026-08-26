@@ -1,0 +1,78 @@
+{
+  "format": "openaladdin-level01-static-connector-inventory-finding-v1",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "repository_commit_at_capture": "47a0d3f",
+  "sources": {
+    "map": "build/assets/levels/level01/raw/map.bin",
+    "floor": "build/assets/levels/level01/raw/floor.bin",
+    "map_dimensions": [300, 45],
+    "word_endianness": "big",
+    "behavior_lookup": "floor[2 + (terrain_word >> 1)]"
+  },
+  "connector_inventory": [
+    {
+      "map_column": 98,
+      "world_x_approx": 1568,
+      "upper_endpoint": { "row": 14, "word": "0x52B0", "behavior": "0x24" },
+      "body_rows": "15-24",
+      "body_behavior": "0x22",
+      "runtime_evidence": "re/mame/campaigns/20260826-level01-fresh-route-high-transfer-v1.json"
+    },
+    {
+      "map_column": 132,
+      "world_x_approx": 2112,
+      "upper_endpoint": { "row": 25, "word": "0x52B0", "behavior": "0x24" },
+      "body_rows": "26-39",
+      "body_behavior": "0x22",
+      "runtime_evidence": "static-only in the current route record"
+    },
+    {
+      "map_column": 170,
+      "world_x_approx": 2720,
+      "upper_endpoint": { "row": 10, "word": "0x52B0", "behavior": "0x24" },
+      "body_rows": "11-22",
+      "body_behavior": "0x22",
+      "runtime_evidence": "re/mame/campaigns/20260826-level01-tower-support-exploration-v1.json"
+    },
+    {
+      "map_column": 296,
+      "world_x_approx": 4736,
+      "upper_endpoint": { "row": 26, "word": "0x52B0", "behavior": "0x24" },
+      "body_rows": "27-36",
+      "body_behavior": "0x22",
+      "runtime_evidence": "re/mame/campaigns/20260826-level01-canonical-recording-v5.json"
+    }
+  ],
+  "adjacent_surfaces": {
+    "behavior_0x25": [
+      { "rows": 10, "columns": "275-284", "meaning": "upper platform band" },
+      { "rows": 24, "columns": "274-296", "meaning": "middle horizontal band" }
+    ],
+    "behavior_0x47": [
+      { "rows": "31-37", "columns": "142-143" },
+      { "rows": "35-42", "columns": "166-174", "meaning": "lower tower/stair surface" }
+    ]
+  },
+  "runtime_correlation": {
+    "tower_connector": "The controlled fixture at world X≈2704,Y=580 reaches the behavior-0x22 band and climbs to approximately Y=385. At the lower tower height around Y=770, the same column is empty and the natural controller branches remain on behavior 0x47 or the lower continuation.",
+    "far_connector": "The natural route reaches the column-296 connector around world X=4728, climbs from behavior 0x22 to its behavior-0x24 endpoint near Y=671, and does not expose the row-10 upper platform through ordinary dismount inputs.",
+    "missing_bridge": "The extracted terrain map contains no behavior-0x22/0x24 cell connecting the lower tower band near Y=770 to the tower connector body near Y=580. Any intended transfer must therefore be a player response, interaction/resource event, or a different route branch rather than an omitted static connector cell."
+  },
+  "conclusion": {
+    "verified": [
+      "Level 01 has four distinct static vertical connector bands.",
+      "The connector bodies use behavior 0x22 and their upper endpoint uses behavior 0x24.",
+      "The tower behavior-0x47 surface is spatially separate from the nearby behavior-0x22 connector.",
+      "The far connector is a real lower-to-middle route element, but its ordinary upper stop is not the exit corridor."
+    ],
+    "negative_evidence": [
+      "The static map does not support the hypothesis that a hidden connector cell is present directly at the lower tower gap.",
+      "Repeating direct Up/jump timing at the lower tower is not justified by the terrain inventory alone."
+    ],
+    "unresolved": "The resource/interaction path that transfers the player from a reachable lower branch into the upper exit band remains to be identified."
+  },
+  "next_action": "Use the targeted level-object/resource decompilation request to classify interaction rows and actor templates associated with the connector columns, then trace the natural lower-tower approach with terrain callbacks and actor collision instrumentation."
+}

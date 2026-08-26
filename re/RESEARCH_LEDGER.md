@@ -420,6 +420,16 @@ no-op; behaviors `0x85/0x86` only set/clear the contour flag. These branches
 remain in scene state `0x01` and do not reach the exit height, closing the
 special-cell and direct-dismount hypotheses while preserving all checkpoints.
 
+The static connector inventory is now recorded in
+`re/mame/findings/20260826-level01-static-connector-inventory-v1.json`. The
+extracted 300x45 level-01 terrain map contains four distinct vertical
+connector bands: columns 98, 132, 170, and 296, with behavior `0x22` bodies
+and behavior `0x24` upper endpoints. The controlled tower connector at
+X≈2720 is spatially separate from the reachable behavior-`0x47` tower surface;
+the static map therefore does not support a hidden connector-cell explanation
+for the lower-tower gap. The remaining bridge must be a player response,
+interaction/resource event, or a different route branch.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |

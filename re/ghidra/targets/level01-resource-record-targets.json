@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-resource-record-dispatch",
+    "purpose": "Recover the level-object/resource dispatch region that creates the lower tower, connector, and upper-route interaction records; distinguish object records from terrain-only level-entry code."
+  },
+  "targets": [
+    { "address": "0x001B5010", "name": "LevelResourceDispatchA" },
+    { "address": "0x001B507E", "name": "LevelResourceDispatchB" },
+    { "address": "0x001B515C", "name": "LevelResourceDispatchC" },
+    { "address": "0x001B524E", "name": "LevelObjectTemplateDispatch" },
+    { "address": "0x001B5256", "name": "LevelObjectHandlerTable" },
+    { "address": "0x001B5266", "name": "LevelObjectSpawnEntry" },
+    { "address": "0x001B52A0", "name": "LevelObjectSpawnVariant" },
+    { "address": "0x001B52A6", "name": "LevelObjectSpawnVariantB" },
+    { "address": "0x001B5354", "name": "LevelObjectDispatchTail" },
+    { "address": "0x001B535A", "name": "LevelObjectType140Dispatcher" },
+    { "address": "0x001B53E0", "name": "LevelObjectDispatchEnd" },
+    { "address": "0x001B571A", "name": "LevelObjectResourceTableA" },
+    { "address": "0x001B58F4", "name": "LevelObjectResourceTableB" },
+    { "address": "0x001B5938", "name": "LevelObjectResourceTableC" },
+    { "address": "0x001B5984", "name": "LevelObjectResourceTableD" },
+    { "address": "0x001B59B4", "name": "LevelObjectResourceTableE" },
+    { "address": "0x001B59F6", "name": "LevelObjectResourceTableF" },
+    { "address": "0x001B5A28", "name": "LevelObjectResourceTableG" },
+    { "address": "0x001B5A5A", "name": "LevelObjectResourceTableH" },
+    { "address": "0x001B5A88", "name": "LevelObjectResourceTableI" },
+    { "address": "0x001B5AB8", "name": "LevelObjectResourceTableJ" },
+    { "address": "0x001B5AE0", "name": "LevelObjectResourceTableK" },
+    { "address": "0x001B5B10", "name": "LevelObjectResourceTableL" },
+    { "address": "0x001B7C10", "name": "ActorTemplateType20" },
+    { "address": "0x001B7C24", "name": "ActorTemplateType1E" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },
+    { "address": "0x00FFAE87", "name": "INTERACTION_TABLE_RUNTIME" },
+    { "address": "0x00FF7DD2", "name": "TERRAIN_QUERY_CALLBACK_A" },
+    { "address": "0x00FF7DD6", "name": "TERRAIN_QUERY_CALLBACK_B" },
+    { "address": "0x00FF7DDA", "name": "TERRAIN_QUERY_CALLBACK_C" }
+  ]
+}
