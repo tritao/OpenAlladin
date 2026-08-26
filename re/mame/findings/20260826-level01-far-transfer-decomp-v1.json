@@ -55,6 +55,24 @@
         "published_interaction_address": "0xFFDDEF"
       },
       "result": "The 0x001AF468 path does not publish the actor interaction because the counter is not 0x3939; it only advances the counter and clears/reinitializes the type-0x40 actor. The interaction handler helper at 0x001B5256 is not entered."
+    },
+    {
+      "id": "launch-family-handler-probe",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v4/decomp-trace-launch-family-nosync",
+      "load_state": "build/re/campaigns/20260826-level01-canonical-recording-v4/far-vertical-rope-climb/states/genesis/end.sta",
+      "input": "c+left*20,left*90,none*10,left*73,c+left*10,left*217",
+      "breakpoints": ["0x001AF978", "0x001AFBF4", "0x001B557E", "0x001B56B6", "0x001AE796", "0x001AEE40", "0x001AF468", "0x001B5256"],
+      "observed_breakpoint_hits": {
+        "0x001AF468": 3,
+        "0x001B5256": 2,
+        "0x001AE796": 18,
+        "0x001AF978": 0,
+        "0x001AFBF4": 0,
+        "0x001B557E": 0,
+        "0x001B56B6": 0,
+        "0x001AEE40": 0
+      },
+      "result": "This instrumentation run reaches the type-0x1E player-collision handler only after the trajectory falls into the lower band; it does not reach the type-0x65 bounce or 0x29/0x2D terrain launch handlers. The trace is debugger-only evidence: loaded-state timing differs from the canonical no-debug v5 replay by a few frames, so v5 remains authoritative for natural coordinates."
     }
   ],
   "handler_table_resolution": [
