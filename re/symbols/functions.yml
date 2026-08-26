@@ -536,6 +536,20 @@
   evidence:
     - ghidra_disassembly_001B53A2
     - rom_terrain_handler_table_004554
+0x001B53B0:
+  name: TerrainHandler_TerminalTransition
+  confidence: confirmed
+  description: Terrain behavior handler for behavior 0x70; if PLAYER_TERMINAL_TRANSITION is clear, arms it with 0x20 and creates a terminal actor at the player's world position.
+  evidence:
+    - ghidra_terrain_dispatch_extended_targeted_decompile
+    - rom_terrain_handler_table_extent_004554_004953
+0x001B53F6:
+  name: TerrainHandler_LandingLatch
+  confidence: confirmed
+  description: Terrain behavior handler for behavior 0x88; on the four-frame cadence while falling, latches the terrain response, clears active response, marks landing, and stops vertical motion.
+  evidence:
+    - ghidra_terrain_dispatch_extended_targeted_decompile
+    - rom_terrain_handler_table_extent_004554_004953
 0x001B5440:
   name: TerrainHandler_ClearSurfaceTransitionFlag
   confidence: confirmed

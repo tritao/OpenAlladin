@@ -1,0 +1,16 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "terrain-dispatch-extended",
+    "purpose": "Decode valid terrain-dispatch entries above the previously assumed 0x47 range and verify their Level 01 relevance."
+  },
+  "targets": [
+    { "address": "0x001B53B0", "name": "TerrainHandler_0x70_Terminal" },
+    { "address": "0x001B53F6", "name": "TerrainHandler_0x88" },
+    { "address": "0x001B5784", "name": "TerrainHandler_0xC7_0xC8" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0E6", "name": "PLAYER_TERMINAL_TRANSITION" }
+  ]
+}

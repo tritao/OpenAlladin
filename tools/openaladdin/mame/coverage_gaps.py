@@ -19,7 +19,7 @@ SUPPORTED_COVERAGE = {
 }
 
 TABLE_SPECS = (
-    ("terrain", "TERRAIN_RESPONSE_HANDLER_TABLE", 72),
+    ("terrain", "TERRAIN_RESPONSE_HANDLER_TABLE", 256),
     ("actor_vm", "ACTOR_VM_DISPATCH_TABLE", 21),
     ("player_collision", "PLAYER_COLLISION_HANDLER_TABLE", 256),
     ("actor_collision", "ACTOR_COLLISION_HANDLER_TABLE", 256),

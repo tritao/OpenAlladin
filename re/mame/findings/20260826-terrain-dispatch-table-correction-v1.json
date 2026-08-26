@@ -1,0 +1,67 @@
+{
+  "format": "openaladdin-terrain-dispatch-table-correction-v1",
+  "recorded_at": "2026-08-26",
+  "repository_commit": "b57ab81",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "purpose": "Correct the terrain-dispatch table extent and decode the valid handlers above behavior 0x47 before selecting the next Level 01 route target.",
+  "table_extent": {
+    "rom_base": "0x004554",
+    "next_table": "0x004954",
+    "entry_size": 4,
+    "entry_count": 256,
+    "last_entry_address": "0x004950",
+    "coverage_tool": "tools/openaladdin/mame/coverage_gaps.py",
+    "corrected_summary": "The corrected report contains 215 covered and 41 uncovered valid terrain entries out of 256; the previous 72-entry limit omitted valid entries 0x48 through 0xFF."
+  },
+  "static_decompilation": {
+    "target_manifest": "re/ghidra/targets/terrain-dispatch-extended-targets.json",
+    "report": "build/re/terrain-dispatch-extended-targeted-decompile-v1.json",
+    "handlers": {
+      "0x70": {
+        "address": "0x001B53B0",
+        "effect": "If PLAYER_TERMINAL_TRANSITION is clear, writes 0x20 to 0x00FFF0E6, allocates an actor slot, initializes the terminal template, and copies PLAYER_WORLD_X/Y into it.",
+        "classification": "terminal/death response, not a direct scene-state writer"
+      },
+      "0x88": {
+        "address": "0x001B53F6",
+        "effect": "On every fourth cadence while the player is falling and terrain response permits it, increments PLAYER_Y, latches terrain response, sets interaction mode and landing state, clears active response, and sets PLAYER_VY=0.",
+        "classification": "landing/vertical response"
+      },
+      "0xC7_0xC8": {
+        "address": "0x001B5784",
+        "effect": "Returns immediately.",
+        "classification": "no-op"
+      }
+    },
+    "scene_transition_scan": "The extended handler report contains no write to SCENE_STATE at 0x00FF7E26 or SCENE_SCRIPT_COUNTDOWN at 0x00FFF0E9. The 0x70 handler only arms PLAYER_TERMINAL_TRANSITION."
+  },
+  "level01_map_check": {
+    "map": "build/assets/levels/level01/raw/map.bin",
+    "floor": "build/assets/levels/level01/raw/floor.bin",
+    "dimensions": [300, 45],
+    "decode": "behavior = floor.bin[2 + (big_endian_u16(map_word) >> 1)]",
+    "cell_counts": {
+      "0x70": 0,
+      "0x88": 0,
+      "0xC7": 0,
+      "0xC8": 0,
+      "0x85": 14,
+      "0x86": 46
+    },
+    "exit_predicate": "Level01_EnterRoutine at 0x001B5B4A arms the scene countdown when PLAYER_WORLD_X > 0x1287 and PLAYER_WORLD_Y < 0x01D6; no 0x70 terrain cell is involved in that predicate."
+  },
+  "conclusion": {
+    "verified": [
+      "The terrain pointer table spans 256 entries from 0x004554 through 0x004953.",
+      "Behavior 0x70 is a terminal/death response and behavior 0x88 is a landing latch; neither is the missing Level 01 upper transfer.",
+      "No Level 01 cell uses the newly decoded 0x70 or 0x88 handlers."
+    ],
+    "negative_evidence": "The corrected terrain inventory does not add a hidden terminal cell to the extracted Level 01 geometry; the natural route still must reach the existing Level 01 X/Y exit predicate.",
+    "unresolved": "The natural transfer from the far vertical rope to world Y below 0x01D6 remains unidentified."
+  },
+  "next_action": "Use the corrected 256-entry terrain coverage to prioritize only handlers that occur in the Level 01 map, then trace the dynamic upper-route actor/resource path."
+}
