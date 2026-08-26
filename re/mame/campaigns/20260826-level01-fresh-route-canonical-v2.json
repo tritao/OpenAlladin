@@ -1,0 +1,109 @@
+{
+  "campaign": "20260826-level01-fresh-route-canonical-v2",
+  "status": "recorded-frontier",
+  "purpose": "Fresh level-01 route recording with debugger state synchronization disabled, from the level-entry checkpoint through the handhold, upper rope, upper-left ledge, and guard interaction.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "b315c26",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "b315c26",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "timing_note": "Canonical gameplay segments use OPENALADDIN_STATE_SYNC=0. Debugger synchronization changes actor timing at the handhold and is not used for behavioral replay.",
+  "fresh_entry_provenance": "The first segment loads build/re/campaigns/20260826-level01-recording-baseline-v1/fresh-boot/states/genesis/level01-entry.sta, captured from the fresh-boot baseline campaign.",
+  "segments": [
+    {
+      "id": "fresh-to-handhold",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/fresh-to-handhold",
+      "frames": 720,
+      "input": "right*60,c+right*20,right*240,c+right*1,right*99,right*50,c+right*20,c*10,right*110,none*50",
+      "load_state": "level01-entry-loaded",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-baseline-v1/fresh-boot/states/genesis/level01-entry.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "level01-entry-loaded", "state": "fresh-to-handhold/states/genesis/level01-entry-loaded.sta" },
+        { "frame": 420, "name": "gap-entrance", "state": "fresh-to-handhold/states/genesis/gap-entrance.sta" },
+        { "frame": 459, "name": "handhold-spawned", "state": "fresh-to-handhold/states/genesis/handhold-spawned.sta" },
+        { "frame": 531, "name": "handhold-grabbed", "state": "fresh-to-handhold/states/genesis/handhold-grabbed.sta" },
+        { "frame": 560, "name": "handhold-release", "state": "fresh-to-handhold/states/genesis/handhold-release.sta" },
+        { "frame": 600, "name": "lower-band-fall", "state": "fresh-to-handhold/states/genesis/lower-band-fall.sta" },
+        { "frame": 720, "name": "segment-end", "state": "fresh-to-handhold/states/genesis/segment-end.sta" }
+      ]
+    },
+    {
+      "id": "handhold-to-rope",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/handhold-to-rope",
+      "frames": 560,
+      "input": "c+right*120,right*30,up*100,c+left*12,left*60,none*237",
+      "load_state": "handhold-grabbed",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/fresh-to-handhold/states/genesis/handhold-grabbed.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "handhold-grabbed-loaded", "state": "handhold-to-rope/states/genesis/handhold-grabbed-loaded.sta" },
+        { "frame": 122, "name": "upper-platform-spring", "state": "handhold-to-rope/states/genesis/upper-platform-spring.sta" },
+        { "frame": 152, "name": "rope-base", "state": "handhold-to-rope/states/genesis/rope-base.sta" },
+        { "frame": 252, "name": "rope-upper-stop", "state": "handhold-to-rope/states/genesis/rope-upper-stop.sta" },
+        { "frame": 264, "name": "dismount-start", "state": "handhold-to-rope/states/genesis/dismount-start.sta" },
+        { "frame": 324, "name": "upper-platform-return", "state": "handhold-to-rope/states/genesis/upper-platform-return.sta" },
+        { "frame": 560, "name": "loop-settled", "state": "handhold-to-rope/states/genesis/loop-settled.sta" }
+      ]
+    },
+    {
+      "id": "rope-to-left-ledge",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/rope-to-left-ledge",
+      "frames": 210,
+      "input": "up*60,c+left*100,none*40,none*9",
+      "load_state": "rope-upper-stop",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/handhold-to-rope/states/genesis/rope-upper-stop.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "rope-upper-stop-loaded", "state": "rope-to-left-ledge/states/genesis/rope-upper-stop-loaded.sta" },
+        { "frame": 61, "name": "upper-rope-climb", "state": "rope-to-left-ledge/states/genesis/upper-rope-climb.sta" },
+        { "frame": 161, "name": "left-transfer", "state": "rope-to-left-ledge/states/genesis/left-transfer.sta" },
+        { "frame": 201, "name": "upper-left-ledge", "state": "rope-to-left-ledge/states/genesis/upper-left-ledge.sta" },
+        { "frame": 210, "name": "ledge-settled", "state": "rope-to-left-ledge/states/genesis/ledge-settled.sta" }
+      ]
+    },
+    {
+      "id": "left-ledge-guard",
+      "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/left-ledge-guard",
+      "frames": 262,
+      "input": "none*30,right*10,b*1,none*10,b*1,none*10,b*1,none*20,right*120,none*61",
+      "load_state": "upper-left-ledge",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/rope-to-left-ledge/states/genesis/upper-left-ledge.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "upper-left-ledge-loaded", "state": "left-ledge-guard/states/genesis/upper-left-ledge-loaded.sta" },
+        { "frame": 31, "name": "guard-approach", "state": "left-ledge-guard/states/genesis/guard-approach.sta" },
+        { "frame": 41, "name": "guard-sword-1", "state": "left-ledge-guard/states/genesis/guard-sword-1.sta" },
+        { "frame": 52, "name": "guard-sword-2", "state": "left-ledge-guard/states/genesis/guard-sword-2.sta" },
+        { "frame": 63, "name": "guard-sword-3", "state": "left-ledge-guard/states/genesis/guard-sword-3.sta" },
+        { "frame": 83, "name": "guard-cleared", "state": "left-ledge-guard/states/genesis/guard-cleared.sta" },
+        { "frame": 203, "name": "rope-base-approach", "state": "left-ledge-guard/states/genesis/rope-base-approach.sta" },
+        { "frame": 262, "name": "guard-route-end", "state": "left-ledge-guard/states/genesis/guard-route-end.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "fresh-level-entry", "segment": "fresh-to-handhold", "frame": 1, "world": [103, 880], "scene_state": "0x01", "meaning": "fresh level-01 entry checkpoint" },
+    { "id": "gap-entrance", "segment": "fresh-to-handhold", "frame": 420, "world": [1357, 832], "meaning": "lower-gap approach" },
+    { "id": "handhold-spawned", "segment": "fresh-to-handhold", "frame": 459, "world": [1474, 816], "actor_type": "0x6A", "meaning": "handhold interaction actor appears" },
+    { "id": "handhold-grabbed", "segment": "fresh-to-handhold", "frame": 531, "world": [1660, 695], "actor_type": "0x6B", "meaning": "player reaches the handhold transfer" },
+    { "id": "upper-platform-spring", "segment": "handhold-to-rope", "frame": 122, "world": [2023, 690], "meaning": "upper platform traversal" },
+    { "id": "rope-upper-stop", "segment": "handhold-to-rope", "frame": 252, "world": [2104, 655], "meaning": "player reaches the top rope stop" },
+    { "id": "upper-left-ledge", "segment": "rope-to-left-ledge", "frame": 201, "world": [1799, 690], "meaning": "upper-left ledge reached" },
+    { "id": "guard-cleared", "segment": "left-ledge-guard", "frame": 83, "world": [1829, 690], "actor_type": "0x1D", "meaning": "three-hit sword sequence clears the guard" },
+    { "id": "route-frontier", "segment": "left-ledge-guard", "frame": 262, "world": [2104, 721], "scene_state": "0x01", "meaning": "route returns to rope base without scene transition" }
+  ],
+  "result": "The fresh no-sync chain is replayable and records the lower-gap handhold, upper-platform spring, rope climb, upper-left ledge, and guard interaction. It remains in scene state 0x01 and does not yet reach the high walkway or level exit.",
+  "negative_evidence": "The recorded left-ledge branch returns toward the rope base after the guard; it does not itself establish a transfer to the retained high-walkway checkpoint.",
+  "next": "Search the fresh rope and upper-left checkpoints for the missing connector to the high walkway, then record post-guard and boundary branches from the newly established frontier."
+}

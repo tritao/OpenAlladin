@@ -82,6 +82,11 @@ the finding or commit message.
   lower-gap → handhold → upper-platform → wall-rope chain, with 22 verified
   named checkpoints. The associated frontier matrix records the direct wall,
   upper-rope, upper-platform, and spring negative branches.
+- `20260826-level01-fresh-route-canonical-v2`: fresh level-entry replay with
+  debugger synchronization disabled, four segments and 27 verified named
+  checkpoints through the handhold, upper rope, upper-left ledge, and guard.
+  This is the current canonical route frontier; it remains in scene state
+  `0x01` and does not yet prove the transfer to the retained high walkway.
 
 ### Scene and exit work
 
@@ -124,6 +129,7 @@ for every newly reached surface, interaction, or boundary.
 | `20260826-level01-bounce-up-sweep-v1` | recorded | bounce timing sweep |
 | `20260826-level01-route-expansion-v1` | in progress | route expansion and unresolved exit search |
 | `20260826-level01-transition-v1` | controlled proof | scene-transition path |
+| `20260826-level01-fresh-route-canonical-v2` | recorded-frontier | fresh no-sync route record through the upper-left guard |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
