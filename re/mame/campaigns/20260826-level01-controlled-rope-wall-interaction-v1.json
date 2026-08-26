@@ -1,0 +1,79 @@
+{
+  "campaign": "20260826-level01-controlled-rope-wall-interaction-v1",
+  "status": "recorded-negative-controlled",
+  "purpose": "Trace the upper-wall dismount from the Level 01 far-rope fixture through terrain and interaction-row handlers while watching every known scene and exit writer.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "ddb0f11",
+  "trace_harness": "working-tree tools/openaladdin/mame/run.sh checkpoint-path fix",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/diagnostics/20260826-level01-controlled-rope-upper-wall-v2/states/genesis/wall.sta",
+  "trace_dir": "build/re/diagnostics/20260826-level01-controlled-rope-wall-interaction-v1",
+  "frames": 180,
+  "input_schedule": "none*1,c+right*20,right*40,none*119",
+  "instrumentation": {
+    "breakpoints": [
+      "0x001AE3FC", "0x001AE406", "0x001AE47E", "0x001AE488",
+      "0x001AE4E4", "0x001AE4EA", "0x001B6E90", "0x001B6EB2",
+      "0x001B735E", "0x001B524E", "0x001B525E", "0x001B5266",
+      "0x001AE30C", "0x001B5B3A", "0x001B5B4A", "0x001A8ED2"
+    ],
+    "watch_addresses": [
+      "0xFFF0D0", "0xFFF0DB", "0xFFF0DC", "0xFFF0E6", "0xFFF0E9",
+      "0xFF7E26", "0xFFF572", "0xFFF576", "0xFFF57A", "0xFFF57C"
+    ],
+    "breakpoint_registers": true,
+    "row_context": true,
+    "actor_trace": true,
+    "scene_state_trace": true
+  },
+  "observed": {
+    "loaded_world": [2542, 418],
+    "loaded_scene_state": "0x01",
+    "wall_jump_peak_approx": [2623, 352],
+    "rope_return": [2712, 453],
+    "interaction_rows": [
+      {
+        "machine_frame": "0x0973",
+        "row_index": "0x2AF8",
+        "row_word": "0x55E8",
+        "selector": "0x60",
+        "handler": "0x001B735E"
+      },
+      {
+        "machine_frame": "0x0980",
+        "row_index": "0x2AFC",
+        "row_word": "0x0000",
+        "selector": "0x60",
+        "handler": "0x001B735E"
+      }
+    ],
+    "boundary_check_hits": 179,
+    "scene_writer_hits": 0,
+    "scene_table_writer_hits": 0,
+    "scene_script_writer_hits": 0
+  },
+  "final_state": {
+    "trace_frame": 180,
+    "world": [2712, 453],
+    "scene_state": "0x01",
+    "scene_script_cursor": "0x4082",
+    "scene_table_index": "0x00",
+    "scene_script_pending": "0x00",
+    "scene_script_countdown": "0x00",
+    "player_transition_gate": "0xFF",
+    "player_transition_lock": "0x00",
+    "player_transition_countdown": "0x00",
+    "player_terminal_transition": "0x00"
+  },
+  "negative_results": [
+    "The upper-wall dismount reaches the behavior-0x22 connector band and returns to the rope instead of entering the upper exit corridor.",
+    "Selector 0x60 is an interaction-row handler on this branch; it does not write a scene state or scene-script cursor.",
+    "Selector 0x51 was not reached by the tested wall-jump branch.",
+    "No Level 01 boundary writer at 0x001B5B3A, follow-on scene writer at 0x001A8ED2, scene transition writer, or table-index writer fired."
+  ],
+  "conclusion": "The far-rope upper-wall branch is a closed connector interaction. It is not the natural Level 01 exit path. The next route search should move upstream to the object/resource activation that exposes the upper boundary band, rather than repeating wall-jump direction variants from this checkpoint.",
+  "next_action": "Trace the natural approach to the row-10 and row-15 interaction records near the upper corridor, correlating their runtime activation with the Level 01 boundary predicate."
+}

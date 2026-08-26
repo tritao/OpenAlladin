@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-level01-controlled-rope-wall-interaction-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-controlled-rope-wall-interaction-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "trace": "build/re/diagnostics/20260826-level01-controlled-rope-wall-interaction-v1",
+  "source_checkpoint": "build/re/diagnostics/20260826-level01-controlled-rope-upper-wall-v2/states/genesis/wall.sta",
+  "path": {
+    "input": "none*1,c+right*20,right*40,none*119",
+    "start": [2542, 418],
+    "peak": [2623, 352],
+    "end": [2712, 453],
+    "scene_state": "0x01"
+  },
+  "interaction_hits": [
+    {
+      "machine_frame": "0x0973",
+      "row_index": "0x2AF8",
+      "row_word": "0x55E8",
+      "selector": "0x60",
+      "handler": "0x001B735E"
+    },
+    {
+      "machine_frame": "0x0980",
+      "row_index": "0x2AFC",
+      "row_word": "0x0000",
+      "selector": "0x60",
+      "handler": "0x001B735E"
+    }
+  ],
+  "not_observed": [
+    "Selector 0x51",
+    "0x001B5B3A Level 01 boundary writer",
+    "0x001A8ED2 scene-script state writer",
+    "0x001B2DB8/0x001B2DD8 scene transition mode writers",
+    "0x001B3F0A scene-table state writer"
+  ],
+  "conclusion": "This controlled upper-wall branch only exercises the connector/interaction path and returns to the far rope. Its selector-0x60 hits are not evidence of level progression."
+}

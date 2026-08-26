@@ -647,6 +647,15 @@ row-10 record is an actor-spawn resource, not a direct scene transition; the
 natural approach and the object/resource activation that makes the upper route
 reachable remain open.
 
+The controlled far-rope wall-interaction trace is recorded in
+`re/mame/findings/20260826-level01-controlled-rope-wall-interaction-v1.json`.
+From the valid wall checkpoint, `C+Right` reaches the behavior-0x22 connector
+band, briefly dispatches selector `0x60` through `0x001B735E`, and returns to
+the rope at world `(2712,453)`. No boundary, scene-script, scene-state, or
+scene-table writer fires; selector `0x51` is not reached. This closes the
+tested upper-wall dismount family as a local connector interaction and leaves
+the natural object/resource activation upstream as the next route question.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -703,6 +712,7 @@ reachable remain open.
 | `20260826-level01-upper-platform-selector87-v1` | recorded-controlled | exact row-10 selector-0x87 dispatch, generic spawn, and Type-0x01 actor initialization |
 | `20260826-level01-exit-data-reference-audit-v1` | recorded-static-audit | complete Ghidra write inventory for scene state, script cursor/data/index, and player transition gates |
 | `20260826-level01-natural-gate-audit-v1` | recorded-negative-natural | far-floor actor terminal countdown and terrain-lock writes are local responses; no scene transition |
+| `20260826-level01-controlled-rope-wall-interaction-v1` | recorded-negative-controlled | far-rope upper-wall dismount reaches selector 0x60 and returns to the connector; no scene transition |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
