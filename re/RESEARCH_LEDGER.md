@@ -70,6 +70,10 @@ the finding or commit message.
 - `477f5c1`: apparent pre-wall platform chain classified as guard-sword child
   (`0x2D`) and oscillating interaction actor (`0x34`), not a traversable
   moving-platform transfer.
+- `20260826-level01-object-trace-frontier-v1`: upper-platform actor
+  initialization and animation trace. It records `0x7F` as a transient
+  spawn/clear effect and `0x2A` as a falling/resetting movement-stream actor;
+  the `0x1E` player-proximity actor remains unresolved.
 - `20260826-level01-recording-frontier-v1`: current-harness replay of the
   lower-gap → handhold → upper-platform → wall-rope chain, with 22 verified
   named checkpoints. The associated frontier matrix records the direct wall,

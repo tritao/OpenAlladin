@@ -1,0 +1,49 @@
+{
+  "campaign": "20260826-level01-object-trace-frontier-v1",
+  "status": "recorded-frontier",
+  "purpose": "Record the actor initialization and animation behavior observed at the upper-platform route frontier.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "1d10043",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "1d10043",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "upper-platform-init",
+      "trace_dir": "build/re/campaigns/20260826-level01-object-trace-frontier-v1/upper-platform-init",
+      "frames": 360,
+      "input": "c+left*60,none*120,c+right*60,none*120",
+      "load_state": "upper-platform-spring",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-recording-frontier-v1/rope-loop/states/genesis/upper-platform-spring.sta",
+      "capture": "state",
+      "actors": true,
+      "actor_initializers": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "platform-loaded", "state": "upper-platform-init/states/genesis/platform-loaded.sta" },
+        { "frame": 60, "name": "left-branch", "state": "upper-platform-init/states/genesis/left-branch.sta" },
+        { "frame": 120, "name": "left-settled", "state": "upper-platform-init/states/genesis/left-settled.sta" },
+        { "frame": 180, "name": "rest", "state": "upper-platform-init/states/genesis/rest.sta" },
+        { "frame": 240, "name": "right-branch", "state": "upper-platform-init/states/genesis/right-branch.sta" },
+        { "frame": 300, "name": "right-settled", "state": "upper-platform-init/states/genesis/right-settled.sta" },
+        { "frame": 360, "name": "end", "state": "upper-platform-init/states/genesis/end.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "platform-loaded", "segment": "upper-platform-init", "frame": 1, "world": [2030, 690], "meaning": "upper-platform route frontier loaded" },
+    { "id": "type-127-effect", "segment": "upper-platform-init", "frame": 2, "world": [2010, 688], "actor_type": "0x7F", "meaning": "transient effect begins" },
+    { "id": "type-127-effect-end", "segment": "upper-platform-init", "frame": 47, "world": [1880, 722], "actor_type": "0x7F", "meaning": "transient effect leaves/clears" },
+    { "id": "type-42-cycle", "segment": "upper-platform-init", "frame": 82, "world": [1863, 769], "actor_type": "0x2A", "meaning": "looping object animation becomes visible" },
+    { "id": "type-42-downward-branch", "segment": "upper-platform-init", "frame": 111, "world": [1888, 863], "actor_type": "0x2A", "meaning": "object follows the movement stream downward" }
+  ],
+  "result": "The trace is replayable and identifies the upper-platform actors without conflating them with the missing route. Actor 0x7F is a transient animation/effect: its stream spawns or copies helper actors, plays sound 0x2A, and destroys or clears itself. Actor 0x2A uses movement stream 0x120F76 and animation stream 0x1231DC; its observed cycle is a falling/resetting object, not a verified climbable transfer. Actor 0x1E is a remaining unresolved candidate: its initializer is at ROM 0x1B7C24 and its animation stream 0x123614 contains player-proximity checks, but it was not instantiated in this segment.",
+  "negative_evidence": [
+    "No actor in this segment reached the high walkway around world Y=530.",
+    "No scene state 0x08 transition occurred.",
+    "The 0x7F and 0x2A behaviors do not justify repeating isolated jump probes as a route search."
+  ],
+  "next": "Trace the 0x1E initializer and its level-01 placement/resource records, then compare its activation conditions with the high-walkway geometry."
+}

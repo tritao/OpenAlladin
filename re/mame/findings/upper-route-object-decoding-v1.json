@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-upper-route-object-decoding-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Decode the actors encountered at the current level-01 upper-platform frontier and record route-relevant versus transient behavior.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "harness_commit": "1d10043",
+  "campaign": "re/mame/campaigns/20260826-level01-object-trace-frontier-v1.json",
+  "trace": "build/re/campaigns/20260826-level01-object-trace-frontier-v1/upper-platform-init",
+  "decoder_inputs": {
+    "actor_initializer_log": "build/re/campaigns/20260826-level01-object-trace-frontier-v1/upper-platform-init/debug.log",
+    "initializer_decoder": "python3 tools/openaladdin/analysis/actor_initializers.py --log <debug.log> --rom rom/Disneys_Aladdin_U_p1.bin",
+    "movement_entry": "0x00120F76",
+    "animation_entries": ["0x001231DC", "0x00125776", "0x00123614"]
+  },
+  "decoded_objects": [
+    {
+      "actor_type": "0x2A",
+      "initializer": "0x001B7AF8",
+      "movement_stream": "0x00120F76",
+      "animation_stream": "0x001231DC",
+      "verified_behavior": "The movement stream starts with a flag test/write/clear sequence, then loops through vertical deltas 0, 2, 2, 3, 3, 4, 4, 0, -1, -1, -1, -2, -2, -2, -3, -2, -2, -1, -1. In the captured route it appears near world (1861,769), moves downward to approximately (1888,863), and resets.",
+      "route_status": "not_verified_as_connector"
+    },
+    {
+      "actor_type": "0x7F",
+      "initializer": "0x001B7AD0",
+      "animation_stream": "0x00125776",
+      "verified_behavior": "The stream begins with tiny effect frames, performs spawn/copy operations through initializer 0x001B7954, plays sound 0x2A, and repeatedly destroys or clears the actor. In the trace it travels from approximately (2010,688) to (1880,722) before clearing.",
+      "route_status": "transient_effect; not_route_connector"
+    },
+    {
+      "actor_type": "0x1E",
+      "initializer": "0x001B7C24",
+      "animation_stream": "0x00123614",
+      "verified_behavior": "The stream faces the player, compares a field against 0x46, checks player Y within 0x40, and calls a secondary stream at 0x0012355A. This actor was not instantiated by the current upper-platform segment.",
+      "route_status": "unresolved_candidate"
+    }
+  ],
+  "conclusion": "The current actor trace narrows the route search. The visible 0x7F effect and 0x2A falling/resetting object should not be treated as the missing high-walkway transfer. The 0x1E object's placement and activation remain worth tracing because its animation has explicit player-proximity logic, but no route claim is made until a replay reaches it.",
+  "next_action": "Locate 0x1E placement records or its initializer call sites in the level-01 object/script data and run a targeted activation trace with named checkpoints."
+}
