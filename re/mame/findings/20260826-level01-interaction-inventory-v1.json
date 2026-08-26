@@ -70,7 +70,7 @@
     "route_relevant_records": [
       { "cell": [283, 14], "world": [4528, 464], "map_word": "0x5658", "interaction_index": "0x2B2C", "interaction_id": "0x11", "handler": "0x001B6E90" },
       { "cell": [294, 14], "world": [4704, 464], "map_word": "0x5668", "interaction_index": "0x2B34", "interaction_id": "0x1B", "handler": "0x001B6EB2" },
-      { "cell": [249, 14], "world": [3984, 464], "map_word": "0x5630", "interaction_id": "0x80", "handler": "0x001B6F0C", "status": "unresolved activation; actor spawn plus FFF104 clear" }
+      { "cell": [249, 14], "world": [3984, 464], "map_word": "0x5630", "interaction_id": "0x80", "handler": "0x001B6F0C", "status": "exact-record controlled dispatch and spawn side effects confirmed; natural activation unresolved" }
     ]
   },
   "runtime_correlation": {
@@ -94,6 +94,6 @@
     }
   },
   "correction": "The earlier offset-2 scan conflated terrain behavior bytes 0x80/0x81 with interaction selectors. The live interaction table is read at FFAE87, which corresponds to resource offset 3 + (map_word >> 1). Under that corrected address, row 15 has no interaction records, and only one Level 01 interaction selector 0x80 remains at cell (249,14). The row processors have short wrappers at 0x001AE3FC and 0x001AE47E that enter the corresponding bodies at 0x001AE406 and 0x001AE488.",
-  "conclusion": "The corrected Level 01 interaction table contains 175 records and 22 unique selectors. The upper row-14 pair is a consumable actor-spawn sequence, and the only 0x80 interaction record is a separate actor spawn at (3984,464). The missing natural exit trigger is not in these direct interaction handlers; the next useful experiment is to activate the actual 0x80 record and trace the actor it creates.",
-  "next_action": "Run a narrow activation experiment for the actual 0x80 record at world (3984,464), watching actor allocation, FFF104, and scene gates; keep terrain behavior 0x80/0x81 as a separate collision-table investigation."
+  "conclusion": "The corrected Level 01 interaction table contains 175 records and 22 unique selectors. The upper row-14 pair is a consumable actor-spawn sequence, and the only 0x80 interaction record is a separate actor spawn at (3984,464). The exact record has now been controlled-dispatched to 0x001B6F0C and traced through FFF104 and actor allocation; it does not directly write the scene state or countdown. The natural exit trigger remains outside these direct interaction handlers.",
+  "next_action": "Preserve the natural route frontier while searching for the Level 01 exit predicate; use re/mame/findings/20260826-level01-actual-80-spawn-side-effects-v1.json as the controlled reference for any natural 0x80 encounter, and keep terrain behavior 0x80/0x81 as a separate collision-table investigation."
 }
