@@ -264,6 +264,12 @@ frontier without creating either actor and dispatches no interaction-table
 edge. The actor pair is therefore conditioned on the Up-triggered interaction
 path, not merely on reaching the horizontal coordinate.
 
+The first collision reachability probe from the activated pair
+(`c+left*20,left*70,none*90`) falls into the lower band instead of reaching
+the actors above. The pair clears by relative frame 34, and the player lands
+around `(4476,880)` with `SCENE_STATE=0x01`; this is negative reachability
+evidence, not a collision result.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |

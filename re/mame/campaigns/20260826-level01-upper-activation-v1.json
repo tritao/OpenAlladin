@@ -43,6 +43,26 @@
       "scene_state_trace": true,
       "edge_trace": "debug.log",
       "branch_class": "exploratory-negative-control"
+    },
+    {
+      "id": "upper-type1e-jump-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-activation-v1/upper-type1e-jump-left-v1",
+      "frames": 180,
+      "input": "c+left*20,left*70,none*90",
+      "load_state": "activation",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation/states/genesis/activation.sta",
+      "recording_commit": "c17039a",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-reachability",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper-type1e-jump-left-v1/states/genesis/loaded.sta" },
+        { "frame": 20, "name": "jump", "state": "upper-type1e-jump-left-v1/states/genesis/jump.sta" },
+        { "frame": 60, "name": "mid", "state": "upper-type1e-jump-left-v1/states/genesis/mid.sta" },
+        { "frame": 100, "name": "land", "state": "upper-type1e-jump-left-v1/states/genesis/land.sta" },
+        { "frame": 180, "name": "end", "state": "upper-type1e-jump-left-v1/states/genesis/end.sta" }
+      ]
     }
   ]
 }

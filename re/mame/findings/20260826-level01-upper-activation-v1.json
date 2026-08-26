@@ -23,6 +23,18 @@
     "interaction_edges_at_activation_frame": 0,
     "conclusion": "The Type-0x1E/Type-0x20 pair does not materialize without Up; reaching x≈4684 alone is insufficient."
   },
+  "collision_probe": {
+    "trace": "build/re/campaigns/20260826-level01-upper-activation-v1/upper-type1e-jump-left-v1",
+    "input": "c+left*20,left*70,none*90",
+    "source_checkpoint": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation/states/genesis/activation.sta",
+    "checkpoints": [
+      { "frame": 20, "player_world": [4648, 644], "event": "jump input leaves the upper band" },
+      { "frame": 60, "player_world": [4568, 860], "event": "falling toward lower floor" },
+      { "frame": 100, "player_world": [4476, 880], "event": "lower-band landing" }
+    ],
+    "actor_result": "The Type-0x1E/Type-0x20 pair is absent by frame 34 and is replaced by lower-band actors; no Type-0x1E collision handler or scene transition is observed.",
+    "scene_state": "0x01 throughout"
+  },
   "initializer_trace": {
     "artifact": "mame-debug.log",
     "routine": "0x001AE30C",
