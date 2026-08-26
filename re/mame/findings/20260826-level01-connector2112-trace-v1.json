@@ -1,0 +1,75 @@
+{
+  "format": "openaladdin-level01-connector2112-trace-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-connector2112-trace-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "8eeaa37ed59f8b6ce9bc18b20fadb6574a0b0f32",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "source_checkpoint": {
+    "path": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/lower-chamber-probe/states/genesis/next-route-end.sta",
+    "world": [2178, 912],
+    "terrain_behavior": "0x00",
+    "scene_state": "0x01",
+    "provenance_note": "Older campaign checkpoint, replayed successfully with the current harness before capture."
+  },
+  "route_result": {
+    "input": "c+left*30,up+left*90,left*60,none*60",
+    "checkpoints": [
+      { "frame": 1, "world": [2178, 912], "terrain_behavior": "0x00", "scene_state": "0x01" },
+      { "frame": 30, "world": [2104, 846], "terrain_behavior": "0x22", "scene_state": "0x01" },
+      { "frame": 60, "world": [2104, 804], "terrain_behavior": "0x22", "scene_state": "0x01" },
+      { "frame": 120, "world": [2104, 714], "terrain_behavior": "0x22", "scene_state": "0x01" },
+      { "frame": 180, "world": [2104, 711], "terrain_behavior": "0x22", "scene_state": "0x01" },
+      { "frame": 240, "world": [2104, 711], "terrain_behavior": "0x22", "scene_state": "0x01" }
+    ],
+    "meaning": "The natural branch attaches to and climbs the static column-132 behavior-0x22 connector, then settles at its upper stop without changing scene state."
+  },
+  "connector_handler": {
+    "requested_breakpoint": "0x001B54D8",
+    "observed_pc": "0x001B54DA",
+    "hits": 214,
+    "frame_range": ["0x088E", "0x0963"],
+    "meaning": "The positive behavior-0x22 connector response is executed continuously while the player is held at X=2104 and climbs from Y=846 to Y=711."
+  },
+  "actor_context": {
+    "type": "0x36",
+    "slot": 20,
+    "position": [2016, 688],
+    "observed": "The type-0x36 actor is present by frame 60 and remains near the connector, but the player does not enter an actor-collision or scene-transition handler."
+  },
+  "watched_state": {
+    "scene_state": "0x01 throughout",
+    "scene_script_cursor": "0x4082 throughout",
+    "scene_script_countdown": "0x00 throughout",
+    "fff0d0": "0x00 initially, then 0xFF during the connector response; this is a transient/player response field, not SCENE_STATE",
+    "fff0db": "0x00 in the state trace; the debugger log records only zero writes from 0x001B1E6E",
+    "fff0dc": "no writes observed",
+    "fff0e6": "no writes observed",
+    "fff0e9": "no writes observed",
+    "fff0ce": "0xFF writes originate at 0x001B54E0 during the connector response; its semantic name remains unresolved"
+  },
+  "breakpoint_summary": {
+    "0x001A9D98": 239,
+    "0x001B1E38": 239,
+    "0x001B54D8": 214,
+    "0x001AE4EA": 2,
+    "other_requested_connector_or_exit_handlers": 0
+  },
+  "conclusion": {
+    "verified": [
+      "The level-01 column-132 connector is naturally reachable from the lower chamber with the recorded controller schedule.",
+      "The connector response executes at 0x001B54D8 (observed debugger PC 0x001B54DA) for 214 traced frames.",
+      "The player climbs from world Y=846 to the upper stop at Y=711 while remaining at X=2104 and SCENE_STATE=0x01.",
+      "The nearby type-0x36 actor is not, in this route, a direct scene-transition trigger."
+    ],
+    "negative_evidence": [
+      "The connector response does not write SCENE_STATE=0x08.",
+      "No write to 0xFFF0DC, 0xFFF0E6, or 0xFFF0E9 occurs in the natural interaction trace.",
+      "The branch does not continue through the connector into a new scene or exit gate."
+    ],
+    "unresolved": "Whether the upper stop is reachable by a separate dismount/interaction route remains open; this trace closes only the recorded left/up/left timing family."
+  },
+  "next_action": "Use the saved climb-upper and dismount checkpoints to test the adjacent upper-stop interaction with narrow, checkpointed inputs, then move to the X≈2720 connector only after this column's upper-stop behavior is classified."
+}

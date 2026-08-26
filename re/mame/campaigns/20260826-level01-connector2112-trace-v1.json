@@ -1,0 +1,41 @@
+{
+  "campaign": "20260826-level01-connector2112-trace-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Record a current-harness natural route through the level-01 connector at X approximately 2112, with connector-handler and scene-gate instrumentation.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "8eeaa37ed59f8b6ce9bc18b20fadb6574a0b0f32",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/lower-chamber-probe/states/genesis/next-route-end.sta",
+  "input_schedule": "c+left*30,up+left*90,left*60,none*60",
+  "timing_note": "The source checkpoint belongs to an earlier recorded campaign. It was smoke-tested with the current checkout before this capture; the new trace directory and checkpoints are current-harness artifacts. Debugger logs are observational and use the same input schedule as the state trace.",
+  "instrumentation": {
+    "breakpoints": ["0x001A9D98", "0x001B1E38", "0x001B54D8", "0x001B5470", "0x001B56B6", "0x001AE4EA", "0x001B6E90", "0x001B6EB2", "0x001AC458", "0x001AE64C"],
+    "watched_addresses": ["0xFFF0D0", "0xFFF0DB", "0xFFF0DC", "0xFFF0E6", "0xFFF0E9", "0xFF7DD2", "0xFF7DD6", "0xFF7DDA", "0xFFF0CE", "0xFFF0CF", "0xFFF0C1", "0xFFF0BE"]
+  },
+  "segments": [
+    {
+      "id": "natural-left-interaction",
+      "trace_dir": "build/re/campaigns/20260826-level01-connector2112-trace-v1/natural-left-interaction",
+      "frames": 240,
+      "input": "c+left*30,up+left*90,left*60,none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/lower-chamber-probe/states/genesis/next-route-end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 30, "name": "interaction-start" },
+        { "frame": 60, "name": "climb-mid" },
+        { "frame": 120, "name": "climb-upper" },
+        { "frame": 180, "name": "dismount" },
+        { "frame": 240, "name": "settled" }
+      ],
+      "debug_log": "build/re/campaigns/20260826-level01-connector2112-trace-v1/natural-left-interaction/debug.log"
+    }
+  ]
+}

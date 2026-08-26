@@ -449,6 +449,18 @@ event is a short behavior-`0x2B` window at `(2902,849..885)` that sets
 `0x6C78` then create lower-band Type-0x20/Type-0x1E actors; no connector
 handler, scene-resource rebuild, or exit gate is reached.
 
+The second connector natural trace is recorded in
+`re/mame/campaigns/20260826-level01-connector2112-trace-v1.json` and
+`re/mame/findings/20260826-level01-connector2112-trace-v1.json`. From the
+replayed lower-chamber checkpoint, `c+left*30,up+left*90,left*60,none*60`
+reaches the static column-132 connector at X=`2104`: the player climbs from
+Y=`846` to the upper stop at Y=`711`, and the requested handler at
+`0x001B54D8` is hit 214 times (observed debugger PC `0x001B54DA`). The nearby
+Type-0x36 actor is not a direct transition trigger in this branch;
+`SCENE_STATE` stays `0x01`, and no write reaches `0xFFF0DC`, `0xFFF0E6`, or
+`0xFFF0E9`. This closes the recorded left/up/left timing family at the
+connector's upper stop while preserving its checkpoints for dismount tests.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -488,6 +500,7 @@ handler, scene-resource rebuild, or exit gate is reached.
 | `20260826-level01-route-geometry-audit-v1` | recorded-negative-frontier | consolidated high-walkway, far-rope, shaft, and upper-platform geometry audit |
 | `20260826-level01-exit-predicate-probe-v1` | recorded-controlled-boundary-write | current-harness boundary predicate and gate observation |
 | `20260826-level01-natural-tower-response-trace-v1` | recorded-negative-frontier | natural lower-tower terrain, interaction-row, and scene-gate trace |
+| `20260826-level01-connector2112-trace-v1` | recorded-negative-frontier | natural column-132 connector climb and upper-stop handler trace |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
