@@ -1,0 +1,66 @@
+{
+  "campaign": "20260826-level01-reproducibility-v1",
+  "status": "recorded-frontier",
+  "purpose": "Current-checkout reproducibility replay of the clean level-01 power-on route through the established upper-edge frontier.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "217f5f5d5abf2121dad42d7165bbc44fb5847eb9",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "217f5f5d5abf2121dad42d7165bbc44fb5847eb9",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "replay_of": "re/mame/campaigns/20260826-level01-recording-fresh-v2.json",
+  "comparison": {
+    "reference_trace": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/state.jsonl",
+    "replay_trace": "build/re/campaigns/20260826-level01-reproducibility-v1/fresh-to-frontier/state.jsonl",
+    "frames_compared": 2297,
+    "result": "exact-match"
+  },
+  "timing_note": "The run uses OPENALADDIN_STATE_SYNC=0 so the route reflects normal no-sync gameplay timing.",
+  "command": "OPENALADDIN_STATE_SYNC=0 OPENALADDIN_TRACE_FRAMES=2296 OPENALADDIN_INPUT=none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right*1,right*99,right*50,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c*1,right*195,b+right*50,right*100,none*19 OPENALADDIN_CAPTURE=state OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_CHECKPOINTS=0=power-on,1245=level01-entry,1665=gap-entrance,1704=handhold-spawned,1776=handhold-grabbed,1811=high-rope-attached,1876=high-rope-climb,1908=high-walkway-height,1936=high-rope-top,1937=high-rope-dismount,1996=high-walkway-entry,2076=high-walkway-mid,2131=guard-approach,2166=guard-cleared,2281=upper-edge-fall,2296=frontier-end OPENALADDIN_TRACE_DIR=build/re/campaigns/20260826-level01-reproducibility-v1/fresh-to-frontier tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+  "segments": [
+    {
+      "id": "fresh-to-frontier",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/fresh-to-frontier",
+      "frames": 2296,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right*1,right*99,right*50,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c*1,right*195,b+right*50,right*100,none*19",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "start_condition": "MAME genesis machine booted from power-on with no loaded state",
+      "checkpoints": [
+        { "frame": 0, "name": "power-on", "state": "fresh-to-frontier/states/genesis/power-on.sta" },
+        { "frame": 1245, "name": "level01-entry", "state": "fresh-to-frontier/states/genesis/level01-entry.sta" },
+        { "frame": 1665, "name": "gap-entrance", "state": "fresh-to-frontier/states/genesis/gap-entrance.sta" },
+        { "frame": 1704, "name": "handhold-spawned", "state": "fresh-to-frontier/states/genesis/handhold-spawned.sta" },
+        { "frame": 1776, "name": "handhold-grabbed", "state": "fresh-to-frontier/states/genesis/handhold-grabbed.sta" },
+        { "frame": 1811, "name": "high-rope-attached", "state": "fresh-to-frontier/states/genesis/high-rope-attached.sta" },
+        { "frame": 1876, "name": "high-rope-climb", "state": "fresh-to-frontier/states/genesis/high-rope-climb.sta" },
+        { "frame": 1908, "name": "high-walkway-height", "state": "fresh-to-frontier/states/genesis/high-walkway-height.sta" },
+        { "frame": 1936, "name": "high-rope-top", "state": "fresh-to-frontier/states/genesis/high-rope-top.sta" },
+        { "frame": 1937, "name": "high-rope-dismount", "state": "fresh-to-frontier/states/genesis/high-rope-dismount.sta" },
+        { "frame": 1996, "name": "high-walkway-entry", "state": "fresh-to-frontier/states/genesis/high-walkway-entry.sta" },
+        { "frame": 2076, "name": "high-walkway-mid", "state": "fresh-to-frontier/states/genesis/high-walkway-mid.sta" },
+        { "frame": 2131, "name": "guard-approach", "state": "fresh-to-frontier/states/genesis/guard-approach.sta" },
+        { "frame": 2166, "name": "guard-cleared", "state": "fresh-to-frontier/states/genesis/guard-cleared.sta" },
+        { "frame": 2281, "name": "upper-edge-fall", "state": "fresh-to-frontier/states/genesis/upper-edge-fall.sta" },
+        { "frame": 2296, "name": "frontier-end", "state": "fresh-to-frontier/states/genesis/frontier-end.sta" }
+      ]
+    }
+  ],
+  "events": [
+    { "id": "level01-entry", "segment": "fresh-to-frontier", "frame": 1245, "world": [103, 880], "scene_state": "0x01", "meaning": "fresh level-01 entry" },
+    { "id": "gap-entrance", "segment": "fresh-to-frontier", "frame": 1665, "world": [1360, 831], "meaning": "lower-gap approach" },
+    { "id": "handhold-spawned", "segment": "fresh-to-frontier", "frame": 1704, "world": [1477, 816], "actor_type": "0x6A", "meaning": "handhold interaction actor appears" },
+    { "id": "handhold-grabbed", "segment": "fresh-to-frontier", "frame": 1776, "world": [1663, 693], "actor_type": "0x6B", "meaning": "player reaches the handhold transfer" },
+    { "id": "high-rope-attached", "segment": "fresh-to-frontier", "frame": 1811, "world": [1564, 637], "terrain_behavior": "0x22", "meaning": "player attaches to the earlier vertical connector" },
+    { "id": "high-rope-climb", "segment": "fresh-to-frontier", "frame": 1876, "world": [1560, 580], "terrain_behavior": "0x22", "meaning": "player climbs the first vertical connector" },
+    { "id": "high-rope-top", "segment": "fresh-to-frontier", "frame": 1936, "world": [1560, 490], "terrain_behavior": "0x22", "meaning": "player reaches the top of the first connector" },
+    { "id": "high-walkway-entry", "segment": "fresh-to-frontier", "frame": 1996, "world": [1703, 530], "meaning": "C dismount lands on the high walkway band" },
+    { "id": "guard-approach", "segment": "fresh-to-frontier", "frame": 2131, "world": [2108, 530], "actor_type": "0x1D", "meaning": "upper walkway guard encounter" },
+    { "id": "guard-cleared", "segment": "fresh-to-frontier", "frame": 2166, "world": [2213, 530], "actor_type": "0x1D", "meaning": "sword sequence clears the guard" },
+    { "id": "upper-edge-fall", "segment": "fresh-to-frontier", "frame": 2281, "world": [2558, 920], "scene_state": "0x01", "meaning": "right edge drops to the lower band" }
+  ],
+  "result": "The current checkout reproduces the historical clean power-on route exactly for all 2297 recorded frames and preserves the same sixteen named checkpoints. This is the new reproducibility baseline; the older fresh-v2 campaign remains the historical reference.",
+  "next": "Use this campaign's frontier-end checkpoint as the provenance root for new route branches, while retaining every branch and negative result as a separately named replay."
+}

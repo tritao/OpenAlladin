@@ -291,6 +291,15 @@ the actors above. The pair clears by relative frame 34, and the player lands
 around `(4476,880)` with `SCENE_STATE=0x01`; this is negative reachability
 evidence, not a collision result.
 
+The current checkout now has its own reproducibility baseline in
+`re/mame/campaigns/20260826-level01-reproducibility-v1.json`. It replays the
+clean power-on route to the established upper-edge frontier with the same
+input schedule as `recording-fresh-v2`, and `compare_state.py` reports an
+exact match for all 2,297 frame records. The replay carries the current
+repository commit, MAME submodule commit, ROM hash, sixteen named checkpoints,
+and the complete frame-level state stream. This is a new provenance root for
+future branches; no historical campaign was replaced or discarded.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -313,6 +322,7 @@ evidence, not a collision result.
 | `20260826-level01-canonical-recording-v5` | recorded-frontier | clean power-on recording and self-contained replay chain through the far vertical-rope frontier |
 | `20260826-level01-canonical-recording-v6` | recording-frontier | clean v5 replay, Type1E wall opening, far-rope transfer, and bounded upper-frontier probes |
 | `20260826-level01-upper-activation-v1` | recorded-static-correlation | initializer and interaction-row traces for the Type1E/Type20 pair materialized at the upper x≈4688 feature |
+| `20260826-level01-reproducibility-v1` | recorded-frontier | current-checkout exact replay of the clean power-on route through the established frontier |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-level01-reproducibility-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-reproducibility-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "217f5f5d5abf2121dad42d7165bbc44fb5847eb9",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "reference_campaign": "re/mame/campaigns/20260826-level01-recording-fresh-v2.json",
+  "replay_trace": "build/re/campaigns/20260826-level01-reproducibility-v1/fresh-to-frontier/state.jsonl",
+  "comparison": {
+    "reference_trace": "build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/state.jsonl",
+    "frames_compared": 2297,
+    "result": "exact-match"
+  },
+  "verified_events": [
+    "power-on",
+    "level01-entry",
+    "opening handhold spawn and grab",
+    "first vertical connector attachment, climb, and top",
+    "high-walkway dismount and traversal",
+    "upper guard approach and sword clearance",
+    "upper-edge fall to the lower-band frontier"
+  ],
+  "interpretation": "A new research restart is unnecessary. We now have a current-checkout, power-on-to-frontier replay with frame-level state, input schedule, MAME provenance, ROM identity, and sixteen replayable save-state checkpoints. Existing v1-v6 and upper-activation campaigns remain historical and exploratory evidence rather than being overwritten.",
+  "next_action": "Branch from the current frontier checkpoint and continue the unresolved level-01 route; record each launch, connector, actor transition, reset, and scene-gate change in a new manifest segment."
+}
