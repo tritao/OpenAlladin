@@ -1,0 +1,93 @@
+{
+  "format": "openaladdin-level01-canonical-recording-v5-finding-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-canonical-recording-v5.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "930420609dbdfce34e0c6387c557e0e0dd2ae890",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "purpose": "Establish a clean canonical replay layer for all future reverse engineering while retaining v3/v4 as historical evidence.",
+  "verification": {
+    "power_on_trace": "build/re/campaigns/20260826-level01-canonical-recording-v5/power-on-to-frontier-correct",
+    "reference_trace": "build/re/campaigns/20260826-level01-canonical-recording-v4/fresh-to-frontier",
+    "power_on_result": "exact-match across 2297 state frames",
+    "continuation_segments": 7,
+    "continuation_result": "all seven v5 loaded-state traces match their v4 counterparts frame-for-frame",
+    "recorded_checkpoint_count": 63
+  },
+  "significant_events": [
+    {
+      "checkpoint": "power-on-to-frontier-correct:level01-entry",
+      "event": "Level 01 becomes active after the title/menu sequence.",
+      "world": [103, 880],
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "power-on-to-frontier-correct:handhold-grabbed",
+      "event": "Opening handhold transfer is reached during the canonical route.",
+      "world": [1663, 693],
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "power-on-to-frontier-correct:high-rope-attached",
+      "event": "Player attaches to the high vertical connector.",
+      "world": [1564, 637],
+      "terrain_behavior": "0x22",
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "power-on-to-frontier-correct:guard-cleared",
+      "event": "Upper walkway guard branch is cleared and the route reaches the edge fall.",
+      "world": [2213, 530],
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "frontier-to-tower:tower-blocked",
+      "event": "The direct rightward continuation reaches the lower tower and stalls on behavior 0x47.",
+      "world": [2745, 920],
+      "terrain_behavior": "0x47",
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "tower-reversal:staircase-entry",
+      "event": "Repeated jump pulses reverse the lower tower branch into the staircase route.",
+      "world": [2580, 863],
+      "terrain_behavior": "0x86",
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "tower-cross:far-floor-entry",
+      "event": "The tower crossing reaches the far lower floor.",
+      "world": [3346, 912],
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "far-floor-guard-branch:end",
+      "event": "The guarded far-floor route reaches the far-band actors and the vertical-rope approach.",
+      "world": [4444, 881],
+      "nearby_actor_types": ["0x0A", "0x2D", "0x6A"],
+      "scene_state": "0x01"
+    },
+    {
+      "checkpoint": "far-vertical-rope-climb:rope-mid",
+      "event": "The far vertical connector climbs from the lower band to its stable upper endpoint.",
+      "world": [4728, 671],
+      "terrain_behavior": "0x24",
+      "scene_state": "0x01"
+    }
+  ],
+  "frontier": {
+    "checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v5/far-vertical-rope-climb/states/genesis/end.sta",
+    "world": [4728, 671],
+    "scene_state": "0x01",
+    "exit_predicate": "PLAYER_WORLD_X > 0x1287 and PLAYER_WORLD_Y < 0x01D6",
+    "remaining_height": "The natural route still needs to reach the upper band below Y=470."
+  },
+  "conclusions": [
+    "A clean recording pass is feasible without discarding the existing research: v5 is a fresh power-on record, while v3/v4 remain preserved historical evidence.",
+    "The v5 power-on segment and every continuation are independently replayable from v5-owned checkpoints.",
+    "The route remains in SCENE_STATE=0x01 at the far-rope frontier; no natural transition to SCENE_STATE=0x08 has been observed."
+  ],
+  "next_action": "Use the v5 far-rope and far-floor checkpoints for controller-only weapon/transfer searches, recording each new launch, collision response, actor transition, death, and scene-gate change as a new named checkpoint."
+}

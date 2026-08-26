@@ -112,6 +112,15 @@ the finding or commit message.
   far horizontal-line dismount, natural lower-handhold `0x6A→0x6B` collision,
   continuous launch apex at `Y=561`, and sword-assisted guard-window negative
   evidence. None reaches scene state `0x08`.
+- `20260826-level01-canonical-recording-v5`: clean recording pass started from
+  a fresh power-on and replayed the entire v4 route through the far vertical
+  rope using only v5-owned loaded-state checkpoints. The power-on trace matches
+  v4 across all 2,297 state frames; all seven continuation segments also match
+  their v4 counterparts frame-for-frame, giving the project a new provenance
+  baseline without discarding earlier evidence.
+- `re/mame/findings/20260826-level01-canonical-recording-v5.json`: records the
+  63 named v5 checkpoints and significant route events, ending at world
+  `(4728,671)` on terrain behavior `0x24` with `SCENE_STATE=0x01`.
 - `20260826-level01-tower-negative-v1`: loaded-state recording from the clean
   upper-edge checkpoint through the lower tower. It verifies the 0x47 surface
   mode/latch behavior, identifies the resident 0x43 lamp and 0x20 enemy, and
@@ -194,6 +203,7 @@ attachment, dismount, reset, or scene gate.
 | `20260826-level01-tower-support-exploration-v1` | recorded-frontier | controlled lower support chain, rope gap, rope fixture, and natural negative |
 | `20260826-level01-canonical-recording-v3` | recorded-frontier | current power-on record through lower-tower crossing and far vertical-rope frontier |
 | `20260826-level01-canonical-recording-v4` | recorded-frontier | fresh exact-match power-on record, owned continuation to far rope, and natural upper-transfer experiments |
+| `20260826-level01-canonical-recording-v5` | recorded-frontier | clean power-on recording and self-contained replay chain through the far vertical-rope frontier |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
