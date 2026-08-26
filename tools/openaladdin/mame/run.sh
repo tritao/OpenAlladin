@@ -56,8 +56,12 @@ export OPENALADDIN_ROM_SHA256
 # The Lua harness consumes a generated symbol table, while the YAML files are
 # the canonical source. Regenerate this small derived file on every run so a
 # clone with new tracked RAM symbols does not depend on a prior Ghidra import.
+SYMBOL_FILE="${ROOT_DIR}/build/re/mame_symbols.lua"
+SYMBOL_TEMP="${SYMBOL_FILE}.tmp.$$"
 PYTHONPATH="${ROOT_DIR}/tools${PYTHONPATH:+:${PYTHONPATH}}" \
-    python3 -c 'from openaladdin.common import ROOT, normalize_symbols, write_mame_symbols; write_mame_symbols(ROOT / "build/re/mame_symbols.lua", normalize_symbols())'
+    OPENALADDIN_SYMBOL_OUTPUT="${SYMBOL_TEMP}" \
+    python3 -c 'import os; from pathlib import Path; from openaladdin.common import ROOT, normalize_symbols, write_mame_symbols; write_mame_symbols(Path(os.environ["OPENALADDIN_SYMBOL_OUTPUT"]), normalize_symbols())' \
+    && mv -f "${SYMBOL_TEMP}" "${SYMBOL_FILE}"
 
 mkdir -p "${TRACE_DIR}"
 mkdir -p "${TRACE_DIR}/states" "${TRACE_DIR}/snapshots"
