@@ -1,0 +1,557 @@
+{
+  "campaign": "20260826-level01-upper-frontier-search-v1",
+  "status": "recorded-negative",
+  "purpose": "Bounded input search from the verified upper-frontier rope checkpoint, testing jump timing, directional input, sword input, and delayed retries for a route to the upper behavior-0x25 band or scene exit.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_campaign": "re/mame/campaigns/20260826-level01-reproducibility-extension-v1.json",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "result": "All twelve branches remained in SCENE_STATE=0x01. None reached world Y<470 or produced a scene transition. The upper band is therefore not reached by these direct timing families from the rope frontier.",
+  "segments": [
+    {
+      "id": "delayed-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/delayed-left",
+      "frames": 360,
+      "input": "left*20,none*30,c+left,left*80,none*229",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "delayed-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/delayed-right",
+      "frames": 360,
+      "input": "right*20,none*30,c+right,right*80,none*229",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "jump-left-long",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/jump-left-long",
+      "frames": 360,
+      "input": "c+left*9,left*60,none*20,c+left*10,left*60,none*201",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "jump-left-pulse",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/jump-left-pulse",
+      "frames": 360,
+      "input": "left*30,none*20,c+left,left*30,none*20,c+left,left*30,none*228",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "jump-right-long",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/jump-right-long",
+      "frames": 360,
+      "input": "c+right*9,right*60,none*20,c+right*10,right*60,none*201",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "jump-right-pulse",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/jump-right-pulse",
+      "frames": 360,
+      "input": "right*30,none*20,c+right,right*30,none*20,c+right,right*30,none*228",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "jump-up-pulse",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/jump-up-pulse",
+      "frames": 360,
+      "input": "up*30,none*20,c+up,up*30,none*279",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "sword-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/sword-left",
+      "frames": 360,
+      "input": "c+b+left*19,b+left*120,left*80,none*141",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "sword-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/sword-right",
+      "frames": 360,
+      "input": "c+b+right*19,b+right*120,right*80,none*141",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "up-attack-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/up-attack-right",
+      "frames": 360,
+      "input": "up*59,b+right*60,right*100,c+right*30,none*111",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "up-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/up-left",
+      "frames": 360,
+      "input": "up+left*29,left*60,none*30,c+left*20,left*100,none*121",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "up-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-frontier-search-v1/up-right",
+      "frames": 360,
+      "input": "up+right*29,right*60,none*30,c+right*20,right*100,none*121",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-frontier",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 240,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    }
+  ]
+}

@@ -329,6 +329,22 @@ one-frame-C audit from the activated upper pair enters none of
 direct lamp/collision hypothesis and moves the search back to the behavior-47
 surface's object/connector source.
 
+The upper-frontier direct-input search is now archived in three new campaign
+manifests and a consolidated finding:
+`20260826-level01-upper-frontier-search-v1` records twelve 360-frame timing
+families from the verified upper-rope checkpoint;
+`20260826-level01-upper-platform-jump-sweep-v1` records eleven fixed-position
+ordinary-C probes across the behavior-25 band; and
+`20260826-level01-upper-actor-jump-v1` records eleven directional-C and C+B
+probes at the upper Type-1E/Type-20 actor line. Together they preserve 34
+branches and 204 named checkpoints, with input schedules checked against the
+captured frame streams. Every branch remains in `SCENE_STATE=0x01`; ordinary
+C does not launch from the behavior-25 surface, and no tested branch reaches
+the upper actor collision band or enters the candidate collision handlers.
+This closes the current direct jump-timing family. The next investigation is
+static/runtime decoding of the interaction-row and level-object records rather
+than more timing variants from the same frontier.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -354,6 +370,9 @@ surface's object/connector source.
 | `20260826-level01-reproducibility-v1` | recorded-frontier | current-checkout exact replay of the clean power-on route through the established frontier |
 | `20260826-level01-reproducibility-extension-v1` | recorded-frontier | current-checkout continuation with 160 checkpoints through the tower, far rope, wall opening, and upper actor setup |
 | `20260826-level01-tower-connector-audit-v1` | recorded-negative | exact lamp-window timing sweep and four-handler upper actor response audit |
+| `20260826-level01-upper-frontier-search-v1` | recorded-negative | twelve exact upper-frontier jump, direction, sword, and delayed timing branches |
+| `20260826-level01-upper-platform-jump-sweep-v1` | recorded-negative | eleven fixed-position ordinary-C probes across the behavior-25 upper band |
+| `20260826-level01-upper-actor-jump-v1` | recorded-negative | eleven directional-C and C+B probes at the upper actor line |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

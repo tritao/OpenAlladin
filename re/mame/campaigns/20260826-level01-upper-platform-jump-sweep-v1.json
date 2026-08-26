@@ -1,0 +1,512 @@
+{
+  "campaign": "20260826-level01-upper-platform-jump-sweep-v1",
+  "status": "recorded-negative",
+  "purpose": "Sweep one-frame C-button timing across the upper behavior-0x25 horizontal surface to determine whether the platform itself launches the player toward the upper actor pair or scene gate.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_campaign": "re/mame/campaigns/20260826-level01-upper-frontier-search-v1.json",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "result": "All eleven fixed-position probes stayed in SCENE_STATE=0x01. Ordinary C did not create an upward launch from the behavior-0x25 surface; probes either stayed on the band or fell to the lower geometry.",
+  "segments": [
+    {
+      "id": "x4372",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4372",
+      "frames": 180,
+      "input": "none,c,none*178",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "x4412",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4412",
+      "frames": 180,
+      "input": "right*9,none*2,c,none*168",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "x4452",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4452",
+      "frames": 180,
+      "input": "right*19,none*2,c,none*158",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "x4492",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4492",
+      "frames": 180,
+      "input": "right*29,none*2,c,none*148",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "x4512",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4512",
+      "frames": 180,
+      "input": "right*34,none*2,c,none*143",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "x4532",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4532",
+      "frames": 180,
+      "input": "right*39,none*2,c,none*138",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "x4572",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4572",
+      "frames": 180,
+      "input": "right*49,none*2,c,none*128",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "x4612",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4612",
+      "frames": 180,
+      "input": "right*59,none*2,c,none*118",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "x4652",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4652",
+      "frames": 180,
+      "input": "right*69,none*2,c,none*108",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "x4692",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4692",
+      "frames": 180,
+      "input": "right*79,none*2,c,none*98",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "x4724",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-platform-jump-sweep-v1/x4724",
+      "frames": 180,
+      "input": "right*87,none*2,c,none*90",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "recording_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "branch_class": "exploratory-negative-platform-jump",
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "positioned",
+          "state": "states/genesis/positioned.sta"
+        },
+        {
+          "frame": 40,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 60,
+          "name": "apex-window",
+          "state": "states/genesis/apex-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "settled",
+          "state": "states/genesis/settled.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    }
+  ]
+}

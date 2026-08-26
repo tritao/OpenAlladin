@@ -1,0 +1,73 @@
+{
+  "format": "openaladdin-level01-upper-frontier-search-finding-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Record the completed upper-frontier input search and close the currently tested direct-jump hypotheses.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "08c1b735505682079b609aacb1a9e58c09c6adb0",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "campaigns": [
+    "re/mame/campaigns/20260826-level01-upper-frontier-search-v1.json",
+    "re/mame/campaigns/20260826-level01-upper-platform-jump-sweep-v1.json",
+    "re/mame/campaigns/20260826-level01-upper-actor-jump-v1.json"
+  ],
+  "static_context": {
+    "upper_surface": {
+      "behavior": "0x25",
+      "world_rows": [
+        10,
+        24
+      ],
+      "world_x_range": [
+        4372,
+        4736
+      ],
+      "observation": "The upper behavior-0x25 band is physically above the lower rope/floor route, but the raw terrain map contains no behavior-0x22/0x24 connector between the upper row and the lower band."
+    },
+    "actor_pair": {
+      "source_campaign": "re/mame/campaigns/20260826-level01-upper-activation-v1.json",
+      "world": [
+        [
+          4512,
+          466
+        ],
+        [
+          4688,
+          466
+        ]
+      ],
+      "scene_state": "0x01",
+      "observation": "Up-triggered interaction rows materialize the pair, but the pair remains outside the tested player collision band."
+    }
+  },
+  "sweeps": [
+    {
+      "campaign": "20260826-level01-upper-frontier-search-v1",
+      "branches": 12,
+      "frames_each": 360,
+      "result": "scene state 0x01 throughout; no world-Y<470 reach"
+    },
+    {
+      "campaign": "20260826-level01-upper-platform-jump-sweep-v1",
+      "branches": 11,
+      "frames_each": 180,
+      "result": "ordinary one-frame C does not launch from behavior 0x25"
+    },
+    {
+      "campaign": "20260826-level01-upper-actor-jump-v1",
+      "branches": 11,
+      "frames_each": 240,
+      "result": "directional C and C+B do not reach the upper actor line or enter collision handlers"
+    }
+  ],
+  "negative_controls": [
+    "No branch writes a scene state transition.",
+    "No branch reaches the static natural-exit predicate at world x>0x1287 and world y<0x01D6.",
+    "No tested branch enters the Type-1E, Type-20, or player Type-1E collision handlers."
+  ],
+  "conclusion": "The direct-input search is now adequately bounded for this surface. Repeating more C/jump timing variants from the same checkpoints is lower value than decoding the interaction/object records and the actor movement/animation conditions that govern the upper resource.",
+  "next_action": "Trace and statically decode the interaction-row dispatcher and level-object records around the upper rows, then identify the actual connector/launch resource or a different route branch before resuming live input exploration."
+}
