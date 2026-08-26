@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-level01-natural-80-camera-scroll-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-natural-80-camera-scroll-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-floor-sword/states/genesis/first-guard.sta",
+  "input": "down+b+right*80,b+right*80,right*60",
+  "trace": "build/re/campaigns/20260826-level01-natural-80-camera-scroll-watch-v1",
+  "target": {
+    "map_cell": [249, 14],
+    "world": [3984, 464],
+    "map_word": "0x5630",
+    "selector": "0x80",
+    "handler": "0x001B6F0C"
+  },
+  "natural_crossing": {
+    "before": { "frame": 166, "player_world": [3982, 912], "camera": [3824, 475] },
+    "crossing": { "frame": 167, "player_world": [3985, 912], "camera": [3827, 475] },
+    "after": { "frame": 185, "player_world": [4039, 912], "camera": [3881, 475] }
+  },
+  "negative_evidence": {
+    "scene_state": "0x01 throughout",
+    "scene_state_changes": 0,
+    "fff104_writes": 0,
+    "selector_0x80_dispatches": 0,
+    "target_row_actor": false,
+    "exit_countdown_writes": 0
+  },
+  "diagnostic_observation": "Selector and interaction-processor observer passes were retained under the campaign directory. The selector observer saw only four ordinary player-interaction calls during guard/contact; no selector-0x80 dispatch was logged. Breakpoint timing was not used for the behavioral conclusion.",
+  "conclusion": "The sole Level 01 selector-0x80 record is not naturally activated by the lower-floor camera crossing. The prior controlled dispatch and spawn-side-effect findings remain exact-record semantics only; the unresolved task is the upstream transfer to the row-14 corridor."
+}

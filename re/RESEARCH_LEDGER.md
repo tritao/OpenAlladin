@@ -619,6 +619,18 @@ runtime type `0x87` at `(3952,464)`. This confirms that the record creates an
 actor rather than advancing the scene; the remaining Level 01 objective is
 still a natural traversal to the exit predicate and subsequent scene change.
 
+The natural camera-scroll audit is recorded in
+`re/mame/findings/20260826-level01-natural-80-camera-scroll-v1.json` and
+`re/mame/campaigns/20260826-level01-natural-80-camera-scroll-v1.json`. From the
+clean far-floor checkpoint, the controller-only replay crosses world X=3984
+at frames 166-167 while the player remains on the lower floor at Y=912. The
+target row-14 actor position at Y=464 is never materialized; the selector
+observer sees no 0x80 dispatch, the FFF104 write tap records zero writes, and
+scene state remains 0x01. The exact-record controlled spawn proof therefore
+stands, but it is not a natural lower-floor camera event. The route search now
+returns to the upstream transfer that would place the player in the row-14
+corridor.
+
 The far-frontier direct-action audit is recorded in
 `re/mame/findings/20260826-level01-upper-action-frontier-v1.json` and
 `re/mame/campaigns/20260826-level01-upper-action-frontier-v1.json`. Ten
@@ -754,6 +766,7 @@ an explicit `PLAYER_Y/PLAYER_VY` poke; it is controlled evidence only.
 | `20260826-level01-canonical-recording-v11` | recorded-negative | ten complete hold-jump transfer-delay traces from the far-rope checkpoint |
 | `20260826-level01-actual-80-activation-v1` | recorded-controlled | exact-row controlled dispatch proof for the sole Level 01 interaction selector 0x80; natural activation unresolved |
 | `20260826-level01-actual-80-spawn-side-effects-v1` | recorded-controlled | selector 0x80 flag clear, generic spawn, and runtime actor-type proof |
+| `20260826-level01-natural-80-camera-scroll-v1` | recorded-negative-natural | lower-floor camera crossing of map cell (249,14); no selector 0x80 dispatch |
 | `20260826-level01-upper-frontier-left-v1` | recorded-negative | four left-side branches from world (4372,628), all falling to the lower floor |
 | `20260826-level01-lower-floor-frontier-v1` | recorded-negative | eight jump/sword branches at the lower-floor wall; no wall crossing or exit gate |
 | `20260826-level01-upper-action-frontier-v1` | recorded-negative-frontier | ten direct-action branches and a breakpoint audit at the far connector; no transfer or scene exit |

@@ -1,0 +1,83 @@
+{
+  "campaign": "20260826-level01-natural-80-camera-scroll-v1",
+  "status": "recorded-negative-natural",
+  "purpose": "Replay the natural far-floor camera scroll across Level 01 map cell (249,14), testing whether the sole selector-0x80 interaction record is dispatched or changes the exit state.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "6a966b3a01f36577c28d527e79a4aa14bb098852",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-floor-sword/states/genesis/first-guard.sta",
+  "input_schedule": "down+b+right*80,b+right*80,right*60",
+  "authoritative_trace": {
+    "directory": "build/re/campaigns/20260826-level01-natural-80-camera-scroll-watch-v1",
+    "state_log": "build/re/campaigns/20260826-level01-natural-80-camera-scroll-watch-v1/state.jsonl",
+    "boot_log": "build/re/campaigns/20260826-level01-natural-80-camera-scroll-watch-v1/trace_boot.jsonl",
+    "frames": 220,
+    "actors": true,
+    "scene_state_trace": true,
+    "write_tap": "0x00FFF104"
+  },
+  "diagnostic_traces": [
+    {
+      "directory": "build/re/campaigns/20260826-level01-natural-80-camera-scroll-observer-v1",
+      "debug_log": "build/re/campaigns/20260826-level01-natural-80-camera-scroll-observer-v1/debug.log",
+      "instrumentation": "Player interaction selector breakpoint",
+      "result": "Four ordinary selector calls occurred during the guard/contact segment; no selector-0x80 line was observed."
+    },
+    {
+      "directory": "build/re/campaigns/20260826-level01-natural-80-camera-scroll-row-observer-v1",
+      "debug_log": "build/re/campaigns/20260826-level01-natural-80-camera-scroll-row-observer-v1/debug.log",
+      "instrumentation": "Interaction wrapper breakpoints",
+      "result": "No wrapper breakpoint was reached; this observer is diagnostic only."
+    },
+    {
+      "directory": "build/re/campaigns/20260826-level01-natural-80-camera-scroll-body-observer-v1",
+      "debug_log": "build/re/campaigns/20260826-level01-natural-80-camera-scroll-body-observer-v1/debug.log",
+      "instrumentation": "Direct interaction-processor and target-handler breakpoints",
+      "result": "The direct processor logged entries, but its entry-register row context was not used to classify the target."
+    }
+  ],
+  "target_record": {
+    "map_cell": [249, 14],
+    "world": [3984, 464],
+    "map_word": "0x5630",
+    "interaction_selector": "0x80",
+    "handler": "0x001B6F0C",
+    "known_side_effect": "FFF104=0x00"
+  },
+  "observed": [
+    {
+      "frame": 166,
+      "player_world": [3982, 912],
+      "camera": [3824, 475],
+      "scene_state": "0x01",
+      "meaning": "The player is immediately left of the target world-X window while the camera is on the Level 01 row-14 band."
+    },
+    {
+      "frame": 167,
+      "player_world": [3985, 912],
+      "camera": [3827, 475],
+      "scene_state": "0x01",
+      "meaning": "The player crosses world X=3984 at the natural lower-floor Y=912; no target actor is present at the row-14 Y=464 position."
+    },
+    {
+      "frame": 185,
+      "player_world": [4039, 912],
+      "camera": [3881, 475],
+      "scene_state": "0x01",
+      "meaning": "The replay has cleared the target window without a selector-0x80 activation."
+    }
+  ],
+  "negative_evidence": {
+    "scene_states_seen": ["0x01"],
+    "scene_state_changes": 0,
+    "fff104_write_events": 0,
+    "selector_0x80_dispatches": 0,
+    "target_row_actor_at_y464": false,
+    "exit_countdown_writes": 0
+  },
+  "conclusion": "The natural far-floor camera scroll crosses the selector-0x80 map-cell window while the player remains on the lower floor. The interaction record is not dispatched, FFF104 is not written, no row-14 target actor appears, and scene state remains 0x01. The controlled selector-0x80 spawn proof therefore remains valid but is not a natural-route event.",
+  "next_action": "Search the upstream route/resource activation that moves the player from the lower floor to the row-14 corridor; do not repeat the same lower-floor camera crossing as an activation test."
+}
