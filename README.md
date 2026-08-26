@@ -131,7 +131,9 @@ captured state trace as the first frame whose predicates remain true for the
 configured stable window. This handles transient entry/transition state
 without baking a frame offset into the tooling. A segment without a stable
 native boundary remains valid for MAME replay but is reported as unavailable
-for native parity.
+for native parity. When the first animation-cursor transition is isolated in
+the trace, `native_animation_phase` also records the derived native VM
+scheduler delay; this is kept separate from the Genesis animation timer.
 
 MAME replay uses the native `.inp` as its authoritative replay artifact and
 automatically compares the regenerated state trace with the recording:

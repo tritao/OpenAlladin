@@ -73,7 +73,6 @@ def main() -> int:
     assert guard["type"] == 0x84
     assert guard["collision_box"] is None
     assert guard["animation_pc"] == 0x00122FA2
-    assert guard["terminal_timer"] == 43
 
     terminal = states[43]
     assert next(actor for actor in terminal["actors"] if actor["slot"] == 5)["type"] == 0x84

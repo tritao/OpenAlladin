@@ -40,8 +40,10 @@ struct Options {
     std::string input_schedule;
     std::string checkpoint_player;
     std::string checkpoint_terrain_behavior;
+    std::string checkpoint_terrain_landing_state;
     std::string checkpoint_frame_ptr;
     std::string checkpoint_animation;
+    std::string checkpoint_animation_phase_delay;
     std::string checkpoint_animation_selector;
     std::string checkpoint_facing_x_flip;
     std::string checkpoint_vdp;
@@ -212,10 +214,14 @@ Options parse_options(int argc, char** argv) {
             options.checkpoint_player = argv[++i];
         } else if (argument == "--checkpoint-terrain-behavior" && i + 1 < argc) {
             options.checkpoint_terrain_behavior = argv[++i];
+        } else if (argument == "--checkpoint-terrain-landing-state" && i + 1 < argc) {
+            options.checkpoint_terrain_landing_state = argv[++i];
         } else if (argument == "--checkpoint-frame-ptr" && i + 1 < argc) {
             options.checkpoint_frame_ptr = argv[++i];
         } else if (argument == "--checkpoint-animation" && i + 1 < argc) {
             options.checkpoint_animation = argv[++i];
+        } else if (argument == "--checkpoint-animation-phase-delay" && i + 1 < argc) {
+            options.checkpoint_animation_phase_delay = argv[++i];
         } else if (argument == "--checkpoint-animation-selector" && i + 1 < argc) {
             options.checkpoint_animation_selector = argv[++i];
         } else if (argument == "--checkpoint-facing-x-flip" && i + 1 < argc) {
@@ -231,8 +237,10 @@ Options parse_options(int argc, char** argv) {
                          "       [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
                          "       [--checkpoint-terrain-behavior BYTE]\n"
+                         "       [--checkpoint-terrain-landing-state BYTE]\n"
                          "       [--checkpoint-frame-ptr ADDRESS]\n"
                          "       [--checkpoint-animation PC,TIMER]\n"
+                         "       [--checkpoint-animation-phase-delay TICKS]\n"
                          "       [--checkpoint-animation-selector FIELDS]\n"
                          "       [--checkpoint-facing-x-flip VALUE]\n"
                          "       [--checkpoint-vdp TRACE_DIR FRAME]\n"
@@ -296,6 +304,11 @@ int main(int argc, char** argv) {
                 checkpoint.size() < 5 || checkpoint[4] != 0
             );
         }
+        if (!options.checkpoint_terrain_landing_state.empty()) {
+            engine.set_checkpoint_terrain_landing_state(
+                static_cast<std::uint8_t>(std::stoul(options.checkpoint_terrain_landing_state, nullptr, 0))
+            );
+        }
         if (!options.checkpoint_frame_ptr.empty()) {
             engine.set_checkpoint_frame_ptr(std::stoi(options.checkpoint_frame_ptr, nullptr, 0));
         }
@@ -307,6 +320,11 @@ int main(int argc, char** argv) {
             engine.set_checkpoint_animation(
                 static_cast<std::uint32_t>(std::stoul(options.checkpoint_animation.substr(0, separator), nullptr, 0)),
                 std::stoi(options.checkpoint_animation.substr(separator + 1), nullptr, 0)
+            );
+        }
+        if (!options.checkpoint_animation_phase_delay.empty()) {
+            engine.set_checkpoint_animation_phase_delay(
+                std::stoi(options.checkpoint_animation_phase_delay, nullptr, 0)
             );
         }
         if (!options.checkpoint_animation_selector.empty()) {

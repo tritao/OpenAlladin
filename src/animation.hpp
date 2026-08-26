@@ -135,6 +135,7 @@ public:
     bool set_frame(int sprite_frame);
     void set_frame_pointer(std::uint32_t frame_pointer);
     void set_animation_state(std::uint32_t animation_pc, int timer);
+    void set_animation_phase_delay(int ticks);
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
@@ -203,6 +204,10 @@ private:
     // contain the opcode as data, so only actor ticks may apply its cleanup
     // side effect.
     bool actor_tick_ = false;
+    // Native checkpoints restore the Genesis-visible animation timer, while
+    // this separate delay restores the VM scheduler phase that is not stored
+    // in the captured RAM fields.
+    int animation_phase_delay_ = 0;
     AnimationSpawnRequest spawn_request_{};
     unsigned update_count_ = 0;
     bool landing_finished_ = false;

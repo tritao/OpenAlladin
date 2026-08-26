@@ -538,6 +538,79 @@ def _find_native_start(
     }
 
 
+def _infer_native_animation_phase(
+    state_records: dict[int, dict[str, Any]],
+    start_frame: int,
+    end_frame: int,
+) -> dict[str, Any]:
+    """Infer the native VM's initial scheduler delay from MAME's trace.
+
+    The native ROM VM is serviced on alternating update passes. Its private
+    scheduler phase is not a Genesis RAM field, so a portable checkpoint must
+    carry this derived adjustment separately from PLAYER_ANIMATION_TIMER.
+    Only infer it while the initial animation cursor and input are stable; an
+    input-triggered cursor change is gameplay, not scheduler evidence.
+    """
+    initial = state_records.get(start_frame) or {}
+    initial_player = initial.get("player") or {}
+    initial_pc = initial_player.get("animation_pc")
+    if initial_pc is None or int(initial_pc) == 0:
+        return {
+            "status": "not_observable",
+            "reason": "initial animation cursor is not available",
+            "delay_ticks": 0,
+        }
+    initial_input = initial.get("input", "none")
+    first_change: int | None = None
+    for frame in range(start_frame + 1, end_frame + 1):
+        state = state_records.get(frame)
+        if state is None:
+            break
+        if state.get("input", "none") != initial_input:
+            return {
+                "status": "not_observable",
+                "reason": "input changed before an isolated animation-cursor transition",
+                "delay_ticks": 0,
+            }
+        player = state.get("player") or {}
+        if player.get("animation_pc") != initial_pc:
+            first_change = frame
+            break
+    if first_change is None:
+        return {
+            "status": "not_observable",
+            "reason": "animation cursor did not transition during the segment",
+            "delay_ticks": 0,
+        }
+
+    offset = first_change - start_frame
+    tick_period = 2
+    # set_checkpoint() performs one initial animation selection only for an
+    # airborne player. A grounded checkpoint reaches its first native VM tick
+    # one frame earlier, so the phase model must retain that state distinction.
+    initial_tick_offset = 1 if bool(initial_player.get("grounded")) else 2
+    if offset < initial_tick_offset or (offset - initial_tick_offset) % tick_period:
+        return {
+            "status": "unrepresentable",
+            "reason": "animation transition does not align with the native VM tick phase",
+            "initial_animation_pc": int(initial_pc),
+            "first_change_frame": first_change,
+            "first_change_offset": offset,
+            "initial_tick_offset": initial_tick_offset,
+            "native_tick_period": tick_period,
+        }
+    return {
+        "status": "inferred",
+        "reason": "animation scheduler delay inferred from the first isolated cursor transition",
+        "delay_ticks": (offset - initial_tick_offset) // tick_period,
+        "initial_animation_pc": int(initial_pc),
+        "first_change_frame": first_change,
+        "first_change_offset": offset,
+        "initial_tick_offset": initial_tick_offset,
+        "native_tick_period": tick_period,
+    }
+
+
 def _backfill_native_boundary(run_dir: Path, segment: dict[str, Any]) -> None:
     """Derive the new native boundary for a pre-readiness segments.json."""
     if "native_start_frame" in segment:
@@ -558,6 +631,17 @@ def _backfill_native_boundary(run_dir: Path, segment: dict[str, Any]) -> None:
     segment["native_start"] = (
         native_checkpoint_descriptor(state_records[native_start_frame])
         if native_start_frame is not None else None
+    )
+    segment["native_animation_phase"] = (
+        _infer_native_animation_phase(
+            state_records,
+            native_start_frame,
+            int(segment["end_frame"]),
+        )
+        if native_start_frame is not None else {
+            "status": "unavailable",
+            "reason": "no stable native boundary was found",
+        }
     )
 
 
@@ -600,8 +684,12 @@ def native_checkpoint_descriptor(state: dict[str, Any]) -> dict[str, Any]:
             for name in ANIMATION_SELECTOR_FIELDS
             if name in selector
         }
-    if "behavior" in terrain:
-        descriptor["terrain"] = {"behavior": _state_int(terrain, "behavior")}
+    if any(name in terrain for name in ("behavior", "landing_state")):
+        descriptor["terrain"] = {
+            name: _state_int(terrain, name)
+            for name in ("behavior", "landing_state")
+            if name in terrain
+        }
     for name in ("horizontal_threshold", "vertical_threshold", "update_delay"):
         if name in camera:
             descriptor["camera"][name] = _state_int(camera, name)
@@ -612,6 +700,7 @@ def native_checkpoint_arguments(
     checkpoint: dict[str, Any],
     *,
     include_terrain_behavior: bool = True,
+    animation_phase_delay: int | None = None,
 ) -> list[str]:
     """Translate a state or native_start descriptor into native CLI flags."""
     player = checkpoint.get("player") or {}
@@ -642,12 +731,24 @@ def native_checkpoint_arguments(
     terrain = checkpoint.get("terrain") or {}
     if include_terrain_behavior and "behavior" in terrain:
         arguments.extend(["--checkpoint-terrain-behavior", str(_state_int(terrain, "behavior"))])
+    if "landing_state" in terrain:
+        arguments.extend([
+            "--checkpoint-terrain-landing-state",
+            str(_state_int(terrain, "landing_state")),
+        ])
     if player.get("frame_ptr"):
         arguments.extend(["--checkpoint-frame-ptr", str(_state_int(player, "frame_ptr"))])
     if player.get("animation_pc"):
         arguments.extend([
             "--checkpoint-animation",
             f"{_state_int(player, 'animation_pc')},{_state_int(player, 'animation_timer')}",
+        ])
+    if animation_phase_delay is not None:
+        if animation_phase_delay < 0:
+            raise SystemExit("native animation phase delay must be non-negative")
+        arguments.extend([
+            "--checkpoint-animation-phase-delay",
+            str(animation_phase_delay),
         ])
     selector_spec = animation_selector_spec(player)
     if selector_spec is not None:
@@ -825,6 +926,7 @@ def _write_segments(run_dir: Path, frame_count: int) -> tuple[int, int]:
             max(start_frame, min(frame_count - 1, next_event_frame - 1)),
             detector_definitions.get(str(event.get("name", ""))),
         )
+        native_end_frame = max(start_frame, min(frame_count - 1, next_event_frame - 1))
         segment: dict[str, Any] = {
             "id": segment_id,
             "event_frame": event_frame,
@@ -842,6 +944,17 @@ def _write_segments(run_dir: Path, frame_count: int) -> tuple[int, int]:
             "native_start": (
                 native_checkpoint_descriptor(state_records[native_start_frame])
                 if native_start_frame is not None else None
+            ),
+            "native_animation_phase": (
+                _infer_native_animation_phase(
+                    state_records,
+                    native_start_frame,
+                    native_end_frame,
+                )
+                if native_start_frame is not None else {
+                    "status": "unavailable",
+                    "reason": "no stable native boundary was found",
+                }
             ),
         }
         if event_state_path and event_state_path.is_file():
@@ -2057,7 +2170,11 @@ def command_replay(args: argparse.Namespace) -> int:
         )
         native_frames = segment_frames
         scheduled_tokens = (
-            _client_input_tokens(input_header, tokens[:-1]) if tokens else []
+            # Native writes the checkpoint as state frame 0, then applies one
+            # scheduled token before writing each subsequent state. The
+            # checkpoint token is therefore already represented by frame 0;
+            # consume source frame start+1 on the first native update.
+            _client_input_tokens(input_header, tokens[1:]) if tokens else []
         )
     else:
         reference = run_dir / "state.jsonl"
@@ -2074,7 +2191,15 @@ def command_replay(args: argparse.Namespace) -> int:
         "--input-schedule", readable_input_schedule(scheduled_tokens),
     ]
     if segment:
-        native_command.extend(native_checkpoint_arguments(initial_state or {}))
+        phase = segment.get("native_animation_phase") or {}
+        phase_delay = (
+            int(phase["delay_ticks"])
+            if phase.get("status") == "inferred" else None
+        )
+        native_command.extend(native_checkpoint_arguments(
+            initial_state or {},
+            animation_phase_delay=phase_delay,
+        ))
     native_environment = os.environ.copy()
     native_environment["SDL_VIDEODRIVER"] = "dummy"
     status = subprocess.run(native_command, cwd=ROOT, env=native_environment, check=False).returncode

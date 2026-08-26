@@ -1473,7 +1473,7 @@ AnimationContext Engine::player_animation_context(bool grounded) const {
     selector.camera_special_mode = static_cast<std::uint8_t>(camera_.special_mode);
     if (selector.response_timer == 0
         && (player_.terrain_response_active != 0
-            || (grounded && player_.terrain_vertical_stop == 0))) {
+            || player_.terrain_response_timer_state != 0)) {
         selector.response_timer = std::max<std::uint8_t>(
             player_.terrain_response_timer_state,
             1
@@ -2082,6 +2082,10 @@ void Engine::set_checkpoint_terrain_behavior(std::uint8_t behavior) {
     player_.terrain_landing_state = behavior != 0 ? 1 : 0;
 }
 
+void Engine::set_checkpoint_terrain_landing_state(std::uint8_t landing_state) {
+    player_.terrain_landing_state = landing_state;
+}
+
 void Engine::set_checkpoint_frame_ptr(int address) {
     if (animation_.rom_loaded()) {
         animation_.set_frame_pointer(static_cast<std::uint32_t>(address));
@@ -2098,6 +2102,10 @@ void Engine::set_checkpoint_frame_ptr(int address) {
 void Engine::set_checkpoint_animation(std::uint32_t animation_pc, int timer) {
     animation_.set_animation_state(animation_pc, timer);
     sync_player_actor();
+}
+
+void Engine::set_checkpoint_animation_phase_delay(int ticks) {
+    animation_.set_animation_phase_delay(ticks);
 }
 
 void Engine::set_checkpoint_animation_selector(const AnimationSelectorState& selector) {
@@ -2920,6 +2928,11 @@ void Engine::apply_ground_movement(const InputState& input) {
     // the terminal wall frame. It is a state-machine value, not the actual
     // collision displacement.
     player_.terrain_horizontal_response = 3;
+    // FFF0CC is the shared ground-response latch. The ROM raises it on the
+    // first held-direction frame and the release path clears it when braking
+    // begins; keep it in the canonical terrain state rather than only in the
+    // animation selector's derived view.
+    player_.terrain_response_timer_state = 1;
     player_.vx = 0;
 }
 
@@ -3289,6 +3302,19 @@ void Engine::update(const InputState& input) {
         player_.ground_braking = false;
     }
 
+    if (ground_release) {
+        // The first no-input frame enters the ROM's inertial ground path after
+        // the position/integration work but before camera follow. The exposed
+        // PLAYER_VX remains zero; the visible one-pixel release shift comes
+        // from the camera follower. The ROM also lowers the vertical follow
+        // threshold while this release enters the camera path.
+        player_.terrain_horizontal_response = 0;
+        player_.terrain_response_timer_state = 0;
+        camera_.vertical_threshold = 0x190;
+        player_.ground_braking = true;
+        last_ground_direction_ = 0;
+    }
+
     // The ROM consumes a pending 16-pixel reference shift at the beginning
     // of the next follow pass. This leaves the boundary frame externally
     // visible with scroll == 16, then exposes the rebased reference on the
@@ -3301,21 +3327,6 @@ void Engine::update(const InputState& input) {
     if (!(camera_reference_rebased && player_.terrain_transition_gate != 0)) {
         update_camera();
     }
-    // Pending bytes are transient dispatcher state and are cleared before
-    // the stable trace boundary. The scroll accumulator survives to the next
-    // frame, where rebase_camera_reference() consumes it.
-    camera_.scroll_left_pending = false;
-    camera_.scroll_right_pending = false;
-    camera_.scroll_up_pending = false;
-    camera_.scroll_down_pending = false;
-    if (ground_release) {
-        // The first no-input frame enters the ROM's inertial ground path after
-        // the position/camera work. The exposed velocity is 0x038C (or its
-        // signed mirror), then the normal integrator decays it by 0x28.
-        player_.vx = static_cast<std::int16_t>(last_ground_direction_ * 0x038C);
-        player_.ground_braking = true;
-        last_ground_direction_ = 0;
-    }
     if (was_grounded && player_.grounded && input_direction != 0) {
         last_ground_direction_ = input_direction;
     } else if (!player_.grounded) {
@@ -3323,16 +3334,18 @@ void Engine::update(const InputState& input) {
     }
 
     const bool landing_event = just_landed || landed_during_frame;
-    const SpritePose desired_pose = !player_.grounded
-        ? SpritePose::Jump
-        : (landing_event
-            ? SpritePose::Landing
-            : (animation_.pose() == SpritePose::Landing && !animation_.finished()
-                ? SpritePose::Landing
-                : (input.left != input.right
-                    ? SpritePose::Run
-                    : (animation_.pose() == SpritePose::Run || animation_.pose() == SpritePose::Brake
-                        ? SpritePose::Brake : SpritePose::Idle))));
+    SpritePose desired_pose = SpritePose::Idle;
+    if (!player_.grounded) {
+        desired_pose = SpritePose::Jump;
+    } else if (landing_event
+               || (animation_.pose() == SpritePose::Landing && !animation_.finished())) {
+        desired_pose = SpritePose::Landing;
+    } else if (input.left != input.right) {
+        desired_pose = SpritePose::Run;
+    } else if (!player_.ground_braking
+               && (animation_.pose() == SpritePose::Run || animation_.pose() == SpritePose::Brake)) {
+        desired_pose = SpritePose::Brake;
+    }
     // The original actor VM runs before the player movement update reaches
     // the stable frame boundary. Feed it the pre-integration state so its
     // F4/F2 conditions see the same velocity and landing fields as MAME.
@@ -3372,9 +3385,7 @@ void Engine::update(const InputState& input) {
         // native terrain mirror still exposes its one-frame response value,
         // so make this caller-side clear explicit in the selector state.
         selector.response_timer =
-            player_.ground_braking
-                ? 1
-                : desired_pose == SpritePose::Brake
+            desired_pose == SpritePose::Brake
                 ? 0
                 : (player_.terrain_response_active != 0
                     || (player_.grounded && player_.terrain_vertical_stop == 0)
@@ -3661,7 +3672,6 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"flags\":" << static_cast<unsigned>(actor.flags)
                << ",\"flag_bit5\":" << ((actor.flags & 0x20) != 0 ? "true" : "false")
                << ",\"movement_command_timer\":" << static_cast<unsigned>(actor.movement_command_timer)
-               << ",\"terminal_timer\":" << static_cast<unsigned>(actor.terminal_timer)
                << "}";
     }
     output << "]}\n";

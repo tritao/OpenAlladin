@@ -29,6 +29,8 @@ detectors:
           equals: 0
         - field: player.frame_ptr
           not_equals: 0
+        - field: player.grounded
+          equals: 1
 
   # SCENE_STATE=0x08 is a confirmed special player/camera transition state.
   # Keep the event name deliberately state-oriented until a natural Level 01

@@ -349,8 +349,10 @@ public:
     void reset();
     void set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded);
     void set_checkpoint_terrain_behavior(std::uint8_t behavior);
+    void set_checkpoint_terrain_landing_state(std::uint8_t landing_state);
     void set_checkpoint_frame_ptr(int address);
     void set_checkpoint_animation(std::uint32_t animation_pc, int timer);
+    void set_checkpoint_animation_phase_delay(int ticks);
     void set_checkpoint_animation_selector(const AnimationSelectorState& selector);
     void set_checkpoint_facing_x_flip(bool facing_x_flip);
     void set_checkpoint_vdp(const std::string& trace_dir, int frame);

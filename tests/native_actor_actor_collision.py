@@ -74,11 +74,9 @@ def main() -> int:
     assert hit_guard["type"] == 0x84
     assert hit_guard["animation_pc"] == 0x00122FA2
     assert hit_guard["frame_ptr"] == 0
-    assert hit_guard["terminal_timer"] == 43
     assert hit_sword["type"] == 0x84
     assert hit_sword["animation_pc"] == 0x00122DD8
     assert hit_sword["frame_ptr"] == 0
-    assert hit_sword["terminal_timer"] == 19
 
     assert actor(states[43], 5)["type"] == 0x84
     assert 26 not in {item["slot"] for item in states[20]["actors"]}

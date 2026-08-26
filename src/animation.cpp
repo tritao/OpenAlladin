@@ -126,6 +126,7 @@ void PlayerAnimationVm::reset() {
     // the standalone VM deterministic when it is used without an engine.
     random_value_ = 0x00;
     actor_tick_ = false;
+    animation_phase_delay_ = 0;
     spawn_request_ = {};
     update_count_ = 0;
     landing_finished_ = false;
@@ -595,6 +596,13 @@ void PlayerAnimationVm::set_animation_state(std::uint32_t animation_pc, int time
     landing_finished_ = false;
 }
 
+void PlayerAnimationVm::set_animation_phase_delay(int ticks) {
+    if (ticks < 0) {
+        throw std::runtime_error("animation phase delay must be non-negative");
+    }
+    animation_phase_delay_ = ticks;
+}
+
 void PlayerAnimationVm::update_actor(
     ActorAnimationState& actor,
     const AnimationContext& context
@@ -819,6 +827,15 @@ void PlayerAnimationVm::update(
         // actor tick. This one-frame root write is visible in FF7E60.
         animation_pc_ = kLandingStream;
         landing_reselect_pending_ = false;
+    }
+    if (animation_phase_delay_ > 0) {
+        // The VM is serviced on alternating update passes. Consume a phase
+        // tick without touching the Genesis-visible timer or cursor.
+        if ((update_count_ & 1U) == 0) {
+            --animation_phase_delay_;
+        }
+        ++update_count_;
+        return;
     }
     if ((update_count_++ & 1U) == 0) tick_rom(context);
 }
