@@ -1,0 +1,108 @@
+{
+  "format": "openaladdin-level01-resource-record-dispatch-finding-v1",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "5b64d93",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "5bad5fb7c04e8d2e3aebf779887d87e975628a50",
+  "ghidra": {
+    "target_manifest": "re/ghidra/targets/level01-resource-record-targets.json",
+    "decompile_artifact": "build/re/level01-resource-record-targeted-decompile.json",
+    "program": "re/ghidra/project/aladdin",
+    "report_format": "openaladdin-targeted-decompile-v1"
+  },
+  "static_records": [
+    {
+      "address": "0x001B58F4",
+      "name": "LevelObjectResourceTableB",
+      "actor_type": "0x3A",
+      "animation": "0x00122BD8",
+      "position": "WORLD_CAMERA_X+0x140, D6+WORLD_CAMERA_Y+0x100",
+      "classification": "camera-relative level object; no connector or scene-state write"
+    },
+    {
+      "address": "0x001B5938",
+      "name": "LevelObjectResourceTableC",
+      "actor_type": "0x34",
+      "animation": "0x00122C1E",
+      "movement": "0x001217B4",
+      "count": 6,
+      "position": "WORLD_CAMERA_X+0x140, D6+WORLD_CAMERA_Y+0x100",
+      "classification": "camera-relative interaction/effect actor; no connector or scene-state write"
+    },
+    {
+      "address": "0x001B5984",
+      "name": "LevelObjectResourceTableD",
+      "classification": "generic actor allocation at camera-relative position, with an optional second allocation at +0x20"
+    },
+    {
+      "address": "0x001B59F6",
+      "name": "LevelObjectResourceTableF",
+      "classification": "generic actor allocation at camera-relative position"
+    },
+    {
+      "address": "0x001B5A28",
+      "name": "LevelObjectResourceTableG",
+      "classification": "generic actor allocation at camera-relative position"
+    },
+    {
+      "address": "0x001B5A5A",
+      "name": "LevelObjectResourceTableH",
+      "classification": "fixed local actor pair at (0x18E,0x164)/(0x18E,0x178), conditional second allocation"
+    },
+    {
+      "address": "0x001B5AB8",
+      "name": "LevelObjectResourceTableJ",
+      "classification": "fixed local actor at (0x18E,0x164)"
+    },
+    {
+      "address": "0x001B5AE0",
+      "name": "LevelObjectResourceTableK",
+      "classification": "fixed local actor at (0x18E,0x164) with movement state"
+    },
+    {
+      "address": "0x001B5B10",
+      "name": "LevelObjectResourceTableL",
+      "classification": "fixed local actor at (0x18E,0x164) with movement state"
+    }
+  ],
+  "terrain_dispatch": [
+    {
+      "address": "0x001B5320",
+      "name": "TerrainHandler_SurfaceInteractionBlock",
+      "effect": "When the scene is not state 0x0B (or its override flag is set) and landing state is active, allocates an actor at PLAYER_WORLD_X/Y.",
+      "classification": "landing-triggered actor materialization, not a hidden connector"
+    },
+    {
+      "address": "0x001B53E0",
+      "name": "LevelObjectDispatchEnd",
+      "effect": "Allocates an actor at PLAYER_WORLD_X/Y.",
+      "classification": "generic dispatch tail, not a scene transition"
+    },
+    {
+      "address": "0x001B54E0",
+      "name": "TerrainHandler_SetTerrainStateBlock",
+      "effect": "Sets TERRAIN_STATE=0xFF; only under SCENE_STATE=0x05 may lateral push state cause an additional actor allocation above the player.",
+      "classification": "scene-specific terrain response; not active in the recorded scene-01 connector/tower traces"
+    }
+  ],
+  "runtime_correlation": {
+    "scene_resource_dispatch": "The scene/resource dispatcher is state-driven and is not entered by the natural column-132 connector trace or the natural lower-tower response trace.",
+    "tower_connector_gap": "The static target pass exposes no object/resource record that directly bridges the reachable behavior-0x47 lower tower around Y=770 to the behavior-0x22 connector body around Y=580.",
+    "nearby_dynamic_records": "The observed lower-continuation interaction rows create ordinary Type-0x1E/Type-0x20 actors through generic spawn wrappers; they do not assign SCENE_STATE or a vertical transfer."
+  },
+  "conclusion": {
+    "verified": [
+      "The targeted resource helpers are actor allocation/resource setup routines, not a single hidden connector record.",
+      "The landing-triggered terrain blocks allocate at the current player position and cannot explain a remote tower-to-rope bridge by themselves.",
+      "The missing X≈2720 transfer remains a dynamic behavior-0x47 response, interaction condition, or route branch rather than a decoded scene-resource load."
+    ],
+    "negative_evidence": [
+      "No targeted resource helper writes SCENE_STATE=0x08.",
+      "No targeted resource helper directly creates a behavior-0x22 terrain cell or installs a connector at the lower tower."
+    ],
+    "unresolved": "The exact dynamic condition that moves the player from the lower behavior-0x47 tower surface into the X≈2720 behavior-0x22 band is still unknown."
+  },
+  "next_action": "Trace the behavior-0x47 response with the adjacent player interaction fields and actor table around the natural tower checkpoint; prioritize a state change in PLAYER_INTERACTION_MODE, TERRAIN_STATE, or PLAYER_VY over additional direct timing variants."
+}

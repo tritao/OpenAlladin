@@ -470,6 +470,15 @@ returns to the endpoint. All four branches remain in scene state `0x01` and
 write none of the scene exit gates, closing this connector as a local loop for
 the tested dismount family.
 
+The targeted resource-record decompilation is summarized in
+`re/mame/findings/20260826-level01-resource-record-dispatch-v1.json`. The
+resource helpers at `0x1B58F4` and `0x1B5938` create camera-relative Type-0x3A
+and Type-0x34 actors; the `0x1B5320/0x1B53E0` paths allocate at the current
+player position; and `0x1B54E0` is a scene-05-specific terrain-state block.
+None installs a hidden behavior-0x22 connector or writes a scene state. The
+X≈2720 gap is therefore still a dynamic behavior-0x47 response/interaction
+question, not an unresolved static resource table entry.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
