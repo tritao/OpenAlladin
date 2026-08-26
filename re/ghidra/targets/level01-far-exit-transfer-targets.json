@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "focus": {
+    "name": "level01-far-exit-transfer",
+    "purpose": "Classify the natural Level 01 exit helper and the terrain-response blocks at the far upper connector after direct action probes remain in scene 0x01.",
+    "fixtures": [
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "build/re/campaigns/20260826-level01-canonical-recording-v6/far-vertical-rope-climb/states/genesis/end.sta"
+    ],
+    "generated_report": "build/re/level01-far-exit-transfer-targeted-decompile-v1.json"
+  },
+  "targets": [
+    { "address": "0x001B6406", "name": "Level01_ExitRoutine" },
+    { "address": "0x001B2E9A", "name": "SceneTransition_VDPHelper" },
+    { "address": "0x001B5B4A", "name": "Level01_EnterAndExitPredicate" },
+    { "address": "0x001B5318", "name": "TerrainHandler_SetTerminalCollisionBlock" },
+    { "address": "0x001B5320", "name": "TerrainHandler_SurfaceInteractionBlock" },
+    { "address": "0x001B537A", "name": "TerrainHandler_LandingResponseBlock" },
+    { "address": "0x001B53A2", "name": "TerrainHandler_HorizontalResponseBlock" },
+    { "address": "0x001B5440", "name": "TerrainHandler_ClearTransitionFlag" },
+    { "address": "0x001B5448", "name": "TerrainHandler_SetTransitionFlag" },
+    { "address": "0x001B5492", "name": "TerrainHandler_ClearSurfaceMode" },
+    { "address": "0x001B549C", "name": "TerrainHandler_SetSurfaceMode" },
+    { "address": "0x001B54D8", "name": "TerrainHandler_QueryStateA" },
+    { "address": "0x001B557E", "name": "TerrainHandler_0x29_Launch" },
+    { "address": "0x001B56B6", "name": "TerrainHandler_0x2D_Bounce" }
+  ]
+}

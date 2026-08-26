@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-level01-upper-action-frontier-finding-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Archive the final direct-action and far-frontier breakpoint audit before returning to the earlier level-object/resource path.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260826-level01-upper-action-frontier-v1.json",
+  "evidence": {
+    "horizontal_frontier": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+    "vertical_rope_endpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-vertical-rope-climb/states/genesis/end.sta",
+    "action_sweep": "build/re/diagnostics/upper-action-frontier-v1",
+    "focused_breakpoint_trace": "build/re/diagnostics/upper-action-frontier-v1/line-right-a-breakpoint",
+    "static_decompile": "build/re/level01-far-exit-transfer-targeted-decompile-v1.json"
+  },
+  "findings": [
+    "The far vertical-rope endpoint remains in scene 0x01 under A, B, C, Up, Left, Right, jump, sword, and combined timing probes.",
+    "The horizontal upper-line branch can reach world x=4750 but falls to the lower band at y=874; it does not arm the Level 01 scene countdown.",
+    "The focused line-right-a trace repeatedly enters the action selector at 0x001A9504 and the Level 01 per-frame predicate at 0x001B5B4C, but never reaches the launch, surface-transfer, terminal-collision, exit helper, or scene-state writer breakpoints.",
+    "The targeted decompilation identifies the natural exit helper at 0x001B6406 as VDP/scene-transition setup and the coordinate gate in the Level 01 routine as the remaining prerequisite; it does not reveal a direct far-rope transfer.",
+    "The far-frontier direct-input family is therefore negative evidence, not a completed route. The next search should move upstream to level-object/resource activation around the reachable middle and upper platform bands."
+  ],
+  "status": "far-direct-action-hypothesis-closed; natural-exit-route-unresolved",
+  "next_action": "Trace the object/resource records and activation path associated with the row-10 upper platform and its adjacent interaction/connector columns, using a natural lower-route checkpoint."
+}

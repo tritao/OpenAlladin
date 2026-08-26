@@ -619,6 +619,21 @@ runtime type `0x87` at `(3952,464)`. This confirms that the record creates an
 actor rather than advancing the scene; the remaining Level 01 objective is
 still a natural traversal to the exit predicate and subsequent scene change.
 
+The far-frontier direct-action audit is recorded in
+`re/mame/findings/20260826-level01-upper-action-frontier-v1.json` and
+`re/mame/campaigns/20260826-level01-upper-action-frontier-v1.json`. Ten
+branches from the horizontal and vertical far-rope checkpoints cover A/B/C,
+Up, Left, Right, jump, sword, and combined action timing. The endpoint either
+holds around `(4728,671)`, remains on the upper line around `(4728,661)`, or
+falls to the lower band around `(4750,874)`; every branch remains in scene
+`0x01`. A focused breakpoint run reaches the action selector and the Level 01
+predicate but does not enter the launch, connector, terminal-collision, exit,
+or scene-state writer paths. The generated static decompilation is archived by
+`re/ghidra/targets/level01-far-exit-transfer-targets.json` and identifies the
+coordinate gate as the remaining prerequisite. The direct far-rope action
+hypothesis is closed; the unresolved route search now returns upstream to the
+level-object/resource activation path around the row-10 upper platform.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -671,6 +686,7 @@ still a natural traversal to the exit predicate and subsequent scene change.
 | `20260826-level01-actual-80-spawn-side-effects-v1` | recorded-controlled | selector 0x80 flag clear, generic spawn, and runtime actor-type proof |
 | `20260826-level01-upper-frontier-left-v1` | recorded-negative | four left-side branches from world (4372,628), all falling to the lower floor |
 | `20260826-level01-lower-floor-frontier-v1` | recorded-negative | eight jump/sword branches at the lower-floor wall; no wall crossing or exit gate |
+| `20260826-level01-upper-action-frontier-v1` | recorded-negative-frontier | ten direct-action branches and a breakpoint audit at the far connector; no transfer or scene exit |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

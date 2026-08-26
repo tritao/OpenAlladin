@@ -1,0 +1,51 @@
+{
+  "campaign": "20260826-level01-upper-action-frontier-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Close the direct action-input hypothesis at the Level 01 far upper connector and verify that the natural exit/launch helpers are not entered by the tested branches.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoints": {
+    "horizontal_frontier": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+    "vertical_rope_endpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-vertical-rope-climb/states/genesis/end.sta"
+  },
+  "branches": [
+    { "id": "line-right-a", "source": "horizontal_frontier", "frames": 240, "input": "right*158,a+right*20,right*100", "terminal_world": [4750, 874], "scene_state": "0x01", "result": "falls to lower band; no transition" },
+    { "id": "line-right-ca", "source": "horizontal_frontier", "frames": 240, "input": "right*158,c+a+right*20,right*100", "terminal_world": [4728, 661], "scene_state": "0x01", "result": "remains at far connector; no transition" },
+    { "id": "line-right-ab", "source": "horizontal_frontier", "frames": 240, "input": "right*158,a+b+right*20,b+right*100", "terminal_world": [4750, 874], "scene_state": "0x01", "result": "falls to lower band; no transition" },
+    { "id": "rope-a-left", "source": "vertical_rope_endpoint", "frames": 240, "input": "a+left*30,left*90", "terminal_world": [4728, 671], "scene_state": "0x01", "result": "fixed at endpoint" },
+    { "id": "rope-a-right", "source": "vertical_rope_endpoint", "frames": 240, "input": "a+right*30,right*90", "terminal_world": [4728, 671], "scene_state": "0x01", "result": "fixed at endpoint" },
+    { "id": "rope-a-up", "source": "vertical_rope_endpoint", "frames": 240, "input": "a+up*30,up*90", "terminal_world": [4728, 671], "scene_state": "0x01", "result": "fixed at endpoint" },
+    { "id": "rope-a-c-right", "source": "vertical_rope_endpoint", "frames": 240, "input": "a+c+right*20,right*100", "terminal_world": [4748, 874], "scene_state": "0x01", "result": "falls to lower band; no transition" },
+    { "id": "rope-a-up-right", "source": "vertical_rope_endpoint", "frames": 240, "input": "a+up+right*30,right*90", "terminal_world": [4728, 671], "scene_state": "0x01", "result": "fixed at endpoint" },
+    { "id": "rope-ca-left", "source": "vertical_rope_endpoint", "frames": 240, "input": "c+a+left*20,left*100", "terminal_world": [4494, 628], "scene_state": "0x01", "result": "falls/freezes after leaving endpoint" },
+    { "id": "rope-cab-left", "source": "vertical_rope_endpoint", "frames": 240, "input": "c+a+b+left*20,b+left*100", "terminal_world": [4494, 628], "scene_state": "0x01", "result": "falls/freezes after leaving endpoint" }
+  ],
+  "focused_breakpoint_trace": {
+    "trace_dir": "build/re/diagnostics/upper-action-frontier-v1/line-right-a-breakpoint",
+    "frames": 240,
+    "input": "right*158,a+right*20,right*100",
+    "breakpoints": [
+      "0x001A9430", "0x001A9502", "0x001B54D8", "0x001B557E",
+      "0x001B5318", "0x001B5320", "0x001B6406", "0x001B5B4A", "0x001A8ED2"
+    ],
+    "observed_instruction_hits": {
+      "0x001A9504": 240,
+      "0x001B5B4C": 240
+    },
+    "not_observed": [
+      "0x001B54D8", "0x001B557E", "0x001B5318", "0x001B5320",
+      "0x001B6406", "0x001A8ED2"
+    ],
+    "result": "The branch reaches x=4750,y=874 but remains in scene 0x01 and enters no connector launch, terrain transfer, scene-exit, or scene-state writer breakpoint."
+  },
+  "interpretation": {
+    "natural_exit_predicate": "Level 01 enter/exit logic arms the scene countdown only when player world X > 0x1287 and world Y < 0x1D6; none of these branches satisfy the vertical condition.",
+    "far_connector": "The ordinary far connector endpoint is a behavior-0x24/0x25 terrain stop around x=4728,y=671 or y=628, not the exit corridor.",
+    "closed_hypothesis": "The tested A/B/C, directional, jump, sword, and combined action families do not directly activate the missing transfer.",
+    "remaining_question": "Identify the earlier object/resource or route interaction that moves the player from the reachable lower/middle branch into the upper exit band."
+  },
+  "static_decompile": "build/re/level01-far-exit-transfer-targeted-decompile-v1.json"
+}
