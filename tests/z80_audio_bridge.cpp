@@ -109,6 +109,10 @@ int main() {
     ym.clear();
 
     bridge.handle(ym_note);
+    assert(ym[0].port == 0);
+    assert(ym[0].data == 0x22);
+    assert(ym[1].port == 1);
+    assert(ym[1].data == 0x0A);
     assert(has_ym_write(0xB0, 0x34));
     assert(has_ym_write(0xB4, 0xE1));
     assert(has_ym_write(0x30, 0x24));
@@ -128,12 +132,12 @@ int main() {
         0,
     };
     bridge.handle(traced_note);
-    assert(has_ym_write(0xA0, 0x3B));
-    assert(has_ym_write(0xA4, 0x1C));
+    assert(has_ym_write(0xA1, 0x3B));
+    assert(has_ym_write(0xA5, 0x1C));
     assert(ym[ym.size() - 6].port == 0);
-    assert(ym[ym.size() - 6].data == 0xA4);
+    assert(ym[ym.size() - 6].data == 0xA5);
     assert(ym[ym.size() - 4].port == 0);
-    assert(ym[ym.size() - 4].data == 0xA0);
+    assert(ym[ym.size() - 4].data == 0xA1);
 
     bridge.reset();
     ym.clear();
@@ -152,6 +156,28 @@ int main() {
     bridge.handle(second_stream_note);
     assert(ym.back().port == 1);
     assert(ym.back().data == 0xF1);
+
+    bridge.reset();
+    ym.clear();
+    psg.clear();
+    auto leased_note = ym_note;
+    leased_note.operand_b = -2;
+    bridge.handle(leased_note);
+    ym.clear();
+    auto overlapping_note = second_stream_note;
+    overlapping_note.operand_b = 0;
+    bridge.handle(overlapping_note);
+    assert(ym.back().port == 1);
+    assert(ym.back().data == 0xF1);
+    ym.clear();
+    bridge.tick();
+    assert(ym.empty());
+    bridge.tick();
+    assert(ym.size() >= 2);
+    assert(ym[ym.size() - 2].port == 0);
+    assert(ym[ym.size() - 2].data == 0x28);
+    assert(ym.back().port == 1);
+    assert(ym.back().data == 0x00);
 
     const Z80SoundDriver::SoundEvent psg_note{
         Z80SoundDriver::SoundEvent::Kind::Note,

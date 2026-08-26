@@ -452,6 +452,7 @@ int main(int argc, char** argv) {
             engine.update(input);
             if (sound_driver) {
                 try {
+                    audio_bridge.tick();
                     sound_driver->tick();
                 } catch (const std::exception& error) {
                     std::cerr << "openaladdin: sound driver stopped: "
