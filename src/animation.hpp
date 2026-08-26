@@ -199,6 +199,10 @@ private:
     std::uint32_t stream_entry_ = 0;
     std::uint32_t return_pc_ = 0;
     std::uint8_t random_value_ = 0xFF;
+    // F6 is an actor callback in the common VM. Player streams can also
+    // contain the opcode as data, so only actor ticks may apply its cleanup
+    // side effect.
+    bool actor_tick_ = false;
     AnimationSpawnRequest spawn_request_{};
     unsigned update_count_ = 0;
     bool landing_finished_ = false;

@@ -1547,6 +1547,16 @@ void Engine::update_actor_animations() {
             ++actor.animation_tick_phase;
             if (hold) continue;
         }
+        // The common actor scheduler services the terrain surface stream on
+        // alternating VBlank passes. Its stream contains paired frame
+        // records, so ticking it every frame reaches F6 00 one pass early
+        // and repeatedly allocates a replacement record at the same cell.
+        const bool surface_animation_cadence = actor.type == kTerrainSpawnActorType;
+        if (surface_animation_cadence) {
+            const bool hold = (actor.animation_tick_phase & 1U) != 0;
+            ++actor.animation_tick_phase;
+            if (hold) continue;
+        }
 
         ActorAnimationState animation_state;
         animation_state.type = actor.type;
@@ -1568,6 +1578,7 @@ void Engine::update_actor_animations() {
         if (!actor_snapshot_mode_) {
             actor_context.random_state = nullptr;
         }
+        const std::uint8_t previous_type = actor.type;
         actor_animations_[slot].update_actor(animation_state, actor_context);
 
         actor.type = animation_state.type;
@@ -1580,6 +1591,23 @@ void Engine::update_actor_animations() {
         actor.animation_pc = animation_state.animation_pc;
         actor.frame_ptr = animation_state.frame_ptr;
         actor.animation_timer = animation_state.animation_timer;
+        // Surface interaction records notify the player when their short
+        // animation changes from type 0x8C to 0x7B. The ROM does this after
+        // the actor animation pass; arming the selector when the record is
+        // merely present fires too early while the player is still braking,
+        // and can select the hurt/stop stream on the wrong frame.
+        if (animation_state.type == 0x7B
+            && previous_type == kTerrainSpawnActorType
+            && player_.animation_selector.interaction_lock == 0
+            && std::abs(static_cast<int>(actor.x) - player_world_x()) <= 0x20
+            && std::abs(static_cast<int>(player_.vx)) <= 0xA0) {
+            // ED 11 in the surface stream changes the temporary record to
+            // type 0x7B. The selector observes this transition on the next
+            // player boundary; F6 00 is the later record cleanup and is not
+            // the player-animation trigger.
+            surface_interaction_pending_ = true;
+            surface_interaction_active_ = true;
+        }
         if (actor.type == kActorTerminalType) {
             update_terminal_actor_motion(actor);
         }
@@ -1976,6 +2004,8 @@ void Engine::reset() {
     interaction_map_.reset();
     interaction_scan_initialized_ = false;
     checkpoint_animation_selector_pending_ = false;
+    surface_interaction_pending_ = false;
+    surface_interaction_active_ = false;
     interaction_reference_x_ = 0;
     interaction_reference_y_ = 0;
     if (actor_snapshot_mode_) {
@@ -2030,6 +2060,8 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     }
     player_.terrain_landing_state = grounded && player_.terrain_behavior != 0 ? 1 : 0;
     checkpoint_animation_selector_pending_ = false;
+    surface_interaction_pending_ = false;
+    surface_interaction_active_ = false;
     frame_ = 0;
     quit_ = false;
     animation_.reset();
@@ -2537,7 +2569,11 @@ void Engine::apply_floor_contour() {
     player_.terrain_response_timer_state = 0;
 }
 
-void Engine::resolve_terrain(int previous_world_y) {
+void Engine::resolve_terrain(
+    int previous_world_y,
+    int preprocessed_surface_row,
+    int preprocessed_surface_column
+) {
     Level::TerrainQuery query = level_.query_player(player_world_x(), player_world_y());
     if (checkpoint_terrain_behavior_override_ && query.resolver.valid) {
         query.resolver.behavior = checkpoint_terrain_behavior_;
@@ -2589,7 +2625,18 @@ void Engine::resolve_terrain(int previous_world_y) {
     // The ROM dispatches the handler on every resolver pass. Individual
     // handlers carry their own guards/latches; dispatching only on behavior
     // transitions loses those semantics for special terrain cells.
-    apply_terrain_behavior(*cell);
+    const bool already_dispatched = cell->behavior == 0x0A
+        && cell->row == preprocessed_surface_row
+        && cell->column == preprocessed_surface_column;
+    // In the live frame order, surface interaction is the pre-integration
+    // dispatch above. A post-integration 0x0A result is only the published
+    // terrain byte; dispatching it here would allocate one frame early (and
+    // would replace a record on the same pass that F6 clears it).
+    const bool defer_surface_dispatch = cell->behavior == 0x0A
+        && !checkpoint_terrain_behavior_override_;
+    if (!already_dispatched && !defer_surface_dispatch) {
+        apply_terrain_behavior(*cell);
+    }
 }
 
 void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
@@ -2607,7 +2654,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         // The three upper surface behaviors share the ROM set block.
         player_.terrain_surface_mode = 1;
         break;
-    case 0x0A:  // TerrainHandler_SurfaceInteraction (0x001B5320).
+    case 0x0A: {  // TerrainHandler_SurfaceInteraction (0x001B5320).
         // The handler first looks for an existing type-0x8C record, then
         // allocates the first free common actor slot (the ROM scans slots
         // 3..22, starting at 0x00FF7F06). It only accepts a non-zero
@@ -2617,22 +2664,39 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         if (player_.terrain_landing_state == 0) {
             break;
         }
-        if (std::any_of(actors_.begin(), actors_.end(), [](const ActorState& actor) {
+        const auto existing_surface = std::find_if(
+            actors_.begin(), actors_.end(), [](const ActorState& actor) {
                 return actor.type == kTerrainSpawnActorType;
-            })) {
+            });
+        if (surface_interaction_active_
+            && player_.animation_selector.interaction_lock == 0
+            && animation_.stream_kind() == AnimationStreamKind::Action
+            && player_.terrain_horizontal_response == 0) {
+            // Once the stop stream's 0x28-frame lock expires, the live
+            // surface handler revisits the same selector even if the actor
+            // allocator has a one-frame gap between records.
+            player_.animation_selector.interaction_lock = 0x28;
+        }
+        if (existing_surface != actors_.end()) {
+            // The existing record owns the actor lifecycle; do not allocate
+            // a replacement while it is still in the table.
             break;
         }
         for (std::size_t slot = 3; slot <= 22 && slot < actors_.size(); ++slot) {
             if (actors_[slot].type != 0) continue;
-            ActorState spawned;
-            spawned.type = kTerrainSpawnActorType;
-            spawned.x = static_cast<std::uint16_t>(player_world_x());
-            spawned.y = static_cast<std::uint16_t>(player_world_y());
-            spawned.animation_pc = kTerrainSpawnAnimationStream;
-            actors_[slot] = spawned;
+            ActorState spawned_actor;
+            spawned_actor.type = kTerrainSpawnActorType;
+            spawned_actor.x = static_cast<std::uint16_t>(player_world_x());
+            spawned_actor.y = static_cast<std::uint16_t>(player_world_y());
+            spawned_actor.animation_pc = kTerrainSpawnAnimationStream;
+            // The allocator runs before the actor animation pass, but a new
+            // record is first serviced on the following VBlank.
+            spawned_actor.animation_tick_phase = 1;
+            actors_[slot] = spawned_actor;
             break;
         }
         break;
+    }
     case 0x20:  // TerrainHandler_SetTerminalCollision (0x001B5318)
         player_.terrain_terminal_transition = 0xFF;
         break;
@@ -3010,6 +3074,8 @@ void Engine::update_state08(const InputState& input) {
 }
 
 void Engine::update(const InputState& input) {
+    const bool arm_surface_interaction = surface_interaction_pending_;
+    surface_interaction_pending_ = false;
     if (player_.animation_selector.interaction_lock != 0) {
         --player_.animation_selector.interaction_lock;
     }
@@ -3051,6 +3117,22 @@ void Engine::update(const InputState& input) {
     }
     const bool was_grounded = player_.grounded;
     const bool just_landed = !grounded_before_contour && player_.grounded;
+    // TerrainHandler_SurfaceInteraction runs from the pre-integration
+    // resolver. The actor record stores the player's position before this
+    // frame's movement, and an existing record prevents a replacement until
+    // the next resolver pass. Keep the later terrain-state publication, but
+    // do not dispatch this same surface cell a second time after movement.
+    int preprocessed_surface_row = -1;
+    int preprocessed_surface_column = -1;
+    if (!checkpoint_terrain_behavior_override_) {
+        const auto prepass_cell = level_.resolve_player_cell(
+            player_world_x(), player_world_y());
+        if (prepass_cell.valid && prepass_cell.behavior == 0x0A) {
+            apply_terrain_behavior(prepass_cell);
+            preprocessed_surface_row = prepass_cell.row;
+            preprocessed_surface_column = prepass_cell.column;
+        }
+    }
     if (player_.attack_timer != 0) {
         --player_.attack_timer;
     }
@@ -3081,6 +3163,12 @@ void Engine::update(const InputState& input) {
     // state while the native animation VM remains intentionally separate.
     if (!stable_terrain_handler_fixture) {
         update_actor_animations();
+    }
+    if (arm_surface_interaction
+        && player_.animation_selector.interaction_lock == 0) {
+        // A surface actor's type transition is published one frame before
+        // Player_ProcessInteractionState selects the stop stream.
+        player_.animation_selector.interaction_lock = 0x28;
     }
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
         && last_ground_direction_ != 0 && player_.vx == 0;
@@ -3147,7 +3235,11 @@ void Engine::update(const InputState& input) {
         player_.vy = static_cast<std::int16_t>(player_.vy + 0x78);
     }
     if (!checkpoint_terrain_behavior_override_) {
-        resolve_terrain(previous_world_y);
+        resolve_terrain(
+            previous_world_y,
+            preprocessed_surface_row,
+            preprocessed_surface_column
+        );
     }
     if (!player_.grounded && player_.terrain_response_active != 0
         && vertical_stop_before_frame) {
@@ -3172,6 +3264,12 @@ void Engine::update(const InputState& input) {
         // contour routine uses that latched bit to distinguish the later
         // falling/landing phase while FFF0BE is still active.
     }
+    // Terrain handlers can arm the interaction lock after the initial RAM
+    // snapshot above. Refresh the animation context before the player VM
+    // tick so a newly spawned surface actor restarts the run stream on this
+    // same frame boundary.
+    animation_context.selector.interaction_lock =
+        player_.animation_selector.interaction_lock;
     if (start_jump && player_.grounded) {
         // The recovered frame order applies the jump handler after motion and
         // terrain resolution (Player_Update -> Terrain_Resolve -> jump
@@ -3563,6 +3661,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"flags\":" << static_cast<unsigned>(actor.flags)
                << ",\"flag_bit5\":" << ((actor.flags & 0x20) != 0 ? "true" : "false")
                << ",\"movement_command_timer\":" << static_cast<unsigned>(actor.movement_command_timer)
+               << ",\"terminal_timer\":" << static_cast<unsigned>(actor.terminal_timer)
                << "}";
     }
     output << "]}\n";

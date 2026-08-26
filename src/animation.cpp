@@ -125,6 +125,7 @@ void PlayerAnimationVm::reset() {
     // The engine supplies the shared ROM RNG through AnimationContext. Keep
     // the standalone VM deterministic when it is used without an engine.
     random_value_ = 0x00;
+    actor_tick_ = false;
     spawn_request_ = {};
     update_count_ = 0;
     landing_finished_ = false;
@@ -436,7 +437,16 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         spawn_request_.source_facing_y_flip = actor_[0x35];
         cursor += 16;
         return false;
-    case 0xF6: cursor += 2; return false;
+    case 0xF6:
+        // Actor callback 0 clears the current actor record. Surface actors
+        // use F6 00 after their short 0x8C/0x7B animation, and the same
+        // callback is used by the short type-0x84 child effect. The player
+        // VM must consume the opcode without clearing its own state.
+        if (actor_tick_ && read_rom8(cursor + 1) == 0) {
+            actor_[0] = 0;
+        }
+        cursor += 2;
+        return false;
     case 0xF7:
         actor_[9] = 0;
         if (read_memory16(0xFF7E02) < read_memory16(2)) actor_[9] = 0xFF;
@@ -611,7 +621,9 @@ void PlayerAnimationVm::update_actor(
     actor_[0x37] = actor.animation_timer;
     actor_[0x3C] = actor.flags;
 
+    actor_tick_ = true;
     tick_actor_rom(context, actor);
+    actor_tick_ = false;
 
     actor.type = actor_[0];
     actor.x = read_memory16(2);
@@ -776,12 +788,24 @@ void PlayerAnimationVm::update(
     }
     horizontal_direction_ = horizontal_direction;
     sync_context(context);
-    if (stream_kind_ == AnimationStreamKind::Locomotion
-        && desired_pose == SpritePose::Run
-        && context.selector.interaction_lock == 0x28) {
-        // Actor flag bit 5 starts the same 0x28-frame interaction lock that
-        // restarts the Genesis run stream at the camera-boundary frame.
-        select_rom_stream(SpritePose::Run, false, &context);
+    if (context.selector.interaction_lock == 0x28) {
+        // Actor flag bit 5 restarts the Genesis run stream. The surface
+        // interaction path uses the same lock after selecting the stop
+        // stream, so preserve that root when the player is braking at a
+        // zero terrain-response boundary.
+        if (stream_kind_ == AnimationStreamKind::Locomotion
+            && desired_pose == SpritePose::Run) {
+            select_rom_stream(SpritePose::Run, false, &context);
+        } else if (desired_pose == SpritePose::Brake
+                   && context.terrain_response_timer_state == 0
+                   && context.selector.horizontal_response == 0) {
+            select_stream_entry(kInteractionStopStream);
+            // The selector writes the new root after this frame's VM pass.
+            // Count the update even though the newly selected stream must
+            // not consume its first command until the next frame.
+            ++update_count_;
+            return;
+        }
     }
     if (response_stream_needs_recovery()) {
         select_rom_stream(desired_pose, false, &context);

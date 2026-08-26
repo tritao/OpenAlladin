@@ -394,7 +394,11 @@ private:
     void update_terrain_input(const InputState& input);
     void update_terrain_connector_response();
     void apply_floor_contour();
-    void resolve_terrain(int previous_world_y);
+    void resolve_terrain(
+        int previous_world_y,
+        int preprocessed_surface_row = -1,
+        int preprocessed_surface_column = -1
+    );
     void update_camera();
     void initialize_camera_alignment();
     bool rebase_camera_reference();
@@ -443,6 +447,8 @@ private:
     bool actor_snapshot_mode_ = false;
     bool interaction_scan_initialized_ = false;
     bool checkpoint_animation_selector_pending_ = false;
+    bool surface_interaction_pending_ = false;
+    bool surface_interaction_active_ = false;
     int interaction_reference_x_ = 0;
     int interaction_reference_y_ = 0;
     // FUN_001B3032 is the shared fixed-ROM PRNG used by terrain responses and
