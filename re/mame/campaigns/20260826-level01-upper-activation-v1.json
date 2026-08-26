@@ -29,6 +29,20 @@
         { "frame": 177, "name": "stable", "state": "upper4372-rope4688-activation/states/genesis/stable.sta" },
         { "frame": 240, "name": "end", "state": "upper4372-rope4688-activation/states/genesis/end.sta" }
       ]
+    },
+    {
+      "id": "upper-connector-no-up-control",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-no-up-control-v1",
+      "frames": 240,
+      "input": "right*158,none*82",
+      "load_state": "upper-frontier",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/end.sta",
+      "recording_commit": "a37f97a",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "edge_trace": "debug.log",
+      "branch_class": "exploratory-negative-control"
     }
   ]
 }

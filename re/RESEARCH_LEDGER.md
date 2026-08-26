@@ -259,6 +259,11 @@ observed 164-pixel vertical separation. The upper feature is therefore an
 interaction-row actor setup, and the next target is the Type-`0x1E`/Type-`0x20`
 collision or interaction response after setup.
 
+The paired no-Up control (`right*158,none*82`) remains at the same x≈4684
+frontier without creating either actor and dispatches no interaction-table
+edge. The actor pair is therefore conditioned on the Up-triggered interaction
+path, not merely on reaching the horizontal coordinate.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |

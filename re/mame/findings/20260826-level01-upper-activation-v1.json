@@ -12,6 +12,17 @@
   "trace": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation",
   "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/end.sta",
   "input": "right*158,up*120,none*42",
+  "negative_control": {
+    "trace": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-no-up-control-v1",
+    "input": "right*158,none*82",
+    "terminal_player_world": [4684, 628],
+    "actors_at_frame_240": [
+      { "slot": 3, "type": "0x40", "world": [4656, 672] },
+      { "slot": 4, "type": "0x00", "world": [4569, 851] }
+    ],
+    "interaction_edges_at_activation_frame": 0,
+    "conclusion": "The Type-0x1E/Type-0x20 pair does not materialize without Up; reaching x≈4684 alone is insufficient."
+  },
   "initializer_trace": {
     "artifact": "mame-debug.log",
     "routine": "0x001AE30C",
