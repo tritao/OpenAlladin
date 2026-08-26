@@ -1,0 +1,47 @@
+{
+  "campaign": "20260826-level01-canonical-recording-v6",
+  "status": "recording",
+  "purpose": "Fresh, self-contained power-on campaign for level 01. Every established route segment is replayed from a v6 checkpoint before frontier exploration continues.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "ba0fdf6e1602480d2af166c989a696d768ed7004",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "ba0fdf6e1602480d2af166c989a696d768ed7004",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "power-on-to-frontier",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v6/power-on-to-frontier",
+      "frames": 2296,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right*1,right*99,right*50,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c*1,right*195,b+right*50,right*100,none*19",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "start_condition": "MAME genesis machine booted from power-on with no loaded state",
+      "comparison_to_v5": {
+        "reference_trace": "build/re/campaigns/20260826-level01-canonical-recording-v5/power-on-to-frontier-correct",
+        "compared_frames": 2297,
+        "result": "exact-match"
+      },
+      "checkpoints": [
+        { "frame": 0, "name": "power-on", "state": "power-on-to-frontier/states/genesis/power-on.sta" },
+        { "frame": 1245, "name": "level01-entry", "state": "power-on-to-frontier/states/genesis/level01-entry.sta" },
+        { "frame": 1665, "name": "gap-entrance", "state": "power-on-to-frontier/states/genesis/gap-entrance.sta" },
+        { "frame": 1704, "name": "handhold-spawned", "state": "power-on-to-frontier/states/genesis/handhold-spawned.sta" },
+        { "frame": 1776, "name": "handhold-grabbed", "state": "power-on-to-frontier/states/genesis/handhold-grabbed.sta" },
+        { "frame": 1811, "name": "high-rope-attached", "state": "power-on-to-frontier/states/genesis/high-rope-attached.sta" },
+        { "frame": 1876, "name": "high-rope-climb", "state": "power-on-to-frontier/states/genesis/high-rope-climb.sta" },
+        { "frame": 1908, "name": "high-walkway-height", "state": "power-on-to-frontier/states/genesis/high-walkway-height.sta" },
+        { "frame": 1936, "name": "high-rope-top", "state": "power-on-to-frontier/states/genesis/high-rope-top.sta" },
+        { "frame": 1937, "name": "high-rope-dismount", "state": "power-on-to-frontier/states/genesis/high-rope-dismount.sta" },
+        { "frame": 1996, "name": "high-walkway-entry", "state": "power-on-to-frontier/states/genesis/high-walkway-entry.sta" },
+        { "frame": 2076, "name": "high-walkway-mid", "state": "power-on-to-frontier/states/genesis/high-walkway-mid.sta" },
+        { "frame": 2131, "name": "guard-approach", "state": "power-on-to-frontier/states/genesis/guard-approach.sta" },
+        { "frame": 2166, "name": "guard-cleared", "state": "power-on-to-frontier/states/genesis/guard-cleared.sta" },
+        { "frame": 2281, "name": "upper-edge-fall", "state": "power-on-to-frontier/states/genesis/upper-edge-fall.sta" },
+        { "frame": 2296, "name": "frontier-end", "state": "power-on-to-frontier/states/genesis/frontier-end.sta" }
+      ]
+    }
+  ]
+}
