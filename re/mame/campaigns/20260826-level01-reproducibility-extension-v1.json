@@ -1,0 +1,1097 @@
+{
+  "campaign": "20260826-level01-reproducibility-extension-v1",
+  "status": "recorded-frontier",
+  "purpose": "Current-checkout continuation of the clean level-01 replay through the tower, far-floor, far-rope, wall-opening, and upper-activation frontiers.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "995bc5031a587c2af0d463510bef96507d10fc1e",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "995bc5031a587c2af0d463510bef96507d10fc1e",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "base_campaign": "re/mame/campaigns/20260826-level01-reproducibility-v1.json",
+  "timing_note": "All segments use OPENALADDIN_STATE_SYNC=0. Each segment is loaded from a state owned by this current-checkout reproducibility tree.",
+  "segments": [
+    {
+      "id": "frontier-to-tower",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/frontier-to-tower",
+      "frames": 181,
+      "input": "right*52,none*129",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/fresh-to-frontier/states/genesis/frontier-end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "upper-edge-loaded",
+          "state": "states/genesis/upper-edge-loaded.sta"
+        },
+        {
+          "frame": 52,
+          "name": "tower-approach",
+          "state": "states/genesis/tower-approach.sta"
+        },
+        {
+          "frame": 80,
+          "name": "tower-base",
+          "state": "states/genesis/tower-base.sta"
+        },
+        {
+          "frame": 181,
+          "name": "tower-blocked",
+          "state": "states/genesis/tower-blocked.sta"
+        }
+      ]
+    },
+    {
+      "id": "tower-reversal",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-reversal",
+      "frames": 421,
+      "input": "c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,left*180,none*129",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/frontier-to-tower/states/genesis/tower-blocked.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "tower-blocked-loaded",
+          "state": "states/genesis/tower-blocked-loaded.sta"
+        },
+        {
+          "frame": 64,
+          "name": "reversal-pulse",
+          "state": "states/genesis/reversal-pulse.sta"
+        },
+        {
+          "frame": 112,
+          "name": "staircase-entry",
+          "state": "states/genesis/staircase-entry.sta"
+        },
+        {
+          "frame": 180,
+          "name": "staircase-mid",
+          "state": "states/genesis/staircase-mid.sta"
+        },
+        {
+          "frame": 292,
+          "name": "staircase-rest",
+          "state": "states/genesis/staircase-rest.sta"
+        },
+        {
+          "frame": 421,
+          "name": "staircase-end",
+          "state": "states/genesis/staircase-end.sta"
+        }
+      ]
+    },
+    {
+      "id": "tower-cross",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-cross",
+      "frames": 561,
+      "input": "right*180,b+right*60,right*120,none*201",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-reversal/states/genesis/staircase-end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "staircase-loaded",
+          "state": "states/genesis/staircase-loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "staircase-run",
+          "state": "states/genesis/staircase-run.sta"
+        },
+        {
+          "frame": 180,
+          "name": "tower-approach",
+          "state": "states/genesis/tower-approach.sta"
+        },
+        {
+          "frame": 240,
+          "name": "tower-attack",
+          "state": "states/genesis/tower-attack.sta"
+        },
+        {
+          "frame": 300,
+          "name": "attack",
+          "state": "states/genesis/attack.sta"
+        },
+        {
+          "frame": 360,
+          "name": "enemy-crossed",
+          "state": "states/genesis/enemy-crossed.sta"
+        },
+        {
+          "frame": 440,
+          "name": "far-side",
+          "state": "states/genesis/far-side.sta"
+        },
+        {
+          "frame": 561,
+          "name": "far-floor-entry",
+          "state": "states/genesis/far-floor-entry.sta"
+        }
+      ],
+      "debug_log": "debug.log",
+      "terrain_context": true
+    },
+    {
+      "id": "far-floor-sword",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-floor-sword",
+      "frames": 721,
+      "input": "b+right*520,none*201",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-cross/states/genesis/far-floor-entry.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "far-floor-entry",
+          "state": "states/genesis/far-floor-entry.sta"
+        },
+        {
+          "frame": 60,
+          "name": "first-guard",
+          "state": "states/genesis/first-guard.sta"
+        },
+        {
+          "frame": 120,
+          "name": "far-floor-early",
+          "state": "states/genesis/far-floor-early.sta"
+        },
+        {
+          "frame": 240,
+          "name": "far-floor-mid",
+          "state": "states/genesis/far-floor-mid.sta"
+        },
+        {
+          "frame": 360,
+          "name": "rope-approach",
+          "state": "states/genesis/rope-approach.sta"
+        },
+        {
+          "frame": 420,
+          "name": "rope-window",
+          "state": "states/genesis/rope-window.sta"
+        },
+        {
+          "frame": 480,
+          "name": "far-rope-edge",
+          "state": "states/genesis/far-rope-edge.sta"
+        },
+        {
+          "frame": 520,
+          "name": "far-floor-edge",
+          "state": "states/genesis/far-floor-edge.sta"
+        },
+        {
+          "frame": 721,
+          "name": "far-floor-end",
+          "state": "states/genesis/far-floor-end.sta"
+        }
+      ]
+    },
+    {
+      "id": "far-floor-guard-branch",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-floor-guard-branch",
+      "frames": 320,
+      "input": "down+b+right*80,b+right*160,right*100,none*61",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-floor-sword/states/genesis/first-guard.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "guard-loaded",
+          "state": "states/genesis/guard-loaded.sta"
+        },
+        {
+          "frame": 30,
+          "name": "guard-contact",
+          "state": "states/genesis/guard-contact.sta"
+        },
+        {
+          "frame": 60,
+          "name": "guard-branch",
+          "state": "states/genesis/guard-branch.sta"
+        },
+        {
+          "frame": 120,
+          "name": "guard-mid",
+          "state": "states/genesis/guard-mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "post-guard",
+          "state": "states/genesis/post-guard.sta"
+        },
+        {
+          "frame": 240,
+          "name": "far-floor",
+          "state": "states/genesis/far-floor.sta"
+        },
+        {
+          "frame": 320,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "far-vertical-rope-approach",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-approach",
+      "frames": 450,
+      "input": "a+right*60,c+right*20,b+right*160,right*140,none*70",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-floor-guard-branch/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "far-forward-loaded",
+          "state": "states/genesis/far-forward-loaded.sta"
+        },
+        {
+          "frame": 30,
+          "name": "jump-start",
+          "state": "states/genesis/jump-start.sta"
+        },
+        {
+          "frame": 80,
+          "name": "first-obstacle",
+          "state": "states/genesis/first-obstacle.sta"
+        },
+        {
+          "frame": 160,
+          "name": "mid-forward",
+          "state": "states/genesis/mid-forward.sta"
+        },
+        {
+          "frame": 240,
+          "name": "rope-approach",
+          "state": "states/genesis/rope-approach.sta"
+        },
+        {
+          "frame": 320,
+          "name": "late-forward",
+          "state": "states/genesis/late-forward.sta"
+        },
+        {
+          "frame": 450,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "far-vertical-rope-climb",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb",
+      "frames": 260,
+      "input": "up*200,none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-approach/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "lower-rope-loaded",
+          "state": "states/genesis/lower-rope-loaded.sta"
+        },
+        {
+          "frame": 40,
+          "name": "rope-climb-start",
+          "state": "states/genesis/rope-climb-start.sta"
+        },
+        {
+          "frame": 100,
+          "name": "rope-mid",
+          "state": "states/genesis/rope-mid.sta"
+        },
+        {
+          "frame": 160,
+          "name": "rope-high",
+          "state": "states/genesis/rope-high.sta"
+        },
+        {
+          "frame": 220,
+          "name": "rope-top",
+          "state": "states/genesis/rope-top.sta"
+        },
+        {
+          "frame": 260,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "natural-horizontal-line",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/natural-horizontal-line",
+      "frames": 120,
+      "input": "c+left*20,left*90,none*10",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "rope-top-loaded",
+          "state": "states/genesis/rope-top-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "jump-release",
+          "state": "states/genesis/jump-release.sta"
+        },
+        {
+          "frame": 40,
+          "name": "line-approach",
+          "state": "states/genesis/line-approach.sta"
+        },
+        {
+          "frame": 60,
+          "name": "line-attached",
+          "state": "states/genesis/line-attached.sta"
+        },
+        {
+          "frame": 100,
+          "name": "line-left",
+          "state": "states/genesis/line-left.sta"
+        },
+        {
+          "frame": 120,
+          "name": "line-baseline",
+          "state": "states/genesis/line-baseline.sta"
+        }
+      ]
+    },
+    {
+      "id": "natural-juggler-defeat",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/natural-juggler-defeat",
+      "frames": 360,
+      "input": "left*80,b*20,left*260",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/natural-horizontal-line/states/genesis/line-baseline.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "line-loaded",
+          "state": "states/genesis/line-loaded.sta"
+        },
+        {
+          "frame": 80,
+          "name": "line-edge",
+          "state": "states/genesis/line-edge.sta"
+        },
+        {
+          "frame": 90,
+          "name": "sword-window",
+          "state": "states/genesis/sword-window.sta"
+        },
+        {
+          "frame": 99,
+          "name": "juggler-defeated",
+          "state": "states/genesis/juggler-defeated.sta"
+        },
+        {
+          "frame": 100,
+          "name": "defeat-followthrough",
+          "state": "states/genesis/defeat-followthrough.sta"
+        },
+        {
+          "frame": 120,
+          "name": "lower-band",
+          "state": "states/genesis/lower-band.sta"
+        },
+        {
+          "frame": 180,
+          "name": "gap-approach",
+          "state": "states/genesis/gap-approach.sta"
+        },
+        {
+          "frame": 240,
+          "name": "gap-window",
+          "state": "states/genesis/gap-window.sta"
+        },
+        {
+          "frame": 300,
+          "name": "post-gap",
+          "state": "states/genesis/post-gap.sta"
+        },
+        {
+          "frame": 360,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "natural-platform-three-pulses",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/natural-platform-three-pulses",
+      "frames": 300,
+      "input": "left*30,c+left*20,left*50,c+left*20,left*50,c+left*20,left*130",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/natural-juggler-defeat/states/genesis/gap-approach.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "gap-loaded",
+          "state": "states/genesis/gap-loaded.sta"
+        },
+        {
+          "frame": 30,
+          "name": "early",
+          "state": "states/genesis/early.sta"
+        },
+        {
+          "frame": 60,
+          "name": "jump-window",
+          "state": "states/genesis/jump-window.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "platform-band",
+          "state": "states/genesis/platform-band.sta"
+        },
+        {
+          "frame": 240,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 300,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "type1e-sword-open-canonical",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/type1e-sword-open-canonical",
+      "frames": 180,
+      "input": "none*40,b+left*60,none*80",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/natural-platform-three-pulses/states/genesis/late.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "wall-loaded",
+          "state": "states/genesis/wall-loaded.sta"
+        },
+        {
+          "frame": 40,
+          "name": "attack-start",
+          "state": "states/genesis/attack-start.sta"
+        },
+        {
+          "frame": 42,
+          "name": "gate-window",
+          "state": "states/genesis/gate-window.sta"
+        },
+        {
+          "frame": 58,
+          "name": "collision-window",
+          "state": "states/genesis/collision-window.sta"
+        },
+        {
+          "frame": 64,
+          "name": "actor-type84",
+          "state": "states/genesis/actor-type84.sta"
+        },
+        {
+          "frame": 66,
+          "name": "actor-stream-return",
+          "state": "states/genesis/actor-stream-return.sta"
+        },
+        {
+          "frame": 80,
+          "name": "wall-crossed",
+          "state": "states/genesis/wall-crossed.sta"
+        },
+        {
+          "frame": 120,
+          "name": "post-crossing",
+          "state": "states/genesis/post-crossing.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "wall-crossed-jump-left-canonical",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/wall-crossed-jump-left-canonical",
+      "frames": 260,
+      "input": "c+left*20,left*160,none*80",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/type1e-sword-open-canonical/states/genesis/wall-crossed.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "wall-crossed-loaded",
+          "state": "states/genesis/wall-crossed-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "post-open",
+          "state": "states/genesis/post-open.sta"
+        },
+        {
+          "frame": 60,
+          "name": "platform-approach",
+          "state": "states/genesis/platform-approach.sta"
+        },
+        {
+          "frame": 120,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "late",
+          "state": "states/genesis/late.sta"
+        },
+        {
+          "frame": 220,
+          "name": "stable",
+          "state": "states/genesis/stable.sta"
+        },
+        {
+          "frame": 260,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "type1e-sword-open-late-state-negative",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/type1e-sword-open",
+      "frames": 180,
+      "input": "none*40,b+left*60,none*80",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/natural-platform-three-pulses/states/genesis/late.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "late-loaded",
+          "state": "states/genesis/late-loaded.sta"
+        },
+        {
+          "frame": 40,
+          "name": "sword-window-start",
+          "state": "states/genesis/sword-window-start.sta"
+        },
+        {
+          "frame": 100,
+          "name": "wall-opened",
+          "state": "states/genesis/wall-opened.sta"
+        },
+        {
+          "frame": 180,
+          "name": "wall-crossed",
+          "state": "states/genesis/wall-crossed.sta"
+        }
+      ]
+    },
+    {
+      "id": "wall-crossed-jump-left-late-state-negative",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/wall-crossed-jump-left",
+      "frames": 260,
+      "input": "c+left*20,left*160,none*80",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/type1e-sword-open/states/genesis/wall-crossed.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "wall-crossed-loaded",
+          "state": "states/genesis/wall-crossed-loaded.sta"
+        },
+        {
+          "frame": 20,
+          "name": "jump-start",
+          "state": "states/genesis/jump-start.sta"
+        },
+        {
+          "frame": 60,
+          "name": "left-clear",
+          "state": "states/genesis/left-clear.sta"
+        },
+        {
+          "frame": 120,
+          "name": "far-side",
+          "state": "states/genesis/far-side.sta"
+        },
+        {
+          "frame": 180,
+          "name": "stable-frontier",
+          "state": "states/genesis/stable-frontier.sta"
+        },
+        {
+          "frame": 260,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "far-upper-probe-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-upper-probe-up",
+      "frames": 240,
+      "input": "up*240",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "upper-loaded",
+          "state": "states/genesis/upper-loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "upper-mid",
+          "state": "states/genesis/upper-mid.sta"
+        },
+        {
+          "frame": 120,
+          "name": "upper-peak",
+          "state": "states/genesis/upper-peak.sta"
+        },
+        {
+          "frame": 180,
+          "name": "upper-return",
+          "state": "states/genesis/upper-return.sta"
+        },
+        {
+          "frame": 240,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "far-upper-probe-up-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-upper-probe-up-right",
+      "frames": 240,
+      "input": "up+right*180,none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "upper-loaded",
+          "state": "states/genesis/upper-loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "upper-mid",
+          "state": "states/genesis/upper-mid.sta"
+        },
+        {
+          "frame": 120,
+          "name": "upper-peak",
+          "state": "states/genesis/upper-peak.sta"
+        },
+        {
+          "frame": 180,
+          "name": "upper-return",
+          "state": "states/genesis/upper-return.sta"
+        },
+        {
+          "frame": 240,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "far-upper-probe-up-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-upper-probe-up-left",
+      "frames": 240,
+      "input": "up+left*180,none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "upper-loaded",
+          "state": "states/genesis/upper-loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "upper-mid",
+          "state": "states/genesis/upper-mid.sta"
+        },
+        {
+          "frame": 120,
+          "name": "upper-peak",
+          "state": "states/genesis/upper-peak.sta"
+        },
+        {
+          "frame": 180,
+          "name": "upper-return",
+          "state": "states/genesis/upper-return.sta"
+        },
+        {
+          "frame": 240,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "far-upper-probe-jump-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-upper-probe-jump-up",
+      "frames": 240,
+      "input": "c+up*20,up*160,none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "upper-loaded",
+          "state": "states/genesis/upper-loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "upper-mid",
+          "state": "states/genesis/upper-mid.sta"
+        },
+        {
+          "frame": 120,
+          "name": "upper-peak",
+          "state": "states/genesis/upper-peak.sta"
+        },
+        {
+          "frame": 180,
+          "name": "upper-return",
+          "state": "states/genesis/upper-return.sta"
+        },
+        {
+          "frame": 240,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "far-upper-probe-jump-right",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-upper-probe-jump-right",
+      "frames": 240,
+      "input": "c+right*20,right*160,none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "upper-loaded",
+          "state": "states/genesis/upper-loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "upper-mid",
+          "state": "states/genesis/upper-mid.sta"
+        },
+        {
+          "frame": 120,
+          "name": "upper-peak",
+          "state": "states/genesis/upper-peak.sta"
+        },
+        {
+          "frame": 180,
+          "name": "upper-return",
+          "state": "states/genesis/upper-return.sta"
+        },
+        {
+          "frame": 240,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "far-upper-probe-jump-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-upper-probe-jump-left",
+      "frames": 240,
+      "input": "c+left*20,left*160,none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "upper-loaded",
+          "state": "states/genesis/upper-loaded.sta"
+        },
+        {
+          "frame": 60,
+          "name": "upper-mid",
+          "state": "states/genesis/upper-mid.sta"
+        },
+        {
+          "frame": 120,
+          "name": "upper-peak",
+          "state": "states/genesis/upper-peak.sta"
+        },
+        {
+          "frame": 180,
+          "name": "upper-return",
+          "state": "states/genesis/upper-return.sta"
+        },
+        {
+          "frame": 240,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    },
+    {
+      "id": "upper-activation-lower-source-negative",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-activation",
+      "frames": 320,
+      "input": "right*158,up*120,none*42",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "activation-loaded",
+          "state": "states/genesis/activation-loaded.sta"
+        },
+        {
+          "frame": 158,
+          "name": "upper-row-entry",
+          "state": "states/genesis/upper-row-entry.sta"
+        },
+        {
+          "frame": 175,
+          "name": "first-actor",
+          "state": "states/genesis/first-actor.sta"
+        },
+        {
+          "frame": 177,
+          "name": "actor-pair",
+          "state": "states/genesis/actor-pair.sta"
+        },
+        {
+          "frame": 240,
+          "name": "upper-settled",
+          "state": "states/genesis/upper-settled.sta"
+        },
+        {
+          "frame": 320,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ],
+      "debug_log": "debug.log",
+      "interaction_row_context": true
+    },
+    {
+      "id": "upper-response-lower-source-negative",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-response-neutral",
+      "frames": 180,
+      "input": "none*180",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-activation/states/genesis/actor-pair.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "actor-pair-loaded",
+          "state": "states/genesis/actor-pair-loaded.sta"
+        },
+        {
+          "frame": 34,
+          "name": "response-window",
+          "state": "states/genesis/response-window.sta"
+        },
+        {
+          "frame": 90,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ],
+      "debug_log": "debug.log"
+    },
+    {
+      "id": "upper-response-lower-source-c-negative",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-response-corrected-c",
+      "frames": 180,
+      "input": "none*1,c*1,none*178",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-activation/states/genesis/actor-pair.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "actor-pair-loaded",
+          "state": "states/genesis/actor-pair-loaded.sta"
+        },
+        {
+          "frame": 34,
+          "name": "response-window",
+          "state": "states/genesis/response-window.sta"
+        },
+        {
+          "frame": 90,
+          "name": "mid",
+          "state": "states/genesis/mid.sta"
+        },
+        {
+          "frame": 180,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ],
+      "debug_log": "debug.log"
+    },
+    {
+      "id": "far-rope-sword-jump",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump",
+      "frames": 240,
+      "input": "c+b+left*20,b+left*160,none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "far-rope-loaded", "state": "states/genesis/far-rope-loaded.sta" },
+        { "frame": 20, "name": "sword-jump-start", "state": "states/genesis/sword-jump-start.sta" },
+        { "frame": 80, "name": "upper-approach", "state": "states/genesis/upper-approach.sta" },
+        { "frame": 160, "name": "upper-band", "state": "states/genesis/upper-band.sta" },
+        { "frame": 220, "name": "upper-frontier", "state": "states/genesis/upper-frontier.sta" },
+        { "frame": 240, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "upper-activation-canonical",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-activation-canonical",
+      "frames": 320,
+      "input": "right*158,up*120,none*42",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "activation-loaded", "state": "states/genesis/activation-loaded.sta" },
+        { "frame": 158, "name": "upper-row-entry", "state": "states/genesis/upper-row-entry.sta" },
+        { "frame": 175, "name": "first-actor", "state": "states/genesis/first-actor.sta" },
+        { "frame": 177, "name": "actor-pair", "state": "states/genesis/actor-pair.sta" },
+        { "frame": 240, "name": "upper-settled", "state": "states/genesis/upper-settled.sta" },
+        { "frame": 320, "name": "end", "state": "states/genesis/end.sta" }
+      ],
+      "debug_log": "debug.log",
+      "interaction_row_context": true
+    },
+    {
+      "id": "upper-response-neutral-canonical",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-response-neutral-canonical",
+      "frames": 180,
+      "input": "none*180",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-activation-canonical/states/genesis/actor-pair.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "actor-pair-loaded", "state": "states/genesis/actor-pair-loaded.sta" },
+        { "frame": 34, "name": "response-window", "state": "states/genesis/response-window.sta" },
+        { "frame": 90, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 180, "name": "end", "state": "states/genesis/end.sta" }
+      ],
+      "debug_log": "debug.log"
+    },
+    {
+      "id": "upper-response-corrected-c-canonical",
+      "trace_dir": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-response-corrected-c-canonical",
+      "frames": 180,
+      "input": "none*1,c*1,none*178",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-activation-canonical/states/genesis/actor-pair.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "actor-pair-loaded", "state": "states/genesis/actor-pair-loaded.sta" },
+        { "frame": 34, "name": "response-window", "state": "states/genesis/response-window.sta" },
+        { "frame": 90, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 180, "name": "end", "state": "states/genesis/end.sta" }
+      ],
+      "debug_log": "debug.log"
+    }
+  ]
+}

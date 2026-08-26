@@ -300,6 +300,23 @@ repository commit, MAME submodule commit, ROM hash, sixteen named checkpoints,
 and the complete frame-level state stream. This is a new provenance root for
 future branches; no historical campaign was replaced or discarded.
 
+The continuation is recorded in
+`re/mame/campaigns/20260826-level01-reproducibility-extension-v1.json` with 160
+verified checkpoints. It is a current-checkout replay chain through the lower
+tower, far-floor guard, far vertical connector, upper-band dismount, Type-1E
+wall opening, and upper interaction-row setup. The sword-assisted route to
+`(4372,628)` is explicitly recorded before the Up-triggered pair appears at
+`(4512,466)` and `(4688,466)`. A same-input attempt from the lower rope
+endpoint is retained as a negative provenance branch rather than being
+mistaken for the actor-pair setup. The two response probes enter none of the
+three candidate collision handlers and leave `SCENE_STATE=0x01`.
+
+The new opt-in terrain breakpoint context in `re/mame/lua/watches.lua` records
+the resolver's live map word, floor byte, contour lookup, world coordinates,
+and terrain flags at `0x001AD87E`, `0x001AD886`, and `0x001AD904`. The tower
+crossing trace shows behavior `0x47` at the staircase/tower surface and lower
+band responses afterward, but no scene-gate write.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -323,6 +340,7 @@ future branches; no historical campaign was replaced or discarded.
 | `20260826-level01-canonical-recording-v6` | recording-frontier | clean v5 replay, Type1E wall opening, far-rope transfer, and bounded upper-frontier probes |
 | `20260826-level01-upper-activation-v1` | recorded-static-correlation | initializer and interaction-row traces for the Type1E/Type20 pair materialized at the upper x≈4688 feature |
 | `20260826-level01-reproducibility-v1` | recorded-frontier | current-checkout exact replay of the clean power-on route through the established frontier |
+| `20260826-level01-reproducibility-extension-v1` | recorded-frontier | current-checkout continuation with 160 checkpoints through the tower, far rope, wall opening, and upper actor setup |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

@@ -1,0 +1,103 @@
+{
+  "format": "openaladdin-level01-reproducibility-extension-finding-v1",
+  "campaign": "re/mame/campaigns/20260826-level01-reproducibility-extension-v1.json",
+  "base_campaign": "re/mame/campaigns/20260826-level01-reproducibility-v1.json",
+  "recorded_at": "2026-08-26",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "995bc5031a587c2af0d463510bef96507d10fc1e",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "checkpoint_count": 160,
+  "route_chain": [
+    {
+      "segment": "frontier-to-tower",
+      "event": "The clean upper-edge fall continues to the lower tower at approximately (2748,920), where terrain behavior 0x47 remains active and the player is blocked.",
+      "checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/frontier-to-tower/states/genesis/tower-blocked.sta"
+    },
+    {
+      "segment": "tower-reversal",
+      "event": "Timed C-left reversal returns through the staircase to the behavior-0x47 surface at (2271,832), preserving a second route into the tower crossing.",
+      "checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-reversal/states/genesis/staircase-end.sta"
+    },
+    {
+      "segment": "tower-cross",
+      "event": "The rightward crossing reaches the far lower floor at (3343,912), passes the upper Type-1F/Type-43 feature, and leaves SCENE_STATE at 0x01.",
+      "checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-cross/states/genesis/far-floor-entry.sta"
+    },
+    {
+      "segment": "far-floor-guard-branch",
+      "event": "The far-floor sword/control branch records the guard contact, actor transitions, and continued movement to the lower handhold area.",
+      "checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-floor-guard-branch/states/genesis/end.sta"
+    },
+    {
+      "segment": "far-vertical-rope-climb",
+      "event": "The far vertical connector is attached at behavior 0x22 around (4728,808), climbs to behavior 0x24 at (4728,671), and stops there.",
+      "checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-vertical-rope-climb/states/genesis/end.sta"
+    },
+    {
+      "segment": "natural-juggler-defeat",
+      "event": "A sword window at frame 99 changes the juggler actor to its defeated type before the player drops into the lower band.",
+      "checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/natural-juggler-defeat/states/genesis/juggler-defeated.sta"
+    },
+    {
+      "segment": "type1e-sword-open-canonical",
+      "event": "The corrected wall-opening replay records the Type-1E sword interaction and the subsequent type-0x84 transition at the exact historical timing.",
+      "checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/type1e-sword-open-canonical/states/genesis/wall-crossed.sta"
+    },
+    {
+      "segment": "wall-crossed-jump-left-canonical",
+      "event": "The canonical post-opening jump-left branch reaches the stable lower frontier at (2846,912) and remains in scene state 0x01.",
+      "checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/wall-crossed-jump-left-canonical/states/genesis/stable.sta"
+    }
+  ],
+  "far_upper_probes": [
+    { "input": "up*240", "endpoint": [4728,671], "behavior": "0x24", "result": "fixed" },
+    { "input": "up+right*180,none*60", "endpoint": [4728,671], "behavior": "0x24", "result": "fixed" },
+    { "input": "up+left*180,none*60", "endpoint": [4728,671], "behavior": "0x24", "result": "fixed" },
+    { "input": "c+up*20,up*160,none*60", "endpoint": [4728,628], "behavior": "0x25", "result": "returns to upper band" },
+    { "input": "c+right*20,right*160,none*60", "endpoint": [4748,874], "behavior": "0x00", "result": "falls to lower band" },
+    { "input": "c+left*20,left*160,none*60", "endpoint": [4372,628], "behavior": "0x25", "result": "reaches upper-band frontier" }
+  ],
+  "upper_activation": {
+    "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+    "input": "right*158,up*120,none*42",
+    "player_endpoint": [4684,628],
+    "scene_state": "0x01",
+    "actors": [
+      { "slot": 4, "type": "0x1E", "world": [4512,466], "initializer_source": "0x001B7C24" },
+      { "slot": 5, "type": "0x20", "world": [4688,466], "initializer_source": "0x001B7C10" }
+    ],
+    "interaction_rows": [
+      { "row_word": "0x5658", "runtime_index": "0x2B2C", "interaction": "0x11", "handler": "0x001B6E90" },
+      { "row_word": "0x5668", "runtime_index": "0x2B34", "interaction": "0x1B", "handler": "0x001B6EB2" }
+    ],
+    "trace": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-activation-canonical/debug.log"
+  },
+  "upper_response_negatives": [
+    {
+      "input": "none*180",
+      "endpoint": [4684,628],
+      "scene_state": "0x01",
+      "handler_hits": [],
+      "trace": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-response-neutral-canonical/debug.log"
+    },
+    {
+      "input": "none*1,c*1,none*178",
+      "endpoint": [4684,628],
+      "scene_state": "0x01",
+      "handler_hits": [],
+      "trace": "build/re/campaigns/20260826-level01-reproducibility-v1/upper-response-corrected-c-canonical/debug.log"
+    }
+  ],
+  "provenance_correction": "The same right/up input from the lower rope endpoint (4728,671) does not materialize the upper pair. The pair is conditioned on first reaching the sword-assisted upper-band checkpoint near (4372,628); that distinction is retained as a separate lower-source negative branch in the campaign.",
+  "terrain_context": {
+    "trace": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-cross/debug.log",
+    "breakpoints": ["0x001AD87E", "0x001AD886", "0x001AD904"],
+    "observations": [
+      "The resolver context records behavior 0x47 at the staircase/tower surface near (2271,832).",
+      "The crossing then passes transient terrain values around behavior 0x2B and lower-band behaviors 0x11/0x0A while the player reaches (3343,912).",
+      "No resolver record in this controlled crossing writes a scene transition; SCENE_STATE remains 0x01."
+    ]
+  },
+  "conclusion": "The current checkout now owns replayable checkpoints for the complete explored level-01 route from the clean frontier through the tower, far floor, far rope, upper-band dismount, Type-1E wall opening, and upper actor setup. The upper pair is now positively correlated with the interaction-row dispatch but remains unreachable from the tested upper-band checkpoint; the natural level exit and scene transition are still unresolved.",
+  "next_action": "Target the behavior-0x47 tower connector and the upper Type-1F/Type-20 response with timing-aware traces, while using the current checkpoints as the provenance root and retaining every negative branch."
+}
