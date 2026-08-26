@@ -384,6 +384,16 @@ scene transition. This closes the remaining direct lamp interaction
 hypothesis without deleting the reusable pre-conversion checkpoint; see
 `re/mame/findings/20260826-level01-tower-type43-interaction-v1.json`.
 
+The upper opening alignment matrix is recorded in
+`re/mame/campaigns/20260826-level01-upper-actor-alignment-v1.json`. Six
+same-checkpoint branches align the player with the dynamic Type-0x1E opening
+at X=`4512` and Type-0x20 opening at X=`4688`, then test Up, C, and leftward
+variants. Up never transfers the player from the behavior-0x25 band; C at
+the left opening falls to the lower band; and no branch enters a player
+collision handler or scene state `0x08`. The static handler interpretation
+and complete result are in
+`re/mame/findings/20260826-level01-upper-actor-alignment-v1.json`.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -416,6 +426,7 @@ hypothesis without deleting the reusable pre-conversion checkpoint; see
 | `20260826-level01-tower-control-matrix-v1` | recorded-negative | eight same-checkpoint control branches over the behavior-47 lower tower |
 | `20260826-level01-lower-continuation-v1` | recorded-negative-frontier | sustained and jump-assisted traversal from the lower tower continuation |
 | `20260826-level01-tower-type43-interaction-v1` | recorded-negative | pre-conversion type-0x43 lamp interaction branches |
+| `20260826-level01-upper-actor-alignment-v1` | recorded-negative | exact opening alignment and Up/C response matrix for the upper Type-1E/Type-20 pair |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

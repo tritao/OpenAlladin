@@ -1,0 +1,128 @@
+{
+  "campaign": "20260826-level01-upper-actor-alignment-v1",
+  "status": "recorded-negative",
+  "purpose": "Test exact horizontal alignment with the two dynamic upper opening actors and isolate Up/jump responses at their world X coordinates.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "3ae3c13",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "3ae3c13",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "timing_note": "Branches use OPENALADDIN_STATE_SYNC=0 and the same upper-frontier checkpoint. The first debugger-instrumented diagonal runs were retried without optional hooks after stopping before frame capture; only the complete no-sync replays below are campaign evidence.",
+  "opening_targets": {
+    "type_0x1e": { "world": [4512, 466], "player_collision_handler": "0x001AE796", "actor_collision_handler": "0x001AC318" },
+    "type_0x20": { "world": [4688, 466], "player_collision_handler": "0x001AE9C6", "actor_collision_handler": "0x001AC350" }
+  },
+  "segments": [
+    {
+      "id": "left-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-actor-alignment-v1/left-up",
+      "frames": 300,
+      "input": "right*46,up*120,none*134",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 46, "name": "left-opening" },
+        { "frame": 104, "name": "right-opening" },
+        { "frame": 166, "name": "interaction-window" },
+        { "frame": 300, "name": "end" }
+      ]
+    },
+    {
+      "id": "right-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-actor-alignment-v1/right-up",
+      "frames": 300,
+      "input": "right*104,up*120,none*76",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 46, "name": "left-opening" },
+        { "frame": 104, "name": "right-opening" },
+        { "frame": 166, "name": "interaction-window" },
+        { "frame": 300, "name": "end" }
+      ]
+    },
+    {
+      "id": "left-c-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-actor-alignment-v1/left-c-up",
+      "frames": 300,
+      "input": "right*46,c*1,none*253",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 46, "name": "left-opening" },
+        { "frame": 104, "name": "right-opening" },
+        { "frame": 166, "name": "interaction-window" },
+        { "frame": 300, "name": "end" }
+      ]
+    },
+    {
+      "id": "right-c-up",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-actor-alignment-v1/right-c-up",
+      "frames": 300,
+      "input": "right*104,c*1,none*195",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 46, "name": "left-opening" },
+        { "frame": 104, "name": "right-opening" },
+        { "frame": 166, "name": "interaction-window" },
+        { "frame": 300, "name": "end" }
+      ]
+    },
+    {
+      "id": "left-up-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-actor-alignment-v1/left-up-left",
+      "frames": 300,
+      "input": "right*46,up+left*120,left*30,none*104",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 46, "name": "left-opening" },
+        { "frame": 104, "name": "right-opening" },
+        { "frame": 166, "name": "interaction-window" },
+        { "frame": 300, "name": "end" }
+      ]
+    },
+    {
+      "id": "right-up-left",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-actor-alignment-v1/right-up-left",
+      "frames": 300,
+      "input": "right*104,up+left*120,left*30,none*46",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 46, "name": "left-opening" },
+        { "frame": 104, "name": "right-opening" },
+        { "frame": 166, "name": "interaction-window" },
+        { "frame": 300, "name": "end" }
+      ]
+    }
+  ]
+}

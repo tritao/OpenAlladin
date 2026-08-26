@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-level01-upper-actor-alignment-finding-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-upper-actor-alignment-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "3ae3c13",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "static_references": [
+    "build/re/level01-upper-interaction-targeted-decompile.json",
+    "build/re/level01-upper-actor-response-targeted-decompile.json",
+    "build/re/level01-type1e-targeted-decompile.json"
+  ],
+  "observed": [
+    { "branch": "left-up", "result": "At the left opening alignment, Up leaves the player at world (4462,628); no player-collision handler is entered and the scene stays 0x01." },
+    { "branch": "right-up", "result": "At the right opening alignment, Up leaves the player at world (4576,628); no upper transfer occurs and the scene stays 0x01." },
+    { "branch": "left-c-up", "result": "A C press at the left opening falls into the lower band, reaching world (4460,880)." },
+    { "branch": "right-c-up", "result": "A C press at the right opening does not raise the player; the player remains on the upper band around world (4576,628)." },
+    { "branch": "left-up-left/right-up-left", "result": "Adding leftward input during the Up interval retreats or falls to the lower band; it does not attach to either opening." }
+  ],
+  "static_result": "The Type-0x1E and Type-0x20 player collision handlers are collision/cleanup paths with interaction-state gates; the upper interaction-row spawn path creates the pair but does not itself assign SCENE_STATE or a vertical transfer.",
+  "conclusion": "Exact alignment closes the remaining direct opening/Up hypothesis. The upper actor pair is a dynamic resource in the upper scene band, not the missing connector from world Y=628 to the exit band below Y=470.",
+  "next_action": "Decode the object/resource record that links the behavior-0x25 band to the upper row-10 platform, or trace a route branch that activates that resource before the actor pair appears."
+}
