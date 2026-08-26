@@ -87,6 +87,11 @@ the finding or commit message.
   checkpoints through the handhold, upper rope, upper-left ledge, and guard.
   This is the current canonical route frontier; it remains in scene state
   `0x01` and does not yet prove the transfer to the retained high walkway.
+- `20260826-level01-fresh-route-high-transfer-v1`: fresh handhold replay that
+  reaches the earlier `0x22` rope at X≈1560, transfers to the Y=530 high
+  walkway, clears the upper guard, and records the right-edge fall. This
+  converts the retained high-walkway state into a verified natural-route
+  continuation.
 
 ### Scene and exit work
 
@@ -130,6 +135,7 @@ for every newly reached surface, interaction, or boundary.
 | `20260826-level01-route-expansion-v1` | in progress | route expansion and unresolved exit search |
 | `20260826-level01-transition-v1` | controlled proof | scene-transition path |
 | `20260826-level01-fresh-route-canonical-v2` | recorded-frontier | fresh no-sync route record through the upper-left guard |
+| `20260826-level01-fresh-route-high-transfer-v1` | recorded-frontier | fresh handhold-to-high-walkway transfer and upper guard |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

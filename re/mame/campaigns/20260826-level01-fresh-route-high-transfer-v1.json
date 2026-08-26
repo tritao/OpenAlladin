@@ -1,0 +1,51 @@
+{
+  "campaign": "20260826-level01-fresh-route-high-transfer-v1",
+  "status": "recorded-frontier",
+  "purpose": "Record the previously missing fresh-route transfer from the handhold to the first high walkway, including the upper guard and right-edge fall.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "99724cb",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "b315c26",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "timing_note": "Canonical gameplay uses OPENALADDIN_STATE_SYNC=0; debugger synchronization is not used for route timing.",
+  "segments": [
+  {
+    "id": "handhold-to-high-walkway",
+    "trace_dir": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/handhold-to-high-walkway",
+    "frames": 520,
+    "input": "c+left*30,left*30,up*100,c*1,right*195,b+right*50,right*100,none*19",
+    "load_state": "handhold-grabbed",
+    "loaded_state_source": "build/re/campaigns/20260826-level01-fresh-route-canonical-v2/fresh-to-handhold/states/genesis/handhold-grabbed.sta",
+    "capture": "state",
+    "actors": true,
+    "scene_state_trace": true,
+    "checkpoints": [
+      { "frame": 1, "name": "handhold-grabbed-loaded", "state": "handhold-to-high-walkway/states/genesis/handhold-grabbed-loaded.sta" },
+      { "frame": 35, "name": "high-rope-attached", "state": "handhold-to-high-walkway/states/genesis/high-rope-attached.sta" },
+      { "frame": 100, "name": "high-rope-climb", "state": "handhold-to-high-walkway/states/genesis/high-rope-climb.sta" },
+      { "frame": 132, "name": "high-walkway-height", "state": "handhold-to-high-walkway/states/genesis/high-walkway-height.sta" },
+      { "frame": 160, "name": "high-rope-top", "state": "handhold-to-high-walkway/states/genesis/high-rope-top.sta" },
+      { "frame": 161, "name": "high-rope-dismount", "state": "handhold-to-high-walkway/states/genesis/high-rope-dismount.sta" },
+      { "frame": 220, "name": "high-walkway-entry", "state": "handhold-to-high-walkway/states/genesis/high-walkway-entry.sta" },
+      { "frame": 300, "name": "high-walkway-mid", "state": "handhold-to-high-walkway/states/genesis/high-walkway-mid.sta" },
+      { "frame": 355, "name": "guard-approach", "state": "handhold-to-high-walkway/states/genesis/guard-approach.sta" },
+      { "frame": 390, "name": "guard-cleared", "state": "handhold-to-high-walkway/states/genesis/guard-cleared.sta" },
+      { "frame": 505, "name": "upper-edge-fall", "state": "handhold-to-high-walkway/states/genesis/upper-edge-fall.sta" },
+      { "frame": 520, "name": "segment-end", "state": "handhold-to-high-walkway/states/genesis/segment-end.sta" }
+    ]
+  }
+  ],
+  "events": [
+    { "id": "high-rope-attached", "frame": 35, "world": [1564, 635], "terrain_behavior": "0x22", "meaning": "player attaches to the earlier vertical connector" },
+    { "id": "high-rope-climb", "frame": 100, "world": [1560, 578], "terrain_behavior": "0x22", "meaning": "player climbs the first vertical connector" },
+    { "id": "high-rope-top", "frame": 160, "world": [1560, 488], "terrain_behavior": "0x22", "meaning": "top of the first connector" },
+    { "id": "high-walkway-entry", "frame": 220, "world": [1703, 530], "meaning": "C dismount lands on the high walkway band" },
+    { "id": "guard-approach", "frame": 355, "world": [2108, 530], "actor_type": "0x1D", "meaning": "upper walkway guard encounter" },
+    { "id": "guard-cleared", "frame": 390, "world": [2213, 530], "actor_type": "0x1D", "meaning": "sword sequence clears the guard" },
+    { "id": "upper-edge-fall", "frame": 505, "world": [2558, 920], "meaning": "right edge drops to the lower band" }
+  ],
+  "result": "The formerly disconnected high-walkway state is reachable from the fresh handhold route. The first connector is a terrain behavior 0x22 vertical rope at X≈1560; C at its top transfers to Y=530. The upper guard is cleared and the right edge falls to the lower band. Scene state remains 0x01.",
+  "next": "Continue from the named upper-edge-fall checkpoint toward the next lower-band connector and level-01 exit corridor."
+}
