@@ -1,0 +1,52 @@
+{
+  "format": "openaladdin-level01-selector12-dispatch-finding-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Classify the selector-0x12 interaction path observed during a fresh natural Level 01 route.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "7d8de9f7f2cedd0fc0a5580ed45d9dae583ada90",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260826-level01-selector12-dispatch-v1.json",
+  "trace": "build/re/campaigns/20260826-level01-selector12-dispatch-v1/fresh-natural-route-v2",
+  "static_path": {
+    "interaction_handler": "0x001B6E7A",
+    "return_site": "0x001AE46E",
+    "spawn_entry": "0x001B5266",
+    "classification": "generic interaction-row actor allocation; no direct scene-state or scene-countdown write"
+  },
+  "runtime": {
+    "dispatch_count": 7,
+    "dispatch_frames": [1727, 2109, 3073, 3250, 3694, 3973, 4133],
+    "return_address": "0x001AE46E",
+    "scene_state_values": [0, 1],
+    "gameplay_scene_state": "0x01",
+    "scene_state_changes_during_gameplay": 0,
+    "player_at_dispatch": [
+      { "frame": 1727, "world": [1546, 837] },
+      { "frame": 2109, "world": [2042, 530] },
+      { "frame": 3073, "world": [2778, 776] },
+      { "frame": 3250, "world": [3276, 912] },
+      { "frame": 3694, "world": [2720, 770] },
+      { "frame": 3973, "world": [3274, 912] },
+      { "frame": 4133, "world": [3740, 912] }
+    ],
+    "post_dispatch_actor_observations": [
+      { "dispatch_frame": 1727, "frame": 1729, "actors": [{ "slot": 10, "type": "0x40", "world": [1728, 832] }, { "slot": 11, "type": "0x1D", "world": [1728, 896], "animation": "0x0012340C" }] },
+      { "dispatch_frame": 2109, "frame": 2111, "actors": [{ "slot": 4, "type": "0x1D", "world": [2224, 528], "animation": "0x0012340C" }] },
+      { "dispatch_frame": 3073, "frame": 3075, "actors": [{ "slot": 9, "type": "0x1D", "world": [2960, 672], "animation": "0x0012340C" }] },
+      { "dispatch_frame": 3250, "frame": 3252, "actors": [{ "slot": 9, "type": "0x1D", "world": [3456, 912], "animation": "0x0012340C" }] },
+      { "dispatch_frame": 3694, "frame": 3696, "actors": [{ "slot": 7, "type": "0x40", "world": [2944, 608] }, { "slot": 8, "type": "0x1D", "world": [2960, 672], "animation": "0x00123458" }] },
+      { "dispatch_frame": 3973, "frame": 3975, "actors": [{ "slot": 15, "type": "0x1D", "world": [3456, 912], "animation": "0x0012340C" }] },
+      { "dispatch_frame": 4133, "frame": 4135, "actors": [{ "slot": 7, "type": "0x1D", "world": [3920, 704], "animation": "0x0012340C" }, { "slot": 13, "type": "0x40", "world": [3920, 848], "animation": "0x00122C12" }] }
+    ],
+    "route_extent": {
+      "maximum_player_world_x": 4290,
+      "maximum_player_world_x_frame": 4324,
+      "exit_predicate_not_reached": true
+    }
+  },
+  "conclusion": "The fresh natural route dispatches selector 0x12 seven times and returns through the generic interaction spawn path. The nearby actor records are ordinary type-0x1D guard/effect objects and type-0x40 support effects; no dispatch writes SCENE_STATE=0x08, arms the scene countdown, or reaches the Level 01 exit predicate. The route also stalls below the required upper-band Y condition, so this campaign does not classify the missing far-right transfer.",
+  "next_action": "Use the named selector-0x12 checkpoints only as provenance anchors, and trace the remaining far-rope upper transfer from its dedicated checkpoint with state-only captures; do not treat selector 0x12 as the scene-transition source."
+}

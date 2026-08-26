@@ -736,6 +736,16 @@ from `0x01`. Static decoding maps selector `0x1A` to the type-0x21 spawn
 handler, whose player/actor collision entries are shared cleanup paths; this
 actor is not the missing connector or scene-transition source.
 
+The fresh selector-0x12 dispatch campaign is recorded in
+`re/mame/findings/20260826-level01-selector12-dispatch-v1.json` and
+`re/mame/campaigns/20260826-level01-selector12-dispatch-v1.json`. The natural
+route reaches the generic handler at `0x001B6E7A` seven times, returning through
+`0x001AE46E` and allocating ordinary type-0x1D/type-0x40 route actors. It does
+not write `SCENE_STATE=0x08`, arm the scene countdown, or reach the exit
+predicate; the run stalls below the required upper-band Y condition. This
+closes selector `0x12` as the direct transition source while retaining the
+named checkpoints as provenance anchors.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -799,6 +809,7 @@ actor is not the missing connector or scene-transition source.
 | `20260826-level01-integrated-natural-exit-v1` | recorded-negative-natural | controller-only upper-frontier replay reaches the X boundary but falls before the Y exit condition |
 | `20260826-level01-type1f-settle-v1` | recorded-negative | 600-frame no-input settle of the lower-tower type-0x1F proximity actor; no vertical transfer or scene transition |
 | `20260826-level01-type21-settle-v1` | recorded-negative | 600-frame no-input settle of the selector-0x1A high-walkway type-0x21 actor; no movement or scene transition |
+| `20260826-level01-selector12-dispatch-v1` | recorded-negative-frontier | fresh natural selector-0x12 dispatch trace; generic route actors only, no scene transition |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

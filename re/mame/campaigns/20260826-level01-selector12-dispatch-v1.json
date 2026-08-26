@@ -1,0 +1,36 @@
+{
+  "campaign": "20260826-level01-selector12-dispatch-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Correlate every selector-0x12 interaction dispatch in a fresh natural Level 01 route with the resulting actor records and scene state.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "7d8de9f7f2cedd0fc0a5580ed45d9dae583ada90",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "7d8de9f7f2cedd0fc0a5580ed45d9dae583ada90",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "edge_trace": "build/re/campaigns/20260826-level01-selector12-dispatch-v1/fresh-natural-route-v2/debug.log",
+  "segments": [
+    {
+      "id": "fresh-natural-route",
+      "trace_dir": "build/re/campaigns/20260826-level01-selector12-dispatch-v1/fresh-natural-route-v2",
+      "frames": 4635,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right*1,right*99,right*50,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c*1,right*195,b+right*50,right*100,none*19,right*52,none*129,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,c+left*8,none*8,left*180,none*129,right*180,b+right*60,right*120,none*201,b+right*60,down+b+right*80,b+right*160,right*100,none*61,a+right*60,c+right*20,b+right*160,right*140,none*70,up*200,none*60",
+      "start_condition": "MAME Genesis machine booted from power-on with no loaded state",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "indirect_edges": true,
+      "checkpoints": [
+        { "frame": 1727, "name": "selector12-first", "state": "states/genesis/selector12-first.sta" },
+        { "frame": 2109, "name": "selector12-second", "state": "states/genesis/selector12-second.sta" },
+        { "frame": 3073, "name": "selector12-third", "state": "states/genesis/selector12-third.sta" },
+        { "frame": 3250, "name": "selector12-fourth", "state": "states/genesis/selector12-fourth.sta" },
+        { "frame": 3694, "name": "selector12-fifth", "state": "states/genesis/selector12-fifth.sta" },
+        { "frame": 3973, "name": "selector12-sixth", "state": "states/genesis/selector12-sixth.sta" },
+        { "frame": 4133, "name": "selector12-seventh", "state": "states/genesis/selector12-seventh.sta" },
+        { "frame": 4635, "name": "route-end", "state": "states/genesis/route-end.sta" }
+      ]
+    }
+  ]
+}
