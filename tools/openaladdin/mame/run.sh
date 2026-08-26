@@ -182,7 +182,11 @@ else
     MAME_ARGS+=( -debugger none )
 fi
 
-if [[ "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" == "1" ]]; then
+# Keep debugger output beside the trace that requested it.  Without this,
+# MAME's implicit -debuglog path is the caller's working directory, which can
+# leave a stale or unrelated debug.log at the repository root for breakpoint
+# and actor-initializer runs.
+if [[ "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" == "1" || "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" || "${OPENALADDIN_TRACE_RNC_LOADS:-0}" == "1" || "${OPENALADDIN_TRACE_AUDIO_COMMANDS:-0}" == "1" || -n "${OPENALADDIN_BREAKPOINTS:-}" ]]; then
     cd "${TRACE_DIR}"
 fi
 
