@@ -183,6 +183,11 @@ the finding or commit message.
   the receiving type-0x0A actor collision path at `0x001AC458`: it clears the
   source, installs the type-0x84 terminal template, and does not write
   `SCENE_STATE`.
+- `re/mame/findings/20260826-level01-uncovered-interactions-v1.json` closes
+  the unobserved selectors `0xAC`, `0xAD`, and `0xB1`. Their terrain-gated
+  handlers spawn Type `0x3A`, Type `0x40`, or a generic object respectively;
+  none writes a scene state, and none is present in the extracted Level 01
+  interaction table.
 
 ### Scene and exit work
 

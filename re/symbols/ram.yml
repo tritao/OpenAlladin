@@ -225,6 +225,42 @@
   evidence:
     - ghidra_upper_interaction_targeted_decompile
     - mame_upper_activation_edge_trace
+0xFFF16F:
+  name: INTERACTION_GATE_TYPE44
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Terrain-response gate set by behavior 0x1B and consumed by interaction selector 0xAB before spawning a Type0x44 actor.
+  evidence:
+    - ghidra_interaction_inventory_targeted_decompile
+    - rom_disassembly_001B575C
+0xFFF170:
+  name: INTERACTION_GATE_TYPE3A
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Terrain-response gate set by behavior 0x1C and consumed by interaction selector 0xAC before spawning a Type0x3A actor.
+  evidence:
+    - ghidra_uncovered_interaction_targeted_decompile
+    - rom_disassembly_001B5764
+0xFFF171:
+  name: INTERACTION_GATE_TYPE40
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Terrain-response gate set by behavior 0x1D and consumed by interaction selector 0xAD before spawning a Type0x40 actor.
+  evidence:
+    - ghidra_uncovered_interaction_targeted_decompile
+    - rom_disassembly_001B576C
+0xFFF172:
+  name: INTERACTION_GATE_GENERIC
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Terrain-response gate set by behavior 0x1F and consumed by interaction selector 0xB1 before a generic level-object spawn.
+  evidence:
+    - ghidra_uncovered_interaction_targeted_decompile
+    - rom_disassembly_001B5774
 0xFFF176:
   name: SCENE_SCRIPT_GATE
   type: u8

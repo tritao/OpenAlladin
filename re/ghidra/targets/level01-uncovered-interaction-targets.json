@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-uncovered-interaction-handlers",
+    "purpose": "Decode the unobserved interaction-table entries whose handlers are gated by terrain-response flags, and determine whether they create traversal actors or scene transitions."
+  },
+  "targets": [
+    { "address": "0x001B7258", "name": "InteractionHandler_0xAC" },
+    { "address": "0x001B7354", "name": "InteractionHandler_0xAD" },
+    { "address": "0x001B742A", "name": "InteractionHandler_0xB1" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF170", "name": "INTERACTION_GATE_0xAC" },
+    { "address": "0x00FFF171", "name": "INTERACTION_GATE_0xAD" },
+    { "address": "0x00FFF172", "name": "INTERACTION_GATE_0xB1" }
+  ]
+}

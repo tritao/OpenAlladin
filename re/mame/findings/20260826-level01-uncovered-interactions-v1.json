@@ -1,0 +1,67 @@
+{
+  "format": "openaladdin-level01-uncovered-interactions-v1",
+  "recorded_at": "2026-08-26",
+  "repository_commit": "7c6ea4b",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "purpose": "Decode the unobserved interaction-table entries gated by terrain-response flags and classify their Level 01 route relevance.",
+  "static_decompilation": {
+    "target_manifest": "re/ghidra/targets/level01-uncovered-interaction-targets.json",
+    "report": "build/re/level01-uncovered-interaction-targeted-decompile-v1.json",
+    "interaction_table_rom": "0x004154",
+    "terrain_table_rom": "0x004554",
+    "handlers": {
+      "0xAC": {
+        "address": "0x001B7258",
+        "gate": "0x00FFF170",
+        "terrain_behavior": "0x1C",
+        "effect": "When the gate is set and 0x00FFEFE2 is not 0x3939, spawn through 0x001B5266 and convert the result to Type 0x3A with animation 0x00122BD8."
+      },
+      "0xAD": {
+        "address": "0x001B7354",
+        "gate": "0x00FFF171",
+        "terrain_behavior": "0x1D",
+        "effect": "When the gate is set and 0x00FFEFE0 is not 0x3939, spawn through 0x001B5266 and convert the result to Type 0x40 with animation 0x00122C12."
+      },
+      "0xB1": {
+        "address": "0x001B742A",
+        "gate": "0x00FFF172",
+        "terrain_behavior": "0x1F",
+        "effect": "When the gate is set and 0x00FF7E3C is not ASCII '9', spawn through 0x001B524E."
+      }
+    },
+    "context": {
+      "behavior_0x1B": "0x001B575C sets 0x00FFF16F; selector 0xAB at 0x001B744A conditionally spawns a Type 0x44 actor.",
+      "behavior_0x1C": "0x001B5764 sets 0x00FFF170.",
+      "behavior_0x1D": "0x001B576C sets 0x00FFF171.",
+      "behavior_0x1F": "0x001B5774 sets 0x00FFF172; 0x001B577C clears it."
+    },
+    "scene_transition_scan": "The decoded handler bodies contain no write to SCENE_STATE at 0x00FF7E26, SCENE_SCRIPT_COUNTDOWN at 0x00FFF0E9, or the Level 01 terminal transition bytes."
+  },
+  "level01_map_check": {
+    "map": "build/assets/levels/level01/raw/map.bin",
+    "floor": "build/assets/levels/level01/raw/floor.bin",
+    "dimensions": [300, 45],
+    "interaction_decode": "floor.bin[3 + (big_endian_u16(map_word) >> 1)]",
+    "selectors_present": [
+      "0x0D", "0x10", "0x11", "0x12", "0x13", "0x14", "0x1A", "0x1B",
+      "0x40", "0x50", "0x51", "0x53", "0x54", "0x55", "0x5C", "0x60",
+      "0x74", "0x80", "0x87", "0xAB", "0xC8", "0xEA"
+    ],
+    "selectors_absent": ["0xAC", "0xAD", "0xB1"],
+    "result": "No Level 01 interaction-table record points at any of the three newly decoded handlers."
+  },
+  "conclusion": {
+    "classification": "negative evidence for the unresolved Level 01 upper transfer",
+    "verified": [
+      "Selectors 0xAC, 0xAD, and 0xB1 are terrain-gated conditional spawners.",
+      "Their terrain flags and handler effects are now named in the RAM symbol database.",
+      "None of the handlers performs a scene transition or direct player launch."
+    ],
+    "unresolved": "The natural route from the far vertical rope to the Level 01 exit corridor remains unidentified."
+  },
+  "next_action": "Prioritize uncovered player-collision table entries for actor types actually present at the upper frontier, then trace the natural actor interaction path rather than these absent Level 01 selectors."
+}
