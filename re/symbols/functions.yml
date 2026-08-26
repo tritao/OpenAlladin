@@ -707,13 +707,6 @@
     - ghidra_rnc_loader_analysis
     - mame_rnc_loader_trace
 
-0x001B2650:
-  name: InteractionHandler_StreamVDPWords
-  confidence: confirmed
-  description: Sets VDP control to 0xC0400000 and streams 16 words from A0 to the VDP data port; used by Level 01 interaction handler 0x81 and not a scene-state writer.
-  evidence:
-    - ghidra_level01_interaction_inventory_targeted_decompile
-
 0x001B524E:
   name: InteractionSpawn_ForwardSlot
   confidence: confirmed
@@ -753,12 +746,5 @@
   name: InteractionHandler_0x80
   confidence: confirmed
   description: Clears the interaction-side flag at 0x00FFF104 and allocates an actor through InteractionSpawn_ReverseSlot.
-  evidence:
-    - ghidra_level01_interaction_inventory_targeted_decompile
-
-0x001B6CB4:
-  name: InteractionHandler_0x81
-  confidence: confirmed
-  description: Allocates an interaction actor through the common spawn path and, on success, streams 16 words to the VDP through InteractionHandler_StreamVDPWords.
   evidence:
     - ghidra_level01_interaction_inventory_targeted_decompile
