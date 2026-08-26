@@ -16,10 +16,11 @@ The command writes generated output under `build/re/traces/`:
 
 - `trace_boot.jsonl` contains run metadata, register/input records, and the
   current VDP state/checksums when that capture profile includes VDP data.
-- `state.jsonl` contains the semantic `openaladdin-frame-state-v1` stream:
-  player motion, scene state, camera, and active actor cursors. A synchronized
-  run also preserves the original video-boundary observation as
-  `state.raw.jsonl` and writes the pre-normalization synchronized view to
+- `state.jsonl` contains the semantic frame-state stream. A synchronized run
+  uses `openaladdin-frame-state-v2`: records marked `capture.atomic` contain
+  player, camera, terrain, scene, and all 32 actor slots from one game-loop
+  boundary. The original video-boundary observation remains in
+  `state.raw.jsonl`, and the pre-normalization synchronized view is written to
   `state.synced.jsonl`.
 - `ram_frames.bin` contains one raw 64 KiB work-RAM image per frame when the
   `ram` or `full` profile is selected.
@@ -224,9 +225,10 @@ python tools/oa.py trace player-jump --capture state
 ```
 
 This writes `build/re/traces/player-jump/state.jsonl` using the
-`openaladdin-frame-state-v1` format. It contains the player position and 8.8
-velocities, animation cursor, scene state, camera, active actor cursors, and
-the resolved collision rectangle for every non-zero animation frame pointer.
+`openaladdin-frame-state-v2` format when synchronization is enabled. Atomic
+records contain the player position and 8.8 velocities, animation cursor,
+scene state, camera, terrain observations, all 32 actor slots, and the
+resolved collision rectangle for every non-zero animation frame pointer.
 The rectangle is derived from the frame record's bytes at `+2..+5`, including
 the original X-flipped signed-byte path; a missing or zero pointer emits
 `null`.

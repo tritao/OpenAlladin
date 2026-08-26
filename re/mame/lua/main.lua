@@ -568,7 +568,7 @@ if state_sync then
     local function sync_address(width, address)
         return string.format(":maincpu.%s@$%06X", width, address)
     end
-    local sync_action = string.format(
+    local legacy_sync_action = string.format(
         "printf \"OPENALADDIN_SYNC frame=%%d pc=%%08X x=%%04X y=%%04X wx=%%04X wy=%%04X vx=%%04X vy=%%04X grounded=%%02X frameptr=%%08X facing=%%02X animpc=%%08X animtimer=%%02X camx=%%04X camy=%%04X refx=%%04X refy=%%04X sx=%%04X sy=%%04X thx=%%04X thy=%%04X delay=%%02X special=%%02X selgate=%%02X selterminal=%%02X selcountdown=%%02X sellock=%%02X selresponse=%%02X sellanding=%%02X selgate2=%%02X seltranslock=%%02X selstate=%%02X selmode=%%02X selflag=%%02X seltransresponse=%%02X selde=%%02X seldf=%%02X selspecial=%%02X sellatch=%%02X selanimation=%%02X selee=%%02X selef=%%02X self0=%%02X sel101=%%02X selhresponse=%%04X seltimer=%%02X selpending=%%02X sellock2=%%02X\\n\",frame,pc,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s ; g",
         sync_memory("w", "PLAYER_X"),
         sync_memory("w", "PLAYER_Y"),
@@ -617,6 +617,179 @@ if state_sync then
         sync_address("b", 0xFFEFFF),
         sync_address("b", 0xFFF11F)
     )
+
+    -- Keep the entire parity-critical state in one debugger action. Every
+    -- value below is read while the CPU is stopped at the same game-loop
+    -- boundary; the Python post-processor can therefore distinguish an
+    -- atomic S[N] from a video sample inherited from a nearby phase.
+    local sync_format =
+        "OPENALADDIN_SYNC frame=%d pc=%08X "
+        .. "x=%04X y=%04X wx=%04X wy=%04X vx=%04X vy=%04X "
+        .. "grounded=%02X frameptr=%08X facing=%02X animpc=%08X animtimer=%02X "
+        .. "camx=%04X camy=%04X refx=%04X refy=%04X sx=%04X sy=%04X "
+        .. "thx=%04X thy=%04X delay=%02X special=%02X "
+        .. "pixelx=%04X pixely=%04X tilex=%04X tiley=%04X "
+        .. "levelw=%04X levelh=%04X pendleft=%02X pendright=%02X "
+        .. "pendup=%02X penddown=%02X "
+        .. "selgate=%02X selterminal=%02X selcountdown=%02X sellock=%02X "
+        .. "selresponse=%02X sellanding=%02X selgate2=%02X seltranslock=%02X "
+        .. "selstate=%02X selmode=%02X selflag=%02X seltransresponse=%02X "
+        .. "selde=%02X seldf=%02X selspecial=%02X sellatch=%02X "
+        .. "selanimation=%02X selee=%02X selef=%02X self0=%02X sel101=%02X "
+        .. "selhresponse=%04X seltimer=%02X selpending=%02X sellock2=%02X "
+        .. "actorflags=%02X attacktimer=%02X "
+        .. "terrwx=%04X terrwy=%04X terrcallbacka=%08X terrcallbackb=%08X terrcallbackc=%08X "
+        .. "terrquery=%02X terrpushright=%02X terrpushleft=%02X terrpushup=%02X terrpushdown=%02X "
+        .. "terrbehavior=%02X terrhresponse=%04X terractive=%02X terrverticalstop=%02X "
+        .. "terrelanding=%02X terrsurfacemode=%04X terrsurfacelatch=%02X terrsurfacetransition=%02X "
+        .. "terrstopleft=%02X terrleftinner=%02X terrleftouter=%02X "
+        .. "terrstopright=%02X terrrightinner=%02X terrrightouter=%02X "
+        .. "terrstopup=%02X terrjumpcounter=%02X terrresponsetimer=%02X "
+        .. "terrstatea=%02X terrstateb=%02X terrstate=%02X terrresponselatch=%02X "
+        .. "scenestate=%02X scenecursor=%08X scenedata=%08X scenetable=%04X "
+        .. "scenepending=%02X scenevdp=%02X sceneclear=%02X sceneevent=%02X "
+        .. "scenecountdown=%02X scenegate=%02X scenegateplayer=%02X scenelockplayer=%02X "
+        .. "scenecountdownplayer=%02X sceneterminalplayer=%02X\\n"
+    local sync_values = {
+        sync_memory("w", "PLAYER_X"),
+        sync_memory("w", "PLAYER_Y"),
+        sync_memory("w", "PLAYER_WORLD_X"),
+        sync_memory("w", "PLAYER_WORLD_Y"),
+        sync_memory("w", "PLAYER_VX"),
+        sync_memory("w", "PLAYER_VY"),
+        sync_memory("b", "TERRAIN_LANDING_STATE"),
+        sync_memory("d", "PLAYER_FRAME_PTR"),
+        sync_memory("b", "PLAYER_FACING_X_FLIP"),
+        sync_memory("d", "PLAYER_ANIMATION_PC"),
+        sync_memory("b", "PLAYER_ANIMATION_TIMER"),
+        sync_memory("w", "WORLD_CAMERA_X"),
+        sync_memory("w", "WORLD_CAMERA_Y"),
+        sync_memory("w", "CAMERA_REFERENCE_X"),
+        sync_memory("w", "CAMERA_REFERENCE_Y"),
+        sync_memory("w", "CAMERA_SCROLL_X"),
+        sync_memory("w", "CAMERA_SCROLL_Y"),
+        sync_memory("w", "CAMERA_HORIZONTAL_THRESHOLD"),
+        sync_memory("w", "CAMERA_VERTICAL_THRESHOLD"),
+        sync_memory("b", "CAMERA_UPDATE_DELAY"),
+        sync_memory("b", "CAMERA_SPECIAL_MODE"),
+        sync_memory("w", "PLAYER_CAMERA_PIXEL_X"),
+        sync_memory("w", "PLAYER_CAMERA_PIXEL_Y"),
+        sync_memory("w", "CAMERA_TILE_X"),
+        sync_memory("w", "CAMERA_TILE_Y"),
+        sync_memory("w", "LEVEL_WIDTH_PIXELS"),
+        sync_memory("w", "LEVEL_HEIGHT_PIXELS"),
+        sync_memory("b", "CAMERA_SCROLL_LEFT_PENDING"),
+        sync_memory("b", "CAMERA_SCROLL_RIGHT_PENDING"),
+        sync_memory("b", "CAMERA_SCROLL_UP_PENDING"),
+        sync_memory("b", "CAMERA_SCROLL_DOWN_PENDING"),
+        sync_address("b", 0xFFF0E7),
+        sync_address("b", 0xFFF0E6),
+        sync_address("b", 0xFFF0E9),
+        sync_address("b", 0xFFF0F2),
+        sync_address("b", 0xFFF0BE),
+        sync_address("b", 0xFFF0C1),
+        sync_address("b", 0xFFF0D0),
+        sync_address("b", 0xFFF0D7),
+        sync_address("b", 0xFFF0DB),
+        sync_address("b", 0xFFF0CD),
+        sync_address("b", 0xFFF0D2),
+        sync_address("b", 0xFFF0D4),
+        sync_address("b", 0xFFF0DE),
+        sync_address("b", 0xFFF0DF),
+        sync_address("b", 0xFFF173),
+        sync_address("b", 0xFFF115),
+        sync_address("b", 0xFFF0ED),
+        sync_address("b", 0xFFF0EE),
+        sync_address("b", 0xFFF0EF),
+        sync_address("b", 0xFFF0F0),
+        sync_address("b", 0xFFF101),
+        sync_address("w", 0xFFF0B0),
+        sync_address("b", 0xFFF0CC),
+        sync_address("b", 0xFFEFFF),
+        sync_address("b", 0xFFF11F),
+        sync_memory("b", "PLAYER_ACTOR_FLAGS"),
+        sync_memory("b", "PLAYER_INTERACTION_PENDING"),
+        sync_memory("w", "PLAYER_WORLD_X"),
+        sync_memory("w", "PLAYER_WORLD_Y"),
+        sync_memory("d", "TERRAIN_QUERY_CALLBACK_A"),
+        sync_memory("d", "TERRAIN_QUERY_CALLBACK_B"),
+        sync_memory("d", "TERRAIN_QUERY_CALLBACK_C"),
+        sync_memory("b", "TERRAIN_QUERY_FLAGS"),
+        sync_memory("b", "TERRAIN_PUSH_RIGHT"),
+        sync_memory("b", "TERRAIN_PUSH_LEFT"),
+        sync_memory("b", "TERRAIN_PUSH_UP"),
+        sync_memory("b", "TERRAIN_PUSH_DOWN"),
+        sync_memory("b", "TERRAIN_BEHAVIOR"),
+        sync_memory("w", "TERRAIN_HORIZONTAL_RESPONSE"),
+        sync_memory("b", "TERRAIN_RESPONSE_ACTIVE"),
+        sync_memory("b", "TERRAIN_VERTICAL_STOP"),
+        sync_memory("b", "TERRAIN_LANDING_STATE"),
+        sync_memory("w", "TERRAIN_SURFACE_MODE"),
+        sync_memory("b", "TERRAIN_SURFACE_LATCH"),
+        sync_memory("b", "TERRAIN_SURFACE_TRANSITION_FLAG"),
+        sync_memory("b", "TERRAIN_STOP_LEFT_MOTION"),
+        sync_memory("b", "TERRAIN_LEFT_INNER_PROBE"),
+        sync_memory("b", "TERRAIN_LEFT_OUTER_PROBE"),
+        sync_memory("b", "TERRAIN_STOP_RIGHT_MOTION"),
+        sync_memory("b", "TERRAIN_RIGHT_INNER_PROBE"),
+        sync_memory("b", "TERRAIN_RIGHT_OUTER_PROBE"),
+        sync_memory("b", "TERRAIN_STOP_UPWARD_MOTION"),
+        sync_memory("b", "TERRAIN_JUMP_RESPONSE_COUNTER"),
+        sync_memory("b", "TERRAIN_RESPONSE_TIMER_STATE"),
+        sync_memory("b", "TERRAIN_QUERY_STATE_A"),
+        sync_memory("b", "TERRAIN_QUERY_STATE_B"),
+        sync_memory("b", "TERRAIN_STATE"),
+        sync_memory("b", "TERRAIN_RESPONSE_LATCH"),
+        sync_memory("b", "SCENE_STATE"),
+        sync_memory("d", "SCENE_SCRIPT_CURSOR"),
+        sync_memory("d", "SCENE_SCRIPT_DATA"),
+        sync_memory("w", "SCENE_TABLE_INDEX"),
+        sync_memory("b", "SCENE_SCRIPT_PENDING"),
+        sync_memory("b", "SCENE_VDP_UPDATE_FLAG"),
+        sync_memory("b", "SCENE_VDP_CLEAR_FLAG"),
+        sync_memory("b", "SCENE_TRANSITION_EVENT"),
+        sync_memory("b", "SCENE_SCRIPT_COUNTDOWN"),
+        sync_memory("b", "SCENE_SCRIPT_GATE"),
+        sync_memory("b", "PLAYER_TRANSITION_GATE"),
+        sync_memory("b", "PLAYER_TRANSITION_LOCK"),
+        sync_memory("b", "PLAYER_TRANSITION_COUNTDOWN"),
+        sync_memory("b", "PLAYER_TERMINAL_TRANSITION")
+    }
+    local sync_action_parts = {
+        "printf \"" .. sync_format .. "\",frame,pc," .. table.concat(sync_values, ",")
+    }
+    local sync_actor_count = math.min(actor_slot_count, 32)
+    for slot = 0, sync_actor_count - 1 do
+        local record = actor_table_base + slot * actor_stride
+        local actor_values = {
+            sync_address("b", record + actor_type_offset),
+            sync_address("w", record + actor_x_offset),
+            sync_address("w", record + actor_y_offset),
+            sync_address("b", record + 0x06),
+            sync_address("b", record + actor_facing_x_flip_offset),
+            sync_address("d", record + actor_movement_pc_offset),
+            sync_address("d", record + actor_movement_loop_pc_offset),
+            sync_address("b", record + actor_movement_loop_timer_offset),
+            sync_address("d", record + actor_frame_ptr_offset),
+            sync_address("d", record + actor_animation_pc_offset),
+            sync_address("w", record + 0x18),
+            sync_address("w", record + 0x1a),
+            sync_address("b", record + actor_facing_y_flip_offset),
+            sync_address("b", record + actor_movement_command_timer_offset),
+            sync_address("b", record + actor_animation_timer_offset),
+            sync_address("d", record + actor_movement_return_pc_offset),
+            sync_address("b", record + actor_flags_offset)
+        }
+        sync_action_parts[#sync_action_parts + 1] =
+            "printf \"OPENALADDIN_SYNC_ACTOR frame=%d slot=" .. tostring(slot)
+            .. " type=%02X x=%04X y=%04X movement=%02X facing=%02X"
+            .. " movementpc=%08X looppc=%08X looptimer=%02X frameptr=%08X"
+            .. " animpc=%08X word18=%04X word1a=%04X facingy=%02X"
+            .. " movementtimer=%02X animtimer=%02X returnpc=%08X flags=%02X\\n\",frame,"
+            .. table.concat(actor_values, ",")
+    end
+    sync_action_parts[#sync_action_parts + 1] = "g"
+    local sync_action = table.concat(sync_action_parts, " ; ")
     -- Gameplay and title/scene modes use different outer loops. VBlankInterrupt
     -- is hit once per emulated frame after the gameplay work
     -- has completed. Allow a targeted run to place the semantic checkpoint at

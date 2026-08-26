@@ -140,8 +140,9 @@ for native parity. When the first animation-cursor transition is isolated in
 the trace, `native_animation_phase` also records the derived native VM
 scheduler delay; this is kept separate from the Genesis animation timer.
 
-MAME replay uses the native `.inp` as its authoritative replay artifact and
-automatically compares the regenerated state trace with the recording:
+MAME replay uses the native `.inp` as its authoritative replay artifact,
+re-runs the same synchronized capture, and compares the regenerated state
+trace with the recording on the common atomic frame set:
 
 ```bash
 python tools/oa.py replay level01-good-run --client mame
@@ -159,10 +160,18 @@ python tools/oa.py inputs summarize build/runs/level01-good-run/input.jsonl
 The recorder never rewrites raw observations. The synchronized semantic
 pipeline records its transformations in the state header, including the
 narrow animation-write-order repair where Genesis writes a frame pointer
-before its advanced cursor. `trace-quality.json` reports input/state
-continuity, synchronization coverage, normalization counts, checkpoint hash
-verification, and the current quality stage (`recorded`, `captured`,
-`deterministic`, or `semantic-verified`).
+before its advanced cursor. Synchronized runs use
+`openaladdin-frame-state-v2`: each record marked `capture.atomic` contains the
+player, camera, terrain, scene, and all 32 actor slots read at one game-loop
+boundary. `state.raw.jsonl` remains the video-boundary observation and
+`state.synced.jsonl` is the pre-normalization derived view. Strict actor
+comparisons reject traces without this qualification; use
+`compare_state.py --require-left-atomic --left-atomic-only` or the actor
+comparator's equivalent flags when comparing against a native trace.
+`trace-quality.json` reports input/state continuity, synchronization and
+atomic coverage, normalization counts, checkpoint hash verification, replay
+round-trip status, and the quality stage (`recorded`, `captured`,
+`deterministic`, `semantic-verified`, or `parity-ready`).
 
 Detected segments can be replayed without rerunning the menu or earlier
 gameplay. A MAME segment replay starts from the save state captured at the

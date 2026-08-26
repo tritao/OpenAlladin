@@ -15,7 +15,10 @@ from pathlib import Path
 from typing import Any
 
 
-FORMAT = "openaladdin-frame-state-v1"
+FORMATS = {
+    "openaladdin-frame-state-v1",
+    "openaladdin-frame-state-v2",
+}
 
 
 def load_states(path: Path) -> tuple[dict[str, Any] | None, dict[int, dict[str, Any]]]:
@@ -36,11 +39,49 @@ def load_states(path: Path) -> tuple[dict[str, Any] | None, dict[int, dict[str, 
         if "frame" not in record:
             raise SystemExit(f"{path}:{line_number}: state record has no frame")
         states[int(record["frame"])] = record
-    if header and header.get("format") not in (None, FORMAT):
+    if header and header.get("format") not in (None, *FORMATS):
         raise SystemExit(f"{path}: unsupported state format {header.get('format')!r}")
     if not states:
         raise SystemExit(f"{path}: no frame state records")
     return header, states
+
+
+def atomic_frames(
+    header: dict[str, Any] | None,
+    states: dict[int, dict[str, Any]],
+) -> set[int]:
+    """Return frames explicitly captured as one atomic game-loop state."""
+    if not header:
+        return set()
+    sync = header.get("sync") or {}
+    fields = set(sync.get("atomic_fields") or [])
+    if "actors" not in fields:
+        return set()
+    return {
+        frame
+        for frame, record in states.items()
+        if isinstance(record.get("capture"), dict)
+        and record["capture"].get("atomic") is True
+    }
+
+
+def require_atomic_trace(
+    path: Path,
+    header: dict[str, Any] | None,
+    states: dict[int, dict[str, Any]],
+    *,
+    label: str,
+) -> set[int]:
+    sync = header.get("sync") if header else None
+    if not isinstance(sync, dict) or not sync.get("actors_qualified"):
+        raise SystemExit(
+            f"{path}: {label} trace is not actor-qualified; "
+            "requires openaladdin-frame-state-v2 atomic game-loop capture"
+        )
+    frames = atomic_frames(header, states)
+    if not frames:
+        raise SystemExit(f"{path}: {label} trace has no atomic game-loop state frames")
+    return frames
 
 
 def first_difference(
@@ -154,6 +195,26 @@ def main() -> int:
             "replaying an older reference with a newer recorder schema"
         ),
     )
+    parser.add_argument(
+        "--require-left-atomic",
+        action="store_true",
+        help="require the left/reference trace to contain actor-qualified atomic states",
+    )
+    parser.add_argument(
+        "--require-atomic",
+        action="store_true",
+        help="require both traces to contain actor-qualified atomic states",
+    )
+    parser.add_argument(
+        "--atomic-only",
+        action="store_true",
+        help="compare only frames marked atomic in both traces",
+    )
+    parser.add_argument(
+        "--left-atomic-only",
+        action="store_true",
+        help="compare only frames marked atomic in the left/reference trace",
+    )
     args = parser.parse_args()
     left_header, left = load_states(args.genesis.resolve())
     right_header, right = load_states(args.openaladdin.resolve())
@@ -163,7 +224,34 @@ def main() -> int:
         if left_rom and right_rom and left_rom != right_rom:
             raise SystemExit(f"ROM mismatch: Genesis={left_rom} OpenAladdin={right_rom}")
 
-    frames = sorted(set(left) | set(right))
+    left_atomic = set()
+    right_atomic = set()
+    if args.require_left_atomic or args.atomic_only:
+        left_atomic = require_atomic_trace(
+            args.genesis.resolve(), left_header, left, label="left/reference"
+        )
+    if args.require_atomic or args.atomic_only:
+        right_atomic = require_atomic_trace(
+            args.openaladdin.resolve(), right_header, right, label="right/replay"
+        )
+    if args.atomic_only:
+        if left_atomic != right_atomic:
+            missing_left = sorted(right_atomic - left_atomic)
+            missing_right = sorted(left_atomic - right_atomic)
+            raise SystemExit(
+                "atomic frame sets differ: "
+                f"missing from left={missing_left[:5]} "
+                f"missing from right={missing_right[:5]}"
+            )
+        frames = sorted(left_atomic)
+    elif args.left_atomic_only:
+        if not args.require_left_atomic:
+            left_atomic = require_atomic_trace(
+                args.genesis.resolve(), left_header, left, label="left/reference"
+            )
+        frames = sorted(left_atomic)
+    else:
+        frames = sorted(set(left) | set(right))
     for frame in frames:
         if frame not in left or frame not in right:
             print(f"First divergence: frame {frame}")
@@ -172,12 +260,22 @@ def main() -> int:
             print(f"  OpenAladdin:  {'present' if frame in right else 'missing'}")
             print_divergence_context(frame, left, right, frames)
             return 1
+        left_record = left[frame]
+        right_record = right[frame]
+        if not args.fields:
+            # The header is the schema authority. Older derived records can
+            # still carry the v1 per-record label after a v2 header was added;
+            # it is provenance, not gameplay state.
+            left_record = dict(left_record)
+            right_record = dict(right_record)
+            left_record.pop("format", None)
+            right_record.pop("format", None)
         difference = (
             selected_difference(left[frame], right[frame], args.fields)
             if args.fields
             else first_difference(
-                left[frame],
-                right[frame],
+                left_record,
+                right_record,
                 allow_additional_right_fields=args.allow_additional_fields,
             )
         )

@@ -12,7 +12,7 @@ import argparse
 from pathlib import Path
 from typing import Any
 
-from compare_state import load_states
+from compare_state import load_states, require_atomic_trace
 
 
 DEFAULT_FIELDS = [
@@ -43,6 +43,12 @@ def actor_table(record: dict[str, Any]) -> dict[int, dict[str, Any]]:
             continue
         result[int(actor["slot"])] = actor
     return result
+
+
+def inactive_actor(actor: dict[str, Any] | None) -> bool:
+    return actor is None or (
+        int(actor.get("type", 0)) == 0 and int(actor.get("flags", 0)) == 0
+    )
 
 
 def first_difference(left: Any, right: Any, path: str) -> tuple[str, Any, Any] | None:
@@ -82,6 +88,8 @@ def actor_difference(
             continue
         left_actor = left_actors.get(slot)
         right_actor = right_actors.get(slot)
+        if inactive_actor(left_actor) and inactive_actor(right_actor):
+            continue
         if left_actor is None or right_actor is None:
             return f"actors[{slot}]", left_actor, right_actor
         for field in fields:
@@ -110,6 +118,16 @@ def main() -> int:
         action="store_true",
         help="also compare actor-table slot 0 (the player)",
     )
+    parser.add_argument(
+        "--require-left-atomic",
+        action="store_true",
+        help="require the left/reference trace to contain actor-qualified atomic states",
+    )
+    parser.add_argument(
+        "--left-atomic-only",
+        action="store_true",
+        help="compare only frames marked atomic in the left/reference trace",
+    )
     args = parser.parse_args()
 
     left_header, left = load_states(args.genesis.resolve())
@@ -121,7 +139,13 @@ def main() -> int:
             raise SystemExit(f"ROM mismatch: Genesis={left_rom} OpenAladdin={right_rom}")
 
     fields = args.fields or DEFAULT_FIELDS
-    frames = sorted(set(left) | set(right))
+    if args.require_left_atomic or args.left_atomic_only:
+        qualified = require_atomic_trace(
+            args.genesis.resolve(), left_header, left, label="left/reference"
+        )
+        frames = sorted(qualified)
+    else:
+        frames = sorted(set(left) | set(right))
     for frame in frames:
         if frame not in left or frame not in right:
             difference = ("state", left.get(frame), right.get(frame))

@@ -37,6 +37,7 @@ LEGACY_BUTTON_REMAP = {"a": "b", "b": "c", "c": "a"}
 EVENT_FORMAT = "openaladdin-event-v1"
 SEGMENTS_FORMAT = "openaladdin-segments-v1"
 RUN_FORMAT = "openaladdin-input-run-v1"
+STATE_FORMAT_V2 = "openaladdin-frame-state-v2"
 INPUT_BUTTONS = ("up", "down", "left", "right", "a", "b", "c", "start")
 INPUT_MASKS = {name: 1 << index for index, name in enumerate(INPUT_BUTTONS)}
 DEFAULT_PARITY_FIELDS = [
@@ -58,6 +59,27 @@ DEFAULT_PARITY_FIELDS = [
     "camera.scroll_y",
     "actors",
 ]
+ATOMIC_STATE_FIELDS = ("player", "camera", "terrain", "scene", "actors")
+ATOMIC_ACTOR_FIELDS = (
+    "type",
+    "x",
+    "y",
+    "movement_flags",
+    "facing_x_flip",
+    "facing_y_flip",
+    "frame_ptr",
+    "animation_pc",
+    "movement_pc",
+    "movement_loop_pc",
+    "movement_loop_timer",
+    "movement_word_18",
+    "movement_word_1a",
+    "animation_timer",
+    "movement_return_pc",
+    "flags",
+    "movement_command_timer",
+    "collision_box",
+)
 
 
 def default_rom() -> Path:
@@ -1644,7 +1666,7 @@ def command_trace(args: argparse.Namespace) -> int:
                 trace_dir.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(debug_log, trace_dir / "debug.log")
         if args.state_sync:
-            synchronize_state_trace(trace_dir)
+            synchronize_state_trace(trace_dir, rom_path=rom)
         print(f"trace: {trace_dir}")
         if args.state_output:
             print(f"state: {trace_dir / 'state.jsonl'}")
@@ -1726,6 +1748,140 @@ SYNC_PATTERN = re.compile(
 )
 
 
+SYNC_V2_FIELDS = (
+    ("frame", "frame", "decimal"),
+    ("pc", "pc", "hex"),
+    ("x", "x", "hex"),
+    ("y", "y", "hex"),
+    ("wx", "world_x", "hex"),
+    ("wy", "world_y", "hex"),
+    ("vx", "vx", "hex"),
+    ("vy", "vy", "hex"),
+    ("grounded", "grounded", "hex"),
+    ("frameptr", "frame_ptr", "hex"),
+    ("facing", "facing_x_flip", "hex"),
+    ("animpc", "animation_pc", "hex"),
+    ("animtimer", "animation_timer", "hex"),
+    ("camx", "camera_x", "hex"),
+    ("camy", "camera_y", "hex"),
+    ("refx", "reference_x", "hex"),
+    ("refy", "reference_y", "hex"),
+    ("sx", "scroll_x", "hex"),
+    ("sy", "scroll_y", "hex"),
+    ("thx", "horizontal_threshold", "hex"),
+    ("thy", "vertical_threshold", "hex"),
+    ("delay", "update_delay", "hex"),
+    ("special", "special_mode", "hex"),
+    ("pixelx", "pixel_x", "hex"),
+    ("pixely", "pixel_y", "hex"),
+    ("tilex", "tile_x", "hex"),
+    ("tiley", "tile_y", "hex"),
+    ("levelw", "level_width", "hex"),
+    ("levelh", "level_height", "hex"),
+    ("pendleft", "scroll_left_pending", "hex"),
+    ("pendright", "scroll_right_pending", "hex"),
+    ("pendup", "scroll_up_pending", "hex"),
+    ("penddown", "scroll_down_pending", "hex"),
+    ("selgate", "animation_gate", "hex"),
+    ("selterminal", "terminal_transition", "hex"),
+    ("selcountdown", "scene_script_countdown", "hex"),
+    ("sellock", "interaction_lock", "hex"),
+    ("selresponse", "response_active", "hex"),
+    ("sellanding", "landing_state", "hex"),
+    ("selgate2", "transition_gate", "hex"),
+    ("seltranslock", "transition_lock", "hex"),
+    ("selstate", "transition_state", "hex"),
+    ("selmode", "transition_mode", "hex"),
+    ("selflag", "transition_flag", "hex"),
+    ("seltransresponse", "transition_response", "hex"),
+    ("selde", "transition_state_de", "hex"),
+    ("seldf", "transition_state_df", "hex"),
+    ("selspecial", "camera_special_mode", "hex"),
+    ("sellatch", "response_latch", "hex"),
+    ("selanimation", "response_animation", "hex"),
+    ("selee", "response_state_ee", "hex"),
+    ("selef", "response_state_ef", "hex"),
+    ("self0", "response_state_f0", "hex"),
+    ("sel101", "response_state_101", "hex"),
+    ("selhresponse", "horizontal_response", "hex"),
+    ("seltimer", "response_timer", "hex"),
+    ("selpending", "interaction_pending", "hex"),
+    ("sellock2", "state_lock", "hex"),
+    ("actorflags", "actor_flags", "hex"),
+    ("attacktimer", "attack_timer", "hex"),
+    ("terrwx", "terrain_world_x", "hex"),
+    ("terrwy", "terrain_world_y", "hex"),
+    ("terrcallbacka", "terrain_callback_a", "hex"),
+    ("terrcallbackb", "terrain_callback_b", "hex"),
+    ("terrcallbackc", "terrain_callback_c", "hex"),
+    ("terrquery", "terrain_query_result", "hex"),
+    ("terrpushright", "terrain_push_right", "hex"),
+    ("terrpushleft", "terrain_push_left", "hex"),
+    ("terrpushup", "terrain_push_up", "hex"),
+    ("terrpushdown", "terrain_push_down", "hex"),
+    ("terrbehavior", "terrain_behavior", "hex"),
+    ("terrhresponse", "terrain_horizontal_response", "hex"),
+    ("terractive", "terrain_response_active", "hex"),
+    ("terrverticalstop", "terrain_vertical_stop", "hex"),
+    ("terrelanding", "terrain_landing_state", "hex"),
+    ("terrsurfacemode", "terrain_surface_mode", "hex"),
+    ("terrsurfacelatch", "terrain_surface_latch", "hex"),
+    ("terrsurfacetransition", "terrain_surface_transition_flag", "hex"),
+    ("terrstopleft", "terrain_stop_left_motion", "hex"),
+    ("terrleftinner", "terrain_left_inner_probe", "hex"),
+    ("terrleftouter", "terrain_left_outer_probe", "hex"),
+    ("terrstopright", "terrain_stop_right_motion", "hex"),
+    ("terrrightinner", "terrain_right_inner_probe", "hex"),
+    ("terrrightouter", "terrain_right_outer_probe", "hex"),
+    ("terrstopup", "terrain_stop_upward_motion", "hex"),
+    ("terrjumpcounter", "terrain_jump_response_counter", "hex"),
+    ("terrresponsetimer", "terrain_response_timer_state", "hex"),
+    ("terrstatea", "terrain_query_state_a", "hex"),
+    ("terrstateb", "terrain_query_state_b", "hex"),
+    ("terrstate", "terrain_state", "hex"),
+    ("terrresponselatch", "terrain_response_latch", "hex"),
+    ("scenestate", "scene_state", "hex"),
+    ("scenecursor", "scene_script_cursor", "hex"),
+    ("scenedata", "scene_script_data", "hex"),
+    ("scenetable", "scene_table_index", "hex"),
+    ("scenepending", "scene_script_pending", "hex"),
+    ("scenevdp", "scene_vdp_update", "hex"),
+    ("sceneclear", "scene_vdp_clear", "hex"),
+    ("sceneevent", "scene_transition_event", "hex"),
+    ("scenecountdown", "scene_script_countdown_value", "hex"),
+    ("scenegate", "scene_script_gate", "hex"),
+    ("scenegateplayer", "scene_player_gate", "hex"),
+    ("scenelockplayer", "scene_player_lock", "hex"),
+    ("scenecountdownplayer", "scene_player_countdown", "hex"),
+    ("sceneterminalplayer", "scene_player_terminal", "hex"),
+)
+
+
+def _sync_v2_pattern() -> re.Pattern[str]:
+    parts = [r"OPENALADDIN_SYNC"]
+    for label, name, kind in SYNC_V2_FIELDS:
+        value = r"\d+" if kind == "decimal" else r"[0-9A-F]+"
+        parts.append(rf"{label}=(?P<{name}>{value})")
+    return re.compile(r" ".join(parts))
+
+
+SYNC_V2_PATTERN = _sync_v2_pattern()
+
+
+SYNC_ACTOR_PATTERN = re.compile(
+    r"OPENALADDIN_SYNC_ACTOR frame=(?P<frame>\d+) slot=(?P<slot>\d+) "
+    r"type=(?P<type>[0-9A-F]+) x=(?P<x>[0-9A-F]+) y=(?P<y>[0-9A-F]+) "
+    r"movement=(?P<movement_flags>[0-9A-F]+) facing=(?P<facing_x_flip>[0-9A-F]+) "
+    r"movementpc=(?P<movement_pc>[0-9A-F]+) looppc=(?P<movement_loop_pc>[0-9A-F]+) "
+    r"looptimer=(?P<movement_loop_timer>[0-9A-F]+) frameptr=(?P<frame_ptr>[0-9A-F]+) "
+    r"animpc=(?P<animation_pc>[0-9A-F]+) word18=(?P<movement_word_18>[0-9A-F]+) "
+    r"word1a=(?P<movement_word_1a>[0-9A-F]+) facingy=(?P<facing_y_flip>[0-9A-F]+) "
+    r"movementtimer=(?P<movement_command_timer>[0-9A-F]+) "
+    r"animtimer=(?P<animation_timer>[0-9A-F]+) returnpc=(?P<movement_return_pc>[0-9A-F]+) "
+    r"flags=(?P<flags>[0-9A-F]+)"
+)
+
+
 def _signed_u16(value: int) -> int:
     return value - 0x10000 if value & 0x8000 else value
 
@@ -1779,6 +1935,207 @@ def _sync_record(match: re.Match[str]) -> dict[str, int]:
     values["scroll_y"] = _signed_u16(values["scroll_y"])
     values["horizontal_response"] = _signed_u16(values["horizontal_response"])
     return values
+
+
+def _sync_v2_record(match: re.Match[str]) -> dict[str, int]:
+    values = {
+        name: int(value, 10 if name == "frame" else 16)
+        for name, value in match.groupdict().items()
+    }
+    for field in (
+        "vx",
+        "vy",
+        "scroll_x",
+        "scroll_y",
+        "horizontal_response",
+        "terrain_horizontal_response",
+    ):
+        values[field] = _signed_u16(values[field])
+    return values
+
+
+def _sync_actor_record(match: re.Match[str]) -> dict[str, int]:
+    values = {
+        name: int(value, 10 if name in {"frame", "slot"} else 16)
+        for name, value in match.groupdict().items()
+    }
+    values["movement_word_18"] = _signed_u16(values["movement_word_18"])
+    values["movement_word_1a"] = _signed_u16(values["movement_word_1a"])
+    return values
+
+
+def _trace_rom_bytes(header: dict[str, Any], rom_path: Path | None) -> bytes | None:
+    candidates: list[Path] = []
+    if rom_path is not None:
+        candidates.append(rom_path)
+    rom_name = str(header.get("rom", ""))
+    if rom_name:
+        candidates.append(ROOT / "rom" / Path(rom_name).name)
+    candidates.append(default_rom())
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate.read_bytes()
+    return None
+
+
+def _signed_u8(value: int) -> int:
+    return value - 0x100 if value & 0x80 else value
+
+
+def _collision_box_for_actor(actor: dict[str, Any], rom_bytes: bytes | None) -> dict[str, int] | None:
+    if rom_bytes is None:
+        return None
+    frame_pointer = int(actor.get("frame_ptr", 0))
+    if frame_pointer <= 0 or frame_pointer + 5 >= len(rom_bytes):
+        return None
+    origin_x = int(actor.get("x", 0))
+    origin_y = int(actor.get("y", 0))
+    if int(actor.get("facing_x_flip", 0)) != 0:
+        left = origin_x - _signed_u8(rom_bytes[frame_pointer + 4])
+        right = origin_x - _signed_u8(rom_bytes[frame_pointer + 2])
+    else:
+        left = origin_x + rom_bytes[frame_pointer + 2]
+        right = origin_x + rom_bytes[frame_pointer + 4]
+    return {
+        "left": left,
+        "top": origin_y + rom_bytes[frame_pointer + 3],
+        "right": right,
+        "bottom": origin_y + rom_bytes[frame_pointer + 5],
+    }
+
+
+def _atomic_actor_view(
+    actor: dict[str, int],
+    rom_bytes: bytes | None,
+) -> dict[str, Any]:
+    result: dict[str, Any] = {
+        "slot": actor["slot"],
+        "type": actor["type"],
+        "x": actor["x"],
+        "y": actor["y"],
+        "movement_flags": actor["movement_flags"],
+        "facing_x_flip": actor["facing_x_flip"],
+        "frame_ptr": actor["frame_ptr"],
+        "animation_pc": actor["animation_pc"],
+        "movement_pc": actor["movement_pc"],
+        "movement_loop_pc": actor["movement_loop_pc"],
+        "movement_loop_timer": actor["movement_loop_timer"],
+        "movement_word_18": actor["movement_word_18"],
+        "movement_word_1a": actor["movement_word_1a"],
+        "facing_y_flip": actor["facing_y_flip"],
+        "movement_command_timer": actor["movement_command_timer"],
+        "animation_timer": actor["animation_timer"],
+        "movement_return_pc": actor["movement_return_pc"],
+        "flags": actor["flags"],
+        "flag_bit5": (actor["flags"] & 0x20) != 0,
+    }
+    result["collision_box"] = _collision_box_for_actor(result, rom_bytes)
+    return result
+
+
+def _atomic_camera_view(sync: dict[str, int], scene_state: int) -> dict[str, Any]:
+    return {
+        "x": sync["camera_x"],
+        "y": sync["camera_y"],
+        "reference_x": sync["reference_x"],
+        "reference_y": sync["reference_y"],
+        "horizontal_threshold": sync["horizontal_threshold"],
+        "vertical_threshold": sync["vertical_threshold"],
+        "scroll_x": sync["scroll_x"],
+        "scroll_y": sync["scroll_y"],
+        "pixel_x": sync["pixel_x"],
+        "pixel_y": sync["pixel_y"],
+        "tile_x": sync["tile_x"],
+        "tile_y": sync["tile_y"],
+        "level_width": sync["level_width"],
+        "level_height": sync["level_height"],
+        "update_delay": sync["update_delay"],
+        "scroll_left_pending": sync["scroll_left_pending"],
+        "scroll_right_pending": sync["scroll_right_pending"],
+        "scroll_up_pending": sync["scroll_up_pending"],
+        "scroll_down_pending": sync["scroll_down_pending"],
+        "special_mode": sync["special_mode"],
+        "state_08": scene_state == 8,
+    }
+
+
+def _atomic_terrain_view(sync: dict[str, int]) -> dict[str, int]:
+    world_x = sync["terrain_world_x"]
+    world_y = sync["terrain_world_y"]
+    collision_y = world_y - 0x110
+    return {
+        "world_x": world_x,
+        "world_y": world_y,
+        "collision_probe_row": collision_y // 16,
+        "collision_probe_column": world_x >> 4,
+        "collision_probe_right_base_column": (world_x >> 4) + 2,
+        "collision_probe_ceiling_column": (world_x >> 4) + 1,
+        "collision_probe_landing_state": sync["terrain_landing_state"],
+        "query_callback_a": sync["terrain_callback_a"],
+        "query_callback_b": sync["terrain_callback_b"],
+        "query_callback_c": sync["terrain_callback_c"],
+        "query_result": sync["terrain_query_result"],
+        "push_right": sync["terrain_push_right"],
+        "push_left": sync["terrain_push_left"],
+        "push_up": sync["terrain_push_up"],
+        "push_down": sync["terrain_push_down"],
+        "behavior": sync["terrain_behavior"],
+        "horizontal_response": sync["terrain_horizontal_response"],
+        "response_active": sync["terrain_response_active"],
+        "vertical_stop": sync["terrain_vertical_stop"],
+        "landing_state": sync["terrain_landing_state"],
+        "surface_mode": sync["terrain_surface_mode"],
+        "surface_latch": sync["terrain_surface_latch"],
+        "surface_transition_flag": sync["terrain_surface_transition_flag"],
+        "stop_left_motion": sync["terrain_stop_left_motion"],
+        "left_inner_probe": sync["terrain_left_inner_probe"],
+        "left_outer_probe": sync["terrain_left_outer_probe"],
+        "stop_right_motion": sync["terrain_stop_right_motion"],
+        "right_inner_probe": sync["terrain_right_inner_probe"],
+        "right_outer_probe": sync["terrain_right_outer_probe"],
+        "stop_upward_motion": sync["terrain_stop_upward_motion"],
+        "jump_response_counter": sync["terrain_jump_response_counter"],
+        "response_timer_state": sync["terrain_response_timer_state"],
+        "query_state_a": sync["terrain_query_state_a"],
+        "query_state_b": sync["terrain_query_state_b"],
+        "state": sync["terrain_state"],
+        "response_latch": sync["terrain_response_latch"],
+    }
+
+
+def _atomic_scene_view(sync: dict[str, int]) -> dict[str, int]:
+    return {
+        "state": sync["scene_state"],
+        "script_cursor": sync["scene_script_cursor"],
+        "script_data_cursor": sync["scene_script_data"],
+        "table_index": sync["scene_table_index"],
+        "script_pending": sync["scene_script_pending"],
+        "vdp_update": sync["scene_vdp_update"],
+        "vdp_clear": sync["scene_vdp_clear"],
+        "transition_event": sync["scene_transition_event"],
+        "script_countdown": sync["scene_script_countdown_value"],
+        "script_gate": sync["scene_script_gate"],
+        "player_gate": sync["scene_player_gate"],
+        "player_lock": sync["scene_player_lock"],
+        "player_countdown": sync["scene_player_countdown"],
+        "player_terminal": sync["scene_player_terminal"],
+    }
+
+
+def _frame_ranges(frames: set[int]) -> list[list[int]]:
+    """Compress a set of logical frames into inclusive ranges."""
+    if not frames:
+        return []
+    ordered = sorted(frames)
+    ranges: list[list[int]] = []
+    start = previous = ordered[0]
+    for frame in ordered[1:]:
+        if frame != previous + 1:
+            ranges.append([start, previous])
+            start = frame
+        previous = frame
+    ranges.append([start, previous])
+    return ranges
 
 
 def _animation_state_records(state: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
@@ -1910,7 +2267,12 @@ def normalize_derived_state_trace(path: Path) -> int:
     return normalize_animation_state_trace(path, path)
 
 
-def synchronize_state_trace(trace_dir: Path, destination_dir: Path | None = None) -> int:
+def synchronize_state_trace(
+    trace_dir: Path,
+    destination_dir: Path | None = None,
+    *,
+    rom_path: Path | None = None,
+) -> int:
     """Derive synchronized and semantic traces from a raw MAME capture.
 
     MAME's frame_done callback is tied to the video device, not the game's
@@ -1918,7 +2280,7 @@ def synchronize_state_trace(trace_dir: Path, destination_dir: Path | None = None
     instructions. The debugger breakpoint is placed at the start of the
     game's per-frame update and reports the completed state for the following
     trace frame. The +1 mapping below is intentional and is part of the
-    openaladdin-frame-state-v1 capture contract.
+    openaladdin-frame-state-v2 capture contract.
     """
 
     state_path = trace_dir / "state.jsonl"
@@ -1950,6 +2312,7 @@ def synchronize_state_trace(trace_dir: Path, destination_dir: Path | None = None
             states[int(record["frame"])] = record
     if header is None:
         raise SystemExit(f"{state_path}: synchronized capture has no state header")
+    rom_bytes = _trace_rom_bytes(header, rom_path)
 
     # Preserve the exact video-boundary observation before creating the
     # compatibility ``state.jsonl`` semantic view in the same directory.
@@ -1974,10 +2337,20 @@ def synchronize_state_trace(trace_dir: Path, destination_dir: Path | None = None
                 frame_markers.append(record)
 
     synchronized_records: list[dict[str, int]] = []
+    synchronized_actor_records: dict[int, dict[int, dict[str, int]]] = {}
     for line in debug_path.read_text(encoding="utf-8").splitlines():
-        match = SYNC_PATTERN.search(line)
-        if match:
-            synchronized_records.append(_sync_record(match))
+        v2_match = SYNC_V2_PATTERN.search(line)
+        if v2_match:
+            synchronized_records.append(_sync_v2_record(v2_match))
+            continue
+        legacy_match = SYNC_PATTERN.search(line)
+        if legacy_match:
+            synchronized_records.append(_sync_record(legacy_match))
+            continue
+        actor_match = SYNC_ACTOR_PATTERN.search(line)
+        if actor_match:
+            actor = _sync_actor_record(actor_match)
+            synchronized_actor_records.setdefault(actor["frame"], {})[actor["slot"]] = actor
     if not synchronized_records:
         raise SystemExit(f"{debug_path}: no OPENALADDIN_SYNC records found")
 
@@ -2006,8 +2379,28 @@ def synchronize_state_trace(trace_dir: Path, destination_dir: Path | None = None
             "save-state restore"
         )
 
+    synchronized_actors: dict[int, dict[int, dict[str, int]]] = {}
+    if synchronized_actor_records:
+        if sync_mapping == "debugger frame F -> logical state S[F+1]":
+            synchronized_actors = {
+                frame + 1: actors
+                for frame, actors in synchronized_actor_records.items()
+            }
+        else:
+            logical_frames = sorted(frame for frame in states if frame > 0)
+            actor_groups = [
+                synchronized_actor_records.get(parsed["frame"], {})
+                for parsed in synchronized_records
+            ]
+            synchronized_actors = {
+                logical_frames[index]: actor_groups[index]
+                for index in range(min(len(logical_frames), len(actor_groups)))
+            }
+
     all_frames = set(states)
     all_frames.update(synchronized)
+    expected_actor_slots = set(range(32))
+    atomic_frames: set[int] = set()
     for frame in sorted(synchronized):
         sync = synchronized[frame]
         previous = max((candidate for candidate in states if candidate < frame), default=None)
@@ -2027,6 +2420,20 @@ def synchronize_state_trace(trace_dir: Path, destination_dir: Path | None = None
                 record["scene"] = metadata["scene"]
             if isinstance(metadata.get("terrain"), dict):
                 record["terrain"] = metadata["terrain"]
+
+        actor_snapshot = synchronized_actors.get(frame, {})
+        actor_snapshot_complete = set(actor_snapshot) == expected_actor_slots
+        if actor_snapshot_complete:
+            atomic_frames.add(frame)
+            atomic_actors = [
+                _atomic_actor_view(actor_snapshot[slot], rom_bytes)
+                for slot in range(32)
+            ]
+            record["actors"] = atomic_actors
+            scene_state = sync["scene_state"]
+            record["scene"] = _atomic_scene_view(sync)
+            record["terrain"] = _atomic_terrain_view(sync)
+            record["camera"] = _atomic_camera_view(sync, scene_state)
 
         player = record.setdefault("player", {})
         for name in (
@@ -2050,6 +2457,13 @@ def synchronize_state_trace(trace_dir: Path, destination_dir: Path | None = None
             name: sync[name]
             for name in ANIMATION_SELECTOR_FIELDS
         }
+        if "actor_flags" in sync:
+            player["actor_flags"] = sync["actor_flags"]
+            player["actor_flag_bit5"] = (sync["actor_flags"] & 0x20) != 0
+            player["attack_timer"] = sync["attack_timer"]
+            player["attack_active"] = sync["attack_timer"] != 0
+        if actor_snapshot_complete:
+            player["collision_box"] = atomic_actors[0]["collision_box"]
 
         camera = record.setdefault("camera", {})
         for name in (
@@ -2065,23 +2479,67 @@ def synchronize_state_trace(trace_dir: Path, destination_dir: Path | None = None
             "special_mode",
         ):
             camera[name.removeprefix("camera_")] = sync[name]
-        camera["state_08"] = sync["special_mode"] != 0
+        if not actor_snapshot_complete:
+            camera["state_08"] = sync["special_mode"] != 0
         states[frame] = record
+
+    # Mark the qualification of every emitted semantic record explicitly.
+    # Raw video samples remain available in state.raw.jsonl; this flag tells
+    # strict consumers whether the derived record is an atomic game-loop
+    # observation or a compatibility sample with inherited fields.
+    for frame, record in states.items():
+        atomic = frame in atomic_frames
+        record["capture"] = {
+            "boundary": "game-loop" if frame in synchronized else "video-frame-done",
+            "atomic": atomic,
+            "atomic_fields": list(ATOMIC_STATE_FIELDS) if atomic else [],
+            "atomic_actor_fields": list(ATOMIC_ACTOR_FIELDS) if atomic else [],
+        }
 
     normalized = _normalize_animation_write_order(states)
     header = dict(header)
     header["source_artifact"] = state_path.name
-    header["state_boundary"] = "game-loop-sync"
+    source_format = header.get("format")
+    has_v2_sync = any("actor_flags" in record for record in synchronized.values())
+    header["format"] = STATE_FORMAT_V2 if has_v2_sync else source_format
+    if has_v2_sync:
+        for record in states.values():
+            record["format"] = STATE_FORMAT_V2
+    header["state_boundary"] = "game-loop"
     header["sync"] = {
         "boundary": "VBlankInterrupt",
+        "state_boundary": "game-loop",
         "coverage": len(synchronized) / max(len(all_frames), 1),
         "mapping": sync_mapping,
+        "atomic_fields": list(ATOMIC_STATE_FIELDS) if atomic_frames else [],
+        "atomic_actor_fields": list(ATOMIC_ACTOR_FIELDS) if atomic_frames else [],
+        "atomic_frame_count": len(atomic_frames),
+        "atomic_coverage": len(atomic_frames) / max(len(all_frames), 1),
+        "atomic_frame_ranges": _frame_ranges(atomic_frames),
+        "actor_slot_count": 32,
+        "actors_qualified": bool(atomic_frames)
+        and len(atomic_frames) == len(synchronized),
     }
+    header["capture"] = {
+        "boundary": "game-loop",
+        "atomic_fields": list(ATOMIC_STATE_FIELDS) if atomic_frames else [],
+        "atomic_actor_fields": list(ATOMIC_ACTOR_FIELDS) if atomic_frames else [],
+        "atomic_frame_count": len(atomic_frames),
+        "atomic_coverage": len(atomic_frames) / max(len(all_frames), 1),
+        "actor_slot_count": 32,
+        "actors_qualified": bool(atomic_frames)
+        and len(atomic_frames) == len(synchronized),
+    }
+    if source_format is not None:
+        header["source_format"] = source_format
     header["transformations"] = list(header.get("transformations") or [])
     header["transformations"].append({
         "name": "game-loop-sync",
-        "version": 1,
+        "version": 2,
         "synchronized_frames": len(synchronized),
+        "atomic_frames": len(atomic_frames),
+        "atomic_fields": list(ATOMIC_STATE_FIELDS) if atomic_frames else [],
+        "atomic_actor_fields": list(ATOMIC_ACTOR_FIELDS) if atomic_frames else [],
     })
 
     # Keep the header and marker records, but emit the completed state stream
@@ -2216,7 +2674,12 @@ def _copy_artifact(source: Path, destination: Path) -> bool:
     return True
 
 
-def _materialize_record_capture(run_dir: Path, capture_dir: Path) -> int:
+def _materialize_record_capture(
+    run_dir: Path,
+    capture_dir: Path,
+    *,
+    rom_path: Path | None = None,
+) -> int:
     """Turn a raw post-recording capture into compatibility artifacts.
 
     MAME writes only below ``capture_dir``.  The raw files remain untouched;
@@ -2227,7 +2690,7 @@ def _materialize_record_capture(run_dir: Path, capture_dir: Path) -> int:
     if not raw_state.is_file():
         raise SystemExit(f"record: missing raw synchronized capture {raw_state}")
     _copy_artifact(raw_state, run_dir / "state.raw.jsonl")
-    sync_count = synchronize_state_trace(capture_dir, run_dir)
+    sync_count = synchronize_state_trace(capture_dir, run_dir, rom_path=rom_path)
 
     raw_events = capture_dir / "events.jsonl"
     if raw_events.is_file():
@@ -2304,7 +2767,7 @@ def _write_trace_quality(
         if quality == "deterministic" and input_replay == "pass" and checkpoint_hashes == checkpoint_count:
             quality = "semantic-verified"
     report = {
-        "format": "openaladdin-trace-quality-v1",
+        "format": "openaladdin-trace-quality-v2",
         "input_frames": frames,
         "state_frames": state_frames,
         "missing_state_frames": missing_state,
@@ -2321,11 +2784,36 @@ def _write_trace_quality(
         "determinism": {
             "mame_inp_replay": capture_status,
             "json_input_replay": input_replay,
+            "semantic_state_roundtrip": "unavailable",
         },
         "quality": quality,
     }
     _write_json(run_dir / "trace-quality.json", report)
     return report
+
+
+def _update_trace_quality_roundtrip(run_dir: Path, status: str) -> None:
+    """Record the result of replaying mame.inp into the quality report."""
+    path = run_dir / "trace-quality.json"
+    if not path.is_file():
+        return
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return
+    determinism = report.setdefault("determinism", {})
+    determinism["semantic_state_roundtrip"] = status
+    if status == "pass" and report.get("quality") == "semantic-verified":
+        report["quality"] = "parity-ready"
+    _write_json(path, report)
+    manifest_path = run_dir / "run.json"
+    if manifest_path.is_file():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            return
+        manifest["quality"] = report.get("quality", manifest.get("quality"))
+        _write_json(manifest_path, manifest)
 
 
 def _finish_record_manifest(
@@ -2350,7 +2838,9 @@ def _finish_record_manifest(
     state_path = run_dir / "state.jsonl"
     if status == 0 and capture_dir is not None:
         try:
-            sync_count = _materialize_record_capture(run_dir, capture_dir)
+            sync_count = _materialize_record_capture(
+                run_dir, capture_dir, rom_path=resolve(Path(str(manifest["rom_path"])))
+            )
             manifest["capture"] = {
                 "status": "complete",
                 "execution_profile": "analysis",
@@ -2492,7 +2982,9 @@ def command_record(args: argparse.Namespace) -> int:
                     )
                 else:
                     try:
-                        sync_count = _materialize_record_capture(run_dir, raw_dir)
+                        sync_count = _materialize_record_capture(
+                            run_dir, raw_dir, rom_path=rom
+                        )
                         manifest["capture"] = {
                             "status": "complete",
                             "execution_profile": "analysis",
@@ -2789,37 +3281,59 @@ def command_replay(args: argparse.Namespace) -> int:
         environment = _clean_mame_environment()
         environment.update({
             "OPENALADDIN_TRACE_DIR": str(replay_dir),
-            "OPENALADDIN_TRACE_FRAMES": str(max(frame_count - 1, 0)),
+            # The recording capture includes S[0] plus the endpoint after
+            # the final recorded input. Match that limit so the second MAME
+            # playback has the same synchronization-qualified frame set.
+            "OPENALADDIN_TRACE_FRAMES": str(max(frame_count, 0)),
             "OPENALADDIN_CAPTURE": "state",
             "OPENALADDIN_INPUT_MODE": "playback",
             "OPENALADDIN_INPUT_OUTPUT": str(replay_dir / "input.jsonl"),
             "OPENALADDIN_PLAYBACK_FILE": str(mame_input),
+            "OPENALADDIN_STATE_SYNC": "1",
             "OPENALADDIN_STATE_DIRECTORY": str(replay_dir / "checkpoints"),
             "OPENALADDIN_CHECKPOINT_REFERENCE": "checkpoints",
             "OPENALADDIN_MAME_HEADLESS": "1",
             "OPENALADDIN_MAME_VIDEO": "none",
             "OPENALADDIN_ROM_SHA256": manifest["rom_sha256"],
         })
+        original = run_dir / "state.jsonl"
+        if original.is_file():
+            _, original_states, _ = load_state_trace(original)
+            if any(record.get("actors") for record in original_states.values()):
+                environment["OPENALADDIN_TRACE_ACTORS"] = "1"
         _apply_run_start(environment, manifest)
         status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
         if status == 0:
-            original = run_dir / "state.jsonl"
             if not original.is_file() or not trace.is_file():
                 print("replay: original or replay state trace is missing", file=sys.stderr)
                 status = 1
             else:
-                normalize_derived_state_trace(trace)
-                if input_header and input_header.get("controller_mapping") is None:
-                    _relabel_state_trace_inputs(
-                        trace,
-                        input_tokens(records),
-                        "legacy-full-replay",
+                try:
+                    synchronize_state_trace(replay_dir, rom_path=rom)
+                except SystemExit as error:
+                    print(f"replay: cannot derive synchronized state: {error}", file=sys.stderr)
+                    status = 1
+                else:
+                    if input_header and input_header.get("controller_mapping") is None:
+                        _relabel_state_trace_inputs(
+                            trace,
+                            input_tokens(records),
+                            "legacy-full-replay",
+                        )
+                    status = run_tool(
+                        "openaladdin/mame/compare_state.py",
+                        [
+                            str(original),
+                            str(trace),
+                            "--allow-additional-fields",
+                            "--require-atomic",
+                            "--atomic-only",
+                        ],
                     )
-                status = run_tool(
-                    "openaladdin/mame/compare_state.py",
-                    [str(original), str(trace), "--allow-additional-fields"],
-                )
         _update_replay_manifest(run_dir, manifest, args.client, trace, status)
+        _update_trace_quality_roundtrip(
+            run_dir, "pass" if status == 0 else "fail"
+        )
         if status == 0:
             print(f"replay: MAME PASS ({frame_count} frame(s))")
         else:
@@ -2905,10 +3419,29 @@ def command_parity(args: argparse.Namespace) -> int:
         normalize_animation_state_trace(genesis, semantic)
         genesis = semantic
     fields = args.fields or DEFAULT_PARITY_FIELDS
-    forwarded = [str(genesis), str(native)]
-    for field in fields:
-        forwarded.extend(["--field", field])
-    return run_tool("openaladdin/mame/compare_state.py", forwarded)
+    actor_fields = [
+        field for field in fields
+        if field == "actors" or field.startswith("actors[")
+    ]
+    state_fields = [field for field in fields if field not in actor_fields]
+    statuses: list[int] = []
+    if actor_fields:
+        # Actor parity is meaningful only against the synchronized MAME
+        # boundary. Native traces need not use the MAME capture metadata, so
+        # restrict the comparison to the reference trace's atomic frames.
+        actor_args = [
+            str(genesis),
+            str(native),
+            "--require-left-atomic",
+            "--left-atomic-only",
+        ]
+        statuses.append(run_tool("openaladdin/mame/compare_actors.py", actor_args))
+    if state_fields:
+        state_args = [str(genesis), str(native)]
+        for field in state_fields:
+            state_args.extend(["--field", field])
+        statuses.append(run_tool("openaladdin/mame/compare_state.py", state_args))
+    return next((status for status in statuses if status), 0)
 
 
 def command_inputs_summarize(args: argparse.Namespace) -> int:
@@ -2916,6 +3449,21 @@ def command_inputs_summarize(args: argparse.Namespace) -> int:
     _, records = load_input_timeline(path)
     print(readable_input_schedule(input_tokens(records)))
     return 0
+
+
+def command_compare(args: argparse.Namespace) -> int:
+    forwarded = [str(resolve(args.genesis)), str(resolve(args.openaladdin))]
+    for field in args.fields or []:
+        forwarded.extend(["--field", field])
+    for option in (
+        "require_left_atomic",
+        "require_atomic",
+        "atomic_only",
+        "left_atomic_only",
+    ):
+        if getattr(args, option):
+            forwarded.append("--" + option.replace("_", "-"))
+    return run_tool("openaladdin/mame/compare_state.py", forwarded)
 
 
 def command_regression(args: argparse.Namespace) -> int:
@@ -2983,7 +3531,7 @@ def command_regression(args: argparse.Namespace) -> int:
     if status:
         return status
     if state_sync:
-        synchronize_state_trace(mame_trace)
+        synchronize_state_trace(mame_trace, rom_path=rom)
 
     mame_source = mame_trace / "state.jsonl"
     compare_frames, checkpoint_frame, checkpoint = aligned_trace(mame_source, aligned, marker_name, fields)
@@ -3550,11 +4098,11 @@ def build_parser() -> argparse.ArgumentParser:
         dest="fields",
         help="compare only this dotted state field; repeat for multiple fields",
     )
-    compare.set_defaults(function=lambda args: run_tool(
-        "openaladdin/mame/compare_state.py",
-        [str(resolve(args.genesis)), str(resolve(args.openaladdin))]
-        + sum((["--field", field] for field in (args.fields or [])), []),
-    ))
+    compare.add_argument("--require-left-atomic", action="store_true")
+    compare.add_argument("--require-atomic", action="store_true")
+    compare.add_argument("--atomic-only", action="store_true")
+    compare.add_argument("--left-atomic-only", action="store_true")
+    compare.set_defaults(function=command_compare)
 
     compare_collision = commands.add_parser(
         "compare-collision",

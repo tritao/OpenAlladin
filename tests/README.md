@@ -29,6 +29,13 @@ It verifies that a one-frame `RIGHT` edge is labelled as `I[N]` and that the
 first observed player-velocity response occurs at a later synchronized state
 boundary.
 
+The synchronization-qualified actor comparator and v2 atomic frame gate are
+covered by:
+
+```bash
+PYTHONPATH=tools python3 tests/trace_atomic_state.py
+```
+
 Generated traces and extracted assets remain under `build/`.
 `native_actor_movement.py` compares the native signed-delta actor movement VM
 against the captured slot-19 type-`0x84` stream, including its `0x84` timer
