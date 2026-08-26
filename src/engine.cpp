@@ -1422,6 +1422,66 @@ void Engine::update_actor_movement() {
     }
 }
 
+void Engine::update_probe_actor_animation_before_movement() {
+    if (rom_bytes_.empty() || !actor_snapshot_mode_) return;
+
+    // This marker describes only the current logical update. Clear it before
+    // examining the persistent probe state so a retired slot cannot suppress
+    // a later actor that reuses the slot.
+    probe_actor_animation_preupdated_.fill(false);
+
+    const AnimationContext context = player_animation_context(player_.grounded);
+    for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
+        ActorState& actor = actors_[slot];
+        // The controlled movement-VM fixtures use the synthetic type-0x7D
+        // record and the common 0x125952 animation entry. Once discovered,
+        // keep the probe on the same ROM ordering for subsequent frames: its
+        // animation service runs before movement, and the normal actor pass
+        // must not tick it a second time.
+        if (!probe_actor_animation_active_[slot]
+            && (actor.type != 0x7D
+                || actor.movement_pc == 0
+                || actor.animation_pc != 0x00125952)) {
+            continue;
+        }
+        if (actor.type == 0 || actor.animation_pc == 0) {
+            probe_actor_animation_active_[slot] = false;
+            continue;
+        }
+
+        ActorAnimationState animation_state;
+        animation_state.type = actor.type;
+        animation_state.x = actor.x;
+        animation_state.y = actor.y;
+        animation_state.movement_pc = actor.movement_pc;
+        animation_state.facing_x_flip = actor.facing_x_flip;
+        animation_state.facing_y_flip = actor.facing_y_flip;
+        animation_state.flags = actor.flags;
+        animation_state.animation_pc = actor.animation_pc;
+        animation_state.frame_ptr = actor.frame_ptr;
+        animation_state.animation_timer = actor.animation_timer;
+
+        AnimationContext actor_context = context;
+        if (!actor_snapshot_mode_) {
+            actor_context.random_state = nullptr;
+        }
+        actor_animations_[slot].update_actor(animation_state, actor_context);
+
+        actor.type = animation_state.type;
+        actor.x = animation_state.x;
+        actor.y = animation_state.y;
+        actor.movement_pc = animation_state.movement_pc;
+        actor.facing_x_flip = animation_state.facing_x_flip;
+        actor.facing_y_flip = animation_state.facing_y_flip;
+        actor.flags = animation_state.flags;
+        actor.animation_pc = animation_state.animation_pc;
+        actor.frame_ptr = animation_state.frame_ptr;
+        actor.animation_timer = animation_state.animation_timer;
+        probe_actor_animation_active_[slot] = true;
+        probe_actor_animation_preupdated_[slot] = true;
+    }
+}
+
 void Engine::update_terminal_actor_motion(ActorState& actor) {
     // MovementVM_TickActors integrates an active actor after its animation
     // pass. The scene-state-5 record has no movement cursor, but its template
@@ -1526,6 +1586,10 @@ void Engine::update_actor_animations() {
             continue;
         }
         if (actor.type == 0 || actor.animation_pc == 0) {
+            continue;
+        }
+        if (probe_actor_animation_preupdated_[slot]) {
+            probe_actor_animation_preupdated_[slot] = false;
             continue;
         }
         // The live sword trace reaches the terminal actor template at the
@@ -2056,9 +2120,10 @@ void Engine::reset() {
     terrain_input_world_x_ = 0;
     terrain_input_world_y_ = 0;
     deferred_animation_spawn_.reset();
+    probe_actor_animation_preupdated_.fill(false);
+    probe_actor_animation_active_.fill(false);
     camera_follow_catch_up_ = false;
     player_animation_catch_up_ = false;
-    camera_horizontal_follow_catch_up_ = false;
     actor_animation_catch_up_ = false;
     actor_animation_scheduler_started_ = false;
     actor_animation_service_phase_ = 0;
@@ -3227,6 +3292,7 @@ void Engine::update(const InputState& input) {
     // state. In the Genesis sword trace it terminalizes the sword at x=1313
     // before the next movement delta can advance it to x=1320.
     update_actor_actor_collisions(true);
+    update_probe_actor_animation_before_movement();
     update_actor_movement();
     update_actor_interactions(input, was_grounded);
     update_actor_actor_collisions();
@@ -3472,15 +3538,14 @@ void Engine::update(const InputState& input) {
         camera_.reference_x != camera_reference_x_before_rebase;
     const bool camera_vertical_reference_rebased =
         camera_.reference_y != camera_reference_y_before_rebase;
-    // Camera_UpdateFollow's reference-tile rebase is the whole
-    // camera pass for that frame. The follow lookup resumes on the next
-    // frame; running it immediately would add a damped step on the same
-    // boundary and drift the local player by the rebase cadence. This applies
-    // to both axes: upward vertical rebases receive two follow services on
-    // the next frame, while a downward rebase is followed by one service and
-    // a post-follow tile rebase.
-    const bool camera_follow_deferred =
-        camera_horizontal_reference_rebased || camera_vertical_reference_rebased;
+    // A vertical Camera_UpdateFollow reference-tile rebase is the whole
+    // camera pass for that frame. The vertical follow lookup resumes on the
+    // next frame; running it immediately would add a damped step on the same
+    // boundary and drift the local player by the rebase cadence. Upward
+    // vertical rebases receive two follow services on the next frame, while a
+    // downward rebase is followed by one service and a post-follow tile
+    // rebase. Horizontal rebases retain the same-frame damped follow.
+    const bool camera_follow_deferred = camera_vertical_reference_rebased;
     const bool camera_follow_catch_up_after_rebase =
         camera_vertical_reference_rebased
         && camera_.reference_y < camera_reference_y_before_rebase;
@@ -3488,33 +3553,10 @@ void Engine::update(const InputState& input) {
     camera_follow_catch_up_ = false;
     if (camera_follow_deferred) {
         camera_follow_catch_up_ = camera_follow_catch_up_after_rebase;
-        if (camera_horizontal_reference_rebased && !camera_vertical_reference_rebased) {
-            // The horizontal player correction still occurs on this boundary,
-            // but the world-camera/scroll component is published next frame.
-            const int camera_x_before_follow = camera_.x;
-            const int camera_scroll_x_before_follow = camera_.scroll_x;
-            update_camera();
-            camera_.x = camera_x_before_follow;
-            camera_.scroll_x = camera_scroll_x_before_follow;
-            camera_horizontal_follow_catch_up_ = true;
-        }
     } else {
         update_camera();
         if (camera_follow_catch_up) {
             update_camera();
-        }
-        if (camera_horizontal_follow_catch_up_) {
-            // Catch up only the world-camera component; the corresponding
-            // local-player correction was already consumed on the rebase
-            // boundary and must not be applied a second time.
-            const int player_x_before_follow = player_.x;
-            // Camera_UpdateFollow evaluates the pre-correction local X on
-            // this catch-up pass. Reconstruct that value from the terrain
-            // response rather than applying a second visible movement.
-            player_.x += input_direction * player_.terrain_horizontal_response;
-            update_camera();
-            player_.x = player_x_before_follow;
-            camera_horizontal_follow_catch_up_ = false;
         }
         // A downward follow step can land exactly on the next camera tile
         // boundary. The ROM applies that reference update after the follow

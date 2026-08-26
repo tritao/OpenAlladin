@@ -2,4 +2,4 @@
 # Controlled movement-VM probe: the first step at 0x0011F730 applies +3 X,
 # toggles horizontal facing, then arms the 0x84 AF command delay.
 # slot type x y movement_pc frame_ptr animation_pc flags facing_x_flip facing_y_flip movement_command_timer movement_loop_pc movement_loop_timer movement_return_pc
-31 0x7D 150 416 0x0011F730 0x0C012100 0x00125952 0 0 0 0 0x59401500 0x10 0x800
+31 0x7D 150 416 0x0011F730 0x0 0x00125952 0 0 0 0 0x0 0x0 0x0

@@ -775,6 +775,8 @@ def main() -> int:
         "2",
         "--state-output",
         str(gate_output),
+        "--actor-records",
+        str(ROOT / "re/actors/level01.tsv"),
         "--checkpoint-player",
         "148,416,0,0,1",
         "--checkpoint-camera",

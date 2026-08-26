@@ -420,6 +420,7 @@ private:
     void load_actor_timeline(const std::string& path);
     void apply_actor_timeline(int frame);
     void update_actor_movement();
+    void update_probe_actor_animation_before_movement();
     void update_terminal_actor_motion(ActorState& actor);
     void update_actor_animations();
     void apply_animation_spawns(bool defer_player_spawns = false);
@@ -451,6 +452,12 @@ private:
     SpriteDatabase sprites_;
     PlayerAnimationVm animation_;
     std::array<PlayerAnimationVm, 32> actor_animations_{};
+    // Controlled movement probes share a VBlank with the common actor
+    // animation pass. The ROM services their animation cursor before
+    // movement; these markers prevent the later actor pass from ticking the
+    // same slot twice.
+    std::array<bool, 32> probe_actor_animation_preupdated_{};
+    std::array<bool, 32> probe_actor_animation_active_{};
     InteractionMap interaction_map_;
     std::array<ActorState, 32> actor_templates_{};
     std::array<ActorState, 32> actors_{};
@@ -476,9 +483,6 @@ private:
     // The same camera boundary suppresses the current player animation pass;
     // queue the next VM service explicitly at the following boundary.
     bool player_animation_catch_up_ = false;
-    // Horizontal tile rebases retain the local correction on the boundary and
-    // catch up the world-camera component on the following frame.
-    bool camera_horizontal_follow_catch_up_ = false;
     // A horizontal camera rebase can share a frame with an actor animation
     // command boundary. The ROM's camera path then reaches the common actor
     // animation loop once more on the following frame.
