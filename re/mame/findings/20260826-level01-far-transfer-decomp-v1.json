@@ -14,6 +14,28 @@
     "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v5/continuous-edge-n73-recorded/states/genesis/apex.sta",
     "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v7/sword-delay-20/states/genesis/guard-window.sta"
   ],
+  "runtime_trace_probes": [
+    {
+      "id": "handhold-far-transfer-helper",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v4/decomp-trace-handhold",
+      "load_state": "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v2/handhold-grab/states/genesis/lower-handhold-grabbed.sta",
+      "input": "none*120",
+      "state_sync": true,
+      "breakpoints": ["0x001AF468", "0x001B0336", "0x001AE9C6", "0x001AE9D4", "0x001AEC00", "0x001AE4F8"],
+      "observed_pc_sequence": ["0x001AF46A", "0x001B0338"],
+      "result": "The loaded lower-handhold fixture reaches the far-transfer handler and its counter helper once during the probe; it does not enter the guard interaction chain."
+    },
+    {
+      "id": "guard-interaction-recovery",
+      "trace_dir": "build/re/campaigns/20260826-level01-canonical-recording-v4/decomp-trace-guard",
+      "load_state": "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v7/sword-delay-20/states/genesis/guard-window.sta",
+      "input": "none*120",
+      "state_sync": true,
+      "breakpoints": ["0x001AF468", "0x001B0336", "0x001AE9C6", "0x001AE9D4", "0x001AEC00", "0x001AE4F8"],
+      "observed_pc_sequence": ["0x001AE9C8", "0x001AEC02", "0x001AE9D6", "0x001AE4FA"],
+      "result": "The loaded guard-window fixture repeatedly follows the type-0x0A shared-block and interaction-recovery chain without entering the far-transfer helper."
+    }
+  ],
   "verified_static_findings": [
     {
       "address": "0x001AF468",
