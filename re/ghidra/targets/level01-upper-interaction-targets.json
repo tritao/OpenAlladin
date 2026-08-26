@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-upper-interaction-actor-pair",
+    "purpose": "Recover the interaction handlers that materialize the Type-0x1E and runtime Type-0x20 pair at the upper x≈4688 feature."
+  },
+  "targets": [
+    { "address": "0x001B6E70", "name": "InteractionGate_Type1D" },
+    { "address": "0x001B6E86", "name": "InteractionGate_Type1E" },
+    { "address": "0x001B6E90", "name": "InteractionSpawn_Type1E" },
+    { "address": "0x001B6E9C", "name": "InteractionGate_Type1F" },
+    { "address": "0x001B6EB2", "name": "InteractionSpawn_RuntimeType20" },
+    { "address": "0x001B5266", "name": "LevelObjectSpawnEntry" },
+    { "address": "0x001AE30A", "name": "ActorInitializeFromTemplate" },
+    { "address": "0x001AE406", "name": "InteractionTableDispatch" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF105", "name": "INTERACTION_GATE_TYPE1F" },
+    { "address": "0x00FFF106", "name": "INTERACTION_GATE_TYPE1D" },
+    { "address": "0x00FFF107", "name": "INTERACTION_GATE_TYPE1E" },
+    { "address": "0x00FFAE87", "name": "INTERACTION_TABLE_RUNTIME" }
+  ]
+}

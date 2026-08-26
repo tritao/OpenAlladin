@@ -34,6 +34,22 @@
     ],
     "context": "A2=0x00FFAE87 for both entries; both return through the level-object dispatcher at 0x001B5270."
   },
+  "interaction_dispatch_trace": {
+    "artifact": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-edges/debug.log",
+    "absolute_mame_frame": "0x1353",
+    "caller": "0x001AE4EA",
+    "targets": [
+      { "handler": "0x001B6E90", "meaning": "INTERACTION_GATE_TYPE1E -> template 0x001B7C24" },
+      { "handler": "0x001B6EB2", "meaning": "template 0x001B7C10 -> runtime type 0x20 / animation 0x0012337A" }
+    ],
+    "following_actor_vm_targets": [
+      "0x001AD138",
+      "0x001ACA14",
+      "0x001AD3C2",
+      "0x001AD378"
+    ],
+    "conclusion": "The upper pair is created by the interaction-row dispatch while Up is held; it is not created by the vertical connector handler."
+  },
   "runtime_checkpoints": [
     {
       "frame": 158,

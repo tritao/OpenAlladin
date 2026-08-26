@@ -191,6 +191,31 @@
   description: Scene-script delay/countdown gate consumed by SceneScript_AdvanceState.
   evidence:
     - ghidra_targeted_decompile_001A8E3E
+0xFFF105:
+  name: INTERACTION_GATE_TYPE1F
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Interaction-row gate consumed by the Type1F object handler at 0x001B6E9C.
+  evidence:
+    - ghidra_upper_interaction_targeted_decompile
+0xFFF106:
+  name: INTERACTION_GATE_TYPE1D
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Interaction-row gate consumed by the Type1D object handler at 0x001B6E70.
+  evidence:
+    - ghidra_upper_interaction_targeted_decompile
+0xFFF107:
+  name: INTERACTION_GATE_TYPE1E
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Interaction-row gate consumed by the Type1E object handler at 0x001B6E86/0x001B6E90.
+  evidence:
+    - ghidra_upper_interaction_targeted_decompile
+    - mame_upper_activation_edge_trace
 0xFFF176:
   name: SCENE_SCRIPT_GATE
   type: u8

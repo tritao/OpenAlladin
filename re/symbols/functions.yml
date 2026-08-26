@@ -174,6 +174,27 @@
   evidence:
     - ghidra_decompile_collision_damage_targets
     - ghidra_disassembly_001AE3FC
+0x001B6E70:
+  name: InteractionGate_Type1D
+  confidence: confirmed
+  description: Interaction handler that checks INTERACTION_GATE_TYPE1D at 0x00FFF106 and invokes the level-object spawn entry when set.
+  evidence:
+    - ghidra_upper_interaction_targeted_decompile
+    - mame_upper_activation_edge_trace
+0x001B6E90:
+  name: InteractionSpawn_Type1E
+  confidence: confirmed
+  description: Interaction handler gated by INTERACTION_GATE_TYPE1E at 0x00FFF107; it selects actor template 0x001B7C24 and enters the level-object spawn entry.
+  evidence:
+    - ghidra_upper_interaction_targeted_decompile
+    - mame_upper_activation_edge_trace
+0x001B6EB2:
+  name: InteractionSpawn_RuntimeType20
+  confidence: confirmed
+  description: Unconditional interaction handler that enters the level-object spawn entry with template 0x001B7C10, then assigns animation stream 0x0012337A and runtime actor type 0x20 when allocation succeeds.
+  evidence:
+    - ghidra_upper_interaction_targeted_decompile
+    - mame_upper_activation_edge_trace
 0x001AE47E:
   name: InteractionTable_ProcessRowsB
   confidence: confirmed

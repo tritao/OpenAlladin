@@ -246,6 +246,17 @@ player remains at `(4684,628)` and
 `SCENE_STATE` remains `0x01`. This is the next concrete actor interaction
 target, not evidence of a climb or scene transition.
 
+The companion edge trace identifies the interaction source. At the same
+absolute MAME frame `0x1353`, the interaction-row caller `0x001AE4EA`
+dispatches to `0x001B6E90` and `0x001B6EB2`. The former is gated by
+`0xFFF107` and selects template `0x001B7C24`; the latter enters the same
+level-object spawn entry with `0x001B7C10`, then assigns animation
+`0x0012337A` and runtime type `0x20`. The Type-`0x1E` animation stream's
+Y-proximity threshold is `0x40`, so it is not the upper climb trigger at the
+observed 164-pixel vertical separation. The upper feature is therefore an
+interaction-row actor setup, and the next target is the Type-`0x1E`/Type-`0x20`
+collision or interaction response after setup.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
