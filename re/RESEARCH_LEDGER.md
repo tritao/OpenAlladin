@@ -134,11 +134,13 @@ the finding or commit message.
   the observed 0x6A→0x6B interaction, the 0x0A guard path flows through the
   shared collision block and interaction-state recovery, and 0x1AF468 clears
   and reinitializes an actor after an optional interaction publish. The 0x29
-  launch and 0x2D bounce handlers are decoded. The raw type-0x40 probe shows
-  that 0x1AF468 takes its counter/cleanup branch, not the interaction-row
-  publish branch, and replaces the actor with type 0x84. None of the 16
-  targets writes `SCENE_STATE=0x08`; the v4 natural-transfer frontier
-  therefore remains the correct replay baseline.
+  launch and 0x2D bounce handlers are decoded. The type-0x2D player-collision
+  entry at `0x001AEE40` is a transient actor cleanup/spawn path, distinct from
+  the terrain behavior 0x2D bounce handler at `0x001B56B6`. The raw type-0x40
+  probe shows that 0x1AF468 takes its counter/cleanup branch, not the
+  interaction-row publish branch, and replaces the actor with type 0x84. None
+  of the 17 targets writes `SCENE_STATE=0x08`; the v4 natural-transfer
+  frontier therefore remains the correct replay baseline.
 
 ### Scene and exit work
 

@@ -172,20 +172,27 @@
       "address": "0x001B5256",
       "name": "InteractionHandler_0x40_Helper",
       "result": "Allocates an actor/template when the free-slot helper succeeds, writes the interaction-derived word and byte fields at actor offsets 0x32 and 0x34, positions the actor from the global interaction coordinates, and clears the consumed interaction byte. The type-0x40 raw probe did not reach this helper because the 0x001AF468 publish gate was false."
+    },
+    {
+      "address": "0x001AEE40",
+      "name": "ActorType2D_PlayerCollisionHandler",
+      "result": "The type-0x2D player-collision handler is a transient actor cleanup/spawn path. With the actor/VDP gate clear it releases the current actor and processes player interaction state; on the alternate path it can create a temporary type-0x7F record from template 0x001209BE, queue event 0x21 when the VDP update flag is active, and otherwise reinitialize/copy the actor position. It does not inject the player's launch/bounce velocity and does not write SCENE_STATE.",
+      "confidence": "confirmed-static"
     }
   ],
   "scene_exit_assessment": {
     "scene_state_address": "0x00FF7E26",
     "terminal_transition_address": "0x00FFF0E6",
     "known_exit_writer": "0x001B5B4A",
-    "result": "None of the 16 targeted functions writes SCENE_STATE=0x08. The natural far-transfer problem remains an unresolved actor/terrain interaction or route-input issue, not evidence that the exit writer is missing from the ROM."
+    "result": "None of the 17 targeted functions writes SCENE_STATE=0x08. The natural far-transfer problem remains an unresolved actor/terrain interaction or route-input issue, not evidence that the exit writer is missing from the ROM."
   },
   "conclusions": [
     "Starting over would discard useful replay and negative evidence; the v4 campaign remains the canonical baseline.",
     "The natural type-0x40 collision is now classified as a cleanup/reinitialization branch, not a route transfer: the publish gate is false and no interaction-row spawn follows it.",
     "The next natural replay should move past the type-0x40 negative and focus on the type-0x65/0x29 launch family, type-0x2D bounce family, and the type-0x1E actor above the guard band.",
     "The guard fixture's 0x001AE9C6 → 0x001AEC00 → 0x001AE9D4 → 0x001AE4F8 chain is a real interaction-recovery path, but its observed branch does not select the scene transition.",
-    "The 0x29 launch and 0x2D bounce handlers are now decoded enough to classify future traces by actual velocity injection and animation selection."
+    "The 0x29 launch and 0x2D bounce handlers are now decoded enough to classify future traces by actual velocity injection and animation selection.",
+    "The type-0x2D table entry resolves to 0x001AEE40, whose static body is an actor cleanup/transient-spawn handler rather than the player bounce path; the terrain behavior 0x2D handler at 0x001B56B6 remains the relevant bounce candidate."
   ],
   "next_action": "Replay the far rope from the saved v4 checkpoints with controller-only inputs while tracing actor types 0x65, 0x2D, and 0x1E, and checkpoint every launch, spring, handhold attachment, dismount, reset, and scene-gate change."
 }
