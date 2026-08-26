@@ -103,6 +103,15 @@ the finding or commit message.
 - `re/mame/findings/20260826-level01-canonical-recording-v3.json`: separates
   verified positive route evidence from guard/reset and horizontal-line
   negative branches and records the next upper-transfer frontier.
+- `20260826-level01-canonical-recording-v4`: provenance-complete fresh power-on
+  replay under the current commit. Its 2,297 state frames exactly match the
+  corresponding v3 fields, and its own loaded-state chain reaches the far rope
+  at world `(4728,671)` with 63 verified checkpoints before the new transfer
+  experiments.
+- `re/mame/findings/20260826-level01-canonical-recording-v4.json`: records the
+  far horizontal-line dismount, natural lower-handhold `0x6A→0x6B` collision,
+  continuous launch apex at `Y=561`, and sword-assisted guard-window negative
+  evidence. None reaches scene state `0x08`.
 - `20260826-level01-tower-negative-v1`: loaded-state recording from the clean
   upper-edge checkpoint through the lower tower. It verifies the 0x47 surface
   mode/latch behavior, identifies the resident 0x43 lamp and 0x20 enemy, and
@@ -146,11 +155,13 @@ geometry/object investigation. The extracted level package is available at
 
 The immediate question is now narrower: what natural interaction or terrain
 response transfers the verified far vertical rope around world `x=4728`,
-`y=671` to the upper platform/exit corridor above `y=470`? The controlled
-support route is not being treated as proof of the intended route. The next
-campaign must start from the current `rope-top-frontier` checkpoint, trace the
-handhold/line transfer and nearby actors, and save a checkpoint for every
-launch, wall transfer, rope attachment, dismount, reset, or scene gate.
+`y=671` to the upper platform/exit corridor above `y=470`? The v4 campaign
+records the horizontal-line dismount and the lower handhold/guard branches;
+the controlled support route is not being treated as proof of the intended
+route. The next investigation should use the saved v4 apex and guard-window
+states to decode the far-band object/collision path, then resume controller-only
+replay and save a checkpoint for every launch, spring, handhold, rope
+attachment, dismount, reset, or scene gate.
 
 ## Campaign index
 
@@ -170,6 +181,7 @@ launch, wall transfer, rope attachment, dismount, reset, or scene gate.
 | `20260826-level01-tower-negative-v1` | recorded-negative | lower-tower surface/actor branch from the clean upper-edge checkpoint |
 | `20260826-level01-tower-support-exploration-v1` | recorded-frontier | controlled lower support chain, rope gap, rope fixture, and natural negative |
 | `20260826-level01-canonical-recording-v3` | recorded-frontier | current power-on record through lower-tower crossing and far vertical-rope frontier |
+| `20260826-level01-canonical-recording-v4` | recorded-frontier | fresh exact-match power-on record, owned continuation to far rope, and natural upper-transfer experiments |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

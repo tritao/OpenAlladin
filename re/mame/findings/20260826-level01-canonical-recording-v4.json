@@ -1,0 +1,111 @@
+{
+  "format": "openaladdin-level01-canonical-recording-v4-finding-v1",
+  "recorded_at": "2026-08-26",
+  "campaign": "re/mame/campaigns/20260826-level01-canonical-recording-v4.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "harness_commit": "7e91b06",
+  "purpose": "Create a fresh provenance-complete power-on record, replay the known level-01 route to the far vertical connector, and document the next natural transfer experiments without promoting controlled memory fixtures as gameplay evidence.",
+  "baseline": {
+    "trace": "build/re/campaigns/20260826-level01-canonical-recording-v4/fresh-to-frontier",
+    "reference_trace": "build/re/campaigns/20260826-level01-canonical-recording-v3/fresh-to-frontier",
+    "state_frames_compared": 2297,
+    "fields_compared": [
+      "player.world_x",
+      "player.world_y",
+      "player.vx",
+      "player.vy",
+      "player.frame_ptr",
+      "terrain.behavior",
+      "terrain.landing_state",
+      "scene.state",
+      "scene.table_index",
+      "camera.x",
+      "camera.y"
+    ],
+    "result": "exact-match"
+  },
+  "verified_route": [
+    {
+      "id": "power-on-to-frontier",
+      "trace": "build/re/campaigns/20260826-level01-canonical-recording-v4/fresh-to-frontier",
+      "result": "The fresh power-on route reproduces the opening handhold, high walkway, guard clearance, and upper-edge fall with 16 named checkpoints."
+    },
+    {
+      "id": "frontier-to-far-rope",
+      "traces": [
+        "build/re/campaigns/20260826-level01-canonical-recording-v4/frontier-to-tower",
+        "build/re/campaigns/20260826-level01-canonical-recording-v4/tower-reversal",
+        "build/re/campaigns/20260826-level01-canonical-recording-v4/tower-cross",
+        "build/re/campaigns/20260826-level01-canonical-recording-v4/far-floor-guard-branch",
+        "build/re/campaigns/20260826-level01-canonical-recording-v4/far-vertical-rope-approach",
+        "build/re/campaigns/20260826-level01-canonical-recording-v4/far-vertical-rope-climb"
+      ],
+      "result": "The lower-tower reversal/crossing, guarded far-floor branch, and far vertical connector are replayable under v4. The rope reaches world (4728,671), terrain behavior 0x24, while scene state remains 0x01."
+    }
+  ],
+  "frontier": {
+    "checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v4/far-vertical-rope-climb/states/genesis/end.sta",
+    "world": [4728, 671],
+    "scene_state": "0x01",
+    "exit_predicate": "PLAYER_WORLD_X > 0x1287 and PLAYER_WORLD_Y < 0x01D6",
+    "remaining_height": "The natural route still needs to reach the upper band below Y=470."
+  },
+  "natural_transfer_experiments": [
+    {
+      "id": "horizontal-line",
+      "trace": "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v1/line-baseline",
+      "input": "c+left*20,left*90,none*10",
+      "checkpoint": "line-attached",
+      "event": {
+        "world": [4614, 628],
+        "terrain_behavior": "0x25"
+      },
+      "result": "Verified dismount from the far rope onto the horizontal connector and a natural leftward walk to its edge."
+    },
+    {
+      "id": "lower-handhold",
+      "trace": "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v2/handhold-grab",
+      "input": "left*74,c+left*10,left*216",
+      "checkpoint": "lower-handhold-grabbed",
+      "event": {
+        "world": [4242, 711],
+        "actor_before": "0x6A",
+        "actor_after": "0x6B",
+        "landing_state": "0xFF"
+      },
+      "result": "Verified natural collision with the lower handhold. Subsequent directional and jump inputs leave the player anchored around (4242,719); the player animation pointer later clears. This is a positive interaction event but not a traversable continuation."
+    },
+    {
+      "id": "continuous-edge-launch",
+      "trace": "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v5/continuous-edge-n73-recorded",
+      "input": "c+left*20,left*90,none*10,left*73,c+left*10,left*217",
+      "checkpoint": "apex",
+      "event": {
+        "world": [4316, 561],
+        "terrain_behavior": "0x00",
+        "actor_handhold": "0x6A remains unchanged"
+      },
+      "result": "The continuous no-reload trajectory reaches the highest observed natural far-transfer point without setting landing_state=0xFF. It later stalls at approximately (4246,690) with the animation pointer cleared; no upper-platform landing or scene transition occurs."
+    },
+    {
+      "id": "sword-assisted-guard-window",
+      "trace": "build/re/campaigns/20260826-level01-canonical-recording-v4/natural-rope-transfer-v7/sword-delay-20",
+      "input": "c+left*20,left*90,none*10,left*73,c+left*10,left*20,b+right*120,right*137",
+      "checkpoint": "guard-window",
+      "event": {
+        "world": [4358, 662],
+        "nearby_actor": "0x0A",
+        "child_actor": "0x2D"
+      },
+      "result": "Sword input changes the guard interaction timing but does not open the upper corridor. The branch returns to the far rope/lower band or stalls near Y=655; scene state remains 0x01."
+    }
+  ],
+  "conclusions": [
+    "The v4 recording is a clean canonical replay rather than a new exploratory state history: every compared v3 state field matches across all power-on frames.",
+    "The far rope, horizontal line, lower handhold, guard, and upper actor band are all real runtime objects in the same scene; the missing progression is an interaction or spring condition, not a missing scene-state write.",
+    "The controlled SCENE_STATE=0x08 fixture remains separate. No natural experiment in this campaign writes the scene exit predicate or reaches the required Y<470 corridor."
+  ],
+  "next_action": "Decode the far-band object records and player/actor collision paths around the type-0x0A guard, type-0x2D child, type-0x34 oscillating actor, type-0x6A handhold, and type-0x1E upper actor. Use the saved apex and guard-window checkpoints as synchronized reverse-engineering fixtures, then resume controller-only replay from the first newly verified spring/launch event."
+}
