@@ -65,16 +65,20 @@ void Z80AudioBridge::reset() {
 }
 
 void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
+    const bool use_psg = event.output == Z80SoundDriver::Output::Psg
+        || (event.output == Z80SoundDriver::Output::Unknown
+            && event.channel >= kYmVoiceCount);
     if (event.kind == Z80SoundDriver::SoundEvent::Kind::Note) {
-        if (event.channel < kYmVoiceCount) {
-            handle_ym_note(event.channel, event.opcode);
-        } else {
+        if (use_psg) {
             handle_psg_note(event.channel % 4, event.opcode);
+        } else if (event.channel < kStreamChannelCount) {
+            handle_ym_note(event.channel, event.opcode);
         }
         return;
     }
 
-    if (event.opcode == 0x61 && event.channel < kYmVoiceCount
+    if (event.opcode == 0x61 && event.channel < kStreamChannelCount
+        && event.output != Z80SoundDriver::Output::Psg
         && event.has_patch_state && is_ym_patch(event.patch_state)) {
         ym_patches_[event.channel] = event.patch_state;
         has_ym_patch_[event.channel] = true;
@@ -82,10 +86,10 @@ void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
     }
 
     if (event.opcode == 0x60) {
-        if (event.channel < kYmVoiceCount) {
-            release_ym_channel(event.channel);
-        } else {
+        if (use_psg) {
             mute_psg(event.channel % 4);
+        } else if (event.channel < kStreamChannelCount) {
+            release_ym_channel(event.channel);
         }
     }
 }
@@ -141,7 +145,7 @@ void Z80AudioBridge::configure_ym_patch(
     // operators in the YM slot order 0, 2, 1, 3.
     constexpr std::size_t kPayloadOffset = 3;
     constexpr std::array<std::uint8_t, 4> kOperatorOffsets{0, 8, 4, 12};
-    constexpr std::array<std::uint8_t, 4> kPayloadGroups{0, 2, 1, 3};
+    constexpr std::array<std::uint8_t, 4> kPayloadGroups{0, 1, 2, 3};
     constexpr std::array<std::uint8_t, 6> kOperatorRegisters{
         0x30, 0x40, 0x50, 0x60, 0x70, 0x80};
     const std::uint8_t channel = ym_channel(hardware_channel);
@@ -282,10 +286,10 @@ std::uint16_t Z80AudioBridge::psg_period(std::uint8_t note) {
 
 bool Z80AudioBridge::is_ym_patch(
     const Z80SoundDriver::PatchState& patch_state) {
-    // Patch-state records selected by the 0x61 handler use the YM record
-    // shape: a 0x0A format byte at offset one, followed by B0/B4 at offset
-    // three. Other 0x27-byte states are PSG/sample controls.
-    return patch_state[1] == 0x0A && patch_state[2] == 0x00;
+    // The byte at offset one varies between YM patches. The stable shape is
+    // the zero format/control byte at offset two, with the YM payload starting
+    // at offset three.
+    return patch_state[0] == 0x00 && patch_state[2] == 0x00;
 }
 
 }  // namespace openaladdin::audio

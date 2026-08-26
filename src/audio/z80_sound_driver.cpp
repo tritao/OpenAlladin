@@ -281,6 +281,7 @@ void Z80SoundDriver::load_patch_state(ChannelState& channel,
                 kPatchStateSize,
                 channel.patch_state.begin());
     channel.has_patch_state = true;
+    channel.output = classify_patch(channel.patch_state);
 }
 
 void Z80SoundDriver::process_channel(std::size_t index) {
@@ -354,6 +355,7 @@ Z80SoundDriver::SoundEvent Z80SoundDriver::read_event(std::size_t index) {
         false,
         0,
     };
+    event.output = channel.output;
 
     if (opcode == 0x60) {
         channel.active = false;
@@ -364,6 +366,7 @@ Z80SoundDriver::SoundEvent Z80SoundDriver::read_event(std::size_t index) {
             load_patch_state(channel, event.control_argument);
             event.has_patch_state = channel.has_patch_state;
             event.patch_state = channel.patch_state;
+            event.output = channel.output;
         }
     }
 
@@ -402,6 +405,16 @@ bool Z80SoundDriver::control_has_argument(std::uint8_t opcode) noexcept {
     default:
         return false;
     }
+}
+
+Z80SoundDriver::Output Z80SoundDriver::classify_patch(
+    const PatchState& patch_state) noexcept {
+    // YM records have a zeroed format/control byte at offset two. The byte at
+    // offset one varies between patches (for example, title patch 0x4B uses
+    // 0x02), so it is not a reliable YM discriminator.
+    return patch_state[0] == 0x00 && patch_state[2] == 0x00
+        ? Output::Ym
+        : Output::Psg;
 }
 
 }  // namespace openaladdin::audio

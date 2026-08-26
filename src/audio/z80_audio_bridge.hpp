@@ -10,11 +10,9 @@
 
 namespace openaladdin::audio {
 
-// Minimal hardware-facing bridge for the recovered stream events. FM tracks
-// use six YM2612 voices; additional tracks use the four-channel Genesis PSG.
-// ROM patch states are supplied by the recovered Z80 stream driver. Synthetic
-// events without a patch state retain a small deterministic fallback voice so
-// the bridge remains useful in isolation.
+// Minimal hardware-facing bridge for the recovered stream events. The native
+// driver annotates events with their selected output path; synthetic events
+// without that metadata retain a deterministic channel-number fallback.
 class Z80AudioBridge {
 public:
     struct Bus {
@@ -30,6 +28,8 @@ public:
 private:
     static constexpr std::size_t kYmVoiceCount = 6;
     static constexpr std::size_t kYmHardwareChannelCount = 7;
+    static constexpr std::size_t kStreamChannelCount =
+        Z80SoundDriver::kChannelCount;
 
     void write_ym_register(std::uint8_t hardware_channel,
                            std::uint8_t address,
@@ -52,10 +52,10 @@ private:
     Bus bus_;
     std::array<bool, kYmHardwareChannelCount> ym_keyed_{};
     std::array<bool, kYmHardwareChannelCount> ym_channel_in_use_{};
-    std::array<std::uint8_t, kYmVoiceCount> ym_channel_for_stream_{};
-    std::array<bool, kYmVoiceCount> has_ym_channel_for_stream_{};
-    std::array<bool, kYmVoiceCount> has_ym_patch_{};
-    std::array<Z80SoundDriver::PatchState, kYmVoiceCount> ym_patches_{};
+    std::array<std::uint8_t, kStreamChannelCount> ym_channel_for_stream_{};
+    std::array<bool, kStreamChannelCount> has_ym_channel_for_stream_{};
+    std::array<bool, kStreamChannelCount> has_ym_patch_{};
+    std::array<Z80SoundDriver::PatchState, kStreamChannelCount> ym_patches_{};
 };
 
 }  // namespace openaladdin::audio

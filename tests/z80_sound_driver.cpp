@@ -92,6 +92,8 @@ int main() {
     assert(events[2].has_patch_state);
     assert(events[2].patch_state[1] == 0x0A);
     assert(events[2].patch_state[3] == 0x34);
+    assert(events[2].output == Z80SoundDriver::Output::Ym);
+    assert(events[3].output == Z80SoundDriver::Output::Ym);
     assert(events[3].kind == Z80SoundDriver::SoundEvent::Kind::Note);
     assert(events[3].opcode == 0x30);
     assert(events[3].operand_b == -0x618);

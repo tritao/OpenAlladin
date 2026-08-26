@@ -24,6 +24,15 @@ public:
 
     using PatchState = std::array<std::uint8_t, kPatchStateSize>;
 
+    // The original driver selects the YM2612/PSG write path from the loaded
+    // track state. Unknown is retained for synthetic events and streams that
+    // have not loaded a patch yet.
+    enum class Output {
+        Unknown,
+        Ym,
+        Psg,
+    };
+
     struct SoundEvent {
         enum class Kind {
             Note,
@@ -40,6 +49,7 @@ public:
         std::uint8_t control_argument;
         bool has_patch_state = false;
         PatchState patch_state{};
+        Output output = Output::Unknown;
     };
 
     struct ChannelState {
@@ -52,6 +62,7 @@ public:
         std::uint16_t event_timer = 0;
         bool has_patch_state = false;
         PatchState patch_state{};
+        Output output = Output::Unknown;
     };
 
     using EventHandler = std::function<void(const SoundEvent&)>;
@@ -97,6 +108,7 @@ private:
     std::uint8_t read_stream_byte(ChannelState& channel);
     static std::int16_t decode_signed_operand(std::uint64_t value) noexcept;
     static bool control_has_argument(std::uint8_t opcode) noexcept;
+    static Output classify_patch(const PatchState& patch_state) noexcept;
 
     std::vector<std::uint8_t> rom_;
     std::uint32_t sequence_table_base_ = kSequenceTableBase;

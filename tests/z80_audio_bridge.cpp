@@ -111,8 +111,8 @@ int main() {
     assert(has_ym_write(0xB0, 0x34));
     assert(has_ym_write(0xB4, 0xE1));
     assert(has_ym_write(0x30, 0x24));
-    assert(has_ym_write(0x38, 0x21));
-    assert(has_ym_write(0x34, 0x51));
+    assert(has_ym_write(0x38, 0x51));
+    assert(has_ym_write(0x34, 0x21));
     assert(has_ym_write(0x3C, 0x50));
 
     ym.clear();
@@ -165,6 +165,24 @@ int main() {
     assert(psg[0] == 0xC7);  // ROM $1182[$24 - $21] = $0357
     assert(psg[1] == 0x35);
     assert(psg[2] == 0xD0);
+
+    // Stream metadata takes precedence over the legacy channel-number
+    // fallback: a PSG track may occupy a native channel normally used for YM.
+    psg.clear();
+    Z80SoundDriver::SoundEvent classified_psg_note{
+        Z80SoundDriver::SoundEvent::Kind::Note,
+        0,
+        36,
+        0,
+        0,
+        0,
+        false,
+        0,
+    };
+    classified_psg_note.output = Z80SoundDriver::Output::Psg;
+    bridge.handle(classified_psg_note);
+    assert(psg.size() == 3);
+    assert(psg[0] == 0x87);
 
     psg.clear();
     const Z80SoundDriver::SoundEvent psg_low_note{
