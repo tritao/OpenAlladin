@@ -134,6 +134,7 @@ void PlayerAnimationVm::reset() {
     pending_animation_pc_ = 0;
     force_tick_after_service_ = false;
     force_tick_next_update_ = false;
+    force_tick_without_phase_ = false;
     spawn_request_ = {};
     sound_requests_.clear();
     update_count_ = 0;
@@ -472,7 +473,10 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
     case 0xF8:
         cursor = dynamic_stream(context);
         stream_entry_ = cursor;
-        if (stream_kind_ == AnimationStreamKind::Response && !is_response_root(cursor)) {
+        // F8 returns control from terrain/action streams to the dynamic
+        // locomotion selector. Keep response roots owned by the response
+        // state machine; every other dynamic target is a locomotion stream.
+        if (stream_kind_ != AnimationStreamKind::Locomotion && !is_response_root(cursor)) {
             stream_kind_ = AnimationStreamKind::Locomotion;
         }
         if (pose_ == SpritePose::Landing) { pose_ = SpritePose::Idle; landing_finished_ = true; }
@@ -634,6 +638,10 @@ void PlayerAnimationVm::republish_stream_root() {
     animation_pc_ = stream_entry_;
     const std::uint16_t reference = read_rom16(stream_entry_);
     set_frame_pointer(read_rom32(reference));
+}
+
+void PlayerAnimationVm::force_tick_next_update_without_phase() {
+    if (rom_mode_) force_tick_without_phase_ = true;
 }
 
 void PlayerAnimationVm::update_actor(
@@ -902,6 +910,11 @@ void PlayerAnimationVm::update(
         // actor tick. This one-frame root write is visible in FF7E60.
         animation_pc_ = kLandingStream;
         landing_reselect_pending_ = false;
+    }
+    if (force_tick_without_phase_) {
+        force_tick_without_phase_ = false;
+        tick_rom(context);
+        return;
     }
     if (animation_phase_delay_ > 0) {
         // The VM is serviced on alternating update passes. Consume a phase

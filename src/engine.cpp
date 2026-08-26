@@ -1529,6 +1529,13 @@ void Engine::update_actor_animations() {
             --actor.animation_defer_ticks;
             continue;
         }
+        if (actor.spawned_by_animation) {
+            const bool hold = actor.animation_service_phase < 8
+                ? (actor.animation_service_phase & 0x03U) >= 2
+                : (actor.animation_service_phase & 1U) != 0;
+            ++actor.animation_service_phase;
+            if (hold) continue;
+        }
         // AnimationVM_TickActors is guarded by the ROM's byte at FF7E28, but
         // the two type-0x84 producers enter that gate on opposite phases:
         // scene-state-5 terrain records hold on odd phases, while sword/death
@@ -2031,6 +2038,8 @@ void Engine::reset() {
     terrain_input_world_y_ = 0;
     deferred_animation_spawn_.reset();
     camera_follow_catch_up_ = false;
+    player_animation_catch_up_ = false;
+    camera_horizontal_follow_catch_up_ = false;
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -3404,18 +3413,22 @@ void Engine::update(const InputState& input) {
     // of the next follow pass. This leaves the boundary frame externally
     // visible with scroll == 16, then exposes the rebased reference on the
     // following frame.
+    const int camera_reference_x_before_rebase = camera_.reference_x;
     const int camera_reference_y_before_rebase = camera_.reference_y;
     rebase_camera_reference();
+    const bool camera_horizontal_reference_rebased =
+        camera_.reference_x != camera_reference_x_before_rebase;
     const bool camera_vertical_reference_rebased =
         camera_.reference_y != camera_reference_y_before_rebase;
-    // Camera_UpdateFollow's vertical reference-tile rebase is the whole
+    // Camera_UpdateFollow's reference-tile rebase is the whole
     // camera pass for that frame. The follow lookup resumes on the next
     // frame; running it immediately would add a damped step on the same
     // boundary and drift the local player by the rebase cadence. This applies
-    // to both directions: upward rebases receive two follow services on the
-    // next frame, while a downward rebase is followed by one service and a
-    // post-follow tile rebase.
-    const bool camera_follow_deferred = camera_vertical_reference_rebased;
+    // to both axes: upward vertical rebases receive two follow services on
+    // the next frame, while a downward rebase is followed by one service and
+    // a post-follow tile rebase.
+    const bool camera_follow_deferred =
+        camera_horizontal_reference_rebased || camera_vertical_reference_rebased;
     const bool camera_follow_catch_up_after_rebase =
         camera_vertical_reference_rebased
         && camera_.reference_y < camera_reference_y_before_rebase;
@@ -3423,10 +3436,33 @@ void Engine::update(const InputState& input) {
     camera_follow_catch_up_ = false;
     if (camera_follow_deferred) {
         camera_follow_catch_up_ = camera_follow_catch_up_after_rebase;
+        if (camera_horizontal_reference_rebased && !camera_vertical_reference_rebased) {
+            // The horizontal player correction still occurs on this boundary,
+            // but the world-camera/scroll component is published next frame.
+            const int camera_x_before_follow = camera_.x;
+            const int camera_scroll_x_before_follow = camera_.scroll_x;
+            update_camera();
+            camera_.x = camera_x_before_follow;
+            camera_.scroll_x = camera_scroll_x_before_follow;
+            camera_horizontal_follow_catch_up_ = true;
+        }
     } else {
         update_camera();
         if (camera_follow_catch_up) {
             update_camera();
+        }
+        if (camera_horizontal_follow_catch_up_) {
+            // Catch up only the world-camera component; the corresponding
+            // local-player correction was already consumed on the rebase
+            // boundary and must not be applied a second time.
+            const int player_x_before_follow = player_.x;
+            // Camera_UpdateFollow evaluates the pre-correction local X on
+            // this catch-up pass. Reconstruct that value from the terrain
+            // response rather than applying a second visible movement.
+            player_.x += input_direction * player_.terrain_horizontal_response;
+            update_camera();
+            player_.x = player_x_before_follow;
+            camera_horizontal_follow_catch_up_ = false;
         }
         // A downward follow step can land exactly on the next camera tile
         // boundary. The ROM applies that reference update after the follow
@@ -3434,7 +3470,12 @@ void Engine::update(const InputState& input) {
         // camera pass.
         if (camera_.y >= camera_.reference_y + 0x10
             && (camera_.y & 0x0F) == 0) {
-            rebase_camera_reference();
+            if (rebase_camera_reference()) {
+                // The post-follow tile update queues the second service for
+                // the following frame, mirroring the upward rebase cadence.
+                camera_follow_catch_up_ = true;
+                player_animation_catch_up_ = true;
+            }
         }
     }
     if (was_grounded && player_.grounded && input_direction != 0) {
@@ -3503,7 +3544,14 @@ void Engine::update(const InputState& input) {
     // animation service in the observed ROM loop. The following frame
     // resumes the normal VM cadence after the camera pass has caught up.
     const bool defer_player_animation_tick = camera_follow_deferred;
+    if (defer_player_animation_tick) {
+        player_animation_catch_up_ = true;
+    }
     if (!stable_terrain_handler_fixture && !defer_player_animation_tick) {
+        if (player_animation_catch_up_) {
+            animation_.force_tick_next_update_without_phase();
+            player_animation_catch_up_ = false;
+        }
         animation_.update(
             landing_approach ? SpritePose::Jump : desired_pose,
             horizontal_direction(input),

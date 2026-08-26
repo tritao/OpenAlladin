@@ -164,6 +164,9 @@ struct ActorState {
     // distinguishes them from the scene-state-5 type-0x84 terminal record,
     // which has its own phase gate and deferred first tick.
     bool spawned_by_animation = false;
+    // Common F5 actors begin with two service frames followed by two held
+    // frames, then settle into the alternating actor-VM cadence.
+    std::uint8_t animation_service_phase = 0;
 };
 
 enum class ActorAllocationPool {
@@ -473,6 +476,12 @@ private:
     // A vertical camera-reference rebase consumes this frame's follow pass;
     // the ROM services the deferred follow twice on the next frame.
     bool camera_follow_catch_up_ = false;
+    // The same camera boundary suppresses the current player animation pass;
+    // queue the next VM service explicitly at the following boundary.
+    bool player_animation_catch_up_ = false;
+    // Horizontal tile rebases retain the local correction on the boundary and
+    // catch up the world-camera component on the following frame.
+    bool camera_horizontal_follow_catch_up_ = false;
     bool checkpoint_terrain_behavior_override_ = false;
     std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;

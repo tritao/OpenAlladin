@@ -141,6 +141,9 @@ public:
     // Publish a selector-written stream root after the VM pass. The cursor
     // reached by that pass is restored at the next update boundary.
     void republish_stream_root();
+    // Service one extra ROM tick on the next update without changing the
+    // alternating scheduler phase.
+    void force_tick_next_update_without_phase();
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
@@ -229,6 +232,7 @@ private:
     std::uint32_t pending_animation_pc_ = 0;
     bool force_tick_after_service_ = false;
     bool force_tick_next_update_ = false;
+    bool force_tick_without_phase_ = false;
     AnimationSpawnRequest spawn_request_{};
     std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;
