@@ -43,7 +43,13 @@ def load_states(path: Path) -> tuple[dict[str, Any] | None, dict[int, dict[str, 
     return header, states
 
 
-def first_difference(left: Any, right: Any, path: str = "") -> tuple[str, Any, Any] | None:
+def first_difference(
+    left: Any,
+    right: Any,
+    path: str = "",
+    *,
+    allow_additional_right_fields: bool = False,
+) -> tuple[str, Any, Any] | None:
     if type(left) is not type(right):
         return path or "$", left, right
     if isinstance(left, dict):
@@ -51,8 +57,15 @@ def first_difference(left: Any, right: Any, path: str = "") -> tuple[str, Any, A
         for key in keys:
             child = f"{path}.{key}" if path else str(key)
             if key not in left or key not in right:
+                if allow_additional_right_fields and key not in left:
+                    continue
                 return child, left.get(key), right.get(key)
-            difference = first_difference(left[key], right[key], child)
+            difference = first_difference(
+                left[key],
+                right[key],
+                child,
+                allow_additional_right_fields=allow_additional_right_fields,
+            )
             if difference:
                 return difference
         return None
@@ -61,7 +74,12 @@ def first_difference(left: Any, right: Any, path: str = "") -> tuple[str, Any, A
             child = f"{path}[{index}]"
             if index >= len(left) or index >= len(right):
                 return child, left[index] if index < len(left) else None, right[index] if index < len(right) else None
-            difference = first_difference(left[index], right[index], child)
+            difference = first_difference(
+                left[index],
+                right[index],
+                child,
+                allow_additional_right_fields=allow_additional_right_fields,
+            )
             if difference:
                 return difference
         return None
@@ -128,6 +146,14 @@ def main() -> int:
         dest="fields",
         help="compare only this dotted state field; repeat for multiple fields",
     )
+    parser.add_argument(
+        "--allow-additional-fields",
+        action="store_true",
+        help=(
+            "allow fields present only in the right-hand trace; use when "
+            "replaying an older reference with a newer recorder schema"
+        ),
+    )
     args = parser.parse_args()
     left_header, left = load_states(args.genesis.resolve())
     right_header, right = load_states(args.openaladdin.resolve())
@@ -149,7 +175,11 @@ def main() -> int:
         difference = (
             selected_difference(left[frame], right[frame], args.fields)
             if args.fields
-            else first_difference(left[frame], right[frame])
+            else first_difference(
+                left[frame],
+                right[frame],
+                allow_additional_right_fields=args.allow_additional_fields,
+            )
         )
         if difference:
             path, genesis_value, openaladdin_value = difference

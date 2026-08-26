@@ -1572,12 +1572,16 @@ def _normalize_animation_write_order(states: dict[int, dict[str, Any]]) -> int:
     """
     normalized = 0
     frames = sorted(states)
+    snapshot = {
+        frame: json.loads(json.dumps(states[frame]))
+        for frame in frames
+    }
     for previous_frame, frame, next_frame in zip(frames, frames[1:], frames[2:]):
         if previous_frame + 1 != frame or frame + 1 != next_frame:
             continue
-        previous = dict(_animation_state_records(states[previous_frame]))
+        previous = dict(_animation_state_records(snapshot[previous_frame]))
         current = dict(_animation_state_records(states[frame]))
-        following = dict(_animation_state_records(states[next_frame]))
+        following = dict(_animation_state_records(snapshot[next_frame]))
         for key, record in current.items():
             before = previous.get(key)
             after = following.get(key)
@@ -1630,10 +1634,14 @@ def normalize_animation_state_trace(path: Path) -> int:
             states[int(record["frame"])] = record
     if header is None or not states:
         return 0
+    if header.get("animation_write_order_normalized"):
+        return 0
 
     normalized = _normalize_animation_write_order(states)
     if normalized == 0:
         return 0
+    header = dict(header)
+    header["animation_write_order_normalized"] = True
     with path.open("w", encoding="utf-8") as output:
         output.write(json.dumps(header, separators=(",", ":")) + "\n")
         for record in records:
@@ -1767,7 +1775,10 @@ def synchronize_state_trace(trace_dir: Path) -> int:
         camera["state_08"] = sync["special_mode"] != 0
         states[frame] = record
 
-    _normalize_animation_write_order(states)
+    normalized = _normalize_animation_write_order(states)
+    if normalized:
+        header = dict(header)
+        header["animation_write_order_normalized"] = True
 
     # Keep the header and marker records, but emit the completed state stream
     # in frame order so downstream tools do not need to know how the debugger
@@ -2123,6 +2134,9 @@ def _prepare_segment_replay(
         end_frame,
         segment_id,
     )
+    # Keep derived segment references on the same stable VM boundary as the
+    # recorder, including runs recorded before the normalizer was introduced.
+    normalize_animation_state_trace(reference)
     _write_sliced_input(
         replay_dir / "input.jsonl",
         input_header,
@@ -2218,7 +2232,7 @@ def command_replay(args: argparse.Namespace) -> int:
                     )
                     status = run_tool(
                         "openaladdin/mame/compare_state.py",
-                        [str(reference), str(trace)],
+                        [str(reference), str(trace), "--allow-additional-fields"],
                     )
             _update_replay_manifest(run_dir, manifest, args.client, trace, status, segment_id)
             if status == 0:
@@ -2262,7 +2276,7 @@ def command_replay(args: argparse.Namespace) -> int:
                     )
                 status = run_tool(
                     "openaladdin/mame/compare_state.py",
-                    [str(original), str(trace)],
+                    [str(original), str(trace), "--allow-additional-fields"],
                 )
         _update_replay_manifest(run_dir, manifest, args.client, trace, status)
         if status == 0:
@@ -2344,6 +2358,7 @@ def command_parity(args: argparse.Namespace) -> int:
     if not native.is_file():
         suffix = f" --segment {args.segment}" if args.segment else ""
         raise SystemExit(f"native replay not found: {native}; run replay {args.name} --client native{suffix}")
+    normalize_animation_state_trace(genesis)
     fields = args.fields or DEFAULT_PARITY_FIELDS
     forwarded = [str(genesis), str(native)]
     for field in fields:

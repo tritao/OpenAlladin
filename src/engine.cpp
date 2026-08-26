@@ -979,7 +979,7 @@ void Engine::dispatch_interaction(
     if (!slot) return;
 
     ActorState actor = actor_from_template(descriptor->template_address);
-    if (actor.type == 0) return;
+    if (actor.type == 0 && !descriptor->override_type) return;
     if (descriptor->override_type) actor.type = descriptor->type;
     if (descriptor->override_animation) actor.animation_pc = descriptor->animation_pc;
     if (descriptor->override_movement) actor.movement_pc = descriptor->movement_pc;
@@ -1497,6 +1497,29 @@ void Engine::update_actor_animations() {
     if (rom_bytes_.empty()) return;
 
     const AnimationContext context = player_animation_context(player_.grounded);
+    bool has_animation_spawn = false;
+    for (const ActorState& actor : actors_) {
+        if (actor.spawned_by_animation && actor.type != 0 && actor.animation_pc != 0) {
+            has_animation_spawn = true;
+            break;
+        }
+    }
+    bool service_animation_spawns = true;
+    if (!actor_animation_scheduler_started_) {
+        if (has_animation_spawn) {
+            actor_animation_scheduler_started_ = true;
+            actor_animation_service_phase_ = 1;
+        }
+    } else if (actor_animation_hold_ticks_ != 0) {
+        --actor_animation_hold_ticks_;
+        ++actor_animation_service_phase_;
+        service_animation_spawns = false;
+    } else {
+        service_animation_spawns = actor_animation_service_phase_ < 8
+            ? (actor_animation_service_phase_ & 0x03U) < 2
+            : (actor_animation_service_phase_ & 1U) == 0;
+        ++actor_animation_service_phase_;
+    }
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         ActorState& actor = actors_[slot];
         if (!actor_snapshot_mode_ && slot == 0) {
@@ -1525,16 +1548,12 @@ void Engine::update_actor_animations() {
         // two VBlank passes before AnimationVM begins servicing it. Death
         // records also use type 0x84, but their terminal_timer guard above
         // keeps them on their independent cleanup path.
-        if (actor.type == kActorTerminalType && actor.animation_defer_ticks != 0) {
+        if (actor.animation_defer_ticks != 0) {
             --actor.animation_defer_ticks;
             continue;
         }
         if (actor.spawned_by_animation) {
-            const bool hold = actor.animation_service_phase < 8
-                ? (actor.animation_service_phase & 0x03U) >= 2
-                : (actor.animation_service_phase & 1U) != 0;
-            ++actor.animation_service_phase;
-            if (hold) continue;
+            if (!service_animation_spawns) continue;
         }
         // AnimationVM_TickActors is guarded by the ROM's byte at FF7E28, but
         // the two type-0x84 producers enter that gate on opposite phases:
@@ -2040,6 +2059,10 @@ void Engine::reset() {
     camera_follow_catch_up_ = false;
     player_animation_catch_up_ = false;
     camera_horizontal_follow_catch_up_ = false;
+    actor_animation_catch_up_ = false;
+    actor_animation_scheduler_started_ = false;
+    actor_animation_service_phase_ = 0;
+    actor_animation_hold_ticks_ = 0;
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -3134,7 +3157,6 @@ void Engine::update(const InputState& input) {
     // animation pass, so drain the request at the frame boundary rather than
     // after the current pass has already completed.
     apply_animation_spawns();
-    scan_interaction_refill_window();
     if (camera_.scene_state == 8) {
         update_state08(input);
         animation_.update(
@@ -3211,8 +3233,38 @@ void Engine::update(const InputState& input) {
     // The launch fixture reaches the ROM handler before its animation pass;
     // keeping the seeded player cursor stable preserves the observed frame
     // state while the native animation VM remains intentionally separate.
+    const bool actor_animation_catch_up = actor_animation_catch_up_;
+    actor_animation_catch_up_ = false;
+    std::array<std::uint32_t, 32> spawned_animation_pcs{};
+    bool actor_animation_command_boundary = false;
+    for (std::size_t slot = 0; slot < actors_.size() && slot < spawned_animation_pcs.size(); ++slot) {
+        if (actors_[slot].spawned_by_animation) {
+            spawned_animation_pcs[slot] = actors_[slot].animation_pc;
+        }
+    }
     if (!stable_terrain_handler_fixture) {
         update_actor_animations();
+        if (actor_animation_catch_up) {
+            // This is a second common actor-loop visit, not a second logical
+            // frame. Keep it separate from the per-actor cadence so every
+            // actor sees the same shared scheduler pass as in the ROM.
+            update_actor_animations();
+            // The extra shared visit consumes the current odd scheduler slot;
+            // align the following two held visits to the next even slot
+            // before normal alternation resumes.
+            if ((actor_animation_service_phase_ & 1U) != 0) {
+                ++actor_animation_service_phase_;
+            }
+            actor_animation_hold_ticks_ = 2;
+        }
+        for (std::size_t slot = 0; slot < actors_.size() && slot < spawned_animation_pcs.size(); ++slot) {
+            if (spawned_animation_pcs[slot] != 0
+                && actors_[slot].spawned_by_animation
+                && actors_[slot].animation_pc != spawned_animation_pcs[slot]) {
+                actor_animation_command_boundary = true;
+                break;
+            }
+        }
     }
     if (arm_surface_interaction
         && player_.animation_selector.interaction_lock == 0) {
@@ -3478,6 +3530,14 @@ void Engine::update(const InputState& input) {
             }
         }
     }
+    if (camera_horizontal_reference_rebased && actor_animation_command_boundary) {
+        actor_animation_catch_up_ = true;
+    }
+    // Camera refill dispatch runs after the common actor-animation traversal
+    // in the ROM. Newly allocated interaction records therefore remain at
+    // their initialized animation cursor for this state sample and join the
+    // next shared traversal.
+    scan_interaction_refill_window();
     if (was_grounded && player_.grounded && input_direction != 0) {
         last_ground_direction_ = input_direction;
     } else if (!player_.grounded) {

@@ -146,8 +146,8 @@ struct ActorState {
     std::uint8_t terminal_timer = 0;
     std::uint8_t movement_command_timer = 0;
     std::uint8_t animation_timer = 0;
-    // Scene-state-5 actors are installed by the terrain handler two VBlank
-    // passes before the shared animation VM begins servicing the record.
+    // Some actor producers install a record after the current animation pass;
+    // this defers its first shared animation service by one VBlank sample.
     std::uint8_t animation_defer_ticks = 0;
     // The live sword animation stream is serviced on its first two actor
     // ticks, then on alternating ticks. This is native scheduler state, not
@@ -164,9 +164,6 @@ struct ActorState {
     // distinguishes them from the scene-state-5 type-0x84 terminal record,
     // which has its own phase gate and deferred first tick.
     bool spawned_by_animation = false;
-    // Common F5 actors begin with two service frames followed by two held
-    // frames, then settle into the alternating actor-VM cadence.
-    std::uint8_t animation_service_phase = 0;
 };
 
 enum class ActorAllocationPool {
@@ -482,6 +479,16 @@ private:
     // Horizontal tile rebases retain the local correction on the boundary and
     // catch up the world-camera component on the following frame.
     bool camera_horizontal_follow_catch_up_ = false;
+    // A horizontal camera rebase can share a frame with an actor animation
+    // command boundary. The ROM's camera path then reaches the common actor
+    // animation loop once more on the following frame.
+    bool actor_animation_catch_up_ = false;
+    // Common F5 actors share one AnimationVM_TickActors traversal. Keep its
+    // cadence at engine scope so actors spawned later join the same service
+    // and hold passes as the already-live records.
+    bool actor_animation_scheduler_started_ = false;
+    std::uint8_t actor_animation_service_phase_ = 0;
+    std::uint8_t actor_animation_hold_ticks_ = 0;
     bool checkpoint_terrain_behavior_override_ = false;
     std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;
