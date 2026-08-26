@@ -345,6 +345,17 @@ This closes the current direct jump-timing family. The next investigation is
 static/runtime decoding of the interaction-row and level-object records rather
 than more timing variants from the same frontier.
 
+The corresponding instruction-level dispatch replay is recorded in
+`re/mame/campaigns/20260826-level01-upper-dispatch-trace-v1.json`. At the
+activation frame, interaction rows `0x5658` and `0x5668` resolve to
+`0x001B6E90` and `0x001B6EB2`; both enter the generic allocator at
+`0x001B5266`, return through `0x001B5270`, and create the Type-1E/Type-20
+pair at y≈466. The trace does not enter `0x001B535A` or the scene-actor
+load/spawn targets, and the full replay remains in `SCENE_STATE=0x01`.
+This closes the upper pair's dispatch path as a connector hypothesis. The
+remaining work is the actual behavior-22/24 connector or a different route
+branch that can bring the player into the pair's vertical interaction band.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -373,6 +384,7 @@ than more timing variants from the same frontier.
 | `20260826-level01-upper-frontier-search-v1` | recorded-negative | twelve exact upper-frontier jump, direction, sword, and delayed timing branches |
 | `20260826-level01-upper-platform-jump-sweep-v1` | recorded-negative | eleven fixed-position ordinary-C probes across the behavior-25 upper band |
 | `20260826-level01-upper-actor-jump-v1` | recorded-negative | eleven directional-C and C+B probes at the upper actor line |
+| `20260826-level01-upper-dispatch-trace-v1` | recorded-static-correlation | full replay and breakpoint trace of the upper interaction-row spawn path |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

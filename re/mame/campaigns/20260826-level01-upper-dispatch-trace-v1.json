@@ -1,0 +1,67 @@
+{
+  "campaign": "20260826-level01-upper-dispatch-trace-v1",
+  "status": "recorded-static-correlation",
+  "purpose": "Trace the upper interaction-row dispatch and level-object spawn path while preserving a full frame-state replay and instruction-level breakpoint log.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "2a44fafacac89fc1fbd6940062e36971234dac38",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "2a44fafacac89fc1fbd6940062e36971234dac38",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_campaign": "re/mame/campaigns/20260826-level01-reproducibility-extension-v1.json",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "breakpoint_trace": "build/re/campaigns/20260826-level01-upper-dispatch-trace-v1/upper-activation-v2/debug.log",
+  "breakpoints": [
+    "0x001AE4E4",
+    "0x001B5266",
+    "0x001B5270",
+    "0x001B535A",
+    "0x001B3E22",
+    "0x001B3C0E",
+    "0x001B3C2A",
+    "0x001AD00E",
+    "0x001AF4D6"
+  ],
+  "segments": [
+    {
+      "id": "upper-activation-dispatch",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-dispatch-trace-v1/upper-activation-v2",
+      "frames": 240,
+      "input": "right*158,up*120,none*42",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "breakpoint_registers": true,
+      "checkpoints": [
+        {
+          "frame": 1,
+          "name": "loaded",
+          "state": "states/genesis/loaded.sta"
+        },
+        {
+          "frame": 158,
+          "name": "approach",
+          "state": "states/genesis/approach.sta"
+        },
+        {
+          "frame": 175,
+          "name": "activation",
+          "state": "states/genesis/activation.sta"
+        },
+        {
+          "frame": 177,
+          "name": "stable",
+          "state": "states/genesis/stable.sta"
+        },
+        {
+          "frame": 240,
+          "name": "end",
+          "state": "states/genesis/end.sta"
+        }
+      ]
+    }
+  ]
+}

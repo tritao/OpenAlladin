@@ -1,0 +1,88 @@
+{
+  "format": "openaladdin-level01-upper-dispatch-trace-finding-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Classify the upper interaction event and close the level-object-dispatch hypothesis for the missing connector.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "2a44fafacac89fc1fbd6940062e36971234dac38",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260826-level01-upper-dispatch-trace-v1.json",
+  "trace": "build/re/campaigns/20260826-level01-upper-dispatch-trace-v1/upper-activation-v2",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "runtime": {
+    "activation_relative_frame": 175,
+    "stable_relative_frame": 177,
+    "terminal_relative_frame": 240,
+    "player_world_at_activation": [
+      4684,
+      628
+    ],
+    "scene_state_throughout": "0x01",
+    "actor_pair_after_activation": [
+      {
+        "slot": 4,
+        "type": "0x1E",
+        "world": [
+          4512,
+          466
+        ],
+        "template": "0x001B7C24"
+      },
+      {
+        "slot": 5,
+        "type": "0x20",
+        "world": [
+          4688,
+          466
+        ],
+        "template": "0x001B7C10",
+        "animation": "0x0012337A"
+      }
+    ]
+  },
+  "interaction_rows": [
+    {
+      "debug_frame": "0x0000134D",
+      "row_word_address": "0x00FF2306",
+      "row_word": "0x5658",
+      "runtime_index": "0x2B2C",
+      "interaction": "0x11",
+      "handler": "0x001B6E90",
+      "template": "0x001B7C24"
+    },
+    {
+      "debug_frame": "0x0000134D",
+      "row_word_address": "0x00FF231C",
+      "row_word": "0x5668",
+      "runtime_index": "0x2B34",
+      "interaction": "0x1B",
+      "handler": "0x001B6EB2",
+      "template": "0x001B7C10"
+    }
+  ],
+  "spawn_path": {
+    "row_processor": "0x001AE4E4",
+    "spawn_entry": "0x001B5266",
+    "post_initialize_write": "0x001B5270",
+    "initializer": "0x001AE30A",
+    "first_destination": "0x00FF7F48",
+    "second_destination": "0x00FF7F8A",
+    "writes": [
+      "actor+0x32 = interaction runtime index",
+      "actor+0x34 = interaction byte",
+      "actor+0x02 = FFF150 + FF7DB0",
+      "actor+0x04 = FFF152 + FF7DB2",
+      "interaction_table[index] = 0 after consumption"
+    ],
+    "observation": "The breakpoint log reaches the generic allocation/initialization path for both rows and returns through 0x001B5270. It does not reach 0x001B535A, 0x001B3E22, 0x001B3C0E, 0x001B3C2A, 0x001AD00E, or 0x001AF4D6."
+  },
+  "static_decode": {
+    "0x001B6E90": "Loads template 0x001B7C24 and calls 0x001B5266.",
+    "0x001B6EB2": "Loads template 0x001B7C10, calls 0x001B5266, then on success selects animation 0x0012337A and runtime type 0x20.",
+    "0x001B535A": "Belongs to the separate surface-interaction block selected from the 0x001B5320 family; it is not the upper pair's dispatch path."
+  },
+  "conclusion": "The upper pair is a concrete interaction-row actor resource, not a connector or scene-transition implementation. The direct upper spawn path has now been traced end-to-end and remains in SCENE_STATE=0x01.",
+  "next_action": "Decode the Type-1E/Type-20 animation and movement conditions and locate the actual behavior-0x22/0x24 connector or another route branch that can bring the player into the actor pair's y≈466 interaction band."
+}
