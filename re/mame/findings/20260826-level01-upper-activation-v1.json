@@ -28,7 +28,8 @@
         "destination": "0x00FF7F8A",
         "slot": 5,
         "source_template": "0x001B7C10",
-        "result_type": "0x20"
+        "template_initial_type": "0x1D",
+        "observed_runtime_type": "0x20"
       }
     ],
     "context": "A2=0x00FFAE87 for both entries; both return through the level-object dispatcher at 0x001B5270."
@@ -63,5 +64,5 @@
       "scene_state": "0x01"
     }
   ],
-  "conclusion": "Holding Up at the x≈4688 feature does not reveal a rope climb or scene gate. It causes the level-object dispatcher to initialize the Type-0x1E and Type-0x20 actor pair in the same emulated frame, placing them at y≈464. The scene remains 0x01 through frame 240. The Type-0x1E actor is now a concrete upper-route interaction candidate; the next step is to decode its collision/animation condition rather than repeat the connector sweep."
+  "conclusion": "Holding Up at the x≈4688 feature does not reveal a rope climb or scene gate. It causes the level-object dispatcher to initialize the Type-0x1E template and the Type-0x1D template in the same emulated frame; the latter is observed as runtime Type 0x20 with animation cursor 0x0012337A. The pair appears at y≈464 while the scene remains 0x01 through frame 240. The Type-0x1E actor is now a concrete upper-route interaction candidate; the next step is to decode its collision/animation condition rather than repeat the connector sweep."
 }

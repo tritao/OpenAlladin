@@ -240,8 +240,9 @@ The initializer trace is now recorded in
 upper actors being materialized in the same emulated frame through
 `0x001AE30C`, returning through the level-object dispatcher at `0x001B5270`:
 slot 4 receives template `0x001B7C24` (Type `0x1E`) and slot 5 receives
-template `0x001B7C10` (Type `0x20`). They appear around world `(4512,464)`
-and `(4688,464)` while the player remains at `(4684,628)` and
+template `0x001B7C10` (initial Type `0x1D`, observed at runtime as Type
+`0x20`). They appear around world `(4512,464)` and `(4688,464)` while the
+player remains at `(4684,628)` and
 `SCENE_STATE` remains `0x01`. This is the next concrete actor interaction
 target, not evidence of a climb or scene transition.
 
