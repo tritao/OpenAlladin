@@ -85,7 +85,7 @@ return function(options)
         if address then
             local action
             if breakpoint_registers then
-                action = "printf \"OPENALADDIN_BREAK_REGS PC=%08X FRAME=%08X D0=%08X D1=%08X D2=%08X D3=%08X D4=%08X D5=%08X D6=%08X D7=%08X A0=%08X A1=%08X A2=%08X A3=%08X A4=%08X A5=%08X A6=%08X F003=%02X F57D=%02X\\n\",pc,frame,d0,d1,d2,d3,d4,d5,d6,d7,a0,a1,a2,a3,a4,a5,a6,:maincpu.b@$FFF003,:maincpu.b@$FFF57D ; g"
+                action = "printf \"OPENALADDIN_BREAK_REGS PC=%08X FRAME=%08X D0=%08X D1=%08X D2=%08X D3=%08X D4=%08X D5=%08X D6=%08X D7=%08X A0=%08X A1=%08X A2=%08X A3=%08X A4=%08X A5=%08X A6=%08X F003=%02X F57D=%02X F7E49=%02X F0D8=%02X A1TYPE=%02X A1X=%04X A1FLAGS=%02X\\n\",pc,frame,d0,d1,d2,d3,d4,d5,d6,d7,a0,a1,a2,a3,a4,a5,a6,:maincpu.b@$FFF003,:maincpu.b@$FFF57D,:maincpu.b@$FF7E49,:maincpu.b@$FFF0D8,:maincpu.b@a1,:maincpu.w@(a1+2),:maincpu.b@(a1+0x3C) ; g"
             else
                 action = "printf \"OPENALADDIN_BREAK PC=%08X FRAME=%08X\\n\",pc,frame ; g"
             end
