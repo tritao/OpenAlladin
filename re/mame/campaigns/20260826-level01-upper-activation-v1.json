@@ -1,0 +1,34 @@
+{
+  "campaign": "20260826-level01-upper-activation-v1",
+  "status": "recorded",
+  "purpose": "Replay the verified upper-frontier route while tracing the actor initializer that materializes the remaining x≈4688 actor pair.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "69b3dbe",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "upper-connector-actor-activation",
+      "trace_dir": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation",
+      "frames": 240,
+      "input": "right*158,up*120,none*42",
+      "load_state": "upper-frontier",
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/end.sta",
+      "recording_commit": "69b3dbe",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "actor_initializer_trace": "mame-debug.log",
+      "branch_class": "exploratory-static-correlation",
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "upper4372-rope4688-activation/states/genesis/loaded.sta" },
+        { "frame": 158, "name": "approach", "state": "upper4372-rope4688-activation/states/genesis/approach.sta" },
+        { "frame": 175, "name": "activation", "state": "upper4372-rope4688-activation/states/genesis/activation.sta" },
+        { "frame": 177, "name": "stable", "state": "upper4372-rope4688-activation/states/genesis/stable.sta" },
+        { "frame": 240, "name": "end", "state": "upper4372-rope4688-activation/states/genesis/end.sta" }
+      ]
+    }
+  ]
+}

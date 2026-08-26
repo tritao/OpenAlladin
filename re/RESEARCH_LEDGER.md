@@ -234,6 +234,17 @@ trace the remaining upper-route actor/launch condition in the ROM and target
 its initializer or collision handler. Repeating the same direct Up/rope
 inputs is no longer an open question.
 
+The initializer trace is now recorded in
+`re/mame/findings/20260826-level01-upper-activation-v1.json`. Replaying
+`right*158,up*120,none*42` from the v6 far-rope checkpoint shows the two
+upper actors being materialized in the same emulated frame through
+`0x001AE30C`, returning through the level-object dispatcher at `0x001B5270`:
+slot 4 receives template `0x001B7C24` (Type `0x1E`) and slot 5 receives
+template `0x001B7C10` (Type `0x20`). They appear around world `(4512,464)`
+and `(4688,464)` while the player remains at `(4684,628)` and
+`SCENE_STATE` remains `0x01`. This is the next concrete actor interaction
+target, not evidence of a climb or scene transition.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -255,6 +266,7 @@ inputs is no longer an open question.
 | `20260826-level01-canonical-recording-v4` | recorded-frontier | fresh exact-match power-on record, owned continuation to far rope, and natural upper-transfer experiments |
 | `20260826-level01-canonical-recording-v5` | recorded-frontier | clean power-on recording and self-contained replay chain through the far vertical-rope frontier |
 | `20260826-level01-canonical-recording-v6` | recording-frontier | clean v5 replay, Type1E wall opening, far-rope transfer, and bounded upper-frontier probes |
+| `20260826-level01-upper-activation-v1` | recorded-static-correlation | initializer trace for the Type1E/Type20 pair materialized at the upper x≈4688 feature |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

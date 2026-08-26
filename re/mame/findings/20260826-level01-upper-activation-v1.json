@@ -1,0 +1,67 @@
+{
+  "format": "openaladdin-level01-upper-activation-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Correlate the remaining upper-frontier actor pair with its level-object initializer and preserve the exact replay evidence.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "harness_commit": "69b3dbe",
+  "campaign": "re/mame/campaigns/20260826-level01-upper-activation-v1.json",
+  "trace": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/far-rope-sword-jump/states/genesis/end.sta",
+  "input": "right*158,up*120,none*42",
+  "initializer_trace": {
+    "artifact": "mame-debug.log",
+    "routine": "0x001AE30C",
+    "return_dispatcher": "0x001B5270",
+    "absolute_mame_frame": "0x1353",
+    "records": [
+      {
+        "destination": "0x00FF7F48",
+        "slot": 4,
+        "source_template": "0x001B7C24",
+        "result_type": "0x1E"
+      },
+      {
+        "destination": "0x00FF7F8A",
+        "slot": 5,
+        "source_template": "0x001B7C10",
+        "result_type": "0x20"
+      }
+    ],
+    "context": "A2=0x00FFAE87 for both entries; both return through the level-object dispatcher at 0x001B5270."
+  },
+  "runtime_checkpoints": [
+    {
+      "frame": 158,
+      "player_world": [4684, 628],
+      "actors": [
+        { "slot": 3, "type": "0x40", "world": [4656, 672] },
+        { "slot": 4, "type": "0x2D", "world": [4554, 798] }
+      ],
+      "scene_state": "0x01"
+    },
+    {
+      "frame": 175,
+      "player_world": [4684, 628],
+      "actors": [
+        { "slot": 3, "type": "0x40", "world": [4656, 672] },
+        { "slot": 4, "type": "0x1E", "world": [4512, 464], "animation_pc": "0x00123614" },
+        { "slot": 5, "type": "0x20", "world": [4688, 464], "animation_pc": "0x0012337A" }
+      ],
+      "scene_state": "0x01"
+    },
+    {
+      "frame": 177,
+      "player_world": [4684, 628],
+      "actors": [
+        { "slot": 4, "type": "0x1E", "world": [4512, 466], "animation_pc": "0x0012355A", "frame_ptr": "0x001F286A" },
+        { "slot": 5, "type": "0x20", "world": [4688, 466], "animation_pc": "0x0012337E", "frame_ptr": "0x001F1ABA" }
+      ],
+      "scene_state": "0x01"
+    }
+  ],
+  "conclusion": "Holding Up at the x≈4688 feature does not reveal a rope climb or scene gate. It causes the level-object dispatcher to initialize the Type-0x1E and Type-0x20 actor pair in the same emulated frame, placing them at y≈464. The scene remains 0x01 through frame 240. The Type-0x1E actor is now a concrete upper-route interaction candidate; the next step is to decode its collision/animation condition rather than repeat the connector sweep."
+}
