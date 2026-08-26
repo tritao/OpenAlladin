@@ -901,6 +901,21 @@ OPENALADDIN_DEBUG_WATCH=1 OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 \
 
 Debugger output is written to MAME's `debug.log` in the working directory.
 
+For terrain-resolution experiments, add breakpoints at the resolver's map,
+floor, or contour stages and enable the context formatter:
+
+```sh
+OPENALADDIN_BREAKPOINTS=0x001AD87E,0x001AD886,0x001AD904 \
+OPENALADDIN_BREAKPOINT_REGISTERS=1 \
+OPENALADDIN_BREAKPOINT_TERRAIN_CONTEXT=1 \
+  ./tools/openaladdin/mame/run.sh
+```
+
+The resulting `OPENALADDIN_BREAK_TERRAIN` lines include the player world
+coordinates, live map word, terrain index, floor byte, contour lookup, and
+terrain-response flags.  This context is intended for saved-state route
+branches and is opt-in; ordinary breakpoint traces keep their existing output.
+
 ## Confirmed observation
 
 The verified USA/NTSC ROM reaches the first Agrabah gameplay screen after the
