@@ -181,6 +181,41 @@
   evidence:
     - ghidra_upper_actor_response_targeted_decompile
     - rom_actor_collision_handler_table_001EBA
+0x001AC614:
+  name: ActorType14_ActorCollisionHandler
+  confidence: confirmed
+  description: Actor-collision dispatch target for runtime actor type 0x14. It clears the source actor, processes the shared type-0x2D interaction cleanup, and optionally queues event 3 when the VDP update flag is active; it does not launch the player or write scene state.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_unclassified_actor_collision_decompile
+0x001AC63C:
+  name: ActorType2B_ActorCollisionHandler
+  confidence: confirmed
+  description: Actor-collision dispatch target for runtime actor type 0x2B. It raises the actor-collision event flag, converts the receiving actor to the type-0x84 event response with animation 0x00123FF8, and has no direct player transfer or scene-state write.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_unclassified_actor_collision_decompile
+0x001AC676:
+  name: ActorType2F_ActorCollisionHandler
+  confidence: confirmed
+  description: Actor-collision dispatch target for runtime actor type 0x2F. It clears both collision records through the shared resource/interaction cleanup path and provides no player transfer or scene-state write.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_unclassified_actor_collision_decompile
+0x001AC682:
+  name: ActorType30_ActorCollisionHandler
+  confidence: confirmed
+  description: Actor-collision dispatch target for runtime actor type 0x30. It clears the source resources and replaces the receiving record with the shared template at 0x001B7940 plus animation 0x00123024; it provides no player transfer or scene-state write.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_unclassified_actor_collision_decompile
+0x001AC6A2:
+  name: ActorType2D2E31_ActorCollisionHandler
+  confidence: confirmed
+  description: Shared actor-collision dispatch target for runtime actor types 0x2D, 0x2E, and 0x31. It converts transient source/receiving records to type 0x84 and clears transient fields; it does not launch the player or write scene state.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_unclassified_actor_collision_decompile
 0x001ABD7E:
   name: Actor_ActorCollisionPass
   confidence: confirmed

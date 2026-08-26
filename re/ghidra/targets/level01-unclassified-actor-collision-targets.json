@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-unclassified-actor-collision-family",
+    "purpose": "Decode the actor-collision handlers shared by runtime types 0x2B, 0x2D, 0x2E, 0x2F, 0x30, and 0x31, and determine whether any path provides a traversal transfer, launch, or scene gate."
+  },
+  "targets": [
+    { "address": "0x001AC614", "name": "ActorCollisionHandler_Type14" },
+    { "address": "0x001AC63C", "name": "ActorCollisionHandler_Type2B" },
+    { "address": "0x001AC676", "name": "ActorCollisionHandler_Type2F" },
+    { "address": "0x001AC682", "name": "ActorCollisionHandler_Type30" },
+    { "address": "0x001AC6A2", "name": "ActorCollisionHandler_Type2D_2E_31" },
+    { "address": "0x001ABE8A", "name": "Actor_HandleType2DInteraction" },
+    { "address": "0x001AE27A", "name": "Actor_AllocateSlot" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
+    { "address": "0x001AE372", "name": "Actor_ClearResources" },
+    { "address": "0x001AE3CE", "name": "Actor_ClearOwnedResources" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF100", "name": "ACTOR_COLLISION_EVENT_FLAG" },
+    { "address": "0x00FFF14E", "name": "ACTOR_INTERACTION_COUNTER" },
+    { "address": "0x00FFF57D", "name": "VDP_UPDATE_FLAG" },
+    { "address": "0x00FFF0E9", "name": "SCENE_SCRIPT_COUNTDOWN" }
+  ]
+}

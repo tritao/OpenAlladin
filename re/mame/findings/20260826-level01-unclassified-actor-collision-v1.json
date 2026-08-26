@@ -1,0 +1,70 @@
+{
+  "format": "openaladdin-level01-unclassified-actor-collision-finding-v1",
+  "recorded_at": "2026-08-26",
+  "purpose": "Classify the remaining compact actor-collision handlers used by runtime types 0x2B, 0x2D, 0x2E, 0x2F, 0x30, and 0x31, and remove or retain them as Level 01 traversal hypotheses.",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "5b3996c",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level01-unclassified-actor-collision-targets.json",
+  "decompile_artifact": "build/re/level01-unclassified-actor-collision-targeted-decompile-v1.json",
+  "dispatch_table": {
+    "rom_base": "0x001EBA",
+    "entry_width": 4,
+    "entries": [
+      { "runtime_type": "0x14", "pointer": "0x001F0A", "handler": "0x001AC614" },
+      { "runtime_type": "0x2B", "pointer": "0x001F66", "handler": "0x001AC63C" },
+      { "runtime_type": "0x2D", "pointer": "0x001F6E", "handler": "0x001AC6A2" },
+      { "runtime_type": "0x2E", "pointer": "0x001F72", "handler": "0x001AC6A2" },
+      { "runtime_type": "0x2F", "pointer": "0x001F76", "handler": "0x001AC676" },
+      { "runtime_type": "0x30", "pointer": "0x001F7A", "handler": "0x001AC682" },
+      { "runtime_type": "0x31", "pointer": "0x001F7E", "handler": "0x001AC6A2" }
+    ]
+  },
+  "static_handlers": [
+    {
+      "address": "0x001AC614",
+      "runtime_types": ["0x14"],
+      "effect": "Clears the source actor, releases its resources, processes the shared type-0x2D interaction branch, and optionally queues event 3 when the VDP update flag is active.",
+      "scene_effect": "No direct SCENE_STATE or SCENE_SCRIPT_COUNTDOWN write."
+    },
+    {
+      "address": "0x001AC63C",
+      "runtime_types": ["0x2B"],
+      "effect": "Processes the shared type-0x2D interaction branch, sets ACTOR_COLLISION_EVENT_FLAG at 0x00FFF100, and converts the receiving actor to type 0x84 with animation 0x00123FF8; the fallback allocation path preserves the source position.",
+      "scene_effect": "No direct SCENE_STATE or SCENE_SCRIPT_COUNTDOWN write."
+    },
+    {
+      "address": "0x001AC676",
+      "runtime_types": ["0x2F"],
+      "effect": "Clears the source actor, releases its resources, and processes the shared type-0x2D interaction branch.",
+      "scene_effect": "No direct player launch, connector install, SCENE_STATE write, or SCENE_SCRIPT_COUNTDOWN write."
+    },
+    {
+      "address": "0x001AC682",
+      "runtime_types": ["0x30"],
+      "effect": "Clears the source actor and owned resources, initializes the receiving record from template 0x001B7940, and assigns animation 0x00123024.",
+      "scene_effect": "No direct player launch, connector install, SCENE_STATE write, or SCENE_SCRIPT_COUNTDOWN write."
+    },
+    {
+      "address": "0x001AC6A2",
+      "runtime_types": ["0x2D", "0x2E", "0x31"],
+      "effect": "If the source actor is type 0x80, converts it to type 0x84 with animation 0x00122B6E and clears its transient fields; if it is type 0x82, the source conversion is skipped. The receiving actor is then converted to type 0x84 with flag byte 0x40.",
+      "scene_effect": "No direct player launch, connector install, SCENE_STATE write, or SCENE_SCRIPT_COUNTDOWN write."
+    }
+  ],
+  "shared_helpers": {
+    "0x001ABE8A": "Handles the type-0x2D interaction branch and reinitializes the actor from the shared template while preserving position/facing conditions.",
+    "0x001AE30A": "Copies an actor template into the destination record and clears runtime cursor/resource fields.",
+    "0x001AE372": "Releases an actor's owned resource bytes and clears its ownership pointers."
+  },
+  "level01_relevance": {
+    "observed_runtime_types": ["0x2D"],
+    "observed_handler_entries": ["0x001AC6A2"],
+    "natural_trace_result": "The existing natural type-0x2D actor traces show transient cleanup/spawn behavior and no traversal transfer; the newly classified sibling handlers add no launch or scene path.",
+    "unobserved_types": ["0x14", "0x2B", "0x2E", "0x2F", "0x30", "0x31"],
+    "scene_state_08_path": "None of the five handlers directly assigns SCENE_STATE=0x08 or arms the scene countdown."
+  },
+  "conclusion": "The remaining compact actor-collision family is terminal cleanup, resource release, or transient effect replacement. It does not explain the missing Level 01 vertical transfer or natural exit. The unresolved search should remain focused on the dynamic terrain/resource condition that reaches the upper corridor, not these actor-collision entries."
+}

@@ -192,6 +192,12 @@ the finding or commit message.
   handlers spawn Type `0x3A`, Type `0x40`, or a generic object respectively;
   none writes a scene state, and none is present in the extracted Level 01
   interaction table.
+- `re/mame/findings/20260826-level01-unclassified-actor-collision-v1.json`
+  classifies the remaining actor-collision table family: types `0x2B`,
+  `0x2D`, `0x2E`, `0x2F`, `0x30`, and `0x31` are transient cleanup, event, or
+  type-`0x84` replacement paths. They contain no player launch, connector, or
+  scene-state write; the observed Level 01 type-`0x2D` path is therefore not
+  the missing vertical transfer.
 
 ### Scene and exit work
 
