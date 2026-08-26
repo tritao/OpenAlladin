@@ -621,6 +621,18 @@
   evidence:
     - ghidra_disassembly_001AD00E
     - mame_type_2D_spawn_trace_1800
+0x001ACB7A:
+  name: ActorEvent_SetFlag20
+  confidence: confirmed
+  description: Animation callback used by the type-0x84 child stream; sets actor field +0x07 bit 0x20.
+  evidence:
+    - ghidra_type01_child_chain_decompile
+0x001ACB82:
+  name: ActorEvent_ClearFlag20
+  confidence: confirmed
+  description: Animation callback used by the type-0x84 child stream; clears actor field +0x07 bit 0x20.
+  evidence:
+    - ghidra_type01_child_chain_decompile
 0x001ADE36:
   name: MovementVM_TickActors
   confidence: confirmed

@@ -1,0 +1,79 @@
+{
+  "campaign": "20260826-type01-child-chain-v1",
+  "status": "recorded-controlled-static-correlation",
+  "purpose": "Resolve the Type-0x01 upper-platform resource animation and validate its F5 child placement and lifetime.",
+  "recorded_at": "2026-08-26",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "0ba36cd",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "0ba36cd",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "trace_dir": "build/re/analysis/20260826-type01-child-chain-v4",
+  "load_state": "build/re/campaigns/20260826-level01-canonical-recording-v6/natural-horizontal-line/states/genesis/line-baseline.sta",
+  "frames": 301,
+  "input": "none*301",
+  "injection": {
+    "frame": 1,
+    "slot": 31,
+    "type": "0x01",
+    "template": "0x001B7A30",
+    "animation": "0x00122D92",
+    "world": [4240, 384],
+    "movement_pc": "0x00000000"
+  },
+  "ghidra": {
+    "target_request": "re/ghidra/targets/type01-child-chain-targets.json",
+    "report": "build/re/type01-child-chain-targeted-decompile.json",
+    "targets": ["0x001AD00E", "0x001AE30A", "0x001ACB7A", "0x001ACB82", "0x001B7A30", "0x001B7D00"]
+  },
+  "static_decode": {
+    "type01_animation": {
+      "entry": "0x00122D92",
+      "frame": "0x001F7DC0",
+      "random_branch": "0x00122D96 -> 0x00122D92",
+      "f5": {
+        "address": "0x00122D9C",
+        "template": "0x001B7D00",
+        "x_offset": 22,
+        "y_offset": -12,
+        "movement_override": null,
+        "animation_override": null
+      },
+      "loop": "0x00122DAC -> 0x00122D92"
+    },
+    "child_animation": {
+      "entry": "0x00122F38",
+      "frames": ["0x001F8ECA", "0x001F8EDC", "0x001F8EEE", "0x001F8F18", "0x001F8F42"],
+      "cleanup": "F6 00 at 0x00122F4C",
+      "callbacks": ["0x001ACB7A", "0x001ACB82"]
+    }
+  },
+  "runtime_observation": {
+    "type01": {
+      "slot": 31,
+      "first_frame": 1,
+      "last_observed_frame": 93,
+      "world": [4240, 384],
+      "movement_pc": "0x00000000",
+      "scene_state": "0x01"
+    },
+    "child": {
+      "slot": 1,
+      "first_frame": 4,
+      "last_observed_frame": 5,
+      "type": "0x84",
+      "world": [4262, 372],
+      "animation": "0x00122F38",
+      "movement_pc": "0x00000000"
+    },
+    "scene_writer_observed": false,
+    "scene_state_changed": false
+  },
+  "result": "Type 0x01 is a stationary, timed upper-route resource. Its F5 record spawns a short-lived Type-0x84 visual/event child at (+22,-12); neither stream supplies movement or a traversal transfer.",
+  "limitations": [
+    "The child was validated with a controlled actor injection from the line-baseline checkpoint, not by natural activation of the row-10 record.",
+    "The runtime child lifetime is reported from frame-state samples; the static F6 cleanup boundary is authoritative for the animation semantics."
+  ],
+  "next": "Return to natural route analysis upstream of the row-10 record; do not treat Type 0x01 or its Type 0x84 child as the missing lift or exit gate."
+}

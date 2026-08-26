@@ -665,6 +665,18 @@ the wall with `SCENE_STATE=0x01`; no actor, scene-script, scene-state, or exit
 writer fires. This closes the lower-wall input family as geometry and returns
 the route search to the upstream resource/object activation path.
 
+The Type-0x01 upper-platform resource chain is recorded in
+`re/mame/findings/20260826-type01-child-chain-v1.json` and
+`re/mame/campaigns/20260826-type01-child-chain-v1.json`. Static decoding of
+`ACTOR_ANIM_TYPE01` at `0x00122D92` shows a stationary frame at
+`0x001F7DC0`, a random branch, and an F5 record that uses template
+`0x001B7D00` with signed offset `(+22,-12)`. The child template is Type
+`0x84`, has no movement stream, cycles five small effect frames, toggles
+actor flag `+0x07` bit `0x20`, and then clears itself. A corrected controlled
+injection confirms the child at `(4262,372)` from the parent at `(4240,384)`;
+scene state remains `0x01` and no scene/exit writer fires. This removes the
+row-10 Type-0x01 chain from the missing lift/exit hypotheses.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -723,6 +735,7 @@ the route search to the upstream resource/object activation path.
 | `20260826-level01-natural-gate-audit-v1` | recorded-negative-natural | far-floor actor terminal countdown and terrain-lock writes are local responses; no scene transition |
 | `20260826-level01-controlled-rope-wall-interaction-v1` | recorded-negative-controlled | far-rope upper-wall dismount reaches selector 0x60 and returns to the connector; no scene transition |
 | `20260826-level01-lower-frontier-terrain-response-v1` | recorded-negative-frontier | lower frontier stop-left behavior is a solid geometry probe; no scene or actor transition |
+| `20260826-type01-child-chain-v1` | recorded-controlled-static-correlation | Type-0x01 upper resource F5 child decode and corrected runtime placement check |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

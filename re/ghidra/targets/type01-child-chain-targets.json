@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "type01-upper-resource-child-chain",
+    "purpose": "Resolve the Type-0x01 upper-route animation F5 child, its Type-0x84 template, and the event callbacks used by the child animation."
+  },
+  "targets": [
+    { "address": "0x001AD00E", "name": "AnimationVM_SpawnOrCopyActor" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
+    { "address": "0x001ACB7A", "name": "Type84ChildEvent_1ACB7A" },
+    { "address": "0x001ACB82", "name": "Type84ChildEvent_1ACB82" },
+    { "address": "0x001B7A30", "name": "ACTOR_TEMPLATE_TYPE01" },
+    { "address": "0x001B7D00", "name": "ACTOR_TEMPLATE_TYPE84_CHILD" }
+  ],
+  "memory_references": [
+    { "address": "0x00122D92", "name": "ACTOR_ANIM_TYPE01" },
+    { "address": "0x00122F38", "name": "ACTOR_ANIM_TYPE84_CHILD" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" }
+  ]
+}

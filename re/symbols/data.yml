@@ -687,6 +687,22 @@
     - ghidra_player_animation_pc_assignment
     - animation_stream_classifier
 
+0x00122D92:
+  name: ACTOR_ANIM_TYPE01
+  confidence: confirmed
+  description: Type-0x01 upper-resource animation; it holds sprite frame 0x001F7DC0, conditionally executes F5, and loops back to its entry.
+  evidence:
+    - ghidra_type01_child_chain_decompile
+    - mame_type01_child_chain_trace
+
+0x00122F38:
+  name: ACTOR_ANIM_TYPE84_CHILD
+  confidence: confirmed
+  description: Short Type-0x84 child effect stream; it cycles frames 0x001F8ECA, 0x001F8EDC, 0x001F8EEE, 0x001F8F18, and 0x001F8F42, then clears the actor and calls the flag-20 callbacks.
+  evidence:
+    - ghidra_type01_child_chain_decompile
+    - mame_type01_child_chain_trace
+
 0x00123EE8:
   name: ACTOR_ANIM_STATE_123EE8
   confidence: confirmed
@@ -750,6 +766,22 @@
   evidence:
     - ghidra_player_animation_selector_001AD150
     - animation_stream_classifier
+
+0x001B7A30:
+  name: ACTOR_TEMPLATE_TYPE01
+  confidence: confirmed
+  description: Compact Type-0x01 upper-resource template with no movement stream and animation ACTOR_ANIM_TYPE01.
+  evidence:
+    - mame_upper_platform_selector87_trace
+    - ghidra_type01_child_chain_decompile
+
+0x001B7D00:
+  name: ACTOR_TEMPLATE_TYPE84_CHILD
+  confidence: confirmed
+  description: Compact Type-0x84 child-effect template with no movement stream, animation ACTOR_ANIM_TYPE84_CHILD, and one owned resource.
+  evidence:
+    - ghidra_type01_child_chain_decompile
+    - mame_type01_child_chain_trace
 
 0x001B7CB0:
   name: ACTOR_TEMPLATE_GUARD_SWORD_ATTACK
