@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-state-level-loader",
+    "purpose": "Decode the common level loader that maps SCENE_STATE to the ROM level table and initializes level-specific runtime resources."
+  },
+  "targets": [
+    { "address": "0x001AA484", "name": "Level_LoadFromSceneState" },
+    { "address": "0x001AA696", "name": "Level_InitializePlayerAndTerrainState" },
+    { "address": "0x001AA6C8", "name": "Level_BuildTerrainRowPointers" },
+    { "address": "0x001AA6EE", "name": "Level_ClearActorScratch" },
+    { "address": "0x001AA700", "name": "Level_ClearSceneEventScratch" },
+    { "address": "0x001AA712", "name": "Level_ClearInputScratch" },
+    { "address": "0x001B3434", "name": "TerrainBehaviorTable_LoadForLevel" },
+    { "address": "0x001B3818", "name": "TerrainBehaviorTable_Decode" }
+  ],
+  "memory_references": [
+    { "address": "0x00002C78", "name": "LEVEL_TABLE" },
+    { "address": "0x00FF7E26", "name": "SCENE_STATE" },
+    { "address": "0x00FF7DF6", "name": "LEVEL_START_X" },
+    { "address": "0x00FF7DFA", "name": "PLAYER_X" },
+    { "address": "0x00FF7DF8", "name": "LEVEL_START_Y" },
+    { "address": "0x00FF7DFC", "name": "PLAYER_Y" },
+    { "address": "0x00FF7DB6", "name": "LEVEL_WIDTH_TILES" },
+    { "address": "0x00FF7DB8", "name": "LEVEL_WIDTH_PIXELS" },
+    { "address": "0x00FF7DBA", "name": "LEVEL_HEIGHT_TILES" },
+    { "address": "0x00FF7DBC", "name": "LEVEL_HEIGHT_PIXELS" },
+    { "address": "0x00FF9884", "name": "TERRAIN_ROW_POINTER_TABLE" },
+    { "address": "0x00FFAE84", "name": "TERRAIN_BEHAVIOR_INDEX_TABLE" },
+    { "address": "0x00FF8884", "name": "TERRAIN_CONTOUR_DATA" },
+    { "address": "0x00FFF140", "name": "LEVEL_RESOURCE_POINTER" },
+    { "address": "0x00FFF148", "name": "LEVEL_RESOURCE_LENGTH" }
+  ]
+}

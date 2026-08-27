@@ -31,6 +31,14 @@
   evidence:
     - ghidra_targeted_decompile_001B0F66
     - scene_resources_static_map
+0x001AA484:
+  name: Level_LoadFromSceneState
+  confidence: confirmed
+  description: Uses SCENE_STATE as an index into the 66-byte ROM level table at 0x002C78, copies the active level's start/camera and dimensions into work RAM, decodes its terrain/map resources, and initializes the runtime row and event tables.
+  evidence:
+    - ghidra_targeted_decompile_001AA484
+    - ghidra_disassembly_001AA484
+    - rom_level_table_002C78
 0x001B1432:
   name: Scene_VDP_ClearTransitionPlane
   confidence: confirmed

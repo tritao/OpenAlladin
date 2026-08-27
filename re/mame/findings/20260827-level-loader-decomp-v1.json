@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-level-loader-decomp-finding-v1",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "e37032d",
+  "target_manifest": "re/ghidra/targets/level-loader-targets.json",
+  "decompile_artifact": "build/re/level-loader-targeted-decompile.json",
+  "loader": {
+    "address": "0x001AA484",
+    "table": "LEVEL_TABLE at 0x002C78",
+    "entry_size": 66,
+    "index_source": "SCENE_STATE at 0x00FF7E26",
+    "behavior": [
+      "Clears scene-event, input, and actor scratch ranges before loading the record.",
+      "Copies record offsets +0/+2/+4/+6 into WORLD_CAMERA_X, PLAYER_X, WORLD_CAMERA_Y, PLAYER_Y and the camera references/thresholds.",
+      "Loads the +0x08 terrain resource, +0x0C map/floor resource, optional +0x1C contour resource, and initializes row pointers from the resulting level width.",
+      "Copies +0x14/+0x18 resource metadata and +0x24/+0x2C/+0x34 level callbacks/related pointers into work RAM.",
+      "Copies +0x28 and +0x2A as LEVEL_WIDTH_TILES/LEVEL_HEIGHT_TILES and derives pixel dimensions and the terrain row stride."
+    ]
+  },
+  "helpers": [
+    { "address": "0x001AA696", "name": "Level_InitializePlayerAndTerrainState", "effect": "installs the initial actor template, resets terrain response timer, and sets controller query flags active" },
+    { "address": "0x001AA6C8", "name": "Level_BuildTerrainRowPointers", "effect": "fills 0x58 rows of 16 pointers from WORK_RAM_BASE using LEVEL_WIDTH_TILES*2 as the row stride" },
+    { "address": "0x001AA6EE", "name": "Level_ClearActorScratch", "effect": "clears 0x2B bytes at 0x00FFEFDC" },
+    { "address": "0x001AA700", "name": "Level_ClearSceneEventScratch", "effect": "clears 0x443 bytes at 0x00FFF12E" },
+    { "address": "0x001AA712", "name": "Level_ClearInputScratch", "effect": "clears 0x126 bytes at 0x00FFF008" }
+  ],
+  "progression_implication": "SCENE_STATE is both the scene/resource state and the level-table index used by the common loader. State 0x01 therefore selects the Level 01 table entry; state 0x03 selects the third table entry during a scene rebuild, but the observed settled state-3 loop does not itself perform another level-load call in the tested window.",
+  "native_implication": "Level metadata must include the ROM table entry's start coordinates, camera thresholds, map dimensions, resource pointers, callbacks, and scene-state index. Level 01 remains the only behaviorally implemented native slice; later entries are now addressable without assuming its 300x45 geometry."
+}

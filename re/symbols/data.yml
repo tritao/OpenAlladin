@@ -54,6 +54,18 @@
   confidence: confirmed
   description: VDP control port
 
+0x002C78:
+  name: LEVEL_TABLE
+  type: rom_table
+  entry_size: 66
+  count: 13
+  confidence: confirmed
+  description: 66-byte level records indexed by SCENE_STATE during Level_LoadFromSceneState; records contain start/camera offsets, compressed terrain/map resources, palette, block dimensions, music and enter/exit callbacks.
+  evidence:
+    - rom_level_table_002C78
+    - ghidra_disassembly_001AA484
+    - asset_extractor_levels_json
+
 0x004554:
   name: TERRAIN_RESPONSE_HANDLER_TABLE
   type: rom_pointer_table
