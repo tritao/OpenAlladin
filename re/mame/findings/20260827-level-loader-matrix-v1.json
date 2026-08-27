@@ -30,8 +30,8 @@
   "static_width_evidence": {
     "decompile": "build/re/level-loader-targeted-decompile.json",
     "loader": "0x001AA484",
-    "table_width_offset": "0x28",
-    "table_height_offset": "0x2A",
+    "table_width_offset": "0x30",
+    "table_height_offset": "0x32",
     "width_read": "LEVEL_WIDTH_TILES = *(short *)(&DAT_00002ca8 + SCENE_STATE * 0x42)",
     "pixel_width": "LEVEL_WIDTH_PIXELS = LEVEL_WIDTH_TILES << 4",
     "conclusion": "The Level 08 runtime width 43392 is the low 16 bits of 15000 * 16, matching the loader's 16-bit table-field semantics."
