@@ -1072,6 +1072,23 @@ predicate, writes a scene gate, or leaves `SCENE_STATE=0x01`. This closes the
 delayed-C family and redirects the search to an interaction/resource producer
 that can change actor or terrain state.
 
+The far-rope upper resource producer is recorded in
+`re/mame/findings/20260827-level01-far-rope-upper-resource-trace-v1.json` and
+`re/mame/campaigns/20260827-level01-far-rope-upper-resource-trace-v1.json`.
+The natural upward dismount from the synchronized far-rope endpoint reaches the
+upper interaction rows at relative frame 57 (MAME debugger frame `0x1403`).
+Row word `0x5658` / runtime index `0x2B2C` selects `0x11`, dispatches through
+`0x001B6E90`, and initializes slot 4 from template `0x001B7C24` as runtime
+Type `0x1E`. Row word `0x5668` / runtime index `0x2B34` selects `0x1B`,
+dispatches through `0x001B6EB2`, and initializes slot 5 from template
+`0x001B7C10` as runtime Type `0x20`. The full 300-frame route and an 80-frame
+register/row-context replay agree on the producer path. Neither replay writes
+scene state, the scene cursor, a countdown, or an exit gate; both remain in
+`SCENE_STATE=0x01`. This confirms the pair's natural producer and closes the
+hypothesis that it is itself the missing transition trigger. The next search is
+the remaining upper-band interaction/resource records and any producer capable
+of changing traversal or setting the Level 01 countdown.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1161,6 +1178,7 @@ that can change actor or terrain state.
 | `20260827-level01-far-floor-type1e-trace-v1` | recorded-negative-frontier | detailed far-floor Type-1E contact, local FFF0E6 timer, and deferred callback trace; no scene transition |
 | `20260827-level01-upper-pair-vm-trace-v1` | recorded-negative | 180-frame neutral VM-boundary trace from the synchronized Type-0x1E/Type-0x20 activation pair; no handler or scene transition |
 | `20260827-level01-early-top-delayed-dismount-v1` | recorded-negative-frontier | seven delayed-C dismount branches from the early connector top; ordinary high-walkway arc only, no upper transfer |
+| `20260827-level01-far-rope-upper-resource-trace-v1` | recorded-positive-producer-frontier | natural far-rope upward dismount produces the upper Type-0x1E/Type-0x20 pair; no scene transition |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
