@@ -948,6 +948,19 @@ exit predicate, or scene-state write; gameplay remains `SCENE_STATE=0x01`.
 This records a positive route frontier and shifts the next target to the
 top-of-connector interaction/resource producer and its hidden-ledge condition.
 
+The lower-tower route join is recorded in
+`re/mame/findings/20260827-level01-route-join-v1.json` and
+`re/mame/campaigns/20260827-level01-route-join-v1.json`. A clean chained replay
+from the lower-tower-entry checkpoint reverses left to the staircase ledge at
+world `(2271,832)`, crosses the tower band, and reaches the far lower floor.
+Immediate downward sword branches clear the overlapping guards at approximately
+`x=3450`, `x=3627`, and `x=4704`, each changing the active enemy to cleanup type
+`0x84`. From the resulting far-guard checkpoint, `C+Left` reaches the vertical
+rope contact at `(4721,816)`; Up held from that synchronized boundary climbs to
+the canonical rope top `(4728,671)` with terrain behavior `0x24`. The gameplay
+scene remains `SCENE_STATE=0x01`, so the remaining frontier is the upper-band
+transfer and natural exit predicate above the rope.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1022,6 +1035,7 @@ top-of-connector interaction/resource producer and its hidden-ledge condition.
 | `20260827-level01-bounce-c-matrix-v1` | recorded-negative-natural | C timing matrix from the lower bounce; no type-0x6A handhold transfer |
 | `20260827-level01-player-motion-writer-audit-v1` | recorded-static-audit | complete actor-specific player-coordinate/velocity writer classification; no unclassified Level 01 writer |
 | `20260827-level01-early-highledge-handhold-v1` | recorded-positive-route-extension | early high-walkway type-0x6A→0x6B handhold and x=1568 connector route; hidden ledge and exit unresolved |
+| `20260827-level01-route-join-v1` | recorded-positive-route-extension | clean lower-tower reversal, three guard clearances, and chained far-rope climb; upper transfer unresolved |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

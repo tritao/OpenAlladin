@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-level01-route-join-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Record the clean MAME replay that joins the lower-tower route to the established far-rope frontier.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_capture": "99f99ef56a17b49af11437b47ccad62cb53c0484",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-route-join-v1.json",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    "build/re/campaigns/20260827-level01-route-join-v13/tower-cross",
+    "build/re/campaigns/20260827-level01-route-join-v14/first-guard",
+    "build/re/campaigns/20260827-level01-route-join-v15/second-guard",
+    "build/re/campaigns/20260827-level01-route-join-v16/far-guard",
+    "build/re/campaigns/20260827-level01-route-join-v17/rope-climb"
+  ],
+  "confirmed": [
+    "The correct continuation from the lower tower reverses left to the staircase ledge at world (2271,832), then crosses right through the tower band.",
+    "The crossing reaches the far lower floor at world x≈3315 without changing SCENE_STATE=0x01.",
+    "The initial close guard must be attacked immediately from the tower-cross endpoint; waiting at the loaded state allows the overlapping enemy to kill the player.",
+    "The second guard at x≈3627 and the far guard at x≈4704 are cleared by the recorded downward sword branches and become cleanup type 0x84 actors.",
+    "At the far rope, a C+Left jump reaches the behavior-0x22 contact window at (4721,816); pressing Up from that boundary locks the player to x=4728 and climbs to the behavior-0x24 top at (4728,671)."
+  ],
+  "negative_evidence": [
+    "SCENE_STATE remains 0x01 through every segment.",
+    "The route does not yet satisfy the natural exit Y condition; the rope-top transfer to world Y<0x01D6 remains unresolved."
+  ],
+  "conclusion": "The newly recovered lower route and the earlier far-rope route are now one reproducible, checkpointed path. Future work should branch from rope-top and focus on the upper-band transfer/exit interaction rather than re-testing the lower tower."
+}

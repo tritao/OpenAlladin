@@ -1,0 +1,117 @@
+{
+  "campaign": "20260827-level01-route-join-v1",
+  "status": "recorded-positive-route-extension",
+  "purpose": "Join the newly recovered lower-tower route to the established Level 01 far-floor and vertical-rope frontier with clean, chained MAME checkpoints.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "99f99ef56a17b49af11437b47ccad62cb53c0484",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "timing_note": "All segments use preload-before-capture with non-breakpoint state capture. Each segment starts from a checkpoint produced by the preceding route segment or an equivalent clean prefix checkpoint.",
+  "segments": [
+    {
+      "id": "lower-tower-to-crossing",
+      "trace_dir": "build/re/campaigns/20260827-level01-route-join-v13/tower-cross",
+      "frames": 540,
+      "input": "left*20,c+left*40,left*120,right*180,b+right*60,right*120",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-lower-market-continuation-v1/right-long/states/genesis/lower-tower-entry.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "lower-tower-entry", "state": "states/genesis/lower-tower-entry.sta" },
+        { "frame": 180, "name": "staircase-ledge", "state": "states/genesis/staircase-ledge.sta" },
+        { "frame": 360, "name": "tower-crossed", "state": "states/genesis/tower-crossed.sta" },
+        { "frame": 540, "name": "tower-cross-end", "state": "states/genesis/tower-cross-end.sta" }
+      ]
+    },
+    {
+      "id": "first-guard-clear",
+      "trace_dir": "build/re/campaigns/20260827-level01-route-join-v14/first-guard",
+      "frames": 80,
+      "input": "down+b+right*80",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-route-join-v13/tower-cross/states/genesis/tower-cross-end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "tower-cross-end", "state": "states/genesis/tower-cross-end.sta" },
+        { "frame": 80, "name": "first-guard-pass", "state": "states/genesis/first-guard-pass.sta" }
+      ]
+    },
+    {
+      "id": "second-guard-to-far-floor",
+      "trace_dir": "build/re/campaigns/20260827-level01-route-join-v15/second-guard",
+      "frames": 340,
+      "input": "down+b+right*80,b+right*160,right*100,none*100",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-route-join-v14/first-guard/states/genesis/first-guard-pass.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "first-guard-pass", "state": "states/genesis/first-guard-pass.sta" },
+        { "frame": 80, "name": "second-guard-pass", "state": "states/genesis/second-guard-pass.sta" },
+        { "frame": 240, "name": "far-guard-route", "state": "states/genesis/far-guard-route.sta" },
+        { "frame": 340, "name": "joined-far-floor", "state": "states/genesis/joined-far-floor.sta" }
+      ]
+    },
+    {
+      "id": "far-guard-clear",
+      "trace_dir": "build/re/campaigns/20260827-level01-route-join-v16/far-guard",
+      "frames": 350,
+      "input": "down+b+right*80,b+right*160,right*140,none*70",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-route-join-v15/second-guard/states/genesis/joined-far-floor.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "joined-far-floor", "state": "states/genesis/joined-far-floor.sta" },
+        { "frame": 80, "name": "far-guard-cleared", "state": "states/genesis/far-guard-cleared.sta" },
+        { "frame": 240, "name": "rope-approach", "state": "states/genesis/rope-approach.sta" },
+        { "frame": 350, "name": "rope-entry", "state": "states/genesis/rope-entry.sta" }
+      ]
+    },
+    {
+      "id": "vertical-rope-climb",
+      "trace_dir": "build/re/campaigns/20260827-level01-route-join-v17/rope-climb",
+      "frames": 260,
+      "input": "c+left*20,up*200,none*40",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-route-join-v16/far-guard/states/genesis/far-guard-cleared.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "far-guard-cleared", "state": "states/genesis/far-guard-cleared.sta" },
+        { "frame": 20, "name": "rope-contact", "state": "states/genesis/rope-contact.sta" },
+        { "frame": 40, "name": "rope-climb", "state": "states/genesis/rope-climb.sta" },
+        { "frame": 220, "name": "rope-top", "state": "states/genesis/rope-top.sta" },
+        { "frame": 260, "name": "rope-end", "state": "states/genesis/rope-end.sta" }
+      ]
+    }
+  ],
+  "observed": {
+    "staircase": { "frame": 180, "world": [2271, 832], "terrain_behavior": "0x47", "scene_state": "0x01" },
+    "tower_crossing": { "frame": 540, "world": [3315, 912], "terrain_behavior": "0x11", "scene_state": "0x01" },
+    "guard_clearances": [
+      { "route": "first-guard-clear", "actor_before": "0x1D", "actor_after": "0x84", "world_x": 3450 },
+      { "route": "second-guard-to-far-floor", "actor_before": "0x1E", "actor_after": "0x84", "world_x": 3627 },
+      { "route": "far-guard-clear", "actor_before": "0x1D", "actor_after": "0x84", "world_x": 4704 }
+    ],
+    "rope": {
+      "contact_frame": 20,
+      "contact_world": [4721, 816],
+      "contact_behavior": "0x22",
+      "top_frame": 220,
+      "top_world": [4728, 671],
+      "top_behavior": "0x24"
+    },
+    "scene_state": "0x01 throughout the joined route"
+  },
+  "conclusion": "The lower-tower reversal is a valid route continuation, not a terminal wall. A clean chained replay clears the three intervening guards, reaches the far vertical rope, and climbs to the canonical rope-top checkpoint. The remaining Level 01 frontier is the transfer from the rope-top/middle band to the upper row and the natural exit predicate; no scene transition occurs in this campaign."
+}
