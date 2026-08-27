@@ -27,5 +27,14 @@
     { "index": 11, "entry": "0x002F4E", "camera": [0, 32], "table_pixels": [3200, 1120], "runtime_pixels": [3200, 1120] },
     { "index": 12, "entry": "0x002F90", "camera": [48, 96], "table_pixels": [800, 352], "runtime_pixels": [800, 352] }
   ],
-  "conclusion": "All 13 scene-state values select the corresponding level-table record at the common loader. At the loader checkpoint every camera start matches the tracked table metadata; after resource setup every ordinary level dimension matches the table projection. Level 08 is the known oversized picture-room case: its 240000-pixel table width is observed in the runtime camera field as 43392, consistent with a 16-bit width field. The width-write truncation remains an explicit follow-up target rather than an unverified assumption."
+  "static_width_evidence": {
+    "decompile": "build/re/level-loader-targeted-decompile.json",
+    "loader": "0x001AA484",
+    "table_width_offset": "0x28",
+    "table_height_offset": "0x2A",
+    "width_read": "LEVEL_WIDTH_TILES = *(short *)(&DAT_00002ca8 + SCENE_STATE * 0x42)",
+    "pixel_width": "LEVEL_WIDTH_PIXELS = LEVEL_WIDTH_TILES << 4",
+    "conclusion": "The Level 08 runtime width 43392 is the low 16 bits of 15000 * 16, matching the loader's 16-bit table-field semantics."
+  },
+  "conclusion": "All 13 scene-state values select the corresponding level-table record at the common loader. At the loader checkpoint every camera start matches the tracked table metadata; after resource setup every ordinary level dimension matches the table projection. Level 08 is the known oversized picture-room case: its 240000-pixel table width is observed in the runtime camera field as 43392, and the static loader confirms that the width field is read as a 16-bit value before the pixel shift."
 }
