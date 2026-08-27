@@ -178,6 +178,10 @@ struct ActorState {
     // distinguishes them from the scene-state-5 type-0x84 terminal record,
     // which has its own phase gate and deferred first tick.
     bool spawned_by_animation = false;
+    // Modes 5/6 of AnimationVM_SpawnOrCopyActor link the new record to the
+    // actor that issued the command. This is host-side metadata for the
+    // parent flag edge; the 68000 pointer itself is not part of the trace.
+    int linked_actor_slot = -1;
 };
 
 enum class ActorAllocationPool {

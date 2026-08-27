@@ -1928,6 +1928,19 @@ void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
         actor.animation_pc = animation_state.animation_pc;
         actor.frame_ptr = animation_state.frame_ptr;
         actor.animation_timer = animation_state.animation_timer;
+        if (previous_type != 0 && actor.type == 0
+            && actor.linked_actor_slot >= 0
+            && static_cast<std::size_t>(actor.linked_actor_slot) < actors_.size()) {
+            // Linked F5 modes (5/6) clear the issuing actor's +0x3C bit 2
+            // when their child retires through F6. Keep that parent edge
+            // visible even though the compact child record is left intact.
+            actors_[static_cast<std::size_t>(actor.linked_actor_slot)].flags =
+                static_cast<std::uint8_t>(
+                    actors_[static_cast<std::size_t>(actor.linked_actor_slot)].flags
+                    & ~0x04U
+                );
+            actor.linked_actor_slot = -1;
+        }
         // Type-0x40's 0x001AF468 replacement uses the 0x00122F80 stream.
         // Its first F0 branch reaches 0x00122F8A and the ROM's common actor
         // path flips the X-facing byte as that first frame is published. Do
@@ -1957,7 +1970,13 @@ void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
             spawn_request.source_world_y = actor.y;
             spawn_request.source_facing_x_flip = actor.facing_x_flip;
             spawn_request.source_facing_y_flip = actor.facing_y_flip;
-            apply_animation_spawn_request(spawn_request);
+            spawn_request.source_actor_slot = static_cast<int>(slot);
+            if (const auto spawned_slot = apply_animation_spawn_request(spawn_request)) {
+                if (spawn_request.mode == 5 || spawn_request.mode == 6) {
+                    actor.flags = static_cast<std::uint8_t>(actor.flags | 0x04U);
+                }
+                (void)spawned_slot;
+            }
         }
         // Surface interaction records notify the player when their short
         // animation changes from type 0x8C to 0x7B. The ROM does this after
@@ -2005,7 +2024,11 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
         // slice. Mode 0 is the common actor path (the opening player stream
         // uses it to create the type-0x84 actor in slot 3); mode 3 is the
         // auxiliary weapon/effect path used by the sword stream.
-        if (!request.valid || (request.mode != 0 && request.mode != 2 && request.mode != 3)) return std::nullopt;
+        if (!request.valid
+            || (request.mode != 0 && request.mode != 1 && request.mode != 2
+                && request.mode != 3 && request.mode != 5 && request.mode != 6)) {
+            return std::nullopt;
+        }
 
         const auto read_u8 = [&](std::uint32_t address) -> std::uint8_t {
             return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
@@ -2038,6 +2061,9 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
         spawned.facing_x_flip = request.source_facing_x_flip;
         spawned.facing_y_flip = request.source_facing_y_flip;
         spawned.spawned_by_animation = true;
+        if (request.mode == 5 || request.mode == 6) {
+            spawned.linked_actor_slot = request.source_actor_slot;
+        }
         if (request.animation_override != 0) {
             spawned.animation_pc = request.animation_override;
         }
@@ -2054,13 +2080,33 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
         spawned.x = static_cast<std::uint16_t>(source_world_x + offset_x);
         spawned.y = static_cast<std::uint16_t>(source_world_y + offset_y);
 
-        const int first_slot = request.mode == 0 ? 3 : request.mode == 2 ? 20 : 25;
-        const int last_slot = request.mode == 0 ? 22 : request.mode == 2 ? 1 : 31;
-        const int step = request.mode == 2 ? -1 : 1;
-        // Mode 0 scans the common records 3..22. Mode 2 uses the reverse
-        // common allocator (20..1), while mode 3 scans the auxiliary records
-        // used by the actor-to-actor collision pass. These are the allocator
-        // branches selected by the ROM F5 handler at 0x001AD00E.
+        int first_slot = 3;
+        int last_slot = 22;
+        int step = 1;
+        switch (request.mode) {
+        case 1:
+        case 5:
+            // FUN_001AE27A: gameplay allocator, slots 1..24.
+            first_slot = 1;
+            last_slot = 24;
+            break;
+        case 2:
+        case 6:
+            // FUN_001AE2AA: reverse common allocator, slots 20..1.
+            first_slot = 20;
+            last_slot = 1;
+            step = -1;
+            break;
+        case 3:
+            // FUN_001AE2DA: auxiliary allocator, slots 25..30.
+            first_slot = 25;
+            last_slot = 30;
+            break;
+        default:
+            // Mode 0 uses FUN_001AE262, the common forward allocator
+            // spanning slots 3..22.
+            break;
+        }
         for (int slot = first_slot; step > 0 ? slot <= last_slot : slot >= last_slot; slot += step) {
             const std::size_t index = static_cast<std::size_t>(slot);
             if (actors_[index].type != 0 || actor_slots_culled_this_frame_[index]) continue;
@@ -2095,7 +2141,11 @@ std::vector<std::size_t> Engine::apply_animation_spawns(bool defer_player_spawns
 
     AnimationSpawnRequest request;
     while (animation_.take_spawn_request(request)) {
-        if (!request.valid || (request.mode != 0 && request.mode != 2 && request.mode != 3)) continue;
+        if (!request.valid
+            || (request.mode != 0 && request.mode != 1 && request.mode != 2
+                && request.mode != 3 && request.mode != 5 && request.mode != 6)) {
+            continue;
+        }
         if (request.mode == 0 && defer_player_spawns) {
             deferred_animation_spawn_ = request;
             continue;
