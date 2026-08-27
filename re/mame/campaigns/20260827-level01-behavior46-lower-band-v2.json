@@ -62,6 +62,30 @@
         { "frame": 120, "name": "settled" },
         { "frame": 180, "name": "end" }
       ]
+    },
+    {
+      "id": "movement-handler-correlation",
+      "trace_dir": "build/re/campaigns/20260827-level01-behavior46-movement-handler-v1",
+      "frames": 30,
+      "input": "none*30",
+      "input_mode": "inject",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-behavior46-lower-band-v2/states/genesis/band-contact.sta",
+      "repository_commit_at_capture": "85cae14",
+      "capture": "ram",
+      "raw_ram": "ram_frames.bin",
+      "state_output": true,
+      "actors": true,
+      "scene_state_trace": false,
+      "debug_watch": true,
+      "breakpoints": ["0x001AC850", "0x001AC86C", "0x001AC89A", "0x001ACA14", "0x001ACC5E"],
+      "watched_addresses": ["0x00FFF0E9", "0x00FF7E26"],
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 6, "name": "handoff" },
+        { "frame": 15, "name": "mid-stream" },
+        { "frame": 30, "name": "end" }
+      ]
     }
   ],
   "result": "The canonical lower-band replay reaches Type-0x1E slot 11 at world x=3225, y=912 and publishes interaction state 0x46. The actor then installs movement stream 0x0012046C and the isolated replay reaches the extended callback requested at 0x001ACC5E, reported by MAME after the instruction at PC 0x001ACC60. Both segments remain in scene 0x01 and produce no scene-state or scene-countdown transition."

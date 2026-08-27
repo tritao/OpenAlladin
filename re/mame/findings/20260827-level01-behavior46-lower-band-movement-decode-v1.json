@@ -1,0 +1,135 @@
+{
+  "format": "openaladdin-level01-behavior46-lower-band-movement-decode-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Decode the complete actor-local movement branch selected by terrain behavior 0x46 and correlate its handlers with the positive lower-band runtime trace.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "85cae14",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "decoder": "tools/openaladdin/vm/movement.py",
+  "decoder_artifact": "build/re/behavior46-movement-targets.json",
+  "vm": {
+    "interpreter": "0x001ADE36",
+    "movement_opcode_range": ["0x80", "0x94"],
+    "shared_animation_opcode_offset": "0x6A",
+    "actor_movement_cursor_offset": "0x0A",
+    "actor_animation_cursor_offset": "0x20"
+  },
+  "stream": {
+    "root": "0x0012046C",
+    "decoded_rom_range": ["0x0012046C", "0x001204D3"],
+    "decoded_bytes": 104,
+    "raw_root": "01008A91003D00460012046C83140020001236148200",
+    "entry": {
+      "delta": [1, 0],
+      "condition": "compare actor +0x3D against 0x0046",
+      "equal_branch": "0x0012046C",
+      "fallthrough": [
+        "write actor +0x20 = 0x00123614",
+        "clear actor movement cursor with 0x82 0x00"
+      ]
+    },
+    "state_46_loop": [
+      { "address": "0x00120482", "control": "jump to 0x00120498" },
+      {
+        "address": "0x00120498",
+        "conditions": [
+          "if player is within X distance 0x73, branch to 0x001204C6",
+          "if actor field/flag 0x0009 through 0x87 is set, branch to 0x001204B6",
+          "if actor +0x3D equals 0x0080, branch to 0x001204C6"
+        ],
+        "fallthrough": "jump to 0x0012048A"
+      },
+      {
+        "address": "0x0012048A",
+        "delta": [3, 0],
+        "condition": "compare actor +0x3D against 0x0046",
+        "equal_branch": "0x001204D0",
+        "fallthrough": "0x00120496"
+      },
+      {
+        "address": "0x00120496",
+        "delta": [2, 0],
+        "control": "repeat the 0x73/player-flag/0x80 tests and jump to 0x0012048A"
+      }
+    ],
+    "exit_paths": {
+      "state_46_equal": {
+        "branch_target": "0x001204D0",
+        "effect": [
+          "write actor +0x20 = 0x001237C6",
+          "clear actor movement cursor with 0x82 0x00"
+        ]
+      },
+      "player_or_state_80": {
+        "branch_target": "0x001204C6",
+        "deltas": [[-125, 20], [0, 32], [0, 18], [54, 20]],
+        "effect": [
+          "clear actor movement cursor",
+          "write actor +0x20 = 0x001237C6",
+          "clear actor movement cursor"
+        ]
+      },
+      "field_81": {
+        "branch_target": "0x001204B6",
+        "deltas": [[-118, -111], [0, 61], [0, -127], [0, 18]],
+        "condition": "compare actor +0x3D against 0x0081, then return to 0x0012048A or 0x001204C6"
+      }
+    },
+    "shared_continuation": {
+      "address": "0x001204DA",
+      "control": "zero delta followed by jump to 0x001204F0",
+      "conditions": [
+        "if player is within Y distance 0x40, branch to 0x001204FC",
+        "otherwise jump to 0x0012052A"
+      ],
+      "classification": "shared actor movement continuation; no player-coordinate or scene-state write"
+    }
+  },
+  "runtime_correlation": {
+    "campaign": "re/mame/campaigns/20260827-level01-behavior46-lower-band-v2.json",
+    "trace": "build/re/campaigns/20260827-level01-behavior46-movement-handler-v1",
+    "actor": {
+      "slot": 11,
+      "record": "0x00FF8116",
+      "type": "0x1E"
+    },
+    "state_sequence": [
+      { "harness_frame": 1, "movement_cursor": "0x001204EE", "animation_cursor": "0x001235EC", "interaction_state": "0x00" },
+      { "harness_frame": 2, "movement_cursor": "0x001204EE", "animation_cursor": "0x001235F0", "interaction_state": "0x46" },
+      { "harness_frame": 3, "movement_cursor": "0x001204E2", "animation_cursor": "0x001235F0", "interaction_state": "0x46" },
+      { "harness_frame": 4, "movement_cursor": "0x00000000", "animation_cursor": "0x001237C8", "interaction_state": "0x46" },
+      { "harness_frame": 6, "movement_cursor": "0x0012046C", "animation_cursor": "0x001237D2", "interaction_state": "0x46" }
+    ],
+    "handler_breakpoints": {
+      "0x001ACA14_compare": { "requested": "0x001ACA14", "reported_pc": "0x001ACA16", "hits": 57 },
+      "0x001AC850_jump": { "requested": "0x001AC850", "reported_pc": "0x001AC852", "hits": 66 },
+      "0x001AC86C_clear": { "requested": "0x001AC86C", "reported_pc": "0x001AC86E", "hits": 1 },
+      "0x001AC89A_write": { "requested": "0x001AC89A", "reported_pc": "0x001AC89C", "hits": 4 },
+      "0x001ACC5E_callback": { "requested": "0x001ACC5E", "reported_pc": "0x001ACC60", "hits": 1 }
+    },
+    "branch_handler_context": {
+      "mame_frame": "0x00000F05",
+      "reported_pc": "0x001AC89C",
+      "actor_record": "0x00FF8116",
+      "actor_type": "0x1E",
+      "actor_x": "0x0C95",
+      "stream_cursor": "0x00120534",
+      "D0": "0x00120046",
+      "interpretation": "the 0x001204E2 predecessor branch sees state 0x46 and selects the 0x001237C6 animation path"
+    },
+    "callback_context": {
+      "mame_frame": "0x00000F19",
+      "reported_pc": "0x001ACC60",
+      "actor_record": "0x00FF8116",
+      "actor_type": "0x1E",
+      "actor_x": "0x0C83",
+      "animation_cursor": "0x001237EA",
+      "frame_pointer": "0x001F271A"
+    }
+  },
+  "conclusion": "The positive lower-band branch is a two-stage actor state machine. The earlier movement stream at 0x001204E2 observes terrain state 0x46 and selects animation root 0x001237C6; that animation writes movement root 0x0012046C. The new root keeps the actor moving while state 0x46 remains present, tests player proximity and actor fields, and falls back to actor-local animation/movement cleanup. Its callback is deferred audio/event behavior and has no scene-transition side effect. The runtime handler sequence matches the static decode and does not identify a player transfer or exit mechanism.",
+  "next_action": "Return to natural route exploration and prioritize the actual player-facing transfer/exit resources; retain this actor branch as a classified local response rather than repeating it as an exit hypothesis."
+}

@@ -890,6 +890,18 @@ write occurs. This is the first positive natural correlation for the extended
 actor branch and confirms it as terrain/contact behavior rather than a direct
 scene-transition selector.
 
+The follow-up movement decode is recorded in
+`re/mame/findings/20260827-level01-behavior46-lower-band-movement-decode-v1.json`.
+The complete `0x0012046C` stream is a short actor-local loop: it retains the
+actor while interaction state `0x46` is present, advances by `+1`, `+3`, and
+`+2`, checks player-X proximity and actor fields, and clears movement while
+selecting animation roots `0x00123614` or `0x001237C6` on its exit paths. A
+30-frame handler trace joins this with the live record: the predecessor
+`0x001204E2` stream selects `0x001237C6`, the animation writes
+`0x0012046C`, and the actor reaches the deferred callback at
+`0x001ACC5E`. The branch is now classified as a local actor response and is
+removed from the direct player-transfer/scene-exit hypothesis set.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
