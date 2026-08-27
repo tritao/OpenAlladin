@@ -24,6 +24,14 @@ def load_states(path: Path) -> dict[int, dict]:
     return states
 
 
+def active_slots(state: dict) -> set[int]:
+    return {
+        item["slot"]
+        for item in state["actors"]
+        if item.get("type", 0) != 0 or item.get("flags", 0) != 0
+    }
+
+
 def main() -> int:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     command = [
@@ -51,7 +59,7 @@ def main() -> int:
     subprocess.run(command, cwd=ROOT, env=environment, check=True)
 
     states = load_states(OUTPUT)
-    assert not any(actor["slot"] >= 25 for actor in states[0]["actors"])
+    assert not any(slot >= 25 for slot in active_slots(states[0]))
     spawned = next(actor for actor in states[1]["actors"] if actor["slot"] == 25)
     assert spawned["type"] == 0x80
     assert spawned["x"] == 1143
@@ -91,7 +99,7 @@ def main() -> int:
     ]
     subprocess.run(player_command, cwd=ROOT, env=environment, check=True)
     player_states = load_states(PLAYER_OUTPUT)
-    assert not any(actor["slot"] == 3 for actor in player_states[1]["actors"])
+    assert 3 not in active_slots(player_states[1])
     player_spawn = next(actor for actor in player_states[2]["actors"] if actor["slot"] == 3)
     assert player_spawn["type"] == 0x84
     assert player_spawn["x"] == 99

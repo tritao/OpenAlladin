@@ -1,5 +1,7 @@
 #include "scene.hpp"
 
+#include "checkpoint_io.hpp"
+
 #include <fstream>
 #include <stdexcept>
 
@@ -63,6 +65,33 @@ bool SceneSystem::update_transition(
     if (input.down && player_y < 0x1E0) player_y += 8;
     grounded = false;
     return true;
+}
+
+void SceneSystem::write_checkpoint(std::ostream& output) const {
+    checkpoint::Writer writer(output);
+    writer.i32(runtime_.state);
+    writer.u32(runtime_.script_cursor);
+    writer.u8(runtime_.script_countdown);
+    writer.u8(runtime_.transition_event);
+    writer.boolean(runtime_.transition_active);
+}
+
+void SceneSystem::read_checkpoint(std::istream& input) {
+    checkpoint::Reader reader(input);
+    SceneRuntimeState runtime;
+    runtime.state = reader.i32();
+    runtime.script_cursor = reader.u32();
+    runtime.script_countdown = reader.u8();
+    runtime.transition_event = reader.u8();
+    runtime.transition_active = reader.boolean();
+    if (!descriptors_.empty()
+        && (runtime.state < 0 || runtime.state >= static_cast<int>(descriptors_.size()))) {
+        throw std::runtime_error("scene state is outside the loaded OpenAladdin ROM");
+    }
+    if (runtime.transition_active != (runtime.state == 8)) {
+        throw std::runtime_error("invalid scene transition state in OpenAladdin checkpoint");
+    }
+    runtime_ = runtime;
 }
 
 }  // namespace openaladdin

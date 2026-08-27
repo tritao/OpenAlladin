@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstdint>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -224,6 +225,18 @@ public:
     // stream identity, not the live cursor (which is the next VM field to
     // recover once conditional control flow is implemented).
     std::uint32_t stream_entry() const;
+    const std::array<std::uint8_t, 0x42>& actor_record() const { return actor_; }
+    int animation_phase_delay() const { return animation_phase_delay_; }
+    std::uint32_t pending_animation_pc() const { return pending_animation_pc_; }
+    bool force_tick_after_service() const { return force_tick_after_service_; }
+    bool force_tick_next_update() const { return force_tick_next_update_; }
+    bool force_tick_without_phase() const { return force_tick_without_phase_; }
+    bool defer_tick_next_update() const { return defer_tick_next_update_; }
+    bool clear_timer_next_update() const { return clear_timer_next_update_; }
+    unsigned update_count() const { return update_count_; }
+    std::uint32_t return_pc() const { return return_pc_; }
+    void write_checkpoint(std::ostream& output) const;
+    void read_checkpoint(std::istream& input);
 
 private:
     static const Clip& clip(SpritePose pose);

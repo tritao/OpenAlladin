@@ -67,7 +67,11 @@ def main() -> int:
     native = load_states(OUTPUT)
     for relative in range(FRAME_COUNT + 1):
         expected = [project(actor) for actor in source[SOURCE_START + relative]["actors"]]
-        actual = [project(actor) for actor in native[relative]["actors"]]
+        actual = [
+            project(actor)
+            for actor in native[relative]["actors"]
+            if actor.get("type", 0) != 0 or actor.get("flags", 0) != 0
+        ]
         assert actual == expected, f"actor divergence at relative frame {relative}"
 
     slot4 = next(actor for actor in native[1]["actors"] if actor["slot"] == 4)

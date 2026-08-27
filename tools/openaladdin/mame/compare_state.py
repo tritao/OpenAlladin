@@ -18,6 +18,7 @@ from typing import Any
 FORMATS = {
     "openaladdin-frame-state-v1",
     "openaladdin-frame-state-v2",
+    "openaladdin-frame-state-v3",
 }
 
 
@@ -76,7 +77,7 @@ def require_atomic_trace(
     if not isinstance(sync, dict) or not sync.get("actors_qualified"):
         raise SystemExit(
             f"{path}: {label} trace is not actor-qualified; "
-            "requires openaladdin-frame-state-v2 atomic game-loop capture"
+            "requires an actor-qualified atomic game-loop capture"
         )
     frames = atomic_frames(header, states)
     if not frames:
@@ -164,6 +165,70 @@ def selected_difference(left: dict[str, Any], right: dict[str, Any], fields: lis
     return None
 
 
+def changed_leaves(
+    before: Any,
+    after: Any,
+    path: str = "",
+    *,
+    limit: int = 16,
+) -> list[tuple[str, Any, Any]]:
+    """Return a compact causal delta between two matching-boundary states."""
+    ignored = {"type", "format", "frame", "input", "capture"}
+    if limit <= 0:
+        return []
+    if type(before) is not type(after):
+        return [(path or "$", before, after)]
+    if isinstance(before, dict):
+        result: list[tuple[str, Any, Any]] = []
+        for key in sorted(set(before) | set(after)):
+            if key in ignored:
+                continue
+            child = f"{path}.{key}" if path else key
+            if key not in before or key not in after:
+                result.append((child, before.get(key), after.get(key)))
+            else:
+                result.extend(changed_leaves(before[key], after[key], child, limit=limit - len(result)))
+            if len(result) >= limit:
+                return result[:limit]
+        return result
+    if isinstance(before, list):
+        result = []
+        for index in range(max(len(before), len(after))):
+            child = f"{path}[{index}]"
+            if index >= len(before) or index >= len(after):
+                result.append((child, before[index] if index < len(before) else None,
+                               after[index] if index < len(after) else None))
+            else:
+                result.extend(changed_leaves(before[index], after[index], child, limit=limit - len(result)))
+            if len(result) >= limit:
+                return result[:limit]
+        return result
+    return [] if before == after else [(path or "$", before, after)]
+
+
+def print_state_changes(
+    label: str,
+    previous: dict[str, Any],
+    current: dict[str, Any],
+) -> None:
+    changes = changed_leaves(previous, current)
+    print(f"{label} changes since S[{previous.get('frame', '?')}]:")
+    if not changes:
+        print("  (none)")
+        return
+    for path, before, after in changes:
+        print(f"  {path}: {json.dumps(before, sort_keys=True)} -> {json.dumps(after, sort_keys=True)}")
+
+
+def print_writer_pcs(label: str, record: dict[str, Any]) -> None:
+    causal = record.get("causal")
+    if not isinstance(causal, dict):
+        return
+    writers = causal.get("writer_pcs") or causal.get("writer_pcs_observed")
+    if writers:
+        print(f"{label} writer PCs observed: {json.dumps(writers, sort_keys=True)}")
+
+
 def print_divergence_context(
     frame: int,
     left: dict[int, dict[str, Any]],
@@ -172,9 +237,18 @@ def print_divergence_context(
 ) -> None:
     left_record = left.get(frame, {})
     right_record = right.get(frame, {})
-    print(f"Input: Genesis={left_record.get('input', 'none')} OpenAladdin={right_record.get('input', 'none')}")
     previous = [candidate for candidate in frames if candidate < frame and candidate in left and candidate in right]
-    print(f"Previous matching frame: {previous[-1] if previous else 'none'}")
+    previous_frame = previous[-1] if previous else None
+    print(f"Last matching state: S[{previous_frame if previous_frame is not None else 'none'}]")
+    input_frame = previous_frame if previous_frame is not None else frame
+    genesis_input = left.get(input_frame, {}).get("input", "none")
+    openaladdin_input = right.get(input_frame, {}).get("input", "none")
+    print(f"Input: I[{input_frame}] Genesis={genesis_input} OpenAladdin={openaladdin_input}")
+    if previous_frame is not None:
+        print_state_changes("Genesis", left[previous_frame], left_record)
+        print_state_changes("OpenAladdin", right[previous_frame], right_record)
+    print_writer_pcs("Genesis", left_record)
+    print_writer_pcs("OpenAladdin", right_record)
 
 
 def main() -> int:

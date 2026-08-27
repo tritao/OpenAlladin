@@ -23,6 +23,14 @@ def states(path: Path) -> dict[int, dict]:
     return result
 
 
+def active_slots(state: dict) -> set[int]:
+    return {
+        item["slot"]
+        for item in state["actors"]
+        if item.get("type", 0) != 0 or item.get("flags", 0) != 0
+    }
+
+
 def main() -> int:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     command = [
@@ -43,7 +51,7 @@ def main() -> int:
     subprocess.run(command, cwd=ROOT, env=environment, check=True)
 
     captured = states(OUTPUT)
-    assert [actor["slot"] for actor in captured[0]["actors"]] == [0]
+    assert active_slots(captured[0]) == {0}
 
     # Interaction refill runs after the current actor-animation traversal, so
     # the newly allocated record exposes its template root for one boundary.

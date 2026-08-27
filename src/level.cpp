@@ -1,5 +1,7 @@
 #include "level.hpp"
 
+#include "checkpoint_io.hpp"
+
 #include <array>
 #include <cctype>
 #include <filesystem>
@@ -378,6 +380,21 @@ std::size_t InteractionMap::active_record_count() const {
         if (selector(record) != 0) ++count;
     }
     return count;
+}
+
+void InteractionMap::write_checkpoint(std::ostream& output) const {
+    checkpoint::Writer writer(output);
+    writer.u32(static_cast<std::uint32_t>(selectors_.size()));
+    writer.bytes(selectors_.data(), selectors_.size());
+}
+
+void InteractionMap::read_checkpoint(std::istream& input) {
+    checkpoint::Reader reader(input);
+    const auto selectors = reader.byte_vector(selectors_.size());
+    if (selectors.size() != selectors_.size()) {
+        throw std::runtime_error("interaction map does not match OpenAladdin checkpoint");
+    }
+    selectors_ = selectors;
 }
 
 bool Level::is_vdp_transparent(

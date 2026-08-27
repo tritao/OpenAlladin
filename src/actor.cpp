@@ -1,6 +1,82 @@
 #include "actor.hpp"
 
+#include "checkpoint_io.hpp"
+
 namespace openaladdin {
+
+namespace {
+
+void write_actor_state(checkpoint::Writer& writer, const ActorState& actor) {
+    writer.u8(actor.type);
+    writer.u16(actor.x);
+    writer.u16(actor.y);
+    writer.u8(actor.movement_flags);
+    writer.u8(actor.runtime_field_07);
+    writer.u8(actor.runtime_field_07_delay);
+    writer.u8(actor.facing_x_flip);
+    writer.u8(actor.facing_y_flip);
+    writer.u32(actor.movement_pc);
+    writer.u32(actor.movement_loop_pc);
+    writer.u8(actor.movement_loop_timer);
+    writer.i16(actor.movement_word_18);
+    writer.i16(actor.movement_word_1a);
+    writer.u32(actor.frame_ptr);
+    writer.u32(actor.animation_pc);
+    writer.u32(actor.movement_return_pc);
+    writer.u8(actor.flags);
+    writer.u8(actor.interaction_state);
+    writer.u8(actor.terminal_timer);
+    writer.u8(actor.movement_command_timer);
+    writer.u8(actor.animation_timer);
+    writer.u8(actor.animation_defer_ticks);
+    writer.boolean(actor.animation_force_next_tick);
+    writer.u8(actor.animation_tick_phase);
+    writer.u8(actor.resource_count);
+    writer.u16(actor.interaction_resource_offset);
+    writer.u8(actor.interaction_selector);
+    writer.boolean(actor.spawned_by_interaction);
+    writer.boolean(actor.spawned_by_animation);
+    writer.boolean(actor.spawned_by_apple);
+    writer.i32(static_cast<std::int32_t>(actor.linked_actor_slot));
+}
+
+ActorState read_actor_state(checkpoint::Reader& reader) {
+    ActorState actor;
+    actor.type = reader.u8();
+    actor.x = reader.u16();
+    actor.y = reader.u16();
+    actor.movement_flags = reader.u8();
+    actor.runtime_field_07 = reader.u8();
+    actor.runtime_field_07_delay = reader.u8();
+    actor.facing_x_flip = reader.u8();
+    actor.facing_y_flip = reader.u8();
+    actor.movement_pc = reader.u32();
+    actor.movement_loop_pc = reader.u32();
+    actor.movement_loop_timer = reader.u8();
+    actor.movement_word_18 = reader.i16();
+    actor.movement_word_1a = reader.i16();
+    actor.frame_ptr = reader.u32();
+    actor.animation_pc = reader.u32();
+    actor.movement_return_pc = reader.u32();
+    actor.flags = reader.u8();
+    actor.interaction_state = reader.u8();
+    actor.terminal_timer = reader.u8();
+    actor.movement_command_timer = reader.u8();
+    actor.animation_timer = reader.u8();
+    actor.animation_defer_ticks = reader.u8();
+    actor.animation_force_next_tick = reader.boolean();
+    actor.animation_tick_phase = reader.u8();
+    actor.resource_count = reader.u8();
+    actor.interaction_resource_offset = reader.u16();
+    actor.interaction_selector = reader.u8();
+    actor.spawned_by_interaction = reader.boolean();
+    actor.spawned_by_animation = reader.boolean();
+    actor.spawned_by_apple = reader.boolean();
+    actor.linked_actor_slot = reader.i32();
+    return actor;
+}
+
+}  // namespace
 
 void ActorSystem::begin_frame() {
     culled_this_frame_.fill(false);
@@ -76,6 +152,29 @@ std::vector<std::size_t> ActorSystem::cull_interaction_actors(
 
 bool ActorSystem::was_culled_this_frame(std::size_t slot) const {
     return slot < culled_this_frame_.size() && culled_this_frame_[slot];
+}
+
+void ActorSystem::write_checkpoint(std::ostream& output) const {
+    checkpoint::Writer writer(output);
+    writer.boolean(snapshot_mode_);
+    for (const ActorState& actor : templates_) write_actor_state(writer, actor);
+    for (const ActorState& actor : *this) write_actor_state(writer, actor);
+    for (const bool culled : culled_this_frame_) writer.boolean(culled);
+}
+
+void ActorSystem::read_checkpoint(std::istream& input) {
+    checkpoint::Reader reader(input);
+    const bool snapshot_mode = reader.boolean();
+    Table templates{};
+    Table records{};
+    std::array<bool, 32> culled{};
+    for (ActorState& actor : templates) actor = read_actor_state(reader);
+    for (ActorState& actor : records) actor = read_actor_state(reader);
+    for (bool& value : culled) value = reader.boolean();
+    templates_ = templates;
+    static_cast<Table&>(*this) = records;
+    culled_this_frame_ = culled;
+    snapshot_mode_ = snapshot_mode;
 }
 
 }  // namespace openaladdin

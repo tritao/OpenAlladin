@@ -171,6 +171,8 @@ public:
     // This is the format used by the visual differential audit tools.
     void write_framebuffer_ppm(const std::string& path) const;
     void write_state(std::ostream& output, const std::string& input_token) const;
+    void write_checkpoint(std::ostream& output) const;
+    void read_checkpoint(std::istream& input);
 
     const PlayerState& player() const { return player_; }
     const CameraState& camera() const { return camera_; }

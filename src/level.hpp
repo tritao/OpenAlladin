@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -204,6 +205,8 @@ public:
     bool consume(std::uint16_t resource_offset);
     const std::vector<Level::InteractionRecord>& records() const { return records_; }
     std::size_t active_record_count() const;
+    void write_checkpoint(std::ostream& output) const;
+    void read_checkpoint(std::istream& input);
 
 private:
     std::vector<Level::InteractionRecord> records_;

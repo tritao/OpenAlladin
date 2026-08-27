@@ -28,6 +28,14 @@ def actor(state: dict, slot: int) -> dict:
     return next(item for item in state["actors"] if item["slot"] == slot)
 
 
+def active_slots(state: dict) -> set[int]:
+    return {
+        item["slot"]
+        for item in state["actors"]
+        if item.get("type", 0) != 0 or item.get("flags", 0) != 0
+    }
+
+
 def main() -> int:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     command = [
@@ -79,8 +87,8 @@ def main() -> int:
     assert hit_sword["frame_ptr"] == 0
 
     assert actor(states[43], 5)["type"] == 0x84
-    assert 26 not in {item["slot"] for item in states[20]["actors"]}
-    assert 5 not in {item["slot"] for item in states[44]["actors"]}
+    assert 26 not in active_slots(states[20])
+    assert 5 not in active_slots(states[44])
 
     print("native actor-to-actor collision: ok")
     return 0

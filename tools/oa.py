@@ -38,6 +38,7 @@ EVENT_FORMAT = "openaladdin-event-v1"
 SEGMENTS_FORMAT = "openaladdin-segments-v1"
 RUN_FORMAT = "openaladdin-input-run-v1"
 STATE_FORMAT_V2 = "openaladdin-frame-state-v2"
+STATE_FORMAT_V3 = "openaladdin-frame-state-v3"
 INPUT_BUTTONS = ("up", "down", "left", "right", "a", "b", "c", "start")
 INPUT_MASKS = {name: 1 << index for index, name in enumerate(INPUT_BUTTONS)}
 DEFAULT_PARITY_FIELDS = [

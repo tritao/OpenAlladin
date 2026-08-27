@@ -1,5 +1,7 @@
 #include "engine.hpp"
 
+#include "checkpoint_io.hpp"
+
 #include <algorithm>
 #include <array>
 #include <cstddef>
@@ -7,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 
 namespace openaladdin {
 namespace {
@@ -159,6 +162,232 @@ constexpr std::array<std::uint32_t, 0x48> kTerrainHandlers = {
 
 std::uint32_t terrain_handler(std::uint8_t behavior) {
     return behavior < kTerrainHandlers.size() ? kTerrainHandlers[behavior] : kTerrainNoOpHandler;
+}
+
+constexpr std::uint32_t kCheckpointVersion = 1;
+
+void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
+    writer.u8(selector.animation_gate);
+    writer.u8(selector.terminal_transition);
+    writer.u8(selector.scene_script_countdown);
+    writer.u8(selector.interaction_lock);
+    writer.u8(selector.response_active);
+    writer.u8(selector.landing_state);
+    writer.u8(selector.transition_gate);
+    writer.u8(selector.transition_lock);
+    writer.u8(selector.transition_state);
+    writer.u8(selector.transition_mode);
+    writer.u8(selector.transition_flag);
+    writer.u8(selector.transition_response);
+    writer.u8(selector.transition_state_de);
+    writer.u8(selector.transition_state_df);
+    writer.u8(selector.camera_special_mode);
+    writer.u8(selector.response_latch);
+    writer.u8(selector.response_animation);
+    writer.u8(selector.response_state_ee);
+    writer.u8(selector.response_state_ef);
+    writer.u8(selector.response_state_f0);
+    writer.u8(selector.response_state_101);
+    writer.i16(selector.horizontal_response);
+    writer.u8(selector.response_timer);
+    writer.u8(selector.interaction_pending);
+    writer.u8(selector.state_lock);
+}
+
+AnimationSelectorState read_selector(checkpoint::Reader& reader) {
+    AnimationSelectorState selector;
+    selector.animation_gate = reader.u8();
+    selector.terminal_transition = reader.u8();
+    selector.scene_script_countdown = reader.u8();
+    selector.interaction_lock = reader.u8();
+    selector.response_active = reader.u8();
+    selector.landing_state = reader.u8();
+    selector.transition_gate = reader.u8();
+    selector.transition_lock = reader.u8();
+    selector.transition_state = reader.u8();
+    selector.transition_mode = reader.u8();
+    selector.transition_flag = reader.u8();
+    selector.transition_response = reader.u8();
+    selector.transition_state_de = reader.u8();
+    selector.transition_state_df = reader.u8();
+    selector.camera_special_mode = reader.u8();
+    selector.response_latch = reader.u8();
+    selector.response_animation = reader.u8();
+    selector.response_state_ee = reader.u8();
+    selector.response_state_ef = reader.u8();
+    selector.response_state_f0 = reader.u8();
+    selector.response_state_101 = reader.u8();
+    selector.horizontal_response = reader.i16();
+    selector.response_timer = reader.u8();
+    selector.interaction_pending = reader.u8();
+    selector.state_lock = reader.u8();
+    return selector;
+}
+
+void write_player_state(checkpoint::Writer& writer, const PlayerState& player) {
+    writer.i32(player.x);
+    writer.i32(player.y);
+    writer.i16(player.vx);
+    writer.i16(player.vy);
+    writer.boolean(player.ground_braking);
+    writer.boolean(player.grounded);
+    writer.u8(player.terrain_behavior);
+    writer.u8(player.terrain_query_result);
+    writer.u8(player.terrain_push_right);
+    writer.u8(player.terrain_push_left);
+    writer.u8(player.terrain_push_up);
+    writer.u8(player.terrain_push_down);
+    writer.i16(player.terrain_horizontal_response);
+    writer.u8(player.terrain_response_active);
+    writer.u8(player.terrain_vertical_stop);
+    writer.u8(player.terrain_landing_state);
+    writer.u16(player.terrain_surface_mode);
+    writer.u8(player.terrain_surface_latch);
+    writer.u8(player.terrain_stop_left_motion);
+    writer.u8(player.terrain_stop_right_motion);
+    writer.u8(player.terrain_stop_upward_motion);
+    writer.u8(player.terrain_left_inner_probe);
+    writer.u8(player.terrain_left_outer_probe);
+    writer.u8(player.terrain_right_inner_probe);
+    writer.u8(player.terrain_right_outer_probe);
+    writer.u8(player.terrain_response_timer_state);
+    writer.u8(player.terrain_jump_response_counter);
+    writer.u8(player.terrain_transition_countdown);
+    writer.u8(player.terrain_query_state_a);
+    writer.u8(player.terrain_query_state_b);
+    writer.u8(player.terrain_state);
+    writer.u8(player.terrain_response_latch);
+    writer.u8(player.terrain_transition_gate);
+    writer.u8(player.terrain_terminal_transition);
+    write_selector(writer, player.animation_selector);
+    writer.u8(player.attack_timer);
+}
+
+PlayerState read_player_state(checkpoint::Reader& reader) {
+    PlayerState player;
+    player.x = reader.i32();
+    player.y = reader.i32();
+    player.vx = reader.i16();
+    player.vy = reader.i16();
+    player.ground_braking = reader.boolean();
+    player.grounded = reader.boolean();
+    player.terrain_behavior = reader.u8();
+    player.terrain_query_result = reader.u8();
+    player.terrain_push_right = reader.u8();
+    player.terrain_push_left = reader.u8();
+    player.terrain_push_up = reader.u8();
+    player.terrain_push_down = reader.u8();
+    player.terrain_horizontal_response = reader.i16();
+    player.terrain_response_active = reader.u8();
+    player.terrain_vertical_stop = reader.u8();
+    player.terrain_landing_state = reader.u8();
+    player.terrain_surface_mode = reader.u16();
+    player.terrain_surface_latch = reader.u8();
+    player.terrain_stop_left_motion = reader.u8();
+    player.terrain_stop_right_motion = reader.u8();
+    player.terrain_stop_upward_motion = reader.u8();
+    player.terrain_left_inner_probe = reader.u8();
+    player.terrain_left_outer_probe = reader.u8();
+    player.terrain_right_inner_probe = reader.u8();
+    player.terrain_right_outer_probe = reader.u8();
+    player.terrain_response_timer_state = reader.u8();
+    player.terrain_jump_response_counter = reader.u8();
+    player.terrain_transition_countdown = reader.u8();
+    player.terrain_query_state_a = reader.u8();
+    player.terrain_query_state_b = reader.u8();
+    player.terrain_state = reader.u8();
+    player.terrain_response_latch = reader.u8();
+    player.terrain_transition_gate = reader.u8();
+    player.terrain_terminal_transition = reader.u8();
+    player.animation_selector = read_selector(reader);
+    player.attack_timer = reader.u8();
+    return player;
+}
+
+void write_camera_state(checkpoint::Writer& writer, const CameraState& camera) {
+    writer.i32(camera.x);
+    writer.i32(camera.y);
+    writer.i32(camera.reference_x);
+    writer.i32(camera.reference_y);
+    writer.i32(camera.scroll_x);
+    writer.i32(camera.scroll_y);
+    writer.i32(camera.horizontal_threshold);
+    writer.i32(camera.vertical_threshold);
+    writer.i32(camera.level_width);
+    writer.i32(camera.level_height);
+    writer.i32(camera.vdp_update);
+    writer.i32(camera.pixel_x);
+    writer.i32(camera.pixel_y);
+    writer.i32(camera.tile_x);
+    writer.i32(camera.tile_y);
+    writer.i32(camera.update_delay);
+    writer.i32(camera.special_mode);
+    writer.i32(camera.scene_state);
+    writer.boolean(camera.scroll_left_pending);
+    writer.boolean(camera.scroll_right_pending);
+    writer.boolean(camera.scroll_up_pending);
+    writer.boolean(camera.scroll_down_pending);
+}
+
+CameraState read_camera_state(checkpoint::Reader& reader) {
+    CameraState camera;
+    camera.x = reader.i32();
+    camera.y = reader.i32();
+    camera.reference_x = reader.i32();
+    camera.reference_y = reader.i32();
+    camera.scroll_x = reader.i32();
+    camera.scroll_y = reader.i32();
+    camera.horizontal_threshold = reader.i32();
+    camera.vertical_threshold = reader.i32();
+    camera.level_width = reader.i32();
+    camera.level_height = reader.i32();
+    camera.vdp_update = reader.i32();
+    camera.pixel_x = reader.i32();
+    camera.pixel_y = reader.i32();
+    camera.tile_x = reader.i32();
+    camera.tile_y = reader.i32();
+    camera.update_delay = reader.i32();
+    camera.special_mode = reader.i32();
+    camera.scene_state = reader.i32();
+    camera.scroll_left_pending = reader.boolean();
+    camera.scroll_right_pending = reader.boolean();
+    camera.scroll_up_pending = reader.boolean();
+    camera.scroll_down_pending = reader.boolean();
+    return camera;
+}
+
+void write_spawn_request(checkpoint::Writer& writer, const AnimationSpawnRequest& request) {
+    writer.boolean(request.valid);
+    writer.u8(request.mode);
+    writer.u32(request.template_address);
+    writer.u8(static_cast<std::uint8_t>(request.offset_x));
+    writer.u8(static_cast<std::uint8_t>(request.offset_y));
+    writer.u32(request.animation_override);
+    writer.u32(request.movement_override);
+    writer.i32(request.source_world_x);
+    writer.i32(request.source_world_y);
+    writer.u8(request.source_facing_x_flip);
+    writer.u8(request.source_facing_y_flip);
+    writer.boolean(request.apple_action);
+    writer.i32(request.source_actor_slot);
+}
+
+AnimationSpawnRequest read_spawn_request(checkpoint::Reader& reader) {
+    AnimationSpawnRequest request;
+    request.valid = reader.boolean();
+    request.mode = reader.u8();
+    request.template_address = reader.u32();
+    request.offset_x = static_cast<std::int8_t>(reader.u8());
+    request.offset_y = static_cast<std::int8_t>(reader.u8());
+    request.animation_override = reader.u32();
+    request.movement_override = reader.u32();
+    request.source_world_x = reader.i32();
+    request.source_world_y = reader.i32();
+    request.source_facing_x_flip = reader.u8();
+    request.source_facing_y_flip = reader.u8();
+    request.apple_action = reader.boolean();
+    request.source_actor_slot = reader.i32();
+    return request;
 }
 
 std::uint8_t fixed_high_byte(std::int16_t value) {
@@ -4055,10 +4284,9 @@ void Engine::write_framebuffer_ppm(const std::string& path) const {
 }
 
 void Engine::write_state(std::ostream& output, const std::string& input_token) const {
-    // Keep this stream deliberately aligned with re/mame/lua/main.lua. It is
-    // intentionally a small, valid subset of the shared schema: scene logic
-    // is still a vertical slice, while actor records mirror the captured
-    // first-level table and expose the interaction flag used by the camera.
+    // This is the native side of the versioned atomic state contract. The
+    // loaded ROM/assets are immutable; every mutable field that can affect a
+    // later update is emitted either in its semantic owner or in scheduler.
     // The ROM keeps its landing flag asserted for the launch-impulse frame,
     // even though the gameplay handler has already left its internal grounded
     // path. Mirror that externally visible state in the shared trace without
@@ -4082,24 +4310,37 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
             + ",\"right\":" + std::to_string(box.right)
             + ",\"bottom\":" + std::to_string(box.bottom) + "}";
     };
+    const auto actor_record_json = [](const std::array<std::uint8_t, 0x42>& record) {
+        constexpr char kHex[] = "0123456789abcdef";
+        std::string result;
+        result.reserve(record.size() * 2);
+        for (const std::uint8_t value : record) {
+            result.push_back(kHex[value >> 4]);
+            result.push_back(kHex[value & 0x0F]);
+        }
+        return result;
+    };
     const CollisionBox player_box = read_collision_box(
         animation_.frame_pointer(),
         player_world_x(),
         player_world_y(),
         animation_.facing_left()
     );
-    const AnimationSelectorState animation_selector =
-        player_animation_context(player_.grounded).selector;
+    const AnimationSelectorState animation_selector = player_.animation_selector;
+    const SceneRuntimeState scene_runtime = scene_.runtime();
 
-    output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v1\""
+    output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v3\""
            << ",\"frame\":" << frame_
            << ",\"input\":\"" << input_token << "\""
+           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"animation_defer_ticks\",\"animation_force_next_tick\",\"animation_tick_phase\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
            << ",\"player\":{\"x\":" << player_.x
            << ",\"y\":" << player_.y
            << ",\"world_x\":" << player_world_x()
            << ",\"world_y\":" << player_world_y()
            << ",\"vx\":" << player_.vx
            << ",\"vy\":" << player_.vy
+           << ",\"ground_braking\":" << (player_.ground_braking ? "true" : "false")
+           << ",\"grounded_internal\":" << (player_.grounded ? "true" : "false")
            << ",\"animation_pc\":" << animation_.animation_pc()
            << ",\"animation_state\":\""
            << (animation_.stream_kind() == AnimationStreamKind::Response ? "response"
@@ -4170,21 +4411,36 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"facing_left\":" << (animation_.facing_left() ? "true" : "false")
            << ",\"attack_timer\":" << static_cast<unsigned>(player_.attack_timer)
            << ",\"attack_active\":" << (player_.attack_timer != 0 ? "true" : "false")
+           << ",\"terrain_behavior\":" << static_cast<unsigned>(player_.terrain_behavior)
+           << ",\"terrain_query_result\":" << static_cast<unsigned>(player_.terrain_query_result)
+           << ",\"terrain_push_right\":" << static_cast<unsigned>(player_.terrain_push_right)
+           << ",\"terrain_push_left\":" << static_cast<unsigned>(player_.terrain_push_left)
+           << ",\"terrain_push_up\":" << static_cast<unsigned>(player_.terrain_push_up)
+           << ",\"terrain_push_down\":" << static_cast<unsigned>(player_.terrain_push_down)
+           << ",\"terrain_horizontal_response\":" << player_.terrain_horizontal_response
+           << ",\"terrain_response_active\":" << static_cast<unsigned>(player_.terrain_response_active)
+           << ",\"terrain_vertical_stop\":" << static_cast<unsigned>(player_.terrain_vertical_stop)
+           << ",\"terrain_landing_state\":" << static_cast<unsigned>(player_.terrain_landing_state)
+           << ",\"terrain_surface_mode\":" << static_cast<unsigned>(player_.terrain_surface_mode)
+           << ",\"terrain_surface_latch\":" << static_cast<unsigned>(player_.terrain_surface_latch)
+           << ",\"terrain_transition_gate\":" << static_cast<unsigned>(player_.terrain_transition_gate)
+           << ",\"terrain_terminal_transition\":" << static_cast<unsigned>(player_.terrain_terminal_transition)
            << ",\"grounded\":" << (trace_grounded ? "true" : "false") << "}"
-           << ",\"scene\":{\"state\":" << scene_.scene_state()
-           << ",\"script_cursor\":0"
+           << ",\"scene\":{\"state\":" << scene_runtime.state
+           << ",\"script_cursor\":" << scene_runtime.script_cursor
            << ",\"script_data_cursor\":0"
            << ",\"table_index\":0"
            << ",\"script_pending\":0"
            << ",\"vdp_update\":" << camera_.vdp_update
            << ",\"vdp_clear\":0"
-           << ",\"transition_event\":0"
-           << ",\"script_countdown\":0"
+           << ",\"transition_event\":" << static_cast<unsigned>(scene_runtime.transition_event)
+           << ",\"script_countdown\":" << static_cast<unsigned>(scene_runtime.script_countdown)
            << ",\"script_gate\":0"
            << ",\"player_gate\":" << static_cast<unsigned>(player_.terrain_transition_gate)
            << ",\"player_lock\":0"
            << ",\"player_countdown\":0"
-           << ",\"player_terminal\":" << static_cast<unsigned>(player_.terrain_terminal_transition) << "}"
+           << ",\"player_terminal\":" << static_cast<unsigned>(player_.terrain_terminal_transition)
+           << ",\"transition_active\":" << (scene_runtime.transition_active ? "true" : "false") << "}"
            << ",\"camera\":{\"x\":" << camera_.x
            << ",\"y\":" << camera_.y
            << ",\"reference_x\":" << camera_.reference_x
@@ -4241,11 +4497,143 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"query_state_b\":" << static_cast<unsigned>(player_.terrain_query_state_b)
            << ",\"state\":" << static_cast<unsigned>(player_.terrain_state)
            << ",\"response_latch\":" << static_cast<unsigned>(player_.terrain_response_latch) << "}"
+           << ",\"scheduler\":{\"interaction_scan_initialized\":"
+           << (interaction_scan_initialized_ ? "true" : "false")
+           << ",\"interaction_selector_pending\":"
+           << (interaction_selector_pending_ ? "true" : "false")
+           << ",\"interaction_actor_lock_pending\":"
+           << (interaction_actor_lock_pending_ ? "true" : "false")
+           << ",\"interaction_camera_delay_pending\":"
+           << (interaction_camera_delay_pending_ ? "true" : "false")
+           << ",\"interaction_actor_triggered\":"
+           << (interaction_actor_triggered_ ? "true" : "false")
+           << ",\"player_collision_interaction_pending\":"
+           << (player_collision_interaction_pending_ ? "true" : "false")
+           << ",\"checkpoint_animation_selector_pending\":"
+           << (checkpoint_animation_selector_pending_ ? "true" : "false")
+           << ",\"surface_interaction_pending\":"
+           << (surface_interaction_pending_ ? "true" : "false")
+           << ",\"surface_interaction_active\":"
+           << (surface_interaction_active_ ? "true" : "false")
+           << ",\"jump_landing_state_arm_pending\":"
+           << (jump_landing_state_arm_pending_ ? "true" : "false")
+           << ",\"jump_landing_state_arm_now\":"
+           << (jump_landing_state_arm_now_ ? "true" : "false")
+           << ",\"terrain_fall_phase\":" << (terrain_fall_phase_ ? "true" : "false")
+           << ",\"bounce_response_active\":"
+           << (bounce_response_active_ ? "true" : "false")
+           << ",\"bounce_response_follow_active\":"
+           << (bounce_response_follow_active_ ? "true" : "false")
+           << ",\"bounce_camera_delay_hold_pending\":"
+           << (bounce_camera_delay_hold_pending_ ? "true" : "false")
+           << ",\"contour_ground_motion\":"
+           << (contour_ground_motion_ ? "true" : "false")
+           << ",\"interaction_reference_x\":" << interaction_reference_x_
+           << ",\"interaction_reference_y\":" << interaction_reference_y_
+           << ",\"random_state\":" << random_state_
+           << ",\"terrain_input_world_x\":" << terrain_input_world_x_
+           << ",\"terrain_input_world_y\":" << terrain_input_world_y_
+           << ",\"camera_follow_catch_up\":"
+           << (camera_follow_catch_up_ ? "true" : "false")
+           << ",\"player_animation_catch_up\":"
+           << (player_animation_catch_up_ ? "true" : "false")
+           << ",\"actor_animation_catch_up\":"
+           << (actor_animation_catch_up_ ? "true" : "false")
+           << ",\"checkpoint_terrain_behavior_override\":"
+           << (checkpoint_terrain_behavior_override_ ? "true" : "false")
+           << ",\"checkpoint_terrain_behavior\":"
+           << static_cast<unsigned>(checkpoint_terrain_behavior_)
+           << ",\"apple_root_republish_pending\":"
+           << (apple_root_republish_pending_ ? "true" : "false")
+           << ",\"apple_cursor_hold_1223fa_done\":"
+           << (apple_cursor_hold_1223fa_done_ ? "true" : "false")
+           << ",\"apple_cursor_hold_122438_done\":"
+           << (apple_cursor_hold_122438_done_ ? "true" : "false")
+           << ",\"apple_following_tick_deferred\":"
+           << (apple_following_tick_deferred_ ? "true" : "false")
+           << ",\"actor_system_snapshot_mode\":"
+           << (actors_.snapshot_mode() ? "true" : "false")
+           << ",\"probe_actor_animation_preupdated\":[";
+    for (std::size_t slot = 0; slot < probe_actor_animation_preupdated_.size(); ++slot) {
+        if (slot != 0) output << ",";
+        output << (probe_actor_animation_preupdated_[slot] ? "true" : "false");
+    }
+    output << "],\"animation_preupdated_this_frame\":[";
+    for (std::size_t slot = 0; slot < animation_preupdated_this_frame_.size(); ++slot) {
+        if (slot != 0) output << ",";
+        output << (animation_preupdated_this_frame_[slot] ? "true" : "false");
+    }
+    output << "],\"apple_actor_hold_next_frame\":[";
+    for (std::size_t slot = 0; slot < apple_actor_hold_next_frame_.size(); ++slot) {
+        if (slot != 0) output << ",";
+        output << (apple_actor_hold_next_frame_[slot] ? "true" : "false");
+    }
+    output << "],\"probe_actor_animation_active\":[";
+    for (std::size_t slot = 0; slot < probe_actor_animation_active_.size(); ++slot) {
+        if (slot != 0) output << ",";
+        output << (probe_actor_animation_active_[slot] ? "true" : "false");
+    }
+    output << "],\"deferred_animation_spawn\":";
+    if (deferred_animation_spawn_) {
+        const AnimationSpawnRequest& request = *deferred_animation_spawn_;
+        output << "{\"valid\":" << (request.valid ? "true" : "false")
+               << ",\"mode\":" << static_cast<unsigned>(request.mode)
+               << ",\"template_address\":" << request.template_address
+               << ",\"offset_x\":" << static_cast<int>(request.offset_x)
+               << ",\"offset_y\":" << static_cast<int>(request.offset_y)
+               << ",\"animation_override\":" << request.animation_override
+               << ",\"movement_override\":" << request.movement_override
+               << ",\"source_world_x\":" << request.source_world_x
+               << ",\"source_world_y\":" << request.source_world_y
+               << ",\"source_facing_x_flip\":"
+               << static_cast<unsigned>(request.source_facing_x_flip)
+               << ",\"source_facing_y_flip\":"
+               << static_cast<unsigned>(request.source_facing_y_flip)
+               << ",\"apple_action\":" << (request.apple_action ? "true" : "false")
+               << ",\"source_actor_slot\":" << request.source_actor_slot << "}";
+    } else {
+        output << "null";
+    }
+    output << ",\"player_vm\":{\"pending_animation_pc\":"
+           << animation_.pending_animation_pc()
+           << ",\"animation_phase_delay\":" << animation_.animation_phase_delay()
+           << ",\"force_tick_after_service\":"
+           << (animation_.force_tick_after_service() ? "true" : "false")
+           << ",\"force_tick_next_update\":"
+           << (animation_.force_tick_next_update() ? "true" : "false")
+           << ",\"force_tick_without_phase\":"
+           << (animation_.force_tick_without_phase() ? "true" : "false")
+           << ",\"defer_tick_next_update\":"
+           << (animation_.defer_tick_next_update() ? "true" : "false")
+           << ",\"clear_timer_next_update\":"
+           << (animation_.clear_timer_next_update() ? "true" : "false")
+           << ",\"update_count\":" << animation_.update_count()
+           << ",\"return_pc\":" << animation_.return_pc() << "},\"actor_vms\":[";
+    for (std::size_t slot = 0; slot < actor_animations_.size(); ++slot) {
+        if (slot != 0) output << ",";
+        const PlayerAnimationVm& actor_animation = actor_animations_[slot];
+        output << "{\"slot\":" << slot
+               << ",\"pending_animation_pc\":" << actor_animation.pending_animation_pc()
+               << ",\"animation_phase_delay\":" << actor_animation.animation_phase_delay()
+               << ",\"force_tick_after_service\":"
+               << (actor_animation.force_tick_after_service() ? "true" : "false")
+               << ",\"force_tick_next_update\":"
+               << (actor_animation.force_tick_next_update() ? "true" : "false")
+               << ",\"force_tick_without_phase\":"
+               << (actor_animation.force_tick_without_phase() ? "true" : "false")
+               << ",\"defer_tick_next_update\":"
+               << (actor_animation.defer_tick_next_update() ? "true" : "false")
+               << ",\"clear_timer_next_update\":"
+               << (actor_animation.clear_timer_next_update() ? "true" : "false")
+               << ",\"update_count\":" << actor_animation.update_count()
+               << ",\"return_pc\":" << actor_animation.return_pc() << "}";
+    }
+    output << "]}"
            << ",\"actors\":[";
     bool first_actor = true;
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         const ActorState& actor = actors_[slot];
-        if (actor.type == 0 && actor.flags == 0) continue;
+        const PlayerAnimationVm& actor_vm = slot == 0 ? animation_ : actor_animations_[slot];
         if (!first_actor) output << ",";
         first_actor = false;
         const CollisionBox actor_box = read_collision_box(
@@ -4275,9 +4663,235 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"flags\":" << static_cast<unsigned>(actor.flags)
                << ",\"flag_bit5\":" << ((actor.flags & 0x20) != 0 ? "true" : "false")
                << ",\"movement_command_timer\":" << static_cast<unsigned>(actor.movement_command_timer)
+               << ",\"interaction_state\":" << static_cast<unsigned>(actor.interaction_state)
+               << ",\"runtime_field_07_delay\":" << static_cast<unsigned>(actor.runtime_field_07_delay)
+               << ",\"terminal_timer\":" << static_cast<unsigned>(actor.terminal_timer)
+               << ",\"animation_defer_ticks\":" << static_cast<unsigned>(actor.animation_defer_ticks)
+               << ",\"animation_force_next_tick\":"
+               << (actor.animation_force_next_tick ? "true" : "false")
+               << ",\"animation_tick_phase\":" << static_cast<unsigned>(actor.animation_tick_phase)
+               << ",\"resource_count\":" << static_cast<unsigned>(actor.resource_count)
+               << ",\"interaction_resource_offset\":" << actor.interaction_resource_offset
+               << ",\"interaction_selector\":" << static_cast<unsigned>(actor.interaction_selector)
+               << ",\"spawned_by_interaction\":"
+               << (actor.spawned_by_interaction ? "true" : "false")
+               << ",\"spawned_by_animation\":"
+               << (actor.spawned_by_animation ? "true" : "false")
+               << ",\"spawned_by_apple\":"
+               << (actor.spawned_by_apple ? "true" : "false")
+               << ",\"linked_actor_slot\":" << actor.linked_actor_slot
+               << ",\"vm_actor_record\":\""
+               << actor_record_json(actor_vm.actor_record()) << "\""
                << "}";
     }
     output << "]}\n";
+}
+
+void Engine::write_checkpoint(std::ostream& output) const {
+    checkpoint::Writer writer(output);
+    checkpoint::magic(writer, "OACP", 4);
+    writer.u32(kCheckpointVersion);
+    writer.u32(static_cast<std::uint32_t>(rom_bytes_.size()));
+    writer.u8(level_.descriptor().scene_id);
+
+    scene_.write_checkpoint(output);
+    interaction_map_.write_checkpoint(output);
+    actors_.write_checkpoint(output);
+    write_player_state(writer, player_);
+    write_camera_state(writer, camera_);
+    animation_.write_checkpoint(output);
+    for (const PlayerAnimationVm& actor_animation : actor_animations_) {
+        actor_animation.write_checkpoint(output);
+    }
+
+    for (const bool value : probe_actor_animation_preupdated_) writer.boolean(value);
+    for (const bool value : animation_preupdated_this_frame_) writer.boolean(value);
+    for (const bool value : apple_actor_hold_next_frame_) writer.boolean(value);
+    writer.boolean(apple_root_republish_pending_);
+    writer.boolean(apple_cursor_hold_1223fa_done_);
+    writer.boolean(apple_cursor_hold_122438_done_);
+    writer.boolean(apple_following_tick_deferred_);
+    for (const bool value : probe_actor_animation_active_) writer.boolean(value);
+
+    writer.boolean(interaction_scan_initialized_);
+    writer.boolean(interaction_selector_pending_);
+    writer.boolean(interaction_actor_lock_pending_);
+    writer.boolean(interaction_camera_delay_pending_);
+    writer.boolean(interaction_actor_triggered_);
+    writer.boolean(player_collision_interaction_pending_);
+    writer.boolean(checkpoint_animation_selector_pending_);
+    writer.boolean(surface_interaction_pending_);
+    writer.boolean(surface_interaction_active_);
+    writer.boolean(jump_landing_state_arm_pending_);
+    writer.boolean(jump_landing_state_arm_now_);
+    writer.boolean(terrain_fall_phase_);
+    writer.boolean(bounce_response_active_);
+    writer.boolean(bounce_response_follow_active_);
+    writer.boolean(bounce_camera_delay_hold_pending_);
+    writer.boolean(contour_ground_motion_);
+    writer.i32(interaction_reference_x_);
+    writer.i32(interaction_reference_y_);
+    writer.u32(random_state_);
+    writer.i32(terrain_input_world_x_);
+    writer.i32(terrain_input_world_y_);
+    writer.boolean(deferred_animation_spawn_.has_value());
+    if (deferred_animation_spawn_) write_spawn_request(writer, *deferred_animation_spawn_);
+    writer.boolean(camera_follow_catch_up_);
+    writer.boolean(player_animation_catch_up_);
+    writer.boolean(actor_animation_catch_up_);
+    writer.boolean(checkpoint_terrain_behavior_override_);
+    writer.u8(checkpoint_terrain_behavior_);
+
+    writer.boolean(vdp_checkpoint_.loaded);
+    writer.byte_vector(vdp_checkpoint_.vram);
+    writer.byte_vector(vdp_checkpoint_.vsram);
+    writer.u32(static_cast<std::uint32_t>(vdp_checkpoint_.palette.size()));
+    for (const SDL_Color& color : vdp_checkpoint_.palette) {
+        writer.u8(color.r);
+        writer.u8(color.g);
+        writer.u8(color.b);
+        writer.u8(color.a);
+    }
+    writer.bytes(vdp_checkpoint_.registers.data(), vdp_checkpoint_.registers.size());
+    writer.i32(frame_);
+    writer.i32(last_ground_direction_);
+    writer.boolean(quit_);
+}
+
+void Engine::read_checkpoint(std::istream& input) {
+    checkpoint::Reader reader(input);
+    checkpoint::expect_magic(reader, "OACP", 4);
+    if (reader.u32() != kCheckpointVersion) {
+        throw std::runtime_error("unsupported OpenAladdin checkpoint version");
+    }
+    if (reader.u32() != rom_bytes_.size()) {
+        throw std::runtime_error("ROM does not match OpenAladdin checkpoint");
+    }
+    if (reader.u8() != level_.descriptor().scene_id) {
+        throw std::runtime_error("level does not match OpenAladdin checkpoint");
+    }
+
+    scene_.read_checkpoint(input);
+    interaction_map_.read_checkpoint(input);
+    actors_.read_checkpoint(input);
+    PlayerState player = read_player_state(reader);
+    CameraState camera = read_camera_state(reader);
+    animation_.read_checkpoint(input);
+    for (PlayerAnimationVm& actor_animation : actor_animations_) {
+        actor_animation.read_checkpoint(input);
+    }
+
+    std::array<bool, 32> probe_actor_animation_preupdated{};
+    std::array<bool, 32> animation_preupdated_this_frame{};
+    std::array<bool, 32> apple_actor_hold_next_frame{};
+    std::array<bool, 32> probe_actor_animation_active{};
+    for (bool& value : probe_actor_animation_preupdated) value = reader.boolean();
+    for (bool& value : animation_preupdated_this_frame) value = reader.boolean();
+    for (bool& value : apple_actor_hold_next_frame) value = reader.boolean();
+    const bool apple_root_republish_pending = reader.boolean();
+    const bool apple_cursor_hold_1223fa_done = reader.boolean();
+    const bool apple_cursor_hold_122438_done = reader.boolean();
+    const bool apple_following_tick_deferred = reader.boolean();
+    for (bool& value : probe_actor_animation_active) value = reader.boolean();
+
+    const bool interaction_scan_initialized = reader.boolean();
+    const bool interaction_selector_pending = reader.boolean();
+    const bool interaction_actor_lock_pending = reader.boolean();
+    const bool interaction_camera_delay_pending = reader.boolean();
+    const bool interaction_actor_triggered = reader.boolean();
+    const bool player_collision_interaction_pending = reader.boolean();
+    const bool checkpoint_animation_selector_pending = reader.boolean();
+    const bool surface_interaction_pending = reader.boolean();
+    const bool surface_interaction_active = reader.boolean();
+    const bool jump_landing_state_arm_pending = reader.boolean();
+    const bool jump_landing_state_arm_now = reader.boolean();
+    const bool terrain_fall_phase = reader.boolean();
+    const bool bounce_response_active = reader.boolean();
+    const bool bounce_response_follow_active = reader.boolean();
+    const bool bounce_camera_delay_hold_pending = reader.boolean();
+    const bool contour_ground_motion = reader.boolean();
+    const int interaction_reference_x = reader.i32();
+    const int interaction_reference_y = reader.i32();
+    const auto random_state = reader.u32();
+    const int terrain_input_world_x = reader.i32();
+    const int terrain_input_world_y = reader.i32();
+    const bool has_deferred_animation_spawn = reader.boolean();
+    std::optional<AnimationSpawnRequest> deferred_animation_spawn;
+    if (has_deferred_animation_spawn) deferred_animation_spawn = read_spawn_request(reader);
+    const bool camera_follow_catch_up = reader.boolean();
+    const bool player_animation_catch_up = reader.boolean();
+    const bool actor_animation_catch_up = reader.boolean();
+    const bool checkpoint_terrain_behavior_override = reader.boolean();
+    const auto checkpoint_terrain_behavior = reader.u8();
+
+    VdpCheckpoint vdp_checkpoint;
+    vdp_checkpoint.loaded = reader.boolean();
+    vdp_checkpoint.vram = reader.byte_vector(0x10000);
+    vdp_checkpoint.vsram = reader.byte_vector(0x80);
+    const auto palette_size = reader.u32();
+    if (palette_size > 256) {
+        throw std::runtime_error("oversized VDP palette in OpenAladdin checkpoint");
+    }
+    vdp_checkpoint.palette.resize(palette_size);
+    for (SDL_Color& color : vdp_checkpoint.palette) {
+        color.r = reader.u8();
+        color.g = reader.u8();
+        color.b = reader.u8();
+        color.a = reader.u8();
+    }
+    reader.bytes(vdp_checkpoint.registers.data(), vdp_checkpoint.registers.size());
+    const int frame = reader.i32();
+    const int last_ground_direction = reader.i32();
+    const bool quit = reader.boolean();
+    if (vdp_checkpoint.loaded
+        && (vdp_checkpoint.vram.size() != 0x10000
+            || vdp_checkpoint.vsram.size() != 0x80)) {
+        throw std::runtime_error("incomplete VDP checkpoint state");
+    }
+
+    player_ = player;
+    camera_ = camera;
+    probe_actor_animation_preupdated_ = probe_actor_animation_preupdated;
+    animation_preupdated_this_frame_ = animation_preupdated_this_frame;
+    apple_actor_hold_next_frame_ = apple_actor_hold_next_frame;
+    apple_root_republish_pending_ = apple_root_republish_pending;
+    apple_cursor_hold_1223fa_done_ = apple_cursor_hold_1223fa_done;
+    apple_cursor_hold_122438_done_ = apple_cursor_hold_122438_done;
+    apple_following_tick_deferred_ = apple_following_tick_deferred;
+    probe_actor_animation_active_ = probe_actor_animation_active;
+    interaction_scan_initialized_ = interaction_scan_initialized;
+    interaction_selector_pending_ = interaction_selector_pending;
+    interaction_actor_lock_pending_ = interaction_actor_lock_pending;
+    interaction_camera_delay_pending_ = interaction_camera_delay_pending;
+    interaction_actor_triggered_ = interaction_actor_triggered;
+    player_collision_interaction_pending_ = player_collision_interaction_pending;
+    checkpoint_animation_selector_pending_ = checkpoint_animation_selector_pending;
+    surface_interaction_pending_ = surface_interaction_pending;
+    surface_interaction_active_ = surface_interaction_active;
+    jump_landing_state_arm_pending_ = jump_landing_state_arm_pending;
+    jump_landing_state_arm_now_ = jump_landing_state_arm_now;
+    terrain_fall_phase_ = terrain_fall_phase;
+    bounce_response_active_ = bounce_response_active;
+    bounce_response_follow_active_ = bounce_response_follow_active;
+    bounce_camera_delay_hold_pending_ = bounce_camera_delay_hold_pending;
+    contour_ground_motion_ = contour_ground_motion;
+    interaction_reference_x_ = interaction_reference_x;
+    interaction_reference_y_ = interaction_reference_y;
+    random_state_ = random_state;
+    terrain_input_world_x_ = terrain_input_world_x;
+    terrain_input_world_y_ = terrain_input_world_y;
+    deferred_animation_spawn_ = std::move(deferred_animation_spawn);
+    camera_follow_catch_up_ = camera_follow_catch_up;
+    player_animation_catch_up_ = player_animation_catch_up;
+    actor_animation_catch_up_ = actor_animation_catch_up;
+    checkpoint_terrain_behavior_override_ = checkpoint_terrain_behavior_override;
+    checkpoint_terrain_behavior_ = checkpoint_terrain_behavior;
+    vdp_checkpoint_ = std::move(vdp_checkpoint);
+    frame_ = frame;
+    last_ground_direction_ = last_ground_direction;
+    quit_ = quit;
+    camera_render_x_ = 0;
+    camera_render_y_ = 0;
 }
 
 void Engine::render(SDL_Renderer* renderer) {

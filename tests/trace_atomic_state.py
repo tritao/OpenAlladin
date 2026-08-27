@@ -102,6 +102,88 @@ def main() -> int:
         assert result.returncode == 0, result.stderr or result.stdout
         assert "Traces match for 1 frame(s)." in result.stdout
 
+        v3_header = {
+            "type": "header",
+            "format": "openaladdin-frame-state-v3",
+            "rom_sha256": "fixture",
+            "sync": {
+                "boundary": "VBlankInterrupt",
+                "state_boundary": "game-loop",
+                "atomic_fields": [*ATOMIC_FIELDS, "scheduler"],
+                "atomic_actor_fields": ["type", "x", "animation_timer"],
+                "actors_qualified": True,
+                "actor_slot_count": 32,
+            },
+        }
+        v3 = directory / "v3.jsonl"
+        write_trace(
+            v3,
+            v3_header,
+            [{
+                **atomic,
+                "format": "openaladdin-frame-state-v3",
+                "capture": {
+                    "boundary": "game-loop",
+                    "atomic": True,
+                    "atomic_fields": [*ATOMIC_FIELDS, "scheduler"],
+                    "atomic_actor_fields": ["type", "x", "animation_timer"],
+                },
+                "scheduler": {"random_state": 7},
+            }],
+        )
+        result = run([
+            sys.executable,
+            str(COMPARE_STATE),
+            str(v3),
+            str(v3),
+            "--require-atomic",
+            "--atomic-only",
+        ])
+        assert result.returncode == 0, result.stderr or result.stdout
+
+        v3_left = directory / "v3-left.jsonl"
+        v3_right = directory / "v3-right.jsonl"
+
+        def v3_state(frame: int, random_state: int, input_value: str) -> dict:
+            return {
+                **atomic,
+                "format": "openaladdin-frame-state-v3",
+                "frame": frame,
+                "input": input_value,
+                "capture": {
+                    "boundary": "game-loop",
+                    "atomic": True,
+                    "atomic_fields": [*ATOMIC_FIELDS, "scheduler"],
+                    "atomic_actor_fields": ["type", "x", "animation_timer"],
+                },
+                "scheduler": {"random_state": random_state},
+                "causal": {"writer_pcs": [0x1234 + frame]},
+            }
+
+        write_trace(v3_left, v3_header, [
+            v3_state(1, 7, "right"),
+            v3_state(2, 8, "none"),
+        ])
+        write_trace(v3_right, v3_header, [
+            v3_state(1, 7, "right"),
+            v3_state(2, 9, "none"),
+        ])
+        result = run([
+            sys.executable,
+            str(COMPARE_STATE),
+            str(v3_left),
+            str(v3_right),
+            "--require-atomic",
+            "--atomic-only",
+        ])
+        assert result.returncode != 0
+        assert "First divergence: frame 2" in result.stdout
+        assert "Last matching state: S[1]" in result.stdout
+        assert "Input: I[1] Genesis=right OpenAladdin=right" in result.stdout
+        assert "Genesis changes since S[1]" in result.stdout
+        assert "OpenAladdin changes since S[1]" in result.stdout
+        assert "writer PCs observed" in result.stdout
+
         result = run([
             sys.executable,
             str(COMPARE_STATE),

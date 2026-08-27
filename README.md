@@ -168,6 +168,11 @@ boundary. `state.raw.jsonl` remains the video-boundary observation and
 comparisons reject traces without this qualification; use
 `compare_state.py --require-left-atomic --left-atomic-only` or the actor
 comparator's equivalent flags when comparing against a native trace.
+Native state output uses `openaladdin-frame-state-v3`: it adds scheduler gates,
+all causal actor fields, and the 0x42-byte per-slot VM actor record as hex.
+Native checkpoints are binary, asset-bound debugging artifacts that preserve
+the same VM RAM, actor tables, scene, camera, VDP, and scheduler state for
+uninterrupted continuation tests.
 `trace-quality.json` reports input/state continuity, synchronization and
 atomic coverage, normalization counts, checkpoint hash verification, replay
 round-trip status, and the quality stage (`recorded`, `captured`,

@@ -1,9 +1,12 @@
 #include "animation.hpp"
 
+#include "checkpoint_io.hpp"
+
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
 #include <stdexcept>
+#include <utility>
 
 namespace openaladdin {
 namespace {
@@ -99,6 +102,40 @@ bool is_response_stream_cursor(std::uint32_t cursor) {
 }
 
 std::uint16_t as_u16(int value) { return static_cast<std::uint16_t>(value & 0xFFFF); }
+
+void write_spawn_request(checkpoint::Writer& writer, const AnimationSpawnRequest& request) {
+    writer.boolean(request.valid);
+    writer.u8(request.mode);
+    writer.u32(request.template_address);
+    writer.u8(static_cast<std::uint8_t>(request.offset_x));
+    writer.u8(static_cast<std::uint8_t>(request.offset_y));
+    writer.u32(request.animation_override);
+    writer.u32(request.movement_override);
+    writer.i32(request.source_world_x);
+    writer.i32(request.source_world_y);
+    writer.u8(request.source_facing_x_flip);
+    writer.u8(request.source_facing_y_flip);
+    writer.boolean(request.apple_action);
+    writer.i32(request.source_actor_slot);
+}
+
+AnimationSpawnRequest read_spawn_request(checkpoint::Reader& reader) {
+    AnimationSpawnRequest request;
+    request.valid = reader.boolean();
+    request.mode = reader.u8();
+    request.template_address = reader.u32();
+    request.offset_x = static_cast<std::int8_t>(reader.u8());
+    request.offset_y = static_cast<std::int8_t>(reader.u8());
+    request.animation_override = reader.u32();
+    request.movement_override = reader.u32();
+    request.source_world_x = reader.i32();
+    request.source_world_y = reader.i32();
+    request.source_facing_x_flip = reader.u8();
+    request.source_facing_y_flip = reader.u8();
+    request.apple_action = reader.boolean();
+    request.source_actor_slot = reader.i32();
+    return request;
+}
 
 }  // namespace
 
@@ -1090,6 +1127,129 @@ int PlayerAnimationVm::sprite_frame() const {
 
 std::uint32_t PlayerAnimationVm::stream_entry() const {
     return rom_mode_ ? stream_entry_ : clip(pose_).stream_entry;
+}
+
+void PlayerAnimationVm::write_checkpoint(std::ostream& output) const {
+    checkpoint::Writer writer(output);
+    writer.u8(static_cast<std::uint8_t>(pose_));
+    writer.u32(static_cast<std::uint32_t>(step_));
+    writer.i32(timer_);
+    writer.boolean(facing_left_);
+    writer.u8(static_cast<std::uint8_t>(horizontal_direction_));
+    writer.u8(static_cast<std::uint8_t>(stream_kind_));
+    writer.boolean(rom_mode_);
+    writer.bytes(memory_.data(), memory_.size());
+    writer.bytes(memory_write_flags_.data(), memory_write_flags_.size());
+    writer.bytes(actor_.data(), actor_.size());
+    writer.u32(animation_pc_);
+    writer.u32(frame_pointer_);
+    writer.u32(stream_entry_);
+    writer.u32(return_pc_);
+    writer.u8(random_value_);
+    writer.boolean(actor_tick_);
+    writer.i32(animation_phase_delay_);
+    writer.u32(pending_animation_pc_);
+    writer.boolean(force_tick_after_service_);
+    writer.boolean(force_tick_next_update_);
+    writer.boolean(force_tick_without_phase_);
+    writer.boolean(defer_tick_next_update_);
+    writer.boolean(clear_timer_next_update_);
+    writer.boolean(tracking_memory_writes_);
+    writer.u32(static_cast<std::uint32_t>(spawn_requests_.size()));
+    for (const AnimationSpawnRequest& request : spawn_requests_) {
+        write_spawn_request(writer, request);
+    }
+    writer.byte_vector(sound_requests_);
+    writer.u32(update_count_);
+    writer.boolean(landing_finished_);
+    writer.boolean(landing_reselect_pending_);
+}
+
+void PlayerAnimationVm::read_checkpoint(std::istream& input) {
+    checkpoint::Reader reader(input);
+    const auto pose = reader.u8();
+    const auto step = reader.u32();
+    const auto timer = reader.i32();
+    const bool facing_left = reader.boolean();
+    const auto horizontal_direction = reader.u8();
+    const auto stream_kind = reader.u8();
+    const bool rom_mode = reader.boolean();
+    if (pose > static_cast<std::uint8_t>(SpritePose::Landing)
+        || horizontal_direction > static_cast<std::uint8_t>(HorizontalDirection::Right)
+        || stream_kind > static_cast<std::uint8_t>(AnimationStreamKind::Action)) {
+        throw std::runtime_error("invalid animation VM enum in OpenAladdin checkpoint");
+    }
+    if (rom_mode != rom_mode_) {
+        throw std::runtime_error("animation VM ROM mode does not match OpenAladdin checkpoint");
+    }
+    std::array<std::uint8_t, 0x10000> memory{};
+    std::array<std::uint8_t, 0x10000> memory_write_flags{};
+    std::array<std::uint8_t, 0x42> actor{};
+    reader.bytes(memory.data(), memory.size());
+    reader.bytes(memory_write_flags.data(), memory_write_flags.size());
+    reader.bytes(actor.data(), actor.size());
+    const auto animation_pc = reader.u32();
+    const auto frame_pointer = reader.u32();
+    const auto stream_entry = reader.u32();
+    const auto return_pc = reader.u32();
+    const auto random_value = reader.u8();
+    const bool actor_tick = reader.boolean();
+    const auto animation_phase_delay = reader.i32();
+    const auto pending_animation_pc = reader.u32();
+    const bool force_tick_after_service = reader.boolean();
+    const bool force_tick_next_update = reader.boolean();
+    const bool force_tick_without_phase = reader.boolean();
+    const bool defer_tick_next_update = reader.boolean();
+    const bool clear_timer_next_update = reader.boolean();
+    const bool tracking_memory_writes = reader.boolean();
+    const auto spawn_count = reader.u32();
+    if (spawn_count > 4096) {
+        throw std::runtime_error("oversized animation spawn queue in OpenAladdin checkpoint");
+    }
+    std::vector<AnimationSpawnRequest> spawn_requests;
+    spawn_requests.reserve(spawn_count);
+    for (std::uint32_t index = 0; index < spawn_count; ++index) {
+        spawn_requests.push_back(read_spawn_request(reader));
+    }
+    auto sound_requests = reader.byte_vector(4096);
+    const auto update_count = reader.u32();
+    const bool landing_finished = reader.boolean();
+    const bool landing_reselect_pending = reader.boolean();
+    if (!rom_mode_ && step >= clip(static_cast<SpritePose>(pose)).steps.size()) {
+        throw std::runtime_error("invalid animation VM clip step in OpenAladdin checkpoint");
+    }
+    if (timer < 0 || animation_phase_delay < 0) {
+        throw std::runtime_error("invalid animation VM timer in OpenAladdin checkpoint");
+    }
+
+    pose_ = static_cast<SpritePose>(pose);
+    step_ = step;
+    timer_ = timer;
+    facing_left_ = facing_left;
+    horizontal_direction_ = static_cast<HorizontalDirection>(horizontal_direction);
+    stream_kind_ = static_cast<AnimationStreamKind>(stream_kind);
+    memory_ = memory;
+    memory_write_flags_ = memory_write_flags;
+    actor_ = actor;
+    animation_pc_ = animation_pc;
+    frame_pointer_ = frame_pointer;
+    stream_entry_ = stream_entry;
+    return_pc_ = return_pc;
+    random_value_ = random_value;
+    actor_tick_ = actor_tick;
+    animation_phase_delay_ = animation_phase_delay;
+    pending_animation_pc_ = pending_animation_pc;
+    force_tick_after_service_ = force_tick_after_service;
+    force_tick_next_update_ = force_tick_next_update;
+    force_tick_without_phase_ = force_tick_without_phase;
+    defer_tick_next_update_ = defer_tick_next_update;
+    clear_timer_next_update_ = clear_timer_next_update;
+    tracking_memory_writes_ = tracking_memory_writes;
+    spawn_requests_ = std::move(spawn_requests);
+    sound_requests_ = std::move(sound_requests);
+    update_count_ = update_count;
+    landing_finished_ = landing_finished;
+    landing_reselect_pending_ = landing_reselect_pending;
 }
 
 }  // namespace openaladdin

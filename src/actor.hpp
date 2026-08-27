@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <iosfwd>
 #include <optional>
 #include <vector>
 
@@ -96,6 +97,8 @@ public:
     );
 
     bool was_culled_this_frame(std::size_t slot) const;
+    void write_checkpoint(std::ostream& output) const;
+    void read_checkpoint(std::istream& input);
 
 private:
     std::array<bool, 32> culled_this_frame_{};

@@ -246,6 +246,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(actor_system_test)
     openaladdin_enable_test_assertions(actor_system_test)
 
+    add_executable(checkpoint_state_test tests/checkpoint_state.cpp)
+    target_link_libraries(checkpoint_state_test PRIVATE openaladdin_engine)
+    target_compile_features(checkpoint_state_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(checkpoint_state_test)
+    openaladdin_enable_test_assertions(checkpoint_state_test)
+
     add_executable(psg_test tests/psg.cpp)
     target_link_libraries(psg_test PRIVATE openaladdin_audio)
     target_compile_features(psg_test PRIVATE cxx_std_20)
@@ -304,6 +310,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME actor_system COMMAND actor_system_test)
     set_tests_properties(actor_system PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME checkpoint_state COMMAND checkpoint_state_test)
+    set_tests_properties(checkpoint_state PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME psg COMMAND psg_test)

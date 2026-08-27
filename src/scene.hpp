@@ -3,6 +3,7 @@
 #include "level.hpp"
 
 #include <cstdint>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -39,6 +40,8 @@ public:
     const SceneRuntimeState& runtime() const { return runtime_; }
     const LevelDescriptor* descriptor(int scene_state) const;
     const LevelDescriptor* current_descriptor() const { return descriptor(runtime_.state); }
+    void write_checkpoint(std::ostream& output) const;
+    void read_checkpoint(std::istream& input);
 
     // Returns true when this scene owns the update. The transition scene uses
     // eight-pixel local-coordinate movement and bypasses normal physics.
