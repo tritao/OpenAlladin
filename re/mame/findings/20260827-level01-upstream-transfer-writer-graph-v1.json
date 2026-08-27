@@ -1,0 +1,292 @@
+{
+  "format": "openaladdin-level01-upstream-transfer-writer-graph-finding-v1",
+  "recorded_at": "2026-08-27",
+  "status": "static-candidate-closure",
+  "repository_commit": "62858500db4a8b90210d603c659b2f168773ffc8",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": {
+    "target_request": "re/ghidra/targets/level01-upstream-transfer-writers-targets.json",
+    "decompile_report": "build/re/level01-upstream-transfer-writers-targeted-decompile.json",
+    "map_inventory": "build/assets/levels/level01/raw/map.bin",
+    "floor_inventory": "build/assets/levels/level01/raw/floor.bin",
+    "connector_audit": "re/mame/findings/20260827-level01-connector-top-transfer-audit-v1.json",
+    "type01_chain": "re/mame/findings/20260826-type01-child-chain-v1.json",
+    "selector87_natural": "re/mame/findings/20260827-level01-selector87-natural-v1.json"
+  },
+  "question": "Which producer can cause the missing discontinuous or assisted upward transfer into the Level 01 exit corridor?",
+  "map_records": {
+    "x2112": {
+      "endpoint": {
+        "cell": [132, 25],
+        "world": [2112, 640],
+        "map_word": "0x52B0",
+        "behavior": "0x24",
+        "handler": "0x001B54D2",
+        "role": "connector upper endpoint"
+      },
+      "body": {
+        "cells": "(132,26..39)",
+        "map_word": "0x5388 and neighboring connector records",
+        "behavior": "0x22",
+        "handler": "0x001B54D2",
+        "role": "connector body"
+      },
+      "nearby_interactions": [
+        { "cell": [123, 11], "world": [1968, 416], "map_word": "0x5368", "selector": "0x5C" },
+        { "cell": [133, 11], "world": [2128, 416], "map_word": "0x5370", "selector": "0x5C" },
+        { "cell": [116, 22], "world": [1856, 592], "map_word": "0x5B20", "selector": "0x5C" },
+        { "cell": [123, 22], "world": [1968, 592], "map_word": "0x5B28", "selector": "0x5C" },
+        { "cell": [158, 23], "world": [2528, 608], "selector": "0x5C" },
+        { "cell": [126, 14], "selector": "0x60" },
+        { "cell": [128, 13], "selector": "0x60" },
+        { "cell": [130, 14], "selector": "0x60" },
+        { "cell": [134, 32], "selector": "0x60" },
+        { "cell": [136, 34], "selector": "0x60" },
+        { "cell": [136, 36], "selector": "0x60" }
+      ]
+    },
+    "x2720": {
+      "endpoint": {
+        "cell": [170, 10],
+        "world": [2720, 400],
+        "map_word": "0x52A8",
+        "behavior": "0x24",
+        "handler": "0x001B54D2",
+        "role": "connector upper endpoint"
+      },
+      "body": {
+        "cells": "(170,11..22)",
+        "map_word": "0x5388 and neighboring connector records",
+        "behavior": "0x22",
+        "handler": "0x001B54D2",
+        "role": "connector body"
+      },
+      "nearby_interactions": [
+        { "cell": [167, 15], "world": [2672, 480], "map_word": "0x56A0", "selector": "0x60" },
+        { "cell": [167, 17], "world": [2672, 512], "map_word": "0x5890", "selector": "0x51" },
+        { "cell": [167, 19], "world": [2672, 544], "map_word": "0x5940", "selector": "0x51" },
+        { "cell": [171, 26], "world": [2736, 656], "map_word": "0x5D78", "selector": "0x10" },
+        { "cell": [171, 33], "world": [2736, 768], "map_word": "0x6268", "selector": "0x40" },
+        { "cell": [168, 41], "world": [2688, 896], "map_word": "0x7138", "selector": "0x51" },
+        { "cell": [171, 41], "world": [2736, 896], "map_word": "0x7148", "selector": "0x51" }
+      ]
+    },
+    "row10": {
+      "cell": [267, 10],
+      "world": [4272, 400],
+      "map_word": "0x52E8",
+      "selector": "0x87",
+      "handler": "0x001B74D6",
+      "role": "upper Type-0x1E / row-10 producer frontier"
+    }
+  },
+  "producer_chains": {
+    "x2112": {
+      "dispatch": "Terrain_ResolvePlayerCell -> 0x001B54D2",
+      "terrain_handler": {
+        "behavior_0x24": "sets TERRAIN_QUERY_STATE_A and TERRAIN_QUERY_STATE_B to 0xFF",
+        "behavior_0x22": "sets TERRAIN_QUERY_STATE_A and TERRAIN_QUERY_STATE_B to 0xFF",
+        "player_x_y_vx_vy_writes": false,
+        "interaction_state_writes": false,
+        "terrain_query_writes": ["TERRAIN_QUERY_STATE_A", "TERRAIN_QUERY_STATE_B"],
+        "child_production": false
+      },
+      "nearby_resource_dispatch": [
+        {
+          "selector": "0x5C",
+          "handler": "0x001B6870",
+          "template": "0x001B7B34",
+          "actor_type": "0x06",
+          "movement_stream": "0x00000000",
+          "animation_stream": "0x00123200",
+          "collision_handler": "0x001AE9DA",
+          "player_coordinate_writes": false,
+          "interaction_state_writes": false,
+          "terrain_writes": false,
+          "child_actor_or_resource": "none"
+        },
+        {
+          "selector": "0x60",
+          "handler": "0x001B735E",
+          "template": "0x001B79B8 then caller override",
+          "actor_type": "0x40",
+          "movement_stream": "0x00000000",
+          "animation_stream": "0x00122C12",
+          "collision_handler": "0x001AF468",
+          "player_coordinate_writes": false,
+          "interaction_state_writes": "cleanup/reinitialization only",
+          "terrain_writes": false,
+          "child_actor_or_resource": "none"
+        }
+      ],
+      "result": "The connector raises query state for the ordinary +/-1 or +/-2 response path. The nearby Type-0x06 and Type-0x40 resources are stationary effects/support actors and do not provide a vertical transfer."
+    },
+    "x2720": {
+      "dispatch": "Terrain_ResolvePlayerCell -> 0x001B54D2",
+      "terrain_handler": {
+        "behavior_0x24": "sets TERRAIN_QUERY_STATE_A and TERRAIN_QUERY_STATE_B to 0xFF",
+        "behavior_0x22": "sets TERRAIN_QUERY_STATE_A and TERRAIN_QUERY_STATE_B to 0xFF",
+        "player_x_y_vx_vy_writes": false,
+        "interaction_state_writes": false,
+        "terrain_query_writes": ["TERRAIN_QUERY_STATE_A", "TERRAIN_QUERY_STATE_B"],
+        "child_production": false
+      },
+      "nearby_resource_dispatch": [
+        {
+          "selector": "0x51",
+          "handler": "0x001B7262",
+          "template": "0x001B79B8 then caller override",
+          "actor_type": "0x3A",
+          "movement_stream": "0x00000000",
+          "animation_stream": "0x00122BD8",
+          "collision_handler": "0x001AF228",
+          "player_coordinate_writes": false,
+          "interaction_state_writes": "effect/cleanup only",
+          "terrain_writes": false,
+          "child_actor_or_resource": "F5 -> template 0x001B7D00, Type-0x84, stationary"
+        },
+        {
+          "selector": "0x10",
+          "handler": "0x001B6EA6",
+          "template": "0x001B7C38",
+          "actor_type": "0x1F",
+          "movement_stream": "0x00120432",
+          "animation_stream": "0x00123900",
+          "collision_handler": "0x001AE796",
+          "player_coordinate_writes": false,
+          "interaction_state_writes": "local Type-0x1E/0x1F cleanup and interaction state",
+          "terrain_writes": false,
+          "child_actor_or_resource": "none"
+        },
+        {
+          "selector": "0x40",
+          "handler": "0x001B7232",
+          "template": "0x001B79E0",
+          "actor_type": "0x43",
+          "movement_stream": "0x00000000",
+          "animation_stream": "0x00124450",
+          "collision_handler": "0x001AE64C",
+          "player_coordinate_writes": "PLAYER_X is temporary and restored; no Y/VY",
+          "interaction_state_writes": "effect event only",
+          "terrain_writes": false,
+          "child_actor_or_resource": "F5 -> template 0x001B8098, Type-0x7F, stationary"
+        }
+      ],
+      "result": "The x≈2720 chain contains the known local Type-0x1E/0x2D interaction family, a horizontal-only Type-0x1F movement stream, and stationary Type-0x3A/0x43 effects. None writes player Y/VY or creates a transfer-capable child."
+    },
+    "row10": {
+      "dispatch": "interaction row processor -> selector 0x87 -> 0x001B74D6 -> 0x001B525E",
+      "template": "0x001B7A30",
+      "actor_type": "0x01",
+      "movement_stream": "0x00000000",
+      "animation_stream": "0x00122D92",
+      "collision_handler": "none capable of player transfer",
+      "player_coordinate_writes": false,
+      "interaction_state_writes": "row cell clear and ordinary actor state",
+      "terrain_writes": false,
+      "child_actor_or_resource": "F5 -> template 0x001B7D00, Type-0x84 at (+22,-12), stationary",
+      "natural_reachability": "not reached in selector-0x87 natural replay"
+    }
+  },
+  "player_writer_graph": {
+    "ordinary_integration": {
+      "writers": ["0x001A9B90"],
+      "effect": "integrates high-byte fixed-point PLAYER_VX/PLAYER_VY; upward acceleration is +0x3C and the ordinary arc is bounded by terrain",
+      "callers_or_reachers": ["Game_FrameUpdateLoop ordinal 16 / 0x001A9D98"]
+    },
+    "normal_jump": {
+      "writers": ["0x001A9716"],
+      "effect": "sets PLAYER_VY=-0x200 under normal jump gates",
+      "callers_or_reachers": ["Game_FrameUpdateLoop ordinal 17"],
+      "transfer_capability": "ordinary arc only"
+    },
+    "connector_movement": {
+      "writers": ["0x001A986E"],
+      "effect": "consumes QUERY_STATE_A and moves local PLAYER_Y by -1/-2 with Up or +2 with Down",
+      "callers_or_reachers": ["behavior 0x22/0x23 via 0x001B54D2", "Game_FrameUpdateLoop ordinal 6"],
+      "transfer_capability": "small assisted step only"
+    },
+    "terrain_snap_and_contact": {
+      "writers": ["0x001A9B6C", "0x001AD7B4", "0x001A99F0", "0x001A9D98", "0x001ADB5C", "0x001ABB40"],
+      "effect": "grid/contour snap, ground response, landing, collision stop, or actor terrain state",
+      "transfer_capability": "local placement/contact only"
+    },
+    "behavior_0x27_discontinuous_step": {
+      "writers": ["0x001B54A6"],
+      "effect": "PLAYER_Y -= 0x50, selects animation 0x001223D0, arms interaction animation gate",
+      "reacher": "Terrain_ResolvePlayerCell behavior dispatch",
+      "level01_presence": "zero decoded terrain cells; no observed behavior-table writer installs it",
+      "transfer_capability": "yes in isolation, unreachable from the decoded Level 01 terrain"
+    },
+    "behavior_0x29_launch": {
+      "writers": ["0x001B557E"],
+      "effect": "PLAYER_VY=0xFB00, PLAYER_VX=0xFC00, TERRAIN_RESPONSE_ACTIVE=0xFF",
+      "reacher": "Terrain_ResolvePlayerCell behavior dispatch",
+      "level01_producer_status": "not produced by x≈2112/x≈2720 chains; zero entry in the connector-top natural audit",
+      "transfer_capability": "yes"
+    },
+    "behavior_0x2D_bounce": {
+      "writers": ["0x001B56B6"],
+      "effect": "PLAYER_VX=0xFC00, PLAYER_VY=0x0200, animation 0x00121AD8",
+      "reacher": "Terrain_ResolvePlayerCell behavior dispatch",
+      "level01_producer_status": "not produced by x≈2112/x≈2720 chains; zero entry in the connector-top natural audit",
+      "transfer_capability": "positive bounce only; no exit gate by itself"
+    },
+    "actor_driven_placement": {
+      "writers": ["0x001AF978", "0x001AFBF4", "0x001AE64C"],
+      "effect": "Type-0x6A aligns PLAYER_Y locally; Type-0x65 sets PLAYER_VY=-0x500; Type-0x43 temporarily changes/restores PLAYER_X",
+      "level01_status": "live known families, but the recorded routes and local producer chains do not reach the missing upper corridor"
+    },
+    "scripted_or_transition_placement": {
+      "writers": ["0x001AA484", "0x001A8F0C", "0x001B5B66"],
+      "effect": "scene/table placement, death/transition reset, or exit countdown",
+      "level01_status": "downstream of the unsatisfied exit predicate; not an upstream natural transfer"
+    },
+    "camera_rebase_bookkeeping": {
+      "writers": ["0x001AA8FA", "0x001B0490", "0x001B04DE"],
+      "effect": "changes local PLAYER_Y and camera together while preserving world Y",
+      "transfer_capability": "none"
+    }
+  },
+  "candidate_ranking": [
+    {
+      "candidate": "behavior 0x27",
+      "static_capacity": "high",
+      "Level01_reachability": "rejected",
+      "reason": "direct -0x50 player-Y writer, but zero Level 01 map cells and no table-install path in the closure"
+    },
+    {
+      "candidate": "behavior 0x29 / 0x2D",
+      "static_capacity": "high",
+      "Level01_reachability": "unresolved globally, rejected for these two chains",
+      "reason": "real launch/bounce writers exist, but neither local producer chain reaches them and the connector-top natural audit records no handler entry"
+    },
+    {
+      "candidate": "Type-0x65 / Type-0x6A actor path",
+      "static_capacity": "medium",
+      "Level01_reachability": "known live family, locally closed",
+      "reason": "actor-driven local alignment/bounce is already observed and does not explain the missing transfer from these records"
+    },
+    {
+      "candidate": "x≈2112/x≈2720/row-10 resources",
+      "static_capacity": "none",
+      "Level01_reachability": "rejected as transfer producers",
+      "reason": "all decoded movement streams are zero or horizontal-only; animation streams only mutate actor fields, spawn stationary effects, or perform local interaction cleanup"
+    }
+  ],
+  "runtime_policy": {
+    "mame_runs_added": false,
+    "reason": "static closure produced no new credible candidate; do not spend another input matrix on the direct connector-top variants",
+    "keep_breakpoints": [
+      "0x001B557E",
+      "0x001B56B6",
+      "0x001B5B4A",
+      "0x001B5B66"
+    ],
+    "next_runtime_trigger": "only after static work identifies a producer that reaches a transfer-capable writer or installs a missing terrain/resource record"
+  },
+  "conclusion": "The requested backward writer graph closes both x≈2112 and x≈2720 producer chains, including their nearby resource selectors and the row-10 selector-0x87 chain. None can cause the missing discontinuous or assisted upward transfer. The remaining blocker is upstream of these records: either a different naturally reachable producer/resource installation path or a terrain/actor family not yet correlated with the route."
+}

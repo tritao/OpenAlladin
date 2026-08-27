@@ -205,6 +205,30 @@ the finding or commit message.
 
 ### Scene and exit work
 
+### Upstream transfer writer graph
+
+- `re/ghidra/targets/level01-upstream-transfer-writers-targets.json` and
+  `re/mame/findings/20260827-level01-upstream-transfer-writer-graph-v1.json`
+  record the backward closure from every material Level 01 player-Y/player-VY,
+  terrain-response, connector, interaction, actor-placement, and scene-gate
+  writer. The x≈2112 chain is behavior `0x24/0x22` through
+  `0x001B54D2`, with nearby selector `0x5C` Type-0x06 and selector `0x60`
+  Type-0x40 resources. The x≈2720 chain has the same connector handlers plus
+  selector `0x51` Type-0x3A, selector `0x10` Type-0x1F, and selector `0x40`
+  Type-0x43 resources. Their movement streams are zero or horizontal-only;
+  their animation streams and collision handlers do not write player Y/VY or
+  a scene gate. The row-10 selector `0x87` path likewise creates stationary
+  Type-0x01/Type-0x84 resources.
+- The writer graph classifies behavior `0x27` (`PLAYER_Y -= 0x50`) and
+  behaviors `0x29/0x2D` (large velocity writes) as the only direct terrain
+  transfer-capable families in the closure. Level 01 contains zero decoded
+  behavior-`0x27` cells, and neither local connector chain reaches the
+  launch/bounce handlers. Type-0x65/Type-0x6A actor placement is live but is
+  already bounded to the observed local bounce/handhold families. This closes
+  the requested upstream records as transfer producers without another MAME
+  input matrix; runtime tracing resumes only after static work identifies a
+  different producer or installation path.
+
 ### Player animation and terrain timing
 
 - `re/mame/findings/20260827-level01-f5-actor-boundary-v1.json`: the opening
@@ -282,6 +306,14 @@ the finding or commit message.
 - This validates the direct static call sequence for the tested route, but it
   does not promote native `probe_animation` or identify indirect service
   callers. Those remain provisional pending a transition/resource campaign.
+- `re/scheduler/native_update_mapping.yml` is the row-by-row comparison of all
+  37 ROM calls against `Engine::update()`. It classifies 19 rows as exact or
+  inlined, 11 as ordering/split mismatches, 6 as presentation-only, and 1 as
+  unknown. The main mismatch is now explicit: ROM ordinal 30 is one gated
+  `AnimationVM_TickActors` call after scene-script advance, while native has a
+  fixture-only pre-motion probe plus separate actor and player animation
+  passes. The seven cadence/catch-up/defer flags remain named temporary parity
+  hacks with ROM-backed removal conditions; none was deleted speculatively.
 
 - `re/mame/campaigns/20260827-frame-wait-lifecycle-v1.json` resolves the
   previously ambiguous `FRAME_WAIT_LATCH` role. Static ROM inspection finds
@@ -1247,6 +1279,7 @@ jump, settles on behavior `0x25` at `(4728,628)`, and never reaches the behavior
 | `20260827-level01-far-rope-up-contact-v1` | recorded-positive-route-frontier | timing sweep proving the far-rope Up contact and synchronized endpoint |
 | `20260827-level01-far-rope-endpoint-v1` | recorded-negative-frontier | direct dismount/jump/attack matrix from the corrected far-rope endpoint |
 | `20260827-level01-actor-lifecycle-extension-v1` | completed-boundary-correction | type-0x40 replacement, F5 type-0x2A accumulator propagation, cull retention, and class-zero terrain correction |
+| `20260827-level01-upstream-transfer-writer-graph-v1` | recorded-static-audit | backward player-Y/VY writer graph and x≈2112/x≈2720/row-10 producer closure; no transfer-capable local producer |
 | `20260827-level01-camel-handhold-connector-v1` | recorded-positive-route-extension | live camel boost, type-0x6A→0x6B handhold, and x=1568 connector-top continuation |
 | `20260827-level01-pole-input-matrix-v1` | recorded-negative-frontier | six exact-pole Up/jump/directional branches; ordinary jump arc and upper-edge fall only |
 | `20260827-level01-upper-type40-contact-v1` | recorded-negative-frontier | upper type-0x40 contact breakpoints and object cleanup; no launch or scene transition |

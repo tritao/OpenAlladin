@@ -1,0 +1,261 @@
+# Row-by-row comparison of native Engine::update() against the recovered
+# Game_FrameUpdateLoop. This is an audit artifact, not a claim that the native
+# phase names are the ROM scheduler.
+format: openaladdin-native-scheduler-mapping-v1
+recorded_at: 2026-08-27
+repository_commit: 62858500db4a8b90210d603c659b2f168773ffc8
+rom_scheduler: re/scheduler/frame_phases.yml
+native_source: src/engine.cpp
+status: static-audit-no-code-change
+
+status_legend:
+  exact: native operation has the same service and ordering role as the ROM call
+  inlined: ROM service is represented inside another native phase
+  derived_presentation_only: native work has no gameplay-state counterpart
+  temporary_parity_hack: native behavior exists to preserve a measured boundary and still needs a ROM gate/lifecycle explanation
+  mismatch: native service exists, but its split, order, or invocation count differs from the ROM call sequence
+  unknown: no defensible native equivalent has been established
+
+rom_rows:
+  - ordinal: 1
+    rom_service: "0x001A91C6 input/resource service"
+    native_equivalent: "terrain_input plus frame-boundary deferred spawn prelude"
+    status: mismatch
+    evidence: "update_terrain_input covers controller/query bytes; F5/resource work is split into deferred_animation_spawn and later animation_spawn"
+  - ordinal: 2
+    rom_service: "0x001A8E0C publish player world coordinates"
+    native_equivalent: "player_world_x/player_world_y reads and sync_player_actor at state boundary"
+    status: mismatch
+    evidence: "native does not expose the ROM's early publish call as a scheduler phase; actor slot 0 is republished at the end of update"
+  - ordinal: 3
+    rom_service: "0x001AD7B4 landing contour resolver"
+    native_equivalent: "terrain_contour -> apply_floor_contour"
+    status: exact
+    evidence: "native phase is recorded at the same pre-motion position on the normal path"
+  - ordinal: 4
+    rom_service: "0x001A8E0C publish player world coordinates"
+    native_equivalent: "cached player_world_x/player_world_y values"
+    status: inlined
+    evidence: "native consumers use the same world-coordinate conversion after contour resolution without a separate publish service"
+  - ordinal: 5
+    rom_service: "0x001AD632 terrain edge/ceiling probe"
+    native_equivalent: "query_player_collision during terrain_input"
+    status: inlined
+    evidence: "collision probes are populated from the level query immediately before connector response"
+  - ordinal: 6
+    rom_service: "0x001A986E terrain vertical response"
+    native_equivalent: "update_terrain_connector_response"
+    status: exact
+    evidence: "behavior-0x22 query latch is consumed with the recovered +/-1, +/-2 local-Y cadence"
+  - ordinal: 7
+    rom_service: "0x001A99F0 terrain horizontal response"
+    native_equivalent: "apply_ground_movement plus integrate_motion response branch"
+    status: inlined
+    evidence: "native separates the ground step and fixed-point response across the physics block"
+  - ordinal: 8
+    rom_service: "0x001ADE36 MovementVM_TickActors"
+    native_equivalent: "movement_vm"
+    status: exact
+    evidence: "direct ROM entry is recorded at the recovered position"
+  - ordinal: 9
+    rom_service: "0x001ADB5C actor terrain collision loop"
+    native_equivalent: "actor_terrain plus actor_terrain_interaction"
+    status: mismatch
+    evidence: "one ROM loop is split into a general terrain pass and a Type-0x2D interaction conversion pass"
+  - ordinal: 10
+    rom_service: "0x001ABB40 actor/player collision pass"
+    native_equivalent: "player_actor_interaction"
+    status: exact
+    evidence: "native calls update_actor_interactions at the corresponding gameplay position"
+  - ordinal: 11
+    rom_service: "0x001B321C query down"
+    native_equivalent: "query_player_collision flags"
+    status: inlined
+    evidence: "native derives directional collision flags in the terrain query block"
+  - ordinal: 12
+    rom_service: "0x001B3212 query up"
+    native_equivalent: "query_player_collision flags"
+    status: inlined
+    evidence: "native derives directional collision flags in the terrain query block"
+  - ordinal: 13
+    rom_service: "0x001B3226 query left"
+    native_equivalent: "query_player_collision flags"
+    status: inlined
+    evidence: "native derives directional collision flags in the terrain query block"
+  - ordinal: 14
+    rom_service: "0x001B3230 query right"
+    native_equivalent: "query_player_collision flags"
+    status: inlined
+    evidence: "native derives directional collision flags in the terrain query block"
+  - ordinal: 15
+    rom_service: "0x001B1E38 Terrain_ResolvePlayerCell"
+    native_equivalent: "terrain_behavior prepass plus terrain_resolution"
+    status: mismatch
+    evidence: "native may resolve before actor/refill work and again after integration; ROM direct loop has one ordinal-15 call, with handler timing still split in native"
+  - ordinal: 16
+    rom_service: "0x001A9D98 player terrain response state machine"
+    native_equivalent: "player_movement response/integration block"
+    status: inlined
+    evidence: "native records player_movement at the response boundary but combines state-machine branches with the integrator"
+  - ordinal: 17
+    rom_service: "0x001A9716 jump and vertical state"
+    native_equivalent: "start_jump and vertical handoff inside player_movement"
+    status: inlined
+    evidence: "jump impulse and response-latch writes are applied after integration and terrain resolution"
+  - ordinal: 18
+    rom_service: "0x001A8E0C publish player world coordinates"
+    native_equivalent: "refreshed world-coordinate reads before camera/VM work"
+    status: inlined
+    evidence: "native context is rebuilt from current player/camera state rather than calling a separate publisher"
+  - ordinal: 19
+    rom_service: "0x001AA8FA Camera_UpdateFollow"
+    native_equivalent: "camera_follow"
+    status: exact
+    evidence: "native records the follow service and carries the recovered delay/rebase rules"
+  - ordinal: 20
+    rom_service: "0x001A9304 locomotion/action selector"
+    native_equivalent: "desired_pose selection and action/locomotion branch logic"
+    status: inlined
+    evidence: "native chooses the same stream families in the player animation preparation block"
+  - ordinal: 21
+    rom_service: "0x001A9502 action animation selector"
+    native_equivalent: "grounded Up/attack/apple stream selection"
+    status: inlined
+    evidence: "native handles action roots around the player animation call"
+  - ordinal: 22
+    rom_service: "0x001ABD7E actor/actor collision pass"
+    native_equivalent: "pre_motion_actor_collision and post_motion_actor_collision"
+    status: mismatch
+    evidence: "native splits one ROM call into two passes to preserve measured sword and actor-lifecycle boundaries"
+  - ordinal: 23
+    rom_service: "0x001B02EC interaction target smoothing"
+    native_equivalent: "interaction target update inside interaction handling"
+    status: inlined
+    evidence: "no separate native scheduler phase; only the smoothed target state is represented"
+  - ordinal: 24
+    rom_service: "0x001A8F0C level exit/terminal transition"
+    native_equivalent: "level exit check within normal update/scene transition branch"
+    status: mismatch
+    evidence: "the ROM call is a fixed ordinal; native transition handling returns through an early scene_transition branch"
+  - ordinal: 25
+    rom_service: "0x001A8F04 empty return block"
+    native_equivalent: "none"
+    status: derived_presentation_only
+    evidence: "one-instruction ROM return has no native state effect"
+  - ordinal: 26
+    rom_service: "0x001B00CA interaction counter service"
+    native_equivalent: "interaction lock/counter updates in the prelude and interaction block"
+    status: inlined
+    evidence: "native state fields exist, but no separate phase records this service"
+  - ordinal: 27
+    rom_service: "0x001B01AC interaction resource state service"
+    native_equivalent: "interaction_refill plus animation/resource side effects"
+    status: mismatch
+    evidence: "native refill allocation is separated from the ROM's gated late service and still carries cadence-specific logic"
+  - ordinal: 28
+    rom_service: "0x001A8E0C publish player world coordinates"
+    native_equivalent: "sync_player_actor before state boundary"
+    status: mismatch
+    evidence: "native publishes slot zero once at the end rather than exposing the ROM's third explicit mid-loop call"
+  - ordinal: 29
+    rom_service: "0x001A8E3E SceneScript_AdvanceState"
+    native_equivalent: "scene transition update / scene update path"
+    status: mismatch
+    evidence: "normal native update has no direct scene-script service phase; transition mode returns before the gameplay sequence completes"
+  - ordinal: 30
+    rom_service: "0x001AC784 AnimationVM_TickActors"
+    native_equivalent: "probe_animation, actor_animation, player_animation"
+    status: mismatch
+    evidence: "ROM has one direct call after scene advance; native splits actor/player service and adds a snapshot-only pre-motion probe"
+  - ordinal: 31
+    rom_service: "0x001AB7C4 build render records"
+    native_equivalent: "render preparation after gameplay update"
+    status: derived_presentation_only
+    evidence: "native rendering is outside Engine::update's gameplay phase model and is not yet tagged with the ROM call boundary"
+  - ordinal: 32
+    rom_service: "0x001B249E frame wait helper"
+    native_equivalent: "host frame boundary/VBlank synchronization"
+    status: derived_presentation_only
+    evidence: "native does not perform the ROM Z80 handshake in Engine::update; frame pacing is host-owned"
+  - ordinal: 33
+    rom_service: "0x001AC726 submit actor sprite records"
+    native_equivalent: "sprite submission/render backend"
+    status: derived_presentation_only
+    evidence: "VDP submission is native presentation work, not a gameplay phase"
+  - ordinal: 34
+    rom_service: "0x001AB776 submit player/camera records"
+    native_equivalent: "sprite submission/render backend"
+    status: derived_presentation_only
+    evidence: "VDP submission is native presentation work, not a gameplay phase"
+  - ordinal: 35
+    rom_service: "0x001AE0F6 transition completion check"
+    native_equivalent: "scene transition/resource completion checks"
+    status: mismatch
+    evidence: "native has an early transition return and no row-aligned completion service in the normal update path"
+  - ordinal: 36
+    rom_service: "0x001AAA2A publish pending camera scroll"
+    native_equivalent: "camera publish after update"
+    status: derived_presentation_only
+    evidence: "native stores camera scroll state and publishes it in the rendering path"
+  - ordinal: 37
+    rom_service: "0x001B315C SceneScript_CompleteToState1"
+    native_equivalent: "scene/state boundary bookkeeping"
+    status: unknown
+    evidence: "native state boundary exists, but no causal mapping to the ROM completion writer is established"
+
+native_extra_phases:
+  - name: deferred_animation_spawn
+    rom_service: "nested F5 allocation from the prior AnimationVM call"
+    status: temporary_parity_hack
+    evidence: "opening player-stream F5 actor is visible on the next live boundary; this preserves a measured actor boot lifecycle"
+    removal_condition: "replace with a caller/gate/lifecycle mapping from AnimationVM_TickActors and AnimationVM_SpawnResource"
+  - name: probe_animation
+    rom_service: "no direct Game_FrameUpdateLoop equivalent"
+    status: temporary_parity_hack
+    evidence: "only used for snapshot movement fixtures; static scheduler shows MovementVM ordinal 8 before the sole AnimationVM ordinal 30"
+    removal_condition: "remove or confine to fixture mode once the native actor lifecycle is driven by the ordinal-30 service"
+  - name: actor_animation
+    rom_service: "part of ordinal 30"
+    status: mismatch
+    evidence: "native actor VM pass occurs after refill/terrain work and is separately recorded from player_animation"
+    removal_condition: "make the single ordinal-30 service own actor and player VM traversal with ROM gate semantics"
+  - name: player_animation
+    rom_service: "part of ordinal 30"
+    status: mismatch
+    evidence: "native player VM pass occurs after camera follow and several native selector branches"
+    removal_condition: "align player/actor animation traversal and keep only ROM-backed command-boundary exceptions"
+  - name: actor_animation_catch_up
+    rom_service: "unknown"
+    status: temporary_parity_hack
+    evidence: "flag is reset at the actor-animation phase but no current direct ROM gate has been identified"
+    removal_condition: "remove after actor VM call ownership is unified"
+  - name: camera_follow_catch_up
+    rom_service: "camera rebase/follow lifecycle"
+    status: temporary_parity_hack
+    evidence: "vertical rebase cadence is backed by camera trace evidence, but the exact ROM second-service ownership remains split"
+    removal_condition: "map the second service to the recovered Camera_UpdateFollow/rebase call sites"
+  - name: player_animation_catch_up
+    rom_service: "unknown secondary animation service"
+    status: temporary_parity_hack
+    evidence: "native can force a tick after a camera rebase, while the ROM static loop has one direct animation call"
+    removal_condition: "delete when the single ordinal-30 traversal reproduces the camera-rebase boundary without forced extra ticks"
+  - name: animation_defer_ticks
+    rom_service: "actor lifecycle gate around F5/F6 and ED/FB commands"
+    status: temporary_parity_hack
+    evidence: "some opening and interaction-refill actor boundaries are measured, but the rule is not yet generalized from a ROM caller"
+    removal_condition: "tie each defer to a decoded command/call-site lifecycle or remove it"
+  - name: animation_force_next_tick
+    rom_service: "actor animation gate/cursor lifecycle"
+    status: temporary_parity_hack
+    evidence: "used for terminalized actor and terrain-converted Type-0x2D boundaries; no single ROM phase currently owns it"
+    removal_condition: "replace with the common ordinal-30 gate and per-record cursor state"
+
+summary:
+  exact_or_inlined_rom_rows: 19
+  mismatch_rom_rows: 11
+  derived_presentation_only_rom_rows: 6
+  unknown_rom_rows: 1
+  native_extra_phases: 9
+  native_hacks_requiring_followup: 7
+  native_extra_mismatch_phases: 2
+  conclusion: "The scheduler is not yet canonical in native code. The largest concrete mismatch is the split AnimationVM model: ROM ordinal 30 is one gated direct call after SceneScript_AdvanceState, while native has a fixture-only pre-motion probe plus separate actor/player passes. No scheduler hack is deleted in this audit; each is now named with a specific ROM-backed removal condition."
