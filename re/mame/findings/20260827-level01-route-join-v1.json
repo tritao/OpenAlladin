@@ -11,11 +11,11 @@
   "campaign": "re/mame/campaigns/20260827-level01-route-join-v1.json",
   "capture_contract": "openaladdin-frame-state-v1",
   "segments": [
-    "build/re/campaigns/20260827-level01-route-join-v13/tower-cross",
-    "build/re/campaigns/20260827-level01-route-join-v14/first-guard",
-    "build/re/campaigns/20260827-level01-route-join-v15/second-guard",
-    "build/re/campaigns/20260827-level01-route-join-v16/far-guard",
-    "build/re/campaigns/20260827-level01-route-join-v17/rope-climb"
+    "build/re/campaigns/20260827-level01-route-join-v3/lower-to-far-floor",
+    "build/re/campaigns/20260827-level01-route-join-v6/guard-staging",
+    "build/re/campaigns/20260827-level01-route-join-v7/guard-staging",
+    "build/re/campaigns/20260827-level01-route-join-v9/far-guard-clear",
+    "build/re/campaigns/20260827-level01-route-join-v12/rope-climb"
   ],
   "confirmed": [
     "The correct continuation from the lower tower reverses left to the staircase ledge at world (2271,832), then crosses right through the tower band.",
