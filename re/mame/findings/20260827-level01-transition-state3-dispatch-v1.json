@@ -1,0 +1,74 @@
+{
+  "format": "openaladdin-transition-state3-dispatch-finding-v1",
+  "recorded_at": "2026-08-27",
+  "status": "controlled-state3-boundary-confirmed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "d7d4e87597396d15a56c5e02b332ad48ceb6f2a7",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-transition-state3-dispatch-v1.json",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "static_model": "re/scheduler/frame_phases.yml",
+  "static_chain": [
+    "0x001A8E3E SceneScript_AdvanceState",
+    "0x001A8E8C scene-script record parser",
+    "0x001A8ED2 scene-state write",
+    "0x001B0F66 SceneResource_Dispatch",
+    "0x001B0FDE state-3 resource branch",
+    "0x001B2ACE transition entry (not reached)",
+    "0x001B315C scene-script completion (not reached)"
+  ],
+  "dynamic_evidence": {
+    "trace": "build/re/20260827-transition-resource-parser-v2/control-state3-resource-context",
+    "lifecycle_entry_post_pc": "0x001B16E2",
+    "controlled_counter_before_write": "0x01",
+    "controlled_counter_value_before_parser": "0x00",
+    "parser_branch_post_pcs": [
+      "0x001A8E8E",
+      "0x001A8E8E",
+      "0x001A8ECC"
+    ],
+    "parser_state_write_post_pc": "0x001A8ED4",
+    "parser_state_written": "0x03",
+    "script_cursor": "0x4082 -> 0x408A",
+    "state3_dispatch_entry_post_pc": "0x001B0F68",
+    "state3_dispatch_branch_post_pcs": [
+      "0x001B0F9C",
+      "0x001B0FE0"
+    ],
+    "state3_d0_low_word": "0x0003",
+    "resource_context": {
+      "status_at_entry": "0x00",
+      "error_after_reset": "0xFF"
+    },
+    "transition_entry_hits": 0,
+    "completion_entry_hits": 0,
+    "final_scene_state": "0x03",
+    "final_script_cursor": "0x408A",
+    "final_pc": "0x001B24F4"
+  },
+  "confidence": {
+    "decompiled": [
+      "SceneScript_AdvanceState record loop and state write",
+      "SceneResource_Dispatch state-3 dispatch",
+      "resource status/error reset helper",
+      "transition and completion entry locations"
+    ],
+    "trace_validated": [
+      "controlled parser return advances 0x4082 to 0x408A",
+      "controlled parser return writes scene state 0x03",
+      "state-3 dispatcher is entered and selects its state-3 branch",
+      "the controlled replay remains before transition entry and scene completion"
+    ],
+    "parity_validated": []
+  },
+  "limitations": [
+    "This is controlled evidence from the upper-frontier checkpoint; it is not a natural transition result.",
+    "The debugger-side FFF003 clear exposes the parser and must not be preserved as native scheduler behavior.",
+    "No claim is made about state-3 resource completion, next-level scene-table selection, or the natural route into this state."
+  ],
+  "conclusion": "The scene-script parser and the later transition entry are distinct boundaries. The controlled route proves the parser's state-3 handoff and resource-dispatch entry, then settles before 0x001B2ACE. This narrows the next investigation to state-3 resource completion and the producer of the transition-mode path.",
+  "next_action": "Trace a naturally reached state-3 boundary, including resource status writers, FRAME_WAIT_LATCH transition writers, and scene-table index publication."
+}

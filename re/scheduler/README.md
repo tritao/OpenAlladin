@@ -58,6 +58,16 @@ entry exposes the `SceneScript_AdvanceState` parser on the next debugger
 frame, while the unmodified baseline does not. The controlled write is causal
 evidence only and is not a native scheduler phase or a natural transition.
 
+The controlled parser/state-3 boundary is recorded in
+`re/mame/campaigns/20260827-level01-transition-state3-dispatch-v1.json`.
+After the same controlled counter clear, the parser consumes the frontier
+record, advances `0x00FFF572` from `0x4082` to `0x408A`, and writes
+`SCENE_STATE=0x03`. The following `SceneResource_Dispatch` entry selects its
+state-3 branch and resets the resource error/status context, but the replay
+does not reach `0x001B2ACE` or `0x001B315C`. This separates parser/state-3
+dispatch from transition completion; it remains controlled evidence rather
+than a natural transition or native scheduler phase.
+
 Reanalyze an existing capture with:
 
 ```sh
