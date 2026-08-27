@@ -8,7 +8,7 @@ provenance, and named checkpoints.
 Verify a campaign after reproducing or restoring its artifacts:
 
 ```sh
-python tools/openaladdin/mame/campaign.py verify \
+python genie/mame/campaign.py verify \
   re/mame/campaigns/20260825-level01-canonical-v1.json
 ```
 

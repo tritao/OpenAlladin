@@ -11,7 +11,7 @@
   "capture_contract": "openaladdin-frame-state-v1",
   "recording_phase": "phase-1-controlled-frontier; phase-0 clean power-on evidence remains authoritative",
   "timing_note": "Loaded-state segments use normal no-sync gameplay timing. Controlled fixtures apply memory pokes at frame 1 and begin measuring the resulting state from frame 2.",
-  "command": "See each segment for its exact input schedule and loaded-state provenance; all runs use tools/openaladdin/mame/run.sh with OPENALADDIN_CAPTURE=state.",
+  "command": "See each segment for its exact input schedule and loaded-state provenance; all runs use genie/mame/run.sh with OPENALADDIN_CAPTURE=state.",
   "segments": [
     {
       "id": "controlled-platform-route",

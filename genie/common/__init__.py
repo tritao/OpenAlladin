@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from openaladdin.common import (
-    ROOT as LEGACY_ROOT,
+from .helpers import (
+    ROOT,
     hashes,
     load_yaml,
     normalize_symbols,
@@ -19,14 +19,8 @@ from genie.provenance import (
     PROVENANCE_FORMAT,
     attach_provenance,
     build_provenance,
-    create_provenance,
     write_provenance_json,
 )
-
-# The old helper's ROOT remains available under its historical name.  It is
-# the same repository root for a normal checkout; new code should use the
-# explicit ProjectContext instead of resolving paths ad hoc.
-ROOT = LEGACY_ROOT
 
 __all__ = [
     "ROOT",
@@ -34,7 +28,6 @@ __all__ = [
     "PROVENANCE_FORMAT",
     "attach_provenance",
     "build_provenance",
-    "create_provenance",
     "find_repository_root",
     "git_revision",
     "hashes",

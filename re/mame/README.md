@@ -9,7 +9,7 @@ knowledge; edit the YAML sources instead.
 With the MAME submodule built and the local ROM at the repository root:
 
 ```sh
-./tools/openaladdin/mame/run.sh
+./genie/mame/run.sh
 ```
 
 The command writes generated output under `build/re/traces/`:
@@ -34,7 +34,7 @@ Override the frame count with `OPENALADDIN_TRACE_FRAMES`.
 
 The MAME wrapper has two execution profiles. `analysis` (the default) uses
 `-nothrottle`, no sound, and a headless renderer. `interactive` enables normal
-speed, visible video, and sound; the unified `oa record` command uses it only
+speed, visible video, and sound; the unified `genie record` command uses it only
 for the live input pass, then automatically performs an `analysis` playback
 from the recorded `.inp` for forensic capture.
 
@@ -45,14 +45,14 @@ Input can be supplied as comma-separated frame tokens, for example:
 
 ```sh
 OPENALADDIN_TRACE_FRAMES=90 OPENALADDIN_INPUT='none,right*60,none' \
-  ./tools/openaladdin/mame/run.sh
+  ./genie/mame/run.sh
 ```
 
 The unified frontend exposes the same profiles directly:
 
 ```sh
-python tools/oa.py trace player-jump --capture state
-python tools/oa.py trace player-jump --capture full
+python -m genie trace player-jump --capture state
+python -m genie trace player-jump --capture full
 ```
 
 The complete ROM level-table loader matrix is recorded in
@@ -62,7 +62,7 @@ states 0 through 12 at `0x001AA484`, retains synchronized traces under
 with:
 
 ```sh
-PYTHONPATH=tools python tools/openaladdin/mame/validate_level_loader_matrix.py
+PYTHONPATH=. python genie/mame/validate_level_loader_matrix.py
 ```
 
 ## Audio-bus trace
@@ -74,11 +74,11 @@ logs the ROM's level-music selector and shared animation SFX command path in
 `debug.log`:
 
 ```sh
-python tools/oa.py trace title-menu --frames 360 \
+python -m genie trace title-menu --frames 360 \
   --audio --audio-commands --capture state \
   --trace-dir build/re/traces/audio-title
 
-PYTHONPATH=tools python tools/openaladdin/mame/audio_trace.py \
+PYTHONPATH=. python genie/mame/audio_trace.py \
   build/re/traces/audio-title
 ```
 
@@ -95,7 +95,7 @@ For a focused consumption check, add selected hexadecimal command frames after
 the first command trace identifies them:
 
 ```sh
-python tools/oa.py trace player-run --frames 1400 \
+python -m genie trace player-run --frames 1400 \
   --audio --audio-mailbox --audio-commands \
   --audio-read-frame 0x496 --audio-read-frame 0x55D \
   --audio-read-frame 0x56B --audio-read-frame 0x56D \
@@ -127,7 +127,7 @@ MAME can record recovered ROM phase entries and debugger write PCs alongside
 the same game-loop synchronization boundary:
 
 ```sh
-python tools/oa.py trace player-run --frames 1400 \
+python -m genie trace player-run --frames 1400 \
   --state-sync --scheduler --trace-dir build/re/traces/scheduler-player-run
 ```
 
@@ -139,7 +139,7 @@ with `causal` records. It reports the first differing phase and its last
 matching boundary:
 
 ```sh
-python tools/oa.py scheduler-compare \
+python -m genie scheduler-compare \
   build/re/traces/mame/state.jsonl \
   build/re/traces/native-scheduler.jsonl \
   --include-pcs --include-writers
@@ -162,7 +162,7 @@ Compare the native Z80 bus writes with a MAME capture, and optionally compare
 decoded command IDs when MAME's command breakpoints produced records:
 
 ```sh
-python tools/oa.py audio-parity \
+python -m genie audio-parity \
   build/re/traces/audio-title build/re/traces/audio-native.jsonl \
   --section all
 ```
@@ -179,7 +179,7 @@ the scripted input has had time to enter the game:
 OPENALADDIN_TRACE_FRAMES=360 \
 OPENALADDIN_INPUT='none*30,start*90,none*60,right*120,none*60' \
 OPENALADDIN_SAVE_FRAME=300 OPENALADDIN_SNAPSHOT_FRAME=300 \
-  ./tools/openaladdin/mame/run.sh
+  ./genie/mame/run.sh
 ```
 
 State files and PNG snapshots are written below `build/re/traces/states/` and
@@ -189,7 +189,7 @@ An existing state can be loaded by its MAME state name:
 
 ```sh
 OPENALADDIN_LOAD_STATE=gameplay MAME_XVFB=1 \
-OPENALADDIN_TRACE_FRAMES=180 ./tools/openaladdin/mame/run.sh
+OPENALADDIN_TRACE_FRAMES=180 ./genie/mame/run.sh
 ```
 
 For a provenance-controlled campaign, save several named checkpoints in one
@@ -202,7 +202,7 @@ OPENALADDIN_CHECKPOINTS='0=boot,1245=level01-entry,1300=opening-ground' \
   OPENALADDIN_TRACE_FRAMES=1400 \
   OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*155' \
   OPENALADDIN_TRACE_DIR=build/re/campaigns/example/boot-route \
-  ./tools/openaladdin/mame/run.sh
+  ./genie/mame/run.sh
 ```
 
 The unified frontend exposes the same option as `--checkpoints`.  Checkpoint
@@ -211,7 +211,7 @@ keep the input schedule and ROM hash beside the resulting trace manifest.
 Recorded campaigns can be checked with:
 
 ```sh
-python tools/openaladdin/mame/campaign.py verify \
+python genie/mame/campaign.py verify \
   re/mame/campaigns/20260825-level01-canonical-v1.json
 ```
 
@@ -222,7 +222,7 @@ fullscreen, not no-window.  If SDL needs a real display, run through Xvfb
 instead:
 
 ```sh
-MAME_XVFB=1 OPENALADDIN_TRACE_FRAMES=120 ./tools/openaladdin/mame/run.sh
+MAME_XVFB=1 OPENALADDIN_TRACE_FRAMES=120 ./genie/mame/run.sh
 ```
 
 This uses a virtual 1024×768 X11 display and MAME's software renderer; the
@@ -233,18 +233,18 @@ An interactive MAME/debugger window is opt-in:
 
 ```sh
 OPENALADDIN_MAME_HEADLESS=0 OPENALADDIN_MAME_DEBUG_UI=1 \
-  ./tools/openaladdin/mame/run.sh
+  ./genie/mame/run.sh
 ```
 
 The harness also accepts declarative experiment actions compiled by
-`tools/oa.py`. Boot schedules, input actions, and waits on tracked symbols or
+`genie`. Boot schedules, input actions, and waits on tracked symbols or
 68000 PCs are evaluated inside MAME, so gameplay captures do not need guessed
 frame counts for those checkpoints.
 
 To rank changing 16-bit words from a controlled interval:
 
 ```sh
-PYTHONPATH=tools python3 tools/openaladdin/mame/analyze_trace.py build/re/traces --input right
+PYTHONPATH=. python3 genie/mame/analyze_trace.py build/re/traces --input right
 ```
 
 The output is only a list of candidates.  Confirmed addresses will be added to
@@ -257,8 +257,8 @@ snapshots and reports type intervals, cursor positions, and ROM-decoder probes:
 ```sh
 OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_FRAMES=1550 \
   OPENALADDIN_TRACE_DIR=build/re/actor-gameplay \
-  ./tools/openaladdin/mame/run.sh
-PYTHONPATH=tools python3 tools/openaladdin/analysis/actors.py
+  ./genie/mame/run.sh
+PYTHONPATH=. python3 genie/analysis/actors.py
 ```
 
 The generated `build/re/actor_animation_inventory.json` is intentionally
@@ -270,7 +270,7 @@ RAM is evidence of stream membership, not automatically a stream entry point.
 The unified frontend can request a stable gameplay state stream:
 
 ```sh
-python tools/oa.py trace player-jump --capture state
+python -m genie trace player-jump --capture state
 ```
 
 This writes `build/re/traces/player-jump/state.jsonl` using the
@@ -284,14 +284,14 @@ the original X-flipped signed-byte path; a missing or zero pointer emits
 The first differing field between two implementations is reported by:
 
 ```sh
-python tools/oa.py compare genesis.jsonl openaladdin.jsonl
+python -m genie compare genesis.jsonl openaladdin.jsonl
 ```
 
 For collision work, compare only the resolved geometry and report the first
 requested actor transition without requiring unrelated state fields to match:
 
 ```sh
-python tools/oa.py compare-collision genesis.jsonl openaladdin.jsonl \
+python -m genie compare-collision genesis.jsonl openaladdin.jsonl \
   --actor-slot 5 --transition-type 0x84
 ```
 
@@ -304,8 +304,8 @@ OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 \
 OPENALADDIN_TRACE_FRAMES=240 OPENALADDIN_INJECT_ACTOR_FRAME=2 \
 OPENALADDIN_INJECT_ACTOR_SLOT=31 OPENALADDIN_INJECT_ACTOR_TYPE=125 \
 OPENALADDIN_TRACE_DIR=build/re/actor-injection-template \
-  ./tools/openaladdin/mame/run.sh
-PYTHONPATH=tools python3 tools/openaladdin/analysis/actors.py \
+  ./genie/mame/run.sh
+PYTHONPATH=. python3 genie/analysis/actors.py \
   --trace-dir build/re/actor-injection-template \
   --output build/re/actor-injection-template/actor_animation_inventory.json
 ```
@@ -325,8 +325,8 @@ OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTOR_INIT=1 \
 OPENALADDIN_TRACE_FRAMES=2880 \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*1400,none*255' \
 OPENALADDIN_TRACE_DIR=build/re/actor-init-gameplay \
-  ./tools/openaladdin/mame/run.sh
-PYTHONPATH=tools python3 tools/openaladdin/analysis/actor_initializers.py \
+  ./genie/mame/run.sh
+PYTHONPATH=. python3 genie/analysis/actor_initializers.py \
   --log debug.log \
   --output build/re/actor-init-gameplay/actor_initializers.json
 ```
@@ -355,7 +355,7 @@ OPENALADDIN_INJECT_ACTOR_X=150 OPENALADDIN_INJECT_ACTOR_Y=416 \
 OPENALADDIN_INJECT_ACTOR_FACING_X=0 OPENALADDIN_INJECT_ACTOR_FACING_Y=0 \
 OPENALADDIN_INJECT_ACTOR_MOVEMENT_TIMER=0 \
 OPENALADDIN_TRACE_DIR=build/re/actor-vm-command-81 \
-  ./tools/openaladdin/mame/run.sh
+  ./genie/mame/run.sh
 python3 tests/native_actor_vm_commands.py
 ```
 
@@ -390,7 +390,7 @@ OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 \
 OPENALADDIN_TRACE_FRAMES=1690 \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*390,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*100' \
 OPENALADDIN_TRACE_DIR=build/re/guard-death \
-  ./tools/openaladdin/mame/run.sh
+  ./genie/mame/run.sh
 ```
 
 The actor initializer at `0x001AE30A` also establishes the confirmed runtime
@@ -481,14 +481,14 @@ OPENALADDIN_DEBUG_WATCH=1 \
 OPENALADDIN_WATCH_ADDRESSES=0xFF7F8A,0xFF7FBC,0xFF7FBE,0xFFE1C2,0xFFF0D8,0xFFF0F4,0xFF7E60 \
 OPENALADDIN_TRACE_FRAMES=1690 \
 OPENALADDIN_TRACE_DIR=build/re/guard-collision-watch \
-./tools/openaladdin/mame/run.sh
+./genie/mame/run.sh
 ```
 
 Write taps can record the 68000 PC responsible for a candidate address:
 
 ```sh
 OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 \
-  OPENALADDIN_TRACE_FRAMES=20 ./tools/openaladdin/mame/run.sh
+  OPENALADDIN_TRACE_FRAMES=20 ./genie/mame/run.sh
 ```
 
 Write events appear as `{"type":"write", ...}` records in
@@ -515,7 +515,7 @@ The decoder preserves each step, raw command bytes, shared opcode, operands,
 and statically visible branch targets:
 
 ```sh
-PYTHONPATH=tools python3 tools/openaladdin/vm/movement.py \
+PYTHONPATH=. python3 genie/vm/movement.py \
   rom/Disneys_Aladdin_U_p1.bin \
   --output build/re/movement_streams.json
 ```
@@ -595,7 +595,7 @@ OPENALADDIN_CAPTURE_VDP=0 \
 OPENALADDIN_TRACE_FRAMES=1700 \
 OPENALADDIN_TRACE_DIR=build/re/player-jump-c-watch \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55,right*80,c*2,none*55,right*80,c*2,none*180' \
-  ./tools/openaladdin/mame/run.sh
+  ./genie/mame/run.sh
 ```
 
 The focused terrain probes are declared in
@@ -659,45 +659,45 @@ fields separately.
 Run the landing fixture through the unified frontend with:
 
 ```sh
-python3 tools/oa.py trace terrain-handler-30 --state-output --edges
+python3 -m genie trace terrain-handler-30 --state-output --edges
 ```
 
 Run the accepted stop-and-align fixture with:
 
 ```sh
-python3 tools/oa.py trace terrain-handler-2b --state-output --edges
+python3 -m genie trace terrain-handler-2b --state-output --edges
 ```
 
 Run the launch fixture with:
 
 ```sh
-python3 tools/oa.py trace terrain-handler-29 --state-output --edges
+python3 -m genie trace terrain-handler-29 --state-output --edges
 ```
 
 Run the stop-and-align fixture with:
 
 ```sh
-python3 tools/oa.py trace terrain-handler-28 --state-output --edges
+python3 -m genie trace terrain-handler-28 --state-output --edges
 ```
 
 Run the bounce fixture with:
 
 ```sh
-python3 tools/oa.py trace terrain-handler-2d --state-output --edges
+python3 -m genie trace terrain-handler-2d --state-output --edges
 ```
 
 Run the horizontal response fixtures with:
 
 ```sh
-python3 tools/oa.py trace terrain-handler-40 --state-output --edges
-python3 tools/oa.py trace terrain-handler-41 --state-output --edges
+python3 -m genie trace terrain-handler-40 --state-output --edges
+python3 -m genie trace terrain-handler-41 --state-output --edges
 ```
 
 Run the surface-mode fixtures with:
 
 ```sh
-python3 tools/oa.py trace terrain-handler-surface-clear --state-output --edges
-python3 tools/oa.py trace terrain-handler-surface-set --state-output --edges
+python3 -m genie trace terrain-handler-surface-clear --state-output --edges
+python3 -m genie trace terrain-handler-surface-set --state-output --edges
 ```
 
 The native vertical slice now mirrors this fixed-ROM lookup in
@@ -741,7 +741,7 @@ thresholds, accumulators, limits, and state-08 mode are emitted in the shared
 camera coordinates directly:
 
 ```sh
-python tools/oa.py regression player-jump --field player.world_x --field player.world_y --field camera.x --field camera.y
+python -m genie regression player-jump --field player.world_x --field player.world_y --field camera.x --field camera.y
 ```
 
 ## Level-transition state tracing
@@ -789,7 +789,7 @@ Regenerate the machine-readable table/script report with the normal asset
 extractor:
 
 ```sh
-python tools/oa.py assets --rom rom/Disneys_Aladdin_U_p1.bin --no-levels --no-sprites --no-animations
+python -m genie assets --rom rom/Disneys_Aladdin_U_p1.bin --no-levels --no-sprites --no-animations
 ```
 
 It writes `build/assets/scene_transitions.json` and records it in the asset
@@ -805,8 +805,8 @@ OPENALADDIN_WATCH_ADDRESSES=0xFF7E26,0xFF7E22,0xFFF57C,0xFFF57E,0xFFF0D0,0xFFF0D
 OPENALADDIN_TRACE_FRAMES=5000 \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right+a*3755' \
 OPENALADDIN_TRACE_DIR=build/re/level-transition-watch \
-  ./tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin
-PYTHONPATH=tools python3 tools/openaladdin/analysis/transition_watch.py \
+  ./genie/mame/run.sh rom/Disneys_Aladdin_U_p1.bin
+PYTHONPATH=. python3 genie/analysis/transition_watch.py \
   --log debug.log \
   --output build/re/level-transition-watch/transition_watch.json
 ```
@@ -866,7 +866,7 @@ To compare the captured VDP memories and DMA stream with the native assets
 already extracted from the ROM:
 
 ```sh
-PYTHONPATH=tools python3 tools/openaladdin/assets/compare_runtime.py
+PYTHONPATH=. python3 genie/assets/compare_runtime.py
 ```
 
 The report is written to `build/re/vdp_asset_comparison.json`.  Exact matches
@@ -880,8 +880,8 @@ source ROM address, VRAM destination, caller return address, and MAME frame:
 ```sh
 OPENALADDIN_TRACE_RNC_LOADS=1 OPENALADDIN_TRACE_FRAMES=1550 \
   OPENALADDIN_TRACE_DIR=build/re/rnc-loader-gameplay \
-  ./tools/openaladdin/mame/run.sh
-PYTHONPATH=tools python3 tools/openaladdin/assets/rnc_load_trace.py \
+  ./genie/mame/run.sh
+PYTHONPATH=. python3 genie/assets/rnc_load_trace.py \
   --log debug.log \
   --output build/re/rnc-loader-gameplay/rnc_loads.json
 ```
@@ -889,7 +889,7 @@ PYTHONPATH=tools python3 tools/openaladdin/assets/rnc_load_trace.py \
 Merge the parsed execution evidence into the runtime asset report:
 
 ```sh
-PYTHONPATH=tools python3 tools/openaladdin/assets/rnc_runtime_cli.py \
+PYTHONPATH=. python3 genie/assets/rnc_runtime_cli.py \
   --trace build/re/rnc-loader-gameplay \
   --load-trace build/re/rnc-loader-gameplay/rnc_loads.json
 ```
@@ -904,11 +904,11 @@ dispatcher state byte `0xFF7E26`:
 OPENALADDIN_TRACE_RNC_LOADS=1 OPENALADDIN_TRACE_SCENE_STATES=1 \
   OPENALADDIN_TRACE_FRAMES=1550 \
   OPENALADDIN_TRACE_DIR=build/re/rnc-loader-gameplay \
-  ./tools/openaladdin/mame/run.sh
-PYTHONPATH=tools python3 tools/openaladdin/assets/rnc_load_trace.py \
+  ./genie/mame/run.sh
+PYTHONPATH=. python3 genie/assets/rnc_load_trace.py \
   --log debug.log \
   --output build/re/rnc-loader-gameplay/rnc_loads.json
-PYTHONPATH=tools python3 tools/openaladdin/analysis/scenes.py \
+PYTHONPATH=. python3 genie/analysis/scenes.py \
   --trace build/re/rnc-loader-gameplay \
   --load-trace build/re/rnc-loader-gameplay/rnc_loads.json
 ```
@@ -918,7 +918,7 @@ state restores the emulated frame counter.  Pass that offset when correlating
 the loader log with the Lua trace, for example:
 
 ```sh
-PYTHONPATH=tools python3 tools/openaladdin/analysis/scenes.py \
+PYTHONPATH=. python3 genie/analysis/scenes.py \
   --trace build/re/state03-transition-final-20260825 \
   --load-trace build/re/state03-transition-final-20260825/rnc_loads.json \
   --machine-frame-offset 3247 \
@@ -936,7 +936,7 @@ For repeatable multi-scene coverage, edit the controller schedules in
 `re/mame/experiments/capture_matrix.yml` and run:
 
 ```sh
-PYTHONPATH=tools python3 tools/openaladdin/mame/capture_matrix.py rom/Disneys_Aladdin_U_p1.bin
+PYTHONPATH=. python3 genie/mame/capture_matrix.py rom/Disneys_Aladdin_U_p1.bin
 ```
 
 Each scenario gets its own ignored directory under
@@ -953,7 +953,7 @@ build/assets/rnc/runtime_analysis.json
 Run only selected scenarios while iterating:
 
 ```sh
-PYTHONPATH=tools python3 tools/openaladdin/mame/capture_matrix.py \
+PYTHONPATH=. python3 genie/mame/capture_matrix.py \
   --scenario first-gameplay \
   --scenario gameplay-progression
 ```
@@ -983,7 +983,7 @@ watchpoint fallback:
 
 ```sh
 OPENALADDIN_DEBUG_WATCH=1 OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 \
-  ./tools/openaladdin/mame/run.sh
+  ./genie/mame/run.sh
 ```
 
 Debugger output is written to MAME's `debug.log` in the working directory.
@@ -995,7 +995,7 @@ floor, or contour stages and enable the context formatter:
 OPENALADDIN_BREAKPOINTS=0x001AD87E,0x001AD886,0x001AD904 \
 OPENALADDIN_BREAKPOINT_REGISTERS=1 \
 OPENALADDIN_BREAKPOINT_TERRAIN_CONTEXT=1 \
-  ./tools/openaladdin/mame/run.sh
+  ./genie/mame/run.sh
 ```
 
 The resulting `OPENALADDIN_BREAK_TERRAIN` lines include the player world

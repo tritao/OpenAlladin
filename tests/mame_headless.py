@@ -12,7 +12,7 @@ import tempfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RUNNER = ROOT / "tools/openaladdin/mame/run.sh"
+RUNNER = ROOT / "genie/mame/run.sh"
 ROM = ROOT / "rom/Disneys_Aladdin_U_p1.bin"
 
 

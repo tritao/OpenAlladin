@@ -10,7 +10,7 @@
   "trace_harness_commit": "5bad5fb",
   "capture_contract": "openaladdin-frame-state-v1",
   "timing_note": "The branch uses normal no-sync gameplay timing. The loaded source is the clean power-on campaign's named upper-edge-fall checkpoint.",
-  "command": "OPENALADDIN_STATE_SYNC=0 OPENALADDIN_TRACE_FRAMES=300 OPENALADDIN_LOAD_STATE=build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/upper-edge-fall.sta OPENALADDIN_INPUT=none*1,right*60,c+right*30,right*100,none*109 OPENALADDIN_CAPTURE=state OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_CHECKPOINTS=1=upper-edge-loaded,60=tower-approach,90=tower-jump,160=tower-surface,300=frontier-end OPENALADDIN_TRACE_DIR=build/re/campaigns/20260826-level01-tower-negative-v1/tower-frontier-v2 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+  "command": "OPENALADDIN_STATE_SYNC=0 OPENALADDIN_TRACE_FRAMES=300 OPENALADDIN_LOAD_STATE=build/re/campaigns/20260826-level01-recording-fresh-v2/fresh-to-frontier/states/genesis/upper-edge-fall.sta OPENALADDIN_INPUT=none*1,right*60,c+right*30,right*100,none*109 OPENALADDIN_CAPTURE=state OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_CHECKPOINTS=1=upper-edge-loaded,60=tower-approach,90=tower-jump,160=tower-surface,300=frontier-end OPENALADDIN_TRACE_DIR=build/re/campaigns/20260826-level01-tower-negative-v1/tower-frontier-v2 genie/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
   "segments": [
     {
       "id": "tower-frontier-v2",

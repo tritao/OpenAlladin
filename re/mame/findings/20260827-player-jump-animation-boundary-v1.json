@@ -9,12 +9,12 @@
   "repository_commit_before_change": "933a8e37af597c9eb5ad4e3610d0aac18cf899c5",
   "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
   "replay": {
-    "command": "python tools/oa.py regression player-jump --field terrain.landing_state --field terrain.vertical_stop --field terrain.response_timer_state --field terrain.response_active --field player.animation_pc --field player.frame_ptr",
+    "command": "python -m genie regression player-jump --field terrain.landing_state --field terrain.vertical_stop --field terrain.response_timer_state --field terrain.response_active --field player.animation_pc --field player.frame_ptr",
     "trace_dir": "build/re/tests/player-jump-regression",
     "checkpoint": "gameplay_checkpoint",
     "matched_frames": 157,
     "terrain_timed_replay": {
-      "command": "python tools/oa.py regression terrain-jump-land",
+      "command": "python -m genie regression terrain-jump-land",
       "trace_dir": "build/re/tests/terrain-jump-regression",
       "checkpoint": "jump_test_start",
       "matched_frames": 257

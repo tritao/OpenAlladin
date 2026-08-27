@@ -10,7 +10,7 @@
   "capture_contract": "openaladdin-frame-state-v1",
   "purpose": "Maintain the clean v6 power-on record while recording every meaningful frontier experiment, including the Type1E wall opening, far-rope transfer, and bounded upper-connector probes.",
   "verification": {
-    "campaign_verifier": "python3 tools/openaladdin/mame/campaign.py verify re/mame/campaigns/20260826-level01-canonical-recording-v6.json",
+    "campaign_verifier": "python3 genie/mame/campaign.py verify re/mame/campaigns/20260826-level01-canonical-recording-v6.json",
     "power_on_and_inherited_chain": "The v6 power-on trace and all ten inherited continuation segments match their v5 counterparts frame-for-frame.",
     "total_segments": 27,
     "total_checkpoint_count": 183,

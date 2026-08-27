@@ -8,7 +8,7 @@
   },
   "repository_commit": "85cae14",
   "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
-  "decoder": "tools/openaladdin/vm/movement.py",
+  "decoder": "genie/vm/movement.py",
   "decoder_artifact": "build/re/behavior46-movement-targets.json",
   "vm": {
     "interpreter": "0x001ADE36",

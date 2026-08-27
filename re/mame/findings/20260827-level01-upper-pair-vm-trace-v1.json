@@ -14,7 +14,7 @@
   "loader_fix": {
     "commit": "7417cce",
     "behavior": "Loaded-state runs receive OPENALADDIN_MAME_LOADED_STATE_SECONDS (default 100000) so a saved MAME emulated-time budget cannot terminate the run before the Lua frame limit.",
-    "result": "The normal tools/openaladdin/mame/run.sh wrapper produced all 180 requested frames and five named checkpoints."
+    "result": "The normal genie/mame/run.sh wrapper produced all 180 requested frames and five named checkpoints."
   },
   "runtime": {
     "loaded_pair": {

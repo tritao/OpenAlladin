@@ -130,7 +130,7 @@ def _check_java(context: ProjectContext) -> Diagnostic:
     configured = None
     config_path = context.repository_root / "re/config/ghidra.yml"
     try:
-        from openaladdin.common import load_yaml
+        from genie.common.helpers import load_yaml
 
         config = load_yaml(config_path) or {}
         configured = int((config.get("java") or {}).get("major"))

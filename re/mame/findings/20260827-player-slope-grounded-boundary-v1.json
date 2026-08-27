@@ -8,7 +8,7 @@
   },
   "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
   "replay": {
-    "command": "python tools/oa.py regression level01-actor-boot --trace-dir build/re/level01-actor-boot-slope-fields2 --field player.grounded --field terrain.landing_state --field player.x --field player.y --field player.vx --field player.vy",
+    "command": "python -m genie regression level01-actor-boot --trace-dir build/re/level01-actor-boot-slope-fields2 --field player.grounded --field terrain.landing_state --field player.x --field player.y --field player.vx --field player.vy",
     "trace_dir": "build/re/level01-actor-boot-slope-fields2",
     "checkpoint": "level01_actor_checkpoint",
     "post_checkpoint_frames": 601

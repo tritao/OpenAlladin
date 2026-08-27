@@ -92,7 +92,3 @@ def write_provenance_json(
         ) + "\n",
         encoding="utf-8",
     )
-
-
-# ``create_provenance`` is a readable compatibility alias for service code.
-create_provenance = build_provenance

@@ -8,7 +8,7 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-from openaladdin.common import hashes, load_yaml
+from .common.helpers import hashes, load_yaml
 
 
 ROM_IDENTITY_FIELDS = ("size", "crc32", "sha1", "sha256")
@@ -22,7 +22,7 @@ def find_repository_root(start: Path | None = None) -> Path:
     if candidate.is_file():
         candidate = candidate.parent
     for directory in (candidate, *candidate.parents):
-        if (directory / "re/config/roms.yml").is_file() and (directory / "tools").is_dir():
+        if (directory / "re/config/roms.yml").is_file() and (directory / "genie").is_dir():
             return directory
     return candidate
 

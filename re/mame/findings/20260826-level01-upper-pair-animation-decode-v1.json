@@ -17,7 +17,7 @@
     "scene_state_at_activation": "0x01"
   },
   "method": {
-    "decoder": "tools/openaladdin/vm/animation.py",
+    "decoder": "genie/vm/animation.py",
     "scope": "Direct ROM stream decode from the runtime animation cursors captured when the upper pair materializes.",
     "encoding": "Frame references and EA-FE animation commands are decoded to semantic operations; dynamic FC calls are followed manually at their concrete branch targets.",
     "scene_write_audit": "The decoded instruction ranges were cross-checked against the static scene-state writer inventory in build/re/level01-exit-data-references.json."

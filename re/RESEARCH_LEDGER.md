@@ -43,7 +43,7 @@ campaign is considered recorded. If a trace is regenerated, retain the same
 input and state provenance and record the new output directory rather than
 silently overwriting the old evidence.
 
-For direct harness runs, use `tools/openaladdin/mame/run.sh`; it records the
+For direct harness runs, use `genie/mame/run.sh`; it records the
 ROM identity in the trace header and supports deterministic frame schedules,
 saved-state loading, actor/RAM/VDP capture, and named checkpoints. For native
 regressions, keep the corresponding MAME trace and the comparison command in

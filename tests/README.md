@@ -33,7 +33,7 @@ The synchronization-qualified actor comparator and v2 atomic frame gate are
 covered by:
 
 ```bash
-PYTHONPATH=tools python3 tests/trace_atomic_state.py
+PYTHONPATH=. python3 tests/trace_atomic_state.py
 ```
 
 The native scheduler corpus checks stable phase ordering across idle, movement,
@@ -55,7 +55,7 @@ The scheduler comparator's normalization, explicit phase projections, and
 first-divergence context are covered by:
 
 ```bash
-PYTHONPATH=tools python3 tests/scheduler_compare.py
+PYTHONPATH=. python3 tests/scheduler_compare.py
 ```
 
 Generated traces and extracted assets remain under `build/`.
@@ -74,7 +74,7 @@ with a MAME snapshot:
 ```bash
 ./build/openaladdin --no-window --frames 1 \
   --framebuffer-out build/re/visual-audit/native.ppm
-python3 tools/openaladdin/analysis/visual_diff.py \
+python3 genie/analysis/visual_diff.py \
   build/re/traces/snapshots/gameplay.png \
   build/re/visual-audit/native.ppm \
   --overlay build/re/visual-audit/diff.ppm \
@@ -95,7 +95,7 @@ OPENALADDIN_CAPTURE=full OPENALADDIN_TRACE_FRAMES=1400 \
 OPENALADDIN_SNAPSHOT_FRAME=1300 \
 OPENALADDIN_SNAPSHOT_NAME=gameplay.png \
 MAME_XVFB=1 OPENALADDIN_MAME_HEADLESS=0 \
-./tools/openaladdin/mame/run.sh
+./genie/mame/run.sh
 ```
 
 Use the MAME `state.jsonl` record at that frame to supply the native
@@ -107,7 +107,7 @@ parity.
 The checkpoint extraction and native replay can be automated with:
 
 ```bash
-PYTHONPATH=tools python3 tools/openaladdin/analysis/audit_visual.py \
+PYTHONPATH=. python3 genie/analysis/audit_visual.py \
   --trace-dir build/re/visual-audit/mame \
   --frame 1300 \
   --reference build/re/visual-audit/mame/snapshots/gameplay.png \
@@ -134,7 +134,7 @@ audit helper uses frame `N-1` by default for a screenshot captured at frame
 `N`; override it with `--vdp-frame` when the capture timing differs:
 
 ```bash
-PYTHONPATH=tools python3 tools/openaladdin/analysis/audit_visual.py \
+PYTHONPATH=. python3 genie/analysis/audit_visual.py \
   --trace-dir build/re/visual-audit/mame \
   --frame 1300 \
   --reference build/re/visual-audit/mame/snapshots/gameplay.png \

@@ -11,8 +11,8 @@ import tempfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COMPARE_STATE = ROOT / "tools/openaladdin/mame/compare_state.py"
-COMPARE_ACTORS = ROOT / "tools/openaladdin/mame/compare_actors.py"
+COMPARE_STATE = ROOT / "genie/mame/compare_state.py"
+COMPARE_ACTORS = ROOT / "genie/mame/compare_actors.py"
 
 
 ATOMIC_FIELDS = ["player", "camera", "terrain", "scene", "actors"]

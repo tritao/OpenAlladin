@@ -17,7 +17,7 @@ local symbols = dofile(root .. "/re/mame/lua/bootstrap.lua")
 local function symbol(name)
     local value = symbols[name]
     if value == nil then
-        error("missing generated MAME symbol: " .. name .. "; run python tools/oa.py ghidra rebuild")
+        error("missing generated MAME symbol: " .. name .. "; run python -m genie ghidra rebuild")
     end
     return value
 end

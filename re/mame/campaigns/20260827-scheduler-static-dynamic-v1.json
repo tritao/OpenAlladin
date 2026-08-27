@@ -9,7 +9,7 @@
   "working_tree_at_capture": "scheduler instrumentation committed; unrelated untracked mame/ captures were left untouched",
   "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
   "capture_contract": "openaladdin-frame-state-v2",
-  "command": "python3 tools/oa.py trace player-run --frames 1400 --state-sync --scheduler-calls --trace-dir build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run",
+  "command": "python3 -m genie trace player-run --frames 1400 --state-sync --scheduler-calls --trace-dir build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run",
   "instrumentation": {
     "call_site_breakpoints": 37,
     "exact_latch_write_taps": [

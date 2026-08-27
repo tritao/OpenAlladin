@@ -78,7 +78,7 @@ def capture_mame(
     if return_pc is not None:
         environment["OPENALADDIN_INJECT_ACTOR_RETURN_PC"] = return_pc
     subprocess.run(
-        [str(ROOT / "tools/openaladdin/mame/run.sh")],
+        [str(ROOT / "genie/mame/run.sh")],
         cwd=ROOT,
         env=environment,
         check=True,

@@ -20,7 +20,7 @@ if [[ ! -f "${ASSET_DIR}/background.ppm" || ! -f "${SPRITE_DIR}/frames.json" ]] 
     || ! rg -q '"offset_pixels"' "${SPRITE_DIR}/frames.json" \
     || ! rg -q '"tile_order": "column-major"' "${SPRITE_DIR}/frames.json"; then
     echo "build.sh: extracting assets from ${ROM_PATH}"
-    python3 "${ROOT_DIR}/tools/oa.py" assets --rom "${ROM_PATH}"
+    python3 -m genie assets --rom "${ROM_PATH}"
 fi
 
 echo "build.sh: building OpenAladdin"

@@ -1,4 +1,4 @@
-# Small, directly runnable experiments exposed by `python tools/oa.py trace`.
+# Small, directly runnable experiments exposed by `python -m genie trace`.
 # These are intentionally small, deterministic probes. The state capture is
 # the normal output; use --capture ram/full only when a probe needs forensic
 # memory or VDP data.

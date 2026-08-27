@@ -16,8 +16,8 @@ genie = "genie.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["genie*", "tools*"]
+include = ["genie*"]
 
 [tool.setuptools.package-data]
-"tools.openaladdin.ghidra" = ["*.sh", "*.cmd"]
-"tools.openaladdin.mame" = ["*.sh"]
+"genie.ghidra" = ["*.sh", "*.cmd"]
+"genie.mame" = ["*.sh"]

@@ -12,8 +12,8 @@ After cloning, initialize the pinned submodules and run:
 
 ```bash
 git submodule update --init --recursive
-python tools/oa.py setup
-python tools/oa.py ghidra rebuild
+python -m genie setup
+python -m genie ghidra rebuild
 ```
 
 Genie is the packaged frontend for the same workflow. Install it from the
@@ -26,37 +26,37 @@ python3 -m genie --help
 genie doctor
 ```
 
-The existing `./oa.sh ...` and `python tools/oa.py ...` forms remain supported
-as compatibility shims while the command handlers are migrated.
+Use the `genie` command for all reverse-engineering workflows. The equivalent
+module form, `python -m genie`, is useful when running from an unmanaged
+checkout.
 
 The supported workflow frontend is:
 
 ```bash
-./oa.sh status
-./oa.sh mame
+genie status
+genie mame
 ```
 
-The root `oa.sh` wrapper forwards all arguments to `tools/oa.py`. The direct
-Python form remains equivalent:
+The direct Python form remains equivalent:
 
 ```bash
-python tools/oa.py status
-python tools/oa.py verify
-python tools/oa.py ghidra rebuild
-python tools/oa.py mame
-python tools/oa.py trace title-menu --capture state
-python tools/oa.py trace player-run --capture state
-python tools/oa.py trace player-jump --capture state
-python tools/oa.py record level01-good-run
-python tools/oa.py replay level01-good-run --client mame
-python tools/oa.py replay level01-good-run --client native
-python tools/oa.py parity level01-good-run
-python tools/oa.py replay level01-good-run --client native --segment level01-entry
-python tools/oa.py parity level01-good-run --segment level01-entry
-python tools/oa.py decode animation --verify
-python tools/oa.py decode movement --verify
-python tools/oa.py assets
-python tools/oa.py validate
+python -m genie status
+python -m genie verify
+python -m genie ghidra rebuild
+python -m genie mame
+python -m genie trace title-menu --capture state
+python -m genie trace player-run --capture state
+python -m genie trace player-jump --capture state
+python -m genie record level01-good-run
+python -m genie replay level01-good-run --client mame
+python -m genie replay level01-good-run --client native
+python -m genie parity level01-good-run
+python -m genie replay level01-good-run --client native --segment level01-entry
+python -m genie parity level01-good-run --segment level01-entry
+python -m genie decode animation --verify
+python -m genie decode movement --verify
+python -m genie assets
+python -m genie validate
 ```
 
 Named traces write to `build/re/traces/<scenario>/`. The `state` capture
@@ -65,13 +65,13 @@ profile writes the versioned `openaladdin-frame-state-v1` JSONL stream at
 capture also needs semantic state. Compare two implementations with:
 
 ```bash
-python tools/oa.py compare genesis.jsonl openaladdin.jsonl
+python -m genie compare genesis.jsonl openaladdin.jsonl
 ```
 
 Run a checkpointed MAME-to-native differential probe with:
 
 ```bash
-python tools/oa.py regression player-jump
+python -m genie regression player-jump
 ```
 
 This runs the MAME experiment, finds its gameplay_checkpoint marker, replays
@@ -84,7 +84,7 @@ map rather than a default snapshot.
 The first native-vs-MAME actor-table probe is:
 
 ```bash
-python tools/oa.py regression level01-actor-boot \
+python -m genie regression level01-actor-boot \
   --trace-dir build/re/level01-actor-boot
 ```
 
@@ -92,7 +92,7 @@ It boots through the real menu sequence, aligns at the first gameplay frame,
 walks through the opening refill window with no actor fixture, and compares
 shared actor-table fields by slot. The actor comparator ignores slot 0 by
 default because player parity is reported separately; use
-`tools/openaladdin/mame/compare_actors.py --include-player` when needed. Until
+`genie/mame/compare_actors.py --include-player` when needed. Until
 scene-created actors are recovered, this probe intentionally reports the first
 remaining actor-spawn divergence and exits non-zero.
 
@@ -105,7 +105,7 @@ harness evaluates those waits while the emulator runs.
 Launch a general interactive MAME session through the project wrapper with:
 
 ```bash
-python tools/oa.py mame
+python -m genie mame
 ```
 
 It runs until MAME exits and writes semantic state under
@@ -115,7 +115,7 @@ sessions, or `--input SCHEDULE` to inject a deterministic schedule.
 Record a normal interactive MAME session with:
 
 ```bash
-python tools/oa.py record level01-good-run
+python -m genie record level01-good-run
 ```
 
 Quit MAME when the session is complete. Recording is deliberately two-stage:
@@ -158,16 +158,16 @@ re-runs the same synchronized capture, and compares the regenerated state
 trace with the recording on the common atomic frame set:
 
 ```bash
-python tools/oa.py replay level01-good-run --client mame
+python -m genie replay level01-good-run --client mame
 ```
 
 The canonical JSONL timeline can also drive the native runtime, after which
 the first semantic divergence is reported with:
 
 ```bash
-python tools/oa.py replay level01-good-run --client native
-python tools/oa.py parity level01-good-run
-python tools/oa.py inputs summarize build/runs/level01-good-run/input.jsonl
+python -m genie replay level01-good-run --client native
+python -m genie parity level01-good-run
+python -m genie inputs summarize build/runs/level01-good-run/input.jsonl
 ```
 
 The recorder never rewrites raw observations. The synchronized semantic
@@ -203,15 +203,15 @@ segment MAME replay uses the canonical input schedule because MAME's native
 To extract the known Genesis graphics and animation data:
 
 ```bash
-python tools/oa.py assets
+python -m genie assets
 ```
 
 The generated asset manifest and renders are under `build/assets/` and are
 not committed. See [`re/assets/README.md`](re/assets/README.md) for the
 current format coverage.
 
-`oa setup` downloads Ghidra 12.1.3, verifies its SHA-256, and installs
-PyGhidra into `.tools/venv`. `oa ghidra rebuild` uses the built-in 68000 raw
+`genie setup` downloads Ghidra 12.1.3, verifies its SHA-256, and installs
+PyGhidra into `.tools/venv`. `genie ghidra rebuild` uses the built-in 68000 raw
 loader for deterministic imports, then applies the tracked Genesis memory map,
 vectors, symbols, and structures.
 
@@ -222,7 +222,7 @@ The repository boundaries are:
 ```text
 src/       native OpenAladdin implementation
 tests/     native/tooling tests
-tools/     Python workflow implementation (`tools/oa.py` is the frontend)
+genie/     Python workflow implementation and CLI
 re/        tracked reverse-engineering knowledge and MAME/Ghidra inputs
 rom/       ROM inputs
 external/  source dependencies and developer tools
@@ -271,7 +271,7 @@ native command, decoded-driver-event, and YM2612/PSG bus records as JSONL.
 Compare it with a MAME trace using:
 
 ```bash
-python tools/oa.py audio-parity \
+python -m genie audio-parity \
   build/re/traces/audio-title build/re/traces/audio-native.jsonl
 ```
 

@@ -12,7 +12,7 @@ import tempfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COMPARATOR = ROOT / "tools/openaladdin/mame/compare_scheduler.py"
+COMPARATOR = ROOT / "genie/mame/compare_scheduler.py"
 
 
 def write_trace(path: Path, records: list[dict]) -> None:
@@ -82,7 +82,7 @@ def state_trace(*, second_terrain_phase: str = "terrain_input") -> list[dict]:
 
 def run(*arguments: str) -> subprocess.CompletedProcess[str]:
     environment = dict(os.environ)
-    environment["PYTHONPATH"] = str(ROOT / "tools")
+    environment["PYTHONPATH"] = str(ROOT)
     return subprocess.run(
         [sys.executable, str(COMPARATOR), *arguments],
         cwd=ROOT,

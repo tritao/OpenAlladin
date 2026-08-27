@@ -10,7 +10,10 @@ import subprocess
 import sys
 import tempfile
 
-from openaladdin.common import ROOT, load_yaml, parse_int
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from genie.common import load_yaml, parse_int
 
 
 ORDINARY_LEVELS = tuple(range(8)) + tuple(range(9, 13))

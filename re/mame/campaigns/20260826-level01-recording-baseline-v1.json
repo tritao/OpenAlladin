@@ -9,7 +9,7 @@
   "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
   "trace_harness_commit": "4a9892c",
   "capture_contract": "openaladdin-frame-state-v1",
-  "command": "OPENALADDIN_ROM_SHA256=8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6 OPENALADDIN_TRACE_FRAMES=1500 OPENALADDIN_INPUT=none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c*1,right*120,none*60 OPENALADDIN_CAPTURE=state OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_CHECKPOINTS=0=boot,1245=level01-entry,1300=opening-ground,1360=first-run,1400=jump-window,1480=post-jump OPENALADDIN_TRACE_DIR=build/re/campaigns/20260826-level01-recording-baseline-v1/fresh-boot tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+  "command": "OPENALADDIN_ROM_SHA256=8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6 OPENALADDIN_TRACE_FRAMES=1500 OPENALADDIN_INPUT=none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c*1,right*120,none*60 OPENALADDIN_CAPTURE=state OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_CHECKPOINTS=0=boot,1245=level01-entry,1300=opening-ground,1360=first-run,1400=jump-window,1480=post-jump OPENALADDIN_TRACE_DIR=build/re/campaigns/20260826-level01-recording-baseline-v1/fresh-boot genie/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
   "segments": [
     {
       "id": "fresh-boot",

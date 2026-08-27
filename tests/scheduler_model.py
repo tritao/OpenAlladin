@@ -9,9 +9,9 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(ROOT))
 
-from openaladdin.common import load_yaml, parse_int  # noqa: E402
+from genie.common import load_yaml, parse_int  # noqa: E402
 
 
 EXPECTED_ENTRIES = [

@@ -100,7 +100,7 @@ search to the remaining connector/resource producers.
 Reanalyze an existing capture with:
 
 ```sh
-python3 tools/openaladdin/mame/analyze_scheduler_trace.py \
+python3 genie/mame/analyze_scheduler_trace.py \
   build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run/debug.log \
   --trace-boot build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run/trace_boot.jsonl \
   --state build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run/state.jsonl \

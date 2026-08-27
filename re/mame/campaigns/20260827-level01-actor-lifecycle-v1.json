@@ -6,7 +6,7 @@
   "rom": "rom/Disneys_Aladdin_U_p1.bin",
   "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
   "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
-  "command": "env OPENALADDIN_BREAKPOINTS=0x001AEE40,0x001ABE6E,0x001AE372,0x001AD0FC OPENALADDIN_BREAKPOINT_REGISTERS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 python3 tools/oa.py trace level01-actor-boot --trace-dir build/re/level01-actor-boot-lifecycle-trace --capture state --state-output --actors",
+  "command": "env OPENALADDIN_BREAKPOINTS=0x001AEE40,0x001ABE6E,0x001AE372,0x001AD0FC OPENALADDIN_BREAKPOINT_REGISTERS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 python3 -m genie trace level01-actor-boot --trace-dir build/re/level01-actor-boot-lifecycle-trace --capture state --state-output --actors",
   "capture_contract": "openaladdin-frame-state-v1",
   "trace_dir": "build/re/level01-actor-boot-lifecycle-trace",
   "segments": [

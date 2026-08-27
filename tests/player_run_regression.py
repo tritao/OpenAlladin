@@ -15,7 +15,8 @@ def main() -> int:
     result = subprocess.run(
         [
             sys.executable,
-            str(ROOT / "tools/oa.py"),
+            "-m",
+            "genie",
             "regression",
             "player-run",
             "--trace-dir",

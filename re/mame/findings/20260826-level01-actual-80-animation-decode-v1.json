@@ -9,7 +9,7 @@
   "repository_commit_at_analysis": "848ccda",
   "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
   "source_finding": "re/mame/findings/20260826-level01-actual-80-spawn-side-effects-v1.json",
-  "decoder": "tools/openaladdin/vm/animation.py",
+  "decoder": "genie/vm/animation.py",
   "actor": {
     "type": "0x87",
     "slot": 20,

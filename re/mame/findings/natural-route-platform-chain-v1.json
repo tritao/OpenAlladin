@@ -13,7 +13,7 @@
     "trace": "build/re/analysis/platform-chain-probe-v2",
     "frames": 160,
     "capture": "ram + actors + actor initializers + scene states",
-    "command": "OPENALADDIN_TRACE_FRAMES=160 OPENALADDIN_INPUT=none*160 OPENALADDIN_CAPTURE=ram OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_TRACE_DIR=build/re/analysis/platform-chain-probe-v2 OPENALADDIN_LOAD_STATE=build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin"
+    "command": "OPENALADDIN_TRACE_FRAMES=160 OPENALADDIN_INPUT=none*160 OPENALADDIN_CAPTURE=ram OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_TRACE_SCENE_STATES=1 OPENALADDIN_TRACE_DIR=build/re/analysis/platform-chain-probe-v2 OPENALADDIN_LOAD_STATE=build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta genie/mame/run.sh rom/Disneys_Aladdin_U_p1.bin"
   },
   "actors": [
     {

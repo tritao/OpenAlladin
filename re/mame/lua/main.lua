@@ -3,7 +3,7 @@
 -- The baseline trace remains generic, while the optional experiment protocol
 -- can wait on the tracked symbols and PCs needed by named gameplay probes.
 --
--- Run through tools/oa.py trace rather than invoking this file directly.
+-- Run through genie trace rather than invoking this file directly.
 
 local root = os.getenv("OPENALADDIN_ROOT") or "."
 local core = dofile(root .. "/re/mame/lua/core.lua")
@@ -14,7 +14,7 @@ local S = core.symbols
 local function symbol(name)
     local value = S[name]
     if value == nil then
-        error("missing generated MAME symbol: " .. name .. "; run python tools/oa.py ghidra rebuild")
+        error("missing generated MAME symbol: " .. name .. "; run python -m genie ghidra rebuild")
     end
     return value
 end
@@ -563,7 +563,7 @@ end
 -- frame_done runs at the video boundary, which can interrupt the 68000 in
 -- the middle of Player_Update/Camera_UpdateFollow. In synchronized mode the
 -- debugger records the semantic RAM state at the game's update-loop boundary;
--- tools/oa.py folds those records back into state.jsonl after MAME exits.
+-- genie folds those records back into state.jsonl after MAME exits.
 if state_sync then
     if not cpu.debug then
         error("OPENALADDIN_STATE_SYNC requires MAME debugger support")

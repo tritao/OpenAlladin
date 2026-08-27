@@ -6,8 +6,12 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 import struct
+import sys
 
-from openaladdin.mame.coverage_gaps import build_gap_report
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from genie.mame.coverage_gaps import build_gap_report
 
 
 def main() -> int:

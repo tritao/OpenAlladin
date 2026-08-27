@@ -8,10 +8,12 @@ import subprocess
 import sys
 import tempfile
 
-from openaladdin.analysis.visual_diff import compare, read_image
-
-
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from genie.analysis.visual_diff import compare, read_image
+
+
 BINARY = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "build/openaladdin"
 
 

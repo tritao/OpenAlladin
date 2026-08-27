@@ -12,35 +12,35 @@
     {
       "id": "refill-initializer-gate",
       "trace_dir": "build/re/level01-actor-boot-refill-v4",
-      "command": "OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_DEBUG_WATCH=1 OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 OPENALADDIN_BREAKPOINTS=0x001B5270,0x001AD00E,0x001AD0FC OPENALADDIN_BREAKPOINT_REGISTERS=1 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+      "command": "OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_DEBUG_WATCH=1 OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 OPENALADDIN_BREAKPOINTS=0x001B5270,0x001AD00E,0x001AD0FC OPENALADDIN_BREAKPOINT_REGISTERS=1 genie/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
       "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
       "frames": 1365
     },
     {
       "id": "refill-actor-state",
       "trace_dir": "build/re/level01-actor-boot-refill-v5",
-      "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_BREAKPOINTS=0x001AC784 OPENALADDIN_BREAKPOINT_REGISTERS=1 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+      "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_BREAKPOINTS=0x001AC784 OPENALADDIN_BREAKPOINT_REGISTERS=1 genie/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
       "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
       "frames": 1360
     },
     {
       "id": "refill-actor-animation-clear",
       "trace_dir": "build/re/level01-actor-boot-refill-v6",
-      "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_BREAKPOINTS=0x001AC86C,0x001AC8E0,0x001AD0FC OPENALADDIN_BREAKPOINT_REGISTERS=1 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+      "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_BREAKPOINTS=0x001AC86C,0x001AC8E0,0x001AD0FC OPENALADDIN_BREAKPOINT_REGISTERS=1 genie/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
       "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
       "frames": 1360
     },
     {
       "id": "refill-actor-reuse-state",
       "trace_dir": "build/re/level01-actor-boot-refill-v8",
-      "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600' OPENALADDIN_TRACE_FRAMES=1800 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+      "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600' OPENALADDIN_TRACE_FRAMES=1800 genie/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
       "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
       "frames": 1800
     },
     {
       "id": "refill-actor-reuse-writes",
       "trace_dir": "build/re/level01-actor-boot-refill-v9",
-      "command": "OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_DEBUG_WATCH=1 OPENALADDIN_WATCH_ADDRESSES=0xFF8050,0xFF8056,0xFF805A,0xFF8064,0xFF8070,0xFF808C OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600' OPENALADDIN_TRACE_FRAMES=1800 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+      "command": "OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_DEBUG_WATCH=1 OPENALADDIN_WATCH_ADDRESSES=0xFF8050,0xFF8056,0xFF805A,0xFF8064,0xFF8070,0xFF808C OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600' OPENALADDIN_TRACE_FRAMES=1800 genie/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
       "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
       "frames": 1800
     }

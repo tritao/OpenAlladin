@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Smoke tests for the packaged Genie frontend and compatibility paths."""
+"""Smoke tests for the packaged Genie frontend."""
 
 from __future__ import annotations
 
@@ -39,11 +39,10 @@ def _run(*command: str) -> subprocess.CompletedProcess[str]:
     return result
 
 
-def _normalize_help(value: str) -> str:
-    return "\n".join(" ".join(line.split()) for line in value.splitlines())
-
-
 def main() -> int:
+    assert not (ROOT / "oa.sh").exists()
+    assert not (ROOT / "tools/oa.py").exists()
+
     module_names = (
         "genie.analysis.actors",
         "genie.assets.extract",
@@ -80,17 +79,13 @@ def main() -> int:
         assert json.loads(output.read_text(encoding="utf-8"))["provenance"] == provenance
 
     genie_help = _run(sys.executable, "-m", "genie", "--help")
-    oa_help = _run(sys.executable, "tools/oa.py", "--help")
-    shell_help = _run("./oa.sh", "--help")
+    module_help = _run(sys.executable, "-m", "genie", "--help")
     doctor_help = _run(sys.executable, "-m", "genie", "doctor", "--help")
     assert "usage: genie" in genie_help.stdout
-    assert "usage: oa" in oa_help.stdout
-    assert "usage: oa" in shell_help.stdout
+    assert module_help.stdout == genie_help.stdout
     assert "doctor" in genie_help.stdout
     assert "--strict" in doctor_help.stdout
-    assert "trace" in genie_help.stdout and "trace" in oa_help.stdout
-    assert _normalize_help(genie_help.stdout).replace("usage: genie", "usage: oa", 1) == _normalize_help(oa_help.stdout)
-    assert shell_help.stdout == oa_help.stdout
+    assert "trace" in genie_help.stdout
 
     print("Genie packaging smoke: ok")
     return 0

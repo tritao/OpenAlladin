@@ -9,8 +9,8 @@
   "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
   "target_manifest": "re/ghidra/targets/level01-upper-pair-extended-interaction-targets.json",
   "decompile_artifact": "build/re/level01-upper-pair-extended-interaction-decompile-v1.json",
-  "stream_decoder": "tools/openaladdin/vm/animation.py",
-  "movement_decoder": "tools/openaladdin/vm/movement.py",
+  "stream_decoder": "genie/vm/animation.py",
+  "movement_decoder": "genie/vm/movement.py",
   "correction": {
     "previous_finding": "re/mame/findings/20260826-level01-upper-pair-animation-decode-v1.json",
     "previous_claim": "The extended stream placed ED at 0x001237D8, FB at 0x001237E0, and FC at 0x001237E6.",

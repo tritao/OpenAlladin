@@ -14,7 +14,7 @@
     "entry_size": 4,
     "entry_count": 256,
     "last_entry_address": "0x004950",
-    "coverage_tool": "tools/openaladdin/mame/coverage_gaps.py",
+    "coverage_tool": "genie/mame/coverage_gaps.py",
     "corrected_summary": "The corrected report contains 215 covered and 41 uncovered valid terrain entries out of 256; the previous 72-entry limit omitted valid entries 0x48 through 0xFF."
   },
   "static_decompilation": {

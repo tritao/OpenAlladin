@@ -6,8 +6,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import tempfile
+import sys
 
-from openaladdin.mame.coverage import merge_coverage
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from genie.mame.coverage import merge_coverage
 
 
 def write_trace(path: Path, frames: list[tuple[int, int]], sha256: str = "rom", *, edge: bool = False) -> None:

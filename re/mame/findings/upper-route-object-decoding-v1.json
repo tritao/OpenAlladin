@@ -13,7 +13,7 @@
   "fresh_route_flag_trace": "build/re/campaigns/20260826-level01-object-trace-frontier-v1/fresh-route-flags",
   "decoder_inputs": {
     "actor_initializer_log": "build/re/campaigns/20260826-level01-object-trace-frontier-v1/upper-platform-init/debug.log",
-    "initializer_decoder": "python3 tools/openaladdin/analysis/actor_initializers.py --log <debug.log> --rom rom/Disneys_Aladdin_U_p1.bin",
+    "initializer_decoder": "python3 genie/analysis/actor_initializers.py --log <debug.log> --rom rom/Disneys_Aladdin_U_p1.bin",
     "movement_entry": "0x00120F76",
     "animation_entries": ["0x001231DC", "0x00125776", "0x00123614"]
   },

@@ -12,7 +12,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 ROM = ROOT / "rom/Disneys_Aladdin_U_p1.bin"
-RUNNER = ROOT / "tools/openaladdin/mame/run.sh"
+RUNNER = ROOT / "genie/mame/run.sh"
 BINARY = ROOT / "build/openaladdin"
 # The injected record is visible at frame 361 before its first common actor
 # service. Start the differential at frame 362, where the native checkpoint

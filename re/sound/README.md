@@ -5,7 +5,7 @@ image described in [z80-driver.yml](z80-driver.yml) from ROM into Z80 RAM.
 Regenerate the extracted image and machine-readable map with:
 
 ```sh
-python3 tools/oa.py audio-driver
+python3 -m genie audio-driver
 ```
 
 The driver consumes the shared 64-byte queue at Z80 `$1B40`, using cursor bytes
@@ -29,14 +29,14 @@ can audition any sequence-table entry with `--sound-id ID`; IDs are valid from
 Regenerate the map, including the decoded music/SFX table, with:
 
 ```sh
-python3 tools/oa.py audio-driver
+python3 -m genie audio-driver
 ```
 
 To capture the live pointer/header/channel state while a title-menu trace is
 running, pair the existing audio trace with the gated driver dump:
 
 ```sh
-OPENALADDIN_TRACE_AUDIO_DRIVER=1 python3 tools/oa.py trace title-menu \
+OPENALADDIN_TRACE_AUDIO_DRIVER=1 python3 -m genie trace title-menu \
   --audio --audio-mailbox --audio-commands \
   --trace-dir build/re/traces/audio-driver-state
 ```
@@ -51,6 +51,6 @@ SDL_AUDIODRIVER=dummy ./build/openaladdin --no-window --frames 360 \
   --audio-trace build/re/traces/audio-native.jsonl
 ```
 
-Use `python tools/oa.py audio-parity` to compare normalized Z80 bus writes and
+Use `python -m genie audio-parity` to compare normalized Z80 bus writes and
 decoded command IDs. The native trace also includes decoded driver events for
 investigating stream timing and channel allocation.
