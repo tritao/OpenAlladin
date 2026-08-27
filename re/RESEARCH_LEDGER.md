@@ -229,6 +229,35 @@ the finding or commit message.
   input matrix; runtime tracing resumes only after static work identifies a
   different producer or installation path.
 
+### Transfer reachability closure
+
+- `re/mame/findings/20260827-level01-transfer-reachability-closure-v1.json`
+  supersedes the provisional Type-0x65/Type-0x6A conclusion above. The
+  terrain path is now closed: `Terrain_ResolvePlayerCell` at `0x001B1E38`
+  is called from `0x001A8C8C`, selects a byte from the load-time terrain table
+  at `0x00FFAE86`, and dispatches through `0x004554`. Level 01 has zero
+  decoded behavior-`0x29` or behavior-`0x2D` cells, and no gameplay writer
+  installs either behavior. The dynamic map mutations clear map work-RAM
+  words; they do not rewrite the behavior table.
+- The same closure finds four direct Level 01 producers for the actor-side
+  transfer families. Selector `0x74` at map cell `(100,41)` dispatches through
+  `0x004324 -> 0x001B670C -> 0x001B525E -> 0x001AE2AA` and initializes
+  template `0x001B7E54` as Type-0x65 in slot 20. Selector `0x0D` at cells
+  `(104,29)`, `(259,31)`, and `(265,30)` dispatches through
+  `0x004188 -> 0x001B6802 -> 0x001B5256 -> 0x001AE292` and initializes
+  template `0x001B7D8C` as Type-0x6A in slot 24. The early selector-0x0D
+  producer is directly trace-validated, and the corrected natural far-floor
+  trace now directly catches both remote records: `0x6148/0x30A4` at MAME
+  frame `0x0EF0` in slot 24 and `0x6060/0x3030` at `0x0F10` in slot 23.
+- Actor collision dispatch is through `0x001ABB40` and table `0x001CBE`:
+  Type-0x65/0x66 reaches `0x001AFBF4`, which can set `PLAYER_VY=-0x0500`,
+  while Type-0x69..0x6C reaches `0x001AF978`, which can place `PLAYER_Y`
+  at actor height. No player/interaction state redirects the terrain resolver
+  to another behavior family; those state bytes gate consequences before or
+  after the lookup. The producer work is closed; the next runtime work is a
+  single targeted contact-window trace for the spawned remote actors, not
+  another connector-top input matrix.
+
 ### Player animation and terrain timing
 
 - `re/mame/findings/20260827-level01-f5-actor-boundary-v1.json`: the opening
@@ -1297,6 +1326,7 @@ jump, settles on behavior `0x25` at `(4728,628)`, and never reaches the behavior
 | `20260827-level01-transition-state3-resource-v1` | controlled-state3-resource-dispatch | two controlled scene-3 replays observe resource status reset and the state-3 helper boundary; transition-mode, scene-table, and script-completion writers remain unreached |
 | `20260827-level01-natural-transition-inventory-v1` | recorded-negative-natural-scene-writer-inventory | clean power-on route evaluates the Level 01 boundary 1105 times but reaches only `(2564,920)`; no post-boot scene-state, cursor, table, transition, latch, or completion writer fires |
 | `20260827-level01-connector-top-transfer-audit-v1` | recorded-negative-natural-continuation | four controller-only connector-top dismount families reach at most ordinary jump `Y=412`; no behavior-0x29/0x2D launch, scene gate, or new transfer path fires |
+| `20260827-level01-transfer-reachability-closure-v1` | recorded-trace-validated-producer-closure | fixed terrain 0x29/0x2D closure plus direct selector-0x0D/0x74 Type-0x6A/0x65 producer validation; remote actor contact/alignment remains the next targeted experiment |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

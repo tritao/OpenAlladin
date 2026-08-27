@@ -1,0 +1,411 @@
+{
+  "format": "openaladdin-level01-transfer-reachability-closure-finding-v1",
+  "recorded_at": "2026-08-27",
+  "status": "trace-validated-remote-producers",
+  "repository_commit": "fe4031469f9f450703d03656a53c0151a59d6fb0",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "question": "How can natural Level 01 reach the proven transfer-capable terrain and actor mechanisms?",
+  "sources": {
+    "terrain_writer_targets": "re/ghidra/targets/level01-upstream-transfer-writers-targets.json",
+    "interaction_targets": "re/ghidra/targets/level01-interaction-inventory-targets.json",
+    "actor_targets": "re/ghidra/targets/actor-combat-targets.json",
+    "writer_decompile": "build/re/level01-upstream-transfer-writers-targeted-decompile.json",
+    "interaction_decompile": "build/re/level01-interaction-inventory-targeted-decompile-v4.json",
+    "initializer_decompile": "build/re/level01-upper-frontier-initializer-targeted-decompile.json",
+    "actor_decompile": "build/re/actor-combat-targeted-decompile.json",
+    "map": "build/assets/levels/level01/raw/map.bin",
+    "floor": "build/assets/levels/level01/raw/floor.bin",
+    "prior_writer_graph": "re/mame/findings/20260827-level01-upstream-transfer-writer-graph-v1.json",
+    "prior_connector_audit": "re/mame/findings/20260827-level01-connector-top-transfer-audit-v1.json"
+  },
+  "reachability_closure": {
+    "terrain_path": {
+      "frame_caller": "0x001A8C8C",
+      "resolver": "0x001B1E38",
+      "handler_table": "0x004554",
+      "lookup": "TERRAIN_BEHAVIOR = TERRAIN_BEHAVIOR_INDEX_TABLE[terrain_word >> 1], then dispatch through 0x004554 + 4 * TERRAIN_BEHAVIOR",
+      "runtime_tables": {
+        "row_pointer_table": "0x00FF9884",
+        "behavior_index_table": "0x00FFAE86",
+        "terrain_behavior_scratch": "0x00FFF10D"
+      },
+      "resolver_prerequisites": [
+        "SCENE_STATE != 0x08",
+        "PLAYER_FRAME_PTR != 0",
+        "camera-relative player Y is inside the level bounds",
+        "the row-pointer lookup is in the loaded terrain buffer"
+      ],
+      "state_effects_before_dispatch": [
+        "clears TERRAIN_QUERY_STATE_A at 0x00FFF0CE",
+        "clears TERRAIN_QUERY_STATE_B at 0x00FFF0CF",
+        "clears TERRAIN_RESPONSE_LATCH at 0x00FFF0C2",
+        "clears TERRAIN_STATE at 0x00FFF0D6",
+        "clears PLAYER_INTERACTION_TRANSITION_LOCK at 0x00FFF0D7",
+        "decrements the player transition countdown when active"
+      ],
+      "important_negative": "The resolver does not read INTERACTION_RUNTIME_TABLE at 0x00FFAE87 and does not select a terrain handler from PLAYER_INTERACTION_MODE or PLAYER_INTERACTION_STATE."
+    },
+    "interaction_path": {
+      "horizontal_wrapper_and_body": [
+        "0x001AB446 -> 0x001AE3FC -> 0x001AE406"
+      ],
+      "vertical_wrapper_and_body": [
+        "0x001AB770 -> 0x001AE47E -> 0x001AE488"
+      ],
+      "runtime_table": "0x00FFAE87",
+      "handler_table": "0x004154",
+      "lookup": "selector = INTERACTION_RUNTIME_TABLE[row_word >> 1]; nonzero selector dispatches through 0x004154 + 4 * selector",
+      "producer_context": "The current camera/refill row window supplies map-word indices; the generic spawn continuation at 0x001B5270 records the row index and selector in actor +0x32/+0x34 and clears the consumed interaction cell."
+    },
+    "actor_collision_path": {
+      "player_collision_pass": "0x001ABB40",
+      "handler_table": "0x001CBE",
+      "dispatch": "active actor type indexes the four-byte player-collision table",
+      "type_0x65_entries": [
+        "0x001E52 -> 0x001AFBF4",
+        "0x001E56 -> 0x001AFBF4"
+      ],
+      "type_0x6A_family_entries": [
+        "0x001E62 -> 0x001AF978",
+        "0x001E66 -> 0x001AF978",
+        "0x001E6A -> 0x001AF978",
+        "0x001E6E -> 0x001AF978"
+      ],
+      "order": "The actor collision pass runs before the frame-loop tail call to Terrain_ResolvePlayerCell, so an actor can change player Y/VY and terrain state before the terrain lookup, but it cannot change which terrain behavior byte the resolver reads for that frame."
+    }
+  },
+  "dynamic_installation_audit": {
+    "terrain_behavior_table": {
+      "initialization": [
+        "0x001A9106 loads the Level 01 table resource",
+        "0x001B3448 selects the level-table resource",
+        "0x001B3818 decodes the resource into 0x00FFAE84/0x00FFAE86"
+      ],
+      "other_load_path": "0x001AA504 can rebuild the same terrain resource during scene/load setup.",
+      "gameplay_writes_found": [],
+      "map_work_ram_mutations": [
+        "0x001AC386 clears selected map words for terrain values 0x4F/0xFE",
+        "0x001AC3BC clears selected map words for terrain values 0x4E/0xFD"
+      ],
+      "result": "The gameplay mutations operate on map work RAM at 0x00FF0000; they do not install a new byte into TERRAIN_BEHAVIOR_INDEX_TABLE at 0x00FFAE86. Level 01 therefore has a load-time-selected, gameplay-fixed terrain behavior table."
+    },
+    "interaction_runtime_table": {
+      "writers": [
+        "0x001B5270 and 0x001B52A6 copy the current row selector into actor +0x34",
+        "0x001AE0D4 republishes actor +0x34 during linked-actor cleanup",
+        "0x001AE246 republishes actor +0x34 during the second cleanup path",
+        "0x001AE6BC, 0x001AE6DE, and 0x001AE700 publish actor +0x34",
+        "0x001ACDD0 and 0x001ACE30 publish an existing actor selector after converting an actor to type 0x84"
+      ],
+      "clear_or_constant_writers": [
+        "0x001AE354 and 0x001AEDA0 clear actor +0x34",
+        "0x001AE66E publishes 0xFF for the special type-0x8A path"
+      ],
+      "result": "The runtime interaction table is genuinely dynamic, but the dynamic publish paths copy an inherited actor selector. They can restore or expose a selector already present in a producer record; they do not synthesize a missing Level 01 0x0D or 0x74 record."
+    },
+    "terrain_callbacks": {
+      "initializer": "0x001B32E2 installs terrain query callbacks at 0x00FF7DD2..0x00FF7DDA from the level resource.",
+      "result": "These callbacks affect terrain queries and contact responses, not the 0x00FFAE86 behavior-byte lookup used by Terrain_ResolvePlayerCell."
+    }
+  },
+  "player_interaction_state_redirect_audit": {
+    "terrain_resolver": {
+      "address": "0x001B1E38",
+      "reads_before_behavior_lookup": [
+        "SCENE_STATE",
+        "PLAYER_FRAME_PTR",
+        "WORLD_CAMERA_Y",
+        "PLAYER_Y",
+        "PLAYER_X",
+        "TERRAIN_ROW_POINTER_TABLE"
+      ],
+      "does_not_read_as_handler_selector": [
+        "PLAYER_INTERACTION_MODE at 0x00FFF0CD",
+        "PLAYER_INTERACTION_STATE at 0x00FFF0DB",
+        "PLAYER_INTERACTION_RESPONSE at 0x00FFF0DC",
+        "TERRAIN_RESPONSE_ACTIVE at 0x00FFF0BE",
+        "TERRAIN_VERTICAL_STOP at 0x00FFF0C0",
+        "INTERACTION_RUNTIME_TABLE at 0x00FFAE87"
+      ],
+      "redirect_result": "No interaction-state gate redirects Terrain_ResolvePlayerCell into a different terrain response family. The only terrain-family selector is the decoded byte from 0x00FFAE86."
+    },
+    "stateful_consumers_elsewhere": [
+      {
+        "address": "0x001A9D98",
+        "role": "player terrain-response state machine",
+        "effect": "PLAYER_INTERACTION_MODE, transition locks, response-active state, and scene countdown can suppress or alter the consequences of motion after terrain/actor processing; they do not alter the behavior table lookup."
+      },
+      {
+        "address": "0x001AD7B4",
+        "role": "landing/contour resolver",
+        "effect": "surface mode selects contour data at 0x00FFAE84/0x00FFAE85; behavior 0x47 can toggle that mode through 0x001B5470, but no behavior-table entry is rewritten."
+      },
+      {
+        "address": "0x001ABB40",
+        "role": "actor-player collision pass",
+        "effect": "Type-0x65/0x6A handlers can write player VY/Y before the terrain resolver; this is actor placement/collision, not a terrain dispatch redirect."
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "candidate_mechanism": "Terrain behavior 0x29 launch",
+      "exact_rom_addresses": {
+        "resolver": "0x001B1E38",
+        "handler_table": "0x004554",
+        "table_entry": "0x0045F8",
+        "handler": "0x001B557E",
+        "frame_caller": "0x001A8C8C"
+      },
+      "semantics": "The handler writes the large launch velocity family, including PLAYER_VY=0xFB00 and PLAYER_VX=0xFC00, and arms TERRAIN_RESPONSE_ACTIVE at 0x00FFF0BE.",
+      "prerequisites": [
+        "the resolver gates must pass",
+        "the current terrain word must index behavior byte 0x29 in 0x00FFAE86",
+        "the player must be in a cell whose behavior dispatch table entry is 0x001B557E"
+      ],
+      "level01_producer_reachability_path": "Level 01 terrain is loaded from the level resource through 0x001A9106 -> 0x001B3448 -> 0x001B3818. Full raw Level 01 map/floor decode found zero cells with behavior 0x29; no gameplay writer installs a replacement behavior byte. The x≈2112 and x≈2720 connector chains resolve to behavior 0x22/0x24 through 0x001B54D2, not to this entry.",
+      "confidence": "decompiled; negative local reachability trace-validated",
+      "next_targeted_runtime_experiment": "None until a new static terrain-resource installation path is found. Keep 0x001B557E active as a sentinel on the first natural run after such a path is identified."
+    },
+    {
+      "candidate_mechanism": "Terrain behavior 0x2D bounce",
+      "exact_rom_addresses": {
+        "resolver": "0x001B1E38",
+        "handler_table": "0x004554",
+        "table_entry": "0x004608",
+        "handler": "0x001B56B6",
+        "frame_caller": "0x001A8C8C"
+      },
+      "semantics": "The handler writes the positive bounce velocity family, including PLAYER_VX=0xFC00 and PLAYER_VY=0x0200, and selects the bounce animation/event path.",
+      "prerequisites": [
+        "the resolver gates must pass",
+        "the current terrain word must index behavior byte 0x2D in 0x00FFAE86"
+      ],
+      "level01_producer_reachability_path": "Full raw Level 01 map/floor decode found zero cells with behavior 0x2D. The behavior table has only the fixed ROM table entry 0x004608 for this handler; no interaction selector, actor publish helper, or map mutation rewrites it. The connector-top natural audit saw zero entries to 0x001B56B6.",
+      "confidence": "decompiled; negative connector-top reachability trace-validated",
+      "next_targeted_runtime_experiment": "None until static analysis finds a load-time terrain resource other than the Level 01 table or a real behavior-table writer."
+    },
+    {
+      "candidate_mechanism": "Level 01 selector 0x0D -> stationary Type-0x6A handhold",
+      "exact_rom_addresses": {
+        "interaction_table_entry": "0x004188",
+        "producer_handler": "0x001B6802",
+        "allocator": "0x001B5256 -> 0x001AE292",
+        "generic_spawn_continuation": "0x001B526C -> 0x001AE30A -> 0x001B5270",
+        "template": "0x001B7D8C",
+        "destination_slot": "24 / 0x00FF8470",
+        "collision_table_entries": "0x001E62, 0x001E66, 0x001E6A, 0x001E6E",
+        "collision_handler": "0x001AF978"
+      },
+      "template_decode": {
+        "actor_type": "0x6A",
+        "template_flags_plus_6": "0x30, including collision flag 0x10",
+        "movement_stream": "0x00000000; stationary actor",
+        "movement_loop_word": "0x0060",
+        "animation_stream": "0x0012404A",
+        "actor_field_0x29": "0x05"
+      },
+      "prerequisites": [
+        "the camera/refill row window must include a Level 01 row word whose selector is 0x0D",
+        "the selector must still be nonzero in 0x00FFAE87",
+        "the backward allocator must find a free actor in the 23-record slot-24 scan",
+        "the actor animation VM must produce a nonzero frame pointer for collision rectangles",
+        "for the placement writer, actor type 0x6A must overlap the player and satisfy (TERRAIN_RESPONSE_ACTIVE == 0 || TERRAIN_VERTICAL_STOP != 0), actor flags +6 bit 0x10, and |PLAYER_Y - (actor_y - WORLD_CAMERA_Y - 8)| < 0x0C"
+      ],
+      "level01_producer_reachability_path": {
+        "static_records": [
+          {
+            "map_cell": [104, 29],
+            "world_cell": [1664, 464],
+            "map_word": "0x5F38",
+            "resource_index": "0x2F9C",
+            "behavior": "0x00",
+            "selector": "0x0D",
+            "role": "early high-walkway handhold record"
+          },
+          {
+            "map_cell": [265, 30],
+            "world_cell": [4240, 480],
+            "map_word": "0x6060",
+            "resource_index": "0x3030",
+            "behavior": "0x00",
+            "selector": "0x0D",
+            "role": "remote upper handhold record"
+          },
+          {
+            "map_cell": [259, 31],
+            "world_cell": [4144, 496],
+            "map_word": "0x6148",
+            "resource_index": "0x30A4",
+            "behavior": "0x00",
+            "selector": "0x0D",
+            "role": "remote upper handhold record"
+          }
+        ],
+        "chain": "Level 01 floor selector 0x0D -> 0x004188 -> 0x001B6802 -> 0x001B5256 -> 0x001AE292 -> 0x001B526C -> 0x001AE30A -> template 0x001B7D8C -> actor type 0x6A -> 0x001ABB40 -> 0x001CBE -> 0x001AF978."
+      },
+      "runtime_evidence": [
+        "A targeted natural early-route trace hit 0x001B6802 at MAME frame 0x0811 with ROWWORD=0x5F38, ROWINDEX=0x2F9C, INTERACTION=0x0D, and then initialized slot 24 from 0x001B7D8C.",
+        "The same trace observed slot 24 at world (1656,703) as type 0x6A, then type 0x6B after alignment; the route remains in SCENE_STATE=0x01.",
+        "A corrected natural far-floor trace directly caught the remote records: ROWWORD=0x6148/ROWINDEX=0x30A4 at MAME frame 0x0EF0 entered 0x001B6802 and initialized slot 24 from 0x001B7D8C; ROWWORD=0x6060/ROWINDEX=0x3030 at frame 0x0F10 entered the same producer and initialized slot 23 from 0x001B7D8C after slot 24 was occupied.",
+        "The resulting actors were Type-0x6A at (4136,735) and (4232,719), matching the static records at cells (259,31) and (265,30). The pass reached neither 0x001AF978 nor 0x001AFBF4 because the player remained on the lower floor at Y=912."
+      ],
+      "transfer_capability": "The handler at 0x001AF978 writes PLAYER_Y by local actor alignment. It is an assisted placement family, but not a guaranteed large transfer; the actor is stationary and requires a narrow contact window.",
+      "confidence": "trace-validated for all three selector-0x0D producer records and the Type-0x6A actor family",
+      "next_targeted_runtime_experiment": "Load the corrected trace's producer checkpoint or reproduce its route to the first remote Type-0x6A, then target the exact descent/contact window with 0x001AF978, PLAYER_Y, PLAYER_VY, TERRAIN_RESPONSE_ACTIVE, and interaction-state writes logged."
+    },
+    {
+      "candidate_mechanism": "Level 01 selector 0x74 -> stationary Type-0x65 bounce/launch actor",
+      "exact_rom_addresses": {
+        "interaction_table_entry": "0x004324",
+        "producer_handler": "0x001B670C",
+        "allocator": "0x001B525E -> 0x001AE2AA",
+        "generic_spawn_continuation": "0x001B526C -> 0x001AE30A -> 0x001B5270",
+        "template": "0x001B7E54",
+        "destination_slot": "20 / 0x00FF8368",
+        "collision_table_entries": "0x001E52, 0x001E56",
+        "collision_handler": "0x001AFBF4"
+      },
+      "template_decode": {
+        "actor_type": "0x65",
+        "template_flags_plus_6": "0x20",
+        "movement_stream": "0x00000000; stationary actor",
+        "movement_loop_word": "0x0060",
+        "animation_stream": "0x001244AC",
+        "actor_field_0x29": "0x0E"
+      },
+      "prerequisites": [
+        "the camera/refill row window must include the Level 01 selector-0x74 record",
+        "the backward allocator must find a free actor in the slot-20 scan",
+        "the actor must be active and overlap the player through 0x001ABB40",
+        "PLAYER_VY must be nonnegative and nonzero at collision",
+        "actor type must not already be 0x66",
+        "PLAYER_INTERACTION_ANIMATION_GATE at 0x00FFF0E7 must be zero for the actual -0x0500 launch"
+      ],
+      "level01_producer_reachability_path": {
+        "static_record": {
+          "map_cell": [100, 41],
+          "world_cell": [1600, 656],
+          "map_word": "0x7098",
+          "resource_index": "0x384C",
+          "behavior": "0x11",
+          "selector": "0x74",
+          "role": "lower camel/bounce producer"
+        },
+        "chain": "Level 01 floor selector 0x74 -> 0x004324 -> 0x001B670C -> 0x001B525E -> 0x001AE2AA -> 0x001B526C -> 0x001AE30A -> template 0x001B7E54 -> actor type 0x65 -> 0x001ABB40 -> 0x001CBE -> 0x001AFBF4."
+      },
+      "runtime_evidence": [
+        "The early-top row-context trace correlated the natural allocation with selector 0x74 and initialized slot 20 from 0x001B7E54 at world (1576,900).",
+        "The corrected camel route reaches this actor naturally; holding C during descent changes the launch to approximately vy=-1328, but the continuation reaches the known Type-0x6A handhold/connector route and remains in SCENE_STATE=0x01.",
+        "No scene/countdown writer fires in the existing bounce and connector continuations."
+      ],
+      "transfer_capability": "This is the strongest actor-side discontinuous transfer writer in Level 01: 0x001AFBF4 can set PLAYER_VY=-0x0500. The known producer is nevertheless lower-band/local, and its tested continuations do not reach the exit corridor.",
+      "confidence": "trace-validated",
+      "next_targeted_runtime_experiment": "None for the already-classified lower record. Keep 0x001AFBF4 active when testing the remote 0x0D handhold route, because a remote Type-0x65 child/reuse path would be a materially new finding."
+    },
+    {
+      "candidate_mechanism": "MovementVM Type-0x83 actor-driven direct player placement",
+      "exact_rom_addresses": {
+        "movement_vm": "0x001ADE36",
+        "actor_vm_table": "0x004954",
+        "player_collision_pass": "0x001ABB40",
+        "boot_template": "0x001B7864",
+        "boot_initializer_caller": "0x001AA6A6"
+      },
+      "semantics": "The special Type-0x83 branch in MovementVM consumes movement bytes that directly add actor X/Y and PLAYER_X/PLAYER_Y. This is a true direct player-coordinate writer, unlike camera rebase bookkeeping.",
+      "prerequisites": [
+        "an active Type-0x83 actor must have a nonzero movement PC at actor +0x0A",
+        "the movement VM must reach the Type-0x83 special branch",
+        "the movement stream must contain a direct displacement command"
+      ],
+      "level01_producer_reachability_path": "The Level 01 inventory contains Type-0x83 only as the player boot record in slot 0; template 0x001B7864 has movement PC zero. No Level 01 interaction producer, F5 child chain, or post-initializer write was found that installs an active Type-0x83 movement stream.",
+      "confidence": "decompiled; not Level 01 reachable under the current producer closure",
+      "next_targeted_runtime_experiment": "Before runtime work, enumerate all ROM writes of actor type 0x83 and actor +0x0A in Level 01 callers. Run only if a non-player Type-0x83 producer with a nonzero movement PC is found."
+    },
+    {
+      "candidate_mechanism": "Dynamic selector republish or child-resource installation",
+      "exact_rom_addresses": {
+        "generic_selector_publish": "0x001B5270",
+        "alternate_selector_publish": "0x001B52A6",
+        "selector_republish_helpers": "0x001AE0D4, 0x001AE246, 0x001AE6BC, 0x001AE6DE, 0x001AE700",
+        "interaction_processors": "0x001AE406, 0x001AE488",
+        "actor_f5_vm": "0x001AD00E"
+      },
+      "prerequisites": [
+        "an actor/resource must already carry a nonzero selector in actor +0x34",
+        "the row processor must revisit the associated map index",
+        "the actor slot/resource lifecycle must remain active or be reused"
+      ],
+      "level01_producer_reachability_path": "Static data-flow closes the only transfer-capable selector values to direct Level 01 floor records: three selector-0x0D cells and one selector-0x74 cell. F5 child chains found in the retained Level 01 actors target other templates, including Type-0x84 cleanup/effect records, not 0x001B7D8C or 0x001B7E54.",
+      "result": "Dynamic interaction state can control when a known producer is exposed, but it cannot currently explain a hidden Type-0x65/0x6A producer that is absent from the decoded Level 01 floor table.",
+      "confidence": "decompiled",
+      "next_targeted_runtime_experiment": "Only trace selector republish on a candidate remote Type-0x6A actor if the corrected pre-remote checkpoint shows a selector disappearing and reappearing at the same actor index."
+    }
+  ],
+  "runtime_experiments": [
+    {
+      "trace_root": "build/re/analysis/20260827-level01-transfer-reachability-v1/early-0d",
+      "purpose": "Directly validate the static early selector-0x0D producer path.",
+      "breakpoints": ["0x001B6802", "0x001B670C"],
+      "result": "At MAME frame 0x0811, row word 0x5F38/index 0x2F9C/selector 0x0D entered 0x001B6802; slot 24 was initialized from template 0x001B7D8C and became Type-0x6A at (1656,703).",
+      "confidence": "trace-validated"
+    },
+    {
+      "trace_root": "build/re/campaigns/20260827-level01-route-join-v16/far-guard",
+      "purpose": "Use the existing natural far-floor route as remote actor evidence.",
+      "result": "A Type-0x6A instance appears at (4136,735) on relative frame 252 and another at (4232,719) on relative frame 284, before the route remains in scene state 0x01. The saved trace lacks the producer breakpoint line, so it validates active remote actors but not direct selector attribution.",
+      "confidence": "trace-validated actor presence; static producer attribution"
+    },
+    {
+      "trace_root": "build/re/analysis/20260827-level01-transfer-reachability-v1/remote-0d and remote-0d-v16",
+      "purpose": "Attempt direct remote producer capture from saved checkpoints.",
+      "result": "Excluded. The loaded checkpoints retained an attack/interaction boundary in which the short replay did not advance, and no producer breakpoint fired. These runs are not evidence against remote reachability.",
+      "confidence": "invalid-experiment"
+    },
+    {
+      "trace_root": "build/re/analysis/20260827-level01-transfer-reachability-v1/remote-0d-corrected",
+      "purpose": "Directly validate both remote selector-0x0D producer records on the advancing natural route.",
+      "source_checkpoint": "build/re/campaigns/20260827-level01-route-join-v15/second-guard/states/genesis/joined-far-floor.sta",
+      "input": "down+b+right*80,b+right*160,right*140,none*70",
+      "frames": 350,
+      "breakpoints": ["0x001B6802", "0x001B670C", "0x001AF978", "0x001AFBF4", "0x001B5B4A", "0x001B5B66"],
+      "producer_hits": [
+        {
+          "mame_frame": "0x0EF0",
+          "row_word": "0x6148",
+          "row_index": "0x30A4",
+          "map_cell": [259, 31],
+          "selector": "0x0D",
+          "handler": "0x001B6802",
+          "destination": "0x00FF8470",
+          "slot": 24,
+          "template": "0x001B7D8C"
+        },
+        {
+          "mame_frame": "0x0F10",
+          "row_word": "0x6060",
+          "row_index": "0x3030",
+          "map_cell": [265, 30],
+          "selector": "0x0D",
+          "handler": "0x001B6802",
+          "destination": "0x00FF842E",
+          "slot": 23,
+          "template": "0x001B7D8C"
+        }
+      ],
+      "result": "Both remote Type-0x0D records are direct, naturally reachable producers. The actors are active Type-0x6A instances, but this lower-floor pass never reaches their narrow 0x001AF978 alignment window and produces no player-Y/VY transfer or scene/countdown write.",
+      "confidence": "trace-validated"
+    }
+  ],
+  "conclusion": {
+    "primary": "The earlier closure was too broad about Type-0x65/Type-0x6A: Level 01 directly encodes four transfer-family interaction producers. Selector 0x74 produces the known lower Type-0x65 bounce actor; selector 0x0D produces one confirmed early Type-0x6A handhold and two statically identified remote Type-0x6A actors at x≈4144 and x≈4240.",
+    "terrain": "Behaviors 0x29 and 0x2D remain unreachable from the loaded Level 01 terrain through every closed path: their only caller is the fixed behavior table at 0x004554, Level 01 has zero decoded cells for both, and no gameplay writer installs them.",
+    "state": "Interaction/player state gates actor collision consequences and can republish an existing interaction selector, but no such state redirects Terrain_ResolvePlayerCell to a different behavior family.",
+    "transfer_frontier": "The remote selector-0x0D producer chain is now closed and trace-validated. The unresolved question is downstream: whether the naturally spawned actors at (4136,735) and (4232,719) can be contacted from an upper trajectory and cause the 0x001AF978 PLAYER_Y placement. The current natural floor pass does not reach that window.",
+    "scheduler_scope": "No scheduler or native implementation changes were made for this finding."
+  },
+  "next_action": "Use the validated remote producer route as the sole next fixture. Reproduce the Type-0x6A actors, then run the minimum targeted upper-approach continuation that can overlap actor Y=719/735, with 0x001AF978, PLAYER_Y, PLAYER_VY, terrain response, interaction state, and exit/countdown sentinels active."
+}
