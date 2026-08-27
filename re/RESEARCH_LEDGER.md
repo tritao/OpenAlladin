@@ -912,6 +912,18 @@ type-`0x6B` transfer. The shared vertical path is unchanged and all runs
 settle on the lower floor in scene `0x01`; C timing changes horizontal travel
 only. This closes the C-timing version of the bounce-to-handhold hypothesis.
 
+The player-motion writer audit is recorded in
+`re/mame/findings/20260827-level01-player-motion-writer-audit-v1.json`. The
+complete player-collision dispatch table identifies the remaining handlers
+that can directly write player coordinates or velocity: the `0x11/0x12`
+launch family is absent from Level 01, the `0x50/0x51` alignment family belongs
+to level-table entry 9, and the `0x67/0x68` alignment family appears in the
+Level 0A matrix rather than Level 01. The live `0x65/0x66` bounce and
+`0x69..0x6C` handhold families are already covered by natural traces. No
+unclassified Level 01 actor-specific player-motion writer remains, so the
+next target is the upper-route object/resource producer and its terrain
+placement.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -984,6 +996,7 @@ only. This closes the C-timing version of the bounce-to-handhold hypothesis.
 | `20260827-level01-upper-pair-extended-interaction-v2` | recorded-negative | explicit left/up upper-frontier coverage of the Type-0x1E extended interaction branch |
 | `20260827-level01-behavior46-lower-band-v2` | recorded-positive | natural behavior-0x46 Type-0x1E contact, movement handoff, and extended callback trace |
 | `20260827-level01-bounce-c-matrix-v1` | recorded-negative-natural | C timing matrix from the lower bounce; no type-0x6A handhold transfer |
+| `20260827-level01-player-motion-writer-audit-v1` | recorded-static-audit | complete actor-specific player-coordinate/velocity writer classification; no unclassified Level 01 writer |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

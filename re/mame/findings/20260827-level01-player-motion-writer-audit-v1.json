@@ -1,0 +1,105 @@
+{
+  "format": "openaladdin-level01-player-motion-writer-audit-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify every actor-specific player-coordinate or player-velocity writer reachable through the 68000 player-collision dispatch table, and identify any remaining live Level 01 transfer candidate.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "0671eff",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "static_sources": [
+    "build/re/dasm-1A8000.txt",
+    "re/mame/findings/natural-exit-findings.json",
+    "re/mame/findings/20260827-level01-bounce-c-input-matrix-v1.json",
+    "re/mame/findings/20260826-level01-observed-unknown-player-collision-v1.json"
+  ],
+  "dispatch_table": {
+    "rom_base": "0x001CBE",
+    "entry_width": 4,
+    "address_space": "68000 ROM addresses",
+    "candidate_handlers": [
+      {
+        "address": "0x001AF110",
+        "actor_types": ["0x11", "0x12"],
+        "writes": [
+          "PLAYER_VX = +0x0600 or -0x0400 when FFF0D8 is set",
+          "PLAYER_VY = -0x0400 when FFF0D8 is set",
+          "PLAYER_ANIMATION_PC = 0x00121C62 when FFF0D8 is set",
+          "actor animation = 0x0012512C for type 0x12 when FFF0D8 is clear"
+        ],
+        "level01_observed": false,
+        "classification": "player-launch handler for another actor family; not a live Level 01 candidate"
+      },
+      {
+        "address": "0x001AF740",
+        "actor_types": ["0x67", "0x68"],
+        "writes": [
+          "PLAYER_Y = actor_y - WORLD_CAMERA_Y - 0x0B when the movement flag and vertical window match",
+          "actor type = 0x68 and animation = 0x0012327E for type 0x67"
+        ],
+        "level01_observed": false,
+        "level01_observation_note": "Type 0x67 appears in the Level 0A loader matrix, not in retained Level 01 traces; type 0x68 is not observed.",
+        "classification": "vertical alignment handler for another level/object family"
+      },
+      {
+        "address": "0x001AF8F6",
+        "actor_types": ["0x50", "0x51"],
+        "writes": [
+          "PLAYER_X = actor_x - WORLD_CAMERA_X",
+          "PLAYER_Y = actor_y - WORLD_CAMERA_Y + 0x20",
+          "PLAYER_INTERACTION_TRANSITION_LOCK = 0xFF",
+          "PLAYER_TRANSITION_GATE = 0xFF",
+          "CAMERA_HORIZONTAL_THRESHOLD = 0x00A0",
+          "actor type = 0x51 and animation = 0x00124BA6 for type 0x50"
+        ],
+        "level01_observed": false,
+        "level01_observation_note": "The type-0x50 spawn/handhold routine is assigned to level-table entry 9, not Level 01.",
+        "classification": "player-alignment/transition handler for another level"
+      },
+      {
+        "address": "0x001AF978",
+        "actor_types": ["0x69", "0x6A", "0x6B", "0x6C"],
+        "writes": [
+          "PLAYER_Y = actor_y - WORLD_CAMERA_Y - 8 when the movement flag and vertical window match",
+          "actor type = 0x6B with animation 0x0012408E for type 0x6A",
+          "actor type = 0x6B with animation 0x0012404E for type 0x69"
+        ],
+        "level01_observed": true,
+        "level01_observation_note": "Type 0x6A is live in Level 01; the seven-run C timing matrix recorded zero transfers to type 0x6B.",
+        "classification": "live Level 01 handhold alignment path; tested timing family is negative, producer/approach remains open"
+      },
+      {
+        "address": "0x001AFBF4",
+        "actor_types": ["0x65", "0x66"],
+        "writes": [
+          "PLAYER_VY = -0x0500 on the positive/nonzero vertical-velocity branch",
+          "PLAYER_ANIMATION_PC = 0x001221B8",
+          "TERRAIN_RESPONSE_ACTIVE = 0xFF"
+        ],
+        "level01_observed": true,
+        "level01_observation_note": "The lower-bounce route and its Up/C timing variants are already recorded as negative for the missing transfer.",
+        "classification": "live Level 01 bounce handler; covered by existing natural traces"
+      },
+      {
+        "address": "0x001AE64C",
+        "actor_types": ["0x43"],
+        "writes": [
+          "local actor/player interaction bookkeeping only"
+        ],
+        "level01_observed": true,
+        "classification": "previously classified local interaction; no player launch or scene-state write"
+      }
+    ]
+  },
+  "observed_level01_actor_types": [
+    "0x00", "0x04", "0x05", "0x06", "0x07", "0x0A", "0x0D", "0x14",
+    "0x15", "0x17", "0x1A", "0x1D", "0x1E", "0x1F", "0x20", "0x21",
+    "0x2A", "0x2D", "0x2F", "0x34", "0x36", "0x3A", "0x40", "0x43",
+    "0x44", "0x4F", "0x52", "0x53", "0x59", "0x60", "0x61", "0x65",
+    "0x66", "0x6A", "0x6B", "0x74", "0x79", "0x7B", "0x7F", "0x80",
+    "0x82", "0x83", "0x84", "0x85", "0x8A", "0x8C", "0x8D"
+  ],
+  "conclusion": "No unclassified actor-specific player-coordinate or player-velocity writer remains among the retained Level 01 actor types. The absent 0x11/0x12 and 0x50/0x51 families cannot explain the Level 01 route, while the live 0x65 and 0x6A paths have already been exercised. The unresolved work is now the producer/approach that makes the upper route satisfy its exit geometry, not another player-collision writer search.",
+  "next_action": "Trace the live upper-route object/resource producer and its terrain placement, starting from the row-10/row-14 interaction records and the far-rope frontier; preserve any new route attempt as a deterministic campaign."
+}
