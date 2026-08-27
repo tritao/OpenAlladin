@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-level01-peddler-c-timing-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Document corrected loaded-state alignment and held-C onset coverage at the peddler-side upper edge.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "2e13f91",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-peddler-c-timing-v1.json",
+  "source_checkpoint": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+  "timing_sweep": {
+    "branch_count": 9,
+    "c_onsets": [25, 35, 45, 50, 55, 60, 65, 70, 75],
+    "schedule": "none*2,right*N,c*20,right*60,none*158",
+    "frames_per_branch": 240,
+    "stable_anchor": [2120, 530],
+    "edge_behavior": "0x86",
+    "ordinary_jump_apex_y": 463,
+    "terminal_y": 920
+  },
+  "interpretation": "The last useful held-C onset is c50: it still follows the ordinary jump arc and crosses the upper-edge geometry before descending. At c55 and later, the player has already entered the fall window, so C does not alter the route. All branches settle in the lower band with scene state 0x01.",
+  "negative_evidence": {
+    "terrain_launch_0x001B557E_hits": 0,
+    "terrain_launch_0x001B56B6_hits": 0,
+    "actor_handler_hits": 0,
+    "scene_state_08": false
+  },
+  "conclusion": "This closes the remaining C-onset timing variable for the stable peddler platform. The missing progression is not a peddler-side jump-timing response; the lower/far resource-object chain remains the higher-value target."
+}
