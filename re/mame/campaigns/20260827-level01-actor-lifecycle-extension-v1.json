@@ -1,0 +1,12 @@
+{
+  "campaign": "20260827-level01-actor-lifecycle-extension-v1",
+  "status": "completed-boundary-correction",
+  "purpose": "Extend the Level 01 actor lifecycle model through type-0x40 replacement, F5 actor-0x2A accumulator writes, culling reuse, and terrain class-zero handling.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "finding": "re/mame/findings/20260827-level01-actor-lifecycle-extension-v1.json",
+  "trace": "build/re/actor2a-terrain1",
+  "result": "The native replay matches all 600 requested post-checkpoint action frames in the level01-actor-boot actor comparison; the only reported frame 601 is the comparison tool's extra terminal synchronized boundary."
+}

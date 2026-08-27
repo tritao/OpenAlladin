@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-level01-actor-lifecycle-extension-finding-v1",
+  "campaign": "re/mame/campaigns/20260827-level01-actor-lifecycle-extension-v1.json",
+  "recorded_at": "2026-08-27",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "evidence": {
+    "trace": "build/re/actor2a-terrain1",
+    "type_0x40_replacement": {
+      "handler": "0x001AF468",
+      "template": "0x001B7ABC",
+      "result_type": "0x84",
+      "first_animation_stream": "0x00122F80",
+      "facing_flip_transition": "0x00122F8A",
+      "aligned_slots": {
+        "slot_7": 527,
+        "slot_11": 538
+      }
+    },
+    "resource_sweep": {
+      "slot_10_clear_aligned_frame": 525,
+      "slot_6_clear_aligned_frame": 523
+    },
+    "cull": {
+      "handler": "0x001AE0B0",
+      "observation": "The ROM clears the actor type/resource links but leaves compact movement-loop fields observable on reuse."
+    },
+    "f5_actor_0x2a": {
+      "template": "0x001B7AF8",
+      "movement_stream": "0x00120F76",
+      "animation_stream": "0x001231DC",
+      "first_animation_command": "FA 42 00 18 02 A4",
+      "observation": "The first animation tick writes movement_word_18=0x02A4 while movement integration remains deferred until the next boundary."
+    },
+    "terrain_class_zero": {
+      "handler": "0x001ADB5C",
+      "observation": "For in-bounds class-zero terrain the ROM adds 0x78 to movement_word_1A but does not convert movement flag bit 0 to bit 6; that conversion is only on the out-of-range path at 0x001ADE10."
+    }
+  },
+  "validation": {
+    "scenario": "level01-actor-boot",
+    "requested_frames": 600,
+    "first_actor_divergence": "none through requested action window",
+    "terminal_trace_note": "The comparison tool also compares its extra synchronized terminal state; the duplicate final MAME boundary reports an unrelated actor timer/player-position difference at relative frame 601."
+  },
+  "next_action": "Keep the actor accumulator propagation and in-bounds terrain behavior as the baseline, then audit the synchronized terminal-state comparison and the remaining player boundary drift."
+}

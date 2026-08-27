@@ -155,6 +155,49 @@ experiments:
           right: true
           frames: 600
 
+  - name: level01-actor-overnight
+    description: Extend the Level-01 actor refill replay past the opening window for long differential reverse-engineering runs.
+    # The checkpoint is the same stable Level-01 boundary as
+    # level01-actor-boot; the longer walk keeps the actor table observable
+    # while later culls and slot reuses occur.
+    frames: 3045
+    regression:
+      checkpoint: level01_actor_checkpoint
+      fields:
+        - player.x
+        - player.y
+        - player.world_x
+        - player.world_y
+        - player.vx
+        - player.vy
+        - player.grounded
+        - player.facing_x_flip
+        - player.frame_ptr
+        - player.animation_pc
+        - player.animation_timer
+        - camera.x
+        - camera.y
+        - camera.reference_x
+        - camera.reference_y
+        - camera.scroll_x
+        - camera.scroll_y
+        - camera.horizontal_threshold
+        - camera.vertical_threshold
+        - camera.update_delay
+        - actors
+    boot:
+      scenario: first-level
+    setup:
+      - wait:
+          symbol: PLAYER_ANIMATION_PC
+          greater_than: 0
+          timeout: 180
+      - marker: level01_actor_checkpoint
+    actions:
+      - input:
+          right: true
+          frames: 1800
+
   - name: player-direction-reversal
     description: Hold left and then right to verify player facing and sprite identity across a reversal.
     # Stop immediately after the reversal segment. The following neutral
