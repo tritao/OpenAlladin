@@ -80,7 +80,21 @@ ram_gates:
     status: decompiled
   - address: 0x00FF7E25
     symbol: FRAME_WAIT_LATCH
-    static_role: tested by the input/resource service and the VBlank wait helper
+    static_role: enables the optional Z80 handshake inside the VBlank wait helper; it is not the VBlank release latch
+    writers:
+      - address: 0x001AA3A8
+        operation: clear byte
+        owner: FUN_001AA344
+        caller: reset/level-entry path at 0x001A8A54
+        role: initialization
+      - address: 0x001B2DF4
+        operation: set byte
+        owner: Scene_EnterTransitionMode
+        role: transition-mode Z80 handshake enable
+      - address: 0x001B2E02
+        operation: clear byte
+        owner: Scene_EnterTransitionMode
+        role: transition-mode Z80 handshake disable
     status: decompiled
   - address: 0x00FF7E1E
     symbol: VBLANK_READY_LATCH
@@ -535,11 +549,11 @@ call_sequence:
     entry: 0x001B249E
     static_name: FUN_001B249E
     role: frame_wait_helper
-    gate_condition: unconditional call; body spins while FRAME_WAIT_LATCH == 0
-    ram_gates: [0x00FF7E25]
+    gate_condition: unconditional call; body performs the Z80 handshake only when FRAME_WAIT_LATCH != 0, then spins until VBLANK_READY_LATCH != 0
+    ram_gates: [0x00FF7E25, 0x00FF7E1E]
     actor_range: none
-    pre_state_mutation: FRAME_WAIT_LATCH is read
-    post_state_mutation: no direct write recovered
+    pre_state_mutation: FRAME_WAIT_LATCH and VBLANK_READY_LATCH are read
+    post_state_mutation: Z80 bus request/release handshake when enabled; no direct VBlank latch write
     possible_second_invocation: no second direct call in this loop; may synchronize with VBlank asynchronously
     status: decompiled
 
@@ -634,9 +648,19 @@ dynamic_validation:
       boundary_pc: 0x001B2470
       boundary_count: 1396
     FRAME_WAIT_LATCH:
-      status: producer_unresolved
+      status: decompiled
       gameplay_writes: 0
-      pre_gameplay_writer_pc: 0x001AA3B0
+      observed_clean_boot_writes: 2
+      observed_clean_boot_writer_pcs: [0x0000027A, 0x001AA3B0]
+      observed_clean_boot_actual_writer_pcs: [0x0000027A, 0x001AA3A8]
+      init_owner: FUN_001AA344
+      init_caller: 0x001A8A54
+      transition_set_writer_pc: 0x001B2DF4
+      transition_clear_writer_pc: 0x001B2E02
+      natural_route_status: trace_validated_no_gameplay_writer
+      transition_route_status: not_reached_in_recorded_replay
+      helper_pc: 0x001B249E
+      helper_role: optional Z80 handshake gate; actual frame release waits on VBLANK_READY_LATCH
 
 native_mapping:
   status: provisional
@@ -652,7 +676,7 @@ native_mapping:
       rom_support: no direct call in the recovered gameplay body; F5 allocation is reached through the animation VM dispatch
       status: indirect_only
   next_dynamic_questions:
-    - Which ROM instruction writes FRAME_WAIT_LATCH and what event releases 0x001B249E?
+    - Which transition branch reaches the 0x001B2DF4/0x001B2E02 FRAME_WAIT_LATCH writers during a natural route?
     - Does any indirect caller reach 0x001AC784 during one gameplay boundary besides ordinal 30?
     - Which state transition, if any, causes the native probe-animation service to correspond to a real ROM call?
     - Which caller/branch owns the post-animation actor traversal observed in native traces?

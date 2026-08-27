@@ -283,6 +283,20 @@ the finding or commit message.
   does not promote native `probe_animation` or identify indirect service
   callers. Those remain provisional pending a transition/resource campaign.
 
+- `re/mame/campaigns/20260827-frame-wait-lifecycle-v1.json` resolves the
+  previously ambiguous `FRAME_WAIT_LATCH` role. Static ROM inspection finds
+  the initialization clear at `0x001AA3A8` in `FUN_001AA344` (the debugger
+  reports post-instruction PC `0x001AA3B0`), plus the transition-mode set/clear
+  pair at `0x001B2DF4` and `0x001B2E02` in `Scene_EnterTransitionMode`.
+- `0x001B249E` does not wait for `FRAME_WAIT_LATCH` to become nonzero. It
+  tests that byte only to decide whether to perform the Z80 bus handshake,
+  then waits for `VBLANK_READY_LATCH` (`0x00FF7E1E`) written by
+  `VBlankInterrupt`. The clean-boot trace observes two frame-wait writes and
+  1,396 VBlank boundaries, with no gameplay writer. A replay from the
+  available transition checkpoint remained in the wait helper and did not
+  reach the transition writer pair, so those writers remain statically
+  decompiled but not dynamically reached.
+
 - `re/mame/findings/20260827-level01-type34-reuse-native-v1.json`: the later
   selector-0x53 reuse now applies the caller's type-0x34/animation-0x00122C1E/
   movement-0x001217B4 fields directly after the generic initializer. Native

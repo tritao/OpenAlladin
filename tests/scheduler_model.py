@@ -80,6 +80,22 @@ def main() -> int:
     animation_calls = [call for call in calls if parse_int(call["entry"]) == 0x001AC784]
     assert [call["ordinal"] for call in animation_calls] == [30]
     assert model["entry_points"]["vblank"]["relation"].startswith("interrupt service")
+    frame_wait = model["ram_gates"][1]
+    assert frame_wait["symbol"] == "FRAME_WAIT_LATCH"
+    assert [parse_int(writer["address"]) for writer in frame_wait["writers"]] == [
+        0x001AA3A8,
+        0x001B2DF4,
+        0x001B2E02,
+    ]
+    assert model["dynamic_validation"]["runtime_latches"]["FRAME_WAIT_LATCH"]["init_owner"] == "FUN_001AA344"
+    assert model["dynamic_validation"]["runtime_latches"]["FRAME_WAIT_LATCH"]["helper_role"].startswith(
+        "optional Z80 handshake"
+    )
+    rom = (ROOT / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001AA3A8 : 0x001AA3AE] == bytes.fromhex("423900ff7e25")
+    assert rom[0x001B2DF4 : 0x001B2DFA] == bytes.fromhex("50f900ff7e25")
+    assert rom[0x001B2E02 : 0x001B2E08] == bytes.fromhex("423900ff7e25")
+    assert rom[0x001B24A4 : 0x001B24AA] == bytes.fromhex("4a3900ff7e25")
     assert model["native_mapping"]["status"] == "provisional"
     print("scheduler model: ok")
     return 0

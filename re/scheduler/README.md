@@ -28,8 +28,18 @@ their own committed provenance.
 
 The first committed dynamic validation is recorded in
 `re/mame/campaigns/20260827-scheduler-static-dynamic-v1.json`. Its focused
-trace observes the exact 37-call sequence in 209 complete gameplay passes and
-keeps `FRAME_WAIT_LATCH` unresolved because no gameplay writer was observed.
+trace observes the exact 37-call sequence in 209 complete gameplay passes.
+The follow-up lifecycle audit is recorded in
+`re/mame/campaigns/20260827-frame-wait-lifecycle-v1.json`: it resolves the
+static writer inventory for `FRAME_WAIT_LATCH`, observes its reset/level-entry
+initialization, and records that the natural Level 01 route has no gameplay
+writer. The transition writers are statically identified but were not reached
+by the restart attempt from the available checkpoint.
+
+The important semantic distinction is that `FRAME_WAIT_LATCH` is only the
+conditional gate for the Z80 bus handshake in `0x001B249E`. The helper's
+actual release condition is `VBLANK_READY_LATCH` at `0x00FF7E1E`, written by
+`VBlankInterrupt`.
 
 Reanalyze an existing capture with:
 

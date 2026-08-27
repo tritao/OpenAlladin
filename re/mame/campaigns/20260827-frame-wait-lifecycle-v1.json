@@ -1,0 +1,121 @@
+{
+  "campaign": "20260827-frame-wait-lifecycle-v1",
+  "status": "completed-static-dynamic-lifecycle-audit",
+  "purpose": "Resolve the FRAME_WAIT_LATCH writer inventory and distinguish its Z80-handshake role from the VBlank release latch.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "df351c2",
+  "working_tree_at_capture": "tracked scheduler instrumentation clean; unrelated untracked mame/ captures were left untouched",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v2",
+  "static_sources": [
+    "build/re/dasm-1A8000.txt",
+    "build/re/level-loader-targeted-decompile.json",
+    "build/re/level-transition-targeted-decompile-v2.json"
+  ],
+  "instrumentation": {
+    "breakpoints": [
+      "0x001AA344",
+      "0x001AA41C",
+      "0x001AA484",
+      "0x001B249E",
+      "0x001B0CB4",
+      "0x001B0F66",
+      "0x001B2ACE",
+      "0x001B2DF4",
+      "0x001B2E02"
+    ],
+    "breakpoint_register_dump": true,
+    "scheduler_latch_watchpoints": [
+      "FRAME_WAIT_LATCH",
+      "VBLANK_READY_LATCH",
+      "FRAME_PHASE_COUNTER",
+      "SCENE_RESOURCE_STATUS",
+      "SCENE_RESOURCE_ERROR"
+    ],
+    "scheduler_call_trace": true,
+    "vblank_boundary_marker": "OPENALADDIN_SCHEDULER_VBLANK"
+  },
+  "segments": [
+    {
+      "id": "clean-boot-level-loader",
+      "status": "completed",
+      "trace_dir": "build/re/campaigns/20260827-frame-wait-lifecycle-v1/clean-boot-level-loader",
+      "frames": 1400,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55",
+      "artifacts": {
+        "debug_log": "debug.log",
+        "trace_boot": "trace_boot.jsonl",
+        "state": "state.jsonl",
+        "analysis": "scheduler-analysis.json"
+      },
+      "observed": {
+        "frame_wait_latch_writes": 2,
+        "frame_wait_latch_debugger_writer_pcs": ["0x0000027A", "0x001AA3B0"],
+        "frame_wait_latch_actual_writer_pcs": ["0x0000027A", "0x001AA3A8"],
+        "gameplay_frame_wait_latch_writes": 0,
+        "vblank_boundaries": 1396,
+        "vblank_boundary_debugger_pc": "0x001B2470",
+        "complete_direct_gameplay_call_sequences": 209,
+        "direct_gameplay_call_sequence_exact": true
+      },
+      "result": "The clean boot initializes FRAME_WAIT_LATCH in FUN_001AA344 and never writes it during the observed gameplay route. The frame wait helper returns on VBLANK_READY_LATCH, not on FRAME_WAIT_LATCH."
+    },
+    {
+      "id": "controlled-boundary-transition",
+      "status": "checkpoint-not-restartable",
+      "trace_dir": "build/re/campaigns/20260827-frame-wait-lifecycle-v1/controlled-boundary-transition",
+      "frames": 1200,
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/clean-upper-platform.sta",
+      "input": "none*1200",
+      "memory_pokes": [
+        "frame 1: 0x00FF7E02=0x1288:u16",
+        "frame 1: 0x00FF7E04=0x0100:u16"
+      ],
+      "artifacts": {
+        "debug_log": "debug.log",
+        "trace_boot": "trace_boot.jsonl",
+        "state": "state.jsonl"
+      },
+      "observed": {
+        "transition_entry_breakpoints": 0,
+        "frame_wait_helper_post_instruction_pc": "0x001B24A0",
+        "vblank_boundaries": 1199
+      },
+      "result": "The available checkpoint resumed inside the frame-wait helper and remained there; this segment is retained as a negative replay result and is not positive evidence about the transition branch."
+    }
+  ],
+  "static_writer_inventory": {
+    "FRAME_WAIT_LATCH": [
+      {
+        "writer_pc": "0x001AA3A8",
+        "debugger_post_instruction_pc": "0x001AA3B0",
+        "operation": "clear",
+        "owner": "FUN_001AA344",
+        "caller": "0x001A8A54",
+        "role": "reset/level-entry initialization"
+      },
+      {
+        "writer_pc": "0x001B2DF4",
+        "operation": "set",
+        "owner": "Scene_EnterTransitionMode",
+        "role": "transition-mode Z80 handshake enable"
+      },
+      {
+        "writer_pc": "0x001B2E02",
+        "operation": "clear",
+        "owner": "Scene_EnterTransitionMode",
+        "role": "transition-mode Z80 handshake disable"
+      }
+    ],
+    "frame_wait_helper": {
+      "entry": "0x001B249E",
+      "flag_test": "0x001B24A4",
+      "release_latch": "VBLANK_READY_LATCH",
+      "release_latch_address": "0x00FF7E1E"
+    }
+  },
+  "conclusion": "FRAME_WAIT_LATCH is statically resolved as a conditional Z80-handshake gate with reset and transition-mode writers. The clean natural route dynamically validates its initialization and absence of gameplay writes; the transition writer pair remains decompiled but not reached by the available checkpoint replay."
+}

@@ -1,0 +1,64 @@
+{
+  "format": "openaladdin-frame-wait-lifecycle-finding-v1",
+  "recorded_at": "2026-08-27",
+  "status": "static-resolved-natural-route-validated",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "df351c2",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-frame-wait-lifecycle-v1.json",
+  "static_model": "re/scheduler/frame_phases.yml",
+  "static_writer_inventory": {
+    "init": {
+      "writer_pc": "0x001AA3A8",
+      "debugger_post_instruction_pc": "0x001AA3B0",
+      "owner": "FUN_001AA344",
+      "caller": "0x001A8A54"
+    },
+    "transition_set": {
+      "writer_pc": "0x001B2DF4",
+      "owner": "Scene_EnterTransitionMode"
+    },
+    "transition_clear": {
+      "writer_pc": "0x001B2E02",
+      "owner": "Scene_EnterTransitionMode"
+    }
+  },
+  "dynamic_evidence": {
+    "clean_boot_trace": "build/re/campaigns/20260827-frame-wait-lifecycle-v1/clean-boot-level-loader",
+    "frame_wait_latch_writes": 2,
+    "gameplay_writes": 0,
+    "observed_debugger_writer_pcs": ["0x0000027A", "0x001AA3B0"],
+    "actual_writer_pcs": ["0x0000027A", "0x001AA3A8"],
+    "vblank_boundaries": 1396,
+    "transition_writer_pair_reached": false
+  },
+  "semantics": {
+    "helper": "0x001B249E",
+    "frame_wait_latch_role": "conditional Z80 bus handshake enable",
+    "release_latch": "VBLANK_READY_LATCH",
+    "release_latch_address": "0x00FF7E1E",
+    "vblank_writer": "0x001B246E"
+  },
+  "confidence": {
+    "decompiled": [
+      "0x001AA3A8",
+      "0x001B2DF4",
+      "0x001B2E02",
+      "0x001B249E"
+    ],
+    "trace_validated": [
+      "reset/level-entry FRAME_WAIT_LATCH initialization",
+      "no FRAME_WAIT_LATCH gameplay writer on the clean Level 01 route",
+      "VBlank release boundaries"
+    ],
+    "parity_validated": []
+  },
+  "limitations": [
+    "The natural route did not enter Scene_EnterTransitionMode during the capture.",
+    "The available controlled checkpoint resumed inside the VBlank wait helper, so its transition breakpoint result is a negative replay limitation rather than a transition-path observation."
+  ],
+  "conclusion": "FRAME_WAIT_LATCH is no longer producer-unresolved. Its static writers and runtime role are identified, while dynamic transition-branch reachability remains an open route question."
+}
