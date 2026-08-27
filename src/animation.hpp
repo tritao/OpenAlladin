@@ -120,6 +120,10 @@ struct AnimationSpawnRequest {
     int source_world_y = 0;
     std::uint8_t source_facing_x_flip = 0;
     std::uint8_t source_facing_y_flip = 0;
+    // The player uses the same template for the physical apple action and
+    // for other mode-3 effects. Preserve the originating stream so Engine
+    // can apply the apple-specific lifecycle only to the former.
+    bool apple_action = false;
     // Actor-originated linked F5 modes (5/6) store a back-reference in the
     // compact Genesis records. The host uses the slot index to mirror the
     // corresponding parent-flag cleanup when the child retires.

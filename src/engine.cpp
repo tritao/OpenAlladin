@@ -551,6 +551,7 @@ void Engine::dispatch_interaction(
     // following VBlank sample.
     if (selector == 0x80) {
         actor.animation_defer_ticks = 1;
+        actor.animation_force_next_tick = true;
     }
     // Interaction refill publishes the short type-0x06 resource actor after
     // the current animation walk. Keep its first cursor visible for one
@@ -899,6 +900,16 @@ void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
             apple_actor_hold_next_frame_[slot] = false;
             continue;
         }
+        if (actor.spawned_by_interaction
+            && actor.interaction_selector == 0x80
+            && actor.animation_defer_ticks != 0) {
+            // This selector's record is created around the shared actor
+            // traversal. Consume the initial defer without servicing it;
+            // the force bit then carries the first animation tick to the
+            // following VBlank, including the ungated phase.
+            actor.animation_defer_ticks = 0;
+            continue;
+        }
         // The live sword trace reaches the terminal actor template at the
         // end of its common effect stream. This is independent of the guard
         // collision: the guard remains type 0x0A while the sword at
@@ -939,6 +950,10 @@ void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
         // at allocation; unlike the shared table, it is serviced on both
         // phases of the global actor gate while it remains type 0x80.
         const bool apple_actor_service = actor.spawned_by_apple;
+        const bool sword_animation_cadence =
+            actor.type == kActorSwordType && !actor.spawned_by_apple;
+        const bool sword_service = sword_animation_cadence
+            && (actor.animation_tick_phase < 2 || (frame_ & 1U) != 0);
         if (!service_actor_table
             && !apple_actor_service && actor.type == kActorTerminalType
             && actor.terminal_timer == 0) {
@@ -949,15 +964,11 @@ void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
             // step compared with the ROM.
             update_terminal_actor_motion(actor);
         }
-        if (!service_actor_table && !force_service && !apple_actor_service) {
+        if (!service_actor_table && !force_service && !apple_actor_service
+            && !sword_service) {
             // FF7E28 gates the complete table walk, not just newly spawned
             // records. Keep the explicit conversion follow-up above as the
             // one evidence-backed exception.
-            continue;
-        }
-        if ((actor.spawned_by_animation || actor.spawned_by_interaction
-             || actor.type == kTerrainSpawnActorType || actor.type == 0x7B)
-            && !service_actor_table && !force_service && !apple_actor_service) {
             continue;
         }
         // AnimationVM_TickActors is guarded by the ROM's byte at FF7E28, but
@@ -981,10 +992,9 @@ void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
         // two consecutive VBlank passes, then every other pass. Preserve the
         // recovered cadence here while the global actor-animation gate and
         // its per-frame scheduler are still being modelled separately.
-        const bool sword_animation_cadence = actor.type == 0x80;
         if (sword_animation_cadence) {
             const bool hold = actor.animation_tick_phase >= 2
-                && (actor.animation_tick_phase & 1U) == 0;
+                && (frame_ & 1U) == 0;
             ++actor.animation_tick_phase;
             if (hold) continue;
         }
@@ -1152,7 +1162,7 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
         spawned.facing_x_flip = request.source_facing_x_flip;
         spawned.facing_y_flip = request.source_facing_y_flip;
         spawned.spawned_by_animation = true;
-        spawned.spawned_by_apple = request.template_address == 0x001B7918;
+        spawned.spawned_by_apple = request.apple_action;
         if (request.mode == 5 || request.mode == 6) {
             spawned.linked_actor_slot = request.source_actor_slot;
         }
@@ -1228,7 +1238,7 @@ std::vector<std::size_t> Engine::apply_animation_spawns(bool defer_player_spawns
         if (const auto slot = apply_animation_spawn_request(request)) {
             spawned_slots.push_back(*slot);
         }
-        if (request.mode == 3 && request.template_address == 0x001B7918) {
+        if (request.apple_action) {
             // The selector lock clears when the deferred record becomes live,
             // at the same boundary that publishes the first projectile state.
             player_.animation_selector.state_lock = 0;
@@ -1243,8 +1253,13 @@ std::vector<std::size_t> Engine::apply_animation_spawns(bool defer_player_spawns
                 && request.mode != 3 && request.mode != 5 && request.mode != 6)) {
             continue;
         }
-        const bool defer_apple_spawn =
-            request.mode == 3 && request.template_address == 0x001B7918;
+        // 0x1B7918 is shared by the physical apple action and generic
+        // mode-3 effects. Only the request emitted by the player's apple
+        // stream follows the deferred apple lifecycle.
+        if (request.mode == 3 && animation_.stream_entry() == kPlayerAppleActionStream) {
+            request.apple_action = true;
+        }
+        const bool defer_apple_spawn = request.apple_action;
         if ((request.mode == 0 && defer_player_spawns) || defer_apple_spawn) {
             deferred_animation_spawn_ = request;
             continue;
@@ -1514,12 +1529,11 @@ Engine::CollisionBox Engine::read_collision_box(
         box.left = origin_x + byte(2);
         box.right = origin_x + byte(4);
     } else {
-        // The 68000 path negates the signed frame offsets and then widens
-        // the resulting byte before adding it to the actor origin.  Keep
-        // that byte-domain wrap: a positive 0x7D offset becomes +0x83 when
-        // mirrored, rather than subtracting 0x7D as a host integer.
-        box.left = origin_x + static_cast<std::uint8_t>(-signed_byte(byte(4)));
-        box.right = origin_x + static_cast<std::uint8_t>(-signed_byte(byte(2)));
+        // The mirrored path subtracts the signed frame offsets from the
+        // origin. Keep the arithmetic widened; wrapping the negated byte
+        // turns the guard's right bound at 0x4B8 into a false far-right box.
+        box.left = origin_x - signed_byte(byte(4));
+        box.right = origin_x - signed_byte(byte(2));
     }
     box.valid = true;
     return box;
@@ -1588,6 +1602,7 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
                 // A new pad contact starts a fresh follow window.  The
                 // completion latch below is deliberately one-shot, so clear
                 // it before arming this response.
+                bounce_response_active_ = true;
                 bounce_response_follow_active_ = false;
                 bounce_camera_delay_hold_pending_ = false;
                 player_.vy = static_cast<std::int16_t>(-0x500);
@@ -1651,6 +1666,7 @@ void Engine::reset() {
     jump_landing_state_arm_pending_ = false;
     jump_landing_state_arm_now_ = false;
     terrain_fall_phase_ = false;
+    bounce_response_active_ = false;
     bounce_response_follow_active_ = false;
     bounce_camera_delay_hold_pending_ = false;
     contour_ground_motion_ = false;
@@ -1724,6 +1740,7 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     jump_landing_state_arm_pending_ = false;
     jump_landing_state_arm_now_ = false;
     terrain_fall_phase_ = false;
+    bounce_response_active_ = false;
     contour_ground_motion_ = false;
     frame_ = 0;
     quit_ = false;
@@ -2566,6 +2583,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.vx = static_cast<std::int16_t>(-0x400);
         player_.vy = static_cast<std::int16_t>(0x200);
         animation_.select_response_stream(0x00121AD8);
+        bounce_response_active_ = true;
         break;
     case 0x30:  // TerrainHandler_LandingResponseBlock (0x001B537A)
         // The ROM subtracts 0x7C from PLAYER_VY, clears FFF0B0, arms the
@@ -2836,12 +2854,17 @@ void Engine::update(const InputState& input) {
     // after the current pass has already completed.
     const auto startup_animation_spawns = apply_animation_spawns();
     for (const std::size_t slot : startup_animation_spawns) {
-        if (slot < actors_.size() && actors_[slot].spawned_by_apple) {
-            // The ROM's deferred F5 record is visible to both the actor
-            // animation and movement passes on this first live boundary.
+        if (slot < actors_.size()) {
+            // A deferred F5 record is allocated before the current actor
+            // traversal. Its first animation word is therefore published on
+            // this live boundary even when the shared table gate is closed.
             update_actor_animations(slot);
             animation_preupdated_this_frame_[slot] = true;
-            apple_actor_hold_next_frame_[slot] = true;
+            if (actors_[slot].spawned_by_apple) {
+                // The ROM's apple child then holds once before resuming its
+                // independent action cadence.
+                apple_actor_hold_next_frame_[slot] = true;
+            }
         }
     }
     if (scene_.is_transition()) {
@@ -3383,6 +3406,8 @@ void Engine::update(const InputState& input) {
     // response latch and holds Camera_UpdateFollow for seven VBlanks before
     // returning to the run stream.
     const bool bounce_response_finished =
+        bounce_response_active_
+        &&
         !bounce_response_follow_active_
         && terrain_response_was_active
         && player_.terrain_response_active == 0;
@@ -3599,7 +3624,7 @@ void Engine::update(const InputState& input) {
         // The reference-tile write occupies this camera pass. The vertical
         // damped lookup resumes on the following VBlank; horizontal follow
         // is still handled by update_camera().
-        update_camera();
+        update_camera(true);
         camera_follow_catch_up_ = camera_follow_catch_up_after_rebase;
     } else {
         update_camera();
@@ -3993,7 +4018,7 @@ void Engine::update(const InputState& input) {
     if (player_.attack_timer == 0
         && animation_.stream_entry() != kPlayerAttackTransitionStream
         && animation_.stream_entry() != kPlayerSwordStableStream) {
-        const auto spawned_slots = apply_animation_spawns(false);
+        const auto spawned_slots = apply_animation_spawns(true);
         // Player mode-0 F5 records are allocated at the next stable boundary;
         // their initial cursor remains visible until the following common
         // actor pass. Mode-3 sword records are published at their initial

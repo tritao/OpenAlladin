@@ -287,6 +287,7 @@ private:
     bool terrain_fall_phase_ = false;
     // The bounce-pad response leaves the ground-response latch armed after
     // FFF0BE clears, while the player resumes the run stream.
+    bool bounce_response_active_ = false;
     bool bounce_response_follow_active_ = false;
     bool bounce_camera_delay_hold_pending_ = false;
     // A sloped contour exposes a non-flat landing byte (and therefore a

@@ -63,8 +63,11 @@ void MovementVm::tick(
     };
 
     for (ActorState& actor : actors) {
+        // Type 0x34 and the mode-3 sword effect enter MovementVM before
+        // their first animation frame is published. Their initial movement
+        // command is therefore live even with a null frame pointer.
         if (actor.type == 0 || actor.terminal_timer != 0 || actor.movement_pc == 0
-            || actor.frame_ptr == 0) {
+            || (actor.frame_ptr == 0 && actor.type != 0x34 && actor.type != 0x80)) {
             continue;
         }
 
