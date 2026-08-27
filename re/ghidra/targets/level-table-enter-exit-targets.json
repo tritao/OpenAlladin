@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level-table-enter-exit-callbacks",
+    "purpose": "Decode every valid level-table entry's enter and exit callback so the native runtime and replay campaigns can follow the original level progression gates."
+  },
+  "targets": [
+    { "address": "0x001B5B66", "name": "Level00_EnterRoutine" },
+    { "address": "0x001B63EA", "name": "Level00_ExitRoutine" },
+    { "address": "0x001B5B4A", "name": "Level01_EnterRoutine" },
+    { "address": "0x001B6406", "name": "Level01_ExitRoutine" },
+    { "address": "0x001B5B94", "name": "Level02_EnterRoutine" },
+    { "address": "0x001B6394", "name": "Level02_ExitRoutine" },
+    { "address": "0x001B5B9A", "name": "Level03_EnterRoutine" },
+    { "address": "0x001B6414", "name": "Level03_ExitRoutine" },
+    { "address": "0x001B5B9C", "name": "Level04_EnterRoutine" },
+    { "address": "0x001B642E", "name": "Level04_ExitRoutine" },
+    { "address": "0x001B5C20", "name": "Level05_EnterRoutine" },
+    { "address": "0x001B6434", "name": "Level05_ExitRoutine" },
+    { "address": "0x001B5D3A", "name": "Level06_EnterRoutine" },
+    { "address": "0x001B644E", "name": "Level06_ExitRoutine" },
+    { "address": "0x001B5D68", "name": "Level07_EnterRoutine" },
+    { "address": "0x001B64C2", "name": "Level07_ExitRoutine" },
+    { "address": "0x001B6066", "name": "Level08_EnterRoutine" },
+    { "address": "0x001B64D0", "name": "Level08_ExitRoutine" },
+    { "address": "0x001B614C", "name": "Level09_EnterRoutine" },
+    { "address": "0x001B653E", "name": "Level09_ExitRoutine" },
+    { "address": "0x001B623A", "name": "Level10_EnterRoutine" },
+    { "address": "0x001B6554", "name": "Level10_ExitRoutine" },
+    { "address": "0x001B6258", "name": "Level11_EnterRoutine" },
+    { "address": "0x001B655C", "name": "Level11_ExitRoutine" },
+    { "address": "0x001B62B6", "name": "Level12_EnterRoutine" },
+    { "address": "0x001B6562", "name": "Level12_ExitRoutine" }
+  ],
+  "memory_references": [
+    { "address": "0x00002C78", "name": "LEVEL_TABLE" },
+    { "address": "0x00FF7E02", "name": "PLAYER_WORLD_X" },
+    { "address": "0x00FF7E04", "name": "PLAYER_WORLD_Y" },
+    { "address": "0x00FFF0E9", "name": "SCENE_SCRIPT_COUNTDOWN" },
+    { "address": "0x00FFF103", "name": "LEVEL_TIMER" },
+    { "address": "0x00FF7E26", "name": "SCENE_STATE" },
+    { "address": "0x00FFF572", "name": "SCENE_SCRIPT_CURSOR" },
+    { "address": "0x00FFF57A", "name": "SCENE_TABLE_INDEX" }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-level-table-enter-exit-decomp-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify every valid level-table entry and exit callback for native progression and replay planning.",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "933a8e3",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "level_table": {
+    "address": "0x002C78",
+    "entry_size": 66,
+    "entry_count": 13,
+    "source": "build/assets/levels.json",
+    "target_manifest": "re/ghidra/targets/level-table-enter-exit-targets.json",
+    "decompile_artifact": "build/re/level-table-enter-exit-targeted-decompile.json"
+  },
+  "callbacks": [
+    { "level_index": 0, "enter": "0x1B5B66", "exit": "0x1B63EA", "enter_effect": "decrements LEVEL_TIMER and invokes 0x1B2650 when the one-shot timer expires", "exit_effect": "sets transition selector 0x17, prepares common transition, writes VDP control 0x8B02", "progression_gate": "timer-driven" },
+    { "level_index": 1, "enter": "0x1B5B4A", "exit": "0x1B6406", "enter_effect": "arms SCENE_SCRIPT_COUNTDOWN=0xFF when PLAYER_WORLD_X>0x1287 and PLAYER_WORLD_Y<0x1D6, then decrements LEVEL_TIMER", "exit_effect": "writes VDP control 0x8B02 and invokes common transition", "progression_gate": "world-position gate" },
+    { "level_index": 2, "enter": "0x1B5B94", "exit": "0x1B6394", "enter_effect": "calls periodic helper 0x1B634E", "exit_effect": "sets camera/scroll flags, selects list pointer 0x2128 and transition selector 0x0F, prepares common transition", "progression_gate": "periodic/event helper" },
+    { "level_index": 3, "enter": "0x1B5B9A", "exit": "0x1B6414", "enter_effect": "returns immediately", "exit_effect": "selects transition selector 0x10 and prepares common transition", "progression_gate": "exit-only" },
+    { "level_index": 4, "enter": "0x1B5B9C", "exit": "0x1B642E", "enter_effect": "consumes one-shot flags and arms countdown 0xFF when FFF0E9==0, X>0x8D8 and Y<0x1EA", "exit_effect": "invokes common transition", "progression_gate": "world-position gate" },
+    { "level_index": 5, "enter": "0x1B5C20", "exit": "0x1B6434", "enter_effect": "on a 0x40-frame cadence spawns template 0x1B819C in two coordinate regions", "exit_effect": "invokes common transition, sets FFF111=1 and transition selector 0x18", "progression_gate": "timed spawn/event" },
+    { "level_index": 6, "enter": "0x1B5D3A", "exit": "0x1B644E", "enter_effect": "calls periodic helper and clears FFF0EB", "exit_effect": "optionally spawns template 0x1B82F0, sets camera/scroll flags, selects list pointer 0x24FC and transition selector 0x0F", "progression_gate": "periodic/event helper" },
+    { "level_index": 7, "enter": "0x1B5D68", "exit": "0x1B64C2", "enter_effect": "arms countdown 0xFF when FFF0E9==0 and X>0x27C4, with periodic coordinate-window spawns", "exit_effect": "writes VDP control 0x8B02 and invokes common transition", "progression_gate": "world-position gate" },
+    { "level_index": 8, "enter": "0x1B6066", "exit": "0x1B64D0", "enter_effect": "advances FFF086/FFF088, consumes an event table through FFF12E and conditionally allocates camera-relative actors", "exit_effect": "writes VDP control 0x8B02, selects list pointer 0x262F, captures player coordinates, selects animation 0x122350 and enables camera scroll", "progression_gate": "event/resource-driven" },
+    { "level_index": 9, "enter": "0x1B614C", "exit": "0x1B653E", "enter_effect": "periodically spawns template 0x1B7FA8 in X 0x6B0..0x9C8 and Y>0x19B; arms countdown 1 when X>0x1B9D", "exit_effect": "writes VDP control 0x8B02, enables TERRAIN_SURFACE_MODE and invokes common transition", "progression_gate": "world-position and timed spawn" },
+    { "level_index": 10, "enter": "0x1B623A", "exit": "0x1B6554", "enter_effect": "arms countdown 1 when X>0xC49 and Y>0x495", "exit_effect": "writes VDP control 0x8B02 and invokes common transition", "progression_gate": "world-position gate" },
+    { "level_index": 11, "enter": "0x1B6258", "exit": "0x1B655C", "enter_effect": "when timer is zero and X is 0x10..0x470 and Y is 0x130..0x1D0, spawns template 0x1B8214", "exit_effect": "enters shared transition body after the VDP write and invokes common transition", "progression_gate": "coordinate-window spawn" },
+    { "level_index": 12, "enter": "0x1B62B6", "exit": "0x1B6562", "enter_effect": "timer value 0x0D spawns template 0x1B7BE8; otherwise a cadence creates template 0x1B8278 with one of two animations", "exit_effect": "creates three final-scene actors at fixed positions and does not invoke common transition", "progression_gate": "timed/final-scene" }
+  ],
+  "conclusion": "All 13 valid level-table entries are now statically classified. Level 01 has a unique direct world-position countdown gate; later entries use distinct position, timer, event, and final-scene rules. The native runtime should consume this as level metadata rather than assume one generic exit path.",
+  "next_action": "Promote the callback inventory into native level metadata and seed a replayable post-Level-01 resource checkpoint without treating the scene-3 transition loop as a playable next-level state."
+}
