@@ -3614,7 +3614,7 @@ def command_regression(args: argparse.Namespace) -> int:
     # from being applied before the state that carries its input.
     input_tokens = [
         str(mame_states[checkpoint_frame + relative].get("input", "none"))
-        for relative in range(compare_frames)
+        for relative in range(compare_frames + 1)
     ]
 
     native_environment = os.environ.copy()
@@ -3638,6 +3638,12 @@ def command_regression(args: argparse.Namespace) -> int:
     status = subprocess.run(native_command, cwd=ROOT, env=native_environment, check=False).returncode
     if status:
         return status
+    # Native writes the token consumed to produce S[N] while the synchronized
+    # MAME view labels S[N] with the transition token I[N]. Relabel the native
+    # compatibility trace before comparing so divergence context reports the
+    # actual input at the matching boundary rather than an artificial one-frame
+    # offset.
+    _relabel_state_trace_inputs(native_trace, input_tokens, "regression-input-alignment")
 
     actor_table_compare = "actors" in fields
     state_fields = [field for field in fields if field != "actors"]

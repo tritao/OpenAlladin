@@ -3477,6 +3477,7 @@ void Engine::update(const InputState& input) {
     }
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
         && last_ground_direction_ != 0 && player_.vx == 0;
+    const int ground_release_direction = ground_release ? last_ground_direction_ : 0;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
     const bool start_jump = input.jump_pressed && was_grounded;
     AnimationContext animation_context = player_animation_context(was_grounded);
@@ -3760,13 +3761,16 @@ void Engine::update(const InputState& input) {
 
     if (ground_release) {
         // The first no-input frame enters the ROM's inertial ground path after
-        // the position/integration work but before camera follow. The exposed
-        // PLAYER_VX remains zero; the visible one-pixel release shift comes
-        // from the camera follower. The ROM also lowers the vertical follow
-        // threshold while this release enters the camera path.
+        // the position/integration work but before camera follow. The common
+        // animation pass selects the ROM brake stream on this boundary;
+        // camera threshold changes are owned by that stream rather than being
+        // inferred from the input edge here.
         player_.terrain_horizontal_response = 0;
         player_.terrain_response_timer_state = 0;
-        camera_.vertical_threshold = 0x190;
+        // The release handler seeds the inertial velocity after the current
+        // integration pass. It is therefore visible on this boundary and is
+        // consumed by the next pass (0x038C, then -0x28 per frame).
+        player_.vx = static_cast<std::int16_t>(ground_release_direction * 0x038C);
         player_.ground_braking = true;
         last_ground_direction_ = 0;
     }
@@ -3947,8 +3951,9 @@ void Engine::update(const InputState& input) {
         desired_pose = SpritePose::Landing;
     } else if (input.left != input.right) {
         desired_pose = SpritePose::Run;
-    } else if (!player_.ground_braking
-               && (animation_.pose() == SpritePose::Run || animation_.pose() == SpritePose::Brake)) {
+    } else if (ground_release
+               || animation_.pose() == SpritePose::Brake
+               || (!player_.ground_braking && animation_.pose() == SpritePose::Run)) {
         desired_pose = SpritePose::Brake;
     }
     // The common actor VM normally sees the pre-integration state. During the
@@ -4070,13 +4075,6 @@ void Engine::update(const InputState& input) {
                 apple_following_tick_deferred_ = true;
             }
         }
-        if (ground_release && desired_pose == SpritePose::Idle) {
-            // Player_TerrainResponseStateMachine writes the idle root after
-            // the common VM pass on this boundary. Keep that root visible for
-            // one frame, then resume the cursor reached by the pass.
-            animation_.republish_stream_root();
-        }
-
         if (player_collision_interaction_pending_) {
             // The type-0x2D collision handler calls the player interaction
             // selector after the common animation tick. Publish the stop
