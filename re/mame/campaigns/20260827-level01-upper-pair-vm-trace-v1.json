@@ -1,0 +1,95 @@
+{
+  "campaign": "20260827-level01-upper-pair-vm-trace-v1",
+  "status": "recorded-negative-vm-boundary",
+  "purpose": "Trace the activated Level 01 upper Type-0x1E/Type-0x20 pair through its animation and collision service window, testing whether the corrected extended Type-0x1E stream is reached.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "7417cce",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation/states/genesis/activation.sta",
+  "timing_note": "The checkpoint is loaded before capture. The two leading neutral tokens preserve the canonical input alignment at the loaded-state boundary. The wrapper supplies a generous loaded-state MAME time ceiling; the Lua frame limit remains authoritative.",
+  "segments": [{
+    "id": "activated-pair-neutral-vm-window",
+    "trace_dir": "build/re/analysis/20260827-level01-upper-pair-vm-trace-v1",
+    "frames": 180,
+    "input": "none*2,none*178",
+    "load_state": true,
+    "loaded_state_source": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation/states/genesis/activation.sta",
+    "capture": "state",
+    "actors": true,
+    "scene_state_trace": true,
+    "selector_trace": true,
+    "debug_watch": true,
+    "watched_addresses": [
+      "0x00FFF0E6",
+      "0x00FFF0E9",
+      "0x00FFF0DC",
+      "0x00FF7E26",
+      "0x00FFF0D0",
+      "0x00FFF0DB",
+      "0x00FFF0D8",
+      "0x00FFF11F",
+      "0x00FF7E28"
+    ],
+    "breakpoints": [
+      "0x001AC89A",
+      "0x001AD372",
+      "0x001ACC5E",
+      "0x0012046C",
+      "0x001ABD7E",
+      "0x001AC318",
+      "0x001AC350",
+      "0x001AE796"
+    ],
+    "checkpoints": [
+      { "frame": 1, "name": "loaded-pair", "state": "states/genesis/loaded-pair.sta" },
+      { "frame": 30, "name": "short-loop", "state": "states/genesis/short-loop.sta" },
+      { "frame": 60, "name": "mid-loop", "state": "states/genesis/mid-loop.sta" },
+      { "frame": 120, "name": "extended-window", "state": "states/genesis/extended-window.sta" },
+      { "frame": 180, "name": "end", "state": "states/genesis/end.sta" }
+    ]
+  }],
+  "artifacts": {
+    "state_trace": "build/re/analysis/20260827-level01-upper-pair-vm-trace-v1/state.jsonl",
+    "raw_trace": "build/re/analysis/20260827-level01-upper-pair-vm-trace-v1/trace_boot.jsonl",
+    "debug_log": "build/re/analysis/20260827-level01-upper-pair-vm-trace-v1/debug.log"
+  },
+  "observed": {
+    "loaded_pair": {
+      "player_world": [4684, 628],
+      "type1e": { "slot": 4, "world": [4512, 464], "animation_pc": "0x00123614" },
+      "type20": { "slot": 5, "world": [4688, 464], "animation_pc": "0x0012337A" }
+    },
+    "checkpoints": [
+      { "frame": 30, "player_world": [4684, 628], "type1e_animation_pc": "0x00123588", "type20_animation_pc": "0x0012337A" },
+      { "frame": 60, "player_world": [4684, 628], "type1e_animation_pc": "0x0012358C", "type20_animation_pc": "0x0012337E" },
+      { "frame": 120, "player_world": [4684, 628], "type1e_animation_pc": "0x00123560", "type20_animation_pc": "0x0012337E" },
+      { "frame": 180, "player_world": [4684, 628], "type1e_animation_pc": "0x0012357A", "type20_animation_pc": "0x0012337E" }
+    ],
+    "service_counts": {
+      "actor_collision_pass_breakpoint_0x001ABD7E": 179,
+      "ed_handler_0x001AC89A": 0,
+      "fb_handler_0x001AD372": 0,
+      "extended_callback_0x001ACC5E": 0,
+      "movement_root_0x0012046C": 0,
+      "actor_type1e_handler_0x001AC318": 0,
+      "actor_type20_handler_0x001AC350": 0,
+      "player_type1e_handler_0x001AE796": 0
+    },
+    "scene": {
+      "state": "0x01",
+      "scene_state_writes": 0,
+      "scene_cursor_writes": 0,
+      "exit_gate_writes": 0
+    }
+  },
+  "negative_evidence": [
+    "The Type-0x1E actor remains in its ordinary proximity/interaction loop; the branch to animation root 0x001237C6 is not selected.",
+    "The corrected ED/FB handlers, movement stream 0x0012046C, deferred callback 0x001ACC5E, and Type-0x1E/Type-0x20 collision handlers receive no hits.",
+    "The pair remains approximately 162 pixels above the player, so this checkpoint does not exercise actor overlap or the extended interaction condition.",
+    "SCENE_STATE remains 0x01 and no watched scene transition or exit-gate write occurs."
+  ],
+  "conclusion": "The activated upper pair is a stable, non-transition interaction resource from this frontier. Its extended Type-0x1E stream is not reachable under neutral control, and repeated direct VM/collision probing from this checkpoint is now closed. The unresolved work is the upstream traversal/resource condition that moves the player into the pair's Y/X proximity window or another route into the exit-height band."
+}

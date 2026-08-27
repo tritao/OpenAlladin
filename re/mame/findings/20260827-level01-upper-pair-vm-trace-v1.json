@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-level01-upper-pair-vm-trace-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Retain the corrected, fully replayed VM boundary for the activated Level 01 upper interaction pair.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "7417cce",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-upper-pair-vm-trace-v1.json",
+  "trace": "build/re/analysis/20260827-level01-upper-pair-vm-trace-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-upper-activation-v1/upper4372-rope4688-activation/states/genesis/activation.sta",
+  "loader_fix": {
+    "commit": "7417cce",
+    "behavior": "Loaded-state runs receive OPENALADDIN_MAME_LOADED_STATE_SECONDS (default 100000) so a saved MAME emulated-time budget cannot terminate the run before the Lua frame limit.",
+    "result": "The normal tools/openaladdin/mame/run.sh wrapper produced all 180 requested frames and five named checkpoints."
+  },
+  "runtime": {
+    "loaded_pair": {
+      "type1e_slot": 4,
+      "type1e_world": [4512, 464],
+      "type1e_animation_root": "0x00123614",
+      "type20_slot": 5,
+      "type20_world": [4688, 464],
+      "type20_animation_root": "0x0012337A",
+      "player_world": [4684, 628]
+    },
+    "ordinary_stream": "The Type-0x1E cursor advances through 0x0012355A and its proximity checks, while the Type-0x20 cursor stays in its 0x0012337A/0x0012337E loop.",
+    "scene_state": "0x01"
+  },
+  "breakpoint_results": {
+    "actor_collision_pass": 179,
+    "ed_handler_0x001AC89A": 0,
+    "fb_handler_0x001AD372": 0,
+    "movement_root_0x0012046C": 0,
+    "deferred_callback_0x001ACC5E": 0,
+    "actor_type1e_0x001AC318": 0,
+    "actor_type20_0x001AC350": 0,
+    "player_type1e_0x001AE796": 0
+  },
+  "confirmed": [
+    "The preloaded upper-pair checkpoint is valid for a complete 180-frame neutral replay when the loaded-state timer ceiling is applied.",
+    "The corrected ED/FB interpretation remains consistent with runtime: neither handler is reached from the ordinary Type-0x1E loop.",
+    "The previous collision-negative classification is reproduced with named loaded-pair, short-loop, mid-loop, extended-window, and end checkpoints.",
+    "No scene-state, scene-cursor, countdown, or exit-gate write occurs."
+  ],
+  "conclusion": "This closes the requested upper-pair VM/collision probe from the activated checkpoint. The pair is not the Level 01 transition in this state, and its extended branch cannot be reached without first solving the upstream player traversal condition. Future traces should follow the connector/resource producer or the natural boundary route rather than repeat neutral VM service from this pair."
+}
