@@ -74,6 +74,7 @@ local trace_audio_commands = os.getenv("OPENALADDIN_TRACE_AUDIO_COMMANDS") == "1
 local state_sync = os.getenv("OPENALADDIN_STATE_SYNC") == "1"
 local trace_scheduler = os.getenv("OPENALADDIN_TRACE_SCHEDULER") == "1"
 local trace_scheduler_calls = os.getenv("OPENALADDIN_TRACE_SCHEDULER_CALLS") == "1"
+local scheduler_call_trace = nil
 
 local state_output = capture_profile == "state" or os.getenv("OPENALADDIN_STATE_OUTPUT") == "1"
 local event_output = os.getenv("OPENALADDIN_EVENT_OUTPUT")
@@ -837,9 +838,14 @@ if trace_scheduler then
 end
 
 if trace_scheduler_calls then
-    dofile(root .. "/re/mame/lua/scheduler.lua")({
+    scheduler_call_trace = dofile(root .. "/re/mame/lua/scheduler.lua")({
+        core = core,
         cpu = cpu,
-        symbol = symbol
+        symbol = symbol,
+        write_record = write_record,
+        read_u8 = read_u8,
+        read_pc = function () return read_register("PC") or 0 end,
+        current_frame = function () return current_frame end
     })
 end
 

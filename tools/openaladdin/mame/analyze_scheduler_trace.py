@@ -44,6 +44,28 @@ def hex_value(value: str) -> int:
     return int(value, 16)
 
 
+def read_trace_latches(path: Path) -> list[dict[str, Any]]:
+    latches: list[dict[str, Any]] = []
+    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if record.get("type") != "scheduler_latch":
+            continue
+        latches.append({
+            "line": line_number,
+            "name": str(record["name"]),
+            "address": int(record["address"]),
+            "watchpoint_address": int(record["address"]),
+            "data": int(record["data"]),
+            "pc": int(record["pc"]),
+            "frame": int(record["frame"]),
+            "value": int(record["value"]),
+        })
+    return latches
+
+
 def read_debug_log(path: Path) -> tuple[list[dict[str, int]], list[dict[str, Any]]]:
     calls: list[dict[str, int]] = []
     latches: list[dict[str, Any]] = []
@@ -205,10 +227,21 @@ def git_value(*arguments: str) -> str:
     return result.stdout.strip()
 
 
-def analyze(model_path: Path, debug_path: Path, output_path: Path, state_path: Path | None) -> dict[str, Any]:
+def analyze(
+    model_path: Path,
+    debug_path: Path,
+    output_path: Path,
+    state_path: Path | None,
+    trace_boot_path: Path | None,
+) -> dict[str, Any]:
     model = load_yaml(model_path)
     expected = static_call_sequence(model)
-    calls, latches = read_debug_log(debug_path)
+    calls, debug_latches = read_debug_log(debug_path)
+    latches = (
+        read_trace_latches(trace_boot_path)
+        if trace_boot_path and trace_boot_path.is_file()
+        else debug_latches
+    )
     first_gameplay_frame = calls[0]["frame"] if calls else None
     call_report = validate_calls(calls, expected)
     latch_report = validate_latches(latches, first_gameplay_frame)
@@ -222,6 +255,7 @@ def analyze(model_path: Path, debug_path: Path, output_path: Path, state_path: P
         "working_tree_at_analysis": git_value("status", "--short").splitlines(),
         "static_model": str(model_path),
         "debug_log": str(debug_path),
+        "trace_boot": str(trace_boot_path) if trace_boot_path else None,
         "state_trace": str(state_path) if state_path else None,
         "instrumentation": {
             "scheduler_call_breakpoints": 37,
@@ -263,9 +297,16 @@ def main() -> int:
     parser.add_argument("debug_log", type=Path)
     parser.add_argument("--model", type=Path, default=ROOT / "re/scheduler/frame_phases.yml")
     parser.add_argument("--state", type=Path)
+    parser.add_argument("--trace-boot", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    report = analyze(args.model.resolve(), args.debug_log.resolve(), args.output.resolve(), args.state)
+    report = analyze(
+        args.model.resolve(),
+        args.debug_log.resolve(),
+        args.output.resolve(),
+        args.state.resolve() if args.state else None,
+        args.trace_boot.resolve() if args.trace_boot else None,
+    )
     print(f"scheduler call sequences: {report['call_sequence']['complete_call_sequences']}")
     print(f"scheduler call events: {report['call_sequence']['observed_call_count']}")
     print(f"scheduler latch writes: {report['latch_writes']['gameplay_write_count']}")

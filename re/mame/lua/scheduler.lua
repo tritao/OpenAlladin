@@ -7,6 +7,10 @@
 return function(options)
     local cpu = options.cpu
     local symbol = options.symbol
+    local core = options.core
+    local write_record = options.write_record
+    local read_u8 = options.read_u8
+    local current_frame = options.current_frame
 
     if not cpu.debug then
         error("focused scheduler tracing requires MAME debugger support")
@@ -68,16 +72,38 @@ return function(options)
         { "SCENE_RESOURCE_STATUS", "SCENE_RESOURCE_STATUS" },
         { "SCENE_RESOURCE_ERROR", "SCENE_RESOURCE_ERROR" }
     }
+    local latch_taps = {}
     for _, latch in ipairs(latch_specs) do
         local name = latch[1]
         local address = symbol(latch[2])
-        local action = string.format(
-            "printf \"OPENALADDIN_SCHEDULER_LATCH NAME=%s ADDR=%06X WPADDR=%%08X DATA=%%08X PC=%%08X FRAME=%%08X VALUE=%%02X\\n\",wpaddr,wpdata,pc,frame,:maincpu.b@$%06X ; g",
-            name,
-            address,
-            address)
-        cpu.debug:wpset(cpu.spaces.program, "w", address, 1, "", action)
+        local tap_start = address & 0xfffffe
+        latch_taps[#latch_taps + 1] = cpu.spaces.program:install_write_tap(
+            tap_start,
+            tap_start + 1,
+            "openaladdin_scheduler_" .. name,
+            function (offset, data, mem_mask)
+                -- MAME aligns debugger watchpoints to the CPU word boundary;
+                -- the write tap exposes the exact byte offset. This filter is
+                -- essential for adjacent odd/even latches such as 0x7E22/23.
+                if offset ~= address then
+                    return
+                end
+                write_record({
+                    { "type", core.json_string("scheduler_latch") },
+                    { "name", core.json_string(name) },
+                    { "address", tostring(address) },
+                    { "data", tostring(data) },
+                    { "mask", tostring(mem_mask) },
+                    { "value", tostring(read_u8(address)) },
+                    { "pc", tostring(options.read_pc()) },
+                    { "frame", tostring(current_frame()) }
+                })
+            end)
     end
 
-    return { call_site_count = #call_sites }
+    return {
+        call_site_count = #call_sites,
+        latch_count = #latch_specs,
+        latch_taps = latch_taps
+    }
 end
