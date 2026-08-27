@@ -73,6 +73,18 @@ return function(options)
         { "SCENE_RESOURCE_ERROR", "SCENE_RESOURCE_ERROR" }
     }
     local latch_taps = {}
+    local function writes_byte(offset, mem_mask, address)
+        -- The 68000 program space is 16-bit and MAME reports the aligned
+        -- word offset plus the active-byte mask. Convert that bus access back
+        -- to the byte address named by the static RAM ledger.
+        if (mem_mask & 0xff00) ~= 0 and offset == address then
+            return true
+        end
+        if (mem_mask & 0x00ff) ~= 0 and offset + 1 == address then
+            return true
+        end
+        return mem_mask == 0 and (offset == address or offset + 1 == address)
+    end
     for _, latch in ipairs(latch_specs) do
         local name = latch[1]
         local address = symbol(latch[2])
@@ -85,7 +97,7 @@ return function(options)
                 -- MAME aligns debugger watchpoints to the CPU word boundary;
                 -- the write tap exposes the exact byte offset. This filter is
                 -- essential for adjacent odd/even latches such as 0x7E22/23.
-                if offset ~= address then
+                if not writes_byte(offset, mem_mask, address) then
                     return
                 end
                 write_record({
