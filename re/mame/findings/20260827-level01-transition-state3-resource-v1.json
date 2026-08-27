@@ -1,0 +1,69 @@
+{
+  "format": "openaladdin-transition-state3-resource-finding-v1",
+  "recorded_at": "2026-08-27",
+  "status": "controlled-state3-resource-boundary-confirmed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "bf29bb0",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-transition-state3-resource-v1.json",
+  "source_checkpoint": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/scene3-active.sta",
+  "static_model": "re/scheduler/frame_phases.yml",
+  "static_chain": [
+    "0x001B202A state-3 scene/resource caller",
+    "0x001B0F66 SceneResource_Dispatch",
+    "0x001B0FDE state-3 branch",
+    "0x001B1006 -> 0x001B100E state-3 resource preparation",
+    "0x001B3258 SceneResource_ResetStatus",
+    "0x001B4920 state-3 resource helper",
+    "0x001B2ACE Scene_EnterTransitionMode (not reached)",
+    "0x001B3B96 SceneTable_SelectNextState (not reached)",
+    "0x001B315C SceneScript_CompleteToState1 (not reached)"
+  ],
+  "dynamic_evidence": {
+    "extended_trace": "build/re/20260827-transition-state3-resource-v1/scene3-active-early",
+    "helper_trace": "build/re/20260827-transition-state3-resource-v1/scene3-dispatch-helpers-v2",
+    "dispatch_entry_post_pc": "0x001B0F68",
+    "state3_branch_post_pc": "0x001B0FE0",
+    "status_reset": {
+      "post_pc": "0x001B325A",
+      "status": "0x00",
+      "error": "0xFF",
+      "marker": "0xFF"
+    },
+    "resource_helper_return_post_pc": "0x001B4922",
+    "preparation_return_post_pcs": ["0x001B1008", "0x001B100C"],
+    "transition_entry_hits": 0,
+    "frame_wait_latch_writer_hits": 0,
+    "scene_table_writer_hits": 0,
+    "completion_entry_hits": 0,
+    "final_scene_state": "0x03",
+    "final_script_cursor": "0x408A",
+    "final_scene_table_index": "0x0000",
+    "final_script_pending": "0x00"
+  },
+  "confidence": {
+    "decompiled": [
+      "state-3 SceneResource_Dispatch branch",
+      "resource status/error reset",
+      "state-3 resource helper call/return",
+      "transition-mode, scene-table, and completion writer locations"
+    ],
+    "trace_validated": [
+      "controlled scene-3 checkpoint enters state-3 resource dispatch",
+      "resource status/error reset is observed",
+      "state-3 resource preparation reaches the helper return boundary",
+      "no configured transition-mode, scene-table, or completion writer fires in either controlled window"
+    ],
+    "parity_validated": []
+  },
+  "limitations": [
+    "The scene-3 checkpoint was created by a controlled boundary proof and is not a natural Level 01 transition.",
+    "The result does not prove that the state-3 resource path completes or that the next scene-table entry is selected.",
+    "The result does not establish natural state-3 reachability or native parity."
+  ],
+  "conclusion": "The saved scene-3 state is a persistent resource-dispatch loop. The ROM enters the state-3 branch, resets the resource context, and reaches the preparation/helper boundary, but the observed windows do not proceed to transition mode, scene-table selection, or script completion. This keeps those mechanisms separate from the controlled parser handoff.",
+  "next_action": "Trace the writer inventory from a natural route or naturally settled state-3 checkpoint, with particular attention to the producer of SCENE_TABLE_INDEX=1 and the transition-mode FRAME_WAIT_LATCH pair."
+}

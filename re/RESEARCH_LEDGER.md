@@ -1261,6 +1261,7 @@ jump, settles on behavior `0x25` at `(4728,628)`, and never reaches the behavior
 | `20260827-level01-transition-resource-lifecycle-v1` | completed-negative-resource-lifecycle | upper-frontier boundary writer, scene resource prelude, 300 VBlank-paced service iterations, and persistent nested interaction/resource lifecycle; scene-state dispatch and transition latch writers remain unreachable from the checkpoint |
 | `20260827-level01-transition-resource-prerequisite-v1` | controlled-prerequisite-confirmation | paired baseline/control proves nonzero `FFF003` holds the nested `0x001B16E0` lifecycle; controlled zero exposes the scene-script parser one debugger frame later, without proving natural transition reachability |
 | `20260827-level01-transition-state3-dispatch-v1` | controlled-state3-resource-boundary | controlled parser return consumes the `0x4082` record, writes `SCENE_STATE=0x03` and cursor `0x408A`, enters state-3 resource dispatch, then remains before `0x001B2ACE` and scene completion |
+| `20260827-level01-transition-state3-resource-v1` | controlled-state3-resource-dispatch | two controlled scene-3 replays observe resource status reset and the state-3 helper boundary; transition-mode, scene-table, and script-completion writers remain unreached |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

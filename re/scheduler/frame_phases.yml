@@ -703,6 +703,26 @@ dynamic_validation:
     final_script_cursor: 0x408A
     controlled: true
     note: The FFF003 zero is a debugger-side causal probe. This validates the parser-to-state-3 dispatch boundary only; it does not establish natural state-3 reachability, resource completion, transition entry, or native parity.
+  scene3_resource_continuation_probe:
+    status: trace_validated_controlled
+    campaign: re/mame/campaigns/20260827-level01-transition-state3-resource-v1.json
+    finding: re/mame/findings/20260827-level01-transition-state3-resource-v1.json
+    trace_roots:
+      - build/re/20260827-transition-state3-resource-v1/scene3-active-early
+      - build/re/20260827-transition-state3-resource-v1/scene3-dispatch-helpers-v2
+    dispatch_entry_post_pc: 0x001B0F68
+    state3_branch_post_pc: 0x001B0FE0
+    status_reset_post_pc: 0x001B325A
+    resource_helper_return_post_pc: 0x001B4922
+    transition_entry_hits: 0
+    frame_wait_latch_writer_hits: 0
+    scene_table_writer_hits: 0
+    completion_entry_hits: 0
+    final_scene_state: 0x03
+    final_script_cursor: 0x408A
+    final_scene_table_index: 0x0000
+    controlled: true
+    note: These runs start from the earlier controlled scene-3 checkpoint. They validate the state-3 resource-dispatch boundary only and do not establish resource completion, natural state-3 reachability, transition entry, or native parity.
 
 native_mapping:
   status: provisional
@@ -718,7 +738,7 @@ native_mapping:
       rom_support: no direct call in the recovered gameplay body; F5 allocation is reached through the animation VM dispatch
       status: indirect_only
   next_dynamic_questions:
-    - Which completed transition/resource context lets the state-3 dispatch reach its resource completion and the 0x001B2DF4/0x001B2E02 FRAME_WAIT_LATCH writers?
+    - Which natural transition/resource context lets the state-3 dispatch reach its resource completion and the 0x001B2DF4/0x001B2E02 FRAME_WAIT_LATCH writers?
     - Does any indirect caller reach 0x001AC784 during one gameplay boundary besides ordinal 30?
     - Which state transition, if any, causes the native probe-animation service to correspond to a real ROM call?
     - Which caller/branch owns the post-animation actor traversal observed in native traces?

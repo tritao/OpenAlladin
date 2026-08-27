@@ -68,6 +68,15 @@ does not reach `0x001B2ACE` or `0x001B315C`. This separates parser/state-3
 dispatch from transition completion; it remains controlled evidence rather
 than a natural transition or native scheduler phase.
 
+The state-3 resource continuation is recorded in
+`re/mame/campaigns/20260827-level01-transition-state3-resource-v1.json`.
+Two focused no-input replays from the earlier controlled `scene3-active`
+checkpoint observe the state-3 dispatcher, its resource status/error reset,
+and the state-3 resource-helper boundary. Neither replay reaches the
+transition-mode writers at `0x001B2DF4`/`0x001B2E02`, scene-table selection, or
+script completion; both remain at state `0x03`, cursor `0x408A`, table index
+`0`. This is resource-path boundary evidence only, not natural progression.
+
 Reanalyze an existing capture with:
 
 ```sh

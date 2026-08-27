@@ -1,0 +1,133 @@
+{
+  "campaign": "20260827-level01-transition-state3-resource-v1",
+  "status": "controlled-state3-resource-dispatch",
+  "purpose": "Trace the state-3 resource dispatcher from the previously recorded controlled scene-script handoff and inventory the completion, transition-mode, and scene-table writers it reaches.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "bf29bb0",
+  "trace_harness_commit": "d7d4e87597396d15a56c5e02b332ad48ceb6f2a7",
+  "working_tree_at_capture": "The committed breakpoint harness and controlled state-3 evidence were present. Unrelated untracked mame/ trace artifacts were left untouched and are not part of this campaign.",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/scene3-active.sta",
+  "static_sources": [
+    "build/re/dasm-1A8000.txt",
+    "build/re/level-transition-targeted-decompile-v2.json",
+    "re/scheduler/frame_phases.yml",
+    "re/symbols/functions.yml",
+    "re/symbols/ram.yml"
+  ],
+  "instrumentation": {
+    "breakpoints": [
+      "0x001B0F66",
+      "0x001B0F74",
+      "0x001B0F9A",
+      "0x001B0FDE",
+      "0x001B1006",
+      "0x001B100A",
+      "0x001B100E",
+      "0x001B1012",
+      "0x001B101C",
+      "0x001B1020",
+      "0x001B1260",
+      "0x001B3258",
+      "0x001B326C",
+      "0x001B4896",
+      "0x001B4A7A",
+      "0x001B4B28",
+      "0x001B4920",
+      "0x001B4C02",
+      "0x001B2ACE",
+      "0x001B2DF4",
+      "0x001B2E02",
+      "0x001B315C",
+      "0x001B3B96"
+    ],
+    "breakpoint_register_dump": true,
+    "breakpoint_resource_context": true,
+    "trace_scene_states": true,
+    "input": "none",
+    "source_checkpoint_origin": "controlled-scene-transition-v1 frame 500 scene3-active checkpoint"
+  },
+  "segments": [
+    {
+      "id": "state3-dispatch-early",
+      "trace_dir": "build/re/20260827-transition-state3-resource-v1/scene3-active-early",
+      "frames": 180,
+      "input": "none*180",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/scene3-active.sta",
+      "capture": "state",
+      "trace_files": ["debug.log", "trace_boot.jsonl", "state.jsonl"],
+      "observed": {
+        "dispatch_entry_post_pc": "0x001B0F68",
+        "status_reset_post_pc": "0x001B0F76",
+        "status_reset_values": { "status": "0x00", "error": "0xFF", "marker": "0xFF" },
+        "state3_branch_post_pc": "0x001B0FE0",
+        "resource_branch_post_pcs": ["0x001B1008", "0x001B100C"],
+        "resource_preparation_post_pcs": ["0x001B211E", "0x001B269E"],
+        "transition_entry_hits": 0,
+        "transition_latch_writer_hits": 0,
+        "scene_table_writer_hits": 0,
+        "completion_entry_hits": 0,
+        "final_scene_state": "0x03",
+        "final_script_cursor": "0x408A",
+        "final_scene_table_index": "0x0000",
+        "final_script_pending": "0x00"
+      },
+      "result": "The loaded controlled state-3 checkpoint enters SceneResource_Dispatch and selects the state-3 resource branch. The resource/status context is initialized, the preparation helpers return, and no transition-mode, scene-table, or script-completion writer fires during the 180-frame window."
+    },
+    {
+      "id": "state3-dispatch-helper-focus",
+      "trace_dir": "build/re/20260827-transition-state3-resource-v1/scene3-dispatch-helpers-v2",
+      "frames": 60,
+      "input": "none*60",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/scene3-active.sta",
+      "capture": "state",
+      "trace_files": ["debug.log", "trace_boot.jsonl", "state.jsonl"],
+      "observed": {
+        "dispatch_entry_post_pc": "0x001B0F68",
+        "status_reset_post_pc": "0x001B325A",
+        "resource_helper_return_post_pc": "0x001B4922",
+        "transition_entry_hits": 0,
+        "transition_latch_writer_hits": 0,
+        "scene_table_writer_hits": 0,
+        "completion_entry_hits": 0,
+        "final_scene_state": "0x03",
+        "final_script_cursor": "0x408A",
+        "final_scene_table_index": "0x0000",
+        "final_script_pending": "0x00"
+      },
+      "result": "The helper-focused rerun independently observes the resource status reset and a state-3 resource helper return boundary. It then continues without any configured transition-mode, scene-table, or completion writer."
+    }
+  ],
+  "limitations": [
+    "The source checkpoint is controlled: it was produced by the earlier scene-transition proof, not by a natural Level 01 route.",
+    "The trace establishes the state-3 dispatch/resource boundary but not successful resource completion, next-level selection, or natural state-3 reachability.",
+    "The configured debugger breakpoints are execution evidence for this capture; a missing later breakpoint is not promoted to a universal reachability claim outside this checkpoint and window.",
+    "No native parity comparison was performed."
+  ],
+  "confidence": {
+    "decompiled": [
+      "0x001B0F66 SceneResource_Dispatch state dispatch",
+      "0x001B3258 resource status/error initialization",
+      "0x001B4920 state-3 resource helper",
+      "0x001B2ACE transition entry",
+      "0x001B2DF4/0x001B2E02 transition-mode FRAME_WAIT_LATCH writers",
+      "0x001B3B96 SceneTable_SelectNextState",
+      "0x001B315C SceneScript_CompleteToState1"
+    ],
+    "trace_validated": [
+      "controlled scene-3 checkpoint enters the state-3 branch",
+      "resource status/error reset occurs at dispatch",
+      "state-3 resource helper preparation/return boundary is observed",
+      "the 60- and 180-frame controlled windows remain at state 0x03/cursor 0x408A/table index 0",
+      "no configured transition-mode, scene-table, or script-completion writer fires"
+    ],
+    "parity_validated": []
+  },
+  "conclusion": "The saved controlled state-3 checkpoint is a resource-dispatch boundary, not a hidden playable next-level start. Its state-3 preparation path resets the resource context and returns to the surrounding state-3 loop without reaching the transition-mode, scene-table, or script-completion writers in the observed windows.",
+  "next_action": "Return to a natural Level 01 route or recover a naturally settled state-3 checkpoint; then trace the same writer inventory with no debugger-side state mutation."
+}
