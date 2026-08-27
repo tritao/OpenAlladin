@@ -1263,6 +1263,7 @@ jump, settles on behavior `0x25` at `(4728,628)`, and never reaches the behavior
 | `20260827-level01-transition-state3-dispatch-v1` | controlled-state3-resource-boundary | controlled parser return consumes the `0x4082` record, writes `SCENE_STATE=0x03` and cursor `0x408A`, enters state-3 resource dispatch, then remains before `0x001B2ACE` and scene completion |
 | `20260827-level01-transition-state3-resource-v1` | controlled-state3-resource-dispatch | two controlled scene-3 replays observe resource status reset and the state-3 helper boundary; transition-mode, scene-table, and script-completion writers remain unreached |
 | `20260827-level01-natural-transition-inventory-v1` | recorded-negative-natural-scene-writer-inventory | clean power-on route evaluates the Level 01 boundary 1105 times but reaches only `(2564,920)`; no post-boot scene-state, cursor, table, transition, latch, or completion writer fires |
+| `20260827-level01-connector-top-transfer-audit-v1` | recorded-negative-natural-continuation | four controller-only connector-top dismount families reach at most ordinary jump `Y=412`; no behavior-0x29/0x2D launch, scene gate, or new transfer path fires |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

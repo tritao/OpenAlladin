@@ -751,6 +751,26 @@ dynamic_validation:
     controlled_writes: false
     natural: true
     note: The repeated scene-completion entry is not equivalent to its gated writer executing. This capture closes one natural route/input family only; it does not establish universal absence of the transition writers.
+  connector_top_transfer_audit:
+    status: trace_validated_negative_natural_continuation
+    campaign: re/mame/campaigns/20260827-level01-connector-top-transfer-audit-v1.json
+    finding: re/mame/findings/20260827-level01-connector-top-transfer-audit-v1.json
+    trace_root: build/re/20260827-level01-connector-top-transfer-audit-v1
+    source_checkpoint: build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta
+    branch_count: 4
+    branch_families: [up-left, up-right, plain-left, down-right]
+    frames_per_branch: 300
+    initial_player_world: [1560, 479]
+    best_ordinary_apex_y: 412
+    exit_height_condition: world Y < 0x01D6
+    launch_0x29_hits: 0
+    bounce_0x2D_hits: 0
+    scene_state_writes: 0
+    scene_countdown_writes: 0
+    known_local_collision_paths_only: [0x001AE798, 0x001AEE42, 0x001AF46A, 0x001B5258]
+    controlled_writes: false
+    natural_continuation: true
+    note: The checkpoint was naturally produced, but the four tested continuations are loaded-state controller probes. The direct connector-top family is negative for the missing transfer; the remaining search is upstream connector/resource production.
 
 native_mapping:
   status: provisional

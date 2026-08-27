@@ -1,0 +1,205 @@
+{
+  "campaign": "20260827-level01-connector-top-transfer-audit-v1",
+  "status": "recorded-negative-natural-continuation",
+  "purpose": "Trace controller-only dismount and launch families from the naturally produced Level 01 connector-top checkpoint, with terrain launch/bounce handlers, actor collision paths, player motion writes, and the scene predicate instrumented.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "f6231f7ad5ee45042b6b1a477310943ea5e621e9",
+  "trace_harness_commit": "f6231f7ad5ee45042b6b1a477310943ea5e621e9",
+  "working_tree_at_capture": "Tracked files were clean at capture. Unrelated untracked mame/ trace artifacts were left untouched and are not part of this campaign.",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+  "static_sources": [
+    "build/re/dasm-1A8000.txt",
+    "re/mame/findings/20260826-level01-far-transfer-decomp-v1.json",
+    "re/mame/findings/20260827-level01-player-motion-writer-audit-v1.json",
+    "re/mame/findings/20260827-level01-upper-band-inventory-v1.json",
+    "re/symbols/ram.yml"
+  ],
+  "instrumentation": {
+    "breakpoints": [
+      "0x001B5470",
+      "0x001B54D2",
+      "0x001B54D8",
+      "0x001B54E0",
+      "0x001B557E",
+      "0x001B56B6",
+      "0x001AFBF4",
+      "0x001AF978",
+      "0x001AE796",
+      "0x001AEE40",
+      "0x001AF468",
+      "0x001B5256",
+      "0x001ABB40",
+      "0x001A9716",
+      "0x001A9D98",
+      "0x001B5B4A",
+      "0x001B5B66"
+    ],
+    "breakpoint_register_dump": true,
+    "breakpoint_terrain_context": true,
+    "trace_actors": true,
+    "trace_actor_initializers": true,
+    "trace_scene_states": true,
+    "debug_watch": true,
+    "watched_addresses": [
+      "0x00FF7DFA",
+      "0x00FF7DFC",
+      "0x00FF7E02",
+      "0x00FF7E04",
+      "0x00FF7E58",
+      "0x00FF7E5A",
+      "0x00FF7E26",
+      "0x00FFF0D0",
+      "0x00FFF0DB",
+      "0x00FFF0DC",
+      "0x00FFF0E6",
+      "0x00FFF0E9",
+      "0x00FFF57A",
+      "0x00FFF57C"
+    ],
+    "controlled_writes": false
+  },
+  "segments": [
+    {
+      "id": "up-left-safe",
+      "trace_dir": "build/re/20260827-level01-connector-top-transfer-audit-v1/up-left-safe",
+      "frames": 300,
+      "input": "c+up+left*20,up+left*120,left*120,none*40",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "breakpoint_terrain_context": false,
+      "observed": {
+        "loaded_world": [1560, 479],
+        "minimum_world_y": 412,
+        "minimum_world_y_frame": 28,
+        "maximum_world_x": 1560,
+        "final_world": [1502, 642],
+        "scene_states": ["0x01"],
+        "launch_0x29_hits": 0,
+        "bounce_0x2D_hits": 0,
+        "scene_state_writes": 0,
+        "scene_countdown_writes": 0,
+        "actor_collision_breaks": { "0x001AF468": 3, "0x001B5258": 1 }
+      },
+      "result": "The left/up dismount reaches the ordinary jump apex, then falls left to (1502,642). It does not reach either terrain launch handler or any scene gate. The reduced context surface is authoritative because the full terrain formatter crashed on this branch before completion."
+    },
+    {
+      "id": "up-right",
+      "trace_dir": "build/re/20260827-level01-connector-top-transfer-audit-v1/up-right",
+      "frames": 300,
+      "input": "c+up*20,up*120,right*120,none*40",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "observed": {
+        "loaded_world": [1560, 479],
+        "minimum_world_y": 412,
+        "minimum_world_y_frame": 28,
+        "maximum_world_x": 1560,
+        "final_world": [1560, 470],
+        "scene_states": ["0x01"],
+        "launch_0x29_hits": 0,
+        "bounce_0x2D_hits": 0,
+        "scene_state_writes": 0,
+        "scene_countdown_writes": 0,
+        "terrain_context_breaks": {
+          "0x001B54D4": 258,
+          "0x001B54DA": 258,
+          "0x001B5B4C": 299
+        }
+      },
+      "result": "The vertical-right dismount reaches the ordinary apex but remains against the connector-side boundary, ending at (1560,470). It never enters the required strict Y<0x01D6 band and produces no launch, bounce, or scene writer."
+    },
+    {
+      "id": "plain-left",
+      "trace_dir": "build/re/20260827-level01-connector-top-transfer-audit-v1/plain-left",
+      "frames": 300,
+      "input": "c+left*20,left*120,none*160",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "observed": {
+        "loaded_world": [1560, 479],
+        "minimum_world_y": 412,
+        "minimum_world_y_frame": 28,
+        "maximum_world_x": 1560,
+        "final_world": [1502, 642],
+        "scene_states": ["0x01"],
+        "launch_0x29_hits": 0,
+        "bounce_0x2D_hits": 0,
+        "scene_state_writes": 0,
+        "scene_countdown_writes": 0,
+        "actor_collision_breaks": { "0x001AF468": 3, "0x001B5258": 1 },
+        "terrain_context_breaks": { "0x001B54D4": 8, "0x001B54DA": 8 }
+      },
+      "result": "The plain-left branch reproduces the leftward ordinary fall to (1502,642). The visible Type-0x40 cleanup path is reached, but neither terrain launch handler nor scene progression is reached."
+    },
+    {
+      "id": "down-right",
+      "trace_dir": "build/re/20260827-level01-connector-top-transfer-audit-v1/down-right",
+      "frames": 300,
+      "input": "c+down+right*20,down+right*120,right*120,none*40",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "observed": {
+        "loaded_world": [1560, 479],
+        "minimum_world_y": 412,
+        "minimum_world_y_frame": 28,
+        "maximum_world_x": 2274,
+        "maximum_world_x_frame": 261,
+        "final_world": [2274, 530],
+        "scene_states": ["0x01"],
+        "launch_0x29_hits": 0,
+        "bounce_0x2D_hits": 0,
+        "scene_state_writes": 0,
+        "scene_countdown_writes": 0,
+        "actor_collision_breaks": {
+          "0x001AE798_type1E": 22,
+          "0x001AEE42_type2D": 2
+        },
+        "terrain_context_breaks": {
+          "0x001B54D4": 7,
+          "0x001B54DA": 7,
+          "0x001B5B4C": 299
+        }
+      },
+      "result": "The downward-right branch traverses the ordinary upper walkway to (2274,530) and exercises the known Type-0x1E/Type-0x2D local collision paths. Neither path injects the missing transfer, and no launch, bounce, or scene writer fires."
+    }
+  ],
+  "discarded_runs": [
+    {
+      "trace_dir": "build/re/20260827-level01-connector-top-transfer-audit-v1/up-left",
+      "input": "c+up+left*20,up+left*120,left*120,none*40",
+      "result": "MAME exited with code 139 after three captured frames while the full terrain-context breakpoint formatter evaluated this branch. It is excluded from evidence; the identical branch was rerun as up-left-safe with the reduced breakpoint surface."
+    }
+  ],
+  "limitations": [
+    "These are controller-only continuations from a checkpoint produced by an earlier natural route, not fresh power-on replays.",
+    "The four tested branches do not prove that every possible connector-top input misses the transfer.",
+    "The up-left authoritative rerun omits terrain-context formatting because that formatter crashed on the same branch; its state, watch, predicate, and safe handler evidence remain valid.",
+    "No native parity comparison was performed."
+  ],
+  "confidence": {
+    "decompiled": [
+      "behavior-0x29 launch handler at 0x001B557E",
+      "behavior-0x2D bounce handler at 0x001B56B6",
+      "live Level 01 actor collision handler locations",
+      "Level 01 upper-band predicate and scene-gate writer locations"
+    ],
+    "trace_validated": [
+      "all four authoritative branches remain in scene state 0x01",
+      "no branch reaches either configured terrain launch/bounce handler",
+      "the down-right branch reaches only the known Type-0x1E/Type-0x2D local collision paths",
+      "no branch writes SCENE_STATE or the scene countdown",
+      "the best ordinary apex is world Y=412, but no branch reaches the strict exit band"
+    ],
+    "parity_validated": []
+  },
+  "conclusion": "The direct connector-top dismount families tested here are a negative natural-continuation boundary. Leftward inputs fall from the ordinary jump arc, vertical-right remains at the connector edge, and downward-right reaches the known upper-walkway actor collisions; none produces the behavior-0x29/0x2D launch family or the Level 01 scene gate. The missing upper transfer must therefore be supplied upstream by another object/resource producer or by a route not represented by these direct connector-top controls.",
+  "next_action": "Stop expanding direct connector-top timing variants. Trace the remaining x=2112/x=2720 connector/resource producers and the natural upper Type-0x1E/row-10 route, retaining the launch and scene-writer breakpoints for any newly reached approach."
+}

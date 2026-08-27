@@ -1,0 +1,69 @@
+{
+  "format": "openaladdin-level01-connector-top-transfer-audit-finding-v1",
+  "recorded_at": "2026-08-27",
+  "status": "negative-natural-continuation-boundary",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_capture": "f6231f7ad5ee45042b6b1a477310943ea5e621e9",
+  "trace_harness_commit": "f6231f7ad5ee45042b6b1a477310943ea5e621e9",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-connector-top-transfer-audit-v1.json",
+  "trace_root": "build/re/20260827-level01-connector-top-transfer-audit-v1",
+  "source_checkpoint": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+  "static_chain": [
+    "0x001B54D2/0x001B54D8 behavior-0x24/0x22 connector response paths",
+    "0x001B557E behavior-0x29 launch handler",
+    "0x001B56B6 behavior-0x2D bounce handler",
+    "0x001AFBF4 Type-0x65/0x66 collision handler",
+    "0x001AF978 Type-0x6A/0x6B handhold handler",
+    "0x001AE796 Type-0x1E collision handler",
+    "0x001AEE40 Type-0x2D actor collision handler",
+    "0x001B5B4A Level 01 upper-band predicate"
+  ],
+  "dynamic_evidence": {
+    "initial_world": [1560, 479],
+    "branches": {
+      "up-left-safe": { "minimum_world_y": 412, "final_world": [1502, 642], "launch_0x29_hits": 0, "bounce_0x2D_hits": 0 },
+      "up-right": { "minimum_world_y": 412, "final_world": [1560, 470], "launch_0x29_hits": 0, "bounce_0x2D_hits": 0 },
+      "plain-left": { "minimum_world_y": 412, "final_world": [1502, 642], "launch_0x29_hits": 0, "bounce_0x2D_hits": 0 },
+      "down-right": { "minimum_world_y": 412, "maximum_world_x": 2274, "final_world": [2274, 530], "launch_0x29_hits": 0, "bounce_0x2D_hits": 0 }
+    },
+    "scene": {
+      "scene_states": ["0x01"],
+      "scene_state_writes": 0,
+      "scene_countdown_writes": 0,
+      "predicate_post_pc": "0x001B5B4C",
+      "predicate_hits_per_full_branch": 299
+    },
+    "known_local_collision_paths": {
+      "down_right_type1e_post_pc": 22,
+      "down_right_type2d_post_pc": 2,
+      "left_type40_cleanup_post_pc": 3,
+      "left_interaction_helper_post_pc": 1
+    }
+  },
+  "confidence": {
+    "decompiled": [
+      "the behavior-0x29 and behavior-0x2D handler semantics",
+      "the live Level 01 actor collision dispatch targets",
+      "the Level 01 predicate and scene-writer locations"
+    ],
+    "trace_validated": [
+      "four controller-only connector-top branches remain in scene state 0x01",
+      "none reaches the configured behavior-0x29/0x2D launch handlers",
+      "the down-right branch reaches only already classified Type-0x1E/Type-0x2D local collisions",
+      "no scene-state or scene-countdown write occurs"
+    ],
+    "parity_validated": []
+  },
+  "limitations": [
+    "The source is a naturally produced route checkpoint, but the tested continuations are loaded-state controller probes.",
+    "This closes only the four recorded direct input families, not universal connector-top reachability.",
+    "One full-context up-left attempt crashed in the debugger formatter and was replaced by an identical reduced-context rerun; the crashed run is excluded.",
+    "No native parity comparison was performed."
+  ],
+  "conclusion": "The connector-top direct dismount family does not explain the missing Level 01 upper transfer. The branches either fall, remain against the connector boundary, or traverse to the already known local actor collisions; no terrain launch/bounce handler or scene gate fires. This moves the search to the remaining connector/resource producers and the upstream route that can place the player in the strict exit-height band.",
+  "next_action": "Decode and trace the x=2112/x=2720 connector/resource producer chain and the natural row-10/row-14 upper route, using this campaign's launch and scene-writer inventory as the negative baseline."
+}

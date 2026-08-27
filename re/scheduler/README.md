@@ -87,6 +87,16 @@ scene-table progression writer fires. The single scene-table selector hit is
 boot initialization. This is a clean negative natural-route boundary, not a
 claim that every possible route misses those writers.
 
+The connector-top transfer audit is recorded in
+`re/mame/campaigns/20260827-level01-connector-top-transfer-audit-v1.json`.
+Four controller-only continuations from the naturally produced connector-top
+checkpoint cover leftward, vertical-right, plain-left, and downward-right
+dismounts. The best ordinary apex is world `Y=412`, but no branch reaches the
+behavior-`0x29` launch or behavior-`0x2D` bounce handler. The downward-right
+branch reaches only the already classified Type-`0x1E`/Type-`0x2D` local
+collision paths. This closes the direct connector-top family and moves the
+search to the remaining connector/resource producers.
+
 Reanalyze an existing capture with:
 
 ```sh
