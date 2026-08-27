@@ -1,0 +1,65 @@
+{
+  "campaign": "20260827-level01-selector87-natural-v1",
+  "status": "recorded-negative-natural",
+  "purpose": "Test natural activation of the Level 01 row-10 selector-0x87 / Type-0x01 upper-platform resource from the upper-frontier checkpoint.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "3f05a78",
+  "working_tree_at_capture": "dirty; scheduler and writer-PC tracing changes were present but are not part of the recorded repository commit",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-up/states/genesis/end.sta",
+  "source_world": [4372, 628],
+  "source_surface_behavior": "0x25",
+  "instrumentation": {
+    "breakpoints": ["0x001B74D6", "0x001B5B4A"],
+    "trace_actor_initializers": true,
+    "trace_actors": true,
+    "trace_scene_states": true,
+    "trace_selector": true,
+    "watched_addresses": ["0x00FFD7FB", "0x00FFF0E9", "0x00FF7E26"],
+    "memory_pokes": false
+  },
+  "segments": [
+    {
+      "id": "left-clean",
+      "trace_dir": "build/re/analysis/20260827-level01-selector87-natural-v1/left-clean",
+      "frames": 240,
+      "input": "left*120,none*120",
+      "result": "Leaves the 0x25 upper surface at frame 34 and settles on the lower band at world (4026,912). Selector 0x87 is not reached; 24 actor-initializer events are recorded."
+    },
+    {
+      "id": "right-clean",
+      "trace_dir": "build/re/analysis/20260827-level01-selector87-natural-v1/right-clean",
+      "frames": 240,
+      "input": "right*120,none*120",
+      "result": "Traverses to the local upper boundary at world (4608,628) and stops. Selector 0x87 is not reached; 7 actor-initializer events are recorded."
+    },
+    {
+      "id": "jump-left",
+      "trace_dir": "build/re/analysis/20260827-level01-selector87-natural-v1/jump-left",
+      "frames": 240,
+      "input": "c+left*40,left*120,none*80",
+      "result": "Falls from the upper surface and settles on the lower band at world (3910,912). Selector 0x87 and the scene exit breakpoint are not reached."
+    },
+    {
+      "id": "up-left",
+      "trace_dir": "build/re/analysis/20260827-level01-selector87-natural-v1/up-left",
+      "frames": 240,
+      "input": "c+up+left*40,up+left*120,none*80",
+      "result": "Follows the same lower-band fallback as jump-left, ending at world (3910,912). Selector 0x87 and the scene exit breakpoint are not reached."
+    }
+  ],
+  "observed": {
+    "selector_0x87_handler_hits": 0,
+    "type_0x01_actor_samples": 0,
+    "scene_exit_breakpoint_hits": 0,
+    "scene_states": ["0x01"],
+    "natural_scene_transition": false,
+    "natural_upper_y_minimum": 628,
+    "natural_upper_x_range": [3910, 4608]
+  },
+  "result": "The natural upper-frontier replay exercises actor refill activity but does not activate the row-10 selector-0x87 record, initialize the reference Type-0x01 actor, or reach the scene exit path. The known controlled selector-0x87 dispatch remains an exact-record resource test, not a naturally reachable route step from this checkpoint.",
+  "next_action": "Search the upstream connector/handhold traversal for the missing transfer into the row-10 corridor; do not treat selector 0x87 as the current transition trigger."
+}

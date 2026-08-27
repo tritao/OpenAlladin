@@ -1,0 +1,57 @@
+{
+  "format": "openaladdin-level01-selector87-natural-finding-v1",
+  "recorded_at": "2026-08-27",
+  "status": "negative-natural-reachability",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "3f05a78",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-selector87-natural-v1.json",
+  "trace_root": "build/re/analysis/20260827-level01-selector87-natural-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/upper4372-up/states/genesis/end.sta",
+  "reference_record": {
+    "map_cell": [267, 10],
+    "world": [4272, 400],
+    "map_word": "0x52E8",
+    "interaction_index": "0x2974",
+    "selector": "0x87",
+    "handler": "0x001B74D6",
+    "controlled_runtime_type": "0x01",
+    "controlled_runtime_world": [4240, 384]
+  },
+  "natural_replay": {
+    "source_world": [4372, 628],
+    "surface_behavior": "0x25",
+    "inputs": [
+      "left*120,none*120",
+      "right*120,none*120",
+      "c+left*40,left*120,none*80",
+      "c+up+left*40,up+left*120,none*80"
+    ],
+    "selector_handler_hits": 0,
+    "type_0x01_actor_samples": 0,
+    "scene_states": ["0x01"],
+    "scene_exit_breakpoint_hits": 0,
+    "actor_initializer_events": {
+      "left-clean": 24,
+      "right-clean": 7,
+      "jump-left": 0,
+      "up-left": 0
+    },
+    "endpoints": {
+      "left-clean": [4026, 912],
+      "right-clean": [4608, 628],
+      "jump-left": [3910, 912],
+      "up-left": [3910, 912]
+    }
+  },
+  "interpretation": [
+    "The upper-frontier refill path is active: actor initializer events occur during the horizontal replays.",
+    "Those refills do not dispatch selector 0x87 or create the controlled Type-0x01 resource.",
+    "Both leftward traversal variants fall to the lower band before reaching the row-10 object coordinates, while rightward traversal stops at the local upper boundary.",
+    "This places the missing gameplay transfer upstream of selector 0x87; the selector remains a generic object-spawn record rather than a proven exit trigger."
+  ],
+  "conclusion": "Natural upper-frontier coverage does not reach the Level 01 row-10 selector-0x87 record. The controlled Type-0x01 dispatch is not yet part of the natural route, and SCENE_STATE remains 0x01 throughout."
+}
