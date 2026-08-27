@@ -1,6 +1,7 @@
 # openaladdin-actor-table-v1
 # Deterministic post-spawn player-sword checkpoint. The frame/animation state
-# matches the first live type-0x80 sword record after its initial animation
-# table lookup; movement starts at the recovered 0x11F6D4 stream.
-# slot type x y movement_pc frame_ptr animation_pc flags [facing_x_flip [facing_y_flip [movement_command_timer [movement_loop_pc [movement_loop_timer [movement_return_pc]]]]]]
-25 0x80 0x0096 0x01A0 0x0011F6D4 0x001FD478 0x00122B5A 0x0A 0x00 0x00 0x00 0x00000000 0x00 0x00000000
+# matches the injected type-0x80 sword record after its first common actor
+# service at the recovered frame boundary. The final two optional fields seed
+# the shared movement accumulators at that same boundary.
+# slot type x y movement_pc frame_ptr animation_pc flags [facing_x_flip [facing_y_flip [movement_command_timer [movement_loop_pc [movement_loop_timer [movement_return_pc [movement_word_18 [movement_word_1a]]]]]]]]]
+25 0x80 0x0096 0x01A0 0x0011F6DE 0x001FD478 0x00122B5C 0x0A 0x00 0x00 0x00 0x0011F6D8 0x2C 0x00000000 0x0000 0x006E

@@ -164,7 +164,7 @@ std::uint32_t terrain_handler(std::uint8_t behavior) {
     return behavior < kTerrainHandlers.size() ? kTerrainHandlers[behavior] : kTerrainNoOpHandler;
 }
 
-constexpr std::uint32_t kCheckpointVersion = 4;
+constexpr std::uint32_t kCheckpointVersion = 5;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
     writer.u8(selector.animation_gate);
@@ -465,6 +465,8 @@ void Engine::load_actor_timeline(const std::string& path) {
         std::string frame_ptr;
         std::string animation_pc;
         std::string movement_return_pc;
+        std::string movement_word_18;
+        std::string movement_word_1a;
         std::string flags;
         std::string facing_x_flip;
         std::string facing_y_flip;
@@ -503,6 +505,12 @@ void Engine::load_actor_timeline(const std::string& path) {
             : 0;
         actor.movement_return_pc = (row >> movement_return_pc)
             ? static_cast<std::uint32_t>(parse(movement_return_pc))
+            : 0;
+        actor.movement_word_18 = (row >> movement_word_18)
+            ? static_cast<std::int16_t>(parse(movement_word_18))
+            : 0;
+        actor.movement_word_1a = (row >> movement_word_1a)
+            ? static_cast<std::int16_t>(parse(movement_word_1a))
             : 0;
     }
     if (actor_timeline_.empty()) {
@@ -1061,10 +1069,6 @@ void Engine::update_actor_animations() {
         // at allocation; unlike the shared table, it is serviced on both
         // phases of the global actor gate while it remains type 0x80.
         const bool apple_actor_service = actor.spawned_by_apple;
-        const bool sword_animation_cadence =
-            actor.type == kActorSwordType && !actor.spawned_by_apple;
-        const bool sword_service = sword_animation_cadence
-            && (actor.animation_tick_phase < 2 || !service_actor_table);
         if (!service_actor_table
             && !apple_actor_service && actor.type == kActorTerminalType
             && actor.terminal_timer == 0) {
@@ -1075,8 +1079,7 @@ void Engine::update_actor_animations() {
             // step compared with the ROM.
             update_terminal_actor_motion(actor);
         }
-        if (!service_actor_table && !force_service && !apple_actor_service
-            && !sword_service) {
+        if (!service_actor_table && !force_service && !apple_actor_service) {
             // FF7E28 gates the complete table walk, not just newly spawned
             // records. Keep the explicit conversion follow-up above as the
             // one evidence-backed exception.
@@ -1099,16 +1102,6 @@ void Engine::update_actor_animations() {
             continue;
         }
 
-        // The sword's common actor animation stream is initially serviced on
-        // two consecutive VBlank passes, then every other pass. Preserve the
-        // recovered cadence here while the global actor-animation gate and
-        // its per-frame scheduler are still being modelled separately.
-        if (sword_animation_cadence) {
-            const bool hold = actor.animation_tick_phase >= 2
-                && service_actor_table;
-            ++actor.animation_tick_phase;
-            if (hold) continue;
-        }
         ActorAnimationState animation_state;
         animation_state.type = actor.type;
         animation_state.x = actor.x;
@@ -1247,7 +1240,7 @@ void Engine::update_animation_vm_ordinal_30(
             SpritePose::Run
         );
     } else {
-        animation_.update(desired_pose, direction, context);
+        animation_.update(desired_pose, direction, context, frame_phase_);
     }
     // F5 is nested in the animation service. Allocate player-originated
     // records before the sole table walk, so a new record joins this same
@@ -1589,6 +1582,8 @@ void Engine::load_actor_records(const std::string& path) {
         std::string frame_ptr;
         std::string animation_pc;
         std::string movement_return_pc;
+        std::string movement_word_18;
+        std::string movement_word_1a;
         std::string flags;
         std::string facing_x_flip;
         std::string facing_y_flip;
@@ -1626,6 +1621,12 @@ void Engine::load_actor_records(const std::string& path) {
             : 0;
         actor.movement_return_pc = (row >> movement_return_pc)
             ? static_cast<std::uint32_t>(parse(movement_return_pc))
+            : 0;
+        actor.movement_word_18 = (row >> movement_word_18)
+            ? static_cast<std::int16_t>(parse(movement_word_18))
+            : 0;
+        actor.movement_word_1a = (row >> movement_word_1a)
+            ? static_cast<std::int16_t>(parse(movement_word_1a))
             : 0;
     }
 }
@@ -1911,8 +1912,8 @@ void Engine::set_checkpoint_animation(std::uint32_t animation_pc, int timer) {
     sync_player_actor();
 }
 
-void Engine::set_checkpoint_animation_phase_delay(int ticks) {
-    animation_.set_animation_phase_delay(ticks);
+void Engine::set_checkpoint_frame_phase(std::uint8_t phase) {
+    frame_phase_ = phase;
 }
 
 void Engine::set_checkpoint_animation_selector(const AnimationSelectorState& selector) {
@@ -2527,7 +2528,6 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
             // The terrain handler runs before the actor animation pass, so
             // the new record is eligible for its first animation word on
             // this same VBlank.
-            spawned_actor.animation_tick_phase = 0;
             actors_[slot] = spawned_actor;
             break;
         }
@@ -4210,7 +4210,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v3\""
            << ",\"frame\":" << frame_
            << ",\"input\":\"" << input_token << "\""
-           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"animation_defer_ticks\",\"animation_force_next_tick\",\"animation_tick_phase\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
+           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"animation_defer_ticks\",\"animation_force_next_tick\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
            << ",\"player\":{\"x\":" << player_.x
            << ",\"y\":" << player_.y
            << ",\"world_x\":" << player_world_x()
@@ -4444,7 +4444,6 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     }
     output << ",\"player_vm\":{\"pending_animation_pc\":"
            << animation_.pending_animation_pc()
-           << ",\"animation_phase_delay\":" << animation_.animation_phase_delay()
            << ",\"force_tick_after_service\":"
            << (animation_.force_tick_after_service() ? "true" : "false")
            << ",\"force_tick_next_update\":"
@@ -4464,7 +4463,6 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
         const PlayerAnimationVm& actor_animation = actor_animations_[slot];
         output << "{\"slot\":" << slot
                << ",\"pending_animation_pc\":" << actor_animation.pending_animation_pc()
-               << ",\"animation_phase_delay\":" << actor_animation.animation_phase_delay()
                << ",\"force_tick_after_service\":"
                << (actor_animation.force_tick_after_service() ? "true" : "false")
                << ",\"force_tick_next_update\":"
@@ -4537,7 +4535,6 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"animation_defer_ticks\":" << static_cast<unsigned>(actor.animation_defer_ticks)
                << ",\"animation_force_next_tick\":"
                << (actor.animation_force_next_tick ? "true" : "false")
-               << ",\"animation_tick_phase\":" << static_cast<unsigned>(actor.animation_tick_phase)
                << ",\"resource_count\":" << static_cast<unsigned>(actor.resource_count)
                << ",\"interaction_resource_offset\":" << actor.interaction_resource_offset
                << ",\"interaction_selector\":" << static_cast<unsigned>(actor.interaction_selector)

@@ -178,7 +178,6 @@ void PlayerAnimationVm::reset() {
     // the standalone VM deterministic when it is used without an engine.
     random_value_ = 0x00;
     actor_tick_ = false;
-    animation_phase_delay_ = 0;
     pending_animation_pc_ = 0;
     service_boundary_ = ServiceBoundary::None;
     action_boundary_ = ActionBoundary::None;
@@ -733,13 +732,6 @@ void PlayerAnimationVm::clear_animation_timer_next_update() {
     clear_timer_next_update_ = true;
 }
 
-void PlayerAnimationVm::set_animation_phase_delay(int ticks) {
-    if (ticks < 0) {
-        throw std::runtime_error("animation phase delay must be non-negative");
-    }
-    animation_phase_delay_ = ticks;
-}
-
 void PlayerAnimationVm::republish_stream_root() {
     if (!rom_mode_ || stream_entry_ == 0 || stream_kind_ != AnimationStreamKind::Locomotion) {
         return;
@@ -1086,7 +1078,8 @@ bool PlayerAnimationVm::finished() const {
 void PlayerAnimationVm::update(
     SpritePose desired_pose,
     HorizontalDirection horizontal_direction,
-    const AnimationContext& context
+    const AnimationContext& context,
+    std::optional<std::uint8_t> scheduler_phase
 ) {
     if (pending_animation_pc_ != 0) {
         animation_pc_ = pending_animation_pc_;
@@ -1150,7 +1143,10 @@ void PlayerAnimationVm::update(
         && (desired_pose != pose_ || animation_pc_ == 0)) {
         select_rom_stream(desired_pose, false, &context);
     }
-    if (pose_ == SpritePose::Landing && landing_reselect_pending_ && (update_count_ & 1U) != 0) {
+    const bool scheduler_service = scheduler_phase
+        ? ((*scheduler_phase & 1U) != 0)
+        : ((update_count_ & 1U) == 0);
+    if (pose_ == SpritePose::Landing && landing_reselect_pending_ && !scheduler_service) {
         // The gameplay state selector writes the landing root again on the
         // intervening frame; the VM then consumes its first frame on the next
         // actor tick. This one-frame root write is visible in FF7E60.
@@ -1168,13 +1164,16 @@ void PlayerAnimationVm::update(
         tick_rom(context);
         return;
     }
-    if (animation_phase_delay_ > 0) {
-        // The VM is serviced on alternating update passes. Consume a phase
-        // tick without touching the Genesis-visible timer or cursor.
-        if ((update_count_ & 1U) == 0) {
-            --animation_phase_delay_;
+    if (scheduler_phase) {
+        if (scheduler_service) {
+            tick_rom(context);
+            if (service_boundary_ == ServiceBoundary::ForceAfterService) {
+                service_boundary_ = ServiceBoundary::ForceNextUpdate;
+            }
+        } else if (service_boundary_ == ServiceBoundary::ForceNextUpdate) {
+            service_boundary_ = ServiceBoundary::None;
+            tick_rom(context);
         }
-        ++update_count_;
         return;
     }
     if ((update_count_++ & 1U) == 0) {
@@ -1217,7 +1216,6 @@ void PlayerAnimationVm::write_checkpoint(std::ostream& output) const {
     writer.u32(return_pc_);
     writer.u8(random_value_);
     writer.boolean(actor_tick_);
-    writer.i32(animation_phase_delay_);
     writer.u32(pending_animation_pc_);
     writer.u8(static_cast<std::uint8_t>(service_boundary_));
     writer.boolean(clear_timer_next_update_);
@@ -1264,7 +1262,6 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     const auto return_pc = reader.u32();
     const auto random_value = reader.u8();
     const bool actor_tick = reader.boolean();
-    const auto animation_phase_delay = reader.i32();
     const auto pending_animation_pc = reader.u32();
     const auto service_boundary = reader.u8();
     const bool clear_timer_next_update = reader.boolean();
@@ -1291,7 +1288,7 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     if (!rom_mode_ && step >= clip(static_cast<SpritePose>(pose)).steps.size()) {
         throw std::runtime_error("invalid animation VM clip step in OpenAladdin checkpoint");
     }
-    if (timer < 0 || animation_phase_delay < 0) {
+    if (timer < 0) {
         throw std::runtime_error("invalid animation VM timer in OpenAladdin checkpoint");
     }
     if (service_boundary > static_cast<std::uint8_t>(ServiceBoundary::DeferNextUpdate)) {
@@ -1316,7 +1313,6 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     return_pc_ = return_pc;
     random_value_ = random_value;
     actor_tick_ = actor_tick;
-    animation_phase_delay_ = animation_phase_delay;
     pending_animation_pc_ = pending_animation_pc;
     service_boundary_ = static_cast<ServiceBoundary>(service_boundary);
     clear_timer_next_update_ = clear_timer_next_update;

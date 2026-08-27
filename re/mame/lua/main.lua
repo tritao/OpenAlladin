@@ -552,7 +552,10 @@ local function capture(frame, input_token, emit_state)
             }) },
             { "camera", camera_runtime_json() },
             { "terrain", terrain_runtime_json() },
-            { "actors", json_array(actors) }
+            { "actors", json_array(actors) },
+            { "scheduler", json_object({
+                { "frame_phase", tostring(read_u8(symbol("FRAME_PHASE_COUNTER"))) }
+            }) }
         })
     end
 end
@@ -626,7 +629,7 @@ if state_sync then
     -- boundary; the Python post-processor can therefore distinguish an
     -- atomic S[N] from a video sample inherited from a nearby phase.
     local sync_format =
-        "OPENALADDIN_SYNC frame=%d pc=%08X "
+        "OPENALADDIN_SYNC frame=%d pc=%08X phase=%02X "
         .. "x=%04X y=%04X wx=%04X wy=%04X vx=%04X vy=%04X "
         .. "grounded=%02X frameptr=%08X facing=%02X animpc=%08X animtimer=%02X "
         .. "camx=%04X camy=%04X refx=%04X refy=%04X sx=%04X sy=%04X "
@@ -654,6 +657,7 @@ if state_sync then
         .. "scenecountdown=%02X scenegate=%02X scenegateplayer=%02X scenelockplayer=%02X "
         .. "scenecountdownplayer=%02X sceneterminalplayer=%02X\\n"
     local sync_values = {
+        sync_memory("b", "FRAME_PHASE_COUNTER"),
         sync_memory("w", "PLAYER_X"),
         sync_memory("w", "PLAYER_Y"),
         sync_memory("w", "PLAYER_WORLD_X"),

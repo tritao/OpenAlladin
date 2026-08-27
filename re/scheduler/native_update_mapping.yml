@@ -251,12 +251,6 @@ animation_lifecycle_mapping:
   # to the regression that currently needs it until the corresponding ROM
   # writer, gate, and cursor transition are decoded. None of these fields
   # creates a second Engine::update phase or a second AnimationVM traversal.
-  - name: animation_phase_delay
-    native_field: PlayerAnimationVm::animation_phase_delay_
-    rom_state: "per-record animation timer/cursor phase between gated ordinal-30 visits"
-    status: temporary_parity_hack
-    regression: tests/mame_events.py (native checkpoint phase inference)
-    removal_condition: "replace inferred delay with the recovered FF7E28 phase and record +0x37 lifecycle"
   - name: pending_animation_pc
     native_field: PlayerAnimationVm::pending_animation_pc_
     rom_state: "selector-written cursor exposed for one boundary before continuing"
@@ -275,12 +269,6 @@ animation_lifecycle_mapping:
     status: temporary_parity_hack
     regression: tests/native_animation_spawn.py, tests/native_actor_collision.py, tests/native_terrain_physics.py
     removal_condition: "replace each native delay assignment with the decoded record timer/caller lifecycle"
-  - name: animation_tick_phase
-    native_field: ActorState::animation_tick_phase
-    rom_state: "unresolved per-record cadence after the shared FF7E28 gate"
-    status: temporary_parity_hack
-    regression: tests/native_sword_lifecycle.py, tests/native_scheduler_trace.py (apple route)
-    removal_condition: "derive cadence from the common gate and stream cursor rather than actor-type timing"
   - name: service_boundary
     native_field: PlayerAnimationVm::service_boundary_
     rom_state: "selector/command boundary pending ordinal-30 cursor service"
@@ -306,6 +294,6 @@ summary:
   derived_presentation_only_rom_rows: 6
   unknown_rom_rows: 0
   native_extra_phases: 1
-  native_hacks_requiring_followup: 6
+  native_hacks_requiring_followup: 4
   native_extra_mismatch_phases: 0
   conclusion: "Engine::update now exposes one owner for each gameplay-affecting ROM service. Animation, actor collision, terrain resolution, interaction resources, coordinate publication, and scene completion are aligned to their recovered causal boundaries; the FF7E28 phase is explicit at engine scope, while remaining per-record cursor fields are state gates inside those services, not native scheduler phases."

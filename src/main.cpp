@@ -50,7 +50,7 @@ struct Options {
     std::string checkpoint_terrain_landing_state;
     std::string checkpoint_frame_ptr;
     std::string checkpoint_animation;
-    std::string checkpoint_animation_phase_delay;
+    std::string checkpoint_frame_phase;
     std::string checkpoint_animation_selector;
     std::string checkpoint_facing_x_flip;
     std::string checkpoint_vdp;
@@ -266,8 +266,8 @@ Options parse_options(int argc, char** argv) {
             options.checkpoint_frame_ptr = argv[++i];
         } else if (argument == "--checkpoint-animation" && i + 1 < argc) {
             options.checkpoint_animation = argv[++i];
-        } else if (argument == "--checkpoint-animation-phase-delay" && i + 1 < argc) {
-            options.checkpoint_animation_phase_delay = argv[++i];
+        } else if (argument == "--checkpoint-frame-phase" && i + 1 < argc) {
+            options.checkpoint_frame_phase = argv[++i];
         } else if (argument == "--checkpoint-animation-selector" && i + 1 < argc) {
             options.checkpoint_animation_selector = argv[++i];
         } else if (argument == "--checkpoint-facing-x-flip" && i + 1 < argc) {
@@ -286,7 +286,7 @@ Options parse_options(int argc, char** argv) {
                          "       [--checkpoint-terrain-landing-state BYTE]\n"
                          "       [--checkpoint-frame-ptr ADDRESS]\n"
                          "       [--checkpoint-animation PC,TIMER]\n"
-                         "       [--checkpoint-animation-phase-delay TICKS]\n"
+                         "       [--checkpoint-frame-phase BYTE]\n"
                          "       [--checkpoint-animation-selector FIELDS]\n"
                          "       [--checkpoint-facing-x-flip VALUE]\n"
                          "       [--checkpoint-vdp TRACE_DIR FRAME]\n"
@@ -377,9 +377,9 @@ int main(int argc, char** argv) {
                 std::stoi(options.checkpoint_animation.substr(separator + 1), nullptr, 0)
             );
         }
-        if (!options.checkpoint_animation_phase_delay.empty()) {
-            engine.set_checkpoint_animation_phase_delay(
-                std::stoi(options.checkpoint_animation_phase_delay, nullptr, 0)
+        if (!options.checkpoint_frame_phase.empty()) {
+            engine.set_checkpoint_frame_phase(
+                static_cast<std::uint8_t>(std::stoul(options.checkpoint_frame_phase, nullptr, 0))
             );
         }
         if (!options.checkpoint_animation_selector.empty()) {
@@ -524,7 +524,7 @@ int main(int argc, char** argv) {
             if (!state_file) {
                 throw std::runtime_error("cannot open state output: " + options.state_output);
             }
-            state_file << "{\"type\":\"header\",\"format\":\"openaladdin-frame-state-v3\",\"rom\":\"openaladdin\",\"rom_sha256\":\"\",\"state_boundary\":\"game-loop\",\"sync\":{\"boundary\":\"VBlankInterrupt\",\"state_boundary\":\"game-loop\",\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"animation_defer_ticks\",\"animation_force_next_tick\",\"animation_tick_phase\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"],\"actors_qualified\":true,\"actor_slot_count\":32,\"scheduler_trace\":" << (!options.scheduler_trace.empty() ? "true" : "false") << "}}\n";
+            state_file << "{\"type\":\"header\",\"format\":\"openaladdin-frame-state-v3\",\"rom\":\"openaladdin\",\"rom_sha256\":\"\",\"state_boundary\":\"game-loop\",\"sync\":{\"boundary\":\"VBlankInterrupt\",\"state_boundary\":\"game-loop\",\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"animation_defer_ticks\",\"animation_force_next_tick\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"],\"actors_qualified\":true,\"actor_slot_count\":32,\"scheduler_trace\":" << (!options.scheduler_trace.empty() ? "true" : "false") << "}}\n";
             engine.write_state(state_file, "none");
         }
 

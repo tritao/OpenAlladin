@@ -19,6 +19,17 @@ import subprocess
 import sys
 from typing import Any, Iterable
 
+# ``tools/oa.py`` remains importable for tests and old integrations, but its
+# direct command-line entry point now goes through Genie.  The legacy body is
+# loaded by ``genie.cli`` under a non-main module name until command handlers
+# are migrated into service modules.
+if __name__ == "__main__":
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from genie.cli import main as genie_main  # noqa: E402
+
+    raise SystemExit(genie_main(program="oa"))
+
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
 sys.path.insert(0, str(SCRIPT_DIR))
@@ -60,7 +71,7 @@ DEFAULT_PARITY_FIELDS = [
     "camera.scroll_y",
     "actors",
 ]
-ATOMIC_STATE_FIELDS = ("player", "camera", "terrain", "scene", "actors")
+ATOMIC_STATE_FIELDS = ("player", "camera", "terrain", "scene", "actors", "scheduler")
 ATOMIC_ACTOR_FIELDS = (
     "type",
     "x",
@@ -561,79 +572,6 @@ def _find_native_start(
     }
 
 
-def _infer_native_animation_phase(
-    state_records: dict[int, dict[str, Any]],
-    start_frame: int,
-    end_frame: int,
-) -> dict[str, Any]:
-    """Infer the native VM's initial scheduler delay from MAME's trace.
-
-    The native ROM VM is serviced on alternating update passes. Its private
-    scheduler phase is not a Genesis RAM field, so a portable checkpoint must
-    carry this derived adjustment separately from PLAYER_ANIMATION_TIMER.
-    Only infer it while the initial animation cursor and input are stable; an
-    input-triggered cursor change is gameplay, not scheduler evidence.
-    """
-    initial = state_records.get(start_frame) or {}
-    initial_player = initial.get("player") or {}
-    initial_pc = initial_player.get("animation_pc")
-    if initial_pc is None or int(initial_pc) == 0:
-        return {
-            "status": "not_observable",
-            "reason": "initial animation cursor is not available",
-            "delay_ticks": 0,
-        }
-    initial_input = initial.get("input", "none")
-    first_change: int | None = None
-    for frame in range(start_frame + 1, end_frame + 1):
-        state = state_records.get(frame)
-        if state is None:
-            break
-        if state.get("input", "none") != initial_input:
-            return {
-                "status": "not_observable",
-                "reason": "input changed before an isolated animation-cursor transition",
-                "delay_ticks": 0,
-            }
-        player = state.get("player") or {}
-        if player.get("animation_pc") != initial_pc:
-            first_change = frame
-            break
-    if first_change is None:
-        return {
-            "status": "not_observable",
-            "reason": "animation cursor did not transition during the segment",
-            "delay_ticks": 0,
-        }
-
-    offset = first_change - start_frame
-    tick_period = 2
-    # set_checkpoint() performs one initial animation selection only for an
-    # airborne player. A grounded checkpoint reaches its first native VM tick
-    # one frame earlier, so the phase model must retain that state distinction.
-    initial_tick_offset = 1 if bool(initial_player.get("grounded")) else 2
-    if offset < initial_tick_offset or (offset - initial_tick_offset) % tick_period:
-        return {
-            "status": "unrepresentable",
-            "reason": "animation transition does not align with the native VM tick phase",
-            "initial_animation_pc": int(initial_pc),
-            "first_change_frame": first_change,
-            "first_change_offset": offset,
-            "initial_tick_offset": initial_tick_offset,
-            "native_tick_period": tick_period,
-        }
-    return {
-        "status": "inferred",
-        "reason": "animation scheduler delay inferred from the first isolated cursor transition",
-        "delay_ticks": (offset - initial_tick_offset) // tick_period,
-        "initial_animation_pc": int(initial_pc),
-        "first_change_frame": first_change,
-        "first_change_offset": offset,
-        "initial_tick_offset": initial_tick_offset,
-        "native_tick_period": tick_period,
-    }
-
-
 def _backfill_native_boundary(run_dir: Path, segment: dict[str, Any]) -> None:
     """Derive the new native boundary for a pre-readiness segments.json."""
     if "native_start_frame" in segment:
@@ -654,17 +592,6 @@ def _backfill_native_boundary(run_dir: Path, segment: dict[str, Any]) -> None:
     segment["native_start"] = (
         native_checkpoint_descriptor(state_records[native_start_frame])
         if native_start_frame is not None else None
-    )
-    segment["native_animation_phase"] = (
-        _infer_native_animation_phase(
-            state_records,
-            native_start_frame,
-            int(segment["end_frame"]),
-        )
-        if native_start_frame is not None else {
-            "status": "unavailable",
-            "reason": "no stable native boundary was found",
-        }
     )
 
 
@@ -692,6 +619,11 @@ def native_checkpoint_descriptor(state: dict[str, Any]) -> dict[str, Any]:
         },
         "scene": {"state": _state_int(scene, "state", 1)},
     }
+    scheduler = state.get("scheduler")
+    if isinstance(scheduler, dict) and "frame_phase" in scheduler:
+        descriptor["scheduler"] = {
+            "frame_phase": _state_int(scheduler, "frame_phase") & 0xFF,
+        }
     descriptor["player"]["grounded"] = _state_bool(
         player,
         "grounded",
@@ -723,7 +655,6 @@ def native_checkpoint_arguments(
     checkpoint: dict[str, Any],
     *,
     include_terrain_behavior: bool = True,
-    animation_phase_delay: int | None = None,
 ) -> list[str]:
     """Translate a state or native_start descriptor into native CLI flags."""
     player = checkpoint.get("player") or {}
@@ -766,12 +697,11 @@ def native_checkpoint_arguments(
             "--checkpoint-animation",
             f"{_state_int(player, 'animation_pc')},{_state_int(player, 'animation_timer')}",
         ])
-    if animation_phase_delay is not None:
-        if animation_phase_delay < 0:
-            raise SystemExit("native animation phase delay must be non-negative")
+    scheduler = checkpoint.get("scheduler") or {}
+    if "frame_phase" in scheduler:
         arguments.extend([
-            "--checkpoint-animation-phase-delay",
-            str(animation_phase_delay),
+            "--checkpoint-frame-phase",
+            str(_state_int(scheduler, "frame_phase") & 0xFF),
         ])
     selector_spec = animation_selector_spec(player)
     if selector_spec is not None:
@@ -967,17 +897,6 @@ def _write_segments(run_dir: Path, frame_count: int) -> tuple[int, int]:
             "native_start": (
                 native_checkpoint_descriptor(state_records[native_start_frame])
                 if native_start_frame is not None else None
-            ),
-            "native_animation_phase": (
-                _infer_native_animation_phase(
-                    state_records,
-                    native_start_frame,
-                    native_end_frame,
-                )
-                if native_start_frame is not None else {
-                    "status": "unavailable",
-                    "reason": "no stable native boundary was found",
-                }
             ),
         }
         if event_state_path and event_state_path.is_file():
@@ -1758,6 +1677,7 @@ SYNC_PATTERN = re.compile(
 SYNC_V2_FIELDS = (
     ("frame", "frame", "decimal"),
     ("pc", "pc", "hex"),
+    ("phase", "frame_phase", "hex"),
     ("x", "x", "hex"),
     ("y", "y", "hex"),
     ("wx", "world_x", "hex"),
@@ -2466,6 +2386,9 @@ def synchronize_state_trace(
         record["type"] = "state"
         record["frame"] = frame
         record["pc"] = sync["pc"]
+        record["scheduler"] = {
+            "frame_phase": sync.get("frame_phase", 0),
+        }
 
         metadata = frame_metadata.get(frame)
         if metadata is not None:
@@ -3442,14 +3365,8 @@ def command_replay(args: argparse.Namespace) -> int:
         "--input-schedule", readable_input_schedule(scheduled_tokens),
     ]
     if segment:
-        phase = segment.get("native_animation_phase") or {}
-        phase_delay = (
-            int(phase["delay_ticks"])
-            if phase.get("status") == "inferred" else None
-        )
         native_command.extend(native_checkpoint_arguments(
             initial_state or {},
-            animation_phase_delay=phase_delay,
         ))
     native_environment = os.environ.copy()
     native_environment["SDL_VIDEODRIVER"] = "dummy"
@@ -4003,8 +3920,19 @@ def command_validate(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_doctor(args: argparse.Namespace) -> int:
+    """Run the shared Genie workspace diagnostics."""
+
+    from genie.doctor import run_doctor
+
+    return run_doctor(args)
+
+
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="oa", description=__doc__)
+    parser = argparse.ArgumentParser(
+        prog=os.environ.get("OPENALADDIN_CLI_PROG", "oa"),
+        description=__doc__,
+    )
     commands = parser.add_subparsers(dest="command", required=True)
 
     setup = commands.add_parser("setup", help="install the pinned Ghidra toolchain")
@@ -4206,6 +4134,24 @@ def build_parser() -> argparse.ArgumentParser:
     validate.add_argument("--skip-assets", action="store_true")
     validate.add_argument("--skip-scene", action="store_true")
     validate.set_defaults(function=command_validate)
+
+    doctor = commands.add_parser(
+        "doctor",
+        help="check the workspace and report fatal versus optional capabilities",
+    )
+    add_rom_argument(doctor)
+    doctor.add_argument(
+        "--strict",
+        action="store_true",
+        help="treat missing optional capabilities as fatal",
+    )
+    doctor.add_argument(
+        "--json",
+        action="store_true",
+        dest="json_output",
+        help="write the diagnostic report as JSON",
+    )
+    doctor.set_defaults(function=command_doctor)
 
     compare = commands.add_parser("compare", help="find the first divergent frame in two state traces")
     compare.add_argument("genesis", type=Path)

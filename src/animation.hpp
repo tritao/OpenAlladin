@@ -152,7 +152,8 @@ public:
     void update(
         SpritePose desired_pose,
         HorizontalDirection horizontal_direction,
-        const AnimationContext& context = {}
+        const AnimationContext& context = {},
+        std::optional<std::uint8_t> scheduler_phase = std::nullopt
     );
     bool set_frame(int sprite_frame);
     void set_frame_pointer(std::uint32_t frame_pointer);
@@ -161,7 +162,6 @@ public:
     // publishing the new stream root. Keep that boundary distinct from the
     // stream's scheduler service so the root remains visible for one frame.
     void clear_animation_timer_next_update();
-    void set_animation_phase_delay(int ticks);
     // Publish a selector-written stream root after the VM pass. The cursor
     // reached by that pass is restored at the next update boundary.
     void republish_stream_root();
@@ -236,7 +236,6 @@ public:
     // recover once conditional control flow is implemented).
     std::uint32_t stream_entry() const;
     const std::array<std::uint8_t, 0x42>& actor_record() const { return actor_; }
-    int animation_phase_delay() const { return animation_phase_delay_; }
     std::uint32_t pending_animation_pc() const { return pending_animation_pc_; }
     bool force_tick_after_service() const {
         return service_boundary_ == ServiceBoundary::ForceAfterService;
@@ -310,10 +309,6 @@ private:
     // contain the opcode as data, so only actor ticks may apply its cleanup
     // side effect.
     bool actor_tick_ = false;
-    // Native checkpoints restore the Genesis-visible animation timer, while
-    // this separate delay restores the VM scheduler phase that is not stored
-    // in the captured RAM fields.
-    int animation_phase_delay_ = 0;
     std::uint32_t pending_animation_pc_ = 0;
     // These requests are mutually exclusive consequences of a selector or
     // command boundary. Keep them as one VM-owned state machine so the

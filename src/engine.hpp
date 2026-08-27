@@ -151,7 +151,7 @@ public:
     void set_checkpoint_terrain_landing_state(std::uint8_t landing_state);
     void set_checkpoint_frame_ptr(int address);
     void set_checkpoint_animation(std::uint32_t animation_pc, int timer);
-    void set_checkpoint_animation_phase_delay(int ticks);
+    void set_checkpoint_frame_phase(std::uint8_t phase);
     void set_checkpoint_animation_selector(const AnimationSelectorState& selector);
     void set_checkpoint_facing_x_flip(bool facing_x_flip);
     void set_checkpoint_vdp(const std::string& trace_dir, int frame);

@@ -14,7 +14,11 @@ ROOT = Path(__file__).resolve().parents[1]
 ROM = ROOT / "rom/Disneys_Aladdin_U_p1.bin"
 RUNNER = ROOT / "tools/openaladdin/mame/run.sh"
 BINARY = ROOT / "build/openaladdin"
-SOURCE_START = 361
+# The injected record is visible at frame 361 before its first common actor
+# service. Start the differential at frame 362, where the native checkpoint
+# represents the same post-service ROM boundary without a synthetic cadence
+# field.
+SOURCE_START = 362
 LIFECYCLE_FRAMES = 50
 SLOT = 25
 

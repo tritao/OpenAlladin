@@ -212,8 +212,6 @@ void write_actor(std::ostream& output, std::size_t slot, const ActorState& actor
            << static_cast<unsigned>(actor.animation_defer_ticks)
            << ",\"animation_force_next_tick\":"
            << (actor.animation_force_next_tick ? "true" : "false")
-           << ",\"animation_tick_phase\":"
-           << static_cast<unsigned>(actor.animation_tick_phase)
            << ",\"resource_count\":"
            << static_cast<unsigned>(actor.resource_count)
            << ",\"interaction_resource_offset\":"

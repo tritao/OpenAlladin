@@ -95,6 +95,7 @@ def main() -> int:
                     "facing_x_flip": 0,
                 },
                 "scene": {"state": 1},
+                "scheduler": {"frame_phase": frame & 0xFF},
                 "camera": {
                     "x": 10,
                     "y": 20,
@@ -139,8 +140,7 @@ def main() -> int:
         assert segment["native_start_frame"] == 15
         assert segment["native_ready"]["status"] == "ready"
         assert segment["native_start"]["player"]["x"] == 115
-        assert segment["native_animation_phase"]["status"] == "inferred"
-        assert segment["native_animation_phase"]["delay_ticks"] == 1
+        assert segment["native_start"]["scheduler"]["frame_phase"] == 15
         assert segment["native_start"]["terrain"]["behavior"] == 0x10
         assert segment["native_start"]["terrain"]["landing_state"] == 1
 
@@ -157,8 +157,8 @@ def main() -> int:
         assert "--checkpoint-terrain-behavior" in arguments
         assert "--checkpoint-terrain-landing-state" in arguments
         assert "--checkpoint-player" in arguments
-        arguments = oa.native_checkpoint_arguments(initial, animation_phase_delay=1)
-        assert "--checkpoint-animation-phase-delay" in arguments
+        arguments = oa.native_checkpoint_arguments(initial)
+        assert "--checkpoint-frame-phase" in arguments
         rebased = run_dir / "replay/mame/level01-entry/state.jsonl"
         oa._write_sliced_state(
             run_dir / "state.jsonl",

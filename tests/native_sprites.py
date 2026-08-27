@@ -19,6 +19,7 @@ def run_case(
     frames: int = 2,
     animation: str | None = None,
     animation_selector: str | None = None,
+    frame_phase: int | None = None,
 ) -> list[dict]:
     output = ROOT / "build/re/tests/native-sprites" / f"{name}.jsonl"
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -38,6 +39,8 @@ def run_case(
         command.extend(["--checkpoint-animation", animation])
     if animation_selector is not None:
         command.extend(["--checkpoint-animation-selector", animation_selector])
+    if frame_phase is not None:
+        command.extend(["--checkpoint-frame-phase", str(frame_phase)])
     environment = dict(os.environ)
     environment["SDL_VIDEODRIVER"] = "dummy"
     subprocess.run(command, cwd=ROOT, env=environment, check=True, stdout=subprocess.DEVNULL)
@@ -64,7 +67,15 @@ def main() -> int:
         0, 255, 255, 255, 255, 0, 0, 0, 0
     ]
 
-    jumping = run_case("jump", "103,416,0,-512,0", "none*7", frames=7)
+    # The legacy expectation starts on the opposite VBlank phase from the
+    # default native checkpoint. Carry that recovered ROM state explicitly.
+    jumping = run_case(
+        "jump",
+        "103,416,0,-512,0",
+        "none*7",
+        frames=7,
+        frame_phase=1,
+    )
     jump_frames = [record["player"]["sprite_frame"] for record in jumping]
     assert jump_frames[:5] == [161, 161, 161, 161, 162]
     assert jumping[-1]["player"]["sprite_frame"] == 162
