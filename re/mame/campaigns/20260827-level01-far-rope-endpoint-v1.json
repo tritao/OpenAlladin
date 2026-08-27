@@ -1,0 +1,144 @@
+{
+  "campaign": "20260827-level01-far-rope-endpoint-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Classify direct dismount, jump, and attack controls from the corrected far-rope endpoint.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "fdb59ff",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-contact/states/genesis/end.sta",
+  "timing_note": "All branches use the synchronized successful far-rope endpoint, preload-before-capture, actor tracing, scene-state tracing, and 240-frame state capture.",
+  "segments": [
+    {
+      "id": "endpoint-neutral",
+      "trace_dir": "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-neutral",
+      "frames": 240,
+      "input": "none*240",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-contact/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "endpoint", "state": "states/genesis/endpoint.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "transfer-window", "state": "states/genesis/transfer-window.sta" },
+        { "frame": 180, "name": "settled", "state": "states/genesis/settled.sta" },
+        { "frame": 240, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "endpoint-left-jump",
+      "trace_dir": "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-left-jump",
+      "frames": 240,
+      "input": "c+left*20,left*120,none*101",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-contact/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "endpoint", "state": "states/genesis/endpoint.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "transfer-window", "state": "states/genesis/transfer-window.sta" },
+        { "frame": 180, "name": "settled", "state": "states/genesis/settled.sta" },
+        { "frame": 240, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "endpoint-right-jump",
+      "trace_dir": "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-right-jump",
+      "frames": 240,
+      "input": "c+right*20,right*120,none*101",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-contact/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "endpoint", "state": "states/genesis/endpoint.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "transfer-window", "state": "states/genesis/transfer-window.sta" },
+        { "frame": 180, "name": "settled", "state": "states/genesis/settled.sta" },
+        { "frame": 240, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "endpoint-up-jump",
+      "trace_dir": "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-up-jump",
+      "frames": 240,
+      "input": "c+up*20,up*120,none*101",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-contact/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "endpoint", "state": "states/genesis/endpoint.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "transfer-window", "state": "states/genesis/transfer-window.sta" },
+        { "frame": 180, "name": "settled", "state": "states/genesis/settled.sta" },
+        { "frame": 240, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "endpoint-sword-left",
+      "trace_dir": "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-sword-left",
+      "frames": 240,
+      "input": "b+left*20,left*120,none*101",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-contact/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "endpoint", "state": "states/genesis/endpoint.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "transfer-window", "state": "states/genesis/transfer-window.sta" },
+        { "frame": 180, "name": "settled", "state": "states/genesis/settled.sta" },
+        { "frame": 240, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "endpoint-sword-right",
+      "trace_dir": "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-sword-right",
+      "frames": 240,
+      "input": "b+right*20,right*120,none*101",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-contact/states/genesis/end.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "endpoint", "state": "states/genesis/endpoint.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "transfer-window", "state": "states/genesis/transfer-window.sta" },
+        { "frame": 180, "name": "settled", "state": "states/genesis/settled.sta" },
+        { "frame": 240, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    }
+  ],
+  "observed": {
+    "source": { "world": [4728, 671], "terrain_behavior": "0x24", "scene_state": "0x01" },
+    "neutral": "Remains at (4728,671).",
+    "left_jump": "Reaches the ordinary upper band at (4454,628) after the temporary jump.",
+    "right_jump": "Falls to the lower floor at (4750,874).",
+    "up_jump": "Lands on the ordinary upper band at (4728,628).",
+    "sword": "Left and right attack variants remain at the endpoint.",
+    "scene": "All six branches remain in SCENE_STATE=0x01 and do not reach the exit height predicate."
+  },
+  "negative_evidence": [
+    "No direct endpoint dismount produces the required upper transfer.",
+    "No branch writes SCENE_STATE=0x08, SCENE_SCRIPT_CURSOR, or an exit gate.",
+    "The endpoint controls only return to the known upper band or fall to the lower floor."
+  ],
+  "conclusion": "The corrected far-rope endpoint is stable, but its direct neutral, directional jump, and sword controls do not cross the remaining Level 01 upper frontier. The next search should target the interaction/resource actor or special movement that precedes the final exit predicate."
+}

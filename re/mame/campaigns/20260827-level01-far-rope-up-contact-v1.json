@@ -1,0 +1,116 @@
+{
+  "campaign": "20260827-level01-far-rope-up-contact-v1",
+  "status": "recorded-positive-route-frontier",
+  "purpose": "Record the timing-sensitive Up input required to attach to the Level 01 far vertical rope, together with early and late timing controls.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "fdb59ff",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "timing_note": "All branches use preload-before-capture, actor tracing, scene-state tracing, and synchronized state checkpoints. The run is capped at 300 frames; the contact branch holds Up through the rope-contact window.",
+  "segments": [
+    {
+      "id": "far-rope-up-contact",
+      "trace_dir": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-contact",
+      "frames": 300,
+      "input": "up+right*29,right*60,none*30,c+right*20,right*80,up*120",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 80, "name": "middle", "state": "states/genesis/middle.sta" },
+        { "frame": 120, "name": "pre-rope", "state": "states/genesis/pre-rope.sta" },
+        { "frame": 160, "name": "rope-approach", "state": "states/genesis/rope-approach.sta" },
+        { "frame": 200, "name": "rope-window", "state": "states/genesis/rope-window.sta" },
+        { "frame": 240, "name": "rope-late", "state": "states/genesis/rope-late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-rope-up-early",
+      "trace_dir": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-early",
+      "frames": 300,
+      "input": "up+right*29,right*60,none*30,c+right*20,up*120,none*61",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 80, "name": "middle", "state": "states/genesis/middle.sta" },
+        { "frame": 120, "name": "pre-rope", "state": "states/genesis/pre-rope.sta" },
+        { "frame": 160, "name": "rope-approach", "state": "states/genesis/rope-approach.sta" },
+        { "frame": 200, "name": "rope-window", "state": "states/genesis/rope-window.sta" },
+        { "frame": 240, "name": "rope-late", "state": "states/genesis/rope-late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-rope-up-mid",
+      "trace_dir": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-mid",
+      "frames": 300,
+      "input": "up+right*29,right*60,none*30,c+right*20,right*20,up*120,none*61",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 80, "name": "middle", "state": "states/genesis/middle.sta" },
+        { "frame": 120, "name": "pre-rope", "state": "states/genesis/pre-rope.sta" },
+        { "frame": 160, "name": "rope-approach", "state": "states/genesis/rope-approach.sta" },
+        { "frame": 200, "name": "rope-window", "state": "states/genesis/rope-window.sta" },
+        { "frame": 240, "name": "rope-late", "state": "states/genesis/rope-late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "far-rope-up-late",
+      "trace_dir": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-late",
+      "frames": 300,
+      "input": "up+right*29,right*60,none*30,c+right*20,right*50,up*120",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 80, "name": "middle", "state": "states/genesis/middle.sta" },
+        { "frame": 120, "name": "pre-rope", "state": "states/genesis/pre-rope.sta" },
+        { "frame": 160, "name": "rope-approach", "state": "states/genesis/rope-approach.sta" },
+        { "frame": 200, "name": "rope-window", "state": "states/genesis/rope-window.sta" },
+        { "frame": 240, "name": "rope-late", "state": "states/genesis/rope-late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    }
+  ],
+  "observed": {
+    "source": { "world": [4372, 628], "terrain_behavior": "0x25", "scene_state": "0x01" },
+    "contact": {
+      "frame_200": { "world": [4728, 769], "terrain_behavior": "0x22", "query_state_a": "0xFF" },
+      "frame_240": { "world": [4728, 739], "terrain_behavior": "0x22", "push_up": "0xFF", "query_state_a": "0xFF" },
+      "frame_300": { "world": [4728, 671], "terrain_behavior": "0x24", "push_up": "0xFF", "query_state_a": "0xFF" }
+    },
+    "timing_controls": {
+      "early": "Up begins before the player reaches x≈4728 and the branch falls/stalls on the lower band.",
+      "mid": "Up begins after a short rightward delay and the branch falls/stalls before the rope contact.",
+      "late": "Up begins after the rope window; the player reaches x≈4716 and falls to the lower floor.",
+      "positive": "Up held through the x≈4728 contact climbs the far rope to the canonical endpoint at world (4728,671)."
+    },
+    "scene": "All four branches remain in SCENE_STATE=0x01 and do not satisfy the Level 01 exit height predicate."
+  },
+  "negative_evidence": [
+    "Starting Up before the vertical rope contact does not attach to the rope.",
+    "Starting Up after the contact window misses the rope and falls to the lower floor.",
+    "The successful rope climb produces no scene-state or transition-gate write."
+  ],
+  "conclusion": "The far-rope route is real and timing-sensitive: Up must be held through the behavior-0x22 contact window at x≈4728. This closes the false negative caused by releasing or starting Up too early and creates a reproducible upper endpoint for the remaining transfer search."
+}

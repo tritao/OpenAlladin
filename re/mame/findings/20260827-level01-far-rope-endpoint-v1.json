@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-level01-far-rope-endpoint-finding-v1",
+  "campaign": "re/mame/campaigns/20260827-level01-far-rope-endpoint-v1.json",
+  "recorded_at": "2026-08-27",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_capture": "fdb59ff",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "traces": [
+    "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-neutral",
+    "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-left-jump",
+    "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-right-jump",
+    "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-up-jump",
+    "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-sword-left",
+    "build/re/analysis/20260827-level01-far-rope-endpoint-v1/endpoint-sword-right"
+  ],
+  "static_context": {
+    "source": "The successful far-rope contact campaign ends at world (4728,671), terrain behavior 0x24.",
+    "exit_predicate": "The Level 01 exit predicate requires PLAYER_WORLD_X > 0x1287 and PLAYER_WORLD_Y < 0x01D6; the endpoint is at the required X range but below the required height."
+  },
+  "confirmed": [
+    "Neutral input leaves the player at (4728,671).",
+    "C+Left exits the endpoint and settles on the known upper band at (4454,628).",
+    "C+Right falls to the lower floor at (4750,874).",
+    "C+Up exits upward and settles on the upper band at (4728,628).",
+    "Sword-left and sword-right remain at the endpoint.",
+    "All six branches remain in SCENE_STATE=0x01 with no exit-gate write."
+  ],
+  "negative_evidence": [
+    "No direct endpoint dismount crosses into the exit-height band.",
+    "No branch writes SCENE_STATE=0x08 or SCENE_SCRIPT_CURSOR.",
+    "No branch materializes a player-transfer actor or other scene-transition response."
+  ],
+  "conclusion": "The far-rope endpoint is a stable, reproducible route frontier. Its direct control family is closed: neutral and attack inputs hold position, left/up jumps return to the ordinary upper band, and right falls to the lower floor. The unresolved step is an interaction/resource-driven upper transfer rather than a simple endpoint dismount."
+}

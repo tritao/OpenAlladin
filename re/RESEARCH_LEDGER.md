@@ -987,6 +987,49 @@ hidden traversal actor or scene-state write appears in the upper-walkway
 branch. This closes the direct connector-top timing family and redirects the
 search to the other vertical connector/resource records.
 
+The far-rope contact correction is recorded in
+`re/mame/findings/20260827-level01-far-rope-up-contact-v1.json` and
+`re/mame/campaigns/20260827-level01-far-rope-up-contact-v1.json`. The timing
+sweep proves that the far vertical rope is reachable: Up must be held through
+the behavior-`0x22` contact window at world `(4728,739)` and the player then
+climbs to the behavior-`0x24` endpoint at `(4728,671)`. Starting Up early,
+mid-window, or late produces lower-band negative controls. The endpoint
+follow-up is recorded in
+`re/mame/findings/20260827-level01-far-rope-endpoint-v1.json` and
+`re/mame/campaigns/20260827-level01-far-rope-endpoint-v1.json`; direct neutral,
+jump, and sword dismounts return to the known upper band or fall, with no
+scene-state or exit-gate write. The endpoint is now the synchronized base for
+the remaining upper-transfer search.
+
+## 2026-08-27 actor lifecycle extension
+
+The synchronized Level-01 actor replay now carries the next lifecycle boundary
+set. Static disassembly and the controlled refill trace identify
+`Actor_HandleType40Interaction` at `0x001AF468` replacing the type-`0x40`
+record with template `0x001B7ABC` (type `0x84`, animation root
+`0x00122F80`). The first frame transition at `0x00122F8A` flips X-facing;
+slot 7 and slot 11 reach that transition at aligned frames 527 and 538. The
+resource sweep clears the short slot-10 child at frame 525 and slot 6 at frame
+523.
+
+The cull handler at `0x001AE0B0` clears the type/resource links without
+zeroing the compact movement-loop words, so native culling now preserves those
+fields for a later slot reuse. F5 template `0x001B7AF8` is the type-`0x2A`
+route actor (`movement=0x00120F76`, `animation=0x001231DC`). Its first
+animation command `FA 42 00 18 02A4` writes the horizontal accumulator; the
+accumulator is now part of the actor animation VM state, while movement
+integration remains on the following boundary. The same pass corrected the
+in-bounds class-zero terrain path: ROM `0x001ADE1E` adds `0x78` to vertical
+acceleration but does not rewrite movement flag bit 0 to bit 6 (that rewrite is
+only the out-of-range `0x001ADE10` path).
+
+The latest `level01-actor-boot` replay matches all 600 requested post-checkpoint
+action frames. The comparison tool also sees one extra synchronized terminal
+state and reports an unrelated frame-601 actor-timer/player-position edge;
+that sentinel is outside the requested input window. Details are recorded in
+`re/mame/findings/20260827-level01-actor-lifecycle-extension-v1.json` and
+`re/mame/campaigns/20260827-level01-actor-lifecycle-extension-v1.json`.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1064,6 +1107,9 @@ search to the other vertical connector/resource records.
 | `20260827-level01-route-join-v1` | recorded-positive-route-extension | clean lower-tower reversal, three guard clearances, and chained far-rope climb; upper transfer unresolved |
 | `20260827-level01-upper-band-pulse-v1` | recorded-negative-frontier | rope-top horizontal line, juggler response, lower-gap drop, and timed C-pulse family; upper transfer unresolved |
 | `20260827-level01-early-top-frontier-v1` | recorded-negative-frontier | six connector-top timing branches plus type-0x65 producer/row correlation; upper transfer unresolved |
+| `20260827-level01-far-rope-up-contact-v1` | recorded-positive-route-frontier | timing sweep proving the far-rope Up contact and synchronized endpoint |
+| `20260827-level01-far-rope-endpoint-v1` | recorded-negative-frontier | direct dismount/jump/attack matrix from the corrected far-rope endpoint |
+| `20260827-level01-actor-lifecycle-extension-v1` | completed-boundary-correction | type-0x40 replacement, F5 type-0x2A accumulator propagation, cull retention, and class-zero terrain correction |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
