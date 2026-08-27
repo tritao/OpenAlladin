@@ -119,6 +119,21 @@ SDL_AUDIODRIVER=dummy ./build/openaladdin --no-window --frames 360 \
   --audio-trace build/re/traces/audio-native.jsonl
 ```
 
+## Scheduler provenance trace
+
+The scheduler trace is an opt-in diagnostic for ordering work. It records the
+native named phase sequence plus animation-VM command PCs that wrote memory;
+MAME can record recovered ROM phase entries and debugger write PCs alongside
+the same game-loop synchronization boundary:
+
+```sh
+python tools/oa.py trace player-run --frames 1400 \
+  --state-sync --scheduler --trace-dir build/re/traces/scheduler-player-run
+```
+
+Native runs accept the matching `--scheduler-trace PATH` option. Phase and
+writer records are provenance diagnostics, not additional semantic state.
+
 Compare the native Z80 bus writes with a MAME capture, and optionally compare
 decoded command IDs when MAME's command breakpoints produced records:
 

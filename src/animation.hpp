@@ -235,6 +235,9 @@ public:
     bool clear_timer_next_update() const { return clear_timer_next_update_; }
     unsigned update_count() const { return update_count_; }
     std::uint32_t return_pc() const { return return_pc_; }
+    void set_writer_trace_enabled(bool enabled) { writer_trace_enabled_ = enabled; }
+    void clear_writer_trace() { writer_pcs_.clear(); }
+    const std::vector<std::uint32_t>& writer_pcs() const { return writer_pcs_; }
     void write_checkpoint(std::ostream& output) const;
     void read_checkpoint(std::istream& input);
 
@@ -297,6 +300,9 @@ private:
     bool defer_tick_next_update_ = false;
     bool clear_timer_next_update_ = false;
     bool tracking_memory_writes_ = false;
+    bool writer_trace_enabled_ = false;
+    std::uint32_t active_command_pc_ = 0;
+    std::vector<std::uint32_t> writer_pcs_;
     std::vector<AnimationSpawnRequest> spawn_requests_{};
     std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;

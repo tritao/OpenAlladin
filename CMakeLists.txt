@@ -477,5 +477,14 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
                     ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_sword_lifecycle.py")
         set_tests_properties(native_sword_lifecycle PROPERTIES
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
+            NAME native_scheduler_trace
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    SDL_VIDEODRIVER=dummy
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_scheduler_trace.py"
+                    "$<TARGET_FILE:openaladdin>")
+        set_tests_properties(native_scheduler_trace PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
     endif()
 endif()

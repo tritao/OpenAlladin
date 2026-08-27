@@ -38,6 +38,7 @@ struct Options {
     bool no_audio = false;
     int sound_id = -1;
     std::string audio_trace;
+    std::string scheduler_trace;
     bool demo = false;
     bool render_only = false;
     std::string state_output;
@@ -241,6 +242,8 @@ Options parse_options(int argc, char** argv) {
             options.sound_id = parse_sound_id(argv[++i]);
         } else if (argument == "--audio-trace" && i + 1 < argc) {
             options.audio_trace = argv[++i];
+        } else if (argument == "--scheduler-trace" && i + 1 < argc) {
+            options.scheduler_trace = argv[++i];
         } else if (argument == "--demo") {
             options.demo = true;
         } else if (argument == "--render-checkpoint") {
@@ -275,7 +278,7 @@ Options parse_options(int argc, char** argv) {
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
-            std::cout << "usage: openaladdin [--assets DIR] [--level-index N] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--sound-id ID] [--audio-trace PATH] [--demo] [--render-checkpoint]\n"
+            std::cout << "usage: openaladdin [--assets DIR] [--level-index N] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--sound-id ID] [--audio-trace PATH] [--scheduler-trace PATH] [--demo] [--render-checkpoint]\n"
                          "       [--state-output PATH] [--framebuffer-out PATH] [--framebuffer-frame N]\n"
                          "       [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
@@ -289,7 +292,8 @@ Options parse_options(int argc, char** argv) {
                          "       [--checkpoint-vdp TRACE_DIR FRAME]\n"
                          "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n"
                          "       --sound-id ID selects a ROM sound sequence (default: Level 01 music 0x49)\n"
-                         "       --audio-trace PATH writes a deterministic native command/event/bus trace\n";
+                         "       --audio-trace PATH writes a deterministic native command/event/bus trace\n"
+                         "       --scheduler-trace PATH writes recovered phase and writer provenance records\n";
             std::exit(0);
         } else {
             throw std::runtime_error("unknown argument: " + argument);
@@ -339,6 +343,7 @@ int main(int argc, char** argv) {
 
         openaladdin::Engine engine;
         engine.load(options.assets, options.sprites, options.rom, options.actor_records, options.actor_timeline);
+        engine.set_scheduler_trace_enabled(!options.scheduler_trace.empty());
         if (!options.checkpoint_terrain_behavior.empty()) {
             engine.set_checkpoint_terrain_behavior(
                 static_cast<std::uint8_t>(std::stoul(options.checkpoint_terrain_behavior, nullptr, 0))
@@ -498,6 +503,18 @@ int main(int argc, char** argv) {
         }
 
         std::ofstream state_file;
+        std::ofstream scheduler_file;
+        if (!options.scheduler_trace.empty()) {
+            const std::filesystem::path scheduler_path(options.scheduler_trace);
+            if (scheduler_path.has_parent_path()) {
+                std::filesystem::create_directories(scheduler_path.parent_path());
+            }
+            scheduler_file.open(scheduler_path);
+            if (!scheduler_file) {
+                throw std::runtime_error("cannot open scheduler trace: " + options.scheduler_trace);
+            }
+            scheduler_file << "{\"type\":\"header\",\"format\":\"openaladdin-scheduler-trace-v1\",\"boundary\":\"game-loop\",\"phase_pc_semantics\":\"recovered-ROM-entry\",\"writer_pc_semantics\":\"native-VM-command-that-wrote-memory\"}\n";
+        }
         if (!options.state_output.empty()) {
             const std::filesystem::path state_path(options.state_output);
             if (state_path.has_parent_path()) {
@@ -507,7 +524,7 @@ int main(int argc, char** argv) {
             if (!state_file) {
                 throw std::runtime_error("cannot open state output: " + options.state_output);
             }
-            state_file << "{\"type\":\"header\",\"format\":\"openaladdin-frame-state-v3\",\"rom\":\"openaladdin\",\"rom_sha256\":\"\",\"state_boundary\":\"game-loop\",\"sync\":{\"boundary\":\"VBlankInterrupt\",\"state_boundary\":\"game-loop\",\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"animation_defer_ticks\",\"animation_force_next_tick\",\"animation_tick_phase\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"],\"actors_qualified\":true,\"actor_slot_count\":32}}\n";
+            state_file << "{\"type\":\"header\",\"format\":\"openaladdin-frame-state-v3\",\"rom\":\"openaladdin\",\"rom_sha256\":\"\",\"state_boundary\":\"game-loop\",\"sync\":{\"boundary\":\"VBlankInterrupt\",\"state_boundary\":\"game-loop\",\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"animation_defer_ticks\",\"animation_force_next_tick\",\"animation_tick_phase\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"],\"actors_qualified\":true,\"actor_slot_count\":32,\"scheduler_trace\":" << (!options.scheduler_trace.empty() ? "true" : "false") << "}}\n";
             engine.write_state(state_file, "none");
         }
 
@@ -619,6 +636,9 @@ int main(int argc, char** argv) {
             }
 
             engine.update(input);
+            if (scheduler_file) {
+                engine.write_scheduler_trace(scheduler_file, input_token);
+            }
             const auto sound_requests = engine.take_sound_requests();
             if (sound_driver) {
                 try {

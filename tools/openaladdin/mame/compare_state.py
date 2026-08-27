@@ -173,7 +173,7 @@ def changed_leaves(
     limit: int = 16,
 ) -> list[tuple[str, Any, Any]]:
     """Return a compact causal delta between two matching-boundary states."""
-    ignored = {"type", "format", "frame", "input", "capture"}
+    ignored = {"type", "format", "frame", "input", "capture", "causal"}
     if limit <= 0:
         return []
     if type(before) is not type(after):
@@ -344,6 +344,12 @@ def main() -> int:
             right_record = dict(right_record)
             left_record.pop("format", None)
             right_record.pop("format", None)
+            # Phase order and writer PCs are provenance diagnostics. They are
+            # intentionally not semantic state: a native phase overlay can
+            # be more explicit than the subset of ROM entry points observed
+            # by a particular breakpoint run.
+            left_record.pop("causal", None)
+            right_record.pop("causal", None)
         difference = (
             selected_difference(left[frame], right[frame], args.fields)
             if args.fields

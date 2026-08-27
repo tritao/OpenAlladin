@@ -36,6 +36,13 @@ covered by:
 PYTHONPATH=tools python3 tests/trace_atomic_state.py
 ```
 
+The native scheduler corpus checks stable phase ordering across idle, movement,
+jump, sword, and apple inputs, including deterministic writer provenance:
+
+```bash
+python3 tests/native_scheduler_trace.py
+```
+
 Generated traces and extracted assets remain under `build/`.
 `native_actor_movement.py` compares the native signed-delta actor movement VM
 against the captured slot-19 type-`0x84` stream, including its `0x84` timer

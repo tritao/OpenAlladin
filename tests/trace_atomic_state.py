@@ -164,9 +164,14 @@ def main() -> int:
             v3_state(1, 7, "right"),
             v3_state(2, 8, "none"),
         ])
+        right_frame_two = v3_state(2, 9, "none")
+        right_frame_two["causal"] = {
+            "phase_order": ["native-only-detail"],
+            "writer_pcs": [0xDEAD],
+        }
         write_trace(v3_right, v3_header, [
             v3_state(1, 7, "right"),
-            v3_state(2, 9, "none"),
+            right_frame_two,
         ])
         result = run([
             sys.executable,

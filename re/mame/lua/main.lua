@@ -72,6 +72,7 @@ local trace_audio_mailbox = os.getenv("OPENALADDIN_TRACE_AUDIO_MAILBOX") == "1"
 local trace_audio_mailbox_reads = os.getenv("OPENALADDIN_TRACE_AUDIO_MAILBOX_READS") == "1"
 local trace_audio_commands = os.getenv("OPENALADDIN_TRACE_AUDIO_COMMANDS") == "1"
 local state_sync = os.getenv("OPENALADDIN_STATE_SYNC") == "1"
+local trace_scheduler = os.getenv("OPENALADDIN_TRACE_SCHEDULER") == "1"
 
 local state_output = capture_profile == "state" or os.getenv("OPENALADDIN_STATE_OUTPUT") == "1"
 local event_output = os.getenv("OPENALADDIN_EVENT_OUTPUT")
@@ -801,6 +802,39 @@ if state_sync then
         sync_action)
 end
 
+if trace_scheduler then
+    if not cpu.debug then
+        error("OPENALADDIN_TRACE_SCHEDULER requires MAME debugger support")
+    end
+    -- These are the recovered ROM entry points that make the order of the
+    -- native frame contract observable. The trace is deliberately opt-in:
+    -- each breakpoint resumes immediately, but a large breakpoint set still
+    -- carries a measurable cost in long runs.
+    local scheduler_phases = {
+        { "frame_loop", "Game_FrameUpdateLoop" },
+        { "terrain_response", "Player_TerrainResponseStateMachine" },
+        { "player_integrate", "Player_IntegrateMotion" },
+        { "terrain_resolve", "Terrain_ResolvePlayerCell" },
+        { "player_collision", "Actor_PlayerCollisionPass" },
+        { "actor_collision", "Actor_ActorCollisionPass" },
+        { "player_interaction", "Player_ProcessInteractionState" },
+        { "interaction_rows_a", "InteractionTable_ProcessRowsA" },
+        { "interaction_rows_b", "InteractionTable_ProcessRowsB" },
+        { "movement_vm", "MovementVM_TickActors" },
+        { "actor_animation", "AnimationVM_TickActors" },
+        { "animation_spawn", "AnimationVM_SpawnOrCopyActor" },
+        { "actor_initialize", "Actor_InitializeFromTemplate" },
+        { "actor_terrain_interaction", "Actor_HandleType2DInteraction" },
+        { "level01_gate", "Level01_EnterRoutine" }
+    }
+    for _, phase in ipairs(scheduler_phases) do
+        local action = string.format(
+            "printf \"OPENALADDIN_SCHEDULER_PHASE NAME=%s PC=%%08X FRAME=%%08X\\n\",pc,frame ; g",
+            phase[1])
+        cpu.debug:bpset(symbol(phase[2]), "", action)
+    end
+end
+
 local function capture_artifacts(frame)
     local checkpoint_name = checkpoints[frame]
     if checkpoint_name then
@@ -960,7 +994,8 @@ local watches = dofile(root .. "/re/mame/lua/watches.lua")({
     trace_rnc_loads = trace_rnc_loads,
     trace_audio_commands = trace_audio_commands,
     trace_audio_mailbox = trace_audio_mailbox,
-    trace_audio_mailbox_reads = trace_audio_mailbox_reads
+    trace_audio_mailbox_reads = trace_audio_mailbox_reads,
+    trace_scheduler = trace_scheduler
 })
 local watched_addresses = watches.watched_addresses
 
@@ -1073,6 +1108,7 @@ write_record({
     { "rnc_loader_trace", json_bool(trace_rnc_loads) },
     { "scene_state_trace", json_bool(trace_scene_states) },
     { "state_trace", json_bool(state_output) },
+    { "scheduler_trace", json_bool(trace_scheduler) },
     { "experiment_actions", json_string(experiment_action_spec) },
     { "event_detectors", json_string(event_spec) },
     { "frame_contract", json_string("S[N] = synchronized state at boundary N; I[N] = input for S[N] -> S[N+1]") },

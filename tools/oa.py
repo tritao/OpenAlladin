@@ -1605,6 +1605,7 @@ def command_trace(args: argparse.Namespace) -> int:
         "OPENALADDIN_TRACE_AUDIO_MAILBOX_READS",
         "OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES",
         "OPENALADDIN_TRACE_AUDIO_COMMANDS",
+        "OPENALADDIN_TRACE_SCHEDULER",
         "OPENALADDIN_POKE_FRAME",
         "OPENALADDIN_POKE_MEMORY",
         "OPENALADDIN_CHECKPOINTS",
@@ -1658,6 +1659,8 @@ def command_trace(args: argparse.Namespace) -> int:
         environment["OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES"] = ",".join(args.audio_read_frame)
     if args.audio_commands:
         environment["OPENALADDIN_TRACE_AUDIO_COMMANDS"] = "1"
+    if args.scheduler:
+        environment["OPENALADDIN_TRACE_SCHEDULER"] = "1"
 
     status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
     if status == 0:
@@ -1880,6 +1883,19 @@ SYNC_ACTOR_PATTERN = re.compile(
     r"movementtimer=(?P<movement_command_timer>[0-9A-F]+) "
     r"animtimer=(?P<animation_timer>[0-9A-F]+) returnpc=(?P<movement_return_pc>[0-9A-F]+) "
     r"flags=(?P<flags>[0-9A-F]+)"
+)
+
+
+SCHEDULER_PHASE_PATTERN = re.compile(
+    r"OPENALADDIN_SCHEDULER_PHASE NAME=(?P<name>[A-Za-z0-9_.-]+) "
+    r"PC=(?P<pc>[0-9A-Fa-f]+) FRAME=(?P<frame>[0-9A-Fa-f]+)"
+)
+
+
+SCHEDULER_WRITE_PATTERN = re.compile(
+    r"OPENALADDIN_SCHEDULER_WRITE PC=(?P<pc>[0-9A-Fa-f]+) "
+    r"FRAME=(?P<frame>[0-9A-Fa-f]+) ADDR=(?P<address>[0-9A-Fa-f]+) "
+    r"DATA=(?P<data>[0-9A-Fa-f]+)"
 )
 
 
@@ -2339,7 +2355,25 @@ def synchronize_state_trace(
 
     synchronized_records: list[dict[str, int]] = []
     synchronized_actor_records: dict[int, dict[int, dict[str, int]]] = {}
+    scheduler_phases: dict[int, list[dict[str, int | str]]] = {}
+    scheduler_writer_pcs: dict[int, list[int]] = {}
     for line in debug_path.read_text(encoding="utf-8").splitlines():
+        phase_match = SCHEDULER_PHASE_PATTERN.search(line)
+        if phase_match:
+            debugger_frame = int(phase_match.group("frame"), 16)
+            scheduler_phases.setdefault(debugger_frame, []).append({
+                "name": phase_match.group("name"),
+                "pc": int(phase_match.group("pc"), 16),
+            })
+            continue
+        write_match = SCHEDULER_WRITE_PATTERN.search(line)
+        if write_match:
+            debugger_frame = int(write_match.group("frame"), 16)
+            pc = int(write_match.group("pc"), 16)
+            writers = scheduler_writer_pcs.setdefault(debugger_frame, [])
+            if not writers or writers[-1] != pc:
+                writers.append(pc)
+            continue
         v2_match = SYNC_V2_PATTERN.search(line)
         if v2_match:
             synchronized_records.append(_sync_v2_record(v2_match))
@@ -2397,6 +2431,23 @@ def synchronize_state_trace(
                 logical_frames[index]: actor_groups[index]
                 for index in range(min(len(logical_frames), len(actor_groups)))
             }
+
+    def map_debugger_groups(
+        groups: dict[int, Any],
+    ) -> dict[int, Any]:
+        if not groups:
+            return {}
+        if sync_mapping == "debugger frame F -> logical state S[F+1]":
+            return {frame + 1: value for frame, value in groups.items()}
+        logical_frames = sorted(frame for frame in states if frame > 0)
+        return {
+            logical_frames[index]: groups[debugger_frame]
+            for index, debugger_frame in enumerate(sorted(groups))
+            if index < len(logical_frames)
+        }
+
+    synchronized_scheduler_phases = map_debugger_groups(scheduler_phases)
+    synchronized_scheduler_writers = map_debugger_groups(scheduler_writer_pcs)
 
     all_frames = set(states)
     all_frames.update(synchronized)
@@ -2484,6 +2535,23 @@ def synchronize_state_trace(
             camera["state_08"] = sync["special_mode"] != 0
         states[frame] = record
 
+    for frame, phases in synchronized_scheduler_phases.items():
+        if frame not in states:
+            continue
+        states[frame]["causal"] = {
+            "phase_order": [phase["name"] for phase in phases],
+            "phase_pcs": [phase["pc"] for phase in phases],
+            "writer_pcs": synchronized_scheduler_writers.get(frame, []),
+        }
+    for frame, writer_pcs in synchronized_scheduler_writers.items():
+        if frame not in states or frame in synchronized_scheduler_phases:
+            continue
+        states[frame]["causal"] = {
+            "phase_order": [],
+            "phase_pcs": [],
+            "writer_pcs": writer_pcs,
+        }
+
     # Mark the qualification of every emitted semantic record explicitly.
     # Raw video samples remain available in state.raw.jsonl; this flag tells
     # strict consumers whether the derived record is an atomic game-loop
@@ -2520,6 +2588,7 @@ def synchronize_state_trace(
         "actor_slot_count": 32,
         "actors_qualified": bool(atomic_frames)
         and len(atomic_frames) == len(synchronized),
+        "scheduler_trace": bool(synchronized_scheduler_phases or synchronized_scheduler_writers),
     }
     header["capture"] = {
         "boundary": "game-loop",
@@ -2530,6 +2599,7 @@ def synchronize_state_trace(
         "actor_slot_count": 32,
         "actors_qualified": bool(atomic_frames)
         and len(atomic_frames) == len(synchronized),
+        "scheduler_trace": bool(synchronized_scheduler_phases or synchronized_scheduler_writers),
     }
     if source_format is not None:
         header["source_format"] = source_format
@@ -4012,6 +4082,7 @@ def build_parser() -> argparse.ArgumentParser:
     trace.add_argument("--audio-mailbox-reads", action="store_true", help="trace selected Z80 mailbox-read frames; pair with --audio-read-frame")
     trace.add_argument("--audio-read-frame", action="append", help="hex frame to inspect for Z80 mailbox reads")
     trace.add_argument("--audio-commands", action="store_true", help="trace ROM music/SFX command dispatches in MAME debug.log")
+    trace.add_argument("--scheduler", action="store_true", help="trace recovered frame phases and scheduler writer provenance")
     trace.set_defaults(function=command_trace)
 
     audio_driver = commands.add_parser(

@@ -51,6 +51,7 @@ return function(options)
     local trace_audio_commands = options.trace_audio_commands
     local trace_audio_mailbox = options.trace_audio_mailbox
     local trace_audio_mailbox_reads = options.trace_audio_mailbox_reads
+    local trace_scheduler = options.trace_scheduler
     local trace_scene_states = options.trace_scene_states
     local trace_selector = options.trace_selector
     local trace_actors = options.trace_actors
@@ -363,6 +364,47 @@ return function(options)
                     actor_slot)
                 cpu.debug:wpset(space, "w", animation_pc_address, 4, "", animation_action)
             end
+        end
+    end
+
+    if trace_scheduler then
+        if not cpu.debug then
+            error("OPENALADDIN_TRACE_SCHEDULER requires MAME debugger support")
+        end
+
+        local function scheduler_watch(address, size)
+            local watch_address = address & 0xfffffe
+            cpu.debug:wpset(
+                space,
+                "w",
+                watch_address,
+                size or 2,
+                "",
+                "printf \"OPENALADDIN_SCHEDULER_WRITE PC=%08X FRAME=%08X ADDR=%08X DATA=%08X\\n\",pc,frame,wpaddr,wpdata ; g")
+        end
+
+        local scheduler_symbols = {
+            "PLAYER_X", "PLAYER_Y", "PLAYER_VX", "PLAYER_VY",
+            "PLAYER_FRAME_PTR", "PLAYER_ANIMATION_PC", "PLAYER_ANIMATION_TIMER",
+            "PLAYER_ACTOR_FLAGS", "PLAYER_INTERACTION_PENDING", "SCENE_STATE",
+            "SCENE_SCRIPT_COUNTDOWN", "TERRAIN_LANDING_STATE",
+            "TERRAIN_RESPONSE_ACTIVE", "TERRAIN_VERTICAL_STOP",
+            "TERRAIN_RESPONSE_TIMER_STATE", "TERRAIN_QUERY_STATE_A",
+            "TERRAIN_QUERY_STATE_B", "TERRAIN_STATE", "TERRAIN_RESPONSE_LATCH",
+            "WORLD_CAMERA_X", "WORLD_CAMERA_Y", "CAMERA_REFERENCE_X",
+            "CAMERA_REFERENCE_Y", "CAMERA_SCROLL_X", "CAMERA_SCROLL_Y",
+            "CAMERA_UPDATE_DELAY", "CAMERA_SPECIAL_MODE"
+        }
+        for _, name in ipairs(scheduler_symbols) do
+            scheduler_watch(symbol(name))
+        end
+
+        for slot = 0, math.min(actor_slot_count, 32) - 1 do
+            local record = actor_table_base + slot * actor_stride
+            -- One range watch per record preserves slot coverage while
+            -- avoiding hundreds of overlapping debugger watchpoints. The
+            -- debugger reports the exact byte/word address that triggered it.
+            scheduler_watch(record, actor_stride)
         end
     end
 

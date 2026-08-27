@@ -130,6 +130,11 @@ struct InputState {
     bool apple_pressed = false;
 };
 
+struct SchedulerPhase {
+    std::string name;
+    std::uint32_t rom_entry_pc = 0;
+};
+
 
 class Engine {
 public:
@@ -171,6 +176,8 @@ public:
     // This is the format used by the visual differential audit tools.
     void write_framebuffer_ppm(const std::string& path) const;
     void write_state(std::ostream& output, const std::string& input_token) const;
+    void set_scheduler_trace_enabled(bool enabled);
+    void write_scheduler_trace(std::ostream& output, const std::string& input_token) const;
     void write_checkpoint(std::ostream& output) const;
     void read_checkpoint(std::istream& input);
 
@@ -223,6 +230,8 @@ private:
     void update_dynamic_actor_culling();
     void sync_player_actor();
     void update_actor_actor_collisions(bool pre_motion = false);
+    void record_scheduler_phase(const char* name, std::uint32_t rom_entry_pc = 0);
+    void collect_scheduler_writer_pcs();
     void render_vdp_checkpoint();
     void update_actor_interactions(const InputState& input, bool was_grounded);
     AnimationContext player_animation_context(bool grounded) const;
@@ -321,6 +330,9 @@ private:
     bool checkpoint_terrain_behavior_override_ = false;
     std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;
+    bool scheduler_trace_enabled_ = false;
+    std::vector<SchedulerPhase> scheduler_phases_;
+    std::vector<std::uint32_t> scheduler_writer_pcs_;
     struct VdpCheckpoint {
         bool loaded = false;
         std::vector<std::uint8_t> vram;

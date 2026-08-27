@@ -3044,6 +3044,15 @@ void Engine::update_camera(bool suppress_vertical_follow) {
 }
 
 void Engine::update(const InputState& input) {
+    if (scheduler_trace_enabled_) {
+        scheduler_phases_.clear();
+        scheduler_writer_pcs_.clear();
+        animation_.clear_writer_trace();
+        for (auto& actor_animation : actor_animations_) {
+            actor_animation.clear_writer_trace();
+        }
+    }
+    record_scheduler_phase("frame_latch", 0x001A8C16);
     actors_.begin_frame();
     animation_preupdated_this_frame_.fill(false);
     for (ActorState& actor : actors_) {
@@ -3081,6 +3090,7 @@ void Engine::update(const InputState& input) {
     // previous frame. Genesis allocates the record before the next actor
     // animation pass, so drain the request at the frame boundary rather than
     // after the current pass has already completed.
+    record_scheduler_phase("deferred_animation_spawn", 0x001AD00E);
     const auto startup_animation_spawns = apply_animation_spawns();
     for (const std::size_t slot : startup_animation_spawns) {
         if (slot < actors_.size()) {
@@ -3097,6 +3107,7 @@ void Engine::update(const InputState& input) {
         }
     }
     if (scene_.is_transition()) {
+        record_scheduler_phase("scene_transition");
         scene_.update_transition(
             SceneInput{input.up, input.down, input.left, input.right},
             player_.x,
@@ -3111,9 +3122,12 @@ void Engine::update(const InputState& input) {
         sync_player_actor();
         apply_actor_timeline(frame_ + 1);
         checkpoint_animation_selector_pending_ = false;
+        record_scheduler_phase("state_boundary");
+        collect_scheduler_writer_pcs();
         ++frame_;
         return;
     }
+    record_scheduler_phase("terrain_input");
     update_terrain_input(input);
     terrain_input_world_x_ = player_world_x();
     terrain_input_world_y_ = player_world_y();
@@ -3130,6 +3144,7 @@ void Engine::update(const InputState& input) {
     // 0x001A9D98 movement integrator, and the fixture supplies the already
     // resolved landing state that the ROM would have in RAM.
     if (!checkpoint_terrain_behavior_override_) {
+        record_scheduler_phase("terrain_contour", 0x001AD7B4);
         apply_floor_contour();
     }
     // The launch frame itself keeps the prior landing value visible. On the
@@ -3208,18 +3223,23 @@ void Engine::update(const InputState& input) {
     // The actor-to-actor pass observes the previous stable animation/motion
     // state. In the Genesis sword trace it terminalizes the sword at x=1313
     // before the next movement delta can advance it to x=1320.
+    record_scheduler_phase("pre_motion_actor_collision", 0x001ABD7E);
     update_actor_actor_collisions(true);
     // The ROM's movement VM performs its cull before integrating actor
     // deltas. Use the pre-motion actor coordinates and pre-follow camera so
     // edge retirement lines up with the synchronized MAME boundary.
+    record_scheduler_phase("actor_culling", 0x001AE0B0);
     update_dynamic_actor_culling();
+    record_scheduler_phase("probe_animation", 0x001AC784);
     update_probe_actor_animation_before_movement();
+    record_scheduler_phase("movement_vm", 0x001ADE36);
     update_actor_movement();
     // FUN_001ADB5C also resolves terrain for non-collision actors whose
     // movement flag bit 0 is set. The common type-0x29 object in the opening
     // refill window has no movement cursor, but its animation publishes a
     // frame pointer and the terrain pass snaps its Y coordinate to the
     // selected class contour on the following VBlank.
+    record_scheduler_phase("actor_terrain", 0x001ADB5C);
     if (!stable_terrain_handler_fixture && !rom_bytes_.empty()) {
         const auto& words = level_.terrain_words();
         const auto& floor = level_.floor_data();
@@ -3358,6 +3378,7 @@ void Engine::update(const InputState& input) {
     // This is what converts the later 0x2D child to the 0x84 template; the
     // earlier child is on a flat class-zero cell and remains eligible for the
     // player collision pass below.
+    record_scheduler_phase("actor_terrain_interaction", 0x001ADB5C);
     if (!stable_terrain_handler_fixture && !rom_bytes_.empty()) {
         const auto& words = level_.terrain_words();
         const auto& floor = level_.floor_data();
@@ -3419,19 +3440,24 @@ void Engine::update(const InputState& input) {
             actor.spawned_by_animation = spawned_by_animation;
         }
     }
+    record_scheduler_phase("player_actor_interaction", 0x001ABB40);
     update_actor_interactions(input, was_grounded);
+    record_scheduler_phase("post_motion_actor_collision", 0x001ABD7E);
     update_actor_actor_collisions();
     // The camera's tile reference is consumed before the actor traversal in
     // the ROM. Rebase it now so the refill edge and the common actor gate see
     // the same newly crossed tile on this VBlank.
     const int camera_reference_y_before_rebase = camera_.reference_y;
+    record_scheduler_phase("camera_reference_rebase", 0x001AA90C);
     rebase_camera_reference();
     const bool camera_vertical_reference_rebased =
         camera_.reference_y != camera_reference_y_before_rebase;
     if (!stable_terrain_handler_fixture) {
+        record_scheduler_phase("interaction_refill", 0x001AE3FC);
         scan_interaction_refill_window();
     }
     if (preprocessed_surface_cell) {
+        record_scheduler_phase("terrain_behavior", 0x001B1E38);
         apply_terrain_behavior(*preprocessed_surface_cell);
     }
     // The launch fixture reaches the ROM handler before its animation pass;
@@ -3439,6 +3465,7 @@ void Engine::update(const InputState& input) {
     // state while the native animation VM remains intentionally separate.
     actor_animation_catch_up_ = false;
     if (!stable_terrain_handler_fixture) {
+        record_scheduler_phase("actor_animation", 0x001AC784);
         update_actor_animations();
     }
     if (arm_surface_interaction
@@ -3569,6 +3596,7 @@ void Engine::update(const InputState& input) {
 
     const int previous_world_y = player_world_y();
     if (checkpoint_terrain_behavior_override_) {
+        record_scheduler_phase("terrain_resolution", 0x001B1E38);
         resolve_terrain(previous_world_y);
     }
     bool landed_during_frame = false;
@@ -3598,6 +3626,7 @@ void Engine::update(const InputState& input) {
             }
         }
     }
+    record_scheduler_phase("player_movement", 0x001A9D98);
     integrate_motion();
     if (player_.terrain_response_active != 0
         && player_.terrain_jump_response_counter != 0
@@ -3617,6 +3646,7 @@ void Engine::update(const InputState& input) {
         player_.vy = static_cast<std::int16_t>(player_.vy + 0x78);
     }
     if (!checkpoint_terrain_behavior_override_) {
+        record_scheduler_phase("terrain_resolution", 0x001B1E38);
         resolve_terrain(
             previous_world_y,
             preprocessed_surface_row,
@@ -3849,6 +3879,7 @@ void Engine::update(const InputState& input) {
         bounce_camera_delay_hold_pending_ = false;
     }
     camera_follow_catch_up_ = false;
+    record_scheduler_phase("camera_follow", 0x001AA90C);
     if (camera_follow_deferred) {
         // The reference-tile write occupies this camera pass. The vertical
         // damped lookup resumes on the following VBlank; horizontal follow
@@ -3970,6 +4001,7 @@ void Engine::update(const InputState& input) {
     // marker only for the post-follow downward rebase path above.
     const bool defer_player_animation_tick = false;
     if (!stable_terrain_handler_fixture && !defer_player_animation_tick) {
+        record_scheduler_phase("player_animation", 0x001AC784);
         if (player_animation_catch_up_) {
             animation_.force_tick_next_update_without_phase();
             player_animation_catch_up_ = false;
@@ -4244,9 +4276,11 @@ void Engine::update(const InputState& input) {
     // tick and expect the auxiliary actor to be visible in that frame's
     // state record. The live sword action is intentionally deferred to the
     // next frame boundary above while its attack timer is active.
+    record_scheduler_phase("post_animation_interaction", 0x001AE4F8);
     if (player_.attack_timer == 0
         && animation_.stream_entry() != kPlayerAttackTransitionStream
         && animation_.stream_entry() != kPlayerSwordStableStream) {
+        record_scheduler_phase("animation_spawn", 0x001AD00E);
         const auto spawned_slots = apply_animation_spawns(true);
         // Player mode-0 F5 records are allocated at the next stable boundary;
         // their initial cursor remains visible until the following common
@@ -4261,7 +4295,62 @@ void Engine::update(const InputState& input) {
     sync_player_actor();
     apply_actor_timeline(frame_ + 1);
     checkpoint_animation_selector_pending_ = false;
+    record_scheduler_phase("state_boundary");
+    collect_scheduler_writer_pcs();
     ++frame_;
+}
+
+void Engine::set_scheduler_trace_enabled(bool enabled) {
+    scheduler_trace_enabled_ = enabled;
+    animation_.set_writer_trace_enabled(enabled);
+    for (auto& actor_animation : actor_animations_) {
+        actor_animation.set_writer_trace_enabled(enabled);
+    }
+}
+
+void Engine::record_scheduler_phase(const char* name, std::uint32_t rom_entry_pc) {
+    if (!scheduler_trace_enabled_) return;
+    scheduler_phases_.push_back(SchedulerPhase{name, rom_entry_pc});
+}
+
+void Engine::collect_scheduler_writer_pcs() {
+    if (!scheduler_trace_enabled_) return;
+    scheduler_writer_pcs_.clear();
+    const auto collect = [this](const PlayerAnimationVm& vm) {
+        for (const std::uint32_t pc : vm.writer_pcs()) {
+            if (pc == 0
+                || (!scheduler_writer_pcs_.empty()
+                    && scheduler_writer_pcs_.back() == pc)) {
+                continue;
+            }
+            scheduler_writer_pcs_.push_back(pc);
+        }
+    };
+    collect(animation_);
+    for (const auto& actor_animation : actor_animations_) {
+        collect(actor_animation);
+    }
+}
+
+void Engine::write_scheduler_trace(
+    std::ostream& output,
+    const std::string& input_token
+) const {
+    output << "{\"type\":\"frame\",\"format\":\"openaladdin-scheduler-trace-v1\""
+           << ",\"frame\":" << frame_
+           << ",\"input\":\"" << input_token << "\",\"phases\":[";
+    for (std::size_t index = 0; index < scheduler_phases_.size(); ++index) {
+        if (index != 0) output << ",";
+        const SchedulerPhase& phase = scheduler_phases_[index];
+        output << "{\"name\":\"" << phase.name
+               << "\",\"rom_entry_pc\":" << phase.rom_entry_pc << "}";
+    }
+    output << "],\"writer_pcs\":[";
+    for (std::size_t index = 0; index < scheduler_writer_pcs_.size(); ++index) {
+        if (index != 0) output << ",";
+        output << scheduler_writer_pcs_[index];
+    }
+    output << "]}\n";
 }
 
 void Engine::write_framebuffer_ppm(const std::string& path) const {
@@ -4628,8 +4717,26 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"update_count\":" << actor_animation.update_count()
                << ",\"return_pc\":" << actor_animation.return_pc() << "}";
     }
-    output << "]}"
-           << ",\"actors\":[";
+    output << "]}";
+    if (scheduler_trace_enabled_) {
+        output << ",\"causal\":{\"phase_order\":[";
+        for (std::size_t index = 0; index < scheduler_phases_.size(); ++index) {
+            if (index != 0) output << ",";
+            output << "\"" << scheduler_phases_[index].name << "\"";
+        }
+        output << "],\"phase_pcs\":[";
+        for (std::size_t index = 0; index < scheduler_phases_.size(); ++index) {
+            if (index != 0) output << ",";
+            output << scheduler_phases_[index].rom_entry_pc;
+        }
+        output << "],\"writer_pcs\":[";
+        for (std::size_t index = 0; index < scheduler_writer_pcs_.size(); ++index) {
+            if (index != 0) output << ",";
+            output << scheduler_writer_pcs_[index];
+        }
+        output << "]}";
+    }
+    output << ",\"actors\":[";
     bool first_actor = true;
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         const ActorState& actor = actors_[slot];

@@ -190,7 +190,7 @@ elif [[ -n "${TRACE_SECONDS}" ]]; then
     MAME_ARGS+=( -seconds_to_run "${TRACE_SECONDS}" )
 fi
 
-if [[ "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" || "${OPENALADDIN_TRACE_RNC_LOADS:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" == "1" || "${OPENALADDIN_TRACE_AUDIO_COMMANDS:-0}" == "1" || -n "${OPENALADDIN_BREAKPOINTS:-}" ]]; then
+if [[ "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" || "${OPENALADDIN_TRACE_RNC_LOADS:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" == "1" || "${OPENALADDIN_TRACE_AUDIO_COMMANDS:-0}" == "1" || "${OPENALADDIN_TRACE_SCHEDULER:-0}" == "1" || -n "${OPENALADDIN_BREAKPOINTS:-}" ]]; then
     MAME_ARGS+=(
         -debug
         -debugscript "${ROOT_DIR}/re/mame/lua/continue-debugger.txt"
@@ -210,7 +210,7 @@ fi
 # MAME's implicit -debuglog path is the caller's working directory, which can
 # leave a stale or unrelated debug.log at the repository root for breakpoint
 # and actor-initializer runs.
-if [[ "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" == "1" || "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" || "${OPENALADDIN_TRACE_RNC_LOADS:-0}" == "1" || "${OPENALADDIN_TRACE_AUDIO_COMMANDS:-0}" == "1" || -n "${OPENALADDIN_BREAKPOINTS:-}" ]]; then
+if [[ "${OPENALADDIN_STATE_SYNC:-0}" == "1" || "${OPENALADDIN_TRACE_EDGES:-0}" == "1" || "${OPENALADDIN_DEBUG_WATCH:-0}" == "1" || "${OPENALADDIN_TRACE_ACTOR_INIT:-0}" == "1" || "${OPENALADDIN_TRACE_RNC_LOADS:-0}" == "1" || "${OPENALADDIN_TRACE_AUDIO_COMMANDS:-0}" == "1" || "${OPENALADDIN_TRACE_SCHEDULER:-0}" == "1" || -n "${OPENALADDIN_BREAKPOINTS:-}" ]]; then
     cd "${TRACE_DIR}"
 fi
 

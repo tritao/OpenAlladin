@@ -179,6 +179,8 @@ void PlayerAnimationVm::reset() {
     force_tick_without_phase_ = false;
     defer_tick_next_update_ = false;
     tracking_memory_writes_ = false;
+    active_command_pc_ = 0;
+    writer_pcs_.clear();
     spawn_requests_.clear();
     sound_requests_.clear();
     update_count_ = 0;
@@ -253,6 +255,10 @@ std::uint32_t PlayerAnimationVm::read_memory32(std::uint32_t address) const {
 }
 
 void PlayerAnimationVm::write_memory8(std::uint32_t address, std::uint8_t value) {
+    if (writer_trace_enabled_ && tracking_memory_writes_ && active_command_pc_ != 0
+        && (writer_pcs_.empty() || writer_pcs_.back() != active_command_pc_)) {
+        writer_pcs_.push_back(active_command_pc_);
+    }
     if (address < actor_.size()) actor_[address] = value;
     else if (address >= 0xFF0000 && address <= 0xFFFFFF) {
         const auto offset = address - 0xFF0000;
@@ -425,6 +431,7 @@ bool PlayerAnimationVm::flag_command(std::uint32_t& cursor) {
 }
 
 bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, const AnimationContext& context) {
+    active_command_pc_ = cursor;
     switch (opcode) {
     case 0xEA: cursor = read_rom32(cursor + 2); return false;
     case 0xEB:
@@ -595,6 +602,7 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
 }
 
 void PlayerAnimationVm::tick_rom(const AnimationContext& context) {
+    active_command_pc_ = 0;
     if (animation_pc_ == 0 || rom_.empty()) return;
     sync_context(context);
     std::uint32_t cursor = animation_pc_;
@@ -629,6 +637,7 @@ void PlayerAnimationVm::tick_actor_rom(
     const AnimationContext& context,
     const ActorAnimationState& actor
 ) {
+    active_command_pc_ = 0;
     if (animation_pc_ == 0 || rom_.empty()) return;
     sync_actor_context(actor, context);
     std::uint32_t cursor = animation_pc_;
@@ -655,17 +664,21 @@ void PlayerAnimationVm::tick_actor_rom(
         return;
     }
 
+    tracking_memory_writes_ = true;
     for (int instruction = 0; instruction < 1024; ++instruction) {
         const std::uint8_t opcode = read_rom8(cursor);
         if (!is_command(opcode)) {
+            tracking_memory_writes_ = false;
             animation_pc_ = cursor;
             return;
         }
         if (command(opcode, cursor, context)) {
+            tracking_memory_writes_ = false;
             animation_pc_ = cursor;
             return;
         }
     }
+    tracking_memory_writes_ = false;
     throw std::runtime_error("actor animation VM command loop exceeded 1024 instructions");
 }
 
