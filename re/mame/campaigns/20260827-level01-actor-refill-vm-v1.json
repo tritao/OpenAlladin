@@ -22,6 +22,13 @@
       "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_BREAKPOINTS=0x001AC784 OPENALADDIN_BREAKPOINT_REGISTERS=1 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
       "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
       "frames": 1360
+    },
+    {
+      "id": "refill-actor-animation-clear",
+      "trace_dir": "build/re/level01-actor-boot-refill-v6",
+      "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_BREAKPOINTS=0x001AC86C,0x001AC8E0,0x001AD0FC OPENALADDIN_BREAKPOINT_REGISTERS=1 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
+      "frames": 1360
     }
   ],
   "evidence": {
@@ -56,16 +63,26 @@
         "type": "0x40",
         "world": [560, 816],
         "animation_pc": "0x00000000",
-        "frame_ptr": "0x00000000"
+        "frame_ptr": "0x001F84A4"
       }
-    ]
+    ],
+    "animation_clear": {
+      "mame_frame": "0x537",
+      "pc": "0x001AC86E",
+      "opcode": "0xEC",
+      "operand": "0x01",
+      "actor_slot": 8,
+      "actor_address": "0x00FF8050",
+      "stream_cursor": "0x00122C14",
+      "result": "The EC 01 handler clears the actor animation cursor while preserving type 0x40 and the current frame pointer."
+    }
   },
   "static_semantics": {
     "animation_vm": "0x001AC784 first clears transient VM fields, then services actors only when (0x00FF7E28 & 1) is nonzero. It scans 32 records, requires a nonzero type and animation pointer, and either consumes animation commands or decrements the actor delay at record +0x37.",
     "initializer": "0x001AE30A copies the compact template fields, installs the animation pointer from template +0x0C, and clears the actor runtime frame/timer/link fields.",
     "f5": "0x001AD00E selects the allocator by the F5 mode byte and applies signed source offsets; optional animation and movement overrides are read from the F5 payload.",
-    "clear": "0x001AD0FC clears a mode-0 actor when the F5 mode and actor flags permit, otherwise it enters the shared owned-resource cleanup path."
+    "clear": "0x001AD0FC clears a mode-0 actor when the F5 mode and actor flags permit, otherwise it enters the shared owned-resource cleanup path. The separate EC 01 animation command at 0x001AC86C clears only record +0x20 (the animation cursor), leaving the actor type and frame pointer intact."
   },
-  "conclusion": "The interaction-refill actor is allocated by the level-object dispatcher at the same VBlank boundary where the shared animation gate advances. Its transient cursor/frame observation is consistent with a real allocation-plus-VM boundary, but does not justify applying the opening player F5 scheduling rule to all interaction spawns. Native scheduling must retain separate allocation families until the first common-pass eligibility and actor-clear path are modeled.",
-  "next_action": "Use the recorded slot-8 boundary as the native differential fixture; next decode the interaction-refill actor's animation stream and its first clear/retire command before changing the common scheduler again."
+  "conclusion": "The interaction-refill actor is allocated by the level-object dispatcher at the same VBlank boundary where the shared animation gate advances. At the next common VM pass, stream 0x00122C12 presents its first frame and EC 01 executes at 0x001AC86E with A1=0x00FF8050; the actor remains type 0x40 while its animation cursor is cleared and frame pointer 0x001F84A4 is retained. This is an animation-state clear, not actor retirement, and does not justify applying the opening player F5 scheduling rule to all interaction spawns.",
+  "next_action": "Add the slot-8 EC 01 boundary as a native differential fixture: preserve type/frame state when the stream clears its animation cursor, then verify the interaction allocator's subsequent reuse path."
 }

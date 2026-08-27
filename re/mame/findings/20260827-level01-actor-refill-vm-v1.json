@@ -17,7 +17,8 @@
   },
   "runtime": {
     "initializer_trace": "build/re/level01-actor-boot-refill-v4/debug.log",
-    "actor_state_trace": "build/re/level01-actor-boot-refill-v5/state.jsonl",
+    "actor_state_trace": "build/re/level01-actor-boot-refill-v6/state.jsonl",
+    "animation_clear_trace": "build/re/level01-actor-boot-refill-v6/debug.log",
     "initializer": {
       "mame_frame": "0x536",
       "actor_slot": 8,
@@ -33,15 +34,32 @@
     },
     "states": [
       { "frame": 1336, "slot": 8, "type": "0x40", "world": [560, 816], "animation_pc": "0x00122C12", "frame_ptr": "0x00000000" },
-      { "frame": 1337, "slot": 8, "type": "0x40", "world": [560, 816], "animation_pc": "0x00000000", "frame_ptr": "0x00000000" }
-    ]
+      { "frame": 1337, "slot": 8, "type": "0x40", "world": [560, 816], "animation_pc": "0x00000000", "frame_ptr": "0x001F84A4" }
+    ],
+    "animation_clear": {
+      "mame_frame": "0x537",
+      "pc": "0x001AC86E",
+      "opcode": "0xEC",
+      "operand": "0x01",
+      "actor_slot": 8,
+      "actor_address": "0x00FF8050",
+      "stream_cursor": "0x00122C14",
+      "registers": {
+        "a1": "0x00FF8050",
+        "a2": "0x00122C14",
+        "d0": "0x00000000",
+        "d1": "0x00000003"
+      },
+      "result": "EC 01 writes zero to actor record +0x20, clearing animation_pc while leaving type 0x40 and frame_ptr 0x001F84A4 intact."
+    }
   },
   "semantics": {
     "animation_gate": "AnimationVM_TickActors services the table only when (0x00FF7E28 & 1) != 0.",
     "eligibility": "A live actor must have a nonzero animation pointer at record +0x20; otherwise the VM does not consume a stream. A nonzero delay at +0x37 decrements instead of servicing the stream.",
     "initializer": "Actor_InitializeFromTemplate clears runtime frame, movement, animation timer, and linked-resource fields after copying the compact template.",
-    "f5": "AnimationVM_SpawnOrCopyActor applies source-relative signed offsets and can override animation/movement cursors from the F5 payload."
+    "f5": "AnimationVM_SpawnOrCopyActor applies source-relative signed offsets and can override animation/movement cursors from the F5 payload.",
+    "animation_clear": "The common animation dispatch at 0x001AC86C maps EC to the clear handler. Operand 0x01 selects the actor animation cursor field at record +0x20; it is distinct from F6 actor retirement."
   },
-  "conclusion": "The first interaction-refill actor is a separate scheduler boundary from the opening player F5 actor. It is allocated at 0x001B5270 during MAME frame 0x536, while the low-bit animation gate crosses to 0x91 at 0x001A8C1E; the actor is then observed briefly at the next stable state with cursor 0x00122C12 and no frame pointer before returning to zero. This confirms a real allocation/eligibility boundary but does not establish that all mode-0 or mode-3 animation spawns share the same immediate-service rule.",
-  "next_action": "Decode the 0x00122C12 stream and trace the first command that returns slot 8 to a zero cursor; use that as the next native actor-refill regression fixture."
+  "conclusion": "The first interaction-refill actor is a separate scheduler boundary from the opening player F5 actor. It is allocated at 0x001B5270 during MAME frame 0x536, while the low-bit animation gate crosses to 0x91 at 0x001A8C1E. At MAME frame 0x537, the 0x00122C12 stream executes EC 01 with A1=0x00FF8050 (slot 8), clearing only the animation cursor; the actor remains type 0x40 with frame pointer 0x001F84A4. This confirms a real allocation/eligibility boundary and distinguishes animation-state clearing from F6 actor retirement.",
+  "next_action": "Add the slot-8 EC 01 boundary as a native differential fixture, preserving the live actor type and frame pointer when the animation cursor is cleared, then trace the subsequent allocator reuse."
 }

@@ -232,10 +232,12 @@ the finding or commit message.
 - `re/mame/findings/20260827-level01-actor-refill-vm-v1.json`: the first
   interaction-refill actor is allocated in slot 8 at MAME frame `0x536` through
   `0x001B5270`, while the common animation gate crosses to `0x91` at
-  `0x001A8C1E`. The actor is briefly observed at the next stable boundary with
-  animation cursor `0x00122C12` and no frame pointer, then returns to a zero
-  cursor. Static decoding confirms that `AnimationVM_TickActors` requires the
-  gate low bit and a nonzero actor animation pointer, so the opening player F5
+  `0x001A8C1E`. At MAME frame `0x537`, stream `0x00122C12` executes `EC 01`
+  at `0x001AC86E` with `A1=0x00FF8050` (slot 8); this clears only record
+  `+0x20`, the animation cursor, while preserving type `0x40` and frame pointer
+  `0x001F84A4`. Static decoding confirms that `AnimationVM_TickActors` requires
+  the gate low bit and a nonzero actor animation pointer, so this is animation
+  state clearing rather than F6 actor retirement, and the opening player F5
   deferral rule cannot yet be generalized to interaction-refill actors.
 - `re/mame/findings/20260827-player-slope-grounded-boundary-v1.json`: a fresh
   Level 01 actor-boot replay shows non-flat contour bytes (`0x0F` through
