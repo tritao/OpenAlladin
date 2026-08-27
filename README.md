@@ -16,6 +16,19 @@ python tools/oa.py setup
 python tools/oa.py ghidra rebuild
 ```
 
+Genie is the packaged frontend for the same workflow. Install it from the
+checkout to enable both entry forms:
+
+```bash
+python3 -m pip install -e .
+genie --help
+python3 -m genie --help
+genie doctor
+```
+
+The existing `./oa.sh ...` and `python tools/oa.py ...` forms remain supported
+as compatibility shims while the command handlers are migrated.
+
 The supported workflow frontend is:
 
 ```bash

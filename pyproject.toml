@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openaladdin-genie"
+version = "0.1.0"
+description = "Genie reverse-engineering tooling for OpenAladdin"
+requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "MIT" }
+dependencies = []
+
+[project.scripts]
+genie = "genie.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["genie*", "tools*"]
+
+[tool.setuptools.package-data]
+"tools.openaladdin.ghidra" = ["*.sh", "*.cmd"]
+"tools.openaladdin.mame" = ["*.sh"]
