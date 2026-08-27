@@ -1,0 +1,120 @@
+{
+  "campaign": "20260827-level01-transition-resource-lifecycle-v1",
+  "status": "completed-negative-resource-lifecycle",
+  "purpose": "Trace the Level 01 exit countdown through SceneScript_AdvanceState and bound its nested resource/interaction lifecycle before script-state dispatch.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "755aa976f10b085c8f83029c4ceb44895d23a7e4",
+  "trace_harness_commit": "62e3826",
+  "working_tree_at_capture": "The scene-context tracing change used by this capture is now committed at 62e3826; unrelated untracked mame/ captures were left untouched.",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "static_sources": [
+    "build/re/level-transition-targeted-decompile-v2.json",
+    "re/scheduler/frame_phases.yml",
+    "re/symbols/ram.yml"
+  ],
+  "instrumentation": {
+    "breakpoints": [
+      "0x001A8E3E",
+      "0x001B0078",
+      "0x001B0D70",
+      "0x001B16E0",
+      "0x001B1842",
+      "0x001B1878",
+      "0x001B199E",
+      "0x001B1AA0",
+      "0x001B1AB6",
+      "0x001B2784",
+      "0x001B28AE",
+      "0x001B249E",
+      "0x001B5B4A",
+      "0x001B0F66",
+      "0x001B0CB4",
+      "0x001B2ACE"
+    ],
+    "breakpoint_register_dump": true,
+    "breakpoint_scene_context": true,
+    "scheduler_call_trace": true,
+    "scene_state_trace": true,
+    "source_local_pokes": [
+      "frame 1: 0x00FF7DFA=0x0219:u16",
+      "frame 1: 0x00FF7DFC=0x00B0:u16",
+      "frame 1: 0x00FF7E58=0x0000:u16",
+      "frame 1: 0x00FF7E5A=0x0000:u16"
+    ]
+  },
+  "segments": [
+    {
+      "id": "local-boundary-resource-lifecycle",
+      "trace_dir": "build/re/campaigns/20260827-transition-resource-lifecycle-v1/upper-frontier-resource-lifecycle",
+      "frames": 1600,
+      "input": "none*1600",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "trace_files": ["debug.log", "trace_boot.jsonl", "state.jsonl"],
+      "observed": {
+        "boundary_predicate_post_pc": "0x001B5B4C",
+        "scene_advance_post_pc": "0x001A8E40",
+        "first_scene_service_post_pcs": ["0x001B007A", "0x001B0D72"],
+        "resource_loop_post_pc": "0x001B28B0",
+        "resource_loop_iterations": 300,
+        "interaction_lifecycle_entry_post_pc": "0x001B16E2",
+        "interaction_lifecycle_loop_post_pcs": {
+          "0x001B1844": 1147,
+          "0x001B187A": 114
+        },
+        "wait_helper_post_pc": "0x001B24A0",
+        "wait_helper_hits": 1513,
+        "scene_writer_hits": 0,
+        "transition_entry_hits": 0,
+        "transition_latch_writer_hits": 0,
+        "state_after": "0x01",
+        "cursor_after": "0x4082",
+        "countdown_after": "0xFF"
+      },
+      "result": "The local-coordinate poke reproduces the Level 01 boundary write and arms the scene countdown. SceneScript_AdvanceState then enters its resource prelude; 0x1B0D70 executes its statically visible 0x12B..0 VBlank-paced service loop through 0x1B28AE, after which the nested 0x1B16E0 interaction/resource lifecycle remains active at 0x1B1842/0x1B1878 for the entire 1600-frame replay. The script cursor/state branch is not reached, and no Scene_EnterTransitionMode or FRAME_WAIT_LATCH transition writer fires."
+    }
+  ],
+  "negative_controls": [
+    {
+      "id": "poweron-world-field-poke",
+      "trace_dir": "build/re/campaigns/20260827-transition-resource-lifecycle-v1/poweron-exit-poke",
+      "result": "Derived world fields are overwritten by the normal publisher; no transition follows."
+    },
+    {
+      "id": "upper-frontier-local-short",
+      "trace_dir": "build/re/campaigns/20260827-transition-resource-lifecycle-v1/upper-frontier-local-predicate",
+      "frames": 600,
+      "result": "The boundary is observed but the scene countdown remains 0xFF and scene state remains 0x01; no transition follows."
+    },
+    {
+      "id": "focused-path",
+      "trace_dir": "build/re/campaigns/20260827-transition-resource-lifecycle-v1/upper-frontier-transition-path-scene",
+      "frames": 40,
+      "result": "The focused path observes 0x1A8E3E -> 0x1B0078 -> 0x1B0D70 -> the VBlank wait helper, but not script parsing or transition entry."
+    }
+  ],
+  "confidence": {
+    "decompiled": [
+      "0x001A8E3E",
+      "0x001B0D70",
+      "0x001B16E0",
+      "0x001B28AE",
+      "0x001B249E"
+    ],
+    "trace_validated": [
+      "Level 01 boundary writer and countdown arm",
+      "SceneScript_AdvanceState resource prelude",
+      "300 iterations of the 0x001B28AE VBlank-paced loop",
+      "persistent 0x001B16E0 interaction/resource lifecycle",
+      "absence of scene-state and transition-latch writers in this replay"
+    ],
+    "parity_validated": []
+  },
+  "conclusion": "This campaign closes the available upper-frontier replay as a restartable transition proof: the boundary writer and nested VBlank-paced resource/interaction path are proven, while follow-on scene-state dispatch remains unreachable because the checkpoint lacks the completed transition/resource context. Do not promote this negative result into a natural-exit failure.",
+  "next_action": "Find a checkpoint or natural route segment that enters SceneScript_AdvanceState with the transition/resource lifecycle already complete, then trace the script-state writer and Scene_EnterTransitionMode."
+}

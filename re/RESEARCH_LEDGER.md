@@ -297,6 +297,18 @@ the finding or commit message.
   reach the transition writer pair, so those writers remain statically
   decompiled but not dynamically reached.
 
+- `re/mame/campaigns/20260827-level01-transition-resource-lifecycle-v1.json`
+  and its finding record the next transition/resource coverage pass. The
+  upper-frontier checkpoint with the proven local-coordinate predicate reaches
+  the Level 01 boundary writer (`0x001B5B66 -> FFF0E9=FF`), then ordinal 29
+  enters `SceneScript_AdvanceState` and its `0x001B0078 -> 0x001B0D70`
+  resource prelude. The latter executes 300 VBlank-paced service iterations
+  through `0x001B28AE -> 0x001B249E`; the nested `0x001B16E0` lifecycle then
+  remains active at `0x001B1842`/`0x001B1878` for the 1600-frame replay. No
+  script cursor/state writer, `Scene_EnterTransitionMode`, or transition
+  `FRAME_WAIT_LATCH` writer fires. This is a restartability/resource-context
+  limitation, not evidence that the natural route cannot transition.
+
 - `re/mame/findings/20260827-level01-type34-reuse-native-v1.json`: the later
   selector-0x53 reuse now applies the caller's type-0x34/animation-0x00122C1E/
   movement-0x001217B4 fields directly after the generic initializer. Native
@@ -1246,6 +1258,7 @@ jump, settles on behavior `0x25` at `(4728,628)`, and never reaches the behavior
 | `20260827-level01-early-top-delayed-dismount-v1` | recorded-negative-frontier | seven delayed-C dismount branches from the early connector top; ordinary high-walkway arc only, no upper transfer |
 | `20260827-level01-far-rope-upper-resource-trace-v1` | recorded-positive-producer-frontier | natural far-rope upward dismount produces the upper Type-0x1E/Type-0x20 pair; no scene transition |
 | `20260827-level01-upper-band-inventory-v1` | recorded-negative-frontier | complete x=4400–4799 upper-band interaction/terrain inventory plus clean far-rope endpoint replay; no remaining upper-band launch or transition producer |
+| `20260827-level01-transition-resource-lifecycle-v1` | completed-negative-resource-lifecycle | upper-frontier boundary writer, scene resource prelude, 300 VBlank-paced service iterations, and persistent nested interaction/resource lifecycle; scene-state dispatch and transition latch writers remain unreachable from the checkpoint |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

@@ -1,0 +1,65 @@
+{
+  "format": "openaladdin-transition-resource-lifecycle-finding-v1",
+  "recorded_at": "2026-08-27",
+  "status": "static-dynamic-negative-replay",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "62e3826",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-transition-resource-lifecycle-v1.json",
+  "static_model": "re/scheduler/frame_phases.yml",
+  "static_chain": [
+    "0x001A8E3E SceneScript_AdvanceState",
+    "0x001B0078 scene/resource prelude",
+    "0x001B0D70 VBlank-paced resource loop",
+    "0x001B28AE service iteration",
+    "0x001B249E VBlank wait helper",
+    "0x001B16E0 nested interaction/resource lifecycle",
+    "0x001B0CB4 -> 0x001B2ACE transition entry (not reached)"
+  ],
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "trace": "build/re/campaigns/20260827-transition-resource-lifecycle-v1/upper-frontier-resource-lifecycle",
+  "dynamic_evidence": {
+    "boundary_writer_post_pc": "0x001B5B4C",
+    "scene_advance_post_pc": "0x001A8E40",
+    "scene_prelude_post_pcs": ["0x001B007A", "0x001B0D72"],
+    "resource_loop_post_pc": "0x001B28B0",
+    "resource_loop_iterations": 300,
+    "interaction_lifecycle_entry_post_pc": "0x001B16E2",
+    "interaction_lifecycle_loop_post_pcs": {
+      "0x001B1844": 1147,
+      "0x001B187A": 114
+    },
+    "wait_helper_post_pc": "0x001B24A0",
+    "wait_helper_hits": 1513,
+    "scene_state_writer_hits": 0,
+    "transition_entry_hits": 0,
+    "frame_wait_latch_transition_writer_hits": 0,
+    "final_scene_state": "0x01",
+    "final_script_cursor": "0x4082",
+    "final_script_countdown": "0xFF"
+  },
+  "confidence": {
+    "decompiled": [
+      "SceneScript_AdvanceState resource prelude",
+      "0x001B0D70 bounded service loop",
+      "0x001B16E0 interaction/resource lifecycle",
+      "0x001B249E VBlank release semantics"
+    ],
+    "trace_validated": [
+      "Level 01 boundary condition reaches the countdown writer",
+      "resource prelude and 300 service iterations",
+      "persistent nested interaction/resource loop",
+      "transition path remains unreachable from this checkpoint"
+    ],
+    "parity_validated": []
+  },
+  "limitations": [
+    "The replay uses a saved upper-frontier checkpoint and a local-coordinate predicate poke, not a natural level exit.",
+    "The checkpoint does not carry a completed transition/resource context, so failure to reach the scene-state branch is a restartability limitation.",
+    "No claim is made about natural reachability of the transition branch."
+  ],
+  "conclusion": "The available upper-frontier checkpoint proves the Level 01 boundary and the nested resource/interaction lifecycle but does not reach script-state dispatch or Scene_EnterTransitionMode. This is a negative replay boundary, not evidence that the natural route cannot transition."
+}

@@ -513,7 +513,10 @@ call_sequence:
     pre_state_mutation: scene script cursor, pending flag, countdown, and scene state are read
     post_state_mutation: scene state/script cursor and scene resource pending state
     possible_second_invocation: no second direct call in this loop; transition helpers can re-enter related scene paths
-    status: decompiled
+    status: trace_validated
+    dynamic_evidence:
+      campaign: re/mame/campaigns/20260827-level01-transition-resource-lifecycle-v1.json
+      result: The Level 01 boundary can enter SceneScript_AdvanceState and its nested resource/interaction prelude from the upper-frontier checkpoint; the script cursor/state branch remains unreachable because the checkpoint does not carry completed transition/resource context.
 
   - ordinal: 30
     call_site: 0x001A8CCE
@@ -661,6 +664,25 @@ dynamic_validation:
       transition_route_status: not_reached_in_recorded_replay
       helper_pc: 0x001B249E
       helper_role: optional Z80 handshake gate; actual frame release waits on VBLANK_READY_LATCH
+  scene_script_transition_probe:
+    status: trace_validated_negative
+    campaign: re/mame/campaigns/20260827-level01-transition-resource-lifecycle-v1.json
+    finding: re/mame/findings/20260827-level01-transition-resource-lifecycle-v1.json
+    trace_root: build/re/campaigns/20260827-transition-resource-lifecycle-v1/upper-frontier-resource-lifecycle
+    boundary_writer_post_pc: 0x001B5B4C
+    scene_advance_post_pc: 0x001A8E40
+    prelude_post_pcs: [0x001B007A, 0x001B0D72]
+    resource_loop_post_pc: 0x001B28B0
+    resource_loop_iterations: 300
+    interaction_lifecycle_loop_post_pcs:
+      0x001B1844: 1147
+      0x001B187A: 114
+    wait_helper_post_pc: 0x001B24A0
+    wait_helper_hits: 1513
+    scene_state_writer_hits: 0
+    transition_entry_hits: 0
+    frame_wait_latch_transition_writer_hits: 0
+    note: This is a static/dynamic negative replay boundary. It validates the nested resource path, but does not establish natural transition reachability or native parity.
 
 native_mapping:
   status: provisional
@@ -676,7 +698,7 @@ native_mapping:
       rom_support: no direct call in the recovered gameplay body; F5 allocation is reached through the animation VM dispatch
       status: indirect_only
   next_dynamic_questions:
-    - Which transition branch reaches the 0x001B2DF4/0x001B2E02 FRAME_WAIT_LATCH writers during a natural route?
+    - Which completed transition/resource context lets SceneScript_AdvanceState reach its script cursor/state branch and the 0x001B2DF4/0x001B2E02 FRAME_WAIT_LATCH writers?
     - Does any indirect caller reach 0x001AC784 during one gameplay boundary besides ordinal 30?
     - Which state transition, if any, causes the native probe-animation service to correspond to a real ROM call?
     - Which caller/branch owns the post-animation actor traversal observed in native traces?

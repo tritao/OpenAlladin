@@ -41,6 +41,15 @@ conditional gate for the Z80 bus handshake in `0x001B249E`. The helper's
 actual release condition is `VBLANK_READY_LATCH` at `0x00FF7E1E`, written by
 `VBlankInterrupt`.
 
+The transition/resource follow-up is recorded in
+`re/mame/campaigns/20260827-level01-transition-resource-lifecycle-v1.json`.
+Its upper-frontier replay reaches the Level 01 boundary and validates the
+`SceneScript_AdvanceState` resource prelude, including 300
+`0x001B28AE`/`0x001B249E` VBlank-paced service iterations. The nested
+`0x001B16E0` lifecycle then remains active for the capture, so the script
+cursor/state branch and `Scene_EnterTransitionMode` are not reached. This is
+restartability/resource-context evidence, not a natural-route failure.
+
 Reanalyze an existing capture with:
 
 ```sh

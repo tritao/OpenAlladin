@@ -1003,6 +1003,12 @@ coordinates, live map word, terrain index, floor byte, contour lookup, and
 terrain-response flags.  This context is intended for saved-state route
 branches and is opt-in; ordinary breakpoint traces keep their existing output.
 
+For scene/resource breakpoints, set
+`OPENALADDIN_BREAKPOINT_SCENE_CONTEXT=1` alongside
+`OPENALADDIN_BREAKPOINT_REGISTERS=1`. The resulting
+`OPENALADDIN_BREAK_SCENE` lines include scene state, script cursor/data/table,
+pending/countdown/gate flags, and the scene resource latches.
+
 ## Confirmed observation
 
 The verified USA/NTSC ROM reaches the first Agrabah gameplay screen after the
