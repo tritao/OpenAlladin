@@ -738,7 +738,7 @@ state `0x01` after a script terminates. State `0x08` is special: the player
 movement routine switches to a camera/transition branch instead of normal
 player integration.
 
-The table is a five-entry, six-byte record array at ROM `0x004B04`. Its state
+The table is a four-entry, six-byte record array at ROM `0x004B04`. Its state
 byte is at record offset `+4`; entry 1 is at `0x004B0A` and contains state
 `0x08` at `0x004B0E`. The state write instruction in the selector is
 `0x001B3F0A`. The compact script region decoded by the asset pipeline spans

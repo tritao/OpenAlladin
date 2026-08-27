@@ -6,7 +6,10 @@ format: openaladdin-scene-transitions-v1
 table:
   address: 0x00004B04
   entry_size: 6
-  count: 5
+  # Four valid records occupy 0x004B04..0x004B1B. The pointer at entry 0
+  # targets 0x004B1C, which is the following script/data region, not a fifth
+  # table record.
+  count: 4
   pointer_offset: 0
   state_offset: 4
   metadata_offset: 5

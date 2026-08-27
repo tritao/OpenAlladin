@@ -1,0 +1,128 @@
+{
+  "campaign": "20260827-level01-pole-input-matrix-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Test the guide-shaped pole interaction window on the early upper walkway with exact-position jump, Up, and directional variants.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "c1b608c208a440e2fc18fca514d4dfe55caa5786",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "working_tree_note": "The pre-existing Lua and native C++ changes were preserved and not staged by this evidence commit.",
+  "source_checkpoint": "build/re/analysis/20260827-level01-handhold-postgrab-timing-v1/lead-10/states/genesis/top.sta",
+  "instrumentation": {
+    "capture": "state",
+    "actor_trace": true,
+    "scene_state_trace": true,
+    "preload_before_capture": true,
+    "checkpoint_names": ["top", "pole-approach", "pole-window", "jump-apex", "post-pole", "lower-fall", "end"]
+  },
+  "segments": [
+    {
+      "id": "jump-before-pole",
+      "trace_dir": "build/re/analysis/20260827-level01-pole-input-matrix-v1/jump-before-pole",
+      "frames": 420,
+      "input": "c+right*20,right*135,c*30,right*170,none*65",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-handhold-postgrab-timing-v1/lead-10/states/genesis/top.sta",
+      "checkpoints": [
+        { "frame": 1, "name": "top" }, { "frame": 145, "name": "pole-approach" },
+        { "frame": 166, "name": "pole-window" }, { "frame": 196, "name": "jump-apex" },
+        { "frame": 250, "name": "post-pole" }, { "frame": 340, "name": "lower-fall" },
+        { "frame": 420, "name": "end" }
+      ]
+    },
+    {
+      "id": "jump-at-first-pole",
+      "trace_dir": "build/re/analysis/20260827-level01-pole-input-matrix-v1/jump-at-first-pole",
+      "frames": 420,
+      "input": "c+right*20,right*145,c*30,right*160,none*65",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-handhold-postgrab-timing-v1/lead-10/states/genesis/top.sta",
+      "checkpoints": [
+        { "frame": 1, "name": "top" }, { "frame": 145, "name": "pole-approach" },
+        { "frame": 166, "name": "pole-window" }, { "frame": 196, "name": "jump-apex" },
+        { "frame": 250, "name": "post-pole" }, { "frame": 340, "name": "lower-fall" },
+        { "frame": 420, "name": "end" }
+      ]
+    },
+    {
+      "id": "jump-after-pole",
+      "trace_dir": "build/re/analysis/20260827-level01-pole-input-matrix-v1/jump-after-pole",
+      "frames": 420,
+      "input": "c+right*20,right*155,c*30,right*150,none*90",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-handhold-postgrab-timing-v1/lead-10/states/genesis/top.sta",
+      "checkpoints": [
+        { "frame": 1, "name": "top" }, { "frame": 145, "name": "pole-approach" },
+        { "frame": 166, "name": "pole-window" }, { "frame": 196, "name": "jump-apex" },
+        { "frame": 250, "name": "post-pole" }, { "frame": 340, "name": "lower-fall" },
+        { "frame": 420, "name": "end" }
+      ]
+    },
+    {
+      "id": "up-at-first-pole",
+      "trace_dir": "build/re/analysis/20260827-level01-pole-input-matrix-v1/up-at-first-pole",
+      "frames": 420,
+      "input": "c+right*20,right*145,up*20,c*30,right*160,none*45",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-handhold-postgrab-timing-v1/lead-10/states/genesis/top.sta",
+      "checkpoints": [
+        { "frame": 1, "name": "top" }, { "frame": 145, "name": "pole-approach" },
+        { "frame": 166, "name": "pole-window" }, { "frame": 196, "name": "jump-apex" },
+        { "frame": 250, "name": "post-pole" }, { "frame": 340, "name": "lower-fall" },
+        { "frame": 420, "name": "end" }
+      ]
+    },
+    {
+      "id": "up-jump-at-first-pole",
+      "trace_dir": "build/re/analysis/20260827-level01-pole-input-matrix-v1/up-jump-at-first-pole",
+      "frames": 420,
+      "input": "c+right*20,right*145,c+up*30,right*160,none*65",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-handhold-postgrab-timing-v1/lead-10/states/genesis/top.sta",
+      "checkpoints": [
+        { "frame": 1, "name": "top" }, { "frame": 145, "name": "pole-approach" },
+        { "frame": 166, "name": "pole-window" }, { "frame": 196, "name": "jump-apex" },
+        { "frame": 250, "name": "post-pole" }, { "frame": 340, "name": "lower-fall" },
+        { "frame": 420, "name": "end" }
+      ]
+    },
+    {
+      "id": "left-jump-at-first-pole",
+      "trace_dir": "build/re/analysis/20260827-level01-pole-input-matrix-v1/left-jump-at-first-pole",
+      "frames": 420,
+      "input": "c+right*20,right*145,c+left*30,left*80,none*145",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-handhold-postgrab-timing-v1/lead-10/states/genesis/top.sta",
+      "checkpoints": [
+        { "frame": 1, "name": "top" }, { "frame": 145, "name": "pole-approach" },
+        { "frame": 166, "name": "pole-window" }, { "frame": 196, "name": "jump-apex" },
+        { "frame": 250, "name": "post-pole" }, { "frame": 340, "name": "lower-fall" },
+        { "frame": 420, "name": "end" }
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "branches": ["jump-before-pole", "jump-at-first-pole", "jump-after-pole"],
+      "result": "The three jump timings produce the ordinary jump arc; the targeted jump reaches world Y=463 and then the upper-walkway edge fall."
+    },
+    {
+      "branches": ["up-at-first-pole", "up-jump-at-first-pole"],
+      "result": "Up and C+Up at the pole window do not install a connector, spring, or altered terrain response."
+    },
+    {
+      "branches": ["left-jump-at-first-pole"],
+      "result": "C+Left reverses onto the upper walkway and does not transfer upward or trigger a scene gate."
+    }
+  ],
+  "scene_result": {
+    "all_branches_scene_state": "0x01",
+    "scene_state_08_writes": 0,
+    "exit_countdown_writes": 0,
+    "exit_height_reached": false
+  },
+  "conclusion": "The early upper-walkway pole timing family is closed under six replayable branches. The visible poles and nearby type-0x06 object do not explain the missing transfer to world Y<0x01D6.",
+  "next_action": "Return to the unresolved lower/far resource-object chain and retain this campaign as the negative boundary for the peddler-side upper walkway."
+}

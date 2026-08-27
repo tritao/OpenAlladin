@@ -161,7 +161,7 @@ PYTHONPATH=tools python tools/openaladdin/assets/validate_scene_resources.py
 ```
 
 The scene-transition pass is driven by `re/assets/scene_transitions.yml`. It
-decodes the five 6-byte records used by `0x001B3B96` at ROM `0x004B04` and the
-14 four-byte records around the runtime script cursor at `0x00004082`.
+decodes the four valid 6-byte records used by `0x001B3B96` at ROM `0x004B04`
+and the 14 four-byte records around the runtime script cursor at `0x00004082`.
 `tools/oa.py assets` writes the generated report to
 `build/assets/scene_transitions.json`.

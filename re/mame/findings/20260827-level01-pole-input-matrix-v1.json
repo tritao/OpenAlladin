@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-level01-pole-input-matrix-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify the static-pole interaction hypothesis on the early upper walkway after the connector-top route.",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_analysis": "c1b608c",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-pole-input-matrix-v1.json",
+  "trace_root": "build/re/analysis/20260827-level01-pole-input-matrix-v1",
+  "source_checkpoint": "build/re/analysis/20260827-level01-handhold-postgrab-timing-v1/lead-10/states/genesis/top.sta",
+  "static_context": {
+    "visible_pole_region": { "world_x": [2000, 2064], "world_y": [448, 464] },
+    "nearby_runtime_type_06": {
+      "handler": "0x001AE9DA",
+      "decompile": "build/re/level01-type06-player-collision-targeted-decompile-v1.json",
+      "classification": "shared player-collision block; no direct launch, coordinate transfer, or scene write"
+    },
+    "nearby_terrain_cells": [
+      { "world_x": 1968, "world_y": 544, "behavior": "0x81" },
+      { "world_x": 1984, "world_y": 544, "behavior": "0x80" }
+    ],
+    "terrain_handlers": {
+      "0x80": "0x001B65BE no-op default",
+      "0x81": "0x001B65BE no-op default",
+      "0x85": "0x001B5448 sets upper-edge surface-transition flag",
+      "0x86": "0x001B5440 clears upper-edge surface-transition flag"
+    }
+  },
+  "runtime_results": {
+    "jump_before_pole": { "target_world": [1959, 530], "jump_world_y": 463, "maximum_world_x": 2444, "terminal_world": [2444, 920] },
+    "jump_at_first_pole": { "target_world": [1989, 530], "jump_world_y": 463, "maximum_world_x": 2452, "terminal_world": [2452, 920] },
+    "jump_after_pole": { "target_world": [2019, 530], "jump_world_y": 463, "maximum_world_x": 2472, "terminal_world": [2472, 920] },
+    "up_at_first_pole": { "target_world": [1989, 530], "jump_world_y": 463, "maximum_world_x": 2452, "terminal_world": [2452, 920] },
+    "up_jump_at_first_pole": { "target_world": [1989, 530], "jump_world_y": 463, "maximum_world_x": 2452, "terminal_world": [2452, 920] },
+    "left_jump_at_first_pole": { "target_world": [1989, 530], "maximum_world_x": 1992, "terminal_world": [1662, 530] }
+  },
+  "scene_and_gate_audit": {
+    "scene_state": "0x01 throughout all six branches",
+    "scene_state_08": false,
+    "scene_script_countdown": false,
+    "level01_exit_predicate": "not satisfied; no branch reaches world Y<0x01D6 while beyond X=0x1287"
+  },
+  "conclusion": "The visible pole region is not a special spring/connector under the tested controller verbs. The player only receives the ordinary jump response and the same upper-edge fall; the nearby type-0x06 object is independently classified as a shared collision block rather than a transfer object.",
+  "next_action": "Do not spend more timing sweeps on this upper-walkway pole family. Focus the next route search on the lower/far resource-object condition that can create the required upper-band transfer."
+}
