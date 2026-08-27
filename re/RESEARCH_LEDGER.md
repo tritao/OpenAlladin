@@ -1043,6 +1043,23 @@ Both segments remain in `SCENE_STATE=0x01`. This corrects the earlier
 provenance mistake: the high-walkway-entry checkpoint did not contain the
 live camel; the hidden-ledge descent is the required producer path.
 
+The loaded-state trace harness fix is recorded in commit `7417cce`:
+preloaded MAME states can restore an already-consumed emulated-time budget, so
+the wrapper now supplies a generous wall-clock ceiling whenever a state is
+loaded. The Lua frame limit remains authoritative. This makes long traces
+from named checkpoints reproducible instead of silently ending after a few
+frames.
+
+The upper Type-0x1E/Type-0x20 pair's VM boundary is recorded in
+`re/mame/findings/20260827-level01-upper-pair-vm-trace-v1.json` and
+`re/mame/campaigns/20260827-level01-upper-pair-vm-trace-v1.json`. A 180-frame
+neutral replay from the synchronized activation checkpoint produced 179
+actor-collision breakpoint hits, but no Type-0x1E or Type-0x20 handler entry,
+animation ED/FB dispatch, callback entry, or scene-gate write. The pair's
+animation cursors advance locally while `SCENE_STATE` stays `0x01`; this
+closes the direct neutral VM-probe family and leaves the unresolved work at
+the connector/terrain producer boundary.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1130,6 +1147,7 @@ live camel; the hidden-ledge descent is the required producer path.
 | `20260827-level01-peddler-guide-matrix-v2` | recorded-negative-frontier | eight synchronization-corrected peddler-side walk-off/held-jump branches; 0x86/0x85 edge fall only |
 | `20260827-level01-peddler-c-timing-v1` | recorded-negative-frontier | nine synchronization-corrected held-C onset branches from the peddler platform; ordinary jump or edge fall only |
 | `20260827-level01-far-floor-type1e-trace-v1` | recorded-negative-frontier | detailed far-floor Type-1E contact, local FFF0E6 timer, and deferred callback trace; no scene transition |
+| `20260827-level01-upper-pair-vm-trace-v1` | recorded-negative | 180-frame neutral VM-boundary trace from the synchronized Type-0x1E/Type-0x20 activation pair; no handler or scene transition |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
