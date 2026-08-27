@@ -961,6 +961,17 @@ the canonical rope top `(4728,671)` with terrain behavior `0x24`. The gameplay
 scene remains `SCENE_STATE=0x01`, so the remaining frontier is the upper-band
 transfer and natural exit predicate above the rope.
 
+The upper-band pulse branch is recorded in
+`re/mame/findings/20260827-level01-upper-band-pulse-v1.json` and
+`re/mame/campaigns/20260827-level01-upper-band-pulse-v1.json`. From the valid
+rope-top checkpoint, `C+Left` reaches the behavior-`0x25` horizontal line at
+world `(4614,628)`. The recorded sword window converts the type-`0x0A` juggler
+to terminal type `0x84`, after which the player drops to the lower gap at
+`(4121,912)`. Three timed C pulses end at `(3293,912)` on the lower floor;
+`SCENE_STATE` remains `0x01` and no transition-gate write occurs. This closes
+the line/juggler/pulse family as an upper-transfer solution and moves the next
+target to static decoding of the upper-band resource/interaction producer.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1036,6 +1047,7 @@ transfer and natural exit predicate above the rope.
 | `20260827-level01-player-motion-writer-audit-v1` | recorded-static-audit | complete actor-specific player-coordinate/velocity writer classification; no unclassified Level 01 writer |
 | `20260827-level01-early-highledge-handhold-v1` | recorded-positive-route-extension | early high-walkway type-0x6A→0x6B handhold and x=1568 connector route; hidden ledge and exit unresolved |
 | `20260827-level01-route-join-v1` | recorded-positive-route-extension | clean lower-tower reversal, three guard clearances, and chained far-rope climb; upper transfer unresolved |
+| `20260827-level01-upper-band-pulse-v1` | recorded-negative-frontier | rope-top horizontal line, juggler response, lower-gap drop, and timed C-pulse family; upper transfer unresolved |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

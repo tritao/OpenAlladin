@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-level01-upper-band-pulse-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify the upper-band line/juggler/lower-gap continuation from the valid far-rope checkpoint.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_capture": "1d35e64",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-upper-band-pulse-v1.json",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "traces": [
+    "build/re/campaigns/20260827-level01-route-join-v19/horizontal-line",
+    "build/re/campaigns/20260827-level01-route-join-v20/juggler-defeat",
+    "build/re/campaigns/20260827-level01-route-join-v21/gap-approach",
+    "build/re/campaigns/20260827-level01-route-join-v22/platform-pulses"
+  ],
+  "confirmed": [
+    "C+Left from the rope top dismounts into the behavior-0x25 horizontal line at world (4614,628).",
+    "Leaving the line with the recorded sword window changes the type-0x0A juggler to terminal type 0x84 at frame 99.",
+    "Continued left movement reaches the lower floor/gap band at world (4121,912).",
+    "Three timed C pulses end at world (3293,912) and remain in SCENE_STATE=0x01."
+  ],
+  "negative_evidence": [
+    "No tested branch reaches world Y<0x01D6 after the far-rope top.",
+    "No scene-state, script-cursor, or transition-gate write occurs in this route family."
+  ],
+  "conclusion": "This route family is closed as an upper-transfer solution. The next useful work is static decoding of the Level 01 upper-band resource/interaction records and their producer/placement path, especially the objects near the rope-top and row-10 upper surface."
+}

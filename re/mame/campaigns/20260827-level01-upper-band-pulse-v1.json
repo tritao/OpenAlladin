@@ -1,0 +1,74 @@
+{
+  "campaign": "20260827-level01-upper-band-pulse-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Record the current-checkout upper-band continuation from the far rope top through the horizontal line, juggler response, lower gap, and timed C-pulse route.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "1d35e64",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "timing_note": "All segments use preload-before-capture and non-breakpoint state capture. Checkpoints are saved at synchronized state boundaries and retain actor/animation phase.",
+  "segments": [
+    {
+      "id": "rope-top-to-horizontal-line",
+      "trace_dir": "build/re/campaigns/20260827-level01-route-join-v19/horizontal-line",
+      "frames": 120,
+      "input": "c+left*20,left*90,none*10",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-route-join-v12/rope-climb/states/genesis/rope-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "rope-top", "state": "states/genesis/rope-top.sta" },
+        { "frame": 20, "name": "rope-dismount", "state": "states/genesis/rope-dismount.sta" },
+        { "frame": 110, "name": "horizontal-line", "state": "states/genesis/horizontal-line.sta" },
+        { "frame": 120, "name": "line-settled", "state": "states/genesis/line-settled.sta" }
+      ]
+    },
+    {
+      "id": "juggler-to-lower-gap",
+      "trace_dir": "build/re/campaigns/20260827-level01-route-join-v20/juggler-defeat",
+      "frames": 360,
+      "input": "left*80,b*20,left*260",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-route-join-v19/horizontal-line/states/genesis/line-settled.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "line-settled", "state": "states/genesis/line-settled.sta" },
+        { "frame": 80, "name": "juggler-contact", "state": "states/genesis/juggler-contact.sta" },
+        { "frame": 100, "name": "juggler-defeated", "state": "states/genesis/juggler-defeated.sta" },
+        { "frame": 160, "name": "drop-window", "state": "states/genesis/drop-window.sta" },
+        { "frame": 360, "name": "juggler-end", "state": "states/genesis/juggler-end.sta" }
+      ]
+    },
+    {
+      "id": "timed-lower-gap-pulses",
+      "trace_dir": "build/re/campaigns/20260827-level01-route-join-v22/platform-pulses",
+      "frames": 320,
+      "input": "left*30,c+left*20,left*50,c+left*20,left*50,c+left*20,left*130",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-route-join-v21/gap-approach/states/genesis/gap-approach.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "gap-approach", "state": "states/genesis/gap-approach.sta" },
+        { "frame": 30, "name": "first-pulse", "state": "states/genesis/first-pulse.sta" },
+        { "frame": 100, "name": "second-pulse", "state": "states/genesis/second-pulse.sta" },
+        { "frame": 170, "name": "third-pulse", "state": "states/genesis/third-pulse.sta" },
+        { "frame": 320, "name": "platform-end", "state": "states/genesis/platform-end.sta" }
+      ]
+    }
+  ],
+  "observed": {
+    "horizontal_line": { "world": [4614, 628], "terrain_behavior": "0x25" },
+    "juggler": { "actor_slot": 5, "type_before": "0x0A", "type_after": "0x84", "transition_frame": 99 },
+    "lower_gap": { "world": [4121, 912], "terrain_behavior": "0x11" },
+    "pulse_endpoint": { "world": [3293, 912], "terrain_behavior": "0x11", "scene_state": "0x01" }
+  },
+  "conclusion": "The rope-top horizontal-line and juggler sequence is real, but it drops into the lower band. Three timed C pulses traverse that lower gap without producing the upper transfer or a scene transition. The missing route remains the interaction/resource condition that moves the player from the far rope or horizontal band to the upper row satisfying world Y<0x01D6."
+}
