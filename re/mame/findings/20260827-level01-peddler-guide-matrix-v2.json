@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-level01-peddler-guide-matrix-finding-v2",
+  "campaign": "re/mame/campaigns/20260827-level01-peddler-guide-matrix-v2.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "source_checkpoint": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+  "trace_root": "build/re/analysis/20260827-level01-peddler-guide-matrix-v2",
+  "result": {
+    "branches": 8,
+    "frames_each": 360,
+    "stable_loaded_world": [2120, 530],
+    "edge_world_x": 2276,
+    "edge_behaviors": ["0x86", "0x85"],
+    "minimum_world_y": 517,
+    "maximum_world_x": 2558,
+    "terminal_world_y": 920,
+    "scene_state": "0x01",
+    "scene_state_08": false,
+    "launch_handler_hits": 0
+  },
+  "interpretation": "The peddler-side route is not explained by a walk-off/held-jump timing variant from the stable platform checkpoint. The player reaches the same 0x86-to-0x85 open edge and falls through the lower band; no type-0x65/0x66 bounce, type-0x6A/0x6B handhold, launch handler, or scene gate is observed.",
+  "negative_boundary": "This campaign supersedes the provisional first pass by correcting the loaded-state first-token alignment. Its checkpoints and exact input schedules are retained for replay.",
+  "next_action": "Focus on the lower/far resource-object path and trace the producer of the type-0x1E interaction plus the behavior-0x29/0x2D launch handlers."
+}

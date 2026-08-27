@@ -1,0 +1,199 @@
+{
+  "campaign": "20260827-level01-peddler-guide-matrix-v2",
+  "status": "recorded-negative-frontier",
+  "purpose": "Test the guide-shaped peddler-side walk-off and held-jump timing family from a stable upper-walkway checkpoint.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_analysis": "c7dcd6a",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "working_tree_note": "The pre-existing generated mame/ directory was preserved and not staged by this evidence commit.",
+  "source_checkpoint": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+  "trace_root": "build/re/analysis/20260827-level01-peddler-guide-matrix-v2",
+  "instrumentation": {
+    "capture": "state",
+    "actor_trace": true,
+    "scene_state_trace": true,
+    "actor_initializer_trace": true,
+    "preload_before_capture": true,
+    "state_sync": false,
+    "breakpoints": [
+      "0x001AF468",
+      "0x001AE9DA",
+      "0x001AE796",
+      "0x001AFBF4",
+      "0x001AF978",
+      "0x001B557E",
+      "0x001B56B6"
+    ]
+  },
+  "segments": [
+    {
+      "id": "approach-jump",
+      "trace_dir": "build/re/analysis/20260827-level01-peddler-guide-matrix-v2/approach-jump",
+      "frames": 360,
+      "input": "none*2,right*45,c*1,right*100,none*213",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "anchor", "state": "states/genesis/anchor.sta" },
+        { "frame": 60, "name": "approach", "state": "states/genesis/approach.sta" },
+        { "frame": 100, "name": "fall-window", "state": "states/genesis/fall-window.sta" },
+        { "frame": 180, "name": "superjump-window", "state": "states/genesis/superjump-window.sta" },
+        { "frame": 300, "name": "settled", "state": "states/genesis/settled.sta" }
+      ]
+    },
+    {
+      "id": "edge-hold-neutral",
+      "trace_dir": "build/re/analysis/20260827-level01-peddler-guide-matrix-v2/edge-hold-neutral",
+      "frames": 360,
+      "input": "none*2,right*60,none*15,c*30,left*30,none*233",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "anchor", "state": "states/genesis/anchor.sta" },
+        { "frame": 60, "name": "approach", "state": "states/genesis/approach.sta" },
+        { "frame": 100, "name": "fall-window", "state": "states/genesis/fall-window.sta" },
+        { "frame": 180, "name": "superjump-window", "state": "states/genesis/superjump-window.sta" },
+        { "frame": 300, "name": "settled", "state": "states/genesis/settled.sta" }
+      ]
+    },
+    {
+      "id": "edge-hold-left",
+      "trace_dir": "build/re/analysis/20260827-level01-peddler-guide-matrix-v2/edge-hold-left",
+      "frames": 360,
+      "input": "none*2,right*60,none*10,c+left*30,left*100,none*168",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "anchor", "state": "states/genesis/anchor.sta" },
+        { "frame": 60, "name": "approach", "state": "states/genesis/approach.sta" },
+        { "frame": 100, "name": "fall-window", "state": "states/genesis/fall-window.sta" },
+        { "frame": 180, "name": "superjump-window", "state": "states/genesis/superjump-window.sta" },
+        { "frame": 300, "name": "settled", "state": "states/genesis/settled.sta" }
+      ]
+    },
+    {
+      "id": "edge-late-left",
+      "trace_dir": "build/re/analysis/20260827-level01-peddler-guide-matrix-v2/edge-late-left",
+      "frames": 360,
+      "input": "none*2,right*75,none*10,c*30,left*120,none*133",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "anchor", "state": "states/genesis/anchor.sta" },
+        { "frame": 60, "name": "approach", "state": "states/genesis/approach.sta" },
+        { "frame": 100, "name": "fall-window", "state": "states/genesis/fall-window.sta" },
+        { "frame": 180, "name": "superjump-window", "state": "states/genesis/superjump-window.sta" },
+        { "frame": 300, "name": "settled", "state": "states/genesis/settled.sta" }
+      ]
+    },
+    {
+      "id": "edge-pulse-left",
+      "trace_dir": "build/re/analysis/20260827-level01-peddler-guide-matrix-v2/edge-pulse-left",
+      "frames": 360,
+      "input": "none*2,right*75,none*20,c+left*1,left*160,none*82",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "anchor", "state": "states/genesis/anchor.sta" },
+        { "frame": 60, "name": "approach", "state": "states/genesis/approach.sta" },
+        { "frame": 100, "name": "fall-window", "state": "states/genesis/fall-window.sta" },
+        { "frame": 180, "name": "superjump-window", "state": "states/genesis/superjump-window.sta" },
+        { "frame": 300, "name": "settled", "state": "states/genesis/settled.sta" }
+      ]
+    },
+    {
+      "id": "edge-far-left",
+      "trace_dir": "build/re/analysis/20260827-level01-peddler-guide-matrix-v2/edge-far-left",
+      "frames": 360,
+      "input": "none*2,right*90,none*10,c+left*30,left*140,none*98",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "anchor", "state": "states/genesis/anchor.sta" },
+        { "frame": 60, "name": "approach", "state": "states/genesis/approach.sta" },
+        { "frame": 100, "name": "fall-window", "state": "states/genesis/fall-window.sta" },
+        { "frame": 180, "name": "superjump-window", "state": "states/genesis/superjump-window.sta" },
+        { "frame": 300, "name": "settled", "state": "states/genesis/settled.sta" }
+      ]
+    },
+    {
+      "id": "combined-pulses",
+      "trace_dir": "build/re/analysis/20260827-level01-peddler-guide-matrix-v2/combined-pulses",
+      "frames": 360,
+      "input": "none*2,right*60,c+right*20,right*40,c+left*30,left*100,none*107",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "anchor", "state": "states/genesis/anchor.sta" },
+        { "frame": 60, "name": "approach", "state": "states/genesis/approach.sta" },
+        { "frame": 100, "name": "fall-window", "state": "states/genesis/fall-window.sta" },
+        { "frame": 180, "name": "superjump-window", "state": "states/genesis/superjump-window.sta" },
+        { "frame": 300, "name": "settled", "state": "states/genesis/settled.sta" }
+      ]
+    },
+    {
+      "id": "long-right-fall",
+      "trace_dir": "build/re/analysis/20260827-level01-peddler-guide-matrix-v2/long-right-fall",
+      "frames": 360,
+      "input": "none*2,right*120,none*20,c*60,left*140,none*26",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-peddler-platform-anchor-v1/states/genesis/peddler-platform.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "anchor", "state": "states/genesis/anchor.sta" },
+        { "frame": 60, "name": "approach", "state": "states/genesis/approach.sta" },
+        { "frame": 100, "name": "fall-window", "state": "states/genesis/fall-window.sta" },
+        { "frame": 180, "name": "superjump-window", "state": "states/genesis/superjump-window.sta" },
+        { "frame": 300, "name": "settled", "state": "states/genesis/settled.sta" }
+      ]
+    }
+  ],
+  "observed": {
+    "stable_anchor": { "world": [2120, 530], "scene_state": "0x01" },
+    "edge": { "world_x": 2276, "behavior": "0x86", "first_descent": "0x85" },
+    "minimum_world_y_after_load": 517,
+    "maximum_world_x_after_load": 2558,
+    "terminal_worlds": "All branches settle in the lower band at world Y=920; the longest rightward branch reaches X=2558 before settling.",
+    "launch_handlers": {
+      "0x001B557E": 0,
+      "0x001B56B6": 0
+    },
+    "actor_handlers": {
+      "0x001AF468": 0,
+      "0x001AE9DA": 0,
+      "0x001AE796": 0,
+      "0x001AFBF4": 0,
+      "0x001AF978": 0
+    },
+    "scene_state": "0x01 throughout",
+    "scene_script_countdown": 0
+  },
+  "conclusion": "With the loaded-state synchronization corrected, all eight guide-shaped peddler-side branches reproduce the same open upper-edge descent. The local 0x85/0x86 surface pair is encountered, but no spring/transfer handler, actor response, or scene transition fires. This closes the peddler-side walk-off timing family from this stable anchor.",
+  "next_action": "Return to the lower/far resource-object chain, especially the unresolved type-0x1E producer and the behavior-0x29/0x2D launch paths; retain this campaign as the upper-route negative boundary."
+}
