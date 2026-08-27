@@ -1,0 +1,30 @@
+{
+  "campaign": "20260827-post-transition-level-loader-negative-v1",
+  "status": "negative-loader-reentry",
+  "purpose": "Check whether the settled Level 01 scene-3 loop re-enters the common level loader or advances resources when left running.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "845d5fb",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "settled-state3-loader-watch",
+      "trace_dir": "build/re/campaigns/20260827-post-transition-level-loader-negative-v1",
+      "frames": 300,
+      "input": "none*300",
+      "load_state": "transition-settled",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/transition-settled.sta",
+      "capture": "state",
+      "scene_state_trace": true,
+      "rnc_loader_trace": true,
+      "breakpoints": ["0x001AA484"],
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta", "scene_state": 3 },
+        { "frame": 299, "name": "end", "state": "states/genesis/end.sta", "scene_state": 3 }
+      ]
+    }
+  ],
+  "next": "Keep the scene-3 loop as a terminal transition checkpoint; investigate progression from the natural Level 01 route or decode the selector that should choose the next scene-table entry."
+}

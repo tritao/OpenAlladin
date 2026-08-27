@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-post-transition-level-loader-finding-v1",
+  "recorded_at": "2026-08-27",
+  "campaign": "re/mame/campaigns/20260827-post-transition-level-loader-negative-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "7744566",
+  "source_checkpoint": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/transition-settled.sta",
+  "trace": {
+    "directory": "build/re/campaigns/20260827-post-transition-level-loader-negative-v1",
+    "state_stream": "state.jsonl",
+    "boot_stream": "trace_boot.jsonl",
+    "debug_log": "debug.log",
+    "input": "none*300",
+    "breakpoint": "0x001AA484",
+    "frame_count": 300
+  },
+  "observations": {
+    "preload": { "scene_state": "0x03", "script_cursor": "0x408A", "scene_table_index": 0, "world": [2019, 690] },
+    "stable_window": { "frames": "1..300", "scene_states": ["0x03"], "script_cursors": ["0x408A"], "scene_table_indexes": [0], "world_positions": [[2019, 690]] },
+    "level_loader_breakpoint_hits": 0,
+    "rnc_loader_events": 0,
+    "scene_state_changes_after_preload": 0
+  },
+  "conclusion": "The settled scene-3 loop does not re-enter Level_LoadFromSceneState at 0x001AA484, does not invoke the RNC loader, and does not advance the scene state, script cursor, or scene-table index during the 300-frame no-input observation. It is therefore not a hidden playable next-level load."
+}
