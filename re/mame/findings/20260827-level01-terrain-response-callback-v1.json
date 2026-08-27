@@ -1,0 +1,59 @@
+{
+  "format": "openaladdin-level01-terrain-response-callback-finding-v1",
+  "campaign": "re/mame/campaigns/20260827-level01-terrain-response-callback-v1.json",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify the behavior-0x47 callback and its relationship to the lower-tower player response.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "2ad9a77",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign_trace": "build/re/campaigns/20260827-level01-terrain-response-callback-v1",
+  "ghidra": {
+    "target_request": "re/ghidra/targets/level01-terrain-query-callback-targets.json",
+    "report": "build/re/level01-terrain-query-callback-decompile-v1.json",
+    "semantics": {
+      "0x001B5470": "If the surface latch is clear, sets it to 0xFF and toggles TERRAIN_SURFACE_MODE.",
+      "0x001B5492": "Clears TERRAIN_SURFACE_MODE.",
+      "0x001B549C": "Sets TERRAIN_SURFACE_MODE to one.",
+      "0x001B1E38": "Resets terrain query/response state, resolves one terrain cell, and clears the surface latch whenever the selected behavior is not 0x47.",
+      "0x001AD7B4": "Samples the contour resource, applies the ordinary landing/grounding response, and advances gravity when no landing contour is accepted; it has no scene-state write.",
+      "0x001B323A-0x001B324E": "The three configured terrain callback targets are empty returns; the caller-side query wrappers invoke the stored callback pointers."
+    }
+  },
+  "runtime": {
+    "input": "up+right*20,down+right*20,up+left*20,down+left*20,none*100",
+    "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+    "frames": 180,
+    "first_behavior_47": {
+      "mame_frame": "0x00000C2D",
+      "breakpoint_pc_after_instruction": "0x001B5472",
+      "world": [2735, 820],
+      "query_flags": "0x79",
+      "surface_mode_before": 0,
+      "surface_latch_before": 0
+    },
+    "surface_switch": {
+      "surface_latch": { "address": "0x00FFF0C2", "value": "0xFF", "pc": "0x001B548A" },
+      "surface_mode": { "address": "0x00FFF0A4", "value": 1, "pc": "0x001B5492" },
+      "mode_remains": 1,
+      "latch_remains": "0xFF"
+    },
+    "endpoint": {
+      "world": [2702, 920],
+      "player_vy": 0,
+      "behavior": "0x47",
+      "landing_state": "0x09",
+      "response_active": 0,
+      "scene_state": "0x01"
+    },
+    "scene_gate_writes": {
+      "SCENE_STATE": 0,
+      "SCENE_SCRIPT_COUNTDOWN": 0,
+      "0x00FFF0E9": 0
+    }
+  },
+  "interpretation": "The behavior-0x47 cell changes which adjacent contour byte the landing path uses. It does not represent a climb/rope connector and does not arm the Level 01 scene transition. The lower-tower branch remains a terminal lower-floor response under this input family.",
+  "next_action": "Shift route discovery away from the already-closed behavior-0x47 surface handler. Correlate the remaining upper-band transfer with actor/resource activation or a terrain behavior other than 0x47, while retaining this trace as the canonical lower-tower negative."
+}

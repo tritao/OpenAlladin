@@ -1,0 +1,86 @@
+{
+  "campaign": "20260827-level01-terrain-response-callback-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Trace the behavior-0x47 terrain callback, surface-mode latch, landing resolver, and player response from the lower-tower checkpoint using a new directional input family.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "2ad9a77",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "2ad9a77",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "static_report": "build/re/level01-terrain-query-callback-decompile-v1.json",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+  "instrumentation": {
+    "breakpoints": ["0x001B5470", "0x001AD7B4", "0x001A9D98"],
+    "breakpoint_context": "terrain context and registers",
+    "watched_addresses": [
+      "0x00FFF0A4",
+      "0x00FFF0C2",
+      "0x00FFF0BE",
+      "0x00FFF0CC",
+      "0x00FFF0D0",
+      "0x00FFF0DB",
+      "0x00FF7E5A"
+    ]
+  },
+  "segments": [
+    {
+      "id": "directional-surface-response",
+      "trace_dir": "build/re/campaigns/20260827-level01-terrain-response-callback-v1",
+      "frames": 180,
+      "input": "up+right*20,down+right*20,up+left*20,down+left*20,none*100",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/tower-lamp-window/states/genesis/tower-lamp-window.sta",
+      "capture": "state",
+      "scene_state_trace": true,
+      "debug_watch": true,
+      "trace_files": ["state.jsonl", "trace_boot.jsonl", "debug.log"],
+      "result": "The surface-mode path is exercised, but the player falls to the lower floor and remains in scene state 0x01."
+    }
+  ],
+  "observed": {
+    "initial_loaded_state": {
+      "harness_frame": 1,
+      "world": [2715, 770],
+      "scene_state": "0x01"
+    },
+    "behavior_47": {
+      "dispatch_pc_after_breakpoint": "0x001B5472",
+      "first_mame_frame": "0x00000C2D",
+      "first_world": [2735, 820],
+      "dispatch_count": 111,
+      "first_query_flags": "0x79",
+      "first_push_flags": { "right": "0x00", "left": "0xFF", "up": "0x00", "down": "0xFF" }
+    },
+    "surface_mode": {
+      "latch_write": { "pc": "0x001B548A", "address": "0x00FFF0C2", "value": "0xFF", "mame_frame": "0x00000C2D" },
+      "mode_write": { "pc": "0x001B5492", "address": "0x00FFF0A4", "value": "0x0001", "mame_frame": "0x00000C2D" },
+      "mode_at_end": "0x0001",
+      "latch_at_end": "0xFF"
+    },
+    "player_response": {
+      "landing_resolver_hits": 179,
+      "terrain_response_breakpoint_hits": 180,
+      "response_active_writes": 2,
+      "response_timer_writes": 7,
+      "vertical_velocity_writes": 102,
+      "landing_state": "The player descends through the behavior-0x47 band and reaches landing state 0x09 at the lower floor; no launch impulse or vertical transfer is produced."
+    },
+    "endpoint": {
+      "harness_frame": 180,
+      "world": [2702, 920],
+      "velocity": [0, 0],
+      "terrain_behavior": "0x47",
+      "scene_state": "0x01",
+      "scene_script_countdown": 0,
+      "player_terminal_gate": 0
+    },
+    "transition_writes": {
+      "scene_state": 0,
+      "scene_script_countdown": 0,
+      "player_terminal_gate": 0
+    }
+  },
+  "conclusion": "The lower-tower behavior-0x47 path is a one-shot terrain resource-mode switch. The callback toggles the active contour byte and arms its latch; the landing resolver applies the resulting contour and ordinary gravity/landing response. The new directional branch reaches the same lower-floor terminal band without writing SCENE_STATE, the scene countdown, or the player terminal gate. This closes behavior-0x47 as a direct vertical-transfer source and leaves the unresolved route transfer upstream or in a different interaction/resource path."
+}

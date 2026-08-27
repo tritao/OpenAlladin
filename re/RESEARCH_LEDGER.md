@@ -844,6 +844,17 @@ allocators; `0x001B5938` specifically materializes type `0x34` with animation
 contain a hidden terrain/scene loader, so the next productive runtime target
 is the behavior-`0x47` terrain callback and player-response path.
 
+That terrain callback pass is recorded in
+`re/mame/findings/20260827-level01-terrain-response-callback-v1.json` and
+`re/mame/campaigns/20260827-level01-terrain-response-callback-v1.json`. A new
+directional branch from the tower checkpoint reaches behavior `0x47` 111
+times, toggles `TERRAIN_SURFACE_MODE` once and arms
+`TERRAIN_SURFACE_LATCH`, then falls back to world `(2702,920)` with ordinary
+landing state `0x09`. The decompilation confirms that this handler only
+selects an adjacent contour byte; there are no writes to `SCENE_STATE`, the
+scene countdown, or `0xFFF0E9`. Behavior `0x47` is therefore closed as a
+direct vertical-transfer source.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -912,6 +923,7 @@ is the behavior-`0x47` terrain callback and player-response path.
 | `20260827-level01-actor-lifecycle-v1` | recorded-lifecycle | type-0x2D player-collision cleanup at the first actor parity break; no scene transition |
 | `20260827-level01-actor-refill-vm-v1` | recorded-boundary-classification | interaction-refill allocation, animation-gate crossing, and transient slot-8 cursor boundary |
 | `20260827-level01-natural-gate-trace-v1` | recorded-negative-natural | fresh power-on exit-predicate and scene-gate trace through the early lower-floor frontier |
+| `20260827-level01-terrain-response-callback-v1` | recorded-negative-frontier | behavior-0x47 surface-mode callback and lower-tower player-response trace |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
