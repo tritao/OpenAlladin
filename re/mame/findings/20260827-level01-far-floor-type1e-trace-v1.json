@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-level01-far-floor-type1e-trace-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify the detailed natural far-floor Type-1E trace and its relationship to scene transition state.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "1dfb7f8",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-far-floor-type1e-trace-v1.json",
+  "trace": "build/re/analysis/20260827-level01-far-floor-type1e-trace-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/tower-cross/states/genesis/far-floor-entry.sta",
+  "runtime": {
+    "frames": 721,
+    "input": "none*2,b+right*520,none*199",
+    "loaded_world": [3346, 912],
+    "type1e_player_collision_hits": 28,
+    "terminal_writer_hits": 2,
+    "deferred_callback_hits": 4,
+    "terrain_launch_0x29_hits": 0,
+    "terrain_launch_0x2d_hits": 0,
+    "scene_state": "0x01 throughout gameplay",
+    "scene_state_08": false,
+    "scene_script_countdown": 0,
+    "local_terminal_timer_address": "0x00FFF0E6",
+    "local_terminal_timer_sequence": "0x0A -> 0x00 at the Type-1E contact windows",
+    "terminal_world": [3453, 912]
+  },
+  "static_context": {
+    "player_collision_handler": "0x001AE796",
+    "terminal_writer": "0x001B042A",
+    "deferred_callback": "0x001ACC5E",
+    "scene_state": "0x00FF7E26",
+    "scene_script_countdown": "0x00FFF0DC"
+  },
+  "interpretation": "The Type-1E contact is a lower-floor actor response, not a scene selector. FFF0E6 belongs to the local terminal/interaction timer, while FFF0D0 and FFF0DB continue as terrain bookkeeping. The separate state-08 scene path is not reached.",
+  "conclusion": "This detailed trace confirms the existing behavior-0x46 classification with direct scene-gate instrumentation and retains checkpoints around both Type-1E contact windows. The missing progression remains the upper transfer/resource activation path, not the far-floor interaction itself."
+}

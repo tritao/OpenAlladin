@@ -1,0 +1,81 @@
+{
+  "campaign": "20260827-level01-far-floor-type1e-trace-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Trace the lower/far Type-1E interaction with scene gates, coordinate watches, launch handlers, and deferred callbacks enabled.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_analysis": "1dfb7f8",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "working_tree_note": "The pre-existing generated mame/ directory and native C++ changes were preserved and not staged by this evidence commit.",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/tower-cross/states/genesis/far-floor-entry.sta",
+  "trace_root": "build/re/analysis/20260827-level01-far-floor-type1e-trace-v1",
+  "instrumentation": {
+    "capture": "state",
+    "actor_trace": true,
+    "scene_state_trace": true,
+    "actor_initializer_trace": true,
+    "preload_before_capture": true,
+    "state_sync": false,
+    "input_alignment": "Two neutral tokens are prepended because the loaded-state boundary consumes the first token before frame 1.",
+    "breakpoints": [
+      "0x001AE796",
+      "0x001B042A",
+      "0x001ACC5E",
+      "0x001B557E",
+      "0x001B56B6",
+      "0x001AFBF4",
+      "0x001AF978",
+      "0x001B5B4A"
+    ],
+    "watched_addresses": [
+      "0x00FFF0E6",
+      "0x00FFF0E9",
+      "0x00FFF0DC",
+      "0x00FF7E26",
+      "0x00FFF0D0",
+      "0x00FFF0DB",
+      "0x00FFF0D8"
+    ]
+  },
+  "segments": [
+    {
+      "id": "far-floor-type1e-route",
+      "trace_dir": "build/re/analysis/20260827-level01-far-floor-type1e-trace-v1",
+      "frames": 721,
+      "input": "none*2,b+right*520,none*199",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/tower-cross/states/genesis/far-floor-entry.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "far-floor-entry", "state": "states/genesis/far-floor-entry.sta" },
+        { "frame": 60, "name": "type1e-approach", "state": "states/genesis/type1e-approach.sta" },
+        { "frame": 79, "name": "type1e-contact", "state": "states/genesis/type1e-contact.sta" },
+        { "frame": 88, "name": "type1e-response", "state": "states/genesis/type1e-response.sta" },
+        { "frame": 120, "name": "far-upper-actor", "state": "states/genesis/far-upper-actor.sta" },
+        { "frame": 133, "name": "upper-actor-response", "state": "states/genesis/upper-actor-response.sta" },
+        { "frame": 142, "name": "post-interaction", "state": "states/genesis/post-interaction.sta" },
+        { "frame": 180, "name": "lower-band", "state": "states/genesis/lower-band.sta" },
+        { "frame": 320, "name": "mid-route", "state": "states/genesis/mid-route.sta" },
+        { "frame": 520, "name": "right-frontier", "state": "states/genesis/right-frontier.sta" },
+        { "frame": 721, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    }
+  ],
+  "observed": {
+    "loaded_world": [3346, 912],
+    "type1e_player_collision": { "requested": "0x001AE796", "reported_post_instruction_pc": "0x001AE798", "hits": 28, "first_trace_frame": 45 },
+    "type1e_terminal_writer": { "requested": "0x001B042A", "reported_post_instruction_pc": "0x001B042C", "hits": 2, "purpose": "Local actor-contact terminal timer setup" },
+    "deferred_callback": { "requested": "0x001ACC5E", "reported_post_instruction_pc": "0x001ACC60", "hits": 4 },
+    "launch_handlers": { "0x001B557E": 0, "0x001B56B6": 0 },
+    "scene_state": { "address": "0x00FF7E26", "gameplay_value": "0x01", "state_08": false },
+    "scene_gates": { "script_countdown": 0, "player_terminal_gate": 0, "FFF0D0_local_writes": 598, "FFF0DB_local_writes": 606 },
+    "local_terminal_timer": { "address": "0x00FFF0E6", "writes": 25, "sequence": "0x0A -> 0x00 twice, plus teardown clear", "writer": "0x001B0432 / 0x001A8F3C" },
+    "terminal_world": [3453, 912]
+  },
+  "conclusion": "The far-floor Type-1E path is an actor-local response. It reaches the shared player-collision handler, schedules a short FFF0E6 terminal timer, and later reaches the deferred callback, but it does not call either terrain launch handler, write SCENE_STATE, or advance the scene script. This separates the lower behavior-0x46 interaction from the missing upper transfer.",
+  "next_action": "Use the static resource/initializer reports to locate the producer and activation conditions for the upper Type-1E/Type-20 pair and the row-10 transfer path."
+}
