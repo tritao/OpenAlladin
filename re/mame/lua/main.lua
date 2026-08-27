@@ -763,7 +763,7 @@ if state_sync then
     }
     if trace_scheduler_calls then
         sync_action_parts[#sync_action_parts + 1] =
-            "printf \"OPENALADDIN_SCHEDULER_VBLANK PC=%%08X FRAME=%%08X VALUE=%%02X\\n\",pc,frame,"
+            "printf \"OPENALADDIN_SCHEDULER_VBLANK PC=%08X FRAME=%08X VALUE=%02X\\n\",pc,frame,"
             .. sync_memory("b", "VBLANK_READY_LATCH")
     end
     local sync_actor_count = math.min(actor_slot_count, 32)
