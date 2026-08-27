@@ -108,6 +108,15 @@ Aladdin level-dump tool: the level table, RNC/ProPack method 1 data, Genesis
 character tiles, block maps, parallax tiles, and palettes. The sprite path
 implements the Aladdin Chopper runtime frame and tile tables.
 
+The ROM level table is also recorded in `re/assets/level_table.yml` as the
+runtime-facing scene-state metadata: start/camera fields, map dimensions,
+resources, music, and enter/exit callbacks. Validate it against the generated
+extract with:
+
+```bash
+PYTHONPATH=tools python tools/openaladdin/assets/validate_level_table.py
+```
+
 The current native graphics slice uses the player frame records in
 `re/assets/player_sprite.yml` and the recovered timing tables in
 `re/assets/player_animation.yml`. The minimal native VM covers the observed

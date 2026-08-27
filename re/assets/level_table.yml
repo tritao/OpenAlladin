@@ -1,0 +1,197 @@
+# Canonical runtime-facing view of the ROM level table.
+# The loader at 0x001AA484 indexes these 66-byte records by SCENE_STATE.
+
+format: openaladdin-level-table-v1
+
+rom_table:
+  address: 0x002C78
+  entry_size: 66
+  count: 13
+  index_source: 0x00FF7E26
+
+levels:
+  - index: 0
+    asset_dir: level00
+    camera_start: [0, 1152]
+    player_start: [107, 448]
+    map_size_blocks: [155, 88]
+    music_id: 20
+    palette: 0x129052
+    floor: 0x1434C4
+    chars: 0x1758E4
+    map: 0x192B82
+    block: 0x145B2C
+    parallax: 0x12A660
+    enter_function: 0x1B5B66
+    exit_function: 0x1B63EA
+  - index: 1
+    asset_dir: level01
+    camera_start: [0, 464]
+    player_start: [103, 416]
+    map_size_blocks: [300, 45]
+    music_id: 73
+    palette: 0x1290D2
+    floor: 0x1434C4
+    chars: 0x1758E4
+    map: 0x195176
+    block: 0x145B2C
+    parallax: 0x12A660
+    enter_function: 0x1B5B4A
+    exit_function: 0x1B6406
+  - index: 2
+    asset_dir: level02
+    camera_start: [0, 16]
+    player_start: [150, 448]
+    map_size_blocks: [21, 18]
+    music_id: 15
+    palette: 0x129052
+    floor: 0x1434C4
+    chars: 0x1758E4
+    map: 0x19759C
+    block: 0x145B2C
+    parallax: 0x12A660
+    enter_function: 0x1B5B94
+    exit_function: 0x1B6394
+  - index: 3
+    asset_dir: level03
+    camera_start: [80, 256]
+    player_start: [142, 427]
+    map_size_blocks: [450, 32]
+    music_id: 38
+    palette: 0x129172
+    floor: 0x143C06
+    chars: 0x17974A
+    map: 0x197786
+    block: 0x14D8CC
+    parallax: 0x12A8E4
+    enter_function: 0x1B5B9A
+    exit_function: 0x1B6414
+  - index: 4
+    asset_dir: level04
+    camera_start: [16, 912]
+    player_start: [93, 440]
+    map_size_blocks: [145, 73]
+    music_id: 82
+    background_swap: 1
+    palette: 0x1291F2
+    floor: 0x14433C
+    chars: 0x17CF86
+    map: 0x19A0C4
+    block: 0x15534C
+    parallax: 0x12AB66
+    enter_function: 0x1B5B9C
+    exit_function: 0x1B642E
+  - index: 5
+    asset_dir: level05
+    camera_start: [0, 768]
+    player_start: [101, 394]
+    map_size_blocks: [222, 64]
+    music_id: 35
+    palette: 0x129272
+    floor: 0x14476E
+    chars: 0x181932
+    map: 0x19DB98
+    block: 0x15C7BC
+    parallax: 0x12AD70
+    enter_function: 0x1B5C20
+    exit_function: 0x1B6434
+  - index: 6
+    asset_dir: level06
+    camera_start: [0, 16]
+    player_start: [150, 448]
+    map_size_blocks: [21, 18]
+    music_id: 15
+    palette: 0x129272
+    floor: 0x14476E
+    chars: 0x181932
+    map: 0x1A06E4
+    block: 0x15C7BC
+    parallax: 0x12AD70
+    enter_function: 0x1B5D3A
+    exit_function: 0x1B644E
+  - index: 7
+    asset_dir: level07
+    camera_start: [0, 16]
+    player_start: [55, 359]
+    map_size_blocks: [654, 22]
+    music_id: 16
+    palette: 0x129332
+    floor: 0x144E0E
+    chars: 0x185B5C
+    map: 0x1A08FC
+    block: 0x164664
+    parallax: 0x12BE18
+    enter_function: 0x1B5D68
+    exit_function: 0x1B64C2
+  - index: 8
+    asset_dir: level08
+    camera_start: [336, 0]
+    player_start: [125, 388]
+    map_size_blocks: [15000, 16]
+    music_id: 29
+    palette: 0x1293B2
+    floor: 0x144E0E
+    chars: 0x185B5C
+    map: 0x1A08FC
+    block: 0x164664
+    parallax: 0x12B428
+    animation: 0x0040B8
+    animation_size: 112
+    enter_function: 0x1B6066
+    exit_function: 0x1B64D0
+    notes: picture-room dimensions exceed the ordinary background renderer limit
+  - index: 9
+    asset_dir: level09
+    camera_start: [0, 96]
+    player_start: [64, 384]
+    map_size_blocks: [448, 32]
+    music_id: 27
+    palette: 0x129432
+    floor: 0x145210
+    chars: 0x188F10
+    map: 0x1A2C26
+    block: 0x169EAC
+    parallax: 0x12C31A
+    enter_function: 0x1B614C
+    exit_function: 0x1B653E
+  - index: 10
+    asset_dir: level10
+    camera_start: [2112, 848]
+    player_start: [228, 412]
+    map_size_blocks: [200, 69]
+    music_id: 22
+    palette: 0x1294B2
+    floor: 0x145582
+    chars: 0x18C28A
+    map: 0x1A4694
+    block: 0x16DA9C
+    parallax: 0x12C86E
+    enter_function: 0x1B623A
+    exit_function: 0x1B6554
+  - index: 11
+    asset_dir: level11
+    camera_start: [0, 32]
+    player_start: [68, 400]
+    map_size_blocks: [200, 70]
+    music_id: 15
+    palette: 0x129552
+    floor: 0x145582
+    chars: 0x18C28A
+    map: 0x1A64E6
+    block: 0x16DA9C
+    parallax: 0x12CB2A
+    enter_function: 0x1B6258
+    exit_function: 0x1B655C
+  - index: 12
+    asset_dir: level12
+    camera_start: [48, 96]
+    player_start: [140, 446]
+    map_size_blocks: [50, 22]
+    music_id: 50
+    palette: 0x129632
+    floor: 0x145A56
+    chars: 0x1903E6
+    map: 0x1A7F5A
+    block: 0x174C1C
+    enter_function: 0x1B62B6
+    exit_function: 0x1B6562
