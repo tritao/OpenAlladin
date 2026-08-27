@@ -1,0 +1,107 @@
+{
+  "format": "openaladdin-level01-upper-pair-extended-interaction-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Resolve the Type-0x1E extended animation ED/FB side effects and correct the byte alignment of the earlier upper-pair stream note.",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_analysis": "d4ca036",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level01-upper-pair-extended-interaction-targets.json",
+  "decompile_artifact": "build/re/level01-upper-pair-extended-interaction-decompile-v1.json",
+  "stream_decoder": "tools/openaladdin/vm/animation.py",
+  "movement_decoder": "tools/openaladdin/vm/movement.py",
+  "correction": {
+    "previous_finding": "re/mame/findings/20260826-level01-upper-pair-animation-decode-v1.json",
+    "previous_claim": "The extended stream placed ED at 0x001237D8, FB at 0x001237E0, and FC at 0x001237E6.",
+    "corrected_bytes": "The ROM bytes at 0x001237C6 are 11D2 11D2 ED14000A0012046C 11BE 11BE 11C2 11C2 11C6 11C6 11CA 11CA 11CE FB00001ACC5E 11CE 11CE ...",
+    "reason": "ED consumes eight bytes and FB consumes six bytes; the apparent FC was a frame-reference misalignment."
+  },
+  "extended_animation_stream": {
+    "root": "0x001237C6",
+    "initial_sequence": [
+      { "address": "0x001237C6", "raw": "11D2", "op": "frame_ref", "resolved_frame": "0x001F271A" },
+      { "address": "0x001237C8", "raw": "11D2", "op": "frame_ref", "resolved_frame": "0x001F271A" },
+      { "address": "0x001237CA", "raw": "ED14000A0012046C", "op": "write_value", "mode": "0x14", "target": "actor+0x0A", "value": "0x0012046C" },
+      { "address": "0x001237D2", "raw": "11BE", "op": "frame_ref", "resolved_frame": "0x001F2564" },
+      { "address": "0x001237D4", "raw": "11BE", "op": "frame_ref", "resolved_frame": "0x001F2564" },
+      { "address": "0x001237D6", "raw": "11C2", "op": "frame_ref", "resolved_frame": "0x001F25BE" },
+      { "address": "0x001237D8", "raw": "11C2", "op": "frame_ref", "resolved_frame": "0x001F25BE" },
+      { "address": "0x001237DA", "raw": "11C6", "op": "frame_ref", "resolved_frame": "0x001F2618" },
+      { "address": "0x001237DC", "raw": "11C6", "op": "frame_ref", "resolved_frame": "0x001F2618" },
+      { "address": "0x001237DE", "raw": "11CA", "op": "frame_ref", "resolved_frame": "0x001F2666" },
+      { "address": "0x001237E0", "raw": "11CA", "op": "frame_ref", "resolved_frame": "0x001F2666" },
+      { "address": "0x001237E2", "raw": "11CE", "op": "frame_ref", "resolved_frame": "0x001F26CC" },
+      { "address": "0x001237E4", "raw": "FB00001ACC5E", "op": "push_parameter", "value": "0x001ACC5E" },
+      { "address": "0x001237EA", "raw": "11CE", "op": "frame_ref", "resolved_frame": "0x001F26CC" }
+    ],
+    "repeated_callback_records": [
+      { "address": "0x001237F8", "raw": "FB00001ACC5E", "value": "0x001ACC5E" },
+      { "address": "0x0012380E", "raw": "FB00001ACC5E", "value": "0x001ACC5E" }
+    ]
+  },
+  "opcode_semantics": {
+    "ed": {
+      "handler": "0x001AC89A",
+      "effect": "Uses mode bit 0x10 for actor-relative addressing, selects byte/word/long width from the low mode bits, and writes the stream operand.",
+      "this_instance": "Mode 0x14 selects actor-relative long write; offset 0x000A receives 0x0012046C."
+    },
+    "fb": {
+      "handler": "0x001AD372",
+      "effect": "Advances past the opcode/mode byte and pushes the following long value on the interpreter stack; it does not directly call the target.",
+      "this_instance": "The pushed value is function address 0x001ACC5E, used by the common deferred callback mechanism."
+    },
+    "extended_callback": {
+      "address": "0x001ACC5E",
+      "rng_helper": "0x001B3032",
+      "effect": "Advances GAME_RANDOM_STATE at 0x00FF7DEA with state = state*13 + 7, selects the low two bits, and conditionally queues audio/event IDs 0x5E, 0x5F, 0x60, or 0x61 when VDP_UPDATE_FLAG is set.",
+      "scene_effect": "No write to SCENE_STATE, SCENE_SCRIPT_COUNTDOWN, PLAYER_WORLD_X, PLAYER_WORLD_Y, PLAYER_VX, or PLAYER_VY."
+    }
+  },
+  "movement_handoff": {
+    "root": "0x0012046C",
+    "decoded_steps": [
+      {
+        "address": "0x0012046C",
+        "delta": [1, 0],
+        "conditions": ["compare actor+0x3D against 0x0046"],
+        "on_fallthrough": ["write actor+0x20 = 0x00123614", "clear actor movement cursor via 0x82 0x00"]
+      },
+      {
+        "address": "0x00120482",
+        "delta": [0, 0],
+        "conditions": ["check player X distance 0x73", "check actor flag/field", "compare actor+0x3D against 0x0080"],
+        "control_flow": "loops through 0x0012048A/0x00120498 when conditions do not branch"
+      },
+      {
+        "address": "0x0012048A",
+        "delta": [3, 0],
+        "conditions": ["compare actor+0x3D against 0x0046"],
+        "control_flow": "falls into the same X/flag/field test family"
+      },
+      {
+        "address": "0x00120496",
+        "delta": [2, 0],
+        "conditions": ["same X/flag/field test family"],
+        "control_flow": "loops back to 0x0012048A"
+      }
+    ],
+    "classification": "actor-local movement/animation handoff; not a player launch, remote connector install, or scene transition"
+  },
+  "conclusion": {
+    "verified": [
+      "The prior extended-stream address annotation was misaligned; the corrected ED and FB addresses are now recorded from a lossless decoder output.",
+      "ED installs an actor movement-stream pointer and FB queues a deferred random/audio callback address.",
+      "The movement stream can switch the actor animation root and stop movement, but its writes are actor-local and contain no scene gate."
+    ],
+    "negative_evidence": [
+      "The corrected extended Type-0x1E stream contains no FC call at 0x001237E6.",
+      "The targeted opcode handlers and callback contain no direct scene-state, countdown, or player-coordinate transfer."
+    ],
+    "unresolved": [
+      "A runtime trace still needs to reach the extended Type-0x1E branch naturally to correlate the deferred callback with actor-table state.",
+      "The exact upstream interaction condition that selects 0x001237C6 remains unresolved."
+    ]
+  },
+  "next_action": "Run one bounded upper-pair checkpoint trace with breakpoints on 0x001237C6, 0x0012046C, 0x001AD372, and 0x001ACC5E; retain it only if the extended branch is reached, otherwise preserve the negative trace as an explicit coverage result."
+}

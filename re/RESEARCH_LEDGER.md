@@ -245,6 +245,15 @@ the finding or commit message.
   `0x001217B4` after the generic `0x001B79B8` initializer. Slot reuse is
   therefore classified at the caller's post-initializer writes, not by the
   zero-type template alone.
+- `re/mame/findings/20260827-level01-upper-pair-extended-interaction-v1.json`:
+  a lossless decode corrects the earlier Type-0x1E extended-stream alignment.
+  `ED` is at `0x001237CA` and writes actor `+0x0A = 0x0012046C`; the repeated
+  `FB` records are at `0x001237E4`, `0x001237F8`, and `0x0012380E`, each
+  queuing the random/audio callback at `0x001ACC5E`. The target movement
+  stream is an actor-local animation handoff and movement stop, while the
+  callback only selects event IDs `0x5E..0x61`; neither path writes player
+  coordinates, the scene countdown, or scene state. Natural reachability of
+  this branch remains the only open question for the upper pair.
 - `re/mame/findings/20260827-player-slope-grounded-boundary-v1.json`: a fresh
   Level 01 actor-boot replay shows non-flat contour bytes (`0x0F` through
   `0x03`) publishing `grounded=false` while retaining ground-motion and run
