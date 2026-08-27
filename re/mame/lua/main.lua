@@ -73,6 +73,7 @@ local trace_audio_mailbox_reads = os.getenv("OPENALADDIN_TRACE_AUDIO_MAILBOX_REA
 local trace_audio_commands = os.getenv("OPENALADDIN_TRACE_AUDIO_COMMANDS") == "1"
 local state_sync = os.getenv("OPENALADDIN_STATE_SYNC") == "1"
 local trace_scheduler = os.getenv("OPENALADDIN_TRACE_SCHEDULER") == "1"
+local trace_scheduler_calls = os.getenv("OPENALADDIN_TRACE_SCHEDULER_CALLS") == "1"
 
 local state_output = capture_profile == "state" or os.getenv("OPENALADDIN_STATE_OUTPUT") == "1"
 local event_output = os.getenv("OPENALADDIN_EVENT_OUTPUT")
@@ -835,6 +836,13 @@ if trace_scheduler then
     end
 end
 
+if trace_scheduler_calls then
+    dofile(root .. "/re/mame/lua/scheduler.lua")({
+        cpu = cpu,
+        symbol = symbol
+    })
+end
+
 local function capture_artifacts(frame)
     local checkpoint_name = checkpoints[frame]
     if checkpoint_name then
@@ -1109,6 +1117,7 @@ write_record({
     { "scene_state_trace", json_bool(trace_scene_states) },
     { "state_trace", json_bool(state_output) },
     { "scheduler_trace", json_bool(trace_scheduler) },
+    { "scheduler_call_trace", json_bool(trace_scheduler_calls) },
     { "experiment_actions", json_string(experiment_action_spec) },
     { "event_detectors", json_string(event_spec) },
     { "frame_contract", json_string("S[N] = synchronized state at boundary N; I[N] = input for S[N] -> S[N+1]") },

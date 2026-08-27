@@ -1606,6 +1606,7 @@ def command_trace(args: argparse.Namespace) -> int:
         "OPENALADDIN_AUDIO_MAILBOX_READ_FRAMES",
         "OPENALADDIN_TRACE_AUDIO_COMMANDS",
         "OPENALADDIN_TRACE_SCHEDULER",
+        "OPENALADDIN_TRACE_SCHEDULER_CALLS",
         "OPENALADDIN_POKE_FRAME",
         "OPENALADDIN_POKE_MEMORY",
         "OPENALADDIN_CHECKPOINTS",
@@ -1661,6 +1662,8 @@ def command_trace(args: argparse.Namespace) -> int:
         environment["OPENALADDIN_TRACE_AUDIO_COMMANDS"] = "1"
     if args.scheduler:
         environment["OPENALADDIN_TRACE_SCHEDULER"] = "1"
+    if args.scheduler_calls:
+        environment["OPENALADDIN_TRACE_SCHEDULER_CALLS"] = "1"
 
     status = run_shell_tool("openaladdin/mame/run.sh", [str(rom)], env=environment)
     if status == 0:
@@ -4105,6 +4108,7 @@ def build_parser() -> argparse.ArgumentParser:
     trace.add_argument("--audio-read-frame", action="append", help="hex frame to inspect for Z80 mailbox reads")
     trace.add_argument("--audio-commands", action="store_true", help="trace ROM music/SFX command dispatches in MAME debug.log")
     trace.add_argument("--scheduler", action="store_true", help="trace recovered frame phases and scheduler writer provenance")
+    trace.add_argument("--scheduler-calls", action="store_true", help="trace every statically recovered gameplay call site and scheduler latch write")
     trace.set_defaults(function=command_trace)
 
     audio_driver = commands.add_parser(

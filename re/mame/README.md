@@ -151,6 +151,13 @@ families with repeated `--phase` options. Missing scheduler records remain a
 failure by default; `--intersection` is available for sparse debugger
 captures and makes that limitation explicit.
 
+For static scheduler validation, add `--scheduler-calls`. This installs
+breakpoints at all 37 recovered `Game_FrameUpdateLoop` call sites and narrow
+write watches for `FRAME_WAIT_LATCH`, `VBLANK_READY_LATCH`,
+`FRAME_PHASE_COUNTER`, and the scene-resource latches. The resulting
+`OPENALADDIN_SCHEDULER_CALL` and `OPENALADDIN_SCHEDULER_LATCH` records are
+debugger evidence for the static model, not native phase names.
+
 Compare the native Z80 bus writes with a MAME capture, and optionally compare
 decoded command IDs when MAME's command breakpoints produced records:
 
