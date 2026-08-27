@@ -876,6 +876,20 @@ selects an adjacent contour byte; there are no writes to `SCENE_STATE`, the
 scene countdown, or `0xFFF0E9`. Behavior `0x47` is therefore closed as a
 direct vertical-transfer source.
 
+The lower behavior-band runtime pass is recorded in
+`re/mame/findings/20260827-level01-behavior46-lower-band-runtime-v1.json` and
+`re/mame/campaigns/20260827-level01-behavior46-lower-band-v2.json`. Replaying
+the canonical `far-floor-entry.sta` route with injected `b+right*520` reaches
+the Level 01 behavior-`0x46` band at world `(3225,912)`: Type `0x1E` slot 11
+publishes interaction state `0x46` for frames 401–495, then installs movement
+stream `0x0012046C` from frame 405 onward. A branch from the saved frame-400
+checkpoint isolates the continuation and reaches the callback requested at
+`0x001ACC5E` (MAME reports the post-instruction PC as `0x001ACC60`) seven
+times. Both traces remain in scene `0x01`; no scene-state or scene-countdown
+write occurs. This is the first positive natural correlation for the extended
+actor branch and confirms it as terrain/contact behavior rather than a direct
+scene-transition selector.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -946,6 +960,7 @@ direct vertical-transfer source.
 | `20260827-level01-natural-gate-trace-v1` | recorded-negative-natural | fresh power-on exit-predicate and scene-gate trace through the early lower-floor frontier |
 | `20260827-level01-terrain-response-callback-v1` | recorded-negative-frontier | behavior-0x47 surface-mode callback and lower-tower player-response trace |
 | `20260827-level01-upper-pair-extended-interaction-v2` | recorded-negative | explicit left/up upper-frontier coverage of the Type-0x1E extended interaction branch |
+| `20260827-level01-behavior46-lower-band-v2` | recorded-positive | natural behavior-0x46 Type-0x1E contact, movement handoff, and extended callback trace |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

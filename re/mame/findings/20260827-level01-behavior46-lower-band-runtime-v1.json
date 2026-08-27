@@ -1,0 +1,111 @@
+{
+  "format": "openaladdin-level01-behavior46-lower-band-runtime-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Record the first natural runtime correlation from Level 01 behavior-0x46 terrain contact through the Type-0x1E movement handoff and extended callback.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "0a45234",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-behavior46-lower-band-v2.json",
+  "static_finding": "re/mame/findings/20260827-level01-actor-interaction-state-producer-v1.json",
+  "actor": {
+    "slot": 11,
+    "record": "0x00FF8116",
+    "table_base": "0x00FF7E40",
+    "record_size": "0x42",
+    "type": "0x1E",
+    "interaction_state_offset": "0x3D",
+    "x_offset": "0x02",
+    "y_offset": "0x04"
+  },
+  "full_route": {
+    "trace_directory": "build/re/campaigns/20260827-level01-behavior46-lower-band-v2",
+    "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/tower-cross/states/genesis/far-floor-entry.sta",
+    "input": "b+right*520,none*201",
+    "frames": 721,
+    "raw_ram_snapshots": 722,
+    "actor_slots_scanned": 32,
+    "state_0x46": {
+      "observations": 91,
+      "first_frame": 401,
+      "last_frame": 495,
+      "first_world_position": [3225, 912]
+    },
+    "movement_0x0012046C": {
+      "observations": 91,
+      "first_frame": 405,
+      "last_frame": 495,
+      "first_world_position": [3220, 912]
+    },
+    "scene": "0x01",
+    "scene_state_writes": 0,
+    "scene_countdown_writes": 0,
+    "watched_gate_writes": {
+      "address": "0x00FFF0E9",
+      "writes": 2,
+      "values": ["0x00000000", "0x00000000"],
+      "interpretation": "startup/clear writes only; no asserted terminal gate"
+    },
+    "endpoint": {
+      "frame": 721,
+      "player_world": [3447, 912],
+      "scene_state": "0x01"
+    }
+  },
+  "isolated_branch": {
+    "trace_directory": "build/re/campaigns/20260827-level01-behavior46-lower-band-v3",
+    "source_checkpoint": "build/re/campaigns/20260827-level01-behavior46-lower-band-v2/states/genesis/band-contact.sta",
+    "input": "none*180",
+    "frames": 180,
+    "raw_ram_snapshots": 181,
+    "actor_slots_scanned": 32,
+    "state_0x46": {
+      "observations": 123,
+      "first_frame": 2,
+      "last_frame": 138,
+      "first_world_position": [3225, 912]
+    },
+    "animation_cursor": {
+      "value": "0x001237C8",
+      "first_frame": 4
+    },
+    "movement_0x0012046C": {
+      "observations": 134,
+      "first_frame": 6,
+      "first_world_position": [3220, 912]
+    },
+    "callback": {
+      "requested_breakpoint": "0x001ACC5E",
+      "reported_pc_after_instruction": "0x001ACC60",
+      "hits": 7,
+      "mame_frames": ["0x00000F19", "0x00000F27", "0x00000F37", "0x00000F41", "0x00000F69", "0x00000F77", "0x00000F87"],
+      "first_context": {
+        "mame_frame": "0x00000F19",
+        "actor_record": "0x00FF8116",
+        "actor_type": "0x1E",
+        "actor_x": "0x0C83",
+        "actor_y": 912,
+        "animation_cursor": "0x001237EA",
+        "frame_pointer": "0x001F271A",
+        "D0": "0x00000030",
+        "D1": "0x00000005",
+        "D2": "0x4CC2FFFF",
+        "D3": "0x00000044",
+        "A2": "0x001237EA"
+      }
+    },
+    "scene": "0x01",
+    "scene_state_writes": 0,
+    "scene_countdown_writes": 0,
+    "endpoint": {
+      "frame": 180,
+      "player_world": [3118, 912],
+      "scene_state": "0x01",
+      "actor_state_0x46": false
+    }
+  },
+  "conclusion": "This is the first positive natural runtime correlation for the corrected extended branch. The common terrain pass publishes state 0x46 for the Type-0x1E actor at the Level 01 lower behavior band; several frames later the actor-local movement cursor becomes 0x0012046C, and the isolated continuation reaches the callback at 0x001ACC5E. The callback operates on the same Type-0x1E record and does not write SCENE_STATE or the scene countdown. The branch is an actor terrain/contact response, not a scene transition selector.",
+  "next_action": "Decode and compare the complete 0x0012046C movement stream with the actor's callback-side state changes, then trace whether this actor-local branch contributes to a later route transfer or exit condition."
+}

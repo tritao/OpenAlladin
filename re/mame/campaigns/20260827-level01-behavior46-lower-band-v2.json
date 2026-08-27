@@ -1,0 +1,68 @@
+{
+  "campaign": "20260827-level01-behavior46-lower-band-v2",
+  "status": "recorded-positive",
+  "purpose": "Natural lower-band coverage of the Type-0x1E terrain interaction state 0x46, its movement handoff at 0x0012046C, and the extended callback at 0x001ACC5E.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "0a45234",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "0a45234",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_finding": "re/mame/findings/20260827-level01-actor-interaction-state-producer-v1.json",
+  "segments": [
+    {
+      "id": "full-lower-band",
+      "trace_dir": "build/re/campaigns/20260827-level01-behavior46-lower-band-v2",
+      "frames": 721,
+      "input": "b+right*520,none*201",
+      "input_mode": "inject",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-canonical-recording-v6/tower-cross/states/genesis/far-floor-entry.sta",
+      "capture": "ram",
+      "raw_ram": "ram_frames.bin",
+      "state_output": true,
+      "actors": true,
+      "scene_state_trace": false,
+      "debug_watch": true,
+      "breakpoints": ["0x001ADD26", "0x0012046C"],
+      "watched_addresses": ["0x00FFF0E9", "0x00FF7E26"],
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 240, "name": "upper-drop" },
+        { "frame": 360, "name": "band-approach" },
+        { "frame": 400, "name": "band-contact" },
+        { "frame": 420, "name": "band-center" },
+        { "frame": 480, "name": "far-side" },
+        { "frame": 520, "name": "far-edge" },
+        { "frame": 721, "name": "end" }
+      ]
+    },
+    {
+      "id": "isolated-branch",
+      "trace_dir": "build/re/campaigns/20260827-level01-behavior46-lower-band-v3",
+      "frames": 180,
+      "input": "none*180",
+      "input_mode": "inject",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-behavior46-lower-band-v2/states/genesis/band-contact.sta",
+      "capture": "ram",
+      "raw_ram": "ram_frames.bin",
+      "state_output": true,
+      "actors": true,
+      "scene_state_trace": false,
+      "debug_watch": true,
+      "breakpoints": ["0x001ADD26", "0x0012046C", "0x001ACC5E"],
+      "watched_addresses": ["0x00FFF0E9", "0x00FF7E26"],
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 5, "name": "branch-start" },
+        { "frame": 30, "name": "handoff" },
+        { "frame": 60, "name": "callback-window" },
+        { "frame": 120, "name": "settled" },
+        { "frame": 180, "name": "end" }
+      ]
+    }
+  ],
+  "result": "The canonical lower-band replay reaches Type-0x1E slot 11 at world x=3225, y=912 and publishes interaction state 0x46. The actor then installs movement stream 0x0012046C and the isolated replay reaches the extended callback requested at 0x001ACC5E, reported by MAME after the instruction at PC 0x001ACC60. Both segments remain in scene 0x01 and produce no scene-state or scene-countdown transition."
+}
