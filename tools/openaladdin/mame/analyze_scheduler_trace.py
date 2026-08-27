@@ -237,11 +237,9 @@ def analyze(
     model = load_yaml(model_path)
     expected = static_call_sequence(model)
     calls, debug_latches = read_debug_log(debug_path)
-    latches = (
-        read_trace_latches(trace_boot_path)
-        if trace_boot_path and trace_boot_path.is_file()
-        else debug_latches
-    )
+    latches = debug_latches
+    if trace_boot_path and trace_boot_path.is_file():
+        latches = read_trace_latches(trace_boot_path) + debug_latches
     first_gameplay_frame = calls[0]["frame"] if calls else None
     call_report = validate_calls(calls, expected)
     latch_report = validate_latches(latches, first_gameplay_frame)

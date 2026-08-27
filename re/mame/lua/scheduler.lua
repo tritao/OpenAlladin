@@ -68,7 +68,6 @@ return function(options)
     local latch_specs = {
         { "FRAME_WAIT_LATCH", "FRAME_WAIT_LATCH" },
         { "VBLANK_READY_LATCH", "VBLANK_READY_LATCH" },
-        { "FRAME_PHASE_COUNTER", "FRAME_PHASE_COUNTER" },
         { "SCENE_RESOURCE_STATUS", "SCENE_RESOURCE_STATUS" },
         { "SCENE_RESOURCE_ERROR", "SCENE_RESOURCE_ERROR" }
     }
@@ -112,6 +111,17 @@ return function(options)
                 })
             end)
     end
+
+    -- The frame counter is an even byte on the 68000 bus. Keep it as a
+    -- debugger watch so the instruction-level writer record remains in the
+    -- same debug.log stream as the call-site breakpoints. Odd-byte latches
+    -- above use exact write taps because debugger watchpoints word-align.
+    local phase_address = symbol("FRAME_PHASE_COUNTER")
+    local phase_action = string.format(
+        "printf \"OPENALADDIN_SCHEDULER_LATCH NAME=FRAME_PHASE_COUNTER ADDR=%06X WPADDR=%%08X DATA=%%08X PC=%%08X FRAME=%%08X VALUE=%%02X\\n\",wpaddr,wpdata,pc,frame,:maincpu.b@$%06X ; g",
+        phase_address,
+        phase_address)
+    cpu.debug:wpset(cpu.spaces.program, "w", phase_address, 1, "", phase_action)
 
     return {
         call_site_count = #call_sites,
