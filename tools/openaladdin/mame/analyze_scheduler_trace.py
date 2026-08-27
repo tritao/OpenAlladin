@@ -319,7 +319,7 @@ def analyze(
         "open_questions": [
             "FRAME_WAIT_LATCH has no identified gameplay writer in this route; its producer remains unresolved unless the latch report shows one.",
             "Indirect or nested callers of AnimationVM_TickActors remain outside the direct Game_FrameUpdateLoop call stream.",
-            "Native probe_animation remains a diagnostic phase until a ROM call site or causal equivalent is identified.",
+            "Native compatibility animation state is owned by ordinal 30; no native-only probe_animation phase is emitted.",
         ],
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)

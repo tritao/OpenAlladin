@@ -96,7 +96,15 @@ def main() -> int:
     assert rom[0x001B2DF4 : 0x001B2DFA] == bytes.fromhex("50f900ff7e25")
     assert rom[0x001B2E02 : 0x001B2E08] == bytes.fromhex("423900ff7e25")
     assert rom[0x001B24A4 : 0x001B24AA] == bytes.fromhex("4a3900ff7e25")
-    assert model["native_mapping"]["status"] == "provisional"
+    assert model["native_mapping"]["status"] == "resolved"
+    mapping = load_yaml(ROOT / "re/scheduler/native_update_mapping.yml")
+    rows = mapping["rom_rows"]
+    assert [row["ordinal"] for row in rows] == list(range(1, 38))
+    assert all(row["status"] in {"exact", "inlined", "derived_presentation_only"} for row in rows)
+    assert mapping["summary"]["mismatch_rom_rows"] == 0
+    assert mapping["summary"]["unknown_rom_rows"] == 0
+    assert mapping["summary"]["native_extra_mismatch_phases"] == 0
+    assert all(item["status"] == "resolved" for item in model["native_mapping"]["closed_mismatches"])
     print("scheduler model: ok")
     return 0
 

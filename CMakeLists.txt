@@ -252,6 +252,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(checkpoint_state_test)
     openaladdin_enable_test_assertions(checkpoint_state_test)
 
+    add_executable(native_actor_vm_fixture tests/native_actor_vm_fixture.cpp)
+    target_link_libraries(native_actor_vm_fixture PRIVATE openaladdin_engine)
+    target_compile_features(native_actor_vm_fixture PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(native_actor_vm_fixture)
+    openaladdin_enable_test_assertions(native_actor_vm_fixture)
+
     add_executable(psg_test tests/psg.cpp)
     target_link_libraries(psg_test PRIVATE openaladdin_audio)
     target_compile_features(psg_test PRIVATE cxx_std_20)
@@ -470,6 +476,22 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
             COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
                     ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_actor_type34.py")
         set_tests_properties(native_actor_type34 PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
+            NAME native_actor_vm_commands
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_actor_vm_commands.py"
+                    "$<TARGET_FILE:native_actor_vm_fixture>")
+        set_tests_properties(native_actor_vm_commands PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
+            NAME native_actor_movement
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_actor_movement.py"
+                    "$<TARGET_FILE:native_actor_vm_fixture>")
+        set_tests_properties(native_actor_movement PROPERTIES
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
         add_test(

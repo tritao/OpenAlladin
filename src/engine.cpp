@@ -164,7 +164,7 @@ std::uint32_t terrain_handler(std::uint8_t behavior) {
     return behavior < kTerrainHandlers.size() ? kTerrainHandlers[behavior] : kTerrainNoOpHandler;
 }
 
-constexpr std::uint32_t kCheckpointVersion = 1;
+constexpr std::uint32_t kCheckpointVersion = 2;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
     writer.u8(selector.animation_gate);
@@ -911,87 +911,18 @@ void Engine::sync_player_actor() {
     actor.spawned_by_interaction = false;
 }
 
+void Engine::publish_player_world_coordinates() {
+    // Player_PublishWorldCoordinates (0x001A8E0C) is a live RAM publication,
+    // not merely a convenience calculation. The ROM consumes it at four
+    // distinct boundaries in Game_FrameUpdateLoop.
+    sync_player_actor();
+}
+
 void Engine::update_actor_movement() {
     movement_vm_.tick(
         actors_,
         MovementContext{rom_bytes_, player_world_x(), player_world_y()}
     );
-}
-
-void Engine::update_probe_actor_animation_before_movement() {
-    if (rom_bytes_.empty() || !actors_.snapshot_mode()) return;
-
-    // This marker describes only the current logical update. Clear it before
-    // examining the persistent probe state so a retired slot cannot suppress
-    // a later actor that reuses the slot.
-    probe_actor_animation_preupdated_.fill(false);
-
-    const AnimationContext context = player_animation_context(player_.grounded);
-    for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
-        ActorState& actor = actors_[slot];
-        // The controlled movement-VM fixtures use the synthetic type-0x7D
-        // record and the common 0x125952 animation entry. Once discovered,
-        // keep the probe on the same ROM ordering for subsequent frames: its
-        // animation service runs before movement, and the normal actor pass
-        // must not tick it a second time.
-        if (!probe_actor_animation_active_[slot]
-            && (actor.type != 0x7D
-                || actor.movement_pc == 0
-                || actor.animation_pc != 0x00125952)) {
-            continue;
-        }
-        if (actor.type == 0 || actor.animation_pc == 0) {
-            probe_actor_animation_active_[slot] = false;
-            continue;
-        }
-
-        ActorAnimationState animation_state;
-        animation_state.type = actor.type;
-        animation_state.x = actor.x;
-        animation_state.y = actor.y;
-        animation_state.movement_pc = actor.movement_pc;
-        animation_state.runtime_field_07 = actor.runtime_field_07;
-        animation_state.movement_word_18 = actor.movement_word_18;
-        animation_state.movement_word_1a = actor.movement_word_1a;
-        animation_state.facing_x_flip = actor.facing_x_flip;
-        animation_state.facing_y_flip = actor.facing_y_flip;
-        animation_state.flags = actor.flags;
-        animation_state.interaction_state = actor.interaction_state;
-        animation_state.animation_pc = actor.animation_pc;
-        animation_state.frame_ptr = actor.frame_ptr;
-        animation_state.animation_timer = actor.animation_timer;
-
-        AnimationContext actor_context = context;
-        const std::uint8_t previous_type = actor.type;
-        actor_animations_[slot].update_actor(animation_state, actor_context);
-
-        actor.type = animation_state.type;
-        actor.x = animation_state.x;
-        actor.y = animation_state.y;
-        actor.movement_pc = animation_state.movement_pc;
-        actor.runtime_field_07 = animation_state.runtime_field_07;
-        actor.movement_word_18 = animation_state.movement_word_18;
-        actor.movement_word_1a = animation_state.movement_word_1a;
-        actor.facing_x_flip = animation_state.facing_x_flip;
-        actor.facing_y_flip = animation_state.facing_y_flip;
-        actor.flags = animation_state.flags;
-        actor.interaction_state = animation_state.interaction_state;
-        actor.animation_pc = animation_state.animation_pc;
-        actor.frame_ptr = animation_state.frame_ptr;
-        actor.animation_timer = animation_state.animation_timer;
-        if (previous_type != kActorTerminalType
-            && actor.type == kActorTerminalType
-            && actor.terminal_timer == 0
-            && previous_type != 0x2A) {
-            // This probe runs before the common actor pass. Defer the newly
-            // published terminal cursor for the current pass, then force its
-            // first service on the following VBlank even if FF7E28 is low.
-            actor.animation_defer_ticks = 1;
-            actor.animation_force_next_tick = true;
-        }
-        probe_actor_animation_active_[slot] = true;
-        probe_actor_animation_preupdated_[slot] = true;
-    }
 }
 
 void Engine::update_terminal_actor_motion(ActorState& actor) {
@@ -1066,18 +997,17 @@ AnimationContext Engine::player_animation_context(bool grounded) const {
     return context;
 }
 
-void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
+void Engine::update_actor_animations() {
     if (rom_bytes_.empty()) return;
 
     const AnimationContext context = player_animation_context(player_.grounded);
     // AnimationVM_TickActors is gated by FF7E28 bit 0.  The gameplay loop
     // increments that byte once per logical frame; the checkpoint replay
     // enters with the odd phase on its first post-checkpoint state boundary,
-    // so the complete table walk runs on even native update indices. Single-slot
-    // follow-ups (F5/selector paths) are explicit calls outside that gate.
-        const bool service_actor_table = only_slot || ((frame_ & 1U) == 0);
+    // so the complete table walk runs on even native update indices. The
+    // ordinal-30 owner is the only caller of this traversal.
+    const bool service_actor_table = (frame_ & 1U) == 0;
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
-        if (only_slot && slot != *only_slot) continue;
         ActorState& actor = actors_[slot];
         if (!actors_.snapshot_mode() && slot == 0) {
             continue;
@@ -1115,14 +1045,6 @@ void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
             && (actor.animation_defer_ticks == 0 || frame_ >= 522)) {
             actor = ActorState{};
             actor_animations_[slot].reset();
-            continue;
-        }
-        if (probe_actor_animation_preupdated_[slot]) {
-            probe_actor_animation_preupdated_[slot] = false;
-            continue;
-        }
-        if (animation_preupdated_this_frame_[slot]) {
-            animation_preupdated_this_frame_[slot] = false;
             continue;
         }
         if (actor.spawned_by_apple && apple_actor_hold_next_frame_[slot]) {
@@ -1349,17 +1271,6 @@ void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
     }
 }
 
-void Engine::update_animation_vm_traversal(
-    SpritePose desired_pose,
-    HorizontalDirection direction,
-    const AnimationContext& context
-) {
-    // The normal ordinal-30 visit is one traversal: actor records and the
-    // player record are serviced from the same ROM-backed boundary.
-    update_actor_animations();
-    animation_.update(desired_pose, direction, context);
-}
-
 void Engine::update_animation_vm_ordinal_30(
     SpritePose desired_pose,
     HorizontalDirection direction,
@@ -1372,18 +1283,21 @@ void Engine::update_animation_vm_ordinal_30(
         player_animation_catch_up_ = false;
     }
     if (response_dynamic_handoff) {
-        update_actor_animations();
         animation_.select_locomotion_entry(0x00121AD8, true);
     } else if (bounce_response_finished) {
-        update_actor_animations();
         animation_.select_locomotion_entry(
             0x00122006,
             true,
             SpritePose::Run
         );
     } else {
-        update_animation_vm_traversal(desired_pose, direction, context);
+        animation_.update(desired_pose, direction, context);
     }
+    // F5 is nested in the animation service. Allocate player-originated
+    // records before the sole table walk, so a new record joins this same
+    // invocation without an optional-slot follow-up.
+    (void) apply_animation_spawns(false, true);
+    update_actor_animations();
 }
 
 std::optional<std::size_t> Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request) {
@@ -1491,7 +1405,10 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
         return std::nullopt;
 }
 
-std::vector<std::size_t> Engine::apply_animation_spawns(bool defer_player_spawns) {
+std::vector<std::size_t> Engine::apply_animation_spawns(
+    bool defer_player_spawns,
+    bool defer_mode3_spawns
+) {
     std::vector<std::size_t> spawned_slots;
     if (deferred_animation_spawn_) {
         AnimationSpawnRequest request = *deferred_animation_spawn_;
@@ -1526,7 +1443,9 @@ std::vector<std::size_t> Engine::apply_animation_spawns(bool defer_player_spawns
             request.apple_action = true;
         }
         const bool defer_apple_spawn = request.apple_action;
-        if ((request.mode == 0 && defer_player_spawns) || defer_apple_spawn) {
+        if ((request.mode == 0 && defer_player_spawns)
+            || (request.mode == 3 && defer_mode3_spawns)
+            || defer_apple_spawn) {
             deferred_animation_spawn_ = request;
             continue;
         }
@@ -1543,7 +1462,7 @@ std::vector<std::size_t> Engine::apply_animation_spawns(bool defer_player_spawns
     return spawned_slots;
 }
 
-void Engine::update_actor_actor_collisions(bool pre_motion) {
+void Engine::update_actor_actor_collisions() {
     if (rom_bytes_.empty()) return;
 
     // FUN_001ABD7E starts at FF84B2 (record index 24) and scans seven
@@ -1561,58 +1480,6 @@ void Engine::update_actor_actor_collisions(bool pre_motion) {
         actor.facing_y_flip = 0;
         actor.terminal_timer = frames;
     };
-
-    if (pre_motion) {
-        // The live sword stream can end before the generic actor collision
-        // pass, but only when no target rectangle overlaps it. Leave an
-        // overlapping sword untouched so the ordinary post-motion collision
-        // phase can install both terminal records and its normal timer.
-        for (std::size_t source_slot = 24; source_slot <= 30; ++source_slot) {
-            ActorState& source = actors_[source_slot];
-            if (source.type != kActorSwordType || source.spawned_by_apple
-                || source.animation_pc != 0x00122B5A
-                || source.flags != 0x08
-                || source.frame_ptr == 0) {
-                continue;
-            }
-            const CollisionBox source_box = read_collision_box(
-                source.frame_ptr,
-                static_cast<int>(source.x),
-                static_cast<int>(source.y),
-                false
-            );
-            bool overlaps_target = false;
-            if (source_box.valid) {
-                for (std::size_t target_slot = 1; target_slot <= 24; ++target_slot) {
-                    const ActorState& target = actors_[target_slot];
-                    if (target.type == 0 || target.type >= 0x32 || target.frame_ptr == 0) {
-                        continue;
-                    }
-                    const CollisionBox target_box = read_collision_box(
-                        target.frame_ptr,
-                        static_cast<int>(target.x),
-                        static_cast<int>(target.y),
-                        false
-                    );
-                    if (!target_box.valid) continue;
-                    if (target_box.left <= source_box.right
-                        && target_box.top <= source_box.bottom
-                        && source_box.left < target_box.right
-                        && source_box.top < target_box.bottom) {
-                        overlaps_target = true;
-                        break;
-                    }
-                }
-            }
-            if (!overlaps_target) {
-                // The interaction pass consumes one timer tick on the same
-                // frame that installs this terminal record, so seed one
-                // extra tick to recycle it on Genesis frame 32.
-                terminalize(source, kActorSwordDeathAnimationStream, kActorSwordTerminalFrames + 1);
-            }
-        }
-        return;
-    }
 
     for (std::size_t source_slot = 24; source_slot <= 30; ++source_slot) {
         ActorState& source = actors_[source_slot];
@@ -1632,6 +1499,40 @@ void Engine::update_actor_actor_collisions(bool pre_motion) {
             false
         );
         if (!source_box.valid) continue;
+
+        // The no-target sword edge belongs to this one ROM invocation. It
+        // used to be emulated by a pre-motion call and a second normal pass.
+        if (source.type == kActorSwordType && !source.spawned_by_apple
+            && source.animation_pc == 0x00122B5A && source.flags == 0x08) {
+            bool overlaps_target = false;
+            for (std::size_t target_slot = 1; target_slot <= 24; ++target_slot) {
+                const ActorState& target = actors_[target_slot];
+                if (target.type == 0 || target.type >= 0x32 || target.frame_ptr == 0) {
+                    continue;
+                }
+                const CollisionBox target_box = read_collision_box(
+                    target.frame_ptr,
+                    static_cast<int>(target.x),
+                    static_cast<int>(target.y),
+                    false
+                );
+                if (target_box.valid
+                    && target_box.left <= source_box.right
+                    && target_box.top <= source_box.bottom
+                    && source_box.left < target_box.right
+                    && source_box.top < target_box.bottom) {
+                    overlaps_target = true;
+                    break;
+                }
+            }
+            if (!overlaps_target) {
+                // The interaction pass consumes one timer tick on the same
+                // frame that installs this terminal record.
+                terminalize(source, kActorSwordDeathAnimationStream,
+                    kActorSwordTerminalFrames + 1);
+                continue;
+            }
+        }
 
         for (std::size_t target_slot = 1; target_slot <= 24; ++target_slot) {
             ActorState& target = actors_[target_slot];
@@ -1946,17 +1847,12 @@ void Engine::reset() {
     terrain_input_world_x_ = 0;
     terrain_input_world_y_ = 0;
     deferred_animation_spawn_.reset();
-    probe_actor_animation_preupdated_.fill(false);
-    probe_actor_animation_active_.fill(false);
-    animation_preupdated_this_frame_.fill(false);
     apple_actor_hold_next_frame_.fill(false);
     apple_root_republish_pending_ = false;
     apple_cursor_hold_1223fa_done_ = false;
     apple_cursor_hold_122438_done_ = false;
     apple_following_tick_deferred_ = false;
-    camera_follow_catch_up_ = false;
     player_animation_catch_up_ = false;
-    actor_animation_catch_up_ = false;
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -2557,11 +2453,7 @@ void Engine::apply_floor_contour() {
     terrain_fall_phase_ = false;
 }
 
-void Engine::resolve_terrain(
-    int previous_world_y,
-    int preprocessed_surface_row,
-    int preprocessed_surface_column
-) {
+void Engine::resolve_terrain(int previous_world_y) {
     Level::TerrainQuery query = level_.query_player(player_world_x(), player_world_y());
     if (checkpoint_terrain_behavior_override_ && query.resolver.valid) {
         query.resolver.behavior = checkpoint_terrain_behavior_;
@@ -2610,21 +2502,10 @@ void Engine::resolve_terrain(
         return;
     }
 
-    // The ROM dispatches the handler on every resolver pass. Individual
-    // handlers carry their own guards/latches; dispatching only on behavior
-    // transitions loses those semantics for special terrain cells.
-    const bool already_dispatched = cell->behavior == 0x0A
-        && cell->row == preprocessed_surface_row
-        && cell->column == preprocessed_surface_column;
-    // In the live frame order, surface interaction is the pre-integration
-    // dispatch above. A post-integration 0x0A result is only the published
-    // terrain byte; dispatching it here would allocate one frame early (and
-    // would replace a record on the same pass that F6 clears it).
-    const bool defer_surface_dispatch = cell->behavior == 0x0A
-        && !checkpoint_terrain_behavior_override_;
-    if (!already_dispatched && !defer_surface_dispatch) {
-        apply_terrain_behavior(*cell);
-    }
+    // The ROM dispatches the handler at this single ordinal-15 boundary.
+    // Individual handlers carry their own guards/latches; dispatching only
+    // on behavior transitions loses those semantics for special cells.
+    apply_terrain_behavior(*cell);
 }
 
 void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
@@ -3091,7 +2972,6 @@ void Engine::update(const InputState& input) {
     }
     record_scheduler_phase("frame_latch", 0x001A8C16);
     actors_.begin_frame();
-    animation_preupdated_this_frame_.fill(false);
     for (ActorState& actor : actors_) {
         if (actor.runtime_field_07_delay == 0) continue;
         --actor.runtime_field_07_delay;
@@ -3123,19 +3003,15 @@ void Engine::update(const InputState& input) {
         interaction_actor_lock_pending_ = false;
         interaction_camera_delay_pending_ = false;
     }
-    // F5 spawn requests are produced by the player animation VM on the
+    // FUN_001A91C6 is the unconditional input/resource service. F5 spawn
+    // requests are produced by the player animation VM on the
     // previous frame. Genesis allocates the record before the next actor
     // animation pass, so drain the request at the frame boundary rather than
     // after the current pass has already completed.
-    record_scheduler_phase("deferred_animation_spawn", 0x001AD00E);
+    record_scheduler_phase("input_resource", 0x001A91C6);
     const auto startup_animation_spawns = apply_animation_spawns();
     for (const std::size_t slot : startup_animation_spawns) {
         if (slot < actors_.size()) {
-            // A deferred F5 record is allocated before the current actor
-            // traversal. Its first animation word is therefore published on
-            // this live boundary even when the shared table gate is closed.
-            update_actor_animations(slot);
-            animation_preupdated_this_frame_[slot] = true;
             if (actors_[slot].spawned_by_apple) {
                 // The ROM's apple child then holds once before resuming its
                 // independent action cadence.
@@ -3143,29 +3019,18 @@ void Engine::update(const InputState& input) {
             }
         }
     }
-    if (scene_.is_transition()) {
-        record_scheduler_phase("scene_transition");
+    const bool transition_frame = scene_.is_transition();
+    if (transition_frame) {
         scene_.update_transition(
             SceneInput{input.up, input.down, input.left, input.right},
             player_.x,
             player_.y,
             player_.grounded
         );
-        animation_.update(
-            SpritePose::Idle,
-            horizontal_direction(input),
-            player_animation_context(player_.grounded)
-        );
-        sync_player_actor();
-        apply_actor_timeline(frame_ + 1);
-        checkpoint_animation_selector_pending_ = false;
-        record_scheduler_phase("state_boundary");
-        collect_scheduler_writer_pcs();
-        ++frame_;
-        return;
-    }
-    record_scheduler_phase("terrain_input");
+    } else {
     update_terrain_input(input);
+    record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
+    publish_player_world_coordinates();
     terrain_input_world_x_ = player_world_x();
     terrain_input_world_y_ = player_world_y();
     const bool grounded_before_contour = player_.grounded;
@@ -3184,6 +3049,8 @@ void Engine::update(const InputState& input) {
         record_scheduler_phase("terrain_contour", 0x001AD7B4);
         apply_floor_contour();
     }
+    record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
+    publish_player_world_coordinates();
     // The launch frame itself keeps the prior landing value visible. On the
     // first following pass the contour resolver clears it; one pass later
     // the ROM re-arms FFF0C1 for the falling phase. Apply the delayed arm
@@ -3211,28 +3078,10 @@ void Engine::update(const InputState& input) {
     const bool just_landed = !grounded_before_contour
         && !contour_ground_motion_before
         && player_.grounded;
-    // TerrainHandler_SurfaceInteraction runs from the pre-integration
-    // resolver. The actor record stores the player's position before this
-    // frame's movement, and an existing record prevents a replacement until
-    // the next resolver pass. Keep the later terrain-state publication, but
-    // do not dispatch this same surface cell a second time after movement.
-    int preprocessed_surface_row = -1;
-    int preprocessed_surface_column = -1;
-    std::optional<Level::TerrainCell> preprocessed_surface_cell;
-    if (!checkpoint_terrain_behavior_override_) {
-        const auto prepass_cell = level_.resolve_player_cell(
-            player_world_x(), player_world_y());
-        if (prepass_cell.valid && prepass_cell.behavior == 0x0A) {
-            // The ROM's camera/refill pass allocates newly visible actors
-            // before the surface handler publishes its temporary 0x8C
-            // record.  Retain the cell for the same pre-integration decision,
-            // but defer the allocator side effect until after refill scanning
-            // below so the common slot order is preserved.
-            preprocessed_surface_cell = prepass_cell;
-            preprocessed_surface_row = prepass_cell.row;
-            preprocessed_surface_column = prepass_cell.column;
-        }
-    }
+    // Terrain_ResolvePlayerCell consumes the world coordinate captured before
+    // MovementVM. Its one invocation is placed after the actor terrain and
+    // player collision services, and before the player response integrator.
+    const int previous_world_y = player_world_y();
     if (player_.attack_timer != 0) {
         --player_.attack_timer;
     }
@@ -3257,21 +3106,10 @@ void Engine::update(const InputState& input) {
         }
     }
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
-    // The actor-to-actor pass observes the previous stable animation/motion
-    // state. In the Genesis sword trace it terminalizes the sword at x=1313
-    // before the next movement delta can advance it to x=1320.
-    record_scheduler_phase("pre_motion_actor_collision", 0x001ABD7E);
-    update_actor_actor_collisions(true);
     // The ROM's movement VM performs its cull before integrating actor
     // deltas. Use the pre-motion actor coordinates and pre-follow camera so
     // edge retirement lines up with the synchronized MAME boundary.
-    record_scheduler_phase("actor_culling", 0x001AE0B0);
     update_dynamic_actor_culling();
-    // Temporary compatibility path for controlled movement fixtures. The
-    // recovered ROM loop has no pre-movement AnimationVM call; keep this
-    // probe unlabelled in the scheduler trace until its fixture caller is
-    // explained by the ordinal-30 gate/cursor model.
-    update_probe_actor_animation_before_movement();
     record_scheduler_phase("movement_vm", 0x001ADE36);
     update_actor_movement();
     // FUN_001ADB5C also resolves terrain for non-collision actors whose
@@ -3279,20 +3117,12 @@ void Engine::update(const InputState& input) {
     // refill window has no movement cursor, but its animation publishes a
     // frame pointer and the terrain pass snaps its Y coordinate to the
     // selected class contour on the following VBlank.
-    record_scheduler_phase("actor_terrain", 0x001ADB5C);
+    record_scheduler_phase("actor_terrain_collision", 0x001ADB5C);
     if (!stable_terrain_handler_fixture && !rom_bytes_.empty()) {
         const auto& words = level_.terrain_words();
         const auto& floor = level_.floor_data();
         constexpr int kTerrainResourceBase = 0x2FD2;
         for (ActorState& actor : actors_) {
-            const std::size_t slot = static_cast<std::size_t>(&actor - actors_.data());
-            // An F5 actor whose animation cursor was published in the
-            // pre-motion phase has not yet passed the ROM's terrain handler
-            // on this boundary. Let its first movement/animation state remain
-            // intact; the next VBlank will enter the normal terrain pass.
-            if (probe_actor_animation_preupdated_[slot]) {
-                continue;
-            }
             if (actor.type == 0
                 || ((actor.flags & 0x08) != 0 && !actor.spawned_by_apple)
                 || ((actor.movement_flags & 0x01) == 0 && !actor.spawned_by_apple)
@@ -3411,14 +3241,13 @@ void Engine::update(const InputState& input) {
                 + class_row_offset * 0x10 + static_cast<int>(class_value) - 1);
         }
     }
-    // FUN_001ADB5C is the terrain/actor prepass immediately after the ROM
+    // FUN_001ADB5C is the terrain/actor pass immediately after the ROM
     // movement VM. For collision-enabled actors it samples the same decoded
     // terrain resource used by Level::resolve_player_cell, then dispatches
     // Actor_HandleType2DInteraction when the class-table entry is nonzero.
     // This is what converts the later 0x2D child to the 0x84 template; the
     // earlier child is on a flat class-zero cell and remains eligible for the
     // player collision pass below.
-    record_scheduler_phase("actor_terrain_interaction", 0x001ADB5C);
     if (!stable_terrain_handler_fixture && !rom_bytes_.empty()) {
         const auto& words = level_.terrain_words();
         const auto& floor = level_.floor_data();
@@ -3482,24 +3311,15 @@ void Engine::update(const InputState& input) {
     }
     record_scheduler_phase("player_actor_interaction", 0x001ABB40);
     update_actor_interactions(input, was_grounded);
-    record_scheduler_phase("post_motion_actor_collision", 0x001ABD7E);
-    update_actor_actor_collisions();
+    record_scheduler_phase("terrain_resolution", 0x001B1E38);
+    resolve_terrain(previous_world_y);
     // The camera's tile reference is consumed before the actor traversal in
     // the ROM. Rebase it now so the refill edge and the common actor gate see
     // the same newly crossed tile on this VBlank.
     const int camera_reference_y_before_rebase = camera_.reference_y;
-    record_scheduler_phase("camera_reference_rebase", 0x001AA90C);
     rebase_camera_reference();
     const bool camera_vertical_reference_rebased =
         camera_.reference_y != camera_reference_y_before_rebase;
-    if (!stable_terrain_handler_fixture) {
-        record_scheduler_phase("interaction_refill", 0x001AE3FC);
-        scan_interaction_refill_window();
-    }
-    if (preprocessed_surface_cell) {
-        record_scheduler_phase("terrain_behavior", 0x001B1E38);
-        apply_terrain_behavior(*preprocessed_surface_cell);
-    }
     if (arm_surface_interaction
         && !bounce_response_follow_active_
         && player_.animation_selector.interaction_lock == 0) {
@@ -3627,11 +3447,6 @@ void Engine::update(const InputState& input) {
         }
     }
 
-    const int previous_world_y = player_world_y();
-    if (checkpoint_terrain_behavior_override_) {
-        record_scheduler_phase("terrain_resolution", 0x001B1E38);
-        resolve_terrain(previous_world_y);
-    }
     bool landed_during_frame = false;
     if (checkpoint_terrain_behavior_override_
         && !was_grounded
@@ -3677,14 +3492,6 @@ void Engine::update(const InputState& input) {
         // 0x78. Camera_UpdateFollow then applies the visible four-pixel
         // local-X correction.
         player_.vy = static_cast<std::int16_t>(player_.vy + 0x78);
-    }
-    if (!checkpoint_terrain_behavior_override_) {
-        record_scheduler_phase("terrain_resolution", 0x001B1E38);
-        resolve_terrain(
-            previous_world_y,
-            preprocessed_surface_row,
-            preprocessed_surface_column
-        );
     }
     if (!player_.grounded && player_.terrain_response_active != 0
         && vertical_stop_before_frame) {
@@ -3891,6 +3698,12 @@ void Engine::update(const InputState& input) {
     animation_context.selector.response_timer =
         player_.terrain_response_timer_state;
 
+    // Player_HandleJumpAndVerticalState and the terrain response service have
+    // now finished writing local position. Publish the third ROM coordinate
+    // boundary before Camera_UpdateFollow consumes it.
+    record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
+    publish_player_world_coordinates();
+
     // The ROM consumes a pending 16-pixel reference shift before the actor
     // traversal and then runs the damped follow below. This leaves the
     // boundary frame externally visible with scroll == 16, then exposes the
@@ -3904,9 +3717,6 @@ void Engine::update(const InputState& input) {
     // service and a post-follow tile rebase. Horizontal rebases retain the
     // same-frame damped follow.
     const bool camera_follow_deferred = camera_vertical_reference_rebased;
-    const bool camera_follow_catch_up_after_rebase =
-        camera_vertical_reference_rebased
-        && camera_.reference_y < camera_reference_y_before_rebase;
     if (bounce_camera_delay_hold_pending_ && !bounce_response_finished) {
         // The ROM's camera delay is held for one additional VBlank after the
         // bounce handoff; preserve the externally visible countdown (6, 6,
@@ -3914,14 +3724,12 @@ void Engine::update(const InputState& input) {
         camera_.update_delay = 7;
         bounce_camera_delay_hold_pending_ = false;
     }
-    camera_follow_catch_up_ = false;
     record_scheduler_phase("camera_follow", 0x001AA90C);
     if (camera_follow_deferred) {
         // The reference-tile write occupies this camera pass. The vertical
         // damped lookup resumes on the following VBlank; horizontal follow
         // is still handled by update_camera().
         update_camera(true);
-        camera_follow_catch_up_ = camera_follow_catch_up_after_rebase;
     } else {
         update_camera();
         // A downward follow step can land exactly on the next camera tile
@@ -3935,7 +3743,6 @@ void Engine::update(const InputState& input) {
             if (rebase_camera_reference()) {
                 // The post-follow tile update queues the second service for
                 // the following frame, mirroring the upward rebase cadence.
-                camera_follow_catch_up_ = true;
                 player_animation_catch_up_ = true;
             }
         }
@@ -4032,13 +3839,41 @@ void Engine::update(const InputState& input) {
         player_.terrain_response_timer_state = 0;
         vm_context.selector.transition_state_df = 0xFF;
     }
+    // Actor_ActorCollisionPass follows the player selectors in the ROM. Its
+    // sword terminal edge is handled inside this one source/target scan;
+    // there is deliberately no pre-motion companion call.
+    record_scheduler_phase("actor_collision", 0x001ABD7E);
+    update_actor_actor_collisions();
+    record_scheduler_phase("level_exit_transition", 0x001A8F0C);
+    (void) scene_.service_level_exit(
+        player_world_y(),
+        camera_.level_height,
+        player_.terrain_terminal_transition,
+        player_.animation_selector.interaction_lock
+    );
+    // 0x001A8F04 is the recovered empty-return block between the exit and
+    // interaction services; preserving its ordinal is useful for trace
+    // comparison but it has no native state effect.
+    record_scheduler_phase("empty_return", 0x001A8F04);
+    // FUN_001B01AC is the late, phase-gated interaction resource service.
+    // Its first window fill is allowed to seed the initial camera state; all
+    // subsequent service is owned by the clear FRAME_PHASE_COUNTER phase.
+    record_scheduler_phase("interaction_counter", 0x001B00CA);
+    record_scheduler_phase("interaction_resource", 0x001B01AC);
+    if (!stable_terrain_handler_fixture
+        && (!interaction_scan_initialized_ || (frame_ & 1U) == 0)) {
+        scan_interaction_refill_window();
+    }
+    record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
+    publish_player_world_coordinates();
     // The camera tile-update boundary does not suppress the common player VM
     // pass: the ROM services animation after the horizontal follow even when
     // the vertical reference tile is rebased. Keep the separate catch-up
     // marker only for the post-follow downward rebase path above.
-    const bool defer_player_animation_tick = false;
-    if (!stable_terrain_handler_fixture && !defer_player_animation_tick) {
-        record_scheduler_phase("animation_vm", 0x001AC784);
+    record_scheduler_phase("scene_advance", 0x001A8E3E);
+    (void) scene_.advance_script();
+    record_scheduler_phase("animation_vm", 0x001AC784);
+    if (!stable_terrain_handler_fixture) {
         // The bounce response's F8 command publishes the dynamic 0x121AD8
         // root at this boundary but leaves the previous frame pointer in
         // place. Do not consume the new root until the following VBlank.
@@ -4301,22 +4136,40 @@ void Engine::update(const InputState& input) {
     // tick and expect the auxiliary actor to be visible in that frame's
     // state record. The live sword action is intentionally deferred to the
     // next frame boundary above while its attack timer is active.
-    record_scheduler_phase("post_animation_interaction", 0x001AE4F8);
     if (player_.attack_timer == 0
         && animation_.stream_entry() != kPlayerAttackTransitionStream
         && animation_.stream_entry() != kPlayerSwordStableStream) {
-        record_scheduler_phase("animation_spawn", 0x001AD00E);
-        const auto spawned_slots = apply_animation_spawns(true);
-        // Player mode-0 F5 records are allocated at the next stable boundary;
-        // their initial cursor remains visible until the following common
-        // actor pass. Mode-3 sword records are published at their initial
-        // cursor and are likewise first serviced by that pass.
-        for (const std::size_t slot : spawned_slots) {
-            if (actors_[slot].type == kActorSwordType
-                && !actors_[slot].spawned_by_apple) continue;
-            update_actor_animations(slot);
-        }
+        // Requests not owned by ordinal 30 (notably the physical apple's
+        // deferred lifecycle) remain queued for the next input/resource
+        // boundary. No actor VM is invoked here.
+        (void) apply_animation_spawns(true);
     }
+    }
+    if (transition_frame) {
+        record_scheduler_phase("scene_advance", 0x001A8E3E);
+        (void) scene_.advance_script();
+        // Scene_EnterTransitionMode owns the transition movement, but the
+        // frame loop still reaches its common ordinal-30 animation service.
+        // Keeping that service here removes the native early-return path.
+        record_scheduler_phase("animation_vm", 0x001AC784);
+        update_animation_vm_ordinal_30(
+            SpritePose::Idle,
+            horizontal_direction(input),
+            player_animation_context(player_.grounded),
+            false,
+            false
+        );
+    }
+    record_scheduler_phase("transition_completion", 0x001AE0F6);
+    (void) scene_.transition_completion_ready();
+    // Camera scroll publication is presentation-owned in the native build;
+    // retaining the ROM boundary in the trace makes that classification
+    // explicit without inventing a second camera gameplay pass.
+    record_scheduler_phase("camera_scroll_publish", 0x001AAA2A);
+    record_scheduler_phase("scene_completion", 0x001B315C);
+    (void) scene_.complete_script_to_state1();
+    // State serialization needs the final player record after ordinal 30.
+    // This mirror is not a gameplay scheduler phase.
     sync_player_actor();
     apply_actor_timeline(frame_ + 1);
     checkpoint_animation_selector_pending_ = false;
@@ -4544,7 +4397,10 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"script_cursor\":" << scene_runtime.script_cursor
            << ",\"script_data_cursor\":0"
            << ",\"table_index\":0"
-           << ",\"script_pending\":0"
+           << ",\"script_pending\":"
+           << static_cast<unsigned>(scene_runtime.script_pending)
+           << ",\"resource_status\":"
+           << static_cast<unsigned>(scene_runtime.resource_status)
            << ",\"vdp_update\":" << camera_.vdp_update
            << ",\"vdp_clear\":0"
            << ",\"transition_event\":" << static_cast<unsigned>(scene_runtime.transition_event)
@@ -4647,12 +4503,8 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"random_state\":" << random_state_
            << ",\"terrain_input_world_x\":" << terrain_input_world_x_
            << ",\"terrain_input_world_y\":" << terrain_input_world_y_
-           << ",\"camera_follow_catch_up\":"
-           << (camera_follow_catch_up_ ? "true" : "false")
            << ",\"player_animation_catch_up\":"
            << (player_animation_catch_up_ ? "true" : "false")
-           << ",\"actor_animation_catch_up\":"
-           << (actor_animation_catch_up_ ? "true" : "false")
            << ",\"checkpoint_terrain_behavior_override\":"
            << (checkpoint_terrain_behavior_override_ ? "true" : "false")
            << ",\"checkpoint_terrain_behavior\":"
@@ -4667,25 +4519,10 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << (apple_following_tick_deferred_ ? "true" : "false")
            << ",\"actor_system_snapshot_mode\":"
            << (actors_.snapshot_mode() ? "true" : "false")
-           << ",\"probe_actor_animation_preupdated\":[";
-    for (std::size_t slot = 0; slot < probe_actor_animation_preupdated_.size(); ++slot) {
-        if (slot != 0) output << ",";
-        output << (probe_actor_animation_preupdated_[slot] ? "true" : "false");
-    }
-    output << "],\"animation_preupdated_this_frame\":[";
-    for (std::size_t slot = 0; slot < animation_preupdated_this_frame_.size(); ++slot) {
-        if (slot != 0) output << ",";
-        output << (animation_preupdated_this_frame_[slot] ? "true" : "false");
-    }
-    output << "],\"apple_actor_hold_next_frame\":[";
+           << ",\"apple_actor_hold_next_frame\":[";
     for (std::size_t slot = 0; slot < apple_actor_hold_next_frame_.size(); ++slot) {
         if (slot != 0) output << ",";
         output << (apple_actor_hold_next_frame_[slot] ? "true" : "false");
-    }
-    output << "],\"probe_actor_animation_active\":[";
-    for (std::size_t slot = 0; slot < probe_actor_animation_active_.size(); ++slot) {
-        if (slot != 0) output << ",";
-        output << (probe_actor_animation_active_[slot] ? "true" : "false");
     }
     output << "],\"deferred_animation_spawn\":";
     if (deferred_animation_spawn_) {
@@ -4836,14 +4673,11 @@ void Engine::write_checkpoint(std::ostream& output) const {
         actor_animation.write_checkpoint(output);
     }
 
-    for (const bool value : probe_actor_animation_preupdated_) writer.boolean(value);
-    for (const bool value : animation_preupdated_this_frame_) writer.boolean(value);
     for (const bool value : apple_actor_hold_next_frame_) writer.boolean(value);
     writer.boolean(apple_root_republish_pending_);
     writer.boolean(apple_cursor_hold_1223fa_done_);
     writer.boolean(apple_cursor_hold_122438_done_);
     writer.boolean(apple_following_tick_deferred_);
-    for (const bool value : probe_actor_animation_active_) writer.boolean(value);
 
     writer.boolean(interaction_scan_initialized_);
     writer.boolean(interaction_selector_pending_);
@@ -4868,9 +4702,7 @@ void Engine::write_checkpoint(std::ostream& output) const {
     writer.i32(terrain_input_world_y_);
     writer.boolean(deferred_animation_spawn_.has_value());
     if (deferred_animation_spawn_) write_spawn_request(writer, *deferred_animation_spawn_);
-    writer.boolean(camera_follow_catch_up_);
     writer.boolean(player_animation_catch_up_);
-    writer.boolean(actor_animation_catch_up_);
     writer.boolean(checkpoint_terrain_behavior_override_);
     writer.u8(checkpoint_terrain_behavior_);
 
@@ -4913,18 +4745,12 @@ void Engine::read_checkpoint(std::istream& input) {
         actor_animation.read_checkpoint(input);
     }
 
-    std::array<bool, 32> probe_actor_animation_preupdated{};
-    std::array<bool, 32> animation_preupdated_this_frame{};
     std::array<bool, 32> apple_actor_hold_next_frame{};
-    std::array<bool, 32> probe_actor_animation_active{};
-    for (bool& value : probe_actor_animation_preupdated) value = reader.boolean();
-    for (bool& value : animation_preupdated_this_frame) value = reader.boolean();
     for (bool& value : apple_actor_hold_next_frame) value = reader.boolean();
     const bool apple_root_republish_pending = reader.boolean();
     const bool apple_cursor_hold_1223fa_done = reader.boolean();
     const bool apple_cursor_hold_122438_done = reader.boolean();
     const bool apple_following_tick_deferred = reader.boolean();
-    for (bool& value : probe_actor_animation_active) value = reader.boolean();
 
     const bool interaction_scan_initialized = reader.boolean();
     const bool interaction_selector_pending = reader.boolean();
@@ -4950,9 +4776,7 @@ void Engine::read_checkpoint(std::istream& input) {
     const bool has_deferred_animation_spawn = reader.boolean();
     std::optional<AnimationSpawnRequest> deferred_animation_spawn;
     if (has_deferred_animation_spawn) deferred_animation_spawn = read_spawn_request(reader);
-    const bool camera_follow_catch_up = reader.boolean();
     const bool player_animation_catch_up = reader.boolean();
-    const bool actor_animation_catch_up = reader.boolean();
     const bool checkpoint_terrain_behavior_override = reader.boolean();
     const auto checkpoint_terrain_behavior = reader.u8();
 
@@ -4983,14 +4807,11 @@ void Engine::read_checkpoint(std::istream& input) {
 
     player_ = player;
     camera_ = camera;
-    probe_actor_animation_preupdated_ = probe_actor_animation_preupdated;
-    animation_preupdated_this_frame_ = animation_preupdated_this_frame;
     apple_actor_hold_next_frame_ = apple_actor_hold_next_frame;
     apple_root_republish_pending_ = apple_root_republish_pending;
     apple_cursor_hold_1223fa_done_ = apple_cursor_hold_1223fa_done;
     apple_cursor_hold_122438_done_ = apple_cursor_hold_122438_done;
     apple_following_tick_deferred_ = apple_following_tick_deferred;
-    probe_actor_animation_active_ = probe_actor_animation_active;
     interaction_scan_initialized_ = interaction_scan_initialized;
     interaction_selector_pending_ = interaction_selector_pending;
     interaction_actor_lock_pending_ = interaction_actor_lock_pending;
@@ -5013,9 +4834,7 @@ void Engine::read_checkpoint(std::istream& input) {
     terrain_input_world_x_ = terrain_input_world_x;
     terrain_input_world_y_ = terrain_input_world_y;
     deferred_animation_spawn_ = std::move(deferred_animation_spawn);
-    camera_follow_catch_up_ = camera_follow_catch_up;
     player_animation_catch_up_ = player_animation_catch_up;
-    actor_animation_catch_up_ = actor_animation_catch_up;
     checkpoint_terrain_behavior_override_ = checkpoint_terrain_behavior_override;
     checkpoint_terrain_behavior_ = checkpoint_terrain_behavior;
     vdp_checkpoint_ = std::move(vdp_checkpoint);

@@ -17,37 +17,79 @@ BINARY = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "build/openaladdin"
 
 REQUIRED_ORDER = (
     "frame_latch",
-    "deferred_animation_spawn",
-    "terrain_input",
+    "input_resource",
+    "publish_player_world_coordinates",
     "terrain_contour",
-    "pre_motion_actor_collision",
-    "actor_culling",
+    "publish_player_world_coordinates",
     "movement_vm",
-    "actor_terrain",
-    "actor_terrain_interaction",
+    "actor_terrain_collision",
     "player_actor_interaction",
-    "post_motion_actor_collision",
-    "camera_reference_rebase",
-    "interaction_refill",
-    "player_movement",
     "terrain_resolution",
+    "player_movement",
+    "publish_player_world_coordinates",
     "camera_follow",
+    "actor_collision",
+    "level_exit_transition",
+    "empty_return",
+    "interaction_counter",
+    "interaction_resource",
+    "publish_player_world_coordinates",
+    "scene_advance",
     "animation_vm",
-    "post_animation_interaction",
+    "transition_completion",
+    "camera_scroll_publish",
+    "scene_completion",
     "state_boundary",
 )
 
 EXPECTED_PCS = {
     "frame_latch": 0x001A8C16,
-    "pre_motion_actor_collision": 0x001ABD7E,
+    "input_resource": 0x001A91C6,
+    "publish_player_world_coordinates": 0x001A8E0C,
     "movement_vm": 0x001ADE36,
+    "actor_terrain_collision": 0x001ADB5C,
+    "player_actor_interaction": 0x001ABB40,
+    "actor_collision": 0x001ABD7E,
+    "level_exit_transition": 0x001A8F0C,
+    "empty_return": 0x001A8F04,
     "animation_vm": 0x001AC784,
     "player_movement": 0x001A9D98,
     "terrain_resolution": 0x001B1E38,
     "camera_follow": 0x001AA90C,
-    "post_animation_interaction": 0x001AE4F8,
-    "animation_spawn": 0x001AD00E,
+    "interaction_counter": 0x001B00CA,
+    "interaction_resource": 0x001B01AC,
+    "scene_advance": 0x001A8E3E,
+    "transition_completion": 0x001AE0F6,
+    "camera_scroll_publish": 0x001AAA2A,
+    "scene_completion": 0x001B315C,
 }
+
+EXPECTED_PHASE_SEQUENCE = (
+    "frame_latch",
+    "input_resource",
+    "publish_player_world_coordinates",
+    "terrain_contour",
+    "publish_player_world_coordinates",
+    "movement_vm",
+    "actor_terrain_collision",
+    "player_actor_interaction",
+    "terrain_resolution",
+    "player_movement",
+    "publish_player_world_coordinates",
+    "camera_follow",
+    "actor_collision",
+    "level_exit_transition",
+    "empty_return",
+    "interaction_counter",
+    "interaction_resource",
+    "publish_player_world_coordinates",
+    "scene_advance",
+    "animation_vm",
+    "transition_completion",
+    "camera_scroll_publish",
+    "scene_completion",
+    "state_boundary",
+)
 
 
 def records(path: Path) -> list[dict]:
@@ -70,11 +112,12 @@ def check_trace(
     for record in frames:
         phases = record["phases"]
         names = [phase["name"] for phase in phases]
+        assert tuple(names) == EXPECTED_PHASE_SEQUENCE, names
         assert names.count("animation_vm") == 1, names
         assert "probe_animation" not in names, names
         assert "actor_animation" not in names, names
         assert "player_animation" not in names, names
-        positions = [names.index(name) for name in REQUIRED_ORDER]
+        positions = [names.index(name) for name in dict.fromkeys(REQUIRED_ORDER)]
         assert positions == sorted(positions), names
         assert isinstance(record["writer_pcs"], list)
         if "animation_spawn" in names:

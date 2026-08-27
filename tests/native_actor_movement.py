@@ -4,12 +4,14 @@
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 import subprocess
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
+FIXTURE_BINARY = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "build/native_actor_vm_fixture"
+ROM = ROOT / "rom/Disneys_Aladdin_U_p1.bin"
 SOURCE = ROOT / "build/re/actor-flags-final/state.jsonl"
 ACTORS = ROOT / "re/actors/actor-movement.tsv"
 OUTPUT = ROOT / "build/re/tests/native-actor-movement/state.jsonl"
@@ -45,24 +47,17 @@ def main() -> int:
     source = load_states(SOURCE)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     command = [
-        str(ROOT / "build/openaladdin"),
-        "--no-window",
+        str(FIXTURE_BINARY),
+        "--rom",
+        str(ROM),
         "--frames",
         str(FRAME_COUNT),
         "--state-output",
         str(OUTPUT),
         "--actor-records",
         str(ACTORS),
-        "--checkpoint-player",
-        "103,416,0,0,1",
-        "--checkpoint-camera",
-        "528,464,528,464,0,0,1",
-        "--input-schedule",
-        f"none*{FRAME_COUNT}",
     ]
-    environment = dict(os.environ)
-    environment["SDL_VIDEODRIVER"] = "dummy"
-    subprocess.run(command, cwd=ROOT, env=environment, check=True)
+    subprocess.run(command, cwd=ROOT, check=True)
 
     native = load_states(OUTPUT)
     for relative in range(FRAME_COUNT + 1):

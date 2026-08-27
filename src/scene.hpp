@@ -20,6 +20,12 @@ struct SceneRuntimeState {
     int state = 1;
     std::uint32_t script_cursor = 0;
     std::uint8_t script_countdown = 0;
+    // SCENE_SCRIPT_PENDING (FFF57C) is kept even when the native slice has
+    // no loaded script payload. It provides the recovered gates for the
+    // ordinal-29 advance, ordinal-35 completion check, and ordinal-37 write.
+    std::uint8_t script_pending = 0;
+    // DAT_00FFF140 is the status polled by the ordinal-35 completion gate.
+    std::uint8_t resource_status = 0;
     std::uint8_t transition_event = 0;
     bool transition_active = false;
 };
@@ -51,6 +57,19 @@ public:
         int& player_y,
         bool& grounded
     );
+
+    // These are the three scene-script services called unconditionally by
+    // Game_FrameUpdateLoop. The payload parser is intentionally outside this
+    // native slice; its RAM gates and no-payload early returns remain here.
+    bool advance_script();
+    bool service_level_exit(
+        int player_world_y,
+        int level_height,
+        std::uint8_t& terminal_transition,
+        std::uint8_t& interaction_lock
+    );
+    bool transition_completion_ready() const;
+    bool complete_script_to_state1();
 
 private:
     std::vector<LevelDescriptor> descriptors_;

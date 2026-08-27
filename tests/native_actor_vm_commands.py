@@ -7,9 +7,11 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
+FIXTURE_BINARY = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "build/native_actor_vm_fixture"
 SOURCE_START = 361
 FRAME_COUNT = 20
 SLOT = 31
@@ -102,20 +104,15 @@ def main() -> int:
         native_output = trace / "native-state.jsonl"
         subprocess.run(
             [
-                str(ROOT / "build/openaladdin"),
-                "--no-window",
+                str(FIXTURE_BINARY),
+                "--rom",
+                str(ROOT / "rom/Disneys_Aladdin_U_p1.bin"),
                 "--frames",
                 str(FRAME_COUNT),
                 "--state-output",
                 str(native_output),
                 "--actor-records",
                 str(ROOT / f"re/actors/actor-vm-command-{name}.tsv"),
-                "--checkpoint-player",
-                "0,0,0,0,0",
-                "--checkpoint-camera",
-                "0,0,0,0,0,0,1",
-                "--input-schedule",
-                f"none*{FRAME_COUNT}",
             ],
             cwd=ROOT,
             env={**os.environ, "SDL_VIDEODRIVER": "dummy"},

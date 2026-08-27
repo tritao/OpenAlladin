@@ -203,11 +203,7 @@ private:
     void update_terrain_input(const InputState& input);
     void update_terrain_connector_response();
     void apply_floor_contour();
-    void resolve_terrain(
-        int previous_world_y,
-        int preprocessed_surface_row = -1,
-        int preprocessed_surface_column = -1
-    );
+    void resolve_terrain(int previous_world_y);
     void update_camera(bool suppress_vertical_follow = false);
     void initialize_camera_alignment();
     bool rebase_camera_reference();
@@ -217,19 +213,11 @@ private:
     void load_actor_timeline(const std::string& path);
     void apply_actor_timeline(int frame);
     void update_actor_movement();
-    void update_probe_actor_animation_before_movement();
     void update_terminal_actor_motion(ActorState& actor);
-    void update_actor_animations(std::optional<std::size_t> only_slot = std::nullopt);
-    void update_animation_vm_traversal(
-        SpritePose desired_pose,
-        HorizontalDirection direction,
-        const AnimationContext& context
-    );
+    void update_actor_animations();
     // ROM ordinal 30 (0x001A8CCE -> 0x001AC784) is the single common
-    // animation service. The normal path enters here once per boundary and
-    // owns both the actor-table traversal and the player VM tick. The
-    // optional-slot calls used by spawn/lifecycle compatibility paths remain
-    // outside this service until their caller and gate are recovered.
+    // animation service. It owns the player VM, player-originated F5
+    // allocation, and one gated actor-table traversal.
     void update_animation_vm_ordinal_30(
         SpritePose desired_pose,
         HorizontalDirection horizontal_direction,
@@ -237,7 +225,10 @@ private:
         bool response_dynamic_handoff,
         bool bounce_response_finished
     );
-    std::vector<std::size_t> apply_animation_spawns(bool defer_player_spawns = false);
+    std::vector<std::size_t> apply_animation_spawns(
+        bool defer_player_spawns = false,
+        bool defer_mode3_spawns = false
+    );
     std::optional<std::size_t> apply_animation_spawn_request(const AnimationSpawnRequest& request);
     void scan_interaction_refill_window();
     void dispatch_interaction(const Level::InteractionRecord& record, int base_x, int base_y);
@@ -245,8 +236,11 @@ private:
     std::optional<std::size_t> allocate_actor_slot(ActorAllocationPool pool) const;
     ActorState actor_from_template(std::uint32_t template_address) const;
     void update_dynamic_actor_culling();
+    // FUN_001A8E0C is a real RAM publication, not a cached convenience. The
+    // ROM uses it at four distinct causal boundaries in the frame loop.
+    void publish_player_world_coordinates();
     void sync_player_actor();
-    void update_actor_actor_collisions(bool pre_motion = false);
+    void update_actor_actor_collisions();
     void record_scheduler_phase(const char* name, std::uint32_t rom_entry_pc = 0);
     void collect_scheduler_writer_pcs();
     void render_vdp_checkpoint();
@@ -270,14 +264,6 @@ private:
     PlayerAnimationVm animation_;
     MovementVm movement_vm_;
     std::array<PlayerAnimationVm, 32> actor_animations_{};
-    // Snapshot-only movement probes run before the common actor traversal.
-    // Their ROM caller is unresolved; these markers prevent the later
-    // ordinal-30 compatibility walk from ticking the same slot twice.
-    std::array<bool, 32> probe_actor_animation_preupdated_{};
-    // Actor records materialized from a deferred apple F5 are serviced once
-    // before movement on their first live boundary. Suppress the later
-    // table walk from ticking that same record twice.
-    std::array<bool, 32> animation_preupdated_this_frame_{};
     // The apple projectile is serviced once at allocation, then exposes one
     // extra held animation boundary before joining the common type-0x80
     // cadence.
@@ -286,7 +272,6 @@ private:
     bool apple_cursor_hold_1223fa_done_ = false;
     bool apple_cursor_hold_122438_done_ = false;
     bool apple_following_tick_deferred_ = false;
-    std::array<bool, 32> probe_actor_animation_active_{};
     InteractionMap interaction_map_;
     ActorSystem actors_{};
     std::map<int, ActorSystem::Table> actor_timeline_;
@@ -330,16 +315,9 @@ private:
     int terrain_input_world_x_ = 0;
     int terrain_input_world_y_ = 0;
     std::optional<AnimationSpawnRequest> deferred_animation_spawn_;
-    // A vertical camera-reference rebase consumes this frame's follow pass;
-    // the ROM services the deferred follow twice on the next frame.
-    bool camera_follow_catch_up_ = false;
     // The same camera boundary suppresses the current player animation pass;
     // queue the next VM service explicitly at the following boundary.
     bool player_animation_catch_up_ = false;
-    // A horizontal camera rebase can share a frame with an actor animation
-    // command boundary. The ROM's camera path then reaches the common actor
-    // animation loop once more on the following frame.
-    bool actor_animation_catch_up_ = false;
     // Common F5 actors share one AnimationVM_TickActors traversal. Keep its
     // cadence at engine scope so actors spawned later join the same service
     // and hold passes as the already-live records.

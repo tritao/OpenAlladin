@@ -78,9 +78,8 @@ def main() -> int:
     assert moved["movement_word_1a"] == 0x006E
 
     # Mode 0 is the common actor allocation path used by the opening Level 01
-    # player stream. It must work with no actor TSV or timeline: the request
-    # is deferred to the next stable boundary, then observes the post-input
-    # player world position just like the Genesis path.
+    # player stream. It is a nested F5 service of ordinal 30, so the new
+    # record is allocated before that ordinal's single actor-table traversal.
     player_command = [
         str(ROOT / "build/openaladdin"),
         "--no-window",
@@ -99,8 +98,7 @@ def main() -> int:
     ]
     subprocess.run(player_command, cwd=ROOT, env=environment, check=True)
     player_states = load_states(PLAYER_OUTPUT)
-    assert 3 not in active_slots(player_states[1])
-    player_spawn = next(actor for actor in player_states[2]["actors"] if actor["slot"] == 3)
+    player_spawn = next(actor for actor in player_states[1]["actors"] if actor["slot"] == 3)
     assert player_spawn["type"] == 0x84
     assert player_spawn["x"] == 99
     assert player_spawn["y"] == 895

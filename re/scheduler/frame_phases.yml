@@ -773,20 +773,22 @@ dynamic_validation:
     note: The checkpoint was naturally produced, but the four tested continuations are loaded-state controller probes. The direct connector-top family is negative for the missing transfer; the remaining search is upstream connector/resource production.
 
 native_mapping:
-  status: provisional
-  note: Native names are diagnostic labels, not evidence that the ROM has the same phase partition.
-  known_mismatches:
+  status: resolved
+  note: Native names are diagnostic labels; the mapping is resolved to the recovered ROM service boundaries documented in re/scheduler/native_update_mapping.yml.
+  closed_mismatches:
     - native_phase: probe_animation
       rom_support: no direct AnimationVM_TickActors call before MovementVM_TickActors appears in the recovered gameplay body
-      status: unresolved
+      status: resolved
+      resolution: removed from Engine::update; controlled movement fixtures are staged at the recovered terrain-handler boundary and do not emit a scheduler phase
     - native_phase: actor_animation
-      rom_support: maps provisionally to ordinal 30 at 0x001AC784
-      status: provisional
+      rom_support: ordinal 30 at 0x001AC784
+      status: resolved
+      resolution: owned by the single ordinal-30 AnimationVM service and its one gated actor-table traversal
     - native_phase: deferred_animation_spawn
       rom_support: no direct call in the recovered gameplay body; F5 allocation is reached through the animation VM dispatch
-      status: indirect_only
+      status: resolved
+      resolution: retained request state is serviced inline by ordinal 30 or at the ordinal-1 input/resource boundary; it is not a native scheduler phase
   next_dynamic_questions:
     - Which natural transition/resource context lets the state-3 dispatch reach its resource completion and the 0x001B2DF4/0x001B2E02 FRAME_WAIT_LATCH writers?
     - Does any indirect caller reach 0x001AC784 during one gameplay boundary besides ordinal 30?
-    - Which state transition, if any, causes the native probe-animation service to correspond to a real ROM call?
-    - Which caller/branch owns the post-animation actor traversal observed in native traces?
+    - Which indirect AnimationVM caller owns any service outside the direct Game_FrameUpdateLoop call stream?
