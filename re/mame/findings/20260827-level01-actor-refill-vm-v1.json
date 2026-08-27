@@ -19,6 +19,8 @@
     "initializer_trace": "build/re/level01-actor-boot-refill-v4/debug.log",
     "actor_state_trace": "build/re/level01-actor-boot-refill-v6/state.jsonl",
     "animation_clear_trace": "build/re/level01-actor-boot-refill-v6/debug.log",
+    "reuse_state_trace": "build/re/level01-actor-boot-refill-v8/state.jsonl",
+    "reuse_field_trace": "build/re/level01-actor-boot-refill-v9/debug.log",
     "initializer": {
       "mame_frame": "0x536",
       "actor_slot": 8,
@@ -51,6 +53,37 @@
         "d1": "0x00000003"
       },
       "result": "EC 01 writes zero to actor record +0x20, clearing animation_pc while leaving type 0x40 and frame_ptr 0x001F84A4 intact."
+    },
+    "reuse": {
+      "first": {
+        "mame_frame": "0x5DA",
+        "initializer": "0x001AE30C",
+        "caller": "0x001B737C",
+        "destination": "0x00FF8050",
+        "post_type": "0x40",
+        "post_animation_pc": "0x00122C12",
+        "stable_state_frame": 1500,
+        "world": [1040, 816]
+      },
+      "second": {
+        "mame_frame": "0x6A5",
+        "initializer": "0x001AE30C",
+        "caller": "0x001B72E6",
+        "destination": "0x00FF8050",
+        "post_type": "0x34",
+        "post_animation_pc": "0x00122C1E",
+        "post_movement_pc": "0x001217B4",
+        "stable_state_frame": 1703,
+        "world": [1648, 656]
+      },
+      "writes": [
+        { "mame_frame": "0x5DA", "pc": "0x001B737C", "address": "0x00FF8050", "value": "0x40" },
+        { "mame_frame": "0x5DA", "pc": "0x001B7382", "address": "0x00FF8070", "value": "0x00122C12" },
+        { "mame_frame": "0x6A5", "pc": "0x001B72E6", "address": "0x00FF8050", "value": "0x34" },
+        { "mame_frame": "0x6A5", "pc": "0x001B72EC", "address": "0x00FF8070", "value": "0x00122C1E" },
+        { "mame_frame": "0x6A5", "pc": "0x001B72F4", "address": "0x00FF805A", "value": "0x001217B4" }
+      ],
+      "interpretation": "The generic template at 0x001B79B8 is a zero-type base. Caller-specific writes after Actor_InitializeFromTemplate select the live actor family, animation stream, and movement stream."
     }
   },
   "semantics": {
@@ -58,8 +91,9 @@
     "eligibility": "A live actor must have a nonzero animation pointer at record +0x20; otherwise the VM does not consume a stream. A nonzero delay at +0x37 decrements instead of servicing the stream.",
     "initializer": "Actor_InitializeFromTemplate clears runtime frame, movement, animation timer, and linked-resource fields after copying the compact template.",
     "f5": "AnimationVM_SpawnOrCopyActor applies source-relative signed offsets and can override animation/movement cursors from the F5 payload.",
-    "animation_clear": "The common animation dispatch at 0x001AC86C maps EC to the clear handler. Operand 0x01 selects the actor animation cursor field at record +0x20; it is distinct from F6 actor retirement."
+    "animation_clear": "The common animation dispatch at 0x001AC86C maps EC to the clear handler. Operand 0x01 selects the actor animation cursor field at record +0x20; it is distinct from F6 actor retirement.",
+    "reuse": "Slot 8 is reused after the initial interaction actor clears its animation cursor. The initializer at 0x001AE30C copies the zero-type base at 0x001B79B8; caller 0x001B737C then selects type 0x40 and stream 0x00122C12 at frame 0x5DA, while caller 0x001B72E6 selects type 0x34, stream 0x00122C1E, and movement 0x001217B4 at frame 0x6A5."
   },
-  "conclusion": "The first interaction-refill actor is a separate scheduler boundary from the opening player F5 actor. It is allocated at 0x001B5270 during MAME frame 0x536, while the low-bit animation gate crosses to 0x91 at 0x001A8C1E. At MAME frame 0x537, the 0x00122C12 stream executes EC 01 with A1=0x00FF8050 (slot 8), clearing only the animation cursor; the actor remains type 0x40 with frame pointer 0x001F84A4. This confirms a real allocation/eligibility boundary and distinguishes animation-state clearing from F6 actor retirement.",
-  "next_action": "Add the slot-8 EC 01 boundary as a native differential fixture, preserving the live actor type and frame pointer when the animation cursor is cleared, then trace the subsequent allocator reuse."
+  "conclusion": "The first interaction-refill actor is a separate scheduler boundary from the opening player F5 actor. It is allocated at 0x001B5270 during MAME frame 0x536, while the low-bit animation gate crosses to 0x91 at 0x001A8C1E. At MAME frame 0x537, the 0x00122C12 stream executes EC 01 with A1=0x00FF8050 (slot 8), clearing only the animation cursor; the actor remains type 0x40 with frame pointer 0x001F84A4. Slot 8 is later reused at frames 0x5DA and 0x6A5, and the post-initializer callers select different actor families, proving that reuse is a caller-level dispatch concern rather than a property of the generic 0x001B79B8 template.",
+  "next_action": "Extend native interaction records with caller-specific post-initializer actor families and add a differential fixture for the type-0x34 reuse path before returning to the natural exit route."
 }

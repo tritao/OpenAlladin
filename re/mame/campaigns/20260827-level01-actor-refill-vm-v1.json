@@ -1,6 +1,6 @@
 {
   "campaign": "20260827-level01-actor-refill-vm-v1",
-  "status": "completed-boundary-classification",
+  "status": "completed-boundary-reuse-classification",
   "purpose": "Resolve the common actor-animation gate and initialization ordering at the first Level 01 interaction-refill actor boundary.",
   "recorded_at": "2026-08-27",
   "rom": "rom/Disneys_Aladdin_U_p1.bin",
@@ -29,6 +29,20 @@
       "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_BREAKPOINTS=0x001AC86C,0x001AC8E0,0x001AD0FC OPENALADDIN_BREAKPOINT_REGISTERS=1 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
       "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
       "frames": 1360
+    },
+    {
+      "id": "refill-actor-reuse-state",
+      "trace_dir": "build/re/level01-actor-boot-refill-v8",
+      "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600' OPENALADDIN_TRACE_FRAMES=1800 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
+      "frames": 1800
+    },
+    {
+      "id": "refill-actor-reuse-writes",
+      "trace_dir": "build/re/level01-actor-boot-refill-v9",
+      "command": "OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_DEBUG_WATCH=1 OPENALADDIN_WATCH_ADDRESSES=0xFF8050,0xFF8056,0xFF805A,0xFF8064,0xFF8070,0xFF808C OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600' OPENALADDIN_TRACE_FRAMES=1800 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
+      "frames": 1800
     }
   ],
   "evidence": {
@@ -75,6 +89,30 @@
       "actor_address": "0x00FF8050",
       "stream_cursor": "0x00122C14",
       "result": "The EC 01 handler clears the actor animation cursor while preserving type 0x40 and the current frame pointer."
+    },
+    "reuse": {
+      "first": {
+        "mame_frame": "0x5DA",
+        "initializer": "0x001AE30C",
+        "caller": "0x001B737C",
+        "destination": "0x00FF8050",
+        "post_type": "0x40",
+        "post_animation_pc": "0x00122C12",
+        "stable_state_frame": 1500,
+        "world": [1040, 816]
+      },
+      "second": {
+        "mame_frame": "0x6A5",
+        "initializer": "0x001AE30C",
+        "caller": "0x001B72E6",
+        "destination": "0x00FF8050",
+        "post_type": "0x34",
+        "post_animation_pc": "0x00122C1E",
+        "post_movement_pc": "0x001217B4",
+        "stable_state_frame": 1703,
+        "world": [1648, 656]
+      },
+      "interpretation": "The generic template at 0x001B79B8 is a zero-type base. The caller-specific writes after Actor_InitializeFromTemplate select the live actor family, animation stream, and movement stream; slot reuse cannot be classified from the initializer source alone."
     }
   },
   "static_semantics": {
@@ -83,6 +121,6 @@
     "f5": "0x001AD00E selects the allocator by the F5 mode byte and applies signed source offsets; optional animation and movement overrides are read from the F5 payload.",
     "clear": "0x001AD0FC clears a mode-0 actor when the F5 mode and actor flags permit, otherwise it enters the shared owned-resource cleanup path. The separate EC 01 animation command at 0x001AC86C clears only record +0x20 (the animation cursor), leaving the actor type and frame pointer intact."
   },
-  "conclusion": "The interaction-refill actor is allocated by the level-object dispatcher at the same VBlank boundary where the shared animation gate advances. At the next common VM pass, stream 0x00122C12 presents its first frame and EC 01 executes at 0x001AC86E with A1=0x00FF8050; the actor remains type 0x40 while its animation cursor is cleared and frame pointer 0x001F84A4 is retained. This is an animation-state clear, not actor retirement, and does not justify applying the opening player F5 scheduling rule to all interaction spawns.",
-  "next_action": "Add the slot-8 EC 01 boundary as a native differential fixture: preserve type/frame state when the stream clears its animation cursor, then verify the interaction allocator's subsequent reuse path."
+  "conclusion": "The interaction-refill actor is allocated by the level-object dispatcher at the same VBlank boundary where the shared animation gate advances. At the next common VM pass, stream 0x00122C12 presents its first frame and EC 01 executes at 0x001AC86E with A1=0x00FF8050; the actor remains type 0x40 while its animation cursor is cleared and frame pointer 0x001F84A4 is retained. The same slot is later reused at MAME frames 0x5DA and 0x6A5, but the generic 0x001B79B8 initializer is followed by caller-specific writes selecting either type 0x40/stream 0x00122C12 or type 0x34/stream 0x00122C1E/movement 0x001217B4. This is an animation-state clear, not actor retirement, and slot reuse must be modeled at the post-initializer caller boundary.",
+  "next_action": "Extend the native interaction records with caller-specific post-initializer actor families, then add a differential fixture for the type-0x34 reuse path before returning to the natural exit route."
 }
