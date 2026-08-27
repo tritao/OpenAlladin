@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-level01-early-top-delayed-dismount-finding-v1",
+  "campaign": "re/mame/campaigns/20260827-level01-early-top-delayed-dismount-v1.json",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify delayed C initiation from the early Level 01 connector-top checkpoint.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_capture": "9d27f73",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_root": "build/re/analysis/20260827-early-top-delayed-dismount-v1",
+  "source_checkpoint": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "branches": [
+    { "delay_frames": 0, "input": "c+right*10,right*290", "max_world_x": 2397, "min_nonzero_world_y": 412, "final_world": [2397, 694], "final_scene_state": "0x01" },
+    { "delay_frames": 1, "input": "none*1,c+right*10,right*289", "max_world_x": 2394, "min_nonzero_world_y": 412, "final_world": [2394, 687], "final_scene_state": "0x01" },
+    { "delay_frames": 5, "input": "none*5,c+right*10,right*285", "max_world_x": 2382, "min_nonzero_world_y": 412, "final_world": [2382, 659], "final_scene_state": "0x01" },
+    { "delay_frames": 10, "input": "none*10,c+right*10,right*280", "max_world_x": 2367, "min_nonzero_world_y": 412, "final_world": [2367, 624], "final_scene_state": "0x01" },
+    { "delay_frames": 20, "input": "none*20,c+right*10,right*270", "max_world_x": 2337, "min_nonzero_world_y": 412, "final_world": [2337, 569], "final_scene_state": "0x01" },
+    { "delay_frames": 30, "input": "none*30,c+right*10,right*260", "max_world_x": 2307, "min_nonzero_world_y": 412, "final_world": [2307, 538], "final_scene_state": "0x01" },
+    { "delay_frames": 45, "input": "none*45,c+right*10,right*245", "max_world_x": 2262, "min_nonzero_world_y": 412, "final_world": [2262, 530], "final_scene_state": "0x01" }
+  ],
+  "observed": {
+    "source": { "world": [1560, 479], "terrain_behavior": "0x24", "scene_state": "0x01" },
+    "initial_gate": "PLAYER_TRANSITION_GATE=0xFF at the loaded connector endpoint; the first C input clears it and begins the ordinary jump arc.",
+    "route": "Every branch follows the same ordinary high-walkway route after the delayed jump. The best vertical result reaches world y=412; later branches have less remaining travel time and stop progressively earlier.",
+    "exit": "No branch reaches the Level 01 exit predicate (PLAYER_WORLD_X > 4743 and PLAYER_WORLD_Y < 470).",
+    "scene": "All seven branches remain in SCENE_STATE=0x01 with no scene-script or transition-gate event."
+  },
+  "negative_evidence": [
+    "No branch enters a behavior-0x22/0x24 connector after dismount.",
+    "No branch reaches the row-10 exit band or the natural Level 01 boundary predicate.",
+    "No branch writes SCENE_STATE, SCENE_SCRIPT_COUNTDOWN, or the player terminal transition gate."
+  ],
+  "conclusion": "Delaying the C+Right jump by 0-45 frames does not expose the hidden upper ledge or a second connector. The tested family is a timing-only variation of the ordinary high-walkway jump and is now closed. The missing transfer must come from another interaction/resource producer or a different route frontier.",
+  "next_action": "Shift exploration to the remaining upper-route interaction/resource producer and use the synchronized checkpoints to test only input families that can change actor interaction state or terrain response."
+}

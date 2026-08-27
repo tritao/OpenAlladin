@@ -1060,6 +1060,18 @@ animation cursors advance locally while `SCENE_STATE` stays `0x01`; this
 closes the direct neutral VM-probe family and leaves the unresolved work at
 the connector/terrain producer boundary.
 
+The delayed early-top dismount campaign is recorded in
+`re/mame/findings/20260827-level01-early-top-delayed-dismount-v1.json` and
+`re/mame/campaigns/20260827-level01-early-top-delayed-dismount-v1.json`. Seven
+branches wait 0, 1, 5, 10, 20, 30, or 45 frames at the synchronized
+behavior-`0x24` endpoint, then hold C+Right for ten frames. The immediate and
+delayed branches all take the ordinary high-walkway arc; the best reaches
+world y=`0x19C` (412), while the later branches simply have less remaining
+travel time. No branch enters another connector, reaches the Level 01 exit
+predicate, writes a scene gate, or leaves `SCENE_STATE=0x01`. This closes the
+delayed-C family and redirects the search to an interaction/resource producer
+that can change actor or terrain state.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1148,6 +1160,7 @@ the connector/terrain producer boundary.
 | `20260827-level01-peddler-c-timing-v1` | recorded-negative-frontier | nine synchronization-corrected held-C onset branches from the peddler platform; ordinary jump or edge fall only |
 | `20260827-level01-far-floor-type1e-trace-v1` | recorded-negative-frontier | detailed far-floor Type-1E contact, local FFF0E6 timer, and deferred callback trace; no scene transition |
 | `20260827-level01-upper-pair-vm-trace-v1` | recorded-negative | 180-frame neutral VM-boundary trace from the synchronized Type-0x1E/Type-0x20 activation pair; no handler or scene transition |
+| `20260827-level01-early-top-delayed-dismount-v1` | recorded-negative-frontier | seven delayed-C dismount branches from the early connector top; ordinary high-walkway arc only, no upper transfer |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

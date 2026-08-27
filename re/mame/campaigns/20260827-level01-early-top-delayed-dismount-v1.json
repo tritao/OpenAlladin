@@ -1,0 +1,142 @@
+{
+  "campaign": "20260827-level01-early-top-delayed-dismount-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Test delayed jump initiation from the synchronized early Level 01 connector-top checkpoint after the immediate-C family only reached the ordinary high walkway.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "9d27f73",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "9d27f73",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+  "timing_note": "Each branch preloads before capture, waits at the endpoint for the requested delay, holds C+Right for ten frames, then continues Right. All branches have 300 post-load frames and named checkpoints.",
+  "segments": [
+    {
+      "id": "delay-0",
+      "trace_dir": "build/re/analysis/20260827-early-top-delayed-dismount-v1/delay0",
+      "frames": 300,
+      "input": "c+right*10,right*290",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 60, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 120, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 180, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "delay-1",
+      "trace_dir": "build/re/analysis/20260827-early-top-delayed-dismount-v1/delay1",
+      "frames": 300,
+      "input": "none*1,c+right*10,right*289",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 60, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 120, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 180, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "delay-5",
+      "trace_dir": "build/re/analysis/20260827-early-top-delayed-dismount-v1/delay5",
+      "frames": 300,
+      "input": "none*5,c+right*10,right*285",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 60, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 120, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 180, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "delay-10",
+      "trace_dir": "build/re/analysis/20260827-early-top-delayed-dismount-v1/delay10",
+      "frames": 300,
+      "input": "none*10,c+right*10,right*280",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 60, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 120, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 180, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "delay-20",
+      "trace_dir": "build/re/analysis/20260827-early-top-delayed-dismount-v1/delay20",
+      "frames": 300,
+      "input": "none*20,c+right*10,right*270",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 60, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 120, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 180, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "delay-30",
+      "trace_dir": "build/re/analysis/20260827-early-top-delayed-dismount-v1/delay30",
+      "frames": 300,
+      "input": "none*30,c+right*10,right*260",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 60, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 120, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 180, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "delay-45",
+      "trace_dir": "build/re/analysis/20260827-early-top-delayed-dismount-v1/delay45",
+      "frames": 300,
+      "input": "none*45,c+right*10,right*245",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 60, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 120, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 180, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    }
+  ]
+}
