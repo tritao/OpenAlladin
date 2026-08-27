@@ -1,0 +1,26 @@
+{
+  "campaign": "20260827-level01-actor-lifecycle-v1",
+  "status": "completed-lifecycle-classification",
+  "purpose": "Classify the actor lifecycle at the first native parity break near the Level 01 opening route.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "command": "env OPENALADDIN_BREAKPOINTS=0x001AEE40,0x001ABE6E,0x001AE372,0x001AD0FC OPENALADDIN_BREAKPOINT_REGISTERS=1 OPENALADDIN_TRACE_ACTOR_INIT=1 python3 tools/oa.py trace level01-actor-boot --trace-dir build/re/level01-actor-boot-lifecycle-trace --capture state --state-output --actors",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "trace_dir": "build/re/level01-actor-boot-lifecycle-trace",
+  "segments": [
+    {
+      "id": "level01-opening-actor-lifecycle",
+      "trace_dir": "build/re/level01-actor-boot-lifecycle-trace",
+      "frames": 1845,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180; wait-for-player; right*600",
+      "capture": "state",
+      "actors": true,
+      "debug_log": "debug.log",
+      "focus_frames": [1637, 1638, 1639, 1640, 1641, 1642]
+    }
+  ],
+  "result": "At the aligned Level 01 boundary, actor-table slot 3 is a type-0x2D interaction record. The type-0x2D player-collision handler is entered through 0x001AEE40 and clears the record through the shared resource-cleanup path; no scene-state or scene-countdown transition is produced.",
+  "next": "Implement or trace the native type-0x2D collision lifecycle only after actor slot/resource ordering is aligned; do not treat this event as the missing Level 01 exit."
+}

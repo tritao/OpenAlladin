@@ -225,6 +225,10 @@ the finding or commit message.
   frame receives one ordinary follow service rather than a queued double step.
   Native player/camera fields now match the actor-boot replay through aligned
   frame 394; frame 395 is coupled to the unresolved actor-cleanup scheduler.
+- `re/mame/findings/20260827-level01-actor-lifecycle-v1.json`: the actor
+  mismatch at aligned frame 395 is a real type-0x2D player-collision lifecycle,
+  not a scene transition. Slot 3 enters `0x001AEE40`, then clears its type and
+  owned resources through `0x001AE372`; Level 01 remains `SCENE_STATE=0x01`.
 - `re/mame/findings/20260827-player-slope-grounded-boundary-v1.json`: a fresh
   Level 01 actor-boot replay shows non-flat contour bytes (`0x0F` through
   `0x03`) publishing `grounded=false` while retaining ground-motion and run
@@ -870,6 +874,7 @@ countdown producer.
 | `20260826-level01-type21-settle-v1` | recorded-negative | 600-frame no-input settle of the selector-0x1A high-walkway type-0x21 actor; no movement or scene transition |
 | `20260826-level01-selector12-dispatch-v1` | recorded-negative-frontier | fresh natural selector-0x12 dispatch trace; generic route actors only, no scene transition |
 | `20260826-level01-scene-countdown-writers-v1` | recorded-negative-natural | complete countdown-writer static/runtime audit; no gameplay countdown or scene-state write |
+| `20260827-level01-actor-lifecycle-v1` | recorded-lifecycle | type-0x2D player-collision cleanup at the first actor parity break; no scene transition |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

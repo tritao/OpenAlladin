@@ -1,0 +1,56 @@
+{
+  "format": "openaladdin-level01-actor-lifecycle-finding-v1",
+  "campaign": "re/mame/campaigns/20260827-level01-actor-lifecycle-v1.json",
+  "recorded_at": "2026-08-27",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace": {
+    "directory": "build/re/level01-actor-boot-lifecycle-trace",
+    "state": "build/re/level01-actor-boot-lifecycle-trace/state.jsonl",
+    "debug": "build/re/level01-actor-boot-lifecycle-trace/debug.log",
+    "focus_state_frames": [1637, 1638, 1639, 1640, 1641, 1642],
+    "debug_frame": "0x666"
+  },
+  "actor": {
+    "slot": 3,
+    "record": "0x00FF7EC4",
+    "record_size": "0x42",
+    "type_address": "0x00FF7EC4",
+    "transition": [
+      { "state_frame": 1637, "type": "0x2D", "x": 1298, "y": 819, "flags": "0x08" },
+      { "state_frame": 1638, "type": "0x2D", "x": 1298, "y": 819, "flags": "0x08" },
+      { "state_frame": 1639, "type": "0x2D", "x": 1298, "y": 819, "flags": "0x08" },
+      { "state_frame": 1640, "type": "0x00", "x": 1291, "y": 820, "flags": "0x08" }
+    ]
+  },
+  "breakpoints": [
+    {
+      "address": "0x001AEE40",
+      "observed_pc": "0x001AEE42",
+      "debug_frame": "0x666",
+      "a1": "0x00FF7F06",
+      "a1_type": "0x2D",
+      "a1_x": "0x050B",
+      "a1_flags": "0x08",
+      "a4": "0x001AEE40",
+      "meaning": "The type-0x2D player-collision dispatch is active for slot 3."
+    },
+    {
+      "address": "0x001AE372",
+      "observed_pc": "0x001AE374",
+      "debug_frame": "0x666",
+      "a1": "0x00FF7F06",
+      "a1_type": "0x00",
+      "meaning": "The shared owned-resource cleanup is entered after the handler clears the actor type."
+    }
+  ],
+  "scene": {
+    "state": "0x01",
+    "scene_countdown": "0x00",
+    "interpretation": "This is an interaction actor cleanup, not the Level 01 exit or SCENE_STATE=0x08 path."
+  },
+  "conclusion": "The first native actor-table divergence around aligned frame 395 is coupled to a real type-0x2D interaction lifecycle. The ROM dispatches slot 3 through ActorType2D_PlayerCollisionHandler, clears its type/resources, and continues Level 01 without arming a scene transition. Native parity must eventually reproduce this lifecycle, but it is independent of the unresolved natural Level 01 exit route."
+}
