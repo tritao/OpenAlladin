@@ -87,6 +87,14 @@ if [[ "${TRACE_FRAMES}" =~ ^[0-9]+$ ]]; then
     TRACE_SECONDS=$(( (TRACE_FRAMES + 59) / 60 + 1 ))
 fi
 
+# MAME save states can restore the emulated-time position together with the
+# machine.  A state captured after a finite -seconds_to_run budget may
+# therefore exit immediately when loaded, before the Lua frame limit gets a
+# chance to run.  Keep the normal finite bound for fresh boots, but give
+# loaded-state traces an explicit ceiling that is safely above any recorded
+# checkpoint.  The Lua harness still owns the exact frame count.
+LOADED_STATE_SECONDS="${OPENALADDIN_MAME_LOADED_STATE_SECONDS:-100000}"
+
 if [[ ! -x "${MAME_BIN}" ]]; then
     echo "MAME executable not found: ${MAME_BIN}" >&2
     echo "Build it with: make -C external/mame SUBTARGET=mame BUILDDIR=../../build/mame -j20" >&2
@@ -176,7 +184,9 @@ fi
 # checkpoint exit on its first frame.  The Lua harness already has its own
 # exact frame-limit shutdown, so loaded checkpoints do not need this second
 # wall-clock bound.
-if [[ -n "${TRACE_SECONDS}" && -z "${OPENALADDIN_LOAD_STATE:-}" && -z "${OPENALADDIN_PRELOAD_STATE:-}" ]]; then
+if [[ -n "${OPENALADDIN_LOAD_STATE:-}" || -n "${OPENALADDIN_PRELOAD_STATE:-}" ]]; then
+    MAME_ARGS+=( -seconds_to_run "${LOADED_STATE_SECONDS}" )
+elif [[ -n "${TRACE_SECONDS}" ]]; then
     MAME_ARGS+=( -seconds_to_run "${TRACE_SECONDS}" )
 fi
 
