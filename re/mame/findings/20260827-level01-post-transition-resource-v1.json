@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-post-transition-resource-finding-v1",
+  "recorded_at": "2026-08-27",
+  "campaign": "re/mame/campaigns/20260827-level01-post-transition-resource-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "950a134",
+  "source_checkpoint": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/transition-settled.sta",
+  "trace": {
+    "directory": "build/re/campaigns/20260827-post-transition-resource-v1",
+    "state_stream": "state.jsonl",
+    "boot_stream": "trace_boot.jsonl",
+    "debug_log": "debug.log",
+    "input": "none*300",
+    "frame_count": 300,
+    "checkpoints": [
+      { "frame": 1, "name": "loaded" },
+      { "frame": 30, "name": "resource-early" },
+      { "frame": 60, "name": "resource-settled" },
+      { "frame": 120, "name": "loop-mid" },
+      { "frame": 240, "name": "loop-late" },
+      { "frame": 299, "name": "end" }
+    ]
+  },
+  "observations": {
+    "preload_boundary": { "scene_state": "0x03", "pc": "0x001B24F4", "world": [2019, 690], "script_cursor": "0x408A", "scene_table_index": 0 },
+    "stable_window": { "frames": "1..300", "scene_state": "0x03", "script_cursor": "0x408A", "scene_table_index": 0, "world": [2019, 690], "actors": 0 },
+    "scene_state_writes": 0,
+    "rnc_loader_events": 0,
+    "watched_gate_writes": 0,
+    "other_writes": [
+      { "address": "0xFFF0DA", "pc": "0x001AC7AA", "value": "0x00", "cadence": "every four emulated frames in the observed log" }
+    ],
+    "input_effect": "No controller input was used in this final settled-loop segment; the earlier same-checkpoint button matrix also left scene state, cursor, table index, and world position unchanged."
+  },
+  "conclusion": "The settled checkpoint is a persistent scene-3 transition/resource loop, not a playable next-level state. It does not advance from controller input alone in the tested window and does not invoke the RNC loader after preload. This is a negative result for post-transition input probing, not evidence that Level 01's natural exit has been reached."
+}

@@ -1,0 +1,34 @@
+{
+  "campaign": "20260827-level01-post-transition-resource-v1",
+  "status": "negative-transition-loop",
+  "purpose": "Replay the settled Level 01 scene-transition checkpoint with controller input and observe whether the next resource/state advances naturally.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "950a134",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "settled-transition-input-matrix",
+      "trace_dir": "build/re/campaigns/20260827-post-transition-resource-v1",
+      "frames": 300,
+      "input": "none*300",
+      "load_state": "transition-settled",
+      "loaded_state_source": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/transition-settled.sta",
+      "capture": "state",
+      "rnc_loader_trace": true,
+      "scene_state_trace": true,
+      "debug_watch_addresses": ["0xFF7E26", "0xFFF0D0", "0xFFF0DB", "0xFFF0DC", "0xFFF0E6", "0xFFF572", "0xFFF57A"],
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta", "scene_state": 3 },
+        { "frame": 30, "name": "resource-early", "state": "states/genesis/resource-early.sta", "scene_state": 3 },
+        { "frame": 60, "name": "resource-settled", "state": "states/genesis/resource-settled.sta", "scene_state": 3 },
+        { "frame": 120, "name": "loop-mid", "state": "states/genesis/loop-mid.sta", "scene_state": 3 },
+        { "frame": 240, "name": "loop-late", "state": "states/genesis/loop-late.sta", "scene_state": 3 },
+        { "frame": 299, "name": "end", "state": "states/genesis/end.sta", "scene_state": 3 }
+      ]
+    }
+  ],
+  "next": "Do not treat the settled scene-3 checkpoint as a playable next-level start. Resume progression work from the Level 01 natural-route frontier or decode the scene script's next-state selector before attempting further input-only probes."
+}
