@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-level-loader-runtime-finding-v1",
+  "recorded_at": "2026-08-27",
+  "campaign": "re/mame/campaigns/20260827-level-loader-runtime-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "845d5fb",
+  "trace": {
+    "directory": "build/re/campaigns/20260827-level-loader-runtime-v1",
+    "state_stream": "state.jsonl",
+    "boot_stream": "trace_boot.jsonl",
+    "debug_log": "debug.log",
+    "breakpoint": "0x001AA484",
+    "breakpoint_log": { "pc_after_breakpoint": "0x001AA486", "machine_frame": "0x00000433", "count": 1 }
+  },
+  "observations": {
+    "scene_entry": { "trace_frame": 5, "scene_state": "0x01" },
+    "level01_checkpoint": { "trace_frame": 1245, "scene_state": "0x01", "world": [103, 880], "level_width_pixels": 4800, "level_height_pixels": 720 },
+    "opening_ground": { "trace_frame": 1300, "scene_state": "0x01", "world": [268, 880], "grounded": true },
+    "runtime_mapping": "The observed Level 01 state uses the level-table entry at 0x002CBA: start/camera offsets produce camera dimensions 4800x720 and the Level 01 player world position."
+  },
+  "conclusion": "The ROM's common loader at 0x001AA484 is a real startup path, not dead data: it runs after scene state 0x01 is selected and establishes the Level 01 dimensions and start state used by gameplay. The loader is now both statically decompiled and dynamically checkpointed."
+}

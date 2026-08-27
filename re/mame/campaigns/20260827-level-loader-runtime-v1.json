@@ -1,0 +1,28 @@
+{
+  "campaign": "20260827-level-loader-runtime-v1",
+  "status": "loader-runtime-confirmed",
+  "purpose": "Observe the common scene-state level loader during a clean boot and retain the Level 01 runtime checkpoint it establishes.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "845d5fb",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "clean-boot-level-loader",
+      "trace_dir": "build/re/campaigns/20260827-level-loader-runtime-v1",
+      "frames": 1400,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55",
+      "capture": "state",
+      "scene_state_trace": true,
+      "breakpoints": ["0x001AA484"],
+      "checkpoints": [
+        { "frame": 0, "name": "boot", "state": "states/genesis/boot.sta" },
+        { "frame": 1245, "name": "level01-entry", "state": "states/genesis/level01-entry.sta", "scene_state": 1 },
+        { "frame": 1300, "name": "opening-ground", "state": "states/genesis/opening-ground.sta", "scene_state": 1, "world": [268, 880] }
+      ]
+    }
+  ],
+  "next": "Use the loader metadata to make native Level configuration select dimensions/start/camera values by scene state, while keeping Level 01's current terrain behavior as the compatibility baseline."
+}
