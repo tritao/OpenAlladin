@@ -723,6 +723,34 @@ dynamic_validation:
     final_scene_table_index: 0x0000
     controlled: true
     note: These runs start from the earlier controlled scene-3 checkpoint. They validate the state-3 resource-dispatch boundary only and do not establish resource completion, natural state-3 reachability, transition entry, or native parity.
+  natural_scene_writer_inventory:
+    status: trace_validated_negative_natural
+    campaign: re/mame/campaigns/20260827-level01-natural-transition-inventory-v1.json
+    finding: re/mame/findings/20260827-level01-natural-transition-inventory-v1.json
+    trace_root: build/re/20260827-level01-natural-transition-inventory-v2
+    route: clean power-on Level 01 replay
+    frames: 2296
+    predicate_post_pc: 0x001B5B4C
+    predicate_hits: 1105
+    predicate_condition: world X > 0x1287 and world Y < 0x01D6
+    predicate_satisfied: false
+    scene_script_advance_post_pc: 0x001A8E40
+    scene_script_advance_hits: 1105
+    scene_completion_entry_post_pc: 0x001B315E
+    scene_completion_entry_hits: 1105
+    scene_completion_writer_hits: 0
+    post_boot_transition_entry_hits: 0
+    post_boot_scene_state_writer_hits: 0
+    post_boot_frame_wait_latch_writer_hits: 0
+    post_boot_scene_table_writer_hits: 0
+    boot_scene_table_select_hits: 1
+    final_scene_state: 0x01
+    final_script_cursor: 0x4082
+    final_scene_table_index: 0x0000
+    final_player_world: [2564, 920]
+    controlled_writes: false
+    natural: true
+    note: The repeated scene-completion entry is not equivalent to its gated writer executing. This capture closes one natural route/input family only; it does not establish universal absence of the transition writers.
 
 native_mapping:
   status: provisional

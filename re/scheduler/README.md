@@ -77,6 +77,16 @@ transition-mode writers at `0x001B2DF4`/`0x001B2E02`, scene-table selection, or
 script completion; both remain at state `0x03`, cursor `0x408A`, table index
 `0`. This is resource-path boundary evidence only, not natural progression.
 
+The clean natural writer inventory is recorded in
+`re/mame/campaigns/20260827-level01-natural-transition-inventory-v1.json`.
+The power-on Level 01 route reaches the shared boundary predicate 1105 times
+and repeatedly enters the scene service, but settles at world `(2564,920)` in
+scene state `0x01`. Its upper-band condition is never satisfied, and no
+post-boot transition entry, scene-state, `FRAME_WAIT_LATCH`, completion, or
+scene-table progression writer fires. The single scene-table selector hit is
+boot initialization. This is a clean negative natural-route boundary, not a
+claim that every possible route misses those writers.
+
 Reanalyze an existing capture with:
 
 ```sh

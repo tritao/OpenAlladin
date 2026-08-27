@@ -1,0 +1,181 @@
+{
+  "campaign": "20260827-level01-natural-transition-inventory-v1",
+  "status": "recorded-negative-natural-scene-writer-inventory",
+  "purpose": "Preserve a clean power-on Level 01 replay with the complete recovered scene-transition, scene-table, latch, and route-predicate writer inventory instrumented.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "f654e98f5d00c9d5b80e80b326f41b6516cef5e2",
+  "trace_harness_commit": "d7d4e87597396d15a56c5e02b332ad48ceb6f2a7",
+  "working_tree_at_capture": "Tracked files were clean at capture. Unrelated untracked mame/ trace artifacts were left untouched and are not part of this campaign.",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "static_sources": [
+    "build/re/dasm-1A8000.txt",
+    "re/scheduler/frame_phases.yml",
+    "re/symbols/functions.yml",
+    "re/symbols/ram.yml",
+    "re/mame/findings/20260826-level01-exit-data-reference-audit-v1.json"
+  ],
+  "instrumentation": {
+    "breakpoints": [
+      "0x001B5B4A",
+      "0x001B5B66",
+      "0x001A8E3E",
+      "0x001A8ED2",
+      "0x001B2ACE",
+      "0x001B2DB8",
+      "0x001B2DD8",
+      "0x001B2DF4",
+      "0x001B2E02",
+      "0x001B3B96",
+      "0x001B3F02",
+      "0x001B3F0A",
+      "0x001B3F1C",
+      "0x001B3F2E",
+      "0x001B315C",
+      "0x001B318E",
+      "0x001AA484",
+      "0x001B0F66",
+      "0x001B042A",
+      "0x001B5318",
+      "0x001B53B8",
+      "0x001B5B42",
+      "0x001B0B38",
+      "0x001B5C18",
+      "0x001B624E",
+      "0x001B7830",
+      "0x001A8F34",
+      "0x001A8F3E",
+      "0x001A8F7A",
+      "0x001A9020"
+    ],
+    "breakpoint_register_dump": true,
+    "breakpoint_scene_context": true,
+    "trace_scene_states": true,
+    "debug_watch": true,
+    "watched_addresses": [
+      "0x00FF7E26",
+      "0x00FF7E22",
+      "0x00FF7E23",
+      "0x00FF7E25",
+      "0x00FFF57C",
+      "0x00FFF57A",
+      "0x00FFF572",
+      "0x00FFF576",
+      "0x00FFF005",
+      "0x00FFF176",
+      "0x00FFF0D0",
+      "0x00FFF0DB",
+      "0x00FFF0DC",
+      "0x00FFF0E6",
+      "0x00FFF0E9"
+    ],
+    "memory_pokes": [],
+    "controlled_writes": false
+  },
+  "segments": [
+    {
+      "id": "fresh-natural-scene-writer-inventory",
+      "trace_dir": "build/re/20260827-level01-natural-transition-inventory-v2",
+      "frames": 2296,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right,right*149,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c,right*195,b+right*50,right*100,none*15",
+      "load_state": false,
+      "start_condition": "MAME Genesis machine booted from power-on with no loaded state",
+      "capture": "state",
+      "scene_state_trace": true,
+      "debug_watch": true,
+      "trace_files": [
+        "state.jsonl",
+        "trace_boot.jsonl",
+        "debug.log"
+      ],
+      "observed": {
+        "state_records": 2297,
+        "scene_states": ["0x00", "0x01"],
+        "final": {
+          "frame": 2296,
+          "pc": "0x001ABC46",
+          "scene_state": "0x01",
+          "script_cursor": "0x4082",
+          "script_data_cursor": "0x0000",
+          "scene_table_index": "0x0000",
+          "script_pending": "0x00",
+          "player_world": [2564, 920]
+        },
+        "route_predicate": {
+          "requested_pc": "0x001B5B4A",
+          "reported_post_instruction_pc": "0x001B5B4C",
+          "hits": 1105,
+          "condition": "world X > 0x1287 and world Y < 0x01D6",
+          "satisfied": false,
+          "last_observed_world": [2564, 920]
+        },
+        "routine_entry_hits": {
+          "0x001A8E40": 1105,
+          "0x001B315E": 1105,
+          "0x001B5B4C": 1105,
+          "0x001AA486": 1,
+          "0x001B0F68": 1,
+          "0x001B3B98": 1
+        },
+        "post_boot_progression_writers": {
+          "scene_enter_transition_mode_0x001B2ACE": 0,
+          "scene_state_writers_0x001B2DB8_0x001B2DD8": 0,
+          "frame_wait_latch_transition_writers_0x001B2DF4_0x001B2E02": 0,
+          "scene_table_progression_writers_0x001B3F02_0x001B3F0A_0x001B3F1C_0x001B3F2E": 0,
+          "scene_state_write_0x001A8ED2": 0,
+          "scene_completion_writer_0x001B318E": 0,
+          "candidate_terminal_producers": 0
+        },
+        "initialization_only": {
+          "level_loader_0x001AA484": 1,
+          "resource_dispatch_0x001B0F66": 1,
+          "scene_table_select_next_state_0x001B3B96": 1
+        },
+        "watched_write_provenance": {
+          "scene_state_0x00FF7E26": {
+            "gameplay_writes": 0,
+            "initialization_pcs": ["0x0000027A", "0x001AA3A2", "0x001AA452"]
+          },
+          "scene_script_cursor_0x00FFF572": {
+            "gameplay_writes": 0,
+            "initialization_pcs": ["0x0000027A", "0x001AA44A"]
+          },
+          "scene_table_index_0x00FFF576": {
+            "gameplay_writes": 0,
+            "initialization_pcs": ["0x0000027A"]
+          },
+          "scene_transition_event_0x00FFF57C": {
+            "gameplay_writes": 0,
+            "initialization_pcs": ["0x0000027A", "0x001A8B2C", "0x001AA394"]
+          }
+        }
+      },
+      "result": "The clean natural route evaluates the Level 01 boundary predicate 1105 times and repeatedly calls SceneScript_AdvanceState and SceneScript_CompleteToState1, but remains in scene state 0x01 at world (2564,920). The direct completion routine's writer branch, transition entry, scene-state progression, FRAME_WAIT_LATCH transition pair, and scene-table progression writers are all absent after initialization."
+    }
+  ],
+  "limitations": [
+    "This is one clean power-on Level 01 input family and does not prove that other natural routes cannot reach the listed writers.",
+    "SceneTable_SelectNextState is observed once during boot initialization; the result concerns post-boot progression, not the existence of that loader path.",
+    "The repeated SceneScript_CompleteToState1 entry is not equivalent to its gated scene-state writer executing.",
+    "No native parity comparison was performed."
+  ],
+  "confidence": {
+    "decompiled": [
+      "Level 01 route predicate and its X/Y condition",
+      "SceneScript_AdvanceState and SceneScript_CompleteToState1 call/writer locations",
+      "scene transition entry and FRAME_WAIT_LATCH writer inventory",
+      "scene-table progression writer inventory"
+    ],
+    "trace_validated": [
+      "clean power-on route reaches the predicate evaluator 1105 times",
+      "scene state remains 0x01 after boot",
+      "no configured post-boot scene-state, transition-mode, latch, completion, or scene-table writer fires",
+      "the route settles at world (2564,920) and fails the upper-band Y condition"
+    ],
+    "parity_validated": []
+  },
+  "conclusion": "This capture is a clean negative natural boundary for scene progression. The route reaches the shared predicate and scene-service call sites, but its lower-floor endpoint never satisfies the upper-band condition and no post-boot scene/table/latch writer runs. The remaining natural-route gap is upstream transfer into the required Y<0x01D6 band and/or the natural producer of scene-table index 1; the controlled scene-3 records must not be promoted to natural scheduler behavior.",
+  "next_action": "Expand natural route coverage upstream of the predicate, or statically decode and trace the producer chain for scene-table index 1 and the transition-mode path while retaining this writer inventory as the clean negative baseline."
+}

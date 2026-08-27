@@ -1,0 +1,90 @@
+{
+  "format": "openaladdin-level01-natural-transition-inventory-finding-v1",
+  "recorded_at": "2026-08-27",
+  "status": "negative-natural-scene-progression-boundary",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_capture": "f654e98f5d00c9d5b80e80b326f41b6516cef5e2",
+  "trace_harness_commit": "d7d4e87597396d15a56c5e02b332ad48ceb6f2a7",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-natural-transition-inventory-v1.json",
+  "trace_root": "build/re/20260827-level01-natural-transition-inventory-v2",
+  "static_model": "re/scheduler/frame_phases.yml",
+  "static_chain": [
+    "0x001A8E3E SceneScript_AdvanceState",
+    "0x001B5B4A Level01_EnterRoutine boundary predicate",
+    "0x001B315C SceneScript_CompleteToState1",
+    "0x001B318E scene-state completion writer (not reached)",
+    "0x001B2ACE Scene_EnterTransitionMode (not reached)",
+    "0x001B2DF4/0x001B2E02 FRAME_WAIT_LATCH transition writers (not reached)",
+    "0x001B3F02/0x001B3F0A/0x001B3F1C/0x001B3F2E scene-table progression writers (not reached)"
+  ],
+  "natural_replay": {
+    "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right,right*149,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c,right*195,b+right*50,right*100,none*15",
+    "frames": 2296,
+    "start_condition": "power-on with no loaded state and no debugger-side memory writes",
+    "scene_states": ["0x00", "0x01"],
+    "final_world": [2564, 920],
+    "final_scene_state": "0x01",
+    "final_script_cursor": "0x4082",
+    "final_scene_table_index": "0x0000"
+  },
+  "dynamic_evidence": {
+    "predicate": {
+      "post_pc": "0x001B5B4C",
+      "hits": 1105,
+      "condition": "world X > 0x1287 and world Y < 0x01D6",
+      "satisfied": false
+    },
+    "shared_scene_services": {
+      "scene_script_advance_post_pc": "0x001A8E40",
+      "scene_script_advance_hits": 1105,
+      "scene_completion_entry_post_pc": "0x001B315E",
+      "scene_completion_entry_hits": 1105,
+      "scene_completion_writer_hits": 0
+    },
+    "post_boot_writer_hits": {
+      "scene_enter_transition_mode": 0,
+      "scene_state_transition_writers": 0,
+      "frame_wait_latch_transition_writers": 0,
+      "scene_table_progression_writers": 0,
+      "scene_state_script_write": 0,
+      "candidate_terminal_producers": 0
+    },
+    "boot_only_entries": {
+      "level_loader_post_pc": "0x001AA486",
+      "resource_dispatch_post_pc": "0x001B0F68",
+      "scene_table_select_next_state_post_pc": "0x001B3B98"
+    },
+    "watch_provenance": {
+      "scene_state": "no gameplay writes; only initialization PCs observed",
+      "script_cursor": "no gameplay writes; remains 0x4082",
+      "scene_table_index": "no gameplay writes; remains 0x0000",
+      "scene_transition_event": "no gameplay writes after initialization"
+    }
+  },
+  "confidence": {
+    "decompiled": [
+      "the Level 01 predicate's upper-band condition",
+      "the shared scene-service call path and gated completion writer",
+      "the transition-mode, latch, and scene-table writer locations"
+    ],
+    "trace_validated": [
+      "the natural route reaches the predicate and shared scene services",
+      "the route remains in scene state 0x01",
+      "the complete configured post-boot writer inventory remains unhit",
+      "the natural endpoint is below the predicate's required Y band"
+    ],
+    "parity_validated": []
+  },
+  "limitations": [
+    "The evidence covers one natural route/input family only.",
+    "A boot-time SceneTable_SelectNextState hit is initialization evidence, not a natural progression event.",
+    "The finding does not assert that every natural Level 01 route misses these writers.",
+    "No native parity comparison was performed."
+  ],
+  "conclusion": "The clean replay closes a negative natural scene-progression boundary: repeated scene-service entry is present, but the route never satisfies the upper-band predicate, and no post-boot transition, latch, scene-state, completion, or scene-table writer executes. The controlled state-3/resource captures therefore remain separate hypotheses and do not define the natural scheduler route.",
+  "next_action": "Use the static writer inventory to trace the upstream producer of scene-table index 1 and expand natural route coverage toward the missing upper-band transfer."
+}
