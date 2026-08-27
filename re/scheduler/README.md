@@ -25,3 +25,18 @@ The generated JSON is evidence for the YAML model and remains under
 `build/`. Dynamic MAME campaigns and native causal parity can promote a row
 from `decompiled` to `trace_validated` and `parity_validated`; they must carry
 their own committed provenance.
+
+The first committed dynamic validation is recorded in
+`re/mame/campaigns/20260827-scheduler-static-dynamic-v1.json`. Its focused
+trace observes the exact 37-call sequence in 209 complete gameplay passes and
+keeps `FRAME_WAIT_LATCH` unresolved because no gameplay writer was observed.
+
+Reanalyze an existing capture with:
+
+```sh
+python3 tools/openaladdin/mame/analyze_scheduler_trace.py \
+  build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run/debug.log \
+  --trace-boot build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run/trace_boot.jsonl \
+  --state build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run/state.jsonl \
+  --output build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run/scheduler-analysis.json
+```

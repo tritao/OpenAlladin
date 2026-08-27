@@ -1,0 +1,64 @@
+{
+  "format": "openaladdin-scheduler-static-dynamic-finding-v1",
+  "recorded_at": "2026-08-27",
+  "status": "trace-validated-direct-call-sequence",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "4414e1610373f6d2450a1d42261de3304c75cefc",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-scheduler-static-dynamic-v1.json",
+  "static_model": "re/scheduler/frame_phases.yml",
+  "trace_root": "build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run",
+  "call_sequence": {
+    "caller": "Game_FrameUpdateLoop",
+    "caller_entry": "0x001A8C16",
+    "static_call_count": 37,
+    "observed_call_events": 7747,
+    "complete_sequences": 209,
+    "partial_final_sequence": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    "exact": true,
+    "error_count": 0,
+    "animation_vm": {
+      "ordinal": 30,
+      "call_site": "0x001A8CCE",
+      "entry": "0x001AC784",
+      "second_direct_call_observed": false
+    }
+  },
+  "runtime_latches": {
+    "FRAME_PHASE_COUNTER": {
+      "status": "trace_validated",
+      "gameplay_writes": 210,
+      "writer_pc": "0x001A8C1E",
+      "debugger_frame_range": [1189, 1398]
+    },
+    "VBLANK_READY_LATCH": {
+      "status": "boundary_validated",
+      "boundary_count": 1396,
+      "boundary_pc": "0x001B2470",
+      "observed_values": [0, 255]
+    },
+    "FRAME_WAIT_LATCH": {
+      "status": "producer_unresolved",
+      "gameplay_writes": 0,
+      "pre_gameplay_writer_pc": "0x001AA3B0"
+    },
+    "SCENE_RESOURCE_STATUS": {
+      "status": "no_gameplay_write_observed",
+      "reset_writer_pc": "0x0000027A"
+    },
+    "SCENE_RESOURCE_ERROR": {
+      "status": "no_gameplay_write_observed",
+      "reset_writer_pc": "0x0000027A"
+    }
+  },
+  "interpretation": [
+    "The 37-row static sequence is directly observed in a natural Level 01 gameplay route, so the direct call-site ledger is trace-validated for this route.",
+    "The ROM's direct gameplay body contains one AnimationVM_TickActors call after scene-script advance; native probe_animation is not supported as a second direct ROM phase by this evidence.",
+    "The phase counter write at 0x001A8C1E is the observed gameplay gate transition, while VBlank synchronization returns through 0x001B2470.",
+    "The wait-latch producer remains unresolved because the natural gameplay window does not write FRAME_WAIT_LATCH after the pre-gameplay 0x001AA3B0 event."
+  ],
+  "conclusion": "Static scheduler reconstruction and dynamic call-site tracing agree on the direct Level 01 gameplay loop. The native scheduler should now be compared against this recovered boundary model, while FRAME_WAIT_LATCH requires a separate transition/resource campaign before its producer is named."
+}

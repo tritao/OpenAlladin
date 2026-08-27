@@ -1,0 +1,62 @@
+{
+  "campaign": "20260827-scheduler-static-dynamic-v1",
+  "status": "completed-static-call-sequence-validation",
+  "purpose": "Validate the statically recovered Game_FrameUpdateLoop call sequence and identify runtime scheduler-latch writers on a clean Level 01 replay.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "4414e1610373f6d2450a1d42261de3304c75cefc",
+  "working_tree_at_capture": "scheduler instrumentation committed; unrelated untracked mame/ captures were left untouched",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v2",
+  "command": "python3 tools/oa.py trace player-run --frames 1400 --state-sync --scheduler-calls --trace-dir build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run",
+  "instrumentation": {
+    "call_site_breakpoints": 37,
+    "exact_latch_write_taps": [
+      "FRAME_WAIT_LATCH",
+      "VBLANK_READY_LATCH",
+      "SCENE_RESOURCE_STATUS",
+      "SCENE_RESOURCE_ERROR"
+    ],
+    "phase_counter_debug_watch": "FRAME_PHASE_COUNTER",
+    "vblank_boundary_marker": "OPENALADDIN_SCHEDULER_VBLANK"
+  },
+  "segments": [
+    {
+      "id": "player-run",
+      "trace_dir": "build/re/campaigns/20260827-scheduler-static-dynamic-v1/player-run",
+      "frames": 1400,
+      "input": "player-run manifest: first-level boot followed by right movement",
+      "artifacts": {
+        "debug_log": "debug.log",
+        "trace_boot": "trace_boot.jsonl",
+        "state": "state.jsonl",
+        "analysis": "scheduler-analysis.json"
+      }
+    }
+  ],
+  "observed": {
+    "static_call_count": 37,
+    "observed_call_events": 7747,
+    "complete_call_sequences": 209,
+    "partial_final_sequence": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    "call_sequence_exact": true,
+    "call_sequence_errors": 0,
+    "direct_animation_vm_ordinals": [30],
+    "vblank_boundaries": 1396,
+    "vblank_pc": "0x001B2470",
+    "vblank_latch_values": [0, 255],
+    "gameplay_frame_counter_writes": 210,
+    "gameplay_frame_counter_writer_pc": "0x001A8C1E",
+    "gameplay_frame_counter_debugger_frames": [1189, 1398],
+    "gameplay_frame_wait_latch_writes": 0,
+    "pre_gameplay_frame_wait_latch_writer_pc": "0x001AA3B0"
+  },
+  "result": "The active Level 01 replay executes all 37 recovered direct Game_FrameUpdateLoop call sites in the recovered order for 209 complete gameplay passes. The only direct AnimationVM_TickActors call is ordinal 30 at 0x001A8CCE, after SceneScript_AdvanceState; no second direct animation pass appears before MovementVM_TickActors. The frame counter is written by 0x001A8C1E at each observed gameplay pass. VBlank synchronization repeatedly returns through 0x001B2470. FRAME_WAIT_LATCH has no gameplay writer in this route; its observed non-reset writer is pre-gameplay at 0x001AA3B0.",
+  "limitations": [
+    "The campaign validates the direct gameplay loop, not every indirect or scene-specific caller of the recovered services.",
+    "The final capture ends partway through the next call sequence because the requested 1400-frame window ends at ordinal 14.",
+    "Native probe_animation remains a provisional diagnostic phase and is not promoted by this evidence."
+  ],
+  "next_action": "Trace the FRAME_WAIT_LATCH producer across a transition/resource campaign, then compare native causal scheduler output against the validated ROM call boundaries."
+}

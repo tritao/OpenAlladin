@@ -269,6 +269,19 @@ the finding or commit message.
   gated by `SCENE_RESOURCE_ERROR`, with its own resource/query callback
   services. This is static/decompiled evidence only; no dynamic scheduler or
   parity claim is promoted until the instrumentation provenance is committed.
+- `re/mame/campaigns/20260827-scheduler-static-dynamic-v1.json` records the
+  first provenance-complete scheduler call-site replay after the focused
+  instrumentation was committed at `4414e16`. The Level 01 route observes
+  7,747 call-site events: 209 complete repetitions of all 37 recovered direct
+  calls, with zero sequence errors and a final capture ending at ordinal 14.
+- The same campaign confirms that ordinal 30 (`0x001A8CCE` → `0x001AC784`) is
+  the only direct animation-VM call in the gameplay body. It records 210
+  gameplay writes to `FRAME_PHASE_COUNTER` from `0x001A8C1E` and 1,396 VBlank
+  boundaries at `0x001B2470`. `FRAME_WAIT_LATCH` has no gameplay writer in
+  this route; its non-reset writer remains the pre-gameplay `0x001AA3B0` path.
+- This validates the direct static call sequence for the tested route, but it
+  does not promote native `probe_animation` or identify indirect service
+  callers. Those remain provisional pending a transition/resource campaign.
 
 - `re/mame/findings/20260827-level01-type34-reuse-native-v1.json`: the later
   selector-0x53 reuse now applies the caller's type-0x34/animation-0x00122C1E/

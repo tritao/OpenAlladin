@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import sys
 
 
@@ -62,6 +63,19 @@ def main() -> int:
     calls = model["call_sequence"]
     assert len(calls) == 37
     assert [parse_int(call["entry"]) for call in calls] == EXPECTED_ENTRIES
+    lua_source = (ROOT / "re/mame/lua/scheduler.lua").read_text(encoding="utf-8")
+    lua_calls = [
+        (int(ordinal), int(call_site, 16), int(entry, 16))
+        for ordinal, call_site, entry in re.findall(
+            r"\{\s*(\d+),\s*0x([0-9A-Fa-f]+),\s*0x([0-9A-Fa-f]+)\s*\}",
+            lua_source,
+        )
+    ]
+    yaml_calls = [
+        (int(call["ordinal"]), parse_int(call["call_site"]), parse_int(call["entry"]))
+        for call in calls
+    ]
+    assert lua_calls == yaml_calls
     assert model["entry_points"]["gameplay"]["direct_call_count"] == len(calls)
     animation_calls = [call for call in calls if parse_int(call["entry"]) == 0x001AC784]
     assert [call["ordinal"] for call in animation_calls] == [30]
