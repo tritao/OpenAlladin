@@ -1,0 +1,129 @@
+{
+  "format": "openaladdin-level01-upper-band-inventory-finding-v1",
+  "recorded_at": "2026-08-27",
+  "repository_commit": "0af48f0d78dff940a06a5641a253cb0b7b17c3ec",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Close the remaining Level 01 upper-band interaction/resource inventory after the natural far-rope producer trace.",
+  "source_assets": {
+    "map": "build/assets/levels/level01/raw/map.bin",
+    "floor": "build/assets/levels/level01/raw/floor.bin",
+    "dimensions": [300, 45],
+    "column_range": [275, 299],
+    "world_x_range": [4400, 4799],
+    "interaction_decode": "floor.bin[3 + (big_endian_u16(map_word) >> 1)]",
+    "terrain_decode": "floor.bin[2 + (big_endian_u16(map_word) >> 1)]",
+    "visual_world_y": "map_row * 16 + 0xF0"
+  },
+  "interaction_records": [
+    {
+      "cell": [283, 14],
+      "map_word": "0x5658",
+      "resource_index": "0x2B2C",
+      "selector": "0x11",
+      "handler": "0x001B6E90",
+      "runtime_result": "Type 0x1E in the confirmed upper pair"
+    },
+    {
+      "cell": [294, 14],
+      "map_word": "0x5668",
+      "resource_index": "0x2B34",
+      "selector": "0x1B",
+      "handler": "0x001B6EB2",
+      "runtime_result": "Type 0x20 in the confirmed upper pair"
+    },
+    {
+      "cell": [284, 23],
+      "map_word": "0x5C50",
+      "resource_index": "0x2E28",
+      "selector": "0x60",
+      "handler": "0x001B735E",
+      "runtime_result": "Type 0x40 cleanup/support actor"
+    },
+    {
+      "cell": [281, 24],
+      "map_word": "0x5CB8",
+      "resource_index": "0x2E5C",
+      "selector": "0x60",
+      "handler": "0x001B735E",
+      "runtime_result": "Type 0x40 cleanup/support actor"
+    },
+    {
+      "cell": [287, 24],
+      "map_word": "0x5CD0",
+      "resource_index": "0x2E68",
+      "selector": "0x60",
+      "handler": "0x001B735E",
+      "runtime_result": "Type 0x40 cleanup/support actor"
+    },
+    {
+      "cell": [292, 27],
+      "map_word": "0x5E40",
+      "resource_index": "0x2F20",
+      "selector": "0x60",
+      "handler": "0x001B735E",
+      "runtime_result": "Type 0x40 cleanup/support actor"
+    },
+    {
+      "cell": [295, 39],
+      "map_word": "0x6BE8",
+      "resource_index": "0x35F4",
+      "selector": "0x12",
+      "handler": "0x001B6E7A",
+      "runtime_result": "Generic Type 0x1D/support path; no scene transition"
+    }
+  ],
+  "terrain_records": {
+    "0x22": {
+      "cells": [[296, 27], [296, 28], [296, 29], [296, 30], [296, 31], [296, 32], [296, 33], [296, 34], [296, 35], [296, 36]],
+      "handler": "0x001B54D8",
+      "classification": "known far vertical connector body"
+    },
+    "0x24": {
+      "cells": [[296, 26]],
+      "handler": "0x001B54D2",
+      "classification": "known far-rope upper stop"
+    },
+    "0x25": {
+      "cells": [[275, 10], [276, 10], [277, 10], [278, 10], [279, 10], [280, 10], [281, 10], [282, 10], [283, 10], [284, 10], [275, 24], [276, 24], [277, 24], [278, 24], [279, 24], [280, 24], [281, 24], [282, 24], [283, 24], [284, 24], [285, 24], [286, 24], [287, 24], [288, 24], [289, 24], [290, 24], [291, 24], [292, 24], [293, 24], [294, 24], [295, 24], [296, 24]],
+      "handler": "0x001B54E0",
+      "classification": "known upper/middle solid contour band"
+    },
+    "0x80": {
+      "cells": [[276, 15], [282, 40]],
+      "handler": "0x001B65BE",
+      "classification": "shared no-op/default terrain handler"
+    },
+    "0x81": {
+      "cells": [[298, 15], [299, 40]],
+      "handler": "0x001B65BE",
+      "classification": "shared no-op/default terrain handler"
+    }
+  },
+  "runtime_probe": {
+    "trace_dir": "build/re/analysis/20260827-level01-upper-band-inventory-v1/runtime-clean",
+    "source_checkpoint": "build/re/analysis/20260827-level01-far-rope-up-contact-v1/far-rope-up-contact/states/genesis/end.sta",
+    "input": "none*1,c+up*20,up*100",
+    "preload_before_capture": true,
+    "observation": {
+      "loaded_endpoint": "Frame 1 restores world (4728,671), terrain behavior 0x24, and SCENE_STATE=0x01.",
+      "ordinary_dismount": "The C+Up input produces PLAYER_VY=-0x0200 at frame 3; the player leaves the rope, crosses empty terrain, and settles on behavior 0x25 at world (4728,628) by frame 43.",
+      "terrain_trace": "The breakpoint trace reaches the behavior-0x24 and behavior-0x25 response/query paths and the Level 01 enter-predicate vicinity, but never reaches the behavior-0x29 launch target 0x001B557E or behavior-0x2D bounce target 0x001B56B6.",
+      "scene": "Across the loaded replay, SCENE_STATE remains 0x01 and player countdown, terminal, and transition-gate fields remain clear."
+    },
+    "negative_handler_hits": {
+      "0x001B557E": 0,
+      "0x001B56B6": 0
+    }
+  },
+  "correlated_findings": [
+    "re/mame/findings/20260827-level01-far-rope-upper-resource-trace-v1.json",
+    "re/mame/findings/20260826-level01-controlled-rope-wall-interaction-v1.json",
+    "re/mame/findings/20260826-level01-selector12-dispatch-v1.json",
+    "re/mame/findings/20260826-level01-route-geometry-audit-v1.json"
+  ],
+  "conclusion": "The complete x=4400-4800 Level 01 band contains no unclassified interaction row. Its seven interaction records are the known upper Type-0x1E/Type-0x20 pair, four Type-0x40 cleanup/support records, and the already classified selector-0x12 generic path. The only special row-15 terrain cells, behaviors 0x80/0x81, dispatch to the no-op/default handler 0x001B65BE. The far connector and contour bands are likewise already classified. No remaining upper-band table entry explains the missing traversal or countdown.",
+  "next_action": "Move the search upstream to the producer that places the player into the upper exit-height band, prioritizing the high-ledge/moving-platform launch chain and terrain/actor callbacks before the far-rope dismount; retain breakpoints on 0x001B557E, 0x001B56B6, 0x001B5B4A, and the player-coordinate writers."
+}

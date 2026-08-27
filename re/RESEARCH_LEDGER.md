@@ -1089,6 +1089,23 @@ hypothesis that it is itself the missing transition trigger. The next search is
 the remaining upper-band interaction/resource records and any producer capable
 of changing traversal or setting the Level 01 countdown.
 
+The complete upper-band inventory is recorded in
+`re/mame/findings/20260827-level01-upper-band-inventory-v1.json`. Static decode
+of map columns 275–299 (`x=4400–4799`) finds seven interaction records: the
+known `0x11`/`0x1B` Type-`0x1E`/Type-`0x20` pair, four selector-`0x60`
+Type-`0x40` cleanup/support records, and the already classified selector-`0x12`
+generic path. The row-15 `0x80`/`0x81` terrain cells both dispatch to the
+shared no-op/default handler at `0x001B65BE`; the `0x22`, `0x24`, and `0x25`
+connector/contour bands are already classified. No unclassified upper-band
+table entry remains that can explain the missing traversal or countdown, so
+the search now moves upstream to the high-ledge/moving-platform launch producer
+and its player-coordinate/terrain callbacks. A clean preloaded replay from the
+far-rope endpoint (`none*1,c+up*20,up*100`) confirms the same boundary at
+runtime: the player leaves behavior `0x24`, makes an ordinary `PLAYER_VY=-0x200`
+jump, settles on behavior `0x25` at `(4728,628)`, and never reaches the behavior
+`0x29`/`0x2D` launch targets or a scene/countdown gate. The trace is retained at
+`build/re/analysis/20260827-level01-upper-band-inventory-v1/runtime-clean`.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1179,6 +1196,7 @@ of changing traversal or setting the Level 01 countdown.
 | `20260827-level01-upper-pair-vm-trace-v1` | recorded-negative | 180-frame neutral VM-boundary trace from the synchronized Type-0x1E/Type-0x20 activation pair; no handler or scene transition |
 | `20260827-level01-early-top-delayed-dismount-v1` | recorded-negative-frontier | seven delayed-C dismount branches from the early connector top; ordinary high-walkway arc only, no upper transfer |
 | `20260827-level01-far-rope-upper-resource-trace-v1` | recorded-positive-producer-frontier | natural far-rope upward dismount produces the upper Type-0x1E/Type-0x20 pair; no scene transition |
+| `20260827-level01-upper-band-inventory-v1` | recorded-negative-frontier | complete x=4400–4799 upper-band interaction/terrain inventory plus clean far-rope endpoint replay; no remaining upper-band launch or transition producer |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
