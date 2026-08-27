@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-level01-upper-type06-jump-sweep-finding-v1",
+  "campaign": "re/mame/campaigns/20260827-level01-upper-type06-jump-sweep-v1.json",
+  "recorded_at": "2026-08-27",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_root": "build/re/analysis/20260827-level01-upper-type06-jump-sweep-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v4/fresh-to-frontier/states/genesis/high-walkway-entry.sta",
+  "static_context": {
+    "type06_player_collision_handler": "0x001AE9DA",
+    "type40_player_collision_handler": "0x001AF468",
+    "launch_handlers": ["0x001B557E", "0x001B56B6"],
+    "type06_classification": "shared player-collision block; no direct launch, coordinate transfer, or scene write",
+    "type40_classification": "gate-checked actor cleanup/reinitialization"
+  },
+  "runtime": {
+    "input_family": "right*N,c+right*30,right*100,none*100",
+    "walk_frames": [120, 130, 140, 150, 160, 170],
+    "frames_per_branch": 300,
+    "upper_type06_world_x": 2121,
+    "ordinary_jump_apex_world_y": 464,
+    "terminal_world_y": 920,
+    "breakpoint_hits": {
+      "0x001AE9DA": "17 total across c120 and c130; zero in c140-c170",
+      "0x001AF468": "25 total across the six branches",
+      "0x001B557E": 0,
+      "0x001B56B6": 0
+    },
+    "scene_state": "0x01 throughout all branches",
+    "scene_script_countdown": "zero at every terminal state"
+  },
+  "interpretation": "The type-0x06 actor above the peddler is exercised by the timing sweep but supplies no vertical impulse, horizontal transfer, or scene transition. Later C timing merely bypasses that actor and still falls through the open upper edge. The accompanying type-0x40 contacts are the already classified cleanup family.",
+  "conclusion": "No tested upper-walkway object explains the required Level 01 transition to world Y<0x01D6. The remaining high-value search target is the lower/far resource-object path, especially the unresolved type-0x1E interaction chain.",
+  "next_action": "Run the same launch and actor-initializer instrumentation from the far-rope endpoint and trace type-0x1E candidates before expanding the input matrix."
+}

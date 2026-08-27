@@ -1126,6 +1126,7 @@ live camel; the hidden-ledge descent is the required producer path.
 | `20260827-level01-camel-handhold-connector-v1` | recorded-positive-route-extension | live camel boost, type-0x6A→0x6B handhold, and x=1568 connector-top continuation |
 | `20260827-level01-pole-input-matrix-v1` | recorded-negative-frontier | six exact-pole Up/jump/directional branches; ordinary jump arc and upper-edge fall only |
 | `20260827-level01-upper-type40-contact-v1` | recorded-negative-frontier | upper type-0x40 contact breakpoints and object cleanup; no launch or scene transition |
+| `20260827-level01-upper-type06-jump-sweep-v1` | recorded-negative-frontier | six walk-off/held-jump branches across the hanging type-0x06 actor; no launch or scene transition |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

@@ -1,0 +1,125 @@
+{
+  "campaign": "20260827-level01-upper-type06-jump-sweep-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Test the hanging upper-walkway type-0x06 actor across the walk-off and held-jump timing window, with launch handlers instrumented.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_analysis": "c7dcd6a",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "working_tree_note": "The pre-existing generated mame/ directory and native changes were preserved and not staged by this evidence commit.",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v4/fresh-to-frontier/states/genesis/high-walkway-entry.sta",
+  "trace_root": "build/re/analysis/20260827-level01-upper-type06-jump-sweep-v1",
+  "instrumentation": {
+    "capture": "state",
+    "actor_trace": true,
+    "scene_state_trace": true,
+    "preload_before_capture": true,
+    "state_sync": false,
+    "breakpoints": [
+      "0x001AE9DA",
+      "0x001AF468",
+      "0x001B557E",
+      "0x001B56B6"
+    ],
+    "breakpoint_context": "registers plus actor type and world X"
+  },
+  "input_family": "right*N,c+right*30,right*100,none*100",
+  "branches": [
+    {
+      "id": "c120",
+      "walk_frames": 120,
+      "frames": 300,
+      "minimum_world_y_after_load": 464,
+      "minimum_world_y_frame": 145,
+      "minimum_world_x": 2107,
+      "final_world": [2400, 920],
+      "scene_state": "0x01",
+      "scene_script_countdown": 0,
+      "type06_collision_breakpoint_hits": 13,
+      "type40_collision_breakpoint_hits": 3
+    },
+    {
+      "id": "c130",
+      "walk_frames": 130,
+      "frames": 300,
+      "minimum_world_y_after_load": 464,
+      "minimum_world_y_frame": 155,
+      "minimum_world_x": 2137,
+      "final_world": [2430, 920],
+      "scene_state": "0x01",
+      "scene_script_countdown": 0,
+      "type06_collision_breakpoint_hits": 4,
+      "type40_collision_breakpoint_hits": 5
+    },
+    {
+      "id": "c140",
+      "walk_frames": 140,
+      "frames": 300,
+      "minimum_world_y_after_load": 464,
+      "minimum_world_y_frame": 165,
+      "minimum_world_x": 2167,
+      "final_world": [2460, 920],
+      "scene_state": "0x01",
+      "scene_script_countdown": 0,
+      "type06_collision_breakpoint_hits": 0,
+      "type40_collision_breakpoint_hits": 4
+    },
+    {
+      "id": "c150",
+      "walk_frames": 150,
+      "frames": 300,
+      "minimum_world_y_after_load": 464,
+      "minimum_world_y_frame": 175,
+      "minimum_world_x": 2222,
+      "final_world": [2540, 920],
+      "scene_state": "0x01",
+      "scene_script_countdown": 0,
+      "type06_collision_breakpoint_hits": 0,
+      "type40_collision_breakpoint_hits": 3
+    },
+    {
+      "id": "c160",
+      "walk_frames": 160,
+      "frames": 300,
+      "minimum_world_y_after_load": 464,
+      "minimum_world_y_frame": 185,
+      "minimum_world_x": 2252,
+      "final_world": [2570, 920],
+      "scene_state": "0x01",
+      "scene_script_countdown": 0,
+      "type06_collision_breakpoint_hits": 0,
+      "type40_collision_breakpoint_hits": 5
+    },
+    {
+      "id": "c170",
+      "walk_frames": 170,
+      "frames": 300,
+      "minimum_world_y_after_load": 464,
+      "minimum_world_y_frame": 195,
+      "minimum_world_x": 2282,
+      "final_world": [2597, 920],
+      "scene_state": "0x01",
+      "scene_script_countdown": 0,
+      "type06_collision_breakpoint_hits": 0,
+      "type40_collision_breakpoint_hits": 5
+    }
+  ],
+  "observations": [
+    {
+      "branches": ["c120", "c130"],
+      "result": "The hanging type-0x06 actor invokes its shared player-collision handler while the player crosses world X=2121; the handler does not invoke either launch response."
+    },
+    {
+      "branches": ["c140", "c150", "c160", "c170"],
+      "result": "Starting C later avoids the type-0x06 contact, but the player still follows the ordinary jump arc and reaches the same open upper-edge fall."
+    },
+    {
+      "branches": ["c120", "c130", "c140", "c150", "c160", "c170"],
+      "result": "No breakpoint hit occurred at 0x001B557E or 0x001B56B6, and no branch reached the Level 01 exit height or changed scene state."
+    }
+  ],
+  "conclusion": "The hanging upper-walkway type-0x06 actor is not the missing spring or high-ledge transfer. Its collision path is shared/non-launching, while the visible type-0x40 objects remain cleanup actors. This closes the peddler-side upper object family for the tested walk-off and held-jump timing window.",
+  "next_action": "Return to the far-rope and unresolved type-0x1E/resource-object chain, instrumenting actor initialization and the 0x29/0x2D launch handlers from the natural lower-route checkpoints."
+}
