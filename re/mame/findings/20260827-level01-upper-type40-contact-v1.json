@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-level01-upper-type40-contact-finding-v1",
+  "campaign": "re/mame/campaigns/20260827-level01-upper-type40-contact-v1.json",
+  "recorded_at": "2026-08-27",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "trace": "build/re/analysis/20260827-level01-pole-type40-trace-v1-rerun",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v4/fresh-to-frontier/states/genesis/high-walkway-entry.sta",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "static": {
+    "handler": "0x001AF468",
+    "breakpoint_after_instruction": "0x001AF46A",
+    "symbol": "Actor_FarTransferPlayerCollisionHandler",
+    "classification": "actor cleanup/reinitialization"
+  },
+  "runtime": {
+    "input": "right*90,c+right*15,right*80,none*35,c+right*20,right*80,none*40",
+    "frames": 360,
+    "upper_objects": [
+      { "world": [2000, 464], "contact_boundary": 105 },
+      { "world": [2032, 448], "contact_boundary": 110 },
+      { "world": [2064, 464], "contact_boundary": 118 }
+    ],
+    "breakpoint_hits": 7,
+    "first_contact": {
+      "trace_frame": 103,
+      "world": [2006, 493],
+      "player_vy": -824
+    },
+    "terminal": {
+      "trace_frame": 360,
+      "world": [2546, 920],
+      "scene_state": "0x01",
+      "scene_script_countdown": 0,
+      "player_terminal_gate": 0
+    }
+  },
+  "interpretation": "The small upper-walkway objects are live type-0x40 actors. Crossing them invokes the known far-transfer player handler, which removes or reinitializes the contacted actor. The player continues through an ordinary jump arc; this family supplies neither the hidden-ledge transfer nor the Level 01 exit condition.",
+  "conclusion": "The visible type-0x40 pole hypothesis is closed for this route and input family. The missing transfer must be produced by a different resource/object condition or by the correctly timed walk-off superjump at the high ledge.",
+  "next_action": "Use a high-ledge edge checkpoint, sweep the walk-off-to-C timing window, and retain launch-handler breakpoints at 0x001B557E and 0x001B56B6."
+}

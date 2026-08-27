@@ -1,0 +1,75 @@
+{
+  "campaign": "20260827-level01-upper-type40-contact-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Trace the upper-walkway type-0x40 objects at the visible pole positions and classify their player-collision path.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "c34c101",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v4/fresh-to-frontier/states/genesis/high-walkway-entry.sta",
+  "trace_dir": "build/re/analysis/20260827-level01-pole-type40-trace-v1-rerun",
+  "frames": 360,
+  "input_schedule": "right*90,c+right*15,right*80,none*35,c+right*20,right*80,none*40",
+  "instrumentation": {
+    "breakpoints": ["0x001AF468"],
+    "breakpoint_pc_after_instruction": "0x001AF46A",
+    "breakpoint_context": "registers plus actor type and world X",
+    "actor_trace": true,
+    "scene_state_trace": true,
+    "preload_before_capture": true,
+    "state_sync": false
+  },
+  "observed": {
+    "initial_loaded_state": {
+      "trace_frame": 1,
+      "world": [1703, 530],
+      "scene_state": "0x01"
+    },
+    "upper_type40_region": {
+      "objects": [
+        { "world": [2000, 464], "trace_added": 43, "trace_removed": 105 },
+        { "world": [2032, 448], "trace_added": 53, "trace_removed": 110 },
+        { "world": [2064, 464], "trace_added": 64, "trace_removed": 118 }
+      ],
+      "interpretation": "The objects are live type-0x40 actors on the upper walkway, not terrain cells."
+    },
+    "breakpoint_hits": [
+      { "machine_frame": "0x00000833", "actor_type": "0x40", "actor_world_x": 2000, "actor_address": "0x00FF7F8A" },
+      { "machine_frame": "0x00000838", "actor_type": "0x40", "actor_world_x": 2032, "actor_address": "0x00FF8050" },
+      { "machine_frame": "0x00000840", "actor_type": "0x40", "actor_world_x": 2064, "actor_address": "0x00FF8092" },
+      { "machine_frame": "0x000008B5", "actor_type": "0x40", "actor_world_x": 2304, "actor_address": "0x00FF7F8A" },
+      { "machine_frame": "0x000008BA", "actor_type": "0x40", "actor_world_x": 2336, "actor_address": "0x00FF800E" },
+      { "machine_frame": "0x000008CE", "actor_type": "0x40", "actor_world_x": 2368, "actor_address": "0x00FF8050" },
+      { "machine_frame": "0x00000908", "actor_type": "0x40", "actor_world_x": 2544, "actor_address": "0x00FF8092" }
+    ],
+    "player_response": {
+      "first_contact_trace_frame": 103,
+      "first_contact_world": [2006, 493],
+      "ordinary_jump_apex_world_y": 464,
+      "post_contact_world": [2057, 465],
+      "interpretation": "Contact removes/reinitializes the object while preserving ordinary player velocity; no -0x0500-style launch impulse appears."
+    },
+    "terminal_state": {
+      "trace_frame": 360,
+      "world": [2546, 920],
+      "scene_state": "0x01",
+      "scene_script_countdown": 0,
+      "player_terminal_gate": 0
+    }
+  },
+  "static_context": {
+    "handler": "0x001AF468",
+    "symbol": "Actor_FarTransferPlayerCollisionHandler",
+    "decompile": "build/re/level01-far-transfer-decomp-v1.json",
+    "classification": "gate-checked actor cleanup/reinitialization; no direct player launch or scene-state write"
+  },
+  "negative_results": [
+    "The upper type-0x40 objects are consumed by the 0x001AF468 player-collision handler when crossed.",
+    "No handler execution writes SCENE_STATE, the scene-script countdown, or the player terminal gate.",
+    "No terrain behavior-0x29/0x2D launch response or upper-band transfer occurs in this replay."
+  ],
+  "conclusion": "The visible upper-walkway pole family is not the missing high-wall spring. Its type-0x40 actors are contact/cleanup objects: the player remains on the ordinary jump trajectory, the objects disappear, and the replay falls to the lower floor in scene state 0x01.",
+  "next_action": "Search the actual high-ledge walk-off superjump route and instrument the 0x001B557E/0x001B56B6 launch handlers plus the remaining interaction/resource producers."
+}
