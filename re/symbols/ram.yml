@@ -51,6 +51,33 @@
   evidence:
     - ghidra_targeted_decompile_001B3258
     - mame_level_transition_watch
+0xFF7E28:
+  name: FRAME_PHASE_COUNTER
+  aliases:
+    - ACTOR_ANIMATION_GATE
+  type: u8
+  format: bitfield
+  confidence: confirmed
+  description: Per-frame counter incremented by Game_FrameUpdateLoop at 0x001A8C16; its low bit gates AnimationVM_TickActors at 0x001AC784 and several later services, so the older actor-gate label is only an alias.
+  evidence:
+    - ghidra_targeted_decompile_001AC784
+    - mame_actor_animation_gate_trace
+0xFF7E25:
+  name: FRAME_WAIT_LATCH
+  type: u8
+  format: boolean
+  confidence: probable
+  description: Frame-service latch tested by the ROM's wait helper at 0x001B249E and by the input/resource service at 0x001A91C6; its producer is not yet named.
+  evidence:
+    - ghidra_targeted_decompile_scheduler
+0xFF7E1E:
+  name: VBLANK_READY_LATCH
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: VBlank-side latch written to 0xFF by VBlankInterrupt at 0x001B246E; its consumer relationship with FRAME_WAIT_LATCH is not yet resolved.
+  evidence:
+    - ghidra_targeted_decompile_scheduler
 0xFF7E26:
   name: SCENE_STATE
   type: u8

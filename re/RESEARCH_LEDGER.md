@@ -248,6 +248,28 @@ the finding or commit message.
   (movement-loop cursor), its timer, and the return cursor untouched; native
   template reuse preserves those stale fields before applying the caller's
   overrides.
+
+### Scheduler static reconstruction
+
+- `re/ghidra/targets/scheduler-targets.json` and
+  `re/scheduler/frame_phases.yml` record the first dedicated static scheduler
+  pass. Ghidra recovers 37 direct call sites in
+  `Game_FrameUpdateLoop` (`0x001A8C16`), beginning with the increment of the
+  `0x00FF7E28` frame-phase counter and ending at
+  `SceneScript_CompleteToState1` (`0x001B315C`). The ledger records each call
+  site, callee, RAM gates, actor range, pre/post mutation summary, and whether
+  another direct invocation exists in the same loop.
+- The recovered gameplay body contains one direct
+  `AnimationVM_TickActors` call at `0x001A8CCE`, after scene-script advance;
+  it does not contain a second direct animation-VM pass before
+  `MovementVM_TickActors`. Native `probe_animation` and `actor_animation`
+  phases therefore remain an unresolved mapping rather than an accepted ROM
+  scheduler fact.
+- `VBlankInterrupt` (`0x001B246E`) is tracked as a separate interrupt path,
+  gated by `SCENE_RESOURCE_ERROR`, with its own resource/query callback
+  services. This is static/decompiled evidence only; no dynamic scheduler or
+  parity claim is promoted until the instrumentation provenance is committed.
+
 - `re/mame/findings/20260827-level01-type34-reuse-native-v1.json`: the later
   selector-0x53 reuse now applies the caller's type-0x34/animation-0x00122C1E/
   movement-0x001217B4 fields directly after the generic initializer. Native

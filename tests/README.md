@@ -43,6 +43,14 @@ jump, sword, and apple inputs, including deterministic writer provenance:
 python3 tests/native_scheduler_trace.py
 ```
 
+The static ROM scheduler ledger checks the recovered direct-call sequence and
+keeps the single direct animation-VM call distinct from native diagnostic
+phases:
+
+```bash
+python3 tests/scheduler_model.py
+```
+
 The scheduler comparator's normalization, explicit phase projections, and
 first-divergence context are covered by:
 

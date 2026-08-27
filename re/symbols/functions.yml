@@ -10,6 +10,29 @@
   description: Stable entry point for the game's per-frame update loop; the debugger state synchronizer samples player and camera RAM here before the next frame's gameplay work.
   evidence:
     - mame_player_run_frame_boundary_trace
+0x001A8E0C:
+  name: Player_PublishWorldCoordinates
+  confidence: confirmed
+  description: Recomputes PLAYER_WORLD_X/Y from PLAYER_X/Y plus WORLD_CAMERA_X/Y and mirrors those values into the player-coordinate scratch fields used by later terrain and actor passes.
+  evidence:
+    - ghidra_targeted_decompile_scheduler
+    - ghidra_disassembly_001A8E0C
+0x001AA8FA:
+  name: Camera_UpdateFollow
+  confidence: confirmed
+  description: Applies the camera delay/special-mode gates, indexes the fixed horizontal and vertical damping tables, and updates player-local/world-camera coordinates plus pending scroll flags.
+  evidence:
+    - ghidra_targeted_decompile_scheduler
+    - player_camera_static_map
+    - mame_player_camera_follow_trace
+0x001ADB5C:
+  name: Actor_TerrainCollisionLoop
+  confidence: confirmed
+  description: Scans the non-player actor records against the terrain row/behavior resources, publishes each actor's terrain behavior byte, and applies the actor vertical movement fallback.
+  evidence:
+    - ghidra_targeted_decompile_scheduler
+    - ghidra_actor_interaction_state_producer
+    - mame_actor_terrain_trace
 0x001B246E:
   name: VBlankInterrupt
   confidence: confirmed
