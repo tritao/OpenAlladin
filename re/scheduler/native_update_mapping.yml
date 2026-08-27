@@ -241,6 +241,12 @@ native_extra_phases:
     classification: presentation_only
 
 animation_lifecycle_mapping:
+  - name: frame_phase
+    native_field: Engine::frame_phase_
+    rom_state: "FRAME_PHASE_COUNTER at 0x00FF7E28"
+    status: exact
+    regression: re/mame/findings/20260827-scheduler-static-dynamic-v1.json, tests/native_scheduler_trace.py
+    removal_condition: "none; the field is the recovered Game_FrameUpdateLoop phase counter"
   # These are state fields rather than scheduler phases. Keep each one tied
   # to the regression that currently needs it until the corresponding ROM
   # writer, gate, and cursor transition are decoded. None of these fields
@@ -275,30 +281,12 @@ animation_lifecycle_mapping:
     status: temporary_parity_hack
     regression: tests/native_sword_lifecycle.py, tests/native_scheduler_trace.py (apple route)
     removal_condition: "derive cadence from the common gate and stream cursor rather than actor-type timing"
-  - name: force_tick_after_service
-    native_field: PlayerAnimationVm::force_tick_after_service_
-    rom_state: "selector command boundary that requests a following cursor service"
+  - name: service_boundary
+    native_field: PlayerAnimationVm::service_boundary_
+    rom_state: "selector/command boundary pending ordinal-30 cursor service"
     status: temporary_parity_hack
     regression: tests/player_jump_regression.py, tests/native_scheduler_trace.py (apple route)
-    removal_condition: "identify the ROM command/caller that consumes the following ordinal-30 slot"
-  - name: force_tick_next_update
-    native_field: PlayerAnimationVm::force_tick_next_update_
-    rom_state: "unresolved following gated cursor visit"
-    status: temporary_parity_hack
-    regression: tests/native_scheduler_trace.py (apple route), player action traces
-    removal_condition: "replace with the common FF7E28 gate/cursor transition"
-  - name: force_tick_without_phase
-    native_field: PlayerAnimationVm::force_tick_without_phase_
-    rom_state: "ordinal-30 cursor gate override; no second AnimationVM call"
-    status: temporary_parity_hack
-    regression: re/mame/findings/20260827-player-camera-follow-boundary-v1.json
-    removal_condition: "delete when camera/action boundary behavior is produced by ordinal-30 lifecycle state"
-  - name: defer_tick_next_update
-    native_field: PlayerAnimationVm::defer_tick_next_update_
-    rom_state: "unresolved one-boundary cursor hold after apple command edge"
-    status: temporary_parity_hack
-    regression: tests/native_scheduler_trace.py (apple route)
-    removal_condition: "replace with decoded command cursor/writeback semantics"
+    removal_condition: "replace enum transitions with decoded ROM command/cursor writeback semantics"
   - name: clear_timer_next_update
     native_field: PlayerAnimationVm::clear_timer_next_update_
     rom_state: "player interaction-selector timer clear at a command boundary"
@@ -313,11 +301,11 @@ animation_lifecycle_mapping:
     removal_condition: "none; the state is owned by the VM and does not create a native scheduler phase"
 
 summary:
-  exact_or_inlined_rom_rows: 31
+  exact_or_inlined_rom_rows: 32
   mismatch_rom_rows: 0
   derived_presentation_only_rom_rows: 6
   unknown_rom_rows: 0
   native_extra_phases: 1
-  native_hacks_requiring_followup: 9
+  native_hacks_requiring_followup: 6
   native_extra_mismatch_phases: 0
-  conclusion: "Engine::update now exposes one owner for each gameplay-affecting ROM service. Animation, actor collision, terrain resolution, interaction resources, coordinate publication, and scene completion are aligned to their recovered causal boundaries; remaining per-record cursor fields are state gates inside those services, not native scheduler phases."
+  conclusion: "Engine::update now exposes one owner for each gameplay-affecting ROM service. Animation, actor collision, terrain resolution, interaction resources, coordinate publication, and scene completion are aligned to their recovered causal boundaries; the FF7E28 phase is explicit at engine scope, while remaining per-record cursor fields are state gates inside those services, not native scheduler phases."

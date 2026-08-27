@@ -323,6 +323,10 @@ private:
         std::array<std::uint8_t, 32> registers{};
     } vdp_checkpoint_;
     int frame_ = 0;
+    // FF7E28 is incremented at Game_FrameUpdateLoop entry. Keep the ROM
+    // phase separately from the host frame label so scene/checkpoint
+    // boundaries do not silently turn into scheduler gates.
+    std::uint8_t frame_phase_ = 0;
     int last_ground_direction_ = 0;
     bool quit_ = false;
     std::vector<std::uint32_t> framebuffer_;

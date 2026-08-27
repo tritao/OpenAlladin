@@ -164,7 +164,7 @@ std::uint32_t terrain_handler(std::uint8_t behavior) {
     return behavior < kTerrainHandlers.size() ? kTerrainHandlers[behavior] : kTerrainNoOpHandler;
 }
 
-constexpr std::uint32_t kCheckpointVersion = 3;
+constexpr std::uint32_t kCheckpointVersion = 4;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
     writer.u8(selector.animation_gate);
@@ -967,12 +967,10 @@ void Engine::update_actor_animations() {
     if (rom_bytes_.empty()) return;
 
     const AnimationContext context = player_animation_context(player_.grounded);
-    // AnimationVM_TickActors is gated by FF7E28 bit 0.  The gameplay loop
-    // increments that byte once per logical frame; the checkpoint replay
-    // enters with the odd phase on its first post-checkpoint state boundary,
-    // so the complete table walk runs on even native update indices. The
-    // ordinal-30 owner is the only caller of this traversal.
-    const bool service_actor_table = (frame_ & 1U) == 0;
+    // AnimationVM_TickActors is gated by FF7E28 bit 0. The ordinal-30 owner
+    // supplies the phase that was incremented at Game_FrameUpdateLoop entry;
+    // frame_ is only the host state-boundary label.
+    const bool service_actor_table = (frame_phase_ & 1U) != 0;
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         ActorState& actor = actors_[slot];
         if (!actors_.snapshot_mode() && slot == 0) {
@@ -1066,7 +1064,7 @@ void Engine::update_actor_animations() {
         const bool sword_animation_cadence =
             actor.type == kActorSwordType && !actor.spawned_by_apple;
         const bool sword_service = sword_animation_cadence
-            && (actor.animation_tick_phase < 2 || (frame_ & 1U) != 0);
+            && (actor.animation_tick_phase < 2 || !service_actor_table);
         if (!service_actor_table
             && !apple_actor_service && actor.type == kActorTerminalType
             && actor.terminal_timer == 0) {
@@ -1092,10 +1090,10 @@ void Engine::update_actor_animations() {
             && !actor.spawned_by_animation
             && actor.terminal_timer == 0
             && !force_service
-            && (frame_ & 1) != 0;
+            && !service_actor_table;
         const bool hold_death_phase = actor.type == kActorTerminalType
             && actor.terminal_timer != 0
-            && (frame_ & 1) == 0;
+            && service_actor_table;
         if (hold_scene5_phase || hold_death_phase) {
             update_terminal_actor_motion(actor);
             continue;
@@ -1107,7 +1105,7 @@ void Engine::update_actor_animations() {
         // its per-frame scheduler are still being modelled separately.
         if (sword_animation_cadence) {
             const bool hold = actor.animation_tick_phase >= 2
-                && (frame_ & 1U) == 0;
+                && service_actor_table;
             ++actor.animation_tick_phase;
             if (hold) continue;
         }
@@ -1809,6 +1807,7 @@ void Engine::reset() {
     random_state_ = 0;
     terrain_input_world_x_ = 0;
     terrain_input_world_y_ = 0;
+    frame_phase_ = 0;
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -1861,6 +1860,7 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     bounce_response_active_ = false;
     contour_ground_motion_ = false;
     frame_ = 0;
+    frame_phase_ = 0;
     quit_ = false;
     animation_.reset();
     if (!grounded) {
@@ -2927,6 +2927,9 @@ void Engine::update(const InputState& input) {
         }
     }
     record_scheduler_phase("frame_latch", 0x001A8C16);
+    // Game_FrameUpdateLoop begins with ADDQ.B #1,$FF7E28. All later gate
+    // decisions in this update consume this single recovered ROM phase.
+    frame_phase_ = static_cast<std::uint8_t>(frame_phase_ + 1);
     actors_.begin_frame();
     for (ActorState& actor : actors_) {
         if (actor.runtime_field_07_delay == 0) continue;
@@ -3804,7 +3807,7 @@ void Engine::update(const InputState& input) {
     record_scheduler_phase("interaction_counter", 0x001B00CA);
     record_scheduler_phase("interaction_resource", 0x001B01AC);
     if (!stable_terrain_handler_fixture
-        && (!interaction_scan_initialized_ || (frame_ & 1U) == 0)) {
+        && (!interaction_scan_initialized_ || (frame_phase_ & 1U) != 0)) {
         scan_interaction_refill_window();
     }
     record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
@@ -4375,7 +4378,8 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"query_state_b\":" << static_cast<unsigned>(player_.terrain_query_state_b)
            << ",\"state\":" << static_cast<unsigned>(player_.terrain_state)
            << ",\"response_latch\":" << static_cast<unsigned>(player_.terrain_response_latch) << "}"
-           << ",\"scheduler\":{\"interaction_scan_initialized\":"
+           << ",\"scheduler\":{\"frame_phase\":" << static_cast<unsigned>(frame_phase_)
+           << ",\"interaction_scan_initialized\":"
            << (interaction_scan_initialized_ ? "true" : "false")
            << ",\"interaction_selector_pending\":"
            << (interaction_selector_pending_ ? "true" : "false")
@@ -4604,6 +4608,7 @@ void Engine::write_checkpoint(std::ostream& output) const {
     }
     writer.bytes(vdp_checkpoint_.registers.data(), vdp_checkpoint_.registers.size());
     writer.i32(frame_);
+    writer.u8(frame_phase_);
     writer.i32(last_ground_direction_);
     writer.boolean(quit_);
 }
@@ -4672,6 +4677,7 @@ void Engine::read_checkpoint(std::istream& input) {
     }
     reader.bytes(vdp_checkpoint.registers.data(), vdp_checkpoint.registers.size());
     const int frame = reader.i32();
+    const auto frame_phase = reader.u8();
     const int last_ground_direction = reader.i32();
     const bool quit = reader.boolean();
     if (vdp_checkpoint.loaded
@@ -4707,6 +4713,7 @@ void Engine::read_checkpoint(std::istream& input) {
     checkpoint_terrain_behavior_ = checkpoint_terrain_behavior;
     vdp_checkpoint_ = std::move(vdp_checkpoint);
     frame_ = frame;
+    frame_phase_ = frame_phase;
     last_ground_direction_ = last_ground_direction;
     quit_ = quit;
     camera_render_x_ = 0;

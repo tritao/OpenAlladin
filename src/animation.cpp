@@ -180,10 +180,7 @@ void PlayerAnimationVm::reset() {
     actor_tick_ = false;
     animation_phase_delay_ = 0;
     pending_animation_pc_ = 0;
-    force_tick_after_service_ = false;
-    force_tick_next_update_ = false;
-    force_tick_without_phase_ = false;
-    defer_tick_next_update_ = false;
+    service_boundary_ = ServiceBoundary::None;
     action_boundary_ = ActionBoundary::None;
     tracking_memory_writes_ = false;
     active_command_pc_ = 0;
@@ -817,11 +814,11 @@ void PlayerAnimationVm::service_apple_action_boundary() {
 }
 
 void PlayerAnimationVm::force_tick_next_update_without_phase() {
-    if (rom_mode_) force_tick_without_phase_ = true;
+    if (rom_mode_) service_boundary_ = ServiceBoundary::ForceWithoutPhase;
 }
 
 void PlayerAnimationVm::defer_tick_next_update() {
-    if (rom_mode_) defer_tick_next_update_ = true;
+    if (rom_mode_) service_boundary_ = ServiceBoundary::DeferNextUpdate;
 }
 
 void PlayerAnimationVm::update_actor(
@@ -932,7 +929,7 @@ void PlayerAnimationVm::select_stream_entry(
         // The terrain selector's first action transition services the new
         // root on the following update and then services one additional
         // command boundary before returning to the alternating cadence.
-        force_tick_after_service_ = true;
+        service_boundary_ = ServiceBoundary::ForceAfterService;
     }
     landing_finished_ = false;
     landing_reselect_pending_ = false;
@@ -1160,14 +1157,14 @@ void PlayerAnimationVm::update(
         animation_pc_ = kLandingStream;
         landing_reselect_pending_ = false;
     }
-    if (defer_tick_next_update_) {
-        defer_tick_next_update_ = false;
+    if (service_boundary_ == ServiceBoundary::DeferNextUpdate) {
+        service_boundary_ = ServiceBoundary::None;
         // Do not consume scheduler phase: the following VBlank is the
         // service that would otherwise have occurred on this boundary.
         return;
     }
-    if (force_tick_without_phase_) {
-        force_tick_without_phase_ = false;
+    if (service_boundary_ == ServiceBoundary::ForceWithoutPhase) {
+        service_boundary_ = ServiceBoundary::None;
         tick_rom(context);
         return;
     }
@@ -1182,12 +1179,11 @@ void PlayerAnimationVm::update(
     }
     if ((update_count_++ & 1U) == 0) {
         tick_rom(context);
-        if (force_tick_after_service_) {
-            force_tick_after_service_ = false;
-            force_tick_next_update_ = true;
+        if (service_boundary_ == ServiceBoundary::ForceAfterService) {
+            service_boundary_ = ServiceBoundary::ForceNextUpdate;
         }
-    } else if (force_tick_next_update_) {
-        force_tick_next_update_ = false;
+    } else if (service_boundary_ == ServiceBoundary::ForceNextUpdate) {
+        service_boundary_ = ServiceBoundary::None;
         tick_rom(context);
         // The forced service occupies the otherwise idle slot. Preserve the
         // alternating cadence for the update after it.
@@ -1223,10 +1219,7 @@ void PlayerAnimationVm::write_checkpoint(std::ostream& output) const {
     writer.boolean(actor_tick_);
     writer.i32(animation_phase_delay_);
     writer.u32(pending_animation_pc_);
-    writer.boolean(force_tick_after_service_);
-    writer.boolean(force_tick_next_update_);
-    writer.boolean(force_tick_without_phase_);
-    writer.boolean(defer_tick_next_update_);
+    writer.u8(static_cast<std::uint8_t>(service_boundary_));
     writer.boolean(clear_timer_next_update_);
     writer.u8(static_cast<std::uint8_t>(action_boundary_));
     writer.boolean(tracking_memory_writes_);
@@ -1273,10 +1266,7 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     const bool actor_tick = reader.boolean();
     const auto animation_phase_delay = reader.i32();
     const auto pending_animation_pc = reader.u32();
-    const bool force_tick_after_service = reader.boolean();
-    const bool force_tick_next_update = reader.boolean();
-    const bool force_tick_without_phase = reader.boolean();
-    const bool defer_tick_next_update = reader.boolean();
+    const auto service_boundary = reader.u8();
     const bool clear_timer_next_update = reader.boolean();
     const auto action_boundary = reader.u8();
     const bool tracking_memory_writes = reader.boolean();
@@ -1304,6 +1294,9 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     if (timer < 0 || animation_phase_delay < 0) {
         throw std::runtime_error("invalid animation VM timer in OpenAladdin checkpoint");
     }
+    if (service_boundary > static_cast<std::uint8_t>(ServiceBoundary::DeferNextUpdate)) {
+        throw std::runtime_error("invalid animation service boundary in OpenAladdin checkpoint");
+    }
     if (action_boundary > static_cast<std::uint8_t>(ActionBoundary::AwaitSecondCursor)) {
         throw std::runtime_error("invalid animation action boundary in OpenAladdin checkpoint");
     }
@@ -1325,10 +1318,7 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     actor_tick_ = actor_tick;
     animation_phase_delay_ = animation_phase_delay;
     pending_animation_pc_ = pending_animation_pc;
-    force_tick_after_service_ = force_tick_after_service;
-    force_tick_next_update_ = force_tick_next_update;
-    force_tick_without_phase_ = force_tick_without_phase;
-    defer_tick_next_update_ = defer_tick_next_update;
+    service_boundary_ = static_cast<ServiceBoundary>(service_boundary);
     clear_timer_next_update_ = clear_timer_next_update;
     action_boundary_ = static_cast<ActionBoundary>(action_boundary);
     tracking_memory_writes_ = tracking_memory_writes;

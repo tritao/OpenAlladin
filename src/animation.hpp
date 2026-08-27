@@ -238,10 +238,18 @@ public:
     const std::array<std::uint8_t, 0x42>& actor_record() const { return actor_; }
     int animation_phase_delay() const { return animation_phase_delay_; }
     std::uint32_t pending_animation_pc() const { return pending_animation_pc_; }
-    bool force_tick_after_service() const { return force_tick_after_service_; }
-    bool force_tick_next_update() const { return force_tick_next_update_; }
-    bool force_tick_without_phase() const { return force_tick_without_phase_; }
-    bool defer_tick_next_update() const { return defer_tick_next_update_; }
+    bool force_tick_after_service() const {
+        return service_boundary_ == ServiceBoundary::ForceAfterService;
+    }
+    bool force_tick_next_update() const {
+        return service_boundary_ == ServiceBoundary::ForceNextUpdate;
+    }
+    bool force_tick_without_phase() const {
+        return service_boundary_ == ServiceBoundary::ForceWithoutPhase;
+    }
+    bool defer_tick_next_update() const {
+        return service_boundary_ == ServiceBoundary::DeferNextUpdate;
+    }
     bool clear_timer_next_update() const { return clear_timer_next_update_; }
     std::uint8_t action_boundary() const {
         return static_cast<std::uint8_t>(action_boundary_);
@@ -307,10 +315,17 @@ private:
     // in the captured RAM fields.
     int animation_phase_delay_ = 0;
     std::uint32_t pending_animation_pc_ = 0;
-    bool force_tick_after_service_ = false;
-    bool force_tick_next_update_ = false;
-    bool force_tick_without_phase_ = false;
-    bool defer_tick_next_update_ = false;
+    // These requests are mutually exclusive consequences of a selector or
+    // command boundary. Keep them as one VM-owned state machine so the
+    // ordinal-30 service has one causal boundary to consume.
+    enum class ServiceBoundary : std::uint8_t {
+        None,
+        ForceAfterService,
+        ForceNextUpdate,
+        ForceWithoutPhase,
+        DeferNextUpdate,
+    };
+    ServiceBoundary service_boundary_ = ServiceBoundary::None;
     bool clear_timer_next_update_ = false;
     enum class ActionBoundary : std::uint8_t {
         None,

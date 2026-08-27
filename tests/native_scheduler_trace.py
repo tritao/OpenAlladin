@@ -128,6 +128,10 @@ def check_trace(
 
     state_frames = [record for record in state if record.get("type") == "state"]
     assert [record["frame"] for record in state_frames] == list(range(0, frame_count + 1))
+    assert [
+        record["scheduler"]["frame_phase"]
+        for record in state_frames
+    ] == [index & 0xFF for index in range(frame_count + 1)]
     for scheduler_record, state_record in zip(frames, state_frames[1:]):
         causal = state_record["causal"]
         assert causal["phase_order"] == [phase["name"] for phase in scheduler_record["phases"]]
