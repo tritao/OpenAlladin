@@ -1,0 +1,115 @@
+{
+  "campaign": "20260827-level01-early-highledge-handhold-v1",
+  "status": "recorded-positive-route-extension",
+  "purpose": "Replay the early Level 01 high-walkway descent and isolate the handhold-to-vertical-connector route described by the natural Stage 1 movement sequence.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "3b8d6b7",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/power-on-to-frontier/states/genesis/high-walkway-entry.sta",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "early-highledge-baselines",
+      "trace_dir": "build/re/campaigns/20260827-level01-early-highledge-v1/left-baseline",
+      "trace_dirs": [
+        "build/re/campaigns/20260827-level01-early-highledge-v1/left-baseline",
+        "build/re/campaigns/20260827-level01-early-highledge-v1/left-c-hold",
+        "build/re/campaigns/20260827-level01-early-highledge-v1/right-baseline"
+      ],
+      "frames_each": 300,
+      "input_family": "left or right traversal from the loaded high-walkway-entry checkpoint, with C held or released during the descent",
+      "result": "Left reaches the x=1568 vertical connector; C held after attachment climbs to y=487. Right traverses the high walkway to x=2243. No scene transition occurs."
+    },
+    {
+      "id": "handhold-alignment-sweep",
+      "trace_dir": "build/re/campaigns/20260827-level01-early-highledge-c-right-v1/rope-c-right-delay45",
+      "frames_each": 260,
+      "variants": {
+        "rope-c-right-delay40": "left*40,c+right*20,right*100,none*100",
+        "rope-c-right-delay45": "left*45,c+right*20,right*100,none*95",
+        "rope-c-right-delay55": "left*55,c+right*20,right*100,none*85",
+        "rope-c-right-delay60": "left*60,c+right*20,right*100,none*80",
+        "walk-c-right-38": "left*38,c+right*20,right*100,none*102",
+        "walk-c-right-42": "left*42,c+right*20,right*100,none*98"
+      },
+      "positive_variant": "rope-c-right-delay45",
+      "result": "The delay-45 branch produces the exact 0x6A-to-0x6B handhold transition; other onset/direction variants either miss the alignment window or leave the actor without a completed grab."
+    },
+    {
+      "id": "post-grab-direction-matrix",
+      "trace_dir": "build/re/campaigns/20260827-level01-early-highledge-postgrab-v1/grab-c-up-left",
+      "frames_each": 400,
+      "variants": {
+        "grab-left": "left*45,c+right*20,right*9,left*140,none*186",
+        "grab-right": "left*45,c+right*20,right*149,none*187",
+        "grab-up": "left*45,c+right*20,right*9,up*140,none*187",
+        "grab-up-left": "left*45,c+right*20,right*9,up+left*140,none*187",
+        "grab-down-left": "left*45,c+right*20,right*9,down+left*140,none*187",
+        "grab-c-left": "left*45,c+right*20,right*9,c+left*20,left*120,none*187",
+        "grab-c-up-left": "left*45,c+right*20,right*9,c+up+left*20,up+left*120,none*187"
+      },
+      "positive_variant": "grab-c-up-left",
+      "result": "C+Up+Left after the completed grab launches the player away from the handhold and then reattaches to the x=1568 vertical connector. The other branches fall to the lower floor or settle at the lower connector position."
+    },
+    {
+      "id": "post-grab-left-timing",
+      "trace_dir": "build/re/campaigns/20260827-level01-early-highledge-handhold-left-v1/left-after-grab9",
+      "frames_each": 400,
+      "variants": {
+        "left-after-c": "left*45,c+right*20,left*150,none*185",
+        "left-after-c-long": "left*45,c+right*29,left*150,none*176",
+        "left-after-grab5": "left*45,c+right*20,none*5,left*150,none*180",
+        "left-after-grab9": "left*45,c+right*20,right*9,left*150,none*176",
+        "left-after-grab20": "left*45,c+right*20,right*20,left*150,none*165",
+        "left-then-c": "left*45,c+right*20,right*9,left*50,c,left*100,none*175"
+      },
+      "result": "Switching to Left before or after the completed grab does not produce the -0x0500 bounce. The branches either dismount to the lower floor or perform an ordinary jump; scene state remains 0x01."
+    }
+  ],
+  "observed": {
+    "loaded_route": {
+      "checkpoint": "high-walkway-entry",
+      "approximate_world": [1706, 530],
+      "descent_begins": { "frame": 36, "world": [1592, 532], "vy": 420 },
+      "connector": "behavior 0x22 at world x=1568"
+    },
+    "handhold": {
+      "actor_slot": 24,
+      "spawn_type": "0x6A",
+      "spawn_frame": 65,
+      "spawn_world": [1656, 703],
+      "grab_type": "0x6B",
+      "grab_frame": 74,
+      "grab_player_world": [1658, 695],
+      "grab_actor_world": [1656, 703],
+      "post_grab_flags": "0x70",
+      "release_type": "0x84",
+      "release_frame": 94
+    },
+    "positive_connector_route": {
+      "input": "left*45,c+right*20,right*9,c+up+left*20,up+left*120,none*187",
+      "connector_attach_frame": 108,
+      "connector_attach_world": [1562, 635],
+      "top_checkpoint_frame": 220,
+      "top_checkpoint_world": [1560, 479],
+      "top_surface_behavior": "0x24",
+      "top_surface_row": 12,
+      "ordinary_launch_vy": -704,
+      "superjump_vy_observed": false
+    },
+    "scene": {
+      "scene_state_address": "0x00FF7E26",
+      "scene_state": "0x01",
+      "scene_state_gameplay_writes": 0,
+      "transition_observations": 0
+    }
+  },
+  "interpretation": {
+    "route_classification": "The early high-walkway descent is the relevant Level 01 handhold route, distinct from the previously exhausted far-right upper shelf. Its actor-local 0x6A-to-0x6B transition is real and reproducible.",
+    "what_is_closed": "The tested Left/Right/Up/Down post-grab timing family does not produce the documented -0x0500 bounce or a scene transition.",
+    "what_remains": "The hidden ledge above the peddler and the final rightward exit route remain unresolved. The next search should branch from the positive top-of-connector checkpoint and trace the producer/consumer of the local 0x6A/0x6B actor rather than repeat the far-shelf probes."
+  },
+  "conclusion": "This campaign records the first positive reproduction of the early Level 01 handhold route: type 0x6A spawns during the high-walkway descent, becomes type 0x6B at the aligned C+Right grab, and the C+Up+Left continuation reaches the top of the x=1568 connector at world (1560,479). It is a route frontier, not a completed level exit."
+}

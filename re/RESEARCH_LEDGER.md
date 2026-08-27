@@ -932,6 +932,22 @@ unclassified Level 01 actor-specific player-motion writer remains, so the
 next target is the upper-route object/resource producer and its terrain
 placement.
 
+The early high-walkway handhold campaign is recorded in
+`re/mame/findings/20260827-level01-early-highledge-handhold-route-v1.json` and
+`re/mame/campaigns/20260827-level01-early-highledge-handhold-v1.json`. Starting
+from the saved `high-walkway-entry` checkpoint, the descent reaches world
+`(1592,532)` near frame 36 and materializes slot 24 as type `0x6A` at
+`(1656,703)` on frame 65. Applying `C+Right` through the aligned window changes
+the actor to type `0x6B` on frame 74 at player world `(1658,695)`, confirming
+the early handhold route that the far-right upper-shelf searches had missed.
+The positive `C+Up+Left` continuation makes an ordinary `vy=-704` launch,
+reattaches to the x=1568 behavior-`0x22` connector around frame 108, and
+climbs to its behavior-`0x24` top at world `(1560,479)` by frame 220.
+No tested post-grab branch produces the `-0x0500` superjump, hidden ledge,
+exit predicate, or scene-state write; gameplay remains `SCENE_STATE=0x01`.
+This records a positive route frontier and shifts the next target to the
+top-of-connector interaction/resource producer and its hidden-ledge condition.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1005,6 +1021,7 @@ placement.
 | `20260827-level01-behavior46-lower-band-v2` | recorded-positive | natural behavior-0x46 Type-0x1E contact, movement handoff, and extended callback trace |
 | `20260827-level01-bounce-c-matrix-v1` | recorded-negative-natural | C timing matrix from the lower bounce; no type-0x6A handhold transfer |
 | `20260827-level01-player-motion-writer-audit-v1` | recorded-static-audit | complete actor-specific player-coordinate/velocity writer classification; no unclassified Level 01 writer |
+| `20260827-level01-early-highledge-handhold-v1` | recorded-positive-route-extension | early high-walkway type-0x6A→0x6B handhold and x=1568 connector route; hidden ledge and exit unresolved |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

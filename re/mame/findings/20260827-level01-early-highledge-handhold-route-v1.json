@@ -1,0 +1,74 @@
+{
+  "format": "openaladdin-level01-early-highledge-handhold-route-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify the early Level 01 high-walkway descent, its handhold actor transition, and the resulting vertical-connector route.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_capture": "3b8d6b7",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-early-highledge-handhold-v1.json",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-canonical-recording-v6/power-on-to-frontier/states/genesis/high-walkway-entry.sta",
+  "static_context": {
+    "early_connector": "Level 01 map column 98 / world x=1568; behavior 0x22 rows 15-24; behavior 0x24 at row 14",
+    "handhold_actor": "The dynamic actor appears near world (1656,703) during the high-walkway descent",
+    "other_connectors": [
+      "world x=2112, behavior 0x22 rows 26-39",
+      "world x=2720, behavior 0x22 rows 11-22",
+      "world x=4736, behavior 0x22 rows 27-36"
+    ],
+    "exit_predicate": "world X > 0x1287 and world Y < 0x01D6 at 0x001B5B4A"
+  },
+  "runtime": {
+    "checkpoint_world": [1706, 530],
+    "descent_start_frame": 36,
+    "actor_slot": 24,
+    "actor_type_0x6A_frame_range": [65, 73],
+    "actor_type_0x6B_frame_range": [74, 93],
+    "actor_type_0x84_frame": 94,
+    "handhold_alignment": {
+      "player_world": [1658, 695],
+      "actor_world": [1656, 703],
+      "input": "C+Right",
+      "flags_after_grab": "0x70"
+    },
+    "connector_reacquire": {
+      "frame": 108,
+      "world": [1562, 635],
+      "behavior": "0x22"
+    },
+    "top_of_connector": {
+      "frame": 220,
+      "world": [1560, 479],
+      "behavior": "0x24",
+      "row": 12
+    },
+    "scene_state": {
+      "address": "0x00FF7E26",
+      "value": "0x01",
+      "gameplay_writes": 0
+    }
+  },
+  "input_coverage": {
+    "descent_alignment": "C+Right onset sweep around frames 38-60",
+    "post_grab_direction": ["Left", "Right", "Up", "Up+Left", "Down+Left"],
+    "post_grab_jump": ["C+Left", "C+Up+Left"],
+    "negative_post_grab_result": "No tested branch writes a scene state, reaches the Level 01 exit predicate, or produces the -0x0500 bounce launch."
+  },
+  "classification": {
+    "confirmed": [
+      "The relevant high-walkway approach is the early x≈1700 route, not the far-right upper shelf.",
+      "A dynamic slot-24 actor changes from type 0x6A to type 0x6B when C+Right is applied at the aligned descent point.",
+      "C+Up+Left after the completed grab performs an ordinary upward launch and reattaches to the x=1568 vertical connector.",
+      "The connector climbs to the behavior-0x24 top surface at world y=479 without changing the gameplay scene."
+    ],
+    "not_confirmed": [
+      "The documented -0x0500 superjump launch.",
+      "The hidden ledge above the peddler.",
+      "The final rightward exit gate and SCENE_STATE=0x08 write."
+    ]
+  },
+  "conclusion": "The early handhold/connector path is now a positive, replayable route frontier. It narrows the remaining problem to the interaction or input condition that converts the top-of-connector position into the hidden upper ledge; repeating the already tested far-shelf and generic C timing families is not warranted.",
+  "next_action": "Branch from the top-of-connector checkpoint, enumerate nearby early-route interaction/resource records, and run an actor-initializer/producer trace around the frame-65 type-0x6A allocation."
+}
