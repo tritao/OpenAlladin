@@ -105,6 +105,8 @@ void apply_scheduled_token(const std::string& token, openaladdin::InputState& in
             input.right = true;
         } else if (part == "a" || part == "attack") {
             input.attack_pressed = true;
+        } else if (part == "apple" || part == "throw") {
+            input.apple_pressed = true;
         } else if (part == "c" || part == "jump" || part == "space") {
             input.jump_pressed = true;
         }

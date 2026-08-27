@@ -140,6 +140,7 @@ void PlayerAnimationVm::reset() {
     force_tick_after_service_ = false;
     force_tick_next_update_ = false;
     force_tick_without_phase_ = false;
+    defer_tick_next_update_ = false;
     tracking_memory_writes_ = false;
     spawn_requests_.clear();
     sound_requests_.clear();
@@ -699,8 +700,28 @@ void PlayerAnimationVm::republish_stream_root() {
     set_frame_pointer(read_rom32(reference));
 }
 
+void PlayerAnimationVm::republish_stream_root_cursor_only() {
+    if (!rom_mode_ || stream_entry_ == 0) return;
+    pending_animation_pc_ = 0;
+    animation_pc_ = stream_entry_;
+}
+
+void PlayerAnimationVm::hold_animation_cursor(std::uint32_t cursor) {
+    if (!rom_mode_ || cursor == 0) return;
+    // Keep the cursor that the next VM service should use separately from
+    // the one exposed in this state boundary. The command already ran (and
+    // may have queued an F5 request), so re-executing it after the held
+    // publication would duplicate the spawned record.
+    pending_animation_pc_ = animation_pc_;
+    animation_pc_ = cursor;
+}
+
 void PlayerAnimationVm::force_tick_next_update_without_phase() {
     if (rom_mode_) force_tick_without_phase_ = true;
+}
+
+void PlayerAnimationVm::defer_tick_next_update() {
+    if (rom_mode_) defer_tick_next_update_ = true;
 }
 
 void PlayerAnimationVm::update_actor(
@@ -1027,6 +1048,12 @@ void PlayerAnimationVm::update(
         // actor tick. This one-frame root write is visible in FF7E60.
         animation_pc_ = kLandingStream;
         landing_reselect_pending_ = false;
+    }
+    if (defer_tick_next_update_) {
+        defer_tick_next_update_ = false;
+        // Do not consume scheduler phase: the following VBlank is the
+        // service that would otherwise have occurred on this boundary.
+        return;
     }
     if (force_tick_without_phase_) {
         force_tick_without_phase_ = false;

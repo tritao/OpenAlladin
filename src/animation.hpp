@@ -159,9 +159,21 @@ public:
     // Publish a selector-written stream root after the VM pass. The cursor
     // reached by that pass is restored at the next update boundary.
     void republish_stream_root();
+    // Re-expose the action root for one synchronized state boundary after a
+    // VM tick without changing the frame pointer or queuing the consumed
+    // cursor. This mirrors the player's action-selector writeback path.
+    void republish_stream_root_cursor_only();
+    // Restore a ROM cursor after its command boundary while retaining the
+    // frame pointer already published by that tick. A few action streams
+    // expose the pre-command cursor for one VBlank before continuing.
+    void hold_animation_cursor(std::uint32_t cursor);
     // Service one extra ROM tick on the next update without changing the
     // alternating scheduler phase.
     void force_tick_next_update_without_phase();
+    // Skip the next scheduled ROM tick while retaining the current cursor.
+    // Action-selector boundaries occasionally expose a command result for an
+    // additional state before the following animation service.
+    void defer_tick_next_update();
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
@@ -265,6 +277,7 @@ private:
     bool force_tick_after_service_ = false;
     bool force_tick_next_update_ = false;
     bool force_tick_without_phase_ = false;
+    bool defer_tick_next_update_ = false;
     bool clear_timer_next_update_ = false;
     bool tracking_memory_writes_ = false;
     std::vector<AnimationSpawnRequest> spawn_requests_{};

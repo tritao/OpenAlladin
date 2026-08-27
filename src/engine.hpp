@@ -119,6 +119,11 @@ struct InputState {
     bool right = false;
     bool jump_pressed = false;
     bool attack_pressed = false;
+    // Explicit apple/throw action.  The legacy attack_pressed field remains
+    // the sword path used by existing fixtures; the ROM's A-button stream
+    // is exposed separately so physical controller replays can preserve the
+    // distinct action selection.
+    bool apple_pressed = false;
 };
 
 struct ActorState {
@@ -178,6 +183,11 @@ struct ActorState {
     // distinguishes them from the scene-state-5 type-0x84 terminal record,
     // which has its own phase gate and deferred first tick.
     bool spawned_by_animation = false;
+    // The physical A-button apple uses the same type-0x80 family as the
+    // sword, but its F5 producer publishes the first animation frame in the
+    // same boundary as allocation. Keep that cadence distinct from the
+    // deferred sword child path.
+    bool spawned_by_apple = false;
     // Modes 5/6 of AnimationVM_SpawnOrCopyActor link the new record to the
     // actor that issued the command. This is host-side metadata for the
     // parent flag edge; the 68000 pointer itself is not part of the trace.
@@ -475,6 +485,18 @@ private:
     // movement; these markers prevent the later actor pass from ticking the
     // same slot twice.
     std::array<bool, 32> probe_actor_animation_preupdated_{};
+    // Actor records materialized from a deferred apple F5 are serviced once
+    // before movement on their first live boundary. Suppress the later
+    // table walk from ticking that same record twice.
+    std::array<bool, 32> animation_preupdated_this_frame_{};
+    // The apple projectile is serviced once at allocation, then exposes one
+    // extra held animation boundary before joining the common type-0x80
+    // cadence.
+    std::array<bool, 32> apple_actor_hold_next_frame_{};
+    bool apple_root_republish_pending_ = false;
+    bool apple_cursor_hold_1223fa_done_ = false;
+    bool apple_cursor_hold_122438_done_ = false;
+    bool apple_following_tick_deferred_ = false;
     std::array<bool, 32> probe_actor_animation_active_{};
     InteractionMap interaction_map_;
     std::array<ActorState, 32> actor_templates_{};
