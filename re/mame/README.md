@@ -55,6 +55,16 @@ python tools/oa.py trace player-jump --capture state
 python tools/oa.py trace player-jump --capture full
 ```
 
+The complete ROM level-table loader matrix is recorded in
+`re/mame/campaigns/20260827-level-loader-matrix-v1.json`. It selects scene
+states 0 through 12 at `0x001AA484`, retains synchronized traces under
+`build/re/campaigns/`, and can be checked against `re/assets/level_table.yml`
+with:
+
+```sh
+PYTHONPATH=tools python tools/openaladdin/mame/validate_level_loader_matrix.py
+```
+
 ## Audio-bus trace
 
 The original sound path can be captured without recording host-dependent WAV

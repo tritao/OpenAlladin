@@ -1,0 +1,36 @@
+{
+  "campaign": "20260827-level-loader-matrix-v1",
+  "status": "all-scene-state-records-confirmed",
+  "purpose": "Select every ROM level-table index at the common loader breakpoint and retain synchronized traces for the resulting runtime geometry.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "repository_commit_at_capture": "df87461",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "loader": "0x001AA484",
+  "scene_state_address": "0x00FF7E26",
+  "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55",
+  "loader_frame": 1100,
+  "settled_frame": 1200,
+  "runtime_dimension_word_bits": 16,
+  "segments": [
+    { "id": "loader-state00", "selected_scene_state": 0, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run/level00", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state01", "selected_scene_state": 1, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run/level01", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state02", "selected_scene_state": 2, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run/level02", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state03", "selected_scene_state": 3, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run/level03", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state04", "selected_scene_state": 4, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run/level04", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state05", "selected_scene_state": 5, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run/level05", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state06", "selected_scene_state": 6, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run/level06", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state07", "selected_scene_state": 7, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run/level07", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state08", "selected_scene_state": 8, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run/level08", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state09", "selected_scene_state": 9, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run/level09", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state0A", "selected_scene_state": 10, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run2/level0A", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state0B", "selected_scene_state": 11, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run2/level0B", "loader_frame": 1100, "settled_frame": 1200 },
+    { "id": "loader-state0C", "selected_scene_state": 12, "trace_dir": "build/re/campaigns/20260827-level-loader-matrix-v1-run2/level0C", "loader_frame": 1100, "settled_frame": 1200 }
+  ],
+  "notes": [
+    "The first pass for indices 10–12 used 0x10–0x12 and is not part of this campaign; corrected traces use 0x0A–0x0C.",
+    "The settled dimensions are the runtime camera fields, not the renderer asset dimensions. Level 08 therefore records the observed 16-bit projection of its oversized table width."
+  ]
+}

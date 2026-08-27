@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-level-loader-matrix-finding-v1",
+  "recorded_at": "2026-08-27",
+  "campaign": "re/mame/campaigns/20260827-level-loader-matrix-v1.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "df87461",
+  "probe": {
+    "loader": "0x001AA484",
+    "scene_state_address": "0x00FF7E26",
+    "loader_frame": 1100,
+    "settled_frame": 1200,
+    "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55"
+  },
+  "observations": [
+    { "index": 0, "entry": "0x002C78", "camera": [0, 1152], "table_pixels": [2480, 1408], "runtime_pixels": [2480, 1408] },
+    { "index": 1, "entry": "0x002CBA", "camera": [0, 464], "table_pixels": [4800, 720], "runtime_pixels": [4800, 720] },
+    { "index": 2, "entry": "0x002CFC", "camera": [0, 16], "table_pixels": [336, 288], "runtime_pixels": [336, 288] },
+    { "index": 3, "entry": "0x002D3E", "camera": [80, 256], "table_pixels": [7200, 512], "runtime_pixels": [7200, 512] },
+    { "index": 4, "entry": "0x002D80", "camera": [16, 912], "table_pixels": [2320, 1168], "runtime_pixels": [2320, 1168] },
+    { "index": 5, "entry": "0x002DC2", "camera": [0, 768], "table_pixels": [3552, 1024], "runtime_pixels": [3552, 1024] },
+    { "index": 6, "entry": "0x002E04", "camera": [0, 16], "table_pixels": [336, 288], "runtime_pixels": [336, 288] },
+    { "index": 7, "entry": "0x002E46", "camera": [0, 16], "table_pixels": [10464, 352], "runtime_pixels": [10464, 352] },
+    { "index": 8, "entry": "0x002E88", "camera": [336, 0], "table_pixels": [240000, 256], "runtime_pixels": [43392, 256], "width_projection": "240000 & 0xFFFF" },
+    { "index": 9, "entry": "0x002ECA", "camera": [0, 96], "table_pixels": [7168, 512], "runtime_pixels": [7168, 512] },
+    { "index": 10, "entry": "0x002F0C", "camera": [2112, 848], "table_pixels": [3200, 1104], "runtime_pixels": [3200, 1104] },
+    { "index": 11, "entry": "0x002F4E", "camera": [0, 32], "table_pixels": [3200, 1120], "runtime_pixels": [3200, 1120] },
+    { "index": 12, "entry": "0x002F90", "camera": [48, 96], "table_pixels": [800, 352], "runtime_pixels": [800, 352] }
+  ],
+  "conclusion": "All 13 scene-state values select the corresponding level-table record at the common loader. At the loader checkpoint every camera start matches the tracked table metadata; after resource setup every ordinary level dimension matches the table projection. Level 08 is the known oversized picture-room case: its 240000-pixel table width is observed in the runtime camera field as 43392, consistent with a 16-bit width field. The width-write truncation remains an explicit follow-up target rather than an unverified assumption."
+}
