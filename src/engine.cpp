@@ -2237,9 +2237,14 @@ void Engine::update_actor_actor_collisions(bool pre_motion) {
             } else if (source.type == 0x7F && target.type == 0x1D) {
                 // The type-0x7F auxiliary stream is the transient child
                 // created by the bounce actor's F5 command.  ROM handler
-                // 0x001AC444 clears that source into the 0x1B792C terminal
-                // template, then reinitializes the type-0x1D target from
-                // 0x1B7940, preserving both actors' world coordinates.
+                // 0x001AC350 is selected for the receiving type-0x1D
+                // record. It calls the common 0x001B3032 RNG helper before
+                // the cleanup/reinitialization chain (the resulting folded
+                // byte only affects the ROM's internal branch here), then
+                // clears that source into the 0x1B792C terminal template and
+                // reinitializes the type-0x1D target from 0x1B7940,
+                // preserving both actors' world coordinates.
+                random_state_ = random_state_ * 13U + 7U;
                 const std::uint16_t source_x = source.x;
                 const std::uint16_t source_y = source.y;
                 const auto source_loop_pc = source.movement_loop_pc;

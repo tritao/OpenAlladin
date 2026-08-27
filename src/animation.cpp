@@ -428,9 +428,9 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         if (context.random_state != nullptr) {
             *context.random_state = *context.random_state * 13U + 7U;
             const std::uint32_t state = *context.random_state;
-            // 0x1B3032 leaves the updated LCG value in D7; F0 compares
-            // only its low byte against the stream threshold.
-            random_value_ = static_cast<std::uint8_t>(state);
+            // 0x1B3032 folds the high and low words into D7; F0 compares the
+            // low byte of that folded 16-bit value against its threshold.
+            random_value_ = static_cast<std::uint8_t>(state ^ (state >> 16));
         }
         cursor += 2;
         cursor = random_value_ < threshold ? read_rom32(cursor) : cursor + 4;
@@ -516,7 +516,21 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         else { const auto value = read_rom32(cursor); const auto old = read_memory32(address); write_memory32(address, subtract ? old - value : old + value); cursor += 4; }
         return false;
     }
-    case 0xFB: cursor += 6; return false;
+    case 0xFB: {
+        const std::uint32_t callback = read_rom32(cursor + 2);
+        // FB performs a tail callback by replacing the VM return address.
+        // The common 1ACC5E callback is the actor animation's random sound
+        // selector; its first operation is the same 13x+7 LCG step used by
+        // F0, even though its audio result is outside this state VM.
+        if (callback == 0x001ACC5E && context.random_state != nullptr) {
+            *context.random_state = *context.random_state * 13U + 7U;
+            random_value_ = static_cast<std::uint8_t>(
+                *context.random_state ^ (*context.random_state >> 16)
+            );
+        }
+        cursor += 6;
+        return false;
+    }
     case 0xFC:
         if ((read_rom8(cursor + 1) & 0x80) != 0) cursor = return_pc_;
         else { return_pc_ = cursor + 6; cursor = read_rom32(cursor + 2); }
