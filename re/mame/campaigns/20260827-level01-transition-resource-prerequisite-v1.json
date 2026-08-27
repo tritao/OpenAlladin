@@ -1,0 +1,113 @@
+{
+  "campaign": "20260827-level01-transition-resource-prerequisite-v1",
+  "status": "controlled-prerequisite-confirmation",
+  "purpose": "Separate the FFF003 interaction-counter gate in the nested transition/resource lifecycle from the later scene-script parser, using a paired baseline and controlled replay.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "ef77ff1b147fd06cc4594c527933e7c79b131144",
+  "trace_harness_commit": "62e3826",
+  "working_tree_at_capture": "The tracked breakpoint-write and scene-context harness changes were committed. Unrelated untracked mame/ trace artifacts were left untouched and are not part of this campaign.",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+  "static_sources": [
+    "build/re/level-transition-targeted-decompile-v2.json",
+    "build/re/dasm-1A8000.txt",
+    "re/scheduler/frame_phases.yml",
+    "re/symbols/functions.yml",
+    "re/symbols/ram.yml"
+  ],
+  "instrumentation": {
+    "breakpoints": [
+      "0x001B16E0",
+      "0x001A8E8C",
+      "0x001A8ECA",
+      "0x001B2ACE",
+      "0x001B2DF4"
+    ],
+    "breakpoint_register_dump": true,
+    "breakpoint_scene_context": true,
+    "source_local_pokes": [
+      "frame 1: 0x00FF7DFA=0x0219:u16",
+      "frame 1: 0x00FF7DFC=0x00B0:u16",
+      "frame 1: 0x00FF7E58=0x0000:u16",
+      "frame 1: 0x00FF7E5A=0x0000:u16"
+    ],
+    "controlled_write": "0x00FFF003=0x00:u8 at every configured debugger breakpoint; the first relevant breakpoint is 0x001B16E0, before its FFF003 test."
+  },
+  "segments": [
+    {
+      "id": "paired-baseline",
+      "trace_dir": "build/re/campaigns/20260827-transition-resource-lifecycle-v2/f003-zero-bypass-baseline-v1",
+      "frames": 600,
+      "input": "none*600",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "breakpoint_writes": [],
+      "observed": {
+        "lifecycle_entry_post_pc": "0x001B16E2",
+        "lifecycle_entry_debugger_frame": "0x1433",
+        "fff003_at_entry": "0x01",
+        "script_parser_post_pcs": [],
+        "transition_entry_hits": 0,
+        "final_scene_state": "0x01",
+        "final_script_cursor": "0x4082"
+      },
+      "result": "The replay reaches the nested lifecycle with FFF003 set, but no configured script-parser or transition breakpoint fires during 600 captured frames."
+    },
+    {
+      "id": "controlled-f003-zero",
+      "trace_dir": "build/re/campaigns/20260827-transition-resource-lifecycle-v2/f003-zero-bypass-downstream-v1",
+      "frames": 600,
+      "input": "none*600",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "state",
+      "breakpoint_writes": ["0x00FFF003=0x00:u8"],
+      "observed": {
+        "lifecycle_entry_post_pc": "0x001B16E2",
+        "lifecycle_entry_debugger_frame": "0x1433",
+        "fff003_before_breakpoint_write": "0x01",
+        "script_parser_post_pcs": [
+          "0x001A8E8E",
+          "0x001A8E8E",
+          "0x001A8ECC"
+        ],
+        "parser_debugger_frame": "0x1434",
+        "transition_entry_hits": 0,
+        "final_scene_state": "0x01",
+        "final_script_cursor": "0x4082"
+      },
+      "result": "Clearing FFF003 at the lifecycle entry allows the function to take its zero-counter return path. SceneScript_AdvanceState then reaches the script-record parser on the next observed debugger frame, while no transition entry is reached."
+    }
+  ],
+  "discarded_runs": [
+    {
+      "trace_dir": "build/re/campaigns/20260827-transition-resource-lifecycle-v2/f003-zero-bypass-complete",
+      "frames_requested": 800,
+      "result": "MAME exited with code 139 after preload and initial debugger activity. The run used a larger breakpoint surface and is excluded from evidence."
+    }
+  ],
+  "confidence": {
+    "decompiled": [
+      "0x001B16E0 FFF003 zero-counter early return",
+      "0x001A8E3E SceneScript_AdvanceState call chain",
+      "0x001AF4D8 Type-0x34 producer of the FFF003 interaction counter"
+    ],
+    "trace_validated": [
+      "paired baseline reaches 0x001B16E0 with FFF003=0x01 and does not reach the parser",
+      "controlled FFF003 clear reaches 0x001A8E8C/0x001A8ECA parser sites one debugger frame later",
+      "the controlled route still does not reach transition entry"
+    ],
+    "parity_validated": []
+  },
+  "limitations": [
+    "The local-coordinate setup and FFF003 clear are controlled probes, not a natural exit replay.",
+    "The breakpoint-write action is global to the configured breakpoint list, although the first relevant write occurs at 0x001B16E0 before its FFF003 test.",
+    "Parser reachability was established, but this capture does not identify the remaining script record's transition decision or prove a completed transition."
+  ],
+  "conclusion": "FFF003 is a causal prerequisite for the upper-frontier checkpoint to pass from the nested 0x001B16E0 lifecycle back into SceneScript_AdvanceState's parser. It is the interaction counter already produced by the Type-0x34 collision path, not a native scheduler phase. Clearing it exposes the parser but does not by itself establish natural transition reachability.",
+  "next_action": "Recover a natural or saved checkpoint with the Type-0x34 interaction counter already settled, then trace the parser's selected record through 0x001B0CB4 and the transition/resource writers without retaining the controlled clear as native behavior."
+}

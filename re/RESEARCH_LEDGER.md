@@ -1259,6 +1259,7 @@ jump, settles on behavior `0x25` at `(4728,628)`, and never reaches the behavior
 | `20260827-level01-far-rope-upper-resource-trace-v1` | recorded-positive-producer-frontier | natural far-rope upward dismount produces the upper Type-0x1E/Type-0x20 pair; no scene transition |
 | `20260827-level01-upper-band-inventory-v1` | recorded-negative-frontier | complete x=4400–4799 upper-band interaction/terrain inventory plus clean far-rope endpoint replay; no remaining upper-band launch or transition producer |
 | `20260827-level01-transition-resource-lifecycle-v1` | completed-negative-resource-lifecycle | upper-frontier boundary writer, scene resource prelude, 300 VBlank-paced service iterations, and persistent nested interaction/resource lifecycle; scene-state dispatch and transition latch writers remain unreachable from the checkpoint |
+| `20260827-level01-transition-resource-prerequisite-v1` | controlled-prerequisite-confirmation | paired baseline/control proves nonzero `FFF003` holds the nested `0x001B16E0` lifecycle; controlled zero exposes the scene-script parser one debugger frame later, without proving natural transition reachability |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

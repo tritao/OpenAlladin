@@ -50,6 +50,14 @@ Its upper-frontier replay reaches the Level 01 boundary and validates the
 cursor/state branch and `Scene_EnterTransitionMode` are not reached. This is
 restartability/resource-context evidence, not a natural-route failure.
 
+The paired prerequisite probe is recorded in
+`re/mame/campaigns/20260827-level01-transition-resource-prerequisite-v1.json`.
+It confirms that the checkpoint's nonzero `0x00FFF003` interaction counter is
+the immediate gate keeping `0x001B16E0` active: a controlled zero at that
+entry exposes the `SceneScript_AdvanceState` parser on the next debugger
+frame, while the unmodified baseline does not. The controlled write is causal
+evidence only and is not a native scheduler phase or a natural transition.
+
 Reanalyze an existing capture with:
 
 ```sh

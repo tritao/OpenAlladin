@@ -219,6 +219,16 @@
   description: Interaction lock checked by Player_ProcessInteractionState before selecting a recovery animation stream.
   evidence:
     - ghidra_disassembly_001AE4F8
+0xFFF003:
+  name: PLAYER_INTERACTION_COUNTER
+  type: u8
+  format: integer
+  confidence: confirmed
+  description: Global player-interaction counter incremented by the Type-0x34 player-collision handler and tested by the nested transition/resource lifecycle at 0x001B16E0; a nonzero value keeps that lifecycle active.
+  evidence:
+    - ghidra_type34_handler_decompile
+    - ghidra_targeted_decompile_001B16E0
+    - mame_transition_resource_prerequisite_probe
 0xFFF0E9:
   name: SCENE_SCRIPT_COUNTDOWN
   type: u8
