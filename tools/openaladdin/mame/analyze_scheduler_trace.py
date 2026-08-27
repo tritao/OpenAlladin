@@ -38,6 +38,12 @@ LATCH_PATTERN = re.compile(
     r" FRAME=(?P<frame>[0-9A-Fa-f]+)"
     r" VALUE=(?P<value>[0-9A-Fa-f]+)"
 )
+VBLANK_PATTERN = re.compile(
+    r"OPENALADDIN_SCHEDULER_VBLANK"
+    r" PC=(?P<pc>[0-9A-Fa-f]+)"
+    r" FRAME=(?P<frame>[0-9A-Fa-f]+)"
+    r" VALUE=(?P<value>[0-9A-Fa-f]+)"
+)
 
 
 def hex_value(value: str) -> int:
@@ -66,9 +72,12 @@ def read_trace_latches(path: Path) -> list[dict[str, Any]]:
     return latches
 
 
-def read_debug_log(path: Path) -> tuple[list[dict[str, int]], list[dict[str, Any]]]:
+def read_debug_log(
+    path: Path,
+) -> tuple[list[dict[str, int]], list[dict[str, Any]], list[dict[str, int]]]:
     calls: list[dict[str, int]] = []
     latches: list[dict[str, Any]] = []
+    vblanks: list[dict[str, int]] = []
     for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
         call = CALL_PATTERN.search(line)
         if call:
@@ -93,7 +102,16 @@ def read_debug_log(path: Path) -> tuple[list[dict[str, int]], list[dict[str, Any
                 "frame": hex_value(latch.group("frame")),
                 "value": hex_value(latch.group("value")),
             })
-    return calls, latches
+            continue
+        vblank = VBLANK_PATTERN.search(line)
+        if vblank:
+            vblanks.append({
+                "line": line_number,
+                "pc": hex_value(vblank.group("pc")),
+                "frame": hex_value(vblank.group("frame")),
+                "value": hex_value(vblank.group("value")),
+            })
+    return calls, latches, vblanks
 
 
 def static_call_sequence(model: dict[str, Any]) -> list[dict[str, int]]:
@@ -181,9 +199,27 @@ def validate_latches(
         event for event in observed
         if first_gameplay_frame is None or event["frame"] >= first_gameplay_frame
     ]
+    all_by_name: dict[str, list[dict[str, Any]]] = defaultdict(list)
     by_name: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for event in observed:
+        all_by_name[event["name"]].append(event)
     for event in gameplay:
         by_name[event["name"]].append(event)
+
+    def summarize(events_by_name: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
+        summary: dict[str, Any] = {}
+        for name, events in sorted(events_by_name.items()):
+            summary[name] = {
+                "count": len(events),
+                "writer_pcs": {
+                    f"0x{pc:06X}": count
+                    for pc, count in sorted(Counter(event["pc"] for event in events).items())
+                },
+                "data_values": sorted({event["data"] for event in events}),
+                "first": events[0],
+                "last": events[-1],
+            }
+        return summary
 
     result: dict[str, Any] = {
         "observed_write_count": len(observed),
@@ -200,19 +236,9 @@ def validate_latches(
             if event["name"] in expected_addresses
             and event["watchpoint_address"] != expected_addresses[event["name"]]
         ],
-        "by_name": {},
+        "all_by_name": summarize(all_by_name),
+        "by_name": summarize(by_name),
     }
-    for name, events in sorted(by_name.items()):
-        result["by_name"][name] = {
-            "count": len(events),
-            "writer_pcs": {
-                f"0x{pc:06X}": count
-                for pc, count in sorted(Counter(event["pc"] for event in events).items())
-            },
-            "data_values": sorted({event["data"] for event in events}),
-            "first": events[0],
-            "last": events[-1],
-        }
     return result
 
 
@@ -236,7 +262,7 @@ def analyze(
 ) -> dict[str, Any]:
     model = load_yaml(model_path)
     expected = static_call_sequence(model)
-    calls, debug_latches = read_debug_log(debug_path)
+    calls, debug_latches, vblanks = read_debug_log(debug_path)
     latches = debug_latches
     if trace_boot_path and trace_boot_path.is_file():
         latches = read_trace_latches(trace_boot_path) + debug_latches
@@ -274,6 +300,17 @@ def analyze(
             **call_report,
         },
         "latch_writes": latch_report,
+        "vblank_boundaries": {
+            "observed_count": len(vblanks),
+            "pc_values": sorted({f"0x{event['pc']:06X}" for event in vblanks}),
+            "value_values": sorted({event["value"] for event in vblanks}),
+            "debugger_frame_range": (
+                [min(event["frame"] for event in vblanks), max(event["frame"] for event in vblanks)]
+                if vblanks else []
+            ),
+            "first": vblanks[0] if vblanks else None,
+            "last": vblanks[-1] if vblanks else None,
+        },
         "observations": [
             "The observed gameplay call stream follows all 37 recovered direct call sites in order.",
             "The only direct AnimationVM_TickActors call in that stream is ordinal 30 at 0x001A8CCE.",
@@ -308,6 +345,7 @@ def main() -> int:
     print(f"scheduler call sequences: {report['call_sequence']['complete_call_sequences']}")
     print(f"scheduler call events: {report['call_sequence']['observed_call_count']}")
     print(f"scheduler latch writes: {report['latch_writes']['gameplay_write_count']}")
+    print(f"scheduler VBlank boundaries: {report['vblank_boundaries']['observed_count']}")
     print(f"scheduler analysis: {args.output.resolve()}")
     return 0 if report["status"] == "trace_validated" else 1
 
