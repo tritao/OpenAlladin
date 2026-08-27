@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-level-loader-state-record-finding-v1",
+  "recorded_at": "2026-08-27",
+  "campaign": "re/mame/campaigns/20260827-level-loader-state03-v2.json",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "7744566",
+  "source": {
+    "trace_directory": "build/re/campaigns/20260827-level-loader-state03-v2",
+    "breakpoint": "0x001AA484",
+    "breakpoint_write": { "address": "0x00FF7E26", "value": "0x03", "width": "u8" },
+    "breakpoint_hit": { "pc_after": "0x001AA486", "machine_frame": "0x00000433", "count": 1 }
+  },
+  "observations": {
+    "before_loader": { "scene_state": "0x01", "trace_frame": 1075 },
+    "after_loader": {
+      "scene_state": "0x03",
+      "trace_frame": 1100,
+      "level_table_index": 3,
+      "level_table_entry": "0x002D3E",
+      "level_dimensions_pixels": [7200, 512],
+      "camera_at_trace_frame_1100": [80, 256],
+      "player_world_at_trace_frame_1100": [80, 256]
+    },
+    "later_state": {
+      "trace_frame": 1200,
+      "scene_state": "0x03",
+      "level_dimensions_pixels": [7200, 512],
+      "camera": [80, 256],
+      "player_world": [222, 683]
+    },
+    "scene_state_changes": [
+      { "trace_frame": 5, "from": "0x00", "to": "0x01" },
+      { "trace_frame": 1077, "from": "0x01", "to": "0x03" }
+    ],
+    "rnc_loader_events": 17
+  },
+  "conclusion": "The original 0x001AA484 loader uses SCENE_STATE as the level-table index in live execution. Selecting state 0x03 at the loader entry produces the table-3 geometry (450x32 blocks, 7200x512 pixels), distinct from Level 01's 300x45/4800x720 geometry. The selection was controlled and must not be confused with a natural Level 01 exit."
+}

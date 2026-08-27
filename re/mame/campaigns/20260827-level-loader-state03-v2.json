@@ -1,0 +1,31 @@
+{
+  "campaign": "20260827-level-loader-state03-v2",
+  "status": "controlled-level-record-confirmed",
+  "purpose": "Use the original loader breakpoint to select scene state 0x03 and observe the corresponding level-table record and runtime geometry.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "845d5fb",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "segments": [
+    {
+      "id": "loader-state03",
+      "trace_dir": "build/re/campaigns/20260827-level-loader-state03-v2",
+      "frames": 1400,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*80,c*2,none*55",
+      "capture": "state",
+      "scene_state_trace": true,
+      "rnc_loader_trace": true,
+      "breakpoints": ["0x001AA484"],
+      "breakpoint_writes": ["0xFF7E26=0x03:u8"],
+      "checkpoints": [
+        { "frame": 0, "name": "boot", "state": "states/genesis/boot.sta" },
+        { "frame": 1075, "name": "loader-window", "state": "states/genesis/loader-window.sta", "scene_state": 1 },
+        { "frame": 1100, "name": "state3-loaded", "state": "states/genesis/state3-loaded.sta", "scene_state": 3 },
+        { "frame": 1399, "name": "end", "state": "states/genesis/end.sta", "scene_state": 3 }
+      ]
+    }
+  ],
+  "next": "Use the table-record mapping to parameterize native level loading; retain the scene-3 state as a controlled level-record checkpoint, not as proof of natural campaign progression."
+}
