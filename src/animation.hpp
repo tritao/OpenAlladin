@@ -5,6 +5,7 @@
 #include <array>
 #include <cstdint>
 #include <iosfwd>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -172,6 +173,10 @@ public:
     // frame pointer already published by that tick. A few action streams
     // expose the pre-command cursor for one VBlank before continuing.
     void hold_animation_cursor(std::uint32_t cursor);
+    // Keep the apple action's selector/cursor publication lifecycle with the
+    // VM that owns the ROM cursor, rather than with Engine scheduler flags.
+    void begin_apple_action_boundary();
+    void service_apple_action_boundary();
     // Service one extra ROM tick on the next update without changing the
     // alternating scheduler phase.
     void force_tick_next_update_without_phase();
@@ -182,6 +187,11 @@ public:
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
+    void defer_spawn_request(const AnimationSpawnRequest& request);
+    bool take_deferred_spawn_request(AnimationSpawnRequest& request);
+    const std::optional<AnimationSpawnRequest>& deferred_spawn_request() const {
+        return deferred_spawn_request_;
+    }
     std::vector<std::uint8_t> take_sound_requests();
     // Consume a global-RAM byte written by the player VM during its most
     // recent tick. This keeps ROM-side ED writes visible to Engine-owned
@@ -233,6 +243,9 @@ public:
     bool force_tick_without_phase() const { return force_tick_without_phase_; }
     bool defer_tick_next_update() const { return defer_tick_next_update_; }
     bool clear_timer_next_update() const { return clear_timer_next_update_; }
+    std::uint8_t action_boundary() const {
+        return static_cast<std::uint8_t>(action_boundary_);
+    }
     unsigned update_count() const { return update_count_; }
     std::uint32_t return_pc() const { return return_pc_; }
     void set_writer_trace_enabled(bool enabled) { writer_trace_enabled_ = enabled; }
@@ -299,11 +312,19 @@ private:
     bool force_tick_without_phase_ = false;
     bool defer_tick_next_update_ = false;
     bool clear_timer_next_update_ = false;
+    enum class ActionBoundary : std::uint8_t {
+        None,
+        AwaitRootRepublish,
+        AwaitFirstCursor,
+        AwaitSecondCursor,
+    };
+    ActionBoundary action_boundary_ = ActionBoundary::None;
     bool tracking_memory_writes_ = false;
     bool writer_trace_enabled_ = false;
     std::uint32_t active_command_pc_ = 0;
     std::vector<std::uint32_t> writer_pcs_;
     std::vector<AnimationSpawnRequest> spawn_requests_{};
+    std::optional<AnimationSpawnRequest> deferred_spawn_request_;
     std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;
     bool landing_finished_ = false;

@@ -26,6 +26,12 @@ constexpr std::uint32_t kResponseRecoveryStream = 0x00121FA0;
 constexpr std::uint32_t kResponseStreamEnd = 0x00121FD4;
 constexpr std::uint32_t kInteractionStopStream = 0x001226CE;
 constexpr std::uint32_t kInteractionSpecialStream = 0x001226B2;
+constexpr std::uint32_t kAppleActionStream = 0x001223DA;
+constexpr std::uint32_t kAppleFirstHeldCursor = 0x001223FA;
+constexpr std::uint32_t kAppleFirstCursorBoundary = 0x00122438;
+constexpr std::uint32_t kAppleSecondCursorBoundary = 0x0012245C;
+constexpr std::uint32_t kAppleFirstFrame = 0x001ED422;
+constexpr std::uint32_t kAppleSecondFrame = 0x001ED470;
 
 const PlayerAnimationVm::Clip kIdleClip{
     kIdleStream,
@@ -178,10 +184,12 @@ void PlayerAnimationVm::reset() {
     force_tick_next_update_ = false;
     force_tick_without_phase_ = false;
     defer_tick_next_update_ = false;
+    action_boundary_ = ActionBoundary::None;
     tracking_memory_writes_ = false;
     active_command_pc_ = 0;
     writer_pcs_.clear();
     spawn_requests_.clear();
+    deferred_spawn_request_.reset();
     sound_requests_.clear();
     update_count_ = 0;
     landing_finished_ = false;
@@ -766,6 +774,48 @@ void PlayerAnimationVm::hold_animation_cursor(std::uint32_t cursor) {
     animation_pc_ = cursor;
 }
 
+void PlayerAnimationVm::begin_apple_action_boundary() {
+    if (!rom_mode_) return;
+    action_boundary_ = ActionBoundary::AwaitRootRepublish;
+}
+
+void PlayerAnimationVm::service_apple_action_boundary() {
+    if (!rom_mode_ || action_boundary_ == ActionBoundary::None) return;
+    if (stream_entry_ != kAppleActionStream) {
+        action_boundary_ = ActionBoundary::None;
+        return;
+    }
+
+    switch (action_boundary_) {
+    case ActionBoundary::AwaitRootRepublish:
+        // The selector writes the action root back after the VM service while
+        // preserving the frame pointer already published by that service.
+        republish_stream_root_cursor_only();
+        force_tick_next_update_without_phase();
+        action_boundary_ = ActionBoundary::AwaitFirstCursor;
+        break;
+    case ActionBoundary::AwaitFirstCursor:
+        if (animation_pc_ == kAppleFirstCursorBoundary
+            && frame_pointer_ == kAppleFirstFrame) {
+            hold_animation_cursor(kAppleFirstHeldCursor);
+            action_boundary_ = ActionBoundary::AwaitSecondCursor;
+        }
+        break;
+    case ActionBoundary::AwaitSecondCursor:
+        if (animation_pc_ == kAppleSecondCursorBoundary
+            && frame_pointer_ == kAppleSecondFrame) {
+            // The second held cursor is followed by one published boundary
+            // before the next frame-reference service.
+            hold_animation_cursor(kAppleFirstCursorBoundary);
+            defer_tick_next_update();
+            action_boundary_ = ActionBoundary::None;
+        }
+        break;
+    case ActionBoundary::None:
+        break;
+    }
+}
+
 void PlayerAnimationVm::force_tick_next_update_without_phase() {
     if (rom_mode_) force_tick_without_phase_ = true;
 }
@@ -825,6 +875,17 @@ bool PlayerAnimationVm::take_spawn_request(AnimationSpawnRequest& request) {
     if (spawn_requests_.empty()) return false;
     request = spawn_requests_.front();
     spawn_requests_.erase(spawn_requests_.begin());
+    return true;
+}
+
+void PlayerAnimationVm::defer_spawn_request(const AnimationSpawnRequest& request) {
+    deferred_spawn_request_ = request;
+}
+
+bool PlayerAnimationVm::take_deferred_spawn_request(AnimationSpawnRequest& request) {
+    if (!deferred_spawn_request_) return false;
+    request = *deferred_spawn_request_;
+    deferred_spawn_request_.reset();
     return true;
 }
 
@@ -1167,11 +1228,14 @@ void PlayerAnimationVm::write_checkpoint(std::ostream& output) const {
     writer.boolean(force_tick_without_phase_);
     writer.boolean(defer_tick_next_update_);
     writer.boolean(clear_timer_next_update_);
+    writer.u8(static_cast<std::uint8_t>(action_boundary_));
     writer.boolean(tracking_memory_writes_);
     writer.u32(static_cast<std::uint32_t>(spawn_requests_.size()));
     for (const AnimationSpawnRequest& request : spawn_requests_) {
         write_spawn_request(writer, request);
     }
+    writer.boolean(deferred_spawn_request_.has_value());
+    if (deferred_spawn_request_) write_spawn_request(writer, *deferred_spawn_request_);
     writer.byte_vector(sound_requests_);
     writer.u32(update_count_);
     writer.boolean(landing_finished_);
@@ -1214,6 +1278,7 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     const bool force_tick_without_phase = reader.boolean();
     const bool defer_tick_next_update = reader.boolean();
     const bool clear_timer_next_update = reader.boolean();
+    const auto action_boundary = reader.u8();
     const bool tracking_memory_writes = reader.boolean();
     const auto spawn_count = reader.u32();
     if (spawn_count > 4096) {
@@ -1224,6 +1289,11 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     for (std::uint32_t index = 0; index < spawn_count; ++index) {
         spawn_requests.push_back(read_spawn_request(reader));
     }
+    const bool has_deferred_spawn_request = reader.boolean();
+    std::optional<AnimationSpawnRequest> deferred_spawn_request;
+    if (has_deferred_spawn_request) {
+        deferred_spawn_request = read_spawn_request(reader);
+    }
     auto sound_requests = reader.byte_vector(4096);
     const auto update_count = reader.u32();
     const bool landing_finished = reader.boolean();
@@ -1233,6 +1303,9 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     }
     if (timer < 0 || animation_phase_delay < 0) {
         throw std::runtime_error("invalid animation VM timer in OpenAladdin checkpoint");
+    }
+    if (action_boundary > static_cast<std::uint8_t>(ActionBoundary::AwaitSecondCursor)) {
+        throw std::runtime_error("invalid animation action boundary in OpenAladdin checkpoint");
     }
 
     pose_ = static_cast<SpritePose>(pose);
@@ -1257,8 +1330,10 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     force_tick_without_phase_ = force_tick_without_phase;
     defer_tick_next_update_ = defer_tick_next_update;
     clear_timer_next_update_ = clear_timer_next_update;
+    action_boundary_ = static_cast<ActionBoundary>(action_boundary);
     tracking_memory_writes_ = tracking_memory_writes;
     spawn_requests_ = std::move(spawn_requests);
+    deferred_spawn_request_ = std::move(deferred_spawn_request);
     sound_requests_ = std::move(sound_requests);
     update_count_ = update_count;
     landing_finished_ = landing_finished;

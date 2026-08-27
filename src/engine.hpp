@@ -264,14 +264,6 @@ private:
     PlayerAnimationVm animation_;
     MovementVm movement_vm_;
     std::array<PlayerAnimationVm, 32> actor_animations_{};
-    // The apple projectile is serviced once at allocation, then exposes one
-    // extra held animation boundary before joining the common type-0x80
-    // cadence.
-    std::array<bool, 32> apple_actor_hold_next_frame_{};
-    bool apple_root_republish_pending_ = false;
-    bool apple_cursor_hold_1223fa_done_ = false;
-    bool apple_cursor_hold_122438_done_ = false;
-    bool apple_following_tick_deferred_ = false;
     InteractionMap interaction_map_;
     ActorSystem actors_{};
     std::map<int, ActorSystem::Table> actor_timeline_;
@@ -314,10 +306,6 @@ private:
     std::uint32_t random_state_ = 0;
     int terrain_input_world_x_ = 0;
     int terrain_input_world_y_ = 0;
-    std::optional<AnimationSpawnRequest> deferred_animation_spawn_;
-    // The same camera boundary suppresses the current player animation pass;
-    // queue the next VM service explicitly at the following boundary.
-    bool player_animation_catch_up_ = false;
     // Common F5 actors share one AnimationVM_TickActors traversal. Keep its
     // cadence at engine scope so actors spawned later join the same service
     // and hold passes as the already-live records.
