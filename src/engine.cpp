@@ -2111,6 +2111,7 @@ void Engine::reset() {
     jump_landing_state_arm_pending_ = false;
     jump_landing_state_arm_now_ = false;
     terrain_fall_phase_ = false;
+    contour_ground_motion_ = false;
     interaction_reference_x_ = 0;
     interaction_reference_y_ = 0;
     if (actor_snapshot_mode_) {
@@ -2179,6 +2180,7 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     jump_landing_state_arm_pending_ = false;
     jump_landing_state_arm_now_ = false;
     terrain_fall_phase_ = false;
+    contour_ground_motion_ = false;
     frame_ = 0;
     quit_ = false;
     animation_.reset();
@@ -2705,7 +2707,11 @@ void Engine::apply_floor_contour() {
     // ROM value).
     player_.y = target_y;
     player_.vy = 0;
-    player_.grounded = true;
+    // The ROM publishes grounded from FFF0C1, not from contour validity.
+    // Sloped contour bytes remain visible in the landing field while the
+    // player traverses the ramp, so only the flat-ground byte (1) is exposed
+    // as grounded at this boundary.
+    player_.grounded = contour.contour == 1;
     player_.terrain_landing_state = contour.contour;
     player_.terrain_response_active = 0;
     player_.terrain_jump_response_counter = 0;
@@ -3252,6 +3258,7 @@ void Engine::update(const InputState& input) {
     terrain_input_world_x_ = player_world_x();
     terrain_input_world_y_ = player_world_y();
     const bool grounded_before_contour = player_.grounded;
+    const bool contour_ground_motion_before = contour_ground_motion_;
     const bool stable_terrain_handler_fixture = checkpoint_terrain_behavior_override_
         && (checkpoint_terrain_behavior_ == 0x28
             || checkpoint_terrain_behavior_ == 0x29
@@ -3278,8 +3285,20 @@ void Engine::update(const InputState& input) {
         jump_landing_state_arm_pending_ = false;
     }
     player_.animation_selector.landing_state = player_.terrain_landing_state;
-    const bool was_grounded = player_.grounded;
-    const bool just_landed = !grounded_before_contour && player_.grounded;
+    // Non-flat contours are traversed by the grounded movement path even
+    // though the ROM's public grounded predicate is false until FFF0C1
+    // returns to 1. Keep that distinction explicit for movement and VM
+    // selection while preserving the observed state byte.
+    bool contour_ground_motion = (grounded_before_contour || contour_ground_motion_)
+        && !player_.grounded
+        && player_.terrain_landing_state != 0
+        && player_.terrain_response_active == 0
+        && player_.vy == 0;
+    contour_ground_motion_ = contour_ground_motion;
+    const bool was_grounded = player_.grounded || contour_ground_motion;
+    const bool just_landed = !grounded_before_contour
+        && !contour_ground_motion_before
+        && player_.grounded;
     // TerrainHandler_SurfaceInteraction runs from the pre-integration
     // resolver. The actor record stores the player's position before this
     // frame's movement, and an existing record prevents a replacement until
@@ -3372,7 +3391,7 @@ void Engine::update(const InputState& input) {
     animation_context.selector.interaction_lock =
         player_.animation_selector.interaction_lock;
 
-    if (was_grounded && player_.grounded) {
+    if (was_grounded && (player_.grounded || contour_ground_motion)) {
         if (input.left != input.right) {
             const int threshold = input.left ? 0xF0 : 0x70;
             if (camera_.horizontal_threshold != threshold) {
@@ -3477,13 +3496,15 @@ void Engine::update(const InputState& input) {
     // same frame boundary.
     animation_context.selector.interaction_lock =
         player_.animation_selector.interaction_lock;
-    if (start_jump && player_.grounded) {
+    if (start_jump && (player_.grounded || contour_ground_motion)) {
         // The recovered frame order applies the jump handler after motion and
         // terrain resolution (Player_Update -> Terrain_Resolve -> jump
         // handler). This leaves the impulse visible for the next frame before
         // the integrator consumes it.
         player_.vy = static_cast<std::int16_t>(-0x200);
         player_.grounded = false;
+        contour_ground_motion = false;
+        contour_ground_motion_ = false;
         player_.terrain_response_active = 0xFF;
         // The live ROM's ten-step counter is observable when a jump follows
         // a terrain-selected action stream. Keep direct locomotion fixtures
@@ -3659,15 +3680,15 @@ void Engine::update(const InputState& input) {
     // their initialized animation cursor for this state sample and join the
     // next shared traversal.
     scan_interaction_refill_window();
-    if (was_grounded && player_.grounded && input_direction != 0) {
+    if (was_grounded && (player_.grounded || contour_ground_motion) && input_direction != 0) {
         last_ground_direction_ = input_direction;
-    } else if (!player_.grounded) {
+    } else if (!player_.grounded && !contour_ground_motion) {
         last_ground_direction_ = 0;
     }
 
     const bool landing_event = just_landed || landed_during_frame;
     SpritePose desired_pose = SpritePose::Idle;
-    if (!player_.grounded) {
+    if (!player_.grounded && !contour_ground_motion) {
         // Genesis keeps the jump stream active during the approach frame. It
         // selects the landing stream only after the contour resolver has
         // actually latched grounded state on the following boundary.
@@ -3787,7 +3808,7 @@ void Engine::update(const InputState& input) {
         selector_context.world_y = player_world_y();
         selector_context.player_vx = player_.vx;
         selector_context.player_vy = player_.vy;
-        selector_context.grounded = player_.grounded;
+        selector_context.grounded = player_.grounded || contour_ground_motion;
         auto& selector = selector_context.selector;
         if (interaction_selector_pending_at_start) {
             // The native lock is a post-call timer used by the animation
@@ -3811,7 +3832,8 @@ void Engine::update(const InputState& input) {
             desired_pose == SpritePose::Brake
                 ? 0
                 : (player_.terrain_response_active != 0
-                    || (player_.grounded && player_.terrain_vertical_stop == 0)
+                    || ((player_.grounded || contour_ground_motion)
+                        && player_.terrain_vertical_stop == 0)
                     ? 1
                     : 0);
         animation_.select_player_interaction_state(selector_context);

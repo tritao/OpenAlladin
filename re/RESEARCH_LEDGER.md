@@ -219,6 +219,12 @@ the finding or commit message.
   selection, delayed landing-latch timing, vertical-stop writes, and landing
   animation ordering. `tests/player_jump_regression.py` runs this comparison
   as a CTest differential gate.
+- `re/mame/findings/20260827-player-slope-grounded-boundary-v1.json`: a fresh
+  Level 01 actor-boot replay shows non-flat contour bytes (`0x0F` through
+  `0x03`) publishing `grounded=false` while retaining ground-motion and run
+  animation behavior. The native contour latch reproduces the six-frame
+  grounded/landing sequence and preserves the verified 157/257-frame jump
+  fixtures; the later camera-rebase differential remains separately open.
 
 - `re/mame/findings/level-transition-findings.json`: controlled scene-state
   transition proof and table/exit-gate work.

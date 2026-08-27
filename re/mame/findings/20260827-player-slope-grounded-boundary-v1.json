@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-player-slope-grounded-boundary-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Separate the ROM's public grounded byte from its internal surface-motion path while traversing non-flat contour samples.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "replay": {
+    "command": "python tools/oa.py regression level01-actor-boot --trace-dir build/re/level01-actor-boot-slope-fields2 --field player.grounded --field terrain.landing_state --field player.x --field player.y --field player.vx --field player.vy",
+    "trace_dir": "build/re/level01-actor-boot-slope-fields2",
+    "checkpoint": "level01_actor_checkpoint",
+    "post_checkpoint_frames": 601
+  },
+  "evidence": {
+    "mame_aligned_slope_window": {
+      "frames": "351-356",
+      "landing_state": [15, 12, 9, 6, 3, 1],
+      "grounded": [false, false, false, false, false, true],
+      "player_x": [160, 160, 160, 160, 160, 160],
+      "player_vx": [0, 0, 0, 0, 0, 0]
+    },
+    "native_slope_window": {
+      "frames": "351-356",
+      "landing_state": [15, 12, 9, 6, 3, 1],
+      "grounded": [false, false, false, false, false, true],
+      "player_x": [160, 160, 160, 160, 160, 160],
+      "player_vx": [0, 0, 0, 0, 0, 0]
+    },
+    "focused_match": "Public grounded, landing_state, position, and velocity remain aligned through frame 374; frame 375 retains the pre-existing camera-rebase X differential.",
+    "jump_regressions": [
+      "player-jump: 157 synchronized frames",
+      "terrain-jump-land: 257 synchronized frames"
+    ]
+  },
+  "implementation": {
+    "public_state": "apply_floor_contour exposes grounded only for contour byte 1, matching the FFF0C1 landing-state predicate.",
+    "internal_state": "contour_ground_motion_ latches surface traversal across consecutive non-flat contour bytes so ground movement and animation selection do not fall into airborne acceleration."
+  },
+  "conclusion": "The ROM's grounded flag is a published contour value, not a generic contour-valid predicate. Non-flat values 0x0F through 0x03 are externally airborne while the player remains on the ground-motion/animation path; the latch reproduces that split without changing the verified jump fixtures.",
+  "next_action": "Decode the separate camera-rebase ordering and later contour drift before claiming full actor-boot parity."
+}

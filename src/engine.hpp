@@ -474,6 +474,10 @@ private:
     bool jump_landing_state_arm_pending_ = false;
     bool jump_landing_state_arm_now_ = false;
     bool terrain_fall_phase_ = false;
+    // A sloped contour exposes a non-flat landing byte (and therefore a
+    // public grounded=false) while the player remains on the surface. Keep
+    // the internal ground-motion path latched across those contour samples.
+    bool contour_ground_motion_ = false;
     int interaction_reference_x_ = 0;
     int interaction_reference_y_ = 0;
     // FUN_001B3032 is the shared fixed-ROM PRNG used by terrain responses and
