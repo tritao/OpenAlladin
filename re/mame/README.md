@@ -134,6 +134,23 @@ python tools/oa.py trace player-run --frames 1400 \
 Native runs accept the matching `--scheduler-trace PATH` option. Phase and
 writer records are provenance diagnostics, not additional semantic state.
 
+The normalized comparator accepts either scheduler JSONL or a v3 state trace
+with `causal` records. It reports the first differing phase and its last
+matching boundary:
+
+```sh
+python tools/oa.py scheduler-compare \
+  build/re/traces/mame/state.jsonl \
+  build/re/traces/native-scheduler.jsonl \
+  --include-pcs --include-writers
+```
+
+Native and MAME traces currently expose different phase granularity. For an
+explicit shared question, project both traces onto selected normalized phase
+families with repeated `--phase` options. Missing scheduler records remain a
+failure by default; `--intersection` is available for sparse debugger
+captures and makes that limitation explicit.
+
 Compare the native Z80 bus writes with a MAME capture, and optionally compare
 decoded command IDs when MAME's command breakpoints produced records:
 

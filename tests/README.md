@@ -43,6 +43,13 @@ jump, sword, and apple inputs, including deterministic writer provenance:
 python3 tests/native_scheduler_trace.py
 ```
 
+The scheduler comparator's normalization, explicit phase projections, and
+first-divergence context are covered by:
+
+```bash
+PYTHONPATH=tools python3 tests/scheduler_compare.py
+```
+
 Generated traces and extracted assets remain under `build/`.
 `native_actor_movement.py` compares the native signed-delta actor movement VM
 against the captured slot-19 type-`0x84` stream, including its `0x84` timer

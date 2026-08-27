@@ -56,13 +56,18 @@ def records(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
 
 
-def check_trace(scheduler_path: Path, state_path: Path) -> bool:
+def check_trace(
+    scheduler_path: Path,
+    state_path: Path,
+    frame_count: int,
+    route: str,
+) -> bool:
     scheduler = records(scheduler_path)
     state = records(state_path)
     assert scheduler[0]["type"] == "header"
     assert scheduler[0]["format"] == "openaladdin-scheduler-trace-v1"
     frames = scheduler[1:]
-    assert [record["frame"] for record in frames] == list(range(1, 5))
+    assert [record["frame"] for record in frames] == list(range(1, frame_count + 1))
 
     for record in frames:
         phases = record["phases"]
@@ -77,16 +82,31 @@ def check_trace(scheduler_path: Path, state_path: Path) -> bool:
                 assert phase["rom_entry_pc"] == EXPECTED_PCS[phase["name"]]
 
     state_frames = [record for record in state if record.get("type") == "state"]
-    assert [record["frame"] for record in state_frames] == list(range(0, 5))
+    assert [record["frame"] for record in state_frames] == list(range(0, frame_count + 1))
     for scheduler_record, state_record in zip(frames, state_frames[1:]):
         causal = state_record["causal"]
         assert causal["phase_order"] == [phase["name"] for phase in scheduler_record["phases"]]
         assert causal["phase_pcs"] == [phase["rom_entry_pc"] for phase in scheduler_record["phases"]]
         assert causal["writer_pcs"] == scheduler_record["writer_pcs"]
+    if route == "jump":
+        assert any(record["player"]["vy"] < 0 for record in state_frames)
+    elif route == "sword":
+        assert any(record["player"]["attack_active"] for record in state_frames)
+    elif route == "apple":
+        assert any(
+            actor.get("spawned_by_apple")
+            for record in state_frames
+            for actor in record["actors"]
+        )
     return any(record["writer_pcs"] for record in frames)
 
 
-def run_case(directory: Path, token: str, suffix: str) -> tuple[Path, Path]:
+def run_case(
+    directory: Path,
+    schedule: str,
+    suffix: str,
+    frame_count: int,
+) -> tuple[Path, Path]:
     scheduler = directory / f"{suffix}.scheduler.jsonl"
     state = directory / f"{suffix}.state.jsonl"
     environment = dict(os.environ)
@@ -97,9 +117,9 @@ def run_case(directory: Path, token: str, suffix: str) -> tuple[Path, Path]:
             "--no-window",
             "--no-audio",
             "--frames",
-            "4",
+            str(frame_count),
             "--input-schedule",
-            f"{token}*4",
+            schedule,
             "--scheduler-trace",
             str(scheduler),
             "--state-output",
@@ -119,12 +139,19 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="openaladdin-native-scheduler-") as name:
         directory = Path(name)
         writer_cases = []
-        for token in ("none", "right", "jump", "a", "apple"):
-            scheduler, state = run_case(directory, token, token)
-            writer_cases.append(check_trace(scheduler, state))
+        cases = {
+            "idle": ("none*8", 8),
+            "run": ("right*12", 12),
+            "jump": ("right*30,jump*1,none*96", 127),
+            "sword": ("right*30,a*2,none*96", 128),
+            "apple": ("right*30,apple*1,none*128", 159),
+        }
+        for route, (schedule, frame_count) in cases.items():
+            scheduler, state = run_case(directory, schedule, route, frame_count)
+            writer_cases.append(check_trace(scheduler, state, frame_count, route))
 
-        first_scheduler, _ = run_case(directory, "right", "repeat-a")
-        second_scheduler, _ = run_case(directory, "right", "repeat-b")
+        first_scheduler, _ = run_case(directory, "right*12", "repeat-a", 12)
+        second_scheduler, _ = run_case(directory, "right*12", "repeat-b", 12)
         assert first_scheduler.read_bytes() == second_scheduler.read_bytes()
         assert any(writer_cases)
 

@@ -3522,6 +3522,22 @@ def command_inputs_summarize(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_scheduler_compare(args: argparse.Namespace) -> int:
+    forwarded = [str(resolve(args.genesis)), str(resolve(args.openaladdin))]
+    for phase in args.phases or []:
+        forwarded.extend(["--phase", phase])
+    for option in ("include_pcs", "include_writers", "intersection"):
+        if getattr(args, option):
+            forwarded.append("--" + option.replace("_", "-"))
+    if args.right_frame_offset:
+        forwarded.extend(["--right-frame-offset", str(args.right_frame_offset)])
+    if args.start_frame is not None:
+        forwarded.extend(["--start-frame", str(args.start_frame)])
+    if args.end_frame is not None:
+        forwarded.extend(["--end-frame", str(args.end_frame)])
+    return run_tool("openaladdin/mame/compare_scheduler.py", forwarded)
+
+
 def command_compare(args: argparse.Namespace) -> int:
     forwarded = [str(resolve(args.genesis)), str(resolve(args.openaladdin))]
     for field in args.fields or []:
@@ -4120,6 +4136,26 @@ def build_parser() -> argparse.ArgumentParser:
          "--mame-source", args.mame_source,
          "--native-frame-offset", str(args.native_frame_offset)],
     ))
+
+    scheduler_compare = commands.add_parser(
+        "scheduler-compare",
+        help="compare normalized MAME and native scheduler traces",
+    )
+    scheduler_compare.add_argument("genesis", type=Path)
+    scheduler_compare.add_argument("openaladdin", type=Path)
+    scheduler_compare.add_argument(
+        "--phase",
+        action="append",
+        dest="phases",
+        help="compare only this normalized phase family; repeat for a projection",
+    )
+    scheduler_compare.add_argument("--include-pcs", action="store_true")
+    scheduler_compare.add_argument("--include-writers", action="store_true")
+    scheduler_compare.add_argument("--right-frame-offset", type=int, default=0)
+    scheduler_compare.add_argument("--intersection", action="store_true")
+    scheduler_compare.add_argument("--start-frame", type=int)
+    scheduler_compare.add_argument("--end-frame", type=int)
+    scheduler_compare.set_defaults(function=command_scheduler_compare)
 
     regression = commands.add_parser("regression", help="differentially compare MAME and native gameplay")
     regression.add_argument("scenario")
