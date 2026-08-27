@@ -1,0 +1,41 @@
+{
+  "campaign": "20260827-level01-upper-pair-extended-interaction-v2",
+  "status": "recorded-negative",
+  "purpose": "Bounded explicit-input upper-frontier coverage for natural reachability of the Type-0x1E extended interaction stream.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "7148647",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "7148647",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_finding": "re/mame/findings/20260827-level01-upper-pair-extended-interaction-v1.json",
+  "segments": [
+    {
+      "id": "left-up-neutral",
+      "trace_dir": "build/re/campaigns/20260827-level01-upper-pair-extended-interaction-v1-left-v5",
+      "frames": 300,
+      "input": "left*60,up*120,none*120",
+      "input_mode": "inject",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260826-level01-reproducibility-v1/far-rope-sword-jump/states/genesis/upper-frontier.sta",
+      "capture": "ram",
+      "raw_ram": "ram_frames.bin",
+      "state_output": true,
+      "actors": true,
+      "scene_state_trace": false,
+      "debug_watch": true,
+      "breakpoints": ["0x001ACC5E"],
+      "watched_addresses": ["0x00FFF0E9", "0x00FF7E26"],
+      "checkpoints": [
+        { "frame": 1, "name": "loaded" },
+        { "frame": 60, "name": "left-open" },
+        { "frame": 120, "name": "ascending" },
+        { "frame": 180, "name": "lower-band" },
+        { "frame": 240, "name": "settled" },
+        { "frame": 300, "name": "end" }
+      ]
+    }
+  ],
+  "result": "The explicit left/up route materializes the ordinary Type-0x1E actor at slot 6, but never selects animation cursor 0x001237C6, movement cursor 0x0012046C, or interaction state 0x46. The scene remains 0x01 and the extended callback breakpoint is never reached."
+}

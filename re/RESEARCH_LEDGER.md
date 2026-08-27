@@ -254,6 +254,12 @@ the finding or commit message.
   callback only selects event IDs `0x5E..0x61`; neither path writes player
   coordinates, the scene countdown, or scene state. Natural reachability of
   this branch remains the only open question for the upper pair.
+- `re/mame/findings/20260827-level01-upper-pair-extended-interaction-runtime-v1.json`:
+  an explicit loaded-state `left*60,up*120,none*120` replay reaches the ordinary
+  Type-0x1E actor but records zero entries for the corrected extended cursor,
+  movement `0x0012046C`, interaction state `0x46`, and callback `0x001ACC5E`.
+  The scene remains `0x01`; this closes the tested input family and moves the
+  unresolved producer question to the common actor-terrain collision pass.
 - `re/mame/findings/20260827-player-slope-grounded-boundary-v1.json`: a fresh
   Level 01 actor-boot replay shows non-flat contour bytes (`0x0F` through
   `0x03`) publishing `grounded=false` while retaining ground-motion and run
@@ -933,6 +939,7 @@ direct vertical-transfer source.
 | `20260827-level01-actor-refill-vm-v1` | recorded-boundary-classification | interaction-refill allocation, animation-gate crossing, and transient slot-8 cursor boundary |
 | `20260827-level01-natural-gate-trace-v1` | recorded-negative-natural | fresh power-on exit-predicate and scene-gate trace through the early lower-floor frontier |
 | `20260827-level01-terrain-response-callback-v1` | recorded-negative-frontier | behavior-0x47 surface-mode callback and lower-tower player-response trace |
+| `20260827-level01-upper-pair-extended-interaction-v2` | recorded-negative | explicit left/up upper-frontier coverage of the Type-0x1E extended interaction branch |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
