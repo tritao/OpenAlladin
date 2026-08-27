@@ -979,8 +979,10 @@ branches from world `(1560,479)` show that plain directional input leaves the
 behavior-`0x24` endpoint fixed, while C-jump branches reach the ordinary high
 walkway and fall near x≈2277 without reaching the row-10 exit band. The
 companion initializer/row trace identifies the natural lower bounce producer:
-map row 41/column 99 source word `0x7078`, selector `0x74` at
-`0x001B670C`, and template `0x001B7E54` in slot 20 at world `(1576,900)`. No
+selector `0x74` at `0x001B670C`, and template `0x001B7E54` in slot 20 at world
+`(1576,900)`. Static floor decode places that selector at map row 41/column 100
+(source word `0x7098`); the runtime row-context cursor reports adjacent/current
+word `0x7078`. No
 hidden traversal actor or scene-state write appears in the upper-walkway
 branch. This closes the direct connector-top timing family and redirects the
 search to the other vertical connector/resource records.

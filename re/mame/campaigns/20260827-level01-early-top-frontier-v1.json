@@ -132,13 +132,13 @@
     "plain_and_up_routes": "No directional input moves the player from the behavior-0x24 endpoint.",
     "jump_routes": "C+jump exits the endpoint, reaches the ordinary high walkway, and falls at x≈2277 into the lower band; the best tested apex is world y=412.",
     "scene": "All six branches remain in SCENE_STATE=0x01 and do not reach world y<0x01D6.",
-    "producer_trace": "The companion edge/init trace records interaction selector 0x74 at 0x001B670C and generic creation of slot 20 from template 0x001B7E54 at absolute MAME frame 0x693. No hidden traversal actor is initialized in the connector-top-to-edge branch."
+    "producer_trace": "The companion edge/init trace records interaction selector 0x74 at 0x001B670C and generic creation of slot 20 from template 0x001B7E54 at absolute MAME frame 0x693. Runtime row context reports ROWWORD=0x7078/ROWINDEX=0x384C; static floor decode places selector 0x74 at row 41/column 100 in source word 0x7098. No hidden traversal actor is initialized in the connector-top-to-edge branch."
   },
   "negative_evidence": [
     "No branch reaches the Level 01 exit predicate.",
     "No scene-state, script-cursor, or transition-gate write occurs.",
     "No branch creates a player-transfer or connector actor at the upper-walkway fall boundary."
   ],
-  "conclusion": "The early connector top is a real positive traversal frontier, but the tested direct jump/direction family only reaches the ordinary high walkway and then falls. The runtime producer trace classifies the nearby selector-0x74 record as the lower bounce actor at map row 41/column 99 (source word 0x7078), not the missing upper transfer.",
+  "conclusion": "The early connector top is a real positive traversal frontier, but the tested direct jump/direction family only reaches the ordinary high walkway and then falls. The runtime producer trace classifies selector 0x74 as the lower bounce actor; static floor decode places that selector at map row 41/column 100 (source word 0x7098), while the runtime row cursor reports adjacent/current word 0x7078. It is not the missing upper transfer.",
   "next": "Trace the remaining Level 01 connector/resource records, prioritizing the x=2112 and x=2720 behavior-0x22 columns and the producer that materializes template 0x001B7E54 outside the already classified lower bounce record."
 }
