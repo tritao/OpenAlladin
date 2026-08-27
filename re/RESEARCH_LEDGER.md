@@ -286,9 +286,10 @@ the finding or commit message.
 - The recovered gameplay body contains one direct
   `AnimationVM_TickActors` call at `0x001A8CCE`, after scene-script advance;
   it does not contain a second direct animation-VM pass before
-  `MovementVM_TickActors`. Native `probe_animation` and `actor_animation`
-  phases therefore remain an unresolved mapping rather than an accepted ROM
-  scheduler fact.
+  `MovementVM_TickActors`. Native now records one `animation_vm` phase for the
+  normal actor/player service at that recovered entry; the snapshot-only
+  pre-motion probe and spawn/cursor follow-ups remain explicitly temporary
+  compatibility paths rather than accepted ROM scheduler phases.
 - `VBlankInterrupt` (`0x001B246E`) is tracked as a separate interrupt path,
   gated by `SCENE_RESOURCE_ERROR`, with its own resource/query callback
   services. This is static/decompiled evidence only; no dynamic scheduler or
@@ -304,16 +305,15 @@ the finding or commit message.
   boundaries at `0x001B2470`. `FRAME_WAIT_LATCH` has no gameplay writer in
   this route; its non-reset writer remains the pre-gameplay `0x001AA3B0` path.
 - This validates the direct static call sequence for the tested route, but it
-  does not promote native `probe_animation` or identify indirect service
+  does not promote the snapshot-only probe or identify indirect service
   callers. Those remain provisional pending a transition/resource campaign.
 - `re/scheduler/native_update_mapping.yml` is the row-by-row comparison of all
   37 ROM calls against `Engine::update()`. It classifies 19 rows as exact or
   inlined, 11 as ordering/split mismatches, 6 as presentation-only, and 1 as
-  unknown. The main mismatch is now explicit: ROM ordinal 30 is one gated
-  `AnimationVM_TickActors` call after scene-script advance, while native has a
-  fixture-only pre-motion probe plus separate actor and player animation
-  passes. The seven cadence/catch-up/defer flags remain named temporary parity
-  hacks with ROM-backed removal conditions; none was deleted speculatively.
+  unknown. Its ordinal-30 row now maps the normal native actor/player
+  traversal to one service and keeps the probe, spawn, catch-up, cursor,
+  defer, and force state tied to individual regression evidence and removal
+  conditions; none was deleted speculatively.
 
 - `re/mame/campaigns/20260827-frame-wait-lifecycle-v1.json` resolves the
   previously ambiguous `FRAME_WAIT_LATCH` role. Static ROM inspection finds

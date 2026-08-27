@@ -6,7 +6,7 @@ recorded_at: 2026-08-27
 repository_commit: 62858500db4a8b90210d603c659b2f168773ffc8
 rom_scheduler: re/scheduler/frame_phases.yml
 native_source: src/engine.cpp
-status: static-audit-no-code-change
+status: incremental-ordinal-30-service
 
 status_legend:
   exact: native operation has the same service and ordering role as the ROM call
@@ -15,6 +15,7 @@ status_legend:
   temporary_parity_hack: native behavior exists to preserve a measured boundary and still needs a ROM gate/lifecycle explanation
   mismatch: native service exists, but its split, order, or invocation count differs from the ROM call sequence
   unknown: no defensible native equivalent has been established
+  unresolved_dead_state: retained compatibility state with no current writer or observed effect
 
 rom_rows:
   - ordinal: 1
@@ -164,9 +165,9 @@ rom_rows:
     evidence: "normal native update has no direct scene-script service phase; transition mode returns before the gameplay sequence completes"
   - ordinal: 30
     rom_service: "0x001AC784 AnimationVM_TickActors"
-    native_equivalent: "probe_animation, actor_animation, player_animation"
-    status: mismatch
-    evidence: "ROM has one direct call after scene advance; native splits actor/player service and adds a snapshot-only pre-motion probe"
+    native_equivalent: "update_animation_vm_ordinal_30 -> update_animation_vm_traversal"
+    status: exact
+    evidence: "The normal native path now records one 0x001AC784 service after the movement/camera boundary; that service owns the actor-table traversal and player VM tick. Snapshot probes and spawn-only follow-ups remain explicitly temporary compatibility paths outside the normal service."
   - ordinal: 31
     rom_service: "0x001AB7C4 build render records"
     native_equivalent: "render preparation after gameplay update"
@@ -207,28 +208,38 @@ native_extra_phases:
   - name: deferred_animation_spawn
     rom_service: "nested F5 allocation from the prior AnimationVM call"
     status: temporary_parity_hack
-    evidence: "opening player-stream F5 actor is visible on the next live boundary; this preserves a measured actor boot lifecycle"
+    evidence: "tests/native_animation_spawn.py and the 20260827-level01-f5-actor-boundary-v1 finding require the opening player-stream F5 actor to become live on the next synchronized boundary; the current deferred allocation is not yet folded into the ordinal-30 cursor lifecycle"
     removal_condition: "replace with a caller/gate/lifecycle mapping from AnimationVM_TickActors and AnimationVM_SpawnResource"
   - name: probe_animation
     rom_service: "no direct Game_FrameUpdateLoop equivalent"
     status: temporary_parity_hack
-    evidence: "only used for snapshot movement fixtures; static scheduler shows MovementVM ordinal 8 before the sole AnimationVM ordinal 30"
-    removal_condition: "remove or confine to fixture mode once the native actor lifecycle is driven by the ordinal-30 service"
+    evidence: "The scheduler phase was removed from the normal trace, but update_probe_actor_animation_before_movement remains for the controlled type-0x7D/0x00125952 movement fixtures in tests/native_actor_vm_commands.py and tests/native_actor_movement.py; static scheduler evidence places MovementVM ordinal 8 before the sole AnimationVM ordinal 30"
+    removal_condition: "remove the compatibility function and its preupdated/active markers once the same fixture cases pass with the ordinal-30 gate and per-record cursor state"
   - name: actor_animation
     rom_service: "part of ordinal 30"
-    status: mismatch
-    evidence: "native actor VM pass occurs after refill/terrain work and is separately recorded from player_animation"
-    removal_condition: "make the single ordinal-30 service own actor and player VM traversal with ROM gate semantics"
+    status: inlined
+    evidence: "The former native phase is no longer recorded or called independently; normal actor records are traversed by update_animation_vm_ordinal_30 through update_animation_vm_traversal"
+    removal_condition: "none; retain only as a historical mapping label until the temporary optional-slot paths are eliminated"
   - name: player_animation
     rom_service: "part of ordinal 30"
-    status: mismatch
-    evidence: "native player VM pass occurs after camera follow and several native selector branches"
-    removal_condition: "align player/actor animation traversal and keep only ROM-backed command-boundary exceptions"
+    status: inlined
+    evidence: "The former native phase is no longer recorded or called independently; the player VM tick is owned by the same ordinal-30 service as the actor traversal"
+    removal_condition: "none; retain only as a historical mapping label until player selector side effects are fully separated from the service"
+  - name: animation_vm
+    rom_service: "0x001AC784 AnimationVM_TickActors at ordinal 30"
+    status: exact
+    evidence: "One native causal phase is recorded at 0x001AC784, and update_animation_vm_ordinal_30 owns the normal actor/player traversal"
+    removal_condition: "none"
+  - name: defer_player_animation_tick
+    rom_service: "no direct second AnimationVM call"
+    status: unresolved_dead_state
+    evidence: "The local guard is a constant false in the normal update; no current writer or trace makes it an active defer path"
+    removal_condition: "remove the guard after the stable terrain-handler fixture no longer bypasses ordinal 30"
   - name: actor_animation_catch_up
     rom_service: "unknown"
-    status: temporary_parity_hack
-    evidence: "flag is reset at the actor-animation phase but no current direct ROM gate has been identified"
-    removal_condition: "remove after actor VM call ownership is unified"
+    status: unresolved_dead_state
+    evidence: "No current writer or trace uses the flag after the former actor phase was inlined; it is retained only in checkpoint/state schemas"
+    removal_condition: "remove after checkpoint compatibility is versioned and no writer exists"
   - name: camera_follow_catch_up
     rom_service: "camera rebase/follow lifecycle"
     status: temporary_parity_hack
@@ -250,12 +261,149 @@ native_extra_phases:
     evidence: "used for terminalized actor and terrain-converted Type-0x2D boundaries; no single ROM phase currently owns it"
     removal_condition: "replace with the common ordinal-30 gate and per-record cursor state"
 
+animation_lifecycle_mapping:
+  # These are state fields rather than scheduler phases. Keep each one tied
+  # to the regression that currently needs it until the corresponding ROM
+  # writer, gate, and cursor transition are decoded.
+  - name: deferred_animation_spawn
+    native_field: deferred_animation_spawn_
+    rom_state: "F5 request queued by AnimationVM_TickActors / AnimationVM_SpawnOrCopyActor"
+    status: temporary_parity_hack
+    regression: tests/native_animation_spawn.py
+    removal_condition: "identify the exact ordinal-30-to-F5 allocation boundary for mode 0 and apple mode 3"
+  - name: probe_actor_animation_preupdated
+    native_field: probe_actor_animation_preupdated_
+    rom_state: "unresolved pre-movement compatibility state; not explained by ordinal-30 direct call"
+    status: temporary_parity_hack
+    regression: tests/native_actor_vm_commands.py, tests/native_actor_movement.py
+    removal_condition: "pass the controlled actor command/movement fixtures through the gated ordinal-30 traversal without a preupdated marker"
+  - name: probe_actor_animation_active
+    native_field: probe_actor_animation_active_
+    rom_state: "unresolved lifetime marker for the injected type-0x7D actor"
+    status: temporary_parity_hack
+    regression: tests/native_actor_vm_commands.py, tests/native_actor_movement.py
+    removal_condition: "remove with the snapshot animation probe"
+  - name: animation_preupdated_this_frame
+    native_field: animation_preupdated_this_frame_
+    rom_state: "new F5 record allocation relative to the next ordinal-30 table walk"
+    status: temporary_parity_hack
+    regression: tests/native_animation_spawn.py
+    removal_condition: "make the generalized ordinal-30 service consume the newly allocated record at the ROM-observed boundary"
+  - name: apple_actor_hold_next_frame
+    native_field: apple_actor_hold_next_frame_
+    rom_state: "apple child allocation/first-cursor lifecycle; exact common-table gate is unresolved"
+    status: temporary_parity_hack
+    regression: tests/native_scheduler_trace.py (apple route)
+    removal_condition: "reproduce the apple child first-live and held boundaries from the ordinal-30 gate without a per-slot hold marker"
+  - name: apple_root_republish_pending
+    native_field: apple_root_republish_pending_
+    rom_state: "player action-selector root writeback after the apple VM command boundary"
+    status: temporary_parity_hack
+    regression: tests/native_scheduler_trace.py (apple route), re/mame/findings/20260827-level01-f5-actor-boundary-v1.json
+    removal_condition: "decode the player selector writeback caller and fold it into the ordinal-30 cursor lifecycle"
+  - name: apple_cursor_hold_1223fa_done
+    native_field: apple_cursor_hold_1223fa_done_
+    rom_state: "cursor 0x001223FA publication edge in the apple action stream"
+    status: temporary_parity_hack
+    regression: tests/native_scheduler_trace.py (apple route)
+    removal_condition: "replace the cursor-specific hold with the decoded stream cursor/writeback rule"
+  - name: apple_cursor_hold_122438_done
+    native_field: apple_cursor_hold_122438_done_
+    rom_state: "cursor 0x00122438 publication edge in the apple action stream"
+    status: temporary_parity_hack
+    regression: tests/native_scheduler_trace.py (apple route)
+    removal_condition: "replace the cursor-specific hold with the decoded stream cursor/writeback rule"
+  - name: apple_following_tick_deferred
+    native_field: apple_following_tick_deferred_
+    rom_state: "unresolved extra published apple boundary after cursor 0x0012245C"
+    status: temporary_parity_hack
+    regression: tests/native_scheduler_trace.py (apple route)
+    removal_condition: "prove the extra boundary is generated by the common ordinal-30 gate/cursor state"
+  - name: camera_follow_catch_up
+    native_field: camera_follow_catch_up_
+    rom_state: "Camera_UpdateFollow/reference-tile lifecycle, not a second direct AnimationVM call"
+    status: temporary_parity_hack
+    regression: re/mame/findings/20260827-player-camera-follow-boundary-v1.json
+    removal_condition: "map the repeated camera service to its exact call-site/latch state and remove the native catch-up bit"
+  - name: player_animation_catch_up
+    native_field: player_animation_catch_up_
+    rom_state: "unresolved secondary player cursor service after a camera reference boundary"
+    status: temporary_parity_hack
+    regression: re/mame/findings/20260827-player-camera-follow-boundary-v1.json
+    removal_condition: "reproduce the player cursor boundary through the single ordinal-30 gate without force_tick_without_phase"
+  - name: actor_animation_catch_up
+    native_field: actor_animation_catch_up_
+    rom_state: "no direct second AnimationVM call in Game_FrameUpdateLoop"
+    status: unresolved_dead_state
+    regression: "no current writer/trace; retained in checkpoints for compatibility"
+    removal_condition: "remove after checkpoint compatibility is versioned and no writer exists"
+  - name: animation_phase_delay
+    native_field: PlayerAnimationVm::animation_phase_delay_
+    rom_state: "per-record animation timer/cursor phase between gated ordinal-30 visits"
+    status: temporary_parity_hack
+    regression: tests/mame_events.py (native checkpoint phase inference)
+    removal_condition: "replace inferred delay with the recovered FF7E28 phase and record +0x37 lifecycle"
+  - name: pending_animation_pc
+    native_field: PlayerAnimationVm::pending_animation_pc_
+    rom_state: "selector-written cursor exposed for one boundary before continuing"
+    status: temporary_parity_hack
+    regression: tests/native_scheduler_trace.py (apple route), player jump/action traces
+    removal_condition: "make cursor publication/writeback ordering explicit in the ordinal-30 service"
+  - name: animation_force_next_tick
+    native_field: ActorState::animation_force_next_tick
+    rom_state: "fresh cursor after terminal/terrain conversion relative to FF7E28 gate"
+    status: temporary_parity_hack
+    regression: tests/native_actor_collision.py, tests/native_actor_actor_collision.py, tests/native_sword_lifecycle.py
+    removal_condition: "tie every force edge to a decoded ROM writer or remove it when the common gate reproduces the boundary"
+  - name: animation_defer_ticks
+    native_field: ActorState::animation_defer_ticks
+    rom_state: "record +0x37 delay byte; exact producer-specific lifecycle remains unresolved"
+    status: temporary_parity_hack
+    regression: tests/native_animation_spawn.py, tests/native_actor_collision.py, tests/native_terrain_physics.py
+    removal_condition: "replace each native delay assignment with the decoded record timer/caller lifecycle"
+  - name: animation_tick_phase
+    native_field: ActorState::animation_tick_phase
+    rom_state: "unresolved per-record cadence after the shared FF7E28 gate"
+    status: temporary_parity_hack
+    regression: tests/native_sword_lifecycle.py, tests/native_scheduler_trace.py (apple route)
+    removal_condition: "derive cadence from the common gate and stream cursor rather than actor-type timing"
+  - name: force_tick_after_service
+    native_field: PlayerAnimationVm::force_tick_after_service_
+    rom_state: "selector command boundary that requests a following cursor service"
+    status: temporary_parity_hack
+    regression: tests/player_jump_regression.py, tests/native_scheduler_trace.py (apple route)
+    removal_condition: "identify the ROM command/caller that consumes the following ordinal-30 slot"
+  - name: force_tick_next_update
+    native_field: PlayerAnimationVm::force_tick_next_update_
+    rom_state: "unresolved following gated cursor visit"
+    status: temporary_parity_hack
+    regression: tests/native_scheduler_trace.py (apple route), player action traces
+    removal_condition: "replace with the common FF7E28 gate/cursor transition"
+  - name: force_tick_without_phase
+    native_field: PlayerAnimationVm::force_tick_without_phase_
+    rom_state: "no direct second AnimationVM call; native-only phase bypass"
+    status: temporary_parity_hack
+    regression: re/mame/findings/20260827-player-camera-follow-boundary-v1.json
+    removal_condition: "delete when camera/action boundary behavior is produced by ordinal-30 lifecycle state"
+  - name: defer_tick_next_update
+    native_field: PlayerAnimationVm::defer_tick_next_update_
+    rom_state: "unresolved one-boundary cursor hold after apple command edge"
+    status: temporary_parity_hack
+    regression: tests/native_scheduler_trace.py (apple route)
+    removal_condition: "replace with decoded command cursor/writeback semantics"
+  - name: clear_timer_next_update
+    native_field: PlayerAnimationVm::clear_timer_next_update_
+    rom_state: "player interaction-selector timer clear at a command boundary"
+    status: inlined
+    regression: player interaction/action traces
+    removal_condition: "none; retain until the selector caller is promoted to an exact ordinal-30 substate"
+
 summary:
   exact_or_inlined_rom_rows: 19
   mismatch_rom_rows: 11
   derived_presentation_only_rom_rows: 6
   unknown_rom_rows: 1
-  native_extra_phases: 9
-  native_hacks_requiring_followup: 7
-  native_extra_mismatch_phases: 2
-  conclusion: "The scheduler is not yet canonical in native code. The largest concrete mismatch is the split AnimationVM model: ROM ordinal 30 is one gated direct call after SceneScript_AdvanceState, while native has a fixture-only pre-motion probe plus separate actor/player passes. No scheduler hack is deleted in this audit; each is now named with a specific ROM-backed removal condition."
+  native_extra_phases: 11
+  native_hacks_requiring_followup: 6
+  native_extra_mismatch_phases: 0
+  conclusion: "The normal native actor/player animation traversal is now owned by one ROM-backed ordinal-30 service and one causal phase. Snapshot probes, spawn-only follow-ups, camera/action catch-up, and cursor force/defer state remain explicitly temporary until their ROM gate/cursor/lifecycle mechanism reproduces the recorded regressions."

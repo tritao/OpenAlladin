@@ -1349,6 +1349,43 @@ void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
     }
 }
 
+void Engine::update_animation_vm_traversal(
+    SpritePose desired_pose,
+    HorizontalDirection direction,
+    const AnimationContext& context
+) {
+    // The normal ordinal-30 visit is one traversal: actor records and the
+    // player record are serviced from the same ROM-backed boundary.
+    update_actor_animations();
+    animation_.update(desired_pose, direction, context);
+}
+
+void Engine::update_animation_vm_ordinal_30(
+    SpritePose desired_pose,
+    HorizontalDirection direction,
+    const AnimationContext& context,
+    bool response_dynamic_handoff,
+    bool bounce_response_finished
+) {
+    if (player_animation_catch_up_) {
+        animation_.force_tick_next_update_without_phase();
+        player_animation_catch_up_ = false;
+    }
+    if (response_dynamic_handoff) {
+        update_actor_animations();
+        animation_.select_locomotion_entry(0x00121AD8, true);
+    } else if (bounce_response_finished) {
+        update_actor_animations();
+        animation_.select_locomotion_entry(
+            0x00122006,
+            true,
+            SpritePose::Run
+        );
+    } else {
+        update_animation_vm_traversal(desired_pose, direction, context);
+    }
+}
+
 std::optional<std::size_t> Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request) {
         // The recovered F5 allocator has two paths used by the live Level 01
         // slice. Mode 0 is the common actor path (the opening player stream
@@ -3230,7 +3267,10 @@ void Engine::update(const InputState& input) {
     // edge retirement lines up with the synchronized MAME boundary.
     record_scheduler_phase("actor_culling", 0x001AE0B0);
     update_dynamic_actor_culling();
-    record_scheduler_phase("probe_animation", 0x001AC784);
+    // Temporary compatibility path for controlled movement fixtures. The
+    // recovered ROM loop has no pre-movement AnimationVM call; keep this
+    // probe unlabelled in the scheduler trace until its fixture caller is
+    // explained by the ordinal-30 gate/cursor model.
     update_probe_actor_animation_before_movement();
     record_scheduler_phase("movement_vm", 0x001ADE36);
     update_actor_movement();
@@ -3459,14 +3499,6 @@ void Engine::update(const InputState& input) {
     if (preprocessed_surface_cell) {
         record_scheduler_phase("terrain_behavior", 0x001B1E38);
         apply_terrain_behavior(*preprocessed_surface_cell);
-    }
-    // The launch fixture reaches the ROM handler before its animation pass;
-    // keeping the seeded player cursor stable preserves the observed frame
-    // state while the native animation VM remains intentionally separate.
-    actor_animation_catch_up_ = false;
-    if (!stable_terrain_handler_fixture) {
-        record_scheduler_phase("actor_animation", 0x001AC784);
-        update_actor_animations();
     }
     if (arm_surface_interaction
         && !bounce_response_follow_active_
@@ -4006,24 +4038,19 @@ void Engine::update(const InputState& input) {
     // marker only for the post-follow downward rebase path above.
     const bool defer_player_animation_tick = false;
     if (!stable_terrain_handler_fixture && !defer_player_animation_tick) {
-        record_scheduler_phase("player_animation", 0x001AC784);
-        if (player_animation_catch_up_) {
-            animation_.force_tick_next_update_without_phase();
-            player_animation_catch_up_ = false;
-        }
+        record_scheduler_phase("animation_vm", 0x001AC784);
         // The bounce response's F8 command publishes the dynamic 0x121AD8
         // root at this boundary but leaves the previous frame pointer in
         // place. Do not consume the new root until the following VBlank.
         const bool response_dynamic_handoff =
             animation_.animation_pc() == 0x001221E8;
-        if (response_dynamic_handoff) {
-            animation_.select_locomotion_entry(0x00121AD8, true);
-        } else if (bounce_response_finished) {
-            animation_.select_locomotion_entry(
-                0x00122006, true, SpritePose::Run);
-        } else {
-            animation_.update(desired_pose, horizontal_direction(input), vm_context);
-        }
+        update_animation_vm_ordinal_30(
+            desired_pose,
+            horizontal_direction(input),
+            vm_context,
+            response_dynamic_handoff,
+            bounce_response_finished
+        );
         if (animation_.rom_loaded()) {
             camera_.vertical_threshold = animation_.camera_vertical_threshold();
             std::uint8_t value = 0;

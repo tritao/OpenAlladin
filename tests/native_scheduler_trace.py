@@ -22,7 +22,6 @@ REQUIRED_ORDER = (
     "terrain_contour",
     "pre_motion_actor_collision",
     "actor_culling",
-    "probe_animation",
     "movement_vm",
     "actor_terrain",
     "actor_terrain_interaction",
@@ -30,11 +29,10 @@ REQUIRED_ORDER = (
     "post_motion_actor_collision",
     "camera_reference_rebase",
     "interaction_refill",
-    "actor_animation",
     "player_movement",
     "terrain_resolution",
     "camera_follow",
-    "player_animation",
+    "animation_vm",
     "post_animation_interaction",
     "state_boundary",
 )
@@ -43,7 +41,7 @@ EXPECTED_PCS = {
     "frame_latch": 0x001A8C16,
     "pre_motion_actor_collision": 0x001ABD7E,
     "movement_vm": 0x001ADE36,
-    "actor_animation": 0x001AC784,
+    "animation_vm": 0x001AC784,
     "player_movement": 0x001A9D98,
     "terrain_resolution": 0x001B1E38,
     "camera_follow": 0x001AA90C,
@@ -72,6 +70,10 @@ def check_trace(
     for record in frames:
         phases = record["phases"]
         names = [phase["name"] for phase in phases]
+        assert names.count("animation_vm") == 1, names
+        assert "probe_animation" not in names, names
+        assert "actor_animation" not in names, names
+        assert "player_animation" not in names, names
         positions = [names.index(name) for name in REQUIRED_ORDER]
         assert positions == sorted(positions), names
         assert isinstance(record["writer_pcs"], list)

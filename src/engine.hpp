@@ -220,6 +220,23 @@ private:
     void update_probe_actor_animation_before_movement();
     void update_terminal_actor_motion(ActorState& actor);
     void update_actor_animations(std::optional<std::size_t> only_slot = std::nullopt);
+    void update_animation_vm_traversal(
+        SpritePose desired_pose,
+        HorizontalDirection direction,
+        const AnimationContext& context
+    );
+    // ROM ordinal 30 (0x001A8CCE -> 0x001AC784) is the single common
+    // animation service. The normal path enters here once per boundary and
+    // owns both the actor-table traversal and the player VM tick. The
+    // optional-slot calls used by spawn/lifecycle compatibility paths remain
+    // outside this service until their caller and gate are recovered.
+    void update_animation_vm_ordinal_30(
+        SpritePose desired_pose,
+        HorizontalDirection horizontal_direction,
+        const AnimationContext& context,
+        bool response_dynamic_handoff,
+        bool bounce_response_finished
+    );
     std::vector<std::size_t> apply_animation_spawns(bool defer_player_spawns = false);
     std::optional<std::size_t> apply_animation_spawn_request(const AnimationSpawnRequest& request);
     void scan_interaction_refill_window();
@@ -253,10 +270,9 @@ private:
     PlayerAnimationVm animation_;
     MovementVm movement_vm_;
     std::array<PlayerAnimationVm, 32> actor_animations_{};
-    // Controlled movement probes share a VBlank with the common actor
-    // animation pass. The ROM services their animation cursor before
-    // movement; these markers prevent the later actor pass from ticking the
-    // same slot twice.
+    // Snapshot-only movement probes run before the common actor traversal.
+    // Their ROM caller is unresolved; these markers prevent the later
+    // ordinal-30 compatibility walk from ticking the same slot twice.
     std::array<bool, 32> probe_actor_animation_preupdated_{};
     // Actor records materialized from a deferred apple F5 are serviced once
     // before movement on their first live boundary. Suppress the later
