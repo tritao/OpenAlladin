@@ -1,0 +1,4 @@
+# openaladdin-actor-table-v1
+# Caller-specific post-initializer state from Level 01 slot-8 reuse at MAME frame 0x6A5.
+# slot type x y movement_pc frame_ptr animation_pc flags
+8 0x34 1648 656 0x001217B4 0x00000000 0x00122C1E 0x0
