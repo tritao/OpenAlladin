@@ -1030,6 +1030,19 @@ that sentinel is outside the requested input window. Details are recorded in
 `re/mame/findings/20260827-level01-actor-lifecycle-extension-v1.json` and
 `re/mame/campaigns/20260827-level01-actor-lifecycle-extension-v1.json`.
 
+The corrected live-camel route is recorded in
+`re/mame/findings/20260827-level01-camel-handhold-connector-v1.json` and
+`re/mame/campaigns/20260827-level01-camel-handhold-connector-v1.json`.
+Starting from the hidden-ledge checkpoint, `right*30,none*20,c*40` reaches
+the live Type-0x65 camel at frame 74. Holding C during that descent changes
+the launch to `vy=-1328`; steering right then reaches the Type-0x6A handhold,
+which becomes Type 0x6B at world `(1658,695)` on frame 114. Issuing
+`C+Up+Left` immediately after the completed grab reattaches to the x=1568
+behavior-0x22 connector and reaches its behavior-0x24 top at `(1560,479)`.
+Both segments remain in `SCENE_STATE=0x01`. This corrects the earlier
+provenance mistake: the high-walkway-entry checkpoint did not contain the
+live camel; the hidden-ledge descent is the required producer path.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1110,6 +1123,7 @@ that sentinel is outside the requested input window. Details are recorded in
 | `20260827-level01-far-rope-up-contact-v1` | recorded-positive-route-frontier | timing sweep proving the far-rope Up contact and synchronized endpoint |
 | `20260827-level01-far-rope-endpoint-v1` | recorded-negative-frontier | direct dismount/jump/attack matrix from the corrected far-rope endpoint |
 | `20260827-level01-actor-lifecycle-extension-v1` | completed-boundary-correction | type-0x40 replacement, F5 type-0x2A accumulator propagation, cull retention, and class-zero terrain correction |
+| `20260827-level01-camel-handhold-connector-v1` | recorded-positive-route-extension | live camel boost, type-0x6A→0x6B handhold, and x=1568 connector-top continuation |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

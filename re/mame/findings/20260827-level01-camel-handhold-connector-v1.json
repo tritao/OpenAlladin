@@ -1,0 +1,58 @@
+{
+  "format": "openaladdin-level01-camel-handhold-connector-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Document the corrected live-camel timing and its positive handhold/connector continuation.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "10ffba60fdc9cea88514578550a1a3ba8325424d",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-camel-handhold-connector-v1.json",
+  "source_checkpoints": [
+    "build/re/campaigns/20260827-level01-hidden-ledge-positive-v1/approach/states/genesis/hidden-ledge.sta",
+    "build/re/analysis/20260827-level01-camel-to-handhold-v1/onset-50-hold-40/states/genesis/handhold-approach.sta"
+  ],
+  "camel": {
+    "actor_slot": 19,
+    "type_before": "0x65",
+    "type_after_contact": "0x66",
+    "world": [1576, 900],
+    "schedule": "right*30,none*20,c*40,right*80,none*70",
+    "contact_frame": 74,
+    "contact_player_world": [1589, 877],
+    "contact_player_vy": -1328,
+    "interpretation": "The player must walk off the upper ledge, remain horizontally aligned with the camel, and hold C only during the descent. Early C input causes a normal ledge jump and misses the camel."
+  },
+  "handhold": {
+    "actor_slot": 24,
+    "type_before": "0x6A",
+    "type_after": "0x6B",
+    "world": [1656, 703],
+    "first_type_0x6B_frame": 114,
+    "player_world": [1658, 695],
+    "post_grab_movement_flags": "0x70",
+    "continuation_schedule": "right*10,c+up+left*20,up+left*120,none*90",
+    "interpretation": "The continuation must be issued immediately as the handhold alignment completes; loading a later release state is too late for the C+Up+Left launch."
+  },
+  "connector": {
+    "world": [1560, 479],
+    "terrain_behavior": "0x24",
+    "first_behavior_0x22_frame": 44,
+    "top_frame": 149,
+    "scene_state": "0x01"
+  },
+  "classification": {
+    "confirmed": [
+      "The live Type 0x65 actor is the lower camel/bounce producer at world (1576,900).",
+      "C held during descent strengthens the camel response and makes the upper Type 0x6A handhold reachable.",
+      "The camel route and the earlier handhold route converge at the x=1568 vertical connector.",
+      "The connector-top state remains a route frontier, not the Level 01 exit."
+    ],
+    "not_confirmed": [
+      "The row-10 exit band at world Y<0x01D6.",
+      "The natural SCENE_STATE=0x08 write."
+    ]
+  },
+  "next_action": "Use the saved connector-top state to test the actual upper-ledge dismount sequence, with snapshots and actor/resource tracing enabled."
+}

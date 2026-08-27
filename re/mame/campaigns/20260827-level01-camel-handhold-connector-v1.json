@@ -1,0 +1,87 @@
+{
+  "campaign": "20260827-level01-camel-handhold-connector-v1",
+  "status": "recorded-positive-route-extension",
+  "purpose": "Record the guide-shaped Level 01 lower camel boost into the upper handhold and connector route.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "10ffba60fdc9cea88514578550a1a3ba8325424d",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "working_tree_note": "The pre-existing native C++ and Lua changes were preserved and not staged by this evidence commit.",
+  "segments": [
+    {
+      "id": "camel-to-handhold",
+      "trace_dir": "build/re/analysis/20260827-level01-camel-to-handhold-v1/onset-50-hold-40",
+      "frames": 240,
+      "input": "right*30,none*20,c*40,right*80,none*70",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-hidden-ledge-positive-v1/approach/states/genesis/hidden-ledge.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 30, "name": "ledge-exit", "state": "camel-to-handhold/states/genesis/ledge-exit.sta" },
+        { "frame": 74, "name": "camel-contact", "state": "camel-to-handhold/states/genesis/camel-contact.sta" },
+        { "frame": 90, "name": "launch", "state": "camel-to-handhold/states/genesis/launch.sta" },
+        { "frame": 105, "name": "handhold-approach", "state": "camel-to-handhold/states/genesis/handhold-approach.sta" },
+        { "frame": 115, "name": "apex", "state": "camel-to-handhold/states/genesis/apex.sta" },
+        { "frame": 140, "name": "post-contact", "state": "camel-to-handhold/states/genesis/post-contact.sta" },
+        { "frame": 240, "name": "end", "state": "camel-to-handhold/states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "handhold-to-connector",
+      "trace_dir": "build/re/analysis/20260827-level01-handhold-postgrab-timing-v1/lead-10",
+      "frames": 240,
+      "input": "right*10,c+up+left*20,up+left*120,none*90",
+      "load_state": true,
+      "loaded_state_source": "build/re/analysis/20260827-level01-camel-to-handhold-v1/onset-50-hold-40/states/genesis/handhold-approach.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "approach", "state": "handhold-to-connector/states/genesis/approach.sta" },
+        { "frame": 10, "name": "grab-window", "state": "handhold-to-connector/states/genesis/grab-window.sta" },
+        { "frame": 11, "name": "post-grab", "state": "handhold-to-connector/states/genesis/post-grab.sta" },
+        { "frame": 30, "name": "launch", "state": "handhold-to-connector/states/genesis/launch.sta" },
+        { "frame": 70, "name": "connector", "state": "handhold-to-connector/states/genesis/connector.sta" },
+        { "frame": 160, "name": "top", "state": "handhold-to-connector/states/genesis/top.sta" },
+        { "frame": 240, "name": "end", "state": "handhold-to-connector/states/genesis/end.sta" }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "camel-boost",
+      "segment": "camel-to-handhold",
+      "frame": 74,
+      "world": [1589, 877],
+      "actor_slot": 19,
+      "actor_type": "0x66",
+      "player_vy": -1328,
+      "result": "C held during descent changes the camel launch from the ordinary -0x04C4 family to the stronger boosted arc."
+    },
+    {
+      "id": "handhold-grab",
+      "segment": "camel-to-handhold",
+      "frame": 114,
+      "world": [1658, 695],
+      "actor_slot": 24,
+      "actor_type_before": "0x6A",
+      "actor_type_after": "0x6B",
+      "actor_world": [1656, 703],
+      "post_grab_flags": "0x70"
+    },
+    {
+      "id": "connector-top",
+      "segment": "handhold-to-connector",
+      "frame": 149,
+      "world": [1560, 479],
+      "terrain_behavior": "0x24",
+      "result": "C+Up+Left after the completed grab reattaches to the x=1568 vertical connector and reaches its top."
+    }
+  ],
+  "result": "The lower Type 0x65 camel is reachable from the hidden-ledge checkpoint when the player walks right for 30 frames and then holds neutral. Holding C through contact produces the stronger launch; steering right during the arc reaches the Type 0x6A handhold, which becomes 0x6B. The completed handhold continuation reaches the known x=1568 connector top. Both segments remain in SCENE_STATE=0x01; the Level 01 exit predicate and SCENE_STATE=0x08 remain unresolved.",
+  "next": "Continue from the new connector-top state with the guide-shaped dismount/upper-ledge route, recording the first branch that reaches the row-10 exit band."
+}
