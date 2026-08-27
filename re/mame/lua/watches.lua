@@ -47,6 +47,7 @@ return function(options)
     local breakpoint_registers = os.getenv("OPENALADDIN_BREAKPOINT_REGISTERS") == "1"
     local breakpoint_row_context = os.getenv("OPENALADDIN_BREAKPOINT_ROW_CONTEXT") == "1"
     local breakpoint_terrain_context = os.getenv("OPENALADDIN_BREAKPOINT_TERRAIN_CONTEXT") == "1"
+    local breakpoint_scene_context = os.getenv("OPENALADDIN_BREAKPOINT_SCENE_CONTEXT") == "1"
     local breakpoint_write_commands = {}
     local trace_audio_commands = options.trace_audio_commands
     local trace_audio_mailbox = options.trace_audio_mailbox
@@ -141,6 +142,8 @@ return function(options)
             if breakpoint_registers then
                 if breakpoint_terrain_context then
                     action = "printf \"OPENALADDIN_BREAK_TERRAIN PC=%08X FRAME=%08X D0=%08X D1=%08X D2=%08X D3=%08X D4=%08X D5=%08X D6=%08X D7=%08X A0=%08X A1=%08X A2=%08X A3=%08X A4=%08X A5=%08X A6=%08X WORLDX=%04X WORLDY=%04X CAMX=%04X CAMY=%04X MAPWORD=%04X TERRAIN_INDEX=%04X FLOOR_BYTE=%02X CONTOUR_INDEX=%04X CONTOUR=%02X BEHAVIOR=%02X QUERY=%02X PUSH_R=%02X PUSH_L=%02X PUSH_U=%02X PUSH_D=%02X STATE_A=%02X STATE_B=%02X SURFACE=%04X LANDING=%02X RESPONSE=%02X\n\",pc,frame,d0,d1,d2,d3,d4,d5,d6,d7,a0,a1,a2,a3,a4,a5,a6,:maincpu.w@$FF7E02,:maincpu.w@$FF7E04,:maincpu.w@$FF7DF6,:maincpu.w@$FF7DF8,:maincpu.w@(a0),d3&0xffff,:maincpu.b@(a1+d3),d5&0xffff,:maincpu.b@(0x2FD2+d5),:maincpu.b@$FFF0C3,:maincpu.b@$FFF156,:maincpu.b@$FFF07C,:maincpu.b@$FFF07D,:maincpu.b@$FFF07E,:maincpu.b@$FFF07F,:maincpu.b@$FFF0CE,:maincpu.b@$FFF0CF,:maincpu.w@$FFF0A4,:maincpu.b@$FFF0C1,:maincpu.b@$FFF0BE ; g"
+                elseif breakpoint_scene_context then
+                    action = "printf \"OPENALADDIN_BREAK_SCENE PC=%08X FRAME=%08X D0=%08X D1=%08X D2=%08X D3=%08X D4=%08X D5=%08X D6=%08X D7=%08X A0=%08X A1=%08X A2=%08X A3=%08X A4=%08X A5=%08X A6=%08X STATE=%02X CURSOR=%08X DATA=%08X TABLE=%04X PENDING=%02X COUNTDOWN=%02X GATE=%02X F005=%02X F0F1=%02X F14E=%04X F57D=%02X F57E=%02X F57F=%02X\\n\",pc,frame,d0,d1,d2,d3,d4,d5,d6,d7,a0,a1,a2,a3,a4,a5,a6,:maincpu.b@$FF7E26,:maincpu.d@$FFF572,:maincpu.d@$FFF576,:maincpu.w@$FFF57A,:maincpu.b@$FFF57C,:maincpu.b@$FFF0E9,:maincpu.b@$FFF176,:maincpu.b@$FFF005,:maincpu.b@$FFF0F1,:maincpu.w@$FFF14E,:maincpu.b@$FFF57D,:maincpu.b@$FFF57E,:maincpu.b@$FFF57F ; g"
                 elseif breakpoint_row_context then
                     action = "printf \"OPENALADDIN_BREAK_ROW PC=%08X FRAME=%08X D0=%08X D1=%08X D2=%08X D3=%08X D4=%08X D5=%08X D6=%08X D7=%08X A0=%08X A1=%08X A2=%08X A3=%08X A4=%08X A5=%08X A6=%08X ROWWORD=%04X ROWINDEX=%04X INTERACTION=%02X HANDLER=%08X F003=%02X F57D=%02X F7E49=%02X F0D8=%02X A1TYPE=%02X A1X=%04X A1FLAGS=%02X\\n\",pc,frame,d0,d1,d2,d3,d4,d5,d6,d7,a0,a1,a2,a3,a4,a5,a6,:maincpu.w@(a0-2),d2&0xffff,d3&0xff,a4,:maincpu.b@$FFF003,:maincpu.b@$FFF57D,:maincpu.b@$FF7E49,:maincpu.b@$FFF0D8,:maincpu.b@a1,:maincpu.w@(a1+2),:maincpu.b@(a1+0x3C) ; g"
                 else
