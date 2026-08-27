@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-player-camera-follow-boundary-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Recover the horizontal/vertical follow ordering at camera reference-tile rebases.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "replay": {
+    "command": "python tools/oa.py regression level01-actor-boot --trace-dir build/re/level01-actor-boot-camera-single",
+    "trace_dir": "build/re/level01-actor-boot-camera-single",
+    "checkpoint": "level01_actor_checkpoint",
+    "post_checkpoint_frames": 601
+  },
+  "evidence": {
+    "vertical_rebase_frame": 375,
+    "mame_before": {
+      "camera": { "x": 1065, "y": 448, "reference_y": 464, "scroll_x": 9, "scroll_y": -16 },
+      "player": { "x": 160, "y": 408, "animation_pc": "0x00122076", "frame_ptr": "0x001EA674" }
+    },
+    "mame_after": {
+      "camera": { "x": 1068, "y": 448, "reference_y": 448, "scroll_x": 12, "scroll_y": 0 },
+      "player": { "x": 160, "y": 408, "animation_pc": "0x0012207E", "frame_ptr": "0x001EA6CE" }
+    },
+    "next_frame": "MAME advances to camera x=1071 with one follow service; it does not perform the legacy queued double-follow.",
+    "native_result": "Horizontal follow runs on the rebase frame, vertical follow is suppressed only there, the player VM still ticks, and no extra catch-up follow runs. These fields match through aligned frame 394.",
+    "remaining_boundary": "At aligned frame 395 MAME exposes CAMERA_UPDATE_DELAY=6 and interaction_lock=0x28 after an actor-collision/cleanup transition; the native actor table is already divergent at frame 27, so this side effect remains coupled to the unresolved actor scheduler."
+  },
+  "implementation": {
+    "camera_api": "Engine::update_camera(bool suppress_vertical_follow) separates the two independent damped lookups.",
+    "rebase_order": "Vertical reference rebases call horizontal follow immediately, then resume ordinary vertical follow on the next pass.",
+    "animation_order": "The player animation VM is not deferred at a vertical rebase boundary."
+  },
+  "conclusion": "Camera reference-tile rebasing is not a full-pass skip or a queued double-follow: horizontal follow and the player VM still run on the rebase boundary, while only the vertical damped lookup is deferred."
+}
