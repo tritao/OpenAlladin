@@ -339,6 +339,15 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
         add_test(
+            NAME native_level_loader
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    SDL_VIDEODRIVER=dummy
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_level_loader.py"
+                    "$<TARGET_FILE:openaladdin>")
+        set_tests_properties(native_level_loader PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
             NAME native_sprites
             COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
                     SDL_VIDEODRIVER=dummy

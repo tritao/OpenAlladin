@@ -2,9 +2,11 @@
 
 #include <algorithm>
 #include <array>
+#include <cctype>
 #include <cstddef>
 #include <cstdlib>
 #include <fstream>
+#include <filesystem>
 #include <sstream>
 #include <stdexcept>
 
@@ -14,6 +16,9 @@ namespace {
 constexpr int kScreenWidth = 320;
 constexpr int kScreenHeight = 224;
 constexpr int kTerrainVisualOffsetY = 0xF0;
+constexpr std::size_t kLevelTableRomOffset = 0x2C78;
+constexpr std::size_t kLevelTableEntrySize = 66;
+constexpr int kLevelTableCount = 13;
 // The extracted level image is the VDP plane-A nametable in world space. At
 // the synchronized gameplay checkpoint, the VDP's plane origin is one tile
 // ahead of WORLD_CAMERA in both axes.
@@ -180,6 +185,29 @@ std::vector<std::uint8_t> read_file(const std::string& path) {
     return data;
 }
 
+std::uint16_t read_be_u16(
+    const std::vector<std::uint8_t>& data,
+    std::size_t offset
+) {
+    if (offset + 2 > data.size()) {
+        throw std::runtime_error("truncated ROM level table");
+    }
+    return static_cast<std::uint16_t>(
+        (static_cast<std::uint16_t>(data[offset]) << 8) | data[offset + 1]
+    );
+}
+
+int level_index_from_asset_root(const std::string& asset_root) {
+    const std::string name = std::filesystem::path(asset_root).filename().string();
+    if (name.size() != 7 || name.compare(0, 5, "level") != 0
+        || !std::isdigit(static_cast<unsigned char>(name[5]))
+        || !std::isdigit(static_cast<unsigned char>(name[6]))) {
+        return 1;
+    }
+    const int index = (name[5] - '0') * 10 + (name[6] - '0');
+    return index < kLevelTableCount ? index : 1;
+}
+
 std::string ppm_token(std::istream& input) {
     while (true) {
         int ch = input.peek();
@@ -266,10 +294,41 @@ std::uint32_t rgba(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t 
 }  // namespace
 
 void Level::load(const std::string& asset_root, const std::string& rom_path) {
+    const int selected_scene_state = level_index_from_asset_root(asset_root);
+    scene_state_ = selected_scene_state;
+    bool table_configured = false;
+    std::vector<std::uint8_t> rom;
+    if (!rom_path.empty()) {
+        rom = read_file(rom_path);
+        const std::size_t entry_offset =
+            kLevelTableRomOffset
+            + static_cast<std::size_t>(selected_scene_state) * kLevelTableEntrySize;
+        if (entry_offset + kLevelTableEntrySize > rom.size()) {
+            throw std::runtime_error("ROM level table does not contain selected scene state");
+        }
+        camera_start_x_ = read_be_u16(rom, entry_offset + 0x00);
+        camera_start_y_ = read_be_u16(rom, entry_offset + 0x02);
+        start_x_ = read_be_u16(rom, entry_offset + 0x04);
+        start_y_ = read_be_u16(rom, entry_offset + 0x06);
+        camera_threshold_x_ = start_x_;
+        camera_threshold_y_ = start_y_;
+        map_width_ = read_be_u16(rom, entry_offset + 0x30);
+        map_height_ = read_be_u16(rom, entry_offset + 0x32);
+        table_configured = true;
+    }
+
     const auto background = read_ppm(asset_root + "/background.ppm");
     background_width_ = background.width;
     background_height_ = background.height;
     background_rgba_ = background.rgba;
+
+    if (!table_configured) {
+        if (background_width_ % 16 != 0 || background_height_ % 16 != 0) {
+            throw std::runtime_error("level background dimensions are not 16-pixel aligned");
+        }
+        map_width_ = background_width_ / 16;
+        map_height_ = background_height_ / 16;
+    }
 
     const std::string parallax_path = asset_root + "/parallax.ppm";
     std::ifstream parallax_file(parallax_path, std::ios::binary);
@@ -287,7 +346,9 @@ void Level::load(const std::string& asset_root, const std::string& rom_path) {
     const auto map_bytes = read_file(asset_root + "/raw/map.bin");
     terrain_words_ = read_be_words(map_bytes);
     if (terrain_words_.size() != static_cast<std::size_t>(map_width_ * map_height_)) {
-        throw std::runtime_error("level-01 map is not 300x45 terrain words");
+        throw std::runtime_error(
+            "selected level map dimensions do not match its terrain words"
+        );
     }
 
     floor_data_ = read_file(asset_root + "/raw/floor.bin");
@@ -316,14 +377,11 @@ void Level::load(const std::string& asset_root, const std::string& rom_path) {
         }
     }
     contour_table_.clear();
-    if (!rom_path.empty()) {
-        const auto rom = read_file(rom_path);
-        if (rom.size() >= static_cast<std::size_t>(kTerrainContourRomOffset + kTerrainContourRomSize)) {
-            contour_table_.assign(
-                rom.begin() + kTerrainContourRomOffset,
-                rom.begin() + kTerrainContourRomOffset + kTerrainContourRomSize
-            );
-        }
+    if (rom.size() >= static_cast<std::size_t>(kTerrainContourRomOffset + kTerrainContourRomSize)) {
+        contour_table_.assign(
+            rom.begin() + kTerrainContourRomOffset,
+            rom.begin() + kTerrainContourRomOffset + kTerrainContourRomSize
+        );
     }
     const auto palette_bytes = read_file(asset_root + "/raw/palette.bin");
     if (palette_bytes.size() < 32) {
@@ -2143,7 +2201,7 @@ void Engine::reset() {
     camera_.vertical_threshold = level_.camera_threshold_y();
     camera_.level_width = level_.map_width() * 16;
     camera_.level_height = level_.map_height() * 16;
-    camera_.scene_state = 1;
+    camera_.scene_state = level_.scene_state();
     camera_.vdp_update = 1;
     player_.grounded = true;
     player_.attack_timer = 0;

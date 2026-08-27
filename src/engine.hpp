@@ -261,6 +261,7 @@ public:
     int camera_start_y() const { return camera_start_y_; }
     int camera_threshold_x() const { return camera_threshold_x_; }
     int camera_threshold_y() const { return camera_threshold_y_; }
+    int scene_state() const { return scene_state_; }
 
     // This is the recovered FF9884/FFAE86 lookup in local, file-backed form.
     std::uint8_t terrain_behavior(int column, int row) const;
@@ -301,15 +302,14 @@ public:
 private:
     int map_width_ = 300;
     int map_height_ = 45;
-    // Level-01 fixed-ROM startup fields: camera (0, 464), local player
-    // (103, 416). They are configuration only; Engine owns mutable runtime
-    // camera state.
+    // These are configuration only; Engine owns mutable runtime camera state.
     int start_x_ = 103;
     int start_y_ = 416;
     int camera_start_x_ = 0;
     int camera_start_y_ = 464;
     int camera_threshold_x_ = 103;
     int camera_threshold_y_ = 416;
+    int scene_state_ = 1;
     int background_width_ = 0;
     int background_height_ = 0;
     std::vector<std::uint8_t> background_rgba_;

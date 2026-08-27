@@ -24,6 +24,8 @@ namespace {
 
 struct Options {
     std::string assets = "build/assets/levels/level01";
+    int level_index = 1;
+    bool assets_explicit = false;
     std::string sprites = "build/assets/sprites";
     std::string rom = "rom/Disneys_Aladdin_U_p1.bin";
     // Native Level 01 actors are refilled from the ROM interaction map. The
@@ -213,6 +215,12 @@ Options parse_options(int argc, char** argv) {
         const std::string argument = argv[i];
         if (argument == "--assets" && i + 1 < argc) {
             options.assets = argv[++i];
+            options.assets_explicit = true;
+        } else if (argument == "--level-index" && i + 1 < argc) {
+            options.level_index = std::stoi(argv[++i], nullptr, 0);
+            if (options.level_index < 0 || options.level_index > 12) {
+                throw std::runtime_error("--level-index expects a value from 0 through 12");
+            }
         } else if (argument == "--sprites" && i + 1 < argc) {
             options.sprites = argv[++i];
         } else if (argument == "--rom" && i + 1 < argc) {
@@ -265,7 +273,7 @@ Options parse_options(int argc, char** argv) {
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
-            std::cout << "usage: openaladdin [--assets DIR] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--sound-id ID] [--audio-trace PATH] [--demo] [--render-checkpoint]\n"
+            std::cout << "usage: openaladdin [--assets DIR] [--level-index N] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--sound-id ID] [--audio-trace PATH] [--demo] [--render-checkpoint]\n"
                          "       [--state-output PATH] [--framebuffer-out PATH] [--framebuffer-frame N]\n"
                          "       [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
@@ -284,6 +292,11 @@ Options parse_options(int argc, char** argv) {
         } else {
             throw std::runtime_error("unknown argument: " + argument);
         }
+    }
+    if (!options.assets_explicit && options.level_index != 1) {
+        options.assets = "build/assets/levels/level";
+        if (options.level_index < 10) options.assets += '0';
+        options.assets += std::to_string(options.level_index);
     }
     return options;
 }
