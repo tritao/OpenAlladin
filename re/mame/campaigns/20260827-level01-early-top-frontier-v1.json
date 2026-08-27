@@ -1,0 +1,144 @@
+{
+  "campaign": "20260827-level01-early-top-frontier-v1",
+  "status": "recorded-negative-frontier",
+  "purpose": "Classify controller-only routes from the early Level 01 connector top at world (1560,479) and identify whether the hidden upper ledge is created by a runtime actor or interaction event.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit_at_capture": "64b59e9",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "64b59e9",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "source_checkpoint": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+  "timing_note": "All branches use preload-before-capture, no-sync gameplay timing, actor capture, and scene-state tracing. The edge/init classification run is retained separately under build/re/analysis.",
+  "segments": [
+    {
+      "id": "plain-right",
+      "trace_dir": "build/re/analysis/20260827-early-top-frontier-v1/right",
+      "frames": 300,
+      "input": "right*300",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "upper", "state": "states/genesis/upper.sta" },
+        { "frame": 200, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "up-right",
+      "trace_dir": "build/re/analysis/20260827-early-top-frontier-v1/up-right",
+      "frames": 300,
+      "input": "up+right*180,right*120",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "upper", "state": "states/genesis/upper.sta" },
+        { "frame": 200, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "short-c-right",
+      "trace_dir": "build/re/analysis/20260827-early-top-frontier-v1/c-right-10",
+      "frames": 300,
+      "input": "c+right*10,right*290",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "upper", "state": "states/genesis/upper.sta" },
+        { "frame": 200, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "medium-c-right",
+      "trace_dir": "build/re/analysis/20260827-early-top-frontier-v1/c-right-20",
+      "frames": 300,
+      "input": "c+right*20,right*280",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "upper", "state": "states/genesis/upper.sta" },
+        { "frame": 200, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "long-c-right",
+      "trace_dir": "build/re/analysis/20260827-early-top-frontier-v1/c-right-30",
+      "frames": 300,
+      "input": "c+right*30,right*270",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "upper", "state": "states/genesis/upper.sta" },
+        { "frame": 200, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    },
+    {
+      "id": "c-up-right",
+      "trace_dir": "build/re/analysis/20260827-early-top-frontier-v1/c-up-right-20",
+      "frames": 300,
+      "input": "c+up+right*20,up+right*100,right*180",
+      "load_state": true,
+      "loaded_state_source": "build/re/campaigns/20260827-level01-early-highledge-positive-checkpoints-v1/states/genesis/connector-top.sta",
+      "capture": "state",
+      "actors": true,
+      "scene_state_trace": true,
+      "checkpoints": [
+        { "frame": 1, "name": "loaded", "state": "states/genesis/loaded.sta" },
+        { "frame": 20, "name": "early", "state": "states/genesis/early.sta" },
+        { "frame": 60, "name": "mid", "state": "states/genesis/mid.sta" },
+        { "frame": 120, "name": "upper", "state": "states/genesis/upper.sta" },
+        { "frame": 200, "name": "late", "state": "states/genesis/late.sta" },
+        { "frame": 300, "name": "end", "state": "states/genesis/end.sta" }
+      ]
+    }
+  ],
+  "observed": {
+    "source": { "world": [1560, 479], "terrain_behavior": "0x24", "scene_state": "0x01" },
+    "plain_and_up_routes": "No directional input moves the player from the behavior-0x24 endpoint.",
+    "jump_routes": "C+jump exits the endpoint, reaches the ordinary high walkway, and falls at x≈2277 into the lower band; the best tested apex is world y=412.",
+    "scene": "All six branches remain in SCENE_STATE=0x01 and do not reach world y<0x01D6.",
+    "producer_trace": "The companion edge/init trace records interaction selector 0x74 at 0x001B670C and generic creation of slot 20 from template 0x001B7E54 at absolute MAME frame 0x693. No hidden traversal actor is initialized in the connector-top-to-edge branch."
+  },
+  "negative_evidence": [
+    "No branch reaches the Level 01 exit predicate.",
+    "No scene-state, script-cursor, or transition-gate write occurs.",
+    "No branch creates a player-transfer or connector actor at the upper-walkway fall boundary."
+  ],
+  "conclusion": "The early connector top is a real positive traversal frontier, but the tested direct jump/direction family only reaches the ordinary high walkway and then falls. The runtime producer trace classifies the nearby selector-0x74 record as the lower bounce actor at map row 41/column 99 (source word 0x7078), not the missing upper transfer.",
+  "next": "Trace the remaining Level 01 connector/resource records, prioritizing the x=2112 and x=2720 behavior-0x22 columns and the producer that materializes template 0x001B7E54 outside the already classified lower bounce record."
+}

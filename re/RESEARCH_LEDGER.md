@@ -972,6 +972,19 @@ to terminal type `0x84`, after which the player drops to the lower gap at
 the line/juggler/pulse family as an upper-transfer solution and moves the next
 target to static decoding of the upper-band resource/interaction producer.
 
+The early connector-top frontier is recorded in
+`re/mame/findings/20260827-level01-early-top-frontier-v1.json` and
+`re/mame/campaigns/20260827-level01-early-top-frontier-v1.json`. Six controlled
+branches from world `(1560,479)` show that plain directional input leaves the
+behavior-`0x24` endpoint fixed, while C-jump branches reach the ordinary high
+walkway and fall near x≈2277 without reaching the row-10 exit band. The
+companion initializer/row trace identifies the natural lower bounce producer:
+map row 41/column 99 source word `0x7078`, selector `0x74` at
+`0x001B670C`, and template `0x001B7E54` in slot 20 at world `(1576,900)`. No
+hidden traversal actor or scene-state write appears in the upper-walkway
+branch. This closes the direct connector-top timing family and redirects the
+search to the other vertical connector/resource records.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1048,6 +1061,7 @@ target to static decoding of the upper-band resource/interaction producer.
 | `20260827-level01-early-highledge-handhold-v1` | recorded-positive-route-extension | early high-walkway type-0x6A→0x6B handhold and x=1568 connector route; hidden ledge and exit unresolved |
 | `20260827-level01-route-join-v1` | recorded-positive-route-extension | clean lower-tower reversal, three guard clearances, and chained far-rope climb; upper transfer unresolved |
 | `20260827-level01-upper-band-pulse-v1` | recorded-negative-frontier | rope-top horizontal line, juggler response, lower-gap drop, and timed C-pulse family; upper transfer unresolved |
+| `20260827-level01-early-top-frontier-v1` | recorded-negative-frontier | six connector-top timing branches plus type-0x65 producer/row correlation; upper transfer unresolved |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

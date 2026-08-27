@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-level01-early-top-frontier-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify the early Level 01 connector-top frontier and the type-0x65 bounce actor's natural producer.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_at_capture": "64b59e9",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-early-top-frontier-v1.json",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "traces": [
+    "build/re/analysis/20260827-early-top-frontier-v1",
+    "build/re/analysis/20260827-early-top-edge-init-v1",
+    "build/re/analysis/20260827-level01-gap-bounce-producer-v1",
+    "build/re/analysis/20260827-level01-gap-bounce-row-context-v2"
+  ],
+  "static_context": {
+    "connector_top": "Level 01 map column 98 / world x=1568; behavior 0x22 rows 15-24 and behavior 0x24 at row 14.",
+    "bounce_record": "Level 01 map row 41, column 99 contains source word 0x7078; its runtime selector is 0x74.",
+    "bounce_handler": "0x001B670C calls the generic spawn-offset helper at 0x001B525E, applying (-8,+4).",
+    "bounce_template": "0x001B7E54 initializes slot 20 (0x00FF8368) as runtime type 0x65 at world (1576,900)."
+  },
+  "confirmed": [
+    "The connector-top checkpoint starts at world (1560,479), terrain behavior 0x24, scene state 0x01.",
+    "Plain right and up/right input leaves the player fixed at the endpoint.",
+    "C+jump branches reach the ordinary high walkway, peak between y=412 and y=419, and fall near x=2277-2300; none reaches the exit-height row-10 band.",
+    "The full canonical route initializes the type-0x65 bounce actor at absolute MAME frame 0x68F through the generic level-object dispatcher.",
+    "The targeted row-context replay correlates the initialization with interaction selector 0x74 at handler 0x001B670C and source word 0x7078.",
+    "The connector-top edge/init trace sees ordinary interaction actors and effects at the walkway edge, but no hidden traversal actor or scene transition."
+  ],
+  "negative_evidence": [
+    "All six early-top branches remain in SCENE_STATE=0x01.",
+    "No write to the scene state, scene script cursor, countdown, or exit gates occurs.",
+    "The type-0x65 bounce producer is a lower-band actor setup and does not explain the upper connector transfer."
+  ],
+  "conclusion": "This closes the direct connector-top timing family and separates the natural bounce actor from the unresolved upper transfer. The early connector remains a valid route frontier, while the next search should follow the other vertical connector/resource records and their natural producers."
+}
