@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-level01-bounce-c-input-matrix-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Record C-button timing coverage for the Level 01 lower bounce and type-0x6A handhold transfer.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "9b91a07",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "campaign": "re/mame/campaigns/20260827-level01-bounce-c-matrix-v1.json",
+  "source_campaign": "re/mame/campaigns/20260826-level01-bounce-up-sweep-v1.json",
+  "source_checkpoint": "build/re/campaigns/20260826-level01-fresh-route-probe-v1/bounce-transfer-probe/states/genesis/bounce-approach.sta",
+  "handler": {
+    "routine": "Actor_type_0x6A_handhold_alignment_handler",
+    "actor_slot": 24,
+    "initial_type": "0x6A",
+    "target_type": "0x6B",
+    "flag_predicate": "actor movement_flags & 0x10",
+    "vertical_predicate": "abs(PLAYER_Y - ((actor_y - WORLD_CAMERA_Y) - 8)) < 0x0C"
+  },
+  "matrix": {
+    "variants": 7,
+    "frames_each": 160,
+    "input_mode": "inject",
+    "shared_vertical_checkpoints": {
+      "frame_1": 904,
+      "frame_20": 854,
+      "frame_32": 826,
+      "frame_42": 831,
+      "frame_55": 873,
+      "frame_100": 904
+    },
+    "endpoint_world_x": {
+      "c-early": 1772,
+      "c-offset14": 1787,
+      "c-offset19": 1802,
+      "c-offset24": 1817,
+      "c-offset29": 1832,
+      "c-offset34": 1847,
+      "c-hold": 1772
+    },
+    "slot_24_types_observed": ["0x6A"],
+    "slot_24_type_0x6B_observations": 0,
+    "scene_states_observed": ["0x01"],
+    "scene_transition_observations": 0
+  },
+  "conclusion": "C-button pulses and a short C hold during the bounce do not satisfy the type-0x6A handhold alignment path. They leave the actor unchanged and affect only horizontal player travel. The missing transfer is therefore not a C timing window layered onto this bounce checkpoint.",
+  "next_action": "Trace the pre-wall level object/resource route and its player-facing transfer conditions; do not repeat the covered C or Up timing families."
+}

@@ -902,6 +902,16 @@ selecting animation roots `0x00123614` or `0x001237C6` on its exit paths. A
 `0x001ACC5E`. The branch is now classified as a local actor response and is
 removed from the direct player-transfer/scene-exit hypothesis set.
 
+The C-button bounce matrix is recorded in
+`re/mame/findings/20260827-level01-bounce-c-input-matrix-v1.json` and
+`re/mame/campaigns/20260827-level01-bounce-c-matrix-v1.json`. Seven injected
+variants from the retained `bounce-approach.sta` checkpoint place a C pulse at
+different points through the bounce, plus one eight-frame C hold. All seven
+traces retain the handhold actor as type `0x6A`; none reaches the handler's
+type-`0x6B` transfer. The shared vertical path is unchanged and all runs
+settle on the lower floor in scene `0x01`; C timing changes horizontal travel
+only. This closes the C-timing version of the bounce-to-handhold hypothesis.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -973,6 +983,7 @@ removed from the direct player-transfer/scene-exit hypothesis set.
 | `20260827-level01-terrain-response-callback-v1` | recorded-negative-frontier | behavior-0x47 surface-mode callback and lower-tower player-response trace |
 | `20260827-level01-upper-pair-extended-interaction-v2` | recorded-negative | explicit left/up upper-frontier coverage of the Type-0x1E extended interaction branch |
 | `20260827-level01-behavior46-lower-band-v2` | recorded-positive | natural behavior-0x46 Type-0x1E contact, movement handoff, and extended callback trace |
+| `20260827-level01-bounce-c-matrix-v1` | recorded-negative-natural | C timing matrix from the lower bounce; no type-0x6A handhold transfer |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
