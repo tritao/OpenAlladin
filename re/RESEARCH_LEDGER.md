@@ -258,6 +258,39 @@ the finding or commit message.
   single targeted contact-window trace for the spawned remote actors, not
   another connector-top input matrix.
 
+### Complete Level 01 transfer-capable mechanism graph
+
+- `re/LEVEL01_TRANSFER_MECHANISM_GRAPH.md` and
+  `re/mame/findings/20260827-level01-transfer-capable-mechanism-graph-v1.json`
+  close the ROM writer graph across ordinary integration/jump, connector
+  stepping, local terrain snap/contact, discontinuous terrain handlers,
+  actor-driven placement, dynamic resource installation, and scripted scene
+  placement. The only remaining Level 01-present actor launch candidate with
+  a complete static producer edge is selector `0x87` -> Type `0x01` ->
+  `0x001AFD84`, whose near-contact path writes actor-relative `PLAYER_Y` and
+  `PLAYER_VY=-0x0800`. It is not yet observed naturally because the clean
+  replay has zero selector-`0x87` handler hits and zero Type-`0x01` samples.
+- The player movement VM at `0x001ADE36` is the strongest raw ROM capability:
+  a Type-`0x83` player actor with nonzero `movement_pc` receives signed stream
+  deltas directly into `PLAYER_Y`. Level 01 has the player actor type but its
+  `movement_pc` is zero, and no natural Level 01 resource chain installs a
+  stream, so this is dormant capacity rather than a live producer.
+- Terrain behaviors `0x27`, `0x29`, and `0x2D` are structurally eliminated:
+  their handlers at `0x001B54A6`, `0x001B557E`, and `0x001B56B6` are genuine
+  discontinuous/launch writers, but Level 01 has zero decoded cells for all
+  three and the dynamic terrain path does not install them. Type-`0x65`
+  bounce and Type-`0x6A` handhold states remain real, naturally observed,
+  local families; neither currently connects to the exit corridor.
+- This graph corrects two scope errors in earlier notes. The old Type-`0x01`
+  child-chain conclusion applies to its stationary Type-`0x84` child, not the
+  parent collision handler. The old motion-audit `0x4F` Level 01 observation
+  belongs to the scene-9 loader matrix, not Level 01. The exit predicate at
+  `0x001B5B4A` and scene loader at `0x001AA484` are genuine downstream
+  discontinuous placement machinery, but cannot explain the upstream rise to
+  the predicate. The predicate's exact countdown store is at `0x001B5B5E`
+  (`0x001B5B66` is the adjacent countdown branch). No broad input sweep is justified before the focused
+  selector-`0x87`/Type-`0x01` runtime trace.
+
 ### Player animation and terrain timing
 
 - `re/mame/findings/20260827-level01-f5-actor-boundary-v1.json`: the opening
@@ -361,7 +394,7 @@ the finding or commit message.
 - `re/mame/campaigns/20260827-level01-transition-resource-lifecycle-v1.json`
   and its finding record the next transition/resource coverage pass. The
   upper-frontier checkpoint with the proven local-coordinate predicate reaches
-  the Level 01 boundary writer (`0x001B5B66 -> FFF0E9=FF`), then ordinal 29
+  the Level 01 boundary writer (`0x001B5B5E -> FFF0E9=FF`), then ordinal 29
   enters `SceneScript_AdvanceState` and its `0x001B0078 -> 0x001B0D70`
   resource prelude. The latter executes 300 VBlank-paced service iterations
   through `0x001B28AE -> 0x001B249E`; the nested `0x001B16E0` lifecycle then
@@ -650,7 +683,7 @@ interaction/resource event, or a different route branch.
 The current-harness boundary test is recorded in
 `re/mame/campaigns/20260826-level01-exit-predicate-probe-v1.json`. A local
 coordinate probe at world `(4748,460)` arms `0xFFF0E9=0xFF` from
-`0x001B5B66`, but the extended current-frontier run stays in scene state
+`0x001B5B5E`, but the extended current-frontier run stays in scene state
 `0x01` with script cursor `0x4082`. This is boundary-write evidence only; the
 authoritative follow-on scene-state write remains the older controlled proof in
 `20260826-level01-transition-v1`.
@@ -736,7 +769,7 @@ The current-checkout boundary follow-up is recorded in
 and `re/mame/findings/20260826-level01-scene-writer-controlled-current-v1.json`.
 Using the current upper-frontier checkpoint and local fields that produce
 world `(4748,460)`, native watchpoints reproduce
-`0x001B5B66 -> FFF0E9=FF`, but no writer reaches `SCENE_STATE`,
+`0x001B5B5E -> FFF0E9=FF`, but no writer reaches `SCENE_STATE`,
 `SCENE_SCRIPT_CURSOR`, or `SCENE_TABLE_INDEX` within 500 frames. This is a
 current-fixture negative follow-on result; the older controlled state-03
 campaign remains the authoritative observed script-writer path.

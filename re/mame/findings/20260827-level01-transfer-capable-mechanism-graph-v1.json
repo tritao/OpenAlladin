@@ -1,0 +1,477 @@
+{
+  "format": "openaladdin-level01-transfer-capable-mechanism-graph-v1",
+  "recorded_at": "2026-08-27",
+  "status": "static-closure-with-one-specific-runtime-candidate",
+  "repository_commit": "fe4031469f9f450703d03656a53c0151a59d6fb0",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "question": "Which natural Level 01 mechanism can produce the missing upward or discontinuous transfer into the exit corridor?",
+  "definition": {
+    "transfer_capable": "A mechanism is transfer-capable if it directly displaces PLAYER_Y beyond a local contact correction, writes a launch VY, applies actor-relative player placement, applies signed movement-stream deltas to the player, or loads a new scene/player placement.",
+    "natural_mame": "Observed on a Level 01 replay without state pokes, injected actor records, or controlled scene/boundary writes.",
+    "static_reachability": "A complete ROM/resource edge from a natural Level 01 map or interaction record to the required active state; it does not imply that the clean replay has reached the trigger coordinate."
+  },
+  "sources": {
+    "human_report": "re/LEVEL01_TRANSFER_MECHANISM_GRAPH.md",
+    "prior_upstream_graph": "re/mame/findings/20260827-level01-upstream-transfer-writer-graph-v1.json",
+    "player_motion_audit": "re/mame/findings/20260827-level01-player-motion-writer-audit-v1.json",
+    "interaction_inventory": "re/mame/findings/20260826-level01-interaction-inventory-v1.json",
+    "upper_band_inventory": "re/mame/findings/20260827-level01-upper-band-inventory-v1.json",
+    "selector87_natural": "re/mame/findings/20260827-level01-selector87-natural-v1.json",
+    "type01_child_chain": "re/mame/findings/20260826-type01-child-chain-v1.json",
+    "early_type65_frontier": "re/mame/findings/20260827-level01-early-top-frontier-v1.json",
+    "natural_gate_trace": "re/mame/findings/20260827-level01-natural-gate-trace-v1.json",
+    "level_table": "re/mame/findings/20260827-level-table-enter-exit-decomp-v1.json",
+    "decompile_artifacts": [
+      "build/re/dasm-1A8000.txt",
+      "build/re/level01-upstream-transfer-writers-targeted-decompile.json",
+      "build/re/level01-far-exit-transfer-targeted-decompile-v1.json",
+      "build/re/level-loader-targeted-decompile.json",
+      "build/re/animation_streams.json"
+    ]
+  },
+  "frame_order": [
+    { "pc": "0x001AD7B4", "routine": "Player_TerrainLandingResolver" },
+    { "pc": "0x001AD632", "routine": "player terrain probe" },
+    { "pc": "0x001A986E", "routine": "Player_ConnectorVerticalResponse" },
+    { "pc": "0x001A99F0", "routine": "Player_TerrainResponse" },
+    { "pc": "0x001ADE36", "routine": "MovementVM_TickActors" },
+    { "pc": "0x001ADB5C", "routine": "Actor_TerrainPass" },
+    { "pc": "0x001ABB40", "routine": "Actor_PlayerCollisionPass" },
+    { "pc": "0x001B1E38", "routine": "Terrain_ResolvePlayerCell" },
+    { "pc": "0x001A9D98", "routine": "Player_TerrainResponseStateMachine" },
+    { "pc": "0x001A9716", "routine": "Player_HandleJumpAndVerticalState" },
+    { "pc": "0x001A8E3E", "routine": "SceneScript_AdvanceState" }
+  ],
+  "level01_inventory": {
+    "level_table": {
+      "base": "0x002C78",
+      "entry_index": 1,
+      "entry_offset": "0x002CBA",
+      "enter_routine": "0x001B5B4A",
+      "exit_routine": "0x001B6406",
+      "boundary": "PLAYER_WORLD_X > 0x1287 && PLAYER_WORLD_Y < 0x01D6"
+    },
+    "terrain_resource": {
+      "rom_source": "0x001434C4",
+      "load_routine": "0x001B3434",
+      "decode_routine": "0x001B3818",
+      "runtime_destination": "0x00FFAE84",
+      "resolver": "0x001B1E38",
+      "dispatch_table": "0x004554"
+    },
+    "terrain_behavior_counts": {
+      "0x00": 12722,
+      "0x0A": 37,
+      "0x11": 157,
+      "0x22": 46,
+      "0x24": 4,
+      "0x25": 33,
+      "0x2B": 10,
+      "0x46": 23,
+      "0x47": 77,
+      "0x80": 24,
+      "0x81": 24,
+      "0x85": 14,
+      "0x86": 46,
+      "0xB0": 4,
+      "0xFF": 279
+    },
+    "terrain_behaviors_absent": [
+      "0x09", "0x0B", "0x0C", "0x20", "0x23", "0x27", "0x29", "0x2A",
+      "0x2D", "0x30", "0x65", "0x6A", "0x70", "0x88"
+    ],
+    "interaction_table": {
+      "runtime_address": "0x00FFAE87",
+      "record_count": 175,
+      "unique_selectors": [
+        "0x0D", "0x10", "0x11", "0x12", "0x13", "0x14", "0x1A", "0x1B",
+        "0x40", "0x50", "0x51", "0x53", "0x54", "0x55", "0x5C", "0x60",
+        "0x74", "0x80", "0x87", "0xAB", "0xC8", "0xEA"
+      ],
+      "relevant_selectors": {
+        "0x74": { "handler": "0x001B670C", "template": "0x001B7E54", "actor_type": "0x65" },
+        "0x87": { "handler": "0x001B74D6", "allocator": "0x001B525E", "template": "0x001B7A30", "actor_type": "0x01" },
+        "0x11": { "handler": "generic row path", "observed_actor_type": "0x1E" },
+        "0x1B": { "handler": "generic row path", "observed_actor_type": "0x20" }
+      },
+      "absent_launch_selectors": ["0xAC", "0xAD", "0xB1"]
+    },
+    "natural_runtime": {
+      "natural_maxima": [
+        { "route": "clean Level 01 gate trace", "world_x": 2564, "world_y": 920 },
+        { "route": "far rope upper endpoint", "world_x": 4728, "world_y": 671 }
+      ],
+      "far_rope": {
+        "endpoint_behavior": "0x24",
+        "body_behavior": "0x22",
+        "ordinary_dismount_vy": "-0x0200",
+        "settled_behavior": "0x25",
+        "scene_state": "0x01"
+      },
+      "selector87": {
+        "source_world": [4372, 628],
+        "natural_handler_hits": 0,
+        "natural_type01_samples": 0,
+        "natural_scene_states": ["0x01"],
+        "natural_exit_breakpoint_hits": 0
+      },
+      "handhold": {
+        "observed_state": "Type 0x6A -> 0x6B",
+        "observed_world_examples": [[1656, 703], [1560, 479]]
+      },
+      "type65": {
+        "observed": true,
+        "result": "local lower bounce/camel family"
+      },
+      "scene": {
+        "natural_scene_state_writes": 0,
+        "controlled_boundary_writer": "0x001B5B5E -> 0x00FFF0E9=0xFF",
+        "controlled_follow_on": "0x001A8ED2 -> SCENE_STATE=0x03"
+      }
+    }
+  },
+  "dispatch_tables": {
+    "terrain": {
+      "table": "0x004554",
+      "transfer_and_adjacent_entries": {
+        "0x20": "0x001B5318",
+        "0x30": "0x001B537A",
+        "0x70": "0x001B53B0",
+        "0x88": "0x001B53F6",
+        "0x47": "0x001B5470",
+        "0x27": "0x001B54A6",
+        "0x24": "0x001B54D2",
+        "0x22-0x23": "0x001B54D8",
+        "0x25": "0x001B54E0",
+        "0x2B": "0x001B5502",
+        "0x29": "0x001B557E",
+        "0x2A": "0x001B55D8",
+        "0x28": "0x001B55E8",
+        "0x2D": "0x001B56B6",
+        "0x1B": "0x001B575C",
+        "0x1C": "0x001B5764",
+        "0x1D": "0x001B576C",
+        "0x1F": "0x001B5774",
+        "default": "0x001B65BE"
+      }
+    },
+    "actor_collision": {
+      "table": "0x001CBE",
+      "transfer_relevant_entries": {
+        "0x01": "0x001AFD84",
+        "0x11-0x12": "0x001AF110",
+        "0x4E": "0x001AFCD2",
+        "0x4F": "0x001AFC4E",
+        "0x50-0x51": "0x001AF8F6",
+        "0x65-0x66": "0x001AFBF4",
+        "0x67-0x68": "0x001AF740",
+        "0x69-0x6C": "0x001AF978"
+      }
+    }
+  },
+  "writer_inventory": {
+    "direct_player_y_writers": {
+      "ordinary_integration": ["0x001A9C22", "0x001A9C54"],
+      "connector": ["0x001A9906", "0x001A993E", "0x001A994E"],
+      "local_contour_and_contact": ["0x001A9B80", "0x001AD94E", "0x001AD960", "0x001ADDF4", "0x001ADE02"],
+      "terrain_discontinuous": ["0x001B54AC"],
+      "terrain_local_snap": ["0x001B5402", "0x001B5672", "0x001B56AC"],
+      "actor_collision_local": [
+        { "handler": "0x001AF590", "types": ["0x55", "0x56", "0x57"], "site": "0x001AF5D0", "effect": "actor_y-cameraY-0x12 within contact window" },
+        { "handler": "0x001AF5F0", "types": ["0x58"], "site": "0x001AF630", "effect": "actor_y-cameraY+2 within contact window" },
+        { "handler": "0x001AF638", "types": ["0x5E"], "site": "0x001AF670", "effect": "local actor-relative X/Y" },
+        { "handler": "0x001AF6AC", "types": ["0x5F"], "site": "0x001AF6D4", "effect": "actor_y-cameraY" },
+        { "handler": "0x001AF740", "types": ["0x67", "0x68"], "site": "0x001AF780", "effect": "actor_y-cameraY-0x0B within vertical window" },
+        { "handler": "0x001AF79E", "types": ["0x52", "0x53"], "site": "0x001AF7DE", "effect": "actor_y-cameraY-0x13 within contact window" },
+        { "handler": "0x001AF81C", "types": ["0x62", "0x63"], "site": "0x001AF858", "effect": "local contact placement" },
+        { "handler": "0x001AF894", "types": ["0x64"], "site": "0x001AF8D4", "effect": "actor_y-cameraY-0x12" },
+        { "handler": "0x001AF978", "types": ["0x69", "0x6A", "0x6B", "0x6C"], "site": "0x001AF9B8", "effect": "actor_y-cameraY-8" },
+        { "handler": "0x001AF9F6", "types": ["0x76", "0x77"], "site": "0x001AFA3C", "effect": "actor_y-cameraY-0x0B" },
+        { "handler": "0x001AFA84", "types": ["0x74", "0x75"], "site": "0x001AFABE", "effect": "actor_y-cameraY-0x0B" },
+        { "handler": "0x001AFB36", "types": ["0x6E", "0x6F", "0x70", "0x71", "0x72", "0x73"], "site": "0x001AFB98", "effect": "actor_y-cameraY+0x10" },
+        { "handler": "0x001AFF82", "types": ["0x02"], "site": "0x001AFFB2", "effect": "actor-relative local Y" }
+      ],
+      "actor_type01": { "handler": "0x001AFD84", "site": "0x001AFDB6", "effect": "actor_y-cameraY; transfer-capable under near-Y guard" },
+      "actor_global_placement": { "handler": "0x001AF8F6", "site": "0x001AF936", "effect": "actor-relative PLAYER_X/Y plus transition gates" },
+      "movement_vm_player": { "handler": "0x001ADE36", "site": "player actor special branch", "effect": "signed movement delta directly adds to PLAYER_Y" },
+      "scene_load": ["0x001AA4EE"],
+      "camera_bookkeeping": ["0x001AA9D6", "0x001AAA10", "0x001B04E8"]
+    },
+    "direct_player_vy_writers": {
+      "ordinary": ["0x001A9764", "0x001A97EA", "0x001A97FA", "0x001A9C28", "0x001A9C5A", "0x001ADAF0"],
+      "actor_collision": ["0x001AF14E", "0x001AFC22", "0x001AFC7A", "0x001AFCF8", "0x001AFDBC"],
+      "terrain": ["0x001B537A", "0x001B5574", "0x001B5586", "0x001B56BE"],
+      "orphan_unreferenced": ["0x001AE630", "0x001AE642", "0x001AED38"],
+      "clear_or_stop_sites_not_producers": ["0x001A914C", "0x001A98A8", "0x001A9A20", "0x001A9A4A", "0x001A9C8C", "0x001ABD46", "0x001AD98E", "0x001AD9DE", "0x001B1F7C"]
+    },
+    "actor_driven_placement_writers": [
+      { "routine": "0x001AFD84", "types": ["0x01"], "effect": "PLAYER_Y=actor_y-cameraY; PLAYER_VY=-0x800" },
+      { "routine": "0x001AFBF4", "types": ["0x65", "0x66"], "effect": "PLAYER_VY=-0x500" },
+      { "routine": "0x001AF978", "types": ["0x69", "0x6A", "0x6B", "0x6C"], "effect": "local PLAYER_Y alignment and interaction publish" },
+      { "routine": "0x001AFC4E", "types": ["0x4F"], "effect": "PLAYER_VY=-0x800" },
+      { "routine": "0x001AFCD2", "types": ["0x4E"], "effect": "PLAYER_VY=-0x900; PLAYER_VX=±0x700" },
+      { "routine": "0x001AF110", "types": ["0x11", "0x12"], "effect": "PLAYER_VY=-0x400; PLAYER_VX=+0x600/-0x400" },
+      { "routine": "0x001AF8F6", "types": ["0x50", "0x51"], "effect": "actor-relative PLAYER_X/Y and transition gate" },
+      { "routine": "0x001AF740", "types": ["0x67", "0x68"], "effect": "actor-relative local PLAYER_Y" },
+      { "routine": "0x001ADE36", "types": ["0x83"], "effect": "movement stream signed delta to player" }
+    ],
+    "connector_interaction_state_writers": [
+      { "routine": "0x001B54D8", "state": "TERRAIN_QUERY_STATE_A/B", "producer": "terrain 0x22/0x23" },
+      { "routine": "0x001B54D2", "state": "TERRAIN_QUERY_STATE_A/B", "producer": "terrain 0x24" },
+      { "routine": "0x001A986E", "state": "query A plus vertical gates", "effect": "local +/-1/-2/+2 step" },
+      { "routine": "0x001AF978", "state": "handhold interaction/vertical stop", "effect": "6A->6B and publish interaction" },
+      { "routine": "0x001AFBF4", "state": "interaction gate clear", "effect": "65->66 and launch" },
+      { "routine": "0x001B03F2", "state": "scene/terminal/interaction gates", "effect": "terminal transition or interaction lock; no SCENE_STATE" }
+    ],
+    "terrain_behavior_selectors": [
+      { "routine": "0x001B1E38", "effect": "map cell -> behavior index -> 0x004554" },
+      { "routine": "0x001B54A6", "behavior": "0x27", "effect": "PLAYER_Y -= 0x50" },
+      { "routine": "0x001B557E", "behavior": "0x29", "effect": "VY=-0x500, VX=-0x400" },
+      { "routine": "0x001B56B6", "behavior": "0x2D", "effect": "VY=+0x200, VX=-0x400" },
+      { "routine": "0x001B54D8", "behavior": "0x22/0x23", "effect": "connector query state" },
+      { "routine": "0x001B54D2", "behavior": "0x24", "effect": "connector endpoint query state" },
+      { "routine": "0x001B54E0", "behavior": "0x25", "effect": "terrain state; scene-5 actor branch only" },
+      { "routine": "0x001B5502", "behavior": "0x2B", "effect": "local stop/align" },
+      { "routine": "0x001B55E8", "behavior": "0x28", "effect": "local grid snap" }
+    ],
+    "dynamic_terrain_and_resource_installers": [
+      { "routine": "0x001AA484", "effect": "scene state selects level and initial placement" },
+      { "routine": "0x001B3434", "effect": "selects Level 01 terrain source 0x001434C4" },
+      { "routine": "0x001B3818", "effect": "decodes fixed terrain behavior resource to 0x00FFAE84" },
+      { "routine": "0x001AE30A", "effect": "copies actor template to runtime record" },
+      { "routine": "0x001AD00E", "effect": "F5 child actor/resource creation" },
+      { "routine": "0x001B525E", "effect": "selector 0x87 Type-0x01 allocation" },
+      { "routine": "0x001B5266", "effect": "generic interaction actor allocation" },
+      { "routine": "0x001ADB5C", "effect": "publishes actor terrain byte such as 0x46; no player transfer" }
+    ],
+    "scene_exit_gate_writers": [
+      { "routine": "0x001B5B4A", "field": "0x00FFF0E9", "effect": "Level 01 boundary arms scene script countdown" },
+      { "routine": "0x001A8E3E", "field": "SCENE_STATE", "effect": "script terminator selects next scene state" },
+      { "routine": "0x001B3B96", "field": "SCENE_STATE/script pointer", "effect": "scene table selects state/script" },
+      { "routine": "0x001AA484", "field": "PLAYER_X/PLAYER_Y/WORLD_CAMERA_X/WORLD_CAMERA_Y", "effect": "scene/table placement" },
+      { "routine": "0x001B6406", "field": "VDP transition control", "effect": "Level 01 exit callback/common transition" },
+      { "routine": "0x001A8F0C", "field": "PLAYER_VY/terminal scene state", "effect": "terminal/death reset and scene reload; no upward placement" },
+      { "routine": "0x001B1F28", "field": "PLAYER_VY/scene setup", "effect": "scene/terrain setup clears motion; no upward placement" }
+    ]
+  },
+  "mechanisms": [
+    {
+      "id": "ordinary-integration-jump",
+      "class": "ordinary integration/jump",
+      "exact_transfer_routine": "0x001A9716 -> 0x001A9B90",
+      "direct_writer_sites": ["0x001A97EA", "0x001A9C22", "0x001A9C54"],
+      "active_state_or_behavior": "ordinary jump gates; VY=-0x200 or integrated VY",
+      "state_producers": ["player jump state/input path"],
+      "producer_present_in_level01": true,
+      "statically_reachable_from_natural_level01_resource_chain": true,
+      "naturally_observed_in_mame_level01": true,
+      "observation": "Matches ordinary jump/dismount traces; bounded continuous arc.",
+      "classification": "not a discontinuous transfer",
+      "rank": null
+    },
+    {
+      "id": "connector-stepping",
+      "class": "connector stepping",
+      "exact_transfer_routine": "0x001A986E",
+      "direct_writer_sites": ["0x001A9906", "0x001A993E", "0x001A994E"],
+      "active_state_or_behavior": "terrain 0x22/0x23/0x24 raises query state A/B; Up/Down response gates",
+      "state_producers": ["0x001B54D8", "0x001B54D2"],
+      "producer_present_in_level01": true,
+      "statically_reachable_from_natural_level01_resource_chain": true,
+      "naturally_observed_in_mame_level01": true,
+      "observation": "Far rope and early connector states are live; per-frame displacement is only -1/-2 or +2 pixels.",
+      "classification": "local assisted step",
+      "rank": 4
+    },
+    {
+      "id": "local-terrain-snap-contact",
+      "class": "local terrain snap/contact",
+      "exact_transfer_routine": "0x001AD7B4 / 0x001A99F0",
+      "direct_writer_sites": ["0x001A9B80", "0x001AD94E", "0x001AD960", "0x001ADDF4", "0x001ADE02", "0x001B5402", "0x001B5672", "0x001B56AC"],
+      "active_state_or_behavior": "contour/contact resource, local difference window, landing/response state",
+      "state_producers": ["0x001B1E38", "0x001B5502", "0x001B55E8", "0x001B53F6"],
+      "producer_present_in_level01": true,
+      "statically_reachable_from_natural_level01_resource_chain": true,
+      "naturally_observed_in_mame_level01": true,
+      "observation": "Terrain landing and upper rope dismount settle locally; no gap-crossing displacement.",
+      "classification": "local contact only",
+      "rank": null
+    },
+    {
+      "id": "terrain-27-step",
+      "class": "discontinuous terrain transfer",
+      "exact_transfer_routine": "0x001B54A6",
+      "direct_writer_sites": ["0x001B54AC"],
+      "active_state_or_behavior": "terrain behavior 0x27",
+      "state_producers": ["0x001B1E38 -> 0x004554", "dynamic terrain install would require a writer not found"],
+      "producer_present_in_level01": false,
+      "statically_reachable_from_natural_level01_resource_chain": false,
+      "naturally_observed_in_mame_level01": false,
+      "observation": "Handler is real and subtracts 0x50 from PLAYER_Y, but Level 01 decoded count is zero and no runtime installer exists.",
+      "classification": "structurally eliminated",
+      "rank": null
+    },
+    {
+      "id": "terrain-29-launch",
+      "class": "discontinuous terrain transfer",
+      "exact_transfer_routine": "0x001B557E",
+      "direct_writer_sites": ["0x001B5586"],
+      "active_state_or_behavior": "terrain behavior 0x29; response inactive",
+      "state_producers": ["0x001B1E38 -> 0x004554", "dynamic terrain install would require a writer not found"],
+      "producer_present_in_level01": false,
+      "statically_reachable_from_natural_level01_resource_chain": false,
+      "naturally_observed_in_mame_level01": false,
+      "observation": "Real VY=-0x500/VX=-0x400 launch handler; Level 01 decoded count is zero.",
+      "classification": "structurally eliminated",
+      "rank": null
+    },
+    {
+      "id": "terrain-2d-bounce",
+      "class": "discontinuous terrain transfer",
+      "exact_transfer_routine": "0x001B56B6",
+      "direct_writer_sites": ["0x001B56BE"],
+      "active_state_or_behavior": "terrain behavior 0x2D",
+      "state_producers": ["0x001B1E38 -> 0x004554", "dynamic terrain install would require a writer not found"],
+      "producer_present_in_level01": false,
+      "statically_reachable_from_natural_level01_resource_chain": false,
+      "naturally_observed_in_mame_level01": false,
+      "observation": "Real VY=+0x200 bounce handler; Level 01 decoded count is zero.",
+      "classification": "structurally eliminated",
+      "rank": null
+    },
+    {
+      "id": "actor-type01-launch",
+      "class": "actor-driven launch/placement",
+      "exact_transfer_routine": "0x001AFD84",
+      "direct_writer_sites": ["0x001AFDB6", "0x001AFDBC"],
+      "active_state_or_behavior": "actor type 0x01; PLAYER_VY>=0; interaction-animation gate clear; local Y difference <6",
+      "state_producers": ["selector 0x87", "0x001B74D6", "0x001B525E", "template 0x001B7A30", "actor collision table 0x001CBE"],
+      "producer_present_in_level01": true,
+      "statically_reachable_from_natural_level01_resource_chain": true,
+      "naturally_observed_in_mame_level01": false,
+      "observation": "Level 01 row at world approximately (4272,400) supplies selector 0x87. Natural replay has zero selector-handler hits and zero Type-0x01 samples. This supersedes only the earlier conclusion that the Type-0x01 child chain was non-transfer-capable; its child remains stationary, but its collision handler is a launch writer.",
+      "classification": "primary focused candidate",
+      "rank": 1
+    },
+    {
+      "id": "actor-type65-launch",
+      "class": "actor-driven launch/placement",
+      "exact_transfer_routine": "0x001AFBF4",
+      "direct_writer_sites": ["0x001AFC22"],
+      "active_state_or_behavior": "actor type 0x65/0x66; falling overlap; interaction gate clear",
+      "state_producers": ["selector 0x74", "0x001B670C", "template 0x001B7E54"],
+      "producer_present_in_level01": true,
+      "statically_reachable_from_natural_level01_resource_chain": true,
+      "naturally_observed_in_mame_level01": true,
+      "observation": "Natural lower Type-0x65 bounce is confirmed; no static edge currently carries this family into the upper exit corridor.",
+      "classification": "real but locally bounded",
+      "rank": 2
+    },
+    {
+      "id": "actor-handhold-alignment",
+      "class": "actor-driven launch/placement",
+      "exact_transfer_routine": "0x001AF978",
+      "direct_writer_sites": ["0x001AF9B8"],
+      "active_state_or_behavior": "actor type 0x69/0x6A/0x6B/0x6C; flag 0x10; response idle/vertical stop; local Y difference <0x0C",
+      "state_producers": ["natural handhold actor initialization; exact selector/template source remains unresolved", "type transition 0x6A -> 0x6B"],
+      "producer_present_in_level01": true,
+      "statically_reachable_from_natural_level01_resource_chain": true,
+      "naturally_observed_in_mame_level01": true,
+      "observation": "Handhold alignment and interaction publication are natural Level 01 states; handler does not write launch VY.",
+      "classification": "local placement only",
+      "rank": 3
+    },
+    {
+      "id": "player-type83-movement-vm",
+      "class": "actor-driven launch/placement",
+      "exact_transfer_routine": "0x001ADE36",
+      "direct_writer_sites": ["MovementVM player Type-0x83 special branch"],
+      "active_state_or_behavior": "player actor type 0x83 with nonzero movement_pc and enabled movement VM; signed stream delta",
+      "state_producers": ["actor template/scene initialization", "movement opcode 0x83 at 0x001AC89A", "shared animation/movement VM state"],
+      "producer_present_in_level01": false,
+      "statically_reachable_from_natural_level01_resource_chain": false,
+      "naturally_observed_in_mame_level01": false,
+      "observation": "Level 01 slot 0 is type 0x83 but observed movement_pc is zero. Current Level 01 player animation streams write FFF0 fields, not actor offset +0x0A movement_pc.",
+      "classification": "dormant raw-capability candidate",
+      "rank": null
+    },
+    {
+      "id": "actor-absent-launch-families",
+      "class": "actor-driven launch/placement",
+      "exact_transfer_routine": "0x001AFCD2 / 0x001AFC4E / 0x001AF110 / 0x001AF740",
+      "direct_writer_sites": ["0x001AFCF8", "0x001AFC7A", "0x001AF14E", "actor-relative Y sites"],
+      "active_state_or_behavior": "types 0x4E, 0x4F, 0x11/0x12, 0x67/0x68 and their guards",
+      "state_producers": ["other scene/level tables or actor records"],
+      "producer_present_in_level01": false,
+      "statically_reachable_from_natural_level01_resource_chain": false,
+      "naturally_observed_in_mame_level01": false,
+      "observation": "No Level 01 producer. Type 0x4F in the prior motion-audit list is corrected as scene-9 loader-matrix data, not Level 01 data.",
+      "classification": "structurally eliminated",
+      "rank": null
+    },
+    {
+      "id": "actor-type50-placement",
+      "class": "actor-driven launch/placement",
+      "exact_transfer_routine": "0x001AF8F6",
+      "direct_writer_sites": ["0x001AF936"],
+      "active_state_or_behavior": "actor type 0x50/0x51; transition lock/gate and camera threshold",
+      "state_producers": ["level-table entry 9 Type-0x50 placement"],
+      "producer_present_in_level01": false,
+      "statically_reachable_from_natural_level01_resource_chain": false,
+      "naturally_observed_in_mame_level01": false,
+      "observation": "Genuine global actor-relative placement family, but producer belongs to another level/scene.",
+      "classification": "structurally eliminated for Level 01",
+      "rank": null
+    },
+    {
+      "id": "scene-exit-and-loader",
+      "class": "scripted/scene placement",
+      "exact_transfer_routine": "0x001B5B4A -> 0x001A8E3E -> 0x001AA484",
+      "direct_writer_sites": ["0x001B5B5E", "0x001A8ED2", "0x001AA4EE"],
+      "active_state_or_behavior": "Level 01 boundary predicate; scene countdown/script terminator; selected scene state",
+      "state_producers": ["Level01_EnterRoutine", "SceneScript_AdvanceState", "SceneTable_SelectNextState"],
+      "producer_present_in_level01": true,
+      "statically_reachable_from_natural_level01_resource_chain": true,
+      "naturally_observed_in_mame_level01": false,
+      "observation": "Natural replay evaluates the predicate but has not completed it. Controlled boundary test reaches SCENE_STATE=0x03; loader can place the next scene's player/camera discontinuously.",
+      "classification": "downstream scene transfer, not upstream exit bridge",
+      "rank": 4
+    }
+  ],
+  "structural_eliminations": [
+    { "family": "terrain 0x27/0x29/0x2D", "reason": "zero Level 01 decoded cells and no dynamic runtime installer" },
+    { "family": "actor types 0x4E/0x4F/0x11/0x12/0x67/0x68", "reason": "no Level 01 producer; relevant old 0x4F observation belongs to scene 9 loader matrix" },
+    { "family": "actor types 0x50/0x51", "reason": "placement producer is level-table entry 9, not Level 01" },
+    { "family": "hidden interaction selectors 0xAC/0xAD/0xB1", "reason": "absent from Level 01 interaction table; generic handlers only spawn non-transfer actors/effects" },
+    { "family": "orphan VY writers 0x001AE630/0x001AE642/0x001AED38", "reason": "no caller or dispatch-table edge into executable Level 01 frame graph" },
+    { "family": "Type-0x01 child resource", "reason": "child chain is stationary, but parent Type-0x01 collision handler remains a live candidate; only the child conclusion is eliminated" }
+  ],
+  "candidate_ranking": [
+    { "rank": 1, "mechanism": "actor-type01-launch", "why": "Only Level 01-present actor state with a complete static chain to direct PLAYER_Y and negative PLAYER_VY writes; unobserved due to route reachability." },
+    { "rank": 2, "mechanism": "actor-type65-launch", "why": "Confirmed natural Level 01 launch, but currently bounded to local lower bounce family." },
+    { "rank": 3, "mechanism": "actor-handhold-alignment", "why": "Confirmed natural handhold/connector state, but no discontinuous VY or remote placement." },
+    { "rank": 4, "mechanism": "scene-exit-and-loader", "why": "Real discontinuous scene placement, but only after the Level 01 boundary predicate is satisfied." }
+  ],
+  "raw_capability_ranking": [
+    { "rank": 1, "mechanism": "player-type83-movement-vm", "why": "Strongest direct player-Y capability, but excluded from natural ranking because movement_pc is zero and no Level 01 producer exists." },
+    { "rank": 2, "mechanism": "actor-type01-launch", "why": "Direct actor-relative Y plus negative VY, with a Level 01 producer edge." },
+    { "rank": 3, "mechanism": "terrain-27-step", "why": "Direct -0x50 Y step, but absent from Level 01." }
+  ],
+  "runtime_policy": {
+    "broad_controller_input_sweeps": false,
+    "next_focused_breakpoints": [
+      "0x001B74D6", "0x001B525E", "0x001AE30A", "0x001AFD84",
+      "0x001ADE36", "0x001B5B4A", "0x001A8E3E", "0x001AA484"
+    ],
+    "decision": "First test selector-0x87 allocation and Type-0x01 collision guard. If cold, the graph contains no other Level 01-present direct launch writer that justifies a broad input sweep."
+  },
+  "audit_correction": {
+    "prior_finding": "re/mame/findings/20260827-level01-player-motion-writer-audit-v1.json",
+    "correction": "Its observed_level01_actor_types list includes 0x4F, but repository-wide state evidence places that type in the scene-9 loader matrix, not Level 01. The Type-0x01 handler at 0x001AFD84 was also omitted from the prior no-live-actor conclusion; this graph adds it.",
+    "scope": "The earlier Type-0x01 child-chain finding remains valid for the child actor's stationary template, not for the parent collision handler."
+  },
+  "conclusion": "Static closure leaves one focused natural Level 01 runtime candidate: selector 0x87 producing Type 0x01 and entering 0x001AFD84. The player Type-0x83 movement VM is dormant raw capacity. Terrain direct-transfer families and absent actor families are structurally eliminated. Scene loading is a downstream discontinuous placement path, not the missing upstream bridge."
+}
