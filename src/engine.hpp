@@ -3,6 +3,10 @@
 #include <SDL.h>
 
 #include "animation.hpp"
+#include "actor.hpp"
+#include "level.hpp"
+#include "movement.hpp"
+#include "scene.hpp"
 #include "sprites.hpp"
 
 #include <array>
@@ -126,250 +130,6 @@ struct InputState {
     bool apple_pressed = false;
 };
 
-struct ActorState {
-    std::uint8_t type = 0;
-    std::uint16_t x = 0;
-    std::uint16_t y = 0;
-    // Actor +0x06 controls common motion integration. Bit 6 enables the
-    // fixed-point vertical gravity step used by the scene-state-5 type 0x84
-    // response, even when its movement stream cursor is null.
-    std::uint8_t movement_flags = 0;
-    // Actor +0x07 is a transient terrain/collision status byte. The ROM's
-    // terrain pass clears bit 4 before testing the actor's floor cell, while
-    // the movement VM's 0x88 command can branch on that bit.
-    std::uint8_t runtime_field_07 = 0;
-    // Native scheduler delay for the terrain pass's +0x07 bit publication;
-    // the ROM exposes the bit only after the following movement boundary.
-    std::uint8_t runtime_field_07_delay = 0;
-    std::uint8_t facing_x_flip = 0;
-    std::uint8_t facing_y_flip = 0;
-    std::uint32_t movement_pc = 0;
-    std::uint32_t movement_loop_pc = 0;
-    std::uint8_t movement_loop_timer = 0;
-    // The movement VM's actor-relative arithmetic command addresses the
-    // 68000 actor record directly. These are the two signed words at +0x18
-    // and +0x1A used by the recovered movement streams.
-    std::int16_t movement_word_18 = 0;
-    std::int16_t movement_word_1a = 0;
-    std::uint32_t frame_ptr = 0;
-    std::uint32_t animation_pc = 0;
-    std::uint32_t movement_return_pc = 0;
-    std::uint8_t flags = 0;
-    // Actor +0x3D is a runtime callback/state byte consumed by proximity
-    // animation streams and survives template reuse of a slot.
-    std::uint8_t interaction_state = 0;
-    std::uint8_t terminal_timer = 0;
-    std::uint8_t movement_command_timer = 0;
-    std::uint8_t animation_timer = 0;
-    // Some actor producers install a record after the current animation pass;
-    // this defers its first shared animation service by one VBlank sample.
-    std::uint8_t animation_defer_ticks = 0;
-    // Type-0x2D terrain conversion publishes a type-0x84 record on the
-    // current pass but the ROM services that new record on the next VBlank
-    // even when the common FF7E28 gate is low.
-    bool animation_force_next_tick = false;
-    // The live sword animation stream is serviced on its first two actor
-    // ticks, then on alternating ticks. This is native scheduler state, not
-    // a field in the 0x42-byte Genesis actor record.
-    std::uint8_t animation_tick_phase = 0;
-    // Compact template byte +0x10 copied by Actor_InitializeFromTemplate.
-    std::uint8_t resource_count = 0;
-    // Interaction sources retain their resource offset so culling/cleanup can
-    // remain separate from the one-shot map selector state.
-    std::uint16_t interaction_resource_offset = 0;
-    std::uint8_t interaction_selector = 0;
-    bool spawned_by_interaction = false;
-    // F5-created actors use the common animation scheduler immediately. This
-    // distinguishes them from the scene-state-5 type-0x84 terminal record,
-    // which has its own phase gate and deferred first tick.
-    bool spawned_by_animation = false;
-    // The physical A-button apple uses the same type-0x80 family as the
-    // sword, but its F5 producer publishes the first animation frame in the
-    // same boundary as allocation. Keep that cadence distinct from the
-    // deferred sword child path.
-    bool spawned_by_apple = false;
-    // Modes 5/6 of AnimationVM_SpawnOrCopyActor link the new record to the
-    // actor that issued the command. This is host-side metadata for the
-    // parent flag edge; the 68000 pointer itself is not part of the trace.
-    int linked_actor_slot = -1;
-};
-
-enum class ActorAllocationPool {
-    CommonForward,       // slots 3..22, FUN_001AE262
-    CommonReverse,       // slots 20..1, FUN_001AE2AA
-    GameplayForward,     // slots 1..24, FUN_001AE27A
-    GameplayReverse,     // slots 24..1, FUN_001AE292
-};
-
-struct SpawnDescriptor {
-    bool valid = false;
-    std::uint8_t selector = 0;
-    std::uint32_t template_address = 0;
-    ActorAllocationPool allocation_pool = ActorAllocationPool::CommonForward;
-    int post_offset_x = 0;
-    int post_offset_y = 0;
-    bool override_type = false;
-    std::uint8_t type = 0;
-    bool override_animation = false;
-    std::uint32_t animation_pc = 0;
-    bool override_movement = false;
-    std::uint32_t movement_pc = 0;
-    bool override_resource_count = false;
-    std::uint8_t resource_count = 0;
-};
-
-class Level {
-public:
-    struct InteractionRecord {
-        int column = -1;
-        int row = -1;
-        std::uint16_t terrain_word = 0;
-        std::uint16_t resource_offset = 0;
-        std::uint8_t selector = 0;
-        int world_x = 0;
-        int world_y = 0;
-    };
-
-    struct TerrainCell {
-        bool valid = false;
-        int column = -1;
-        int row = -1;
-        std::uint16_t terrain_word = 0;
-        std::uint8_t behavior = 0;
-        std::uint32_t handler = 0;
-    };
-
-    struct TerrainQuery {
-        TerrainCell resolver;
-    };
-
-    struct TerrainCollisionFlags {
-        // FFF0C5/FFF0C8/FFF0CB from Player_TerrainCollisionProbe
-        // (0x001AD632). These are separate from the resolver result: the
-        // original probe uses the collision map's >=0xE0 criterion and runs
-        // before Player_IntegrateMotion.
-        bool stop_left = false;
-        bool stop_right = false;
-        bool stop_upward = false;
-        bool left_inner = false;
-        bool left_outer = false;
-        bool right_inner = false;
-        bool right_outer = false;
-    };
-
-    struct TerrainContour {
-        bool valid = false;
-        int row = -1;
-        int column = -1;
-        int target_world_y = 0;
-        std::uint8_t floor_type = 0;
-        std::uint8_t contour = 0;
-    };
-
-    void load(const std::string& asset_root, const std::string& rom_path = {});
-
-    int background_width() const { return background_width_; }
-    int background_height() const { return background_height_; }
-    const std::vector<std::uint8_t>& background_rgba() const { return background_rgba_; }
-    int parallax_width() const { return parallax_width_; }
-    int parallax_height() const { return parallax_height_; }
-    const std::vector<std::uint8_t>& parallax_rgba() const { return parallax_rgba_; }
-    const std::vector<std::uint16_t>& terrain_words() const { return terrain_words_; }
-    const std::vector<std::uint8_t>& floor_data() const { return floor_data_; }
-    const std::vector<InteractionRecord>& interaction_records() const {
-        return interaction_records_;
-    }
-    const std::vector<SDL_Color>& palette() const { return palette_; }
-    bool is_vdp_transparent(std::uint8_t red, std::uint8_t green, std::uint8_t blue) const;
-    int map_width() const { return map_width_; }
-    int map_height() const { return map_height_; }
-    int start_x() const { return start_x_; }
-    int start_y() const { return start_y_; }
-    int camera_start_x() const { return camera_start_x_; }
-    int camera_start_y() const { return camera_start_y_; }
-    int camera_threshold_x() const { return camera_threshold_x_; }
-    int camera_threshold_y() const { return camera_threshold_y_; }
-    int scene_state() const { return scene_state_; }
-
-    // This is the recovered FF9884/FFAE86 lookup in local, file-backed form.
-    std::uint8_t terrain_behavior(int column, int row) const;
-
-    // Resource offset 3 is the Level-01 interaction selector table. It is
-    // indexed by the same terrain-word resource offset used by the ROM's
-    // row scanner: floor[3 + (map_word >> 1)].
-    std::uint8_t interaction_selector(int column, int row) const;
-
-    // Exact fixed-ROM equivalent of Terrain_ResolvePlayerCell's address math:
-    // the resolver selects one 16-pixel row band and one column, then applies
-    // the terrain-word -> behavior-table lookup. No nearby-row search occurs.
-    TerrainCell resolve_player_cell(int world_x, int world_y) const;
-
-    // Canonical player probe used by the native terrain response.
-    TerrainQuery query_player(int world_x, int world_y) const;
-
-    // Exact fixed-ROM equivalent of Player_TerrainCollisionProbe at
-    // 0x001AD632. This is not a rectangle scan and does not use behavior
-    // handler dispatch. The landing-state byte controls whether the probe
-    // performs its extra downward row check.
-    TerrainCollisionFlags query_player_collision(
-        int world_x,
-        int world_y,
-        std::uint8_t landing_state
-    ) const;
-
-    // Exact fixed-ROM equivalent of Player_FloorContour at 0x001AD7B4.
-    // The routine checks the selected row and the next two rows, then uses
-    // the ROM contour table to turn a floor type and X fraction into a
-    // pixel-accurate target Y.
-    TerrainContour query_player_contour(
-        int world_x,
-        int world_y,
-        std::uint16_t surface_mode
-    ) const;
-
-private:
-    int map_width_ = 300;
-    int map_height_ = 45;
-    // These are configuration only; Engine owns mutable runtime camera state.
-    int start_x_ = 103;
-    int start_y_ = 416;
-    int camera_start_x_ = 0;
-    int camera_start_y_ = 464;
-    int camera_threshold_x_ = 103;
-    int camera_threshold_y_ = 416;
-    int scene_state_ = 1;
-    int background_width_ = 0;
-    int background_height_ = 0;
-    std::vector<std::uint8_t> background_rgba_;
-    int parallax_width_ = 0;
-    int parallax_height_ = 0;
-    std::vector<std::uint8_t> parallax_rgba_;
-    std::vector<std::uint16_t> terrain_words_;
-    std::vector<std::uint8_t> floor_data_;
-    std::vector<InteractionRecord> interaction_records_;
-    std::vector<std::uint8_t> contour_table_;
-    std::vector<SDL_Color> palette_;
-};
-
-// The Level-01 interaction table is mutable at runtime. The original clears
-// the selector at its resource offset after a successful allocation, which
-// makes the map a one-shot source while still allowing failed allocations to
-// be retried by a later camera refill pass.
-class InteractionMap {
-public:
-    void load(const Level& level);
-    void reset();
-
-    std::uint8_t selector(int column, int row) const;
-    std::uint8_t selector(const Level::InteractionRecord& record) const;
-    bool consume(std::uint16_t resource_offset);
-    const std::vector<Level::InteractionRecord>& records() const { return records_; }
-    std::size_t active_record_count() const;
-
-private:
-    std::vector<Level::InteractionRecord> records_;
-    std::vector<std::uint8_t> selectors_;
-};
 
 class Engine {
 public:
@@ -419,6 +179,7 @@ public:
     int frame() const { return frame_; }
     bool grounded() const { return player_.grounded; }
     const std::array<ActorState, 32>& actors() const { return actors_; }
+    const LevelDescriptor& level_descriptor() const { return level_.descriptor(); }
 
 private:
     struct CollisionBox {
@@ -441,7 +202,6 @@ private:
     void update_camera(bool suppress_vertical_follow = false);
     void initialize_camera_alignment();
     bool rebase_camera_reference();
-    void update_state08(const InputState& input);
     void apply_ground_movement(const InputState& input);
     void apply_terrain_behavior(const Level::TerrainCell& cell);
     void load_actor_records(const std::string& path);
@@ -475,10 +235,12 @@ private:
     int visual_y() const;
 
     Level level_;
+    SceneSystem scene_;
     PlayerState player_;
     CameraState camera_;
     SpriteDatabase sprites_;
     PlayerAnimationVm animation_;
+    MovementVm movement_vm_;
     std::array<PlayerAnimationVm, 32> actor_animations_{};
     // Controlled movement probes share a VBlank with the common actor
     // animation pass. The ROM services their animation cursor before
@@ -499,16 +261,13 @@ private:
     bool apple_following_tick_deferred_ = false;
     std::array<bool, 32> probe_actor_animation_active_{};
     InteractionMap interaction_map_;
-    std::array<ActorState, 32> actor_templates_{};
-    std::array<ActorState, 32> actors_{};
-    std::map<int, std::array<ActorState, 32>> actor_timeline_;
-    bool actor_snapshot_mode_ = false;
+    ActorSystem actors_{};
+    std::map<int, ActorSystem::Table> actor_timeline_;
     bool interaction_scan_initialized_ = false;
     bool interaction_selector_pending_ = false;
     // Slots retired by the movement VM remain unavailable to refill scans
     // until the next game-loop boundary, matching the ROM's refill-before-cull
     // allocator snapshot even when native camera reconstruction runs later.
-    std::array<bool, 32> actor_slots_culled_this_frame_{};
     // Type-0x1F actor flags are written after the player's ground step.  The
     // selector lock/camera delay become visible on the following VBlank.
     bool interaction_actor_lock_pending_ = false;

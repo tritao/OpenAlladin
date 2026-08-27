@@ -167,8 +167,16 @@ target_link_libraries(openaladdin_audio_sdl PUBLIC
 openaladdin_enable_warnings(openaladdin_audio_sdl)
 
 add_library(openaladdin_engine STATIC
+    src/actor.cpp
+    src/actor.hpp
     src/engine.cpp
     src/engine.hpp
+    src/level.cpp
+    src/level.hpp
+    src/movement.cpp
+    src/movement.hpp
+    src/scene.cpp
+    src/scene.hpp
 )
 target_include_directories(openaladdin_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_features(openaladdin_engine PUBLIC cxx_std_20)
@@ -214,6 +222,30 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(player_animation_test)
     openaladdin_enable_test_assertions(player_animation_test)
 
+    add_executable(level_descriptor_test tests/level_descriptor.cpp)
+    target_link_libraries(level_descriptor_test PRIVATE openaladdin_engine)
+    target_compile_features(level_descriptor_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(level_descriptor_test)
+    openaladdin_enable_test_assertions(level_descriptor_test)
+
+    add_executable(movement_vm_test tests/movement_vm.cpp)
+    target_link_libraries(movement_vm_test PRIVATE openaladdin_engine)
+    target_compile_features(movement_vm_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(movement_vm_test)
+    openaladdin_enable_test_assertions(movement_vm_test)
+
+    add_executable(scene_system_test tests/scene_system.cpp)
+    target_link_libraries(scene_system_test PRIVATE openaladdin_engine)
+    target_compile_features(scene_system_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(scene_system_test)
+    openaladdin_enable_test_assertions(scene_system_test)
+
+    add_executable(actor_system_test tests/actor_system.cpp)
+    target_link_libraries(actor_system_test PRIVATE openaladdin_engine)
+    target_compile_features(actor_system_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(actor_system_test)
+    openaladdin_enable_test_assertions(actor_system_test)
+
     add_executable(psg_test tests/psg.cpp)
     target_link_libraries(psg_test PRIVATE openaladdin_audio)
     target_compile_features(psg_test PRIVATE cxx_std_20)
@@ -256,6 +288,22 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME player_animation COMMAND player_animation_test)
     set_tests_properties(player_animation PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME level_descriptor COMMAND level_descriptor_test)
+    set_tests_properties(level_descriptor PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME movement_vm COMMAND movement_vm_test)
+    set_tests_properties(movement_vm PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME scene_system COMMAND scene_system_test)
+    set_tests_properties(scene_system PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME actor_system COMMAND actor_system_test)
+    set_tests_properties(actor_system PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME psg COMMAND psg_test)

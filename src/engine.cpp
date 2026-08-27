@@ -2,11 +2,9 @@
 
 #include <algorithm>
 #include <array>
-#include <cctype>
 #include <cstddef>
 #include <cstdlib>
 #include <fstream>
-#include <filesystem>
 #include <sstream>
 #include <stdexcept>
 
@@ -16,9 +14,6 @@ namespace {
 constexpr int kScreenWidth = 320;
 constexpr int kScreenHeight = 224;
 constexpr int kTerrainVisualOffsetY = 0xF0;
-constexpr std::size_t kLevelTableRomOffset = 0x2C78;
-constexpr std::size_t kLevelTableEntrySize = 66;
-constexpr int kLevelTableCount = 13;
 // The extracted level image is the VDP plane-A nametable in world space. At
 // the synchronized gameplay checkpoint, the VDP's plane origin is one tile
 // ahead of WORLD_CAMERA in both axes.
@@ -166,122 +161,6 @@ std::uint32_t terrain_handler(std::uint8_t behavior) {
     return behavior < kTerrainHandlers.size() ? kTerrainHandlers[behavior] : kTerrainNoOpHandler;
 }
 
-std::vector<std::uint8_t> read_file(const std::string& path) {
-    std::ifstream file(path, std::ios::binary);
-    if (!file) {
-        throw std::runtime_error("cannot open " + path);
-    }
-    file.seekg(0, std::ios::end);
-    const auto size = file.tellg();
-    if (size < 0) {
-        throw std::runtime_error("cannot size " + path);
-    }
-    file.seekg(0, std::ios::beg);
-    std::vector<std::uint8_t> data(static_cast<std::size_t>(size));
-    if (!data.empty()) {
-        file.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(data.size()));
-    }
-    if (!file) {
-        throw std::runtime_error("cannot read " + path);
-    }
-    return data;
-}
-
-std::uint16_t read_be_u16(
-    const std::vector<std::uint8_t>& data,
-    std::size_t offset
-) {
-    if (offset + 2 > data.size()) {
-        throw std::runtime_error("truncated ROM level table");
-    }
-    return static_cast<std::uint16_t>(
-        (static_cast<std::uint16_t>(data[offset]) << 8) | data[offset + 1]
-    );
-}
-
-int level_index_from_asset_root(const std::string& asset_root) {
-    const std::string name = std::filesystem::path(asset_root).filename().string();
-    if (name.size() != 7 || name.compare(0, 5, "level") != 0
-        || !std::isdigit(static_cast<unsigned char>(name[5]))
-        || !std::isdigit(static_cast<unsigned char>(name[6]))) {
-        return 1;
-    }
-    const int index = (name[5] - '0') * 10 + (name[6] - '0');
-    return index < kLevelTableCount ? index : 1;
-}
-
-std::string ppm_token(std::istream& input) {
-    while (true) {
-        int ch = input.peek();
-        if (ch == '#') {
-            std::string ignored;
-            std::getline(input, ignored);
-        } else if (ch != EOF && std::isspace(static_cast<unsigned char>(ch))) {
-            input.get();
-        } else {
-            break;
-        }
-    }
-    std::string token;
-    while (true) {
-        int ch = input.peek();
-        if (ch == EOF || std::isspace(static_cast<unsigned char>(ch)) || ch == '#') {
-            break;
-        }
-        token.push_back(static_cast<char>(input.get()));
-    }
-    return token;
-}
-
-struct PpmImage {
-    int width = 0;
-    int height = 0;
-    std::vector<std::uint8_t> rgba;
-};
-
-PpmImage read_ppm(const std::string& path) {
-    std::ifstream file(path, std::ios::binary);
-    if (!file) {
-        throw std::runtime_error("cannot open " + path);
-    }
-    if (ppm_token(file) != "P6") {
-        throw std::runtime_error(path + " is not a binary PPM (P6)");
-    }
-    const int width = std::stoi(ppm_token(file));
-    const int height = std::stoi(ppm_token(file));
-    const int max_value = std::stoi(ppm_token(file));
-    if (width <= 0 || height <= 0 || max_value != 255) {
-        throw std::runtime_error("unsupported PPM dimensions or color depth in " + path);
-    }
-    // ppm_token leaves the delimiter after max_value in the stream. Consume
-    // it before reading the packed RGB payload.
-    file.get();
-    std::vector<std::uint8_t> rgb(static_cast<std::size_t>(width) * height * 3);
-    file.read(reinterpret_cast<char*>(rgb.data()), static_cast<std::streamsize>(rgb.size()));
-    if (file.gcount() != static_cast<std::streamsize>(rgb.size())) {
-        throw std::runtime_error("truncated PPM payload in " + path);
-    }
-    PpmImage result{width, height, std::vector<std::uint8_t>(static_cast<std::size_t>(width) * height * 4)};
-    for (std::size_t source = 0, destination = 0; source < rgb.size(); source += 3, destination += 4) {
-        result.rgba[destination + 0] = rgb[source + 0];
-        result.rgba[destination + 1] = rgb[source + 1];
-        result.rgba[destination + 2] = rgb[source + 2];
-        result.rgba[destination + 3] = 255;
-    }
-    return result;
-}
-
-std::vector<std::uint16_t> read_be_words(const std::vector<std::uint8_t>& bytes) {
-    if (bytes.size() % 2 != 0) {
-        throw std::runtime_error("terrain map has an odd byte count");
-    }
-    std::vector<std::uint16_t> words(bytes.size() / 2);
-    for (std::size_t i = 0; i < words.size(); ++i) {
-        words[i] = static_cast<std::uint16_t>(bytes[i * 2] << 8 | bytes[i * 2 + 1]);
-    }
-    return words;
-}
-
 std::uint8_t fixed_high_byte(std::int16_t value) {
     return static_cast<std::uint8_t>(static_cast<std::uint16_t>(value) >> 8);
 }
@@ -294,370 +173,6 @@ std::uint32_t rgba(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t 
 }
 
 }  // namespace
-
-void Level::load(const std::string& asset_root, const std::string& rom_path) {
-    const int selected_scene_state = level_index_from_asset_root(asset_root);
-    scene_state_ = selected_scene_state;
-    bool table_configured = false;
-    std::vector<std::uint8_t> rom;
-    if (!rom_path.empty()) {
-        rom = read_file(rom_path);
-        const std::size_t entry_offset =
-            kLevelTableRomOffset
-            + static_cast<std::size_t>(selected_scene_state) * kLevelTableEntrySize;
-        if (entry_offset + kLevelTableEntrySize > rom.size()) {
-            throw std::runtime_error("ROM level table does not contain selected scene state");
-        }
-        camera_start_x_ = read_be_u16(rom, entry_offset + 0x00);
-        camera_start_y_ = read_be_u16(rom, entry_offset + 0x02);
-        start_x_ = read_be_u16(rom, entry_offset + 0x04);
-        start_y_ = read_be_u16(rom, entry_offset + 0x06);
-        camera_threshold_x_ = start_x_;
-        camera_threshold_y_ = start_y_;
-        map_width_ = read_be_u16(rom, entry_offset + 0x30);
-        map_height_ = read_be_u16(rom, entry_offset + 0x32);
-        table_configured = true;
-    }
-
-    const auto background = read_ppm(asset_root + "/background.ppm");
-    background_width_ = background.width;
-    background_height_ = background.height;
-    background_rgba_ = background.rgba;
-
-    if (!table_configured) {
-        if (background_width_ % 16 != 0 || background_height_ % 16 != 0) {
-            throw std::runtime_error("level background dimensions are not 16-pixel aligned");
-        }
-        map_width_ = background_width_ / 16;
-        map_height_ = background_height_ / 16;
-    }
-
-    const std::string parallax_path = asset_root + "/parallax.ppm";
-    std::ifstream parallax_file(parallax_path, std::ios::binary);
-    if (parallax_file.good()) {
-        const auto parallax = read_ppm(parallax_path);
-        parallax_width_ = parallax.width;
-        parallax_height_ = parallax.height;
-        parallax_rgba_ = parallax.rgba;
-    } else {
-        parallax_width_ = 0;
-        parallax_height_ = 0;
-        parallax_rgba_.clear();
-    }
-
-    const auto map_bytes = read_file(asset_root + "/raw/map.bin");
-    terrain_words_ = read_be_words(map_bytes);
-    if (terrain_words_.size() != static_cast<std::size_t>(map_width_ * map_height_)) {
-        throw std::runtime_error(
-            "selected level map dimensions do not match its terrain words"
-        );
-    }
-
-    floor_data_ = read_file(asset_root + "/raw/floor.bin");
-    interaction_records_.clear();
-    // Level-01's interaction resource is the fourth byte-oriented table in
-    // floor.bin. The map word is a 16-bit resource reference, so both the
-    // terrain and interaction lookups share the same (word >> 1) index.
-    for (int row = 0; row < map_height_; ++row) {
-        for (int column = 0; column < map_width_; ++column) {
-            const std::uint16_t terrain_word = terrain_words_[
-                static_cast<std::size_t>(row * map_width_ + column)];
-            const std::uint16_t resource_offset = static_cast<std::uint16_t>(terrain_word >> 1);
-            const std::size_t selector_index = static_cast<std::size_t>(3 + resource_offset);
-            if (selector_index >= floor_data_.size() || floor_data_[selector_index] == 0) {
-                continue;
-            }
-            interaction_records_.push_back(InteractionRecord{
-                column,
-                row,
-                terrain_word,
-                resource_offset,
-                floor_data_[selector_index],
-                column * 16,
-                row * 16 + kTerrainVisualOffsetY,
-            });
-        }
-    }
-    contour_table_.clear();
-    if (rom.size() >= static_cast<std::size_t>(kTerrainContourRomOffset + kTerrainContourRomSize)) {
-        contour_table_.assign(
-            rom.begin() + kTerrainContourRomOffset,
-            rom.begin() + kTerrainContourRomOffset + kTerrainContourRomSize
-        );
-    }
-    const auto palette_bytes = read_file(asset_root + "/raw/palette.bin");
-    if (palette_bytes.size() < 32) {
-        throw std::runtime_error("level palette is too short");
-    }
-    palette_.clear();
-    palette_.reserve(palette_bytes.size() / 2);
-    for (std::size_t i = 0; i + 1 < palette_bytes.size(); i += 2) {
-        const std::uint16_t word = static_cast<std::uint16_t>(palette_bytes[i] << 8 | palette_bytes[i + 1]);
-        const auto channel = [](std::uint16_t value, int shift) {
-            static constexpr std::uint8_t levels[8] = {
-                0, 52, 87, 116, 144, 172, 206, 255,
-            };
-            return levels[(value >> shift) & 7];
-        };
-        palette_.push_back(SDL_Color{channel(word, 1), channel(word, 5), channel(word, 9), 255});
-    }
-}
-
-std::uint8_t Level::interaction_selector(int column, int row) const {
-    if (column < 0 || column >= map_width_ || row < 0 || row >= map_height_) {
-        return 0;
-    }
-    const std::uint16_t terrain_word = terrain_words_[
-        static_cast<std::size_t>(row * map_width_ + column)];
-    const std::size_t selector_index = static_cast<std::size_t>(3 + (terrain_word >> 1));
-    return selector_index < floor_data_.size() ? floor_data_[selector_index] : 0;
-}
-
-void InteractionMap::load(const Level& level) {
-    records_ = level.interaction_records();
-    selectors_.assign(level.floor_data().size(), 0);
-    for (const Level::InteractionRecord& record : records_) {
-        const std::size_t index = static_cast<std::size_t>(3 + record.resource_offset);
-        if (index < selectors_.size()) {
-            selectors_[index] = record.selector;
-        }
-    }
-}
-
-void InteractionMap::reset() {
-    for (const Level::InteractionRecord& record : records_) {
-        const std::size_t index = static_cast<std::size_t>(3 + record.resource_offset);
-        if (index < selectors_.size()) {
-            selectors_[index] = record.selector;
-        }
-    }
-}
-
-std::uint8_t InteractionMap::selector(int column, int row) const {
-    for (const Level::InteractionRecord& record : records_) {
-        if (record.column == column && record.row == row) {
-            return selector(record);
-        }
-    }
-    return 0;
-}
-
-std::uint8_t InteractionMap::selector(const Level::InteractionRecord& record) const {
-    const std::size_t index = static_cast<std::size_t>(3 + record.resource_offset);
-    return index < selectors_.size() ? selectors_[index] : 0;
-}
-
-bool InteractionMap::consume(std::uint16_t resource_offset) {
-    const std::size_t index = static_cast<std::size_t>(3 + resource_offset);
-    if (index >= selectors_.size() || selectors_[index] == 0) {
-        return false;
-    }
-    selectors_[index] = 0;
-    return true;
-}
-
-std::size_t InteractionMap::active_record_count() const {
-    std::size_t count = 0;
-    for (const Level::InteractionRecord& record : records_) {
-        if (selector(record) != 0) ++count;
-    }
-    return count;
-}
-
-bool Level::is_vdp_transparent(
-    std::uint8_t red,
-    std::uint8_t green,
-    std::uint8_t blue
-) const {
-    // A Genesis plane pixel with color index zero is transparent. The
-    // extracted PPMs preserve the selected palette line, so compare against
-    // color zero from each of the four palette lines rather than a single
-    // RGB key.
-    for (int line = 0; line < 4; ++line) {
-        const std::size_t index = static_cast<std::size_t>(line * 16);
-        if (index < palette_.size()
-            && palette_[index].r == red
-            && palette_[index].g == green
-            && palette_[index].b == blue) {
-            return true;
-        }
-    }
-    return false;
-}
-
-std::uint8_t Level::terrain_behavior(int column, int row) const {
-    if (column < 0 || column >= map_width_ || row < 0 || row >= map_height_) {
-        return 0xFF;
-    }
-    const std::uint16_t terrain_word = terrain_words_[static_cast<std::size_t>(row * map_width_ + column)];
-    const std::size_t behavior_index = 2 + (terrain_word >> 1);
-    if (behavior_index >= floor_data_.size()) {
-        return 0xFF;
-    }
-    return floor_data_[behavior_index];
-}
-
-Level::TerrainCell Level::resolve_player_cell(int world_x, int world_y) const {
-    TerrainCell cell;
-    const int terrain_y = world_y - kTerrainVisualOffsetY;
-    if (terrain_y < 0 || terrain_y >= map_height_ * 16) {
-        return cell;
-    }
-
-    const int row = terrain_y >> 4;
-    const int column = (world_x + 16) >> 4;
-    if (column < 0 || column >= map_width_ || row < 0 || row >= map_height_) {
-        return cell;
-    }
-
-    const std::uint16_t word = terrain_words_[static_cast<std::size_t>(row * map_width_ + column)];
-    const std::size_t behavior_index = 2 + (word >> 1);
-    if (behavior_index >= floor_data_.size()) {
-        return cell;
-    }
-
-    cell.valid = true;
-    cell.column = column;
-    cell.row = row;
-    cell.terrain_word = word;
-    cell.behavior = floor_data_[behavior_index];
-    cell.handler = terrain_handler(cell.behavior);
-    return cell;
-}
-
-Level::TerrainQuery Level::query_player(int world_x, int world_y) const {
-    TerrainQuery query;
-    query.resolver = resolve_player_cell(world_x, world_y);
-    return query;
-}
-
-Level::TerrainCollisionFlags Level::query_player_collision(
-    int world_x,
-    int world_y,
-    std::uint8_t landing_state
-) const {
-    TerrainCollisionFlags flags;
-
-    // Player_TerrainCollisionProbe uses WORLD_CAMERA_Y + PLAYER_Y - 0x110
-    // as a pixel-space row selector and WORLD_CAMERA_X + PLAYER_X as the
-    // column selector. The ROM's row pointers are equivalent to these
-    // fixed-size level-01 indices.
-    const int collision_y = world_y - 0x110;
-    const int row = collision_y >> 4;
-    const int column = world_x >> 4;
-    if (collision_y < 0 || row < 0 || row >= map_height_ - 3
-        || column < 0 || column + 4 >= map_width_) {
-        return flags;
-    }
-
-    const auto blocking = [this](int test_column, int test_row) {
-        if (test_column < 0 || test_column >= map_width_
-            || test_row < 0 || test_row >= map_height_) {
-            return false;
-        }
-        // The collision probe deliberately uses a different interpretation
-        // from Terrain_ResolvePlayerCell: bytes >= 0xE0 are blocking geometry,
-        // while ordinary floor behavior 0x11 remains traversable here.
-        return terrain_behavior(test_column, test_row) >= 0xE0;
-    };
-
-    // Left side: the ROM first requires the two cells under the player's
-    // left column to be traversable, then records the two adjacent probes and
-    // the deeper wall condition. Only the terminal stop bit is consumed by
-    // the player motion path, but the complete condition is retained here.
-    const bool left_passable = !blocking(column, row) && !blocking(column, row + 1);
-    if (left_passable) {
-        flags.left_inner = blocking(column - 1, row + 1);
-        flags.left_outer = blocking(column - 2, row + 1);
-        flags.stop_left = blocking(column, row + 2)
-            || (landing_state == 0 && blocking(column, row + 3));
-    } else {
-        flags.stop_left = true;
-    }
-
-    // The ROM restores the base pointer and advances it by four bytes before
-    // the right-side pass. That is two terrain words, not one: the right
-    // group begins at column + 2 and its inner/outer probes are +3/+4.
-    const bool right_passable = !blocking(column + 2, row) && !blocking(column + 2, row + 1);
-    if (right_passable) {
-        flags.right_inner = blocking(column + 3, row + 1);
-        flags.right_outer = blocking(column + 4, row + 1);
-        flags.stop_right = blocking(column + 2, row + 2)
-            || (landing_state == 0 && blocking(column + 2, row + 3));
-    } else {
-        flags.stop_right = true;
-    }
-
-    // FFF0CB is the ceiling bit: the word immediately to the right of the
-    // base pointer at the probe row must be blocking. The ROM bounds-checks
-    // this pointer before testing it; the column bounds above provide the
-    // same protection for the fixed level map.
-    flags.stop_upward = blocking(column + 1, row);
-    return flags;
-}
-
-Level::TerrainContour Level::query_player_contour(
-    int world_x,
-    int world_y,
-    std::uint16_t surface_mode
-) const {
-    TerrainContour result;
-    if (contour_table_.size() < static_cast<std::size_t>(kTerrainContourRomSize)) {
-        return result;
-    }
-
-    // Player_FloorContour bounds its source lookup with:
-    //   (WORLD_CAMERA_Y + PLAYER_Y) - 0x100
-    //   < LEVEL_HEIGHT_PIXELS - 0x20
-    // FF98C4 is one 16-pixel row ahead of the resolver's FF9884 table, so
-    // the first candidate is the same row selected by the 0xF0 resolver.
-    const int lookup_y = world_y - 0x100;
-    if (lookup_y < 0 || lookup_y >= map_height_ * 16 - 0x20) {
-        return result;
-    }
-
-    const int base_row = (world_y - kTerrainVisualOffsetY) >> 4;
-    const int column = (world_x + 16) >> 4;
-    if (base_row < 0 || base_row + 2 >= map_height_
-        || column < 0 || column >= map_width_) {
-        return result;
-    }
-
-    const int x_fraction = world_x & 0x0F;
-    for (int candidate = 0; candidate < 3; ++candidate) {
-        const int row = base_row + candidate;
-        const std::uint16_t word = terrain_words_[static_cast<std::size_t>(row * map_width_ + column)];
-        const std::size_t floor_index = static_cast<std::size_t>(word >> 1)
-            + static_cast<std::size_t>(surface_mode);
-        if (floor_index >= floor_data_.size()) {
-            continue;
-        }
-
-        const std::uint8_t floor_type = floor_data_[floor_index];
-        const int fraction = candidate == 2 ? 2 : x_fraction;
-        const std::size_t contour_index = static_cast<std::size_t>(floor_type) * 16
-            + static_cast<std::size_t>(fraction);
-        if (contour_index >= contour_table_.size()) {
-            continue;
-        }
-
-        const std::uint8_t contour = static_cast<std::uint8_t>(contour_table_[contour_index] & 0x3F);
-        if (contour == 0) {
-            continue;
-        }
-
-        const int candidate_y = world_y - 16 + candidate * 16;
-        result.valid = true;
-        result.row = row;
-        result.column = column;
-        result.target_world_y = (candidate_y & ~0x0F) + contour - 1;
-        result.floor_type = floor_type;
-        result.contour = contour;
-        return result;
-    }
-
-    return result;
-}
 
 void Engine::load(
     const std::string& asset_root,
@@ -701,8 +216,10 @@ void Engine::load(
     } else {
         rom_bytes_.clear();
     }
-    actor_snapshot_mode_ = !actor_records_path.empty() || !actor_timeline_path.empty();
-    actor_templates_.fill({});
+    scene_.load_rom_bytes(rom_bytes_);
+    scene_.reset(level_.scene_state());
+    actors_.set_snapshot_mode(!actor_records_path.empty() || !actor_timeline_path.empty());
+    actors_.templates().fill({});
     if (!actor_records_path.empty()) {
         load_actor_records(actor_records_path);
     }
@@ -964,41 +481,7 @@ std::optional<SpawnDescriptor> Engine::spawn_descriptor(std::uint8_t selector) c
 }
 
 std::optional<std::size_t> Engine::allocate_actor_slot(ActorAllocationPool pool) const {
-    auto free_slot = [this](int slot) -> std::optional<std::size_t> {
-        if (slot < 0 || slot >= static_cast<int>(actors_.size())) return std::nullopt;
-        const std::size_t index = static_cast<std::size_t>(slot);
-        return actors_[index].type == 0 && !actor_slots_culled_this_frame_[index]
-            ? std::optional<std::size_t>(index)
-            : std::nullopt;
-    };
-
-    switch (pool) {
-    case ActorAllocationPool::CommonForward:
-        for (int slot = 3; slot <= 22; ++slot) {
-            if (auto found = free_slot(slot)) return found;
-        }
-        break;
-    case ActorAllocationPool::CommonReverse:
-        for (int slot = 20; slot >= 1; --slot) {
-            if (auto found = free_slot(slot)) return found;
-        }
-        break;
-    case ActorAllocationPool::GameplayForward:
-        // FUN_001AE27A starts at FF7E82 (slot 1) and runs DBRA #$17,
-        // covering the 24 gameplay records through slot 24.
-        for (int slot = 1; slot <= 24; ++slot) {
-            if (auto found = free_slot(slot)) return found;
-        }
-        break;
-    case ActorAllocationPool::GameplayReverse:
-        // FUN_001AE292 starts at FF8470 (slot 24) and scans back through
-        // slot 1 for the same 24-record gameplay pool.
-        for (int slot = 24; slot >= 1; --slot) {
-            if (auto found = free_slot(slot)) return found;
-        }
-        break;
-    }
-    return std::nullopt;
+    return actors_.allocate_actor_slot(pool);
 }
 
 ActorState Engine::actor_from_template(std::uint32_t template_address) const {
@@ -1082,7 +565,7 @@ void Engine::dispatch_interaction(
 }
 
 void Engine::scan_interaction_refill_window() {
-    if (actor_snapshot_mode_ || rom_bytes_.empty()) return;
+    if (actors_.snapshot_mode() || rom_bytes_.empty()) return;
 
     // The four original refill callers process one 16-row/23-column edge at
     // the camera's tile reference. Their source rows are terrain-space rows;
@@ -1162,7 +645,7 @@ void Engine::scan_interaction_refill_window() {
 }
 
 void Engine::update_dynamic_actor_culling() {
-    if (actor_snapshot_mode_) return;
+    if (actors_.snapshot_mode()) return;
     // Release static refill records once they leave the ROM's interaction
     // window. MovementVM_TickActors compares actor X against camera-0x50 and
     // camera+0x190 with inclusive edge semantics; retain the broad vertical
@@ -1171,28 +654,17 @@ void Engine::update_dynamic_actor_culling() {
     const int right = camera_.x + 0x190;
     const int top = camera_.y - 0x120;
     const int bottom = camera_.y + kScreenHeight + 0x120;
-    for (std::size_t slot = 1; slot < actors_.size(); ++slot) {
-        ActorState& actor = actors_[slot];
-        if (!actor.spawned_by_interaction || actor.type == 0 || actor.terminal_timer != 0) {
-            continue;
-        }
-        if (static_cast<int>(actor.x) < left || static_cast<int>(actor.x) > right
-            || static_cast<int>(actor.y) < top || static_cast<int>(actor.y) > bottom) {
-            actor_slots_culled_this_frame_[slot] = true;
-            // FUN_001AE0B0 clears only the record type before releasing its
-            // linked resources; the compact actor words (notably the stale
-            // movement-loop cursor) remain in RAM and are observable when
-            // the slot is reused by a later refill initializer. Preserve
-            // those words instead of replacing the whole host-side record.
-            actor.type = 0;
-            actor.spawned_by_interaction = false;
-            actor_animations_[slot].reset();
-        }
+    for (const std::size_t slot : actors_.cull_interaction_actors(left, right, top, bottom)) {
+        // FUN_001AE0B0 clears only the record type before releasing its linked
+        // resources. ActorSystem preserves the remaining compact words for
+        // the next template reuse; Engine only resets the VM attached to the
+        // retired slot.
+        actor_animations_[slot].reset();
     }
 }
 
 void Engine::sync_player_actor() {
-    if (actor_snapshot_mode_) return;
+    if (actors_.snapshot_mode()) return;
     ActorState& actor = actors_[0];
     actor.type = 0x83;
     actor.x = static_cast<std::uint16_t>(player_world_x());
@@ -1210,409 +682,14 @@ void Engine::sync_player_actor() {
 }
 
 void Engine::update_actor_movement() {
-    if (rom_bytes_.empty()) return;
-
-    const auto read_u8 = [&](std::uint32_t address) -> std::uint8_t {
-        if (address >= rom_bytes_.size()) return 0;
-        return rom_bytes_[address];
-    };
-    const auto read_u32 = [&](std::uint32_t address) -> std::uint32_t {
-        if (address + 3 >= rom_bytes_.size()) return 0;
-        return (static_cast<std::uint32_t>(read_u8(address)) << 24)
-            | (static_cast<std::uint32_t>(read_u8(address + 1)) << 16)
-            | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
-            | read_u8(address + 3);
-    };
-    const auto read_u16 = [&](std::uint32_t address) -> std::uint16_t {
-        return static_cast<std::uint16_t>(
-            (static_cast<std::uint16_t>(read_u8(address)) << 8)
-            | read_u8(address + 1));
-    };
-    const auto write_actor_value = [](ActorState& actor, std::uint16_t offset, int size, std::uint32_t value) {
-        if (size == 1) {
-            const auto byte = static_cast<std::uint8_t>(value);
-            switch (offset) {
-            case 0x00: actor.type = byte; break;
-            case 0x06: actor.movement_flags = byte; break;
-            case 0x09: actor.facing_x_flip = byte; break;
-            case 0x12: actor.movement_loop_timer = byte; break;
-            case 0x35: actor.facing_y_flip = byte; break;
-            case 0x36: actor.movement_command_timer = byte; break;
-            case 0x3C: actor.flags = byte; break;
-            default: break;
-            }
-        } else if (size == 2) {
-            const auto word = static_cast<std::uint16_t>(value);
-            switch (offset) {
-            case 0x02: actor.x = word; break;
-            case 0x04: actor.y = word; break;
-            default: break;
-            }
-        } else {
-            switch (offset) {
-            case 0x0A: actor.movement_pc = value; break;
-            case 0x0E: actor.movement_loop_pc = value; break;
-            case 0x14: actor.frame_ptr = value; break;
-            case 0x20: actor.animation_pc = value; break;
-            case 0x38: actor.movement_return_pc = value; break;
-            default: break;
-            }
-        }
-    };
-
-    for (ActorState& actor : actors_) {
-        if (actor.type == 0 || actor.terminal_timer != 0 || actor.movement_pc == 0
-            || actor.frame_ptr == 0) {
-            continue;
-        }
-
-        const std::uint8_t previous_type = actor.type;
-        const std::uint32_t step_pc = actor.movement_pc;
-        std::uint32_t cursor = step_pc;
-        if (cursor + 1 >= rom_bytes_.size()) continue;
-
-        // MovementVM_TickActors applies the per-record gravity increment
-        // before integrating the vertical accumulator. The increment is
-        // enabled by actor +0x06 bit 6; scene-created type-0x2D streams
-        // commonly arm it through a 0x91 callback in their first step.
-        if ((actor.movement_flags & 0x40) != 0) {
-            actor.movement_word_1a = static_cast<std::int16_t>(
-                actor.movement_word_1a + 0x78);
-        }
-
-        // MovementVM_TickActors integrates the two actor velocity words
-        // before consuming the next signed-delta step. The words are 8.8
-        // fixed-point values: the ROM-visible pixel coordinate receives the
-        // signed high byte, while the full word remains as the accumulator.
-        actor.x = static_cast<std::uint16_t>(
-            static_cast<int>(actor.x) + (actor.movement_word_18 >> 8));
-        actor.y = static_cast<std::uint16_t>(
-            static_cast<int>(actor.y) + (actor.movement_word_1a >> 8));
-        const auto decay_velocity = [](std::int16_t& velocity, std::int16_t step) {
-            if (velocity < 0) {
-                if (velocity > static_cast<std::int16_t>(-step)) {
-                    velocity = 0;
-                } else {
-                    velocity = static_cast<std::int16_t>(velocity + step);
-                }
-            } else if (velocity < step) {
-                velocity = 0;
-            } else {
-                velocity = static_cast<std::int16_t>(velocity - step);
-            }
-        };
-        decay_velocity(actor.movement_word_18, 0x28);
-        decay_velocity(actor.movement_word_1a, 0x3C);
-
-        int delta_x = static_cast<std::int8_t>(read_u8(cursor));
-        int delta_y = static_cast<std::int8_t>(read_u8(cursor + 1));
-        if (actor.facing_x_flip != 0) delta_x = -delta_x;
-        if (actor.facing_y_flip != 0) delta_y = -delta_y;
-        actor.x = static_cast<std::uint16_t>(static_cast<int>(actor.x) + delta_x);
-        actor.y = static_cast<std::uint16_t>(static_cast<int>(actor.y) + delta_y);
-        cursor += 2;
-
-        // The ROM applies the signed delta on every tick. The command timer
-        // gates only the command dispatch that follows it, so a delayed
-        // stream continues moving along the current step each frame.
-        if (actor.movement_command_timer != 0) {
-            --actor.movement_command_timer;
-            continue;
-        }
-
-        bool cursor_committed = false;
-        for (int command_count = 0; command_count < 32; ++command_count) {
-            const std::uint8_t opcode = read_u8(cursor);
-            if (opcode < 0x80 || opcode > 0x94) break;
-
-            switch (opcode) {
-            case 0x80:  // Movement_Jump: absolute long target.
-                cursor = read_u32(cursor + 2);
-                if (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94) {
-                    actor.movement_pc = cursor;
-                    cursor_committed = true;
-                    break;
-                }
-                continue;
-            case 0x81:  // Movement_ToggleFacing.
-                if (read_u8(cursor + 1) != 0) {
-                    actor.facing_y_flip = static_cast<std::uint8_t>(actor.facing_y_flip ^ 0xFF);
-                } else {
-                    actor.facing_x_flip = static_cast<std::uint8_t>(actor.facing_x_flip ^ 0xFF);
-                }
-                cursor += 2;
-                continue;
-            case 0x82:  // Movement_ClearCursor.
-                if (read_u8(cursor + 1) == 0) {
-                    actor.movement_pc = 0;
-                    cursor_committed = true;
-                    break;
-                }
-                actor.animation_pc = 0;
-                cursor += 2;
-                continue;
-            case 0x83: {  // Movement_WriteActorOrRamValue.
-                const std::uint8_t operand = read_u8(cursor + 1);
-                const int size = (operand & 0x0F) == 1 || (operand & 0x0F) == 2 ? 2 : 4;
-                const std::uint16_t offset = read_u16(cursor + 2);
-                const std::uint32_t value = size == 2
-                    ? read_u16(cursor + 4)
-                    : read_u32(cursor + 4);
-                // Absolute work-RAM writes need a RAM model. Actor-relative
-                // writes are safe to mirror now and cover the confirmed
-                // movement streams that update animation/state cursors.
-                if ((operand & 0x10) != 0) {
-                    write_actor_value(actor, offset, size, value);
-                }
-                cursor += static_cast<std::uint32_t>(4 + size);
-                continue;
-            }
-            case 0x84:  // Movement_SetCommandTimer.
-                // In movement mode the shared handler uses the high bit to
-                // select the per-frame command timer. Without it, the
-                // command initializes the separate loop cursor/timer pair.
-                if ((read_u8(cursor + 1) & 0x80) != 0) {
-                    actor.movement_command_timer = static_cast<std::uint8_t>(read_u8(cursor + 1) & 0x7F);
-                    actor.movement_pc = cursor + 2;
-                    cursor_committed = true;
-                    break;
-                } else {
-                    actor.movement_loop_timer = read_u8(cursor + 1);
-                    actor.movement_loop_pc = cursor + 2;
-                }
-                // A loop timer is setup inline with the current movement
-                // step. The interpreter continues through the rest of that
-                // step, so a following arithmetic command is consumed now
-                // rather than being mistaken for the next signed delta.
-                cursor += 2;
-                continue;
-            case 0x85:  // Movement_RewindAfterTimer.
-                // The original handler consumes one loop count and the
-                // interpreter rewinds to the saved loop cursor whenever the
-                // counter was non-zero on entry. Re-enter the command loop
-                // immediately: the saved cursor points at the inline 0x90
-                // command, not at a fresh signed-delta step.
-                if (actor.movement_loop_timer != 0) {
-                    --actor.movement_loop_timer;
-                    cursor = actor.movement_loop_pc;
-                    continue;
-                }
-                cursor += 2;
-                continue;
-            case 0x87: {  // Movement_AddSignedActorOffset.
-                const int delta = static_cast<std::int16_t>(
-                    (static_cast<std::uint16_t>(read_u8(cursor + 2)) << 8)
-                    | read_u8(cursor + 3));
-                if (read_u8(cursor + 1) == 0) {
-                    const int mirrored = actor.facing_x_flip != 0 ? -delta : delta;
-                    actor.x = static_cast<std::uint16_t>(static_cast<int>(actor.x) + mirrored);
-                } else {
-                    const int mirrored = actor.facing_y_flip != 0 ? -delta : delta;
-                    actor.y = static_cast<std::uint16_t>(static_cast<int>(actor.y) + mirrored);
-                }
-                cursor += 4;
-                continue;
-            }
-            case 0x88: {  // Movement_PlayerFlagTest.
-                // Shared movement command 0x88 maps to animation F2.  Its
-                // operand addresses an actor byte and branches on the
-                // selected bit (bit 6 selects set vs. clear), retaining the
-                // command-stream cursor when the predicate is false.
-                const std::uint8_t flags = read_u8(cursor + 1);
-                const int bit = flags & 7;
-                const std::uint16_t offset = read_u16(cursor + 2);
-                const bool set = [&]() {
-                    if (offset == 0x09) return (actor.facing_x_flip & (1U << bit)) != 0;
-                    if (offset == 0x35) return (actor.facing_y_flip & (1U << bit)) != 0;
-                    if (offset == 0x07) return (actor.runtime_field_07 & (1U << bit)) != 0;
-                    if (offset == 0x3C) return (actor.flags & (1U << bit)) != 0;
-                    return false;
-                }();
-                const bool branch = (flags & 0x40) != 0 ? set : !set;
-                const std::uint32_t target = read_u32(cursor + 4);
-                cursor = branch ? target : cursor + 8;
-                if (branch
-                    && (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94)) {
-                    actor.movement_pc = cursor;
-                    cursor_committed = true;
-                    break;
-                }
-                continue;
-            }
-            case 0x8A: {  // Movement_ActorFieldCompare.
-                const std::uint8_t flags = read_u8(cursor + 1);
-                const std::uint8_t operation = flags & 0x70;
-                const std::uint16_t offset = read_u16(cursor + 2);
-                const std::uint16_t value = read_u16(cursor + 4);
-                const std::uint32_t current = [&]() -> std::uint32_t {
-                    if (offset == 0x09) return actor.facing_x_flip;
-                    if (offset == 0x35) return actor.facing_y_flip;
-                    if (offset == 0x3C) return actor.flags;
-                    if (offset == 0x3D) return actor.interaction_state;
-                    return 0;
-                }();
-                bool branch = false;
-                switch (operation) {
-                case 0x10: branch = current == value; break;
-                case 0x20: branch = current != value; break;
-                case 0x30: branch = current >= value; break;
-                default: branch = current < value; break;
-                }
-                const std::uint32_t target = read_u32(cursor + 6);
-                cursor = branch ? target : cursor + 10;
-                if (branch
-                    && (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94)) {
-                    actor.movement_pc = cursor;
-                    cursor_committed = true;
-                    break;
-                }
-                continue;
-            }
-            case 0x90: {  // Movement_AddOrSubtractActorWord.
-                const std::uint8_t mode = read_u8(cursor + 1);
-                const std::uint16_t offset = read_u16(cursor + 2);
-                const auto value = static_cast<std::int16_t>(read_u16(cursor + 4));
-                const std::uint8_t width = static_cast<std::uint8_t>(mode & 0x3F);
-
-                // The confirmed sword stream uses actor-relative word
-                // arithmetic (mode 0x42, offset +0x1A). Keep the other
-                // address/width variants consumed but inert until their RAM
-                // targets are identified from a trace.
-                if ((mode & 0x40) != 0 && width == 2) {
-                    std::int16_t* target = nullptr;
-                    if (offset == 0x18) target = &actor.movement_word_18;
-                    if (offset == 0x1A) target = &actor.movement_word_1a;
-                    if (target != nullptr) {
-                        if ((mode & 0x80) != 0) {
-                            *target = static_cast<std::int16_t>(*target - value);
-                        } else {
-                            *target = static_cast<std::int16_t>(*target + value);
-                        }
-                    }
-                }
-                cursor += 6;
-                continue;
-            }
-            case 0x8C:  // Movement_ClearActor.
-                if (read_u8(cursor + 1) == 0 && (actor.flags & 0x04) == 0) {
-                    actor = ActorState{};
-                    cursor_committed = true;
-                    break;
-                }
-                cursor += 2;
-                continue;
-            case 0x8D:  // Movement_FacePlayer.
-                actor.facing_x_flip = player_world_x() < static_cast<int>(actor.x) ? 0xFF : 0;
-                cursor += 2;
-                continue;
-            case 0x8E:  // Movement_SelectDynamicStream.
-                // FUN_001AD150 returns the default actor stream in the
-                // no-player-state path used by the controlled probe. The
-                // remaining global-state selector branches need their own
-                // RAM fixtures before they can be mirrored safely.
-                actor.movement_pc = 0x00121AD8;
-                cursor_committed = true;
-                break;
-            case 0x91: {  // Movement_PushParameter / tail-call helper.
-                // The shared 0xFB handler pushes its long operand over the
-                // command-return address, so the helper executes immediately
-                // and returns to the movement command loop. Mirror the
-                // actor-local helpers observed in the live type-0x2D stream;
-                // global callbacks remain consumed but inert until their RAM
-                // side effects are modeled.
-                const std::uint32_t callback = read_u32(cursor + 2);
-                switch (callback) {
-                case 0x001ACB5A: actor.flags = static_cast<std::uint8_t>(actor.flags | 0x10); break;
-                case 0x001ACB62: actor.flags = static_cast<std::uint8_t>(actor.flags & ~0x10U); break;
-                case 0x001ACB6A: actor.movement_flags = static_cast<std::uint8_t>(actor.movement_flags | 0x40); break;
-                case 0x001ACB72: actor.movement_flags = static_cast<std::uint8_t>(actor.movement_flags & ~0x40U); break;
-                default: break;
-                }
-                cursor += 6;
-                continue;
-            }
-            case 0x92: {  // Movement_CallOrReturn.
-                const std::uint8_t operand = read_u8(cursor + 1);
-                if ((operand & 0x80) != 0) {
-                    cursor = actor.movement_return_pc;
-                } else {
-                    actor.movement_return_pc = cursor + 6;
-                    cursor = read_u32(cursor + 2);
-                }
-                if (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94) {
-                    actor.movement_pc = cursor;
-                    cursor_committed = true;
-                    break;
-                }
-                continue;
-            }
-            case 0x93: {  // Movement_PlayerWithinX.
-                const int threshold = read_u8(cursor + 1) == 0xFF
-                    ? 0x140
-                    : read_u8(cursor + 1);
-                const int distance = std::abs(player_world_x() - static_cast<int>(actor.x));
-                if (distance <= threshold) {
-                    cursor = read_u32(cursor + 2);
-                    if (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94) {
-                        actor.movement_pc = cursor;
-                        cursor_committed = true;
-                        break;
-                    }
-                    continue;
-                }
-                // A failed predicate falls through to the alternate command
-                // path in the same movement step. The stream itself decides
-                // whether that path eventually jumps back to the step root.
-                cursor += 6;
-                continue;
-            }
-            case 0x94: {  // Movement_PlayerWithinY.
-                const int threshold = read_u8(cursor + 1);
-                const int distance = std::abs(player_world_y() - static_cast<int>(actor.y));
-                if (distance <= threshold) {
-                    cursor = read_u32(cursor + 2);
-                    if (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94) {
-                        actor.movement_pc = cursor;
-                        cursor_committed = true;
-                        break;
-                    }
-                    continue;
-                }
-                // The original Y condition falls through when the player is
-                // outside the threshold; the inline jump after the command
-                // handles the alternate path.
-                cursor += 6;
-                continue;
-            }
-            default:
-                // Other conditional, RAM-write, spawn, and velocity commands
-                // are intentionally not guessed. Leave the cursor at the command
-                // so a trace can identify the next missing handler.
-                actor.movement_pc = cursor;
-                cursor_committed = true;
-                break;
-            }
-            break;
-        }
-        if (!cursor_committed) {
-            actor.movement_pc = cursor;
-        }
-        if (previous_type != kActorTerminalType
-            && actor.type == kActorTerminalType
-            && actor.terminal_timer == 0
-            && previous_type != 0x2A) {
-            // Movement streams can publish the terminal template directly
-            // (the type-0x45 path does so before AnimationVM_TickActors).
-            // Preserve the current boundary, then service the new cursor on
-            // the next VBlank regardless of the shared animation gate.
-            actor.animation_defer_ticks = 1;
-            actor.animation_force_next_tick = true;
-        }
-    }
+    movement_vm_.tick(
+        actors_,
+        MovementContext{rom_bytes_, player_world_x(), player_world_y()}
+    );
 }
 
 void Engine::update_probe_actor_animation_before_movement() {
-    if (rom_bytes_.empty() || !actor_snapshot_mode_) return;
+    if (rom_bytes_.empty() || !actors_.snapshot_mode()) return;
 
     // This marker describes only the current logical update. Clear it before
     // examining the persistent probe state so a retired slot cannot suppress
@@ -1772,7 +849,7 @@ void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         if (only_slot && slot != *only_slot) continue;
         ActorState& actor = actors_[slot];
-        if (!actor_snapshot_mode_ && slot == 0) {
+        if (!actors_.snapshot_mode() && slot == 0) {
             continue;
         }
         if (actor.type == 0 || actor.animation_pc == 0) {
@@ -2124,7 +1201,7 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
         }
         for (int slot = first_slot; step > 0 ? slot <= last_slot : slot >= last_slot; slot += step) {
             const std::size_t index = static_cast<std::size_t>(slot);
-            if (actors_[index].type != 0 || actor_slots_culled_this_frame_[index]) continue;
+            if (actors_[index].type != 0 || actors_.was_culled_this_frame(index)) continue;
             const ActorState previous = actors_[index];
             // The shared template initializer leaves these movement fields
             // untouched when F5 recycles a zero-type record.
@@ -2374,14 +1451,14 @@ void Engine::load_actor_records(const std::string& path) {
         std::string facing_y_flip;
         std::string movement_command_timer;
         if (!(row >> slot >> type >> x >> y >> movement_pc >> frame_ptr >> animation_pc >> flags)
-            || slot < 0 || slot >= static_cast<int>(actor_templates_.size())) {
+            || slot < 0 || slot >= static_cast<int>(actors_.templates().size())) {
             throw std::runtime_error(
                 "invalid actor record at " + path + ":" + std::to_string(line_number));
         }
         auto parse = [](const std::string& value) {
             return std::stoul(value, nullptr, 0);
         };
-        ActorState& actor = actor_templates_[static_cast<std::size_t>(slot)];
+        ActorState& actor = actors_.templates()[static_cast<std::size_t>(slot)];
         actor.type = static_cast<std::uint8_t>(parse(type));
         actor.x = static_cast<std::uint16_t>(parse(x));
         actor.y = static_cast<std::uint16_t>(parse(y));
@@ -2579,11 +1656,9 @@ void Engine::reset() {
     contour_ground_motion_ = false;
     interaction_reference_x_ = 0;
     interaction_reference_y_ = 0;
-    if (actor_snapshot_mode_) {
-        actors_ = actor_templates_;
+    actors_.reset();
+    if (actors_.snapshot_mode()) {
         apply_actor_timeline(0);
-    } else {
-        actors_.fill({});
     }
     random_state_ = 0;
     terrain_input_world_x_ = 0;
@@ -2611,7 +1686,8 @@ void Engine::reset() {
     camera_.vertical_threshold = level_.camera_threshold_y();
     camera_.level_width = level_.map_width() * 16;
     camera_.level_height = level_.map_height() * 16;
-    camera_.scene_state = level_.scene_state();
+    scene_.reset(level_.scene_state());
+    camera_.scene_state = scene_.scene_state();
     camera_.vdp_update = 1;
     player_.grounded = true;
     player_.attack_timer = 0;
@@ -2806,9 +1882,10 @@ void Engine::set_checkpoint_camera(
     // frame perform its initial interaction refill against the supplied
     // reference coordinates.
     interaction_scan_initialized_ = false;
-    camera_.scene_state = scene_state;
-    camera_.special_mode = scene_state == 8 ? 1 : 0;
-    camera_.vdp_update = scene_state == 8 ? 0 : 1;
+    scene_.select(scene_state);
+    camera_.scene_state = scene_.scene_state();
+    camera_.special_mode = scene_.is_transition() ? 1 : 0;
+    camera_.vdp_update = scene_.is_transition() ? 0 : 1;
     if (horizontal_threshold >= 0) camera_.horizontal_threshold = horizontal_threshold;
     if (vertical_threshold >= 0) camera_.vertical_threshold = vertical_threshold;
     if (update_delay >= 0) camera_.update_delay = update_delay;
@@ -3025,7 +2102,7 @@ void Engine::update_terrain_connector_response() {
     // frame this prepass consumes that latched byte and performs the small
     // one/two-pixel local-Y step while Up is held. The resolver later in the
     // same frame clears and re-raises QUERY_STATE_A for the next step.
-    if (camera_.scene_state == 8 || player_.terrain_query_state_a == 0) {
+    if (scene_.is_transition() || player_.terrain_query_state_a == 0) {
         player_.terrain_transition_gate = 0;
         return;
     }
@@ -3351,7 +2428,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         break;
     case 0x25: {  // TerrainHandler_SetTerrainStateBlock (0x001B54E0)
         player_.terrain_state = 0xFF;
-        if (camera_.scene_state != 5
+        if (scene_.scene_state() != 5
             || (player_.terrain_push_left == 0 && player_.terrain_push_right == 0)) {
             break;
         }
@@ -3644,7 +2721,7 @@ void Engine::update_camera(bool suppress_vertical_follow) {
         --camera_.update_delay;
         return;
     }
-    if (camera_.special_mode != 0 || camera_.scene_state == 8) {
+    if (camera_.special_mode != 0 || scene_.is_transition()) {
         return;
     }
 
@@ -3719,27 +2796,8 @@ void Engine::update_camera(bool suppress_vertical_follow) {
 
 }
 
-void Engine::update_state08(const InputState& input) {
-    // State 08 enters the transition branch at 0x001A9D18 and bypasses the
-    // normal physics/camera follower. The controller fallback at 0x001A9C9A
-    // moves the local coordinates in eight-pixel steps within these bounds.
-    if (input.right && player_.x < 0x130) {
-        player_.x += 8;
-    }
-    if (input.left && player_.x >= 0x10) {
-        player_.x -= 8;
-    }
-    if (input.up && player_.y >= 0x10) {
-        player_.y -= 8;
-    }
-    if (input.down && player_.y < 0x1E0) {
-        player_.y += 8;
-    }
-    player_.grounded = false;
-}
-
 void Engine::update(const InputState& input) {
-    actor_slots_culled_this_frame_.fill(false);
+    actors_.begin_frame();
     animation_preupdated_this_frame_.fill(false);
     for (ActorState& actor : actors_) {
         if (actor.runtime_field_07_delay == 0) continue;
@@ -3786,8 +2844,13 @@ void Engine::update(const InputState& input) {
             apple_actor_hold_next_frame_[slot] = true;
         }
     }
-    if (camera_.scene_state == 8) {
-        update_state08(input);
+    if (scene_.is_transition()) {
+        scene_.update_transition(
+            SceneInput{input.up, input.down, input.left, input.right},
+            player_.x,
+            player_.y,
+            player_.grounded
+        );
         animation_.update(
             SpritePose::Idle,
             horizontal_direction(input),
@@ -5083,7 +4146,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"attack_timer\":" << static_cast<unsigned>(player_.attack_timer)
            << ",\"attack_active\":" << (player_.attack_timer != 0 ? "true" : "false")
            << ",\"grounded\":" << (trace_grounded ? "true" : "false") << "}"
-           << ",\"scene\":{\"state\":" << camera_.scene_state
+           << ",\"scene\":{\"state\":" << scene_.scene_state()
            << ",\"script_cursor\":0"
            << ",\"script_data_cursor\":0"
            << ",\"table_index\":0"
@@ -5113,7 +4176,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"level_height\":" << camera_.level_height
            << ",\"update_delay\":" << camera_.update_delay
            << ",\"special_mode\":" << camera_.special_mode
-           << ",\"state_08\":" << (camera_.scene_state == 8 ? "true" : "false")
+           << ",\"state_08\":" << (scene_.is_transition() ? "true" : "false")
            << ",\"scroll_left_pending\":" << (camera_.scroll_left_pending ? 255 : 0)
            << ",\"scroll_right_pending\":" << (camera_.scroll_right_pending ? 255 : 0)
            << ",\"scroll_up_pending\":" << (camera_.scroll_up_pending ? 255 : 0)
