@@ -1,0 +1,66 @@
+{
+  "format": "openaladdin-level01-resource-dispatch-decomp-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify the targeted Level 01 resource-record dispatch region before selecting the next runtime probe.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "06112939bb37da07456cd5a29b6b25fe7757affb",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "target_request": "re/ghidra/targets/level01-resource-record-targets.json",
+  "report": "build/re/level01-resource-record-dispatch-decompile-v1.json",
+  "targets": [
+    {
+      "address": "0x001B58F4",
+      "name": "LevelObjectResourceTableB",
+      "semantics": "Generic template allocation followed by type 0x3A, animation 0x00122BD8, resource count 1, and camera-relative position (camera X + 0x140, D6 + camera Y + 0x100)."
+    },
+    {
+      "address": "0x001B5938",
+      "name": "LevelObjectResourceTableC",
+      "semantics": "Generic template allocation followed by type 0x34, animation 0x00122C1E, movement 0x001217B4, resource count 6, and the same camera-relative position."
+    },
+    {
+      "address": "0x001B5984",
+      "name": "LevelObjectResourceTableD",
+      "semantics": "Generic camera-relative allocation with a conditional second allocation at X + 0x20."
+    },
+    {
+      "address": "0x001B59F6",
+      "name": "LevelObjectResourceTableF",
+      "semantics": "Single generic camera-relative actor allocation."
+    },
+    {
+      "address": "0x001B5A28",
+      "name": "LevelObjectResourceTableG",
+      "semantics": "Single generic camera-relative actor allocation."
+    },
+    {
+      "address": "0x001B5A5A",
+      "name": "LevelObjectResourceTableH",
+      "semantics": "Fixed local actor pair at (0x18E,0x164) and (0x18E,0x178), with animation/movement streams 0x0012585C/0x00120FA0 and 0x00125864/0x00120F8A."
+    },
+    {
+      "address": "0x001B5AB8",
+      "name": "LevelObjectResourceTableJ",
+      "semantics": "Fixed local actor at (0x18E,0x164), animation 0x0012586C."
+    },
+    {
+      "address": "0x001B5AE0",
+      "name": "LevelObjectResourceTableK",
+      "semantics": "Fixed local actor at (0x18E,0x164), animation 0x0012585C, movement 0x00120FB4."
+    },
+    {
+      "address": "0x001B5B10",
+      "name": "LevelObjectResourceTableL",
+      "semantics": "Fixed local actor at (0x18E,0x164), animation 0x00125864, movement 0x00120F8A."
+    }
+  ],
+  "supporting_blocks": {
+    "0x001B54E0": "Terrain-state block sets TERRAIN_STATE=0xFF; only under SCENE_STATE=0x05 and horizontal push does it consider the random terrain actor templates at 0x001250CE/0x001250DE.",
+    "0x001B5320": "Surface interaction block allocates from a terrain response path when its scene/landing conditions hold; it is not a direct scene transition writer.",
+    "0x001B524E-0x001B52A0": "Generic forward/reverse/free-slot allocators initialize records and write player-relative coordinates."
+  },
+  "conclusion": "The suspected 0x001B58F4-0x001B5B10 range is a family of actor/resource allocators, including the confirmed type-0x34 wall/effect record, rather than a hidden terrain or scene loader. The next runtime target should therefore be the behavior-0x47 terrain callback and player-response path that can expose the upper transfer, not another resource-table breakpoint sweep."
+}

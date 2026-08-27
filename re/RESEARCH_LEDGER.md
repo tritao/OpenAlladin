@@ -825,6 +825,25 @@ The other changing gates are terrain or death bookkeeping, so the missing
 work is the upper transfer that must satisfy the exit predicate, not another
 countdown producer.
 
+The fresh natural gate trace is recorded in
+`re/mame/findings/20260827-level01-natural-gate-trace-v1.json` and
+`re/mame/campaigns/20260827-level01-natural-gate-trace-v1.json`. From power-on,
+the route reaches world `(2564,920)` by frame 2296 and remains in gameplay
+scene state `0x01`. The exit predicate executes 1105 times from frame 1190
+through 2294, but its `X>0x1287, Y<0x1D6` condition is never satisfied; there
+are no gameplay writes to `SCENE_STATE`, `SCENE_SCRIPT_COUNTDOWN`, or
+`0xFFF0E9`. The changing `0xFFF0D0` and `0xFFF0DB` fields remain local terrain
+bookkeeping, so this closes another direct gate/countdown probe and preserves
+the fresh trace as the early-route provenance anchor.
+
+The targeted resource-dispatch decompilation is summarized in
+`re/mame/findings/20260827-level01-resource-dispatch-decomp-v1.json`. The
+`0x001B58F4-0x001B5B10` family consists of camera-relative or fixed-local actor
+allocators; `0x001B5938` specifically materializes type `0x34` with animation
+`0x00122C1E`, movement `0x001217B4`, and resource count 6. The range does not
+contain a hidden terrain/scene loader, so the next productive runtime target
+is the behavior-`0x47` terrain callback and player-response path.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -892,6 +911,7 @@ countdown producer.
 | `20260826-level01-scene-countdown-writers-v1` | recorded-negative-natural | complete countdown-writer static/runtime audit; no gameplay countdown or scene-state write |
 | `20260827-level01-actor-lifecycle-v1` | recorded-lifecycle | type-0x2D player-collision cleanup at the first actor parity break; no scene transition |
 | `20260827-level01-actor-refill-vm-v1` | recorded-boundary-classification | interaction-refill allocation, animation-gate crossing, and transient slot-8 cursor boundary |
+| `20260827-level01-natural-gate-trace-v1` | recorded-negative-natural | fresh power-on exit-predicate and scene-gate trace through the early lower-floor frontier |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

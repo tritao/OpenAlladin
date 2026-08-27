@@ -1,0 +1,90 @@
+{
+  "campaign": "20260827-level01-natural-gate-trace-v1",
+  "status": "recorded-negative-natural",
+  "purpose": "Preserve a fresh power-on natural-route trace with the Level 01 exit predicate, scene-state writers, and transition gate fields instrumented.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "repository_commit": "06112939bb37da07456cd5a29b6b25fe7757affb",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace_harness_commit": "06112939bb37da07456cd5a29b6b25fe7757affb",
+  "capture_contract": "openaladdin-frame-state-v1",
+  "static_report": "build/re/level01-resource-record-dispatch-decompile-v1.json",
+  "segments": [
+    {
+      "id": "fresh-natural-route-gate-watch",
+      "trace_dir": "build/re/campaigns/20260827-level01-natural-gate-trace-v1",
+      "frames": 2296,
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right,right*149,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c,right*195,b+right*50,right*100,none*15",
+      "start_condition": "MAME Genesis machine booted from power-on with no loaded state",
+      "capture": "state",
+      "scene_state_trace": true,
+      "debug_watch": true,
+      "breakpoints": [
+        "0x001B2DB8",
+        "0x001B2DD8",
+        "0x001B042A",
+        "0x001B5318",
+        "0x001B53B8",
+        "0x001B5B4A",
+        "0x001B5B66",
+        "0x001A8ED2"
+      ],
+      "watched_addresses": [
+        "0x00FF7E26",
+        "0x00FF7E22",
+        "0x00FFF57C",
+        "0x00FFF57E",
+        "0x00FFF0D0",
+        "0x00FFF0DB",
+        "0x00FFF0DC",
+        "0x00FFF0E6",
+        "0x00FFF0E9"
+      ],
+      "trace_files": [
+        "state.jsonl",
+        "trace_boot.jsonl",
+        "debug.log"
+      ],
+      "result": "The route stays in gameplay scene state 0x01 and terminates at the early lower-floor frontier; no exit or scene-state writer breakpoint is reached."
+    }
+  ],
+  "observed": {
+    "state_frames": [0, 2296],
+    "scene_states": [0, 1],
+    "max_player_world": {
+      "x": 2564,
+      "y": 920,
+      "frame": 2283
+    },
+    "exit_predicate": {
+      "requested": "0x001B5B4A",
+      "reported_post_instruction_pc": "0x001B5B4C",
+      "hits": 1105,
+      "frame_range": [1190, 2294],
+      "condition": "world X > 0x1287 and world Y < 0x01D6",
+      "satisfied": false
+    },
+    "writes": {
+      "scene_state": {
+        "address": "0x00FF7E26",
+        "gameplay_writes": 0
+      },
+      "scene_script_countdown": {
+        "address": "0x00FFF0DC",
+        "gameplay_writes": 0
+      },
+      "player_terminal_gate": {
+        "address": "0x00FFF0E9",
+        "gameplay_writes": 0,
+        "initialization_writes": 3
+      },
+      "terrain_and_local_gates": {
+        "0x00FFF0D0": 1105,
+        "0x00FFF0DB": 1105,
+        "0x00FFF0E6": 3
+      }
+    }
+  },
+  "conclusion": "This is a reproducible negative natural-route boundary: the exit predicate executes from frame 1190 onward, but the fresh route reaches only world (2564,920), so its upper-band Y condition is never met. The observed FFF0D0/FFF0DB activity is local terrain bookkeeping, while FFF0E9 and SCENE_STATE remain unchanged during gameplay. This trace closes another repeated gate/countdown probe and keeps the next search focused on the route transfer that can bring the player above Y=0x01D6."
+}
