@@ -184,6 +184,19 @@ public:
     // Action-selector boundaries occasionally expose a command result for an
     // additional state before the following animation service.
     void defer_tick_next_update();
+    // Actor producers can publish a record immediately before the shared
+    // ordinal-30 traversal. Keep that producer-to-VM boundary on the actor's
+    // VM rather than adding synthetic fields to the Genesis actor record.
+    void defer_actor_service();
+    void defer_actor_service_on_gate();
+    void defer_actor_service_then_force();
+    void force_actor_service_next_update();
+    void defer_actor_retirement();
+    void clear_actor_service_boundary();
+    bool consume_actor_service(bool scheduler_service, bool defer_gate);
+    bool consume_actor_retirement_defer();
+    bool actor_service_deferred() const;
+    bool actor_service_forced() const;
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
@@ -319,6 +332,10 @@ private:
         ForceNextUpdate,
         ForceWithoutPhase,
         DeferNextUpdate,
+        ActorDeferUntilGate,
+        ActorDeferOnGate,
+        ActorDeferThenForce,
+        ActorRetireNextUpdate,
     };
     ServiceBoundary service_boundary_ = ServiceBoundary::None;
     bool clear_timer_next_update_ = false;

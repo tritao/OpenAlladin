@@ -164,7 +164,7 @@ std::uint32_t terrain_handler(std::uint8_t behavior) {
     return behavior < kTerrainHandlers.size() ? kTerrainHandlers[behavior] : kTerrainNoOpHandler;
 }
 
-constexpr std::uint32_t kCheckpointVersion = 5;
+constexpr std::uint32_t kCheckpointVersion = 6;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
     writer.u8(selector.animation_gate);
@@ -749,22 +749,21 @@ void Engine::dispatch_interaction(
     actor.interaction_resource_offset = record.resource_offset;
     actor.interaction_selector = selector;
     actor.spawned_by_interaction = true;
+    actors_[*slot] = actor;
+    actor_animations_[*slot].reset();
     // Selector 0x80 has no movement stream, but its animation cursor is
     // installed after the common actor pass and is first serviced on the
     // following VBlank sample.
     if (selector == 0x80) {
-        actor.animation_defer_ticks = 1;
-        actor.animation_force_next_tick = true;
+        actor_animations_[*slot].defer_actor_service_then_force();
     }
     // Interaction refill publishes the short type-0x06 resource actor after
     // the current animation walk. Keep its first cursor visible for one
     // boundary before the 0x001AD40E resource-cleanup check can retire it.
     if (actor.type == 0x06 && actor.animation_pc == 0x00123200
         && actor.x == 1849 && actor.y == 775) {
-        actor.animation_defer_ticks = 1;
+        actor_animations_[*slot].defer_actor_service();
     }
-    actors_[*slot] = actor;
-    actor_animations_[*slot].reset();
     interaction_map_.consume(record.resource_offset);
 }
 
@@ -893,10 +892,27 @@ void Engine::publish_player_world_coordinates() {
 }
 
 void Engine::update_actor_movement() {
+    std::array<std::uint8_t, 32> previous_types{};
+    for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
+        previous_types[slot] = actors_[slot].type;
+    }
     movement_vm_.tick(
         actors_,
         MovementContext{rom_bytes_, player_world_x(), player_world_y()}
     );
+    for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
+        const ActorState& actor = actors_[slot];
+        if (previous_types[slot] != kActorTerminalType
+            && actor.type == kActorTerminalType
+            && actor.terminal_timer == 0
+            && previous_types[slot] != 0x2A) {
+            // Movement streams can publish the terminal template directly
+            // (the type-0x45 path does so before AnimationVM_TickActors).
+            // Preserve the current boundary, then service the new cursor on
+            // the next VBlank regardless of the shared animation gate.
+            actor_animations_[slot].defer_actor_service_on_gate();
+        }
+    }
 }
 
 void Engine::update_terminal_actor_motion(ActorState& actor) {
@@ -998,14 +1014,13 @@ void Engine::update_actor_animations() {
             // state boundary, then the resource sweep clears it on the next
             // pass. Use the same one-boundary defer used by the short 0x06
             // refill effect below.
-            if (actor.animation_defer_ticks != 0) {
-                --actor.animation_defer_ticks;
+            if (actor_animations_[slot].consume_actor_retirement_defer()) {
+                actor = ActorState{};
+                actor_animations_[slot].reset();
             } else {
-                actor.animation_defer_ticks = 1;
+                actor_animations_[slot].defer_actor_retirement();
                 continue;
             }
-            actor = ActorState{};
-            actor_animations_[slot].reset();
             continue;
         }
         // The short type-0x06 resource effect reaches the ROM cleanup loop
@@ -1014,19 +1029,9 @@ void Engine::update_actor_animations() {
         // exhausted, so the record is cleared at the next actor boundary.
         if (actor.type == 0x06 && actor.animation_pc == 0x00123200
             && actor.x == 1849 && actor.y == 775
-            && (actor.animation_defer_ticks == 0 || frame_ >= 522)) {
+            && (!actor_animations_[slot].actor_service_deferred() || frame_ >= 522)) {
             actor = ActorState{};
             actor_animations_[slot].reset();
-            continue;
-        }
-        if (actor.spawned_by_interaction
-            && actor.interaction_selector == 0x80
-            && actor.animation_defer_ticks != 0) {
-            // This selector's record is created around the shared actor
-            // traversal. Consume the initial defer without servicing it;
-            // the force bit then carries the first animation tick to the
-            // following VBlank, including the ungated phase.
-            actor.animation_defer_ticks = 0;
             continue;
         }
         // The live sword trace reaches the terminal actor template at the
@@ -1050,39 +1055,29 @@ void Engine::update_actor_animations() {
         // two VBlank passes before AnimationVM begins servicing it. Death
         // records also use type 0x84, but their terminal_timer guard above
         // keeps them on their independent cleanup path.
-        if (actor.animation_defer_ticks != 0) {
-            // A gated VBlank does not consume the generic first-tick defer;
-            // the caller's record remains at its initialized cursor until
-            // the next serviced pass.
-            if (!service_actor_table) continue;
-            --actor.animation_defer_ticks;
-            if (actor.animation_defer_ticks != 0
-                || !actor.animation_force_next_tick) {
-                continue;
-            }
-        }
-        const bool force_service = actor.animation_force_next_tick;
-        if (force_service) {
-            actor.animation_force_next_tick = false;
-        }
         // The apple child has its own every-other-VBlank cadence beginning
         // at allocation; unlike the shared table, it is serviced on both
         // phases of the global actor gate while it remains type 0x80.
         const bool apple_actor_service = actor.spawned_by_apple;
-        if (!service_actor_table
-            && !apple_actor_service && actor.type == kActorTerminalType
+        const bool force_service = actor_animations_[slot].actor_service_forced();
+        const bool actor_service = actor_animations_[slot].consume_actor_service(
+            service_actor_table || apple_actor_service,
+            service_actor_table
+        );
+        if (!actor_service) {
+            if (!service_actor_table
+                && !apple_actor_service && actor.type == kActorTerminalType
             && actor.terminal_timer == 0) {
-            // Terminal actors with a null movement cursor still pass through
-            // MovementVM_TickActors on the ungated VBlank phases. Apply their
-            // accumulator decay before the early animation-table continue;
-            // otherwise a freshly converted actor loses every other gravity
-            // step compared with the ROM.
-            update_terminal_actor_motion(actor);
-        }
-        if (!service_actor_table && !force_service && !apple_actor_service) {
+                // Terminal actors with a null movement cursor still pass
+                // through MovementVM_TickActors on the ungated VBlank phases.
+                // Apply their accumulator decay before the early
+                // animation-table continue; otherwise a freshly converted
+                // actor loses every other gravity step compared with ROM.
+                update_terminal_actor_motion(actor);
+            }
             // FF7E28 gates the complete table walk, not just newly spawned
-            // records. Keep the explicit conversion follow-up above as the
-            // one evidence-backed exception.
+            // records. Actor-local producer boundaries are consumed above by
+            // the VM that owns this record.
             continue;
         }
         // AnimationVM_TickActors is guarded by the ROM's byte at FF7E28, but
@@ -1164,7 +1159,7 @@ void Engine::update_actor_animations() {
             // an ED/EC command (the type-0x45 -> 0x84 path). The ROM's next
             // VBlank services that freshly published cursor even when the
             // shared gate is on its opposite phase.
-            actor.animation_force_next_tick = true;
+            actor_animations_[slot].force_actor_service_next_update();
         }
         AnimationSpawnRequest spawn_request;
         while (actor_animations_[slot].take_spawn_request(spawn_request)) {
@@ -1292,13 +1287,6 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
         spawned.facing_y_flip = request.source_facing_y_flip;
         spawned.spawned_by_animation = true;
         spawned.spawned_by_apple = request.apple_action;
-        if (request.apple_action) {
-            // The allocated projectile reaches the common actor table on the
-            // current boundary, but its first frame is consumed on the next
-            // one. Keep that lifecycle in the actor record's existing delay
-            // byte instead of a parallel per-slot Engine flag.
-            spawned.animation_defer_ticks = 1;
-        }
         if (request.mode == 5 || request.mode == 6) {
             spawned.linked_actor_slot = request.source_actor_slot;
         }
@@ -1356,6 +1344,13 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
             spawned.movement_return_pc = previous.movement_return_pc;
             actors_[index] = spawned;
             actor_animations_[static_cast<std::size_t>(slot)].reset();
+            if (request.apple_action) {
+                // The allocated projectile reaches the common actor table on
+                // the current boundary, but its first frame is consumed on
+                // the next one. Keep that producer boundary with the actor
+                // VM rather than adding a field to the Genesis record.
+                actor_animations_[static_cast<std::size_t>(slot)].defer_actor_service();
+            }
             return static_cast<std::size_t>(slot);
         }
         return std::nullopt;
@@ -2525,10 +2520,13 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
             spawned_actor.movement_loop_pc = previous.movement_loop_pc;
             spawned_actor.movement_loop_timer = previous.movement_loop_timer;
             spawned_actor.movement_return_pc = previous.movement_return_pc;
-            // The terrain handler runs before the actor animation pass, so
-            // the new record is eligible for its first animation word on
-            // this same VBlank.
+            // The terrain handler runs before the actor animation pass, but
+            // the ROM's new-record boundary defers the first actor service
+            // and forces it on the following VBlank, regardless of the
+            // shared actor-table gate phase.
             actors_[slot] = spawned_actor;
+            actor_animations_[slot].clear_actor_service_boundary();
+            actor_animations_[slot].defer_actor_service_then_force();
             break;
         }
         break;
@@ -2598,7 +2596,6 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         spawned.animation_pc = read_rom_u32(kTerrainScene5SpawnTemplate + 0x0C);
         spawned.facing_y_flip = read_rom_u8(kTerrainScene5SpawnTemplate + 0x11);
         spawned.flags = read_rom_u8(kTerrainScene5SpawnTemplate + 0x12);
-        spawned.animation_defer_ticks = 1;
         spawned.x = static_cast<std::uint16_t>(
             terrain_input_world_x_ + static_cast<int>(random_value & 7U) - 3);
         spawned.y = static_cast<std::uint16_t>(terrain_input_world_y_ - 0x2A);
@@ -2610,6 +2607,8 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
             spawned.animation_pc = kTerrainScene5SpawnAnimationDefault;
         }
         actors_[free_slot] = spawned;
+        actor_animations_[free_slot].clear_actor_service_boundary();
+        actor_animations_[free_slot].defer_actor_service();
         break;
     }
     case 0x27:  // TerrainHandler_TransitionResponse (0x001B54A6)
@@ -3072,7 +3071,8 @@ void Engine::update(const InputState& input) {
         const auto& words = level_.terrain_words();
         const auto& floor = level_.floor_data();
         constexpr int kTerrainResourceBase = 0x2FD2;
-        for (ActorState& actor : actors_) {
+        for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
+            ActorState& actor = actors_[slot];
             if (actor.type == 0
                 || ((actor.flags & 0x08) != 0 && !actor.spawned_by_apple)
                 || ((actor.movement_flags & 0x01) == 0 && !actor.spawned_by_apple)
@@ -3138,8 +3138,8 @@ void Engine::update(const InputState& input) {
                     actor.movement_loop_pc = loop_pc;
                     actor.movement_loop_timer = loop_timer;
                     actor.movement_return_pc = return_pc;
-                    actor.animation_defer_ticks = 1;
-                    actor.animation_force_next_tick = false;
+                    actor_animations_[slot].clear_actor_service_boundary();
+                    actor_animations_[slot].defer_actor_service();
                     actor.spawned_by_apple = false;
                 }
                 continue;
@@ -3202,7 +3202,8 @@ void Engine::update(const InputState& input) {
         const auto& words = level_.terrain_words();
         const auto& floor = level_.floor_data();
         constexpr int kTerrainResourceBase = 0x2FD2;
-        for (ActorState& actor : actors_) {
+        for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
+            ActorState& actor = actors_[slot];
             if (actor.type != 0x2D
                 || (actor.flags & 0x08) == 0
                 || actor.frame_ptr == 0
@@ -3254,8 +3255,8 @@ void Engine::update(const InputState& input) {
             // the direct terrain path instead and keeps the template's zero
             // facing byte.
             actor.facing_x_flip = animation_pc == 0x00123EFA ? 0 : 0xFF;
-            actor.animation_defer_ticks = 1;
-            actor.animation_force_next_tick = true;
+            actor_animations_[slot].clear_actor_service_boundary();
+            actor_animations_[slot].defer_actor_service_on_gate();
             actor.spawned_by_animation = spawned_by_animation;
         }
     }
@@ -4210,7 +4211,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v3\""
            << ",\"frame\":" << frame_
            << ",\"input\":\"" << input_token << "\""
-           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"animation_defer_ticks\",\"animation_force_next_tick\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
+           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
            << ",\"player\":{\"x\":" << player_.x
            << ",\"y\":" << player_.y
            << ",\"world_x\":" << player_world_x()
@@ -4532,9 +4533,6 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"interaction_state\":" << static_cast<unsigned>(actor.interaction_state)
                << ",\"runtime_field_07_delay\":" << static_cast<unsigned>(actor.runtime_field_07_delay)
                << ",\"terminal_timer\":" << static_cast<unsigned>(actor.terminal_timer)
-               << ",\"animation_defer_ticks\":" << static_cast<unsigned>(actor.animation_defer_ticks)
-               << ",\"animation_force_next_tick\":"
-               << (actor.animation_force_next_tick ? "true" : "false")
                << ",\"resource_count\":" << static_cast<unsigned>(actor.resource_count)
                << ",\"interaction_resource_offset\":" << actor.interaction_resource_offset
                << ",\"interaction_selector\":" << static_cast<unsigned>(actor.interaction_selector)

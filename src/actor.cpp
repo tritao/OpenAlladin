@@ -28,8 +28,6 @@ void write_actor_state(checkpoint::Writer& writer, const ActorState& actor) {
     writer.u8(actor.terminal_timer);
     writer.u8(actor.movement_command_timer);
     writer.u8(actor.animation_timer);
-    writer.u8(actor.animation_defer_ticks);
-    writer.boolean(actor.animation_force_next_tick);
     writer.u8(actor.resource_count);
     writer.u16(actor.interaction_resource_offset);
     writer.u8(actor.interaction_selector);
@@ -62,8 +60,6 @@ ActorState read_actor_state(checkpoint::Reader& reader) {
     actor.terminal_timer = reader.u8();
     actor.movement_command_timer = reader.u8();
     actor.animation_timer = reader.u8();
-    actor.animation_defer_ticks = reader.u8();
-    actor.animation_force_next_tick = reader.boolean();
     actor.resource_count = reader.u8();
     actor.interaction_resource_offset = reader.u16();
     actor.interaction_selector = reader.u8();

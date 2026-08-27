@@ -30,8 +30,6 @@ struct ActorState {
     std::uint8_t terminal_timer = 0;
     std::uint8_t movement_command_timer = 0;
     std::uint8_t animation_timer = 0;
-    std::uint8_t animation_defer_ticks = 0;
-    bool animation_force_next_tick = false;
     std::uint8_t resource_count = 0;
     std::uint16_t interaction_resource_offset = 0;
     std::uint8_t interaction_selector = 0;

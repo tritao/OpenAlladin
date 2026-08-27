@@ -247,28 +247,22 @@ animation_lifecycle_mapping:
     status: exact
     regression: re/mame/findings/20260827-scheduler-static-dynamic-v1.json, tests/native_scheduler_trace.py
     removal_condition: "none; the field is the recovered Game_FrameUpdateLoop phase counter"
-  # These are state fields rather than scheduler phases. Keep each one tied
-  # to the regression that currently needs it until the corresponding ROM
-  # writer, gate, and cursor transition are decoded. None of these fields
-  # creates a second Engine::update phase or a second AnimationVM traversal.
+  # These are VM-owned boundary states rather than scheduler phases. Keep the
+  # remaining temporary cursor states tied to the regression that currently
+  # needs them until their ROM writeback boundaries are decoded. None of these
+  # fields creates a second Engine::update phase or AnimationVM traversal.
   - name: pending_animation_pc
     native_field: PlayerAnimationVm::pending_animation_pc_
     rom_state: "selector-written cursor exposed for one boundary before continuing"
     status: temporary_parity_hack
     regression: tests/native_scheduler_trace.py (apple route), player jump/action traces
     removal_condition: "make cursor publication/writeback ordering explicit in the ordinal-30 service"
-  - name: animation_force_next_tick
-    native_field: ActorState::animation_force_next_tick
-    rom_state: "fresh cursor after terminal/terrain conversion relative to FF7E28 gate"
-    status: temporary_parity_hack
-    regression: tests/native_actor_collision.py, tests/native_actor_actor_collision.py, tests/native_sword_lifecycle.py
-    removal_condition: "tie every force edge to a decoded ROM writer or remove it when the common gate reproduces the boundary"
-  - name: animation_defer_ticks
-    native_field: ActorState::animation_defer_ticks
-    rom_state: "record +0x37 delay byte; exact producer-specific lifecycle remains unresolved"
-    status: temporary_parity_hack
-    regression: tests/native_animation_spawn.py, tests/native_actor_collision.py, tests/native_terrain_physics.py
-    removal_condition: "replace each native delay assignment with the decoded record timer/caller lifecycle"
+  - name: actor_service_boundary
+    native_field: PlayerAnimationVm::service_boundary_ (actor VM instances)
+    rom_state: "producer-to-ordinal-30 cursor boundary consumed by the common actor gate"
+    status: inlined
+    regression: tests/native_animation_spawn.py, tests/native_actor_collision.py, tests/native_terrain_physics.py, tests/native_sword_lifecycle.py
+    removal_condition: "none; the boundary is VM-owned state inside the exact ordinal-30 actor traversal"
   - name: service_boundary
     native_field: PlayerAnimationVm::service_boundary_
     rom_state: "selector/command boundary pending ordinal-30 cursor service"
@@ -294,6 +288,6 @@ summary:
   derived_presentation_only_rom_rows: 6
   unknown_rom_rows: 0
   native_extra_phases: 1
-  native_hacks_requiring_followup: 4
+  native_hacks_requiring_followup: 2
   native_extra_mismatch_phases: 0
   conclusion: "Engine::update now exposes one owner for each gameplay-affecting ROM service. Animation, actor collision, terrain resolution, interaction resources, coordinate publication, and scene completion are aligned to their recovered causal boundaries; the FF7E28 phase is explicit at engine scope, while remaining per-record cursor fields are state gates inside those services, not native scheduler phases."

@@ -71,7 +71,6 @@ void MovementVm::tick(
             continue;
         }
 
-        const std::uint8_t previous_type = actor.type;
         const std::uint32_t step_pc = actor.movement_pc;
         std::uint32_t cursor = step_pc;
         if (cursor + 1 >= context.rom.size()) continue;
@@ -401,17 +400,6 @@ void MovementVm::tick(
         }
         if (!cursor_committed) {
             actor.movement_pc = cursor;
-        }
-        if (previous_type != kActorTerminalType
-            && actor.type == kActorTerminalType
-            && actor.terminal_timer == 0
-            && previous_type != 0x2A) {
-            // Movement streams can publish the terminal template directly
-            // (the type-0x45 path does so before AnimationVM_TickActors).
-            // Preserve the current boundary, then service the new cursor on
-            // the next VBlank regardless of the shared animation gate.
-            actor.animation_defer_ticks = 1;
-            actor.animation_force_next_tick = true;
         }
     }
 }

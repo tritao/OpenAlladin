@@ -813,6 +813,69 @@ void PlayerAnimationVm::defer_tick_next_update() {
     if (rom_mode_) service_boundary_ = ServiceBoundary::DeferNextUpdate;
 }
 
+void PlayerAnimationVm::defer_actor_service() {
+    if (!rom_mode_) return;
+    service_boundary_ = ServiceBoundary::ActorDeferUntilGate;
+}
+
+void PlayerAnimationVm::defer_actor_service_on_gate() {
+    if (rom_mode_) service_boundary_ = ServiceBoundary::ActorDeferOnGate;
+}
+
+void PlayerAnimationVm::defer_actor_service_then_force() {
+    if (rom_mode_) service_boundary_ = ServiceBoundary::ActorDeferThenForce;
+}
+
+void PlayerAnimationVm::force_actor_service_next_update() {
+    if (rom_mode_) service_boundary_ = ServiceBoundary::ForceNextUpdate;
+}
+
+void PlayerAnimationVm::defer_actor_retirement() {
+    if (rom_mode_) service_boundary_ = ServiceBoundary::ActorRetireNextUpdate;
+}
+
+void PlayerAnimationVm::clear_actor_service_boundary() {
+    if (rom_mode_) service_boundary_ = ServiceBoundary::None;
+}
+
+bool PlayerAnimationVm::consume_actor_service(bool scheduler_service, bool defer_gate) {
+    switch (service_boundary_) {
+    case ServiceBoundary::ActorDeferUntilGate:
+        if (!defer_gate) return false;
+        service_boundary_ = ServiceBoundary::None;
+        return false;
+    case ServiceBoundary::ActorDeferOnGate:
+        if (!defer_gate) return false;
+        service_boundary_ = ServiceBoundary::None;
+        return true;
+    case ServiceBoundary::ActorDeferThenForce:
+        if (!defer_gate) return false;
+        service_boundary_ = ServiceBoundary::ForceNextUpdate;
+        return false;
+    case ServiceBoundary::ForceNextUpdate:
+        service_boundary_ = ServiceBoundary::None;
+        return true;
+    default:
+        return scheduler_service;
+    }
+}
+
+bool PlayerAnimationVm::consume_actor_retirement_defer() {
+    if (service_boundary_ != ServiceBoundary::ActorRetireNextUpdate) return false;
+    service_boundary_ = ServiceBoundary::None;
+    return true;
+}
+
+bool PlayerAnimationVm::actor_service_deferred() const {
+    return service_boundary_ == ServiceBoundary::ActorDeferUntilGate
+        || service_boundary_ == ServiceBoundary::ActorDeferOnGate
+        || service_boundary_ == ServiceBoundary::ActorDeferThenForce;
+}
+
+bool PlayerAnimationVm::actor_service_forced() const {
+    return service_boundary_ == ServiceBoundary::ForceNextUpdate;
+}
+
 void PlayerAnimationVm::update_actor(
     ActorAnimationState& actor,
     const AnimationContext& context
@@ -1291,7 +1354,7 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     if (timer < 0) {
         throw std::runtime_error("invalid animation VM timer in OpenAladdin checkpoint");
     }
-    if (service_boundary > static_cast<std::uint8_t>(ServiceBoundary::DeferNextUpdate)) {
+    if (service_boundary > static_cast<std::uint8_t>(ServiceBoundary::ActorRetireNextUpdate)) {
         throw std::runtime_error("invalid animation service boundary in OpenAladdin checkpoint");
     }
     if (action_boundary > static_cast<std::uint8_t>(ActionBoundary::AwaitSecondCursor)) {
