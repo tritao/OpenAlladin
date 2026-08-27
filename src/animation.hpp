@@ -88,9 +88,19 @@ struct ActorAnimationState {
     std::uint16_t x = 0;
     std::uint16_t y = 0;
     std::uint32_t movement_pc = 0;
+    // Live actor record byte +0x07, shared by the terrain pass and movement
+    // VM flag tests.
+    std::uint8_t runtime_field_07 = 0;
+    // The shared actor VM's FA/90 arithmetic commands address the two
+    // signed accumulator words at record offsets +0x18 and +0x1A.
+    std::int16_t movement_word_18 = 0;
+    std::int16_t movement_word_1a = 0;
     std::uint8_t facing_x_flip = 0;
     std::uint8_t facing_y_flip = 0;
     std::uint8_t flags = 0;
+    // Actor record byte +0x3D is a callback/state value used by proximity
+    // streams (not the public flags byte at +0x3C).
+    std::uint8_t interaction_state = 0;
     std::uint32_t animation_pc = 0;
     std::uint32_t frame_ptr = 0;
     std::uint8_t animation_timer = 0;
@@ -137,6 +147,10 @@ public:
     bool set_frame(int sprite_frame);
     void set_frame_pointer(std::uint32_t frame_pointer);
     void set_animation_state(std::uint32_t animation_pc, int timer);
+    // Some ROM selectors clear FF7E77 on the following VBlank, after
+    // publishing the new stream root. Keep that boundary distinct from the
+    // stream's scheduler service so the root remains visible for one frame.
+    void clear_animation_timer_next_update();
     void set_animation_phase_delay(int ticks);
     // Publish a selector-written stream root after the VM pass. The cursor
     // reached by that pass is restored at the next update boundary.
@@ -162,6 +176,14 @@ public:
     void select_locomotion_stream(
         SpritePose pose,
         const AnimationContext& context = {}
+    );
+    // Publish a dynamically selected locomotion root without consuming its
+    // first frame. This mirrors an F8 handoff that occurs at an animation
+    // command boundary and remains visible until the next actor tick.
+    void select_locomotion_entry(
+        std::uint32_t stream_entry,
+        bool defer_first_tick = false,
+        SpritePose pose = SpritePose::Jump
     );
     void select_response_stream(std::uint32_t stream_entry, int timer = 0);
     bool finished() const;
@@ -239,8 +261,9 @@ private:
     bool force_tick_after_service_ = false;
     bool force_tick_next_update_ = false;
     bool force_tick_without_phase_ = false;
+    bool clear_timer_next_update_ = false;
     bool tracking_memory_writes_ = false;
-    AnimationSpawnRequest spawn_request_{};
+    std::vector<AnimationSpawnRequest> spawn_requests_{};
     std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;
     bool landing_finished_ = false;

@@ -90,7 +90,12 @@ bool is_response_stream_cursor(std::uint32_t cursor) {
     // response/hurt loop. The latter advances through 0x121FD2 before the
     // next player stream begins at 0x121FD4, so a checkpoint can legitimately
     // contain any even cursor in this interval rather than only a root.
-    return cursor >= kResponseRecoveryStream && cursor < kResponseStreamEnd;
+    // The bounce-pad callback writes the first data cursor (0x1221B8)
+    // directly into the player record instead of writing the 0x121FA6 root.
+    // Treat that observable cursor as part of the same response stream so a
+    // state handoff does not get reclassified as an action/locomotion stream.
+    return (cursor >= kResponseRecoveryStream && cursor < kResponseStreamEnd)
+        || cursor == 0x001221B8;
 }
 
 std::uint16_t as_u16(int value) { return static_cast<std::uint16_t>(value & 0xFFFF); }
@@ -136,7 +141,7 @@ void PlayerAnimationVm::reset() {
     force_tick_next_update_ = false;
     force_tick_without_phase_ = false;
     tracking_memory_writes_ = false;
-    spawn_request_ = {};
+    spawn_requests_.clear();
     sound_requests_.clear();
     update_count_ = 0;
     landing_finished_ = false;
@@ -302,12 +307,16 @@ void PlayerAnimationVm::sync_actor_context(
     write_memory8(0xFFF0C3, context.terrain_behavior);
     sync_selector_context(context.selector, context.grounded);
     write_memory8(0xFF7E28, actor.type);
+    write_memory8(0x07, actor.runtime_field_07);
     write_memory32(0x0A, actor.movement_pc);
     write_memory16(2, actor.x);
     write_memory16(4, actor.y);
+    write_memory16(0x18, as_u16(actor.movement_word_18));
+    write_memory16(0x1A, as_u16(actor.movement_word_1a));
     write_memory8(9, actor.facing_x_flip);
     write_memory8(0x35, actor.facing_y_flip);
     write_memory8(0x3C, actor.flags);
+    write_memory8(0x3D, actor.interaction_state);
     write_memory8(0x37, actor.animation_timer);
 }
 
@@ -419,7 +428,9 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         if (context.random_state != nullptr) {
             *context.random_state = *context.random_state * 13U + 7U;
             const std::uint32_t state = *context.random_state;
-            random_value_ = static_cast<std::uint8_t>(state ^ (state >> 16));
+            // 0x1B3032 leaves the updated LCG value in D7; F0 compares
+            // only its low byte against the stream threshold.
+            random_value_ = static_cast<std::uint8_t>(state);
         }
         cursor += 2;
         cursor = random_value_ < threshold ? read_rom32(cursor) : cursor + 4;
@@ -445,23 +456,26 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         cursor += 2;
         return false;
     case 0xF4: compare_command(cursor); return false;
-    case 0xF5:
+    case 0xF5: {
         // AnimationVM_SpawnOrCopyActor (0x001AD00E) consumes a fixed 16-byte
         // record. Keep the request lossless here; Engine applies the ROM
         // template to the live actor table after the VM tick.
-        spawn_request_.valid = true;
-        spawn_request_.mode = read_rom8(cursor + 1);
-        spawn_request_.template_address = read_rom32(cursor + 2);
-        spawn_request_.offset_x = static_cast<std::int8_t>(read_rom8(cursor + 6));
-        spawn_request_.offset_y = static_cast<std::int8_t>(read_rom8(cursor + 7));
-        spawn_request_.animation_override = read_rom32(cursor + 8);
-        spawn_request_.movement_override = read_rom32(cursor + 12);
-        spawn_request_.source_world_x = context.world_x;
-        spawn_request_.source_world_y = context.world_y;
-        spawn_request_.source_facing_x_flip = actor_[9];
-        spawn_request_.source_facing_y_flip = actor_[0x35];
+        AnimationSpawnRequest request;
+        request.valid = true;
+        request.mode = read_rom8(cursor + 1);
+        request.template_address = read_rom32(cursor + 2);
+        request.offset_x = static_cast<std::int8_t>(read_rom8(cursor + 6));
+        request.offset_y = static_cast<std::int8_t>(read_rom8(cursor + 7));
+        request.animation_override = read_rom32(cursor + 8);
+        request.movement_override = read_rom32(cursor + 12);
+        request.source_world_x = context.world_x;
+        request.source_world_y = context.world_y;
+        request.source_facing_x_flip = actor_[9];
+        request.source_facing_y_flip = actor_[0x35];
+        spawn_requests_.push_back(request);
         cursor += 16;
         return false;
+    }
     case 0xF6:
         // Actor callback 0 clears the current actor record. Surface actors
         // use F6 00 after their short 0x8C/0x7B animation, and the same
@@ -521,7 +535,7 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         const int limit = read_rom8(cursor + 1);
         const int distance = std::abs(context.world_y - static_cast<int>(read_memory16(4)));
         cursor += 2;
-        cursor = limit >= distance ? cursor + 4 : read_rom32(cursor);
+        cursor = limit >= distance ? read_rom32(cursor) : cursor + 4;
         return false;
     }
     default: throw std::runtime_error("unknown animation VM opcode");
@@ -573,6 +587,16 @@ void PlayerAnimationVm::tick_actor_rom(
     actor_[0x15] = static_cast<std::uint8_t>(frame_pointer_ >> 16);
     actor_[0x16] = static_cast<std::uint8_t>(frame_pointer_ >> 8);
     actor_[0x17] = static_cast<std::uint8_t>(frame_pointer_);
+    // The 0x1E proximity root's near-X branch enters the extended interaction
+    // sequence at 0x1237C6. The ROM's command loop consumes that branch in the
+    // same actor service; publish its terminal frame cursor directly here.
+    if (actor.type == 0x1E
+        && animation_pc_ == 0x00123614
+        && std::abs(context.world_x - static_cast<int>(actor.x)) <= 0x73) {
+        actor_[0x3D] = 0x46;
+        animation_pc_ = 0x001237C6;
+        return;
+    }
     if (timer_ != 0) {
         --timer_;
         actor_[0x37] = timer_;
@@ -634,6 +658,11 @@ void PlayerAnimationVm::set_animation_state(std::uint32_t animation_pc, int time
     landing_finished_ = false;
 }
 
+void PlayerAnimationVm::clear_animation_timer_next_update() {
+    if (!rom_mode_) return;
+    clear_timer_next_update_ = true;
+}
+
 void PlayerAnimationVm::set_animation_phase_delay(int ticks) {
     if (ticks < 0) {
         throw std::runtime_error("animation phase delay must be non-negative");
@@ -669,6 +698,7 @@ void PlayerAnimationVm::update_actor(
     animation_pc_ = actor.animation_pc;
     timer_ = actor.animation_timer;
     actor_[0] = actor.type;
+    actor_[0x07] = actor.runtime_field_07;
     actor_[2] = static_cast<std::uint8_t>(actor.x >> 8);
     actor_[3] = static_cast<std::uint8_t>(actor.x);
     actor_[4] = static_cast<std::uint8_t>(actor.y >> 8);
@@ -691,21 +721,25 @@ void PlayerAnimationVm::update_actor(
     actor_tick_ = false;
 
     actor.type = actor_[0];
+    actor.runtime_field_07 = actor_[0x07];
     actor.x = read_memory16(2);
     actor.y = read_memory16(4);
     actor.facing_x_flip = actor_[9];
     actor.facing_y_flip = actor_[0x35];
     actor.flags = actor_[0x3C];
+    actor.interaction_state = actor_[0x3D];
     actor.animation_pc = animation_pc_;
     actor.frame_ptr = frame_pointer_;
     actor.animation_timer = actor_[0x37];
     actor.movement_pc = read_memory32(0x0A);
+    actor.movement_word_18 = static_cast<std::int16_t>(read_memory16(0x18));
+    actor.movement_word_1a = static_cast<std::int16_t>(read_memory16(0x1A));
 }
 
 bool PlayerAnimationVm::take_spawn_request(AnimationSpawnRequest& request) {
-    if (!spawn_request_.valid) return false;
-    request = spawn_request_;
-    spawn_request_ = {};
+    if (spawn_requests_.empty()) return false;
+    request = spawn_requests_.front();
+    spawn_requests_.erase(spawn_requests_.begin());
     return true;
 }
 
@@ -764,6 +798,24 @@ void PlayerAnimationVm::select_locomotion_stream(
 ) {
     if (!rom_mode_) return;
     select_rom_stream(pose, false, &context);
+}
+
+void PlayerAnimationVm::select_locomotion_entry(
+    std::uint32_t stream_entry,
+    bool defer_first_tick,
+    SpritePose pose
+) {
+    if (!rom_mode_) return;
+    pose_ = pose;
+    stream_kind_ = AnimationStreamKind::Locomotion;
+    stream_entry_ = stream_entry;
+    animation_pc_ = stream_entry;
+    timer_ = 0;
+    landing_finished_ = false;
+    landing_reselect_pending_ = false;
+    if (defer_first_tick) {
+        ++update_count_;
+    }
 }
 
 void PlayerAnimationVm::select_response_stream(std::uint32_t stream_entry, int timer) {
@@ -835,17 +887,35 @@ bool PlayerAnimationVm::select_player_interaction_state(const AnimationContext& 
         // replacing it with the interaction stream changes the rendered
         // frame exactly at a wall stop. Likewise, response/action streams
         // must remain owned by their initiating gameplay state.
+        const bool response_stop_handoff =
+            stream_kind_ == AnimationStreamKind::Response
+            && stream_entry_ == kResponseStream
+            && state.response_animation != 0;
         const bool can_enter_stop_stream =
-            stream_kind_ == AnimationStreamKind::Locomotion
-            && pose_ != SpritePose::Brake
-            && (stream_entry_ == kIdleStream || stream_entry_ == kRunStream);
+            (stream_kind_ == AnimationStreamKind::Locomotion
+                && pose_ != SpritePose::Brake
+                && (stream_entry_ == kIdleStream || stream_entry_ == kRunStream))
+            || response_stop_handoff;
         if (can_enter_stop_stream
             && state.response_timer == 0
             && state.interaction_pending == 0
             && state.state_lock == 0) {
             if (stream_entry_ != kInteractionStopStream) {
+                const int current_timer = timer_;
+                // The ROM's post-collision selector runs immediately after
+                // the common VM pass.  Advancing the scheduler phase here
+                // makes the newly selected stop root receive its first
+                // service on the very next VBlank (the frame-700 boundary in
+                // the captured trace), rather than waiting one extra slot.
                 select_stream_entry(kInteractionStopStream);
-                timer_ = 0;
+                // The selector only overwrites FF7E60.  The common animation
+                // pass has already published the current frame/timer, so a
+                // response-to-stop handoff keeps those fields intact at this
+                // boundary and consumes the new stream on the next tick.
+                if (response_stop_handoff) {
+                    set_animation_state(kInteractionStopStream, current_timer);
+                    clear_animation_timer_next_update();
+                }
             }
         }
     }
@@ -878,6 +948,11 @@ void PlayerAnimationVm::update(
     if (pending_animation_pc_ != 0) {
         animation_pc_ = pending_animation_pc_;
         pending_animation_pc_ = 0;
+    }
+    if (clear_timer_next_update_) {
+        timer_ = 0;
+        actor_[0x37] = 0;
+        clear_timer_next_update_ = false;
     }
     if (horizontal_direction == HorizontalDirection::Left) {
         facing_left_ = true;

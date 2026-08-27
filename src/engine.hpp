@@ -129,6 +129,13 @@ struct ActorState {
     // fixed-point vertical gravity step used by the scene-state-5 type 0x84
     // response, even when its movement stream cursor is null.
     std::uint8_t movement_flags = 0;
+    // Actor +0x07 is a transient terrain/collision status byte. The ROM's
+    // terrain pass clears bit 4 before testing the actor's floor cell, while
+    // the movement VM's 0x88 command can branch on that bit.
+    std::uint8_t runtime_field_07 = 0;
+    // Native scheduler delay for the terrain pass's +0x07 bit publication;
+    // the ROM exposes the bit only after the following movement boundary.
+    std::uint8_t runtime_field_07_delay = 0;
     std::uint8_t facing_x_flip = 0;
     std::uint8_t facing_y_flip = 0;
     std::uint32_t movement_pc = 0;
@@ -143,12 +150,19 @@ struct ActorState {
     std::uint32_t animation_pc = 0;
     std::uint32_t movement_return_pc = 0;
     std::uint8_t flags = 0;
+    // Actor +0x3D is a runtime callback/state byte consumed by proximity
+    // animation streams and survives template reuse of a slot.
+    std::uint8_t interaction_state = 0;
     std::uint8_t terminal_timer = 0;
     std::uint8_t movement_command_timer = 0;
     std::uint8_t animation_timer = 0;
     // Some actor producers install a record after the current animation pass;
     // this defers its first shared animation service by one VBlank sample.
     std::uint8_t animation_defer_ticks = 0;
+    // Type-0x2D terrain conversion publishes a type-0x84 record on the
+    // current pass but the ROM services that new record on the next VBlank
+    // even when the common FF7E28 gate is low.
+    bool animation_force_next_tick = false;
     // The live sword animation stream is serviced on its first two actor
     // ticks, then on alternating ticks. This is native scheduler state, not
     // a field in the 0x42-byte Genesis actor record.
@@ -169,8 +183,8 @@ struct ActorState {
 enum class ActorAllocationPool {
     CommonForward,       // slots 3..22, FUN_001AE262
     CommonReverse,       // slots 20..1, FUN_001AE2AA
-    GameplayForward,     // slots 1..23, FUN_001AE27A
-    GameplayReverse,     // slots 23..1, FUN_001AE292
+    GameplayForward,     // slots 1..24, FUN_001AE27A
+    GameplayReverse,     // slots 24..1, FUN_001AE292
 };
 
 struct SpawnDescriptor {
@@ -410,7 +424,7 @@ private:
         int preprocessed_surface_row = -1,
         int preprocessed_surface_column = -1
     );
-    void update_camera();
+    void update_camera(bool suppress_vertical_follow = false);
     void initialize_camera_alignment();
     bool rebase_camera_reference();
     void update_state08(const InputState& input);
@@ -422,9 +436,9 @@ private:
     void update_actor_movement();
     void update_probe_actor_animation_before_movement();
     void update_terminal_actor_motion(ActorState& actor);
-    void update_actor_animations();
-    void apply_animation_spawns(bool defer_player_spawns = false);
-    void apply_animation_spawn_request(const AnimationSpawnRequest& request);
+    void update_actor_animations(std::optional<std::size_t> only_slot = std::nullopt);
+    std::vector<std::size_t> apply_animation_spawns(bool defer_player_spawns = false);
+    std::optional<std::size_t> apply_animation_spawn_request(const AnimationSpawnRequest& request);
     void scan_interaction_refill_window();
     void dispatch_interaction(const Level::InteractionRecord& record, int base_x, int base_y);
     std::optional<SpawnDescriptor> spawn_descriptor(std::uint8_t selector) const;
@@ -465,6 +479,18 @@ private:
     bool actor_snapshot_mode_ = false;
     bool interaction_scan_initialized_ = false;
     bool interaction_selector_pending_ = false;
+    // Slots retired by the movement VM remain unavailable to refill scans
+    // until the next game-loop boundary, matching the ROM's refill-before-cull
+    // allocator snapshot even when native camera reconstruction runs later.
+    std::array<bool, 32> actor_slots_culled_this_frame_{};
+    // Type-0x1F actor flags are written after the player's ground step.  The
+    // selector lock/camera delay become visible on the following VBlank.
+    bool interaction_actor_lock_pending_ = false;
+    bool interaction_camera_delay_pending_ = false;
+    bool interaction_actor_triggered_ = false;
+    // Actor_PlayerCollisionPass invokes the type-0x2D handler on the overlap
+    // boundary; the player stream root is published after the common VM pass.
+    bool player_collision_interaction_pending_ = false;
     bool checkpoint_animation_selector_pending_ = false;
     bool surface_interaction_pending_ = false;
     bool surface_interaction_active_ = false;
@@ -474,6 +500,10 @@ private:
     bool jump_landing_state_arm_pending_ = false;
     bool jump_landing_state_arm_now_ = false;
     bool terrain_fall_phase_ = false;
+    // The bounce-pad response leaves the ground-response latch armed after
+    // FFF0BE clears, while the player resumes the run stream.
+    bool bounce_response_follow_active_ = false;
+    bool bounce_camera_delay_hold_pending_ = false;
     // A sloped contour exposes a non-flat landing byte (and therefore a
     // public grounded=false) while the player remains on the surface. Keep
     // the internal ground-motion path latched across those contour samples.
@@ -500,9 +530,6 @@ private:
     // Common F5 actors share one AnimationVM_TickActors traversal. Keep its
     // cadence at engine scope so actors spawned later join the same service
     // and hold passes as the already-live records.
-    bool actor_animation_scheduler_started_ = false;
-    std::uint8_t actor_animation_service_phase_ = 0;
-    std::uint8_t actor_animation_hold_ticks_ = 0;
     bool checkpoint_terrain_behavior_override_ = false;
     std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;

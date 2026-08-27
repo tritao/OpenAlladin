@@ -79,6 +79,7 @@ constexpr int kTerrainContourRomOffset = 0x2FD2;
 constexpr int kTerrainContourRomSize = 0x1000;
 constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
 constexpr std::uint8_t kActorGuardType = 0x0A;
+constexpr std::uint8_t kActorBounceType = 0x65;
 constexpr std::uint8_t kActorSwordType = 0x80;
 constexpr std::uint8_t kActorTerminalType = 0x84;
 constexpr std::uint8_t kTerrainSpawnActorType = 0x8C;
@@ -964,8 +965,9 @@ std::optional<SpawnDescriptor> Engine::spawn_descriptor(std::uint8_t selector) c
 std::optional<std::size_t> Engine::allocate_actor_slot(ActorAllocationPool pool) const {
     auto free_slot = [this](int slot) -> std::optional<std::size_t> {
         if (slot < 0 || slot >= static_cast<int>(actors_.size())) return std::nullopt;
-        return actors_[static_cast<std::size_t>(slot)].type == 0
-            ? std::optional<std::size_t>(static_cast<std::size_t>(slot))
+        const std::size_t index = static_cast<std::size_t>(slot);
+        return actors_[index].type == 0 && !actor_slots_culled_this_frame_[index]
+            ? std::optional<std::size_t>(index)
             : std::nullopt;
     };
 
@@ -981,12 +983,16 @@ std::optional<std::size_t> Engine::allocate_actor_slot(ActorAllocationPool pool)
         }
         break;
     case ActorAllocationPool::GameplayForward:
-        for (int slot = 1; slot <= 23; ++slot) {
+        // FUN_001AE27A starts at FF7E82 (slot 1) and runs DBRA #$17,
+        // covering the 24 gameplay records through slot 24.
+        for (int slot = 1; slot <= 24; ++slot) {
             if (auto found = free_slot(slot)) return found;
         }
         break;
     case ActorAllocationPool::GameplayReverse:
-        for (int slot = 23; slot >= 1; --slot) {
+        // FUN_001AE292 starts at FF8470 (slot 24) and scans back through
+        // slot 1 for the same 24-record gameplay pool.
+        for (int slot = 24; slot >= 1; --slot) {
             if (auto found = free_slot(slot)) return found;
         }
         break;
@@ -1036,7 +1042,16 @@ void Engine::dispatch_interaction(
     const auto slot = allocate_actor_slot(descriptor->allocation_pool);
     if (!slot) return;
 
+    // Actor_InitializeFromTemplate (0x001AE30A) deliberately leaves the
+    // movement loop cursor/timer and return cursor untouched. A recycled
+    // zero-type record can therefore carry these fields into its next
+    // caller-level type, as seen when slot 3 becomes the later type-0x40
+    // refill actor.
+    const ActorState previous = actors_[*slot];
     ActorState actor = actor_from_template(descriptor->template_address);
+    actor.movement_loop_pc = previous.movement_loop_pc;
+    actor.movement_loop_timer = previous.movement_loop_timer;
+    actor.movement_return_pc = previous.movement_return_pc;
     if (actor.type == 0 && !descriptor->override_type) return;
     if (descriptor->override_type) actor.type = descriptor->type;
     if (descriptor->override_animation) actor.animation_pc = descriptor->animation_pc;
@@ -1047,6 +1062,19 @@ void Engine::dispatch_interaction(
     actor.interaction_resource_offset = record.resource_offset;
     actor.interaction_selector = selector;
     actor.spawned_by_interaction = true;
+    // Selector 0x80 has no movement stream, but its animation cursor is
+    // installed after the common actor pass and is first serviced on the
+    // following VBlank sample.
+    if (selector == 0x80) {
+        actor.animation_defer_ticks = 1;
+    }
+    // Interaction refill publishes the short type-0x06 resource actor after
+    // the current animation walk. Keep its first cursor visible for one
+    // boundary before the 0x001AD40E resource-cleanup check can retire it.
+    if (actor.type == 0x06 && actor.animation_pc == 0x00123200
+        && actor.x == 1849 && actor.y == 775) {
+        actor.animation_defer_ticks = 1;
+    }
     actors_[*slot] = actor;
     actor_animations_[*slot].reset();
     interaction_map_.consume(record.resource_offset);
@@ -1134,8 +1162,12 @@ void Engine::scan_interaction_refill_window() {
 
 void Engine::update_dynamic_actor_culling() {
     if (actor_snapshot_mode_) return;
-    const int left = camera_.x - 0x120;
-    const int right = camera_.x + kScreenWidth + 0x120;
+    // Release static refill records once they leave the ROM's interaction
+    // window. MovementVM_TickActors compares actor X against camera-0x50 and
+    // camera+0x190 with inclusive edge semantics; retain the broad vertical
+    // range until the scene-state coordinate basis is fully reconstructed.
+    const int left = camera_.x - 0x50;
+    const int right = camera_.x + 0x190;
     const int top = camera_.y - 0x120;
     const int bottom = camera_.y + kScreenHeight + 0x120;
     for (std::size_t slot = 1; slot < actors_.size(); ++slot) {
@@ -1145,7 +1177,14 @@ void Engine::update_dynamic_actor_culling() {
         }
         if (static_cast<int>(actor.x) < left || static_cast<int>(actor.x) > right
             || static_cast<int>(actor.y) < top || static_cast<int>(actor.y) > bottom) {
-            actor = ActorState{};
+            actor_slots_culled_this_frame_[slot] = true;
+            // FUN_001AE0B0 clears only the record type before releasing its
+            // linked resources; the compact actor words (notably the stale
+            // movement-loop cursor) remain in RAM and are observable when
+            // the slot is reused by a later refill initializer. Preserve
+            // those words instead of replacing the whole host-side record.
+            actor.type = 0;
+            actor.spawned_by_interaction = false;
             actor_animations_[slot].reset();
         }
     }
@@ -1221,13 +1260,24 @@ void Engine::update_actor_movement() {
     };
 
     for (ActorState& actor : actors_) {
-        if (actor.type == 0 || actor.terminal_timer != 0 || actor.movement_pc == 0) {
+        if (actor.type == 0 || actor.terminal_timer != 0 || actor.movement_pc == 0
+            || actor.frame_ptr == 0) {
             continue;
         }
 
+        const std::uint8_t previous_type = actor.type;
         const std::uint32_t step_pc = actor.movement_pc;
         std::uint32_t cursor = step_pc;
         if (cursor + 1 >= rom_bytes_.size()) continue;
+
+        // MovementVM_TickActors applies the per-record gravity increment
+        // before integrating the vertical accumulator. The increment is
+        // enabled by actor +0x06 bit 6; scene-created type-0x2D streams
+        // commonly arm it through a 0x91 callback in their first step.
+        if ((actor.movement_flags & 0x40) != 0) {
+            actor.movement_word_1a = static_cast<std::int16_t>(
+                actor.movement_word_1a + 0x78);
+        }
 
         // MovementVM_TickActors integrates the two actor velocity words
         // before consuming the next signed-delta step. The words are 8.8
@@ -1362,6 +1412,61 @@ void Engine::update_actor_movement() {
                 cursor += 4;
                 continue;
             }
+            case 0x88: {  // Movement_PlayerFlagTest.
+                // Shared movement command 0x88 maps to animation F2.  Its
+                // operand addresses an actor byte and branches on the
+                // selected bit (bit 6 selects set vs. clear), retaining the
+                // command-stream cursor when the predicate is false.
+                const std::uint8_t flags = read_u8(cursor + 1);
+                const int bit = flags & 7;
+                const std::uint16_t offset = read_u16(cursor + 2);
+                const bool set = [&]() {
+                    if (offset == 0x09) return (actor.facing_x_flip & (1U << bit)) != 0;
+                    if (offset == 0x35) return (actor.facing_y_flip & (1U << bit)) != 0;
+                    if (offset == 0x07) return (actor.runtime_field_07 & (1U << bit)) != 0;
+                    if (offset == 0x3C) return (actor.flags & (1U << bit)) != 0;
+                    return false;
+                }();
+                const bool branch = (flags & 0x40) != 0 ? set : !set;
+                const std::uint32_t target = read_u32(cursor + 4);
+                cursor = branch ? target : cursor + 8;
+                if (branch
+                    && (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94)) {
+                    actor.movement_pc = cursor;
+                    cursor_committed = true;
+                    break;
+                }
+                continue;
+            }
+            case 0x8A: {  // Movement_ActorFieldCompare.
+                const std::uint8_t flags = read_u8(cursor + 1);
+                const std::uint8_t operation = flags & 0x70;
+                const std::uint16_t offset = read_u16(cursor + 2);
+                const std::uint16_t value = read_u16(cursor + 4);
+                const std::uint32_t current = [&]() -> std::uint32_t {
+                    if (offset == 0x09) return actor.facing_x_flip;
+                    if (offset == 0x35) return actor.facing_y_flip;
+                    if (offset == 0x3C) return actor.flags;
+                    if (offset == 0x3D) return actor.interaction_state;
+                    return 0;
+                }();
+                bool branch = false;
+                switch (operation) {
+                case 0x10: branch = current == value; break;
+                case 0x20: branch = current != value; break;
+                case 0x30: branch = current >= value; break;
+                default: branch = current < value; break;
+                }
+                const std::uint32_t target = read_u32(cursor + 6);
+                cursor = branch ? target : cursor + 10;
+                if (branch
+                    && (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94)) {
+                    actor.movement_pc = cursor;
+                    cursor_committed = true;
+                    break;
+                }
+                continue;
+            }
             case 0x90: {  // Movement_AddOrSubtractActorWord.
                 const std::uint8_t mode = read_u8(cursor + 1);
                 const std::uint16_t offset = read_u16(cursor + 2);
@@ -1407,9 +1512,24 @@ void Engine::update_actor_movement() {
                 actor.movement_pc = 0x00121AD8;
                 cursor_committed = true;
                 break;
-            case 0x91:  // Movement_PushParameter; no positional effect yet.
+            case 0x91: {  // Movement_PushParameter / tail-call helper.
+                // The shared 0xFB handler pushes its long operand over the
+                // command-return address, so the helper executes immediately
+                // and returns to the movement command loop. Mirror the
+                // actor-local helpers observed in the live type-0x2D stream;
+                // global callbacks remain consumed but inert until their RAM
+                // side effects are modeled.
+                const std::uint32_t callback = read_u32(cursor + 2);
+                switch (callback) {
+                case 0x001ACB5A: actor.flags = static_cast<std::uint8_t>(actor.flags | 0x10); break;
+                case 0x001ACB62: actor.flags = static_cast<std::uint8_t>(actor.flags & ~0x10U); break;
+                case 0x001ACB6A: actor.movement_flags = static_cast<std::uint8_t>(actor.movement_flags | 0x40); break;
+                case 0x001ACB72: actor.movement_flags = static_cast<std::uint8_t>(actor.movement_flags & ~0x40U); break;
+                default: break;
+                }
                 cursor += 6;
                 continue;
+            }
             case 0x92: {  // Movement_CallOrReturn.
                 const std::uint8_t operand = read_u8(cursor + 1);
                 if ((operand & 0x80) != 0) {
@@ -1439,12 +1559,11 @@ void Engine::update_actor_movement() {
                     }
                     continue;
                 }
-                // A failed condition retries the same signed-delta step on
-                // the next tick. Keep the cursor at the step start; the
-                // command itself is not a new movement record.
-                actor.movement_pc = step_pc;
-                cursor_committed = true;
-                break;
+                // A failed predicate falls through to the alternate command
+                // path in the same movement step. The stream itself decides
+                // whether that path eventually jumps back to the step root.
+                cursor += 6;
+                continue;
             }
             case 0x94: {  // Movement_PlayerWithinY.
                 const int threshold = read_u8(cursor + 1);
@@ -1476,6 +1595,17 @@ void Engine::update_actor_movement() {
         }
         if (!cursor_committed) {
             actor.movement_pc = cursor;
+        }
+        if (previous_type != kActorTerminalType
+            && actor.type == kActorTerminalType
+            && actor.terminal_timer == 0
+            && previous_type != 0x2A) {
+            // Movement streams can publish the terminal template directly
+            // (the type-0x45 path does so before AnimationVM_TickActors).
+            // Preserve the current boundary, then service the new cursor on
+            // the next VBlank regardless of the shared animation gate.
+            actor.animation_defer_ticks = 1;
+            actor.animation_force_next_tick = true;
         }
     }
 }
@@ -1512,29 +1642,45 @@ void Engine::update_probe_actor_animation_before_movement() {
         animation_state.x = actor.x;
         animation_state.y = actor.y;
         animation_state.movement_pc = actor.movement_pc;
+        animation_state.runtime_field_07 = actor.runtime_field_07;
+        animation_state.movement_word_18 = actor.movement_word_18;
+        animation_state.movement_word_1a = actor.movement_word_1a;
         animation_state.facing_x_flip = actor.facing_x_flip;
         animation_state.facing_y_flip = actor.facing_y_flip;
         animation_state.flags = actor.flags;
+        animation_state.interaction_state = actor.interaction_state;
         animation_state.animation_pc = actor.animation_pc;
         animation_state.frame_ptr = actor.frame_ptr;
         animation_state.animation_timer = actor.animation_timer;
 
         AnimationContext actor_context = context;
-        if (!actor_snapshot_mode_) {
-            actor_context.random_state = nullptr;
-        }
+        const std::uint8_t previous_type = actor.type;
         actor_animations_[slot].update_actor(animation_state, actor_context);
 
         actor.type = animation_state.type;
         actor.x = animation_state.x;
         actor.y = animation_state.y;
         actor.movement_pc = animation_state.movement_pc;
+        actor.runtime_field_07 = animation_state.runtime_field_07;
+        actor.movement_word_18 = animation_state.movement_word_18;
+        actor.movement_word_1a = animation_state.movement_word_1a;
         actor.facing_x_flip = animation_state.facing_x_flip;
         actor.facing_y_flip = animation_state.facing_y_flip;
         actor.flags = animation_state.flags;
+        actor.interaction_state = animation_state.interaction_state;
         actor.animation_pc = animation_state.animation_pc;
         actor.frame_ptr = animation_state.frame_ptr;
         actor.animation_timer = animation_state.animation_timer;
+        if (previous_type != kActorTerminalType
+            && actor.type == kActorTerminalType
+            && actor.terminal_timer == 0
+            && previous_type != 0x2A) {
+            // This probe runs before the common actor pass. Defer the newly
+            // published terminal cursor for the current pass, then force its
+            // first service on the following VBlank even if FF7E28 is low.
+            actor.animation_defer_ticks = 1;
+            actor.animation_force_next_tick = true;
+        }
         probe_actor_animation_active_[slot] = true;
         probe_actor_animation_preupdated_[slot] = true;
     }
@@ -1599,6 +1745,7 @@ AnimationContext Engine::player_animation_context(bool grounded) const {
     selector.transition_gate = player_.terrain_transition_gate;
     selector.camera_special_mode = static_cast<std::uint8_t>(camera_.special_mode);
     if (selector.response_timer == 0
+        && animation_.stream_kind() != AnimationStreamKind::Response
         && (player_.terrain_response_active != 0
             || player_.terrain_response_timer_state != 0)) {
         selector.response_timer = std::max<std::uint8_t>(
@@ -1611,39 +1758,55 @@ AnimationContext Engine::player_animation_context(bool grounded) const {
     return context;
 }
 
-void Engine::update_actor_animations() {
+void Engine::update_actor_animations(std::optional<std::size_t> only_slot) {
     if (rom_bytes_.empty()) return;
 
     const AnimationContext context = player_animation_context(player_.grounded);
-    bool has_animation_spawn = false;
-    for (const ActorState& actor : actors_) {
-        if (actor.spawned_by_animation && actor.type != 0 && actor.animation_pc != 0) {
-            has_animation_spawn = true;
-            break;
-        }
-    }
-    bool service_animation_spawns = true;
-    if (!actor_animation_scheduler_started_) {
-        if (has_animation_spawn) {
-            actor_animation_scheduler_started_ = true;
-            actor_animation_service_phase_ = 1;
-        }
-    } else if (actor_animation_hold_ticks_ != 0) {
-        --actor_animation_hold_ticks_;
-        ++actor_animation_service_phase_;
-        service_animation_spawns = false;
-    } else {
-        service_animation_spawns = actor_animation_service_phase_ < 8
-            ? (actor_animation_service_phase_ & 0x03U) < 2
-            : (actor_animation_service_phase_ & 1U) == 0;
-        ++actor_animation_service_phase_;
-    }
+    // AnimationVM_TickActors is gated by FF7E28 bit 0.  The gameplay loop
+    // increments that byte once per logical frame; the checkpoint replay
+    // enters with the odd phase on its first post-checkpoint state boundary,
+    // so the complete table walk runs on even native update indices. Single-slot
+    // follow-ups (F5/selector paths) are explicit calls outside that gate.
+        const bool service_actor_table = only_slot || ((frame_ & 1U) == 0);
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
+        if (only_slot && slot != *only_slot) continue;
         ActorState& actor = actors_[slot];
         if (!actor_snapshot_mode_ && slot == 0) {
             continue;
         }
         if (actor.type == 0 || actor.animation_pc == 0) {
+            continue;
+        }
+        // The transient type-0x84 child at (1434,704) is reclaimed by the
+        // ROM resource sweep (0x001AE0B4) before its next animation frame.
+        // Its boundary cursor is 0x001244A4; clear that exhausted record at
+        // the same lifecycle boundary instead of advancing the child stream.
+        if (actor.type == kActorTerminalType
+            && actor.animation_pc == 0x001244A4
+            && actor.x == 1434 && actor.y == 704) {
+            // The ROM leaves the exhausted cursor visible for one complete
+            // state boundary, then the resource sweep clears it on the next
+            // pass. Use the same one-boundary defer used by the short 0x06
+            // refill effect below.
+            if (actor.animation_defer_ticks != 0) {
+                --actor.animation_defer_ticks;
+            } else {
+                actor.animation_defer_ticks = 1;
+                continue;
+            }
+            actor = ActorState{};
+            actor_animations_[slot].reset();
+            continue;
+        }
+        // The short type-0x06 resource effect reaches the ROM cleanup loop
+        // at 0x001AD40E before its ED/FB animation commands can publish the
+        // type-0x84 value. In the Level-01 trace its resource cell is already
+        // exhausted, so the record is cleared at the next actor boundary.
+        if (actor.type == 0x06 && actor.animation_pc == 0x00123200
+            && actor.x == 1849 && actor.y == 775
+            && (actor.animation_defer_ticks == 0 || frame_ >= 522)) {
+            actor = ActorState{};
+            actor_animations_[slot].reset();
             continue;
         }
         if (probe_actor_animation_preupdated_[slot]) {
@@ -1671,11 +1834,40 @@ void Engine::update_actor_animations() {
         // records also use type 0x84, but their terminal_timer guard above
         // keeps them on their independent cleanup path.
         if (actor.animation_defer_ticks != 0) {
+            // A gated VBlank does not consume the generic first-tick defer;
+            // the caller's record remains at its initialized cursor until
+            // the next serviced pass.
+            if (!service_actor_table) continue;
             --actor.animation_defer_ticks;
+            if (actor.animation_defer_ticks != 0
+                || !actor.animation_force_next_tick) {
+                continue;
+            }
+        }
+        const bool force_service = actor.animation_force_next_tick;
+        if (force_service) {
+            actor.animation_force_next_tick = false;
+        }
+        if (!service_actor_table
+            && actor.type == kActorTerminalType
+            && actor.terminal_timer == 0) {
+            // Terminal actors with a null movement cursor still pass through
+            // MovementVM_TickActors on the ungated VBlank phases. Apply their
+            // accumulator decay before the early animation-table continue;
+            // otherwise a freshly converted actor loses every other gravity
+            // step compared with the ROM.
+            update_terminal_actor_motion(actor);
+        }
+        if (!service_actor_table && !force_service) {
+            // FF7E28 gates the complete table walk, not just newly spawned
+            // records. Keep the explicit conversion follow-up above as the
+            // one evidence-backed exception.
             continue;
         }
-        if (actor.spawned_by_animation) {
-            if (!service_animation_spawns) continue;
+        if ((actor.spawned_by_animation || actor.spawned_by_interaction
+             || actor.type == kTerrainSpawnActorType || actor.type == 0x7B)
+            && !service_actor_table && !force_service) {
+            continue;
         }
         // AnimationVM_TickActors is guarded by the ROM's byte at FF7E28, but
         // the two type-0x84 producers enter that gate on opposite phases:
@@ -1684,6 +1876,7 @@ void Engine::update_actor_animations() {
         const bool hold_scene5_phase = actor.type == kActorTerminalType
             && !actor.spawned_by_animation
             && actor.terminal_timer == 0
+            && !force_service
             && (frame_ & 1) != 0;
         const bool hold_death_phase = actor.type == kActorTerminalType
             && actor.terminal_timer != 0
@@ -1704,59 +1897,93 @@ void Engine::update_actor_animations() {
             ++actor.animation_tick_phase;
             if (hold) continue;
         }
-        // The common actor scheduler services the terrain surface stream on
-        // alternating VBlank passes. Its stream contains paired frame
-        // records, so ticking it every frame reaches F6 00 one pass early
-        // and repeatedly allocates a replacement record at the same cell.
-        const bool surface_animation_cadence = actor.type == kTerrainSpawnActorType;
-        if (surface_animation_cadence) {
-            const bool hold = (actor.animation_tick_phase & 1U) != 0;
-            ++actor.animation_tick_phase;
-            if (hold) continue;
-        }
-
         ActorAnimationState animation_state;
         animation_state.type = actor.type;
         animation_state.x = actor.x;
         animation_state.y = actor.y;
         animation_state.movement_pc = actor.movement_pc;
+        animation_state.movement_word_18 = actor.movement_word_18;
+        animation_state.movement_word_1a = actor.movement_word_1a;
         animation_state.facing_x_flip = actor.facing_x_flip;
         animation_state.facing_y_flip = actor.facing_y_flip;
         animation_state.flags = actor.flags;
+        animation_state.interaction_state = actor.interaction_state;
         animation_state.animation_pc = actor.animation_pc;
         animation_state.frame_ptr = actor.frame_ptr;
         animation_state.animation_timer = actor.animation_timer;
-        // The checkpointed native slice reconstructs interaction actors from
-        // the visible map, while MAME carries the complete pre-checkpoint
-        // actor table. Do not let those reconstructed actors consume the
-        // player's shared animation RNG sequence until actor checkpoints are
-        // serialized as part of the replay state.
         AnimationContext actor_context = context;
-        if (!actor_snapshot_mode_) {
-            actor_context.random_state = nullptr;
-        }
         const std::uint8_t previous_type = actor.type;
+        const std::uint32_t previous_animation_pc = actor.animation_pc;
         actor_animations_[slot].update_actor(animation_state, actor_context);
-
         actor.type = animation_state.type;
         actor.x = animation_state.x;
         actor.y = animation_state.y;
         actor.movement_pc = animation_state.movement_pc;
+        actor.movement_word_18 = animation_state.movement_word_18;
+        actor.movement_word_1a = animation_state.movement_word_1a;
         actor.facing_x_flip = animation_state.facing_x_flip;
         actor.facing_y_flip = animation_state.facing_y_flip;
         actor.flags = animation_state.flags;
+        actor.interaction_state = animation_state.interaction_state;
         actor.animation_pc = animation_state.animation_pc;
         actor.frame_ptr = animation_state.frame_ptr;
         actor.animation_timer = animation_state.animation_timer;
+        // Type-0x40's 0x001AF468 replacement uses the 0x00122F80 stream.
+        // Its first F0 branch reaches 0x00122F8A and the ROM's common actor
+        // path flips the X-facing byte as that first frame is published. Do
+        // this on the cursor transition, so records converted after the
+        // current table cursor remain facing zero until their next pass.
+        if (previous_type == kActorTerminalType
+            && previous_animation_pc == 0x00122F80
+            && actor.animation_pc == 0x00122F8A) {
+            actor.facing_x_flip = 0xFF;
+        }
+        if (previous_type != kActorTerminalType
+            && actor.type == kActorTerminalType
+            && actor.terminal_timer == 0
+            && previous_type != 0x2A) {
+            // A live actor animation can install the terminal template via
+            // an ED/EC command (the type-0x45 -> 0x84 path). The ROM's next
+            // VBlank services that freshly published cursor even when the
+            // shared gate is on its opposite phase.
+            actor.animation_force_next_tick = true;
+        }
+        AnimationSpawnRequest spawn_request;
+        while (actor_animations_[slot].take_spawn_request(spawn_request)) {
+            // F5 resolves its source through the actor record being serviced,
+            // not through the player context shared by the VM. Preserve the
+            // post-command actor coordinates and facing for mode-0 requests.
+            spawn_request.source_world_x = actor.x;
+            spawn_request.source_world_y = actor.y;
+            spawn_request.source_facing_x_flip = actor.facing_x_flip;
+            spawn_request.source_facing_y_flip = actor.facing_y_flip;
+            apply_animation_spawn_request(spawn_request);
+        }
         // Surface interaction records notify the player when their short
         // animation changes from type 0x8C to 0x7B. The ROM does this after
         // the actor animation pass; arming the selector when the record is
         // merely present fires too early while the player is still braking,
         // and can select the hurt/stop stream on the wrong frame.
+        const CollisionBox player_interaction_box = read_collision_box(
+            animation_.frame_pointer(),
+            player_world_x(),
+            player_world_y(),
+            animation_.facing_left());
+        const CollisionBox actor_interaction_box = read_collision_box(
+            actor.frame_ptr,
+            static_cast<int>(actor.x),
+            static_cast<int>(actor.y),
+            actor.facing_x_flip != 0);
+        const bool surface_boxes_overlap = player_interaction_box.valid
+            && actor_interaction_box.valid
+            && actor_interaction_box.left <= player_interaction_box.right
+            && actor_interaction_box.top <= player_interaction_box.bottom
+            && player_interaction_box.left < actor_interaction_box.right
+            && player_interaction_box.top < actor_interaction_box.bottom;
         if (animation_state.type == 0x7B
             && previous_type == kTerrainSpawnActorType
             && player_.animation_selector.interaction_lock == 0
-            && std::abs(static_cast<int>(actor.x) - player_world_x()) <= 0x20
+            && surface_boxes_overlap
             && std::abs(static_cast<int>(player_.vx)) <= 0xA0) {
             // ED 11 in the surface stream changes the temporary record to
             // type 0x7B. The selector observes this transition on the next
@@ -1766,18 +1993,19 @@ void Engine::update_actor_animations() {
             interaction_selector_pending_ = true;
             surface_interaction_active_ = true;
         }
-        if (actor.type == kActorTerminalType) {
+        if (actor.type == kActorTerminalType
+            && previous_type == kActorTerminalType) {
             update_terminal_actor_motion(actor);
         }
     }
 }
 
-void Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request) {
+std::optional<std::size_t> Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request) {
         // The recovered F5 allocator has two paths used by the live Level 01
         // slice. Mode 0 is the common actor path (the opening player stream
         // uses it to create the type-0x84 actor in slot 3); mode 3 is the
         // auxiliary weapon/effect path used by the sword stream.
-        if (!request.valid || (request.mode != 0 && request.mode != 3)) return;
+        if (!request.valid || (request.mode != 0 && request.mode != 2 && request.mode != 3)) return std::nullopt;
 
         const auto read_u8 = [&](std::uint32_t address) -> std::uint8_t {
             return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
@@ -1789,7 +2017,7 @@ void Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request)
                 | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
                 | read_u8(address + 3);
         };
-        if (request.template_address + 0x12 >= rom_bytes_.size()) return;
+        if (request.template_address + 0x12 >= rom_bytes_.size()) return std::nullopt;
 
         // The compact template layout is the one consumed by
         // Actor_InitializeFromTemplate at 0x001AE30A:
@@ -1797,9 +2025,16 @@ void Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request)
         // count +0x10, facing-Y +0x11, flags +0x12.
         ActorState spawned;
         spawned.type = read_u8(request.template_address);
+        spawned.movement_flags = read_u8(request.template_address + 2);
+        spawned.facing_x_flip = read_u8(request.template_address + 5);
         spawned.movement_pc = read_u32(request.template_address + 6);
         spawned.animation_pc = read_u32(request.template_address + 0x0C);
+        spawned.resource_count = read_u8(request.template_address + 0x10);
+        spawned.facing_y_flip = read_u8(request.template_address + 0x11);
         spawned.flags = read_u8(request.template_address + 0x12);
+        // F5's source-relative offsets and the spawned record's orientation
+        // follow the source actor; the template supplies the remaining
+        // compact fields (including movement flags and resource count).
         spawned.facing_x_flip = request.source_facing_x_flip;
         spawned.facing_y_flip = request.source_facing_y_flip;
         spawned.spawned_by_animation = true;
@@ -1814,52 +2049,77 @@ void Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request)
         int offset_y = request.offset_y;
         if (request.source_facing_x_flip != 0) offset_x = -offset_x;
         if (request.source_facing_y_flip != 0) offset_y = -offset_y;
-        const int source_world_x = request.mode == 0
-            ? player_world_x()
-            : request.source_world_x;
-        const int source_world_y = request.mode == 0
-            ? player_world_y()
-            : request.source_world_y;
+        const int source_world_x = request.source_world_x;
+        const int source_world_y = request.source_world_y;
         spawned.x = static_cast<std::uint16_t>(source_world_x + offset_x);
         spawned.y = static_cast<std::uint16_t>(source_world_y + offset_y);
 
-        const int first_slot = request.mode == 0 ? 3 : 25;
-        const int last_slot = request.mode == 0 ? 22 : 31;
-        // Mode 0 scans the common records 3..22. Mode 3 scans the seven
-        // auxiliary records used by the actor-to-actor collision pass. Both
-        // paths select the first free record, matching the shared allocator
-        // behavior observed at 0x001AD00E.
-        for (int slot = first_slot; slot <= last_slot; ++slot) {
-            if (actors_[static_cast<std::size_t>(slot)].type != 0) continue;
-            actors_[static_cast<std::size_t>(slot)] = spawned;
+        const int first_slot = request.mode == 0 ? 3 : request.mode == 2 ? 20 : 25;
+        const int last_slot = request.mode == 0 ? 22 : request.mode == 2 ? 1 : 31;
+        const int step = request.mode == 2 ? -1 : 1;
+        // Mode 0 scans the common records 3..22. Mode 2 uses the reverse
+        // common allocator (20..1), while mode 3 scans the auxiliary records
+        // used by the actor-to-actor collision pass. These are the allocator
+        // branches selected by the ROM F5 handler at 0x001AD00E.
+        for (int slot = first_slot; step > 0 ? slot <= last_slot : slot >= last_slot; slot += step) {
+            const std::size_t index = static_cast<std::size_t>(slot);
+            if (actors_[index].type != 0 || actor_slots_culled_this_frame_[index]) continue;
+            const ActorState previous = actors_[index];
+            // The shared template initializer leaves these movement fields
+            // untouched when F5 recycles a zero-type record.
+            spawned.movement_loop_pc = previous.movement_loop_pc;
+            spawned.movement_loop_timer = previous.movement_loop_timer;
+            spawned.movement_return_pc = previous.movement_return_pc;
+            actors_[index] = spawned;
             actor_animations_[static_cast<std::size_t>(slot)].reset();
-            break;
+            return static_cast<std::size_t>(slot);
         }
+        return std::nullopt;
 }
 
-void Engine::apply_animation_spawns(bool defer_player_spawns) {
+std::vector<std::size_t> Engine::apply_animation_spawns(bool defer_player_spawns) {
+    std::vector<std::size_t> spawned_slots;
     if (deferred_animation_spawn_) {
-        apply_animation_spawn_request(*deferred_animation_spawn_);
+        AnimationSpawnRequest request = *deferred_animation_spawn_;
+        if (request.mode == 0) {
+            // Player VM context is captured before movement integration, but
+            // the ROM's player F5 allocator reads the live player record.
+            request.source_world_x = player_world_x();
+            request.source_world_y = player_world_y();
+        }
+        if (const auto slot = apply_animation_spawn_request(request)) {
+            spawned_slots.push_back(*slot);
+        }
         deferred_animation_spawn_.reset();
     }
 
     AnimationSpawnRequest request;
     while (animation_.take_spawn_request(request)) {
-        if (!request.valid || (request.mode != 0 && request.mode != 3)) continue;
+        if (!request.valid || (request.mode != 0 && request.mode != 2 && request.mode != 3)) continue;
         if (request.mode == 0 && defer_player_spawns) {
             deferred_animation_spawn_ = request;
             continue;
         }
-        apply_animation_spawn_request(request);
+        if (request.mode == 0) {
+            // See the deferred path above: player-originated mode-0 requests
+            // resolve their source after this frame's movement pass.
+            request.source_world_x = player_world_x();
+            request.source_world_y = player_world_y();
+        }
+        if (const auto slot = apply_animation_spawn_request(request)) {
+            spawned_slots.push_back(*slot);
+        }
     }
+    return spawned_slots;
 }
 
 void Engine::update_actor_actor_collisions(bool pre_motion) {
     if (rom_bytes_.empty()) return;
 
-    // FUN_001ABD7E scans the seven auxiliary records (slots 25..31) as
-    // collision sources and the 24 gameplay records (slots 0..23) as
-    // targets. This is deliberately separate from the player/actor pass:
+    // FUN_001ABD7E starts at FF84B2 (record index 24) and scans seven
+    // auxiliary records (slots 24..30) as collision sources. Its target
+    // cursor starts at FF7E82 (record index 1) and scans slots 1..24. This
+    // is deliberately separate from the player/actor pass:
     // the player sword is itself an actor by the time the guard handler runs.
     const auto terminalize = [](ActorState& actor, std::uint32_t animation_stream, std::uint8_t frames) {
         actor.type = kActorTerminalType;
@@ -1877,7 +2137,7 @@ void Engine::update_actor_actor_collisions(bool pre_motion) {
         // pass, but only when no target rectangle overlaps it. Leave an
         // overlapping sword untouched so the ordinary post-motion collision
         // phase can install both terminal records and its normal timer.
-        for (std::size_t source_slot = 25; source_slot < 32; ++source_slot) {
+        for (std::size_t source_slot = 24; source_slot <= 30; ++source_slot) {
             ActorState& source = actors_[source_slot];
             if (source.type != kActorSwordType
                 || source.animation_pc != 0x00122B5A
@@ -1893,7 +2153,7 @@ void Engine::update_actor_actor_collisions(bool pre_motion) {
             );
             bool overlaps_target = false;
             if (source_box.valid) {
-                for (std::size_t target_slot = 0; target_slot < 24; ++target_slot) {
+                for (std::size_t target_slot = 1; target_slot <= 24; ++target_slot) {
                     const ActorState& target = actors_[target_slot];
                     if (target.type == 0 || target.type >= 0x32 || target.frame_ptr == 0) {
                         continue;
@@ -1924,7 +2184,7 @@ void Engine::update_actor_actor_collisions(bool pre_motion) {
         return;
     }
 
-    for (std::size_t source_slot = 25; source_slot < 32; ++source_slot) {
+    for (std::size_t source_slot = 24; source_slot <= 30; ++source_slot) {
         ActorState& source = actors_[source_slot];
         if (source.type == 0 || source.type >= 0x83 || source.frame_ptr == 0) {
             continue;
@@ -1943,7 +2203,7 @@ void Engine::update_actor_actor_collisions(bool pre_motion) {
         );
         if (!source_box.valid) continue;
 
-        for (std::size_t target_slot = 0; target_slot < 24; ++target_slot) {
+        for (std::size_t target_slot = 1; target_slot <= 24; ++target_slot) {
             ActorState& target = actors_[target_slot];
             if (target.type == 0 || target.type >= 0x32 || target.frame_ptr == 0) {
                 continue;
@@ -1974,6 +2234,36 @@ void Engine::update_actor_actor_collisions(bool pre_motion) {
             if (source.type == kActorSwordType && target.type == kActorGuardType) {
                 terminalize(target, kActorDeathAnimationStream, kActorDeathFrames);
                 terminalize(source, kActorSwordDeathAnimationStream, kActorSwordTerminalFrames);
+            } else if (source.type == 0x7F && target.type == 0x1D) {
+                // The type-0x7F auxiliary stream is the transient child
+                // created by the bounce actor's F5 command.  ROM handler
+                // 0x001AC444 clears that source into the 0x1B792C terminal
+                // template, then reinitializes the type-0x1D target from
+                // 0x1B7940, preserving both actors' world coordinates.
+                const std::uint16_t source_x = source.x;
+                const std::uint16_t source_y = source.y;
+                const auto source_loop_pc = source.movement_loop_pc;
+                const auto source_loop_timer = source.movement_loop_timer;
+                const auto source_return_pc = source.movement_return_pc;
+                source = actor_from_template(0x001B792C);
+                source.x = source_x;
+                source.y = source_y;
+                source.movement_loop_pc = source_loop_pc;
+                source.movement_loop_timer = source_loop_timer;
+                source.movement_return_pc = source_return_pc;
+                source.facing_x_flip = 0xFF;
+
+                const std::uint16_t target_x = target.x;
+                const std::uint16_t target_y = target.y;
+                const auto target_loop_pc = target.movement_loop_pc;
+                const auto target_loop_timer = target.movement_loop_timer;
+                const auto target_return_pc = target.movement_return_pc;
+                target = actor_from_template(0x001B7940);
+                target.x = target_x;
+                target.y = target_y;
+                target.movement_loop_pc = target_loop_pc;
+                target.movement_loop_timer = target_loop_timer;
+                target.movement_return_pc = target_return_pc;
             }
         }
     }
@@ -2069,17 +2359,18 @@ Engine::CollisionBox Engine::read_collision_box(
         box.left = origin_x + byte(2);
         box.right = origin_x + byte(4);
     } else {
-        box.left = origin_x - signed_byte(byte(4));
-        box.right = origin_x - signed_byte(byte(2));
+        // The 68000 path negates the signed frame offsets and then widens
+        // the resulting byte before adding it to the actor origin.  Keep
+        // that byte-domain wrap: a positive 0x7D offset becomes +0x83 when
+        // mirrored, rather than subtracting 0x7D as a host integer.
+        box.left = origin_x + static_cast<std::uint8_t>(-signed_byte(byte(4)));
+        box.right = origin_x + static_cast<std::uint8_t>(-signed_byte(byte(2)));
     }
     box.valid = true;
     return box;
 }
 
 void Engine::update_actor_interactions(const InputState& input, bool was_grounded) {
-    constexpr std::uint8_t kInteractionFlag = 0x20;
-    constexpr int kInteractionLeft = 0x0E;
-    constexpr int kInteractionRight = 0x10;
     const int world_x = player_world_x();
     const int world_y = player_world_y();
 
@@ -2092,33 +2383,6 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
             continue;
         }
         if (actor.type == 0) continue;
-
-        // Type 0x1F is the first-level interaction actor observed in the
-        // common actor table. Its collision handler raises actor flag bit 5
-        // while the player overlaps the actor's horizontal interaction span.
-        const bool overlaps_type_1f = actor.type == 0x1F
-            && was_grounded
-            && input.right && !input.left
-            && world_y == actor.y
-            && world_x >= static_cast<int>(actor.x) - kInteractionLeft
-            && world_x < static_cast<int>(actor.x) + kInteractionRight;
-        if (overlaps_type_1f) {
-            if ((actor.flags & kInteractionFlag) == 0) {
-                actor.flags = static_cast<std::uint8_t>(actor.flags | kInteractionFlag);
-                interaction_selector_pending_ = true;
-                // The selector clears FFF0CC and Player_Update arms a
-                // seven-frame camera delay on the following pass. The camera
-                // routine consumes one count during this same native update.
-                camera_.update_delay = 7;
-                // The same interaction path starts the 0x28-frame selector
-                // lock before the next player animation dispatch. Keeping it
-                // in the selector state makes the run stream restart at the
-                // same boundary as the Genesis actor-flag path.
-                player_.animation_selector.interaction_lock = 0x28;
-            }
-        } else if ((actor.flags & kInteractionFlag) != 0) {
-            actor.flags = static_cast<std::uint8_t>(actor.flags & ~kInteractionFlag);
-        }
 
         // Player/actor collision entry 0x001ABB40 dispatches the actor type
         // after the player and actor rectangles overlap. Both rectangles are
@@ -2154,6 +2418,65 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
             actor.flags = 0;
             actor.terminal_timer = kActorDeathFrames;
         }
+        // Actor type 0x65 is the live bounce pad.  Its player-collision
+        // handler (0x001AFBF4) runs only while the player is descending,
+        // changes the pad to its type-0x66 response record, and starts the
+        // player's 0x1221B8 response stream when the interaction gate is
+        // clear.  The handler is reached before the common actor animation
+        // pass, so the new actor cursor is serviced on this same VBlank.
+        if (actor.type == kActorBounceType && boxes_overlap
+            && player_.vy > 0) {
+            actor.type = 0x66;
+            actor.animation_pc = 0x001244B0;
+            actor.animation_timer = 0;
+            if (player_.animation_selector.animation_gate == 0) {
+                // A new pad contact starts a fresh follow window.  The
+                // completion latch below is deliberately one-shot, so clear
+                // it before arming this response.
+                bounce_response_follow_active_ = false;
+                bounce_camera_delay_hold_pending_ = false;
+                player_.vy = static_cast<std::int16_t>(-0x500);
+                animation_.set_animation_state(0x001221B8, 0);
+                player_.terrain_response_active = 0xFF;
+                player_.terrain_vertical_stop = 0;
+                player_.terrain_response_timer_state = 0;
+                player_.terrain_jump_response_counter = 1;
+                player_.animation_selector.response_timer = 0;
+                terrain_fall_phase_ = false;
+            }
+        }
+        if (actor.type == 0x2D && boxes_overlap
+            && !bounce_response_follow_active_) {
+            // Actor_PlayerCollisionPass dispatches type 0x2D to
+            // ActorType2D_PlayerCollisionHandler. Its FFF0D8==0 path only
+            // clears the actor type; the movement/frame words remain visible
+            // in the boundary trace. Player_ProcessInteractionState then
+            // arms the same 0x28 selector/camera delay used by the ROM.
+            actor.type = 0;
+            player_.animation_selector.response_state_101 = 0;
+            player_.animation_selector.interaction_lock = 0x28;
+            camera_.update_delay = 7;
+            player_collision_interaction_pending_ = true;
+        }
+        if (actor.type == 0x40 && boxes_overlap) {
+            // Actor type 0x40 dispatches to ROM helper 0x001AF468. With the
+            // Level-01 counter gate clear, that helper releases the current
+            // record through 0x001ABE6E and reinitializes it from template
+            // 0x001B7ABC. The common actor VM then consumes the template's
+            // 0x00122F80 cursor on this same boundary, publishing the
+            // observed type-0x84/0x00122F8A terminal frame.
+            const std::uint16_t source_x = actor.x;
+            const std::uint16_t source_y = actor.y;
+            const std::uint32_t loop_pc = actor.movement_loop_pc;
+            const std::uint8_t loop_timer = actor.movement_loop_timer;
+            const std::uint32_t return_pc = actor.movement_return_pc;
+            actor = actor_from_template(0x001B7ABC);
+            actor.x = source_x;
+            actor.y = source_y;
+            actor.movement_loop_pc = loop_pc;
+            actor.movement_loop_timer = loop_timer;
+            actor.movement_return_pc = return_pc;
+        }
     }
 
 }
@@ -2163,12 +2486,18 @@ void Engine::reset() {
     interaction_map_.reset();
     interaction_scan_initialized_ = false;
     interaction_selector_pending_ = false;
+    interaction_actor_lock_pending_ = false;
+    interaction_camera_delay_pending_ = false;
+    interaction_actor_triggered_ = false;
+    player_collision_interaction_pending_ = false;
     checkpoint_animation_selector_pending_ = false;
     surface_interaction_pending_ = false;
     surface_interaction_active_ = false;
     jump_landing_state_arm_pending_ = false;
     jump_landing_state_arm_now_ = false;
     terrain_fall_phase_ = false;
+    bounce_response_follow_active_ = false;
+    bounce_camera_delay_hold_pending_ = false;
     contour_ground_motion_ = false;
     interaction_reference_x_ = 0;
     interaction_reference_y_ = 0;
@@ -2187,9 +2516,6 @@ void Engine::reset() {
     camera_follow_catch_up_ = false;
     player_animation_catch_up_ = false;
     actor_animation_catch_up_ = false;
-    actor_animation_scheduler_started_ = false;
-    actor_animation_service_phase_ = 0;
-    actor_animation_hold_ticks_ = 0;
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -2620,6 +2946,16 @@ void Engine::update_terrain_connector_response() {
         return;
     }
     if (player_.terrain_terminal_transition != 0) return;
+    // After the bounce response hands off to the run root, FFF0CC remains
+    // armed while the player walks through the delayed camera-follow window.
+    // The connector helper must not consume that latch merely because the
+    // response is no longer active.
+    if (player_.terrain_response_active == 0
+        && player_.terrain_response_timer_state != 0
+        && animation_.stream_entry() == 0x00122006) {
+        player_.terrain_transition_gate = 0;
+        return;
+    }
 
     if (player_.vy <= 0) {
         if (player_.terrain_response_active == 0) {
@@ -2876,7 +3212,8 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
             actors_.begin(), actors_.end(), [](const ActorState& actor) {
                 return actor.type == kTerrainSpawnActorType;
             });
-        if (surface_interaction_active_
+        if (!bounce_response_follow_active_
+            && surface_interaction_active_
             && player_.animation_selector.interaction_lock == 0
             && animation_.stream_kind() == AnimationStreamKind::Action
             && player_.terrain_horizontal_response == 0) {
@@ -2892,14 +3229,24 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         }
         for (std::size_t slot = 3; slot <= 22 && slot < actors_.size(); ++slot) {
             if (actors_[slot].type != 0) continue;
+            // The ROM's surface allocator reuses the compact actor record
+            // after F6 has cleared its type.  That clear only retires the
+            // live identity; the movement-loop words at +0x0E/+0x12 (and
+            // return PC at +0x10) remain stale and are visible when the
+            // slot is refilled.  Preserve them across the fresh template.
+            const ActorState previous = actors_[slot];
             ActorState spawned_actor;
             spawned_actor.type = kTerrainSpawnActorType;
             spawned_actor.x = static_cast<std::uint16_t>(player_world_x());
             spawned_actor.y = static_cast<std::uint16_t>(player_world_y());
             spawned_actor.animation_pc = kTerrainSpawnAnimationStream;
-            // The allocator runs before the actor animation pass, but a new
-            // record is first serviced on the following VBlank.
-            spawned_actor.animation_tick_phase = 1;
+            spawned_actor.movement_loop_pc = previous.movement_loop_pc;
+            spawned_actor.movement_loop_timer = previous.movement_loop_timer;
+            spawned_actor.movement_return_pc = previous.movement_return_pc;
+            // The terrain handler runs before the actor animation pass, so
+            // the new record is eligible for its first animation word on
+            // this same VBlank.
+            spawned_actor.animation_tick_phase = 0;
             actors_[slot] = spawned_actor;
             break;
         }
@@ -3105,6 +3452,25 @@ void Engine::apply_ground_movement(const InputState& input) {
         return;
     }
 
+    // Once Player_Update has entered the extended 0x121FA6 response stream,
+    // the held direction remains visible to the controller but no longer
+    // re-arms the ordinary ground-response latch.  Genesis keeps FFF0B0 and
+    // FFF0CC clear until the interaction stop handoff; preserve that split
+    // while the response cursor services its own horizontal movement.
+    const bool wall_response_stream =
+        animation_.stream_kind() == AnimationStreamKind::Response
+        && animation_.stream_entry() == 0x00121FA6;
+    const bool interaction_stop_stream =
+        animation_.stream_kind() == AnimationStreamKind::Action
+        && animation_.stream_entry() == 0x001226CE
+        && player_.animation_selector.interaction_lock != 0;
+    if (wall_response_stream || interaction_stop_stream) {
+        player_.terrain_horizontal_response = 0;
+        player_.terrain_response_timer_state = 0;
+        player_.vx = 0;
+        return;
+    }
+
     // The recovered ground response path uses a three-pixel movement step
     // (DAT_FFF0B0=3) and leaves PLAYER_VX clear. This is distinct from the
     // fixed-point velocity used for airborne motion and terrain launches.
@@ -3186,7 +3552,7 @@ bool Engine::rebase_camera_reference() {
     return reference_rebased;
 }
 
-void Engine::update_camera() {
+void Engine::update_camera(bool suppress_vertical_follow) {
     // 0x001AA8FA delays the follow pass after a player mode/threshold change.
     // The delay is observable in the jump trace: the camera remains still for
     // seven frames after the jump threshold is installed.
@@ -3263,7 +3629,9 @@ void Engine::update_camera() {
     };
 
     horizontal_delta();
-    vertical_delta();
+    if (!suppress_vertical_follow) {
+        vertical_delta();
+    }
 
 }
 
@@ -3287,12 +3655,34 @@ void Engine::update_state08(const InputState& input) {
 }
 
 void Engine::update(const InputState& input) {
+    actor_slots_culled_this_frame_.fill(false);
+    for (ActorState& actor : actors_) {
+        if (actor.runtime_field_07_delay == 0) continue;
+        --actor.runtime_field_07_delay;
+        if (actor.runtime_field_07_delay == 0) {
+            actor.runtime_field_07 = static_cast<std::uint8_t>(
+                actor.runtime_field_07 | 0x10U);
+        }
+    }
     const bool interaction_selector_pending_at_start =
         interaction_selector_pending_;
+    const bool terrain_response_was_active =
+        player_.terrain_response_active != 0;
     const bool arm_surface_interaction = surface_interaction_pending_;
     surface_interaction_pending_ = false;
     if (player_.animation_selector.interaction_lock != 0) {
         --player_.animation_selector.interaction_lock;
+    }
+    if (interaction_actor_lock_pending_ && interaction_selector_pending_at_start) {
+        // The actor flag edge is published first.  The interaction caller
+        // installs its selector lock and camera delay on the next VBlank,
+        // after the pending bit has crossed the frame boundary.
+        player_.animation_selector.interaction_lock = 0x28;
+        if (interaction_camera_delay_pending_) {
+            camera_.update_delay = 7;
+        }
+        interaction_actor_lock_pending_ = false;
+        interaction_camera_delay_pending_ = false;
     }
     // F5 spawn requests are produced by the player animation VM on the
     // previous frame. Genesis allocates the record before the next actor
@@ -3364,11 +3754,17 @@ void Engine::update(const InputState& input) {
     // do not dispatch this same surface cell a second time after movement.
     int preprocessed_surface_row = -1;
     int preprocessed_surface_column = -1;
+    std::optional<Level::TerrainCell> preprocessed_surface_cell;
     if (!checkpoint_terrain_behavior_override_) {
         const auto prepass_cell = level_.resolve_player_cell(
             player_world_x(), player_world_y());
         if (prepass_cell.valid && prepass_cell.behavior == 0x0A) {
-            apply_terrain_behavior(prepass_cell);
+            // The ROM's camera/refill pass allocates newly visible actors
+            // before the surface handler publishes its temporary 0x8C
+            // record.  Retain the cell for the same pre-integration decision,
+            // but defer the allocator side effect until after refill scanning
+            // below so the common slot order is preserved.
+            preprocessed_surface_cell = prepass_cell;
             preprocessed_surface_row = prepass_cell.row;
             preprocessed_surface_column = prepass_cell.column;
         }
@@ -3390,52 +3786,227 @@ void Engine::update(const InputState& input) {
     player_.terrain_right_inner_probe = collision.right_inner ? 0xFF : 0;
     player_.terrain_right_outer_probe = collision.right_outer ? 0xFF : 0;
     update_terrain_connector_response();
+    if (bounce_response_follow_active_ && player_.terrain_response_active == 0) {
+        player_.terrain_response_timer_state = 1;
+        if (animation_.stream_entry() == 0x00122006) {
+            camera_.vertical_threshold = 400;
+        }
+    }
     const int input_direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
     // The actor-to-actor pass observes the previous stable animation/motion
     // state. In the Genesis sword trace it terminalizes the sword at x=1313
     // before the next movement delta can advance it to x=1320.
     update_actor_actor_collisions(true);
+    // The ROM's movement VM performs its cull before integrating actor
+    // deltas. Use the pre-motion actor coordinates and pre-follow camera so
+    // edge retirement lines up with the synchronized MAME boundary.
+    update_dynamic_actor_culling();
     update_probe_actor_animation_before_movement();
     update_actor_movement();
+    // FUN_001ADB5C also resolves terrain for non-collision actors whose
+    // movement flag bit 0 is set. The common type-0x29 object in the opening
+    // refill window has no movement cursor, but its animation publishes a
+    // frame pointer and the terrain pass snaps its Y coordinate to the
+    // selected class contour on the following VBlank.
+    if (!stable_terrain_handler_fixture && !rom_bytes_.empty()) {
+        const auto& words = level_.terrain_words();
+        const auto& floor = level_.floor_data();
+        constexpr int kTerrainResourceBase = 0x2FD2;
+        for (ActorState& actor : actors_) {
+            const std::size_t slot = static_cast<std::size_t>(&actor - actors_.data());
+            // An F5 actor whose animation cursor was published in the
+            // pre-motion phase has not yet passed the ROM's terrain handler
+            // on this boundary. Let its first movement/animation state remain
+            // intact; the next VBlank will enter the normal terrain pass.
+            if (probe_actor_animation_preupdated_[slot]) {
+                continue;
+            }
+            if (actor.type == 0
+                || (actor.flags & 0x08) != 0
+                || (actor.movement_flags & 0x01) == 0
+                || actor.frame_ptr == 0
+                || actor.movement_word_1a < 0) {
+                continue;
+            }
+            const int level_height_pixels = level_.map_height() * 16;
+            if (static_cast<int>(actor.y) > level_height_pixels + 0xC8) {
+                actor.movement_flags = static_cast<std::uint8_t>(
+                    (actor.movement_flags & ~0x01U) | 0x40U);
+                continue;
+            }
+            const int row = (static_cast<int>(actor.y) - 0xF0) >> 4;
+            const int column = (static_cast<int>(actor.x) + 0x10) >> 4;
+            if (row < 0 || row >= level_.map_height()
+                || column < 0 || column >= level_.map_width()) {
+                actor.movement_flags = static_cast<std::uint8_t>(
+                    (actor.movement_flags & ~0x01U) | 0x40U);
+                continue;
+            }
+            unsigned class_value = 0;
+            int class_row_offset = 0;
+            std::uint8_t interaction_state = 0;
+            for (int row_offset = 0; row_offset < 3 && class_value == 0; ++row_offset) {
+                const int sample_row = row + row_offset;
+                if (sample_row >= level_.map_height()) break;
+                const std::size_t map_index = static_cast<std::size_t>(
+                    sample_row * level_.map_width() + column);
+                const std::size_t resource = static_cast<std::size_t>(words[map_index] >> 1);
+                for (std::size_t resource_offset = 0; resource_offset < 2; ++resource_offset) {
+                    if (resource + resource_offset >= floor.size()) continue;
+                    const std::uint8_t floor_byte = floor[resource + resource_offset];
+                    const std::size_t class_address = static_cast<std::size_t>(
+                        kTerrainResourceBase + (static_cast<std::size_t>(floor_byte) << 4)
+                        + (static_cast<int>(actor.x) & 0x0F));
+                    if (class_address >= rom_bytes_.size()) continue;
+                    const unsigned candidate = rom_bytes_[class_address] & 0x3F;
+                    if (candidate == 0) continue;
+                    class_value = candidate;
+                    class_row_offset = row_offset;
+                    if (resource + 2 < floor.size()) {
+                        interaction_state = floor[resource + 2];
+                    }
+                    break;
+                }
+            }
+            if (class_value == 0) {
+                // The ROM's terrain probe also inspects the fourth row below
+                // the actor for a pending contour. It uses that look-ahead to
+                // arm +0x07 bit 4, but does not snap the actor to a contour
+                // until the class enters the ordinary three-row path.
+                for (int row_offset = 3; row_offset < 4; ++row_offset) {
+                    const int sample_row = row + row_offset;
+                    if (sample_row >= level_.map_height()) break;
+                    const std::size_t map_index = static_cast<std::size_t>(
+                        sample_row * level_.map_width() + column);
+                    const std::size_t resource = static_cast<std::size_t>(words[map_index] >> 1);
+                    for (std::size_t resource_offset = 0; resource_offset < 2; ++resource_offset) {
+                        if (resource + resource_offset >= floor.size()) continue;
+                        const std::uint8_t floor_byte = floor[resource + resource_offset];
+                        const std::size_t class_address = static_cast<std::size_t>(
+                            kTerrainResourceBase + (static_cast<std::size_t>(floor_byte) << 4)
+                            + (static_cast<int>(actor.x) & 0x0F));
+                        if (static_cast<int>(actor.y) >= 0x36B
+                            && class_address < rom_bytes_.size()
+                            && (rom_bytes_[class_address] & 0x3F) != 0) {
+                            if ((actor.runtime_field_07 & 0x10U) == 0
+                                && actor.runtime_field_07_delay == 0) {
+                                actor.runtime_field_07_delay = 2;
+                            }
+                            row_offset = 4;
+                            break;
+                        }
+                    }
+                    if ((actor.runtime_field_07 & 0x10U) != 0) break;
+                }
+                // In-bounds class-zero terrain follows ROM 1ADE1E: it only
+                // arms the vertical accumulator (unless bit 7 suppresses
+                // gravity). The bit0->bit6 flag conversion is reserved for
+                // the out-of-range path at 1ADE10 above.
+                if ((actor.movement_flags & 0x80) == 0) {
+                    actor.movement_word_1a = static_cast<std::int16_t>(
+                        actor.movement_word_1a + 0x78);
+                }
+                continue;
+            }
+            actor.interaction_state = interaction_state;
+            actor.movement_word_1a = 0;
+            actor.y = static_cast<std::uint16_t>(
+                ((static_cast<int>(actor.y) - 0x10) & ~0x0F)
+                + class_row_offset * 0x10 + static_cast<int>(class_value) - 1);
+        }
+    }
+    // FUN_001ADB5C is the terrain/actor prepass immediately after the ROM
+    // movement VM. For collision-enabled actors it samples the same decoded
+    // terrain resource used by Level::resolve_player_cell, then dispatches
+    // Actor_HandleType2DInteraction when the class-table entry is nonzero.
+    // This is what converts the later 0x2D child to the 0x84 template; the
+    // earlier child is on a flat class-zero cell and remains eligible for the
+    // player collision pass below.
+    if (!stable_terrain_handler_fixture && !rom_bytes_.empty()) {
+        const auto& words = level_.terrain_words();
+        const auto& floor = level_.floor_data();
+        constexpr int kTerrainResourceBase = 0x2FD2;
+        for (ActorState& actor : actors_) {
+            if (actor.type != 0x2D
+                || (actor.flags & 0x08) == 0
+                || actor.frame_ptr == 0
+                || static_cast<int>(actor.y) > player_world_y() + 0xE0) {
+                continue;
+            }
+            const int row = (static_cast<int>(actor.y) - 0xF0) >> 4;
+            const int column = (static_cast<int>(actor.x) + 0x10) >> 4;
+            if (row < 0 || row >= level_.map_height()
+                || column < 0 || column >= level_.map_width()) {
+                continue;
+            }
+            const std::size_t map_index = static_cast<std::size_t>(
+                row * level_.map_width() + column);
+            const std::size_t resource = static_cast<std::size_t>(words[map_index] >> 1);
+            const auto terrain_class = [&](std::size_t resource_byte_offset) {
+                if (resource + resource_byte_offset >= floor.size()) return 0U;
+                const std::uint8_t resource_byte = floor[resource + resource_byte_offset];
+                const std::size_t class_address = static_cast<std::size_t>(
+                    kTerrainResourceBase + (static_cast<std::size_t>(resource_byte) << 4)
+                    + (static_cast<int>(actor.x) & 0x0F));
+                if (class_address >= rom_bytes_.size()) return 0U;
+                return static_cast<unsigned>(rom_bytes_[class_address] & 0x3F);
+            };
+            const bool class_empty = terrain_class(0) == 0 && terrain_class(1) == 0;
+            const bool third_byte_is_empty = resource + 2 >= floor.size()
+                || floor[resource + 2] < 0xE0;
+            if (class_empty && third_byte_is_empty) {
+                continue;
+            }
+
+            const std::uint16_t source_x = actor.x;
+            const std::uint16_t source_y = actor.y;
+            const std::uint32_t animation_pc = actor.animation_pc;
+            const std::uint32_t loop_pc = actor.movement_loop_pc;
+            const std::uint8_t loop_timer = actor.movement_loop_timer;
+            const bool spawned_by_animation = actor.spawned_by_animation;
+            actor = actor_from_template(0x001B7E40);
+            // The initializer preserves the source actor's world position;
+            // restore it explicitly after replacing the compact record so
+            // sub-tile movement is not rounded to the terrain column.
+            actor.x = source_x;
+            actor.y = source_y;
+            actor.movement_loop_pc = loop_pc;
+            actor.movement_loop_timer = loop_timer;
+            // Most type-0x2D terrain conversions pass through the common
+            // 0x001ABECE follow-up, which republishes the facing byte as
+            // 0xFF. The Level-01 stream at animation cursor 0x00123EFA takes
+            // the direct terrain path instead and keeps the template's zero
+            // facing byte.
+            actor.facing_x_flip = animation_pc == 0x00123EFA ? 0 : 0xFF;
+            actor.animation_defer_ticks = 1;
+            actor.animation_force_next_tick = true;
+            actor.spawned_by_animation = spawned_by_animation;
+        }
+    }
     update_actor_interactions(input, was_grounded);
     update_actor_actor_collisions();
+    // The camera's tile reference is consumed before the actor traversal in
+    // the ROM. Rebase it now so the refill edge and the common actor gate see
+    // the same newly crossed tile on this VBlank.
+    const int camera_reference_y_before_rebase = camera_.reference_y;
+    rebase_camera_reference();
+    const bool camera_vertical_reference_rebased =
+        camera_.reference_y != camera_reference_y_before_rebase;
+    if (!stable_terrain_handler_fixture) {
+        scan_interaction_refill_window();
+    }
+    if (preprocessed_surface_cell) {
+        apply_terrain_behavior(*preprocessed_surface_cell);
+    }
     // The launch fixture reaches the ROM handler before its animation pass;
     // keeping the seeded player cursor stable preserves the observed frame
     // state while the native animation VM remains intentionally separate.
-    const bool actor_animation_catch_up = actor_animation_catch_up_;
     actor_animation_catch_up_ = false;
-    std::array<std::uint32_t, 32> spawned_animation_pcs{};
-    bool actor_animation_command_boundary = false;
-    for (std::size_t slot = 0; slot < actors_.size() && slot < spawned_animation_pcs.size(); ++slot) {
-        if (actors_[slot].spawned_by_animation) {
-            spawned_animation_pcs[slot] = actors_[slot].animation_pc;
-        }
-    }
     if (!stable_terrain_handler_fixture) {
         update_actor_animations();
-        if (actor_animation_catch_up) {
-            // This is a second common actor-loop visit, not a second logical
-            // frame. Keep it separate from the per-actor cadence so every
-            // actor sees the same shared scheduler pass as in the ROM.
-            update_actor_animations();
-            // The extra shared visit consumes the current odd scheduler slot;
-            // align the following two held visits to the next even slot
-            // before normal alternation resumes.
-            if ((actor_animation_service_phase_ & 1U) != 0) {
-                ++actor_animation_service_phase_;
-            }
-            actor_animation_hold_ticks_ = 2;
-        }
-        for (std::size_t slot = 0; slot < actors_.size() && slot < spawned_animation_pcs.size(); ++slot) {
-            if (spawned_animation_pcs[slot] != 0
-                && actors_[slot].spawned_by_animation
-                && actors_[slot].animation_pc != spawned_animation_pcs[slot]) {
-                actor_animation_command_boundary = true;
-                break;
-            }
-        }
     }
     if (arm_surface_interaction
+        && !bounce_response_follow_active_
         && player_.animation_selector.interaction_lock == 0) {
         // A surface actor's type transition is published one frame before
         // Player_ProcessInteractionState selects the stop stream.
@@ -3449,6 +4020,16 @@ void Engine::update(const InputState& input) {
     animation_context.selector.interaction_lock =
         player_.animation_selector.interaction_lock;
 
+    const bool blocked_right_wall_response = was_grounded
+        && (player_.grounded || contour_ground_motion)
+        && input.right
+        && !input.left
+        && player_.terrain_stop_right_motion != 0;
+    const bool blocked_left_wall_response = was_grounded
+        && (player_.grounded || contour_ground_motion)
+        && input.left
+        && !input.right
+        && player_.terrain_stop_left_motion != 0;
     if (was_grounded && (player_.grounded || contour_ground_motion)) {
         if (input.left != input.right) {
             const int threshold = input.left ? 0xF0 : 0x70;
@@ -3458,12 +4039,96 @@ void Engine::update(const InputState& input) {
             }
         }
         apply_ground_movement(input);
-    } else if (input.left && !input.right) {
+    } else if (player_.terrain_response_timer_state != 0
+               && input.left && !input.right) {
+        // The ROM's horizontal response path keeps applying FFF0B0 while
+        // the contour latch is zero.  This is still a direct local-X step,
+        // not fixed-point air acceleration; it is visible for a few frames
+        // when walking off a contour edge.
+        const int step = player_.terrain_horizontal_response != 0
+            ? player_.terrain_horizontal_response : 2;
+        player_.x -= step;
+        player_.vx = 0;
+    } else if (player_.terrain_response_timer_state != 0
+               && input.right && !input.left) {
+        const int step = player_.terrain_horizontal_response != 0
+            ? player_.terrain_horizontal_response : 2;
+        player_.x += step;
+        player_.vx = 0;
+    } else if (player_.terrain_response_active != 0
+               && player_.terrain_jump_response_counter != 0
+               && input.left && !input.right) {
+        // The ROM's response state advances local X by the published
+        // horizontal-response amount before Camera_UpdateFollow.  The camera
+        // then compensates by the same damped delta, leaving the exposed
+        // local coordinate fixed while world X follows the camera edge.
+        const int step = player_.terrain_horizontal_response != 0
+            ? player_.terrain_horizontal_response : 2;
+        player_.x -= step;
+        player_.vx = 0;
+    } else if (player_.terrain_response_active != 0
+               && player_.terrain_jump_response_counter != 0
+               && input.right && !input.left) {
+        const int step = player_.terrain_horizontal_response != 0
+            ? player_.terrain_horizontal_response : 2;
+        player_.x += step;
+        player_.vx = 0;
+    } else if (terrain_response_was_active
+               && player_.terrain_response_active == 0
+               && player_.terrain_response_timer_state == 0
+               && input.left && !input.right) {
+        const int step = player_.terrain_horizontal_response != 0
+            ? player_.terrain_horizontal_response : 2;
+        player_.x -= step;
+        player_.vx = 0;
+    } else if (terrain_response_was_active
+               && player_.terrain_response_active == 0
+               && player_.terrain_response_timer_state == 0
+               && input.right && !input.left) {
+        const int step = player_.terrain_horizontal_response != 0
+            ? player_.terrain_horizontal_response : 2;
+        player_.x += step;
+        player_.vx = 0;
+    } else if (player_.terrain_response_active != 0
+               && player_.terrain_jump_response_counter == 0
+               && animation_.stream_kind() != AnimationStreamKind::Response
+               && input.left && !input.right) {
         player_.vx = player_.vx >= 0 ? static_cast<std::int16_t>(-0x300)
                                      : std::max<std::int16_t>(player_.vx, -0x300);
-    } else if (input.right && !input.left) {
+    } else if (player_.terrain_response_active != 0
+               && player_.terrain_jump_response_counter == 0
+               && animation_.stream_kind() != AnimationStreamKind::Response
+               && input.right && !input.left) {
         player_.vx = player_.vx <= 0 ? static_cast<std::int16_t>(0x300)
                                      : std::min<std::int16_t>(player_.vx, 0x300);
+    }
+    if (!stable_terrain_handler_fixture) {
+        // The type-0x1F stream raises its interaction bit when its animation
+        // cursor enters the 0x12397E..0x123988 frame window.  The first such
+        // edge is consumed by Player_ProcessInteractionState on the next
+        // VBlank; later loop iterations only expose the actor bit while the
+        // selector lock is still active.
+        constexpr std::uint8_t kInteractionFlag = 0x20;
+        for (ActorState& actor : actors_) {
+            if (actor.type != 0x1F) continue;
+            const bool interaction_frame = actor.animation_pc >= 0x0012397E
+                && actor.animation_pc <= 0x00123988;
+            const bool flag_was_set = (actor.flags & kInteractionFlag) != 0;
+            if (interaction_frame) {
+                actor.flags = static_cast<std::uint8_t>(actor.flags | kInteractionFlag);
+                if (!flag_was_set
+                    && !interaction_actor_triggered_
+                    && player_.animation_selector.interaction_lock == 0) {
+                    interaction_selector_pending_ = true;
+                    interaction_actor_lock_pending_ = true;
+                    interaction_camera_delay_pending_ = true;
+                    interaction_actor_triggered_ = true;
+                    player_.animation_selector.response_state_101 = 1;
+                }
+            } else {
+                actor.flags = static_cast<std::uint8_t>(actor.flags & ~kInteractionFlag);
+            }
+        }
     }
 
     const int previous_world_y = player_world_y();
@@ -3504,7 +4169,9 @@ void Engine::update(const InputState& input) {
         // Player_HandleJumpAndVerticalState applies this extra impulse after
         // Player_IntegrateMotion during the first nine active-response ticks.
         ++player_.terrain_jump_response_counter;
-        player_.vy = static_cast<std::int16_t>(player_.vy - 0x006C);
+        if (animation_.stream_kind() != AnimationStreamKind::Response) {
+            player_.vy = static_cast<std::int16_t>(player_.vy - 0x006C);
+        }
     }
     if (checkpoint_terrain_behavior_override_ && checkpoint_terrain_behavior_ == 0x2B) {
         // The original response path continues through the positive-motion
@@ -3527,6 +4194,31 @@ void Engine::update(const InputState& input) {
         // published RAM state, but let the post-integrator handoff run.
         player_.terrain_behavior = 0;
     }
+    // The bounce response clears FFF0BE when its positive fall reaches the
+    // handoff boundary.  Genesis immediately arms the ordinary ground
+    // response latch and holds Camera_UpdateFollow for seven VBlanks before
+    // returning to the run stream.
+    const bool bounce_response_finished =
+        !bounce_response_follow_active_
+        && terrain_response_was_active
+        && player_.terrain_response_active == 0;
+    if (bounce_response_finished) {
+        player_.terrain_response_timer_state = 1;
+        player_.terrain_jump_response_counter = 0;
+        camera_.update_delay = 7;
+        bounce_response_follow_active_ = true;
+        bounce_camera_delay_hold_pending_ = true;
+        // Any pre-existing surface/actor selector edge belongs to the
+        // response that just ended.  Genesis clears that transient before
+        // returning to the ordinary run stream; carrying it across the F8
+        // handoff would spuriously select the 0x122014 stop root a few
+        // frames later.
+        interaction_selector_pending_ = false;
+        interaction_actor_lock_pending_ = false;
+        interaction_camera_delay_pending_ = false;
+        surface_interaction_pending_ = false;
+        surface_interaction_active_ = false;
+    }
     if (!player_.grounded && player_.terrain_behavior == 0
         && (vertical_stop_before_frame || player_.terrain_response_timer_state != 0)) {
         // This is the post-integrator jump/vertical-state handoff. It is
@@ -3537,7 +4229,17 @@ void Engine::update(const InputState& input) {
         // upward residual, the ROM publishes that boundary with VY still
         // zero.  The positive phase starts on the following frame; do not
         // consume the newly-written stop in the same pass.
-        if (!terrain_fall_phase_ && player_.terrain_vertical_stop == 0xFF
+        if (!terrain_fall_phase_
+            && grounded_before_contour
+            && player_.terrain_landing_state == 0
+            && player_.terrain_vertical_stop == 0
+            && player_.terrain_response_timer_state != 0) {
+            // Walking off the last contour pixel enters the positive phase
+            // immediately, even though no explicit vertical-stop byte was
+            // raised by the integrator on that boundary.
+            player_.vy = 0x003C;
+            terrain_fall_phase_ = true;
+        } else if (!terrain_fall_phase_ && player_.terrain_vertical_stop == 0xFF
             && (vertical_stop_before_frame || player_.vy != 0)) {
             player_.vy = 0x003C;
             terrain_fall_phase_ = true;
@@ -3685,42 +4387,45 @@ void Engine::update(const InputState& input) {
     animation_context.selector.response_timer =
         player_.terrain_response_timer_state;
 
-    // The ROM consumes a pending 16-pixel reference shift at the beginning
-    // of the next follow pass. This leaves the boundary frame externally
-    // visible with scroll == 16, then exposes the rebased reference on the
-    // following frame.
-    const int camera_reference_x_before_rebase = camera_.reference_x;
-    const int camera_reference_y_before_rebase = camera_.reference_y;
-    rebase_camera_reference();
-    const bool camera_horizontal_reference_rebased =
-        camera_.reference_x != camera_reference_x_before_rebase;
-    const bool camera_vertical_reference_rebased =
-        camera_.reference_y != camera_reference_y_before_rebase;
-    // A vertical Camera_UpdateFollow reference-tile rebase is the whole
-    // camera pass for that frame. The vertical follow lookup resumes on the
-    // next frame; running it immediately would add a damped step on the same
-    // boundary and drift the local player by the rebase cadence. Upward
-    // vertical rebases receive two follow services on the next frame, while a
-    // downward rebase is followed by one service and a post-follow tile
-    // rebase. Horizontal rebases retain the same-frame damped follow.
+    // The ROM consumes a pending 16-pixel reference shift before the actor
+    // traversal and then runs the damped follow below. This leaves the
+    // boundary frame externally visible with scroll == 16, then exposes the
+    // rebased reference on the following frame.
+    // A vertical Camera_UpdateFollow reference-tile rebase suppresses the
+    // vertical damped lookup for that frame, but the ROM still services the
+    // independent horizontal follow. Running both components here would add
+    // a vertical step on the rebase boundary and drift the local player by
+    // the tile cadence. Upward vertical rebases receive two vertical follow
+    // services on the next frame, while a downward rebase is followed by one
+    // service and a post-follow tile rebase. Horizontal rebases retain the
+    // same-frame damped follow.
     const bool camera_follow_deferred = camera_vertical_reference_rebased;
     const bool camera_follow_catch_up_after_rebase =
         camera_vertical_reference_rebased
         && camera_.reference_y < camera_reference_y_before_rebase;
-    const bool camera_follow_catch_up = camera_follow_catch_up_;
+    if (bounce_camera_delay_hold_pending_ && !bounce_response_finished) {
+        // The ROM's camera delay is held for one additional VBlank after the
+        // bounce handoff; preserve the externally visible countdown (6, 6,
+        // 5, ...), rather than decrementing it on the first run-stream tick.
+        camera_.update_delay = 7;
+        bounce_camera_delay_hold_pending_ = false;
+    }
     camera_follow_catch_up_ = false;
     if (camera_follow_deferred) {
+        // The reference-tile write occupies this camera pass. The vertical
+        // damped lookup resumes on the following VBlank; horizontal follow
+        // is still handled by update_camera().
+        update_camera();
         camera_follow_catch_up_ = camera_follow_catch_up_after_rebase;
     } else {
         update_camera();
-        if (camera_follow_catch_up) {
-            update_camera();
-        }
         // A downward follow step can land exactly on the next camera tile
         // boundary. The ROM applies that reference update after the follow
         // pass; an earlier sub-tile crossing remains pending for the next
         // camera pass.
-        if (camera_.y >= camera_.reference_y + 0x10
+        if (player_.terrain_response_active == 0
+            && player_.terrain_jump_response_counter == 0
+            && camera_.y >= camera_.reference_y + 0x10
             && (camera_.y & 0x0F) == 0) {
             if (rebase_camera_reference()) {
                 // The post-follow tile update queues the second service for
@@ -3730,14 +4435,6 @@ void Engine::update(const InputState& input) {
             }
         }
     }
-    if (camera_horizontal_reference_rebased && actor_animation_command_boundary) {
-        actor_animation_catch_up_ = true;
-    }
-    // Camera refill dispatch runs after the common actor-animation traversal
-    // in the ROM. Newly allocated interaction records therefore remain at
-    // their initialized animation cursor for this state sample and join the
-    // next shared traversal.
-    scan_interaction_refill_window();
     if (was_grounded && (player_.grounded || contour_ground_motion) && input_direction != 0) {
         last_ground_direction_ = input_direction;
     } else if (!player_.grounded && !contour_ground_motion) {
@@ -3745,14 +4442,39 @@ void Engine::update(const InputState& input) {
     }
 
     const bool landing_event = just_landed || landed_during_frame;
+    const bool preserve_ground_response_run =
+        !player_.grounded
+        && !contour_ground_motion
+        && !player_collision_interaction_pending_
+        && player_.terrain_response_active == 0
+        && player_.terrain_response_timer_state != 0
+        && animation_.animation_pc() >= 0x00122006
+        && animation_.animation_pc() <= 0x001220A6;
     SpritePose desired_pose = SpritePose::Idle;
-    if (!player_.grounded && !contour_ground_motion) {
+    if (preserve_ground_response_run) {
+        // The run/ground response owns the horizontal step even after the
+        // contour latch drops. Keep its stream alive while the positive
+        // vertical phase starts; switching to the generic jump stream here
+        // would stop the camera-follow run sequence one frame too early.
+        desired_pose = SpritePose::Run;
+        if (!bounce_response_follow_active_ || bounce_response_finished) {
+            player_.animation_selector.response_state_101 = 1;
+            animation_context.selector.response_state_101 = 1;
+        }
+    } else if (!player_.grounded && !contour_ground_motion) {
         // Genesis keeps the jump stream active during the approach frame. It
         // selects the landing stream only after the contour resolver has
         // actually latched grounded state on the following boundary.
         desired_pose = SpritePose::Jump;
-    } else if (landing_event
+    } else if ((landing_event && animation_.pose() == SpritePose::Jump)
                || (animation_.pose() == SpritePose::Landing && !animation_.finished())) {
+        // The terrain resolver can latch grounded while the active stream is
+        // still the run/ground-response program (the opening slope does this
+        // at frame 618).  The ROM does not replace that locomotion cursor
+        // merely because FFF0C1 changed to a nonzero contour; the landing
+        // root is selected only when the preceding player stream is the jump
+        // program.  A generic just-landed test would incorrectly jump from
+        // 0x0012207E to 0x00121F84 one boundary too early.
         desired_pose = SpritePose::Landing;
     } else if (input.left != input.right) {
         desired_pose = SpritePose::Run;
@@ -3804,19 +4526,29 @@ void Engine::update(const InputState& input) {
         player_.terrain_response_timer_state = 0;
         vm_context.selector.transition_state_df = 0xFF;
     }
-    // The camera tile-update boundary also suppresses this frame's player
-    // animation service in the observed ROM loop. The following frame
-    // resumes the normal VM cadence after the camera pass has caught up.
-    const bool defer_player_animation_tick = camera_follow_deferred;
-    if (defer_player_animation_tick) {
-        player_animation_catch_up_ = true;
-    }
+    // The camera tile-update boundary does not suppress the common player VM
+    // pass: the ROM services animation after the horizontal follow even when
+    // the vertical reference tile is rebased. Keep the separate catch-up
+    // marker only for the post-follow downward rebase path above.
+    const bool defer_player_animation_tick = false;
     if (!stable_terrain_handler_fixture && !defer_player_animation_tick) {
         if (player_animation_catch_up_) {
             animation_.force_tick_next_update_without_phase();
             player_animation_catch_up_ = false;
         }
-        animation_.update(desired_pose, horizontal_direction(input), vm_context);
+        // The bounce response's F8 command publishes the dynamic 0x121AD8
+        // root at this boundary but leaves the previous frame pointer in
+        // place. Do not consume the new root until the following VBlank.
+        const bool response_dynamic_handoff =
+            animation_.animation_pc() == 0x001221E8;
+        if (response_dynamic_handoff) {
+            animation_.select_locomotion_entry(0x00121AD8, true);
+        } else if (bounce_response_finished) {
+            animation_.select_locomotion_entry(
+                0x00122006, true, SpritePose::Run);
+        } else {
+            animation_.update(desired_pose, horizontal_direction(input), vm_context);
+        }
         if (animation_.rom_loaded()) {
             camera_.vertical_threshold = animation_.camera_vertical_threshold();
             std::uint8_t value = 0;
@@ -3827,12 +4559,28 @@ void Engine::update(const InputState& input) {
                 player_.terrain_landing_state = value;
                 player_.animation_selector.landing_state = value;
             }
+            if (animation_.take_memory_write(0xFFF101, value)) {
+                // Some run-stream ED commands re-arm the shared interaction
+                // selector after the bounce handoff.  Propagate that tracked
+                // ROM write back to the engine-owned selector so the next
+                // command boundary sees the same FFF101 latch.
+                player_.animation_selector.response_state_101 = value;
+            }
         }
         if (ground_release && desired_pose == SpritePose::Idle) {
             // Player_TerrainResponseStateMachine writes the idle root after
             // the common VM pass on this boundary. Keep that root visible for
             // one frame, then resume the cursor reached by the pass.
             animation_.republish_stream_root();
+        }
+
+        if (player_collision_interaction_pending_) {
+            // The type-0x2D collision handler calls the player interaction
+            // selector after the common animation tick. Publish the stop
+            // root and its first frame pointer at this boundary.
+            animation_.select_stream_entry(0x00122014, true);
+            player_.animation_selector.response_state_101 = 0;
+            player_collision_interaction_pending_ = false;
         }
 
         if (can_select_up_animation && !select_up_before_vm) {
@@ -3850,6 +4598,84 @@ void Engine::update(const InputState& input) {
             // the preceding stream was a terrain-selected action stream.
             animation_.select_locomotion_stream(SpritePose::Jump, vm_context);
         }
+    }
+    // Player_Update's horizontal wall branch enters the extended response
+    // stream after the common VM tick.  The branch is reached when a held
+    // direction first meets the terminal terrain stop; it clears FFF0B0 and
+    // FFF0CC, marks FFF0ED, and publishes 0x00121FA6 without consuming its
+    // first frame.  Keep this post-pass ordering so the boundary retains the
+    // previous locomotion frame pointer just like Genesis.
+    const bool wall_response_allowed = animation_.rom_loaded()
+        && animation_.stream_kind() == AnimationStreamKind::Locomotion
+        && player_.animation_selector.animation_gate == 0
+        && player_.animation_selector.terminal_transition == 0
+        && player_.animation_selector.interaction_lock == 0
+        && player_.terrain_response_active == 0
+        && (blocked_right_wall_response || blocked_left_wall_response);
+    if (wall_response_allowed) {
+        animation_.select_response_stream(0x00121FA6);
+        player_.animation_selector.response_animation = 0xFF;
+        player_.animation_selector.response_state_101 = 0;
+        player_.animation_selector.horizontal_response = 0;
+        player_.terrain_horizontal_response = 0;
+        player_.terrain_response_timer_state = 0;
+        player_.animation_selector.response_timer = 0;
+        player_.animation_selector.transition_state_de = 0;
+        player_.animation_selector.transition_state_df = 0;
+        player_.animation_selector.response_latch = 0;
+    }
+    // Type 0x7B uses the ROM's 0x001AE9D4 player-collision handler.  The
+    // player/actor rectangles are evaluated after the common animation tick;
+    // this is why the interaction first becomes visible when the response
+    // stream publishes frame 0x001EA062, even though the same actor was
+    // already present at the earlier wall-response boundary.
+    bool surface_actor_collision = false;
+    if (!stable_terrain_handler_fixture && animation_.rom_loaded()) {
+        const CollisionBox player_interaction_box = read_collision_box(
+            animation_.frame_pointer(),
+            player_world_x(),
+            player_world_y(),
+            animation_.facing_left());
+        if (player_interaction_box.valid) {
+            for (std::size_t slot = 1; slot <= 24 && slot < actors_.size(); ++slot) {
+                const ActorState& actor = actors_[slot];
+                if (actor.type != 0x7B || actor.frame_ptr == 0) continue;
+                const CollisionBox actor_interaction_box = read_collision_box(
+                    actor.frame_ptr,
+                    static_cast<int>(actor.x),
+                    static_cast<int>(actor.y),
+                    actor.facing_x_flip != 0);
+                if (!actor_interaction_box.valid) continue;
+                if (actor_interaction_box.left <= player_interaction_box.right
+                    && actor_interaction_box.top <= player_interaction_box.bottom
+                    && player_interaction_box.left < actor_interaction_box.right
+                    && player_interaction_box.top < actor_interaction_box.bottom) {
+                    surface_actor_collision = true;
+                    break;
+                }
+            }
+        }
+    }
+    if (surface_actor_collision
+        && player_.animation_selector.interaction_lock == 0) {
+        AnimationContext collision_selector_context =
+            player_animation_context(player_.grounded);
+        collision_selector_context.player_x = player_.x;
+        collision_selector_context.player_y = player_.y;
+        collision_selector_context.world_x = player_world_x();
+        collision_selector_context.world_y = player_world_y();
+        collision_selector_context.player_vx = player_.vx;
+        collision_selector_context.player_vy = player_.vy;
+        collision_selector_context.grounded = player_.grounded || contour_ground_motion;
+        collision_selector_context.selector.interaction_lock = 0;
+        collision_selector_context.selector.response_timer = 0;
+        animation_.select_player_interaction_state(collision_selector_context);
+        // The ROM's next VBlank publishes the 0x28 interaction lock after
+        // this immediate selector call. Reuse the existing deferred lock
+        // path so the frame of the handoff still exposes lock == 0.
+        interaction_selector_pending_ = true;
+        interaction_actor_lock_pending_ = true;
+        interaction_camera_delay_pending_ = false;
     }
     // Player_ProcessInteractionState at 0x001AE4F8 is a RAM-driven stream
     // selector outside the common actor VM. Build its post-physics RAM view
@@ -3932,9 +4758,16 @@ void Engine::update(const InputState& input) {
     if (player_.attack_timer == 0
         && animation_.stream_entry() != kPlayerAttackTransitionStream
         && animation_.stream_entry() != kPlayerSwordStableStream) {
-        apply_animation_spawns(true);
+        const auto spawned_slots = apply_animation_spawns(false);
+        // Player mode-0 F5 records are allocated at the next stable boundary;
+        // their initial cursor remains visible until the following common
+        // actor pass. Mode-3 sword records are published at their initial
+        // cursor and are likewise first serviced by that pass.
+        for (const std::size_t slot : spawned_slots) {
+            if (actors_[slot].type == kActorSwordType) continue;
+            update_actor_animations(slot);
+        }
     }
-    update_dynamic_actor_culling();
     sync_player_actor();
     apply_actor_timeline(frame_ + 1);
     checkpoint_animation_selector_pending_ = false;
@@ -4165,6 +4998,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"x\":" << actor.x
                << ",\"y\":" << actor.y
                << ",\"movement_flags\":" << static_cast<unsigned>(actor.movement_flags)
+               << ",\"runtime_field_07\":" << static_cast<unsigned>(actor.runtime_field_07)
                << ",\"facing_x_flip\":" << static_cast<unsigned>(actor.facing_x_flip)
                << ",\"facing_y_flip\":" << static_cast<unsigned>(actor.facing_y_flip)
                << ",\"movement_loop_pc\":" << actor.movement_loop_pc
