@@ -229,6 +229,14 @@ the finding or commit message.
   mismatch at aligned frame 395 is a real type-0x2D player-collision lifecycle,
   not a scene transition. Slot 3 enters `0x001AEE40`, then clears its type and
   owned resources through `0x001AE372`; Level 01 remains `SCENE_STATE=0x01`.
+- `re/mame/findings/20260827-level01-actor-refill-vm-v1.json`: the first
+  interaction-refill actor is allocated in slot 8 at MAME frame `0x536` through
+  `0x001B5270`, while the common animation gate crosses to `0x91` at
+  `0x001A8C1E`. The actor is briefly observed at the next stable boundary with
+  animation cursor `0x00122C12` and no frame pointer, then returns to a zero
+  cursor. Static decoding confirms that `AnimationVM_TickActors` requires the
+  gate low bit and a nonzero actor animation pointer, so the opening player F5
+  deferral rule cannot yet be generalized to interaction-refill actors.
 - `re/mame/findings/20260827-player-slope-grounded-boundary-v1.json`: a fresh
   Level 01 actor-boot replay shows non-flat contour bytes (`0x0F` through
   `0x03`) publishing `grounded=false` while retaining ground-motion and run
@@ -875,6 +883,7 @@ countdown producer.
 | `20260826-level01-selector12-dispatch-v1` | recorded-negative-frontier | fresh natural selector-0x12 dispatch trace; generic route actors only, no scene transition |
 | `20260826-level01-scene-countdown-writers-v1` | recorded-negative-natural | complete countdown-writer static/runtime audit; no gameplay countdown or scene-state write |
 | `20260827-level01-actor-lifecycle-v1` | recorded-lifecycle | type-0x2D player-collision cleanup at the first actor parity break; no scene transition |
+| `20260827-level01-actor-refill-vm-v1` | recorded-boundary-classification | interaction-refill allocation, animation-gate crossing, and transient slot-8 cursor boundary |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

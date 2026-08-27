@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-actor-refill-vm",
+    "purpose": "Decode the common actor-animation gate and F5/initializer ordering at the first Level 01 interaction-refill actor boundary."
+  },
+  "targets": [
+    { "address": "0x001AC784", "name": "AnimationVM_TickActors" },
+    { "address": "0x001AD00E", "name": "AnimationVM_SpawnOrCopyActor" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
+    { "address": "0x001AD0FC", "name": "MovementVM_ClearActor" },
+    { "address": "0x001B5270", "name": "LevelObjectSpawnDispatcher" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E28", "name": "PLAYER_X_ANIMATION_VM_GATE" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },
+    { "address": "0x00FF8050", "name": "ACTOR_SLOT_8" }
+  ]
+}

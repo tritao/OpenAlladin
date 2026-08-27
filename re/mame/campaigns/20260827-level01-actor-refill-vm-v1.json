@@ -1,0 +1,71 @@
+{
+  "campaign": "20260827-level01-actor-refill-vm-v1",
+  "status": "completed-boundary-classification",
+  "purpose": "Resolve the common actor-animation gate and initialization ordering at the first Level 01 interaction-refill actor boundary.",
+  "recorded_at": "2026-08-27",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "static_report": "build/re/actor-refill-vm-targeted-decompile-v1.json",
+  "target_manifest": "re/ghidra/targets/level01-actor-refill-vm-targets.json",
+  "traces": [
+    {
+      "id": "refill-initializer-gate",
+      "trace_dir": "build/re/level01-actor-boot-refill-v4",
+      "command": "OPENALADDIN_TRACE_ACTOR_INIT=1 OPENALADDIN_DEBUG_WATCH=1 OPENALADDIN_WATCH_ADDRESSES=0xFF7E28 OPENALADDIN_BREAKPOINTS=0x001B5270,0x001AD00E,0x001AD0FC OPENALADDIN_BREAKPOINT_REGISTERS=1 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
+      "frames": 1365
+    },
+    {
+      "id": "refill-actor-state",
+      "trace_dir": "build/re/level01-actor-boot-refill-v5",
+      "command": "OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_BREAKPOINTS=0x001AC784 OPENALADDIN_BREAKPOINT_REGISTERS=1 tools/openaladdin/mame/run.sh rom/Disneys_Aladdin_U_p1.bin",
+      "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*600",
+      "frames": 1360
+    }
+  ],
+  "evidence": {
+    "initializer": {
+      "mame_frame": "0x536",
+      "destination": "0x00FF8050",
+      "actor_slot": 8,
+      "source_template": "0x001B79B8",
+      "template_context": "0x00FFAE87",
+      "caller_return": "0x001B5270",
+      "initializer_pc": "0x001AE30C"
+    },
+    "gate": {
+      "mame_frame": "0x536",
+      "write_pc": "0x001A8C1E",
+      "address": "0x00FF7E28",
+      "value": "0x91",
+      "interpretation": "The common animation VM tests the low bit of this field; the write crosses the actor allocation boundary from an even value to an odd value."
+    },
+    "actor_observation": [
+      {
+        "state_frame": 1336,
+        "slot": 8,
+        "type": "0x40",
+        "world": [560, 816],
+        "animation_pc": "0x00122C12",
+        "frame_ptr": "0x00000000"
+      },
+      {
+        "state_frame": 1337,
+        "slot": 8,
+        "type": "0x40",
+        "world": [560, 816],
+        "animation_pc": "0x00000000",
+        "frame_ptr": "0x00000000"
+      }
+    ]
+  },
+  "static_semantics": {
+    "animation_vm": "0x001AC784 first clears transient VM fields, then services actors only when (0x00FF7E28 & 1) is nonzero. It scans 32 records, requires a nonzero type and animation pointer, and either consumes animation commands or decrements the actor delay at record +0x37.",
+    "initializer": "0x001AE30A copies the compact template fields, installs the animation pointer from template +0x0C, and clears the actor runtime frame/timer/link fields.",
+    "f5": "0x001AD00E selects the allocator by the F5 mode byte and applies signed source offsets; optional animation and movement overrides are read from the F5 payload.",
+    "clear": "0x001AD0FC clears a mode-0 actor when the F5 mode and actor flags permit, otherwise it enters the shared owned-resource cleanup path."
+  },
+  "conclusion": "The interaction-refill actor is allocated by the level-object dispatcher at the same VBlank boundary where the shared animation gate advances. Its transient cursor/frame observation is consistent with a real allocation-plus-VM boundary, but does not justify applying the opening player F5 scheduling rule to all interaction spawns. Native scheduling must retain separate allocation families until the first common-pass eligibility and actor-clear path are modeled.",
+  "next_action": "Use the recorded slot-8 boundary as the native differential fixture; next decode the interaction-refill actor's animation stream and its first clear/retire command before changing the common scheduler again."
+}
