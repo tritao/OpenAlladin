@@ -347,6 +347,22 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
         add_test(
+            NAME player_jump_regression
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    SDL_VIDEODRIVER=dummy
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/player_jump_regression.py")
+        set_tests_properties(player_jump_regression PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
+            NAME terrain_jump_regression
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    SDL_VIDEODRIVER=dummy
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/terrain_jump_regression.py")
+        set_tests_properties(terrain_jump_regression PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
             NAME native_connector_response
             COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
                     ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_connector_response.py")

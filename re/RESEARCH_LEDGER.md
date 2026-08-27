@@ -205,6 +205,21 @@ the finding or commit message.
 
 ### Scene and exit work
 
+### Player animation and terrain timing
+
+- `re/mame/findings/20260827-level01-f5-actor-boundary-v1.json`: the opening
+  player-stream `F5` request initializes slot 3 and publishes its first actor
+  animation frame in the same MAME VBlank. Native mode-0 allocation remains a
+  known one-boundary gap for the live actor boot; a later interaction-refill
+  actor follows a different cadence, so the broader scheduler is still
+  unresolved.
+- `re/mame/findings/20260827-player-jump-animation-boundary-v1.json`: the
+  ROM-backed player jump replay now matches MAME for 157 synchronized frames,
+  including run-stream response-latch branching, ordinary-vs-timed jump root
+  selection, delayed landing-latch timing, vertical-stop writes, and landing
+  animation ordering. `tests/player_jump_regression.py` runs this comparison
+  as a CTest differential gate.
+
 - `re/mame/findings/level-transition-findings.json`: controlled scene-state
   transition proof and table/exit-gate work.
 - `re/mame/findings/natural-exit-findings.json`: controller-only natural route

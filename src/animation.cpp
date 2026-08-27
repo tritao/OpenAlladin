@@ -135,12 +135,14 @@ void PlayerAnimationVm::reset() {
     force_tick_after_service_ = false;
     force_tick_next_update_ = false;
     force_tick_without_phase_ = false;
+    tracking_memory_writes_ = false;
     spawn_request_ = {};
     sound_requests_.clear();
     update_count_ = 0;
     landing_finished_ = false;
     landing_reselect_pending_ = false;
     memory_.fill(0);
+    memory_write_flags_.fill(0);
     actor_.fill(0);
     actor_[0] = 1;
 }
@@ -209,7 +211,11 @@ std::uint32_t PlayerAnimationVm::read_memory32(std::uint32_t address) const {
 
 void PlayerAnimationVm::write_memory8(std::uint32_t address, std::uint8_t value) {
     if (address < actor_.size()) actor_[address] = value;
-    else if (address >= 0xFF0000 && address <= 0xFFFFFF) memory_[address - 0xFF0000] = value;
+    else if (address >= 0xFF0000 && address <= 0xFFFFFF) {
+        const auto offset = address - 0xFF0000;
+        memory_[offset] = value;
+        if (tracking_memory_writes_) memory_write_flags_[offset] = 1;
+    }
 }
 
 void PlayerAnimationVm::write_memory16(std::uint32_t address, std::uint16_t value) {
@@ -535,11 +541,21 @@ void PlayerAnimationVm::tick_rom(const AnimationContext& context) {
     actor_[0x17] = static_cast<std::uint8_t>(frame_pointer_);
     if (timer_ != 0) { --timer_; actor_[0x37] = timer_; return; }
 
+    tracking_memory_writes_ = true;
     for (int instruction = 0; instruction < 1024; ++instruction) {
         const std::uint8_t opcode = read_rom8(cursor);
-        if (!is_command(opcode)) { animation_pc_ = cursor; return; }
-        if (command(opcode, cursor, context)) { animation_pc_ = cursor; return; }
+        if (!is_command(opcode)) {
+            tracking_memory_writes_ = false;
+            animation_pc_ = cursor;
+            return;
+        }
+        if (command(opcode, cursor, context)) {
+            tracking_memory_writes_ = false;
+            animation_pc_ = cursor;
+            return;
+        }
     }
+    tracking_memory_writes_ = false;
     throw std::runtime_error("animation VM command loop exceeded 1024 instructions");
 }
 
@@ -697,6 +713,18 @@ std::vector<std::uint8_t> PlayerAnimationVm::take_sound_requests() {
     std::vector<std::uint8_t> requests;
     requests.swap(sound_requests_);
     return requests;
+}
+
+bool PlayerAnimationVm::take_memory_write(
+    std::uint32_t address,
+    std::uint8_t& value
+) {
+    if (address < 0xFF0000 || address > 0xFFFFFF) return false;
+    const auto offset = address - 0xFF0000;
+    if (memory_write_flags_[offset] == 0) return false;
+    memory_write_flags_[offset] = 0;
+    value = memory_[offset];
+    return true;
 }
 
 void PlayerAnimationVm::select_stream_entry(

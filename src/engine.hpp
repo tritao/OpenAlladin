@@ -468,6 +468,12 @@ private:
     bool checkpoint_animation_selector_pending_ = false;
     bool surface_interaction_pending_ = false;
     bool surface_interaction_active_ = false;
+    // The ROM leaves the landing latch visible for the launch boundary,
+    // clears it on the first airborne pass, then re-arms it when the jump
+    // state enters its falling phase. Keep those two boundaries explicit.
+    bool jump_landing_state_arm_pending_ = false;
+    bool jump_landing_state_arm_now_ = false;
+    bool terrain_fall_phase_ = false;
     int interaction_reference_x_ = 0;
     int interaction_reference_y_ = 0;
     // FUN_001B3032 is the shared fixed-ROM PRNG used by terrain responses and

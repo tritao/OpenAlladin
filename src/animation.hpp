@@ -148,6 +148,11 @@ public:
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
     std::vector<std::uint8_t> take_sound_requests();
+    // Consume a global-RAM byte written by the player VM during its most
+    // recent tick. This keeps ROM-side ED writes visible to Engine-owned
+    // terrain state without treating the VM's private scratch image as the
+    // authoritative state on frames where no write occurred.
+    bool take_memory_write(std::uint32_t address, std::uint8_t& value);
     void select_stream_entry(
         std::uint32_t stream_entry,
         bool publish_frame_pointer = false,
@@ -215,6 +220,7 @@ private:
     bool rom_mode_ = false;
     std::vector<std::uint8_t> rom_;
     std::array<std::uint8_t, 0x10000> memory_{};
+    std::array<std::uint8_t, 0x10000> memory_write_flags_{};
     std::array<std::uint8_t, 0x42> actor_{};
     std::uint32_t animation_pc_ = 0;
     std::uint32_t frame_pointer_ = 0;
@@ -233,6 +239,7 @@ private:
     bool force_tick_after_service_ = false;
     bool force_tick_next_update_ = false;
     bool force_tick_without_phase_ = false;
+    bool tracking_memory_writes_ = false;
     AnimationSpawnRequest spawn_request_{};
     std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;

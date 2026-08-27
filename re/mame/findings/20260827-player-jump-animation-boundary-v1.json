@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-player-jump-animation-boundary-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Lock the ROM-backed player jump and landing VM ordering against a synchronized MAME replay.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit_before_change": "933a8e37af597c9eb5ad4e3610d0aac18cf899c5",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "replay": {
+    "command": "python tools/oa.py regression player-jump --field terrain.landing_state --field terrain.vertical_stop --field terrain.response_timer_state --field terrain.response_active --field player.animation_pc --field player.frame_ptr",
+    "trace_dir": "build/re/tests/player-jump-regression",
+    "checkpoint": "gameplay_checkpoint",
+    "matched_frames": 157,
+    "terrain_timed_replay": {
+      "command": "python tools/oa.py regression terrain-jump-land",
+      "trace_dir": "build/re/tests/terrain-jump-regression",
+      "checkpoint": "jump_test_start",
+      "matched_frames": 257
+    }
+  },
+  "evidence": {
+    "run_stream_compare": {
+      "rom_address": "0x0012201C",
+      "operation": "F4 compares FFF0CC with zero and branches to idle when equal",
+      "observed_failure": "The native context was captured before ground movement raised FFF0CC, so frame 9 incorrectly returned to 0x00121D9A.",
+      "observed_fix": "Publish post-ground-handler response and horizontal selector values before the player VM tick."
+    },
+    "jump_stream_selection": {
+      "ordinary_root": "0x001221B0",
+      "timed_root": "0x0012214E",
+      "observed_boundary": "The jump handler clears FFF0CC before selecting the ordinary root; the launch state must expose 0x001221B2 after the common VM pass.",
+      "observed_fix": "Select direct locomotion jumps before the VM pass and select landing only after contour-grounded state is latched."
+    },
+    "landing_response": {
+      "observed_sequence": "landing_state 1 at launch, 0 on the first airborne pass, 0xFF in the falling phase; vertical_stop 0xFF at residual-upward stop, then 1 after the jump stream writes FFF0C0=1.",
+      "observed_fix": "Model the delayed landing latch and falling phase, and propagate ROM VM ED writes for FFF0C0/FFF0C1 into Engine state."
+    }
+  },
+  "implementation": [
+    "src/engine.cpp",
+    "src/engine.hpp",
+    "src/animation.cpp",
+    "src/animation.hpp",
+    "tests/player_jump_regression.py",
+    "CMakeLists.txt"
+  ],
+  "conclusion": "The native player jump, terrain latches, frame pointers, and animation cursors match the MAME replay for all 157 ordinary-jump and 257 timed terrain-jump synchronized frames. The corrected boundaries are ROM/data-backed and protected by CTest differential regressions.",
+  "next_action": "Use the same earliest-divergence method on the next gameplay or actor-table mismatch; retain the player-jump regression as a gate for future VM and terrain changes."
+}

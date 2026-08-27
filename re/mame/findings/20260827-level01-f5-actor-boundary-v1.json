@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-level01-f5-actor-boundary-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Resolve the first actor-table boundary after the opening player animation stream emits F5.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "replay": {
+    "command": "OPENALADDIN_TRACE_ACTOR_INIT=1 python tools/oa.py trace level01-actor-boot --trace-dir build/re/level01-actor-boot-init-overnight --actors --state-sync --no-capture-vdp",
+    "trace_dir": "build/re/level01-actor-boot-init-overnight",
+    "checkpoint": "level01_actor_checkpoint",
+    "post_checkpoint_frames": 601
+  },
+  "evidence": {
+    "player_stream": {
+      "stream_cursor_before_f5": "0x00122046",
+      "bytes": "F4 21 F0 C3 00 11 00 12 20 62 F5 00 00 1B 7E CC FC 0F",
+      "f5_template": "0x001B7ECC",
+      "f5_payload_cursor": "0x00122058",
+      "return": "0x001AD0AC"
+    },
+    "initializer": {
+      "mame_frame": 1271,
+      "aligned_state": 27,
+      "destination": "0x00FF7F06",
+      "actor_slot": 3,
+      "type": "0x84",
+      "x": 180,
+      "y": 895,
+      "animation_pc": "0x001245D0",
+      "frame_ptr": "0x001EF9A2",
+      "animation_timer": 2,
+      "initializer_log": "OPENALADDIN_ACTOR_INIT DEST=00FF7F06 SOURCE=001B7ECC A2=00122058 PC=001AE30C RETURN=001AD0AC FRAME=000004F7"
+    },
+    "native_boundary": {
+      "first_divergence_before_experiment": "aligned frame 27: actors[3] absent instead of initialized",
+      "isolated_spawn_test": "tests/native_animation_spawn.py still expects deferred mode-0 allocation",
+      "follow_up_probe": "Immediate allocation plus same-frame actor VM service matches slot 3 through frame 600, but later interaction-refill actor cadence diverges at aligned frame 91. Keep the scheduler change separate until that refill path is decoded."
+    }
+  },
+  "conclusion": "The opening F5 mode-0 request is allocated by the ROM at the same synchronized boundary as its first actor animation frame. Native mode-0 deferral is therefore a known one-boundary gap for the live Level 01 actor boot, while a broader immediate-spawn change is not yet safe because the subsequent refill actor uses a different initialization cadence.",
+  "next_action": "Trace the frame-91 interaction-refill initializer and its actor-animation gate, then add a focused actor-table regression once both allocation families share an evidence-backed scheduler model."
+}
