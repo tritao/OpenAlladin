@@ -244,7 +244,15 @@ the finding or commit message.
   `0x001B72E6` writes type `0x34`/stream `0x00122C1E`/movement
   `0x001217B4` after the generic `0x001B79B8` initializer. Slot reuse is
   therefore classified at the caller's post-initializer writes, not by the
-  zero-type template alone.
+  zero-type template alone. The initializer also leaves actor `+0x0E`
+  (movement-loop cursor), its timer, and the return cursor untouched; native
+  template reuse preserves those stale fields before applying the caller's
+  overrides.
+- `re/mame/findings/20260827-level01-type34-reuse-native-v1.json`: the later
+  selector-0x53 reuse now applies the caller's type-0x34/animation-0x00122C1E/
+  movement-0x001217B4 fields directly after the generic initializer. Native
+  slot 8 matches the MAME actor fields from aligned frame 458 through its
+  type-zero retirement at frame 597; no synthetic first-tick defer is needed.
 - `re/mame/findings/20260827-level01-upper-pair-extended-interaction-v1.json`:
   a lossless decode corrects the earlier Type-0x1E extended-stream alignment.
   `ED` is at `0x001237CA` and writes actor `+0x0A = 0x0012046C`; the repeated
