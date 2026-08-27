@@ -1,0 +1,71 @@
+{
+  "format": "openaladdin-level01-actor-interaction-state-producer-finding-v1",
+  "recorded_at": "2026-08-27",
+  "purpose": "Classify the common actor terrain/collision pass and identify the source and Level 01 locations of interaction state 0x46.",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "repository_commit": "32a2466",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level01-actor-interaction-state-producer-targets.json",
+  "decompile_artifact": "build/re/level01-actor-interaction-state-producer-decompile-v1.json",
+  "actor_layout": {
+    "table_base": "0x00FF7E40",
+    "record_size": "0x42",
+    "processed_slots": "1..30",
+    "interaction_state_offset": "0x3D",
+    "x_offset": "0x02",
+    "y_offset": "0x04",
+    "vertical_motion_offset": "0x1A",
+    "frame_pointer_offset": "0x14",
+    "flags_offset": "0x3C"
+  },
+  "static_decompilation": {
+    "function": {
+      "address": "0x001ADB5C",
+      "body_end": "0x001ADE35",
+      "name": "Actor_TerrainCollisionLoop"
+    },
+    "entry_callers": ["0x001A8C3C"],
+    "loop": "Iterates 30 non-player actor records at 0x00FF7E82 with stride 0x42. For collision-enabled actors with a nonzero frame pointer, nonnegative vertical motion, and a valid terrain row, it clears actor +0x3D and probes the current, above, and below terrain records.",
+    "terrain_lookup": {
+      "row_pointer_table": "0x00FF9884",
+      "resource": "0x00FFAE84",
+      "resource_index": "map_word >> 1",
+      "terrain_class_table": "0x00002FD2",
+      "x_index": "actor_x & 0x0F",
+      "class_test": "terrain_class_table[x_index + (resource_byte_0 * 0x10)] & 0x3F"
+    },
+    "state_write": "When a sampled terrain class is nonzero, actor +0x3D receives resource_byte_2 at the same resource index. If actor flags +0x3C bit 0x10 are clear, vertical motion +0x1A is cleared; otherwise the actor is vertically aligned and a terrain effect may be queued.",
+    "invalid_or_empty_path": "Out-of-range rows set actor flags +0x06 bit 0x40 and clear bit 0x01. If all three sampled terrain classes are empty, the actor receives a downward motion adjustment unless actor flags +0x06 bit 0x80 are set.",
+    "cleanup_neighbors": {
+      "0x001AE30A": "Actor_InitializeFromTemplate clears actor +0x3D during record initialization.",
+      "0x001AE368": "Actor_ClearInteractionState clears actor +0x3D during owned-resource cleanup."
+    }
+  },
+  "level01_resource_correlation": {
+    "map": "build/assets/levels/level01/raw/map.bin",
+    "floor": "build/assets/levels/level01/raw/floor.bin",
+    "dimensions": [300, 45],
+    "record_decode": "resource_offset = big_endian_u16(map_word) >> 1; behavior = floor.bin[resource_offset + 2]",
+    "behavior_0x46_cells": {
+      "count": 23,
+      "bands": [
+        { "row": 41, "x_cells": [54, 55, 56, 57, 58, 59, 60, 65, 66, 67, 68, 69, 70, 71] },
+        { "row": 43, "x_cells": [194, 195, 196, 197, 198, 199, 200, 201, 202] }
+      ],
+      "resource_records": ["0x37D8", "0x37DC", "0x37E0", "0x37E4", "0x37E8", "0x37EC", "0x3CB8"],
+      "world_y_model": "map row * 16 + 240; the two bands are approximately world Y 896 and 928"
+    },
+    "class_table_check": "The behavior-0x46 records have resource_byte_0=0x01. The 0x2FD2 row at 0x2FE2 contains 0x81, so the low six bits are nonzero for every x-cell and the actor state write is eligible when the three-probe conditions are met."
+  },
+  "relationship_to_upper_pair": {
+    "upper_pair_runtime_finding": "re/mame/findings/20260827-level01-upper-pair-extended-interaction-runtime-v1.json",
+    "result": "The explicit upper-frontier left/up replay reaches ordinary Type-0x1E state but has no state-0x46 observation. This is consistent with the static map: the tested pair is not in either Level 01 behavior-0x46 band.",
+    "extended_stream_condition": "The movement stream at 0x0012046C compares actor +0x3D against 0x46; the comparison is a terrain-contact condition, not a scene transition selector."
+  },
+  "conclusion": "The only writer of actor interaction state +0x3D in the examined common pass is the decoded terrain resource's third byte. State 0x46 is produced by terrain behavior records and is cleared on initialization/cleanup. Level 01 contains 23 static behavior-0x46 cells in two lower bands, while the tested upper Type-0x1E route contains none. The upper extended branch remains unobserved, but its prerequisite is now localized to a finite lower-band terrain/contact route rather than an unknown actor-side flag producer. No scene-state, scene-countdown, or player-coordinate write occurs in this producer pass.",
+  "next_action": "Use the Level 01 behavior-0x46 bands to choose a targeted lower-route checkpoint and trace whether a Type-0x1E actor can occupy those cells and reach 0x0012046C; retain the existing upper-frontier negative as separate coverage."
+}

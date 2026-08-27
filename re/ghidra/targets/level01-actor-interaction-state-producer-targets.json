@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level01-actor-interaction-state-producer",
+    "purpose": "Decode the common actor terrain/collision pass that writes actor +0x3D from collision data and classify the producer of interaction state 0x46."
+  },
+  "targets": [
+    { "address": "0x001ADB5C", "name": "Actor_TerrainCollisionLoop" },
+    { "address": "0x001ADB70", "name": "Actor_TerrainCollisionIteration" },
+    { "address": "0x001ADD26", "name": "Actor_SetInteractionStateFromCollision" },
+    { "address": "0x001ADE36", "name": "Actor_MovementVmEntry" },
+    { "address": "0x001AE368", "name": "Actor_ClearInteractionState" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFAE84", "name": "TERRAIN_CONTOUR_RESOURCE" },
+    { "address": "0x00FF9884", "name": "TERRAIN_ROW_POINTERS" },
+    { "address": "0x00FF725C", "name": "TERRAIN_WORK_END" },
+    { "address": "0x00FF7DBC", "name": "WORLD_CAMERA_Y" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" }
+  ]
+}

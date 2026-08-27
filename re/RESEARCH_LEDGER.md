@@ -260,6 +260,12 @@ the finding or commit message.
   movement `0x0012046C`, interaction state `0x46`, and callback `0x001ACC5E`.
   The scene remains `0x01`; this closes the tested input family and moves the
   unresolved producer question to the common actor-terrain collision pass.
+- `re/mame/findings/20260827-level01-actor-interaction-state-producer-v1.json`:
+  the common actor terrain/collision pass writes `+0x3D` from the decoded terrain
+  resource's third byte (`0xFFAE84 + (map_word >> 1) + 2`). Level 01's behavior
+  `0x46` prerequisite exists in 23 cells across lower rows 41 and 43, not at the
+  tested upper pair; the remaining branch search is now a finite lower-band route
+  and contact trace.
 - `re/mame/findings/20260827-player-slope-grounded-boundary-v1.json`: a fresh
   Level 01 actor-boot replay shows non-flat contour bytes (`0x0F` through
   `0x03`) publishing `grounded=false` while retaining ground-motion and run
