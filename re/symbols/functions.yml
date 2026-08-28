@@ -330,6 +330,28 @@
   evidence:
     - ghidra_decompile_001B32F0
     - ghidra_scene_vdp_audio_service_targets
+0x001B329E:
+  name: Menu_PlaySelectionChangeCue
+  confidence: decompiled
+  description: Sends audio command 0x06 through the sound-command interface after a menu selection change.
+  evidence:
+    - ghidra_disassembly_001B329E
+    - ghidra_menu_input_audio_targets
+0x001B3548:
+  name: Input_TestControllerReleased
+  confidence: decompiled
+  description: Samples both phases of the Genesis controller port through the Z80 handoff and returns the condition code for the relevant controller buttons being released; title/menu callers use it as a release wait predicate.
+  evidence:
+    - ghidra_decompile_001B3548
+    - ghidra_menu_input_audio_targets
+0x001B4410:
+  name: Menu_RenderControlBindings
+  confidence: decompiled
+  description: Renders the three trigger-binding rows from the selected control-layout table through the scene command-stream service.
+  evidence:
+    - ghidra_decompile_001B4410
+    - ghidra_menu_input_audio_targets
+    - rom_control_layout_table_00004036
 0x001B32E2:
   name: Terrain_InstallQueryCallbacks
   confidence: decompiled

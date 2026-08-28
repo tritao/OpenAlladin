@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-menu-input-audio-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/menu-input-audio-targets.json",
+  "services": [
+    {
+      "address": "0x001B329E",
+      "name": "Menu_PlaySelectionChangeCue",
+      "confidence": "decompiled",
+      "behavior": "Sends audio command 0x06 through Audio_SendCommand; the two callers are menu selection-change branches."
+    },
+    {
+      "address": "0x001B3548",
+      "name": "Input_TestControllerReleased",
+      "confidence": "decompiled",
+      "behavior": "Performs two controller-port phases with Z80 bus acquisition, samples IO_PORT1_DATA, tests the relevant button bits, and leaves a release predicate in the condition codes for its callers."
+    },
+    {
+      "address": "0x001B4410",
+      "name": "Menu_RenderControlBindings",
+      "confidence": "decompiled",
+      "behavior": "Invokes the scene command-stream renderer three times at consecutive row positions using the selected control-layout record."
+    }
+  ],
+  "evidence": {
+    "control_layout_pointer": "MENU_CONTROL_LAYOUT_PTR is initialized to ROM 0x00004036 by the startup path. The menu adds 0x12 to the selected record to install three callback pointers, then Menu_RenderControlBindings consumes the following trigger-label data.",
+    "control_layout_rows": [
+      "SWORD - B",
+      "THROW - A",
+      "JUMP - C"
+    ],
+    "selection_audio": "The menu's primary and secondary selection-change branches call 0x001B329E, which sends command 0x06 without reading a new command ID."
+  },
+  "conclusion": "The menu input/presentation path now distinguishes controller release testing, trigger-binding rendering, and the fixed selection-change audio command. The broader meaning of the control-layout callback entries remains shared with the existing terrain callback model."
+}

@@ -70,6 +70,16 @@
   evidence:
     - ghidra_options_menu_strings_00126680
     - ghidra_options_menu_targets
+0xFF7DDE:
+  name: MENU_CONTROL_LAYOUT_PTR
+  type: rom_pointer
+  format: address
+  confidence: probable
+  description: Pointer to the selected menu control-layout record; its callback pointers are installed into the terrain/query callback slots and its three trigger labels are rendered by Menu_RenderControlBindings.
+  evidence:
+    - ghidra_disassembly_001AA344
+    - ghidra_disassembly_001B4410
+    - ghidra_menu_input_audio_targets
 0xFF7DE2:
   name: SOUND_TEST_ENTRY_PTR
   type: rom_pointer

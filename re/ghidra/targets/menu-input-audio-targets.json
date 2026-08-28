@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "menu-input-and-control-presentation",
+    "purpose": "Recover the menu controller-release predicate, trigger-binding renderer, and selection-change audio cue."
+  },
+  "targets": [
+    { "address": "0x001B329E", "name": "Menu_PlaySelectionChangeCue" },
+    { "address": "0x001B3548", "name": "Input_TestControllerReleased" },
+    { "address": "0x001B4410", "name": "Menu_RenderControlBindings" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7DDE", "name": "MENU_CONTROL_LAYOUT_PTR" },
+    { "address": "0x00004036", "name": "ROM_CONTROL_LAYOUT_TABLE" },
+    { "address": "0x00A10003", "name": "IO_PORT1_DATA" },
+    { "address": "0x00A11100", "name": "Z80_BUS_REQUEST" }
+  ]
+}
