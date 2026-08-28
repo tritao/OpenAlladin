@@ -264,6 +264,13 @@
     - ghidra_disassembly_001B0008
     - ghidra_render_actor_records
     - ghidra_scene_camera_orchestration_targets
+0x001AFFE4:
+  name: Interaction_InitializePendingDisplayValue
+  confidence: decompiled
+  description: Seeds INTERACTION_PENDING_DISPLAY_VALUE with the ASCII string "100000" and a trailing NUL during runtime initialization; the pending display's user-facing meaning remains intentionally unassigned.
+  evidence:
+    - ghidra_decompile_001AFFE4
+    - ghidra_interaction_display_initialization_targets
 0x001B0046:
   name: Game_InitializeDifficultyCounter
   confidence: confirmed

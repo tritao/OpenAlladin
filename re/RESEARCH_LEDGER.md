@@ -1989,6 +1989,19 @@ The static result is recorded in
 
 ## Campaign index
 
+## Interaction pending display initialization (20260829)
+
+`Interaction_InitializePendingDisplayValue` at `0x001AFFE4` seeds the
+seven-byte pending display buffer at `FF7E30` with ASCII `100000` followed by
+a NUL during `System_InitializeRuntime`. `Interaction_SynchronizeResponseState`
+at `0x001B0078` compares that pending six-character value with the active
+display at `FF7E29` and copies it forward when the pending value is ready.
+The field is therefore named by its synchronization role; its user-facing
+meaning is intentionally left unresolved.
+
+The static result is recorded in
+`re/mame/findings/20260829-interaction-display-initialization-v1.json`.
+
 ## Audio control-marker wrappers (20260828)
 
 The two fixed-packet wrappers around `Frame_InputAndResourceService` are now

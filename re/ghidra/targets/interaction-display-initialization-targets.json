@@ -1,0 +1,17 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-display-initialization",
+    "purpose": "Decode the pending six-digit display buffer initialization and its synchronization with the active display buffer."
+  },
+  "targets": [
+    { "address": "0x001AFFE4", "name": "Interaction_InitializePendingDisplayValue" },
+    { "address": "0x001B0078", "name": "Interaction_SynchronizeResponseState" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E29", "name": "HUD_DISPLAY_DIGITS" },
+    { "address": "0x00FF7E30", "name": "INTERACTION_PENDING_DISPLAY_VALUE" },
+    { "address": "0x00FFF0F1", "name": "HUD_DISPLAY_UPDATE_PENDING" }
+  ]
+}
