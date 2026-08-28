@@ -14,8 +14,8 @@
     { "address": "0x001ABE8A", "name": "Actor_HandleType2DInteraction" },
     { "address": "0x001AE27A", "name": "Actor_AllocateSlot" },
     { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
-    { "address": "0x001AE372", "name": "Actor_ClearResources" },
-    { "address": "0x001AE3CE", "name": "Actor_ClearOwnedResources" }
+    { "address": "0x001AE372", "name": "Actor_ClearOwnedResources" },
+    { "address": "0x001AE3CE", "name": "Actor_ClearOwnedResourcesFromA2" }
   ],
   "memory_references": [
     { "address": "0x00FFF100", "name": "ACTOR_COLLISION_EVENT_FLAG" },

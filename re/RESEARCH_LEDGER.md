@@ -1516,6 +1516,13 @@ the same named allocator/initializer contract. The native model and allocator
 unit test now encode these recovered ranges and retention semantics rather
 than treating stale loop words as unexplained behavior.
 
+The duplicate cleanup entry at `0x001AE3CE` is now named
+`Actor_ClearOwnedResourcesFromA2`. It has the same resource-list clearing body
+as `Actor_ClearOwnedResources` at `0x001AE372`, but addresses the actor through
+A2 for the linked collision cleanup path at `0x001ABE52`. This is an ABI-level
+variant, not a separate allocator or slot-reuse rule. Details are recorded in
+`re/mame/findings/20260828-actor-resource-clear-variant-v1.json`.
+
 ## Actor collision terminal response (20260828)
 
 The shared response block at `0x001AC484` is now decoded from its callers at
@@ -1731,6 +1738,7 @@ re/mame/findings/20260828-scene-vdp-audio-service-v1.json.
 | `20260828-compressed-resource-decode-v1` | recorded-static-decompilation | RNC payload decoding, terrain-resource Huffman decoding, and VDP fill helper classification |
 | `20260828-vdp-scene-setup-v1` | recorded-static-decompilation | fixed transition-plane clears, VRAM block clears, and scene-header copy |
 | `20260828-scene-vdp-audio-service-v1` | recorded-static-decompilation | tile-row VDP command tables, scene-resource completion wait, raw query sampling, conditional scene-update audio, and paired VDP setup |
+| `20260828-actor-resource-clear-variant-v1` | recorded-static-decompilation | A2 calling-convention variant of actor-owned resource cleanup used by linked collision teardown |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

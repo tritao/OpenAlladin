@@ -1206,6 +1206,13 @@
   evidence:
     - ghidra_actor_cleanup_001AE372
     - mame_guard_sword_hit_trace
+0x001AE3CE:
+  name: Actor_ClearOwnedResourcesFromA2
+  confidence: decompiled
+  description: A2-register calling-convention variant of Actor_ClearOwnedResources; clears the selected actor's owned resource list, count, and resource pointers for linked collision cleanup paths.
+  evidence:
+    - ghidra_decompile_001AE3CE
+    - ghidra_actor_resource_clear_variant
 
 0x001E57AC:
   name: Audio_QueueBegin
