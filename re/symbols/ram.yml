@@ -118,6 +118,24 @@
     - ghidra_disassembly_001B0A46
     - ghidra_disassembly_001B0BBE
     - ghidra_input_pattern_targets
+0xFF7290:
+  name: SCENE_RESOURCE_PALETTE_SOURCE
+  type: rom_pointer
+  format: address
+  confidence: probable
+  description: Active ROM palette source published by the scene-resource loader wrappers before render-frame preparation.
+  evidence:
+    - ghidra_scene_resource_transfer_targets
+    - ghidra_scene_resource_variant_targets
+0xFF7294:
+  name: SCENE_RESOURCE_C000_SOURCE
+  type: rom_pointer
+  format: address
+  confidence: probable
+  description: Active ROM source pointer for the compressed resource loaded into VRAM C000 by scene-resource paths.
+  evidence:
+    - ghidra_scene_resource_transfer_targets
+    - ghidra_scene_resource_variant_targets
 0xFF7E28:
   name: FRAME_PHASE_COUNTER
   aliases:

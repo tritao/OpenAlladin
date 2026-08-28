@@ -810,6 +810,14 @@ separately. The `0x001B4666` branch is the credits roll, consuming the
 command/text stream at `0x127E8C` while servicing the actor and VDP frame
 pipeline until its terminator.
 
+The adjacent compact scene-resource loader variants are recorded in
+`re/mame/findings/20260828-scene-resource-loader-variants-v1.json`.
+`0x001B4896`, `0x001B48C4`, and `0x001B48F2` load exact two-resource VRAM
+pairs, while `0x001B496C` loads the common base resource only. Their names
+include the published palette source so each wrapper is distinguishable
+without assigning an unproven scene or asset identity; the active palette and
+C000 source pointers are now canonical RAM fields.
+
 The countdown-producer static audit is recorded in
 `re/mame/findings/20260826-level01-countdown-producer-static-v1.json`. The
 actor-collision table entries for receiving types `0x10`, `0x11`, and `0x13`
@@ -2069,6 +2077,7 @@ The static result is recorded in
 | `20260828-scene-resource-transfer-v1` | recorded-static-decompilation | indirect VDP word stream, fixed F800 scene-plane copy, and blank scene-resource frame setup |
 | `20260828-options-menu-scene-table-v1` | recorded-static-decompilation | startup/options loop, selection-marker coordinate helpers, and final scene-table publication |
 | `20260828-menu-soundtest-credits-v1` | recorded-static-decompilation | sound-test entry navigation/playback/redraw and credits command-stream roll |
+| `20260828-scene-resource-loader-variants-v1` | recorded-static-decompilation | compact VRAM pair/base loader wrappers and palette-source publication |
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |

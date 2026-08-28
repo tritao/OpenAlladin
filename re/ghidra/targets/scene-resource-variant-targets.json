@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-loader-variants",
+    "purpose": "Classify the compact scene-resource VRAM loader wrappers by exact compressed sources, destinations, and published palette source."
+  },
+  "targets": [
+    { "address": "0x001B4896", "name": "SceneResource_LoadVRAMPairWithPalette1298F2" },
+    { "address": "0x001B48C4", "name": "SceneResource_LoadVRAMPairWithPalette1299D2" },
+    { "address": "0x001B48F2", "name": "SceneResource_LoadVRAMPairWithPalette129812" },
+    { "address": "0x001B496C", "name": "SceneResource_LoadVRAMBaseWithPalette1290B2" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7290", "name": "SCENE_RESOURCE_PALETTE_SOURCE" },
+    { "address": "0x00FF7294", "name": "SCENE_RESOURCE_C000_SOURCE" },
+    { "address": "0x0000C000", "name": "VRAM_C000" },
+    { "address": "0x0000E000", "name": "VRAM_E000" }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-scene-resource-loader-variants-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-resource-variant-targets.json",
+  "services": [
+    {
+      "address": "0x001B4896",
+      "name": "SceneResource_LoadVRAMPairWithPalette1298F2",
+      "confidence": "decompiled",
+      "behavior": "Clears VRAM E000, decompresses 0x00132F8E to VRAM 0x0000 and 0x0012D654 to VRAM 0xE000, then writes 0x001298F2 to SCENE_RESOURCE_PALETTE_SOURCE."
+    },
+    {
+      "address": "0x001B48C4",
+      "name": "SceneResource_LoadVRAMPairWithPalette1299D2",
+      "confidence": "decompiled",
+      "behavior": "Clears VRAM E000, decompresses 0x00132F8E to VRAM 0x0000 and 0x0012E4BE to VRAM 0xE000, then writes 0x001299D2 to SCENE_RESOURCE_PALETTE_SOURCE."
+    },
+    {
+      "address": "0x001B48F2",
+      "name": "SceneResource_LoadVRAMPairWithPalette129812",
+      "confidence": "decompiled",
+      "behavior": "Clears VRAM C000, decompresses 0x00136912 to VRAM 0x0000 and 0x0012D0FA to VRAM 0xE000, then writes 0x00129812 to SCENE_RESOURCE_PALETTE_SOURCE."
+    },
+    {
+      "address": "0x001B496C",
+      "name": "SceneResource_LoadVRAMBaseWithPalette1290B2",
+      "confidence": "decompiled",
+      "behavior": "Clears VRAM E000, decompresses 0x00132F8E to VRAM 0x0000, then writes 0x001290B2 to SCENE_RESOURCE_PALETTE_SOURCE."
+    }
+  ],
+  "conclusion": "Four compact scene-resource wrappers are now named by their exact transfer contracts. Their palette pointers and compressed payloads are canonicalized, while state-specific visual asset identities remain intentionally unresolved."
+}
