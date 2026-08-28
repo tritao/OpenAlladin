@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-game-difficulty-counter-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/game-difficulty-counter-targets.json",
+  "service": {
+    "address": "0x001AEF70",
+    "name": "Game_IncrementDifficultyCounter",
+    "confidence": "decompiled",
+    "callers": [
+      "0x001B00D6 Interaction_DrainResponseCounter",
+      "0x001B19EE SceneResource_RebuildAfterInteraction"
+    ],
+    "behavior": [
+      "Increments the byte at 0x00FF7E3C.",
+      "Clamps the result at ASCII '9'.",
+      "When SCENE_VDP_UPDATE_FLAG is nonzero, queues audio command 0x66 with the updated counter value."
+    ]
+  },
+  "counter_contract": {
+    "address": "0x00FF7E3C",
+    "initializer": "0x001B0046 Game_InitializeDifficultyCounter selects '5', '3', or '2' from GAME_DIFFICULTY_MODE.",
+    "hud_consumer": "0x001AB7C4 Render_BuildActorRecords converts the ASCII digit to the HUD tile word at the second seeded record.",
+    "decrement_consumer": "0x001A8F0C Level_ExitAndTerminalTransition decrements it when the terminal path's gate is clear.",
+    "upper_bound": "ASCII '9'"
+  },
+  "conclusion": "The anonymous helper is the increment operation for the difficulty-initialized HUD counter. The static closure proves its initialization, increment, audio notification, display, and terminal-transition decrement paths, but does not assign the counter to a specific gameplay resource."
+}

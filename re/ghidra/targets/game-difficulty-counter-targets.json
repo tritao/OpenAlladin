@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "difficulty-initialized-counter",
+    "purpose": "Decode the counter increment helper and its interaction, scene-resource, HUD, and level-transition consumers without assigning an unproven user-facing meaning."
+  },
+  "targets": [
+    { "address": "0x001AEF70", "name": "Game_IncrementDifficultyCounter" },
+    { "address": "0x001B0046", "name": "Game_InitializeDifficultyCounter" },
+    { "address": "0x001B00D6", "name": "Interaction_DrainResponseCounter" },
+    { "address": "0x001B19EE", "name": "SceneResource_RebuildAfterInteraction" },
+    { "address": "0x001AB7C4", "name": "Render_BuildActorRecords" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E3C", "name": "GAME_DIFFICULTY_COUNTER" },
+    { "address": "0x00FFF57D", "name": "SCENE_VDP_UPDATE_FLAG" },
+    { "address": "0x00FFF14E", "name": "ACTOR_RESPONSE_COUNTER" }
+  ]
+}

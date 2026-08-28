@@ -1989,6 +1989,25 @@ The static result is recorded in
 
 ## Campaign index
 
+## Difficulty-initialized counter increment (20260828)
+
+The helper at `0x001AEF70` is now named `Game_IncrementDifficultyCounter`.
+It increments the ASCII byte at `0x00FF7E3C`, clamps it at `'9'`, and when
+`SCENE_VDP_UPDATE_FLAG` is set queues audio command `0x66` with the updated
+value. The two callers are the interaction-response drain at `0x001B00D6` and
+the scene-resource rebuild path at `0x001B19EE`.
+
+The counter's surrounding contract is now explicit: `Game_InitializeDifficultyCounter`
+initializes it from `GAME_DIFFICULTY_MODE` as `'5'`, `'3'`, or `'2'`;
+`Render_BuildActorRecords` renders it into a seeded HUD record; and the
+terminal level-transition path decrements it when its gate is clear. The
+structured name `GAME_DIFFICULTY_COUNTER` records those facts without claiming
+whether the displayed value is lives, health, wishes, or another gameplay
+resource.
+
+The static result is recorded in
+`re/mame/findings/20260828-game-difficulty-counter-v1.json`.
+
 ## Primary controller-pattern service (20260828)
 
 The frame-side routine at `0x001B0A46` is now named

@@ -70,6 +70,17 @@
     - ghidra_difficulty_menu_strings_003FD2
     - ghidra_disassembly_001B0046
     - ghidra_disassembly_001B434E
+0xFF7E3C:
+  name: GAME_DIFFICULTY_COUNTER
+  type: u8
+  format: ascii_digit
+  confidence: decompiled
+  description: ASCII counter initialized from GAME_DIFFICULTY_MODE, rendered in the HUD, decremented by the terminal level-transition path, and incremented by Game_IncrementDifficultyCounter up to '9'. Its user-facing game meaning remains unassigned.
+  evidence:
+    - ghidra_disassembly_001B0046
+    - ghidra_decompile_001AEF70
+    - ghidra_disassembly_001AB7C4
+    - ghidra_disassembly_001A8F0C
 0xFFF13C:
   name: MENU_SELECTION_INDEX
   type: u8
