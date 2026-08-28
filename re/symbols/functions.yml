@@ -984,6 +984,14 @@
     - ghidra_decompile_001B0360
     - ghidra_level01_observed_unknown_player_collision_targets
     - ghidra_decompile_001AE978
+0x001B0394:
+  name: InteractionCounter_AdvanceSecondaryDigits
+  confidence: confirmed
+  description: Advances the secondary ASCII-digit counter at INTERACTION_COUNTER_SECONDARY_DIGITS up to "99", carrying the low digit from ':' back to '0' and incrementing the high digit.
+  evidence:
+    - ghidra_disassembly_001B0394
+    - ghidra_interaction_counter_targets
+    - ghidra_decompile_001AF228
 0x001B5256:
   name: InteractionHandler_0x40_Helper
   confidence: confirmed

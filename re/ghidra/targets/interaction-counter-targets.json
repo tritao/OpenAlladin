@@ -9,7 +9,8 @@
     { "address": "0x001AA664", "name": "InteractionCounter_ResetSecondaryDigits" },
     { "address": "0x001AA66E", "name": "InteractionCounter_Initialize" },
     { "address": "0x001B0336", "name": "FarTransfer_InteractionCounterStep" },
-    { "address": "0x001B0360", "name": "FarTransfer_InteractionCounterStepBack" }
+    { "address": "0x001B0360", "name": "FarTransfer_InteractionCounterStepBack" },
+    { "address": "0x001B0394", "name": "InteractionCounter_AdvanceSecondaryDigits" }
   ],
   "memory_references": [
     { "address": "0x00FFEFE0", "name": "INTERACTION_COUNTER_DIGITS" },

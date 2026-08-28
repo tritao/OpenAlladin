@@ -20,5 +20,16 @@
       "Render_BuildActorRecords consumes the two digits when constructing interaction records."
     ]
   },
-  "conclusion": "0x00FFEFE2 is a secondary two-digit interaction counter distinct from INTERACTION_COUNTER_DIGITS at 0x00FFEFE0."
+  "advance_function": {
+    "address": "0x001B0394",
+    "name": "InteractionCounter_AdvanceSecondaryDigits",
+    "confidence": "confirmed-static",
+    "behavior": [
+      "Returns without changing the word when it is ASCII \"99\".",
+      "Increments the low digit at 0x00FFEFE3.",
+      "When the low digit reaches ':', increments the high digit at 0x00FFEFE2 and reloads the low digit to '0'.",
+      "Is called from the type-0x3A collision handler and the interaction-triggered scene rebuild."
+    ]
+  },
+  "conclusion": "0x00FFEFE2 is a secondary two-digit interaction counter distinct from INTERACTION_COUNTER_DIGITS at 0x00FFEFE0, with explicit reset and bounded advance services."
 }
