@@ -10,6 +10,7 @@
     { "address": "0x001B2E9A", "name": "SceneTransition_VDPHelper" },
     { "address": "0x001B2EAC", "name": "SceneResource_WaitForCompletion" },
     { "address": "0x001B319C", "name": "Terrain_QueryFlagDispatcher" },
+    { "address": "0x001B34CA", "name": "Input_SampleControllerState" },
     { "address": "0x001B327A", "name": "Audio_QueueSceneUpdateIfPending" },
     { "address": "0x001B32F0", "name": "Terrain_QueryCallbackSetup" }
   ],
@@ -19,6 +20,7 @@
     { "address": "0x00FF8700", "name": "VDP_TILE_ROW_COMMANDS_B" },
     { "address": "0x00FF8780", "name": "VDP_TILE_ROW_COMMANDS_C" },
     { "address": "0x00FFF155", "name": "TERRAIN_QUERY_INPUT_RAW" },
+    { "address": "0x00FFF156", "name": "TERRAIN_QUERY_FLAGS" },
     { "address": "0x00FFF57D", "name": "SCENE_VDP_UPDATE_FLAG" },
     { "address": "0x00A10003", "name": "IO_PORT1_DATA" },
     { "address": "0x00A11100", "name": "Z80_BUS_REQUEST" },

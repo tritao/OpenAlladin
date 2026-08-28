@@ -35,6 +35,12 @@
       "behavior": "Samples IO_PORT1_DATA through the I/O and Z80 handoff sequence and stores the raw query byte at FFF155."
     },
     {
+      "address": "0x001B34CA",
+      "name": "Input_SampleControllerState",
+      "confidence": "confirmed",
+      "behavior": "Samples the controller/query port in both select phases, stores the directional byte at FFF156 and the raw scene/resource byte at FFF155, and restores the caller's D0 word."
+    },
+    {
       "address": "0x001B327A",
       "name": "Audio_QueueSceneUpdateIfPending",
       "confidence": "decompiled",
@@ -47,5 +53,5 @@
       "behavior": "Writes D2 and D3 through the two VDP control/data command pairs used by scene and terrain setup paths."
     }
   ],
-  "conclusion": "The shared transition helpers now expose the tile-row command-table builder, its scene-transition wrapper, the resource completion wait, raw query sampling, conditional scene-update audio notification, and the two-word VDP setup primitive."
+  "conclusion": "The shared transition helpers now expose the tile-row command-table builder, its scene-transition wrapper, the resource completion wait, both raw/controller query sampling paths, conditional scene-update audio notification, and the two-word VDP setup primitive."
 }

@@ -1705,6 +1705,13 @@ and data commands used by the scene and terrain paths.
 The static result is recorded in
 re/mame/findings/20260828-scene-vdp-audio-service-v1.json.
 
+`Input_SampleControllerState` at `0x001B34CA` is now named as the complete
+two-phase controller sampler. It selects the controller port phase, waits for
+the Z80 handoff, publishes the directional/query byte at `FFF156`, repeats
+the read for the raw scene/resource byte at `FFF155`, and restores the caller's
+word register. The existing `Terrain_QueryFlagDispatcher` remains the
+single-phase raw-query entry used by the terrain/resource gate.
+
 ## Actor allocation entrypoints and terrain callback publication (20260828)
 
 The common level-object allocation paths at `0x001B5266` and `0x001B52A0`

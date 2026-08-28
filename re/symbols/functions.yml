@@ -255,6 +255,13 @@
   evidence:
     - ghidra_decompile_001B319C
     - ghidra_scene_vdp_audio_service_targets
+0x001B34CA:
+  name: Input_SampleControllerState
+  confidence: confirmed
+  description: Performs the two-phase Genesis I/O/Z80 handoff, stores the directional/controller query byte at FFF156, then stores the raw scene/resource query byte at FFF155 while preserving the caller's D0 word.
+  evidence:
+    - ghidra_disassembly_001B34CA
+    - ghidra_scene_vdp_audio_service_targets
 0x001B327A:
   name: Audio_QueueSceneUpdateIfPending
   confidence: decompiled
