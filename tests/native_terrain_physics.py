@@ -106,8 +106,9 @@ def main() -> int:
     # Terrain behavior 0x0A dispatches the ROM's common surface-interaction
     # handler. On a landing result it scans actor slots 3..22, copies the
     # type-0x8C template at 0x001B7E2C, and places the new actor at the
-    # player's world position. The animation VM advances its stream on the
-    # following frame, so frame 1 must still have a clear frame pointer.
+    # player's world position. This checkpoint enters the common actor pass
+    # on its service phase, so the first frame reference is published on the
+    # same boundary as the allocation.
     spawn_command = [
         str(ROOT / "build/openaladdin"),
         "--no-window",
@@ -135,8 +136,9 @@ def main() -> int:
     assert spawned["type"] == 0x8C
     assert spawned["x"] == 481
     assert spawned["y"] == 880
-    assert spawned["animation_pc"] == 0x00124408
-    assert spawned["frame_ptr"] == 0
+    assert spawned["animation_pc"] == 0x0012440C
+    assert spawned["sprite_attribute"] == 0x4000
+    assert spawned["frame_ptr"] != 0
     advanced = next(actor for actor in spawn_states[2]["actors"] if actor["slot"] == 3)
     assert advanced["animation_pc"] == 0x0012440C
     assert advanced["frame_ptr"] != 0

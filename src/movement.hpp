@@ -12,6 +12,7 @@ struct MovementContext {
     const std::vector<std::uint8_t>& rom;
     int player_world_x = 0;
     int player_world_y = 0;
+    const std::array<bool, 32>* deferred_actors = nullptr;
 };
 
 // Shared actor movement interpreter. It owns no actor records and therefore

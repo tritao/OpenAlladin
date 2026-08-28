@@ -84,6 +84,7 @@ constexpr std::uint8_t kActorBounceType = 0x65;
 constexpr std::uint8_t kActorSwordType = 0x80;
 constexpr std::uint8_t kActorTerminalType = 0x84;
 constexpr std::uint8_t kTerrainSpawnActorType = 0x8C;
+constexpr std::uint32_t kTerrainSpawnTemplate = 0x001B7E2C;
 constexpr std::uint32_t kTerrainSpawnAnimationStream = 0x00124408;
 constexpr std::uint32_t kTerrainScene5SpawnTemplate = 0x001B805C;
 constexpr std::uint32_t kTerrainScene5SpawnAnimationDefault = 0x001250BA;
@@ -760,6 +761,9 @@ void Engine::dispatch_interaction(
     actor.interaction_selector = selector;
     actor.spawned_by_interaction = true;
     actors_[*slot] = actor;
+    if (actor.movement_pc != 0) {
+        actor_movement_deferred_[*slot] = true;
+    }
     actor_animations_[*slot].reset();
     // Selector 0x80 has no movement stream, but its animation cursor is
     // installed after the common actor pass and is first serviced on the
@@ -857,6 +861,31 @@ void Engine::scan_interaction_refill_window() {
     scan_y_edges(reference_y);
 }
 
+void Engine::flush_surface_actor_spawn() {
+    if (!surface_actor_spawn_pending_) return;
+    const int spawn_x = surface_actor_spawn_x_;
+    const int spawn_y = surface_actor_spawn_y_;
+    surface_actor_spawn_pending_ = false;
+
+    for (std::size_t slot = 3; slot <= 22 && slot < actors_.size(); ++slot) {
+        if (actors_[slot].type != 0) continue;
+        // The ROM's surface allocator reuses the compact actor record after
+        // F6 has cleared its type. That clear retires only the live identity;
+        // the movement-loop words at +0x0E/+0x12 and return PC at +0x10
+        // remain stale when the slot is refilled.
+        const ActorState previous = actors_[slot];
+        ActorState spawned_actor = actor_from_template(kTerrainSpawnTemplate);
+        spawned_actor.x = static_cast<std::uint16_t>(spawn_x);
+        spawned_actor.y = static_cast<std::uint16_t>(spawn_y);
+        spawned_actor.movement_loop_pc = previous.movement_loop_pc;
+        spawned_actor.movement_loop_timer = previous.movement_loop_timer;
+        spawned_actor.movement_return_pc = previous.movement_return_pc;
+        actors_[slot] = spawned_actor;
+        actor_animations_[slot].clear_actor_service_boundary();
+        return;
+    }
+}
+
 void Engine::update_dynamic_actor_culling() {
     if (actors_.snapshot_mode()) return;
     // Release static refill records once they leave the ROM's interaction
@@ -908,8 +937,14 @@ void Engine::update_actor_movement() {
     }
     movement_vm_.tick(
         actors_,
-        MovementContext{rom_bytes_, player_world_x(), player_world_y()}
+        MovementContext{
+            rom_bytes_,
+            player_world_x(),
+            player_world_y(),
+            &actor_movement_deferred_
+        }
     );
+    actor_movement_deferred_.fill(false);
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         const ActorState& actor = actors_[slot];
         if (previous_types[slot] != kActorTerminalType
@@ -1196,12 +1231,12 @@ void Engine::update_actor_animations() {
         // the actor animation pass; arming the selector when the record is
         // merely present fires too early while the player is still braking,
         // and can select the hurt/stop stream on the wrong frame.
-        const CollisionBox player_interaction_box = read_collision_box(
+        const CollisionBox player_interaction_box = read_collision_hitbox(
             animation_.frame_pointer(),
             player_world_x(),
             player_world_y(),
             animation_.facing_left());
-        const CollisionBox actor_interaction_box = read_collision_box(
+        const CollisionBox actor_interaction_box = read_collision_hitbox(
             actor.frame_ptr,
             static_cast<int>(actor.x),
             static_cast<int>(actor.y),
@@ -1232,6 +1267,42 @@ void Engine::update_actor_animations() {
     }
 }
 
+void Engine::update_interaction_actor_flags() {
+    if (rom_bytes_.empty()) return;
+    const bool stable_terrain_handler_fixture = checkpoint_terrain_behavior_override_
+        && (checkpoint_terrain_behavior_ == 0x28
+            || checkpoint_terrain_behavior_ == 0x29
+            || checkpoint_terrain_behavior_ == 0x2D
+            || checkpoint_terrain_behavior_ == 0x27);
+    if (stable_terrain_handler_fixture) return;
+
+    // The interaction actor raises its flag after AnimationVM_TickActors has
+    // published the current cursor. The next frame consumes this edge in the
+    // player selector; evaluating the old cursor before the actor pass makes
+    // the flag and selector one VBlank late.
+    constexpr std::uint8_t kInteractionFlag = 0x20;
+    for (ActorState& actor : actors_) {
+        if (actor.type != 0x1F) continue;
+        const bool interaction_frame = actor.animation_pc >= 0x0012397E
+            && actor.animation_pc <= 0x00123988;
+        const bool flag_was_set = (actor.flags & kInteractionFlag) != 0;
+        if (interaction_frame) {
+            actor.flags = static_cast<std::uint8_t>(actor.flags | kInteractionFlag);
+            if (!flag_was_set
+                && !interaction_actor_triggered_
+                && player_.animation_selector.interaction_lock == 0) {
+                interaction_selector_pending_ = true;
+                interaction_actor_lock_pending_ = true;
+                interaction_camera_delay_pending_ = true;
+                interaction_actor_triggered_ = true;
+                player_.animation_selector.response_state_101 = 1;
+            }
+        } else {
+            actor.flags = static_cast<std::uint8_t>(actor.flags & ~kInteractionFlag);
+        }
+    }
+}
+
 void Engine::update_animation_vm_ordinal_30(
     SpritePose desired_pose,
     HorizontalDirection direction,
@@ -1255,6 +1326,69 @@ void Engine::update_animation_vm_ordinal_30(
     // invocation without an optional-slot follow-up.
     (void) apply_animation_spawns(false, true);
     update_actor_animations();
+    update_interaction_actor_flags();
+}
+
+void Engine::update_bounce_actor_interaction() {
+    if (rom_bytes_.empty() || player_.vy <= 0
+        || player_.animation_selector.animation_gate != 0) {
+        return;
+    }
+
+    const CollisionBox player_box = read_collision_hitbox(
+        animation_.frame_pointer(),
+        player_world_x(),
+        player_world_y(),
+        animation_.facing_left());
+    if (!player_box.valid) return;
+
+    const auto boxes_overlap = [](const CollisionBox& first, const CollisionBox& second) {
+        const int first_left = std::min(first.left, first.right);
+        const int first_right = std::max(first.left, first.right);
+        const int second_left = std::min(second.left, second.right);
+        const int second_right = std::max(second.left, second.right);
+        const int first_top = std::min(first.top, first.bottom);
+        const int first_bottom = std::max(first.top, first.bottom);
+        const int second_top = std::min(second.top, second.bottom);
+        const int second_bottom = std::max(second.top, second.bottom);
+        return first_left <= second_right
+            && first_top <= second_bottom
+            && second_left < first_right
+            && second_top < first_bottom;
+    };
+    for (ActorState& actor : actors_) {
+        if (actor.type != kActorBounceType || actor.frame_ptr == 0) continue;
+        const CollisionBox actor_box = read_collision_hitbox(
+            actor.frame_ptr,
+            static_cast<int>(actor.x),
+            static_cast<int>(actor.y),
+            actor.facing_x_flip != 0);
+        if (!actor_box.valid || !boxes_overlap(player_box, actor_box)) continue;
+
+        // The bounce actor is tested after Player_IntegrateMotion. That is
+        // why contact is visible on the first boundary whose descending
+        // player hitbox crosses the pad's top edge, rather than one boundary
+        // earlier when the pre-motion rectangles merely touch.
+        actor.type = 0x66;
+        actor.animation_pc = 0x001244B0;
+        actor.animation_timer = 0;
+        bounce_response_active_ = true;
+        bounce_response_follow_active_ = false;
+        bounce_camera_delay_hold_pending_ = false;
+        // The handler places the player one 32-pixel actor step above the
+        // pad before the camera pass. Preserve that world-space placement;
+        // deriving it from the actor keeps this valid for every pad height.
+        player_.y = static_cast<int>(actor.y) - 0x1F - camera_.y;
+        player_.vy = static_cast<std::int16_t>(-0x500 + 0x003C);
+        animation_.set_animation_state(0x001221B8, 0);
+        player_.terrain_response_active = 0xFF;
+        player_.terrain_vertical_stop = 0;
+        player_.terrain_response_timer_state = 0;
+        player_.terrain_jump_response_counter = 1;
+        player_.animation_selector.response_timer = 0;
+        terrain_fall_phase_ = false;
+        return;
+    }
 }
 
 std::optional<std::size_t> Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request) {
@@ -1679,9 +1813,73 @@ Engine::CollisionBox Engine::read_collision_box(
     return box;
 }
 
+Engine::CollisionBox Engine::read_collision_hitbox(
+    std::uint32_t frame_pointer,
+    int origin_x,
+    int origin_y,
+    bool facing_left
+) const {
+    CollisionBox box;
+    if (frame_pointer == 0 || static_cast<std::size_t>(frame_pointer) + 5 >= rom_bytes_.size()) {
+        return box;
+    }
+
+    const auto byte = [&](std::size_t offset) {
+        return rom_bytes_[static_cast<std::size_t>(frame_pointer) + offset];
+    };
+    if (!facing_left) {
+        box.left = origin_x + byte(2);
+        box.right = origin_x + byte(4);
+    } else {
+        // Actor_PlayerCollisionPass negates the signed frame byte and stores
+        // the result in an unsigned byte before adding the actor origin.
+        // That is distinct from the signed display bounds emitted by
+        // read_collision_box: a mirrored frame's hit range stays narrow and
+        // moves to the actor's facing side.
+        const auto negated_byte = [](std::uint8_t value) {
+            return static_cast<int>(static_cast<std::uint8_t>(
+                -static_cast<int>(static_cast<std::int8_t>(value))));
+        };
+        box.left = origin_x + negated_byte(byte(4));
+        box.right = origin_x + negated_byte(byte(2));
+    }
+    box.top = origin_y + byte(3);
+    box.bottom = origin_y + byte(5);
+    box.valid = true;
+    return box;
+}
+
 void Engine::update_actor_interactions(const InputState& input, bool was_grounded) {
     const int world_x = player_world_x();
     const int world_y = player_world_y();
+    const auto boxes_overlap = [](const CollisionBox& first, const CollisionBox& second) {
+        const int first_left = std::min(first.left, first.right);
+        const int first_right = std::max(first.left, first.right);
+        const int second_left = std::min(second.left, second.right);
+        const int second_right = std::max(second.left, second.right);
+        const int first_top = std::min(first.top, first.bottom);
+        const int first_bottom = std::max(first.top, first.bottom);
+        const int second_top = std::min(second.top, second.bottom);
+        const int second_bottom = std::max(second.top, second.bottom);
+        return first_left <= second_right
+            && first_top <= second_bottom
+            && second_left < first_right
+            && second_top < first_bottom;
+    };
+    const auto strict_boxes_overlap = [](const CollisionBox& first, const CollisionBox& second) {
+        const int first_left = std::min(first.left, first.right);
+        const int first_right = std::max(first.left, first.right);
+        const int second_left = std::min(second.left, second.right);
+        const int second_right = std::max(second.left, second.right);
+        const int first_top = std::min(first.top, first.bottom);
+        const int first_bottom = std::max(first.top, first.bottom);
+        const int second_top = std::min(second.top, second.bottom);
+        const int second_bottom = std::max(second.top, second.bottom);
+        return first_left < second_right
+            && first_top < second_bottom
+            && second_left < first_right
+            && second_top < first_bottom;
+    };
 
     for (ActorState& actor : actors_) {
         if (actor.terminal_timer != 0) {
@@ -1701,24 +1899,21 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
         // 0x0A in place with the shared type-0x84 terminal template.
         const bool sword_active = was_grounded
             && (input.attack_pressed || player_.attack_timer != 0);
-        const CollisionBox player_box = read_collision_box(
+        const CollisionBox player_box = read_collision_hitbox(
             animation_.frame_pointer(),
             world_x,
             world_y,
             animation_.facing_left()
         );
-        const CollisionBox actor_box = read_collision_box(
+        const CollisionBox actor_box = read_collision_hitbox(
             actor.frame_ptr,
             static_cast<int>(actor.x),
             static_cast<int>(actor.y),
             actor.facing_x_flip != 0
         );
-        const bool boxes_overlap = player_box.valid && actor_box.valid
-            && actor_box.left <= player_box.right
-            && actor_box.top <= player_box.bottom
-            && player_box.left < actor_box.right
-            && player_box.top < actor_box.bottom;
-        const bool guard_overlap = actor.type == kActorGuardType && boxes_overlap;
+        const bool overlap = player_box.valid && actor_box.valid
+            && boxes_overlap(player_box, actor_box);
+        const bool guard_overlap = actor.type == kActorGuardType && overlap;
         if (sword_active && guard_overlap) {
             actor.type = kActorTerminalType;
             actor.sprite_attribute = actor_from_template(kActorDeathTemplate).sprite_attribute;
@@ -1728,35 +1923,7 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
             actor.flags = 0;
             actor.terminal_timer = kActorDeathFrames;
         }
-        // Actor type 0x65 is the live bounce pad.  Its player-collision
-        // handler (0x001AFBF4) runs only while the player is descending,
-        // changes the pad to its type-0x66 response record, and starts the
-        // player's 0x1221B8 response stream when the interaction gate is
-        // clear.  The handler is reached before the common actor animation
-        // pass, so the new actor cursor is serviced on this same VBlank.
-        if (actor.type == kActorBounceType && boxes_overlap
-            && player_.vy > 0) {
-            actor.type = 0x66;
-            actor.animation_pc = 0x001244B0;
-            actor.animation_timer = 0;
-            if (player_.animation_selector.animation_gate == 0) {
-                // A new pad contact starts a fresh follow window.  The
-                // completion latch below is deliberately one-shot, so clear
-                // it before arming this response.
-                bounce_response_active_ = true;
-                bounce_response_follow_active_ = false;
-                bounce_camera_delay_hold_pending_ = false;
-                player_.vy = static_cast<std::int16_t>(-0x500);
-                animation_.set_animation_state(0x001221B8, 0);
-                player_.terrain_response_active = 0xFF;
-                player_.terrain_vertical_stop = 0;
-                player_.terrain_response_timer_state = 0;
-                player_.terrain_jump_response_counter = 1;
-                player_.animation_selector.response_timer = 0;
-                terrain_fall_phase_ = false;
-            }
-        }
-        if (actor.type == 0x2D && boxes_overlap
+        if (actor.type == 0x2D && overlap
             && !bounce_response_follow_active_) {
             // Actor_PlayerCollisionPass dispatches type 0x2D to
             // ActorType2D_PlayerCollisionHandler. Its FFF0D8==0 path only
@@ -1769,7 +1936,7 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
             camera_.update_delay = 7;
             player_collision_interaction_pending_ = true;
         }
-        if (actor.type == 0x40 && boxes_overlap) {
+        if (actor.type == 0x40 && strict_boxes_overlap(player_box, actor_box)) {
             // Actor type 0x40 dispatches to ROM helper 0x001AF468. With the
             // Level-01 counter gate clear, that helper releases the current
             // record through 0x001ABE6E and reinitializes it from template
@@ -1800,6 +1967,10 @@ void Engine::reset() {
     interaction_actor_lock_pending_ = false;
     interaction_camera_delay_pending_ = false;
     interaction_actor_triggered_ = false;
+    surface_actor_spawn_pending_ = false;
+    surface_actor_spawn_x_ = 0;
+    surface_actor_spawn_y_ = 0;
+    actor_movement_deferred_.fill(false);
     player_collision_interaction_pending_ = false;
     checkpoint_animation_selector_pending_ = false;
     surface_interaction_pending_ = false;
@@ -1875,6 +2046,7 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     frame_ = 0;
     frame_phase_ = 0;
     quit_ = false;
+    actor_movement_deferred_.fill(false);
     animation_.reset();
     if (!grounded) {
         animation_.update(
@@ -2497,8 +2669,8 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         // allocates the first free common actor slot (the ROM scans slots
         // 3..22, starting at 0x00FF7F06). It only accepts a non-zero
         // landing/contour result and copies the player's world position into
-        // the new record. The animation VM advances the stream on the next
-        // frame, so leave frame_ptr clear here just like 0x001AE30A does.
+        // the new record. The common actor pass services this new record on
+        // the same boundary when its phase gate is open.
         if (player_.terrain_landing_state == 0) {
             break;
         }
@@ -2521,31 +2693,12 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
             // a replacement while it is still in the table.
             break;
         }
-        for (std::size_t slot = 3; slot <= 22 && slot < actors_.size(); ++slot) {
-            if (actors_[slot].type != 0) continue;
-            // The ROM's surface allocator reuses the compact actor record
-            // after F6 has cleared its type.  That clear only retires the
-            // live identity; the movement-loop words at +0x0E/+0x12 (and
-            // return PC at +0x10) remain stale and are visible when the
-            // slot is refilled.  Preserve them across the fresh template.
-            const ActorState previous = actors_[slot];
-            ActorState spawned_actor;
-            spawned_actor.type = kTerrainSpawnActorType;
-            spawned_actor.x = static_cast<std::uint16_t>(player_world_x());
-            spawned_actor.y = static_cast<std::uint16_t>(player_world_y());
-            spawned_actor.animation_pc = kTerrainSpawnAnimationStream;
-            spawned_actor.movement_loop_pc = previous.movement_loop_pc;
-            spawned_actor.movement_loop_timer = previous.movement_loop_timer;
-            spawned_actor.movement_return_pc = previous.movement_return_pc;
-            // The terrain handler runs before the actor animation pass, but
-            // the ROM's new-record boundary defers the first actor service
-            // and forces it on the following VBlank, regardless of the
-            // shared actor-table gate phase.
-            actors_[slot] = spawned_actor;
-            actor_animations_[slot].clear_actor_service_boundary();
-            actor_animations_[slot].defer_actor_service_then_force();
-            break;
-        }
+        // The interaction refill service runs before this allocation's
+        // publication in the same frame. Keep the request until that service
+        // has had the first chance to claim the lowest free actor slot.
+        surface_actor_spawn_pending_ = true;
+        surface_actor_spawn_x_ = player_world_x();
+        surface_actor_spawn_y_ = player_world_y();
         break;
     }
     case 0x20:  // TerrainHandler_SetTerminalCollision (0x001B5318)
@@ -2679,7 +2832,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.x += 1;
         player_.vx = static_cast<std::int16_t>(player_.vx - 0x46);
         break;
-    case 0x2B:  // TerrainHandler_StopAndAlignPlayer (0x001B5502)
+    case 0x2B: {  // TerrainHandler_StopAndAlignPlayer (0x001B5502)
         // The ROM ignores this response while the animation gate is set, VY
         // is negative, or the landing state is already active. The fixture
         // exposes the accepted branch; the normal path has the same guards
@@ -2693,12 +2846,23 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_horizontal_response = 0;
         player_.terrain_landing_state = 0;
         player_.x = ((visual_x() & ~0x0F) - camera_.x) + 6;
+        const bool first_response_boundary =
+            animation_.stream_kind() != AnimationStreamKind::Response
+            || animation_.stream_entry() != 0x0012181A;
         animation_.select_response_stream(0x0012181A);
+        if (first_response_boundary) {
+            // Terrain handlers publish the new response root after the
+            // current player service. Its first frame is therefore consumed
+            // on the following VBlank, while this boundary retains the
+            // previously published frame pointer.
+            animation_.defer_tick_next_update();
+        }
         if (player_.vy < 8) {
             player_.vy = static_cast<std::int16_t>(player_.vy + 0x78);
         }
         player_.grounded = false;
         break;
+    }
     case 0x2D:  // TerrainHandler_BouncePlayerBlock (0x001B56B6)
         player_.vx = static_cast<std::int16_t>(-0x400);
         player_.vy = static_cast<std::int16_t>(0x200);
@@ -3289,6 +3453,8 @@ void Engine::update(const InputState& input) {
     rebase_camera_reference();
     const bool camera_vertical_reference_rebased =
         camera_.reference_y != camera_reference_y_before_rebase;
+    const bool camera_reference_moved_up =
+        camera_.reference_y < camera_reference_y_before_rebase;
     if (arm_surface_interaction
         && !bounce_response_follow_active_
         && player_.animation_selector.interaction_lock == 0) {
@@ -3387,35 +3553,6 @@ void Engine::update(const InputState& input) {
         player_.vx = player_.vx <= 0 ? static_cast<std::int16_t>(0x300)
                                      : std::min<std::int16_t>(player_.vx, 0x300);
     }
-    if (!stable_terrain_handler_fixture) {
-        // The type-0x1F stream raises its interaction bit when its animation
-        // cursor enters the 0x12397E..0x123988 frame window.  The first such
-        // edge is consumed by Player_ProcessInteractionState on the next
-        // VBlank; later loop iterations only expose the actor bit while the
-        // selector lock is still active.
-        constexpr std::uint8_t kInteractionFlag = 0x20;
-        for (ActorState& actor : actors_) {
-            if (actor.type != 0x1F) continue;
-            const bool interaction_frame = actor.animation_pc >= 0x0012397E
-                && actor.animation_pc <= 0x00123988;
-            const bool flag_was_set = (actor.flags & kInteractionFlag) != 0;
-            if (interaction_frame) {
-                actor.flags = static_cast<std::uint8_t>(actor.flags | kInteractionFlag);
-                if (!flag_was_set
-                    && !interaction_actor_triggered_
-                    && player_.animation_selector.interaction_lock == 0) {
-                    interaction_selector_pending_ = true;
-                    interaction_actor_lock_pending_ = true;
-                    interaction_camera_delay_pending_ = true;
-                    interaction_actor_triggered_ = true;
-                    player_.animation_selector.response_state_101 = 1;
-                }
-            } else {
-                actor.flags = static_cast<std::uint8_t>(actor.flags & ~kInteractionFlag);
-            }
-        }
-    }
-
     bool landed_during_frame = false;
     if (checkpoint_terrain_behavior_override_
         && !was_grounded
@@ -3445,6 +3582,7 @@ void Engine::update(const InputState& input) {
     }
     record_scheduler_phase("player_movement", 0x001A9D98);
     integrate_motion();
+    update_bounce_actor_interaction();
     if (player_.terrain_response_active != 0
         && player_.terrain_jump_response_counter != 0
         && player_.terrain_jump_response_counter < 10) {
@@ -3677,13 +3815,12 @@ void Engine::update(const InputState& input) {
     // traversal and then runs the damped follow below. This leaves the
     // boundary frame externally visible with scroll == 16, then exposes the
     // rebased reference on the following frame.
-    // A vertical Camera_UpdateFollow reference-tile rebase suppresses the
+    // A downward Camera_UpdateFollow reference-tile rebase suppresses the
     // vertical damped lookup for that frame, but the ROM still services the
-    // independent horizontal follow. Running both components here would add
-    // a vertical step on the rebase boundary and drift the local player by
-    // the tile cadence. Upward vertical rebases receive two vertical follow
-    // services on the next frame, while a downward rebase is followed by one
-    // service and a post-follow tile rebase. Horizontal rebases retain the
+    // independent horizontal follow. An upward rebase keeps the same-frame
+    // vertical lookup; otherwise the residual scroll is lost and the player
+    // drifts by one pixel at the tile cadence. Controlled resolver fixtures
+    // retain their staged rebase boundary. Horizontal rebases retain the
     // same-frame damped follow.
     const bool camera_follow_deferred = camera_vertical_reference_rebased;
     if (bounce_camera_delay_hold_pending_ && !bounce_response_finished) {
@@ -3694,7 +3831,10 @@ void Engine::update(const InputState& input) {
         bounce_camera_delay_hold_pending_ = false;
     }
     record_scheduler_phase("camera_follow", 0x001AA90C);
-    if (camera_follow_deferred) {
+    const bool same_frame_vertical_rebase =
+        camera_reference_moved_up && !checkpoint_terrain_behavior_override_;
+    if (camera_follow_deferred && !same_frame_vertical_rebase
+        && !bounce_response_active_) {
         // The reference-tile write occupies this camera pass. The vertical
         // damped lookup resumes on the following VBlank; horizontal follow
         // is still handled by update_camera().
@@ -3820,15 +3960,16 @@ void Engine::update(const InputState& input) {
     // interaction services; preserving its ordinal is useful for trace
     // comparison but it has no native state effect.
     record_scheduler_phase("empty_return", 0x001A8F04);
-    // FUN_001B01AC is the late, phase-gated interaction resource service.
-    // Its first window fill is allowed to seed the initial camera state; all
-    // subsequent service is owned by the clear FRAME_PHASE_COUNTER phase.
+    // FUN_001B01AC is the late interaction resource service. Its actor refill
+    // edge is visible at the same game-loop boundary on either phase of
+    // FRAME_PHASE_COUNTER; only the common actor animation table walk is
+    // phase-gated.
     record_scheduler_phase("interaction_counter", 0x001B00CA);
     record_scheduler_phase("interaction_resource", 0x001B01AC);
-    if (!stable_terrain_handler_fixture
-        && (!interaction_scan_initialized_ || (frame_phase_ & 1U) != 0)) {
+    if (!stable_terrain_handler_fixture) {
         scan_interaction_refill_window();
     }
+    flush_surface_actor_spawn();
     record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
     publish_player_world_coordinates();
     // The camera tile-update boundary does not suppress the common player VM
@@ -3927,7 +4068,7 @@ void Engine::update(const InputState& input) {
     // already present at the earlier wall-response boundary.
     bool surface_actor_collision = false;
     if (!stable_terrain_handler_fixture && animation_.rom_loaded()) {
-        const CollisionBox player_interaction_box = read_collision_box(
+        const CollisionBox player_interaction_box = read_collision_hitbox(
             animation_.frame_pointer(),
             player_world_x(),
             player_world_y(),
@@ -3936,7 +4077,7 @@ void Engine::update(const InputState& input) {
             for (std::size_t slot = 1; slot <= 24 && slot < actors_.size(); ++slot) {
                 const ActorState& actor = actors_[slot];
                 if (actor.type != 0x7B || actor.frame_ptr == 0) continue;
-                const CollisionBox actor_interaction_box = read_collision_box(
+                const CollisionBox actor_interaction_box = read_collision_hitbox(
                     actor.frame_ptr,
                     static_cast<int>(actor.x),
                     static_cast<int>(actor.y),
@@ -4725,6 +4866,7 @@ void Engine::read_checkpoint(std::istream& input) {
     terrain_input_world_y_ = terrain_input_world_y;
     checkpoint_terrain_behavior_override_ = checkpoint_terrain_behavior_override;
     checkpoint_terrain_behavior_ = checkpoint_terrain_behavior;
+    actor_movement_deferred_.fill(false);
     vdp_checkpoint_ = std::move(vdp_checkpoint);
     frame_ = frame;
     frame_phase_ = frame_phase;

@@ -215,6 +215,8 @@ private:
     void update_actor_movement();
     void update_terminal_actor_motion(ActorState& actor);
     void update_actor_animations();
+    void update_interaction_actor_flags();
+    void update_bounce_actor_interaction();
     // ROM ordinal 30 (0x001A8CCE -> 0x001AC784) is the single common
     // animation service. It owns the player VM, player-originated F5
     // allocation, and one gated actor-table traversal.
@@ -231,6 +233,7 @@ private:
     );
     std::optional<std::size_t> apply_animation_spawn_request(const AnimationSpawnRequest& request);
     void scan_interaction_refill_window();
+    void flush_surface_actor_spawn();
     void dispatch_interaction(const Level::InteractionRecord& record, int base_x, int base_y);
     std::optional<SpawnDescriptor> spawn_descriptor(std::uint8_t selector) const;
     std::optional<std::size_t> allocate_actor_slot(ActorAllocationPool pool) const;
@@ -252,6 +255,12 @@ private:
         int origin_y,
         bool facing_left
     ) const;
+    CollisionBox read_collision_hitbox(
+        std::uint32_t frame_pointer,
+        int origin_x,
+        int origin_y,
+        bool facing_left
+    ) const;
     SpritePose sprite_pose() const;
     int visual_x() const;
     int visual_y() const;
@@ -264,6 +273,11 @@ private:
     PlayerAnimationVm animation_;
     MovementVm movement_vm_;
     std::array<PlayerAnimationVm, 32> actor_animations_{};
+    // Actor records allocated by the late interaction refill service are not
+    // visited by the movement pass until the following game-loop boundary.
+    // Keep this transient scheduling edge separate from the actor record so
+    // it cannot leak into the ROM-shaped state or fixture format.
+    std::array<bool, 32> actor_movement_deferred_{};
     InteractionMap interaction_map_;
     ActorSystem actors_{};
     std::map<int, ActorSystem::Table> actor_timeline_;
@@ -277,6 +291,9 @@ private:
     bool interaction_actor_lock_pending_ = false;
     bool interaction_camera_delay_pending_ = false;
     bool interaction_actor_triggered_ = false;
+    bool surface_actor_spawn_pending_ = false;
+    int surface_actor_spawn_x_ = 0;
+    int surface_actor_spawn_y_ = 0;
     // Actor_PlayerCollisionPass invokes the type-0x2D handler on the overlap
     // boundary; the player stream root is published after the common VM pass.
     bool player_collision_interaction_pending_ = false;
