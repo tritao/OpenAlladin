@@ -33,6 +33,12 @@
       "name": "SceneResource_PrepareBlankFrame",
       "confidence": "decompiled",
       "behavior": "Clears VRAM C000, clears the scene-resource C000 source pointer, and prepares the shared blank palette frame from 0x00128ED2."
+    },
+    {
+      "address": "0x001B2E70",
+      "name": "SceneResource_CopyFixedBlockToD000",
+      "confidence": "confirmed",
+      "behavior": "Copies 0x800 words from fixed ROM source 0x0011E0A0 to VRAM destination 0xD000 through VDP_CopyWordsToVRAM."
     }
   ],
   "conclusion": "The scene/resource transfer layer now exposes its indirect VDP stream format, fixed F800 plane transfer, and blank-frame preparation contract without assigning names to state-specific compressed resource loaders."

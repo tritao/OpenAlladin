@@ -1692,6 +1692,12 @@ The fixed common-plane loader SceneResource_LoadCommonPlaneC000 at
 ROM resource `0x0012F4EC` directly to VRAM `0xC000`; unlike the nearby
 state-specific resource loaders, its source and destination contract is fixed.
 
+SceneResource_CopyFixedBlockToD000 at `0x001B2E70` is now named as the
+matching fixed-word transfer for the `D000` VRAM region. It copies `0x800`
+words from ROM `0x0011E0A0` through VDP_CopyWordsToVRAM. The transfer is kept
+address-qualified because the payload's higher-level asset role is not yet
+established.
+
 ## Scene VDP and query/audio service helpers (20260828)
 
 The shared scene service helpers around the tile-row command tables are now

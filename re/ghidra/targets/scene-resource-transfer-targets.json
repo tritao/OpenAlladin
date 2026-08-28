@@ -9,7 +9,8 @@
     { "address": "0x001B2584", "name": "VDP_CopyIndirectWordStream" },
     { "address": "0x001B47F0", "name": "SceneResource_LoadCommonPlaneC000" },
     { "address": "0x001B2E44", "name": "VDP_CopyScenePlaneF800" },
-    { "address": "0x001B4A7A", "name": "SceneResource_PrepareBlankFrame" }
+    { "address": "0x001B4A7A", "name": "SceneResource_PrepareBlankFrame" },
+    { "address": "0x001B2E70", "name": "SceneResource_CopyFixedBlockToD000" }
   ],
   "memory_references": [
     { "address": "0x00C00000", "name": "VDP_DATA" },
