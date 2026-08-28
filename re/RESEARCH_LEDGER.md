@@ -1447,6 +1447,12 @@ scene words to VRAM after the loop.
 The static result is recorded in
 re/mame/findings/20260828-scene-resource-service-v1.json.
 
+SceneResource_RunTransitionCommandStream at `0x001B46A8` is the stream-driven
+counterpart used by Scene_ResetToState0. Given the ROM stream at `0x00127E8C`,
+it handles terminator, palette-band, and timed-service commands while running
+AnimationVM, VBlank, query, and sprite stages. The name describes the stream
+contract without assigning a state-specific resource role.
+
 ## VDP scene setup primitives (20260828)
 
 The fixed VDP setup wrappers are now named. VDP_ClearTransitionPlanes at

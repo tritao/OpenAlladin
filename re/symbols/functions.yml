@@ -376,6 +376,14 @@
   evidence:
     - ghidra_decompile_001B4B5E
     - ghidra_scene_resource_service_targets
+0x001B46A8:
+  name: SceneResource_RunTransitionCommandStream
+  confidence: decompiled
+  description: Interprets a transition command stream, executing timed AnimationVM, VBlank, query, and sprite services while applying palette-band commands until the stream terminates.
+  evidence:
+    - ghidra_decompile_001B46A8
+    - ghidra_decompile_001B4F7C
+    - ghidra_scene_resource_service_targets
 0x001ADB5C:
   name: Actor_TerrainCollisionLoop
   confidence: confirmed

@@ -27,6 +27,12 @@
       "name": "SceneResource_RunFadeAndReset",
       "confidence": "decompiled",
       "behavior": "Runs the resource loop when needed, applies the palette transition, clears actor resources, and copies the prepared scene words to VRAM."
+    },
+    {
+      "address": "0x001B46A8",
+      "name": "SceneResource_RunTransitionCommandStream",
+      "confidence": "decompiled",
+      "behavior": "Consumes the transition stream passed by Scene_ResetToState0, running timed AnimationVM, VBlank, query, and sprite services; handles end, palette-band, and timed-stream commands before applying the final palette/VDP reset."
     }
   ],
   "conclusion": "The scene-resource lifecycle has an explicit VBlank service loop followed by palette fade, actor reset, and final VRAM copy, with render-frame preparation as a reusable inner stage."

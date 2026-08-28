@@ -8,7 +8,8 @@
   "targets": [
     { "address": "0x001B4B28", "name": "SceneResource_PrepareRenderFrame" },
     { "address": "0x001B4B78", "name": "SceneResource_RunServiceLoop" },
-    { "address": "0x001B4B5E", "name": "SceneResource_RunFadeAndReset" }
+    { "address": "0x001B4B5E", "name": "SceneResource_RunFadeAndReset" },
+    { "address": "0x001B46A8", "name": "SceneResource_RunTransitionCommandStream" }
   ],
   "memory_references": [
     { "address": "0x00FF7E22", "name": "SCENE_RESOURCE_STATUS" },
