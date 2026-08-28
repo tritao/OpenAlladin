@@ -7,6 +7,7 @@
   },
   "targets": [
     { "address": "0x001AC784", "name": "AnimationVM_TickActors" },
+    { "address": "0x001AC796", "name": "AnimationVM_RunActorPass" },
     { "address": "0x001AD00E", "name": "AnimationVM_SpawnOrCopyActor" },
     { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
     { "address": "0x001AD0FC", "name": "MovementVM_ClearActor" },

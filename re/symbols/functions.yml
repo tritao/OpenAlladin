@@ -847,10 +847,18 @@
 0x001AC784:
   name: AnimationVM_TickActors
   confidence: confirmed
-  description: Common actor animation interpreter; when FRAME_PHASE_COUNTER is odd it starts at the actor table, services the player record at 0x00FF7E40 and the remaining records, publishes frame pointers from each record's FF7E60-relative cursor, and advances records by 0x42 bytes.
+  description: Common actor animation entry gate; clears the per-pass animation scratch state and falls through to AnimationVM_RunActorPass when FRAME_PHASE_COUNTER bit 0 is set.
   evidence:
     - ghidra_disassembly_001AC784
     - mame_player_state_trace
+0x001AC796:
+  name: AnimationVM_RunActorPass
+  confidence: decompiled
+  description: Services all 32 actor records with a 0x42-byte stride, filters live records with a valid resource/link condition and nonzero animation cursor, synchronizes frame pointers through the actor animation cursor, dispatches EA-FE animation commands through ACTOR_VM_DISPATCH_TABLE, and decrements the per-actor animation timer when command execution is deferred.
+  evidence:
+    - ghidra_decompile_001AC796
+    - ghidra_decompile_001AC784
+    - ghidra_actor_animation_gate_trace
 0x001AD00E:
   name: AnimationVM_SpawnOrCopyActor
   confidence: confirmed
