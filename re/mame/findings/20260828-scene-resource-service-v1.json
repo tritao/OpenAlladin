@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-scene-resource-service-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-resource-service-targets.json",
+  "targeted_decompile": "build/re/scene-resource-service-targeted-decompile-v1.json",
+  "services": [
+    {
+      "address": "0x001B4B28",
+      "name": "SceneResource_PrepareRenderFrame",
+      "confidence": "decompiled",
+      "behavior": "Waits for VBlank, refreshes transition state, clears the transition VDP plane, and runs the shared VDP fill helpers."
+    },
+    {
+      "address": "0x001B4B78",
+      "name": "SceneResource_RunServiceLoop",
+      "confidence": "decompiled",
+      "behavior": "Runs up to 300 VBlank-paced iterations while scene-resource status is clear, ticking AnimationVM and MovementVM, building actor-only records, and submitting both sprite stages."
+    },
+    {
+      "address": "0x001B4B5E",
+      "name": "SceneResource_RunFadeAndReset",
+      "confidence": "decompiled",
+      "behavior": "Runs the resource loop when needed, applies the palette transition, clears actor resources, and copies the prepared scene words to VRAM."
+    }
+  ],
+  "conclusion": "The scene-resource lifecycle has an explicit VBlank service loop followed by palette fade, actor reset, and final VRAM copy, with render-frame preparation as a reusable inner stage."
+}

@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-service",
+    "purpose": "Decode the VBlank-paced scene-resource loop, render-frame preparation, palette fade, actor reset, and final VRAM copy."
+  },
+  "targets": [
+    { "address": "0x001B4B28", "name": "SceneResource_PrepareRenderFrame" },
+    { "address": "0x001B4B78", "name": "SceneResource_RunServiceLoop" },
+    { "address": "0x001B4B5E", "name": "SceneResource_RunFadeAndReset" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E22", "name": "SCENE_RESOURCE_STATUS" },
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
+    { "address": "0x00FFF11B", "name": "SCENE_RESOURCE_FAST_PATH" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ]
+}

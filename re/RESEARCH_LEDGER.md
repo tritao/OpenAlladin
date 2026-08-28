@@ -1408,6 +1408,20 @@ component group at a time and writes it to VDP.
 The static result is recorded in
 re/mame/findings/20260828-transition-render-service-v1.json.
 
+## Scene-resource service lifecycle (20260828)
+
+The scene-resource lifecycle around 0x001B4B5E is now named. The preparation
+helper at 0x001B4B28 waits for VBlank, refreshes transition state, clears the
+transition VDP plane, and runs the shared VDP fills. SceneResource_RunServiceLoop
+at 0x001B4B78 performs up to 300 VBlank-paced iterations while resource status
+is clear, ticking MovementVM and AnimationVM, building actor-only records, and
+submitting both sprite stages. SceneResource_RunFadeAndReset at 0x001B4B5E
+applies the palette transition, clears actor resources, and copies the prepared
+scene words to VRAM after the loop.
+
+The static result is recorded in
+re/mame/findings/20260828-scene-resource-service-v1.json.
+
 ## Frame resource wait and terrain edge probe (20260828)
 
 Frame_InputAndResourceService at 0x001A91C6 now owns the frame-wait and
@@ -1662,6 +1676,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-animation-sprite-payload-v1` | recorded-static-decompilation | AnimationVM frame expansion into actor sprite payload records for VDP submission |
 | `20260828-audio-z80-bootstrap-v1` | recorded-static-decompilation | Z80 bus handoff, sound-driver copy, Z80 start, and audio bootstrap command sequence |
 | `20260828-transition-render-service-v1` | recorded-static-decompilation | palette-transition loop, service-frame execution, actor-only records, and palette-step VDP writes |
+| `20260828-scene-resource-service-v1` | recorded-static-decompilation | VBlank scene-resource loop, render-frame preparation, palette fade, actor reset, and VRAM copy |
 | `20260828-render-submission-v1` | recorded-static-decompilation | sprite attribute-record construction, camera-relative actor culling, and the two VDP submission stages |
 | `20260828-vdp-tile-word-v1` | recorded-static-decompilation | reusable scene/resource VDP control-address and tile-word writer |
 | `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |
