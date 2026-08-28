@@ -30,7 +30,8 @@
     { "address": "0x001B5AE0", "name": "LevelObjectResourceTableK" },
     { "address": "0x001B5B10", "name": "LevelObjectResourceTableL" },
     { "address": "0x001B7C10", "name": "ActorTemplateType20" },
-    { "address": "0x001B7C24", "name": "ActorTemplateType1E" }
+    { "address": "0x001B7C24", "name": "ActorTemplateType1E" },
+    { "address": "0x001A92DC", "name": "Actor_ClearType85Slots" }
   ],
   "memory_references": [
     { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },

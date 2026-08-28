@@ -1711,6 +1711,14 @@
     - ghidra_decompile_001AD150
     - ghidra_decompile_001AE796
     - ghidra_decompile_001AEC00
+0x001A92DC:
+  name: Actor_ClearType85Slots
+  confidence: confirmed
+  description: Scans the non-player actor pool before scene-resource instantiation and retires every record marked with type 0x85 by clearing its type and owned resources.
+  evidence:
+    - ghidra_decompile_001A92DC
+    - ghidra_decompile_001B2238
+    - ghidra_actor_table_layout
 0x001AE1A0:
   name: Scene_ApplyActiveLevelPaletteTransition
   confidence: decompiled

@@ -32,5 +32,11 @@
       ]
     }
   ],
-  "conclusion": "The common level-object allocation contract is now explicit: both entrypoints initialize a template-backed actor at the current interaction origin, while only LevelObjectSpawnEntry acknowledges consumption by clearing the source interaction byte."
+  "pre_instantiation_cleanup": {
+    "address": "0x001A92DC",
+    "name": "Actor_ClearType85Slots",
+    "confidence": "confirmed",
+    "behavior": "Scans the non-player actor pool and clears records whose type byte is 0x85, including their owned-resource list, before SceneResource_InstantiateActors consumes the selected resource stream."
+  },
+  "conclusion": "The common level-object allocation contract is now explicit: the scene-resource path first retires marked type-0x85 records, then both entrypoints initialize a template-backed actor at the current interaction origin, while only LevelObjectSpawnEntry acknowledges consumption by clearing the source interaction byte."
 }

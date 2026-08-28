@@ -1728,6 +1728,13 @@ The static result is recorded in
 `re/mame/findings/20260828-actor-allocation-entrypoints-v1.json` and
 `re/mame/findings/20260828-terrain-query-callback-installer-v1.json`.
 
+The pre-instantiation cleanup at `0x001A92DC` is now named
+`Actor_ClearType85Slots`. `SceneResource_InstantiateActors` invokes it after
+selecting a resource stream; it scans the non-player pool and retires records
+whose type byte is `0x85`, including their owned resources, before decoding new
+actor records. This extends the allocation contract with the observed marked-
+slot retirement step without assigning a higher-level meaning to type `0x85`.
+
 ## Scene/resource orchestration and camera rebuild (20260828)
 
 The larger scene/resource entrypoints are now separated from their lower-level
