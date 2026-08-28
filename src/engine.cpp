@@ -721,6 +721,25 @@ ActorState Engine::actor_from_template(std::uint32_t template_address) const {
     return actor;
 }
 
+ActorState Engine::initialize_actor_from_template(
+    const ActorState& destination,
+    std::uint32_t template_address
+) const {
+    // Actor_InitializeFromTemplate (0x001AE30A) is a partial record
+    // initializer. These are the destination fields the ROM does not write:
+    // coordinates at +0x02/+0x04, movement-loop cursor/timer at
+    // +0x0E/+0x12, and movement return cursor at +0x38. Keep those fields
+    // explicit here so every replacement path gets the same slot-reuse
+    // semantics before its caller applies new coordinates or overrides.
+    ActorState actor = actor_from_template(template_address);
+    actor.x = destination.x;
+    actor.y = destination.y;
+    actor.movement_loop_pc = destination.movement_loop_pc;
+    actor.movement_loop_timer = destination.movement_loop_timer;
+    actor.movement_return_pc = destination.movement_return_pc;
+    return actor;
+}
+
 void Engine::dispatch_interaction(
     const Level::InteractionRecord& record,
     int base_x,
@@ -745,11 +764,8 @@ void Engine::dispatch_interaction(
     // zero-type record can therefore carry these fields into its next
     // caller-level type, as seen when slot 3 becomes the later type-0x40
     // refill actor.
-    const ActorState previous = actors_[*slot];
-    ActorState actor = actor_from_template(descriptor->template_address);
-    actor.movement_loop_pc = previous.movement_loop_pc;
-    actor.movement_loop_timer = previous.movement_loop_timer;
-    actor.movement_return_pc = previous.movement_return_pc;
+    ActorState actor = initialize_actor_from_template(
+        actors_[*slot], descriptor->template_address);
     if (actor.type == 0 && !descriptor->override_type) return;
     if (descriptor->override_type) actor.type = descriptor->type;
     if (descriptor->override_animation) actor.animation_pc = descriptor->animation_pc;
@@ -871,15 +887,12 @@ void Engine::flush_surface_actor_spawn() {
         if (actors_[slot].type != 0) continue;
         // The ROM's surface allocator reuses the compact actor record after
         // F6 has cleared its type. That clear retires only the live identity;
-        // the movement-loop words at +0x0E/+0x12 and return PC at +0x10
+        // the movement-loop words at +0x0E/+0x12 and return PC at +0x38
         // remain stale when the slot is refilled.
-        const ActorState previous = actors_[slot];
-        ActorState spawned_actor = actor_from_template(kTerrainSpawnTemplate);
+        ActorState spawned_actor = initialize_actor_from_template(
+            actors_[slot], kTerrainSpawnTemplate);
         spawned_actor.x = static_cast<std::uint16_t>(spawn_x);
         spawned_actor.y = static_cast<std::uint16_t>(spawn_y);
-        spawned_actor.movement_loop_pc = previous.movement_loop_pc;
-        spawned_actor.movement_loop_timer = previous.movement_loop_timer;
-        spawned_actor.movement_return_pc = previous.movement_return_pc;
         actors_[slot] = spawned_actor;
         actor_animations_[slot].clear_actor_service_boundary();
         return;
@@ -1402,55 +1415,7 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
             return std::nullopt;
         }
 
-        const auto read_u8 = [&](std::uint32_t address) -> std::uint8_t {
-            return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
-        };
-        const auto read_u32 = [&](std::uint32_t address) -> std::uint32_t {
-            if (address + 3 >= rom_bytes_.size()) return 0;
-            return (static_cast<std::uint32_t>(read_u8(address)) << 24)
-                | (static_cast<std::uint32_t>(read_u8(address + 1)) << 16)
-                | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
-                | read_u8(address + 3);
-        };
-        const auto read_u16 = [&](std::uint32_t address) -> std::uint16_t {
-            if (address + 1 >= rom_bytes_.size()) return 0;
-            return static_cast<std::uint16_t>(
-                (static_cast<std::uint16_t>(read_u8(address)) << 8)
-                | read_u8(address + 1)
-            );
-        };
         if (request.template_address + 0x12 >= rom_bytes_.size()) return std::nullopt;
-
-        // The compact template layout is the one consumed by
-        // Actor_InitializeFromTemplate at 0x001AE30A:
-        // type +0, movement pointer +6, animation pointer +0xC, resource
-        // count +0x10, facing-Y +0x11, flags +0x12.
-        ActorState spawned;
-        spawned.type = read_u8(request.template_address);
-        spawned.movement_flags = read_u8(request.template_address + 2);
-        spawned.facing_x_flip = read_u8(request.template_address + 5);
-        spawned.movement_pc = read_u32(request.template_address + 6);
-        spawned.sprite_attribute = read_u16(request.template_address + 0x0A);
-        spawned.animation_pc = read_u32(request.template_address + 0x0C);
-        spawned.resource_count = read_u8(request.template_address + 0x10);
-        spawned.facing_y_flip = read_u8(request.template_address + 0x11);
-        spawned.flags = read_u8(request.template_address + 0x12);
-        // F5's source-relative offsets and the spawned record's orientation
-        // follow the source actor; the template supplies the remaining
-        // compact fields (including movement flags and resource count).
-        spawned.facing_x_flip = request.source_facing_x_flip;
-        spawned.facing_y_flip = request.source_facing_y_flip;
-        spawned.spawned_by_animation = true;
-        spawned.spawned_by_apple = request.apple_action;
-        if (request.mode == 5 || request.mode == 6) {
-            spawned.linked_actor_slot = request.source_actor_slot;
-        }
-        if (request.animation_override != 0) {
-            spawned.animation_pc = request.animation_override;
-        }
-        if (request.movement_override != 0) {
-            spawned.movement_pc = request.movement_override;
-        }
 
         int offset_x = request.offset_x;
         int offset_y = request.offset_y;
@@ -1458,8 +1423,6 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
         if (request.source_facing_y_flip != 0) offset_y = -offset_y;
         const int source_world_x = request.source_world_x;
         const int source_world_y = request.source_world_y;
-        spawned.x = static_cast<std::uint16_t>(source_world_x + offset_x);
-        spawned.y = static_cast<std::uint16_t>(source_world_y + offset_y);
 
         int first_slot = 3;
         int last_slot = 22;
@@ -1491,12 +1454,27 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
         for (int slot = first_slot; step > 0 ? slot <= last_slot : slot >= last_slot; slot += step) {
             const std::size_t index = static_cast<std::size_t>(slot);
             if (actors_[index].type != 0 || actors_.was_culled_this_frame(index)) continue;
-            const ActorState previous = actors_[index];
-            // The shared template initializer leaves these movement fields
-            // untouched when F5 recycles a zero-type record.
-            spawned.movement_loop_pc = previous.movement_loop_pc;
-            spawned.movement_loop_timer = previous.movement_loop_timer;
-            spawned.movement_return_pc = previous.movement_return_pc;
+            // F5 invokes Actor_InitializeFromTemplate on the selected record.
+            // Build that partial initialization from the actual destination
+            // so its retained coordinates/continuation fields are explicit,
+            // then apply the F5 source-relative and override writes.
+            ActorState spawned = initialize_actor_from_template(
+                actors_[index], request.template_address);
+            spawned.facing_x_flip = request.source_facing_x_flip;
+            spawned.facing_y_flip = request.source_facing_y_flip;
+            spawned.spawned_by_animation = true;
+            spawned.spawned_by_apple = request.apple_action;
+            if (request.mode == 5 || request.mode == 6) {
+                spawned.linked_actor_slot = request.source_actor_slot;
+            }
+            if (request.animation_override != 0) {
+                spawned.animation_pc = request.animation_override;
+            }
+            if (request.movement_override != 0) {
+                spawned.movement_pc = request.movement_override;
+            }
+            spawned.x = static_cast<std::uint16_t>(source_world_x + offset_x);
+            spawned.y = static_cast<std::uint16_t>(source_world_y + offset_y);
             actors_[index] = spawned;
             actor_animations_[static_cast<std::size_t>(slot)].reset();
             if (request.apple_action) {
@@ -1687,28 +1665,16 @@ void Engine::update_actor_actor_collisions() {
                 random_state_ = random_state_ * 13U + 7U;
                 const std::uint16_t source_x = source.x;
                 const std::uint16_t source_y = source.y;
-                const auto source_loop_pc = source.movement_loop_pc;
-                const auto source_loop_timer = source.movement_loop_timer;
-                const auto source_return_pc = source.movement_return_pc;
-                source = actor_from_template(0x001B792C);
+                source = initialize_actor_from_template(source, 0x001B792C);
                 source.x = source_x;
                 source.y = source_y;
-                source.movement_loop_pc = source_loop_pc;
-                source.movement_loop_timer = source_loop_timer;
-                source.movement_return_pc = source_return_pc;
                 source.facing_x_flip = 0xFF;
 
                 const std::uint16_t target_x = target.x;
                 const std::uint16_t target_y = target.y;
-                const auto target_loop_pc = target.movement_loop_pc;
-                const auto target_loop_timer = target.movement_loop_timer;
-                const auto target_return_pc = target.movement_return_pc;
-                target = actor_from_template(0x001B7940);
+                target = initialize_actor_from_template(target, 0x001B7940);
                 target.x = target_x;
                 target.y = target_y;
-                target.movement_loop_pc = target_loop_pc;
-                target.movement_loop_timer = target_loop_timer;
-                target.movement_return_pc = target_return_pc;
             }
         }
     }
@@ -1943,17 +1909,7 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
             // 0x001B7ABC. The common actor VM then consumes the template's
             // 0x00122F80 cursor on this same boundary, publishing the
             // observed type-0x84/0x00122F8A terminal frame.
-            const std::uint16_t source_x = actor.x;
-            const std::uint16_t source_y = actor.y;
-            const std::uint32_t loop_pc = actor.movement_loop_pc;
-            const std::uint8_t loop_timer = actor.movement_loop_timer;
-            const std::uint32_t return_pc = actor.movement_return_pc;
-            actor = actor_from_template(0x001B7ABC);
-            actor.x = source_x;
-            actor.y = source_y;
-            actor.movement_loop_pc = loop_pc;
-            actor.movement_loop_timer = loop_timer;
-            actor.movement_return_pc = return_pc;
+            actor = initialize_actor_from_template(actor, 0x001B7ABC);
         }
     }
 
@@ -2749,24 +2705,13 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         const auto read_rom_u8 = [this](std::uint32_t address) -> std::uint8_t {
             return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
         };
-        const auto read_rom_u32 = [&read_rom_u8](std::uint32_t address) -> std::uint32_t {
-            return (static_cast<std::uint32_t>(read_rom_u8(address)) << 24)
-                | (static_cast<std::uint32_t>(read_rom_u8(address + 1)) << 16)
-                | (static_cast<std::uint32_t>(read_rom_u8(address + 2)) << 8)
-                | read_rom_u8(address + 3);
-        };
-        ActorState spawned;
-        spawned.type = read_rom_u8(kTerrainScene5SpawnTemplate);
-        spawned.sprite_attribute = actor_from_template(kTerrainScene5SpawnTemplate).sprite_attribute;
+        ActorState spawned = initialize_actor_from_template(
+            actors_[free_slot], kTerrainScene5SpawnTemplate);
         // The template source byte is clear, but the terrain response's
         // runtime initializer enables actor-motion bit 6 before the record is
         // next observed in RAM (confirmed at +0x06 in the MAME capture).
         spawned.movement_flags = static_cast<std::uint8_t>(
             read_rom_u8(kTerrainScene5SpawnTemplate + 0x06) | 0x40);
-        spawned.movement_pc = read_rom_u32(kTerrainScene5SpawnTemplate + 6);
-        spawned.animation_pc = read_rom_u32(kTerrainScene5SpawnTemplate + 0x0C);
-        spawned.facing_y_flip = read_rom_u8(kTerrainScene5SpawnTemplate + 0x11);
-        spawned.flags = read_rom_u8(kTerrainScene5SpawnTemplate + 0x12);
         spawned.x = static_cast<std::uint16_t>(
             terrain_input_world_x_ + static_cast<int>(random_value & 7U) - 3);
         spawned.y = static_cast<std::uint16_t>(terrain_input_world_y_ - 0x2A);
@@ -3299,17 +3244,7 @@ void Engine::update(const InputState& input) {
                 // only when the current row (rather than a look-ahead row)
                 // contains a solid class, matching the observed impact edge.
                 if (class_value != 0 && class_row_offset == 0) {
-                    const std::uint16_t source_x = actor.x;
-                    const std::uint16_t source_y = actor.y;
-                    const auto loop_pc = actor.movement_loop_pc;
-                    const auto loop_timer = actor.movement_loop_timer;
-                    const auto return_pc = actor.movement_return_pc;
-                    actor = actor_from_template(0x001B792C);
-                    actor.x = source_x;
-                    actor.y = source_y;
-                    actor.movement_loop_pc = loop_pc;
-                    actor.movement_loop_timer = loop_timer;
-                    actor.movement_return_pc = return_pc;
+                    actor = initialize_actor_from_template(actor, 0x001B792C);
                     actor_animations_[slot].clear_actor_service_boundary();
                     actor_animations_[slot].defer_actor_service();
                     actor.spawned_by_apple = false;
@@ -3407,20 +3342,9 @@ void Engine::update(const InputState& input) {
                 continue;
             }
 
-            const std::uint16_t source_x = actor.x;
-            const std::uint16_t source_y = actor.y;
             const std::uint32_t animation_pc = actor.animation_pc;
-            const std::uint32_t loop_pc = actor.movement_loop_pc;
-            const std::uint8_t loop_timer = actor.movement_loop_timer;
             const bool spawned_by_animation = actor.spawned_by_animation;
-            actor = actor_from_template(0x001B7E40);
-            // The initializer preserves the source actor's world position;
-            // restore it explicitly after replacing the compact record so
-            // sub-tile movement is not rounded to the terrain column.
-            actor.x = source_x;
-            actor.y = source_y;
-            actor.movement_loop_pc = loop_pc;
-            actor.movement_loop_timer = loop_timer;
+            actor = initialize_actor_from_template(actor, 0x001B7E40);
             // Most type-0x2D terrain conversions pass through the common
             // 0x001ABECE follow-up, which republishes the facing byte as
             // 0xFF. The Level-01 stream at animation cursor 0x00123EFA takes

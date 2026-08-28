@@ -1291,6 +1291,35 @@ the surviving `actor_service_boundary_` is explicitly limited to producer gates
 on non-player actor VM instances. `tests/native_scheduler_trace.py` locks the
 apple cursor sequence and focused jump/spawn/scheduler regressions remain green.
 
+## Actor allocation and template lifecycle (20260828)
+
+The actor allocation cluster around `0x001AE206..0x001AE372` is now named from
+the recovered decompilations. `Actor_ClearAllRecords` at `0x001AE206` zeroes
+the complete `0x840`-byte table, while `Actor_ClearAllAndPublishResources`
+(`0x001AE218`) and `Actor_ClearGameplayRecordsAndPublishResources`
+(`0x001AE224`) retire live records through `Actor_ClearOwnedResources` and
+publish flagged interaction payloads. The free-slot helpers are distinct ROM
+pools: common `3..22`, forward `1..24`, reverse `24..1`, reverse-20 `20..1`,
+and auxiliary `25..30`, all with the `0x42`-byte actor stride. The type lookup
+at `0x001AE2F2` scans non-player records `1..24`.
+
+`Actor_InitializeFromTemplate` at `0x001AE30A` is a partial initializer, not a
+blind `0x42`-byte copy. It copies the compact template identity, movement,
+animation, sprite, resource-count, facing-Y, and flags fields; clears the
+frame pointer, velocity, interaction/resource links, and animation/movement
+timers; and leaves destination coordinates, movement-loop cursor/timer, and
+movement return cursor untouched. That explains the observed slot-reuse
+traces: a zero-type retirement removes the live identity, and the next caller
+overwrites the selected fields while the three continuation fields can remain
+stale by design.
+
+`AnimationVM_SpawnOrCopyActor` selects among these pools from its F5 mode byte,
+calls the partial initializer, then applies source-relative offsets and
+optional animation/movement overrides. Interaction and terrain spawners use
+the same named allocator/initializer contract. The native model and allocator
+unit test now encode these recovered ranges and retention semantics rather
+than treating stale loop words as unexplained behavior.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |

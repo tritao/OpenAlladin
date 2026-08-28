@@ -238,6 +238,10 @@ private:
     std::optional<SpawnDescriptor> spawn_descriptor(std::uint8_t selector) const;
     std::optional<std::size_t> allocate_actor_slot(ActorAllocationPool pool) const;
     ActorState actor_from_template(std::uint32_t template_address) const;
+    ActorState initialize_actor_from_template(
+        const ActorState& destination,
+        std::uint32_t template_address
+    ) const;
     void update_dynamic_actor_culling();
     // FUN_001A8E0C is a real RAM publication, not a cached convenience. The
     // ROM uses it at four distinct causal boundaries in the frame loop.

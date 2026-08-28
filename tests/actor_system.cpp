@@ -22,6 +22,27 @@ int main() {
         openaladdin::ActorAllocationPool::CommonForward);
     assert(after_cull && *after_cull != 3);
 
+    openaladdin::ActorSystem pools;
+    for (auto& actor : pools) actor.type = 1;
+    pools[3].type = 0;
+    pools[22].type = 0;
+    pools[1].type = 0;
+    pools[24].type = 0;
+    pools[20].type = 0;
+    pools[25].type = 0;
+    pools[30].type = 0;
+    pools.begin_frame();
+    assert(pools.allocate_actor_slot(
+        openaladdin::ActorAllocationPool::CommonForward) == std::optional<std::size_t>(3));
+    assert(pools.allocate_actor_slot(
+        openaladdin::ActorAllocationPool::CommonReverse) == std::optional<std::size_t>(20));
+    assert(pools.allocate_actor_slot(
+        openaladdin::ActorAllocationPool::GameplayForward) == std::optional<std::size_t>(1));
+    assert(pools.allocate_actor_slot(
+        openaladdin::ActorAllocationPool::GameplayReverse) == std::optional<std::size_t>(24));
+    assert(pools.allocate_actor_slot(
+        openaladdin::ActorAllocationPool::AuxiliaryForward) == std::optional<std::size_t>(25));
+
     openaladdin::ActorSystem::Table templates{};
     templates[1].type = 0x2D;
     actors.set_snapshot_mode(true);

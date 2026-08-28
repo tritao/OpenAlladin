@@ -4,15 +4,15 @@ fields:
   0x00:
     name: type
     type: u8
-    description: Actor type/state byte copied from the object template; zero marks a free record and non-zero values are processed by common actor logic.
+    description: Actor type/state byte copied from template byte +0; zero marks a free record and non-zero values are processed by common actor logic.
   0x02:
     name: x
     type: u16
-    description: World X coordinate written by the animation VM spawn/copy handler and consumed by common actor movement/rendering.
+    description: World X coordinate written by the caller after Actor_InitializeFromTemplate; the template initializer deliberately leaves this destination field unchanged.
   0x04:
     name: y
     type: u16
-    description: World Y coordinate written by the animation VM spawn/copy handler and consumed by common actor movement/rendering.
+    description: World Y coordinate written by the caller after Actor_InitializeFromTemplate; the template initializer deliberately leaves this destination field unchanged.
   0x09:
     name: facing_x_flip
     type: u8
@@ -24,11 +24,11 @@ fields:
   0x0e:
     name: movement_loop_pc
     type: u32
-    description: Movement-stream continuation cursor used by the shared loop/delay command handler.
+    description: Movement-stream continuation cursor used by the shared loop/delay command handler; Actor_InitializeFromTemplate deliberately leaves it unchanged, so slot reuse can carry the prior cursor.
   0x12:
     name: movement_loop_timer
     type: u8
-    description: Movement-stream loop/delay counter consumed by the shared movement command handler.
+    description: Movement-stream loop/delay counter consumed by the shared movement command handler; Actor_InitializeFromTemplate deliberately leaves it unchanged on reuse.
   0x18:
     name: velocity_x
     type: u16
@@ -44,7 +44,7 @@ fields:
   0x14:
     name: collision_frame_ptr
     type: u32
-    description: Current animation-frame/collision-record pointer written by the animation VM. Player/actor collision reads bounds from bytes +2..+5 of this record; the guard fixture resolves to ROM 0x001F6500.
+    description: Current animation-frame/collision-record pointer written by the animation VM; Actor_InitializeFromTemplate clears it before the first animation service. Player/actor collision reads bounds from bytes +2..+5 of this record; the guard fixture resolves to ROM 0x001F6500.
   0x20:
     name: animation_pc
     type: u32
@@ -68,7 +68,7 @@ fields:
   0x38:
     name: movement_return_pc
     type: u32
-    description: Return cursor used by movement-stream call/return command 0x92.
+    description: Return cursor used by movement-stream call/return command 0x92; Actor_InitializeFromTemplate deliberately leaves it unchanged so a recycled record retains the prior continuation until the caller overwrites it.
   0x37:
     name: animation_timer
     type: u8

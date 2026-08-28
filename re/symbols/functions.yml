@@ -759,7 +759,7 @@
 0x001AE30A:
   name: Actor_InitializeFromTemplate
   confidence: confirmed
-  description: Copies a 0x42-byte actor template into a destination actor record; A5 is the destination and A6 is the source template.
+  description: Partially initializes a destination actor record from the compact template at A6. It copies the template identity, movement/animation/resource fields, clears frame/velocity/resource-link/interaction/timer fields, and deliberately leaves destination coordinates, movement-loop cursor/timer, and movement return cursor for the caller or slot-reuse path.
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - mame_actor_initializer_trace
@@ -851,14 +851,14 @@
 0x001AE27A:
   name: Actor_FindFreeSlotForward
   confidence: confirmed
-  description: Scans 23 actor records forward from 0x00FF7E82 with stride 0x42 for a zero-type slot.
+  description: Scans 24 actor records forward from 0x00FF7E82 with stride 0x42 for a zero-type slot.
   evidence:
     - ghidra_level01_interaction_inventory_targeted_decompile
 
 0x001AE292:
   name: Actor_FindFreeSlotBackward
   confidence: confirmed
-  description: Scans 23 actor records backward from 0x00FF8470 with stride 0x42 for a zero-type slot.
+  description: Scans 24 actor records backward from 0x00FF8470 with stride 0x42 for a zero-type slot.
   evidence:
     - ghidra_level01_interaction_inventory_targeted_decompile
 
@@ -892,3 +892,39 @@
     - ghidra_decompile_001AD150
     - ghidra_decompile_001AE796
     - ghidra_decompile_001AEC00
+0x001AE206:
+  name: Actor_ClearAllRecords
+  confidence: confirmed
+  description: Zeroes the complete 0x840-byte actor table at ACTOR_TABLE_BASE, covering all 32 records of 0x42 bytes each without releasing per-record resources.
+  evidence:
+    - ghidra_decompile_001AE206
+    - ghidra_actor_table_layout
+0x001AE218:
+  name: Actor_ClearAllAndPublishResources
+  confidence: decompiled
+  description: Walks all 32 actor records, clears each live type and owned resources, and publishes a nonzero interaction payload when the record carries the resource-publication flag.
+  evidence:
+    - ghidra_decompile_001AE218
+    - ghidra_decompile_001AE372
+0x001AE224:
+  name: Actor_ClearGameplayRecordsAndPublishResources
+  confidence: decompiled
+  description: Walks non-player records 1..24, clears live types and owned resources, and publishes flagged interaction payloads before advancing by the 0x42-byte record stride.
+  evidence:
+    - ghidra_decompile_001AE224
+    - ghidra_decompile_001AE372
+0x001AE2DA:
+  name: Actor_FindAuxiliaryFreeSlot
+  confidence: confirmed
+  description: Scans the auxiliary actor pool, records 25..30 at 0x00FF84B2 with stride 0x42, and returns the first zero-type slot.
+  evidence:
+    - ghidra_decompile_001AE2DA
+    - ghidra_decompile_001AD00E
+0x001AE2F2:
+  name: Actor_FindActorByType
+  confidence: decompiled
+  description: Scans non-player records 1..24 at 0x00FF7E82 with stride 0x42 for the first record whose type byte equals the caller's D0 value.
+  evidence:
+    - ghidra_decompile_001AE2F2
+    - ghidra_decompile_001AEE40
+    - ghidra_decompile_001AF516
