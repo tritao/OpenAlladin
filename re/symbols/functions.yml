@@ -1890,6 +1890,21 @@
     - ghidra_audio_queue_decompile
     - mame_audio_mailbox_queue_trace
 
+0x001E58CC:
+  name: Audio_QueueControlMarker0C
+  confidence: confirmed
+  description: Opens a protected sound queue transaction, writes the fixed two-byte 0xFF,0x0C control packet, and closes the transaction.
+  evidence:
+    - ghidra_disassembly_001E58CC
+    - ghidra_frame_input_resource_service
+0x001E58E0:
+  name: Audio_QueueControlMarker0D
+  confidence: confirmed
+  description: Opens a protected sound queue transaction, writes the fixed two-byte 0xFF,0x0D control packet, and closes the transaction.
+  evidence:
+    - ghidra_disassembly_001E58E0
+    - ghidra_frame_input_resource_service
+
 0x001E58F4:
   name: Audio_QueueControlCommand
   confidence: confirmed

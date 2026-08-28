@@ -1989,6 +1989,22 @@ The static result is recorded in
 
 ## Campaign index
 
+## Audio control-marker wrappers (20260828)
+
+The two fixed-packet wrappers around `Frame_InputAndResourceService` are now
+named. `Audio_QueueControlMarker0C` at `0x001E58CC` emits `FF 0C`, while
+`Audio_QueueControlMarker0D` at `0x001E58E0` emits `FF 0D`. Both open the
+protected Z80 sound queue, call `Audio_QueueWriteMarker`, and close the queue;
+the former is called at the beginning of the frame input/resource sequence and
+the latter at its completion.
+
+The packet identities and queue ownership are exact disassembly facts. The
+audio driver's internal meanings for control bytes `0x0C` and `0x0D` are not
+assigned until the Z80-side command consumer is decoded.
+
+The static result is recorded in
+`re/mame/findings/20260828-audio-control-markers-v1.json`.
+
 ## Scene-resource VDP command-record streamer (20260828)
 
 The frame/reset helper at `0x001AE0F6` is now named

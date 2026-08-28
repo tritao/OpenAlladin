@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "audio-control-marker-wrappers",
+    "purpose": "Decode the fixed sound-queue control packets used before and after the frame input/resource service."
+  },
+  "targets": [
+    { "address": "0x001E58CC", "name": "Audio_QueueControlMarker0C" },
+    { "address": "0x001E58E0", "name": "Audio_QueueControlMarker0D" },
+    { "address": "0x001E57AC", "name": "Audio_QueueBegin" },
+    { "address": "0x001E57F4", "name": "Audio_QueueWriteMarker" },
+    { "address": "0x001E57E2", "name": "Audio_QueueEnd" },
+    { "address": "0x001A91C6", "name": "Frame_InputAndResourceService" }
+  ],
+  "memory_references": [
+    { "address": "0x00A01B40", "name": "Z80_SOUND_COMMAND_QUEUE" },
+    { "address": "0x00A00036", "name": "Z80_SOUND_QUEUE_CURSOR" },
+    { "address": "0x00A11100", "name": "Z80_BUS_REQUEST" }
+  ]
+}
