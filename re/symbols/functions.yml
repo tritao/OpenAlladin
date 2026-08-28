@@ -984,6 +984,14 @@
     - ghidra_disassembly_001AEC00
     - ghidra_decompile_collision_damage_targets
     - mame_guard_collision_watchpoint
+0x001AF1AC:
+  name: ActorType13_PlayerCollisionHandler
+  confidence: decompiled
+  description: Player-collision handler for actor type 0x13. It clears the source actor's owned resources, allocates a backward-slot response actor, copies its position with a 0x20-pixel vertical offset, arms the response timer to 8, and conditionally queues the response audio command.
+  evidence:
+    - ghidra_decompile_001AF1AC
+    - ghidra_decompile_001AEC00
+    - ghidra_collision_damage_targets
 0x001AE0B0:
   name: Actor_CullAndRemoveLinked
   confidence: confirmed

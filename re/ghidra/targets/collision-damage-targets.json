@@ -18,6 +18,7 @@
     { "address": "0x001AE47E", "name": "Interaction table consumer B" },
     { "address": "0x001AE9C6", "name": "Guard player-collision handler" },
     { "address": "0x001AEC00", "name": "Shared actor damage response" },
+    { "address": "0x001AF1AC", "name": "ActorType13_PlayerCollisionHandler" },
     { "address": "0x001AE64C", "name": "Player interaction response" },
     { "address": "0x001AE6BC", "name": "Interaction table publisher A2" },
     { "address": "0x001AE6DE", "name": "Interaction table publisher A1" }

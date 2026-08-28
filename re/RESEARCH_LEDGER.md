@@ -1559,6 +1559,19 @@ coordinates, so it does not alter the existing Level 01 transfer conclusion.
 The static result is recorded in
 `re/mame/findings/20260828-actor-collision-terminal-response-v1.json`.
 
+## Actor type-0x13 collision response (20260828)
+
+ActorType13_PlayerCollisionHandler at `0x001AF1AC` is the dedicated type
+`0x13` branch from Actor_HandlePlayerCollisionBlock. It clears the source
+actor's owned resources, allocates a backward-slot response actor, copies the
+source position with a `0x20`-pixel vertical offset, sets its response field,
+arms `FFF124` to `8`, and conditionally queues the response audio command.
+The routine does not directly write player coordinates, velocity, or scene
+state; it materializes an actor-side collision response.
+
+The static result is recorded in
+`re/mame/findings/20260828-actor-type13-collision-v1.json`.
+
 ## Scene resource and VDP service helpers (20260828)
 
 The next high-call-count queue cluster is now named from the existing scene
