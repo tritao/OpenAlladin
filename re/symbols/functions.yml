@@ -142,6 +142,41 @@
   evidence:
     - ghidra_decompile_001B2916
     - ghidra_transition_render_targets
+0x001B2E9A:
+  name: SceneTransition_VDPHelper
+  confidence: decompiled
+  description: Programs VDP control word 0x9001, selects an 0x80-byte tile-row stride, and rebuilds the scene tile-row command tables.
+  evidence:
+    - ghidra_decompile_001B2E9A
+    - ghidra_scene_vdp_audio_service_targets
+0x001B2EAC:
+  name: SceneResource_WaitForCompletion
+  confidence: decompiled
+  description: Waits up to the caller's D0 countdown for SCENE_RESOURCE_STATUS to become nonzero, polling the raw terrain/query input and synchronizing at each VBlank.
+  evidence:
+    - ghidra_decompile_001B2EAC
+    - ghidra_scene_vdp_audio_service_targets
+0x001B319C:
+  name: Terrain_QueryFlagDispatcher
+  confidence: decompiled
+  description: Samples IO_PORT1_DATA through the Genesis I/O/Z80 handoff sequence and publishes the raw query byte at FFF155 for the scene/resource gate and terrain callbacks.
+  evidence:
+    - ghidra_decompile_001B319C
+    - ghidra_scene_vdp_audio_service_targets
+0x001B327A:
+  name: Audio_QueueSceneUpdateIfPending
+  confidence: decompiled
+  description: When SCENE_VDP_UPDATE_FLAG is set, queues audio command 4 through the prepare/send pair while preserving the caller's working registers.
+  evidence:
+    - ghidra_decompile_001B327A
+    - ghidra_scene_vdp_audio_service_targets
+0x001B32F0:
+  name: Terrain_QueryCallbackSetup
+  confidence: decompiled
+  description: Writes the caller's D2 and D3 words to the two VDP control/data destinations selected by control words 0x70000003 and 0x70020003.
+  evidence:
+    - ghidra_decompile_001B32F0
+    - ghidra_scene_vdp_audio_service_targets
 0x001B4B28:
   name: SceneResource_PrepareRenderFrame
   confidence: decompiled
@@ -340,6 +375,13 @@
     - ghidra_decompile_001B21A8
     - ghidra_decompile_001B21F6
     - ghidra_level_transition_targeted_decompile
+0x001B2142:
+  name: VDP_BuildTileRowCommandTables
+  confidence: decompiled
+  description: Builds the three 32-entry VDP tile-row command tables at FF8680, FF8700, and FF8780, selecting the C000/E000 plane order from FFF165 and advancing each command by the caller's D1 row stride.
+  evidence:
+    - ghidra_decompile_001B2142
+    - ghidra_scene_vdp_audio_service_targets
 0x001B00CA:
   name: Interaction_UpdateCounter
   confidence: decompiled

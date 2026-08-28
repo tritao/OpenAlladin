@@ -1593,6 +1593,27 @@ resource path. The two pairs keep separate bit-buffer and table state.
 The static result is recorded in
 re/mame/findings/20260828-compressed-resource-decode-v1.json.
 
+## Scene VDP and query/audio service helpers (20260828)
+
+The shared scene service helpers around the tile-row command tables are now
+named. VDP_BuildTileRowCommandTables at 0x001B2142 builds the three 32-entry
+VDP command arrays at FF8680, FF8700, and FF8780, selecting the C000/E000 plane
+order from FFF165 and advancing by the caller's row stride. The
+SceneTransition_VDPHelper wrapper at 0x001B2E9A supplies the 0x80-byte stride
+after programming VDP control word 0x9001.
+
+SceneResource_WaitForCompletion at 0x001B2EAC polls the scene-resource status
+for a bounded number of VBlank iterations and invokes the raw query sampler
+each time. Terrain_QueryFlagDispatcher at 0x001B319C performs the I/O/Z80
+handoff, samples IO_PORT1_DATA, and publishes the raw query byte at FFF155.
+Audio_QueueSceneUpdateIfPending at 0x001B327A conditionally queues audio
+command 4 when SCENE_VDP_UPDATE_FLAG is set. Terrain_QueryCallbackSetup at
+0x001B32F0 writes the caller's two setup words through the paired VDP control
+and data commands used by the scene and terrain paths.
+
+The static result is recorded in
+re/mame/findings/20260828-scene-vdp-audio-service-v1.json.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1709,6 +1730,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |
 | `20260828-compressed-resource-decode-v1` | recorded-static-decompilation | RNC payload decoding, terrain-resource Huffman decoding, and VDP fill helper classification |
 | `20260828-vdp-scene-setup-v1` | recorded-static-decompilation | fixed transition-plane clears, VRAM block clears, and scene-header copy |
+| `20260828-scene-vdp-audio-service-v1` | recorded-static-decompilation | tile-row VDP command tables, scene-resource completion wait, raw query sampling, conditional scene-update audio, and paired VDP setup |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

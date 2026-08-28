@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-scene-vdp-audio-service-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-vdp-audio-service-targets.json",
+  "targeted_decompile": "build/re/scene-vdp-audio-service-targeted-decompile-v1.json",
+  "services": [
+    {
+      "address": "0x001B2142",
+      "name": "VDP_BuildTileRowCommandTables",
+      "confidence": "decompiled",
+      "behavior": "Builds three 32-entry VDP tile-row command tables, selecting the C000/E000 plane order from FFF165 and advancing by the caller's D1 stride."
+    },
+    {
+      "address": "0x001B2E9A",
+      "name": "SceneTransition_VDPHelper",
+      "confidence": "decompiled",
+      "behavior": "Programs VDP control word 0x9001, supplies an 0x80-byte row stride, and rebuilds the tile-row command tables."
+    },
+    {
+      "address": "0x001B2EAC",
+      "name": "SceneResource_WaitForCompletion",
+      "confidence": "decompiled",
+      "behavior": "Polls until SCENE_RESOURCE_STATUS becomes nonzero or the caller countdown expires, sampling query input and waiting for VBlank each iteration."
+    },
+    {
+      "address": "0x001B319C",
+      "name": "Terrain_QueryFlagDispatcher",
+      "confidence": "decompiled",
+      "behavior": "Samples IO_PORT1_DATA through the I/O and Z80 handoff sequence and stores the raw query byte at FFF155."
+    },
+    {
+      "address": "0x001B327A",
+      "name": "Audio_QueueSceneUpdateIfPending",
+      "confidence": "decompiled",
+      "behavior": "Queues audio command 4 only when SCENE_VDP_UPDATE_FLAG is set."
+    },
+    {
+      "address": "0x001B32F0",
+      "name": "Terrain_QueryCallbackSetup",
+      "confidence": "decompiled",
+      "behavior": "Writes D2 and D3 through the two VDP control/data command pairs used by scene and terrain setup paths."
+    }
+  ],
+  "conclusion": "The shared transition helpers now expose the tile-row command-table builder, its scene-transition wrapper, the resource completion wait, raw query sampling, conditional scene-update audio notification, and the two-word VDP setup primitive."
+}

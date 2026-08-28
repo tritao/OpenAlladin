@@ -115,6 +115,15 @@
     - ghidra_disassembly_001B1E38
     - mame_level01_floor_runtime_match
 
+0xFFF155:
+  name: TERRAIN_QUERY_INPUT_RAW
+  type: u8
+  confidence: decompiled
+  description: Raw byte sampled from IO_PORT1_DATA by Terrain_QueryFlagDispatcher and consumed by the scene/resource gate and terrain query callbacks.
+  evidence:
+    - ghidra_decompile_001B319C
+    - ghidra_scene_vdp_audio_service_targets
+
 0xFFF156:
   name: TERRAIN_QUERY_FLAGS
   type: u8
