@@ -1637,6 +1637,29 @@ and data commands used by the scene and terrain paths.
 The static result is recorded in
 re/mame/findings/20260828-scene-vdp-audio-service-v1.json.
 
+## Actor allocation entrypoints and terrain callback publication (20260828)
+
+The common level-object allocation paths at `0x001B5266` and `0x001B52A0`
+are now named. LevelObjectSpawnEntry at `0x001B5266` selects the first free
+common actor record through Actor_FindFreeSlot, applies the caller's template,
+stores the interaction index and selector at actor offsets `0x32`/`0x34`,
+places the actor from the current interaction origin, and clears the consumed
+interaction byte. LevelObjectSpawnVariant at `0x001B52A0` performs the same
+template-backed initialization and placement but leaves the source interaction
+byte unchanged. This makes the consuming/non-consuming distinction explicit
+without claiming that either entrypoint owns the higher-level selector-specific
+actor type or animation assignment.
+
+Terrain_InstallQueryCallbacks at `0x001B32E2` is also named. It copies three
+longwords from the caller's resource record into
+TERRAIN_QUERY_CALLBACK_A/B/C at `FF7DD2`, `FF7DD6`, and `FF7DDA`. This is a
+callback-publication service and is separate from the adjacent paired VDP word
+setup helper at `0x001B32F0`.
+
+The static result is recorded in
+`re/mame/findings/20260828-actor-allocation-entrypoints-v1.json` and
+`re/mame/findings/20260828-terrain-query-callback-installer-v1.json`.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1756,6 +1779,8 @@ re/mame/findings/20260828-scene-vdp-audio-service-v1.json.
 | `20260828-scene-vdp-audio-service-v1` | recorded-static-decompilation | tile-row VDP command tables, scene-resource completion wait, raw query sampling, conditional scene-update audio, and paired VDP setup |
 | `20260828-actor-resource-clear-variant-v1` | recorded-static-decompilation | A2 calling-convention variant of actor-owned resource cleanup used by linked collision teardown |
 | `20260828-scene-resource-transfer-v1` | recorded-static-decompilation | indirect VDP word stream, fixed F800 scene-plane copy, and blank scene-resource frame setup |
+| `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
+| `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

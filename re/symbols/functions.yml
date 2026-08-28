@@ -177,6 +177,14 @@
   evidence:
     - ghidra_decompile_001B32F0
     - ghidra_scene_vdp_audio_service_targets
+0x001B32E2:
+  name: Terrain_InstallQueryCallbacks
+  confidence: decompiled
+  description: Copies three callback addresses from the caller's A0 record into TERRAIN_QUERY_CALLBACK_A, TERRAIN_QUERY_CALLBACK_B, and TERRAIN_QUERY_CALLBACK_C at FF7DD2, FF7DD6, and FF7DDA.
+  evidence:
+    - ghidra_decompile_001B32E2
+    - ghidra_level01_terrain_query_callback_targets
+    - ghidra_disassembly_001B32E2
 0x001B4A7A:
   name: SceneResource_PrepareBlankFrame
   confidence: decompiled
@@ -184,6 +192,22 @@
   evidence:
     - ghidra_decompile_001B4A7A
     - ghidra_scene_resource_transfer_targets
+0x001B5266:
+  name: LevelObjectSpawnEntry
+  confidence: confirmed
+  description: Allocates a common actor slot through Actor_FindFreeSlot, initializes it from the caller's template, stores the interaction index and selector at actor offsets 0x32/0x34, positions the actor from the current interaction coordinates, and clears the consumed interaction byte.
+  evidence:
+    - ghidra_decompile_001B5266
+    - ghidra_level01_resource_record_targets
+    - mame_level01_upper_dispatch_trace
+0x001B52A0:
+  name: LevelObjectSpawnVariant
+  confidence: decompiled
+  description: Allocates a common actor slot through Actor_FindFreeSlot, initializes it from the caller's template, stores the interaction index and selector at actor offsets 0x32/0x34, and positions the actor from the current interaction coordinates without consuming the interaction byte.
+  evidence:
+    - ghidra_decompile_001B52A0
+    - ghidra_level01_resource_record_targets
+    - ghidra_disassembly_001B52A0
 0x001B4B28:
   name: SceneResource_PrepareRenderFrame
   confidence: decompiled

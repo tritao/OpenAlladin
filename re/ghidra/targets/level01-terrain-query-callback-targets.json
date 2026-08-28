@@ -9,6 +9,7 @@
     { "address": "0x001B323A", "name": "Terrain_QueryCallbackB_Impl" },
     { "address": "0x001B3244", "name": "Terrain_QueryCallbackA_Impl" },
     { "address": "0x001B324E", "name": "Terrain_QueryCallbackC_Impl" },
+    { "address": "0x001B32E2", "name": "Terrain_InstallQueryCallbacks" },
     { "address": "0x001B32F0", "name": "Terrain_QueryCallbackSetup" },
     { "address": "0x001B319C", "name": "Terrain_QueryFlagDispatcher" },
     { "address": "0x001B1E38", "name": "Terrain_ResolvePlayerCell" },

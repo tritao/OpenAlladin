@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-actor-allocation-entrypoints-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level01-resource-record-targets.json",
+  "entrypoints": [
+    {
+      "address": "0x001B5266",
+      "name": "LevelObjectSpawnEntry",
+      "confidence": "confirmed",
+      "behavior": [
+        "Allocates the first free common actor record through Actor_FindFreeSlot.",
+        "Initializes the record from the caller's actor template.",
+        "Stores the interaction index and selector at actor offsets 0x32 and 0x34.",
+        "Places the actor at FFF150/FFF152 plus the current interaction origin at FF7DB0/FF7DB2.",
+        "Clears the consumed interaction byte through the caller's interaction-table base."
+      ],
+      "callers": "The Level 01 interaction handlers use this path for the common resource-record spawn family, including the observed Type-0x1E/Type-0x20 pair."
+    },
+    {
+      "address": "0x001B52A0",
+      "name": "LevelObjectSpawnVariant",
+      "confidence": "decompiled",
+      "behavior": [
+        "Allocates the same common actor pool and applies the same template/payload/position initialization.",
+        "Leaves the interaction-table byte unchanged, making it the non-consuming variant of the common entrypoint."
+      ]
+    }
+  ],
+  "conclusion": "The common level-object allocation contract is now explicit: both entrypoints initialize a template-backed actor at the current interaction origin, while only LevelObjectSpawnEntry acknowledges consumption by clearing the source interaction byte."
+}
