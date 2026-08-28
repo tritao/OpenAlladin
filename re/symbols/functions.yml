@@ -317,6 +317,14 @@
     - ghidra_decompile_001B0BBE
     - ghidra_menu_pattern_wish_targets
     - rom_wish_prompt_00126570
+0x001B0A46:
+  name: Input_ProcessPrimaryPattern
+  confidence: decompiled
+  description: Samples both controller phases through the Z80 handoff, advances the primary INPUT_PATTERN_CURSOR on a matching two-byte record, resets the primary table on mismatch, and on its terminal record performs the timed scene/audio handshake and arms SCENE_SCRIPT_COUNTDOWN.
+  evidence:
+    - ghidra_disassembly_001B0A46
+    - ghidra_input_pattern_targets
+    - ghidra_frame_input_resource_service
 0x001B34CA:
   name: Input_SampleControllerState
   confidence: confirmed

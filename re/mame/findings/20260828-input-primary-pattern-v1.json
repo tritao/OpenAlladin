@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-input-primary-pattern-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/input-primary-pattern-targets.json",
+  "service": {
+    "address": "0x001B0A46",
+    "name": "Input_ProcessPrimaryPattern",
+    "confidence": "decompiled",
+    "caller": "0x001A91C6 Frame_InputAndResourceService",
+    "behavior": [
+      "Samples the two controller phases through the Z80 bus handoff and reduces each phase to the 0x30-bit pattern fields.",
+      "When both sampled fields are released, consumes a pending match by advancing INPUT_PATTERN_CURSOR by two bytes and resets the cursor on the 0xFF terminator.",
+      "When a field is pressed, compares both bytes with the active primary pattern record and sets INPUT_PATTERN_MATCH_LATCH only on an exact match; mismatch selects the primary table again.",
+      "On the terminal pattern, optionally queues audio commands 0x02 and 0x5B around SceneResource_WaitForCompletion calls, reselects the primary table, and writes SCENE_SCRIPT_COUNTDOWN to 0xFF."
+    ]
+  },
+  "relationship": {
+    "primary_selector": "0x001B0B8E Input_SelectPrimaryPatternTable",
+    "menu_counterpart": "0x001B0BBE Input_ProcessMenuPattern uses the alternate selector and enters Menu_ShowWishPrompt instead of this service's countdown/audio handshake.",
+    "known_state": "The static body establishes the controller-pattern and scene/audio side effects; it does not by itself establish the user-facing meaning of the primary pattern."
+  },
+  "conclusion": "The anonymous frame-side routine is a primary controller-pattern service. Its cursor/latch state and terminal scene/audio handshake are now distinct from the alternate menu wish-pattern path."
+}

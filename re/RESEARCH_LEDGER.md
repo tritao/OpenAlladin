@@ -1989,6 +1989,26 @@ The static result is recorded in
 
 ## Campaign index
 
+## Primary controller-pattern service (20260828)
+
+The frame-side routine at `0x001B0A46` is now named
+`Input_ProcessPrimaryPattern`. It samples both controller phases through the
+Z80 handoff, compares the reduced two-byte sample against the active primary
+pattern record, sets `INPUT_PATTERN_MATCH_LATCH` only on an exact match, and
+advances `INPUT_PATTERN_CURSOR` after the matching release interval. A
+mismatch reselects the primary table at `0x00004128`.
+
+The terminal record reselects that primary table, optionally queues audio
+commands `0x02` and `0x5B` around `SceneResource_WaitForCompletion`, and arms
+`SCENE_SCRIPT_COUNTDOWN` with `0xFF`. This differs from
+`Input_ProcessMenuPattern` at `0x001B0BBE`, whose alternate-table terminal path
+enters the wish-prompt presentation. The static body establishes the
+controller-pattern and scene/audio effects but does not identify the
+user-facing purpose of the primary pattern.
+
+The static result is recorded in
+`re/mame/findings/20260828-input-primary-pattern-v1.json`.
+
 ## Actor sprite-resource allocation (20260828)
 
 The AnimationVM actor pass calls `0x001AD3E8` when an actor's sprite-resource
