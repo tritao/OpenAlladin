@@ -258,6 +258,56 @@ int main() {
     bridge.handle(psg_stop);
     assert(psg.back() == 0xDF);
 
+    // The real animation SFX (ROM sound 0x4C) is a type-3 PSG noise track,
+    // not a pitched tone on the stream-numbered voice. Its patch is [03,07,
+    // 1F,...], and the recovered driver writes the tone-2 clock, noise setup,
+    // and the short volume attack below.
+    psg.clear();
+    Z80SoundDriver::SoundEvent psg_patch{};
+    psg_patch.kind = Z80SoundDriver::SoundEvent::Kind::Control;
+    psg_patch.channel = 0;
+    psg_patch.opcode = 0x61;
+    psg_patch.has_control_argument = true;
+    psg_patch.control_argument = 0x69;
+    psg_patch.has_patch_state = true;
+    psg_patch.patch_state[0] = 0x03;
+    psg_patch.patch_state[1] = 0x07;
+    psg_patch.patch_state[2] = 0x1F;
+    psg_patch.output = Z80SoundDriver::Output::Psg;
+    bridge.handle(psg_patch);
+
+    Z80SoundDriver::SoundEvent noise_note{};
+    noise_note.kind = Z80SoundDriver::SoundEvent::Kind::Note;
+    noise_note.channel = 0;
+    noise_note.opcode = 0x44;
+    noise_note.output = Z80SoundDriver::Output::Psg;
+    bridge.handle(noise_note);
+    assert((psg == std::vector<std::uint8_t>{
+        0xC7, 0x08, 0xE7, 0xDF, 0xFE}));
+
+    for (const std::uint8_t volume : {
+             static_cast<std::uint8_t>(0xFC),
+             static_cast<std::uint8_t>(0xFA),
+             static_cast<std::uint8_t>(0xF8),
+             static_cast<std::uint8_t>(0xF6),
+             static_cast<std::uint8_t>(0xF4),
+             static_cast<std::uint8_t>(0xF2),
+             static_cast<std::uint8_t>(0xF0),
+             static_cast<std::uint8_t>(0xF0),
+             static_cast<std::uint8_t>(0xF0)}) {
+        bridge.tick();
+        assert(psg.back() == volume);
+    }
+
+    psg.clear();
+    Z80SoundDriver::SoundEvent noise_stop{};
+    noise_stop.kind = Z80SoundDriver::SoundEvent::Kind::Control;
+    noise_stop.channel = 0;
+    noise_stop.opcode = 0x60;
+    noise_stop.output = Z80SoundDriver::Output::Psg;
+    bridge.handle(noise_stop);
+    assert((psg == std::vector<std::uint8_t>{0xDF, 0xFF}));
+
     std::cout << "z80 audio bridge: ok\n";
     return 0;
 }

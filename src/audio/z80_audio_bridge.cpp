@@ -31,6 +31,12 @@ constexpr std::array<std::uint16_t, 64> kPsgPeriodTable{
 // selectors, not dense native voice indices: $04/$05/$06 select YM port 2.
 constexpr std::array<std::uint8_t, 6> kYmChannelOrder{0, 1, 4, 5, 6, 2};
 
+// The original PSG/noise path starts at volume $E and advances through this
+// nine-tick attack sequence. Volume $0 is loudest on the SN76489.
+constexpr std::array<std::uint8_t, 9> kPsgNoiseEnvelope{
+    0x0C, 0x0A, 0x08, 0x06, 0x04, 0x02, 0x00, 0x00, 0x00};
+constexpr std::size_t kPsgNoiseToneVoice = 2;
+
 std::uint8_t ym_port(std::uint8_t hardware_channel) {
     return hardware_channel >= 4 ? 2 : 0;
 }
@@ -63,6 +69,13 @@ void Z80AudioBridge::reset() {
     for (auto& patch : ym_patches_) {
         patch.fill(0);
     }
+    has_psg_patch_.fill(false);
+    for (auto& patch : psg_patches_) {
+        patch.fill(0);
+    }
+    psg_noise_active_ = false;
+    psg_noise_stream_ = 0;
+    psg_noise_envelope_step_ = 0;
 }
 
 void Z80AudioBridge::tick() {
@@ -78,6 +91,14 @@ void Z80AudioBridge::tick() {
             ym_voice_has_stream_[hardware_channel] = false;
         }
     }
+
+    if (psg_noise_active_
+        && psg_noise_envelope_step_ < kPsgNoiseEnvelope.size()
+        && bus_.write_psg) {
+        bus_.write_psg(static_cast<std::uint8_t>(
+            0xF0 | kPsgNoiseEnvelope[psg_noise_envelope_step_]));
+        ++psg_noise_envelope_step_;
+    }
 }
 
 void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
@@ -86,7 +107,7 @@ void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
             && event.channel >= kYmVoiceCount);
     if (event.kind == Z80SoundDriver::SoundEvent::Kind::Note) {
         if (use_psg) {
-            handle_psg_note(event.channel % 4, event.opcode);
+            handle_psg_note(event.channel, event.opcode);
         } else if (event.channel < kStreamChannelCount) {
             handle_ym_note(event.channel, event.opcode, event.operand_b);
         }
@@ -94,16 +115,28 @@ void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
     }
 
     if (event.opcode == 0x61 && event.channel < kStreamChannelCount
-        && event.output != Z80SoundDriver::Output::Psg
-        && event.has_patch_state && is_ym_patch(event.patch_state)) {
-        ym_patches_[event.channel] = event.patch_state;
-        has_ym_patch_[event.channel] = true;
-        return;
+        && event.has_patch_state) {
+        if (event.output == Z80SoundDriver::Output::Psg) {
+            psg_patches_[event.channel] = event.patch_state;
+            has_psg_patch_[event.channel] = true;
+            return;
+        }
+        if (is_ym_patch(event.patch_state)) {
+            ym_patches_[event.channel] = event.patch_state;
+            has_ym_patch_[event.channel] = true;
+            return;
+        }
     }
 
     if (event.opcode == 0x60) {
         if (use_psg) {
-            mute_psg(event.channel % 4);
+            if (event.output == Z80SoundDriver::Output::Psg
+                && psg_noise_active_
+                && psg_noise_stream_ == event.channel) {
+                release_psg(event.channel);
+            } else {
+                mute_psg(event.channel % 4);
+            }
         } else if (event.channel < kStreamChannelCount) {
             release_ym_channel(event.channel);
         }
@@ -250,7 +283,18 @@ void Z80AudioBridge::handle_ym_note(std::size_t stream_channel,
     ym_release_timer_[hardware_channel] = ym_voice_lifetime(operand_b);
 }
 
-void Z80AudioBridge::handle_psg_note(std::size_t voice, std::uint8_t note) {
+void Z80AudioBridge::handle_psg_note(std::size_t stream_channel,
+                                     std::uint8_t note) {
+    if (stream_channel < kStreamChannelCount
+        && has_psg_patch_[stream_channel]
+        && is_psg_noise_patch(psg_patches_[stream_channel])) {
+        handle_psg_noise(stream_channel, note, psg_patches_[stream_channel]);
+        return;
+    }
+    handle_psg_tone(stream_channel % 4, note);
+}
+
+void Z80AudioBridge::handle_psg_tone(std::size_t voice, std::uint8_t note) {
     if (!bus_.write_psg) {
         return;
     }
@@ -259,6 +303,42 @@ void Z80AudioBridge::handle_psg_note(std::size_t voice, std::uint8_t note) {
                                                | (period & 0x0F)));
     bus_.write_psg(static_cast<std::uint8_t>((period >> 4) & 0x3F));
     bus_.write_psg(static_cast<std::uint8_t>(0x90 | (voice << 5)));
+}
+
+void Z80AudioBridge::handle_psg_noise(
+    std::size_t stream_channel,
+    std::uint8_t note,
+    const Z80SoundDriver::PatchState& patch_state) {
+    if (!bus_.write_psg) {
+        return;
+    }
+
+    const std::uint16_t period = psg_period(note);
+    // The recovered type-$3 PSG path uses tone channel 2 as the noise clock
+    // and noise channel 3 as the audible voice. The stream channel number is
+    // only a software track index and must not be used as a PSG voice index.
+    bus_.write_psg(static_cast<std::uint8_t>(
+        0x80 | (kPsgNoiseToneVoice << 5) | (period & 0x0F)));
+    bus_.write_psg(static_cast<std::uint8_t>((period >> 4) & 0x3F));
+    bus_.write_psg(static_cast<std::uint8_t>(
+        0xE0 | (patch_state[1] & 0x0F)));
+    bus_.write_psg(0xDF);  // tone channel 2 muted
+    bus_.write_psg(0xFE);  // noise channel 3, initial volume $E
+    psg_noise_active_ = true;
+    psg_noise_stream_ = static_cast<std::uint8_t>(stream_channel);
+    psg_noise_envelope_step_ = 0;
+}
+
+void Z80AudioBridge::release_psg(std::size_t stream_channel) {
+    if (!bus_.write_psg) {
+        psg_noise_active_ = false;
+        return;
+    }
+    if (psg_noise_active_ && psg_noise_stream_ == stream_channel) {
+        mute_psg_noise();
+        psg_noise_active_ = false;
+        psg_noise_envelope_step_ = 0;
+    }
 }
 
 void Z80AudioBridge::key_off_ym(std::uint8_t hardware_channel) {
@@ -321,6 +401,13 @@ void Z80AudioBridge::mute_psg(std::size_t voice) {
     }
 }
 
+void Z80AudioBridge::mute_psg_noise() {
+    if (bus_.write_psg) {
+        bus_.write_psg(0xDF);  // tone channel 2
+        bus_.write_psg(0xFF);  // noise channel 3
+    }
+}
+
 std::pair<std::uint8_t, std::uint16_t> Z80AudioBridge::ym_frequency(
     std::uint8_t note) {
     const std::uint8_t clamped_note = std::min<std::uint8_t>(note, 0x5F);
@@ -343,6 +430,14 @@ bool Z80AudioBridge::is_ym_patch(
     // the zero format/control byte at offset two, with the YM payload starting
     // at offset three.
     return patch_state[0] == 0x00 && patch_state[2] == 0x00;
+}
+
+bool Z80AudioBridge::is_psg_noise_patch(
+    const Z80SoundDriver::PatchState& patch_state) {
+    // Z80 $1298 selects this path when patch type is 3 and the low two bits
+    // of the patch control byte are also 3. The known animation SFX patch
+    // (ID $69) is [03,07,1F,...].
+    return patch_state[0] == 0x03 && (patch_state[1] & 0x03) == 0x03;
 }
 
 }  // namespace openaladdin::audio

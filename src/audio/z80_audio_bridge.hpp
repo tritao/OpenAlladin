@@ -45,9 +45,15 @@ private:
     void handle_ym_note(std::size_t stream_channel,
                         std::uint8_t note,
                         std::int16_t operand_b);
-    void handle_psg_note(std::size_t voice, std::uint8_t note);
+    void handle_psg_note(std::size_t stream_channel, std::uint8_t note);
+    void handle_psg_tone(std::size_t voice, std::uint8_t note);
+    void handle_psg_noise(std::size_t stream_channel,
+                          std::uint8_t note,
+                          const Z80SoundDriver::PatchState& patch_state);
+    void release_psg(std::size_t stream_channel);
     void key_off_ym(std::uint8_t hardware_channel);
     void mute_psg(std::size_t voice);
+    void mute_psg_noise();
     std::uint8_t allocate_ym_channel(std::size_t stream_channel);
     void release_ym_channel(std::size_t stream_channel);
     static std::uint16_t ym_voice_lifetime(std::int16_t operand_b) noexcept;
@@ -56,6 +62,8 @@ private:
         std::uint8_t note);
     static std::uint16_t psg_period(std::uint8_t note);
     static bool is_ym_patch(const Z80SoundDriver::PatchState& patch_state);
+    static bool is_psg_noise_patch(
+        const Z80SoundDriver::PatchState& patch_state);
 
     Bus bus_;
     std::array<bool, kYmHardwareChannelCount> ym_keyed_{};
@@ -65,6 +73,11 @@ private:
     std::array<bool, kYmHardwareChannelCount> ym_voice_has_stream_{};
     std::array<bool, kStreamChannelCount> has_ym_patch_{};
     std::array<Z80SoundDriver::PatchState, kStreamChannelCount> ym_patches_{};
+    std::array<bool, kStreamChannelCount> has_psg_patch_{};
+    std::array<Z80SoundDriver::PatchState, kStreamChannelCount> psg_patches_{};
+    bool psg_noise_active_ = false;
+    std::uint8_t psg_noise_stream_ = 0;
+    std::size_t psg_noise_envelope_step_ = 0;
 };
 
 }  // namespace openaladdin::audio
