@@ -1340,6 +1340,18 @@ transfers that attribute list to the VDP. Render_SubmitActorSprites at
 The static result is recorded in
 re/mame/findings/20260828-render-submission-v1.json.
 
+## VDP tile-word primitive (20260828)
+
+The scene command stream's single-word VDP helper at 0x001B21A8 is now named
+VDP_WriteTileWord. It indexes the tile-row command table at 0x00FF8680,
+combines the caller's row/word offset into a VDP control address, adds the
+scene/resource tile base at 0x00FFEFF0 to the caller's tile word, and writes
+both values through the VDP ports while preserving the caller's working
+registers. The same primitive is reused by the resource-size setup path.
+
+The static result is recorded in
+re/mame/findings/20260828-vdp-tile-word-v1.json.
+
 ## Actor allocation and template lifecycle (20260828)
 
 The actor allocation cluster around `0x001AE206..0x001AE372` is now named from
@@ -1549,6 +1561,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-animation-vm-core-v1` | recorded-static-decompilation | AnimationVM entry gate/core split, actor-table traversal, frame synchronization, and EA-FE dispatch |
 | `20260828-camera-scroll-refill-v1` | recorded-static-decompilation | pending-scroll publication, directional VDP row/column refill, and interaction-row processor dispatch |
 | `20260828-render-submission-v1` | recorded-static-decompilation | sprite attribute-record construction, camera-relative actor culling, and the two VDP submission stages |
+| `20260828-vdp-tile-word-v1` | recorded-static-decompilation | reusable scene/resource VDP control-address and tile-word writer |
 | `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |
 | `20260828-compressed-resource-decode-v1` | recorded-static-decompilation | RNC payload decoding, terrain-resource Huffman decoding, and VDP fill helper classification |
 

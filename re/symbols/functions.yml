@@ -192,6 +192,14 @@
     - ghidra_decompile_001B2238
     - ghidra_level_transition_targeted_decompile
     - ghidra_actor_table_layout
+0x001B21A8:
+  name: VDP_WriteTileWord
+  confidence: decompiled
+  description: Programs one VDP control address from the tile-row command table at FF8680 and the caller's word offset, then writes the computed tile word through VDP_DATA while preserving the caller's working registers.
+  evidence:
+    - ghidra_decompile_001B21A8
+    - ghidra_decompile_001B21F6
+    - ghidra_level_transition_targeted_decompile
 0x001B3B96:
   name: SceneTable_SelectNextState
   confidence: probable

@@ -16,6 +16,7 @@
     { "address": "0x001B1432", "name": "Scene transition common update" },
     { "address": "0x001B2ACE", "name": "Scene transition mode dispatcher" },
     { "address": "0x001B211C", "name": "Scene/VDP preparation helper" },
+    { "address": "0x001B21A8", "name": "VDP_WriteTileWord" },
     { "address": "0x001B21F6", "name": "Scene resource command-stream interpreter" },
     { "address": "0x001B2238", "name": "Scene transition post-load helper" },
     { "address": "0x001B35D0", "name": "RNC compressed payload decoder" },
