@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "startup-options-menu",
+    "purpose": "Recover the startup/options loop, its selection-marker helpers, and the scene-table selection performed when the menu exits."
+  },
+  "targets": [
+    { "address": "0x001B3B96", "name": "Menu_RunOptionsAndSelectNextState" },
+    { "address": "0x001B43C4", "name": "Menu_SetPrimarySelectionMarkerPosition" },
+    { "address": "0x001B43E0", "name": "Menu_SetSecondarySelectionMarkerPosition" },
+    { "address": "0x001B43FC", "name": "Menu_SetFixedSelectionMarkerPosition" },
+    { "address": "0x001B434E", "name": "Menu_RenderDifficultyLabel" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF13C", "name": "MENU_SELECTION_INDEX" },
+    { "address": "0x00FF7E21", "name": "GAME_DIFFICULTY_MODE" },
+    { "address": "0x00FF7EC4", "name": "OPTION_SELECTION_MARKER_ACTOR" },
+    { "address": "0x00FF7EC6", "name": "OPTION_SELECTION_MARKER_X" },
+    { "address": "0x00FF7EC8", "name": "OPTION_SELECTION_MARKER_Y" },
+    { "address": "0x00126680", "name": "STARTUP_OPTIONS_TEXT" },
+    { "address": "0x00004B04", "name": "ROM_SCENE_TRANSITION_TABLE" }
+  ]
+}

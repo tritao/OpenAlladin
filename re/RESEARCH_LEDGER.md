@@ -783,12 +783,22 @@ campaign remains the authoritative observed script-writer path.
 The scene-table index call path is recorded in
 `re/mame/findings/20260826-level01-scene-table-index-call-path-v1.json`.
 Static decompilation shows that `SCENE_TABLE_INDEX` is incremented only by
-`SceneTable_SelectNextState`, reached from the pending-script terminator in
+the scene-table selection path inside `Menu_RunOptionsAndSelectNextState`,
+reached from the pending-script terminator in
 `SceneScript_CompleteToState1`. The level-01 boundary instead arms the
 countdown and takes the script writer to state `0x03` with table index `0`.
 The state-`0x08` table entry is the second selector-cycle result at index `1`,
 so it remains a separate scene-table/resource proof rather than the direct
 natural level-01 exit target.
+
+The broader startup/options role of the former `SceneTable_SelectNextState`
+label at `0x001B3B96` is now recorded in
+`re/mame/findings/20260828-options-menu-scene-table-v1.json`. The routine
+initializes and services the options screen, consumes `MENU_SELECTION_INDEX`
+for the difficulty/music/sound-test/exit branches, and only then performs the
+scene-table publication. Its three small coordinate helpers at `0x001B43C4`,
+`0x001B43E0`, and `0x001B43FC` are named by their exact marker-position
+contracts; the menu actor's higher-level art identity remains open.
 
 The countdown-producer static audit is recorded in
 `re/mame/findings/20260826-level01-countdown-producer-static-v1.json`. The
@@ -2047,6 +2057,7 @@ The static result is recorded in
 | `20260828-scene-vdp-audio-service-v1` | recorded-static-decompilation | tile-row VDP command tables, scene-resource completion wait, raw query sampling, conditional scene-update audio, and paired VDP setup |
 | `20260828-actor-resource-clear-variant-v1` | recorded-static-decompilation | A2 calling-convention variant of actor-owned resource cleanup used by linked collision teardown |
 | `20260828-scene-resource-transfer-v1` | recorded-static-decompilation | indirect VDP word stream, fixed F800 scene-plane copy, and blank scene-resource frame setup |
+| `20260828-options-menu-scene-table-v1` | recorded-static-decompilation | startup/options loop, selection-marker coordinate helpers, and final scene-table publication |
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |

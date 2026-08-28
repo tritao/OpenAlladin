@@ -38,7 +38,7 @@
     { "address": "0x001B2534", "name": "VRAM word-fill helper" },
     { "address": "0x001B56F4", "name": "Behavior-0x25 scene-state-5 transition branch" },
     { "address": "0x001B315C", "name": "Scene-script completion setter" },
-    { "address": "0x001B3B96", "name": "Scene table state selector" },
+    { "address": "0x001B3B96", "name": "Options menu and scene-table selector" },
     { "address": "0x001B3F0A", "name": "Scene table state-byte write" },
     { "address": "0x001A8ED2", "name": "Scene script state-byte write" },
     { "address": "0x001B4F7C", "name": "Scene reset/state-zero path" },

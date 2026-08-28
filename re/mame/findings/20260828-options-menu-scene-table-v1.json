@@ -1,0 +1,54 @@
+{
+  "format": "openaladdin-options-menu-scene-table-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/options-menu-targets.json",
+  "decompile_source": "build/re/full-rom/decompile/001B3B96.txt",
+  "services": [
+    {
+      "address": "0x001B3B96",
+      "name": "Menu_RunOptionsAndSelectNextState",
+      "confidence": "decompiled",
+      "behavior": "Initializes the startup/options presentation, handles the selection index at MENU_SELECTION_INDEX across difficulty, music, sound-test, and exit branches, and on the exit path advances SCENE_TABLE_INDEX while publishing the next scene script pointer and state from ROM table 0x00004B04."
+    },
+    {
+      "address": "0x001B43C4",
+      "name": "Menu_SetPrimarySelectionMarkerPosition",
+      "confidence": "decompiled",
+      "behavior": "Writes the option marker actor's X coordinate as MENU_SELECTION_INDEX*0x10+0x184 and its Y coordinate as 0xD4."
+    },
+    {
+      "address": "0x001B43E0",
+      "name": "Menu_SetSecondarySelectionMarkerPosition",
+      "confidence": "decompiled",
+      "behavior": "Writes the secondary option marker actor's X coordinate as MENU_SELECTION_INDEX*0x10+0x174 and its Y coordinate as 0xB4."
+    },
+    {
+      "address": "0x001B43FC",
+      "name": "Menu_SetFixedSelectionMarkerPosition",
+      "confidence": "decompiled",
+      "behavior": "Writes the fixed option marker actor position X=0x194 and Y=0xCC."
+    }
+  ],
+  "evidence": {
+    "menu_text_rom_address": "0x00126680",
+    "menu_text": [
+      "PRESS START OPTIONS",
+      "DIFFICULTY :",
+      "MUSIC IS :",
+      "SOUND FX ARE :",
+      "SOUND TEST",
+      "TRIGGERS ARE : SWORD - B",
+      "THROW - A",
+      "JUMP - C",
+      "EXIT"
+    ],
+    "selection_marker_record": "The menu initializes the actor record at 0x00FF7EC4; the helper writes its coordinate words at +0x02 (0x00FF7EC6) and +0x04 (0x00FF7EC8).",
+    "scene_table_contract": "The post-menu path indexes ROM table 0x00004B04 by SCENE_TABLE_INDEX*6, publishes the script pointer and state byte, then advances the index with the existing wrap behavior."
+  },
+  "conclusion": "The former SceneTable_SelectNextState label at 0x001B3B96 was too narrow. Static decompilation identifies one startup/options loop with three marker-position helpers and a final scene-table selection path; the helper names preserve exact coordinate formulas without assigning an unproven menu asset identity."
+}

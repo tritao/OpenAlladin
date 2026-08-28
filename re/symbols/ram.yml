@@ -61,6 +61,15 @@
     - ghidra_difficulty_menu_strings_003FD2
     - ghidra_disassembly_001B0046
     - ghidra_disassembly_001B434E
+0xFFF13C:
+  name: MENU_SELECTION_INDEX
+  type: u8
+  format: integer
+  confidence: probable
+  description: Startup/options-screen selection index consumed by the option-marker positioning helpers and the difficulty, music, sound-test, and exit menu branches.
+  evidence:
+    - ghidra_options_menu_strings_00126680
+    - ghidra_options_menu_targets
 0xFF7276:
   name: INPUT_PATTERN_CURSOR
   type: rom_pointer
@@ -146,7 +155,7 @@
   type: u8
   format: integer
   confidence: probable
-  description: Index into the ROM scene transition table used by SceneTable_SelectNextState.
+  description: Index into the ROM scene transition table advanced by Menu_RunOptionsAndSelectNextState.
   evidence:
     - ghidra_level_transition_targeted_decompile
 0xFFF57C:

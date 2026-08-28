@@ -786,12 +786,35 @@
     - level01_transfer_capable_mechanism_graph
     - level01_upstream_transfer_writer_graph
 0x001B3B96:
-  name: SceneTable_SelectNextState
-  confidence: probable
-  description: Advances the scene-table index and selects SCENE_STATE plus the next scene script pointer from the ROM transition table.
+  name: Menu_RunOptionsAndSelectNextState
+  confidence: decompiled
+  description: Runs the startup/options screen, including option-marker setup, difficulty/music/sound-test selection, and exit handling, then advances SCENE_TABLE_INDEX and publishes SCENE_STATE plus the next scene script pointer from the ROM transition table.
   evidence:
     - ghidra_level_transition_targeted_decompile
     - ghidra_memory_reference_scene_state
+    - ghidra_options_menu_strings_00126680
+    - ghidra_options_menu_targets
+0x001B43C4:
+  name: Menu_SetPrimarySelectionMarkerPosition
+  confidence: decompiled
+  description: Updates the primary option-selection marker actor position to X=MENU_SELECTION_INDEX*0x10+0x184 and Y=0xD4.
+  evidence:
+    - ghidra_decompile_001B43C4
+    - ghidra_options_menu_targets
+0x001B43E0:
+  name: Menu_SetSecondarySelectionMarkerPosition
+  confidence: decompiled
+  description: Updates the secondary option-selection marker actor position to X=MENU_SELECTION_INDEX*0x10+0x174 and Y=0xB4.
+  evidence:
+    - ghidra_decompile_001B43E0
+    - ghidra_options_menu_targets
+0x001B43FC:
+  name: Menu_SetFixedSelectionMarkerPosition
+  confidence: decompiled
+  description: Places the fixed option-selection marker actor at X=0x194 and Y=0xCC.
+  evidence:
+    - ghidra_decompile_001B43FC
+    - ghidra_options_menu_targets
 0x001B4F7C:
   name: Scene_ResetToState0
   confidence: confirmed
