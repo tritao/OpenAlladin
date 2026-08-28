@@ -1690,6 +1690,14 @@ fixed resources, renders the initial service frames, and continues through the
 scene frame loop. SceneResource_ProcessCommandStreams at `0x001B430C` is the
 small state-table wrapper that invokes the command-stream interpreter twice.
 
+SceneResource_InitializeScriptTransition at `0x001B50EE` is the separate
+scene-script transition entry. SceneScript_AdvanceState reaches it when its
+transition gate is set; it clears transition and actor state, copies the scene
+presentation, loads the selected VRAM resources, initializes the transition
+actor at `(0x40, 0x1B8)`, runs the initial service passes, and conditionally
+queues the transition audio command. It is named by its caller contract and
+keeps the state-specific compressed resource loaders below it unresolved.
+
 Camera_RebuildView at `0x001AA724` either writes the complete 16-by-23 terrain
 viewport in special mode or performs paired right/left `0x10`-pixel camera
 sweeps while servicing actor VMs, interaction rows, and sprite submission.

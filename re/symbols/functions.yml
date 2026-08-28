@@ -264,6 +264,13 @@
     - ghidra_decompile_001B080E
     - ghidra_scene_camera_orchestration_targets
     - ghidra_scene_resource_service_targets
+0x001B50EE:
+  name: SceneResource_InitializeScriptTransition
+  confidence: decompiled
+  description: Initializes the scene-resource presentation for a scene-script transition, clearing transition state and actors, loading the selected VRAM resources, placing the transition actor, and running the initial frame service passes.
+  evidence:
+    - ghidra_decompile_001B50EE
+    - ghidra_scene_camera_orchestration_targets
 0x001B16E0:
   name: SceneResource_RebuildAfterInteraction
   confidence: decompiled

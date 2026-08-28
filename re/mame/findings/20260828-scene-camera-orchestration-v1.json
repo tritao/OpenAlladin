@@ -15,6 +15,12 @@
       "behavior": "When the active-scene entry gate is set, clears/rebuilds VDP state, initializes the scene-backed actors, runs the initial service pass, uploads the palette band, and enters the recurring frame service."
     },
     {
+      "address": "0x001B50EE",
+      "name": "SceneResource_InitializeScriptTransition",
+      "confidence": "decompiled",
+      "behavior": "Called by SceneScript_AdvanceState when the scene-script transition gate is set; clears transition state and actor resources, copies the scene presentation, loads the selected VRAM resources, initializes the transition actor at (0x40, 0x1B8), runs the initial service passes, and queues the transition audio command when required."
+    },
+    {
       "address": "0x001B16E0",
       "name": "SceneResource_RebuildAfterInteraction",
       "confidence": "decompiled",
