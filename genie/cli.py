@@ -66,6 +66,17 @@ def build_parser() -> argparse.ArgumentParser:
     add_analysis_query("writers", "show writes to an address", command_ghidra_writers)
     add_analysis_query("readers", "show reads from an address", command_ghidra_readers)
     add_analysis_query("xrefs", "show references to an address", command_ghidra_xrefs)
+    decompile = ghidra_commands.add_parser(
+        "decompile",
+        help="decompile and cache one containing function",
+    )
+    decompile.add_argument("address", type=lambda value: int(value, 0))
+    decompile.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    decompile.add_argument("--cache-dir", type=Path)
+    decompile.add_argument("--project-dir", type=Path)
+    decompile.add_argument("--force", action="store_true", help="refresh an existing cached pseudocode")
+    decompile.add_argument("--json", action="store_true", dest="json_output")
+    decompile.set_defaults(function=command_ghidra_decompile)
     context = ghidra_commands.add_parser(
         "context",
         help="show the combined RE context for an address",

@@ -875,3 +875,7 @@
   description: Clears the interaction-side flag at 0x00FFF104 and allocates an actor through InteractionSpawn_ReverseSlot.
   evidence:
     - ghidra_level01_interaction_inventory_targeted_decompile
+0x001A9304:
+  name: Player_SelectLocomotionOrAction
+  confidence: decompiled
+  description: "Selects the player locomotion/action animation stream from terrain, transition, interaction, and scene state; resets PLAYER_ANIMATION_TIMER and publishes PLAYER_ANIMATION_PC."

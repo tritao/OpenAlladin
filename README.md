@@ -52,6 +52,13 @@ with `genie ghidra function`, `callers`, `callees`, `writers`, `readers`,
 query combines callers, callees, RAM references, xrefs, nearby layout objects,
 runtime coverage, and known symbols referenced by one address.
 
+Decompile one function on demand. The first request uses the disposable Ghidra
+project; later requests reuse the cached pseudocode:
+
+```bash
+genie ghidra decompile 0x001AC784
+```
+
 Validate a generated scan against the recovered scheduler, canonical symbols,
 dispatch-table xrefs, and normalized ROM coverage before consuming it:
 
@@ -86,7 +93,8 @@ genie deasm verify
 exactly once. `deasm verify` assembles that source with the pinned GNU m68k
 toolchain, preserves exact bytes for instructions that do not safely round-trip
 as readable syntax, and compares the rebuilt ROM byte-for-byte. Run
-`genie ghidra scan` first when `instructions.json` is absent.
+`genie ghidra scan` first when `instructions.json` is absent. Cached single-
+function pseudocode is written below `build/re/full-rom/decompile/`.
 
 Use the `genie` command for all reverse-engineering workflows. The equivalent
 module form, `python -m genie`, is useful when running from an unmanaged

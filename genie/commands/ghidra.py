@@ -11,7 +11,7 @@ from __future__ import annotations
 import argparse
 import json
 
-from genie.ghidra import rebuild_project, scan_project, setup_ghidra, verify_rom
+from genie.ghidra import decompile_function, rebuild_project, scan_project, setup_ghidra, verify_rom
 from genie.ghidra.context import build_context
 from genie.ghidra.database import AnalysisDatabase, render_records
 from genie.ghidra.validate import validate_database
@@ -129,6 +129,29 @@ def command_ghidra_xrefs(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_ghidra_decompile(args: argparse.Namespace) -> int:
+    try:
+        database = _database(args)
+        result = decompile_function(
+            args.address,
+            database=database,
+            cache_dir=resolve(args.cache_dir) if args.cache_dir else None,
+            project_dir=resolve(args.project_dir) if args.project_dir else None,
+            force=args.force,
+        )
+    except (OSError, TypeError, ValueError, RuntimeError, json.JSONDecodeError) as error:
+        print(f"ERROR {error}")
+        return 1
+    if args.json_output:
+        print(json.dumps(result, indent=2, sort_keys=True))
+    else:
+        print(f"{result['status'].capitalize()} {result['name']} ({result['address']})")
+        print(f"Pseudocode: {result['path']}")
+        if result.get("report"):
+            print(f"Report:     {result['report']}")
+    return 0
+
+
 def _context_records(title: str, records: list[dict]) -> None:
     print(f"{title}  {len(records)}")
     for record in records:
@@ -160,6 +183,9 @@ def _render_context(value: dict) -> None:
     if value.get("layout"):
         layout = value["layout"]
         print(f"layout      {layout['class']}  {layout['start']}-{layout['end']} ({layout.get('name', '')})")
+    if value.get("decompile"):
+        decompile = value["decompile"]
+        print(f"decompile   {'cached' if decompile['available'] else 'not cached'}  {decompile['path']}")
     runtime = value.get("runtime")
     if runtime:
         scenarios = ", ".join(runtime.get("scenarios", [])) or "-"
@@ -231,6 +257,7 @@ __all__ = [
     "command_ghidra_writers",
     "command_ghidra_readers",
     "command_ghidra_xrefs",
+    "command_ghidra_decompile",
     "command_ghidra_context",
     "command_ghidra_unknown",
     "command_ghidra_validate_db",

@@ -53,6 +53,7 @@ python -m genie ghidra writers 0x00FF7E60
 python -m genie ghidra readers 0x00FF7E28
 python -m genie ghidra xrefs 0x001B557E
 python -m genie ghidra context 0x00184320
+python -m genie ghidra decompile 0x00184320
 python -m genie ghidra unknown
 ```
 

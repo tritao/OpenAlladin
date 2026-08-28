@@ -1,8 +1,11 @@
 from pathlib import Path
+import json
 
 from genie.cli import build_parser
 from genie.commands import deasm
 from genie.commands import ghidra
+from genie.ghidra.database import AnalysisDatabase
+from genie.ghidra.decompile import decompile_function
 
 
 def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
@@ -16,6 +19,7 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     deasm_stats = build_parser().parse_args(["deasm", "stats", "--json"])
     deasm_todo = build_parser().parse_args(["deasm", "todo", "--limit", "3"])
     context = build_parser().parse_args(["ghidra", "context", "0x1234", "--json"])
+    decompile = build_parser().parse_args(["ghidra", "decompile", "0x1234", "--force"])
 
     assert setup.function is ghidra.command_ghidra_setup
     assert verify.function is ghidra.command_ghidra_verify
@@ -35,6 +39,8 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert deasm_todo.limit == 3
     assert context.function is ghidra.command_ghidra_context
     assert context.radius == 2
+    assert decompile.function is ghidra.command_ghidra_decompile
+    assert decompile.force is True
 
 
 def test_ghidra_rebuild_calls_existing_service(monkeypatch, capsys):
@@ -96,3 +102,23 @@ def test_ghidra_scan_calls_scan_service(monkeypatch, capsys):
         ),
     ]
     assert "validated symbols and types" in capsys.readouterr().out
+
+
+def test_single_function_decompile_reuses_cached_pseudocode(tmp_path):
+    database_root = tmp_path / "full-rom"
+    database_root.mkdir()
+    (database_root / "metadata.json").write_text(json.dumps({"rom": {}, "rom_size": 0x40}), encoding="utf-8")
+    (database_root / "functions.json").write_text(
+        json.dumps([{"address": "0x00000010", "start": "0x00000010", "end": "0x00000018", "name": "CachedFunction"}]),
+        encoding="utf-8",
+    )
+    cache = database_root / "decompile"
+    cache.mkdir()
+    cached = cache / "00000010.txt"
+    cached.write_text("void CachedFunction(void) {}\n", encoding="utf-8")
+
+    result = decompile_function(0x14, database=AnalysisDatabase(database_root))
+
+    assert result["status"] == "cached"
+    assert result["address"] == "0x00000010"
+    assert result["path"] == str(cached)
