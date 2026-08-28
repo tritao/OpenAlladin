@@ -1365,6 +1365,14 @@
     - ghidra_audio_queue_decompile
     - mame_audio_mailbox_queue_trace
 
+0x001E5824:
+  name: Audio_QueueThreeBytePacket
+  confidence: decompiled
+  description: Opens a sound-command queue transaction, writes the caller's longword as its three most-significant bytes in order, and closes the transaction.
+  evidence:
+    - ghidra_decompile_001E5824
+    - ghidra_audio_bootstrap_targeted_decompile
+
 0x001E589A:
   name: Audio_SendCommand
   confidence: confirmed

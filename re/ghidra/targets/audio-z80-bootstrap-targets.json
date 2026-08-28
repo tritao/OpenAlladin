@@ -10,6 +10,7 @@
     { "address": "0x001E5730", "name": "Audio_ReleaseZ80Bus" },
     { "address": "0x001E573A", "name": "Audio_LoadZ80Driver" },
     { "address": "0x001E5780", "name": "Audio_StartZ80" },
+    { "address": "0x001E5824", "name": "Audio_QueueThreeBytePacket" },
     { "address": "0x001E584A", "name": "Audio_Initialize" }
   ],
   "memory_references": [

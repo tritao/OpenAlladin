@@ -1487,6 +1487,12 @@ commands. Audio_ReleaseZ80Bus at 0x001E5730 is the shared release primitive.
 The static result is recorded in
 re/mame/findings/20260828-audio-z80-bootstrap-v1.json.
 
+The shared bootstrap packet wrapper Audio_QueueThreeBytePacket at `0x001E5824`
+is now named as well. It opens the protected sound queue, emits the three
+most-significant bytes of the caller's longword through Audio_QueueWriteByte,
+and closes the transaction. Audio_Initialize uses it for each caller-supplied
+initialization value.
+
 ## Actor allocation and template lifecycle (20260828)
 
 The actor allocation cluster around `0x001AE206..0x001AE372` is now named from

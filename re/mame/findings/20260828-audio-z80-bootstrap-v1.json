@@ -35,6 +35,12 @@
       "behavior": "Releases Z80 reset, delays, releases the bus, and leaves the Z80 running."
     },
     {
+      "address": "0x001E5824",
+      "name": "Audio_QueueThreeBytePacket",
+      "confidence": "decompiled",
+      "behavior": "Opens a protected queue transaction, writes the caller's longword one byte at a time from most-significant to least-significant order while emitting three bytes, and closes the transaction."
+    },
+    {
       "address": "0x001E584A",
       "name": "Audio_Initialize",
       "confidence": "decompiled",
