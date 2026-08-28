@@ -15,8 +15,8 @@
     { "address": "0x001AB770", "name": "LevelInteraction_UpdateCallerB" },
     { "address": "0x001AE3FC", "name": "InteractionRowProcessorVerticalWrapper" },
     { "address": "0x001AE47E", "name": "InteractionRowProcessorHorizontalWrapper" },
-    { "address": "0x001AE406", "name": "InteractionRowProcessorA" },
-    { "address": "0x001AE488", "name": "InteractionRowProcessorB" }
+    { "address": "0x001AE406", "name": "InteractionTable_ProcessRowsA_Core" },
+    { "address": "0x001AE488", "name": "InteractionTable_ProcessRowsB_Core" }
   ],
   "memory_references": [
     { "address": "0x00FF7DAC", "name": "INTERACTION_ROW_POINTER" },

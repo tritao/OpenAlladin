@@ -858,6 +858,14 @@
   evidence:
     - ghidra_decompile_collision_damage_targets
     - ghidra_disassembly_001AE3FC
+0x001AE406:
+  name: InteractionTable_ProcessRowsA_Core
+  confidence: confirmed
+  description: Dispatches the 16-entry interaction window used by the horizontal camera refill path, translating non-zero runtime interaction selectors through INTERACTION_HANDLER_TABLE with camera-relative coordinates.
+  evidence:
+    - ghidra_decompile_001AE406
+    - ghidra_camera_scroll_refill
+    - ghidra_interaction_dispatch_callers
 0x001B6E70:
   name: InteractionGate_Type1D
   confidence: confirmed
@@ -893,6 +901,14 @@
   evidence:
     - ghidra_decompile_collision_damage_targets
     - ghidra_disassembly_001AE47E
+0x001AE488:
+  name: InteractionTable_ProcessRowsB_Core
+  confidence: confirmed
+  description: Dispatches the 23-entry interaction window used by the vertical camera refill path, translating non-zero runtime interaction selectors through INTERACTION_HANDLER_TABLE with camera-relative coordinates.
+  evidence:
+    - ghidra_decompile_001AE488
+    - ghidra_camera_scroll_refill
+    - ghidra_interaction_dispatch_callers
 0x001AE4F8:
   name: Player_ProcessInteractionState
   confidence: confirmed

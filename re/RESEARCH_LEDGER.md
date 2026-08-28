@@ -838,6 +838,13 @@ no interaction selectors. Neither direct handler writes `SCENE_STATE=0x08` or
 the scene countdown. The remaining high-value test is controlled activation
 of the actual `0x80` record followed by tracing the actor it creates.
 
+The concrete interaction dispatch bodies are now named separately from their
+short directional wrappers: `InteractionTable_ProcessRowsA_Core` at
+`0x001AE406` handles the 16-entry horizontal refill window, while
+`InteractionTable_ProcessRowsB_Core` at `0x001AE488` handles the 23-entry
+vertical refill window. Both decode `0x00FFAE87` selectors through the common
+handler table with camera-relative coordinates.
+
 The transfer-delay matrix is recorded in
 `re/mame/findings/20260826-level01-superjump-delay-matrix-v1.json` and
 `re/mame/campaigns/20260826-level01-canonical-recording-v11.json`. Ten complete

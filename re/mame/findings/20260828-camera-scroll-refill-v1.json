@@ -20,25 +20,25 @@
       "address": "0x001AB34E",
       "name": "Camera_ScrollLeftAndRefill",
       "window": "16 horizontal VDP entries",
-      "processor": "0x001AE3FC -> 0x001AE406"
+      "processor": "InteractionTable_ProcessRowsA at 0x001AE3FC -> InteractionTable_ProcessRowsA_Core at 0x001AE406"
     },
     "right": {
       "address": "0x001AB44C",
       "name": "Camera_ScrollRightAndRefill",
       "window": "16 horizontal VDP entries",
-      "processor": "0x001AE3FC -> 0x001AE406"
+      "processor": "InteractionTable_ProcessRowsA at 0x001AE3FC -> InteractionTable_ProcessRowsA_Core at 0x001AE406"
     },
     "down": {
       "address": "0x001AB55A",
       "name": "Camera_ScrollDownAndRefill",
       "window": "23 vertical VDP entries",
-      "processor": "0x001AE47E -> 0x001AE488"
+      "processor": "InteractionTable_ProcessRowsB at 0x001AE47E -> InteractionTable_ProcessRowsB_Core at 0x001AE488"
     },
     "up": {
       "address": "0x001AB66C",
       "name": "Camera_ScrollUpAndRefill",
       "window": "23 vertical VDP entries",
-      "processor": "0x001AE47E -> 0x001AE488"
+      "processor": "InteractionTable_ProcessRowsB at 0x001AE47E -> InteractionTable_ProcessRowsB_Core at 0x001AE488"
     }
   },
   "conclusion": "Camera follow publishes directional pending flags first; the scroll service then advances the camera by one 0x10-pixel step, refills the corresponding VDP row or column from terrain data, and invokes the matching interaction-row processor."
