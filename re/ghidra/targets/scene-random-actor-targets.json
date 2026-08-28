@@ -1,0 +1,17 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-random-actor-selection",
+    "purpose": "Decode the scene-rebuild actor-variant selector and its weighted ROM table."
+  },
+  "targets": [
+    { "address": "0x001B16B4", "name": "SceneResource_SelectRandomActorVariant" },
+    { "address": "0x001B16E0", "name": "SceneResource_RebuildAfterInteraction" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E82", "name": "ACTOR_RECORD_1" },
+    { "address": "0x00006960", "name": "SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS" },
+    { "address": "0x001B3032", "name": "TerrainScene5RandomStep" }
+  ]
+}

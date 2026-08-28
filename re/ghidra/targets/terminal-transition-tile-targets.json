@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "terminal-transition-tile-band",
+    "purpose": "Decode the terminal transition tile-band service called by the level transition coordinator."
+  },
+  "targets": [
+    { "address": "0x001B07D0", "name": "Level_RenderTerminalTransitionTileBand" },
+    { "address": "0x001A8F0C", "name": "Level_ExitAndTerminalTransition" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7280", "name": "VDP_ANIMATION_FRAME_OFFSET" },
+    { "address": "0x00129C52", "name": "ROM_TERMINAL_TRANSITION_TILE_BAND" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ]
+}

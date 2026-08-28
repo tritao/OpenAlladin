@@ -2412,3 +2412,30 @@
     - ghidra_decompile_001E56FE
     - ghidra_audio_bank_window_targets
     - z80_bank_window_helper_01F9
+
+0x001B07D0:
+  name: Level_RenderTerminalTransitionTileBand
+  confidence: decompiled
+  description: Copies a 14-word sliding tile band from ROM table 0x00129C52 plus VDP_ANIMATION_FRAME_OFFSET to VDP_DATA at command 0xC0440000, decrements the shared offset by two, and wraps it to 0x1C; called after Level_ExitAndTerminalTransition prepares the terminal scene.
+  evidence:
+    - ghidra_decompile_001B07D0
+    - ghidra_level_terminal_transition_decompile
+    - ghidra_terminal_transition_tile_targets
+
+0x001B1676:
+  name: SceneResource_RenderTransitionTileBand
+  confidence: decompiled
+  description: Copies a 16-word sliding tile band from ROM table 0x00129B92 plus VDP_ANIMATION_FRAME_OFFSET to VDP_DATA at command 0xC0000000, decrements the shared offset by two, and wraps it to 0x20 during transition presentation.
+  evidence:
+    - ghidra_decompile_001B1676
+    - ghidra_scene_transition_tile_targets
+    - ghidra_decompile_001B1486
+
+0x001B16B4:
+  name: SceneResource_SelectRandomActorVariant
+  confidence: decompiled
+  description: Uses TerrainScene5RandomStep and a 0x78 mask to select a weighted entry from SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS, retries when the selected type matches actor record 1, then installs the selected type and animation stream and clears the actor transient byte at offset 0x37.
+  evidence:
+    - ghidra_decompile_001B16B4
+    - ghidra_decompile_001B16E0
+    - ghidra_scene_random_actor_targets

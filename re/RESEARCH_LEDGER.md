@@ -2029,6 +2029,44 @@ higher-level visual asset identity remains intentionally unassigned.
 The static result is recorded in
 `re/mame/findings/20260829-menu-selection-marker-animation-v1.json`.
 
+## Scene-rebuild random actor variant selection (20260829)
+
+The helper at `0x001B16B4` is now named
+`SceneResource_SelectRandomActorVariant`. It calls the fixed-ROM PRNG at
+`0x001B3032`, masks the returned word with `0x78`, and indexes the sixteen
+eight-byte entries at `0x00006960`. Each entry contains an actor type and its
+paired animation-stream pointer. The helper retries when the selected type is
+already installed in actor record 1 at `FF7E82`, then writes the new type and
+animation pointer and clears actor byte `+0x37`.
+
+The table is weighted: types `0x01`, `0x02`, `0x03`, and `0x04` occur two,
+three, three, and eight times respectively. The static closure establishes the
+selection and no-repeat contract without assigning visual identities to those
+four actor types.
+
+The static result is recorded in
+`re/mame/findings/20260829-scene-random-actor-selection-v1.json`.
+
+## Shared transition tile-band services (20260829)
+
+The compact helpers at `0x001B07D0` and `0x001B1676` are now named
+`Level_RenderTerminalTransitionTileBand` and
+`SceneResource_RenderTransitionTileBand`. Both copy a sliding word band from
+ROM to `VDP_DATA` using the shared `VDP_ANIMATION_FRAME_OFFSET` at `FF7280`,
+then decrement the offset by two and wrap at their own bounds. The terminal
+transition helper copies fourteen words from `0x00129C52` to VDP command
+`0xC0440000` and wraps at `0x1C`; the scene-resource helper copies sixteen
+words from `0x00129B92` to command `0xC0000000` and wraps at `0x20`.
+
+The first is called after `Level_ExitAndTerminalTransition` prepares the
+terminal scene. The second is reached from
+`SceneResource_InitializeTransitionPresentation` when its presentation flag is
+set. Their shared offset is now documented as a reusable VDP tile-animation
+cursor rather than a menu-only field.
+
+The static result is recorded in
+`re/mame/findings/20260829-scene-transition-tile-bands-v1.json`.
+
 ## Active-scene initial C000 and palette transfer (20260829)
 
 `SceneResource_LoadInitialC000AndPaletteSources` at `0x001B25FE` is called by

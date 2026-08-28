@@ -908,6 +908,18 @@
     - ghidra_type01_child_chain_decompile
     - mame_type01_child_chain_trace
 
+0x00006960:
+  name: SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS
+  type: u32[32]
+  format: interleaved_type_animation_pairs
+  count: 16
+  entry_size: 8
+  confidence: decompiled
+  description: Sixteen weighted scene-presentation actor-variant entries. Each entry stores the actor type in the low byte of its first longword and an animation-stream pointer in its second longword; SceneResource_SelectRandomActorVariant indexes the table with a masked PRNG value.
+  evidence:
+    - ghidra_decompile_001B16B4
+    - ghidra_scene_random_actor_targets
+
 0x001B7CB0:
   name: ACTOR_TEMPLATE_GUARD_SWORD_ATTACK
   confidence: confirmed
