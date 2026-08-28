@@ -392,6 +392,32 @@
   description: Scene-script delay/countdown gate consumed by SceneScript_AdvanceState.
   evidence:
     - ghidra_targeted_decompile_001A8E3E
+0xFFF140:
+  name: SCENE_RESOURCE_VDP_STREAM_PTR
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Pointer to the active scene-resource stream of 14-byte VDP command records, installed from the level table and consumed by SceneResource_StreamVdpRecord.
+  evidence:
+    - ghidra_disassembly_001AA58E
+    - ghidra_decompile_001AE0F6
+0xFFF148:
+  name: SCENE_RESOURCE_VDP_STREAM_END
+  type: u16
+  format: byte_offset
+  confidence: decompiled
+  description: Exclusive byte-offset bound for the active scene-resource VDP command stream; SceneResource_StreamVdpRecord wraps its rotating offset to zero when the next 14-byte record would reach this bound.
+  evidence:
+    - ghidra_disassembly_001AA596
+    - ghidra_decompile_001AE0F6
+0xFFF14C:
+  name: SCENE_RESOURCE_VDP_STREAM_OFFSET
+  type: u16
+  format: byte_offset
+  confidence: decompiled
+  description: Rotating byte offset into SCENE_RESOURCE_VDP_STREAM_PTR, advanced by 0x0E for each streamed VDP command record and wrapped by SceneResource_StreamVdpRecord.
+  evidence:
+    - ghidra_decompile_001AE0F6
 0xFFF105:
   name: INTERACTION_GATE_TYPE1F
   type: u8

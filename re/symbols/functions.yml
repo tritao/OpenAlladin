@@ -1398,6 +1398,14 @@
     - ghidra_decompile_actor_combat_targets
     - ghidra_disassembly_001AE0B0
     - ghidra_disassembly_001ADEDE
+0x001AE0F6:
+  name: SceneResource_StreamVdpRecord
+  confidence: decompiled
+  description: Advances the rotating offset within the active scene-resource VDP command stream, copies one 14-byte record through the VDP control/data port, waits for the VDP FIFO, and releases the Z80 bus handoff.
+  evidence:
+    - ghidra_decompile_001AE0F6
+    - ghidra_disassembly_001AA58E
+    - ghidra_scene_resource_vdp_service_targets
 0x001AE1DA:
   name: Audio_SendSceneStateCommand
   confidence: decompiled

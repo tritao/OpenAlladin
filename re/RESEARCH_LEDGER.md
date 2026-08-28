@@ -1989,6 +1989,25 @@ The static result is recorded in
 
 ## Campaign index
 
+## Scene-resource VDP command-record streamer (20260828)
+
+The frame/reset helper at `0x001AE0F6` is now named
+`SceneResource_StreamVdpRecord`. It is idle when the scene-script pending
+state is `0x02` or no stream is installed. Otherwise it advances the
+`SCENE_RESOURCE_VDP_STREAM_OFFSET` by `0x0E`, wraps it against the installed
+stream bound, reads one 14-byte record, acquires the Z80 bus, writes the
+record's long VDP address and five VDP words, waits for the VDP FIFO, and
+releases the bus handoff.
+
+`Level_LoadFromSceneState` installs the stream pointer at `FFF140` and its
+exclusive byte-offset bound at `FFF148`; `FFF14C` is the rotating offset.
+This names the command-record transfer contract without conflating it with
+the enclosing `Level_ExitAndTerminalTransition` function or with the separate
+scene-resource completion wait.
+
+The static result is recorded in
+`re/mame/findings/20260828-scene-resource-vdp-record-v1.json`.
+
 ## Difficulty-initialized counter increment (20260828)
 
 The helper at `0x001AEF70` is now named `Game_IncrementDifficultyCounter`.

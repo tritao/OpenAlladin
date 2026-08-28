@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-scene-resource-vdp-record-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-resource-vdp-record-targets.json",
+  "service": {
+    "address": "0x001AE0F6",
+    "name": "SceneResource_StreamVdpRecord",
+    "confidence": "decompiled",
+    "callers": [
+      "0x0000021A Reset",
+      "0x001A8C16 Game_FrameUpdateLoop"
+    ],
+    "algorithm": [
+      "Returns immediately when SCENE_SCRIPT_PENDING is 0x02 or the active stream pointer is null.",
+      "Reads SCENE_RESOURCE_VDP_STREAM_OFFSET, adds 0x0E, and wraps it to zero when it reaches SCENE_RESOURCE_VDP_STREAM_END.",
+      "Loads one long VDP command address followed by five VDP command words from the selected 14-byte record.",
+      "Acquires the Z80 bus, writes the record through VDP_CONTROL while preserving the command address in VDP_COMMAND_ADDRESS_LATCH, waits for the VDP FIFO, and releases the bus handoff."
+    ]
+  },
+  "stream_contract": {
+    "pointer": "0x00FFF140",
+    "offset": "0x00FFF14C",
+    "end_offset": "0x00FFF148",
+    "record_size": "0x0E bytes",
+    "producer": "Level_LoadFromSceneState at 0x001AA58E/0x001AA596 copies the level-table stream pointer and end offset."
+  },
+  "conclusion": "The anonymous helper is a scene-resource VDP command-record streamer. Its rotating offset, fixed 14-byte record shape, Z80 handoff, and FIFO synchronization are now separate from the broad level-transition coordinator."
+}

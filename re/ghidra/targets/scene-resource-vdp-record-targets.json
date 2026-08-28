@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-vdp-record-stream",
+    "purpose": "Decode the rotating scene-resource VDP command-record transfer and its level-table-installed stream contract."
+  },
+  "targets": [
+    { "address": "0x001AE0F6", "name": "SceneResource_StreamVdpRecord" },
+    { "address": "0x001AA58E", "name": "Level_LoadFromSceneState" },
+    { "address": "0x001B2EAC", "name": "SceneResource_WaitForCompletion" },
+    { "address": "0x001E571C", "name": "Audio_AcquireZ80Bus" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF140", "name": "SCENE_RESOURCE_VDP_STREAM_PTR" },
+    { "address": "0x00FFF148", "name": "SCENE_RESOURCE_VDP_STREAM_END" },
+    { "address": "0x00FFF14C", "name": "SCENE_RESOURCE_VDP_STREAM_OFFSET" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" },
+    { "address": "0x00FF8880", "name": "VDP_COMMAND_ADDRESS_LATCH" }
+  ]
+}
