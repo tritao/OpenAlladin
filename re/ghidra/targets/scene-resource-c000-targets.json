@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-c000-loaders",
+    "purpose": "Classify the remaining compact C000 scene-resource loaders by their published source, compressed payload, and palette-frame inputs."
+  },
+  "targets": [
+    { "address": "0x001B498A", "name": "SceneResource_LoadC000Resource12D870" },
+    { "address": "0x001B49B2", "name": "SceneResource_LoadC000Resource12DA04" },
+    { "address": "0x001B4A02", "name": "SceneResource_LoadC000Resource12DF6C" },
+    { "address": "0x001B4A2A", "name": "SceneResource_LoadC000Resource12E176" },
+    { "address": "0x001B4A52", "name": "SceneResource_LoadC000Resource12E34A" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7290", "name": "SCENE_RESOURCE_PALETTE_SOURCE" },
+    { "address": "0x00FF7294", "name": "SCENE_RESOURCE_C000_SOURCE" },
+    { "address": "0x0000C000", "name": "VRAM_C000" }
+  ]
+}

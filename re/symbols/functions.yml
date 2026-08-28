@@ -464,6 +464,41 @@
   evidence:
     - ghidra_disassembly_001B496C
     - ghidra_scene_resource_variant_targets
+0x001B498A:
+  name: SceneResource_LoadC000Resource12D870
+  confidence: decompiled
+  description: Publishes ROM source 0x0012D870 as the C000 resource, decompresses it to VRAM 0xC000, and prepares the render frame with palette sources 0x00129912 and 0x00129AB2.
+  evidence:
+    - ghidra_disassembly_001B498A
+    - ghidra_scene_resource_c000_targets
+0x001B49B2:
+  name: SceneResource_LoadC000Resource12DA04
+  confidence: decompiled
+  description: Publishes ROM source 0x0012DA04 as the C000 resource, decompresses it to VRAM 0xC000, and prepares the render frame with palette sources 0x00129932 and 0x00129AB2.
+  evidence:
+    - ghidra_disassembly_001B49B2
+    - ghidra_scene_resource_c000_targets
+0x001B4A02:
+  name: SceneResource_LoadC000Resource12DF6C
+  confidence: decompiled
+  description: Publishes ROM source 0x0012DF6C as the C000 resource, decompresses it to VRAM 0xC000, and prepares the render frame with palette sources 0x00129972 and 0x00129AB2.
+  evidence:
+    - ghidra_disassembly_001B4A02
+    - ghidra_scene_resource_c000_targets
+0x001B4A2A:
+  name: SceneResource_LoadC000Resource12E176
+  confidence: decompiled
+  description: Publishes ROM source 0x0012E176 as the C000 resource, decompresses it to VRAM 0xC000, and prepares the render frame with palette sources 0x00129992 and 0x00129A92.
+  evidence:
+    - ghidra_disassembly_001B4A2A
+    - ghidra_scene_resource_c000_targets
+0x001B4A52:
+  name: SceneResource_LoadC000Resource12E34A
+  confidence: decompiled
+  description: Publishes ROM source 0x0012E34A as the C000 resource, decompresses it to VRAM 0xC000, and prepares the render frame with palette sources 0x001299B2 and 0x00129A92.
+  evidence:
+    - ghidra_disassembly_001B4A52
+    - ghidra_scene_resource_c000_targets
 0x001B5266:
   name: LevelObjectSpawnEntry
   confidence: confirmed
