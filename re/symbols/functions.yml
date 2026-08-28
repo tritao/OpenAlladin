@@ -2060,6 +2060,14 @@
     - ghidra_decompile_001AE2F2
     - ghidra_decompile_001AEE40
     - ghidra_decompile_001AF516
+0x001B0CBC:
+  name: Hud_RunPendingDisplayPresentation
+  confidence: decompiled
+  description: Consumes the pending HUD display synchronization flag, clears gameplay VRAM and records, runs the actor/render service for the fixed 0x293-frame presentation window with its frame-phase cadence, then fades and clears the temporary actors.
+  evidence:
+    - ghidra_decompile_001B0CBC
+    - ghidra_decompile_001B0078
+    - ghidra_hud_display_targets
 0x001A986E:
   name: Player_ApplyTerrainResponse
   confidence: decompiled

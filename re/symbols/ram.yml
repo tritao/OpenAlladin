@@ -306,6 +306,16 @@
   description: Animation/interaction gate checked by Player_ProcessInteractionState and asserted by its special-mode branch.
   evidence:
     - ghidra_disassembly_001AE4F8
+0xFFF0F1:
+  name: HUD_DISPLAY_UPDATE_PENDING
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Pending display-update flag cleared by Interaction_SynchronizeResponseState and consumed by Hud_RunPendingDisplayPresentation after the current six-byte display buffer is synchronized.
+  evidence:
+    - ghidra_decompile_001B0078
+    - ghidra_decompile_001B0CBC
+    - ghidra_hud_display_targets
 0xFFF0F2:
   name: PLAYER_INTERACTION_LOCK
   type: u8

@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "hud-display-presentation",
+    "purpose": "Decode the pending six-byte display synchronization flag and the long actor/VRAM presentation that consumes it."
+  },
+  "targets": [
+    { "address": "0x001B0078", "name": "Interaction_SynchronizeResponseState" },
+    { "address": "0x001B0CBC", "name": "Hud_RunPendingDisplayPresentation" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E29", "name": "HUD_DISPLAY_DIGITS" },
+    { "address": "0x00FF7E30", "name": "HUD_DISPLAY_TARGET_DIGITS" },
+    { "address": "0x00FFF0F1", "name": "HUD_DISPLAY_UPDATE_PENDING" },
+    { "address": "0x00FFF0F2", "name": "PLAYER_INTERACTION_LOCK" },
+    { "address": "0x00FFF15A", "name": "SCENE_RESOURCE_MODE" },
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
+    { "address": "0x00FFF57D", "name": "SCENE_VDP_UPDATE_FLAG" },
+    { "address": "0x00FFF14E", "name": "ACTOR_RESPONSE_COUNTER" }
+  ]
+}

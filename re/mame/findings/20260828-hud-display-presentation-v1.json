@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-hud-display-presentation-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/hud-display-presentation-targets.json",
+  "services": [
+    {
+      "address": "0x001B0078",
+      "name": "Interaction_SynchronizeResponseState",
+      "confidence": "confirmed",
+      "behavior": "Drains ACTOR_RESPONSE_COUNTER, compares the six current display bytes at 0xFF7E29 with the pending bytes at 0xFF7E30, copies the pending value when it has advanced, and sets HUD_DISPLAY_UPDATE_PENDING."
+    },
+    {
+      "address": "0x001B0CBC",
+      "name": "Hud_RunPendingDisplayPresentation",
+      "confidence": "decompiled",
+      "behavior": "When HUD_DISPLAY_UPDATE_PENDING is set, clears C000/E000 and non-player actor records, prepares the temporary presentation, runs AnimationVM/render submission and the shared frame service for 0x293 iterations with the 16-phase cadence, then applies a fade and clears the temporary actors."
+    }
+  ],
+  "evidence": {
+    "trigger": "Interaction_SynchronizeResponseState clears FFF0F1 on entry and sets it only after copying an advanced six-byte display value from 0xFF7E30 to 0xFF7E29.",
+    "presentation_window": "Hud_RunPendingDisplayPresentation clears the pending flag, sets SCENE_RESOURCE_MODE to 4, renders the initial temporary actor state, services 0x293 iterations, selects the short frame helper while FRAME_PHASE_COUNTER&0x0F is below 6, and finishes with palette fade plus actor cleanup.",
+    "call_path": "The pending-display service is called from the level/scene reset path after the response-state synchronization and before active-scene initialization."
+  },
+  "limitations": [
+    "The static path establishes a pending display presentation but does not assign a user-facing name such as score, bonus, or reward without runtime/UI correlation.",
+    "The two one-instruction RTS entries at 0x001B0134 and 0x001B0136 remain intentionally unnamed aliases/helpers."
+  ],
+  "conclusion": "The display-update flag and its long presentation consumer are now named as a distinct HUD synchronization path, separate from the actor response counter drain and from scene-resource dispatch."
+}
