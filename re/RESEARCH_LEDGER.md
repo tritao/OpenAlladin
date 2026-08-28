@@ -2026,6 +2026,29 @@ contracts without assigning stream-internal meanings.
 The static result is recorded in
 `re/mame/findings/20260828-scene-resource-presentation-wrappers-v1.json`.
 
+## Scene-transition input services (20260828)
+
+The controller-neutral wait at `0x001B3064` is now named
+`Input_WaitForNeutralController`. Its live loop drives the controller port
+through the Z80 handoff, accepts the directional phase only when
+`IO_PORT1_DATA & 0x3F == 0x3F`, accepts the button phase only when
+`IO_PORT1_DATA & 0x30 == 0x30`, and returns to `Scene_EnterTransitionMode` once
+both masks are neutral.
+
+The adjacent `0x001B2802` helper is now named
+`Level_PrepareTerminalTransitionFrame`. It clears VRAM C000 and runs one
+`Frame_RunServicePass` before `Level_ExitAndTerminalTransition` checks the
+scene-state boundary. Its later controller polling block is statically
+unreachable because the local counter is initialized to `0x0103` and compared
+immediately against `0x00D2`; that dead block is retained as disassembly
+evidence and not assigned live semantics.
+
+`IO_PORT1_CONTROL` at `0x00A10009` is now a shared hardware symbol for the
+controller phase-select writes.
+
+The static result is recorded in
+`re/mame/findings/20260828-scene-transition-input-services-v1.json`.
+
 ## Shared actor-collision reinitialization (20260828)
 
 The short body at `0x001AF4C2` is now named

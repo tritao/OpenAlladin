@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-scene-transition-input-services-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-transition-input-targets.json",
+  "services": [
+    {
+      "address": "0x001B3064",
+      "name": "Input_WaitForNeutralController",
+      "caller": "0x001B2ACE Scene_EnterTransitionMode",
+      "samples": [
+        "directional phase: IO_PORT1_CONTROL=0x40, IO_PORT1_DATA & 0x3F == 0x3F",
+        "button phase: IO_PORT1_CONTROL=0x40, IO_PORT1_DATA & 0x30 == 0x30"
+      ],
+      "behavior": "Repeats both Z80-handoff controller samples until both neutral masks match, then restores the caller's D0 word and returns."
+    },
+    {
+      "address": "0x001B2802",
+      "name": "Level_PrepareTerminalTransitionFrame",
+      "caller": "0x001A8F0C Level_ExitAndTerminalTransition",
+      "behavior": "Calls VDP_ClearVRAM_C000 and Frame_RunServicePass. The following controller polling block is statically unreachable because the local counter starts at 0x0103 and is immediately compared against 0x00D2."
+    }
+  ],
+  "conclusion": "The scene transition path now distinguishes the active neutral-controller wait from the terminal-transition frame preparation helper. The inactive controller block in 0x001B2802 is retained as exact dead-code evidence rather than being presented as live behavior."
+}

@@ -376,6 +376,22 @@
   evidence:
     - ghidra_decompile_001B3548
     - ghidra_menu_input_audio_targets
+0x001B3064:
+  name: Input_WaitForNeutralController
+  confidence: decompiled
+  description: Repeatedly samples both Genesis controller phases through the Z80 handoff until the directional phase is 0x3F and the button phase is 0x30, then returns to the scene-transition caller.
+  evidence:
+    - ghidra_disassembly_001B3064
+    - ghidra_decompile_001B3064
+    - ghidra_scene_transition_input_targets
+0x001B2802:
+  name: Level_PrepareTerminalTransitionFrame
+  confidence: decompiled
+  description: Clears VRAM C000 and runs the shared transition service frame before Level_ExitAndTerminalTransition applies its scene-state gate; an older controller-polling block remains unreachable under the literal 0x0103 counter guard.
+  evidence:
+    - ghidra_disassembly_001B2802
+    - ghidra_decompile_001B2802
+    - ghidra_level_transition_terminal_targets
 0x001B4410:
   name: Menu_RenderControlBindings
   confidence: decompiled

@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-transition-input-services",
+    "purpose": "Resolve the controller-neutral wait and terminal-transition frame preparation helpers."
+  },
+  "targets": [
+    { "address": "0x001B3064", "name": "Input_WaitForNeutralController" },
+    { "address": "0x001B2802", "name": "Level_PrepareTerminalTransitionFrame" },
+    { "address": "0x001B2ACE", "name": "Scene_EnterTransitionMode" },
+    { "address": "0x001A8F0C", "name": "Level_ExitAndTerminalTransition" },
+    { "address": "0x001B249E", "name": "Frame_WaitForVBlankWork" },
+    { "address": "0x001B28AE", "name": "Frame_RunServicePass" },
+    { "address": "0x001B2510", "name": "VDP_ClearVRAM_C000" },
+    { "address": "0x001E571C", "name": "Audio_AcquireZ80Bus" }
+  ],
+  "memory_references": [
+    { "address": "0x00A10009", "name": "IO_PORT1_CONTROL" },
+    { "address": "0x00A10003", "name": "IO_PORT1_DATA" },
+    { "address": "0x00A11100", "name": "Z80_BUS_REQUEST" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ]
+}

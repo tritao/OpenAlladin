@@ -12,6 +12,12 @@
   confidence: confirmed
   description: Controller port 1 data register
 
+0xA10009:
+  name: IO_PORT1_CONTROL
+  type: u8
+  confidence: confirmed
+  description: Controller port 1 control register used to select the Genesis controller sampling phases.
+
 0xA11100:
   name: Z80_BUS_REQUEST
   type: u16
