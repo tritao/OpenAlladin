@@ -48,6 +48,24 @@ python -m genie ghidra xrefs 0x001B557E
 python -m genie ghidra unknown
 ```
 
+Before using a scan as deassembly input, run its known-fact trust gate:
+
+```bash
+python -m genie ghidra validate-db
+```
+
+The first ROM layout projection is written beside the scan and merges Ghidra
+functions/data, canonical symbols, VM stream reports, decoded asset manifests,
+and recovered jump tables into one gap-free range partition:
+
+```bash
+python -m genie layout build
+python -m genie layout show 0x001223DA
+python -m genie layout gaps
+python -m genie layout stats
+python -m genie layout validate
+```
+
 The recovered frame scheduler is tracked separately in
 `re/scheduler/frame_phases.yml`. It is a static call-chain model rooted at
 `Game_FrameUpdateLoop` (`0x001A8C16`) and `VBlankInterrupt` (`0x001B246E`);

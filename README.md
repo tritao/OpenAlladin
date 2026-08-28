@@ -40,6 +40,25 @@ its JSON indexes are written to `build/re/full-rom/` and can then be queried
 with `genie ghidra function`, `callers`, `callees`, `writers`, `readers`,
 `xrefs`, and `unknown` without another Ghidra run.
 
+Validate a generated scan against the recovered scheduler, canonical symbols,
+dispatch-table xrefs, and normalized ROM coverage before consuming it:
+
+```bash
+genie ghidra validate-db
+```
+
+Build and inspect the first fused ROM layout view. It combines Ghidra ranges,
+tracked symbols, recovered VM streams, decoded assets, and jump-table evidence
+into a gap-free partition:
+
+```bash
+genie layout build
+genie layout show 0x001223DA
+genie layout gaps
+genie layout stats
+genie layout validate
+```
+
 Use the `genie` command for all reverse-engineering workflows. The equivalent
 module form, `python -m genie`, is useful when running from an unmanaged
 checkout.

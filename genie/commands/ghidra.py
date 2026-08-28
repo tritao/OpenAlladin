@@ -13,6 +13,7 @@ import json
 
 from genie.ghidra import rebuild_project, scan_project, setup_ghidra, verify_rom
 from genie.ghidra.database import AnalysisDatabase, render_records
+from genie.ghidra.validate import validate_database
 from genie.knowledge import validate_knowledge
 from genie.runtime import resolve
 
@@ -131,6 +132,24 @@ def command_ghidra_unknown(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_ghidra_validate_db(args: argparse.Namespace) -> int:
+    """Validate a generated whole-ROM database against known ROM facts."""
+
+    database = AnalysisDatabase(resolve(args.database))
+    try:
+        errors = validate_database(database)
+    except (OSError, ValueError, TypeError) as error:
+        errors = [str(error)]
+    if args.json_output:
+        print(json.dumps({"valid": not errors, "errors": errors}, indent=2, sort_keys=True))
+    elif errors:
+        for error in errors:
+            print(f"ERROR {error}")
+    else:
+        print("Validated whole-ROM analysis database")
+    return 1 if errors else 0
+
+
 __all__ = [
     "command_ghidra_rebuild",
     "command_ghidra_scan",
@@ -141,6 +160,7 @@ __all__ = [
     "command_ghidra_readers",
     "command_ghidra_xrefs",
     "command_ghidra_unknown",
+    "command_ghidra_validate_db",
     "command_ghidra_setup",
     "command_ghidra_verify",
 ]

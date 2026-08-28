@@ -7,6 +7,7 @@ from collections.abc import Sequence
 
 from genie.runtime import *
 from genie.commands.ghidra import *
+from genie.commands.layout import *
 from genie.commands.symbols import *
 from genie.commands.setup import *
 from genie.commands.trace import *
@@ -68,6 +69,38 @@ def build_parser() -> argparse.ArgumentParser:
     unknown.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
     unknown.add_argument("--json", action="store_true", dest="json_output")
     unknown.set_defaults(function=command_ghidra_unknown)
+    validate_db = ghidra_commands.add_parser(
+        "validate-db",
+        help="validate a generated whole-ROM database against known ROM facts",
+    )
+    validate_db.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    validate_db.add_argument("--json", action="store_true", dest="json_output")
+    validate_db.set_defaults(function=command_ghidra_validate_db)
+
+    layout = commands.add_parser("layout", help="classify and query the ROM layout")
+    layout_commands = layout.add_subparsers(dest="layout_command", required=True)
+    layout_build = layout_commands.add_parser("build", help="build the normalized ROM layout")
+    layout_build.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    layout_build.add_argument("--output", type=Path)
+    layout_build.add_argument("--no-artifacts", action="store_true", help="use only Ghidra and tracked-symbol evidence")
+    layout_build.set_defaults(function=command_layout_build)
+    layout_show = layout_commands.add_parser("show", help="show the range containing an address")
+    layout_show.add_argument("address", type=lambda value: int(value, 0))
+    layout_show.add_argument("--layout", type=Path, default=ROOT / "build/re/full-rom/layout.json")
+    layout_show.add_argument("--json", action="store_true", dest="json_output")
+    layout_show.set_defaults(function=command_layout_show)
+    layout_gaps = layout_commands.add_parser("gaps", help="show unknown ROM ranges")
+    layout_gaps.add_argument("--layout", type=Path, default=ROOT / "build/re/full-rom/layout.json")
+    layout_gaps.add_argument("--json", action="store_true", dest="json_output")
+    layout_gaps.set_defaults(function=command_layout_gaps)
+    layout_stats = layout_commands.add_parser("stats", help="show layout class counts and byte totals")
+    layout_stats.add_argument("--layout", type=Path, default=ROOT / "build/re/full-rom/layout.json")
+    layout_stats.add_argument("--json", action="store_true", dest="json_output")
+    layout_stats.set_defaults(function=command_layout_stats)
+    layout_validate = layout_commands.add_parser("validate", help="validate layout coverage and range ownership")
+    layout_validate.add_argument("--layout", type=Path, default=ROOT / "build/re/full-rom/layout.json")
+    layout_validate.add_argument("--json", action="store_true", dest="json_output")
+    layout_validate.set_defaults(function=command_layout_validate)
 
     symbols = commands.add_parser("symbols", help="query canonical tracked symbols")
     symbol_commands = symbols.add_subparsers(dest="symbols_command", required=True)

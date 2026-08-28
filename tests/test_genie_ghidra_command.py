@@ -9,6 +9,8 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     verify = build_parser().parse_args(["ghidra", "verify", "rom.bin", "--allow-unverified"])
     rebuild = build_parser().parse_args(["ghidra", "rebuild", "--rom", "rom.bin", "--no-analysis"])
     scan = build_parser().parse_args(["ghidra", "scan", "--rom", "rom.bin", "--allow-unverified"])
+    validate_db = build_parser().parse_args(["ghidra", "validate-db", "--json"])
+    layout = build_parser().parse_args(["layout", "show", "0x1234", "--json"])
 
     assert setup.function is ghidra.command_ghidra_setup
     assert verify.function is ghidra.command_ghidra_verify
@@ -18,6 +20,9 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert rebuild.no_analysis is True
     assert scan.function is ghidra.command_ghidra_scan
     assert scan.allow_unverified is True
+    assert validate_db.function is ghidra.command_ghidra_validate_db
+    assert validate_db.json_output is True
+    assert layout.address == 0x1234
 
 
 def test_ghidra_rebuild_calls_existing_service(monkeypatch, capsys):
