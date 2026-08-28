@@ -2094,6 +2094,18 @@ the tile word `0x0EEE` sixty-four times to VDP destination `C000`, preserving
 the caller's D0 word. The marked Type-0x1E player-collision recovery path uses
 it before waiting for VBlank and reloading the palette bands.
 
+## Scene-resource animated palette service (20260829)
+
+`SceneResource_UpdateAnimatedPalette` at `0x001B1B3C` is the per-frame palette
+service in `SceneResource_RebuildAfterInteraction`. It masks
+`FRAME_PHASE_COUNTER` to a 64-frame phase and updates five CRAM entries at
+phases `0x0A` and `0x1E`. The two phase points write palette indices 7, 8, 21,
+22, and 23 with distinct five-word sets, making the service a small deterministic
+palette animation rather than a general palette transition or a tile transfer.
+The static decompilation and exact VDP command/value pairs are recorded in
+`re/mame/findings/20260829-scene-resource-animated-palette-v1.json` and
+`re/ghidra/targets/scene-resource-animated-palette-targets.json`.
+
 The static result is recorded in
 `re/mame/findings/20260829-vdp-fill-c000-v1.json`.
 

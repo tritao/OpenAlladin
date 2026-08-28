@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-scene-resource-animated-palette-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "services": [
+    {
+      "address": "0x001B1B3C",
+      "name": "SceneResource_UpdateAnimatedPalette",
+      "caller": "0x001B16E0 SceneResource_RebuildAfterInteraction",
+      "phase_mask": "0x3F",
+      "phase_values": [
+        {
+          "phase": "0x0A",
+          "palette_words": ["0x0E66", "0x0E86", "0x0000", "0x0002", "0x0202"]
+        },
+        {
+          "phase": "0x1E",
+          "palette_words": ["0x0C6C", "0x0EAE", "0x0006", "0x024E", "0x0C8E"]
+        }
+      ],
+      "cram_indices": [7, 8, 21, 22, 23],
+      "vdp_control_commands": ["0xC00E0000", "0xC0100000", "0xC02A0000", "0xC02C0000", "0xC02E0000"]
+    }
+  ]
+}
