@@ -2097,6 +2097,29 @@ it before waiting for VBlank and reloading the palette bands.
 The static result is recorded in
 `re/mame/findings/20260829-vdp-fill-c000-v1.json`.
 
+## Camera terrain viewport renderer (20260829)
+
+The helper at `0x001AA81A` is now named `Camera_RenderTerrainViewport`. It
+renders a 16-by-23 visible terrain tile viewport, selecting rows from
+`TERRAIN_ROW_POINTER_TABLE` using `CAMERA_REFERENCE_X/Y`, reading the active
+background-block source through `LEVEL_BACKGROUND_BLOCK_SOURCE`, and emitting
+four tile words per map word through the generated VDP tile-row command tables.
+The active row stride is published as `TERRAIN_ROW_BYTE_STRIDE` at `FF7DB4`.
+
+The static result is recorded in
+`re/mame/findings/20260829-camera-terrain-viewport-v1.json`.
+
+## Level-table exit callback dispatch (20260829)
+
+The short routine at `0x001AE1C2` is now named `Level_InvokeExitCallback`. It
+indexes the 66-byte `LEVEL_TABLE` record selected by `SCENE_STATE`, loads the
+longword at record offset `0x28`, pushes it as a return address, and returns
+through `RTS`. This is an indirect tail dispatch to the current level's exit
+callback, reached from `Level_ExitAndTerminalTransition` at `0x001A90E8`.
+
+The static result is recorded in
+`re/mame/findings/20260829-level-exit-callback-dispatch-v1.json`.
+
 ## Active-scene initial C000 and palette transfer (20260829)
 
 `SceneResource_LoadInitialC000AndPaletteSources` at `0x001B25FE` is called by

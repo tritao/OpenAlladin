@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-camera-terrain-viewport-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/camera-terrain-viewport-targets.json",
+  "decompile_source": "build/re/full-rom/decompile/001AA81A.txt",
+  "service": {
+    "address": "0x001AA81A",
+    "name": "Camera_RenderTerrainViewport",
+    "caller": "0x001AA724 Camera_RebuildView and 0x001ADB36 Terrain_TemporaryLookupHelper",
+    "viewport": {
+      "rows": 16,
+      "columns": 23,
+      "words_written": 368
+    },
+    "behavior": [
+      "Selects terrain rows from TERRAIN_ROW_POINTER_TABLE using CAMERA_REFERENCE_Y and starts at the camera-aligned X word.",
+      "Uses VDP_TILE_ROW_COMMAND_TABLE to emit four tile words per map word through VDP_DATA.",
+      "Indexes LEVEL_BACKGROUND_BLOCK_SOURCE with each terrain map word to obtain the emitted tile words."
+    ]
+  },
+  "conclusion": "The former anonymous camera helper is the special-mode visible terrain viewport renderer. Its 16-by-23 geometry and active resource inputs are now explicit; the higher-level visual meaning of individual terrain blocks remains in the level asset model."
+}

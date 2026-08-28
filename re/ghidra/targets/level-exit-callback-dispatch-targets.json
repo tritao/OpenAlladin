@@ -1,0 +1,16 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level-exit-callback-dispatch",
+    "purpose": "Decode the indirect level-table exit callback dispatch used by the level transition coordinator."
+  },
+  "targets": [
+    { "address": "0x001AE1C2", "name": "Level_InvokeExitCallback" },
+    { "address": "0x001A8F0C", "name": "Level_ExitAndTerminalTransition" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E26", "name": "SCENE_STATE" },
+    { "address": "0x00002C78", "name": "LEVEL_TABLE" }
+  ]
+}

@@ -657,6 +657,24 @@
   evidence:
     - ghidra_disassembly_001AA724
     - ghidra_disassembly_001AA90C
+0xFF7DB4:
+  name: TERRAIN_ROW_BYTE_STRIDE
+  type: u16
+  format: bytes
+  confidence: decompiled
+  description: Active terrain row stride in bytes, derived as twice LEVEL_WIDTH_TILES and used by camera viewport rendering and terrain consumers.
+  evidence:
+    - ghidra_disassembly_001AA484
+    - ghidra_decompile_001AA81A
+0xFF7DBE:
+  name: LEVEL_BACKGROUND_BLOCK_SOURCE
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Active level background-block source pointer installed from the level table and indexed by terrain map words when Camera_RenderTerrainViewport emits VDP tile words.
+  evidence:
+    - ghidra_disassembly_001AA484
+    - ghidra_decompile_001AA81A
 0xFF7DBA:
   name: LEVEL_HEIGHT_TILES
   type: u16

@@ -2454,6 +2454,24 @@
     - ghidra_level_frame_setup_decompile
     - ghidra_scene_resource_transfer_targets
 
+0x001AA81A:
+  name: Camera_RenderTerrainViewport
+  confidence: decompiled
+  description: Renders the 16-by-23 visible terrain tile viewport using CAMERA_REFERENCE_X/Y, TERRAIN_ROW_POINTER_TABLE, LEVEL_BACKGROUND_BLOCK_SOURCE, and the generated VDP tile-row command tables.
+  evidence:
+    - ghidra_decompile_001AA81A
+    - ghidra_scene_camera_orchestration_targets
+    - ghidra_camera_terrain_viewport_targets
+
+0x001AE1C2:
+  name: Level_InvokeExitCallback
+  confidence: decompiled
+  description: Tail-dispatches to the current level-table exit callback by indexing LEVEL_TABLE with SCENE_STATE and returning through the longword at record offset 0x28.
+  evidence:
+    - ghidra_disassembly_001AE1C2
+    - ghidra_level_table_enter_exit_targets
+    - ghidra_level_exit_callback_dispatch_targets
+
 0x001B07D0:
   name: Level_RenderTerminalTransitionTileBand
   confidence: decompiled

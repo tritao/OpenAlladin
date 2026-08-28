@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "camera-terrain-viewport",
+    "purpose": "Decode the camera special-mode terrain viewport renderer and its active level resource fields."
+  },
+  "targets": [
+    { "address": "0x001AA81A", "name": "Camera_RenderTerrainViewport" },
+    { "address": "0x001AA724", "name": "Camera_RebuildView" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E06", "name": "CAMERA_REFERENCE_X" },
+    { "address": "0x00FF7E08", "name": "CAMERA_REFERENCE_Y" },
+    { "address": "0x00FF9884", "name": "TERRAIN_ROW_POINTER_TABLE" },
+    { "address": "0x00FF7DB4", "name": "TERRAIN_ROW_BYTE_STRIDE" },
+    { "address": "0x00FF7DBE", "name": "LEVEL_BACKGROUND_BLOCK_SOURCE" },
+    { "address": "0x00FF8680", "name": "VDP_TILE_ROW_COMMAND_TABLE" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ]
+}
