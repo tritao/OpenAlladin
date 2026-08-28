@@ -1311,6 +1311,21 @@ player cursor or scheduler phase.
 The static result is recorded in
 re/mame/findings/20260828-animation-vm-core-v1.json.
 
+## Camera scroll refill service (20260828)
+
+The pending-scroll wrapper at 0x001AAA2A is now named
+Camera_PublishScroll. It consumes the four directional flags only when
+CAMERA_SCROLL_APPLY_GATE is clear, dispatching the matching refill helper and
+clearing each flag after the helper returns. The horizontal helpers at
+0x001AB34E and 0x001AB44C advance the camera state by one 0x10-pixel step,
+write 16 terrain-derived VDP entries, and invoke InteractionTable_ProcessRowsA.
+The vertical helpers at 0x001AB55A and 0x001AB66C write 23 entries to the VDP
+column and invoke InteractionTable_ProcessRowsB. Their existing deadband and
+level-bound checks remain explicit in the decompiler record.
+
+The static result is recorded in
+re/mame/findings/20260828-camera-scroll-refill-v1.json.
+
 ## Actor allocation and template lifecycle (20260828)
 
 The actor allocation cluster around `0x001AE206..0x001AE372` is now named from
@@ -1518,6 +1533,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260827-level01-transfer-reachability-closure-v1` | recorded-trace-validated-producer-closure | fixed terrain 0x29/0x2D closure plus direct selector-0x0D/0x74 Type-0x6A/0x65 producer validation; remote actor contact/alignment remains the next targeted experiment |
 | `20260828-actor-collision-terminal-response-v1` | recorded-static-decompilation | shared terminal actor-collision response, linked cleanup, type-countdown gating, and type-0x84 replacement |
 | `20260828-animation-vm-core-v1` | recorded-static-decompilation | AnimationVM entry gate/core split, actor-table traversal, frame synchronization, and EA-FE dispatch |
+| `20260828-camera-scroll-refill-v1` | recorded-static-decompilation | pending-scroll publication, directional VDP row/column refill, and interaction-row processor dispatch |
 | `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |
 | `20260828-compressed-resource-decode-v1` | recorded-static-decompilation | RNC payload decoding, terrain-resource Huffman decoding, and VDP fill helper classification |
 

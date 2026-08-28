@@ -25,6 +25,42 @@
     - ghidra_targeted_decompile_scheduler
     - player_camera_static_map
     - mame_player_camera_follow_trace
+0x001AAA2A:
+  name: Camera_PublishScroll
+  confidence: decompiled
+  description: Consumes pending camera scroll flags when CAMERA_SCROLL_APPLY_GATE is clear, dispatches the corresponding horizontal or vertical refill helper, and clears each flag after its refill path returns.
+  evidence:
+    - ghidra_decompile_001AAA2A
+    - ghidra_camera_refill_dispatch_audit
+    - mame_player_camera_follow_trace
+0x001AB34E:
+  name: Camera_ScrollLeftAndRefill
+  confidence: decompiled
+  description: Consumes the left-scroll refill path, adjusts the horizontal camera state by one 0x10-pixel step when outside the deadband, writes 16 terrain-derived entries to the VDP, and processes the refreshed interaction rows through InteractionTable_ProcessRowsA.
+  evidence:
+    - ghidra_decompile_001AB34E
+    - ghidra_interaction_dispatch_callers
+0x001AB44C:
+  name: Camera_ScrollRightAndRefill
+  confidence: decompiled
+  description: Consumes the right-scroll refill path, adjusts the horizontal camera state by one 0x10-pixel step when inside the level bounds, writes 16 terrain-derived entries to the VDP, and processes the refreshed interaction rows through InteractionTable_ProcessRowsA.
+  evidence:
+    - ghidra_decompile_001AB44C
+    - ghidra_interaction_dispatch_callers
+0x001AB55A:
+  name: Camera_ScrollDownAndRefill
+  confidence: decompiled
+  description: Consumes the down-scroll refill path, adjusts the vertical camera state by one 0x10-pixel step, writes 23 terrain-derived entries to the VDP column, and processes the refreshed interaction rows through InteractionTable_ProcessRowsB.
+  evidence:
+    - ghidra_decompile_001AB55A
+    - ghidra_interaction_dispatch_callers
+0x001AB66C:
+  name: Camera_ScrollUpAndRefill
+  confidence: decompiled
+  description: Consumes the up-scroll refill path, adjusts the vertical camera state by one 0x10-pixel step, writes 23 terrain-derived entries to the VDP column, and processes the refreshed interaction rows through InteractionTable_ProcessRowsB.
+  evidence:
+    - ghidra_decompile_001AB66C
+    - ghidra_interaction_dispatch_callers
 0x001ADB5C:
   name: Actor_TerrainCollisionLoop
   confidence: confirmed

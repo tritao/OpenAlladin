@@ -6,6 +6,11 @@
     "purpose": "Decode the callers that enter the vertical and horizontal interaction-row processors, with emphasis on the conditions that determine which row and direction are processed."
   },
   "targets": [
+    { "address": "0x001AAA2A", "name": "Camera_PublishScroll" },
+    { "address": "0x001AB34E", "name": "Camera_ScrollLeftAndRefill" },
+    { "address": "0x001AB44C", "name": "Camera_ScrollRightAndRefill" },
+    { "address": "0x001AB55A", "name": "Camera_ScrollDownAndRefill" },
+    { "address": "0x001AB66C", "name": "Camera_ScrollUpAndRefill" },
     { "address": "0x001AB446", "name": "LevelInteraction_UpdateCallerA" },
     { "address": "0x001AB770", "name": "LevelInteraction_UpdateCallerB" },
     { "address": "0x001AE3FC", "name": "InteractionRowProcessorVerticalWrapper" },

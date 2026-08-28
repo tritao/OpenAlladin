@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-camera-scroll-refill-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level01-interaction-dispatch-callers-targets.json",
+  "targeted_decompile": "build/re/level01-interaction-dispatch-callers-targeted-decompile-v1.json",
+  "wrapper": {
+    "address": "0x001AAA2A",
+    "name": "Camera_PublishScroll",
+    "confidence": "decompiled",
+    "behavior": "When CAMERA_SCROLL_APPLY_GATE is clear, consumes the pending left, right, up, and down scroll flags through their directional refill helpers and clears each flag after processing."
+  },
+  "directional_refills": {
+    "left": {
+      "address": "0x001AB34E",
+      "name": "Camera_ScrollLeftAndRefill",
+      "window": "16 horizontal VDP entries",
+      "processor": "0x001AE3FC -> 0x001AE406"
+    },
+    "right": {
+      "address": "0x001AB44C",
+      "name": "Camera_ScrollRightAndRefill",
+      "window": "16 horizontal VDP entries",
+      "processor": "0x001AE3FC -> 0x001AE406"
+    },
+    "down": {
+      "address": "0x001AB55A",
+      "name": "Camera_ScrollDownAndRefill",
+      "window": "23 vertical VDP entries",
+      "processor": "0x001AE47E -> 0x001AE488"
+    },
+    "up": {
+      "address": "0x001AB66C",
+      "name": "Camera_ScrollUpAndRefill",
+      "window": "23 vertical VDP entries",
+      "processor": "0x001AE47E -> 0x001AE488"
+    }
+  },
+  "conclusion": "Camera follow publishes directional pending flags first; the scroll service then advances the camera by one 0x10-pixel step, refills the corresponding VDP row or column from terrain data, and invokes the matching interaction-row processor."
+}
