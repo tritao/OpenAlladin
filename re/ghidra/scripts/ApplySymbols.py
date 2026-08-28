@@ -22,7 +22,7 @@ def run():
                     function.setName(name, SourceType.USER_DEFINED)
             else:
                 createLabel(address, name, True)
-            evidence = symbol.get("evidence", [])
+            evidence = symbol.get("provenance", symbol.get("evidence", []))
             details = "confidence={}".format(symbol.get("confidence", "unspecified"))
             if evidence:
                 details += "; evidence=" + ", ".join(str(item) for item in evidence)

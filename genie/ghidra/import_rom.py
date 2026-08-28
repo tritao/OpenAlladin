@@ -14,13 +14,13 @@ from genie.common import (
     ROOT,
     hashes,
     load_yaml,
-    normalize_symbols,
     normalize_types,
     parse_int,
     rom_entries,
     write_json,
     write_mame_symbols,
 )
+from genie.symbols import SymbolStore
 
 
 VECTOR_NAMES = [
@@ -78,7 +78,12 @@ def resolve_rom(requested: Path | None, expected: dict) -> Path:
     raise SystemExit(f"ROM not found. Searched:\n{searched}")
 
 
-def make_analysis_config(rom: Path, output_dir: Path) -> Path:
+def make_analysis_config(
+    rom: Path,
+    output_dir: Path,
+    *,
+    full_rom_export_dir: Path | None = None,
+) -> Path:
     _, expected, _ = rom_entries()
     memory_map = load_yaml(ROOT / "re/config/memory_map.yml") or {}
     for block in memory_map.get("blocks", []):
@@ -87,7 +92,12 @@ def make_analysis_config(rom: Path, output_dir: Path) -> Path:
             block["end"] = rom.stat().st_size - 1
         else:
             block["end"] = parse_int(block["end"])
-    symbols = normalize_symbols()
+    symbols = []
+    for symbol in SymbolStore(root=ROOT).symbols:
+        value = symbol.to_dict()
+        value["category"] = "functions" if symbol.kind == "function" else symbol.kind
+        value["evidence"] = list(symbol.provenance)
+        symbols.append(value)
     analysis = {
         "rom": str(rom),
         "rom_size": rom.stat().st_size,
@@ -99,6 +109,8 @@ def make_analysis_config(rom: Path, output_dir: Path) -> Path:
         "export_dir": str(output_dir),
         "mame_symbols": str(output_dir / "mame_symbols.lua"),
     }
+    if full_rom_export_dir is not None:
+        analysis["full_rom_export_dir"] = str(full_rom_export_dir)
     path = output_dir / "analysis.json"
     write_json(path, analysis)
     write_mame_symbols(output_dir / "mame_symbols.lua", symbols)
@@ -116,8 +128,13 @@ def rebuild_project(
     allow_unverified: bool = False,
     reuse_project: bool = False,
     no_analysis: bool = False,
+    scan: bool = False,
 ) -> int:
-    """Import the ROM into a deterministic local Ghidra project."""
+    """Import the ROM into a deterministic local Ghidra project.
+
+    ``scan`` adds the whole-ROM JSON export while retaining the existing
+    ``build/re`` exports consumed by asset and VM analysis.
+    """
 
     _, expected, _ = rom_entries()
     rom = resolve_rom(requested_rom, expected)
@@ -129,7 +146,12 @@ def rebuild_project(
 
     output_dir = ROOT / "build/re"
     output_dir.mkdir(parents=True, exist_ok=True)
-    analysis_config = make_analysis_config(rom, output_dir)
+    full_rom_export_dir = output_dir / "full-rom" if scan else None
+    analysis_config = make_analysis_config(
+        rom,
+        output_dir,
+        full_rom_export_dir=full_rom_export_dir,
+    )
 
     config = load_yaml(ROOT / "re/config/ghidra.yml")
     project_dir = ROOT / config["ghidra"]["project_dir"]
@@ -184,6 +206,12 @@ def rebuild_project(
         "ExportSymbols.py",
         str(analysis_config),
     ]
+    if scan:
+        command.extend([
+            "-postScript",
+            "ExportWholeRom.py",
+            str(analysis_config),
+        ])
     if no_analysis:
         command.insert(4, "-noanalysis")
     print("Running:", " ".join(command))
@@ -200,6 +228,24 @@ def rebuild_project(
     print(f"Analysis complete: {project_dir / project_name}")
     print(f"Exports: {output_dir}")
     return 0
+
+
+def scan_project(
+    requested_rom: Path | None = None,
+    *,
+    allow_unverified: bool = False,
+    reuse_project: bool = False,
+    no_analysis: bool = False,
+) -> int:
+    """Rebuild the project and emit the queryable whole-ROM static database."""
+
+    return rebuild_project(
+        requested_rom,
+        allow_unverified=allow_unverified,
+        reuse_project=reuse_project,
+        no_analysis=no_analysis,
+        scan=True,
+    )
 
 
 def main() -> int:

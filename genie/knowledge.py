@@ -6,8 +6,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-from genie.common import load_yaml, normalize_symbols, normalize_types
+from genie.common import load_yaml, normalize_types
 from genie.runtime import *
+from genie.symbols import SymbolStore
 def _field_size(type_name: str) -> int:
     normalized = type_name.strip().lower()
     if normalized in {"u8", "i8", "s8", "byte", "bool"}:
@@ -27,24 +28,10 @@ def _field_size(type_name: str) -> int:
 def validate_knowledge(rom: Path) -> list[str]:
     errors: list[str] = []
     try:
-        symbols = normalize_symbols()
+        symbol_store = SymbolStore()
     except (OSError, ValueError) as error:
         return [f"symbols: {error}"]
-
-    names: dict[str, dict[str, Any]] = {}
-    for symbol in symbols:
-        name = str(symbol["name"])
-        if name in names:
-            errors.append(f"duplicate symbol name: {name}")
-        names[name] = symbol
-        address = int(symbol["address"])
-        category = symbol["category"]
-        if category == "ram" and not 0xFF0000 <= address <= 0xFFFFFF:
-            errors.append(f"RAM symbol outside work RAM: {name} at 0x{address:06X}")
-        if category == "functions" and not 0 <= address < rom.stat().st_size:
-            errors.append(f"function outside ROM: {name} at 0x{address:06X}")
-        if category == "data" and address >= 0x1000000:
-            errors.append(f"data symbol outside 24-bit address space: {name}")
+    errors.extend(symbol_store.validate(rom_size=rom.stat().st_size))
 
     for type_path in sorted((ROOT / "re/types").glob("*.yml")):
         try:
@@ -80,8 +67,8 @@ def validate_knowledge(rom: Path) -> list[str]:
                         continue
                     current_frame = int(fields[1], 0)
                     continue
-                if len(fields) < 8 or len(fields) > 14:
-                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: expected 8..14 actor fields")
+                if len(fields) < 8 or len(fields) > 16:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: expected 8..16 actor fields")
                     continue
                 if "timeline" in actor_path.name and current_frame is None:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: record precedes frame marker")
@@ -112,6 +99,10 @@ def validate_knowledge(rom: Path) -> list[str]:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_loop_timer outside range")
                 if len(values) >= 14 and not 0 <= values[13] <= 0xFFFFFFFF:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_return_pc outside range")
+                if len(values) >= 15 and not 0 <= values[14] <= 0xFFFF:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_word_18 outside range")
+                if len(values) >= 16 and not 0 <= values[15] <= 0xFFFF:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_word_1a outside range")
                 key = (current_frame, slot)
                 if key in seen_slots:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: duplicate slot {slot}")

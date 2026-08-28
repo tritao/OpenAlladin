@@ -8,7 +8,7 @@ from script_common import context
 
 
 def address_value(address):
-    return "0x{:08X}".format(address.getOffset())
+    return "0x{:08X}".format(address.getOffset() & 0xFFFFFFFF)
 
 
 def run():

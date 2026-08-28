@@ -7,6 +7,7 @@ from collections.abc import Sequence
 
 from genie.runtime import *
 from genie.commands.ghidra import *
+from genie.commands.symbols import *
 from genie.commands.setup import *
 from genie.commands.trace import *
 from genie.commands.record import *
@@ -42,6 +43,55 @@ def build_parser() -> argparse.ArgumentParser:
     rebuild.add_argument("--reuse-project", action="store_true")
     rebuild.add_argument("--no-analysis", action="store_true")
     rebuild.set_defaults(function=command_ghidra_rebuild)
+    scan = ghidra_commands.add_parser("scan", help="rebuild and export the whole-ROM analysis database")
+    add_rom_argument(scan)
+    scan.add_argument("--allow-unverified", action="store_true")
+    scan.add_argument("--reuse-project", action="store_true")
+    scan.add_argument("--no-analysis", action="store_true")
+    scan.set_defaults(function=command_ghidra_scan)
+
+    def add_analysis_query(name: str, help_text: str, function) -> argparse.ArgumentParser:
+        query = ghidra_commands.add_parser(name, help=help_text)
+        query.add_argument("address", type=lambda value: int(value, 0))
+        query.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+        query.add_argument("--json", action="store_true", dest="json_output")
+        query.set_defaults(function=function)
+        return query
+
+    add_analysis_query("function", "show a function from the whole-ROM database", command_ghidra_function)
+    add_analysis_query("callers", "show callers of a function", command_ghidra_callers)
+    add_analysis_query("callees", "show callees of a function", command_ghidra_callees)
+    add_analysis_query("writers", "show writes to an address", command_ghidra_writers)
+    add_analysis_query("readers", "show reads from an address", command_ghidra_readers)
+    add_analysis_query("xrefs", "show references to an address", command_ghidra_xrefs)
+    unknown = ghidra_commands.add_parser("unknown", help="show unclassified ROM ranges")
+    unknown.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    unknown.add_argument("--json", action="store_true", dest="json_output")
+    unknown.set_defaults(function=command_ghidra_unknown)
+
+    symbols = commands.add_parser("symbols", help="query canonical tracked symbols")
+    symbol_commands = symbols.add_subparsers(dest="symbols_command", required=True)
+    symbols_show = symbol_commands.add_parser("show", help="show the symbol at an address")
+    symbols_show.add_argument("address", type=parse_symbol_address)
+    symbols_show.add_argument("--json", action="store_true", dest="json_output")
+    symbols_show.set_defaults(function=command_symbols_show)
+    symbols_find = symbol_commands.add_parser("find", help="find symbols by name or alias")
+    symbols_find.add_argument("query")
+    symbols_find.add_argument("--kind", choices=("function", "ram", "data"))
+    symbols_find.add_argument("--exact", action="store_true")
+    symbols_find.add_argument("--json", action="store_true", dest="json_output")
+    symbols_find.set_defaults(function=command_symbols_find)
+    symbols_list = symbol_commands.add_parser("list", help="list canonical symbols")
+    symbols_list.add_argument("--kind", choices=("function", "ram", "data"))
+    symbols_list.add_argument("--json", action="store_true", dest="json_output")
+    symbols_list.set_defaults(function=command_symbols_list)
+    symbols_validate = symbol_commands.add_parser("validate", help="validate tracked symbol maps")
+    symbols_validate.add_argument("--rom", type=Path)
+    symbols_validate.add_argument("--json", action="store_true", dest="json_output")
+    symbols_validate.set_defaults(function=command_symbols_validate)
+    symbols_stats = symbol_commands.add_parser("stats", help="show symbol counts and confidence totals")
+    symbols_stats.add_argument("--json", action="store_true", dest="json_output")
+    symbols_stats.set_defaults(function=command_symbols_stats)
 
     record = commands.add_parser(
         "record",

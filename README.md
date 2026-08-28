@@ -26,6 +26,20 @@ python3 -m genie --help
 genie doctor
 ```
 
+The canonical tracked symbols are queryable directly through Genie:
+
+```bash
+genie symbols show 0x001AC784
+genie symbols find AnimationVM
+genie symbols validate
+genie symbols stats
+```
+
+Build the whole-ROM static analysis database once with `genie ghidra scan`;
+its JSON indexes are written to `build/re/full-rom/` and can then be queried
+with `genie ghidra function`, `callers`, `callees`, `writers`, `readers`,
+`xrefs`, and `unknown` without another Ghidra run.
+
 Use the `genie` command for all reverse-engineering workflows. The equivalent
 module form, `python -m genie`, is useful when running from an unmanaged
 checkout.

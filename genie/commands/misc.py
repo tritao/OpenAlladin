@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import os
 
+from genie.ghidra import verify_rom
 from genie.runtime import *
 from genie.knowledge import *
 from genie.mame.experiments import *
@@ -206,7 +207,7 @@ def command_coverage_gaps(args: argparse.Namespace) -> int:
 
 def command_validate(args: argparse.Namespace) -> int:
     rom = resolve(args.rom)
-    status = command_verify(argparse.Namespace(rom=rom, allow_unverified=args.allow_unverified))
+    status = verify_rom(rom, allow_unverified=args.allow_unverified)
     if status:
         return status
     errors = validate_knowledge(rom)
