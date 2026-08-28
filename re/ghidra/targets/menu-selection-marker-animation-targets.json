@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "menu-selection-marker-animation",
+    "purpose": "Decode the frame-gated menu selection-marker tile animation and its rotating ROM table offset."
+  },
+  "targets": [
+    { "address": "0x001B3B4A", "name": "Menu_AnimateSelectionMarkerTiles" },
+    { "address": "0x001B3B96", "name": "Menu_RunOptionsAndSelectNextState" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
+    { "address": "0x00FF7280", "name": "MENU_SELECTION_MARKER_TILE_OFFSET" },
+    { "address": "0x00129DAA", "name": "ROM_MENU_SELECTION_MARKER_TILES" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ]
+}

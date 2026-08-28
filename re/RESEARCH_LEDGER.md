@@ -2002,6 +2002,18 @@ meaning is intentionally left unresolved.
 The static result is recorded in
 `re/mame/findings/20260829-interaction-display-initialization-v1.json`.
 
+## Menu selection-marker tile animation (20260829)
+
+`Menu_AnimateSelectionMarkerTiles` at `0x001B3B4A` runs on even
+`FRAME_PHASE_COUNTER` phases. It copies one 16-word frame from the 28-frame
+ROM table at `0x00129DAA` to VDP destination offset `0x2000`, advances the
+byte offset at `FF7280` by two, and wraps it after `0x38`. The field is named
+by this exact table/animation contract; the higher-level visual asset identity
+remains intentionally unassigned.
+
+The static result is recorded in
+`re/mame/findings/20260829-menu-selection-marker-animation-v1.json`.
+
 ## Audio control-marker wrappers (20260828)
 
 The two fixed-packet wrappers around `Frame_InputAndResourceService` are now

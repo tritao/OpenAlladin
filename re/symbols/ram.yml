@@ -1084,3 +1084,13 @@
   evidence:
     - ghidra_disassembly_001B1E38
     - ghidra_disassembly_001B537A
+0xFF7280:
+  name: MENU_SELECTION_MARKER_TILE_OFFSET
+  type: u16
+  format: table_byte_offset
+  confidence: decompiled
+  description: Byte offset into the 28-frame, 16-word menu selection-marker tile table at ROM 0x00129DAA; the menu animation service advances it by two and wraps at 0x38.
+  evidence:
+    - ghidra_decompile_001B3B4A
+    - ghidra_menu_selection_marker_animation_targets
+    - rom_menu_selection_marker_tiles_00129DAA

@@ -2372,3 +2372,11 @@
     - ghidra_decompile_001B202A
     - ghidra_scene_state_resource_targets
     - ghidra_title_presentation_resource_contract
+0x001B3B4A:
+  name: Menu_AnimateSelectionMarkerTiles
+  confidence: decompiled
+  description: On even FRAME_PHASE_COUNTER phases, copies one 16-word frame from the ROM selection-marker tile table at 0x00129DAA to VRAM offset 0x2000, advances MENU_SELECTION_MARKER_TILE_OFFSET by two, and wraps after the 28th frame.
+  evidence:
+    - ghidra_decompile_001B3B4A
+    - ghidra_menu_selection_marker_animation_targets
+    - rom_menu_selection_marker_tiles_00129DAA
