@@ -98,6 +98,20 @@
     - ghidra_decompile_001AB7A4
     - ghidra_decompile_001B28AE
     - ghidra_transition_render_targets
+0x001B2650:
+  name: Render_UploadPaletteBand2
+  confidence: decompiled
+  description: Uploads 16 palette words to the third VDP palette band and records the source pointer at FF726A.
+  evidence:
+    - ghidra_decompile_001B2650
+    - ghidra_transition_render_targets
+0x001B2664:
+  name: Render_UploadPaletteBand1
+  confidence: decompiled
+  description: Uploads 16 palette words to the second VDP palette band and records the source pointer at FF7266.
+  evidence:
+    - ghidra_decompile_001B2664
+    - ghidra_transition_render_targets
 0x001B2784:
   name: Render_BeginPaletteTransition
   confidence: decompiled

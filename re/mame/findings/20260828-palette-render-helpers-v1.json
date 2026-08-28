@@ -11,6 +11,18 @@
   "targeted_decompile": "build/re/transition-render-targeted-decompile-v1.json",
   "helpers": [
     {
+      "address": "0x001B2664",
+      "name": "Render_UploadPaletteBand1",
+      "confidence": "decompiled",
+      "behavior": "Uploads 16 palette words to the second VDP palette band and records the source pointer at 0x00FF7266."
+    },
+    {
+      "address": "0x001B2650",
+      "name": "Render_UploadPaletteBand2",
+      "confidence": "decompiled",
+      "behavior": "Uploads 16 palette words to the third VDP palette band and records the source pointer at 0x00FF726A."
+    },
+    {
       "address": "0x001B2678",
       "name": "Render_UploadPaletteBand0",
       "confidence": "decompiled",
@@ -35,5 +47,5 @@
       "behavior": "Initializes four palette-band pointers from a caller-supplied palette, snapshots current VDP palette state, and runs 16 VBlank-paced palette convergence steps."
     }
   ],
-  "conclusion": "The palette subsystem has reusable band upload and clear primitives plus a parameterized transition loop complementary to the fixed-source transition entry."
+  "conclusion": "The palette subsystem has all four reusable band upload primitives, a full clear primitive, and parameterized and fixed-source transition loops."
 }

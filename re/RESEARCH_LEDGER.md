@@ -1410,9 +1410,10 @@ re/mame/findings/20260828-transition-render-service-v1.json.
 
 ## Palette upload and transition helpers (20260828)
 
-The palette helper family is now named. Render_UploadPaletteBand0 at 0x001B2678
-and Render_UploadPaletteBand3 at 0x001B263C upload 16-word bands to the VDP
-and publish their source pointers. Render_ClearPalette at 0x001B26B0 clears all
+The palette helper family is now named. Render_UploadPaletteBand0 at 0x001B2678,
+Render_UploadPaletteBand1 at 0x001B2664, Render_UploadPaletteBand2 at 0x001B2650,
+and Render_UploadPaletteBand3 at 0x001B263C upload 16-word bands to the VDP and
+publish their source pointers. Render_ClearPalette at 0x001B26B0 clears all
 64 palette words. Render_RunPaletteTransitionFrom at 0x001B278A initializes
 the four palette bands from a caller-supplied source, snapshots the current
 palette, and runs the same 16 VBlank-paced convergence loop as the fixed-source
