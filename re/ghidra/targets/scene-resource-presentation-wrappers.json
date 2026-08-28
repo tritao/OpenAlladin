@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-presentation-wrappers",
+    "purpose": "Decode the fixed scene-state resource/command-stream wrapper family selected by SceneResource_Dispatch."
+  },
+  "targets": [
+    { "address": "0x001B4BB8", "name": "SceneResource_Run12E34AStream1270A8" },
+    { "address": "0x001B4BDC", "name": "SceneResource_Run12E176Stream127134" },
+    { "address": "0x001B4C02", "name": "SceneResource_Run12DD76Stream127207" },
+    { "address": "0x001B4C28", "name": "SceneResource_Run12DD76Stream127338" },
+    { "address": "0x001B4C4E", "name": "SceneResource_Run12DA04Stream1273E9" },
+    { "address": "0x001B4C74", "name": "SceneResource_Run12DD76Stream127571" },
+    { "address": "0x001B4C9A", "name": "SceneResource_Run12DD76Stream1275EE" },
+    { "address": "0x001B4CC0", "name": "SceneResource_Run12D870Stream12772D" },
+    { "address": "0x001B4DD2", "name": "SceneResource_Run12DF6CStream12792B" },
+    { "address": "0x001B4DF8", "name": "SceneResource_RunBlankStream1279B7" },
+    { "address": "0x001B4E1E", "name": "SceneResource_RunBlankStream127AEE" },
+    { "address": "0x001B4E6A", "name": "SceneResource_RunBlankStream127BD2" },
+    { "address": "0x001B4E90", "name": "SceneResource_RunBlankStream127C42" },
+    { "address": "0x001B4EB6", "name": "SceneResource_RunBlankStream127CB4" },
+    { "address": "0x001B4EDC", "name": "SceneResource_RunBlankStream127D74" },
+    { "address": "0x001B0F66", "name": "SceneResource_Dispatch" },
+    { "address": "0x001B21F6", "name": "SceneResource_ProcessCommandStream" },
+    { "address": "0x001B4B5E", "name": "SceneResource_RunFadeAndReset" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E22", "name": "SCENE_RESOURCE_STATUS" },
+    { "address": "0x00FFEFFC", "name": "SCENE_RESOURCE_PRESENTATION_SCRATCH" }
+  ]
+}

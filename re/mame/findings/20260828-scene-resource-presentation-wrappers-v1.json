@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-scene-resource-presentation-wrappers-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-resource-presentation-wrappers.json",
+  "common_behavior": "Each wrapper invokes a fixed resource loader or blank-frame preparer, sets and clears the scene-resource presentation scratch byte at 0x00FFEFFC around SceneResource_ProcessCommandStream, then invokes SceneResource_RunFadeAndReset.",
+  "wrappers": [
+    { "address": "0x001B4BB8", "name": "SceneResource_Run12E34AStream1270A8", "scene_states": [1], "resource": "0x0012E34A", "stream": "0x001270A8", "parameters": [21, 8] },
+    { "address": "0x001B4BDC", "name": "SceneResource_Run12E176Stream127134", "scene_states": [1], "resource": "0x0012E176", "stream": "0x00127134", "parameters": [2, 10] },
+    { "address": "0x001B4C02", "name": "SceneResource_Run12DD76Stream127207", "scene_states": [3], "resource": "0x0012DD76", "stream": "0x00127207", "parameters": [17, 5] },
+    { "address": "0x001B4C28", "name": "SceneResource_Run12DD76Stream127338", "scene_states": [0], "resource": "0x0012DD76", "stream": "0x00127338", "parameters": [19, 5] },
+    { "address": "0x001B4C4E", "name": "SceneResource_Run12DA04Stream1273E9", "scene_states": [4], "resource": "0x0012DA04", "stream": "0x001273E9", "parameters": [19, 3] },
+    { "address": "0x001B4C74", "name": "SceneResource_Run12DD76Stream127571", "scene_states": [5], "resource": "0x0012DD76", "stream": "0x00127571", "parameters": [18, 8] },
+    { "address": "0x001B4C9A", "name": "SceneResource_Run12DD76Stream1275EE", "scene_states": [5], "resource": "0x0012DD76", "stream": "0x001275EE", "parameters": [17, 7] },
+    { "address": "0x001B4CC0", "name": "SceneResource_Run12D870Stream12772D", "scene_states": [7], "resource": "0x0012D870", "stream": "0x0012772D", "parameters": [21, 10] },
+    { "address": "0x001B4DD2", "name": "SceneResource_Run12DF6CStream12792B", "scene_states": [11], "resource": "0x0012DF6C", "stream": "0x0012792B", "parameters": [18, 7] },
+    { "address": "0x001B4DF8", "name": "SceneResource_RunBlankStream1279B7", "scene_states": [1], "resource": "blank", "stream": "0x001279B7", "parameters": [3, 6] },
+    { "address": "0x001B4E1E", "name": "SceneResource_RunBlankStream127AEE", "scene_states": [3], "resource": "blank", "stream": "0x00127AEE", "parameters": [3, 12] },
+    { "address": "0x001B4E6A", "name": "SceneResource_RunBlankStream127BD2", "scene_states": [4], "resource": "blank", "stream": "0x00127BD2", "parameters": [3, 11] },
+    { "address": "0x001B4E90", "name": "SceneResource_RunBlankStream127C42", "scene_states": [11], "resource": "blank", "stream": "0x00127C42", "parameters": [3, 11] },
+    { "address": "0x001B4EB6", "name": "SceneResource_RunBlankStream127CB4", "scene_states": [4], "resource": "blank", "stream": "0x00127CB4", "parameters": [3, 11] },
+    { "address": "0x001B4EDC", "name": "SceneResource_RunBlankStream127D74", "scene_states": [9], "resource": "blank", "stream": "0x00127D74", "parameters": [3, 6] }
+  ],
+  "conclusion": "The anonymous 0x001B4BB8..0x001B4EDC bodies are fixed scene-state presentation wrappers. Their resource sources, command streams, dimensions, and common completion path are exact static facts; the stream-internal record meanings remain owned by SceneResource_ProcessCommandStream."
+}

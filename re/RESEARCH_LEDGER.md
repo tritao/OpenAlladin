@@ -2005,6 +2005,27 @@ assigned until the Z80-side command consumer is decoded.
 The static result is recorded in
 `re/mame/findings/20260828-audio-control-markers-v1.json`.
 
+## Scene-resource presentation wrapper family (20260828)
+
+The fixed wrapper family selected by `SceneResource_Dispatch` is now named.
+The `0x001B4BB8` through `0x001B4EDC` bodies each combine a source-qualified
+C000 resource loader or the shared blank-frame preparer with one fixed command
+stream, dimensions, the temporary `0x00FFEFFC` presentation scratch marker,
+and `SceneResource_RunFadeAndReset`.
+
+The source/stream pairs are now explicit in the names and finding record:
+state-1 uses `0x0012E34A/0x001270A8` and `0x0012E176/0x00127134`; state-3 uses
+`0x0012DD76/0x00127207` and `0x0012DD76/0x00127338`; state-4 uses
+`0x0012DA04/0x001273E9` plus blank streams `0x00127BD2` and `0x00127CB4`;
+state-5 uses `0x00127571` and `0x001275EE`; state-7 uses
+`0x0012D870/0x0012772D`; state-9 uses `0x00127D74`; and state-11 uses
+`0x0012792B` and `0x00127C42`. The dispatch code also retains a few wrappers
+reachable from state-0 paths; the names deliberately identify the fixed
+contracts without assigning stream-internal meanings.
+
+The static result is recorded in
+`re/mame/findings/20260828-scene-resource-presentation-wrappers-v1.json`.
+
 ## Shared actor-collision reinitialization (20260828)
 
 The short body at `0x001AF4C2` is now named
