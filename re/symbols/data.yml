@@ -111,6 +111,16 @@
     - ghidra_decompile_001AD3E8
     - ghidra_disassembly_001AC6D0
 
+0x00129CAA:
+  name: SCENE_INITIAL_C000_PALETTE_DATA
+  type: u16[32]
+  format: vdp_words
+  confidence: decompiled
+  description: 32-word scene-initialization block copied to VRAM C000; its first and second 16-word bands are also published as the initial palette sources at FF7262 and FF7266.
+  evidence:
+    - ghidra_decompile_001B25FE
+    - ghidra_scene_initial_vdp_palette_targets
+
 
 0xFF9884:
   name: TERRAIN_ROW_POINTER_TABLE

@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-initial-vdp-palette",
+    "purpose": "Decode the active-scene initialization transfer that publishes palette sources and copies the initial C000 block."
+  },
+  "targets": [
+    { "address": "0x001B25FE", "name": "SceneResource_LoadInitialC000AndPaletteSources" },
+    { "address": "0x001B080E", "name": "SceneResource_InitializeActiveScene" }
+  ],
+  "memory_references": [
+    { "address": "0x00129CAA", "name": "SCENE_INITIAL_C000_PALETTE_DATA" },
+    { "address": "0x00FF7262", "name": "PALETTE_BAND_0" },
+    { "address": "0x00FF7266", "name": "PALETTE_BAND_1" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ]
+}

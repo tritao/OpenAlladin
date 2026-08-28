@@ -2014,6 +2014,18 @@ remains intentionally unassigned.
 The static result is recorded in
 `re/mame/findings/20260829-menu-selection-marker-animation-v1.json`.
 
+## Active-scene initial C000 and palette transfer (20260829)
+
+`SceneResource_LoadInitialC000AndPaletteSources` at `0x001B25FE` is called by
+`SceneResource_InitializeActiveScene` with `A0=0x00129CAA`. It publishes that
+pointer and `A0+0x20` as the first two palette-band sources at `FF7262` and
+`FF7266`, programs VDP VRAM address `0xC000`, and copies 32 words through the
+VDP data port. It preserves the caller's D0 word. The source is named as an
+initial C000/palette block; its higher-level visual identity remains open.
+
+The static result is recorded in
+`re/mame/findings/20260829-scene-initial-vdp-palette-v1.json`.
+
 ## Audio control-marker wrappers (20260828)
 
 The two fixed-packet wrappers around `Frame_InputAndResourceService` are now

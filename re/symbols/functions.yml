@@ -2372,6 +2372,14 @@
     - ghidra_decompile_001B202A
     - ghidra_scene_state_resource_targets
     - ghidra_title_presentation_resource_contract
+0x001B25FE:
+  name: SceneResource_LoadInitialC000AndPaletteSources
+  confidence: decompiled
+  description: Publishes the first two 16-word palette sources from the caller's scene-initialization block, copies 32 words from that block to VRAM C000, and preserves the caller's D0 word.
+  evidence:
+    - ghidra_decompile_001B25FE
+    - ghidra_scene_initial_vdp_palette_targets
+    - ghidra_scene_resource_vdp_service
 0x001B3B4A:
   name: Menu_AnimateSelectionMarkerTiles
   confidence: decompiled
