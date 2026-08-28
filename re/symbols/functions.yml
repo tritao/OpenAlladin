@@ -82,6 +82,14 @@
   evidence:
     - ghidra_decompile_001AC726
     - ghidra_render_submission_targets
+0x001AC6D0:
+  name: Render_BuildActorSpritePayload
+  confidence: decompiled
+  description: Expands an actor animation frame record into 14-byte VDP sprite payload entries at the renderer output pointer, applies the actor's sprite attribute and horizontal state, and increments the payload count at FFEFEE for Render_SubmitActorSprites.
+  evidence:
+    - ghidra_decompile_001AC6D0
+    - ghidra_decompile_001AC796
+    - ghidra_render_submission_targets
 0x001ADB5C:
   name: Actor_TerrainCollisionLoop
   confidence: confirmed

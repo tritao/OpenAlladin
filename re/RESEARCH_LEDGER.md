@@ -1379,6 +1379,20 @@ edge flags plus the upward stop flag with landing-state handling.
 The static result is recorded in
 re/mame/findings/20260828-frame-terrain-services-v1.json.
 
+## AnimationVM sprite payload bridge (20260828)
+
+The frame-change helper at 0x001AC6D0 is now named
+Render_BuildActorSpritePayload. Called by AnimationVM_RunActorPass, it reads
+the actor's animation frame record, expands each sub-sprite into a 14-byte
+renderer payload at 0x00FF769A, applies the actor sprite attribute and
+horizontal state, and increments 0x00FFEFEE for Render_SubmitActorSprites.
+This makes the AnimationVM-to-VDP payload boundary explicit and keeps it
+separate from the actor animation command interpreter and the sprite attribute
+record builder.
+
+The static result is recorded in
+re/mame/findings/20260828-animation-sprite-payload-v1.json.
+
 ## Actor allocation and template lifecycle (20260828)
 
 The actor allocation cluster around `0x001AE206..0x001AE372` is now named from
@@ -1589,6 +1603,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-camera-scroll-refill-v1` | recorded-static-decompilation | pending-scroll publication, directional VDP row/column refill, and interaction-row processor dispatch |
 | `20260828-frame-terrain-services-v1` | recorded-static-decompilation | frame/resource wait handshake and player directional terrain edge probes |
 | `20260828-interaction-state-services-v1` | recorded-static-decompilation | frame-gated response-counter, resource-milestone, and interaction-target services |
+| `20260828-animation-sprite-payload-v1` | recorded-static-decompilation | AnimationVM frame expansion into actor sprite payload records for VDP submission |
 | `20260828-render-submission-v1` | recorded-static-decompilation | sprite attribute-record construction, camera-relative actor culling, and the two VDP submission stages |
 | `20260828-vdp-tile-word-v1` | recorded-static-decompilation | reusable scene/resource VDP control-address and tile-word writer |
 | `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |

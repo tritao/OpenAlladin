@@ -8,6 +8,7 @@
   "targets": [
     { "address": "0x001AB7C4", "name": "Render_BuildActorRecords" },
     { "address": "0x001AB776", "name": "Render_SubmitPlayerSprites" },
+    { "address": "0x001AC6D0", "name": "Render_BuildActorSpritePayload" },
     { "address": "0x001AC726", "name": "Render_SubmitActorSprites" }
   ],
   "memory_references": [
