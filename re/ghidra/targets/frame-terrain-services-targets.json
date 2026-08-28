@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "frame-terrain-services",
+    "purpose": "Decode the frame input/resource wait service and the player terrain edge probe that publishes directional blocking flags."
+  },
+  "targets": [
+    { "address": "0x001A91C6", "name": "Frame_InputAndResourceService" },
+    { "address": "0x001AD632", "name": "Player_TerrainEdgeProbe" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E25", "name": "FRAME_WAIT_LATCH" },
+    { "address": "0x00FF7E26", "name": "SCENE_STATE" },
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
+    { "address": "0x00FF7E54", "name": "PLAYER_FRAME_PTR" },
+    { "address": "0x00FFF0C5", "name": "TERRAIN_STOP_LEFT_MOTION" },
+    { "address": "0x00FFF0C8", "name": "TERRAIN_STOP_RIGHT_MOTION" },
+    { "address": "0x00FFF0CB", "name": "TERRAIN_STOP_UPWARD_MOTION" }
+  ]
+}

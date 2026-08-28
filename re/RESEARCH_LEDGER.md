@@ -1366,6 +1366,19 @@ target value. The unthrottled 0x001B00D6 variant remains distinct and unnamed.
 The static result is recorded in
 re/mame/findings/20260828-interaction-state-services-v1.json.
 
+## Frame resource wait and terrain edge probe (20260828)
+
+Frame_InputAndResourceService at 0x001A91C6 now owns the frame-wait and
+scene/resource handshake: it samples the VDP/resource state, runs the resource
+helper sequence, waits for VBlank work, and returns once the scene countdown is
+active. Player_TerrainEdgeProbe at 0x001AD632 is the separate directional
+terrain probe. It checks the scene, player-frame, and map-boundary gates,
+samples cells around the player, and publishes left/right stop and inner/outer
+edge flags plus the upward stop flag with landing-state handling.
+
+The static result is recorded in
+re/mame/findings/20260828-frame-terrain-services-v1.json.
+
 ## Actor allocation and template lifecycle (20260828)
 
 The actor allocation cluster around `0x001AE206..0x001AE372` is now named from
@@ -1574,6 +1587,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-actor-collision-terminal-response-v1` | recorded-static-decompilation | shared terminal actor-collision response, linked cleanup, type-countdown gating, and type-0x84 replacement |
 | `20260828-animation-vm-core-v1` | recorded-static-decompilation | AnimationVM entry gate/core split, actor-table traversal, frame synchronization, and EA-FE dispatch |
 | `20260828-camera-scroll-refill-v1` | recorded-static-decompilation | pending-scroll publication, directional VDP row/column refill, and interaction-row processor dispatch |
+| `20260828-frame-terrain-services-v1` | recorded-static-decompilation | frame/resource wait handshake and player directional terrain edge probes |
 | `20260828-interaction-state-services-v1` | recorded-static-decompilation | frame-gated response-counter, resource-milestone, and interaction-target services |
 | `20260828-render-submission-v1` | recorded-static-decompilation | sprite attribute-record construction, camera-relative actor culling, and the two VDP submission stages |
 | `20260828-vdp-tile-word-v1` | recorded-static-decompilation | reusable scene/resource VDP control-address and tile-word writer |

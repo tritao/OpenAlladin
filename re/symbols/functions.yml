@@ -221,6 +221,21 @@
   evidence:
     - ghidra_decompile_001B02EC
     - ghidra_targeted_decompile_scheduler
+0x001A91C6:
+  name: Frame_InputAndResourceService
+  confidence: decompiled
+  description: Handles the frame-wait/resource gate, samples the VDP status and controller/resource state, runs the scene/resource service helpers, waits for VBlank work, and returns after the scene countdown becomes active.
+  evidence:
+    - ghidra_decompile_001A91C6
+    - ghidra_targeted_decompile_scheduler
+0x001AD632:
+  name: Player_TerrainEdgeProbe
+  confidence: decompiled
+  description: Probes the terrain around the player for left, right, and upward blocking cells, publishing the corresponding stop and inner/outer edge flags while respecting the scene-state, player-frame, map-boundary, and landing-state gates.
+  evidence:
+    - ghidra_decompile_001AD632
+    - ghidra_targeted_decompile_scheduler
+    - ghidra_lower_frontier_terrain_response
 0x001B3B96:
   name: SceneTable_SelectNextState
   confidence: probable

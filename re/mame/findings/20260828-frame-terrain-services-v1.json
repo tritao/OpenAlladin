@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-frame-terrain-services-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/frame-terrain-services-targets.json",
+  "targeted_decompile": "build/re/frame-terrain-services-targeted-decompile-v1.json",
+  "services": [
+    {
+      "address": "0x001A91C6",
+      "name": "Frame_InputAndResourceService",
+      "confidence": "decompiled",
+      "behavior": [
+        "Runs the frame-wait/resource gate and VBlank scene/resource query.",
+        "Samples the VDP status/resource state into the frame scratch buffer.",
+        "Runs the scene/resource helper sequence and waits for VBlank work before returning."
+      ]
+    },
+    {
+      "address": "0x001AD632",
+      "name": "Player_TerrainEdgeProbe",
+      "confidence": "decompiled",
+      "behavior": [
+        "Returns without publishing probes in scene state 8, without a player frame, or outside the vertical map bounds.",
+        "Samples terrain behavior entries on both sides of the player and publishes left/right stop and inner/outer probe flags.",
+        "Publishes the upward stop flag from the cell above the player while honoring the landing-state condition."
+      ]
+    }
+  ],
+  "conclusion": "The frame resource wait and player terrain edge probe are independent services: the former owns the VBlank/resource handshake, while the latter publishes directional terrain blocking state for later player response logic."
+}
