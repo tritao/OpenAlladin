@@ -301,6 +301,20 @@
   evidence:
     - ghidra_decompile_001B1F28
     - ghidra_player_terrain_state_targets
+0x001B1FAE:
+  name: Player_SelectIdleOrInteractionAnimation
+  confidence: decompiled
+  description: Selects the player idle or interaction animation from PLAYER_INTERACTION_MODE, the interaction marker at 0x00FFF0D3, and CAMERA_SPECIAL_MODE, then clears PLAYER_ANIMATION_TIMER.
+  evidence:
+    - ghidra_decompile_001B1FAE
+    - ghidra_player_terrain_state_targets
+0x001B1FFE:
+  name: Player_SelectRunOrSpecialAnimation
+  confidence: decompiled
+  description: Selects the normal player run animation or the camera-special animation root from CAMERA_SPECIAL_MODE, then clears PLAYER_ANIMATION_TIMER.
+  evidence:
+    - ghidra_decompile_001B1FFE
+    - ghidra_player_terrain_state_targets
 0x001B430C:
   name: SceneResource_ProcessCommandStreams
   confidence: decompiled

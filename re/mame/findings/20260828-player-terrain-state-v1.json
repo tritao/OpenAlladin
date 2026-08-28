@@ -25,7 +25,19 @@
       "name": "Player_ResetTerrainMotionState",
       "confidence": "decompiled",
       "behavior": "Selects a response stream from the raw query, SCENE_STATE, and CAMERA_SPECIAL_MODE gates, clears PLAYER_VY and PLAYER_ANIMATION_TIMER, sets TERRAIN_LANDING_STATE to 0xFF, and clears the terrain response timer/latch."
+    },
+    {
+      "address": "0x001B1FAE",
+      "name": "Player_SelectIdleOrInteractionAnimation",
+      "confidence": "decompiled",
+      "behavior": "Selects the player interaction animation when PLAYER_INTERACTION_MODE is active and the marker at 0x00FFF0D3 is '^'; otherwise selects the normal or camera-special idle root, then clears PLAYER_ANIMATION_TIMER."
+    },
+    {
+      "address": "0x001B1FFE",
+      "name": "Player_SelectRunOrSpecialAnimation",
+      "confidence": "decompiled",
+      "behavior": "Selects the normal run root or camera-special root from CAMERA_SPECIAL_MODE and clears PLAYER_ANIMATION_TIMER."
     }
   ],
-  "conclusion": "The player terrain-response cluster now exposes its coordinate alignment, indexed interaction-animation selection, and reset-state contracts as named services."
+  "conclusion": "The player terrain-response cluster now exposes its coordinate alignment, indexed interaction-animation selection, reset-state, idle/interaction selection, and run/special selection contracts as named services."
 }

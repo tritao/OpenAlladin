@@ -1738,7 +1738,7 @@ The static result is recorded in
 
 ## Player terrain-state helpers (20260828)
 
-The player terrain-response cluster is now named at three concrete service
+The player terrain-response cluster is now named at five concrete service
 boundaries. Player_AlignXToCameraGrid at `0x001A99C6` rounds the published
 world X coordinate to the `0x10`-pixel camera grid, converts it back to local
 PLAYER_X, restores the horizontal camera threshold, and clears the camera
@@ -1751,7 +1751,11 @@ stream from the raw query, scene, and camera-special gates, then clears
 PLAYER_VY and the animation timer while publishing the landing and terrain
 response reset flags. These helpers are state transitions used by the existing
 player terrain services; they do not introduce another animation cursor or
-service-boundary state.
+service-boundary state. Player_SelectIdleOrInteractionAnimation at
+`0x001B1FAE` selects the interaction root when the player interaction mode and
+`FFF0D3` marker are active, otherwise choosing the normal or camera-special
+idle root. Player_SelectRunOrSpecialAnimation at `0x001B1FFE` chooses the
+normal run or camera-special root. Both selectors clear the animation timer.
 
 The static result is recorded in
 `re/mame/findings/20260828-player-terrain-state-v1.json`.

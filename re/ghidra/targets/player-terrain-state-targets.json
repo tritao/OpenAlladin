@@ -8,7 +8,9 @@
   "targets": [
     { "address": "0x001A99C6", "name": "Player_AlignXToCameraGrid" },
     { "address": "0x001A9B38", "name": "Player_SelectInteractionAnimation" },
-    { "address": "0x001B1F28", "name": "Player_ResetTerrainMotionState" }
+    { "address": "0x001B1F28", "name": "Player_ResetTerrainMotionState" },
+    { "address": "0x001B1FAE", "name": "Player_SelectIdleOrInteractionAnimation" },
+    { "address": "0x001B1FFE", "name": "Player_SelectRunOrSpecialAnimation" }
   ],
   "memory_references": [
     { "address": "0x00FF7DFA", "name": "PLAYER_X" },
