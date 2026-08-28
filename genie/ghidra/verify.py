@@ -10,18 +10,11 @@ from pathlib import Path
 from genie.common import ROOT, hashes, rom_entries
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("rom", type=Path, nargs="?", help="ROM path")
-    parser.add_argument(
-        "--allow-unverified",
-        action="store_true",
-        help="accept a ROM whose identity is not in re/config/roms.yml",
-    )
-    args = parser.parse_args()
+def verify_rom(rom: Path | None = None, *, allow_unverified: bool = False) -> int:
+    """Verify *rom* against the configured ROM identity."""
 
     default_name, expected, _ = rom_entries()
-    path = args.rom or ROOT / str(expected.get("expected_filename", "rom/Disneys_Aladdin_U_p1.bin"))
+    path = rom or ROOT / str(expected.get("expected_filename", "rom/Disneys_Aladdin_U_p1.bin"))
     if not path.is_absolute():
         path = Path.cwd() / path
     path = path.resolve()
@@ -41,7 +34,7 @@ def main() -> int:
 
     expected_values = {key: str(expected.get(key, "")).upper() for key in actual}
     known = all(expected_values[key] and expected_values[key] == str(actual[key]).upper() for key in actual)
-    if not known and not args.allow_unverified:
+    if not known and not allow_unverified:
         print("\nROM rejected. Use --allow-unverified for exploratory work.", file=sys.stderr)
         return 1
     if not known:
@@ -49,6 +42,18 @@ def main() -> int:
     else:
         print("\nROM accepted.")
     return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("rom", type=Path, nargs="?", help="ROM path")
+    parser.add_argument(
+        "--allow-unverified",
+        action="store_true",
+        help="accept a ROM whose identity is not in re/config/roms.yml",
+    )
+    args = parser.parse_args()
+    return verify_rom(args.rom, allow_unverified=args.allow_unverified)
 
 
 if __name__ == "__main__":

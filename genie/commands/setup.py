@@ -1,43 +1,22 @@
-"""Workspace setup and ROM verification commands."""
+"""Compatibility aliases for the original top-level setup commands."""
 
 from __future__ import annotations
 
 import argparse
 
-from genie.runtime import *
-from genie.knowledge import validate_knowledge
+from genie.commands.ghidra import command_ghidra_setup, command_ghidra_verify
+
+
 def command_setup(args: argparse.Namespace) -> int:
-    return run_tool("ghidra/setup.py")
+    """Keep ``genie setup`` as an alias for ``genie ghidra setup``."""
+
+    return command_ghidra_setup(args)
+
 
 def command_verify(args: argparse.Namespace) -> int:
-    rom = resolve(args.rom)
-    forwarded = [str(rom)]
-    if args.allow_unverified:
-        forwarded.append("--allow-unverified")
-    return run_tool("ghidra/verify.py", forwarded)
+    """Keep ``genie verify`` as an alias for ``genie ghidra verify``."""
 
-def command_ghidra_rebuild(args: argparse.Namespace) -> int:
-    rom = resolve(args.rom)
-    verify_args = [str(rom)]
-    if args.allow_unverified:
-        verify_args.append("--allow-unverified")
-    status = run_tool("ghidra/verify.py", verify_args)
-    if status:
-        return status
+    return command_ghidra_verify(args)
 
-    forwarded = [str(rom)]
-    for flag in ("--allow-unverified", "--reuse-project", "--no-analysis"):
-        if getattr(args, flag[2:].replace("-", "_")):
-            forwarded.append(flag)
-    status = run_tool("ghidra/import_rom.py", forwarded)
-    if status:
-        return status
-    errors = validate_knowledge(rom)
-    if errors:
-        for error in errors:
-            print(f"ERROR {error}")
-        return 1
-    print("validated symbols and types")
-    return 0
 
-__all__ = [name for name in globals() if not name.startswith("__")]
+__all__ = ["command_setup", "command_verify"]

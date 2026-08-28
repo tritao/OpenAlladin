@@ -6,6 +6,7 @@ import argparse
 from collections.abc import Sequence
 
 from genie.runtime import *
+from genie.commands.ghidra import *
 from genie.commands.setup import *
 from genie.commands.trace import *
 from genie.commands.record import *
@@ -29,6 +30,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     ghidra = commands.add_parser("ghidra", help="manage Ghidra analysis")
     ghidra_commands = ghidra.add_subparsers(dest="ghidra_command", required=True)
+    ghidra_setup = ghidra_commands.add_parser("setup", help="install the pinned Ghidra toolchain")
+    ghidra_setup.set_defaults(function=command_ghidra_setup)
+    ghidra_verify = ghidra_commands.add_parser("verify", help="verify a ROM before analysis")
+    add_rom_argument(ghidra_verify, positional=True)
+    ghidra_verify.add_argument("--allow-unverified", action="store_true")
+    ghidra_verify.set_defaults(function=command_ghidra_verify)
     rebuild = ghidra_commands.add_parser("rebuild", help="verify and rebuild the local project")
     add_rom_argument(rebuild)
     rebuild.add_argument("--allow-unverified", action="store_true")

@@ -119,13 +119,19 @@ def install_pyghidra(install: Path) -> None:
     print(f"PyGhidra ready: {python}")
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    args = parser.parse_args()
+def setup_ghidra() -> None:
+    """Install the configured Ghidra release and bundled PyGhidra package."""
+
     config = load_yaml(ROOT / "re/config/ghidra.yml")
     check_java(int(config["java"]["major"]))
     install = install_release(config)
     install_pyghidra(install)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.parse_args()
+    setup_ghidra()
     print("Setup complete.")
     return 0
 

@@ -8,7 +8,6 @@ import json
 import os
 import shutil
 import subprocess
-import sys
 from pathlib import Path
 
 from genie.common import (
@@ -111,21 +110,22 @@ def ghidra_install() -> Path:
     return ROOT / config["ghidra"]["install_dir"]
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("rom", type=Path, nargs="?", help="ROM path; defaults to the existing local Aladdin dump")
-    parser.add_argument("--allow-unverified", action="store_true", help="allow a ROM not listed in re/config/roms.yml")
-    parser.add_argument("--reuse-project", action="store_true", help="do not delete the existing local project")
-    parser.add_argument("--no-analysis", action="store_true", help="import and run scripts without Ghidra auto-analysis")
-    args = parser.parse_args()
+def rebuild_project(
+    requested_rom: Path | None = None,
+    *,
+    allow_unverified: bool = False,
+    reuse_project: bool = False,
+    no_analysis: bool = False,
+) -> int:
+    """Import the ROM into a deterministic local Ghidra project."""
 
     _, expected, _ = rom_entries()
-    rom = resolve_rom(args.rom, expected)
-    verifier = ROOT / "genie/ghidra/verify.py"
-    verify_command = [sys.executable, str(verifier), str(rom)]
-    if args.allow_unverified:
-        verify_command.append("--allow-unverified")
-    subprocess.run(verify_command, check=True)
+    rom = resolve_rom(requested_rom, expected)
+    from genie.ghidra.verify import verify_rom
+
+    status = verify_rom(rom, allow_unverified=allow_unverified)
+    if status:
+        return status
 
     output_dir = ROOT / "build/re"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -135,7 +135,7 @@ def main() -> int:
     project_dir = ROOT / config["ghidra"]["project_dir"]
     project_name = config["ghidra"]["project_name"]
     project_dir.mkdir(parents=True, exist_ok=True)
-    if not args.reuse_project:
+    if not reuse_project:
         project_files = [
             project_dir / project_name,
             project_dir / f"{project_name}.gpr",
@@ -184,7 +184,7 @@ def main() -> int:
         "ExportSymbols.py",
         str(analysis_config),
     ]
-    if args.no_analysis:
+    if no_analysis:
         command.insert(4, "-noanalysis")
     print("Running:", " ".join(command))
     environment = os.environ.copy()
@@ -193,10 +193,28 @@ def main() -> int:
         environment["PATH"] = str(venv_bin) + os.pathsep + environment.get("PATH", "")
     environment["GHIDRA_INSTALL_DIR"] = str(ghidra_install())
     environment["OPENALADDIN_ROOT"] = str(ROOT)
-    subprocess.run(command, cwd=ROOT, env=environment, check=True)
+    try:
+        subprocess.run(command, cwd=ROOT, env=environment, check=True)
+    except subprocess.CalledProcessError as error:
+        return error.returncode or 1
     print(f"Analysis complete: {project_dir / project_name}")
     print(f"Exports: {output_dir}")
     return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("rom", type=Path, nargs="?", help="ROM path; defaults to the existing local Aladdin dump")
+    parser.add_argument("--allow-unverified", action="store_true", help="allow a ROM not listed in re/config/roms.yml")
+    parser.add_argument("--reuse-project", action="store_true", help="do not delete the existing local project")
+    parser.add_argument("--no-analysis", action="store_true", help="import and run scripts without Ghidra auto-analysis")
+    args = parser.parse_args()
+    return rebuild_project(
+        args.rom,
+        allow_unverified=args.allow_unverified,
+        reuse_project=args.reuse_project,
+        no_analysis=args.no_analysis,
+    )
 
 
 if __name__ == "__main__":
