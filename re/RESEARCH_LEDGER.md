@@ -1393,6 +1393,18 @@ record builder.
 The static result is recorded in
 re/mame/findings/20260828-animation-sprite-payload-v1.json.
 
+## Z80 audio bootstrap (20260828)
+
+The sound startup chain is now named end-to-end. Audio_AcquireZ80Bus at
+0x001E571C waits for the bus handoff, Audio_LoadZ80Driver at 0x001E573A copies
+the ROM driver from 0x001B8480-0x001B9D05 into Z80 RAM and clears the remaining
+RAM, Audio_StartZ80 at 0x001E5780 releases reset and the bus, and
+Audio_Initialize at 0x001E584A queues the initial sound-engine bootstrap
+commands. Audio_ReleaseZ80Bus at 0x001E5730 is the shared release primitive.
+
+The static result is recorded in
+re/mame/findings/20260828-audio-z80-bootstrap-v1.json.
+
 ## Actor allocation and template lifecycle (20260828)
 
 The actor allocation cluster around `0x001AE206..0x001AE372` is now named from
@@ -1604,6 +1616,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-frame-terrain-services-v1` | recorded-static-decompilation | frame/resource wait handshake and player directional terrain edge probes |
 | `20260828-interaction-state-services-v1` | recorded-static-decompilation | frame-gated response-counter, resource-milestone, and interaction-target services |
 | `20260828-animation-sprite-payload-v1` | recorded-static-decompilation | AnimationVM frame expansion into actor sprite payload records for VDP submission |
+| `20260828-audio-z80-bootstrap-v1` | recorded-static-decompilation | Z80 bus handoff, sound-driver copy, Z80 start, and audio bootstrap command sequence |
 | `20260828-render-submission-v1` | recorded-static-decompilation | sprite attribute-record construction, camera-relative actor culling, and the two VDP submission stages |
 | `20260828-vdp-tile-word-v1` | recorded-static-decompilation | reusable scene/resource VDP control-address and tile-word writer |
 | `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |

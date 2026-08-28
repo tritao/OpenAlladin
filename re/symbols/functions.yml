@@ -1065,6 +1065,46 @@
     - ghidra_audio_queue_decompile
     - mame_audio_mailbox_queue_trace
 
+0x001E571C:
+  name: Audio_AcquireZ80Bus
+  confidence: decompiled
+  description: Requests the Z80 bus through Z80_BUS_REQUEST and waits until the Z80 acknowledges the handoff before returning.
+  evidence:
+    - ghidra_decompile_001E571C
+    - ghidra_audio_bootstrap_disassembly
+
+0x001E5730:
+  name: Audio_ReleaseZ80Bus
+  confidence: decompiled
+  description: Releases the Z80 bus by clearing Z80_BUS_REQUEST.
+  evidence:
+    - ghidra_decompile_001E5730
+    - ghidra_audio_bootstrap_disassembly
+
+0x001E573A:
+  name: Audio_LoadZ80Driver
+  confidence: decompiled
+  description: Holds the Z80 in reset, acquires the bus, copies the ROM sound driver from 0x001B8480 through 0x001B9D05 into Z80 RAM at 0x00A00000, clears the remaining RAM through 0x00A02000, and restores the caller status.
+  evidence:
+    - ghidra_decompile_001E573A
+    - ghidra_audio_bootstrap_disassembly
+
+0x001E5780:
+  name: Audio_StartZ80
+  confidence: decompiled
+  description: Clears Z80 reset, delays for the reset transition, releases the Z80 bus, and reasserts the running reset-control state.
+  evidence:
+    - ghidra_decompile_001E5780
+    - ghidra_audio_bootstrap_disassembly
+
+0x001E584A:
+  name: Audio_Initialize
+  confidence: decompiled
+  description: Loads and starts the Z80 driver, then queues the initial sound-engine bootstrap commands and four caller-supplied initialization values.
+  evidence:
+    - ghidra_decompile_001E584A
+    - ghidra_audio_bootstrap_disassembly
+
 0x001B3416:
   name: RNC_To_VDP_Loader
   confidence: confirmed

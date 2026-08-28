@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "audio-z80-bootstrap",
+    "purpose": "Decode the Z80 bus handoff, sound-driver copy, Z80 start sequence, and initial audio command bootstrap."
+  },
+  "targets": [
+    { "address": "0x001E571C", "name": "Audio_AcquireZ80Bus" },
+    { "address": "0x001E5730", "name": "Audio_ReleaseZ80Bus" },
+    { "address": "0x001E573A", "name": "Audio_LoadZ80Driver" },
+    { "address": "0x001E5780", "name": "Audio_StartZ80" },
+    { "address": "0x001E584A", "name": "Audio_Initialize" }
+  ],
+  "memory_references": [
+    { "address": "0x00A00000", "name": "Z80_RAM" },
+    { "address": "0x00A11100", "name": "Z80_BUS_REQUEST" },
+    { "address": "0x00A11200", "name": "Z80_RESET" },
+    { "address": "0x00A01B20", "name": "Z80_SOUND_QUEUE_MARKER" }
+  ]
+}
