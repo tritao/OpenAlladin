@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-interaction-state-services-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-state-targets.json",
+  "targeted_decompile": "build/re/interaction-state-targeted-decompile-v1.json",
+  "services": [
+    {
+      "address": "0x001B00CA",
+      "name": "Interaction_UpdateCounter",
+      "confidence": "decompiled",
+      "behavior": [
+        "Runs only when FRAME_PHASE_COUNTER is even and ACTOR_RESPONSE_COUNTER is nonzero.",
+        "Decrements the response counter and advances the decimal interaction counter.",
+        "Invokes the response reset helper after the configured 5000, 7500, or 10000 tick budget."
+      ]
+    },
+    {
+      "address": "0x001B01AC",
+      "name": "Interaction_UpdateResourceState",
+      "confidence": "decompiled",
+      "behavior": [
+        "Runs the scene/resource decimal counter on even frame phases.",
+        "Triggers the matching resource command and optional audio event at the two resource milestones.",
+        "Arms the scene script countdown when the terminal resource state is reached."
+      ]
+    },
+    {
+      "address": "0x001B02EC",
+      "name": "Interaction_UpdateTarget",
+      "confidence": "decompiled",
+      "behavior": [
+        "Runs on even FRAME_PHASE_COUNTER phases.",
+        "Moves the current interaction target value one step toward the target value."
+      ]
+    }
+  ],
+  "conclusion": "The gameplay interaction service has separate frame-gated response-counter, resource-milestone, and target-convergence helpers; the unthrottled counter variant at 0x001B00D6 remains a distinct reset-path helper."
+}

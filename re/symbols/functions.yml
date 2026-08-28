@@ -200,6 +200,27 @@
     - ghidra_decompile_001B21A8
     - ghidra_decompile_001B21F6
     - ghidra_level_transition_targeted_decompile
+0x001B00CA:
+  name: Interaction_UpdateCounter
+  confidence: decompiled
+  description: On even FRAME_PHASE_COUNTER phases, drains ACTOR_RESPONSE_COUNTER, advances the decimal interaction counter, and invokes the response reset helper when the configured response budget is exhausted.
+  evidence:
+    - ghidra_decompile_001B00CA
+    - ghidra_targeted_decompile_scheduler
+0x001B01AC:
+  name: Interaction_UpdateResourceState
+  confidence: decompiled
+  description: Advances the scene/resource decimal counter on even frame phases, triggers the matching resource command and optional audio event at resource milestones, and arms the transition countdown for the terminal resource state.
+  evidence:
+    - ghidra_decompile_001B01AC
+    - ghidra_targeted_decompile_scheduler
+0x001B02EC:
+  name: Interaction_UpdateTarget
+  confidence: decompiled
+  description: On even FRAME_PHASE_COUNTER phases, moves the current interaction target value one step toward the target value published by the active interaction state.
+  evidence:
+    - ghidra_decompile_001B02EC
+    - ghidra_targeted_decompile_scheduler
 0x001B3B96:
   name: SceneTable_SelectNextState
   confidence: probable
