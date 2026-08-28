@@ -2026,6 +2026,19 @@ initial C000/palette block; its higher-level visual identity remains open.
 The static result is recorded in
 `re/mame/findings/20260829-scene-initial-vdp-palette-v1.json`.
 
+## Scene-transition selection cursor (20260829)
+
+`SceneTransition_RenderSelectionCursor` at `0x001B2AB2` processes the ROM
+command stream at `0x0012651A` with a width parameter of `0x15` and a row
+parameter of `0x14 + SCENE_TRANSITION_SELECTION_INDEX`. Its caller,
+`Scene_EnterTransitionMode`, maintains that selection index in the range `0..3`
+while handling controller input. The stream contains the cursor arrow and
+surrounding blank rows; the user-facing labels represented by the rows remain
+unassigned.
+
+The static result is recorded in
+`re/mame/findings/20260829-scene-transition-selection-v1.json`.
+
 ## Audio control-marker wrappers (20260828)
 
 The two fixed-packet wrappers around `Frame_InputAndResourceService` are now

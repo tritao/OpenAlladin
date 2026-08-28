@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-transition-selection",
+    "purpose": "Decode the transition-mode selection index and the command stream that renders its cursor."
+  },
+  "targets": [
+    { "address": "0x001B2AB2", "name": "SceneTransition_RenderSelectionCursor" },
+    { "address": "0x001B2ACE", "name": "Scene_EnterTransitionMode" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7272", "name": "SCENE_TRANSITION_SELECTION_INDEX" },
+    { "address": "0x0012651A", "name": "ROM_SCENE_TRANSITION_SELECTION_STREAM" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ]
+}

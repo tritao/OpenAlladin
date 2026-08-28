@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-scene-transition-selection-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-transition-selection-targets.json",
+  "decompile_source": "build/re/full-rom/decompile/001B2AB2.txt",
+  "services": [
+    {
+      "address": "0x001B2AB2",
+      "name": "SceneTransition_RenderSelectionCursor",
+      "confidence": "decompiled",
+      "caller": "0x001B2ACE Scene_EnterTransitionMode",
+      "stream": "0x0012651A",
+      "parameters": {
+        "width": "0x15",
+        "row": "0x14 + SCENE_TRANSITION_SELECTION_INDEX"
+      },
+      "behavior": "Runs the shared scene-resource command interpreter for the transition selection cursor stream."
+    },
+    {
+      "address": "0x001B2ACE",
+      "name": "Scene_EnterTransitionMode",
+      "confidence": "decompiled",
+      "selection_state": "Initializes and adjusts SCENE_TRANSITION_SELECTION_INDEX within the range 0..3 while processing controller input."
+    }
+  ],
+  "stream": {
+    "address": "0x0012651A",
+    "observed_content": "Cursor arrow and surrounding blank rows encoded as scene-resource command/text records."
+  },
+  "conclusion": "The former anonymous helper is the transition-mode cursor renderer. The selection index and stream address are now explicit, while the user-facing labels represented by the surrounding rows remain unresolved."
+}

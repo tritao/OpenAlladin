@@ -2388,3 +2388,11 @@
     - ghidra_decompile_001B3B4A
     - ghidra_menu_selection_marker_animation_targets
     - rom_menu_selection_marker_tiles_00129DAA
+0x001B2AB2:
+  name: SceneTransition_RenderSelectionCursor
+  confidence: decompiled
+  description: Processes the ROM command stream at 0x0012651A with a 0x15-word width and a row parameter of 0x14 plus SCENE_TRANSITION_SELECTION_INDEX, rendering the transition selection cursor and its surrounding rows.
+  evidence:
+    - ghidra_decompile_001B2AB2
+    - ghidra_scene_transition_selection_targets
+    - ghidra_decompile_001B2ACE
