@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-command-handlers",
+    "purpose": "Decode the scene-resource dispatch handlers and fixed VDP transfer helpers."
+  },
+  "targets": [
+    { "address": "0x001B23EA", "name": "SceneResource_LoadOrClearC000" },
+    { "address": "0x001B2412", "name": "SceneResource_PrepareFrameAndPalette" },
+    { "address": "0x001B2432", "name": "SceneResource_InstantiateActorRecord" },
+    { "address": "0x001B2E5A", "name": "VDP_CopyLevelF800Tilemap" },
+    { "address": "0x001B2E70", "name": "SceneResource_CopyFixedBlockToD000" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7294", "name": "SCENE_RESOURCE_C000_SOURCE" },
+    { "address": "0x00FF7E82", "name": "ACTOR_RECORD_1" },
+    { "address": "0x0011F000", "name": "LEVEL_F800_TILEMAP_SOURCE" },
+    { "address": "0x00129F00", "name": "SCENE_F800_TILEMAP_SOURCE" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ]
+}

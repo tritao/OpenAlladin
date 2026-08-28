@@ -2413,6 +2413,47 @@
     - ghidra_audio_bank_window_targets
     - z80_bank_window_helper_01F9
 
+0x001B23EA:
+  name: SceneResource_LoadOrClearC000
+  confidence: decompiled
+  description: Scene-resource command handler that clears VRAM C000 when SCENE_RESOURCE_C000_SOURCE is null, otherwise invokes the RNC-to-VDP loader for the installed source.
+  evidence:
+    - ghidra_decompile_001B23EA
+    - ghidra_scene_resource_command_handlers_targets
+
+0x001B2412:
+  name: SceneResource_PrepareFrameAndPalette
+  confidence: decompiled
+  description: Scene-resource command handler that waits for VBlank, begins the palette transition, clears VRAM C000, and uploads palette band 3 while preserving the caller's working registers.
+  evidence:
+    - ghidra_decompile_001B2412
+    - ghidra_scene_resource_command_handlers_targets
+
+0x001B2432:
+  name: SceneResource_InstantiateActorRecord
+  confidence: decompiled
+  description: Scene-resource command handler that consumes an eight-byte record containing a template pointer, X word, and Y word; when the record is active, it finds a free actor slot, initializes the template, and writes the record's X/Y position.
+  evidence:
+    - ghidra_decompile_001B2432
+    - ghidra_scene_resource_command_handlers_targets
+
+0x001B26D0:
+  name: VDP_FillC000WithTileEEEE
+  confidence: decompiled
+  description: Programs the VDP C000 destination and writes tile word 0x0EEE sixty-four times, preserving the caller's D0 word; the Type-0x1E player-collision recovery path uses it before its palette refresh.
+  evidence:
+    - ghidra_disassembly_001B26D0
+    - ghidra_decompile_001AE796
+
+0x001B2E5A:
+  name: VDP_CopyLevelF800Tilemap
+  confidence: decompiled
+  description: Copies 0x400 words from the level F800 tilemap source at ROM 0x0011F000 to VRAM destination 0xF800 through VDP_CopyWordsToVRAM during level setup.
+  evidence:
+    - ghidra_disassembly_001B2E5A
+    - ghidra_level_frame_setup_decompile
+    - ghidra_scene_resource_transfer_targets
+
 0x001B07D0:
   name: Level_RenderTerminalTransitionTileBand
   confidence: decompiled

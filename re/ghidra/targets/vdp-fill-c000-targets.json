@@ -1,0 +1,16 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "vdp-fill-c000",
+    "purpose": "Decode the fixed-pattern C000 VDP fill used by player-collision recovery."
+  },
+  "targets": [
+    { "address": "0x001B26D0", "name": "VDP_FillC000WithTileEEEE" },
+    { "address": "0x001AE796", "name": "ActorType1E_PlayerCollisionHandler" }
+  ],
+  "memory_references": [
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ]
+}

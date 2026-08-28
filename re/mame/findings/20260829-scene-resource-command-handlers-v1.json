@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-scene-resource-command-handlers-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-resource-command-handlers-targets.json",
+  "services": [
+    {
+      "address": "0x001B23EA",
+      "name": "SceneResource_LoadOrClearC000",
+      "dispatch_role": "scene-resource command handler",
+      "behavior": "Clears C000 when SCENE_RESOURCE_C000_SOURCE is null, otherwise invokes the RNC-to-VDP loader."
+    },
+    {
+      "address": "0x001B2412",
+      "name": "SceneResource_PrepareFrameAndPalette",
+      "dispatch_role": "scene-resource command handler",
+      "behavior": "Waits for VBlank, begins the palette transition, clears C000, and uploads palette band 3."
+    },
+    {
+      "address": "0x001B2432",
+      "name": "SceneResource_InstantiateActorRecord",
+      "dispatch_role": "scene-resource command handler",
+      "record_format": "template pointer longword, X word, Y word",
+      "behavior": "Skips records whose Y low byte is zero; otherwise finds a free slot, initializes the template, and writes X/Y."
+    },
+    {
+      "address": "0x001B2E5A",
+      "name": "VDP_CopyLevelF800Tilemap",
+      "behavior": "Copies 0x400 words from ROM 0x0011F000 to VRAM 0xF800 through VDP_CopyWordsToVRAM."
+    }
+  ],
+  "conclusion": "The scene-resource command table now has explicit names for its conditional C000 loader, frame/palette preparation handler, and actor-record instantiator. The level-specific F800 tilemap transfer is separated from the fixed scene F800 transfer."
+}

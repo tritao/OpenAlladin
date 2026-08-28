@@ -908,6 +908,26 @@
     - ghidra_type01_child_chain_decompile
     - mame_type01_child_chain_trace
 
+0x0011F000:
+  name: LEVEL_F800_TILEMAP_SOURCE
+  type: u16[1024]
+  format: vdp_tilemap_words
+  confidence: decompiled
+  description: Fixed 0x400-word level tilemap source copied to VRAM F800 by VDP_CopyLevelF800Tilemap during level setup.
+  evidence:
+    - ghidra_disassembly_001B2E5A
+    - ghidra_scene_resource_command_handlers_targets
+
+0x00129F00:
+  name: SCENE_F800_TILEMAP_SOURCE
+  type: u16[1024]
+  format: vdp_tilemap_words
+  confidence: decompiled
+  description: Fixed 0x400-word scene tilemap source copied to VRAM F800 by VDP_CopyScenePlaneF800.
+  evidence:
+    - ghidra_disassembly_001B2E44
+    - ghidra_scene_resource_transfer_targets
+
 0x00006960:
   name: SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS
   type: u32[32]

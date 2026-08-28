@@ -2067,6 +2067,36 @@ cursor rather than a menu-only field.
 The static result is recorded in
 `re/mame/findings/20260829-scene-transition-tile-bands-v1.json`.
 
+## Scene-resource command handlers and level tilemap transfer (20260829)
+
+The scene-resource dispatch handlers at `0x001B23EA`, `0x001B2412`, and
+`0x001B2432` are now named `SceneResource_LoadOrClearC000`,
+`SceneResource_PrepareFrameAndPalette`, and
+`SceneResource_InstantiateActorRecord`. The first selects between clearing
+VRAM C000 and invoking the RNC-to-VDP loader from `SCENE_RESOURCE_C000_SOURCE`.
+The second waits for VBlank, starts the palette transition, clears C000, and
+uploads palette band 3. The third consumes an eight-byte scene object record
+containing a template pointer and X/Y words, skips an inactive zero-Y record,
+and initializes a free actor slot for an active record.
+
+The fixed transfer at `0x001B2E5A` is now named
+`VDP_CopyLevelF800Tilemap`. It copies `0x400` words from the level source at
+`0x0011F000` to VRAM `F800`, distinct from the fixed scene source at
+`0x00129F00` used by `VDP_CopyScenePlaneF800`.
+
+The static result is recorded in
+`re/mame/findings/20260829-scene-resource-command-handlers-v1.json`.
+
+## Fixed-pattern C000 VDP fill (20260829)
+
+The helper at `0x001B26D0` is now named `VDP_FillC000WithTileEEEE`. It writes
+the tile word `0x0EEE` sixty-four times to VDP destination `C000`, preserving
+the caller's D0 word. The marked Type-0x1E player-collision recovery path uses
+it before waiting for VBlank and reloading the palette bands.
+
+The static result is recorded in
+`re/mame/findings/20260829-vdp-fill-c000-v1.json`.
+
 ## Active-scene initial C000 and palette transfer (20260829)
 
 `SceneResource_LoadInitialC000AndPaletteSources` at `0x001B25FE` is called by

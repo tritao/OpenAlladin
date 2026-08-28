@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-vdp-fill-c000-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/vdp-fill-c000-targets.json",
+  "service": {
+    "address": "0x001B26D0",
+    "name": "VDP_FillC000WithTileEEEE",
+    "word_count": 64,
+    "tile_word": "0x0EEE",
+    "vdp_command": "0xC0000000",
+    "caller": "0x001ACD54, reached from ActorType1E_PlayerCollisionHandler"
+  },
+  "conclusion": "The anonymous VDP helper is a fixed-pattern C000 fill used in the marked Type-0x1E player-collision recovery path before the VBlank wait and palette reload."
+}
