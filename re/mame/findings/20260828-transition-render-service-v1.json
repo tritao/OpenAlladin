@@ -42,6 +42,36 @@
       "name": "Render_ApplyPaletteStep",
       "confidence": "decompiled",
       "behavior": "Moves each active palette word toward the selected transition palette by component group, writes the new palette to VDP, and updates the palette-band pointers."
+    },
+    {
+      "address": "0x001B34B4",
+      "name": "SceneTransition_WriteDecimalDigit",
+      "confidence": "decompiled",
+      "behavior": "Extracts one decimal digit from D3 using the divisor in D4, emits the digit through VDP_WriteTileWord, and returns the remaining value."
+    },
+    {
+      "address": "0x001B3472",
+      "name": "SceneTransition_WriteMillionsDigit",
+      "confidence": "decompiled",
+      "behavior": "Sets the decimal divisor to 1,000,000 and delegates to SceneTransition_WriteDecimalDigit."
+    },
+    {
+      "address": "0x001B347C",
+      "name": "SceneTransition_WriteHundredThousandsDigit",
+      "confidence": "decompiled",
+      "behavior": "Sets the decimal divisor to 100,000 and delegates to SceneTransition_WriteDecimalDigit."
+    },
+    {
+      "address": "0x001B3486",
+      "name": "SceneTransition_WriteTenThousandsDigit",
+      "confidence": "decompiled",
+      "behavior": "Sets the decimal divisor to 10,000 and delegates to SceneTransition_WriteDecimalDigit."
+    },
+    {
+      "address": "0x001B3490",
+      "name": "SceneTransition_WriteThousandsDigit",
+      "confidence": "decompiled",
+      "behavior": "Sets the decimal divisor to 1,000 and delegates to SceneTransition_WriteDecimalDigit."
     }
   ],
   "conclusion": "Transition rendering uses a shared service frame with a reset-phase entry, actor-only record construction, sprite submission, and a separate 64-word palette convergence step."

@@ -506,6 +506,45 @@
   evidence:
     - ghidra_targeted_decompile_001B2ACE
     - ghidra_level_transition_targeted_decompile
+0x001B3472:
+  name: SceneTransition_WriteMillionsDigit
+  confidence: decompiled
+  description: Selects the 1,000,000 decimal place and delegates to SceneTransition_WriteDecimalDigit for transition-screen VDP output.
+  evidence:
+    - ghidra_disassembly_001B3472
+    - ghidra_decompile_001B2ACE
+    - ghidra_transition_render_targets
+0x001B347C:
+  name: SceneTransition_WriteHundredThousandsDigit
+  confidence: decompiled
+  description: Selects the 100,000 decimal place and delegates to SceneTransition_WriteDecimalDigit for transition-screen VDP output.
+  evidence:
+    - ghidra_disassembly_001B347C
+    - ghidra_decompile_001B2ACE
+    - ghidra_transition_render_targets
+0x001B3486:
+  name: SceneTransition_WriteTenThousandsDigit
+  confidence: decompiled
+  description: Selects the 10,000 decimal place and delegates to SceneTransition_WriteDecimalDigit for transition-screen VDP output.
+  evidence:
+    - ghidra_disassembly_001B3486
+    - ghidra_decompile_001B2ACE
+    - ghidra_transition_render_targets
+0x001B3490:
+  name: SceneTransition_WriteThousandsDigit
+  confidence: decompiled
+  description: Selects the 1,000 decimal place and delegates to SceneTransition_WriteDecimalDigit for transition-screen VDP output.
+  evidence:
+    - ghidra_disassembly_001B3490
+    - ghidra_decompile_001B2ACE
+    - ghidra_transition_render_targets
+0x001B34B4:
+  name: SceneTransition_WriteDecimalDigit
+  confidence: decompiled
+  description: Extracts one decimal digit from D3 using the divisor in D4, emits it through VDP_WriteTileWord, and returns the remaining value to the transition formatter.
+  evidence:
+    - ghidra_decompile_001B34B4
+    - ghidra_transition_render_targets
 0x001B315C:
   name: SceneScript_CompleteToState1
   confidence: probable

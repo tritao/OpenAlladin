@@ -1408,6 +1408,13 @@ component group at a time and writes it to VDP.
 The static result is recorded in
 re/mame/findings/20260828-transition-render-service-v1.json.
 
+The transition numeric writer family is also named. SceneTransition_WriteDecimalDigit
+at `0x001B34B4` extracts one decimal digit from the caller's value and emits
+it through VDP_WriteTileWord. The wrappers at `0x001B3472`, `0x001B347C`,
+`0x001B3486`, and `0x001B3490` select the 1,000,000, 100,000, 10,000, and
+1,000 places respectively. These helpers explain the fixed-place numeric
+output in Scene_EnterTransitionMode without assigning it to a resource type.
+
 ## Palette upload and transition helpers (20260828)
 
 The palette helper family is now named. Render_UploadPaletteBand0 at 0x001B2678,
