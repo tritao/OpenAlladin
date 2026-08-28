@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-player-terrain-state-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/player-terrain-state-targets.json",
+  "services": [
+    {
+      "address": "0x001A99C6",
+      "name": "Player_AlignXToCameraGrid",
+      "confidence": "decompiled",
+      "behavior": "Rounds PLAYER_WORLD_X to a 0x10-pixel grid position plus 8, converts it to local PLAYER_X using WORLD_CAMERA_X, restores the horizontal threshold to 0xB0, and clears CAMERA_UPDATE_DELAY."
+    },
+    {
+      "address": "0x001A9B38",
+      "name": "Player_SelectInteractionAnimation",
+      "confidence": "decompiled",
+      "behavior": "When PLAYER_INTERACTION_ANIMATION_GATE is clear, indexes the animation-root table at ROM 0x001218D8 with PLAYER_INTERACTION_ANIMATION_INDEX, clears PLAYER_ANIMATION_TIMER, and sets TERRAIN_HORIZONTAL_RESPONSE to 2."
+    },
+    {
+      "address": "0x001B1F28",
+      "name": "Player_ResetTerrainMotionState",
+      "confidence": "decompiled",
+      "behavior": "Selects a response stream from the raw query, SCENE_STATE, and CAMERA_SPECIAL_MODE gates, clears PLAYER_VY and PLAYER_ANIMATION_TIMER, sets TERRAIN_LANDING_STATE to 0xFF, and clears the terrain response timer/latch."
+    }
+  ],
+  "conclusion": "The player terrain-response cluster now exposes its coordinate alignment, indexed interaction-animation selection, and reset-state contracts as named services."
+}

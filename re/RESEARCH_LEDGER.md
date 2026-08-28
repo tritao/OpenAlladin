@@ -1682,6 +1682,26 @@ sweeps while servicing actor VMs, interaction rows, and sprite submission.
 The static result is recorded in
 `re/mame/findings/20260828-scene-camera-orchestration-v1.json`.
 
+## Player terrain-state helpers (20260828)
+
+The player terrain-response cluster is now named at three concrete service
+boundaries. Player_AlignXToCameraGrid at `0x001A99C6` rounds the published
+world X coordinate to the `0x10`-pixel camera grid, converts it back to local
+PLAYER_X, restores the horizontal camera threshold, and clears the camera
+update delay. Player_SelectInteractionAnimation at `0x001A9B38` indexes the
+interaction animation-root table when its gate is clear, resets the animation
+timer, and publishes horizontal terrain response state 2.
+
+Player_ResetTerrainMotionState at `0x001B1F28` chooses the player response
+stream from the raw query, scene, and camera-special gates, then clears
+PLAYER_VY and the animation timer while publishing the landing and terrain
+response reset flags. These helpers are state transitions used by the existing
+player terrain services; they do not introduce another animation cursor or
+service-boundary state.
+
+The static result is recorded in
+`re/mame/findings/20260828-player-terrain-state-v1.json`.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1804,6 +1824,7 @@ The static result is recorded in
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |
+| `20260828-player-terrain-state-v1` | recorded-static-decompilation | player camera-grid alignment, interaction-animation selection, and terrain-motion reset |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

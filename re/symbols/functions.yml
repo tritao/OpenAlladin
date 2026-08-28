@@ -32,6 +32,21 @@
   evidence:
     - ghidra_decompile_001AA724
     - ghidra_scene_camera_orchestration_targets
+0x001A99C6:
+  name: Player_AlignXToCameraGrid
+  confidence: decompiled
+  description: Rounds the published player world X coordinate to the camera grid, writes the corresponding local PLAYER_X value, restores the horizontal camera threshold to 0xB0, and clears the camera update delay.
+  evidence:
+    - ghidra_decompile_001A99C6
+    - ghidra_player_terrain_state_targets
+    - mame_player_terrain_experiments
+0x001A9B38:
+  name: Player_SelectInteractionAnimation
+  confidence: decompiled
+  description: When the interaction-animation gate is clear, selects the player animation root from the indexed interaction animation table at ROM 0x001218D8, clears the animation timer, and publishes horizontal terrain response state 2.
+  evidence:
+    - ghidra_decompile_001A9B38
+    - ghidra_player_terrain_state_targets
 0x001AAA2A:
   name: Camera_PublishScroll
   confidence: decompiled
@@ -208,6 +223,13 @@
     - ghidra_decompile_001B16E0
     - ghidra_scene_camera_orchestration_targets
     - mame_transition_resource_lifecycle
+0x001B1F28:
+  name: Player_ResetTerrainMotionState
+  confidence: decompiled
+  description: Resets player vertical motion and terrain response state, chooses the scene/query/camera-specific player response animation, clears the animation timer, and publishes the reset landing/response flags.
+  evidence:
+    - ghidra_decompile_001B1F28
+    - ghidra_player_terrain_state_targets
 0x001B430C:
   name: SceneResource_ProcessCommandStreams
   confidence: decompiled
