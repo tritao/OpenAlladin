@@ -2031,6 +2031,19 @@ and writes the active-scene entry gate at `0xFF7E3F`. The gate is consumed by
 The static result is recorded in
 `re/mame/findings/20260828-startup-initialization-v1.json`.
 
+## Player terrain-contact resolution (20260828)
+
+The neighboring contact-side player routines are now named. `0x001A99F0`
+handles terrain contact while the player is not rising: it selects the
+interaction animation and facing for directional push flags, updates camera
+thresholds and delay, aligns local Y, and publishes the interaction transition
+lock. `0x001A9B6C` owns the exact alignment formula
+`((PLAYER_WORLD_Y & 0xFFF0) | 4) - WORLD_CAMERA_Y` and restores the horizontal
+camera threshold.
+
+The static result is recorded in
+`re/mame/findings/20260828-player-terrain-contact-v1.json`.
+
 | Campaign | Status | Purpose |
 | --- | --- | --- |
 | `20260825-level01-canonical-v1` | in progress | original canonical route record |
@@ -2159,6 +2172,7 @@ The static result is recorded in
 | `20260828-scene-state-resource-presentations-v1` | recorded-static-decompilation | scene-script state presentation, shared reset/transition presentation, and title/intro timing/resource contracts |
 | `20260828-player-terrain-response-v1` | recorded-static-decompilation | terrain-response resolver, odd/even animation selectors, and vertical-band pointer table |
 | `20260828-startup-initialization-v1` | recorded-static-decompilation | reset audio/runtime setup, scene/script defaults, menu callback installation, and active-scene gate |
+| `20260828-player-terrain-contact-v1` | recorded-static-decompilation | non-rising terrain contact, directional push animation/facing, camera thresholds, and local-Y grid alignment |
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |

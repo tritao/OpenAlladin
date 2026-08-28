@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-terrain-contact",
+    "purpose": "Decode the grounded/contact-side player terrain response and the local-Y camera-grid alignment helper."
+  },
+  "targets": [
+    { "address": "0x001A99F0", "name": "Player_ResolveTerrainContact" },
+    { "address": "0x001A9B6C", "name": "Player_AlignYToCameraGrid" },
+    { "address": "0x001A9B38", "name": "Player_SelectInteractionAnimation" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E02", "name": "PLAYER_WORLD_X" },
+    { "address": "0x00FF7E04", "name": "PLAYER_WORLD_Y" },
+    { "address": "0x00FF7DF8", "name": "WORLD_CAMERA_Y" },
+    { "address": "0x00FF7DFC", "name": "PLAYER_Y" },
+    { "address": "0x00FF7DFE", "name": "CAMERA_HORIZONTAL_THRESHOLD" },
+    { "address": "0x00FF7E00", "name": "CAMERA_VERTICAL_THRESHOLD" },
+    { "address": "0x00FF7E49", "name": "PLAYER_FACING_X_FLIP" },
+    { "address": "0x00FF7E5A", "name": "PLAYER_VY" },
+    { "address": "0x00FFF07C", "name": "TERRAIN_PUSH_RIGHT" },
+    { "address": "0x00FFF07D", "name": "TERRAIN_PUSH_LEFT" },
+    { "address": "0x00FFF0B0", "name": "TERRAIN_HORIZONTAL_RESPONSE" },
+    { "address": "0x00FFF0BE", "name": "TERRAIN_RESPONSE_ACTIVE" },
+    { "address": "0x00FFF0C0", "name": "TERRAIN_VERTICAL_STOP" },
+    { "address": "0x00FFF0D6", "name": "TERRAIN_STATE" },
+    { "address": "0x00FFF0D7", "name": "PLAYER_INTERACTION_TRANSITION_LOCK" },
+    { "address": "0x00FFF0E7", "name": "PLAYER_INTERACTION_ANIMATION_GATE" },
+    { "address": "0x00FFF0EB", "name": "PLAYER_ANIMATION_REFRESH_PENDING" },
+    { "address": "0x00FFF16A", "name": "PLAYER_INTERACTION_ANIMATION_INDEX" },
+    { "address": "0x00FFF167", "name": "CAMERA_UPDATE_DELAY" }
+  ]
+}

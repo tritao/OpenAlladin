@@ -2076,6 +2076,21 @@
     - ghidra_decompile_001AA41C
     - ghidra_startup_initialization_targets
     - ghidra_disassembly_0000021A
+0x001A99F0:
+  name: Player_ResolveTerrainContact
+  confidence: decompiled
+  description: Resolves the player's terrain contact state when the player is not rising, selecting interaction animation and facing for directional push responses, aligning the player to the terrain grid, updating camera thresholds, and publishing PLAYER_INTERACTION_TRANSITION_LOCK.
+  evidence:
+    - ghidra_decompile_001A99F0
+    - ghidra_player_terrain_contact_targets
+    - ghidra_disassembly_001A8C16
+0x001A9B6C:
+  name: Player_AlignYToCameraGrid
+  confidence: decompiled
+  description: Recomputes PLAYER_Y from PLAYER_WORLD_Y aligned to a 16-pixel grid plus the four-pixel player offset relative to WORLD_CAMERA_Y, and restores CAMERA_HORIZONTAL_THRESHOLD to 0xB0.
+  evidence:
+    - ghidra_decompile_001A9B6C
+    - ghidra_player_terrain_contact_targets
 0x001B0CBC:
   name: Hud_RunPendingDisplayPresentation
   confidence: decompiled
