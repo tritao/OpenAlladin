@@ -1698,6 +1698,19 @@ words from ROM `0x0011E0A0` through VDP_CopyWordsToVRAM. The transfer is kept
 address-qualified because the payload's higher-level asset role is not yet
 established.
 
+## Controller-pattern table selectors (20260828)
+
+The two small table selectors at `0x001B0B8E` and `0x001B0BA6` are now named
+`Input_SelectPrimaryPatternTable` and `Input_SelectAlternatePatternTable`.
+They publish the ROM table addresses `0x4128` and `0x413A` to the active
+pattern cursor slots at `FF7276`/`FF727A` and clear the shared match latch at
+`FF727E`. The tables contain two-byte controller samples terminated by
+`FF 00`; the consuming frame/scene services remain separate because the
+higher-level purpose of the patterns is not yet established.
+
+The static result is recorded in
+`re/mame/findings/20260828-input-pattern-service-v1.json`.
+
 ## Scene VDP and query/audio service helpers (20260828)
 
 The shared scene service helpers around the tile-row command tables are now

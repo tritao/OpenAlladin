@@ -61,6 +61,35 @@
     - ghidra_difficulty_menu_strings_003FD2
     - ghidra_disassembly_001B0046
     - ghidra_disassembly_001B434E
+0xFF7276:
+  name: INPUT_PATTERN_CURSOR
+  type: rom_pointer
+  format: address
+  confidence: probable
+  description: Active controller-pattern table cursor used by the frame input service; selected from the primary table at 0x00004128 or alternate table at 0x0000413A.
+  evidence:
+    - ghidra_disassembly_001B0A46
+    - ghidra_input_pattern_targets
+0xFF727A:
+  name: INPUT_PATTERN_MIRROR_CURSOR
+  type: rom_pointer
+  format: address
+  confidence: probable
+  description: Companion controller-pattern cursor slot initialized alongside INPUT_PATTERN_CURSOR by the two table selectors.
+  evidence:
+    - ghidra_disassembly_001B0B8E
+    - ghidra_disassembly_001B0BA6
+    - ghidra_input_pattern_targets
+0xFF727E:
+  name: INPUT_PATTERN_MATCH_LATCH
+  type: u8
+  format: boolean
+  confidence: probable
+  description: Controller-pattern match/advance latch cleared when a primary or alternate input-pattern table is selected and set by the consuming services after a matching two-byte sample.
+  evidence:
+    - ghidra_disassembly_001B0A46
+    - ghidra_disassembly_001B0BBE
+    - ghidra_input_pattern_targets
 0xFF7E28:
   name: FRAME_PHASE_COUNTER
   aliases:

@@ -295,6 +295,20 @@
   evidence:
     - ghidra_disassembly_001B2E70
     - ghidra_scene_resource_transfer_targets
+0x001B0B8E:
+  name: Input_SelectPrimaryPatternTable
+  confidence: decompiled
+  description: Selects the primary two-byte controller-pattern table at ROM 0x00004128, publishes it to the pattern cursor slots, and clears the pattern-match latch.
+  evidence:
+    - ghidra_disassembly_001B0B8E
+    - ghidra_input_pattern_targets
+0x001B0BA6:
+  name: Input_SelectAlternatePatternTable
+  confidence: decompiled
+  description: Selects the alternate two-byte controller-pattern table at ROM 0x0000413A, publishes it to the pattern cursor slots, and clears the pattern-match latch.
+  evidence:
+    - ghidra_disassembly_001B0BA6
+    - ghidra_input_pattern_targets
 0x001B34CA:
   name: Input_SampleControllerState
   confidence: confirmed

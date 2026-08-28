@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-input-pattern-service-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/input-pattern-targets.json",
+  "services": [
+    {
+      "address": "0x001B0B8E",
+      "name": "Input_SelectPrimaryPatternTable",
+      "confidence": "decompiled",
+      "behavior": "Stores the primary controller-pattern table address 0x00004128 in INPUT_PATTERN_CURSOR and INPUT_PATTERN_MIRROR_CURSOR, then clears INPUT_PATTERN_MATCH_LATCH."
+    },
+    {
+      "address": "0x001B0BA6",
+      "name": "Input_SelectAlternatePatternTable",
+      "confidence": "decompiled",
+      "behavior": "Stores the alternate controller-pattern table address 0x0000413A in INPUT_PATTERN_CURSOR and INPUT_PATTERN_MIRROR_CURSOR, then clears INPUT_PATTERN_MATCH_LATCH."
+    }
+  ],
+  "context": {
+    "primary_consumer": "0x001B0A46",
+    "alternate_consumer": "0x001B0BBE",
+    "table_format": "Two-byte controller samples terminated by FF 00; the consuming services compare the sampled controller nibbles against the active table and advance by two bytes when a match is latched."
+  },
+  "conclusion": "The ROM has two explicit controller-pattern table selectors. Their table contents and callers are recorded while the higher-level purpose of each pattern remains intentionally unnamed."
+}

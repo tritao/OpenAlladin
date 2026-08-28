@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "input-pattern-services",
+    "purpose": "Classify the two static controller-pattern table selectors used by the frame and scene input services without assigning an unproven higher-level feature name."
+  },
+  "targets": [
+    { "address": "0x001B0B8E", "name": "Input_SelectPrimaryPatternTable" },
+    { "address": "0x001B0BA6", "name": "Input_SelectAlternatePatternTable" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7276", "name": "INPUT_PATTERN_CURSOR" },
+    { "address": "0x00FF727A", "name": "INPUT_PATTERN_MIRROR_CURSOR" },
+    { "address": "0x00FF727E", "name": "INPUT_PATTERN_MATCH_LATCH" },
+    { "address": "0x00004128", "name": "PRIMARY_INPUT_PATTERN_TABLE" },
+    { "address": "0x0000413A", "name": "ALTERNATE_INPUT_PATTERN_TABLE" }
+  ]
+}
