@@ -280,6 +280,14 @@
     - ghidra_disassembly_001B434E
     - ghidra_difficulty_menu_strings_003FD2
     - ghidra_scene_camera_orchestration_targets
+0x001B293C:
+  name: Render_ConvergePaletteWords
+  confidence: decompiled
+  description: Shared palette convergence loop that adjusts each selected current VDP palette word toward the caller's source words by one Genesis color-component step and writes the result to VDP_DATA.
+  evidence:
+    - ghidra_disassembly_001B293C
+    - ghidra_decompile_001B2916
+    - ghidra_transition_render_targets
 0x001B34CA:
   name: Input_SampleControllerState
   confidence: confirmed

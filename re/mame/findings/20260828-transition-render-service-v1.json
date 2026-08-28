@@ -44,6 +44,12 @@
       "behavior": "Moves each active palette word toward the selected transition palette by component group, writes the new palette to VDP, and updates the palette-band pointers."
     },
     {
+      "address": "0x001B293C",
+      "name": "Render_ConvergePaletteWords",
+      "confidence": "decompiled",
+      "behavior": "Shared convergence loop used for full-palette and single-band steps; adjusts each selected current VDP palette word toward the caller's source words by one Genesis color-component step and writes the result to VDP_DATA."
+    },
+    {
       "address": "0x001B34B4",
       "name": "SceneTransition_WriteDecimalDigit",
       "confidence": "decompiled",

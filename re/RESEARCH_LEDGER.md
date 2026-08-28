@@ -1410,7 +1410,10 @@ Frame_RunServicePass at 0x001B28AE, which advances the phase, services
 MovementVM and AnimationVM, builds actor-only records through
 Render_BuildActorRecordsOnly at 0x001AB7A4, waits for VBlank, and submits both
 sprite stages. Render_ApplyPaletteStep at 0x001B2916 converges the palette one
-component group at a time and writes it to VDP.
+component group at a time and writes it to VDP. The shared loop at
+0x001B293C is now named Render_ConvergePaletteWords; the full-palette and
+single-band entries select their respective word counts before entering this
+same component-step writer.
 
 The static result is recorded in
 re/mame/findings/20260828-transition-render-service-v1.json.

@@ -18,6 +18,7 @@
     { "address": "0x001B28AE", "name": "Frame_RunServicePass" },
     { "address": "0x001B28CE", "name": "Render_ApplyPaletteBandStep" },
     { "address": "0x001B2916", "name": "Render_ApplyPaletteStep" },
+    { "address": "0x001B293C", "name": "Render_ConvergePaletteWords" },
     { "address": "0x001B3472", "name": "SceneTransition_WriteMillionsDigit" },
     { "address": "0x001B347C", "name": "SceneTransition_WriteHundredThousandsDigit" },
     { "address": "0x001B3486", "name": "SceneTransition_WriteTenThousandsDigit" },
