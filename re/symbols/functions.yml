@@ -1695,6 +1695,14 @@
     - ghidra_decompile_001AD150
     - ghidra_decompile_001AE796
     - ghidra_decompile_001AEC00
+0x001AE1A0:
+  name: Scene_ApplyActiveLevelPaletteTransition
+  confidence: decompiled
+  description: Selects the active level record from SCENE_STATE in the ROM level table, publishes its palette source, and runs the shared palette transition from that source.
+  evidence:
+    - ghidra_decompile_001AE1A0
+    - rom_level_table_002C78
+    - ghidra_decompile_001B278A
 0x001AE206:
   name: Actor_ClearAllRecords
   confidence: confirmed

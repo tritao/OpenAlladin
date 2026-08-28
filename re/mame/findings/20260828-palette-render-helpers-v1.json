@@ -51,7 +51,13 @@
       "name": "Render_RunPaletteTransitionFrom",
       "confidence": "decompiled",
       "behavior": "Initializes four palette-band pointers from a caller-supplied palette, snapshots current VDP palette state, and runs 16 VBlank-paced palette convergence steps."
+    },
+    {
+      "address": "0x001AE1A0",
+      "name": "Scene_ApplyActiveLevelPaletteTransition",
+      "confidence": "decompiled",
+      "behavior": "Selects the active level record from SCENE_STATE in the ROM level table, stores its palette source, and invokes the shared palette transition using that source."
     }
   ],
-  "conclusion": "The palette subsystem has all four reusable band upload primitives, a full clear primitive, and parameterized and fixed-source transition loops."
+  "conclusion": "The palette subsystem has all four reusable band upload primitives, a full clear primitive, parameterized and fixed-source transition loops, and a named scene entry that selects the active level palette source."
 }

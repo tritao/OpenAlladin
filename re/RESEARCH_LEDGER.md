@@ -1430,6 +1430,11 @@ Render_ApplyPaletteBandStep at `0x001B28CE` is the 16-word counterpart to
 Render_ApplyPaletteStep: it converges one caller-selected palette band by one
 component group, writes that band to VDP, and records its source pointer.
 
+Scene_ApplyActiveLevelPaletteTransition at `0x001AE1A0` selects the active
+level record from `SCENE_STATE` in the ROM level table, publishes its palette
+source, and invokes `Render_RunPaletteTransitionFrom`. This names the shared
+scene-side entry without conflating it with any state-specific resource loader.
+
 The static result is recorded in
 re/mame/findings/20260828-palette-render-helpers-v1.json.
 

@@ -22,7 +22,8 @@
     { "address": "0x001B3486", "name": "SceneTransition_WriteTenThousandsDigit" },
     { "address": "0x001B3490", "name": "SceneTransition_WriteThousandsDigit" },
     { "address": "0x001B34B4", "name": "SceneTransition_WriteDecimalDigit" },
-    { "address": "0x001AB7A4", "name": "Render_BuildActorRecordsOnly" }
+    { "address": "0x001AB7A4", "name": "Render_BuildActorRecordsOnly" },
+    { "address": "0x001AE1A0", "name": "Scene_ApplyActiveLevelPaletteTransition" }
   ],
   "memory_references": [
     { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
