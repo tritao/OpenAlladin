@@ -1716,6 +1716,19 @@ service-boundary state.
 The static result is recorded in
 `re/mame/findings/20260828-player-terrain-state-v1.json`.
 
+## Interaction-counter decrement helper (20260828)
+
+FarTransfer_InteractionCounterStepBack at `0x001B0360` is now named as the
+counterpart to FarTransfer_InteractionCounterStep at `0x001B0336`. It
+decrements the two ASCII digits at `FFEFE0`, rolls a low digit below `'0'`
+back to `'9'` while decrementing the high digit, and stops at `"00"`.
+ActorType15_PlayerCollisionHandler invokes it three times before selecting its
+player response animation. The interaction counter therefore has explicit
+bounded increment/decrement operations in the collision/resource lifecycle.
+
+The static result is recorded in
+`re/mame/findings/20260828-interaction-counter-decrement-v1.json`.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1840,6 +1853,7 @@ The static result is recorded in
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |
 | `20260828-interaction-counter-actors-v1` | recorded-static-decompilation | interaction-counter quotient/remainder selection of scene-rebuild actor animation roots |
 | `20260828-player-terrain-state-v1` | recorded-static-decompilation | player camera-grid alignment, interaction-animation selection, and terrain-motion reset |
+| `20260828-interaction-counter-decrement-v1` | recorded-static-decompilation | bounded ASCII-style interaction-counter decrement and rollover behavior |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

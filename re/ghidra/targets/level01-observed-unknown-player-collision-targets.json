@@ -12,6 +12,7 @@
     { "address": "0x001AEC00", "name": "PlayerCollision_SharedResponse" },
     { "address": "0x001AE4F8", "name": "Player_ProcessInteractionState" },
     { "address": "0x001B0336", "name": "Player_InteractionCounterStep" },
+    { "address": "0x001B0360", "name": "FarTransfer_InteractionCounterStepBack" },
     { "address": "0x001AE2DA", "name": "Actor_CollisionEligibilityCheck" },
     { "address": "0x001ABE6E", "name": "Actor_ClearAndRelease" }
   ],

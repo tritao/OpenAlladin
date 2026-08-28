@@ -852,6 +852,14 @@
   evidence:
     - ghidra_far_transfer_targeted_decompile_v1
     - mame_handhold_far_transfer_trace
+0x001B0360:
+  name: FarTransfer_InteractionCounterStepBack
+  confidence: decompiled
+  description: Decrements the ASCII-style interaction counter at 0x00FFEFE0, rolls a low digit below '0' back to '9' while decrementing the high digit, and stops when the word reaches "00".
+  evidence:
+    - ghidra_decompile_001B0360
+    - ghidra_level01_observed_unknown_player_collision_targets
+    - ghidra_decompile_001AE978
 0x001B5256:
   name: InteractionHandler_0x40_Helper
   confidence: confirmed

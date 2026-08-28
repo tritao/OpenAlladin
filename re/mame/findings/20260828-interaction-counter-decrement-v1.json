@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-interaction-counter-decrement-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level01-observed-unknown-player-collision-targets.json",
+  "function": {
+    "address": "0x001B0360",
+    "name": "FarTransfer_InteractionCounterStepBack",
+    "confidence": "decompiled",
+    "behavior": [
+      "Returns without changing the word when 0x00FFEFE0 is \"00\".",
+      "Decrements the low ASCII digit at 0x00FFEFE1.",
+      "When the low digit crosses below '0', reloads it to '9' and decrements the high ASCII digit at 0x00FFEFE0."
+    ],
+    "caller": "ActorType15_PlayerCollisionHandler at 0x001AE978 invokes the helper three times before selecting the player response animation."
+  },
+  "conclusion": "The far-transfer interaction counter has explicit decrement semantics that complement the existing increment helper; it is a bounded two-digit ASCII state word rather than an opaque flag."
+}
