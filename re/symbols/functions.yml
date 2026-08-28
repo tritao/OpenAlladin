@@ -229,6 +229,20 @@
   evidence:
     - ghidra_decompile_001B02EC
     - ghidra_targeted_decompile_scheduler
+0x001B0078:
+  name: Interaction_SynchronizeResponseState
+  confidence: decompiled
+  description: Clears the response-sync flag, drains ACTOR_RESPONSE_COUNTER through Interaction_DrainResponseCounter, and copies the six-byte response state forward when the pending value has not passed the published value.
+  evidence:
+    - ghidra_decompile_001B0078
+    - ghidra_interaction_counter_reset_audit
+0x001B00D6:
+  name: Interaction_DrainResponseCounter
+  confidence: decompiled
+  description: Unthrottled response-counter drain used by Interaction_SynchronizeResponseState; decrements ACTOR_RESPONSE_COUNTER, advances the decimal interaction counter, and invokes the response reset helper at the configured budget.
+  evidence:
+    - ghidra_decompile_001B00D6
+    - ghidra_interaction_counter_reset_audit
 0x001A91C6:
   name: Frame_InputAndResourceService
   confidence: decompiled

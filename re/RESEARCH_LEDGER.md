@@ -1366,6 +1366,19 @@ target value. The unthrottled 0x001B00D6 variant remains distinct and unnamed.
 The static result is recorded in
 re/mame/findings/20260828-interaction-state-services-v1.json.
 
+## Interaction response-counter drain (20260828)
+
+The reset-path response helper at 0x001B0078 is now named
+Interaction_SynchronizeResponseState. It clears the response-sync flag,
+drains ACTOR_RESPONSE_COUNTER through the unthrottled helper at 0x001B00D6,
+and copies the six-byte pending response state to the published state when
+the pending value has not passed it. The 0x001B00D6 helper is now named
+Interaction_DrainResponseCounter, distinct from the even-frame gameplay
+counter updater at 0x001B00CA.
+
+The static result is recorded in
+re/mame/findings/20260828-interaction-counter-drain-v1.json.
+
 ## Frame resource wait and terrain edge probe (20260828)
 
 Frame_InputAndResourceService at 0x001A91C6 now owns the frame-wait and
@@ -1615,6 +1628,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-camera-scroll-refill-v1` | recorded-static-decompilation | pending-scroll publication, directional VDP row/column refill, and interaction-row processor dispatch |
 | `20260828-frame-terrain-services-v1` | recorded-static-decompilation | frame/resource wait handshake and player directional terrain edge probes |
 | `20260828-interaction-state-services-v1` | recorded-static-decompilation | frame-gated response-counter, resource-milestone, and interaction-target services |
+| `20260828-interaction-counter-drain-v1` | recorded-static-decompilation | reset-path response-counter drain and six-byte response-state synchronization |
 | `20260828-animation-sprite-payload-v1` | recorded-static-decompilation | AnimationVM frame expansion into actor sprite payload records for VDP submission |
 | `20260828-audio-z80-bootstrap-v1` | recorded-static-decompilation | Z80 bus handoff, sound-driver copy, Z80 start, and audio bootstrap command sequence |
 | `20260828-render-submission-v1` | recorded-static-decompilation | sprite attribute-record construction, camera-relative actor culling, and the two VDP submission stages |

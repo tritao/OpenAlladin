@@ -6,6 +6,8 @@
     "purpose": "Decode the frame-gated interaction counter, scene/resource milestone updater, and target convergence helper in the gameplay service sequence."
   },
   "targets": [
+    { "address": "0x001B0078", "name": "Interaction_SynchronizeResponseState" },
+    { "address": "0x001B00D6", "name": "Interaction_DrainResponseCounter" },
     { "address": "0x001B00CA", "name": "Interaction_UpdateCounter" },
     { "address": "0x001B01AC", "name": "Interaction_UpdateResourceState" },
     { "address": "0x001B02EC", "name": "Interaction_UpdateTarget" }
