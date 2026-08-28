@@ -1261,6 +1261,36 @@ jump, settles on behavior `0x25` at `(4728,628)`, and never reaches the behavior
 `0x29`/`0x2D` launch targets or a scene/countdown gate. The trace is retained at
 `build/re/analysis/20260827-level01-upper-band-inventory-v1/runtime-clean`.
 
+## Player AnimationVM cursor lifecycle (20260828)
+
+The serialized decompiler reports for `0x001A8C16`, `0x001A9304`, `0x001A9502`,
+`0x001AC784`, `0x001AD150`, and the complete `PLAYER_ANIMATION_PC` /
+`PLAYER_ANIMATION_TIMER` writer closure establish the player animation order.
+`Game_FrameUpdateLoop` increments `FRAME_PHASE_COUNTER`, runs the locomotion and
+action selectors, terrain response and collision handlers, and only then enters
+the single common `AnimationVM_TickActors` traversal. `0x001AC784` walks the
+player record at `0x00FF7E40` as slot 0, reads its frame reference through the
+cursor at `0x00FF7E60`, decrements `0x00FF7E77` when nonzero, otherwise executes
+the command stream and writes the advanced cursor back to the same record.
+
+The writers at `0x001A9304`, `0x001A9502`, `0x001A9716`, `0x001A9D98`,
+`0x001ABB40`, `0x001AD7B4`, `0x001AE796`, `0x001AEC00`, `0x001AFBF4`,
+`0x001B1F28`, `0x001B1FAE`, `0x001B1FFE`, `0x001B5502`, `0x001B55E8`, and
+`0x001B56B6` all publish a new root and clear the timer as part of gameplay
+selection/response handling before the common traversal. `0x001AD150` clears
+the timer and animation gate but does not introduce a second cursor or service
+phase. There is no ROM-side pending cursor and no ROM-side service-boundary
+enum.
+
+The native player path now follows that ownership directly. Physical apple
+selection is made before ordinal 30, so the VM consumes `0x001223DA` itself and
+the live cursor advances through `0x001223E2`, `0x00122438`, and `0x0012245C`
+without a shadow cursor or apple-specific service state. The former native
+`pending_animation_pc_` and player `service_boundary_` fields were removed;
+the surviving `actor_service_boundary_` is explicitly limited to producer gates
+on non-player actor VM instances. `tests/native_scheduler_trace.py` locks the
+apple cursor sequence and focused jump/spawn/scheduler regressions remain green.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |

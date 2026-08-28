@@ -147,6 +147,13 @@ def check_trace(
             for record in state_frames
             for actor in record["actors"]
         )
+        state_by_frame = {record["frame"]: record for record in state_frames}
+        assert state_by_frame[31]["player"]["animation_pc"] == 0x001223E2
+        assert state_by_frame[39]["player"]["animation_pc"] == 0x00122438
+        assert state_by_frame[41]["player"]["animation_pc"] == 0x0012245C
+        player_vm = state_by_frame[31]["scheduler"]["player_vm"]
+        assert not player_vm["actor_service_deferred"]
+        assert not player_vm["actor_service_forced"]
     return any(record["writer_pcs"] for record in frames)
 
 

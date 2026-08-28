@@ -178,9 +178,7 @@ void PlayerAnimationVm::reset() {
     // the standalone VM deterministic when it is used without an engine.
     random_value_ = 0x00;
     actor_tick_ = false;
-    pending_animation_pc_ = 0;
-    service_boundary_ = ServiceBoundary::None;
-    action_boundary_ = ActionBoundary::None;
+    actor_service_boundary_ = ActorServiceBoundary::None;
     tracking_memory_writes_ = false;
     active_command_pc_ = 0;
     writer_pcs_.clear();
@@ -713,7 +711,6 @@ void PlayerAnimationVm::set_frame_pointer(std::uint32_t frame_pointer) {
 
 void PlayerAnimationVm::set_animation_state(std::uint32_t animation_pc, int timer) {
     if (!rom_mode_) return;
-    pending_animation_pc_ = 0;
     animation_pc_ = animation_pc;
     if (is_response_stream_cursor(animation_pc)) {
         stream_entry_ = animation_pc < kResponseStream
@@ -732,128 +729,47 @@ void PlayerAnimationVm::clear_animation_timer_next_update() {
     clear_timer_next_update_ = true;
 }
 
-void PlayerAnimationVm::republish_stream_root() {
-    if (!rom_mode_ || stream_entry_ == 0 || stream_kind_ != AnimationStreamKind::Locomotion) {
-        return;
-    }
-    if (animation_pc_ != stream_entry_) {
-        // The VM pass may already have advanced the cursor before the
-        // gameplay selector writes the root. Restore that cursor after the
-        // one-frame root publication so scheduler phase is not disturbed.
-        pending_animation_pc_ = animation_pc_;
-    }
-    animation_pc_ = stream_entry_;
-    const std::uint16_t reference = read_rom16(stream_entry_);
-    set_frame_pointer(read_rom32(reference));
-}
-
-void PlayerAnimationVm::republish_stream_root_cursor_only() {
-    if (!rom_mode_ || stream_entry_ == 0) return;
-    pending_animation_pc_ = 0;
-    animation_pc_ = stream_entry_;
-}
-
-void PlayerAnimationVm::hold_animation_cursor(std::uint32_t cursor) {
-    if (!rom_mode_ || cursor == 0) return;
-    // Keep the cursor that the next VM service should use separately from
-    // the one exposed in this state boundary. The command already ran (and
-    // may have queued an F5 request), so re-executing it after the held
-    // publication would duplicate the spawned record.
-    pending_animation_pc_ = animation_pc_;
-    animation_pc_ = cursor;
-}
-
-void PlayerAnimationVm::begin_apple_action_boundary() {
-    if (!rom_mode_) return;
-    action_boundary_ = ActionBoundary::AwaitRootRepublish;
-}
-
-void PlayerAnimationVm::service_apple_action_boundary() {
-    if (!rom_mode_ || action_boundary_ == ActionBoundary::None) return;
-    if (stream_entry_ != kAppleActionStream) {
-        action_boundary_ = ActionBoundary::None;
-        return;
-    }
-
-    switch (action_boundary_) {
-    case ActionBoundary::AwaitRootRepublish:
-        // The selector writes the action root back after the VM service while
-        // preserving the frame pointer already published by that service.
-        republish_stream_root_cursor_only();
-        force_tick_next_update_without_phase();
-        action_boundary_ = ActionBoundary::AwaitFirstCursor;
-        break;
-    case ActionBoundary::AwaitFirstCursor:
-        if (animation_pc_ == kAppleFirstCursorBoundary
-            && frame_pointer_ == kAppleFirstFrame) {
-            hold_animation_cursor(kAppleFirstHeldCursor);
-            action_boundary_ = ActionBoundary::AwaitSecondCursor;
-        }
-        break;
-    case ActionBoundary::AwaitSecondCursor:
-        if (animation_pc_ == kAppleSecondCursorBoundary
-            && frame_pointer_ == kAppleSecondFrame) {
-            // The second held cursor is followed by one published boundary
-            // before the next frame-reference service.
-            hold_animation_cursor(kAppleFirstCursorBoundary);
-            defer_tick_next_update();
-            action_boundary_ = ActionBoundary::None;
-        }
-        break;
-    case ActionBoundary::None:
-        break;
-    }
-}
-
-void PlayerAnimationVm::force_tick_next_update_without_phase() {
-    if (rom_mode_) service_boundary_ = ServiceBoundary::ForceWithoutPhase;
-}
-
-void PlayerAnimationVm::defer_tick_next_update() {
-    if (rom_mode_) service_boundary_ = ServiceBoundary::DeferNextUpdate;
-}
-
 void PlayerAnimationVm::defer_actor_service() {
     if (!rom_mode_) return;
-    service_boundary_ = ServiceBoundary::ActorDeferUntilGate;
+    actor_service_boundary_ = ActorServiceBoundary::ActorDeferUntilGate;
 }
 
 void PlayerAnimationVm::defer_actor_service_on_gate() {
-    if (rom_mode_) service_boundary_ = ServiceBoundary::ActorDeferOnGate;
+    if (rom_mode_) actor_service_boundary_ = ActorServiceBoundary::ActorDeferOnGate;
 }
 
 void PlayerAnimationVm::defer_actor_service_then_force() {
-    if (rom_mode_) service_boundary_ = ServiceBoundary::ActorDeferThenForce;
+    if (rom_mode_) actor_service_boundary_ = ActorServiceBoundary::ActorDeferThenForce;
 }
 
 void PlayerAnimationVm::force_actor_service_next_update() {
-    if (rom_mode_) service_boundary_ = ServiceBoundary::ForceNextUpdate;
+    if (rom_mode_) actor_service_boundary_ = ActorServiceBoundary::ForceNextUpdate;
 }
 
 void PlayerAnimationVm::defer_actor_retirement() {
-    if (rom_mode_) service_boundary_ = ServiceBoundary::ActorRetireNextUpdate;
+    if (rom_mode_) actor_service_boundary_ = ActorServiceBoundary::ActorRetireNextUpdate;
 }
 
 void PlayerAnimationVm::clear_actor_service_boundary() {
-    if (rom_mode_) service_boundary_ = ServiceBoundary::None;
+    if (rom_mode_) actor_service_boundary_ = ActorServiceBoundary::None;
 }
 
 bool PlayerAnimationVm::consume_actor_service(bool scheduler_service, bool defer_gate) {
-    switch (service_boundary_) {
-    case ServiceBoundary::ActorDeferUntilGate:
+    switch (actor_service_boundary_) {
+    case ActorServiceBoundary::ActorDeferUntilGate:
         if (!defer_gate) return false;
-        service_boundary_ = ServiceBoundary::None;
+        actor_service_boundary_ = ActorServiceBoundary::None;
         return false;
-    case ServiceBoundary::ActorDeferOnGate:
+    case ActorServiceBoundary::ActorDeferOnGate:
         if (!defer_gate) return false;
-        service_boundary_ = ServiceBoundary::None;
+        actor_service_boundary_ = ActorServiceBoundary::None;
         return true;
-    case ServiceBoundary::ActorDeferThenForce:
+    case ActorServiceBoundary::ActorDeferThenForce:
         if (!defer_gate) return false;
-        service_boundary_ = ServiceBoundary::ForceNextUpdate;
+        actor_service_boundary_ = ActorServiceBoundary::ForceNextUpdate;
         return false;
-    case ServiceBoundary::ForceNextUpdate:
-        service_boundary_ = ServiceBoundary::None;
+    case ActorServiceBoundary::ForceNextUpdate:
+        actor_service_boundary_ = ActorServiceBoundary::None;
         return true;
     default:
         return scheduler_service;
@@ -861,19 +777,19 @@ bool PlayerAnimationVm::consume_actor_service(bool scheduler_service, bool defer
 }
 
 bool PlayerAnimationVm::consume_actor_retirement_defer() {
-    if (service_boundary_ != ServiceBoundary::ActorRetireNextUpdate) return false;
-    service_boundary_ = ServiceBoundary::None;
+    if (actor_service_boundary_ != ActorServiceBoundary::ActorRetireNextUpdate) return false;
+    actor_service_boundary_ = ActorServiceBoundary::None;
     return true;
 }
 
 bool PlayerAnimationVm::actor_service_deferred() const {
-    return service_boundary_ == ServiceBoundary::ActorDeferUntilGate
-        || service_boundary_ == ServiceBoundary::ActorDeferOnGate
-        || service_boundary_ == ServiceBoundary::ActorDeferThenForce;
+    return actor_service_boundary_ == ActorServiceBoundary::ActorDeferUntilGate
+        || actor_service_boundary_ == ActorServiceBoundary::ActorDeferOnGate
+        || actor_service_boundary_ == ActorServiceBoundary::ActorDeferThenForce;
 }
 
 bool PlayerAnimationVm::actor_service_forced() const {
-    return service_boundary_ == ServiceBoundary::ForceNextUpdate;
+    return actor_service_boundary_ == ActorServiceBoundary::ForceNextUpdate;
 }
 
 void PlayerAnimationVm::update_actor(
@@ -965,8 +881,7 @@ bool PlayerAnimationVm::take_memory_write(
 void PlayerAnimationVm::select_stream_entry(
     std::uint32_t stream_entry,
     bool publish_frame_pointer,
-    bool defer_first_tick,
-    bool force_following_tick
+    bool defer_first_tick
 ) {
     if (!rom_mode_) return;
     stream_kind_ = AnimationStreamKind::Action;
@@ -982,12 +897,6 @@ void PlayerAnimationVm::select_stream_entry(
         // scheduler's service slot. Move the phase once so this root remains
         // observable for one frame and the following update takes the tick.
         ++update_count_;
-    }
-    if (force_following_tick) {
-        // The terrain selector's first action transition services the new
-        // root on the following update and then services one additional
-        // command boundary before returning to the alternating cadence.
-        service_boundary_ = ServiceBoundary::ForceAfterService;
     }
     landing_finished_ = false;
     landing_reselect_pending_ = false;
@@ -1147,10 +1056,6 @@ void PlayerAnimationVm::update(
     const AnimationContext& context,
     std::optional<std::uint8_t> scheduler_phase
 ) {
-    if (pending_animation_pc_ != 0) {
-        animation_pc_ = pending_animation_pc_;
-        pending_animation_pc_ = 0;
-    }
     if (clear_timer_next_update_) {
         timer_ = 0;
         actor_[0x37] = 0;
@@ -1219,40 +1124,12 @@ void PlayerAnimationVm::update(
         animation_pc_ = kLandingStream;
         landing_reselect_pending_ = false;
     }
-    if (service_boundary_ == ServiceBoundary::DeferNextUpdate) {
-        service_boundary_ = ServiceBoundary::None;
-        // Do not consume scheduler phase: the following VBlank is the
-        // service that would otherwise have occurred on this boundary.
-        return;
-    }
-    if (service_boundary_ == ServiceBoundary::ForceWithoutPhase) {
-        service_boundary_ = ServiceBoundary::None;
-        tick_rom(context);
-        return;
-    }
     if (scheduler_phase) {
-        if (scheduler_service) {
-            tick_rom(context);
-            if (service_boundary_ == ServiceBoundary::ForceAfterService) {
-                service_boundary_ = ServiceBoundary::ForceNextUpdate;
-            }
-        } else if (service_boundary_ == ServiceBoundary::ForceNextUpdate) {
-            service_boundary_ = ServiceBoundary::None;
-            tick_rom(context);
-        }
+        if (scheduler_service) tick_rom(context);
         return;
     }
     if ((update_count_++ & 1U) == 0) {
         tick_rom(context);
-        if (service_boundary_ == ServiceBoundary::ForceAfterService) {
-            service_boundary_ = ServiceBoundary::ForceNextUpdate;
-        }
-    } else if (service_boundary_ == ServiceBoundary::ForceNextUpdate) {
-        service_boundary_ = ServiceBoundary::None;
-        tick_rom(context);
-        // The forced service occupies the otherwise idle slot. Preserve the
-        // alternating cadence for the update after it.
-        ++update_count_;
     }
 }
 
@@ -1282,10 +1159,8 @@ void PlayerAnimationVm::write_checkpoint(std::ostream& output) const {
     writer.u32(return_pc_);
     writer.u8(random_value_);
     writer.boolean(actor_tick_);
-    writer.u32(pending_animation_pc_);
-    writer.u8(static_cast<std::uint8_t>(service_boundary_));
+    writer.u8(static_cast<std::uint8_t>(actor_service_boundary_));
     writer.boolean(clear_timer_next_update_);
-    writer.u8(static_cast<std::uint8_t>(action_boundary_));
     writer.boolean(tracking_memory_writes_);
     writer.u32(static_cast<std::uint32_t>(spawn_requests_.size()));
     for (const AnimationSpawnRequest& request : spawn_requests_) {
@@ -1328,10 +1203,8 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     const auto return_pc = reader.u32();
     const auto random_value = reader.u8();
     const bool actor_tick = reader.boolean();
-    const auto pending_animation_pc = reader.u32();
-    const auto service_boundary = reader.u8();
+    const auto actor_service_boundary = reader.u8();
     const bool clear_timer_next_update = reader.boolean();
-    const auto action_boundary = reader.u8();
     const bool tracking_memory_writes = reader.boolean();
     const auto spawn_count = reader.u32();
     if (spawn_count > 4096) {
@@ -1357,11 +1230,8 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     if (timer < 0) {
         throw std::runtime_error("invalid animation VM timer in OpenAladdin checkpoint");
     }
-    if (service_boundary > static_cast<std::uint8_t>(ServiceBoundary::ActorRetireNextUpdate)) {
+    if (actor_service_boundary > static_cast<std::uint8_t>(ActorServiceBoundary::ActorRetireNextUpdate)) {
         throw std::runtime_error("invalid animation service boundary in OpenAladdin checkpoint");
-    }
-    if (action_boundary > static_cast<std::uint8_t>(ActionBoundary::AwaitSecondCursor)) {
-        throw std::runtime_error("invalid animation action boundary in OpenAladdin checkpoint");
     }
 
     pose_ = static_cast<SpritePose>(pose);
@@ -1379,10 +1249,8 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     return_pc_ = return_pc;
     random_value_ = random_value;
     actor_tick_ = actor_tick;
-    pending_animation_pc_ = pending_animation_pc;
-    service_boundary_ = static_cast<ServiceBoundary>(service_boundary);
+    actor_service_boundary_ = static_cast<ActorServiceBoundary>(actor_service_boundary);
     clear_timer_next_update_ = clear_timer_next_update;
-    action_boundary_ = static_cast<ActionBoundary>(action_boundary);
     tracking_memory_writes_ = tracking_memory_writes;
     spawn_requests_ = std::move(spawn_requests);
     deferred_spawn_request_ = std::move(deferred_spawn_request);

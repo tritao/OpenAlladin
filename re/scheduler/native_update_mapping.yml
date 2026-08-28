@@ -247,47 +247,27 @@ animation_lifecycle_mapping:
     status: exact
     regression: re/mame/findings/20260827-scheduler-static-dynamic-v1.json, tests/native_scheduler_trace.py
     removal_condition: "none; the field is the recovered Game_FrameUpdateLoop phase counter"
-  # These are VM-owned boundary states rather than scheduler phases. Keep the
-  # remaining temporary cursor states tied to the regression that currently
-  # needs them until their ROM writeback boundaries are decoded. None of these
-  # fields creates a second Engine::update phase or AnimationVM traversal.
-  - name: pending_animation_pc
-    native_field: PlayerAnimationVm::pending_animation_pc_
-    rom_state: "selector-written cursor exposed for one boundary before continuing"
-    status: temporary_parity_hack
-    regression: tests/native_scheduler_trace.py (apple route), player jump/action traces
-    removal_condition: "make cursor publication/writeback ordering explicit in the ordinal-30 service"
+  # Actor producer gates are VM-owned boundary states rather than scheduler
+  # phases. The player cursor is not duplicated here: the recovered selectors
+  # write FF7E60 before the single ordinal-30 traversal consumes it.
   - name: actor_service_boundary
-    native_field: PlayerAnimationVm::service_boundary_ (actor VM instances)
+    native_field: PlayerAnimationVm::actor_service_boundary_ (actor VM instances)
     rom_state: "producer-to-ordinal-30 cursor boundary consumed by the common actor gate"
     status: inlined
     regression: tests/native_animation_spawn.py, tests/native_actor_collision.py, tests/native_terrain_physics.py, tests/native_sword_lifecycle.py
     removal_condition: "none; the boundary is VM-owned state inside the exact ordinal-30 actor traversal"
-  - name: service_boundary
-    native_field: PlayerAnimationVm::service_boundary_
-    rom_state: "selector/command boundary pending ordinal-30 cursor service"
-    status: temporary_parity_hack
-    regression: tests/player_jump_regression.py, tests/native_scheduler_trace.py (apple route)
-    removal_condition: "replace enum transitions with decoded ROM command/cursor writeback semantics"
   - name: clear_timer_next_update
     native_field: PlayerAnimationVm::clear_timer_next_update_
     rom_state: "player interaction-selector timer clear at a command boundary"
     status: inlined
     regression: player interaction/action traces
     removal_condition: "none; retain until the selector caller is promoted to an exact ordinal-30 substate"
-  - name: action_boundary
-    native_field: PlayerAnimationVm::action_boundary_
-    rom_state: "apple selector and FF7E60 cursor publication boundaries inside AnimationVM"
-    status: inlined
-    regression: tests/native_scheduler_trace.py (apple route)
-    removal_condition: "none; the state is owned by the VM and does not create a native scheduler phase"
-
 summary:
   exact_or_inlined_rom_rows: 32
   mismatch_rom_rows: 0
   derived_presentation_only_rom_rows: 6
   unknown_rom_rows: 0
   native_extra_phases: 1
-  native_hacks_requiring_followup: 2
+  native_hacks_requiring_followup: 0
   native_extra_mismatch_phases: 0
-  conclusion: "Engine::update now exposes one owner for each gameplay-affecting ROM service. Animation, actor collision, terrain resolution, interaction resources, coordinate publication, and scene completion are aligned to their recovered causal boundaries; the FF7E28 phase is explicit at engine scope, while remaining per-record cursor fields are state gates inside those services, not native scheduler phases."
+  conclusion: "Engine::update now exposes one owner for each gameplay-affecting ROM service. Animation, actor collision, terrain resolution, interaction resources, coordinate publication, and scene completion are aligned to their recovered causal boundaries; the FF7E28 phase is explicit at engine scope, actor producer gates remain on actor VMs, and the player cursor is serviced directly from the ROM-owned record without a native pending cursor or player service-boundary field."

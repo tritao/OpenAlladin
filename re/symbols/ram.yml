@@ -519,6 +519,9 @@
   evidence:
     - mame_player_state_trace
     - ghidra_animation_vm_001AC784
+    - ghidra_decompile_001A9304
+    - ghidra_decompile_001A9502
+    - ghidra_decompile_001AC784
 0xFF7E77:
   name: PLAYER_ANIMATION_TIMER
   type: u8
@@ -528,6 +531,10 @@
   evidence:
     - mame_player_state_trace
     - ghidra_animation_vm_001AC816
+    - ghidra_decompile_001A9304
+    - ghidra_decompile_001A9502
+    - ghidra_decompile_001AC784
+    - ghidra_decompile_001AD150
 
 0xFFF07C:
   name: TERRAIN_PUSH_RIGHT

@@ -119,18 +119,6 @@ int main() {
     assert(!interaction_vm.select_player_interaction_state(interaction_context));
     assert(interaction_vm.take_sound_requests().empty());
 
-    // A gameplay selector can publish a new locomotion root after the VM has
-    // already advanced it. The root is visible for that frame; the advanced
-    // cursor resumes on the next update without changing scheduler phase.
-    PlayerAnimationVm boundary_vm;
-    boundary_vm.load_rom(test_rom);
-    boundary_vm.update(SpritePose::Idle, HorizontalDirection::None);
-    const auto advanced_cursor = boundary_vm.animation_pc();
-    assert(advanced_cursor != 0);
-    boundary_vm.republish_stream_root();
-    assert(boundary_vm.animation_pc() == 0x00121D9A);
-    boundary_vm.update(SpritePose::Idle, HorizontalDirection::None);
-    assert(boundary_vm.animation_pc() == advanced_cursor);
     std::remove(test_rom);
     return 0;
 }

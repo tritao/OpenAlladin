@@ -170,7 +170,7 @@ std::uint32_t terrain_handler(std::uint8_t behavior) {
     return behavior < kTerrainHandlers.size() ? kTerrainHandlers[behavior] : kTerrainNoOpHandler;
 }
 
-constexpr std::uint32_t kCheckpointVersion = 7;
+constexpr std::uint32_t kCheckpointVersion = 8;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
     writer.u8(selector.animation_gate);
@@ -2846,17 +2846,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_horizontal_response = 0;
         player_.terrain_landing_state = 0;
         player_.x = ((visual_x() & ~0x0F) - camera_.x) + 6;
-        const bool first_response_boundary =
-            animation_.stream_kind() != AnimationStreamKind::Response
-            || animation_.stream_entry() != 0x0012181A;
         animation_.select_response_stream(0x0012181A);
-        if (first_response_boundary) {
-            // Terrain handlers publish the new response root after the
-            // current player service. Its first frame is therefore consumed
-            // on the following VBlank, while this boundary retains the
-            // previously published frame pointer.
-            animation_.defer_tick_next_update();
-        }
         if (player_.vy < 8) {
             player_.vy = static_cast<std::int16_t>(player_.vy + 0x78);
         }
@@ -3939,10 +3929,19 @@ void Engine::update(const InputState& input) {
     const bool select_up_before_vm =
         can_select_up_animation && player_.terrain_vertical_stop != 0;
     if (select_up_before_vm) {
-        animation_.select_stream_entry(kPlayerUpAnimationStream, true, true, true);
+        animation_.select_stream_entry(kPlayerUpAnimationStream, true, true);
         player_.animation_selector.transition_state_df = 0xFF;
         player_.terrain_response_timer_state = 0;
         vm_context.selector.transition_state_df = 0xFF;
+    }
+    if (input.apple_pressed && was_grounded && animation_.rom_loaded()) {
+        // Player_SelectLocomotionOrAction publishes the throw root before
+        // the single AnimationVM_TickActors traversal. Let that traversal
+        // consume the root directly; the old post-pass apple boundary was a
+        // native ordering workaround rather than a ROM state field.
+        animation_.select_stream_entry(kPlayerAppleActionStream);
+        player_.animation_selector.state_lock = 0x0E;
+        vm_context.selector.state_lock = 0x0E;
     }
     // Actor_ActorCollisionPass follows the player selectors in the ROM. Its
     // sword terminal edge is handled inside this one source/target scan;
@@ -4010,7 +4009,6 @@ void Engine::update(const InputState& input) {
                 player_.animation_selector.response_state_101 = value;
             }
         }
-        animation_.service_apple_action_boundary();
         if (player_collision_interaction_pending_) {
             // The type-0x2D collision handler calls the player interaction
             // selector after the common animation tick. Publish the stop
@@ -4187,21 +4185,6 @@ void Engine::update(const InputState& input) {
                 : kPlayerSwordAnimationStream;
             animation_.select_stream_entry(attack_stream);
         }
-    }
-    if (input.apple_pressed && was_grounded && animation_.rom_loaded()) {
-        // The ROM's physical A-button path publishes the throw stream at
-        // 0x001223DA after the common locomotion tick.  Its following VM
-        // boundaries publish the mode-0 apple actor through F5; keep this
-        // separate from the sword/attack alias above.
-        // The first throw frame reuses the locomotion frame pointer at the
-        // action boundary; the stream's own first frame is published on the
-        // following VM tick.
-        animation_.select_stream_entry(kPlayerAppleActionStream, false, false, true);
-        // Player_SelectActionAnimation arms the shared state lock for the
-        // throw stream.  The post-input boundary exposes 0x0E, then the
-        // normal selector countdown consumes one byte per following VBlank.
-        player_.animation_selector.state_lock = 0x0E;
-        animation_.begin_apple_action_boundary();
     }
     // Non-combat F5 streams publish their request on the current animation
     // tick and expect the auxiliary actor to be visible in that frame's
@@ -4602,35 +4585,22 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     } else {
         output << "null";
     }
-    output << ",\"player_vm\":{\"pending_animation_pc\":"
-           << animation_.pending_animation_pc()
-           << ",\"force_tick_after_service\":"
-           << (animation_.force_tick_after_service() ? "true" : "false")
-           << ",\"force_tick_next_update\":"
-           << (animation_.force_tick_next_update() ? "true" : "false")
-           << ",\"force_tick_without_phase\":"
-           << (animation_.force_tick_without_phase() ? "true" : "false")
-           << ",\"defer_tick_next_update\":"
-           << (animation_.defer_tick_next_update() ? "true" : "false")
+    output << ",\"player_vm\":{\"actor_service_deferred\":"
+           << (animation_.actor_service_deferred() ? "true" : "false")
+           << ",\"actor_service_forced\":"
+           << (animation_.actor_service_forced() ? "true" : "false")
            << ",\"clear_timer_next_update\":"
            << (animation_.clear_timer_next_update() ? "true" : "false")
-           << ",\"action_boundary\":"
-           << static_cast<unsigned>(animation_.action_boundary())
            << ",\"update_count\":" << animation_.update_count()
            << ",\"return_pc\":" << animation_.return_pc() << "},\"actor_vms\":[";
     for (std::size_t slot = 0; slot < actor_animations_.size(); ++slot) {
         if (slot != 0) output << ",";
         const PlayerAnimationVm& actor_animation = actor_animations_[slot];
         output << "{\"slot\":" << slot
-               << ",\"pending_animation_pc\":" << actor_animation.pending_animation_pc()
-               << ",\"force_tick_after_service\":"
-               << (actor_animation.force_tick_after_service() ? "true" : "false")
-               << ",\"force_tick_next_update\":"
-               << (actor_animation.force_tick_next_update() ? "true" : "false")
-               << ",\"force_tick_without_phase\":"
-               << (actor_animation.force_tick_without_phase() ? "true" : "false")
-               << ",\"defer_tick_next_update\":"
-               << (actor_animation.defer_tick_next_update() ? "true" : "false")
+               << ",\"actor_service_deferred\":"
+               << (actor_animation.actor_service_deferred() ? "true" : "false")
+               << ",\"actor_service_forced\":"
+               << (actor_animation.actor_service_forced() ? "true" : "false")
                << ",\"clear_timer_next_update\":"
                << (actor_animation.clear_timer_next_update() ? "true" : "false")
                << ",\"update_count\":" << actor_animation.update_count()

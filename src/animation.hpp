@@ -163,28 +163,6 @@ public:
     // publishing the new stream root. Keep that boundary distinct from the
     // stream's scheduler service so the root remains visible for one frame.
     void clear_animation_timer_next_update();
-    // Publish a selector-written stream root after the VM pass. The cursor
-    // reached by that pass is restored at the next update boundary.
-    void republish_stream_root();
-    // Re-expose the action root for one synchronized state boundary after a
-    // VM tick without changing the frame pointer or queuing the consumed
-    // cursor. This mirrors the player's action-selector writeback path.
-    void republish_stream_root_cursor_only();
-    // Restore a ROM cursor after its command boundary while retaining the
-    // frame pointer already published by that tick. A few action streams
-    // expose the pre-command cursor for one VBlank before continuing.
-    void hold_animation_cursor(std::uint32_t cursor);
-    // Keep the apple action's selector/cursor publication lifecycle with the
-    // VM that owns the ROM cursor, rather than with Engine scheduler flags.
-    void begin_apple_action_boundary();
-    void service_apple_action_boundary();
-    // Service one extra ROM tick on the next update without changing the
-    // alternating scheduler phase.
-    void force_tick_next_update_without_phase();
-    // Skip the next scheduled ROM tick while retaining the current cursor.
-    // Action-selector boundaries occasionally expose a command result for an
-    // additional state before the following animation service.
-    void defer_tick_next_update();
     // Actor producers can publish a record immediately before the shared
     // ordinal-30 traversal. Keep that producer-to-VM boundary on the actor's
     // VM rather than adding synthetic fields to the Genesis actor record.
@@ -215,8 +193,7 @@ public:
     void select_stream_entry(
         std::uint32_t stream_entry,
         bool publish_frame_pointer = false,
-        bool defer_first_tick = false,
-        bool force_following_tick = false
+        bool defer_first_tick = false
     );
     void select_locomotion_stream(
         SpritePose pose,
@@ -250,23 +227,7 @@ public:
     // recover once conditional control flow is implemented).
     std::uint32_t stream_entry() const;
     const std::array<std::uint8_t, 0x42>& actor_record() const { return actor_; }
-    std::uint32_t pending_animation_pc() const { return pending_animation_pc_; }
-    bool force_tick_after_service() const {
-        return service_boundary_ == ServiceBoundary::ForceAfterService;
-    }
-    bool force_tick_next_update() const {
-        return service_boundary_ == ServiceBoundary::ForceNextUpdate;
-    }
-    bool force_tick_without_phase() const {
-        return service_boundary_ == ServiceBoundary::ForceWithoutPhase;
-    }
-    bool defer_tick_next_update() const {
-        return service_boundary_ == ServiceBoundary::DeferNextUpdate;
-    }
     bool clear_timer_next_update() const { return clear_timer_next_update_; }
-    std::uint8_t action_boundary() const {
-        return static_cast<std::uint8_t>(action_boundary_);
-    }
     unsigned update_count() const { return update_count_; }
     std::uint32_t return_pc() const { return return_pc_; }
     void set_writer_trace_enabled(bool enabled) { writer_trace_enabled_ = enabled; }
@@ -323,30 +284,19 @@ private:
     // contain the opcode as data, so only actor ticks may apply its cleanup
     // side effect.
     bool actor_tick_ = false;
-    std::uint32_t pending_animation_pc_ = 0;
-    // These requests are mutually exclusive consequences of a selector or
-    // command boundary. Keep them as one VM-owned state machine so the
-    // ordinal-30 service has one causal boundary to consume.
-    enum class ServiceBoundary : std::uint8_t {
+    // Actor producers can publish a record immediately before the shared
+    // ordinal-30 traversal. Keep those producer-to-VM gates on actor VMs;
+    // the player cursor itself is serviced directly by the ROM phase.
+    enum class ActorServiceBoundary : std::uint8_t {
         None,
-        ForceAfterService,
         ForceNextUpdate,
-        ForceWithoutPhase,
-        DeferNextUpdate,
         ActorDeferUntilGate,
         ActorDeferOnGate,
         ActorDeferThenForce,
         ActorRetireNextUpdate,
     };
-    ServiceBoundary service_boundary_ = ServiceBoundary::None;
+    ActorServiceBoundary actor_service_boundary_ = ActorServiceBoundary::None;
     bool clear_timer_next_update_ = false;
-    enum class ActionBoundary : std::uint8_t {
-        None,
-        AwaitRootRepublish,
-        AwaitFirstCursor,
-        AwaitSecondCursor,
-    };
-    ActionBoundary action_boundary_ = ActionBoundary::None;
     bool tracking_memory_writes_ = false;
     bool writer_trace_enabled_ = false;
     std::uint32_t active_command_pc_ = 0;
