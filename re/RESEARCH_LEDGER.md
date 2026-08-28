@@ -1422,6 +1422,18 @@ scene words to VRAM after the loop.
 The static result is recorded in
 re/mame/findings/20260828-scene-resource-service-v1.json.
 
+## VDP scene setup primitives (20260828)
+
+The fixed VDP setup wrappers are now named. VDP_ClearTransitionPlanes at
+0x001B211C writes zero to the two transition-plane destinations
+0x40000010 and 0x40020010. VDP_ClearVRAM_C000 and VDP_ClearVRAM_E000 at
+0x001B2510 and 0x001B2522 clear 0x800 words at their respective VRAM blocks.
+VDP_CopyFixedSceneHeader at 0x001B269C copies four fixed words from ROM
+0x002A40 to VRAM 0xF400.
+
+The static result is recorded in
+re/mame/findings/20260828-vdp-scene-setup-v1.json.
+
 ## Frame resource wait and terrain edge probe (20260828)
 
 Frame_InputAndResourceService at 0x001A91C6 now owns the frame-wait and
@@ -1681,6 +1693,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-vdp-tile-word-v1` | recorded-static-decompilation | reusable scene/resource VDP control-address and tile-word writer |
 | `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |
 | `20260828-compressed-resource-decode-v1` | recorded-static-decompilation | RNC payload decoding, terrain-resource Huffman decoding, and VDP fill helper classification |
+| `20260828-vdp-scene-setup-v1` | recorded-static-decompilation | fixed transition-plane clears, VRAM block clears, and scene-header copy |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

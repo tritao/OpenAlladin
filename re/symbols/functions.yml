@@ -188,6 +188,34 @@
   evidence:
     - ghidra_decompile_001B2534
     - ghidra_disassembly_001B2534
+0x001B211C:
+  name: VDP_ClearTransitionPlanes
+  confidence: decompiled
+  description: Writes zero to the two fixed VDP transition-plane destinations at 0x40000010 and 0x40020010.
+  evidence:
+    - ghidra_decompile_001B211C
+    - ghidra_vdp_scene_setup_targets
+0x001B2510:
+  name: VDP_ClearVRAM_C000
+  confidence: decompiled
+  description: Clears 0x800 words beginning at VRAM address 0xC000 through the shared VDP fill primitive.
+  evidence:
+    - ghidra_decompile_001B2510
+    - ghidra_vdp_scene_setup_targets
+0x001B2522:
+  name: VDP_ClearVRAM_E000
+  confidence: decompiled
+  description: Clears 0x800 words beginning at VRAM address 0xE000 through the shared VDP fill primitive.
+  evidence:
+    - ghidra_decompile_001B2522
+    - ghidra_vdp_scene_setup_targets
+0x001B269C:
+  name: VDP_CopyFixedSceneHeader
+  confidence: decompiled
+  description: Copies four fixed words from ROM address 0x002A40 to VRAM address 0xF400 through VDP_CopyWordsToVRAM.
+  evidence:
+    - ghidra_decompile_001B269C
+    - ghidra_vdp_scene_setup_targets
 0x001A8E3E:
   name: SceneScript_AdvanceState
   confidence: probable

@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "vdp-scene-setup",
+    "purpose": "Decode the fixed transition-plane clears, VRAM block clears, and fixed scene-header copy used by scene and resource setup paths."
+  },
+  "targets": [
+    { "address": "0x001B211C", "name": "VDP_ClearTransitionPlanes" },
+    { "address": "0x001B2510", "name": "VDP_ClearVRAM_C000" },
+    { "address": "0x001B2522", "name": "VDP_ClearVRAM_E000" },
+    { "address": "0x001B269C", "name": "VDP_CopyFixedSceneHeader" }
+  ],
+  "memory_references": [
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" },
+    { "address": "0x00FF7E22", "name": "SCENE_RESOURCE_STATUS" }
+  ]
+}
