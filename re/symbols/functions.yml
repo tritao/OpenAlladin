@@ -55,6 +55,13 @@
   evidence:
     - ghidra_decompile_001B255C
     - ghidra_disassembly_001B255C
+0x001B2534:
+  name: VDP_FillWords
+  confidence: decompiled
+  description: Programs a sequential VRAM destination from A0 and writes D0 copies of the word in D1 through the VDP data port.
+  evidence:
+    - ghidra_decompile_001B2534
+    - ghidra_disassembly_001B2534
 0x001A8E3E:
   name: SceneScript_AdvanceState
   confidence: probable
@@ -581,6 +588,27 @@
     - ghidra_level01_surface_mode_consumer_targeted_decompile
     - ghidra_disassembly_001B3818
     - rom_rnc_level01_001434C4
+0x001B3912:
+  name: TerrainResource_ReadDecodedSize
+  confidence: decompiled
+  description: Reads the four-byte decoded-size header from the terrain resource stream and returns it for the destination-range calculation used by TerrainBehaviorTable_Decode.
+  evidence:
+    - ghidra_decompile_001B3912
+    - ghidra_decompile_001B3818
+0x001B38EE:
+  name: TerrainResource_ReadBits
+  confidence: decompiled
+  description: Reads a variable-width field from the terrain-resource bit buffer, refilling the compressed source word when the current buffer is exhausted.
+  evidence:
+    - ghidra_decompile_001B38EE
+    - ghidra_decompile_001B3818
+0x001B391E:
+  name: TerrainResource_BuildDecodeTable
+  confidence: decompiled
+  description: Builds the terrain-resource Huffman decode table from the compressed code lengths before TerrainBehaviorTable_Decode expands the stream into the runtime behavior resource.
+  evidence:
+    - ghidra_decompile_001B391E
+    - ghidra_decompile_001B3818
 0x001B31DE:
   name: Terrain_QueryCallbackA
   confidence: confirmed
@@ -881,6 +909,28 @@
   evidence:
     - ghidra_rnc_loader_analysis
     - mame_rnc_loader_trace
+
+0x001B35D0:
+  name: RNC_DecodePayloadToVRAM
+  confidence: decompiled
+  description: Decodes the compressed RNC payload using its bitstream tables and streams the reconstructed words to the VDP data port while honoring the source block dimensions and VRAM ring position.
+  evidence:
+    - ghidra_decompile_001B35D0
+    - ghidra_rnc_loader_analysis
+0x001B376C:
+  name: RNC_ReadBits
+  confidence: decompiled
+  description: Reads a variable-width field from the RNC bit buffer, refilling the buffer from the compressed source when the current word does not contain enough bits.
+  evidence:
+    - ghidra_decompile_001B376C
+    - ghidra_decompile_001B35D0
+0x001B3790:
+  name: RNC_BuildDecodeTable
+  confidence: decompiled
+  description: Builds the RNC Huffman decode table from the compressed code lengths and bitstream entries used by the payload decoder.
+  evidence:
+    - ghidra_decompile_001B3790
+    - ghidra_decompile_001B35D0
 
 0x001B524E:
   name: InteractionSpawn_ForwardSlot

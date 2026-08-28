@@ -1368,6 +1368,29 @@ or direct scene-state writers.
 The static result extends the transition/resource evidence in
 re/mame/findings/20260828-scene-resource-vdp-service-v1.json.
 
+## Compressed resource decoder family (20260828)
+
+The level-loading queue cluster around 0x001B3416 is now separated into its
+format-specific helpers. RNC_To_VDP_Loader programs the destination and enters
+RNC_DecodePayloadToVRAM at 0x001B35D0. The latter consumes the compressed
+payload with RNC_ReadBits at 0x001B376C and RNC_BuildDecodeTable at
+0x001B3790, then streams reconstructed words to the VDP data port.
+
+TerrainBehaviorTable_Decode uses the parallel terrain-resource helpers.
+TerrainResource_ReadDecodedSize at 0x001B3912 reads the four-byte decoded
+size used to bound the output, TerrainResource_ReadBits at 0x001B38EE
+consumes the bitstream, and TerrainResource_BuildDecodeTable at 0x001B391E
+builds the code table before the packed behavior resource is expanded into
+the runtime terrain table. The duplicate helper layout is deliberate because
+the two decoders maintain independent bit-buffer state.
+
+VDP_FillWords at 0x001B2534 is also named as the constant-word counterpart to
+VDP_CopyWordsToVRAM. These helpers are data-transfer primitives only; this
+promotion adds no new gameplay, player-transfer, or scene-state semantics.
+
+The static result is recorded in
+re/mame/findings/20260828-compressed-resource-decode-v1.json.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1469,6 +1492,7 @@ re/mame/findings/20260828-scene-resource-vdp-service-v1.json.
 | `20260827-level01-transfer-reachability-closure-v1` | recorded-trace-validated-producer-closure | fixed terrain 0x29/0x2D closure plus direct selector-0x0D/0x74 Type-0x6A/0x65 producer validation; remote actor contact/alignment remains the next targeted experiment |
 | `20260828-actor-collision-terminal-response-v1` | recorded-static-decompilation | shared terminal actor-collision response, linked cleanup, type-countdown gating, and type-0x84 replacement |
 | `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |
+| `20260828-compressed-resource-decode-v1` | recorded-static-decompilation | RNC payload decoding, terrain-resource Huffman decoding, and VDP fill helper classification |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

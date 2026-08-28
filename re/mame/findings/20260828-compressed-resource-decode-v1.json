@@ -1,0 +1,60 @@
+{
+  "format": "openaladdin-compressed-resource-decode-v1",
+  "recorded_at": "2026-08-28",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level-transition-targets.json",
+  "decompile_artifact": "build/re/level-transition-targeted-decompile-v2.json",
+  "targets": [
+    {
+      "address": "0x001B35D0",
+      "name": "RNC_DecodePayloadToVRAM",
+      "confidence": "decompiled",
+      "called_by": "0x001B3416 RNC_To_VDP_Loader",
+      "helpers": [
+        "0x001B376C RNC_ReadBits",
+        "0x001B3790 RNC_BuildDecodeTable"
+      ],
+      "result": "Decodes the compressed payload and streams reconstructed words to VDP_DATA while preserving the source block's row/column progression."
+    },
+    {
+      "address": "0x001B376C",
+      "name": "RNC_ReadBits",
+      "confidence": "decompiled",
+      "result": "Reads a variable-width field from the RNC bit buffer and refills the source word when the current buffer is exhausted."
+    },
+    {
+      "address": "0x001B3790",
+      "name": "RNC_BuildDecodeTable",
+      "confidence": "decompiled",
+      "result": "Builds the RNC Huffman decode table from compressed code lengths and entries."
+    },
+    {
+      "address": "0x001B3912",
+      "name": "TerrainResource_ReadDecodedSize",
+      "confidence": "decompiled",
+      "result": "Reads the four-byte decoded-size header used by TerrainBehaviorTable_Decode to calculate its output end."
+    },
+    {
+      "address": "0x001B38EE",
+      "name": "TerrainResource_ReadBits",
+      "confidence": "decompiled",
+      "result": "Reads a variable-width field from the terrain-resource bit buffer and refills its compressed source word as needed."
+    },
+    {
+      "address": "0x001B391E",
+      "name": "TerrainResource_BuildDecodeTable",
+      "confidence": "decompiled",
+      "result": "Builds the terrain-resource Huffman decode table before TerrainBehaviorTable_Decode expands the runtime behavior resource."
+    },
+    {
+      "address": "0x001B2534",
+      "name": "VDP_FillWords",
+      "confidence": "decompiled",
+      "result": "Writes a constant word to a sequential VRAM destination for the requested count."
+    }
+  ],
+  "conclusion": "The named functions form two parallel compressed-resource decoders and the constant VDP transfer primitive. They explain resource construction paths without adding any new direct scene-state or player-transfer writer."
+}
