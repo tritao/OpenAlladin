@@ -2463,6 +2463,22 @@
     - ghidra_scene_camera_orchestration_targets
     - ghidra_camera_terrain_viewport_targets
 
+0x001A8F04:
+  name: Level_InvokeFrameCallback
+  confidence: decompiled
+  description: Tail-dispatches to the active level's per-frame callback through LEVEL_FRAME_CALLBACK, which Level_LoadFromSceneState installs from the level-table record at offset 0x2C; Game_FrameUpdateLoop invokes this trampoline once per frame.
+  evidence:
+    - ghidra_disassembly_001A8F04
+    - ghidra_level_callback_dispatch_targets
+
+0x001AAA80:
+  name: Level_InvokeCameraScrollCallback
+  confidence: decompiled
+  description: Tail-dispatches to the active level's camera-scroll callback through LEVEL_CAMERA_SCROLL_CALLBACK, which Level_LoadFromSceneState installs from the level-table record at offset 0x34; Camera_PublishScroll invokes it before handling pending directional refills.
+  evidence:
+    - ghidra_disassembly_001AAA80
+    - ghidra_level_callback_dispatch_targets
+
 0x001AE1C2:
   name: Level_InvokeExitCallback
   confidence: decompiled

@@ -675,6 +675,26 @@
   evidence:
     - ghidra_disassembly_001AA484
     - ghidra_decompile_001AA81A
+0xFF7DA4:
+  name: LEVEL_CAMERA_SCROLL_CALLBACK
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Active level-specific camera-scroll callback installed from LEVEL_TABLE record offset 0x34 and tail-dispatched by Level_InvokeCameraScrollCallback before pending camera refills.
+  evidence:
+    - ghidra_disassembly_001AA484
+    - ghidra_disassembly_001AAA80
+    - ghidra_level_callback_dispatch_targets
+0xFF7DC2:
+  name: LEVEL_FRAME_CALLBACK
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Active level-specific per-frame callback installed from LEVEL_TABLE record offset 0x2C and tail-dispatched by Level_InvokeFrameCallback from Game_FrameUpdateLoop.
+  evidence:
+    - ghidra_disassembly_001AA484
+    - ghidra_disassembly_001A8F04
+    - ghidra_level_callback_dispatch_targets
 0xFF7DBA:
   name: LEVEL_HEIGHT_TILES
   type: u16

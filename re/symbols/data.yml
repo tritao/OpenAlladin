@@ -87,7 +87,7 @@
   entry_size: 66
   count: 13
   confidence: confirmed
-  description: 66-byte level records indexed by SCENE_STATE during Level_LoadFromSceneState; records contain start/camera offsets, compressed terrain/map resources, palette, block dimensions, music and enter/exit callbacks.
+  description: 66-byte level records indexed by SCENE_STATE during Level_LoadFromSceneState; records contain start/camera offsets, compressed terrain/map resources, palette, block dimensions, music, per-frame/camera-scroll callbacks, and an exit callback.
   evidence:
     - rom_level_table_002C78
     - ghidra_disassembly_001AA484

@@ -2132,6 +2132,22 @@ callback, reached from `Level_ExitAndTerminalTransition` at `0x001A90E8`.
 The static result is recorded in
 `re/mame/findings/20260829-level-exit-callback-dispatch-v1.json`.
 
+## Level callback dispatch trampolines (20260829)
+
+The active level publishes two additional callback pointers during
+`Level_LoadFromSceneState`. `LEVEL_FRAME_CALLBACK` at `0x00FF7DC2` receives the
+level-table record's `+0x2C` pointer, and `Level_InvokeFrameCallback` at
+`0x001A8F04` tail-dispatches through it from `Game_FrameUpdateLoop` once per
+frame. `LEVEL_CAMERA_SCROLL_CALLBACK` at `0x00FF7DA4` receives the record's
+`+0x34` pointer, and `Level_InvokeCameraScrollCallback` at `0x001AAA80`
+tail-dispatches through it from `Camera_PublishScroll` before the pending
+directional refill handlers run. The callback slots are distinct from the
+level-table exit callback field; the record `+0x2C` field previously tracked as
+an `EnterRoutine` is the per-frame boundary callback, while `+0x34` is the
+camera-scroll callback. The dispatch pair is recorded in
+`re/mame/findings/20260829-level-callback-dispatch-v1.json` and
+`re/ghidra/targets/level-callback-dispatch-targets.json`.
+
 ## Active-scene initial C000 and palette transfer (20260829)
 
 `SceneResource_LoadInitialC000AndPaletteSources` at `0x001B25FE` is called by
