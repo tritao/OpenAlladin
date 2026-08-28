@@ -1746,8 +1746,15 @@ The static result is recorded in
 
 ## Level-loader scratch helpers (20260828)
 
-The level-loader scratch family is now named at all three documented service
-boundaries. Level_ClearActorScratch at `0x001AA6EE` clears the `0x2B`-byte
+The level-loader initialization family is now named at five documented
+service boundaries. Level_InitializePlayerAndTerrainState at `0x001AA696`
+installs the initial actor template, resets the terrain response timer, and
+activates the terrain controller query flags. Level_BuildTerrainRowPointers
+at `0x001AA6C8` fills the `0x58` terrain rows from `WORK_RAM_BASE` using the
+level width as the row stride.
+
+The adjacent scratch helpers then clear their owned ranges:
+Level_ClearActorScratch at `0x001AA6EE` clears the `0x2B`-byte
 actor scratch range beginning at `FFEFDC`, while
 Level_ClearSceneEventScratch at `0x001AA700` clears the `0x443`-byte
 scene-event range beginning at `FFF12E`. The adjacent
