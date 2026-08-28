@@ -1326,6 +1326,20 @@ level-bound checks remain explicit in the decompiler record.
 The static result is recorded in
 re/mame/findings/20260828-camera-scroll-refill-v1.json.
 
+## Sprite record construction and VDP submission (20260828)
+
+The render path is now split into three named stages. Render_BuildActorRecords
+at 0x001AB7C4 constructs camera-relative 8-byte sprite attribute records at
+0x00FF729A, seeds player/status entries, appends visible actor records from
+the 32-slot actor table, applies facing and priority bits, and publishes the
+record count through 0x00FFEFEC. Render_SubmitPlayerSprites at 0x001AB776
+transfers that attribute list to the VDP. Render_SubmitActorSprites at
+0x001AC726 transfers the separate 14-byte actor sprite payload records from
+0x00FF769A and waits for the VDP FIFO before finalizing.
+
+The static result is recorded in
+re/mame/findings/20260828-render-submission-v1.json.
+
 ## Actor allocation and template lifecycle (20260828)
 
 The actor allocation cluster around `0x001AE206..0x001AE372` is now named from
@@ -1534,6 +1548,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-actor-collision-terminal-response-v1` | recorded-static-decompilation | shared terminal actor-collision response, linked cleanup, type-countdown gating, and type-0x84 replacement |
 | `20260828-animation-vm-core-v1` | recorded-static-decompilation | AnimationVM entry gate/core split, actor-table traversal, frame synchronization, and EA-FE dispatch |
 | `20260828-camera-scroll-refill-v1` | recorded-static-decompilation | pending-scroll publication, directional VDP row/column refill, and interaction-row processor dispatch |
+| `20260828-render-submission-v1` | recorded-static-decompilation | sprite attribute-record construction, camera-relative actor culling, and the two VDP submission stages |
 | `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |
 | `20260828-compressed-resource-decode-v1` | recorded-static-decompilation | RNC payload decoding, terrain-resource Huffman decoding, and VDP fill helper classification |
 

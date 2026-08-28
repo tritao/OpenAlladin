@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "render-submission",
+    "purpose": "Decode the sprite-record builder and the two VDP submission stages used by the gameplay frame and transition paths."
+  },
+  "targets": [
+    { "address": "0x001AB7C4", "name": "Render_BuildActorRecords" },
+    { "address": "0x001AB776", "name": "Render_SubmitPlayerSprites" },
+    { "address": "0x001AC726", "name": "Render_SubmitActorSprites" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF729A", "name": "SPRITE_ATTRIBUTE_RECORDS" },
+    { "address": "0x00FF769A", "name": "ACTOR_SPRITE_PAYLOAD" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },
+    { "address": "0x00FF7DF6", "name": "WORLD_CAMERA_X" },
+    { "address": "0x00FF7DF8", "name": "WORLD_CAMERA_Y" }
+  ]
+}

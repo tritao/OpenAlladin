@@ -61,6 +61,27 @@
   evidence:
     - ghidra_decompile_001AB66C
     - ghidra_interaction_dispatch_callers
+0x001AB776:
+  name: Render_SubmitPlayerSprites
+  confidence: decompiled
+  description: Transfers the generated 8-byte sprite attribute records from FF729A to the VDP data port using the record count at FFEFEC, with a guard that rejects counts at or above 0x80.
+  evidence:
+    - ghidra_decompile_001AB776
+    - ghidra_render_submission_targets
+0x001AB7C4:
+  name: Render_BuildActorRecords
+  confidence: decompiled
+  description: Builds the camera-relative sprite attribute list at FF729A, including player/status records and visible actor frame records, applies facing and priority bits, terminates the list, and publishes its count through FFEFEC.
+  evidence:
+    - ghidra_decompile_001AB7C4
+    - ghidra_render_submission_targets
+0x001AC726:
+  name: Render_SubmitActorSprites
+  confidence: decompiled
+  description: Transfers the actor sprite payload records from FF769A to the VDP after programming the actor-sprite destination, waits for the VDP FIFO before finalizing the transfer, and uses FFEFEE as the record count.
+  evidence:
+    - ghidra_decompile_001AC726
+    - ghidra_render_submission_targets
 0x001ADB5C:
   name: Actor_TerrainCollisionLoop
   confidence: confirmed
