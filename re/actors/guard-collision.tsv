@@ -1,7 +1,7 @@
 # openaladdin-actor-table-v1
 # Fixed level-01 guard collision fixture from the confirmed type-0x0A
 # player/actor dispatch at 0x001ABB40.
-# slot type x y movement_pc frame_ptr animation_pc flags
+# slot type x y movement_pc frame_ptr animation_pc flags facing_x_flip facing_y_flip movement_command_timer movement_loop_pc movement_loop_timer movement_return_pc movement_word_18 movement_word_1a sprite_attribute
 # frame_ptr 0x001F6500 is the guard's live animation collision record:
 # bytes +2..+5 are 0x78, 0x55, 0x86, 0x8E.
-5 0x0A 0x0530 0x0340 0x0 0x001F6500 0x0012542A 0x0
+5 0x0A 0x0530 0x0340 0x0 0x001F6500 0x0012542A 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x4000

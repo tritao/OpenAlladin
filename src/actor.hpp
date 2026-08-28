@@ -22,6 +22,10 @@ struct ActorState {
     std::uint8_t movement_loop_timer = 0;
     std::int16_t movement_word_18 = 0;
     std::int16_t movement_word_1a = 0;
+    // Raw actor-table word at +0x1E. This is the Genesis SAT tile
+    // attribute base; its palette and priority bits are part of the actor
+    // template and must not be inferred from the actor type.
+    std::uint16_t sprite_attribute = 0;
     std::uint32_t frame_ptr = 0;
     std::uint32_t animation_pc = 0;
     std::uint32_t movement_return_pc = 0;

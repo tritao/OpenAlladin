@@ -97,6 +97,7 @@ struct ActorAnimationState {
     // signed accumulator words at record offsets +0x18 and +0x1A.
     std::int16_t movement_word_18 = 0;
     std::int16_t movement_word_1a = 0;
+    std::uint16_t sprite_attribute = 0;
     std::uint8_t facing_x_flip = 0;
     std::uint8_t facing_y_flip = 0;
     std::uint8_t flags = 0;

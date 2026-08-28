@@ -47,6 +47,7 @@ def main() -> int:
         "x": 100,
         "y": 200,
         "movement_flags": 0,
+        "sprite_attribute": 0,
         "facing_x_flip": 0,
         "facing_y_flip": 0,
         "frame_ptr": 0,

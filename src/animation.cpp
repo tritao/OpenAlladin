@@ -895,6 +895,8 @@ void PlayerAnimationVm::update_actor(
     actor_[0x15] = static_cast<std::uint8_t>(actor.frame_ptr >> 16);
     actor_[0x16] = static_cast<std::uint8_t>(actor.frame_ptr >> 8);
     actor_[0x17] = static_cast<std::uint8_t>(actor.frame_ptr);
+    actor_[0x1e] = static_cast<std::uint8_t>(actor.sprite_attribute >> 8);
+    actor_[0x1f] = static_cast<std::uint8_t>(actor.sprite_attribute);
     actor_[0x20] = static_cast<std::uint8_t>(actor.animation_pc >> 24);
     actor_[0x21] = static_cast<std::uint8_t>(actor.animation_pc >> 16);
     actor_[0x22] = static_cast<std::uint8_t>(actor.animation_pc >> 8);
@@ -921,6 +923,7 @@ void PlayerAnimationVm::update_actor(
     actor.movement_pc = read_memory32(0x0A);
     actor.movement_word_18 = static_cast<std::int16_t>(read_memory16(0x18));
     actor.movement_word_1a = static_cast<std::int16_t>(read_memory16(0x1A));
+    actor.sprite_attribute = read_memory16(0x1E);
 }
 
 bool PlayerAnimationVm::take_spawn_request(AnimationSpawnRequest& request) {

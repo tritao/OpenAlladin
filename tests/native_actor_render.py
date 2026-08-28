@@ -56,8 +56,8 @@ def main() -> int:
         apple_records.write_text(
             "# openaladdin-actor-table-v1\n"
             "# Type-0x40 apple palette fixture.\n"
-            "# slot type x y movement_pc frame_ptr animation_pc flags\n"
-            "5 0x40 0x0530 0x0340 0x0 0x001F84A4 0x0 0x0\n",
+            "# slot type x y movement_pc frame_ptr animation_pc flags facing_x_flip facing_y_flip movement_command_timer movement_loop_pc movement_loop_timer movement_return_pc movement_word_18 movement_word_1a sprite_attribute\n"
+            "5 0x40 0x0530 0x0340 0x0 0x001F84A4 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x6000\n",
             encoding="utf-8",
         )
         with_apple = render(apple_records, directory_path / "with-apple.ppm")

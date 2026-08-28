@@ -196,6 +196,7 @@ SYNC_ACTOR_PATTERN = re.compile(
     r"OPENALADDIN_SYNC_ACTOR frame=(?P<frame>\d+) slot=(?P<slot>\d+) "
     r"type=(?P<type>[0-9A-F]+) x=(?P<x>[0-9A-F]+) y=(?P<y>[0-9A-F]+) "
     r"movement=(?P<movement_flags>[0-9A-F]+) facing=(?P<facing_x_flip>[0-9A-F]+) "
+    r"spriteattr=(?P<sprite_attribute>[0-9A-F]+) "
     r"movementpc=(?P<movement_pc>[0-9A-F]+) looppc=(?P<movement_loop_pc>[0-9A-F]+) "
     r"looptimer=(?P<movement_loop_timer>[0-9A-F]+) frameptr=(?P<frame_ptr>[0-9A-F]+) "
     r"animpc=(?P<animation_pc>[0-9A-F]+) word18=(?P<movement_word_18>[0-9A-F]+) "
@@ -340,6 +341,7 @@ def _atomic_actor_view(
         "y": actor["y"],
         "movement_flags": actor["movement_flags"],
         "facing_x_flip": actor["facing_x_flip"],
+        "sprite_attribute": actor["sprite_attribute"],
         "frame_ptr": actor["frame_ptr"],
         "animation_pc": actor["animation_pc"],
         "movement_pc": actor["movement_pc"],

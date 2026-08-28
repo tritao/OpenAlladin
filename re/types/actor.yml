@@ -37,6 +37,10 @@ fields:
     name: velocity_y
     type: u16
     description: Vertical movement accumulator integrated by the common actor movement update.
+  0x1e:
+    name: sprite_attribute
+    type: u16
+    description: Raw Genesis SAT tile-attribute base copied from the actor template; bits 13..14 select the CRAM palette line and bit 15 selects sprite priority.
   0x14:
     name: collision_frame_ptr
     type: u32

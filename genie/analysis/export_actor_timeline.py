@@ -8,6 +8,27 @@ import json
 from pathlib import Path
 
 
+ACTOR_FIELDS = (
+    "slot",
+    "type",
+    "x",
+    "y",
+    "movement_pc",
+    "frame_ptr",
+    "animation_pc",
+    "flags",
+    "facing_x_flip",
+    "facing_y_flip",
+    "movement_command_timer",
+    "movement_loop_pc",
+    "movement_loop_timer",
+    "movement_return_pc",
+    "movement_word_18",
+    "movement_word_1a",
+    "sprite_attribute",
+)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -44,36 +65,32 @@ def main() -> int:
         "# openaladdin-actor-timeline-v1",
         f"# Source state frames {args.start_frame}..{args.end_frame} (inclusive).",
         "# Frame numbers are rebased to zero for native replay.",
-        "# @frame N followed by: slot type x y movement_pc frame_ptr animation_pc flags [facing_x_flip [facing_y_flip [movement_command_timer [movement_loop_pc [movement_loop_timer [movement_return_pc]]]]]]",
+        "# @frame N followed by: slot type x y movement_pc frame_ptr animation_pc flags facing_x_flip facing_y_flip movement_command_timer movement_loop_pc movement_loop_timer movement_return_pc movement_word_18 movement_word_1a sprite_attribute",
     ]
     for relative, source_frame in enumerate(range(args.start_frame, args.end_frame + 1)):
         lines.append(f"@frame {relative}")
         actors = sorted(states[source_frame].get("actors", []), key=lambda actor: int(actor["slot"]))
         for actor in actors:
+            missing = [field for field in ACTOR_FIELDS if field not in actor]
+            if missing:
+                raise SystemExit(
+                    f"actor record at frame {source_frame} is missing required fields: "
+                    f"{', '.join(missing)}"
+                )
             line = (
                 "{slot} {type} {x} {y} {movement_pc:#x} {frame_ptr:#x} {animation_pc:#x} {flags:#x}".format(
                     slot=int(actor["slot"]),
-                    type=int(actor.get("type", 0)),
-                    x=int(actor.get("x", 0)),
-                    y=int(actor.get("y", 0)),
-                    movement_pc=int(actor.get("movement_pc", 0)),
-                    frame_ptr=int(actor.get("frame_ptr", 0)),
-                    animation_pc=int(actor.get("animation_pc", 0)),
-                    flags=int(actor.get("flags", 0)),
+                    type=int(actor["type"]),
+                    x=int(actor["x"]),
+                    y=int(actor["y"]),
+                    movement_pc=int(actor["movement_pc"]),
+                    frame_ptr=int(actor["frame_ptr"]),
+                    animation_pc=int(actor["animation_pc"]),
+                    flags=int(actor["flags"]),
                 )
             )
-            if "facing_x_flip" in actor:
-                line += f" {int(actor.get('facing_x_flip', 0)):#x}"
-            if "facing_y_flip" in actor:
-                line += f" {int(actor.get('facing_y_flip', 0)):#x}"
-            if "movement_command_timer" in actor:
-                line += f" {int(actor.get('movement_command_timer', 0)):#x}"
-            if "movement_loop_pc" in actor:
-                line += f" {int(actor.get('movement_loop_pc', 0)):#x}"
-            if "movement_loop_timer" in actor:
-                line += f" {int(actor.get('movement_loop_timer', 0)):#x}"
-            if "movement_return_pc" in actor:
-                line += f" {int(actor.get('movement_return_pc', 0)):#x}"
+            for field in ACTOR_FIELDS[8:]:
+                line += f" {int(actor[field]):#x}"
             lines.append(line)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)

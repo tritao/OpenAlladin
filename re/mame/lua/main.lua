@@ -439,6 +439,7 @@ local function capture(frame, input_token, emit_state)
                     { "y", tostring(actor_y) },
                     { "movement_flags", tostring(read_u8(record + 0x06)) },
                     { "facing_x_flip", tostring(facing_x_flip) },
+                    { "sprite_attribute", tostring(read_u16(record + 0x1E)) },
                     { "frame_ptr", tostring(frame_pointer) },
                     { "collision_box", collision_box_json(
                         frame_pointer,
@@ -779,6 +780,7 @@ if state_sync then
             sync_address("w", record + actor_y_offset),
             sync_address("b", record + 0x06),
             sync_address("b", record + actor_facing_x_flip_offset),
+            sync_address("w", record + 0x1E),
             sync_address("d", record + actor_movement_pc_offset),
             sync_address("d", record + actor_movement_loop_pc_offset),
             sync_address("b", record + actor_movement_loop_timer_offset),
@@ -795,6 +797,7 @@ if state_sync then
         sync_action_parts[#sync_action_parts + 1] =
             "printf \"OPENALADDIN_SYNC_ACTOR frame=%d slot=" .. tostring(slot)
             .. " type=%02X x=%04X y=%04X movement=%02X facing=%02X"
+            .. " spriteattr=%04X"
             .. " movementpc=%08X looppc=%08X looptimer=%02X frameptr=%08X"
             .. " animpc=%08X word18=%04X word1a=%04X facingy=%02X"
             .. " movementtimer=%02X animtimer=%02X returnpc=%08X flags=%02X\\n\",frame,"

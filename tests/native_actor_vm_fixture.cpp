@@ -92,12 +92,13 @@ void load_actor_records(
         if (!(row >> slot_text)) continue;
         if (!slot_text.empty() && slot_text.front() == '#') continue;
 
-        std::string fields[13];
+        std::string fields[16];
+        std::string extra;
         int field_count = 0;
-        while (field_count < 13 && (row >> fields[field_count])) {
+        while (field_count < 16 && (row >> fields[field_count])) {
             ++field_count;
         }
-        if (field_count < 7) {
+        if (field_count != 16 || (row >> extra)) {
             throw std::runtime_error(
                 "invalid actor fixture record at " + path + ":"
                 + std::to_string(line_number));
@@ -139,6 +140,21 @@ void load_actor_records(
         if (field_count > 12) {
             actor.movement_return_pc = parse_unsigned(fields[12], "movement return PC");
         }
+        if (field_count > 13) {
+            actor.movement_word_18 = static_cast<std::int16_t>(
+                parse_unsigned(fields[13], "movement word 18")
+            );
+        }
+        if (field_count > 14) {
+            actor.movement_word_1a = static_cast<std::int16_t>(
+                parse_unsigned(fields[14], "movement word 1A")
+            );
+        }
+        if (field_count > 15) {
+            actor.sprite_attribute = static_cast<std::uint16_t>(
+                parse_unsigned(fields[15], "sprite attribute")
+            );
+        }
     }
 }
 
@@ -151,6 +167,7 @@ ActorAnimationState animation_state(const ActorState& actor) {
     state.runtime_field_07 = actor.runtime_field_07;
     state.movement_word_18 = actor.movement_word_18;
     state.movement_word_1a = actor.movement_word_1a;
+    state.sprite_attribute = actor.sprite_attribute;
     state.facing_x_flip = actor.facing_x_flip;
     state.facing_y_flip = actor.facing_y_flip;
     state.flags = actor.flags;
@@ -169,6 +186,7 @@ void copy_animation_state(const ActorAnimationState& state, ActorState& actor) {
     actor.runtime_field_07 = state.runtime_field_07;
     actor.movement_word_18 = state.movement_word_18;
     actor.movement_word_1a = state.movement_word_1a;
+    actor.sprite_attribute = state.sprite_attribute;
     actor.facing_x_flip = state.facing_x_flip;
     actor.facing_y_flip = state.facing_y_flip;
     actor.flags = state.flags;
@@ -196,6 +214,7 @@ void write_actor(std::ostream& output, std::size_t slot, const ActorState& actor
            << static_cast<unsigned>(actor.movement_loop_timer)
            << ",\"movement_word_18\":" << actor.movement_word_18
            << ",\"movement_word_1a\":" << actor.movement_word_1a
+           << ",\"sprite_attribute\":" << actor.sprite_attribute
            << ",\"frame_ptr\":" << actor.frame_ptr
            << ",\"animation_pc\":" << actor.animation_pc
            << ",\"movement_return_pc\":" << actor.movement_return_pc

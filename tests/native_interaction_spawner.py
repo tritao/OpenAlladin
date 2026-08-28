@@ -57,6 +57,7 @@ def main() -> int:
     # the newly allocated record exposes its template root for one boundary.
     first_visible = next(actor for actor in captured[1]["actors"] if actor["slot"] == 20)
     assert first_visible["animation_pc"] == 0x00123B38
+    assert first_visible["sprite_attribute"] == 0x6000
 
     # The following shared traversal performs the actor's first animation
     # tick, entering the stream decoded by the MAME side-effect finding.
@@ -67,6 +68,7 @@ def main() -> int:
     assert actor["movement_flags"] == 0x21
     assert actor["flags"] == 0x04
     assert actor["animation_pc"] == 0x00123AC4
+    assert actor["sprite_attribute"] == 0x6000
 
     print("native interaction spawner: ok")
     return 0

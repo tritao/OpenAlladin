@@ -1,5 +1,5 @@
 # openaladdin-actor-table-v1
 # Slot-8 interaction-refill actor at the first common animation boundary.
 # The 0x00122C12 stream begins with frame 0x16DE followed by EC 01.
-# slot type x y movement_pc frame_ptr animation_pc flags
-8 0x40 560 816 0x0 0x0 0x00122C12 0x0
+# slot type x y movement_pc frame_ptr animation_pc flags facing_x_flip facing_y_flip movement_command_timer movement_loop_pc movement_loop_timer movement_return_pc movement_word_18 movement_word_1a sprite_attribute
+8 0x40 560 816 0x0 0x0 0x00122C12 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x6000

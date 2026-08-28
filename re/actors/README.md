@@ -1,7 +1,7 @@
 # Actor snapshots and interaction spawning
 
 `level01.tsv` is a small, reviewable actor seed exported from a synchronized
-MAME state trace. It remains available as a compatibility fixture, but the
+MAME state trace. It remains available as a replay fixture, but the
 native Level 01 runtime now starts without it and builds actors from the
 decoded interaction map in `floor.bin`.
 
@@ -14,10 +14,12 @@ python3 genie/analysis/export_actor_records.py \
   --output re/actors/level01.tsv
 ```
 
-The columns are `slot type x y movement_pc collision_frame_ptr animation_pc flags`,
-with optional `facing_x_flip`, `facing_y_flip`, `movement_command_timer`,
-`movement_loop_pc`, `movement_loop_timer`, and `movement_return_pc` columns for
-movement VM fixtures.
+Every record has the columns `slot type x y movement_pc collision_frame_ptr
+animation_pc flags facing_x_flip facing_y_flip movement_command_timer
+movement_loop_pc movement_loop_timer movement_return_pc movement_word_18
+movement_word_1a sprite_attribute`. `sprite_attribute` is the raw Genesis SAT
+tile attribute word from actor-table offset `+0x1E`; its palette and priority
+bits come from the ROM template rather than the actor type.
 The native runtime loads no snapshot by default. Use `--actor-records FILE` to
 select this or another snapshot explicitly for a replay fixture.
 

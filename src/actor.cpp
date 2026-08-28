@@ -20,6 +20,7 @@ void write_actor_state(checkpoint::Writer& writer, const ActorState& actor) {
     writer.u8(actor.movement_loop_timer);
     writer.i16(actor.movement_word_18);
     writer.i16(actor.movement_word_1a);
+    writer.u16(actor.sprite_attribute);
     writer.u32(actor.frame_ptr);
     writer.u32(actor.animation_pc);
     writer.u32(actor.movement_return_pc);
@@ -52,6 +53,7 @@ ActorState read_actor_state(checkpoint::Reader& reader) {
     actor.movement_loop_timer = reader.u8();
     actor.movement_word_18 = reader.i16();
     actor.movement_word_1a = reader.i16();
+    actor.sprite_attribute = reader.u16();
     actor.frame_ptr = reader.u32();
     actor.animation_pc = reader.u32();
     actor.movement_return_pc = reader.u32();

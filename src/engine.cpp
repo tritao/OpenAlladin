@@ -98,6 +98,8 @@ constexpr std::uint32_t kPlayerUpAnimationStream = 0x00122236;
 constexpr std::uint32_t kPlayerDownAnimationStream = 0x001222D2;
 constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
 constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
+constexpr std::uint32_t kActorDeathTemplate = 0x001B7940;
+constexpr std::uint32_t kActorSwordDeathTemplate = 0x001B792C;
 constexpr std::uint8_t kActorDeathFrames = 43;
 constexpr std::uint8_t kActorSwordTerminalFrames = 19;
 
@@ -167,7 +169,7 @@ std::uint32_t terrain_handler(std::uint8_t behavior) {
     return behavior < kTerrainHandlers.size() ? kTerrainHandlers[behavior] : kTerrainNoOpHandler;
 }
 
-constexpr std::uint32_t kCheckpointVersion = 6;
+constexpr std::uint32_t kCheckpointVersion = 7;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
     writer.u8(selector.animation_gate);
@@ -370,13 +372,11 @@ std::uint32_t rgba(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t 
            (static_cast<std::uint32_t>(a) << 24);
 }
 
-int actor_palette_line(std::uint8_t actor_type) {
-    // Type 0x40 is the small apple/object actor visible in the level-01
-    // captures. It shares the player/object palette line, while the guard
-    // family uses the enemy line.
-    return actor_type == 0x40
-        ? SpriteDatabase::kApplePaletteLine
-        : SpriteDatabase::kGuardPaletteLine;
+int actor_palette_line(const ActorState& actor) {
+    // Genesis SAT tile attributes store the palette select in bits 13..14.
+    // The extracted Chopper pixels are palette-line agnostic, so this is the
+    // runtime colour selection copied from the actor template.
+    return static_cast<int>((actor.sprite_attribute >> 13) & 0x03);
 }
 
 }  // namespace
@@ -483,8 +483,14 @@ void Engine::load_actor_timeline(const std::string& path) {
         std::string facing_x_flip;
         std::string facing_y_flip;
         std::string movement_command_timer;
+        std::string sprite_attribute;
+        std::string extra;
         const int slot = std::stoi(first, nullptr, 0);
-        if (!(row >> type >> x >> y >> movement_pc >> frame_ptr >> animation_pc >> flags)
+        if (!(row >> type >> x >> y >> movement_pc >> frame_ptr >> animation_pc >> flags
+              >> facing_x_flip >> facing_y_flip >> movement_command_timer
+              >> movement_loop_pc >> movement_loop_timer >> movement_return_pc
+              >> movement_word_18 >> movement_word_1a >> sprite_attribute)
+            || (row >> extra)
             || slot < 0 || slot >= static_cast<int>(actor_timeline_[current_frame].size())) {
             throw std::runtime_error(
                 "invalid actor timeline record at " + path + ":" + std::to_string(line_number));
@@ -500,30 +506,15 @@ void Engine::load_actor_timeline(const std::string& path) {
         actor.frame_ptr = static_cast<std::uint32_t>(parse(frame_ptr));
         actor.animation_pc = static_cast<std::uint32_t>(parse(animation_pc));
         actor.flags = static_cast<std::uint8_t>(parse(flags));
-        actor.facing_x_flip = (row >> facing_x_flip)
-            ? static_cast<std::uint8_t>(parse(facing_x_flip))
-            : 0;
-        actor.facing_y_flip = (row >> facing_y_flip)
-            ? static_cast<std::uint8_t>(parse(facing_y_flip))
-            : 0;
-        actor.movement_command_timer = (row >> movement_command_timer)
-            ? static_cast<std::uint8_t>(parse(movement_command_timer))
-            : 0;
-        actor.movement_loop_pc = (row >> movement_loop_pc)
-            ? static_cast<std::uint32_t>(parse(movement_loop_pc))
-            : 0;
-        actor.movement_loop_timer = (row >> movement_loop_timer)
-            ? static_cast<std::uint8_t>(parse(movement_loop_timer))
-            : 0;
-        actor.movement_return_pc = (row >> movement_return_pc)
-            ? static_cast<std::uint32_t>(parse(movement_return_pc))
-            : 0;
-        actor.movement_word_18 = (row >> movement_word_18)
-            ? static_cast<std::int16_t>(parse(movement_word_18))
-            : 0;
-        actor.movement_word_1a = (row >> movement_word_1a)
-            ? static_cast<std::int16_t>(parse(movement_word_1a))
-            : 0;
+        actor.facing_x_flip = static_cast<std::uint8_t>(parse(facing_x_flip));
+        actor.facing_y_flip = static_cast<std::uint8_t>(parse(facing_y_flip));
+        actor.movement_command_timer = static_cast<std::uint8_t>(parse(movement_command_timer));
+        actor.movement_loop_pc = static_cast<std::uint32_t>(parse(movement_loop_pc));
+        actor.movement_loop_timer = static_cast<std::uint8_t>(parse(movement_loop_timer));
+        actor.movement_return_pc = static_cast<std::uint32_t>(parse(movement_return_pc));
+        actor.movement_word_18 = static_cast<std::int16_t>(parse(movement_word_18));
+        actor.movement_word_1a = static_cast<std::int16_t>(parse(movement_word_1a));
+        actor.sprite_attribute = static_cast<std::uint16_t>(parse(sprite_attribute));
     }
     if (actor_timeline_.empty()) {
         throw std::runtime_error("actor timeline is empty: " + path);
@@ -710,11 +701,18 @@ ActorState Engine::actor_from_template(std::uint32_t template_address) const {
             | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
             | read_u8(address + 3);
     };
+    const auto read_u16 = [&read_u8](std::uint32_t address) -> std::uint16_t {
+        return static_cast<std::uint16_t>(
+            (static_cast<std::uint16_t>(read_u8(address)) << 8)
+            | read_u8(address + 1)
+        );
+    };
     if (template_address + 0x12 >= rom_bytes_.size()) return actor;
     actor.type = read_u8(template_address);
     actor.movement_flags = read_u8(template_address + 2);
     actor.facing_x_flip = read_u8(template_address + 5);
     actor.movement_pc = read_u32(template_address + 6);
+    actor.sprite_attribute = read_u16(template_address + 0x0A);
     actor.animation_pc = read_u32(template_address + 0x0C);
     actor.resource_count = read_u8(template_address + 0x10);
     actor.facing_y_flip = read_u8(template_address + 0x11);
@@ -1055,6 +1053,7 @@ void Engine::update_actor_animations() {
             && actor.animation_pc == 0x00122B5A
             && actor.flags == 0x08) {
             actor.type = kActorTerminalType;
+            actor.sprite_attribute = actor_from_template(kActorSwordDeathTemplate).sprite_attribute;
             actor.movement_pc = 0;
             actor.animation_pc = kActorSwordDeathAnimationStream;
             actor.frame_ptr = 0;
@@ -1116,6 +1115,7 @@ void Engine::update_actor_animations() {
         animation_state.movement_pc = actor.movement_pc;
         animation_state.movement_word_18 = actor.movement_word_18;
         animation_state.movement_word_1a = actor.movement_word_1a;
+        animation_state.sprite_attribute = actor.sprite_attribute;
         animation_state.facing_x_flip = actor.facing_x_flip;
         animation_state.facing_y_flip = actor.facing_y_flip;
         animation_state.flags = actor.flags;
@@ -1133,6 +1133,7 @@ void Engine::update_actor_animations() {
         actor.movement_pc = animation_state.movement_pc;
         actor.movement_word_18 = animation_state.movement_word_18;
         actor.movement_word_1a = animation_state.movement_word_1a;
+        actor.sprite_attribute = animation_state.sprite_attribute;
         actor.facing_x_flip = animation_state.facing_x_flip;
         actor.facing_y_flip = animation_state.facing_y_flip;
         actor.flags = animation_state.flags;
@@ -1277,6 +1278,13 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
                 | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
                 | read_u8(address + 3);
         };
+        const auto read_u16 = [&](std::uint32_t address) -> std::uint16_t {
+            if (address + 1 >= rom_bytes_.size()) return 0;
+            return static_cast<std::uint16_t>(
+                (static_cast<std::uint16_t>(read_u8(address)) << 8)
+                | read_u8(address + 1)
+            );
+        };
         if (request.template_address + 0x12 >= rom_bytes_.size()) return std::nullopt;
 
         // The compact template layout is the one consumed by
@@ -1288,6 +1296,7 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
         spawned.movement_flags = read_u8(request.template_address + 2);
         spawned.facing_x_flip = read_u8(request.template_address + 5);
         spawned.movement_pc = read_u32(request.template_address + 6);
+        spawned.sprite_attribute = read_u16(request.template_address + 0x0A);
         spawned.animation_pc = read_u32(request.template_address + 0x0C);
         spawned.resource_count = read_u8(request.template_address + 0x10);
         spawned.facing_y_flip = read_u8(request.template_address + 0x11);
@@ -1431,8 +1440,12 @@ void Engine::update_actor_actor_collisions() {
     // cursor starts at FF7E82 (record index 1) and scans slots 1..24. This
     // is deliberately separate from the player/actor pass:
     // the player sword is itself an actor by the time the guard handler runs.
-    const auto terminalize = [](ActorState& actor, std::uint32_t animation_stream, std::uint8_t frames) {
+    const auto terminalize = [this](ActorState& actor, std::uint32_t animation_stream, std::uint8_t frames) {
         actor.type = kActorTerminalType;
+        const std::uint32_t template_address = animation_stream == kActorDeathAnimationStream
+            ? kActorDeathTemplate
+            : kActorSwordDeathTemplate;
+        actor.sprite_attribute = actor_from_template(template_address).sprite_attribute;
         actor.movement_pc = 0;
         actor.animation_pc = animation_stream;
         actor.frame_ptr = 0;
@@ -1595,7 +1608,13 @@ void Engine::load_actor_records(const std::string& path) {
         std::string facing_x_flip;
         std::string facing_y_flip;
         std::string movement_command_timer;
-        if (!(row >> slot >> type >> x >> y >> movement_pc >> frame_ptr >> animation_pc >> flags)
+        std::string sprite_attribute;
+        std::string extra;
+        if (!(row >> slot >> type >> x >> y >> movement_pc >> frame_ptr >> animation_pc >> flags
+              >> facing_x_flip >> facing_y_flip >> movement_command_timer
+              >> movement_loop_pc >> movement_loop_timer >> movement_return_pc
+              >> movement_word_18 >> movement_word_1a >> sprite_attribute)
+            || (row >> extra)
             || slot < 0 || slot >= static_cast<int>(actors_.templates().size())) {
             throw std::runtime_error(
                 "invalid actor record at " + path + ":" + std::to_string(line_number));
@@ -1611,30 +1630,15 @@ void Engine::load_actor_records(const std::string& path) {
         actor.frame_ptr = static_cast<std::uint32_t>(parse(frame_ptr));
         actor.animation_pc = static_cast<std::uint32_t>(parse(animation_pc));
         actor.flags = static_cast<std::uint8_t>(parse(flags));
-        actor.facing_x_flip = (row >> facing_x_flip)
-            ? static_cast<std::uint8_t>(parse(facing_x_flip))
-            : 0;
-        actor.facing_y_flip = (row >> facing_y_flip)
-            ? static_cast<std::uint8_t>(parse(facing_y_flip))
-            : 0;
-        actor.movement_command_timer = (row >> movement_command_timer)
-            ? static_cast<std::uint8_t>(parse(movement_command_timer))
-            : 0;
-        actor.movement_loop_pc = (row >> movement_loop_pc)
-            ? static_cast<std::uint32_t>(parse(movement_loop_pc))
-            : 0;
-        actor.movement_loop_timer = (row >> movement_loop_timer)
-            ? static_cast<std::uint8_t>(parse(movement_loop_timer))
-            : 0;
-        actor.movement_return_pc = (row >> movement_return_pc)
-            ? static_cast<std::uint32_t>(parse(movement_return_pc))
-            : 0;
-        actor.movement_word_18 = (row >> movement_word_18)
-            ? static_cast<std::int16_t>(parse(movement_word_18))
-            : 0;
-        actor.movement_word_1a = (row >> movement_word_1a)
-            ? static_cast<std::int16_t>(parse(movement_word_1a))
-            : 0;
+        actor.facing_x_flip = static_cast<std::uint8_t>(parse(facing_x_flip));
+        actor.facing_y_flip = static_cast<std::uint8_t>(parse(facing_y_flip));
+        actor.movement_command_timer = static_cast<std::uint8_t>(parse(movement_command_timer));
+        actor.movement_loop_pc = static_cast<std::uint32_t>(parse(movement_loop_pc));
+        actor.movement_loop_timer = static_cast<std::uint8_t>(parse(movement_loop_timer));
+        actor.movement_return_pc = static_cast<std::uint32_t>(parse(movement_return_pc));
+        actor.movement_word_18 = static_cast<std::int16_t>(parse(movement_word_18));
+        actor.movement_word_1a = static_cast<std::int16_t>(parse(movement_word_1a));
+        actor.sprite_attribute = static_cast<std::uint16_t>(parse(sprite_attribute));
     }
 }
 
@@ -1717,6 +1721,7 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
         const bool guard_overlap = actor.type == kActorGuardType && boxes_overlap;
         if (sword_active && guard_overlap) {
             actor.type = kActorTerminalType;
+            actor.sprite_attribute = actor_from_template(kActorDeathTemplate).sprite_attribute;
             actor.movement_pc = 0;
             actor.animation_pc = kActorDeathAnimationStream;
             actor.frame_ptr = 0;
@@ -2599,6 +2604,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         };
         ActorState spawned;
         spawned.type = read_rom_u8(kTerrainScene5SpawnTemplate);
+        spawned.sprite_attribute = actor_from_template(kTerrainScene5SpawnTemplate).sprite_attribute;
         // The template source byte is clear, but the terrain response's
         // runtime initializer enables actor-motion bit 6 before the record is
         // next observed in RAM (confirmed at +0x06 in the MAME capture).
@@ -4045,7 +4051,7 @@ void Engine::update(const InputState& input) {
         // The ROM's physical A-button path publishes the throw stream at
         // 0x001223DA after the common locomotion tick.  Its following VM
         // boundaries publish the mode-0 apple actor through F5; keep this
-        // separate from the legacy sword/attack alias above.
+        // separate from the sword/attack alias above.
         // The first throw frame reuses the locomotion frame pointer at the
         // action boundary; the stream's own first frame is published on the
         // following VM tick.
@@ -4223,7 +4229,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v3\""
            << ",\"frame\":" << frame_
            << ",\"input\":\"" << input_token << "\""
-           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
+           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"sprite_attribute\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
            << ",\"player\":{\"x\":" << player_.x
            << ",\"y\":" << player_.y
            << ",\"world_x\":" << player_world_x()
@@ -4526,6 +4532,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"x\":" << actor.x
                << ",\"y\":" << actor.y
                << ",\"movement_flags\":" << static_cast<unsigned>(actor.movement_flags)
+               << ",\"sprite_attribute\":" << actor.sprite_attribute
                << ",\"runtime_field_07\":" << static_cast<unsigned>(actor.runtime_field_07)
                << ",\"facing_x_flip\":" << static_cast<unsigned>(actor.facing_x_flip)
                << ",\"facing_y_flip\":" << static_cast<unsigned>(actor.facing_y_flip)
@@ -4889,7 +4896,7 @@ void Engine::render(SDL_Renderer* renderer) {
             static_cast<int>(actor.y) - kPlayerVisualOffsetY - camera_render_y_,
             actor.facing_x_flip != 0,
             actor.facing_y_flip != 0,
-            actor_palette_line(actor.type)
+            actor_palette_line(actor)
         );
     }
 

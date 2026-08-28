@@ -25,6 +25,7 @@ DEFAULT_FIELDS = [
     "x",
     "y",
     "movement_flags",
+    "sprite_attribute",
     "facing_x_flip",
     "facing_y_flip",
     "frame_ptr",

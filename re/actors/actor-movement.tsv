@@ -3,5 +3,5 @@
 # Slot 19 is the confirmed type-0x84 actor whose ROM movement stream starts
 # at 0x00120360 and reaches the 0x84 timer command at 0x0012038E. The
 # captured actor is facing left (field +0x09 = 0xFF).
-# slot type x y movement_pc frame_ptr animation_pc flags [facing_x_flip [facing_y_flip [movement_command_timer]]]
-19 0x84 0x01dc 0x01f0 0x00120360 0x001fad72 0x0 0x0 0xFF
+# slot type x y movement_pc frame_ptr animation_pc flags facing_x_flip facing_y_flip movement_command_timer movement_loop_pc movement_loop_timer movement_return_pc movement_word_18 movement_word_1a sprite_attribute
+19 0x84 0x01dc 0x01f0 0x00120360 0x001fad72 0x0 0x0 0xFF 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x6000

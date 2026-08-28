@@ -29,7 +29,7 @@ struct Options {
     std::string sprites = "build/assets/sprites";
     std::string rom = "rom/Disneys_Aladdin_U_p1.bin";
     // Native Level 01 actors are refilled from the ROM interaction map. The
-    // TSV remains available as an explicit compatibility/replay fixture via
+    // TSV remains available as an explicit replay fixture via
     // --actor-records.
     std::string actor_records;
     std::string actor_timeline;
@@ -524,7 +524,7 @@ int main(int argc, char** argv) {
             if (!state_file) {
                 throw std::runtime_error("cannot open state output: " + options.state_output);
             }
-            state_file << "{\"type\":\"header\",\"format\":\"openaladdin-frame-state-v3\",\"rom\":\"openaladdin\",\"rom_sha256\":\"\",\"state_boundary\":\"game-loop\",\"sync\":{\"boundary\":\"VBlankInterrupt\",\"state_boundary\":\"game-loop\",\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"],\"actors_qualified\":true,\"actor_slot_count\":32,\"scheduler_trace\":" << (!options.scheduler_trace.empty() ? "true" : "false") << "}}\n";
+            state_file << "{\"type\":\"header\",\"format\":\"openaladdin-frame-state-v3\",\"rom\":\"openaladdin\",\"rom_sha256\":\"\",\"state_boundary\":\"game-loop\",\"sync\":{\"boundary\":\"VBlankInterrupt\",\"state_boundary\":\"game-loop\",\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"sprite_attribute\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"],\"actors_qualified\":true,\"actor_slot_count\":32,\"scheduler_trace\":" << (!options.scheduler_trace.empty() ? "true" : "false") << "}}\n";
             engine.write_state(state_file, "none");
         }
 

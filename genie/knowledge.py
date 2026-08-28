@@ -67,8 +67,8 @@ def validate_knowledge(rom: Path) -> list[str]:
                         continue
                     current_frame = int(fields[1], 0)
                     continue
-                if len(fields) < 8 or len(fields) > 16:
-                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: expected 8..16 actor fields")
+                if len(fields) != 17:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: expected exactly 17 actor fields")
                     continue
                 if "timeline" in actor_path.name and current_frame is None:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: record precedes frame marker")
@@ -103,6 +103,8 @@ def validate_knowledge(rom: Path) -> list[str]:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_word_18 outside range")
                 if len(values) >= 16 and not 0 <= values[15] <= 0xFFFF:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: movement_word_1a outside range")
+                if len(values) >= 17 and not 0 <= values[16] <= 0xFFFF:
+                    errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: sprite_attribute outside range")
                 key = (current_frame, slot)
                 if key in seen_slots:
                     errors.append(f"{actor_path.relative_to(ROOT)}:{line_number}: duplicate slot {slot}")

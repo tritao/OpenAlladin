@@ -123,7 +123,7 @@ struct InputState {
     bool right = false;
     bool jump_pressed = false;
     bool attack_pressed = false;
-    // Explicit apple/throw action.  The legacy attack_pressed field remains
+    // Explicit apple/throw action. The attack_pressed field remains
     // the sword path used by existing fixtures; the ROM's A-button stream
     // is exposed separately so physical controller replays can preserve the
     // distinct action selection.

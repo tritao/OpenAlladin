@@ -68,6 +68,7 @@ def main() -> int:
     assert spawned["animation_pc"] == 0x00122B58
     assert spawned["frame_ptr"] == 0
     assert spawned["flags"] == 0x08
+    assert spawned["sprite_attribute"] == 0x6000
 
     moved = next(actor for actor in states[2]["actors"] if actor["slot"] == 25)
     assert moved["x"] == 1143
@@ -104,6 +105,7 @@ def main() -> int:
     assert player_spawn["y"] == 895
     assert player_spawn["animation_pc"] == 0x001245D0
     assert player_spawn["frame_ptr"] != 0
+    assert player_spawn["sprite_attribute"] == 0
 
     print("native animation F5 spawn: ok")
     return 0

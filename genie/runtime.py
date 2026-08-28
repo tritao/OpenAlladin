@@ -85,6 +85,7 @@ ATOMIC_ACTOR_FIELDS = (
     "movement_flags",
     "facing_x_flip",
     "facing_y_flip",
+    "sprite_attribute",
     "frame_ptr",
     "animation_pc",
     "movement_pc",
