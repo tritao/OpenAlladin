@@ -73,6 +73,9 @@ HorizontalDirection horizontal_direction(const InputState& input) {
 // origin. The ROM keeps these coordinate systems distinct: terrain probes use
 // WORLD_Y - 0xF0, while the VDP sprite origin uses WORLD_Y - 0x100.
 constexpr int kPlayerVisualOffsetY = 0x100;
+// Actor table X is the collision/logic origin. The Genesis actor sprite
+// publisher places the multipart visual three pixels to its right.
+constexpr int kActorVisualOffsetX = 3;
 constexpr int kTerrainContourRomOffset = 0x2FD2;
 constexpr int kTerrainContourRomSize = 0x1000;
 constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
@@ -365,6 +368,15 @@ std::uint32_t rgba(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t 
            (static_cast<std::uint32_t>(g) << 8) |
            (static_cast<std::uint32_t>(b) << 16) |
            (static_cast<std::uint32_t>(a) << 24);
+}
+
+int actor_palette_line(std::uint8_t actor_type) {
+    // Type 0x40 is the small apple/object actor visible in the level-01
+    // captures. It shares the player/object palette line, while the guard
+    // family uses the enemy line.
+    return actor_type == 0x40
+        ? SpriteDatabase::kApplePaletteLine
+        : SpriteDatabase::kGuardPaletteLine;
 }
 
 }  // namespace
@@ -4844,6 +4856,43 @@ void Engine::render(SDL_Renderer* renderer) {
         player_frame_index = SpriteDatabase::kIdleFrame;
     }
     const SpriteFrame& player_frame = sprites_.frame(player_frame_index);
+
+    // Actor animation is state-owned by the native actor table, but its
+    // visual output still has to be submitted to the same framebuffer as the
+    // player. Actor frame pointers use the same extracted Chopper frame
+    // database. Their extracted records retain preview palette line 0,
+    // while the runtime Genesis SAT selects enemy palette line 2.
+    // Slot zero is mirrored from PlayerState in the live engine and is drawn
+    // separately below. Snapshot fixtures use the same convention.
+    for (std::size_t slot = 1; slot < actors_.size(); ++slot) {
+        const ActorState& actor = actors_[slot];
+        if (actor.type == 0 || actor.frame_ptr == 0) {
+            continue;
+        }
+        const int actor_frame_index = sprites_.frame_index_for_address(
+            static_cast<int>(actor.frame_ptr)
+        );
+        if (actor_frame_index < 0) {
+            // Some terminal/resource records intentionally have frame
+            // pointers that are not visual Chopper frames. They remain part
+            // of gameplay state but have no native bitmap to submit.
+            continue;
+        }
+        const SpriteFrame& actor_frame = sprites_.frame(actor_frame_index);
+        SpriteRenderer::draw(
+            actor_frame,
+            sprites_.palette(),
+            framebuffer_,
+            kScreenWidth,
+            kScreenHeight,
+            static_cast<int>(actor.x) + kActorVisualOffsetX - camera_render_x_,
+            static_cast<int>(actor.y) - kPlayerVisualOffsetY - camera_render_y_,
+            actor.facing_x_flip != 0,
+            actor.facing_y_flip != 0,
+            actor_palette_line(actor.type)
+        );
+    }
+
     SpriteRenderer::draw(
         player_frame,
         sprites_.palette(),

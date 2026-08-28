@@ -67,6 +67,13 @@ public:
     // palette line 3. The frame metadata keeps its local indices; rendering
     // applies this runtime line to the player multipart frame.
     static constexpr int kPlayerPaletteLine = 3;
+    // Guard frame records use the same local colour indices, but their
+    // runtime SAT entries select CRAM line 2. The extractor leaves the
+    // metadata at its preview line (0), so native actor rendering must apply
+    // this runtime palette explicitly just like the player does above.
+    static constexpr int kGuardPaletteLine = 2;
+    // Type-0x40 apple actors use the player/object CRAM line instead.
+    static constexpr int kApplePaletteLine = 3;
 
 private:
     std::vector<SpriteFrame> frames_;
