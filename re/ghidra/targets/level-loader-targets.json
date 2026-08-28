@@ -13,7 +13,9 @@
     { "address": "0x001AA700", "name": "Level_ClearSceneEventScratch" },
     { "address": "0x001AA712", "name": "Level_ClearInputScratch" },
     { "address": "0x001B3434", "name": "TerrainBehaviorTable_LoadForLevel" },
-    { "address": "0x001B3818", "name": "TerrainBehaviorTable_Decode" }
+    { "address": "0x001B3818", "name": "TerrainBehaviorTable_Decode" },
+    { "address": "0x001B0490", "name": "Camera_RebuildDerivedCoordinateState" },
+    { "address": "0x001B04DE", "name": "Camera_InitializeCoordinateState" }
   ],
   "memory_references": [
     { "address": "0x00002C78", "name": "LEVEL_TABLE" },

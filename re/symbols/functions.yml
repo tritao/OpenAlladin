@@ -81,6 +81,20 @@
   evidence:
     - ghidra_level_loader_targeted_decompile
     - ghidra_disassembly_001AA712
+0x001B0490:
+  name: Camera_RebuildDerivedCoordinateState
+  confidence: confirmed
+  description: Recomputes the player camera-pixel coordinates and aligned camera tile coordinates from PLAYER_X/PLAYER_Y and WORLD_CAMERA_X/WORLD_CAMERA_Y.
+  evidence:
+    - ghidra_decompile_001B0490
+    - ghidra_camera_coordinate_state
+0x001B04DE:
+  name: Camera_InitializeCoordinateState
+  confidence: confirmed
+  description: Initializes local and world player coordinates from the camera pixel/tile state, clears camera scroll deltas, and sets the camera reference to the aligned world-camera position.
+  evidence:
+    - ghidra_decompile_001B04DE
+    - ghidra_camera_coordinate_state
 0x001A99C6:
   name: Player_AlignXToCameraGrid
   confidence: decompiled
