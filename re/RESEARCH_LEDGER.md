@@ -192,6 +192,12 @@ the finding or commit message.
   handlers spawn Type `0x3A`, Type `0x40`, or a generic object respectively;
   none writes a scene state, and none is present in the extracted Level 01
   interaction table.
+- The query/gate leafs at `0x001B3208` and `0x001B323A..0x001B324E` are now
+  named from their exact bit-test bodies. `VBlank_SceneResourceGate` tests
+  bit 5 of `0x00FFF155`; the three configured terrain callback
+  implementations test bits 4/4/5 of `0x00FFF155`/`0x00FFF156` and return
+  condition codes to their indirect callers. They do not write terrain,
+  player, actor, or scene state.
 - `re/mame/findings/20260826-level01-unclassified-actor-collision-v1.json`
   classifies the remaining actor-collision table family: types `0x2B`,
   `0x2D`, `0x2E`, `0x2F`, `0x30`, and `0x31` are transient cleanup, event, or

@@ -675,6 +675,38 @@
   evidence:
     - ghidra_disassembly_001B3230
     - ghidra_decompile_player_movement_collision_targets
+0x001B3208:
+  name: VBlank_SceneResourceGate
+  confidence: decompiled
+  description: Tests bit 5 of the raw scene/resource query byte at 0x00FFF155 and returns the condition code used by the VBlank and resource service paths.
+  evidence:
+    - ghidra_decompile_001B3208
+    - ghidra_targeted_decompile_scheduler
+    - mame_terrain_callback_trace
+0x001B323A:
+  name: Terrain_QueryCallbackB_Impl
+  confidence: decompiled
+  description: Tests bit 4 of the raw terrain query byte at 0x00FFF155 and returns the condition code for the configured terrain callback.
+  evidence:
+    - ghidra_decompile_001B323A
+    - ghidra_level01_terrain_query_callback_targeted_decompile
+    - mame_terrain_callback_trace
+0x001B3244:
+  name: Terrain_QueryCallbackA_Impl
+  confidence: decompiled
+  description: Tests bit 4 of TERRAIN_QUERY_FLAGS at 0x00FFF156 and returns the condition code for the configured terrain callback.
+  evidence:
+    - ghidra_decompile_001B3244
+    - ghidra_level01_terrain_query_callback_targeted_decompile
+    - mame_terrain_callback_trace
+0x001B324E:
+  name: Terrain_QueryCallbackC_Impl
+  confidence: decompiled
+  description: Tests bit 5 of TERRAIN_QUERY_FLAGS at 0x00FFF156 and returns the condition code for the configured terrain callback.
+  evidence:
+    - ghidra_decompile_001B324E
+    - ghidra_level01_terrain_query_callback_targeted_decompile
+    - mame_terrain_callback_trace
 0x001B5318:
   name: TerrainHandler_SetTerminalCollisionBlock
   confidence: confirmed
