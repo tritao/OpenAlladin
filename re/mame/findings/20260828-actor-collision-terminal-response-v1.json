@@ -1,0 +1,53 @@
+{
+  "format": "openaladdin-actor-collision-terminal-response-v1",
+  "recorded_at": "2026-08-28",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-combat-targets.json",
+  "decompile_artifact": "build/re/actor-combat-targeted-decompile.json",
+  "dispatch": {
+    "pass": "0x001ABD7E",
+    "table": "0x001EBA",
+    "callers": [
+      {
+        "address": "0x001AC458",
+        "name": "ActorType0A_ActorCollisionHandler",
+        "receiving_type": "0x0A"
+      },
+      {
+        "address": "0x001AC350",
+        "name": "ActorType20_ActorCollisionHandler",
+        "receiving_type": "0x20"
+      }
+    ]
+  },
+  "targets": [
+    {
+      "address": "0x001AC484",
+      "name": "Actor_ApplyTerminalCollisionResponse",
+      "confidence": "decompiled",
+      "behavior": [
+        "Adds receiving record byte +0x08 to ACTOR_RESPONSE_COUNTER.",
+        "Arms SCENE_SCRIPT_COUNTDOWN=0x20 for receiving types 0x10, 0x11, and 0x13.",
+        "Clears current and linked records and releases their owned resources.",
+        "Reinitializes the current record from the type-0x84 template at 0x001B7940.",
+        "Queues audio event 3 when SCENE_VDP_UPDATE_FLAG is nonzero."
+      ],
+      "direct_scene_state_write": false,
+      "direct_player_coordinate_write": false
+    },
+    {
+      "address": "0x001ABE52",
+      "name": "Actor_ClearAndReleaseLinked",
+      "confidence": "decompiled",
+      "behavior": [
+        "Clears the current actor type and owned resources.",
+        "Clears and releases a linked actor through record offset +0x3E."
+      ],
+      "duplicate_of": "0x001ABE6E"
+    }
+  ],
+  "conclusion": "The decoded family is a generic actor terminal-response path, not a Level 01 scene transition or player-transfer writer. The shared helper is now represented by canonical symbols, while its countdown behavior remains limited to receiving types 0x10, 0x11, and 0x13."
+}

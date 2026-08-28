@@ -177,6 +177,15 @@
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_actor_combat_targeted_decompile
+0x001AC484:
+  name: Actor_ApplyTerminalCollisionResponse
+  confidence: decompiled
+  description: Shared actor-to-actor terminal response path. It adds the receiving actor's response byte at offset 0x08 to ACTOR_RESPONSE_COUNTER, arms SCENE_SCRIPT_COUNTDOWN=0x20 for receiving types 0x10, 0x11, and 0x13, clears the current and linked records and their resources, reinitializes the current record from the type-0x84 terminal template, and optionally queues audio event 3 when SCENE_VDP_UPDATE_FLAG is set.
+  evidence:
+    - ghidra_decompile_001AC484
+    - ghidra_decompile_001AC350
+    - ghidra_decompile_001AC458
+    - rom_actor_collision_handler_table_001EBA
 0x001AC2BC:
   name: ActorType10_ActorCollisionHandler
   confidence: confirmed
@@ -408,6 +417,14 @@
   evidence:
     - ghidra_far_transfer_targeted_decompile_v1
     - ghidra_decompile_collision_damage_targets
+0x001ABE52:
+  name: Actor_ClearAndReleaseLinked
+  confidence: decompiled
+  description: "Collision-response cleanup helper equivalent to Actor_ClearAndRelease: clears the current actor type and owned resources, then clears and releases a linked actor through the record link at offset 0x3E. This is the duplicate call-site variant used by the shared terminal response path."
+  evidence:
+    - ghidra_decompile_001ABE52
+    - ghidra_decompile_001AC484
+    - ghidra_decompile_001AC350
 0x001B03F2:
   name: Player_InteractionHelper
   confidence: confirmed

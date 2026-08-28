@@ -1320,6 +1320,28 @@ the same named allocator/initializer contract. The native model and allocator
 unit test now encode these recovered ranges and retention semantics rather
 than treating stale loop words as unexplained behavior.
 
+## Actor collision terminal response (20260828)
+
+The shared response block at `0x001AC484` is now decoded from its callers at
+`0x001AC350` (receiving type `0x20`) and `0x001AC458` (receiving type `0x0A`).
+It adds the receiving record's byte at offset `+0x08` to
+`ACTOR_RESPONSE_COUNTER`; when the receiving type is `0x10`, `0x11`, or
+`0x13`, it arms `SCENE_SCRIPT_COUNTDOWN=0x20`. It then clears the current
+record and any linked record through `+0x3E`, releases their owned resources,
+reinitializes the current record from the type-`0x84` terminal template at
+`0x001B7940`, and queues audio event `3` when `SCENE_VDP_UPDATE_FLAG` is set.
+
+The cleanup call at `0x001ABE52` is a duplicate-form helper of the confirmed
+`Actor_ClearAndRelease` path at `0x001ABE6E`: both clear the current type and
+resources and then clear/release a linked actor. The duplicate is now named
+`Actor_ClearAndReleaseLinked` because it is the helper used directly by the
+shared collision response. This family is an actor terminal replacement and
+counter/countdown producer; it does not directly write `SCENE_STATE` or player
+coordinates, so it does not alter the existing Level 01 transfer conclusion.
+
+The static result is recorded in
+`re/mame/findings/20260828-actor-collision-terminal-response-v1.json`.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1419,6 +1441,7 @@ than treating stale loop words as unexplained behavior.
 | `20260827-level01-natural-transition-inventory-v1` | recorded-negative-natural-scene-writer-inventory | clean power-on route evaluates the Level 01 boundary 1105 times but reaches only `(2564,920)`; no post-boot scene-state, cursor, table, transition, latch, or completion writer fires |
 | `20260827-level01-connector-top-transfer-audit-v1` | recorded-negative-natural-continuation | four controller-only connector-top dismount families reach at most ordinary jump `Y=412`; no behavior-0x29/0x2D launch, scene gate, or new transfer path fires |
 | `20260827-level01-transfer-reachability-closure-v1` | recorded-trace-validated-producer-closure | fixed terrain 0x29/0x2D closure plus direct selector-0x0D/0x74 Type-0x6A/0x65 producer validation; remote actor contact/alignment remains the next targeted experiment |
+| `20260828-actor-collision-terminal-response-v1` | recorded-static-decompilation | shared terminal actor-collision response, linked cleanup, type-countdown gating, and type-0x84 replacement |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
