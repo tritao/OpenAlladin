@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-level-boundary-transition-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scheduler-targets.json",
+  "decompile_report": "build/re/full-rom/decompile/001A8F0C.json",
+  "function": {
+    "address": "0x001A8F0C",
+    "name": "Level_ExitAndTerminalTransition",
+    "confidence": "decompiled",
+    "behavior": [
+      "Checks PLAYER_WORLD_Y against the active level height and performs actor/resource cleanup for an out-of-bounds exit.",
+      "Consumes PLAYER_TERMINAL_TRANSITION as a delayed terminal/reload request and blocks the reset while PLAYER_INTERACTION_LOCK is active.",
+      "Clears actor records, reinitializes terminal actors, and restores the response state when the terminal path is accepted.",
+      "Reloads level behavior/resources, resets frame and terrain state, refills camera data, and runs the initial render/service sequence for a level change.",
+      "Dispatches the normal scene/resource transition path and returns to the gameplay frame pipeline after scene setup."
+    ]
+  },
+  "limitations": [
+    "Ghidra currently represents the surrounding transition/service region as one large parent function; internal logical services remain tracked by their own entry points.",
+    "The level selector and several transition scratch fields remain mechanically named until their producer/consumer ownership is resolved."
+  ],
+  "conclusion": "0x001A8F0C is the boundary/terminal-transition coordinator, not a second scheduler. Its broad body contains the cleanup, reload, camera refill, and transition-to-frame-pipeline branches that are being split into named callees."
+}

@@ -1379,6 +1379,20 @@ counter updater at 0x001B00CA.
 The static result is recorded in
 re/mame/findings/20260828-interaction-counter-drain-v1.json.
 
+## Level boundary and terminal transition coordinator (20260828)
+
+The broad entry at 0x001A8F0C is now named Level_ExitAndTerminalTransition.
+Its decompilation shows one coordinator for the level-boundary and terminal
+branches: it performs out-of-bounds cleanup, consumes the delayed terminal
+transition request, resets actor/resource state, reloads level and scene
+resources, refills camera data, and re-enters the frame/render pipeline for the
+resulting state. The surrounding Ghidra parent-function artifact is still
+large, so its internal services remain represented by their own named entry
+points rather than being collapsed into this label.
+
+The static result is recorded in
+re/mame/findings/20260828-level-boundary-transition-v1.json.
+
 ## Frame resource wait and terrain edge probe (20260828)
 
 Frame_InputAndResourceService at 0x001A91C6 now owns the frame-wait and
@@ -1629,6 +1643,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-frame-terrain-services-v1` | recorded-static-decompilation | frame/resource wait handshake and player directional terrain edge probes |
 | `20260828-interaction-state-services-v1` | recorded-static-decompilation | frame-gated response-counter, resource-milestone, and interaction-target services |
 | `20260828-interaction-counter-drain-v1` | recorded-static-decompilation | reset-path response-counter drain and six-byte response-state synchronization |
+| `20260828-level-boundary-transition-v1` | recorded-static-decompilation | level-boundary cleanup, terminal transition countdown, scene/resource reload, and frame-pipeline re-entry |
 | `20260828-animation-sprite-payload-v1` | recorded-static-decompilation | AnimationVM frame expansion into actor sprite payload records for VDP submission |
 | `20260828-audio-z80-bootstrap-v1` | recorded-static-decompilation | Z80 bus handoff, sound-driver copy, Z80 start, and audio bootstrap command sequence |
 | `20260828-render-submission-v1` | recorded-static-decompilation | sprite attribute-record construction, camera-relative actor culling, and the two VDP submission stages |

@@ -258,6 +258,15 @@
     - ghidra_decompile_001AD632
     - ghidra_targeted_decompile_scheduler
     - ghidra_lower_frontier_terrain_response
+0x001A8F0C:
+  name: Level_ExitAndTerminalTransition
+  confidence: decompiled
+  description: Coordinates level-boundary and terminal-transition handling; performs out-of-bounds cleanup, consumes the terminal transition countdown, resets actor/resource state, reloads level and scene resources, refills camera data, and re-enters the frame/render pipeline for the resulting state.
+  evidence:
+    - ghidra_decompile_001A8F0C
+    - ghidra_targeted_decompile_scheduler
+    - level01_transfer_capable_mechanism_graph
+    - level01_upstream_transfer_writer_graph
 0x001B3B96:
   name: SceneTable_SelectNextState
   confidence: probable
