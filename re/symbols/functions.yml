@@ -1422,6 +1422,14 @@
     - ghidra_audio_queue_decompile
     - mame_audio_mailbox_queue_trace
 
+0x001E580E:
+  name: Audio_QueueSingleByte
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, writes one caller-supplied byte, and closes the transaction.
+  evidence:
+    - ghidra_decompile_001E580E
+    - ghidra_audio_bootstrap_targeted_decompile
+
 0x001E5824:
   name: Audio_QueueThreeBytePacket
   confidence: decompiled

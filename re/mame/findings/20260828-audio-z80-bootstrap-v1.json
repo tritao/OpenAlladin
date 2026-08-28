@@ -41,6 +41,12 @@
       "behavior": "Opens a protected queue transaction, writes the caller's longword one byte at a time from most-significant to least-significant order while emitting three bytes, and closes the transaction."
     },
     {
+      "address": "0x001E580E",
+      "name": "Audio_QueueSingleByte",
+      "confidence": "decompiled",
+      "behavior": "Opens a protected queue transaction, writes one caller-supplied byte, and closes the transaction; Audio_Initialize uses it for the two bootstrap prefix bytes."
+    },
+    {
       "address": "0x001E584A",
       "name": "Audio_Initialize",
       "confidence": "decompiled",

@@ -1497,6 +1497,10 @@ most-significant bytes of the caller's longword through Audio_QueueWriteByte,
 and closes the transaction. Audio_Initialize uses it for each caller-supplied
 initialization value.
 
+Audio_QueueSingleByte at `0x001E580E` is the corresponding one-byte protected
+queue wrapper. Audio_Initialize uses it for the `0xFF` and `0x0B` bootstrap
+prefix bytes before queuing its four three-byte initialization values.
+
 ## Actor allocation and template lifecycle (20260828)
 
 The actor allocation cluster around `0x001AE206..0x001AE372` is now named from
