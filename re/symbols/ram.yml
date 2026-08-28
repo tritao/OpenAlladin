@@ -1085,12 +1085,23 @@
     - ghidra_disassembly_001B1E38
     - ghidra_disassembly_001B537A
 0xFF7280:
-  name: MENU_SELECTION_MARKER_TILE_OFFSET
+  name: VDP_ANIMATION_FRAME_OFFSET
   type: u16
   format: table_byte_offset
   confidence: decompiled
-  description: Byte offset into the 28-frame, 16-word menu selection-marker tile table at ROM 0x00129DAA; the menu animation service advances it by two and wraps at 0x38.
+  description: Shared byte offset for compact VDP tile-animation tables; the active presentation helper advances or decrements it in two-byte steps and applies its own table bound.
   evidence:
     - ghidra_decompile_001B3B4A
     - ghidra_menu_selection_marker_animation_targets
     - rom_menu_selection_marker_tiles_00129DAA
+    - ghidra_decompile_001B1676
+    - ghidra_decompile_001B07D0
+0xFF7272:
+  name: SCENE_TRANSITION_SELECTION_INDEX
+  type: u8
+  format: integer_range_0_3
+  confidence: decompiled
+  description: Four-way selection index used by Scene_EnterTransitionMode to choose the active transition option and by SceneTransition_RenderSelectionCursor to select the corresponding cursor row.
+  evidence:
+    - ghidra_decompile_001B2ACE
+    - ghidra_scene_transition_selection_targets

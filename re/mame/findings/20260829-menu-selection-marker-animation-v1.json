@@ -16,8 +16,8 @@
     "behavior": [
       "Returns on odd FRAME_PHASE_COUNTER values.",
       "Programs VDP destination offset 0x2000.",
-      "Copies 16 words from ROM table 0x00129DAA plus MENU_SELECTION_MARKER_TILE_OFFSET to VDP_DATA.",
-      "Advances MENU_SELECTION_MARKER_TILE_OFFSET by two and wraps it to zero when it reaches 0x38."
+      "Copies 16 words from ROM table 0x00129DAA plus VDP_ANIMATION_FRAME_OFFSET to VDP_DATA.",
+      "Advances VDP_ANIMATION_FRAME_OFFSET by two and wraps it to zero when it reaches 0x38."
     ]
   },
   "table": {
@@ -26,5 +26,5 @@
     "frame_count": 28,
     "extent": "0x00129DAA-0x00129E29"
   },
-  "conclusion": "The former anonymous helper is a frame-gated menu selection-marker tile animation service. Its visual asset identity is left at the table level, while the exact frame count, VDP destination, and offset lifecycle are recorded."
+  "conclusion": "The former anonymous helper is a frame-gated menu tile animation service using the shared VDP_ANIMATION_FRAME_OFFSET. Its visual asset identity is left at the table level, while the exact frame count, VDP destination, and offset lifecycle are recorded."
 }

@@ -11,7 +11,7 @@
   ],
   "memory_references": [
     { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
-    { "address": "0x00FF7280", "name": "MENU_SELECTION_MARKER_TILE_OFFSET" },
+    { "address": "0x00FF7280", "name": "VDP_ANIMATION_FRAME_OFFSET" },
     { "address": "0x00129DAA", "name": "ROM_MENU_SELECTION_MARKER_TILES" },
     { "address": "0x00C00000", "name": "VDP_DATA" },
     { "address": "0x00C00004", "name": "VDP_CONTROL" }

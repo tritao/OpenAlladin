@@ -2021,9 +2021,10 @@ The static result is recorded in
 `Menu_AnimateSelectionMarkerTiles` at `0x001B3B4A` runs on even
 `FRAME_PHASE_COUNTER` phases. It copies one 16-word frame from the 28-frame
 ROM table at `0x00129DAA` to VDP destination offset `0x2000`, advances the
-byte offset at `FF7280` by two, and wraps it after `0x38`. The field is named
-by this exact table/animation contract; the higher-level visual asset identity
-remains intentionally unassigned.
+shared `VDP_ANIMATION_FRAME_OFFSET` at `FF7280` by two, and wraps it after
+`0x38`. The same shared offset is used by the transition-presentation tile
+helpers at `0x001B1676` and `0x001B07D0`, each with its own table bound. The
+higher-level visual asset identity remains intentionally unassigned.
 
 The static result is recorded in
 `re/mame/findings/20260829-menu-selection-marker-animation-v1.json`.
