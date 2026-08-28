@@ -39,6 +39,20 @@
   evidence:
     - ghidra_decompile_001AA66E
     - ghidra_interaction_counter_targets
+0x001AA6EE:
+  name: Level_ClearActorScratch
+  confidence: confirmed
+  description: Clears the 0x2B-byte actor scratch range beginning at 0x00FFEFDC during level and scene initialization.
+  evidence:
+    - ghidra_level_loader_targeted_decompile
+    - ghidra_disassembly_001AA6EE
+0x001AA700:
+  name: Level_ClearSceneEventScratch
+  confidence: confirmed
+  description: Clears the 0x443-byte scene-event scratch range beginning at 0x00FFF12E during level and scene initialization.
+  evidence:
+    - ghidra_level_loader_targeted_decompile
+    - ghidra_disassembly_001AA700
 0x001AA712:
   name: Level_ClearInputScratch
   confidence: confirmed

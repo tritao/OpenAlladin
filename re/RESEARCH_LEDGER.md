@@ -1744,10 +1744,23 @@ bounded increment/decrement operations in the collision/resource lifecycle.
 The static result is recorded in
 `re/mame/findings/20260828-interaction-counter-decrement-v1.json`.
 
-The existing level-loader helper Level_ClearInputScratch at `0x001AA712` is
-now also promoted into the canonical symbol store. Its exact loop clears the
-`0x126`-byte controller/input scratch range beginning at `FFF008`, preserving
-the level-loader distinction between actor, scene-event, and input scratch.
+## Level-loader scratch helpers (20260828)
+
+The level-loader scratch family is now named at all three documented service
+boundaries. Level_ClearActorScratch at `0x001AA6EE` clears the `0x2B`-byte
+actor scratch range beginning at `FFEFDC`, while
+Level_ClearSceneEventScratch at `0x001AA700` clears the `0x443`-byte
+scene-event range beginning at `FFF12E`. The adjacent
+Level_ClearInputScratch at `0x001AA712` clears the `0x126`-byte controller
+and input range beginning at `FFF008`.
+
+These are exact range-clearing helpers used during level and scene
+initialization. Naming the family distinguishes lifecycle scratch ownership
+from the larger scene-resource and actor orchestration routines, without
+claiming a more specific state or resource role.
+
+The static result is recorded in
+`re/mame/findings/20260827-level-loader-decomp-v1.json`.
 
 ## Campaign index
 
