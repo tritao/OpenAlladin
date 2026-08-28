@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-actor-runtime-type6e-73-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "shared_path": {
+    "duplicate_check": "0x001AE2F2 Actor_FindActorByType",
+    "allocator": "0x001AE2AA Actor_FindFreeSlotReverse20",
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "template": "0x001B7904"
+  },
+  "services": [
+    { "address": "0x001ACE90", "name": "InteractionSpawn_RuntimeType6E", "type": "0x6E", "animation_root": "0x00120584" },
+    { "address": "0x001ACECC", "name": "InteractionSpawn_RuntimeType6F", "type": "0x6F", "animation_root": "0x001205F4" },
+    { "address": "0x001ACF08", "name": "InteractionSpawn_RuntimeType70", "type": "0x70", "animation_root": "0x00120664" },
+    { "address": "0x001ACF44", "name": "InteractionSpawn_RuntimeType71", "type": "0x71", "animation_root": "0x0012070E" },
+    { "address": "0x001ACF80", "name": "InteractionSpawn_RuntimeType72", "type": "0x72", "animation_root": "0x00120868" },
+    { "address": "0x001ACFBC", "name": "InteractionSpawn_RuntimeType73", "type": "0x73", "animation_root": "0x001208D8" }
+  ],
+  "source_record": "A1 +0x02/+0x04 supplies destination actor X/Y when allocation succeeds"
+}

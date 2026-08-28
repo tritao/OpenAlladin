@@ -2124,6 +2124,20 @@ the four published palette bands. Both helper contracts are recorded in
 `re/mame/findings/20260829-actor-lifecycle-helpers-v1.json` and
 `re/ghidra/targets/actor-lifecycle-helpers-targets.json`.
 
+## Runtime actor spawn family 0x6E-0x73 (20260829)
+
+The six indirect handlers at `0x001ACE90`, `0x001ACECC`, `0x001ACF08`,
+`0x001ACF44`, `0x001ACF80`, and `0x001ACFBC` now have explicit runtime-type
+names. They share a duplicate-type check, the reverse auxiliary-slot allocator,
+and `Actor_InitializeFromTemplate` with template `0x001B7904`. On successful
+allocation they install runtime types `0x6E` through `0x73`, select animation
+roots `0x00120584`, `0x001205F4`, `0x00120664`, `0x0012070E`, `0x00120868`, and
+`0x001208D8`, and copy the source record's X/Y words. This closes a coherent
+actor-spawn family without assigning unverified gameplay identities to the
+individual types. The exact mapping is recorded in
+`re/mame/findings/20260829-actor-runtime-type6e-73-v1.json` and
+`re/ghidra/targets/actor-runtime-type6e-73-targets.json`.
+
 The static result is recorded in
 `re/mame/findings/20260829-vdp-fill-c000-v1.json`.
 

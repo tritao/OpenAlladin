@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "family": {
+    "range": "0x001ACE90-0x001ACFFC",
+    "template": "0x001B7904",
+    "allocator": "0x001AE2AA Actor_FindFreeSlotReverse20",
+    "coordinate_source": "A1 offsets +0x02/+0x04"
+  },
+  "members": [
+    { "address": "0x001ACE90", "type": "0x6E", "animation_root": "0x00120584" },
+    { "address": "0x001ACECC", "type": "0x6F", "animation_root": "0x001205F4" },
+    { "address": "0x001ACF08", "type": "0x70", "animation_root": "0x00120664" },
+    { "address": "0x001ACF44", "type": "0x71", "animation_root": "0x0012070E" },
+    { "address": "0x001ACF80", "type": "0x72", "animation_root": "0x00120868" },
+    { "address": "0x001ACFBC", "type": "0x73", "animation_root": "0x001208D8" }
+  ],
+  "behavior": "Each handler first checks whether the requested runtime type already exists, then allocates an auxiliary slot, initializes the common template, assigns the type and animation root, and copies source coordinates.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
