@@ -1600,6 +1600,22 @@ resource path. The two pairs keep separate bit-buffer and table state.
 The static result is recorded in
 re/mame/findings/20260828-compressed-resource-decode-v1.json.
 
+## Scene resource transfer helpers (20260828)
+
+The scene/resource transfer primitives at `0x001B2584`, `0x001B2E44`, and
+`0x001B4A7A` are now named. VDP_CopyIndirectWordStream at `0x001B2584`
+emits 0x200 words through VDP control word 0x70000003 and treats an FFFF
+source word as an indirect pointer escape. VDP_CopyScenePlaneF800 at
+`0x001B2E44` copies the fixed 0x400-word ROM plane at `0x00129F00` to VRAM
+`0xF800`. SceneResource_PrepareBlankFrame at `0x001B4A7A` clears VRAM C000,
+clears the scene-resource C000 source pointer, and prepares the shared blank
+palette frame from `0x00128ED2`.
+
+The state-specific compressed loaders remain separate until their resource
+roles can be distinguished from the scene table without relying on address-only
+suffixes. The static result is recorded in
+`re/mame/findings/20260828-scene-resource-transfer-v1.json`.
+
 ## Scene VDP and query/audio service helpers (20260828)
 
 The shared scene service helpers around the tile-row command tables are now
@@ -1739,6 +1755,7 @@ re/mame/findings/20260828-scene-vdp-audio-service-v1.json.
 | `20260828-vdp-scene-setup-v1` | recorded-static-decompilation | fixed transition-plane clears, VRAM block clears, and scene-header copy |
 | `20260828-scene-vdp-audio-service-v1` | recorded-static-decompilation | tile-row VDP command tables, scene-resource completion wait, raw query sampling, conditional scene-update audio, and paired VDP setup |
 | `20260828-actor-resource-clear-variant-v1` | recorded-static-decompilation | A2 calling-convention variant of actor-owned resource cleanup used by linked collision teardown |
+| `20260828-scene-resource-transfer-v1` | recorded-static-decompilation | indirect VDP word stream, fixed F800 scene-plane copy, and blank scene-resource frame setup |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

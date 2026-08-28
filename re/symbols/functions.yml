@@ -177,6 +177,13 @@
   evidence:
     - ghidra_decompile_001B32F0
     - ghidra_scene_vdp_audio_service_targets
+0x001B4A7A:
+  name: SceneResource_PrepareBlankFrame
+  confidence: decompiled
+  description: Clears VRAM C000, clears the scene-resource C000 source pointer, and prepares the shared blank palette frame from ROM source 0x00128ED2.
+  evidence:
+    - ghidra_decompile_001B4A7A
+    - ghidra_scene_resource_transfer_targets
 0x001B4B28:
   name: SceneResource_PrepareRenderFrame
   confidence: decompiled
@@ -382,6 +389,20 @@
   evidence:
     - ghidra_decompile_001B2142
     - ghidra_scene_vdp_audio_service_targets
+0x001B2584:
+  name: VDP_CopyIndirectWordStream
+  confidence: decompiled
+  description: Programs VDP control word 0x70000003 and emits 0x200 words from the caller's A1 stream, treating an FFFF source word as an indirect pointer escape for the next output word.
+  evidence:
+    - ghidra_decompile_001B2584
+    - ghidra_scene_resource_transfer_targets
+0x001B2E44:
+  name: VDP_CopyScenePlaneF800
+  confidence: decompiled
+  description: Copies 0x400 words from ROM source 0x00129F00 to VRAM destination 0xF800 through VDP_CopyWordsToVRAM.
+  evidence:
+    - ghidra_decompile_001B2E44
+    - ghidra_scene_resource_transfer_targets
 0x001B00CA:
   name: Interaction_UpdateCounter
   confidence: decompiled
