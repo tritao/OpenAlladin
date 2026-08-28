@@ -223,6 +223,14 @@
     - ghidra_decompile_001B16E0
     - ghidra_scene_camera_orchestration_targets
     - mame_transition_resource_lifecycle
+0x001B1AD6:
+  name: InteractionCounter_ConfigureActors
+  confidence: decompiled
+  description: Derives the quotient and remainder of PLAYER_INTERACTION_COUNTER, selects animation roots from the table at ROM 0x004A58, and configures the interaction actor records at slots 6 and 7, including the type-0x84 quotient actor when applicable.
+  evidence:
+    - ghidra_decompile_001B1AD6
+    - ghidra_scene_camera_orchestration_targets
+    - ghidra_actor_table_layout
 0x001B1F28:
   name: Player_ResetTerrainMotionState
   confidence: decompiled

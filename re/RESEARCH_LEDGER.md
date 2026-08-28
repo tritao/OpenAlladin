@@ -1682,6 +1682,20 @@ sweeps while servicing actor VMs, interaction rows, and sprite submission.
 The static result is recorded in
 `re/mame/findings/20260828-scene-camera-orchestration-v1.json`.
 
+## Interaction-counter actor setup (20260828)
+
+InteractionCounter_ConfigureActors at `0x001B1AD6` now names the actor setup
+performed during the interaction/resource rebuild. It divides
+PLAYER_INTERACTION_COUNTER by 10, selects animation roots from the longword
+table at ROM `0x004A58`, configures the slot-6 and slot-7 interaction records,
+and marks the quotient-selected slot-6 record as type `0x84` when the quotient
+is nonzero. The remainder selects the slot-7 animation root. This establishes
+that the counter is also an animation/actor selector, not only a countdown
+scalar.
+
+The static result is recorded in
+`re/mame/findings/20260828-interaction-counter-actors-v1.json`.
+
 ## Player terrain-state helpers (20260828)
 
 The player terrain-response cluster is now named at three concrete service
@@ -1824,6 +1838,7 @@ The static result is recorded in
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |
+| `20260828-interaction-counter-actors-v1` | recorded-static-decompilation | interaction-counter quotient/remainder selection of scene-rebuild actor animation roots |
 | `20260828-player-terrain-state-v1` | recorded-static-decompilation | player camera-grid alignment, interaction-animation selection, and terrain-motion reset |
 
 When a campaign is superseded, leave it in this table. A negative result is

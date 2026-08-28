@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-interaction-counter-actors-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-camera-orchestration-targets.json",
+  "function": {
+    "address": "0x001B1AD6",
+    "name": "InteractionCounter_ConfigureActors",
+    "confidence": "decompiled",
+    "behavior": [
+      "Divides PLAYER_INTERACTION_COUNTER by 10 and uses the quotient to select a root from the longword table at ROM 0x004A58.",
+      "When the quotient is nonzero, publishes that root to the slot-6 actor record, marks the record type as 0x84, and sets its Y field to 0x188.",
+      "Uses the remainder to select the slot-7 animation root and sets its Y field to 0x199."
+    ],
+    "actor_records": [
+      { "slot": 6, "base": "0x00FF7FCC" },
+      { "slot": 7, "base": "0x00FF800E" }
+    ]
+  },
+  "conclusion": "The interaction counter directly selects the animation roots for the two scene-rebuild interaction actors; it is not merely a scalar countdown."
+}
