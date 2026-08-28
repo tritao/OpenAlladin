@@ -2004,6 +2004,20 @@ wait loops before pending main-scene setup.
 The static result is recorded in
 `re/mame/findings/20260828-scene-state-resource-presentations-v1.json`.
 
+## Player terrain-response animation selectors (20260828)
+
+The player motion region now has a complete named handoff for terrain
+responses. `0x001A986E` consumes the terrain-query and stop/response flags,
+applies vertical corrections or cancels the response state, and publishes
+`PLAYER_TRANSITION_GATE`. Its correction branches use the odd-frame-gated
+selector at `0x001A997A`; the velocity-cancel path uses the ungated selector at
+`0x001A9986`. Both selectors index the sixteen-entry pointer table at
+`0x00121828` with `(PLAYER_WORLD_Y >> 2) & 0x0F`, update the facing flip for
+bands 8 through 15, and clear the animation timer.
+
+The static result is recorded in
+`re/mame/findings/20260828-player-terrain-response-v1.json`.
+
 | Campaign | Status | Purpose |
 | --- | --- | --- |
 | `20260825-level01-canonical-v1` | in progress | original canonical route record |
@@ -2130,6 +2144,7 @@ The static result is recorded in
 | `20260828-menu-input-audio-v1` | recorded-static-decompilation | controller-release predicate, trigger-binding renderer, and selection-change audio cue |
 | `20260828-menu-pattern-wish-v1` | recorded-static-decompilation | hidden menu pattern recognizer and wish-prompt resource/text presentation |
 | `20260828-scene-state-resource-presentations-v1` | recorded-static-decompilation | scene-script state presentation, shared reset/transition presentation, and title/intro timing/resource contracts |
+| `20260828-player-terrain-response-v1` | recorded-static-decompilation | terrain-response resolver, odd/even animation selectors, and vertical-band pointer table |
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |

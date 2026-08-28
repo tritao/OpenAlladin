@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-terrain-response",
+    "purpose": "Decode the terrain-response resolver and the vertical-band player animation selectors used by the per-frame player motion path."
+  },
+  "targets": [
+    { "address": "0x001A986E", "name": "Player_ApplyTerrainResponse" },
+    { "address": "0x001A997A", "name": "Player_SelectVerticalBandAnimationOnOddFrame" },
+    { "address": "0x001A9986", "name": "Player_SelectVerticalBandAnimation" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E04", "name": "PLAYER_WORLD_Y" },
+    { "address": "0x00FF7E49", "name": "PLAYER_FACING_X_FLIP" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FF7DFC", "name": "PLAYER_Y" },
+    { "address": "0x00FF7E00", "name": "CAMERA_VERTICAL_THRESHOLD" },
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
+    { "address": "0x00FFF0B0", "name": "TERRAIN_HORIZONTAL_RESPONSE" },
+    { "address": "0x00FFF0BE", "name": "TERRAIN_RESPONSE_ACTIVE" },
+    { "address": "0x00FFF0C0", "name": "TERRAIN_VERTICAL_STOP" },
+    { "address": "0x00FFF0C1", "name": "TERRAIN_LANDING_STATE" },
+    { "address": "0x00FFF0CB", "name": "TERRAIN_STOP_UPWARD_MOTION" },
+    { "address": "0x00FFF0CC", "name": "TERRAIN_RESPONSE_TIMER_STATE" },
+    { "address": "0x00FFF0CE", "name": "TERRAIN_QUERY_STATE_A" },
+    { "address": "0x00FFF0CF", "name": "TERRAIN_QUERY_STATE_B" },
+    { "address": "0x00FFF0D0", "name": "PLAYER_TRANSITION_GATE" },
+    { "address": "0x00FFF0E7", "name": "PLAYER_INTERACTION_ANIMATION_GATE" }
+  ],
+  "rom_references": [
+    { "address": "0x00121828", "name": "PLAYER_VERTICAL_ANIMATION_TABLE" }
+  ]
+}

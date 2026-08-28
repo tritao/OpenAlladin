@@ -2060,6 +2060,28 @@
     - ghidra_decompile_001AE2F2
     - ghidra_decompile_001AEE40
     - ghidra_decompile_001AF516
+0x001A986E:
+  name: Player_ApplyTerrainResponse
+  confidence: decompiled
+  description: Applies the resolved terrain response to the player, handling upward/downward pixel corrections, camera thresholds, animation refresh, velocity cancellation, and PLAYER_TRANSITION_GATE publication while respecting the terrain stop and interaction gates.
+  evidence:
+    - ghidra_decompile_001A986E
+    - ghidra_player_terrain_response_targets
+    - ghidra_disassembly_001A8C16
+0x001A997A:
+  name: Player_SelectVerticalBandAnimationOnOddFrame
+  confidence: decompiled
+  description: On odd frame phases, selects the player vertical-band animation when the interaction-animation gate is clear, updates the facing flip from PLAYER_WORLD_Y, and clears PLAYER_ANIMATION_TIMER.
+  evidence:
+    - ghidra_decompile_001A997A
+    - ghidra_player_terrain_response_targets
+0x001A9986:
+  name: Player_SelectVerticalBandAnimation
+  confidence: decompiled
+  description: Selects the player animation root from the 16-entry ROM table at 0x00121828 using PLAYER_WORLD_Y shifted by two and masked to four bits, updates the facing flip, and clears PLAYER_ANIMATION_TIMER when the interaction-animation gate is clear.
+  evidence:
+    - ghidra_decompile_001A9986
+    - ghidra_player_terrain_response_targets
 0x001B0D70:
   name: SceneResource_RunStatePresentation
   confidence: decompiled

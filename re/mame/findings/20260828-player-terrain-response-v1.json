@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-player-terrain-response-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/player-terrain-response-targets.json",
+  "services": [
+    {
+      "address": "0x001A986E",
+      "name": "Player_ApplyTerrainResponse",
+      "confidence": "decompiled",
+      "behavior": "Consumes TERRAIN_QUERY_STATE_A and the terrain stop/response flags, applies the player Y correction and camera threshold, refreshes the vertical-band animation when permitted, or cancels velocity and response state; publishes PLAYER_TRANSITION_GATE for the next frame."
+    },
+    {
+      "address": "0x001A997A",
+      "name": "Player_SelectVerticalBandAnimationOnOddFrame",
+      "confidence": "decompiled",
+      "behavior": "Runs only on odd FRAME_PHASE_COUNTER phases and, when PLAYER_INTERACTION_ANIMATION_GATE is clear, maps PLAYER_WORLD_Y>>2 & 0xF to a player animation root, sets PLAYER_FACING_X_FLIP for bands above 7, and clears PLAYER_ANIMATION_TIMER."
+    },
+    {
+      "address": "0x001A9986",
+      "name": "Player_SelectVerticalBandAnimation",
+      "confidence": "decompiled",
+      "behavior": "Performs the same vertical-band animation-root selection without the odd-frame phase gate."
+    }
+  ],
+  "data": [
+    {
+      "address": "0x00121828",
+      "name": "PLAYER_VERTICAL_ANIMATION_TABLE",
+      "confidence": "confirmed",
+      "behavior": "Sixteen longword pointers to player animation streams; entries are selected by the four-bit vertical band derived from PLAYER_WORLD_Y."
+    }
+  ],
+  "evidence": {
+    "frame_path": "Game_FrameUpdateLoop calls the terrain/motion region before MovementVM and actor collision; 0x001A986E calls the gated selector from its correction branches and the ungated selector when vertical motion is canceled.",
+    "selection_contract": "The 0x001A9986 instruction sequence references ROM 0x00121828, computes (PLAYER_WORLD_Y >> 2) & 0x0F, writes PLAYER_ANIMATION_PC and PLAYER_ANIMATION_TIMER, and sets the facing flip for indices 8..15.",
+    "response_contract": "0x001A986E clears or sets PLAYER_TRANSITION_GATE according to terrain-query, response-active, stop, landing, and interaction conditions; correction branches update PLAYER_Y and camera thresholds before selecting the vertical-band stream."
+  },
+  "limitations": [
+    "The table entries are mechanically confirmed as player animation roots, but their individual motion-state meanings remain a separate naming task.",
+    "This is static decompilation; no new runtime trace was required because the data flow and caller contract are explicit."
+  ],
+  "conclusion": "The former anonymous player terrain-response region is now named as one connected path: terrain flags resolve through Player_ApplyTerrainResponse, which selects the appropriate vertical-band animation through the gated or ungated selector and the dedicated sixteen-entry ROM table."
+}

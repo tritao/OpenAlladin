@@ -407,6 +407,16 @@
     - ghidra_disassembly_001B1FFE
     - mame_player_animation_trace
 
+0x00121828:
+  name: PLAYER_VERTICAL_ANIMATION_TABLE
+  type: rom_pointer_table
+  count: 16
+  confidence: confirmed
+  description: Sixteen-entry player animation-root table indexed by PLAYER_WORLD_Y shifted right two and masked to four bits by Player_SelectVerticalBandAnimation.
+  evidence:
+    - ghidra_decompile_001A9986
+    - ghidra_player_terrain_response_targets
+
 0x001221B0:
   name: PLAYER_ANIM_JUMP
   confidence: confirmed
