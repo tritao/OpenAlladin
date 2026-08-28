@@ -11,7 +11,13 @@ def render_instruction(mnemonic: str, operands: str = "") -> str:
     return f"    {text}{(' ' + operands) if operands else ''}"
 
 
-def render_bytes(data: bytes, *, directive: str = "dc.b", width: int = 16) -> list[str]:
+def render_bytes(
+    data: bytes,
+    *,
+    directive: str = "dc.b",
+    width: int = 16,
+    prefix: str = "$",
+) -> list[str]:
     """Render raw bytes in bounded deterministic directive lines."""
 
     if width <= 0:
@@ -19,12 +25,12 @@ def render_bytes(data: bytes, *, directive: str = "dc.b", width: int = 16) -> li
     result = []
     for offset in range(0, len(data), width):
         chunk = data[offset:offset + width]
-        values = ",".join(f"${value:02X}" for value in chunk)
+        values = ",".join(f"{prefix}{value:02X}" for value in chunk)
         result.append(f"    {directive:<7} {values}")
     return result
 
 
-def render_longs(data: bytes, *, width: int = 4) -> list[str]:
+def render_longs(data: bytes, *, width: int = 4, prefix: str = "$") -> list[str]:
     """Render aligned big-endian longwords for pointer-like tables."""
 
     if width != 4:
@@ -33,7 +39,7 @@ def render_longs(data: bytes, *, width: int = 4) -> list[str]:
     complete = len(data) - (len(data) % width)
     for offset in range(0, complete, width):
         value = int.from_bytes(data[offset:offset + width], byteorder="big")
-        result.append(f"    {'dc.l':<7} ${value:08X}")
+        result.append(f"    {'dc.l':<7} {prefix}{value:08X}")
     return result
 
 

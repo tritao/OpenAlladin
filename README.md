@@ -14,6 +14,8 @@ After cloning, initialize the pinned submodules and run:
 git submodule update --init --recursive
 python -m genie setup
 python -m genie ghidra rebuild
+# Debian/Ubuntu: install the pinned 68000 assembler toolchain for deasm verify
+sudo apt-get install binutils-m68k-linux-gnu
 ```
 
 Genie is the packaged frontend for the same workflow. Install it from the
@@ -25,6 +27,9 @@ genie --help
 python3 -m genie --help
 genie doctor
 ```
+
+`genie doctor` checks for GNU m68k binutils, configured as version 2.42, which
+provides the assembler/linker used for deterministic source verification.
 
 The canonical tracked symbols are queryable directly through Genie:
 
@@ -66,10 +71,14 @@ after every scan:
 ```bash
 genie deasm build
 genie deasm stats
+genie deasm verify
 ```
 
 `deasm build` refuses layouts with holes or overlaps and emits every ROM byte
-exactly once. Run `genie ghidra scan` first when `instructions.json` is absent.
+exactly once. `deasm verify` assembles that source with the pinned GNU m68k
+toolchain, preserves exact bytes for instructions that do not safely round-trip
+as readable syntax, and compares the rebuilt ROM byte-for-byte. Run
+`genie ghidra scan` first when `instructions.json` is absent.
 
 Use the `genie` command for all reverse-engineering workflows. The equivalent
 module form, `python -m genie`, is useful when running from an unmanaged

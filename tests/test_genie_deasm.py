@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 
 from genie.deasm import DeasmInput, DeasmError, InstructionRecord, collect, emit, validate_input
+from genie.deasm.syntax import Gnu68000Syntax
 from genie.layout.model import Layout, LayoutRange
 from genie.symbols import Symbol, SymbolStore
 
@@ -114,3 +115,30 @@ def test_deasm_input_round_trips_from_json(tmp_path):
     loaded = load_input(rom_path, layout_path, instructions_path)
     assert loaded.rom == value.rom
     assert loaded.instructions == value.instructions
+
+
+def test_gnu_deasm_backend_normalizes_operands_and_targets():
+    rom = b"\x66\x00\x4e\x75"
+    layout = Layout(
+        rom_size=len(rom),
+        ranges=(LayoutRange(0x00, 0x03, "CODE", "test", "BranchFunction"),),
+    )
+    instructions = (
+        InstructionRecord(
+            0x00,
+            2,
+            rom[:2],
+            "bne.b",
+            "0x00000002",
+            function=0x00,
+            references=({"operand_index": 0, "to": "0x00000002"},),
+        ),
+        InstructionRecord(0x02, 2, rom[2:], "rts", function=0x00),
+    )
+    value = DeasmInput(rom, layout, instructions)
+    result = emit(value, SymbolStore(symbols=(Symbol(0x00, "BranchFunction", "function"),)), syntax=Gnu68000Syntax())
+
+    assert "bne.b Loc_00000002" in result.source
+    assert "BranchFunction:" in result.source
+    assert result.instructionized == 2
+    assert result.raw_fallback == 0

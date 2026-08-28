@@ -114,6 +114,22 @@ def build_parser() -> argparse.ArgumentParser:
     deasm_build.add_argument("--output", type=Path, default=ROOT / "build/re/deasm/aladdin.asm")
     deasm_build.set_defaults(function=command_deasm_build)
 
+    deasm_verify = deasm_commands.add_parser(
+        "verify",
+        help="assemble the generated source and compare it byte-for-byte with the ROM",
+    )
+    deasm_verify.add_argument("--rom", type=Path, default=default_rom())
+    deasm_verify.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    deasm_verify.add_argument("--layout", type=Path)
+    deasm_verify.add_argument("--instructions", type=Path)
+    deasm_verify.add_argument("--output", type=Path, default=ROOT / "build/re/deasm/aladdin.asm")
+    deasm_verify.add_argument(
+        "--rebuilt",
+        type=Path,
+        default=ROOT / "build/re/deasm/aladdin-rebuilt.bin",
+    )
+    deasm_verify.set_defaults(function=command_deasm_verify)
+
     deasm_stats = deasm_commands.add_parser("stats", help="show deassembly coverage and naming statistics")
     deasm_stats.add_argument("--rom", type=Path, default=default_rom())
     deasm_stats.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")

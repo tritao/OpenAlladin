@@ -1,0 +1,9 @@
+toolchain:
+  name: GNU binutils m68k
+  version: "2.42"
+  assembler: m68k-linux-gnu-as
+  linker: m68k-linux-gnu-ld
+  nm: m68k-linux-gnu-nm
+  objcopy: m68k-linux-gnu-objcopy
+  flags:
+    - -m68000

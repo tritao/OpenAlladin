@@ -118,6 +118,20 @@ def _check_native(context: ProjectContext) -> Diagnostic:
     return Diagnostic("native build", "OK", str(context.native_executable))
 
 
+def _check_m68k_assembler(context: ProjectContext) -> Diagnostic:
+    try:
+        from genie.deasm.toolchain import ToolchainError, find_toolchain
+
+        toolchain = find_toolchain(context.repository_root)
+    except (OSError, TypeError, ValueError, ToolchainError) as error:
+        return Diagnostic("68000 assembler", "OPTIONAL", str(error))
+    return Diagnostic(
+        "68000 assembler",
+        "OK",
+        f"{toolchain.name} {toolchain.version}: {toolchain.assembler}",
+    )
+
+
 def _check_python_modules() -> Diagnostic:
     # The repository has a standard-library YAML fallback.  PyYAML is useful,
     # but its absence must not make a fresh checkout unusable.
@@ -177,6 +191,7 @@ def diagnostics(context: ProjectContext | None = None, *, strict: bool = False) 
         _check_java(context),
         _check_ghidra(context),
         _check_ghidra_project(context),
+        _check_m68k_assembler(context),
         _check_mame(context),
         _check_native(context),
         _check_git(context),
