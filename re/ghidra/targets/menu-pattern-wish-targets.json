@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "menu-pattern-wish-prompt",
+    "purpose": "Recover the options-screen controller-pattern recognizer and the wish-prompt presentation it enters on completion."
+  },
+  "targets": [
+    { "address": "0x001B0BBE", "name": "Input_ProcessMenuPattern" },
+    { "address": "0x001B3324", "name": "Menu_ShowWishPrompt" },
+    { "address": "0x001B0B8E", "name": "Input_SelectPrimaryPatternTable" },
+    { "address": "0x001B0BA6", "name": "Input_SelectAlternatePatternTable" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7276", "name": "INPUT_PATTERN_CURSOR" },
+    { "address": "0x00FF727A", "name": "INPUT_PATTERN_MIRROR_CURSOR" },
+    { "address": "0x00FF727E", "name": "INPUT_PATTERN_MATCH_LATCH" },
+    { "address": "0x00126570", "name": "ROM_WISH_PROMPT_TEXT" },
+    { "address": "0x00130709", "name": "WISH_PROMPT_RESOURCE_E000" },
+    { "address": "0x001319EC", "name": "WISH_PROMPT_RESOURCE_BASE" }
+  ]
+}

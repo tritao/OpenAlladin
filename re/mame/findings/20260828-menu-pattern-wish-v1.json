@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-menu-pattern-wish-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/menu-pattern-wish-targets.json",
+  "services": [
+    {
+      "address": "0x001B0BBE",
+      "name": "Input_ProcessMenuPattern",
+      "confidence": "decompiled",
+      "behavior": "Reads both controller phases, compares the active sample against the current two-byte pattern record, advances INPUT_PATTERN_CURSOR after a match, and on the 0xFF terminator sends audio command 0x02, invokes Menu_ShowWishPrompt, clears C000/E000 VRAM, and enters Scene_EnterTransitionMode."
+    },
+    {
+      "address": "0x001B3324",
+      "name": "Menu_ShowWishPrompt",
+      "confidence": "decompiled",
+      "behavior": "Clears palette/actor/presentation state, loads ROM resources 0x00130709 to VRAM E000 and 0x001319EC to VRAM 0, renders the command/text stream beginning at 0x00126570, waits for completion, and applies the palette transition."
+    }
+  ],
+  "evidence": {
+    "prompt_text": "ROM 0x00126570 begins with the command/text sequence for 'AH!, DAVID PERRY, WHAT IS YOUR WISH?' followed by the level-choice strings AGRABAH ROOFTOPS, AGRABAH MARKET, ABU IN AGRABAH, THE DESERT, SULTAN'S DUNGEON, CAVE OF WONDERS, ABU IN CAVE, ESCAPE FROM CAVE, RUG RIDE, INSIDE THE LAMP, SULTAN'S PALACE, JAFAR'S PALACE, and JAFAR'S QUARTERS.",
+    "pattern_contract": "The recognizer consumes the selected primary/alternate tables through INPUT_PATTERN_CURSOR and treats the FF 00 pair as the terminal record, matching the table-selector contract already recorded for the two-byte samples."
+  },
+  "conclusion": "The options pattern recognizer and its wish-prompt presentation are now named as one hidden-menu path. The exact user-facing level-selection interaction after the prompt remains separate from this trigger and presentation service."
+}

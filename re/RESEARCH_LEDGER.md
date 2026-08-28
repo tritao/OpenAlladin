@@ -841,6 +841,15 @@ at `0x001B4410` consumes the selected control-layout record beginning at
 `0x06`. `MENU_CONTROL_LAYOUT_PTR` is now canonicalized alongside the existing
 callback slots.
 
+The hidden menu pattern path is recorded in
+`re/mame/findings/20260828-menu-pattern-wish-v1.json`. The options-loop
+consumer at `0x001B0BBE` advances the active two-byte input pattern and, on
+the terminal record, sends audio command `0x02`, calls the wish-prompt
+presentation at `0x001B3324`, clears VRAM, and enters transition mode. The
+prompt stream at `0x126570` contains the David Perry question followed by
+the ROM's level-choice strings; the later choice handling remains a separate
+investigation.
+
 The countdown-producer static audit is recorded in
 `re/mame/findings/20260826-level01-countdown-producer-static-v1.json`. The
 actor-collision table entries for receiving types `0x10`, `0x11`, and `0x13`
@@ -2104,6 +2113,7 @@ The static result is recorded in
 | `20260828-scene-resource-c000-loaders-v1` | recorded-static-decompilation | five source-qualified C000 loaders and palette-frame contracts |
 | `20260828-scene-resource-setup-loaders-v1` | recorded-static-decompilation | setup-time three-region, E000, and C000/base VRAM loader wrappers |
 | `20260828-menu-input-audio-v1` | recorded-static-decompilation | controller-release predicate, trigger-binding renderer, and selection-change audio cue |
+| `20260828-menu-pattern-wish-v1` | recorded-static-decompilation | hidden menu pattern recognizer and wish-prompt resource/text presentation |
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |

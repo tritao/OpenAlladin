@@ -309,6 +309,14 @@
   evidence:
     - ghidra_disassembly_001B0BA6
     - ghidra_input_pattern_targets
+0x001B0BBE:
+  name: Input_ProcessMenuPattern
+  confidence: decompiled
+  description: Samples the active two-byte controller-pattern table during the options loop, advances the pattern cursor on a match, and on the terminal pattern plays command 0x02, shows the wish prompt, clears the presentation VRAM, and enters transition mode.
+  evidence:
+    - ghidra_decompile_001B0BBE
+    - ghidra_menu_pattern_wish_targets
+    - rom_wish_prompt_00126570
 0x001B34CA:
   name: Input_SampleControllerState
   confidence: confirmed
@@ -330,6 +338,14 @@
   evidence:
     - ghidra_decompile_001B32F0
     - ghidra_scene_vdp_audio_service_targets
+0x001B3324:
+  name: Menu_ShowWishPrompt
+  confidence: decompiled
+  description: Builds the wish-prompt presentation, loads its compressed VRAM resources, renders the ROM text beginning at 0x00126570, waits for the scene/resource service, and applies the palette transition before returning.
+  evidence:
+    - ghidra_decompile_001B3324
+    - ghidra_menu_pattern_wish_targets
+    - rom_wish_prompt_00126570
 0x001B329E:
   name: Menu_PlaySelectionChangeCue
   confidence: decompiled
