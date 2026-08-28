@@ -2018,6 +2018,19 @@ bands 8 through 15, and clear the animation timer.
 The static result is recorded in
 `re/mame/findings/20260828-player-terrain-response-v1.json`.
 
+## Startup initialization services (20260828)
+
+The reset entry now has two named bootstrap services. `0x001AA344` performs
+the one-time audio/runtime setup, installs the default menu terrain callbacks,
+and publishes the initial scene and transition gates. `0x001AA41C` performs
+reset-time scene defaults: it selects the initial sound-test table and scene
+script, sets `SCENE_STATE=1`, initializes the difficulty-dependent counter,
+and writes the active-scene entry gate at `0xFF7E3F`. The gate is consumed by
+`SceneResource_InitializeActiveScene` at `0x001B080E`.
+
+The static result is recorded in
+`re/mame/findings/20260828-startup-initialization-v1.json`.
+
 | Campaign | Status | Purpose |
 | --- | --- | --- |
 | `20260825-level01-canonical-v1` | in progress | original canonical route record |
@@ -2145,6 +2158,7 @@ The static result is recorded in
 | `20260828-menu-pattern-wish-v1` | recorded-static-decompilation | hidden menu pattern recognizer and wish-prompt resource/text presentation |
 | `20260828-scene-state-resource-presentations-v1` | recorded-static-decompilation | scene-script state presentation, shared reset/transition presentation, and title/intro timing/resource contracts |
 | `20260828-player-terrain-response-v1` | recorded-static-decompilation | terrain-response resolver, odd/even animation selectors, and vertical-band pointer table |
+| `20260828-startup-initialization-v1` | recorded-static-decompilation | reset audio/runtime setup, scene/script defaults, menu callback installation, and active-scene gate |
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |

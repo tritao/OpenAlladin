@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-startup-initialization-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/startup-initialization-targets.json",
+  "services": [
+    {
+      "address": "0x001AA344",
+      "name": "System_InitializeRuntime",
+      "confidence": "decompiled",
+      "behavior": "Initializes the audio driver from the four ROM driver/resource pointers, queues the initial audio control command, clears runtime gates, installs the default menu control-layout pointer and terrain callbacks on first entry, and publishes the initial scene/transition/difficulty flags."
+    },
+    {
+      "address": "0x001AA41C",
+      "name": "Startup_InitializeSceneState",
+      "confidence": "decompiled",
+      "behavior": "Clears actor scratch, publishes SOUND_TEST_ENTRY_PTR=0x0012675E and SCENE_SCRIPT_CURSOR=0x00004082, selects SCENE_STATE=1, initializes the difficulty-based interaction counter, and sets ACTIVE_SCENE_ENTRY_GATE to 3, 1, or 0 for difficulty modes 0, 1, or other."
+    },
+    {
+      "address": "0x001B080E",
+      "name": "SceneResource_InitializeActiveScene",
+      "confidence": "decompiled",
+      "behavior": "Consumes ACTIVE_SCENE_ENTRY_GATE; when set, initializes the active scene presentation and recurring resource/frame service before returning to the reset flow."
+    }
+  ],
+  "evidence": {
+    "reset_order": "Reset calls System_InitializeRuntime and Startup_InitializeSceneState before programming the initial VDP registers and entering the scene/resource presentation sequence.",
+    "one_time_install": "System_InitializeRuntime checks the existing pointer at 0x00FF728C before installing the default menu control layout at ROM 0x00004036 and its three terrain callback pointers.",
+    "active_scene_gate": "Startup_InitializeSceneState writes 0x00FF7E3F after the scene/script defaults and SceneResource_InitializeActiveScene returns immediately when that byte is clear."
+  },
+  "limitations": [
+    "The exact user-facing meaning of GAME_RUNTIME_MODE and STARTUP_FRAME_LIMIT is not assigned by this finding; both remain manifest-only context names.",
+    "The gate values 3, 1, and 0 are recorded as the ROM's mode-dependent initialization contract, not as a newly inferred enum beyond the active-scene entry use."
+  ],
+  "conclusion": "The reset bootstrap is now represented as two named initialization services feeding the active-scene presentation gate. This separates one-time hardware/menu setup from reset-time scene/script defaults and from the later scene-resource renderer."
+}

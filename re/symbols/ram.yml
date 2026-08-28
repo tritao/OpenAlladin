@@ -183,6 +183,16 @@
     - ghidra_targeted_decompile_001B0F66
     - ghidra_level_transition_targeted_decompile
     - mame_level_transition_watch
+0xFF7E3F:
+  name: ACTIVE_SCENE_ENTRY_GATE
+  type: u8
+  format: integer
+  confidence: probable
+  description: Reset-time active-scene entry gate initialized from GAME_DIFFICULTY_MODE and consumed by SceneResource_InitializeActiveScene before the first scene presentation.
+  evidence:
+    - ghidra_decompile_001AA41C
+    - ghidra_decompile_001B080E
+    - ghidra_startup_initialization_targets
 0xFFF572:
   name: SCENE_SCRIPT_CURSOR
   type: rom_pointer

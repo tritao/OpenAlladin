@@ -2060,6 +2060,22 @@
     - ghidra_decompile_001AE2F2
     - ghidra_decompile_001AEE40
     - ghidra_decompile_001AF516
+0x001AA344:
+  name: System_InitializeRuntime
+  confidence: decompiled
+  description: Initializes the audio driver and one-time Genesis runtime state, installs the default menu terrain callbacks, and publishes the initial scene, frame, transition, difficulty, and resource-service gates.
+  evidence:
+    - ghidra_decompile_001AA344
+    - ghidra_startup_initialization_targets
+    - ghidra_disassembly_0000021A
+0x001AA41C:
+  name: Startup_InitializeSceneState
+  confidence: decompiled
+  description: Initializes reset-time scene state by clearing actor scratch, publishing the initial sound-test entry and scene-script cursor, selecting SCENE_STATE=1, initializing the difficulty-based interaction counter, and setting the active-scene entry gate.
+  evidence:
+    - ghidra_decompile_001AA41C
+    - ghidra_startup_initialization_targets
+    - ghidra_disassembly_0000021A
 0x001B0CBC:
   name: Hud_RunPendingDisplayPresentation
   confidence: decompiled
