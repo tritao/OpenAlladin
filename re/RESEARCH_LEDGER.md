@@ -1989,6 +1989,21 @@ The static result is recorded in
 
 ## Campaign index
 
+## Scene-state presentation services (20260828)
+
+The scene/resource region contains three distinct presentation entrypoints
+around the reset and scene-script handoff. `0x001B0D70` is the countdown-driven
+state presentation: it clears the active presentation, selects the resource
+pair according to scene/camera gates, initializes the fixed-row actors, and
+enters the VBlank-paced service. `0x001B1486` is the shared reset/transition
+presentation that loads the fixed `0x0012EA12`/`0x001319EC` pair and places its
+two presentation actors. `0x001B202A` is the `SCENE_STATE=1` title/intro path,
+with explicit 30-frame fade-in, 60-frame hold, and 900-frame controller-release
+wait loops before pending main-scene setup.
+
+The static result is recorded in
+`re/mame/findings/20260828-scene-state-resource-presentations-v1.json`.
+
 | Campaign | Status | Purpose |
 | --- | --- | --- |
 | `20260825-level01-canonical-v1` | in progress | original canonical route record |
@@ -2114,6 +2129,7 @@ The static result is recorded in
 | `20260828-scene-resource-setup-loaders-v1` | recorded-static-decompilation | setup-time three-region, E000, and C000/base VRAM loader wrappers |
 | `20260828-menu-input-audio-v1` | recorded-static-decompilation | controller-release predicate, trigger-binding renderer, and selection-change audio cue |
 | `20260828-menu-pattern-wish-v1` | recorded-static-decompilation | hidden menu pattern recognizer and wish-prompt resource/text presentation |
+| `20260828-scene-state-resource-presentations-v1` | recorded-static-decompilation | scene-script state presentation, shared reset/transition presentation, and title/intro timing/resource contracts |
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |

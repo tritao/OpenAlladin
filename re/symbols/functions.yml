@@ -2060,3 +2060,27 @@
     - ghidra_decompile_001AE2F2
     - ghidra_decompile_001AEE40
     - ghidra_decompile_001AF516
+0x001B0D70:
+  name: SceneResource_RunStatePresentation
+  confidence: decompiled
+  description: Rebuilds the scene-resource presentation when a scene-script countdown reaches this service, selecting state- and camera-dependent compressed resources, initializing the transition actors, and entering the VBlank-paced frame service.
+  evidence:
+    - ghidra_decompile_001B0D70
+    - ghidra_level01_transition_resource_lifecycle
+    - ghidra_scene_state_resource_targets
+0x001B1486:
+  name: SceneResource_InitializeTransitionPresentation
+  confidence: decompiled
+  description: Initializes the shared reset/transition presentation by clearing VDP and actor state, loading the transition resources at 0x0012EA12 and 0x001319EC, placing the two presentation actors, priming palettes, and entering the frame service.
+  evidence:
+    - ghidra_decompile_001B1486
+    - ghidra_level_transition_targeted_decompile
+    - ghidra_scene_state_resource_targets
+0x001B202A:
+  name: Startup_RunTitlePresentation
+  confidence: decompiled
+  description: "Runs the SCENE_STATE=1 title/intro presentation: clears and rebuilds VDP state, loads its three compressed resources, fades in, holds for the fixed display intervals, waits up to 900 frames for controller release, and re-enters the main scene setup when the script is pending."
+  evidence:
+    - ghidra_decompile_001B202A
+    - ghidra_scene_state_resource_targets
+    - ghidra_title_presentation_resource_contract

@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-scene-state-resource-presentations-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-state-resource-targets.json",
+  "services": [
+    {
+      "address": "0x001B0D70",
+      "name": "SceneResource_RunStatePresentation",
+      "confidence": "decompiled",
+      "behavior": "Runs the scene-script resource presentation after its countdown gate, clears the current presentation, selects state/camera-dependent resources, initializes the transition actors at the fixed 0x1B8 row, and enters the recurring VBlank-paced frame service."
+    },
+    {
+      "address": "0x001B1486",
+      "name": "SceneResource_InitializeTransitionPresentation",
+      "confidence": "decompiled",
+      "behavior": "Clears transition VDP and actor state, loads ROM 0x0012EA12 into VRAM E000 and ROM 0x001319EC into VRAM 0, initializes two presentation actors at (0x58,0x1F0) and (0x1DC,0x1F0), primes the palettes, and enters the frame service."
+    },
+    {
+      "address": "0x001B202A",
+      "name": "Startup_RunTitlePresentation",
+      "confidence": "decompiled",
+      "behavior": "For SCENE_STATE=1, clears/rebuilds the presentation, loads ROM 0x001307D5 to E000, 0x00130EA1 to C000, and 0x001401DA to VRAM 0, fades in, waits 30 and 60 VBlank intervals, then waits up to 900 further intervals for controller release before restarting the pending main-scene setup."
+    }
+  ],
+  "evidence": {
+    "state_presentation": "0x001B0D70 is called by SceneScript_AdvanceState after the scene-script countdown expires; it selects alternate resource pairs under SCENE_STATE=8, CAMERA_SPECIAL_MODE, and the scene-specific gate at FFF570, then initializes the fixed transition-row actors.",
+    "transition_presentation": "0x001B1486 is called from reset/transition setup and is also reached by the controlled state-3 transition path; its two fixed RNC sources and actor coordinates are visible in the instruction/xref export.",
+    "title_timing": "0x001B202A is called from reset, executes only when SCENE_STATE is 1, and has explicit 30-frame fade-in, 60-frame hold, and 900-frame controller-release wait loops."
+  },
+  "limitations": [
+    "The Ghidra decompiler represents the long-lived service loops as non-returning; the names describe their entry contracts and not a new scheduler boundary.",
+    "The controlled state-3 resource path still does not prove natural transition completion or scene-table advancement."
+  ],
+  "conclusion": "The three formerly anonymous entries are distinct presentation services: a scene-script state presentation, a shared reset/transition presentation, and the SCENE_STATE=1 title/intro presentation. Their resource sources, actor placement, and timing contracts are now recorded without conflating them with the later scene dispatcher or natural level progression."
+}
