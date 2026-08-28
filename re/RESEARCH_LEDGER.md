@@ -1393,6 +1393,21 @@ points rather than being collapsed into this label.
 The static result is recorded in
 re/mame/findings/20260828-level-boundary-transition-v1.json.
 
+## Transition render service (20260828)
+
+The transition renderer is now split into named stages. Render_BeginPaletteTransition
+at 0x001B2784 selects the palette bands, snapshots the current 64-word VDP
+palette, and runs 16 VBlank-paced service frames. The reset-phase entry at
+0x001B28A6 sets FRAME_PHASE_COUNTER to 0xFF before entering
+Frame_RunServicePass at 0x001B28AE, which advances the phase, services
+MovementVM and AnimationVM, builds actor-only records through
+Render_BuildActorRecordsOnly at 0x001AB7A4, waits for VBlank, and submits both
+sprite stages. Render_ApplyPaletteStep at 0x001B2916 converges the palette one
+component group at a time and writes it to VDP.
+
+The static result is recorded in
+re/mame/findings/20260828-transition-render-service-v1.json.
+
 ## Frame resource wait and terrain edge probe (20260828)
 
 Frame_InputAndResourceService at 0x001A91C6 now owns the frame-wait and
@@ -1646,6 +1661,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-level-boundary-transition-v1` | recorded-static-decompilation | level-boundary cleanup, terminal transition countdown, scene/resource reload, and frame-pipeline re-entry |
 | `20260828-animation-sprite-payload-v1` | recorded-static-decompilation | AnimationVM frame expansion into actor sprite payload records for VDP submission |
 | `20260828-audio-z80-bootstrap-v1` | recorded-static-decompilation | Z80 bus handoff, sound-driver copy, Z80 start, and audio bootstrap command sequence |
+| `20260828-transition-render-service-v1` | recorded-static-decompilation | palette-transition loop, service-frame execution, actor-only records, and palette-step VDP writes |
 | `20260828-render-submission-v1` | recorded-static-decompilation | sprite attribute-record construction, camera-relative actor culling, and the two VDP submission stages |
 | `20260828-vdp-tile-word-v1` | recorded-static-decompilation | reusable scene/resource VDP control-address and tile-word writer |
 | `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |

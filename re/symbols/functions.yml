@@ -90,6 +90,44 @@
     - ghidra_decompile_001AC6D0
     - ghidra_decompile_001AC796
     - ghidra_render_submission_targets
+0x001AB7A4:
+  name: Render_BuildActorRecordsOnly
+  confidence: decompiled
+  description: Builds only the camera-relative actor sprite records for the 32-slot actor table, starting from the existing renderer output pointer and publishing the terminating record and count for transition service frames.
+  evidence:
+    - ghidra_decompile_001AB7A4
+    - ghidra_decompile_001B28AE
+    - ghidra_transition_render_targets
+0x001B2784:
+  name: Render_BeginPaletteTransition
+  confidence: decompiled
+  description: Selects the palette-transition source and four 0x20-byte palette bands, snapshots the current VDP palette, runs 16 VBlank-paced service frames, and applies one palette step after each frame.
+  evidence:
+    - ghidra_decompile_001B2784
+    - ghidra_decompile_001B2916
+    - ghidra_transition_render_targets
+0x001B28A6:
+  name: Frame_RunServicePassResetPhase
+  confidence: decompiled
+  description: Enters the shared transition service pass with FRAME_PHASE_COUNTER forced to 0xFF before falling through to the incrementing service body.
+  evidence:
+    - ghidra_decompile_001B28A6
+    - ghidra_transition_render_targets
+0x001B28AE:
+  name: Frame_RunServicePass
+  confidence: decompiled
+  description: Advances FRAME_PHASE_COUNTER, services MovementVM and AnimationVM, builds actor-only render records, waits for VBlank, and submits actor and player sprites.
+  evidence:
+    - ghidra_decompile_001B28AE
+    - ghidra_transition_resource_lifecycle
+    - ghidra_transition_render_targets
+0x001B2916:
+  name: Render_ApplyPaletteStep
+  confidence: decompiled
+  description: Adjusts each of 64 active palette words one component group at a time toward the selected transition palette, writes the result to VDP, and updates the four palette-band pointers.
+  evidence:
+    - ghidra_decompile_001B2916
+    - ghidra_transition_render_targets
 0x001ADB5C:
   name: Actor_TerrainCollisionLoop
   confidence: confirmed

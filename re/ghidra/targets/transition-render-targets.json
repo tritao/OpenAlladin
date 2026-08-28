@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "transition-render",
+    "purpose": "Decode the palette-transition loop, shared service-frame entries, actor-only render record builder, and palette-step writer."
+  },
+  "targets": [
+    { "address": "0x001B2784", "name": "Render_BeginPaletteTransition" },
+    { "address": "0x001B28A6", "name": "Frame_RunServicePassResetPhase" },
+    { "address": "0x001B28AE", "name": "Frame_RunServicePass" },
+    { "address": "0x001B2916", "name": "Render_ApplyPaletteStep" },
+    { "address": "0x001AB7A4", "name": "Render_BuildActorRecordsOnly" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },
+    { "address": "0x00FF7262", "name": "PALETTE_BAND_0" },
+    { "address": "0x00FF8800", "name": "CURRENT_VDP_PALETTE" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ]
+}
