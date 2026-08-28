@@ -37,7 +37,19 @@
       "name": "Camera_RebuildView",
       "confidence": "decompiled",
       "behavior": "In special mode writes the complete 16-by-23 terrain viewport; otherwise performs paired right/left 0x10-pixel camera sweeps with actor VM, interaction-row, and sprite service work."
+    },
+    {
+      "address": "0x001B0008",
+      "name": "Hud_ResetDisplayDigits",
+      "confidence": "confirmed",
+      "behavior": "During reset and active-scene setup, writes six ASCII zero digits to the display buffer at 0x00FF7E29 and terminates it with a NUL."
+    },
+    {
+      "address": "0x001B0046",
+      "name": "Game_InitializeDifficultyCounter",
+      "confidence": "confirmed",
+      "behavior": "Selects the initial ASCII counter value at 0x00FF7E3C from GAME_DIFFICULTY_MODE: '5' for mode 0, '3' for mode 1, and '2' otherwise, then clears 0x00FF7E3D."
     }
   ],
-  "conclusion": "The scene/resource entrypoints and camera rebuild path are now distinct from the lower-level VDP transfer, actor initialization, and recurring service helpers they orchestrate."
+  "conclusion": "The scene/resource entrypoints and camera rebuild path are now distinct from the lower-level VDP transfer, actor initialization, recurring service helpers, and startup display-state helpers they orchestrate."
 }

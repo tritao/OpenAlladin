@@ -51,6 +51,16 @@
   evidence:
     - ghidra_targeted_decompile_001B3258
     - mame_level_transition_watch
+0xFF7E21:
+  name: GAME_DIFFICULTY_MODE
+  type: u8
+  format: enum
+  confidence: confirmed
+  description: Difficulty/menu mode selector. The ROM table at 0x003FD2 points to the PRACTICE, NORMAL, and DIFFICULT strings, and the scene/menu code indexes that table with this byte.
+  evidence:
+    - ghidra_difficulty_menu_strings_003FD2
+    - ghidra_disassembly_001B0046
+    - ghidra_disassembly_001B434E
 0xFF7E28:
   name: FRAME_PHASE_COUNTER
   aliases:

@@ -12,9 +12,9 @@
     "name": "InteractionCounter_Initialize",
     "confidence": "decompiled",
     "behavior": [
-      "Stores ASCII \"15\" to INTERACTION_COUNTER_DIGITS when PLAYER_STATE_BYTE is 0.",
-      "Stores ASCII \"10\" when PLAYER_STATE_BYTE is 1.",
-      "Stores ASCII \"05\" for all other player-state values."
+      "Stores ASCII \"15\" to INTERACTION_COUNTER_DIGITS when GAME_DIFFICULTY_MODE is 0.",
+      "Stores ASCII \"10\" when GAME_DIFFICULTY_MODE is 1.",
+      "Stores ASCII \"05\" for all other difficulty/menu mode values."
     ],
     "callers": [
       "Reset",
@@ -22,5 +22,5 @@
       "SceneResource_InitializeActiveScene"
     ]
   },
-  "conclusion": "The interaction counter's initial value is selected by player state and is stored as two ASCII digits, matching the existing increment and decrement helper semantics."
+  "conclusion": "The interaction counter's initial value is selected by the difficulty/menu mode and is stored as two ASCII digits, matching the existing increment and decrement helper semantics."
 }

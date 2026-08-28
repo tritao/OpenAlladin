@@ -15,6 +15,6 @@
   "memory_references": [
     { "address": "0x00FFEFE0", "name": "INTERACTION_COUNTER_DIGITS" },
     { "address": "0x00FFEFE2", "name": "INTERACTION_COUNTER_SECONDARY_DIGITS" },
-    { "address": "0x00FF7E21", "name": "PLAYER_STATE_BYTE" }
+    { "address": "0x00FF7E21", "name": "GAME_DIFFICULTY_MODE" }
   ]
 }

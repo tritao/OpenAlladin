@@ -1787,6 +1787,20 @@ sets the camera reference to the aligned world-camera position.
 The static result is recorded in
 `re/mame/findings/20260828-camera-coordinate-state-v1.json`.
 
+The reset/active-scene startup helpers at `0x001B0008` and `0x001B0046` are
+now named. `Hud_ResetDisplayDigits` clears the six-character ASCII display
+buffer at `FF7E29` and terminates it after writing six zero digits.
+`Game_InitializeDifficultyCounter` selects the initial ASCII counter at
+`FF7E3C` as `5`, `3`, or `2` from the difficulty/menu mode byte at `FF7E21`.
+The ROM pointer table at `0x003FD2` resolves to the `PRACTICE`, `NORMAL`, and
+`DIFFICULT` strings, so that byte is now canonicalized as
+`GAME_DIFFICULTY_MODE`; the interaction-counter initialization description is
+updated accordingly rather than treating it as player state.
+
+The static result is recorded in
+`re/mame/findings/20260828-scene-camera-orchestration-v1.json` and
+`re/mame/findings/20260828-interaction-counter-init-v1.json`.
+
 ## Interaction-counter actor setup (20260828)
 
 InteractionCounter_ConfigureActors at `0x001B1AD6` now names the actor setup
