@@ -12,10 +12,12 @@ import argparse
 import json
 
 from genie.ghidra import rebuild_project, scan_project, setup_ghidra, verify_rom
+from genie.ghidra.context import build_context
 from genie.ghidra.database import AnalysisDatabase, render_records
 from genie.ghidra.validate import validate_database
 from genie.knowledge import validate_knowledge
-from genie.runtime import resolve
+from genie.runtime import ROOT, resolve
+from genie.symbols import SymbolStore
 
 
 def command_ghidra_setup(args: argparse.Namespace) -> int:
@@ -127,6 +129,76 @@ def command_ghidra_xrefs(args: argparse.Namespace) -> int:
     return 0
 
 
+def _context_records(title: str, records: list[dict]) -> None:
+    print(f"{title}  {len(records)}")
+    for record in records:
+        left = record.get("from")
+        right = record.get("to")
+        if left is not None or right is not None:
+            print(
+                f"  0x{int(str(left), 0):08X} -> 0x{int(str(right), 0):08X}"
+                f" {record.get('type', '')}".rstrip()
+            )
+        else:
+            print(f"  {json.dumps(record, sort_keys=True)}")
+
+
+def _render_context(value: dict) -> None:
+    print(f"address     {value['address']}")
+    symbol = value.get("symbol") or value.get("function_symbol")
+    if symbol:
+        print(f"symbol      {symbol['name']} [{symbol['kind']}; {symbol['confidence']}]")
+        if symbol.get("range"):
+            print(
+                f"symbol range 0x{symbol['range']['start']:08X}-0x{symbol['range']['end']:08X}"
+            )
+    function = value.get("function")
+    if function:
+        print(f"function    {function.get('name')}  {function.get('start', function.get('address'))}-{function.get('end', '')}")
+    else:
+        print("function    <none>")
+    if value.get("layout"):
+        layout = value["layout"]
+        print(f"layout      {layout['class']}  {layout['start']}-{layout['end']} ({layout.get('name', '')})")
+    runtime = value.get("runtime")
+    if runtime:
+        scenarios = ", ".join(runtime.get("scenarios", [])) or "-"
+        print(f"runtime     {'observed' if runtime.get('observed') else 'not observed'}; PCs {runtime.get('pc_count', 0)}; scenarios {scenarios}")
+    _context_records("callers", value["callers"])
+    _context_records("callees", value["callees"])
+    _context_records("RAM reads", value["ram_reads"])
+    _context_records("RAM writes", value["ram_writes"])
+    _context_records("xrefs", value["xrefs"])
+    _context_records("outgoing xrefs", value["outgoing_xrefs"])
+    print(f"known symbols referenced  {len(value['known_symbols_referenced'])}")
+    for symbol in value["known_symbols_referenced"]:
+        print(f"  0x{symbol['address']:08X} {symbol['name']}")
+    print(f"nearby layout objects    {len(value['nearby_layout'])}")
+    for layout in value["nearby_layout"]:
+        print(f"  {layout['start']}-{layout['end']} {layout['class']} {layout.get('name', '')}".rstrip())
+
+
+def command_ghidra_context(args: argparse.Namespace) -> int:
+    try:
+        database = _database(args)
+        value = build_context(
+            database,
+            args.address,
+            SymbolStore(root=ROOT),
+            layout_path=resolve(args.layout) if args.layout else None,
+            coverage_path=resolve(args.coverage) if args.coverage else None,
+            radius=args.radius,
+        )
+    except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        print(f"ERROR {error}")
+        return 1
+    if args.json_output:
+        print(json.dumps(value, indent=2, sort_keys=True))
+    else:
+        _render_context(value)
+    return 0
+
+
 def command_ghidra_unknown(args: argparse.Namespace) -> int:
     render_records(_database(args).unknown(), json_output=args.json_output)
     return 0
@@ -159,6 +231,7 @@ __all__ = [
     "command_ghidra_writers",
     "command_ghidra_readers",
     "command_ghidra_xrefs",
+    "command_ghidra_context",
     "command_ghidra_unknown",
     "command_ghidra_validate_db",
     "command_ghidra_setup",

@@ -23,6 +23,11 @@ python -m genie symbols find AnimationVM
 python -m genie symbols list --kind function
 python -m genie symbols validate
 python -m genie symbols stats
+python -m genie symbols unknown --kind function
+python -m genie symbols next --kind function
+python -m genie symbols rename 0x00184320 SceneResource_Whatever
+python -m genie symbols describe 0x00184320 "resource decoder entry point"
+python -m genie symbols confidence 0x00184320 decompiled
 ```
 
 For a fresh whole-ROM static database, run:
@@ -47,6 +52,7 @@ python -m genie ghidra callees 0x001AC784
 python -m genie ghidra writers 0x00FF7E60
 python -m genie ghidra readers 0x00FF7E28
 python -m genie ghidra xrefs 0x001B557E
+python -m genie ghidra context 0x00184320
 python -m genie ghidra unknown
 ```
 
@@ -73,6 +79,7 @@ Generate the first complete local ROM source from the offline scan:
 ```bash
 python -m genie deasm build
 python -m genie deasm stats
+python -m genie deasm todo
 ```
 
 The emitter consumes only the ROM, `layout.json`, `instructions.json`, and

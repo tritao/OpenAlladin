@@ -4,8 +4,11 @@ import json
 from pathlib import Path
 
 from genie.cli import build_parser
+from genie.ghidra.context import build_context
 from genie.ghidra.database import AnalysisDatabase
-from genie.symbols import SymbolStore, mechanical_name, name_for
+from genie.ghidra.worklist import function_work_queue
+from genie.layout.model import Layout, LayoutRange
+from genie.symbols import Symbol, SymbolStore, edit_symbol, mechanical_name, name_for
 
 
 def _write_symbol_tree(root: Path) -> None:
@@ -64,9 +67,84 @@ def test_symbols_cli_surface_dispatches():
     show = build_parser().parse_args(["symbols", "show", "0x001AC784"])
     find = build_parser().parse_args(["symbols", "find", "AnimationVM", "--kind", "function"])
     stats = build_parser().parse_args(["symbols", "stats", "--json"])
+    unknown = build_parser().parse_args(["symbols", "unknown", "--kind", "function", "--limit", "4"])
+    rename = build_parser().parse_args(["symbols", "rename", "0x20", "Scene_Init"])
+    describe = build_parser().parse_args(["symbols", "describe", "0x20", "entry point"])
+    confidence = build_parser().parse_args(["symbols", "confidence", "0x20", "decompiled"])
     assert show.address == 0x1AC784
     assert find.kind == "function"
     assert stats.json_output is True
+    assert unknown.limit == 4
+    assert rename.name == "Scene_Init"
+    assert describe.description == "entry point"
+    assert confidence.confidence == "decompiled"
+
+
+def test_symbol_editor_promotes_and_annotates_a_tracked_symbol(tmp_path):
+    _write_symbol_tree(tmp_path)
+
+    updated = edit_symbol(
+        0x10,
+        root=tmp_path,
+        name="Scene_Init",
+        description="scene entry point",
+        confidence="decompiled",
+    )
+
+    assert updated.name == "Scene_Init"
+    assert updated.description == "scene entry point"
+    assert updated.confidence == "decompiled"
+    assert "  name: Scene_Init" in (tmp_path / "re/symbols/functions.yml").read_text()
+
+
+def test_function_work_queue_ranks_runtime_unknowns(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    (tmp_path / "coverage-ghidra.json").write_text(
+        json.dumps({
+            "functions": {
+                "0x00000020": {"pc_count": 4, "scenarios": ["smoke"]},
+            },
+        }),
+        encoding="utf-8",
+    )
+    database = AnalysisDatabase(database_root)
+    queue = function_work_queue(
+        database,
+        SymbolStore(symbols=(Symbol(0x10, "FirstFunction", "function"),)),
+    )
+
+    assert len(queue) == 1
+    assert queue[0]["address"] == "0x00000020"
+    assert queue[0]["runtime_observed"] is True
+    assert queue[0]["callers"] == 1
+
+
+def test_context_combines_function_references_and_layout(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    layout = Layout(
+        rom_size=0x40,
+        ranges=(
+            LayoutRange(0x00, 0x0F, "UNKNOWN", "test"),
+            LayoutRange(0x10, 0x28, "CODE", "test", "FirstFunction"),
+            LayoutRange(0x29, 0x3F, "OPAQUE_DATA", "test"),
+        ),
+    )
+    (database_root / "layout.json").write_text(json.dumps(layout.to_dict()), encoding="utf-8")
+    value = build_context(
+        AnalysisDatabase(database_root),
+        0x14,
+        SymbolStore(symbols=(Symbol(0x10, "FirstFunction", "function"),)),
+    )
+
+    assert value["function"]["name"] == "First"
+    assert value["layout"]["class"] == "CODE"
+    assert len(value["callers"]) == 0
+    assert len(value["callees"]) == 1
+    assert len(value["ram_reads"]) == 1
+    assert len(value["ram_writes"]) == 1
+    assert value["nearby_layout"]
 
 
 def _write_database(root: Path) -> None:

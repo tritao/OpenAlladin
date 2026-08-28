@@ -66,6 +66,17 @@ def build_parser() -> argparse.ArgumentParser:
     add_analysis_query("writers", "show writes to an address", command_ghidra_writers)
     add_analysis_query("readers", "show reads from an address", command_ghidra_readers)
     add_analysis_query("xrefs", "show references to an address", command_ghidra_xrefs)
+    context = ghidra_commands.add_parser(
+        "context",
+        help="show the combined RE context for an address",
+    )
+    context.add_argument("address", type=lambda value: int(value, 0))
+    context.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    context.add_argument("--layout", type=Path)
+    context.add_argument("--coverage", type=Path)
+    context.add_argument("--radius", type=int, default=2, help="nearby layout objects on each side")
+    context.add_argument("--json", action="store_true", dest="json_output")
+    context.set_defaults(function=command_ghidra_context)
     unknown = ghidra_commands.add_parser("unknown", help="show unclassified ROM ranges")
     unknown.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
     unknown.add_argument("--json", action="store_true", dest="json_output")
@@ -112,6 +123,7 @@ def build_parser() -> argparse.ArgumentParser:
     deasm_build.add_argument("--layout", type=Path)
     deasm_build.add_argument("--instructions", type=Path)
     deasm_build.add_argument("--output", type=Path, default=ROOT / "build/re/deasm/aladdin.asm")
+    deasm_build.add_argument("--metrics", type=Path, default=ROOT / "build/re/deasm/metrics.json")
     deasm_build.set_defaults(function=command_deasm_build)
 
     deasm_verify = deasm_commands.add_parser(
@@ -128,6 +140,7 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=ROOT / "build/re/deasm/aladdin-rebuilt.bin",
     )
+    deasm_verify.add_argument("--metrics", type=Path, default=ROOT / "build/re/deasm/metrics.json")
     deasm_verify.set_defaults(function=command_deasm_verify)
 
     deasm_stats = deasm_commands.add_parser("stats", help="show deassembly coverage and naming statistics")
@@ -135,8 +148,19 @@ def build_parser() -> argparse.ArgumentParser:
     deasm_stats.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
     deasm_stats.add_argument("--layout", type=Path)
     deasm_stats.add_argument("--instructions", type=Path)
+    deasm_stats.add_argument("--metrics", type=Path, default=ROOT / "build/re/deasm/metrics.json")
     deasm_stats.add_argument("--json", action="store_true", dest="json_output")
     deasm_stats.set_defaults(function=command_deasm_stats)
+
+    deasm_todo = deasm_commands.add_parser(
+        "todo",
+        help="rank mechanically named functions for semantic investigation",
+    )
+    deasm_todo.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    deasm_todo.add_argument("--coverage", type=Path)
+    deasm_todo.add_argument("--limit", type=int, default=25, help="maximum rows; zero means all")
+    deasm_todo.add_argument("--json", action="store_true", dest="json_output")
+    deasm_todo.set_defaults(function=command_deasm_todo)
 
     symbols = commands.add_parser("symbols", help="query canonical tracked symbols")
     symbol_commands = symbols.add_subparsers(dest="symbols_command", required=True)
@@ -161,6 +185,48 @@ def build_parser() -> argparse.ArgumentParser:
     symbols_stats = symbol_commands.add_parser("stats", help="show symbol counts and confidence totals")
     symbols_stats.add_argument("--json", action="store_true", dest="json_output")
     symbols_stats.set_defaults(function=command_symbols_stats)
+
+    symbols_unknown = symbol_commands.add_parser(
+        "unknown",
+        help="list mechanically named functions ranked by analysis evidence",
+    )
+    symbols_unknown.add_argument("--kind", choices=("function",), default="function")
+    symbols_unknown.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    symbols_unknown.add_argument("--coverage", type=Path)
+    symbols_unknown.add_argument("--limit", type=int, default=0, help="maximum rows; zero means all")
+    symbols_unknown.add_argument("--json", action="store_true", dest="json_output")
+    symbols_unknown.set_defaults(function=command_symbols_unknown)
+
+    symbols_next = symbol_commands.add_parser(
+        "next",
+        help="show the highest-priority mechanically named function",
+    )
+    symbols_next.add_argument("--kind", choices=("function",), default="function")
+    symbols_next.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    symbols_next.add_argument("--coverage", type=Path)
+    symbols_next.add_argument("--json", action="store_true", dest="json_output")
+    symbols_next.set_defaults(function=command_symbols_next)
+
+    symbols_rename = symbol_commands.add_parser("rename", help="rename or create a canonical symbol")
+    symbols_rename.add_argument("address", type=parse_symbol_address)
+    symbols_rename.add_argument("name")
+    symbols_rename.add_argument("--kind", choices=("function", "ram", "data"))
+    symbols_rename.add_argument("--json", action="store_true", dest="json_output")
+    symbols_rename.set_defaults(function=command_symbols_rename)
+
+    symbols_describe = symbol_commands.add_parser("describe", help="set a symbol description")
+    symbols_describe.add_argument("address", type=parse_symbol_address)
+    symbols_describe.add_argument("description")
+    symbols_describe.add_argument("--kind", choices=("function", "ram", "data"))
+    symbols_describe.add_argument("--json", action="store_true", dest="json_output")
+    symbols_describe.set_defaults(function=command_symbols_describe)
+
+    symbols_confidence = symbol_commands.add_parser("confidence", help="set symbol confidence")
+    symbols_confidence.add_argument("address", type=parse_symbol_address)
+    symbols_confidence.add_argument("confidence")
+    symbols_confidence.add_argument("--kind", choices=("function", "ram", "data"))
+    symbols_confidence.add_argument("--json", action="store_true", dest="json_output")
+    symbols_confidence.set_defaults(function=command_symbols_confidence)
 
     record = commands.add_parser(
         "record",

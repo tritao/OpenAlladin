@@ -7,8 +7,10 @@ import json
 from pathlib import Path
 from typing import Any, Iterable
 
+from genie.ghidra.database import AnalysisDatabase
+from genie.ghidra.worklist import function_work_queue, render_work_queue
 from genie.runtime import ROOT, default_rom, resolve
-from genie.symbols import Symbol, SymbolStore, mechanical_name
+from genie.symbols import Symbol, SymbolStore, edit_symbol, mechanical_name
 
 
 def _store() -> SymbolStore:
@@ -100,6 +102,77 @@ def command_symbols_stats(args: argparse.Namespace) -> int:
         print(f"aliases   {stats['aliases']}")
         print(f"ranged    {stats['ranged']}")
     return 0
+
+
+def _function_queue(args: argparse.Namespace) -> list[dict[str, Any]]:
+    if args.kind != "function":
+        raise ValueError(f"symbols {args.symbols_command} currently supports --kind function only")
+    database = AnalysisDatabase(resolve(args.database))
+    database.load("metadata.json")
+    return function_work_queue(
+        database,
+        _store(),
+        coverage_path=resolve(args.coverage) if args.coverage else None,
+    )
+
+
+def command_symbols_unknown(args: argparse.Namespace) -> int:
+    try:
+        queue = _function_queue(args)
+    except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        print(f"ERROR {error}")
+        return 1
+    limit = args.limit if args.limit > 0 else len(queue)
+    render_work_queue(
+        queue[:limit],
+        total=len(queue),
+        json_output=args.json_output,
+        title="Unknown/mechanical functions",
+    )
+    return 0
+
+
+def command_symbols_next(args: argparse.Namespace) -> int:
+    try:
+        queue = _function_queue(args)
+    except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        print(f"ERROR {error}")
+        return 1
+    if not queue:
+        print("No unknown/mechanical functions remain")
+        return 1
+    render_work_queue(queue[:1], total=len(queue), json_output=args.json_output, title="Next function")
+    return 0
+
+
+def _edit_command(args: argparse.Namespace, **changes: str | None) -> int:
+    try:
+        symbol = edit_symbol(
+            args.address,
+            root=ROOT,
+            kind=args.kind,
+            **changes,
+        )
+    except (OSError, TypeError, ValueError) as error:
+        print(f"ERROR {error}")
+        return 1
+    if args.json_output:
+        print(json.dumps(symbol.to_dict(), indent=2, sort_keys=True))
+    else:
+        print(f"Updated 0x{symbol.address:08X}: {symbol.name} [{symbol.kind}; {symbol.confidence}]")
+    return 0
+
+
+def command_symbols_rename(args: argparse.Namespace) -> int:
+    return _edit_command(args, name=args.name)
+
+
+def command_symbols_describe(args: argparse.Namespace) -> int:
+    return _edit_command(args, description=args.description)
+
+
+def command_symbols_confidence(args: argparse.Namespace) -> int:
+    return _edit_command(args, confidence=args.confidence)
 
 
 __all__ = [name for name in globals() if not name.startswith("__")]

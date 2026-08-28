@@ -103,6 +103,32 @@ class AnalysisDatabase:
             key=lambda item: (_address(item.get("from", 0)), str(item.get("type", ""))),
         )
 
+    def function_references(self, address: int, filename: str) -> list[dict[str, Any]]:
+        """Return references originating inside the function at *address*."""
+
+        function = self.function(address)
+        if function is None:
+            return []
+        start = _address(function.get("start") or function["address"])
+        end = _address(function.get("end") or function["address"])
+        result = []
+        for item in self._records(filename, "references"):
+            try:
+                origin = _address(item.get("from"))
+            except (TypeError, ValueError):
+                continue
+            raw_function = item.get("from_function")
+            try:
+                belongs = raw_function is not None and _address(raw_function) == start
+            except (TypeError, ValueError):
+                belongs = False
+            if belongs or start <= origin <= end:
+                result.append(item)
+        return sorted(
+            result,
+            key=lambda item: (_address(item.get("from", 0)), _address(item.get("to", 0)), str(item.get("type", ""))),
+        )
+
     def readers(self, address: int) -> list[dict[str, Any]]:
         return self._memory_references("memory_reads.json", address)
 

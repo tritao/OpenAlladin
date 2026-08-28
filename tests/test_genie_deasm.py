@@ -65,6 +65,15 @@ def test_deasm_stats_separates_semantic_and_mechanical_labels():
     assert stats.mechanical_names == 3
     assert "ROM                         32 bytes" in stats.render()
 
+    measured = collect(
+        value,
+        symbols,
+        metrics={"instructionized": 2, "raw_fallback": 1},
+    )
+    assert measured.instructionized == 2
+    assert measured.raw_fallback == 1
+    assert '"raw_fallback": 1' in json.dumps(measured.to_dict(), sort_keys=True)
+
 
 def test_deasm_rejects_instruction_bytes_that_do_not_match_rom():
     value, _ = _fixture()

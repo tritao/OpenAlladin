@@ -14,6 +14,8 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     layout = build_parser().parse_args(["layout", "show", "0x1234", "--json"])
     deasm_build = build_parser().parse_args(["deasm", "build"])
     deasm_stats = build_parser().parse_args(["deasm", "stats", "--json"])
+    deasm_todo = build_parser().parse_args(["deasm", "todo", "--limit", "3"])
+    context = build_parser().parse_args(["ghidra", "context", "0x1234", "--json"])
 
     assert setup.function is ghidra.command_ghidra_setup
     assert verify.function is ghidra.command_ghidra_verify
@@ -29,6 +31,10 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert deasm_build.function is deasm.command_deasm_build
     assert deasm_stats.function is deasm.command_deasm_stats
     assert deasm_stats.json_output is True
+    assert deasm_todo.function is deasm.command_deasm_todo
+    assert deasm_todo.limit == 3
+    assert context.function is ghidra.command_ghidra_context
+    assert context.radius == 2
 
 
 def test_ghidra_rebuild_calls_existing_service(monkeypatch, capsys):

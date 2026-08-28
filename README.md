@@ -38,12 +38,19 @@ genie symbols show 0x001AC784
 genie symbols find AnimationVM
 genie symbols validate
 genie symbols stats
+genie symbols unknown --kind function
+genie symbols next --kind function
+genie symbols rename 0x00184320 SceneResource_Whatever
+genie symbols describe 0x00184320 "resource decoder entry point"
+genie symbols confidence 0x00184320 decompiled
 ```
 
 Build the whole-ROM static analysis database once with `genie ghidra scan`;
 its JSON indexes are written to `build/re/full-rom/` and can then be queried
 with `genie ghidra function`, `callers`, `callees`, `writers`, `readers`,
-`xrefs`, and `unknown` without another Ghidra run.
+`xrefs`, `context`, and `unknown` without another Ghidra run. The context
+query combines callers, callees, RAM references, xrefs, nearby layout objects,
+runtime coverage, and known symbols referenced by one address.
 
 Validate a generated scan against the recovered scheduler, canonical symbols,
 dispatch-table xrefs, and normalized ROM coverage before consuming it:
@@ -71,6 +78,7 @@ after every scan:
 ```bash
 genie deasm build
 genie deasm stats
+genie deasm todo
 genie deasm verify
 ```
 

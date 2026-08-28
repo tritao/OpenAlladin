@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Mapping
 
 from genie.symbols import SymbolStore
 
@@ -23,6 +23,8 @@ class DeasmStats:
     instructions: int
     semantic_names: int
     mechanical_names: int
+    instructionized: int | None = None
+    raw_fallback: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -36,6 +38,8 @@ class DeasmStats:
             "instructions": self.instructions,
             "semantic_names": self.semantic_names,
             "mechanical_names": self.mechanical_names,
+            "instructionized": self.instructionized,
+            "raw_fallback": self.raw_fallback,
         }
 
     def render(self) -> str:
@@ -53,6 +57,8 @@ class DeasmStats:
             "",
             f"ranges                      {self.ranges:,}",
             f"instructions                {self.instructions:,}",
+            f"instructionized             {self.instructionized if self.instructionized is not None else 'not built'}",
+            f"raw fallback                {self.raw_fallback if self.raw_fallback is not None else 'not built'}",
             f"functions                   {self.functions:,}",
             f"semantic names              {self.semantic_names:,}",
             f"mechanical names            {self.mechanical_names:,}",
@@ -60,7 +66,12 @@ class DeasmStats:
         return "\n".join(lines)
 
 
-def collect(value: DeasmInput, symbols: SymbolStore) -> DeasmStats:
+def collect(
+    value: DeasmInput,
+    symbols: SymbolStore,
+    *,
+    metrics: Mapping[str, Any] | None = None,
+) -> DeasmStats:
     """Calculate stats from the same validated inputs consumed by the emitter."""
 
     ranges_by_class: dict[str, int] = {}
@@ -87,6 +98,8 @@ def collect(value: DeasmInput, symbols: SymbolStore) -> DeasmStats:
         instructions=len(value.instructions),
         semantic_names=len(labels) - mechanical_names,
         mechanical_names=mechanical_names,
+        instructionized=(int(metrics["instructionized"]) if metrics and metrics.get("instructionized") is not None else None),
+        raw_fallback=(int(metrics["raw_fallback"]) if metrics and metrics.get("raw_fallback") is not None else None),
     )
 
 
