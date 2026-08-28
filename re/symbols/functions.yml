@@ -484,6 +484,14 @@
   evidence:
     - ghidra_decompile_001B263C
     - ghidra_transition_render_targets
+0x001ACDA2:
+  name: Render_ReloadPaletteBands
+  confidence: confirmed
+  description: Re-uploads all four published palette bands through the VDP upload helpers, preserving the caller's A0 register across the reload.
+  evidence:
+    - ghidra_decompile_001ACDA2
+    - ghidra_transition_render_targets
+    - ghidra_decompile_001AE796
 0x001B26B0:
   name: Render_ClearPalette
   confidence: decompiled

@@ -1442,6 +1442,11 @@ level record from `SCENE_STATE` in the ROM level table, publishes its palette
 source, and invokes `Render_RunPaletteTransitionFrom`. This names the shared
 scene-side entry without conflating it with any state-specific resource loader.
 
+Render_ReloadPaletteBands at `0x001ACDA2` re-uploads the four currently
+published palette bands through the individual VDP upload helpers while
+preserving the caller's `A0`. The type-1E recovery path uses this as a palette
+refresh primitive rather than selecting a new palette source.
+
 The static result is recorded in
 re/mame/findings/20260828-palette-render-helpers-v1.json.
 

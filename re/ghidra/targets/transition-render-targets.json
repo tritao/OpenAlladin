@@ -12,6 +12,7 @@
     { "address": "0x001B2664", "name": "Render_UploadPaletteBand1" },
     { "address": "0x001B2650", "name": "Render_UploadPaletteBand2" },
     { "address": "0x001B263C", "name": "Render_UploadPaletteBand3" },
+    { "address": "0x001ACDA2", "name": "Render_ReloadPaletteBands" },
     { "address": "0x001B26B0", "name": "Render_ClearPalette" },
     { "address": "0x001B28A6", "name": "Frame_RunServicePassResetPhase" },
     { "address": "0x001B28AE", "name": "Frame_RunServicePass" },

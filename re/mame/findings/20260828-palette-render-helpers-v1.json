@@ -35,6 +35,12 @@
       "behavior": "Uploads 16 palette words to the fourth VDP palette band and records the source pointer at 0x00FF726E."
     },
     {
+      "address": "0x001ACDA2",
+      "name": "Render_ReloadPaletteBands",
+      "confidence": "confirmed",
+      "behavior": "Re-uploads all four published palette bands through the individual VDP upload helpers while preserving the caller's A0 register."
+    },
+    {
       "address": "0x001B26B0",
       "name": "Render_ClearPalette",
       "confidence": "decompiled",
@@ -59,5 +65,5 @@
       "behavior": "Selects the active level record from SCENE_STATE in the ROM level table, stores its palette source, and invokes the shared palette transition using that source."
     }
   ],
-  "conclusion": "The palette subsystem has all four reusable band upload primitives, a full clear primitive, parameterized and fixed-source transition loops, and a named scene entry that selects the active level palette source."
+  "conclusion": "The palette subsystem has all four reusable band upload primitives, a full clear primitive, parameterized and fixed-source transition loops, a palette-band reload primitive, and a named scene entry that selects the active level palette source."
 }
