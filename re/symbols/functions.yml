@@ -259,6 +259,14 @@
   evidence:
     - ghidra_decompile_001B4A7A
     - ghidra_scene_resource_transfer_targets
+0x001B47F0:
+  name: SceneResource_LoadCommonPlaneC000
+  confidence: decompiled
+  description: Decompresses the fixed common scene resource at ROM 0x0012F4EC into VRAM address 0xC000 through the shared RNC-to-VDP loader.
+  evidence:
+    - ghidra_decompile_001B47F0
+    - ghidra_scene_resource_transfer_targets
+    - ghidra_disassembly_001B47F0
 0x001B5266:
   name: LevelObjectSpawnEntry
   confidence: confirmed

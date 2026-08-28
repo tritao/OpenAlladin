@@ -11,6 +11,12 @@
   "targeted_decompile": "build/re/scene-resource-transfer-targeted-decompile-v1.json",
   "services": [
     {
+      "address": "0x001B47F0",
+      "name": "SceneResource_LoadCommonPlaneC000",
+      "confidence": "decompiled",
+      "behavior": "Decompresses the fixed ROM resource at 0x0012F4EC into VRAM 0xC000 through RNC_To_VDP_Loader."
+    },
+    {
       "address": "0x001B2584",
       "name": "VDP_CopyIndirectWordStream",
       "confidence": "decompiled",

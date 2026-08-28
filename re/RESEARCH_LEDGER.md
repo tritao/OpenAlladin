@@ -1622,6 +1622,11 @@ roles can be distinguished from the scene table without relying on address-only
 suffixes. The static result is recorded in
 `re/mame/findings/20260828-scene-resource-transfer-v1.json`.
 
+The fixed common-plane loader SceneResource_LoadCommonPlaneC000 at
+`0x001B47F0` is now named as part of the same transfer layer. It decompresses
+ROM resource `0x0012F4EC` directly to VRAM `0xC000`; unlike the nearby
+state-specific resource loaders, its source and destination contract is fixed.
+
 ## Scene VDP and query/audio service helpers (20260828)
 
 The shared scene service helpers around the tile-row command tables are now
