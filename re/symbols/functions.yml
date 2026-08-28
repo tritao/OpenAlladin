@@ -815,6 +815,51 @@
   evidence:
     - ghidra_decompile_001B43FC
     - ghidra_options_menu_targets
+0x001B4436:
+  name: SoundTest_RunScreen
+  confidence: decompiled
+  description: "Runs the sound-test screen: loads its presentation, redraws the selected sound entry, services the animation/render loop, navigates the indexed sound-entry table, plays the selected sound, and returns through the menu exit path."
+  evidence:
+    - ghidra_decompile_001B4436
+    - ghidra_sound_test_targets
+    - rom_sound_test_entry_table_0012675E
+0x001B45CC:
+  name: SoundTest_SelectPreviousEntry
+  confidence: decompiled
+  description: Moves SOUND_TEST_ENTRY_PTR back by one 0x10-byte sound-test record when the preceding record is not the table sentinel, then redraws the selected entry.
+  evidence:
+    - ghidra_disassembly_001B45CC
+    - ghidra_sound_test_targets
+0x001B45D8:
+  name: SoundTest_SelectNextEntry
+  confidence: decompiled
+  description: Moves SOUND_TEST_ENTRY_PTR forward by one 0x10-byte sound-test record when the next record is not the table sentinel, then redraws the selected entry.
+  evidence:
+    - ghidra_disassembly_001B45D8
+    - ghidra_sound_test_targets
+0x001B45F4:
+  name: SoundTest_PlaySelectedEntry
+  confidence: decompiled
+  description: Reads the command byte at SOUND_TEST_ENTRY_PTR and queues it through the audio command interface for playback.
+  evidence:
+    - ghidra_decompile_001B45F4
+    - ghidra_sound_test_targets
+    - rom_sound_test_entry_table_0012675E
+0x001B4626:
+  name: SoundTest_RenderSelectedEntry
+  confidence: decompiled
+  description: Rebuilds the sound-test presentation and renders the selected entry's screen rows through the scene command-stream service.
+  evidence:
+    - ghidra_decompile_001B4626
+    - ghidra_sound_test_targets
+0x001B4666:
+  name: Credits_RunRoll
+  confidence: decompiled
+  description: Runs the credits sequence from ROM stream 0x00127E8C, applying palette/VDP setup, rendering each command-stream row, servicing actor frames, and ending on the stream terminator.
+  evidence:
+    - ghidra_decompile_001B4666
+    - ghidra_sound_test_targets
+    - rom_credits_stream_00127E8C
 0x001B4F7C:
   name: Scene_ResetToState0
   confidence: confirmed

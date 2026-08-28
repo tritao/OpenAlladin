@@ -1,0 +1,76 @@
+{
+  "format": "openaladdin-menu-soundtest-credits-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/menu-subservices-targets.json",
+  "decompile_sources": [
+    "build/re/full-rom/decompile/001B4436.txt",
+    "build/re/full-rom/decompile/001B4626.txt",
+    "build/re/full-rom/decompile/001B4666.txt"
+  ],
+  "services": [
+    {
+      "address": "0x001B4436",
+      "name": "SoundTest_RunScreen",
+      "confidence": "decompiled",
+      "behavior": "Loads the sound-test presentation, renders the selected entry, services AnimationVM/MovementVM and sprite submission each frame, polls controller bits, debounces navigation through SOUND_TEST_INPUT_REPEAT_TIMER, queues playback, and returns after the exit input path."
+    },
+    {
+      "address": "0x001B45CC",
+      "name": "SoundTest_SelectPreviousEntry",
+      "confidence": "decompiled",
+      "behavior": "Subtracts 0x10 from SOUND_TEST_ENTRY_PTR, rejects the 0xFF sentinel, and redraws the selected entry when a prior record exists."
+    },
+    {
+      "address": "0x001B45D8",
+      "name": "SoundTest_SelectNextEntry",
+      "confidence": "decompiled",
+      "behavior": "Adds 0x10 to SOUND_TEST_ENTRY_PTR, rejects the 0xFF sentinel, and redraws the selected entry when a following record exists."
+    },
+    {
+      "address": "0x001B45F4",
+      "name": "SoundTest_PlaySelectedEntry",
+      "confidence": "decompiled",
+      "behavior": "Reads the first byte of the current 0x10-byte record at SOUND_TEST_ENTRY_PTR and sends that value through the audio command queue."
+    },
+    {
+      "address": "0x001B4626",
+      "name": "SoundTest_RenderSelectedEntry",
+      "confidence": "decompiled",
+      "behavior": "Processes the fixed sound-test presentation stream at 0x00128E4D and nine row commands derived from SOUND_TEST_ENTRY_PTR before processing the closing command stream."
+    },
+    {
+      "address": "0x001B4666",
+      "name": "Credits_RunRoll",
+      "confidence": "decompiled",
+      "behavior": "Sets up the transition presentation, consumes the command/text stream at 0x00127E8C, advances actor/render frames for each stream row, applies palette steps, and exits on the stream terminator."
+    }
+  ],
+  "evidence": {
+    "sound_test_entry_table": "ROM 0x0012675E begins the 0x10-byte records: each record starts with an audio command byte followed by a display string, and records use 0xFF sentinel bytes. The initial pointer is published as 0x0012675E by the startup path.",
+    "sound_test_text": [
+      "HIGH SWORD",
+      "LOW SWORD",
+      "SILENT LAMB",
+      "OBJECT THROW",
+      "MENU SELECT",
+      "FLAGPOLE",
+      "MENU CHANGE",
+      "HEAD BOP",
+      "WALL HIT 2",
+      "CLOUD POOF"
+    ],
+    "credits_text": [
+      "BONUS LEVEL",
+      "VIRGIN GAMES CREDITS",
+      "PROGRAMMING & PROJECT MANAGEMENT",
+      "DAVID PERRY",
+      "ANIMATION ENGINE BY"
+    ]
+  },
+  "conclusion": "The menu's sound-test and credits branches are now represented as named, bounded services. Their exact stream/pointer/timer contracts are established without inferring broader audio asset identities or the meaning of every presentation command."
+}

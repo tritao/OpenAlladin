@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "menu-media-subservices",
+    "purpose": "Recover the sound-test screen and credits-roll services reached from the startup/options menu."
+  },
+  "targets": [
+    { "address": "0x001B4436", "name": "SoundTest_RunScreen" },
+    { "address": "0x001B45CC", "name": "SoundTest_SelectPreviousEntry" },
+    { "address": "0x001B45D8", "name": "SoundTest_SelectNextEntry" },
+    { "address": "0x001B45F4", "name": "SoundTest_PlaySelectedEntry" },
+    { "address": "0x001B4626", "name": "SoundTest_RenderSelectedEntry" },
+    { "address": "0x001B4666", "name": "Credits_RunRoll" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7DE2", "name": "SOUND_TEST_ENTRY_PTR" },
+    { "address": "0x00FFF15B", "name": "SOUND_TEST_INPUT_REPEAT_TIMER" },
+    { "address": "0x0012675E", "name": "SOUND_TEST_ENTRY_TABLE" },
+    { "address": "0x00127E8C", "name": "ROM_CREDITS_STREAM" },
+    { "address": "0x00128E4D", "name": "SOUND_TEST_PRESENTATION_STREAM" }
+  ]
+}

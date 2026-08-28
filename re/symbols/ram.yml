@@ -70,6 +70,25 @@
   evidence:
     - ghidra_options_menu_strings_00126680
     - ghidra_options_menu_targets
+0xFF7DE2:
+  name: SOUND_TEST_ENTRY_PTR
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Pointer to the current 0x10-byte sound-test entry record; the record's first byte is the audio command and its following text is rendered by the sound-test screen.
+  evidence:
+    - ghidra_decompile_001B45F4
+    - ghidra_sound_test_targets
+    - rom_sound_test_entry_table_0012675E
+0xFFF15B:
+  name: SOUND_TEST_INPUT_REPEAT_TIMER
+  type: u8
+  format: integer
+  confidence: decompiled
+  description: Sound-test navigation debounce timer loaded with seven frames after a previous/next entry action and decremented by the sound-test frame loop.
+  evidence:
+    - ghidra_decompile_001B4436
+    - ghidra_sound_test_targets
 0xFF7276:
   name: INPUT_PATTERN_CURSOR
   type: rom_pointer

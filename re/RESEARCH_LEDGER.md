@@ -800,6 +800,16 @@ scene-table publication. Its three small coordinate helpers at `0x001B43C4`,
 `0x001B43E0`, and `0x001B43FC` are named by their exact marker-position
 contracts; the menu actor's higher-level art identity remains open.
 
+The menu media subservices are recorded in
+`re/mame/findings/20260828-menu-soundtest-credits-v1.json`. The sound-test
+screen at `0x001B4436` owns the indexed records beginning at ROM `0x12675E`:
+`SOUND_TEST_ENTRY_PTR` advances in `0x10`-byte steps, the first byte queues the
+selected audio command, and `SOUND_TEST_INPUT_REPEAT_TIMER` debounces the
+navigation actions. Its redraw and previous/next/play helpers are now named
+separately. The `0x001B4666` branch is the credits roll, consuming the
+command/text stream at `0x127E8C` while servicing the actor and VDP frame
+pipeline until its terminator.
+
 The countdown-producer static audit is recorded in
 `re/mame/findings/20260826-level01-countdown-producer-static-v1.json`. The
 actor-collision table entries for receiving types `0x10`, `0x11`, and `0x13`
@@ -2058,6 +2068,7 @@ The static result is recorded in
 | `20260828-actor-resource-clear-variant-v1` | recorded-static-decompilation | A2 calling-convention variant of actor-owned resource cleanup used by linked collision teardown |
 | `20260828-scene-resource-transfer-v1` | recorded-static-decompilation | indirect VDP word stream, fixed F800 scene-plane copy, and blank scene-resource frame setup |
 | `20260828-options-menu-scene-table-v1` | recorded-static-decompilation | startup/options loop, selection-marker coordinate helpers, and final scene-table publication |
+| `20260828-menu-soundtest-credits-v1` | recorded-static-decompilation | sound-test entry navigation/playback/redraw and credits command-stream roll |
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |
