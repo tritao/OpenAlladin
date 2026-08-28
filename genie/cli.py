@@ -8,6 +8,7 @@ from collections.abc import Sequence
 from genie.runtime import *
 from genie.commands.ghidra import *
 from genie.commands.layout import *
+from genie.commands.deasm import *
 from genie.commands.symbols import *
 from genie.commands.setup import *
 from genie.commands.trace import *
@@ -101,6 +102,25 @@ def build_parser() -> argparse.ArgumentParser:
     layout_validate.add_argument("--layout", type=Path, default=ROOT / "build/re/full-rom/layout.json")
     layout_validate.add_argument("--json", action="store_true", dest="json_output")
     layout_validate.set_defaults(function=command_layout_validate)
+
+    deasm = commands.add_parser("deasm", help="generate and inspect the complete ROM deassembly")
+    deasm_commands = deasm.add_subparsers(dest="deasm_command", required=True)
+
+    deasm_build = deasm_commands.add_parser("build", help="emit a complete symbolized ROM source")
+    deasm_build.add_argument("--rom", type=Path, default=default_rom())
+    deasm_build.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    deasm_build.add_argument("--layout", type=Path)
+    deasm_build.add_argument("--instructions", type=Path)
+    deasm_build.add_argument("--output", type=Path, default=ROOT / "build/re/deasm/aladdin.asm")
+    deasm_build.set_defaults(function=command_deasm_build)
+
+    deasm_stats = deasm_commands.add_parser("stats", help="show deassembly coverage and naming statistics")
+    deasm_stats.add_argument("--rom", type=Path, default=default_rom())
+    deasm_stats.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    deasm_stats.add_argument("--layout", type=Path)
+    deasm_stats.add_argument("--instructions", type=Path)
+    deasm_stats.add_argument("--json", action="store_true", dest="json_output")
+    deasm_stats.set_defaults(function=command_deasm_stats)
 
     symbols = commands.add_parser("symbols", help="query canonical tracked symbols")
     symbol_commands = symbols.add_subparsers(dest="symbols_command", required=True)

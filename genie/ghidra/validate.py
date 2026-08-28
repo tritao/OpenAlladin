@@ -15,6 +15,7 @@ EXPECTED_FORMAT = "openaladdin-ghidra-full-rom-v1"
 REQUIRED_FILES = (
     "metadata.json",
     "functions.json",
+    "instructions.json",
     "callgraph.json",
     "xrefs.json",
     "memory_reads.json",
@@ -140,6 +141,7 @@ def validate_database(
     if isinstance(counts, dict):
         count_sources = {
             "functions": len(database.functions),
+            "instructions": len(database.instructions),
             "callgraph_edges": len(database.callgraph()),
             "xrefs": len(_values(database, "xrefs.json", "references")),
             "memory_reads": len(_values(database, "memory_reads.json", "references")),

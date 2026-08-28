@@ -35,7 +35,9 @@ This retains the normal `build/re/` exports and additionally writes the
 queryable database below `build/re/full-rom/`:
 `metadata.json`, `functions.json`, `callgraph.json`, `xrefs.json`,
 `memory_reads.json`, `memory_writes.json`, `indirect_calls.json`,
-`jump_tables.json`, and `address_classes.json`. The graph and reference files
+`jump_tables.json`, `address_classes.json`, and `instructions.json`. The
+instruction export preserves original bytes, decoded mnemonic/operands, and
+references for offline deassembly. The graph and reference files
 can be queried without launching Ghidra again:
 
 ```bash
@@ -65,6 +67,18 @@ python -m genie layout gaps
 python -m genie layout stats
 python -m genie layout validate
 ```
+
+Generate the first complete local ROM source from the offline scan:
+
+```bash
+python -m genie deasm build
+python -m genie deasm stats
+```
+
+The emitter consumes only the ROM, `layout.json`, `instructions.json`, and
+canonical symbols. It refuses to emit if the layout is not a gap-free,
+non-overlapping partition or if an instruction's exported bytes differ from
+the ROM.
 
 The recovered frame scheduler is tracked separately in
 `re/scheduler/frame_phases.yml`. It is a static call-chain model rooted at

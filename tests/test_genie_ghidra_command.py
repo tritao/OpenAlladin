@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from genie.cli import build_parser
+from genie.commands import deasm
 from genie.commands import ghidra
 
 
@@ -11,6 +12,8 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     scan = build_parser().parse_args(["ghidra", "scan", "--rom", "rom.bin", "--allow-unverified"])
     validate_db = build_parser().parse_args(["ghidra", "validate-db", "--json"])
     layout = build_parser().parse_args(["layout", "show", "0x1234", "--json"])
+    deasm_build = build_parser().parse_args(["deasm", "build"])
+    deasm_stats = build_parser().parse_args(["deasm", "stats", "--json"])
 
     assert setup.function is ghidra.command_ghidra_setup
     assert verify.function is ghidra.command_ghidra_verify
@@ -23,6 +26,9 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert validate_db.function is ghidra.command_ghidra_validate_db
     assert validate_db.json_output is True
     assert layout.address == 0x1234
+    assert deasm_build.function is deasm.command_deasm_build
+    assert deasm_stats.function is deasm.command_deasm_stats
+    assert deasm_stats.json_output is True
 
 
 def test_ghidra_rebuild_calls_existing_service(monkeypatch, capsys):

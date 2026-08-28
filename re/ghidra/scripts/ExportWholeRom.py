@@ -54,6 +54,67 @@ def function_key(function):
     return address_value(function.getEntryPoint()) if function else None
 
 
+def instruction_bytes(instruction):
+    """Return the original instruction encoding as stable uppercase hex."""
+
+    return "".join(
+        "{:02X}".format(int(value) & 0xFF)
+        for value in instruction.getBytes()
+    )
+
+
+def instruction_value(program, instruction, listing, function_manager, tracked_symbols):
+    """Serialize one decoded instruction without relying on formatted listings."""
+
+    address = instruction.getAddress()
+    function = function_manager.getFunctionContaining(address)
+    manager = program.getReferenceManager()
+    references = {}
+    for reference in instruction.getReferencesFrom():
+        record = reference_value(reference, listing, function_manager)
+        key = (record["from"], record["to"], record["operand_index"], record["type"])
+        references[key] = record
+    # Flow references are not present in getReferencesFrom() for every
+    # processor-language/reference-manager combination.
+    for reference in manager.getFlowReferencesFrom(address):
+        record = reference_value(reference, listing, function_manager)
+        key = (record["from"], record["to"], record["operand_index"], record["type"])
+        references[key] = record
+    operands = []
+    for index in range(instruction.getNumOperands()):
+        operands.append(str(instruction.getDefaultOperandRepresentation(index)))
+    return {
+        "address": address_value(address),
+        "size": int(instruction.getLength()),
+        "bytes": instruction_bytes(instruction),
+        "mnemonic": str(instruction.getMnemonicString()),
+        "operands": ", ".join(operands),
+        "function": function_key(function),
+        "function_name": function_name(function, tracked_symbols) if function else None,
+        "references": [references[key] for key in sorted(references)],
+    }
+
+
+def all_instructions(program, listing, function_manager, tracked_symbols):
+    """Collect each decoded ROM instruction once, in address order."""
+
+    records = {}
+    for block in program.getMemory().getBlocks():
+        if not block.isExecute():
+            continue
+        iterator = listing.getInstructions(block.getStart(), True)
+        while iterator.hasNext():
+            instruction = iterator.next()
+            address = instruction.getAddress()
+            if address.getOffset() > block.getEnd().getOffset():
+                break
+            if not block.contains(address):
+                continue
+            record = instruction_value(program, instruction, listing, function_manager, tracked_symbols)
+            records[record["address"]] = record
+    return [records[key] for key in sorted(records, key=lambda value: int(value, 16))]
+
+
 def reference_value(reference, listing, function_manager):
     from_address = reference.getFromAddress()
     to_address = reference.getToAddress()
@@ -315,6 +376,12 @@ def run():
         functions.append(function_value(iterator.next(), tracked_symbols))
     functions.sort(key=lambda item: item["address"])
 
+    instructions = all_instructions(
+        currentProgram,
+        listing,
+        function_manager,
+        tracked_symbols,
+    )
     references = all_references(currentProgram, listing, function_manager)
     call_edges = [
         {"from": item["from_function"], "to": item["to_function"], "site": item["from"], "type": item["type"]}
@@ -330,6 +397,7 @@ def run():
     classes = address_classes(currentProgram, functions, config.get("symbols", []))
 
     write_json(os.path.join(output, "functions.json"), functions)
+    write_json(os.path.join(output, "instructions.json"), instructions)
     write_json(os.path.join(output, "callgraph.json"), {"format": "openaladdin-callgraph-v1", "edges": call_edges})
     write_json(os.path.join(output, "xrefs.json"), {"format": "openaladdin-xrefs-v1", "references": references})
     write_json(os.path.join(output, "memory_reads.json"), {"format": "openaladdin-memory-reads-v1", "references": reads})
@@ -345,12 +413,13 @@ def run():
         "program": currentProgram.getDomainFile().getName(),
         "language": str(currentProgram.getLanguageID()),
         "files": [
-            "metadata.json", "functions.json", "callgraph.json", "xrefs.json",
+            "metadata.json", "functions.json", "instructions.json", "callgraph.json", "xrefs.json",
             "memory_reads.json", "memory_writes.json", "indirect_calls.json",
             "jump_tables.json", "address_classes.json",
         ],
         "counts": {
             "functions": len(functions),
+            "instructions": len(instructions),
             "callgraph_edges": len(call_edges),
             "xrefs": len(references),
             "memory_reads": len(reads),
@@ -363,7 +432,9 @@ def run():
         },
     }
     write_json(os.path.join(output, "metadata.json"), metadata)
-    print("Exported whole-ROM database: {} functions, {} references to {}".format(len(functions), len(references), output))
+    print("Exported whole-ROM database: {} functions, {} instructions, {} references to {}".format(
+        len(functions), len(instructions), len(references), output
+    ))
 
 
 run()

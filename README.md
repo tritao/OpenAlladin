@@ -59,6 +59,18 @@ genie layout stats
 genie layout validate
 ```
 
+Generate a complete local ROM representation from the validated layout and
+canonical instruction export. The output is ignored and can be regenerated
+after every scan:
+
+```bash
+genie deasm build
+genie deasm stats
+```
+
+`deasm build` refuses layouts with holes or overlaps and emits every ROM byte
+exactly once. Run `genie ghidra scan` first when `instructions.json` is absent.
+
 Use the `genie` command for all reverse-engineering workflows. The equivalent
 module form, `python -m genie`, is useful when running from an unmanaged
 checkout.

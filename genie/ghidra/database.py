@@ -46,6 +46,13 @@ class AnalysisDatabase:
             document = document.get("functions", [])
         return sorted((dict(item) for item in document), key=lambda item: _address(item["address"]))
 
+    @property
+    def instructions(self) -> list[dict[str, Any]]:
+        document = self.load("instructions.json")
+        if isinstance(document, dict):
+            document = document.get("instructions", [])
+        return sorted((dict(item) for item in document), key=lambda item: _address(item["address"]))
+
     def _records(self, filename: str, key: str) -> list[dict[str, Any]]:
         document = self.load(filename)
         values = document.get(key, []) if isinstance(document, dict) else document
@@ -116,6 +123,7 @@ class AnalysisDatabase:
         if not counts:
             counts = {
                 "functions": len(self.functions),
+                "instructions": len(self.instructions),
                 "callgraph_edges": len(self.callgraph()),
                 "xrefs": len(self._records("xrefs.json", "references")),
                 "memory_reads": len(self._records("memory_reads.json", "references")),

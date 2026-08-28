@@ -15,6 +15,7 @@ from genie.symbols import SymbolStore
 FILES = (
     "metadata.json",
     "functions.json",
+    "instructions.json",
     "callgraph.json",
     "xrefs.json",
     "memory_reads.json",
@@ -48,6 +49,7 @@ def _write_database(root: Path, *, rom_size: int = 0x100) -> Path:
         "functions.json": [
             {"address": "0x10", "name": "First", "start": "0x10", "end": "0x1F"},
         ],
+        "instructions.json": [],
         "callgraph.json": {"edges": []},
         "xrefs.json": {"references": []},
         "memory_reads.json": {"references": []},
@@ -162,6 +164,7 @@ def _write_validated_database_fixture(tmp_path: Path) -> Path:
             "files": list(FILES),
         },
         "functions.json": functions,
+        "instructions.json": [],
         "callgraph.json": {"edges": edges},
         "xrefs.json": {"references": xrefs},
         "memory_reads.json": {"references": []},
