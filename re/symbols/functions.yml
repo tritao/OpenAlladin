@@ -216,6 +216,35 @@
   evidence:
     - ghidra_decompile_001B269C
     - ghidra_vdp_scene_setup_targets
+0x001B2678:
+  name: Render_UploadPaletteBand0
+  confidence: decompiled
+  description: Uploads 16 palette words from the caller's source pointer to the first VDP palette band and records the source pointer at FF7262.
+  evidence:
+    - ghidra_decompile_001B2678
+    - ghidra_transition_render_targets
+0x001B263C:
+  name: Render_UploadPaletteBand3
+  confidence: decompiled
+  description: Uploads 16 palette words from the caller's source pointer to the fourth VDP palette band and records the source pointer at FF726E.
+  evidence:
+    - ghidra_decompile_001B263C
+    - ghidra_transition_render_targets
+0x001B26B0:
+  name: Render_ClearPalette
+  confidence: decompiled
+  description: Writes zero to all 64 palette words at the VDP palette destination.
+  evidence:
+    - ghidra_decompile_001B26B0
+    - ghidra_transition_render_targets
+0x001B278A:
+  name: Render_RunPaletteTransitionFrom
+  confidence: decompiled
+  description: Initializes the four palette-band source pointers from a caller-supplied palette, snapshots the current VDP palette, and runs 16 VBlank-paced service frames with one palette convergence step per frame.
+  evidence:
+    - ghidra_decompile_001B278A
+    - ghidra_decompile_001B2916
+    - ghidra_transition_render_targets
 0x001A8E3E:
   name: SceneScript_AdvanceState
   confidence: probable

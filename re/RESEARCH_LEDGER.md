@@ -1408,6 +1408,19 @@ component group at a time and writes it to VDP.
 The static result is recorded in
 re/mame/findings/20260828-transition-render-service-v1.json.
 
+## Palette upload and transition helpers (20260828)
+
+The palette helper family is now named. Render_UploadPaletteBand0 at 0x001B2678
+and Render_UploadPaletteBand3 at 0x001B263C upload 16-word bands to the VDP
+and publish their source pointers. Render_ClearPalette at 0x001B26B0 clears all
+64 palette words. Render_RunPaletteTransitionFrom at 0x001B278A initializes
+the four palette bands from a caller-supplied source, snapshots the current
+palette, and runs the same 16 VBlank-paced convergence loop as the fixed-source
+transition entry.
+
+The static result is recorded in
+re/mame/findings/20260828-palette-render-helpers-v1.json.
+
 ## Scene-resource service lifecycle (20260828)
 
 The scene-resource lifecycle around 0x001B4B5E is now named. The preparation
@@ -1688,6 +1701,7 @@ re/mame/findings/20260828-compressed-resource-decode-v1.json.
 | `20260828-animation-sprite-payload-v1` | recorded-static-decompilation | AnimationVM frame expansion into actor sprite payload records for VDP submission |
 | `20260828-audio-z80-bootstrap-v1` | recorded-static-decompilation | Z80 bus handoff, sound-driver copy, Z80 start, and audio bootstrap command sequence |
 | `20260828-transition-render-service-v1` | recorded-static-decompilation | palette-transition loop, service-frame execution, actor-only records, and palette-step VDP writes |
+| `20260828-palette-render-helpers-v1` | recorded-static-decompilation | palette-band upload, full palette clear, and parameterized palette transition helpers |
 | `20260828-scene-resource-service-v1` | recorded-static-decompilation | VBlank scene-resource loop, render-frame preparation, palette fade, actor reset, and VRAM copy |
 | `20260828-render-submission-v1` | recorded-static-decompilation | sprite attribute-record construction, camera-relative actor culling, and the two VDP submission stages |
 | `20260828-vdp-tile-word-v1` | recorded-static-decompilation | reusable scene/resource VDP control-address and tile-word writer |
