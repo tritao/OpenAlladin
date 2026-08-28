@@ -1419,6 +1419,10 @@ the four palette bands from a caller-supplied source, snapshots the current
 palette, and runs the same 16 VBlank-paced convergence loop as the fixed-source
 transition entry.
 
+Render_ApplyPaletteBandStep at `0x001B28CE` is the 16-word counterpart to
+Render_ApplyPaletteStep: it converges one caller-selected palette band by one
+component group, writes that band to VDP, and records its source pointer.
+
 The static result is recorded in
 re/mame/findings/20260828-palette-render-helpers-v1.json.
 

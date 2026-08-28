@@ -41,6 +41,12 @@
       "behavior": "Writes zero to all 64 palette words at the VDP palette destination."
     },
     {
+      "address": "0x001B28CE",
+      "name": "Render_ApplyPaletteBandStep",
+      "confidence": "decompiled",
+      "behavior": "Converges a caller-selected 16-word palette band toward the current palette one component group at a time, writes the band to VDP, and records the source pointer at 0x00FF7262."
+    },
+    {
       "address": "0x001B278A",
       "name": "Render_RunPaletteTransitionFrom",
       "confidence": "decompiled",

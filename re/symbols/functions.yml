@@ -178,6 +178,13 @@
   evidence:
     - ghidra_decompile_001B2916
     - ghidra_transition_render_targets
+0x001B28CE:
+  name: Render_ApplyPaletteBandStep
+  confidence: decompiled
+  description: Converges 16 palette words from the caller's source band toward the current VDP palette, adjusts each color component group by one step, writes the band to VDP, and publishes its source pointer.
+  evidence:
+    - ghidra_decompile_001B28CE
+    - ghidra_transition_render_targets
 0x001B2E9A:
   name: SceneTransition_VDPHelper
   confidence: decompiled
