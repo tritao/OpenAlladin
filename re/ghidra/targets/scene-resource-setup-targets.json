@@ -1,0 +1,17 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-setup-loaders",
+    "purpose": "Classify the compact setup-time VRAM loaders by exact compressed sources and destinations."
+  },
+  "targets": [
+    { "address": "0x001B477C", "name": "SceneResource_LoadVRAMTriple12CCD8" },
+    { "address": "0x001B47AC", "name": "SceneResource_LoadE000Resource12D0FA" },
+    { "address": "0x001B47D0", "name": "SceneResource_LoadC000ResourceAndBase136912" }
+  ],
+  "memory_references": [
+    { "address": "0x0000C000", "name": "VRAM_C000" },
+    { "address": "0x0000E000", "name": "VRAM_E000" }
+  ]
+}

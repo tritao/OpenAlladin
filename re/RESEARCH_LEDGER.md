@@ -826,6 +826,13 @@ and prepare a frame from explicit palette pointers. They are source-qualified
 until the scene table or runtime evidence establishes higher-level asset
 identities.
 
+The setup-time VRAM loader wrappers are recorded in
+`re/mame/findings/20260828-scene-resource-setup-loaders-v1.json`.
+`0x001B477C` loads a three-region VRAM set, `0x001B47AC` loads the E000
+resource used by the scene setup path, and `0x001B47D0` loads the C000/base
+pair. These names retain exact payload and destination evidence without
+guessing which menu or scene art consumes each resource.
+
 The countdown-producer static audit is recorded in
 `re/mame/findings/20260826-level01-countdown-producer-static-v1.json`. The
 actor-collision table entries for receiving types `0x10`, `0x11`, and `0x13`
@@ -2087,6 +2094,7 @@ The static result is recorded in
 | `20260828-menu-soundtest-credits-v1` | recorded-static-decompilation | sound-test entry navigation/playback/redraw and credits command-stream roll |
 | `20260828-scene-resource-loader-variants-v1` | recorded-static-decompilation | compact VRAM pair/base loader wrappers and palette-source publication |
 | `20260828-scene-resource-c000-loaders-v1` | recorded-static-decompilation | five source-qualified C000 loaders and palette-frame contracts |
+| `20260828-scene-resource-setup-loaders-v1` | recorded-static-decompilation | setup-time three-region, E000, and C000/base VRAM loader wrappers |
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
 | `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |

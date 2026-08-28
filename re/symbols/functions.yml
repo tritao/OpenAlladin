@@ -412,6 +412,27 @@
     - ghidra_decompile_001B47F0
     - ghidra_scene_resource_transfer_targets
     - ghidra_disassembly_001B47F0
+0x001B477C:
+  name: SceneResource_LoadVRAMTriple12CCD8
+  confidence: decompiled
+  description: Decompresses ROM sources 0x0012CCD8, 0x0012CD74, and 0x00136912 to VRAM destinations 0xC000, 0xE000, and 0x0000.
+  evidence:
+    - ghidra_disassembly_001B477C
+    - ghidra_scene_resource_setup_targets
+0x001B47AC:
+  name: SceneResource_LoadE000Resource12D0FA
+  confidence: decompiled
+  description: Decompresses ROM source 0x0012D0FA to VRAM destination 0xE000.
+  evidence:
+    - ghidra_disassembly_001B47AC
+    - ghidra_scene_resource_setup_targets
+0x001B47D0:
+  name: SceneResource_LoadC000ResourceAndBase136912
+  confidence: decompiled
+  description: Decompresses ROM source 0x0012F4EC to VRAM 0xC000 and ROM source 0x00136912 to VRAM 0x0000.
+  evidence:
+    - ghidra_disassembly_001B47D0
+    - ghidra_scene_resource_setup_targets
 0x001B4920:
   name: SceneResource_LoadCommonVRAMPair
   confidence: decompiled
