@@ -2091,6 +2091,14 @@
   evidence:
     - ghidra_decompile_001A9B6C
     - ghidra_player_terrain_contact_targets
+0x001B4D0C:
+  name: SceneResource_RunState10Presentation
+  confidence: decompiled
+  description: Runs the SCENE_STATE=10 resource presentation by preparing the palette and command stream, servicing AnimationVM, MovementVM, actors, and sprites for up to 300 VBlank iterations, advancing the presentation fill state, and then fading and releasing the scene resources.
+  evidence:
+    - ghidra_decompile_001B4D0C
+    - ghidra_scene_state10_targets
+    - ghidra_decompile_001B0F66
 0x001B0CBC:
   name: Hud_RunPendingDisplayPresentation
   confidence: decompiled

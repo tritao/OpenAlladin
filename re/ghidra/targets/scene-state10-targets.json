@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-state10-presentation",
+    "purpose": "Decode the SCENE_STATE=10 command-stream, VBlank service, VDP fill, and resource cleanup loop."
+  },
+  "targets": [
+    { "address": "0x001B4D0C", "name": "SceneResource_RunState10Presentation" },
+    { "address": "0x001B0F66", "name": "SceneResource_Dispatch" },
+    { "address": "0x001B4B28", "name": "SceneResource_PrepareRenderFrame" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E22", "name": "SCENE_RESOURCE_STATUS" },
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
+    { "address": "0x00FFF0B6", "name": "STATE10_VDP_FILL_OFFSET" },
+    { "address": "0x00FFEFFC", "name": "SCENE_COMMAND_STREAM_CURSOR" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ],
+  "rom_references": [
+    { "address": "0x00127834", "name": "STATE10_COMMAND_STREAM" },
+    { "address": "0x00129812", "name": "STATE10_PALETTE_SOURCE" }
+  ]
+}

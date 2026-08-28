@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-scene-state10-presentation-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-state10-targets.json",
+  "services": [
+    {
+      "address": "0x001B4D0C",
+      "name": "SceneResource_RunState10Presentation",
+      "confidence": "decompiled",
+      "behavior": "Prepares VDP control and palette source 0x00129812, clears the state-10 fill offset, initializes the render-frame service, and interprets the command stream at 0x00127834. While resource status remains clear, runs up to 300 iterations of AnimationVM, MovementVM, actor-only records, VBlank wait, state-10 VDP fill progression, and both sprite submissions before fading and releasing actor resources."
+    }
+  ],
+  "evidence": {
+    "dispatch": "SceneResource_Dispatch calls 0x001B4D0C only in its SCENE_STATE=10 branch after loading the state-10 VRAM pair and checking SCENE_RESOURCE_STATUS.",
+    "command_stream": "The routine publishes SCENE_COMMAND_STREAM_CURSOR from ROM 0x00127834, marks the command-stream phase with 0x00FFEFFC, and invokes SceneResource_ProcessCommandStream before the recurring service loop.",
+    "service_loop": "The loop tests SCENE_RESOURCE_STATUS, runs 300 DBF iterations, increments FRAME_PHASE_COUNTER, and writes VDP_DATA from STATE10_VDP_FILL_OFFSET on every qualifying phase until the offset reaches 0x20."
+  },
+  "limitations": [
+    "The user-facing identity of the state-10 presentation and command stream remains unresolved; this finding records the state-specific resource/service contract only.",
+    "No new runtime trace was required because the caller branch, fixed ROM sources, loop bound, and cleanup path are explicit in the decompile."
+  ],
+  "conclusion": "The state-10 dispatcher branch now has a named presentation service distinct from the generic scene-resource command interpreter and shared VBlank/render helpers."
+}
