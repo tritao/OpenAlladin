@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-actor-lifecycle-helpers-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "services": [
+    {
+      "address": "0x001AE0D4",
+      "name": "Actor_RepublishInteractionValueOnCull",
+      "caller": "0x001AE0B0 Actor_CullAndRemoveLinked",
+      "actor_fields": {
+        "flag": "0x06 bit 0x20",
+        "interaction_index": "0x32",
+        "interaction_selector": "0x34"
+      },
+      "destination": "0x00FFAE87 INTERACTION_TABLE_RUNTIME"
+    },
+    {
+      "address": "0x001ACD54",
+      "name": "ActorType1E_PrepareRecoveryPlane",
+      "caller": "0x001AE796 ActorType1E_PlayerCollisionHandler",
+      "callee": "0x001B26D0 VDP_FillC000WithTileEEEE",
+      "effect": "fills VRAM C000 with sixty-four 0x0EEE tile words"
+    }
+  ]
+}

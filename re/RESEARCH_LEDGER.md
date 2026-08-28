@@ -2106,6 +2106,24 @@ The static decompilation and exact VDP command/value pairs are recorded in
 `re/mame/findings/20260829-scene-resource-animated-palette-v1.json` and
 `re/ghidra/targets/scene-resource-animated-palette-targets.json`.
 
+## Actor lifecycle helper services (20260829)
+
+The actor cleanup path now has an explicit interaction-table publication helper.
+`Actor_RepublishInteractionValueOnCull` at `0x001AE0D4` is called by
+`Actor_CullAndRemoveLinked` after clearing an actor's type/resources. When actor
+flag bit `0x20` is present and its selector byte is nonzero, it republishes the
+selector from actor offsets `+0x32/+0x34` into `INTERACTION_TABLE_RUNTIME` at
+`0x00FFAE87`. This explains the previously anonymous writeback observed in the
+linked cleanup path without conflating it with the ordinary A1/A2 publication
+helpers.
+
+The Type-`0x1E` collision recovery wrapper at `0x001ACD54` is now named
+`ActorType1E_PrepareRecoveryPlane`. It delegates to
+`VDP_FillC000WithTileEEEE`, after which the caller waits for VBlank and reloads
+the four published palette bands. Both helper contracts are recorded in
+`re/mame/findings/20260829-actor-lifecycle-helpers-v1.json` and
+`re/ghidra/targets/actor-lifecycle-helpers-targets.json`.
+
 The static result is recorded in
 `re/mame/findings/20260829-vdp-fill-c000-v1.json`.
 

@@ -2488,6 +2488,24 @@
     - ghidra_level_table_enter_exit_targets
     - ghidra_level_exit_callback_dispatch_targets
 
+0x001AE0D4:
+  name: Actor_RepublishInteractionValueOnCull
+  confidence: decompiled
+  description: During linked-actor cleanup, republishes a nonzero actor interaction selector from offsets 0x32/0x34 into INTERACTION_TABLE_RUNTIME when the actor flag at offset 0x06 has bit 0x20 set.
+  evidence:
+    - ghidra_disassembly_001AE0B0
+    - ghidra_disassembly_001AE0D4
+    - ghidra_actor_lifecycle_helpers_targets
+
+0x001ACD54:
+  name: ActorType1E_PrepareRecoveryPlane
+  confidence: decompiled
+  description: Collision-specific wrapper that fills VRAM C000 with tile word 0x0EEE through VDP_FillC000WithTileEEEE; ActorType1E_PlayerCollisionHandler calls it before its VBlank and palette-reload recovery sequence.
+  evidence:
+    - ghidra_disassembly_001ACD54
+    - ghidra_decompile_001AE796
+    - ghidra_actor_lifecycle_helpers_targets
+
 0x001B07D0:
   name: Level_RenderTerminalTransitionTileBand
   confidence: decompiled
