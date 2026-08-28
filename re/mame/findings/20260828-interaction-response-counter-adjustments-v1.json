@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-interaction-response-counter-adjustments-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-response-counter-targets.json",
+  "counter": "0x00FFF14E ACTOR_RESPONSE_COUNTER",
+  "services": [
+    {
+      "address": "0x001B0156",
+      "name": "Interaction_AddResponseCounter15",
+      "callers": ["0x001AF4C2 Actor_ReinitializeFromCollisionTemplate"],
+      "instruction": "addi.w #0x000F,(0x00FFF14E).l"
+    },
+    {
+      "address": "0x001B016A",
+      "name": "Interaction_AddResponseCounter25",
+      "callers": ["0x001AF4D8 ActorType34_PlayerCollisionHandler"],
+      "instruction": "addi.w #0x0019,(0x00FFF14E).l"
+    },
+    {
+      "address": "0x001B0192",
+      "name": "Interaction_AddResponseCounter1000",
+      "callers": ["0x001B01AC Interaction_UpdateResourceState"],
+      "instruction": "addi.w #0x03E8,(0x00FFF14E).l"
+    }
+  ],
+  "conclusion": "The three anonymous helpers are fixed response-counter adjustments, not general interaction-counter services. ACTOR_RESPONSE_COUNTER is drained by the existing frame-gated interaction services."
+}

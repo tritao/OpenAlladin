@@ -15,12 +15,12 @@
       "0x001AF468 Actor_FarTransferPlayerCollisionHandler"
     ],
     "callees": [
-      "0x001B0156 Interaction_UpdateCounter",
+      "0x001B0156 Interaction_AddResponseCounter15",
       "0x001ABE6E Actor_ClearAndRelease",
       "0x001AE30A Actor_InitializeFromTemplate"
     ],
     "template": "0x001B7ABC ACTOR_TEMPLATE_COLLISION_RESPONSE",
-    "behavior": "Advances the interaction counter, clears the actor record and owned resources, preserves the cleared record pointer for the initializer, and installs the shared collision-response template."
+    "behavior": "Adds 0x000F to ACTOR_RESPONSE_COUNTER, clears the actor record and owned resources, preserves the cleared record pointer for the initializer, and installs the shared collision-response template."
   },
   "conclusion": "The 0x001AF4C2 body is a shared actor lifecycle boundary rather than a type-specific collision handler. The exact template contents remain a separate data-decoding task."
 }

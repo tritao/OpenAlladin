@@ -9,7 +9,7 @@
     { "address": "0x001AF4C2", "name": "Actor_ReinitializeFromCollisionTemplate" },
     { "address": "0x001AF228", "name": "ActorType3A_PlayerCollisionHandler" },
     { "address": "0x001AF468", "name": "Actor_FarTransferPlayerCollisionHandler" },
-    { "address": "0x001B0156", "name": "Interaction_UpdateCounter" },
+    { "address": "0x001B0156", "name": "Interaction_AddResponseCounter15" },
     { "address": "0x001ABE6E", "name": "Actor_ClearAndRelease" },
     { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" }
   ],

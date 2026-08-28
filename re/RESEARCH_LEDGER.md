@@ -2049,6 +2049,20 @@ controller phase-select writes.
 The static result is recorded in
 `re/mame/findings/20260828-scene-transition-input-services-v1.json`.
 
+## Interaction response-counter adjustments (20260829)
+
+The fixed helpers that adjust `ACTOR_RESPONSE_COUNTER` are now named. The
+shared collision reinitialization path calls `Interaction_AddResponseCounter15`
+at `0x001B0156`; the type-0x34 handler calls
+`Interaction_AddResponseCounter25` at `0x001B016A`; and the long interaction /
+resource branch calls `Interaction_AddResponseCounter1000` at `0x001B0192`.
+Their exact writes are respectively `+0x000F`, `+0x0019`, and `+0x03E8` to
+`0x00FFF14E`. This separates fixed response-delay adjustments from the
+frame-gated drain and decimal-display update services.
+
+The static result is recorded in
+`re/mame/findings/20260828-interaction-response-counter-adjustments-v1.json`.
+
 ## Shared actor-collision reinitialization (20260828)
 
 The short body at `0x001AF4C2` is now named
