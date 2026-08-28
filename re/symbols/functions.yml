@@ -1014,6 +1014,13 @@
     - ghidra_decompile_actor_combat_targets
     - ghidra_disassembly_001AE0B0
     - ghidra_disassembly_001ADEDE
+0x001AE1DA:
+  name: Audio_SendSceneStateCommand
+  confidence: decompiled
+  description: When SCENE_TRANSITION_EVENT is set, sends the scene-state audio command word selected from LEVEL_TABLE using SCENE_STATE as the entry index.
+  evidence:
+    - ghidra_decompile_001AE1DA
+    - ghidra_level_transition_targets
 0x001AE6BC:
   name: Actor_PublishInteractionValueA2
   confidence: confirmed

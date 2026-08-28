@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-scene-state-audio-command-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level-transition-targets.json",
+  "function": {
+    "address": "0x001AE1DA",
+    "name": "Audio_SendSceneStateCommand",
+    "confidence": "decompiled",
+    "behavior": [
+      "Reads SCENE_STATE at 0x00FF7E26.",
+      "Selects the corresponding command word from LEVEL_TABLE at 0x00002C78 using the 0x42-byte scene entry stride.",
+      "Calls Audio_SendCommand only when SCENE_TRANSITION_EVENT at 0x00FFF57F is set."
+    ]
+  },
+  "conclusion": "Scene-transition audio notification is selected from the canonical level table rather than from a separate hard-coded scene-state switch."
+}

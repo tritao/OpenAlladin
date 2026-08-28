@@ -1572,6 +1572,17 @@ state; it materializes an actor-side collision response.
 The static result is recorded in
 `re/mame/findings/20260828-actor-type13-collision-v1.json`.
 
+## Scene-state audio command (20260828)
+
+Audio_SendSceneStateCommand at `0x001AE1DA` selects the scene-transition
+audio command word from the `LEVEL_TABLE` entry indexed by `SCENE_STATE` and
+sends it only when `SCENE_TRANSITION_EVENT` is set. This keeps scene audio
+selection tied to the same table stride as level metadata instead of adding a
+separate state-specific switch.
+
+The static result is recorded in
+`re/mame/findings/20260828-scene-state-audio-command-v1.json`.
+
 ## Scene resource and VDP service helpers (20260828)
 
 The next high-call-count queue cluster is now named from the existing scene
@@ -1935,6 +1946,7 @@ The static result is recorded in
 | `20260828-interaction-counter-actors-v1` | recorded-static-decompilation | interaction-counter quotient/remainder selection of scene-rebuild actor animation roots |
 | `20260828-player-terrain-state-v1` | recorded-static-decompilation | player camera-grid alignment, interaction-animation selection, and terrain-motion reset |
 | `20260828-interaction-counter-decrement-v1` | recorded-static-decompilation | bounded ASCII-style interaction-counter decrement and rollover behavior |
+| `20260828-scene-state-audio-command-v1` | recorded-static-decompilation | scene-state-indexed transition audio command selection |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
