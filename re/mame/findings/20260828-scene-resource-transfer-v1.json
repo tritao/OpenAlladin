@@ -39,7 +39,25 @@
       "name": "SceneResource_CopyFixedBlockToD000",
       "confidence": "confirmed",
       "behavior": "Copies 0x800 words from fixed ROM source 0x0011E0A0 to VRAM destination 0xD000 through VDP_CopyWordsToVRAM."
+    },
+    {
+      "address": "0x001B4920",
+      "name": "SceneResource_LoadCommonVRAMPair",
+      "confidence": "decompiled",
+      "behavior": "Clears VRAM E000, decompresses ROM sources 0x00132F8E and 0x0012E7EA to VRAM 0x0000 and 0xE000, and publishes palette source 0x00129A12."
+    },
+    {
+      "address": "0x001B494E",
+      "name": "SceneResource_LoadCommonVRAMBase",
+      "confidence": "decompiled",
+      "behavior": "Clears VRAM E000, decompresses ROM source 0x00132F8E to VRAM 0x0000, and publishes palette source 0x001298D2."
+    },
+    {
+      "address": "0x001B49DA",
+      "name": "SceneResource_LoadC000ResourceAndPrepareFrame",
+      "confidence": "decompiled",
+      "behavior": "Publishes ROM source 0x0012DD76 for the C000 resource, decompresses it to VRAM 0xC000, and invokes the render-frame preparation path with palette sources 0x00129952 and 0x00129A92."
     }
   ],
-  "conclusion": "The scene/resource transfer layer now exposes its indirect VDP stream format, fixed F800 plane transfer, and blank-frame preparation contract without assigning names to state-specific compressed resource loaders."
+  "conclusion": "The scene/resource transfer layer now exposes its indirect VDP stream format, fixed transfers, blank-frame preparation, and the exact contracts of the compact state-resource wrappers without assigning higher-level asset identities."
 }

@@ -1698,6 +1698,16 @@ words from ROM `0x0011E0A0` through VDP_CopyWordsToVRAM. The transfer is kept
 address-qualified because the payload's higher-level asset role is not yet
 established.
 
+The compact state-resource wrappers are now classified by transfer contract.
+`SceneResource_LoadCommonVRAMPair` at `0x001B4920` loads the repeated common
+resources to VRAM `0x0000`/`0xE000` and publishes palette source `0x129A12`;
+`SceneResource_LoadCommonVRAMBase` at `0x001B494E` loads only the common base
+resource and publishes `0x1298D2`; and
+`SceneResource_LoadC000ResourceAndPrepareFrame` at `0x001B49DA` loads the
+`0x12DD76` C000 resource before the shared render-frame preparation. These
+names intentionally describe the exact transfer behavior, not unproven asset
+roles.
+
 ## Controller-pattern table selectors (20260828)
 
 The two small table selectors at `0x001B0B8E` and `0x001B0BA6` are now named
