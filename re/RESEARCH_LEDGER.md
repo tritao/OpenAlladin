@@ -1756,6 +1756,18 @@ bounded increment/decrement operations in the collision/resource lifecycle.
 The static result is recorded in
 `re/mame/findings/20260828-interaction-counter-decrement-v1.json`.
 
+## Secondary interaction counter reset (20260828)
+
+InteractionCounter_ResetSecondaryDigits at `0x001AA664` resets the separate
+two-digit ASCII word at `FFEFE2` to `"00"`. Interaction handlers compare this
+word with `"99"` and increment its low digit, while Render_BuildActorRecords
+consumes the digits when constructing interaction records. This distinguishes
+the secondary interaction counter from the primary response budget at
+`FFEFE0` without assigning it to a particular interaction type.
+
+The static result is recorded in
+`re/mame/findings/20260828-interaction-counter-secondary-v1.json`.
+
 ## Level-loader scratch helpers (20260828)
 
 The level-loader initialization family is now named at five documented

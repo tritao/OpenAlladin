@@ -39,6 +39,13 @@
   evidence:
     - ghidra_decompile_001AA66E
     - ghidra_interaction_counter_targets
+0x001AA664:
+  name: InteractionCounter_ResetSecondaryDigits
+  confidence: confirmed
+  description: Resets the secondary two-digit interaction counter at INTERACTION_COUNTER_SECONDARY_DIGITS to ASCII "00" during reset and scene initialization.
+  evidence:
+    - ghidra_decompile_001AA664
+    - ghidra_interaction_counter_secondary_targets
 0x001AA696:
   name: Level_InitializePlayerAndTerrainState
   confidence: confirmed

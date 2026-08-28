@@ -239,6 +239,16 @@
     - ghidra_decompile_001AA66E
     - ghidra_decompile_001B0336
     - ghidra_decompile_001B0360
+0xFFEFE2:
+  name: INTERACTION_COUNTER_SECONDARY_DIGITS
+  type: u16
+  format: ascii_digits
+  confidence: confirmed
+  description: Secondary two-digit interaction counter reset to ASCII "00", incremented up to "99", and consumed by interaction handlers and actor-record rendering.
+  evidence:
+    - ghidra_decompile_001AA664
+    - ghidra_decompile_001AB7C4
+    - ghidra_level01_uncovered_interaction_targets
 0xFFF0E9:
   name: SCENE_SCRIPT_COUNTDOWN
   type: u8

@@ -6,12 +6,14 @@
     "purpose": "Name the initialization and bounded digit operations for the interaction counter word used by actor response and scene/resource flows."
   },
   "targets": [
+    { "address": "0x001AA664", "name": "InteractionCounter_ResetSecondaryDigits" },
     { "address": "0x001AA66E", "name": "InteractionCounter_Initialize" },
     { "address": "0x001B0336", "name": "FarTransfer_InteractionCounterStep" },
     { "address": "0x001B0360", "name": "FarTransfer_InteractionCounterStepBack" }
   ],
   "memory_references": [
     { "address": "0x00FFEFE0", "name": "INTERACTION_COUNTER_DIGITS" },
+    { "address": "0x00FFEFE2", "name": "INTERACTION_COUNTER_SECONDARY_DIGITS" },
     { "address": "0x00FF7E21", "name": "PLAYER_STATE_BYTE" }
   ]
 }
