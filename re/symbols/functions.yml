@@ -32,6 +32,13 @@
   evidence:
     - ghidra_decompile_001AA724
     - ghidra_scene_camera_orchestration_targets
+0x001AA66E:
+  name: InteractionCounter_Initialize
+  confidence: decompiled
+  description: Initializes the two-digit interaction counter at INTERACTION_COUNTER_DIGITS to the player-state-specific ASCII value "15", "10", or "05".
+  evidence:
+    - ghidra_decompile_001AA66E
+    - ghidra_interaction_counter_targets
 0x001AA712:
   name: Level_ClearInputScratch
   confidence: confirmed

@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-interaction-counter-init-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-counter-targets.json",
+  "function": {
+    "address": "0x001AA66E",
+    "name": "InteractionCounter_Initialize",
+    "confidence": "decompiled",
+    "behavior": [
+      "Stores ASCII \"15\" to INTERACTION_COUNTER_DIGITS when PLAYER_STATE_BYTE is 0.",
+      "Stores ASCII \"10\" when PLAYER_STATE_BYTE is 1.",
+      "Stores ASCII \"05\" for all other player-state values."
+    ],
+    "callers": [
+      "Reset",
+      "Level_LoadFromSceneState",
+      "SceneResource_InitializeActiveScene"
+    ]
+  },
+  "conclusion": "The interaction counter's initial value is selected by player state and is stored as two ASCII digits, matching the existing increment and decrement helper semantics."
+}

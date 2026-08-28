@@ -229,6 +229,16 @@
     - ghidra_type34_handler_decompile
     - ghidra_targeted_decompile_001B16E0
     - mame_transition_resource_prerequisite_probe
+0xFFEFE0:
+  name: INTERACTION_COUNTER_DIGITS
+  type: u16
+  format: ascii_digits
+  confidence: confirmed
+  description: Two ASCII counter digits initialized by InteractionCounter_Initialize and advanced or decremented by the interaction-counter helpers during far-transfer and actor-response flows.
+  evidence:
+    - ghidra_decompile_001AA66E
+    - ghidra_decompile_001B0336
+    - ghidra_decompile_001B0360
 0xFFF0E9:
   name: SCENE_SCRIPT_COUNTDOWN
   type: u8
