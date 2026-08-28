@@ -602,6 +602,20 @@
   evidence:
     - ghidra_decompile_001B38EE
     - ghidra_decompile_001B3818
+0x001B38B8:
+  name: TerrainResource_DecodeSymbol
+  confidence: decompiled
+  description: Decodes one terrain-resource Huffman symbol from the bit buffer and advances through the table entry selected by its code width and value fields.
+  evidence:
+    - ghidra_decompile_001B38B8
+    - ghidra_decompile_001B3818
+0x001B38FA:
+  name: TerrainResource_RefillBitBuffer
+  confidence: decompiled
+  description: Refills the terrain-resource bit buffer from the compressed source and restores the available-bit count after a variable-width read crosses a word boundary.
+  evidence:
+    - ghidra_decompile_001B38FA
+    - ghidra_decompile_001B38EE
 0x001B391E:
   name: TerrainResource_BuildDecodeTable
   confidence: decompiled
@@ -931,6 +945,20 @@
   evidence:
     - ghidra_decompile_001B3790
     - ghidra_decompile_001B35D0
+0x001B3736:
+  name: RNC_DecodeSymbol
+  confidence: decompiled
+  description: Decodes one RNC Huffman symbol from the bit buffer and advances the compressed-stream state using the table entry's code width and value fields.
+  evidence:
+    - ghidra_decompile_001B3736
+    - ghidra_decompile_001B35D0
+0x001B3778:
+  name: RNC_RefillBitBuffer
+  confidence: decompiled
+  description: Refills the RNC bit buffer from the compressed source and restores the available-bit count after a variable-width read crosses a word boundary.
+  evidence:
+    - ghidra_decompile_001B3778
+    - ghidra_decompile_001B376C
 
 0x001B524E:
   name: InteractionSpawn_ForwardSlot

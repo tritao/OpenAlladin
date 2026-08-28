@@ -1388,6 +1388,12 @@ VDP_FillWords at 0x001B2534 is also named as the constant-word counterpart to
 VDP_CopyWordsToVRAM. These helpers are data-transfer primitives only; this
 promotion adds no new gameplay, player-transfer, or scene-state semantics.
 
+The remaining decoder leaves are now named as well. RNC_DecodeSymbol at
+0x001B3736 and RNC_RefillBitBuffer at 0x001B3778 complete the RNC payload
+path, while TerrainResource_DecodeSymbol at 0x001B38B8 and
+TerrainResource_RefillBitBuffer at 0x001B38FA complete the parallel terrain
+resource path. The two pairs keep separate bit-buffer and table state.
+
 The static result is recorded in
 re/mame/findings/20260828-compressed-resource-decode-v1.json.
 

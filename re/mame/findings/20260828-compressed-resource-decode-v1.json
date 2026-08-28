@@ -15,7 +15,9 @@
       "called_by": "0x001B3416 RNC_To_VDP_Loader",
       "helpers": [
         "0x001B376C RNC_ReadBits",
-        "0x001B3790 RNC_BuildDecodeTable"
+        "0x001B3778 RNC_RefillBitBuffer",
+        "0x001B3790 RNC_BuildDecodeTable",
+        "0x001B3736 RNC_DecodeSymbol"
       ],
       "result": "Decodes the compressed payload and streams reconstructed words to VDP_DATA while preserving the source block's row/column progression."
     },
@@ -32,6 +34,18 @@
       "result": "Builds the RNC Huffman decode table from compressed code lengths and entries."
     },
     {
+      "address": "0x001B3736",
+      "name": "RNC_DecodeSymbol",
+      "confidence": "decompiled",
+      "result": "Decodes one RNC Huffman symbol and advances the compressed-stream state using the selected table entry."
+    },
+    {
+      "address": "0x001B3778",
+      "name": "RNC_RefillBitBuffer",
+      "confidence": "decompiled",
+      "result": "Refills the RNC bit buffer after a variable-width read crosses the current source word boundary."
+    },
+    {
       "address": "0x001B3912",
       "name": "TerrainResource_ReadDecodedSize",
       "confidence": "decompiled",
@@ -42,6 +56,18 @@
       "name": "TerrainResource_ReadBits",
       "confidence": "decompiled",
       "result": "Reads a variable-width field from the terrain-resource bit buffer and refills its compressed source word as needed."
+    },
+    {
+      "address": "0x001B38B8",
+      "name": "TerrainResource_DecodeSymbol",
+      "confidence": "decompiled",
+      "result": "Decodes one terrain-resource Huffman symbol and advances through the selected table entry."
+    },
+    {
+      "address": "0x001B38FA",
+      "name": "TerrainResource_RefillBitBuffer",
+      "confidence": "decompiled",
+      "result": "Refills the terrain-resource bit buffer after a variable-width read crosses the current source word boundary."
     },
     {
       "address": "0x001B391E",
