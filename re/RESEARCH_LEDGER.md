@@ -1729,6 +1729,11 @@ bounded increment/decrement operations in the collision/resource lifecycle.
 The static result is recorded in
 `re/mame/findings/20260828-interaction-counter-decrement-v1.json`.
 
+The existing level-loader helper Level_ClearInputScratch at `0x001AA712` is
+now also promoted into the canonical symbol store. Its exact loop clears the
+`0x126`-byte controller/input scratch range beginning at `FFF008`, preserving
+the level-loader distinction between actor, scene-event, and input scratch.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |

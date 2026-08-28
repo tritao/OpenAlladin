@@ -32,6 +32,13 @@
   evidence:
     - ghidra_decompile_001AA724
     - ghidra_scene_camera_orchestration_targets
+0x001AA712:
+  name: Level_ClearInputScratch
+  confidence: confirmed
+  description: Clears the 0x126-byte input/controller scratch range beginning at 0x00FFF008 during level and scene initialization.
+  evidence:
+    - ghidra_level_loader_targeted_decompile
+    - ghidra_disassembly_001AA712
 0x001A99C6:
   name: Player_AlignXToCameraGrid
   confidence: decompiled
