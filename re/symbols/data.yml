@@ -42,6 +42,27 @@
     - ghidra_audio_queue_decompile
     - mame_audio_mailbox_queue_trace
 
+0xA01B20:
+  name: Z80_AUDIO_BANK_WINDOW_LOCK
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: 68000-held lock flag for the Z80 audio driver's banked-ROM window; Audio_AcquireZ80BankWindow sets bit 0 and Audio_ReleaseZ80BankWindow clears it around protected render-side work.
+  evidence:
+    - ghidra_decompile_001E56C0
+    - ghidra_decompile_001E56FE
+    - z80_bank_window_helper_01F9
+
+0xA01B21:
+  name: Z80_AUDIO_BANK_WINDOW_BUSY
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Z80-side busy flag for the audio driver's banked-ROM window; Audio_AcquireZ80BankWindow waits for bit 0 to clear before returning with the lock held.
+  evidence:
+    - ghidra_disassembly_001E56C0
+    - z80_bank_window_helper_01F9
+
 0xA11200:
   name: Z80_RESET
   type: u16

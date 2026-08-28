@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "audio-bank-window",
+    "purpose": "Decode the protected 68000/Z80 banked-ROM window handshake around render submission."
+  },
+  "targets": [
+    { "address": "0x001E56C0", "name": "Audio_AcquireZ80BankWindow" },
+    { "address": "0x001E56FE", "name": "Audio_ReleaseZ80BankWindow" }
+  ],
+  "memory_references": [
+    { "address": "0x00A01B20", "name": "Z80_AUDIO_BANK_WINDOW_LOCK" },
+    { "address": "0x00A01B21", "name": "Z80_AUDIO_BANK_WINDOW_BUSY" },
+    { "address": "0x00A11100", "name": "Z80_BUS_REQUEST" }
+  ],
+  "z80_references": [
+    { "address": "0x01F9", "name": "Z80_BankedRomReadHelper" },
+    { "address": "0x023D", "name": "Z80_CopyBankedRomWindow" }
+  ]
+}

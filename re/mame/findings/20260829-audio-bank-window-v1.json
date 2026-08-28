@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-audio-bank-window-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/audio-bank-window-targets.json",
+  "decompile_sources": [
+    "build/re/full-rom/decompile/001E56C0.txt",
+    "build/re/full-rom/decompile/001E56FE.txt",
+    "build/re/z80-disassembly.json"
+  ],
+  "services": [
+    {
+      "address": "0x001E56C0",
+      "name": "Audio_AcquireZ80BankWindow",
+      "confidence": "decompiled",
+      "caller": "0x001AC726 Render_SubmitActorSprites",
+      "behavior": [
+        "Raises the 68000 interrupt mask to 7.",
+        "Requests the Z80 bus and waits for the handoff.",
+        "Sets bit 0 of Z80_AUDIO_BANK_WINDOW_LOCK at 0x00A01B20.",
+        "Reads Z80_AUDIO_BANK_WINDOW_BUSY at 0x00A01B21; if busy, delays and retries the bus handoff.",
+        "Returns with the lock held when the Z80 busy bit is clear."
+      ]
+    },
+    {
+      "address": "0x001E56FE",
+      "name": "Audio_ReleaseZ80BankWindow",
+      "confidence": "decompiled",
+      "caller": "0x001AC726 Render_SubmitActorSprites",
+      "behavior": [
+        "Raises the 68000 interrupt mask to 7.",
+        "Acquires the Z80 bus.",
+        "Clears bit 0 of Z80_AUDIO_BANK_WINDOW_LOCK.",
+        "Releases the Z80 bus and restores the saved interrupt state."
+      ]
+    }
+  ],
+  "z80_contract": {
+    "banked_read_helper": "Z80 address 0x01F9",
+    "bank_copy_helper": "Z80 address 0x023D",
+    "lock_address": "Z80 RAM 0x1B20 / 68000 A01B20",
+    "busy_address": "Z80 RAM 0x1B21 / 68000 A01B21",
+    "contract": "The Z80 banked-ROM read helper defers its copy while lock bit 0 is set and publishes busy bit 0 during the copy."
+  },
+  "conclusion": "A01B20/A01B21 are the audio driver's bank-window synchronization bytes, not a sound-queue marker. The 68000 acquire/release pair is now named at the protected render boundary, and the Z80-side contract is recorded separately from the command queue."
+}

@@ -2396,3 +2396,19 @@
     - ghidra_decompile_001B2AB2
     - ghidra_scene_transition_selection_targets
     - ghidra_decompile_001B2ACE
+0x001E56C0:
+  name: Audio_AcquireZ80BankWindow
+  confidence: decompiled
+  description: Masks interrupts, sets Z80_AUDIO_BANK_WINDOW_LOCK, waits for the Z80_AUDIO_BANK_WINDOW_BUSY flag to clear through the Z80 bus handoff, and returns with the banked-ROM window held for the caller.
+  evidence:
+    - ghidra_decompile_001E56C0
+    - ghidra_audio_bank_window_targets
+    - z80_bank_window_helper_01F9
+0x001E56FE:
+  name: Audio_ReleaseZ80BankWindow
+  confidence: decompiled
+  description: Masks interrupts, acquires the Z80 bus, clears Z80_AUDIO_BANK_WINDOW_LOCK, releases the bus, and restores the caller's interrupt state after protected render-side work.
+  evidence:
+    - ghidra_decompile_001E56FE
+    - ghidra_audio_bank_window_targets
+    - z80_bank_window_helper_01F9

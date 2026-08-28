@@ -1584,6 +1584,20 @@ commands. Audio_ReleaseZ80Bus at 0x001E5730 is the shared release primitive.
 The static result is recorded in
 re/mame/findings/20260828-audio-z80-bootstrap-v1.json.
 
+## Z80 audio bank-window synchronization (20260829)
+
+The former `Z80_SOUND_QUEUE_MARKER` label at `A01B20` was incorrect. The
+68000 helper `Audio_AcquireZ80BankWindow` at `0x001E56C0` raises the interrupt
+mask, sets the lock byte at `A01B20`, and waits through the Z80 bus handoff
+until the Z80 busy byte at `A01B21` is clear. Its paired
+`Audio_ReleaseZ80BankWindow` at `0x001E56FE` reacquires the bus, clears the
+lock, and restores the interrupt state. The Z80 banked-ROM helper at `0x01F9`
+defers its copy while the lock bit is set and publishes the busy bit during the
+copy. This is a bank-window protocol, separate from the sound-command queue.
+
+The static result is recorded in
+re/mame/findings/20260829-audio-bank-window-v1.json.
+
 The shared bootstrap packet wrapper Audio_QueueThreeBytePacket at `0x001E5824`
 is now named as well. It opens the protected sound queue, emits the three
 most-significant bytes of the caller's longword through Audio_QueueWriteByte,

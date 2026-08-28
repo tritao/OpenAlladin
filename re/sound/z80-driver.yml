@@ -99,6 +99,15 @@ rom_window:
   read_helper: 0x01F9
   bank_copy_helper: 0x023D
 
+bank_window_synchronization:
+  lock_address: 0x1B20
+  busy_address: 0x1B21
+  lock_bit: 0
+  busy_bit: 0
+  lock_owner: 68000
+  busy_owner: Z80
+  behavior: 68000 sets the lock before protected work and waits for Z80 busy to clear; the Z80 banked-read helper defers its copy while the lock is set and publishes its own busy bit during the copy.
+
 evidence:
   - ghidra_audio_queue_decompile
   - mame_audio_mailbox_queue_trace

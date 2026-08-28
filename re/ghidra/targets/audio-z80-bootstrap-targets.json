@@ -18,6 +18,7 @@
     { "address": "0x00A00000", "name": "Z80_RAM" },
     { "address": "0x00A11100", "name": "Z80_BUS_REQUEST" },
     { "address": "0x00A11200", "name": "Z80_RESET" },
-    { "address": "0x00A01B20", "name": "Z80_SOUND_QUEUE_MARKER" }
+    { "address": "0x00A01B20", "name": "Z80_AUDIO_BANK_WINDOW_LOCK" },
+    { "address": "0x00A01B21", "name": "Z80_AUDIO_BANK_WINDOW_BUSY" }
   ]
 }
