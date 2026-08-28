@@ -40,6 +40,21 @@
   evidence:
     - m68k_vector_table
     - mame_vblank_state_synchronization
+0x001B249E:
+  name: Frame_WaitForVBlankWork
+  confidence: decompiled
+  description: Blocks until VBlankInterrupt publishes VBLANK_READY_LATCH; when FRAME_WAIT_LATCH is set, it acquires the Z80 bus, services the sound-side handshake, and releases the bus before waiting for the next VBlank boundary.
+  evidence:
+    - ghidra_decompile_001B249E
+    - ghidra_frame_wait_lifecycle
+    - mame_vblank_state_synchronization
+0x001B255C:
+  name: VDP_CopyWordsToVRAM
+  confidence: decompiled
+  description: Copies a caller-supplied word count from A0 to the VDP data port after programming the VRAM destination command from A1; preserves the caller registers across the transfer.
+  evidence:
+    - ghidra_decompile_001B255C
+    - ghidra_disassembly_001B255C
 0x001A8E3E:
   name: SceneScript_AdvanceState
   confidence: probable
@@ -97,6 +112,22 @@
   evidence:
     - ghidra_targeted_decompile_001B326C
     - mame_level_transition_watch
+0x001B21F6:
+  name: SceneResource_ProcessCommandStream
+  confidence: decompiled
+  description: Runs a scene-resource command stream until SCENE_RESOURCE_STATUS changes. Commands below 0x20 dispatch through the shared resource command table; object commands invoke the scene/VDP helper and continue at the next stream record.
+  evidence:
+    - ghidra_decompile_001B21F6
+    - ghidra_decompile_001B2238
+    - ghidra_level_transition_targeted_decompile
+0x001B2238:
+  name: SceneResource_InstantiateActors
+  confidence: decompiled
+  description: Selects the active scene-resource record, initializes its render origin, interprets resource commands, and creates actors from nonzero object entries by finding a free gameplay slot, applying the common template initializer, and assigning the resource animation, movement, and position fields.
+  evidence:
+    - ghidra_decompile_001B2238
+    - ghidra_level_transition_targeted_decompile
+    - ghidra_actor_table_layout
 0x001B3B96:
   name: SceneTable_SelectNextState
   confidence: probable

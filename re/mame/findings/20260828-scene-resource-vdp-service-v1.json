@@ -1,0 +1,57 @@
+{
+  "format": "openaladdin-scene-resource-vdp-service-v1",
+  "recorded_at": "2026-08-28",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level-transition-targets.json",
+  "decompile_artifact": "build/re/level-transition-targeted-decompile-v2.json",
+  "source_campaign": "re/mame/campaigns/20260827-level01-transition-resource-lifecycle-v1.json",
+  "targets": [
+    {
+      "address": "0x001B249E",
+      "name": "Frame_WaitForVBlankWork",
+      "confidence": "decompiled",
+      "behavior": [
+        "Clears VBLANK_READY_LATCH before waiting for the next VBlank.",
+        "Uses FRAME_WAIT_LATCH only as the conditional Z80 bus-handshake gate.",
+        "Acquires/releases the Z80 bus and services the sound-side handshake when enabled.",
+        "Returns after VBlankInterrupt publishes VBLANK_READY_LATCH."
+      ]
+    },
+    {
+      "address": "0x001B255C",
+      "name": "VDP_CopyWordsToVRAM",
+      "confidence": "decompiled",
+      "behavior": [
+        "Programs the VRAM destination command from A1.",
+        "Copies D0 words from A0 through VDP_DATA.",
+        "Preserves A0, A1, D0, and D1 for the caller."
+      ]
+    },
+    {
+      "address": "0x001B21F6",
+      "name": "SceneResource_ProcessCommandStream",
+      "confidence": "decompiled",
+      "behavior": [
+        "Consumes resource commands until SCENE_RESOURCE_STATUS changes.",
+        "Dispatches commands below 0x20 through the shared resource table.",
+        "Routes object commands through the scene/resource actor helper."
+      ]
+    },
+    {
+      "address": "0x001B2238",
+      "name": "SceneResource_InstantiateActors",
+      "confidence": "decompiled",
+      "behavior": [
+        "Selects a scene-resource record and initializes its rendering origin.",
+        "Resolves object entries and finds a free gameplay actor slot.",
+        "Applies Actor_InitializeFromTemplate and assigns animation, movement, and position fields."
+      ],
+      "direct_scene_state_write": false,
+      "direct_player_coordinate_write": false
+    }
+  ],
+  "conclusion": "The queue cluster is scene/resource and VDP infrastructure. Its actor creation path is now named, while the existing transition campaign remains the authority for reachability and does not gain a new direct scene-state or player-transfer writer from these helpers."
+}

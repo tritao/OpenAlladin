@@ -1342,6 +1342,32 @@ coordinates, so it does not alter the existing Level 01 transfer conclusion.
 The static result is recorded in
 `re/mame/findings/20260828-actor-collision-terminal-response-v1.json`.
 
+## Scene resource and VDP service helpers (20260828)
+
+The next high-call-count queue cluster is now named from the existing scene
+transition evidence. Frame_WaitForVBlankWork at 0x001B249E clears the
+VBlank-ready latch, conditionally performs the Z80 bus handshake when
+FRAME_WAIT_LATCH is set, and waits for VBlankInterrupt at 0x001B246E to
+publish the next ready boundary. This matches the previously recorded frame
+wait lifecycle and does not make FRAME_WAIT_LATCH a gameplay scheduler phase.
+
+VDP_CopyWordsToVRAM at 0x001B255C programs the VRAM destination from A1
+and copies the requested word count from A0 through the VDP data port. The
+scene/resource path uses it alongside the related VDP helpers during scene
+setup and transition work.
+
+SceneResource_ProcessCommandStream at 0x001B21F6 interprets the compact
+resource stream until SCENE_RESOURCE_STATUS changes. Its object-command
+branch reaches SceneResource_InstantiateActors at 0x001B2238, which selects
+the active scene-resource record, initializes the rendering origin, resolves
+object entries, finds a free gameplay actor slot, and applies the common
+Actor_InitializeFromTemplate contract before assigning animation, movement,
+and position fields. These are scene/resource producers, not player-transfer
+or direct scene-state writers.
+
+The static result extends the transition/resource evidence in
+re/mame/findings/20260828-scene-resource-vdp-service-v1.json.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1442,6 +1468,7 @@ The static result is recorded in
 | `20260827-level01-connector-top-transfer-audit-v1` | recorded-negative-natural-continuation | four controller-only connector-top dismount families reach at most ordinary jump `Y=412`; no behavior-0x29/0x2D launch, scene gate, or new transfer path fires |
 | `20260827-level01-transfer-reachability-closure-v1` | recorded-trace-validated-producer-closure | fixed terrain 0x29/0x2D closure plus direct selector-0x0D/0x74 Type-0x6A/0x65 producer validation; remote actor contact/alignment remains the next targeted experiment |
 | `20260828-actor-collision-terminal-response-v1` | recorded-static-decompilation | shared terminal actor-collision response, linked cleanup, type-countdown gating, and type-0x84 replacement |
+| `20260828-scene-resource-vdp-service-v1` | recorded-static-decompilation | VBlank wait/Z80 service, VRAM word transfer, scene-resource command interpretation, and actor instantiation |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
