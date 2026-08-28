@@ -13,7 +13,8 @@
     { "address": "0x001B430C", "name": "SceneResource_ProcessCommandStreams" },
     { "address": "0x001AA724", "name": "Camera_RebuildView" },
     { "address": "0x001B0008", "name": "Hud_ResetDisplayDigits" },
-    { "address": "0x001B0046", "name": "Game_InitializeDifficultyCounter" }
+    { "address": "0x001B0046", "name": "Game_InitializeDifficultyCounter" },
+    { "address": "0x001B434E", "name": "Menu_RenderDifficultyLabel" }
   ],
   "memory_references": [
     { "address": "0x00FF7E26", "name": "SCENE_STATE" },

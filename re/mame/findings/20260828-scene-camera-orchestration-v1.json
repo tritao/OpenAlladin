@@ -49,6 +49,12 @@
       "name": "Game_InitializeDifficultyCounter",
       "confidence": "confirmed",
       "behavior": "Selects the initial ASCII counter value at 0x00FF7E3C from GAME_DIFFICULTY_MODE: '5' for mode 0, '3' for mode 1, and '2' otherwise, then clears 0x00FF7E3D."
+    },
+    {
+      "address": "0x001B434E",
+      "name": "Menu_RenderDifficultyLabel",
+      "confidence": "confirmed",
+      "behavior": "Uses GAME_DIFFICULTY_MODE as a four-byte index into the ROM pointer table at 0x003FD2, then renders the selected PRACTICE, NORMAL, or DIFFICULT label through the scene command-stream renderer."
     }
   ],
   "conclusion": "The scene/resource entrypoints and camera rebuild path are now distinct from the lower-level VDP transfer, actor initialization, recurring service helpers, and startup display-state helpers they orchestrate."

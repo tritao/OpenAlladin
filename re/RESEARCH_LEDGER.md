@@ -1797,6 +1797,10 @@ The ROM pointer table at `0x003FD2` resolves to the `PRACTICE`, `NORMAL`, and
 `GAME_DIFFICULTY_MODE`; the interaction-counter initialization description is
 updated accordingly rather than treating it as player state.
 
+`Menu_RenderDifficultyLabel` at `0x001B434E` now closes the static consumer
+side of that mode byte: it indexes the same pointer table and renders the
+selected difficulty label through the scene command-stream service.
+
 The static result is recorded in
 `re/mame/findings/20260828-scene-camera-orchestration-v1.json` and
 `re/mame/findings/20260828-interaction-counter-init-v1.json`.
