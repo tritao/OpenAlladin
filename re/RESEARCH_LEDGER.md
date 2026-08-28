@@ -2005,6 +2005,23 @@ assigned until the Z80-side command consumer is decoded.
 The static result is recorded in
 `re/mame/findings/20260828-audio-control-markers-v1.json`.
 
+## Shared actor-collision reinitialization (20260828)
+
+The short body at `0x001AF4C2` is now named
+`Actor_ReinitializeFromCollisionTemplate`. It is reached by both
+`ActorType3A_PlayerCollisionHandler` and `Actor_FarTransferPlayerCollisionHandler`.
+The shared tail advances `Interaction_UpdateCounter`, clears the current actor
+through `Actor_ClearAndRelease`, preserves the cleared record pointer in `A5`,
+and calls `Actor_InitializeFromTemplate` with the response template at
+`0x001B7ABC`.
+
+This separates the common actor lifecycle operation from the two caller-specific
+interaction/audio decisions. The shared template's complete field meaning is
+left for a separate data-decoding pass.
+
+The static result is recorded in
+`re/mame/findings/20260828-actor-collision-reinitialization-v1.json`.
+
 ## Scene-resource VDP command-record streamer (20260828)
 
 The frame/reset helper at `0x001AE0F6` is now named
