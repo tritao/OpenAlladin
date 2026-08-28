@@ -1989,6 +1989,28 @@ The static result is recorded in
 
 ## Campaign index
 
+## Actor sprite-resource allocation (20260828)
+
+The AnimationVM actor pass calls `0x001AD3E8` when an actor's sprite-resource
+base at record offset `+0x2E` is empty. The routine is now named
+`Actor_AllocateSpriteVRAM`. It reads the template-owned resource count at
+`+0x29`, searches the first `0x74` bytes at `0x00FFF008` for a contiguous free
+run of `resource_count + 1` bytes, stores the run pointer at `+0x2A`, and marks
+the run with `0xFF`.
+
+The selected run start indexes `ACTOR_SPRITE_VRAM_BASE_TABLE` at `0x0011F500`,
+whose entries are `0x80`-byte-spaced VRAM bases from `0x8600` through `0xA580`.
+The selected base is stored at actor `+0x2E`; `Render_BuildActorSpritePayload`
+uses that field to form the sprite tile attribute words. The corresponding
+cleanup at `0x001AE372` clears the occupancy run and both owner fields. If the
+allocator cannot find a contiguous run, the ROM publishes and clears the
+current actor and then clears its linked actor when present.
+
+This closes the anonymous AnimationVM precondition as sprite-resource
+ownership, independently of the actor animation cursor and scheduler timing.
+The static result is recorded in
+`re/mame/findings/20260828-actor-sprite-resource-allocation-v1.json`.
+
 ## Scene-state presentation services (20260828)
 
 The scene/resource region contains three distinct presentation entrypoints

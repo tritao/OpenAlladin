@@ -1753,6 +1753,14 @@
   evidence:
     - ghidra_disassembly_001AD00E
     - mame_type_2D_spawn_trace_1800
+0x001AD3E8:
+  name: Actor_AllocateSpriteVRAM
+  confidence: decompiled
+  description: Allocates a contiguous actor-owned sprite-resource run from the first 0x74 occupancy bytes at 0x00FFF008. It marks resource_count+1 bytes, stores the run pointer at actor offset +0x2A, and selects the corresponding 0x80-byte VRAM base from ACTOR_SPRITE_VRAM_BASE_TABLE at 0x0011F500 into actor offset +0x2E; when no run fits, it publishes and clears the current actor and any linked actor.
+  evidence:
+    - ghidra_decompile_001AD3E8
+    - ghidra_animation_vm_core_001AC796
+    - ghidra_actor_resource_clear_contract
 0x001ACB7A:
   name: ActorEvent_SetFlag20
   confidence: confirmed

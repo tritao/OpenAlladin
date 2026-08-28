@@ -94,6 +94,17 @@
   evidence:
     - ghidra_decompile_collision_damage_targets
 
+0x0011F500:
+  name: ACTOR_SPRITE_VRAM_BASE_TABLE
+  type: rom_table
+  entry_size: 4
+  count: 117
+  confidence: decompiled
+  description: Table of actor sprite VRAM base addresses in 0x80-byte increments, from 0x8600 through 0xA580. Actor_AllocateSpriteVRAM indexes it by the selected resource-slot start and stores the result in actor offset +0x2E; the renderer uses that value as the actor's sprite tile base.
+  evidence:
+    - ghidra_decompile_001AD3E8
+    - ghidra_disassembly_001AC6D0
+
 
 0xFF9884:
   name: TERRAIN_ROW_POINTER_TABLE

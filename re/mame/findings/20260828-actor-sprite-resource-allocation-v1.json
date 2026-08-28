@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-actor-sprite-resource-allocation-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-sprite-resource-targets.json",
+  "function": {
+    "address": "0x001AD3E8",
+    "name": "Actor_AllocateSpriteVRAM",
+    "confidence": "decompiled",
+    "caller": "0x001AC796 AnimationVM_RunActorPass",
+    "algorithm": [
+      "Reads the actor template resource_count byte at offset +0x29.",
+      "Scans 0x00FFF008 for a zero byte followed by resource_count additional zero bytes.",
+      "Stores the selected run at actor offset +0x2A and marks all resource_count+1 bytes with 0xFF.",
+      "Indexes ACTOR_SPRITE_VRAM_BASE_TABLE at 0x0011F500 by the run start and stores the 0x80-byte VRAM base at actor offset +0x2E.",
+      "If no contiguous run is available, publishes and clears the current actor and then clears a linked actor when present."
+    ]
+  },
+  "contract": {
+    "slot_bitmap": "0x00FFF008..0x00FFF07B",
+    "base_table": "0x0011F500..0x0011F6D3",
+    "base_values": "0x00008600 + 0x80 * slot_index",
+    "owner_fields": {
+      "resource_count": "actor +0x29",
+      "resource_slot_run": "actor +0x2A",
+      "sprite_vram_base": "actor +0x2E"
+    },
+    "release": "Actor_ClearOwnedResources at 0x001AE372 clears the run, count, and base pointer."
+  },
+  "conclusion": "The previously anonymous AnimationVM precondition is an actor sprite-resource allocation boundary, not an animation cursor or service phase. The actor table's +0x2E field is the VRAM tile-base address consumed by Render_BuildActorSpritePayload, while +0x2A tracks the occupancy run that must be released on actor teardown."
+}

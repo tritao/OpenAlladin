@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "actor-sprite-resource-allocation",
+    "purpose": "Decode actor sprite-resource ownership, VRAM base assignment, and allocation-exhaustion cleanup."
+  },
+  "targets": [
+    { "address": "0x001AD3E8", "name": "Actor_AllocateSpriteVRAM" },
+    { "address": "0x001AC796", "name": "AnimationVM_RunActorPass" },
+    { "address": "0x001AC6D0", "name": "Render_BuildActorSpritePayload" },
+    { "address": "0x001AE372", "name": "Actor_ClearOwnedResources" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF008", "name": "ACTOR_SPRITE_RESOURCE_SLOT_BITMAP" },
+    { "address": "0x0011F500", "name": "ACTOR_SPRITE_VRAM_BASE_TABLE" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" }
+  ]
+}

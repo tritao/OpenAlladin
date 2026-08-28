@@ -8,6 +8,15 @@
   evidence:
     - ghidra_actor_table_layout
     - mame_actor_animation_trace
+0xFFF008:
+  name: ACTOR_SPRITE_RESOURCE_SLOT_BITMAP
+  type: u8[0x74]
+  format: occupancy_bitmap
+  confidence: decompiled
+  description: Occupancy bytes used by Actor_AllocateSpriteVRAM to reserve contiguous actor-owned sprite-resource slots. A zero byte is free; an allocated run is marked with 0xFF and released by Actor_ClearOwnedResources.
+  evidence:
+    - ghidra_decompile_001AD3E8
+    - ghidra_disassembly_001AE372
 0xFF7E54:
   name: PLAYER_FRAME_PTR
   type: u32
