@@ -25,6 +25,13 @@
     - ghidra_targeted_decompile_scheduler
     - player_camera_static_map
     - mame_player_camera_follow_trace
+0x001AA724:
+  name: Camera_RebuildView
+  confidence: decompiled
+  description: Rebuilds the camera viewport either by writing the full 16-by-23 terrain matrix in special mode or by sweeping the camera right and left in 0x10-pixel steps while servicing actors, interaction rows, and sprites.
+  evidence:
+    - ghidra_decompile_001AA724
+    - ghidra_scene_camera_orchestration_targets
 0x001AAA2A:
   name: Camera_PublishScroll
   confidence: decompiled
@@ -185,6 +192,29 @@
     - ghidra_decompile_001B32E2
     - ghidra_level01_terrain_query_callback_targets
     - ghidra_disassembly_001B32E2
+0x001B080E:
+  name: SceneResource_InitializeActiveScene
+  confidence: decompiled
+  description: Initializes an active scene resource when the scene-entry gate is set, rebuilding VDP state, actor records, resource-backed actors, palettes, and the recurring frame service pass.
+  evidence:
+    - ghidra_decompile_001B080E
+    - ghidra_scene_camera_orchestration_targets
+    - ghidra_scene_resource_service_targets
+0x001B16E0:
+  name: SceneResource_RebuildAfterInteraction
+  confidence: decompiled
+  description: Rebuilds the scene/resource presentation after the interaction countdown path, clearing and reinitializing actor/resource state, loading the fixed scene resources, rendering the initial service frames, and continuing through the scene frame loop.
+  evidence:
+    - ghidra_decompile_001B16E0
+    - ghidra_scene_camera_orchestration_targets
+    - mame_transition_resource_lifecycle
+0x001B430C:
+  name: SceneResource_ProcessCommandStreams
+  confidence: decompiled
+  description: Runs the scene-resource command-stream interpreter twice for the active scene-resource state, allowing the selected command streams to complete their VDP/resource work.
+  evidence:
+    - ghidra_decompile_001B430C
+    - ghidra_scene_camera_orchestration_targets
 0x001B4A7A:
   name: SceneResource_PrepareBlankFrame
   confidence: decompiled

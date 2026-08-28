@@ -1660,6 +1660,28 @@ The static result is recorded in
 `re/mame/findings/20260828-actor-allocation-entrypoints-v1.json` and
 `re/mame/findings/20260828-terrain-query-callback-installer-v1.json`.
 
+## Scene/resource orchestration and camera rebuild (20260828)
+
+The larger scene/resource entrypoints are now separated from their lower-level
+helpers. SceneResource_InitializeActiveScene at `0x001B080E` performs the
+active-scene entry sequence: it rebuilds VDP state, initializes the
+scene-backed actors, runs the initial service pass, uploads the palette band,
+and enters the recurring frame service when its entry gate is set.
+
+SceneResource_RebuildAfterInteraction at `0x001B16E0` owns the corresponding
+interaction-countdown rebuild path. After its scene/counter gate it resets the
+scene presentation, clears and reinitializes actor/resource state, loads the
+fixed resources, renders the initial service frames, and continues through the
+scene frame loop. SceneResource_ProcessCommandStreams at `0x001B430C` is the
+small state-table wrapper that invokes the command-stream interpreter twice.
+
+Camera_RebuildView at `0x001AA724` either writes the complete 16-by-23 terrain
+viewport in special mode or performs paired right/left `0x10`-pixel camera
+sweeps while servicing actor VMs, interaction rows, and sprite submission.
+
+The static result is recorded in
+`re/mame/findings/20260828-scene-camera-orchestration-v1.json`.
+
 ## Campaign index
 
 | Campaign | Status | Purpose |
@@ -1781,6 +1803,7 @@ The static result is recorded in
 | `20260828-scene-resource-transfer-v1` | recorded-static-decompilation | indirect VDP word stream, fixed F800 scene-plane copy, and blank scene-resource frame setup |
 | `20260828-actor-allocation-entrypoints-v1` | recorded-static-decompilation | common level-object allocation, template initialization, coordinate placement, and interaction-byte consumption |
 | `20260828-terrain-query-callback-installer-v1` | recorded-static-decompilation | three-pointer terrain query callback publication into the live callback slots |
+| `20260828-scene-camera-orchestration-v1` | recorded-static-decompilation | active-scene initialization, interaction-triggered resource rebuild, command-stream dispatch, and viewport reconstruction |
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.

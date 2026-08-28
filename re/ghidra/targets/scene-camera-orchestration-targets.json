@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-camera-orchestration",
+    "purpose": "Name the scene/resource orchestration entrypoints and the camera viewport rebuild service from their static control flow and existing lifecycle evidence."
+  },
+  "targets": [
+    { "address": "0x001B080E", "name": "SceneResource_InitializeActiveScene" },
+    { "address": "0x001B16E0", "name": "SceneResource_RebuildAfterInteraction" },
+    { "address": "0x001B430C", "name": "SceneResource_ProcessCommandStreams" },
+    { "address": "0x001AA724", "name": "Camera_RebuildView" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E26", "name": "SCENE_STATE" },
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
+    { "address": "0x00FFF003", "name": "PLAYER_INTERACTION_COUNTER" },
+    { "address": "0x00FFF57D", "name": "SCENE_VDP_UPDATE_FLAG" },
+    { "address": "0x00FFF57E", "name": "SCENE_VDP_CLEAR_FLAG" },
+    { "address": "0x00FFF57F", "name": "SCENE_TRANSITION_EVENT" },
+    { "address": "0x00FFF173", "name": "CAMERA_SPECIAL_MODE" },
+    { "address": "0x00FFF0B2", "name": "CAMERA_SCROLL_X" }
+  ]
+}

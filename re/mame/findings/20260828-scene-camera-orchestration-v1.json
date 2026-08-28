@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-scene-camera-orchestration-v1",
+  "recorded_at": "2026-08-28",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-camera-orchestration-targets.json",
+  "services": [
+    {
+      "address": "0x001B080E",
+      "name": "SceneResource_InitializeActiveScene",
+      "confidence": "decompiled",
+      "behavior": "When the active-scene entry gate is set, clears/rebuilds VDP state, initializes the scene-backed actors, runs the initial service pass, uploads the palette band, and enters the recurring frame service."
+    },
+    {
+      "address": "0x001B16E0",
+      "name": "SceneResource_RebuildAfterInteraction",
+      "confidence": "decompiled",
+      "behavior": "When SCENE_STATE is not 0x0A and PLAYER_INTERACTION_COUNTER is nonzero, resets the scene/resource presentation, clears and reinitializes actors, loads fixed resources, renders initial frames, and continues through the frame loop."
+    },
+    {
+      "address": "0x001B430C",
+      "name": "SceneResource_ProcessCommandStreams",
+      "confidence": "decompiled",
+      "behavior": "Invokes SceneResource_ProcessCommandStream twice for the active state."
+    },
+    {
+      "address": "0x001AA724",
+      "name": "Camera_RebuildView",
+      "confidence": "decompiled",
+      "behavior": "In special mode writes the complete 16-by-23 terrain viewport; otherwise performs paired right/left 0x10-pixel camera sweeps with actor VM, interaction-row, and sprite service work."
+    }
+  ],
+  "conclusion": "The scene/resource entrypoints and camera rebuild path are now distinct from the lower-level VDP transfer, actor initialization, and recurring service helpers they orchestrate."
+}
