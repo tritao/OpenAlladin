@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type05-interaction-animation-static-targets.json",
+  "animations": [
+    {
+      "address": "0x001251A6",
+      "name": "ACTOR_ANIM_TYPE05_INTERACTION_VARIANT_A",
+      "range": "0x001251A6-0x001251FB",
+      "bytes": 86,
+      "consumer": "ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_A",
+      "behavior": "Proximity-gated 0x0FF6 presentation followed by the 0x0FFA-0x0FF2 response branch and actor-field write 0x00120B96."
+    },
+    {
+      "address": "0x001251FC",
+      "name": "ACTOR_ANIM_TYPE05_INTERACTION_VARIANT_B",
+      "range": "0x001251FC-0x00125227",
+      "bytes": 44,
+      "consumer": "ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_B",
+      "behavior": "0x0FF6-0x1002 lead-in, actor-field write at 0x0012520C, and looping 0x0FDA-0x0FF2 response sequence."
+    },
+    {
+      "address": "0x00125228",
+      "name": "ACTOR_ANIM_TYPE05_INTERACTION_VARIANT_C",
+      "range": "0x00125228-0x001252A7",
+      "bytes": 128,
+      "consumer": "ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_C",
+      "behavior": "Player-X proximity gate, Type-0x05 child F5 spawn, repeated actor-field arithmetic, and local response loop."
+    }
+  ],
+  "template_consumers": [
+    { "address": "0x001B6C0E", "name": "InteractionSpawn_Type05VariantA_23_24", "template": "ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_A" },
+    { "address": "0x001B7634", "name": "LevelEvent_SpawnType05WithPaletteRefresh", "template": "ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_B" },
+    { "address": "0x001B6C2E", "name": "InteractionSpawn_Type05VariantC_25", "template": "ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_C" }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact Type-0x05 template records and animation pointers",
+    "Exact direct consumer bodies and proximity/child-spawn branches"
+  ],
+  "conclusion": "The three direct Type-0x05 interaction variants now have canonical names and non-overlapping owned ranges. The adjacent 0x001252A8 stream remains separate because it is referenced by the Level-exit transition path rather than these templates.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

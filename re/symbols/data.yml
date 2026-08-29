@@ -1353,6 +1353,33 @@
     - actor_template_type30_presentation_child
     - animation_stream_decoder
 
+0x001251A6:
+  name: ACTOR_ANIM_TYPE05_INTERACTION_VARIANT_A
+  size: 86
+  confidence: decompiled
+  description: Type-0x05 interaction variant A installed by ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_A. Its packed region contains the 0x0FF6 proximity gate, the 0x0FFA-0x0FF2 response branch with actor-field write 0x00120B96, and the local loop returning to 0x001251A6.
+  evidence:
+    - actor_template_interaction_dispatch_family_static_decompilation
+    - animation_stream_decoder
+
+0x001251FC:
+  name: ACTOR_ANIM_TYPE05_INTERACTION_VARIANT_B
+  size: 44
+  confidence: decompiled
+  description: Type-0x05 interaction variant B installed by ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_B. It presents the 0x0FF6-0x1002 lead-in, writes the actor field at 0x0012520C, cycles the 0x0FDA-0x0FF2 sequence, and loops through the local entry at 0x00125214.
+  evidence:
+    - actor_template_interaction_dispatch_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125228:
+  name: ACTOR_ANIM_TYPE05_INTERACTION_VARIANT_C
+  size: 128
+  confidence: decompiled
+  description: Type-0x05 interaction variant C installed by ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_C. It uses a 0x64 player-X proximity gate, then runs the timer/spawn response at 0x00125236, including the Type-0x05 child F5 record and repeated actor-field arithmetic through the loop at 0x00125262.
+  evidence:
+    - actor_template_interaction_dispatch_family_static_decompilation
+    - animation_stream_decoder
+
 0x00122D92:
   name: ACTOR_ANIM_TYPE01
   confidence: confirmed

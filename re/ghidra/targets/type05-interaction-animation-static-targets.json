@@ -1,0 +1,54 @@
+{
+  "format": "openaladdin-type05-interaction-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Range-bound the three direct Type-0x05 interaction animation variants and connect each stream to its exact template consumer.",
+  "animations": [
+    {
+      "address": "0x001251A6",
+      "name": "ACTOR_ANIM_TYPE05_INTERACTION_VARIANT_A",
+      "range": ["0x001251A6", "0x001251FB"],
+      "bytes": 86,
+      "consumer": "0x001B6C0E InteractionSpawn_Type05VariantA_23_24",
+      "template": "0x001B7A80 ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_A",
+      "internal_entries": ["0x001251B6"],
+      "behavior": "Initial 0x0FF6 proximity presentation, response branch through 0x0FFA-0x0FF2 with actor-field write 0x00120B96, and local loop returning to the root."
+    },
+    {
+      "address": "0x001251FC",
+      "name": "ACTOR_ANIM_TYPE05_INTERACTION_VARIANT_B",
+      "range": ["0x001251FC", "0x00125227"],
+      "bytes": 44,
+      "consumer": "0x001B7634 LevelEvent_SpawnType05WithPaletteRefresh",
+      "template": "0x001B7A94 ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_B",
+      "internal_entries": ["0x00125214"],
+      "behavior": "0x0FF6-0x1002 lead-in, actor-field write at 0x0012520C, 0x0FDA-0x0FF2 response sequence, and local loop through 0x00125214."
+    },
+    {
+      "address": "0x00125228",
+      "name": "ACTOR_ANIM_TYPE05_INTERACTION_VARIANT_C",
+      "range": ["0x00125228", "0x001252A7"],
+      "bytes": 128,
+      "consumer": "0x001B6C2E InteractionSpawn_Type05VariantC_25",
+      "template": "0x001B7AA8 ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_C",
+      "internal_entries": ["0x00125236", "0x00125262"],
+      "behavior": "0x64 player-X proximity gate, timed response with a Type-0x05 child F5 record, repeated actor-field arithmetic, and loop through 0x00125262."
+    }
+  ],
+  "boundary": {
+    "start": "The first direct Type-0x05 animation pointer is 0x001251A6.",
+    "end": "The final variant ends at 0x001252A7; the separately referenced 0x001252A8 stream is not included."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact actor-template animation pointers",
+    "Exact interaction and Level-event consumer bodies",
+    "Exact FD/EA control-flow boundaries"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
