@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-mid-dispatch-family-targets.json",
+  "templates": [
+    {
+      "address": "0x001B79CC",
+      "name": "ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN",
+      "consumer": "0x001B59F0, 0x001B743E, and 0x001B771A",
+      "behavior": "Shared type-0x46 source using animation 0x00122C66 and two resources; level-event and interaction callers provide their own positions and event-specific state."
+    },
+    {
+      "address": "0x001B7A08",
+      "name": "ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT",
+      "consumer": "0x001B7494, 0x001B74B2, and 0x001B74C4",
+      "behavior": "Zero-resource type-0x5A level-object source using animation 0x00122C1A; two consumers republish it as types 0x5C and 0x5D."
+    },
+    {
+      "address": "0x001B7A1C",
+      "name": "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E",
+      "consumer": "INTERACTION_HANDLER_TABLE selectors 0x7B-0x7E at 0x004340-0x00434C",
+      "behavior": "Shared reverse-slot type-0x55 interaction source using animation 0x00122D54 and four resources, with four fixed y offsets after allocation."
+    }
+  ],
+  "conclusion": "The mid-dispatch block establishes three additional exact 20-byte actor-template records from level-event and interaction consumers. Their shared records, dispatch selectors, resource counts, and post-spawn mutations are now explicit.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

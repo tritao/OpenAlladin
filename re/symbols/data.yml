@@ -1765,3 +1765,33 @@
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
+
+0x001B79CC:
+  name: ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Shared type-0x46 spawn template used by the level-event command entry at 0x001B59F0 and the related forward/free-slot producers at 0x001B743E and 0x001B771A; it has no movement stream, uses animation stream 0x00122C66, and owns two resources before each caller supplies its position and any event-specific animation.
+  evidence:
+    - ghidra_level_event_spawn_block
+    - actor_template_grid_xrefs
+
+0x001B7A08:
+  name: ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x5A level-object template loaded through LevelObjectSpawnEntry at 0x001B7494, 0x001B74B2, and 0x001B74C4; it has no movement stream, uses animation stream 0x00122C1A, and owns no resources, while the latter two callers promote the allocated actor to runtime types 0x5C and 0x5D.
+  evidence:
+    - ghidra_level_actor_spawn_block
+    - actor_template_grid_xrefs
+
+0x001B7A1C:
+  name: ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Shared type-0x55 interaction template selected by INTERACTION_HANDLER_TABLE entries 0x7B through 0x7E at ROM 0x004340-0x00434C; reverse-slot consumers apply fixed position offsets (+8,0), (+8,+4), (+8,+8), and (+8,+0x0C), and the record uses no movement stream, animation stream 0x00122D54, and four resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs

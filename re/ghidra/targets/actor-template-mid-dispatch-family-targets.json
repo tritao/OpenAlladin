@@ -1,0 +1,55 @@
+{
+  "format": "openaladdin-actor-template-mid-dispatch-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name shared actor-template records used by the mid-ROM level-event and interaction dispatch blocks.",
+  "templates": [
+    {
+      "address": "0x001B79CC",
+      "name": "ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN",
+      "consumer_sites": ["0x001B59F0", "0x001B743E", "0x001B771A"],
+      "dispatch_entries": ["0x002108 level-event command entry 0x12"],
+      "spawn_helpers": ["0x001AE262 Actor_FindFreeSlot", "0x001B524E InteractionSpawn_ForwardSlot"],
+      "runtime_type": "0x46",
+      "movement_stream": null,
+      "animation_stream": "0x00122C66",
+      "resource_count": "0x02",
+      "post_initialize": "The three producers publish their own coordinates; the level-event path derives position from the active level origin and adds (0x0140,0x0100), while the interaction paths use their caller-provided positions and may replace the animation root."
+    },
+    {
+      "address": "0x001B7A08",
+      "name": "ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT",
+      "consumer_sites": ["0x001B7494", "0x001B74B2", "0x001B74C4"],
+      "dispatch_entries": ["0x00438C selector 0x8E", "0x004394 selector 0x90", "0x004398 selector 0x91"],
+      "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+      "runtime_type": "0x5A",
+      "movement_stream": null,
+      "animation_stream": "0x00122C1A",
+      "resource_count": "0x00",
+      "post_initialize": "The 0x001B74B2 and 0x001B74C4 consumers change the initialized runtime type to 0x5C and 0x5D, respectively."
+    },
+    {
+      "address": "0x001B7A1C",
+      "name": "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E",
+      "consumer_sites": ["0x001B66AC", "0x001B66C0", "0x001B66D8", "0x001B66F2"],
+      "dispatch_entries": ["0x004340 selector 0x7B", "0x004344 selector 0x7C", "0x004348 selector 0x7D", "0x00434C selector 0x7E"],
+      "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+      "runtime_type": "0x55",
+      "movement_stream": null,
+      "animation_stream": "0x00122D54",
+      "resource_count": "0x04",
+      "post_initialize": "The four consumers apply x offset +8 and y offsets 0, +4, +8, and +0x0C after successful allocation."
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "conclusion": "All three records are exact 20-byte templates selected by complete static spawn bodies. The type-0x46 record is shared across level-event and interaction producers; the type-0x5A and type-0x55 records are bounded by their dispatch entries and post-spawn mutations. Nearby records without equally complete consumers remain unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
