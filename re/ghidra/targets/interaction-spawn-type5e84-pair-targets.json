@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-interaction-spawn-type5e84-pair-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0xE0-0xE6, 0xE8-0xE9, 0xF9",
+    "newly_named_targets": 7,
+    "handlers": [
+      { "selectors": ["0xE0"], "address": "0x001B68F6", "name": "InteractionSpawn_Type5E84Pair_E0", "movement_stream": "0x0011F7A6", "base_offset": ["0x00", "0x40"] },
+      { "selectors": ["0xE1", "0xE2"], "address": "0x001B694C", "name": "InteractionSpawn_Type5E84Pair_E1E2", "movement_stream": "0x0011F8A4", "base_offset": ["-0x20", "0x40"] },
+      { "selectors": ["0xE3", "0xE4", "0xE5"], "address": "0x001B6A00", "name": "InteractionSpawn_Type5E84Pair_E3E5", "movement_stream": "0x0011FD18", "base_offset": ["-0x20", "0x40"] },
+      { "selectors": ["0xE8"], "address": "0x001B6A5A", "name": "InteractionSpawn_Type5E84Pair_E8", "movement_stream": "0x001201FE", "base_offset": ["-0x20", "0x40"] },
+      { "selectors": ["0xE9"], "address": "0x001B6AB4", "name": "InteractionSpawn_Type5E84Pair_E9", "movement_stream": "0x001202CA", "base_offset": ["-0x20", "0x40"] },
+      { "selectors": ["0xE6"], "address": "0x001B6B0E", "name": "InteractionSpawn_Type5E84Pair_E6", "movement_stream": "0x0012004E", "base_offset": ["-0x20", "0x40"] },
+      { "selectors": ["0xF9"], "address": "0x001B6B5C", "name": "InteractionSpawn_Type5E84Pair_F9WhenReady", "movement_stream": "0x001200DE", "base_offset": ["-0x20", "0x40"], "gate": "0x00FFF112" }
+    ]
+  },
+  "pair_contract": {
+    "base_template": "0x001B78A0 ACTOR_TEMPLATE_TYPE_5E_INTERACTION_PAIR_BASE",
+    "companion_template": "0x001B78C8 ACTOR_TEMPLATE_TYPE_84_INTERACTION_PAIR_COMPANION",
+    "link_field": "actor offset 0x3E",
+    "companion_anchor": ["0x00FFF094", "0x00FFF096"],
+    "base_initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "spawn_helpers": ["0x001B525E InteractionSpawn_ReverseSlot", "0x001B524E InteractionSpawn_ForwardSlot"]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Established type-0x5E/type-0x84 template records and pair link contract",
+    "Per-handler movement-stream literals and anchor-coordinate writes"
+  ],
+  "conclusion": "The E0-E6/E8-E9/F9 interaction handlers form a bounded family of type-0x5E plus type-0x84 paired spawns. Each handler selects one base movement stream and publishes the companion anchor with a fixed coordinate offset; selector F9 additionally requires gate byte 0x00FFF112.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
