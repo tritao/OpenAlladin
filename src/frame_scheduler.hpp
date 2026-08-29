@@ -11,8 +11,10 @@
 #include "player_terrain.hpp"
 #include "scene.hpp"
 
+#include <array>
 #include <cstdint>
 #include <functional>
+#include <string>
 #include <vector>
 
 namespace openaladdin {
@@ -29,6 +31,31 @@ struct InputState {
     // is exposed separately so physical controller replays can preserve the
     // distinct action selection.
     bool apple_pressed = false;
+};
+
+struct SchedulerPhase {
+    std::string name;
+    std::uint32_t rom_entry_pc = 0;
+};
+
+// Host-side state that affects frame ordering but is not itself a Genesis
+// record. Keeping it together makes the scheduler boundary explicit while
+// preserving the existing checkpoint and trace representation.
+struct FrameRuntime {
+    std::array<bool, 32> actor_movement_deferred{};
+    bool checkpoint_animation_selector_pending = false;
+    bool jump_landing_state_arm_pending = false;
+    bool jump_landing_state_arm_now = false;
+    bool terrain_fall_phase = false;
+    bool contour_ground_motion = false;
+    int terrain_input_world_x = 0;
+    int terrain_input_world_y = 0;
+    int last_ground_direction = 0;
+    bool checkpoint_terrain_behavior_override = false;
+    std::uint8_t checkpoint_terrain_behavior = 0;
+    bool scheduler_trace_enabled = false;
+    std::vector<SchedulerPhase> scheduler_phases;
+    std::vector<std::uint32_t> scheduler_writer_pcs;
 };
 
 // Owns the recovered frame ordering. Gameplay helpers remain injectable so
@@ -68,20 +95,7 @@ public:
         AnimationSystem* animation_system = nullptr;
         const std::vector<std::uint8_t>* rom_bytes = nullptr;
         std::vector<std::uint8_t>* level_event_sound_requests = nullptr;
-
-        bool* checkpoint_animation_selector_pending = nullptr;
-        bool* jump_landing_state_arm_pending = nullptr;
-        bool* jump_landing_state_arm_now = nullptr;
-        bool* terrain_fall_phase = nullptr;
-        bool* contour_ground_motion = nullptr;
-        int* terrain_input_world_x = nullptr;
-        int* terrain_input_world_y = nullptr;
-        int* frame = nullptr;
-        std::uint8_t* frame_phase = nullptr;
-        int* last_ground_direction = nullptr;
-        bool* checkpoint_terrain_behavior_override = nullptr;
-        std::uint8_t* checkpoint_terrain_behavior = nullptr;
-        bool* scheduler_trace_enabled = nullptr;
+        FrameRuntime* runtime = nullptr;
 
         NoArg clear_scheduler_trace;
         NoArg flush_deferred_animation_spawn;

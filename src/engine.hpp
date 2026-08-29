@@ -30,12 +30,6 @@
 
 namespace openaladdin {
 
-struct SchedulerPhase {
-    std::string name;
-    std::uint32_t rom_entry_pc = 0;
-};
-
-
 class Engine {
 public:
     Engine();
@@ -147,47 +141,21 @@ private:
     LevelEventSystem level_event_system_;
     CameraSystem camera_system_;
     FrameScheduler scheduler_;
-    // Actor records allocated by the late interaction refill service are not
-    // visited by the movement pass until the following game-loop boundary.
-    // Keep this transient scheduling edge separate from the actor record so
-    // it cannot leak into the ROM-shaped state or fixture format.
-    std::array<bool, 32> actor_movement_deferred_{};
+    FrameRuntime frame_runtime_;
     InteractionSystem interactions_;
     std::map<int, ActorSystem::Table> actor_timeline_;
-    bool checkpoint_animation_selector_pending_ = false;
-    // The ROM leaves the landing latch visible for the launch boundary,
-    // clears it on the first airborne pass, then re-arms it when the jump
-    // state enters its falling phase. Keep those two boundaries explicit.
-    bool jump_landing_state_arm_pending_ = false;
-    bool jump_landing_state_arm_now_ = false;
-    bool terrain_fall_phase_ = false;
-    // A sloped contour exposes a non-flat landing byte (and therefore a
-    // public grounded=false) while the player remains on the surface. Keep
-    // the internal ground-motion path latched across those contour samples.
-    bool contour_ground_motion_ = false;
     // FUN_001B3032 is the shared fixed-ROM PRNG used by terrain responses and
     // animation F0 branches. Keep its state in one place so VM consumers do
     // not silently diverge from the Genesis sequence.
     std::uint32_t& random_state_;
-    int terrain_input_world_x_ = 0;
-    int terrain_input_world_y_ = 0;
-    // Common F5 actors share one AnimationVM_TickActors traversal. Keep its
-    // cadence at engine scope so actors spawned later join the same service
-    // and hold passes as the already-live records.
-    bool checkpoint_terrain_behavior_override_ = false;
-    std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;
     std::vector<std::uint8_t> level_event_sound_requests_;
     bool level_event_exit_started_ = false;
-    bool scheduler_trace_enabled_ = false;
-    std::vector<SchedulerPhase> scheduler_phases_;
-    std::vector<std::uint32_t> scheduler_writer_pcs_;
     int& frame_;
     // FF7E28 is incremented at Game_FrameUpdateLoop entry. Keep the ROM
     // phase separately from the host frame label so scene/checkpoint
     // boundaries do not silently turn into scheduler gates.
     std::uint8_t& frame_phase_;
-    int last_ground_direction_ = 0;
     bool quit_ = false;
     RenderPipeline render_pipeline_;
     SdlRenderBackend render_backend_;

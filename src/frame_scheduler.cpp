@@ -41,23 +41,24 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& actor_animations_ = context.animation_system->actors().vms();
     const auto& rom_bytes_ = *context.rom_bytes;
     auto& level_event_sound_requests_ = *context.level_event_sound_requests;
+    auto& runtime_ = *context.runtime;
 
     auto& checkpoint_animation_selector_pending_ =
-        *context.checkpoint_animation_selector_pending;
-    auto& jump_landing_state_arm_pending_ = *context.jump_landing_state_arm_pending;
-    auto& jump_landing_state_arm_now_ = *context.jump_landing_state_arm_now;
-    auto& terrain_fall_phase_ = *context.terrain_fall_phase;
-    auto& contour_ground_motion_ = *context.contour_ground_motion;
-    auto& terrain_input_world_x_ = *context.terrain_input_world_x;
-    auto& terrain_input_world_y_ = *context.terrain_input_world_y;
-    auto& frame_ = *context.frame;
-    auto& frame_phase_ = *context.frame_phase;
-    auto& last_ground_direction_ = *context.last_ground_direction;
+        runtime_.checkpoint_animation_selector_pending;
+    auto& jump_landing_state_arm_pending_ = runtime_.jump_landing_state_arm_pending;
+    auto& jump_landing_state_arm_now_ = runtime_.jump_landing_state_arm_now;
+    auto& terrain_fall_phase_ = runtime_.terrain_fall_phase;
+    auto& contour_ground_motion_ = runtime_.contour_ground_motion;
+    auto& terrain_input_world_x_ = runtime_.terrain_input_world_x;
+    auto& terrain_input_world_y_ = runtime_.terrain_input_world_y;
+    auto& frame_ = state_.frame.number;
+    auto& frame_phase_ = state_.frame.phase;
+    auto& last_ground_direction_ = runtime_.last_ground_direction;
     const bool checkpoint_terrain_behavior_override_ =
-        *context.checkpoint_terrain_behavior_override;
+        runtime_.checkpoint_terrain_behavior_override;
     const std::uint8_t checkpoint_terrain_behavior_ =
-        *context.checkpoint_terrain_behavior;
-    const bool scheduler_trace_enabled_ = *context.scheduler_trace_enabled;
+        runtime_.checkpoint_terrain_behavior;
+    const bool scheduler_trace_enabled_ = runtime_.scheduler_trace_enabled;
 
     auto& clear_scheduler_trace = context.clear_scheduler_trace;
     auto& flush_deferred_animation_spawn = context.flush_deferred_animation_spawn;

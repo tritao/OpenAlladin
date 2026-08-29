@@ -258,7 +258,7 @@ Engine::Engine()
           actor_lifecycle_,
           collisions_,
           animation_system_,
-          actor_movement_deferred_),
+          frame_runtime_.actor_movement_deferred),
       random_state_(state_.random.value),
       frame_(state_.frame.number),
       frame_phase_(state_.frame.phase) {
@@ -499,13 +499,13 @@ void Engine::update_actor_movement() {
             rom_bytes_,
             player_world_x(),
             player_world_y(),
-            &actor_movement_deferred_,
+            &frame_runtime_.actor_movement_deferred,
             [this](ActorIndex slot, std::uint8_t command_mode) {
                 actor_lifecycle_.retire_from_vm(slot, command_mode);
             }
         }
     );
-    actor_movement_deferred_.fill(false);
+    frame_runtime_.actor_movement_deferred.fill(false);
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         const ActorState& actor = actors_[slot];
         if (previous_types[slot] != kActorTerminalType
@@ -699,19 +699,19 @@ void Engine::reset() {
     level_events_.reset();
     level_event_sound_requests_.clear();
     level_event_exit_started_ = false;
-    actor_movement_deferred_.fill(false);
-    checkpoint_animation_selector_pending_ = false;
-    jump_landing_state_arm_pending_ = false;
-    jump_landing_state_arm_now_ = false;
-    terrain_fall_phase_ = false;
-    contour_ground_motion_ = false;
+    frame_runtime_.actor_movement_deferred.fill(false);
+    frame_runtime_.checkpoint_animation_selector_pending = false;
+    frame_runtime_.jump_landing_state_arm_pending = false;
+    frame_runtime_.jump_landing_state_arm_now = false;
+    frame_runtime_.terrain_fall_phase = false;
+    frame_runtime_.contour_ground_motion = false;
     actors_.reset();
     if (actors_.snapshot_mode()) {
         apply_actor_timeline(0);
     }
     random_state_ = 0;
-    terrain_input_world_x_ = 0;
-    terrain_input_world_y_ = 0;
+    frame_runtime_.terrain_input_world_x = 0;
+    frame_runtime_.terrain_input_world_y = 0;
     frame_phase_ = 0;
     camera_ = CameraState{};
     player_.x = level_.start_x();
@@ -734,7 +734,7 @@ void Engine::reset() {
     player_.terrain_behavior = initial_cell.valid ? initial_cell.behavior : 0;
     player_.terrain_landing_state = player_.terrain_behavior != 0 ? 1 : 0;
     frame_ = 0;
-    last_ground_direction_ = 0;
+    frame_runtime_.last_ground_direction = 0;
     quit_ = false;
     animation_system_.reset();
     sync_player_actor();
@@ -749,20 +749,20 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     player_.attack_timer = 0;
     const auto checkpoint_cell = level_.resolve_player_cell(player_world_x(), player_world_y());
     player_.terrain_behavior = checkpoint_cell.valid ? checkpoint_cell.behavior : 0;
-    if (checkpoint_terrain_behavior_override_) {
-        player_.terrain_behavior = checkpoint_terrain_behavior_;
+    if (frame_runtime_.checkpoint_terrain_behavior_override) {
+        player_.terrain_behavior = frame_runtime_.checkpoint_terrain_behavior;
     }
     player_.terrain_landing_state = grounded && player_.terrain_behavior != 0 ? 1 : 0;
-    checkpoint_animation_selector_pending_ = false;
+    frame_runtime_.checkpoint_animation_selector_pending = false;
     interactions_.clear_surface_interaction_state();
-    jump_landing_state_arm_pending_ = false;
-    jump_landing_state_arm_now_ = false;
-    terrain_fall_phase_ = false;
-    contour_ground_motion_ = false;
+    frame_runtime_.jump_landing_state_arm_pending = false;
+    frame_runtime_.jump_landing_state_arm_now = false;
+    frame_runtime_.terrain_fall_phase = false;
+    frame_runtime_.contour_ground_motion = false;
     frame_ = 0;
     frame_phase_ = 0;
     quit_ = false;
-    actor_movement_deferred_.fill(false);
+    frame_runtime_.actor_movement_deferred.fill(false);
     animation_system_.player().reset();
     if (!grounded) {
         animation_system_.player().update(
@@ -786,8 +786,8 @@ std::vector<std::uint8_t> Engine::take_sound_requests() {
 }
 
 void Engine::set_checkpoint_terrain_behavior(std::uint8_t behavior) {
-    checkpoint_terrain_behavior_override_ = true;
-    checkpoint_terrain_behavior_ = behavior;
+    frame_runtime_.checkpoint_terrain_behavior_override = true;
+    frame_runtime_.checkpoint_terrain_behavior = behavior;
     player_.terrain_behavior = behavior;
     player_.terrain_landing_state = behavior != 0 ? 1 : 0;
 }
@@ -820,7 +820,7 @@ void Engine::set_checkpoint_frame_phase(std::uint8_t phase) {
 
 void Engine::set_checkpoint_animation_selector(const AnimationSelectorState& selector) {
     player_.animation_selector = selector;
-    checkpoint_animation_selector_pending_ = true;
+    frame_runtime_.checkpoint_animation_selector_pending = true;
 }
 
 void Engine::set_checkpoint_facing_x_flip(bool facing_x_flip) {
@@ -1025,7 +1025,7 @@ void Engine::integrate_motion() {
 }
 
 void Engine::apply_floor_contour() {
-    terrain_.apply_contour(state_, level_, terrain_fall_phase_);
+    terrain_.apply_contour(state_, level_, frame_runtime_.terrain_fall_phase);
 }
 
 void Engine::resolve_terrain(int previous_world_y) {
@@ -1033,8 +1033,8 @@ void Engine::resolve_terrain(int previous_world_y) {
         state_,
         level_,
         previous_world_y,
-        checkpoint_terrain_behavior_override_
-            ? std::optional<std::uint8_t>(checkpoint_terrain_behavior_)
+        frame_runtime_.checkpoint_terrain_behavior_override
+            ? std::optional<std::uint8_t>(frame_runtime_.checkpoint_terrain_behavior)
             : std::nullopt
     );
     if (cell) apply_terrain_behavior(*cell);
@@ -1107,8 +1107,8 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         spawned.movement_flags = static_cast<std::uint8_t>(
             read_rom_u8(kTerrainScene5SpawnTemplate + 0x06) | 0x40);
         spawned.x = static_cast<std::uint16_t>(
-            terrain_input_world_x_ + static_cast<int>(random_value & 7U) - 3);
-        spawned.y = static_cast<std::uint16_t>(terrain_input_world_y_ - 0x2A);
+            frame_runtime_.terrain_input_world_x + static_cast<int>(random_value & 7U) - 3);
+        spawned.y = static_cast<std::uint16_t>(frame_runtime_.terrain_input_world_y - 0x2A);
         if (random_value < 0x1B) {
             spawned.animation_pc = random_value < 0x0D
                 ? kTerrainScene5SpawnAnimationLow
@@ -1238,7 +1238,7 @@ void Engine::apply_ground_movement(const InputState& input) {
     if (direction == 0) {
         // FFF0B0 is retained for the first release frame; the following idle
         // frame clears it when the ROM's ground-response state is idle.
-        if (last_ground_direction_ == 0) {
+        if (frame_runtime_.last_ground_direction == 0) {
             player_.terrain_horizontal_response = 0;
         }
         return;
@@ -1308,22 +1308,10 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.animation_system = &animation_system_;
     context.rom_bytes = &rom_bytes_;
     context.level_event_sound_requests = &level_event_sound_requests_;
-    context.checkpoint_animation_selector_pending = &checkpoint_animation_selector_pending_;
-    context.jump_landing_state_arm_pending = &jump_landing_state_arm_pending_;
-    context.jump_landing_state_arm_now = &jump_landing_state_arm_now_;
-    context.terrain_fall_phase = &terrain_fall_phase_;
-    context.contour_ground_motion = &contour_ground_motion_;
-    context.terrain_input_world_x = &terrain_input_world_x_;
-    context.terrain_input_world_y = &terrain_input_world_y_;
-    context.frame = &frame_;
-    context.frame_phase = &frame_phase_;
-    context.last_ground_direction = &last_ground_direction_;
-    context.checkpoint_terrain_behavior_override = &checkpoint_terrain_behavior_override_;
-    context.checkpoint_terrain_behavior = &checkpoint_terrain_behavior_;
-    context.scheduler_trace_enabled = &scheduler_trace_enabled_;
+    context.runtime = &frame_runtime_;
     context.clear_scheduler_trace = [this]() {
-        scheduler_phases_.clear();
-        scheduler_writer_pcs_.clear();
+        frame_runtime_.scheduler_phases.clear();
+        frame_runtime_.scheduler_writer_pcs.clear();
         animation_system_.clear_writer_trace();
     };
     context.flush_deferred_animation_spawn = [this]() {
@@ -1378,11 +1366,11 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
             );
             interactions_.update_actor_flags(
                 state_,
-                checkpoint_terrain_behavior_override_
-                    && (checkpoint_terrain_behavior_ == 0x28
-                        || checkpoint_terrain_behavior_ == 0x29
-                        || checkpoint_terrain_behavior_ == 0x2D
-                        || checkpoint_terrain_behavior_ == 0x27));
+                frame_runtime_.checkpoint_terrain_behavior_override
+                    && (frame_runtime_.checkpoint_terrain_behavior == 0x28
+                        || frame_runtime_.checkpoint_terrain_behavior == 0x29
+                        || frame_runtime_.checkpoint_terrain_behavior == 0x2D
+                        || frame_runtime_.checkpoint_terrain_behavior == 0x27));
         };
     context.publish_player_world_coordinates = [this]() {
         publish_player_world_coordinates();
@@ -1415,27 +1403,27 @@ void Engine::update(const InputState& input) {
 }
 
 void Engine::set_scheduler_trace_enabled(bool enabled) {
-    scheduler_trace_enabled_ = enabled;
+    frame_runtime_.scheduler_trace_enabled = enabled;
     animation_system_.player().set_writer_trace_enabled(enabled);
     animation_system_.actors().set_writer_trace_enabled(enabled);
 }
 
 void Engine::record_scheduler_phase(const char* name, std::uint32_t rom_entry_pc) {
-    if (!scheduler_trace_enabled_) return;
-    scheduler_phases_.push_back(SchedulerPhase{name, rom_entry_pc});
+    if (!frame_runtime_.scheduler_trace_enabled) return;
+    frame_runtime_.scheduler_phases.push_back(SchedulerPhase{name, rom_entry_pc});
 }
 
 void Engine::collect_scheduler_writer_pcs() {
-    if (!scheduler_trace_enabled_) return;
-    scheduler_writer_pcs_.clear();
+    if (!frame_runtime_.scheduler_trace_enabled) return;
+    frame_runtime_.scheduler_writer_pcs.clear();
     const auto collect = [this](const PlayerAnimationVm& vm) {
         for (const std::uint32_t pc : vm.writer_pcs()) {
             if (pc == 0
-                || (!scheduler_writer_pcs_.empty()
-                    && scheduler_writer_pcs_.back() == pc)) {
+                || (!frame_runtime_.scheduler_writer_pcs.empty()
+                    && frame_runtime_.scheduler_writer_pcs.back() == pc)) {
                 continue;
             }
-            scheduler_writer_pcs_.push_back(pc);
+            frame_runtime_.scheduler_writer_pcs.push_back(pc);
         }
     };
     collect(animation_system_.player());
@@ -1451,16 +1439,16 @@ void Engine::write_scheduler_trace(
     output << "{\"type\":\"frame\",\"format\":\"openaladdin-scheduler-trace-v1\""
            << ",\"frame\":" << frame_
            << ",\"input\":\"" << input_token << "\",\"phases\":[";
-    for (std::size_t index = 0; index < scheduler_phases_.size(); ++index) {
+    for (std::size_t index = 0; index < frame_runtime_.scheduler_phases.size(); ++index) {
         if (index != 0) output << ",";
-        const SchedulerPhase& phase = scheduler_phases_[index];
+        const SchedulerPhase& phase = frame_runtime_.scheduler_phases[index];
         output << "{\"name\":\"" << phase.name
                << "\",\"rom_entry_pc\":" << phase.rom_entry_pc << "}";
     }
     output << "],\"writer_pcs\":[";
-    for (std::size_t index = 0; index < scheduler_writer_pcs_.size(); ++index) {
+    for (std::size_t index = 0; index < frame_runtime_.scheduler_writer_pcs.size(); ++index) {
         if (index != 0) output << ",";
-        output << scheduler_writer_pcs_[index];
+        output << frame_runtime_.scheduler_writer_pcs[index];
     }
     output << "]}\n";
 }
@@ -1705,16 +1693,16 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"player_collision_interaction_pending\":"
            << (interaction_runtime.player_collision_pending ? "true" : "false")
            << ",\"checkpoint_animation_selector_pending\":"
-           << (checkpoint_animation_selector_pending_ ? "true" : "false")
+           << (frame_runtime_.checkpoint_animation_selector_pending ? "true" : "false")
            << ",\"surface_interaction_pending\":"
            << (interaction_runtime.surface_interaction_pending ? "true" : "false")
            << ",\"surface_interaction_active\":"
            << (interaction_runtime.surface_interaction_active ? "true" : "false")
            << ",\"jump_landing_state_arm_pending\":"
-           << (jump_landing_state_arm_pending_ ? "true" : "false")
+           << (frame_runtime_.jump_landing_state_arm_pending ? "true" : "false")
            << ",\"jump_landing_state_arm_now\":"
-           << (jump_landing_state_arm_now_ ? "true" : "false")
-           << ",\"terrain_fall_phase\":" << (terrain_fall_phase_ ? "true" : "false")
+           << (frame_runtime_.jump_landing_state_arm_now ? "true" : "false")
+           << ",\"terrain_fall_phase\":" << (frame_runtime_.terrain_fall_phase ? "true" : "false")
            << ",\"bounce_response_active\":"
            << (interaction_runtime.bounce_response_active ? "true" : "false")
            << ",\"bounce_response_follow_active\":"
@@ -1722,16 +1710,16 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"bounce_camera_delay_hold_pending\":"
            << (interaction_runtime.bounce_camera_delay_hold_pending ? "true" : "false")
            << ",\"contour_ground_motion\":"
-           << (contour_ground_motion_ ? "true" : "false")
+           << (frame_runtime_.contour_ground_motion ? "true" : "false")
            << ",\"interaction_reference_x\":" << interaction_runtime.reference_x
            << ",\"interaction_reference_y\":" << interaction_runtime.reference_y
            << ",\"random_state\":" << random_state_
-           << ",\"terrain_input_world_x\":" << terrain_input_world_x_
-           << ",\"terrain_input_world_y\":" << terrain_input_world_y_
+           << ",\"terrain_input_world_x\":" << frame_runtime_.terrain_input_world_x
+           << ",\"terrain_input_world_y\":" << frame_runtime_.terrain_input_world_y
            << ",\"checkpoint_terrain_behavior_override\":"
-           << (checkpoint_terrain_behavior_override_ ? "true" : "false")
+           << (frame_runtime_.checkpoint_terrain_behavior_override ? "true" : "false")
            << ",\"checkpoint_terrain_behavior\":"
-           << static_cast<unsigned>(checkpoint_terrain_behavior_)
+           << static_cast<unsigned>(frame_runtime_.checkpoint_terrain_behavior)
            << ",\"actor_system_snapshot_mode\":"
            << (actors_.snapshot_mode() ? "true" : "false")
            << ",\"deferred_animation_spawn\":";
@@ -1777,21 +1765,21 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"return_pc\":" << actor_animation.return_pc() << "}";
     }
     output << "]}";
-    if (scheduler_trace_enabled_) {
+    if (frame_runtime_.scheduler_trace_enabled) {
         output << ",\"causal\":{\"phase_order\":[";
-        for (std::size_t index = 0; index < scheduler_phases_.size(); ++index) {
+        for (std::size_t index = 0; index < frame_runtime_.scheduler_phases.size(); ++index) {
             if (index != 0) output << ",";
-            output << "\"" << scheduler_phases_[index].name << "\"";
+            output << "\"" << frame_runtime_.scheduler_phases[index].name << "\"";
         }
         output << "],\"phase_pcs\":[";
-        for (std::size_t index = 0; index < scheduler_phases_.size(); ++index) {
+        for (std::size_t index = 0; index < frame_runtime_.scheduler_phases.size(); ++index) {
             if (index != 0) output << ",";
-            output << scheduler_phases_[index].rom_entry_pc;
+            output << frame_runtime_.scheduler_phases[index].rom_entry_pc;
         }
         output << "],\"writer_pcs\":[";
-        for (std::size_t index = 0; index < scheduler_writer_pcs_.size(); ++index) {
+        for (std::size_t index = 0; index < frame_runtime_.scheduler_writer_pcs.size(); ++index) {
             if (index != 0) output << ",";
-            output << scheduler_writer_pcs_[index];
+            output << frame_runtime_.scheduler_writer_pcs[index];
         }
         output << "]}";
     }
@@ -1884,23 +1872,23 @@ void Engine::write_checkpoint(std::ostream& output) const {
     writer.boolean(interaction_runtime.camera_delay_pending);
     writer.boolean(interaction_runtime.actor_triggered);
     writer.boolean(interaction_runtime.player_collision_pending);
-    writer.boolean(checkpoint_animation_selector_pending_);
+    writer.boolean(frame_runtime_.checkpoint_animation_selector_pending);
     writer.boolean(interaction_runtime.surface_interaction_pending);
     writer.boolean(interaction_runtime.surface_interaction_active);
-    writer.boolean(jump_landing_state_arm_pending_);
-    writer.boolean(jump_landing_state_arm_now_);
-    writer.boolean(terrain_fall_phase_);
+    writer.boolean(frame_runtime_.jump_landing_state_arm_pending);
+    writer.boolean(frame_runtime_.jump_landing_state_arm_now);
+    writer.boolean(frame_runtime_.terrain_fall_phase);
     writer.boolean(interaction_runtime.bounce_response_active);
     writer.boolean(interaction_runtime.bounce_response_follow_active);
     writer.boolean(interaction_runtime.bounce_camera_delay_hold_pending);
-    writer.boolean(contour_ground_motion_);
+    writer.boolean(frame_runtime_.contour_ground_motion);
     writer.i32(interaction_runtime.reference_x);
     writer.i32(interaction_runtime.reference_y);
     writer.u32(random_state_);
-    writer.i32(terrain_input_world_x_);
-    writer.i32(terrain_input_world_y_);
-    writer.boolean(checkpoint_terrain_behavior_override_);
-    writer.u8(checkpoint_terrain_behavior_);
+    writer.i32(frame_runtime_.terrain_input_world_x);
+    writer.i32(frame_runtime_.terrain_input_world_y);
+    writer.boolean(frame_runtime_.checkpoint_terrain_behavior_override);
+    writer.u8(frame_runtime_.checkpoint_terrain_behavior);
 
     writer.boolean(render_model_.loaded());
     writer.byte_vector(render_model_.checkpoint_vram());
@@ -1918,7 +1906,7 @@ void Engine::write_checkpoint(std::ostream& output) const {
     );
     writer.i32(frame_);
     writer.u8(frame_phase_);
-    writer.i32(last_ground_direction_);
+    writer.i32(frame_runtime_.last_ground_direction);
     writer.boolean(quit_);
 }
 
@@ -2004,17 +1992,17 @@ void Engine::read_checkpoint(std::istream& input) {
     player_ = player;
     camera_ = camera;
     interactions_.restore_runtime(interaction_runtime);
-    checkpoint_animation_selector_pending_ = checkpoint_animation_selector_pending;
-    jump_landing_state_arm_pending_ = jump_landing_state_arm_pending;
-    jump_landing_state_arm_now_ = jump_landing_state_arm_now;
-    terrain_fall_phase_ = terrain_fall_phase;
-    contour_ground_motion_ = contour_ground_motion;
+    frame_runtime_.checkpoint_animation_selector_pending = checkpoint_animation_selector_pending;
+    frame_runtime_.jump_landing_state_arm_pending = jump_landing_state_arm_pending;
+    frame_runtime_.jump_landing_state_arm_now = jump_landing_state_arm_now;
+    frame_runtime_.terrain_fall_phase = terrain_fall_phase;
+    frame_runtime_.contour_ground_motion = contour_ground_motion;
     random_state_ = random_state;
-    terrain_input_world_x_ = terrain_input_world_x;
-    terrain_input_world_y_ = terrain_input_world_y;
-    checkpoint_terrain_behavior_override_ = checkpoint_terrain_behavior_override;
-    checkpoint_terrain_behavior_ = checkpoint_terrain_behavior;
-    actor_movement_deferred_.fill(false);
+    frame_runtime_.terrain_input_world_x = terrain_input_world_x;
+    frame_runtime_.terrain_input_world_y = terrain_input_world_y;
+    frame_runtime_.checkpoint_terrain_behavior_override = checkpoint_terrain_behavior_override;
+    frame_runtime_.checkpoint_terrain_behavior = checkpoint_terrain_behavior;
+    frame_runtime_.actor_movement_deferred.fill(false);
     render_model_.load_checkpoint(
         std::move(vdp_checkpoint_vram),
         std::move(vdp_checkpoint_vsram),
@@ -2024,7 +2012,7 @@ void Engine::read_checkpoint(std::istream& input) {
     );
     frame_ = frame;
     frame_phase_ = frame_phase;
-    last_ground_direction_ = last_ground_direction;
+    frame_runtime_.last_ground_direction = last_ground_direction;
     quit_ = quit;
     level_events_.restore(RomAddress{level_event_cursor}, level_event_tick);
     level_event_exit_started_ = level_event_exit_started;
