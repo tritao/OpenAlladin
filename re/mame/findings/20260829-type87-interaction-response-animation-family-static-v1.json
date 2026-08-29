@@ -1,0 +1,68 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type87-interaction-response-animation-family-targets.json",
+  "templates": [
+    "0x001B7C4C ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE -> 0x00123B38",
+    "0x001B7C60 ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD -> 0x00123C84"
+  ],
+  "streams": [
+    {
+      "address": "0x00123AC4",
+      "name": "ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_A",
+      "range": "0x00123AC4-0x00123AFF",
+      "size": 60,
+      "terminal": "FC80 at 0x00123AFE",
+      "decoded": "0x18C2 lead-in, timer phases 0x87/0x02, 0x186A-0x187E presentation sequence, EF advance, return"
+    },
+    {
+      "address": "0x00123B00",
+      "name": "ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_B",
+      "range": "0x00123B00-0x00123B37",
+      "size": 56,
+      "terminal": "FC80 at 0x00123B36",
+      "decoded": "0x18C2 lead-in, timer phases 0x85/0x8F, 0x18C6-0x18DE presentation sequence, return"
+    },
+    {
+      "address": "0x00123B38",
+      "name": "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE",
+      "range": "0x00123B38-0x00123C83",
+      "size": 332,
+      "decoded": "Calls phase A, spawns the Type-0x84 response child and death template, gates the ten-record collision-response F5 sequence on player Y distance, applies F1 offset 0x0028, and loops through phase A/phase B at 0x00123C6A"
+    },
+    {
+      "address": "0x00123C84",
+      "name": "ACTOR_ANIM_TYPE84_TYPE87_RESPONSE_CHILD",
+      "range": "0x00123C84-0x00123CF7",
+      "size": 116,
+      "decoded": "F4 state gate, F5 Type-0x8D child, 0x1882-0x18BE frame sequence, ED type-0x7E publication, ED field write, EC clear"
+    }
+  ],
+  "aliases": [
+    {
+      "address": "0x00123B66",
+      "name": "ACTOR_ANIM_TYPE87_COLLISION_RESPONSE_ENTRY",
+      "alias_of": "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE",
+      "entry_offset": 46
+    },
+    {
+      "address": "0x00123C6A",
+      "name": "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE_LOOP",
+      "alias_of": "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE",
+      "entry_offset": 306
+    }
+  ],
+  "boundary_basis": [
+    "Direct Type-0x87 and Type-0x84 template animation pointers",
+    "Exact FC80 helper returns and stream decoder output",
+    "Direct child root boundary at 0x00123C84",
+    "Established adjacent Type-0x0F root at 0x00123CF8"
+  ],
+  "conclusion": "The formerly unknown 0x00123AC4-0x00123CF7 band is a complete Type-0x87 interaction-response family. Two shared FC-return presentation phases, the Type-0x87 root with its collision-response and loop entries, and the Type-0x84 child root are now range-bounded; embedded entries remain aliases so the band has one owner per byte.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

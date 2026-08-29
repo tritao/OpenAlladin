@@ -314,6 +314,36 @@ def test_shared_type84_0f22_response_range_is_exact():
     assert symbol.end < following.address
 
 
+def test_type87_interaction_response_animation_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00123AC4: (0x00123AFF, "ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_A"),
+        0x00123B00: (0x00123B37, "ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_B"),
+        0x00123B38: (0x00123C83, "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE"),
+        0x00123C84: (0x00123CF7, "ACTOR_ANIM_TYPE84_TYPE87_RESPONSE_CHILD"),
+    }
+    owners = []
+    for address, (end, name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        owners.append((symbol.address, symbol.end))
+    assert all(right < next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
+
+    collision = symbols.at(0x00123B66, include_ranges=False)
+    assert collision is not None
+    assert collision.name == "ACTOR_ANIM_TYPE87_COLLISION_RESPONSE_ENTRY"
+    assert collision.metadata["alias_of"] == "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE"
+    assert collision.metadata["entry_offset"] == 46
+
+    loop = symbols.at(0x00123C6A, include_ranges=False)
+    assert loop is not None
+    assert loop.name == "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE_LOOP"
+    assert loop.metadata["alias_of"] == "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE"
+    assert loop.metadata["entry_offset"] == 306
+
+
 def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)

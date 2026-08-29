@@ -1,0 +1,106 @@
+{
+  "format": "openaladdin-type87-interaction-response-animation-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the complete Type-0x87 interaction-response animation family in the formerly unknown 0x00123AC4-0x00123CF7 band.",
+  "templates": [
+    {
+      "address": "0x001B7C4C",
+      "name": "ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE",
+      "animation_root": "0x00123B38",
+      "role": "Direct Type-0x87 interaction-response actor template"
+    },
+    {
+      "address": "0x001B7C60",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD",
+      "animation_root": "0x00123C84",
+      "role": "F5-spawned Type-0x84 response child"
+    }
+  ],
+  "streams": [
+    {
+      "address": "0x00123AC4",
+      "name": "ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_A",
+      "range": ["0x00123AC4", "0x00123AFF"],
+      "size": 60,
+      "callers": ["0x00123B3A", "0x00123C6A"],
+      "decoded": [
+        "Frames 0x18C2, 0x186A-0x187E, and the return sequence through 0x18C2",
+        "EE timers 0x87 and 0x02",
+        "EF advance at 0x00123AEC",
+        "FC80 return at 0x00123AFE"
+      ]
+    },
+    {
+      "address": "0x00123B00",
+      "name": "ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_B",
+      "range": ["0x00123B00", "0x00123B37"],
+      "size": 56,
+      "callers": ["0x00123C74"],
+      "decoded": [
+        "Frames 0x18C2 and 0x18C6-0x18DE",
+        "EE timers 0x85 and 0x8F",
+        "FC80 return at 0x00123B36"
+      ]
+    },
+    {
+      "address": "0x00123B38",
+      "name": "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE",
+      "range": ["0x00123B38", "0x00123C83"],
+      "size": 332,
+      "decoded": [
+        "Initial 0x18C2 frame and FC call to phase A",
+        "EE timer 0x89",
+        "F5 Type-0x84 child at 0x00123B44 using ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD",
+        "F5 ACTOR_TEMPLATE_DEATH_84 at 0x00123B56",
+        "Embedded collision-response entry at 0x00123B66 gates on player Y distance 0x40",
+        "Ten F5 records target ACTOR_TEMPLATE_COLLISION_RESPONSE at 0x001B7ABC",
+        "F1 actor-relative offset 0x0028 at 0x00123C66",
+        "Embedded loop at 0x00123C6A calls both shared phases and loops at 0x00123C7E"
+      ],
+      "embedded_entries": [
+        {
+          "address": "0x00123B66",
+          "name": "ACTOR_ANIM_TYPE87_COLLISION_RESPONSE_ENTRY",
+          "entry_offset": 46,
+          "ownership": "alias"
+        },
+        {
+          "address": "0x00123C6A",
+          "name": "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE_LOOP",
+          "entry_offset": 306,
+          "ownership": "alias"
+        }
+      ]
+    },
+    {
+      "address": "0x00123C84",
+      "name": "ACTOR_ANIM_TYPE84_TYPE87_RESPONSE_CHILD",
+      "range": ["0x00123C84", "0x00123CF7"],
+      "size": 116,
+      "producer_sites": ["0x00123B44"],
+      "decoded": [
+        "F4 child-state gate loops to 0x00123C84",
+        "F5 ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE at 0x00123C90",
+        "Frames 0x1882-0x18BE",
+        "ED publishes actor type 0x7E at 0x00123CEA",
+        "ED writes the encoded child field at 0x00123CF0",
+        "EC 0x01 clears actor state at 0x00123CF6"
+      ]
+    }
+  ],
+  "boundary_basis": [
+    "Exact animation-root pointer 0x00123B38 in ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE",
+    "Exact child animation-root pointer 0x00123C84 in ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD",
+    "FC80 terminals at 0x00123AFE and 0x00123B36",
+    "Parent boundary immediately before the directly selected child root at 0x00123C84",
+    "Child boundary immediately before the established ACTOR_ANIM_TYPE0F_INTERACTION root at 0x00123CF8",
+    "Embedded 0x00123B66 and 0x00123C6A entries are aliases into the parent range"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
