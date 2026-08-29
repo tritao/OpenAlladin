@@ -824,6 +824,14 @@
   evidence:
     - ghidra_decompile_001B211C
     - ghidra_vdp_scene_setup_targets
+0x001B33D8:
+  name: VDP_WriteDescendingBytePatternAtVRAMStart
+  confidence: decompiled
+  description: "Programs VDP VRAM address zero and emits 20 low-byte values twice each: 0x00 followed by the descending sequence 0xFF through 0xED, for 40 total words."
+  evidence:
+    - ghidra_disassembly_001B33D8
+    - vdp_descending_pattern_targets
+    - vdp_descending_pattern_static_decompilation
 0x001B2510:
   name: VDP_ClearVRAM_C000
   confidence: decompiled
