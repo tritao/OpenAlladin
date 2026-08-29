@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "actor-vm-lifecycle-static",
+    "purpose": "Resolve the shared F6/8C actor-retirement paths separately from EC/82 cursor clearing, and record the exact F7/8D player-facing rule."
+  },
+  "targets": [
+    { "address": "0x001AD0FC", "name": "ActorVM_DestroyOrClearActor" },
+    { "address": "0x001AD138", "name": "ActorVM_FaceTowardPlayer" },
+    { "address": "0x001ABE6E", "name": "Actor_ClearAndRelease" },
+    { "address": "0x001AE372", "name": "Actor_ClearOwnedResources" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },
+    { "address": "0x00FF7E02", "name": "PLAYER_WORLD_X" }
+  ]
+}

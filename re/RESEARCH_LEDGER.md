@@ -1763,6 +1763,17 @@ A2 for the linked collision cleanup path at `0x001ABE52`. This is an ABI-level
 variant, not a separate allocator or slot-reuse rule. Details are recorded in
 `re/mame/findings/20260828-actor-resource-clear-variant-v1.json`.
 
+The shared actor-VM lifecycle handlers are now separated from cursor clearing.
+`ActorVM_DestroyOrClearActor` at `0x001AD0FC` handles animation opcode `F6` and
+movement opcode `8C`: the zero-mode path with actor flag bit `+0x3C.2` clear
+retires the current record and releases only the linked record's link/flag
+state, while the alternate path calls `Actor_ClearAndRelease` and clears both
+current and linked types/resources. `EC/82` remains cursor-only. The paired
+`ActorVM_FaceTowardPlayer` handler at `0x001AD138` clears actor field `+0x09`
+and sets it to `0xFF` only when `PLAYER_WORLD_X` is left of the actor. The exact
+static result is recorded in
+`re/mame/findings/20260829-actor-vm-lifecycle-static-decompilation-v1.json`.
+
 ## Actor collision terminal response (20260828)
 
 The shared response block at `0x001AC484` is now decoded from its callers at
@@ -2936,3 +2947,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-player-terrain-alignment-animation-static-decompilation-v1` | recorded-static-decompilation | Player terrain-alignment response range-bounded with snap-to-grid selection, timer phases, state gates, randomized loops, and exact boundary before the dynamic selector |
 | `20260829-terminal-transition-animation-static-decompilation-v1` | recorded-static-decompilation | Primary and secondary Type-0x84 terminal-transition presentation streams independently named and range-bounded before the shared Type-0x29 transition stream |
 | `20260829-player-transition-response-animation-static-decompilation-v1` | recorded-static-decompilation | Player transition-flag response prefix and shared terrain-bounce prelude named and range-bounded with exact selector and stream handoffs |
+| `20260829-actor-vm-lifecycle-static-decompilation-v1` | recorded-static-decompilation | F6/8C actor retirement paths separated from EC/82 cursor clearing, with exact linked cleanup and F7/8D player-facing semantics |

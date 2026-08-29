@@ -1,0 +1,58 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-vm-lifecycle-static-targets.json",
+  "handlers": [
+    {
+      "address": "0x001AD0FC",
+      "name": "ActorVM_DestroyOrClearActor",
+      "opcodes": ["0xF6", "0x8C"],
+      "mode_field": "The command payload byte at A2+0x01 selects the ordinary versus linked cleanup path.",
+      "ordinary_path": {
+        "condition": "A2+0x01 == 0 and current actor flags +0x3C bit 0x04 is clear",
+        "writes": [
+          "clear current actor type at +0x00",
+          "release current actor resources through Actor_ClearOwnedResources",
+          "when +0x3E links another actor, clear the linked actor's +0x3E link and clear its +0x3C bit 0x04"
+        ],
+        "linked_record": "The linked actor remains typed and resource-owned on this ordinary path; only its link and bit 0x04 are released."
+      },
+      "full_cleanup_path": {
+        "condition": "A2+0x01 != 0 or current actor flags +0x3C bit 0x04 is set",
+        "callee": "Actor_ClearAndRelease",
+        "writes": [
+          "clear current actor type and owned resources",
+          "when +0x3E links another actor, clear the linked actor type and owned resources"
+        ]
+      },
+      "lifecycle_boundary": "This handler can retire an actor record. It is distinct from EC/82, whose selected cursor write only clears animation_pc or movement_pc while leaving the actor type and frame/resource state live."
+    },
+    {
+      "address": "0x001AD138",
+      "name": "ActorVM_FaceTowardPlayer",
+      "opcodes": ["0xF7", "0x8D"],
+      "writes": [
+        "clear actor horizontal-facing byte at +0x09",
+        "set actor +0x09 to 0xFF when PLAYER_WORLD_X is less than actor X at +0x02"
+      ],
+      "result": "The actor faces right/normal when the player is at or to the right of its X coordinate and faces left/flipped when the player is left of it."
+    }
+  ],
+  "shared_helpers": {
+    "0x001ABE6E": "Actor_ClearAndRelease clears the current type/resources and then clears the linked actor type/resources when +0x3E is nonzero.",
+    "0x001AE372": "Actor_ClearOwnedResources releases the actor-owned resource list selected by +0x29 and clears its resource pointers."
+  },
+  "evidence": [
+    "Exact 68000 decompilation of ActorVM_DestroyOrClearActor at 0x001AD0FC",
+    "Exact 68000 decompilation of ActorVM_FaceTowardPlayer at 0x001AD138",
+    "ActorVM dispatch table mapping F6/8C and F7/8D",
+    "Existing EC/82 cursor-clear finding and actor record lifecycle contract"
+  ],
+  "conclusion": "The actor VM lifecycle boundary is explicit: EC/82 is cursor-only, while F6/8C chooses a link-preserving retirement path or full current-and-linked cleanup from the command mode and actor flag bit. F7/8D deterministically derives the actor horizontal-facing byte from PLAYER_WORLD_X versus actor X.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

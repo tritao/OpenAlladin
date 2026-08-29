@@ -3099,19 +3099,21 @@
 0x001AD0FC:
   name: ActorVM_DestroyOrClearActor
   confidence: decompiled
-  description: Shared actor-VM destroy handler for animation opcode F6 and movement opcode 8C; consumes the command byte, clears or retires the current actor when its linked-state gate permits, and removes the linked actor state through the common cleanup path.
+  description: Shared actor-VM destroy handler for animation opcode F6 and movement opcode 8C. When the command mode byte is zero and actor flags +0x3C bit 0x04 is clear, it clears the current type/resources and releases a linked actor's link/bit-0x04 state; otherwise it calls Actor_ClearAndRelease to clear current and linked types/resources. This is actor retirement, distinct from EC/82 cursor clearing.
   evidence:
     - ghidra_disassembly_001AD0FC
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - actor_vm_lifecycle_static_decompilation
 0x001AD138:
   name: ActorVM_FaceTowardPlayer
   confidence: decompiled
-  description: Shared actor-VM facing handler for animation opcode F7 and movement opcode 8D; clears the actor horizontal-facing byte and sets it when the player X coordinate lies on the opposite side of the actor.
+  description: Shared actor-VM facing handler for animation opcode F7 and movement opcode 8D; clears actor field +0x09 and sets it to 0xFF exactly when PLAYER_WORLD_X is less than actor X at +0x02.
   evidence:
     - ghidra_disassembly_001AD138
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - actor_vm_lifecycle_static_decompilation
 0x001AD2DC:
   name: ActorVM_AdjustMovementTowardPlayer
   confidence: decompiled
