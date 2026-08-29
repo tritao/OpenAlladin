@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-camera-damping-tables-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "routine": {
+    "address": "0x001AA90C",
+    "name": "Camera_UpdateFollow"
+  },
+  "tables": [
+    {
+      "address": "0x00002A52",
+      "name": "CAMERA_HORIZONTAL_DAMPING_TABLE",
+      "size": 338,
+      "end": "0x00002BA3",
+      "index": "abs(PLAYER_X - CAMERA_HORIZONTAL_THRESHOLD)",
+      "value": "horizontal camera-follow step"
+    },
+    {
+      "address": "0x00002BA4",
+      "name": "CAMERA_VERTICAL_DAMPING_TABLE",
+      "size": 212,
+      "end": "0x00002C77",
+      "index": "abs(PLAYER_Y - CAMERA_VERTICAL_THRESHOLD)",
+      "value": "vertical camera-follow step"
+    }
+  ],
+  "evidence": [
+    "Camera_UpdateFollow loads the horizontal table base with LEA 0x2A52 and the vertical table base with LEA 0x2BA4.",
+    "The horizontal table is bounded by the direct vertical-table base; the vertical table is bounded by LEVEL_TABLE at 0x2C78.",
+    "The existing player-camera finding and runtime trace establish the threshold, scroll, and camera-coordinate update contract."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

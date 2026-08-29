@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/camera-damping-tables-targets.json",
+  "routine": {
+    "address": "0x001AA90C",
+    "name": "Camera_UpdateFollow"
+  },
+  "tables": [
+    {
+      "address": "0x00002A52",
+      "name": "CAMERA_HORIZONTAL_DAMPING_TABLE",
+      "range": ["0x00002A52", "0x00002BA3"],
+      "bytes": 338,
+      "lookup": "abs(PLAYER_X - CAMERA_HORIZONTAL_THRESHOLD)",
+      "consumer_effect": "A nonzero byte advances or retreats PLAYER_X while applying the opposite WORLD_CAMERA_X and CAMERA_SCROLL_X step; a zero byte leaves the horizontal camera state unchanged."
+    },
+    {
+      "address": "0x00002BA4",
+      "name": "CAMERA_VERTICAL_DAMPING_TABLE",
+      "range": ["0x00002BA4", "0x00002C77"],
+      "bytes": 212,
+      "lookup": "abs(PLAYER_Y - CAMERA_VERTICAL_THRESHOLD)",
+      "consumer_effect": "A nonzero byte advances or retreats PLAYER_Y while applying the opposite WORLD_CAMERA_Y and CAMERA_SCROLL_Y step; a zero byte leaves the vertical camera state unchanged."
+    }
+  ],
+  "boundaries": {
+    "horizontal_end": "The horizontal table ends immediately before the directly loaded vertical table at 0x00002BA4.",
+    "vertical_end": "The vertical table ends immediately before LEVEL_TABLE at 0x00002C78."
+  },
+  "evidence": [
+    "Exact 68000 disassembly of Camera_UpdateFollow at 0x001AA90C",
+    "Existing player-camera threshold/scroll algorithm and runtime validation",
+    "ROM byte ranges between the two direct table bases and LEVEL_TABLE"
+  ],
+  "conclusion": "The two fixed camera-follow lookup tables are now canonical data ranges. Their separate horizontal and vertical ownership is explicit, and the adjacent LEVEL_TABLE boundary is no longer an anonymous layout gap.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
