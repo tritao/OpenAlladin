@@ -1,0 +1,82 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-interaction-response-animation-static-targets.json",
+  "streams": [
+    {
+      "address": "0x001226B2",
+      "name": "PLAYER_ANIM_INTERACTION_CAMERA_RESPONSE",
+      "range": "0x001226B2-0x001226CD",
+      "bytes": 28,
+      "frames": ["0x0796", "0x079A", "0x079E", "0x07A2", "0x07A2", "0x07A6"],
+      "state_writes": [
+        "ED at 0x001226B4 writes player interaction animation state field 0xF0E7 to 1",
+        "ED at 0x001226C6 writes player interaction response field 0xF0E9 to 0xFF"
+      ],
+      "timer": "EE 0x93 at 0x001226C2",
+      "handoff": "F8 at 0x001226CC -> dynamic player animation state selection",
+      "selector": "Player_ProcessInteractionState selects this stream in CAMERA_SPECIAL_MODE and arms PLAYER_INTERACTION_ANIMATION_GATE plus SCENE_SCRIPT_COUNTDOWN."
+    },
+    {
+      "address": "0x001226CE",
+      "name": "PLAYER_ANIM_INTERACTION_RECOVERY",
+      "range": "0x001226CE-0x001226E3",
+      "bytes": 22,
+      "frames": ["0x0B9E", "0x0B9E", "0x0BA2", "0x0BA6", "0x0BA6", "0x0BAA", "0x0BAE", "0x0BB2", "0x0BB2"],
+      "timer": "EE 0x83 at 0x001226D8",
+      "handoff": "F8 at 0x001226E2 -> dynamic player animation state selection",
+      "selectors": [
+        "Player_ProcessInteractionState selects this stream for normal interaction recovery when pending/state locks are clear",
+        "ActorType15_PlayerCollisionHandler selects this stream after its shared collision block when player action-response field 0xF0D8 is clear"
+      ]
+    },
+    {
+      "address": "0x001226E4",
+      "name": "PLAYER_ANIM_ACTION_SPECIAL_CAMERA",
+      "range": "0x001226E4-0x00122719",
+      "bytes": 54,
+      "frames": ["0x074E", "0x0752", "0x0756", "0x075A", "0x075E", "0x075E", "0x0762", "0x0762"],
+      "state_writes": "ED writes player action-response field 0xF0D8 to 1 after each frame phase",
+      "handoff": "F8 at 0x00122718 -> dynamic player animation state selection",
+      "selector": "Player_SelectActionAnimation selects this stream when CAMERA_SPECIAL_MODE is nonzero and the action query succeeds."
+    },
+    {
+      "address": "0x001227C2",
+      "name": "PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE",
+      "range": "0x001227C2-0x001227D1",
+      "bytes": 16,
+      "frames": ["0x07AE", "0x07AE", "0x07B2", "0x07B2", "0x07B6", "0x07B6"],
+      "audio": "F3 at 0x001227C6 plays sound 0x21",
+      "handoff": "F8 at 0x001227D0 -> dynamic player animation state selection",
+      "selector": "ActorType1E_PlayerCollisionHandler selects this variant when TERRAIN_LANDING_STATE is active, PLAYER_INTERACTION_TRANSITION_LOCK is clear, and player action-response field 0xF0D8 equals 1."
+    },
+    {
+      "address": "0x001228A0",
+      "name": "PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE_ALTERNATE",
+      "range": "0x001228A0-0x001228AB",
+      "bytes": 12,
+      "frames": ["0x0A9A", "0x0A8A", "0x0A86", "0x0A86"],
+      "audio": "F3 at 0x001228A2 plays sound 0x21",
+      "handoff": "F8 at 0x001228AA -> dynamic player animation state selection",
+      "selector": "ActorType1E_PlayerCollisionHandler selects this variant under the same landing/transition gates when player action-response field 0xF0D8 is not 1."
+    }
+  ],
+  "boundaries": {
+    "stream_group": "The five entries are independently bounded by exact F8 terminators and adjacent roots: 0x001226B2/0x001226CE/0x001226E4 end at 0x001226CD/0x001226E3/0x00122719, and the Type-1E responses end at 0x001227D1 and 0x001228AB immediately before their adjacent action roots."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Player_ProcessInteractionState exact camera/normal branches",
+    "Player_SelectActionAnimation special-camera branch",
+    "ActorType1E_PlayerCollisionHandler exact response selection",
+    "ActorType15_PlayerCollisionHandler normal recovery selection",
+    "Exact non-overlapping stream boundaries"
+  ],
+  "conclusion": "The interaction-response bridge is now named and range-bounded. Camera-special interaction recovery arms the presentation gate and scene countdown, normal recovery is shared with the Type-0x15 collision path, special-camera action has its own state-publication stream, and Type-0x1E collision response selects one of two sound-producing presentation variants based on the action-response state field.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

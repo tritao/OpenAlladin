@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-interaction-response-animation-static",
+    "purpose": "Resolve camera-special/normal interaction recovery, special-camera action, and the two Type-0x1E player-collision response streams."
+  },
+  "targets": [
+    { "address": "0x001226B2", "name": "PLAYER_ANIM_INTERACTION_CAMERA_RESPONSE" },
+    { "address": "0x001226CE", "name": "PLAYER_ANIM_INTERACTION_RECOVERY" },
+    { "address": "0x001226E4", "name": "PLAYER_ANIM_ACTION_SPECIAL_CAMERA" },
+    { "address": "0x001227C2", "name": "PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE" },
+    { "address": "0x001228A0", "name": "PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE_ALTERNATE" },
+    { "address": "0x001A9502", "name": "Player_SelectActionAnimation" },
+    { "address": "0x001AE4F8", "name": "Player_ProcessInteractionState" },
+    { "address": "0x001AE796", "name": "ActorType1E_PlayerCollisionHandler" },
+    { "address": "0x001AE978", "name": "ActorType15_PlayerCollisionHandler" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF0D8", "name": "PLAYER_ACTION_RESPONSE_STATE_A" },
+    { "address": "0x00FFF0E7", "name": "PLAYER_INTERACTION_ANIMATION_GATE" },
+    { "address": "0x00FFF0E9", "name": "PLAYER_INTERACTION_RESPONSE_PHASE" },
+    { "address": "0x00FFF0D3", "name": "PLAYER_INTERACTION_MARKER" },
+    { "address": "0x00FFF115", "name": "TERRAIN_RESPONSE_LATCH" },
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" }
+  ]
+}
