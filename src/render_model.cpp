@@ -94,7 +94,7 @@ void GenesisRenderModel::reset() {
     scroll_ = {};
     palette_.fill({});
     sprites_ = {};
-    scene_tile_writes_.clear();
+    scene_resources_ = {};
 }
 
 void GenesisRenderModel::load_preview(
@@ -134,7 +134,7 @@ void GenesisRenderModel::load_checkpoint(
     checkpoint_palette_ = std::move(palette);
     registers_ = registers;
     loaded_ = loaded;
-    scene_tile_writes_.clear();
+    scene_resources_ = {};
     refresh_views();
 }
 
@@ -144,10 +144,13 @@ void GenesisRenderModel::write_tile(
     std::uint8_t tile_row,
     std::uint16_t tile_base
 ) {
-    scene_tile_writes_.push_back({x, y, tile_row, tile_base});
+    scene_resources_.tile_writes.push_back(GenesisTileWrite{
+        x, y, tile_row, tile_base
+    });
 }
 
 void GenesisRenderModel::clear_c000() {
+    scene_resources_.c000_cleared = true;
     if (loaded_ && vram_.size() >= 0xE000) {
         std::fill(vram_.begin() + 0xC000, vram_.begin() + 0xE000, 0);
         refresh_views();
@@ -155,10 +158,8 @@ void GenesisRenderModel::clear_c000() {
 }
 
 void GenesisRenderModel::prepare_frame_and_palette() {
-    // The recovered command currently clears C000 before the palette service;
-    // palette progression will become a typed operation as its source banks
-    // are promoted into GameData.
     clear_c000();
+    scene_resources_.frame_palette_prepared = true;
 }
 
 void GenesisRenderModel::render_preview_background(

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 
@@ -19,6 +20,25 @@ struct GenesisPlaneState {
     std::uint16_t vram_base = 0;
     int width_tiles = 32;
     int height_tiles = 32;
+};
+
+struct GenesisTileWrite {
+    std::uint16_t x = 0;
+    std::uint16_t y = 0;
+    std::uint8_t tile_row = 0;
+    std::uint16_t tile_base = 0;
+};
+
+// Typed state for scene-resource operations that do not yet have a complete
+// direct plane-map representation. The recovered VDP row-command table still
+// determines the final destination of a tile write, so retain the operation
+// until that table is promoted rather than guessing a plane address. C000
+// clears and palette preparation are observable semantic operations even when
+// no checkpoint-backed VDP memory is loaded.
+struct GenesisSceneResourceState {
+    std::vector<GenesisTileWrite> tile_writes;
+    bool c000_cleared = false;
+    bool frame_palette_prepared = false;
 };
 
 struct GenesisScrollState {
@@ -127,8 +147,15 @@ public:
     const std::vector<std::uint8_t>& checkpoint_vsram() const { return vsram_; }
     const std::vector<GenesisColor>& checkpoint_palette() const { return checkpoint_palette_; }
     const std::array<std::uint8_t, 32>& checkpoint_registers() const { return registers_; }
-    const std::vector<std::array<std::uint16_t, 4>>& scene_tile_writes() const {
-        return scene_tile_writes_;
+    const GenesisSceneResourceState& scene_resources() const {
+        return scene_resources_;
+    }
+    const std::vector<GenesisTileWrite>& scene_tile_writes() const {
+        return scene_resources_.tile_writes;
+    }
+    bool c000_cleared() const { return scene_resources_.c000_cleared; }
+    bool frame_palette_prepared() const {
+        return scene_resources_.frame_palette_prepared;
     }
 
 private:
@@ -158,10 +185,7 @@ private:
     std::array<GenesisColor, 64> palette_{};
     GenesisSpriteList sprites_{};
 
-    // SceneResourceVm writes are retained as semantic tile operations until
-    // the recovered VDP row-command table is promoted to a direct plane map.
-    // This makes the callback observable without guessing a destination.
-    std::vector<std::array<std::uint16_t, 4>> scene_tile_writes_;
+    GenesisSceneResourceState scene_resources_{};
 };
 
 }  // namespace openaladdin

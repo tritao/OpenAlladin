@@ -56,16 +56,24 @@ int main() {
 
     model.write_tile(4, 7, 3, 0x4000);
     assert(model.scene_tile_writes().size() == 1);
-    assert(model.scene_tile_writes()[0][0] == 4);
-    assert(model.scene_tile_writes()[0][1] == 7);
-    assert(model.scene_tile_writes()[0][2] == 3);
-    assert(model.scene_tile_writes()[0][3] == 0x4000);
+    assert(model.scene_tile_writes()[0].x == 4);
+    assert(model.scene_tile_writes()[0].y == 7);
+    assert(model.scene_tile_writes()[0].tile_row == 3);
+    assert(model.scene_tile_writes()[0].tile_base == 0x4000);
+    assert(!model.c000_cleared());
+    assert(!model.frame_palette_prepared());
 
     model.clear_c000();
+    assert(model.c000_cleared());
+    assert(!model.frame_palette_prepared());
     assert(model.checkpoint_vram()[0xBFFF] == 1);
     assert(model.checkpoint_vram()[0xC000] == 0);
     assert(model.checkpoint_vram()[0xDFFF] == 0);
     assert(model.checkpoint_vram()[0xE000] == 4);
+
+    model.prepare_frame_and_palette();
+    assert(model.c000_cleared());
+    assert(model.frame_palette_prepared());
 
     std::vector<std::uint32_t> framebuffer(320 * 224, 0);
     model.render(framebuffer, 320, 224);
@@ -74,6 +82,8 @@ int main() {
     model.reset();
     assert(!model.loaded());
     assert(model.scene_tile_writes().empty());
+    assert(!model.c000_cleared());
+    assert(!model.frame_palette_prepared());
     assert(model.checkpoint_vram().empty());
 
     std::vector<GenesisColor> preview_palette(64);
