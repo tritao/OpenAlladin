@@ -1679,6 +1679,22 @@
     - ghidra_level01_surface_mode_consumer_targeted_decompile
     - ghidra_disassembly_001B3818
     - rom_rnc_level01_001434C4
+0x001AC386:
+  name: Terrain_ClearMapWordsForBehaviorPair4F_FE
+  confidence: decompiled
+  description: Scans the map work-RAM word range and clears words whose terrain behavior lookup is 0x4F or 0xFE.
+  evidence:
+    - ghidra_disassembly_001AC386
+    - terrain_map_behavior_clear_targets
+    - level01_transfer_reachability_closure
+0x001AC3BC:
+  name: Terrain_ClearMapWordsForBehaviorPair4E_FD
+  confidence: decompiled
+  description: Scans the map work-RAM word range and clears words whose terrain behavior lookup is 0x4E or 0xFD.
+  evidence:
+    - ghidra_disassembly_001AC3BC
+    - terrain_map_behavior_clear_targets
+    - level01_transfer_reachability_closure
 0x001B3912:
   name: TerrainResource_ReadDecodedSize
   confidence: decompiled

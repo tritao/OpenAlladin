@@ -2238,6 +2238,21 @@ The static result is recorded in
 `re/mame/findings/20260829-windowed-resource-decoder-v1.json` and
 `re/ghidra/targets/windowed-resource-decoder-targets.json`.
 
+## Dynamic terrain map behavior cleanup (20260829)
+
+The paired routines at `0x001AC386` and `0x001AC3BC` now have explicit
+terrain-side names. Each scans the map work-RAM word range beginning at
+`0x00FF0000`, shifts each map word right by one to index
+`TERRAIN_BEHAVIOR_INDEX_TABLE`, and clears the map word when its behavior
+matches the routine's pair. The first handles behaviors `0x4F` and `0xFE`;
+the second handles `0x4E` and `0xFD`. This records the dynamic map mutation
+found in the Level 01 transfer closure without conflating it with a writer to
+the load-time terrain behavior table.
+
+The static result is recorded in
+`re/mame/findings/20260829-terrain-map-behavior-clear-v1.json` and
+`re/ghidra/targets/terrain-map-behavior-clear-targets.json`.
+
 ## Camera terrain viewport renderer (20260829)
 
 The helper at `0x001AA81A` is now named `Camera_RenderTerrainViewport`. It
