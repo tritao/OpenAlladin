@@ -463,6 +463,30 @@ def test_type5e84_pair_movement_stream_family_is_exact_and_contiguous():
         assert jump["branch_target"] == "0x0011F890"
 
 
+def test_type84_death_terminal_movement_stream_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x00120352, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_MOVE_TYPE84_DEATH_TERMINAL"
+    assert stream.end == 0x0012035F
+    assert stream.size == 14
+    assert stream.metadata["type"] == "movement_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoded = MovementDecoder(rom).decode_stream(
+        0x00120352,
+        max_steps=256,
+        max_bytes=512,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 14
+    assert decoded["stopped_reason"] == "control_flow_cycle"
+    assert decoded["steps"][-1]["address"] == "0x00120352"
+    jump = next(command for command in decoded["steps"][-1]["commands"] if command["opcode"] == "0x80")
+    assert jump["branch_target"] == "0x00120352"
+
+
 def test_shared_movement_root_family_is_exact():
     symbols = SymbolStore()
     expected = {

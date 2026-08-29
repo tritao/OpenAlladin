@@ -1834,6 +1834,16 @@
     - interaction_spawn_type5e84_pair_static_decompilation
     - movement_stream_decoder
 
+0x00120352:
+  name: ACTOR_MOVE_TYPE84_DEATH_TERMINAL
+  type: movement_stream
+  size: 14
+  confidence: decompiled
+  description: Type-0x84 terminal-death movement response written by ACTOR_ANIM_DEATH_84_SHARED_CONTINUATION at 0x0012305C. Its exact 14-byte owner applies the signed vertical step and actor-field arithmetic, then loops from 0x0012035A back to its own root.
+  evidence:
+    - type84_death_animation_static_decompilation
+    - movement_stream_decoder
+
 0x00120360:
   name: ACTOR_MOVE_TRANSITION_PRESENTATION_LEAD_IN
   size: 96
