@@ -693,6 +693,17 @@
     - actor_type8d_response_stream_decode
     - mame_type_34_handler_overlap_trace
 
+0x001241F8:
+  name: ACTOR_ANIM_TYPE89_RANDOM_VARIANT
+  size: 46
+  confidence: decompiled
+  description: Type-0x89 random-variant animation selected by ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT. Its packed 46-byte region starts at 0x001241F8, provides the alternate entry at 0x001241FC used by Actor_ApplyRandomSpawnVariation, cycles the 0x16AE/0x16B2/0x16B6/0x16BA frame groups with clear commands, and loops from 0x00124220 to 0x00124208.
+  evidence:
+    - type89_animation_static_decompilation
+    - actor_template_type89_random_variant
+    - actor_spawn_variation_targets
+    - animation_stream_decoder
+
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
   confidence: probable
@@ -1716,7 +1727,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x89 source template loaded by the two random-variant spawn branches at 0x001B67CC and 0x001B67E6; it has no movement stream, uses animation stream 0x001241F8, and owns two resources before Actor_ApplyRandomSpawnVariation applies the branch-specific variation.
+  description: Type-0x89 source template loaded by the two random-variant spawn branches at 0x001B67CC and 0x001B67E6; it has no movement stream, uses ACTOR_ANIM_TYPE89_RANDOM_VARIANT at 0x001241F8, and owns two resources before Actor_ApplyRandomSpawnVariation optionally switches to its embedded entry at 0x001241FC and applies the branch-specific variation.
   evidence:
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs

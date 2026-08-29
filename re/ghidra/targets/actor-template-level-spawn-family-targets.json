@@ -26,7 +26,7 @@
       "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
       "runtime_type": "0x89",
       "movement_stream": null,
-      "animation_stream": "0x001241F8",
+      "animation_stream": "0x001241F8 ACTOR_ANIM_TYPE89_RANDOM_VARIANT",
       "resource_count": "0x02",
       "post_spawn": "Both branches invoke Actor_ApplyRandomSpawnVariation after allocation."
     },

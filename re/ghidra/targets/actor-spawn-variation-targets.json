@@ -14,7 +14,7 @@
       "random_source": "0x001B3032 TerrainScene5RandomStep",
       "effects": [
         "Adds (random_low_3_bits - 3) to actor A5 offset 0x02.",
-        "If the next random value bit 0 is set, writes animation root 0x001241FC to actor offset 0x20.",
+        "If the next random value bit 0 is set, writes ACTOR_ANIM_TYPE89_RANDOM_VARIANT embedded entry 0x001241FC to actor offset 0x20.",
         "If the next random value bit 1 is set, sets actor offset 0x35."
       ]
     },

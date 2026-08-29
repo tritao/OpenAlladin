@@ -2727,7 +2727,7 @@
 0x001B6794:
   name: Actor_ApplyRandomSpawnVariation
   confidence: decompiled
-  description: Applies two PRNG-derived post-spawn variations to the actor record in A5; it adds an X displacement in the range -3..+4, optionally replaces the animation root with 0x001241FC, and optionally sets the transient flag at actor offset 0x35.
+  description: Applies two PRNG-derived post-spawn variations to the actor record in A5; it adds an X displacement in the range -3..+4, optionally replaces the animation entry with ACTOR_ANIM_TYPE89_RANDOM_VARIANT embedded entry 0x001241FC, and optionally sets the transient flag at actor offset 0x35.
   evidence:
     - ghidra_disassembly_001B6794
     - ghidra_actor_spawn_variation_targets

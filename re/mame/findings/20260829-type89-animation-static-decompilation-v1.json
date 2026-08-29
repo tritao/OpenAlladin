@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type89-animation-static-targets.json",
+  "stream": {
+    "address": "0x001241F8",
+    "name": "ACTOR_ANIM_TYPE89_RANDOM_VARIANT",
+    "range": "0x001241F8-0x00124225",
+    "bytes": 46,
+    "entries": {
+      "root": "0x001241F8",
+      "optional_random_variant": "0x001241FC"
+    },
+    "frame_groups": ["0x16AE", "0x16B2", "0x16B6", "0x16BA"],
+    "loop_target": "0x00124208"
+  },
+  "consumer": {
+    "template": "0x001B7DA0 ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT",
+    "spawn_handler": "0x001B67C2 InteractionSpawn_Type89RandomPair",
+    "variation_helper": "0x001B6794 Actor_ApplyRandomSpawnVariation",
+    "variation_entry": "0x001241FC"
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact Type-0x89 template record",
+    "Direct PRNG-derived embedded-entry write",
+    "Established boundary before the following 0x00124226 stream"
+  ],
+  "conclusion": "The Type-0x89 animation is closed as a 46-byte random-variant frame loop. Its alternate entry is internal to the same owned range and is selected by the existing post-spawn variation helper.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -18,7 +18,7 @@
       "address": "0x001B7DA0",
       "name": "ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT",
       "consumer": "0x001B67CC and 0x001B67E6",
-      "behavior": "Backward-slot type-0x89 source followed by Actor_ApplyRandomSpawnVariation."
+      "behavior": "Backward-slot type-0x89 source using ACTOR_ANIM_TYPE89_RANDOM_VARIANT at 0x001241F8, followed by Actor_ApplyRandomSpawnVariation and its optional embedded-entry switch."
     },
     {
       "address": "0x001B7DB4",
