@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-targeted-data-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "audio-z80-driver-image",
+    "purpose": "Record the exact ROM extent of the Z80 sound-driver image copied during reset bootstrap without asserting an internal Z80 symbol map."
+  },
+  "consumer": {
+    "address": "0x001E573A",
+    "name": "Audio_LoadZ80Driver",
+    "destination": "0x00A00000",
+    "copy_range": "0x001B8480-0x001B9D05"
+  },
+  "target": {
+    "address": "0x001B8480",
+    "name": "AUDIO_Z80_DRIVER_IMAGE",
+    "size": 6278,
+    "end": "0x001B9D05",
+    "layout_class": "AUDIO_DATA"
+  },
+  "hardware_references": [
+    { "address": "0x00A11100", "name": "Z80_BUS_REQUEST" },
+    { "address": "0x00A11200", "name": "Z80_RESET" }
+  ],
+  "boundary": "The copy loop terminates immediately after source address 0x001B9D05; the following ROM bytes are not included in the driver image."
+}

@@ -1,5 +1,15 @@
 # Address-keyed data knowledge. Hardware names are deliberately explicit so
 # both Ghidra and MAME can use the same names.
+0x001B8480:
+  name: AUDIO_Z80_DRIVER_IMAGE
+  type: z80_binary
+  size: 0x1886
+  confidence: confirmed
+  description: Exact ROM image copied by Audio_LoadZ80Driver to Z80 RAM at 0x00A00000 during reset bootstrap; the image occupies 0x001B8480-0x001B9D05 and its internal Z80 code/data layout remains a separate analysis target.
+  evidence:
+    - ghidra_audio_bootstrap_disassembly
+    - audio_z80_bootstrap
+
 0xFF0000:
   name: WORK_RAM_BASE
   type: address
