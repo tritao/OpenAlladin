@@ -2741,3 +2741,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-interaction-spawn-mid-family-static-v1` | recorded-static-decompilation | Mid interaction-table spawn handlers named from exact 68000 bodies, template selection, and coordinate offsets |
 | `20260829-interaction-spawn-type5e84-pair-static-v1` | recorded-static-decompilation | E0-E6/E8-E9/F9 paired type-0x5E/type-0x84 interaction handlers named from exact bodies, movement streams, gates, and anchor offsets |
 | `20260829-interaction-spawn-type5e-threshold-static-v1` | recorded-static-decompilation | Selector-FB thresholded type-0x5E plus C0-C7/57 type-0x29 and 3D type-0x67 interaction handlers named from exact bodies |
+| `20260829-interaction-spawn-response-family-static-v1` | recorded-static-decompilation | Selectors 18/23-25/29-2A/46 response and spawn handlers named from exact templates, palette/audio side effects, and facing updates |

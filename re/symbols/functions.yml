@@ -3818,3 +3818,51 @@
     - ghidra_disassembly_001B6BF0
     - interaction_spawn_type5e-threshold-targets
     - interaction_spawn_type5e-threshold-static-decompilation
+0x001B6C0E:
+  name: InteractionSpawn_Type05VariantA_23_24
+  confidence: decompiled
+  description: Interaction selectors 0x23 and 0x24 handler that spawns the type-0x05 variant-A template through LevelObjectSpawnEntry and refreshes palette band 2 when the palette-update gate is clear.
+  evidence:
+    - ghidra_disassembly_001B6C0E
+    - interaction_spawn_response_family_targets
+    - interaction_spawn_response_family_static_decompilation
+0x001B6C2E:
+  name: InteractionSpawn_Type05VariantC_25
+  confidence: decompiled
+  description: Interaction selector 0x25 handler that spawns the type-0x05 variant-C template through LevelObjectSpawnEntry and refreshes palette band 2 when the palette-update gate is clear.
+  evidence:
+    - ghidra_disassembly_001B6C2E
+    - interaction_spawn_response_family_targets
+    - interaction_spawn_response_family_static_decompilation
+0x001B6C4E:
+  name: InteractionSpawn_Type03_46
+  confidence: decompiled
+  description: Interaction selector 0x46 handler that forward-spawns the established type-0x03 interaction template.
+  evidence:
+    - ghidra_disassembly_001B6C4E
+    - interaction_spawn_response_family_targets
+    - interaction_spawn_response_family_static_decompilation
+0x001B6C5A:
+  name: InteractionSpawn_Type10WithAudio_18
+  confidence: decompiled
+  description: Interaction selector 0x18 handler that reverse-spawns the type-0x10 interaction-response template and, when the audio gate 0x00FFF57F is active, queues prepared command 0x32 through the audio service.
+  evidence:
+    - ghidra_disassembly_001B6C5A
+    - interaction_spawn_response_family_targets
+    - interaction_spawn_response_family_static_decompilation
+0x001B6C96:
+  name: InteractionSpawn_Type2F_2A
+  confidence: decompiled
+  description: Interaction selector 0x2A handler that reverse-spawns the established type-0x2F interaction template.
+  evidence:
+    - ghidra_disassembly_001B6C96
+    - interaction_spawn_response_family_targets
+    - interaction_spawn_response_family_static_decompilation
+0x001B6CA2:
+  name: InteractionSpawn_Type2F_Facing_29
+  confidence: decompiled
+  description: Interaction selector 0x29 handler that reverse-spawns the type-0x2F interaction template and sets the spawned actor's facing byte when allocation succeeds.
+  evidence:
+    - ghidra_disassembly_001B6CA2
+    - interaction_spawn_response_family_targets
+    - interaction_spawn_response_family_static_decompilation

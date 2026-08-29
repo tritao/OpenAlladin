@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-interaction-spawn-response-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0x18, 0x23-0x25, 0x29-0x2A, 0x46",
+    "newly_named_targets": 6,
+    "handlers": [
+      { "selectors": ["0x23", "0x24"], "address": "0x001B6C0E", "name": "InteractionSpawn_Type05VariantA_23_24", "template": "0x001B7A80 ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_A", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry", "palette_update": "0x001292B2 when 0x00FFF175 is clear" },
+      { "selectors": ["0x25"], "address": "0x001B6C2E", "name": "InteractionSpawn_Type05VariantC_25", "template": "0x001B7AA8 ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_C", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry", "palette_update": "0x001292B2 when 0x00FFF175 is clear" },
+      { "selectors": ["0x46"], "address": "0x001B6C4E", "name": "InteractionSpawn_Type03_46", "template": "0x001B7A6C ACTOR_TEMPLATE_TYPE_03_INTERACTION", "spawn_helper": "0x001B524E InteractionSpawn_ForwardSlot" },
+      { "selectors": ["0x18"], "address": "0x001B6C5A", "name": "InteractionSpawn_Type10WithAudio_18", "template": "0x001B7B84 ACTOR_TEMPLATE_TYPE_10_INTERACTION_RESPONSE", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot", "audio_command": "0x32 when 0x00FFF57F is active" },
+      { "selectors": ["0x2A"], "address": "0x001B6C96", "name": "InteractionSpawn_Type2F_2A", "template": "0x001B7BD4 ACTOR_TEMPLATE_TYPE_2F_INTERACTION", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot" },
+      { "selectors": ["0x29"], "address": "0x001B6CA2", "name": "InteractionSpawn_Type2F_Facing_29", "template": "0x001B7BD4 ACTOR_TEMPLATE_TYPE_2F_INTERACTION", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot", "post_spawn": "set actor facing byte at offset 0x09" }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Previously established type-0x03, type-0x05, type-0x10, and type-0x2F template records",
+    "Direct palette, audio-gate, and facing-byte side effects"
+  ],
+  "conclusion": "This response/spawn block is statically closed at selector membership, template selection, allocator choice, and direct palette/audio/facing side effects. User-facing actor roles remain unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
