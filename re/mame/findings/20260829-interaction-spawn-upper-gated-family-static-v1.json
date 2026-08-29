@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-spawn-upper-gated-family-targets.json",
+  "dispatch_table": {
+    "address": "0x004154",
+    "name": "INTERACTION_HANDLER_TABLE",
+    "newly_named_targets": 4
+  },
+  "handler_contracts": [
+    { "address": "0x001B6E7A", "selector": "0x12", "template": "ACTOR_TEMPLATE_UPPER_TYPE20", "effect": "direct LevelObjectSpawnEntry allocation" },
+    { "address": "0x001B6E86", "selector": "0x64", "gate": "0x00FFF107", "template": "ACTOR_TEMPLATE_UPPER_TYPE1E", "effect": "allocate only when gate is nonzero" },
+    { "address": "0x001B6E9C", "selector": "0x63", "gate": "0x00FFF105", "template": "ACTOR_TEMPLATE_TYPE_1F", "effect": "allocate only when gate is nonzero" },
+    { "address": "0x001B6EA6", "selector": "0x10", "template": "ACTOR_TEMPLATE_TYPE_1F", "effect": "direct LevelObjectSpawnEntry allocation" }
+  ],
+  "evidence": [
+    "Direct template loads and terminating LevelObjectSpawnEntry calls",
+    "Exact selector membership from INTERACTION_HANDLER_TABLE",
+    "Gate-test branches in the selector-0x64 and selector-0x63 bodies"
+  ],
+  "conclusion": "The four upper-route handlers are statically closed at their direct allocation and gate contracts; no new route or user-facing role is inferred.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
