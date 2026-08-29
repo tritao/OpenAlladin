@@ -1,0 +1,59 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-additional-family-targets.json",
+  "templates": [
+    {
+      "address": "0x001B7B34",
+      "name": "ACTOR_TEMPLATE_TYPE_06",
+      "producer": "selector 0x5C through 0x001B6870",
+      "runtime_type": "0x06",
+      "movement_stream": null,
+      "animation_stream": "0x00123200"
+    },
+    {
+      "address": "0x001B7C38",
+      "name": "ACTOR_TEMPLATE_TYPE_1F",
+      "producer": "selector 0x10 through 0x001B6EA6",
+      "runtime_type": "0x1F",
+      "movement_stream": "0x00120432",
+      "animation_stream": "0x00123900"
+    },
+    {
+      "address": "0x001B79E0",
+      "name": "ACTOR_TEMPLATE_TYPE_43",
+      "producer": "selector 0x40 through 0x001B7232",
+      "runtime_type": "0x43",
+      "movement_stream": null,
+      "animation_stream": "0x00124450"
+    },
+    {
+      "address": "0x001B8098",
+      "name": "ACTOR_TEMPLATE_F5_TYPE_7F",
+      "producer": "type-0x43 interaction path through AnimationVM opcode F5",
+      "runtime_type": "0x7F",
+      "movement_stream": null
+    },
+    {
+      "address": "0x001B805C",
+      "name": "ACTOR_TEMPLATE_TERRAIN_TYPE_84",
+      "producer": "TerrainScene5SpawnResponse at 0x001B56F4",
+      "runtime_type": "0x84"
+    },
+    {
+      "address": "0x001B7E2C",
+      "name": "ACTOR_TEMPLATE_TYPE_8C",
+      "producer": "terrain landing-state spawn path",
+      "runtime_type": "0x8C",
+      "animation_stream": "0x00124408"
+    }
+  ],
+  "conclusion": "Six additional actor-template entries have direct producer and runtime evidence. Each is recorded as a 20-byte compact source record; no neighboring unclassified record is promoted by association alone.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

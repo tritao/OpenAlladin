@@ -1145,3 +1145,63 @@
   evidence:
     - level01_f5_actor_boundary
     - ghidra_actor_template_initializer_001AE30A
+
+0x001B7B34:
+  name: ACTOR_TEMPLATE_TYPE_06
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Selector-0x5C actor template for runtime type 0x06; it has no movement stream and uses animation stream 0x00123200.
+  evidence:
+    - level01_upstream_transfer_writer_graph
+    - level01_upper_frontier_initializer_targets
+
+0x001B7C38:
+  name: ACTOR_TEMPLATE_TYPE_1F
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Selector-0x10 actor template for runtime type 0x1F; it uses movement stream 0x00120432 and animation stream 0x00123900.
+  evidence:
+    - level01_upstream_transfer_writer_graph
+    - level01_upper_frontier_initializer_targets
+
+0x001B79E0:
+  name: ACTOR_TEMPLATE_TYPE_43
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Selector-0x40 actor template for runtime type 0x43; it has no movement stream and uses animation stream 0x00124450.
+  evidence:
+    - level01_upstream_transfer_writer_graph
+    - level01_upper_frontier_initializer_targets
+
+0x001B8098:
+  name: ACTOR_TEMPLATE_F5_TYPE_7F
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Stationary type-0x7F child-actor template supplied by the type-0x43 interaction path through AnimationVM opcode F5.
+  evidence:
+    - level01_upstream_transfer_writer_graph
+    - level01_upper_frontier_initializer_targets
+
+0x001B805C:
+  name: ACTOR_TEMPLATE_TERRAIN_TYPE_84
+  type: actor_template
+  size: 20
+  confidence: trace_validated
+  description: Type-0x84 terrain-response template installed by TerrainScene5SpawnResponse after its scene-state-5 random gate and slot allocation.
+  evidence:
+    - ghidra_disassembly_001B54E0
+    - mame_terrain_handler_25_scene5_spawn_trace
+
+0x001B7E2C:
+  name: ACTOR_TEMPLATE_TYPE_8C
+  type: actor_template
+  size: 20
+  confidence: trace_validated
+  description: Type-0x8C landing-response template used by the terrain resolver's landing-state spawn path; its animation stream is 0x00124408.
+  evidence:
+    - player_terrain_experiments
+    - level01_upper_frontier_initializer_targets
