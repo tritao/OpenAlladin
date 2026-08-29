@@ -3002,3 +3002,147 @@
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
+0x001AC850:
+  name: ActorVM_JumpToStreamPointer
+  confidence: decompiled
+  description: Shared actor-VM jump handler for animation opcode EA and movement opcode 80; advances past the command header and replaces the stream cursor with the following 32-bit pointer.
+  evidence:
+    - ghidra_disassembly_001AC850
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AC856:
+  name: ActorVM_ToggleFacingState
+  confidence: decompiled
+  description: Shared actor-VM toggle handler for animation opcode EB and movement opcode 81; consumes a selector byte and complements either the actor horizontal-facing byte at +0x09 or the alternate facing/state byte at +0x35.
+  evidence:
+    - ghidra_disassembly_001AC856
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AC86C:
+  name: ActorVM_ClearAnimationOrMovementCursor
+  confidence: decompiled
+  description: Shared actor-VM clear handler for animation opcode EC and movement opcode 82; clears the actor animation cursor at +0x20 or movement cursor at +0x0A according to the command byte and publishes the current VM stream scratch pointer.
+  evidence:
+    - ghidra_disassembly_001AC86C
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AC89A:
+  name: ActorVM_WriteActorOrRamValue
+  confidence: decompiled
+  description: Shared actor-VM write handler for animation opcode ED and movement opcode 83; selects actor-relative or absolute addressing, chooses byte/word/long width, and writes the following stream value.
+  evidence:
+    - ghidra_disassembly_001AC89A
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AC8E0:
+  name: ActorVM_SetStreamTimerAndLoop
+  confidence: decompiled
+  description: Shared actor-VM timer handler for animation opcode EE and movement opcode 84; stores the command byte in the selected animation or movement timer field and publishes the current stream pointer as its loop target.
+  evidence:
+    - ghidra_disassembly_001AC8E0
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AC926:
+  name: ActorVM_RewindStreamAfterTimer
+  confidence: decompiled
+  description: Shared actor-VM loop-delay handler for animation opcode EF and movement opcode 85; consumes the command header, decrements the selected actor timer, and restores the corresponding stream cursor when the timer remains active.
+  evidence:
+    - ghidra_disassembly_001AC926
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AC950:
+  name: ActorVM_RandomBranch
+  confidence: decompiled
+  description: Shared actor-VM random-branch handler for animation opcode F0 and movement opcode 86; compares the next random byte with the stream operand and either follows the inline pointer or skips the pointer payload.
+  evidence:
+    - ghidra_disassembly_001AC950
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AC968:
+  name: ActorVM_ApplyRelativeOffset
+  confidence: decompiled
+  description: Shared actor-VM offset handler for animation opcode F1 and movement opcode 87; applies a signed word to actor X or Y, negating it when the selected facing byte is set.
+  evidence:
+    - ghidra_disassembly_001AC968
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AC98E:
+  name: ActorVM_FlagTestBranch
+  confidence: decompiled
+  description: Shared actor-VM flag-test handler for animation opcode F2 and movement opcode 88; tests a selected bit in an actor-relative or absolute byte and follows the inline pointer or skips it according to the command condition.
+  evidence:
+    - ghidra_disassembly_001AC98E
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001ACA14:
+  name: ActorVM_CompareBranch
+  confidence: decompiled
+  description: Shared actor-VM compare handler for animation opcode F4 and movement opcode 8A; compares a byte, word, or long stream value against an actor-relative or absolute target using the encoded equality and ordering condition, then follows or skips the inline pointer.
+  evidence:
+    - ghidra_disassembly_001ACA14
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AD0FC:
+  name: ActorVM_DestroyOrClearActor
+  confidence: decompiled
+  description: Shared actor-VM destroy handler for animation opcode F6 and movement opcode 8C; consumes the command byte, clears or retires the current actor when its linked-state gate permits, and removes the linked actor state through the common cleanup path.
+  evidence:
+    - ghidra_disassembly_001AD0FC
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AD138:
+  name: ActorVM_FaceTowardPlayer
+  confidence: decompiled
+  description: Shared actor-VM facing handler for animation opcode F7 and movement opcode 8D; clears the actor horizontal-facing byte and sets it when the player X coordinate lies on the opposite side of the actor.
+  evidence:
+    - ghidra_disassembly_001AD138
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AD2DC:
+  name: ActorVM_AdjustMovementTowardPlayer
+  confidence: decompiled
+  description: Shared actor-VM movement-vector handler for animation opcode F9 and movement opcode 8F; adjusts the actor movement words at +0x18 and +0x1A toward the player's X/Y position, with signed direction selected by the distance comparisons.
+  evidence:
+    - ghidra_disassembly_001AD2DC
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AD314:
+  name: ActorVM_AddOrSubtractValue
+  confidence: decompiled
+  description: Shared actor-VM arithmetic handler for animation opcode FA and movement opcode 90; selects actor-relative or absolute byte/word/long storage and adds or subtracts the stream operand according to the encoded mode bits.
+  evidence:
+    - ghidra_disassembly_001AD314
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AD372:
+  name: ActorVM_PushStreamParameter
+  confidence: decompiled
+  description: Shared actor-VM parameter handler for animation opcode FB and movement opcode 91; advances past the command header and pushes the following longword value for the deferred callback convention.
+  evidence:
+    - ghidra_disassembly_001AD372
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AD378:
+  name: ActorVM_CallOrReturnStream
+  confidence: decompiled
+  description: Shared actor-VM stream-call handler for animation opcode FC and movement opcode 92; saves the post-command cursor in actor field +0x38 and jumps to an inline pointer, or restores the saved cursor for the return form.
+  evidence:
+    - ghidra_disassembly_001AD378
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AD392:
+  name: ActorVM_PlayerWithinXBranch
+  confidence: decompiled
+  description: Shared actor-VM horizontal-distance handler for animation opcode FD and movement opcode 93; follows the inline pointer when the player's X distance from the actor is within the supplied threshold and otherwise skips it.
+  evidence:
+    - ghidra_disassembly_001AD392
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation
+0x001AD3C2:
+  name: ActorVM_PlayerWithinYBranch
+  confidence: decompiled
+  description: Shared actor-VM vertical-distance handler for animation opcode FE and movement opcode 94; follows the inline pointer when the player's Y distance from the actor is within the supplied threshold and otherwise skips it.
+  evidence:
+    - ghidra_disassembly_001AD3C2
+    - actor_vm_dispatch_family_targets
+    - actor_vm_dispatch_family_static_decompilation

@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-actor-vm-dispatch-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004954 ACTOR_VM_DISPATCH_TABLE",
+    "animation_commands": "0xEA-0xFE",
+    "movement_commands": "0x80-0x94",
+    "shared_handlers": [
+      { "index": "0x00", "animation": "0xEA", "movement": "0x80", "address": "0x001AC850", "name": "ActorVM_JumpToStreamPointer" },
+      { "index": "0x01", "animation": "0xEB", "movement": "0x81", "address": "0x001AC856", "name": "ActorVM_ToggleFacingState" },
+      { "index": "0x02", "animation": "0xEC", "movement": "0x82", "address": "0x001AC86C", "name": "ActorVM_ClearAnimationOrMovementCursor" },
+      { "index": "0x03", "animation": "0xED", "movement": "0x83", "address": "0x001AC89A", "name": "ActorVM_WriteActorOrRamValue" },
+      { "index": "0x04", "animation": "0xEE", "movement": "0x84", "address": "0x001AC8E0", "name": "ActorVM_SetStreamTimerAndLoop" },
+      { "index": "0x05", "animation": "0xEF", "movement": "0x85", "address": "0x001AC926", "name": "ActorVM_RewindStreamAfterTimer" },
+      { "index": "0x06", "animation": "0xF0", "movement": "0x86", "address": "0x001AC950", "name": "ActorVM_RandomBranch" },
+      { "index": "0x07", "animation": "0xF1", "movement": "0x87", "address": "0x001AC968", "name": "ActorVM_ApplyRelativeOffset" },
+      { "index": "0x08", "animation": "0xF2", "movement": "0x88", "address": "0x001AC98E", "name": "ActorVM_FlagTestBranch" },
+      { "index": "0x09", "animation": "0xF3", "movement": "0x89", "address": "0x001AC9D2", "name": "ActorVM_HandleSoundEventCommand" },
+      { "index": "0x0A", "animation": "0xF4", "movement": "0x8A", "address": "0x001ACA14", "name": "ActorVM_CompareBranch" },
+      { "index": "0x0B", "animation": "0xF5", "movement": "0x8B", "address": "0x001AD00E", "name": "AnimationVM_SpawnOrCopyActor" },
+      { "index": "0x0C", "animation": "0xF6", "movement": "0x8C", "address": "0x001AD0FC", "name": "ActorVM_DestroyOrClearActor" },
+      { "index": "0x0D", "animation": "0xF7", "movement": "0x8D", "address": "0x001AD138", "name": "ActorVM_FaceTowardPlayer" },
+      { "index": "0x0E", "animation": "0xF8", "movement": "0x8E", "address": "0x001AD150", "name": "Player_ResetAnimationResponseGate" },
+      { "index": "0x0F", "animation": "0xF9", "movement": "0x8F", "address": "0x001AD2DC", "name": "ActorVM_AdjustMovementTowardPlayer" },
+      { "index": "0x10", "animation": "0xFA", "movement": "0x90", "address": "0x001AD314", "name": "ActorVM_AddOrSubtractValue" },
+      { "index": "0x11", "animation": "0xFB", "movement": "0x91", "address": "0x001AD372", "name": "ActorVM_PushStreamParameter" },
+      { "index": "0x12", "animation": "0xFC", "movement": "0x92", "address": "0x001AD378", "name": "ActorVM_CallOrReturnStream" },
+      { "index": "0x13", "animation": "0xFD", "movement": "0x93", "address": "0x001AD392", "name": "ActorVM_PlayerWithinXBranch" },
+      { "index": "0x14", "animation": "0xFE", "movement": "0x94", "address": "0x001AD3C2", "name": "ActorVM_PlayerWithinYBranch" }
+    ]
+  },
+  "conclusion": "The complete shared actor-VM dispatch family is now named from exact 68000 bodies. The table is a one-to-one command mapping; no additional handler entry is implied beyond the 21 pointers shown here.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

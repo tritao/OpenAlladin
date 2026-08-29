@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-vm-dispatch-family-targets.json",
+  "dispatch_table": {
+    "address": "0x004954",
+    "name": "ACTOR_VM_DISPATCH_TABLE",
+    "animation_range": "0xEA-0xFE",
+    "movement_range": "0x80-0x94",
+    "indexing": "Animation opcode minus 0xEA, or movement opcode minus 0x80"
+  },
+  "handlers": [
+    { "address": "0x001AC850", "animation_opcode": "0xEA", "movement_opcode": "0x80", "behavior": "Replaces the stream cursor with the following longword pointer." },
+    { "address": "0x001AC856", "animation_opcode": "0xEB", "movement_opcode": "0x81", "behavior": "Complements the selected actor facing/state byte." },
+    { "address": "0x001AC86C", "animation_opcode": "0xEC", "movement_opcode": "0x82", "behavior": "Clears the selected animation or movement cursor." },
+    { "address": "0x001AC89A", "animation_opcode": "0xED", "movement_opcode": "0x83", "behavior": "Writes a byte, word, or long value to actor-relative or absolute memory." },
+    { "address": "0x001AC8E0", "animation_opcode": "0xEE", "movement_opcode": "0x84", "behavior": "Stores a selected timer byte and its stream-loop pointer." },
+    { "address": "0x001AC926", "animation_opcode": "0xEF", "movement_opcode": "0x85", "behavior": "Decrements the selected timer and rewinds to its saved loop pointer." },
+    { "address": "0x001AC950", "animation_opcode": "0xF0", "movement_opcode": "0x86", "behavior": "Takes an RNG comparison branch through an inline pointer." },
+    { "address": "0x001AC968", "animation_opcode": "0xF1", "movement_opcode": "0x87", "behavior": "Applies a facing-aware signed X or Y actor offset." },
+    { "address": "0x001AC98E", "animation_opcode": "0xF2", "movement_opcode": "0x88", "behavior": "Tests a selected bit and follows or skips an inline pointer." },
+    { "address": "0x001AC9D2", "animation_opcode": "0xF3", "movement_opcode": "0x89", "behavior": "Queues the actor-VM sound/event command according to the scene gate and high bit." },
+    { "address": "0x001ACA14", "animation_opcode": "0xF4", "movement_opcode": "0x8A", "behavior": "Performs encoded byte/word/long comparison and follows or skips an inline pointer." },
+    { "address": "0x001AD00E", "animation_opcode": "0xF5", "movement_opcode": "0x8B", "behavior": "Selects or allocates an actor and copies the command's spawn payload." },
+    { "address": "0x001AD0FC", "animation_opcode": "0xF6", "movement_opcode": "0x8C", "behavior": "Clears or retires the current actor through the linked cleanup path." },
+    { "address": "0x001AD138", "animation_opcode": "0xF7", "movement_opcode": "0x8D", "behavior": "Sets the actor horizontal-facing byte toward the player." },
+    { "address": "0x001AD150", "animation_opcode": "0xF8", "movement_opcode": "0x8E", "behavior": "Selects the actor's dynamic state stream through the established response-gate service." },
+    { "address": "0x001AD2DC", "animation_opcode": "0xF9", "movement_opcode": "0x8F", "behavior": "Adjusts actor movement words according to player X/Y distance." },
+    { "address": "0x001AD314", "animation_opcode": "0xFA", "movement_opcode": "0x90", "behavior": "Adds or subtracts a typed value from actor-relative or absolute memory." },
+    { "address": "0x001AD372", "animation_opcode": "0xFB", "movement_opcode": "0x91", "behavior": "Pushes the following longword stream parameter for the VM callback convention." },
+    { "address": "0x001AD378", "animation_opcode": "0xFC", "movement_opcode": "0x92", "behavior": "Calls an inline stream pointer or returns through actor field +0x38." },
+    { "address": "0x001AD392", "animation_opcode": "0xFD", "movement_opcode": "0x93", "behavior": "Branches on player-to-actor horizontal distance." },
+    { "address": "0x001AD3C2", "animation_opcode": "0xFE", "movement_opcode": "0x94", "behavior": "Branches on player-to-actor vertical distance." }
+  ],
+  "evidence": [
+    "Exact 68000 disassembly of every previously unnamed table target",
+    "AnimationDecoder command mapping in genie/vm/animation.py",
+    "MovementDecoder shared opcode mapping in genie/vm/movement.py",
+    "ACTOR_VM_DISPATCH_TABLE at ROM 0x004954"
+  ],
+  "conclusion": "All 18 previously anonymous dispatch targets are named without introducing a new actor lifecycle claim. The opcode family is shared by animation and movement streams, so names remain ActorVM-scoped except for the established animation spawn and response-gate services.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
