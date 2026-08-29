@@ -1377,6 +1377,30 @@ def test_type84_menu_presentation_child_a_animation_is_exact():
     ]
 
 
+def test_type64_interaction_animation_entry_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x00124CD8, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_ANIM_TYPE64_INTERACTION"
+    assert stream.end == 0x00124CDB
+    assert stream.size == 4
+    assert stream.metadata["type"] == "animation_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = load_animation_decoder().AnimationDecoder(rom)
+    decoded = decoder.decode_stream(
+        0x00124CD8,
+        max_instructions=8,
+        max_bytes=4,
+        follow_control_flow=False,
+    )
+    assert decoded["bytes_decoded"] == 4
+    assert decoded["stopped_reason"] == "byte_limit"
+    assert decoded["instructions"][0]["reference"] == "0x1696"
+    assert decoded["instructions"][1]["opcode"] == "0xEC"
+
+
 def test_scene_reset_secondary_animation_and_embedded_entry_are_exact():
     symbols = SymbolStore()
     root = symbols.at(0x00125EEE, include_ranges=False)

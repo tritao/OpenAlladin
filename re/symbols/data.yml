@@ -3475,6 +3475,16 @@
     - actor_animation_stream_family_static_decompilation
     - animation_stream_decoder
 
+0x00124CD8:
+  name: ACTOR_ANIM_TYPE64_INTERACTION
+  type: animation_stream
+  size: 4
+  confidence: decompiled
+  description: Compact Type-0x64 interaction animation entry selected by ACTOR_TEMPLATE_TYPE_64 at 0x001B7FBC. Its exact four-byte body presents frame 0x1696, clears actor state with EC01, and ends immediately before the separately owned Type-0x62 response entries.
+  evidence:
+    - actor_template_service_family_static_decompilation
+    - animation_stream_decoder
+
 0x00124CDC:
   name: ACTOR_ANIM_TYPE62_SCENE5_RESPONSE_ENTRY
   type: animation_stream
