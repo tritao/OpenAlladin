@@ -6,6 +6,8 @@
 
 namespace openaladdin {
 
+struct GameState;
+
 struct GenesisColor {
     std::uint8_t r = 0;
     std::uint8_t g = 0;
@@ -49,6 +51,21 @@ public:
 
     void reset();
 
+    // Bind the decoded preview planes used when no VDP checkpoint is
+    // available. These are render-model inputs rather than Level lookups so
+    // the frontend has one owner for backdrop, parallax, palette and camera
+    // sampling policy.
+    void load_preview(
+        int background_width,
+        int background_height,
+        const std::vector<std::uint8_t>& background_rgba,
+        int parallax_width,
+        int parallax_height,
+        const std::vector<std::uint8_t>& parallax_rgba,
+        const std::vector<GenesisColor>& palette,
+        bool rom_loaded
+    );
+
     void load_checkpoint(
         std::vector<std::uint8_t> vram,
         std::vector<std::uint8_t> vsram,
@@ -58,6 +75,16 @@ public:
     );
 
     bool loaded() const { return loaded_; }
+
+    int preview_background_width() const { return preview_background_width_; }
+    int preview_background_height() const { return preview_background_height_; }
+
+    void render_preview_background(
+        std::vector<std::uint32_t>& framebuffer,
+        int width,
+        int height,
+        const GameState& state
+    ) const;
 
     void write_tile(
         std::uint16_t x,
@@ -93,6 +120,16 @@ private:
     std::uint16_t word(int address) const;
 
     bool loaded_ = false;
+    bool preview_loaded_ = false;
+    bool preview_rom_loaded_ = false;
+    int preview_background_width_ = 0;
+    int preview_background_height_ = 0;
+    int preview_parallax_width_ = 0;
+    int preview_parallax_height_ = 0;
+    std::vector<std::uint8_t> preview_background_rgba_;
+    std::vector<std::uint8_t> preview_parallax_rgba_;
+    std::vector<GenesisColor> preview_palette_;
+
     std::vector<std::uint8_t> vram_;
     std::vector<std::uint8_t> vsram_;
     std::vector<GenesisColor> checkpoint_palette_;

@@ -8,45 +8,8 @@
 namespace openaladdin {
 namespace {
 
-constexpr int kBackgroundPlaneOriginOffset = 0x10;
-constexpr int kLevel01ParallaxSourceX = 0x79;
 constexpr int kPlayerVisualOffsetY = 0x100;
 constexpr int kActorVisualOffsetX = 3;
-
-int level01_parallax_source_x(int camera_x, int camera_y, int screen_y) {
-    if (camera_x != 16 || camera_y != 464) {
-        return kLevel01ParallaxSourceX;
-    }
-    if (screen_y >= 1 && screen_y <= 6) return 120;
-    if (screen_y >= 25 && screen_y <= 30) return 0;
-    if (screen_y >= 34 && screen_y <= 37) return 43;
-    switch (screen_y) {
-    case 42: return 22;
-    case 43:
-    case 44:
-    case 45: return 158;
-    default: return kLevel01ParallaxSourceX;
-    }
-}
-
-int level01_parallax_source_y(int camera_x, int camera_y, int screen_y) {
-    if (camera_x == 16 && camera_y == 464 && screen_y >= 43 && screen_y <= 45) {
-        return screen_y - 40;
-    }
-    return screen_y;
-}
-
-std::uint32_t rgba(
-    std::uint8_t r,
-    std::uint8_t g,
-    std::uint8_t b,
-    std::uint8_t a = 255
-) {
-    return static_cast<std::uint32_t>(r)
-        | (static_cast<std::uint32_t>(g) << 8)
-        | (static_cast<std::uint32_t>(b) << 16)
-        | (static_cast<std::uint32_t>(a) << 24);
-}
 
 int actor_palette_line(const ActorState& actor) {
     return static_cast<int>((actor.sprite_attribute >> 13) & 0x03);
@@ -74,7 +37,6 @@ void RenderPipeline::resize(int width, int height) {
 
 bool RenderPipeline::render(
     const GameState& state,
-    const Level& level,
     const GenesisRenderModel& render_model,
     const SpriteDatabase& sprites,
     const PlayerRenderState& player,
@@ -89,65 +51,19 @@ bool RenderPipeline::render(
         return false;
     }
     const int camera_render_x = std::clamp(
-        state.camera.x, 0, std::max(0, level.background_width() - width_));
+        state.camera.x,
+        0,
+        std::max(0, render_model.preview_background_width() - width_));
     const int camera_render_y = std::clamp(
-        state.camera.y, 0, std::max(0, level.background_height() - height_));
+        state.camera.y,
+        0,
+        std::max(0, render_model.preview_background_height() - height_));
 
     if (render_model.loaded()) {
         render_model.render(framebuffer_, width_, height_);
     } else {
-    const auto& background = level.background_rgba();
-    const auto& parallax = level.parallax_rgba();
-    const auto& palette = level.palette();
-    const std::uint32_t backdrop = palette.empty()
-        ? rgba(10, 10, 18)
-        : rgba(palette[0].r, palette[0].g, palette[0].b);
-    const int background_source_x = std::clamp(
-        state.camera.x + kBackgroundPlaneOriginOffset,
-        0,
-        std::max(0, level.background_width() - width_)
-    );
-    const int background_source_y = std::clamp(
-        state.camera.y + kBackgroundPlaneOriginOffset,
-        0,
-        std::max(0, level.background_height() - height_)
-    );
-    for (int y = 0; y < height_; ++y) {
-        for (int x = 0; x < width_; ++x) {
-            std::uint32_t pixel = backdrop;
-            if (level.parallax_width() > 0 && level.parallax_height() > 0) {
-                const int source_x = (
-                    (rom.empty()
-                        ? kLevel01ParallaxSourceX
-                        : level01_parallax_source_x(state.camera.x, state.camera.y, y)) + x
-                ) % level.parallax_width();
-                const int source_y = (
-                    rom.empty()
-                        ? y
-                        : level01_parallax_source_y(state.camera.x, state.camera.y, y)
-                ) % level.parallax_height();
-                const std::size_t source = static_cast<std::size_t>(
-                    (source_y * level.parallax_width() + source_x) * 4
-                );
-                if (!level.is_vdp_transparent(
-                        parallax[source], parallax[source + 1], parallax[source + 2])) {
-                    pixel = rgba(parallax[source], parallax[source + 1], parallax[source + 2]);
-                }
-            }
-            if (!background.empty()) {
-                const int source_x = background_source_x + x;
-                const int source_y = background_source_y + y;
-                const std::size_t source = static_cast<std::size_t>(
-                    (source_y * level.background_width() + source_x) * 4
-                );
-                if (!level.is_vdp_transparent(
-                        background[source], background[source + 1], background[source + 2])) {
-                    pixel = rgba(background[source], background[source + 1], background[source + 2]);
-                }
-            }
-            framebuffer_[static_cast<std::size_t>(y * width_ + x)] = pixel;
-        }
-    }
+        render_model.render_preview_background(
+            framebuffer_, width_, height_, state);
 
     // The level-01 SAT contains a small set of fixed HUD/static sprites
     // before the player chain. Their tile attributes are stable at the
@@ -191,7 +107,7 @@ bool RenderPipeline::render(
                 sprite.tile_address,
                 sprite.width_tiles,
                 sprite.height_tiles,
-                level.palette(),
+                sprites.palette(),
                 framebuffer_,
                 width_,
                 height_,

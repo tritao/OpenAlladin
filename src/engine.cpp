@@ -308,6 +308,21 @@ void Engine::load(
         rom_bytes_.clear();
     }
     game_data_.bind_rom(rom_bytes_);
+    std::vector<GenesisColor> preview_palette;
+    preview_palette.reserve(level_.palette().size());
+    for (const SDL_Color& color : level_.palette()) {
+        preview_palette.push_back(GenesisColor{color.r, color.g, color.b, color.a});
+    }
+    render_model_.load_preview(
+        level_.background_width(),
+        level_.background_height(),
+        level_.background_rgba(),
+        level_.parallax_width(),
+        level_.parallax_height(),
+        level_.parallax_rgba(),
+        preview_palette,
+        !rom_bytes_.empty()
+    );
     actor_lifecycle_.bind_rom(rom_bytes_);
     collisions_.bind_rom(rom_bytes_);
     interactions_.bind_rom(rom_bytes_);
@@ -2019,7 +2034,6 @@ void Engine::read_checkpoint(std::istream& input) {
 void Engine::render(SDL_Renderer* renderer) {
     const bool rendered = render_pipeline_.render(
         state_,
-        level_,
         render_model_,
         sprites_,
         PlayerRenderState{

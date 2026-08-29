@@ -31,7 +31,6 @@ public:
 
     bool render(
         const GameState& state,
-        const Level& level,
         const GenesisRenderModel& render_model,
         const SpriteDatabase& sprites,
         const PlayerRenderState& player,

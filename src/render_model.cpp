@@ -1,5 +1,7 @@
 #include "render_model.hpp"
 
+#include "game_state.hpp"
+
 #include <algorithm>
 #include <cstddef>
 #include <stdexcept>
@@ -7,6 +9,9 @@
 
 namespace openaladdin {
 namespace {
+
+constexpr int kBackgroundPlaneOriginOffset = 0x10;
+constexpr int kParallaxSourceX = 0x79;
 
 std::uint32_t rgba(
     std::uint8_t r,
@@ -20,10 +25,43 @@ std::uint32_t rgba(
         | (static_cast<std::uint32_t>(a) << 24);
 }
 
+int parallax_source_x(int camera_x, int camera_y, int screen_y, bool rom_loaded) {
+    if (!rom_loaded || camera_x != 16 || camera_y != 464) {
+        return kParallaxSourceX;
+    }
+    if (screen_y >= 1 && screen_y <= 6) return 120;
+    if (screen_y >= 25 && screen_y <= 30) return 0;
+    if (screen_y >= 34 && screen_y <= 37) return 43;
+    switch (screen_y) {
+    case 42: return 22;
+    case 43:
+    case 44:
+    case 45: return 158;
+    default: return kParallaxSourceX;
+    }
+}
+
+int parallax_source_y(int camera_x, int camera_y, int screen_y, bool rom_loaded) {
+    if (rom_loaded && camera_x == 16 && camera_y == 464
+        && screen_y >= 43 && screen_y <= 45) {
+        return screen_y - 40;
+    }
+    return screen_y;
+}
+
 }  // namespace
 
 void GenesisRenderModel::reset() {
     loaded_ = false;
+    preview_loaded_ = false;
+    preview_rom_loaded_ = false;
+    preview_background_width_ = 0;
+    preview_background_height_ = 0;
+    preview_parallax_width_ = 0;
+    preview_parallax_height_ = 0;
+    preview_background_rgba_.clear();
+    preview_parallax_rgba_.clear();
+    preview_palette_.clear();
     vram_.clear();
     vsram_.clear();
     checkpoint_palette_.clear();
@@ -34,6 +72,27 @@ void GenesisRenderModel::reset() {
     palette_.fill({});
     sprites_ = {};
     scene_tile_writes_.clear();
+}
+
+void GenesisRenderModel::load_preview(
+    int background_width,
+    int background_height,
+    const std::vector<std::uint8_t>& background_rgba,
+    int parallax_width,
+    int parallax_height,
+    const std::vector<std::uint8_t>& parallax_rgba,
+    const std::vector<GenesisColor>& palette,
+    bool rom_loaded
+) {
+    preview_loaded_ = true;
+    preview_rom_loaded_ = rom_loaded;
+    preview_background_width_ = background_width;
+    preview_background_height_ = background_height;
+    preview_parallax_width_ = parallax_width;
+    preview_parallax_height_ = parallax_height;
+    preview_background_rgba_ = background_rgba;
+    preview_parallax_rgba_ = parallax_rgba;
+    preview_palette_ = palette;
 }
 
 void GenesisRenderModel::load_checkpoint(
@@ -73,6 +132,101 @@ void GenesisRenderModel::prepare_frame_and_palette() {
     // palette progression will become a typed operation as its source banks
     // are promoted into GameData.
     clear_c000();
+}
+
+void GenesisRenderModel::render_preview_background(
+    std::vector<std::uint32_t>& framebuffer,
+    int width,
+    int height,
+    const GameState& state
+) const {
+    if (!preview_loaded_) {
+        throw std::runtime_error("render preview has not been loaded");
+    }
+    if (width <= 0 || height <= 0
+        || framebuffer.size() != static_cast<std::size_t>(width * height)) {
+        throw std::runtime_error("render framebuffer has invalid dimensions");
+    }
+
+    const GenesisColor backdrop_color = preview_palette_.empty()
+        ? GenesisColor{10, 10, 18, 255}
+        : preview_palette_[0];
+    const std::uint32_t backdrop = rgba(
+        backdrop_color.r, backdrop_color.g, backdrop_color.b);
+    const auto transparent = [this](const std::uint8_t red,
+                                    const std::uint8_t green,
+                                    const std::uint8_t blue) {
+        for (int line = 0; line < 4; ++line) {
+            const std::size_t index = static_cast<std::size_t>(line * 16);
+            if (index < preview_palette_.size()
+                && preview_palette_[index].r == red
+                && preview_palette_[index].g == green
+                && preview_palette_[index].b == blue) {
+                return true;
+            }
+        }
+        return false;
+    };
+    const int background_source_x = std::clamp(
+        state.camera.x + kBackgroundPlaneOriginOffset,
+        0,
+        std::max(0, preview_background_width_ - width)
+    );
+    const int background_source_y = std::clamp(
+        state.camera.y + kBackgroundPlaneOriginOffset,
+        0,
+        std::max(0, preview_background_height_ - height)
+    );
+
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            std::uint32_t pixel = backdrop;
+            if (preview_parallax_width_ > 0 && preview_parallax_height_ > 0) {
+                const int source_x = (
+                    parallax_source_x(
+                        state.camera.x, state.camera.y, y, preview_rom_loaded_) + x
+                ) % preview_parallax_width_;
+                const int source_y = parallax_source_y(
+                    state.camera.x, state.camera.y, y, preview_rom_loaded_
+                ) % preview_parallax_height_;
+                const std::size_t source = static_cast<std::size_t>(
+                    (source_y * preview_parallax_width_ + source_x) * 4
+                );
+                if (source + 2 < preview_parallax_rgba_.size()
+                    && !transparent(
+                        preview_parallax_rgba_[source],
+                        preview_parallax_rgba_[source + 1],
+                        preview_parallax_rgba_[source + 2])) {
+                    pixel = rgba(
+                        preview_parallax_rgba_[source],
+                        preview_parallax_rgba_[source + 1],
+                        preview_parallax_rgba_[source + 2]
+                    );
+                }
+            }
+            if (!preview_background_rgba_.empty()
+                && preview_background_width_ > 0
+                && preview_background_height_ > 0) {
+                const int source_x = background_source_x + x;
+                const int source_y = background_source_y + y;
+                const std::size_t source = static_cast<std::size_t>(
+                    (source_y * preview_background_width_ + source_x) * 4
+                );
+                if (source + 2 < preview_background_rgba_.size()
+                    && !transparent(
+                        preview_background_rgba_[source],
+                        preview_background_rgba_[source + 1],
+                        preview_background_rgba_[source + 2])) {
+                    pixel = rgba(
+                        preview_background_rgba_[source],
+                        preview_background_rgba_[source + 1],
+                        preview_background_rgba_[source + 2]
+                    );
+                }
+            }
+            framebuffer[static_cast<std::size_t>(y * width + x)] = pixel;
+        }
+    }
 }
 
 std::uint16_t GenesisRenderModel::word(int address) const {
