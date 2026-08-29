@@ -1398,6 +1398,15 @@
     - level_exit_terminal_transition_static_decompilation
     - animation_stream_decoder
 
+0x001253E8:
+  name: ACTOR_ANIM_TYPE52_LEVEL09_ENTRY
+  size: 18
+  confidence: decompiled
+  description: Level-09 Type-0x52 entry animation installed by ACTOR_TEMPLATE_TYPE_52_LEVEL09. Its compact region presents frame 0x13B2, waits on the encoded interaction field through the F4 gate targeting 0x001253FA, and loops from 0x001253F4 back to 0x001253E8. The separately owned 0x001253FA response stream is not included.
+  evidence:
+    - type52_level09_animation_static_decompilation
+    - animation_stream_decoder
+
 0x001252F0:
   name: ACTOR_ANIM_TYPE07_MOVING_INTERACTION
   size: 88
@@ -2141,6 +2150,17 @@
   description: Reused type-0x52 actor template referenced by seven interaction-handler sites; it uses movement stream 0x00120D7A and animation stream 0x0012548E.
   evidence:
     - level01_upper_frontier_initializer_targets
+    - actor_template_grid_xrefs
+
+0x001B80D4:
+  name: ACTOR_TEMPLATE_TYPE_52_LEVEL09
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Level-09 type-0x52 actor template initialized by Level09_EnterRoutine; it carries movement stream 0x00121300 and animation stream ACTOR_ANIM_TYPE52_LEVEL09_ENTRY at 0x001253E8, with four resources and the encoded post-initialization flag word.
+  evidence:
+    - type52_level09_animation_static_decompilation
+    - level_callback_family_targets
     - actor_template_grid_xrefs
 
 0x001B8160:

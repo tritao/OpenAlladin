@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type52-level09-animation-static-targets.json",
+  "animation": {
+    "address": "0x001253E8",
+    "name": "ACTOR_ANIM_TYPE52_LEVEL09_ENTRY",
+    "range": "0x001253E8-0x001253F9",
+    "bytes": 18,
+    "template": "ACTOR_TEMPLATE_TYPE_52_LEVEL09",
+    "consumer": "Level09_EnterRoutine",
+    "movement_stream": "0x00121300",
+    "internal_gate_target": "0x001253FA",
+    "behavior": "The compact entry presents 0x13B2, waits on its encoded interaction comparison, and loops through the local EA at 0x001253F4."
+  },
+  "template": {
+    "address": "0x001B80D4",
+    "name": "ACTOR_TEMPLATE_TYPE_52_LEVEL09",
+    "runtime_type": "0x52",
+    "resource_count": "0x04"
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact Level09 template record and direct animation pointer",
+    "Exact Level09_EnterRoutine installation site and F4/EA control flow"
+  ],
+  "conclusion": "The Level-09 Type-0x52 entry animation is now represented by its own canonical 18-byte region. Its F4 gate targets the following 0x001253FA response stream, which remains separately owned rather than being folded into the entry record.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
