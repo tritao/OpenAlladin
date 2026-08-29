@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-presentation-family-targets.json",
+  "templates": [
+    {
+      "address": "0x001B7F6C",
+      "name": "ACTOR_TEMPLATE_TYPE_8B_PRESENTATION_RESPONSE",
+      "consumer": "six direct entries from 0x001B6D98 through 0x001B6E4C",
+      "behavior": "Backward-slot presentation response using animation 0x00124A2E, with event-specific animation replacement and optional audio."
+    },
+    {
+      "address": "0x001B7FF8",
+      "name": "ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE",
+      "consumer": "0x001B6636, 0x001B6654, and 0x001B6672",
+      "behavior": "Reverse-slot shared source whose callers publish final types 0x1A, 0x1B, or 0x1C."
+    },
+    {
+      "address": "0x001B80E8",
+      "name": "ACTOR_TEMPLATE_TYPE_53_INTERACTION",
+      "consumer": "0x001B75BE",
+      "behavior": "LevelObjectSpawnEntry type-0x53 object with movement 0x00120EAA, animation 0x001256EE, and (+0x18,-0x0E) placement adjustment."
+    },
+    {
+      "address": "0x001B8174",
+      "name": "ACTOR_TEMPLATE_TYPE_17_INTERACTION",
+      "consumer": "0x001B75D6",
+      "behavior": "LevelObjectSpawnEntry type-0x17 object with movement 0x00120FDE, animation 0x0012587C, and optional palette upload."
+    }
+  ],
+  "conclusion": "The presentation/interaction block establishes four additional exact 20-byte actor-template records from direct consumers and bounded post-spawn behavior.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

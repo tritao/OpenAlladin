@@ -1555,3 +1555,43 @@
   evidence:
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs
+
+0x001B7F6C:
+  name: ACTOR_TEMPLATE_TYPE_8B_PRESENTATION_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Shared type-0x8B presentation-response template loaded by six conditional interaction entries in the 0x001B6D98-0x001B6E4C block; it has no movement stream, uses animation stream 0x00124A2E, and owns six resources before each caller publishes its event-specific frame stream.
+  evidence:
+    - ghidra_presentation_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7FF8:
+  name: ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Shared presentation source template loaded by the type-0x1A, type-0x1B, and type-0x1C spawn entries at 0x001B6636, 0x001B6654, and 0x001B6672; it has no movement stream, uses animation stream 0x00124CE4, and owns nine resources while callers publish the final type and placement.
+  evidence:
+    - ghidra_presentation_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B80E8:
+  name: ACTOR_TEMPLATE_TYPE_53_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x53 interaction template loaded through LevelObjectSpawnEntry at 0x001B75BE; it uses movement stream 0x00120EAA, animation stream 0x001256EE, and four resources before the caller adjusts position by (+0x18,-0x0E).
+  evidence:
+    - ghidra_presentation_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B8174:
+  name: ACTOR_TEMPLATE_TYPE_17_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x17 interaction template loaded through LevelObjectSpawnEntry at 0x001B75D6; it uses movement stream 0x00120FDE, animation stream 0x0012587C, and five resources, with an optional palette upload after allocation.
+  evidence:
+    - ghidra_presentation_interaction_dispatch_block
+    - actor_template_grid_xrefs
