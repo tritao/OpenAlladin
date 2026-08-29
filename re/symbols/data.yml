@@ -1679,12 +1679,23 @@
     - animation_stream_decoder
 
 0x00125966:
-  name: ACTOR_ANIM_STATE_125966
+  name: ACTOR_ANIM_TYPE0C_DIRECTIONAL_RESPONSE
+  size: 64
   confidence: confirmed
-  description: Common actor branch state selected by Actor_SelectDirectionalAnimation at 0x001ACBF2 from ACTOR_ANIM_TYPE0C_LEVEL_EVENT for actor type 0x7D.
+  description: Type-0x0C directional response state selected by Actor_SelectDirectionalAnimation at 0x001ACBF2 from ACTOR_ANIM_TYPE0C_LEVEL_EVENT. Its 64-byte region republishes actor type 0x0C, clears the horizontal flip, presents the 0x13D2-0x13EA sequence, spawns the Type-0x2E directional child through the template at 0x001B8200, and returns to the Type-0x0C root at 0x00125952.
   evidence:
     - ghidra_common_actor_animation_helper_001ACBF2
+    - type0c_directional_response_animation_static_decompilation
     - animation_stream_classifier
+
+0x001259A6:
+  name: ACTOR_ANIM_TYPE2E_DIRECTIONAL_CHILD
+  size: 26
+  confidence: decompiled
+  description: Type-0x2E directional child animation supplied by ACTOR_TEMPLATE_TYPE_2E_DIRECTIONAL_CHILD. Its packed region cycles the paired 0x1BF6-0x1C06 frame sequence and loops from 0x001259BA back to 0x001259A6.
+  evidence:
+    - type0c_directional_response_animation_static_decompilation
+    - animation_stream_decoder
 
 0x00125C52:
   name: PLAYER_ANIM_STATE_125C52
@@ -2050,6 +2061,16 @@
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets
+
+0x001B8200:
+  name: ACTOR_TEMPLATE_TYPE_2E_DIRECTIONAL_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x2E directional child template supplied by the F5 command at 0x00125980 inside ACTOR_ANIM_TYPE0C_DIRECTIONAL_RESPONSE. It uses movement stream 0x0011F6D4, animation ACTOR_ANIM_TYPE2E_DIRECTIONAL_CHILD at 0x001259A6, and retains the trailing template word 0x00000800.
+  evidence:
+    - type0c_directional_response_animation_static_decompilation
+    - animation_stream_decoder
 
 0x001B805C:
   name: ACTOR_TEMPLATE_TERRAIN_TYPE_84

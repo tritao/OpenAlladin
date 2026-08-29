@@ -1283,7 +1283,7 @@
 0x001ACBF2:
   name: Actor_SelectDirectionalAnimation
   confidence: confirmed
-  description: Compares actor position field +0x02 against the global word at 0x00FF7E02 and, subject to 0x00FF7E49, loads animation stream 0x00125966 into A2.
+  description: Compares actor position field +0x02 against the global word at 0x00FF7E02 and, subject to 0x00FF7E49, loads ACTOR_ANIM_TYPE0C_DIRECTIONAL_RESPONSE at 0x00125966 into A2.
   evidence:
     - ghidra_disassembly_001ACBF2
     - ghidra_decompile_actor_combat_targets
