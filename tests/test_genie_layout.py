@@ -360,6 +360,18 @@ def test_canonical_sound_test_entry_table_has_complete_sentinel_record():
     assert symbol.metadata["active_count"] == 94
 
 
+def test_canonical_scene_resource_mode_record_table_has_exact_records_and_boundary():
+    symbols = SymbolStore()
+    symbol = symbols.at(0x00126D7E, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "SCENE_RESOURCE_MODE_RECORD_TABLE"
+    assert symbol.size == 0x138
+    assert symbol.end == 0x00126EB5
+    assert symbol.metadata["type"] == "scene_resource_record_table"
+    assert symbol.metadata["entry_size"] == 0x0C
+    assert symbol.metadata["count"] == 26
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(

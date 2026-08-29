@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-mode-record-table",
+    "purpose": "Bound the fixed scene-resource mode record table consumed by SceneResource_InstantiateActors and document its 12-byte record fields and following text boundary."
+  },
+  "table": {
+    "address": "0x00126D7E",
+    "name": "SCENE_RESOURCE_MODE_RECORD_TABLE",
+    "entry_size": 12,
+    "count": 26,
+    "range": ["0x00126D7E", "0x00126EB5"],
+    "index": "SCENE_RESOURCE_MODE values 0x00-0x19",
+    "fields": [
+      { "offset": "0x00", "size": 4, "name": "resource_command_stream_pointer" },
+      { "offset": "0x04", "size": 2, "name": "render_origin_x" },
+      { "offset": "0x06", "size": 2, "name": "render_origin_y" },
+      { "offset": "0x08", "size": 4, "name": "resource_pointer" }
+    ],
+    "following_object": {
+      "address": "0x00126EB6",
+      "description": "ASCII scene/menu text begins immediately after the final 12-byte record."
+    }
+  },
+  "consumer": {
+    "address": "0x001B2238",
+    "name": "SceneResource_InstantiateActors",
+    "indexing": "Reads SCENE_RESOURCE_MODE, multiplies it by 12 through 68000 byte arithmetic, adds 0x00126D7E, then consumes the four fields in order."
+  },
+  "evidence": [
+    "SceneResource_InstantiateActors adds the exact 12-byte stride to the table base.",
+    "The ROM contains 26 complete records from mode index 0 through 0x19.",
+    "The final record ends at 0x00126EB5 and the next object begins with text at 0x00126EB6.",
+    "The two directly selecting scene-resource callers publish modes 0x11 and 0x16, both within the table."
+  ],
+  "limitations": [
+    "The higher-level user-facing meaning of every mode record remains separate from the table layout.",
+    "The command-stream extents pointed to by the records are not claimed by this slice."
+  ]
+}

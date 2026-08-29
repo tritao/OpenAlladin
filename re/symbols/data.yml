@@ -228,6 +228,19 @@
     - ghidra_menu_media_subservices
     - rom_sound_test_entry_table_0012675E
 
+0x00126D7E:
+  name: SCENE_RESOURCE_MODE_RECORD_TABLE
+  type: scene_resource_record_table
+  entry_size: 0x0C
+  count: 26
+  size: 0x138
+  confidence: decompiled
+  description: Fixed 26-entry scene-resource mode table consumed by SceneResource_InstantiateActors after indexing SCENE_RESOURCE_MODE by a 12-byte stride. Each record stores a command-stream pointer, the scene-resource render-origin X/Y words, and the resource pointer published for the active scene; the table occupies 0x00126D7E-0x00126EB5 and ends immediately before the following text object.
+  evidence:
+    - ghidra_scene_resource_mode_record_consumer
+    - scene_resource_mode_record_table_static_v1
+    - rom_scene_resource_mode_record_table_00126D7E
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data
