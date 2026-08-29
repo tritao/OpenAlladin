@@ -1,0 +1,106 @@
+{
+  "format": "openaladdin-interaction-spawn-type46-5a-response-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0x50, 0x87, 0x8E, 0x90-0x91, 0xA6, 0xA9, 0xAB, 0xAF, 0xBB",
+    "newly_named_targets": 10,
+    "handlers": [
+      {
+        "selector": "0xAF",
+        "address": "0x001B742A",
+        "name": "InteractionGate_Type46_AF",
+        "gates": ["0x00FFF172 != 0", "0x00FF7E3C != 0x39"],
+        "template": "0x001B79CC ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN",
+        "spawn_helper": "0x001B524E InteractionSpawn_ForwardOffset"
+      },
+      {
+        "selector": "0xAB",
+        "address": "0x001B744A",
+        "name": "InteractionSpawn_RuntimeType44_AB",
+        "gate": "0x00FFF16F != 0",
+        "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "runtime_type": "0x44",
+        "animation_root": "0x00122C40",
+        "flag_value": "0x01"
+      },
+      {
+        "selector": "0x50",
+        "address": "0x001B7454",
+        "name": "InteractionSpawn_RuntimeType44_50",
+        "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "runtime_type": "0x44",
+        "animation_root": "0x00122C40",
+        "flag_value": "0x01"
+      },
+      {
+        "selector": "0x8E",
+        "address": "0x001B7494",
+        "name": "InteractionSpawn_RuntimeType5A_8E",
+        "template": "0x001B7A08 ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry"
+      },
+      {
+        "selector": "0x90",
+        "address": "0x001B74B2",
+        "name": "InteractionSpawn_RuntimeType5C_90",
+        "template": "0x001B7A08 ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "runtime_type": "0x5C"
+      },
+      {
+        "selector": "0x91",
+        "address": "0x001B74C4",
+        "name": "InteractionSpawn_RuntimeType5D_91",
+        "template": "0x001B7A08 ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "runtime_type": "0x5D"
+      },
+      {
+        "selector": "0x87",
+        "address": "0x001B74D6",
+        "name": "InteractionSpawn_RuntimeType01_87",
+        "template": "0x001B7A30 ACTOR_TEMPLATE_TYPE01",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot"
+      },
+      {
+        "selector": "0xBB",
+        "address": "0x001B74E2",
+        "name": "InteractionSpawn_RuntimeType4E_BB",
+        "template": "0x001B7F80 ACTOR_TEMPLATE_TYPE_4E_INTERACTION",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+        "success_mutation": "actor byte +0x09 = 0xFF"
+      },
+      {
+        "selector": "0xA9",
+        "address": "0x001B74F4",
+        "name": "InteractionSpawn_RuntimeType4E_A9",
+        "template": "0x001B7F80 ACTOR_TEMPLATE_TYPE_4E_INTERACTION",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot"
+      },
+      {
+        "selector": "0xA6",
+        "address": "0x001B7500",
+        "name": "InteractionSpawn_RuntimeType4F_A6",
+        "template": "0x001B7F94 ACTOR_TEMPLATE_TYPE_4F_INTERACTION",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot"
+      }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Established actor-template records at 0x001B79CC, 0x001B7A08, 0x001B7A30, 0x001B7F80, and 0x001B7F94",
+    "Direct gate, allocator, runtime-type, animation, flag, and facing-byte writes"
+  ],
+  "conclusion": "This family is statically closed at selector membership, gates, template choice, allocator choice, and direct post-allocation mutations. The 0xAF compare against 0x00FF7E3C and the runtime meanings of the selector-specific flags remain unresolved state rather than being given speculative semantic names.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

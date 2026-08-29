@@ -1,0 +1,63 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type46-5a-response-targets.json",
+  "services": [
+    {
+      "address": "0x001B742A",
+      "name": "InteractionGate_Type46_AF",
+      "behavior": "Selector 0xAF requires 0x00FFF172 != 0 and 0x00FF7E3C != 0x39, then forward-spawns the shared type-0x46 template at 0x001B79CC."
+    },
+    {
+      "address": "0x001B744A",
+      "name": "InteractionSpawn_RuntimeType44_AB",
+      "behavior": "Selector 0xAB requires 0x00FFF16F != 0, then zero-template allocates and installs runtime type 0x44, animation root 0x00122C40, and actor byte +0x29 = 1."
+    },
+    {
+      "address": "0x001B7454",
+      "name": "InteractionSpawn_RuntimeType44_50",
+      "behavior": "Selector 0x50 zero-template allocates and installs runtime type 0x44, animation root 0x00122C40, and actor byte +0x29 = 1."
+    },
+    {
+      "address": "0x001B7494",
+      "name": "InteractionSpawn_RuntimeType5A_8E",
+      "behavior": "Selector 0x8E loads the type-0x5A level-object template at 0x001B7A08 through LevelObjectSpawnEntry."
+    },
+    {
+      "address": "0x001B74B2",
+      "name": "InteractionSpawn_RuntimeType5C_90",
+      "behavior": "Selector 0x90 loads the type-0x5A template and promotes a successful allocation to type 0x5C."
+    },
+    {
+      "address": "0x001B74C4",
+      "name": "InteractionSpawn_RuntimeType5D_91",
+      "behavior": "Selector 0x91 loads the type-0x5A template and promotes a successful allocation to type 0x5D."
+    },
+    {
+      "address": "0x001B74D6",
+      "name": "InteractionSpawn_RuntimeType01_87",
+      "behavior": "Selector 0x87 reverse-spawns from the established type-0x01 template at 0x001B7A30."
+    },
+    {
+      "address": "0x001B74E2",
+      "name": "InteractionSpawn_RuntimeType4E_BB",
+      "behavior": "Selector 0xBB reverse-spawns the type-0x4E template at 0x001B7F80 and sets actor byte +0x09 to 0xFF on success."
+    },
+    {
+      "address": "0x001B74F4",
+      "name": "InteractionSpawn_RuntimeType4E_A9",
+      "behavior": "Selector 0xA9 reverse-spawns the type-0x4E template at 0x001B7F80."
+    },
+    {
+      "address": "0x001B7500",
+      "name": "InteractionSpawn_RuntimeType4F_A6",
+      "behavior": "Selector 0xA6 reverse-spawns the type-0x4F template at 0x001B7F94."
+    }
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

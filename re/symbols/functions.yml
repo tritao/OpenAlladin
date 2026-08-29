@@ -4218,3 +4218,83 @@
     - ghidra_disassembly_001B73F2
     - interaction-spawn-runtime3c-40-targets
     - interaction-spawn-runtime3c-40-static-decompilation
+0x001B742A:
+  name: InteractionGate_Type46_AF
+  confidence: decompiled
+  description: Interaction selector 0xAF gate that requires 0x00FFF172 set and 0x00FF7E3C not equal to 0x39, then forward-spawns from ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN at 0x001B79CC.
+  evidence:
+    - ghidra_disassembly_001B742A
+    - interaction-spawn-type46-5a-response-targets
+    - interaction-spawn-type46-5a-response-static-decompilation
+0x001B744A:
+  name: InteractionSpawn_RuntimeType44_AB
+  confidence: decompiled
+  description: Interaction selector 0xAB handler that requires 0x00FFF16F set, uses the zero-type base through LevelObjectSpawnEntry, and promotes a successful allocation to runtime type 0x44 with animation root 0x00122C40 and actor byte +0x29 set to 1.
+  evidence:
+    - ghidra_disassembly_001B744A
+    - interaction-spawn-type46-5a-response-targets
+    - interaction-spawn-type46-5a-response-static-decompilation
+0x001B7454:
+  name: InteractionSpawn_RuntimeType44_50
+  confidence: decompiled
+  description: Interaction selector 0x50 handler that uses the zero-type base through LevelObjectSpawnEntry and promotes a successful allocation to runtime type 0x44 with animation root 0x00122C40 and actor byte +0x29 set to 1.
+  evidence:
+    - ghidra_disassembly_001B7454
+    - interaction-spawn-type46-5a-response-targets
+    - interaction-spawn-type46-5a-response-static-decompilation
+0x001B7494:
+  name: InteractionSpawn_RuntimeType5A_8E
+  confidence: decompiled
+  description: Interaction selector 0x8E handler that loads ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT at 0x001B7A08 through LevelObjectSpawnEntry without an additional post-allocation mutation.
+  evidence:
+    - ghidra_disassembly_001B7494
+    - interaction-spawn-type46-5a-response-targets
+    - interaction-spawn-type46-5a-response-static-decompilation
+0x001B74B2:
+  name: InteractionSpawn_RuntimeType5C_90
+  confidence: decompiled
+  description: Interaction selector 0x90 handler that loads the type-0x5A template at 0x001B7A08 through LevelObjectSpawnEntry and, on success, promotes the actor to runtime type 0x5C.
+  evidence:
+    - ghidra_disassembly_001B74B2
+    - interaction-spawn-type46-5a-response-targets
+    - interaction-spawn-type46-5a-response-static-decompilation
+0x001B74C4:
+  name: InteractionSpawn_RuntimeType5D_91
+  confidence: decompiled
+  description: Interaction selector 0x91 handler that loads the type-0x5A template at 0x001B7A08 through LevelObjectSpawnEntry and, on success, promotes the actor to runtime type 0x5D.
+  evidence:
+    - ghidra_disassembly_001B74C4
+    - interaction-spawn-type46-5a-response-targets
+    - interaction-spawn-type46-5a-response-static-decompilation
+0x001B74D6:
+  name: InteractionSpawn_RuntimeType01_87
+  confidence: decompiled
+  description: Interaction selector 0x87 handler that reverse-spawns from ACTOR_TEMPLATE_TYPE01 at 0x001B7A30 through InteractionSpawn_ReverseSlot.
+  evidence:
+    - ghidra_disassembly_001B74D6
+    - interaction-spawn-type46-5a-response-targets
+    - interaction-spawn-type46-5a-response-static-decompilation
+0x001B74E2:
+  name: InteractionSpawn_RuntimeType4E_BB
+  confidence: decompiled
+  description: Interaction selector 0xBB handler that reverse-spawns from ACTOR_TEMPLATE_TYPE_4E_INTERACTION at 0x001B7F80 and, on success, sets the actor facing byte at offset 0x09 to 0xFF.
+  evidence:
+    - ghidra_disassembly_001B74E2
+    - interaction-spawn-type46-5a-response-targets
+    - interaction-spawn-type46-5a-response-static-decompilation
+0x001B74F4:
+  name: InteractionSpawn_RuntimeType4E_A9
+  confidence: decompiled
+  description: Interaction selector 0xA9 handler that reverse-spawns from ACTOR_TEMPLATE_TYPE_4E_INTERACTION at 0x001B7F80.
+  evidence:
+    - ghidra_disassembly_001B74F4
+    - interaction-spawn-type46-5a-response-targets
+    - interaction-spawn-type46-5a-response-static-decompilation
+0x001B7500:
+  name: InteractionSpawn_RuntimeType4F_A6
+  confidence: decompiled
+  description: Interaction selector 0xA6 handler that reverse-spawns from ACTOR_TEMPLATE_TYPE_4F_INTERACTION at 0x001B7F94.
+  evidence:
+    - ghidra_disassembly_001B7500
+    - interaction-spawn-type46-5a-response-targets
+    - interaction-spawn-type46-5a-response-static-decompilation
