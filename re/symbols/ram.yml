@@ -1226,3 +1226,13 @@
   evidence:
     - ghidra_decompile_001B2ACE
     - ghidra_scene_transition_selection_targets
+0xFFF102:
+  name: SCENE_TRANSITION_TILE_BAND_READY
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Scene-transition presentation latch cleared during initialization, set by the palette callback before SceneResource_RenderTransitionTileBand is serviced, and cleared by the paired palette-reset callback.
+  evidence:
+    - ghidra_decompile_001B1486
+    - ghidra_scene_transition_palette_callbacks
+    - scene-transition-palette-callback-static-decompilation

@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-transition-palette-callback-targets.json",
+  "callbacks": [
+    {
+      "address": "0x001B1640",
+      "name": "SceneResource_SetTransitionTileBandReady",
+      "range": ["0x001B1640", "0x001B1655"],
+      "confidence": "decompiled",
+      "body": "Saves A0, loads ROM source 0x00129B72, calls Render_UploadPaletteBand2, stores 0xFF in SCENE_TRANSITION_TILE_BAND_READY at 0x00FFF102, restores A0, and returns.",
+      "effect": "Publishes the transition palette band 2 and arms the scene-transition tile-band service latch."
+    },
+    {
+      "address": "0x001B1656",
+      "name": "SceneResource_ClearTransitionTileBandReady",
+      "range": ["0x001B1656", "0x001B1675"],
+      "confidence": "decompiled",
+      "body": "Saves A0, loads ROM source 0x00128ED2 and calls Render_UploadPaletteBand0, loads ROM source 0x00129B52 and calls Render_UploadPaletteBand2, clears SCENE_TRANSITION_TILE_BAND_READY at 0x00FFF102, restores A0, and returns.",
+      "effect": "Restores the blank transition palette bands and disarms the scene-transition tile-band service latch."
+    }
+  ],
+  "relationships": {
+    "movement_stream": "ACTOR_MOVE_TRANSITION_PRESENTATION_LEAD_IN at 0x00120360 pushes 0x001B1640 and 0x001B1656 as callback parameters.",
+    "latch_consumer": "SceneResource_InitializeTransitionPresentation clears 0x00FFF102 before its initial service pass and calls SceneResource_RenderTransitionTileBand when the latch is nonzero."
+  },
+  "limitations": [
+    "The callbacks are invoked through the VM's deferred callback convention; no direct 68000 call edge is emitted for the pushed addresses.",
+    "The exact higher-level presentation phase represented by the latch remains named from its static producer/consumer contract rather than a runtime trace."
+  ]
+}

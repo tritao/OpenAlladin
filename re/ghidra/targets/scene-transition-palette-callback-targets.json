@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-transition-palette-callbacks",
+    "purpose": "Decode the two callback services embedded immediately before the scene-transition tile-band helper."
+  },
+  "targets": [
+    { "address": "0x001B1640", "name": "SceneResource_SetTransitionTileBandReady" },
+    { "address": "0x001B1656", "name": "SceneResource_ClearTransitionTileBandReady" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF102", "name": "SCENE_TRANSITION_TILE_BAND_READY" },
+    { "address": "0x00129B72", "name": "ROM_SCENE_TRANSITION_PALETTE_BAND2_READY" },
+    { "address": "0x00128ED2", "name": "SCENE_BLANK_PALETTE" },
+    { "address": "0x00129B52", "name": "ROM_SCENE_TRANSITION_PALETTE_BAND2_CLEAR" }
+  ],
+  "relationships": {
+    "producer": "ACTOR_MOVE_TRANSITION_PRESENTATION_LEAD_IN at 0x00120360 pushes both callback addresses through movement opcode 0x91.",
+    "consumer": "SceneResource_InitializeTransitionPresentation clears the latch and tests it before SceneResource_RenderTransitionTileBand."
+  }
+}

@@ -4816,3 +4816,23 @@
     - ghidra_decompile_001B32C8
     - ghidra_embedded-word-pair-targets
     - embedded-word-pair-static-decompilation
+0x001B1640:
+  name: SceneResource_SetTransitionTileBandReady
+  confidence: decompiled
+  size: 22
+  description: Transition-presentation callback that uploads palette band 2 from ROM source 0x00129B72, sets SCENE_TRANSITION_TILE_BAND_READY, restores A0, and returns.
+  evidence:
+    - ghidra_disassembly_001B1640
+    - ghidra_decompile_001B1640
+    - ghidra_scene_transition_palette_callbacks
+    - scene-transition-palette-callback-static-decompilation
+0x001B1656:
+  name: SceneResource_ClearTransitionTileBandReady
+  confidence: decompiled
+  size: 32
+  description: Transition-presentation callback that uploads the blank palette band 0 from ROM source 0x00128ED2, refreshes palette band 2 from 0x00129B52, clears SCENE_TRANSITION_TILE_BAND_READY, restores A0, and returns.
+  evidence:
+    - ghidra_disassembly_001B1656
+    - ghidra_decompile_001B1656
+    - ghidra_scene_transition_palette_callbacks
+    - scene-transition-palette-callback-static-decompilation
