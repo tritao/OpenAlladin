@@ -2900,6 +2900,16 @@
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs
 
+0x001B7F08:
+  name: ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Structurally closed Type-0x84 AnimationVM child template supplied by ten exact F5 records in the 0x00122E10 and 0x00124C1A stream families; it carries no F5 template payload, uses movement stream 0x00120AA4, template word 0x6000, animation root 0x00122E96, and owns no resources, while each producer supplies its placement payload.
+  evidence:
+    - actor_template_f5_moving_child_base_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B7F1C:
   name: ACTOR_TEMPLATE_TYPE_13_INTERACTION
   type: actor_template

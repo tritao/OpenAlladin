@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-actor-template-f5-moving-child-base-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the exact shared Type-0x84 moving child template referenced by the decoded AnimationVM F5 records.",
+  "producer_streams": [
+    {
+      "region": "0x00122E10",
+      "f5_sites": [
+        "0x00122E1E", "0x00122E32", "0x00122E44", "0x00122E56",
+        "0x00122E68", "0x00122E7A", "0x00122E9E"
+      ],
+      "payload_words": ["0x10F8", "0xF010", "0xE8E8", "0x1808", "0xF8F0", "0x0818", "0x0000"]
+    },
+    {
+      "region": "0x00124C1A",
+      "f5_sites": ["0x00124C1A", "0x00124C56", "0x00124C78"],
+      "payload_words": ["0x0008", "0xF800", "0x0008"]
+    }
+  ],
+  "template": {
+    "address": "0x001B7F08",
+    "name": "ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE",
+    "range": ["0x001B7F08", "0x001B7F1B"],
+    "size": 20,
+    "raw_bytes": "84000000000000120AA4600000122E9600000000",
+    "runtime_type": "0x84",
+    "template_payload": "0x00000000",
+    "movement_stream": "0x00120AA4",
+    "template_word": "0x6000",
+    "animation_stream": "0x00122E96",
+    "resource_count": "0x00",
+    "trailing_flags": "0x0000"
+  },
+  "record_contract": {
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "placement": "Each F5 producer supplies its own signed placement payload after the template pointer; the shared record contributes the Type-0x84 identity and default movement/animation fields.",
+    "boundary": "The 20-byte record ends immediately before ACTOR_TEMPLATE_TYPE_13_INTERACTION at 0x001B7F1C."
+  },
+  "evidence": [
+    "Exact F5 template pointers at all ten listed producer sites",
+    "Exact F5 payload words and lossless AnimationVM stream decoding",
+    "Exact 20-byte actor-template record boundary",
+    "Common Actor_InitializeFromTemplate record layout"
+  ]
+}
