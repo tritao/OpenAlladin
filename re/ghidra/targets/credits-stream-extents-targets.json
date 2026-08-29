@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-credits-stream-extents-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "stream": {
+    "address": "0x00127E8C",
+    "name": "ROM_CREDITS_STREAM",
+    "range": ["0x00127E8C", "0x00128E44"],
+    "size": 4025,
+    "consumers": [
+      "0x001B4666 Credits_RunRoll",
+      "0x001B4F7C Scene_ResetToState0"
+    ],
+    "load_sites": ["0x001B46A2", "0x001B50D8"],
+    "interpreter": "0x001B46A8 SceneResource_RunTransitionCommandStream",
+    "terminator": "0x00128E44 = 0xFD"
+  },
+  "evidence": [
+    "Both consumers load the same ROM stream address directly.",
+    "SceneResource_RunTransitionCommandStream handles text/control bytes and returns on command 0xFD.",
+    "The final credits text record ends at 0x00128E35, followed by the fixed control tail and terminal 0xFD at 0x00128E44.",
+    "The following byte 0x00128E45 is loaded separately as the transition closing command stream."
+  ],
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled"
+}

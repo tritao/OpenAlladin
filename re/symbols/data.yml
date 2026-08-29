@@ -203,6 +203,17 @@
     - scene_resource_command_stream_terminators
     - scene_resource_presentation_stream_extents_static_v1
 
+0x00127E8C:
+  name: ROM_CREDITS_STREAM
+  type: scene_resource_stream
+  size: 0xFB9
+  confidence: decompiled
+  description: Credits command/text stream loaded by Credits_RunRoll and Scene_ResetToState0. Its specialized SceneResource_RunTransitionCommandStream interpreter consumes the text/control records through the unique 0xFD terminal at 0x00128E44, immediately before the separate sound-test presentation records.
+  evidence:
+    - ghidra_menu_media_subservices
+    - scene_resource_transition_command_interpreter
+    - rom_credits_stream_00127E8C
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data
