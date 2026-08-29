@@ -2738,6 +2738,16 @@
     - actor_template_type3d_collision_static_decompilation
     - movement_stream_decoder
 
+0x00121256:
+  name: ACTOR_MOVE_TYPE84_RUNTIME47_4C_CHILD_SHARED
+  type: movement_stream
+  size: 106
+  confidence: decompiled
+  description: Shared 106-byte MovementVM response bank installed by ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD at 0x001B828C. Its packed region contains the five random branch alternatives, signed response steps, and the local loop at 0x001212BA back to 0x001212B0, ending before the following defined pointer data.
+  evidence:
+    - actor_template_type84_runtime47_4c_child_static_decompilation
+    - movement_stream_decoder
+
 0x00121240:
   name: ACTOR_MOVE_GUARD_SWORD_ATTACK
   size: 22

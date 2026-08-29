@@ -523,6 +523,44 @@ def test_type31_f5_child_movement_stream_is_exact():
     assert "0x00120D4C" in targets
 
 
+def test_type84_runtime47_4c_child_movement_stream_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x00121256, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_MOVE_TYPE84_RUNTIME47_4C_CHILD_SHARED"
+    assert stream.end == 0x001212BF
+    assert stream.size == 106
+    assert stream.metadata["type"] == "movement_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = MovementDecoder(rom)
+    linear = decoder.decode_stream(
+        0x00121256,
+        max_steps=256,
+        max_bytes=106,
+        follow_control_flow=False,
+    )
+    assert linear["bytes_decoded"] == 106
+    assert linear["stopped_reason"] == "byte_limit"
+    assert linear["steps"][-1]["next_address"] == "0x001212C0"
+
+    decoded = decoder.decode_stream(
+        0x00121256,
+        max_steps=256,
+        max_bytes=512,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 54
+    assert decoded["stopped_reason"] == "control_flow_cycle"
+    assert decoded["steps"][-1]["next_address"] == "0x0012127C"
+    commands = [command for step in decoded["steps"] for command in step["commands"]]
+    assert {command.get("branch_target") for command in commands} >= {
+        "0x0012127C",
+        "0x0012128C",
+    }
+
+
 def test_shared_movement_root_family_is_exact():
     symbols = SymbolStore()
     expected = {

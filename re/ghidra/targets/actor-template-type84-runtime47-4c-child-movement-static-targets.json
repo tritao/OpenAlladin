@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-actor-template-type84-runtime47-4c-child-movement-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Classify the shared MovementVM response bank installed by the runtime type-0x47 through type-0x4C child template.",
+  "stream": {
+    "address": "0x00121256",
+    "name": "ACTOR_MOVE_TYPE84_RUNTIME47_4C_CHILD_SHARED",
+    "range": ["0x00121256", "0x001212BF"],
+    "size": 106,
+    "producer": "ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD at 0x001B828C loads 0x00121256 into actor movement field +0x0A",
+    "decoded": [
+      "Initial signed step followed by five random branch alternatives at 0x00121258, 0x00121262, 0x0012126C, 0x00121276, and 0x00121280",
+      "Positive and negative response variants use the local entries at 0x0012128C, 0x0012129A, 0x001212A4, 0x001212AE, and 0x001212B8",
+      "0x80 at 0x001212BA loops to 0x001212B0; the exact owner ends before defined data at 0x001212C0"
+    ]
+  },
+  "boundary_basis": [
+    "The exact Type-0x84 runtime-0x47-to-0x4C child template record supplies the movement root.",
+    "MovementDecoder linear decode covers exactly 106 contiguous bytes through the final local jump.",
+    "The range stops at the existing 0x001212C0 defined-data boundary and does not claim the following stream at 0x001212C4."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
