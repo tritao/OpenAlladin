@@ -1,0 +1,73 @@
+{
+  "format": "openaladdin-mid-actor-animation-stream-extents-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "streams": [
+    {
+      "address": "0x00122C40",
+      "name": "ACTOR_ANIM_TYPE44_INTERACTION",
+      "range": ["0x00122C40", "0x00122C65"],
+      "consumers": ["0x001B744A selector 0xAB", "0x001B7454 selector 0x50"],
+      "terminal": "0x00122C60 EA -> 0x00122C40"
+    },
+    {
+      "address": "0x00122C66",
+      "name": "ACTOR_ANIM_TYPE46_SHARED_SPAWN",
+      "range": ["0x00122C66", "0x00122CAB"],
+      "template": "0x001B79CC ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN",
+      "child_templates": ["0x001B7E18", "0x001B7D00"],
+      "terminal": "0x00122CA6 EA -> 0x00122C78"
+    },
+    {
+      "address": "0x00122D54",
+      "name": "ACTOR_ANIM_TYPE55_INTERACTION",
+      "range": ["0x00122D54", "0x00122D91"],
+      "template": "0x001B7A1C ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E",
+      "terminal": "0x00122D90 EC 0x01 -> next root 0x00122D92"
+    },
+    {
+      "address": "0x00122DD8",
+      "name": "ACTOR_ANIM_TYPE84_TYPE2D_INTERACTION_RESPONSE",
+      "range": ["0x00122DD8", "0x00122DED"],
+      "template": "0x001B792C ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE",
+      "terminal": "0x00122DEC F6 0x00"
+    },
+    {
+      "address": "0x00122DEE",
+      "name": "ACTOR_ANIM_TYPE84_MENU_PRESENTATION",
+      "range": ["0x00122DEE", "0x00122DF1"],
+      "template": "0x001B7A44 ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84",
+      "terminal": "0x00122DF0 EC 0x01"
+    },
+    {
+      "address": "0x00122DF2",
+      "name": "ACTOR_ANIM_TYPE03_INTERACTION",
+      "range": ["0x00122DF2", "0x00122E15"],
+      "template": "0x001B7A78 ACTOR_TEMPLATE_TYPE_03_INTERACTION",
+      "terminal": "0x00122E10 EA -> 0x00122DF2"
+    }
+  ],
+  "decoder_checks": {
+    "type44_bytes": 38,
+    "type46_bytes": 70,
+    "type55_prefix_bytes": 62,
+    "type2d_response_bytes": 22,
+    "menu_presentation_bytes": 4,
+    "type03_bytes": 36
+  },
+  "boundary_basis": [
+    "Exact direct animation roots installed by the recorded interaction/template consumers",
+    "Lossless AnimationDecoder frame and command boundaries",
+    "F600 and EC01 interpreter terminal commands",
+    "Explicit Type-0x55 fall-through boundary before ACTOR_ANIM_TYPE01"
+  ],
+  "limitations": [
+    "The adjacent 0x00122DB2 response fragment remains unresolved here because its direct producer bodies are outside the currently bounded Ghidra function set.",
+    "The Type-0x46 child-template records are documented by their existing target/finding family; this record only claims the parent animation extent."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

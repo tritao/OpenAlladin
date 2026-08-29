@@ -250,6 +250,26 @@ def test_type0f_child_and_type6e_default_animation_ranges_are_exact():
     assert symbols.at(0x00123DE2, include_ranges=False) is None
 
 
+def test_mid_actor_animation_stream_ranges_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00122C40: (0x00122C65, "ACTOR_ANIM_TYPE44_INTERACTION"),
+        0x00122C66: (0x00122CAB, "ACTOR_ANIM_TYPE46_SHARED_SPAWN"),
+        0x00122D54: (0x00122D91, "ACTOR_ANIM_TYPE55_INTERACTION"),
+        0x00122DD8: (0x00122DED, "ACTOR_ANIM_TYPE84_TYPE2D_INTERACTION_RESPONSE"),
+        0x00122DEE: (0x00122DF1, "ACTOR_ANIM_TYPE84_MENU_PRESENTATION"),
+        0x00122DF2: (0x00122E15, "ACTOR_ANIM_TYPE03_INTERACTION"),
+    }
+    owners = []
+    for address, (end, name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        owners.append((symbol.address, symbol.end))
+    assert all(right < next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
+
+
 def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)

@@ -1,0 +1,76 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "streams": [
+    {
+      "address": "0x00122C40",
+      "name": "ACTOR_ANIM_TYPE44_INTERACTION",
+      "range": "0x00122C40-0x00122C65",
+      "size": 38,
+      "consumers": ["InteractionSpawn_RuntimeType44_AB", "InteractionSpawn_RuntimeType44_50"],
+      "decoded": ["0x1706-0x1722 repeated frame sequence", "EA loop at 0x00122C60"]
+    },
+    {
+      "address": "0x00122C66",
+      "name": "ACTOR_ANIM_TYPE46_SHARED_SPAWN",
+      "range": "0x00122C66-0x00122CAB",
+      "size": 70,
+      "template": "ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN",
+      "decoded": [
+        "0x16BE lead-in",
+        "F5 child template 0x001B7E18",
+        "F5 child template 0x001B7D00",
+        "0x16C2-0x16CA response sequence",
+        "EA loop from 0x00122CA6 to 0x00122C78"
+      ]
+    },
+    {
+      "address": "0x00122D54",
+      "name": "ACTOR_ANIM_TYPE55_INTERACTION",
+      "range": "0x00122D54-0x00122D91",
+      "size": 62,
+      "template": "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E",
+      "decoded": [
+        "EC 0x01 clear",
+        "0x1596-0x15BA frame sequence",
+        "EE 0x89",
+        "ED write 0x40 to actor field +0x06",
+        "F3 sound 0x4D",
+        "ED write 0x84 to actor type field",
+        "EC 0x01 fall-through boundary"
+      ],
+      "next_root": "0x00122D92 ACTOR_ANIM_TYPE01"
+    },
+    {
+      "address": "0x00122DD8",
+      "name": "ACTOR_ANIM_TYPE84_TYPE2D_INTERACTION_RESPONSE",
+      "range": "0x00122DD8-0x00122DED",
+      "size": 22,
+      "template": "ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE",
+      "decoded": ["0x1B12-0x1B22 frame sequence", "F6 0x00 terminal"]
+    },
+    {
+      "address": "0x00122DEE",
+      "name": "ACTOR_ANIM_TYPE84_MENU_PRESENTATION",
+      "range": "0x00122DEE-0x00122DF1",
+      "size": 4,
+      "template": "ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84",
+      "decoded": ["frame 0x16E2", "EC 0x01 terminal"]
+    },
+    {
+      "address": "0x00122DF2",
+      "name": "ACTOR_ANIM_TYPE03_INTERACTION",
+      "range": "0x00122DF2-0x00122E15",
+      "size": 36,
+      "template": "ACTOR_TEMPLATE_TYPE_03_INTERACTION",
+      "decoded": ["0x1462-0x147A frame sequence", "EA loop at 0x00122E10"]
+    }
+  ],
+  "conclusion": "Six direct mid-band actor AnimationVM roots are now range-bounded from their exact consumers and decoded terminals. The 0x00122DB2 fragment and unrelated 0x00122E16-onward data remain outside this finding.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

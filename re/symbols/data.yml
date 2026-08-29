@@ -1909,6 +1909,61 @@
     - actor_template_interaction_dispatch_family_static_decompilation
     - animation_stream_decoder
 
+0x00122C40:
+  name: ACTOR_ANIM_TYPE44_INTERACTION
+  size: 38
+  confidence: decompiled
+  description: Type-0x44 interaction animation installed by the selector-0x50 and selector-0xAB runtime-type-0x44 spawners. Its exact 38-byte region presents the repeated 0x1706-0x1722 frame sequence and loops from 0x00122C60 to its root.
+  evidence:
+    - interaction_spawn_type46_5a_response_static_decompilation
+    - animation_stream_decoder
+
+0x00122C66:
+  name: ACTOR_ANIM_TYPE46_SHARED_SPAWN
+  size: 70
+  confidence: decompiled
+  description: Shared Type-0x46 animation installed by ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN. Its exact 70-byte region presents the 0x16BE lead-in, spawns the child templates at 0x001B7E18 and 0x001B7D00 through F5 records, presents the 0x16C2-0x16CA response sequence, and loops from 0x00122CA6 to the local 0x00122C78 entry.
+  evidence:
+    - actor_template_mid_dispatch_family_static_decompilation
+    - interaction_spawn_type46_5a_response_static_decompilation
+    - animation_stream_decoder
+
+0x00122D54:
+  name: ACTOR_ANIM_TYPE55_INTERACTION
+  size: 62
+  confidence: decompiled
+  description: Type-0x55 interaction animation installed by ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E. Its exact 62-byte region clears the actor, presents the 0x1596-0x15BA sequence with timer 0x89, writes 0x40 to actor field +0x06, plays sound 0x4D, writes type 0x84, and ends with EC 0x01 immediately before ACTOR_ANIM_TYPE01 at 0x00122D92.
+  evidence:
+    - actor_template_interaction_dispatch_family_static_decompilation
+    - animation_stream_decoder
+
+0x00122DD8:
+  name: ACTOR_ANIM_TYPE84_TYPE2D_INTERACTION_RESPONSE
+  size: 22
+  confidence: decompiled
+  description: Type-0x84 response animation installed by ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE. Its exact 22-byte region presents the repeated 0x1B12-0x1B22 frame sequence and terminates with F6 0x00; the following menu presentation entry is separately owned.
+  evidence:
+    - actor_template_collision_interaction_static_decompilation
+    - animation_stream_decoder
+
+0x00122DEE:
+  name: ACTOR_ANIM_TYPE84_MENU_PRESENTATION
+  size: 4
+  confidence: decompiled
+  description: Compact Type-0x84 menu-presentation entry installed by ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84. Its exact 4-byte body presents frame 0x16E2 and ends with EC 0x01 before the separately owned Type-0x03 interaction stream.
+  evidence:
+    - actor_template_service_family_static_decompilation
+    - animation_stream_decoder
+
+0x00122DF2:
+  name: ACTOR_ANIM_TYPE03_INTERACTION
+  size: 36
+  confidence: decompiled
+  description: Type-0x03 interaction animation installed by ACTOR_TEMPLATE_TYPE_03_INTERACTION. Its exact 36-byte region cycles the 0x1462-0x147A frame sequence and loops from 0x00122E10 back to the root.
+  evidence:
+    - actor_template_interaction_dispatch_family_static_decompilation
+    - animation_stream_decoder
+
 0x0012312C:
   name: ACTOR_ANIM_TYPE5F_INTERACTION
   size: 40
