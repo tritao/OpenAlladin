@@ -3137,6 +3137,18 @@
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
 
+0x001B8368:
+  name: ACTOR_TEMPLATE_TYPE_3D_COLLISION_RESPONSE_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x3D collision-response child template selected by ActorType13_ActorCollisionHandler and ActorType13_PlayerCollisionHandler; it uses movement stream 0x0012146C, template word 0x6000, animation stream 0x00124390, and one resource before each handler copies the source position, applies a 0x20-pixel upward offset, and sets facing to 0xFF.
+  evidence:
+    - ghidra_disassembly_001AC1D0
+    - ghidra_disassembly_001AF1AC
+    - actor_template_type3d_collision_targets
+    - actor_template_grid_xrefs
+
 0x001B79CC:
   name: ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN
   type: actor_template

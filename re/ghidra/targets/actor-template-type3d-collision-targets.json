@@ -1,0 +1,56 @@
+{
+  "format": "openaladdin-actor-template-type3d-collision-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the exact Type-0x3D child template shared by the Type-0x13 actor-collision and player-collision response paths.",
+  "template": {
+    "address": "0x001B8368",
+    "name": "ACTOR_TEMPLATE_TYPE_3D_COLLISION_RESPONSE_CHILD",
+    "range": ["0x001B8368", "0x001B837B"],
+    "size": 20,
+    "runtime_type": "0x3D",
+    "movement_stream": "0x0012146C",
+    "template_word": "0x6000",
+    "animation_stream": "0x00124390",
+    "resource_count": "0x01"
+  },
+  "consumers": [
+    {
+      "address": "0x001AC1D0",
+      "name": "ActorType13_ActorCollisionHandler",
+      "template_load": "0x001AC262",
+      "post_initialize": [
+        "copy source X/Y from actor offsets +0x02/+0x04",
+        "subtract 0x20 from the child Y coordinate",
+        "set child facing byte +0x09 to 0xFF",
+        "set 0x00FFF124 to 8",
+        "queue audio control command before optional event 0x14"
+      ]
+    },
+    {
+      "address": "0x001AF1AC",
+      "name": "ActorType13_PlayerCollisionHandler",
+      "template_load": "0x001AF1C4",
+      "post_initialize": [
+        "copy source X/Y from actor offsets +0x02/+0x04",
+        "subtract 0x20 from the child Y coordinate",
+        "set child facing byte +0x09 to 0xFF",
+        "set 0x00FFF124 to 8",
+        "queue audio control command before optional event 0x14"
+      ]
+    }
+  ],
+  "evidence": [
+    "Exact Type-0x13 actor-collision disassembly at 0x001AC262-0x001AC2BA",
+    "Exact Type-0x13 player-collision disassembly at 0x001AF1C4-0x001AF21C",
+    "Shared direct template load and common post-initialization writes",
+    "Exact 20-byte record immediately before ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT"
+  ],
+  "conclusion": "The Type-0x3D record is a directly selected collision-response child shared by both Type-0x13 collision paths. The adjacent Type-0x84 record at 0x001B837C remains separate pending a follow-up AnimationVM producer analysis.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
