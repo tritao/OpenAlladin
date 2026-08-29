@@ -1010,6 +1010,14 @@
     - ghidra_decompile_001B2238
     - ghidra_level_transition_targeted_decompile
     - ghidra_actor_table_layout
+0x001B2236:
+  name: SceneResource_ModeNoOpHook
+  confidence: confirmed
+  description: RTS-only scene-resource mode hook invoked after selecting modes 0x1B, 0x1C, or 0x04 and before the caller continues its resource/status work; it has no observable state effect.
+  evidence:
+    - ghidra_disassembly_001B2236
+    - scene_resource_mode_hook_targets
+    - scene_resource_mode_hook_static_decompilation
 0x001B21A8:
   name: VDP_WriteTileWord
   confidence: decompiled
@@ -1712,6 +1720,14 @@
   evidence:
     - ghidra_level01_surface_mode_consumer_targeted_decompile
     - ghidra_disassembly_001ADB34
+0x001ADB32:
+  name: Terrain_ActorCollisionNoOpHook
+  confidence: confirmed
+  description: RTS-only hook called by the actor terrain-collision loop after selecting a terrain-row word and before reading the behavior byte; it does not alter the lookup or actor state.
+  evidence:
+    - ghidra_disassembly_001ADB32
+    - terrain_actor_collision_hook_targets
+    - terrain_actor_collision_hook_static_decompilation
 0x001ADB36:
   name: Terrain_TemporaryLookupHelper
   confidence: provisional

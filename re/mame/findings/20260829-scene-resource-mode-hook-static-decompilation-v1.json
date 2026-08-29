@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "function": {
+    "address": "0x001B2236",
+    "name": "SceneResource_ModeNoOpHook",
+    "confidence": "confirmed",
+    "body": "The complete function body is one RTS instruction and preserves all caller state.",
+    "call_sites": [
+      "Interaction_UpdateResourceState selects SCENE_RESOURCE_MODE=0x1C, calls the hook, then clears its status byte.",
+      "Interaction_UpdateResourceState selects SCENE_RESOURCE_MODE=0x1B, calls the hook, then clears its status byte.",
+      "Hud_RunPendingDisplayPresentation selects SCENE_RESOURCE_MODE=0x04, calls the hook, then starts its presentation service."
+    ],
+    "effect": "No memory, register, control-flow, or return-value effect beyond the call/return boundary."
+  },
+  "conclusion": "This is an intentional RTS-only scene-resource mode hook. The mode-specific work is performed by the callers and by SceneResource_InstantiateActors or the presentation service that follows; no additional behavior is assigned to this address."
+}
