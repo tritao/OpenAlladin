@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-type2f-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animations": [
+    {
+      "address": "0x00123A68",
+      "name": "ACTOR_ANIM_TYPE2F_INTERACTION_LOOP",
+      "packed_region": ["0x00123A68", "0x00123A7D"],
+      "packed_bytes": 22,
+      "frame_sequence": ["0x1AEE", "0x1AEE", "0x1AF2", "0x1AF2", "0x1AF6", "0x1AF6", "0x1AFA", "0x1AFA"],
+      "loop": "0x00123A78 EA -> 0x00123A68",
+      "consumers": ["0x001B6C96 InteractionSpawn_Type2F_2A", "0x001B6CA2 InteractionSpawn_Type2F_Facing_29"]
+    },
+    {
+      "address": "0x00123A7E",
+      "name": "ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT",
+      "packed_region": ["0x00123A7E", "0x00123AC3"],
+      "packed_bytes": 70,
+      "frame_sequence": ["0x1AEE", "0x1AEE", "0x1AF2", "0x1AF2", "0x1AF6", "0x1AF6", "0x1AFA", "0x1AFA", "0x1AFE", "0x1AFE", "0x1B26", "0x1B26", "0x1B2A", "0x1B2A", "0x1B2E", "0x1B2E", "0x1B32", "0x1B32", "0x1AFE", "0x1AFE"],
+      "commands": {
+        "timer": "0x00123A80 EE 0x0D",
+        "clear_actor": ["0x00123A94", "0x00123AA8"],
+        "publish_type": { "address": "0x00123A98", "value": "0x84" },
+        "clear_movement": { "address": "0x00123A9E", "value": "0x00000000" }
+      },
+      "loop": "0x00123ABE EA -> 0x00123AAA",
+      "consumer": "0x001B62CC Level12_EnterRoutine"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output for both Type-0x2F roots",
+    "Exact Type-0x2F interaction and Level-12 event template contracts",
+    "Direct interaction-table and Level12_EnterRoutine consumers",
+    "Packed boundaries immediately before the established 0x00123AC4 stream"
+  ],
+  "conclusion": "The two Type-0x2F animation roots are independently bounded. The interaction root is a fixed four-frame loop; the Level-12 root is a terminal-event sequence that clears and repurposes its actor before looping through the final frame tail. Neither root is a player-transfer implementation.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

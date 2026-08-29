@@ -33,7 +33,7 @@
       "consumer_sites": ["0x001B6C96", "0x001B6CA2"],
       "runtime_type": "0x2F",
       "movement_stream": "0x00120ACC",
-      "animation_stream": "0x00123A68",
+      "animation_stream": "0x00123A68 ACTOR_ANIM_TYPE2F_INTERACTION_LOOP",
       "resource_count": "0x04"
     }
   ],

@@ -487,6 +487,26 @@
     - level01_type1f_settle_trace
     - animation_stream_decoder
 
+0x00123A68:
+  name: ACTOR_ANIM_TYPE2F_INTERACTION_LOOP
+  size: 22
+  confidence: decompiled
+  description: Type-0x2F interaction animation loop used by the direct reverse-slot interaction handlers. Its packed 22-byte body cycles the four frame references 0x1AEE, 0x1AF2, 0x1AF6, and 0x1AFA, then loops unconditionally back to its entry.
+  evidence:
+    - type2f_animation_static_decompilation
+    - actor_template_type2f_interaction
+    - animation_stream_decoder
+
+0x00123A7E:
+  name: ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT
+  size: 70
+  confidence: decompiled
+  description: Type-0x2F Level-12 terminal-event animation selected by Level12_EnterRoutine. Its packed 70-byte body presents the 0x1AEE/0x1AF2/0x1AF6/0x1AFA/0x1AFE sequence, delays through timer 0x0D, clears the actor, publishes type 0x84, clears actor movement, and loops through the terminal frame tail.
+  evidence:
+    - type2f_animation_static_decompilation
+    - actor_template_type2f_level12_event
+    - animation_stream_decoder
+
 0x001231DC:
   name: ACTOR_ANIM_TYPE2A_VERTICAL_BOB
   size: 36
@@ -1436,7 +1456,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2F interaction template loaded by direct reverse-slot spawn entries at 0x001B6C96 and 0x001B6CA2; it uses movement stream 0x00120ACC, animation stream 0x00123A68, and four resources.
+  description: Type-0x2F interaction template loaded by direct reverse-slot spawn entries at 0x001B6C96 and 0x001B6CA2; it uses movement stream 0x00120ACC, animation stream ACTOR_ANIM_TYPE2F_INTERACTION_LOOP, and four resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
@@ -1906,7 +1926,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2F final-scene event template selected by Level12_EnterRoutine at 0x001B62B6 when its event byte is 0x0D; it uses movement stream 0x001203D0, animation stream 0x00123A7E, and four resources before the caller initializes position (0x02B1,0x022A).
+  description: Type-0x2F final-scene event template selected by Level12_EnterRoutine at 0x001B62B6 when its event byte is 0x0D; it uses movement stream 0x001203D0, animation stream ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs

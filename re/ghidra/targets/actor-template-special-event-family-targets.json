@@ -28,7 +28,7 @@
       "spawn_helper": "0x001AE262 Actor_FindFreeSlot + 0x001AE30A Actor_InitializeFromTemplate",
       "runtime_type": "0x2F",
       "movement_stream": "0x001203D0",
-      "animation_stream": "0x00123A7E",
+      "animation_stream": "0x00123A7E ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT",
       "resource_count": "0x04",
       "post_initialize": "The event path initializes the allocated actor at position (0x02B1,0x022A)."
     }
