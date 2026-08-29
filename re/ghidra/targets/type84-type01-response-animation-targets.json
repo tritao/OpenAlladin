@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-type84-type01-response-animation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "stream": {
+    "address": "0x00122DB2",
+    "name": "ACTOR_ANIM_TYPE84_TYPE01_RESPONSE",
+    "range": ["0x00122DB2", "0x00122DD7"],
+    "size": 38,
+    "producers": [
+      "0x001AFD84 Type-0x01 player-collision transition",
+      "0x001ABF9C collision-response helper"
+    ],
+    "transition": "The producers initialize the actor as type 0x84 and install this stream; the ED command at 0x00122DCC publishes type 0x01 before the stream returns to 0x00122D92.",
+    "terminal": "0x00122DD2 EA -> 0x00122D92"
+  },
+  "decoder_checks": {
+    "bytes": 38,
+    "stop": "unconditional_jump",
+    "sound": "F3 0x05 at 0x00122DB4",
+    "type_publication": "ED 0x11 offset 0 at 0x00122DCC value 0x0001"
+  },
+  "boundary_basis": [
+    "Direct animation installation at 0x001AFDEC",
+    "Direct animation installation at 0x001ABFC4",
+    "Lossless AnimationDecoder boundaries",
+    "EA return at 0x00122DD2 and next root 0x00122DD8"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

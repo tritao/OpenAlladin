@@ -65,7 +65,7 @@
     "Explicit Type-0x55 fall-through boundary before ACTOR_ANIM_TYPE01"
   ],
   "limitations": [
-    "The adjacent 0x00122DB2 response fragment remains unresolved here because its direct producer bodies are outside the currently bounded Ghidra function set.",
+    "The adjacent 0x00122DB2 response fragment is recorded separately in type84-type01-response-animation-targets.json because it has a distinct producer/transition contract.",
     "The Type-0x46 child-template records are documented by their existing target/finding family; this record only claims the parent animation extent."
   ],
   "confidence": "decompiled",

@@ -1964,6 +1964,16 @@
     - actor_template_interaction_dispatch_family_static_decompilation
     - animation_stream_decoder
 
+0x00122DB2:
+  name: ACTOR_ANIM_TYPE84_TYPE01_RESPONSE
+  size: 38
+  confidence: decompiled
+  description: Shared Type-0x84 response animation installed by the Type-0x01 player-collision transition at 0x001AFD84 and the collision-response helper at 0x001ABF9C. Its exact 38-byte region plays sound 0x05, presents the 0x1632-0x164E sequence, writes actor type 0x01 through ED, and returns to ACTOR_ANIM_TYPE01 at 0x00122D92.
+  evidence:
+    - player_collision_transfer_capable_mechanism_graph
+    - actor_collision_handler_family_static_decompilation
+    - animation_stream_decoder
+
 0x0012312C:
   name: ACTOR_ANIM_TYPE5F_INTERACTION
   size: 40

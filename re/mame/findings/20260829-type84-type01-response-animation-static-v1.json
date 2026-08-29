@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "stream": {
+    "address": "0x00122DB2",
+    "name": "ACTOR_ANIM_TYPE84_TYPE01_RESPONSE",
+    "range": "0x00122DB2-0x00122DD7",
+    "size": 38,
+    "producer_sites": [
+      {
+        "address": "0x001AFD84",
+        "effect": "Type-0x01 player-collision transition sets actor type 0x84, installs 0x00122DB2, clears actor field +0x37, and then performs the player placement/launch writes."
+      },
+      {
+        "address": "0x001ABF9C",
+        "effect": "Collision-response helper sets actor type 0x84, installs 0x00122DB2, and clears actor field +0x37 after its optional response audio call."
+      }
+    ],
+    "decoded": [
+      "frame 0x1632",
+      "F3 sound 0x05",
+      "0x1636, 0x1632, 0x1636, 0x163A, 0x163E, 0x1642, 0x163E, 0x1642, 0x1646, 0x164A, 0x164E",
+      "ED 0x11 actor offset 0 value 0x0001 at 0x00122DCC",
+      "EA from 0x00122DD2 to ACTOR_ANIM_TYPE01 at 0x00122D92"
+    ]
+  },
+  "conclusion": "The formerly unclassified 0x00122DB2 fragment is a shared Type-0x84 response/Type-0x01 handoff. Its two direct producers and its exact ED type publication explain why it is a separate stream rather than part of the stationary ACTOR_ANIM_TYPE01 root.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

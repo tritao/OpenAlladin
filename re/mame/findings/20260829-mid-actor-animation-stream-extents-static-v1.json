@@ -70,7 +70,7 @@
       "decoded": ["0x1462-0x147A frame sequence", "EA loop at 0x00122E10"]
     }
   ],
-  "conclusion": "Six direct mid-band actor AnimationVM roots are now range-bounded from their exact consumers and decoded terminals. The 0x00122DB2 fragment and unrelated 0x00122E16-onward data remain outside this finding.",
+  "conclusion": "Six direct mid-band actor AnimationVM roots are now range-bounded from their exact consumers and decoded terminals. The 0x00122DB2 response is recorded separately; unrelated 0x00122E16-onward data remains outside this finding.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }
