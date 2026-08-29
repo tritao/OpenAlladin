@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-launch-placement-family",
+    "purpose": "Canonicalize the remaining player-collision entries that directly alter player velocity, camera thresholds, and launch/placement animation state."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x4D"], "address": "0x001AF0B8" },
+      { "actor_types": ["0x11", "0x12"], "address": "0x001AF110" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AF0B8", "name": "ActorType4D_PlayerCollisionHandler" },
+    { "address": "0x001AF110", "name": "ActorType11_12_PlayerCollisionHandler" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E02", "name": "PLAYER_WORLD_X" },
+    { "address": "0x00FF7E58", "name": "PLAYER_VX" },
+    { "address": "0x00FF7E5A", "name": "PLAYER_VY" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FF7DFE", "name": "CAMERA_HORIZONTAL_THRESHOLD" },
+    { "address": "0x00FF7E00", "name": "CAMERA_VERTICAL_THRESHOLD" },
+    { "address": "0x00FFF0BE", "name": "TERRAIN_RESPONSE_ACTIVE" },
+    { "address": "0x00FFF0C0", "name": "TERRAIN_VERTICAL_STOP" },
+    { "address": "0x00FFF0CC", "name": "TERRAIN_RESPONSE_TIMER_STATE" }
+  ]
+}

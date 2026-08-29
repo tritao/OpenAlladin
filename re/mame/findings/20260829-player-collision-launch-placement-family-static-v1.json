@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-player-collision-launch-placement-family-finding-v1",
+  "recorded_at": "2026-08-29",
+  "status": "static-family-closed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": [
+    "re/ghidra/targets/player-collision-launch-placement-family-targets.json",
+    "re/mame/findings/20260827-level01-player-motion-writer-audit-v1.json",
+    "re/mame/findings/20260827-level01-transfer-capable-mechanism-graph-v1.json",
+    "re/symbols/functions.yml",
+    "build/re/dasm-1A8000.txt"
+  ],
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "address_space": "68000 ROM addresses",
+    "handlers": [
+      {
+        "address": "0x001AF0B8",
+        "size": 88,
+        "actor_types": ["0x4D"],
+        "name": "ActorType4D_PlayerCollisionHandler",
+        "range": "0x001AF0B8-0x001AF10F",
+        "semantics": "Type-0x4D placement response: find type-0x12 context, adjust the camera threshold and PLAYER_VX by the actor/player X ordering, then install a type-0x84 response actor with animation 0x00124498 and cleared transient motion words."
+      },
+      {
+        "address": "0x001AF110",
+        "size": 156,
+        "actor_types": ["0x11", "0x12"],
+        "name": "ActorType11_12_PlayerCollisionHandler",
+        "range": "0x001AF110-0x001AF1AB",
+        "semantics": "Shared type-0x11/0x12 collision response. The ungated type-0x12 branch selects animation 0x0012512C and recovers interaction state; the gated branch writes PLAYER_VX=+0x0600 or -0x0400, PLAYER_VY=-0x0400, installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE, sets camera thresholds, arms TERRAIN_RESPONSE_ACTIVE, and clears TERRAIN_VERTICAL_STOP/TERRAIN_RESPONSE_TIMER_STATE."
+      }
+    ]
+  },
+  "boundary_checks": {
+    "ranges": [
+      "0x001AF0B8-0x001AF10F",
+      "0x001AF110-0x001AF1AB"
+    ],
+    "result": "Both bodies terminate immediately before the existing ActorType13_PlayerCollisionHandler at 0x001AF1AC; no promoted ranges overlap."
+  },
+  "negative_findings": [
+    "The type-0x11/0x12 handler is a real launch writer, but prior Level 01 reachability audits recorded no live producer for these actor types in the missing upper corridor.",
+    "Neither entry directly writes SCENE_STATE."
+  ],
+  "conclusion": "The two remaining direct player placement/launch entries are now canonicalized. Their exact velocity and camera-state writes are available to the deasm and parity model, while the existing Level 01 producer audit remains the authority for whether either handler is reachable on the unresolved route."
+}
