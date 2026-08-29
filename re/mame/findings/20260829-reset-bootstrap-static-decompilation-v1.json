@@ -11,6 +11,35 @@
     "confidence": "decompiled",
     "hardware_guard": "The reset entry reads 0x00A10008 and 0x00A1000C; only when both are zero does it execute the initial hardware setup block.",
     "inline_table": "The setup block loads its initial values from 0x000002A8-0x000002DE: VDP control/data pointers, Z80 bus/reset/RAM pointers, the initial VDP register base, and the Z80/VDP initialization bytes.",
+    "data_objects": [
+      {
+        "address": "0x000002A8",
+        "name": "RESET_BOOTSTRAP_INITIAL_WORDS",
+        "size": 6,
+        "values": ["0x8000", "0x3FFF", "0x0100"],
+        "roles": ["initial VDP command base", "hardware-clear loop counter", "VDP register command increment"]
+      },
+      {
+        "address": "0x000002AE",
+        "name": "RESET_BOOTSTRAP_HARDWARE_POINTERS",
+        "size": 20,
+        "values": ["0x00A00000", "0x00A11100", "0x00A11200", "0x00C00000", "0x00C00004"],
+        "roles": ["Z80 RAM", "Z80 bus request", "Z80 reset", "VDP data", "VDP control"]
+      },
+      {
+        "address": "0x000002C2",
+        "name": "RESET_BOOTSTRAP_VDP_REGISTER_BYTES",
+        "size": 24,
+        "role": "initial VDP register byte sequence"
+      },
+      {
+        "address": "0x000002DA",
+        "name": "RESET_BOOTSTRAP_VDP_COMMAND",
+        "size": 4,
+        "value": "0x40000080",
+        "role": "follow-up VDP control command"
+      }
+    ],
     "hardware_setup": "The guarded block identifies the console region through 0x00A10001, optionally writes the SEGA marker at 0x00A12F00, initializes VDP registers, clears VDP memory regions, copies the Z80 driver bytes to 0x00A00000, and releases the Z80 reset/bus handoff.",
     "continuation": "The bootstrap branches to 0x00000314 for region selection and then continues through the reset-time system initialization path.",
     "service_order": [

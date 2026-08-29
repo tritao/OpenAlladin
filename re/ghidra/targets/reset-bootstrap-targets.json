@@ -16,6 +16,12 @@
     "hardware_guard": ["0x00A10008", "0x00A1000C"],
     "inline_constants": "0x000002A8-0x000002DE",
     "continuation": "0x00000314",
+    "data_objects": [
+      { "address": "0x000002A8", "name": "RESET_BOOTSTRAP_INITIAL_WORDS", "size": 6 },
+      { "address": "0x000002AE", "name": "RESET_BOOTSTRAP_HARDWARE_POINTERS", "size": 20 },
+      { "address": "0x000002C2", "name": "RESET_BOOTSTRAP_VDP_REGISTER_BYTES", "size": 24 },
+      { "address": "0x000002DA", "name": "RESET_BOOTSTRAP_VDP_COMMAND", "size": 4 }
+    ],
     "hardware_ports": [
       "0x00A00000",
       "0x00A10001",
