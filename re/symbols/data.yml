@@ -1855,3 +1855,43 @@
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
+
+0x001B8020:
+  name: ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x16 level-object template loaded through LevelObjectSpawnEntry at 0x001B7000; it has no movement stream, uses animation stream 0x00124D38, and owns eleven resources.
+  evidence:
+    - ghidra_level_actor_spawn_block
+    - actor_template_grid_xrefs
+
+0x001B8070:
+  name: ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x07 moving interaction template loaded through the reverse-slot consumer at 0x001B6726; it uses movement stream 0x001216C6, animation stream 0x001252F0, and owns six resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B8084:
+  name: ACTOR_TEMPLATE_TYPE_58_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x58 interaction template loaded through forward-slot consumers at 0x001B668A and 0x001B6696; it has no movement stream, uses animation stream 0x00125392, and owns four resources, while the latter consumer replaces the animation root with 0x00125348 after allocation.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B80FC:
+  name: ACTOR_TEMPLATE_TYPE_36_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x36 interaction template loaded through the reverse-slot consumer at 0x001B700C; it has no movement stream, uses animation stream 0x0012570C, and owns six resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs

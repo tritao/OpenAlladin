@@ -2728,3 +2728,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-actor-template-type4e-family-static-decompilation-v1` | recorded-static-decompilation | Type-0x4E and type-0x4F interaction templates named from reverse-slot consumers |
 | `20260829-actor-template-special-event-family-static-decompilation-v1` | recorded-static-decompilation | Type-0x0F interaction and Level 12 type-0x2F event templates named from complete consumers |
 | `20260829-actor-template-type62-family-static-decompilation-v1` | recorded-static-decompilation | Scene-gated default and scene-5 type-0x62 response templates named from the shared spawn path |
+| `20260829-actor-template-late-interaction-family-static-decompilation-v1` | recorded-static-decompilation | Type-0x16, type-0x07, type-0x58, and type-0x36 templates named from late level/interaction consumers |

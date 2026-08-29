@@ -1,0 +1,64 @@
+{
+  "format": "openaladdin-actor-template-late-interaction-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the remaining late level-object and interaction templates with direct consumers in the 0x001B66xx-0x001B70xx dispatch blocks.",
+  "templates": [
+    {
+      "address": "0x001B8020",
+      "name": "ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT",
+      "consumer_site": "0x001B7000",
+      "dispatch_entry": "0x0041C4 selector 0x1C",
+      "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+      "runtime_type": "0x16",
+      "movement_stream": null,
+      "animation_stream": "0x00124D38",
+      "resource_count": "0x0B"
+    },
+    {
+      "address": "0x001B8070",
+      "name": "ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION",
+      "consumer_site": "0x001B6726",
+      "dispatch_entry": "0x004268 selector 0x45",
+      "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+      "runtime_type": "0x07",
+      "movement_stream": "0x001216C6",
+      "animation_stream": "0x001252F0",
+      "resource_count": "0x06"
+    },
+    {
+      "address": "0x001B8084",
+      "name": "ACTOR_TEMPLATE_TYPE_58_INTERACTION",
+      "consumer_sites": ["0x001B668A", "0x001B6696"],
+      "dispatch_entries": ["0x004328 selector 0x75", "0x00432C selector 0x76"],
+      "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
+      "runtime_type": "0x58",
+      "movement_stream": null,
+      "animation_stream": "0x00125392",
+      "resource_count": "0x04",
+      "post_initialize": "The 0x001B6696 consumer replaces the animation root with 0x00125348 after successful allocation."
+    },
+    {
+      "address": "0x001B80FC",
+      "name": "ACTOR_TEMPLATE_TYPE_36_INTERACTION",
+      "consumer_site": "0x001B700C",
+      "dispatch_entry": "0x0044FC selector 0xEA",
+      "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+      "runtime_type": "0x36",
+      "movement_stream": null,
+      "animation_stream": "0x0012570C",
+      "resource_count": "0x06"
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "conclusion": "All four records are exact 20-byte templates selected by complete direct consumers. The group covers one level-object source, one movement-backed interaction, and two ordinary interaction sources with an explicit alternate animation publication.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
