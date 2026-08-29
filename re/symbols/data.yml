@@ -3132,6 +3132,17 @@
     - type84_terminal_interaction_static_decompilation
     - animation_stream_decoder
 
+0x001B828C:
+  name: ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 child template supplied by the two F5 records in the shared runtime-0x47-to-0x4C animation root at 0x00123E36; it carries record payload 0x000000FF, movement stream 0x00121256, template word 0x6000, default animation entry 0x00125B86 within ACTOR_ANIM_TYPE59_SCENE_EVENT, and no owned resources, while the second producer enters the embedded alternate at 0x00125BA6.
+  evidence:
+    - actor_template_type84_runtime47_4c_child_static_decompilation
+    - interaction_spawn_runtime47-4c-static-decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B8318:
   name: ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY
   type: actor_template

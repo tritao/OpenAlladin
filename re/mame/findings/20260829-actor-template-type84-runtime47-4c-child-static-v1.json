@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-type84-runtime47-4c-child-targets.json",
+  "producer": {
+    "animation_root": "0x00123E36",
+    "producer_sites": ["0x00123E44", "0x00123E60"],
+    "runtime_family": "InteractionSpawn_RuntimeType47_B1 through InteractionSpawn_RuntimeType4C_B6",
+    "animation_entries": ["0x00125B86", "0x00125BA6"]
+  },
+  "template": {
+    "address": "0x001B828C",
+    "name": "ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD",
+    "range": ["0x001B828C", "0x001B829F"],
+    "runtime_type": "0x84",
+    "template_payload": "0x000000FF",
+    "movement_stream": "0x00121256",
+    "template_word": "0x6000",
+    "animation_stream": "0x00125B86 embedded in ACTOR_ANIM_TYPE59_SCENE_EVENT",
+    "resource_count": "0x00",
+    "trailing_flags": "0x0000"
+  },
+  "evidence": [
+    "Direct F5 template pointers and payloads in the shared runtime-47-to-4C animation root",
+    "Exact raw 20-byte record between established terminal-interaction and scene-initialization templates",
+    "Common Actor_InitializeFromTemplate record layout"
+  ],
+  "conclusion": "The formerly unassigned 0x001B828C record is statically closed as the shared Type-0x84 child base for the runtime-0x47-to-0x4C interaction animation. Its movement, template, resource, and two embedded animation-entry contracts are established without assigning a narrower user-facing effect role.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

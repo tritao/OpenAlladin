@@ -1,0 +1,60 @@
+{
+  "format": "openaladdin-actor-template-type84-runtime47-4c-child-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the Type-0x84 child record supplied by the shared runtime-0x47-to-0x4C interaction animation.",
+  "producer": {
+    "animation_root": "0x00123E36",
+    "root_contract": "Shared by InteractionSpawn_RuntimeType47_B1 through InteractionSpawn_RuntimeType4C_B6 after their runtime-type and flag publication.",
+    "f5_records": [
+      {
+        "address": "0x00123E44",
+        "template": "0x001B828C",
+        "parameter_byte": "0x01",
+        "placement_word": "0x0806",
+        "animation_entry": "0x00125B86"
+      },
+      {
+        "address": "0x00123E60",
+        "template": "0x001B828C",
+        "parameter_byte": "0x01",
+        "placement_word": "0x0806",
+        "animation_entry": "0x00125BA6"
+      }
+    ]
+  },
+  "template": {
+    "address": "0x001B828C",
+    "name": "ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD",
+    "range": ["0x001B828C", "0x001B829F"],
+    "size": 20,
+    "raw_bytes": "8400000000FF00121256600000125B8600000000",
+    "runtime_type": "0x84",
+    "template_payload": "0x000000FF",
+    "movement_stream": "0x00121256",
+    "template_word": "0x6000",
+    "animation_stream": "0x00125B86 embedded in ACTOR_ANIM_TYPE59_SCENE_EVENT",
+    "resource_count": "0x00",
+    "trailing_flags": "0x0000"
+  },
+  "embedded_animation": {
+    "default_entry": "0x00125B86",
+    "alternate_entry": "0x00125BA6",
+    "owner": "0x00125AFE ACTOR_ANIM_TYPE59_SCENE_EVENT",
+    "boundary": "Both entries remain embedded in the established Type-0x59 scene-event family; the F5 records select their starting PCs."
+  },
+  "record_contract": {
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "boundary": "The 20-byte record ends immediately before ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY at 0x001B8318."
+  },
+  "evidence": [
+    "Exact F5 template pointers at 0x00123E44 and 0x00123E64",
+    "Exact F5 placement words and embedded animation-entry pointers",
+    "Exact 20-byte actor-template record boundary",
+    "Common Actor_InitializeFromTemplate record layout"
+  ]
+}
