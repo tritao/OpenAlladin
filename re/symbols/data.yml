@@ -1527,6 +1527,16 @@
     - actor_template_presentation_family_static_decompilation
     - animation_stream_decoder
 
+0x0012570C:
+  name: ACTOR_ANIM_TYPE36_INTERACTION
+  size: 336
+  confidence: decompiled
+  description: Type-0x36 interaction animation installed by ACTOR_TEMPLATE_TYPE_36_INTERACTION. Its packed region clears the actor state, spawns the encoded Type-0x84 and upper-route child records, applies the 0x0F22-0x0F4E frame/arithmetic response, jumps to the local 0x0F26 sequence at 0x001257C6, plays sound 0x2A, and terminates with F600 at 0x0012585A before the separately owned Level-entry stream.
+  evidence:
+    - actor_template_late_interaction_family_static_decompilation
+    - interaction_spawn_late_level_object_family_static_decompilation
+    - animation_stream_decoder
+
 0x00122D92:
   name: ACTOR_ANIM_TYPE01
   confidence: confirmed
