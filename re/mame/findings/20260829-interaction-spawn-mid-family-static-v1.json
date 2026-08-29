@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-spawn-mid-family-targets.json",
+  "dispatch_table": {
+    "address": "0x004154",
+    "name": "INTERACTION_HANDLER_TABLE",
+    "newly_named_targets": 11
+  },
+  "handler_contracts": [
+    { "address": "0x001B67C2", "selector": "0xD7", "template": "ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT", "effect": "up to two random-variant spawns, second at Y + 8 with facing complemented" },
+    { "address": "0x001B6802", "selector": "0x0D", "template": "ACTOR_TEMPLATE_TYPE_6A_6B", "effect": "offset (+8,-1)" },
+    { "address": "0x001B681C", "selector": "0x2B", "template": "ACTOR_TEMPLATE_TYPE_69_INTERACTION", "effect": "offset (+8,-1)" },
+    { "address": "0x001B6836", "selector": "0x70", "template": "ACTOR_TEMPLATE_TYPE_69_INTERACTION", "effect": "gate 0x00FFF100, runtime type 0x6C, animation 0x00124034, offset (+0x0F,-1)" },
+    { "address": "0x001B6864", "selectors": ["0xD0", "0xD1", "0xD2", "0xD3", "0xD4", "0xD5"], "template": "ACTOR_TEMPLATE_TYPE_23_INTERACTION", "effect": "reverse-slot allocation" },
+    { "address": "0x001B6870", "selector": "0x5C", "template": "ACTOR_TEMPLATE_TYPE_06", "effect": "offset (+9,+7)" },
+    { "address": "0x001B688A", "selector": "0x6C", "template": "ACTOR_TEMPLATE_TYPE_2B_INTERACTION", "effect": "interaction-helper allocation" },
+    { "address": "0x001B6896", "selector": "0xFD", "template": "ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE", "effect": "offset (+0x14,-1)" },
+    { "address": "0x001B68B0", "selector": "0xFE", "template": "ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE", "effect": "offset (+0x0B,+6)" },
+    { "address": "0x001B68CA", "selector": "0xAA", "template": "ACTOR_TEMPLATE_TYPE_84_INTERACTION_RESPONSE", "effect": "resource-free interaction-response allocation" },
+    { "address": "0x001B68D6", "selector": "0x82", "template": "ACTOR_TEMPLATE_TYPE_5F_INTERACTION", "effect": "gate 0x00FFF11C and offset (+0x0D,-0x0C)" }
+  ],
+  "evidence": [
+    "Direct template loads and runtime field writes",
+    "Exact selector membership from INTERACTION_HANDLER_TABLE",
+    "InteractionSpawn_ReverseSlot, InteractionHandler_0x40_Helper, and Actor_ApplyRandomSpawnVariation calls"
+  ],
+  "conclusion": "This cluster is statically closed at the allocation and coordinate-contract level. It does not assert dynamic reachability or user-facing meanings for the actor types.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
