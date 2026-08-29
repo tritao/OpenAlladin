@@ -399,6 +399,27 @@ def test_canonical_fixed_palette_sources_have_exact_upload_extents():
         assert symbol.metadata["type"] == "palette_data"
 
 
+def test_canonical_scene_transition_graphics_have_exact_service_extents():
+    symbols = SymbolStore()
+    expected = (
+        (0x00129B92, 0x00129BD1, "ROM_SCENE_TRANSITION_TILE_BAND", "graphics_data"),
+        (0x00129BD2, 0x00129C51, "SCENE_TERMINAL_TRANSITION_PALETTE_SOURCE", "palette_data"),
+        (0x00129C52, 0x00129C89, "ROM_TERMINAL_TRANSITION_TILE_BAND", "graphics_data"),
+        (0x00129C8A, 0x00129CA9, "SCENE_TERMINAL_TRANSITION_PALETTE_BAND0_SOURCE", "palette_data"),
+    )
+    actual = []
+    for start, end, name, symbol_type in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == end - start + 1
+        assert symbol.end == end
+        assert symbol.metadata["type"] == symbol_type
+        actual.append((symbol.address, symbol.end))
+    assert actual == [(start, end) for start, end, _, _ in expected]
+    assert all(left[1] + 1 == right[0] for left, right in zip(actual, actual[1:]))
+
+
 def test_canonical_credits_stream_has_exact_interpreter_terminal():
     symbols = SymbolStore()
     symbol = symbols.at(0x00127E8C, include_ranges=False)

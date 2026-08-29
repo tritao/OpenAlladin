@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-transition-graphics-extents-targets.json",
+  "objects": [
+    { "address": "0x00129B92", "name": "ROM_SCENE_TRANSITION_TILE_BAND", "class": "GRAPHICS", "range": ["0x00129B92", "0x00129BD1"], "bytes": 64 },
+    { "address": "0x00129BD2", "name": "SCENE_TERMINAL_TRANSITION_PALETTE_SOURCE", "class": "GRAPHICS", "range": ["0x00129BD2", "0x00129C51"], "bytes": 128 },
+    { "address": "0x00129C52", "name": "ROM_TERMINAL_TRANSITION_TILE_BAND", "class": "GRAPHICS", "range": ["0x00129C52", "0x00129C89"], "bytes": 56 },
+    { "address": "0x00129C8A", "name": "SCENE_TERMINAL_TRANSITION_PALETTE_BAND0_SOURCE", "class": "GRAPHICS", "range": ["0x00129C8A", "0x00129CA9"], "bytes": 32 }
+  ],
+  "contracts": {
+    "scene_tile_band": "Offsets 0x00-0x20 plus 16 words cover 0x40 bytes.",
+    "terminal_palette": "Four 16-word bands cover 0x80 bytes.",
+    "terminal_tile_band": "Offsets 0x00-0x1C plus 14 words cover 0x38 bytes.",
+    "terminal_palette_band0": "One 16-word upload covers 0x20 bytes."
+  },
+  "evidence": [
+    "Exact VDP_ANIMATION_FRAME_OFFSET bounds and DBF copy counts in the two tile-band services.",
+    "Direct source loads and palette helper calls in Level_ExitAndTerminalTransition.",
+    "The promoted objects form one gap-free 0x00129B92-0x00129CA9 graphics region."
+  ],
+  "conclusion": "The scene-transition tile and palette resources are now explicit GRAPHICS layout evidence with exact service-derived boundaries.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

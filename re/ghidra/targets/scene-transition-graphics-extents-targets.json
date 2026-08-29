@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-transition-graphics-extents",
+    "purpose": "Bound the transition tile tables and palette sources selected by the terminal and scene-transition render services."
+  },
+  "services": [
+    { "address": "0x001B1676", "name": "SceneResource_RenderTransitionTileBand", "source": "0x00129B92", "offsets": "0x00-0x20 by 2", "words": 16, "range": ["0x00129B92", "0x00129BD1"] },
+    { "address": "0x001B05D4", "name": "Level_ExitAndTerminalTransition", "source": "0x00129BD2", "helper": "0x001B278A Render_RunPaletteTransitionFrom", "bands": 4, "words_per_band": 16, "range": ["0x00129BD2", "0x00129C51"] },
+    { "address": "0x001B07D0", "name": "Level_RenderTerminalTransitionTileBand", "source": "0x00129C52", "offsets": "0x00-0x1C by 2", "words": 14, "range": ["0x00129C52", "0x00129C89"] },
+    { "address": "0x001B06FA", "name": "Level_ExitAndTerminalTransition", "source": "0x00129C8A", "helper": "0x001B2678 Render_UploadPaletteBand0", "words": 16, "range": ["0x00129C8A", "0x00129CA9"] }
+  ],
+  "evidence": [
+    "SceneResource_RenderTransitionTileBand uses VDP_ANIMATION_FRAME_OFFSET, wraps after 0x20, and copies 16 words.",
+    "Level_RenderTerminalTransitionTileBand wraps after 0x1C and copies 14 words.",
+    "Render_RunPaletteTransitionFrom consumes four 16-word bands from the direct 0x00129BD2 source.",
+    "Render_UploadPaletteBand0 copies exactly 16 words from the direct 0x00129C8A source.",
+    "The four ranges are adjacent from 0x00129B92 through 0x00129CA9 and end immediately before SCENE_INITIAL_C000_PALETTE_DATA."
+  ],
+  "limitations": [
+    "The semantic color roles of individual palette words remain represented by their verified consumer service.",
+    "The separate initial C000/palette block at 0x00129CAA is not claimed by this slice."
+  ]
+}

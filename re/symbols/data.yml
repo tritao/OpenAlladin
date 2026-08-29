@@ -735,6 +735,47 @@
   description: Fixed 16-word transition palette source uploaded to palette band 2 by the transition tile-band-ready callback.
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
+0x00129B92:
+  name: ROM_SCENE_TRANSITION_TILE_BAND
+  type: graphics_data
+  size: 0x40
+  confidence: decompiled
+  description: Scene-transition tile-band table consumed by SceneResource_RenderTransitionTileBand. The service selects offsets from 0x00 through 0x20 in two-byte steps and copies 16 words, ending at 0x00129BD1.
+  evidence:
+    - ghidra_scene_transition_tile_target
+    - scene_transition_graphics_extents_static_v1
+
+0x00129BD2:
+  name: SCENE_TERMINAL_TRANSITION_PALETTE_SOURCE
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band terminal-transition palette source passed by Level_ExitAndTerminalTransition to Render_RunPaletteTransitionFrom. The transition helper consumes four 16-word bands through 0x00129C51.
+  evidence:
+    - ghidra_terminal_transition_palette_target
+    - ghidra_palette_transition_source_contract
+    - scene_transition_graphics_extents_static_v1
+
+0x00129C52:
+  name: ROM_TERMINAL_TRANSITION_TILE_BAND
+  type: graphics_data
+  size: 0x38
+  confidence: decompiled
+  description: Terminal-transition tile-band table consumed by Level_RenderTerminalTransitionTileBand. The service selects offsets from 0x00 through 0x1C and copies 14 words, ending at 0x00129C89.
+  evidence:
+    - ghidra_terminal_transition_tile_target
+    - scene_transition_graphics_extents_static_v1
+
+0x00129C8A:
+  name: SCENE_TERMINAL_TRANSITION_PALETTE_BAND0_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word terminal-transition palette source uploaded to palette band 0 by Level_ExitAndTerminalTransition through Render_UploadPaletteBand0, ending at 0x00129CA9 before the initial C000/palette block.
+  evidence:
+    - ghidra_terminal_transition_palette_target
+    - scene_transition_graphics_extents_static_v1
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data
