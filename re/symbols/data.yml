@@ -2146,10 +2146,30 @@
   type: movement_stream
   size: 24
   confidence: decompiled
-  description: Type-0x7B Level-11 event movement root installed by ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT at 0x001B8214. Its exact 24-byte primary loop applies the initial (+3, 0) step, checks actor field 0xB2 against 0x0008, gates on player X distance 0xC8, and loops at 0x00121220 back to the root; the conditional alternate entries at 0x00121226 and 0x0012123E remain separate unresolved/shared bytes.
+  description: Type-0x7B Level-11 event movement root installed by ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT at 0x001B8214. Its exact 24-byte primary loop applies the initial (+3, 0) step, checks actor field 0xB2 against 0x0008, gates on player X distance 0xC8, and loops at 0x00121220 back to the root; the conditional alternate entries at 0x00121226 and 0x0012123E are represented as separate non-overlapping entries.
   evidence:
     - type7b_level11_animation_static_decompilation
     - ghidra_level_table_enter_exit_targeted_decompile
+    - movement_stream_decoder
+
+0x00121226:
+  name: ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_DISTANCE_ENTRY
+  type: movement_stream
+  size: 24
+  confidence: decompiled
+  description: Type-0x7B Level-11 event distance-gate entry selected by the 0x0012121A player-X comparison. Its exact 24-byte body applies the signed (-119, +76) setup and timer 0x1D, repeats the actor-field 0xB2 compare, advances the delay, and jumps from 0x00121238 back to ACTOR_MOVE_TYPE7B_LEVEL11_EVENT at 0x0012120E.
+  evidence:
+    - type7b_level11_movement_static_decompilation
+    - movement_stream_decoder
+
+0x0012123E:
+  name: ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_COMPARE_TRANSITION
+  type: movement_stream
+  size: 2
+  confidence: decompiled
+  description: Two-byte Type-0x7B Level-11 compare-transition entry selected by the actor-field 0xB2 gate at 0x00121210. Its exact signed (-116, 0) delta falls through into ACTOR_MOVE_GUARD_SWORD_ATTACK at 0x00121240; the neighboring guard-sword owner is not duplicated.
+  evidence:
+    - type7b_level11_movement_static_decompilation
     - movement_stream_decoder
 
 0x00120A42:

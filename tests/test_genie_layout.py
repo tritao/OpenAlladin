@@ -727,6 +727,50 @@ def test_type7b_level11_movement_stream_is_exact():
     assert jumps[-1]["branch_target"] == "0x0012120E"
 
 
+def test_type7b_level11_movement_alternate_entries_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00121226: (0x0012123D, 24, "ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_DISTANCE_ENTRY"),
+        0x0012123E: (0x0012123F, 2, "ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_COMPARE_TRANSITION"),
+    }
+    for address, (end, size, name) in expected.items():
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.end == end
+        assert stream.size == size
+        assert stream.metadata["type"] == "movement_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = MovementDecoder(rom)
+    for address, (end, size, _) in expected.items():
+        linear = decoder.decode_stream(
+            address,
+            max_steps=256,
+            max_bytes=size,
+            follow_control_flow=False,
+        )
+        assert linear["bytes_decoded"] == size
+        assert linear["stopped_reason"] == "byte_limit"
+        assert linear["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
+
+    distance = decoder.decode_stream(0x00121226, 256, 512, True)
+    assert distance["bytes_decoded"] == 24
+    assert distance["stopped_reason"] == "control_flow_cycle"
+    distance_jump = next(
+        command
+        for step in distance["steps"]
+        for command in step["commands"]
+        if command["opcode"] == "0x80"
+    )
+    assert distance_jump["branch_target"] == "0x0012120E"
+
+    transition = decoder.decode_stream(0x0012123E, 256, 512, True)
+    assert transition["bytes_decoded"] == 24
+    assert transition["stopped_reason"] == "control_flow_cycle"
+
+
 def test_type7c_type7d_level_event_movement_family_is_exact():
     symbols = SymbolStore()
     prelude = symbols.at(0x00121180, include_ranges=False)
