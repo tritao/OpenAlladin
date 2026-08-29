@@ -1925,3 +1925,33 @@
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
+0x001B7864:
+  name: ACTOR_TEMPLATE_TYPE_83_PLAYER_BOOT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x83 player bootstrap template loaded by Level_InitializePlayerAndTerrainState at 0x001AA6A4; it has no movement stream, uses animation stream 0x00121D9A, and owns sixteen resources. The Level 01 producer closure identifies this as the slot-0 boot record, with movement PC zero.
+  evidence:
+    - level01_transfer_reachability_closure
+    - ghidra_actor_template_initializer_001AE30A
+    - actor_template_bootstrap_targets
+0x001B7878:
+  name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_TRANSITION_SECONDARY
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 terminal-transition presentation template loaded into the secondary temporary actor slot by Level_ExitAndTerminalTransition; it has no movement stream, uses animation stream 0x00121CCE, and owns twenty-four resources before the caller supplies position 0x0120,0x0178.
+  evidence:
+    - ghidra_level_exit_terminal_transition
+    - actor_template_bootstrap_targets
+    - actor_template_grid_xrefs
+0x001B788C:
+  name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_TRANSITION_PRIMARY
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 terminal-transition presentation template loaded into the primary temporary actor slot by Level_ExitAndTerminalTransition; it has no movement stream, uses animation stream 0x00121CB0, and owns eight resources before the caller supplies position 0x016A,0x018A.
+  evidence:
+    - ghidra_level_exit_terminal_transition
+    - actor_template_bootstrap_targets
+    - actor_template_grid_xrefs
