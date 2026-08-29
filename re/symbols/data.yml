@@ -1077,7 +1077,7 @@
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Type-0x2A actor template used by the upper-route moving object; its movement stream is ACTOR_MOVE_STATE_120F76 and its animation stream is ACTOR_ANIM_STATE_1231DC.
+  description: Type-0x2A actor template used by the upper-route moving object; its movement stream is ACTOR_MOVE_TYPE2A_VERTICAL_BOB and its animation stream is ACTOR_ANIM_STATE_1231DC.
   evidence:
     - actor_type2a_targets
     - level01_actor_type2a_decomp
