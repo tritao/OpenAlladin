@@ -2045,6 +2045,16 @@
     - actor_template_type84_type4d_child_family_static_decompilation
     - animation_stream_decoder
 
+0x00126118:
+  name: ACTOR_ANIM_MENU_TYPE84_SECONDARY
+  size: 184
+  confidence: decompiled
+  description: Secondary Type-0x84 menu-presentation animation installed by ACTOR_TEMPLATE_MENU_TYPE_84_SECONDARY during Menu_RunOptionsAndSelectNextState. Its exact 184-byte region runs the 0x1376-0x138A frame sequence, uses F4 comparisons to enter the actor-field correction at 0x001261C0, and loops through the local entry at 0x0012612A.
+  evidence:
+    - actor_template_menu_secondary_static_decompilation
+    - ghidra_menu_scene_table_transition
+    - animation_stream_decoder
+
 0x00125DC4:
   name: ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY
   size: 38
@@ -3270,6 +3280,17 @@
   description: Type-0x4D interaction-response child template supplied by the three F5 commands at 0x0012514C, 0x00125162, and 0x0012517C inside ACTOR_ANIM_TYPE12_INTERACTION_RESPONSE. It uses movement stream 0x00121710, template word 0x6000, animation entry 0x00126074, owns one resource, and carries no trailing flags; the three producer payloads select the response placement words.
   evidence:
     - actor_template_type84_type4d_child_family_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B846C:
+  name: ACTOR_TEMPLATE_MENU_TYPE_84_SECONDARY
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Secondary Type-0x84 menu-presentation template loaded directly by Menu_RunOptionsAndSelectNextState into actor slot 0x00FF7F06, then placed at (0x01BA,0x0170). It carries the 0x08000000 template payload, template flag byte 0xFF, no movement stream, animation entry ACTOR_ANIM_MENU_TYPE84_SECONDARY at 0x00126118, and no owned resources.
+  evidence:
+    - actor_template_menu_secondary_static_decompilation
+    - ghidra_menu_scene_table_transition
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8458:

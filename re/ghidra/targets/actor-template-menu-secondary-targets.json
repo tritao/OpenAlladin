@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-actor-template-menu-secondary-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the direct secondary menu-presentation actor template and its exact animation entry from the scene-table initializer.",
+  "animation_stream": {
+    "address": "0x00126118",
+    "name": "ACTOR_ANIM_MENU_TYPE84_SECONDARY",
+    "range": ["0x00126118", "0x001261CF"],
+    "size": 184,
+    "consumer": "0x001B846C ACTOR_TEMPLATE_MENU_TYPE_84_SECONDARY",
+    "loop_entry": "0x0012612A",
+    "correction_entry": "0x001261C0",
+    "behavior": "Frames 0x1376 through 0x138A are tested with F4 comparisons; the correction path applies F1 +1 and an ED write before returning to the frame loop."
+  },
+  "template": {
+    "address": "0x001B846C",
+    "name": "ACTOR_TEMPLATE_MENU_TYPE_84_SECONDARY",
+    "range": ["0x001B846C", "0x001B847F"],
+    "size": 20,
+    "raw_bytes": "8400080000FF0000000060000012611800000000",
+    "runtime_type": "0x84",
+    "template_payload": "0x08000000",
+    "template_flag": "0xFF",
+    "movement_stream": null,
+    "template_word": "0x6000",
+    "animation_stream": "0x00126118",
+    "resource_count": "0x00",
+    "caller": "0x001B3B96 Menu_RunOptionsAndSelectNextState",
+    "initializer_site": "0x001B3C20",
+    "actor_slot": "0x00FF7F06",
+    "caller_position": {
+      "x": "0x01BA",
+      "y": "0x0170"
+    }
+  },
+  "evidence": [
+    "Direct LEA template load at 0x001B3C20",
+    "Exact actor-slot position writes immediately after initialization",
+    "Exact 20-byte template record and contiguous 184-byte animation entry",
+    "Lossless AnimationDecoder output for the frame loop and correction path"
+  ],
+  "conclusion": "The 0x001B846C record is a direct secondary menu-presentation actor initialized beside ACTOR_TEMPLATE_MENU_TYPE_84 in Menu_RunOptionsAndSelectNextState. Its animation entry is range-bounded immediately before ACTOR_ANIM_TYPE84_SCENE_INITIAL_SECONDARY; no broader scene trigger is inferred.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
