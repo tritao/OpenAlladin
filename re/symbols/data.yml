@@ -1100,12 +1100,24 @@
     - animation_stream_decoder
 
 0x00121C62:
-  name: PLAYER_ANIM_STATE_121C62
+  name: PLAYER_ANIM_TRANSITION_FLAG_RESPONSE
+  size: 78
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Player transition-flag response entry. Its exact 78-byte region writes actor field 0xF0EB to 0x0029, presents the 0x0932 and 0x0C62-0x0C7E frame sequence with EE 0x82 timers, and jumps to the shared terrain-response prelude at 0x00121ACA.
   evidence:
     - ghidra_player_animation_pc_assignment
+    - ghidra_player_animation_selector
     - animation_stream_classifier
+    - animation_stream_decoder
+
+0x00121ACA:
+  name: PLAYER_ANIM_TERRAIN_BOUNCE_PRELUDE
+  size: 14
+  confidence: confirmed
+  description: Shared terrain-bounce prelude. Its exact 14-byte entry presents frame 0x093A twice, branches to PLAYER_ANIM_TERRAIN_RESPONSE_SHARED when TERRAIN_RESPONSE_LATCH is clear, and otherwise falls through to PLAYER_ANIM_TERRAIN_BOUNCE_ROOT at 0x00121AD8.
+  evidence:
+    - player_transition_response_static_decompilation
+    - animation_stream_decoder
 
 0x00121CB0:
   name: ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_PRIMARY

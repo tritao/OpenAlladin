@@ -14,7 +14,7 @@
   ],
   "memory_references": [
     { "address": "0x00FFF0EB", "name": "PLAYER_TERRAIN_BOUNCE_ANIMATION_STATE" },
-    { "address": "0x00FFF115", "name": "PLAYER_TERRAIN_RESPONSE_FIELD" },
+    { "address": "0x00FFF115", "name": "TERRAIN_RESPONSE_LATCH" },
     { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
     { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
     { "address": "0x001E95D0", "name": "SPRITE_FRAME_TERRAIN_BOUNCE_OPENING" },

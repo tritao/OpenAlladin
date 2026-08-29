@@ -297,6 +297,15 @@
   evidence:
     - ghidra_memory_reference_player_movement_transition_gate
     - mame_level_transition_watch
+0xFFF0D2:
+  name: PLAYER_TRANSITION_FLAG
+  type: u8
+  format: integer
+  confidence: probable
+  description: Player transition flag tested by Player_ResetAnimationResponseGate; when set, the selector returns the 0x00121C62 transition-response animation entry.
+  evidence:
+    - ghidra_player_animation_selector
+    - native_animation_selector_contract
 0xFFF0D7:
   name: PLAYER_INTERACTION_TRANSITION_LOCK
   type: u8

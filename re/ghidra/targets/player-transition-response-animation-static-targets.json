@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-transition-response-animation-static",
+    "purpose": "Range-bound the player transition-flag animation entry and its shared terrain-bounce prelude without absorbing the already owned bounce root or terminal-transition streams."
+  },
+  "targets": [
+    { "address": "0x00121C62", "name": "PLAYER_ANIM_TRANSITION_FLAG_RESPONSE" },
+    { "address": "0x00121ACA", "name": "PLAYER_ANIM_TERRAIN_BOUNCE_PRELUDE" },
+    { "address": "0x00121AD8", "name": "PLAYER_ANIM_TERRAIN_BOUNCE_ROOT" },
+    { "address": "0x00125E72", "name": "PLAYER_ANIM_TERRAIN_RESPONSE_SHARED" },
+    { "address": "0x001AD150", "name": "Player_ResetAnimationResponseGate" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0D2", "name": "PLAYER_TRANSITION_FLAG" },
+    { "address": "0x00FFF115", "name": "TERRAIN_RESPONSE_LATCH" },
+    { "address": "0x00FFF0EB", "name": "PLAYER_TERRAIN_BOUNCE_ANIMATION_STATE" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" }
+  ]
+}

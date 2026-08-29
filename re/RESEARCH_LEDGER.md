@@ -1122,6 +1122,15 @@ actor template, while `ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_SECONDARY` owns
 timer/sound sequences and boundaries are explicit; the shared Type-0x29
 transition stream begins immediately at `0x00121D5A`.
 
+The player transition-response entries are recorded in
+`re/mame/findings/20260829-player-transition-response-animation-static-decompilation-v1.json`.
+`PLAYER_ANIM_TRANSITION_FLAG_RESPONSE` owns the exact
+`0x00121C62-0x00121CAF` prefix selected by the nonzero `PLAYER_TRANSITION_FLAG`,
+then hands off through EA to the shared 14-byte
+`PLAYER_ANIM_TERRAIN_BOUNCE_PRELUDE` at `0x00121ACA`. The prelude branches
+through `TERRAIN_RESPONSE_LATCH` to the shared terrain-response stream or
+falls through to the separately owned bounce root at `0x00121AD8`.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2926,3 +2935,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-player-terrain-bounce-animation-static-decompilation-v1` | recorded-static-decompilation | Player terrain-bounce response root range-bounded with actor-state write, shared response handoffs, terminal frame loop, and exact boundary before interaction-pair setup |
 | `20260829-player-terrain-alignment-animation-static-decompilation-v1` | recorded-static-decompilation | Player terrain-alignment response range-bounded with snap-to-grid selection, timer phases, state gates, randomized loops, and exact boundary before the dynamic selector |
 | `20260829-terminal-transition-animation-static-decompilation-v1` | recorded-static-decompilation | Primary and secondary Type-0x84 terminal-transition presentation streams independently named and range-bounded before the shared Type-0x29 transition stream |
+| `20260829-player-transition-response-animation-static-decompilation-v1` | recorded-static-decompilation | Player transition-flag response prefix and shared terrain-bounce prelude named and range-bounded with exact selector and stream handoffs |
