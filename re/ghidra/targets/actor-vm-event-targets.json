@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-actor-vm-event-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004954 ACTOR_VM_DISPATCH_TABLE",
+    "movement_command": "0x89",
+    "animation_event_command": "0xF3",
+    "handler": "0x001AC9D2 ActorVM_HandleSoundEventCommand",
+    "prepare_only_helper": "0x001ACA00 ActorVM_QueuePreparedSoundCommand"
+  },
+  "behavior": {
+    "gate": "SCENE_TRANSITION_EVENT at 0x00FFF57D",
+    "command_byte": "low seven bits are passed as the sound command ID",
+    "high_bit_set": "queue Audio_PrepareCommand only",
+    "high_bit_clear": "queue Audio_PrepareCommand followed by Audio_SendCommand",
+    "cursor": "advance past the event byte before returning"
+  }
+}

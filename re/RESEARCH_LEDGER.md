@@ -2188,6 +2188,24 @@ The static result is recorded in
 `re/mame/findings/20260829-level-event-dispatch-v1.json` and
 `re/ghidra/targets/level-event-dispatch-targets.json`.
 
+## Shared actor-VM sound event command (20260829)
+
+The shared dispatch-table entry at `0x001AC9D2` is now named
+`ActorVM_HandleSoundEventCommand`. It consumes the event byte from the actor
+VM stream only when `SCENE_TRANSITION_EVENT` is active. The high bit selects
+between a prepare-only packet and the normal prepare-plus-send sequence; the
+low seven bits remain the sound command ID. The prepare-only branch is the
+small helper at `0x001ACA00`, now named
+`ActorVM_QueuePreparedSoundCommand`, which preserves the VM command value and
+working registers while calling `Audio_PrepareCommand`.
+
+This path is shared by the movement command `0x89` and its corresponding
+animation event command through `ACTOR_VM_DISPATCH_TABLE`, so the names stay
+VM-generic rather than assigning the event to a particular actor or scene.
+The exact dispatch and packet behavior is recorded in
+`re/mame/findings/20260829-actor-vm-event-v1.json` and
+`re/ghidra/targets/actor-vm-event-targets.json`.
+
 The static result is recorded in
 `re/mame/findings/20260829-vdp-fill-c000-v1.json`.
 
