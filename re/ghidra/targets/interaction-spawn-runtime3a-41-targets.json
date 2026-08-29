@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-interaction-spawn-runtime3a-41-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0x53, 0xAC, 0xC8-C9",
+    "newly_named_targets": 4,
+    "handlers": [
+      { "selector": "0xAC", "address": "0x001B7258", "name": "InteractionGate_RuntimeType3A_AC", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "gates": ["0x00FFF170 != 0", "0x00FFEFE2 != 0x3939"], "runtime_type": "0x3A", "animation_root": "0x00122BD8", "flag_value": "0x01" },
+      { "selector": "0xC8", "address": "0x001B728E", "name": "InteractionSpawn_RuntimeType41_C8", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "runtime_type": "0x41", "animation_root": "0x00125D7E", "flag_value": "0x02" },
+      { "selector": "0xC9", "address": "0x001B72AE", "name": "InteractionSpawn_RuntimeType84_C9", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper", "runtime_type": "0x84", "actor_field_06": "0x21", "animation_root": "0x00123E7A", "flag_value": "0x02" },
+      { "selector": "0x53", "address": "0x001B72D4", "name": "InteractionSpawn_RuntimeType34_53", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "runtime_type": "0x34", "animation_root": "0x00122C1E", "movement_stream": "0x001217B4", "flag_value": "0x06" }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Established zero-type actor-template base and post-initialization contract",
+    "Direct gate, runtime-type, actor-field, animation, movement, and flag writes"
+  ],
+  "conclusion": "This subset is statically closed at selector membership, gate conditions, allocator choice, and runtime initialization. Selector AC retains both its explicit gate bytes and the 0x3939 suppression compare without assigning them user-facing meanings.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
