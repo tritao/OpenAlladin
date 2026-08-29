@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "decoder": {
+    "address": "0x001B39A6",
+    "name": "Resource_DecodeWindowedStreamToVRAM",
+    "bitstream_source": "A0",
+    "control_source": "A2",
+    "vdp_destination": "A1",
+    "window_base": "0x00FF0000",
+    "window_size": "0x1000",
+    "output": "VDP_DATA at 0x00C00000"
+  },
+  "behavior": "The decoder consumes control bytes until 0xFF, skips zero controls, expands literal and back-reference bitstream tokens into a 4 KiB wrapping work-RAM window, and emits the reconstructed stream as VDP words.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

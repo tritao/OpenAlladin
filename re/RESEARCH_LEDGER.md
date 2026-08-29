@@ -2223,6 +2223,21 @@ The static result is recorded in
 `re/mame/findings/20260829-interaction-resource-progress-v1.json` and
 `re/ghidra/targets/interaction-resource-progress-targets.json`.
 
+## Windowed resource decoder to VRAM (20260829)
+
+The standalone decoder at `0x001B39A6` is now named
+`Resource_DecodeWindowedStreamToVRAM`. It programs the VDP destination from
+`A1`, consumes a bitstream from `A0` under control bytes from `A2`, writes
+literal bytes into a 4 KiB work-RAM sliding window at `0x00FF0000`, and
+reconstructs back-reference runs from that window before streaming output
+words through `VDP_DATA`. A zero control byte is skipped and `0xFF` ends the
+stream. The name deliberately describes the observed decoder contract without
+assigning a format name or an unresolved resource caller.
+
+The static result is recorded in
+`re/mame/findings/20260829-windowed-resource-decoder-v1.json` and
+`re/ghidra/targets/windowed-resource-decoder-targets.json`.
+
 ## Camera terrain viewport renderer (20260829)
 
 The helper at `0x001AA81A` is now named `Camera_RenderTerrainViewport`. It

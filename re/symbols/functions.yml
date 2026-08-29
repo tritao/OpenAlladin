@@ -2613,6 +2613,14 @@
     - ghidra_disassembly_001B634E
     - ghidra_decompile_001B634E
     - ghidra_level_event_dispatch_targets
+0x001B39A6:
+  name: Resource_DecodeWindowedStreamToVRAM
+  confidence: decompiled
+  description: Programs the VDP destination from A1, decodes literal and back-reference tokens from the source stream at A0 using control bytes at A2, keeps a 4 KiB sliding window in work RAM, and streams reconstructed words to VRAM until the control stream terminator.
+  evidence:
+    - ghidra_disassembly_001B39A6
+    - ghidra_decompile_001B39A6
+    - ghidra_windowed_resource_decoder_targets
 
 0x001B07D0:
   name: Level_RenderTerminalTransitionTileBand

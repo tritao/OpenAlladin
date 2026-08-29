@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-windowed-resource-decoder-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "decoder": {
+    "address": "0x001B39A6",
+    "name": "Resource_DecodeWindowedStreamToVRAM",
+    "bitstream_source": "A0",
+    "control_source": "A2",
+    "vdp_destination": "A1",
+    "window_base": "0x00FF0000",
+    "window_size": "0x1000",
+    "window_wrap": "0x00FF1000",
+    "output": "VDP_DATA at 0x00C00000",
+    "control_zero": "skip and continue",
+    "control_ff": "terminate"
+  },
+  "token_behavior": "A leading bit selects a literal byte or a back-reference. Back-references derive a window displacement and copy length from the bitstream while maintaining the sliding window."
+}
