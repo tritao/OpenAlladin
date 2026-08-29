@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type43-8a-interaction-animation-static-targets.json",
+  "animation_family": {
+    "address": "0x00124450",
+    "name": "ACTOR_ANIM_TYPE43_8A_INTERACTION",
+    "range": "0x00124450-0x001244E5",
+    "bytes": 150,
+    "root_entry": "0x00124450 for runtime type 0x43",
+    "embedded_entry": "0x00124494 for runtime type 0x8A",
+    "opening_frames": "0x1326 through 0x134A with EC01 and EB00 commands",
+    "response_frames": "0x1786 through 0x1792",
+    "child_spawn": "F5 at 0x001244BA uses ACTOR_TEMPLATE_F5_TYPE_7F at 0x001B8098",
+    "state_write": "ED actor field 0x11 = 0x0065 at 0x001244D6",
+    "loop_target": "0x001244AC"
+  },
+  "consumers": [
+    {
+      "template": "0x001B79E0 ACTOR_TEMPLATE_TYPE_43",
+      "consumer": "0x001B7232 InteractionSpawn_RuntimeType43_40",
+      "runtime_type": "0x43",
+      "entry": "0x00124450"
+    },
+    {
+      "template": "0x001B79E0 ACTOR_TEMPLATE_TYPE_43",
+      "consumer": "0x001B723E InteractionSpawn_RuntimeType8A_FF",
+      "runtime_type": "0x8A",
+      "entry": "0x00124494"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Type-0x43 template animation pointer",
+    "Type-0x8A embedded animation-root assignment",
+    "Encoded Type-0x7F child spawn and actor-field publication"
+  ],
+  "conclusion": "The Type-0x43 interaction root and Type-0x8A runtime override share one contiguous 150-byte animation family. Its two entry points, child spawn, actor-state clear, response sequence, actor-field publication, and loop are now represented without duplicating the embedded bytes.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

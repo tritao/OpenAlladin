@@ -14,7 +14,7 @@
       { "selector": "0x66", "address": "0x001B71E0", "name": "InteractionSpawn_RuntimeType3B_66", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "skip_if": "0x00FFEFE2 == 0x3939", "runtime_type": "0x3B", "animation_root": "0x00122BD8", "flag_value": "0x01" },
       { "selector": "0x6B", "address": "0x001B720C", "name": "InteractionSpawn_RuntimeType37_6B", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "runtime_type": "0x37", "actor_field_06": "0x21", "animation_root": "0x00123F10", "flag_value": "0x02" },
       { "selector": "0x40", "address": "0x001B7232", "name": "InteractionSpawn_RuntimeType43_40", "template": "0x001B79E0 ACTOR_TEMPLATE_TYPE_43", "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper" },
-      { "selector": "0xFF", "address": "0x001B723E", "name": "InteractionSpawn_RuntimeType8A_FF", "template": "0x001B79E0 ACTOR_TEMPLATE_TYPE_43", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot", "runtime_type": "0x8A", "animation_root": "0x00124494" }
+      { "selector": "0xFF", "address": "0x001B723E", "name": "InteractionSpawn_RuntimeType8A_FF", "template": "0x001B79E0 ACTOR_TEMPLATE_TYPE_43", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot", "runtime_type": "0x8A", "animation_root": "0x00124494 embedded in ACTOR_ANIM_TYPE43_8A_INTERACTION" }
     ]
   },
   "evidence": [

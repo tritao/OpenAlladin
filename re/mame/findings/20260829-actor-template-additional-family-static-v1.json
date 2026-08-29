@@ -30,7 +30,7 @@
       "producer": "selector 0x40 through 0x001B7232",
       "runtime_type": "0x43",
       "movement_stream": null,
-      "animation_stream": "0x00124450"
+      "animation_stream": "0x00124450 ACTOR_ANIM_TYPE43_8A_INTERACTION"
     },
     {
       "address": "0x001B8098",

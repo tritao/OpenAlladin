@@ -807,6 +807,17 @@
     - player_terrain_experiments
     - animation_stream_decoder
 
+0x00124450:
+  name: ACTOR_ANIM_TYPE43_8A_INTERACTION
+  size: 150
+  confidence: decompiled
+  description: Shared Type-0x43/0x8A interaction animation family selected by ACTOR_TEMPLATE_TYPE_43 and entered at embedded root 0x00124494 by InteractionSpawn_RuntimeType8A_FF. Its packed 150-byte region presents the 0x1326-0x134E interaction sequence, clears actor state, plays the 0x1786-0x1792 response, spawns ACTOR_TEMPLATE_F5_TYPE_7F, writes actor field 0x11 to 0x0065, and loops through the embedded response path at 0x001244AC.
+  evidence:
+    - type43_8a_interaction_animation_static_decompilation
+    - interaction_spawn_runtime37_3b_type43_static_decompilation
+    - actor_template_additional_family_static_decompilation
+    - animation_stream_decoder
+
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
   confidence: probable
@@ -1512,7 +1523,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Selector-0x40 actor template for runtime type 0x43; it has no movement stream and uses animation stream 0x00124450.
+  description: Selector-0x40 actor template for runtime type 0x43; it has no movement stream and uses ACTOR_ANIM_TYPE43_8A_INTERACTION at 0x00124450, whose embedded entry at 0x00124494 is installed by the runtime type-0x8A selector.
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets

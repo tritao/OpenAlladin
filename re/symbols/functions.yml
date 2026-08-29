@@ -4147,7 +4147,7 @@
 0x001B723E:
   name: InteractionSpawn_RuntimeType8A_FF
   confidence: decompiled
-  description: Interaction selector 0xFF handler that reverse-spawns from the type-0x43 template, then promotes the actor to runtime type 0x8A and installs animation root 0x00124494 when allocation succeeds.
+  description: Interaction selector 0xFF handler that reverse-spawns from the type-0x43 template, then promotes the actor to runtime type 0x8A and installs the embedded ACTOR_ANIM_TYPE43_8A_INTERACTION entry at 0x00124494 when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B723E
     - interaction_spawn_runtime37-3b-type43-targets

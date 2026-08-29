@@ -10,7 +10,7 @@
   "templates": [
     { "address": "0x001B7B34", "name": "ACTOR_TEMPLATE_TYPE_06", "producer": "selector 0x5C / 0x001B6870", "runtime_type": "0x06", "animation": "0x00123200 ACTOR_ANIM_TYPE06_INTERACTION", "movement": null },
     { "address": "0x001B7C38", "name": "ACTOR_TEMPLATE_TYPE_1F", "producer": "selector 0x10 / 0x001B6EA6", "runtime_type": "0x1F", "animation": "0x00123900", "movement": "0x00120432" },
-    { "address": "0x001B79E0", "name": "ACTOR_TEMPLATE_TYPE_43", "producer": "selector 0x40 / 0x001B7232", "runtime_type": "0x43", "animation": "0x00124450", "movement": null },
+    { "address": "0x001B79E0", "name": "ACTOR_TEMPLATE_TYPE_43", "producer": "selector 0x40 / 0x001B7232", "runtime_type": "0x43", "animation": "0x00124450 ACTOR_ANIM_TYPE43_8A_INTERACTION", "movement": null },
     { "address": "0x001B8098", "name": "ACTOR_TEMPLATE_F5_TYPE_7F", "producer": "type-0x43 AnimationVM F5 child path", "runtime_type": "0x7F", "movement": null },
     { "address": "0x001B805C", "name": "ACTOR_TEMPLATE_TERRAIN_TYPE_84", "producer": "TerrainScene5SpawnResponse / behavior 0x25", "runtime_type": "0x84" },
     { "address": "0x001B7E2C", "name": "ACTOR_TEMPLATE_TYPE_8C", "producer": "terrain landing-state spawn path", "runtime_type": "0x8C", "animation": "0x00124408 ACTOR_ANIM_TYPE8C_LANDING_RESPONSE" }

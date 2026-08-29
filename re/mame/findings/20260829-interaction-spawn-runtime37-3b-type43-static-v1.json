@@ -16,7 +16,7 @@
     { "address": "0x001B71E0", "selector": "0x66", "template": "ACTOR_TEMPLATE_BASE_ZERO", "effect": "skip when 0x00FFEFE2 == 0x3939; otherwise runtime type 0x3B, animation 0x00122BD8, flag +0x29 = 1" },
     { "address": "0x001B720C", "selector": "0x6B", "template": "ACTOR_TEMPLATE_BASE_ZERO", "effect": "runtime type 0x37, actor +0x06 = 0x21, animation 0x00123F10, flag +0x29 = 2" },
     { "address": "0x001B7232", "selector": "0x40", "template": "ACTOR_TEMPLATE_TYPE_43", "effect": "0x40-helper spawn" },
-    { "address": "0x001B723E", "selector": "0xFF", "template": "ACTOR_TEMPLATE_TYPE_43", "effect": "reverse-slot spawn, runtime type 0x8A, animation 0x00124494" }
+    { "address": "0x001B723E", "selector": "0xFF", "template": "ACTOR_TEMPLATE_TYPE_43", "effect": "reverse-slot spawn, runtime type 0x8A, embedded animation entry 0x00124494 in ACTOR_ANIM_TYPE43_8A_INTERACTION" }
   ],
   "evidence": [
     "Direct template loads and terminating helper calls",
