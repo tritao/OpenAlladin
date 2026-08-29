@@ -14,7 +14,7 @@
       "consumer_sites": ["0x001B6BD8", "0x001B6BE4"],
       "runtime_type": "0x29",
       "movement_stream": null,
-      "animation_stream": "0x00121D5A",
+      "animation_stream": "0x00121D5A ACTOR_ANIM_TYPE29_TRANSITION_SHARED",
       "resource_count": "0x0E"
     },
     {

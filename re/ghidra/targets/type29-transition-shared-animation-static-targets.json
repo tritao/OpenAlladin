@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "type29-transition-shared-animation-static",
+    "purpose": "Range-bound the shared Type-0x29 interaction animation reused as the transition-presentation continuation."
+  },
+  "targets": [
+    { "address": "0x00121D5A", "name": "ACTOR_ANIM_TYPE29_TRANSITION_SHARED" },
+    { "address": "0x001B7B70", "name": "ACTOR_TEMPLATE_TYPE_29_INTERACTION" },
+    { "address": "0x001232D8", "name": "ACTOR_ANIM_TRANSITION_PRESENTATION" },
+    { "address": "0x001B1486", "name": "SceneResource_InitializeTransitionPresentation" }
+  ],
+  "memory_references": [
+    { "address": "0x001E66C6", "name": "SPRITE_FRAME_TYPE29_TRANSITION" },
+    { "address": "0x001B7B70", "name": "ACTOR_TEMPLATE_TYPE_29_INTERACTION" }
+  ]
+}

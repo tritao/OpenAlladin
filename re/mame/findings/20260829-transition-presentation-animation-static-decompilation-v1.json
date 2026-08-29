@@ -19,7 +19,7 @@
     "actor_field_adjustment": "0x038C on actor field 0x18 through both paths",
     "frame_sequence": ["0x0A52", "0x0A56", "0x0A56", "0x0A5A", "0x0A5A", "0x0A5E", "0x0A5E", "0x0A62", "0x0A62", "0x0A66", "0x0A66", "0x0A6A", "0x0A6A", "0x0A6E", "0x0A6E", "0x0A6E"],
     "state_handoff": "0x0012333C F8",
-    "continuation": "0x00121D5A"
+    "continuation": "0x00121D5A ACTOR_ANIM_TYPE29_TRANSITION_SHARED"
   },
   "consumer": {
     "function": "0x001B1486",

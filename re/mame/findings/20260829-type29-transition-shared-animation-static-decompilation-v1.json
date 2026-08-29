@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type29-transition-shared-animation-static-targets.json",
+  "stream": {
+    "address": "0x00121D5A",
+    "name": "ACTOR_ANIM_TYPE29_TRANSITION_SHARED",
+    "range": "0x00121D5A-0x00121D87",
+    "bytes": 46,
+    "frames": ["0x0782", "0x0786", "0x078A", "0x078E", "0x0792"],
+    "random_branches": [
+      "F0EE at 0x00121D5E -> 0x00121D5A",
+      "F0EE at 0x00121D72 -> 0x00121D6E"
+    ],
+    "loop": "EA at 0x00121D82 -> 0x00121D5A"
+  },
+  "consumers": [
+    {
+      "template": "0x001B7B70 ACTOR_TEMPLATE_TYPE_29_INTERACTION",
+      "producer": "Direct reverse-slot Type-0x29 interaction entries at 0x001B6BD8 and 0x001B6BE4"
+    },
+    {
+      "producer": "ACTOR_ANIM_TRANSITION_PRESENTATION at 0x001232D8",
+      "handoff": "EA at 0x00123352 -> 0x00121D5A"
+    }
+  ],
+  "boundaries": {
+    "start": "The Type-0x29 root begins at 0x00121D5A after the preceding 0x0782/0x0786/0x078A/0x078E/0x0792 fragment.",
+    "end": "The exact self-loop ends at 0x00121D87 immediately before the separately entered player/actor stream at 0x00121D88."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact Type-0x29 template animation pointer",
+    "Existing transition-presentation state-handoff finding",
+    "Direct reverse-slot Type-0x29 consumers"
+  ],
+  "conclusion": "The 46-byte Type-0x29 animation is a shared actor/transition loop, not a player-only state. Its two random branches and local self-loop are now range-bounded without absorbing the following 0x00121D88 stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

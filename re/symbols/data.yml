@@ -1097,12 +1097,14 @@
     - animation_stream_classifier
 
 0x00121D5A:
-  name: PLAYER_ANIM_STATE_121D5A
+  name: ACTOR_ANIM_TYPE29_TRANSITION_SHARED
+  size: 46
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Shared Type-0x29 interaction and transition-presentation animation. Its exact 46-byte loop presents the 0x0782-0x0792 frame sequence with two encoded random branches and returns to its root; the transition presentation enters this same stream after its state-handoff command.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - actor_template_type29_interaction
+    - transition_presentation_animation_static_decompilation
+    - animation_stream_decoder
 
 0x00121D88:
   name: PLAYER_ANIM_STATE_121D88
@@ -2300,7 +2302,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x29 interaction template loaded by two direct reverse-slot spawn entries in the interaction dispatch block; it has no movement stream, uses animation stream 0x00121D5A, and owns fourteen resources.
+  description: Type-0x29 interaction template loaded by two direct reverse-slot spawn entries in the interaction dispatch block; it has no movement stream, uses ACTOR_ANIM_TYPE29_TRANSITION_SHARED at 0x00121D5A, and owns fourteen resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
