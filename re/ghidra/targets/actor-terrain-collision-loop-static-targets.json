@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "actor-terrain-collision-loop-static",
+    "purpose": "Resolve the per-frame actor terrain sampler, actor interaction-state publication, grounded response, and terrain-invalid cleanup boundary."
+  },
+  "targets": [
+    { "address": "0x001ADB5C", "name": "Actor_TerrainCollisionLoop" },
+    { "address": "0x001ADB32", "name": "Terrain_ActorCollisionNoOpHook" },
+    { "address": "0x001ABE8A", "name": "Actor_HandleType2DInteraction" },
+    { "address": "0x001AE372", "name": "Actor_ClearOwnedResources" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },
+    { "address": "0x00FF9884", "name": "TERRAIN_ROW_POINTER_TABLE" },
+    { "address": "0x00FF7DB4", "name": "TERRAIN_ROW_BYTE_STRIDE" },
+    { "address": "0x00FF7DBC", "name": "LEVEL_HEIGHT_PIXELS" },
+    { "address": "0x00FFAE84", "name": "TERRAIN_CONTOUR_RESOURCE" },
+    { "address": "0x00FFAE86", "name": "TERRAIN_BEHAVIOR_INDEX_TABLE" },
+    { "address": "0x00FFF10D", "name": "ACTOR_TERRAIN_BEHAVIOR_SCRATCH" },
+    { "address": "0x00FFF57D", "name": "SCENE_VDP_UPDATE_FLAG" }
+  ]
+}

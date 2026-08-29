@@ -791,11 +791,12 @@
 0x001ADB5C:
   name: Actor_TerrainCollisionLoop
   confidence: confirmed
-  description: Scans the non-player actor records against the terrain row/behavior resources, publishes each actor's terrain behavior byte, and applies the actor vertical movement fallback.
+  description: Per-frame actor-terrain service called by Game_FrameUpdateLoop. It scans actor records 1..31, clears the per-record terrain flag, samples current/adjacent terrain rows, publishes the decoded resource byte 2 to actor +0x3D, applies gravity or grounded facing/vertical response, and retires flagged actors through Actor_HandleType2DInteraction when their terrain sample is nonempty or invalid.
   evidence:
     - ghidra_targeted_decompile_scheduler
     - ghidra_actor_interaction_state_producer
     - mame_actor_terrain_trace
+    - actor_terrain_collision_loop_static_decompilation
 0x001B246E:
   name: VBlankInterrupt
   confidence: confirmed

@@ -383,6 +383,15 @@
   description: Interaction lock checked by Player_ProcessInteractionState before selecting a recovery animation stream.
   evidence:
     - ghidra_disassembly_001AE4F8
+0xFFF10D:
+  name: ACTOR_TERRAIN_BEHAVIOR_SCRATCH
+  type: u8
+  format: integer
+  confidence: confirmed
+  description: Per-actor terrain behavior byte scratch written by Actor_TerrainCollisionLoop after sampling TERRAIN_CONTOUR_RESOURCE; the terrain class lookup and actor +0x3D publication use the sampled value.
+  evidence:
+    - ghidra_actor_interaction_state_producer
+    - actor_terrain_collision_loop_static_decompilation
 0xFFF100:
   name: ACTOR_COLLISION_EVENT_FLAG
   type: u8

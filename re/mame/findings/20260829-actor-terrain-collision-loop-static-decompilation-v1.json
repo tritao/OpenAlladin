@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-terrain-collision-loop-static-targets.json",
+  "function": {
+    "address": "0x001ADB5C",
+    "name": "Actor_TerrainCollisionLoop",
+    "caller": "0x001A8C16 Game_FrameUpdateLoop",
+    "record_range": "actor records 1..31 at ACTOR_TABLE_BASE + 0x42*n",
+    "per_record_prelude": [
+      "skip zero-type records",
+      "clear actor flags +0x07 bit 0x10",
+      "for the ordinary path, require actor flags +0x06 bit 0x01, nonnegative vertical velocity at +0x1A, and a nonzero frame pointer at +0x14",
+      "clear actor interaction state at +0x3D before terrain sampling"
+    ],
+    "ordinary_sampling": {
+      "bounds": "Skip the sample when actor Y is beyond LEVEL_HEIGHT_PIXELS + 0xC8 or the resolved row pointer is outside the active work-RAM bound.",
+      "cell": "Use actor X low nibble and the row word selected from TERRAIN_ROW_POINTER_TABLE at actor Y - 0xF0; read the terrain behavior byte from TERRAIN_CONTOUR_RESOURCE and publish it to ACTOR_TERRAIN_BEHAVIOR_SCRATCH.",
+      "neighbor_fallback": "When the current behavior class is empty, sample one row above and then one row below using TERRAIN_ROW_BYTE_STRIDE. If all three classes are empty and actor flags +0x06 bit 0x80 are clear, add 0x78 to vertical velocity.",
+      "solid_response": [
+        "publish the decoded resource third byte at the selected terrain index to actor +0x3D",
+        "when actor flags +0x3C bit 0x10 are clear, clear vertical velocity +0x1A",
+        "otherwise set actor horizontal-facing +0x09 from the behavior's 0x683E direction table, halve/negate vertical velocity, optionally queue event 0x50 when SCENE_VDP_UPDATE_FLAG is set, align actor Y to the decoded terrain surface, and set actor flags +0x07 bit 0x10"
+      ]
+    },
+    "flagged_path": {
+      "condition": "Actor flags +0x3C bit 0x08 are set, the frame pointer is nonzero, and actor Y is within LEVEL_HEIGHT_PIXELS + 0xE0.",
+      "sampling": "Samples the current and next terrain rows; it also treats behavior-index values above 0xDF as nonempty.",
+      "nonempty_result": "Releases actor-owned resources and runs Actor_HandleType2DInteraction, retiring/reinitializing the terrain-invalid actor through the shared Type-0x2D path."
+    }
+  },
+  "helper_contract": {
+    "0x001ADB32": "Terrain_ActorCollisionNoOpHook is called after each selected row word and before the terrain behavior byte is read; it is an RTS-only instrumentation boundary.",
+    "0x001ABE8A": "Actor_HandleType2DInteraction performs the shared actor reinitialization used by the terrain-invalid cleanup path."
+  },
+  "evidence": [
+    "Exact 68000 decompilation of Actor_TerrainCollisionLoop",
+    "Direct caller from Game_FrameUpdateLoop",
+    "Three-row terrain sampling through TERRAIN_ROW_POINTER_TABLE and TERRAIN_ROW_BYTE_STRIDE",
+    "Actor interaction-state producer finding and actor cleanup contracts"
+  ],
+  "conclusion": "The actor-terrain boundary is explicit: live non-player actors sample current/adjacent terrain rows, publish resource byte 2 to actor +0x3D, apply either gravity or a grounded/facing/vertical response, and set the per-record terrain-contact flag. The flagged path retires/reinitializes actors whose sampled terrain is nonempty or invalid. This service is distinct from Player_TerrainLandingResolver and does not write player coordinates or scene state directly.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

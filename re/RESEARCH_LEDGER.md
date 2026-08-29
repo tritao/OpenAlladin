@@ -1806,6 +1806,17 @@ promotes the receiver with flag `+0x06=0x40`. None of these bodies directly
 writes player coordinates or scene state. Details are recorded in
 `re/mame/findings/20260829-actor-collision-handler-family-static-decompilation-v1.json`.
 
+The per-frame actor-terrain service at `0x001ADB5C` is now bounded. It scans
+actor records `1..31`, clears the per-record terrain flag, samples the current
+and adjacent terrain rows, writes the decoded resource byte 2 to actor `+0x3D`,
+and applies either the gravity fallback or the grounded facing/vertical
+response. The flagged path retires/reinitializes actors whose terrain sample is
+nonempty or invalid through `Actor_HandleType2DInteraction`. Its global sampled
+behavior byte is now named `ACTOR_TERRAIN_BEHAVIOR_SCRATCH` at `0x00FFF10D`.
+This service is separate from the player's landing resolver and does not write
+player coordinates or scene state directly. Details are recorded in
+`re/mame/findings/20260829-actor-terrain-collision-loop-static-decompilation-v1.json`.
+
 The static result is recorded in
 `re/mame/findings/20260828-actor-collision-terminal-response-v1.json`.
 
@@ -2962,3 +2973,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-player-transition-response-animation-static-decompilation-v1` | recorded-static-decompilation | Player transition-flag response prefix and shared terrain-bounce prelude named and range-bounded with exact selector and stream handoffs |
 | `20260829-actor-vm-lifecycle-static-decompilation-v1` | recorded-static-decompilation | F6/8C actor retirement paths separated from EC/82 cursor clearing, with exact linked cleanup and F7/8D player-facing semantics |
 | `20260829-actor-collision-handler-family-static-decompilation-v1` | recorded-static-decompilation | Type 0x14/0x2B/0x2F/0x30 and shared 0x2D/0x2E/0x31 collision lifecycles separated by exact source/receiver writes and cleanup paths |
+| `20260829-actor-terrain-collision-loop-static-decompilation-v1` | recorded-static-decompilation | Actor terrain sampling, actor +0x3D publication, grounded response, gravity fallback, and terrain-invalid cleanup bounded from the exact per-frame loop |
