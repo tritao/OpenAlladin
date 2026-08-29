@@ -30,13 +30,13 @@
       "address": "0x001B7DDC",
       "name": "ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE",
       "consumer": "0x001B6760",
-      "behavior": "Type-0x84 terrain response selected outside terrain mode 0x0B."
+      "behavior": "Type-0x84 terrain response selected outside terrain mode 0x0B, using ACTOR_ANIM_TYPE84_TERRAIN_RESPONSE at 0x00124226."
     },
     {
       "address": "0x001B7DF0",
       "name": "ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE_ALT",
       "consumer": "0x001B6774",
-      "behavior": "Type-0x84 terrain response selected for terrain mode 0x0B when the response countdown is clear, with optional palette upload."
+      "behavior": "Type-0x84 terrain response selected for terrain mode 0x0B when the response countdown is clear, using ACTOR_ANIM_TYPE84_TERRAIN_RESPONSE at 0x00124226, with optional palette upload."
     },
     {
       "address": "0x001B7E68",

@@ -704,6 +704,17 @@
     - actor_spawn_variation_targets
     - animation_stream_decoder
 
+0x00124226:
+  name: ACTOR_ANIM_TYPE84_TERRAIN_RESPONSE
+  size: 138
+  confidence: decompiled
+  description: Shared Type-0x84 terrain-response animation used by the normal and alternate terrain templates. Its packed 138-byte region presents the 0x0D52-0x0D7E frame ascent, writes actor field 0x11 to 0x0078, returns through the 0x0D7E-0x0D7A frames, writes actor field 0x11 to 0x0084, completes the descending 0x0D7A-0x0D52 tail, and loops from 0x001242AA to its root.
+  evidence:
+    - type84_terrain_response_animation_static_decompilation
+    - actor_template_type84_terrain_response
+    - actor_template_type84_terrain_response_alt
+    - animation_stream_decoder
+
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
   confidence: probable
@@ -1747,7 +1758,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: First type-0x84 terrain-response template selected by the branch at 0x001B6760 when the terrain mode byte is not 0x0B; it has no movement stream, uses animation stream 0x00124226, and owns five resources.
+  description: First type-0x84 terrain-response template selected by the branch at 0x001B6760 when the terrain mode byte is not 0x0B; it has no movement stream, uses ACTOR_ANIM_TYPE84_TERRAIN_RESPONSE at 0x00124226, and owns five resources.
   evidence:
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs
@@ -1757,7 +1768,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Alternate type-0x84 terrain-response template selected by the 0x0B terrain-mode branch at 0x001B676C when the response countdown is clear; it has no movement stream, uses animation stream 0x00124226, owns five resources, and triggers the palette upload path when permitted.
+  description: Alternate type-0x84 terrain-response template selected by the 0x0B terrain-mode branch at 0x001B676C when the response countdown is clear; it has no movement stream, uses ACTOR_ANIM_TYPE84_TERRAIN_RESPONSE at 0x00124226, owns five resources, and triggers the palette upload path when permitted.
   evidence:
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs

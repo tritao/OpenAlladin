@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-type84-terrain-response-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x00124226",
+    "name": "ACTOR_ANIM_TYPE84_TERRAIN_RESPONSE",
+    "packed_region": ["0x00124226", "0x001242AF"],
+    "packed_bytes": 138,
+    "sequence": {
+      "opening_frames": "0x0D52 through 0x0D7E, each presented twice",
+      "first_state_write": "0x00124254 ED writes actor field 0x11 = 0x0078",
+      "return_frames": "0x0D7E through 0x0D7A, with the 0x0D8A frame repeated four times",
+      "second_state_write": "0x0012427A ED writes actor field 0x11 = 0x0084",
+      "closing_frames": "0x0D7A back through 0x0D52, each presented twice",
+      "loop": "0x001242AA EA -> 0x00124226"
+    }
+  },
+  "consumers": [
+    {
+      "template": "0x001B7DDC ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE",
+      "consumer": "0x001B6760",
+      "selection": "terrain mode is not 0x0B"
+    },
+    {
+      "template": "0x001B7DF0 ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE_ALT",
+      "consumer": "0x001B6774",
+      "selection": "terrain mode is 0x0B and response countdown is clear"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output for 0x00124226",
+    "Exact shared animation pointer in both Type-0x84 terrain templates",
+    "Contiguous 138-byte boundary before the next stream at 0x001242B0",
+    "Two encoded actor-field publication commands"
+  ],
+  "conclusion": "The normal and alternate Type-0x84 terrain-response templates share one bounded 138-byte animation loop. Its two state writes and complete frame path are now represented as a single owned stream rather than an unclassified template target.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

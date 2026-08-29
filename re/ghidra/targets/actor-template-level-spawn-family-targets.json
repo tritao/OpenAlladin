@@ -47,7 +47,7 @@
       "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
       "runtime_type": "0x84",
       "movement_stream": null,
-      "animation_stream": "0x00124226",
+      "animation_stream": "0x00124226 ACTOR_ANIM_TYPE84_TERRAIN_RESPONSE",
       "resource_count": "0x05",
       "selection": "Chosen when the terrain mode byte at 0x00FF7E26 is not 0x0B."
     },
@@ -58,7 +58,7 @@
       "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
       "runtime_type": "0x84",
       "movement_stream": null,
-      "animation_stream": "0x00124226",
+      "animation_stream": "0x00124226 ACTOR_ANIM_TYPE84_TERRAIN_RESPONSE",
       "resource_count": "0x05",
       "selection": "Chosen when the terrain mode byte is 0x0B and 0x00FFF123 is clear.",
       "post_spawn": "Queues the palette upload from ROM source 0x00129612 when 0x00FFF175 is clear."

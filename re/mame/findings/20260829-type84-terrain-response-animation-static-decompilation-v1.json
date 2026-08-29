@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type84-terrain-response-animation-static-targets.json",
+  "stream": {
+    "address": "0x00124226",
+    "name": "ACTOR_ANIM_TYPE84_TERRAIN_RESPONSE",
+    "range": "0x00124226-0x001242AF",
+    "bytes": 138,
+    "opening_frames": "0x0D52 through 0x0D7E, each duplicated",
+    "first_state_write": "ED field 0x11 = 0x0078 at 0x00124254",
+    "second_state_write": "ED field 0x11 = 0x0084 at 0x0012427A",
+    "loop_target": "0x00124226"
+  },
+  "consumers": [
+    {
+      "template": "0x001B7DDC ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE",
+      "handler": "0x001B6760"
+    },
+    {
+      "template": "0x001B7DF0 ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE_ALT",
+      "handler": "0x001B6774"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Shared pointer in both terrain-response template records",
+    "Established boundary before the following stream at 0x001242B0"
+  ],
+  "conclusion": "The Type-0x84 terrain-response animation is closed as a shared 138-byte state-publishing frame loop used by both terrain-template variants.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

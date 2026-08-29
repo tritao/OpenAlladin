@@ -2780,3 +2780,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type6c-animation-static-decompilation-v1` | recorded-static-decompilation | Promoted Type-0x6C interaction animation prefix range-bounded with its actor-field self-loop and continuation into the Type-0x69 response stream |
 | `20260829-type69-animation-static-decompilation-v1` | recorded-static-decompilation | Shared Type-0x69/0x6A handhold animation family range-bounded with root, embedded template, and Type-0x6B alignment entries |
 | `20260829-type89-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x89 random-variant animation range-bounded with its alternate post-spawn entry |
+| `20260829-type84-terrain-response-animation-static-decompilation-v1` | recorded-static-decompilation | Shared Type-0x84 terrain-response animation range-bounded with state publication and descending frame loop |
