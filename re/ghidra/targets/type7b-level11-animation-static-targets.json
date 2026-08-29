@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-type7b-level11-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x001243E2",
+    "name": "ACTOR_ANIM_TYPE7B_LEVEL11_EVENT",
+    "range": ["0x001243E2", "0x00124407"],
+    "bytes": 38,
+    "frames": "0x1BB6, 0x1BBA, 0x1BBE, 0x1BC2, 0x1BC6, 0x1BCA, 0x1BCE, and 0x1BD2, each presented twice",
+    "loop": "0x00124402 -> 0x001243E2"
+  },
+  "consumer": {
+    "template": "0x001B8214 ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT",
+    "service": "0x001B6258 Level11_EnterRoutine",
+    "allocation_site": "0x001B6290",
+    "template_load": "0x001B629A",
+    "initial_position": "(0x04C0, 0x01B0)",
+    "movement_stream": "0x0012120E"
+  },
+  "shared_pointer": {
+    "record": "0x001B83CC",
+    "runtime_type": "0x7B",
+    "movement_stream": "0x0012171C",
+    "status": "unresolved template consumer"
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for 0x001243E2",
+    "Direct template load in Level11_EnterRoutine",
+    "Exact Type-0x7B template animation pointer",
+    "Control-flow cycle at 0x00124402"
+  ],
+  "boundary": {
+    "next_stream": "0x00124408",
+    "reason": "The Type-0x8C landing-response stream begins at 0x00124408 after the 38-byte Type-0x7B cycle."
+  }
+}

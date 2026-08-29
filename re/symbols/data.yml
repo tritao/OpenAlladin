@@ -786,6 +786,16 @@
     - actor_template_exit_child_type8c
     - animation_stream_decoder
 
+0x001243E2:
+  name: ACTOR_ANIM_TYPE7B_LEVEL11_EVENT
+  size: 38
+  confidence: decompiled
+  description: Type-0x7B Level 11 event animation selected by ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT. Its packed 38-byte region presents each frame in the 0x1BB6-0x1BD2 sequence twice and loops from 0x00124402 back to its root; the same animation pointer is present in a second unresolved Type-0x7B template record at 0x001B83CC.
+  evidence:
+    - type7b_level11_animation_static_decompilation
+    - level_table_enter_exit_decompilation
+    - animation_stream_decoder
+
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
   confidence: probable
@@ -1360,6 +1370,18 @@
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - ghidra_actor_template_001B81D8
+
+0x001B8214:
+  name: ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x7B Level 11 event template selected by Level11_EnterRoutine at 0x001B6258 inside its coordinate-window spawn path; it uses movement stream 0x0012120E, animation stream ACTOR_ANIM_TYPE7B_LEVEL11_EVENT at 0x001243E2, and owns ten resources before the caller publishes position (0x04C0,0x01B0).
+  evidence:
+    - ghidra_level_table_enter_exit_targeted_decompile
+    - level_table_enter_exit_decompilation
+    - type7b_level11_animation_static_decompilation
+    - animation_stream_decoder
 
 0x001B7CD8:
   name: ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE

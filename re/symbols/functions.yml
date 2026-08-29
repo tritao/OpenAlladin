@@ -2991,7 +2991,7 @@
 0x001B6258:
   name: Level11_EnterRoutine
   confidence: decompiled
-  description: Level-table entry-11 per-frame callback; when the player animation gate and coordinate window match, allocates the type-0x84 level-event actor at its fixed position and facing.
+  description: Level-table entry-11 per-frame callback; when the player animation gate and coordinate window match, allocates the type-0x7B level-event actor from ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT at its fixed position and facing.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
