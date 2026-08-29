@@ -1895,3 +1895,23 @@
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
+
+0x001B8138:
+  name: ACTOR_TEMPLATE_TYPE_84_LEVEL_ENTRY_SHARED
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Shared type-0x84 level-entry template loaded by the five actor-creation bodies at 0x001B5A54, 0x001B5A82, 0x001B5AB2, 0x001B5ADA, and 0x001B5B0A; it has no movement stream, uses base animation stream 0x0012585C, and owns seven resources while callers select animation, movement, and position variants.
+  evidence:
+    - ghidra_level_entry_actor_block
+    - actor_template_grid_xrefs
+
+0x001B814C:
+  name: ACTOR_TEMPLATE_TYPE_42_LEVEL_ENTRY
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x42 level-entry template loaded by the actor-creation body at 0x001B5A22; it has no movement stream, uses animation stream 0x00125874, and owns one resource before the caller supplies position from the active level origin.
+  evidence:
+    - ghidra_level_entry_actor_block
+    - actor_template_grid_xrefs

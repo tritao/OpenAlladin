@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-actor-template-level-entry-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the shared level-entry actor-template records selected by the early scene/level callback block.",
+  "templates": [
+    {
+      "address": "0x001B8138",
+      "name": "ACTOR_TEMPLATE_TYPE_84_LEVEL_ENTRY_SHARED",
+      "consumer_sites": ["0x001B5A54", "0x001B5A82", "0x001B5AB2", "0x001B5ADA", "0x001B5B0A"],
+      "spawn_helper": "0x001AE30A Actor_InitializeFromTemplate after Actor_FindFreeSlot",
+      "runtime_type": "0x84",
+      "movement_stream": null,
+      "animation_stream": "0x0012585C",
+      "resource_count": "0x07",
+      "post_initialize": "Callers publish animation roots 0x0012585C, 0x00125864, or 0x0012586C, optionally install movement streams 0x00120FA0, 0x00120F8A, or 0x00120FB4, and place the actor around (0x018E,0x0164) or (0x018E,0x0178)."
+    },
+    {
+      "address": "0x001B814C",
+      "name": "ACTOR_TEMPLATE_TYPE_42_LEVEL_ENTRY",
+      "consumer_site": "0x001B5A22",
+      "spawn_helper": "0x001AE30A Actor_InitializeFromTemplate after Actor_FindFreeSlot",
+      "runtime_type": "0x42",
+      "movement_stream": null,
+      "animation_stream": "0x00125874",
+      "resource_count": "0x01",
+      "post_initialize": "The caller places the actor from the active level origin plus (0x0140,0x0100) and the current level offset."
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "conclusion": "Both records are exact 20-byte templates selected by complete level-entry actor bodies. The type-0x84 record is a shared source whose callers provide the movement/animation variants; the type-0x42 record is a one-resource level-entry source.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -108,7 +108,9 @@
     "0x001B8020",
     "0x001B8070",
     "0x001B8084",
-    "0x001B80FC"
+    "0x001B80FC",
+    "0x001B8138",
+    "0x001B814C"
   ],
   "invariant": "Each promoted record occupies exactly 0x14 bytes from its canonical start; no promoted record overlaps another canonical record. The one byte beyond the initializer's sequential source reads is retained as part of the ROM record and is not assigned an independent field meaning."
 }
