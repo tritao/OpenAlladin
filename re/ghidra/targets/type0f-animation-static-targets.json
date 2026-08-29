@@ -1,0 +1,47 @@
+{
+  "format": "openaladdin-type0f-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x00123CF8",
+    "name": "ACTOR_ANIM_TYPE0F_INTERACTION",
+    "packed_region": ["0x00123CF8", "0x00123D33"],
+    "packed_bytes": 60,
+    "entry": {
+      "frame": "0x1006",
+      "spawn": {
+        "address": "0x00123CFA",
+        "template": "0x001B7C88",
+        "offsets": "0x00FF 0x0000 0x0000 0x0000 0x0000"
+      },
+      "random_branches": [
+        "0x00123D0E F0 -> 0x00123D0C",
+        "0x00123D20 F0 -> 0x00123D1E"
+      ],
+      "timers": ["0x00123D14 EE 0x83", "0x00123D18 EE 0x83", "0x00123D26 EE 0x83", "0x00123D2A EE 0x83"],
+      "loop": "0x00123D2E EA -> 0x00123D0C"
+    }
+  },
+  "consumers": [
+    "0x001B6FE2 InteractionSpawn_Type0F_26",
+    "0x001B6FEE InteractionSpawn_Type0F_Facing_16"
+  ],
+  "template": {
+    "address": "0x001B7C74",
+    "name": "ACTOR_TEMPLATE_TYPE_0F_INTERACTION",
+    "runtime_type": "0x0F",
+    "movement": null,
+    "resource_count": "0x05"
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for 0x00123CF8",
+    "Exact Type-0x0F template and forward-slot consumers",
+    "Packed boundary immediately before the next animation root at 0x00123D34"
+  ],
+  "conclusion": "The Type-0x0F animation root is a bounded random/timed interaction loop with one child-spawn record. It has no movement assignment, player-coordinate write, or scene-state write in its owned region.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
