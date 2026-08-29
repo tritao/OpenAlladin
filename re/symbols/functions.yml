@@ -1823,6 +1823,105 @@
     - rom_actor_collision_handler_table_001EBA
     - ghidra_type21_targeted_decompile
     - mame_type21_settle_trace
+0x001AEECA:
+  name: ActorType23_PlayerCollisionHandler
+  size: 20
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x23. When PLAYER_INTERACTION_GATE is set it temporarily passes the current actor in A2 to the shared helper at 0x001ABFFA, then restores A2; otherwise it returns without a response call.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AEECA
+    - player_collision_response_counter_family_static_decompilation
+0x001AEEDE:
+  name: ActorType24_28_PlayerCollisionHandler
+  size: 2
+  confidence: decompiled
+  description: Shared empty player-collision handler for runtime actor types 0x24 through 0x28; it returns without changing player, actor, interaction, terrain, or scene state.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AEEDE
+    - player_collision_response_counter_family_static_decompilation
+0x001AEEE0:
+  name: ActorType45_PlayerCollisionHandler
+  size: 50
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x45. It optionally queues sound/event 0x62, copies the pending interaction-response byte from 0x00FFEFFB to 0x00FFEFFA, and enters Actor_ReinitializeFromCollisionTemplate.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AEEE0
+    - player_collision_response_counter_family_static_decompilation
+0x001AEF12:
+  name: ActorType44_PlayerCollisionHandler
+  size: 74
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x44. It optionally queues sound/event 0x62, computes the bounded interaction-response value in 0x00FFEFFA from the difficulty mode and the pending value at 0x00FFEFFB, and enters Actor_ReinitializeFromCollisionTemplate.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AEF12
+    - player_collision_response_counter_family_static_decompilation
+0x001AEF5C:
+  name: ActorType46_PlayerCollisionHandler
+  size: 20
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x46. If the game difficulty counter is below its 0x39 cap it advances that counter through Game_IncrementDifficultyCounter, then enters Actor_ReinitializeFromCollisionTemplate; at the cap it returns through the existing gameplay path.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AEF5C
+    - player_collision_response_counter_family_static_decompilation
+0x001AEFB0:
+  name: ActorType47_PlayerCollisionHandler
+  size: 44
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x47. It latches 0x00FFF126, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AEFB0
+    - player_collision_response_counter_family_static_decompilation
+0x001AEFDC:
+  name: ActorType48_PlayerCollisionHandler
+  size: 44
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x48. It latches 0x00FFF127, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AEFDC
+    - player_collision_response_counter_family_static_decompilation
+0x001AF008:
+  name: ActorType49_PlayerCollisionHandler
+  size: 44
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x49. It latches 0x00FFF128, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF008
+    - player_collision_response_counter_family_static_decompilation
+0x001AF034:
+  name: ActorType4A_PlayerCollisionHandler
+  size: 44
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x4A. It latches 0x00FFF129, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF034
+    - player_collision_response_counter_family_static_decompilation
+0x001AF060:
+  name: ActorType4B_PlayerCollisionHandler
+  size: 44
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x4B. It latches 0x00FFF116, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF060
+    - player_collision_response_counter_family_static_decompilation
+0x001AF08C:
+  name: ActorType4C_PlayerCollisionHandler
+  size: 44
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x4C. It latches 0x00FFF12A, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF08C
+    - player_collision_response_counter_family_static_decompilation
 0x001AEBFE:
   name: ActorType2B_PlayerCollisionHandler
   confidence: confirmed

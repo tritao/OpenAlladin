@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-response-counter-family",
+    "purpose": "Recover the response-counter, difficulty, and event-latch player-collision entries that converge on the shared collision-template reinitialization tail."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x23"], "address": "0x001AEECA" },
+      { "actor_types": ["0x24", "0x25", "0x26", "0x27", "0x28"], "address": "0x001AEEDE" },
+      { "actor_types": ["0x45"], "address": "0x001AEEE0" },
+      { "actor_types": ["0x44"], "address": "0x001AEF12" },
+      { "actor_types": ["0x46"], "address": "0x001AEF5C" },
+      { "actor_types": ["0x47"], "address": "0x001AEFB0" },
+      { "actor_types": ["0x48"], "address": "0x001AEFDC" },
+      { "actor_types": ["0x49"], "address": "0x001AF008" },
+      { "actor_types": ["0x4A"], "address": "0x001AF034" },
+      { "actor_types": ["0x4B"], "address": "0x001AF060" },
+      { "actor_types": ["0x4C"], "address": "0x001AF08C" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AEECA", "name": "ActorType23_PlayerCollisionHandler" },
+    { "address": "0x001AEEDE", "name": "ActorType24_28_PlayerCollisionHandler" },
+    { "address": "0x001AEEE0", "name": "ActorType45_PlayerCollisionHandler" },
+    { "address": "0x001AEF12", "name": "ActorType44_PlayerCollisionHandler" },
+    { "address": "0x001AEF5C", "name": "ActorType46_PlayerCollisionHandler" },
+    { "address": "0x001AEFB0", "name": "ActorType47_PlayerCollisionHandler" },
+    { "address": "0x001AEFDC", "name": "ActorType48_PlayerCollisionHandler" },
+    { "address": "0x001AF008", "name": "ActorType49_PlayerCollisionHandler" },
+    { "address": "0x001AF034", "name": "ActorType4A_PlayerCollisionHandler" },
+    { "address": "0x001AF060", "name": "ActorType4B_PlayerCollisionHandler" },
+    { "address": "0x001AF08C", "name": "ActorType4C_PlayerCollisionHandler" }
+  ],
+  "shared_tail": {
+    "address": "0x001AF4C2",
+    "name": "Actor_ReinitializeFromCollisionTemplate"
+  },
+  "memory_references": [
+    { "address": "0x00FFEFFA", "name": "INTERACTION_RESPONSE_PENDING" },
+    { "address": "0x00FFEFFB", "name": "INTERACTION_RESPONSE_VALUE" },
+    { "address": "0x00FF7E21", "name": "GAME_DIFFICULTY_MODE" },
+    { "address": "0x00FF7E3C", "name": "GAME_DIFFICULTY_COUNTER" },
+    { "address": "0x00FFF116", "name": "PLAYER_INTERACTION_TYPE4B_LATCH" },
+    { "address": "0x00FFF126", "name": "PLAYER_INTERACTION_TYPE47_LATCH" },
+    { "address": "0x00FFF12A", "name": "PLAYER_INTERACTION_TYPE4C_LATCH" }
+  ]
+}

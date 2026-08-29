@@ -1,0 +1,127 @@
+{
+  "format": "openaladdin-player-collision-response-counter-family-finding-v1",
+  "recorded_at": "2026-08-29",
+  "status": "static-family-closed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": [
+    "re/ghidra/targets/player-collision-response-counter-family-targets.json",
+    "re/symbols/functions.yml",
+    "re/symbols/data.yml",
+    "build/re/dasm-1A8000.txt"
+  ],
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "address_space": "68000 ROM addresses",
+    "handlers": [
+      {
+        "address": "0x001AEECA",
+        "size": 20,
+        "actor_types": ["0x23"],
+        "name": "ActorType23_PlayerCollisionHandler",
+        "range": "0x001AEECA-0x001AEEDD",
+        "semantics": "Interaction-gated delegation to helper 0x001ABFFA with the current actor temporarily passed in A2."
+      },
+      {
+        "address": "0x001AEEDE",
+        "size": 2,
+        "actor_types": ["0x24", "0x25", "0x26", "0x27", "0x28"],
+        "name": "ActorType24_28_PlayerCollisionHandler",
+        "range": "0x001AEEDE-0x001AEEDF",
+        "semantics": "Empty RTS-only dispatch entry."
+      },
+      {
+        "address": "0x001AEEE0",
+        "size": 50,
+        "actor_types": ["0x45"],
+        "name": "ActorType45_PlayerCollisionHandler",
+        "range": "0x001AEEE0-0x001AEF11",
+        "semantics": "Optional event-0x62 audio, pending response-byte copy from 0x00FFEFFB to 0x00FFEFFA, then shared collision-template reinitialization."
+      },
+      {
+        "address": "0x001AEF12",
+        "size": 74,
+        "actor_types": ["0x44"],
+        "name": "ActorType44_PlayerCollisionHandler",
+        "range": "0x001AEF12-0x001AEF5B",
+        "semantics": "Optional event-0x62 audio, difficulty-adjusted/clamped response-byte calculation, then shared collision-template reinitialization."
+      },
+      {
+        "address": "0x001AEF5C",
+        "size": 20,
+        "actor_types": ["0x46"],
+        "name": "ActorType46_PlayerCollisionHandler",
+        "range": "0x001AEF5C-0x001AEF6F",
+        "semantics": "Difficulty-counter cap check and increment through Game_IncrementDifficultyCounter before shared collision-template reinitialization."
+      },
+      {
+        "address": "0x001AEFB0",
+        "size": 44,
+        "actor_types": ["0x47"],
+        "name": "ActorType47_PlayerCollisionHandler",
+        "range": "0x001AEFB0-0x001AEFDB",
+        "semantics": "Latch 0x00FFF126, optional event-0x67 audio, shared collision-template reinitialization."
+      },
+      {
+        "address": "0x001AEFDC",
+        "size": 44,
+        "actor_types": ["0x48"],
+        "name": "ActorType48_PlayerCollisionHandler",
+        "range": "0x001AEFDC-0x001AF007",
+        "semantics": "Latch 0x00FFF127, optional event-0x67 audio, shared collision-template reinitialization."
+      },
+      {
+        "address": "0x001AF008",
+        "size": 44,
+        "actor_types": ["0x49"],
+        "name": "ActorType49_PlayerCollisionHandler",
+        "range": "0x001AF008-0x001AF033",
+        "semantics": "Latch 0x00FFF128, optional event-0x67 audio, shared collision-template reinitialization."
+      },
+      {
+        "address": "0x001AF034",
+        "size": 44,
+        "actor_types": ["0x4A"],
+        "name": "ActorType4A_PlayerCollisionHandler",
+        "range": "0x001AF034-0x001AF05F",
+        "semantics": "Latch 0x00FFF129, optional event-0x67 audio, shared collision-template reinitialization."
+      },
+      {
+        "address": "0x001AF060",
+        "size": 44,
+        "actor_types": ["0x4B"],
+        "name": "ActorType4B_PlayerCollisionHandler",
+        "range": "0x001AF060-0x001AF08B",
+        "semantics": "Latch 0x00FFF116, optional event-0x67 audio, shared collision-template reinitialization."
+      },
+      {
+        "address": "0x001AF08C",
+        "size": 44,
+        "actor_types": ["0x4C"],
+        "name": "ActorType4C_PlayerCollisionHandler",
+        "range": "0x001AF08C-0x001AF0B7",
+        "semantics": "Latch 0x00FFF12A, optional event-0x67 audio, shared collision-template reinitialization."
+      }
+    ]
+  },
+  "boundary_checks": {
+    "ranges": [
+      "0x001AEECA-0x001AEEDD",
+      "0x001AEEDE-0x001AEEDF",
+      "0x001AEEE0-0x001AEF11",
+      "0x001AEF12-0x001AEF5B",
+      "0x001AEF5C-0x001AEF6F",
+      "0x001AEFB0-0x001AEFDB",
+      "0x001AEFDC-0x001AF007",
+      "0x001AF008-0x001AF033",
+      "0x001AF034-0x001AF05F",
+      "0x001AF060-0x001AF08B",
+      "0x001AF08C-0x001AF0B7"
+    ],
+    "result": "The response-entry bodies end at their next direct entry or the existing Game_IncrementDifficultyCounter/shared-tail boundary; no promoted ranges overlap."
+  },
+  "conclusion": "The dense 0x001AEECA-0x001AF0B7 dispatch region is now semantically partitioned into helper delegation, no-op, response-counter, difficulty, and event-latch handlers. All of these converge on existing shared services and none directly writes player coordinates, player velocity, or SCENE_STATE."
+}
