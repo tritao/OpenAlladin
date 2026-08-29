@@ -1409,3 +1409,21 @@ def test_scene_transition_closing_and_sound_test_streams_are_exact():
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     assert rom[0x00128E45:0x00128E4B] == bytes.fromhex("032820000800")
     assert rom[0x00128E4D:0x00128E4F] == bytes.fromhex("0A00")
+
+
+def test_menu_sound_test_shared_presentation_stream_has_exact_terminal():
+    symbols = SymbolStore()
+    stream = symbols.at(0x00128E5B, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "MENU_SOUND_TEST_SHARED_PRESENTATION_STREAM"
+    assert stream.end == 0x00128EB0
+    assert stream.size == 0x56
+    assert stream.metadata["type"] == "scene_resource_stream"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x00128E5B] == 0x0A
+    assert rom[0x00128E5C:0x00128E84] == bytes([0x20]) * 40
+    assert rom[0x00128E84:0x00128E88] == bytes.fromhex("01D80201")
+    assert rom[0x00128E88:0x00128EB0] == bytes([0x20]) * 40
+    assert rom[0x00128EB0] == 0x00
+    assert symbols.at(0x00128ED2, include_ranges=False).name == "SCENE_BLANK_PALETTE"

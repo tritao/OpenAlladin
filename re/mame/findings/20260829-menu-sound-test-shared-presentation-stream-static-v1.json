@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/menu-sound-test-shared-presentation-stream-static-targets.json",
+  "stream": {
+    "address": "0x00128E5B",
+    "name": "MENU_SOUND_TEST_SHARED_PRESENTATION_STREAM",
+    "range": "0x00128E5B-0x00128EB0",
+    "bytes": 86,
+    "consumer": "Menu_RunOptionsAndSelectNextState at 0x001B3E22/0x001B3E7A and SoundTest_RunScreen at 0x001B4440/0x001B45B8",
+    "commands": [
+      "0A",
+      "40 space bytes",
+      "01 D8",
+      "02 01",
+      "40 space bytes",
+      "00"
+    ]
+  },
+  "boundary": "The shared interpreter returns on the first command-0 byte at 0x00128EB0. Bytes 0x00128EB1-0x00128ED1 are not consumed by these callers and remain unresolved before SCENE_BLANK_PALETTE at 0x00128ED2.",
+  "evidence": [
+    "Direct LEA stream loads in the options-menu and sound-test routines",
+    "Scene-resource command dispatch table at 0x000049D8",
+    "Exact ROM bytes and interpreter-aware command walk"
+  ],
+  "conclusion": "The fixed presentation stream shared by the options menu and sound-test screen is now an explicit bounded scene-resource range without speculative ownership of the following mixed/unreferenced bytes.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

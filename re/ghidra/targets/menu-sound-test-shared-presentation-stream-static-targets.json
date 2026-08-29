@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "focus": {
+    "name": "menu-sound-test-shared-presentation-stream",
+    "purpose": "Bound the fixed scene-resource presentation stream shared by the options menu and sound-test screen without claiming the following unresolved bytes."
+  },
+  "interpreter": {
+    "address": "0x001B21F6",
+    "name": "SceneResource_ProcessCommandStream",
+    "terminator": "command byte 0x00"
+  },
+  "stream": {
+    "address": "0x00128E5B",
+    "name": "MENU_SOUND_TEST_SHARED_PRESENTATION_STREAM",
+    "range": ["0x00128E5B", "0x00128EB0"],
+    "size": 86,
+    "consumers": [
+      "0x001B3E22 Menu_RunOptionsAndSelectNextState",
+      "0x001B3E7A Menu_RunOptionsAndSelectNextState",
+      "0x001B4440 SoundTest_RunScreen",
+      "0x001B45B8 SoundTest_RunScreen"
+    ],
+    "commands": [
+      "0x0A set tile base 0x4000 at 0x00128E5B",
+      "0x20-0x00128E83 fixed first 40-byte space row",
+      "0x01 0xD8 advance X by 0xD8 at 0x00128E84",
+      "0x02 0x01 advance Y by 0x01 at 0x00128E86",
+      "0x20-0x00128EAF fixed second 40-byte space row",
+      "0x00 end at 0x00128EB0"
+    ]
+  },
+  "boundary": {
+    "unclaimed_after_stream": ["0x00128EB1", "0x00128ED1"],
+    "next_claimed_range": "0x00128ED2 SCENE_BLANK_PALETTE"
+  },
+  "evidence": [
+    "Fresh instructions.json DATA references from the four direct stream loads",
+    "SceneResource_ProcessCommandStream dispatches command bytes below 0x20 and exits on command 0x00",
+    "Exact ROM command/text walk reaches the first command-0 terminator at 0x00128EB0",
+    "Both menu and sound-test callers pass the identical stream root to the shared interpreter"
+  ],
+  "conclusion": "The shared menu/sound-test presentation stream is now bounded at its interpreter terminator. The 33 following bytes before SCENE_BLANK_PALETTE remain intentionally unresolved and are not absorbed into the stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
