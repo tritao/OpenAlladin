@@ -1410,6 +1410,259 @@
     - actor_template_type8b_presentation_response
     - animation_stream_decoder
 
+0x00124A2E:
+  name: ACTOR_ANIM_TYPE8B_PRESENTATION_F5
+  type: animation_stream
+  size: 62
+  confidence: decompiled
+  description: Base type-0x8B presentation animation installed by InteractionSpawn_Type8BPresentation_F5. Its exact 62-byte loop writes the response field 0x0000, conditionally spawns the type-0x84 presentation child at 0x00124A4A, and returns through the local response entry.
+  evidence:
+    - interaction_spawn_type8b_presentation_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124A6C:
+  name: ACTOR_ANIM_TYPE8B_PRESENTATION_F6
+  type: animation_stream
+  size: 62
+  confidence: decompiled
+  description: Type-0x8B presentation variant installed by InteractionSpawn_Type8BPresentation_F6. Its exact 62-byte loop writes response value 0x00FF, conditionally spawns the shared type-0x84 presentation child at 0x00124A88, and returns through its local response entry.
+  evidence:
+    - interaction_spawn_type8b_presentation_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124AAA:
+  name: ACTOR_ANIM_TYPE8B_PRESENTATION_F7
+  type: animation_stream
+  size: 54
+  confidence: decompiled
+  description: Type-0x8B presentation variant installed by InteractionSpawn_Type8BPresentation_F7. Its exact 54-byte loop uses response value 0x0002 and conditionally spawns the shared type-0x84 presentation child at 0x00124ABE.
+  evidence:
+    - interaction_spawn_type8b_presentation_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124AE0:
+  name: ACTOR_ANIM_TYPE8B_PRESENTATION_F8
+  type: animation_stream
+  size: 54
+  confidence: decompiled
+  description: Type-0x8B presentation variant installed by InteractionSpawn_Type8BPresentation_F8. Its exact 54-byte loop uses response value 0x0003 and conditionally spawns the shared type-0x84 presentation child at 0x00124AF4.
+  evidence:
+    - interaction_spawn_type8b_presentation_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124B16:
+  name: ACTOR_ANIM_TYPE4E_INTERACTION
+  type: animation_stream
+  size: 36
+  confidence: decompiled
+  description: Type-0x4E interaction animation selected by ACTOR_TEMPLATE_TYPE_4E_INTERACTION. Its exact 36-byte loop presents the 0x1392-0x13CA frame sequence, clears actor state at the opening, publishes actor field 0x11 as 0x004E, and loops at 0x00124B16.
+  evidence:
+    - actor_template_type4e_family_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124B3A:
+  name: ACTOR_ANIM_TYPE4F_INTERACTION
+  type: animation_stream
+  size: 52
+  confidence: decompiled
+  description: Type-0x4F interaction animation selected by ACTOR_TEMPLATE_TYPE_4F_INTERACTION. Its exact 52-byte loop presents the 0x13B6-0x13CA frame sequence, clears actor state at the opening, publishes actor field 0x11 as 0x004F, and loops at 0x00124B3A.
+  evidence:
+    - actor_template_type4e_family_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124B6E:
+  name: ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE
+  type: animation_stream
+  size: 56
+  confidence: decompiled
+  description: Shared type-0x84 response body reached by the type-0x51 player-collision animation and by the embedded Level-09 type-0x50 response entry. Its exact 56-byte region presents the 0x130A-0x1322 sequence, publishes actor field 0x11 as 0x0084, plays sound 0x1F, clears the actor, and gates the local response loop.
+  evidence:
+    - player_collision_global_placement_static_decompilation
+    - level09_type50_template_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124B94:
+  name: ACTOR_ANIM_TYPE50_LEVEL09_RESPONSE_ENTRY
+  type: animation_stream
+  alias_of: ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE
+  entry_offset: 38
+  confidence: decompiled
+  description: Embedded Level-09 type-0x50 response entry installed by Level09_EnterRoutine. It begins at offset 38 inside ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE and therefore does not claim a second ROM ownership range.
+  evidence:
+    - level09_type50_template_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+
+0x00124BA6:
+  name: ACTOR_ANIM_TYPE51_PLAYER_COLLISION_RESPONSE
+  type: animation_stream
+  size: 54
+  confidence: decompiled
+  description: Type-0x51 player-collision response animation installed by Actor_PlayerCollisionPass when it promotes a type-0x50 actor. Its exact 54-byte region presents the 0x12A6-0x12B2 sequence and gates the shared type-0x84 response handoff at 0x00124B6E.
+  evidence:
+    - player_collision_global_placement_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124BDC:
+  name: ACTOR_ANIM_TYPE04_SCENE_SETUP
+  type: animation_stream
+  size: 60
+  confidence: decompiled
+  description: Type-0x04 fixed scene-setup animation selected by ACTOR_TEMPLATE_TYPE_04_SCENE_SETUP. Its exact 60-byte loop presents the 0x14D6-0x14F2 sequence, writes actor field 0x11 as 0x0004, and loops at 0x00124BDC.
+  evidence:
+    - actor_template_scene_setup_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124C1A:
+  name: ACTOR_ANIM_TYPE84_MOVING_CHILD_SPAWN_PREFIX
+  type: animation_stream
+  size: 32
+  confidence: decompiled
+  description: Exact F5 moving-child spawn prefix at 0x00124C1A. It supplies ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE, presents the 0x14F6 response frames, writes actor field 0x11 as 0x0004, and returns to ACTOR_ANIM_TYPE04_SCENE_SETUP; the later conditional variant region remains unpromoted.
+  evidence:
+    - actor_template_f5_moving_child_base_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124C9C:
+  name: ACTOR_ANIM_TYPE84_SCENE_SETUP_A
+  type: animation_stream
+  size: 36
+  confidence: decompiled
+  description: Fixed type-0x84 scene-setup animation selected by ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_A. Its exact 36-byte loop presents the repeated 0x149E-0x14B6 frame sequence.
+  evidence:
+    - actor_template_scene_setup_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124CC0:
+  name: ACTOR_ANIM_TYPE84_SCENE_SETUP_B
+  type: animation_stream
+  size: 24
+  confidence: decompiled
+  description: Fixed type-0x84 scene-setup animation selected by ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_B. Its exact 24-byte loop presents the 0x14FA-0x1502 frame sequence.
+  evidence:
+    - actor_template_scene_setup_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124CDC:
+  name: ACTOR_ANIM_TYPE62_SCENE5_RESPONSE_ENTRY
+  type: animation_stream
+  size: 4
+  confidence: decompiled
+  description: Scene-5 type-0x62 response entry selected by ACTOR_TEMPLATE_TYPE_62_SCENE5_RESPONSE. Its exact four-byte prefix presents frame 0x1692 and clears actor state before the shared type-0x1A presentation body.
+  evidence:
+    - actor_template_type62_family_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+
+0x00124CE0:
+  name: ACTOR_ANIM_TYPE62_DEFAULT_RESPONSE_ENTRY
+  type: animation_stream
+  size: 4
+  confidence: decompiled
+  description: Default type-0x62 response entry selected by ACTOR_TEMPLATE_TYPE_62_DEFAULT_RESPONSE. Its exact four-byte prefix presents frame 0x168E and clears actor state before the shared type-0x1A presentation body.
+  evidence:
+    - actor_template_type62_family_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+
+0x00124CE4:
+  name: ACTOR_ANIM_TYPE1A_PRESENTATION
+  type: animation_stream
+  size: 84
+  confidence: decompiled
+  description: Shared type-0x1A/0x1B/0x1C presentation animation selected by ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE. Its exact 84-byte body spawns the type-0x84 presentation child, pushes the 0x001ACBD8, 0x001ACB82, and 0x001ACB7A callback parameters, and loops through the local presentation response entries.
+  evidence:
+    - actor_template_presentation_family_static_decompilation
+    - actor_template_type84_type1a_presentation_child_static_v1
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124D38:
+  name: ACTOR_ANIM_TYPE16_LEVEL_OBJECT
+  type: animation_stream
+  size: 24
+  confidence: decompiled
+  description: Type-0x16 level-object animation selected by ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT. Its exact 24-byte region presents the 0x193E frame loop and applies the player-Y proximity gate before entering the adjacent response path.
+  evidence:
+    - actor_template_late_interaction_family_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124F96:
+  name: ACTOR_ANIM_TYPE31_F5_CHILD_A
+  type: animation_stream
+  size: 146
+  confidence: decompiled
+  description: Type-0x31 child animation entry selected by ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A. Its exact 146-byte region presents the 0x199A-0x19A2 sequence, performs the shared F5 spawn, and loops through its deterministic frame-delay progression.
+  evidence:
+    - actor_template_type31_f5_child_family_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125028:
+  name: ACTOR_ANIM_TYPE31_F5_CHILD_B
+  type: animation_stream
+  size: 146
+  confidence: decompiled
+  description: Paired Type-0x31 child animation entry selected by ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B. Its exact 146-byte region presents the 0x198E-0x1996 sequence, performs the shared F5 spawn, and loops through its distinct frame-delay progression.
+  evidence:
+    - actor_template_type31_f5_child_family_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x001250BA:
+  name: ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_BASE
+  type: animation_stream
+  size: 20
+  confidence: decompiled
+  description: Base scene-state-5 terrain response animation selected by ACTOR_TEMPLATE_TERRAIN_TYPE_84. Its exact 20-byte loop presents the 0x0F86/0x0F8A sequence, applies two (+1, 0) offsets, clears actor state, and returns through the local entry.
+  evidence:
+    - terrain_scene5_spawn_response_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x001250CE:
+  name: ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_A
+  type: animation_stream
+  size: 16
+  confidence: decompiled
+  description: First random scene-state-5 terrain-response variant selected by TerrainScene5SpawnResponse. Its exact 16-byte loop presents the 0x0F8A/0x0F8E sequence, applies a (+1, 0) offset, clears actor state, and loops locally.
+  evidence:
+    - terrain_scene5_spawn_response_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x001250DE:
+  name: ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_B
+  type: animation_stream
+  size: 12
+  confidence: decompiled
+  description: Second random scene-state-5 terrain-response variant selected by TerrainScene5SpawnResponse. Its exact 12-byte loop presents the 0x0F92/0x0F96 sequence, clears actor state, and loops locally.
+  evidence:
+    - terrain_scene5_spawn_response_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x001250EA:
+  name: ACTOR_ANIM_TYPE30_PRESENTATION_CHILD_INLINE
+  type: animation_stream
+  size: 32
+  confidence: decompiled
+  description: Inline Type-0x30 presentation-child animation selected by the F5 payload inside ACTOR_ANIM_TYPE84_PRESENTATION_CHILD. Its exact 32-byte loop presents the 0x1B5E-0x1B72 frame sequence and returns to its local second-frame entry.
+  evidence:
+    - type30_presentation_child_stream_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
   size: 18

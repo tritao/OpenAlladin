@@ -1,0 +1,52 @@
+{
+  "format": "openaladdin-actor-animation-stream-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Range-bound the directly selected AnimationVM entries in the actor presentation, collision-response, scene-setup, and terrain-spawn corpus.",
+  "streams": [
+    { "address": "0x00124A2E", "name": "ACTOR_ANIM_TYPE8B_PRESENTATION_F5", "range": ["0x00124A2E", "0x00124A6B"], "consumer": "InteractionSpawn_Type8BPresentation_F5 at 0x001B6D90", "role": "Base type-0x8B presentation loop; its F5 child producer is at 0x00124A4A." },
+    { "address": "0x00124A6C", "name": "ACTOR_ANIM_TYPE8B_PRESENTATION_F6", "range": ["0x00124A6C", "0x00124AA9"], "consumer": "InteractionSpawn_Type8BPresentation_F6 at 0x001B6DEC", "role": "Type-0x8B presentation variant with encoded response value 0x0001." },
+    { "address": "0x00124AAA", "name": "ACTOR_ANIM_TYPE8B_PRESENTATION_F7", "range": ["0x00124AAA", "0x00124ADF"], "consumer": "InteractionSpawn_Type8BPresentation_F7 at 0x001B6E18", "role": "Type-0x8B presentation variant with encoded response value 0x0002." },
+    { "address": "0x00124AE0", "name": "ACTOR_ANIM_TYPE8B_PRESENTATION_F8", "range": ["0x00124AE0", "0x00124B15"], "consumer": "InteractionSpawn_Type8BPresentation_F8 at 0x001B6E44", "role": "Type-0x8B presentation variant with encoded response value 0x0003." },
+    { "address": "0x00124B16", "name": "ACTOR_ANIM_TYPE4E_INTERACTION", "range": ["0x00124B16", "0x00124B39"], "consumer": "ACTOR_TEMPLATE_TYPE_4E_INTERACTION", "role": "Type-0x4E interaction loop." },
+    { "address": "0x00124B3A", "name": "ACTOR_ANIM_TYPE4F_INTERACTION", "range": ["0x00124B3A", "0x00124B6D"], "consumer": "ACTOR_TEMPLATE_TYPE_4F_INTERACTION", "role": "Type-0x4F interaction loop." },
+    { "address": "0x00124B6E", "name": "ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE", "range": ["0x00124B6E", "0x00124BA5"], "consumer": "Type-0x51 response handoff at 0x00124BB0/0x00124BCC", "role": "Shared Type-0x84 response body with sound 0x1F, response frames, F600 retirement, and the embedded 0x00124B94 entry." },
+    { "address": "0x00124B94", "name": "ACTOR_ANIM_TYPE50_LEVEL09_RESPONSE_ENTRY", "alias_of": "ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE", "entry_offset": 38, "consumer": "Level09_EnterRoutine at 0x001B6194", "role": "Embedded response entry into the shared Type-0x84 collision-response body; it does not claim a second range." },
+    { "address": "0x00124BA6", "name": "ACTOR_ANIM_TYPE51_PLAYER_COLLISION_RESPONSE", "range": ["0x00124BA6", "0x00124BDB"], "consumer": "Actor_PlayerCollisionPass at 0x001AF8F6", "role": "Type-0x51 response loop that gates the handoff into the shared Type-0x84 response body." },
+    { "address": "0x00124BDC", "name": "ACTOR_ANIM_TYPE04_SCENE_SETUP", "range": ["0x00124BDC", "0x00124C17"], "consumer": "ACTOR_TEMPLATE_TYPE_04_SCENE_SETUP", "role": "Fixed scene-setup presentation loop publishing actor field 0x11 as 0x0004." },
+    { "address": "0x00124C1A", "name": "ACTOR_ANIM_TYPE84_MOVING_CHILD_SPAWN_PREFIX", "range": ["0x00124C1A", "0x00124C39"], "consumer": "F5 moving-child producer at 0x00124C1A", "role": "Exact F5/response prefix that returns to ACTOR_ANIM_TYPE04_SCENE_SETUP; later conditional variants remain separate evidence." },
+    { "address": "0x00124C9C", "name": "ACTOR_ANIM_TYPE84_SCENE_SETUP_A", "range": ["0x00124C9C", "0x00124CBF"], "consumer": "ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_A", "role": "Fixed scene-setup frame loop." },
+    { "address": "0x00124CC0", "name": "ACTOR_ANIM_TYPE84_SCENE_SETUP_B", "range": ["0x00124CC0", "0x00124CD7"], "consumer": "ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_B", "role": "Fixed scene-setup frame loop." },
+    { "address": "0x00124CDC", "name": "ACTOR_ANIM_TYPE62_SCENE5_RESPONSE_ENTRY", "range": ["0x00124CDC", "0x00124CDF"], "consumer": "ACTOR_TEMPLATE_TYPE_62_SCENE5_RESPONSE", "role": "Scene-5 type-0x62 entry prefix that clears actor state before the shared presentation body." },
+    { "address": "0x00124CE0", "name": "ACTOR_ANIM_TYPE62_DEFAULT_RESPONSE_ENTRY", "range": ["0x00124CE0", "0x00124CE3"], "consumer": "ACTOR_TEMPLATE_TYPE_62_DEFAULT_RESPONSE", "role": "Default type-0x62 entry prefix that clears actor state before the shared presentation body." },
+    { "address": "0x00124CE4", "name": "ACTOR_ANIM_TYPE1A_PRESENTATION", "range": ["0x00124CE4", "0x00124D37"], "consumer": "ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE", "role": "Shared type-0x1A/0x1B/0x1C presentation body with the Type-0x84 F5 child and callback parameters." },
+    { "address": "0x00124D38", "name": "ACTOR_ANIM_TYPE16_LEVEL_OBJECT", "range": ["0x00124D38", "0x00124D4F"], "consumer": "ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT", "role": "Type-0x16 level-object proximity loop." },
+    { "address": "0x00124F96", "name": "ACTOR_ANIM_TYPE31_F5_CHILD_A", "range": ["0x00124F96", "0x00125027"], "consumer": "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A", "role": "Type-0x31 child animation entry with the shared F5 spawn and frame-delay loop." },
+    { "address": "0x00125028", "name": "ACTOR_ANIM_TYPE31_F5_CHILD_B", "range": ["0x00125028", "0x001250B9"], "consumer": "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B", "role": "Paired Type-0x31 child animation entry with its distinct frame sequence and shared F5 spawn." },
+    { "address": "0x001250BA", "name": "ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_BASE", "range": ["0x001250BA", "0x001250CD"], "consumer": "ACTOR_TEMPLATE_TERRAIN_TYPE_84", "role": "Base scene-state-5 terrain response animation." },
+    { "address": "0x001250CE", "name": "ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_A", "range": ["0x001250CE", "0x001250DD"], "consumer": "TerrainScene5SpawnResponse at 0x001B5752", "role": "First random terrain-response variant." },
+    { "address": "0x001250DE", "name": "ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_B", "range": ["0x001250DE", "0x001250E9"], "consumer": "TerrainScene5SpawnResponse at 0x001B5744", "role": "Second random terrain-response variant." },
+    { "address": "0x001250EA", "name": "ACTOR_ANIM_TYPE30_PRESENTATION_CHILD_INLINE", "range": ["0x001250EA", "0x00125109"], "consumer": "F5 override in ACTOR_ANIM_TYPE84_PRESENTATION_CHILD at 0x00124966", "role": "Inline Type-0x30 presentation-child frame loop selected with the (+4,+2) movement override." }
+  ],
+  "boundaries": {
+    "known_following_stream": "ACTOR_ANIM_TYPE30_PRESENTATION_CHILD begins at 0x0012510A.",
+    "unpromoted_gaps": ["0x00124C3A-0x00124C9B", "0x00124D50-0x00124D5B", "0x00124D5C-0x00124F95"]
+  },
+  "evidence": [
+    "interaction-spawn-type8b-presentation-targets",
+    "actor-template-type4e-family-targets",
+    "level09-type50-template-targets",
+    "actor-template-scene-setup-targets",
+    "actor-template-type62-family-targets",
+    "actor-template-type31-f5-child-family-targets",
+    "type30-presentation-child-stream-static-targets",
+    "actor-template-additional-family-targets",
+    "Lossless AnimationDecoder output against the ROM"
+  ],
+  "conclusion": "Twenty-three directly selected or directly produced AnimationVM entries are now range-bound without claiming the remaining unpromoted gaps. Embedded entries are represented as aliases where they enter an already owned stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

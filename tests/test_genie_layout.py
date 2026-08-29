@@ -193,6 +193,36 @@ def test_layout_uses_canonical_terrain_collision_profile_range(tmp_path):
     assert item.start == 0x20 and item.end == 0x101F
 
 
+def test_canonical_actor_animation_family_has_exact_non_overlapping_ranges():
+    symbols = SymbolStore()
+    expected = {
+        0x00124A2E: (0x00124A6B, "ACTOR_ANIM_TYPE8B_PRESENTATION_F5"),
+        0x00124A6C: (0x00124AA9, "ACTOR_ANIM_TYPE8B_PRESENTATION_F6"),
+        0x00124AAA: (0x00124ADF, "ACTOR_ANIM_TYPE8B_PRESENTATION_F7"),
+        0x00124AE0: (0x00124B15, "ACTOR_ANIM_TYPE8B_PRESENTATION_F8"),
+        0x00124B16: (0x00124B39, "ACTOR_ANIM_TYPE4E_INTERACTION"),
+        0x00124B3A: (0x00124B6D, "ACTOR_ANIM_TYPE4F_INTERACTION"),
+        0x00124BA6: (0x00124BDB, "ACTOR_ANIM_TYPE51_PLAYER_COLLISION_RESPONSE"),
+        0x00124BDC: (0x00124C17, "ACTOR_ANIM_TYPE04_SCENE_SETUP"),
+        0x00124F96: (0x00125027, "ACTOR_ANIM_TYPE31_F5_CHILD_A"),
+        0x00125028: (0x001250B9, "ACTOR_ANIM_TYPE31_F5_CHILD_B"),
+        0x001250EA: (0x00125109, "ACTOR_ANIM_TYPE30_PRESENTATION_CHILD_INLINE"),
+    }
+    owners = []
+    for address, (end, name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        owners.append((symbol.address, symbol.end))
+    assert all(right < next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
+
+    alias = symbols.at(0x00124B94, include_ranges=False)
+    assert alias is not None
+    assert alias.name == "ACTOR_ANIM_TYPE50_LEVEL09_RESPONSE_ENTRY"
+    assert alias.metadata["alias_of"] == "ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE"
+
+
 def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)

@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-animation-stream-family-targets.json",
+  "streams": {
+    "presentation": [
+      "0x00124A2E-0x00124A6B ACTOR_ANIM_TYPE8B_PRESENTATION_F5",
+      "0x00124A6C-0x00124AA9 ACTOR_ANIM_TYPE8B_PRESENTATION_F6",
+      "0x00124AAA-0x00124ADF ACTOR_ANIM_TYPE8B_PRESENTATION_F7",
+      "0x00124AE0-0x00124B15 ACTOR_ANIM_TYPE8B_PRESENTATION_F8",
+      "0x00124CE4-0x00124D37 ACTOR_ANIM_TYPE1A_PRESENTATION",
+      "0x001250EA-0x00125109 ACTOR_ANIM_TYPE30_PRESENTATION_CHILD_INLINE"
+    ],
+    "interaction_and_collision": [
+      "0x00124B16-0x00124B39 ACTOR_ANIM_TYPE4E_INTERACTION",
+      "0x00124B3A-0x00124B6D ACTOR_ANIM_TYPE4F_INTERACTION",
+      "0x00124B6E-0x00124BA5 ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE",
+      "0x00124BA6-0x00124BDB ACTOR_ANIM_TYPE51_PLAYER_COLLISION_RESPONSE",
+      "0x00124B94 embedded Type-0x50 Level-09 response entry"
+    ],
+    "scene_and_children": [
+      "0x00124BDC-0x00124C17 ACTOR_ANIM_TYPE04_SCENE_SETUP",
+      "0x00124C1A-0x00124C39 ACTOR_ANIM_TYPE84_MOVING_CHILD_SPAWN_PREFIX",
+      "0x00124C9C-0x00124CBF ACTOR_ANIM_TYPE84_SCENE_SETUP_A",
+      "0x00124CC0-0x00124CD7 ACTOR_ANIM_TYPE84_SCENE_SETUP_B",
+      "0x00124CDC-0x00124CDF ACTOR_ANIM_TYPE62_SCENE5_RESPONSE_ENTRY",
+      "0x00124CE0-0x00124CE3 ACTOR_ANIM_TYPE62_DEFAULT_RESPONSE_ENTRY",
+      "0x00124D38-0x00124D4F ACTOR_ANIM_TYPE16_LEVEL_OBJECT",
+      "0x00124F96-0x00125027 ACTOR_ANIM_TYPE31_F5_CHILD_A",
+      "0x00125028-0x001250B9 ACTOR_ANIM_TYPE31_F5_CHILD_B"
+    ],
+    "terrain": [
+      "0x001250BA-0x001250CD ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_BASE",
+      "0x001250CE-0x001250DD ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_A",
+      "0x001250DE-0x001250E9 ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_B"
+    ]
+  },
+  "evidence": [
+    "Direct animation-root assignments in the named interaction, collision, scene, level, and terrain consumers",
+    "Exact F5 template pointers and inline animation overrides",
+    "Exact fixed stream boundaries at adjacent known roots",
+    "Lossless AnimationDecoder output and original ROM bytes"
+  ],
+  "conclusion": "The actor AnimationVM corpus now has a larger mechanically authoritative boundary map. The promoted ranges are direct roots or exact producer entries; the intervening gaps remain UNKNOWN until their own consumers are proven.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
