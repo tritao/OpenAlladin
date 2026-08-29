@@ -2726,6 +2726,16 @@
     - level_event_command_family_static_decompilation
     - movement_stream_decoder
 
+0x00121300:
+  name: ACTOR_MOVE_TYPE52_LEVEL09_ENTRY
+  type: movement_stream
+  size: 226
+  confidence: decompiled
+  description: Level-09 Type-0x52 movement stream installed by ACTOR_TEMPLATE_TYPE_52_LEVEL09 during Level09_EnterRoutine. Its exact 226-byte owner contains the signed rise/fall trajectory, actor-field gates, Type-0x84 child-spawn response, and the terminal jump at 0x001213DC back to the root.
+  evidence:
+    - type52_level09_animation_static_decompilation
+    - movement_stream_decoder
+
 0x0012146C:
   name: ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE
   type: movement_stream
