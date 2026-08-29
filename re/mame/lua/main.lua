@@ -977,7 +977,7 @@ local trace_rnc_loads = os.getenv("OPENALADDIN_TRACE_RNC_LOADS") == "1"
 local inject_actor_frame = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_FRAME", -1))
 local inject_actor_slot = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_SLOT", 31))
 local inject_actor_type = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_TYPE", 0x7d))
-local inject_actor_pc = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_PC", symbol("ACTOR_ANIM_STATE_125952")))
+local inject_actor_pc = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_PC", symbol("ACTOR_ANIM_TYPE0C_LEVEL_EVENT")))
 local inject_actor_template = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_TEMPLATE", symbol("ACTOR_TEMPLATE_TYPE_7D")))
 local inject_actor_x = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_X", -1))
 local inject_actor_y = math.floor(env_number("OPENALADDIN_INJECT_ACTOR_Y", -1))

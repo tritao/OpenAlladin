@@ -1,0 +1,80 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type0b-type0c-type79-type7a-animation-static-targets.json",
+  "level_event_family": {
+    "type0c": {
+      "address": "0x00125952",
+      "name": "ACTOR_ANIM_TYPE0C_LEVEL_EVENT",
+      "range": "0x00125952-0x00125965",
+      "consumer": "0x001B6FAE InteractionSpawn_Type0C_3C",
+      "behavior": "Frame 0x13CE, actor field 0x11 = 0x000D, directional selector parameter, and self-loop."
+    },
+    "type0b": {
+      "address": "0x001259C0",
+      "name": "ACTOR_ANIM_TYPE0B_LEVEL_EVENT",
+      "range": "0x001259C0-0x00125A4B",
+      "consumer": "0x001B6F82 InteractionSpawn_Type0B_3E",
+      "behavior": "Initial Type-0x84 child phase, Type-0x0B publication, event frame sequence, Type-0x2C child, terminal terrain child, and self-loop."
+    },
+    "type2c_child": {
+      "address": "0x001253FC",
+      "name": "ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD",
+      "range": "0x001253FC-0x00125429",
+      "producer": "F5 at 0x00125A12",
+      "behavior": "Repeated paired frame sequence with local loop entry."
+    }
+  },
+  "interaction_family": {
+    "type79": {
+      "address": "0x00125A4C",
+      "name": "ACTOR_ANIM_TYPE79_INTERACTION",
+      "range": "0x00125A4C-0x00125A67",
+      "consumer": "0x001B6F1E InteractionSpawn_Type79_0A0C",
+      "behavior": "Timed 0x1C46/0x1C4A/0x1C4E/0x1C52 interaction loop."
+    },
+    "type7a": {
+      "roots": [
+        { "address": "0x00125A68", "name": "ACTOR_ANIM_TYPE7A_INTERACTION_06", "value": "0x0001" },
+        { "address": "0x00125A88", "name": "ACTOR_ANIM_TYPE7A_INTERACTION_07", "value": "0x0055" },
+        { "address": "0x00125AA8", "name": "ACTOR_ANIM_TYPE7A_INTERACTION_08", "value": "0x00AB" }
+      ],
+      "shared_tail": {
+        "address": "0x00125AC8",
+        "name": "ACTOR_ANIM_TYPE7A_INTERACTION_RESPONSE",
+        "range": "0x00125AC8-0x00125AFD",
+        "behavior": "Sound 0x4E, Type-0x7A publication, response frames, Type-0x84 publication, and FC80 return."
+      }
+    }
+  },
+  "templates": [
+    {
+      "address": "0x001B8188",
+      "name": "ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_CHILD",
+      "runtime_type": "0x84",
+      "animation_stream": "0x001258A6",
+      "resource_count": "0x02"
+    },
+    {
+      "address": "0x001B823C",
+      "name": "ACTOR_TEMPLATE_TYPE_2C_LEVEL_EVENT_CHILD",
+      "runtime_type": "0x2C",
+      "animation_stream": "0x001253FC",
+      "movement_stream": "0x0011F6D4",
+      "resource_count": "0x01"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact template records and direct consumers",
+    "Exact stream terminators and shared-call boundaries"
+  ],
+  "conclusion": "The directly referenced Type-0B/0C level-event and Type-79/7A interaction roots are now range-bounded and semantically named. The Type-0B child template records and Type-2C child animation are also tracked; the Type-7A roots share one exact response tail rather than overlapping ranges.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

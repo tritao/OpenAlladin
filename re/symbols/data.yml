@@ -1339,17 +1339,83 @@
     - animation_stream_classifier
 
 0x00125952:
-  name: ACTOR_ANIM_STATE_125952
+  name: ACTOR_ANIM_TYPE0C_LEVEL_EVENT
+  size: 20
   confidence: confirmed
-  description: Common actor animation branch stream used by the helper at 0x001ACBF2; its helper-selected branch state is ACTOR_ANIM_STATE_125966.
+  description: Type-0x0C level-event animation root used by the direct LevelObjectSpawnEntry consumer at 0x001B6FAE. The stream presents frame 0x13CE, writes actor field 0x11 to 0x000D, invokes Actor_SelectDirectionalAnimation through its parameter command, and loops at 0x00125960.
   evidence:
-    - ghidra_common_actor_animation_helper_001ACBF2
-    - animation_stream_classifier
+    - actor_template_scene_level_family_static_decompilation
+    - interaction_spawn_late_level_object_family_static_decompilation
+    - animation_stream_decoder
+
+0x001259C0:
+  name: ACTOR_ANIM_TYPE0B_LEVEL_EVENT
+  size: 140
+  confidence: decompiled
+  description: Type-0x0B level-event animation root installed by InteractionSpawn_Type0B_3E. It publishes type 0x84 for the initial phase, conditionally spawns the type-0x84 child at 0x001B8188, then publishes type 0x0B, invokes the directional selector, presents the event frame sequence, spawns the type-0x2C child at 0x001B823C and the terminal terrain template, and loops from 0x00125A46.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - interaction_spawn_late_level_object_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125A4C:
+  name: ACTOR_ANIM_TYPE79_INTERACTION
+  size: 28
+  confidence: decompiled
+  description: Type-0x79 reverse-slot interaction animation installed by InteractionSpawn_Type79_0A0C. It cycles frame references 0x1C46, 0x1C4A, 0x1C4E, and 0x1C52 with timer values 0x8B, 0x82, and 0x85 before looping at 0x00125A62.
+  evidence:
+    - interaction_spawn_type79_type7a_static_decompilation
+    - animation_stream_decoder
+
+0x00125A68:
+  name: ACTOR_ANIM_TYPE7A_INTERACTION_06
+  size: 26
+  confidence: decompiled
+  description: Type-0x7A interaction animation for selector 0x06. It publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 1, and calls the shared Type-0x7A response tail at 0x00125AC8.
+  evidence:
+    - interaction_spawn_type79_type7a_static_decompilation
+    - animation_stream_decoder
+
+0x00125A88:
+  name: ACTOR_ANIM_TYPE7A_INTERACTION_07
+  size: 26
+  confidence: decompiled
+  description: Type-0x7A interaction animation for selector 0x07. It publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 0x55, and calls the shared Type-0x7A response tail at 0x00125AC8.
+  evidence:
+    - interaction_spawn_type79_type7a_static_decompilation
+    - animation_stream_decoder
+
+0x00125AA8:
+  name: ACTOR_ANIM_TYPE7A_INTERACTION_08
+  size: 26
+  confidence: decompiled
+  description: Type-0x7A interaction animation for selector 0x08. It publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 0x00AB, and calls the shared Type-0x7A response tail at 0x00125AC8.
+  evidence:
+    - interaction_spawn_type79_type7a_static_decompilation
+    - animation_stream_decoder
+
+0x00125AC8:
+  name: ACTOR_ANIM_TYPE7A_INTERACTION_RESPONSE
+  size: 54
+  confidence: decompiled
+  description: Shared Type-0x7A interaction response tail called by the selector 0x06, 0x07, and 0x08 roots. It plays sound 0x4E, publishes type 0x7A, presents the 0x1C82/0x1C86/0x1C8A/0x1C8E/0x1C92 sequence, promotes the actor to type 0x84, and returns through FC80 at 0x00125AFC.
+  evidence:
+    - interaction_spawn_type79_type7a_static_decompilation
+    - animation_stream_decoder
+
+0x001253FC:
+  name: ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD
+  size: 46
+  confidence: decompiled
+  description: Type-0x2C child animation spawned by ACTOR_ANIM_TYPE0B_LEVEL_EVENT through the template at 0x001B823C. It presents the paired 0x1C56-0x1C7A frame sequence and loops from 0x00125424 to the local 0x00125404 entry.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - animation_stream_decoder
 
 0x00125966:
   name: ACTOR_ANIM_STATE_125966
   confidence: confirmed
-  description: Common actor branch state selected by the helper at 0x001ACBF2 from ACTOR_ANIM_STATE_125952 for actor type 0x7D.
+  description: Common actor branch state selected by Actor_SelectDirectionalAnimation at 0x001ACBF2 from ACTOR_ANIM_TYPE0C_LEVEL_EVENT for actor type 0x7D.
   evidence:
     - ghidra_common_actor_animation_helper_001ACBF2
     - animation_stream_classifier
@@ -2154,6 +2220,16 @@
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
 
+0x001B8188:
+  name: ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 level-event child template supplied by the F5 command at 0x001259D8 inside ACTOR_ANIM_TYPE0B_LEVEL_EVENT. It has no movement stream, uses the shared animation entry at 0x001258A6, and owns two resources.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - animation_stream_decoder
+
 0x001B8228:
   name: ACTOR_TEMPLATE_TYPE_0B_LEVEL_EVENT
   type: actor_template
@@ -2163,6 +2239,16 @@
   evidence:
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
+
+0x001B823C:
+  name: ACTOR_TEMPLATE_TYPE_2C_LEVEL_EVENT_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x2C level-event child template supplied by the F5 command at 0x00125A12 inside ACTOR_ANIM_TYPE0B_LEVEL_EVENT. It uses movement stream 0x0011F6D4, animation ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD, and owns one resource.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - animation_stream_decoder
 
 0x001B8250:
   name: ACTOR_TEMPLATE_TYPE_79_INTERACTION
