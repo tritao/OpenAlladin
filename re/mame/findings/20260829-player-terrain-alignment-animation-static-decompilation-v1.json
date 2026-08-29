@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-terrain-alignment-animation-static-targets.json",
+  "stream": {
+    "address": "0x00121964",
+    "name": "PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE",
+    "range": "0x00121964-0x00121AC7",
+    "bytes": 356,
+    "opening_frame": "0x08F6",
+    "frame_groups": [
+      "0x08F6 repeated through the initial transition checks",
+      "0x08FA, 0x08FE, 0x0902, 0x0906, 0x0902, and 0x08FE response phases",
+      "The final 0x08FA phase returns to the 0x08F6 timer entry."
+    ],
+    "gates": [
+      "F4 compares PLAYER_TRANSITION_GATE (0x00FFF0D0) with zero and branches to the next timer phase.",
+      "F4 compares PLAYER_TRANSITION_COUNTDOWN/response field (0x00FFF0DC) with zero and branches to the next timer phase.",
+      "F4 compares PLAYER_TERRAIN_RESPONSE_STATE (0x00FFF0D6) with zero and branches to the adjacent dynamic state-selection entry at 0x00121AC8."
+    ],
+    "timers": ["EE 0x87", "EE 0x83", "EE 0x82", "EE 0x89"],
+    "randomized_phases": [
+      "F0 at 0x001219A8 loops the opening 0x08F6 frame until the random condition passes.",
+      "F0 at 0x00121A38 loops the 0x0906 frame pair until the random condition passes."
+    ],
+    "loop": "EA at 0x00121AC2 -> 0x00121984"
+  },
+  "consumer": {
+    "selector": "0x001B55E8 TerrainHandler_SnapToGridBlock writes PLAYER_ANIMATION_PC=0x00121964 after clearing response state and aligning PLAYER_X/PLAYER_Y.",
+    "runtime": "The Level 01 terrain behavior-0x28 fixture reaches this stream after the snap-to-grid response."
+  },
+  "boundaries": {
+    "start": "The exact stream begins at 0x00121964 after the preceding packed player-state entries.",
+    "end": "The 356-byte stream ends at 0x00121AC7 after its EA loop; 0x00121AC8 is a separate dynamic state-selection command and 0x00121AD8 begins the independently owned terrain-bounce root."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact PLAYER_ANIMATION_PC write in TerrainHandler_SnapToGridBlock",
+    "Runtime Level 01 behavior-0x28 alignment fixture",
+    "Exact non-overlapping boundary before the dynamic state-selection entry"
+  ],
+  "conclusion": "The player terrain-alignment response is now range-bounded as a 356-byte stream selected by the snap-to-grid handler. Its timer phases, transition/terrain gates, randomized frame loops, and exact boundary before the dynamic selector are explicit without absorbing the following terrain-bounce stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

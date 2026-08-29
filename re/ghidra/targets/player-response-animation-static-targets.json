@@ -8,6 +8,7 @@
   "targets": [
     { "address": "0x001258D2", "name": "PLAYER_ANIM_LEVEL_EVENT_PRESENTATION" },
     { "address": "0x00125E72", "name": "PLAYER_ANIM_TERRAIN_RESPONSE_SHARED" },
+    { "address": "0x00121964", "name": "PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE" },
     { "address": "0x00121AD8", "name": "PLAYER_ANIM_TERRAIN_BOUNCE_ROOT" },
     { "address": "0x001258A6", "name": "ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD_OPENING" },
     { "address": "0x00125C26", "name": "ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN" },

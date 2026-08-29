@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-terrain-alignment-animation-static",
+    "purpose": "Range-bound the player terrain alignment response selected by the snap-to-grid handler and preserve the adjacent dynamic state-selection entry."
+  },
+  "targets": [
+    { "address": "0x00121964", "name": "PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE" },
+    { "address": "0x00121AC8", "name": "Player terrain response dynamic state selection" },
+    { "address": "0x00121AD8", "name": "PLAYER_ANIM_TERRAIN_BOUNCE_ROOT" },
+    { "address": "0x001B55E8", "name": "TerrainHandler_SnapToGridBlock" },
+    { "address": "0x001AD150", "name": "Player_ResetAnimationResponseGate" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0D0", "name": "PLAYER_TRANSITION_GATE" },
+    { "address": "0x00FFF0D6", "name": "PLAYER_TERRAIN_RESPONSE_STATE" },
+    { "address": "0x00FFF0DC", "name": "PLAYER_TRANSITION_COUNTDOWN" },
+    { "address": "0x00FFF115", "name": "PLAYER_TERRAIN_RESPONSE_FIELD" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" }
+  ]
+}

@@ -1068,12 +1068,15 @@
 # PLAYER_ANIMATION_PC assignments and the player selector are confirmed as
 # player-owned; the generic actor helper root remains provisional.
 0x00121964:
-  name: PLAYER_ANIM_STATE_121964
+  name: PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE
+  size: 356
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Player terrain-alignment response stream. Its exact 356-byte region presents the 0x08F6-0x0906 alignment sequence, gates transition and terrain-response fields, reloads the encoded frame timers, and loops through the response cycle before the adjacent dynamic state-selection entry at 0x00121AC8.
   evidence:
     - ghidra_player_animation_pc_assignment
+    - terrain_snap_to_grid_handler_static_decompilation
     - animation_stream_classifier
+    - animation_stream_decoder
 
 0x00121AD8:
   name: PLAYER_ANIM_TERRAIN_BOUNCE_ROOT

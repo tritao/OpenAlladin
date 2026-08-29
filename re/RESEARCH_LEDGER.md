@@ -1104,6 +1104,15 @@ the `0x093E-0x0956` bounce frames, repeated handoffs to the shared
 `PLAYER_ANIM_TERRAIN_RESPONSE_SHARED` stream, and the terminal `0x087E-0x088A`
 loop. The interaction-pair setup stream begins immediately at `0x00121BB6`.
 
+The player terrain-alignment response stream is recorded in
+`re/mame/findings/20260829-player-terrain-alignment-animation-static-decompilation-v1.json`.
+`PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE` owns the exact
+`0x00121964-0x00121AC7` region (356 bytes), selected by
+`TerrainHandler_SnapToGridBlock` after it aligns the player to the terrain
+grid. Its transition/terrain gates, encoded timer phases, randomized frame
+loops, and separate dynamic selector at `0x00121AC8` are retained without
+absorbing the following terrain-bounce root at `0x00121AD8`.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2906,3 +2915,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-player-idle-animation-static-decompilation-v1` | recorded-static-decompilation | Player idle pre-roll and root range-bounded with exact response branches, Type-0x46 F5 spawn, and self-loop |
 | `20260829-player-interaction-pair-animation-static-decompilation-v1` | recorded-static-decompilation | Player interaction-pair setup range-bounded with dual Type-0x84 child spawns and dynamic state handoff |
 | `20260829-player-terrain-bounce-animation-static-decompilation-v1` | recorded-static-decompilation | Player terrain-bounce response root range-bounded with actor-state write, shared response handoffs, terminal frame loop, and exact boundary before interaction-pair setup |
+| `20260829-player-terrain-alignment-animation-static-decompilation-v1` | recorded-static-decompilation | Player terrain-alignment response range-bounded with snap-to-grid selection, timer phases, state gates, randomized loops, and exact boundary before the dynamic selector |

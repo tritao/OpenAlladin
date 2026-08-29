@@ -2044,7 +2044,7 @@
 0x001B55E8:
   name: TerrainHandler_SnapToGridBlock
   confidence: confirmed
-  description: Terrain behavior handler that snaps PLAYER_X/PLAYER_Y to the 16-pixel terrain grid, applies a small collision offset, and arms a short terrain-response timer.
+  description: Terrain behavior handler that snaps PLAYER_X/PLAYER_Y to the 16-pixel terrain grid, clears the response actor state, selects PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964, and arms a short terrain-response timer.
   evidence:
     - ghidra_disassembly_001B55E8
     - rom_terrain_handler_table_004554
