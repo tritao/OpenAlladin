@@ -2180,6 +2180,16 @@
     - ghidra_disassembly_001AFCD2
     - level01_transfer_capable_mechanism_graph
     - player_collision_launch_placement_family_static_decompilation
+0x001AFD32:
+  name: ActorType4E_QueueRandomResponseAudio
+  size: 82
+  confidence: decompiled
+  description: Type-0x4E collision-response audio helper called after the horizontal launch setup. It advances TerrainScene5RandomStep, selects event 0x47 when the returned low bit is set or event 0x46 otherwise, and queues the selected audio command only when SCENE_VDP_UPDATE_FLAG is active.
+  evidence:
+    - ghidra_disassembly_001AFD32
+    - ghidra_disassembly_001AFCD2
+    - terrain_scene5_random_step
+    - player_collision_type4e_audio_helper_static_decompilation
 0x001AF740:
   name: ActorType67_68_PlayerCollisionHandler
   size: 94

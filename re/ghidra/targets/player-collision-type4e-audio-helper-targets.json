@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-type4e-audio-helper",
+    "purpose": "Canonicalize the Type-0x4E collision-response helper that selects and queues the randomized event-0x46/0x47 audio command."
+  },
+  "caller": {
+    "address": "0x001AFCD2",
+    "name": "ActorType4E_PlayerCollisionHandler"
+  },
+  "targets": [
+    { "address": "0x001AFD32", "name": "ActorType4E_QueueRandomResponseAudio" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF57D", "name": "SCENE_VDP_UPDATE_FLAG" }
+  ],
+  "rom_references": [
+    { "address": "0x001B3032", "name": "TerrainScene5RandomStep" },
+    { "address": "0x001E58B8", "name": "Audio_PrepareCommand" },
+    { "address": "0x001E589A", "name": "Audio_SendCommand" }
+  ],
+  "event_selection": {
+    "random_source": "TerrainScene5RandomStep low word",
+    "low_bit_set": "queue event 0x47",
+    "low_bit_clear": "queue event 0x46",
+    "gate": "SCENE_VDP_UPDATE_FLAG must be nonzero"
+  }
+}
