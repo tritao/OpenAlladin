@@ -220,8 +220,26 @@ def test_startup_region_warning_partition_is_exact():
     routine = symbols.at(0x00000344, include_ranges=False)
     assert routine is not None
     assert routine.name == "System_DisplayRegionCompatibilityWarning"
-    assert routine.end == 0x0000044D
-    assert routine.size == 266
+    assert routine.end == 0x00000417
+    assert routine.size == 212
+
+    helper = symbols.at(0x00000418, include_ranges=False)
+    assert helper is not None
+    assert helper.name == "System_WriteRegionWarningText"
+    assert helper.end == 0x0000044D
+    assert helper.size == 54
+
+    thunk = symbols.at(0x000006A8, include_ranges=False)
+    assert thunk is not None
+    assert thunk.name == "System_ResetToGameInitializationThunk"
+    assert thunk.end == 0x000006AD
+    assert thunk.size == 6
+
+    initializer = symbols.at(0x001A8A4A, include_ranges=False)
+    assert initializer is not None
+    assert initializer.name == "Game_InitializeAndEnterFrameLoop"
+    assert initializer.end == 0x001A8C15
+    assert initializer.size == 460
 
     selector = symbols.at(0x0000044E, include_ranges=False)
     assert selector is not None

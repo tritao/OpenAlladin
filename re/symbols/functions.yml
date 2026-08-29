@@ -14,12 +14,37 @@
     - reset_bootstrap_static_decompilation
 0x00000344:
   name: System_DisplayRegionCompatibilityWarning
-  size: 266
+  size: 212
   confidence: decompiled
   description: Initializes the Genesis VDP, expands the startup font bank into VRAM, renders the regional compatibility warning selected from the console region and country string, and spins after the warning is displayed.
   evidence:
     - startup_region_warning_static_disassembly
     - gnu_m68k_disassembly_00000344
+0x00000418:
+  name: System_WriteRegionWarningText
+  size: 54
+  confidence: decompiled
+  description: Converts a warning-text character position and character code into a VDP tile destination, writes the tile address, emits the character sequence through the VDP data port, and returns to the regional warning renderer.
+  evidence:
+    - startup_region_warning_static_disassembly
+    - gnu_m68k_disassembly_00000344
+0x000006A8:
+  name: System_ResetToGameInitializationThunk
+  size: 6
+  confidence: decompiled
+  description: Reset-path thunk that jumps from the post-font bootstrap area to Game_InitializeAndEnterFrameLoop at 0x001A8A4A.
+  evidence:
+    - reset_bootstrap_static_disassembly
+    - gnu_m68k_disassembly_000006A8
+0x001A8A4A:
+  name: Game_InitializeAndEnterFrameLoop
+  size: 460
+  confidence: decompiled
+  description: Initializes runtime, VDP, scene, menu, actor, camera, terrain, and rendering state, performs the first synchronized service pass, and transfers into Game_FrameUpdateLoop at 0x001A8C16.
+  evidence:
+    - ghidra_decompile_001A8A4A
+    - gnu_m68k_disassembly_001A8A4A
+    - frame_loop_entry_tail_transfer
 0x001A8C16:
   name: Game_FrameUpdateLoop
   confidence: confirmed

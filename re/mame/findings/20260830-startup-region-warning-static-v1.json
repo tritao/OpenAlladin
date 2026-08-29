@@ -8,10 +8,17 @@
   "objects": [
     {
       "address": "0x00000344",
-      "end": "0x0000044D",
+      "end": "0x00000417",
       "name": "System_DisplayRegionCompatibilityWarning",
-      "size": 266,
+      "size": 212,
       "role": "VDP/font initialization and regional compatibility warning renderer"
+    },
+    {
+      "address": "0x00000418",
+      "end": "0x0000044D",
+      "name": "System_WriteRegionWarningText",
+      "size": 54,
+      "role": "VDP warning-text output helper"
     },
     {
       "address": "0x0000044E",
@@ -33,9 +40,23 @@
       "name": "SYSTEM_REGION_WARNING_TEXT",
       "size": 106,
       "role": "regional compatibility warning text"
+    },
+    {
+      "address": "0x000006A8",
+      "end": "0x000006AD",
+      "name": "System_ResetToGameInitializationThunk",
+      "size": 6,
+      "role": "reset-path jump to game initialization"
+    },
+    {
+      "address": "0x001A8A4A",
+      "end": "0x001A8C15",
+      "name": "Game_InitializeAndEnterFrameLoop",
+      "size": 460,
+      "role": "runtime/scene initialization and first service pass"
     }
   ],
-  "behavior": "The routine prepares VDP output, expands the startup font glyphs, selects a compatibility-warning suffix using the console country string, writes the warning text, and intentionally never returns to gameplay. The exact partition ends before the eight-byte font alignment padding at 0x000004D0.",
+  "behavior": "The warning path consists of a 212-byte non-returning renderer at 0x00000344 and a 54-byte VDP text-output helper at 0x00000418. The reset thunk at 0x000006A8 transfers control to the 460-byte runtime initializer at 0x001A8A4A, which enters Game_FrameUpdateLoop at 0x001A8C16. The exact partition ends before the eight-byte font alignment padding at 0x000004D0.",
   "evidence": [
     "startup_region_warning_static_disassembly",
     "gnu_m68k_disassembly_00000344",

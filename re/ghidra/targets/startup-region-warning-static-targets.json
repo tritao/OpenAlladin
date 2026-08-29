@@ -8,16 +8,38 @@
   "purpose": "Classify the startup routine that initializes the VDP/font path and renders the regional compatibility warning.",
   "routine": {
     "address": "0x00000344",
-    "end": "0x0000044D",
-    "size": 266,
+    "end": "0x00000417",
+    "size": 212,
     "name": "System_DisplayRegionCompatibilityWarning",
-    "terminator": "rts at 0x0000044C",
+    "terminator": "intentional spin at 0x00000414-0x00000417",
     "behavior": [
       "Initializes VDP control/data ports.",
       "Expands the startup font bank into VRAM.",
       "Renders the regional compatibility warning and selected regional variant.",
       "Spins after the warning display is complete."
     ]
+  },
+  "helper": {
+    "address": "0x00000418",
+    "end": "0x0000044D",
+    "size": 54,
+    "name": "System_WriteRegionWarningText",
+    "terminator": "rts at 0x0000044C",
+    "behavior": "Converts the warning text position and character code to a VDP tile address, emits the character sequence, and returns to the renderer."
+  },
+  "reset_thunk": {
+    "address": "0x000006A8",
+    "end": "0x000006AD",
+    "size": 6,
+    "name": "System_ResetToGameInitializationThunk",
+    "target": "0x001A8A4A Game_InitializeAndEnterFrameLoop"
+  },
+  "runtime_initializer": {
+    "address": "0x001A8A4A",
+    "end": "0x001A8C15",
+    "size": 460,
+    "name": "Game_InitializeAndEnterFrameLoop",
+    "behavior": "Initializes the runtime and performs the first complete scene/actor/player/render service pass before transferring to Game_FrameUpdateLoop at 0x001A8C16."
   },
   "data": [
     {
