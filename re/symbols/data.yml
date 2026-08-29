@@ -414,19 +414,23 @@
     - movement_stream_decoder
 
 0x0012046C:
-  name: ACTOR_MOVE_STATE_12046C
-  confidence: probable
-  description: Conditional movement substream reached from ACTOR_MOVE_STATE_120432 through a player-distance branch.
+  name: ACTOR_MOVE_TYPE1E_STATE46_RESPONSE
+  size: 118
+  confidence: decompiled
+  description: Type-0x1E actor movement response for terrain interaction state 0x46. Its packed 118-byte region applies the initial (+1, 0) delta, retains the state-0x46 loop through player-X distance 0x73 and actor flag/value tests, and selects the local animation cleanup roots 0x00123614 or 0x001237C6 before handing through the shared continuation at 0x001204F0.
   evidence:
-    - mame_actor_movement_cursor_trace
+    - type1e_state46_movement_static_decompilation
+    - level01_behavior46_lower_band_runtime
     - movement_stream_decoder
 
 0x001204E2:
-  name: ACTOR_MOVE_STATE_1204E2
-  confidence: probable
-  description: Actor movement state-stream root with conditional value tests and a looping pointer path.
+  name: ACTOR_MOVE_TYPE1E_PROXIMITY_TRANSITION_GATE
+  size: 162
+  confidence: decompiled
+  description: Type-0x1E actor movement gate following ACTOR_MOVE_TYPE1E_STATE46_RESPONSE. Its packed 162-byte region compares actor interaction state 0x46, tests player Y distance 0x40 and X distance 0x78, checks actor flag/value fields 0x0080 and 0x0081, and selects animation roots 0x00123614 or 0x001237C6 before clearing movement state.
   evidence:
-    - mame_actor_movement_cursor_trace
+    - type1e_state46_movement_static_decompilation
+    - level01_behavior46_lower_band_runtime
     - movement_stream_decoder
 
 0x001235AC:

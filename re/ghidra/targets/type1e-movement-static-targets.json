@@ -1,0 +1,83 @@
+{
+  "format": "openaladdin-type1e-movement-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "movement": [
+    {
+      "address": "0x0012046C",
+      "name": "ACTOR_MOVE_TYPE1E_STATE46_RESPONSE",
+      "packed_region": ["0x0012046C", "0x001204E1"],
+      "packed_bytes": 118,
+      "decoder_path_bytes": 104,
+      "entry": {
+        "delta": [1, 0],
+        "condition": "compare actor +0x3D against 0x0046",
+        "equal_target": "0x0012046C",
+        "fallthrough": [
+          "write actor +0x20 = 0x00123614",
+          "clear actor movement cursor with 0x82 0x00"
+        ]
+      },
+      "state_loop": {
+        "root": "0x00120482",
+        "jump_target": "0x00120498",
+        "conditions": [
+          "player within X distance 0x73 -> 0x001204C6",
+          "actor flag field 0x0009 through 0x87 -> 0x001204B6",
+          "actor +0x3D equals 0x0080 -> 0x001204C6"
+        ],
+        "step_deltas": [[3, 0], [2, 0]],
+        "loop_target": "0x0012048A"
+      },
+      "exit_writes": [
+        { "address": "0x001204C6", "animation": "0x00123614", "clear_movement": true },
+        { "address": "0x001204D0", "animation": "0x001237C6", "clear_movement": true }
+      ],
+      "shared_continuation": "0x001204DA -> 0x001204F0"
+    },
+    {
+      "address": "0x001204E2",
+      "name": "ACTOR_MOVE_TYPE1E_PROXIMITY_TRANSITION_GATE",
+      "packed_region": ["0x001204E2", "0x00120583"],
+      "packed_bytes": 162,
+      "decoder_path_bytes": 84,
+      "entry": {
+        "delta": [4, 0],
+        "condition": "compare actor +0x3D against 0x0046",
+        "equal_target": "0x00120534"
+      },
+      "proximity_loop": {
+        "root": "0x001204EE",
+        "step_delta": [3, 0],
+        "conditions": [
+          "player within Y distance 0x40 -> 0x001204FC",
+          "player within X distance 0x78 -> 0x0012052A",
+          "actor flag field 0x0009 through 0x87 -> 0x0012051A",
+          "actor +0x3D equals 0x0080 -> 0x0012052A"
+        ],
+        "loop_target": "0x001204E2"
+      },
+      "exit_writes": [
+        { "address": "0x0012052A", "animation": "0x00123614", "clear_movement": true },
+        { "address": "0x00120534", "animation": "0x001237C6", "clear_movement": true }
+      ]
+    }
+  ],
+  "consumer": {
+    "runtime_type": "0x1E",
+    "state_field": "actor +0x3D",
+    "animation_handoff": "0x001237C6 writes movement root 0x0012046C",
+    "runtime_trace": "re/mame/findings/20260827-level01-behavior46-lower-band-runtime-v1.json"
+  },
+  "evidence": [
+    "Lossless MovementDecoder output for both roots",
+    "Level 01 behavior-0x46 lower-band runtime trace",
+    "Exact animation-to-movement handoff at 0x001237CA"
+  ],
+  "conclusion": "The adjacent Type-0x1E movement roots form a bounded actor-local response state machine. The 0x001204E2 predecessor tests terrain/contact and player proximity before selecting ordinary or extended animation; the extended animation writes 0x0012046C, whose state-0x46 loop advances the actor and exits through actor-local animation cleanup. No scene-state or terminal-transition write is part of either movement object.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -11,7 +11,7 @@
     { "address": "0x001AD372", "name": "AnimationOpcode_FB_PushParameter" },
     { "address": "0x001AD378", "name": "AnimationOpcode_FC_CallReturn" },
     { "address": "0x001B3032", "name": "GameRandomNextWord" },
-    { "address": "0x0012046C", "name": "ActorMovementState_12046C" }
+    { "address": "0x0012046C", "name": "ACTOR_MOVE_TYPE1E_STATE46_RESPONSE" }
   ],
   "memory_references": [
     { "address": "0x00FF7DEA", "name": "GAME_RANDOM_STATE" },
