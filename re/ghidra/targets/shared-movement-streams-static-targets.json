@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "shared-movement-streams-static",
+    "purpose": "Name the final generic movement-stream entries from their exact actor-template consumers and lossless movement decodes."
+  },
+  "targets": [
+    { "address": "0x0011F6D4", "name": "ACTOR_MOVE_SHARED_CHILD_ENTRY" },
+    { "address": "0x0011F6FE", "name": "ACTOR_MOVE_MENU_PRESENTATION_TYPE84" },
+    { "address": "0x001217B4", "name": "ACTOR_MOVE_TYPE34_WALL_OSCILLATION" },
+    { "address": "0x001B7CB0", "name": "ACTOR_TEMPLATE_GUARD_SWORD_ATTACK" },
+    { "address": "0x001B8200", "name": "ACTOR_TEMPLATE_TYPE_2E_DIRECTIONAL_CHILD" },
+    { "address": "0x001B823C", "name": "ACTOR_TEMPLATE_TYPE_2C_LEVEL_EVENT_CHILD" },
+    { "address": "0x001B7A44", "name": "ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84" },
+    { "address": "0x001B80AC", "name": "ACTOR_TEMPLATE_GUARD" }
+  ],
+  "memory_references": [
+    { "address": "0x0011F6D4", "name": "ACTOR_MOVE_SHARED_CHILD_ENTRY" },
+    { "address": "0x0011F6FE", "name": "ACTOR_MOVE_MENU_PRESENTATION_TYPE84" },
+    { "address": "0x001217B4", "name": "ACTOR_MOVE_TYPE34_WALL_OSCILLATION" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" }
+  ]
+}

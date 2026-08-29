@@ -357,21 +357,24 @@
     - ghidra_level01_countdown_producer_decompile
 
 0x0011F6D4:
-  name: ACTOR_MOVE_STATE_11F6D4
+  name: ACTOR_MOVE_SHARED_CHILD_ENTRY
+  size: 42
   confidence: confirmed
-  description: Natural type 0x2D actor movement state-stream entry copied into the actor-table movement_pc field at offset 0x0A and advanced by the common movement VM. It contains signed per-step deltas followed by shared movement commands and loops through 0x0011F6FE.
+  description: Shared 42-byte movement prelude used by the Type-0x2D guard-sword child, Type-0x2E directional child, and Type-0x2C level-event child. It performs the initial timer/arithmetic phases, applies the (+7,+1) and (+7,0) steps, destroys or clears the actor on the terminal phase, tests the actor flag path, clears actor field 0x11, and clears the movement cursor at 0x0011F6FC. The adjacent ACTOR_MOVE_MENU_PRESENTATION_TYPE84 stream at 0x0011F6FE is independently owned.
   evidence:
-    - ghidra_actor_movement_vm_001ADE36
-    - mame_natural_actor_type_2D_trace
+    - actor_template_guard_sword_child
+    - actor_template_type2e_directional_child
+    - actor_template_type2c_level_event_child
     - movement_stream_decoder
 
 0x0011F6FE:
-  name: ACTOR_MOVE_STATE_11F6FE
+  name: ACTOR_MOVE_MENU_PRESENTATION_TYPE84
+  size: 42
   confidence: confirmed
-  description: Actor movement state-stream root containing the signed delta sequence used by the type-0x84 transition actor; it loops back to its entry through movement command 0x80.
+  description: Type-0x84 menu-presentation movement loop installed by ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84. Its exact 42-byte region applies the zero, positive, and negative horizontal step profile and loops from the movement command at 0x0011F720 back to 0x0011F6FE.
   evidence:
-    - ghidra_actor_movement_vm_001ADE36
-    - mame_actor_movement_cursor_trace
+    - actor_template_menu_presentation_type84
+    - menu_state_selection_decomp
     - movement_stream_decoder
 
 0x001216C6:
@@ -686,7 +689,7 @@
     - movement_stream_decoder
 
 0x001217B4:
-  name: ACTOR_MOVE_STATE_1217B4
+  name: ACTOR_MOVE_TYPE34_WALL_OSCILLATION
   size: 102
   confidence: decompiled
   description: Type-0x34 wall actor movement root; its lossless 102-byte decode contains zero horizontal deltas, a signed one-pixel vertical oscillation controlled by opcode 0x84 values 0x80 through 0x84, and an opcode-0x80 loop back to the root.

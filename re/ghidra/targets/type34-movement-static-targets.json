@@ -7,7 +7,7 @@
   },
   "movement": {
     "address": "0x001217B4",
-    "name": "ACTOR_MOVE_STATE_1217B4",
+    "name": "ACTOR_MOVE_TYPE34_WALL_OSCILLATION",
     "decoded_bytes": 102,
     "decoded_steps": 32,
     "pattern": "zero horizontal delta with signed vertical deltas +1 and -1",

@@ -8,7 +8,7 @@
   "target_manifest": "re/ghidra/targets/type34-movement-static-targets.json",
   "stream": {
     "address": "0x001217B4",
-    "name": "ACTOR_MOVE_STATE_1217B4",
+    "name": "ACTOR_MOVE_TYPE34_WALL_OSCILLATION",
     "decoded_bytes": 102,
     "decoded_steps": 32,
     "vertical_deltas": ["+1", "0", "-1"],
