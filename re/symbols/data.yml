@@ -1,5 +1,27 @@
 # Address-keyed data knowledge. Hardware names are deliberately explicit so
 # both Ghidra and MAME can use the same names.
+0x000006AE:
+  name: SPRITE_FRAME_POINTER_TABLE
+  type: rom_pointer_table
+  entry_size: 4
+  count: 1409
+  size: 0x1604
+  confidence: confirmed
+  description: Chopper sprite-frame pointer table discovered at ROM 0x000006AE. Its 1409 four-byte entries occupy 0x000006AE-0x00001CB1 and point to the contiguous frame-record corpus beginning at 0x001E5A24.
+  evidence:
+    - chopper_frame_parser
+    - sprite_frame_pointer_table_static_v1
+
+0x00010000:
+  name: SPRITE_TILE_DATA
+  type: graphics_data
+  size: 0x10E160
+  confidence: confirmed
+  description: Raw Genesis sprite tile payload referenced by the validated Chopper frame manifest. The referenced tile runs form one contiguous ROM region at 0x00010000-0x0011E15F with no unreferenced gaps.
+  evidence:
+    - chopper_frame_parser
+    - sprite_tile_data_extent_static_v1
+
 0x001B8480:
   name: AUDIO_Z80_DRIVER_IMAGE
   type: z80_binary

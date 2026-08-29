@@ -29,6 +29,8 @@ def _class_for_symbol(symbol: Symbol) -> str:
         return "GRAPHICS"
     if name == "LEVEL_TABLE":
         return "SCENE_TABLE"
+    if "graphics" in symbol_type or "sprite" in symbol_type:
+        return "GRAPHICS"
     if symbol_type == "rom_pointer_table":
         return "POINTER_TABLE"
     if symbol_type == "rom_table":
@@ -171,6 +173,98 @@ def _audio_candidates(root: Path, rom_size: int) -> list[Candidate]:
             92,
             f"AUDIO_Z80_SEQUENCE_STREAM_{sound_id}_{track:02d}",
             ("z80_sequence_stream_decoder",),
+        ))
+    return result
+
+
+def _sprite_candidates(root: Path, rom_size: int) -> list[Candidate]:
+    """Use the validated Chopper manifest to claim sprite ROM ownership."""
+
+    document = _read_json(root / "build/assets/sprites/frames.json", rom_size)
+    if document is None or not document.get("supported"):
+        return []
+    frames = document.get("frames", [])
+    if not isinstance(frames, list) or not frames:
+        return []
+
+    result: list[Candidate] = []
+    try:
+        pointer_table = parse_int(document["pointer_table"])
+    except (KeyError, TypeError, ValueError):
+        pointer_table = None
+    if pointer_table is not None:
+        pointer_end = pointer_table + len(frames) * 4 - 1
+        first_frame = min(
+            (parse_int(frame["address"]) for frame in frames if isinstance(frame, dict)),
+            default=rom_size,
+        )
+        if 0 <= pointer_table <= pointer_end < first_frame < rom_size:
+            result.append(Candidate(
+                pointer_table,
+                pointer_end,
+                "POINTER_TABLE",
+                "sprites.frame_pointer_table",
+                94,
+                "SPRITE_FRAME_POINTER_TABLE",
+                ("chopper_frame_parser",),
+            ))
+
+    for frame in frames:
+        if not isinstance(frame, dict):
+            continue
+        try:
+            start = parse_int(frame["address"])
+            size = parse_int(frame["struct_size"])
+            index = parse_int(frame.get("index", len(result)))
+        except (KeyError, TypeError, ValueError):
+            continue
+        if size <= 0 or start < 0 or start + size > rom_size:
+            continue
+        result.append(Candidate(
+            start,
+            start + size - 1,
+            "GRAPHICS",
+            "sprites.frame_manifest",
+            88,
+            f"SPRITE_FRAME_{index:04d}",
+            ("chopper_frame_parser",),
+        ))
+
+    tile_sets = document.get("tile_sets", {})
+    intervals: list[tuple[int, int]] = []
+    for frame in frames:
+        if not isinstance(frame, dict):
+            continue
+        for part in frame.get("parts", []) or []:
+            if not isinstance(part, dict):
+                continue
+            tile_set = tile_sets.get(part.get("tile_set"), {}) if isinstance(tile_sets, dict) else {}
+            try:
+                start = parse_int(part["tile_address"])
+                tile_count = parse_int(part["tile_size"])
+                tile_bytes = parse_int(tile_set["tile_bytes"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            size = tile_count * tile_bytes
+            if tile_count <= 0 or tile_bytes <= 0 or start < 0 or start + size > rom_size:
+                continue
+            intervals.append((start, start + size - 1))
+
+    merged: list[tuple[int, int]] = []
+    for start, end in sorted(set(intervals)):
+        if merged and start <= merged[-1][1] + 1:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+        else:
+            merged.append((start, end))
+    for start, end in merged:
+        result.append(Candidate(
+            start,
+            end,
+            "GRAPHICS",
+            "sprites.tile_manifest",
+            86,
+            "SPRITE_TILE_DATA" if len(merged) == 1 else f"SPRITE_TILE_DATA_{start:08X}",
+            ("chopper_frame_parser",),
         ))
     return result
 
@@ -322,6 +416,7 @@ def build_layout(
             candidates.extend(_stream_candidates(root / relative, rom_size, layout_class))
         candidates.extend(_asset_candidates(root, rom_size))
         candidates.extend(_audio_candidates(root, rom_size))
+        candidates.extend(_sprite_candidates(root, rom_size))
 
     ranges = partition(candidates, rom_size)
     sources = tuple(sorted({item.source for item in candidates}))

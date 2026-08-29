@@ -88,6 +88,12 @@ canonical symbols. It refuses to emit if the layout is not a gap-free,
 non-overlapping partition or if an instruction's exported bytes differ from
 the ROM.
 
+When `build/assets/sprites/frames.json` is present, the layout also consumes
+the validated Chopper manifest: the 1409-entry frame pointer table, each
+variable-size sprite frame record, and the physical tile-data runs are marked
+as `POINTER_TABLE`/`GRAPHICS`. Run `python -m genie assets` before rebuilding
+the layout when starting from a clean checkout.
+
 The recovered frame scheduler is tracked separately in
 `re/scheduler/frame_phases.yml`. It is a static call-chain model rooted at
 `Game_FrameUpdateLoop` (`0x001A8C16`) and `VBlankInterrupt` (`0x001B246E`);

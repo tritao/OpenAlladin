@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "pointer_table": {
+    "range": "0x000006AE-0x00001CB1",
+    "entry_size": 4,
+    "count": 1409,
+    "first_frame": "0x001E5A24"
+  },
+  "frame_records": {
+    "range": "0x001E5A24-0x001FE9C5",
+    "count": 1409,
+    "boundary": "The Chopper manifest reports an address and exact struct_size for every frame; sorted records are adjacent with no gap or overlap."
+  },
+  "tile_data": {
+    "range": "0x00010000-0x0011E15F",
+    "bytes": 1106272,
+    "boundary": "Every byte in the range is covered by at least one validated tile run from a frame part; overlapping shape views are merged once for physical ROM ownership."
+  },
+  "conclusion": "The validated Chopper corpus resolves the large raw graphics regions that Ghidra leaves unclassified: pointer table, 1409 frame records, and their contiguous tile payload."
+}

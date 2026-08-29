@@ -123,6 +123,31 @@ def test_layout_preserves_sparse_function_body_ranges(tmp_path):
     assert layout.at(0x28).layout_class == "CODE"
 
 
+def test_layout_uses_chopper_graphics_manifest(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    database_root = _write_database(tmp_path)
+    assets = tmp_path / "build/assets/sprites"
+    assets.mkdir(parents=True)
+    _write_json(assets / "frames.json", {
+        "supported": True,
+        "pointer_table": "0x20",
+        "tile_sets": {"1x1": {"tile_bytes": 32}},
+        "frames": [
+            {"index": 0, "address": "0x40", "struct_size": 4,
+             "parts": [{"tile_set": "1x1", "tile_address": "0x80", "tile_size": 1}]},
+            {"index": 1, "address": "0x44", "struct_size": 4,
+             "parts": [{"tile_set": "1x1", "tile_address": "0xA0", "tile_size": 1}]},
+        ],
+    })
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path)
+    assert layout.at(0x20).layout_class == "POINTER_TABLE"
+    assert layout.at(0x40).layout_class == "GRAPHICS"
+    assert layout.at(0x40).name == "SPRITE_FRAME_0000"
+    assert layout.at(0x80).layout_class == "GRAPHICS"
+    assert layout.at(0x80).name == "SPRITE_TILE_DATA"
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(
