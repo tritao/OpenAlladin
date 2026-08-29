@@ -2401,6 +2401,17 @@
     - scene-resource-queued-actor-static-decompilation
     - ghidra_actor_template_initializer_001AE30A
 
+0x001B7918:
+  name: ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x80 child template supplied by the F5 command in PLAYER_ANIM_ACTION_TRANSITION_LOCK at 0x0012253C. It uses the shared ACTOR_MOVE_SHARED_CHILD_ENTRY movement stream, animation root 0x00122B58, owns one resource, and carries trailing template flags 0x0800; the parent action stream establishes its transition-state role and callback side effects.
+  evidence:
+    - ghidra_player_action_transition_animation_static_targets
+    - player-action-transition-animation-static-decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B7A44:
   name: ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84
   type: actor_template

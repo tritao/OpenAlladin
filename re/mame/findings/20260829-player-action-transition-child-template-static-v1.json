@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/player-action-transition-child-template-targets.json",
+  "template": {
+    "address": "0x001B7918",
+    "name": "ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD",
+    "size": 20,
+    "record_bytes": "8000000000000011F6D4600000122B5801000800",
+    "runtime_type": "0x80",
+    "movement_pointer": "0x0011F6D4",
+    "animation_root": "0x00122B58",
+    "resource_count": "0x01",
+    "template_flags": "0x0800"
+  },
+  "producer": {
+    "address": "0x0012253C",
+    "stream": "0x00122504 PLAYER_ANIM_ACTION_TRANSITION_LOCK",
+    "command": "F5",
+    "parent_selector": "0x001A9304 Player_SelectLocomotionOrAction",
+    "side_effects": [
+      "queues callback 0x001B0360 with FB",
+      "writes player action-animation state through ED",
+      "plays audio command 0x03"
+    ]
+  },
+  "conclusion": "The formerly unclassified 20-byte F5 payload is a Type-0x80 child template owned by the player action-transition stream. Its transition-state role is bounded by the exact producer, while the child animation root at 0x00122B58 remains unnamed and the runtime child lifetime is not separately traced."
+}

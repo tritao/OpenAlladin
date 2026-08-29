@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-action-transition-child-template",
+    "purpose": "Record the exact actor-template payload spawned by the player action-transition animation stream."
+  },
+  "targets": [
+    {
+      "address": "0x001B7918",
+      "name": "ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD",
+      "size": 20
+    },
+    {
+      "address": "0x00122504",
+      "name": "PLAYER_ANIM_ACTION_TRANSITION_LOCK"
+    }
+  ],
+  "memory_references": [
+    { "address": "0x0011F6D4", "name": "ACTOR_MOVE_SHARED_CHILD_ENTRY" },
+    { "address": "0x00122B58", "name": "PLAYER_ACTION_TRANSITION_CHILD_ANIMATION_ROOT" },
+    { "address": "0x001B0360", "name": "FarTransfer_InteractionCounterStepBack" }
+  ]
+}
