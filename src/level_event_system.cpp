@@ -66,7 +66,7 @@ bool LevelEventSystem::spawn_actor(
         actor.facing_x_flip = x >= 0x8D ? 0xFF : 0;
     }
     if (!actor_lifecycle_.install(*slot, actor)) return false;
-    actor_animations_[*slot].reset();
+    animation_system_.actors().reset(*slot);
     return true;
 }
 
@@ -146,8 +146,8 @@ LevelEventEffects LevelEventSystem::dispatch(
         state.player.animation_selector.animation_gate = 0xFF;
         state.player.animation_selector.scene_script_countdown = 0xC8;
         state.scene.script_countdown = 0xC8;
-        animation_.select_stream_entry(0x001258D2);
-        animation_.clear_animation_timer_next_update();
+        animation_system_.player().select_stream_entry(0x001258D2);
+        animation_system_.player().clear_animation_timer_next_update();
         break;
     case 0xEB: // LevelEvent_SpawnType2FWithMovement
         (void)spawn_direct(

@@ -2,8 +2,7 @@
 
 #include <SDL.h>
 
-#include "animation.hpp"
-#include "actor_animation_system.hpp"
+#include "animation_system.hpp"
 #include "actor_lifecycle.hpp"
 #include "camera.hpp"
 #include "collision.hpp"
@@ -112,17 +111,6 @@ private:
     void update_scene_resources();
     SceneServices scene_services();
     bool instantiate_scene_actor(const SceneActorRecord& record);
-    // ROM ordinal 30 (0x001A8CCE -> 0x001AC784) is the single common
-    // animation service. It owns the player VM, player-originated F5
-    // allocation, and one gated actor-table traversal.
-    void update_animation_vm_ordinal_30(
-        SpritePose desired_pose,
-        HorizontalDirection horizontal_direction,
-        const AnimationContext& context,
-        bool response_dynamic_handoff,
-        bool bounce_response_finished
-    );
-    void flush_deferred_animation_spawn();
     ActorState actor_from_template(std::uint32_t template_address) const;
     ActorState initialize_actor_from_template(
         const ActorState& destination,
@@ -135,7 +123,6 @@ private:
     void sync_player_actor();
     void record_scheduler_phase(const char* name, std::uint32_t rom_entry_pc = 0);
     void collect_scheduler_writer_pcs();
-    AnimationContext player_animation_context(bool grounded);
     int visual_x() const;
     int visual_y() const;
     FrameScheduler::Context frame_scheduler_context();
@@ -149,14 +136,13 @@ private:
     ActorSystem& actors_;
     ActorLifecycleSystem actor_lifecycle_;
     CollisionSystem collisions_;
-    ActorAnimationSystem actor_animation_system_;
+    AnimationSystem animation_system_;
     SceneSystem scene_;
     SceneResourceVm scene_resources_;
     GenesisRenderModel render_model_;
     LevelEventVm level_events_;
     PlayerTerrainSystem terrain_;
     SpriteDatabase sprites_;
-    PlayerAnimationVm animation_;
     MovementVm movement_vm_;
     LevelEventSystem level_event_system_;
     CameraSystem camera_system_;

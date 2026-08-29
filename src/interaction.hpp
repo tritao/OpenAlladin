@@ -1,6 +1,6 @@
 #pragma once
 
-#include "animation.hpp"
+#include "animation_system.hpp"
 #include "collision.hpp"
 #include "game_state.hpp"
 
@@ -46,8 +46,7 @@ public:
     InteractionSystem(
         ActorLifecycleSystem& actor_lifecycle,
         CollisionSystem& collisions,
-        PlayerAnimationVm& animation,
-        std::array<PlayerAnimationVm, 32>& actor_animations,
+        AnimationSystem& animation_system,
         std::array<bool, 32>& actor_movement_deferred
     );
 
@@ -123,8 +122,7 @@ private:
 
     ActorLifecycleSystem& actor_lifecycle_;
     CollisionSystem& collisions_;
-    PlayerAnimationVm& animation_;
-    std::array<PlayerAnimationVm, 32>& actor_animations_;
+    AnimationSystem& animation_system_;
     std::array<bool, 32>& actor_movement_deferred_;
     const std::vector<std::uint8_t>* rom_ = nullptr;
     InteractionRuntimeState runtime_{};

@@ -175,6 +175,8 @@ add_library(openaladdin_engine STATIC
     src/actor.hpp
     src/actor_animation_system.cpp
     src/actor_animation_system.hpp
+    src/animation_system.cpp
+    src/animation_system.hpp
     src/actor_lifecycle.cpp
     src/actor_lifecycle.hpp
     src/camera.cpp

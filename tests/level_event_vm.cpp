@@ -92,12 +92,10 @@ int main() {
     // from stream timing.
     openaladdin::ActorSystem actors;
     openaladdin::ActorLifecycleSystem lifecycle(actors);
-    openaladdin::PlayerAnimationVm animation;
-    std::array<openaladdin::PlayerAnimationVm, 32> actor_animations;
+    openaladdin::AnimationSystem animation_system(lifecycle);
     openaladdin::LevelEventSystem event_system(
         lifecycle,
-        animation,
-        actor_animations
+        animation_system
     );
     openaladdin::GameState effect_state;
     effect_state.camera.vdp_update = 1;

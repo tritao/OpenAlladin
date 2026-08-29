@@ -37,8 +37,8 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& scene_ = *context.scene;
     auto& interactions_ = *context.interactions;
     auto& camera_system_ = *context.camera_system;
-    auto& animation_ = *context.animation;
-    auto& actor_animations_ = *context.actor_animations;
+    auto& animation_ = context.animation_system->player();
+    auto& actor_animations_ = context.animation_system->actors().vms();
     const auto& rom_bytes_ = *context.rom_bytes;
     auto& level_event_sound_requests_ = *context.level_event_sound_requests;
 

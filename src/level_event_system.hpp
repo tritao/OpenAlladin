@@ -1,10 +1,9 @@
 #pragma once
 
 #include "actor_lifecycle.hpp"
-#include "animation.hpp"
+#include "animation_system.hpp"
 #include "level_event.hpp"
 
-#include <array>
 #include <cstdint>
 #include <vector>
 
@@ -23,12 +22,10 @@ class LevelEventSystem {
 public:
     LevelEventSystem(
         ActorLifecycleSystem& actor_lifecycle,
-        PlayerAnimationVm& animation,
-        std::array<PlayerAnimationVm, 32>& actor_animations
+        AnimationSystem& animation_system
     )
         : actor_lifecycle_(actor_lifecycle),
-          animation_(animation),
-          actor_animations_(actor_animations) {}
+          animation_system_(animation_system) {}
 
     LevelEventEffects dispatch(GameState& state, const LevelEventCommand& event);
 
@@ -50,8 +47,7 @@ private:
     );
 
     ActorLifecycleSystem& actor_lifecycle_;
-    PlayerAnimationVm& animation_;
-    std::array<PlayerAnimationVm, 32>& actor_animations_;
+    AnimationSystem& animation_system_;
 };
 
 }  // namespace openaladdin

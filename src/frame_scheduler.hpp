@@ -1,7 +1,7 @@
 #pragma once
 
 #include "actor_lifecycle.hpp"
-#include "animation.hpp"
+#include "animation_system.hpp"
 #include "camera.hpp"
 #include "collision.hpp"
 #include "game_data.hpp"
@@ -11,7 +11,6 @@
 #include "player_terrain.hpp"
 #include "scene.hpp"
 
-#include <array>
 #include <cstdint>
 #include <functional>
 #include <vector>
@@ -66,8 +65,7 @@ public:
         SceneSystem* scene = nullptr;
         InteractionSystem* interactions = nullptr;
         CameraSystem* camera_system = nullptr;
-        PlayerAnimationVm* animation = nullptr;
-        std::array<PlayerAnimationVm, 32>* actor_animations = nullptr;
+        AnimationSystem* animation_system = nullptr;
         const std::vector<std::uint8_t>* rom_bytes = nullptr;
         std::vector<std::uint8_t>* level_event_sound_requests = nullptr;
 

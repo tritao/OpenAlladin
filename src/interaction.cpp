@@ -16,14 +16,12 @@ constexpr std::uint32_t kTerrainSpawnTemplate = 0x001B7E2C;
 InteractionSystem::InteractionSystem(
     ActorLifecycleSystem& actor_lifecycle,
     CollisionSystem& collisions,
-    PlayerAnimationVm& animation,
-    std::array<PlayerAnimationVm, 32>& actor_animations,
+    AnimationSystem& animation_system,
     std::array<bool, 32>& actor_movement_deferred
 )
     : actor_lifecycle_(actor_lifecycle),
       collisions_(collisions),
-      animation_(animation),
-      actor_animations_(actor_animations),
+      animation_system_(animation_system),
       actor_movement_deferred_(actor_movement_deferred) {}
 
 void InteractionSystem::reset() {
@@ -79,7 +77,7 @@ void InteractionSystem::apply_surface_terrain_behavior(GameState& state) {
     if (!runtime_.bounce_response_follow_active
         && runtime_.surface_interaction_active
         && player.animation_selector.interaction_lock == 0
-        && animation_.stream_kind() == AnimationStreamKind::Action
+        && animation_system_.player().stream_kind() == AnimationStreamKind::Action
         && player.terrain_horizontal_response == 0) {
         // Once the stop stream's 0x28-frame lock expires, the live surface
         // handler revisits the same selector even if the actor allocator has
@@ -119,7 +117,7 @@ void InteractionSystem::apply_player_collision_selector(
     bool stable_fixture
 ) {
     if (stable_fixture || !runtime_.player_collision_pending) return;
-    animation_.select_stream_entry(0x00122014, true);
+    animation_system_.player().select_stream_entry(0x00122014, true);
     state.player.animation_selector.response_state_101 = 0;
     runtime_.player_collision_pending = false;
 }
@@ -163,10 +161,10 @@ void InteractionSystem::observe_surface_actor_transition(
     // animation changes from type 0x8C to 0x7B. This observation belongs after
     // the actor animation pass, not to the refill allocator.
     const CollisionBox player_box = collisions_.hitbox(
-        animation_.frame_pointer(),
+        animation_system_.player().frame_pointer(),
         state.camera.x + state.player.x,
         state.camera.y + state.player.y,
-        animation_.facing_left());
+        animation_system_.player().facing_left());
     const CollisionBox actor_box = collisions_.hitbox(
         actor.frame_ptr,
         static_cast<int>(actor.x),
@@ -192,8 +190,8 @@ void InteractionSystem::process_surface_actor_collision(
     if (stable_fixture || rom_ == nullptr || rom_->empty()) return;
     if (!collisions_.any_player_actor_overlap(
             state,
-            animation_.frame_pointer(),
-            animation_.facing_left(),
+            animation_system_.player().frame_pointer(),
+            animation_system_.player().facing_left(),
             0x7B,
             1,
             24)
@@ -204,7 +202,7 @@ void InteractionSystem::process_surface_actor_collision(
     context.grounded_override = state.player.grounded || contour_ground_motion;
     context.interaction_lock_override = 0;
     context.response_timer_override = 0;
-    animation_.select_player_interaction_state(context);
+    animation_system_.player().select_player_interaction_state(context);
     runtime_.selector_pending = true;
     runtime_.actor_lock_pending = true;
     runtime_.camera_delay_pending = false;
@@ -237,7 +235,7 @@ void InteractionSystem::update_player_selector(
                 && state.player.terrain_vertical_stop == 0)
             ? 1
             : 0);
-    animation_.select_player_interaction_state(context);
+    animation_system_.player().select_player_interaction_state(context);
     if (selector_pending_at_start) {
         runtime_.selector_pending = false;
     }
@@ -294,8 +292,8 @@ void InteractionSystem::bounce_actor_interaction(
         if (actor.type != kActorBounceType
             || !collisions_.player_actor_overlap(
                 state,
-                animation_.frame_pointer(),
-                animation_.facing_left(),
+                animation_system_.player().frame_pointer(),
+                animation_system_.player().facing_left(),
                 slot)) {
             continue;
         }
@@ -308,7 +306,7 @@ void InteractionSystem::bounce_actor_interaction(
         runtime_.bounce_camera_delay_hold_pending = false;
         state.player.y = static_cast<int>(actor.y) - 0x1F - state.camera.y;
         state.player.vy = static_cast<std::int16_t>(-0x500 + 0x003C);
-        animation_.set_animation_state(0x001221B8, 0);
+        animation_system_.player().set_animation_state(0x001221B8, 0);
         state.player.terrain_response_active = 0xFF;
         state.player.terrain_vertical_stop = 0;
         state.player.terrain_response_timer_state = 0;
@@ -505,13 +503,13 @@ void InteractionSystem::dispatch_interaction(
     if (actor.movement_pc != 0) {
         actor_movement_deferred_[*slot] = true;
     }
-    actor_animations_[*slot].reset();
+    animation_system_.actors().reset(*slot);
     if (selector == 0x80) {
-        actor_animations_[*slot].defer_actor_service_then_force();
+        animation_system_.actors().vm(*slot).defer_actor_service_then_force();
     }
     if (actor.type == 0x06 && actor.animation_pc == 0x00123200
         && actor.x == 1849 && actor.y == 775) {
-        actor_animations_[*slot].defer_actor_service();
+        animation_system_.actors().vm(*slot).defer_actor_service();
     }
     state.interactions.consume(record.resource_offset);
 }
@@ -605,7 +603,7 @@ void InteractionSystem::flush_surface_actor_spawn(GameState& state) {
     spawned_actor.x = static_cast<std::uint16_t>(spawn_x);
     spawned_actor.y = static_cast<std::uint16_t>(spawn_y);
     if (!actor_lifecycle_.install(*slot, spawned_actor)) return;
-    actor_animations_[*slot].clear_actor_service_boundary();
+    animation_system_.actors().vm(*slot).clear_actor_service_boundary();
 }
 
 }  // namespace openaladdin
