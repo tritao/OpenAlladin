@@ -404,6 +404,16 @@
     - mame_actor_movement_cursor_trace
     - movement_stream_decoder
 
+0x001203C8:
+  name: ACTOR_MOVE_TYPE30_PRESENTATION_CHILD
+  size: 8
+  confidence: decompiled
+  description: Type-0x30 presentation-child movement override supplied by the inline F5 payload at 0x00124966. Its lossless 8-byte stream applies a fixed (+4, +2) delta and loops unconditionally from 0x001203CE back to 0x001203C8.
+  evidence:
+    - type30_presentation_child_stream_static_decompilation
+    - actor_template_type30_presentation_child
+    - movement_stream_decoder
+
 0x00120432:
   name: ACTOR_MOVE_TYPE1F_PROXIMITY_GATE
   size: 58
@@ -1269,6 +1279,16 @@
   evidence:
     - ghidra_player_animation_pc_assignment
     - animation_stream_classifier
+
+0x0012510A:
+  name: ACTOR_ANIM_TYPE30_PRESENTATION_CHILD
+  size: 34
+  confidence: decompiled
+  description: Type-0x30 presentation-child animation selected by ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD. Its packed 34-byte region presents the repeated 0x1B46-0x1B5A frame sequence and loops from 0x00125126 to the second 0x1B4A frame at 0x00125112.
+  evidence:
+    - type30_presentation_child_stream_static_decompilation
+    - actor_template_type30_presentation_child
+    - animation_stream_decoder
 
 0x00122D92:
   name: ACTOR_ANIM_TYPE01

@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-type30-presentation-child-stream-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x0012510A",
+    "name": "ACTOR_ANIM_TYPE30_PRESENTATION_CHILD",
+    "range": ["0x0012510A", "0x0012512B"],
+    "bytes": 34,
+    "consumer": "0x001B7F58 ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD",
+    "producer": "F5 at 0x00124966 in ACTOR_ANIM_TYPE84_PRESENTATION_CHILD",
+    "frames": "Repeated 0x1B46 entries followed by paired 0x1B4A, 0x1B4E, 0x1B52, 0x1B56, and 0x1B5A entries.",
+    "loop": "EA at 0x00125126 returns to 0x00125112, the second 0x1B4A frame, preserving the initial four-frame lead-in."
+  },
+  "movement": {
+    "address": "0x001203C8",
+    "name": "ACTOR_MOVE_TYPE30_PRESENTATION_CHILD",
+    "range": ["0x001203C8", "0x001203CF"],
+    "bytes": 8,
+    "consumer": "Inline movement override in the F5 payload at 0x00124966",
+    "delta": "(+4, +2)",
+    "loop": "Movement opcode 0x80 at 0x001203CA returns to 0x001203C8."
+  },
+  "template": {
+    "address": "0x001B7F58",
+    "name": "ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD",
+    "runtime_type": "0x30",
+    "record_movement": "0x001203C0",
+    "record_animation": "0x0012510A",
+    "resource_count": "0x06",
+    "inline_override": "The F5 record supplies animation 0x001250EA and movement 0x001203C8 for the spawned instance."
+  },
+  "boundary": {
+    "movement_predecessor": "0x001203C0 ACTOR_MOVE_TRANSITION_PRESENTATION_LOOP ends at 0x001203C7.",
+    "animation_terminator": "The Type-0x30 animation ends at its exact EA loop command; the following bytes remain a separate data/stream boundary."
+  },
+  "evidence": [
+    "Lossless MovementDecoder output",
+    "Lossless AnimationDecoder output",
+    "Exact Type-0x30 template record at 0x001B7F58",
+    "Exact inline F5 animation and movement overrides"
+  ]
+}

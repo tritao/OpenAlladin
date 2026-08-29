@@ -46,7 +46,7 @@
       "address": "0x001B7F58",
       "name": "ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD",
       "consumer": "0x00124966",
-      "movement": "0x001203C0 (inline F5 override 0x001203C8)",
+      "movement": "0x001203C0 ACTOR_MOVE_TRANSITION_PRESENTATION_LOOP (inline F5 override 0x001203C8 ACTOR_MOVE_TYPE30_PRESENTATION_CHILD)",
       "animation": "0x0012510A"
     }
   ],
