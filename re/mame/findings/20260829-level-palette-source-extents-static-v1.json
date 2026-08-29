@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/level-palette-source-extents-targets.json",
+  "table": {
+    "name": "LEVEL_TABLE",
+    "address": "0x00002C78",
+    "entry_size": 66,
+    "count": 13,
+    "palette_field_offset": "0x20"
+  },
+  "sources": [
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_00_02", "states": [0, 2], "range": ["0x00129052", "0x001290D1"], "bytes": 128 },
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_01", "states": [1], "range": ["0x001290D2", "0x00129151"], "bytes": 128 },
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_03", "states": [3], "range": ["0x00129172", "0x001291F1"], "bytes": 128 },
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_04", "states": [4], "range": ["0x001291F2", "0x00129271"], "bytes": 128 },
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_05_06", "states": [5, 6], "range": ["0x00129272", "0x001292F1"], "bytes": 128 },
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_07", "states": [7], "range": ["0x00129332", "0x001293B1"], "bytes": 128 },
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_08", "states": [8], "range": ["0x001293B2", "0x00129431"], "bytes": 128 },
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_09", "states": [9], "range": ["0x00129432", "0x001294B1"], "bytes": 128 },
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_10", "states": [10], "range": ["0x001294B2", "0x00129531"], "bytes": 128 },
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_11", "states": [11], "range": ["0x00129552", "0x001295D1"], "bytes": 128 },
+    { "name": "LEVEL_PALETTE_SOURCE_STATE_12", "states": [12], "range": ["0x00129632", "0x001296B1"], "bytes": 128 }
+  ],
+  "evidence": [
+    "Scene_ApplyActiveLevelPaletteTransition at 0x001AE1A0 selects the active record and loads field +0x20.",
+    "The shared Render_RunPaletteTransitionFrom contract consumes four 16-word bands from that source pointer.",
+    "The 13 LEVEL_TABLE records resolve to 11 unique, non-overlapping 0x80-byte source ranges; state 07 is split only at the existing 0x00129332 fixed palette-bank boundary."
+  ],
+  "conclusion": "LEVEL_TABLE palette selections are now explicit GRAPHICS layout evidence, including previously unresolved palette regions from 0x00129052 through 0x001296B1.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

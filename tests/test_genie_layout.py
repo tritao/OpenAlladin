@@ -490,6 +490,37 @@ def test_canonical_scene_reset_credits_palette_sources_have_exact_extents():
     assert actual[0][1] + 1 == actual[1][0]
 
 
+def test_canonical_level_palette_sources_have_exact_transition_extents():
+    symbols = SymbolStore()
+    expected = (
+        (0x00129052, 0x001290D1, "LEVEL_PALETTE_SOURCE_STATE_00_02"),
+        (0x001290D2, 0x00129151, "LEVEL_PALETTE_SOURCE_STATE_01"),
+        (0x00129172, 0x001291F1, "LEVEL_PALETTE_SOURCE_STATE_03"),
+        (0x001291F2, 0x00129271, "LEVEL_PALETTE_SOURCE_STATE_04"),
+        (0x00129272, 0x001292F1, "LEVEL_PALETTE_SOURCE_STATE_05_06"),
+        (0x00129332, 0x001293B1, "INTERACTION_TYPE7D_PALETTE_SOURCE"),
+        (0x001293B2, 0x00129431, "LEVEL_PALETTE_SOURCE_STATE_08"),
+        (0x00129432, 0x001294B1, "LEVEL_PALETTE_SOURCE_STATE_09"),
+        (0x001294B2, 0x00129531, "LEVEL_PALETTE_SOURCE_STATE_10"),
+        (0x00129552, 0x001295D1, "LEVEL_PALETTE_SOURCE_STATE_11"),
+        (0x00129632, 0x001296B1, "LEVEL_PALETTE_SOURCE_STATE_12"),
+    )
+    for start, end, name in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == 0x80 if start != 0x00129332 else symbol.size == 0x20
+        assert symbol.end == (end if start != 0x00129332 else 0x00129351)
+        assert symbol.metadata["type"] == "palette_data"
+    remainder = symbols.at(0x00129352, include_ranges=False)
+    assert remainder is not None
+    assert remainder.name == "LEVEL_PALETTE_SOURCE_STATE_07_REMAINDER"
+    assert remainder.size == 0x60
+    assert remainder.end == 0x001293B1
+    assert remainder.metadata["type"] == "palette_data"
+    assert "LEVEL_PALETTE_SOURCE_STATE_07" in symbols.at(0x00129332, include_ranges=False).aliases
+
+
 def test_canonical_credits_stream_has_exact_interpreter_terminal():
     symbols = SymbolStore()
     symbol = symbols.at(0x00127E8C, include_ranges=False)

@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "level-palette-source-extents",
+    "purpose": "Bound the level-selected four-band palette sources published by the active-level transition service."
+  },
+  "table": {
+    "address": "0x00002C78",
+    "name": "LEVEL_TABLE",
+    "entry_size": 66,
+    "count": 13,
+    "palette_field_offset": "0x20"
+  },
+  "service": {
+    "address": "0x001AE1A0",
+    "name": "Scene_ApplyActiveLevelPaletteTransition",
+    "transition_helper": "0x001B278A Render_RunPaletteTransitionFrom",
+    "contract": "Loads the active LEVEL_TABLE palette pointer and passes it to a helper that consumes four 16-word bands."
+  },
+  "sources": [
+    { "address": "0x00129052", "name": "LEVEL_PALETTE_SOURCE_STATE_00_02", "states": [0, 2], "range": ["0x00129052", "0x001290D1"], "bytes": 128 },
+    { "address": "0x001290D2", "name": "LEVEL_PALETTE_SOURCE_STATE_01", "states": [1], "range": ["0x001290D2", "0x00129151"], "bytes": 128 },
+    { "address": "0x00129172", "name": "LEVEL_PALETTE_SOURCE_STATE_03", "states": [3], "range": ["0x00129172", "0x001291F1"], "bytes": 128 },
+    { "address": "0x001291F2", "name": "LEVEL_PALETTE_SOURCE_STATE_04", "states": [4], "range": ["0x001291F2", "0x00129271"], "bytes": 128 },
+    { "address": "0x00129272", "name": "LEVEL_PALETTE_SOURCE_STATE_05_06", "states": [5, 6], "range": ["0x00129272", "0x001292F1"], "bytes": 128 },
+    { "address": "0x00129332", "name": "LEVEL_PALETTE_SOURCE_STATE_07", "states": [7], "range": ["0x00129332", "0x001293B1"], "bytes": 128 },
+    { "address": "0x001293B2", "name": "LEVEL_PALETTE_SOURCE_STATE_08", "states": [8], "range": ["0x001293B2", "0x00129431"], "bytes": 128 },
+    { "address": "0x00129432", "name": "LEVEL_PALETTE_SOURCE_STATE_09", "states": [9], "range": ["0x00129432", "0x001294B1"], "bytes": 128 },
+    { "address": "0x001294B2", "name": "LEVEL_PALETTE_SOURCE_STATE_10", "states": [10], "range": ["0x001294B2", "0x00129531"], "bytes": 128 },
+    { "address": "0x00129552", "name": "LEVEL_PALETTE_SOURCE_STATE_11", "states": [11], "range": ["0x00129552", "0x001295D1"], "bytes": 128 },
+    { "address": "0x00129632", "name": "LEVEL_PALETTE_SOURCE_STATE_12", "states": [12], "range": ["0x00129632", "0x001296B1"], "bytes": 128 }
+  ],
+  "evidence": [
+    "Scene_ApplyActiveLevelPaletteTransition multiplies SCENE_STATE by the 0x42-byte LEVEL_TABLE stride and reads the palette pointer at record offset 0x20.",
+    "Render_RunPaletteTransitionFrom publishes and consumes exactly four 16-word source bands, establishing a 0x80-byte extent for each unique pointer.",
+    "The 13 records resolve to 11 unique pointers; state 00/02 and state 05/06 share sources, while the existing 0x00129332 interaction palette bank is the first band of state 07."
+  ],
+  "limitations": [
+    "The four bands are not split into individual semantic color roles.",
+    "The state-07 source is represented by its existing first-band symbol plus a separately owned 0x60-byte remainder to avoid duplicate symbol addresses."
+  ]
+}

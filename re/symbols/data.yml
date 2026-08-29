@@ -647,6 +647,103 @@
     - ghidra_palette_band3_consumer
     - fixed_palette_source_extents_static_v1
 
+0x00129052:
+  name: LEVEL_PALETTE_SOURCE_STATE_00_02
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band level palette source selected by LEVEL_TABLE states 00 and 02 through the active-level palette transition service.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
+0x001290D2:
+  name: LEVEL_PALETTE_SOURCE_STATE_01
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band level palette source selected by LEVEL_TABLE state 01 through the active-level palette transition service.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
+0x00129172:
+  name: LEVEL_PALETTE_SOURCE_STATE_03
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band level palette source selected by LEVEL_TABLE state 03 through the active-level palette transition service.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
+0x001291F2:
+  name: LEVEL_PALETTE_SOURCE_STATE_04
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band level palette source selected by LEVEL_TABLE state 04 through the active-level palette transition service.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
+0x00129272:
+  name: LEVEL_PALETTE_SOURCE_STATE_05_06
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band level palette source selected by LEVEL_TABLE states 05 and 06 through the active-level palette transition service.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
+0x00129332:
+  name: INTERACTION_TYPE7D_PALETTE_SOURCE
+  aliases: [LEVEL_PALETTE_SOURCE_STATE_07]
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x7D level-event spawner; it is also the first band of the four-band LEVEL_TABLE state-07 palette source.
+  evidence: [ghidra_palette_band2_consumers, ghidra_level_table_palette_pointer, fixed_palette_source_extents_static_v1, level_palette_source_extents_static_v1]
+
+0x00129352:
+  name: LEVEL_PALETTE_SOURCE_STATE_07_REMAINDER
+  type: palette_data
+  size: 0x60
+  confidence: decompiled
+  description: Remaining three 16-word bands of the LEVEL_TABLE state-07 four-band palette source after its first band at 0x00129332.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
+0x001293B2:
+  name: LEVEL_PALETTE_SOURCE_STATE_08
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band level palette source selected by LEVEL_TABLE state 08 through the active-level palette transition service.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
+0x00129432:
+  name: LEVEL_PALETTE_SOURCE_STATE_09
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band level palette source selected by LEVEL_TABLE state 09 through the active-level palette transition service.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
+0x001294B2:
+  name: LEVEL_PALETTE_SOURCE_STATE_10
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band level palette source selected by LEVEL_TABLE state 10 through the active-level palette transition service.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
+0x00129552:
+  name: LEVEL_PALETTE_SOURCE_STATE_11
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band level palette source selected by LEVEL_TABLE state 11 through the active-level palette transition service.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
+0x00129632:
+  name: LEVEL_PALETTE_SOURCE_STATE_12
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band level palette source selected by LEVEL_TABLE state 12 through the active-level palette transition service.
+  evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
+
 0x00129152:
   name: INTERACTION_TYPE13_PALETTE_SOURCE
   type: palette_data
@@ -669,14 +766,6 @@
   size: 0x20
   confidence: decompiled
   description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x8B presentation-response handlers.
-  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
-
-0x00129332:
-  name: INTERACTION_TYPE7D_PALETTE_SOURCE
-  type: palette_data
-  size: 0x20
-  confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x7D level-event spawner.
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x001294F2:
