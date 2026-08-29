@@ -181,6 +181,8 @@ add_library(openaladdin_engine STATIC
     src/engine.hpp
     src/level.cpp
     src/level.hpp
+    src/level_event.cpp
+    src/level_event.hpp
     src/movement.cpp
     src/movement.hpp
     src/player_terrain.cpp
@@ -250,6 +252,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     target_compile_features(movement_vm_test PRIVATE cxx_std_20)
     openaladdin_enable_warnings(movement_vm_test)
     openaladdin_enable_test_assertions(movement_vm_test)
+
+    add_executable(level_event_vm_test tests/level_event_vm.cpp)
+    target_link_libraries(level_event_vm_test PRIVATE openaladdin_engine)
+    target_compile_features(level_event_vm_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(level_event_vm_test)
+    openaladdin_enable_test_assertions(level_event_vm_test)
 
     add_executable(scene_system_test tests/scene_system.cpp)
     target_link_libraries(scene_system_test PRIVATE openaladdin_engine)
@@ -353,6 +361,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME movement_vm COMMAND movement_vm_test)
     set_tests_properties(movement_vm PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME level_event_vm COMMAND level_event_vm_test)
+    set_tests_properties(level_event_vm PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME scene_system COMMAND scene_system_test)
