@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/title-menu-graphics-extents-targets.json",
+  "objects": [
+    { "address": "0x00129CEA", "name": "TITLE_TRANSITION_PALETTE_SOURCE", "class": "GRAPHICS", "range": ["0x00129CEA", "0x00129D69"], "bytes": 128 },
+    { "address": "0x00129D6A", "name": "SCENE_PRESENTATION_PALETTE_BAND0_SOURCE", "class": "GRAPHICS", "range": ["0x00129D6A", "0x00129D89"], "bytes": 32 },
+    { "address": "0x00129D8A", "name": "MENU_WISH_PROMPT_PALETTE_BAND0_SOURCE", "class": "GRAPHICS", "range": ["0x00129D8A", "0x00129DA9"], "bytes": 32 },
+    { "address": "0x00129DAA", "name": "MENU_SELECTION_MARKER_TILE_TABLE", "class": "GRAPHICS", "range": ["0x00129DAA", "0x00129DFF"], "bytes": 86 }
+  ],
+  "contracts": {
+    "title_palette": "Four 16-word palette bands cover 0x80 bytes.",
+    "scene_palette": "One 16-word band-0 upload covers 0x20 bytes.",
+    "wish_palette": "One 16-word band-0 upload covers 0x20 bytes.",
+    "selection_marker_tiles": "Offsets 0x00-0x36 plus 15 words cover 0x56 bytes."
+  },
+  "evidence": [
+    "Exact direct source loads in Startup_RunTitlePresentation, SceneResource_RunStatePresentation, Menu_ShowWishPrompt, and Menu_AnimateSelectionMarkerTiles.",
+    "Exact palette/tile copy counts and frame-offset bounds in the shared services.",
+    "The promoted objects are contiguous and non-overlapping."
+  ],
+  "conclusion": "Title and menu presentation palette/tile resources are now explicit GRAPHICS layout evidence with exact consumer-derived extents.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "title-menu-graphics-extents",
+    "purpose": "Bound the title/menu palette and selection-marker graphics directly consumed by startup and options presentation services."
+  },
+  "services": [
+    { "address": "0x001B2098", "name": "Startup_RunTitlePresentation", "source": "0x00129CEA", "helper": "0x001B28CE Render_ApplyPaletteBandStep", "bands": 4, "words_per_band": 16, "range": ["0x00129CEA", "0x00129D69"] },
+    { "address": "0x001B0EB0", "name": "SceneResource_RunStatePresentation", "source": "0x00129D6A", "helper": "0x001B2678 Render_UploadPaletteBand0", "words": 16, "range": ["0x00129D6A", "0x00129D89"] },
+    { "address": "0x001B3380", "name": "Menu_ShowWishPrompt", "source": "0x00129D8A", "helper": "0x001B2678 Render_UploadPaletteBand0", "words": 16, "range": ["0x00129D8A", "0x00129DA9"] },
+    { "address": "0x001B3B4A", "name": "Menu_AnimateSelectionMarkerTiles", "source": "0x00129DAA", "offsets": "0x00-0x36 by 2", "words": 15, "range": ["0x00129DAA", "0x00129DFF"] }
+  ],
+  "evidence": [
+    "Render_ApplyPaletteBandStep publishes four 0x20-byte bands from the direct title source.",
+    "Render_UploadPaletteBand0 copies exactly 16 words for each direct scene/menu source.",
+    "Menu_AnimateSelectionMarkerTiles wraps VDP_ANIMATION_FRAME_OFFSET at 0x38 and copies 15 words per selected frame.",
+    "The four ranges form one gap-free 0x00129CEA-0x00129DFF region immediately before the unresolved zero/data tail."
+  ],
+  "limitations": [
+    "The individual title/menu color roles are not split beyond the verified upload service and consumer.",
+    "The following zero-filled/data region beginning at 0x00129E00 is not claimed."
+  ]
+}

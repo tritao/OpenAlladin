@@ -420,6 +420,27 @@ def test_canonical_scene_transition_graphics_have_exact_service_extents():
     assert all(left[1] + 1 == right[0] for left, right in zip(actual, actual[1:]))
 
 
+def test_canonical_title_menu_graphics_have_exact_service_extents():
+    symbols = SymbolStore()
+    expected = (
+        (0x00129CEA, 0x00129D69, "TITLE_TRANSITION_PALETTE_SOURCE", "palette_data"),
+        (0x00129D6A, 0x00129D89, "SCENE_PRESENTATION_PALETTE_BAND0_SOURCE", "palette_data"),
+        (0x00129D8A, 0x00129DA9, "MENU_WISH_PROMPT_PALETTE_BAND0_SOURCE", "palette_data"),
+        (0x00129DAA, 0x00129DFF, "MENU_SELECTION_MARKER_TILE_TABLE", "graphics_data"),
+    )
+    actual = []
+    for start, end, name, symbol_type in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == end - start + 1
+        assert symbol.end == end
+        assert symbol.metadata["type"] == symbol_type
+        actual.append((symbol.address, symbol.end))
+    assert actual == [(start, end) for start, end, _, _ in expected]
+    assert all(left[1] + 1 == right[0] for left, right in zip(actual, actual[1:]))
+
+
 def test_canonical_credits_stream_has_exact_interpreter_terminal():
     symbols = SymbolStore()
     symbol = symbols.at(0x00127E8C, include_ranges=False)

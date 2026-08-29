@@ -776,6 +776,43 @@
     - ghidra_terminal_transition_palette_target
     - scene_transition_graphics_extents_static_v1
 
+0x00129CEA:
+  name: TITLE_TRANSITION_PALETTE_SOURCE
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band title-transition palette source passed by Startup_RunTitlePresentation to Render_ApplyPaletteBandStep. The service consumes four 16-word bands through 0x00129D69.
+  evidence:
+    - ghidra_title_presentation_palette_target
+    - ghidra_palette_transition_source_contract
+    - title-menu-graphics-extents-static-v1
+
+0x00129D6A:
+  name: SCENE_PRESENTATION_PALETTE_BAND0_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word scene-presentation palette source uploaded to palette band 0 by SceneResource_RunStatePresentation.
+  evidence: [ghidra_palette_band0_consumers, title-menu-graphics-extents-static-v1]
+
+0x00129D8A:
+  name: MENU_WISH_PROMPT_PALETTE_BAND0_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word wish-prompt palette source uploaded to palette band 0 by Menu_ShowWishPrompt.
+  evidence: [ghidra_palette_band0_consumers, title-menu-graphics-extents-static-v1]
+
+0x00129DAA:
+  name: MENU_SELECTION_MARKER_TILE_TABLE
+  type: graphics_data
+  size: 0x56
+  confidence: decompiled
+  description: Menu selection-marker tile animation table consumed by Menu_AnimateSelectionMarkerTiles. The service selects offsets from 0x00 through 0x36 in two-byte steps and copies 15 words, ending at 0x00129DFF.
+  evidence:
+    - ghidra_menu_selection_marker_animation_targets
+    - title-menu-graphics-extents-static-v1
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data
