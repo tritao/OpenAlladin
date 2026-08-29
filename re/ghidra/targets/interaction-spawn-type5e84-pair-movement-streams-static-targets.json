@@ -1,0 +1,74 @@
+{
+  "format": "openaladdin-interaction-spawn-type5e84-pair-movement-streams-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Classify the five directly selected Type-0x5E interaction-pair MovementVM roots in the 0x0011FD18-0x00120351 band.",
+  "streams": [
+    {
+      "address": "0x0011FD18",
+      "name": "ACTOR_MOVE_TYPE5E84_PAIR_E3E5",
+      "range": ["0x0011FD18", "0x0012004D"],
+      "size": 822,
+      "producer": "0x001B6A00 InteractionSpawn_Type5E84Pair_E3E5 writes 0x0011FD18 into actor movement field +0x0A for selectors 0xE3-0xE5",
+      "decoded": [
+        "Initial zero delta, actor type/state compare against 0x005E, and actor field 0x016D write",
+        "Long signed movement trajectory with repeated 0x91 parameter pushes and 0x84 timer loads",
+        "0x80 at 0x00120048 jumps to the shared movement continuation at 0x0011F890"
+      ]
+    },
+    {
+      "address": "0x0012004E",
+      "name": "ACTOR_MOVE_TYPE5E84_PAIR_E6",
+      "range": ["0x0012004E", "0x001200DD"],
+      "size": 144,
+      "producer": "0x001B6B0E InteractionSpawn_Type5E84Pair_E6 writes 0x0012004E into actor movement field +0x0A",
+      "decoded": [
+        "Signed E6 movement trajectory with repeated parameter pushes and timer loads",
+        "0x80 at 0x001200D8 jumps to the shared movement continuation at 0x0011F890"
+      ]
+    },
+    {
+      "address": "0x001200DE",
+      "name": "ACTOR_MOVE_TYPE5E84_PAIR_F9",
+      "range": ["0x001200DE", "0x001201FD"],
+      "size": 288,
+      "producer": "0x001B6B5C InteractionSpawn_Type5E84Pair_F9WhenReady writes 0x001200DE into actor movement field +0x0A after gate 0x00FFF112",
+      "decoded": [
+        "Signed F9 movement trajectory with the direct readiness gate remaining in its producer",
+        "0x80 at 0x001201F8 jumps to the shared movement continuation at 0x0011F890"
+      ]
+    },
+    {
+      "address": "0x001201FE",
+      "name": "ACTOR_MOVE_TYPE5E84_PAIR_E8",
+      "range": ["0x001201FE", "0x001202C9"],
+      "size": 204,
+      "producer": "0x001B6A5A InteractionSpawn_Type5E84Pair_E8 writes 0x001201FE into actor movement field +0x0A",
+      "decoded": [
+        "Signed E8 movement trajectory with repeated parameter pushes and timer loads",
+        "0x80 at 0x001202C4 jumps to the shared movement continuation at 0x0011F890"
+      ]
+    },
+    {
+      "address": "0x001202CA",
+      "name": "ACTOR_MOVE_TYPE5E84_PAIR_E9",
+      "range": ["0x001202CA", "0x00120351"],
+      "size": 136,
+      "producer": "0x001B6AB4 InteractionSpawn_Type5E84Pair_E9 writes 0x001202CA into actor movement field +0x0A",
+      "decoded": [
+        "Signed E9 vertical response with command 0x85 delay and 0x84 timer loads",
+        "0x80 at 0x0012034C jumps to the shared movement continuation at 0x0011F890"
+      ]
+    }
+  ],
+  "boundary_basis": [
+    "Each root is an exact absolute-long movement-field assignment in the closed Type-0x5E/type-0x84 pair handler family.",
+    "MovementDecoder follows each root to its terminal 0x80 and confirms a control-flow cycle through the shared continuation.",
+    "The five local ranges are contiguous and non-overlapping from 0x0011FD18 through 0x00120351; the shared continuation at 0x0011F890 and the following unresolved bytes are not absorbed."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

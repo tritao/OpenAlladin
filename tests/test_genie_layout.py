@@ -421,6 +421,48 @@ def test_direct_movement_response_streams_are_exact():
         assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
+def test_type5e84_pair_movement_stream_family_is_exact_and_contiguous():
+    symbols = SymbolStore()
+    expected = [
+        (0x0011FD18, 0x0012004D, "ACTOR_MOVE_TYPE5E84_PAIR_E3E5", 822, 0x00120048),
+        (0x0012004E, 0x001200DD, "ACTOR_MOVE_TYPE5E84_PAIR_E6", 144, 0x001200D8),
+        (0x001200DE, 0x001201FD, "ACTOR_MOVE_TYPE5E84_PAIR_F9", 288, 0x001201F8),
+        (0x001201FE, 0x001202C9, "ACTOR_MOVE_TYPE5E84_PAIR_E8", 204, 0x001202C4),
+        (0x001202CA, 0x00120351, "ACTOR_MOVE_TYPE5E84_PAIR_E9", 136, 0x0012034C),
+    ]
+    previous_end = None
+    for address, end, name, size, terminal_jump in expected:
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.end == end
+        assert stream.size == size
+        assert stream.metadata["type"] == "movement_stream"
+        if previous_end is not None:
+            assert address == previous_end + 1
+        previous_end = end
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = MovementDecoder(rom)
+    for address, end, _, size, terminal_jump in expected:
+        decoded = decoder.decode_stream(
+            address,
+            max_steps=1024,
+            max_bytes=4096,
+            follow_control_flow=True,
+        )
+        assert decoded["stopped_reason"] == "control_flow_cycle"
+        # The decoder also records the eight-byte shared continuation reached
+        # by the terminal jump; local ownership ends before that continuation.
+        assert decoded["bytes_decoded"] == size + 8
+        terminal = decoded["steps"][-1]
+        jump = next(command for command in terminal["commands"] if command["opcode"] == "0x80")
+        assert int(jump["address"], 16) == terminal_jump
+        assert int(jump["address"], 16) + int(jump["size"]) == end + 1
+        assert jump["branch_target"] == "0x0011F890"
+
+
 def test_shared_movement_root_family_is_exact():
     symbols = SymbolStore()
     expected = {
