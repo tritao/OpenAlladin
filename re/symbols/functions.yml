@@ -1146,6 +1146,15 @@
     - ghidra_decompile_001B21A8
     - ghidra_decompile_001B21F6
     - ghidra_level_transition_targeted_decompile
+0x001B21E4:
+  name: SceneResource_ProcessCommandStreamWithPresentationScratch
+  size: 18
+  confidence: decompiled
+  description: Sets SCENE_RESOURCE_PRESENTATION_SCRATCH, runs SceneResource_ProcessCommandStream, then clears the scratch gate. Presentation wrappers use this boundary so object-command records take the presentation-only no-op hook before VDP tile writes.
+  evidence:
+    - scene_resource_presentation_scratch_static_decompilation
+    - ghidra_decompile_001B21F6
+    - ghidra_scene_resource_presentation_wrappers
 0x001B2142:
   name: VDP_BuildTileRowCommandTables
   confidence: decompiled

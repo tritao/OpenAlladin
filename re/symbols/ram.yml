@@ -488,6 +488,17 @@
   description: Rotating byte offset into SCENE_RESOURCE_VDP_STREAM_PTR, advanced by 0x0E for each streamed VDP command record and wrapped by SceneResource_StreamVdpRecord.
   evidence:
     - ghidra_decompile_001AE0F6
+
+0xFFEFFC:
+  name: SCENE_RESOURCE_PRESENTATION_SCRATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Presentation-mode scratch gate set around SceneResource_ProcessCommandStream by the scene-resource presentation wrapper; while set, object-command records pass through SceneResource_ObjectCommandNoOpHook before their VDP tile write.
+  evidence:
+    - ghidra_disassembly_001B21E4
+    - ghidra_scene_resource_presentation_wrappers
+    - scene_resource_presentation_scratch_static_decompilation
 0xFFF105:
   name: INTERACTION_GATE_TYPE1F
   type: u8

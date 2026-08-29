@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "wrapper": {
+    "address": "0x001B21E4",
+    "name": "SceneResource_ProcessCommandStreamWithPresentationScratch",
+    "contract": "Set the presentation scratch byte, invoke the common scene-resource command interpreter, clear the byte, and return."
+  },
+  "scratch": {
+    "address": "0x00FFEFFC",
+    "name": "SCENE_RESOURCE_PRESENTATION_SCRATCH",
+    "lifetime": "only across the nested SceneResource_ProcessCommandStream call",
+    "effect": "When set, object-command records invoke SceneResource_ObjectCommandNoOpHook before VDP_WriteTileWord."
+  },
+  "evidence": [
+    "Exact ROM bytes 50F900FFEFFC6100000A423900FFEFFC4E75",
+    "Existing scene-resource presentation wrapper family",
+    "Object-command branch at 0x001B222E"
+  ],
+  "conclusion": "The small interpreter-boundary gap is a reusable presentation-mode wrapper, not opaque data; its scratch lifetime and no-op hook are now explicit.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
