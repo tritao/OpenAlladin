@@ -4796,3 +4796,13 @@
     - ghidra_disassembly_001B34A4
     - ghidra_scene-transition-digit-wrapper-targets
     - scene-transition-digit-wrapper-static-decompilation
+0x001B30F0:
+  name: SceneResource_DebugQueryVramStream
+  confidence: decompiled
+  size: 108
+  description: When SCENE_SCRIPT_PENDING equals 2, streams TERRAIN_QUERY_FLAGS into successive VDP word addresses derived from SCENE_SCRIPT_DATA until the cursor reaches 0x0E10; the exhausted path reads 1800 VDP words back into work RAM at 0x00FF0000 and intentionally loops forever.
+  evidence:
+    - ghidra_disassembly_001B30F0
+    - ghidra_decompile_001B30F0
+    - ghidra_scene-resource-query-vram-debug-targets
+    - scene-resource-query-vram-debug-static-decompilation

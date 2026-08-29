@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-scene-resource-query-vram-debug-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "focus": {
+    "name": "scene-resource-query-vram-debug",
+    "purpose": "Bound the complete scene-script-pending VDP query stream and preserve its non-returning diagnostic dump path."
+  },
+  "target": {
+    "address": "0x001B30F0",
+    "name": "SceneResource_DebugQueryVramStream",
+    "size": 108,
+    "end": "0x001B315B",
+    "contract": "Gate on SCENE_SCRIPT_PENDING == 2, write TERRAIN_QUERY_FLAGS to VDP addresses derived from SCENE_SCRIPT_DATA while advancing by two, then enter the terminal VDP readback loop when the cursor reaches 0x0E10."
+  },
+  "memory_references": [
+    { "address": "0x00FFF57C", "name": "SCENE_SCRIPT_PENDING" },
+    { "address": "0x00FFF576", "name": "SCENE_SCRIPT_DATA" },
+    { "address": "0x00FFF156", "name": "TERRAIN_QUERY_FLAGS" },
+    { "address": "0x00FF0000", "name": "DEBUG_VDP_READBACK_BUFFER" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ],
+  "branches": {
+    "inactive": "SCENE_SCRIPT_PENDING != 2 returns immediately at 0x001B3130.",
+    "stream": "Writes the current TERRAIN_QUERY_FLAGS byte as a VDP word and advances SCENE_SCRIPT_DATA by two until the cursor reaches 0x0E10.",
+    "exhausted": "Reads 1800 VDP words from the zero-based VDP address into the low byte of DEBUG_VDP_READBACK_BUFFER, then loops at 0x001B315A."
+  },
+  "limitations": [
+    "The whole-ROM reference export reports no direct static caller for this entry.",
+    "The routine's terminal infinite loop and fixed VDP readback are recorded as exact behavior; the intended diagnostic consumer is not identified."
+  ]
+}

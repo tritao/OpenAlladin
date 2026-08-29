@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-resource-query-vram-debug-targets.json",
+  "function": {
+    "address": "0x001B30F0",
+    "name": "SceneResource_DebugQueryVramStream",
+    "range": ["0x001B30F0", "0x001B315B"],
+    "confidence": "decompiled",
+    "body": "Returns unless SCENE_SCRIPT_PENDING at 0x00FFF57C equals 2. Otherwise it converts SCENE_SCRIPT_DATA at 0x00FFF576 into one VDP write command, writes TERRAIN_QUERY_FLAGS from 0x00FFF156 to VDP_DATA, advances the cursor by two, and on a cursor value above 0x0E0F selects VDP readback from address zero, stores the low byte of 1800 returned words at 0x00FF0000, and branches to itself forever. Repeated calls provide the streaming behavior before exhaustion.",
+    "effect": "A bounded query-byte VDP stream followed by a non-returning VDP readback diagnostic path."
+  },
+  "relationships": {
+    "related_scene_stream": "0x001AE0F6 SceneResource_StreamVdpRecord gates a separate active VDP stream on SCENE_SCRIPT_PENDING and a nonzero stream pointer.",
+    "query_source": "0x00FFF156 TERRAIN_QUERY_FLAGS",
+    "stream_cursor": "0x00FFF576 SCENE_SCRIPT_DATA"
+  },
+  "limitations": [
+    "No direct static caller or runtime reachability was recovered.",
+    "The diagnostic buffer's higher-level consumer and the reason for the terminal infinite loop remain unresolved."
+  ],
+  "conclusion": "The formerly unknown 108-byte block is a complete gated query-to-VDP stream with an explicit terminal readback loop. It is named conservatively as a diagnostic service rather than assigned to normal scene presentation."
+}
