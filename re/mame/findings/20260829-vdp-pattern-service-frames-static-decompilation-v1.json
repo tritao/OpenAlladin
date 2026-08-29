@@ -16,7 +16,7 @@
   },
   "relationships": {
     "callers": [
-      "0x001B1C0C mode-0x17 caller block"
+      "0x001B1C0C SceneResource_RunMode17Service"
     ],
     "callees": [
       "0x001B28AE Frame_RunServicePass",

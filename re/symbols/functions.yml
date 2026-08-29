@@ -2920,6 +2920,26 @@
   evidence:
     - ghidra_decompile_001B1B3C
     - ghidra_scene_resource_animated_palette_targets
+0x001B1C0C:
+  name: SceneResource_RunMode17Service
+  confidence: decompiled
+  size: 216
+  description: Selects scene-resource mode 0x17, runs the actor animation and sprite submission passes, then enters the 0x28-iteration VDP pattern service; it conditionally runs the resource service and audio handoff while the interaction progress counter is nonzero.
+  evidence:
+    - ghidra_disassembly_001B1C0C
+    - ghidra_decompile_001B1C0C
+    - scene_resource_mode17_targets
+    - scene_resource_mode17_static_decompilation
+0x001B1D00:
+  name: SceneResource_InitializeMode17Service
+  confidence: decompiled
+  size: 216
+  description: Initializes the mode-0x17 scene-resource presentation state by clearing palette/transition data and actors, programming VDP/Z80 setup, then invoking SceneResource_RunMode17Service before starting the palette transition.
+  evidence:
+    - ghidra_disassembly_001B1D00
+    - ghidra_decompile_001B1D00
+    - scene_resource_mode17_targets
+    - scene_resource_mode17_static_decompilation
 0x001B1CE4:
   name: VDP_RunPatternServiceFrames
   confidence: decompiled

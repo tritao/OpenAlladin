@@ -2272,6 +2272,19 @@ static contract is recorded in
 `re/mame/findings/20260829-vdp-pattern-service-frames-static-decompilation-v1.json`
 and `re/ghidra/targets/vdp-pattern-service-frames-targets.json`.
 
+## Scene-resource mode-0x17 service/setup (20260829)
+
+The adjacent blocks at `0x001B1C0C` and `0x001B1D00` are now named
+`SceneResource_RunMode17Service` and `SceneResource_InitializeMode17Service`.
+The first writes `SCENE_RESOURCE_MODE = 0x17`, runs the actor/render passes,
+enters the exact `0x28`-iteration VDP pattern service, and applies the known
+interaction-progress and scene-audio gates. The second performs the matching
+palette/transition/actor/VDP/Z80 setup and invokes the service. Both `0xD8`
+byte boundaries are explicit; the exact user-visible identity of mode `0x17`
+remains unresolved. The static contract is recorded in
+`re/mame/findings/20260829-scene-resource-mode17-static-decompilation-v1.json`
+and `re/ghidra/targets/scene-resource-mode17-targets.json`.
+
 ## Actor lifecycle helper services (20260829)
 
 The actor cleanup path now has an explicit interaction-table publication helper.
@@ -2872,6 +2885,7 @@ valuable because it prevents repeating the same input family.
 | `20260829-no-op-service-boundaries-static-decompilation-v1` | recorded-static-decompilation | Five RTS-only reset, exit, scene-script, and scene-resource extension boundaries with proven caller positions |
 | `20260829-vdp-pattern-loop-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only boundary between frame-phase service and the descending VDP pattern writer; surrounding presentation purpose remains unresolved |
 | `20260829-vdp-pattern-service-frames-static-decompilation-v1` | recorded-static-decompilation | Exact 0x28-iteration frame-phase and descending VDP pattern service helper at 0x001B1CE4; surrounding mode-0x17 presentation purpose remains unresolved |
+| `20260829-scene-resource-mode17-static-decompilation-v1` | recorded-static-decompilation | Exact mode-0x17 scene-resource service/setup blocks at 0x001B1C0C and 0x001B1D00, with explicit boundaries and conservative presentation naming |
 | `20260829-scene-resource-mode-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only scene-resource mode hook called after modes 0x1B, 0x1C, and 0x04 are selected |
 | `20260829-terrain-actor-collision-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only actor terrain-collision hook between terrain-row selection and behavior-byte lookup |
 | `20260829-interrupt-vector-static-decompilation-v1` | recorded-static-decompilation | Exception vector fan-in, line-1010 VDP loop, level-4 RTE stub, and spurious interrupt RTE stub |

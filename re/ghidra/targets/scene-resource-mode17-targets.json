@@ -1,0 +1,53 @@
+{
+  "format": "openaladdin-scene-resource-mode17-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "functions": [
+    {
+      "address": "0x001B1C0C",
+      "name": "SceneResource_RunMode17Service",
+      "size": 216,
+      "end": "0x001B1CE3"
+    },
+    {
+      "address": "0x001B1D00",
+      "name": "SceneResource_InitializeMode17Service",
+      "size": 216,
+      "end": "0x001B1DD7"
+    }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF15A", "name": "SCENE_RESOURCE_MODE" },
+    { "address": "0x00FF7E38", "name": "INTERACTION_RESOURCE_PROGRESS_COUNTER" },
+    { "address": "0x00FFF0F2", "name": "PLAYER_INTERACTION_LOCK" }
+  ],
+  "contracts": {
+    "mode17_service": {
+      "mode_write": "SCENE_RESOURCE_MODE = 0x17",
+      "prefix": [
+        "call AnimationVM_RunActorPass",
+        "call Render_BuildActorRecords",
+        "call Render_SubmitActorSprites",
+        "call Render_SubmitPlayerSprites",
+        "call the local scene-resource service tail"
+      ],
+      "pattern_service": "call VDP_RunPatternServiceFrames at 0x001B1CE4",
+      "resource_gate": "when INTERACTION_RESOURCE_PROGRESS_COUNTER is not the ASCII string 000, call Frame_RunServicePass and the local VDP hook/command tail",
+      "audio_gate": "when SCENE_VDP_UPDATE_FLAG is set, prepare/send the scene audio command before returning"
+    },
+    "mode17_setup": {
+      "initialization": [
+        "clear the transition palette/plane state",
+        "clear actors and initialize VDP registers",
+        "acquire the Z80 bus and publish the VDP command pointer",
+        "clear the bus request and invoke SceneResource_RunMode17Service",
+        "start the palette transition and restore the VDP display register"
+      ],
+      "range_boundary": "The setup returns at 0x001B1DD7; the adjacent 0x001B1DD8 entry is the separate RTS-only hook."
+    }
+  }
+}
