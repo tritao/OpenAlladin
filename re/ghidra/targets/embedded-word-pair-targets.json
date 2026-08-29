@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-embedded-word-pair-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "focus": {
+    "name": "embedded-word-pair",
+    "purpose": "Partition the compact 0x001B32C8 code-like block into its exact helper and adjacent four-byte value without assigning an unsupported PRNG or runtime role."
+  },
+  "function": {
+    "address": "0x001B32C8",
+    "name": "Utility_AdvanceEmbeddedWordPair",
+    "size": 22,
+    "end": "0x001B32DD",
+    "contract": "Load two words from 0x001B32DE, add the second into the first, add the new first into the second with carry, store both words back, and return."
+  },
+  "data": {
+    "address": "0x001B32DE",
+    "name": "EMBEDDED_WORD_PAIR_INITIAL_VALUE",
+    "size": 4,
+    "end": "0x001B32E1",
+    "value": "0x31415926"
+  },
+  "limitations": [
+    "The whole-ROM export reports no direct static caller for the helper.",
+    "The destination lies in the ROM address range; whether this is intentionally unreachable code, a writable mapped mirror, or an artifact of a packed/data region is unresolved."
+  ]
+}

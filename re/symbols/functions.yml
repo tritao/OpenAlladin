@@ -4806,3 +4806,13 @@
     - ghidra_decompile_001B30F0
     - ghidra_scene-resource-query-vram-debug-targets
     - scene-resource-query-vram-debug-static-decompilation
+0x001B32C8:
+  name: Utility_AdvanceEmbeddedWordPair
+  confidence: decompiled
+  size: 22
+  description: Reads the two words at EMBEDDED_WORD_PAIR_INITIAL_VALUE, updates the pair with add/add-with-carry arithmetic, writes both words back to the same ROM address, and returns.
+  evidence:
+    - ghidra_disassembly_001B32C8
+    - ghidra_decompile_001B32C8
+    - ghidra_embedded-word-pair-targets
+    - embedded-word-pair-static-decompilation

@@ -205,6 +205,18 @@
     - ghidra_disassembly_001B1E38
     - mame_level01_map_runtime_match
 
+0x001B32DE:
+  name: EMBEDDED_WORD_PAIR_INITIAL_VALUE
+  type: u32
+  size: 4
+  format: hex
+  confidence: decompiled
+  description: The 32-bit value 0x31415926 immediately following Utility_AdvanceEmbeddedWordPair; the adjacent helper reads and writes this ROM address as two words, but no caller or effective writable-memory mapping has been recovered.
+  evidence:
+    - ghidra_disassembly_001B32C8
+    - ghidra_embedded-word-pair-targets
+    - embedded-word-pair-static-decompilation
+
 0xFFAE86:
   name: TERRAIN_BEHAVIOR_INDEX_TABLE
   type: ram_table
