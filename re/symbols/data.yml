@@ -940,6 +940,16 @@
     - ghidra_player_animation_selector_001AD150
     - animation_stream_classifier
 
+0x001B79B8:
+  name: ACTOR_TEMPLATE_BASE_ZERO
+  type: actor_template_base
+  confidence: confirmed
+  description: Shared zero-type actor-template base passed to Actor_InitializeFromTemplate; caller-specific spawn paths overwrite the live actor type, animation, movement, and placement fields after initialization. The exact full template extent remains intentionally unclaimed.
+  evidence:
+    - ghidra_actor_template_initializer_001AE30A
+    - actor_spawn_variation_targets
+    - actor_refill_vm_static_decompilation
+
 0x001B7A30:
   name: ACTOR_TEMPLATE_TYPE01
   confidence: confirmed

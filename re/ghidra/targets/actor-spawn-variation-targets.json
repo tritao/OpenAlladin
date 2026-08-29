@@ -23,7 +23,7 @@
       "name": "InteractionSpawn_RuntimeType40",
       "caller": "0x001B72FC",
       "allocator": "0x001B52A0 LevelObjectSpawnVariant",
-      "template": "0x001B79B8",
+      "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
       "runtime_type": "0x40",
       "animation_root": "0x00122C12",
       "post_init_clear": "actor offset 0x29"

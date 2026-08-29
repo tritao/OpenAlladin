@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-spawn-variation-targets.json",
+  "data_object": {
+    "address": "0x001B79B8",
+    "name": "ACTOR_TEMPLATE_BASE_ZERO",
+    "role": "Shared zero-type actor-template base passed to Actor_InitializeFromTemplate.",
+    "uses": [
+      "InteractionSpawn_RuntimeType40",
+      "LevelObjectSpawnVariant callers",
+      "level01 actor refill and slot-reuse paths"
+    ],
+    "caller_overrides": [
+      "runtime actor type",
+      "animation root",
+      "movement stream",
+      "placement and other spawn-specific fields"
+    ]
+  },
+  "conclusion": "0x001B79B8 is the shared zero-type base used by the common actor initializer. The surrounding template family is not assigned a full range here because caller-specific overrides and adjacent template boundaries do not yet establish an exact extent; the canonical symbol intentionally labels the base address only.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}
