@@ -2159,6 +2159,53 @@
     - ghidra_disassembly_001AFCD2
     - level01_transfer_capable_mechanism_graph
     - player_collision_launch_placement_family_static_decompilation
+0x001AF740:
+  name: ActorType67_68_PlayerCollisionHandler
+  size: 94
+  confidence: decompiled
+  description: Shared player-collision handler for runtime actor types 0x67 and 0x68. When the terrain response is eligible and the actor has the collision flag, it snaps PLAYER_Y to actor Y minus WORLD_CAMERA_Y minus 0x0B within a 12-pixel window; type 0x67 is then converted to type 0x68 with animation 0x0012327E and a cleared animation timer.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF740
+    - level01_transfer_capable_mechanism_graph
+    - player_collision_actor_relative_placement_family_static_decompilation
+0x001AF79E:
+  name: ActorType52_53_PlayerCollisionHandler
+  size: 84
+  confidence: decompiled
+  description: Shared player-collision handler for runtime actor types 0x52 and 0x53. It snaps PLAYER_Y to actor Y minus WORLD_CAMERA_Y minus 0x13 within a 12-pixel window, then applies the actor's signed offset byte at +0x1C to PLAYER_X.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF79E
+    - level01_transfer_capable_mechanism_graph
+    - player_collision_actor_relative_placement_family_static_decompilation
+0x001AF7F2:
+  name: ActorType54_PlayerCollisionHandler
+  size: 42
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x54. It optionally queues event 0x65 when the scene VDP-update flag is set, then arms PLAYER_TERMINAL_TRANSITION.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF7F2
+    - player_collision_actor_relative_placement_family_static_decompilation
+0x001AF81C:
+  name: ActorType62_63_PlayerCollisionHandler
+  size: 120
+  confidence: decompiled
+  description: Shared player-collision handler for runtime actor types 0x62 and 0x63. It snaps PLAYER_Y to actor Y minus WORLD_CAMERA_Y within a 10-pixel window; type 0x62 is converted to type 0x63 with animation 0x00121598 and optional event-0x45 audio.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF81C
+    - player_collision_actor_relative_placement_family_static_decompilation
+0x001AF894:
+  name: ActorType64_PlayerCollisionHandler
+  size: 98
+  confidence: decompiled
+  description: Player-collision handler for runtime actor type 0x64. It snaps PLAYER_Y to actor Y minus WORLD_CAMERA_Y minus 0x12 within a 6-pixel window and conditionally applies the actor's signed offset byte at +0x1C to PLAYER_X, respecting TERRAIN_STOP_RIGHT when deciding whether to add a positive offset.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF894
+    - player_collision_actor_relative_placement_family_static_decompilation
 0x001AF1AC:
   name: ActorType13_PlayerCollisionHandler
   confidence: decompiled

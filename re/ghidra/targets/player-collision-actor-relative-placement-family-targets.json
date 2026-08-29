@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-actor-relative-placement-family",
+    "purpose": "Canonicalize the actor-relative player placement and terminal-response entries in the dense player-collision dispatch region."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x67", "0x68"], "address": "0x001AF740" },
+      { "actor_types": ["0x52", "0x53"], "address": "0x001AF79E" },
+      { "actor_types": ["0x54"], "address": "0x001AF7F2" },
+      { "actor_types": ["0x62", "0x63"], "address": "0x001AF81C" },
+      { "actor_types": ["0x64"], "address": "0x001AF894" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AF740", "name": "ActorType67_68_PlayerCollisionHandler" },
+    { "address": "0x001AF79E", "name": "ActorType52_53_PlayerCollisionHandler" },
+    { "address": "0x001AF7F2", "name": "ActorType54_PlayerCollisionHandler" },
+    { "address": "0x001AF81C", "name": "ActorType62_63_PlayerCollisionHandler" },
+    { "address": "0x001AF894", "name": "ActorType64_PlayerCollisionHandler" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7DF8", "name": "WORLD_CAMERA_Y" },
+    { "address": "0x00FF7DFC", "name": "PLAYER_Y" },
+    { "address": "0x00FF7DFA", "name": "PLAYER_X" },
+    { "address": "0x00FFF0BE", "name": "TERRAIN_RESPONSE_ACTIVE" },
+    { "address": "0x00FFF0C0", "name": "TERRAIN_VERTICAL_STOP" },
+    { "address": "0x00FFF0C8", "name": "TERRAIN_STOP_RIGHT" },
+    { "address": "0x00FFF0E6", "name": "PLAYER_TERMINAL_TRANSITION" },
+    { "address": "0x00FFF57D", "name": "SCENE_VDP_UPDATE_FLAG" }
+  ]
+}

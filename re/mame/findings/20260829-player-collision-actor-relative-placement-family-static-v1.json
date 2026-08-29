@@ -1,0 +1,75 @@
+{
+  "format": "openaladdin-player-collision-actor-relative-placement-family-finding-v1",
+  "recorded_at": "2026-08-29",
+  "status": "static-family-closed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": [
+    "re/ghidra/targets/player-collision-actor-relative-placement-family-targets.json",
+    "re/mame/findings/20260827-level01-transfer-capable-mechanism-graph-v1.json",
+    "re/mame/findings/20260827-level01-player-motion-writer-audit-v1.json",
+    "re/symbols/functions.yml",
+    "build/re/dasm-1A8000.txt"
+  ],
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "address_space": "68000 ROM addresses",
+    "handlers": [
+      {
+        "address": "0x001AF740",
+        "size": 94,
+        "actor_types": ["0x67", "0x68"],
+        "name": "ActorType67_68_PlayerCollisionHandler",
+        "range": "0x001AF740-0x001AF79D",
+        "semantics": "Collision-flagged actor-relative vertical placement at PLAYER_Y = actor Y - WORLD_CAMERA_Y - 0x0B within a 12-pixel window; type 0x67 promotes to type 0x68 and animation 0x0012327E."
+      },
+      {
+        "address": "0x001AF79E",
+        "size": 84,
+        "actor_types": ["0x52", "0x53"],
+        "name": "ActorType52_53_PlayerCollisionHandler",
+        "range": "0x001AF79E-0x001AF7F1",
+        "semantics": "Actor-relative vertical placement at actor Y - WORLD_CAMERA_Y - 0x13 within a 12-pixel window, followed by signed actor +0x1C horizontal offset into PLAYER_X."
+      },
+      {
+        "address": "0x001AF7F2",
+        "size": 42,
+        "actor_types": ["0x54"],
+        "name": "ActorType54_PlayerCollisionHandler",
+        "range": "0x001AF7F2-0x001AF81B",
+        "semantics": "Optional event-0x65 audio when SCENE_VDP_UPDATE_FLAG is set, then PLAYER_TERMINAL_TRANSITION latch."
+      },
+      {
+        "address": "0x001AF81C",
+        "size": 120,
+        "actor_types": ["0x62", "0x63"],
+        "name": "ActorType62_63_PlayerCollisionHandler",
+        "range": "0x001AF81C-0x001AF893",
+        "semantics": "Actor-relative vertical placement at actor Y - WORLD_CAMERA_Y within a 10-pixel window; type 0x62 promotes to type 0x63 and animation 0x00121598, with optional event-0x45 audio."
+      },
+      {
+        "address": "0x001AF894",
+        "size": 98,
+        "actor_types": ["0x64"],
+        "name": "ActorType64_PlayerCollisionHandler",
+        "range": "0x001AF894-0x001AF8F5",
+        "semantics": "Actor-relative vertical placement at actor Y - WORLD_CAMERA_Y - 0x12 within a 6-pixel window, plus conditional signed actor +0x1C horizontal placement subject to TERRAIN_STOP_RIGHT."
+      }
+    ]
+  },
+  "boundary_checks": {
+    "ranges": [
+      "0x001AF740-0x001AF79D",
+      "0x001AF79E-0x001AF7F1",
+      "0x001AF7F2-0x001AF81B",
+      "0x001AF81C-0x001AF893",
+      "0x001AF894-0x001AF8F5"
+    ],
+    "result": "The five bodies terminate immediately before the next dispatch entry; no promoted ranges overlap."
+  },
+  "reachability_qualification": "These are real actor-relative placement/terminal handlers. Their Level 01 reachability remains governed by the existing transfer-capable mechanism audit; static presence alone does not establish a live producer chain.",
+  "conclusion": "The actor-relative player placement family is now canonicalized with exact thresholds, coordinate formulas, type transitions, animation installs, and terminal-state effects. The deasm can name these writes without conflating them with generic terrain integration."
+}
