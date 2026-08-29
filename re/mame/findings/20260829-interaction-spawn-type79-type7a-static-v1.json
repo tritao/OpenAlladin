@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type79-type7a-targets.json",
+  "dispatch_table": {
+    "address": "0x004154",
+    "name": "INTERACTION_HANDLER_TABLE",
+    "newly_named_targets": 4
+  },
+  "handler_contracts": [
+    { "address": "0x001B6F1E", "selectors": ["0x0A", "0x0B", "0x0C"], "template": "ACTOR_TEMPLATE_TYPE_79_INTERACTION", "effect": "reverse-slot spawn and animation root 0x00125A4C" },
+    { "address": "0x001B6F34", "selectors": ["0x06"], "template": "ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "effect": "0x40-helper spawn and animation root 0x00125A68" },
+    { "address": "0x001B6F4A", "selectors": ["0x07"], "template": "ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "effect": "0x40-helper spawn and animation root 0x00125A88" },
+    { "address": "0x001B6F60", "selectors": ["0x08"], "template": "ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "effect": "0x40-helper spawn and animation root 0x00125AA8" }
+  ],
+  "evidence": [
+    "Direct template loads and terminating helper calls",
+    "Exact selector membership from INTERACTION_HANDLER_TABLE",
+    "Per-handler actor animation-root writes"
+  ],
+  "conclusion": "The type-0x79/type-0x7A handler family is statically closed at direct spawn and animation selection level, while the surrounding scene semantics remain open.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
