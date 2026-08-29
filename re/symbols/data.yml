@@ -1389,6 +1389,15 @@
     - actor_template_interaction_dispatch_family_static_decompilation
     - animation_stream_decoder
 
+0x001252A8:
+  name: ACTOR_ANIM_LEVEL_EXIT_TERMINAL_TRANSITION
+  size: 72
+  confidence: decompiled
+  description: Level-exit terminal-transition animation installed by the actor setup block at 0x001AC1B6. Its packed 72-byte region presents the 0x0FB6-0x0FD6 frame progression, applies three (+1, 0) actor offsets, and loops from 0x001252EA back to the local entry at 0x001252BA.
+  evidence:
+    - level_exit_terminal_transition_static_decompilation
+    - animation_stream_decoder
+
 0x001252F0:
   name: ACTOR_ANIM_TYPE07_MOVING_INTERACTION
   size: 88

@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-level-exit-terminal-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Range-bound the directly installed Level-exit terminal animation at 0x001252A8.",
+  "animation": {
+    "address": "0x001252A8",
+    "name": "ACTOR_ANIM_LEVEL_EXIT_TERMINAL_TRANSITION",
+    "range": ["0x001252A8", "0x001252EF"],
+    "bytes": 72,
+    "consumer_site": "0x001AC1B6",
+    "consumer_context": "Level-exit terminal actor setup block",
+    "internal_entry": "0x001252BA",
+    "behavior": "Presents the 0x0FB6, 0x0FBA, 0x0FBE, 0x0FC2, 0x0FC6, 0x0FCA, 0x0FCE, 0x0FD2, and 0x0FD6 frame groups, applies three (+1, 0) actor offsets between groups, and loops through 0x001252BA."
+  },
+  "boundary": {
+    "next_stream": "0x001252F0",
+    "reason": "The 72-byte terminal-transition stream ends at its EA command at 0x001252EA; the Type-0x07 animation root begins at 0x001252F0."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact long-pointer installation at 0x001AC1B6",
+    "Exact EA control-flow cycle and boundary before Type-0x07 animation"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
