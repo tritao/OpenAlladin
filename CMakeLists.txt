@@ -196,12 +196,16 @@ add_library(openaladdin_engine STATIC
     src/movement.cpp
     src/movement.hpp
     src/player_terrain.cpp
+    src/render_pipeline.cpp
+    src/render_pipeline.hpp
     src/render_model.cpp
     src/render_model.hpp
     src/scene.cpp
     src/scene.hpp
     src/scene_resource.cpp
     src/scene_resource.hpp
+    src/sdl_render_backend.cpp
+    src/sdl_render_backend.hpp
 )
 target_include_directories(openaladdin_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_features(openaladdin_engine PUBLIC cxx_std_20)

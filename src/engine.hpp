@@ -14,8 +14,10 @@
 #include "level_event_system.hpp"
 #include "movement.hpp"
 #include "player_terrain.hpp"
+#include "render_pipeline.hpp"
 #include "render_model.hpp"
 #include "scene_resource.hpp"
+#include "sdl_render_backend.hpp"
 #include "sprites.hpp"
 
 #include <array>
@@ -143,9 +145,7 @@ private:
     void sync_player_actor();
     void record_scheduler_phase(const char* name, std::uint32_t rom_entry_pc = 0);
     void collect_scheduler_writer_pcs();
-    void render_vdp_checkpoint();
     AnimationContext player_animation_context(bool grounded);
-    SpritePose sprite_pose() const;
     int visual_x() const;
     int visual_y() const;
     FrameScheduler::Context frame_scheduler_context();
@@ -213,10 +213,8 @@ private:
     std::uint8_t& frame_phase_;
     int last_ground_direction_ = 0;
     bool quit_ = false;
-    std::vector<std::uint32_t> framebuffer_;
-    SDL_Texture* texture_ = nullptr;
-    int camera_render_x_ = 0;
-    int camera_render_y_ = 0;
+    RenderPipeline render_pipeline_;
+    SdlRenderBackend render_backend_;
     // Bound once because all scheduler dependencies are stable for the
     // lifetime of Engine. Runtime scalars are referenced through Context so
     // checkpoint and trace setters remain visible without rebuilding the

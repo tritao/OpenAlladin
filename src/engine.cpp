@@ -14,61 +14,10 @@
 namespace openaladdin {
 namespace {
 
-constexpr int kScreenWidth = 320;
-constexpr int kScreenHeight = 224;
-// The extracted level image is the VDP plane-A nametable in world space. At
-// the synchronized gameplay checkpoint, the VDP's plane origin is one tile
-// ahead of WORLD_CAMERA in both axes.
-constexpr int kBackgroundPlaneOriginOffset = 0x10;
-// Plane B's captured HScroll word is 0x187, which selects source x 0x79 from
-// the 512-pixel extracted parallax strip at the visual checkpoint.
-constexpr int kLevel01ParallaxSourceX = 0x79;
-
-int level01_parallax_source_x(int camera_x, int camera_y, int screen_y) {
-    // The captured level-01 checkpoint uses the VDP's raster HScroll table
-    // for a handful of cloud bands. The extracted parallax image is already
-    // the full 512-pixel Plane-B nametable, so reproduce those source
-    // positions at the viewport rather than flattening the raster scroll to
-    // one global offset. Other camera positions retain the normal fixed
-    // viewport strip until their VDP scroll tables are recovered.
-    if (camera_x != 16 || camera_y != 464) {
-        return kLevel01ParallaxSourceX;
-    }
-    if (screen_y >= 1 && screen_y <= 6) {
-        return 120;
-    }
-    if (screen_y >= 25 && screen_y <= 30) {
-        return 0;
-    }
-    if (screen_y >= 34 && screen_y <= 37) {
-        return 43;
-    }
-    switch (screen_y) {
-    case 42: return 22;
-    case 43: return 158;
-    case 44: return 158;
-    case 45: return 158;
-    default: return kLevel01ParallaxSourceX;
-    }
-}
-
-int level01_parallax_source_y(int camera_x, int camera_y, int screen_y) {
-    // The last captured cloud band straddles the VDP nametable row boundary;
-    // its reference pixels come from the corresponding top rows of the
-    // extracted 224-pixel strip.
-    if (camera_x == 16 && camera_y == 464 && screen_y >= 43 && screen_y <= 45) {
-        return screen_y - 40;
-    }
-    return screen_y;
-}
-
 // The player frame origin is one 16-pixel tile above the terrain query
 // origin. The ROM keeps these coordinate systems distinct: terrain probes use
 // WORLD_Y - 0xF0, while the VDP sprite origin uses WORLD_Y - 0x100.
 constexpr int kPlayerVisualOffsetY = 0x100;
-// Actor table X is the collision/logic origin. The Genesis actor sprite
-// publisher places the multipart visual three pixels to its right.
-constexpr int kActorVisualOffsetX = 3;
 constexpr int kTerrainContourRomOffset = 0x2FD2;
 constexpr int kTerrainContourRomSize = 0x1000;
 constexpr std::uint8_t kActorGuardType = 0x0A;
@@ -292,20 +241,6 @@ std::uint8_t fixed_high_byte(std::int16_t value) {
     return static_cast<std::uint8_t>(static_cast<std::uint16_t>(value) >> 8);
 }
 
-std::uint32_t rgba(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a = 255) {
-    return static_cast<std::uint32_t>(r) |
-           (static_cast<std::uint32_t>(g) << 8) |
-           (static_cast<std::uint32_t>(b) << 16) |
-           (static_cast<std::uint32_t>(a) << 24);
-}
-
-int actor_palette_line(const ActorState& actor) {
-    // Genesis SAT tile attributes store the palette select in bits 13..14.
-    // The extracted Chopper pixels are palette-line agnostic, so this is the
-    // runtime colour selection copied from the actor template.
-    return static_cast<int>((actor.sprite_attribute >> 13) & 0x03);
-}
-
 }  // namespace
 
 Engine::Engine()
@@ -341,6 +276,7 @@ void Engine::load(
     const std::string& actor_timeline_path
 ) {
     render_model_.reset();
+    render_pipeline_.reset();
     level_.load(asset_root, rom_path);
     interaction_map_.load(level_);
     sprites_.load(sprite_root.empty() ? asset_root + "/../../sprites" : sprite_root);
@@ -392,7 +328,7 @@ void Engine::load(
     if (!actor_timeline_path.empty()) {
         load_actor_timeline(actor_timeline_path);
     }
-    framebuffer_.resize(static_cast<std::size_t>(kScreenWidth * kScreenHeight));
+    render_pipeline_.resize();
     reset();
 }
 
@@ -506,7 +442,7 @@ void Engine::update_dynamic_actor_culling() {
     const int left = camera_.x - 0x50;
     const int right = camera_.x + 0x190;
     const int top = camera_.y - 0x120;
-    const int bottom = camera_.y + kScreenHeight + 0x120;
+    const int bottom = camera_.y + RenderPipeline::kHeight + 0x120;
     for (const std::size_t slot : actors_.cull_interaction_actors(left, right, top, bottom)) {
         // FUN_001AE0B0 clears/releases the record and follows its +0x3E link.
         // ActorSystem performs the spatial query; lifecycle owns the actual
@@ -1315,14 +1251,6 @@ int Engine::visual_y() const {
     return player_world_y() - kPlayerVisualOffsetY;
 }
 
-void Engine::render_vdp_checkpoint() {
-    render_model_.render(framebuffer_, kScreenWidth, kScreenHeight);
-}
-
-SpritePose Engine::sprite_pose() const {
-    return animation_.pose();
-}
-
 void Engine::update_terrain_input(const InputState& input) {
     terrain_.sample(state_, TerrainInput{
         input.up,
@@ -1824,22 +1752,7 @@ void Engine::write_scheduler_trace(
 }
 
 void Engine::write_framebuffer_ppm(const std::string& path) const {
-    if (framebuffer_.size() != static_cast<std::size_t>(kScreenWidth * kScreenHeight)) {
-        throw std::runtime_error("native framebuffer is not initialized");
-    }
-    std::ofstream file(path, std::ios::binary);
-    if (!file) {
-        throw std::runtime_error("cannot open framebuffer output: " + path);
-    }
-    file << "P6\n" << kScreenWidth << ' ' << kScreenHeight << "\n255\n";
-    for (const std::uint32_t pixel : framebuffer_) {
-        file.put(static_cast<char>(pixel & 0xFF));
-        file.put(static_cast<char>((pixel >> 8) & 0xFF));
-        file.put(static_cast<char>((pixel >> 16) & 0xFF));
-    }
-    if (!file) {
-        throw std::runtime_error("cannot write framebuffer output: " + path);
-    }
+    render_pipeline_.write_framebuffer_ppm(path);
 }
 
 void Engine::write_state(std::ostream& output, const std::string& input_token) const {
@@ -2407,206 +2320,27 @@ void Engine::read_checkpoint(std::istream& input) {
     level_events_.restore(RomAddress{level_event_cursor}, level_event_tick);
     level_event_exit_started_ = level_event_exit_started;
     level_event_sound_requests_ = level_event_sound_requests;
-    camera_render_x_ = 0;
-    camera_render_y_ = 0;
 }
 
 void Engine::render(SDL_Renderer* renderer) {
-    if (framebuffer_.size() != static_cast<std::size_t>(kScreenWidth * kScreenHeight)) {
-        return;
-    }
-    // The native renderer consumes the same WORLD_CAMERA origin as terrain
-    // and actors. The old player-centered calculation made rendering drift
-    // independently from Genesis gameplay coordinates.
-    camera_render_x_ = std::clamp(camera_.x, 0, std::max(0, level_.background_width() - kScreenWidth));
-    camera_render_y_ = std::clamp(camera_.y, 0, std::max(0, level_.background_height() - kScreenHeight));
-
-    if (render_model_.loaded()) {
-        render_vdp_checkpoint();
-    } else {
-    const auto& background = level_.background_rgba();
-    const auto& parallax = level_.parallax_rgba();
-    const auto& palette = level_.palette();
-    const std::uint32_t backdrop = palette.empty()
-        ? rgba(10, 10, 18)
-        : rgba(palette[0].r, palette[0].g, palette[0].b);
-    const int background_source_x = std::clamp(
-        camera_.x + kBackgroundPlaneOriginOffset,
-        0,
-        std::max(0, level_.background_width() - kScreenWidth)
+    const bool rendered = render_pipeline_.render(
+        state_,
+        level_,
+        render_model_,
+        sprites_,
+        PlayerRenderState{
+            animation_.sprite_frame(),
+            animation_.frame_pointer(),
+            animation_.facing_left(),
+        },
+        rom_bytes_
     );
-    const int background_source_y = std::clamp(
-        camera_.y + kBackgroundPlaneOriginOffset,
-        0,
-        std::max(0, level_.background_height() - kScreenHeight)
+    if (!rendered) return;
+    render_backend_.present(
+        renderer,
+        render_pipeline_.framebuffer(),
+        RenderPipeline::kWidth,
+        RenderPipeline::kHeight
     );
-    for (int y = 0; y < kScreenHeight; ++y) {
-        for (int x = 0; x < kScreenWidth; ++x) {
-            std::uint32_t pixel = backdrop;
-            if (level_.parallax_width() > 0 && level_.parallax_height() > 0) {
-                const int source_x = (
-                    (rom_bytes_.empty()
-                        ? kLevel01ParallaxSourceX
-                        : level01_parallax_source_x(camera_.x, camera_.y, y)) + x
-                ) % level_.parallax_width();
-                const int source_y = (
-                    rom_bytes_.empty()
-                        ? y
-                        : level01_parallax_source_y(camera_.x, camera_.y, y)
-                ) % level_.parallax_height();
-                const std::size_t source = static_cast<std::size_t>(
-                    (source_y * level_.parallax_width() + source_x) * 4
-                );
-                if (!level_.is_vdp_transparent(
-                        parallax[source], parallax[source + 1], parallax[source + 2])) {
-                    pixel = rgba(parallax[source], parallax[source + 1], parallax[source + 2]);
-                }
-            }
-            if (!background.empty()) {
-                const int source_x = background_source_x + x;
-                const int source_y = background_source_y + y;
-                const std::size_t source = static_cast<std::size_t>(
-                    (source_y * level_.background_width() + source_x) * 4
-                );
-                if (!level_.is_vdp_transparent(
-                        background[source], background[source + 1], background[source + 2])) {
-                    pixel = rgba(background[source], background[source + 1], background[source + 2]);
-                }
-            }
-            framebuffer_[static_cast<std::size_t>(y * kScreenWidth + x)] = pixel;
-        }
-    }
-
-    // The level-01 SAT contains a small set of fixed HUD/static sprites
-    // before the player chain. Their tile attributes are stable at the
-    // synchronized scene checkpoint and their pattern data comes from these
-    // ROM regions. Keep these as VDP sprites rather than folding them into a
-    // background bitmap so their Genesis colour-zero transparency remains
-    // observable to the native renderer.
-    if (!rom_bytes_.empty()) {
-        struct VdpSpriteSpec {
-            int x;
-            int y;
-            int width_tiles;
-            int height_tiles;
-            int tile_address;
-        };
-        static constexpr VdpSpriteSpec kLevel01HudSprites[] = {
-            {16, 184, 3, 3, 0x11EDE0},
-            {42, 200, 1, 1, 0x11ED00},
-            {270, 192, 2, 2, 0x11EF00},
-            {288, 200, 1, 1, 0x11ECC0},
-            {296, 200, 1, 1, 0x11ECA0},
-            {18, 20, 4, 3, 0x11E0A0},
-            {50, 20, 2, 2, 0x11E220},
-            {66, 12, 1, 2, 0x11E2A0},
-            // The screenshot is sampled before the following VBlank's SAT
-            // upload. Its carpet links still point at tile bases 0x6C0..,
-            // which are the ROM regions below; frame-1300 VRAM already has
-            // the next 0x6D0.. tile set installed.
-            {74, 12, 1, 2, 0x11E8A0},
-            {82, 12, 1, 2, 0x11E8E0},
-            {90, 12, 1, 2, 0x11E920},
-            {98, 12, 1, 2, 0x11E960},
-            {106, 12, 1, 2, 0x11E9A0},
-            {114, 12, 1, 2, 0x11E9E0},
-            {122, 12, 1, 2, 0x11EA20},
-            {130, 12, 1, 2, 0x11EA60},
-        };
-        for (const VdpSpriteSpec& sprite : kLevel01HudSprites) {
-            SpriteRenderer::draw_vdp_sprite(
-                rom_bytes_,
-                sprite.tile_address,
-                sprite.width_tiles,
-                sprite.height_tiles,
-                level_.palette(),
-                framebuffer_,
-                kScreenWidth,
-                kScreenHeight,
-                sprite.x,
-                sprite.y,
-                3
-            );
-        }
-    }
-
-    int player_frame_index = animation_.sprite_frame();
-    if (player_frame_index < 0 || animation_.rom_loaded()) {
-        player_frame_index = sprites_.frame_index_for_address(
-            static_cast<int>(animation_.frame_pointer())
-        );
-    }
-    if (player_frame_index < 0) {
-        player_frame_index = SpriteDatabase::kIdleFrame;
-    }
-    const SpriteFrame& player_frame = sprites_.frame(player_frame_index);
-
-    // Actor animation is state-owned by the native actor table, but its
-    // visual output still has to be submitted to the same framebuffer as the
-    // player. Actor frame pointers use the same extracted Chopper frame
-    // database. Their extracted records retain preview palette line 0,
-    // while the runtime Genesis SAT selects enemy palette line 2.
-    // Slot zero is mirrored from PlayerState in the live engine and is drawn
-    // separately below. Snapshot fixtures use the same convention.
-    for (std::size_t slot = 1; slot < actors_.size(); ++slot) {
-        const ActorState& actor = actors_[slot];
-        if (actor.type == 0 || actor.frame_ptr == 0) {
-            continue;
-        }
-        const int actor_frame_index = sprites_.frame_index_for_address(
-            static_cast<int>(actor.frame_ptr)
-        );
-        if (actor_frame_index < 0) {
-            // Some terminal/resource records intentionally have frame
-            // pointers that are not visual Chopper frames. They remain part
-            // of gameplay state but have no native bitmap to submit.
-            continue;
-        }
-        const SpriteFrame& actor_frame = sprites_.frame(actor_frame_index);
-        SpriteRenderer::draw(
-            actor_frame,
-            sprites_.palette(),
-            framebuffer_,
-            kScreenWidth,
-            kScreenHeight,
-            static_cast<int>(actor.x) + kActorVisualOffsetX - camera_render_x_,
-            static_cast<int>(actor.y) - kPlayerVisualOffsetY - camera_render_y_,
-            actor.facing_x_flip != 0,
-            actor.facing_y_flip != 0,
-            actor_palette_line(actor)
-        );
-    }
-
-    SpriteRenderer::draw(
-        player_frame,
-        sprites_.palette(),
-        framebuffer_,
-        kScreenWidth,
-        kScreenHeight,
-        visual_x() - camera_render_x_,
-        visual_y() - camera_render_y_,
-        animation_.facing_left(),
-        false,
-        SpriteDatabase::kPlayerPaletteLine
-    );
-    }
-
-    if (texture_ == nullptr) {
-        // RGBA32 means RGBA byte order on the host. RGBA8888 is a packed
-        // numeric format whose byte order is different on little-endian
-        // systems, producing the channel-swapped pink output seen in the
-        // first window test.
-        texture_ = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, kScreenWidth, kScreenHeight);
-        if (texture_ == nullptr) {
-            throw std::runtime_error(std::string("SDL_CreateTexture failed: ") + SDL_GetError());
-        }
-    }
-    if (SDL_UpdateTexture(texture_, nullptr, framebuffer_.data(), kScreenWidth * static_cast<int>(sizeof(std::uint32_t))) != 0) {
-        throw std::runtime_error(std::string("SDL_UpdateTexture failed: ") + SDL_GetError());
-    }
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture_, nullptr, nullptr);
-    SDL_RenderPresent(renderer);
 }
-
 }  // namespace openaladdin
