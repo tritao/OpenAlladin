@@ -392,10 +392,12 @@
     - movement_stream_decoder
 
 0x001203C0:
-  name: ACTOR_MOVE_STATE_1203C0
-  confidence: probable
-  description: Short actor movement state-stream subroutine observed in the runtime movement cursor inventory.
+  name: ACTOR_MOVE_TRANSITION_PRESENTATION_LOOP
+  size: 8
+  confidence: decompiled
+  description: Transition-presentation movement substream; its lossless 8-byte body applies a fixed (+4, 0) delta and loops unconditionally from 0x001203C6 back to 0x001203C0.
   evidence:
+    - transition_presentation_movement_static_decode
     - mame_actor_movement_cursor_trace
     - movement_stream_decoder
 
@@ -1234,7 +1236,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 transition-presentation template instantiated by SceneResource_InitializeTransitionPresentation; it uses movement stream 0x00120360, animation stream 0x001232D8, and resource count 0x35.
+  description: Type-0x84 transition-presentation template instantiated by SceneResource_InitializeTransitionPresentation; it uses movement stream 0x00120360, whose terminal substream is ACTOR_MOVE_TRANSITION_PRESENTATION_LOOP, animation stream 0x001232D8, and resource count 0x35.
   evidence:
     - ghidra_scene_resource_transition_presentation
     - level01_upper_frontier_initializer_targets
