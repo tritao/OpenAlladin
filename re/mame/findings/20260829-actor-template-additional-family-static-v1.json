@@ -14,7 +14,7 @@
       "producer": "selector 0x5C through 0x001B6870",
       "runtime_type": "0x06",
       "movement_stream": null,
-      "animation_stream": "0x00123200"
+      "animation_stream": "0x00123200 ACTOR_ANIM_TYPE06_INTERACTION"
     },
     {
       "address": "0x001B7C38",

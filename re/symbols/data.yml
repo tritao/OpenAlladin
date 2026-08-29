@@ -559,6 +559,17 @@
     - actor_template_runtime_trace
     - animation_stream_decoder
 
+0x00123200:
+  name: ACTOR_ANIM_TYPE06_INTERACTION
+  size: 116
+  confidence: decompiled
+  description: Selector-0x5C Type-0x06 interaction animation state machine. Its packed 116-byte region publishes type 0x84 and queues the Type-0x84 child events on the idle path, tests the player-within-X condition, then runs the Type-0x06 response sequence with frame references 0x0C86-0x0CA6, spawns ACTOR_TEMPLATE_TYPE_2A, and loops back to the root.
+  evidence:
+    - type06_animation_static_decompilation
+    - actor_template_type06
+    - interaction_spawn_mid_family_static_decompilation
+    - animation_stream_decoder
+
 0x00120F76:
   name: ACTOR_MOVE_TYPE2A_VERTICAL_BOB
   size: 62
@@ -1288,7 +1299,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Selector-0x5C actor template for runtime type 0x06; it has no movement stream and uses animation stream 0x00123200.
+  description: Selector-0x5C actor template for runtime type 0x06; it has no movement stream and uses animation stream ACTOR_ANIM_TYPE06_INTERACTION.
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets

@@ -8,7 +8,7 @@
   "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
   "purpose": "Promote additional actor-template records whose producer paths and runtime assignments are already documented.",
   "templates": [
-    { "address": "0x001B7B34", "name": "ACTOR_TEMPLATE_TYPE_06", "producer": "selector 0x5C / 0x001B6870", "runtime_type": "0x06", "animation": "0x00123200", "movement": null },
+    { "address": "0x001B7B34", "name": "ACTOR_TEMPLATE_TYPE_06", "producer": "selector 0x5C / 0x001B6870", "runtime_type": "0x06", "animation": "0x00123200 ACTOR_ANIM_TYPE06_INTERACTION", "movement": null },
     { "address": "0x001B7C38", "name": "ACTOR_TEMPLATE_TYPE_1F", "producer": "selector 0x10 / 0x001B6EA6", "runtime_type": "0x1F", "animation": "0x00123900", "movement": "0x00120432" },
     { "address": "0x001B79E0", "name": "ACTOR_TEMPLATE_TYPE_43", "producer": "selector 0x40 / 0x001B7232", "runtime_type": "0x43", "animation": "0x00124450", "movement": null },
     { "address": "0x001B8098", "name": "ACTOR_TEMPLATE_F5_TYPE_7F", "producer": "type-0x43 AnimationVM F5 child path", "runtime_type": "0x7F", "movement": null },

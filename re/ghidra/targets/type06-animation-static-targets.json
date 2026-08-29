@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-type06-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x00123200",
+    "name": "ACTOR_ANIM_TYPE06_INTERACTION",
+    "packed_region": ["0x00123200", "0x00123273"],
+    "packed_bytes": 116,
+    "idle_path": {
+      "frame": "0x0C82",
+      "publish_type": "0x00123202 ED actor type <- 0x84",
+      "child_event": "0x00123208 FB 0x001ACB7A",
+      "gate": "0x00123210 FD player-within-X -> 0x0012321C",
+      "loop": "0x00123216 EA -> 0x0012320E"
+    },
+    "response_path": {
+      "entry": "0x0012321C",
+      "frame_sequence": ["0x0C82", "0x0C82", "0x0C86", "0x0C86", "0x0C86", "0x0C8A", "0x0C8A", "0x0C8A", "0x0C8A", "0x0C8E", "0x0C8E", "0x0C8E", "0x0C92", "0x0C92", "0x0C96", "0x0C96", "0x0C96", "0x0C96", "0x0C96", "0x0C9A", "0x0C9A", "0x0C9E", "0x0C9E", "0x0CA2", "0x0CA2", "0x0CA6", "0x0CA6"],
+      "child_event": "0x0012321E FB 0x001ACB82",
+      "publish_type": "0x00123226 ED actor type <- 0x06",
+      "spawn": "0x00123246 F5 template ACTOR_TEMPLATE_TYPE_2A at 0x001B7AF8",
+      "loop": "0x0012326E EA -> 0x00123200"
+    }
+  },
+  "consumer": {
+    "handler": "0x001B6870 InteractionSpawn_Type06Offset",
+    "selector": "0x5C",
+    "template": "0x001B7B34 ACTOR_TEMPLATE_TYPE_06",
+    "runtime_type": "0x06",
+    "movement": null
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for the root and both statically visible paths",
+    "Exact Type-0x06 template and selector-0x5C consumer",
+    "F5 child-spawn record targets ACTOR_TEMPLATE_TYPE_2A at 0x001B7AF8",
+    "Packed boundary immediately before the next animation root at 0x00123274"
+  ],
+  "conclusion": "The Type-0x06 animation is a single 116-byte conditional state machine. Its idle path publishes type 0x84 and queues the first child event until the player gate is met; the response path publishes type 0x06, runs the 0x0C86-0x0CA6 sequence, spawns the Type-0x2A child, and returns to the root.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

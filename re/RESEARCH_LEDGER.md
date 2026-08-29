@@ -2772,3 +2772,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type0f-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x0F random/timed interaction animation root range-bounded with its direct child-spawn record |
 | `20260829-type5f-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x5F interaction animation root range-bounded with its direct reverse-slot consumer |
 | `20260829-type84-interaction-pair-companion-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x84 paired-interaction companion animation root range-bounded with its embedded Type-0x23 entry |
+| `20260829-type06-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x06 selector animation range-bounded with its player gate and Type-0x2A child spawn |
