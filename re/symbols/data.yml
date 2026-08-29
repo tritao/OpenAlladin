@@ -4329,6 +4329,16 @@
     - interaction_spawn_early_family_static_decompilation
     - animation_stream_decoder
 
+0x00120B36:
+  name: ACTOR_MOVE_TYPE64_INTERACTION
+  type: movement_stream
+  size: 44
+  confidence: decompiled
+  description: Type-0x64 interaction movement stream installed by ACTOR_TEMPLATE_TYPE_64 at 0x001B7FBC. Its exact 44-byte owner contains the timer, signed movement, random branch, and terminal delay sequence, ending with the local jump at 0x00120B5C back to 0x00120B38.
+  evidence:
+    - actor_template_service_family_static_decompilation
+    - movement_stream_decoder
+
 0x00120B62:
   name: ACTOR_MOVE_TYPE31_F5_CHILD_SHARED
   type: movement_stream
