@@ -179,6 +179,8 @@ add_library(openaladdin_engine STATIC
     src/collision.hpp
     src/engine.cpp
     src/engine.hpp
+    src/interaction.cpp
+    src/interaction.hpp
     src/level.cpp
     src/level.hpp
     src/level_event.cpp

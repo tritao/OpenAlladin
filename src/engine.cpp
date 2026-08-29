@@ -16,7 +16,6 @@ namespace {
 
 constexpr int kScreenWidth = 320;
 constexpr int kScreenHeight = 224;
-constexpr int kTerrainVisualOffsetY = 0xF0;
 // The extracted level image is the VDP plane-A nametable in world space. At
 // the synchronized gameplay checkpoint, the VDP's plane origin is one tile
 // ahead of WORLD_CAMERA in both axes.
@@ -79,12 +78,8 @@ constexpr int kActorVisualOffsetX = 3;
 constexpr int kTerrainContourRomOffset = 0x2FD2;
 constexpr int kTerrainContourRomSize = 0x1000;
 constexpr std::uint8_t kActorGuardType = 0x0A;
-constexpr std::uint8_t kActorBounceType = 0x65;
 constexpr std::uint8_t kActorSwordType = 0x80;
 constexpr std::uint8_t kActorTerminalType = 0x84;
-constexpr std::uint8_t kTerrainSpawnActorType = 0x8C;
-constexpr std::uint32_t kTerrainSpawnTemplate = 0x001B7E2C;
-constexpr std::uint32_t kTerrainSpawnAnimationStream = 0x00124408;
 constexpr std::uint32_t kTerrainScene5SpawnTemplate = 0x001B805C;
 constexpr std::uint32_t kTerrainScene5SpawnAnimationDefault = 0x001250BA;
 constexpr std::uint32_t kTerrainScene5SpawnAnimationLow = 0x001250CE;
@@ -390,6 +385,12 @@ Engine::Engine()
       actors_(state_.actors),
       actor_lifecycle_(actors_),
       collisions_(actor_lifecycle_),
+      interactions_(
+          actor_lifecycle_,
+          collisions_,
+          animation_,
+          actor_animations_,
+          actor_movement_deferred_),
       random_state_(state_.random.value),
       frame_(state_.frame.number),
       frame_phase_(state_.frame.phase) {
@@ -444,6 +445,7 @@ void Engine::load(
     }
     actor_lifecycle_.bind_rom(rom_bytes_);
     collisions_.bind_rom(rom_bytes_);
+    interactions_.bind_rom(rom_bytes_);
     scene_resources_.bind_rom(rom_bytes_);
     level_events_.bind_rom(rom_bytes_);
     scene_.load_rom_bytes(rom_bytes_);
@@ -551,168 +553,6 @@ void Engine::apply_actor_timeline(int frame) {
     }
 }
 
-std::optional<SpawnDescriptor> Engine::spawn_descriptor(std::uint8_t selector) const {
-    // These are the compact templates selected by the Level-01 interaction
-    // handlers. The addresses are ROM addresses, and therefore also file
-    // offsets for the flat extracted cartridge image.
-    SpawnDescriptor descriptor;
-    descriptor.valid = true;
-    descriptor.selector = selector;
-    switch (selector) {
-    case 0x0D:
-        descriptor.template_address = 0x001B7D8C;
-        descriptor.allocation_pool = ActorAllocationPool::GameplayReverse;
-        descriptor.post_offset_x = 8;
-        descriptor.post_offset_y = -1;
-        break;
-    case 0x10:
-        descriptor.template_address = 0x001B7C38;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        break;
-    case 0x11:
-        descriptor.template_address = 0x001B7C24;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        break;
-    case 0x12:
-        descriptor.template_address = 0x001B7C10;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        break;
-    case 0x13:
-        descriptor.template_address = 0x001B7F30;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        break;
-    case 0x14:
-        descriptor.template_address = 0x001B80AC;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        break;
-    case 0x1A:
-        descriptor.template_address = 0x001B7C24;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        descriptor.override_type = true;
-        descriptor.type = 0x21;
-        descriptor.override_movement = true;
-        descriptor.movement_pc = 0;
-        descriptor.override_animation = true;
-        descriptor.animation_pc = 0x001235AC;
-        break;
-    case 0x1B:
-        descriptor.template_address = 0x001B7C10;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        descriptor.override_type = true;
-        descriptor.type = 0x20;
-        descriptor.override_movement = true;
-        descriptor.movement_pc = 0;
-        descriptor.override_animation = true;
-        descriptor.animation_pc = 0x0012337A;
-        break;
-    case 0x40:
-        descriptor.template_address = 0x001B79E0;
-        descriptor.allocation_pool = ActorAllocationPool::GameplayReverse;
-        break;
-    case 0x50:
-        descriptor.template_address = 0x001B79B8;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        descriptor.override_type = true;
-        descriptor.type = 0x44;
-        descriptor.override_animation = true;
-        descriptor.animation_pc = 0x00122C40;
-        descriptor.override_resource_count = true;
-        descriptor.resource_count = 1;
-        break;
-    case 0x51:
-        descriptor.template_address = 0x001B79B8;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        descriptor.override_type = true;
-        descriptor.type = 0x3A;
-        descriptor.override_animation = true;
-        descriptor.animation_pc = 0x00122BD8;
-        descriptor.override_resource_count = true;
-        descriptor.resource_count = 1;
-        break;
-    case 0x53:
-        descriptor.template_address = 0x001B79B8;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        descriptor.override_type = true;
-        descriptor.type = 0x34;
-        descriptor.override_animation = true;
-        descriptor.animation_pc = 0x00122C1E;
-        descriptor.override_movement = true;
-        descriptor.movement_pc = 0x001217B4;
-        descriptor.override_resource_count = true;
-        descriptor.resource_count = 6;
-        break;
-    case 0x55:
-        descriptor.template_address = 0x001B79CC;
-        descriptor.allocation_pool = ActorAllocationPool::GameplayForward;
-        break;
-    case 0x5C:
-        descriptor.template_address = 0x001B7B34;
-        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
-        descriptor.post_offset_x = 9;
-        descriptor.post_offset_y = 7;
-        break;
-    case 0x60:
-        descriptor.template_address = 0x001B79B8;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        descriptor.override_type = true;
-        descriptor.type = 0x40;
-        descriptor.override_animation = true;
-        descriptor.animation_pc = 0x00122C12;
-        descriptor.override_resource_count = true;
-        descriptor.resource_count = 0;
-        break;
-    case 0x74:
-        descriptor.template_address = 0x001B7E54;
-        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
-        descriptor.post_offset_x = -8;
-        descriptor.post_offset_y = 4;
-        break;
-    case 0x80:
-        descriptor.template_address = 0x001B7C4C;
-        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
-        // This handler's controlled Level 01 dispatch writes x=0x0F70 for
-        // source cell (249,14), one additional tile before the common
-        // vertical-row seed (0x0F80).
-        descriptor.post_offset_x = -0x10;
-        break;
-    case 0x87:
-        descriptor.template_address = 0x001B7A30;
-        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
-        break;
-    case 0xC8:
-        descriptor.template_address = 0x001B79B8;
-        descriptor.allocation_pool = ActorAllocationPool::CommonForward;
-        descriptor.override_type = true;
-        descriptor.type = 0x41;
-        descriptor.override_animation = true;
-        descriptor.animation_pc = 0x00125D7E;
-        descriptor.override_resource_count = true;
-        descriptor.resource_count = 2;
-        break;
-    case 0xEA:
-        descriptor.template_address = 0x001B80FC;
-        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
-        break;
-    case 0xFF:
-        descriptor.template_address = 0x001B79E0;
-        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
-        descriptor.override_type = true;
-        descriptor.type = 0x8A;
-        descriptor.override_animation = true;
-        descriptor.animation_pc = 0x00124494;
-        break;
-    default:
-        descriptor.valid = false;
-        break;
-    }
-    if (!descriptor.valid) return std::nullopt;
-    return descriptor;
-}
-
-std::optional<std::size_t> Engine::allocate_actor_slot(ActorAllocationPool pool) const {
-    return actor_lifecycle_.allocate(pool);
-}
-
 ActorState Engine::actor_from_template(std::uint32_t template_address) const {
     return actor_lifecycle_.from_template(template_address);
 }
@@ -722,163 +562,6 @@ ActorState Engine::initialize_actor_from_template(
     std::uint32_t template_address
 ) const {
     return actor_lifecycle_.initialize_record(destination, template_address);
-}
-
-void Engine::dispatch_interaction(
-    const Level::InteractionRecord& record,
-    int base_x,
-    int base_y
-) {
-    const std::uint8_t selector = interaction_map_.selector(record);
-    if (selector == 0) return;
-
-    // 0xAB is gated by the scene's FFF16F latch. That latch is not yet
-    // surfaced by the native scene-script slice; leaving the entry live is
-    // equivalent to the original failed conditional dispatch and allows a
-    // later scene-state implementation to activate it.
-    if (selector == 0xAB) return;
-
-    const auto descriptor = spawn_descriptor(selector);
-    if (!descriptor || rom_bytes_.empty()) return;
-    const auto slot = allocate_actor_slot(descriptor->allocation_pool);
-    if (!slot) return;
-
-    // Actor_InitializeFromTemplate (0x001AE30A) deliberately leaves the
-    // movement loop cursor/timer and return cursor untouched. A recycled
-    // zero-type record can therefore carry these fields into its next
-    // caller-level type, as seen when slot 3 becomes the later type-0x40
-    // refill actor.
-    ActorState actor = initialize_actor_from_template(
-        actors_[*slot], descriptor->template_address);
-    if (actor.type == 0 && !descriptor->override_type) return;
-    if (descriptor->override_type) actor.type = descriptor->type;
-    if (descriptor->override_animation) actor.animation_pc = descriptor->animation_pc;
-    if (descriptor->override_movement) actor.movement_pc = descriptor->movement_pc;
-    if (descriptor->override_resource_count) actor.resource_count = descriptor->resource_count;
-    actor.x = static_cast<std::uint16_t>(base_x + descriptor->post_offset_x);
-    actor.y = static_cast<std::uint16_t>(base_y + descriptor->post_offset_y);
-    actor.interaction_resource_offset = record.resource_offset;
-    actor.interaction_selector = selector;
-    if (!actor_lifecycle_.install(*slot, actor)) return;
-    actors_.host_meta(*slot).spawned_by_interaction = true;
-    if (actor.movement_pc != 0) {
-        actor_movement_deferred_[*slot] = true;
-    }
-    actor_animations_[*slot].reset();
-    // Selector 0x80 has no movement stream, but its animation cursor is
-    // installed after the common actor pass and is first serviced on the
-    // following VBlank sample.
-    if (selector == 0x80) {
-        actor_animations_[*slot].defer_actor_service_then_force();
-    }
-    // Interaction refill publishes the short type-0x06 resource actor after
-    // the current animation walk. Keep its first cursor visible for one
-    // boundary before the 0x001AD40E resource-cleanup check can retire it.
-    if (actor.type == 0x06 && actor.animation_pc == 0x00123200
-        && actor.x == 1849 && actor.y == 775) {
-        actor_animations_[*slot].defer_actor_service();
-    }
-    interaction_map_.consume(record.resource_offset);
-}
-
-void Engine::scan_interaction_refill_window() {
-    if (actors_.snapshot_mode() || rom_bytes_.empty()) return;
-
-    // The four original refill callers process one 16-row/23-column edge at
-    // the camera's tile reference. Their source rows are terrain-space rows;
-    // adding 0xF0 converts them to actor world coordinates. The first pass
-    // fills the initial camera window; subsequent passes process only the
-    // newly crossed edge, matching the camera-refill call sites instead of
-    // rescanning the interaction table every simulation frame.
-    const int reference_x = camera_.reference_x & ~0x0F;
-    const int reference_y = camera_.reference_y & ~0x0F;
-
-    auto scan_vertical_edge = [this](int edge_reference_x, int edge_reference_y, bool right) {
-        const int reference_column = edge_reference_x >> 4;
-        const int reference_row = edge_reference_y >> 4;
-        const int column = right ? reference_column + 22 : reference_column;
-        const int base_x = right ? edge_reference_x + 0x150 : edge_reference_x - 0x10;
-        if (column < 0 || column >= level_.map_width()) return;
-        for (int index = 0; index < 16; ++index) {
-            const int scan_row = reference_row + index;
-            if (scan_row < 0 || scan_row >= level_.map_height()) continue;
-            for (const Level::InteractionRecord& record : interaction_map_.records()) {
-                if (record.column == column && record.row == scan_row) {
-                    dispatch_interaction(record, base_x, (scan_row * 16) + kTerrainVisualOffsetY);
-                    break;
-                }
-            }
-        }
-    };
-    auto scan_horizontal_edge = [this](int edge_reference_x, int edge_reference_y, bool down) {
-        const int reference_column = edge_reference_x >> 4;
-        const int reference_row = edge_reference_y >> 4;
-        const int row = reference_row + (down ? 15 : 0);
-        if (row < 0 || row >= level_.map_height()) return;
-        for (const Level::InteractionRecord& record : interaction_map_.records()) {
-            if (record.row != row || record.column < reference_column
-                || record.column >= reference_column + 23) {
-                continue;
-            }
-            // ProcessRowsB seeds FF7DB0 at the source column and the generic
-            // spawn helper applies FFF150 (-0x10) before initialization.
-            dispatch_interaction(record, record.world_x - 0x10, record.world_y);
-        }
-    };
-
-    if (!interaction_scan_initialized_) {
-        scan_vertical_edge(reference_x, reference_y, false);
-        scan_vertical_edge(reference_x, reference_y, true);
-        scan_horizontal_edge(reference_x, reference_y, false);
-        scan_horizontal_edge(reference_x, reference_y, true);
-        interaction_scan_initialized_ = true;
-        interaction_reference_x_ = reference_x;
-        interaction_reference_y_ = reference_y;
-        return;
-    }
-
-    const auto scan_x_edges = [&](int target_x) {
-        while (interaction_reference_x_ < target_x) {
-            interaction_reference_x_ += 0x10;
-            scan_vertical_edge(interaction_reference_x_, interaction_reference_y_, true);
-        }
-        while (interaction_reference_x_ > target_x) {
-            interaction_reference_x_ -= 0x10;
-            scan_vertical_edge(interaction_reference_x_, interaction_reference_y_, false);
-        }
-    };
-    const auto scan_y_edges = [&](int target_y) {
-        while (interaction_reference_y_ < target_y) {
-            interaction_reference_y_ += 0x10;
-            scan_horizontal_edge(interaction_reference_x_, interaction_reference_y_, true);
-        }
-        while (interaction_reference_y_ > target_y) {
-            interaction_reference_y_ -= 0x10;
-            scan_horizontal_edge(interaction_reference_x_, interaction_reference_y_, false);
-        }
-    };
-    scan_x_edges(reference_x);
-    scan_y_edges(reference_y);
-}
-
-void Engine::flush_surface_actor_spawn() {
-    if (!surface_actor_spawn_pending_) return;
-    const int spawn_x = surface_actor_spawn_x_;
-    const int spawn_y = surface_actor_spawn_y_;
-    surface_actor_spawn_pending_ = false;
-
-    const auto slot = actor_lifecycle_.allocate(ActorPool::CommonForward);
-    if (!slot) return;
-    // The ROM's surface allocator reuses the compact actor record after F6
-    // has cleared its type. That clear retires only the live identity; the
-    // movement-loop words at +0x0E/+0x12 and return PC at +0x38 remain stale
-    // when the slot is refilled.
-    ActorState spawned_actor = initialize_actor_from_template(
-        actors_[*slot], kTerrainSpawnTemplate);
-    spawned_actor.x = static_cast<std::uint16_t>(spawn_x);
-    spawned_actor.y = static_cast<std::uint16_t>(spawn_y);
-    if (!actor_lifecycle_.install(*slot, spawned_actor)) return;
-    actor_animations_[*slot].clear_actor_service_boundary();
 }
 
 void Engine::update_dynamic_actor_culling() {
@@ -1187,77 +870,11 @@ void Engine::update_actor_animations() {
             // shared gate is on its opposite phase.
             actor_animations_[slot].force_actor_service_next_update();
         }
-        // Surface interaction records notify the player when their short
-        // animation changes from type 0x8C to 0x7B. The ROM does this after
-        // the actor animation pass; arming the selector when the record is
-        // merely present fires too early while the player is still braking,
-        // and can select the hurt/stop stream on the wrong frame.
-        const CollisionBox player_interaction_box = collisions_.hitbox(
-            animation_.frame_pointer(),
-            player_world_x(),
-            player_world_y(),
-            animation_.facing_left());
-        const CollisionBox actor_interaction_box = collisions_.hitbox(
-            actor.frame_ptr,
-            static_cast<int>(actor.x),
-            static_cast<int>(actor.y),
-            actor.facing_x_flip != 0);
-        const bool surface_boxes_overlap = CollisionSystem::overlaps(
-            player_interaction_box,
-            actor_interaction_box
-        );
-        if (animation_state.type == 0x7B
-            && previous_type == kTerrainSpawnActorType
-            && player_.animation_selector.interaction_lock == 0
-            && surface_boxes_overlap
-            && std::abs(static_cast<int>(player_.vx)) <= 0xA0) {
-            // ED 11 in the surface stream changes the temporary record to
-            // type 0x7B. The selector observes this transition on the next
-            // player boundary; F6 00 is the later record cleanup and is not
-            // the player-animation trigger.
-            surface_interaction_pending_ = true;
-            interaction_selector_pending_ = true;
-            surface_interaction_active_ = true;
-        }
+        interactions_.observe_surface_actor_transition(
+            state_, actor, previous_type, animation_state.type);
         if (actor.type == kActorTerminalType
             && previous_type == kActorTerminalType) {
             update_terminal_actor_motion(actor);
-        }
-    }
-}
-
-void Engine::update_interaction_actor_flags() {
-    if (rom_bytes_.empty()) return;
-    const bool stable_terrain_handler_fixture = checkpoint_terrain_behavior_override_
-        && (checkpoint_terrain_behavior_ == 0x28
-            || checkpoint_terrain_behavior_ == 0x29
-            || checkpoint_terrain_behavior_ == 0x2D
-            || checkpoint_terrain_behavior_ == 0x27);
-    if (stable_terrain_handler_fixture) return;
-
-    // The interaction actor raises its flag after AnimationVM_TickActors has
-    // published the current cursor. The next frame consumes this edge in the
-    // player selector; evaluating the old cursor before the actor pass makes
-    // the flag and selector one VBlank late.
-    constexpr std::uint8_t kInteractionFlag = 0x20;
-    for (ActorState& actor : actors_) {
-        if (actor.type != 0x1F) continue;
-        const bool interaction_frame = actor.animation_pc >= 0x0012397E
-            && actor.animation_pc <= 0x00123988;
-        const bool flag_was_set = (actor.flags & kInteractionFlag) != 0;
-        if (interaction_frame) {
-            actor.flags = static_cast<std::uint8_t>(actor.flags | kInteractionFlag);
-            if (!flag_was_set
-                && !interaction_actor_triggered_
-                && player_.animation_selector.interaction_lock == 0) {
-                interaction_selector_pending_ = true;
-                interaction_actor_lock_pending_ = true;
-                interaction_camera_delay_pending_ = true;
-                interaction_actor_triggered_ = true;
-                player_.animation_selector.response_state_101 = 1;
-            }
-        } else {
-            actor.flags = static_cast<std::uint8_t>(actor.flags & ~kInteractionFlag);
         }
     }
 }
@@ -1649,50 +1266,13 @@ void Engine::update_animation_vm_ordinal_30(
         animation_.update(desired_pose, direction, context, frame_phase_, &services);
     }
     update_actor_animations();
-    update_interaction_actor_flags();
-}
-
-void Engine::update_bounce_actor_interaction() {
-    if (rom_bytes_.empty() || player_.vy <= 0
-        || player_.animation_selector.animation_gate != 0) {
-        return;
-    }
-
-    for (ActorState& actor : actors_) {
-        const std::size_t slot = static_cast<std::size_t>(&actor - actors_.data());
-        if (actor.type != kActorBounceType
-            || !collisions_.player_actor_overlap(
-                state_,
-                animation_.frame_pointer(),
-                animation_.facing_left(),
-                slot)) {
-            continue;
-        }
-
-        // The bounce actor is tested after Player_IntegrateMotion. That is
-        // why contact is visible on the first boundary whose descending
-        // player hitbox crosses the pad's top edge, rather than one boundary
-        // earlier when the pre-motion rectangles merely touch.
-        actor.type = 0x66;
-        actor.animation_pc = 0x001244B0;
-        actor.animation_timer = 0;
-        bounce_response_active_ = true;
-        bounce_response_follow_active_ = false;
-        bounce_camera_delay_hold_pending_ = false;
-        // The handler places the player one 32-pixel actor step above the
-        // pad before the camera pass. Preserve that world-space placement;
-        // deriving it from the actor keeps this valid for every pad height.
-        player_.y = static_cast<int>(actor.y) - 0x1F - camera_.y;
-        player_.vy = static_cast<std::int16_t>(-0x500 + 0x003C);
-        animation_.set_animation_state(0x001221B8, 0);
-        player_.terrain_response_active = 0xFF;
-        player_.terrain_vertical_stop = 0;
-        player_.terrain_response_timer_state = 0;
-        player_.terrain_jump_response_counter = 1;
-        player_.animation_selector.response_timer = 0;
-        terrain_fall_phase_ = false;
-        return;
-    }
+    interactions_.update_actor_flags(
+        state_,
+        checkpoint_terrain_behavior_override_
+            && (checkpoint_terrain_behavior_ == 0x28
+                || checkpoint_terrain_behavior_ == 0x29
+                || checkpoint_terrain_behavior_ == 0x2D
+                || checkpoint_terrain_behavior_ == 0x27));
 }
 
 AnimationServices Engine::animation_services(
@@ -1815,32 +1395,17 @@ void Engine::load_actor_records(const std::string& path) {
 void Engine::reset() {
     player_ = PlayerState{};
     interaction_map_.reset();
-    interaction_scan_initialized_ = false;
-    interaction_selector_pending_ = false;
-    interaction_actor_lock_pending_ = false;
-    interaction_camera_delay_pending_ = false;
-    interaction_actor_triggered_ = false;
-    surface_actor_spawn_pending_ = false;
-    surface_actor_spawn_x_ = 0;
-    surface_actor_spawn_y_ = 0;
+    interactions_.reset();
     scene_resources_.reset();
     level_events_.reset();
     level_event_sound_requests_.clear();
     level_event_exit_started_ = false;
     actor_movement_deferred_.fill(false);
-    player_collision_interaction_pending_ = false;
     checkpoint_animation_selector_pending_ = false;
-    surface_interaction_pending_ = false;
-    surface_interaction_active_ = false;
     jump_landing_state_arm_pending_ = false;
     jump_landing_state_arm_now_ = false;
     terrain_fall_phase_ = false;
-    bounce_response_active_ = false;
-    bounce_response_follow_active_ = false;
-    bounce_camera_delay_hold_pending_ = false;
     contour_ground_motion_ = false;
-    interaction_reference_x_ = 0;
-    interaction_reference_y_ = 0;
     actors_.reset();
     if (actors_.snapshot_mode()) {
         apply_actor_timeline(0);
@@ -1893,12 +1458,10 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     }
     player_.terrain_landing_state = grounded && player_.terrain_behavior != 0 ? 1 : 0;
     checkpoint_animation_selector_pending_ = false;
-    surface_interaction_pending_ = false;
-    surface_interaction_active_ = false;
+    interactions_.clear_surface_interaction_state();
     jump_landing_state_arm_pending_ = false;
     jump_landing_state_arm_now_ = false;
     terrain_fall_phase_ = false;
-    bounce_response_active_ = false;
     contour_ground_motion_ = false;
     frame_ = 0;
     frame_phase_ = 0;
@@ -2064,7 +1627,7 @@ void Engine::set_checkpoint_camera(
     // A checkpoint represents a freshly entered camera window. Let the next
     // frame perform its initial interaction refill against the supplied
     // reference coordinates.
-    interaction_scan_initialized_ = false;
+    interactions_.reset_scan();
     scene_.select(scene_state);
     camera_.scene_state = scene_.scene_state();
     camera_.special_mode = scene_.is_transition() ? 1 : 0;
@@ -2371,40 +1934,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.terrain_surface_mode = 1;
         break;
     case 0x0A: {  // TerrainHandler_SurfaceInteraction (0x001B5320).
-        // The handler first looks for an existing type-0x8C record, then
-        // allocates the first free common actor slot (the ROM scans slots
-        // 3..22, starting at 0x00FF7F06). It only accepts a non-zero
-        // landing/contour result and copies the player's world position into
-        // the new record. The common actor pass services this new record on
-        // the same boundary when its phase gate is open.
-        if (player_.terrain_landing_state == 0) {
-            break;
-        }
-        const auto existing_surface = std::find_if(
-            actors_.begin(), actors_.end(), [](const ActorState& actor) {
-                return actor.type == kTerrainSpawnActorType;
-            });
-        if (!bounce_response_follow_active_
-            && surface_interaction_active_
-            && player_.animation_selector.interaction_lock == 0
-            && animation_.stream_kind() == AnimationStreamKind::Action
-            && player_.terrain_horizontal_response == 0) {
-            // Once the stop stream's 0x28-frame lock expires, the live
-            // surface handler revisits the same selector even if the actor
-            // allocator has a one-frame gap between records.
-            player_.animation_selector.interaction_lock = 0x28;
-        }
-        if (existing_surface != actors_.end()) {
-            // The existing record owns the actor lifecycle; do not allocate
-            // a replacement while it is still in the table.
-            break;
-        }
-        // The interaction refill service runs before this allocation's
-        // publication in the same frame. Keep the request until that service
-        // has had the first chance to claim the lowest free actor slot.
-        surface_actor_spawn_pending_ = true;
-        surface_actor_spawn_x_ = player_world_x();
-        surface_actor_spawn_y_ = player_world_y();
+        interactions_.apply_surface_terrain_behavior(state_);
         break;
     }
     case 0x20:  // TerrainHandler_SetTerminalCollision (0x001B5318)
@@ -2544,7 +2074,7 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         player_.vx = static_cast<std::int16_t>(-0x400);
         player_.vy = static_cast<std::int16_t>(0x200);
         animation_.select_response_stream(0x00121AD8);
-        bounce_response_active_ = true;
+        interactions_.start_bounce_response();
         break;
     case 0x30:  // TerrainHandler_LandingResponseBlock (0x001B537A)
         // The ROM subtracts 0x7C from PLAYER_VY, clears FFF0B0, arms the
@@ -2797,28 +2327,14 @@ void Engine::update(const InputState& input) {
                 actor.runtime_field_07 | 0x10U);
         }
     }
+    const InteractionFrameBoundary interaction_boundary = interactions_.begin_frame(state_);
     const bool interaction_selector_pending_at_start =
-        interaction_selector_pending_;
+        interaction_boundary.selector_pending_at_start;
     const bool terrain_response_was_active =
         player_.terrain_response_active != 0;
-    const bool arm_surface_interaction = surface_interaction_pending_;
-    surface_interaction_pending_ = false;
-    if (player_.animation_selector.interaction_lock != 0) {
-        --player_.animation_selector.interaction_lock;
-    }
+    const bool arm_surface_interaction = interaction_boundary.arm_surface_interaction;
     if (player_.animation_selector.state_lock != 0) {
         --player_.animation_selector.state_lock;
-    }
-    if (interaction_actor_lock_pending_ && interaction_selector_pending_at_start) {
-        // The actor flag edge is published first.  The interaction caller
-        // installs its selector lock and camera delay on the next VBlank,
-        // after the pending bit has crossed the frame boundary.
-        player_.animation_selector.interaction_lock = 0x28;
-        if (interaction_camera_delay_pending_) {
-            camera_.update_delay = 7;
-        }
-        interaction_actor_lock_pending_ = false;
-        interaction_camera_delay_pending_ = false;
     }
     // FUN_001A91C6 is the unconditional input/resource service. A player F5
     // command deferred by the previous animation boundary becomes live here.
@@ -2904,7 +2420,8 @@ void Engine::update(const InputState& input) {
     player_.terrain_right_inner_probe = collision.right_inner ? 0xFF : 0;
     player_.terrain_right_outer_probe = collision.right_outer ? 0xFF : 0;
     update_terrain_connector_response();
-    if (bounce_response_follow_active_ && player_.terrain_response_active == 0) {
+    if (interactions_.bounce_response_follow_active()
+        && player_.terrain_response_active == 0) {
         player_.terrain_response_timer_state = 1;
         if (animation_.stream_entry() == 0x00122006) {
             camera_.vertical_threshold = 400;
@@ -3104,11 +2621,10 @@ void Engine::update(const InputState& input) {
             animation_.frame_pointer(),
             animation_.facing_left(),
             was_grounded && (input.attack_pressed || player_.attack_timer != 0),
-            bounce_response_follow_active_
+            interactions_.bounce_response_follow_active()
         }
     );
-    player_collision_interaction_pending_ =
-        collision_effects.player_collision_interaction_pending;
+    interactions_.consume_collision_effects(collision_effects);
     record_scheduler_phase("terrain_resolution", 0x001B1E38);
     resolve_terrain(previous_world_y);
     // The camera's tile reference is consumed before the actor traversal in
@@ -3120,13 +2636,7 @@ void Engine::update(const InputState& input) {
         camera_.reference_y != camera_reference_y_before_rebase;
     const bool camera_reference_moved_up =
         camera_.reference_y < camera_reference_y_before_rebase;
-    if (arm_surface_interaction
-        && !bounce_response_follow_active_
-        && player_.animation_selector.interaction_lock == 0) {
-        // A surface actor's type transition is published one frame before
-        // Player_ProcessInteractionState selects the stop stream.
-        player_.animation_selector.interaction_lock = 0x28;
-    }
+    interactions_.apply_surface_interaction_lock(state_, arm_surface_interaction);
     const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
         && last_ground_direction_ != 0 && player_.vx == 0;
     const int ground_release_direction = ground_release ? last_ground_direction_ : 0;
@@ -3245,7 +2755,7 @@ void Engine::update(const InputState& input) {
     }
     record_scheduler_phase("player_movement", 0x001A9D98);
     integrate_motion();
-    update_bounce_actor_interaction();
+    interactions_.bounce_actor_interaction(state_, terrain_fall_phase_);
     if (player_.terrain_response_active != 0
         && player_.terrain_jump_response_counter != 0
         && player_.terrain_jump_response_counter < 10) {
@@ -3274,29 +2784,8 @@ void Engine::update(const InputState& input) {
     // handoff boundary.  Genesis immediately arms the ordinary ground
     // response latch and holds Camera_UpdateFollow for seven VBlanks before
     // returning to the run stream.
-    const bool bounce_response_finished =
-        bounce_response_active_
-        &&
-        !bounce_response_follow_active_
-        && terrain_response_was_active
-        && player_.terrain_response_active == 0;
-    if (bounce_response_finished) {
-        player_.terrain_response_timer_state = 1;
-        player_.terrain_jump_response_counter = 0;
-        camera_.update_delay = 7;
-        bounce_response_follow_active_ = true;
-        bounce_camera_delay_hold_pending_ = true;
-        // Any pre-existing surface/actor selector edge belongs to the
-        // response that just ended.  Genesis clears that transient before
-        // returning to the ordinary run stream; carrying it across the F8
-        // handoff would spuriously select the 0x122014 stop root a few
-        // frames later.
-        interaction_selector_pending_ = false;
-        interaction_actor_lock_pending_ = false;
-        interaction_camera_delay_pending_ = false;
-        surface_interaction_pending_ = false;
-        surface_interaction_active_ = false;
-    }
+    const bool bounce_response_finished = interactions_.finish_bounce_response(
+        state_, terrain_response_was_active);
     if (!player_.grounded && player_.terrain_behavior == 0
         && (vertical_stop_before_frame || player_.terrain_response_timer_state != 0)) {
         // This is the post-integrator jump/vertical-state handoff. It is
@@ -3436,18 +2925,12 @@ void Engine::update(const InputState& input) {
     // retain their staged rebase boundary. Horizontal rebases retain the
     // same-frame damped follow.
     const bool camera_follow_deferred = camera_vertical_reference_rebased;
-    if (bounce_camera_delay_hold_pending_ && !bounce_response_finished) {
-        // The ROM's camera delay is held for one additional VBlank after the
-        // bounce handoff; preserve the externally visible countdown (6, 6,
-        // 5, ...), rather than decrementing it on the first run-stream tick.
-        camera_.update_delay = 7;
-        bounce_camera_delay_hold_pending_ = false;
-    }
+    interactions_.hold_bounce_camera_delay(state_, bounce_response_finished);
     record_scheduler_phase("camera_follow", 0x001AA90C);
     const bool same_frame_vertical_rebase =
         camera_reference_moved_up && !checkpoint_terrain_behavior_override_;
     if (camera_follow_deferred && !same_frame_vertical_rebase
-        && !bounce_response_active_) {
+        && !interactions_.bounce_response_active()) {
         // The reference-tile write occupies this camera pass. The vertical
         // damped lookup resumes on the following VBlank; horizontal follow
         // is still handled by update_camera().
@@ -3475,7 +2958,7 @@ void Engine::update(const InputState& input) {
     const bool preserve_ground_response_run =
         !player_.grounded
         && !contour_ground_motion
-        && !player_collision_interaction_pending_
+        && !interactions_.player_collision_pending()
         && player_.terrain_response_active == 0
         && player_.terrain_response_timer_state != 0
         && animation_.animation_pc() >= 0x00122006
@@ -3487,7 +2970,7 @@ void Engine::update(const InputState& input) {
         // vertical phase starts; switching to the generic jump stream here
         // would stop the camera-follow run sequence one frame too early.
         desired_pose = SpritePose::Run;
-        if (!bounce_response_follow_active_ || bounce_response_finished) {
+        if (!interactions_.bounce_response_follow_active() || bounce_response_finished) {
             player_.animation_selector.response_state_101 = 1;
         }
     } else if (!player_.grounded && !contour_ground_motion) {
@@ -3588,9 +3071,9 @@ void Engine::update(const InputState& input) {
     record_scheduler_phase("interaction_counter", 0x001B00CA);
     record_scheduler_phase("interaction_resource", 0x001B01AC);
     if (!stable_terrain_handler_fixture) {
-        scan_interaction_refill_window();
+    interactions_.scan_refill_window(state_, level_, stable_terrain_handler_fixture);
     }
-    flush_surface_actor_spawn();
+    interactions_.flush_surface_actor_spawn(state_);
     record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
     publish_player_world_coordinates();
     // The camera tile-update boundary does not suppress the common player VM
@@ -3631,14 +3114,7 @@ void Engine::update(const InputState& input) {
                 player_.animation_selector.response_state_101 = value;
             }
         }
-        if (player_collision_interaction_pending_) {
-            // The type-0x2D collision handler calls the player interaction
-            // selector after the common animation tick. Publish the stop
-            // root and its first frame pointer at this boundary.
-            animation_.select_stream_entry(0x00122014, true);
-            player_.animation_selector.response_state_101 = 0;
-            player_collision_interaction_pending_ = false;
-        }
+        interactions_.apply_player_collision_selector(state_, stable_terrain_handler_fixture);
 
         if (can_select_up_animation && !select_up_before_vm) {
             // The ordinary grounded Up path publishes its action root after
@@ -3686,64 +3162,23 @@ void Engine::update(const InputState& input) {
     // this is why the interaction first becomes visible when the response
     // stream publishes frame 0x001EA062, even though the same actor was
     // already present at the earlier wall-response boundary.
-    const bool surface_actor_collision = !stable_terrain_handler_fixture
-        && animation_.rom_loaded()
-        && collisions_.any_player_actor_overlap(
-            state_,
-            animation_.frame_pointer(),
-            animation_.facing_left(),
-            0x7B,
-            1,
-            24
-        );
-    if (surface_actor_collision
-        && player_.animation_selector.interaction_lock == 0) {
-        AnimationContext collision_selector_context =
-            player_animation_context(player_.grounded);
-        collision_selector_context.grounded_override =
-            player_.grounded || contour_ground_motion;
-        collision_selector_context.interaction_lock_override = 0;
-        collision_selector_context.response_timer_override = 0;
-        animation_.select_player_interaction_state(collision_selector_context);
-        // The ROM's next VBlank publishes the 0x28 interaction lock after
-        // this immediate selector call. Reuse the existing deferred lock
-        // path so the frame of the handoff still exposes lock == 0.
-        interaction_selector_pending_ = true;
-        interaction_actor_lock_pending_ = true;
-        interaction_camera_delay_pending_ = false;
-    }
+    interactions_.process_surface_actor_collision(
+        state_,
+        player_animation_context(player_.grounded),
+        stable_terrain_handler_fixture,
+        contour_ground_motion);
     // Player_ProcessInteractionState at 0x001AE4F8 is a RAM-driven stream
     // selector outside the common actor VM. Build its post-physics RAM view
     // after the actor tick so the native path owns the same boundary as the
     // ROM's interaction caller.
-    if (!stable_terrain_handler_fixture
-        && animation_.rom_loaded() && !landing_event && desired_pose != SpritePose::Landing
-        && (interaction_selector_pending_at_start
-            || player_.animation_selector.interaction_lock != 0)) {
-        AnimationContext selector_context = animation_context;
-        selector_context.grounded_override = player_.grounded || contour_ground_motion;
-        if (interaction_selector_pending_at_start) {
-            // The native lock is a post-call timer used by the animation
-            // pass. The ROM caller reaches Player_ProcessInteractionState
-            // with FFF0F2 clear on the frame after the actor flag edge.
-            selector_context.interaction_lock_override = 0;
-        }
-        // The release path clears FFF0CC before entering 0x001AE4F8. The
-        // native terrain mirror still exposes its one-frame response value,
-        // so make this caller-side clear explicit in the selector state.
-        selector_context.response_timer_override =
-            desired_pose == SpritePose::Brake
-                ? 0
-                : (player_.terrain_response_active != 0
-                    || ((player_.grounded || contour_ground_motion)
-                        && player_.terrain_vertical_stop == 0)
-                    ? 1
-                    : 0);
-        animation_.select_player_interaction_state(selector_context);
-        if (interaction_selector_pending_at_start) {
-            interaction_selector_pending_ = false;
-        }
-    }
+    interactions_.update_player_selector(
+        state_,
+        animation_context,
+        stable_terrain_handler_fixture,
+        landing_event,
+        desired_pose,
+        contour_ground_motion,
+        interaction_selector_pending_at_start);
     if (input.attack_pressed && was_grounded && animation_.rom_loaded()) {
         // The live ROM trace has a two-stage action transition: the input
         // frame leaves the player at 0x001232E0, and the following animation
@@ -3933,6 +3368,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     );
     const AnimationSelectorState animation_selector = player_.animation_selector;
     const SceneRuntimeState scene_runtime = scene_.runtime();
+    const InteractionRuntimeState& interaction_runtime = interactions_.runtime();
 
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v3\""
            << ",\"frame\":" << frame_
@@ -4111,38 +3547,38 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"level_event_active\":" << (level_events_.active() ? "true" : "false")
            << ",\"level_event_faulted\":" << (level_events_.faulted() ? "true" : "false")
            << ",\"interaction_scan_initialized\":"
-           << (interaction_scan_initialized_ ? "true" : "false")
+           << (interaction_runtime.scan_initialized ? "true" : "false")
            << ",\"interaction_selector_pending\":"
-           << (interaction_selector_pending_ ? "true" : "false")
+           << (interaction_runtime.selector_pending ? "true" : "false")
            << ",\"interaction_actor_lock_pending\":"
-           << (interaction_actor_lock_pending_ ? "true" : "false")
+           << (interaction_runtime.actor_lock_pending ? "true" : "false")
            << ",\"interaction_camera_delay_pending\":"
-           << (interaction_camera_delay_pending_ ? "true" : "false")
+           << (interaction_runtime.camera_delay_pending ? "true" : "false")
            << ",\"interaction_actor_triggered\":"
-           << (interaction_actor_triggered_ ? "true" : "false")
+           << (interaction_runtime.actor_triggered ? "true" : "false")
            << ",\"player_collision_interaction_pending\":"
-           << (player_collision_interaction_pending_ ? "true" : "false")
+           << (interaction_runtime.player_collision_pending ? "true" : "false")
            << ",\"checkpoint_animation_selector_pending\":"
            << (checkpoint_animation_selector_pending_ ? "true" : "false")
            << ",\"surface_interaction_pending\":"
-           << (surface_interaction_pending_ ? "true" : "false")
+           << (interaction_runtime.surface_interaction_pending ? "true" : "false")
            << ",\"surface_interaction_active\":"
-           << (surface_interaction_active_ ? "true" : "false")
+           << (interaction_runtime.surface_interaction_active ? "true" : "false")
            << ",\"jump_landing_state_arm_pending\":"
            << (jump_landing_state_arm_pending_ ? "true" : "false")
            << ",\"jump_landing_state_arm_now\":"
            << (jump_landing_state_arm_now_ ? "true" : "false")
            << ",\"terrain_fall_phase\":" << (terrain_fall_phase_ ? "true" : "false")
            << ",\"bounce_response_active\":"
-           << (bounce_response_active_ ? "true" : "false")
+           << (interaction_runtime.bounce_response_active ? "true" : "false")
            << ",\"bounce_response_follow_active\":"
-           << (bounce_response_follow_active_ ? "true" : "false")
+           << (interaction_runtime.bounce_response_follow_active ? "true" : "false")
            << ",\"bounce_camera_delay_hold_pending\":"
-           << (bounce_camera_delay_hold_pending_ ? "true" : "false")
+           << (interaction_runtime.bounce_camera_delay_hold_pending ? "true" : "false")
            << ",\"contour_ground_motion\":"
            << (contour_ground_motion_ ? "true" : "false")
-           << ",\"interaction_reference_x\":" << interaction_reference_x_
-           << ",\"interaction_reference_y\":" << interaction_reference_y_
+           << ",\"interaction_reference_x\":" << interaction_runtime.reference_x
+           << ",\"interaction_reference_y\":" << interaction_runtime.reference_y
            << ",\"random_state\":" << random_state_
            << ",\"terrain_input_world_x\":" << terrain_input_world_x_
            << ",\"terrain_input_world_y\":" << terrain_input_world_y_
@@ -4278,6 +3714,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
 
 void Engine::write_checkpoint(std::ostream& output) const {
     checkpoint::Writer writer(output);
+    const InteractionRuntimeState& interaction_runtime = interactions_.runtime();
     checkpoint::magic(writer, "OACP", 4);
     writer.u32(kCheckpointVersion);
     writer.u32(static_cast<std::uint32_t>(rom_bytes_.size()));
@@ -4297,24 +3734,24 @@ void Engine::write_checkpoint(std::ostream& output) const {
     writer.boolean(level_event_exit_started_);
     writer.byte_vector(level_event_sound_requests_);
 
-    writer.boolean(interaction_scan_initialized_);
-    writer.boolean(interaction_selector_pending_);
-    writer.boolean(interaction_actor_lock_pending_);
-    writer.boolean(interaction_camera_delay_pending_);
-    writer.boolean(interaction_actor_triggered_);
-    writer.boolean(player_collision_interaction_pending_);
+    writer.boolean(interaction_runtime.scan_initialized);
+    writer.boolean(interaction_runtime.selector_pending);
+    writer.boolean(interaction_runtime.actor_lock_pending);
+    writer.boolean(interaction_runtime.camera_delay_pending);
+    writer.boolean(interaction_runtime.actor_triggered);
+    writer.boolean(interaction_runtime.player_collision_pending);
     writer.boolean(checkpoint_animation_selector_pending_);
-    writer.boolean(surface_interaction_pending_);
-    writer.boolean(surface_interaction_active_);
+    writer.boolean(interaction_runtime.surface_interaction_pending);
+    writer.boolean(interaction_runtime.surface_interaction_active);
     writer.boolean(jump_landing_state_arm_pending_);
     writer.boolean(jump_landing_state_arm_now_);
     writer.boolean(terrain_fall_phase_);
-    writer.boolean(bounce_response_active_);
-    writer.boolean(bounce_response_follow_active_);
-    writer.boolean(bounce_camera_delay_hold_pending_);
+    writer.boolean(interaction_runtime.bounce_response_active);
+    writer.boolean(interaction_runtime.bounce_response_follow_active);
+    writer.boolean(interaction_runtime.bounce_camera_delay_hold_pending);
     writer.boolean(contour_ground_motion_);
-    writer.i32(interaction_reference_x_);
-    writer.i32(interaction_reference_y_);
+    writer.i32(interaction_runtime.reference_x);
+    writer.i32(interaction_runtime.reference_y);
     writer.u32(random_state_);
     writer.i32(terrain_input_world_x_);
     writer.i32(terrain_input_world_y_);
@@ -4369,24 +3806,25 @@ void Engine::read_checkpoint(std::istream& input) {
         throw std::runtime_error("level-event cursor is outside the OpenAladdin ROM");
     }
 
-    const bool interaction_scan_initialized = reader.boolean();
-    const bool interaction_selector_pending = reader.boolean();
-    const bool interaction_actor_lock_pending = reader.boolean();
-    const bool interaction_camera_delay_pending = reader.boolean();
-    const bool interaction_actor_triggered = reader.boolean();
-    const bool player_collision_interaction_pending = reader.boolean();
+    InteractionRuntimeState interaction_runtime;
+    interaction_runtime.scan_initialized = reader.boolean();
+    interaction_runtime.selector_pending = reader.boolean();
+    interaction_runtime.actor_lock_pending = reader.boolean();
+    interaction_runtime.camera_delay_pending = reader.boolean();
+    interaction_runtime.actor_triggered = reader.boolean();
+    interaction_runtime.player_collision_pending = reader.boolean();
     const bool checkpoint_animation_selector_pending = reader.boolean();
-    const bool surface_interaction_pending = reader.boolean();
-    const bool surface_interaction_active = reader.boolean();
+    interaction_runtime.surface_interaction_pending = reader.boolean();
+    interaction_runtime.surface_interaction_active = reader.boolean();
     const bool jump_landing_state_arm_pending = reader.boolean();
     const bool jump_landing_state_arm_now = reader.boolean();
     const bool terrain_fall_phase = reader.boolean();
-    const bool bounce_response_active = reader.boolean();
-    const bool bounce_response_follow_active = reader.boolean();
-    const bool bounce_camera_delay_hold_pending = reader.boolean();
+    interaction_runtime.bounce_response_active = reader.boolean();
+    interaction_runtime.bounce_response_follow_active = reader.boolean();
+    interaction_runtime.bounce_camera_delay_hold_pending = reader.boolean();
     const bool contour_ground_motion = reader.boolean();
-    const int interaction_reference_x = reader.i32();
-    const int interaction_reference_y = reader.i32();
+    interaction_runtime.reference_x = reader.i32();
+    interaction_runtime.reference_y = reader.i32();
     const auto random_state = reader.u32();
     const int terrain_input_world_x = reader.i32();
     const int terrain_input_world_y = reader.i32();
@@ -4421,24 +3859,12 @@ void Engine::read_checkpoint(std::istream& input) {
 
     player_ = player;
     camera_ = camera;
-    interaction_scan_initialized_ = interaction_scan_initialized;
-    interaction_selector_pending_ = interaction_selector_pending;
-    interaction_actor_lock_pending_ = interaction_actor_lock_pending;
-    interaction_camera_delay_pending_ = interaction_camera_delay_pending;
-    interaction_actor_triggered_ = interaction_actor_triggered;
-    player_collision_interaction_pending_ = player_collision_interaction_pending;
+    interactions_.restore_runtime(interaction_runtime);
     checkpoint_animation_selector_pending_ = checkpoint_animation_selector_pending;
-    surface_interaction_pending_ = surface_interaction_pending;
-    surface_interaction_active_ = surface_interaction_active;
     jump_landing_state_arm_pending_ = jump_landing_state_arm_pending;
     jump_landing_state_arm_now_ = jump_landing_state_arm_now;
     terrain_fall_phase_ = terrain_fall_phase;
-    bounce_response_active_ = bounce_response_active;
-    bounce_response_follow_active_ = bounce_response_follow_active;
-    bounce_camera_delay_hold_pending_ = bounce_camera_delay_hold_pending;
     contour_ground_motion_ = contour_ground_motion;
-    interaction_reference_x_ = interaction_reference_x;
-    interaction_reference_y_ = interaction_reference_y;
     random_state_ = random_state;
     terrain_input_world_x_ = terrain_input_world_x;
     terrain_input_world_y_ = terrain_input_world_y;

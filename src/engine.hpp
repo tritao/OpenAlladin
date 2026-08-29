@@ -6,6 +6,7 @@
 #include "actor_lifecycle.hpp"
 #include "collision.hpp"
 #include "game_state.hpp"
+#include "interaction.hpp"
 #include "level_event.hpp"
 #include "movement.hpp"
 #include "player_terrain.hpp"
@@ -117,8 +118,6 @@ private:
     void update_actor_movement();
     void update_terminal_actor_motion(ActorState& actor);
     void update_actor_animations();
-    void update_interaction_actor_flags();
-    void update_bounce_actor_interaction();
     void update_level_events();
     void dispatch_level_event(const LevelEventCommand& event);
     bool spawn_level_event_actor(
@@ -159,11 +158,6 @@ private:
         const F5Command& command
     );
     void flush_deferred_animation_spawn();
-    void scan_interaction_refill_window();
-    void flush_surface_actor_spawn();
-    void dispatch_interaction(const Level::InteractionRecord& record, int base_x, int base_y);
-    std::optional<SpawnDescriptor> spawn_descriptor(std::uint8_t selector) const;
-    std::optional<std::size_t> allocate_actor_slot(ActorAllocationPool pool) const;
     ActorState actor_from_template(std::uint32_t template_address) const;
     ActorState initialize_actor_from_template(
         const ActorState& destination,
@@ -203,43 +197,19 @@ private:
     // Keep this transient scheduling edge separate from the actor record so
     // it cannot leak into the ROM-shaped state or fixture format.
     std::array<bool, 32> actor_movement_deferred_{};
+    InteractionSystem interactions_;
     std::map<int, ActorSystem::Table> actor_timeline_;
-    bool interaction_scan_initialized_ = false;
-    bool interaction_selector_pending_ = false;
-    // Slots retired by the movement VM remain unavailable to refill scans
-    // until the next game-loop boundary, matching the ROM's refill-before-cull
-    // allocator snapshot even when native camera reconstruction runs later.
-    // Type-0x1F actor flags are written after the player's ground step.  The
-    // selector lock/camera delay become visible on the following VBlank.
-    bool interaction_actor_lock_pending_ = false;
-    bool interaction_camera_delay_pending_ = false;
-    bool interaction_actor_triggered_ = false;
-    bool surface_actor_spawn_pending_ = false;
-    int surface_actor_spawn_x_ = 0;
-    int surface_actor_spawn_y_ = 0;
-    // Actor_PlayerCollisionPass invokes the type-0x2D handler on the overlap
-    // boundary; the player stream root is published after the common VM pass.
-    bool player_collision_interaction_pending_ = false;
     bool checkpoint_animation_selector_pending_ = false;
-    bool surface_interaction_pending_ = false;
-    bool surface_interaction_active_ = false;
     // The ROM leaves the landing latch visible for the launch boundary,
     // clears it on the first airborne pass, then re-arms it when the jump
     // state enters its falling phase. Keep those two boundaries explicit.
     bool jump_landing_state_arm_pending_ = false;
     bool jump_landing_state_arm_now_ = false;
     bool terrain_fall_phase_ = false;
-    // The bounce-pad response leaves the ground-response latch armed after
-    // FFF0BE clears, while the player resumes the run stream.
-    bool bounce_response_active_ = false;
-    bool bounce_response_follow_active_ = false;
-    bool bounce_camera_delay_hold_pending_ = false;
     // A sloped contour exposes a non-flat landing byte (and therefore a
     // public grounded=false) while the player remains on the surface. Keep
     // the internal ground-motion path latched across those contour samples.
     bool contour_ground_motion_ = false;
-    int interaction_reference_x_ = 0;
-    int interaction_reference_y_ = 0;
     // FUN_001B3032 is the shared fixed-ROM PRNG used by terrain responses and
     // animation F0 branches. Keep its state in one place so VM consumers do
     // not silently diverge from the Genesis sequence.
