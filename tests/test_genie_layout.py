@@ -437,6 +437,37 @@ def test_upper_collision_response_animation_family_is_exact():
         assert alias.metadata["entry_offset"] == offset
 
 
+def test_upper_type1f_type22_collision_animation_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x0012384A: (0x00123879, "ACTOR_ANIM_TYPE1F_ACTOR_COLLISION_RESPONSE"),
+        0x0012387A: (0x001238A9, "ACTOR_ANIM_TYPE22_ACTOR_COLLISION_RESPONSE"),
+        0x001238AA: (0x001238F7, "ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE"),
+        0x001238F8: (0x001238FF, "ACTOR_ANIM_TYPE1F_COLLISION_RESPONSE_ALTERNATE_PREFIX"),
+    }
+    owners = []
+    for address, (end, name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        assert symbol.size == end - address + 1
+        assert symbol.metadata["type"] == "animation_stream"
+        owners.append((symbol.address, symbol.end))
+    assert all(right + 1 == next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
+
+    aliases = {
+        0x001238B2: ("ACTOR_ANIM_TYPE22_PROXIMITY_LOOP", 8),
+        0x001238C4: ("ACTOR_ANIM_TYPE22_RESPONSE_SEQUENCE", 26),
+    }
+    for address, (name, offset) in aliases.items():
+        alias = symbols.at(address, include_ranges=False)
+        assert alias is not None
+        assert alias.name == name
+        assert alias.metadata["alias_of"] == "ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE"
+        assert alias.metadata["entry_offset"] == offset
+
+
 def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)

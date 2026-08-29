@@ -1,0 +1,83 @@
+{
+  "format": "openaladdin-upper-type1f-type22-collision-animation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Classify the four direct Type-0x1F/Type-0x22 player-collision animation entries between ACTOR_ANIM_TYPE1E_STATE46_EXTENDED and ACTOR_ANIM_TYPE1F_PROXIMITY_GATE.",
+  "producer": {
+    "address": "0x001AE796",
+    "name": "ActorType1E_PlayerCollisionHandler",
+    "normal_entries": [
+      { "source_type": "0x1F", "animation": "0x0012384A" },
+      { "source_type": "0x22", "animation": "0x0012387A" }
+    ],
+    "alternate_entries": [
+      { "source_type": "0x22", "animation": "0x001238AA" },
+      { "source_type": "0x1F", "animation": "0x001238F8" }
+    ],
+    "contract": "The handler selects the normal roots on the interaction path and the alternate entries on the landing/recovery path after the shared player-collision gates."
+  },
+  "streams": [
+    {
+      "address": "0x0012384A",
+      "name": "ACTOR_ANIM_TYPE1F_ACTOR_COLLISION_RESPONSE",
+      "range": ["0x0012384A", "0x00123879"],
+      "size": 48,
+      "decoded": [
+        "Frame 0x1232 and ED publication of temporary type 0x84",
+        "Sound 0x41 and repeated 0x1232-0x1246 frame sequence",
+        "ED restoration of type 0x1F",
+        "EA at 0x00123874 -> ACTOR_ANIM_TYPE1F_PROXIMITY_GATE at 0x00123900"
+      ]
+    },
+    {
+      "address": "0x0012387A",
+      "name": "ACTOR_ANIM_TYPE22_ACTOR_COLLISION_RESPONSE",
+      "range": ["0x0012387A", "0x001238A9"],
+      "size": 48,
+      "decoded": [
+        "Frame 0x1232 and ED publication of temporary type 0x84",
+        "Sound 0x41 and repeated 0x1232-0x1246 frame sequence",
+        "ED restoration of type 0x22",
+        "EA at 0x001238A4 -> embedded entry 0x001238B2"
+      ]
+    },
+    {
+      "address": "0x001238AA",
+      "name": "ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE",
+      "range": ["0x001238AA", "0x001238F7"],
+      "size": 78,
+      "decoded": [
+        "Frames 0x125A and 0x1256 lead into the embedded 0x001238B2 proximity loop",
+        "FD 0x40 at 0x001238B8 branches to 0x001238C4 when the player is within the X threshold",
+        "The response branch presents 0x124E-0x1266 and pushes 0x001ACCB8 and 0x001ACCC0",
+        "EA at 0x001238F2 loops to 0x001238B2"
+      ],
+      "embedded_entries": [
+        { "address": "0x001238B2", "name": "ACTOR_ANIM_TYPE22_PROXIMITY_LOOP", "entry_offset": 8, "ownership": "alias" },
+        { "address": "0x001238C4", "name": "ACTOR_ANIM_TYPE22_RESPONSE_SEQUENCE", "entry_offset": 26, "ownership": "alias" }
+      ]
+    },
+    {
+      "address": "0x001238F8",
+      "name": "ACTOR_ANIM_TYPE1F_COLLISION_RESPONSE_ALTERNATE_PREFIX",
+      "range": ["0x001238F8", "0x001238FF"],
+      "size": 8,
+      "decoded": [
+        "Frames 0x125A and 0x1256",
+        "Falls through to ACTOR_ANIM_TYPE1F_PROXIMITY_GATE at 0x00123900"
+      ]
+    }
+  ],
+  "boundary_basis": [
+    "Direct normal and alternate animation-root writes in ActorType1E_PlayerCollisionHandler",
+    "Lossless AnimationDecoder output",
+    "The Type-0x1F prefix ends immediately before ACTOR_ANIM_TYPE1F_PROXIMITY_GATE at 0x00123900",
+    "The four owners partition 0x0012384A-0x001238FF without overlap; the two Type-0x22 internal entries remain aliases"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

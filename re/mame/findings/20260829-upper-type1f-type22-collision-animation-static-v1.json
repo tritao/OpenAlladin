@@ -1,0 +1,76 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/upper-type1f-type22-collision-animation-targets.json",
+  "producer": {
+    "address": "0x001AE796",
+    "name": "ActorType1E_PlayerCollisionHandler",
+    "normal_entries": "Source types 0x1F and 0x22 select 0x0012384A and 0x0012387A.",
+    "alternate_entries": "Source types 0x1F and 0x22 select 0x001238F8 and 0x001238AA on the landing/recovery path."
+  },
+  "streams": [
+    {
+      "address": "0x0012384A",
+      "name": "ACTOR_ANIM_TYPE1F_ACTOR_COLLISION_RESPONSE",
+      "range": "0x0012384A-0x00123879",
+      "size": 48,
+      "decoded": [
+        "Temporary type-0x84 publication and sound 0x41",
+        "0x1232-0x1246 frame cadence",
+        "Restores type 0x1F and EA transfers to 0x00123900"
+      ]
+    },
+    {
+      "address": "0x0012387A",
+      "name": "ACTOR_ANIM_TYPE22_ACTOR_COLLISION_RESPONSE",
+      "range": "0x0012387A-0x001238A9",
+      "size": 48,
+      "decoded": [
+        "Temporary type-0x84 publication and sound 0x41",
+        "0x1232-0x1246 frame cadence",
+        "Restores type 0x22 and EA transfers to 0x001238B2"
+      ]
+    },
+    {
+      "address": "0x001238AA",
+      "name": "ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE",
+      "range": "0x001238AA-0x001238F7",
+      "size": 78,
+      "decoded": [
+        "0x125A/0x1256 lead-in",
+        "0x40 player-X gate at 0x001238B8",
+        "0x124E-0x1266 response sequence",
+        "FB parameters 0x001ACCB8 and 0x001ACCC0",
+        "EA 0x001238F2 -> 0x001238B2"
+      ],
+      "aliases": [
+        { "address": "0x001238B2", "name": "ACTOR_ANIM_TYPE22_PROXIMITY_LOOP", "entry_offset": 8 },
+        { "address": "0x001238C4", "name": "ACTOR_ANIM_TYPE22_RESPONSE_SEQUENCE", "entry_offset": 26 }
+      ]
+    },
+    {
+      "address": "0x001238F8",
+      "name": "ACTOR_ANIM_TYPE1F_COLLISION_RESPONSE_ALTERNATE_PREFIX",
+      "range": "0x001238F8-0x001238FF",
+      "size": 8,
+      "decoded": [
+        "0x125A/0x1256 prefix",
+        "Falls through to ACTOR_ANIM_TYPE1F_PROXIMITY_GATE at 0x00123900"
+      ]
+    }
+  ],
+  "boundary_basis": [
+    "Exact normal/alternate writes in ActorType1E_PlayerCollisionHandler",
+    "Lossless AnimationDecoder output",
+    "Known neighboring ACTOR_ANIM_TYPE1E_STATE46_EXTENDED and ACTOR_ANIM_TYPE1F_PROXIMITY_GATE roots",
+    "Non-overlapping owner boundaries and alias-only internal Type-0x22 entries"
+  ],
+  "conclusion": "The formerly unknown 0x0012384A-0x001238FF band is a closed Type-0x1F/Type-0x22 player-collision family: two 48-byte normal responses, one 78-byte Type-0x22 alternate response with two internal aliases, and an 8-byte Type-0x1F alternate prefix that falls into the established proximity root.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
