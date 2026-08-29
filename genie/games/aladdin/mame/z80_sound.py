@@ -36,6 +36,10 @@ COMMAND_DISPATCH = 0x0945
 SEQUENCE_TABLE_BASE = 0x001BAF6F
 SEQUENCE_HEADER_SIZE = 0x21
 SEQUENCE_TRACK_COUNT = 16
+SEQUENCE_HEADER_DATA_START = 0x001BB053
+SEQUENCE_HEADER_DATA_END = 0x001BB316
+SEQUENCE_STREAM_DATA_START = 0x001BB317
+SEQUENCE_STREAM_DATA_END = 0x001C73CA
 
 # The fourth pointer sent by Audio_Initialize addresses thirty fixed-width
 # descriptors. Each descriptor points, relative to this table, into the
@@ -45,6 +49,24 @@ SAMPLE_DESCRIPTOR_SIZE = 0x0C
 SAMPLE_DESCRIPTOR_COUNT = 30
 SAMPLE_PAYLOAD_START = 0x001C7533
 SAMPLE_PAYLOAD_END = 0x001E56BE
+
+SEQUENCE_CONTROL_ARGUMENT_COUNTS = {
+    0x61: 1,
+    0x62: 1,
+    0x64: 1,
+    0x66: 1,
+    0x67: 1,
+    0x68: 1,
+    0x69: 1,
+    0x6A: 1,
+    0x6B: 1,
+    0x6C: 2,
+    0x6E: 1,
+    0x6F: 2,
+    0x70: 2,
+    0x71: 3,
+    0x72: 2,
+}
 
 COMMAND_HANDLERS = {
     0x00: 0x09D6,
@@ -99,6 +121,7 @@ def sequence_table_report(image: bytes) -> dict[str, Any]:
         raise SystemExit("sequence table has no even first-header offset")
     entry_count = first_header_offset // 2
     entries: dict[str, Any] = {}
+    header_addresses: list[int] = []
     for sound_id in range(entry_count):
         table_address = SEQUENCE_TABLE_BASE + sound_id * 2
         header_offset = read_u16_le(image, table_address)
@@ -108,6 +131,7 @@ def sequence_table_report(image: bytes) -> dict[str, Any]:
                 f"sequence header for ID {sound_id:#x} exceeds ROM at {header_address:#x}"
             )
         track_count = image[header_address]
+        header_addresses.append(header_address)
         if track_count > SEQUENCE_TRACK_COUNT:
             raise SystemExit(
                 f"sequence header for ID {sound_id:#x} has {track_count} tracks"
@@ -143,7 +167,92 @@ def sequence_table_report(image: bytes) -> dict[str, Any]:
         "track_offset_count": SEQUENCE_TRACK_COUNT,
         "track_offset_endianness": "little",
         "entries": entries,
+        "logical_header_start": hex_address(min(header_addresses)),
+        "logical_header_end": hex_address(max(
+            int(value["header_address"], 16) + value["logical_header_size"] - 1
+            for value in entries.values()
+        )),
     }
+
+
+def sequence_stream_ranges(image: bytes) -> list[dict[str, Any]]:
+    """Decode every table-referenced stream through its terminal 0x60 event."""
+    owners: dict[int, list[dict[str, Any]]] = {}
+    first_header_offset = read_u16_le(image, SEQUENCE_TABLE_BASE)
+    entry_count = first_header_offset // 2
+    for sound_id in range(entry_count):
+        header_offset = read_u16_le(image, SEQUENCE_TABLE_BASE + sound_id * 2)
+        header_address = SEQUENCE_TABLE_BASE + header_offset
+        track_count = image[header_address]
+        for track_index in range(track_count):
+            offset = read_u16_le(image, header_address + 1 + track_index * 2)
+            stream_address = SEQUENCE_TABLE_BASE + offset
+            owners.setdefault(stream_address, []).append({
+                "sound_id": f"0x{sound_id:02X}",
+                "track": track_index,
+            })
+
+    def read_until_stop(start: int) -> tuple[int, int]:
+        cursor = start
+        event_count = 0
+        while cursor < len(image):
+            opcode = image[cursor]
+            cursor += 1
+            while opcode >= 0x80:
+                continuation_class = 0xC0 if opcode >= 0xC0 else 0x80
+                while cursor < len(image):
+                    opcode = image[cursor]
+                    cursor += 1
+                    if (opcode & 0xC0) != continuation_class:
+                        break
+                else:
+                    raise SystemExit(f"sequence stream at {start:#x} ends in an operand")
+            event_count += 1
+            if opcode == 0x60:
+                return cursor, event_count
+            argument_count = SEQUENCE_CONTROL_ARGUMENT_COUNTS.get(opcode, 0)
+            if cursor + argument_count > len(image):
+                raise SystemExit(f"sequence stream at {start:#x} lacks a control argument")
+            cursor += argument_count
+        raise SystemExit(f"sequence stream at {start:#x} has no 0x60 terminator")
+
+    result: list[dict[str, Any]] = []
+    for start in sorted(owners):
+        end_exclusive, event_count = read_until_stop(start)
+        result.append({
+            "start": hex_address(start),
+            "end_inclusive": hex_address(end_exclusive - 1),
+            "size": end_exclusive - start,
+            "terminator": "0x60",
+            "event_count": event_count,
+            "owners": owners[start],
+        })
+    previous_end = None
+    for stream in result:
+        start = int(stream["start"], 16)
+        end = int(stream["end_inclusive"], 16)
+        if previous_end is not None and start < previous_end:
+            raise SystemExit("referenced sequence streams overlap")
+        previous_end = end
+    return result
+
+
+def coalesce_sequence_stream_ranges(streams: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Coalesce adjacent decoded streams without hiding their ownership."""
+    result: list[dict[str, Any]] = []
+    for stream in streams:
+        start = int(stream["start"], 16)
+        end = int(stream["end_inclusive"], 16)
+        if result and start == int(result[-1]["end_inclusive"], 16) + 1:
+            result[-1]["end_inclusive"] = hex_address(end)
+            result[-1]["size"] += stream["size"]
+        else:
+            result.append({
+                "start": stream["start"],
+                "end_inclusive": stream["end_inclusive"],
+                "size": stream["size"],
+            })
+    return result
 
 
 def sample_descriptor_report(image: bytes) -> dict[str, Any]:
@@ -224,6 +333,14 @@ def build_report(rom: Path) -> tuple[dict[str, Any], bytes]:
         or parse_int(knowledge_samples.get("payload_size")) != SAMPLE_PAYLOAD_END - SAMPLE_PAYLOAD_START + 1
     ):
         raise SystemExit("re/sound/z80-driver.yml sample descriptor map is stale")
+    knowledge_streams = knowledge.get("sequence_streams", {}) or {}
+    if (
+        parse_int(knowledge_streams.get("stream_count")) != 297
+        or parse_int(knowledge_streams.get("data_start")) != SEQUENCE_STREAM_DATA_START
+        or parse_int(knowledge_streams.get("data_end_inclusive")) != SEQUENCE_STREAM_DATA_END
+        or parse_int(knowledge_streams.get("data_size")) != SEQUENCE_STREAM_DATA_END - SEQUENCE_STREAM_DATA_START + 1
+    ):
+        raise SystemExit("re/sound/z80-driver.yml sequence stream map is stale")
 
     image = rom.read_bytes()
     end = DRIVER_ROM_END + 1
@@ -232,6 +349,13 @@ def build_report(rom: Path) -> tuple[dict[str, Any], bytes]:
             f"driver range {DRIVER_ROM_START:#x}..{DRIVER_ROM_END:#x} exceeds {rom}"
         )
     driver = image[DRIVER_ROM_START:end]
+    sequence_streams = sequence_stream_ranges(image)
+    sequence_union = coalesce_sequence_stream_ranges(sequence_streams)
+    if len(sequence_union) != 1 or (
+        int(sequence_union[0]["start"], 16) != SEQUENCE_STREAM_DATA_START
+        or int(sequence_union[0]["end_inclusive"], 16) != SEQUENCE_STREAM_DATA_END
+    ):
+        raise SystemExit("sequence stream payload is not the expected contiguous range")
     report = {
         "format": "openaladdin-z80-sound-driver-v1",
         "rom": str(rom),
@@ -282,6 +406,12 @@ def build_report(rom: Path) -> tuple[dict[str, Any], bytes]:
             ],
         },
         "sequence_table": sequence_table_report(image),
+        "sequence_streams": {
+            "terminator": "0x60",
+            "stream_count": len(sequence_streams),
+            "ranges": sequence_streams,
+            "union_ranges": sequence_union,
+        },
         "sample_descriptor_table": sample_descriptor_report(image),
         "evidence": {
             "68k_copy_routine": "0x001E573A",

@@ -35,6 +35,14 @@ The fourth pointer sent by the 68K audio initializer is ROM `$1C73CB`. Z80
 offsets and lengths form one contiguous waveform payload at `$1C7533-$1E56BE`;
 `$1E56C0` is the next 68K audio service entry point.
 
+The 297 active sequence tracks can also be decoded deterministically: the
+stream reader consumes the encoded operands and control arguments until the
+terminal control `$60`. Genie records those individual ranges in the local
+`z80-sound-driver/driver.json` report and uses them as `AUDIO_DATA` layout
+evidence. Their union is contiguous from `$1BB317` through `$1C73CA`, so the
+packed headers and stream payload form one gap-free audio-data region before
+the sample descriptors.
+
 Regenerate the map, including the decoded music/SFX table, with:
 
 ```sh

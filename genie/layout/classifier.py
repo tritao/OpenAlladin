@@ -143,6 +143,38 @@ def _asset_candidates(root: Path, rom_size: int) -> list[Candidate]:
     return result
 
 
+def _audio_candidates(root: Path, rom_size: int) -> list[Candidate]:
+    """Use the recovered Z80 stream decoder as bounded audio evidence."""
+    document = _read_json(root / "build/re/z80-sound-driver/driver.json", rom_size)
+    if document is None:
+        return []
+    streams = document.get("sequence_streams", {})
+    ranges = streams.get("ranges", []) if isinstance(streams, dict) else []
+    result = []
+    for index, stream in enumerate(ranges):
+        if not isinstance(stream, dict):
+            continue
+        try:
+            start = parse_int(stream["start"])
+            end = parse_int(stream["end_inclusive"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        owners = stream.get("owners", [])
+        owner = owners[0] if isinstance(owners, list) and owners else {}
+        sound_id = owner.get("sound_id", "unknown") if isinstance(owner, dict) else "unknown"
+        track = owner.get("track", index) if isinstance(owner, dict) else index
+        result.append(Candidate(
+            start,
+            end,
+            "AUDIO_DATA",
+            "z80.sequence_stream",
+            92,
+            f"AUDIO_Z80_SEQUENCE_STREAM_{sound_id}_{track:02d}",
+            ("z80_sequence_stream_decoder",),
+        ))
+    return result
+
+
 def _jump_table_candidates(database: AnalysisDatabase, rom_size: int) -> list[Candidate]:
     """Convert decompiler-recovered load tables into explicit JUMP_TABLE ranges."""
 
@@ -269,6 +301,7 @@ def build_layout(
         ):
             candidates.extend(_stream_candidates(root / relative, rom_size, layout_class))
         candidates.extend(_asset_candidates(root, rom_size))
+        candidates.extend(_audio_candidates(root, rom_size))
 
     ranges = partition(candidates, rom_size)
     sources = tuple(sorted({item.source for item in candidates}))

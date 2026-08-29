@@ -60,6 +60,18 @@ sequence_table:
   track_offset_count: 16
   track_offset_endianness: little
   base_address_is: 24-bit ROM address used by the banked read helper
+  header_format: variable logical record; fixed 0x21-byte Z80 copy window
+  logical_record_size: 1 + 2 * track_count
+  logical_header_start: 0x001BB053
+  logical_header_end: 0x001BB316
+
+sequence_streams:
+  terminator: 0x60
+  bounds: decoded from each active track offset through its terminal event
+  stream_count: 297
+  data_start: 0x001BB317
+  data_end_inclusive: 0x001C73CA
+  data_size: 49332
 
 sample_descriptor_table:
   address: 0x001C73CB

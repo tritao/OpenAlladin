@@ -47,6 +47,26 @@
     - audio_initialize_pointer_tuple
     - z80_audio_sequence_table_static_v1
 
+0x001BB053:
+  name: AUDIO_Z80_SEQUENCE_HEADER_DATA
+  type: z80_sequence_header_data
+  size: 0x2C4
+  confidence: confirmed
+  description: Packed logical sound-sequence headers addressed by AUDIO_Z80_SEQUENCE_POINTER_TABLE. Each record begins with a track count followed by that many little-endian offsets; the Z80 copies a fixed 0x21-byte window from the selected record, so records are variable-sized and packed from 0x001BB053 through 0x001BB316.
+  evidence:
+    - z80_sequence_loader_000BDF
+    - z80_sequence_header_packing_static_v1
+
+0x001BB317:
+  name: AUDIO_Z80_SEQUENCE_STREAM_DATA
+  type: z80_sequence_stream_data
+  size: 0xC0B4
+  confidence: confirmed
+  description: Complete contiguous payload of the 297 active Z80 sound tracks referenced by AUDIO_Z80_SEQUENCE_HEADER_DATA. The stream decoder consumes encoded operands and handler-specific control arguments through terminal 0x60 events, covering 0x001BB317-0x001C73CA without gaps or overlaps.
+  evidence:
+    - z80_sequence_stream_decoder
+    - z80_sequence_stream_extent_static_v1
+
 0x001C73CB:
   name: AUDIO_Z80_SAMPLE_DESCRIPTOR_TABLE
   type: z80_sample_descriptor_table

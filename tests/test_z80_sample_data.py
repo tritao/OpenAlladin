@@ -4,6 +4,7 @@ from genie.common import ROOT, load_yaml, parse_int
 from genie.games.aladdin.mame.z80_sound import (
     SEQUENCE_TABLE_BASE,
     SAMPLE_DESCRIPTOR_TABLE_BASE,
+    sequence_stream_ranges,
 )
 
 
@@ -33,3 +34,21 @@ def test_z80_sample_descriptors_bound_contiguous_waveform_payload():
     assert base + previous_end - 1 == payload_end
     assert payload_end == 0x001E56BE
     assert len(rom[payload_start:payload_end + 1]) == parse_int(table["payload_size"])
+
+
+def test_z80_sequence_streams_are_non_overlapping_and_terminal():
+    rom = (ROOT / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    streams = sequence_stream_ranges(rom)
+    assert len(streams) == 297
+    previous_end = None
+    for stream in streams:
+        start = parse_int(stream["start"])
+        end = parse_int(stream["end_inclusive"])
+        assert stream["terminator"] == "0x60"
+        assert end >= start
+        if previous_end is not None:
+            assert start == previous_end + 1
+        previous_end = end
+    assert streams[0]["start"] == "0x1BB317"
+    assert streams[-1]["end_inclusive"] == "0x1C73CA"
+    assert sum(parse_int(stream["size"]) for stream in streams) == 0xC0B4

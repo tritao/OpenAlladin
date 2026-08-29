@@ -37,6 +37,20 @@
       "header_size": 33
     },
     {
+      "address": "0x001BB053",
+      "name": "AUDIO_Z80_SEQUENCE_HEADER_DATA",
+      "logical_header_end": "0x001BB316",
+      "record_count": 114,
+      "record_format": "track-count byte followed by track-count little-endian offsets"
+    },
+    {
+      "address": "0x001BB317",
+      "name": "AUDIO_Z80_SEQUENCE_STREAM_DATA",
+      "end": "0x001C73CA",
+      "stream_count": 297,
+      "terminator": "0x60"
+    },
+    {
       "address": "0x1336",
       "name": "Z80_LoadSampleDescriptor",
       "pointer": "0x001C73CB",
