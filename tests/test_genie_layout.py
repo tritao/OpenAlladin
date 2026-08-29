@@ -1382,3 +1382,30 @@ def test_whole_rom_validator_reports_missing_scheduler_fact(tmp_path):
 
     errors = validate_database(AnalysisDatabase(database_root), root=tmp_path)
     assert any("direct scheduler calls" in error for error in errors)
+
+
+def test_scene_transition_closing_and_sound_test_streams_are_exact():
+    symbols = SymbolStore()
+    closing = symbols.at(0x00128E45, include_ranges=False)
+    assert closing is not None
+    assert closing.name == "SCENE_TRANSITION_CLOSING_STREAM"
+    assert closing.end == 0x00128E4A
+    assert closing.size == 6
+    assert closing.metadata["type"] == "scene_resource_stream"
+
+    embedded = symbols.at(0x00128E49, include_ranges=False)
+    assert embedded is not None
+    assert embedded.name == "SCENE_TRANSITION_CLOSING_STREAM_BASE0000_ENTRY"
+    assert embedded.metadata["alias_of"] == "SCENE_TRANSITION_CLOSING_STREAM"
+    assert embedded.metadata["entry_offset"] == 4
+
+    sound_test = symbols.at(0x00128E4D, include_ranges=False)
+    assert sound_test is not None
+    assert sound_test.name == "SOUND_TEST_PRESENTATION_STREAM"
+    assert sound_test.end == 0x00128E4E
+    assert sound_test.size == 2
+    assert sound_test.metadata["type"] == "scene_resource_stream"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x00128E45:0x00128E4B] == bytes.fromhex("032820000800")
+    assert rom[0x00128E4D:0x00128E4F] == bytes.fromhex("0A00")

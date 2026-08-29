@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-scene-transition-closing-stream-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Bound the small scene-transition and sound-test command streams adjacent to the credits corpus.",
+  "streams": [
+    {
+      "address": "0x00128E45",
+      "name": "SCENE_TRANSITION_CLOSING_STREAM",
+      "range": ["0x00128E45", "0x00128E4A"],
+      "size": 6,
+      "consumer": "SceneResource_RunTransitionCommandStream at 0x001B46BC",
+      "commands": [
+        "0x03 fill row: count 0x28, tile word 0x2000",
+        "0x08 set tile base 0x0000",
+        "0x00 end at 0x00128E4A"
+      ]
+    },
+    {
+      "address": "0x00128E49",
+      "name": "SCENE_TRANSITION_CLOSING_STREAM_BASE0000_ENTRY",
+      "alias_of": "SCENE_TRANSITION_CLOSING_STREAM",
+      "entry_offset": 4,
+      "consumer": "SoundTest_RenderSelectedEntry at 0x001B465A"
+    },
+    {
+      "address": "0x00128E4D",
+      "name": "SOUND_TEST_PRESENTATION_STREAM",
+      "range": ["0x00128E4D", "0x00128E4E"],
+      "size": 2,
+      "consumer": "SoundTest_RenderSelectedEntry at 0x001B4626",
+      "commands": ["0x0A set tile base 0x4000", "0x00 end"]
+    }
+  ],
+  "boundary_basis": "The transition closing stream ends at its command-0 terminator 0x00128E4A. Its 0x00128E49 entry is an embedded alias, while the directly selected sound-test stream begins at 0x00128E4D and ends at 0x00128E4E.",
+  "evidence": [
+    "Fresh instructions.json DATA references from 0x001B46B6, 0x001B465A, and 0x001B4626",
+    "Scene-resource command dispatch table at 0x000049D8",
+    "Exact command operands and command-0 terminators"
+  ],
+  "conclusion": "The small command records adjacent to ROM_CREDITS_STREAM are now bounded without absorbing the unselected records at 0x00128E4B and 0x00128E4F.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

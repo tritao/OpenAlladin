@@ -300,6 +300,40 @@
     - scene_resource_transition_command_interpreter
     - rom_credits_stream_00127E8C
 
+0x00128E45:
+  name: SCENE_TRANSITION_CLOSING_STREAM
+  type: scene_resource_stream
+  size: 6
+  confidence: decompiled
+  description: Six-byte scene-transition closing command stream consumed by SceneResource_RunTransitionCommandStream at 0x001B46BC. It fills a 0x28-word row with tile word 0x2000, enters tile base 0x0000 through the embedded 0x00128E49 entry, and terminates at 0x00128E4A.
+  evidence:
+    - scene_transition_closing_stream_static_decompilation
+    - ghidra_scene_resource_run_transition_command_stream
+    - scene_resource_command_table
+
+0x00128E49:
+  name: SCENE_TRANSITION_CLOSING_STREAM_BASE0000_ENTRY
+  type: scene_resource_stream
+  alias_of: SCENE_TRANSITION_CLOSING_STREAM
+  entry_offset: 4
+  confidence: decompiled
+  description: Embedded base-0x0000 entry into SCENE_TRANSITION_CLOSING_STREAM selected directly by SoundTest_RenderSelectedEntry at 0x001B465A. It does not claim a second ROM ownership range.
+  evidence:
+    - scene_transition_closing_stream_static_decompilation
+    - ghidra_sound_test_render_selected_entry
+    - scene_resource_command_table
+
+0x00128E4D:
+  name: SOUND_TEST_PRESENTATION_STREAM
+  type: scene_resource_stream
+  size: 2
+  confidence: decompiled
+  description: Two-byte sound-test presentation command stream consumed directly by SoundTest_RenderSelectedEntry at 0x001B4626. It selects tile base 0x4000 and terminates with command 0.
+  evidence:
+    - menu_soundtest_credits_static_decompilation
+    - ghidra_sound_test_render_selected_entry
+    - scene_resource_command_table
+
 0x0012675E:
   name: SOUND_TEST_ENTRY_TABLE
   type: sound_test_entry_table
