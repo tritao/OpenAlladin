@@ -123,8 +123,12 @@ def _asset_candidates(root: Path, rom_size: int) -> list[Candidate]:
             continue
         try:
             start = parse_int(block["offset"])
-            end = parse_int(block["end"])
+            # The RNC manifest follows Python's half-open convention: end is
+            # the first ROM byte after the self-contained compressed block.
+            end = parse_int(block["end"]) - 1
         except (KeyError, TypeError, ValueError):
+            continue
+        if end < start:
             continue
         refs = " ".join(str(item).lower() for item in block.get("references", ()) or ())
         if any(token in refs for token in (".chars", ".parallax", ".palette")):

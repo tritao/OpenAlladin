@@ -148,6 +148,28 @@ def test_layout_uses_chopper_graphics_manifest(tmp_path):
     assert layout.at(0x80).name == "SPRITE_TILE_DATA"
 
 
+def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    database_root = _write_database(tmp_path)
+    assets = tmp_path / "build/assets"
+    assets.mkdir(parents=True)
+    _write_json(assets / "manifest.json", {
+        "rom": {"size": 0x100},
+        "inventory": {"rnc_blocks": [
+            {"offset": "0x20", "end": "0x28", "references": ["first"]},
+            {"offset": "0x28", "end": "0x30", "references": ["second"]},
+        ]},
+    })
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path)
+    first = layout.at(0x27)
+    second = layout.at(0x28)
+    assert first is not None and first.layout_class == "COMPRESSED_DATA"
+    assert first.end == 0x27
+    assert second is not None and second.layout_class == "COMPRESSED_DATA"
+    assert second.start == 0x28
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(
