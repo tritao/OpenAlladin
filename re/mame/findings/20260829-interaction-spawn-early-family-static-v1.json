@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-spawn-early-family-targets.json",
+  "dispatch_table": {
+    "address": "0x004154",
+    "name": "INTERACTION_HANDLER_TABLE",
+    "newly_named_targets": 21
+  },
+  "handler_contracts": [
+    { "address": "0x001B65C0", "selector": "0x20", "template": "ACTOR_TEMPLATE_TYPE_84_INTERACTION_OFFSET", "effect": "reverse/forward interaction allocation with Y += 0x0A" },
+    { "address": "0x001B65D4", "selector": "0x4B", "template": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION", "effect": "reverse-slot interaction allocation" },
+    { "address": "0x001B65E0", "selector": "0xA4", "template": "ACTOR_TEMPLATE_TYPE_32_INTERACTION", "effect": "allocation with Y += 0x08" },
+    { "address": "0x001B65F4", "selector": "0xF4", "template": "ACTOR_TEMPLATE_TYPE_62_DEFAULT_RESPONSE or ACTOR_TEMPLATE_TYPE_62_SCENE5_RESPONSE", "effect": "gate on 0x00FFF10E then scene-specific spawn with Y -= 0x08" },
+    { "address": "0x001B6622", "selector": "0xEE", "template": "ACTOR_TEMPLATE_TYPE_64", "effect": "allocation with X += 0x10" },
+    { "address": "0x001B6636", "selector": "0x35", "template": "ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE", "effect": "runtime type 0x1A with X/Y += 0x10" },
+    { "address": "0x001B6654", "selector": "0x36", "template": "ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE", "effect": "runtime type 0x1B, facing 0xFF, X/Y += 0x10" },
+    { "address": "0x001B6672", "selector": "0x37", "template": "ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE", "effect": "runtime type 0x1C with Y += 0x10" },
+    { "address": "0x001B668A", "selector": "0x75", "template": "ACTOR_TEMPLATE_TYPE_58_INTERACTION", "effect": "forward-slot allocation" },
+    { "address": "0x001B6696", "selector": "0x76", "template": "ACTOR_TEMPLATE_TYPE_58_INTERACTION", "effect": "allocation with animation root 0x00125348" },
+    { "address": "0x001B66AC", "selector": "0x7B", "template": "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E", "effect": "offset (+8,0)" },
+    { "address": "0x001B66C0", "selector": "0x7C", "template": "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E", "effect": "offset (+8,+4)" },
+    { "address": "0x001B66D8", "selector": "0x7D", "template": "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E", "effect": "offset (+8,+8)" },
+    { "address": "0x001B66F2", "selector": "0x7E", "template": "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E", "effect": "offset (+8,+0x0C)" },
+    { "address": "0x001B670C", "selector": "0x74", "template": "ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE", "effect": "offset (-8,+4)" },
+    { "address": "0x001B6726", "selector": "0x45", "template": "ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION", "effect": "reverse-slot allocation" },
+    { "address": "0x001B6732", "selector": "0x48", "template": "ACTOR_TEMPLATE_TYPE_8C", "effect": "reverse-slot allocation" },
+    { "address": "0x001B673E", "selector": "0xD6", "template": "ACTOR_TEMPLATE_TYPE_76_INTERACTION", "effect": "LevelObjectSpawnEntry allocation" },
+    { "address": "0x001B674A", "selector": "0xD8", "template": "ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE", "effect": "reverse-slot allocation" },
+    { "address": "0x001B6756", "selector": "0x8F", "template": "ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE or ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE_ALT", "effect": "scene/gate selection and optional palette-band refresh" }
+  ],
+  "evidence": [
+    "Direct template loads in the handler bodies",
+    "InteractionSpawn_ReverseSlot, InteractionHandler_0x40_Helper, and LevelObjectSpawnEntry calls",
+    "Exact post-allocation field writes and coordinate offsets"
+  ],
+  "conclusion": "The selected interaction-table handlers are named by exact allocation and field-write contracts. No dynamic route or user-facing actor interpretation is inferred.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

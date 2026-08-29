@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-interaction-spawn-early-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0x20, 0x35-0x37, 0x45, 0x48, 0x4B, 0x74-0x7E, 0x8F, 0xA4, 0xD6, 0xD8, 0xEF, 0xEE, 0xF4",
+    "newly_named_targets": 21,
+    "handlers": [
+      { "selector": "0x20", "address": "0x001B65C0", "name": "InteractionSpawn_Type84OffsetY10" },
+      { "selector": "0x4B", "address": "0x001B65D4", "name": "InteractionSpawn_Type84Terminal" },
+      { "selector": "0xA4", "address": "0x001B65E0", "name": "InteractionSpawn_Type32OffsetY8" },
+      { "selector": "0xF4", "address": "0x001B65F4", "name": "InteractionGate_Type62ByScene" },
+      { "selector": "0xEF", "address": "0x001B65FE", "name": "InteractionSpawn_Type62ByScene" },
+      { "selector": "0xEE", "address": "0x001B6622", "name": "InteractionSpawn_Type64OffsetX16" },
+      { "selector": "0x35", "address": "0x001B6636", "name": "InteractionSpawn_Type1AOffset" },
+      { "selector": "0x36", "address": "0x001B6654", "name": "InteractionSpawn_Type1BOffset" },
+      { "selector": "0x37", "address": "0x001B6672", "name": "InteractionSpawn_Type1COffset" },
+      { "selector": "0x75", "address": "0x001B668A", "name": "InteractionSpawn_Type58" },
+      { "selector": "0x76", "address": "0x001B6696", "name": "InteractionSpawn_Type58AlternateAnimation" },
+      { "selector": "0x7B", "address": "0x001B66AC", "name": "InteractionSpawn_Type55OffsetY0" },
+      { "selector": "0x7C", "address": "0x001B66C0", "name": "InteractionSpawn_Type55OffsetY4" },
+      { "selector": "0x7D", "address": "0x001B66D8", "name": "InteractionSpawn_Type55OffsetY8" },
+      { "selector": "0x7E", "address": "0x001B66F2", "name": "InteractionSpawn_Type55OffsetY12" },
+      { "selector": "0x74", "address": "0x001B670C", "name": "InteractionSpawn_Type74Offset" },
+      { "selector": "0x45", "address": "0x001B6726", "name": "InteractionSpawn_Type07" },
+      { "selector": "0x48", "address": "0x001B6732", "name": "InteractionSpawn_Type8C" },
+      { "selector": "0xD6", "address": "0x001B673E", "name": "InteractionSpawn_Type76" },
+      { "selector": "0xD8", "address": "0x001B674A", "name": "InteractionSpawn_Type74" },
+      { "selector": "0x8F", "address": "0x001B6756", "name": "InteractionSpawn_Type84TerrainResponseByScene" }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each target body",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Established actor-template records and interaction spawn helper contracts"
+  ],
+  "conclusion": "The early interaction table cluster is now named by runtime actor type, selector-specific coordinate offsets, scene gates, and allocation helper. User-facing actor roles remain intentionally outside this static result.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

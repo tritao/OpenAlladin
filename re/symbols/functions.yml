@@ -3474,3 +3474,171 @@
     - ghidra_disassembly_001B65BE
     - terrain_response_family_targets
     - terrain_response_family_static_decompilation
+0x001B65C0:
+  name: InteractionSpawn_Type84OffsetY10
+  confidence: decompiled
+  description: Interaction selector 0x20 handler that allocates the type-0x84 interaction-offset template and adds 0x0A to the spawned actor Y coordinate.
+  evidence:
+    - ghidra_disassembly_001B65C0
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B65D4:
+  name: InteractionSpawn_Type84Terminal
+  confidence: decompiled
+  description: Interaction selector 0x4B handler that allocates the type-0x84 terminal-interaction template through the reverse-slot path.
+  evidence:
+    - ghidra_disassembly_001B65D4
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B65E0:
+  name: InteractionSpawn_Type32OffsetY8
+  confidence: decompiled
+  description: Interaction selector 0xA4 handler that allocates the type-0x32 interaction template and adds 0x08 to the spawned actor Y coordinate.
+  evidence:
+    - ghidra_disassembly_001B65E0
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B65F4:
+  name: InteractionGate_Type62ByScene
+  confidence: decompiled
+  description: Interaction selector 0xF4 gate that suppresses the type-0x62 response when the interaction gate byte at 0x00FFF10E is set, otherwise dispatching to the scene-specific type-0x62 spawn body.
+  evidence:
+    - ghidra_disassembly_001B65F4
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B65FE:
+  name: InteractionSpawn_Type62ByScene
+  confidence: decompiled
+  description: Interaction selector 0xEF handler that chooses the type-0x62 scene-5 or default template from SCENE_STATE, allocates through the variant path, and subtracts 0x08 from the spawned actor Y coordinate.
+  evidence:
+    - ghidra_disassembly_001B65FE
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B6622:
+  name: InteractionSpawn_Type64OffsetX16
+  confidence: decompiled
+  description: Interaction selector 0xEE handler that allocates the type-0x64 template and adds 0x10 to the spawned actor X coordinate.
+  evidence:
+    - ghidra_disassembly_001B6622
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B6636:
+  name: InteractionSpawn_Type1AOffset
+  confidence: decompiled
+  description: Interaction selector 0x35 handler that allocates the shared presentation template, sets runtime type 0x1A, and adds 0x10 to both spawned actor coordinates.
+  evidence:
+    - ghidra_disassembly_001B6636
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B6654:
+  name: InteractionSpawn_Type1BOffset
+  confidence: decompiled
+  description: Interaction selector 0x36 handler that allocates the shared presentation template, sets runtime type 0x1B and horizontal-facing byte 0xFF, and applies the recorded coordinate offsets.
+  evidence:
+    - ghidra_disassembly_001B6654
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B6672:
+  name: InteractionSpawn_Type1COffset
+  confidence: decompiled
+  description: Interaction selector 0x37 handler that allocates the shared presentation template, sets runtime type 0x1C, and adds 0x10 to the spawned actor Y coordinate.
+  evidence:
+    - ghidra_disassembly_001B6672
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B668A:
+  name: InteractionSpawn_Type58
+  confidence: decompiled
+  description: Interaction selector 0x75 handler that allocates the type-0x58 interaction template through the forward-slot path.
+  evidence:
+    - ghidra_disassembly_001B668A
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B6696:
+  name: InteractionSpawn_Type58AlternateAnimation
+  confidence: decompiled
+  description: Interaction selector 0x76 handler that allocates the type-0x58 interaction template and replaces its animation root with 0x00125348 after allocation.
+  evidence:
+    - ghidra_disassembly_001B6696
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B66AC:
+  name: InteractionSpawn_Type55OffsetY0
+  confidence: decompiled
+  description: Interaction selector 0x7B handler that allocates the shared type-0x55 template and applies an offset of (+0x08, +0x00).
+  evidence:
+    - ghidra_disassembly_001B66AC
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B66C0:
+  name: InteractionSpawn_Type55OffsetY4
+  confidence: decompiled
+  description: Interaction selector 0x7C handler that allocates the shared type-0x55 template and applies an offset of (+0x08, +0x04).
+  evidence:
+    - ghidra_disassembly_001B66C0
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B66D8:
+  name: InteractionSpawn_Type55OffsetY8
+  confidence: decompiled
+  description: Interaction selector 0x7D handler that allocates the shared type-0x55 template and applies an offset of (+0x08, +0x08).
+  evidence:
+    - ghidra_disassembly_001B66D8
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B66F2:
+  name: InteractionSpawn_Type55OffsetY12
+  confidence: decompiled
+  description: Interaction selector 0x7E handler that allocates the shared type-0x55 template and applies an offset of (+0x08, +0x0C).
+  evidence:
+    - ghidra_disassembly_001B66F2
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B670C:
+  name: InteractionSpawn_Type74Offset
+  confidence: decompiled
+  description: Interaction selector 0x74 handler that allocates the type-0x74 terrain-response template and applies an offset of (-0x08, +0x04).
+  evidence:
+    - ghidra_disassembly_001B670C
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B6726:
+  name: InteractionSpawn_Type07
+  confidence: decompiled
+  description: Interaction selector 0x45 handler that allocates the type-0x07 moving-interaction template through the reverse-slot path.
+  evidence:
+    - ghidra_disassembly_001B6726
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B6732:
+  name: InteractionSpawn_Type8C
+  confidence: decompiled
+  description: Interaction selector 0x48 handler that allocates the type-0x8C landing-response template through the reverse-slot path.
+  evidence:
+    - ghidra_disassembly_001B6732
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B673E:
+  name: InteractionSpawn_Type76
+  confidence: decompiled
+  description: Interaction selector 0xD6 handler that allocates the type-0x76 interaction template through LevelObjectSpawnEntry.
+  evidence:
+    - ghidra_disassembly_001B673E
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B674A:
+  name: InteractionSpawn_Type74
+  confidence: decompiled
+  description: Interaction selector 0xD8 handler that allocates the type-0x74 terrain-response template through the reverse-slot path.
+  evidence:
+    - ghidra_disassembly_001B674A
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation
+0x001B6756:
+  name: InteractionSpawn_Type84TerrainResponseByScene
+  confidence: decompiled
+  description: Interaction selector 0x8F handler that chooses between two type-0x84 terrain-response templates from scene state and response gate, then optionally refreshes palette band 2 after allocation.
+  evidence:
+    - ghidra_disassembly_001B6756
+    - interaction_spawn_early_family_targets
+    - interaction_spawn_early_family_static_decompilation

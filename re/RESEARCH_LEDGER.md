@@ -2737,3 +2737,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-actor-vm-dispatch-family-static-v1` | recorded-static-decompilation | Complete shared EA-FE/80-94 actor-VM dispatch family named from exact 68000 handler bodies |
 | `20260829-level-event-command-family-static-v1` | recorded-static-decompilation | Complete 26-entry level-event command family named from exact 68000 handler bodies |
 | `20260829-terrain-response-family-static-v1` | recorded-static-decompilation | Remaining terrain-response table handlers named from exact 68000 bodies and behavior-byte membership |
+| `20260829-interaction-spawn-early-family-static-v1` | recorded-static-decompilation | Early interaction-table spawn and response handlers named from exact 68000 bodies and selector-specific offsets |
