@@ -4724,3 +4724,30 @@
     - ghidra_disassembly_001B2F7E
     - ghidra_scene-render-service-targets
     - scene-render-service-static-decompilation
+0x001B32B4:
+  name: Frame_WaitForVBlankAndDelay11
+  confidence: decompiled
+  size: 20
+  description: Preserves the caller's D0 word, waits for one VBlank through Frame_WaitForVBlankWork, burns eleven NOP iterations, restores D0, and returns.
+  evidence:
+    - ghidra_disassembly_001B32B4
+    - ghidra_scene-terrain-utility-targets
+    - scene-terrain-utility-static-decompilation
+0x001B3312:
+  name: SceneResource_ClearScratchWords
+  confidence: decompiled
+  size: 18
+  description: Clears 448 words beginning at 0x00FFF17A, covering the fixed scene-resource scratch region, and returns.
+  evidence:
+    - ghidra_disassembly_001B3312
+    - ghidra_scene-terrain-utility-targets
+    - scene-terrain-utility-static-decompilation
+0x001B3406:
+  name: Terrain_WriteMapWordAtOffset
+  confidence: decompiled
+  size: 16
+  description: Indexes TERRAIN_ROW_POINTER_TABLE at 0x00FF9884 with D1, adds the signed D0 word offset within the selected row, and writes D2 as the map word at the resulting terrain address.
+  evidence:
+    - ghidra_disassembly_001B3406
+    - ghidra_scene-terrain-utility-targets
+    - scene-terrain-utility-static-decompilation

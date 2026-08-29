@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-scene-terrain-utilities-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "focus": {
+    "name": "scene-terrain-utilities",
+    "purpose": "Record three complete utility bodies in the post-render service region without inferring unavailable callers or higher-level roles."
+  },
+  "targets": [
+    {
+      "address": "0x001B32B4",
+      "name": "Frame_WaitForVBlankAndDelay11",
+      "size": 20,
+      "end": "0x001B32C7",
+      "contract": "Preserve D0, wait for VBlank, execute eleven NOP iterations, restore D0, and return."
+    },
+    {
+      "address": "0x001B3312",
+      "name": "SceneResource_ClearScratchWords",
+      "size": 18,
+      "end": "0x001B3323",
+      "contract": "Clear 448 words at 0x00FFF17A through a DBF loop."
+    },
+    {
+      "address": "0x001B3406",
+      "name": "Terrain_WriteMapWordAtOffset",
+      "size": 16,
+      "end": "0x001B3415",
+      "contract": "Load a row pointer from 0x00FF9884 using D1, add D0 as a signed word offset, and store D2 at the resulting address."
+    }
+  ],
+  "memory_references": [
+    { "address": "0x00FF9884", "name": "TERRAIN_ROW_POINTER_TABLE" },
+    { "address": "0x00FFF17A", "name": "SCENE_RESOURCE_SCRATCH_BASE" }
+  ],
+  "relationships": [
+    "0x001B32B4 calls Frame_WaitForVBlankWork at 0x001B249E.",
+    "0x001B3406 consumes TERRAIN_ROW_POINTER_TABLE, the same row-pointer table used by Terrain_ResolvePlayerCell."
+  ],
+  "limitations": [
+    "The current whole-ROM export reports no direct static callers for these formerly unassigned entries.",
+    "The exact semantic subdivision of the 0x00FFF17A scratch region remains unresolved; the target records its fixed address and extent without introducing a broader RAM model."
+  ]
+}

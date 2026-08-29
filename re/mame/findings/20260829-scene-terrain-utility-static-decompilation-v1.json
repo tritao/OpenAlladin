@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-terrain-utility-targets.json",
+  "functions": [
+    {
+      "address": "0x001B32B4",
+      "name": "Frame_WaitForVBlankAndDelay11",
+      "range": ["0x001B32B4", "0x001B32C7"],
+      "confidence": "decompiled",
+      "body": "Saves the incoming D0 word, calls Frame_WaitForVBlankWork, loads D0 with 10, executes the NOP at 0x001B32BE eleven times with DBF, restores the original D0, and returns.",
+      "effect": "Adds one VBlank synchronization followed by an exact eleven-iteration delay while preserving D0."
+    },
+    {
+      "address": "0x001B3312",
+      "name": "SceneResource_ClearScratchWords",
+      "range": ["0x001B3312", "0x001B3323"],
+      "confidence": "decompiled",
+      "body": "Loads A0 with 0x00FFF17A, loads D4 with 0x01BF, clears the word at (A0)+, and repeats through DBF for 448 words before returning.",
+      "effect": "Clears the fixed 896-byte scene-resource scratch block beginning at 0x00FFF17A."
+    },
+    {
+      "address": "0x001B3406",
+      "name": "Terrain_WriteMapWordAtOffset",
+      "range": ["0x001B3406", "0x001B3415"],
+      "confidence": "decompiled",
+      "body": "Loads A0 with TERRAIN_ROW_POINTER_TABLE at 0x00FF9884, selects the row pointer at D1.w, adds D0.w to that row address, stores D2.w at the resulting map location, and returns.",
+      "effect": "Writes one word into a selected runtime terrain row at a caller-provided signed byte offset."
+    }
+  ],
+  "relationships": {
+    "shared_helpers": ["0x001B249E Frame_WaitForVBlankWork"],
+    "terrain_state": "0x00FF9884 TERRAIN_ROW_POINTER_TABLE",
+    "scratch_state": "0x00FFF17A-0x00FFF4F9, 448 words"
+  },
+  "limitations": [
+    "No direct static caller was exported for the three entries, so their local register/address contracts are recorded without assigning a scene, menu, or terrain gameplay path.",
+    "The write helper's caller-supplied row and byte offset semantics are exact from the instruction sequence; the higher-level reason for mutating the terrain buffer remains unresolved."
+  ],
+  "conclusion": "Three complete utility bodies in the scene/terrain service region are now bounded and named by their exact synchronization, scratch-clear, and row-pointer write contracts."
+}
