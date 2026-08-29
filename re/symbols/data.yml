@@ -425,10 +425,11 @@
 
 0x001235AC:
   name: ACTOR_ANIM_TYPE_21_PROXIMITY
-  confidence: probable
-  description: Selector-0x1A type-0x21 animation stream; it performs player-Y proximity checks and calls the secondary stream at 0x0012355A without installing actor movement.
+  confidence: decompiled
+  description: Selector-0x1A type-0x21 animation stream; its lossless decode opens with frame 0x001F286A, clears or updates facing through F7, tests player Y distance 0x40, and calls the secondary stream at 0x0012355A without installing actor movement.
   evidence:
     - ghidra_type21_targeted_decompile
+    - actor_type21_proximity_stream_decode
     - animation_stream_decoder
     - mame_type21_settle_trace
 

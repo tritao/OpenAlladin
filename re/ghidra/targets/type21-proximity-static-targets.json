@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-type21-proximity-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "actor_path": {
+    "handler": {
+      "address": "0x001B6ED0",
+      "name": "InteractionHandler_Type21",
+      "selector": "0x1A",
+      "template": "0x001B7C24 ACTOR_TEMPLATE_UPPER_TYPE1E",
+      "runtime_type": "0x21",
+      "animation_root": "0x001235AC"
+    },
+    "animation": {
+      "address": "0x001235AC",
+      "name": "ACTOR_ANIM_TYPE_21_PROXIMITY",
+      "linear_prefix_bytes": 18,
+      "linear_prefix": [
+        "frame 0x001F286A",
+        "F7 00 facing/flip command",
+        "frame 0x001F286A",
+        "FE 40 -> 0x001235C4 player-Y proximity branch",
+        "FC 00 -> 0x0012355A secondary stream call"
+      ],
+      "secondary_stream": "0x0012355A",
+      "movement_assignment": false,
+      "control_flow_note": "The primary stream enters the dynamic secondary-stream call form; the decoder does not infer the runtime branch result."
+    },
+    "collision_dispatch": {
+      "player_collision_handler": "0x001AE796",
+      "actor_collision_handler": "0x001AC334"
+    }
+  },
+  "evidence": [
+    "Exact 68000 disassembly of InteractionHandler_Type21",
+    "Existing type-0x21 template and collision-table mappings",
+    "Lossless AnimationDecoder output for 0x001235AC"
+  ],
+  "conclusion": "The selector-0x1A actor is statically closed as a type-0x21 animation/proximity path with no movement-state installation. The secondary stream's state-dependent behavior remains represented by its raw VM control flow rather than assigned a stronger gameplay interpretation.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
