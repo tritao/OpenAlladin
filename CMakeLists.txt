@@ -186,6 +186,8 @@ add_library(openaladdin_engine STATIC
     src/player_terrain.cpp
     src/scene.cpp
     src/scene.hpp
+    src/scene_resource.cpp
+    src/scene_resource.hpp
 )
 target_include_directories(openaladdin_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_features(openaladdin_engine PUBLIC cxx_std_20)
@@ -254,6 +256,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     target_compile_features(scene_system_test PRIVATE cxx_std_20)
     openaladdin_enable_warnings(scene_system_test)
     openaladdin_enable_test_assertions(scene_system_test)
+
+    add_executable(scene_resource_test tests/scene_resource.cpp)
+    target_link_libraries(scene_resource_test PRIVATE openaladdin_engine)
+    target_compile_features(scene_resource_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(scene_resource_test)
+    openaladdin_enable_test_assertions(scene_resource_test)
 
     add_executable(actor_system_test tests/actor_system.cpp)
     target_link_libraries(actor_system_test PRIVATE openaladdin_engine)
@@ -349,6 +357,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME scene_system COMMAND scene_system_test)
     set_tests_properties(scene_system PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME scene_resource COMMAND scene_resource_test)
+    set_tests_properties(scene_resource PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME actor_system COMMAND actor_system_test)
