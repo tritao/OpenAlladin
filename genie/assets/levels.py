@@ -7,7 +7,7 @@ from pathlib import Path
 import struct
 from typing import Any
 
-from .genesis import render_tilemap
+from genie.platforms.genesis.vdp import render_tilemap
 from .png import write_rgba
 from .rnc import RncError, decompress_at, is_rnc
 

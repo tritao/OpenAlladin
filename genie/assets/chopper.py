@@ -8,7 +8,8 @@ from pathlib import Path
 import struct
 from typing import Any
 
-from .genesis import decode_tile, genesis_color
+from genie.platforms.genesis.rom import has_genesis_header
+from genie.platforms.genesis.vdp import decode_tile, genesis_color
 from .png import write_rgba
 
 
@@ -284,7 +285,7 @@ def _render_frame(frame: ChopperFrame, tile_sets: dict[str, _TileSet], output: P
 
 def extract_chopper(rom: bytes, output_root: Path) -> dict[str, Any]:
     parser = ChopperParser(rom)
-    if rom[0x100:0x104] != b"SEGA":
+    if not has_genesis_header(rom):
         return {"supported": False, "reason": "missing Genesis header"}
     found = parser.find_pointer_table()
     if found is None:

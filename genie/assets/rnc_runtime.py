@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .genesis import render_tileset
+from genie.platforms.genesis.vdp import render_tileset
 
 
 def _read_jsonl(path: Path) -> list[dict[str, Any]]:

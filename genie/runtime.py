@@ -15,6 +15,15 @@ from typing import Any, Iterable
 
 from genie.common import hashes, load_yaml, normalize_symbols, parse_int, rom_entries
 from genie.context import ProjectContext
+from genie.platforms.genesis.input import (
+    INPUT_BUTTONS,
+    INPUT_MASKS,
+    INPUT_MAPPING,
+    LEGACY_BUTTON_REMAP,
+    buttons_for_mask as genesis_buttons_for_mask,
+    client_input_tokens as genesis_client_input_tokens,
+    token_for_mask as genesis_token_for_mask,
+)
 from genie.profiles import load_profile
 
 PROJECT = ProjectContext.discover()
@@ -51,10 +60,6 @@ SEGMENTS_FORMAT = PROFILE.segments_format
 RUN_FORMAT = PROFILE.run_format
 
 STATE_FORMAT_V2, STATE_FORMAT_V3 = PROFILE.state_formats
-
-INPUT_BUTTONS = ("up", "down", "left", "right", "a", "b", "c", "start")
-
-INPUT_MASKS = {name: 1 << index for index, name in enumerate(INPUT_BUTTONS)}
 
 DEFAULT_PARITY_FIELDS = list(PROFILE.parity_fields)
 
@@ -126,13 +131,10 @@ def run_directory(name: str) -> Path:
     return directory
 
 def buttons_for_mask(mask: int) -> list[str]:
-    if mask < 0 or mask > 0xFF:
-        raise SystemExit(f"input mask out of range: {mask}")
-    return [name for name in INPUT_BUTTONS if mask & INPUT_MASKS[name]]
+    return genesis_buttons_for_mask(mask)
 
 def token_for_mask(mask: int) -> str:
-    buttons = buttons_for_mask(mask)
-    return "+".join(buttons) if buttons else "none"
+    return genesis_token_for_mask(mask)
 
 def _client_input_tokens(
     header: dict[str, Any] | None,
@@ -145,18 +147,7 @@ def _client_input_tokens(
     carry ``controller_mapping`` and need no translation; a missing mapping is
     retained as a backward-compatible legacy marker.
     """
-    if header and header.get("controller_mapping") is not None:
-        return list(tokens)
-    translated: list[str] = []
-    for token in tokens:
-        if token == "none":
-            translated.append(token)
-            continue
-        translated.append("+".join(
-            LEGACY_BUTTON_REMAP.get(part, part)
-            for part in token.split("+")
-        ))
-    return translated
+    return genesis_client_input_tokens(header, tokens)
 
 def load_input_timeline(path: Path) -> tuple[dict[str, Any] | None, list[dict[str, Any]]]:
     header: dict[str, Any] | None = None
