@@ -2994,6 +2994,16 @@
     - ghidra_presentation_interaction_dispatch_block
     - actor_template_grid_xrefs
 
+0x001B800C:
+  name: ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 presentation child template supplied by the initial F5 command at 0x00124CE6 in the shared Type-0x1A/0x1B/0x1C presentation stream. It has no movement stream, template word 0x6000, continues at animation entry 0x00124CF8, owns four resources, and carries no trailing flags; the F5 payload bytes are all zero.
+  evidence:
+    - actor_template_type84_type1a_presentation_child_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B80E8:
   name: ACTOR_TEMPLATE_TYPE_53_INTERACTION
   type: actor_template
