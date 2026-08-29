@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "fixed-palette-source-extents",
+    "purpose": "Bound the fixed 16-word palette sources loaded directly by scene, menu, transition, level, and interaction services."
+  },
+  "upload_helpers": {
+    "band2": { "address": "0x001B2650", "name": "Render_UploadPaletteBand2", "words": 16, "bytes": 32 },
+    "band3": { "address": "0x001B263C", "name": "Render_UploadPaletteBand3", "words": 16, "bytes": 32 }
+  },
+  "sources": [
+    { "address": "0x00129012", "name": "MENU_PALETTE_BAND_SOURCE_129012", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["0x001B3E38 Menu_RunOptionsAndSelectNextState"], "range": ["0x00129012", "0x00129031"] },
+    { "address": "0x00129092", "name": "LEVEL00_PALETTE_BAND_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["0x001B5B78 Level00_EnterRoutine"], "range": ["0x00129092", "0x001290B1"] },
+    { "address": "0x001290B2", "name": "SCENE_RESOURCE_PALETTE_BAND_SOURCE", "helper": "0x001B263C Render_UploadPaletteBand3", "consumers": ["Level_ExitAndTerminalTransition", "SceneResource_InitializeActiveScene", "SceneResource_RunStatePresentation", "SceneResource_InitializeTransitionPresentation", "Menu_RunOptionsAndSelectNextState", "SceneResource_InitializeScriptTransition"], "range": ["0x001290B2", "0x001290D1"] },
+    { "address": "0x00129152", "name": "INTERACTION_TYPE13_PALETTE_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["0x001B6D46 InteractionSpawn_Type13_28"], "range": ["0x00129152", "0x00129171"] },
+    { "address": "0x001292B2", "name": "INTERACTION_PALETTE_SOURCE_1292B2", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["InteractionSpawn_Type05VariantA_23_24", "InteractionSpawn_Type05VariantC_25", "InteractionSpawn_RuntimeType17_2D_2E_2F_4E_4F", "LevelEvent_SpawnType05WithPaletteRefresh"], "range": ["0x001292B2", "0x001292D1"] },
+    { "address": "0x001292F2", "name": "INTERACTION_TYPE8B_PALETTE_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["InteractionSpawn_Type8BPresentation_F5/F6/F7/F8"], "range": ["0x001292F2", "0x00129311"] },
+    { "address": "0x00129332", "name": "INTERACTION_TYPE7D_PALETTE_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["0x001B7692 LevelEvent_SpawnType7DWithPaletteRefresh"], "range": ["0x00129332", "0x00129351"] },
+    { "address": "0x001294F2", "name": "INTERACTION_TYPE0C_PALETTE_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["0x001B6FCC InteractionSpawn_Type0C_3C"], "range": ["0x001294F2", "0x00129511"] },
+    { "address": "0x00129532", "name": "INTERACTION_TYPE0B_PALETTE_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["0x001B6FA2 InteractionSpawn_Type0B_3E"], "range": ["0x00129532", "0x00129551"] },
+    { "address": "0x001295D2", "name": "INTERACTION_TYPE12_PALETTE_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["0x001B6CDA InteractionSpawn_Type12WithPresentation_4D"], "range": ["0x001295D2", "0x001295F1"] },
+    { "address": "0x001295F2", "name": "INTERACTION_TYPE11_PALETTE_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["0x001AC5E4 ActorType11_ActorCollisionHandler", "0x001B6CC0 InteractionSpawn_Type11WithPalette_1F"], "range": ["0x001295F2", "0x00129611"] },
+    { "address": "0x00129612", "name": "INTERACTION_TYPE84_TERRAIN_PALETTE_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["0x001B6786 InteractionSpawn_Type84TerrainResponseByScene"], "range": ["0x00129612", "0x00129631"] },
+    { "address": "0x00129B52", "name": "SCENE_TRANSITION_PALETTE_BAND_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["SceneResource_InitializeTransitionPresentation", "SceneResource_ClearTransitionTileBandReady"], "range": ["0x00129B52", "0x00129B71"] },
+    { "address": "0x00129B72", "name": "SCENE_TRANSITION_READY_PALETTE_SOURCE", "helper": "0x001B2650 Render_UploadPaletteBand2", "consumers": ["0x001B1640 SceneResource_SetTransitionTileBandReady"], "range": ["0x00129B72", "0x00129B91"] }
+  ],
+  "evidence": [
+    "Each listed source is loaded directly into A0 by a ROM service before calling one of the fixed 16-word palette upload helpers.",
+    "The helpers set D0 to 0x0F and execute a DBF loop, copying exactly 16 big-endian words (32 bytes).",
+    "The listed ranges are non-overlapping; adjacent unreferenced palette-like bytes remain outside this evidence slice."
+  ],
+  "limitations": [
+    "Sources reached indirectly through a published RAM pointer are not promoted here unless their direct extent was independently bounded.",
+    "Palette source names identify their verified consumer family and do not claim a complete color-theme taxonomy."
+  ]
+}

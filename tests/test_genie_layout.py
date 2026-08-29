@@ -372,6 +372,33 @@ def test_canonical_scene_transition_menu_streams_have_exact_terminals():
     assert actual == [(start, end) for start, end, _ in expected]
 
 
+def test_canonical_fixed_palette_sources_have_exact_upload_extents():
+    symbols = SymbolStore()
+    expected = (
+        (0x00129012, 0x00129031, "MENU_PALETTE_BAND_SOURCE_129012"),
+        (0x00129092, 0x001290B1, "LEVEL00_PALETTE_BAND_SOURCE"),
+        (0x001290B2, 0x001290D1, "SCENE_RESOURCE_PALETTE_BAND_SOURCE"),
+        (0x00129152, 0x00129171, "INTERACTION_TYPE13_PALETTE_SOURCE"),
+        (0x001292B2, 0x001292D1, "INTERACTION_PALETTE_SOURCE_1292B2"),
+        (0x001292F2, 0x00129311, "INTERACTION_TYPE8B_PALETTE_SOURCE"),
+        (0x00129332, 0x00129351, "INTERACTION_TYPE7D_PALETTE_SOURCE"),
+        (0x001294F2, 0x00129511, "INTERACTION_TYPE0C_PALETTE_SOURCE"),
+        (0x00129532, 0x00129551, "INTERACTION_TYPE0B_PALETTE_SOURCE"),
+        (0x001295D2, 0x001295F1, "INTERACTION_TYPE12_PALETTE_SOURCE"),
+        (0x001295F2, 0x00129611, "INTERACTION_TYPE11_PALETTE_SOURCE"),
+        (0x00129612, 0x00129631, "INTERACTION_TYPE84_TERRAIN_PALETTE_SOURCE"),
+        (0x00129B52, 0x00129B71, "SCENE_TRANSITION_PALETTE_BAND_SOURCE"),
+        (0x00129B72, 0x00129B91, "SCENE_TRANSITION_READY_PALETTE_SOURCE"),
+    )
+    for start, end, name in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == 0x20
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "palette_data"
+
+
 def test_canonical_credits_stream_has_exact_interpreter_terminal():
     symbols = SymbolStore()
     symbol = symbols.at(0x00127E8C, include_ranges=False)

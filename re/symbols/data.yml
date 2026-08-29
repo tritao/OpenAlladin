@@ -621,6 +621,120 @@
     - ghidra_palette_transition_source_contract
     - scene_palette_bank_extents_static_v1
 
+0x00129012:
+  name: MENU_PALETTE_BAND_SOURCE_129012
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 2 by Menu_RunOptionsAndSelectNextState.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x00129092:
+  name: LEVEL00_PALETTE_BAND_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word Level 00 palette source uploaded to palette band 2 by Level00_EnterRoutine.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x001290B2:
+  name: SCENE_RESOURCE_PALETTE_BAND_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Shared fixed 16-word scene palette source uploaded to palette band 3 by scene initialization, transition, level-exit, menu, and script-transition services.
+  evidence:
+    - ghidra_palette_band3_consumer
+    - fixed_palette_source_extents_static_v1
+
+0x00129152:
+  name: INTERACTION_TYPE13_PALETTE_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x13 interaction spawner.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x001292B2:
+  name: INTERACTION_PALETTE_SOURCE_1292B2
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Shared fixed 16-word interaction palette source uploaded to palette band 2 by Type-0x05 and related interaction/level-event spawners.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x001292F2:
+  name: INTERACTION_TYPE8B_PALETTE_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x8B presentation-response handlers.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x00129332:
+  name: INTERACTION_TYPE7D_PALETTE_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x7D level-event spawner.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x001294F2:
+  name: INTERACTION_TYPE0C_PALETTE_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x0C/0x3C interaction handler family.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x00129532:
+  name: INTERACTION_TYPE0B_PALETTE_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x0B/0x3E interaction handler family.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x001295D2:
+  name: INTERACTION_TYPE12_PALETTE_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x12/0x4D presentation handler.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x001295F2:
+  name: INTERACTION_TYPE11_PALETTE_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x11 interaction handler.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x00129612:
+  name: INTERACTION_TYPE84_TERRAIN_PALETTE_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x84 terrain-response interaction handler.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x00129B52:
+  name: SCENE_TRANSITION_PALETTE_BAND_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word transition palette source uploaded to palette band 2 by the transition initialization and reset callbacks.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
+0x00129B72:
+  name: SCENE_TRANSITION_READY_PALETTE_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word transition palette source uploaded to palette band 2 by the transition tile-band-ready callback.
+  evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data
