@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-type84-opening-level08-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "streams": [
+    {
+      "address": "0x001245CC",
+      "name": "ACTOR_ANIM_TYPE84_F5_OPENING",
+      "range": ["0x001245CC", "0x001245E3"],
+      "bytes": 24,
+      "consumer": "ACTOR_TEMPLATE_F5_TYPE_84 at 0x001B7ECC",
+      "frames": "0x0EB2, 0x0EB2, 0x0EB6, 0x0EBA, 0x0EBE, and 0x0EC2",
+      "timers": "EE values 0x82, 0x83, 0x84, 0x85, and 0x86 at 0x001245CE, 0x001245D2, 0x001245D6, 0x001245DA, and 0x001245DE",
+      "clear": "F600 at 0x001245E2"
+    },
+    {
+      "address": "0x001245E4",
+      "name": "ACTOR_ANIM_LEVEL08_TYPE84_ENTRY",
+      "range": ["0x001245E4", "0x00124615"],
+      "bytes": 50,
+      "consumer": "ACTOR_TEMPLATE_LEVEL08_TYPE_84 at 0x001B7EE0",
+      "producer": "Level08_EnterRoutine at 0x001B611E",
+      "frames": "0x0D92, 0x0D96, 0x0D9A, 0x0D9E, 0x0DA2, 0x0DA6, 0x0DAA, 0x0DAE, 0x0DB2, 0x0DB6, 0x0DBA, and 0x0DBE with the original repeated frame entries",
+      "clear": "F600 at 0x00124614"
+    }
+  ],
+  "boundary": {
+    "next_stream": "0x00124616",
+    "next_stream_name": "ACTOR_ANIM_TYPE32_INTERACTION_LOOP",
+    "reason": "The opening F5 stream ends at 0x001245E3 and the Level 08 stream ends at 0x00124615; the established Type-0x32 stream begins immediately at 0x00124616."
+  },
+  "evidence": [
+    "Lossless linear AnimationDecoder output",
+    "Exact animation pointer in ACTOR_TEMPLATE_F5_TYPE_84",
+    "Exact animation pointer in ACTOR_TEMPLATE_LEVEL08_TYPE_84",
+    "Direct Level08_EnterRoutine template load",
+    "F600 terminators at 0x001245E2 and 0x00124614"
+  ]
+}

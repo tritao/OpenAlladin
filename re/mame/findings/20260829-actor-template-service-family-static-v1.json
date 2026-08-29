@@ -49,7 +49,7 @@
       "name": "ACTOR_TEMPLATE_LEVEL08_TYPE_84",
       "consumer": "Level08_EnterRoutine at 0x001B611E",
       "runtime_type": "0x84",
-      "animation_stream": "0x001245E4"
+      "animation_stream": "0x001245E4 ACTOR_ANIM_LEVEL08_TYPE84_ENTRY"
     },
     {
       "address": "0x001B80C0",

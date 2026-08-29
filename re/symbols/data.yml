@@ -829,6 +829,27 @@
     - actor_template_late_dispatch_family_static_decompilation
     - animation_stream_decoder
 
+0x001245CC:
+  name: ACTOR_ANIM_TYPE84_F5_OPENING
+  size: 24
+  confidence: decompiled
+  description: Opening Type-0x84 child animation supplied by ACTOR_TEMPLATE_F5_TYPE_84 during player actor bootstrap. Its 24-byte stream presents the 0x0EB2/0x0EB6/0x0EBA/0x0EBE/0x0EC2 frame progression with EE timer values 0x82 through 0x86, then clears the actor at 0x001245E2.
+  evidence:
+    - type84_opening_level08_animation_static_decompilation
+    - actor_template_f5_type84
+    - animation_stream_decoder
+
+0x001245E4:
+  name: ACTOR_ANIM_LEVEL08_TYPE84_ENTRY
+  size: 50
+  confidence: decompiled
+  description: Level 08 Type-0x84 entry animation selected by ACTOR_TEMPLATE_LEVEL08_TYPE_84. Its 50-byte stream presents the 0x0D92 through 0x0DBE frame sequence with the encoded repeats and clears the actor at 0x00124614 before the following Type-0x32 interaction stream.
+  evidence:
+    - type84_opening_level08_animation_static_decompilation
+    - actor_template_level08_type84
+    - level08_event_vdp_static_decompilation
+    - animation_stream_decoder
+
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
   confidence: probable
@@ -1515,7 +1536,7 @@
   type: actor_template
   size: 20
   confidence: trace_validated
-  description: Type-0x84 actor template supplied by the opening player AnimationVM F5 spawn; the common initializer is followed by caller/stream-specific runtime field publication.
+  description: Type-0x84 actor template supplied by the opening player AnimationVM F5 spawn; it uses ACTOR_ANIM_TYPE84_F5_OPENING at 0x001245CC, and the common initializer is followed by caller/stream-specific runtime field publication.
   evidence:
     - level01_f5_actor_boundary
     - ghidra_actor_template_initializer_001AE30A
@@ -1656,7 +1677,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 Level 08 entry template initialized by Level08_EnterRoutine; it uses animation stream 0x001245E4.
+  description: Type-0x84 Level 08 entry template initialized by Level08_EnterRoutine; it uses ACTOR_ANIM_LEVEL08_TYPE84_ENTRY at 0x001245E4.
   evidence:
     - ghidra_level08_entry_routine
     - level01_upper_frontier_initializer_targets

@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type84-opening-level08-animation-static-targets.json",
+  "streams": [
+    {
+      "address": "0x001245CC",
+      "name": "ACTOR_ANIM_TYPE84_F5_OPENING",
+      "range": "0x001245CC-0x001245E3",
+      "bytes": 24,
+      "consumer": "0x001B7ECC ACTOR_TEMPLATE_F5_TYPE_84",
+      "frames": "0x0EB2, 0x0EB2, 0x0EB6, 0x0EBA, 0x0EBE, and 0x0EC2",
+      "timers": "EE 0x82 through EE 0x86",
+      "clear_command": "F600 at 0x001245E2"
+    },
+    {
+      "address": "0x001245E4",
+      "name": "ACTOR_ANIM_LEVEL08_TYPE84_ENTRY",
+      "range": "0x001245E4-0x00124615",
+      "bytes": 50,
+      "consumer": "0x001B7EE0 ACTOR_TEMPLATE_LEVEL08_TYPE_84",
+      "producer": "0x001B611E Level08_EnterRoutine template load",
+      "frames": "0x0D92 through 0x0DBE with the exact repeated 0x0DA2/0x0DA6/0x0DAA/0x0DAE/0x0DB2/0x0DB6/0x0DBA/0x0DBE entries",
+      "clear_command": "F600 at 0x00124614"
+    }
+  ],
+  "boundary": {
+    "next_stream": "0x00124616",
+    "next_stream_name": "ACTOR_ANIM_TYPE32_INTERACTION_LOOP",
+    "reason": "Both streams terminate with F600 before the already established Type-0x32 stream."
+  },
+  "evidence": [
+    "Lossless linear AnimationDecoder output",
+    "Exact template animation pointers",
+    "Direct Level08_EnterRoutine template load",
+    "Exact F600 terminators and contiguous boundaries"
+  ],
+  "conclusion": "The 24-byte Type-0x84 opening F5 stream and the separate 50-byte Level 08 Type-0x84 entry stream are now range-bounded and named. Neither stream claims the following Type-0x32 interaction bytes at 0x00124616.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
