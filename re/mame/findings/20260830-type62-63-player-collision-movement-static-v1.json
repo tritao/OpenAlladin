@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "producer": {
+    "address": "0x001AF81C",
+    "name": "ActorType62_63_PlayerCollisionHandler",
+    "root_write": "0x001AF868 move.l #0x00121598,(0x0A,A1)"
+  },
+  "stream": {
+    "address": "0x00121598",
+    "end": "0x001215D7",
+    "name": "ACTOR_MOVE_TYPE62_63_PLAYER_COLLISION_RESPONSE",
+    "size": 64,
+    "role": "shared Type-0x62/0x63 player-collision vertical response"
+  },
+  "behavior": "The handler converts Type 0x62 to Type 0x63 when required, publishes this movement root, and optionally queues event 0x45. The exact stream applies the signed vertical collision-response profile and terminates before the separately unresolved packed entry at 0x001215D8.",
+  "evidence": [
+    "player_collision_actor_relative_placement_family_static_decompilation",
+    "ghidra_disassembly_001AF81C",
+    "movement_stream_decoder",
+    "exact_64_byte_linear_decode"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

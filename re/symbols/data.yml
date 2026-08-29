@@ -3083,6 +3083,17 @@
     - type14_type84_presentation_animation_static_decompilation
     - movement_stream_decoder
 
+0x00121598:
+  name: ACTOR_MOVE_TYPE62_63_PLAYER_COLLISION_RESPONSE
+  type: movement_stream
+  size: 64
+  confidence: decompiled
+  description: Shared Type-0x62/0x63 player-collision movement root installed by ActorType62_63_PlayerCollisionHandler at 0x001AF868. Its exact 64-byte region applies the signed vertical response profile, reloads the local movement timer near the terminal steps, and ends immediately before the separate packed movement entry at 0x001215D8.
+  evidence:
+    - player_collision_actor_relative_placement_family_static_decompilation
+    - ghidra_disassembly_001AF81C
+    - movement_stream_decoder
+
 0x00121256:
   name: ACTOR_MOVE_TYPE84_RUNTIME47_4C_CHILD_SHARED
   type: movement_stream

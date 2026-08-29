@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-type62-63-player-collision-movement-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Classify the directly installed Type-0x62/0x63 player-collision MovementVM root.",
+  "producer": {
+    "address": "0x001AF81C",
+    "name": "ActorType62_63_PlayerCollisionHandler",
+    "write_site": "0x001AF868",
+    "movement_field": "+0x0A",
+    "root": "0x00121598"
+  },
+  "stream": {
+    "address": "0x00121598",
+    "end": "0x001215D7",
+    "size": 64,
+    "name": "ACTOR_MOVE_TYPE62_63_PLAYER_COLLISION_RESPONSE",
+    "decoded": [
+      "Signed vertical response steps from (+0,+2) through the negative recovery phase",
+      "Movement command timers at 0x001215C4 and 0x001215CC",
+      "Exact linear boundary immediately before the separate 0x001215D8 packed entry"
+    ]
+  },
+  "boundary_basis": [
+    "Direct producer write to actor movement field",
+    "MovementDecoder consumes exactly 64 bytes in linear mode",
+    "The next bytes begin the separately unresolved packed movement entry at 0x001215D8"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
