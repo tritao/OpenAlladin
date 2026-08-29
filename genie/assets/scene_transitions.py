@@ -84,6 +84,62 @@ def decode_scene_table(data: bytes, table: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def decode_scene_resource_streams(
+    data: bytes,
+    table: dict[str, Any],
+    payload: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Bound the four scene-resource streams selected by the ROM table.
+
+    The selector stores pointers in table order, but the payloads are laid out
+    consecutively in ROM.  The recorded table evidence gives the common
+    0x70A-byte extent and the following defined object supplies the exclusive
+    boundary.  Each stream ends in the same two zero bytes: command 0 is the
+    interpreter terminator and the second byte preserves the observed aligned
+    tail.
+    """
+
+    stream_size = parse_int(payload["stream_size"])
+    payload_start = parse_int(payload["start"])
+    payload_end = parse_int(payload["end_exclusive"])
+    if stream_size <= 0 or payload_end <= payload_start:
+        raise ValueError("scene-resource payload extent must be positive")
+    entries = decode_scene_table(data, table)["entries"]
+    if payload_end > len(data):
+        raise ValueError("scene-resource payload end is outside the ROM")
+    if payload_end - payload_start != stream_size * len(entries):
+        raise ValueError("scene-resource payload is not an integral stream corpus")
+
+    streams = []
+    sorted_entries = sorted(entries, key=lambda value: parse_int(value["pointer"]))
+    for index, entry in enumerate(sorted_entries):
+        address = parse_int(entry["pointer"])
+        end_exclusive = address + stream_size
+        expected_address = payload_start + index * stream_size
+        if address != expected_address:
+            raise ValueError("scene-resource streams are not adjacent in ROM")
+        if end_exclusive > payload_end:
+            raise ValueError("scene-resource stream exceeds payload region")
+        if data[end_exclusive - 2:end_exclusive] != b"\x00\x00":
+            raise ValueError(
+                f"scene-resource stream at 0x{address:06X} lacks its recorded terminator"
+            )
+        state = entry["state"]
+        streams.append({
+            "name": f"SCENE_TRANSITION_RESOURCE_STREAM_STATE_{parse_int(state):02X}",
+            "entry": _hex(address),
+            "end": _hex(end_exclusive - 1),
+            "end_exclusive": _hex(end_exclusive),
+            "bytes_decoded": stream_size,
+            "state": state,
+            "table_index": entry["index"],
+            "terminator": _hex(end_exclusive - 2),
+            "terminal_bytes": data[end_exclusive - 2:end_exclusive].hex().upper(),
+            "preview": _preview(data, address, 8),
+        })
+    return streams
+
+
 def decode_scene_script(data: bytes, script: dict[str, Any]) -> dict[str, Any]:
     address = parse_int(script["address"])
     end = parse_int(script["end"])
@@ -133,6 +189,11 @@ def extract_scene_transitions(
         "rom_size": len(data),
         "metadata": str(metadata_path),
         "table": decode_scene_table(data, metadata["table"]),
+        "streams": decode_scene_resource_streams(
+            data,
+            metadata["table"],
+            metadata["resource_streams"],
+        ) if metadata.get("resource_streams") else [],
         "scripts": [decode_scene_script(data, script) for script in metadata.get("scripts", [])],
         "semantics": {
             "scene_state_address": "0x00FF7E26",

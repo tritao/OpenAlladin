@@ -89,7 +89,7 @@ build/assets/
 ├── sprites/             # SEG-equivalent tile sets and frame PNGs
 │   └── frames.json      # detailed frame/part metadata
 ├── animations.json      # known animation stream records
-├── scene_transitions.json # ROM scene table and compact transition script records
+├── scene_transitions.json # ROM scene table, resource streams, and transition scripts
 └── rnc/
     ├── manifest.json    # every RNC block, hashes, consumers, and failures
     ├── classification.json # tile candidates and contiguous block families
@@ -166,7 +166,9 @@ PYTHONPATH=. python genie/assets/validate_scene_resources.py
 ```
 
 The scene-transition pass is driven by `re/assets/scene_transitions.yml`. It
-decodes the four valid 6-byte records used by `0x001B3B96` at ROM `0x004B04`
-and the 14 four-byte records around the runtime script cursor at `0x00004082`.
-`genie assets` writes the generated report to
-`build/assets/scene_transitions.json`.
+decodes the four valid 6-byte records used by `0x001B3B96` at ROM `0x004B04`,
+their four adjacent 0x70A-byte scene-resource command streams at
+`0x00004B1C-0x00006743`, and the 14 four-byte records around the runtime
+script cursor at `0x00004082`. The stream boundaries are checked against the
+two-byte command-0/alignment tail on every resource. `genie assets` writes the
+generated report to `build/assets/scene_transitions.json`.

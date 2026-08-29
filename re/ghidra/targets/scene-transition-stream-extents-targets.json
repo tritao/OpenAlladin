@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-scene-transition-stream-extents-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "table": {
+    "address": "0x00004B04",
+    "entry_size": 6,
+    "count": 4,
+    "consumer": "0x001B3B96 Menu_RunOptionsAndSelectNextState",
+    "interpreter": "0x001B21F6 SceneResource_ProcessCommandStream"
+  },
+  "streams": [
+    { "address": "0x00004B1C", "name": "SCENE_TRANSITION_RESOURCE_STREAM_STATE_00", "size": 1802, "end_inclusive": "0x00005225", "table_index": 0, "state": "0x00" },
+    { "address": "0x00005226", "name": "SCENE_TRANSITION_RESOURCE_STREAM_STATE_02", "size": 1802, "end_inclusive": "0x0000592F", "table_index": 2, "state": "0x02" },
+    { "address": "0x00005930", "name": "SCENE_TRANSITION_RESOURCE_STREAM_STATE_08", "size": 1802, "end_inclusive": "0x00006039", "table_index": 1, "state": "0x08" },
+    { "address": "0x0000603A", "name": "SCENE_TRANSITION_RESOURCE_STREAM_STATE_04", "size": 1802, "end_inclusive": "0x00006743", "table_index": 3, "state": "0x04" }
+  ],
+  "evidence": [
+    "All four table pointers decode as even ROM addresses in the same payload region.",
+    "Sorted pointers form four adjacent 0x70A-byte records.",
+    "Each record ends with the observed command-0/alignment bytes 0x00 0x00.",
+    "SceneResource_ProcessCommandStream dispatches byte values below 0x20 through the ROM command table and terminates on command 0.",
+    "The next Ghidra-defined ROM object begins at 0x00006744."
+  ],
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled"
+}

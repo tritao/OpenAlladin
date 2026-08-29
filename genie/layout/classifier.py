@@ -31,6 +31,8 @@ def _class_for_symbol(symbol: Symbol) -> str:
         return "GRAPHICS"
     if name == "LEVEL_TABLE":
         return "SCENE_TABLE"
+    if "scene_resource" in symbol_type or "scene_transition" in symbol_type:
+        return "SCENE_TABLE"
     if "graphics" in symbol_type or "sprite" in symbol_type:
         return "GRAPHICS"
     if symbol_type == "rom_pointer_table":
@@ -464,6 +466,7 @@ def build_layout(
             ("build/assets/animations.json", "ANIMATION_STREAM"),
             ("build/re/animation_streams.json", "ANIMATION_STREAM"),
             ("build/re/movement_streams.json", "MOVEMENT_STREAM"),
+            ("build/assets/scene_transitions.json", "SCENE_TABLE"),
         ):
             candidates.extend(_stream_candidates(root / relative, rom_size, layout_class))
         candidates.extend(_asset_candidates(root, rom_size))

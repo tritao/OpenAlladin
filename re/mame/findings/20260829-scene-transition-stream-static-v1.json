@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": {
+    "metadata": "re/assets/scene_transitions.yml",
+    "extractor": "genie/assets/scene_transitions.py",
+    "consumer_decompile": "build/re/full-rom/decompile/001B21F6.txt",
+    "selector_decompile": "build/re/full-rom/decompile/001B3B96.txt"
+  },
+  "table": {
+    "range": "0x00004B04-0x00004B1B",
+    "entry_size": 6,
+    "entries": [
+      { "index": 0, "pointer": "0x00004B1C", "state": "0x00" },
+      { "index": 1, "pointer": "0x00005930", "state": "0x08" },
+      { "index": 2, "pointer": "0x00005226", "state": "0x02" },
+      { "index": 3, "pointer": "0x0000603A", "state": "0x04" }
+    ]
+  },
+  "streams": [
+    "0x00004B1C-0x00005225 state 0x00",
+    "0x00005226-0x0000592F state 0x02",
+    "0x00005930-0x00006039 state 0x08",
+    "0x0000603A-0x00006743 state 0x04"
+  ],
+  "conclusion": "The four ROM pointers selected by the scene-table path identify four adjacent 0x70A-byte scene-resource command streams. The command-stream interpreter consumes their byte records and exits on command 0; all four bounded records end in the same 0x00 0x00 terminator/alignment tail. The following ROM object begins at 0x00006744, so the corpus is promoted to SCENE_TABLE layout evidence."
+}

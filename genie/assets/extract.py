@@ -235,6 +235,7 @@ def main() -> int:
             manifest["assets"]["scene_transitions"] = {
                 "file": "scene_transitions.json",
                 "table_entries": scene_transitions["table"]["count"],
+                "stream_count": len(scene_transitions["streams"]),
                 "script_count": len(scene_transitions["scripts"]),
                 "script_record_count": sum(
                     len(script["records"]) for script in scene_transitions["scripts"]

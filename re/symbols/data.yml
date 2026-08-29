@@ -22,6 +22,63 @@
     - chopper_frame_parser
     - sprite_tile_data_extent_static_v1
 
+0x00004B04:
+  name: ROM_SCENE_TRANSITION_TABLE
+  type: rom_pointer_table
+  entry_size: 6
+  count: 4
+  size: 0x18
+  confidence: confirmed
+  description: Four-entry scene-transition table selected by SceneTable_SelectNextState. Each record stores a 32-bit scene-resource stream pointer, a state byte, and a zero metadata byte; the records occupy 0x00004B04-0x00004B1B.
+  evidence:
+    - ghidra_targeted_decompile_001B3B96
+    - ghidra_scene_resource_command_stream_consumer
+    - scene_transition_resource_stream_static_v1
+
+0x00004B1C:
+  name: SCENE_TRANSITION_RESOURCE_STREAM_STATE_00
+  type: scene_resource_stream
+  size: 0x70A
+  confidence: decompiled
+  description: State-0 scene-resource command stream selected by ROM_SCENE_TRANSITION_TABLE. Its 0x70A-byte extent ends with the command-0 terminator and aligned zero tail immediately before the state-2 stream.
+  evidence:
+    - ghidra_scene_resource_command_stream_consumer
+    - scene_resource_command_stream_terminators
+    - scene_transition_resource_stream_static_v1
+
+0x00005226:
+  name: SCENE_TRANSITION_RESOURCE_STREAM_STATE_02
+  type: scene_resource_stream
+  size: 0x70A
+  confidence: decompiled
+  description: State-2 scene-resource command stream selected by ROM_SCENE_TRANSITION_TABLE. Its 0x70A-byte extent ends with the command-0 terminator and aligned zero tail immediately before the state-8 stream.
+  evidence:
+    - ghidra_scene_resource_command_stream_consumer
+    - scene_resource_command_stream_terminators
+    - scene_transition_resource_stream_static_v1
+
+0x00005930:
+  name: SCENE_TRANSITION_RESOURCE_STREAM_STATE_08
+  type: scene_resource_stream
+  size: 0x70A
+  confidence: decompiled
+  description: State-8 scene-resource command stream selected by ROM_SCENE_TRANSITION_TABLE. Its 0x70A-byte extent ends with the command-0 terminator and aligned zero tail immediately before the state-4 stream.
+  evidence:
+    - ghidra_scene_resource_command_stream_consumer
+    - scene_resource_command_stream_terminators
+    - scene_transition_resource_stream_static_v1
+
+0x0000603A:
+  name: SCENE_TRANSITION_RESOURCE_STREAM_STATE_04
+  type: scene_resource_stream
+  size: 0x70A
+  confidence: decompiled
+  description: State-4 scene-resource command stream selected by ROM_SCENE_TRANSITION_TABLE. Its 0x70A-byte extent ends with the command-0 terminator and aligned zero tail at 0x00006742-0x00006743; the next defined ROM object begins at 0x00006744.
+  evidence:
+    - ghidra_scene_resource_command_stream_consumer
+    - scene_resource_command_stream_terminators
+    - scene_transition_resource_stream_static_v1
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data

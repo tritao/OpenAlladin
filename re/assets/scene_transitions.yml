@@ -15,7 +15,21 @@ table:
   metadata_offset: 5
   evidence:
     - ghidra_targeted_decompile_001B3B96
+    - ghidra_scene_resource_command_stream_consumer
     - rom_bytes_00004B04
+
+resource_streams:
+  # The four pointers select adjacent, fixed-size scene-resource command
+  # streams.  The final stream's two zero bytes at 0x006742-0x006743 are the
+  # same command-0/alignment tail seen at the three preceding boundaries; the
+  # next Ghidra-defined object begins at 0x006744.
+  start: 0x00004B1C
+  end_exclusive: 0x00006744
+  stream_size: 0x70A
+  evidence:
+    - scene_resource_command_stream_terminators
+    - scene_resource_pointer_adjacency
+    - ghidra_scene_resource_command_stream_consumer
 
 scripts:
   - name: initial_scene_transition_script

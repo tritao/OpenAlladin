@@ -215,6 +215,28 @@ def test_layout_uses_level_block_dictionary_extents(tmp_path):
     assert later.name == "LEVEL_BLOCK_DICTIONARY_000030"
 
 
+def test_layout_uses_scene_resource_stream_extents(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    database_root = _write_database(tmp_path)
+    assets = tmp_path / "build/assets"
+    assets.mkdir(parents=True)
+    _write_json(assets / "scene_transitions.json", {
+        "rom_size": 0x100,
+        "streams": [{
+            "name": "SCENE_TRANSITION_RESOURCE_STREAM_STATE_00",
+            "entry": "0x40",
+            "bytes_decoded": 0x10,
+        }],
+    })
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path)
+    stream = layout.at(0x4F)
+    assert stream is not None
+    assert stream.layout_class == "SCENE_TABLE"
+    assert stream.start == 0x40 and stream.end == 0x4F
+    assert stream.name == "SCENE_TRANSITION_RESOURCE_STREAM_STATE_00"
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(
