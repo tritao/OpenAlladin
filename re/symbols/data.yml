@@ -3586,6 +3586,17 @@
     - ghidra_player_action_animation_selector
     - animation_stream_decoder
 
+0x00122B58:
+  name: ACTOR_ANIM_TYPE80_ACTION_TRANSITION_CHILD
+  type: animation_stream
+  size: 22
+  confidence: decompiled
+  description: Type-0x80 child animation installed by ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD at 0x001B7918 from the F5 command in PLAYER_ANIM_ACTION_TRANSITION_LOCK. Its exact 22-byte region presents the 0x1ADE, 0x1AE2, 0x1AE6, and 0x1AEA frame pairs and loops from 0x00122B68 back to its root.
+  evidence:
+    - player-action-transition-child-animation-static-decompilation
+    - ghidra_player_action_transition_animation_static_targets
+    - animation_stream_decoder
+
 0x0012510A:
   name: ACTOR_ANIM_TYPE30_PRESENTATION_CHILD
   size: 34

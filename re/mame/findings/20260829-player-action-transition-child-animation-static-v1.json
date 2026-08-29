@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/player-action-transition-child-animation-static-targets.json",
+  "stream": {
+    "address": "0x00122B58",
+    "name": "ACTOR_ANIM_TYPE80_ACTION_TRANSITION_CHILD",
+    "range": "0x00122B58-0x00122B6D",
+    "bytes": 22,
+    "template": "0x001B7918 ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD",
+    "producer": "0x0012253C F5 in PLAYER_ANIM_ACTION_TRANSITION_LOCK",
+    "runtime_type": "0x80",
+    "frame_sequence": [
+      "0x001FD478",
+      "0x001FD478",
+      "0x001FD48A",
+      "0x001FD48A",
+      "0x001FD49C",
+      "0x001FD49C",
+      "0x001FD4AE",
+      "0x001FD4AE"
+    ],
+    "loop": "0x00122B68 EA -> 0x00122B58"
+  },
+  "boundary_basis": [
+    "Direct animation-root field in the exact Type-0x80 template",
+    "Lossless AnimationDecoder output",
+    "The following bytes at 0x00122B6E remain outside the root"
+  ],
+  "conclusion": "The Type-0x80 player action-transition child animation is now a named, exact 22-byte frame loop. Its ownership is tied to the F5 template producer and does not imply ownership of the adjacent unresolved bytes.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

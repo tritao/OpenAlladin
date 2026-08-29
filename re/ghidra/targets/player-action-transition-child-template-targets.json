@@ -14,11 +14,16 @@
     {
       "address": "0x00122504",
       "name": "PLAYER_ANIM_ACTION_TRANSITION_LOCK"
+    },
+    {
+      "address": "0x00122B58",
+      "name": "ACTOR_ANIM_TYPE80_ACTION_TRANSITION_CHILD",
+      "size": 22
     }
   ],
   "memory_references": [
     { "address": "0x0011F6D4", "name": "ACTOR_MOVE_SHARED_CHILD_ENTRY" },
-    { "address": "0x00122B58", "name": "PLAYER_ACTION_TRANSITION_CHILD_ANIMATION_ROOT" },
+    { "address": "0x00122B58", "name": "ACTOR_ANIM_TYPE80_ACTION_TRANSITION_CHILD" },
     { "address": "0x001B0360", "name": "FarTransfer_InteractionCounterStepBack" }
   ]
 }

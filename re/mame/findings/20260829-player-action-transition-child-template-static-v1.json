@@ -29,5 +29,5 @@
       "plays audio command 0x03"
     ]
   },
-  "conclusion": "The formerly unclassified 20-byte F5 payload is a Type-0x80 child template owned by the player action-transition stream. Its transition-state role is bounded by the exact producer, while the child animation root at 0x00122B58 remains unnamed and the runtime child lifetime is not separately traced."
+  "conclusion": "The formerly unclassified 20-byte F5 payload is a Type-0x80 child template owned by the player action-transition stream. Its transition-state role is bounded by the exact producer, and its child animation root at 0x00122B58 is now separately range-bounded as ACTOR_ANIM_TYPE80_ACTION_TRANSITION_CHILD. The runtime child lifetime is not separately traced."
 }

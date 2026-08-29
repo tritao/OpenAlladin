@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-player-action-transition-child-animation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Classify the Type-0x80 child AnimationVM root installed by the player action-transition F5 record.",
+  "stream": {
+    "address": "0x00122B58",
+    "name": "ACTOR_ANIM_TYPE80_ACTION_TRANSITION_CHILD",
+    "range": ["0x00122B58", "0x00122B6D"],
+    "size": 22,
+    "template": "0x001B7918 ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD",
+    "producer": "0x0012253C F5 in PLAYER_ANIM_ACTION_TRANSITION_LOCK",
+    "runtime_type": "0x80",
+    "movement_stream": "0x0011F6D4 ACTOR_MOVE_SHARED_CHILD_ENTRY",
+    "decoded": [
+      "Frames 0x1ADE and 0x1AE2 form the opening pair",
+      "Frames 0x1AE6 and 0x1AEA form the closing pair",
+      "EA at 0x00122B68 loops to the root at 0x00122B58"
+    ]
+  },
+  "boundary_basis": [
+    "The F5 template at 0x001B7918 installs animation root 0x00122B58",
+    "Lossless AnimationDecoder output",
+    "The self-loop terminates the 22-byte root before the unresolved bytes at 0x00122B6E"
+  ],
+  "conclusion": "The formerly unnamed Type-0x80 child animation root is a closed 22-byte four-frame loop directly owned by the player action-transition template. No internal alias claims a second ROM ownership range.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -314,6 +314,17 @@ def test_mid_actor_animation_stream_ranges_are_exact():
     assert all(right < next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
 
 
+def test_player_action_transition_child_animation_is_exact():
+    symbols = SymbolStore()
+    symbol = symbols.at(0x00122B58, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "ACTOR_ANIM_TYPE80_ACTION_TRANSITION_CHILD"
+    assert symbol.end == 0x00122B6D
+    assert symbol.size == 22
+    assert symbol.metadata["type"] == "animation_stream"
+    assert symbols.at(0x00122B6E, include_ranges=False) is None
+
+
 def test_type03_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {
