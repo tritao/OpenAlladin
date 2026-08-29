@@ -1365,3 +1365,73 @@
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
+
+0x001B7A6C:
+  name: ACTOR_TEMPLATE_TYPE_03_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x03 interaction template loaded by the forward-slot spawn entry at 0x001B6C4E; it uses movement stream 0x0011F72C, animation stream 0x00122DF2, and eighteen resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7A80:
+  name: ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_A
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: First type-0x05 interaction template in the direct LevelObjectSpawnEntry family at 0x001B6C0E; it has no movement stream, uses animation stream 0x001251A6, and owns four resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7A94:
+  name: ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_B
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Second type-0x05 interaction template in the direct LevelObjectSpawnEntry family at 0x001B6C2E; it has no movement stream, uses animation stream 0x001251FC, and owns four resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7AA8:
+  name: ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_C
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Third type-0x05 interaction template in the direct LevelObjectSpawnEntry family at 0x001B6C2E; it has no movement stream, uses animation stream 0x00125228, and owns four resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7AE4:
+  name: ACTOR_TEMPLATE_TYPE_23_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x23 interaction template loaded by the reverse-slot spawn entry at 0x001B6864; it has no movement stream, uses animation stream 0x00123198, and owns three resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7B0C:
+  name: ACTOR_TEMPLATE_TYPE_2B_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x2B interaction template loaded by the backward-slot spawn entry at 0x001B688A; it has no movement stream, uses animation stream 0x00123FE4, and owns seven resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7C9C:
+  name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 interaction-response template loaded by the backward-slot spawn entry at 0x001B68CA; it has no movement stream, uses animation stream 0x00123E76, and owns no resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
