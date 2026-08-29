@@ -133,6 +133,7 @@ class AnalysisDatabase:
         if function is None:
             return []
         ranges = _record_ranges(function)
+        function_address = _address(function["address"])
         result = []
         for item in self._records(filename, "references"):
             try:
@@ -141,10 +142,10 @@ class AnalysisDatabase:
                 continue
             raw_function = item.get("from_function")
             try:
-                belongs = raw_function is not None and _address(raw_function) == start
+                belongs = raw_function is not None and _address(raw_function) == function_address
             except (TypeError, ValueError):
                 belongs = False
-            if belongs or any(start <= origin <= end for start, end in ranges):
+            if belongs or any(range_start <= origin <= range_end for range_start, range_end in ranges):
                 result.append(item)
         return sorted(
             result,

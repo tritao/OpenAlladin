@@ -178,3 +178,31 @@ def test_analysis_database_queries_generated_records(tmp_path):
     assert database.readers(0xFF0000)[0]["from"] == "0x00000012"
     assert database.writers(0xFF0000)[0]["from"] == "0x00000016"
     assert database.unknown()[0]["class"] == "UNKNOWN"
+
+
+def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    path = database_root / "functions.json"
+    path.write_text(json.dumps([
+        {
+            "address": "0x00000010",
+            "name": "Sparse",
+            "start": "0x00000010",
+            "end": "0x00000028",
+            "ranges": [
+                {"start": "0x00000010", "end": "0x00000012"},
+                {"start": "0x00000020", "end": "0x00000022"},
+            ],
+        },
+        {"address": "0x00000020", "name": "Second", "start": "0x00000020", "end": "0x00000028"},
+    ]), encoding="utf-8")
+    xrefs = json.loads((database_root / "xrefs.json").read_text())
+    xrefs["references"].extend([
+        {"from": "0x00000021", "to": "0x00000030", "type": "DATA"},
+        {"from": "0x00000018", "to": "0x00000031", "type": "DATA", "from_function": "0x00000010"},
+    ])
+    (database_root / "xrefs.json").write_text(json.dumps(xrefs), encoding="utf-8")
+
+    references = AnalysisDatabase(database_root).function_references(0x10, "xrefs.json")
+    assert [item["from"] for item in references] == ["0x00000018", "0x00000021"]
