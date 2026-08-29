@@ -1,4 +1,5 @@
 #include "animation.hpp"
+#include "game_state.hpp"
 #include "movement.hpp"
 
 #include <array>
@@ -19,6 +20,7 @@ namespace {
 using openaladdin::ActorAnimationState;
 using openaladdin::ActorState;
 using openaladdin::AnimationContext;
+using openaladdin::GameState;
 using openaladdin::HorizontalDirection;
 using openaladdin::MovementContext;
 using openaladdin::MovementVm;
@@ -268,10 +270,10 @@ int main(int argc, char** argv) {
         std::array<PlayerAnimationVm, 32> actor_vms{};
         std::array<bool, 32> active_animation_fixtures{};
         std::array<bool, 32> loaded_vms{};
-        std::uint32_t random_state = 0;
+        GameState state;
+        state.camera.vdp_update = 1;
         AnimationContext context;
-        context.scene_vdp_update_flag = 1;
-        context.random_state = &random_state;
+        context.state = &state;
         MovementVm movement_vm;
 
         std::ofstream output(options.state_output);

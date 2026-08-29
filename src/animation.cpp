@@ -1,6 +1,7 @@
 #include "animation.hpp"
 
 #include "checkpoint_io.hpp"
+#include "game_state.hpp"
 
 #include <algorithm>
 #include <cstdlib>
@@ -187,8 +188,8 @@ void PlayerAnimationVm::reset() {
     frame_pointer_ = 0;
     stream_entry_ = rom_mode_ ? kIdleStream : clip(pose_).stream_entry;
     return_pc_ = 0;
-    // The engine supplies the shared ROM RNG through AnimationContext. Keep
-    // the standalone VM deterministic when it is used without an engine.
+    // The shared ROM RNG lives in GameState. Keep the byte result local to the
+    // interpreter because it is a command result, not another RAM image.
     random_value_ = 0x00;
     actor_tick_ = false;
     actor_service_boundary_ = ActorServiceBoundary::None;
@@ -226,8 +227,9 @@ void PlayerAnimationVm::select_rom_stream(
     // a grounded run and is distinct from the ordinary 0x1221B0 jump root.
     stream_entry_ = pose == SpritePose::Jump
         && context != nullptr
-        && (context->terrain_response_timer_state != 0
-            || context->selector.response_timer != 0)
+        && (context->response_timer_override
+                ? *context->response_timer_override != 0
+                : read_memory8(0xFFF0CC) != 0)
         ? kJumpTimedStream
         : clip(pose).stream_entry;
     animation_pc_ = stream_entry_;
@@ -284,17 +286,20 @@ void PlayerAnimationVm::write_memory32(std::uint32_t address, std::uint32_t valu
 
 void PlayerAnimationVm::sync_context(const AnimationContext& context) {
     ram_.bind_context(context);
+    const GameState* state = context.state;
+    const int player_x = state == nullptr ? 0 : state->player.x;
+    const int player_y = state == nullptr ? 0 : state->player.y;
+    const auto player_vx = state == nullptr ? 0 : state->player.vx;
+    const auto player_vy = context.player_vy_override
+        ? *context.player_vy_override
+        : state == nullptr ? 0 : state->player.vy;
     // The player record's actor-relative movement words are inputs to F2/F9
     // branches in the jump streams. The byte at +0x1A is the integral/high
     // byte of the vertical word, not an independent VM scratch byte.
-    write_memory16(0x18, as_u16(context.player_vx));
-    write_memory16(0x1A, as_u16(context.player_vy));
-    // FF7E28 is the common animation-service gate. It is not yet a typed
-    // GameState field, so retain it in the sparse VM-local portion of the
-    // address view.
-    write_memory8(0xFF7E28, 1);
-    write_memory16(2, as_u16(context.player_x));
-    write_memory16(4, as_u16(context.player_y));
+    write_memory16(0x18, as_u16(player_vx));
+    write_memory16(0x1A, as_u16(player_vy));
+    write_memory16(2, as_u16(player_x));
+    write_memory16(4, as_u16(player_y));
     write_memory8(9, facing_left_ ? 0xFF : 0);
 }
 
@@ -303,7 +308,6 @@ void PlayerAnimationVm::sync_actor_context(
     const AnimationContext& context
 ) {
     ram_.bind_context(context);
-    write_memory8(0xFF7E28, actor.type);
     write_memory8(0x07, actor.runtime_field_07);
     write_memory32(0x0A, actor.movement_pc);
     write_memory16(2, actor.x);
@@ -323,7 +327,11 @@ std::uint32_t PlayerAnimationVm::dynamic_stream(const AnimationContext& context)
     // preserve the original global-state routing for future states.
     if (pose_ == SpritePose::Landing) return kIdleStream;
     if (read_memory8(0xFFF0D7) != 0) return 0x00121964;
-    if (read_memory8(0xFFF173) != 0) return context.grounded ? kRunStream : 0x00121C28;
+    if (read_memory8(0xFFF173) != 0) {
+        const bool grounded = context.grounded_override
+            ? *context.grounded_override : read_memory8(0xFFF0C1) != 0;
+        return grounded ? kRunStream : 0x00121C28;
+    }
     if (read_memory8(0xFFF115) != 0) return 0x00125E72;
     if (read_memory8(0xFFF0CD) != 0) return 0x00121964;
     if (read_memory8(0xFFF0DB) != 0) return 0x0012181A;
@@ -423,9 +431,9 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         return false;
     case 0xF0: {
         const std::uint8_t threshold = read_rom8(cursor + 1);
-        if (context.random_state != nullptr) {
-            *context.random_state = *context.random_state * 13U + 7U;
-            const std::uint32_t state = *context.random_state;
+        if (auto* random_state = ram_.random_state(); random_state != nullptr) {
+            *random_state = *random_state * 13U + 7U;
+            const std::uint32_t state = *random_state;
             // 0x1B3032 folds the high and low words into D7; F0 compares the
             // low byte of that folded 16-bit value against its threshold.
             random_value_ = static_cast<std::uint8_t>(state ^ (state >> 16));
@@ -466,8 +474,8 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         request.offset_y = static_cast<std::int8_t>(read_rom8(cursor + 7));
         request.animation_override = read_rom32(cursor + 8);
         request.movement_override = read_rom32(cursor + 12);
-        request.source_world_x = context.world_x;
-        request.source_world_y = context.world_y;
+        request.source_world_x = static_cast<int>(read_memory16(0xFF7E02));
+        request.source_world_y = static_cast<int>(read_memory16(0xFF7E04));
         request.source_facing_x_flip = actor_[9];
         request.source_facing_y_flip = actor_[0x35];
         spawn_requests_.push_back(request);
@@ -520,11 +528,14 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         // The common 1ACC5E callback is the actor animation's random sound
         // selector; its first operation is the same 13x+7 LCG step used by
         // F0, even though its audio result is outside this state VM.
-        if (callback == 0x001ACC5E && context.random_state != nullptr) {
-            *context.random_state = *context.random_state * 13U + 7U;
+        if (callback == 0x001ACC5E) {
+            auto* random_state = ram_.random_state();
+            if (random_state != nullptr) {
+                *random_state = *random_state * 13U + 7U;
             random_value_ = static_cast<std::uint8_t>(
-                *context.random_state ^ (*context.random_state >> 16)
+                *random_state ^ (*random_state >> 16)
             );
+            }
         }
         cursor += 6;
         return false;
@@ -536,7 +547,8 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
     case 0xFD: {
         int limit = read_rom8(cursor + 1);
         if (limit == 0xFF) limit = 0x140;
-        const int distance = std::abs(context.world_x - static_cast<int>(read_memory16(2)));
+        const int distance = std::abs(
+            static_cast<int>(read_memory16(0xFF7E02)) - static_cast<int>(read_memory16(2)));
         cursor += 2;
         // The inline path is the far-away approach behavior; the target path
         // is the near-enough idle behavior used by the interaction actor.
@@ -545,7 +557,8 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
     }
     case 0xFE: {
         const int limit = read_rom8(cursor + 1);
-        const int distance = std::abs(context.world_y - static_cast<int>(read_memory16(4)));
+        const int distance = std::abs(
+            static_cast<int>(read_memory16(0xFF7E04)) - static_cast<int>(read_memory16(4)));
         cursor += 2;
         cursor = limit >= distance ? read_rom32(cursor) : cursor + 4;
         return false;
@@ -612,7 +625,8 @@ void PlayerAnimationVm::tick_actor_rom(
     // same actor service; publish its terminal frame cursor directly here.
     if (actor.type == 0x1E
         && animation_pc_ == 0x00123614
-        && std::abs(context.world_x - static_cast<int>(actor.x)) <= 0x73) {
+        && std::abs(
+            static_cast<int>(read_memory16(0xFF7E02)) - static_cast<int>(actor.x)) <= 0x73) {
         actor_[0x3D] = 0x46;
         animation_pc_ = 0x001237C6;
         return;
@@ -919,27 +933,29 @@ bool PlayerAnimationVm::response_stream_needs_recovery() const {
 bool PlayerAnimationVm::select_player_interaction_state(const AnimationContext& context) {
     if (!rom_mode_) return false;
 
+    sync_context(context);
+    RamContextScope context_scope(ram_);
+
     // This is the control flow of Player_ProcessInteractionState at
-    // 0x001AE4F8. The caller-side write that clears FFF0CC is represented by
-    // selector.response_timer; it is intentionally not inferred from the
-    // VM's bytecode scratch memory because FFF0CC has two distinct roles in
-    // the ROM.
-    const AnimationSelectorState& state = context.selector;
-    if (state.animation_gate != 0
-        || state.terminal_transition != 0
-        || state.scene_script_countdown != 0
-        || state.interaction_lock != 0) {
+    // 0x001AE4F8. All selector inputs are read from the bound GameState view;
+    // the context only supplies an explicit caller-side override when a
+    // selector is invoked between two native state boundaries.
+    if (read_memory8(0xFFF0E7) != 0
+        || read_memory8(0xFFF0E6) != 0
+        || read_memory8(0xFFF0E9) != 0
+        || read_memory8(0xFFF0F2) != 0) {
         return false;
     }
 
-    const bool normal_path = state.response_active == 0
-        && state.landing_state != 0
-        && state.transition_gate == 0
-        && state.transition_lock == 0
-        && state.transition_mode == 0
-        && state.transition_response == 0;
+    const bool normal_path = read_memory8(0xFFF0BE) == 0
+        && read_memory8(0xFFF0C1) != 0
+        && read_memory8(0xFFF0D0) == 0
+        && read_memory8(0xFFF0D7) == 0
+        && read_memory8(0xFFF0CD) == 0
+        && read_memory8(0xFFF0D4) == 0;
+    const bool response_timer_was_clear = read_memory8(0xFFF0CC) == 0;
     if (normal_path) {
-        if (state.camera_special_mode != 0) {
+        if (read_memory8(0xFFF173) != 0) {
             if (stream_entry_ != kInteractionSpecialStream) {
                 select_stream_entry(kInteractionSpecialStream);
                 timer_ = 0;
@@ -957,16 +973,16 @@ bool PlayerAnimationVm::select_player_interaction_state(const AnimationContext& 
         const bool response_stop_handoff =
             stream_kind_ == AnimationStreamKind::Response
             && stream_entry_ == kResponseStream
-            && state.response_animation != 0;
+            && read_memory8(0xFFF0ED) != 0;
         const bool can_enter_stop_stream =
             (stream_kind_ == AnimationStreamKind::Locomotion
                 && pose_ != SpritePose::Brake
                 && (stream_entry_ == kIdleStream || stream_entry_ == kRunStream))
             || response_stop_handoff;
         if (can_enter_stop_stream
-            && state.response_timer == 0
-            && state.interaction_pending == 0
-            && state.state_lock == 0) {
+            && read_memory8(0xFFF0CC) == 0
+            && read_memory8(0xFFEFFF) == 0
+            && read_memory8(0xFFF11F) == 0) {
             if (stream_entry_ != kInteractionStopStream) {
                 const int current_timer = timer_;
                 // The ROM's post-collision selector runs immediately after
@@ -992,13 +1008,13 @@ bool PlayerAnimationVm::select_player_interaction_state(const AnimationContext& 
     // the interaction helper at 0x001B03F2.
     write_memory16(0xFFF0B0, 0);
     write_memory8(0xFFF0CC, 0);
-    if (context.scene_vdp_update_flag != 0) {
+    if (read_memory8(0xFFF57D) != 0) {
         sound_requests_.push_back(kInteractionEventSoundId);
     }
-    return normal_path && state.camera_special_mode == 0
-        && state.response_timer == 0
-        && state.interaction_pending == 0
-        && state.state_lock == 0;
+    return normal_path && read_memory8(0xFFF173) == 0
+        && response_timer_was_clear
+        && read_memory8(0xFFEFFF) == 0
+        && read_memory8(0xFFF11F) == 0;
 }
 
 bool PlayerAnimationVm::finished() const {
@@ -1047,7 +1063,7 @@ void PlayerAnimationVm::update(
     horizontal_direction_ = horizontal_direction;
     sync_context(context);
     RamContextScope context_scope(ram_);
-    if (context.selector.interaction_lock == 0x28) {
+    if (read_memory8(0xFFF0F2) == 0x28) {
         // Actor flag bit 5 restarts the Genesis run stream. The surface
         // interaction path uses the same lock after selecting the stop
         // stream, so preserve that root when the player is braking at a
@@ -1056,8 +1072,8 @@ void PlayerAnimationVm::update(
             && desired_pose == SpritePose::Run) {
             select_rom_stream(SpritePose::Run, false, &context);
         } else if (desired_pose == SpritePose::Brake
-                   && context.terrain_response_timer_state == 0
-                   && context.selector.horizontal_response == 0) {
+                   && read_memory8(0xFFF0CC) == 0
+                   && read_memory16(0xFFF0B0) == 0) {
             select_stream_entry(kInteractionStopStream);
             // The selector writes the new root after this frame's VM pass.
             // Count the update even though the newly selected stream must

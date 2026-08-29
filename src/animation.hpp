@@ -69,21 +69,18 @@ struct AnimationSelectorState {
 };
 
 struct AnimationContext {
-    int player_x = 0;
-    int player_y = 0;
-    int world_x = 0;
-    int world_y = 0;
-    std::int16_t player_vx = 0;
-    std::int16_t player_vy = 0;
-    bool grounded = false;
-    std::uint8_t terrain_response_timer_state = 0;
-    std::uint8_t terrain_behavior = 0;          // FFF0C3
-    std::uint16_t camera_vertical_threshold = 0; // FF7E00
-    std::uint8_t scene_vdp_update_flag = 0;     // FFF57D
-    AnimationSelectorState selector{};
-    // The ROM animation F0 command calls the same shared PRNG as the terrain
-    // response code. Engine owns the state; every VM sees the same sequence.
-    std::uint32_t* random_state = nullptr;
+    // Animation commands consume the live Genesis fields through GameRamView.
+    // This is deliberately a non-owning link, not a snapshot of player RAM.
+    GameState* state = nullptr;
+
+    // These are call-site inputs for boundaries where the original caller has
+    // not yet committed a field to GameState. They are transient invocation
+    // parameters, never a second semantic state representation.
+    std::optional<bool> grounded_override;
+    std::optional<std::int16_t> player_vy_override;
+    std::optional<std::uint8_t> landing_state_override;
+    std::optional<std::uint8_t> interaction_lock_override;
+    std::optional<std::uint8_t> response_timer_override;
 };
 
 struct ActorAnimationState {

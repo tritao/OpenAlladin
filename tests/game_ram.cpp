@@ -12,7 +12,7 @@ int main() {
     state.player.x = 0x1234;
     state.player.y = 0x5678;
     state.player.vx = static_cast<std::int16_t>(0x9ABC);
-    state.player.animation_selector.response_active = 0x42;
+    state.player.terrain_response_active = 0x42;
     state.camera.x = 0x100;
     state.camera.vertical_threshold = 0x234;
 
@@ -22,16 +22,21 @@ int main() {
     assert(ram.read16(0xFF7E02) == 0x1334);
     assert(ram.read16(0xFF7E58) == 0x9ABC);
     assert(ram.read8(0xFFF0BE) == 0x42);
+    state.frame.phase = 0xA5;
+    assert(ram.read8(0xFF7E28) == 0xA5);
 
     ram.set_write_tracking(true);
     ram.write16(0xFF7DFA, 0xFEDC);
     ram.write8(0xFFF0BE, 0x11);
+    ram.write8(0xFF7E28, 0x12);
     assert(state.player.x == static_cast<std::int16_t>(0xFEDC));
     assert(state.player.animation_selector.response_active == 0x11);
+    assert(state.frame.phase == 0x12);
     std::uint8_t value = 0;
     assert(ram.take_write(0xFF7DFA, value) && value == 0xFE);
     assert(ram.take_write(0xFF7DFB, value) && value == 0xDC);
     assert(ram.take_write(0xFFF0BE, value) && value == 0x11);
+    assert(ram.take_write(0xFF7E28, value) && value == 0x12);
     assert(!ram.take_write(0xFFF0BE, value));
 
     ram.write8(0xFF1234, 0xA5);

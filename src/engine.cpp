@@ -78,7 +78,6 @@ constexpr int kPlayerVisualOffsetY = 0x100;
 constexpr int kActorVisualOffsetX = 3;
 constexpr int kTerrainContourRomOffset = 0x2FD2;
 constexpr int kTerrainContourRomSize = 0x1000;
-constexpr std::uint32_t kTerrainNoOpHandler = 0x001B65BE;
 constexpr std::uint8_t kActorGuardType = 0x0A;
 constexpr std::uint8_t kActorBounceType = 0x65;
 constexpr std::uint8_t kActorSwordType = 0x80;
@@ -143,33 +142,6 @@ constexpr std::array<std::uint8_t, 0xD4> kCameraVerticalDampening = {
     0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
     0x0F, 0x0F, 0x0F, 0x00
 };
-// the native slice makes the behavior -> handler decision data-driven and
-// avoids treating an arbitrary behavior-byte range as solid terrain.
-constexpr std::array<std::uint32_t, 0x48> kTerrainHandlers = {
-    0x001B65BE, 0x001B5492, 0x001B5492, 0x001B5492,
-    0x001B5492, 0x001B549C, 0x001B549C, 0x001B549C,
-    0x001B65BE, 0x001B54F4, 0x001B5320, 0x001B54F4,
-    0x001B54F4, 0x001B65BE, 0x001B65BE, 0x001B65BE,
-    0x001B5450, 0x001B65BE, 0x001B56F4, 0x001B65BE,
-    0x001B65BE, 0x001B65BE, 0x001B5458, 0x001B5460,
-    0x001B5468, 0x001B65BE, 0x001B65BE, 0x001B575C,
-    0x001B5764, 0x001B576C, 0x001B65BE, 0x001B5774,
-    0x001B5318, 0x001B65BE, 0x001B54D8, 0x001B54D8,
-    0x001B54D2, 0x001B54E0, 0x001B65BE, 0x001B54A6,
-    0x001B55E8, 0x001B557E, 0x001B55D8, 0x001B5502,
-    0x001B65BE, 0x001B56B6, 0x001B65BE, 0x001B65BE,
-    0x001B537A, 0x001B65BE, 0x001B65BE, 0x001B65BE,
-    0x001B65BE, 0x001B65BE, 0x001B65BE, 0x001B65BE,
-    0x001B65BE, 0x001B65BE, 0x001B65BE, 0x001B65BE,
-    0x001B65BE, 0x001B65BE, 0x001B65BE, 0x001B65BE,
-    0x001B536C, 0x001B53A2, 0x001B65BE, 0x001B65BE,
-    0x001B65BE, 0x001B65BE, 0x001B65BE, 0x001B5470
-};
-
-std::uint32_t terrain_handler(std::uint8_t behavior) {
-    return behavior < kTerrainHandlers.size() ? kTerrainHandlers[behavior] : kTerrainNoOpHandler;
-}
-
 constexpr std::uint32_t kCheckpointVersion = 8;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
@@ -1018,45 +990,10 @@ void Engine::update_terminal_actor_motion(ActorState& actor) {
     decay_velocity(actor.movement_word_1a, 0x3C);
 }
 
-AnimationContext Engine::player_animation_context(bool grounded) const {
-    AnimationContext context{
-        player_.x,
-        player_.y,
-        player_world_x(),
-        player_world_y(),
-        player_.vx,
-        player_.vy,
-        grounded,
-        player_.terrain_response_timer_state,
-        player_.terrain_behavior,
-    };
-    context.camera_vertical_threshold =
-        static_cast<std::uint16_t>(camera_.vertical_threshold);
-    context.scene_vdp_update_flag =
-        static_cast<std::uint8_t>(camera_.vdp_update);
-    context.selector = player_.animation_selector;
-    // The context is also used by const trace serialization. The VM is the
-    // only consumer that mutates this engine-owned shared state.
-    context.random_state = const_cast<std::uint32_t*>(&random_state_);
-    if (checkpoint_animation_selector_pending_) {
-        return context;
-    }
-    auto& selector = context.selector;
-    selector.terminal_transition = player_.terrain_terminal_transition;
-    selector.response_active = player_.terrain_response_active;
-    selector.transition_gate = player_.terrain_transition_gate;
-    selector.camera_special_mode = static_cast<std::uint8_t>(camera_.special_mode);
-    if (selector.response_timer == 0
-        && animation_.stream_kind() != AnimationStreamKind::Response
-        && (player_.terrain_response_active != 0
-            || player_.terrain_response_timer_state != 0)) {
-        selector.response_timer = std::max<std::uint8_t>(
-            player_.terrain_response_timer_state,
-            1
-        );
-    }
-    selector.response_latch = player_.terrain_response_latch;
-    selector.horizontal_response = player_.terrain_horizontal_response;
+AnimationContext Engine::player_animation_context(bool grounded) {
+    AnimationContext context;
+    context.state = &state_;
+    context.grounded_override = grounded;
     return context;
 }
 
@@ -1186,10 +1123,9 @@ void Engine::update_actor_animations() {
         animation_state.animation_pc = actor.animation_pc;
         animation_state.frame_ptr = actor.frame_ptr;
         animation_state.animation_timer = actor.animation_timer;
-        AnimationContext actor_context = context;
         const std::uint8_t previous_type = actor.type;
         const std::uint32_t previous_animation_pc = actor.animation_pc;
-        actor_animations_[slot].update_actor(animation_state, actor_context);
+        actor_animations_[slot].update_actor(animation_state, context);
         actor.type = animation_state.type;
         actor.x = animation_state.x;
         actor.y = animation_state.y;
@@ -2371,85 +2307,21 @@ SpritePose Engine::sprite_pose() const {
 }
 
 void Engine::update_terrain_input(const InputState& input) {
-    // FFF156 is the active-low controller/query byte consumed by the four
-    // Terrain_TestQueryFlag helpers. The main loop turns direction bits into
-    // FFF07C..FFF07F with SEQ, so a pressed direction is represented by 0xFF.
-    player_.terrain_query_result = 0x7F;
-    if (input.up) player_.terrain_query_result &= static_cast<std::uint8_t>(~0x01);
-    if (input.down) player_.terrain_query_result &= static_cast<std::uint8_t>(~0x02);
-    if (input.left) player_.terrain_query_result &= static_cast<std::uint8_t>(~0x04);
-    if (input.right) player_.terrain_query_result &= static_cast<std::uint8_t>(~0x08);
-    if (input.jump_pressed) player_.terrain_query_result &= static_cast<std::uint8_t>(~0x20);
-
-    player_.terrain_push_right = input.right ? 0xFF : 0;
-    player_.terrain_push_left = input.left ? 0xFF : 0;
-    player_.terrain_push_up = input.up ? 0xFF : 0;
-    player_.terrain_push_down = input.down ? 0xFF : 0;
+    terrain_.sample(state_, TerrainInput{
+        input.up,
+        input.down,
+        input.left,
+        input.right,
+        input.jump_pressed,
+    });
 }
 
 void Engine::update_terrain_connector_response() {
-    // FUN_001A986E is the response half of the behavior-0x22/0x23 query
-    // path. The terrain handler only raises QUERY_STATE_A; on the following
-    // frame this prepass consumes that latched byte and performs the small
-    // one/two-pixel local-Y step while Up is held. The resolver later in the
-    // same frame clears and re-raises QUERY_STATE_A for the next step.
-    if (scene_.is_transition() || player_.terrain_query_state_a == 0) {
-        player_.terrain_transition_gate = 0;
-        return;
-    }
-    if (player_.terrain_terminal_transition != 0) return;
-    // After the bounce response hands off to the run root, FFF0CC remains
-    // armed while the player walks through the delayed camera-follow window.
-    // The connector helper must not consume that latch merely because the
-    // response is no longer active.
-    if (player_.terrain_response_active == 0
-        && player_.terrain_response_timer_state != 0
-        && animation_.stream_entry() == 0x00122006) {
-        player_.terrain_transition_gate = 0;
-        return;
-    }
-
-    if (player_.vy <= 0) {
-        if (player_.terrain_response_active == 0) {
-            if (player_.terrain_push_up != 0) {
-                if (player_.terrain_stop_upward_motion == 0
-                    && player_.terrain_query_state_b == 0) {
-                    const int step = (frame_ & 1U) != 0 ? 2 : 1;
-                    player_.y -= step;
-                    camera_.vertical_threshold = 400;
-                    camera_.update_delay = 0;
-                }
-                player_.terrain_transition_gate = 0xFF;
-                return;
-            }
-            if (player_.terrain_push_down != 0) {
-                if (player_.terrain_landing_state != 0) {
-                    player_.terrain_transition_gate = 0;
-                    return;
-                }
-                player_.y += 2;
-                camera_.vertical_threshold = 0x150;
-                camera_.update_delay = 0;
-                player_.terrain_transition_gate = 0xFF;
-                return;
-            }
-        } else if (player_.terrain_vertical_stop == 0) {
-            player_.terrain_transition_gate = 0;
-            return;
-        }
-    }
-
-    if (player_.terrain_stop_upward_motion == 0) {
-        player_.vx = 0;
-        player_.vy = 0;
-        player_.terrain_horizontal_response = 0;
-        player_.terrain_response_active = 0;
-        player_.terrain_jump_response_counter = 0;
-        player_.terrain_response_timer_state = 0;
-        player_.terrain_transition_gate = 0xFF;
-        return;
-    }
-    player_.terrain_transition_gate = 0;
+    terrain_.apply_response(state_, TerrainResponseContext{
+        frame_,
+        scene_.is_transition(),
+        animation_.stream_entry() == 0x00122006,
+    });
 }
 
 void Engine::integrate_motion() {
@@ -2512,112 +2384,19 @@ void Engine::integrate_motion() {
 }
 
 void Engine::apply_floor_contour() {
-    const Level::TerrainContour contour = level_.query_player_contour(
-        player_world_x(), player_world_y(), player_.terrain_surface_mode);
-    if (!contour.valid) {
-        // Player_FloorContour clears FFF0C1 when all three contour probes are
-        // empty. The following state machine then treats the player as
-        // airborne and the normal integrator supplies gravity.
-        player_.terrain_landing_state = 0;
-        player_.grounded = false;
-        return;
-    }
-
-    // During the upward response phase the ROM deliberately keeps the
-    // contour from re-grounding the player on the launch tile. Once the
-    // vertical stop is armed, the same contour becomes eligible for landing.
-    if ((player_.terrain_response_active != 0 && player_.terrain_vertical_stop == 0)
-        || (!player_.grounded && player_.vy < 0 && player_.terrain_vertical_stop == 0)) {
-        if (player_.terrain_landing_state == 0xFF) {
-            // Once the falling-phase latch is raised, the active response
-            // keeps it asserted until the contour actually lands.
-            player_.grounded = false;
-            return;
-        }
-        player_.terrain_landing_state = 0;
-        player_.grounded = false;
-        return;
-    }
-
-    const int target_y = contour.target_world_y - camera_.y;
-    const int delta = target_y - player_.y;
-    if (delta < -8 || delta > 8) {
-        player_.terrain_landing_state = 0;
-        player_.grounded = false;
-        return;
-    }
-
-    // The original writes the contour-adjusted local Y only when the player
-    // is within eight pixels of the target. The contour byte itself is the
-    // grounded/landing value (flat ground is 1; sloped surfaces retain their
-    // ROM value).
-    player_.y = target_y;
-    player_.vy = 0;
-    // The ROM publishes grounded from FFF0C1, not from contour validity.
-    // Sloped contour bytes remain visible in the landing field while the
-    // player traverses the ramp, so only the flat-ground byte (1) is exposed
-    // as grounded at this boundary.
-    player_.grounded = contour.contour == 1;
-    player_.terrain_landing_state = contour.contour;
-    player_.terrain_response_active = 0;
-    player_.terrain_jump_response_counter = 0;
-    player_.terrain_response_timer_state = 0;
-    terrain_fall_phase_ = false;
+    terrain_.apply_contour(state_, level_, terrain_fall_phase_);
 }
 
 void Engine::resolve_terrain(int previous_world_y) {
-    Level::TerrainQuery query = level_.query_player(player_world_x(), player_world_y());
-    if (checkpoint_terrain_behavior_override_ && query.resolver.valid) {
-        query.resolver.behavior = checkpoint_terrain_behavior_;
-        query.resolver.handler = terrain_handler(checkpoint_terrain_behavior_);
-    }
-    const Level::TerrainCell previous_down_probe =
-        level_.resolve_player_cell(player_world_x(), previous_world_y + 8);
-    const Level::TerrainCell* cell = &query.resolver;
-    const bool resolver_has_handler = query.resolver.valid
-        && query.resolver.behavior != 0
-        && (query.resolver.handler != kTerrainNoOpHandler
-            || query.resolver.behavior == 0x11);
-    if (player_.vy >= 0 && !resolver_has_handler
-        && previous_down_probe.valid && previous_down_probe.behavior != 0
-        && (previous_down_probe.handler != kTerrainNoOpHandler
-            || previous_down_probe.behavior == 0x11)) {
-        // Terrain_ResolvePlayerCell probes the row immediately below the
-        // player on the descending path. This catches the floor crossing
-        // before PLAYER_Y reaches the floor row itself, matching the ROM's
-        // landing snap at the first frame over the surface.
-        cell = &previous_down_probe;
-    }
-    player_.terrain_behavior = cell->valid ? cell->behavior : 0;
-    // Terrain_ResolvePlayerCell clears these scratch fields before it looks
-    // up the selected behavior. FFF0C2 is deliberately cleared only when
-    // the resolved behavior is not 0x47; the 0x47 handler uses it as a
-    // one-shot latch on consecutive frames.
-    player_.terrain_query_state_a = 0;
-    player_.terrain_query_state_b = 0;
-    player_.terrain_response_latch = 0;
-    player_.terrain_state = 0;
-    if (player_.terrain_behavior != 0x47) {
-        player_.terrain_surface_latch = 0;
-    }
-
-    // The original resolver dispatches the behavior selected by the exact
-    // cell. A zero behavior returns without changing motion; it does not
-    // search forward for a nearby floor row and it does not add gravity.
-    const bool has_handler = cell->valid && cell->behavior != 0
-        && (cell->handler != kTerrainNoOpHandler || cell->behavior == 0x11);
-    if (!has_handler) {
-        // A zero-behavior cell is a no-op for the current terrain state. In
-        // particular, the ROM does not turn a grounded player airborne merely
-        // because the resolved row has no handler; the landing flag remains
-        // latched until an actual vertical transition changes it.
-        return;
-    }
-
-    // The ROM dispatches the handler at this single ordinal-15 boundary.
-    // Individual handlers carry their own guards/latches; dispatching only
-    // on behavior transitions loses those semantics for special cells.
-    apply_terrain_behavior(*cell);
+    const auto cell = terrain_.resolve(
+        state_,
+        level_,
+        previous_world_y,
+        checkpoint_terrain_behavior_override_
+            ? std::optional<std::uint8_t>(checkpoint_terrain_behavior_)
+            : std::nullopt
+    );
+    if (cell) apply_terrain_behavior(*cell);
 }
 
 void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
@@ -3397,8 +3176,6 @@ void Engine::update(const InputState& input) {
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
     const bool start_jump = input.jump_pressed && was_grounded;
     AnimationContext animation_context = player_animation_context(was_grounded);
-    animation_context.selector.interaction_lock =
-        player_.animation_selector.interaction_lock;
 
     const bool blocked_right_wall_response = was_grounded
         && (player_.grounded || contour_ground_motion)
@@ -3594,12 +3371,9 @@ void Engine::update(const InputState& input) {
         // contour routine uses that latched bit to distinguish the later
         // falling/landing phase while FFF0BE is still active.
     }
-    // Terrain handlers can arm the interaction lock after the initial RAM
-    // snapshot above. Refresh the animation context before the player VM
-    // tick so a newly spawned surface actor restarts the run stream on this
-    // same frame boundary.
-    animation_context.selector.interaction_lock =
-        player_.animation_selector.interaction_lock;
+    // Terrain handlers can arm the interaction lock after the frame's initial
+    // state read. The animation VM observes that mutation through GameRamView
+    // at its later scheduler boundary.
     if (start_jump && (player_.grounded || contour_ground_motion)) {
         // The recovered frame order applies the jump handler after motion and
         // terrain resolution (Player_Update -> Terrain_Resolve -> jump
@@ -3650,15 +3424,6 @@ void Engine::update(const InputState& input) {
         last_ground_direction_ = 0;
     }
 
-    // The jump handler clears the ground-response latch before publishing
-    // the jump animation root. The context was captured before physics, so
-    // refresh this field after the handler; otherwise select_locomotion_stream
-    // mistakes a normal jump for the timed terrain-response jump stream.
-    animation_context.terrain_response_timer_state =
-        player_.terrain_response_timer_state;
-    animation_context.selector.response_timer =
-        player_.terrain_response_timer_state;
-
     const bool release_up_animation =
         !input.up && player_.animation_selector.transition_state_df != 0;
     if (release_up_animation) {
@@ -3666,7 +3431,6 @@ void Engine::update(const InputState& input) {
         // Camera_UpdateFollow. The selected action stream remains active.
         player_.animation_selector.transition_state_df = 0;
         camera_.vertical_threshold = 0x170;
-        animation_context.selector.transition_state_df = 0;
     }
     const bool select_down_animation =
         input.down
@@ -3683,9 +3447,6 @@ void Engine::update(const InputState& input) {
         player_.animation_selector.transition_state_de = 0xFF;
         player_.animation_selector.response_animation = 0;
         player_.animation_selector.state_lock = 0;
-        animation_context.selector.transition_state_de = 0xFF;
-        animation_context.selector.response_animation = 0;
-        animation_context.selector.state_lock = 0;
     }
     const bool release_down_animation =
         !input.down && player_.animation_selector.transition_state_de != 0;
@@ -3695,44 +3456,10 @@ void Engine::update(const InputState& input) {
         // the later F8 handoff back to locomotion.
         player_.animation_selector.transition_state_de = 0;
         camera_.vertical_threshold = 0x170;
-        animation_context.selector.transition_state_de = 0;
     }
-    // Terrain and selector handlers above can write the shared camera RAM
-    // before the actor VM tick. Refresh the VM view after those writes so it
-    // does not restore the earlier pre-handler threshold.
-    animation_context.camera_vertical_threshold =
-        static_cast<std::uint16_t>(camera_.vertical_threshold);
-    // Ground movement publishes the response latch and horizontal response
-    // after the initial context snapshot. The run stream tests FFF0CC at its
-    // command boundary, so expose the post-handler selector values here just
-    // as the Genesis actor pass does. Leaving the pre-movement zero causes a
-    // held run to branch back to the idle root at 0x00121D9A.
-    animation_context.selector.terminal_transition =
-        player_.terrain_terminal_transition;
-    animation_context.selector.response_active =
-        player_.terrain_response_active;
-    animation_context.selector.transition_gate =
-        player_.terrain_transition_gate;
-    animation_context.selector.camera_special_mode =
-        static_cast<std::uint8_t>(camera_.special_mode);
-    if (animation_context.selector.response_timer == 0
-        && (player_.terrain_response_active != 0
-            || player_.terrain_response_timer_state != 0)) {
-        animation_context.selector.response_timer = std::max<std::uint8_t>(
-            player_.terrain_response_timer_state,
-            1
-        );
-    }
-    animation_context.selector.response_latch =
-        player_.terrain_response_latch;
-    animation_context.selector.horizontal_response =
-        player_.terrain_horizontal_response;
-    // FFF0BE (active response) and FFF0CC (ground-response timer) are
-    // independent Genesis fields. An airborne launch can leave the former
-    // set while the latter has already been cleared; do not reconstruct the
-    // timer from the active-response bit.
-    animation_context.selector.response_timer =
-        player_.terrain_response_timer_state;
+    // The VM reads these post-handler values directly from GameState through
+    // GameRamView. The invocation context remains a lightweight description
+    // of this frame's call boundary rather than a copied RAM image.
 
     // Player_HandleJumpAndVerticalState and the terrain response service have
     // now finished writing local position. Publish the third ROM coordinate
@@ -3805,7 +3532,6 @@ void Engine::update(const InputState& input) {
         desired_pose = SpritePose::Run;
         if (!bounce_response_follow_active_ || bounce_response_finished) {
             player_.animation_selector.response_state_101 = 1;
-            animation_context.selector.response_state_101 = 1;
         }
     } else if (!player_.grounded && !contour_ground_motion) {
         // Genesis keeps the jump stream active during the approach frame. It
@@ -3836,11 +3562,11 @@ void Engine::update(const InputState& input) {
     // signed threshold transition at 0x001221B8 follows the ROM.
     AnimationContext vm_context = animation_context;
     if (desired_pose == SpritePose::Jump && player_.terrain_response_active != 0) {
-        vm_context.player_vy = player_.vy;
+        vm_context.player_vy_override = player_.vy;
         // FFF0C1 is cleared while the active-response jump is airborne. The
         // native terrain mirror retains the launch contour for landing
         // resolution, so keep the VM's selector input at the ROM value.
-        vm_context.selector.landing_state = 0;
+        vm_context.landing_state_override = 0;
     }
     // A direct grounded jump publishes its root before the common actor VM
     // pass. The resulting state boundary therefore exposes the first data
@@ -3871,7 +3597,6 @@ void Engine::update(const InputState& input) {
         animation_.select_stream_entry(kPlayerUpAnimationStream, true, true);
         player_.animation_selector.transition_state_df = 0xFF;
         player_.terrain_response_timer_state = 0;
-        vm_context.selector.transition_state_df = 0xFF;
     }
     if (input.apple_pressed && was_grounded && animation_.rom_loaded()) {
         // Player_SelectLocomotionOrAction publishes the throw root before
@@ -3880,7 +3605,6 @@ void Engine::update(const InputState& input) {
         // native ordering workaround rather than a ROM state field.
         animation_.select_stream_entry(kPlayerAppleActionStream);
         player_.animation_selector.state_lock = 0x0E;
-        vm_context.selector.state_lock = 0x0E;
     }
     // Actor_ActorCollisionPass follows the player selectors in the ROM. Its
     // sword terminal edge is handled inside this one source/target scan;
@@ -4034,15 +3758,10 @@ void Engine::update(const InputState& input) {
         && player_.animation_selector.interaction_lock == 0) {
         AnimationContext collision_selector_context =
             player_animation_context(player_.grounded);
-        collision_selector_context.player_x = player_.x;
-        collision_selector_context.player_y = player_.y;
-        collision_selector_context.world_x = player_world_x();
-        collision_selector_context.world_y = player_world_y();
-        collision_selector_context.player_vx = player_.vx;
-        collision_selector_context.player_vy = player_.vy;
-        collision_selector_context.grounded = player_.grounded || contour_ground_motion;
-        collision_selector_context.selector.interaction_lock = 0;
-        collision_selector_context.selector.response_timer = 0;
+        collision_selector_context.grounded_override =
+            player_.grounded || contour_ground_motion;
+        collision_selector_context.interaction_lock_override = 0;
+        collision_selector_context.response_timer_override = 0;
         animation_.select_player_interaction_state(collision_selector_context);
         // The ROM's next VBlank publishes the 0x28 interaction lock after
         // this immediate selector call. Reuse the existing deferred lock
@@ -4060,33 +3779,17 @@ void Engine::update(const InputState& input) {
         && (interaction_selector_pending_at_start
             || player_.animation_selector.interaction_lock != 0)) {
         AnimationContext selector_context = animation_context;
-        selector_context.player_x = player_.x;
-        selector_context.player_y = player_.y;
-        selector_context.world_x = player_world_x();
-        selector_context.world_y = player_world_y();
-        selector_context.player_vx = player_.vx;
-        selector_context.player_vy = player_.vy;
-        selector_context.grounded = player_.grounded || contour_ground_motion;
-        auto& selector = selector_context.selector;
+        selector_context.grounded_override = player_.grounded || contour_ground_motion;
         if (interaction_selector_pending_at_start) {
             // The native lock is a post-call timer used by the animation
             // pass. The ROM caller reaches Player_ProcessInteractionState
             // with FFF0F2 clear on the frame after the actor flag edge.
-            selector.interaction_lock = 0;
+            selector_context.interaction_lock_override = 0;
         }
-        selector.terminal_transition = player_.terrain_terminal_transition;
-        selector.response_active = player_.terrain_response_active;
-        // FFF0C1 is an explicit selector input. Leave it at the value carried
-        // by the checkpoint/context; the VM synchronizer supplies the basic
-        // grounded fallback only to its private RAM view.
-        selector.transition_gate = player_.terrain_transition_gate;
-        selector.camera_special_mode = static_cast<std::uint8_t>(camera_.special_mode);
-        selector.response_latch = player_.terrain_response_latch;
-        selector.horizontal_response = player_.terrain_horizontal_response;
         // The release path clears FFF0CC before entering 0x001AE4F8. The
         // native terrain mirror still exposes its one-frame response value,
         // so make this caller-side clear explicit in the selector state.
-        selector.response_timer =
+        selector_context.response_timer_override =
             desired_pose == SpritePose::Brake
                 ? 0
                 : (player_.terrain_response_active != 0

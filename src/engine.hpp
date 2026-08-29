@@ -5,6 +5,7 @@
 #include "animation.hpp"
 #include "game_state.hpp"
 #include "movement.hpp"
+#include "player_terrain.hpp"
 #include "sprites.hpp"
 
 #include <array>
@@ -157,7 +158,7 @@ private:
     void collect_scheduler_writer_pcs();
     void render_vdp_checkpoint();
     void update_actor_interactions(const InputState& input, bool was_grounded);
-    AnimationContext player_animation_context(bool grounded) const;
+    AnimationContext player_animation_context(bool grounded);
     CollisionBox read_collision_box(
         std::uint32_t frame_pointer,
         int origin_x,
@@ -181,6 +182,7 @@ private:
     InteractionMap& interaction_map_;
     ActorSystem& actors_;
     SceneSystem scene_;
+    PlayerTerrainSystem terrain_;
     SpriteDatabase sprites_;
     PlayerAnimationVm animation_;
     MovementVm movement_vm_;

@@ -20,11 +20,16 @@ std::int16_t as_i16(std::uint16_t value) {
 
 void GameRamView::bind_context(const AnimationContext& context) {
     context_ = &context;
+    if (context.state != nullptr) state_ = context.state;
     // A command write is an actual state mutation. It must be visible to
     // subsequent commands even though the context itself is an input view.
     // Overlay bytes provide that read-after-write behavior without mutating a
     // caller-owned AnimationContext.
     context_overrides_.clear();
+}
+
+std::uint32_t* GameRamView::random_state() {
+    return state_ == nullptr ? nullptr : &state_->random.value;
 }
 
 void GameRamView::clear_context() {
@@ -47,6 +52,7 @@ bool GameRamView::is_typed_address(RamAddress address) {
     case 0xFF7E00: case 0xFF7E01:
     case 0xFF7E02: case 0xFF7E03:
     case 0xFF7E04: case 0xFF7E05:
+    case 0xFF7E28:
     case 0xFF7E58: case 0xFF7E59:
     case 0xFF7E5A: case 0xFF7E5B:
     case 0xFFF0B0: case 0xFFF0B1:
@@ -75,6 +81,7 @@ bool GameRamView::is_typed_address(RamAddress address) {
     case 0xFFF115:
     case 0xFFF11F:
     case 0xFFF173:
+    case 0xFFF57D:
     case 0xFFEFFF:
         return true;
     default:
@@ -88,95 +95,99 @@ std::uint8_t GameRamView::read_typed8(RamAddress address, bool& handled) const {
 
     const auto& player = state_->player;
     const auto& selector = player.animation_selector;
-    const auto context_u8 = [&](std::uint8_t AnimationSelectorState::*member) {
-        return context_ != nullptr ? context_->selector.*member : selector.*member;
+    const auto selector_u8 = [&](std::uint8_t AnimationSelectorState::*member) {
+        return selector.*member;
     };
-    const auto context_i16 = [&](std::int16_t AnimationSelectorState::*member) {
-        return context_ != nullptr ? context_->selector.*member : selector.*member;
+    const auto context_u8 = [&](std::uint8_t AnimationSelectorState::*member) {
+        return selector_u8(member);
     };
 
     switch (address) {
     case 0xFF7DFA: return static_cast<std::uint8_t>(as_u16(
-        context_ != nullptr ? context_->player_x : player.x) >> 8);
+        player.x) >> 8);
     case 0xFF7DFB: return static_cast<std::uint8_t>(as_u16(
-        context_ != nullptr ? context_->player_x : player.x));
+        player.x));
     case 0xFF7DFC: return static_cast<std::uint8_t>(as_u16(
-        context_ != nullptr ? context_->player_y : player.y) >> 8);
+        player.y) >> 8);
     case 0xFF7DFD: return static_cast<std::uint8_t>(as_u16(
-        context_ != nullptr ? context_->player_y : player.y));
+        player.y));
     case 0xFF7E00: {
-        const int threshold = context_ != nullptr
-            ? context_->camera_vertical_threshold : state_->camera.vertical_threshold;
+        const int threshold = state_->camera.vertical_threshold;
         return static_cast<std::uint8_t>(as_u16(threshold) >> 8);
     }
     case 0xFF7E01: {
-        const int threshold = context_ != nullptr
-            ? context_->camera_vertical_threshold : state_->camera.vertical_threshold;
+        const int threshold = state_->camera.vertical_threshold;
         return static_cast<std::uint8_t>(as_u16(threshold));
     }
     case 0xFF7E02: {
-        const int world_x = context_ != nullptr
-            ? context_->world_x : state_->camera.x + player.x;
+        const int world_x = state_->camera.x + player.x;
         return static_cast<std::uint8_t>(as_u16(world_x) >> 8);
     }
     case 0xFF7E03: {
-        const int world_x = context_ != nullptr
-            ? context_->world_x : state_->camera.x + player.x;
+        const int world_x = state_->camera.x + player.x;
         return static_cast<std::uint8_t>(as_u16(world_x));
     }
     case 0xFF7E04: {
-        const int world_y = context_ != nullptr
-            ? context_->world_y : state_->camera.y + player.y;
+        const int world_y = state_->camera.y + player.y;
         return static_cast<std::uint8_t>(as_u16(world_y) >> 8);
     }
     case 0xFF7E05: {
-        const int world_y = context_ != nullptr
-            ? context_->world_y : state_->camera.y + player.y;
+        const int world_y = state_->camera.y + player.y;
         return static_cast<std::uint8_t>(as_u16(world_y));
     }
+    case 0xFF7E28: return state_->frame.phase;
     case 0xFF7E58: return static_cast<std::uint8_t>(static_cast<std::uint16_t>(
-        context_ != nullptr ? context_->player_vx : player.vx) >> 8);
+        player.vx) >> 8);
     case 0xFF7E59: return static_cast<std::uint8_t>(static_cast<std::uint16_t>(
-        context_ != nullptr ? context_->player_vx : player.vx));
+        player.vx));
     case 0xFF7E5A: return static_cast<std::uint8_t>(static_cast<std::uint16_t>(
-        context_ != nullptr ? context_->player_vy : player.vy) >> 8);
+        context_ != nullptr && context_->player_vy_override
+            ? *context_->player_vy_override : player.vy) >> 8);
     case 0xFF7E5B: return static_cast<std::uint8_t>(static_cast<std::uint16_t>(
-        context_ != nullptr ? context_->player_vy : player.vy));
+        context_ != nullptr && context_->player_vy_override
+            ? *context_->player_vy_override : player.vy));
     case 0xFFF0B0: return static_cast<std::uint8_t>(
-        static_cast<std::uint16_t>(context_i16(&AnimationSelectorState::horizontal_response)) >> 8);
+        static_cast<std::uint16_t>(player.terrain_horizontal_response) >> 8);
     case 0xFFF0B1: return static_cast<std::uint8_t>(
-        static_cast<std::uint16_t>(context_i16(&AnimationSelectorState::horizontal_response)));
-    case 0xFFF0BE: return context_u8(&AnimationSelectorState::response_active);
+        static_cast<std::uint16_t>(player.terrain_horizontal_response));
+    case 0xFFF0BE: return player.terrain_response_active;
     case 0xFFF0C0: return player.terrain_vertical_stop;
     case 0xFFF0C1:
-        if (context_ != nullptr) {
-            return context_->selector.landing_state != 0
-                ? context_->selector.landing_state
-                : context_->grounded ? 1 : 0;
+        if (context_ != nullptr && context_->landing_state_override) {
+            return *context_->landing_state_override;
         }
-        return player.terrain_landing_state;
-    case 0xFFF0C3: return context_ != nullptr ? context_->terrain_behavior : player.terrain_behavior;
-    case 0xFFF0CC: return context_u8(&AnimationSelectorState::response_timer);
+        return player.terrain_landing_state != 0
+            ? player.terrain_landing_state
+            : (context_ != nullptr && context_->grounded_override && *context_->grounded_override
+                ? 1 : 0);
+    case 0xFFF0C3: return player.terrain_behavior;
+    case 0xFFF0CC:
+        return context_ != nullptr && context_->response_timer_override
+            ? *context_->response_timer_override : player.terrain_response_timer_state;
     case 0xFFF0CD: return context_u8(&AnimationSelectorState::transition_mode);
-    case 0xFFF0D0: return context_u8(&AnimationSelectorState::transition_gate);
+    case 0xFFF0D0: return player.terrain_transition_gate;
     case 0xFFF0D2: return context_u8(&AnimationSelectorState::transition_flag);
     case 0xFFF0D4: return context_u8(&AnimationSelectorState::transition_response);
     case 0xFFF0D7: return context_u8(&AnimationSelectorState::transition_lock);
     case 0xFFF0DB: return context_u8(&AnimationSelectorState::transition_state);
     case 0xFFF0DE: return context_u8(&AnimationSelectorState::transition_state_de);
     case 0xFFF0DF: return context_u8(&AnimationSelectorState::transition_state_df);
-    case 0xFFF0E6: return context_u8(&AnimationSelectorState::terminal_transition);
+    case 0xFFF0E6: return player.terrain_terminal_transition;
     case 0xFFF0E7: return context_u8(&AnimationSelectorState::animation_gate);
     case 0xFFF0E9: return context_u8(&AnimationSelectorState::scene_script_countdown);
     case 0xFFF0ED: return context_u8(&AnimationSelectorState::response_animation);
     case 0xFFF0EE: return context_u8(&AnimationSelectorState::response_state_ee);
     case 0xFFF0EF: return context_u8(&AnimationSelectorState::response_state_ef);
     case 0xFFF0F0: return context_u8(&AnimationSelectorState::response_state_f0);
-    case 0xFFF0F2: return context_u8(&AnimationSelectorState::interaction_lock);
+    case 0xFFF0F2:
+        return context_ != nullptr && context_->interaction_lock_override
+            ? *context_->interaction_lock_override
+            : context_u8(&AnimationSelectorState::interaction_lock);
     case 0xFFF101: return context_u8(&AnimationSelectorState::response_state_101);
-    case 0xFFF115: return context_u8(&AnimationSelectorState::response_latch);
+    case 0xFFF115: return player.terrain_response_latch;
     case 0xFFF11F: return context_u8(&AnimationSelectorState::state_lock);
-    case 0xFFF173: return context_u8(&AnimationSelectorState::camera_special_mode);
+    case 0xFFF173: return static_cast<std::uint8_t>(state_->camera.special_mode);
+    case 0xFFF57D: return static_cast<std::uint8_t>(state_->camera.vdp_update);
     case 0xFFEFFF: return context_u8(&AnimationSelectorState::interaction_pending);
     default: return 0;
     }
@@ -220,6 +231,7 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
     case 0xFF7E01: {
         auto word = as_u16(state_->camera.vertical_threshold); update_word(word, address, 0xFF7E00); state_->camera.vertical_threshold = word; return;
     }
+    case 0xFF7E28: state_->frame.phase = value; return;
     case 0xFF7E58: {
         auto word = static_cast<std::uint16_t>(player.vx); update_word(word, address, 0xFF7E58); player.vx = as_i16(word); return;
     }
@@ -232,21 +244,36 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
     case 0xFF7E5B: {
         auto word = static_cast<std::uint16_t>(player.vy); update_word(word, address, 0xFF7E5A); player.vy = as_i16(word); return;
     }
-    case 0xFFF0B0: case 0xFFF0B1: update_i16(selector.horizontal_response, 0xFFF0B0); return;
-    case 0xFFF0BE: update_selector_u8(&AnimationSelectorState::response_active); return;
+    case 0xFFF0B0: case 0xFFF0B1:
+        update_i16(player.terrain_horizontal_response, 0xFFF0B0);
+        selector.horizontal_response = player.terrain_horizontal_response;
+        return;
+    case 0xFFF0BE:
+        player.terrain_response_active = value;
+        update_selector_u8(&AnimationSelectorState::response_active);
+        return;
     case 0xFFF0C0: player.terrain_vertical_stop = value; return;
     case 0xFFF0C1: player.terrain_landing_state = value; selector.landing_state = value; return;
     case 0xFFF0C3: player.terrain_behavior = value; return;
-    case 0xFFF0CC: update_selector_u8(&AnimationSelectorState::response_timer); return;
+    case 0xFFF0CC:
+        player.terrain_response_timer_state = value;
+        update_selector_u8(&AnimationSelectorState::response_timer);
+        return;
     case 0xFFF0CD: update_selector_u8(&AnimationSelectorState::transition_mode); return;
-    case 0xFFF0D0: player.terrain_transition_gate = value; update_selector_u8(&AnimationSelectorState::transition_gate); return;
+    case 0xFFF0D0:
+        player.terrain_transition_gate = value;
+        update_selector_u8(&AnimationSelectorState::transition_gate);
+        return;
     case 0xFFF0D2: update_selector_u8(&AnimationSelectorState::transition_flag); return;
     case 0xFFF0D4: update_selector_u8(&AnimationSelectorState::transition_response); return;
     case 0xFFF0D7: update_selector_u8(&AnimationSelectorState::transition_lock); return;
     case 0xFFF0DB: update_selector_u8(&AnimationSelectorState::transition_state); return;
     case 0xFFF0DE: update_selector_u8(&AnimationSelectorState::transition_state_de); return;
     case 0xFFF0DF: update_selector_u8(&AnimationSelectorState::transition_state_df); return;
-    case 0xFFF0E6: update_selector_u8(&AnimationSelectorState::terminal_transition); return;
+    case 0xFFF0E6:
+        player.terrain_terminal_transition = value;
+        update_selector_u8(&AnimationSelectorState::terminal_transition);
+        return;
     case 0xFFF0E7: update_selector_u8(&AnimationSelectorState::animation_gate); return;
     case 0xFFF0E9: update_selector_u8(&AnimationSelectorState::scene_script_countdown); return;
     case 0xFFF0ED: update_selector_u8(&AnimationSelectorState::response_animation); return;
@@ -255,9 +282,16 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
     case 0xFFF0F0: update_selector_u8(&AnimationSelectorState::response_state_f0); return;
     case 0xFFF0F2: update_selector_u8(&AnimationSelectorState::interaction_lock); return;
     case 0xFFF101: update_selector_u8(&AnimationSelectorState::response_state_101); return;
-    case 0xFFF115: update_selector_u8(&AnimationSelectorState::response_latch); return;
+    case 0xFFF115:
+        player.terrain_response_latch = value;
+        update_selector_u8(&AnimationSelectorState::response_latch);
+        return;
     case 0xFFF11F: update_selector_u8(&AnimationSelectorState::state_lock); return;
-    case 0xFFF173: update_selector_u8(&AnimationSelectorState::camera_special_mode); return;
+    case 0xFFF173:
+        state_->camera.special_mode = value;
+        update_selector_u8(&AnimationSelectorState::camera_special_mode);
+        return;
+    case 0xFFF57D: state_->camera.vdp_update = value; return;
     case 0xFFEFFF: update_selector_u8(&AnimationSelectorState::interaction_pending); return;
     default: return;
     }

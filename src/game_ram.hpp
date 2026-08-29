@@ -22,6 +22,7 @@ public:
     void bind_state(GameState& state) { state_ = &state; }
     void bind_context(const AnimationContext& context);
     void clear_context();
+    std::uint32_t* random_state();
     void bind_actor_record(std::array<std::uint8_t, 0x42>& record) {
         actor_record_ = &record;
     }

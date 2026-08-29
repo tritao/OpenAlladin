@@ -1,4 +1,5 @@
 #include "animation.hpp"
+#include "game_state.hpp"
 
 #include <cassert>
 #include <cstdio>
@@ -107,15 +108,18 @@ int main() {
     PlayerAnimationVm interaction_vm;
     interaction_vm.load_rom(test_rom);
     AnimationContext interaction_context;
-    interaction_context.scene_vdp_update_flag = 1;
-    interaction_context.selector.landing_state = 1;
-    interaction_context.selector.response_timer = 1;
+    GameState interaction_state;
+    interaction_state.camera.vdp_update = 1;
+    interaction_state.player.terrain_landing_state = 1;
+    interaction_state.player.terrain_response_timer_state = 1;
+    interaction_context.state = &interaction_state;
     assert(!interaction_vm.select_player_interaction_state(interaction_context));
     const auto interaction_requests = interaction_vm.take_sound_requests();
     assert(interaction_requests.size() == 1);
     assert(interaction_requests.front() == 0x31);
 
-    interaction_context.scene_vdp_update_flag = 0;
+    interaction_state.player.terrain_response_timer_state = 1;
+    interaction_state.camera.vdp_update = 0;
     assert(!interaction_vm.select_player_interaction_state(interaction_context));
     assert(interaction_vm.take_sound_requests().empty());
 
