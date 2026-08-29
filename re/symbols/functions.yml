@@ -465,7 +465,7 @@
 0x001B1AD6:
   name: InteractionCounter_ConfigureActors
   confidence: decompiled
-  description: Derives the quotient and remainder of PLAYER_INTERACTION_COUNTER, selects animation roots from the table at ROM 0x004A58, and configures the interaction actor records at slots 6 and 7, including the type-0x84 quotient actor when applicable.
+  description: Derives the quotient and remainder of PLAYER_INTERACTION_COUNTER, selects roots from INTERACTION_COUNTER_ANIMATION_ROOT_TABLE at ROM 0x004A58, and configures the interaction actor records at slots 6 and 7, including the type-0x84 quotient actor when applicable. The selected roots point into ACTOR_ANIM_INTERACTION_COUNTER_FRAME_BANK at 0x00122CAC.
   evidence:
     - ghidra_decompile_001B1AD6
     - ghidra_scene_camera_orchestration_targets

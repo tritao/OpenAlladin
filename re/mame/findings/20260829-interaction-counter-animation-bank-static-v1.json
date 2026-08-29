@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-counter-animation-bank-targets.json",
+  "consumer": {
+    "address": "0x001B1AD6",
+    "name": "InteractionCounter_ConfigureActors",
+    "contract": "Quotient and remainder values derived from PLAYER_INTERACTION_COUNTER index the same root table for the slot-6 and slot-7 interaction actors."
+  },
+  "root_table": {
+    "address": "0x00004A58",
+    "name": "INTERACTION_COUNTER_ANIMATION_ROOT_TABLE",
+    "range": "0x00004A58-0x00004B03",
+    "bytes": 172,
+    "entries": 43,
+    "reserved_zero_entries": [11, 12, 13, 14, 16],
+    "selected_roots": "The nonzero entries select the 42 four-byte records in ACTOR_ANIM_INTERACTION_COUNTER_FRAME_BANK."
+  },
+  "animation_bank": {
+    "address": "0x00122CAC",
+    "name": "ACTOR_ANIM_INTERACTION_COUNTER_FRAME_BANK",
+    "range": "0x00122CAC-0x00122D53",
+    "bytes": 168,
+    "entries": 42,
+    "decoded": [
+      "Frame references increment from 0x0CAA to 0x0D4E in steps of four.",
+      "Every entry is followed by EC 0x01, clearing actor state.",
+      "The bank is contiguous and terminates before ACTOR_ANIM_TYPE55_INTERACTION at 0x00122D54."
+    ]
+  },
+  "boundary_basis": [
+    "InteractionCounter_ConfigureActors performs the exact table indexing and publishes selected roots to actor records.",
+    "The table's 43 longwords end at 0x00004B03 before ROM_SCENE_TRANSITION_TABLE at 0x00004B04.",
+    "The bank's fixed four-byte records and known neighboring animation root establish its exact extent."
+  ],
+  "conclusion": "The former 0x00122CAC-0x00122D53 gap is the counter-driven interaction animation bank selected by the root table at 0x00004A58. Its 42 frame/EC01 entries are now canonical, and the sparse table is represented explicitly with its reserved zero slots instead of being treated as opaque fragments.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

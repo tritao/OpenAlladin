@@ -1413,6 +1413,19 @@
     - ghidra_actor_movement_vm_001ADE36
     - animation_stream_decoder
 
+0x004A58:
+  name: INTERACTION_COUNTER_ANIMATION_ROOT_TABLE
+  type: rom_pointer_table
+  entry_size: 4
+  count: 43
+  size: 172
+  confidence: decompiled
+  description: Exact 43-entry longword table indexed by the quotient and remainder of PLAYER_INTERACTION_COUNTER in InteractionCounter_ConfigureActors. Its nonzero entries select roots within ACTOR_ANIM_INTERACTION_COUNTER_FRAME_BANK at 0x00122CAC; zero slots are preserved as reserved counter values, and the table ends immediately before ROM_SCENE_TRANSITION_TABLE at 0x00004B04.
+  evidence:
+    - interaction_counter_animation_bank_static_decompilation
+    - ghidra_decompile_001B1AD6
+    - interaction_counter_actor_configuration
+
 0x0049D8:
   name: SCENE_RESOURCE_COMMAND_TABLE
   type: rom_pointer_table
@@ -1989,6 +2002,17 @@
   evidence:
     - actor_template_mid_dispatch_family_static_decompilation
     - interaction_spawn_type46_5a_response_static_decompilation
+    - animation_stream_decoder
+
+0x00122CAC:
+  name: ACTOR_ANIM_INTERACTION_COUNTER_FRAME_BANK
+  type: animation_stream
+  size: 168
+  confidence: decompiled
+  description: Exact 42-entry interaction-counter animation bank selected by INTERACTION_COUNTER_ANIMATION_ROOT_TABLE. Each four-byte entry presents one frame reference from 0x0CAA through 0x0D4E and clears actor state with EC 0x01; the bank is contiguous and ends immediately before ACTOR_ANIM_TYPE55_INTERACTION at 0x00122D54.
+  evidence:
+    - interaction_counter_animation_bank_static_decompilation
+    - ghidra_decompile_001B1AD6
     - animation_stream_decoder
 
 0x00122D54:

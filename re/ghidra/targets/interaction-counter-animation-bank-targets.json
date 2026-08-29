@@ -1,0 +1,56 @@
+{
+  "format": "openaladdin-interaction-counter-animation-bank-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Classify the counter-indexed interaction animation root table and its contiguous frame/clear bank.",
+  "consumer": {
+    "address": "0x001B1AD6",
+    "name": "InteractionCounter_ConfigureActors",
+    "counter": "PLAYER_INTERACTION_COUNTER",
+    "behavior": [
+      "Divides PLAYER_INTERACTION_COUNTER by ten to obtain the quotient and uses the quotient as a longword index from 0x004A58.",
+      "Uses the remainder as a second longword index from the same table for the slot-7 actor.",
+      "Publishes the quotient root to the slot-6 actor when the quotient is nonzero and the remainder root to the slot-7 actor."
+    ]
+  },
+  "root_table": {
+    "address": "0x00004A58",
+    "name": "INTERACTION_COUNTER_ANIMATION_ROOT_TABLE",
+    "range": ["0x00004A58", "0x00004B03"],
+    "size": 172,
+    "entry_size": 4,
+    "count": 43,
+    "nonzero_ranges": [
+      { "entries": "0-10", "roots": "0x00122CAC-0x00122CD4" },
+      { "entries": "15", "roots": "0x00122D48" },
+      { "entries": "17-42", "roots": "0x00122CD8-0x00122D3C" }
+    ],
+    "reserved_zero_entries": [11, 12, 13, 14, 16]
+  },
+  "animation_bank": {
+    "address": "0x00122CAC",
+    "name": "ACTOR_ANIM_INTERACTION_COUNTER_FRAME_BANK",
+    "range": ["0x00122CAC", "0x00122D53"],
+    "size": 168,
+    "entry_size": 4,
+    "entry_count": 42,
+    "entry_contract": "Each entry is one frame reference word followed by EC 0x01, clearing the actor state after the selected counter frame.",
+    "frame_references": {
+      "first": "0x0CAA",
+      "last": "0x0D4E",
+      "step": "0x0004"
+    }
+  },
+  "boundary_basis": [
+    "Direct quotient/remainder indexing in InteractionCounter_ConfigureActors",
+    "Exact longword table extent immediately before ROM_SCENE_TRANSITION_TABLE at 0x00004B04",
+    "Every selected nonzero root lands on a four-byte frame/EC01 entry in the bank",
+    "The bank is contiguous and ends immediately before ACTOR_ANIM_TYPE55_INTERACTION at 0x00122D54"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

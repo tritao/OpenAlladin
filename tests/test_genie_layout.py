@@ -246,6 +246,30 @@ def test_type84_interaction_base_b6_animation_range_is_exact():
     assert symbol.end + 1 == following.address
 
 
+def test_interaction_counter_animation_table_and_bank_are_exact():
+    symbols = SymbolStore()
+    table = symbols.at(0x00004A58, include_ranges=False)
+    assert table is not None
+    assert table.name == "INTERACTION_COUNTER_ANIMATION_ROOT_TABLE"
+    assert table.size == 172
+    assert table.end == 0x00004B03
+    assert table.metadata["type"] == "rom_pointer_table"
+    assert table.metadata["entry_size"] == 4
+    assert table.metadata["count"] == 43
+
+    bank = symbols.at(0x00122CAC, include_ranges=False)
+    assert bank is not None
+    assert bank.name == "ACTOR_ANIM_INTERACTION_COUNTER_FRAME_BANK"
+    assert bank.size == 168
+    assert bank.end == 0x00122D53
+    assert bank.metadata["type"] == "animation_stream"
+
+    following = symbols.at(0x00122D54, include_ranges=False)
+    assert following is not None
+    assert following.name == "ACTOR_ANIM_TYPE55_INTERACTION"
+    assert bank.end + 1 == following.address
+
+
 def test_type0f_child_and_type6e_default_animation_ranges_are_exact():
     symbols = SymbolStore()
     expected = {
