@@ -1,0 +1,61 @@
+{
+  "format": "openaladdin-upper-type20-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x00123358",
+    "name": "ACTOR_ANIM_UPPER_TYPE20",
+    "packed_region": ["0x00123358", "0x001233CB"],
+    "packed_bytes": 116,
+    "callable_prelude": {
+      "address": "0x00123358",
+      "frame_sequence": ["0x111A", "0x111A", "0x111E", "0x111E", "0x1122", "0x1122", "0x1126", "0x1126", "0x112A", "0x112A", "0x112E", "0x112E", "0x1132", "0x1132", "0x1136", "0x1136"],
+      "return": "0x00123378 FC 0x80"
+    },
+    "main_entry": {
+      "address": "0x0012337A",
+      "frame": "0x113A",
+      "face_or_clear_flip": "0x0012337C F7 0x00",
+      "x_gate": "0x00123380 FD 0x78 -> 0x00123392",
+      "call_prelude": "0x00123386 FC -> 0x00123358",
+      "loop_gate": "0x0012338C EA -> 0x00123380"
+    },
+    "response_path": {
+      "entry": "0x0012339E",
+      "timer": "0x0012339E EE 0x8B",
+      "frame_sequence": ["0x115E", "0x1162", "0x1162", "0x1166", "0x116A", "0x116A", "0x116A", "0x116E", "0x116E", "0x116E"],
+      "child_spawn": "0x001233AA F5 template 0x001B7CB0 payload offset 0x20F0",
+      "loop": "0x001233C6 EA -> 0x0012337A"
+    },
+    "proximity_branch": {
+      "address": "0x00123392",
+      "y_gate": "0x00123392 FE 0x30 -> 0x0012339E",
+      "fallback": "0x00123398 EA -> 0x0012337A"
+    }
+  },
+  "consumers": [
+    {
+      "function": "0x001B6EB2 InteractionSpawn_RuntimeType20",
+      "template": "0x001B7C10 ACTOR_TEMPLATE_UPPER_TYPE20",
+      "entry": "0x0012337A",
+      "runtime_type": "0x20"
+    },
+    {
+      "function": "0x001AC350 ActorType20_ActorCollisionHandler",
+      "entry": "0x001233CC",
+      "note": "The collision-response entry is immediately after this family and remains a separate unclaimed range."
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output for the callable prelude and main Type-0x20 path",
+    "Exact ACTOR_TEMPLATE_UPPER_TYPE20 consumer and runtime type publication",
+    "Existing upper-pair animation decode and VM trace",
+    "Packed boundary immediately before the collision-response entry at 0x001233CC"
+  ],
+  "conclusion": "The upper Type-0x20 animation is one 116-byte composite family: a callable frame prelude, the template entry at 0x0012337A with X/Y proximity gates, and a timer-driven response branch with one child spawn. The collision-selected entry at 0x001233CC is not included.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

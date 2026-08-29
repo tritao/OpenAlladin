@@ -1427,7 +1427,7 @@
 0x001B6EB2:
   name: InteractionSpawn_RuntimeType20
   confidence: confirmed
-  description: Unconditional interaction handler that enters the level-object spawn entry with template 0x001B7C10, then assigns animation stream 0x0012337A and runtime actor type 0x20 when allocation succeeds.
+  description: Unconditional interaction handler that enters the level-object spawn entry with template 0x001B7C10, then assigns animation entry 0x0012337A within ACTOR_ANIM_UPPER_TYPE20 and runtime actor type 0x20 when allocation succeeds.
   evidence:
     - ghidra_upper_interaction_targeted_decompile
     - mame_upper_activation_edge_trace

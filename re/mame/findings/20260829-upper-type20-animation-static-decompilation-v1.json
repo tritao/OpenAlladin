@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/upper-type20-animation-static-targets.json",
+  "stream": {
+    "address": "0x00123358",
+    "name": "ACTOR_ANIM_UPPER_TYPE20",
+    "range": "0x00123358-0x001233CB",
+    "bytes": 116,
+    "entry": "0x0012337A",
+    "callable_prelude": "0x00123358-0x00123379 with FC80 return",
+    "x_gate": "0x78 -> 0x00123392",
+    "y_gate": "0x30 -> 0x0012339E",
+    "timer": "0x8B",
+    "response_frames": ["0x115E", "0x1162", "0x1162", "0x1166", "0x116A", "0x116A", "0x116A", "0x116E", "0x116E", "0x116E"],
+    "response_child_spawn": "0x001B7CB0",
+    "loop_target": "0x0012337A"
+  },
+  "consumers": [
+    {
+      "address": "0x001B6EB2",
+      "name": "InteractionSpawn_RuntimeType20",
+      "template": "0x001B7C10 ACTOR_TEMPLATE_UPPER_TYPE20",
+      "runtime_type": "0x20",
+      "entry": "0x0012337A"
+    },
+    {
+      "address": "0x001AC350",
+      "name": "ActorType20_ActorCollisionHandler",
+      "entry": "0x001233CC",
+      "note": "Separate collision-response stream immediately follows the owned range."
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Direct Type-0x20 spawn consumer",
+    "Existing upper-route runtime traces",
+    "Collision handler reference establishes the next entry boundary"
+  ],
+  "conclusion": "The upper Type-0x20 animation family is closed as a composite callable/prelude and proximity-gated response region. Its collision-response entry at 0x001233CC is deliberately left separate for a follow-up campaign.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

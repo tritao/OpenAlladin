@@ -31,7 +31,7 @@
     {
       "address": "0x001B7C10",
       "name": "ACTOR_TEMPLATE_UPPER_TYPE20",
-      "role": "Upper interaction source template for selector 0x1B; the caller publishes runtime type 0x20 and animation root 0x0012337A."
+      "role": "Upper interaction source template for selector 0x1B; the caller publishes runtime type 0x20 and animation entry 0x0012337A within ACTOR_ANIM_UPPER_TYPE20."
     },
     {
       "address": "0x001B7C24",

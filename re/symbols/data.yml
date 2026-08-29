@@ -592,6 +592,17 @@
     - transition_presentation_lead_in_static_decompilation
     - animation_stream_decoder
 
+0x00123358:
+  name: ACTOR_ANIM_UPPER_TYPE20
+  size: 116
+  confidence: decompiled
+  description: Upper-route Type-0x20 animation family used by the direct interaction spawn and its actor-collision response. Its packed 116-byte region contains the callable 0x00123358 frame prelude, the main entry at 0x0012337A with X/Y proximity gates, the timer-0x8B response branch and child spawn, then loops through the local upper-interaction sequence before the separate collision-response entry at 0x001233CC.
+  evidence:
+    - upper_type20_animation_static_decompilation
+    - actor_template_upper_type20
+    - upper_actor_response_targeted_decompile
+    - animation_stream_decoder
+
 0x00120F76:
   name: ACTOR_MOVE_TYPE2A_VERTICAL_BOB
   size: 62
@@ -1260,7 +1271,7 @@
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Upper interaction template used by the runtime type-0x20 spawn path; the caller initializes the record and then writes animation root 0x0012337A and runtime type 0x20.
+  description: Upper interaction template used by the runtime type-0x20 spawn path; the caller initializes the record and then writes animation entry 0x0012337A within ACTOR_ANIM_UPPER_TYPE20 and runtime type 0x20.
   evidence:
     - level01_upper_actor_response_targets
     - level01_upper_activation_trace
