@@ -1532,6 +1532,17 @@
     - actor_animation_stream_family_static_decompilation
     - animation_stream_decoder
 
+0x00124C3A:
+  name: ACTOR_ANIM_TYPE84_MOVING_CHILD_VARIANT_LOOP
+  type: animation_stream
+  size: 98
+  confidence: decompiled
+  description: Type-0x84 moving-child variant loop paired with ACTOR_ANIM_TYPE84_MOVING_CHILD_SPAWN_PREFIX. Its exact 98-byte body presents the 0x14BA-0x14D2 frame groups, uses two random gates to issue F5 commands for ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE, and returns to ACTOR_ANIM_TYPE04_SCENE_SETUP.
+  evidence:
+    - actor_template_f5_moving_child_base_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
 0x00124C9C:
   name: ACTOR_ANIM_TYPE84_SCENE_SETUP_A
   type: animation_stream
@@ -1594,6 +1605,16 @@
   description: Type-0x16 level-object animation selected by ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT. Its exact 24-byte region presents the 0x193E frame loop and applies the player-Y proximity gate before entering the adjacent response path.
   evidence:
     - actor_template_late_interaction_family_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124D50:
+  name: ACTOR_ANIM_TYPE16_LEVEL_OBJECT_HORIZONTAL_GATE
+  type: animation_stream
+  size: 12
+  confidence: decompiled
+  description: Horizontal player-X proximity entry paired with ACTOR_ANIM_TYPE16_LEVEL_OBJECT. Its exact 12-byte body tests distance 0x64 against the Type-0x16 response body at 0x00124D5C and otherwise loops through the shared vertical-gate entry at 0x00124D42.
+  evidence:
     - actor_animation_stream_family_static_decompilation
     - animation_stream_decoder
 
