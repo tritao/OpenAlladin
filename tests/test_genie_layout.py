@@ -441,6 +441,36 @@ def test_canonical_title_menu_graphics_have_exact_service_extents():
     assert all(left[1] + 1 == right[0] for left, right in zip(actual, actual[1:]))
 
 
+def test_canonical_scene_resource_palette_sources_have_exact_loader_extents():
+    symbols = SymbolStore()
+    expected = (
+        (0x001297F2, 0x00129811, "MENU_PALETTE_BAND1_SOURCE"),
+        (0x00129812, 0x00129831, "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812"),
+        (0x00129832, 0x001298B1, "SCENE_REBUILD_TRANSITION_PALETTE_SOURCE"),
+        (0x001298B2, 0x001298D1, "SCENE_RESOURCE_PALETTE_BAND3_SOURCE"),
+        (0x001298D2, 0x001298F1, "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2"),
+        (0x001298F2, 0x00129911, "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2"),
+        (0x00129912, 0x00129931, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912"),
+        (0x00129932, 0x00129951, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932"),
+        (0x00129952, 0x00129971, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952"),
+        (0x00129972, 0x00129991, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972"),
+        (0x00129992, 0x001299B1, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992"),
+        (0x001299B2, 0x001299D1, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2"),
+        (0x001299D2, 0x001299F1, "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2"),
+        (0x001299F2, 0x00129A11, "SCENE_RESET_PALETTE_BAND1_SOURCE"),
+        (0x00129A12, 0x00129A31, "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12"),
+        (0x00129A92, 0x00129AB1, "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92"),
+        (0x00129AB2, 0x00129AD1, "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2"),
+    )
+    for start, end, name in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == end - start + 1
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "palette_data"
+
+
 def test_canonical_credits_stream_has_exact_interpreter_terminal():
     symbols = SymbolStore()
     symbol = symbols.at(0x00127E8C, include_ranges=False)

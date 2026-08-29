@@ -813,6 +813,145 @@
     - ghidra_menu_selection_marker_animation_targets
     - title-menu-graphics-extents-static-v1
 
+0x001297F2:
+  name: MENU_PALETTE_BAND1_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word options palette source uploaded to palette band 1 during Menu_RunOptionsAndSelectNextState.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129812:
+  name: SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Scene-resource palette source published for palette band 2 by SceneResource_LoadVRAMPairWithPalette129812 and consumed by the common render-frame preparation service.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129832:
+  name: SCENE_REBUILD_TRANSITION_PALETTE_SOURCE
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band palette source passed directly by SceneResource_RebuildAfterInteraction to Render_RunPaletteTransitionFrom; its final band ends at 0x001298B1.
+  evidence:
+    - ghidra_scene_resource_palette_loader
+    - ghidra_palette_transition_source_contract
+    - scene_resource_palette_source_extents_static_v1
+
+0x001298B2:
+  name: SCENE_RESOURCE_PALETTE_BAND3_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word scene-resource palette source uploaded to palette band 3 by SceneResource_PrepareRenderFrame.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x001298D2:
+  name: SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Common scene-resource palette source published for palette band 2 by SceneResource_LoadCommonVRAMBase.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x001298F2:
+  name: SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Scene-resource variant palette source published for palette band 2 by SceneResource_LoadVRAMPairWithPalette1298F2.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129912:
+  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012D870 C000 resource frame.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129932:
+  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012DA04 C000 resource frame.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129952:
+  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012DD76 C000 resource frame.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129972:
+  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012DF6C C000 resource frame.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129992:
+  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012E176 C000 resource frame.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x001299B2:
+  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012E34A C000 resource frame.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x001299D2:
+  name: SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Scene-resource variant palette source published for palette band 2 by SceneResource_LoadVRAMPairWithPalette1299D2.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x001299F2:
+  name: SCENE_RESET_PALETTE_BAND1_SOURCE
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Fixed 16-word reset-scene palette source uploaded to palette band 1 by Scene_ResetToState0.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129A12:
+  name: SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Common scene-resource palette source published for palette band 2 by SceneResource_LoadCommonVRAMPair.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129A92:
+  name: SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Shared scene-resource palette source supplied as the band-1 input to the 0x0012DD76, 0x0012E176, and 0x0012E34A C000 resource frame preparations.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129AB2:
+  name: SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  description: Shared scene-resource palette source supplied as the band-1 input to the 0x0012D870, 0x0012DA04, and 0x0012DF6C C000 resource frame preparations.
+  evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data

@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-resource-palette-source-extents-targets.json",
+  "corpus": {
+    "sources": 17,
+    "bytes": 608,
+    "fixed_upload_rule": "Band sources are 16 words / 0x20 bytes; transition sources are four bands / 0x80 bytes."
+  },
+  "sources": [
+    { "name": "MENU_PALETTE_BAND1_SOURCE", "range": ["0x001297F2", "0x00129811"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812", "range": ["0x00129812", "0x00129831"], "bytes": 32 },
+    { "name": "SCENE_REBUILD_TRANSITION_PALETTE_SOURCE", "range": ["0x00129832", "0x001298B1"], "bytes": 128 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND3_SOURCE", "range": ["0x001298B2", "0x001298D1"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2", "range": ["0x001298D2", "0x001298F1"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2", "range": ["0x001298F2", "0x00129911"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912", "range": ["0x00129912", "0x00129931"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932", "range": ["0x00129932", "0x00129951"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952", "range": ["0x00129952", "0x00129971"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972", "range": ["0x00129972", "0x00129991"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992", "range": ["0x00129992", "0x001299B1"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2", "range": ["0x001299B2", "0x001299D1"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2", "range": ["0x001299D2", "0x001299F1"], "bytes": 32 },
+    { "name": "SCENE_RESET_PALETTE_BAND1_SOURCE", "range": ["0x001299F2", "0x00129A11"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12", "range": ["0x00129A12", "0x00129A31"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92", "range": ["0x00129A92", "0x00129AB1"], "bytes": 32 },
+    { "name": "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2", "range": ["0x00129AB2", "0x00129AD1"], "bytes": 32 }
+  ],
+  "evidence": [
+    "Exact direct loader assignments and A0/A2 source setup in the scene-resource service family.",
+    "Exact fixed-word and four-band copy loops in Render_UploadPaletteBand0-3 and Render_RunPaletteTransitionFrom.",
+    "No promoted range overlaps another; the only gap in the local loader palette corpus is explicitly retained as unresolved."
+  ],
+  "conclusion": "The scene-resource loader palette corpus is now explicit GRAPHICS layout evidence, with direct source roles documented and no inferred ownership for the intervening unknown region.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

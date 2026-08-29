@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-palette-source-extents",
+    "purpose": "Bound the scene-resource loader palette sources by their fixed VDP upload contracts and direct loader assignments."
+  },
+  "services": {
+    "band0": { "address": "0x001B2678", "name": "Render_UploadPaletteBand0", "words": 16, "bytes": 32 },
+    "band1": { "address": "0x001B2664", "name": "Render_UploadPaletteBand1", "words": 16, "bytes": 32 },
+    "band2": { "address": "0x001B2650", "name": "Render_UploadPaletteBand2", "words": 16, "bytes": 32 },
+    "band3": { "address": "0x001B263C", "name": "Render_UploadPaletteBand3", "words": 16, "bytes": 32 },
+    "transition": { "address": "0x001B278A", "name": "Render_RunPaletteTransitionFrom", "bands": 4, "words_per_band": 16, "bytes": 128 }
+  },
+  "sources": [
+    { "address": "0x001297F2", "name": "MENU_PALETTE_BAND1_SOURCE", "service": "0x001B2664 Render_UploadPaletteBand1", "range": ["0x001297F2", "0x00129811"] },
+    { "address": "0x00129812", "name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812", "service": "0x001B2650 Render_UploadPaletteBand2 via SCENE_RESOURCE_PALETTE_SOURCE", "range": ["0x00129812", "0x00129831"] },
+    { "address": "0x00129832", "name": "SCENE_REBUILD_TRANSITION_PALETTE_SOURCE", "service": "0x001B278A Render_RunPaletteTransitionFrom", "range": ["0x00129832", "0x001298B1"] },
+    { "address": "0x001298B2", "name": "SCENE_RESOURCE_PALETTE_BAND3_SOURCE", "service": "0x001B263C Render_UploadPaletteBand3", "range": ["0x001298B2", "0x001298D1"] },
+    { "address": "0x001298D2", "name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2", "service": "0x001B2650 Render_UploadPaletteBand2 via SCENE_RESOURCE_PALETTE_SOURCE", "range": ["0x001298D2", "0x001298F1"] },
+    { "address": "0x001298F2", "name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2", "service": "0x001B2650 Render_UploadPaletteBand2 via SCENE_RESOURCE_PALETTE_SOURCE", "range": ["0x001298F2", "0x00129911"] },
+    { "address": "0x00129912", "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912", "service": "0x001B2678 Render_UploadPaletteBand0", "range": ["0x00129912", "0x00129931"] },
+    { "address": "0x00129932", "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932", "service": "0x001B2678 Render_UploadPaletteBand0", "range": ["0x00129932", "0x00129951"] },
+    { "address": "0x00129952", "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952", "service": "0x001B2678 Render_UploadPaletteBand0", "range": ["0x00129952", "0x00129971"] },
+    { "address": "0x00129972", "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972", "service": "0x001B2678 Render_UploadPaletteBand0", "range": ["0x00129972", "0x00129991"] },
+    { "address": "0x00129992", "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992", "service": "0x001B2678 Render_UploadPaletteBand0", "range": ["0x00129992", "0x001299B1"] },
+    { "address": "0x001299B2", "name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2", "service": "0x001B2678 Render_UploadPaletteBand0", "range": ["0x001299B2", "0x001299D1"] },
+    { "address": "0x001299D2", "name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2", "service": "0x001B2650 Render_UploadPaletteBand2 via SCENE_RESOURCE_PALETTE_SOURCE", "range": ["0x001299D2", "0x001299F1"] },
+    { "address": "0x001299F2", "name": "SCENE_RESET_PALETTE_BAND1_SOURCE", "service": "0x001B2664 Render_UploadPaletteBand1", "range": ["0x001299F2", "0x00129A11"] },
+    { "address": "0x00129A12", "name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12", "service": "0x001B2650 Render_UploadPaletteBand2 via SCENE_RESOURCE_PALETTE_SOURCE", "range": ["0x00129A12", "0x00129A31"] },
+    { "address": "0x00129A92", "name": "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92", "service": "0x001B2664 Render_UploadPaletteBand1", "range": ["0x00129A92", "0x00129AB1"] },
+    { "address": "0x00129AB2", "name": "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2", "service": "0x001B2664 Render_UploadPaletteBand1", "range": ["0x00129AB2", "0x00129AD1"] }
+  ],
+  "evidence": [
+    "Every fixed source is directly loaded or published by a named scene-resource/menu loader.",
+    "The shared band helpers copy exactly 16 words, while the transition helper publishes four 16-word bands.",
+    "The promoted ranges are contiguous from 0x001297F2-0x00129A31 and 0x00129A92-0x00129AD1; the intervening 0x00129A32-0x00129A91 gap remains unresolved."
+  ],
+  "limitations": [
+    "Published RAM-pointer sources are named by their loader assignments; this slice does not infer palette color roles.",
+    "The unreferenced 0x00129A32-0x00129A91 region is intentionally not claimed."
+  ]
+}
