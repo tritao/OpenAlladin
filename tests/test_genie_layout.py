@@ -530,6 +530,28 @@ def test_player_response_reset_fallback_animation_is_exact():
     assert decoded["instructions"][1]["branch_target"] == "0x00121C28"
 
 
+def test_actor_type4d_collision_response_animation_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x001222C2, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE"
+    assert stream.end == 0x001222D1
+    assert stream.size == 16
+    assert stream.metadata["type"] == "animation_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoded = load_animation_decoder().AnimationDecoder(rom).decode_stream(
+        0x001222C2,
+        max_instructions=16,
+        max_bytes=64,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 16
+    assert decoded["stopped_reason"] == "dynamic_state_selection"
+    assert decoded["instructions"][-1]["opcode"] == "0xF8"
+
+
 def test_type03_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {

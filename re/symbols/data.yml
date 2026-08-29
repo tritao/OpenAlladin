@@ -3613,6 +3613,17 @@
     - ghidra_player_animation_pc_assignment_001AED40
     - animation_stream_decoder
 
+0x001222C2:
+  name: ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE
+  type: animation_stream
+  size: 16
+  confidence: decompiled
+  description: Type-0x12 actor response animation installed by ActorType4D_PlayerCollisionHandler at 0x001AF0CA when it finds the paired actor. Its exact 16-byte region presents 0x09AA, reloads timer 0x8B, repeats the 0x09AA/0x09A6/0x09A2 frame pairs, and enters dynamic state selection at 0x001222D0.
+  evidence:
+    - actor_type4d_collision_response_animation_static_decompilation
+    - ghidra_disassembly_001AF0B8
+    - animation_stream_decoder
+
 0x00122236:
   name: PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE
   size: 140

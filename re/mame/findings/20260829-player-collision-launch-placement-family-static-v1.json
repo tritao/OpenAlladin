@@ -24,7 +24,7 @@
         "actor_types": ["0x4D"],
         "name": "ActorType4D_PlayerCollisionHandler",
         "range": "0x001AF0B8-0x001AF10F",
-        "semantics": "Type-0x4D placement response: find type-0x12 context, adjust the camera threshold and PLAYER_VX by the actor/player X ordering, then install a type-0x84 response actor with animation 0x00124498 and cleared transient motion words."
+        "semantics": "Type-0x4D placement response: find type-0x12 context, install ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE at 0x001222C2 on that paired actor, adjust the camera threshold and PLAYER_VX by the actor/player X ordering, then install a type-0x84 response actor with animation 0x00124498 and cleared transient motion words."
       },
       {
         "address": "0x001AF110",

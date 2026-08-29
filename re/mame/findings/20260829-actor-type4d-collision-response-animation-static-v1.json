@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-type4d-collision-response-animation-static-targets.json",
+  "stream": {
+    "address": "0x001222C2",
+    "name": "ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE",
+    "range": "0x001222C2-0x001222D1",
+    "bytes": 16,
+    "frames": ["0x09AA", "0x09AA", "0x09A6", "0x09A6", "0x09A2", "0x09A2"],
+    "timer": "EE 0x8B at 0x001222C4",
+    "handoff": "F8 at 0x001222D0 -> dynamic actor animation state selection",
+    "stopped_reason": "dynamic_state_selection"
+  },
+  "producer": {
+    "address": "0x001AF0B8",
+    "name": "ActorType4D_PlayerCollisionHandler",
+    "selection_site": "0x001AF0CA",
+    "condition": "The handler first searches for the paired runtime type-0x12 actor and installs this stream into that actor's animation field."
+  },
+  "boundary": "The exact 16-byte stream ends at 0x001222D1; PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE begins at 0x001222D2.",
+  "evidence": [
+    "Fresh instructions.json DATA reference from 0x001AF0CA to 0x001222C2",
+    "Lossless AnimationDecoder output",
+    "ActorType4D_PlayerCollisionHandler disassembly showing the paired actor animation-field write"
+  ],
+  "conclusion": "The previously unknown 0x001222C2 range is a directly installed Type-0x12 actor response stream for the Type-0x4D collision path, not a player-owned terrain stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

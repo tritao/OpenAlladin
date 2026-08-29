@@ -14,7 +14,7 @@
     ]
   },
   "targets": [
-    { "address": "0x001AF0B8", "name": "ActorType4D_PlayerCollisionHandler" },
+    { "address": "0x001AF0B8", "name": "ActorType4D_PlayerCollisionHandler", "animation_response": "0x001222C2 ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE" },
     { "address": "0x001AF110", "name": "ActorType11_12_PlayerCollisionHandler" }
   ],
   "memory_references": [
