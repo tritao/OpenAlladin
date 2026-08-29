@@ -2086,6 +2086,20 @@
     - ghidra_disassembly_001ACA00
     - ghidra_decompile_001ACA00
     - ghidra_actor_vm_event_targets
+0x001ACB6A:
+  name: ActorEvent_SetActorFlag40
+  confidence: decompiled
+  description: Animation/movement callback that sets bit 0x40 in actor field +0x06 and returns.
+  evidence:
+    - actor_type2d_movement_stream_static_decompilation
+    - type34_wall_response_static_decompilation
+0x001ACB72:
+  name: ActorEvent_ClearActorFlag40
+  confidence: decompiled
+  description: Animation/movement callback that clears bit 0x40 in actor field +0x06 and returns.
+  evidence:
+    - actor_type2d_movement_stream_static_decompilation
+    - type34_wall_response_static_decompilation
 0x001AD00E:
   name: AnimationVM_SpawnOrCopyActor
   confidence: confirmed

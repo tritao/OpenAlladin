@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-guard-sword-movement-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "movement": {
+    "address": "0x00121240",
+    "name": "ACTOR_MOVE_GUARD_SWORD_ATTACK",
+    "decoded_bytes": 22,
+    "decoded_steps": 2,
+    "deltas": [[3, -4], [3, 0]],
+    "commands": [
+      "0x91 parameter 0x001ACB6A -> ActorEvent_SetActorFlag40",
+      "0x90 arithmetic target fields 0xC2/0x00/0x1A value 0x0C00",
+      "0x80 loop 0x0012124E -> 0x0012124E"
+    ],
+    "non_linear_runtime_state": false
+  },
+  "producer": {
+    "animation_root": "0x0012542A ACTOR_ANIM_GUARD_ATTACK",
+    "spawn_command": "0x0012545E F5 00 00 1B 7C B0 10 E2 00 00 00 00 00 12 12 40",
+    "template": "0x001B7CB0 ACTOR_TEMPLATE_GUARD_SWORD_ATTACK",
+    "runtime_type": "0x2D",
+    "default_movement": "0x0011F6D4",
+    "movement_override": "0x00121240"
+  },
+  "callbacks": [
+    {
+      "address": "0x001ACB6A",
+      "name": "ActorEvent_SetActorFlag40",
+      "encoding": "08E9000600064E75",
+      "effect": "set actor field +0x06 bit 0x40"
+    },
+    {
+      "address": "0x001ACB72",
+      "name": "ActorEvent_ClearActorFlag40",
+      "encoding": "08A9000600064E75",
+      "effect": "clear actor field +0x06 bit 0x40"
+    }
+  ],
+  "evidence": [
+    "Lossless MovementDecoder output for 0x00121240",
+    "Exact guard animation F5 payload and type-0x2D template",
+    "Exact callback encodings at 0x001ACB6A and 0x001ACB72"
+  ],
+  "conclusion": "The guard sword-attack child has a statically closed movement override: two fixed displacement steps, an exact field-bit callback parameter, one encoded arithmetic command, and an unconditional self-loop. The F5 producer establishes why this stream replaces the template default.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

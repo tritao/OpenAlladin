@@ -444,10 +444,12 @@
     - movement_stream_decoder
 
 0x00121240:
-  name: ACTOR_MOVE_STATE_121240
-  confidence: probable
-  description: Actor movement state-stream root containing conditional player-distance and flag tests.
+  name: ACTOR_MOVE_GUARD_SWORD_ATTACK
+  size: 22
+  confidence: decompiled
+  description: Type-0x2D guard-sword child movement override; its lossless 22-byte stream applies two signed (+3, -4) and (+3, 0) deltas, pushes ActorEvent_SetActorFlag40, performs the encoded 0x90 arithmetic operation, and loops from 0x0012124E to itself.
   evidence:
+    - actor_type2d_movement_stream_static_decompilation
     - actor_template_runtime_trace
     - movement_stream_decoder
 
@@ -902,7 +904,7 @@
 0x0012542A:
   name: ACTOR_ANIM_GUARD_ATTACK
   confidence: confirmed
-  description: Type 0x0A guard animation stream; its F5 spawn records create the type 0x2D guard sword-attack child.
+  description: Type 0x0A guard animation stream; its F5 spawn record creates the type 0x2D guard sword-attack child and overrides that child movement with ACTOR_MOVE_GUARD_SWORD_ATTACK.
   evidence:
     - mame_type_2D_spawn_trace_1800
     - ghidra_animation_vm_spawn_handler_001AD00E
@@ -1025,7 +1027,7 @@
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Compact actor template for the guard sword-attack child; its type byte is 0x2D, movement stream pointer is 0x0011F6D4, and animation stream pointer is 0x00123EE8. It is spawned by the type 0x0A guard animation through the F5 handler.
+  description: Compact actor template for the guard sword-attack child; its type byte is 0x2D, default movement stream pointer is 0x0011F6D4, and animation stream pointer is 0x00123EE8. The type 0x0A guard animation F5 record overrides movement with ACTOR_MOVE_GUARD_SWORD_ATTACK when it spawns this child.
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - mame_natural_actor_type_2D_trace
