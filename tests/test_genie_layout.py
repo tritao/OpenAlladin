@@ -190,6 +190,30 @@ def test_layout_uses_canonical_padding_ranges(tmp_path):
     assert layout.at(0x30).layout_class == "PADDING"
 
 
+def test_startup_font_glyph_bank_is_exact_and_precedes_reset_code():
+    symbols = SymbolStore()
+    padding = symbols.at(0x000004D0, include_ranges=False)
+    assert padding is not None
+    assert padding.name == "FONT_GLYPH_ALIGNMENT_PADDING"
+    assert padding.end == 0x000004D7
+    assert padding.size == 8
+    assert padding.metadata["type"] == "padding_data"
+
+    bank = symbols.at(0x000004D8, include_ranges=False)
+    assert bank is not None
+    assert bank.name == "FONT_GLYPH_DATA"
+    assert bank.end == 0x000006A7
+    assert bank.size == 464
+    assert bank.metadata["type"] == "graphics_data"
+    assert bank.metadata["entry_size"] == 8
+    assert bank.metadata["count"] == 58
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    glyphs = rom_path.read_bytes()[bank.address:bank.end + 1]
+    assert len(glyphs) == 58 * 8
+    assert glyphs[:8] == bytes.fromhex("1818181800181800")
+
+
 def test_layout_uses_canonical_terrain_collision_profile_range(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(

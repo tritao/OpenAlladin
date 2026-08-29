@@ -12,6 +12,27 @@
     - chopper_frame_parser
     - sprite_frame_pointer_table_static_v1
 
+0x000004D0:
+  name: FONT_GLYPH_ALIGNMENT_PADDING
+  type: padding_data
+  size: 8
+  confidence: confirmed
+  description: Eight zero bytes between the regional-format strings and the fixed-width startup font glyph bank at 0x000004D8.
+  evidence:
+    - startup_font_bank_static_v1
+
+0x000004D8:
+  name: FONT_GLYPH_DATA
+  type: graphics_data
+  entry_size: 8
+  count: 58
+  size: 464
+  confidence: confirmed
+  description: Fixed-width startup font glyph bank containing 58 contiguous eight-byte bitmap records at 0x000004D8-0x000006A7. The bank ends immediately before System_ResetBootstrap at 0x000006A8 and the known SPRITE_FRAME_POINTER_TABLE at 0x000006AE.
+  evidence:
+    - startup_font_bank_static_v1
+    - font_glyph_bitmap_pattern
+
 0x00010000:
   name: SPRITE_TILE_DATA
   type: graphics_data

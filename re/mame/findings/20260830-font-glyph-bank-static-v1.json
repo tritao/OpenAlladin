@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "objects": [
+    {
+      "address": "0x000004D0",
+      "end": "0x000004D7",
+      "name": "FONT_GLYPH_ALIGNMENT_PADDING",
+      "size": 8,
+      "role": "zero alignment padding"
+    },
+    {
+      "address": "0x000004D8",
+      "end": "0x000006A7",
+      "name": "FONT_GLYPH_DATA",
+      "size": 464,
+      "entry_size": 8,
+      "count": 58,
+      "role": "fixed-width startup font bitmap bank"
+    }
+  ],
+  "behavior": "The bank is a contiguous sequence of 58 eight-byte glyph bitmaps. It is bounded by the regional-format string terminator before it and reset bootstrap code plus the sprite-frame pointer table after it.",
+  "evidence": [
+    "startup_font_bank_static_v1",
+    "font_glyph_bitmap_pattern",
+    "exact_58_record_partition"
+  ],
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}
