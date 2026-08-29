@@ -27,15 +27,18 @@
     "record": "0x001B83CC",
     "runtime_type": "0x7B",
     "movement_stream": "0x0012171C",
-    "status": "unresolved template consumer"
+    "name": "ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD",
+    "animation_stream": "0x001243E2 ACTOR_ANIM_TYPE7B_LEVEL11_EVENT",
+    "consumer": "F5 at 0x0012457C inside ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE"
   },
   "evidence": [
     "Lossless AnimationDecoder output",
     "Direct Level11_EnterRoutine template load",
     "Exact Type-0x7B animation pointer",
+    "Direct F5 consumer at 0x0012457C",
     "Exact boundary before the following stream at 0x00124408"
   ],
-  "conclusion": "The Level 11 coordinate-window path selects a Type-0x7B template with a closed 38-byte doubled-frame animation cycle. The same animation pointer is retained as shared evidence for the unresolved Type-0x7B record at 0x001B83CC without inferring that record's consumer.",
+  "conclusion": "The Level 11 coordinate-window path selects a Type-0x7B template with a closed 38-byte doubled-frame animation cycle. A second template record at 0x001B83CC uses the same animation and is now resolved as ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD by the direct F5 consumer at 0x0012457C inside the Type-0x74 terrain/exit response family.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

@@ -70,7 +70,7 @@
       "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
       "runtime_type": "0x74",
       "movement_stream": null,
-      "animation_stream": "0x001244E6",
+      "animation_stream": "0x001244E6 ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE",
       "resource_count": "0x05"
     },
     {

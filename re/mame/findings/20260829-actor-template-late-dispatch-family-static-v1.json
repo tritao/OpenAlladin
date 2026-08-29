@@ -12,7 +12,7 @@
       "address": "0x001B82F0",
       "name": "ACTOR_TEMPLATE_TYPE_74_LEVEL06_EXIT",
       "consumer": "Level06_ExitRoutine at 0x001B644E",
-      "behavior": "Optional reverse-slot type-0x74 spawn using animation 0x001244E6 and five resources; the successful path sets facing 0xFF and position (0x00A0,0x01C0)."
+      "behavior": "Optional reverse-slot type-0x74 spawn using ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE at 0x001244E6 and five resources; the successful path sets facing 0xFF and position (0x00A0,0x01C0)."
     },
     {
       "address": "0x001B8354",

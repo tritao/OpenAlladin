@@ -790,7 +790,7 @@
   name: ACTOR_ANIM_TYPE7B_LEVEL11_EVENT
   size: 38
   confidence: decompiled
-  description: Type-0x7B Level 11 event animation selected by ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT. Its packed 38-byte region presents each frame in the 0x1BB6-0x1BD2 sequence twice and loops from 0x00124402 back to its root; the same animation pointer is present in a second unresolved Type-0x7B template record at 0x001B83CC.
+  description: Shared Type-0x7B event animation selected by ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT for the Level 11 coordinate-window path and by ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD from the Type-0x74 response family. Its packed 38-byte region presents each frame in the 0x1BB6-0x1BD2 sequence twice and loops from 0x00124402 back to its root.
   evidence:
     - type7b_level11_animation_static_decompilation
     - level_table_enter_exit_decompilation
@@ -816,6 +816,17 @@
     - type43_8a_interaction_animation_static_decompilation
     - interaction_spawn_runtime37_3b_type43_static_decompilation
     - actor_template_additional_family_static_decompilation
+    - animation_stream_decoder
+
+0x001244E6:
+  name: ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE
+  size: 230
+  confidence: decompiled
+  description: Shared Type-0x74 terrain/Level 06 exit response family selected by ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE and ACTOR_TEMPLATE_TYPE_74_LEVEL06_EXIT. Its 230-byte region opens with the 0x169A response and three F5 child placements through ACTOR_TEMPLATE_TYPE_84_TYPE74_RESPONSE_CHILD, calls the local substream at 0x00124574 and shared substream at 0x001245AE, and loops through the response body at 0x00124560; the embedded streams return with FC80 and are owned by this family.
+  evidence:
+    - type74_terrain_exit_response_animation_static_decompilation
+    - actor_template_level_spawn_family_static_decompilation
+    - actor_template_late_dispatch_family_static_decompilation
     - animation_stream_decoder
 
 0x001EF4D4:
@@ -1405,6 +1416,17 @@
     - type7b_level11_animation_static_decompilation
     - animation_stream_decoder
 
+0x001B83CC:
+  name: ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x7B child template supplied by the F5 command at 0x0012457C inside ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE. It uses movement stream 0x0012171C, the shared ACTOR_ANIM_TYPE7B_LEVEL11_EVENT animation at 0x001243E2, and owns ten resources; the direct Type-0x74 response consumer resolves the previously unassigned template record.
+  evidence:
+    - type74_terrain_exit_response_animation_static_decompilation
+    - type7b_level11_animation_static_decompilation
+    - animation_stream_decoder
+
 0x001B7CD8:
   name: ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE
   type: actor_template
@@ -1904,7 +1926,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x74 terrain-response template loaded by the reverse-slot entry at 0x001B674A; it has no movement stream, uses animation stream 0x001244E6, and owns five resources.
+  description: Type-0x74 terrain-response template loaded by the reverse-slot entry at 0x001B674A; it has no movement stream, uses ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE at 0x001244E6, and owns five resources.
   evidence:
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs
@@ -2114,10 +2136,21 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x74 template selected by Level06_ExitRoutine at 0x001B644E after a reverse-slot availability check; it has no movement stream, uses animation stream 0x001244E6, and owns five resources before the caller initializes position (0x00A0,0x01C0), facing, and transition flags.
+  description: Type-0x74 template selected by Level06_ExitRoutine at 0x001B644E after a reverse-slot availability check; it has no movement stream, uses ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE at 0x001244E6, and owns five resources before the caller initializes position (0x00A0,0x01C0), facing, and transition flags.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
+
+0x001B7EB8:
+  name: ACTOR_TEMPLATE_TYPE_84_TYPE74_RESPONSE_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 child template supplied by the three F5 commands at 0x0012451A, 0x0012452C, and 0x0012453E inside ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE. It has no movement stream, reuses the embedded ACTOR_ANIM_TYPE8C_LANDING_RESPONSE path at 0x00124436, owns five resources, and receives the response-specific encoded placement bytes.
+  evidence:
+    - type74_terrain_exit_response_animation_static_decompilation
+    - type8c_landing_animation_static_decompilation
+    - animation_stream_decoder
 
 0x001B8354:
   name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE

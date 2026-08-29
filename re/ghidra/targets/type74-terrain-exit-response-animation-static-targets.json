@@ -1,0 +1,84 @@
+{
+  "format": "openaladdin-type74-terrain-exit-response-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation_family": {
+    "address": "0x001244E6",
+    "name": "ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE",
+    "range": ["0x001244E6", "0x001245CB"],
+    "bytes": 230,
+    "root": "Type-0x74 terrain/Level 06 exit response at 0x001244E6",
+    "opening": "Frames 0x169A, 0x160E, 0x1612, 0x1616, 0x161A, 0x161E, and 0x1622 with EC01, F343, EE08, repeated frame groups, and EF00; three F5 commands supply the Type-0x84 child template with encoded placement bytes 0xF0, 0x00, and 0x10.",
+    "embedded_entries": [
+      {
+        "address": "0x00124574",
+        "purpose": "Local Type-0x7B response substream",
+        "range": ["0x00124574", "0x001245AC"],
+        "bytes": 57,
+        "child_spawn": "F5 at 0x0012457C uses ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD at 0x001B83CC",
+        "return": "FC80 at 0x001245AC"
+      },
+      {
+        "address": "0x001245AE",
+        "purpose": "Shared Type-0x74 response substream",
+        "range": ["0x001245AE", "0x001245CB"],
+        "bytes": 30,
+        "frames": "0x1572, 0x1576, 0x157A, and 0x157E in the descending/ascending response sequence",
+        "return": "FC80 at 0x001245CA"
+      }
+    ],
+    "calls": [
+      "FC at 0x00124562 -> 0x001245AE",
+      "FC at 0x00124568 -> 0x00124574",
+      "EA at 0x0012456E -> 0x00124560"
+    ],
+    "loop": "The main response body loops from 0x0012456E to 0x00124560 after both embedded streams return."
+  },
+  "consumers": [
+    {
+      "template": "0x001B7E68 ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE",
+      "consumer": "0x001B674A terrain-response reverse-slot entry",
+      "runtime_type": "0x74",
+      "entry": "0x001244E6"
+    },
+    {
+      "template": "0x001B82F0 ACTOR_TEMPLATE_TYPE_74_LEVEL06_EXIT",
+      "consumer": "0x001B644E Level06_ExitRoutine",
+      "runtime_type": "0x74",
+      "entry": "0x001244E6"
+    }
+  ],
+  "child_templates": [
+    {
+      "template": "0x001B7EB8 ACTOR_TEMPLATE_TYPE_84_TYPE74_RESPONSE_CHILD",
+      "runtime_type": "0x84",
+      "animation": "0x00124436 embedded in ACTOR_ANIM_TYPE8C_LANDING_RESPONSE",
+      "movement": null,
+      "resource_count": "0x05",
+      "producer_sites": ["0x0012451A", "0x0012452C", "0x0012453E"],
+      "encoded_placement_bytes": ["0xF0", "0x00", "0x10"]
+    },
+    {
+      "template": "0x001B83CC ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD",
+      "runtime_type": "0x7B",
+      "animation": "0x001243E2 ACTOR_ANIM_TYPE7B_LEVEL11_EVENT",
+      "movement": "0x0012171C",
+      "resource_count": "0x0A",
+      "producer_site": "0x0012457C"
+    }
+  ],
+  "boundary": {
+    "next_data": "0x001245CC",
+    "reason": "The closed family ends at the FC80 return byte at 0x001245CB; the following 0x001245CC prefix is a separate stream and 0x001245E4 is the next known animation root."
+  },
+  "evidence": [
+    "Lossless linear AnimationDecoder output for 0x001244E6",
+    "Exact animation pointers in both Type-0x74 templates",
+    "Three encoded F5 Type-0x84 child spawns",
+    "F5 Type-0x7B child spawn at 0x0012457C",
+    "FC call/return pairs and bounded embedded streams"
+  ]
+}

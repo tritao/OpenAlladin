@@ -15,7 +15,7 @@
       "spawn_helper": "0x001AE2AA Actor_FindFreeSlotReverse20 + 0x001AE30A Actor_InitializeFromTemplate",
       "runtime_type": "0x74",
       "movement_stream": null,
-      "animation_stream": "0x001244E6",
+      "animation_stream": "0x001244E6 ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE",
       "resource_count": "0x05",
       "post_initialize": "On a free reverse slot, initializes facing byte 0xFF and position (0x00A0,0x01C0), then arms the exit transition flags."
     },

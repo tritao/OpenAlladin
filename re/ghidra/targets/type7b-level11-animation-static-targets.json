@@ -25,12 +25,15 @@
     "record": "0x001B83CC",
     "runtime_type": "0x7B",
     "movement_stream": "0x0012171C",
-    "status": "unresolved template consumer"
+    "name": "ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD",
+    "animation_stream": "0x001243E2 ACTOR_ANIM_TYPE7B_LEVEL11_EVENT",
+    "consumer": "F5 at 0x0012457C inside ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE"
   },
   "evidence": [
     "Lossless AnimationDecoder output for 0x001243E2",
     "Direct template load in Level11_EnterRoutine",
     "Exact Type-0x7B template animation pointer",
+    "Direct F5 consumer at 0x0012457C",
     "Control-flow cycle at 0x00124402"
   ],
   "boundary": {

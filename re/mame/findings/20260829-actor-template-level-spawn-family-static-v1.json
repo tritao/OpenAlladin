@@ -42,7 +42,7 @@
       "address": "0x001B7E68",
       "name": "ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE",
       "consumer": "0x001B674A",
-      "behavior": "Direct reverse-slot type-0x74 terrain-response spawn."
+      "behavior": "Direct reverse-slot type-0x74 terrain-response spawn using ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE at 0x001244E6."
     },
     {
       "address": "0x001B7EF4",
