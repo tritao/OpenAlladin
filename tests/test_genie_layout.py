@@ -337,6 +337,16 @@ def test_canonical_scene_resource_presentation_stream_ranges_are_exact_and_adjac
     assert all(left[1] + 1 == right[0] for left, right in zip(actual, actual[1:]))
 
 
+def test_canonical_scene_transition_presentation_stream_has_exact_terminal():
+    symbols = SymbolStore()
+    symbol = symbols.at(0x0012622E, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "SCENE_TRANSITION_PRESENTATION_STREAM_12622E"
+    assert symbol.size == 0x2E4
+    assert symbol.end == 0x00126511
+    assert symbol.metadata["type"] == "scene_resource_stream"
+
+
 def test_canonical_credits_stream_has_exact_interpreter_terminal():
     symbols = SymbolStore()
     symbol = symbols.at(0x00127E8C, include_ranges=False)

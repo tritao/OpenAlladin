@@ -126,6 +126,17 @@
     - scene_resource_command_stream_terminators
     - scene_resource_presentation_stream_extents_static_v1
 
+0x0012622E:
+  name: SCENE_TRANSITION_PRESENTATION_STREAM_12622E
+  type: scene_resource_stream
+  size: 0x2E4
+  confidence: decompiled
+  description: Transition-mode scene-resource command/text stream selected directly by Scene_EnterTransitionMode with origin (0,3). The shared interpreter reaches its first command-0 terminator at 0x00126511 after consuming the embedded transition/debug presentation text.
+  evidence:
+    - ghidra_scene_transition_mode_stream_consumer
+    - scene_resource_command_stream_terminators
+    - scene_transition_mode_stream_extents_static_v1
+
 0x0012792B:
   name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_0B
   type: scene_resource_stream

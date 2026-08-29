@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-transition-mode-stream",
+    "purpose": "Bound the command/text stream selected directly by Scene_EnterTransitionMode while preserving the adjacent transition labels and cursor stream as separate objects."
+  },
+  "interpreter": {
+    "address": "0x001B21F6",
+    "name": "SceneResource_ProcessCommandStream",
+    "terminator": "first command byte 0x00"
+  },
+  "consumer": {
+    "address": "0x001B2ACE",
+    "name": "Scene_EnterTransitionMode",
+    "setup": "Loads A0 with 0x0012622E, D0 with 0, and D1 with 3 before calling the shared interpreter."
+  },
+  "stream": {
+    "address": "0x0012622E",
+    "name": "SCENE_TRANSITION_PRESENTATION_STREAM_12622E",
+    "range": ["0x0012622E", "0x00126511"],
+    "bytes": 740,
+    "terminator": "0x00126511"
+  },
+  "boundaries": {
+    "following_labels": ["0x00126512", "0x00126519"],
+    "following_labels_description": "NUL-terminated ON/OFF transition labels.",
+    "next_stream": "0x0012651A",
+    "next_stream_name": "ROM_SCENE_TRANSITION_SELECTION_STREAM"
+  },
+  "evidence": [
+    "Scene_EnterTransitionMode loads the exact stream address and interpreter arguments.",
+    "Interpreter-aware command walking reaches the first command-0 byte at 0x00126511.",
+    "The following ON/OFF strings begin at 0x00126512 and the separately selected cursor stream begins at 0x0012651A."
+  ],
+  "limitations": [
+    "The user-facing transition labels after the stream and the cursor stream at 0x0012651A are not claimed by this extent record.",
+    "The stream's embedded debug/status text is represented as command/text bytes rather than split into separate semantic labels."
+  ]
+}

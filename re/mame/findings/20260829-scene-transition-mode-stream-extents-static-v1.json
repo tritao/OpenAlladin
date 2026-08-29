@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-transition-mode-stream-extents-targets.json",
+  "consumer": {
+    "address": "0x001B2ACE",
+    "name": "Scene_EnterTransitionMode",
+    "interpreter": "0x001B21F6 SceneResource_ProcessCommandStream",
+    "arguments": { "stream": "0x0012622E", "x": 0, "y": 3 }
+  },
+  "stream": {
+    "address": "0x0012622E",
+    "name": "SCENE_TRANSITION_PRESENTATION_STREAM_12622E",
+    "range": ["0x0012622E", "0x00126511"],
+    "bytes": 740,
+    "terminator": "0x00126511",
+    "termination_rule": "Stop at the first command byte 0x00 using the exact 0x00-0x0F handler widths and one-byte records for bytes >= 0x20."
+  },
+  "following_objects": [
+    {
+      "range": ["0x00126512", "0x00126519"],
+      "description": "NUL-terminated ON and OFF labels."
+    },
+    {
+      "address": "0x0012651A",
+      "name": "ROM_SCENE_TRANSITION_SELECTION_STREAM",
+      "description": "Separate cursor stream consumed by SceneTransition_RenderSelectionCursor; not claimed here."
+    }
+  ],
+  "evidence": [
+    "Direct A0/D0/D1 setup in Scene_EnterTransitionMode.",
+    "Exact command walking reaches 0x00126511 after 699 non-terminal records.",
+    "The first byte after the terminal is the independent ON label at 0x00126512, followed by OFF and the known cursor stream."
+  ],
+  "conclusion": "The former 0x0012622E-0x001264F2 gap is a single 0x2E4-byte scene-transition presentation stream. Its exact terminal is 0x00126511; adjacent labels and the cursor stream remain separate unresolved objects.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
