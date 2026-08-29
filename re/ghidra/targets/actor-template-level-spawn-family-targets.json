@@ -15,7 +15,7 @@
       "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
       "runtime_type": "0x69",
       "movement_stream": null,
-      "animation_stream": "0x00124046",
+      "animation_stream": "0x00124046 ACTOR_ANIM_TYPE69_HANDHOLD",
       "resource_count": "0x05",
       "post_spawn": "The 0x001B683E branch converts the allocated actor to type 0x6C and installs ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE at 0x00124034."
     },

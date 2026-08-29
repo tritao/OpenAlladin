@@ -13,7 +13,7 @@
     "entry": {
       "initial_frame": "0x15DA",
       "comparison": "0x00124036 F4 compares actor fields 0xF1/0x00/0x00 against long value 0x00000000 and branches to 0x00124034",
-      "continuation": "0x00124040 EA -> 0x0012404E"
+      "continuation": "0x00124040 EA -> 0x0012404E (ACTOR_ANIM_TYPE69_HANDHOLD Type-0x6B entry)"
     }
   },
   "consumer": {
@@ -22,15 +22,15 @@
     "source_template": "0x001B7D78 ACTOR_TEMPLATE_TYPE_69_INTERACTION",
     "runtime_type": "0x6C",
     "offset": ["0x0F", "-0x01"],
-    "note": "The promoted Type-0x6C actor enters this response prefix and continues at 0x0012404E in the Type-0x69 stream."
+    "note": "The promoted Type-0x6C actor enters this response prefix and continues at 0x0012404E in ACTOR_ANIM_TYPE69_HANDHOLD."
   },
   "evidence": [
     "Lossless AnimationDecoder output for 0x00124034",
     "Direct selector-0x70 consumer",
     "Type-0x69 template promotion contract",
-    "Packed boundary immediately before the Type-0x69 response stream at 0x00124046"
+    "Packed boundary immediately before ACTOR_ANIM_TYPE69_HANDHOLD at 0x00124046"
   ],
-  "conclusion": "The Type-0x6C promoted interaction response is a bounded 18-byte animation prefix. It presents 0x15DA, self-loops while the encoded actor-field comparison remains true, and transfers into the following Type-0x69 response sequence when the comparison clears.",
+  "conclusion": "The Type-0x6C promoted interaction response is a bounded 18-byte animation prefix. It presents 0x15DA, self-loops while the encoded actor-field comparison remains true, and transfers into ACTOR_ANIM_TYPE69_HANDHOLD at 0x0012404E when the comparison clears.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

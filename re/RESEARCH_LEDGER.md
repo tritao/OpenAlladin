@@ -2778,3 +2778,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-upper-type20-animation-static-decompilation-v1` | recorded-static-decompilation | Upper Type-0x20 animation family range-bounded with callable prelude, proximity gates, and response child spawn |
 | `20260829-type2b-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x2B interaction animation range-bounded with child spawn, cleanup, and terminal frame loop |
 | `20260829-type6c-animation-static-decompilation-v1` | recorded-static-decompilation | Promoted Type-0x6C interaction animation prefix range-bounded with its actor-field self-loop and continuation into the Type-0x69 response stream |
+| `20260829-type69-animation-static-decompilation-v1` | recorded-static-decompilation | Shared Type-0x69/0x6A handhold animation family range-bounded with root, embedded template, and Type-0x6B alignment entries |

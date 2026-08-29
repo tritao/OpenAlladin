@@ -12,7 +12,7 @@
       "address": "0x001B7D78",
       "name": "ACTOR_TEMPLATE_TYPE_69_INTERACTION",
       "consumer": "0x001B681C and 0x001B683E",
-      "behavior": "Reverse-slot type-0x69 source; the second branch converts the resulting actor to type 0x6C with ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE at 0x00124034."
+      "behavior": "Reverse-slot type-0x69 source using ACTOR_ANIM_TYPE69_HANDHOLD at 0x00124046; the second branch converts the resulting actor to type 0x6C with ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE at 0x00124034."
     },
     {
       "address": "0x001B7DA0",

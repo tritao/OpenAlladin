@@ -205,7 +205,7 @@
         "template_flags_plus_6": "0x30, including collision flag 0x10",
         "movement_stream": "0x00000000; stationary actor",
         "movement_loop_word": "0x0060",
-        "animation_stream": "0x0012404A",
+        "animation_stream": "ACTOR_ANIM_TYPE69_HANDHOLD embedded entry 0x0012404A",
         "actor_field_0x29": "0x05"
       },
       "prerequisites": [

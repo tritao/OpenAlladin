@@ -1,0 +1,63 @@
+{
+  "format": "openaladdin-type69-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x00124046",
+    "name": "ACTOR_ANIM_TYPE69_HANDHOLD",
+    "packed_region": ["0x00124046", "0x001240CD"],
+    "packed_bytes": 136,
+    "entries": [
+      {
+        "address": "0x00124046",
+        "role": "Type-0x69 template root",
+        "opening": ["0x15DA", "EC 0x01", "0x15BE", "EC 0x01"],
+        "response_entry": "0x0012404E"
+      },
+      {
+        "address": "0x0012404A",
+        "role": "Type-0x6A template entry",
+        "note": "Embedded frame entry selected by ACTOR_TEMPLATE_TYPE_6A_6B."
+      },
+      {
+        "address": "0x0012404E",
+        "role": "Type-0x69 to Type-0x6B alignment response",
+        "parameter": "0x001ACB6A",
+        "actor_write": "ED 11 00 00 00 84",
+        "terminal": "F6 00 at 0x0012408C"
+      },
+      {
+        "address": "0x0012408E",
+        "role": "Type-0x6A to Type-0x6B alignment response",
+        "parameter": "0x001ACB6A",
+        "actor_write": "ED 11 00 00 00 84",
+        "terminal": "F6 00 at 0x001240CC"
+      }
+    ]
+  },
+  "consumers": [
+    {
+      "template": "0x001B7D78 ACTOR_TEMPLATE_TYPE_69_INTERACTION",
+      "root": "0x00124046",
+      "spawn_handlers": ["0x001B681C InteractionSpawn_Type69Offset", "0x001B6836 InteractionSpawn_Type6C"]
+    },
+    {
+      "template": "0x001B7D8C ACTOR_TEMPLATE_TYPE_6A_6B",
+      "entry": "0x0012404A",
+      "alignment_handler": "0x001AF978 ActorType6A_PlayerCollisionHandler",
+      "aligned_entry": "0x0012408E"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output for 0x00124046 through the established 0x001240CE wall-response boundary",
+    "Exact Type-0x69 and Type-0x6A template animation pointers",
+    "ActorType6A_PlayerCollisionHandler writes the two Type-0x6B embedded entries",
+    "Type-0x6C prefix transfers into the Type-0x69 response entry at 0x0012404E"
+  ],
+  "conclusion": "The 136-byte region is one shared handhold animation family rather than unrelated adjacent data. Its four meaningful entry points cover the Type-0x69 root, Type-0x6A template entry, and the two Type-0x6B post-alignment responses; both response sequences publish actor field 0x11 as 0x0084 and terminate with F6 00 before ACTOR_ANIM_TYPE_8D_WALL_RESPONSE at 0x001240CE.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

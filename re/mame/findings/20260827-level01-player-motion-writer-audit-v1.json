@@ -62,8 +62,8 @@
         "actor_types": ["0x69", "0x6A", "0x6B", "0x6C"],
         "writes": [
           "PLAYER_Y = actor_y - WORLD_CAMERA_Y - 8 when the movement flag and vertical window match",
-          "actor type = 0x6B with animation 0x0012408E for type 0x6A",
-          "actor type = 0x6B with animation 0x0012404E for type 0x69"
+          "actor type = 0x6B with ACTOR_ANIM_TYPE69_HANDHOLD embedded entry 0x0012408E for type 0x6A",
+          "actor type = 0x6B with ACTOR_ANIM_TYPE69_HANDHOLD embedded entry 0x0012404E for type 0x69"
         ],
         "level01_observed": true,
         "level01_observation_note": "Type 0x6A is live in Level 01; the seven-run C timing matrix recorded zero transfers to type 0x6B.",

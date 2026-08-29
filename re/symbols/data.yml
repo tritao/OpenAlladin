@@ -618,11 +618,23 @@
   name: ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE
   size: 18
   confidence: decompiled
-  description: Type-0x6C promoted interaction response animation installed by InteractionSpawn_Type6C. Its packed 18-byte region presents frame 0x15DA, loops while the encoded actor-field comparison at 0x00124036 holds, and jumps into the following Type-0x69 response sequence at 0x0012404E when the condition clears.
+  description: Type-0x6C promoted interaction response animation installed by InteractionSpawn_Type6C. Its packed 18-byte region presents frame 0x15DA, loops while the encoded actor-field comparison at 0x00124036 holds, and jumps into ACTOR_ANIM_TYPE69_HANDHOLD at its Type-0x6B entry 0x0012404E when the condition clears.
   evidence:
     - type6c_animation_static_decompilation
     - interaction_spawn_mid_family_static_decompilation
     - actor_template_type69_interaction
+    - animation_stream_decoder
+
+0x00124046:
+  name: ACTOR_ANIM_TYPE69_HANDHOLD
+  size: 136
+  confidence: decompiled
+  description: Shared Type-0x69/0x6A handhold animation family. Its packed 136-byte region contains the Type-0x69 root at 0x00124046, the Type-0x6A template entry at 0x0012404A, the Type-0x69 to Type-0x6B alignment entry at 0x0012404E, and the Type-0x6A to Type-0x6B alignment entry at 0x0012408E; both response paths present paired frame sequences, push parameter 0x001ACB6A, write actor field 0x11 to 0x0084, and clear actor state before the following wall-response stream.
+  evidence:
+    - type69_animation_static_decompilation
+    - actor_template_type69_interaction
+    - actor_template_type6a_6b
+    - actor_type6a_player_collision_handler
     - animation_stream_decoder
 
 0x00120F76:
@@ -1313,7 +1325,7 @@
   type: actor_template
   size: 20
   confidence: trace_validated
-  description: Shared selector-0x0D actor template used by the natural remote interaction producers; the initialized actor family is observed as runtime type 0x6A and can align into type 0x6B.
+  description: Shared selector-0x0D actor template used by the natural remote interaction producers; its animation pointer enters ACTOR_ANIM_TYPE69_HANDHOLD at embedded entry 0x0012404A, the initialized actor is observed as runtime type 0x6A, and ActorType6A_PlayerCollisionHandler can align it into type 0x6B at embedded entry 0x0012408E.
   evidence:
     - level01_transfer_reachability_closure
     - actor_runtime_type6a_trace
@@ -1694,7 +1706,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x69 interaction template loaded by the reverse-slot entries at 0x001B681C and 0x001B683E; it has no movement stream, uses animation stream 0x00124046, and owns five resources before the first path promotes the actor to type 0x6C.
+  description: Type-0x69 interaction template loaded by the reverse-slot entries at 0x001B681C and 0x001B683E; it has no movement stream, uses ACTOR_ANIM_TYPE69_HANDHOLD at 0x00124046, and owns five resources before the second path promotes the actor to type 0x6C and installs ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE.
   evidence:
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs
