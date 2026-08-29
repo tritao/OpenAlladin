@@ -18,32 +18,10 @@ namespace {
 // origin. The ROM keeps these coordinate systems distinct: terrain probes use
 // WORLD_Y - 0xF0, while the VDP sprite origin uses WORLD_Y - 0x100.
 constexpr int kPlayerVisualOffsetY = 0x100;
-constexpr int kTerrainContourRomOffset = 0x2FD2;
-constexpr int kTerrainContourRomSize = 0x1000;
-constexpr std::uint8_t kActorGuardType = 0x0A;
-constexpr std::uint8_t kActorSwordType = 0x80;
-constexpr std::uint8_t kActorTerminalType = 0x84;
-constexpr std::uint32_t kTerrainScene5SpawnTemplate = 0x001B805C;
-constexpr std::uint32_t kTerrainScene5SpawnAnimationDefault = 0x001250BA;
-constexpr std::uint32_t kTerrainScene5SpawnAnimationLow = 0x001250CE;
-constexpr std::uint32_t kTerrainScene5SpawnAnimationHigh = 0x001250DE;
-constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
-constexpr std::uint32_t kPlayerAppleActionStream = 0x001223DA;
-constexpr std::uint32_t kPlayerAttackTransitionStream = 0x00122034;
-constexpr std::uint32_t kPlayerSwordStableStream = 0x001223E2;
-constexpr std::uint32_t kPlayerSwordFirstFrame = 0x001ED34A;
-constexpr std::uint32_t kPlayerUpAnimationStream = 0x00122236;
-constexpr std::uint32_t kPlayerDownAnimationStream = 0x001222D2;
-constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
-constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
-constexpr std::uint32_t kActorDeathTemplate = 0x001B7940;
-constexpr std::uint32_t kActorSwordDeathTemplate = 0x001B792C;
 constexpr std::uint32_t kLevel02ExitCallback = 0x001B6394;
 constexpr std::uint32_t kLevel06ExitCallback = 0x001B644E;
 constexpr std::uint32_t kLevel02EventStream = 0x00002128;
 constexpr std::uint32_t kLevel06EventStream = 0x000024FC;
-constexpr std::uint8_t kActorDeathFrames = 43;
-constexpr std::uint8_t kActorSwordTerminalFrames = 19;
 
 constexpr std::uint32_t kCheckpointVersion = 10;
 
@@ -256,6 +234,10 @@ Engine::Engine()
           collisions_,
           animation_system_,
           frame_runtime_.actor_movement_deferred),
+      terrain_behavior_(TerrainBehaviorServices{
+          actor_lifecycle_,
+          animation_system_,
+          interactions_}),
       random_state_(state_.random.value),
       frame_(state_.frame.number),
       frame_phase_(state_.frame.phase) {
@@ -911,233 +893,6 @@ int Engine::visual_y() const {
     return player_world_y() - kPlayerVisualOffsetY;
 }
 
-void Engine::update_terrain_input(const InputState& input) {
-    terrain_.sample(state_, TerrainInput{
-        input.up,
-        input.down,
-        input.left,
-        input.right,
-        input.jump_pressed,
-    });
-}
-
-void Engine::update_terrain_connector_response() {
-    terrain_.apply_response(state_, TerrainResponseContext{
-        frame_,
-        scene_.is_transition(),
-        animation_system_.player().stream_entry() == 0x00122006,
-    });
-}
-
-void Engine::apply_floor_contour() {
-    terrain_.apply_contour(state_, level_, frame_runtime_.terrain_fall_phase);
-}
-
-void Engine::resolve_terrain(int previous_world_y) {
-    const auto cell = terrain_.resolve(
-        state_,
-        level_,
-        previous_world_y,
-        frame_runtime_.checkpoint_terrain_behavior_override
-            ? std::optional<std::uint8_t>(frame_runtime_.checkpoint_terrain_behavior)
-            : std::nullopt
-    );
-    if (cell) apply_terrain_behavior(*cell);
-}
-
-void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
-    switch (cell.behavior) {
-    case 0x01:  // TerrainHandler_ClearSurfaceModeBlock (0x001B5492)
-    case 0x02:
-    case 0x03:
-    case 0x04:
-        // The four low surface behaviors share the ROM clear block.
-        player_.terrain_surface_mode = 0;
-        break;
-    case 0x05:  // TerrainHandler_SetSurfaceModeBlock (0x001B549C)
-    case 0x06:
-    case 0x07:
-        // The three upper surface behaviors share the ROM set block.
-        player_.terrain_surface_mode = 1;
-        break;
-    case 0x0A: {  // TerrainHandler_SurfaceInteraction (0x001B5320).
-        interactions_.apply_surface_terrain_behavior(state_);
-        break;
-    }
-    case 0x20:  // TerrainHandler_SetTerminalCollision (0x001B5318)
-        player_.terrain_terminal_transition = 0xFF;
-        break;
-    case 0x22:  // TerrainHandler_SetQueryStateA (0x001B54D8)
-    case 0x23:
-        player_.terrain_query_state_a = 0xFF;
-        break;
-    case 0x24:  // TerrainHandler_SetQueryStateAB (0x001B54D2)
-        // The ROM writes FFF0CF and falls through to 0x001B54D8, which writes
-        // FFF0CE before returning.
-        player_.terrain_query_state_b = 0xFF;
-        player_.terrain_query_state_a = 0xFF;
-        break;
-    case 0x25: {  // TerrainHandler_SetTerrainStateBlock (0x001B54E0)
-        player_.terrain_state = 0xFF;
-        if (scene_.scene_state() != 5
-            || (player_.terrain_push_left == 0 && player_.terrain_push_right == 0)) {
-            break;
-        }
-
-        // FUN_001B3032: the scene-5 branch advances the shared 32-bit state
-        // with state = state * 13 + 7, then uses the low byte as D7. The ROM
-        // only allocates when that byte is below 0x28.
-        random_state_ = random_state_ * 13U + 7U;
-        const std::uint8_t random_value = static_cast<std::uint8_t>(
-            random_state_ ^ (random_state_ >> 16)
-        );
-        if (random_value >= 0x28) {
-            break;
-        }
-
-        // Actor_FindFreeSlot (0x001AE262) scans the common records at slots
-        // 3..22. Actor_InitializeFromTemplate copies the fixed template at
-        // 0x001B805C into the selected record.
-        const auto free_slot = actor_lifecycle_.allocate(ActorPool::CommonForward);
-        if (!free_slot) break;
-
-        const auto read_rom_u8 = [this](std::uint32_t address) -> std::uint8_t {
-            return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
-        };
-        ActorState spawned = initialize_actor_from_template(
-            actors_[*free_slot], kTerrainScene5SpawnTemplate);
-        // The template source byte is clear, but the terrain response's
-        // runtime initializer enables actor-motion bit 6 before the record is
-        // next observed in RAM (confirmed at +0x06 in the MAME capture).
-        spawned.movement_flags = static_cast<std::uint8_t>(
-            read_rom_u8(kTerrainScene5SpawnTemplate + 0x06) | 0x40);
-        spawned.x = static_cast<std::uint16_t>(
-            frame_runtime_.terrain_input_world_x + static_cast<int>(random_value & 7U) - 3);
-        spawned.y = static_cast<std::uint16_t>(frame_runtime_.terrain_input_world_y - 0x2A);
-        if (random_value < 0x1B) {
-            spawned.animation_pc = random_value < 0x0D
-                ? kTerrainScene5SpawnAnimationLow
-                : kTerrainScene5SpawnAnimationHigh;
-        } else {
-            spawned.animation_pc = kTerrainScene5SpawnAnimationDefault;
-        }
-        if (!actor_lifecycle_.install(*free_slot, spawned)) break;
-        animation_system_.actors().vm(*free_slot).clear_actor_service_boundary();
-        animation_system_.actors().vm(*free_slot).defer_actor_service();
-        break;
-    }
-    case 0x27:  // TerrainHandler_TransitionResponse (0x001B54A6)
-        // Exact ROM body: set FFF0CF, SUBI.W #$50,PLAYER_Y, select the
-        // transition stream, clear its timer, set FFF0E7, and clear FFF0CC.
-        player_.terrain_query_state_b = 0xFF;
-        player_.y -= 0x50;
-        animation_system_.player().select_response_stream(0x001223D0);
-        player_.terrain_response_active = 0xFF;
-        player_.terrain_response_timer_state = 0;
-        break;
-    case 0x28:  // TerrainHandler_StopAndAlign (0x001B55E8)
-        // The ROM ignores the response while the animation gate or another
-        // terrain response is active. The accepted branch clears velocity
-        // and response state, selects the stop stream, snaps to the aligned
-        // world tile, and arms the four-frame transition countdown.
-        if (player_.terrain_response_active != 0) {
-            break;
-        }
-        player_.vx = 0;
-        player_.vy = 0;
-        player_.terrain_horizontal_response = 0;
-        player_.terrain_response_timer_state = 0;
-        player_.terrain_transition_countdown = 4;
-        player_.terrain_response_active = 0;
-        player_.grounded = true;
-        player_.x = ((player_world_x() | 0x1F) - camera_.x) - 8;
-        player_.y = ((player_world_y() & ~0x0F) - camera_.y) + 4;
-        animation_system_.player().select_response_stream(0x00121964);
-        break;
-    case 0x29:  // TerrainHandler_LaunchPlayerBlock (0x001B557E)
-        // Launch is accepted only when the previous terrain response has
-        // completed. The ROM writes the launch velocities, clears the
-        // vertical-stop/timer latches, and marks the response active. It
-        // leaves the animation cursor alone; D0=0x001221B8 is the sound
-        // parameter used by the optional effect path.
-        if (player_.terrain_response_active != 0) {
-            break;
-        }
-        player_.vx = static_cast<std::int16_t>(-0x400);
-        player_.vy = static_cast<std::int16_t>(-0x500);
-        player_.terrain_vertical_stop = 0;
-        player_.terrain_response_timer_state = 0;
-        player_.terrain_response_active = 0xFF;
-        break;
-    case 0x2A:  // TerrainHandler_DiagonalCorrection (0x001B55D8)
-        // Exact ROM body: ADDQ.W #1,PLAYER_X; ADDI.W #-0x46,PLAYER_VX.
-        // The normal integrator consumes the resulting high-byte displacement
-        // later in the same frame, so the visible net X change can be zero.
-        player_.x += 1;
-        player_.vx = static_cast<std::int16_t>(player_.vx - 0x46);
-        break;
-    case 0x2B: {  // TerrainHandler_StopAndAlignPlayer (0x001B5502)
-        // The ROM ignores this response while the animation gate is set, VY
-        // is negative, or the landing state is already active. The fixture
-        // exposes the accepted branch; the normal path has the same guards
-        // represented by these native state fields.
-        if (player_.vy < 0 || player_.terrain_landing_state != 0) {
-            break;
-        }
-        player_.vx = 0;
-        player_.terrain_response_active = 0;
-        player_.terrain_response_timer_state = 0;
-        player_.terrain_horizontal_response = 0;
-        player_.terrain_landing_state = 0;
-        player_.x = ((visual_x() & ~0x0F) - camera_.x) + 6;
-        animation_system_.player().select_response_stream(0x0012181A);
-        if (player_.vy < 8) {
-            player_.vy = static_cast<std::int16_t>(player_.vy + 0x78);
-        }
-        player_.grounded = false;
-        break;
-    }
-    case 0x2D:  // TerrainHandler_BouncePlayerBlock (0x001B56B6)
-        player_.vx = static_cast<std::int16_t>(-0x400);
-        player_.vy = static_cast<std::int16_t>(0x200);
-        animation_system_.player().select_response_stream(0x00121AD8);
-        interactions_.start_bounce_response();
-        break;
-    case 0x30:  // TerrainHandler_LandingResponseBlock (0x001B537A)
-        // The ROM subtracts 0x7C from PLAYER_VY, clears FFF0B0, arms the
-        // landing state, then calls 0x001A99C6 to align PLAYER_X to the
-        // current world tile plus eight pixels. The animation selector call
-        // is intentionally left to the normal selector pass; the handler
-        // itself writes no animation stream directly.
-        player_.vy = static_cast<std::int16_t>(player_.vy - 0x7C);
-        player_.terrain_horizontal_response = 0;
-        player_.terrain_landing_state = 0xFF;
-        player_.terrain_response_timer_state = 0;
-        player_.grounded = false;
-        player_.x = ((player_world_x() & ~0x0F) + 8) - camera_.x;
-        break;
-    case 0x40:  // TerrainHandler_MovePlayerRight (0x001B536C)
-        // Exact ROM body: ADDQ.W #8,PLAYER_X; CLR.W,FFF0B0.
-        player_.x += 8;
-        player_.terrain_horizontal_response = 0;
-        break;
-    case 0x41:  // TerrainHandler_HorizontalResponseBlock (0x001B53A2)
-        // Exact ROM body: SUBQ.W #8,PLAYER_X; CLR.W,FFF0B0. There is no
-        // native lower-bound clamp in this handler.
-        player_.x -= 8;
-        player_.terrain_horizontal_response = 0;
-        break;
-    case 0x47:  // TerrainHandler_ToggleSurfaceMode (0x001B5470)
-        if (player_.terrain_surface_latch == 0) {
-            player_.terrain_surface_latch = 0xFF;
-            player_.terrain_surface_mode ^= 1;
-        }
-        break;
-    default:
-        break;
-    }
-}
-
 FrameScheduler::Context Engine::frame_scheduler_context() {
     FrameScheduler::Context context;
     context.state = &state_;
@@ -1152,6 +907,8 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.animation_system = &animation_system_;
     context.player_motion = &player_motion_;
     context.actor_movement = &actor_movement_;
+    context.terrain = &terrain_;
+    context.terrain_behavior = &terrain_behavior_;
     context.rom_bytes = &rom_bytes_;
     context.level_event_sound_requests = &level_event_sound_requests_;
     context.runtime = &frame_runtime_;
@@ -1163,16 +920,6 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.flush_deferred_animation_spawn = [this]() {
         animation_system_.flush_deferred_spawn(
             state_, player_world_x(), player_world_y());
-    };
-    context.update_terrain_input = [this](const InputState& input) {
-        update_terrain_input(input);
-    };
-    context.update_terrain_connector_response = [this]() {
-        update_terrain_connector_response();
-    };
-    context.apply_floor_contour = [this]() { apply_floor_contour(); };
-    context.resolve_terrain = [this](int previous_world_y) {
-        resolve_terrain(previous_world_y);
     };
     context.update_dynamic_actor_culling = [this]() {
         update_dynamic_actor_culling();

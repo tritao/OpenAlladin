@@ -21,6 +21,7 @@ namespace openaladdin {
 
 class ActorMovementSystem;
 class PlayerMotionSystem;
+class TerrainBehaviorSystem;
 
 struct InputState {
     bool up = false;
@@ -67,8 +68,6 @@ struct FrameRuntime {
 class FrameScheduler {
 public:
     using NoArg = std::function<void()>;
-    using UpdateTerrainInput = std::function<void(const InputState&)>;
-    using ResolveTerrain = std::function<void(int)>;
     using PlayerAnimationContext = std::function<AnimationContext(bool)>;
     using UpdateAnimation = std::function<void(
         SpritePose,
@@ -97,16 +96,14 @@ public:
         AnimationSystem* animation_system = nullptr;
         PlayerMotionSystem* player_motion = nullptr;
         ActorMovementSystem* actor_movement = nullptr;
+        PlayerTerrainSystem* terrain = nullptr;
+        TerrainBehaviorSystem* terrain_behavior = nullptr;
         const std::vector<std::uint8_t>* rom_bytes = nullptr;
         std::vector<std::uint8_t>* level_event_sound_requests = nullptr;
         FrameRuntime* runtime = nullptr;
 
         NoArg clear_scheduler_trace;
         NoArg flush_deferred_animation_spawn;
-        UpdateTerrainInput update_terrain_input;
-        NoArg update_terrain_connector_response;
-        NoArg apply_floor_contour;
-        ResolveTerrain resolve_terrain;
         NoArg update_dynamic_actor_culling;
         NoArg update_level_events;
         NoArg start_level_event_stream_after_exit;

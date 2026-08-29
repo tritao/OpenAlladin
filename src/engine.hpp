@@ -21,6 +21,7 @@
 #include "scene_resource.hpp"
 #include "sdl_render_backend.hpp"
 #include "sprites.hpp"
+#include "terrain_behavior.hpp"
 
 #include <array>
 #include <cstdint>
@@ -91,11 +92,6 @@ public:
     const LevelDescriptor& level_descriptor() const { return level_.descriptor(); }
 
 private:
-    void update_terrain_input(const InputState& input);
-    void update_terrain_connector_response();
-    void apply_floor_contour();
-    void resolve_terrain(int previous_world_y);
-    void apply_terrain_behavior(const Level::TerrainCell& cell);
     void load_actor_records(const std::string& path);
     void load_actor_timeline(const std::string& path);
     void apply_actor_timeline(int frame);
@@ -144,6 +140,7 @@ private:
     FrameScheduler scheduler_;
     FrameRuntime frame_runtime_;
     InteractionSystem interactions_;
+    TerrainBehaviorSystem terrain_behavior_;
     std::map<int, ActorSystem::Table> actor_timeline_;
     // FUN_001B3032 is the shared fixed-ROM PRNG used by terrain responses and
     // animation F0 branches. Keep its state in one place so VM consumers do

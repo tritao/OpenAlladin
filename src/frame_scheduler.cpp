@@ -2,6 +2,7 @@
 
 #include "actor_movement.hpp"
 #include "player_motion.hpp"
+#include "terrain_behavior.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -43,6 +44,8 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& animation_ = context.animation_system->player();
     auto& player_motion_ = *context.player_motion;
     auto& actor_movement_ = *context.actor_movement;
+    auto& terrain_ = *context.terrain;
+    auto& terrain_behavior_ = *context.terrain_behavior;
     auto& actor_animations_ = context.animation_system->actors().vms();
     const auto& rom_bytes_ = *context.rom_bytes;
     auto& level_event_sound_requests_ = *context.level_event_sound_requests;
@@ -67,11 +70,6 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
 
     auto& clear_scheduler_trace = context.clear_scheduler_trace;
     auto& flush_deferred_animation_spawn = context.flush_deferred_animation_spawn;
-    auto& update_terrain_input = context.update_terrain_input;
-    auto& update_terrain_connector_response =
-        context.update_terrain_connector_response;
-    auto& apply_floor_contour = context.apply_floor_contour;
-    auto& resolve_terrain = context.resolve_terrain;
     auto& update_dynamic_actor_culling = context.update_dynamic_actor_culling;
     auto& update_level_events = context.update_level_events;
     auto& start_level_event_stream_after_exit =
@@ -129,7 +127,13 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
             player_.grounded
         );
     } else {
-    update_terrain_input(input);
+    terrain_.sample(state_, TerrainInput{
+        input.up,
+        input.down,
+        input.left,
+        input.right,
+        input.jump_pressed,
+    });
     record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
     publish_player_world_coordinates();
     terrain_input_world_x_ = player_world_x();
@@ -148,7 +152,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // resolved landing state that the ROM would have in RAM.
     if (!checkpoint_terrain_behavior_override_) {
         record_scheduler_phase("terrain_contour", 0x001AD7B4);
-        apply_floor_contour();
+        terrain_.apply_contour(state_, level_, terrain_fall_phase_);
     }
     record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
     publish_player_world_coordinates();
@@ -199,7 +203,11 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     player_.terrain_left_outer_probe = collision.left_outer ? 0xFF : 0;
     player_.terrain_right_inner_probe = collision.right_inner ? 0xFF : 0;
     player_.terrain_right_outer_probe = collision.right_outer ? 0xFF : 0;
-    update_terrain_connector_response();
+    terrain_.apply_response(state_, TerrainResponseContext{
+        frame_,
+        scene_.is_transition(),
+        animation_.stream_entry() == 0x00122006,
+    });
     if (interactions_.bounce_response_follow_active()
         && player_.terrain_response_active == 0) {
         player_.terrain_response_timer_state = 1;
@@ -415,7 +423,17 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         collision_effects.sound_requests.end()
     );
     record_scheduler_phase("terrain_resolution", 0x001B1E38);
-    resolve_terrain(previous_world_y);
+    const auto terrain_cell = terrain_.resolve(
+        state_,
+        level_,
+        previous_world_y,
+        checkpoint_terrain_behavior_override_
+            ? std::optional<std::uint8_t>(checkpoint_terrain_behavior_)
+            : std::nullopt
+    );
+    if (terrain_cell) {
+        terrain_behavior_.apply(state_, *terrain_cell, runtime_, rom_bytes_);
+    }
     // The camera's tile reference is consumed before the actor traversal in
     // the ROM. Rebase it now so the refill edge and the common actor gate see
     // the same newly crossed tile on this VBlank.

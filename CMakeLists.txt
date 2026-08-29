@@ -214,6 +214,8 @@ add_library(openaladdin_engine STATIC
     src/scene_resource.hpp
     src/sdl_render_backend.cpp
     src/sdl_render_backend.hpp
+    src/terrain_behavior.cpp
+    src/terrain_behavior.hpp
 )
 target_include_directories(openaladdin_engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_features(openaladdin_engine PUBLIC cxx_std_20)

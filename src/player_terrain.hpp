@@ -26,8 +26,8 @@ struct TerrainResponseContext {
 };
 
 // Owns the player-facing terrain state machine's typed state transitions.
-// Animation, actor allocation, and scene side effects are deliberately passed
-// back to their owning services by Engine at the recovered scheduler slots.
+// Animation, actor allocation, and scene side effects are delegated to
+// TerrainBehaviorSystem at the recovered scheduler boundary.
 class PlayerTerrainSystem {
 public:
     void sample(GameState&, const TerrainInput&) const;
