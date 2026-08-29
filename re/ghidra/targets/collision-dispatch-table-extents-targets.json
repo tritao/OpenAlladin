@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-collision-dispatch-table-extents-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "tables": [
+    {
+      "address": "0x001CBE",
+      "name": "PLAYER_COLLISION_HANDLER_TABLE",
+      "entry_size": 4,
+      "count": 127,
+      "end": "0x001EB9",
+      "consumer": "0x001ABB40 Actor_PlayerCollisionPass",
+      "index": "actor type byte * 4",
+      "guard": "types >= 0x7F skip the dispatch"
+    },
+    {
+      "address": "0x001EBA",
+      "name": "ACTOR_COLLISION_HANDLER_TABLE",
+      "entry_size": 4,
+      "count": 50,
+      "end": "0x001F81",
+      "consumer": "0x001ABD7E Actor_ActorCollisionPass",
+      "index": "receiving actor type byte * 4",
+      "guard": "receiving types >= 0x32 skip the dispatch"
+    }
+  ],
+  "evidence": [
+    "Exact 68000 instructions in build/re/full-rom/instructions.json",
+    "Direct table bases at 0x001CBE and 0x001EBA",
+    "Verified ROM adjacency and raw pointer entries"
+  ],
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled"
+}

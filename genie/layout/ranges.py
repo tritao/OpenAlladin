@@ -14,8 +14,8 @@ from .model import LayoutRange, coalesce_ranges
 # Extents recovered from the dispatch-table ledgers.  Keeping these here
 # avoids pretending that a one-byte canonical label describes a whole table.
 KNOWN_EXTENTS = {
-    "PLAYER_COLLISION_HANDLER_TABLE": (0x00001CBE, 0x00001DBD),
-    "ACTOR_COLLISION_HANDLER_TABLE": (0x00001EBA, 0x00001FB9),
+    "PLAYER_COLLISION_HANDLER_TABLE": (0x00001CBE, 0x00001EB9),
+    "ACTOR_COLLISION_HANDLER_TABLE": (0x00001EBA, 0x00001F81),
     "INTERACTION_HANDLER_TABLE": (0x00004154, 0x00004553),
     "TERRAIN_RESPONSE_HANDLER_TABLE": (0x00004554, 0x00004953),
     "ACTOR_VM_DISPATCH_TABLE": (0x00004954, 0x000049A7),

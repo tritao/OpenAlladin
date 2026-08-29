@@ -255,8 +255,10 @@
 0x001CBE:
   name: PLAYER_COLLISION_HANDLER_TABLE
   type: rom_pointer_table
+  entry_size: 4
+  count: 127
   confidence: confirmed
-  description: Four-byte handler pointers indexed by the actor type byte during the player-versus-actor collision pass; the type-0x0A entry at 0x001CE6 points to 0x001AE9C6.
+  description: Exact 127-entry table of four-byte handler pointers indexed by the actor type byte during the player-versus-actor collision pass. Actor_PlayerCollisionPass rejects types 0x7F and above, so the table occupies 0x001CBE-0x001EB9; the type-0x0A entry at 0x001CE6 points to 0x001AE9C6.
   evidence:
     - rom_handler_table_decode
     - ghidra_decompile_collision_damage_targets
@@ -336,8 +338,10 @@
 0x001EBA:
   name: ACTOR_COLLISION_HANDLER_TABLE
   type: rom_pointer_table
+  entry_size: 4
+  count: 50
   confidence: confirmed
-  description: Four-byte handler pointers indexed by the receiving actor type during the actor-to-actor collision pass; the type-0x0A entry at 0x001EE2 points to 0x001AC458.
+  description: Exact 50-entry table of four-byte handler pointers indexed by the receiving actor type during the actor-to-actor collision pass. Actor_ActorCollisionPass rejects receiving types 0x32 and above, so the table occupies 0x001EBA-0x001F81; the type-0x0A entry at 0x001EE2 points to 0x001AC458.
   evidence:
     - rom_handler_table_decode
     - ghidra_decompile_collision_damage_targets
