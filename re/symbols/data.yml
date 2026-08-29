@@ -1034,10 +1034,12 @@
 
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
-  confidence: probable
-  description: First runtime frame pointer observed after ActorType34_PlayerCollisionHandler replaces the wall actor with type 0x8D.
+  size: 18
+  confidence: confirmed
+  description: First Chopper sprite-frame record used after ActorType34_PlayerCollisionHandler replaces the wall actor with type 0x8D. Its exact 18-byte record spans 0x001EF4D4-0x001EF4E5 and is followed by the next response frame at 0x001EF4E6.
   evidence:
     - mame_type_34_handler_overlap_trace
+    - type8d_wall_response_frame_manifest
 
 0x00121D9A:
   name: PLAYER_ANIM_IDLE
