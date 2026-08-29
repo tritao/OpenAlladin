@@ -207,7 +207,7 @@ def main() -> int:
     ], cwd=ROOT, check=True)
     subprocess.run([
         sys.executable,
-        str(ROOT / "genie/analysis/scenes.py"),
+        str(ROOT / "genie/games/aladdin/analysis/scenes.py"),
         "--trace",
         str(combined),
         "--load-trace",
