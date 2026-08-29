@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-interaction-spawn-type84-base-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0xB7-B9, 0xBA, 0xCA",
+    "newly_named_targets": 5,
+    "shared_template": "0x001B78F0 ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE",
+    "shared_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+    "shared_post_spawn": "subtract 8 from actor Y at offset 0x04",
+    "handlers": [
+      { "selector": "0xB7", "address": "0x001B712C", "name": "InteractionSpawn_Type84Base_B7", "gate": "0x00FFF127 != 0 and 0x00FFF128 == 0", "animation_root": "0x001242CA" },
+      { "selector": "0xB8", "address": "0x001B7158", "name": "InteractionSpawn_Type84Base_B8", "gate": "0x00FFF128 != 0", "animation_root": "0x001242E4" },
+      { "selector": "0xB9", "address": "0x001B717C", "name": "InteractionSpawn_Type84Base_B9", "gate": "0x00FFF129 != 0", "animation_root": "0x001242FE" },
+      { "selector": "0xBA", "address": "0x001B71A0", "name": "InteractionSpawn_Type84Base_BA", "gate": "0x00FFF12A != 0", "animation_root": "0x00124318" },
+      { "selector": "0xCA", "address": "0x001B71C4", "name": "InteractionSpawn_Type84Base_CA", "gate": null, "animation_root": "0x00124332" }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Established shared type-0x84 interaction-base template and reverse-slot helper",
+    "Per-selector gate tests, animation roots, and common Y adjustment"
+  ],
+  "conclusion": "Selectors B7-B9/BA/CA form a shared type-0x84 interaction-base family. Each direct target applies its own gate and animation root, then subtracts eight from the spawned actor Y coordinate; the adjacent 0x001B70F8 fragment is not a target of this table and is intentionally excluded.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

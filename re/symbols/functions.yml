@@ -4066,3 +4066,43 @@
     - ghidra_disassembly_001B70D4
     - interaction_spawn_runtime47-4c-targets
     - interaction_spawn_runtime47-4c-static-decompilation
+0x001B712C:
+  name: InteractionSpawn_Type84Base_B7
+  confidence: decompiled
+  description: Interaction selector 0xB7 handler that requires 0x00FFF127 set and 0x00FFF128 clear, reverse-spawns the shared type-0x84 interaction base, installs animation root 0x001242CA, and subtracts eight from the actor Y coordinate.
+  evidence:
+    - ghidra_disassembly_001B712C
+    - interaction_spawn_type84-base-targets
+    - interaction_spawn_type84-base-static-decompilation
+0x001B7158:
+  name: InteractionSpawn_Type84Base_B8
+  confidence: decompiled
+  description: Interaction selector 0xB8 handler that requires 0x00FFF128 set, reverse-spawns the shared type-0x84 interaction base, installs animation root 0x001242E4, and subtracts eight from the actor Y coordinate.
+  evidence:
+    - ghidra_disassembly_001B7158
+    - interaction_spawn_type84-base-targets
+    - interaction_spawn_type84-base-static-decompilation
+0x001B717C:
+  name: InteractionSpawn_Type84Base_B9
+  confidence: decompiled
+  description: Interaction selector 0xB9 handler that requires 0x00FFF129 set, reverse-spawns the shared type-0x84 interaction base, installs animation root 0x001242FE, and subtracts eight from the actor Y coordinate.
+  evidence:
+    - ghidra_disassembly_001B717C
+    - interaction_spawn_type84-base-targets
+    - interaction_spawn_type84-base-static-decompilation
+0x001B71A0:
+  name: InteractionSpawn_Type84Base_BA
+  confidence: decompiled
+  description: Interaction selector 0xBA handler that requires 0x00FFF12A set, reverse-spawns the shared type-0x84 interaction base, installs animation root 0x00124318, and subtracts eight from the actor Y coordinate.
+  evidence:
+    - ghidra_disassembly_001B71A0
+    - interaction_spawn_type84-base-targets
+    - interaction_spawn_type84-base-static-decompilation
+0x001B71C4:
+  name: InteractionSpawn_Type84Base_CA
+  confidence: decompiled
+  description: Interaction selector 0xCA handler that reverse-spawns the shared type-0x84 interaction base, installs animation root 0x00124332, and subtracts eight from the actor Y coordinate.
+  evidence:
+    - ghidra_disassembly_001B71C4
+    - interaction_spawn_type84-base-targets
+    - interaction_spawn_type84-base-static-decompilation
