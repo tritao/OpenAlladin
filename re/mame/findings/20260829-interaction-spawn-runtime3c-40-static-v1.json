@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-runtime3c-40-targets.json",
+  "services": [
+    {
+      "address": "0x001B72FC",
+      "name": "InteractionSpawn_RuntimeType40_FourPosition_61",
+      "behavior": "Selector 0x61 requires 0x00FFEFE0 == 0x3030 and invokes InteractionSpawn_RuntimeType40 four times at the unmodified position, X + 0x0C, Y - 0x0A, and the original position again."
+    },
+    {
+      "address": "0x001B7354",
+      "name": "InteractionGate_RuntimeType40_AD",
+      "behavior": "Selector 0xAD requires 0x00FFF171 != 0 and falls through to the adjacent selector-0x60 body, which suppresses 0x00FFEFE0 == 0x3939 and otherwise creates a type-0x40 actor."
+    },
+    {
+      "address": "0x001B735E",
+      "name": "InteractionSpawn_RuntimeType40_60",
+      "behavior": "Selector 0x60 suppresses 0x00FFEFE0 == 0x3939, then uses LevelObjectSpawnEntry with the zero-type base and installs type 0x40, animation root 0x00122C12, and actor byte +0x29 = 0."
+    },
+    {
+      "address": "0x001B738A",
+      "name": "InteractionSpawn_RuntimeType3C_42",
+      "behavior": "Selector 0x42 requires 0x00FFF177 and 0x00FFF178 set, uses the forward-offset allocator with the zero-type base, and installs type 0x3C, animation root 0x0012437E, movement stream 0x0012146C, and actor byte +0x29 = 1."
+    },
+    {
+      "address": "0x001B73C2",
+      "name": "InteractionSpawn_RuntimeType3E_5F",
+      "behavior": "Selector 0x5F requires 0x00FFF177 clear, uses the forward-offset allocator with the zero-type base, and installs type 0x3E, animation root 0x0012437E, movement stream 0x0012146C, and actor byte +0x29 = 1."
+    },
+    {
+      "address": "0x001B73F2",
+      "name": "InteractionSpawn_RuntimeType3F_41",
+      "behavior": "Selector 0x41 requires 0x00FFF177 set and 0x00FFF178 clear, uses the forward-offset allocator with the zero-type base, and installs type 0x3F, animation root 0x0012437E, movement stream 0x0012146C, and actor byte +0x29 = 1."
+    }
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -4170,3 +4170,51 @@
     - ghidra_disassembly_001B72D4
     - interaction_spawn_runtime3a-41-targets
     - interaction_spawn_runtime3a-41-static-decompilation
+0x001B72FC:
+  name: InteractionSpawn_RuntimeType40_FourPosition_61
+  confidence: decompiled
+  description: Interaction selector 0x61 handler that requires 0x00FFEFE0 to equal 0x3030, then calls InteractionSpawn_RuntimeType40 four times while adjusting the destination coordinates for the base, X plus 0x0C, Y minus 0x0A, and base-again positions.
+  evidence:
+    - ghidra_disassembly_001B72FC
+    - interaction-spawn-runtime3c-40-targets
+    - interaction-spawn-runtime3c-40-static-decompilation
+0x001B7354:
+  name: InteractionGate_RuntimeType40_AD
+  confidence: decompiled
+  description: Interaction selector 0xAD gate that requires 0x00FFF171 set, then falls through to the selector-0x60 runtime-type-0x40 spawn body, which suppresses when 0x00FFEFE0 equals 0x3939 and otherwise uses the zero-type base with animation root 0x00122C12 and a cleared actor byte at offset 0x29.
+  evidence:
+    - ghidra_disassembly_001B7354
+    - interaction-spawn-runtime3c-40-targets
+    - interaction-spawn-runtime3c-40-static-decompilation
+0x001B735E:
+  name: InteractionSpawn_RuntimeType40_60
+  confidence: decompiled
+  description: Interaction selector 0x60 handler that suppresses when 0x00FFEFE0 equals 0x3939, then uses the zero-type base through LevelObjectSpawnEntry and promotes a successful allocation to runtime type 0x40 with animation root 0x00122C12 and a cleared actor byte at offset 0x29.
+  evidence:
+    - ghidra_disassembly_001B735E
+    - interaction-spawn-runtime3c-40-targets
+    - interaction-spawn-runtime3c-40-static-decompilation
+0x001B738A:
+  name: InteractionSpawn_RuntimeType3C_42
+  confidence: decompiled
+  description: Interaction selector 0x42 handler that requires both 0x00FFF177 and 0x00FFF178 set, reverse-spawns from the zero-type base, and initializes runtime type 0x3C with animation root 0x0012437E, movement stream 0x0012146C, and actor byte +0x29 set to 1.
+  evidence:
+    - ghidra_disassembly_001B738A
+    - interaction-spawn-runtime3c-40-targets
+    - interaction-spawn-runtime3c-40-static-decompilation
+0x001B73C2:
+  name: InteractionSpawn_RuntimeType3E_5F
+  confidence: decompiled
+  description: Interaction selector 0x5F handler that requires 0x00FFF177 clear, reverse-spawns from the zero-type base, and initializes runtime type 0x3E with animation root 0x0012437E, movement stream 0x0012146C, and actor byte +0x29 set to 1.
+  evidence:
+    - ghidra_disassembly_001B73C2
+    - interaction-spawn-runtime3c-40-targets
+    - interaction-spawn-runtime3c-40-static-decompilation
+0x001B73F2:
+  name: InteractionSpawn_RuntimeType3F_41
+  confidence: decompiled
+  description: Interaction selector 0x41 handler that requires 0x00FFF177 set and 0x00FFF178 clear, reverse-spawns from the zero-type base, and initializes runtime type 0x3F with animation root 0x0012437E, movement stream 0x0012146C, and actor byte +0x29 set to 1.
+  evidence:
+    - ghidra_disassembly_001B73F2
+    - interaction-spawn-runtime3c-40-targets
+    - interaction-spawn-runtime3c-40-static-decompilation

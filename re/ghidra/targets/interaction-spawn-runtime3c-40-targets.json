@@ -1,0 +1,93 @@
+{
+  "format": "openaladdin-interaction-spawn-runtime3c-40-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0x41, 0x42, 0x5F-0x61, 0xAD",
+    "newly_named_targets": 6,
+    "handlers": [
+      {
+        "selector": "0x61",
+        "address": "0x001B72FC",
+        "name": "InteractionSpawn_RuntimeType40_FourPosition_61",
+        "gate": "0x00FFEFE0 == 0x3030",
+        "shared_helper": "0x001B7332 InteractionSpawn_RuntimeType40",
+        "positions": ["base", "X + 0x0C", "Y - 0x0A", "base again"]
+      },
+      {
+        "selector": "0xAD",
+        "address": "0x001B7354",
+        "name": "InteractionGate_RuntimeType40_AD",
+        "gates": ["0x00FFF171 != 0", "0x00FFEFE0 != 0x3939"],
+        "wrapper_for": "0x001B735E InteractionSpawn_RuntimeType40_60",
+        "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "runtime_type": "0x40",
+        "animation_root": "0x00122C12",
+        "flag_value": "0x00"
+      },
+      {
+        "selector": "0x60",
+        "address": "0x001B735E",
+        "name": "InteractionSpawn_RuntimeType40_60",
+        "gate": "0x00FFEFE0 != 0x3939",
+        "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "runtime_type": "0x40",
+        "animation_root": "0x00122C12",
+        "flag_value": "0x00"
+      },
+      {
+        "selector": "0x42",
+        "address": "0x001B738A",
+        "name": "InteractionSpawn_RuntimeType3C_42",
+        "gates": ["0x00FFF177 != 0", "0x00FFF178 != 0"],
+        "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+        "spawn_helper": "0x001B524E InteractionSpawn_ForwardOffset",
+        "runtime_type": "0x3C",
+        "animation_root": "0x0012437E",
+        "movement_stream": "0x0012146C",
+        "flag_value": "0x01"
+      },
+      {
+        "selector": "0x5F",
+        "address": "0x001B73C2",
+        "name": "InteractionSpawn_RuntimeType3E_5F",
+        "gate": "0x00FFF177 == 0",
+        "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+        "spawn_helper": "0x001B524E InteractionSpawn_ForwardOffset",
+        "runtime_type": "0x3E",
+        "animation_root": "0x0012437E",
+        "movement_stream": "0x0012146C",
+        "flag_value": "0x01"
+      },
+      {
+        "selector": "0x41",
+        "address": "0x001B73F2",
+        "name": "InteractionSpawn_RuntimeType3F_41",
+        "gates": ["0x00FFF177 != 0", "0x00FFF178 == 0"],
+        "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+        "spawn_helper": "0x001B524E InteractionSpawn_ForwardOffset",
+        "runtime_type": "0x3F",
+        "animation_root": "0x0012437E",
+        "movement_stream": "0x0012146C",
+        "flag_value": "0x01"
+      }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Established zero-type actor-template base and post-initialization contract",
+    "Selector 0x61 calls the established type-0x40 helper four times around coordinate adjustments",
+    "Selectors 0x41, 0x42, and 0x5F share the forward-offset allocator and animation/movement pair"
+  ],
+  "conclusion": "This family is statically closed at selector membership, gate conditions, allocator choice, coordinate adjustments, runtime types, animation and movement streams, and post-spawn flags. Selector 0xAD is recorded as a gate wrapper that falls through to the adjacent selector-0x60 body. The flag bytes and 0x3939 comparisons remain mechanically named state rather than assigned user-facing meanings.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
