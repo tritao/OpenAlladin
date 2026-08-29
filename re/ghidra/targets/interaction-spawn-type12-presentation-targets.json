@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-interaction-spawn-type12-presentation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the selector-0x4D Type-0x12 interaction-response handler and its directly selected actor-template record.",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector": "0x4D",
+    "handler": {
+      "address": "0x001B6CCE",
+      "name": "InteractionSpawn_Type12WithPresentation_4D",
+      "range": ["0x001B6CCE", "0x001B6D1D"],
+      "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+      "template": "0x001B7EA4 ACTOR_TEMPLATE_TYPE_12_INTERACTION_RESPONSE",
+      "presentation_palette": "0x001295D2 through Render_UploadPaletteBand2 at 0x001B2650",
+      "presentation_flag": "sets 0x00FFF123 after successful allocation",
+      "audio": "queues command 0x32 through Audio_PrepareCommand and Audio_SendCommand when 0x00FFF57F is active"
+    }
+  },
+  "template": {
+    "address": "0x001B7EA4",
+    "name": "ACTOR_TEMPLATE_TYPE_12_INTERACTION_RESPONSE",
+    "range": ["0x001B7EA4", "0x001B7EB7"],
+    "size": 20,
+    "runtime_type": "0x12",
+    "movement_stream": null,
+    "template_word": "0x4000",
+    "animation_stream": "0x0012512C",
+    "resource_count": "0x0E",
+    "raw_bytes": "120A200000000000000040000012512C0E000200"
+  },
+  "record_contract": {
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "size": 20
+  },
+  "evidence": [
+    "Exact 68000 disassembly of 0x001B6CCE-0x001B6D1D",
+    "INTERACTION_HANDLER_TABLE entry at 0x004288",
+    "Direct template load, palette upload, presentation-flag write, and audio-gate branches",
+    "Exact 20-byte template record immediately before the established 0x001B7EB8 record"
+  ],
+  "conclusion": "The selector-0x4D handler and Type-0x12 template are statically closed at dispatch membership, allocation contract, exact range, palette side effect, presentation flag, and conditional audio command. No user-facing actor role is inferred.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

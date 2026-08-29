@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-interaction-spawn-type11-palette-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the selector-0x1F Type-0x11 interaction handler and record its direct palette side effect.",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector": "0x1F",
+    "handler": {
+      "address": "0x001B6CB4",
+      "name": "InteractionSpawn_Type11WithPalette_1F",
+      "range": ["0x001B6CB4", "0x001B6CCD"],
+      "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+      "template": "0x001B7E90 ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE",
+      "palette": "0x001295F2 through Render_UploadPaletteBand2 at 0x001B2650",
+      "success_condition": "palette upload is reached only when LevelObjectSpawnEntry succeeds"
+    }
+  },
+  "template": {
+    "address": "0x001B7E90",
+    "name": "ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE",
+    "range": ["0x001B7E90", "0x001B7EA3"],
+    "size": 20,
+    "runtime_type": "0x11",
+    "movement_stream": null,
+    "animation_stream": "0x00124518",
+    "resource_count": "0x10"
+  },
+  "record_contract": {
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "size": 20
+  },
+  "evidence": [
+    "Exact 68000 disassembly of 0x001B6CB4-0x001B6CCD",
+    "INTERACTION_HANDLER_TABLE entry at 0x0041D0",
+    "Direct template load, terminating LevelObjectSpawnEntry call, and success-gated palette upload",
+    "Exact 20-byte template record immediately before the newly named 0x001B7EA4 record"
+  ],
+  "conclusion": "The selector-0x1F handler is statically closed at dispatch membership, allocation contract, exact range, and success-gated palette upload. The template's separate collision-handler consumer remains recorded by the existing collision evidence.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

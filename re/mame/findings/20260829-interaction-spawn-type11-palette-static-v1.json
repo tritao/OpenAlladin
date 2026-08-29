@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type11-palette-targets.json",
+  "handler": {
+    "address": "0x001B6CB4",
+    "range": ["0x001B6CB4", "0x001B6CCD"],
+    "selector": "0x1F",
+    "template": "ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE",
+    "behavior": [
+      "Loads the exact Type-0x11 template at 0x001B7E90 and enters LevelObjectSpawnEntry.",
+      "On successful allocation, uploads palette band 2 from ROM 0x001295F2.",
+      "Returns without additional state or audio writes."
+    ]
+  },
+  "template": {
+    "address": "0x001B7E90",
+    "range": ["0x001B7E90", "0x001B7EA3"],
+    "runtime_type": "0x11",
+    "movement_stream": null,
+    "animation_stream": "0x00124518",
+    "resource_count": "0x10"
+  },
+  "evidence": [
+    "Direct 68000 disassembly of the handler body",
+    "Selector-0x1F pointer at INTERACTION_HANDLER_TABLE address 0x0041D0",
+    "Actor_InitializeFromTemplate field contract and exact adjacent 20-byte record boundaries"
+  ],
+  "conclusion": "The selector-0x1F Type-0x11 interaction spawn is statically closed at its exact handler/template pair and success-gated palette side effect. Its user-facing role is intentionally unspecified.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
