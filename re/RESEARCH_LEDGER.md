@@ -2702,6 +2702,7 @@ valuable because it prevents repeating the same input family.
 | `20260829-vdp-descending-pattern-static-decompilation-v1` | recorded-static-decompilation | VRAM-start VDP writer for the 40-word descending low-byte pattern |
 | `20260829-random-scaled-step-static-decompilation-v1` | recorded-static-decompilation | Shared PRNG advance with counter-scaled mixed-word output |
 | `20260829-reset-bootstrap-static-decompilation-v1` | recorded-static-decompilation | Reset-vector hardware bootstrap, inline initialization table, region detection, Z80/VDP setup, and reset-time service entry |
+| `20260829-no-op-service-boundaries-static-decompilation-v1` | recorded-static-decompilation | Five RTS-only reset, exit, scene-script, and scene-resource extension boundaries with proven caller positions |
 | `20260829-scene-resource-mode-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only scene-resource mode hook called after modes 0x1B, 0x1C, and 0x04 are selected |
 | `20260829-terrain-actor-collision-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only actor terrain-collision hook between terrain-row selection and behavior-byte lookup |
 | `20260829-interrupt-vector-static-decompilation-v1` | recorded-static-decompilation | Exception vector fan-in, line-1010 VDP loop, level-4 RTE stub, and spurious interrupt RTE stub |

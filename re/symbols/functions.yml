@@ -2776,3 +2776,43 @@
   evidence:
     - ghidra_decompile_001B1B3C
     - ghidra_scene_resource_animated_palette_targets
+0x001B0022:
+  name: System_ResetDisplayNoOpHook
+  confidence: confirmed
+  description: RTS-only reset-path hook called immediately after HUD display digits are cleared and before the difficulty counter is initialized; it has no observable state effect.
+  evidence:
+    - ghidra_disassembly_001B0022
+    - no_op_service_boundaries_targets
+    - no_op_service_boundaries_static_decompilation
+0x001B0076:
+  name: Level_ExitNoOpHook
+  confidence: confirmed
+  description: RTS-only hook called after Level_ExitAndTerminalTransition decrements the level-exit countdown and before it refreshes palette/level service state; it has no observable state effect.
+  evidence:
+    - ghidra_disassembly_001B0076
+    - no_op_service_boundaries_targets
+    - no_op_service_boundaries_static_decompilation
+0x001B02EA:
+  name: System_ResetTransitionNoOpHook
+  confidence: confirmed
+  description: RTS-only reset-path hook called immediately after the initial scene-transition VDP setup and before HUD reset; it has no observable state effect.
+  evidence:
+    - ghidra_disassembly_001B02EA
+    - no_op_service_boundaries_targets
+    - no_op_service_boundaries_static_decompilation
+0x001B2E86:
+  name: SceneScript_PostStateNoOpHook
+  confidence: confirmed
+  description: RTS-only scene-script hook called after scene-state VDP/resource preparation and before returning to the reset-time frame pipeline; it has no observable state effect.
+  evidence:
+    - ghidra_disassembly_001B2E86
+    - no_op_service_boundaries_targets
+    - no_op_service_boundaries_static_decompilation
+0x001B2EE0:
+  name: SceneResource_ObjectCommandNoOpHook
+  confidence: confirmed
+  description: RTS-only scene-resource hook called for an object-command stream record when presentation scratch is active, before the shared VDP tile-word writer; it has no observable state effect.
+  evidence:
+    - ghidra_disassembly_001B2EE0
+    - no_op_service_boundaries_targets
+    - no_op_service_boundaries_static_decompilation

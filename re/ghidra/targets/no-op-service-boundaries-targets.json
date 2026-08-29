@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-no-op-service-boundaries-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "targets": [
+    {
+      "address": "0x001B0022",
+      "name": "System_ResetDisplayNoOpHook",
+      "body": "rts",
+      "callers": ["0x001A8B40 Reset bootstrap"]
+    },
+    {
+      "address": "0x001B0076",
+      "name": "Level_ExitNoOpHook",
+      "body": "rts",
+      "callers": ["0x001A90C6 Level_ExitAndTerminalTransition"]
+    },
+    {
+      "address": "0x001B02EA",
+      "name": "System_ResetTransitionNoOpHook",
+      "body": "rts",
+      "callers": ["0x001A8B38 Reset bootstrap"]
+    },
+    {
+      "address": "0x001B2E86",
+      "name": "SceneScript_PostStateNoOpHook",
+      "body": "rts",
+      "callers": ["0x001A8EF6 SceneScript_AdvanceState"]
+    },
+    {
+      "address": "0x001B2EE0",
+      "name": "SceneResource_ObjectCommandNoOpHook",
+      "body": "rts",
+      "callers": ["0x001B222A SceneResource_ProcessCommandStream"]
+    }
+  ]
+}
