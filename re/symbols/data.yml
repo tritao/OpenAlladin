@@ -1589,6 +1589,15 @@
     - actor_template_type30_presentation_child
     - animation_stream_decoder
 
+0x0012512C:
+  name: ACTOR_ANIM_TYPE12_INTERACTION_RESPONSE
+  size: 122
+  confidence: decompiled
+  description: Type-0x12 interaction-response animation installed by ACTOR_TEMPLATE_TYPE_12_INTERACTION_RESPONSE. Its packed 122-byte region presents the repeated 0x1536-0x1552 response sequence, spawns the Type-0x4D child template at 0x001B83B8 with payload-specific placement words, and loops through the local random response branches.
+  evidence:
+    - actor_template_type84_type4d_child_family_static_decompilation
+    - animation_stream_decoder
+
 0x001251A6:
   name: ACTOR_ANIM_TYPE05_INTERACTION_VARIANT_A
   size: 86
@@ -2006,6 +2015,34 @@
   description: Type-0x84 terminal-interaction child animation supplied by the F5 template at 0x001B82C8. It presents the shared 0x077E/0x06AE-0x06CE frame sequence, writes actor field 0xF117 to 1 and then 0, and loops from 0x00125D52.
   evidence:
     - type84_terminal_interaction_static_decompilation
+    - animation_stream_decoder
+
+0x00126042:
+  name: ACTOR_ANIM_TYPE84_LEVEL_EVENT
+  size: 50
+  confidence: decompiled
+  description: Type-0x84 level-event animation installed by ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT. Its exact 50-byte region presents frame 0x06D2, spawns the Type-0x84 child template at 0x001B83A4, clears the parent actor, and loops through the embedded child-entry sequence beginning at 0x00126056.
+  evidence:
+    - actor_template_type84_type4d_child_family_static_decompilation
+    - animation_stream_decoder
+
+0x00126056:
+  name: ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD
+  alias_of: ACTOR_ANIM_TYPE84_LEVEL_EVENT
+  entry_offset: 20
+  confidence: decompiled
+  description: Embedded Type-0x84 level-event response-child animation selected by ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_RESPONSE_CHILD at 0x001B83A4. It presents the 0x0766-0x077A frame loop and does not claim a second ROM ownership range.
+  evidence:
+    - actor_template_type84_type4d_child_family_static_decompilation
+    - animation_stream_decoder
+
+0x00126074:
+  name: ACTOR_ANIM_TYPE4D_INTERACTION_RESPONSE_CHILD
+  size: 42
+  confidence: decompiled
+  description: Type-0x4D interaction-response child animation selected by ACTOR_TEMPLATE_TYPE_4D_TYPE12_RESPONSE_CHILD at 0x001B83B8. It presents the 0x0F7A/0x0F7E/0x0F82 response frames, plays sound 0x68, clears its facing flag, and loops at 0x00126078.
+  evidence:
+    - actor_template_type84_type4d_child_family_static_decompilation
     - animation_stream_decoder
 
 0x00125DC4:
@@ -3214,6 +3251,26 @@
   evidence:
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
+
+0x001B83A4:
+  name: ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_RESPONSE_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 level-event response child template supplied by the F5 command at 0x00126044 inside ACTOR_ANIM_TYPE84_LEVEL_EVENT. It has no movement stream, template word 0x6000, animation entry 0x00126056, and three owned resources; the parent stream clears its own actor after publishing the child.
+  evidence:
+    - actor_template_type84_type4d_child_family_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B83B8:
+  name: ACTOR_TEMPLATE_TYPE_4D_TYPE12_RESPONSE_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x4D interaction-response child template supplied by the three F5 commands at 0x0012514C, 0x00125162, and 0x0012517C inside ACTOR_ANIM_TYPE12_INTERACTION_RESPONSE. It uses movement stream 0x00121710, template word 0x6000, animation entry 0x00126074, owns one resource, and carries no trailing flags; the three producer payloads select the response placement words.
+  evidence:
+    - actor_template_type84_type4d_child_family_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
 
 0x001B8458:
   name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_RESPONSE
