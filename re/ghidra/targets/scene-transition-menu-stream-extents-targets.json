@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-transition-menu-streams",
+    "purpose": "Bound the directly selected transition and options/menu command/text streams in the 0x00126512-0x0012671D region."
+  },
+  "interpreter": {
+    "address": "0x001B21F6",
+    "name": "SceneResource_ProcessCommandStream",
+    "terminator": "first command byte 0x00"
+  },
+  "streams": [
+    { "address": "0x00126512", "name": "SCENE_TRANSITION_LABEL_ON", "consumer": "0x001B2BEC Scene_EnterTransitionMode; 0x001B430C SceneResource_ProcessCommandStreams", "range": ["0x00126512", "0x00126515"], "terminator": "0x00126515" },
+    { "address": "0x00126516", "name": "SCENE_TRANSITION_LABEL_OFF", "consumer": "0x001B2BDE/0x001B2BFE/0x001B2C1E Scene_EnterTransitionMode; 0x001B431A/0x001B433A SceneResource_ProcessCommandStreams", "range": ["0x00126516", "0x00126519"], "terminator": "0x00126519" },
+    { "address": "0x0012651A", "name": "ROM_SCENE_TRANSITION_SELECTION_STREAM", "consumer": "0x001B2AB2 SceneTransition_RenderSelectionCursor", "range": ["0x0012651A", "0x0012652C"], "terminator": "0x0012652C" },
+    { "address": "0x0012652D", "name": "SCENE_TRANSITION_SELECTION_ROW_STATUS_32", "consumer": "0x001B2BAC Scene_EnterTransitionMode when 0x00FF7E27 == 0x32", "range": ["0x0012652D", "0x0012654E"], "terminator": "0x0012654E" },
+    { "address": "0x0012654F", "name": "SCENE_TRANSITION_SELECTION_ROW_DEFAULT", "consumer": "0x001B2BBE Scene_EnterTransitionMode when 0x00FF7E27 != 0x32", "range": ["0x0012654F", "0x0012656F"], "terminator": "0x0012656F" },
+    { "address": "0x00126570", "name": "MENU_WISH_PROMPT_STREAM", "consumer": "0x001B3390 Menu_ShowWishPrompt", "range": ["0x00126570", "0x0012659B"], "terminator": "0x0012659B" },
+    { "address": "0x00126679", "name": "MENU_OPTIONS_HEADER_STREAM", "consumer": "0x001B3E94 Menu_RunOptionsAndSelectNextState; 0x001B43A2 Menu_PrepareOptionsScreen", "range": ["0x00126679", "0x00126691"], "terminator": "0x00126691" },
+    { "address": "0x00126692", "name": "MENU_DIFFICULTY_PROMPT_STREAM", "consumer": "0x001B436C Menu_RenderDifficultyLabel", "range": ["0x00126692", "0x0012669F"], "terminator": "0x0012669F" },
+    { "address": "0x001266A0", "name": "MENU_OPTIONS_PRESENTATION_STREAM", "consumer": "0x001B4076 Menu_RunOptionsAndSelectNextState; 0x001B43B8 Menu_PrepareOptionsScreen", "range": ["0x001266A0", "0x0012671D"], "terminator": "0x0012671D" }
+  ],
+  "evidence": [
+    "Every listed address is loaded directly into A0 by a named scene-transition, menu, or shared command-stream consumer.",
+    "Interpreter-aware command walking reaches the listed first command-0 terminal for every stream.",
+    "The selected ranges are non-overlapping; their intervening and following text/data objects remain separate layout evidence."
+  ],
+  "limitations": [
+    "The transition status byte at 0x00FF7E27 remains unnamed; the two branch-selected rows are therefore named by their observed selector value.",
+    "The adjacent user-facing strings after these streams are not claimed unless independently selected by a direct consumer."
+  ]
+}

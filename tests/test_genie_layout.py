@@ -347,6 +347,31 @@ def test_canonical_scene_transition_presentation_stream_has_exact_terminal():
     assert symbol.metadata["type"] == "scene_resource_stream"
 
 
+def test_canonical_scene_transition_menu_streams_have_exact_terminals():
+    symbols = SymbolStore()
+    expected = (
+        (0x00126512, 0x00126515, "SCENE_TRANSITION_LABEL_ON"),
+        (0x00126516, 0x00126519, "SCENE_TRANSITION_LABEL_OFF"),
+        (0x0012651A, 0x0012652C, "ROM_SCENE_TRANSITION_SELECTION_STREAM"),
+        (0x0012652D, 0x0012654E, "SCENE_TRANSITION_SELECTION_ROW_STATUS_32"),
+        (0x0012654F, 0x0012656F, "SCENE_TRANSITION_SELECTION_ROW_DEFAULT"),
+        (0x00126570, 0x0012659B, "MENU_WISH_PROMPT_STREAM"),
+        (0x00126679, 0x00126691, "MENU_OPTIONS_HEADER_STREAM"),
+        (0x00126692, 0x0012669F, "MENU_DIFFICULTY_PROMPT_STREAM"),
+        (0x001266A0, 0x0012671D, "MENU_OPTIONS_PRESENTATION_STREAM"),
+    )
+    actual = []
+    for start, end, name in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == end - start + 1
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "scene_resource_stream"
+        actual.append((symbol.address, symbol.end))
+    assert actual == [(start, end) for start, end, _ in expected]
+
+
 def test_canonical_credits_stream_has_exact_interpreter_terminal():
     symbols = SymbolStore()
     symbol = symbols.at(0x00127E8C, include_ranges=False)

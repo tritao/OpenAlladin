@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-transition-menu-stream-extents-targets.json",
+  "interpreter": "0x001B21F6 SceneResource_ProcessCommandStream",
+  "streams": [
+    { "address": "0x00126512", "name": "SCENE_TRANSITION_LABEL_ON", "range": ["0x00126512", "0x00126515"], "bytes": 4, "terminator": "0x00126515" },
+    { "address": "0x00126516", "name": "SCENE_TRANSITION_LABEL_OFF", "range": ["0x00126516", "0x00126519"], "bytes": 4, "terminator": "0x00126519" },
+    { "address": "0x0012651A", "name": "ROM_SCENE_TRANSITION_SELECTION_STREAM", "range": ["0x0012651A", "0x0012652C"], "bytes": 19, "terminator": "0x0012652C" },
+    { "address": "0x0012652D", "name": "SCENE_TRANSITION_SELECTION_ROW_STATUS_32", "range": ["0x0012652D", "0x0012654E"], "bytes": 34, "terminator": "0x0012654E" },
+    { "address": "0x0012654F", "name": "SCENE_TRANSITION_SELECTION_ROW_DEFAULT", "range": ["0x0012654F", "0x0012656F"], "bytes": 33, "terminator": "0x0012656F" },
+    { "address": "0x00126570", "name": "MENU_WISH_PROMPT_STREAM", "range": ["0x00126570", "0x0012659B"], "bytes": 44, "terminator": "0x0012659B" },
+    { "address": "0x00126679", "name": "MENU_OPTIONS_HEADER_STREAM", "range": ["0x00126679", "0x00126691"], "bytes": 25, "terminator": "0x00126691" },
+    { "address": "0x00126692", "name": "MENU_DIFFICULTY_PROMPT_STREAM", "range": ["0x00126692", "0x0012669F"], "bytes": 14, "terminator": "0x0012669F" },
+    { "address": "0x001266A0", "name": "MENU_OPTIONS_PRESENTATION_STREAM", "range": ["0x001266A0", "0x0012671D"], "bytes": 126, "terminator": "0x0012671D" }
+  ],
+  "direct_consumers": [
+    "Scene_EnterTransitionMode selects the ON/OFF labels, cursor row, and status-dependent presentation rows.",
+    "SceneTransition_RenderSelectionCursor selects the 0x0012651A cursor stream.",
+    "Menu_ShowWishPrompt selects the 0x00126570 wish prompt.",
+    "Menu_RunOptionsAndSelectNextState, Menu_PrepareOptionsScreen, Menu_RenderDifficultyLabel, and SceneResource_ProcessCommandStreams select the options/menu streams."
+  ],
+  "evidence": [
+    "All nine ranges terminate at their first command/text NUL under the exact scene-resource handler widths.",
+    "The ranges do not overlap and align with the direct A0 loads in the recorded Ghidra instruction corpus.",
+    "The options stream's final terminal at 0x0012671D is immediately followed by the independent 0xFF/data region."
+  ],
+  "conclusion": "The directly selected transition/menu command-text corpus is now range-bounded without claiming the surrounding unreferenced strings or data.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

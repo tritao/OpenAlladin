@@ -137,6 +137,81 @@
     - scene_resource_command_stream_terminators
     - scene_transition_mode_stream_extents_static_v1
 
+0x00126512:
+  name: SCENE_TRANSITION_LABEL_ON
+  type: scene_resource_stream
+  size: 0x04
+  confidence: decompiled
+  description: NUL-terminated ON label stream selected by Scene_EnterTransitionMode and the generic transition command-stream service.
+  evidence: [ghidra_scene_transition_menu_stream_consumers, scene_transition_menu_stream_extents_static_v1]
+
+0x00126516:
+  name: SCENE_TRANSITION_LABEL_OFF
+  type: scene_resource_stream
+  size: 0x04
+  confidence: decompiled
+  description: NUL-terminated OFF label stream selected by Scene_EnterTransitionMode and the generic transition command-stream service.
+  evidence: [ghidra_scene_transition_menu_stream_consumers, scene_transition_menu_stream_extents_static_v1]
+
+0x0012651A:
+  name: ROM_SCENE_TRANSITION_SELECTION_STREAM
+  type: scene_resource_stream
+  size: 0x13
+  confidence: decompiled
+  description: Transition-selection cursor command stream consumed by SceneTransition_RenderSelectionCursor with a 0x15-word width and a row derived from SCENE_TRANSITION_SELECTION_INDEX.
+  evidence:
+    - ghidra_scene_transition_selection_targets
+    - scene_resource_command_stream_terminators
+    - scene_transition_menu_stream_extents_static_v1
+
+0x0012652D:
+  name: SCENE_TRANSITION_SELECTION_ROW_STATUS_32
+  type: scene_resource_stream
+  size: 0x22
+  confidence: decompiled
+  description: Transition-selection presentation row selected by Scene_EnterTransitionMode when the transition status byte at 0x00FF7E27 equals 0x32; the command interpreter reaches 0x0012654E.
+  evidence: [ghidra_scene_transition_mode_stream_consumer, scene_resource_command_stream_terminators, scene_transition_menu_stream_extents_static_v1]
+
+0x0012654F:
+  name: SCENE_TRANSITION_SELECTION_ROW_DEFAULT
+  type: scene_resource_stream
+  size: 0x21
+  confidence: decompiled
+  description: Default transition-selection presentation row selected by Scene_EnterTransitionMode when the transition status byte at 0x00FF7E27 is not 0x32; the command interpreter reaches 0x0012656F.
+  evidence: [ghidra_scene_transition_mode_stream_consumer, scene_resource_command_stream_terminators, scene_transition_menu_stream_extents_static_v1]
+
+0x00126570:
+  name: MENU_WISH_PROMPT_STREAM
+  type: scene_resource_stream
+  size: 0x2C
+  confidence: decompiled
+  description: NUL-terminated scene-resource prompt stream consumed by Menu_ShowWishPrompt after the options/presentation palette setup; it renders the David Perry wish prompt text.
+  evidence: [ghidra_menu_wish_prompt_consumer, scene_resource_command_stream_terminators, scene_transition_menu_stream_extents_static_v1]
+
+0x00126679:
+  name: MENU_OPTIONS_HEADER_STREAM
+  type: scene_resource_stream
+  size: 0x19
+  confidence: decompiled
+  description: NUL-terminated options-screen header stream selected by Menu_RunOptionsAndSelectNextState and Menu_PrepareOptionsScreen.
+  evidence: [ghidra_options_menu_stream_consumers, scene_resource_command_stream_terminators, scene_transition_menu_stream_extents_static_v1]
+
+0x00126692:
+  name: MENU_DIFFICULTY_PROMPT_STREAM
+  type: scene_resource_stream
+  size: 0x0E
+  confidence: decompiled
+  description: NUL-terminated difficulty prompt stream consumed by Menu_RenderDifficultyLabel for the options presentation.
+  evidence: [ghidra_options_menu_stream_consumers, scene_resource_command_stream_terminators, scene_transition_menu_stream_extents_static_v1]
+
+0x001266A0:
+  name: MENU_OPTIONS_PRESENTATION_STREAM
+  type: scene_resource_stream
+  size: 0x7E
+  confidence: decompiled
+  description: NUL-terminated options-screen command/text stream consumed by Menu_RunOptionsAndSelectNextState and Menu_PrepareOptionsScreen; it contains the music, sound-effects, sound-test, trigger, and exit rows.
+  evidence: [ghidra_options_menu_stream_consumers, scene_resource_command_stream_terminators, scene_transition_menu_stream_extents_static_v1]
+
 0x0012792B:
   name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_0B
   type: scene_resource_stream
