@@ -181,6 +181,8 @@ add_library(openaladdin_engine STATIC
     src/collision.hpp
     src/engine.cpp
     src/engine.hpp
+    src/frame_scheduler.cpp
+    src/frame_scheduler.hpp
     src/game_data.cpp
     src/game_data.hpp
     src/interaction.cpp

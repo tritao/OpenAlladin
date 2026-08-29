@@ -8,6 +8,7 @@
 #include "collision.hpp"
 #include "game_data.hpp"
 #include "game_state.hpp"
+#include "frame_scheduler.hpp"
 #include "interaction.hpp"
 #include "level_event.hpp"
 #include "level_event_system.hpp"
@@ -26,20 +27,6 @@
 #include <vector>
 
 namespace openaladdin {
-
-struct InputState {
-    bool up = false;
-    bool down = false;
-    bool left = false;
-    bool right = false;
-    bool jump_pressed = false;
-    bool attack_pressed = false;
-    // Explicit apple/throw action. The attack_pressed field remains
-    // the sword path used by existing fixtures; the ROM's A-button stream
-    // is exposed separately so physical controller replays can preserve the
-    // distinct action selection.
-    bool apple_pressed = false;
-};
 
 struct SchedulerPhase {
     std::string name;
@@ -161,6 +148,7 @@ private:
     SpritePose sprite_pose() const;
     int visual_x() const;
     int visual_y() const;
+    FrameScheduler::Context frame_scheduler_context();
 
     Level level_;
     GameData game_data_;
@@ -182,6 +170,7 @@ private:
     std::array<PlayerAnimationVm, 32> actor_animations_{};
     LevelEventSystem level_event_system_;
     CameraSystem camera_system_;
+    FrameScheduler scheduler_;
     // Actor records allocated by the late interaction refill service are not
     // visited by the movement pass until the following game-loop boundary.
     // Keep this transient scheduling edge separate from the actor record so
@@ -228,6 +217,11 @@ private:
     SDL_Texture* texture_ = nullptr;
     int camera_render_x_ = 0;
     int camera_render_y_ = 0;
+    // Bound once because all scheduler dependencies are stable for the
+    // lifetime of Engine. Runtime scalars are referenced through Context so
+    // checkpoint and trace setters remain visible without rebuilding the
+    // callback table every frame.
+    FrameScheduler::Context scheduler_context_;
 
 public:
     bool quit_requested() const { return quit_; }
