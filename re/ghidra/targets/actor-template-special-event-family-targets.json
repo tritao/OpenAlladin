@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-actor-template-special-event-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the remaining type-0x0F interaction and Level 12 final-scene actor-template records with complete consumers.",
+  "templates": [
+    {
+      "address": "0x001B7C74",
+      "name": "ACTOR_TEMPLATE_TYPE_0F_INTERACTION",
+      "consumer_sites": ["0x001B6FE2", "0x001B6FEE"],
+      "dispatch_entries": ["0x0041AC selector 0x16", "0x0041EC selector 0x26"],
+      "spawn_helper": "0x001B524E InteractionSpawn_ForwardSlot",
+      "runtime_type": "0x0F",
+      "movement_stream": null,
+      "animation_stream": "0x00123CF8",
+      "resource_count": "0x05",
+      "post_initialize": "The 0x001B6FEE consumer sets actor facing byte +0x09 to 0xFF when allocation succeeds; the 0x001B6FE2 consumer performs the shared forward-slot spawn without that mutation."
+    },
+    {
+      "address": "0x001B7BE8",
+      "name": "ACTOR_TEMPLATE_TYPE_2F_LEVEL12_EVENT",
+      "consumer_site": "0x001B62CC Level12_EnterRoutine",
+      "event_condition": "SCENE_EVENT_BYTE at 0x00FF7E28 equals 0x0D",
+      "spawn_helper": "0x001AE262 Actor_FindFreeSlot + 0x001AE30A Actor_InitializeFromTemplate",
+      "runtime_type": "0x2F",
+      "movement_stream": "0x001203D0",
+      "animation_stream": "0x00123A7E",
+      "resource_count": "0x04",
+      "post_initialize": "The event path initializes the allocated actor at position (0x02B1,0x022A)."
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "conclusion": "Both records are exact 20-byte templates selected by complete consumers. The type-0x0F record is bounded by two interaction-table entries and a facing mutation; the type-0x2F record is bounded by the Level 12 event condition and fixed final-scene position.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

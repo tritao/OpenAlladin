@@ -1815,3 +1815,23 @@
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
+
+0x001B7C74:
+  name: ACTOR_TEMPLATE_TYPE_0F_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x0F interaction template loaded by the forward-slot consumers at 0x001B6FE2 and 0x001B6FEE; it has no movement stream, uses animation stream 0x00123CF8, and owns five resources, with the latter consumer setting the initialized actor's facing byte to 0xFF after successful allocation.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7BE8:
+  name: ACTOR_TEMPLATE_TYPE_2F_LEVEL12_EVENT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x2F final-scene event template selected by Level12_EnterRoutine at 0x001B62B6 when its event byte is 0x0D; it uses movement stream 0x001203D0, animation stream 0x00123A7E, and four resources before the caller initializes position (0x02B1,0x022A).
+  evidence:
+    - ghidra_level_table_enter_exit_targeted_decompile
+    - actor_template_grid_xrefs

@@ -2726,3 +2726,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-actor-template-late-dispatch-family-static-decompilation-v1` | recorded-static-decompilation | Level 06 exit and selector-0xFD/0xFE interaction templates named from complete consumers |
 | `20260829-actor-template-mid-dispatch-family-static-decompilation-v1` | recorded-static-decompilation | Shared type-0x46, type-0x5A, and type-0x55 templates named from level-event and interaction dispatch consumers |
 | `20260829-actor-template-type4e-family-static-decompilation-v1` | recorded-static-decompilation | Type-0x4E and type-0x4F interaction templates named from reverse-slot consumers |
+| `20260829-actor-template-special-event-family-static-decompilation-v1` | recorded-static-decompilation | Type-0x0F interaction and Level 12 type-0x2F event templates named from complete consumers |
