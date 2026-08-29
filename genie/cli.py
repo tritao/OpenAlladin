@@ -476,7 +476,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="report/check the first frame where each selected actor reaches this type",
     )
     compare_collision.set_defaults(function=lambda args: run_tool(
-        "mame/compare_collision.py",
+        "genie/games/aladdin/mame/compare_collision.py",
         [str(resolve(args.genesis)), str(resolve(args.openaladdin))]
         + sum((["--actor-slot", str(slot)] for slot in (args.actor_slots or [])), [])
         + (["--transition-type", str(args.transition_type)] if args.transition_type is not None else []),

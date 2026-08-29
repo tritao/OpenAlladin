@@ -127,7 +127,7 @@ def command_regression(args: argparse.Namespace) -> int:
         actor_args: list[str] = [str(aligned), str(native_trace)]
         for field in regression.get("actor_fields") or []:
             actor_args.extend(["--field", str(field)])
-        actor_status = run_tool("mame/compare_actors.py", actor_args)
+        actor_status = run_tool("genie/games/aladdin/mame/compare_actors.py", actor_args)
 
     state_status = 0
     if state_fields:
@@ -203,7 +203,7 @@ def command_coverage_gaps(args: argparse.Namespace) -> int:
         "--rom", str(resolve(args.rom)),
         "--output", str(resolve(args.output)),
     ]
-    return run_tool("mame/coverage_gaps.py", forwarded)
+    return run_tool("genie/games/aladdin/mame/coverage_gaps.py", forwarded)
 
 def command_validate(args: argparse.Namespace) -> int:
     rom = resolve(args.rom)
