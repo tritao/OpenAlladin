@@ -2581,6 +2581,15 @@
     - ghidra_disassembly_001B7332
     - ghidra_actor_spawn_variation_targets
 
+0x001B634E:
+  name: LevelEvent_DispatchTimedCommand
+  confidence: decompiled
+  description: Advances the active six-byte level-event command stream at LEVEL_EVENT_SCRIPT_CURSOR, dispatching one record after its delay expires through LEVEL_EVENT_COMMAND_DISPATCH_TABLE and resetting the elapsed tick counter.
+  evidence:
+    - ghidra_disassembly_001B634E
+    - ghidra_decompile_001B634E
+    - ghidra_level_event_dispatch_targets
+
 0x001B07D0:
   name: Level_RenderTerminalTransitionTileBand
   confidence: decompiled

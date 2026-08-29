@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "dispatcher": {
+    "address": "0x001B634E",
+    "name": "LevelEvent_DispatchTimedCommand",
+    "callers": ["0x001B5B94", "0x001B5D3A"],
+    "cursor": "0x00FFF132",
+    "tick": "0x00FFF10C",
+    "record_size": 6,
+    "dispatch_table": "0x0020C0",
+    "dispatch_entries": 26,
+    "stream_starts": ["0x002128", "0x0024FC"]
+  },
+  "behavior": "The routine gates timed six-byte level-event records, advances the stream cursor only on dispatch, clears the tick counter after dispatch, and invokes the handler selected by the command byte plus 0x1A.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

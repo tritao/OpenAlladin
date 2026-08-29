@@ -2171,6 +2171,23 @@ The static results are recorded in
 `re/mame/findings/20260829-actor-runtime-type84-v1.json` and
 `re/ghidra/targets/actor-runtime-type84-targets.json`.
 
+## Timed level-event command dispatcher (20260829)
+
+`LevelEvent_DispatchTimedCommand` at `0x001B634E` is the shared per-frame
+dispatcher reached by the level callbacks at `0x001B5B94` and `0x001B5D3A`.
+It reads a six-byte record from `LEVEL_EVENT_SCRIPT_CURSOR`: a delay byte, a
+command byte, and two word payload values. The elapsed counter at
+`LEVEL_EVENT_SCRIPT_TICK` advances once per callback; when it exceeds the
+record delay, the cursor advances by six bytes, the counter resets, and the
+command byte plus `0x1A` selects one of 26 handlers from
+`LEVEL_EVENT_COMMAND_DISPATCH_TABLE` at `0x0020C0`. Setup paths publish stream
+starts at `0x002128` and `0x0024FC`. This separates the level-event stream
+from the scene-script cursor used by scene-state transitions.
+
+The static result is recorded in
+`re/mame/findings/20260829-level-event-dispatch-v1.json` and
+`re/ghidra/targets/level-event-dispatch-targets.json`.
+
 The static result is recorded in
 `re/mame/findings/20260829-vdp-fill-c000-v1.json`.
 

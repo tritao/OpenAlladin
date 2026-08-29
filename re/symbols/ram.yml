@@ -402,6 +402,29 @@
   description: Scene-script delay/countdown gate consumed by SceneScript_AdvanceState.
   evidence:
     - ghidra_targeted_decompile_001A8E3E
+
+0xFFF10C:
+  name: LEVEL_EVENT_SCRIPT_TICK
+  type: u8
+  format: integer
+  confidence: decompiled
+  description: Elapsed per-frame tick counter for the active level-event command record; LevelEvent_DispatchTimedCommand increments it until the record delay expires, then clears it after dispatch.
+  evidence:
+    - ghidra_disassembly_001B634E
+    - ghidra_level_event_dispatch_targets
+
+0xFFF132:
+  name: LEVEL_EVENT_SCRIPT_CURSOR
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Cursor into the active six-byte level-event command stream; level setup publishes stream starts at ROM 0x002128 or 0x0024FC and LevelEvent_DispatchTimedCommand advances it after dispatch.
+  evidence:
+    - ghidra_disassembly_001B634E
+    - ghidra_disassembly_001B63A4
+    - ghidra_disassembly_001B6488
+    - ghidra_level_event_dispatch_targets
+
 0xFFF140:
   name: SCENE_RESOURCE_VDP_STREAM_PTR
   type: rom_pointer
