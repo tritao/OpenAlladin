@@ -1,0 +1,135 @@
+{
+  "format": "openaladdin-actor-template-scene-resource-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the exact actor-template records selected by scene-resource command 0x0F and connect their animation entries, including the F5 child relationship in the 0x00123F7E prefix.",
+  "scene_resource_records": [
+    {
+      "stream": "0x00127571",
+      "resource": "0x0012DD76",
+      "command_site": "0x0012766F",
+      "template": "0x001B83E0 ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E",
+      "position": ["0x00D0", "0x0170"]
+    },
+    {
+      "stream": "0x00127134",
+      "resource": "0x0012E176",
+      "command_site": "0x0012719D",
+      "template": "0x001B83F4 ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA",
+      "position": ["0x00A0", "0x01C8"]
+    },
+    {
+      "stream": "0x00127134",
+      "resource": "0x0012E176",
+      "command_site": "0x00127194",
+      "template": "0x001B8408 ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E",
+      "position": ["0x00A0", "0x01C8"]
+    },
+    {
+      "stream": "0x0012772D",
+      "resource": "0x0012D870",
+      "command_site": "0x0012781B",
+      "template": "0x001B841C ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E",
+      "position": ["0x00F0", "0x01A8"]
+    }
+  ],
+  "animation_streams": [
+    {
+      "address": "0x0012609E",
+      "name": "ACTOR_ANIM_TYPE84_SCENE_RESOURCE_OPENING",
+      "range": ["0x0012609E", "0x001260D9"],
+      "size": 60,
+      "consumer": "0x001B83E0 ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E"
+    },
+    {
+      "address": "0x001260EA",
+      "name": "ACTOR_ANIM_TYPE84_SCENE_REBUILD_ENTRY",
+      "alias_of": "0x001260DA ACTOR_ANIM_TYPE84_SCENE_REBUILD",
+      "entry_offset": 16,
+      "consumer": "0x001B83F4 ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA"
+    },
+    {
+      "address": "0x00123E7E",
+      "name": "ACTOR_ANIM_TYPE84_COLLISION_RESPONSE",
+      "range": ["0x00123E7E", "0x00123EE7"],
+      "size": 106,
+      "consumers": [
+        "0x001B7CC4 ACTOR_TEMPLATE_COLLISION_TYPE_84",
+        "0x001B8408 ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E"
+      ]
+    },
+    {
+      "address": "0x00123F7E",
+      "name": "ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX",
+      "range": ["0x00123F7E", "0x00123FE3"],
+      "size": 102,
+      "consumer": "0x001B841C ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E",
+      "child_spawn": "0x00123FD2 -> 0x001B8408 ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E",
+      "continuation": "0x00123FE4 ACTOR_ANIM_TYPE2B_INTERACTION"
+    }
+  ],
+  "templates": [
+    {
+      "address": "0x001B83E0",
+      "name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E",
+      "range": ["0x001B83E0", "0x001B83F3"],
+      "raw_bytes": "8400080000000000000040000012609E03000000",
+      "runtime_type": "0x84",
+      "template_payload": "0x08000000",
+      "movement_stream": null,
+      "template_word": "0x4000",
+      "animation_stream": "0x0012609E",
+      "resource_count": "0x03"
+    },
+    {
+      "address": "0x001B83F4",
+      "name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA",
+      "range": ["0x001B83F4", "0x001B8407"],
+      "raw_bytes": "840008000000000000004000001260EA09000000",
+      "runtime_type": "0x84",
+      "template_payload": "0x08000000",
+      "movement_stream": null,
+      "template_word": "0x4000",
+      "animation_stream": "0x001260EA",
+      "resource_count": "0x09"
+    },
+    {
+      "address": "0x001B8408",
+      "name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E",
+      "range": ["0x001B8408", "0x001B841B"],
+      "raw_bytes": "84000800000000000000400000123E7E12000000",
+      "runtime_type": "0x84",
+      "template_payload": "0x08000000",
+      "movement_stream": null,
+      "template_word": "0x4000",
+      "animation_stream": "0x00123E7E",
+      "resource_count": "0x12",
+      "f5_site": "0x00123FD2"
+    },
+    {
+      "address": "0x001B841C",
+      "name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E",
+      "range": ["0x001B841C", "0x001B842F"],
+      "raw_bytes": "84000800000000000000400000123F7E02000000",
+      "runtime_type": "0x84",
+      "template_payload": "0x08000000",
+      "movement_stream": null,
+      "template_word": "0x4000",
+      "animation_stream": "0x00123F7E",
+      "resource_count": "0x02"
+    }
+  ],
+  "evidence": [
+    "Exact scene-resource command 0x0F records: template pointer followed by X/Y words",
+    "Known wrapper streams at 0x00127134, 0x00127571, and 0x0012772D",
+    "Exact adjacent 20-byte actor-template records",
+    "Lossless AnimationDecoder output and explicit Type-0x2B handoff"
+  ],
+  "conclusion": "Four previously opaque actor-template records are direct scene-resource objects. Their exact positions and resource streams are now recorded; the 0x001B8408 record is additionally the F5 child selected by the 0x00123F7E response prefix. No user-facing actor names are inferred from the resource assets alone.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

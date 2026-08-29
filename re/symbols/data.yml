@@ -1811,6 +1811,25 @@
     - type01_type84_child_animation_static_decompilation
     - mame_type01_child_chain_trace
 
+0x00123E7E:
+  name: ACTOR_ANIM_TYPE84_COLLISION_RESPONSE
+  size: 106
+  confidence: decompiled
+  description: Shared Type-0x84 collision-response animation used by ACTOR_TEMPLATE_COLLISION_TYPE_84 and the scene-resource Type-0x84 record at 0x001B8408. Its exact 106-byte region presents the 0x0DC2-0x0DFE sequence with sound 0x2A, clears the source actor at 0x00123EC0, then cycles the 0x12C2-0x12DE response tail through 0x00123EC2.
+  evidence:
+    - actor_template_scene_resource_family_static_decompilation
+    - actor_template_presentation_response_static_decompilation
+    - animation_stream_decoder
+
+0x00123F7E:
+  name: ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX
+  size: 102
+  confidence: decompiled
+  description: Type-0x84 scene-resource response prefix selected by ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E. It presents the 0x1726-0x1766 sequence, applies the encoded timer/random/actor-flag phases, spawns ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E at 0x00123FD2, clears the source at 0x00123FE2, and hands off to ACTOR_ANIM_TYPE2B_INTERACTION at 0x00123FE4.
+  evidence:
+    - actor_template_scene_resource_family_static_decompilation
+    - animation_stream_decoder
+
 0x00123EE8:
   name: ACTOR_ANIM_TYPE2D_GUARD_SWORD_ATTACK
   size: 40
@@ -2045,6 +2064,15 @@
     - actor_template_type84_type4d_child_family_static_decompilation
     - animation_stream_decoder
 
+0x0012609E:
+  name: ACTOR_ANIM_TYPE84_SCENE_RESOURCE_OPENING
+  size: 60
+  confidence: decompiled
+  description: Type-0x84 scene-resource opening animation selected by ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E. Its exact 60-byte region presents the 0x0E02-0x0E1A sequence, plays sound 0x2D, loads timer 0x8F, reverses through the same frames, and clears the actor at 0x001260D8 before the separate 0x001260DA entry.
+  evidence:
+    - actor_template_scene_resource_family_static_decompilation
+    - animation_stream_decoder
+
 0x001260DA:
   name: ACTOR_ANIM_TYPE84_SCENE_REBUILD
   size: 62
@@ -2053,6 +2081,16 @@
   evidence:
     - actor_template_scene_rebuild_static_decompilation
     - ghidra_scene_resource_rebuild
+    - animation_stream_decoder
+
+0x001260EA:
+  name: ACTOR_ANIM_TYPE84_SCENE_REBUILD_ENTRY
+  alias_of: ACTOR_ANIM_TYPE84_SCENE_REBUILD
+  entry_offset: 16
+  confidence: decompiled
+  description: Embedded scene/resource-rebuild entry selected by ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA. It begins at the 0x090A frame immediately before the shared 0x0A0A-0x0A2E loop and does not claim a second ROM ownership range.
+  evidence:
+    - actor_template_scene_resource_family_static_decompilation
     - animation_stream_decoder
 
 0x00126118:
@@ -3290,6 +3328,52 @@
   description: Type-0x4D interaction-response child template supplied by the three F5 commands at 0x0012514C, 0x00125162, and 0x0012517C inside ACTOR_ANIM_TYPE12_INTERACTION_RESPONSE. It uses movement stream 0x00121710, template word 0x6000, animation entry 0x00126074, owns one resource, and carries no trailing flags; the three producer payloads select the response placement words.
   evidence:
     - actor_template_type84_type4d_child_family_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B83E0:
+  name: ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene-resource actor record selected by command 0x0F at 0x0012766F in the 0x00127571 resource stream. It has no movement stream, uses ACTOR_ANIM_TYPE84_SCENE_RESOURCE_OPENING at 0x0012609E, owns three resources, and is instantiated at scene-resource position (0x00D0,0x0170).
+  evidence:
+    - actor_template_scene_resource_family_static_decompilation
+    - scene_resource_command_table_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B83F4:
+  name: ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene-resource actor record selected by command 0x0F at 0x0012719D in the 0x00127134 resource stream. It has no movement stream, uses the embedded ACTOR_ANIM_TYPE84_SCENE_REBUILD_ENTRY at 0x001260EA, owns nine resources, and is instantiated at scene-resource position (0x00A0,0x01C8).
+  evidence:
+    - actor_template_scene_resource_family_static_decompilation
+    - scene_resource_command_table_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B8408:
+  name: ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene-resource actor record selected by command 0x0F at 0x00127194 in the 0x00127134 resource stream. It has no movement stream, uses ACTOR_ANIM_TYPE84_COLLISION_RESPONSE at 0x00123E7E, owns eighteen resources, and is instantiated at scene-resource position (0x00A0,0x01C8); the same record is also spawned by the F5 command at 0x00123FD2.
+  evidence:
+    - actor_template_scene_resource_family_static_decompilation
+    - scene_resource_command_table_static_decompilation
+    - animation_stream_decoder
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B841C:
+  name: ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene-resource actor record selected by command 0x0F at 0x0012781B in the 0x0012772D resource stream. It has no movement stream, uses ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX at 0x00123F7E, owns two resources, and is instantiated at scene-resource position (0x00F0,0x01A8); the prefix hands off to the established Type-0x2B interaction continuation.
+  evidence:
+    - actor_template_scene_resource_family_static_decompilation
+    - scene_resource_command_table_static_decompilation
+    - animation_stream_decoder
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8430:
