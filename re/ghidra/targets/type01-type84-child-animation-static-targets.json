@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "type01-type84-child-animation-static",
+    "purpose": "Range-bound the Type-0x01 upper-resource animation and its F5-spawned Type-0x84 child stream without absorbing adjacent animation fragments."
+  },
+  "targets": [
+    { "address": "0x00122D92", "name": "ACTOR_ANIM_TYPE01" },
+    { "address": "0x00122F38", "name": "ACTOR_ANIM_TYPE84_CHILD" },
+    { "address": "0x001B7A30", "name": "ACTOR_TEMPLATE_TYPE01" },
+    { "address": "0x001B7D00", "name": "ACTOR_TEMPLATE_TYPE84_CHILD" },
+    { "address": "0x001AD00E", "name": "AnimationVM_SpawnOrCopyActor" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
+    { "address": "0x001ACB7A", "name": "Type84ChildEvent_1ACB7A" },
+    { "address": "0x001ACB82", "name": "Type84ChildEvent_1ACB82" }
+  ],
+  "memory_references": [
+    { "address": "0x001F7DC0", "name": "SPRITE_FRAME_TYPE01_UPPER_RESOURCE" },
+    { "address": "0x001F8ECA", "name": "SPRITE_FRAME_TYPE84_CHILD_0" },
+    { "address": "0x001F8EDC", "name": "SPRITE_FRAME_TYPE84_CHILD_1" },
+    { "address": "0x001F8EEE", "name": "SPRITE_FRAME_TYPE84_CHILD_2" },
+    { "address": "0x001F8F18", "name": "SPRITE_FRAME_TYPE84_CHILD_3" },
+    { "address": "0x001F8F42", "name": "SPRITE_FRAME_TYPE84_CHILD_4" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" }
+  ]
+}

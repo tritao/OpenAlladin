@@ -1557,18 +1557,22 @@
 
 0x00122D92:
   name: ACTOR_ANIM_TYPE01
+  size: 32
   confidence: confirmed
-  description: Type-0x01 upper-resource animation; it holds sprite frame 0x001F7DC0, conditionally executes F5, and loops back to its entry.
+  description: Type-0x01 upper-resource animation. Its exact 32-byte region holds sprite frame 0x001F7DC0 twice, conditionally executes F5 with ACTOR_TEMPLATE_TYPE84_CHILD at signed offset (+22,-12), and loops from 0x00122DAC back to the entry; the adjacent 0x00122DB2 fragment is not folded into this root.
   evidence:
     - ghidra_type01_child_chain_decompile
+    - type01_type84_child_animation_static_decompilation
     - mame_type01_child_chain_trace
 
 0x00122F38:
   name: ACTOR_ANIM_TYPE84_CHILD
+  size: 72
   confidence: confirmed
-  description: Short Type-0x84 child effect stream; it cycles frames 0x001F8ECA, 0x001F8EDC, 0x001F8EEE, 0x001F8F18, and 0x001F8F42, then clears the actor and calls the flag-20 callbacks.
+  description: Short Type-0x84 child effect stream. Its exact 72-byte region cycles frames 0x001F8ECA, 0x001F8EDC, 0x001F8EEE, 0x001F8F18, and 0x001F8F42, clears the actor with F600, calls Type84ChildEvent_1ACB7A and conditionally Type84ChildEvent_1ACB82, then loops through the local 0x00122F4E entry; the following 0x00122F80 response stream is separately owned.
   evidence:
     - ghidra_type01_child_chain_decompile
+    - type01_type84_child_animation_static_decompilation
     - mame_type01_child_chain_trace
 
 0x00123EE8:

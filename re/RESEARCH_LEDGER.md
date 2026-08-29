@@ -1012,6 +1012,16 @@ injection confirms the child at `(4262,372)` from the parent at `(4240,384)`;
 scene state remains `0x01` and no scene/exit writer fires. This removes the
 row-10 Type-0x01 chain from the missing lift/exit hypotheses.
 
+The Type-0x01 upper-resource and Type-0x84 child animation family is recorded
+in `re/mame/findings/20260829-type01-type84-child-animation-static-decompilation-v1.json`.
+Lossless decoding range-bounds the parent at `0x00122D92-0x00122DB1` (32
+bytes), including its stationary `0x001F7DC0` frames, random branch, and exact
+F5 child record for `ACTOR_TEMPLATE_TYPE84_CHILD`. The child is independently
+bounded at `0x00122F38-0x00122F7F` (72 bytes), with its five paired frames,
+`F600` cleanup, flag-20 callback parameters, and local-entry loop. The
+adjacent `0x00122DB2` and `0x00122F80` fragments remain explicitly unclaimed
+by these roots rather than being absorbed by proximity.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2804,3 +2814,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type52-level09-animation-static-decompilation-v1` | recorded-static-decompilation | Level-09 Type-0x52 entry animation range-bounded through its exact template pointer, F4 gate, local EA loop, and boundary before the separate response stream |
 | `20260829-type0c-directional-response-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x0C directional response and Type-0x2E child animation closed through the common directional selector, exact F5 template record, parent return, and child self-loop boundaries |
 | `20260829-type2d-guard-sword-attack-animation-static-decompilation-v1` | recorded-static-decompilation | Natural Type-0x2D guard sword-attack child animation closed through its exact template pointer, parent F5 producer, sound command, paired frame cycle, and self-loop boundary |
+| `20260829-type01-type84-child-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x01 upper-resource root and F5-spawned Type-0x84 child range-bounded with exact frames, callbacks, template records, and explicit adjacent-stream boundaries |

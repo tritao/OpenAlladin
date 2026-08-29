@@ -1,0 +1,63 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type01-type84-child-animation-static-targets.json",
+  "family": {
+    "parent": {
+      "address": "0x00122D92",
+      "name": "ACTOR_ANIM_TYPE01",
+      "range": "0x00122D92-0x00122DB1",
+      "bytes": 32,
+      "template": "0x001B7A30 ACTOR_TEMPLATE_TYPE01",
+      "frame_sequence": ["0x001F7DC0", "0x001F7DC0"],
+      "random_branch": "0x00122D96 F0 -> 0x00122D92",
+      "child_spawn": {
+        "address": "0x00122D9C",
+        "raw": "F501001B7D0016F40000000000000000",
+        "template": "0x001B7D00 ACTOR_TEMPLATE_TYPE84_CHILD",
+        "offset": { "x": 22, "y": -12 }
+      },
+      "loop": "0x00122DAC EA -> 0x00122D92"
+    },
+    "child": {
+      "address": "0x00122F38",
+      "name": "ACTOR_ANIM_TYPE84_CHILD",
+      "range": "0x00122F38-0x00122F7F",
+      "bytes": 72,
+      "runtime_type": "0x84",
+      "frame_sequence": [
+        "0x001F8ECA", "0x001F8ECA",
+        "0x001F8EDC", "0x001F8EDC",
+        "0x001F8EEE", "0x001F8EEE",
+        "0x001F8F18", "0x001F8F18",
+        "0x001F8F42", "0x001F8F42"
+      ],
+      "clear": "0x00122F4C F600",
+      "callbacks": [
+        "0x00122F50 FB -> Type84ChildEvent_1ACB7A",
+        "0x00122F60 FB -> Type84ChildEvent_1ACB82"
+      ],
+      "local_entry": "0x00122F4E",
+      "loop": "0x00122F7A EA -> 0x00122F4E"
+    }
+  },
+  "boundaries": {
+    "parent_start": "The exact ACTOR_TEMPLATE_TYPE01 animation pointer at 0x001B7A3C selects 0x00122D92; the preceding EC01 at 0x00122D90 belongs to the adjacent stream.",
+    "parent_end": "The unconditional EA at 0x00122DAC returns to the parent root. The adjacent 0x00122DB2 fragment has a separate local entry and is not folded into the 32-byte Type-0x01 range.",
+    "child_end": "The child cycle reaches its local 0x00122F4E entry and ends at 0x00122F7F; the following 0x00122F80 response stream is separately owned."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output from both direct roots",
+    "Exact Type-0x01 and Type-0x84 template records",
+    "Exact F5 child-spawn record and signed offsets",
+    "Existing controlled Type-0x01 runtime trace",
+    "Existing Type84 child event callback analysis"
+  ],
+  "conclusion": "The Type-0x01 upper-resource animation and its Type-0x84 F5 child are now range-bounded independently. The parent is a stationary two-frame/random child-spawn loop, while the child is a 72-byte five-frame cleanup/callback cycle. Adjacent animation fragments remain explicitly outside both ownership ranges.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}
