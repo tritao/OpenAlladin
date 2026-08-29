@@ -117,13 +117,21 @@ The supported workflow frontend is:
 
 ```bash
 genie status
+genie play
+genie play mame
 genie mame
 ```
+
+`genie play` launches the native OpenAladdin build by default. Use
+`genie play mame` (or `--client mame`) for a windowed MAME session; pass
+`--headless` when running either client from automation.
 
 The direct Python form remains equivalent:
 
 ```bash
 python -m genie status
+python -m genie play
+python -m genie play mame
 python -m genie verify
 python -m genie ghidra rebuild
 python -m genie mame

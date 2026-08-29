@@ -12,6 +12,7 @@ from genie.commands.layout import *
 from genie.commands.deasm import *
 from genie.commands.symbols import *
 from genie.commands.setup import *
+from genie.commands.play import *
 from genie.commands.trace import *
 from genie.commands.record import *
 from genie.commands.replay import *
@@ -269,6 +270,30 @@ def build_parser() -> argparse.ArgumentParser:
     )
     record.add_argument("--controller", default="P1 Mega Drive pad")
     record.set_defaults(function=command_record)
+
+    play = commands.add_parser(
+        "play",
+        help="launch the native or MAME gameplay client",
+    )
+    play.add_argument(
+        "client",
+        nargs="?",
+        choices=("native", "mame"),
+        help="client to launch (default: native)",
+    )
+    play.add_argument("--client", dest="client_option", choices=("native", "mame"))
+    add_rom_argument(play)
+    play.add_argument("--frames", type=int, help="stop after this many frames")
+    play.add_argument("--headless", action="store_true", help="run without a visible window")
+    play.add_argument("--no-audio", action="store_true", help="disable client audio")
+    play.add_argument("--input", help="deterministic input schedule")
+    play.add_argument("--demo", action="store_true", help="run the native demo input")
+    play.add_argument("--level-index", type=int, help="native level index")
+    play.add_argument("--trace-dir", type=Path, help="MAME trace output directory")
+    play.add_argument("--video", default="soft", help="MAME video backend (default: soft)")
+    play.add_argument("--debug-ui", action="store_true", help="show the MAME debugger UI")
+    play.add_argument("--load-state", help="MAME save-state file to load")
+    play.set_defaults(function=command_play)
 
     mame = commands.add_parser(
         "mame",

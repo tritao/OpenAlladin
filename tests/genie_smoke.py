@@ -80,12 +80,15 @@ def main() -> int:
 
     genie_help = _run(sys.executable, "-m", "genie", "--help")
     module_help = _run(sys.executable, "-m", "genie", "--help")
+    play_help = _run(sys.executable, "-m", "genie", "play", "--help")
     doctor_help = _run(sys.executable, "-m", "genie", "doctor", "--help")
     assert "usage: genie" in genie_help.stdout
     assert module_help.stdout == genie_help.stdout
     assert "doctor" in genie_help.stdout
     assert "--strict" in doctor_help.stdout
     assert "trace" in genie_help.stdout
+    assert "--headless" in play_help.stdout
+    assert "native" in play_help.stdout and "mame" in play_help.stdout
 
     print("Genie packaging smoke: ok")
     return 0
