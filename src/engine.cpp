@@ -18,10 +18,6 @@ namespace {
 // origin. The ROM keeps these coordinate systems distinct: terrain probes use
 // WORLD_Y - 0xF0, while the VDP sprite origin uses WORLD_Y - 0x100.
 constexpr int kPlayerVisualOffsetY = 0x100;
-constexpr std::uint32_t kLevel02ExitCallback = 0x001B6394;
-constexpr std::uint32_t kLevel06ExitCallback = 0x001B644E;
-constexpr std::uint32_t kLevel02EventStream = 0x00002128;
-constexpr std::uint32_t kLevel06EventStream = 0x000024FC;
 
 constexpr std::uint32_t kCheckpointVersion = 10;
 
@@ -461,61 +457,6 @@ void Engine::publish_player_world_coordinates() {
     sync_player_actor();
 }
 
-void Engine::start_level_event_stream_after_exit() {
-    if (level_event_exit_started_ || level_events_.active() || rom_bytes_.empty()) return;
-
-    const std::uint32_t exit_callback = level_.descriptor().exit_function.value;
-    std::uint32_t stream = 0;
-    if (exit_callback == kLevel02ExitCallback) {
-        stream = kLevel02EventStream;
-    } else if (exit_callback == kLevel06ExitCallback) {
-        stream = kLevel06EventStream;
-    }
-    if (stream == 0 || stream >= rom_bytes_.size()) return;
-
-    level_events_.start(RomAddress{stream});
-    level_event_exit_started_ = true;
-}
-
-void Engine::update_level_events() {
-    if (!level_events_.active()) return;
-    LevelEventServices services{
-        [this](const LevelEventCommand& event) {
-            const LevelEventEffects effects = level_event_system_.dispatch(state_, event);
-            level_event_sound_requests_.insert(
-                level_event_sound_requests_.end(),
-                effects.sound_requests.begin(),
-                effects.sound_requests.end()
-            );
-        },
-    };
-    level_events_.update(state_, services);
-}
-
-void Engine::update_scene_resources() {
-    // SceneSystem retains the recovered countdown gate. Service it at the
-    // same boundary as the compact resource interpreter so the frame loop
-    // has one owner for scene-script advancement.
-    (void) scene_.advance_script();
-    if (!scene_resources_.started()) {
-        // Ordinary gameplay has no scene-resource stream and remains a no-op
-        // after the scene-state gate has been serviced.
-        if (state_.scene.script_cursor == 0) return;
-        scene_resources_.start(state_.scene.script_cursor);
-    }
-
-    SceneServices services = scene_services();
-    const SceneResourceRunResult result = scene_resources_.tick(state_, services);
-    // Publish the VM's live A0 command cursor through the existing scene
-    // checkpoint field instead of creating a second Engine-side cursor.
-    state_.scene.script_cursor = scene_resources_.cursor();
-    if (result == SceneResourceRunResult::InvalidStream) {
-        // A malformed native stream follows the ROM's nonzero-status exit
-        // boundary so the interpreter will not be re-entered.
-        state_.scene.resource_status = 0xFF;
-    }
-}
-
 SceneServices Engine::scene_services() {
     SceneServices services;
     services.write_tile = [this](GameState&, const SceneTileWrite& write) {
@@ -638,7 +579,7 @@ void Engine::reset() {
     scene_resources_.reset();
     level_events_.reset();
     level_event_sound_requests_.clear();
-    level_event_exit_started_ = false;
+    frame_runtime_.level_event_exit_started = false;
     frame_runtime_.actor_movement_deferred.fill(false);
     frame_runtime_.checkpoint_animation_selector_pending = false;
     frame_runtime_.jump_landing_state_arm_pending = false;
@@ -903,6 +844,10 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.actor_terrain = &actor_terrain_;
     context.terrain = &terrain_;
     context.terrain_behavior = &terrain_behavior_;
+    context.level_events = &level_events_;
+    context.level_event_system = &level_event_system_;
+    context.scene_resources = &scene_resources_;
+    context.scene_services = scene_services();
     context.rom_bytes = &rom_bytes_;
     context.level_event_sound_requests = &level_event_sound_requests_;
     context.runtime = &frame_runtime_;
@@ -918,11 +863,6 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.update_dynamic_actor_culling = [this]() {
         update_dynamic_actor_culling();
     };
-    context.update_level_events = [this]() { update_level_events(); };
-    context.start_level_event_stream_after_exit = [this]() {
-        start_level_event_stream_after_exit();
-    };
-    context.update_scene_resources = [this]() { update_scene_resources(); };
     context.update_animation_vm_ordinal_30 =
         [this](SpritePose pose, HorizontalDirection direction,
                const AnimationContext& animation_context,
@@ -1441,7 +1381,7 @@ void Engine::write_checkpoint(std::ostream& output) const {
     animation_system_.write_checkpoint(output);
     writer.u32(level_events_.cursor().value);
     writer.u8(level_events_.tick());
-    writer.boolean(level_event_exit_started_);
+    writer.boolean(frame_runtime_.level_event_exit_started);
     writer.byte_vector(level_event_sound_requests_);
 
     writer.boolean(interaction_runtime.scan_initialized);
@@ -1593,7 +1533,7 @@ void Engine::read_checkpoint(std::istream& input) {
     frame_runtime_.last_ground_direction = last_ground_direction;
     quit_ = quit;
     level_events_.restore(RomAddress{level_event_cursor}, level_event_tick);
-    level_event_exit_started_ = level_event_exit_started;
+    frame_runtime_.level_event_exit_started = level_event_exit_started;
     level_event_sound_requests_ = level_event_sound_requests;
 }
 

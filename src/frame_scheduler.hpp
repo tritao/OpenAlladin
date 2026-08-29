@@ -7,6 +7,7 @@
 #include "game_state.hpp"
 #include "interaction.hpp"
 #include "level.hpp"
+#include "scene_resource.hpp"
 #include "player_terrain.hpp"
 #include "scene.hpp"
 
@@ -20,7 +21,10 @@ namespace openaladdin {
 
 class ActorMovementSystem;
 class ActorTerrainSystem;
+class LevelEventSystem;
+class LevelEventVm;
 class PlayerMotionSystem;
+class SceneResourceVm;
 class TerrainBehaviorSystem;
 
 struct InputState {
@@ -57,6 +61,7 @@ struct FrameRuntime {
     int last_ground_direction = 0;
     bool checkpoint_terrain_behavior_override = false;
     std::uint8_t checkpoint_terrain_behavior = 0;
+    bool level_event_exit_started = false;
     bool scheduler_trace_enabled = false;
     std::vector<SchedulerPhase> scheduler_phases;
     std::vector<std::uint32_t> scheduler_writer_pcs;
@@ -94,6 +99,10 @@ public:
         ActorTerrainSystem* actor_terrain = nullptr;
         PlayerTerrainSystem* terrain = nullptr;
         TerrainBehaviorSystem* terrain_behavior = nullptr;
+        LevelEventVm* level_events = nullptr;
+        LevelEventSystem* level_event_system = nullptr;
+        SceneResourceVm* scene_resources = nullptr;
+        SceneServices scene_services;
         const std::vector<std::uint8_t>* rom_bytes = nullptr;
         std::vector<std::uint8_t>* level_event_sound_requests = nullptr;
         FrameRuntime* runtime = nullptr;
@@ -101,9 +110,6 @@ public:
         NoArg clear_scheduler_trace;
         NoArg flush_deferred_animation_spawn;
         NoArg update_dynamic_actor_culling;
-        NoArg update_level_events;
-        NoArg start_level_event_stream_after_exit;
-        NoArg update_scene_resources;
         UpdateAnimation update_animation_vm_ordinal_30;
         NoArg publish_player_world_coordinates;
         NoArg sync_player_actor;

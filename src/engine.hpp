@@ -96,9 +96,6 @@ private:
     void load_actor_records(const std::string& path);
     void load_actor_timeline(const std::string& path);
     void apply_actor_timeline(int frame);
-    void update_level_events();
-    void start_level_event_stream_after_exit();
-    void update_scene_resources();
     SceneServices scene_services();
     bool instantiate_scene_actor(const SceneActorRecord& record);
     ActorState actor_from_template(std::uint32_t template_address) const;
@@ -146,7 +143,6 @@ private:
     std::uint32_t& random_state_;
     std::vector<std::uint8_t> rom_bytes_;
     std::vector<std::uint8_t> level_event_sound_requests_;
-    bool level_event_exit_started_ = false;
     int& frame_;
     // FF7E28 is incremented at Game_FrameUpdateLoop entry. Keep the ROM
     // phase separately from the host frame label so scene/checkpoint

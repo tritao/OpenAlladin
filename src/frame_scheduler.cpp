@@ -2,6 +2,8 @@
 
 #include "actor_movement.hpp"
 #include "actor_terrain.hpp"
+#include "level_event.hpp"
+#include "level_event_system.hpp"
 #include "player_motion.hpp"
 #include "terrain_behavior.hpp"
 
@@ -19,6 +21,10 @@ constexpr std::uint32_t kPlayerSwordStableStream = 0x001223E2;
 constexpr std::uint32_t kPlayerSwordFirstFrame = 0x001ED34A;
 constexpr std::uint32_t kPlayerUpAnimationStream = 0x00122236;
 constexpr std::uint32_t kPlayerDownAnimationStream = 0x001222D2;
+constexpr std::uint32_t kLevel02ExitCallback = 0x001B6394;
+constexpr std::uint32_t kLevel06ExitCallback = 0x001B644E;
+constexpr std::uint32_t kLevel02EventStream = 0x00002128;
+constexpr std::uint32_t kLevel06EventStream = 0x000024FC;
 HorizontalDirection horizontal_direction(const InputState& input) {
     if (input.left && !input.right) return HorizontalDirection::Left;
     if (input.right && !input.left) return HorizontalDirection::Right;
@@ -45,6 +51,10 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& actor_terrain_ = *context.actor_terrain;
     auto& terrain_ = *context.terrain;
     auto& terrain_behavior_ = *context.terrain_behavior;
+    auto& level_events_ = *context.level_events;
+    auto& level_event_system_ = *context.level_event_system;
+    auto& scene_resources_ = *context.scene_resources;
+    auto& scene_services_ = context.scene_services;
     const auto& rom_bytes_ = *context.rom_bytes;
     auto& level_event_sound_requests_ = *context.level_event_sound_requests;
     auto& runtime_ = *context.runtime;
@@ -69,10 +79,6 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& clear_scheduler_trace = context.clear_scheduler_trace;
     auto& flush_deferred_animation_spawn = context.flush_deferred_animation_spawn;
     auto& update_dynamic_actor_culling = context.update_dynamic_actor_culling;
-    auto& update_level_events = context.update_level_events;
-    auto& start_level_event_stream_after_exit =
-        context.start_level_event_stream_after_exit;
-    auto& update_scene_resources = context.update_scene_resources;
     auto& update_animation_vm_ordinal_30 =
         context.update_animation_vm_ordinal_30;
     auto& publish_player_world_coordinates =
@@ -84,6 +90,50 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& player_world_y = context.player_world_y;
     auto& record_scheduler_phase = context.record_scheduler_phase;
     auto& collect_scheduler_writer_pcs = context.collect_scheduler_writer_pcs;
+
+    const auto update_level_events = [&]() {
+        if (!level_events_.active()) return;
+        LevelEventServices services{
+            [&](const LevelEventCommand& event) {
+                const LevelEventEffects effects = level_event_system_.dispatch(
+                    state_,
+                    event
+                );
+                level_event_sound_requests_.insert(
+                    level_event_sound_requests_.end(),
+                    effects.sound_requests.begin(),
+                    effects.sound_requests.end()
+                );
+            },
+        };
+        level_events_.update(state_, services);
+    };
+
+    const auto update_scene_resources = [&]() {
+        // SceneSystem retains the recovered countdown gate. Service it at the
+        // same boundary as the compact resource interpreter so the frame loop
+        // has one owner for scene-script advancement.
+        (void)scene_.advance_script();
+        if (!scene_resources_.started()) {
+            // Ordinary gameplay has no scene-resource stream and remains a
+            // no-op after the scene-state gate has been serviced.
+            if (state_.scene.script_cursor == 0) return;
+            scene_resources_.start(state_.scene.script_cursor);
+        }
+
+        const SceneResourceRunResult result = scene_resources_.tick(
+            state_,
+            scene_services_
+        );
+        // Publish the VM's live A0 command cursor through the existing scene
+        // checkpoint field instead of creating a second scheduler cursor.
+        state_.scene.script_cursor = scene_resources_.cursor();
+        if (result == SceneResourceRunResult::InvalidStream) {
+            // A malformed native stream follows the ROM's nonzero-status exit
+            // boundary so the interpreter will not be re-entered.
+            state_.scene.resource_status = 0xFF;
+        }
+    };
 
     if (scheduler_trace_enabled_) {
         clear_scheduler_trace();
@@ -629,7 +679,22 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         player_.terrain_terminal_transition,
         player_.animation_selector.interaction_lock
     );
-    if (level_exit_callback) start_level_event_stream_after_exit();
+    if (level_exit_callback
+        && !runtime_.level_event_exit_started
+        && !level_events_.active()
+        && !rom_bytes_.empty()) {
+        const std::uint32_t exit_callback = level_.descriptor().exit_function.value;
+        std::uint32_t stream = 0;
+        if (exit_callback == kLevel02ExitCallback) {
+            stream = kLevel02EventStream;
+        } else if (exit_callback == kLevel06ExitCallback) {
+            stream = kLevel06EventStream;
+        }
+        if (stream != 0 && stream < rom_bytes_.size()) {
+            level_events_.start(RomAddress{stream});
+            runtime_.level_event_exit_started = true;
+        }
+    }
     // 0x001A8F04 is the recovered level callback boundary. Level 02 and 06
     // install their timed stream from the exit callback above, then dispatch
     // one record tick here on the same subsequent callback cadence.
