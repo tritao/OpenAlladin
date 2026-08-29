@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-type21-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x001235AC",
+    "name": "ACTOR_ANIM_TYPE_21_PROXIMITY",
+    "packed_region": ["0x001235AC", "0x001235E1"],
+    "packed_bytes": 54,
+    "entry": {
+      "frames": ["0x11E2", "0x11E2"],
+      "facing_command": "0x001235AE F7",
+      "player_y_test": "FE 0x40 -> 0x001235C4",
+      "secondary_call": "FC -> 0x0012355A ACTOR_ANIM_PROXIMITY_SECONDARY",
+      "loop": "0x001235BE EA -> 0x001235AC"
+    },
+    "state_branch": {
+      "address": "0x001235C4",
+      "random_branch": "F0 -> 0x001235D6",
+      "callback_branches": ["0x0012379C", "0x00123772"],
+      "loop_targets": ["0x001235AC", "0x001235AC"]
+    }
+  },
+  "consumer": {
+    "handler": "0x001B6ED0 InteractionHandler_Type21",
+    "selector": "0x1A",
+    "template": "0x001B7C24 ACTOR_TEMPLATE_UPPER_TYPE1E",
+    "runtime_type": "0x21",
+    "movement": null
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for 0x001235AC",
+    "Exact Type-0x21 interaction handler and template contract",
+    "Packed boundary immediately before the known 0x001235E2 animation root"
+  ],
+  "conclusion": "The Type-0x21 animation root is a bounded proximity loop with one shared secondary-stream call and a random callback branch. It does not install actor movement or write player coordinates or scene state.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

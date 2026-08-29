@@ -2768,3 +2768,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type1f-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x1F proximity animation root range-bounded, named, and connected to its movement install/clear paths |
 | `20260829-type2f-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x2F interaction loop and Level-12 terminal-event animation roots range-bounded and connected to their direct template consumers |
 | `20260829-type10-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x10 timed interaction-response animation root range-bounded with its direct child-spawn branches |
+| `20260829-type21-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x21 proximity animation root range-bounded with its shared secondary-stream call and local state branch |
