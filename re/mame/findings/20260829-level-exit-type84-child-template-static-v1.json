@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level-exit-type84-child-template-targets.json",
+  "consumer": {
+    "address": "0x001A8F0C",
+    "name": "Level_ExitAndTerminalTransition",
+    "template_load_site": "0x001AFB1E",
+    "initializer": "Actor_InitializeFromTemplate at 0x001AE30A"
+  },
+  "template": {
+    "address": "0x001B7E7C",
+    "name": "ACTOR_TEMPLATE_TYPE_84_LEVEL_EXIT_CHILD",
+    "range": ["0x001B7E7C", "0x001B7E8F"],
+    "runtime_type": "0x84",
+    "movement_stream": null,
+    "template_word": "0x0000",
+    "animation_stream": "0x001244EA embedded in ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE",
+    "resource_count": "0x0B",
+    "trailing_flags": "0x0000"
+  },
+  "caller_contract": {
+    "source_setup": "The caller prepares the source actor with movement stream 0x00120A42, clears offset 0x36, and sets runtime type 0x75 before requesting a free slot.",
+    "position_copy": "The initialized child receives source X/Y from actor offsets +0x02/+0x04 after the template call.",
+    "failure_behavior": "The template load and initialization are skipped when the free-slot test at 0x001AFB18 fails."
+  },
+  "evidence": [
+    "Direct Level_ExitAndTerminalTransition disassembly at 0x001AFB08-0x001AFB34",
+    "Exact raw 20-byte template bytes and adjacent established actor-template records",
+    "Established Type-0x74 animation family owns the 0x001244EA entry"
+  ],
+  "conclusion": "The formerly unassigned 0x001B7E7C record is statically closed as the directly initialized Type-0x84 level-exit child base. The evidence establishes its template fields and caller position-copy contract without assigning a more specific presentation role.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

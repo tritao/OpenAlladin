@@ -1270,6 +1270,7 @@
     - ghidra_targeted_decompile_scheduler
     - level01_transfer_capable_mechanism_graph
     - level01_upstream_transfer_writer_graph
+    - level_exit_type84_child_template_static_decompilation
 0x001B3B96:
   name: Menu_RunOptionsAndSelectNextState
   confidence: decompiled

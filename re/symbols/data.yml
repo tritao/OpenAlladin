@@ -2879,6 +2879,17 @@
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs
 
+0x001B7E7C:
+  name: ACTOR_TEMPLATE_TYPE_84_LEVEL_EXIT_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 level-exit child template loaded directly by Level_ExitAndTerminalTransition at 0x001AFB1E; it has no movement stream, uses the embedded ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE entry at 0x001244EA, and owns eleven resources before the caller copies the source actor position.
+  evidence:
+    - level_exit_type84_child_template_static_decompilation
+    - ghidra_level_exit_terminal_transition
+    - actor_template_grid_xrefs
+
 0x001B7EF4:
   name: ACTOR_TEMPLATE_TYPE_32_INTERACTION
   type: actor_template

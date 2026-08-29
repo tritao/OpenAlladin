@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-level-exit-type84-child-template-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the directly initialized Type-0x84 child actor used by the level-exit transition path.",
+  "consumer": {
+    "address": "0x001A8F0C",
+    "name": "Level_ExitAndTerminalTransition",
+    "template_load_site": "0x001AFB1E",
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "template": "0x001B7E7C ACTOR_TEMPLATE_TYPE_84_LEVEL_EXIT_CHILD"
+  },
+  "template": {
+    "address": "0x001B7E7C",
+    "name": "ACTOR_TEMPLATE_TYPE_84_LEVEL_EXIT_CHILD",
+    "range": ["0x001B7E7C", "0x001B7E8F"],
+    "size": 20,
+    "raw_bytes": "840000000000000000000000001244EA0B000000",
+    "runtime_type": "0x84",
+    "template_payload": "0x00000000",
+    "movement_stream": null,
+    "template_word": "0x0000",
+    "animation_stream": "0x001244EA embedded in ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE",
+    "resource_count": "0x0B",
+    "trailing_flags": "0x0000"
+  },
+  "caller_contract": {
+    "source_setup": "Before the child allocation, the caller writes movement stream 0x00120A42 to the source actor, clears source offset 0x36, and publishes source runtime type 0x75.",
+    "allocation": "The free-slot result is checked at 0x001AFB18; on success A5 is loaded with the template at 0x001B7E7C and Actor_InitializeFromTemplate is called at 0x001AFB24.",
+    "position": "After initialization, the child receives the source actor X and Y words from offsets +0x02 and +0x04 at 0x001AFB28-0x001AFB32."
+  },
+  "evidence": [
+    "Exact 68000 load of 0x001B7E7C at 0x001AFB1E",
+    "Direct Actor_InitializeFromTemplate call at 0x001AFB24",
+    "Exact 20-byte record boundary after ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE",
+    "Animation pointer 0x001244EA enters the established Type-0x74 response stream"
+  ]
+}
