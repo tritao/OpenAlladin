@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-audio-z80-sample-data-finding-v1",
+  "recorded_at": "2026-08-29",
+  "status": "static-extents-closed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": [
+    "re/ghidra/targets/audio-z80-table-targets.json",
+    "re/sound/z80-driver.yml",
+    "re/symbols/data.yml"
+  ],
+  "consumer": {
+    "address": "0x00001336",
+    "name": "Z80_LoadSampleDescriptor",
+    "pointer": "0x001C73CB",
+    "record_size": 12,
+    "record_count": 30,
+    "index_transform": "input >= 0x30 uses input-0x30; otherwise input+0x60; the resulting index is multiplied by 12.",
+    "descriptor_fields": {
+      "flags": { "offset": 0, "width": 1 },
+      "relative_waveform_offset": { "offset": 1, "width": 3, "endianness": "little" },
+      "waveform_length": { "offset": 6, "width": 2, "endianness": "little" }
+    }
+  },
+  "descriptor_table": {
+    "name": "AUDIO_Z80_SAMPLE_DESCRIPTOR_TABLE",
+    "start": "0x001C73CB",
+    "end_inclusive": "0x001C7532",
+    "size": 360,
+    "record_count": 30,
+    "record_size": 12
+  },
+  "waveform_payload": {
+    "name": "AUDIO_Z80_SAMPLE_WAVEFORM_DATA",
+    "start": "0x001C7533",
+    "end_inclusive": "0x001E56BE",
+    "size": 123276,
+    "first_descriptor_offset": "0x000168",
+    "last_descriptor_offset": "0x01DF67",
+    "last_descriptor_length": "0x038D",
+    "end_exclusive": "0x001E56BF"
+  },
+  "boundary_check": "For every descriptor, next_offset equals current_offset + current_length. The first payload byte is table_base + 0x168, and the final payload byte is table_base + 0x1E2F3. Byte 0x001E56BF precedes Audio_AcquireZ80BankWindow at 0x001E56C0."
+}

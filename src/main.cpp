@@ -464,7 +464,7 @@ int main(int argc, char** argv) {
                         openaladdin::audio::Z80SoundDriver::kPatchTableBase,
                         0x1BAF46,
                         openaladdin::audio::Z80SoundDriver::kSequenceTableBase,
-                        0x1C73CB,
+                        openaladdin::audio::Z80SoundDriver::kSampleDescriptorTableBase,
                     };
                     std::array<std::uint8_t, 12> audio_setup{};
                     for (std::size_t index = 0; index < audio_tables.size(); ++index) {

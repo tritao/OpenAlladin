@@ -3,7 +3,7 @@
   "rom": "rom/Disneys_Aladdin_U_p1.bin",
   "focus": {
     "name": "audio-z80-rom-tables",
-    "purpose": "Bound the ROM-resident Z80 patch, channel-parameter, and sound-sequence tables passed by the 68K startup path."
+    "purpose": "Bound the ROM-resident Z80 patch, channel-parameter, sound-sequence, and sample-data tables passed by the 68K startup path."
   },
   "initializer": {
     "address": "0x001AA344",
@@ -14,7 +14,7 @@
       { "address": "0x001B9D06", "name": "AUDIO_Z80_PATCH_TABLE" },
       { "address": "0x001BAF46", "name": "AUDIO_Z80_CHANNEL_PARAMETER_TABLE" },
       { "address": "0x001BAF6F", "name": "AUDIO_Z80_SEQUENCE_POINTER_TABLE" },
-      { "address": "0x001C73CB", "name": "AUDIO_Z80_WAVEFORM_PARAMETER_TABLE" }
+      { "address": "0x001C73CB", "name": "AUDIO_Z80_SAMPLE_DESCRIPTOR_TABLE" }
     ]
   },
   "z80_consumers": [
@@ -35,6 +35,15 @@
       "name": "Z80_LoadSoundSequenceHeader",
       "pointer": "0x001BAF6F",
       "header_size": 33
+    },
+    {
+      "address": "0x1336",
+      "name": "Z80_LoadSampleDescriptor",
+      "pointer": "0x001C73CB",
+      "record_size": 12,
+      "record_count": 30,
+      "offset_field": { "offset": 1, "width": 3, "endianness": "little" },
+      "length_field": { "offset": 6, "width": 2, "endianness": "little" }
     }
   ],
   "tables": [
@@ -68,7 +77,28 @@
       "pointer_width": 2,
       "pointer_endianness": "little",
       "first_header_offset": "0x00E4"
+    },
+    {
+      "address": "0x001C73CB",
+      "name": "AUDIO_Z80_SAMPLE_DESCRIPTOR_TABLE",
+      "size": 360,
+      "end": "0x001C7532",
+      "layout_class": "AUDIO_DATA",
+      "record_count": 30,
+      "record_size": 12,
+      "offset_field": { "offset": 1, "width": 3, "endianness": "little" },
+      "length_field": { "offset": 6, "width": 2, "endianness": "little" },
+      "payload_start": "0x001C7533",
+      "payload_end": "0x001E56BE"
+    },
+    {
+      "address": "0x001C7533",
+      "name": "AUDIO_Z80_SAMPLE_WAVEFORM_DATA",
+      "size": 123276,
+      "end": "0x001E56BE",
+      "layout_class": "AUDIO_DATA",
+      "descriptor_table": "0x001C73CB"
     }
   ],
-  "boundary": "The three ranges are contiguous. The patch records end immediately before the secondary table, and the sequence pointer table ends immediately before its first 0x21-byte header at 0x001BB053."
+  "boundary": "The patch, channel, and sequence-pointer ranges are contiguous. The sample descriptor table is independently bounded by 30 twelve-byte records; its relative offsets and lengths cover the following waveform payload exactly through 0x001E56BE, followed by one boundary byte before Audio_AcquireZ80BankWindow at 0x001E56C0."
 }

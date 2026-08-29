@@ -37,6 +37,15 @@ SEQUENCE_TABLE_BASE = 0x001BAF6F
 SEQUENCE_HEADER_SIZE = 0x21
 SEQUENCE_TRACK_COUNT = 16
 
+# The fourth pointer sent by Audio_Initialize addresses thirty fixed-width
+# descriptors. Each descriptor points, relative to this table, into the
+# contiguous waveform payload that follows it.
+SAMPLE_DESCRIPTOR_TABLE_BASE = 0x001C73CB
+SAMPLE_DESCRIPTOR_SIZE = 0x0C
+SAMPLE_DESCRIPTOR_COUNT = 30
+SAMPLE_PAYLOAD_START = 0x001C7533
+SAMPLE_PAYLOAD_END = 0x001E56BE
+
 COMMAND_HANDLERS = {
     0x00: 0x09D6,
     0x01: 0x09EA,
@@ -117,6 +126,10 @@ def sequence_table_report(image: bytes) -> dict[str, Any]:
                 hex_address(SEQUENCE_TABLE_BASE + offset)
                 for offset in track_offsets[:track_count]
             ],
+            "logical_header_size": 1 + track_count * 2,
+            "logical_header_end": hex_address(
+                header_address + track_count * 2
+            ),
         }
     return {
         "table_address": hex_address(SEQUENCE_TABLE_BASE),
@@ -124,10 +137,56 @@ def sequence_table_report(image: bytes) -> dict[str, Any]:
         "entry_count": entry_count,
         "entry_endianness": "little",
         "header_size": SEQUENCE_HEADER_SIZE,
+        "header_size_is": "fixed Z80 copy window; logical records are variable-sized",
         "track_count_offset": 0,
         "track_offsets_offset": 1,
         "track_offset_count": SEQUENCE_TRACK_COUNT,
         "track_offset_endianness": "little",
+        "entries": entries,
+    }
+
+
+def sample_descriptor_report(image: bytes) -> dict[str, Any]:
+    """Decode the Z80 sample descriptors and prove their payload coverage."""
+    entries: dict[str, Any] = {}
+    previous_end: int | None = None
+    for sample_id in range(SAMPLE_DESCRIPTOR_COUNT):
+        address = SAMPLE_DESCRIPTOR_TABLE_BASE + sample_id * SAMPLE_DESCRIPTOR_SIZE
+        if address + SAMPLE_DESCRIPTOR_SIZE > len(image):
+            raise SystemExit(
+                f"sample descriptor {sample_id} exceeds ROM at {address:#x}"
+            )
+        record = image[address:address + SAMPLE_DESCRIPTOR_SIZE]
+        relative_offset = int.from_bytes(record[1:4], "little")
+        length = int.from_bytes(record[6:8], "little")
+        if previous_end is not None and relative_offset != previous_end:
+            raise SystemExit(
+                f"sample descriptor {sample_id:#x} leaves a payload gap or overlap"
+            )
+        previous_end = relative_offset + length
+        entries[f"0x{sample_id:02X}"] = {
+            "address": hex_address(address),
+            "flags": f"0x{record[0]:02X}",
+            "relative_offset": hex_address(relative_offset),
+            "payload_address": hex_address(SAMPLE_DESCRIPTOR_TABLE_BASE + relative_offset),
+            "length": length,
+            "payload_end_inclusive": hex_address(
+                SAMPLE_DESCRIPTOR_TABLE_BASE + relative_offset + length - 1
+            ),
+        }
+    if SAMPLE_DESCRIPTOR_TABLE_BASE + 0x168 != SAMPLE_PAYLOAD_START:
+        raise SystemExit("sample descriptor payload start constant is stale")
+    if previous_end is None or SAMPLE_DESCRIPTOR_TABLE_BASE + previous_end - 1 != SAMPLE_PAYLOAD_END:
+        raise SystemExit("sample descriptor payload end constant is stale")
+    return {
+        "table_address": hex_address(SAMPLE_DESCRIPTOR_TABLE_BASE),
+        "entry_width": SAMPLE_DESCRIPTOR_SIZE,
+        "entry_count": SAMPLE_DESCRIPTOR_COUNT,
+        "offset_field": {"offset": 1, "width": 3, "endianness": "little"},
+        "length_field": {"offset": 6, "width": 2, "endianness": "little"},
+        "payload_start": hex_address(SAMPLE_PAYLOAD_START),
+        "payload_end_inclusive": hex_address(SAMPLE_PAYLOAD_END),
+        "payload_size": SAMPLE_PAYLOAD_END - SAMPLE_PAYLOAD_START + 1,
         "entries": entries,
     }
 
@@ -155,6 +214,16 @@ def build_report(rom: Path) -> tuple[dict[str, Any], bytes]:
         or parse_int(knowledge_sequence.get("header_size")) != SEQUENCE_HEADER_SIZE
     ):
         raise SystemExit("re/sound/z80-driver.yml sequence table map is stale")
+    knowledge_samples = knowledge.get("sample_descriptor_table", {}) or {}
+    if (
+        parse_int(knowledge_samples.get("address")) != SAMPLE_DESCRIPTOR_TABLE_BASE
+        or parse_int(knowledge_samples.get("entry_width")) != SAMPLE_DESCRIPTOR_SIZE
+        or parse_int(knowledge_samples.get("entry_count")) != SAMPLE_DESCRIPTOR_COUNT
+        or parse_int(knowledge_samples.get("payload_start")) != SAMPLE_PAYLOAD_START
+        or parse_int(knowledge_samples.get("payload_end_inclusive")) != SAMPLE_PAYLOAD_END
+        or parse_int(knowledge_samples.get("payload_size")) != SAMPLE_PAYLOAD_END - SAMPLE_PAYLOAD_START + 1
+    ):
+        raise SystemExit("re/sound/z80-driver.yml sample descriptor map is stale")
 
     image = rom.read_bytes()
     end = DRIVER_ROM_END + 1
@@ -213,6 +282,7 @@ def build_report(rom: Path) -> tuple[dict[str, Any], bytes]:
             ],
         },
         "sequence_table": sequence_table_report(image),
+        "sample_descriptor_table": sample_descriptor_report(image),
         "evidence": {
             "68k_copy_routine": "0x001E573A",
             "queue_trace": "mame_audio_mailbox_queue_trace",

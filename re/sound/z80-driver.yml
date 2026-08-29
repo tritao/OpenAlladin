@@ -61,6 +61,21 @@ sequence_table:
   track_offset_endianness: little
   base_address_is: 24-bit ROM address used by the banked read helper
 
+sample_descriptor_table:
+  address: 0x001C73CB
+  entry_width: 12
+  entry_count: 30
+  offset_field_offset: 1
+  offset_field_width: 3
+  offset_field_endianness: little
+  length_field_offset: 6
+  length_field_width: 2
+  length_field_endianness: little
+  offsets_relative_to: 0x001C73CB
+  payload_start: 0x001C7533
+  payload_end_inclusive: 0x001E56BE
+  payload_size: 123276
+
 # IDs confirmed by the Level 01 MAME command trace. The native runtime uses
 # the level music ID when no --sound-id override is supplied.
 sound_ids:

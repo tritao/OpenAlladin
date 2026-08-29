@@ -13,9 +13,11 @@ python3 -m genie audio-driver
 The driver consumes the shared 64-byte queue at Z80 `$1B40`, using cursor bytes
 `$36` and `$37`. Its command dispatcher is at Z80 `$0945`. Command `$10`
 selects a sound ID from the 16-bit little-endian table at ROM `$1BAF6F`, copies
-a 33-byte header, and initializes up to sixteen channel records at `$1B80`
-with 24-bit ROM stream pointers. The header is one track-count byte followed
-by sixteen little-endian track offsets relative to `$1BAF6F`.
+a 33-byte window, and initializes up to sixteen channel records at `$1B80`
+with 24-bit ROM stream pointers. The logical header begins with a track-count
+byte followed by that many little-endian track offsets relative to `$1BAF6F`;
+the logical records are packed as `1 + 2 * track_count` bytes even though the
+Z80 copies the fixed 33-byte window.
 
 The stream interpreter is at Z80 `$04BC` and reads through `$03EF`. Its byte
 classes are notes `$00–$5F`, control opcodes `$60–$7F`, and two six-bit-group
@@ -27,6 +29,11 @@ The currently confirmed Level 01 command IDs are music `0x49`, animation F3
 effects `0x4C`, and the fixed interaction event `0x31`. The native runtime
 can audition any sequence-table entry with `--sound-id ID`; IDs are valid from
 `0x00` through `0x71`.
+
+The fourth pointer sent by the 68K audio initializer is ROM `$1C73CB`. Z80
+`$1336` selects one of thirty 12-byte sample descriptors. Their relative
+offsets and lengths form one contiguous waveform payload at `$1C7533-$1E56BE`;
+`$1E56C0` is the next 68K audio service entry point.
 
 Regenerate the map, including the decoded music/SFX table, with:
 

@@ -47,6 +47,29 @@
     - audio_initialize_pointer_tuple
     - z80_audio_sequence_table_static_v1
 
+0x001C73CB:
+  name: AUDIO_Z80_SAMPLE_DESCRIPTOR_TABLE
+  type: z80_sample_descriptor_table
+  entry_size: 0x0C
+  count: 0x1E
+  size: 0x168
+  confidence: confirmed
+  description: ROM-resident Z80 sample descriptor table passed as the fourth Audio_Initialize pointer. The 30 twelve-byte records are indexed by the converted sample number at Z80 0x1336; each record stores flags, a 24-bit offset relative to this table, and a 16-bit waveform length. The descriptor table occupies 0x001C73CB-0x001C7532.
+  evidence:
+    - z80_sample_descriptor_loader_001336
+    - audio_initialize_pointer_tuple
+    - z80_audio_sample_descriptor_table_static_v1
+
+0x001C7533:
+  name: AUDIO_Z80_SAMPLE_WAVEFORM_DATA
+  type: z80_waveform_data
+  size: 0x1E18C
+  confidence: confirmed
+  description: Contiguous waveform/sample payload selected by AUDIO_Z80_SAMPLE_DESCRIPTOR_TABLE. Descriptor offsets and lengths cover this payload without gaps from 0x001C7533 through 0x001E56BE; the following byte is the boundary padding before Audio_AcquireZ80BankWindow at 0x001E56C0.
+  evidence:
+    - z80_sample_descriptor_loader_001336
+    - z80_sample_descriptor_extent_static_v1
+
 0xFF0000:
   name: WORK_RAM_BASE
   type: address

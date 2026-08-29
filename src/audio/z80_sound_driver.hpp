@@ -18,6 +18,7 @@ class Z80SoundDriver {
 public:
     static constexpr std::uint32_t kSequenceTableBase = 0x1BAF6F;
     static constexpr std::uint32_t kPatchTableBase = 0x1B9D06;
+    static constexpr std::uint32_t kSampleDescriptorTableBase = 0x1C73CB;
     static constexpr std::uint8_t kSoundSequenceCount = 0x72;
     static constexpr std::uint8_t kLevel01MusicSoundId = 0x49;
     static constexpr std::uint8_t kAnimationSfxSoundId = 0x4C;
