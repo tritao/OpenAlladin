@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-resource-default-movement-static-targets.json",
+  "stream": {
+    "address": "0x0011F728",
+    "name": "ACTOR_MOVE_SCENE_RESOURCE_DEFAULT",
+    "packed_region": ["0x0011F728", "0x0011F745"],
+    "decoded_bytes": 26,
+    "primary_loop": "0x0011F738 opcode 0x80 -> 0x0011F732",
+    "secondary_entry": "0x0011F73E",
+    "secondary_loop": "0x0011F742 opcode 0x80 -> 0x0011F73E"
+  },
+  "consumer": {
+    "function": "0x001B2238 SceneResource_InstantiateActors",
+    "template": "0x001B7968 ACTOR_TEMPLATE_SCENE_RESOURCE_BASE",
+    "runtime_type": "0x85",
+    "assignment_address": "0x001B22E6"
+  },
+  "interpretation": {
+    "primary": "The scene-resource actor starts with a zero-delta clear, waits through timer value 0x97, then moves three pixels horizontally per service step, writes the encoded flag value 0, reloads timer 0xAF, and loops from 0x0011F732.",
+    "secondary": "The adjacent 0x0011F73E entry is a separate fixed (+7, 0) self-loop inside the same packed ROM object. Its independent runtime consumer is not asserted by the current direct-xref evidence."
+  },
+  "evidence": [
+    "Lossless MovementDecoder output",
+    "SceneResource_InstantiateActors decompilation",
+    "Exact ROM pointer assignment at 0x001B22E6"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

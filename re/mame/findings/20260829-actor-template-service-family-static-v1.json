@@ -16,7 +16,8 @@
         "SceneResource_RebuildAfterInteraction at 0x001B16E0"
       ],
       "runtime_type": "0x85",
-      "role": "Shared source record whose resource-specific animation, movement, and position fields are published by the callers."
+      "movement_stream": "0x0011F728 ACTOR_MOVE_SCENE_RESOURCE_DEFAULT",
+      "role": "Shared source record whose resource-specific animation, movement, and position fields are published by the callers; SceneResource_InstantiateActors installs the common default movement stream after initialization."
     },
     {
       "address": "0x001B7A44",

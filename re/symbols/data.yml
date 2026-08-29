@@ -375,11 +375,13 @@
     - movement_stream_decoder
 
 0x0011F728:
-  name: ACTOR_MOVE_STATE_11F728
-  confidence: probable
-  description: Actor movement state-stream root observed in natural gameplay; it applies a short scripted delta/command sequence and loops through a ROM pointer.
+  name: ACTOR_MOVE_SCENE_RESOURCE_DEFAULT
+  size: 30
+  confidence: decompiled
+  description: Shared scene-resource actor movement stream installed by SceneResource_InstantiateActors. Its packed 30-byte region starts with a zero-delta clear, a zero-delta timer load of 0x97, then a fixed (+3, 0) step with flag value 0 and timer 0xAF before looping through 0x0011F732; the same region contains a secondary entry at 0x0011F73E with a fixed (+7, 0) step and self-loop.
   evidence:
-    - mame_actor_movement_cursor_trace
+    - ghidra_scene_resource_actor_instantiation
+    - scene_resource_default_movement_static_decompilation
     - movement_stream_decoder
 
 0x00120360:

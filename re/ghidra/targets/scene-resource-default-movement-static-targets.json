@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-scene-resource-default-movement-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "movement": {
+    "address": "0x0011F728",
+    "name": "ACTOR_MOVE_SCENE_RESOURCE_DEFAULT",
+    "packed_region": ["0x0011F728", "0x0011F745"],
+    "decoded_bytes": 26,
+    "primary_root": {
+      "entry": "0x0011F728",
+      "steps": [
+        { "delta": [0, 0], "commands": ["0x82 0x00"] },
+        { "delta": [0, 0], "commands": ["0x84 0x97"] },
+        { "delta": [3, 0], "commands": ["0x81 0x00", "0x84 0xAF"] },
+        { "delta": [3, 0], "commands": ["0x80 0x00 0x0011F732"] }
+      ],
+      "loop_target": "0x0011F732"
+    },
+    "secondary_entry": {
+      "entry": "0x0011F73E",
+      "delta": [7, 0],
+      "loop_target": "0x0011F73E"
+    }
+  },
+  "consumer": {
+    "function": "0x001B2238 SceneResource_InstantiateActors",
+    "template": "0x001B7968 ACTOR_TEMPLATE_SCENE_RESOURCE_BASE",
+    "runtime_type": "0x85",
+    "assignment": "move.l #0x0011F728,(0x0A,A5)"
+  },
+  "evidence": [
+    "Lossless MovementDecoder output for 0x0011F728",
+    "Exact SceneResource_InstantiateActors instruction at 0x001B22E6",
+    "Packed-region boundary immediately before the established 0x0011F746 stream"
+  ],
+  "conclusion": "The scene-resource default movement object is a bounded packed region. Its primary entry clears state, delays, then applies a fixed horizontal service step with timer reload and loops through 0x0011F732; the adjacent 0x0011F73E entry is retained as a secondary self-loop within the same owned region without asserting an independent runtime consumer.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
