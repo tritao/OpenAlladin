@@ -17,7 +17,7 @@
       "The record initializes runtime type 0x87, has no movement stream, uses animation root 0x00123B38, and owns eleven resources."
     ]
   },
-  "conclusion": "0x001B7C4C is a directly consumed type-0x87 interaction-response template. The surrounding type-0x84 record at 0x001B7C60 remains unresolved.",
+  "conclusion": "0x001B7C4C is a directly consumed type-0x87 interaction-response template. The adjacent Type-0x84 record at 0x001B7C60 is separately resolved from its direct F5 producer at 0x00123B48.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

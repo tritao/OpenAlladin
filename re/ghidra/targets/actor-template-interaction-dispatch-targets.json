@@ -21,7 +21,7 @@
     "size": 20,
     "initializer": "0x001AE30A Actor_InitializeFromTemplate"
   },
-  "conclusion": "The record is directly referenced by the named interaction handler and aligns with the established 20-byte actor-template cadence. No adjacent record is promoted by association alone.",
+  "conclusion": "The record is directly referenced by the named interaction handler and aligns with the established 20-byte actor-template cadence. The adjacent Type-0x84 child at 0x001B7C60 is tracked separately from its direct F5 producer evidence.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

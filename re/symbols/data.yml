@@ -2658,6 +2658,17 @@
     - ghidra_interaction_handler_0x80
     - actor_template_grid_xrefs
 
+0x001B7C60:
+  name: ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 child template supplied by the F5 record at 0x00123B44 inside the ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE animation root; it carries template payload 0x01000000, has no movement stream, uses animation entry 0x00123C84, owns twenty-four resources, and carries template word 0x6000.
+  evidence:
+    - actor_template_type84_type87_response_child_static_decompilation
+    - actor_template_interaction_dispatch_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B7B70:
   name: ACTOR_TEMPLATE_TYPE_29_INTERACTION
   type: actor_template

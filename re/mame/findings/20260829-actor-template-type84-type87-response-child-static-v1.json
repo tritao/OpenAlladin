@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-type84-type87-response-child-targets.json",
+  "producer": {
+    "parent_template": "0x001B7C4C ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE",
+    "parent_animation_root": "0x00123B38",
+    "producer_site": "0x00123B44",
+    "f5_parameter_byte": "0x06",
+    "f5_payload_bytes": "0xE0E0"
+  },
+  "template": {
+    "address": "0x001B7C60",
+    "name": "ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD",
+    "range": ["0x001B7C60", "0x001B7C73"],
+    "runtime_type": "0x84",
+    "template_payload": "0x01000000",
+    "movement_stream": null,
+    "template_word": "0x6000",
+    "animation_stream": "0x00123C84",
+    "resource_count": "0x18",
+    "trailing_flags": "0x0000"
+  },
+  "evidence": [
+    "Direct F5 template pointer and payload in ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE's animation root",
+    "Exact raw 20-byte record between established Type-0x87 and Type-0x0F templates",
+    "Common Actor_InitializeFromTemplate record layout"
+  ],
+  "conclusion": "The formerly unassigned 0x001B7C60 record is statically closed as the Type-0x84 child base spawned by the Type-0x87 interaction response. Its template fields and direct F5 contract are established without inferring a narrower presentation role.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
