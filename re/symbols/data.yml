@@ -3432,6 +3432,17 @@
     - interaction_spawn_type5e84_pair_static_decompilation
     - animation_stream_decoder
 
+0x00121C28:
+  name: PLAYER_ANIM_RESPONSE_RESET_FALLBACK
+  type: animation_stream
+  size: 8
+  confidence: decompiled
+  description: Final player AnimationVM response-reset fallback selected by Player_ResetAnimationResponseGate at 0x001AD2D4 after the response and transition checks converge. Its exact 8-byte region presents frame 0x06E6 and loops unconditionally from 0x00121C2A back to 0x00121C28.
+  evidence:
+    - player_response_reset_fallback_animation_static_decompilation
+    - ghidra_player_animation_response_gate
+    - animation_stream_decoder
+
 0x00121C62:
   name: PLAYER_ANIM_TRANSITION_FLAG_RESPONSE
   size: 78

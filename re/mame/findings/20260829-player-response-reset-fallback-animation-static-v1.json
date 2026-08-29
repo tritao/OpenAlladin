@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-response-reset-fallback-animation-static-targets.json",
+  "stream": {
+    "address": "0x00121C28",
+    "name": "PLAYER_ANIM_RESPONSE_RESET_FALLBACK",
+    "range": "0x00121C28-0x00121C2F",
+    "bytes": 8,
+    "frames": ["0x06E6"],
+    "loop": "EA at 0x00121C2A -> 0x00121C28",
+    "stopped_reason": "control_flow_cycle"
+  },
+  "selector": {
+    "address": "0x001AD150",
+    "name": "Player_ResetAnimationResponseGate",
+    "selection_site": "0x001AD2D4",
+    "condition": "Final fallback after the response/transition checks, including the clear PLAYER_ANIMATION_FIELD_C1 path."
+  },
+  "boundary": "The exact 8-byte loop ends at 0x00121C2F; PLAYER_ANIM_TRANSITION_FLAG_RESPONSE begins at 0x00121C62 after the existing unresolved gap.",
+  "evidence": [
+    "Fresh instructions.json DATA reference from 0x001AD2D4 to 0x00121C28",
+    "Lossless AnimationDecoder output",
+    "Player_ResetAnimationResponseGate selector body and branch boundary"
+  ],
+  "conclusion": "The previously unknown 0x00121C28 range is a directly selected eight-byte player AnimationVM fallback, not an unresolved data blob.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
