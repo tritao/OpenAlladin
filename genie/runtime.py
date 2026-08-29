@@ -15,14 +15,16 @@ from typing import Any, Iterable
 
 from genie.common import hashes, load_yaml, normalize_symbols, parse_int, rom_entries
 from genie.context import ProjectContext
+from genie.profiles import load_profile
 
 PROJECT = ProjectContext.discover()
 ROOT = PROJECT.root
 SCRIPT_DIR = ROOT / "genie"
-EXPERIMENTS = ROOT / "re/mame/experiments/manifest.yml"
-EVENTS = ROOT / "re/mame/events/manifest.yml"
-GHIDRA_CONFIG = ROOT / "re/config/ghidra.yml"
-ROM_DEFAULT = ROOT / "rom/Disneys_Aladdin_U_p1.bin"
+PROFILE = load_profile()
+EXPERIMENTS = ROOT / PROFILE.experiments_manifest
+EVENTS = ROOT / PROFILE.events_manifest
+GHIDRA_CONFIG = ROOT / PROFILE.ghidra_config
+ROM_DEFAULT = ROOT / PROFILE.default_rom
 
 
 def _load_state_trace(path: Path):
@@ -36,73 +38,33 @@ def _animation_selector_spec(player: dict[str, Any]) -> str | None:
 
     return animation_selector_spec(player)
 
-INPUT_FORMAT = "openaladdin-input-v1"
+INPUT_FORMAT = PROFILE.input_format
 
-INPUT_MAPPING = "mame-genesis-3button-v1"
+INPUT_MAPPING = PROFILE.input_mapping
 
 LEGACY_BUTTON_REMAP = {"a": "b", "b": "c", "c": "a"}
 
-EVENT_FORMAT = "openaladdin-event-v1"
+EVENT_FORMAT = PROFILE.event_format
 
-SEGMENTS_FORMAT = "openaladdin-segments-v1"
+SEGMENTS_FORMAT = PROFILE.segments_format
 
-RUN_FORMAT = "openaladdin-input-run-v1"
+RUN_FORMAT = PROFILE.run_format
 
-STATE_FORMAT_V2 = "openaladdin-frame-state-v2"
-
-STATE_FORMAT_V3 = "openaladdin-frame-state-v3"
+STATE_FORMAT_V2, STATE_FORMAT_V3 = PROFILE.state_formats
 
 INPUT_BUTTONS = ("up", "down", "left", "right", "a", "b", "c", "start")
 
 INPUT_MASKS = {name: 1 << index for index, name in enumerate(INPUT_BUTTONS)}
 
-DEFAULT_PARITY_FIELDS = [
-    "player.x",
-    "player.y",
-    "player.world_x",
-    "player.world_y",
-    "player.vx",
-    "player.vy",
-    "player.animation_pc",
-    "player.frame_ptr",
-    "player.facing_x_flip",
-    "player.animation_timer",
-    "player.grounded",
-    "scene.state",
-    "camera.x",
-    "camera.y",
-    "camera.scroll_x",
-    "camera.scroll_y",
-    "actors",
-]
+DEFAULT_PARITY_FIELDS = list(PROFILE.parity_fields)
 
-ATOMIC_STATE_FIELDS = ("player", "camera", "terrain", "scene", "actors", "scheduler")
+ATOMIC_STATE_FIELDS = PROFILE.atomic_state_fields
 
-ATOMIC_ACTOR_FIELDS = (
-    "type",
-    "x",
-    "y",
-    "movement_flags",
-    "facing_x_flip",
-    "facing_y_flip",
-    "sprite_attribute",
-    "frame_ptr",
-    "animation_pc",
-    "movement_pc",
-    "movement_loop_pc",
-    "movement_loop_timer",
-    "movement_word_18",
-    "movement_word_1a",
-    "animation_timer",
-    "movement_return_pc",
-    "flags",
-    "movement_command_timer",
-    "collision_box",
-)
+ATOMIC_ACTOR_FIELDS = PROFILE.atomic_actor_fields
 
 def default_rom() -> Path:
     _, expected, _ = rom_entries()
-    configured = ROOT / str(expected.get("expected_filename", "rom/Disneys_Aladdin_U_p1.bin"))
+    configured = ROOT / str(expected.get("expected_filename", PROFILE.default_rom))
     if configured.is_file():
         return configured
     return ROOT / "rom/aladdin-usa.bin"
