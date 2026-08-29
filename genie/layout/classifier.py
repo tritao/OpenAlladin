@@ -183,6 +183,10 @@ def _symbol_candidates(
     for symbol in symbols:
         if symbol.kind == "ram":
             continue
+        if symbol.metadata.get("alias_of"):
+            # Alternate entries describe control-flow into an existing ROM
+            # object; they must not split or compete for layout ownership.
+            continue
         if symbol.kind == "function" and symbol.address in functions:
             function = functions[symbol.address]
             try:

@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-player-terrain-response-entry-aliases-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "entries": [
+    {
+      "address": "0x00122298",
+      "name": "PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE_TAIL",
+      "alias_of": "PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE",
+      "owner_range": "0x00122236-0x001222C1",
+      "entry_offset": 98,
+      "branch_source": "Player_ResetAnimationResponseGate"
+    },
+    {
+      "address": "0x0012231E",
+      "name": "PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE_TAIL",
+      "alias_of": "PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE",
+      "owner_range": "0x001222D2-0x00122335",
+      "entry_offset": 76,
+      "branch_source": "Player_ResetAnimationResponseGate"
+    }
+  ],
+  "evidence": [
+    "The response-gate branches target both addresses inside their already bounded owning streams",
+    "The owning ranges contain the complete byte regions through their shared dynamic-selector exits"
+  ],
+  "status": "recorded-static-decompilation",
+  "confidence": "confirmed"
+}

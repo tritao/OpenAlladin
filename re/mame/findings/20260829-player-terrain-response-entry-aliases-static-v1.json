@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "entries": [
+    {
+      "name": "PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE_TAIL",
+      "address": "0x00122298",
+      "alias_of": "PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE",
+      "entry_offset": 98,
+      "reason": "The response-gate branch enters the return tail within the 140-byte owner at 0x00122236; the tail is an alternate entry, not a second data range."
+    },
+    {
+      "name": "PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE_TAIL",
+      "address": "0x0012231E",
+      "alias_of": "PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE",
+      "entry_offset": 76,
+      "reason": "The response-gate branch enters the return tail within the 100-byte owner at 0x001222D2; the tail is an alternate entry, not a second data range."
+    }
+  ],
+  "verification": {
+    "upward_owner_end": "0x00122236 + 140 - 1 = 0x001222C1",
+    "downward_owner_end": "0x001222D2 + 100 - 1 = 0x00122335"
+  },
+  "conclusion": "Terrain-response tail entries are represented as aliases so data ownership remains gap-free and non-overlapping.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

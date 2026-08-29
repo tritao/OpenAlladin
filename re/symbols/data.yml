@@ -1337,8 +1337,10 @@
 
 0x00122298:
   name: PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE_TAIL
+  alias_of: PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE
+  entry_offset: 98
   confidence: confirmed
-  description: Embedded upward terrain-response tail selected by Player_ResetAnimationResponseGate while player response field 0xF0DF is active. It presents the 0x09AA/0x09A6/0x09A2 return sequence, gates the tail on fields 0xF0C1, 0xF0CD, and 0xF0DF, and returns through the shared dynamic selector at 0x001222C0.
+  description: Embedded upward terrain-response tail selected by Player_ResetAnimationResponseGate while player response field 0xF0DF is active. It begins 98 bytes into PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE, presents the 0x09AA/0x09A6/0x09A2 return sequence, gates the tail on fields 0xF0C1, 0xF0CD, and 0xF0DF, and returns through the shared dynamic selector at 0x001222C0; it does not claim a second ROM ownership range.
   evidence:
     - ghidra_player_animation_response_gate
     - animation_stream_decoder
@@ -1354,8 +1356,10 @@
 
 0x0012231E:
   name: PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE_TAIL
+  alias_of: PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE
+  entry_offset: 76
   confidence: confirmed
-  description: Embedded downward terrain-response tail selected by Player_ResetAnimationResponseGate while player response field 0xF0DE is active. It presents the 0x085E/0x085A/0x0856/0x0852 return sequence, gates the repeated opening on player field 0xF0DE, reloads the encoded timer phases, and enters dynamic state selection.
+  description: Embedded downward terrain-response tail selected by Player_ResetAnimationResponseGate while player response field 0xF0DE is active. It begins 76 bytes into PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE, presents the 0x085E/0x085A/0x0856/0x0852 return sequence, gates the repeated opening on player field 0xF0DE, reloads the encoded timer phases, and enters dynamic state selection; it does not claim a second ROM ownership range.
   evidence:
     - ghidra_player_animation_response_gate
     - animation_stream_decoder

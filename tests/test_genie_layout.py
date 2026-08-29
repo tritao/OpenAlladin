@@ -103,6 +103,33 @@ def test_layout_uses_recovered_jump_table_extents(tmp_path):
     assert item.end == 0x47
 
 
+def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    (tmp_path / "re/symbols/data.yml").write_text(
+        """
+0x00000010:
+  name: OwnerStream
+  size: 16
+  type: animation_stream
+
+0x00000014:
+  name: EmbeddedEntry
+  alias_of: OwnerStream
+  entry_offset: 4
+  type: animation_stream
+""",
+        encoding="utf-8",
+    )
+    database_root = _write_database(tmp_path)
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path, include_artifacts=False)
+    item = layout.at(0x14)
+    assert item is not None
+    assert item.name == "OwnerStream"
+    assert item.start == 0x10
+    assert item.end == 0x1F
+
+
 def test_layout_validator_rejects_overlap_and_gap():
     layout = Layout(
         rom_size=0x10,
