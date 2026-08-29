@@ -14,6 +14,121 @@ constexpr std::uint32_t kActorDeathTemplate = 0x001B7940;
 constexpr std::uint32_t kActorSwordDeathTemplate = 0x001B792C;
 constexpr std::uint8_t kActorDeathFrames = 43;
 constexpr std::uint8_t kActorSwordTerminalFrames = 19;
+constexpr std::uint32_t kPlayerCollisionHandlerTable = 0x001CBE;
+
+PlayerCollisionHandlerKind player_handler_kind(std::uint8_t actor_type) {
+    switch (actor_type) {
+    case 0x04:
+    case 0x0D:
+    case 0x24: case 0x25: case 0x26: case 0x27: case 0x28:
+    case 0x2B:
+        return PlayerCollisionHandlerKind::NoOp;
+    case 0x03:
+    case 0x06: case 0x0A: case 0x0F:
+    case 0x1D: case 0x20: case 0x2A:
+        return PlayerCollisionHandlerKind::SharedActorResponse;
+    case 0x08: case 0x09:
+        return PlayerCollisionHandlerKind::TerrainPushResponse;
+    case 0x18: case 0x19:
+    case 0x23:
+    case 0x2C: case 0x2D: case 0x2F: case 0x30:
+    case 0x32: case 0x45: case 0x46: case 0x47: case 0x48:
+    case 0x49: case 0x4A: case 0x4B: case 0x4C:
+    case 0x54:
+    case 0x78: case 0x79: case 0x7A: case 0x7B: case 0x7D:
+        return PlayerCollisionHandlerKind::InteractionResponse;
+    case 0x0C:
+    case 0x1A: case 0x1B: case 0x1C:
+    case 0x34: case 0x35:
+    case 0x43: case 0x44:
+    case 0x4D:
+    case 0x62: case 0x63: case 0x64: case 0x65:
+    case 0x67: case 0x68: case 0x6A:
+        return PlayerCollisionHandlerKind::ActorResponse;
+    case 0x50: case 0x51:
+    case 0x52: case 0x53:
+    case 0x66:
+        return PlayerCollisionHandlerKind::PlayerPlacement;
+    case 0x11: case 0x12:
+    case 0x4E: case 0x4F:
+        return PlayerCollisionHandlerKind::PlayerLaunch;
+    case 0x6E: case 0x6F: case 0x70: case 0x71: case 0x72: case 0x73:
+    case 0x74: case 0x75: case 0x76: case 0x77:
+        return PlayerCollisionHandlerKind::TransitionResponse;
+    default:
+        return PlayerCollisionHandlerKind::Unknown;
+    }
+}
+
+// Fallback identities keep ROM-less collision fixtures useful. When a full
+// ROM is bound, player_collision_handler() replaces these addresses with the
+// actual four-byte table entry at 0x001CBE + type * 4.
+std::uint32_t known_player_handler_address(std::uint8_t actor_type) {
+    switch (actor_type) {
+    case 0x03: return 0x001AED86;
+    case 0x04: return 0x001AEDA6;
+    case 0x06: case 0x0F: return 0x001AE9DA;
+    case 0x08: case 0x09: return 0x001AE722;
+    case 0x0A: case 0x1D: case 0x20: case 0x2A: return 0x001AE9C6;
+    case 0x0C: return 0x001AE9A8;
+    case 0x0D: return 0x001AEB7A;
+    case 0x11: case 0x12: return 0x001AF110;
+    case 0x18: case 0x19: return 0x001AEA48;
+    case 0x1A: return 0x001AE9E0;
+    case 0x1B: return 0x001AEA00;
+    case 0x1C: return 0x001AEA24;
+    case 0x23: return 0x001AEECA;
+    case 0x24: case 0x25: case 0x26: case 0x27: case 0x28:
+        return 0x001AEEDE;
+    case 0x2B: return 0x001AEBFE;
+    case 0x2C: case 0x2D: return 0x001AEE40;
+    case 0x2F: return 0x001AEDA8;
+    case 0x30: return 0x001AEE18;
+    case 0x32: case 0x79: return 0x001AEB7C;
+    case 0x34: return 0x001AF4D8;
+    case 0x35: case 0x40: return 0x001AF468;
+    case 0x43: return 0x001AE64C;
+    case 0x44: return 0x001AEF12;
+    case 0x45: return 0x001AEEE0;
+    case 0x46: return 0x001AEF5C;
+    case 0x47: return 0x001AEFB0;
+    case 0x48: return 0x001AEFDC;
+    case 0x49: return 0x001AF008;
+    case 0x4A: return 0x001AF034;
+    case 0x4B: return 0x001AF060;
+    case 0x4C: return 0x001AF08C;
+    case 0x4D: return 0x001AF0B8;
+    case 0x4E: return 0x001AFCD2;
+    case 0x4F: return 0x001AFC4E;
+    case 0x50: case 0x51: return 0x001AF8F6;
+    case 0x52: case 0x53: return 0x001AF79E;
+    case 0x54: return 0x001AF7F2;
+    case 0x62: case 0x63: return 0x001AF81C;
+    case 0x64: return 0x001AF894;
+    case 0x65: return 0x001AFBF4;
+    case 0x67: case 0x68: return 0x001AF740;
+    case 0x6A: return 0x001AF978;
+    case 0x6E: case 0x6F: case 0x70: case 0x71: case 0x72: case 0x73:
+        return 0x001AFB36;
+    case 0x74: case 0x75: return 0x001AFA84;
+    case 0x76: case 0x77: return 0x001AF9F6;
+    case 0x78: case 0x7A: return 0x001AEBDC;
+    case 0x7B: return 0x001AE9D4;
+    case 0x7D: return 0x001AEBA4;
+    default: return 0;
+    }
+}
+
+std::uint32_t read_be32(
+    const std::vector<std::uint8_t>& bytes,
+    std::size_t address
+) {
+    if (address + 3 >= bytes.size()) return 0;
+    return (static_cast<std::uint32_t>(bytes[address]) << 24)
+        | (static_cast<std::uint32_t>(bytes[address + 1]) << 16)
+        | (static_cast<std::uint32_t>(bytes[address + 2]) << 8)
+        | bytes[address + 3];
+}
 
 int normalized_left(const CollisionBox& box) {
     return std::min(box.left, box.right);
@@ -165,6 +280,129 @@ bool CollisionSystem::any_player_actor_overlap(
     return false;
 }
 
+PlayerCollisionHandlerInfo CollisionSystem::player_collision_handler(
+    std::uint8_t actor_type
+) const {
+    PlayerCollisionHandlerInfo info;
+    info.actor_type = actor_type;
+    if (actor_type >= 0x7F) return info;
+
+    info.address = known_player_handler_address(actor_type);
+    if (rom_ != nullptr) {
+        const std::uint32_t table_address = kPlayerCollisionHandlerTable
+            + static_cast<std::uint32_t>(actor_type) * 4U;
+        const std::uint32_t table_entry = read_be32(*rom_, table_address);
+        if (table_address + 3 < rom_->size()) info.address = table_entry;
+    }
+    info.kind = player_handler_kind(actor_type);
+    info.native_implemented = actor_type == kActorGuardType
+        || actor_type == 0x2D
+        || actor_type == 0x40;
+    return info;
+}
+
+std::vector<PlayerActorCollision> CollisionSystem::detect_player_actor(
+    const GameState& state,
+    const PlayerCollisionInput& input
+) const {
+    std::vector<PlayerActorCollision> collisions;
+    const CollisionBox player_box = hitbox(
+        input.frame_pointer,
+        state.camera.x + state.player.x,
+        state.camera.y + state.player.y,
+        input.facing_left
+    );
+    if (!player_box.valid) return collisions;
+
+    // Actor_PlayerCollisionPass scans the 24 gameplay records and rejects
+    // actor types 0 and 0x7F+ before indexing PLAYER_COLLISION_HANDLER_TABLE.
+    for (ActorIndex slot = 1; slot <= 24 && slot < state.actors.size(); ++slot) {
+        const ActorState& actor = state.actors[slot];
+        if (actor.type == 0 || actor.type >= 0x7F) continue;
+        const CollisionBox actor_box = hitbox(
+            actor.frame_ptr,
+            static_cast<int>(actor.x),
+            static_cast<int>(actor.y),
+            actor.facing_x_flip != 0
+        );
+        if (!overlaps(player_box, actor_box)) continue;
+        collisions.push_back(PlayerActorCollision{slot, player_collision_handler(actor.type)});
+    }
+    return collisions;
+}
+
+CollisionEffects CollisionSystem::dispatch_player_handler(
+    GameState& state,
+    const PlayerActorCollision& collision,
+    const PlayerCollisionInput& input
+) {
+    CollisionEffects effects;
+    if (collision.actor >= state.actors.size()) return effects;
+    ActorState& actor = state.actors[collision.actor];
+
+    if (collision.handler.kind == PlayerCollisionHandlerKind::NoOp) return effects;
+    if (!collision.handler.native_implemented) {
+        effects.unhandled_player_collision_types.push_back(actor.type);
+        return effects;
+    }
+
+    const CollisionBox player_box = hitbox(
+        input.frame_pointer,
+        state.camera.x + state.player.x,
+        state.camera.y + state.player.y,
+        input.facing_left
+    );
+    const CollisionBox actor_box = hitbox(
+        actor.frame_ptr,
+        static_cast<int>(actor.x),
+        static_cast<int>(actor.y),
+        actor.facing_x_flip != 0
+    );
+    if (!player_box.valid || !actor_box.valid) return effects;
+
+    if (actor.type == kActorGuardType) {
+        if (!input.sword_active) return effects;
+        ActorState terminal = actor;
+        terminal.type = kActorTerminalType;
+        const ActorState template_record = actor_lifecycle_.from_template(
+            kActorDeathTemplate);
+        terminal.sprite_attribute = template_record.sprite_attribute;
+        terminal.resource_count = template_record.resource_count;
+        terminal.movement_pc = 0;
+        terminal.animation_pc = kActorDeathAnimationStream;
+        terminal.frame_ptr = 0;
+        terminal.flags = 0;
+        terminal.facing_x_flip = 0;
+        terminal.facing_y_flip = 0;
+        terminal.terminal_timer = kActorDeathFrames;
+        (void)actor_lifecycle_.install(collision.actor, terminal);
+        return effects;
+    }
+
+    if (actor.type == 0x2D) {
+        if (input.bounce_response_follow_active) return effects;
+        // The type-0x2D handler retires the actor, then arms the player
+        // interaction selector for the scheduler's post-VM handoff.
+        actor_lifecycle_.retire(collision.actor);
+        state.player.animation_selector.response_state_101 = 0;
+        state.player.animation_selector.interaction_lock = 0x28;
+        state.camera.update_delay = 7;
+        effects.player_collision_interaction_pending = true;
+        return effects;
+    }
+
+    // Type-0x40 uses the handler's strict secondary rectangle test after the
+    // common pass has accepted the candidate.
+    if (actor.type == 0x40 && strict_overlaps(player_box, actor_box)) {
+        const ActorState replacement = actor_lifecycle_.initialize_record(
+            actor,
+            0x001B7ABC
+        );
+        (void)actor_lifecycle_.install(collision.actor, replacement);
+    }
+    return effects;
+}
+
 CollisionEffects CollisionSystem::player_actor(
     GameState& state,
     const PlayerCollisionInput& input
@@ -184,60 +422,20 @@ CollisionEffects CollisionSystem::player_actor(
     }
     if (rom_ == nullptr) return effects;
 
-    const CollisionBox player_box = hitbox(
-        input.frame_pointer,
-        state.camera.x + state.player.x,
-        state.camera.y + state.player.y,
-        input.facing_left
-    );
-    if (!player_box.valid) return effects;
-
-    for (ActorIndex slot = 1; slot <= 24 && slot < actors.size(); ++slot) {
-        ActorState& actor = actors[slot];
-        if (actor.type == 0) continue;
-
-        // Player/actor collision entry 0x001ABB40 dispatches the actor type
-        // only after both frame hitboxes overlap.
-        const CollisionBox actor_box = hitbox(
-            actor.frame_ptr,
-            static_cast<int>(actor.x),
-            static_cast<int>(actor.y),
-            actor.facing_x_flip != 0
+    for (const PlayerActorCollision& collision : detect_player_actor(state, input)) {
+        CollisionEffects handler_effects = dispatch_player_handler(
+            state,
+            collision,
+            input
         );
-        const bool overlap = overlaps(player_box, actor_box);
-        if (input.sword_active && actor.type == kActorGuardType && overlap) {
-            ActorState terminal = actor;
-            terminal.type = kActorTerminalType;
-            const ActorState template_record = actor_lifecycle_.from_template(
-                kActorDeathTemplate);
-            terminal.sprite_attribute = template_record.sprite_attribute;
-            terminal.resource_count = template_record.resource_count;
-            terminal.movement_pc = 0;
-            terminal.animation_pc = kActorDeathAnimationStream;
-            terminal.frame_ptr = 0;
-            terminal.flags = 0;
-            terminal.facing_x_flip = 0;
-            terminal.facing_y_flip = 0;
-            terminal.terminal_timer = kActorDeathFrames;
-            (void)actor_lifecycle_.install(slot, terminal);
-        }
-        if (actor.type == 0x2D && overlap
-            && !input.bounce_response_follow_active) {
-            // The type-0x2D handler retires the actor, then arms the player
-            // interaction selector for the scheduler's post-VM handoff.
-            actor_lifecycle_.retire(slot);
-            state.player.animation_selector.response_state_101 = 0;
-            state.player.animation_selector.interaction_lock = 0x28;
-            state.camera.update_delay = 7;
-            effects.player_collision_interaction_pending = true;
-        }
-        if (actor.type == 0x40 && strict_overlaps(player_box, actor_box)) {
-            const ActorState replacement = actor_lifecycle_.initialize_record(
-                actor,
-                0x001B7ABC
-            );
-            (void)actor_lifecycle_.install(slot, replacement);
-        }
+        effects.player_collision_interaction_pending =
+            effects.player_collision_interaction_pending
+            || handler_effects.player_collision_interaction_pending;
+        effects.unhandled_player_collision_types.insert(
+            effects.unhandled_player_collision_types.end(),
+            handler_effects.unhandled_player_collision_types.begin(),
+            handler_effects.unhandled_player_collision_types.end()
+        );
     }
     return effects;
 }

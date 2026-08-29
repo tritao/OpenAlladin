@@ -3,6 +3,7 @@
 #include "actor_lifecycle.hpp"
 #include "game_state.hpp"
 
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 
@@ -27,8 +28,40 @@ struct PlayerCollisionInput {
     bool bounce_response_follow_active = false;
 };
 
+// The player-collision table is a semantic dispatch table, not just an
+// implementation detail of the geometry pass. Keep the recovered families
+// visible so callers and parity tooling can distinguish an intentional no-op
+// from a handler that has been classified but not yet implemented natively.
+enum class PlayerCollisionHandlerKind {
+    Unknown,
+    NoOp,
+    SharedActorResponse,
+    TerrainPushResponse,
+    InteractionResponse,
+    ActorResponse,
+    PlayerPlacement,
+    PlayerLaunch,
+    TransitionResponse,
+};
+
+struct PlayerCollisionHandlerInfo {
+    std::uint8_t actor_type = 0;
+    std::uint32_t address = 0;
+    PlayerCollisionHandlerKind kind = PlayerCollisionHandlerKind::Unknown;
+    bool native_implemented = false;
+};
+
+struct PlayerActorCollision {
+    ActorIndex actor = 0;
+    PlayerCollisionHandlerInfo handler{};
+};
+
 struct CollisionEffects {
     bool player_collision_interaction_pending = false;
+    // These are diagnostic parity edges, not Genesis state. They make a
+    // colliding table entry visible until its recovered behavior is attached
+    // to the corresponding native service.
+    std::vector<std::uint8_t> unhandled_player_collision_types;
 };
 
 // Owns the recovered actor collision geometry and actor dispatch scans. The
@@ -71,6 +104,19 @@ public:
         ActorIndex first_slot,
         ActorIndex last_slot
     ) const;
+
+    PlayerCollisionHandlerInfo player_collision_handler(
+        std::uint8_t actor_type
+    ) const;
+    std::vector<PlayerActorCollision> detect_player_actor(
+        const GameState& state,
+        const PlayerCollisionInput& input
+    ) const;
+    CollisionEffects dispatch_player_handler(
+        GameState& state,
+        const PlayerActorCollision& collision,
+        const PlayerCollisionInput& input
+    );
 
     CollisionEffects player_actor(
         GameState& state,
