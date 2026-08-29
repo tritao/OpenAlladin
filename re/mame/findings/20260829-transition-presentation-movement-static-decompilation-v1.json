@@ -18,7 +18,7 @@
     "movement_root": "0x00120360 ACTOR_MOVE_TRANSITION_PRESENTATION_LEAD_IN",
     "template": "0x001B7B48",
     "runtime_type": "0x84",
-    "animation_root": "0x001232D8"
+    "animation_root": "0x001232D8 ACTOR_ANIM_TRANSITION_PRESENTATION"
   },
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"

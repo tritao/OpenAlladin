@@ -20,7 +20,7 @@
     "function": "0x001B1486 SceneResource_InitializeTransitionPresentation",
     "template": "0x001B7B48 ACTOR_TEMPLATE_TRANSITION_TYPE_84",
     "runtime_type": "0x84",
-    "animation_root": "0x001232D8"
+    "animation_root": "0x001232D8 ACTOR_ANIM_TRANSITION_PRESENTATION"
   },
   "interpretation": "The 0x00120360 root is the lead-in portion of the transition presentation. Its signed deltas move toward and back from the presentation position; the two 0x91 parameters identify scene-resource callback services, and the final 0x82 clears the movement cursor before the fixed-drift terminal substream.",
   "evidence": [

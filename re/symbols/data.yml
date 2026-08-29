@@ -581,6 +581,17 @@
     - interaction_spawn_type5e_threshold_static_decompilation
     - animation_stream_decoder
 
+0x001232D8:
+  name: ACTOR_ANIM_TRANSITION_PRESENTATION
+  size: 128
+  confidence: decompiled
+  description: Type-0x84 transition-presentation animation root paired with the scene-resource movement lead-in. Its packed 128-byte region clears the actor, gates two child-spawn/actor-field-adjustment paths on a flag, presents the 0x0A52-0x0A6E sequence, and hands off through the dynamic state-selection command before the separate Type-0x20 animation entry at 0x00123358.
+  evidence:
+    - transition_presentation_animation_static_decompilation
+    - actor_template_transition_type84
+    - transition_presentation_lead_in_static_decompilation
+    - animation_stream_decoder
+
 0x00120F76:
   name: ACTOR_MOVE_TYPE2A_VERTICAL_BOB
   size: 62
@@ -1370,7 +1381,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 transition-presentation template instantiated by SceneResource_InitializeTransitionPresentation; it uses movement stream 0x00120360, whose terminal substream is ACTOR_MOVE_TRANSITION_PRESENTATION_LOOP, animation stream 0x001232D8, and resource count 0x35.
+  description: Type-0x84 transition-presentation template instantiated by SceneResource_InitializeTransitionPresentation; it uses movement stream 0x00120360, whose terminal substream is ACTOR_MOVE_TRANSITION_PRESENTATION_LOOP, animation stream ACTOR_ANIM_TRANSITION_PRESENTATION, and resource count 0x35.
   evidence:
     - ghidra_scene_resource_transition_presentation
     - level01_upper_frontier_initializer_targets

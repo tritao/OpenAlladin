@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/transition-presentation-animation-static-targets.json",
+  "stream": {
+    "address": "0x001232D8",
+    "name": "ACTOR_ANIM_TRANSITION_PRESENTATION",
+    "range": "0x001232D8-0x00123357",
+    "bytes": 128,
+    "initial_frames": ["0x1936", "0x193A"],
+    "actor_state_clear": "0x01",
+    "flag_gate": "0x001232E2 F2 -> 0x00123306",
+    "child_spawn_paths": ["0x001B8110 via entry 0x00123158", "0x001B8110 via entry 0x00123166"],
+    "actor_field_adjustment": "0x038C on actor field 0x18 through both paths",
+    "frame_sequence": ["0x0A52", "0x0A56", "0x0A56", "0x0A5A", "0x0A5A", "0x0A5E", "0x0A5E", "0x0A62", "0x0A62", "0x0A66", "0x0A66", "0x0A6A", "0x0A6A", "0x0A6E", "0x0A6E", "0x0A6E"],
+    "state_handoff": "0x0012333C F8",
+    "continuation": "0x00121D5A"
+  },
+  "consumer": {
+    "function": "0x001B1486",
+    "name": "SceneResource_InitializeTransitionPresentation",
+    "template": "0x001B7B48 ACTOR_TEMPLATE_TRANSITION_TYPE_84",
+    "runtime_type": "0x84",
+    "movement": "0x00120360 ACTOR_MOVE_TRANSITION_PRESENTATION_LEAD_IN"
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Transition-presentation template and movement finding",
+    "Direct scene-resource initialization consumer",
+    "Packed boundary before the separate Type-0x20 entry at 0x00123358"
+  ],
+  "conclusion": "The transition-presentation animation root is closed as a range-bounded actor setup and state-handoff stream. It has no independent movement implementation; that behavior is supplied by the paired 0x00120360 movement root.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

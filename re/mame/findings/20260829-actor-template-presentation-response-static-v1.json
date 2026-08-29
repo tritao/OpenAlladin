@@ -16,7 +16,7 @@
       "record_fields": {
         "runtime_type": "0x84",
         "movement_stream": "0x00120360",
-        "animation_stream": "0x001232D8",
+        "animation_stream": "0x001232D8 ACTOR_ANIM_TRANSITION_PRESENTATION",
         "resource_count": "0x35"
       }
     },
