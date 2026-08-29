@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-actor-template-type31-f5-child-movement-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Classify the shared MovementVM trajectory installed by the paired Type-0x31 F5 child templates.",
+  "stream": {
+    "address": "0x00120B62",
+    "name": "ACTOR_MOVE_TYPE31_F5_CHILD_SHARED",
+    "range": ["0x00120B62", "0x00120D79"],
+    "size": 536,
+    "producers": [
+      "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A at 0x001B8034",
+      "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B at 0x001B8048"
+    ],
+    "decoded": [
+      "Initial flag gate and actor-field write, followed by the signed Type-0x31 child trajectory",
+      "Dynamic return at 0x00120D4A",
+      "Random alternatives at 0x00120D52 and 0x00120D5E select the +1/+3 and -1/+3 terminal steps at 0x00120D6A and 0x00120D72",
+      "Each terminal alternative jumps to 0x00120D4C; the local owner ends immediately before ACTOR_MOVE_TYPE52_INTERACTION_BASE at 0x00120D7A"
+    ]
+  },
+  "boundary_basis": [
+    "Both exact Type-0x31 F5 template records load 0x00120B62 into actor movement field +0x0A.",
+    "MovementDecoder linear decode covers exactly 536 contiguous bytes through both conditional terminal alternatives; control-flow decode confirms the local response loop.",
+    "The owner stops at 0x00120D79 before the independently selected Type-0x52 root at 0x00120D7A."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

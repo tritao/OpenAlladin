@@ -4309,6 +4309,16 @@
     - interaction_spawn_early_family_static_decompilation
     - animation_stream_decoder
 
+0x00120B62:
+  name: ACTOR_MOVE_TYPE31_F5_CHILD_SHARED
+  type: movement_stream
+  size: 536
+  confidence: decompiled
+  description: Shared 536-byte MovementVM trajectory installed by both Type-0x31 F5 child templates at 0x001B8034 and 0x001B8048. Its packed region contains actor-flag gates, random branches, the dynamic-return command at 0x00120D4A, and the two conditional terminal variants at 0x00120D6A and 0x00120D72, all converging on the local loop at 0x00120D4C before the next known movement root.
+  evidence:
+    - actor_template_type31_f5_child_family_static_decompilation
+    - movement_stream_decoder
+
 0x00120D7A:
   name: ACTOR_MOVE_TYPE52_INTERACTION_BASE
   size: 102

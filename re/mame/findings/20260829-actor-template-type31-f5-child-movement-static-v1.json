@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-type31-f5-child-movement-static-targets.json",
+  "stream": {
+    "address": "0x00120B62",
+    "name": "ACTOR_MOVE_TYPE31_F5_CHILD_SHARED",
+    "range": ["0x00120B62", "0x00120D79"],
+    "size": 536,
+    "templates": [
+      "0x001B8034 ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A",
+      "0x001B8048 ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B"
+    ],
+    "movement_field": "actor offset 0x0A"
+  },
+  "evidence": [
+    "Exact movement pointer in both adjacent Type-0x31 template records",
+    "Lossless linear MovementDecoder coverage of the 536-byte packed region",
+    "Static conditional terminal variants and local loop before ACTOR_MOVE_TYPE52_INTERACTION_BASE"
+  ],
+  "conclusion": "The paired Type-0x31 child templates share one exact 536-byte MovementVM owner, including the conditional terminal variants previously hidden inside the unresolved 0x00120AD4-0x00120D79 band.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
