@@ -38,6 +38,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& interactions_ = *context.interactions;
     auto& camera_system_ = *context.camera_system;
     auto& animation_ = context.animation_system->player();
+    auto& player_motion_ = *context.player_motion;
     auto& actor_animations_ = context.animation_system->actors().vms();
     const auto& rom_bytes_ = *context.rom_bytes;
     auto& level_event_sound_requests_ = *context.level_event_sound_requests;
@@ -67,8 +68,6 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         context.update_terrain_connector_response;
     auto& apply_floor_contour = context.apply_floor_contour;
     auto& resolve_terrain = context.resolve_terrain;
-    auto& apply_ground_movement = context.apply_ground_movement;
-    auto& integrate_motion = context.integrate_motion;
     auto& update_dynamic_actor_culling = context.update_dynamic_actor_culling;
     auto& update_actor_movement = context.update_actor_movement;
     auto& update_level_events = context.update_level_events;
@@ -424,9 +423,6 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     const bool camera_reference_moved_up =
         camera_.reference_y < camera_reference_y_before_rebase;
     interactions_.apply_surface_interaction_lock(state_, arm_surface_interaction);
-    const bool ground_release = was_grounded && !input.jump_pressed && input_direction == 0
-        && last_ground_direction_ != 0 && player_.vx == 0;
-    const int ground_release_direction = ground_release ? last_ground_direction_ : 0;
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
     const bool start_jump = input.jump_pressed && was_grounded;
     AnimationContext animation_context = player_animation_context(was_grounded);
@@ -449,70 +445,19 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
                 camera_.update_delay = 7;
             }
         }
-        apply_ground_movement(input);
-    } else if (player_.terrain_response_timer_state != 0
-               && input.left && !input.right) {
-        // The ROM's horizontal response path keeps applying FFF0B0 while
-        // the contour latch is zero.  This is still a direct local-X step,
-        // not fixed-point air acceleration; it is visible for a few frames
-        // when walking off a contour edge.
-        const int step = player_.terrain_horizontal_response != 0
-            ? player_.terrain_horizontal_response : 2;
-        player_.x -= step;
-        player_.vx = 0;
-    } else if (player_.terrain_response_timer_state != 0
-               && input.right && !input.left) {
-        const int step = player_.terrain_horizontal_response != 0
-            ? player_.terrain_horizontal_response : 2;
-        player_.x += step;
-        player_.vx = 0;
-    } else if (player_.terrain_response_active != 0
-               && player_.terrain_jump_response_counter != 0
-               && input.left && !input.right) {
-        // The ROM's response state advances local X by the published
-        // horizontal-response amount before Camera_UpdateFollow.  The camera
-        // then compensates by the same damped delta, leaving the exposed
-        // local coordinate fixed while world X follows the camera edge.
-        const int step = player_.terrain_horizontal_response != 0
-            ? player_.terrain_horizontal_response : 2;
-        player_.x -= step;
-        player_.vx = 0;
-    } else if (player_.terrain_response_active != 0
-               && player_.terrain_jump_response_counter != 0
-               && input.right && !input.left) {
-        const int step = player_.terrain_horizontal_response != 0
-            ? player_.terrain_horizontal_response : 2;
-        player_.x += step;
-        player_.vx = 0;
-    } else if (terrain_response_was_active
-               && player_.terrain_response_active == 0
-               && player_.terrain_response_timer_state == 0
-               && input.left && !input.right) {
-        const int step = player_.terrain_horizontal_response != 0
-            ? player_.terrain_horizontal_response : 2;
-        player_.x -= step;
-        player_.vx = 0;
-    } else if (terrain_response_was_active
-               && player_.terrain_response_active == 0
-               && player_.terrain_response_timer_state == 0
-               && input.right && !input.left) {
-        const int step = player_.terrain_horizontal_response != 0
-            ? player_.terrain_horizontal_response : 2;
-        player_.x += step;
-        player_.vx = 0;
-    } else if (player_.terrain_response_active != 0
-               && player_.terrain_jump_response_counter == 0
-               && animation_.stream_kind() != AnimationStreamKind::Response
-               && input.left && !input.right) {
-        player_.vx = player_.vx >= 0 ? static_cast<std::int16_t>(-0x300)
-                                     : std::max<std::int16_t>(player_.vx, -0x300);
-    } else if (player_.terrain_response_active != 0
-               && player_.terrain_jump_response_counter == 0
-               && animation_.stream_kind() != AnimationStreamKind::Response
-               && input.right && !input.left) {
-        player_.vx = player_.vx <= 0 ? static_cast<std::int16_t>(0x300)
-                                     : std::min<std::int16_t>(player_.vx, 0x300);
-    }
+    const PlayerMotionResult motion = player_motion_.update_horizontal(
+        state_,
+        runtime_,
+        input,
+        animation_,
+        PlayerMotionInput{
+            was_grounded,
+            contour_ground_motion,
+            terrain_response_was_active,
+        }
+    );
+    const bool ground_release = motion.ground_release;
+    const int ground_release_direction = motion.ground_release_direction;
     bool landed_during_frame = false;
     if (checkpoint_terrain_behavior_override_
         && !was_grounded
@@ -541,7 +486,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         }
     }
     record_scheduler_phase("player_movement", 0x001A9D98);
-    integrate_motion();
+    player_motion_.integrate(state_);
     interactions_.bounce_actor_interaction(state_, terrain_fall_phase_);
     if (player_.terrain_response_active != 0
         && player_.terrain_jump_response_counter != 0
@@ -647,14 +592,8 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         // animation pass selects the ROM brake stream on this boundary;
         // camera threshold changes are owned by that stream rather than being
         // inferred from the input edge here.
-        player_.terrain_horizontal_response = 0;
-        player_.terrain_response_timer_state = 0;
-        // The release handler seeds the inertial velocity after the current
-        // integration pass. It is therefore visible on this boundary and is
-        // consumed by the next pass (0x038C, then -0x28 per frame).
-        player_.vx = static_cast<std::int16_t>(ground_release_direction * 0x038C);
-        player_.ground_braking = true;
-        last_ground_direction_ = 0;
+        player_motion_.finish_ground_release(
+            state_, runtime_, ground_release_direction);
     }
 
     const bool release_up_animation =

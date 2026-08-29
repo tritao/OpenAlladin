@@ -13,6 +13,7 @@
 #include "level_event.hpp"
 #include "level_event_system.hpp"
 #include "movement.hpp"
+#include "player_motion.hpp"
 #include "player_terrain.hpp"
 #include "render_pipeline.hpp"
 #include "render_model.hpp"
@@ -89,12 +90,10 @@ public:
     const LevelDescriptor& level_descriptor() const { return level_.descriptor(); }
 
 private:
-    void integrate_motion();
     void update_terrain_input(const InputState& input);
     void update_terrain_connector_response();
     void apply_floor_contour();
     void resolve_terrain(int previous_world_y);
-    void apply_ground_movement(const InputState& input);
     void apply_terrain_behavior(const Level::TerrainCell& cell);
     void load_actor_records(const std::string& path);
     void load_actor_timeline(const std::string& path);
@@ -136,6 +135,7 @@ private:
     GenesisRenderModel render_model_;
     LevelEventVm level_events_;
     PlayerTerrainSystem terrain_;
+    PlayerMotionSystem player_motion_;
     SpriteDatabase sprites_;
     MovementVm movement_vm_;
     LevelEventSystem level_event_system_;

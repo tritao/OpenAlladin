@@ -19,6 +19,8 @@
 
 namespace openaladdin {
 
+class PlayerMotionSystem;
+
 struct InputState {
     bool up = false;
     bool down = false;
@@ -66,7 +68,6 @@ public:
     using NoArg = std::function<void()>;
     using UpdateTerrainInput = std::function<void(const InputState&)>;
     using ResolveTerrain = std::function<void(int)>;
-    using ApplyGroundMovement = std::function<void(const InputState&)>;
     using PlayerAnimationContext = std::function<AnimationContext(bool)>;
     using UpdateAnimation = std::function<void(
         SpritePose,
@@ -93,6 +94,7 @@ public:
         InteractionSystem* interactions = nullptr;
         CameraSystem* camera_system = nullptr;
         AnimationSystem* animation_system = nullptr;
+        PlayerMotionSystem* player_motion = nullptr;
         const std::vector<std::uint8_t>* rom_bytes = nullptr;
         std::vector<std::uint8_t>* level_event_sound_requests = nullptr;
         FrameRuntime* runtime = nullptr;
@@ -103,8 +105,6 @@ public:
         NoArg update_terrain_connector_response;
         NoArg apply_floor_contour;
         ResolveTerrain resolve_terrain;
-        ApplyGroundMovement apply_ground_movement;
-        NoArg integrate_motion;
         NoArg update_dynamic_actor_culling;
         NoArg update_actor_movement;
         NoArg update_level_events;

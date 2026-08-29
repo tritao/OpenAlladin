@@ -237,10 +237,6 @@ CameraState read_camera_state(checkpoint::Reader& reader) {
     return camera;
 }
 
-std::uint8_t fixed_high_byte(std::int16_t value) {
-    return static_cast<std::uint8_t>(static_cast<std::uint16_t>(value) >> 8);
-}
-
 }  // namespace
 
 Engine::Engine()
@@ -965,65 +961,6 @@ void Engine::update_terrain_connector_response() {
     });
 }
 
-void Engine::integrate_motion() {
-    // This follows Player_IntegrateMotion at 0x001A9B90: move by the signed
-    // high byte of each 8.8 velocity, then damp by 0x28/0x3C.
-    if (player_.vx != 0) {
-        if (player_.vx < 0) {
-            if (player_.terrain_stop_left_motion != 0
-                || player_.x < 0x14
-                || static_cast<std::uint16_t>(-player_.vx) < 0x28) {
-                player_.vx = 0;
-            } else {
-                player_.x += static_cast<std::int8_t>(fixed_high_byte(player_.vx));
-                player_.vx = static_cast<std::int16_t>(player_.vx + 0x28);
-            }
-        } else if (player_.vx < 0x28 || player_.terrain_stop_right_motion != 0) {
-            player_.vx = 0;
-        } else {
-            if (player_.x < 0x130) {
-                player_.x += static_cast<std::int8_t>(fixed_high_byte(player_.vx));
-            }
-            player_.vx = static_cast<std::int16_t>(player_.vx - 0x28);
-        }
-    }
-
-    if (player_.vy == 0) {
-        return;
-    }
-    if (player_.vy < 0) {
-        const std::int16_t magnitude = static_cast<std::int16_t>(-player_.vy);
-        if (player_.y < 0x14) {
-            player_.vy = static_cast<std::int16_t>(player_.vy + 0x3C);
-        } else if (player_.terrain_stop_upward_motion != 0) {
-            player_.terrain_response_active = 0;
-            player_.terrain_vertical_stop = 0xFF;
-            player_.terrain_response_latch = 0;
-            player_.vy = 0;
-        } else if (magnitude > 0x3B) {
-            player_.y += static_cast<std::int8_t>(fixed_high_byte(player_.vy));
-            player_.vy = static_cast<std::int16_t>(player_.vy + 0x3C);
-        } else {
-            // 0x001A9C8C: the original integrator clears the small residual
-            // velocity and arms the following downward-state handler.
-            player_.terrain_vertical_stop = 0xFF;
-            player_.vy = 0;
-        }
-    } else if (player_.vy > 0x3B) {
-        // The ROM's positive branch reloads D0 after the vertical-state
-        // handoff. The native handoff below contributes 0x0078 before the
-        // next state is published, so the exposed position step uses that
-        // post-handoff velocity (the ascent branch already matches the direct
-        // pre-step form above).
-        const auto next_velocity = static_cast<std::int16_t>(player_.vy + 0x0078);
-        player_.y += static_cast<std::int8_t>(fixed_high_byte(next_velocity));
-        player_.vy = static_cast<std::int16_t>(player_.vy - 0x3C);
-    } else {
-        player_.terrain_vertical_stop = 0xFF;
-        player_.vy = 0;
-    }
-}
-
 void Engine::apply_floor_contour() {
     terrain_.apply_contour(state_, level_, frame_runtime_.terrain_fall_phase);
 }
@@ -1233,67 +1170,6 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
     }
 }
 
-void Engine::apply_ground_movement(const InputState& input) {
-    const int direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
-    if (direction == 0) {
-        // FFF0B0 is retained for the first release frame; the following idle
-        // frame clears it when the ROM's ground-response state is idle.
-        if (frame_runtime_.last_ground_direction == 0) {
-            player_.terrain_horizontal_response = 0;
-        }
-        return;
-    }
-
-    // Once Player_Update has entered the extended 0x121FA6 response stream,
-    // the held direction remains visible to the controller but no longer
-    // re-arms the ordinary ground-response latch.  Genesis keeps FFF0B0 and
-    // FFF0CC clear until the interaction stop handoff; preserve that split
-    // while the response cursor services its own horizontal movement.
-    const bool wall_response_stream =
-        animation_system_.player().stream_kind() == AnimationStreamKind::Response
-        && animation_system_.player().stream_entry() == 0x00121FA6;
-    const bool interaction_stop_stream =
-        animation_system_.player().stream_kind() == AnimationStreamKind::Action
-        && animation_system_.player().stream_entry() == 0x001226CE
-        && player_.animation_selector.interaction_lock != 0;
-    if (wall_response_stream || interaction_stop_stream) {
-        player_.terrain_horizontal_response = 0;
-        player_.terrain_response_timer_state = 0;
-        player_.vx = 0;
-        return;
-    }
-
-    // The recovered ground response path uses a three-pixel movement step
-    // (DAT_FFF0B0=3) and leaves PLAYER_VX clear. This is distinct from the
-    // fixed-point velocity used for airborne motion and terrain launches.
-    const bool blocked = direction < 0
-        ? player_.terrain_stop_left_motion != 0
-        : player_.terrain_stop_right_motion != 0;
-    if (!blocked) {
-        // The left-edge branch in Player_Update admits PLAYER_X=0x12 before
-        // the next input frame is held.  The 0x14 clamp used here was two
-        // pixels too conservative and made the wall-left differential stop
-        // early.
-        if (direction < 0) {
-            if (player_.x >= 0x14) {
-                player_.x -= 3;
-            }
-        } else if (player_.x < 0x130) {
-            player_.x += 3;
-        }
-    }
-    // The response amount is published while a direction is held, including
-    // the terminal wall frame. It is a state-machine value, not the actual
-    // collision displacement.
-    player_.terrain_horizontal_response = 3;
-    // FFF0CC is the shared ground-response latch. The ROM raises it on the
-    // first held-direction frame and the release path clears it when braking
-    // begins; keep it in the canonical terrain state rather than only in the
-    // animation selector's derived view.
-    player_.terrain_response_timer_state = 1;
-    player_.vx = 0;
-}
-
 FrameScheduler::Context Engine::frame_scheduler_context() {
     FrameScheduler::Context context;
     context.state = &state_;
@@ -1306,6 +1182,7 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.interactions = &interactions_;
     context.camera_system = &camera_system_;
     context.animation_system = &animation_system_;
+    context.player_motion = &player_motion_;
     context.rom_bytes = &rom_bytes_;
     context.level_event_sound_requests = &level_event_sound_requests_;
     context.runtime = &frame_runtime_;
@@ -1328,10 +1205,6 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.resolve_terrain = [this](int previous_world_y) {
         resolve_terrain(previous_world_y);
     };
-    context.apply_ground_movement = [this](const InputState& input) {
-        apply_ground_movement(input);
-    };
-    context.integrate_motion = [this]() { integrate_motion(); };
     context.update_dynamic_actor_culling = [this]() {
         update_dynamic_actor_culling();
     };
