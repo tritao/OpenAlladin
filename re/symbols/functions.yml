@@ -3338,3 +3338,139 @@
     - ghidra_disassembly_001B7840
     - level_event_command_family_targets
     - level_event_command_family_static_decompilation
+0x001B536C:
+  name: TerrainHandler_PushPlayerRight
+  confidence: decompiled
+  description: Terrain behavior 0x40 handler that advances PLAYER_X by eight pixels and clears the horizontal terrain response delta.
+  evidence:
+    - ghidra_disassembly_001B536C
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B5450:
+  name: TerrainHandler_SetResponseFlag_FFF0E4
+  confidence: decompiled
+  description: Terrain behavior 0x10 handler that sets the byte at 0x00FFF0E4; its downstream consumer is not present in the current whole-ROM reference set, so the address-qualified name is intentional.
+  evidence:
+    - ghidra_disassembly_001B5450
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B5458:
+  name: TerrainHandler_SetInteractionGateType1F
+  confidence: decompiled
+  description: Terrain behavior 0x16 handler that sets INTERACTION_GATE_TYPE1F for the corresponding interaction-row consumer.
+  evidence:
+    - ghidra_disassembly_001B5458
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B5460:
+  name: TerrainHandler_SetInteractionGateType1E
+  confidence: decompiled
+  description: Terrain behavior 0x17 handler that sets INTERACTION_GATE_TYPE1E for the corresponding interaction-row consumer.
+  evidence:
+    - ghidra_disassembly_001B5460
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B5468:
+  name: TerrainHandler_SetInteractionGateType1D
+  confidence: decompiled
+  description: Terrain behavior 0x18 handler that sets INTERACTION_GATE_TYPE1D for the corresponding interaction-row consumer.
+  evidence:
+    - ghidra_disassembly_001B5468
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B5470:
+  name: TerrainHandler_ToggleSurfaceMode
+  confidence: decompiled
+  description: Terrain behavior 0x47 handler that toggles TERRAIN_SURFACE_MODE once the surface-transition flag and one-shot latch permit it.
+  evidence:
+    - ghidra_disassembly_001B5470
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B54A6:
+  name: TerrainHandler_EnterSurfaceRecovery
+  confidence: decompiled
+  description: Terrain behavior 0x27 handler that sets TERRAIN_QUERY_STATE_B, moves PLAYER_Y upward by 0x50, selects animation stream 0x001223D0, clears the animation timer, and arms the player interaction-animation gate.
+  evidence:
+    - ghidra_disassembly_001B54A6
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B54D2:
+  name: TerrainHandler_SetQueryStates
+  confidence: decompiled
+  description: Terrain behavior 0x24 handler that sets both terrain query state bytes TERRAIN_QUERY_STATE_A and TERRAIN_QUERY_STATE_B.
+  evidence:
+    - ghidra_disassembly_001B54D2
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B54F4:
+  name: TerrainHandler_ProcessSurfaceInteraction
+  confidence: decompiled
+  description: Terrain behaviors 0x09/0x0B/0x0C handler that invokes the player interaction-state service when PLAYER_VY is nonnegative and otherwise returns without the call.
+  evidence:
+    - ghidra_disassembly_001B54F4
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B55D8:
+  name: TerrainHandler_NudgePlayerAndBrake
+  confidence: decompiled
+  description: Terrain behavior 0x2A handler that advances PLAYER_X by one pixel and subtracts 0x46 from PLAYER_VX.
+  evidence:
+    - ghidra_disassembly_001B55D8
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B575C:
+  name: TerrainHandler_SetInteractionGateType44
+  confidence: decompiled
+  description: Terrain behavior 0x1B handler that sets INTERACTION_GATE_TYPE44.
+  evidence:
+    - ghidra_disassembly_001B575C
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B5764:
+  name: TerrainHandler_SetInteractionGateType3A
+  confidence: decompiled
+  description: Terrain behavior 0x1C handler that sets INTERACTION_GATE_TYPE3A.
+  evidence:
+    - ghidra_disassembly_001B5764
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B576C:
+  name: TerrainHandler_SetInteractionGateType40
+  confidence: decompiled
+  description: Terrain behavior 0x1D handler that sets INTERACTION_GATE_TYPE40.
+  evidence:
+    - ghidra_disassembly_001B576C
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B5774:
+  name: TerrainHandler_SetGenericInteractionGate
+  confidence: decompiled
+  description: Terrain behavior 0x1F handler that sets INTERACTION_GATE_GENERIC.
+  evidence:
+    - ghidra_disassembly_001B5774
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B577C:
+  name: TerrainHandler_ClearGenericInteractionGate
+  confidence: decompiled
+  description: Terrain behavior 0x48 handler that clears INTERACTION_GATE_GENERIC.
+  evidence:
+    - ghidra_disassembly_001B577C
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B5784:
+  name: TerrainHandler_NoOp
+  confidence: confirmed
+  description: Terrain behaviors 0xC7/0xC8 handler; an intentional RTS-only response with no state effect.
+  evidence:
+    - ghidra_disassembly_001B5784
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation
+0x001B65BE:
+  name: TerrainHandler_CommonNoOp
+  confidence: confirmed
+  description: Common RTS-only terrain response selected by the majority of TERRAIN_RESPONSE_HANDLER_TABLE behavior entries; it has no observable state effect.
+  evidence:
+    - ghidra_disassembly_001B65BE
+    - terrain_response_family_targets
+    - terrain_response_family_static_decompilation

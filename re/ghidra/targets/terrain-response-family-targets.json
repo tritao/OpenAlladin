@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-terrain-response-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004554 TERRAIN_RESPONSE_HANDLER_TABLE",
+    "behavior_range": "0x00-0xFF",
+    "entry_count": 256,
+    "unique_handler_count": 34,
+    "newly_named_unique_handlers": 17,
+    "handlers": [
+      { "address": "0x001B536C", "behaviors": ["0x40"], "name": "TerrainHandler_PushPlayerRight" },
+      { "address": "0x001B5450", "behaviors": ["0x10"], "name": "TerrainHandler_SetResponseFlag_FFF0E4" },
+      { "address": "0x001B5458", "behaviors": ["0x16"], "name": "TerrainHandler_SetInteractionGateType1F" },
+      { "address": "0x001B5460", "behaviors": ["0x17"], "name": "TerrainHandler_SetInteractionGateType1E" },
+      { "address": "0x001B5468", "behaviors": ["0x18"], "name": "TerrainHandler_SetInteractionGateType1D" },
+      { "address": "0x001B5470", "behaviors": ["0x47"], "name": "TerrainHandler_ToggleSurfaceMode" },
+      { "address": "0x001B54A6", "behaviors": ["0x27"], "name": "TerrainHandler_EnterSurfaceRecovery" },
+      { "address": "0x001B54D2", "behaviors": ["0x24"], "name": "TerrainHandler_SetQueryStates" },
+      { "address": "0x001B54F4", "behaviors": ["0x09", "0x0B", "0x0C"], "name": "TerrainHandler_ProcessSurfaceInteraction" },
+      { "address": "0x001B55D8", "behaviors": ["0x2A"], "name": "TerrainHandler_NudgePlayerAndBrake" },
+      { "address": "0x001B575C", "behaviors": ["0x1B"], "name": "TerrainHandler_SetInteractionGateType44" },
+      { "address": "0x001B5764", "behaviors": ["0x1C"], "name": "TerrainHandler_SetInteractionGateType3A" },
+      { "address": "0x001B576C", "behaviors": ["0x1D"], "name": "TerrainHandler_SetInteractionGateType40" },
+      { "address": "0x001B5774", "behaviors": ["0x1F"], "name": "TerrainHandler_SetGenericInteractionGate" },
+      { "address": "0x001B577C", "behaviors": ["0x48"], "name": "TerrainHandler_ClearGenericInteractionGate" },
+      { "address": "0x001B5784", "behaviors": ["0xC7", "0xC8"], "name": "TerrainHandler_NoOp" },
+      { "address": "0x001B65BE", "behaviors": ["common_no_op_entries"], "name": "TerrainHandler_CommonNoOp" }
+    ]
+  },
+  "conclusion": "All previously anonymous terrain-response targets are now named from exact 68000 bodies. The address-qualified name for behavior 0x10 preserves the one unresolved downstream flag meaning; no new consumer is invented for it.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
