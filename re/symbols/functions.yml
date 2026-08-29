@@ -803,6 +803,30 @@
   evidence:
     - m68k_vector_table
     - mame_vblank_state_synchronization
+0x001B249C:
+  name: Level4Interrupt
+  confidence: confirmed
+  description: Level-4 interrupt vector stub; the entry contains only RTE and therefore has no interrupt-specific work in this ROM.
+  evidence:
+    - m68k_vector_table
+    - interrupt_vector_targets
+    - interrupt_vector_static_decompilation
+0x001B24F6:
+  name: SpuriousInterrupt
+  confidence: confirmed
+  description: Spurious/unassigned interrupt vector stub; the entry contains only RTE and returns without modifying machine state.
+  evidence:
+    - m68k_vector_table
+    - interrupt_vector_targets
+    - interrupt_vector_static_decompilation
+0x001B24F8:
+  name: Exception_Line1010Emulator
+  confidence: confirmed
+  description: Shared line-1010 exception handler that waits for VBlank, streams an incrementing word sequence to VDP VRAM at C000, and repeats indefinitely.
+  evidence:
+    - m68k_vector_table
+    - interrupt_vector_targets
+    - interrupt_vector_static_decompilation
 0x001B249E:
   name: Frame_WaitForVBlankWork
   confidence: decompiled

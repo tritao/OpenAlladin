@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "vector_entries": [
+    {
+      "address": "0x001B249C",
+      "name": "Level4Interrupt",
+      "confidence": "confirmed",
+      "body": "rte",
+      "vector_offsets": ["0x0070"]
+    },
+    {
+      "address": "0x001B24F6",
+      "name": "SpuriousInterrupt",
+      "confidence": "confirmed",
+      "body": "rte",
+      "vector_offsets": ["0x0060", "0x0064", "0x0068", "0x006C", "0x0074", "0x007C"]
+    },
+    {
+      "address": "0x001B24F8",
+      "name": "Exception_Line1010Emulator",
+      "confidence": "confirmed",
+      "body": [
+        "clear D0",
+        "wait through Frame_WaitForVBlankWork",
+        "write VDP control address 0xC0000000",
+        "write D0 to VDP_DATA",
+        "increment D0",
+        "repeat forever"
+      ],
+      "vector_offsets": ["0x0028-0x005C", "0x0080-0x00BC"]
+    }
+  ],
+  "conclusion": "The vector table confirms that the ROM intentionally funnels the line-1010 and several other exception vectors into the VBlank-paced VDP test/emulator loop, while the level-4 and spurious entries are RTE-only stubs. VBlankInterrupt at 0x001B246E remains the separate level-6 handler."
+}
