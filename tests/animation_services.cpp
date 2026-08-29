@@ -22,26 +22,6 @@ void write_u32(std::vector<std::uint8_t>& rom, std::size_t address, std::uint32_
     rom[address + 3] = static_cast<std::uint8_t>(value);
 }
 
-openaladdin::ActorAnimationState animation_state(const openaladdin::ActorState& actor) {
-    openaladdin::ActorAnimationState state;
-    state.type = actor.type;
-    state.x = actor.x;
-    state.y = actor.y;
-    state.movement_pc = actor.movement_pc;
-    state.runtime_field_07 = actor.runtime_field_07;
-    state.movement_word_18 = actor.movement_word_18;
-    state.movement_word_1a = actor.movement_word_1a;
-    state.sprite_attribute = actor.sprite_attribute;
-    state.facing_x_flip = actor.facing_x_flip;
-    state.facing_y_flip = actor.facing_y_flip;
-    state.flags = actor.flags;
-    state.interaction_state = actor.interaction_state;
-    state.animation_pc = actor.animation_pc;
-    state.frame_ptr = actor.frame_ptr;
-    state.animation_timer = actor.animation_timer;
-    return state;
-}
-
 }  // namespace
 
 int main() {
@@ -101,8 +81,7 @@ int main() {
         spawned = lifecycle.spawn_f5(source, command);
         return spawned;
     };
-    ActorAnimationState spawn_state = animation_state(actors[1]);
-    assert(!spawn_vm.update_actor(spawn_state, context, &spawn_services));
+    assert(!spawn_vm.update_actor(actors[1], context, &spawn_services));
     assert(spawned && *spawned == 3);
     assert(actors[3].type == 0x42);
     assert(actors[3].x == actors[1].x);
@@ -120,8 +99,7 @@ int main() {
     retire_services.retire_actor = [&](ActorIndex actor, std::uint8_t command_mode) {
         lifecycle.retire_from_vm(actor, command_mode);
     };
-    ActorAnimationState retire_state = animation_state(actors[1]);
-    assert(retire_vm.update_actor(retire_state, context, &retire_services));
+    assert(retire_vm.update_actor(actors[1], context, &retire_services));
     assert(actors[1].type == 0);
     assert(!actors.resource_allocation(1));
 

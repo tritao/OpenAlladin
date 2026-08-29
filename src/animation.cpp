@@ -275,8 +275,7 @@ void PlayerAnimationVm::write_memory8(std::uint32_t address, std::uint8_t value)
         && (writer_pcs_.empty() || writer_pcs_.back() != active_command_pc_)) {
         writer_pcs_.push_back(active_command_pc_);
     }
-    if (address < actor_.size()) actor_[address] = value;
-    else ram_.write8(address, value);
+    ram_.write8(address, value);
 }
 
 void PlayerAnimationVm::write_memory16(std::uint32_t address, std::uint16_t value) {
@@ -304,24 +303,6 @@ void PlayerAnimationVm::sync_context(const AnimationContext& context) {
     write_memory16(2, as_u16(player_x));
     write_memory16(4, as_u16(player_y));
     write_memory8(9, facing_left_ ? 0xFF : 0);
-}
-
-void PlayerAnimationVm::sync_actor_context(
-    const ActorAnimationState& actor,
-    const AnimationContext& context
-) {
-    ram_.bind_context(context);
-    write_memory8(0x07, actor.runtime_field_07);
-    write_memory32(0x0A, actor.movement_pc);
-    write_memory16(2, actor.x);
-    write_memory16(4, actor.y);
-    write_memory16(0x18, as_u16(actor.movement_word_18));
-    write_memory16(0x1A, as_u16(actor.movement_word_1a));
-    write_memory8(9, actor.facing_x_flip);
-    write_memory8(0x35, actor.facing_y_flip);
-    write_memory8(0x3C, actor.flags);
-    write_memory8(0x3D, actor.interaction_state);
-    write_memory8(0x37, actor.animation_timer);
 }
 
 std::uint32_t PlayerAnimationVm::dynamic_stream(const AnimationContext& context) const {
@@ -404,8 +385,11 @@ bool PlayerAnimationVm::command(
     switch (opcode) {
     case 0xEA: cursor = read_rom32(cursor + 2); return false;
     case 0xEB:
-        if (read_rom8(cursor + 1) == 0) actor_[9] ^= 0xFF;
-        else actor_[0x35] ^= 0xFF;
+        if (read_rom8(cursor + 1) == 0) {
+            write_memory8(9, static_cast<std::uint8_t>(read_memory8(9) ^ 0xFFU));
+        } else {
+            write_memory8(0x35, static_cast<std::uint8_t>(read_memory8(0x35) ^ 0xFFU));
+        }
         cursor += 2; return false;
     case 0xEC:
         cursor += 2;
@@ -428,14 +412,21 @@ bool PlayerAnimationVm::command(
     case 0xEE: {
         const std::uint8_t value = read_rom8(cursor + 1);
         cursor += 2;
-        if ((value & 0x80) != 0) { timer_ = value & 0x7F; actor_[0x37] = timer_; return true; }
-        actor_[0x28] = value;
+        if ((value & 0x80) != 0) {
+            timer_ = value & 0x7F;
+            write_memory8(0x37, static_cast<std::uint8_t>(timer_));
+            return true;
+        }
+        write_memory8(0x28, value);
         return_pc_ = cursor;
         return false;
     }
     case 0xEF:
         cursor += 2;
-        if (actor_[0x28] != 0) { --actor_[0x28]; cursor = return_pc_; }
+        if (read_memory8(0x28) != 0) {
+            write_memory8(0x28, static_cast<std::uint8_t>(read_memory8(0x28) - 1));
+            cursor = return_pc_;
+        }
         return false;
     case 0xF0: {
         const std::uint8_t threshold = read_rom8(cursor + 1);
@@ -454,10 +445,12 @@ bool PlayerAnimationVm::command(
         const std::uint8_t axis = read_rom8(cursor + 1);
         const auto delta = static_cast<std::int16_t>(read_rom16(cursor + 2));
         if (axis == 0) {
-            const int value = static_cast<std::int16_t>(read_memory16(2)) + (actor_[9] ? -delta : delta);
+            const int value = static_cast<std::int16_t>(read_memory16(2))
+                + (read_memory8(9) ? -delta : delta);
             write_memory16(2, as_u16(value));
         } else {
-            const int value = static_cast<std::int16_t>(read_memory16(4)) + (actor_[0x35] ? -delta : delta);
+            const int value = static_cast<std::int16_t>(read_memory16(4))
+                + (read_memory8(0x35) ? -delta : delta);
             write_memory16(4, as_u16(value));
         }
         cursor += 4; return false;
@@ -489,8 +482,8 @@ bool PlayerAnimationVm::command(
         command.source_world_y = static_cast<int>(
             actor_tick_ ? read_memory16(4) : read_memory16(0xFF7E04)
         );
-        command.source_facing_x_flip = actor_[9];
-        command.source_facing_y_flip = actor_[0x35];
+        command.source_facing_x_flip = read_memory8(9);
+        command.source_facing_y_flip = read_memory8(0x35);
         command.apple_action = !actor_tick_ && stream_entry_ == kAppleActionStream;
 
         const bool defer = !actor_tick_
@@ -522,13 +515,13 @@ bool PlayerAnimationVm::command(
                 services->retire_actor(services->source_actor, command_mode);
                 actor_retired_ = true;
             }
-            actor_[0] = 0;
+            write_memory8(0, 0);
         }
         cursor += 2;
         return false;
     case 0xF7:
-        actor_[9] = 0;
-        if (read_memory16(0xFF7E02) < read_memory16(2)) actor_[9] = 0xFF;
+        write_memory8(9, 0);
+        if (read_memory16(0xFF7E02) < read_memory16(2)) write_memory8(9, 0xFF);
         cursor += 2; return false;
     case 0xF8:
         cursor = dynamic_stream(context);
@@ -542,8 +535,12 @@ bool PlayerAnimationVm::command(
         if (pose_ == SpritePose::Landing) { pose_ = SpritePose::Idle; landing_finished_ = true; }
         return false;
     case 0xF9:
-        actor_[0x1A] = static_cast<std::uint8_t>(actor_[0x1A] + read_rom8(cursor + 1));
-        actor_[0x18] = static_cast<std::uint8_t>(actor_[0x18] + read_rom8(cursor + 2));
+        write_memory8(
+            0x1A,
+            static_cast<std::uint8_t>(read_memory8(0x1A) + read_rom8(cursor + 1)));
+        write_memory8(
+            0x18,
+            static_cast<std::uint8_t>(read_memory8(0x18) + read_rom8(cursor + 2)));
         cursor += 4; return false;
     case 0xFA: {
         const std::uint8_t mode = read_rom8(cursor + 1);
@@ -613,11 +610,12 @@ void PlayerAnimationVm::tick_rom(
     const std::uint16_t reference = read_rom16(cursor);
     cursor += 2;
     frame_pointer_ = read_rom32(reference);
-    actor_[0x14] = static_cast<std::uint8_t>(frame_pointer_ >> 24);
-    actor_[0x15] = static_cast<std::uint8_t>(frame_pointer_ >> 16);
-    actor_[0x16] = static_cast<std::uint8_t>(frame_pointer_ >> 8);
-    actor_[0x17] = static_cast<std::uint8_t>(frame_pointer_);
-    if (timer_ != 0) { --timer_; actor_[0x37] = timer_; return; }
+    write_memory32(0x14, frame_pointer_);
+    if (timer_ != 0) {
+        --timer_;
+        write_memory8(0x37, static_cast<std::uint8_t>(timer_));
+        return;
+    }
 
     tracking_memory_writes_ = true;
     ram_.set_write_tracking(true);
@@ -643,21 +641,17 @@ void PlayerAnimationVm::tick_rom(
 
 void PlayerAnimationVm::tick_actor_rom(
     const AnimationContext& context,
-    const ActorAnimationState& actor,
+    const ActorState& actor,
     AnimationServices* services
 ) {
     active_command_pc_ = 0;
     if (animation_pc_ == 0 || rom_.empty()) return;
-    sync_actor_context(actor, context);
     RamContextScope context_scope(ram_);
     std::uint32_t cursor = animation_pc_;
     const std::uint16_t reference = read_rom16(cursor);
     cursor += 2;
     frame_pointer_ = read_rom32(reference);
-    actor_[0x14] = static_cast<std::uint8_t>(frame_pointer_ >> 24);
-    actor_[0x15] = static_cast<std::uint8_t>(frame_pointer_ >> 16);
-    actor_[0x16] = static_cast<std::uint8_t>(frame_pointer_ >> 8);
-    actor_[0x17] = static_cast<std::uint8_t>(frame_pointer_);
+    write_memory32(0x14, frame_pointer_);
     // The 0x1E proximity root's near-X branch enters the extended interaction
     // sequence at 0x1237C6. The ROM's command loop consumes that branch in the
     // same actor service; publish its terminal frame cursor directly here.
@@ -665,13 +659,13 @@ void PlayerAnimationVm::tick_actor_rom(
         && animation_pc_ == 0x00123614
         && std::abs(
             static_cast<int>(read_memory16(0xFF7E02)) - static_cast<int>(actor.x)) <= 0x73) {
-        actor_[0x3D] = 0x46;
+        write_memory8(0x3D, 0x46);
         animation_pc_ = 0x001237C6;
         return;
     }
     if (timer_ != 0) {
         --timer_;
-        actor_[0x37] = timer_;
+        write_memory8(0x37, static_cast<std::uint8_t>(timer_));
         return;
     }
 
@@ -716,10 +710,7 @@ bool PlayerAnimationVm::set_frame(int sprite_frame) {
 void PlayerAnimationVm::set_frame_pointer(std::uint32_t frame_pointer) {
     if (!rom_mode_) return;
     frame_pointer_ = frame_pointer;
-    actor_[0x14] = static_cast<std::uint8_t>(frame_pointer >> 24);
-    actor_[0x15] = static_cast<std::uint8_t>(frame_pointer >> 16);
-    actor_[0x16] = static_cast<std::uint8_t>(frame_pointer >> 8);
-    actor_[0x17] = static_cast<std::uint8_t>(frame_pointer);
+    write_memory32(0x14, frame_pointer);
 }
 
 void PlayerAnimationVm::set_animation_state(std::uint32_t animation_pc, int timer) {
@@ -733,7 +724,7 @@ void PlayerAnimationVm::set_animation_state(std::uint32_t animation_pc, int time
         stream_kind_ = AnimationStreamKind::Locomotion;
     }
     timer_ = std::clamp(timer, 0, 0x7F);
-    actor_[0x37] = static_cast<std::uint8_t>(timer_);
+    write_memory8(0x37, static_cast<std::uint8_t>(timer_));
     landing_finished_ = false;
 }
 
@@ -806,35 +797,17 @@ bool PlayerAnimationVm::actor_service_forced() const {
 }
 
 bool PlayerAnimationVm::update_actor(
-    ActorAnimationState& actor,
+    ActorState& actor,
     const AnimationContext& context,
     AnimationServices* services
 ) {
     actor_retired_ = false;
     if (!rom_mode_ || actor.animation_pc == 0) return false;
 
+    ram_.bind_actor(actor, actor_);
+    ram_.bind_context(context);
     animation_pc_ = actor.animation_pc;
     timer_ = actor.animation_timer;
-    actor_[0] = actor.type;
-    actor_[0x07] = actor.runtime_field_07;
-    actor_[2] = static_cast<std::uint8_t>(actor.x >> 8);
-    actor_[3] = static_cast<std::uint8_t>(actor.x);
-    actor_[4] = static_cast<std::uint8_t>(actor.y >> 8);
-    actor_[5] = static_cast<std::uint8_t>(actor.y);
-    actor_[9] = actor.facing_x_flip;
-    actor_[0x14] = static_cast<std::uint8_t>(actor.frame_ptr >> 24);
-    actor_[0x15] = static_cast<std::uint8_t>(actor.frame_ptr >> 16);
-    actor_[0x16] = static_cast<std::uint8_t>(actor.frame_ptr >> 8);
-    actor_[0x17] = static_cast<std::uint8_t>(actor.frame_ptr);
-    actor_[0x1e] = static_cast<std::uint8_t>(actor.sprite_attribute >> 8);
-    actor_[0x1f] = static_cast<std::uint8_t>(actor.sprite_attribute);
-    actor_[0x20] = static_cast<std::uint8_t>(actor.animation_pc >> 24);
-    actor_[0x21] = static_cast<std::uint8_t>(actor.animation_pc >> 16);
-    actor_[0x22] = static_cast<std::uint8_t>(actor.animation_pc >> 8);
-    actor_[0x23] = static_cast<std::uint8_t>(actor.animation_pc);
-    actor_[0x35] = actor.facing_y_flip;
-    actor_[0x37] = actor.animation_timer;
-    actor_[0x3C] = actor.flags;
 
     actor_tick_ = true;
     RamContextScope context_scope(ram_);
@@ -843,21 +816,9 @@ bool PlayerAnimationVm::update_actor(
 
     if (actor_retired_) return true;
 
-    actor.type = actor_[0];
-    actor.runtime_field_07 = actor_[0x07];
-    actor.x = read_memory16(2);
-    actor.y = read_memory16(4);
-    actor.facing_x_flip = actor_[9];
-    actor.facing_y_flip = actor_[0x35];
-    actor.flags = actor_[0x3C];
-    actor.interaction_state = actor_[0x3D];
     actor.animation_pc = animation_pc_;
     actor.frame_ptr = frame_pointer_;
-    actor.animation_timer = actor_[0x37];
-    actor.movement_pc = read_memory32(0x0A);
-    actor.movement_word_18 = static_cast<std::int16_t>(read_memory16(0x18));
-    actor.movement_word_1a = static_cast<std::int16_t>(read_memory16(0x1A));
-    actor.sprite_attribute = read_memory16(0x1E);
+    actor.animation_timer = read_memory8(0x37);
     return false;
 }
 
@@ -948,7 +909,7 @@ void PlayerAnimationVm::select_response_stream(std::uint32_t stream_entry, int t
     stream_entry_ = stream_entry;
     animation_pc_ = stream_entry;
     timer_ = std::clamp(timer, 0, 0x7F);
-    actor_[0x37] = static_cast<std::uint8_t>(timer_);
+    write_memory8(0x37, static_cast<std::uint8_t>(timer_));
     landing_finished_ = false;
     landing_reselect_pending_ = false;
 }
@@ -1075,7 +1036,7 @@ void PlayerAnimationVm::update(
 ) {
     if (clear_timer_next_update_) {
         timer_ = 0;
-        actor_[0x37] = 0;
+        write_memory8(0x37, 0);
         clear_timer_next_update_ = false;
     }
     if (horizontal_direction == HorizontalDirection::Left) {

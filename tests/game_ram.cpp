@@ -57,5 +57,62 @@ int main() {
     restored.restore_legacy_memory(legacy, flags);
     assert(restored.read16(0xFF7DFA) == 0xFEDC);
 
+    ActorState actor;
+    actor.type = 0x42;
+    actor.x = 0x1234;
+    actor.y = 0x5678;
+    actor.movement_flags = 0x06;
+    actor.runtime_field_07 = 0x17;
+    actor.runtime_field_07_delay = 0x02;
+    actor.facing_x_flip = 0xFF;
+    actor.facing_y_flip = 0x80;
+    actor.movement_pc = 0x00123456;
+    actor.movement_loop_pc = 0x00654321;
+    actor.movement_loop_timer = 0x09;
+    actor.movement_word_18 = static_cast<std::int16_t>(0xFEDC);
+    actor.movement_word_1a = static_cast<std::int16_t>(0x0123);
+    actor.sprite_attribute = 0x4567;
+    actor.frame_ptr = 0x001ED422;
+    actor.animation_pc = 0x001223DA;
+    actor.movement_return_pc = 0x00123400;
+    actor.flags = 0x08;
+    actor.interaction_state = 0x46;
+    actor.movement_command_timer = 0x03;
+    actor.animation_timer = 0x04;
+    actor.linked_actor_slot = -1;
+
+    std::array<std::uint8_t, 0x42> private_actor_bytes{};
+    GameRamView actor_ram;
+    actor_ram.bind_actor(actor, private_actor_bytes);
+    assert(actor_ram.read8(0x00) == 0x42);
+    assert(actor_ram.read16(0x02) == 0x1234);
+    assert(actor_ram.read16(0x04) == 0x5678);
+    assert(actor_ram.read32(0x0A) == 0x00123456);
+    assert(actor_ram.read32(0x0E) == 0x00654321);
+    assert(actor_ram.read16(0x18) == 0xFEDC);
+    assert(actor_ram.read32(0x14) == 0x001ED422);
+    assert(actor_ram.read32(0x20) == 0x001223DA);
+    assert(actor_ram.read32(0x38) == 0x00123400);
+    assert(actor_ram.read8(0x3C) == 0x08);
+    assert(actor_ram.read8(0x3D) == 0x46);
+    assert(actor_ram.read32(0x3E) == 0xFFFFFFFF);
+
+    actor_ram.write16(0x02, 0xABCD);
+    actor_ram.write32(0x0A, 0x00ABCDEF);
+    actor_ram.write16(0x1A, 0xFEDC);
+    actor_ram.write8(0x3D, 0x52);
+    actor_ram.write32(0x3E, 0x00000007);
+    actor_ram.write8(0x28, 0xA5);
+    assert(actor.x == 0xABCD);
+    assert(actor.movement_pc == 0x00ABCDEF);
+    assert(actor.movement_word_1a == static_cast<std::int16_t>(0xFEDC));
+    assert(actor.interaction_state == 0x52);
+    assert(actor.linked_actor_slot == 7);
+    assert(private_actor_bytes[0x28] == 0xA5);
+    const auto actor_record = actor_ram.actor_record();
+    assert(actor_record[0x02] == 0xAB);
+    assert(actor_record[0x03] == 0xCD);
+    assert(actor_record[0x28] == 0xA5);
+
     return 0;
 }

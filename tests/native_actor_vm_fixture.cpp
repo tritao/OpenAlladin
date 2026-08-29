@@ -17,7 +17,6 @@
 // it is not a second gameplay scheduler.
 namespace {
 
-using openaladdin::ActorAnimationState;
 using openaladdin::ActorState;
 using openaladdin::AnimationContext;
 using openaladdin::GameState;
@@ -160,44 +159,6 @@ void load_actor_records(
     }
 }
 
-ActorAnimationState animation_state(const ActorState& actor) {
-    ActorAnimationState state;
-    state.type = actor.type;
-    state.x = actor.x;
-    state.y = actor.y;
-    state.movement_pc = actor.movement_pc;
-    state.runtime_field_07 = actor.runtime_field_07;
-    state.movement_word_18 = actor.movement_word_18;
-    state.movement_word_1a = actor.movement_word_1a;
-    state.sprite_attribute = actor.sprite_attribute;
-    state.facing_x_flip = actor.facing_x_flip;
-    state.facing_y_flip = actor.facing_y_flip;
-    state.flags = actor.flags;
-    state.interaction_state = actor.interaction_state;
-    state.animation_pc = actor.animation_pc;
-    state.frame_ptr = actor.frame_ptr;
-    state.animation_timer = actor.animation_timer;
-    return state;
-}
-
-void copy_animation_state(const ActorAnimationState& state, ActorState& actor) {
-    actor.type = state.type;
-    actor.x = state.x;
-    actor.y = state.y;
-    actor.movement_pc = state.movement_pc;
-    actor.runtime_field_07 = state.runtime_field_07;
-    actor.movement_word_18 = state.movement_word_18;
-    actor.movement_word_1a = state.movement_word_1a;
-    actor.sprite_attribute = state.sprite_attribute;
-    actor.facing_x_flip = state.facing_x_flip;
-    actor.facing_y_flip = state.facing_y_flip;
-    actor.flags = state.flags;
-    actor.interaction_state = state.interaction_state;
-    actor.animation_pc = state.animation_pc;
-    actor.frame_ptr = state.frame_ptr;
-    actor.animation_timer = state.animation_timer;
-}
-
 void write_actor(std::ostream& output, std::size_t slot, const ActorState& actor) {
     output << (slot == 0 ? "" : ",")
            << "{\"slot\":" << slot
@@ -296,9 +257,7 @@ int main(int argc, char** argv) {
                     actor_vms[slot].load_rom(options.rom);
                     loaded_vms[slot] = true;
                 }
-                ActorAnimationState state = animation_state(actor);
-                actor_vms[slot].update_actor(state, context);
-                copy_animation_state(state, actor);
+                actor_vms[slot].update_actor(actor, context);
                 active_animation_fixtures[slot] = true;
             }
             movement_vm.tick(

@@ -166,26 +166,11 @@ void ActorAnimationSystem::update(
             continue;
         }
 
-        ActorAnimationState animation_state;
-        animation_state.type = actor.type;
-        animation_state.x = actor.x;
-        animation_state.y = actor.y;
-        animation_state.movement_pc = actor.movement_pc;
-        animation_state.movement_word_18 = actor.movement_word_18;
-        animation_state.movement_word_1a = actor.movement_word_1a;
-        animation_state.sprite_attribute = actor.sprite_attribute;
-        animation_state.facing_x_flip = actor.facing_x_flip;
-        animation_state.facing_y_flip = actor.facing_y_flip;
-        animation_state.flags = actor.flags;
-        animation_state.interaction_state = actor.interaction_state;
-        animation_state.animation_pc = actor.animation_pc;
-        animation_state.frame_ptr = actor.frame_ptr;
-        animation_state.animation_timer = actor.animation_timer;
         const std::uint8_t previous_type = actor.type;
         const std::uint32_t previous_animation_pc = actor.animation_pc;
         AnimationServices animation_services = services(slot);
         const bool retired_by_animation = vm(slot).update_actor(
-            animation_state,
+            actor,
             context,
             &animation_services
         );
@@ -195,20 +180,6 @@ void ActorAnimationSystem::update(
             reset(slot);
             continue;
         }
-        actor.type = animation_state.type;
-        actor.x = animation_state.x;
-        actor.y = animation_state.y;
-        actor.movement_pc = animation_state.movement_pc;
-        actor.movement_word_18 = animation_state.movement_word_18;
-        actor.movement_word_1a = animation_state.movement_word_1a;
-        actor.sprite_attribute = animation_state.sprite_attribute;
-        actor.facing_x_flip = animation_state.facing_x_flip;
-        actor.facing_y_flip = animation_state.facing_y_flip;
-        actor.flags = animation_state.flags;
-        actor.interaction_state = animation_state.interaction_state;
-        actor.animation_pc = animation_state.animation_pc;
-        actor.frame_ptr = animation_state.frame_ptr;
-        actor.animation_timer = animation_state.animation_timer;
         if (previous_type != 0 && actor.type == 0
             && actor.linked_actor_slot >= 0
             && static_cast<std::size_t>(actor.linked_actor_slot) < state.actors.size()) {
@@ -231,7 +202,7 @@ void ActorAnimationSystem::update(
             vm(slot).force_actor_service_next_update();
         }
         if (observe_transition) {
-            observe_transition(state, actor, previous_type, animation_state.type);
+            observe_transition(state, actor, previous_type, actor.type);
         }
         if (actor.type == kActorTerminalType
             && previous_type == kActorTerminalType) {

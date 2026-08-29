@@ -103,30 +103,6 @@ struct AnimationServices {
     RetireActor retire_actor;
 };
 
-struct ActorAnimationState {
-    std::uint8_t type = 0;
-    std::uint16_t x = 0;
-    std::uint16_t y = 0;
-    std::uint32_t movement_pc = 0;
-    // Live actor record byte +0x07, shared by the terrain pass and movement
-    // VM flag tests.
-    std::uint8_t runtime_field_07 = 0;
-    // The shared actor VM's FA/90 arithmetic commands address the two
-    // signed accumulator words at record offsets +0x18 and +0x1A.
-    std::int16_t movement_word_18 = 0;
-    std::int16_t movement_word_1a = 0;
-    std::uint16_t sprite_attribute = 0;
-    std::uint8_t facing_x_flip = 0;
-    std::uint8_t facing_y_flip = 0;
-    std::uint8_t flags = 0;
-    // Actor record byte +0x3D is a callback/state value used by proximity
-    // streams (not the public flags byte at +0x3C).
-    std::uint8_t interaction_state = 0;
-    std::uint32_t animation_pc = 0;
-    std::uint32_t frame_ptr = 0;
-    std::uint8_t animation_timer = 0;
-};
-
 // PlayerAnimationVm is the player-facing slice of the original common actor
 // animation VM at 0x001AC784. With a ROM loaded it executes the original
 // frame-reference stream and command bytecode directly. The small Clip table
@@ -178,7 +154,7 @@ public:
     bool actor_service_forced() const;
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     bool update_actor(
-        ActorAnimationState& actor,
+        ActorState& actor,
         const AnimationContext& context = {},
         AnimationServices* services = nullptr
     );
@@ -230,7 +206,9 @@ public:
     // stream identity, not the live cursor (which is the next VM field to
     // recover once conditional control flow is implemented).
     std::uint32_t stream_entry() const;
-    const std::array<std::uint8_t, 0x42>& actor_record() const { return actor_; }
+    std::array<std::uint8_t, 0x42> actor_record() const {
+        return ram_.actor_record();
+    }
     bool clear_timer_next_update() const { return clear_timer_next_update_; }
     unsigned update_count() const { return update_count_; }
     std::uint32_t return_pc() const { return return_pc_; }
@@ -251,7 +229,7 @@ private:
     void tick_rom(const AnimationContext& context, AnimationServices* services);
     void tick_actor_rom(
         const AnimationContext& context,
-        const ActorAnimationState& actor,
+        const ActorState& actor,
         AnimationServices* services
     );
     std::uint32_t dynamic_stream(const AnimationContext& context) const;
@@ -273,7 +251,6 @@ private:
     bool compare_command(std::uint32_t& cursor);
     bool flag_command(std::uint32_t& cursor);
     void sync_context(const AnimationContext& context);
-    void sync_actor_context(const ActorAnimationState& actor, const AnimationContext& context);
     bool response_stream_needs_recovery() const;
 
     SpritePose pose_ = SpritePose::Idle;
