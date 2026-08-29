@@ -1796,6 +1796,27 @@
     - menu_scene_animation_static_decompilation
     - movement_stream_decoder
 
+0x00121710:
+  name: ACTOR_MOVE_TYPE4D_TYPE12_RESPONSE_CHILD
+  type: movement_stream
+  size: 12
+  confidence: decompiled
+  description: Type-0x4D response-child movement loop supplied by ACTOR_TEMPLATE_TYPE_4D_TYPE12_RESPONSE_CHILD at 0x001B83B8. Its exact 12-byte body applies the signed sprite/position offset (+1, -16) and loops from 0x00121716 back to the root.
+  evidence:
+    - actor_template_type84_type4d_child_family_static_decompilation
+    - movement_stream_decoder
+
+0x0012171C:
+  name: ACTOR_MOVE_TYPE7B_RESPONSE_CHILD
+  type: movement_stream
+  size: 134
+  confidence: decompiled
+  description: Type-0x7B response-child movement stream supplied by ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD at 0x001B83CC. Its exact 134-byte owner faces the player, advances through the timed positive horizontal phases, clears the actor at the terminal phase, applies the long negative vertical settle, and loops through the local entry at 0x00121788; the owner ends immediately before ACTOR_MOVE_TYPE84_SCENE_RESET.
+  evidence:
+    - type7b_level11_animation_static_decompilation
+    - type74_terrain_exit_response_animation_static_decompilation
+    - movement_stream_decoder
+
 0x0011F728:
   name: ACTOR_MOVE_SCENE_RESOURCE_DEFAULT
   size: 30

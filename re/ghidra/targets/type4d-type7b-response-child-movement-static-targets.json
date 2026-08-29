@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-type4d-type7b-response-child-movement-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Classify the direct Type-0x4D and Type-0x7B response-child MovementVM entries.",
+  "streams": [
+    {
+      "address": "0x00121710",
+      "name": "ACTOR_MOVE_TYPE4D_TYPE12_RESPONSE_CHILD",
+      "range": ["0x00121710", "0x0012171B"],
+      "size": 12,
+      "template": "0x001B83B8 ACTOR_TEMPLATE_TYPE_4D_TYPE12_RESPONSE_CHILD",
+      "decoded": [
+        "Signed sprite/position offset (+1, -16)",
+        "0x80 at 0x00121716 loops to 0x00121710"
+      ]
+    },
+    {
+      "address": "0x0012171C",
+      "name": "ACTOR_MOVE_TYPE7B_RESPONSE_CHILD",
+      "range": ["0x0012171C", "0x001217A1"],
+      "size": 134,
+      "template": "0x001B83CC ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD",
+      "decoded": [
+        "Face toward player and set the initial timer",
+        "Timed positive horizontal response through 0x00121750",
+        "Terminal actor clear followed by the long negative vertical settle",
+        "Local movement loop through 0x00121788"
+      ]
+    }
+  ],
+  "boundary_basis": [
+    "The exact Type-0x4D and Type-0x7B response-child template records supply the two movement roots.",
+    "MovementDecoder control-flow decode closes the Type-0x4D loop at 12 bytes and the Type-0x7B loop at 134 bytes.",
+    "The Type-0x7B owner ends at 0x001217A1, immediately before the independently selected ACTOR_MOVE_TYPE84_SCENE_RESET stream at 0x001217A2."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
