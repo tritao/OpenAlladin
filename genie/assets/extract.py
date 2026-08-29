@@ -24,7 +24,7 @@ from genie.assets.scene_transitions import extract_scene_transitions
 
 
 def _animation_module():
-    path = ROOT / "genie/vm/animation.py"
+    path = ROOT / "genie/games/aladdin/vm/animation.py"
     if not path.exists():
         return None
     spec = importlib.util.spec_from_file_location("openaladdin_animation_decoder", path)

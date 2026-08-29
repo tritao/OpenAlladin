@@ -28,7 +28,7 @@ DEFAULT_OUTPUT = ROOT / "build/re/actor_animation_inventory.json"
 
 
 def load_decoder():
-    path = ROOT / "genie/vm/animation.py"
+    path = ROOT / "genie/games/aladdin/vm/animation.py"
     spec = importlib.util.spec_from_file_location(
         "openaladdin_animation_decoder", path
     )

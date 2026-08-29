@@ -163,10 +163,10 @@ def command_decode(args: argparse.Namespace, kind: str) -> int:
         if args.max_bytes is not None:
             forwarded.extend(["--max-bytes", str(args.max_bytes)])
 
-    status = run_tool(f"vm/{kind}.py", forwarded)
+    status = run_tool(f"games/aladdin/vm/{kind}.py", forwarded)
     if status or not args.verify:
         return status
-    return run_tool("vm/verify.py", [kind, str(rom), str(output)])
+    return run_tool("games/aladdin/vm/verify.py", [kind, str(rom), str(output)])
 
 def command_assets(args: argparse.Namespace) -> int:
     rom = resolve(args.rom)
@@ -233,7 +233,7 @@ def command_validate(args: argparse.Namespace) -> int:
             print("scene resources: skipped (asset extraction is not present)")
     for kind, path in (("animation", ROOT / "build/re/animation_streams.json"), ("movement", ROOT / "build/re/movement_streams.json")):
         if path.is_file():
-            status = run_tool("vm/verify.py", [kind, str(rom), str(path)])
+            status = run_tool("games/aladdin/vm/verify.py", [kind, str(rom), str(path)])
             if status:
                 return status
         else:
