@@ -799,10 +799,43 @@
 
 0x001F3DEE:
   name: ACTOR_FRAME_TYPE_34_WALL
-  confidence: probable
-  description: Chopper frame referenced by type-0x34 wall actor animation frame reference 0x12E2.
+  frame_ref: 0x12E2
+  size: 66
+  confidence: confirmed
+  description: First Chopper sprite-frame record for the type-0x34 wall actor, referenced by animation frame 0x12E2. Its exact 66-byte record spans 0x001F3DEE-0x001F3E2F and is followed by the 0x12E6 frame at 0x001F3E30.
   evidence:
     - actor_type_34_stream_decode
+    - type34_wall_frame_manifest
+
+0x001F3E30:
+  name: ACTOR_FRAME_TYPE_34_WALL_VARIANT_1
+  frame_ref: 0x12E6
+  size: 66
+  confidence: confirmed
+  description: Second Chopper sprite-frame record for the type-0x34 wall actor, referenced by animation frame 0x12E6. Its exact 66-byte record spans 0x001F3E30-0x001F3E71 and is followed by the 0x12EA frame at 0x001F3E72.
+  evidence:
+    - actor_type_34_stream_decode
+    - type34_wall_frame_manifest
+
+0x001F3E72:
+  name: ACTOR_FRAME_TYPE_34_WALL_VARIANT_2
+  frame_ref: 0x12EA
+  size: 42
+  confidence: confirmed
+  description: Third Chopper sprite-frame record for the type-0x34 wall actor, referenced by animation frame 0x12EA. Its exact 42-byte record spans 0x001F3E72-0x001F3E9B and is followed by the 0x12EE frame at 0x001F3E9C.
+  evidence:
+    - actor_type_34_stream_decode
+    - type34_wall_frame_manifest
+
+0x001F3E9C:
+  name: ACTOR_FRAME_TYPE_34_WALL_VARIANT_3
+  frame_ref: 0x12EE
+  size: 66
+  confidence: confirmed
+  description: Fourth Chopper sprite-frame record for the type-0x34 wall actor, referenced by animation frame 0x12EE. Its exact 66-byte record spans 0x001F3E9C-0x001F3EDD before the following graphics data.
+  evidence:
+    - actor_type_34_stream_decode
+    - type34_wall_frame_manifest
 
 0x001240CE:
   name: ACTOR_ANIM_TYPE_8D_WALL_RESPONSE
