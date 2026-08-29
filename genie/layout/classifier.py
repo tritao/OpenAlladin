@@ -19,7 +19,7 @@ def _class_for_symbol(symbol: Symbol) -> str:
     symbol_type = str(symbol.metadata.get("type", "")).lower()
     if symbol.kind == "function":
         return "CODE"
-    if "ACTOR_MOVE_STATE" in name or "MOVEMENT_STREAM" in symbol_type:
+    if name.startswith("ACTOR_MOVE_") or "MOVEMENT_STREAM" in symbol_type:
         return "MOVEMENT_STREAM"
     if "ACTOR_TEMPLATE" in name:
         return "ACTOR_TEMPLATE"

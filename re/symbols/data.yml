@@ -435,6 +435,7 @@
 
 0x00120F76:
   name: ACTOR_MOVE_TYPE2A_VERTICAL_BOB
+  size: 62
   confidence: decompiled
   description: Type-0x2A upper-route actor movement root; its lossless 62-byte stream performs the shared flag-test/write/clear prefix, follows a fixed vertical profile of 0, +2, +2, +3, +3, +4, +4, 0, -1, -1, -1, -2, -2, -2, -3, -2, -2, -1, -1, and loops from 0x00120FAC back to 0x00120F8A.
   evidence:
@@ -452,6 +453,7 @@
 
 0x001217B4:
   name: ACTOR_MOVE_STATE_1217B4
+  size: 102
   confidence: decompiled
   description: Type-0x34 wall actor movement root; its lossless 102-byte decode contains zero horizontal deltas, a signed one-pixel vertical oscillation controlled by opcode 0x84 values 0x80 through 0x84, and an opcode-0x80 loop back to the root.
   evidence:
