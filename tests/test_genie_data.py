@@ -97,6 +97,37 @@ def test_data_todo_filters_aliases_and_prioritizes_missing_decode(tmp_path):
     assert "not_decoded" in items[0]["reasons"]
 
 
+def test_data_todo_ignores_embedded_stream_alias(tmp_path):
+    database_root = _database(tmp_path)
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0x10,
+            "BrakeEntry",
+            "data",
+            metadata={"alias_of": "TransitionPresentation", "entry_offset": 8},
+        ),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(
+            0x100,
+            (
+                LayoutRange(0, 0x0F, "UNKNOWN", "test"),
+                LayoutRange(0x10, 0x10, "ANIMATION_STREAM", "tracked.symbol", "BrakeEntry"),
+                LayoutRange(0x11, 0xFF, "UNKNOWN", "test"),
+            ),
+        ),
+    )
+
+    assert index.todo(kind="animation_stream") == []
+    context = index.context(0x10)
+    assert context is not None
+    assert context["decoder"]["aliased"] is True
+    assert context["decoder"]["alias_of"] == "TransitionPresentation"
+
+
 def test_data_cli_surface_dispatches():
     stats = build_parser().parse_args(["data", "stats", "--json"])
     todo = build_parser().parse_args(["data", "todo", "--kind", "animation", "--limit", "4"])

@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-player-vertical-animation-table-extents-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "table": {
+    "address": "0x00121828",
+    "name": "PLAYER_VERTICAL_ANIMATION_TABLE",
+    "entry_size": 4,
+    "count": 16,
+    "size": 64,
+    "range": "0x00121828-0x00121867",
+    "selection": "(PLAYER_WORLD_Y >> 2) & 0x0F"
+  },
+  "following_roots": [
+    "0x00121868",
+    "0x00121876",
+    "0x00121884",
+    "0x00121892",
+    "0x001218A0",
+    "0x001218AE",
+    "0x001218BC",
+    "0x001218CA"
+  ],
+  "evidence": [
+    "0x001A9986 loads a longword from the table using the four-bit vertical-band index",
+    "The next ROM object begins at 0x00121868, immediately after 16 longwords"
+  ],
+  "status": "recorded-static-decompilation",
+  "confidence": "confirmed"
+}

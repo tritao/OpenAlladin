@@ -114,6 +114,12 @@ def _has_inferred_extent(symbol: Symbol) -> bool:
     return False
 
 
+def _is_alias(value: dict[str, Any]) -> bool:
+    """Whether a data object is an alternate entry into another object."""
+
+    return bool((value.get("canonical_symbol") or {}).get("alias_of"))
+
+
 class DataIndex:
     """Join canonical ROM-object evidence into deterministic query records."""
 
@@ -461,6 +467,14 @@ class DataIndex:
         kind = value["kind"]
         if kind not in STREAM_KINDS:
             return None
+        canonical_symbol = value.get("canonical_symbol") or {}
+        if canonical_symbol.get("alias_of"):
+            return {
+                "available": False,
+                "aliased": True,
+                "alias_of": canonical_symbol["alias_of"],
+                "entry_offset": canonical_symbol.get("entry_offset"),
+            }
         entry = _address(value["start"])
         stream = self._decoded[kind].get(entry)
         if stream is None:
@@ -586,6 +600,10 @@ class DataIndex:
     def todo(self, *, kind: str | None = None) -> list[dict[str, Any]]:
         result = []
         for value in self.objects(kind=kind):
+            if _is_alias(value):
+                # An alternate stream entry is useful context, but it does
+                # not own bytes or require a second decoder result.
+                continue
             context = self.context(_address(value["start"]))
             consumers = context["consumers"] if context else []
             decoder = context["decoder"] if context else None
@@ -593,7 +611,9 @@ class DataIndex:
             reasons: list[str] = []
             if not value["range_bounded"]:
                 reasons.append("unbounded")
-            if value["kind"] in STREAM_KINDS and not (decoder and decoder.get("available")):
+            if value["kind"] in STREAM_KINDS and not (
+                decoder and (decoder.get("available") or decoder.get("aliased"))
+            ):
                 reasons.append("not_decoded")
             if decoder and decoder.get("available") and not decoder.get("size_matches", True):
                 reasons.append("decoded_size_mismatch")
