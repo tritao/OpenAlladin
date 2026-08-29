@@ -415,6 +415,7 @@ void Engine::load(
     }
     actor_lifecycle_.bind_rom(rom_bytes_);
     collisions_.bind_rom(rom_bytes_);
+    scene_resources_.bind_rom(rom_bytes_);
     scene_.load_rom_bytes(rom_bytes_);
     scene_.reset(level_.scene_state());
     actors_.set_snapshot_mode(!actor_records_path.empty() || !actor_timeline_path.empty());
@@ -1231,6 +1232,83 @@ void Engine::update_interaction_actor_flags() {
     }
 }
 
+void Engine::update_scene_resources() {
+    // SceneSystem retains the recovered countdown gate. A nonzero script
+    // cursor is the explicit handoff into the compact resource interpreter;
+    // ordinary gameplay has no scene-resource stream and remains a no-op at
+    // this boundary.
+    if (!scene_resources_.started()) {
+        if (state_.scene.script_cursor == 0) return;
+        scene_resources_.start(state_.scene.script_cursor);
+    }
+
+    SceneServices services = scene_services();
+    const SceneResourceRunResult result = scene_resources_.tick(state_, services);
+    // Publish the VM's live A0 command cursor through the existing scene
+    // checkpoint field instead of creating a second Engine-side cursor.
+    state_.scene.script_cursor = scene_resources_.cursor();
+    if (result == SceneResourceRunResult::InvalidStream) {
+        // A malformed native stream follows the ROM's nonzero-status exit
+        // boundary so the interpreter will not be re-entered.
+        state_.scene.resource_status = 0xFF;
+    }
+}
+
+SceneServices Engine::scene_services() {
+    SceneServices services;
+    // RenderModel is the next frontend boundary. Keep tile writes expressed
+    // as semantic service calls; the current asset renderer has no live VDP
+    // plane owner to mutate yet.
+    services.write_tile = [](GameState&, const SceneTileWrite&) {};
+    services.service_frame = [this](GameState&) {
+        // SceneResource_RunServiceFrames owns this cadence around the common
+        // movement and actor-animation services.
+        update_actor_movement();
+        update_actor_animations();
+    };
+    services.load_or_clear_c000 = [this](GameState&) {
+        if (!vdp_checkpoint_.loaded || vdp_checkpoint_.vram.size() < 0xE000) return;
+        std::fill(
+            vdp_checkpoint_.vram.begin() + 0xC000,
+            vdp_checkpoint_.vram.begin() + 0xE000,
+            0
+        );
+    };
+    services.prepare_frame_and_palette = [this](GameState&) {
+        // The current native renderer sources its palette from Level. Keep
+        // the command at this service boundary until RenderModel owns CRAM.
+        if (vdp_checkpoint_.loaded && vdp_checkpoint_.vram.size() >= 0xE000) {
+            std::fill(
+                vdp_checkpoint_.vram.begin() + 0xC000,
+                vdp_checkpoint_.vram.begin() + 0xE000,
+                0
+            );
+        }
+    };
+    services.instantiate_actor = [this](GameState&, const SceneActorRecord& record) {
+        return instantiate_scene_actor(record);
+    };
+    return services;
+}
+
+bool Engine::instantiate_scene_actor(const SceneActorRecord& record) {
+    const auto slot = actor_lifecycle_.allocate(ActorPool::CommonForward);
+    if (!slot) return false;
+
+    ActorState destination = actors_[*slot];
+    destination.x = record.x;
+    destination.y = record.y;
+    ActorState actor = actor_lifecycle_.initialize_record(
+        destination,
+        record.template_address
+    );
+    actor.x = record.x;
+    actor.y = record.y;
+    if (!actor_lifecycle_.install(*slot, actor)) return false;
+    actor_animations_[*slot].reset();
+    return true;
+}
+
 void Engine::update_animation_vm_ordinal_30(
     SpritePose desired_pose,
     HorizontalDirection direction,
@@ -1425,6 +1503,7 @@ void Engine::reset() {
     surface_actor_spawn_pending_ = false;
     surface_actor_spawn_x_ = 0;
     surface_actor_spawn_y_ = 0;
+    scene_resources_.reset();
     actor_movement_deferred_.fill(false);
     player_collision_interaction_pending_ = false;
     checkpoint_animation_selector_pending_ = false;
@@ -3189,6 +3268,7 @@ void Engine::update(const InputState& input) {
     // marker only for the post-follow downward rebase path above.
     record_scheduler_phase("scene_advance", 0x001A8E3E);
     (void) scene_.advance_script();
+    update_scene_resources();
     record_scheduler_phase("animation_vm", 0x001AC784);
     if (!stable_terrain_handler_fixture) {
         // The bounce response's F8 command publishes the dynamic 0x121AD8
@@ -3376,6 +3456,7 @@ void Engine::update(const InputState& input) {
     if (transition_frame) {
         record_scheduler_phase("scene_advance", 0x001A8E3E);
         (void) scene_.advance_script();
+        update_scene_resources();
         // Scene_EnterTransitionMode owns the transition movement, but the
         // frame loop still reaches its common ordinal-30 animation service.
         // Keeping that service here removes the native early-return path.
@@ -3934,6 +4015,7 @@ void Engine::read_checkpoint(std::istream& input) {
     }
 
     scene_.read_checkpoint(input);
+    scene_resources_.reset();
     interaction_map_.read_checkpoint(input);
     actors_.read_checkpoint(input);
     PlayerState player = read_player_state(reader);

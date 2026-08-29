@@ -61,9 +61,10 @@ public:
         bool& grounded
     );
 
-    // These are the three scene-script services called unconditionally by
-    // Game_FrameUpdateLoop. The payload parser is intentionally outside this
-    // native slice; its RAM gates and no-payload early returns remain here.
+    // These are the scene-script gate services called unconditionally by
+    // Game_FrameUpdateLoop. Resource payload execution is owned by the
+    // Engine-bound SceneResourceVm; these methods retain only the scene-state
+    // gates and transition behavior.
     bool advance_script();
     bool service_level_exit(
         int player_world_y,

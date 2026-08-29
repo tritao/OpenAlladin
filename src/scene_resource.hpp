@@ -59,6 +59,7 @@ public:
     static constexpr std::size_t kDefaultInstructionBudget = 1'000'000;
 
     void bind_rom(const std::vector<std::uint8_t>& rom) { rom_ = &rom; }
+    void reset();
     void start(RamAddress stream);
     SceneResourceRunResult tick(
         GameState& state,

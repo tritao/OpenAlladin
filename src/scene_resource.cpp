@@ -2,16 +2,22 @@
 
 namespace openaladdin {
 
-void SceneResourceVm::start(RamAddress stream) {
-    cursor_ = stream;
+void SceneResourceVm::reset() {
+    cursor_ = 0;
     stream_pointer_ = 0;
     tile_x_ = 0;
     tile_y_ = 0;
     tile_base_ = 0;
-    started_ = true;
+    started_ = false;
     finished_ = false;
     faulted_ = false;
     presentation_scratch_ = false;
+}
+
+void SceneResourceVm::start(RamAddress stream) {
+    reset();
+    cursor_ = stream;
+    started_ = true;
 }
 
 bool SceneResourceVm::can_read(std::size_t count) const {

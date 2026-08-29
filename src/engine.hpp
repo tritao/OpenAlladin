@@ -8,6 +8,7 @@
 #include "game_state.hpp"
 #include "movement.hpp"
 #include "player_terrain.hpp"
+#include "scene_resource.hpp"
 #include "sprites.hpp"
 
 #include <array>
@@ -117,6 +118,9 @@ private:
     void update_actor_animations();
     void update_interaction_actor_flags();
     void update_bounce_actor_interaction();
+    void update_scene_resources();
+    SceneServices scene_services();
+    bool instantiate_scene_actor(const SceneActorRecord& record);
     // ROM ordinal 30 (0x001A8CCE -> 0x001AC784) is the single common
     // animation service. It owns the player VM, player-originated F5
     // allocation, and one gated actor-table traversal.
@@ -169,6 +173,7 @@ private:
     ActorLifecycleSystem actor_lifecycle_;
     CollisionSystem collisions_;
     SceneSystem scene_;
+    SceneResourceVm scene_resources_;
     PlayerTerrainSystem terrain_;
     SpriteDatabase sprites_;
     PlayerAnimationVm animation_;
