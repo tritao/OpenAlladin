@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-exit-type84-child-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x001243B4",
+    "name": "ACTOR_ANIM_EXIT_CHILD_TYPE8C",
+    "range": ["0x001243B4", "0x001243E1"],
+    "bytes": 46,
+    "event_parameters": ["0x001ACB7A", "0x001ACB82"],
+    "random_branch": "F0 at 0x001243C0 -> 0x001243BC",
+    "frames": "0x17AA repeated before and after the random branch, then 0x17AE through 0x17C6",
+    "loop": "0x001243DE -> 0x001243B4"
+  },
+  "consumer": {
+    "template": "0x001B7E18 ACTOR_TEMPLATE_EXIT_CHILD_TYPE8C",
+    "parent_stream": "0x0012434C ACTOR_ANIM_EXIT_TYPE84_PRESENTATION",
+    "spawn_site": "0x00124380 F5"
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for 0x001243B4",
+    "Exact animation pointer in the Type-0x8C child template",
+    "Parent-stream F5 command at 0x00124380",
+    "Control-flow cycle at 0x001243DE"
+  ],
+  "boundary": {
+    "next_stream": "0x001243E2",
+    "reason": "The next animation root begins at 0x001243E2 after the 46-byte child cycle."
+  }
+}

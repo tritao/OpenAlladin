@@ -776,6 +776,16 @@
     - level_exit_terminal_transition
     - animation_stream_decoder
 
+0x001243B4:
+  name: ACTOR_ANIM_EXIT_CHILD_TYPE8C
+  size: 46
+  confidence: decompiled
+  description: Type-0x8C exit-child animation installed by ACTOR_TEMPLATE_EXIT_CHILD_TYPE8C at 0x001B7E18. Its packed 46-byte region pushes event parameters 0x001ACB7A and 0x001ACB82, takes the encoded random branch through 0x001243BC, presents the 0x17AA-0x17C6 frame sequence, and loops from 0x001243DE to its root.
+  evidence:
+    - exit_type84_child_animation_static_decompilation
+    - actor_template_exit_child_type8c
+    - animation_stream_decoder
+
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
   confidence: probable
@@ -1563,6 +1573,17 @@
   evidence:
     - ghidra_level_exit_terminal_transition
     - level01_upper_frontier_initializer_targets
+
+0x001B7E18:
+  name: ACTOR_TEMPLATE_EXIT_CHILD_TYPE8C
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x8C exit-child template supplied by the F5 command in ACTOR_ANIM_EXIT_TYPE84_PRESENTATION; it has no movement stream, uses ACTOR_ANIM_EXIT_CHILD_TYPE8C at 0x001243B4, and owns five resources.
+  evidence:
+    - exit_type84_child_animation_static_decompilation
+    - actor_template_exit_type84
+    - animation_stream_decoder
 
 0x001B7EE0:
   name: ACTOR_TEMPLATE_LEVEL08_TYPE_84

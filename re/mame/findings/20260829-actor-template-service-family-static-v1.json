@@ -36,6 +36,15 @@
       "reference_sites": ["0x001B06E0", "0x001B07B6"]
     },
     {
+      "address": "0x001B7E18",
+      "name": "ACTOR_TEMPLATE_EXIT_CHILD_TYPE8C",
+      "consumer": "F5 at 0x00124380 in ACTOR_ANIM_EXIT_TYPE84_PRESENTATION",
+      "runtime_type": "0x8C",
+      "animation_stream": "0x001243B4 ACTOR_ANIM_EXIT_CHILD_TYPE8C",
+      "movement_stream": null,
+      "resource_count": "0x05"
+    },
+    {
       "address": "0x001B7EE0",
       "name": "ACTOR_TEMPLATE_LEVEL08_TYPE_84",
       "consumer": "Level08_EnterRoutine at 0x001B611E",
@@ -66,7 +75,7 @@
       "animation_stream": "0x00124CD8"
     }
   ],
-  "conclusion": "These seven 20-byte actor-template records are named from direct consumer or typed interaction evidence. The unreferenced and target-focus-only records around types 0x67 and 0x68 remain unresolved.",
+  "conclusion": "These eight 20-byte actor-template records are named from direct consumer or typed interaction evidence. The unreferenced and target-focus-only records around types 0x67 and 0x68 remain unresolved.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }
