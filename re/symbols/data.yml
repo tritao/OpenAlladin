@@ -1618,6 +1618,30 @@
     - actor_animation_stream_family_static_decompilation
     - animation_stream_decoder
 
+0x00124D5C:
+  name: ACTOR_ANIM_TYPE16_COLLISION_RESPONSE_SPAWN_SEQUENCE
+  type: animation_stream
+  size: 470
+  confidence: decompiled
+  description: Type-0x16 collision-response child-spawn sequence entered by the vertical and horizontal proximity gates at 0x00124D44 and 0x00124D50. Its exact 470-byte region contains 21 F5 commands targeting ACTOR_TEMPLATE_COLLISION_RESPONSE at 0x001B7ABC, publishes actor field 0x11 as 0x0016 at 0x00124E0A, and ends after the final F5 payload at 0x00124F31.
+  evidence:
+    - actor_animation_collision_child_sequence_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - actor_collision_response_targets
+    - animation_stream_decoder
+
+0x00124F32:
+  name: ACTOR_ANIM_TYPE31_CHILD_SPAWN_PREFIX
+  type: animation_stream
+  size: 100
+  confidence: decompiled
+  description: Type-0x31 child-spawn prefix immediately following the Type-0x16 sequence. Its exact 100-byte region sets the 0x8B timer/field phase, plays sound 0x37, issues five F5 records for the paired Type-0x31 templates, and terminates with F600 at 0x00124F94 before ACTOR_ANIM_TYPE31_F5_CHILD_A.
+  evidence:
+    - actor_animation_collision_child_sequence_static_decompilation
+    - actor_animation_stream_family_static_decompilation
+    - actor_template_type31_f5_child_family_static_decompilation
+    - animation_stream_decoder
+
 0x00124F96:
   name: ACTOR_ANIM_TYPE31_F5_CHILD_A
   type: animation_stream

@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-actor-animation-collision-child-sequence-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Resolve the remaining 0x124D5C-0x124F95 actor-animation gap by separating the Type-0x16 collision-response spawn sequence from the following Type-0x31 child-spawn prefix.",
+  "type16_sequence": {
+    "address": "0x00124D5C",
+    "name": "ACTOR_ANIM_TYPE16_COLLISION_RESPONSE_SPAWN_SEQUENCE",
+    "range": ["0x00124D5C", "0x00124F31"],
+    "size": 470,
+    "entry_gates": ["ACTOR_ANIM_TYPE16_LEVEL_OBJECT at 0x00124D38", "horizontal gate at 0x00124D50"],
+    "f5_template": "0x001B7ABC ACTOR_TEMPLATE_COLLISION_RESPONSE",
+    "f5_count": 21,
+    "field_write": "ED at 0x00124E0A publishes actor field 0x11 as 0x0016",
+    "boundary": "The final F5 command starts at 0x00124F22 and consumes its exact 16-byte payload through 0x00124F31. The next independent prefix starts at 0x00124F32."
+  },
+  "type31_prefix": {
+    "address": "0x00124F32",
+    "name": "ACTOR_ANIM_TYPE31_CHILD_SPAWN_PREFIX",
+    "range": ["0x00124F32", "0x00124F95"],
+    "size": 100,
+    "f5_sites": ["0x00124F3A", "0x00124F4C", "0x00124F5E", "0x00124F70", "0x00124F82"],
+    "f5_templates": ["0x001B8034 ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A", "0x001B8048 ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B"],
+    "header": "EE8B timer/field phase, 0x198A frame lead-in, and sound 0x37",
+    "terminator": "F600 at 0x00124F94-0x00124F95",
+    "boundary": "The Type-0x31 child-A entry starts at 0x00124F96 immediately after the exact F600 command."
+  },
+  "evidence": [
+    "actor-template-late-interaction-family-targets",
+    "actor-collision-response-targets",
+    "actor-template-type31-f5-child-family-targets",
+    "Lossless AnimationDecoder output against the ROM",
+    "Exact 16-byte F5 command width and adjacent root boundary"
+  ],
+  "conclusion": "The former 570-byte unknown region is now partitioned into a 470-byte Type-0x16 collision-response spawn sequence and a 100-byte Type-0x31 child-spawn prefix. The separate Type-0x31 child entries begin at 0x00124F96 and remain independently owned.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-animation-collision-child-sequence-targets.json",
+  "type16_sequence": {
+    "range": "0x00124D5C-0x00124F31",
+    "bytes": 470,
+    "entry": "ACTOR_ANIM_TYPE16_LEVEL_OBJECT at 0x00124D38 uses FE at 0x00124D44 and the paired FD entry at 0x00124D50 to reach this body.",
+    "f5_records": "All 21 F5 commands target ACTOR_TEMPLATE_COLLISION_RESPONSE at 0x001B7ABC. The last command begins at 0x00124F22 and consumes bytes through 0x00124F31.",
+    "field_write": "The ED command at 0x00124E0A publishes actor field 0x11 as 0x0016 during the sequence."
+  },
+  "type31_prefix": {
+    "range": "0x00124F32-0x00124F95",
+    "bytes": 100,
+    "header": "EE8B and the 0x198A lead-in, followed by sound 0x37.",
+    "f5_records": "Five direct F5 records target the paired Type-0x31 templates at 0x001B8034 and 0x001B8048.",
+    "terminator": "F600 at 0x00124F94-0x00124F95; the Type-0x31 child-A entry begins at 0x00124F96."
+  },
+  "evidence": [
+    "Exact Type-0x16 proximity gates and branch targets",
+    "Exact F5 template pointers and payload widths",
+    "Exact Type-0x31 child producer records",
+    "Lossless AnimationDecoder output and original ROM bytes"
+  ],
+  "conclusion": "The formerly unclassified actor-animation gap is now split at the exact end of the final collision-response F5 payload and the exact Type-0x31 F600 terminator. No bytes are shared between the two promoted ranges or the following child entry.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

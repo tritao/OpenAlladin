@@ -26,6 +26,8 @@
     { "address": "0x00124CE4", "name": "ACTOR_ANIM_TYPE1A_PRESENTATION", "range": ["0x00124CE4", "0x00124D37"], "consumer": "ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE", "role": "Shared type-0x1A/0x1B/0x1C presentation body with the Type-0x84 F5 child and callback parameters." },
     { "address": "0x00124D38", "name": "ACTOR_ANIM_TYPE16_LEVEL_OBJECT", "range": ["0x00124D38", "0x00124D4F"], "consumer": "ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT", "role": "Type-0x16 level-object proximity loop." },
     { "address": "0x00124D50", "name": "ACTOR_ANIM_TYPE16_LEVEL_OBJECT_HORIZONTAL_GATE", "range": ["0x00124D50", "0x00124D5B"], "consumer": "Horizontal proximity entry paired with ACTOR_ANIM_TYPE16_LEVEL_OBJECT", "role": "Exact 12-byte horizontal player-X gate that enters the shared Type-0x16 response path at 0x00124D42 or the child-spawn body at 0x00124D5C." },
+    { "address": "0x00124D5C", "name": "ACTOR_ANIM_TYPE16_COLLISION_RESPONSE_SPAWN_SEQUENCE", "range": ["0x00124D5C", "0x00124F31"], "consumer": "ACTOR_ANIM_TYPE16_LEVEL_OBJECT proximity gates at 0x00124D44 and 0x00124D50", "role": "Type-0x16 child-spawn sequence with 21 F5 commands targeting ACTOR_TEMPLATE_COLLISION_RESPONSE; the final F5 payload ends at 0x00124F31." },
+    { "address": "0x00124F32", "name": "ACTOR_ANIM_TYPE31_CHILD_SPAWN_PREFIX", "range": ["0x00124F32", "0x00124F95"], "consumer": "Type-0x31 F5 child producers in the following entry family", "role": "Exact Type-0x31 child-spawn prefix with the 0x8B timer/field phase, sound 0x37, five direct F5 records, and F600 at 0x00124F94." },
     { "address": "0x00124F96", "name": "ACTOR_ANIM_TYPE31_F5_CHILD_A", "range": ["0x00124F96", "0x00125027"], "consumer": "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A", "role": "Type-0x31 child animation entry with the shared F5 spawn and frame-delay loop." },
     { "address": "0x00125028", "name": "ACTOR_ANIM_TYPE31_F5_CHILD_B", "range": ["0x00125028", "0x001250B9"], "consumer": "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B", "role": "Paired Type-0x31 child animation entry with its distinct frame sequence and shared F5 spawn." },
     { "address": "0x001250BA", "name": "ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_BASE", "range": ["0x001250BA", "0x001250CD"], "consumer": "ACTOR_TEMPLATE_TERRAIN_TYPE_84", "role": "Base scene-state-5 terrain response animation." },
@@ -35,7 +37,7 @@
   ],
   "boundaries": {
     "known_following_stream": "ACTOR_ANIM_TYPE30_PRESENTATION_CHILD begins at 0x0012510A.",
-    "unpromoted_gaps": ["0x00124D5C-0x00124F95"]
+    "unpromoted_gaps": []
   },
   "evidence": [
     "interaction-spawn-type8b-presentation-targets",
