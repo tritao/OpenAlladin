@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-type32-interaction-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x00124616",
+    "name": "ACTOR_ANIM_TYPE32_INTERACTION",
+    "range": ["0x00124616", "0x00124657"],
+    "bytes": 66,
+    "consumer": "0x001B7EF4 ACTOR_TEMPLATE_TYPE_32_INTERACTION",
+    "producer": "selector 0xA4 at 0x001B65E0",
+    "opening": "Frame 0x0D92, parameter pushes 0x001ACB7A and 0x001ACB82 around EE timer value 0x8B, then the repeated 0x0D92-0x0DBE frame sequence.",
+    "clear": "F600 at 0x00124656"
+  },
+  "consumer": {
+    "template": "0x001B7EF4 ACTOR_TEMPLATE_TYPE_32_INTERACTION",
+    "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+    "runtime_type": "0x32",
+    "post_spawn": "The selector-0xA4 body adds eight pixels to the spawned actor's Y position when allocation succeeds."
+  },
+  "boundary": {
+    "next_stream": "0x00124658",
+    "reason": "The Type-0x32 stream ends at F600 at 0x00124656; the following Type-0x13 animation root begins at 0x00124658."
+  },
+  "evidence": [
+    "Lossless linear AnimationDecoder output",
+    "Exact Type-0x32 template animation pointer",
+    "Direct selector-0xA4 reverse-slot consumer",
+    "Exact parameter pushes and F600 terminator"
+  ]
+}

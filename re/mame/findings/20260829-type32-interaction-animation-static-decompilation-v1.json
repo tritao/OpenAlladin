@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type32-interaction-animation-static-targets.json",
+  "animation": {
+    "address": "0x00124616",
+    "name": "ACTOR_ANIM_TYPE32_INTERACTION",
+    "range": "0x00124616-0x00124657",
+    "bytes": 66,
+    "frames": "0x0D92, 0x0D96, 0x0D9A, 0x0D9E, 0x0DA2, 0x0DA6, 0x0DAA, 0x0DAE, 0x0DB2, 0x0DB6, 0x0DBA, and 0x0DBE with the original repeated entries",
+    "parameter_pushes": ["FB 0x001ACB7A at 0x00124618", "FB 0x001ACB82 at 0x00124622"],
+    "timer": "EE 0x8B at 0x0012461E",
+    "clear_command": "F600 at 0x00124656"
+  },
+  "consumer": {
+    "template": "0x001B7EF4 ACTOR_TEMPLATE_TYPE_32_INTERACTION",
+    "selector": "0xA4 at 0x001B65E0",
+    "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+    "runtime_type": "0x32",
+    "post_spawn": "Y += 0x08"
+  },
+  "boundary": {
+    "next_stream": "0x00124658",
+    "next_stream_name": "Type-0x13 animation root",
+    "reason": "The following stream begins immediately after the Type-0x32 F600 terminator."
+  },
+  "evidence": [
+    "Lossless linear AnimationDecoder output",
+    "Exact Type-0x32 template pointer",
+    "Direct selector-0xA4 consumer",
+    "Exact F600 terminator"
+  ],
+  "conclusion": "The selector-0xA4 Type-0x32 interaction stream is a closed 66-byte animation region. It owns its parameter pushes, timer phase, repeated frame sequence, and actor clear, and does not claim the following Type-0x13 stream at 0x00124658.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

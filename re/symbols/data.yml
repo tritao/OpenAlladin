@@ -850,6 +850,16 @@
     - level08_event_vdp_static_decompilation
     - animation_stream_decoder
 
+0x00124616:
+  name: ACTOR_ANIM_TYPE32_INTERACTION
+  size: 66
+  confidence: decompiled
+  description: Type-0x32 interaction animation selected by ACTOR_TEMPLATE_TYPE_32_INTERACTION through selector 0xA4. Its packed 66-byte stream presents the 0x0D92 through 0x0DBE sequence with repeated frame groups, pushes parameters 0x001ACB7A and 0x001ACB82 around the 0x8B timer phase, and clears the actor at 0x00124656.
+  evidence:
+    - type32_interaction_animation_static_decompilation
+    - actor_template_type32_interaction
+    - animation_stream_decoder
+
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
   confidence: probable
@@ -1957,7 +1967,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x32 interaction template loaded by the reverse-slot entry at 0x001B65E0; it has no movement stream, uses animation stream 0x00124616, and owns fourteen resources before the caller adjusts the spawned Y position.
+  description: Type-0x32 interaction template loaded by the reverse-slot entry at 0x001B65E0; it has no movement stream, uses ACTOR_ANIM_TYPE32_INTERACTION at 0x00124616, and owns fourteen resources before the caller adjusts the spawned Y position.
   evidence:
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs

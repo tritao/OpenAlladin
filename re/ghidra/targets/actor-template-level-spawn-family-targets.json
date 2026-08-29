@@ -80,7 +80,7 @@
       "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
       "runtime_type": "0x32",
       "movement_stream": null,
-      "animation_stream": "0x00124616",
+      "animation_stream": "0x00124616 ACTOR_ANIM_TYPE32_INTERACTION",
       "resource_count": "0x0E",
       "post_spawn": "The caller adds eight pixels to the spawned actor's Y position when allocation succeeds."
     }

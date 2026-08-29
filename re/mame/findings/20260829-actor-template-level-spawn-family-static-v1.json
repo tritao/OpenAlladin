@@ -48,7 +48,7 @@
       "address": "0x001B7EF4",
       "name": "ACTOR_TEMPLATE_TYPE_32_INTERACTION",
       "consumer": "0x001B65E0",
-      "behavior": "Reverse-slot type-0x32 spawn followed by an eight-pixel Y adjustment."
+      "behavior": "Reverse-slot type-0x32 spawn using ACTOR_ANIM_TYPE32_INTERACTION at 0x00124616, followed by an eight-pixel Y adjustment."
     }
   ],
   "conclusion": "The level/terrain spawn block establishes seven additional exact 20-byte actor-template records from direct static consumers and bounded post-spawn behavior.",
