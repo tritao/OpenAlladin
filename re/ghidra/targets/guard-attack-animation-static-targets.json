@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "guard-attack-animation-static",
+    "purpose": "Range-bound the Type-0x0A guard animation parent and preserve both exact Type-0x2D child-spawn branches before the Type-0x52 stream."
+  },
+  "targets": [
+    { "address": "0x0012542A", "name": "ACTOR_ANIM_GUARD_ATTACK" },
+    { "address": "0x001B80AC", "name": "ACTOR_TEMPLATE_GUARD" },
+    { "address": "0x001B7CB0", "name": "ACTOR_TEMPLATE_GUARD_SWORD_ATTACK" },
+    { "address": "0x00121240", "name": "ACTOR_MOVE_GUARD_SWORD_ATTACK" },
+    { "address": "0x0012545E", "name": "GuardAttack_F5Primary" },
+    { "address": "0x00125474", "name": "GuardAttack_F5Alternate" },
+    { "address": "0x001AD00E", "name": "AnimationVM_SpawnOrCopyActor" },
+    { "address": "0x001ACB6A", "name": "ActorEvent_SetActorFlag40" }
+  ],
+  "memory_references": [
+    { "address": "0x001F6500", "name": "SPRITE_FRAME_GUARD_ATTACK_0" },
+    { "address": "0x001F69D4", "name": "SPRITE_FRAME_GUARD_ATTACK_TERMINAL" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" }
+  ]
+}

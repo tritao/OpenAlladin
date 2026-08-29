@@ -1043,6 +1043,15 @@ Finally, `Level_ExitAndTerminalTransition`'s direct assignment at
 walks through the shared Type-0x76 continuation; it is not used as an
 overlapping layout range.
 
+The Type-0x0A guard parent animation is recorded in
+`re/mame/findings/20260829-guard-attack-animation-static-decompilation-v1.json`.
+The exact `0x0012542A-0x0012548D` range (100 bytes) presents the guard frame
+groups and facing clears, gates the Type-0x2D child on the player-X distance,
+and preserves both F5 payloads at `0x0012545E` and `0x00125474`. The primary
+payload installs `ACTOR_MOVE_GUARD_SWORD_ATTACK` while the alternate retains
+the template default movement; the terminal `0x152E` pair loops back to the
+guard root immediately before `ACTOR_ANIM_TYPE52_INTERACTION_BASE`.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2838,3 +2847,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type01-type84-child-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x01 upper-resource root and F5-spawned Type-0x84 child range-bounded with exact frames, callbacks, template records, and explicit adjacent-stream boundaries |
 | `20260829-type34-wall-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x34 wall actor animation range-bounded with exact frames, timers, random branch, loop, and selector-0x53 installation contract |
 | `20260829-type8d-type76-terminal-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x8D response prefix, direct Type-0x76 shared continuation, and level-exit terminal alternate partitioned with exact non-overlapping boundaries |
+| `20260829-guard-attack-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x0A guard parent animation range-bounded with exact frame groups, distance gate, dual Type-0x2D F5 payloads, movement contract, and terminal loop |

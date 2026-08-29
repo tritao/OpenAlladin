@@ -1619,11 +1619,13 @@
 
 0x0012542A:
   name: ACTOR_ANIM_GUARD_ATTACK
+  size: 100
   confidence: confirmed
-  description: Type 0x0A guard animation stream; its F5 spawn record creates the type 0x2D guard sword-attack child and overrides that child movement with ACTOR_MOVE_GUARD_SWORD_ATTACK.
+  description: Type 0x0A guard animation stream. Its exact 100-byte region presents the 0x1506-0x152A frame sequence with facing clears, gates the sword-child spawn on player-X distance, supplies both F5 records for ACTOR_TEMPLATE_GUARD_SWORD_ATTACK, and closes with the 0x152E terminal pair before looping to the root.
   evidence:
     - mame_type_2D_spawn_trace_1800
     - ghidra_animation_vm_spawn_handler_001AD00E
+    - guard_attack_animation_static_decompilation
 
 0x001258D2:
   name: PLAYER_ANIM_STATE_1258D2

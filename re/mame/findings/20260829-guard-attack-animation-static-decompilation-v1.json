@@ -1,0 +1,58 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/guard-attack-animation-static-targets.json",
+  "animation": {
+    "address": "0x0012542A",
+    "name": "ACTOR_ANIM_GUARD_ATTACK",
+    "range": "0x0012542A-0x0012548D",
+    "bytes": 100,
+    "template": "0x001B80AC ACTOR_TEMPLATE_GUARD",
+    "runtime_type": "0x0A",
+    "opening_frame_groups": [
+      "0x1506 x3 with F700",
+      "0x150A x2",
+      "0x150E x2",
+      "0x1512 x2",
+      "0x1516 x2",
+      "0x151A x2",
+      "0x151E x2 with F700",
+      "0x1522 x2",
+      "0x1526 x2",
+      "0x152A x2"
+    ],
+    "distance_gate": "0x00125458 FD 0x78 -> 0x00125474",
+    "child_template": "0x001B7CB0 ACTOR_TEMPLATE_GUARD_SWORD_ATTACK",
+    "child_spawns": [
+      {
+        "address": "0x0012545E",
+        "raw": "F500001B7CB010E20000000000121240",
+        "movement_override": "0x00121240 ACTOR_MOVE_GUARD_SWORD_ATTACK"
+      },
+      {
+        "address": "0x00125474",
+        "raw": "F500001B7CB01EF3000000000011F6D4",
+        "movement": "0x0011F6D4"
+      }
+    ],
+    "terminal_frames": ["0x001F69D4", "0x001F69D4"],
+    "loop": "0x00125488 EA -> 0x0012542A"
+  },
+  "boundaries": {
+    "start": "The exact ACTOR_TEMPLATE_GUARD animation pointer at 0x001B80B8 selects 0x0012542A.",
+    "end": "The terminal EA at 0x00125488 returns to the guard root; the following 0x0012548E byte begins ACTOR_ANIM_TYPE52_INTERACTION_BASE."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output from 0x0012542A",
+    "Exact guard template and both F5 payloads",
+    "Existing Type-0x2D natural spawn trace",
+    "Existing guard sword-attack movement decode"
+  ],
+  "conclusion": "The Type-0x0A guard parent animation is now a confirmed 100-byte range with exact facing commands, player-distance branch, two Type-0x2D child-spawn payloads, terminal frames, and self-loop. The primary branch's movement override and alternate branch's default movement are preserved as separate raw contracts.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}
