@@ -83,7 +83,7 @@ ignored by Git:
 ```text
 build/assets/
 ├── manifest.json       # ROM identity and extraction summary
-├── levels.json         # level table and asset metadata
+├── levels.json         # level table, asset metadata, and block-dictionary extents
 ├── levels/             # raw decompressed data and rendered PNGs
 ├── sprites.json        # Chopper frame/tile metadata
 ├── sprites/             # SEG-equivalent tile sets and frame PNGs
@@ -105,7 +105,8 @@ build/assets/
 
 The level path implements the format behavior documented by the Noesis
 Aladdin level-dump tool: the level table, RNC/ProPack method 1 data, Genesis
-character tiles, block maps, parallax tiles, and palettes. The sprite path
+character tiles, block maps, the exact 8-byte block dictionaries selected by
+map offsets, parallax tiles, and palettes. The sprite path
 implements the Aladdin Chopper runtime frame and tile tables.
 
 The ROM level table is also recorded in `re/assets/level_table.yml` as the

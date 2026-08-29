@@ -118,6 +118,39 @@ def _read_words(data: bytes, endian: str) -> list[int]:
     return list(struct.unpack(f"{endian}{len(data) // 2}H", data))
 
 
+def _block_dictionary_extent(entry: LevelEntry, map_data: bytes, rom_size: int) -> dict[str, Any] | None:
+    """Describe the referenced 8-byte background-block dictionary span.
+
+    Level maps contain word offsets into the dictionary selected by the level
+    record.  The largest referenced offset plus one 8-byte block is the
+    smallest extent that is completely justified by the renderer and avoids
+    treating the surrounding ROM as level data.
+    """
+
+    if entry.block <= 0 or entry.block >= rom_size:
+        return None
+    words = _read_words(map_data, ">")
+    expected = entry.block_width * entry.block_height
+    if expected <= 0 or not words:
+        return None
+    used = words[:min(expected, len(words))]
+    if not used:
+        return None
+    maximum = max(used)
+    end_exclusive = entry.block + maximum + 8
+    if end_exclusive > rom_size:
+        return None
+    return {
+        "rom": f"0x{entry.block:06X}",
+        "bytes": end_exclusive - entry.block,
+        "end_exclusive": f"0x{end_exclusive:06X}",
+        "record_size": 8,
+        "max_map_offset": f"0x{maximum:04X}",
+        "map_words_used": len(used),
+        "map_words_expected": expected,
+    }
+
+
 def _compose_background(data: bytes, entry: LevelEntry, map_data: bytes) -> list[int]:
     if entry.block_width <= 0 or entry.block_height <= 0:
         raise ValueError("level has no drawable block dimensions")
@@ -212,6 +245,9 @@ def extract_level(data: bytes, index: int, table_offset: int, entry_offset: int,
 
     chars_data = (level_dir / "raw" / "chars.bin").read_bytes()
     map_data = (level_dir / "raw" / "map.bin").read_bytes()
+    block_dictionary = _block_dictionary_extent(entry, map_data, len(data))
+    if block_dictionary is not None:
+        metadata["assets"]["block_dictionary"] = block_dictionary
     # A normal Aladdin room is often wider than a Genesis viewport.  Keep the
     # limit high enough for the full level backgrounds while still refusing
     # the special picture-room entry whose table advertises 15000 blocks.

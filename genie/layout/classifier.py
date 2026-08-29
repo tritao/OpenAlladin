@@ -149,6 +149,52 @@ def _asset_candidates(root: Path, rom_size: int) -> list[Candidate]:
     return result
 
 
+def _level_block_candidates(root: Path, rom_size: int) -> list[Candidate]:
+    """Claim the exact block dictionaries referenced by extracted level maps."""
+
+    document = _read_json(root / "build/assets/levels.json", rom_size)
+    if document is None:
+        return []
+    levels = document.get("levels", [])
+    if not isinstance(levels, list):
+        return []
+
+    grouped: dict[int, dict[str, Any]] = {}
+    for level in levels:
+        if not isinstance(level, dict):
+            continue
+        assets = level.get("assets", {})
+        block = assets.get("block_dictionary") if isinstance(assets, dict) else None
+        if not isinstance(block, dict):
+            continue
+        try:
+            start = parse_int(block["rom"])
+            size = parse_int(block["bytes"])
+            index = parse_int(level.get("index", 0))
+        except (KeyError, TypeError, ValueError):
+            continue
+        if size <= 0 or start < 0 or start + size > rom_size:
+            continue
+        current = grouped.setdefault(start, {"end": start - 1, "levels": []})
+        current["end"] = max(int(current["end"]), start + size - 1)
+        current["levels"].append(index)
+
+    result = []
+    for start, value in sorted(grouped.items()):
+        end = int(value["end"])
+        levels_used = ",".join(f"{index:02d}" for index in sorted(set(value["levels"])))
+        result.append(Candidate(
+            start,
+            end,
+            "LEVEL_DATA",
+            "levels.block_dictionary",
+            93,
+            f"LEVEL_BLOCK_DICTIONARY_{start:06X}",
+            ("level_map_block_offsets", f"levels:{levels_used}"),
+        ))
+    return result
+
+
 def _audio_candidates(root: Path, rom_size: int) -> list[Candidate]:
     """Use the recovered Z80 stream decoder as bounded audio evidence."""
     document = _read_json(root / "build/re/z80-sound-driver/driver.json", rom_size)
@@ -419,6 +465,7 @@ def build_layout(
         ):
             candidates.extend(_stream_candidates(root / relative, rom_size, layout_class))
         candidates.extend(_asset_candidates(root, rom_size))
+        candidates.extend(_level_block_candidates(root, rom_size))
         candidates.extend(_audio_candidates(root, rom_size))
         candidates.extend(_sprite_candidates(root, rom_size))
 

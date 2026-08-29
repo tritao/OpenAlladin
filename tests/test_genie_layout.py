@@ -170,6 +170,28 @@ def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     assert second.start == 0x28
 
 
+def test_layout_uses_level_block_dictionary_extents(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    database_root = _write_database(tmp_path)
+    assets = tmp_path / "build/assets"
+    assets.mkdir(parents=True)
+    _write_json(assets / "levels.json", {
+        "levels": [
+            {"index": 0, "assets": {"block_dictionary": {"rom": "0x20", "bytes": 8}}},
+            {"index": 1, "assets": {"block_dictionary": {"rom": "0x20", "bytes": 16}}},
+            {"index": 2, "assets": {"block_dictionary": {"rom": "0x30", "bytes": 8}}},
+        ],
+    })
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path)
+    shared = layout.at(0x2F)
+    later = layout.at(0x30)
+    assert shared is not None and shared.layout_class == "LEVEL_DATA"
+    assert shared.start == 0x20 and shared.end == 0x2F
+    assert later is not None and later.layout_class == "LEVEL_DATA"
+    assert later.name == "LEVEL_BLOCK_DICTIONARY_000030"
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(

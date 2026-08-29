@@ -205,6 +205,102 @@
     - ghidra_disassembly_001AA484
     - asset_extractor_levels_json
 
+0x00145B2C:
+  name: LEVEL_BLOCK_DICTIONARY_SHARED_00_01_02
+  type: rom_table
+  record_size: 8
+  size: 0x7DA0
+  confidence: confirmed
+  description: Shared 8-byte background-block dictionary selected by level-table records 00, 01, and 02. Map offsets reference the complete 0x00145B2C-0x0014D8CB span, which ends immediately before the level-03 dictionary.
+  evidence:
+    - level_map_block_offsets
+    - asset_extractor_levels_json
+    - level_block_dictionary_extent_static_v1
+
+0x0014D8CC:
+  name: LEVEL_BLOCK_DICTIONARY_LEVEL03
+  type: rom_table
+  record_size: 8
+  size: 0x7A80
+  confidence: confirmed
+  description: 8-byte background-block dictionary for level 03. Its map offsets reference 0x0014D8CC-0x0015534B, immediately before the level-04 dictionary.
+  evidence:
+    - level_map_block_offsets
+    - asset_extractor_levels_json
+    - level_block_dictionary_extent_static_v1
+
+0x0015534C:
+  name: LEVEL_BLOCK_DICTIONARY_LEVEL04
+  type: rom_table
+  record_size: 8
+  size: 0x7470
+  confidence: confirmed
+  description: 8-byte background-block dictionary for level 04. Its map offsets reference 0x0015534C-0x0015C7BB, immediately before the shared level-05/06 dictionary.
+  evidence:
+    - level_map_block_offsets
+    - asset_extractor_levels_json
+    - level_block_dictionary_extent_static_v1
+
+0x0015C7BC:
+  name: LEVEL_BLOCK_DICTIONARY_SHARED_05_06
+  type: rom_table
+  record_size: 8
+  size: 0x7EA8
+  confidence: confirmed
+  description: Shared 8-byte background-block dictionary selected by level-table records 05 and 06. Map offsets reference the complete 0x0015C7BC-0x00164663 span, which ends immediately before the shared level-07/08 dictionary.
+  evidence:
+    - level_map_block_offsets
+    - asset_extractor_levels_json
+    - level_block_dictionary_extent_static_v1
+
+0x00164664:
+  name: LEVEL_BLOCK_DICTIONARY_SHARED_07_08
+  type: rom_table
+  record_size: 8
+  size: 0x5848
+  confidence: confirmed
+  description: Shared 8-byte background-block dictionary selected by level-table records 07 and 08. The picture-room record 08 reuses the same map/block source as level 07; the referenced span is 0x00164664-0x00169EAB.
+  evidence:
+    - level_map_block_offsets
+    - asset_extractor_levels_json
+    - level_block_dictionary_extent_static_v1
+
+0x00169EAC:
+  name: LEVEL_BLOCK_DICTIONARY_LEVEL09
+  type: rom_table
+  record_size: 8
+  size: 0x3BF0
+  confidence: confirmed
+  description: 8-byte background-block dictionary for level 09. Its map offsets reference 0x00169EAC-0x0016DA9B, immediately before the shared level-10/11 dictionary.
+  evidence:
+    - level_map_block_offsets
+    - asset_extractor_levels_json
+    - level_block_dictionary_extent_static_v1
+
+0x0016DA9C:
+  name: LEVEL_BLOCK_DICTIONARY_SHARED_10_11
+  type: rom_table
+  record_size: 8
+  size: 0x7180
+  confidence: confirmed
+  description: Shared 8-byte background-block dictionary selected by level-table records 10 and 11. Level 11 reaches the complete 0x0016DA9C-0x00174C1B span, immediately before the level-12 dictionary.
+  evidence:
+    - level_map_block_offsets
+    - asset_extractor_levels_json
+    - level_block_dictionary_extent_static_v1
+
+0x00174C1C:
+  name: LEVEL_BLOCK_DICTIONARY_LEVEL12
+  type: rom_table
+  record_size: 8
+  size: 0x0CC8
+  confidence: confirmed
+  description: 8-byte background-block dictionary for level 12. Its map offsets reference 0x00174C1C-0x001758E3, immediately before the level-00 character resource.
+  evidence:
+    - level_map_block_offsets
+    - asset_extractor_levels_json
+    - level_block_dictionary_extent_static_v1
+
 0x002A52:
   name: CAMERA_HORIZONTAL_DAMPING_TABLE
   type: u8[0x152]
