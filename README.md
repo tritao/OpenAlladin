@@ -76,6 +76,11 @@ genie layout show 0x001223DA
 genie layout gaps
 genie layout stats
 genie layout validate
+
+genie data stats
+genie data todo --kind animation
+genie data next --kind actor-template
+genie data context 0x00121964
 ```
 
 Generate a complete local ROM representation from the validated layout and

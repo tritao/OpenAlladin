@@ -16,6 +16,7 @@ from genie.commands.record import *
 from genie.commands.replay import *
 from genie.commands.parity import *
 from genie.commands.misc import *
+from genie.commands.data import *
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="genie",
@@ -497,6 +498,43 @@ def build_parser() -> argparse.ArgumentParser:
     add_rom_argument(coverage_gaps)
     coverage_gaps.add_argument("--output", type=Path, default=ROOT / "build/re/coverage-gaps.json")
     coverage_gaps.set_defaults(function=command_coverage_gaps)
+
+    data = commands.add_parser(
+        "data",
+        help="query semantic ROM objects and their evidence",
+    )
+    data_commands = data.add_subparsers(dest="data_command", required=True)
+
+    def add_data_sources(query: argparse.ArgumentParser) -> None:
+        query.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+        query.add_argument("--layout", type=Path, default=ROOT / "build/re/full-rom/layout.json")
+        query.add_argument("--coverage", type=Path)
+        query.add_argument("--animation", type=Path, help="override decoded animation-stream report")
+        query.add_argument("--movement", type=Path, help="override decoded movement-stream report")
+
+    data_stats = data_commands.add_parser("stats", help="show ROM-object and evidence counts")
+    add_data_sources(data_stats)
+    data_stats.add_argument("--json", action="store_true", dest="json_output")
+    data_stats.set_defaults(function=command_data_stats)
+
+    data_todo = data_commands.add_parser("todo", help="rank ROM objects needing semantic evidence")
+    add_data_sources(data_todo)
+    data_todo.add_argument("--kind", choices=DATA_KINDS, default="all")
+    data_todo.add_argument("--limit", type=int, default=25, help="maximum rows; zero means all")
+    data_todo.add_argument("--json", action="store_true", dest="json_output")
+    data_todo.set_defaults(function=command_data_todo)
+
+    data_next = data_commands.add_parser("next", help="show the highest-priority ROM data object")
+    add_data_sources(data_next)
+    data_next.add_argument("--kind", choices=DATA_KINDS, default="all")
+    data_next.add_argument("--json", action="store_true", dest="json_output")
+    data_next.set_defaults(function=command_data_next)
+
+    data_context = data_commands.add_parser("context", help="show semantic evidence for one ROM object")
+    data_context.add_argument("address", type=lambda value: int(value, 0))
+    add_data_sources(data_context)
+    data_context.add_argument("--json", action="store_true", dest="json_output")
+    data_context.set_defaults(function=command_data_context)
 
     status = commands.add_parser("status", help="show repository and RE progress status")
     add_rom_argument(status)

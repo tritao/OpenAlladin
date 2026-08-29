@@ -1,0 +1,624 @@
+"""Read-only indexing of semantic ROM data and its supporting evidence.
+
+The function workflow has a canonical Ghidra database.  This module gives ROM
+objects the equivalent small, queryable view by joining the normalized layout,
+tracked data symbols, VM decoder output, xrefs, and optional runtime coverage.
+It intentionally does not create a second source of truth: tracked symbols and
+the generated layout remain authoritative for names and extents.
+"""
+
+from __future__ import annotations
+
+from collections import Counter
+import json
+from pathlib import Path
+from typing import Any, Iterable
+
+from genie.common import ROOT, parse_int
+from genie.ghidra.database import AnalysisDatabase
+from genie.layout.model import Layout, LayoutRange
+from genie.symbols import Symbol, SymbolStore
+
+
+SEMANTIC_LAYOUT_CLASSES = {
+    "ACTOR_TEMPLATE": "actor-template",
+    "ANIMATION_STREAM": "animation",
+    "MOVEMENT_STREAM": "movement",
+    "POINTER_TABLE": "pointer-table",
+    "JUMP_TABLE": "jump-table",
+    "LEVEL_DATA": "level-data",
+    "SCENE_TABLE": "scene-table",
+    "AUDIO_DATA": "audio-data",
+    "GRAPHICS": "graphics",
+    "COMPRESSED_DATA": "compressed-data",
+    "OPAQUE_DATA": "rom-data",
+}
+
+STREAM_KINDS = {"animation", "movement"}
+
+
+def _address(value: Any) -> int:
+    return parse_int(value)
+
+
+def _hex(value: int) -> str:
+    return f"0x{value:08X}"
+
+
+def _read_json(path: Path) -> Any | None:
+    if not path.is_file():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _stream_values(document: Any) -> Iterable[tuple[str, dict[str, Any]]]:
+    if not isinstance(document, dict):
+        return ()
+    streams = document.get("streams", {})
+    if isinstance(streams, dict):
+        return ((str(name), dict(value)) for name, value in streams.items() if isinstance(value, dict))
+    if isinstance(streams, list):
+        return (
+            (str(value.get("name", "")), dict(value))
+            for value in streams
+            if isinstance(value, dict)
+        )
+    return ()
+
+
+def _symbol_class(symbol: Symbol) -> str:
+    metadata = {str(key): value for key, value in symbol.metadata.items()}
+    type_name = str(metadata.get("type", "")).casefold()
+    name = symbol.name.upper()
+    if type_name in {"actor_template", "actor_template_base"}:
+        return "actor-template"
+    if "ANIM" in name or "ANIMATION" in name:
+        return "animation"
+    if "MOVE" in name or "MOVEMENT" in name:
+        return "movement"
+    if "ACTOR_FRAME" in name:
+        return "graphics"
+    if "pointer_table" in type_name or "POINTER_TABLE" in name:
+        return "pointer-table"
+    if type_name == "rom_table":
+        return "scene-table" if name == "LEVEL_TABLE" else "level-data"
+    if "table" in type_name or "TABLE" in name:
+        return "rom-data"
+    return "rom-data"
+
+
+def _canonical_symbol(symbol: Symbol | None) -> dict[str, Any] | None:
+    return symbol.to_dict() if symbol is not None else None
+
+
+class DataIndex:
+    """Join canonical ROM-object evidence into deterministic query records."""
+
+    def __init__(
+        self,
+        database: AnalysisDatabase | None = None,
+        *,
+        root: Path = ROOT,
+        symbols: SymbolStore | None = None,
+        layout: Layout | None = None,
+        layout_path: Path | None = None,
+        coverage_path: Path | None = None,
+        animation_path: Path | None = None,
+        movement_path: Path | None = None,
+    ):
+        self.root = Path(root).resolve()
+        self.database = database or AnalysisDatabase(self.root / "build/re/full-rom")
+        self.symbols = symbols or SymbolStore(root=self.root)
+        self.layout = layout
+        if self.layout is None:
+            path = Path(layout_path) if layout_path else self.database.root / "layout.json"
+            document = _read_json(path)
+            if document is not None:
+                self.layout = Layout.from_dict(document)
+        self.coverage_path = Path(coverage_path) if coverage_path else self.database.root.parent / "coverage.json"
+        self._decoded: dict[str, dict[int, dict[str, Any]]] = {"animation": {}, "movement": {}}
+        self._decoded_sources: dict[str, dict[int, str]] = {"animation": {}, "movement": {}}
+        self._load_streams("animation", animation_path)
+        self._load_streams("movement", movement_path)
+        self._objects: tuple[dict[str, Any], ...] | None = None
+
+    def _load_streams(self, kind: str, explicit: Path | None) -> None:
+        paths: list[Path] = []
+        if explicit is not None:
+            paths.append(Path(explicit))
+        else:
+            paths.append(self.root / "build/re" / f"{kind}_streams.json")
+            if kind == "animation":
+                paths.append(self.root / "build/assets/animations.json")
+        for path in paths:
+            document = _read_json(path)
+            if document is None:
+                continue
+            for _, stream in _stream_values(document):
+                try:
+                    entry = _address(stream["entry"])
+                except (KeyError, TypeError, ValueError):
+                    continue
+                # The first generated report is the canonical campaign report;
+                # asset extraction is only a fallback for missing stream roots.
+                if entry in self._decoded[kind]:
+                    continue
+                self._decoded[kind][entry] = stream
+                self._decoded_sources[kind][entry] = str(path)
+
+    @property
+    def ram_symbols(self) -> tuple[Symbol, ...]:
+        return self.symbols.list(kind="ram")
+
+    def _symbols_at_start(self) -> dict[int, Symbol]:
+        result: dict[int, Symbol] = {}
+        for symbol in self.symbols.symbols:
+            if symbol.kind == "data":
+                result.setdefault(symbol.address, symbol)
+        return result
+
+    def _object_from_layout(self, item: LayoutRange, symbol: Symbol | None) -> dict[str, Any]:
+        kind = SEMANTIC_LAYOUT_CLASSES[item.layout_class]
+        name = symbol.name if symbol is not None else item.name
+        confidence = symbol.confidence if symbol is not None else "unknown"
+        # A one-byte layout range is the normalized fallback for a tracked
+        # symbol that only establishes an entry point.  Do not call that an
+        # owned extent: the data queue should surface it until a size or a
+        # decoder-backed boundary is established.
+        range_bounded = not (
+            symbol is not None
+            and symbol.range is None
+            and item.source == "tracked.symbol"
+        )
+        result: dict[str, Any] = {
+            "id": f"{kind}:{item.start:08X}:{item.end:08X}",
+            "address": _hex(item.start),
+            "start": _hex(item.start),
+            "end": _hex(item.end),
+            "size": item.size,
+            "kind": kind,
+            "layout_class": item.layout_class,
+            "name": name or f"Data_{item.start:08X}",
+            "confidence": confidence,
+            "source": item.source,
+            "evidence": list(item.evidence),
+            "range_bounded": range_bounded,
+            "canonical_symbol": _canonical_symbol(symbol),
+        }
+        return result
+
+    def _object_from_symbol(self, symbol: Symbol) -> dict[str, Any]:
+        symbol_range = symbol.range
+        if symbol_range is None:
+            metadata_type = str(symbol.metadata.get("type", "")).casefold()
+            inferred_size = None
+            if metadata_type == "rom_pointer":
+                inferred_size = 4
+            elif metadata_type in {"rom_table", "rom_pointer_table"}:
+                try:
+                    inferred_size = _address(symbol.metadata["entry_size"]) * _address(symbol.metadata["count"])
+                except (KeyError, TypeError, ValueError):
+                    inferred_size = None
+            if inferred_size and inferred_size > 0:
+                symbol_range = (symbol.address, symbol.address + inferred_size - 1)
+        symbol_range = symbol_range or (symbol.address, symbol.address)
+        start, end = symbol_range
+        kind = _symbol_class(symbol)
+        return {
+            "id": f"{kind}:{start:08X}:{end:08X}",
+            "address": _hex(start),
+            "start": _hex(start),
+            "end": _hex(end),
+            "size": end - start + 1,
+            "kind": kind,
+            "layout_class": None,
+            "name": symbol.name,
+            "confidence": symbol.confidence,
+            "source": symbol.source,
+            "evidence": list(symbol.provenance),
+            "range_bounded": symbol.range is not None,
+            "canonical_symbol": _canonical_symbol(symbol),
+        }
+
+    def _ram_object(self, symbol: Symbol) -> dict[str, Any]:
+        value = self._object_from_symbol(symbol)
+        value["kind"] = "ram"
+        value["id"] = f"ram:{symbol.address:08X}:{_address(value['end']):08X}"
+        value["layout_class"] = None
+        return value
+
+    def objects(self, *, kind: str | None = None) -> list[dict[str, Any]]:
+        if self._objects is None:
+            by_key: dict[tuple[str, int, int], dict[str, Any]] = {}
+            symbols_by_start = self._symbols_at_start()
+            if self.layout is not None:
+                for item in self.layout.ranges:
+                    object_kind = SEMANTIC_LAYOUT_CLASSES.get(item.layout_class)
+                    if object_kind is None:
+                        continue
+                    value = self._object_from_layout(item, symbols_by_start.get(item.start))
+                    by_key[(object_kind, item.start, item.end)] = value
+
+            # Include tracked data not yet represented by a generated layout.
+            # This is important during an investigation between symbol editing
+            # and the next full layout build.
+            for symbol in self.symbols.list(kind="data"):
+                if not 0 <= symbol.address <= 0xFFFFFF:
+                    continue
+                value = self._object_from_symbol(symbol)
+                start = _address(value["start"])
+                key = (value["kind"], start, _address(value["end"]))
+                existing = by_key.get(key)
+                if existing is None:
+                    # A tracked symbol and a generated layout range may have
+                    # different extents while still describing one object
+                    # (for example an entry-only symbol beside decoder output).
+                    # Keep the normalized layout's ownership range and attach
+                    # the symbol metadata to it instead of manufacturing a
+                    # second overlapping object.
+                    existing = next(
+                        (
+                            candidate
+                            for candidate in by_key.values()
+                            if candidate["kind"] == value["kind"]
+                            and _address(candidate["start"]) == start
+                        ),
+                        None,
+                    )
+                if existing is None:
+                    by_key[key] = value
+                elif existing.get("canonical_symbol") is None:
+                    existing.update({
+                        "name": symbol.name,
+                        "confidence": symbol.confidence,
+                        "canonical_symbol": _canonical_symbol(symbol),
+                        "evidence": list(symbol.provenance),
+                    })
+            self._objects = tuple(sorted(
+                by_key.values(),
+                key=lambda value: (_address(value["start"]), str(value["kind"]), str(value["name"])),
+            ))
+        values = [dict(value) for value in self._objects]
+        normalized = _normalize_kind(kind) if kind else None
+        if normalized:
+            values = [value for value in values if value["kind"] == normalized]
+        return values
+
+    def at(self, address: int) -> dict[str, Any] | None:
+        address = _address(address)
+        exact = [value for value in self.objects() if _address(value["start"]) == address]
+        if exact:
+            return exact[0]
+        for value in self.objects():
+            if _address(value["start"]) <= address <= _address(value["end"]):
+                return value
+        symbol = self.symbols.at(address, include_ranges=True)
+        if symbol is not None and symbol.kind == "ram":
+            return self._ram_object(symbol)
+        return None
+
+    def _records(self, filename: str, key: str) -> list[dict[str, Any]]:
+        try:
+            document = self.database.load(filename)
+        except (OSError, ValueError, TypeError):
+            return []
+        values = document.get(key, []) if isinstance(document, dict) else document
+        return [dict(value) for value in values if isinstance(value, dict)]
+
+    def _incoming_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
+        start, end = _address(value["start"]), _address(value["end"])
+        result = []
+        filenames = ["xrefs.json"]
+        if value["kind"] == "ram":
+            filenames.extend(("memory_reads.json", "memory_writes.json"))
+        for filename in filenames:
+            for reference in self._records(filename, "references"):
+                try:
+                    target = _address(reference.get("to"))
+                except (TypeError, ValueError):
+                    continue
+                if start <= target <= end:
+                    enriched = dict(reference)
+                    enriched.setdefault("source", filename)
+                    result.append(enriched)
+        return sorted(result, key=lambda item: (
+            _address(item.get("from", 0)),
+            _address(item.get("to", 0)),
+            str(item.get("type", "")),
+        ))
+
+    def _consumer_records(self, references: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+        grouped: dict[tuple[int | None, str], dict[str, Any]] = {}
+        for reference in references:
+            raw_address = reference.get("from_function")
+            try:
+                address = _address(raw_address) if raw_address is not None else None
+            except (TypeError, ValueError):
+                address = None
+            name = str(reference.get("from_function_name") or "")
+            if not name and address is not None:
+                symbol = self.symbols.at(address, include_ranges=False)
+                name = symbol.name if symbol is not None else f"Func_{address:08X}"
+            if not name:
+                name = "<non-function reference>"
+            key = (address, name)
+            item = grouped.setdefault(key, {
+                "address": _hex(address) if address is not None else None,
+                "name": name,
+                "references": 0,
+            })
+            item["references"] += 1
+        return sorted(grouped.values(), key=lambda item: (str(item["name"]), str(item["address"])))
+
+    def _runtime(self, value: dict[str, Any]) -> dict[str, Any]:
+        document = _read_json(self.coverage_path)
+        result: dict[str, Any] = {
+            "observed": False,
+            "scenarios": [],
+            "source": str(self.coverage_path),
+        }
+        if document is None:
+            return result
+        start, end = _address(value["start"]), _address(value["end"])
+        matches: list[dict[str, Any]] = []
+        if isinstance(document, dict):
+            for key in ("objects", "data", "ranges", "addresses", "edges"):
+                entries = document.get(key, {})
+                if isinstance(entries, dict):
+                    entries = [dict(item, address=raw_address) if isinstance(item, dict) else {"address": raw_address}
+                               for raw_address, item in entries.items()]
+                if not isinstance(entries, list):
+                    continue
+                for item in entries:
+                    if not isinstance(item, dict):
+                        continue
+                    for field in ("address", "target", "to", "start"):
+                        try:
+                            target = _address(item.get(field))
+                        except (TypeError, ValueError):
+                            continue
+                        if start <= target <= end:
+                            matches.append(item)
+                            break
+        scenarios = sorted({
+            str(scenario)
+            for item in matches
+            for scenario in item.get("scenarios", ()) or ()
+        })
+        result["observed"] = bool(matches)
+        result["scenarios"] = scenarios
+        result["match_count"] = len(matches)
+        return result
+
+    def _decoded_for(self, value: dict[str, Any]) -> dict[str, Any] | None:
+        kind = value["kind"]
+        if kind not in STREAM_KINDS:
+            return None
+        entry = _address(value["start"])
+        stream = self._decoded[kind].get(entry)
+        if stream is None:
+            return {"available": False}
+        decoded_bytes = stream.get("bytes_decoded")
+        try:
+            decoded_bytes = _address(decoded_bytes) if decoded_bytes is not None else 0
+        except (TypeError, ValueError):
+            decoded_bytes = 0
+        if not decoded_bytes:
+            records = stream.get("instructions", []) if kind == "animation" else stream.get("steps", [])
+            ends = []
+            for record in records if isinstance(records, list) else ():
+                if not isinstance(record, dict):
+                    continue
+                try:
+                    record_start = _address(record["address"])
+                    record_size = _address(record.get("size", 0))
+                except (KeyError, TypeError, ValueError):
+                    continue
+                ends.append(record_start + record_size - entry)
+            decoded_bytes = max(ends, default=0)
+        declared_size = int(value["size"])
+        return {
+            "available": True,
+            "source": self._decoded_sources[kind].get(entry),
+            "name": stream.get("name"),
+            "bytes_decoded": decoded_bytes,
+            "stopped_reason": stream.get("stopped_reason"),
+            "size_matches": decoded_bytes == declared_size,
+        }
+
+    def _stream_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
+        decoded = self._decoded_for(value)
+        if not decoded or not decoded.get("available"):
+            return []
+        kind = value["kind"]
+        stream = self._decoded[kind].get(_address(value["start"]), {})
+        pointer_keys = {
+            "branch_target", "target", "stream_target", "animation_target",
+            "movement_target", "continuation", "return_target", "value",
+        }
+        pointers: set[int] = set()
+
+        def visit(node: Any) -> None:
+            if isinstance(node, dict):
+                for key, child in node.items():
+                    if key in pointer_keys:
+                        try:
+                            pointers.add(_address(child))
+                        except (TypeError, ValueError):
+                            pass
+                    visit(child)
+            elif isinstance(node, list):
+                for child in node:
+                    visit(child)
+
+        visit(stream)
+        current = self.at(_address(value["start"]))
+        result: dict[tuple[str, int], dict[str, Any]] = {}
+        for pointer in sorted(pointers):
+            target = self.at(pointer)
+            if target is None or target["kind"] not in STREAM_KINDS:
+                continue
+            if current is not None and target["id"] == current["id"]:
+                continue
+            result[(target["kind"], _address(target["start"]))] = {
+                "address": target["address"],
+                "name": target["name"],
+                "kind": target["kind"],
+            }
+        return sorted(result.values(), key=lambda item: (_address(item["address"]), item["kind"]))
+
+    def _overlaps(self, value: dict[str, Any]) -> list[dict[str, Any]]:
+        start, end = _address(value["start"]), _address(value["end"])
+        result = []
+        for other in self.objects():
+            if other["id"] == value["id"]:
+                continue
+            if not value["range_bounded"] or not other["range_bounded"]:
+                continue
+            # Individual named pointer entries are intentionally nested in
+            # their owning pointer table.  Keep overlap detection focused on
+            # competing ownership claims rather than this normal table shape.
+            value_type = str((value.get("canonical_symbol") or {}).get("type", "")).casefold()
+            other_type = str((other.get("canonical_symbol") or {}).get("type", "")).casefold()
+            if (
+                value_type == "rom_pointer" and other["kind"] == "pointer-table"
+            ) or (
+                other_type == "rom_pointer" and value["kind"] == "pointer-table"
+            ):
+                continue
+            other_start, other_end = _address(other["start"]), _address(other["end"])
+            if start <= other_end and other_start <= end:
+                result.append({
+                    "address": other["address"],
+                    "name": other["name"],
+                    "kind": other["kind"],
+                    "start": other["start"],
+                    "end": other["end"],
+                })
+        return sorted(result, key=lambda item: _address(item["start"]))
+
+    def context(self, address: int) -> dict[str, Any] | None:
+        value = self.at(address)
+        if value is None:
+            return None
+        references = self._incoming_references(value)
+        decoded = self._decoded_for(value)
+        return {
+            "address": _hex(_address(address)),
+            "object": value,
+            "consumers": self._consumer_records(references),
+            "references": references,
+            "outgoing_stream_refs": self._stream_references(value),
+            "decoded": decoded["available"] if decoded else None,
+            "decoder": decoded,
+            "range_bounded": bool(value["range_bounded"]),
+            "overlap": self._overlaps(value),
+            "runtime": self._runtime(value),
+        }
+
+    def todo(self, *, kind: str | None = None) -> list[dict[str, Any]]:
+        result = []
+        for value in self.objects(kind=kind):
+            context = self.context(_address(value["start"]))
+            consumers = context["consumers"] if context else []
+            decoder = context["decoder"] if context else None
+            runtime = context["runtime"] if context else {"observed": False}
+            reasons: list[str] = []
+            if not value["range_bounded"]:
+                reasons.append("unbounded")
+            if value["kind"] in STREAM_KINDS and not (decoder and decoder.get("available")):
+                reasons.append("not_decoded")
+            if decoder and decoder.get("available") and not decoder.get("size_matches", True):
+                reasons.append("decoded_size_mismatch")
+            if not consumers:
+                reasons.append("no_consumers")
+            if value["confidence"] in {"unknown", "provisional"}:
+                reasons.append("low_confidence")
+            if context and context["overlap"]:
+                reasons.append("overlap")
+            if not reasons:
+                continue
+            score = (
+                (10_000 if "unbounded" in reasons else 0)
+                + (5_000 if "decoded_size_mismatch" in reasons else 0)
+                + (2_500 if "not_decoded" in reasons else 0)
+                + (1_000 if "no_consumers" in reasons else 0)
+                + (500 if "overlap" in reasons else 0)
+                + (100 if "low_confidence" in reasons else 0)
+            )
+            result.append({
+                "rank": 0,
+                "score": score,
+                "address": value["address"],
+                "name": value["name"],
+                "kind": value["kind"],
+                "size": value["size"],
+                "confidence": value["confidence"],
+                "range_bounded": value["range_bounded"],
+                "decoded": bool(decoder and decoder.get("available")),
+                "runtime_observed": bool(runtime.get("observed")),
+                "consumers": len(consumers),
+                "reasons": reasons,
+            })
+        result.sort(key=lambda item: (-item["score"], -int(item["runtime_observed"]), _address(item["address"])))
+        for rank, item in enumerate(result, 1):
+            item["rank"] = rank
+        return result
+
+    def stats(self) -> dict[str, Any]:
+        values = self.objects()
+        by_kind = Counter(value["kind"] for value in values)
+        by_layout_class = Counter(value["layout_class"] or "unclassified" for value in values)
+        contexts = [self.context(_address(value["start"])) for value in values]
+        bounded = sum(bool(value["range_bounded"]) for value in values)
+        decoded = sum(bool(context and context["decoded"]) for context in contexts)
+        consumers = sum(bool(context and context["consumers"]) for context in contexts)
+        runtime = sum(bool(context and context["runtime"].get("observed")) for context in contexts)
+        overlaps = sum(bool(context and context["overlap"]) for context in contexts)
+        gaps = list(self.layout.gaps()) if self.layout is not None else []
+        ram_references = {
+            symbol.address
+            for symbol in self.ram_symbols
+            if self._incoming_references(self._ram_object(symbol))
+        }
+        return {
+            "objects": len(values),
+            "by_kind": dict(sorted(by_kind.items())),
+            "by_layout_class": dict(sorted(by_layout_class.items())),
+            "ranged": bounded,
+            "unbounded": len(values) - bounded,
+            "decoded": decoded,
+            "with_consumers": consumers,
+            "runtime_observed": runtime,
+            "overlapping_objects": overlaps,
+            "unowned_rom_ranges": len(gaps),
+            "unowned_rom_bytes": sum(item.size for item in gaps),
+            "ram": {
+                "referenced": len(ram_references),
+                "named": sum(bool(symbol.name) for symbol in self.ram_symbols),
+                "typed": sum(bool(symbol.metadata.get("type")) for symbol in self.ram_symbols),
+            },
+        }
+
+
+def _normalize_kind(kind: str | None) -> str | None:
+    if kind is None:
+        return None
+    aliases = {
+        "all": None,
+        "actor_template": "actor-template",
+        "template": "actor-template",
+        "actor-template": "actor-template",
+        "animation_stream": "animation",
+        "animation": "animation",
+        "movement_stream": "movement",
+        "movement": "movement",
+    }
+    return aliases.get(str(kind).casefold(), str(kind).casefold())
+
+
+__all__ = [
+    "DataIndex",
+    "SEMANTIC_LAYOUT_CLASSES",
+    "STREAM_KINDS",
+]
