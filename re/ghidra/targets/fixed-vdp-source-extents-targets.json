@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-fixed-vdp-source-extents-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": [
+    {
+      "address": "0x0011F000",
+      "name": "LEVEL_F800_TILEMAP_SOURCE",
+      "size": 2048,
+      "end": "0x0011F7FF",
+      "consumer": "0x001B2E5A VDP_CopyLevelF800Tilemap",
+      "copy_words": 1024,
+      "destination": "0x0000F800"
+    },
+    {
+      "address": "0x00129CAA",
+      "name": "SCENE_INITIAL_C000_PALETTE_DATA",
+      "size": 64,
+      "end": "0x00129CE9",
+      "consumer": "0x001B25FE SceneResource_LoadInitialC000AndPaletteSources",
+      "copy_words": 32,
+      "destination": "0x0000C000"
+    },
+    {
+      "address": "0x00129F00",
+      "name": "SCENE_F800_TILEMAP_SOURCE",
+      "size": 2048,
+      "end": "0x0012A6FF",
+      "consumer": "0x001B2E44 VDP_CopyScenePlaneF800",
+      "copy_words": 1024,
+      "destination": "0x0000F800"
+    }
+  ],
+  "evidence": [
+    "Exact immediate copy counts in the named VDP routines",
+    "Existing scene-resource transfer targets and findings",
+    "Verified ROM source ranges before the following code/data boundaries"
+  ],
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled"
+}

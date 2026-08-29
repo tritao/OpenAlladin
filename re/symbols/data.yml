@@ -174,9 +174,10 @@
 0x00129CAA:
   name: SCENE_INITIAL_C000_PALETTE_DATA
   type: u16[32]
+  size: 64
   format: vdp_words
   confidence: decompiled
-  description: 32-word scene-initialization block copied to VRAM C000; its first and second 16-word bands are also published as the initial palette sources at FF7262 and FF7266.
+  description: Exact 32-word (64-byte) scene-initialization block at 0x00129CAA-0x00129CE9 copied to VRAM C000; its first and second 16-word bands are also published as the initial palette sources at FF7262 and FF7266.
   evidence:
     - ghidra_decompile_001B25FE
     - ghidra_scene_initial_vdp_palette_targets
@@ -2006,9 +2007,10 @@
 0x0011F000:
   name: LEVEL_F800_TILEMAP_SOURCE
   type: u16[1024]
+  size: 2048
   format: vdp_tilemap_words
   confidence: decompiled
-  description: Fixed 0x400-word level tilemap source copied to VRAM F800 by VDP_CopyLevelF800Tilemap during level setup.
+  description: Exact 0x400-word (0x800-byte) level tilemap source at 0x0011F000-0x0011F7FF copied to VRAM F800 by VDP_CopyLevelF800Tilemap during level setup.
   evidence:
     - ghidra_disassembly_001B2E5A
     - ghidra_scene_resource_command_handlers_targets
@@ -2016,9 +2018,10 @@
 0x00129F00:
   name: SCENE_F800_TILEMAP_SOURCE
   type: u16[1024]
+  size: 2048
   format: vdp_tilemap_words
   confidence: decompiled
-  description: Fixed 0x400-word scene tilemap source copied to VRAM F800 by VDP_CopyScenePlaneF800.
+  description: Exact 0x400-word (0x800-byte) scene tilemap source at 0x00129F00-0x0012A6FF copied to VRAM F800 by VDP_CopyScenePlaneF800.
   evidence:
     - ghidra_disassembly_001B2E44
     - ghidra_scene_resource_transfer_targets
