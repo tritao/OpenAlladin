@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/level09-type50-template-targets.json",
+  "consumer": {
+    "address": "0x001B614C",
+    "selection_site": "0x001B6186",
+    "allocator": "Actor_FindFreeSlotBackward at 0x001AE292",
+    "initializer": "Actor_InitializeFromTemplate at 0x001AE30A"
+  },
+  "template": {
+    "address": "0x001B7FA8",
+    "range": ["0x001B7FA8", "0x001B7FBB"],
+    "runtime_type": "0x50",
+    "movement_stream": null,
+    "template_word": "0x4000",
+    "animation_stream": null,
+    "resource_count": "0x0B"
+  },
+  "caller_overrides": {
+    "movement_stream": "0x001203F2",
+    "animation_stream": "0x00124B94",
+    "facing_byte": "0xFF",
+    "response_byte": "0x02",
+    "position": "X=0x0A22; Y=0x0220 plus the low 0x20-bit random variation"
+  },
+  "evidence": [
+    "Direct Level09_EnterRoutine disassembly and cached decompilation",
+    "Exact 20-byte record boundary between ACTOR_TEMPLATE_TYPE_4F_INTERACTION and ACTOR_TEMPLATE_TYPE_64",
+    "Post-initialization writes of the Level-09 movement, animation, facing, response, and position fields"
+  ],
+  "conclusion": "The Level-09 callback's Type-0x50 spawn base is statically closed at its exact selection, initialization, and caller-override contract. The broader presentation/handhold role remains intentionally described only by its observable fields.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -3187,6 +3187,17 @@
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
 
+0x001B7FA8:
+  name: ACTOR_TEMPLATE_TYPE_50_LEVEL09_SPAWN_BASE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x50 Level-09 spawn base selected by Level09_EnterRoutine at 0x001B6186; its template supplies the type, base flags, template word 0x4000, and eleven resources, while the callback installs movement 0x001203F2, animation 0x00124B94, facing 0xFF, response byte 2, and the level-relative position.
+  evidence:
+    - ghidra_decompile_001B614C
+    - level09_type50_template_targets
+    - actor_template_grid_xrefs
+
 0x001B7C74:
   name: ACTOR_TEMPLATE_TYPE_0F_INTERACTION
   type: actor_template

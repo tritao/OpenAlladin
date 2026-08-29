@@ -3213,10 +3213,11 @@
 0x001B614C:
   name: Level09_EnterRoutine
   confidence: decompiled
-  description: Level-table entry-9 per-frame callback; advances its event cadence, evaluates player-coordinate windows, conditionally spawns a type-0x50 presentation actor, and increments its bounded event counter.
+  description: Level-table entry-9 per-frame callback; advances its event cadence, evaluates player-coordinate windows, conditionally spawns ACTOR_TEMPLATE_TYPE_50_LEVEL09_SPAWN_BASE into a backward slot before installing the level-specific movement/animation and position fields, and increments its bounded event counter.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
+    - level09_type50_template_targets
 0x001B653E:
   name: Level09_ExitRoutine
   confidence: decompiled
