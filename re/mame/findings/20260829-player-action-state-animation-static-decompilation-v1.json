@@ -1,0 +1,96 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-action-state-animation-static-targets.json",
+  "streams": [
+    {
+      "address": "0x001227D2",
+      "name": "PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN",
+      "range": "0x001227D2-0x0012280B",
+      "bytes": 58,
+      "frames": ["0x0A86", "0x0A86", "0x0A8A"],
+      "state_writes": "ED writes player action-response field 0xF0D8 to 2 after each opening frame",
+      "gates": [
+        "F2 at 0x001227EA tests flag target 0x870009",
+        "F4 at 0x001227F2 and 0x001227FC compare terrain stop fields 0xF0C5 and 0xF0C6"
+      ],
+      "continuation": "EA at 0x00122806 enters the local continuation at 0x00122820",
+      "selector": "Player_SelectActionAnimation selects this stream for a grounded action while PLAYER_TERRAIN_PUSH_DOWN_STATE is active."
+    },
+    {
+      "address": "0x001228AC",
+      "name": "PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED",
+      "range": "0x001228AC-0x0012290F",
+      "bytes": 100,
+      "frames": ["0x0A9E", "0x0AA2", "0x0AA6", "0x0AAA"],
+      "state_writes": "ED writes player action-response field 0xF0D8 to 1 after each frame phase",
+      "audio": "F3 at 0x001228D4 and the later continuation play sound 0",
+      "gates": [
+        "F2 at 0x001228EE tests flag target 0x870009",
+        "F4 at 0x001228F6 and 0x00122900 compare terrain stop fields 0xF0C5 and 0xF0C6"
+      ],
+      "continuation": "EA at 0x0012290A enters the local continuation at 0x00122924",
+      "selector": "Player_SelectActionAnimation selects this stream when TERRAIN_RESPONSE_TIMER_STATE and TERRAIN_LANDING_STATE are active."
+    },
+    {
+      "address": "0x0012295E",
+      "name": "PLAYER_ANIM_ACTION_AIRBORNE",
+      "range": "0x0012295E-0x001229C1",
+      "bytes": 100,
+      "frames": ["0x0AB6", "0x0ABA", "0x0ABE", "0x0AC2"],
+      "state_writes": "ED writes player action-response field 0xF0D8 to 1 after each frame phase",
+      "audio": "F3 at 0x0012298E and the later continuation play sound 0",
+      "gates": [
+        "F2 at 0x001229A0 tests flag target 0x870009",
+        "F4 at 0x001229A8 and 0x001229B2 compare terrain stop fields 0xF0C5 and 0xF0C6"
+      ],
+      "continuation": "EA at 0x001229BC enters the local continuation at 0x001229D6",
+      "selector": "Player_SelectActionAnimation selects this fallback when the special-camera, transition-lock, grounded, and terrain-timer branches do not apply."
+    },
+    {
+      "address": "0x00122A10",
+      "name": "PLAYER_ANIM_ACTION_TERRAIN_PUSH_UP",
+      "range": "0x00122A10-0x00122AF5",
+      "bytes": 230,
+      "frames": ["0x0AE6", "0x0AEA", "0x0AEE", "0x0AF2", "0x0AF6", "0x0AFA", "0x0AFE", "0x0B02", "0x0B06", "0x0B0A", "0x0B0E", "0x0B12"],
+      "state_writes": [
+        "ED writes player action-response field 0xF0D9 to 1 through the opening 0x0AE6/0x0AEA phases",
+        "ED writes player action-response field 0xF0D8 to 1 through the later response phases"
+      ],
+      "timing": "EE 0x01 at 0x00122A38 and EF at 0x00122ADE encode the distinct action phases",
+      "audio": "F3 sound 0 at 0x00122A3A, 0x00122A8C, and 0x00122AE0",
+      "handoff": "F8 at 0x00122AF4 -> dynamic player animation state selection",
+      "selector": "Player_SelectActionAnimation selects this stream for a grounded action when TERRAIN_PUSH_UP is active."
+    },
+    {
+      "address": "0x00122AF6",
+      "name": "PLAYER_ANIM_ACTION_TRANSITION_GATE",
+      "range": "0x00122AF6-0x00122B57",
+      "bytes": 98,
+      "frames": ["0x0ACE", "0x0AD2", "0x0AD6", "0x0ADA", "0x0ADE", "0x0AE2"],
+      "state_writes": [
+        "ED writes player action-response field 0xF0D9 to 1 through the opening phases",
+        "ED writes player action-response field 0xF0D8 to 1 through the response phases"
+      ],
+      "audio": "F3 sound 1 at 0x00122B0E, followed by sound 0 at 0x00122B18",
+      "handoff": "F8 at 0x00122B56 -> dynamic player animation state selection",
+      "selector": "Player_SelectActionAnimation selects this stream when PLAYER_INTERACTION_TRANSITION_LOCK or PLAYER_TRANSITION_GATE is active."
+    }
+  ],
+  "boundaries": {
+    "stream_group": "The five direct action roots are bounded by exact local branch/selection boundaries at 0x0012280C, 0x00122910, 0x001229C2, 0x00122AF6, and 0x00122B58. Each continuation target remains outside its root-sized ownership range."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Player_SelectActionAnimation exact selector branches",
+    "Exact repeated ED action-response publication and F3 audio commands",
+    "Exact non-overlapping root boundaries"
+  ],
+  "conclusion": "The remaining direct player action-selection roots are now named and bounded. The action selector distinguishes grounded push-down, terrain-timer grounded, airborne fallback, grounded push-up, and transition-lock presentation, with each stream publishing the action-side state fields consumed by the surrounding player logic. The static evidence does not infer meanings beyond those selector and stream contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

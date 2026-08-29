@@ -1402,12 +1402,13 @@
     - animation_stream_decoder
 
 0x001227D2:
-  name: PLAYER_ANIM_STATE_1227D2
+  name: PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN
+  size: 58
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Grounded push-down action stream selected by Player_SelectActionAnimation when TERRAIN_LANDING_STATE and PLAYER_TERRAIN_PUSH_DOWN_STATE are active. It publishes player action-response field 0xF0D8 as 2 during the opening frames and gates the continuation on the interaction flag and terrain stop fields.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_action_animation_selector
+    - animation_stream_decoder
 
 0x001228A0:
   name: PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE_ALTERNATE
@@ -1419,36 +1420,40 @@
     - animation_stream_decoder
 
 0x001228AC:
-  name: PLAYER_ANIM_STATE_1228AC
+  name: PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED
+  size: 100
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Grounded terrain-timer action stream selected by Player_SelectActionAnimation when TERRAIN_RESPONSE_TIMER_STATE and TERRAIN_LANDING_STATE are active. It publishes player action-response field 0xF0D8 as 1 through the 0x0A9E-0x0AAA sequence, plays sound 0, and gates continuation on the interaction flag and terrain stop fields.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_action_animation_selector
+    - animation_stream_decoder
 
 0x0012295E:
-  name: PLAYER_ANIM_STATE_12295E
+  name: PLAYER_ANIM_ACTION_AIRBORNE
+  size: 100
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Airborne action stream selected by Player_SelectActionAnimation when no settled landing branch applies. It publishes player action-response field 0xF0D8 as 1 through the 0x0AB6-0x0AC2 sequence, plays sound 0, and gates continuation on the interaction flag and terrain stop fields.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_action_animation_selector
+    - animation_stream_decoder
 
 0x00122A10:
-  name: PLAYER_ANIM_STATE_122A10
+  name: PLAYER_ANIM_ACTION_TERRAIN_PUSH_UP
+  size: 230
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Grounded push-up action stream selected by Player_SelectActionAnimation when TERRAIN_LANDING_STATE is active and TERRAIN_PUSH_UP is set. It publishes action-response fields 0xF0D9 and 0xF0D8, includes the encoded one-frame delay and sound-0 phases, and enters dynamic state selection after the 0x0AE6-0x0B12 sequence.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_action_animation_selector
+    - animation_stream_decoder
 
 0x00122AF6:
-  name: PLAYER_ANIM_STATE_122AF6
+  name: PLAYER_ANIM_ACTION_TRANSITION_GATE
+  size: 98
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Transition-lock action stream selected by Player_SelectActionAnimation when PLAYER_INTERACTION_TRANSITION_LOCK or PLAYER_TRANSITION_GATE is active. It publishes action-response fields 0xF0D9 and 0xF0D8, plays sounds 1 and 0 at the opening phases, presents the 0x0ACE-0x0AE2 sequence, and enters dynamic state selection.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_action_animation_selector
+    - animation_stream_decoder
 
 0x0012510A:
   name: ACTOR_ANIM_TYPE30_PRESENTATION_CHILD

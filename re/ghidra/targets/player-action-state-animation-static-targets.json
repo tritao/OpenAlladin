@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-action-state-animation-static",
+    "purpose": "Resolve the remaining direct Player_SelectActionAnimation roots for grounded push-down, terrain-timer, airborne, grounded push-up, and transition-lock action states."
+  },
+  "targets": [
+    { "address": "0x001227D2", "name": "PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN" },
+    { "address": "0x001228AC", "name": "PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED" },
+    { "address": "0x0012295E", "name": "PLAYER_ANIM_ACTION_AIRBORNE" },
+    { "address": "0x00122A10", "name": "PLAYER_ANIM_ACTION_TERRAIN_PUSH_UP" },
+    { "address": "0x00122AF6", "name": "PLAYER_ANIM_ACTION_TRANSITION_GATE" },
+    { "address": "0x001A9502", "name": "Player_SelectActionAnimation" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF0D8", "name": "PLAYER_ACTION_RESPONSE_STATE_A" },
+    { "address": "0x00FFF0D9", "name": "PLAYER_ACTION_RESPONSE_STATE_B" },
+    { "address": "0x00FFF0DE", "name": "PLAYER_TERRAIN_PUSH_DOWN_STATE" },
+    { "address": "0x00FFF0E7", "name": "PLAYER_INTERACTION_ANIMATION_GATE" },
+    { "address": "0x00FFF0C5", "name": "TERRAIN_STOP_LEFT_MOTION" },
+    { "address": "0x00FFF0C6", "name": "TERRAIN_LEFT_INNER_PROBE" },
+    { "address": "0x00FFF115", "name": "TERRAIN_RESPONSE_LATCH" }
+  ]
+}
