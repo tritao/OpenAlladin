@@ -667,6 +667,15 @@
     - actor_template_runtime_trace
     - movement_stream_decoder
 
+0x001217A2:
+  name: ACTOR_MOVE_TYPE84_SCENE_RESET
+  size: 18
+  confidence: decompiled
+  description: Type-0x84 scene-reset movement loop installed by ACTOR_TEMPLATE_TYPE_84_SCENE_RESET. It applies five (+1, 0) steps followed by a (+1, -1) step and loops back to 0x001217A2; the following 0x001217B4 region is a separate actor movement entry.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - movement_stream_decoder
+
 0x001217B4:
   name: ACTOR_MOVE_STATE_1217B4
   size: 102
@@ -1435,6 +1444,74 @@
   evidence:
     - ghidra_player_animation_selector_001AD150
     - animation_stream_classifier
+
+0x00125C26:
+  name: ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN
+  size: 44
+  confidence: decompiled
+  description: Opening segment of the Type-0x84 terminal-terrain animation installed by TerrainHandler_TerminalTransition. It presents the 0x0F52-0x0F76 terminal sequence, plays sound 0x3C, clears the actor at 0x00125C50, and continues at PLAYER_ANIM_STATE_125C52.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - ghidra_terrain_terminal_transition
+    - animation_stream_decoder
+
+0x00125CC6:
+  name: ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION
+  size: 76
+  confidence: decompiled
+  description: Type-0x84 terminal-interaction animation installed by the reverse-slot selector at 0x001B65D4. It spawns the two terminal child templates, waits for the global interaction state at 0x00FF7E28 to clear, plays sound 0x71, and loops from 0x00125CE8.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - interaction_spawn_early_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125D12:
+  name: ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_CHILD
+  size: 70
+  confidence: decompiled
+  description: Type-0x84 terminal-interaction child animation supplied by the F5 template at 0x001B82C8. It presents the shared 0x077E/0x06AE-0x06CE frame sequence, writes actor field 0xF117 to 1 and then 0, and loops from 0x00125D52.
+  evidence:
+    - type84_terminal_interaction_static_decompilation
+    - animation_stream_decoder
+
+0x00125DC4:
+  name: ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY
+  size: 38
+  confidence: decompiled
+  description: Fixed-slot scene-initialization animation for ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY. It presents the paired 0x070A-0x0726 frame sequence and loops at 0x00125DE4.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - ghidra_scene_initialize_active_scene
+    - animation_stream_decoder
+
+0x00126030:
+  name: ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE
+  size: 18
+  confidence: decompiled
+  description: Three-frame Type-0x84 terminal-interaction response supplied by the F5 template at 0x001B8458. It presents paired 0x0F7A, 0x0F7E, and 0x0F82 frames and loops at 0x0012603C.
+  evidence:
+    - type84_terminal_interaction_static_decompilation
+    - animation_stream_decoder
+
+0x001261D0:
+  name: ACTOR_ANIM_TYPE84_SCENE_INITIAL_SECONDARY
+  size: 58
+  confidence: decompiled
+  description: Primary-gameplay-slot scene-initialization animation for ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY. It presents the 0x09D2-0x0A06 frame sequence and loops through the embedded entry at 0x001261E0.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - ghidra_scene_initialize_active_scene
+    - animation_stream_decoder
+
+0x0012620A:
+  name: ACTOR_ANIM_TYPE84_SCENE_RESET
+  size: 36
+  confidence: decompiled
+  description: Scene-reset animation for ACTOR_TEMPLATE_TYPE_84_SCENE_RESET. It presents the repeated 0x0EEE-0x0EFE frame sequence and loops at 0x00126228.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - ghidra_scene_level_actor_block
+    - animation_stream_decoder
 
 0x001B79B8:
   name: ACTOR_TEMPLATE_BASE_ZERO
@@ -2300,6 +2377,16 @@
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
 
+0x001B82C8:
+  name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 terminal-interaction child template supplied by the F5 command at 0x00125CC8. It has no movement stream, uses animation ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_CHILD, and owns fourteen resources.
+  evidence:
+    - type84_terminal_interaction_static_decompilation
+    - animation_stream_decoder
+
 0x001B8318:
   name: ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY
   type: actor_template
@@ -2339,6 +2426,16 @@
   evidence:
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
+
+0x001B8458:
+  name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 terminal-interaction response template supplied by the F5 command at 0x00125CD8. It has no movement stream, uses animation ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE, owns one resource, and carries the terminal flag byte 0xFF.
+  evidence:
+    - type84_terminal_interaction_static_decompilation
+    - animation_stream_decoder
 
 0x001B82F0:
   name: ACTOR_TEMPLATE_TYPE_74_LEVEL06_EXIT

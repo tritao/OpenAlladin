@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/terminal-scene-animation-static-targets.json",
+  "animations": [
+    { "address": "0x00125C26", "name": "ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN", "range": "0x00125C26-0x00125C51", "consumer": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TERRAIN", "handoff": "F600 at 0x00125C50 continues at PLAYER_ANIM_STATE_125C52" },
+    { "address": "0x00125CC6", "name": "ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION", "range": "0x00125CC6-0x00125D11", "consumer": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION", "children": ["ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_CHILD", "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_RESPONSE"] },
+    { "address": "0x00125D12", "name": "ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_CHILD", "range": "0x00125D12-0x00125D57", "producer": "F5 at 0x00125CC8" },
+    { "address": "0x00125DC4", "name": "ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY", "range": "0x00125DC4-0x00125DE9", "consumer": "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY" },
+    { "address": "0x00126030", "name": "ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE", "range": "0x00126030-0x0012603F", "producer": "F5 at 0x00125CD8" },
+    { "address": "0x001261D0", "name": "ACTOR_ANIM_TYPE84_SCENE_INITIAL_SECONDARY", "range": "0x001261D0-0x00126209", "consumer": "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY" },
+    { "address": "0x0012620A", "name": "ACTOR_ANIM_TYPE84_SCENE_RESET", "range": "0x0012620A-0x0012622D", "consumer": "ACTOR_TEMPLATE_TYPE_84_SCENE_RESET" }
+  ],
+  "movement": { "address": "0x001217A2", "name": "ACTOR_MOVE_TYPE84_SCENE_RESET", "range": "0x001217A2-0x001217B3", "consumer": "ACTOR_TEMPLATE_TYPE_84_SCENE_RESET" },
+  "templates": [
+    { "address": "0x001B82C8", "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_CHILD", "animation_stream": "0x00125D12", "resource_count": "0x0E" },
+    { "address": "0x001B8458", "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_RESPONSE", "animation_stream": "0x00126030", "resource_count": "0x01", "template_flag": "0xFF" }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Lossless MovementDecoder output",
+    "Exact direct template records and F5 payloads",
+    "Exact VM terminator and shared-stream boundaries"
+  ],
+  "conclusion": "Terminal terrain, terminal interaction, fixed scene initialization, and scene-reset roots are now range-bounded. The terminal-terrain opening explicitly hands off to the existing player stream at 0x00125C52, and the terminal interaction's two F5 child records are tracked without overlapping the neighboring scene streams.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,104 @@
+{
+  "format": "openaladdin-terminal-scene-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Range-bound the direct terminal-transition and scene-initialization animation/movement roots and their F5 child templates.",
+  "animations": [
+    {
+      "address": "0x00125C26",
+      "name": "ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN",
+      "range": ["0x00125C26", "0x00125C51"],
+      "bytes": 44,
+      "consumer": "0x001B82A0 ACTOR_TEMPLATE_TYPE_84_TERMINAL_TERRAIN",
+      "behavior": "Terminal frame/sound opening ending with F600 at 0x00125C50; execution continues at PLAYER_ANIM_STATE_125C52."
+    },
+    {
+      "address": "0x00125CC6",
+      "name": "ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION",
+      "range": ["0x00125CC6", "0x00125D11"],
+      "bytes": 76,
+      "consumer": "0x001B82B4 ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION",
+      "behavior": "Two child spawns, global interaction-state wait, sound 0x71, and loop from 0x00125D0C to 0x00125CE8."
+    },
+    {
+      "address": "0x00125D12",
+      "name": "ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_CHILD",
+      "range": ["0x00125D12", "0x00125D57"],
+      "bytes": 70,
+      "consumer": "F5 at 0x00125CC8 through ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_CHILD",
+      "behavior": "Shared frame sequence with actor-field 0xF117 write/clear and unconditional loop."
+    },
+    {
+      "address": "0x00125DC4",
+      "name": "ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY",
+      "range": ["0x00125DC4", "0x00125DE9"],
+      "bytes": 38,
+      "consumer": "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY",
+      "behavior": "Paired 0x070A-0x0726 scene-initial frame loop."
+    },
+    {
+      "address": "0x00126030",
+      "name": "ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE",
+      "range": ["0x00126030", "0x0012603F"],
+      "bytes": 18,
+      "consumer": "F5 at 0x00125CD8 through ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_RESPONSE",
+      "behavior": "Paired 0x0F7A/0x0F7E/0x0F82 response loop."
+    },
+    {
+      "address": "0x001261D0",
+      "name": "ACTOR_ANIM_TYPE84_SCENE_INITIAL_SECONDARY",
+      "range": ["0x001261D0", "0x00126209"],
+      "bytes": 58,
+      "consumer": "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY",
+      "behavior": "Scene-initial frame sequence with embedded loop entry at 0x001261E0."
+    },
+    {
+      "address": "0x0012620A",
+      "name": "ACTOR_ANIM_TYPE84_SCENE_RESET",
+      "range": ["0x0012620A", "0x0012622D"],
+      "bytes": 36,
+      "consumer": "ACTOR_TEMPLATE_TYPE_84_SCENE_RESET",
+      "behavior": "Repeated 0x0EEE-0x0EFE scene-reset frame loop."
+    }
+  ],
+  "movement": {
+    "address": "0x001217A2",
+    "name": "ACTOR_MOVE_TYPE84_SCENE_RESET",
+    "range": ["0x001217A2", "0x001217B3"],
+    "bytes": 18,
+    "consumer": "ACTOR_TEMPLATE_TYPE_84_SCENE_RESET",
+    "behavior": "Five (+1,0) steps and one (+1,-1) step, looping back to 0x001217A2 before the separate 0x001217B4 entry."
+  },
+  "templates": [
+    {
+      "address": "0x001B82C8",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_CHILD",
+      "runtime_type": "0x84",
+      "animation_stream": "0x00125D12",
+      "movement_stream": null,
+      "resource_count": "0x0E",
+      "producer": "F5 at 0x00125CC8"
+    },
+    {
+      "address": "0x001B8458",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_RESPONSE",
+      "runtime_type": "0x84",
+      "animation_stream": "0x00126030",
+      "movement_stream": null,
+      "resource_count": "0x01",
+      "template_flag": "0xFF",
+      "producer": "F5 at 0x00125CD8"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Lossless MovementDecoder output",
+    "Exact direct template records and F5 payloads",
+    "Exact VM terminator and shared-stream boundaries"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
