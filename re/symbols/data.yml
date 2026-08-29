@@ -728,7 +728,7 @@
   name: ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD_OPENING
   size: 44
   confidence: decompiled
-  description: Type-0x84 level-event child animation opening supplied by ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_CHILD. It presents the 0x10B6-0x10D2 lead-in and clears the actor at 0x001258D0 before continuing at PLAYER_ANIM_STATE_1258D2.
+  description: Type-0x84 level-event child animation opening supplied by ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_CHILD. It presents the 0x10B6-0x10D2 lead-in and clears the actor at 0x001258D0 before continuing at PLAYER_ANIM_LEVEL_EVENT_PRESENTATION.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - animation_stream_decoder
@@ -1641,12 +1641,15 @@
     - guard_attack_animation_static_decompilation
 
 0x001258D2:
-  name: PLAYER_ANIM_STATE_1258D2
+  name: PLAYER_ANIM_LEVEL_EVENT_PRESENTATION
+  size: 68
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Player presentation animation selected by LevelEvent_ArmPlayerPresentation and reached after the Type-0x84 level-event child clears itself. Its exact 68-byte loop presents frame 0x077E, waits for TERRAIN_LANDING_STATE to clear, sets timer 0x85, cycles the 0x06AE-0x06CE frame sequence, and returns to its root.
   evidence:
     - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - level_entry_animation_static_decompilation
+    - level_event_command_family_static_decompilation
+    - animation_stream_decoder
 
 0x00125952:
   name: ACTOR_ANIM_TYPE0C_LEVEL_EVENT
@@ -1751,12 +1754,15 @@
     - animation_stream_classifier
 
 0x00125E72:
-  name: PLAYER_ANIM_STATE_125E72
+  name: PLAYER_ANIM_TERRAIN_RESPONSE_SHARED
+  size: 124
   confidence: confirmed
-  description: Player animation state stream returned by the player animation selector at 0x001AD150.
+  description: Shared player terrain-response animation returned by the player animation selector at 0x001AD150 and entered from the 0x00121AD8 bounce/response stream. Its exact 124-byte loop presents the tripled 0x0A32-0x0A4E frame sequence and returns to 0x00121AD8 when the encoded player response field is clear.
   evidence:
     - ghidra_player_animation_selector_001AD150
-    - animation_stream_classifier
+    - terrain_response_handler_table_004554
+    - player_terrain_experiments
+    - animation_stream_decoder
 
 0x00125AFE:
   name: ACTOR_ANIM_TYPE59_SCENE_EVENT

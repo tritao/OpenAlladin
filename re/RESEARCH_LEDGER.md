@@ -1062,6 +1062,16 @@ template F5 records and the inline continuation stubs. The shared
 and movement stream `0x00120352`, and branches through the internal
 `0x00123130` entry of the separately owned Type-0x5F stream.
 
+The player response streams are recorded in
+`re/mame/findings/20260829-player-response-animation-static-decompilation-v1.json`.
+`PLAYER_ANIM_LEVEL_EVENT_PRESENTATION` now owns the exact
+`0x001258D2-0x00125915` loop (68 bytes) reached after the Type-0x84 level-event
+child clears itself. `PLAYER_ANIM_TERRAIN_RESPONSE_SHARED` owns
+`0x00125E72-0x00125EED` (124 bytes), presents the tripled 0x0A32-0x0A4E
+sequence, and is the shared response branch reached from the bounce stream at
+`0x00121AD8`. The adjacent Type-0x0C and terminal-terrain boundaries remain
+separate.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2859,3 +2869,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type8d-type76-terminal-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x8D response prefix, direct Type-0x76 shared continuation, and level-exit terminal alternate partitioned with exact non-overlapping boundaries |
 | `20260829-guard-attack-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x0A guard parent animation range-bounded with exact frame groups, distance gate, dual Type-0x2D F5 payloads, movement contract, and terminal loop |
 | `20260829-type84-death-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x84 death root and shared continuation range-bounded with exact child spawns, type/movement publication, response loop, and Type-0x5F internal handoff |
+| `20260829-player-response-animation-static-decompilation-v1` | recorded-static-decompilation | Level-event presentation and shared terrain-response player streams range-bounded with exact loops and cross-stream handoffs |

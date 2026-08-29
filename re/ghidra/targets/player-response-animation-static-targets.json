@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-response-animation-static",
+    "purpose": "Range-bound the two player-side continuation streams reached from level-event and terrain response paths without absorbing adjacent animation families."
+  },
+  "targets": [
+    { "address": "0x001258D2", "name": "PLAYER_ANIM_LEVEL_EVENT_PRESENTATION" },
+    { "address": "0x00125E72", "name": "PLAYER_ANIM_TERRAIN_RESPONSE_SHARED" },
+    { "address": "0x00121AD8", "name": "PLAYER_ANIM_STATE_121AD8" },
+    { "address": "0x001258A6", "name": "ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD_OPENING" },
+    { "address": "0x00125C26", "name": "ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN" },
+    { "address": "0x001B781A", "name": "LevelEvent_ArmPlayerPresentation" },
+    { "address": "0x001B56B6", "name": "TerrainHandler_BouncePlayerBlock" },
+    { "address": "0x001AD150", "name": "Player_ResetAnimationResponseGate" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0C1", "name": "TERRAIN_LANDING_STATE" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x001E66A8", "name": "SPRITE_FRAME_LEVEL_EVENT_PRESENTATION" },
+    { "address": "0x001EAB7E", "name": "SPRITE_FRAME_TERRAIN_RESPONSE" }
+  ]
+}

@@ -37,7 +37,7 @@
       "range": ["0x001258A6", "0x001258D1"],
       "bytes": 44,
       "consumer": "0x001B8188 ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_CHILD",
-      "handoff": "Continues at PLAYER_ANIM_STATE_1258D2 after F600 at 0x001258D0."
+      "handoff": "Continues at PLAYER_ANIM_LEVEL_EVENT_PRESENTATION after F600 at 0x001258D0."
     },
     {
       "address": "0x00125916",
