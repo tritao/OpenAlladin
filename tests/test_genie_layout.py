@@ -148,6 +148,29 @@ def test_layout_uses_chopper_graphics_manifest(tmp_path):
     assert layout.at(0x80).name == "SPRITE_TILE_DATA"
 
 
+def test_layout_uses_canonical_padding_ranges(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    (tmp_path / "re/symbols/data.yml").write_text(
+        """
+0x00000020:
+  name: ROM_PADDING_FF_00000020
+  type: padding_data
+  size: 4
+
+0x00000030:
+  name: ROM_PADDING_ZERO_00000030
+  type: padding_data
+  size: 2
+""",
+        encoding="utf-8",
+    )
+    database_root = _write_database(tmp_path)
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path, include_artifacts=False)
+    assert layout.at(0x20).layout_class == "PADDING"
+    assert layout.at(0x30).layout_class == "PADDING"
+
+
 def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)

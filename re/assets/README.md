@@ -109,6 +109,10 @@ character tiles, block maps, the exact 8-byte block dictionaries selected by
 map offsets, parallax tiles, and palettes. The sprite path
 implements the Aladdin Chopper runtime frame and tile tables.
 
+The layout also records the two verified byte-uniform ROM fill regions at the
+boundaries of the sprite corpus as `PADDING`; mixed-content gaps are not
+promoted by the padding finding.
+
 The ROM level table is also recorded in `re/assets/level_table.yml` as the
 runtime-facing scene-state metadata: start/camera fields, map dimensions,
 resources, music, and enter/exit callbacks. Validate it against the generated

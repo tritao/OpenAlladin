@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ranges": [
+    {
+      "range": "0x000069E0-0x0000FFFF",
+      "size": 38432,
+      "fill_byte": "0xFF",
+      "boundary": "ends immediately before the validated Chopper tile payload at 0x00010000"
+    },
+    {
+      "range": "0x001FE9C6-0x001FFFFF",
+      "size": 5690,
+      "fill_byte": "0x00",
+      "boundary": "starts immediately after the validated final Chopper frame at 0x001FE9C5"
+    }
+  ],
+  "conclusion": "The two byte-uniform boundary regions are explicit ROM padding, not unknown data objects. Mixed-content gaps remain conservatively unclassified."
+}

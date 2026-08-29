@@ -22,6 +22,26 @@
     - chopper_frame_parser
     - sprite_tile_data_extent_static_v1
 
+0x000069E0:
+  name: ROM_PADDING_FF_000069E0
+  type: padding_data
+  size: 0x9620
+  confidence: confirmed
+  description: Unused ROM fill between the early ROM data region and the Chopper sprite tile payload. Every byte from 0x000069E0 through 0x0000FFFF is 0xFF, and the next owned range begins at SPRITE_TILE_DATA 0x00010000.
+  evidence:
+    - rom_padding_uniform_static_v1
+    - sprite_tile_data_extent_static_v1
+
+0x001FE9C6:
+  name: ROM_PADDING_ZERO_001FE9C6
+  type: padding_data
+  size: 0x163A
+  confidence: confirmed
+  description: Zero-filled ROM tail after the final Chopper sprite frame record. Every byte from 0x001FE9C6 through the 2 MiB ROM end at 0x001FFFFF is 0x00.
+  evidence:
+    - rom_padding_uniform_static_v1
+    - sprite_frame_pointer_table_static_v1
+
 0x001B8480:
   name: AUDIO_Z80_DRIVER_IMAGE
   type: z80_binary
