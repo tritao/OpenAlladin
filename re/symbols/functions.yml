@@ -3736,6 +3736,24 @@
     - ghidra_disassembly_001B68CA
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+
+0x001B6D1E:
+  name: InteractionSpawn_Type13_28
+  confidence: decompiled
+  description: Interaction selector 0x28 handler that requires the gate byte at 0x00FFF179 to be clear and the player world Y coordinate to lie in the 0x02AD-0x02F4 window, then loads ACTOR_TEMPLATE_TYPE_13_INTERACTION through LevelObjectSpawnEntry. A successful allocation performs the 0x00129152 presentation update and queues the 0x32 interaction audio when the VDP update flag is active.
+  evidence:
+    - type13_interaction_animation_static_decompilation
+    - interaction_spawn_type13_static_decompilation
+    - ghidra_disassembly_001B6D1E
+
+0x001B6D84:
+  name: InteractionSpawn_Type14_13
+  confidence: decompiled
+  description: Interaction selector 0x13 handler that loads ACTOR_TEMPLATE_TYPE_14_INTERACTION through LevelObjectSpawnEntry; the template enters the separate Type-0x14 animation root at 0x00124766.
+  evidence:
+    - type13_interaction_animation_static_decompilation
+    - interaction_spawn_type13_static_decompilation
+    - ghidra_disassembly_001B6D84
 0x001B68D6:
   name: InteractionSpawn_Type5FWhenReady
   confidence: decompiled

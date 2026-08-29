@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-type13-interaction-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x00124658",
+    "name": "ACTOR_ANIM_TYPE13_INTERACTION",
+    "range": ["0x00124658", "0x00124765"],
+    "bytes": 270,
+    "consumer": "0x001B7F1C ACTOR_TEMPLATE_TYPE_13_INTERACTION",
+    "producer": "InteractionSpawn_Type13_28 at 0x001B6D1E",
+    "opening": "Publishes actor field 0x11 = 0x0013, presents the 0x1422/0x1426/0x142A sequence, and gates the response branches on player X distance, actor flag fields, and actor field 0x3D values 0x80/0x81.",
+    "response": "The 0x1402-0x141E branch publishes actor field 0x11 = 0x0084, installs movement stream 0x001216DC, then returns through the 0x13F2-0x13FE frames; the alternate path clears movement before the 0x142E-0x1446 response.",
+    "child_spawn": "F5 at 0x00124730 uses ACTOR_TEMPLATE_GUARD_SWORD_ATTACK at 0x001B7CB0.",
+    "loop": "The response tail clears actor flag state at 0x0012475E and jumps back to the movement/field gate at 0x001246B4."
+  },
+  "consumer": {
+    "handler": "0x001B6D1E InteractionSpawn_Type13_28",
+    "selector": "0x28",
+    "template": "0x001B7F1C ACTOR_TEMPLATE_TYPE_13_INTERACTION",
+    "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+    "runtime_type": "0x13",
+    "gates": ["0x00FFF179 == 0", "PLAYER_WORLD_Y within the 0x02AD-0x02F4 window"],
+    "post_spawn": "Palette source 0x00129152 is submitted after allocation; interaction audio command 0x32 is queued when 0x00FFF57F is set."
+  },
+  "adjacent_template": {
+    "address": "0x001B7F30",
+    "name": "ACTOR_TEMPLATE_TYPE_14_INTERACTION",
+    "consumer": "selector 0x13 handler at 0x001B6D84",
+    "animation_root": "0x00124766"
+  },
+  "boundary": {
+    "next_stream": "0x00124766",
+    "reason": "The Type-0x13 family ends at the final jump byte 0x00124765; the separate Type-0x14 animation root begins at 0x00124766."
+  },
+  "evidence": [
+    "Lossless linear AnimationDecoder output",
+    "Direct selector-0x28 handler and template load",
+    "Exact actor-field and movement-stream writes",
+    "Encoded guard sword-attack F5 child spawn",
+    "Bounded jump/branch region before the Type-0x14 root"
+  ]
+}
