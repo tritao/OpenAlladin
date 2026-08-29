@@ -2155,6 +2155,62 @@
     - type84-death-animation-static-decompilation
     - ghidra_actor_template_initializer_001AE30A
 
+0x001B7AD0:
+  name: ACTOR_TEMPLATE_TYPE_7F_TYPE36_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x7F child template supplied by the four F5 records in ACTOR_ANIM_TYPE36_INTERACTION. It carries template bytes 0x40000000, no movement stream, template word 0x6000, animation root 0x00125776, and one owned resource; the F5 continuations select the child response entries.
+  evidence:
+    - type36-interaction-animation-static-targets
+    - type36-interaction-animation-static-decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B7B20:
+  name: ACTOR_TEMPLATE_TYPE_84_TYPE2B_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 child template supplied by the F5 record in ACTOR_ANIM_TYPE2B_INTERACTION. It has no movement stream or template word, animation root 0x0012400E, and one owned resource; the parent interaction stream performs the child spawn before clearing and cycling its own response state.
+  evidence:
+    - type2b-animation-static-targets
+    - type2b-animation-static-decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B7BFC:
+  name: ACTOR_TEMPLATE_TYPE_2F_TYPE10_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x2F child template supplied by the first F5 branch in ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE. It carries template bytes 0x01000000, movement stream 0x00120ACC, template word 0x6000, animation root 0x00123A68, four owned resources, and trailing flags 0x0200.
+  evidence:
+    - type10-animation-static-targets
+    - type10-animation-static-decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B7C88:
+  name: ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 child template supplied by the F5 record in ACTOR_ANIM_TYPE0F_INTERACTION. It carries actor template word 0x6000, animation root 0x00123D34, one encoded placement word 0x1400, and two owned resources with no movement stream.
+  evidence:
+    - type0f-animation-static-targets
+    - type0f-animation-static-decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B8110:
+  name: ACTOR_TEMPLATE_INTERACTION_PAIR_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Shared Type-0x84 child template supplied by the player interaction-pair and transition-presentation F5 records. It has no movement stream, template word 0x6000, animation root 0x00123158, and four owned resources; the parent payload selects the paired inline animation entries.
+  evidence:
+    - player-interaction-pair-animation-static-targets
+    - player-interaction-pair-animation-static-decompilation
+    - transition-presentation-animation-static-decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B80AC:
   name: ACTOR_TEMPLATE_GUARD
   type: actor_template

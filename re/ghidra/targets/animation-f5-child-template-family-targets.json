@@ -1,0 +1,63 @@
+{
+  "format": "openaladdin-actor-template-f5-child-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "purpose": "Promote exact 20-byte actor templates used by directly decoded AnimationVM F5 child-spawn records.",
+  "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+  "templates": [
+    {
+      "address": "0x001B7AD0",
+      "name": "ACTOR_TEMPLATE_TYPE_7F_TYPE36_CHILD",
+      "producer": "0x0012570C ACTOR_ANIM_TYPE36_INTERACTION",
+      "runtime_type": "0x7F",
+      "movement": null,
+      "animation": "0x00125776",
+      "resource_count": "0x01"
+    },
+    {
+      "address": "0x001B7B20",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TYPE2B_CHILD",
+      "producer": "0x00123FE4 ACTOR_ANIM_TYPE2B_INTERACTION",
+      "runtime_type": "0x84",
+      "movement": null,
+      "animation": "0x0012400E",
+      "resource_count": "0x01"
+    },
+    {
+      "address": "0x001B7BFC",
+      "name": "ACTOR_TEMPLATE_TYPE_2F_TYPE10_CHILD",
+      "producer": "0x001239CA ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE",
+      "runtime_type": "0x2F",
+      "movement": "0x00120ACC",
+      "animation": "0x00123A68",
+      "resource_count": "0x04"
+    },
+    {
+      "address": "0x001B7C88",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD",
+      "producer": "0x00123CF8 ACTOR_ANIM_TYPE0F_INTERACTION",
+      "runtime_type": "0x84",
+      "movement": null,
+      "animation": "0x00123D34",
+      "resource_count": "0x02"
+    },
+    {
+      "address": "0x001B8110",
+      "name": "ACTOR_TEMPLATE_INTERACTION_PAIR_CHILD",
+      "producer": "0x0012312C ACTOR_ANIM_TYPE5F_INTERACTION and transition/player interaction-pair F5 records",
+      "runtime_type": "0x84",
+      "movement": null,
+      "animation": "0x00123158",
+      "resource_count": "0x04"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder producer manifests for each stream",
+    "Exact 20-byte records at each address",
+    "Actor_InitializeFromTemplate field map"
+  ],
+  "limitations": [
+    "F5 payloads may override the initial animation entry or placement fields; this family records the template records, not every child runtime state.",
+    "The child animation roots remain separately owned by their stream manifests."
+  ]
+}

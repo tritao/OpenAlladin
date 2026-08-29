@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/animation-f5-child-template-family-targets.json",
+  "templates": [
+    {
+      "address": "0x001B7AD0",
+      "name": "ACTOR_TEMPLATE_TYPE_7F_TYPE36_CHILD",
+      "record_bytes": "7F00400000000000000060000012577601000000",
+      "producer": "ACTOR_ANIM_TYPE36_INTERACTION",
+      "f5_children": ["0x0012572E", "0x00125740", "0x00125752", "0x00125764"]
+    },
+    {
+      "address": "0x001B7B20",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TYPE2B_CHILD",
+      "record_bytes": "8400000000000000000000000012400E01000000",
+      "producer": "ACTOR_ANIM_TYPE2B_INTERACTION",
+      "f5_children": ["0x00123FE6"]
+    },
+    {
+      "address": "0x001B7BFC",
+      "name": "ACTOR_TEMPLATE_TYPE_2F_TYPE10_CHILD",
+      "record_bytes": "2F000100000000120ACC600000123A6804000200",
+      "producer": "ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE",
+      "f5_children": ["0x001239E2"]
+    },
+    {
+      "address": "0x001B7C88",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD",
+      "record_bytes": "84010000140000000000600000123D3402000000",
+      "producer": "0x00123CF8 ACTOR_ANIM_TYPE0F_INTERACTION",
+      "f5_children": ["documented by type0f-animation-static-decompilation"]
+    },
+    {
+      "address": "0x001B8110",
+      "name": "ACTOR_TEMPLATE_INTERACTION_PAIR_CHILD",
+      "record_bytes": "8400000000000000000060000012315804000000",
+      "producer": "player interaction-pair and transition-presentation streams",
+      "f5_children": ["0x0012319E", "0x001231AE", "0x001232EA", "0x00123306"]
+    }
+  ],
+  "conclusion": "These five exact 20-byte records are canonical AnimationVM child templates. Their identities are bounded by the decoded F5 producer streams and the shared initializer layout; any payload-specific animation-entry or placement override remains an explicit child-state operation rather than a second template record.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
