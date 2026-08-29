@@ -2824,3 +2824,19 @@
     - ghidra_disassembly_001B2EE0
     - no_op_service_boundaries_targets
     - no_op_service_boundaries_static_decompilation
+0x001B0134:
+  name: Hud_PresentationEarlyPhaseNoOpHook
+  confidence: confirmed
+  description: RTS-only HUD presentation hook selected while the low four bits of FRAME_PHASE_COUNTER are below 6 during the fixed presentation loop; it has no observable state effect.
+  evidence:
+    - ghidra_disassembly_001B0134
+    - hud_display_frame_hooks_targets
+    - hud_display_frame_hooks_static_decompilation
+0x001B0136:
+  name: Hud_PresentationLatePhaseNoOpHook
+  confidence: confirmed
+  description: RTS-only HUD presentation hook selected for late frame phases and once after the fixed presentation loop; it has no observable state effect.
+  evidence:
+    - ghidra_disassembly_001B0136
+    - hud_display_frame_hooks_targets
+    - hud_display_frame_hooks_static_decompilation

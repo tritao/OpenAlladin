@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-hud-display-frame-hooks-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "targets": [
+    {
+      "address": "0x001B0134",
+      "name": "Hud_PresentationEarlyPhaseNoOpHook",
+      "body": "rts",
+      "caller": "0x001B0D52",
+      "caller_function": "0x001B0CBC Hud_RunPendingDisplayPresentation",
+      "condition": "FRAME_PHASE_COUNTER & 0x0F < 6"
+    },
+    {
+      "address": "0x001B0136",
+      "name": "Hud_PresentationLatePhaseNoOpHook",
+      "body": "rts",
+      "caller_sites": ["0x001B0D34", "0x001B0D58", "0x001B0D62"],
+      "caller_function": "0x001B0CBC Hud_RunPendingDisplayPresentation",
+      "condition": "late presentation phase or post-loop cleanup"
+    }
+  ]
+}
