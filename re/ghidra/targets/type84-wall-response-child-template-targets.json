@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "type84-wall-response-child-template",
+    "purpose": "Resolve the formerly conservative Type-0x84 child template used by the Type-0x8D wall-response animation's F5 spawn records."
+  },
+  "targets": [
+    {
+      "address": "0x001B7CEC",
+      "name": "ACTOR_TEMPLATE_TYPE_84_WALL_RESPONSE_CHILD",
+      "size": 20
+    },
+    {
+      "address": "0x001240CE",
+      "name": "ACTOR_ANIM_TYPE_8D_WALL_RESPONSE"
+    }
+  ],
+  "memory_references": [
+    { "address": "0x001B7CD8", "name": "ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE" },
+    { "address": "0x0012415E", "name": "TYPE_84_WALL_RESPONSE_CHILD_ANIMATION_ROOT" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" }
+  ]
+}
