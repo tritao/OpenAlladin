@@ -23,6 +23,8 @@ def _class_for_symbol(symbol: Symbol) -> str:
         return "MOVEMENT_STREAM"
     if "ACTOR_TEMPLATE" in name:
         return "ACTOR_TEMPLATE"
+    if symbol_type == "rom_pointer_table":
+        return "POINTER_TABLE"
     if "ANIM" in name or "ANIMATION_STREAM" in symbol_type:
         return "ANIMATION_STREAM"
     if "padding" in symbol_type or "fill" in symbol_type:
@@ -43,8 +45,6 @@ def _class_for_symbol(symbol: Symbol) -> str:
         return "TERRAIN_DATA"
     if "graphics" in symbol_type or "sprite" in symbol_type:
         return "GRAPHICS"
-    if symbol_type == "rom_pointer_table":
-        return "POINTER_TABLE"
     if symbol_type == "rom_table":
         return "LEVEL_DATA"
     if "AUDIO" in name or "SOUND" in name:

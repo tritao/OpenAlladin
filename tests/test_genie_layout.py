@@ -124,6 +124,24 @@ def test_layout_preserves_sparse_function_body_ranges(tmp_path):
     assert layout.at(0x28).layout_class == "CODE"
 
 
+def test_layout_preserves_explicit_pointer_table_type_before_animation_name(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    (tmp_path / "re/symbols/data.yml").write_text(
+        """
+0x00000020:
+  name: PLAYER_ANIMATION_LOOKUP_TABLE
+  type: rom_pointer_table
+  entry_size: 4
+  count: 2
+""",
+        encoding="utf-8",
+    )
+    database_root = _write_database(tmp_path)
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path, include_artifacts=False)
+    assert layout.at(0x20).layout_class == "POINTER_TABLE"
+
+
 def test_layout_uses_chopper_graphics_manifest(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)
@@ -550,6 +568,67 @@ def test_actor_type4d_collision_response_animation_is_exact():
     assert decoded["bytes_decoded"] == 16
     assert decoded["stopped_reason"] == "dynamic_state_selection"
     assert decoded["instructions"][-1]["opcode"] == "0xF8"
+
+
+def test_player_animation_lookup_family_is_exact():
+    symbols = SymbolStore()
+    vertical = (
+        (0x00121868, 0x00121875, "PLAYER_ANIM_VERTICAL_BAND_07_15", "0x07BA"),
+        (0x00121876, 0x00121883, "PLAYER_ANIM_VERTICAL_BAND_06_14", "0x07BE"),
+        (0x00121884, 0x00121891, "PLAYER_ANIM_VERTICAL_BAND_05_13", "0x07C2"),
+        (0x00121892, 0x0012189F, "PLAYER_ANIM_VERTICAL_BAND_04_12", "0x07C6"),
+        (0x001218A0, 0x001218AD, "PLAYER_ANIM_VERTICAL_BAND_03_11", "0x07CA"),
+        (0x001218AE, 0x001218BB, "PLAYER_ANIM_VERTICAL_BAND_02_10", "0x07CE"),
+        (0x001218BC, 0x001218C9, "PLAYER_ANIM_VERTICAL_BAND_01_09", "0x07D2"),
+        (0x001218CA, 0x001218D7, "PLAYER_ANIM_VERTICAL_BAND_00_08", "0x07D6"),
+    )
+    interaction = (
+        (0x00121900, 0x00121909, "PLAYER_ANIM_INTERACTION_VARIANT_00", "0x08CE"),
+        (0x0012190A, 0x00121913, "PLAYER_ANIM_INTERACTION_VARIANT_01", "0x08D2"),
+        (0x00121914, 0x0012191D, "PLAYER_ANIM_INTERACTION_VARIANT_02", "0x08D6"),
+        (0x0012191E, 0x00121927, "PLAYER_ANIM_INTERACTION_VARIANT_03", "0x08DA"),
+        (0x00121928, 0x00121931, "PLAYER_ANIM_INTERACTION_VARIANT_04", "0x08DE"),
+        (0x00121932, 0x0012193B, "PLAYER_ANIM_INTERACTION_VARIANT_05", "0x08E2"),
+        (0x0012193C, 0x00121945, "PLAYER_ANIM_INTERACTION_VARIANT_06", "0x08E6"),
+        (0x00121946, 0x0012194F, "PLAYER_ANIM_INTERACTION_VARIANT_07", "0x08EA"),
+        (0x00121950, 0x00121959, "PLAYER_ANIM_INTERACTION_VARIANT_08", "0x08EE"),
+        (0x0012195A, 0x00121963, "PLAYER_ANIM_INTERACTION_VARIANT_09", "0x08F2"),
+    )
+    for address, end, name, frame in vertical + interaction:
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        assert symbol.size == end - address + 1
+        assert symbol.metadata["type"] == "animation_stream"
+
+    vertical_table = symbols.at(0x00121828, include_ranges=False)
+    assert vertical_table is not None
+    assert vertical_table.size == 64
+    assert vertical_table.end == 0x00121867
+    assert vertical_table.metadata["count"] == 16
+
+    interaction_table = symbols.at(0x001218D8, include_ranges=False)
+    assert interaction_table is not None
+    assert interaction_table.name == "PLAYER_INTERACTION_ANIMATION_TABLE"
+    assert interaction_table.size == 40
+    assert interaction_table.end == 0x001218FF
+    assert interaction_table.metadata["count"] == 10
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = load_animation_decoder().AnimationDecoder(rom)
+    for address, end, _, frame in vertical:
+        decoded = decoder.decode_stream(address, 16, 64, True)
+        assert decoded["bytes_decoded"] == end - address + 1
+        assert decoded["stopped_reason"] == "dynamic_state_selection"
+        assert decoded["instructions"][0]["reference"] == frame
+    for address, end, _, frame in interaction:
+        decoded = decoder.decode_stream(address, 16, 64, False)
+        assert decoded["bytes_decoded"] == end - address + 1
+        assert decoded["stopped_reason"] == "unconditional_jump"
+        assert decoded["instructions"][0]["reference"] == frame
+        assert decoded["instructions"][-1]["branch_target"] == "0x00121964"
 
 
 def test_type03_collision_response_animation_family_is_exact():

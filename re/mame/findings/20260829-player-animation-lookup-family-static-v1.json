@@ -1,0 +1,56 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/player-animation-lookup-family-static-targets.json",
+  "vertical_table": {
+    "address": "0x00121828",
+    "name": "PLAYER_VERTICAL_ANIMATION_TABLE",
+    "range": "0x00121828-0x00121867",
+    "bytes": 64,
+    "selection": "(PLAYER_WORLD_Y >> 2) & 0x0F",
+    "targets": [
+      { "indices": [0, 8], "address": "0x001218CA", "name": "PLAYER_ANIM_VERTICAL_BAND_00_08", "range": "0x001218CA-0x001218D7", "frame": "0x07D6" },
+      { "indices": [1, 9], "address": "0x001218BC", "name": "PLAYER_ANIM_VERTICAL_BAND_01_09", "range": "0x001218BC-0x001218C9", "frame": "0x07D2" },
+      { "indices": [2, 10], "address": "0x001218AE", "name": "PLAYER_ANIM_VERTICAL_BAND_02_10", "range": "0x001218AE-0x001218BB", "frame": "0x07CE" },
+      { "indices": [3, 11], "address": "0x001218A0", "name": "PLAYER_ANIM_VERTICAL_BAND_03_11", "range": "0x001218A0-0x001218AD", "frame": "0x07CA" },
+      { "indices": [4, 12], "address": "0x00121892", "name": "PLAYER_ANIM_VERTICAL_BAND_04_12", "range": "0x00121892-0x0012189F", "frame": "0x07C6" },
+      { "indices": [5, 13], "address": "0x00121884", "name": "PLAYER_ANIM_VERTICAL_BAND_05_13", "range": "0x00121884-0x00121891", "frame": "0x07C2" },
+      { "indices": [6, 14], "address": "0x00121876", "name": "PLAYER_ANIM_VERTICAL_BAND_06_14", "range": "0x00121876-0x00121883", "frame": "0x07BE" },
+      { "indices": [7, 15], "address": "0x00121868", "name": "PLAYER_ANIM_VERTICAL_BAND_07_15", "range": "0x00121868-0x00121875", "frame": "0x07BA" }
+    ]
+  },
+  "interaction_table": {
+    "address": "0x001218D8",
+    "name": "PLAYER_INTERACTION_ANIMATION_TABLE",
+    "range": "0x001218D8-0x001218FF",
+    "bytes": 40,
+    "selection": "PLAYER_INTERACTION_ANIMATION_INDEX in Player_SelectInteractionAnimation",
+    "targets": [
+      { "index": 0, "address": "0x00121900", "name": "PLAYER_ANIM_INTERACTION_VARIANT_00", "range": "0x00121900-0x00121909", "frame": "0x08CE" },
+      { "index": 1, "address": "0x0012190A", "name": "PLAYER_ANIM_INTERACTION_VARIANT_01", "range": "0x0012190A-0x00121913", "frame": "0x08D2" },
+      { "index": 2, "address": "0x00121914", "name": "PLAYER_ANIM_INTERACTION_VARIANT_02", "range": "0x00121914-0x0012191D", "frame": "0x08D6" },
+      { "index": 3, "address": "0x0012191E", "name": "PLAYER_ANIM_INTERACTION_VARIANT_03", "range": "0x0012191E-0x00121927", "frame": "0x08DA" },
+      { "index": 4, "address": "0x00121928", "name": "PLAYER_ANIM_INTERACTION_VARIANT_04", "range": "0x00121928-0x00121931", "frame": "0x08DE" },
+      { "index": 5, "address": "0x00121932", "name": "PLAYER_ANIM_INTERACTION_VARIANT_05", "range": "0x00121932-0x0012193B", "frame": "0x08E2" },
+      { "index": 6, "address": "0x0012193C", "name": "PLAYER_ANIM_INTERACTION_VARIANT_06", "range": "0x0012193C-0x00121945", "frame": "0x08E6" },
+      { "index": 7, "address": "0x00121946", "name": "PLAYER_ANIM_INTERACTION_VARIANT_07", "range": "0x00121946-0x0012194F", "frame": "0x08EA" },
+      { "index": 8, "address": "0x00121950", "name": "PLAYER_ANIM_INTERACTION_VARIANT_08", "range": "0x00121950-0x00121959", "frame": "0x08EE" },
+      { "index": 9, "address": "0x0012195A", "name": "PLAYER_ANIM_INTERACTION_VARIANT_09", "range": "0x0012195A-0x00121963", "frame": "0x08F2" }
+    ]
+  },
+  "continuation": "Every interaction variant ends with EA to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964. Every vertical-band prelude ends with F8 dynamic player-state selection.",
+  "evidence": [
+    "Exact 16-entry longword PLAYER_VERTICAL_ANIMATION_TABLE values",
+    "Exact 10-entry longword PLAYER_INTERACTION_ANIMATION_TABLE values",
+    "Player_SelectVerticalBandAnimation and Player_SelectInteractionAnimation table-indexing bodies",
+    "Lossless AnimationDecoder output and contiguous boundaries"
+  ],
+  "conclusion": "The previously anonymous player animation lookup bands are now fully named: eight repeated vertical-band preludes, the ten-entry interaction table, and all ten interaction preludes are canonical owners with no overlap or unowned byte inside their selected ranges.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -3341,11 +3341,220 @@
   entry_size: 4
   count: 16
   confidence: confirmed
-  description: Sixteen-entry player animation-root table indexed by PLAYER_WORLD_Y shifted right two and masked to four bits by Player_SelectVerticalBandAnimation. Its exact 64-byte table occupies 0x00121828-0x00121867; the 16 longwords repeat the eight vertical-band roots at 0x00121868-0x001218CA.
+  description: Sixteen-entry player animation-root table indexed by PLAYER_WORLD_Y shifted right two and masked to four bits by Player_SelectVerticalBandAnimation. Its exact 64-byte table occupies 0x00121828-0x00121867; the 16 longwords repeat the eight vertical-band roots PLAYER_ANIM_VERTICAL_BAND_00_08 through PLAYER_ANIM_VERTICAL_BAND_07_15 at 0x00121868-0x001218D7.
   evidence:
     - ghidra_decompile_001A9986
     - ghidra_player_terrain_response_targets
     - player_vertical_animation_table_extent_static_decompilation
+
+0x00121868:
+  name: PLAYER_ANIM_VERTICAL_BAND_07_15
+  type: animation_stream
+  size: 14
+  confidence: decompiled
+  description: Vertical-band player animation prelude for table indices 7 and 15. Its exact 14-byte region presents frame 0x07BA, tests PLAYER_TRANSITION_GATE, and enters dynamic player animation state selection.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_response_targets
+    - animation_stream_decoder
+
+0x00121876:
+  name: PLAYER_ANIM_VERTICAL_BAND_06_14
+  type: animation_stream
+  size: 14
+  confidence: decompiled
+  description: Vertical-band player animation prelude for table indices 6 and 14. Its exact 14-byte region presents frame 0x07BE, tests PLAYER_TRANSITION_GATE, and enters dynamic player animation state selection.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_response_targets
+    - animation_stream_decoder
+
+0x00121884:
+  name: PLAYER_ANIM_VERTICAL_BAND_05_13
+  type: animation_stream
+  size: 14
+  confidence: decompiled
+  description: Vertical-band player animation prelude for table indices 5 and 13. Its exact 14-byte region presents frame 0x07C2, tests PLAYER_TRANSITION_GATE, and enters dynamic player animation state selection.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_response_targets
+    - animation_stream_decoder
+
+0x00121892:
+  name: PLAYER_ANIM_VERTICAL_BAND_04_12
+  type: animation_stream
+  size: 14
+  confidence: decompiled
+  description: Vertical-band player animation prelude for table indices 4 and 12. Its exact 14-byte region presents frame 0x07C6, tests PLAYER_TRANSITION_GATE, and enters dynamic player animation state selection.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_response_targets
+    - animation_stream_decoder
+
+0x001218A0:
+  name: PLAYER_ANIM_VERTICAL_BAND_03_11
+  type: animation_stream
+  size: 14
+  confidence: decompiled
+  description: Vertical-band player animation prelude for table indices 3 and 11. Its exact 14-byte region presents frame 0x07CA, tests PLAYER_TRANSITION_GATE, and enters dynamic player animation state selection.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_response_targets
+    - animation_stream_decoder
+
+0x001218AE:
+  name: PLAYER_ANIM_VERTICAL_BAND_02_10
+  type: animation_stream
+  size: 14
+  confidence: decompiled
+  description: Vertical-band player animation prelude for table indices 2 and 10. Its exact 14-byte region presents frame 0x07CE, tests PLAYER_TRANSITION_GATE, and enters dynamic player animation state selection.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_response_targets
+    - animation_stream_decoder
+
+0x001218BC:
+  name: PLAYER_ANIM_VERTICAL_BAND_01_09
+  type: animation_stream
+  size: 14
+  confidence: decompiled
+  description: Vertical-band player animation prelude for table indices 1 and 9. Its exact 14-byte region presents frame 0x07D2, tests PLAYER_TRANSITION_GATE, and enters dynamic player animation state selection.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_response_targets
+    - animation_stream_decoder
+
+0x001218CA:
+  name: PLAYER_ANIM_VERTICAL_BAND_00_08
+  type: animation_stream
+  size: 14
+  confidence: decompiled
+  description: Vertical-band player animation prelude for table indices 0 and 8. Its exact 14-byte region presents frame 0x07D6, tests PLAYER_TRANSITION_GATE, and enters dynamic player animation state selection.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_response_targets
+    - animation_stream_decoder
+
+0x001218D8:
+  name: PLAYER_INTERACTION_ANIMATION_TABLE
+  type: rom_pointer_table
+  entry_size: 4
+  count: 10
+  confidence: decompiled
+  description: Ten-entry player interaction-animation root table indexed by PLAYER_INTERACTION_ANIMATION_INDEX in Player_SelectInteractionAnimation. Its exact 40-byte table occupies 0x001218D8-0x001218FF and points to PLAYER_ANIM_INTERACTION_VARIANT_00 through PLAYER_ANIM_INTERACTION_VARIANT_09.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+
+0x00121900:
+  name: PLAYER_ANIM_INTERACTION_VARIANT_00
+  type: animation_stream
+  size: 10
+  confidence: decompiled
+  description: Player interaction-animation variant 00 selected through PLAYER_INTERACTION_ANIMATION_TABLE. Its exact 10-byte prelude presents frame 0x08CE twice and jumps to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+    - animation_stream_decoder
+
+0x0012190A:
+  name: PLAYER_ANIM_INTERACTION_VARIANT_01
+  type: animation_stream
+  size: 10
+  confidence: decompiled
+  description: Player interaction-animation variant 01 selected through PLAYER_INTERACTION_ANIMATION_TABLE. Its exact 10-byte prelude presents frame 0x08D2 twice and jumps to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+    - animation_stream_decoder
+
+0x00121914:
+  name: PLAYER_ANIM_INTERACTION_VARIANT_02
+  type: animation_stream
+  size: 10
+  confidence: decompiled
+  description: Player interaction-animation variant 02 selected through PLAYER_INTERACTION_ANIMATION_TABLE. Its exact 10-byte prelude presents frame 0x08D6 twice and jumps to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+    - animation_stream_decoder
+
+0x0012191E:
+  name: PLAYER_ANIM_INTERACTION_VARIANT_03
+  type: animation_stream
+  size: 10
+  confidence: decompiled
+  description: Player interaction-animation variant 03 selected through PLAYER_INTERACTION_ANIMATION_TABLE. Its exact 10-byte prelude presents frame 0x08DA twice and jumps to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+    - animation_stream_decoder
+
+0x00121928:
+  name: PLAYER_ANIM_INTERACTION_VARIANT_04
+  type: animation_stream
+  size: 10
+  confidence: decompiled
+  description: Player interaction-animation variant 04 selected through PLAYER_INTERACTION_ANIMATION_TABLE. Its exact 10-byte prelude presents frame 0x08DE twice and jumps to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+    - animation_stream_decoder
+
+0x00121932:
+  name: PLAYER_ANIM_INTERACTION_VARIANT_05
+  type: animation_stream
+  size: 10
+  confidence: decompiled
+  description: Player interaction-animation variant 05 selected through PLAYER_INTERACTION_ANIMATION_TABLE. Its exact 10-byte prelude presents frame 0x08E2 twice and jumps to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+    - animation_stream_decoder
+
+0x0012193C:
+  name: PLAYER_ANIM_INTERACTION_VARIANT_06
+  type: animation_stream
+  size: 10
+  confidence: decompiled
+  description: Player interaction-animation variant 06 selected through PLAYER_INTERACTION_ANIMATION_TABLE. Its exact 10-byte prelude presents frame 0x08E6 twice and jumps to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+    - animation_stream_decoder
+
+0x00121946:
+  name: PLAYER_ANIM_INTERACTION_VARIANT_07
+  type: animation_stream
+  size: 10
+  confidence: decompiled
+  description: Player interaction-animation variant 07 selected through PLAYER_INTERACTION_ANIMATION_TABLE. Its exact 10-byte prelude presents frame 0x08EA twice and jumps to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+    - animation_stream_decoder
+
+0x00121950:
+  name: PLAYER_ANIM_INTERACTION_VARIANT_08
+  type: animation_stream
+  size: 10
+  confidence: decompiled
+  description: Player interaction-animation variant 08 selected through PLAYER_INTERACTION_ANIMATION_TABLE. Its exact 10-byte prelude presents frame 0x08EE twice and jumps to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+    - animation_stream_decoder
+
+0x0012195A:
+  name: PLAYER_ANIM_INTERACTION_VARIANT_09
+  type: animation_stream
+  size: 10
+  confidence: decompiled
+  description: Player interaction-animation variant 09 selected through PLAYER_INTERACTION_ANIMATION_TABLE. Its exact 10-byte prelude presents frame 0x08F2 twice and jumps to PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE at 0x00121964.
+  evidence:
+    - player_vertical_animation_lookup_family_static_decompilation
+    - ghidra_player_terrain_state_targets
+    - animation_stream_decoder
 
 0x001221B0:
   name: PLAYER_ANIM_JUMP
