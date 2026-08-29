@@ -1,0 +1,100 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-vertical-interaction-response-animation-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00122236",
+      "name": "PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE",
+      "range": "0x00122236-0x001222C1",
+      "bytes": 140,
+      "frames": ["0x09A2", "0x09A2", "0x09A6", "0x09A6", "0x09AA", "0x09A6", "0x09A6", "0x09A2", "0x09A2"],
+      "gates": [
+        "F4 phases test player fields 0xF0CD, 0xF0C1, and 0xF0DF",
+        "the dynamic handoff is the F8 at 0x001222C0"
+      ],
+      "state_write": "ED at 0x00122292 writes response word 0x01D4 through target fields 0x7E00",
+      "embedded_entry": "The selector-owned tail at 0x00122298 shares the 0x001222C0 dynamic handoff and is recorded separately without a second sized ownership range.",
+      "selector": "Player_TerrainResponseStateMachine selects this root for ordinary-camera grounded push-up response and sets PLAYER_TERRAIN_PUSH_UP_STATE."
+    },
+    {
+      "address": "0x00122298",
+      "name": "PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE_TAIL",
+      "range": "0x00122298-0x001222C1",
+      "bytes": 42,
+      "frames": ["0x09AA", "0x09A6", "0x09A6", "0x09A2", "0x09A2"],
+      "gates": [
+        "F4 at 0x0012229A tests player field 0xF0C1",
+        "F4 at 0x001222A4 tests player field 0xF0CD",
+        "F4 at 0x001222AE loops on player field 0xF0DF"
+      ],
+      "handoff": "F8 at 0x001222C0 -> dynamic player animation state selection",
+      "selector": "Player_ResetAnimationResponseGate enters this embedded tail when PLAYER_TERRAIN_PUSH_UP_STATE is active."
+    },
+    {
+      "address": "0x001222D2",
+      "name": "PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE",
+      "range": "0x001222D2-0x00122335",
+      "bytes": 100,
+      "frames": ["0x0852", "0x0852", "0x0852", "0x0856", "0x085A", "0x085A", "0x085E", "0x085E", "0x085E", "0x085A", "0x0856", "0x0852"],
+      "gates": ["F4 phases test player response field 0xF0DE"],
+      "state_write": "ED at 0x00122318 writes response word 0x010C through target fields 0x7E00",
+      "embedded_entry": "The selector-owned tail at 0x0012231E is embedded in this packed region and is recorded separately without a second sized ownership range.",
+      "handoff": "F8 at 0x00122334 -> dynamic player animation state selection",
+      "selector": "Player_TerrainResponseStateMachine selects this root for ordinary-camera grounded push-down response and sets PLAYER_TERRAIN_PUSH_DOWN_STATE."
+    },
+    {
+      "address": "0x0012231E",
+      "name": "PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE_TAIL",
+      "range": "0x0012231E-0x00122335",
+      "bytes": 24,
+      "frames": ["0x085E", "0x085A", "0x0856", "0x0852"],
+      "gates": [
+        "F4 at 0x00122320 loops while player field 0xF0DE is active",
+        "EE 0x82 reloads the opening response timer phases"
+      ],
+      "handoff": "F8 at 0x00122334 -> dynamic player animation state selection",
+      "selector": "Player_ResetAnimationResponseGate enters this embedded tail when PLAYER_TERRAIN_PUSH_DOWN_STATE is active."
+    },
+    {
+      "address": "0x00122336",
+      "name": "PLAYER_ANIM_INTERACTION_RESPONSE_LOOP",
+      "range": "0x00122336-0x0012234F",
+      "bytes": 26,
+      "frames": ["0x08BA", "0x08BA", "0x08BE", "0x08BE", "0x08C2", "0x08C2", "0x08C6", "0x08C6", "0x08CA", "0x08CA"],
+      "loop": "EA at 0x0012234A -> 0x00122336",
+      "selectors": [
+        "Player_SelectIdleOrInteractionAnimation selects it for active interaction mode with marker 0x5E",
+        "Player_ResetTerrainMotionState selects it for scene-specific reset state"
+      ]
+    },
+    {
+      "address": "0x001223A2",
+      "name": "PLAYER_ANIM_INTERACTION_PUSH_DOWN_RESPONSE",
+      "range": "0x001223A2-0x001223CF",
+      "bytes": 46,
+      "frames": ["0x0862", "0x0862", "0x0866", "0x086A", "0x086E", "0x0872", "0x0876", "0x087A", "0x086A", "0x0866", "0x0866", "0x0862", "0x0862"],
+      "timers": "EE 0x82 precedes each 0x086E-0x087A phase",
+      "gate": "F4 at 0x001223BA compares player field 0xF07F with zero",
+      "handoff": "F8 at 0x001223CE -> dynamic player animation state selection",
+      "selector": "Player_TerrainResponseStateMachine selects this variant when PLAYER_INTERACTION_MODE is active and the interaction marker is '^' during a grounded push-down response."
+    }
+  ],
+  "boundaries": {
+    "shared_regions": "The roots at 0x00122236 and 0x001222D2 contain the selector-owned tails at 0x00122298 and 0x0012231E respectively. Only the roots claim sizes in the symbol store; the tails remain named embedded entries so the layout has no overlap."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Player_TerrainResponseStateMachine static selector branches",
+    "Player_ResetAnimationResponseGate exact response-tail branches",
+    "Player_SelectIdleOrInteractionAnimation and Player_ResetTerrainMotionState selectors",
+    "Exact shared-tail boundaries and dynamic handoffs"
+  ],
+  "conclusion": "The vertical interaction block contains separate upward and downward terrain-response roots, selector-owned tail entries, and an interaction-mode downward variant. The response gate dispatches tails based on the published push-direction fields, while the interaction loop is shared by marker-driven and scene-reset paths. The roots and embedded tails are named without introducing overlapping layout ownership.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

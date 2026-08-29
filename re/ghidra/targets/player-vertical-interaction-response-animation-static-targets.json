@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-vertical-interaction-response-animation-static",
+    "purpose": "Resolve the player upward/downward terrain-response and interaction-response animation entries, including selector-owned tails and shared dynamic handoffs."
+  },
+  "targets": [
+    { "address": "0x00122236", "name": "PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE" },
+    { "address": "0x00122298", "name": "PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE_TAIL" },
+    { "address": "0x001222D2", "name": "PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE" },
+    { "address": "0x0012231E", "name": "PLAYER_ANIM_TERRAIN_PUSH_DOWN_RESPONSE_TAIL" },
+    { "address": "0x00122336", "name": "PLAYER_ANIM_INTERACTION_RESPONSE_LOOP" },
+    { "address": "0x001223A2", "name": "PLAYER_ANIM_INTERACTION_PUSH_DOWN_RESPONSE" },
+    { "address": "0x001A9D98", "name": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001AD150", "name": "Player_ResetAnimationResponseGate" },
+    { "address": "0x001B1F28", "name": "Player_ResetTerrainMotionState" },
+    { "address": "0x001B1FAE", "name": "Player_SelectIdleOrInteractionAnimation" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF0C1", "name": "PLAYER_ANIMATION_FIELD_C1" },
+    { "address": "0x00FFF0CD", "name": "PLAYER_ANIMATION_FIELD_CD" },
+    { "address": "0x00FFF0DE", "name": "PLAYER_TERRAIN_PUSH_DOWN_STATE" },
+    { "address": "0x00FFF0DF", "name": "PLAYER_TERRAIN_PUSH_UP_STATE" },
+    { "address": "0x00FFF0ED", "name": "PLAYER_TERRAIN_RESPONSE_PHASE" },
+    { "address": "0x00FFF101", "name": "PLAYER_TERRAIN_BRAKE_STATE" },
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" }
+  ]
+}
