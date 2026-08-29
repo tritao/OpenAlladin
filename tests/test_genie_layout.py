@@ -673,6 +673,66 @@ def test_type7b_level11_movement_stream_is_exact():
     assert jumps[-1]["branch_target"] == "0x0012120E"
 
 
+def test_type7c_type7d_level_event_movement_family_is_exact():
+    symbols = SymbolStore()
+    prelude = symbols.at(0x00121180, include_ranges=False)
+    assert prelude is not None
+    assert prelude.name == "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE"
+    assert prelude.end == 0x00121189
+    assert prelude.size == 10
+    assert prelude.metadata["type"] == "movement_stream"
+
+    shared = symbols.at(0x0012118A, include_ranges=False)
+    assert shared is not None
+    assert shared.name == "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED"
+    assert shared.end == 0x0012120D
+    assert shared.size == 132
+    assert shared.metadata["type"] == "movement_stream"
+
+    alias = symbols.at(0x001211C4, include_ranges=False)
+    assert alias is not None
+    assert alias.name == "ACTOR_MOVE_TYPE7D_LEVEL_ENTRY"
+    assert alias.metadata["alias_of"] == "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED"
+    assert alias.metadata["entry_offset"] == 58
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = MovementDecoder(rom)
+    prelude_decode = decoder.decode_stream(
+        0x00121180,
+        max_steps=256,
+        max_bytes=10,
+        follow_control_flow=False,
+    )
+    assert prelude_decode["bytes_decoded"] == 10
+    assert prelude_decode["stopped_reason"] == "byte_limit"
+    assert prelude_decode["steps"][-1]["next_address"] == "0x0012118A"
+
+    shared_decode = decoder.decode_stream(
+        0x0012118A,
+        max_steps=256,
+        max_bytes=132,
+        follow_control_flow=False,
+    )
+    assert shared_decode["bytes_decoded"] == 132
+    assert shared_decode["stopped_reason"] == "byte_limit"
+    assert shared_decode["steps"][-1]["next_address"] == "0x0012120E"
+
+    expected_bytes = {
+        0x0012118A: 132,
+        0x001211C4: 74,
+    }
+    for address, byte_count in expected_bytes.items():
+        decoded = decoder.decode_stream(
+            address,
+            max_steps=256,
+            max_bytes=512,
+            follow_control_flow=True,
+        )
+        assert decoded["bytes_decoded"] == byte_count
+        assert decoded["stopped_reason"] == "control_flow_cycle"
+
+
 def test_scene_table_transition_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001209C6, include_ranges=False)

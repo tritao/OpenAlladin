@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type7c-type7d-level-event-movement-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00121180",
+      "name": "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE",
+      "range": "0x00121180-0x00121189",
+      "bytes": 10,
+      "template": "0x001B81B0 adjacent Type-0x7C record",
+      "next_entry": "0x0012118A"
+    },
+    {
+      "address": "0x0012118A",
+      "name": "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED",
+      "range": "0x0012118A-0x0012120D",
+      "bytes": 132,
+      "templates": [
+        "0x001B819C ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN",
+        "0x001B81C4 ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN"
+      ],
+      "loop_target": "0x001211FA"
+    }
+  ],
+  "alias": {
+    "address": "0x001211C4",
+    "name": "ACTOR_MOVE_TYPE7D_LEVEL_ENTRY",
+    "alias_of": "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED",
+    "entry_offset": 58,
+    "template": "0x001B81D8 ACTOR_TEMPLATE_TYPE_7D"
+  },
+  "evidence": [
+    "Exact movement pointers in the Type-0x7C and Type-0x7D template records",
+    "Lossless MovementDecoder output for the prelude and shared entry",
+    "Exact boundary before ACTOR_MOVE_TYPE7B_LEVEL11_EVENT at 0x0012120E",
+    "Type-0x7D pointer is an entry inside the shared Type-0x7C owner"
+  ],
+  "conclusion": "The contiguous 0x00121180-0x0012120D body is now represented as a ten-byte Type-0x7C prelude plus a 132-byte shared Type-0x7C/Type-0x7D movement owner, with the Type-0x7D pointer recorded as an alias entry."
+}

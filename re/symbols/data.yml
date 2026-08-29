@@ -2025,6 +2025,38 @@
     - actor_runtime_type84_static_decompilation
     - movement_stream_decoder
 
+0x00121180:
+  name: ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE
+  type: movement_stream
+  size: 10
+  confidence: provisional
+  description: Short Type-0x7C level-event movement prelude selected by the adjacent template record at 0x001B81B0. Its exact ten-byte body pushes parameter 0x001ACD5A, clears the actor state through opcode 0x82, and falls through into ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED at 0x0012118A; the template's runtime producer remains unresolved.
+  evidence:
+    - actor_template_level_event_record_partition
+    - movement_stream_decoder
+
+0x0012118A:
+  name: ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED
+  type: movement_stream
+  size: 132
+  confidence: decompiled
+  description: Shared Type-0x7C level-event movement stream selected by ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN and ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN. Its exact 132-byte owner contains the flag-gated zero and (+3, 0) phases, event-parameter pushes, sound/event commands, timer setup, and the terminal 0x00121200 jump into the shared continuation at 0x001211FA; the owner ends immediately before ACTOR_MOVE_TYPE7B_LEVEL11_EVENT.
+  evidence:
+    - actor_template_level05_timed_static_decompilation
+    - level07_type7c_template_targets
+    - movement_stream_decoder
+
+0x001211C4:
+  name: ACTOR_MOVE_TYPE7D_LEVEL_ENTRY
+  type: movement_stream
+  alias_of: ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED
+  entry_offset: 58
+  confidence: decompiled
+  description: Type-0x7D level-entry movement entry selected by ACTOR_TEMPLATE_TYPE_7D. It aliases the shared Type-0x7C owner and does not claim a second ROM range.
+  evidence:
+    - ghidra_actor_template_001B81D8
+    - movement_stream_decoder
+
 0x0012120E:
   name: ACTOR_MOVE_TYPE7B_LEVEL11_EVENT
   type: movement_stream
