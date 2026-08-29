@@ -25,7 +25,7 @@
       "static_behavior": [
         "Selected after the type-0x11 collision source is cleared and a response slot is prepared.",
         "Initializes the response through Actor_InitializeFromTemplate before Render_UploadPaletteBand2.",
-        "Carries runtime type 0x11, movement stream 0x00142000, animation root 0x00124518, and resource count 0x10."
+        "Carries runtime type 0x11, no movement stream, animation root 0x00124518, and resource count 0x10."
       ]
     }
   ],

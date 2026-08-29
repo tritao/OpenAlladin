@@ -23,7 +23,7 @@
       "name": "ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE",
       "consumer": "0x001AC4E8 ActorType11_ActorCollisionHandler",
       "runtime_type": "0x11",
-      "movement_stream": "0x00142000",
+      "movement_stream": null,
       "animation_stream": "0x00124518",
       "resource_count": "0x10",
       "post_initialize": "Installed after the collision source is cleared and before the response palette upload."
