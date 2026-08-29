@@ -5,12 +5,13 @@
 #include <array>
 #include <cstdint>
 #include <functional>
+#include <span>
 #include <vector>
 
 namespace openaladdin {
 
 struct MovementContext {
-    const std::vector<std::uint8_t>& rom;
+    std::span<const std::uint8_t> rom;
     int player_world_x = 0;
     int player_world_y = 0;
     const std::array<bool, 32>* deferred_actors = nullptr;

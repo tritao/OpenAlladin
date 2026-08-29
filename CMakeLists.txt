@@ -171,6 +171,8 @@ target_link_libraries(openaladdin_audio_sdl PUBLIC
 openaladdin_enable_warnings(openaladdin_audio_sdl)
 
 add_library(openaladdin_engine STATIC
+    src/actor_movement.cpp
+    src/actor_movement.hpp
     src/actor.cpp
     src/actor.hpp
     src/actor_animation_system.cpp

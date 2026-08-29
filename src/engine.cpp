@@ -247,6 +247,7 @@ Engine::Engine()
       actor_lifecycle_(actors_),
       collisions_(actor_lifecycle_),
       animation_system_(actor_lifecycle_),
+      actor_movement_(movement_vm_, actor_lifecycle_, animation_system_),
       level_event_system_(
           actor_lifecycle_,
           animation_system_),
@@ -484,39 +485,6 @@ void Engine::publish_player_world_coordinates() {
     sync_player_actor();
 }
 
-void Engine::update_actor_movement() {
-    std::array<std::uint8_t, 32> previous_types{};
-    for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
-        previous_types[slot] = actors_[slot].type;
-    }
-    movement_vm_.tick(
-        actors_,
-        MovementContext{
-            rom_bytes_,
-            player_world_x(),
-            player_world_y(),
-            &frame_runtime_.actor_movement_deferred,
-            [this](ActorIndex slot, std::uint8_t command_mode) {
-                actor_lifecycle_.retire_from_vm(slot, command_mode);
-            }
-        }
-    );
-    frame_runtime_.actor_movement_deferred.fill(false);
-    for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
-        const ActorState& actor = actors_[slot];
-        if (previous_types[slot] != kActorTerminalType
-            && actor.type == kActorTerminalType
-            && actor.terminal_timer == 0
-            && previous_types[slot] != 0x2A) {
-            // Movement streams can publish the terminal template directly
-            // (the type-0x45 path does so before AnimationVM_TickActors).
-            // Preserve the current boundary, then service the new cursor on
-            // the next VBlank regardless of the shared animation gate.
-            animation_system_.actors().vm(slot).defer_actor_service_on_gate();
-        }
-    }
-}
-
 void Engine::start_level_event_stream_after_exit() {
     if (level_event_exit_started_ || level_events_.active() || rom_bytes_.empty()) return;
 
@@ -580,7 +548,7 @@ SceneServices Engine::scene_services() {
     services.service_frame = [this](GameState&) {
         // SceneResource_RunServiceFrames owns this cadence around the common
         // movement and actor-animation services.
-        update_actor_movement();
+        actor_movement_.update(state_, frame_runtime_, rom_bytes_);
         animation_system_.actors().update(
             state_,
             frame_,
@@ -1183,6 +1151,7 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.camera_system = &camera_system_;
     context.animation_system = &animation_system_;
     context.player_motion = &player_motion_;
+    context.actor_movement = &actor_movement_;
     context.rom_bytes = &rom_bytes_;
     context.level_event_sound_requests = &level_event_sound_requests_;
     context.runtime = &frame_runtime_;
@@ -1208,7 +1177,6 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.update_dynamic_actor_culling = [this]() {
         update_dynamic_actor_culling();
     };
-    context.update_actor_movement = [this]() { update_actor_movement(); };
     context.update_level_events = [this]() { update_level_events(); };
     context.start_level_event_stream_after_exit = [this]() {
         start_level_event_stream_after_exit();

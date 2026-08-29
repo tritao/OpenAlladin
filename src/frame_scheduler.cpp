@@ -1,5 +1,8 @@
 #include "frame_scheduler.hpp"
 
+#include "actor_movement.hpp"
+#include "player_motion.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
@@ -39,6 +42,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& camera_system_ = *context.camera_system;
     auto& animation_ = context.animation_system->player();
     auto& player_motion_ = *context.player_motion;
+    auto& actor_movement_ = *context.actor_movement;
     auto& actor_animations_ = context.animation_system->actors().vms();
     const auto& rom_bytes_ = *context.rom_bytes;
     auto& level_event_sound_requests_ = *context.level_event_sound_requests;
@@ -69,7 +73,6 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& apply_floor_contour = context.apply_floor_contour;
     auto& resolve_terrain = context.resolve_terrain;
     auto& update_dynamic_actor_culling = context.update_dynamic_actor_culling;
-    auto& update_actor_movement = context.update_actor_movement;
     auto& update_level_events = context.update_level_events;
     auto& start_level_event_stream_after_exit =
         context.start_level_event_stream_after_exit;
@@ -210,7 +213,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // edge retirement lines up with the synchronized MAME boundary.
     update_dynamic_actor_culling();
     record_scheduler_phase("movement_vm", 0x001ADE36);
-    update_actor_movement();
+    actor_movement_.update(state_, runtime_, rom_bytes_);
     // FUN_001ADB5C also resolves terrain for non-collision actors whose
     // movement flag bit 0 is set. The common type-0x29 object in the opening
     // refill window has no movement cursor, but its animation publishes a
@@ -445,6 +448,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
                 camera_.update_delay = 7;
             }
         }
+    }
     const PlayerMotionResult motion = player_motion_.update_horizontal(
         state_,
         runtime_,

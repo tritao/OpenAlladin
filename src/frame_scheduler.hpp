@@ -19,6 +19,7 @@
 
 namespace openaladdin {
 
+class ActorMovementSystem;
 class PlayerMotionSystem;
 
 struct InputState {
@@ -95,6 +96,7 @@ public:
         CameraSystem* camera_system = nullptr;
         AnimationSystem* animation_system = nullptr;
         PlayerMotionSystem* player_motion = nullptr;
+        ActorMovementSystem* actor_movement = nullptr;
         const std::vector<std::uint8_t>* rom_bytes = nullptr;
         std::vector<std::uint8_t>* level_event_sound_requests = nullptr;
         FrameRuntime* runtime = nullptr;
@@ -106,7 +108,6 @@ public:
         NoArg apply_floor_contour;
         ResolveTerrain resolve_terrain;
         NoArg update_dynamic_actor_culling;
-        NoArg update_actor_movement;
         NoArg update_level_events;
         NoArg start_level_event_stream_after_exit;
         NoArg update_scene_resources;

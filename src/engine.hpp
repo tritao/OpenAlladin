@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 
+#include "actor_movement.hpp"
 #include "animation_system.hpp"
 #include "actor_lifecycle.hpp"
 #include "camera.hpp"
@@ -98,7 +99,6 @@ private:
     void load_actor_records(const std::string& path);
     void load_actor_timeline(const std::string& path);
     void apply_actor_timeline(int frame);
-    void update_actor_movement();
     void update_level_events();
     void start_level_event_stream_after_exit();
     void update_scene_resources();
@@ -138,6 +138,7 @@ private:
     PlayerMotionSystem player_motion_;
     SpriteDatabase sprites_;
     MovementVm movement_vm_;
+    ActorMovementSystem actor_movement_;
     LevelEventSystem level_event_system_;
     CameraSystem camera_system_;
     FrameScheduler scheduler_;
