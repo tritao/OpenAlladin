@@ -1,0 +1,90 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/mid-actor-collision-animation-family-static-targets.json",
+  "purpose": "Promote the directly produced mid-band actor collision and interaction animation family from exact handler assignments and lossless stream decoding.",
+  "template": {
+    "address": "0x001B79A4",
+    "name": "ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD",
+    "record_bytes": "8400400000FF001203E0600000122B9C00000000",
+    "runtime_type": "0x84",
+    "default_movement": "0x001203E0",
+    "default_animation": "0x00122B9C"
+  },
+  "streams": [
+    {
+      "address": "0x00122B6E",
+      "name": "ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE",
+      "range": "0x00122B6E-0x00122BBB",
+      "bytes": 78,
+      "producer": "0x001AC6B4 ActorType2D2E31_ActorCollisionHandler",
+      "children": [
+        "0x00122B9C ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_A (embedded alias)",
+        "0x00122BBC ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_B"
+      ],
+      "decoded": [
+        "F5 child records use ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD",
+        "F600 clears the source actor",
+        "FA applies the 0x001A0A actor-field adjustment and EB clears the actor flag",
+        "The local loop is 0x00122BB6 -> 0x00122BA6"
+      ]
+    },
+    {
+      "address": "0x00122BBC",
+      "name": "ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_B",
+      "range": "0x00122BBC-0x00122BD7",
+      "bytes": 28,
+      "producer": "F5 at 0x00122B80",
+      "decoded": [
+        "FA 0x001A0A += 0x0700",
+        "EB clears actor flag",
+        "EA loops from 0x00122BD2 to 0x00122BC6"
+      ]
+    },
+    {
+      "address": "0x00122BD8",
+      "name": "ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE",
+      "range": "0x00122BD8-0x00122C11",
+      "bytes": 58,
+      "producers": [
+        "0x001AC018 ActorType23_SpawnCollisionResponsePair",
+        "0x001B58FC LevelEvent_SpawnType3AFromCounter",
+        "0x001B71FC InteractionSpawn_RuntimeType3B_66",
+        "0x001B727E InteractionGate_RuntimeType3A_AC",
+        "0x001B77D0 LevelEvent_SpawnType3AWithMovement"
+      ],
+      "decoded": [
+        "Random opening gate",
+        "F5 ACTOR_TEMPLATE_TYPE84_CHILD spawn",
+        "0x16E6-0x1702 frame sequence",
+        "EA 0x00122C0C -> 0x00122BD8"
+      ]
+    },
+    {
+      "address": "0x00122C12",
+      "name": "ACTOR_ANIM_TYPE40_INTERACTION",
+      "range": "0x00122C12-0x00122C1D",
+      "bytes": 12,
+      "producers": [
+        "0x001B7332 InteractionSpawn_RuntimeType40",
+        "0x001B735E InteractionSpawn_RuntimeType40_60",
+        "0x001B7784 LevelEvent_SpawnType40"
+      ],
+      "decoded": ["0x16DE/0x179A/0x1ADE phases with EC 0x01 clears"]
+    }
+  ],
+  "boundary_basis": [
+    "Exact direct animation-root assignments in the actor-collision, level-event, and interaction producers",
+    "Lossless AnimationDecoder output",
+    "The four owners are contiguous from 0x00122B6E through 0x00122C1D",
+    "The existing Type-0x34 wall stream begins at 0x00122C1E"
+  ],
+  "conclusion": "The formerly unresolved 0x00122B6E-0x00122C1D band is now partitioned into four direct actor-animation owners. The Type-0x84 collision response contains one embedded child alias and one separately owned child variant; the Type-0x3A/0x3B response is shared across five producers; and the Type-0x40 interaction root is a compact terminal prefix before the Type-0x34 wall stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

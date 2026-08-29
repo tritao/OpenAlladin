@@ -341,6 +341,38 @@ def test_type10_collision_response_animation_is_exact():
     assert continuation.metadata["entry_offset"] == 20
 
 
+def test_mid_actor_collision_animation_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00122B6E: (0x00122BBB, "ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE"),
+        0x00122BBC: (0x00122BD7, "ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_B"),
+        0x00122BD8: (0x00122C11, "ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE"),
+        0x00122C12: (0x00122C1D, "ACTOR_ANIM_TYPE40_INTERACTION"),
+    }
+    owners = []
+    for address, (end, name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "animation_stream"
+        owners.append((symbol.address, symbol.end))
+    assert all(right + 1 == next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
+    assert symbols.at(0x00122C1E, include_ranges=False).name == "ACTOR_ANIM_TYPE_34_WALL"
+
+    child = symbols.at(0x00122B9C, include_ranges=False)
+    assert child is not None
+    assert child.name == "ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_A"
+    assert child.metadata["alias_of"] == "ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE"
+    assert child.metadata["entry_offset"] == 46
+
+    template = symbols.at(0x001B79A4, include_ranges=False)
+    assert template is not None
+    assert template.name == "ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD"
+    assert template.end == 0x001B79B7
+    assert template.size == 20
+
+
 def test_type03_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {

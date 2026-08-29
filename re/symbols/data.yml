@@ -3618,6 +3618,60 @@
     - ghidra_player_action_transition_animation_static_targets
     - animation_stream_decoder
 
+0x00122B6E:
+  name: ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE
+  type: animation_stream
+  size: 78
+  confidence: decompiled
+  description: Type-0x84 collision-response animation installed by ActorType2D2E31_ActorCollisionHandler when the source actor is promoted from type 0x80 or the receiver is accepted from type 0x82. Its exact 78-byte region spawns two Type-0x84 child records through ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD, clears the source actor, applies the encoded actor-field adjustment and flag clear, then loops through the local response frames.
+  evidence:
+    - mid-actor-collision-animation-family-static-decompilation
+    - actor_collision_handler_family_static_decompilation
+    - animation_stream_decoder
+
+0x00122B9C:
+  name: ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_A
+  type: animation_stream
+  alias_of: ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE
+  entry_offset: 46
+  confidence: decompiled
+  description: Embedded first Type-0x84 collision-child animation entry selected by the first F5 record in ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE. It aliases the parent collision-response owner and does not claim a second ROM ownership range.
+  evidence:
+    - mid-actor-collision-animation-family-static-decompilation
+    - animation_stream_decoder
+
+0x00122BBC:
+  name: ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_B
+  type: animation_stream
+  size: 28
+  confidence: decompiled
+  description: Second Type-0x84 collision-child animation selected by the second F5 record in ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE. Its exact 28-byte region applies the encoded actor-field adjustment, clears the actor flag, presents the 0x1CA2-0x1CAE frame sequence, and loops through its local entry.
+  evidence:
+    - mid-actor-collision-animation-family-static-decompilation
+    - animation_stream_decoder
+
+0x00122BD8:
+  name: ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE
+  type: animation_stream
+  size: 58
+  confidence: decompiled
+  description: Shared Type-0x3A/0x3B interaction-response animation installed by the Type-0x23 collision pair and the Type-0x3A/0x3B level-event and interaction producers. Its exact 58-byte region applies the random opening gate, spawns ACTOR_TEMPLATE_TYPE84_CHILD, presents the 0x16E6-0x1702 sequence, and loops to its root.
+  evidence:
+    - mid-actor-collision-animation-family-static-decompilation
+    - actor_collision_handler_family_static_decompilation
+    - animation_stream_decoder
+
+0x00122C12:
+  name: ACTOR_ANIM_TYPE40_INTERACTION
+  type: animation_stream
+  size: 12
+  confidence: decompiled
+  description: Compact Type-0x40 interaction animation installed by the selector-0x60/0xAD interaction producers and the level-event Type-0x40 producer. Its exact 12-byte region presents frames 0x16DE, 0x179A, and 0x1ADE with EC 0x01 clears between phases, ending immediately before ACTOR_ANIM_TYPE_34_WALL.
+  evidence:
+    - mid-actor-collision-animation-family-static-decompilation
+    - interaction-spawn-runtime3c-40-static-decompilation
+    - animation_stream_decoder
+
 0x0012510A:
   name: ACTOR_ANIM_TYPE30_PRESENTATION_CHILD
   size: 34
@@ -4699,6 +4753,17 @@
   evidence:
     - ghidra_player_action_transition_animation_static_targets
     - player-action-transition-animation-static-decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B79A4:
+  name: ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 collision-child template supplied by the two F5 records in ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE. Its default movement and animation roots are 0x001203E0 and 0x00122B9C, while the F5 records provide the alternate child overrides 0x001203D8/0x00122B9C and 0x001203E0/0x00122BBC.
+  evidence:
+    - mid-actor-collision-animation-family-static-decompilation
+    - actor_collision_handler_family_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7A44:

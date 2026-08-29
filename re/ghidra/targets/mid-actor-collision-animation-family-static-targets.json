@@ -1,0 +1,97 @@
+{
+  "format": "openaladdin-mid-actor-collision-animation-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Classify the directly produced actor collision and interaction animation family between the Type-0x80 transition child and the Type-0x34 wall stream.",
+  "template": {
+    "address": "0x001B79A4",
+    "name": "ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD",
+    "size": 20,
+    "record_bytes": "8400400000FF001203E0600000122B9C00000000",
+    "default_runtime_type": "0x84",
+    "default_movement": "0x001203E0",
+    "default_animation": "0x00122B9C",
+    "producer": "F5 records at 0x00122B70 and 0x00122B80"
+  },
+  "streams": [
+    {
+      "address": "0x00122B6E",
+      "name": "ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE",
+      "range": ["0x00122B6E", "0x00122BBB"],
+      "size": 78,
+      "producer": "0x001AC6B4 ActorType2D2E31_ActorCollisionHandler",
+      "decoded": [
+        "Frame 0x1C96 opens the Type-0x84 response",
+        "F5 at 0x00122B70 selects ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD with animation 0x00122B9C and movement 0x001203D8",
+        "F5 at 0x00122B80 selects the same template with animation 0x00122BBC and movement 0x001203E0",
+        "The parent clears the source actor, applies the 0x001A0A adjustment through FA, clears the actor flag, and loops from 0x00122BB6 to 0x00122BA6"
+      ],
+      "embedded_entries": [
+        {
+          "address": "0x00122B9C",
+          "name": "ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_A",
+          "entry_offset": 46,
+          "ownership": "alias"
+        }
+      ]
+    },
+    {
+      "address": "0x00122BBC",
+      "name": "ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_B",
+      "range": ["0x00122BBC", "0x00122BD7"],
+      "size": 28,
+      "producer": "F5 at 0x00122B80 in ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE",
+      "decoded": [
+        "Frame 0x1CA2 opens the child variant",
+        "FA applies the encoded 0x0700 actor-field adjustment",
+        "EB clears the actor flag",
+        "Frames 0x1CA2-0x1CAE form the loop, returning from 0x00122BD2 to 0x00122BC6"
+      ]
+    },
+    {
+      "address": "0x00122BD8",
+      "name": "ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE",
+      "range": ["0x00122BD8", "0x00122C11"],
+      "size": 58,
+      "producers": [
+        "0x001AC018 ActorType23_SpawnCollisionResponsePair",
+        "0x001B58FC LevelEvent_SpawnType3AFromCounter",
+        "0x001B71FC InteractionSpawn_RuntimeType3B_66",
+        "0x001B727E InteractionGate_RuntimeType3A_AC",
+        "0x001B77D0 LevelEvent_SpawnType3AWithMovement"
+      ],
+      "decoded": [
+        "F0 at 0x00122BDA randomly loops to the root",
+        "F5 at 0x00122BE8 spawns ACTOR_TEMPLATE_TYPE84_CHILD",
+        "Frames 0x16E6-0x1702 form the shared interaction presentation",
+        "EA at 0x00122C0C loops to 0x00122BD8"
+      ]
+    },
+    {
+      "address": "0x00122C12",
+      "name": "ACTOR_ANIM_TYPE40_INTERACTION",
+      "range": ["0x00122C12", "0x00122C1D"],
+      "size": 12,
+      "producers": [
+        "0x001B7332 InteractionSpawn_RuntimeType40",
+        "0x001B735E InteractionSpawn_RuntimeType40_60",
+        "0x001B7784 LevelEvent_SpawnType40"
+      ],
+      "decoded": [
+        "Frames 0x16DE, 0x179A, and 0x1ADE are separated by EC 0x01 clears",
+        "The root ends at 0x00122C1D immediately before ACTOR_ANIM_TYPE_34_WALL"
+      ]
+    }
+  ],
+  "family_boundary": [
+    "The first owner begins at the direct 0x001AC6B4 animation assignment",
+    "The four owners are contiguous and non-overlapping from 0x00122B6E through 0x00122C1D",
+    "ACTOR_ANIM_TYPE_34_WALL begins at 0x00122C1E and remains separately owned"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
