@@ -1233,11 +1233,13 @@ void Engine::update_interaction_actor_flags() {
 }
 
 void Engine::update_scene_resources() {
-    // SceneSystem retains the recovered countdown gate. A nonzero script
-    // cursor is the explicit handoff into the compact resource interpreter;
-    // ordinary gameplay has no scene-resource stream and remains a no-op at
-    // this boundary.
+    // SceneSystem retains the recovered countdown gate. Service it at the
+    // same boundary as the compact resource interpreter so the frame loop
+    // has one owner for scene-script advancement.
+    (void) scene_.advance_script();
     if (!scene_resources_.started()) {
+        // Ordinary gameplay has no scene-resource stream and remains a no-op
+        // after the scene-state gate has been serviced.
         if (state_.scene.script_cursor == 0) return;
         scene_resources_.start(state_.scene.script_cursor);
     }
@@ -3267,7 +3269,6 @@ void Engine::update(const InputState& input) {
     // the vertical reference tile is rebased. Keep the separate catch-up
     // marker only for the post-follow downward rebase path above.
     record_scheduler_phase("scene_advance", 0x001A8E3E);
-    (void) scene_.advance_script();
     update_scene_resources();
     record_scheduler_phase("animation_vm", 0x001AC784);
     if (!stable_terrain_handler_fixture) {
@@ -3455,7 +3456,6 @@ void Engine::update(const InputState& input) {
     }
     if (transition_frame) {
         record_scheduler_phase("scene_advance", 0x001A8E3E);
-        (void) scene_.advance_script();
         update_scene_resources();
         // Scene_EnterTransitionMode owns the transition movement, but the
         // frame loop still reaches its common ordinal-30 animation service.
