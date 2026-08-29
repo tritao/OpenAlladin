@@ -513,6 +513,28 @@
   description: Scene-resource presentation command stream loaded with resource 0x0012D870 by SceneResource_Run12D870Stream12772D; the shared interpreter reaches its command-0 terminator at 0x001277C4.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
+0x00128ED2:
+  name: SCENE_BLANK_PALETTE
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band blank scene palette source used by Render_RunPaletteTransitionFrom. The transition helper consumes exactly 64 words from this source through bands at offsets 0x00, 0x20, 0x40, and 0x60, ending at 0x00128F51.
+  evidence:
+    - ghidra_scene_resource_transfer_targets
+    - ghidra_palette_transition_source_contract
+    - scene_palette_bank_extents_static_v1
+
+0x00128FD2:
+  name: SCENE_TRANSITION_PALETTE_SOURCE
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band scene-transition palette source passed by Scene_EnterTransitionMode to Render_RunPaletteTransitionFrom. The transition helper consumes exactly 64 words through bands at offsets 0x00, 0x20, 0x40, and 0x60, ending at 0x00129051.
+  evidence:
+    - ghidra_scene_transition_palette_callback_targets
+    - ghidra_palette_transition_source_contract
+    - scene_palette_bank_extents_static_v1
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data

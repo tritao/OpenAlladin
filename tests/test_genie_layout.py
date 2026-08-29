@@ -436,6 +436,21 @@ def test_canonical_scene_resource_presentation_streams_have_exact_terminals():
         assert symbol.metadata["type"] == "scene_resource_stream"
 
 
+def test_canonical_scene_palette_banks_have_exact_transition_source_extents():
+    symbols = SymbolStore()
+    expected = (
+        (0x00128ED2, 0x00128F51, "SCENE_BLANK_PALETTE"),
+        (0x00128FD2, 0x00129051, "SCENE_TRANSITION_PALETTE_SOURCE"),
+    )
+    for start, end, name in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == end - start + 1
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "palette_data"
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(

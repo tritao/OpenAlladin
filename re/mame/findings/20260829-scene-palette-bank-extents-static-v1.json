@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-palette-bank-extents-targets.json",
+  "banks": [
+    {
+      "address": "0x00128ED2",
+      "name": "SCENE_BLANK_PALETTE",
+      "range": ["0x00128ED2", "0x00128F51"],
+      "size": 128,
+      "source": "Render_BeginPaletteTransition at 0x001B2784"
+    },
+    {
+      "address": "0x00128FD2",
+      "name": "SCENE_TRANSITION_PALETTE_SOURCE",
+      "range": ["0x00128FD2", "0x00129051"],
+      "size": 128,
+      "source": "Scene_EnterTransitionMode at 0x001B2BC8"
+    }
+  ],
+  "contract": {
+    "band_size": 32,
+    "band_count": 4,
+    "word_count": 64,
+    "extent": "4 * 32 = 128 bytes"
+  },
+  "evidence": [
+    "Render_RunPaletteTransitionFrom publishes source bands at A0+0x00/+0x20/+0x40/+0x60.",
+    "Render_ApplyPaletteStep advances across exactly 0x40 source words.",
+    "The two direct source addresses are separated by an explicit unresolved zero-filled gap."
+  ],
+  "conclusion": "The blank and scene-transition palette banks are canonical GRAPHICS ranges with exact four-band extents; the gap and other palette upload sources remain separate audits.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

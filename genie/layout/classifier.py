@@ -27,6 +27,8 @@ def _class_for_symbol(symbol: Symbol) -> str:
         return "ANIMATION_STREAM"
     if "padding" in symbol_type or "fill" in symbol_type:
         return "PADDING"
+    if "palette" in name or "palette" in symbol_type:
+        return "GRAPHICS"
     if "ACTOR_FRAME" in name:
         return "GRAPHICS"
     if name == "LEVEL_TABLE":

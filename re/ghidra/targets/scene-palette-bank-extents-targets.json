@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-palette-banks",
+    "purpose": "Bound the fixed blank and scene-transition palette sources consumed by the shared palette transition helper."
+  },
+  "consumer": {
+    "address": "0x001B278A",
+    "name": "Render_RunPaletteTransitionFrom",
+    "source_contract": "Publishes A0, A0+0x20, A0+0x40, and A0+0x60 as four 16-word palette bands; Render_ApplyPaletteStep converges 0x40 words from the source."
+  },
+  "banks": [
+    {
+      "address": "0x00128ED2",
+      "name": "SCENE_BLANK_PALETTE",
+      "range": ["0x00128ED2", "0x00128F51"],
+      "bytes": 128,
+      "consumer": "0x001B2784 Render_BeginPaletteTransition"
+    },
+    {
+      "address": "0x00128FD2",
+      "name": "SCENE_TRANSITION_PALETTE_SOURCE",
+      "range": ["0x00128FD2", "0x00129051"],
+      "bytes": 128,
+      "consumer": "0x001B2BC8 Scene_EnterTransitionMode -> 0x001B278A Render_RunPaletteTransitionFrom"
+    }
+  ],
+  "unclaimed_gap": ["0x00128F52", "0x00128FD1"],
+  "evidence": [
+    "The shared transition entry publishes four 0x20-byte source bands.",
+    "The palette convergence loop consumes exactly 0x40 words per source.",
+    "Both source pointers are direct ROM addresses from named scene/render callers."
+  ],
+  "limitations": [
+    "The zero-filled gap between the two banks is not assigned to either source.",
+    "Other 16-word palette upload sources elsewhere in the ROM remain separate records."
+  ]
+}
