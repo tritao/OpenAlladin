@@ -1915,3 +1915,13 @@
   evidence:
     - ghidra_level_entry_actor_block
     - actor_template_grid_xrefs
+
+0x001B819C:
+  name: ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x7C level-event template selected by the timed/cadence spawn path in Level05_EnterRoutine at 0x001B5C20; it uses movement stream 0x0012118A, animation stream 0x00125916, and three resources before the caller supplies the level-relative position and facing condition.
+  evidence:
+    - ghidra_level_table_enter_exit_targeted_decompile
+    - actor_template_grid_xrefs
