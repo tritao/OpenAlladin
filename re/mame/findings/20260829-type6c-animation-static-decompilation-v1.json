@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type6c-animation-static-targets.json",
+  "stream": {
+    "address": "0x00124034",
+    "name": "ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE",
+    "range": "0x00124034-0x00124045",
+    "bytes": 18,
+    "initial_frame": "0x15DA",
+    "comparison": "F4 fields 0xF1/0x00/0x00 compared with long value 0x00000000; true path returns to 0x00124034",
+    "continuation": "EA at 0x00124040 transfers to 0x0012404E inside the following Type-0x69 stream"
+  },
+  "consumer": {
+    "address": "0x001B6836",
+    "name": "InteractionSpawn_Type6C",
+    "selector": "0x70",
+    "template": "0x001B7D78 ACTOR_TEMPLATE_TYPE_69_INTERACTION",
+    "runtime_type": "0x6C",
+    "offset": ["0x0F", "-0x01"]
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Direct selector-0x70 consumer",
+    "Type-0x69 template promotion contract",
+    "Packed boundary before the Type-0x69 response stream"
+  ],
+  "conclusion": "The Type-0x6C animation is closed as an 18-byte promoted-response prefix with a self-looping actor-field comparison and a transfer into the Type-0x69 response stream at 0x0012404E.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

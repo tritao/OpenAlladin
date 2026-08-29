@@ -614,6 +614,17 @@
     - interaction_spawn_mid_family_static_decompilation
     - animation_stream_decoder
 
+0x00124034:
+  name: ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE
+  size: 18
+  confidence: decompiled
+  description: Type-0x6C promoted interaction response animation installed by InteractionSpawn_Type6C. Its packed 18-byte region presents frame 0x15DA, loops while the encoded actor-field comparison at 0x00124036 holds, and jumps into the following Type-0x69 response sequence at 0x0012404E when the condition clears.
+  evidence:
+    - type6c_animation_static_decompilation
+    - interaction_spawn_mid_family_static_decompilation
+    - actor_template_type69_interaction
+    - animation_stream_decoder
+
 0x00120F76:
   name: ACTOR_MOVE_TYPE2A_VERTICAL_BOB
   size: 62

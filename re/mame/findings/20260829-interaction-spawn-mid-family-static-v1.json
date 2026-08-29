@@ -16,7 +16,7 @@
     { "address": "0x001B67C2", "selector": "0xD7", "template": "ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT", "effect": "up to two random-variant spawns, second at Y + 8 with facing complemented" },
     { "address": "0x001B6802", "selector": "0x0D", "template": "ACTOR_TEMPLATE_TYPE_6A_6B", "effect": "offset (+8,-1)" },
     { "address": "0x001B681C", "selector": "0x2B", "template": "ACTOR_TEMPLATE_TYPE_69_INTERACTION", "effect": "offset (+8,-1)" },
-    { "address": "0x001B6836", "selector": "0x70", "template": "ACTOR_TEMPLATE_TYPE_69_INTERACTION", "effect": "gate 0x00FFF100, runtime type 0x6C, animation 0x00124034, offset (+0x0F,-1)" },
+    { "address": "0x001B6836", "selector": "0x70", "template": "ACTOR_TEMPLATE_TYPE_69_INTERACTION", "effect": "gate 0x00FFF100, runtime type 0x6C, animation ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE at 0x00124034, offset (+0x0F,-1)" },
     { "address": "0x001B6864", "selectors": ["0xD0", "0xD1", "0xD2", "0xD3", "0xD4", "0xD5"], "template": "ACTOR_TEMPLATE_TYPE_23_INTERACTION", "effect": "reverse-slot allocation" },
     { "address": "0x001B6870", "selector": "0x5C", "template": "ACTOR_TEMPLATE_TYPE_06", "effect": "offset (+9,+7)" },
     { "address": "0x001B688A", "selector": "0x6C", "template": "ACTOR_TEMPLATE_TYPE_2B_INTERACTION", "effect": "interaction-helper allocation" },
