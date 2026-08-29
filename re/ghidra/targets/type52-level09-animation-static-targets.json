@@ -6,7 +6,7 @@
     "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
   },
   "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
-  "purpose": "Range-bound the directly installed Level-09 Type-0x52 entry animation and its exact template record.",
+  "purpose": "Range-bound the directly installed Level-09 Type-0x52 entry animation, its response-clear prefix, and the exact template record.",
   "animation": {
     "address": "0x001253E8",
     "name": "ACTOR_ANIM_TYPE52_LEVEL09_ENTRY",
@@ -15,8 +15,15 @@
     "template": "0x001B80D4 ACTOR_TEMPLATE_TYPE_52_LEVEL09",
     "consumer": "0x001B6210 Level09_EnterRoutine",
     "movement_stream": "0x00121300",
-    "internal_gate_target": "0x001253FA",
+    "internal_gate_target": "0x001253FA ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX",
     "behavior": "Frame 0x13B2, F4 comparison gate with encoded target 0x001253FA, and unconditional EA loop from 0x001253F4 to 0x001253E8."
+  },
+  "response_prefix": {
+    "address": "0x001253FA",
+    "name": "ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX",
+    "range": ["0x001253FA", "0x001253FB"],
+    "bytes": 2,
+    "command": "F600 clears the actor, then falls through to ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD at 0x001253FC"
   },
   "template": {
     "address": "0x001B80D4",
@@ -29,13 +36,14 @@
   },
   "boundary": {
     "start": "The template at 0x001B80D4 directly publishes the animation pointer 0x001253E8 from Level09_EnterRoutine.",
-    "end": "The EA loop occupies 0x001253F4-0x001253F9; the separately referenced 0x001253FA response stream begins immediately afterward."
+    "end": "The EA loop occupies 0x001253F4-0x001253F9; the response-clear prefix occupies 0x001253FA-0x001253FB and falls through to the separately owned ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD body at 0x001253FC."
   },
   "evidence": [
     "Lossless AnimationDecoder output",
     "Exact Level09 template record and animation pointer",
     "Exact Level09_EnterRoutine installation site",
-    "Exact F4 gate target and EA loop boundary"
+    "Exact F4 gate target, response-clear command, and EA loop boundary",
+    "Existing Type-0x2C child body boundary at 0x001253FC"
   ],
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"

@@ -15,8 +15,15 @@
     "template": "ACTOR_TEMPLATE_TYPE_52_LEVEL09",
     "consumer": "Level09_EnterRoutine",
     "movement_stream": "0x00121300",
-    "internal_gate_target": "0x001253FA",
+    "internal_gate_target": "0x001253FA ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX",
     "behavior": "The compact entry presents 0x13B2, waits on its encoded interaction comparison, and loops through the local EA at 0x001253F4."
+  },
+  "response_prefix": {
+    "address": "0x001253FA",
+    "name": "ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX",
+    "range": "0x001253FA-0x001253FB",
+    "bytes": 2,
+    "behavior": "F600 clears the actor and falls through to the shared ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD body at 0x001253FC."
   },
   "template": {
     "address": "0x001B80D4",
@@ -27,9 +34,10 @@
   "evidence": [
     "Lossless AnimationDecoder output",
     "Exact Level09 template record and direct animation pointer",
-    "Exact Level09_EnterRoutine installation site and F4/EA control flow"
+    "Exact Level09_EnterRoutine installation site and F4/EA control flow",
+    "Exact response-clear prefix and existing shared child-body boundary"
   ],
-  "conclusion": "The Level-09 Type-0x52 entry animation is now represented by its own canonical 18-byte region. Its F4 gate targets the following 0x001253FA response stream, which remains separately owned rather than being folded into the entry record.",
+  "conclusion": "The Level-09 Type-0x52 entry animation is now represented by its own canonical 18-byte region plus a separately owned 2-byte F600 response-clear prefix. That prefix falls through to the existing shared ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD body at 0x001253FC rather than being folded into either neighboring record.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

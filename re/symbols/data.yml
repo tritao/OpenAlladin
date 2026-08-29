@@ -1402,7 +1402,16 @@
   name: ACTOR_ANIM_TYPE52_LEVEL09_ENTRY
   size: 18
   confidence: decompiled
-  description: Level-09 Type-0x52 entry animation installed by ACTOR_TEMPLATE_TYPE_52_LEVEL09. Its compact region presents frame 0x13B2, waits on the encoded interaction field through the F4 gate targeting 0x001253FA, and loops from 0x001253F4 back to 0x001253E8. The separately owned 0x001253FA response stream is not included.
+  description: Level-09 Type-0x52 entry animation installed by ACTOR_TEMPLATE_TYPE_52_LEVEL09. Its compact region presents frame 0x13B2, waits on the encoded interaction field through the F4 gate targeting ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX at 0x001253FA, and loops from 0x001253F4 back to 0x001253E8.
+  evidence:
+    - type52_level09_animation_static_decompilation
+    - animation_stream_decoder
+
+0x001253FA:
+  name: ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX
+  size: 2
+  confidence: decompiled
+  description: Level-09 Type-0x52 response prefix entered by ACTOR_ANIM_TYPE52_LEVEL09_ENTRY through its F4 gate. The F600 command clears the actor and falls through to the separately owned ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD body at 0x001253FC; it has no independent loop.
   evidence:
     - type52_level09_animation_static_decompilation
     - animation_stream_decoder
@@ -1663,9 +1672,10 @@
   name: ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD
   size: 46
   confidence: decompiled
-  description: Type-0x2C child animation spawned by ACTOR_ANIM_TYPE0B_LEVEL_EVENT through the template at 0x001B823C. It presents the paired 0x1C56-0x1C7A frame sequence and loops from 0x00125424 to the local 0x00125404 entry.
+  description: Shared 0x1C56-0x1C7A child-animation body selected directly by ACTOR_TEMPLATE_F5_TYPE_7F and ACTOR_TEMPLATE_TYPE_2C_LEVEL_EVENT_CHILD, and reached after ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX clears the Level-09 actor. It presents the paired frame sequence and loops from 0x00125424 to the local 0x00125404 entry.
   evidence:
     - actor_template_scene_level_family_static_decompilation
+    - type52_level09_animation_static_decompilation
     - animation_stream_decoder
 
 0x00125966:
