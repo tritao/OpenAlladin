@@ -3207,10 +3207,11 @@
 0x001B64D0:
   name: Level08_ExitRoutine
   confidence: decompiled
-  description: Level-table entry-8 exit callback; prepares scene-resource VDP state, initializes the exit presentation actor from the level table, publishes the presentation animation cursor, and records the exit resource phase.
+  description: Level-table entry-8 exit callback; prepares scene-resource VDP state, initializes ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT at 0x001B7DC8, copies the player position into the actor, publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350, and records the exit resource phase.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
+    - level08_exit_template_targets
 0x001B614C:
   name: Level09_EnterRoutine
   confidence: decompiled

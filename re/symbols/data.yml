@@ -2794,6 +2794,17 @@
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs
 
+0x001B7DC8:
+  name: ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x60 Level 08 exit-presentation template selected by Level08_ExitRoutine; it uses movement stream 0x0012152A, default animation entry 0x00123130, owns eleven resources, and carries trailing flags 0x0200 before the caller copies the player position and publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350.
+  evidence:
+    - ghidra_level08_exit_routine
+    - level08_exit_template_targets
+    - actor_template_grid_xrefs
+
 0x001B7DDC:
   name: ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE
   type: actor_template

@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/level08-exit-template-targets.json",
+  "consumer": {
+    "address": "0x001B64D0",
+    "selection_site": "0x001B6504",
+    "initializer": "Actor_InitializeFromTemplate at 0x001AE30A"
+  },
+  "template": {
+    "address": "0x001B7DC8",
+    "range": ["0x001B7DC8", "0x001B7DDB"],
+    "runtime_type": "0x60",
+    "movement_stream": "0x0012152A",
+    "template_word": "0x6000",
+    "animation_stream": "0x00123130",
+    "resource_count": "0x0B",
+    "trailing_flags": "0x0200"
+  },
+  "caller_overrides": {
+    "position": "Actor offset +0x02 receives 0x00FF7E02 and offset +0x04 receives 0x00FF7E04.",
+    "player_animation_cursor": "0x00FF7E60 receives 0x00122350 after template initialization.",
+    "exit_resource_phase": "0x00FFF086 receives 0x0006 and 0x00FFF174 is set."
+  },
+  "evidence": [
+    "Direct Level08_ExitRoutine disassembly and cached decompilation",
+    "Exact 20-byte record boundary between the established Type-0x76 and Type-0x84 records",
+    "Post-initialization player-position and animation-cursor writes"
+  ],
+  "conclusion": "The Level-08 exit callback's Type-0x60 actor base is statically closed at its exact selection, initialization, and caller-override contract. The template's default animation entry is intentionally distinguished from the callback's later player animation publication.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

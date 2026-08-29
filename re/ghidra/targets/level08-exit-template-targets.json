@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-level08-exit-type60-template-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the exact Type-0x60 actor template selected by the Level-08 exit callback.",
+  "consumer": {
+    "address": "0x001B64D0",
+    "name": "Level08_ExitRoutine",
+    "selection_site": "0x001B6504",
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "template": "0x001B7DC8 ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT"
+  },
+  "template": {
+    "address": "0x001B7DC8",
+    "name": "ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT",
+    "range": ["0x001B7DC8", "0x001B7DDB"],
+    "size": 20,
+    "raw_bytes": "6000000000000012152A6000001231300B000200",
+    "runtime_type": "0x60",
+    "movement_stream": "0x0012152A",
+    "template_word": "0x6000",
+    "animation_stream": "0x00123130",
+    "resource_count": "0x0B",
+    "trailing_flags": "0x0200"
+  },
+  "caller_overrides": {
+    "position": "Copies PLAYER_WORLD_X from 0x00FF7E02 to actor offset +0x02 and PLAYER_WORLD_Y from 0x00FF7E04 to actor offset +0x04.",
+    "player_animation_cursor": "Publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350 through PLAYER_ANIMATION_PC at 0x00FF7E60.",
+    "exit_resource_phase": "Writes 0x0006 to 0x00FFF086 and sets 0x00FFF174 after initialization."
+  },
+  "evidence": [
+    "Exact 68000 Level08_ExitRoutine installation at 0x001B6504-0x001B653C",
+    "Direct Actor_InitializeFromTemplate call with A5=0x00FF7E82",
+    "Post-initialization copy of player X/Y and dedicated PLAYER_ANIMATION_PC publication",
+    "Exact 20-byte record boundary between ACTOR_TEMPLATE_TYPE_76_INTERACTION and ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE"
+  ],
+  "conclusion": "The Type-0x60 record is the directly selected Level-08 exit-presentation actor base. Its default animation field is distinct from the player animation cursor published by the callback after initialization; no broader Type-0x60 role is inferred.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
