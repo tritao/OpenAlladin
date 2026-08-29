@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-type10-collision-response-animation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Classify the Type-0x10 actor-collision response animation selected by the actor collision dispatch path.",
+  "stream": {
+    "address": "0x001239A0",
+    "name": "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE",
+    "range": ["0x001239A0", "0x001239C9"],
+    "size": 42,
+    "producer": "0x001AC2D2 ActorType10_ActorCollisionHandler",
+    "runtime_type": "0x10",
+    "decoded": [
+      "Frame 0x18E2 opens the response",
+      "ED at 0x001239A2 publishes temporary actor type 0x84",
+      "F3 0x42 plays the collision-response sound",
+      "Frames 0x18E2, 0x18E6, 0x18EA, 0x18EE, and 0x18F2 form the response cadence",
+      "ED at 0x001239BC restores actor type 0x10",
+      "EA at 0x001239C4 enters 0x001239DE inside the existing Type-0x10 interaction owner"
+    ]
+  },
+  "embedded_entries": [
+    {
+      "address": "0x001239DE",
+      "name": "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION",
+      "alias_of": "ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE",
+      "entry_offset": 20,
+      "ownership": "alias"
+    }
+  ],
+  "boundary_basis": [
+    "Direct animation-root installation by ActorType10_ActorCollisionHandler",
+    "Lossless AnimationDecoder output",
+    "The root ends immediately before ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE at 0x001239CA",
+    "The continuation target 0x001239DE remains inside the existing Type-0x10 owner"
+  ],
+  "conclusion": "The formerly unclassified 0x001239A0-0x001239C9 band is a closed Type-0x10 actor-collision response root. Its continuation is an alias into the existing Type-0x10 interaction-response owner, so no duplicate ROM ownership is introduced.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

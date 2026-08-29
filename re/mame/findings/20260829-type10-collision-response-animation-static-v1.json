@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type10-collision-response-animation-static-targets.json",
+  "stream": {
+    "address": "0x001239A0",
+    "name": "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE",
+    "range": "0x001239A0-0x001239C9",
+    "bytes": 42,
+    "producer": "0x001AC2D2 ActorType10_ActorCollisionHandler",
+    "runtime_type": "0x10",
+    "frame_sequence": [
+      "0x001FA41E",
+      "0x001FA41E",
+      "0x001FA484",
+      "0x001FA50E",
+      "0x001FA50E",
+      "0x001FA50E",
+      "0x001FA568",
+      "0x001FA568",
+      "0x001FA5CE",
+      "0x001FA5CE",
+      "0x001FA5CE"
+    ],
+    "temporary_type": "ED 0x84 at 0x001239A2, restored to 0x10 at 0x001239BC",
+    "sound": "F3 0x42 at 0x001239A8",
+    "continuation": "0x001239C4 EA -> 0x001239DE"
+  },
+  "embedded_entry": {
+    "address": "0x001239DE",
+    "name": "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION",
+    "alias_of": "ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE",
+    "entry_offset": 20
+  },
+  "boundary_basis": [
+    "Direct Type-0x10 actor-collision handler write",
+    "Lossless AnimationDecoder output",
+    "Exact boundary before the Type-0x10 interaction-response root"
+  ],
+  "conclusion": "The Type-0x10 actor-collision response is now a named, exact 42-byte temporary-type-0x84 animation root. Its tail enters an alias within the existing Type-0x10 interaction-response owner.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

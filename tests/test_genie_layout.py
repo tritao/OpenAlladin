@@ -325,6 +325,22 @@ def test_player_action_transition_child_animation_is_exact():
     assert symbols.at(0x00122B6E, include_ranges=False) is None
 
 
+def test_type10_collision_response_animation_is_exact():
+    symbols = SymbolStore()
+    response = symbols.at(0x001239A0, include_ranges=False)
+    assert response is not None
+    assert response.name == "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE"
+    assert response.end == 0x001239C9
+    assert response.size == 42
+    assert response.metadata["type"] == "animation_stream"
+
+    continuation = symbols.at(0x001239DE, include_ranges=False)
+    assert continuation is not None
+    assert continuation.name == "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION"
+    assert continuation.metadata["alias_of"] == "ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE"
+    assert continuation.metadata["entry_offset"] == 20
+
+
 def test_type03_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {

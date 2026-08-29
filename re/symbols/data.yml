@@ -1843,6 +1843,27 @@
     - level01_type1f_settle_trace
     - animation_stream_decoder
 
+0x001239A0:
+  name: ACTOR_ANIM_TYPE10_COLLISION_RESPONSE
+  type: animation_stream
+  size: 42
+  confidence: decompiled
+  description: Type-0x10 actor-collision response animation installed by ActorType10_ActorCollisionHandler at 0x001AC2D2. Its exact 42-byte region publishes temporary type 0x84, presents the 0x18E2-0x18F2 response cadence with sound 0x42, restores type 0x10, and transfers into the embedded ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION at 0x001239DE.
+  evidence:
+    - type10_collision_response_animation_static_decompilation
+    - ghidra_actor_type10_collision_handler
+    - animation_stream_decoder
+
+0x001239DE:
+  name: ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION
+  alias_of: ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE
+  entry_offset: 20
+  confidence: decompiled
+  description: Embedded Type-0x10 collision-response continuation entered by ACTOR_ANIM_TYPE10_COLLISION_RESPONSE after its temporary type-0x84 presentation. It aliases the existing Type-0x10 interaction-response owner and does not claim a second ROM ownership range.
+  evidence:
+    - type10_collision_response_animation_static_decompilation
+    - animation_stream_decoder
+
 0x00123A68:
   name: ACTOR_ANIM_TYPE2F_INTERACTION_LOOP
   size: 22
