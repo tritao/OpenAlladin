@@ -1,6 +1,5 @@
 #pragma once
 
-#include "actor_lifecycle.hpp"
 #include "animation_system.hpp"
 #include "camera.hpp"
 #include "collision.hpp"
@@ -20,6 +19,7 @@
 namespace openaladdin {
 
 class ActorMovementSystem;
+class ActorTerrainSystem;
 class PlayerMotionSystem;
 class TerrainBehaviorSystem;
 
@@ -76,10 +76,6 @@ public:
         bool,
         bool
     )>;
-    using InitializeActor = std::function<ActorState(
-        const ActorState&,
-        std::uint32_t
-    )>;
     using ApplyTimeline = std::function<void(int)>;
     using RecordPhase = std::function<void(const char*, std::uint32_t)>;
 
@@ -88,7 +84,6 @@ public:
         Level* level = nullptr;
         GameData* game_data = nullptr;
         ActorSystem* actors = nullptr;
-        ActorLifecycleSystem* actor_lifecycle = nullptr;
         CollisionSystem* collisions = nullptr;
         SceneSystem* scene = nullptr;
         InteractionSystem* interactions = nullptr;
@@ -96,6 +91,7 @@ public:
         AnimationSystem* animation_system = nullptr;
         PlayerMotionSystem* player_motion = nullptr;
         ActorMovementSystem* actor_movement = nullptr;
+        ActorTerrainSystem* actor_terrain = nullptr;
         PlayerTerrainSystem* terrain = nullptr;
         TerrainBehaviorSystem* terrain_behavior = nullptr;
         const std::vector<std::uint8_t>* rom_bytes = nullptr;
@@ -112,7 +108,6 @@ public:
         NoArg publish_player_world_coordinates;
         NoArg sync_player_actor;
         PlayerAnimationContext player_animation_context;
-        InitializeActor initialize_actor_from_template;
         ApplyTimeline apply_actor_timeline;
         std::function<int()> player_world_x;
         std::function<int()> player_world_y;

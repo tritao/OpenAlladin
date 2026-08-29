@@ -1,6 +1,7 @@
 #include "frame_scheduler.hpp"
 
 #include "actor_movement.hpp"
+#include "actor_terrain.hpp"
 #include "player_motion.hpp"
 #include "terrain_behavior.hpp"
 
@@ -18,8 +19,6 @@ constexpr std::uint32_t kPlayerSwordStableStream = 0x001223E2;
 constexpr std::uint32_t kPlayerSwordFirstFrame = 0x001ED34A;
 constexpr std::uint32_t kPlayerUpAnimationStream = 0x00122236;
 constexpr std::uint32_t kPlayerDownAnimationStream = 0x001222D2;
-constexpr int kTerrainResourceBase = 0x2FD2;
-
 HorizontalDirection horizontal_direction(const InputState& input) {
     if (input.left && !input.right) return HorizontalDirection::Left;
     if (input.right && !input.left) return HorizontalDirection::Right;
@@ -36,7 +35,6 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& player_ = state_.player;
     auto& camera_ = state_.camera;
     auto& actors_ = *context.actors;
-    auto& actor_lifecycle_ = *context.actor_lifecycle;
     auto& collisions_ = *context.collisions;
     auto& scene_ = *context.scene;
     auto& interactions_ = *context.interactions;
@@ -44,9 +42,9 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& animation_ = context.animation_system->player();
     auto& player_motion_ = *context.player_motion;
     auto& actor_movement_ = *context.actor_movement;
+    auto& actor_terrain_ = *context.actor_terrain;
     auto& terrain_ = *context.terrain;
     auto& terrain_behavior_ = *context.terrain_behavior;
-    auto& actor_animations_ = context.animation_system->actors().vms();
     const auto& rom_bytes_ = *context.rom_bytes;
     auto& level_event_sound_requests_ = *context.level_event_sound_requests;
     auto& runtime_ = *context.runtime;
@@ -81,8 +79,6 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         context.publish_player_world_coordinates;
     auto& sync_player_actor = context.sync_player_actor;
     auto& player_animation_context = context.player_animation_context;
-    auto& initialize_actor_from_template =
-        context.initialize_actor_from_template;
     auto& apply_actor_timeline = context.apply_actor_timeline;
     auto& player_world_x = context.player_world_x;
     auto& player_world_y = context.player_world_y;
@@ -222,186 +218,13 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     update_dynamic_actor_culling();
     record_scheduler_phase("movement_vm", 0x001ADE36);
     actor_movement_.update(state_, runtime_, rom_bytes_);
-    // FUN_001ADB5C also resolves terrain for non-collision actors whose
-    // movement flag bit 0 is set. The common type-0x29 object in the opening
-    // refill window has no movement cursor, but its animation publishes a
-    // frame pointer and the terrain pass snaps its Y coordinate to the
-    // selected class contour on the following VBlank.
     record_scheduler_phase("actor_terrain_collision", 0x001ADB5C);
-    if (!stable_terrain_handler_fixture && !rom_bytes_.empty()) {
-        const auto& words = level_.terrain_words();
-        const auto& floor = level_.floor_data();
-        constexpr int kTerrainResourceBase = 0x2FD2;
-        for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
-            ActorState& actor = actors_[slot];
-            if (actor.type == 0
-                || ((actor.flags & 0x08) != 0 && !actors_.host_meta(slot).spawned_by_apple)
-                || ((actor.movement_flags & 0x01) == 0 && !actors_.host_meta(slot).spawned_by_apple)
-                || actor.frame_ptr == 0
-                || actor.movement_word_1a < 0) {
-                continue;
-            }
-            const int level_height_pixels = level_.map_height() * 16;
-            if (static_cast<int>(actor.y) > level_height_pixels + 0xC8) {
-                actor.movement_flags = static_cast<std::uint8_t>(
-                    (actor.movement_flags & ~0x01U) | 0x40U);
-                continue;
-            }
-            const int row = (static_cast<int>(actor.y) - 0xF0) >> 4;
-            const int column = (static_cast<int>(actor.x) + 0x10) >> 4;
-            if (row < 0 || row >= level_.map_height()
-                || column < 0 || column >= level_.map_width()) {
-                actor.movement_flags = static_cast<std::uint8_t>(
-                    (actor.movement_flags & ~0x01U) | 0x40U);
-                continue;
-            }
-            unsigned class_value = 0;
-            int class_row_offset = 0;
-            std::uint8_t interaction_state = 0;
-            for (int row_offset = 0; row_offset < 3 && class_value == 0; ++row_offset) {
-                const int sample_row = row + row_offset;
-                if (sample_row >= level_.map_height()) break;
-                const std::size_t map_index = static_cast<std::size_t>(
-                    sample_row * level_.map_width() + column);
-                const std::size_t resource = static_cast<std::size_t>(words[map_index] >> 1);
-                for (std::size_t resource_offset = 0; resource_offset < 2; ++resource_offset) {
-                    if (resource + resource_offset >= floor.size()) continue;
-                    const std::uint8_t floor_byte = floor[resource + resource_offset];
-                    const std::size_t class_address = static_cast<std::size_t>(
-                        kTerrainResourceBase + (static_cast<std::size_t>(floor_byte) << 4)
-                        + (static_cast<int>(actor.x) & 0x0F));
-                    if (class_address >= rom_bytes_.size()) continue;
-                    const unsigned candidate = rom_bytes_[class_address] & 0x3F;
-                    if (candidate == 0) continue;
-                    class_value = candidate;
-                    class_row_offset = row_offset;
-                    if (resource + 2 < floor.size()) {
-                        interaction_state = floor[resource + 2];
-                    }
-                    break;
-                }
-            }
-            if (actors_.host_meta(slot).spawned_by_apple && actor.type == 0x80
-                && (actor.flags & 0x08) != 0) {
-                // The apple flight record is collision-enabled but does not
-                // use the generic gravity-only terrain branch. It converts
-                // only when the current row (rather than a look-ahead row)
-                // contains a solid class, matching the observed impact edge.
-                if (class_value != 0 && class_row_offset == 0) {
-                    const ActorState replacement = initialize_actor_from_template(actor, 0x001B792C);
-                    (void)actor_lifecycle_.install(slot, replacement);
-                    actor_animations_[slot].clear_actor_service_boundary();
-                    actor_animations_[slot].defer_actor_service();
-                    actors_.host_meta(slot).spawned_by_apple = false;
-                }
-                continue;
-            }
-            if (class_value == 0) {
-                // The ROM's terrain probe also inspects the fourth row below
-                // the actor for a pending contour. It uses that look-ahead to
-                // arm +0x07 bit 4, but does not snap the actor to a contour
-                // until the class enters the ordinary three-row path.
-                for (int row_offset = 3; row_offset < 4; ++row_offset) {
-                    const int sample_row = row + row_offset;
-                    if (sample_row >= level_.map_height()) break;
-                    const std::size_t map_index = static_cast<std::size_t>(
-                        sample_row * level_.map_width() + column);
-                    const std::size_t resource = static_cast<std::size_t>(words[map_index] >> 1);
-                    for (std::size_t resource_offset = 0; resource_offset < 2; ++resource_offset) {
-                        if (resource + resource_offset >= floor.size()) continue;
-                        const std::uint8_t floor_byte = floor[resource + resource_offset];
-                        const std::size_t class_address = static_cast<std::size_t>(
-                            kTerrainResourceBase + (static_cast<std::size_t>(floor_byte) << 4)
-                            + (static_cast<int>(actor.x) & 0x0F));
-                        if (static_cast<int>(actor.y) >= 0x36B
-                            && class_address < rom_bytes_.size()
-                            && (rom_bytes_[class_address] & 0x3F) != 0) {
-                            if ((actor.runtime_field_07 & 0x10U) == 0
-                                && actor.runtime_field_07_delay == 0) {
-                                actor.runtime_field_07_delay = 2;
-                            }
-                            row_offset = 4;
-                            break;
-                        }
-                    }
-                    if ((actor.runtime_field_07 & 0x10U) != 0) break;
-                }
-                // In-bounds class-zero terrain follows ROM 1ADE1E: it only
-                // arms the vertical accumulator (unless bit 7 suppresses
-                // gravity). The bit0->bit6 flag conversion is reserved for
-                // the out-of-range path at 1ADE10 above.
-                if ((actor.movement_flags & 0x80) == 0) {
-                    actor.movement_word_1a = static_cast<std::int16_t>(
-                        actor.movement_word_1a + 0x78);
-                }
-                continue;
-            }
-            actor.interaction_state = interaction_state;
-            actor.movement_word_1a = 0;
-            actor.y = static_cast<std::uint16_t>(
-                ((static_cast<int>(actor.y) - 0x10) & ~0x0F)
-                + class_row_offset * 0x10 + static_cast<int>(class_value) - 1);
-        }
-    }
-    // FUN_001ADB5C is the terrain/actor pass immediately after the ROM
-    // movement VM. For collision-enabled actors it samples the same decoded
-    // terrain resource used by Level::resolve_player_cell, then dispatches
-    // Actor_HandleType2DInteraction when the class-table entry is nonzero.
-    // This is what converts the later 0x2D child to the 0x84 template; the
-    // earlier child is on a flat class-zero cell and remains eligible for the
-    // player collision pass below.
-    if (!stable_terrain_handler_fixture && !rom_bytes_.empty()) {
-        const auto& words = level_.terrain_words();
-        const auto& floor = level_.floor_data();
-        constexpr int kTerrainResourceBase = 0x2FD2;
-        for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
-            ActorState& actor = actors_[slot];
-            if (actor.type != 0x2D
-                || (actor.flags & 0x08) == 0
-                || actor.frame_ptr == 0
-                || static_cast<int>(actor.y) > player_world_y() + 0xE0) {
-                continue;
-            }
-            const int row = (static_cast<int>(actor.y) - 0xF0) >> 4;
-            const int column = (static_cast<int>(actor.x) + 0x10) >> 4;
-            if (row < 0 || row >= level_.map_height()
-                || column < 0 || column >= level_.map_width()) {
-                continue;
-            }
-            const std::size_t map_index = static_cast<std::size_t>(
-                row * level_.map_width() + column);
-            const std::size_t resource = static_cast<std::size_t>(words[map_index] >> 1);
-            const auto terrain_class = [&](std::size_t resource_byte_offset) {
-                if (resource + resource_byte_offset >= floor.size()) return 0U;
-                const std::uint8_t resource_byte = floor[resource + resource_byte_offset];
-                const std::size_t class_address = static_cast<std::size_t>(
-                    kTerrainResourceBase + (static_cast<std::size_t>(resource_byte) << 4)
-                    + (static_cast<int>(actor.x) & 0x0F));
-                if (class_address >= rom_bytes_.size()) return 0U;
-                return static_cast<unsigned>(rom_bytes_[class_address] & 0x3F);
-            };
-            const bool class_empty = terrain_class(0) == 0 && terrain_class(1) == 0;
-            const bool third_byte_is_empty = resource + 2 >= floor.size()
-                || floor[resource + 2] < 0xE0;
-            if (class_empty && third_byte_is_empty) {
-                continue;
-            }
-
-            const std::uint32_t animation_pc = actor.animation_pc;
-            const bool spawned_by_animation = actors_.host_meta(slot).spawned_by_animation;
-            const ActorState replacement = initialize_actor_from_template(actor, 0x001B7E40);
-            (void)actor_lifecycle_.install(slot, replacement);
-            // Most type-0x2D terrain conversions pass through the common
-            // 0x001ABECE follow-up, which republishes the facing byte as
-            // 0xFF. The Level-01 stream at animation cursor 0x00123EFA takes
-            // the direct terrain path instead and keeps the template's zero
-            // facing byte.
-            actor.facing_x_flip = animation_pc == 0x00123EFA ? 0 : 0xFF;
-            actor_animations_[slot].clear_actor_service_boundary();
-            actor_animations_[slot].defer_actor_service_on_gate();
-            actors_.host_meta(slot).spawned_by_animation = spawned_by_animation;
-        }
-    }
+    actor_terrain_.update(
+        state_,
+        level_,
+        rom_bytes_,
+        stable_terrain_handler_fixture
+    );
     record_scheduler_phase("player_actor_interaction", 0x001ABB40);
     const CollisionEffects collision_effects = collisions_.player_actor(
         state_,

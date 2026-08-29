@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include "actor_movement.hpp"
+#include "actor_terrain.hpp"
 #include "animation_system.hpp"
 #include "actor_lifecycle.hpp"
 #include "camera.hpp"
@@ -101,10 +102,6 @@ private:
     SceneServices scene_services();
     bool instantiate_scene_actor(const SceneActorRecord& record);
     ActorState actor_from_template(std::uint32_t template_address) const;
-    ActorState initialize_actor_from_template(
-        const ActorState& destination,
-        std::uint32_t template_address
-    ) const;
     void update_dynamic_actor_culling();
     // FUN_001A8E0C is a real RAM publication, not a cached convenience. The
     // ROM uses it at four distinct causal boundaries in the frame loop.
@@ -141,6 +138,7 @@ private:
     FrameRuntime frame_runtime_;
     InteractionSystem interactions_;
     TerrainBehaviorSystem terrain_behavior_;
+    ActorTerrainSystem actor_terrain_;
     std::map<int, ActorSystem::Table> actor_timeline_;
     // FUN_001B3032 is the shared fixed-ROM PRNG used by terrain responses and
     // animation F0 branches. Keep its state in one place so VM consumers do

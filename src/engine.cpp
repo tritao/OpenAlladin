@@ -238,6 +238,7 @@ Engine::Engine()
           actor_lifecycle_,
           animation_system_,
           interactions_}),
+      actor_terrain_(actor_lifecycle_, animation_system_),
       random_state_(state_.random.value),
       frame_(state_.frame.number),
       frame_phase_(state_.frame.phase) {
@@ -414,13 +415,6 @@ void Engine::apply_actor_timeline(int frame) {
 
 ActorState Engine::actor_from_template(std::uint32_t template_address) const {
     return actor_lifecycle_.from_template(template_address);
-}
-
-ActorState Engine::initialize_actor_from_template(
-    const ActorState& destination,
-    std::uint32_t template_address
-) const {
-    return actor_lifecycle_.initialize_record(destination, template_address);
 }
 
 void Engine::update_dynamic_actor_culling() {
@@ -899,7 +893,6 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.level = &level_;
     context.game_data = &game_data_;
     context.actors = &actors_;
-    context.actor_lifecycle = &actor_lifecycle_;
     context.collisions = &collisions_;
     context.scene = &scene_;
     context.interactions = &interactions_;
@@ -907,6 +900,7 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.animation_system = &animation_system_;
     context.player_motion = &player_motion_;
     context.actor_movement = &actor_movement_;
+    context.actor_terrain = &actor_terrain_;
     context.terrain = &terrain_;
     context.terrain_behavior = &terrain_behavior_;
     context.rom_bytes = &rom_bytes_;
@@ -967,10 +961,6 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.player_animation_context = [this](bool grounded) {
         return animation_system_.player_context(state_, grounded);
     };
-    context.initialize_actor_from_template =
-        [this](const ActorState& destination, std::uint32_t template_address) {
-            return initialize_actor_from_template(destination, template_address);
-        };
     context.apply_actor_timeline = [this](int frame) {
         apply_actor_timeline(frame);
     };
