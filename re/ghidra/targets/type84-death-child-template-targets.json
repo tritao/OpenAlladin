@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "type84-death-child-template",
+    "purpose": "Resolve the adjacent Type-0x84 child template supplied by the death animation's F5 spawn records."
+  },
+  "targets": [
+    {
+      "address": "0x001B7954",
+      "name": "ACTOR_TEMPLATE_DEATH_84_CHILD",
+      "size": 20
+    },
+    {
+      "address": "0x00122FA2",
+      "name": "ACTOR_ANIM_DEATH_122FA2"
+    }
+  ],
+  "memory_references": [
+    { "address": "0x001B7940", "name": "ACTOR_TEMPLATE_DEATH_84" },
+    { "address": "0x00122FFE", "name": "ACTOR_ANIM_DEATH_84_CHILD_ENTRY_A" },
+    { "address": "0x00122FF2", "name": "ACTOR_ANIM_DEATH_84_CHILD_ENTRY_B" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" }
+  ]
+}
