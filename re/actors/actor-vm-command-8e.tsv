@@ -1,5 +1,6 @@
 # openaladdin-actor-table-v1
 # Controlled 0x8E dynamic-stream selector probe. The command at 0x004BBD8
-# selects the default stream returned by FUN_001AD150: 0x00121AD8.
+# selects the default stream returned by Player_ResetAnimationResponseGate:
+# PLAYER_ANIM_TERRAIN_BOUNCE_ROOT (0x00121AD8).
 # slot type x y movement_pc frame_ptr animation_pc flags facing_x_flip facing_y_flip movement_command_timer movement_loop_pc movement_loop_timer movement_return_pc movement_word_18 movement_word_1a sprite_attribute
 31 0x7D 150 416 0x004BBD6 0x0 0x00125952 0 0 0 0 0x0 0x0 0x0 0x0 0x0 0x0

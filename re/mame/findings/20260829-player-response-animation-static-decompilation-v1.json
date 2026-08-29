@@ -25,7 +25,7 @@
       "bytes": 124,
       "frames": ["0x0A32", "0x0A36", "0x0A3A", "0x0A3E", "0x0A42", "0x0A46", "0x0A4A", "0x0A4E"],
       "frame_repetition": "Each response frame is presented three times before its gate.",
-      "response_gate": "F4 commands compare the encoded player response field with zero and branch to PLAYER_ANIM_STATE_121AD8 at 0x00121AD8.",
+      "response_gate": "F4 commands compare the encoded player response field with zero and branch to PLAYER_ANIM_TERRAIN_BOUNCE_ROOT at 0x00121AD8.",
       "loop": "EA at 0x00125EE8 -> 0x00125E72"
     }
   ],
@@ -48,7 +48,7 @@
   ],
   "consumers": [
     "0x001B781A LevelEvent_ArmPlayerPresentation publishes 0x001258D2 through PLAYER_ANIMATION_PC.",
-    "0x001B56B6 TerrainHandler_BouncePlayerBlock publishes 0x00121AD8, which can branch into 0x00125E72.",
+    "0x001B56B6 TerrainHandler_BouncePlayerBlock publishes PLAYER_ANIM_TERRAIN_BOUNCE_ROOT at 0x00121AD8, which can branch into 0x00125E72.",
     "0x001AD150 Player_ResetAnimationResponseGate is the selector-side response service associated with the shared player stream."
   ],
   "boundaries": {

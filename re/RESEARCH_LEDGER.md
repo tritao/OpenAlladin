@@ -1096,6 +1096,14 @@ conditional F5 records targeting the embedded `0x00123158`/`0x00123166`
 entries of the Type-0x84 companion stream, and the terminal dynamic state
 selection at `0x00121C26`.
 
+The player terrain-bounce response root is recorded in
+`re/mame/findings/20260829-player-terrain-bounce-animation-static-decompilation-v1.json`.
+`PLAYER_ANIM_TERRAIN_BOUNCE_ROOT` owns the exact
+`0x00121AD8-0x00121BB5` region (222 bytes), including the actor-state write,
+the `0x093E-0x0956` bounce frames, repeated handoffs to the shared
+`PLAYER_ANIM_TERRAIN_RESPONSE_SHARED` stream, and the terminal `0x087E-0x088A`
+loop. The interaction-pair setup stream begins immediately at `0x00121BB6`.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2897,3 +2905,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type29-transition-shared-animation-static-decompilation-v1` | recorded-static-decompilation | Shared Type-0x29 interaction/transition animation range-bounded with exact random branches and transition handoff |
 | `20260829-player-idle-animation-static-decompilation-v1` | recorded-static-decompilation | Player idle pre-roll and root range-bounded with exact response branches, Type-0x46 F5 spawn, and self-loop |
 | `20260829-player-interaction-pair-animation-static-decompilation-v1` | recorded-static-decompilation | Player interaction-pair setup range-bounded with dual Type-0x84 child spawns and dynamic state handoff |
+| `20260829-player-terrain-bounce-animation-static-decompilation-v1` | recorded-static-decompilation | Player terrain-bounce response root range-bounded with actor-state write, shared response handoffs, terminal frame loop, and exact boundary before interaction-pair setup |

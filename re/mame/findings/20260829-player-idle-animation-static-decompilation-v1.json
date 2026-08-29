@@ -22,7 +22,7 @@
       "bytes": 416,
       "opening_frame": "0x09D2",
       "response_branches": [
-        "F4 checks TERRAIN_LANDING_STATE and branches to PLAYER_ANIM_STATE_121AD8.",
+        "F4 checks TERRAIN_LANDING_STATE and branches to PLAYER_ANIM_TERRAIN_BOUNCE_ROOT.",
         "F4 checks the encoded terrain/interaction response field and branches to PLAYER_ANIM_TERRAIN_RESPONSE_SHARED.",
         "F4 checks PLAYER_INTERACTION_MARKER and enters the local response state at 0x00121DE0."
       ],
