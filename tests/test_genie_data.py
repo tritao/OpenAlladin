@@ -107,3 +107,62 @@ def test_data_cli_surface_dispatches():
     assert todo.limit == 4
     assert next_item.kind == "actor-template"
     assert context.address == 0x121964
+
+
+def test_data_infers_bounded_pointer_and_table_extents(tmp_path):
+    database_root = _database(tmp_path)
+    symbols = SymbolStore(symbols=(
+        Symbol(0x10, "Pointer", "data", metadata={"type": "rom_pointer"}),
+        Symbol(
+            0x20,
+            "PointerTable",
+            "data",
+            metadata={"type": "rom_pointer_table", "entry_size": 4, "count": 3},
+        ),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x100, (LayoutRange(0, 0xFF, "UNKNOWN", "test"),)),
+    )
+
+    pointer = index.at(0x10)
+    table = index.at(0x20)
+    assert pointer is not None and pointer["range_bounded"] is True
+    assert pointer["size"] == 4
+    assert table is not None and table["range_bounded"] is True
+    assert table["end"] == "0x0000002B"
+
+
+def test_data_context_includes_animation_f5_template_consumer(tmp_path):
+    database_root = _database(tmp_path)
+    symbols = SymbolStore(symbols=(
+        Symbol(0x40, "PlayerAnimation", "data", size=16),
+        Symbol(0x80, "ActorTemplate", "data", metadata={"type": "actor_template"}),
+    ))
+    (tmp_path / "animation.json").write_text(json.dumps({
+        "streams": {
+            "PlayerAnimation": {
+                "entry": "0x40",
+                "name": "PlayerAnimation",
+                "instructions": [{
+                    "address": "0x44",
+                    "opcode": "0xF5",
+                    "raw": "F5000000008000000000000000000000",
+                }],
+            },
+        },
+    }), encoding="utf-8")
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x100, (LayoutRange(0, 0xFF, "UNKNOWN", "test"),)),
+        animation_path=tmp_path / "animation.json",
+    )
+
+    context = index.context(0x80)
+    assert context is not None
+    assert context["consumers"][0]["name"] == "PlayerAnimation"
+    assert context["references"][0]["type"] == "ANIMATION_F5_TEMPLATE"

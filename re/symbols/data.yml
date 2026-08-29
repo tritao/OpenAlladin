@@ -129,8 +129,10 @@
 0x004554:
   name: TERRAIN_RESPONSE_HANDLER_TABLE
   type: rom_pointer_table
+  entry_size: 4
+  count: 256
   confidence: confirmed
-  description: 256-entry four-byte table indexed by the terrain behavior byte read from TERRAIN_BEHAVIOR_INDEX_TABLE; handlers update terrain flags, player velocity, alignment, animation, and actor spawns. Most entries select the common no-op handler at 0x001B65BE.
+  description: Exact 256-entry four-byte table indexed by the terrain behavior byte read from TERRAIN_BEHAVIOR_INDEX_TABLE; handlers update terrain flags, player velocity, alignment, animation, and actor spawns. It occupies 0x004554-0x004953 and most entries select the common no-op handler at 0x001B65BE.
   evidence:
     - rom_terrain_handler_table_004554
     - ghidra_disassembly_001B1E38
@@ -139,8 +141,10 @@
 0x004954:
   name: ACTOR_VM_DISPATCH_TABLE
   type: rom_pointer_table
+  entry_size: 4
+  count: 21
   confidence: confirmed
-  description: Shared 21-entry pointer table used by AnimationVM command bytes EA-FE and MovementVM command bytes 80-94.
+  description: Exact 21-entry pointer table at 0x004954-0x0049A7 used by AnimationVM command bytes EA-FE and MovementVM command bytes 80-94.
   evidence:
     - ghidra_animation_vm_001AC784
     - ghidra_actor_movement_vm_001ADE36
@@ -149,8 +153,10 @@
 0x004154:
   name: INTERACTION_HANDLER_TABLE
   type: rom_pointer_table
+  entry_size: 4
+  count: 256
   confidence: confirmed
-  description: Pointer table used by the two interaction-table row processors for non-zero scene interaction values.
+  description: Exact 256-entry four-byte pointer table at 0x004154-0x004553 used by the two interaction-table row processors for non-zero scene interaction values.
   evidence:
     - ghidra_decompile_collision_damage_targets
 

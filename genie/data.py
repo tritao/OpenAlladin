@@ -91,6 +91,25 @@ def _canonical_symbol(symbol: Symbol | None) -> dict[str, Any] | None:
     return symbol.to_dict() if symbol is not None else None
 
 
+def _has_inferred_extent(symbol: Symbol) -> bool:
+    """Whether the symbol metadata supplies a deterministic ROM extent."""
+
+    if symbol.range is not None:
+        return True
+    metadata_type = str(symbol.metadata.get("type", "")).casefold()
+    if metadata_type == "rom_pointer":
+        return True
+    if metadata_type in {"rom_table", "rom_pointer_table"}:
+        try:
+            return (
+                _address(symbol.metadata["entry_size"]) > 0
+                and _address(symbol.metadata["count"]) > 0
+            )
+        except (KeyError, TypeError, ValueError):
+            return False
+    return False
+
+
 class DataIndex:
     """Join canonical ROM-object evidence into deterministic query records."""
 
@@ -169,6 +188,7 @@ class DataIndex:
             symbol is not None
             and symbol.range is None
             and item.source == "tracked.symbol"
+            and not _has_inferred_extent(symbol)
         )
         result: dict[str, Any] = {
             "id": f"{kind}:{item.start:08X}:{item.end:08X}",
@@ -201,6 +221,7 @@ class DataIndex:
                     inferred_size = None
             if inferred_size and inferred_size > 0:
                 symbol_range = (symbol.address, symbol.address + inferred_size - 1)
+        range_bounded = symbol_range is not None
         symbol_range = symbol_range or (symbol.address, symbol.address)
         start, end = symbol_range
         kind = _symbol_class(symbol)
@@ -216,7 +237,7 @@ class DataIndex:
             "confidence": symbol.confidence,
             "source": symbol.source,
             "evidence": list(symbol.provenance),
-            "range_bounded": symbol.range is not None,
+            "range_bounded": range_bounded,
             "canonical_symbol": _canonical_symbol(symbol),
         }
 
@@ -321,11 +342,53 @@ class DataIndex:
                     enriched = dict(reference)
                     enriched.setdefault("source", filename)
                     result.append(enriched)
+        result.extend(self._decoded_template_references(value))
         return sorted(result, key=lambda item: (
             _address(item.get("from", 0)),
             _address(item.get("to", 0)),
             str(item.get("type", "")),
         ))
+
+    def _decoded_template_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
+        """Recover actor-template consumers encoded in AnimationVM F5 records."""
+
+        if value["kind"] != "actor-template":
+            return []
+        start, end = _address(value["start"]), _address(value["end"])
+        result: list[dict[str, Any]] = []
+        for kind, streams in self._decoded.items():
+            for entry, stream in streams.items():
+                stream_name = str(stream.get("name") or f"{kind.title()}_{entry:08X}")
+                records = stream.get("instructions", []) if kind == "animation" else []
+                for record in records if isinstance(records, list) else ():
+                    if not isinstance(record, dict) or record.get("opcode") != "0xF5":
+                        continue
+                    raw_text = record.get("raw")
+                    if not isinstance(raw_text, str):
+                        continue
+                    try:
+                        raw = bytes.fromhex(raw_text)
+                    except ValueError:
+                        continue
+                    # F5 stores its template pointer immediately after the
+                    # opcode and mode byte; the remaining ten bytes are the
+                    # child placement/override payload.
+                    if len(raw) < 6:
+                        continue
+                    target = int.from_bytes(raw[2:6], "big")
+                    if not start <= target <= end:
+                        continue
+                    result.append({
+                        "from": record.get("address", _hex(entry)),
+                        "from_function_name": stream_name,
+                        "to": _hex(target),
+                        "type": "ANIMATION_F5_TEMPLATE",
+                        "read": False,
+                        "write": False,
+                        "source": "animation_streams",
+                        "instruction": "F5 template pointer",
+                    })
+        return result
 
     def _consumer_records(self, references: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
         grouped: dict[tuple[int | None, str], dict[str, Any]] = {}
