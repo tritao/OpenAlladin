@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-actor-runtime-type6e-73-movement-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Bound the runtime type 0x6E-0x73 MovementVM roots and their shared continuation from direct producer writes and lossless decoder output.",
+  "field_basis": {
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "movement_root_field": "+0x0A",
+    "template_record_size": 20,
+    "template": "0x001B7904 ACTOR_TEMPLATE_TYPE_6E_73_BASE"
+  },
+  "handlers": [
+    { "address": "0x001ACE90", "name": "InteractionSpawn_RuntimeType6E", "runtime_type": "0x6E", "movement_root": "0x00120584", "actor_field": "+0x0A" },
+    { "address": "0x001ACECC", "name": "InteractionSpawn_RuntimeType6F", "runtime_type": "0x6F", "movement_root": "0x001205F4", "actor_field": "+0x0A" },
+    { "address": "0x001ACF08", "name": "InteractionSpawn_RuntimeType70", "runtime_type": "0x70", "movement_root": "0x00120664", "actor_field": "+0x0A" },
+    { "address": "0x001ACF44", "name": "InteractionSpawn_RuntimeType71", "runtime_type": "0x71", "movement_root": "0x0012070E", "actor_field": "+0x0A" },
+    { "address": "0x001ACF80", "name": "InteractionSpawn_RuntimeType72", "runtime_type": "0x72", "movement_root": "0x00120868", "actor_field": "+0x0A" },
+    { "address": "0x001ACFBC", "name": "InteractionSpawn_RuntimeType73", "runtime_type": "0x73", "movement_root": "0x001208D8", "actor_field": "+0x0A" }
+  ],
+  "streams": [
+    { "address": "0x00120584", "name": "ACTOR_MOVE_TYPE6E_INTERACTION", "end": "0x001205C9", "size": 70 },
+    { "address": "0x001205F4", "name": "ACTOR_MOVE_TYPE6F_INTERACTION", "end": "0x00120639", "size": 70 },
+    { "address": "0x00120664", "name": "ACTOR_MOVE_TYPE70_INTERACTION", "end": "0x001206BB", "size": 88 },
+    { "address": "0x0012070E", "name": "ACTOR_MOVE_TYPE71_INTERACTION", "end": "0x0012075D", "size": 80 },
+    { "address": "0x00120868", "name": "ACTOR_MOVE_TYPE72_INTERACTION", "end": "0x001208AD", "size": 70 },
+    { "address": "0x001208D8", "name": "ACTOR_MOVE_TYPE73_INTERACTION", "end": "0x0012091D", "size": 70 },
+    { "address": "0x00120948", "name": "ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE", "end": "0x001209BD", "size": 118 }
+  ],
+  "boundary_basis": {
+    "root_decoder": "MovementDecoder linear decode reaches each declared local end exactly.",
+    "shared_decoder": "MovementDecoder linear decode reaches 0x001209BE after 118 bytes.",
+    "following_owner": "0x001209BE ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE",
+    "internal_entries": ["0x00120914", "0x00120924"]
+  },
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

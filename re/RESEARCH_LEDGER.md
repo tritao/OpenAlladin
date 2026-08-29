@@ -2332,13 +2332,18 @@ The six indirect handlers at `0x001ACE90`, `0x001ACECC`, `0x001ACF08`,
 `0x001ACF44`, `0x001ACF80`, and `0x001ACFBC` now have explicit runtime-type
 names. They share a duplicate-type check, the reverse auxiliary-slot allocator,
 and `Actor_InitializeFromTemplate` with template `0x001B7904`. On successful
-allocation they install runtime types `0x6E` through `0x73`, select animation
+allocation they install runtime types `0x6E` through `0x73`, select movement
 roots `0x00120584`, `0x001205F4`, `0x00120664`, `0x0012070E`, `0x00120868`, and
-`0x001208D8`, and copy the source record's X/Y words. This closes a coherent
-actor-spawn family without assigning unverified gameplay identities to the
-individual types. The exact mapping is recorded in
-`re/mame/findings/20260829-actor-runtime-type6e-73-v1.json` and
-`re/ghidra/targets/actor-runtime-type6e-73-targets.json`.
+`0x001208D8` into actor field `+0x0A`, and copy the source record's X/Y words.
+Static decoder evidence now bounds six exact local MovementVM bodies and their
+shared 118-byte continuation at `0x00120948-0x001209BD`, ending immediately
+before the independent Type-0x7F response stream. This closes the actor-spawn
+family's movement contract without assigning unverified gameplay identities to
+the individual types. The original handler mapping remains recorded in
+`re/mame/findings/20260829-actor-runtime-type6e-73-v1.json`; the corrected
+movement classification is recorded in
+`re/mame/findings/20260829-actor-runtime-type6e-73-movement-static-v1.json` and
+`re/ghidra/targets/actor-runtime-type6e-73-movement-static-targets.json`.
 
 ## Actor spawn variation and runtime type 0x40 (20260829)
 
@@ -3160,3 +3165,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type64-interaction-animation-static-v1` | recorded-static-decompilation | Promoted the compact four-byte Type-0x64 interaction AnimationVM entry at 0x00124CD8 from ACTOR_TEMPLATE_TYPE_64, preserving the boundary before the Type-0x62 response entries |
 | `20260829-type4d-type7b-response-child-movement-static-v1` | recorded-static-decompilation | Promoted the exact Type-0x4D and Type-0x7B response-child MovementVM owners at 0x00121710-0x0012171B and 0x0012171C-0x001217A1 from their direct template pointers and decoder loop boundaries |
 | `20260829-menu-transition-scene-table-movement-static-v1` | recorded-static-decompilation | Promoted the exact 42-byte Type-0x84 scene-table transition MovementVM stream at 0x001209C6-0x001209EF from its direct template pointer and internal random alternatives |
+| `20260829-actor-runtime-type6e-73-movement-static-v1` | recorded-static-decompilation | Promoted six directly installed runtime-type 0x6E-0x73 MovementVM roots and their shared 118-byte response continuation, correcting the actor +0x0A movement-field classification and preserving the Type-0x7F boundary |

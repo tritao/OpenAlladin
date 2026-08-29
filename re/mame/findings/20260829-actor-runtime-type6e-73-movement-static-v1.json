@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "family": {
+    "handlers": "0x001ACE90-0x001ACFFC",
+    "template": "0x001B7904 ACTOR_TEMPLATE_TYPE_6E_73_BASE",
+    "movement_field": "actor +0x0A",
+    "shared_continuation": "0x00120948-0x001209BD"
+  },
+  "members": [
+    { "address": "0x00120584", "end": "0x001205C9", "name": "ACTOR_MOVE_TYPE6E_INTERACTION", "runtime_type": "0x6E", "producer": "InteractionSpawn_RuntimeType6E" },
+    { "address": "0x001205F4", "end": "0x00120639", "name": "ACTOR_MOVE_TYPE6F_INTERACTION", "runtime_type": "0x6F", "producer": "InteractionSpawn_RuntimeType6F" },
+    { "address": "0x00120664", "end": "0x001206BB", "name": "ACTOR_MOVE_TYPE70_INTERACTION", "runtime_type": "0x70", "producer": "InteractionSpawn_RuntimeType70" },
+    { "address": "0x0012070E", "end": "0x0012075D", "name": "ACTOR_MOVE_TYPE71_INTERACTION", "runtime_type": "0x71", "producer": "InteractionSpawn_RuntimeType71" },
+    { "address": "0x00120868", "end": "0x001208AD", "name": "ACTOR_MOVE_TYPE72_INTERACTION", "runtime_type": "0x72", "producer": "InteractionSpawn_RuntimeType72" },
+    { "address": "0x001208D8", "end": "0x0012091D", "name": "ACTOR_MOVE_TYPE73_INTERACTION", "runtime_type": "0x73", "producer": "InteractionSpawn_RuntimeType73" },
+    { "address": "0x00120948", "end": "0x001209BD", "name": "ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE", "role": "shared continuation" }
+  ],
+  "behavior": "The six handlers install runtime types 0x6E-0x73 and write their per-type roots into the initialized actor movement field. Each root has an exact local decoder extent and enters the shared timed response continuation; the continuation ends before the independent Type-0x7F player-collision response stream.",
+  "evidence": [
+    "actor_runtime_type6e_73_movement_static_decompilation",
+    "actor_runtime_type6e_73_targets",
+    "movement_stream_decoder",
+    "actor_template_initializer_field_map"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

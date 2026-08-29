@@ -2035,6 +2035,83 @@
     - menu_transition_template_family_static_decompilation
     - movement_stream_decoder
 
+0x00120584:
+  name: ACTOR_MOVE_TYPE6E_INTERACTION
+  type: movement_stream
+  size: 70
+  confidence: decompiled
+  description: Runtime type-0x6E interaction movement root installed by InteractionSpawn_RuntimeType6E into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
+    - actor_runtime_type6e_73_targets
+    - movement_stream_decoder
+
+0x001205F4:
+  name: ACTOR_MOVE_TYPE6F_INTERACTION
+  type: movement_stream
+  size: 70
+  confidence: decompiled
+  description: Runtime type-0x6F interaction movement root installed by InteractionSpawn_RuntimeType6F into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
+    - actor_runtime_type6e_73_targets
+    - movement_stream_decoder
+
+0x00120664:
+  name: ACTOR_MOVE_TYPE70_INTERACTION
+  type: movement_stream
+  size: 88
+  confidence: decompiled
+  description: Runtime type-0x70 interaction movement root installed by InteractionSpawn_RuntimeType70 into actor field +0x0A after the shared template initialization. Its exact 88-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
+    - actor_runtime_type6e_73_targets
+    - movement_stream_decoder
+
+0x0012070E:
+  name: ACTOR_MOVE_TYPE71_INTERACTION
+  type: movement_stream
+  size: 80
+  confidence: decompiled
+  description: Runtime type-0x71 interaction movement root installed by InteractionSpawn_RuntimeType71 into actor field +0x0A after the shared template initialization. Its exact 80-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
+    - actor_runtime_type6e_73_targets
+    - movement_stream_decoder
+
+0x00120868:
+  name: ACTOR_MOVE_TYPE72_INTERACTION
+  type: movement_stream
+  size: 70
+  confidence: decompiled
+  description: Runtime type-0x72 interaction movement root installed by InteractionSpawn_RuntimeType72 into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
+    - actor_runtime_type6e_73_targets
+    - movement_stream_decoder
+
+0x001208D8:
+  name: ACTOR_MOVE_TYPE73_INTERACTION
+  type: movement_stream
+  size: 70
+  confidence: decompiled
+  description: Runtime type-0x73 interaction movement root installed by InteractionSpawn_RuntimeType73 into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
+    - actor_runtime_type6e_73_targets
+    - movement_stream_decoder
+
+0x00120948:
+  name: ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE
+  type: movement_stream
+  size: 118
+  confidence: decompiled
+  description: Shared 118-byte MovementVM continuation reached by the runtime type-0x6E through 0x73 roots. Its exact body carries the timed vertical response and dynamic return through 0x001209B0, ending immediately before the independent ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE stream at 0x001209BE.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
+    - actor_runtime_type6e_73_targets
+    - movement_stream_decoder
+
 0x001209BE:
   name: ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE
   type: movement_stream
