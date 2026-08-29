@@ -2028,7 +2028,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 presentation-child template supplied by the four F5 commands in the type-0x8B presentation roots at 0x00124A4A, 0x00124A88, 0x00124ABE, and 0x00124AF4. It has no movement stream, uses ACTOR_ANIM_TYPE84_PRESENTATION_CHILD at 0x001248EA, and owns two resources before the child animation publishes its response fields.
+  description: Type-0x84 presentation-child template supplied by the four F5 commands in the type-0x8B presentation roots at 0x00124A4A, 0x00124A88, 0x00124ABE, and 0x00124AF4. Its record has no default movement stream, uses ACTOR_ANIM_TYPE84_PRESENTATION_CHILD at 0x001248EA, and owns 0x13 resources before the child animation publishes its response fields.
   evidence:
     - type14_type84_presentation_animation_static_decompilation
     - actor_template_type8b_presentation_response
@@ -2039,7 +2039,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x30 presentation child template supplied by the F5 command at 0x00124966 inside ACTOR_ANIM_TYPE84_PRESENTATION_CHILD. It uses movement stream 0x001203C8, animation stream 0x0012510A, and owns six resources.
+  description: Type-0x30 presentation child template supplied by the F5 command at 0x00124966 inside ACTOR_ANIM_TYPE84_PRESENTATION_CHILD. Its record uses default movement stream 0x001203C0 and animation stream 0x0012510A with six resources; the inline F5 payload supplies movement stream 0x001203C8 for the spawned instance.
   evidence:
     - type14_type84_presentation_animation_static_decompilation
     - actor_template_grid_xrefs

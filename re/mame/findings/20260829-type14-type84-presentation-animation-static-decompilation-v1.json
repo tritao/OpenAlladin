@@ -38,13 +38,15 @@
       "address": "0x001B7F44",
       "name": "ACTOR_TEMPLATE_TYPE_84_PRESENTATION_CHILD",
       "consumers": ["0x00124A4A", "0x00124A88", "0x00124ABE", "0x00124AF4"],
-      "animation": "0x001248EA"
+      "animation": "0x001248EA",
+      "resource_count": "0x13",
+      "movement": null
     },
     {
       "address": "0x001B7F58",
       "name": "ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD",
       "consumer": "0x00124966",
-      "movement": "0x001203C8",
+      "movement": "0x001203C0 (inline F5 override 0x001203C8)",
       "animation": "0x0012510A"
     }
   ],

@@ -49,7 +49,7 @@
       "runtime_type": "0x84",
       "animation": "0x001248EA ACTOR_ANIM_TYPE84_PRESENTATION_CHILD",
       "movement": null,
-      "resource_count": "0x02",
+      "resource_count": "0x13",
       "consumers": ["F5 at 0x00124A4A", "F5 at 0x00124A88", "F5 at 0x00124ABE", "F5 at 0x00124AF4"]
     },
     {
@@ -57,7 +57,7 @@
       "name": "ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD",
       "runtime_type": "0x30",
       "animation": "0x0012510A",
-      "movement": "0x001203C8",
+      "movement": "0x001203C0 (inline F5 override 0x001203C8)",
       "resource_count": "0x06",
       "consumer": "F5 at 0x00124966"
     }
