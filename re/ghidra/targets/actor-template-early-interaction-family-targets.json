@@ -33,7 +33,7 @@
       "consumer_sites": ["0x001B6916", "0x001B696C", "0x001B6A20", "0x001B6A7A", "0x001B6AD4", "0x001B6B22"],
       "runtime_type": "0x84",
       "movement_stream": "0x0011F7A6",
-      "animation_stream": "0x00123154",
+      "animation_stream": "0x00123154 ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION",
       "resource_count": "0x02",
       "pair_base": "0x001B78A0 ACTOR_TEMPLATE_TYPE_5E_INTERACTION_PAIR_BASE"
     },

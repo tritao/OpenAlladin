@@ -538,6 +538,17 @@
     - actor_template_type5f_interaction
     - animation_stream_decoder
 
+0x00123154:
+  name: ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION
+  size: 136
+  confidence: decompiled
+  description: Type-0x84 companion animation for the paired type-0x5E interaction spawns. Its packed 136-byte region clears and initializes the companion, cycles the 0x0EC6-0x0EEA frame sequence, spawns the two linked child records at 0x001B8110, publishes actor type 0x84, plays sound 0x39, and terminates before the established Type-0x2A stream at 0x001231DC; the Type-0x23 interaction enters an embedded sub-entry at 0x00123198 within this same region.
+  evidence:
+    - type84_interaction_pair_companion_animation_static_decompilation
+    - actor_template_type84_interaction_pair_companion
+    - interaction_spawn_type5e84_pair_static_decompilation
+    - animation_stream_decoder
+
 0x001231DC:
   name: ACTOR_ANIM_TYPE2A_VERTICAL_BOB
   size: 36
@@ -1537,7 +1548,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x23 interaction template loaded by the reverse-slot spawn entry at 0x001B6864; it has no movement stream, uses animation stream 0x00123198, and owns three resources.
+  description: Type-0x23 interaction template loaded by the reverse-slot spawn entry at 0x001B6864; it has no movement stream, enters the embedded 0x00123198 sub-entry within ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION, and owns three resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
@@ -1587,7 +1598,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 companion template for the paired type-0x5E interaction spawns; it uses movement stream 0x0011F7A6, animation stream 0x00123154, and owns two resources before the caller links and positions it.
+  description: Type-0x84 companion template for the paired type-0x5E interaction spawns; it uses movement stream 0x0011F7A6, animation stream ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION, and owns two resources before the caller links and positions it.
   evidence:
     - ghidra_early_interaction_dispatch_block
     - actor_template_grid_xrefs

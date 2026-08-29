@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type84-interaction-pair-companion-animation-static-targets.json",
+  "stream": {
+    "address": "0x00123154",
+    "name": "ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION",
+    "range": "0x00123154-0x001231DB",
+    "bytes": 136,
+    "initial_frame": "0x104E",
+    "frame_sequence": ["0x0EC6", "0x0EC6", "0x0ECA", "0x0ECA", "0x0ECE", "0x0ECE", "0x0ED2", "0x0ED2", "0x0ED6", "0x0ED6", "0x0EDA", "0x0EDA", "0x0EDE", "0x0EDE", "0x0EE2", "0x0EE2", "0x0EE6", "0x0EE6", "0x0EEA", "0x0EEA", "0x0EEA", "0x1C1A", "0x1C32", "0x1C36", "0x1C36", "0x1C3A", "0x1C3A", "0x1C3E", "0x1C3E", "0x1C42", "0x1C42", "0x1C42"],
+    "actor_state_clear": "0x01",
+    "child_spawn_template": "0x001B8110",
+    "published_type": "0x84",
+    "sound": "0x39",
+    "destroy": "0x00",
+    "embedded_entry": "0x00123198 for ACTOR_TEMPLATE_TYPE_23_INTERACTION",
+    "boundary": "ends at 0x001231DB immediately before ACTOR_ANIM_TYPE2A_VERTICAL_BOB"
+  },
+  "consumers": [
+    {
+      "template": "0x001B78C8 ACTOR_TEMPLATE_TYPE_84_INTERACTION_PAIR_COMPANION",
+      "runtime_type": "0x84",
+      "movement": "0x0011F7A6",
+      "paired_with": "ACTOR_TEMPLATE_TYPE_5E_INTERACTION_PAIR_BASE",
+      "handlers": ["0x001B68F6", "0x001B694C", "0x001B6A00", "0x001B6A5A", "0x001B6AB4", "0x001B6B0E"]
+    },
+    {
+      "template": "0x001B7AE4 ACTOR_TEMPLATE_TYPE_23_INTERACTION",
+      "runtime_type": "0x23",
+      "entry": "0x00123198"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Direct Type-0x84 paired-spawn template consumers",
+    "Embedded Type-0x23 entry and template consumer",
+    "Existing type-0x5E/type-0x84 pair allocation and link finding"
+  ],
+  "conclusion": "The Type-0x84 companion stream is closed as one range-bounded paired-interaction animation with two child spawns, type publication, sound, and terminal cleanup. The Type-0x23 path reuses an embedded entry in this range, so no overlapping data symbol is introduced.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
