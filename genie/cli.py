@@ -17,6 +17,7 @@ from genie.commands.replay import *
 from genie.commands.parity import *
 from genie.commands.misc import *
 from genie.commands.data import *
+from genie.commands.coverage_report import *
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="genie",
@@ -498,6 +499,18 @@ def build_parser() -> argparse.ArgumentParser:
     add_rom_argument(coverage_gaps)
     coverage_gaps.add_argument("--output", type=Path, default=ROOT / "build/re/coverage-gaps.json")
     coverage_gaps.set_defaults(function=command_coverage_gaps)
+
+    coverage_report = coverage_commands.add_parser(
+        "report",
+        help="report semantic function and ROM-data coverage",
+    )
+    coverage_report.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    coverage_report.add_argument("--layout", type=Path, default=ROOT / "build/re/full-rom/layout.json")
+    coverage_report.add_argument("--coverage", type=Path)
+    coverage_report.add_argument("--animation", type=Path, help="override decoded animation-stream report")
+    coverage_report.add_argument("--movement", type=Path, help="override decoded movement-stream report")
+    coverage_report.add_argument("--json", action="store_true", dest="json_output")
+    coverage_report.set_defaults(function=command_coverage_report)
 
     data = commands.add_parser(
         "data",
