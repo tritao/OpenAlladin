@@ -42,7 +42,7 @@
       "address": "0x001B7B0C",
       "name": "ACTOR_TEMPLATE_TYPE_2B_INTERACTION",
       "consumer": "0x001B688A",
-      "behavior": "Backward-slot interaction spawn with animation 0x00123FE4."
+      "behavior": "Backward-slot interaction spawn with animation 0x00123FE4 ACTOR_ANIM_TYPE2B_INTERACTION."
     },
     {
       "address": "0x001B7C9C",

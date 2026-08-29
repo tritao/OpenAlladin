@@ -603,6 +603,17 @@
     - upper_actor_response_targeted_decompile
     - animation_stream_decoder
 
+0x00123FE4:
+  name: ACTOR_ANIM_TYPE2B_INTERACTION
+  size: 80
+  confidence: decompiled
+  description: Type-0x2B interaction animation selected by the backward-slot consumer. Its packed 80-byte region performs the initial child spawn for template 0x001B7B20, clears actor state, presents the 0x1772-0x1782 sequence, destroys or clears the actor, then cycles the 0x0F02-0x0F1E terminal sequence before looping.
+  evidence:
+    - type2b_animation_static_decompilation
+    - actor_template_type2b_interaction
+    - interaction_spawn_mid_family_static_decompilation
+    - animation_stream_decoder
+
 0x00120F76:
   name: ACTOR_MOVE_TYPE2A_VERTICAL_BOB
   size: 62
@@ -1602,7 +1613,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2B interaction template loaded by the backward-slot spawn entry at 0x001B688A; it has no movement stream, uses animation stream 0x00123FE4, and owns seven resources.
+  description: Type-0x2B interaction template loaded by the backward-slot spawn entry at 0x001B688A; it has no movement stream, uses animation stream ACTOR_ANIM_TYPE2B_INTERACTION, and owns seven resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs

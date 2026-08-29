@@ -2776,3 +2776,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type67-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x67 interaction animation range-bounded with its conditional child-spawn loop |
 | `20260829-transition-presentation-animation-static-decompilation-v1` | recorded-static-decompilation | Transition-presentation animation root range-bounded with its flag-gated child setup and dynamic state handoff |
 | `20260829-upper-type20-animation-static-decompilation-v1` | recorded-static-decompilation | Upper Type-0x20 animation family range-bounded with callable prelude, proximity gates, and response child spawn |
+| `20260829-type2b-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x2B interaction animation range-bounded with child spawn, cleanup, and terminal frame loop |

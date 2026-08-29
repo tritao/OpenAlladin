@@ -68,7 +68,7 @@
       "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
       "runtime_type": "0x2B",
       "movement_stream": null,
-      "animation_stream": "0x00123FE4",
+      "animation_stream": "0x00123FE4 ACTOR_ANIM_TYPE2B_INTERACTION",
       "resource_count": "0x07"
     },
     {
