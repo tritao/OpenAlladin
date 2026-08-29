@@ -1219,6 +1219,33 @@
   evidence:
     - ghidra_decompile_001B00D6
     - ghidra_interaction_counter_reset_audit
+0x001B0138:
+  name: Interaction_AddResponseCounter1
+  confidence: decompiled
+  size: 10
+  description: Adds 0x0001 to ACTOR_RESPONSE_COUNTER and returns.
+  evidence:
+    - ghidra_disassembly_001B0138
+    - interaction_response_counter_complete_targets
+    - interaction_response_counter_complete_static_decompilation
+0x001B0142:
+  name: Interaction_AddResponseCounter5
+  confidence: decompiled
+  size: 10
+  description: Adds 0x0005 to ACTOR_RESPONSE_COUNTER and returns.
+  evidence:
+    - ghidra_disassembly_001B0142
+    - interaction_response_counter_complete_targets
+    - interaction_response_counter_complete_static_decompilation
+0x001B014C:
+  name: Interaction_AddResponseCounter10
+  confidence: decompiled
+  size: 10
+  description: Adds 0x000A to ACTOR_RESPONSE_COUNTER and returns.
+  evidence:
+    - ghidra_disassembly_001B014C
+    - interaction_response_counter_complete_targets
+    - interaction_response_counter_complete_static_decompilation
 0x001A91C6:
   name: Frame_InputAndResourceService
   confidence: decompiled
@@ -1672,6 +1699,15 @@
   evidence:
     - ghidra_disassembly_001B0156
     - ghidra_actor_collision_response_targets
+0x001B0160:
+  name: Interaction_AddResponseCounter20
+  confidence: decompiled
+  size: 10
+  description: Adds 0x0014 to ACTOR_RESPONSE_COUNTER and returns.
+  evidence:
+    - ghidra_disassembly_001B0160
+    - interaction_response_counter_complete_targets
+    - interaction_response_counter_complete_static_decompilation
 0x001B016A:
   name: Interaction_AddResponseCounter25
   confidence: decompiled
@@ -1679,6 +1715,33 @@
   evidence:
     - ghidra_disassembly_001B016A
     - ghidra_actor_collision_response_targets
+0x001B0174:
+  name: Interaction_AddResponseCounter50
+  confidence: decompiled
+  size: 10
+  description: Adds 0x0032 to ACTOR_RESPONSE_COUNTER and returns.
+  evidence:
+    - ghidra_disassembly_001B0174
+    - interaction_response_counter_complete_targets
+    - interaction_response_counter_complete_static_decompilation
+0x001B017E:
+  name: Interaction_AddResponseCounter75
+  confidence: decompiled
+  size: 10
+  description: Adds 0x004B to ACTOR_RESPONSE_COUNTER and returns.
+  evidence:
+    - ghidra_disassembly_001B017E
+    - interaction_response_counter_complete_targets
+    - interaction_response_counter_complete_static_decompilation
+0x001B0188:
+  name: Interaction_AddResponseCounter100
+  confidence: decompiled
+  size: 10
+  description: Adds 0x0064 to ACTOR_RESPONSE_COUNTER and returns.
+  evidence:
+    - ghidra_disassembly_001B0188
+    - interaction_response_counter_complete_targets
+    - interaction_response_counter_complete_static_decompilation
 0x001B0192:
   name: Interaction_AddResponseCounter1000
   confidence: decompiled
@@ -1694,6 +1757,16 @@
     - ghidra_disassembly_001B003A
     - ghidra_disassembly_001B01AC
     - ghidra_interaction_resource_progress_targets
+0x001B02B6:
+  name: Interaction_DecrementResourceProgressCounter
+  confidence: decompiled
+  size: 52
+  description: Decrements the three-digit ASCII INTERACTION_RESOURCE_PROGRESS_COUNTER with decimal borrow, leaves 000 unchanged, then returns its base pointer through Interaction_GetResourceProgressPointer.
+  evidence:
+    - ghidra_disassembly_001B02B6
+    - ghidra_decompile_001B02B6
+    - interaction_response_counter_complete_targets
+    - interaction_response_counter_complete_static_decompilation
 0x001B0336:
   name: FarTransfer_InteractionCounterStep
   confidence: confirmed

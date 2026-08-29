@@ -2285,6 +2285,18 @@ remains unresolved. The static contract is recorded in
 `re/mame/findings/20260829-scene-resource-mode17-static-decompilation-v1.json`
 and `re/ghidra/targets/scene-resource-mode17-targets.json`.
 
+## Interaction response-counter family and resource decrement (20260829)
+
+The fixed response-delay helpers from `0x001B0138` through `0x001B019B`
+are now named as the complete `Interaction_AddResponseCounter*` family for
+increments `1, 5, 10, 15, 20, 25, 50, 75, 100, and 1000`. The adjacent
+`0x001B02B6` helper is now `Interaction_DecrementResourceProgressCounter`; it
+decrements the three-digit ASCII interaction/resource progress value with
+decimal borrow, preserves `000`, and returns the progress pointer. The exact
+fixed bodies and ranges are recorded in
+`re/mame/findings/20260829-interaction-response-counter-complete-static-decompilation-v1.json`
+and `re/ghidra/targets/interaction-response-counter-complete-targets.json`.
+
 ## Actor lifecycle helper services (20260829)
 
 The actor cleanup path now has an explicit interaction-table publication helper.
@@ -2886,6 +2898,7 @@ valuable because it prevents repeating the same input family.
 | `20260829-vdp-pattern-loop-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only boundary between frame-phase service and the descending VDP pattern writer; surrounding presentation purpose remains unresolved |
 | `20260829-vdp-pattern-service-frames-static-decompilation-v1` | recorded-static-decompilation | Exact 0x28-iteration frame-phase and descending VDP pattern service helper at 0x001B1CE4; surrounding mode-0x17 presentation purpose remains unresolved |
 | `20260829-scene-resource-mode17-static-decompilation-v1` | recorded-static-decompilation | Exact mode-0x17 scene-resource service/setup blocks at 0x001B1C0C and 0x001B1D00, with explicit boundaries and conservative presentation naming |
+| `20260829-interaction-response-counter-complete-static-decompilation-v1` | recorded-static-decompilation | Complete fixed response-counter increment family and three-digit interaction/resource progress decrement helper |
 | `20260829-scene-resource-mode-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only scene-resource mode hook called after modes 0x1B, 0x1C, and 0x04 are selected |
 | `20260829-terrain-actor-collision-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only actor terrain-collision hook between terrain-row selection and behavior-byte lookup |
 | `20260829-interrupt-vector-static-decompilation-v1` | recorded-static-decompilation | Exception vector fan-in, line-1010 VDP loop, level-4 RTE stub, and spurious interrupt RTE stub |

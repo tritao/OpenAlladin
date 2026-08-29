@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "response_counter": {
+    "address": "0x00FFF14E",
+    "helpers": [
+      { "address": "0x001B0138", "range": ["0x001B0138", "0x001B0141"], "name": "Interaction_AddResponseCounter1", "instruction": "addi.w #0x0001,(0x00FFF14E).l; rts" },
+      { "address": "0x001B0142", "range": ["0x001B0142", "0x001B014B"], "name": "Interaction_AddResponseCounter5", "instruction": "addi.w #0x0005,(0x00FFF14E).l; rts" },
+      { "address": "0x001B014C", "range": ["0x001B014C", "0x001B0155"], "name": "Interaction_AddResponseCounter10", "instruction": "addi.w #0x000A,(0x00FFF14E).l; rts" },
+      { "address": "0x001B0156", "range": ["0x001B0156", "0x001B015F"], "name": "Interaction_AddResponseCounter15", "instruction": "addi.w #0x000F,(0x00FFF14E).l; rts" },
+      { "address": "0x001B0160", "range": ["0x001B0160", "0x001B0169"], "name": "Interaction_AddResponseCounter20", "instruction": "addi.w #0x0014,(0x00FFF14E).l; rts" },
+      { "address": "0x001B016A", "range": ["0x001B016A", "0x001B0173"], "name": "Interaction_AddResponseCounter25", "instruction": "addi.w #0x0019,(0x00FFF14E).l; rts" },
+      { "address": "0x001B0174", "range": ["0x001B0174", "0x001B017D"], "name": "Interaction_AddResponseCounter50", "instruction": "addi.w #0x0032,(0x00FFF14E).l; rts" },
+      { "address": "0x001B017E", "range": ["0x001B017E", "0x001B0187"], "name": "Interaction_AddResponseCounter75", "instruction": "addi.w #0x004B,(0x00FFF14E).l; rts" },
+      { "address": "0x001B0188", "range": ["0x001B0188", "0x001B0191"], "name": "Interaction_AddResponseCounter100", "instruction": "addi.w #0x0064,(0x00FFF14E).l; rts" },
+      { "address": "0x001B0192", "range": ["0x001B0192", "0x001B019B"], "name": "Interaction_AddResponseCounter1000", "instruction": "addi.w #0x03E8,(0x00FFF14E).l; rts" }
+    ],
+    "common_contract": "Each helper performs one fixed word addition to ACTOR_RESPONSE_COUNTER and returns; the counter is drained by the existing interaction services."
+  },
+  "resource_progress": {
+    "address": "0x001B02B6",
+    "name": "Interaction_DecrementResourceProgressCounter",
+    "range": ["0x001B02B6", "0x001B02E9"],
+    "body": "Reads the three ASCII digits at INTERACTION_RESOURCE_PROGRESS_COUNTER, compares their sum with 0x90 (000), decrements the decimal value with borrow when nonzero, then returns the counter pointer through Interaction_GetResourceProgressPointer.",
+    "caller": "0x001B1C0C SceneResource_RunMode17Service",
+    "effect": "The helper preserves the terminal 000 value and performs no unrelated scene or actor mutation."
+  },
+  "conclusion": "The response-delay adjustment stubs form a complete fixed-increment family, and the adjacent mode-0x17 helper is a distinct three-digit ASCII progress decrement service."
+}

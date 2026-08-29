@@ -6,9 +6,17 @@
     "purpose": "Resolve the fixed response-counter increments used by collision and interaction/resource services."
   },
   "targets": [
+    { "address": "0x001B0138", "name": "Interaction_AddResponseCounter1" },
+    { "address": "0x001B0142", "name": "Interaction_AddResponseCounter5" },
+    { "address": "0x001B014C", "name": "Interaction_AddResponseCounter10" },
     { "address": "0x001B0156", "name": "Interaction_AddResponseCounter15" },
+    { "address": "0x001B0160", "name": "Interaction_AddResponseCounter20" },
     { "address": "0x001B016A", "name": "Interaction_AddResponseCounter25" },
+    { "address": "0x001B0174", "name": "Interaction_AddResponseCounter50" },
+    { "address": "0x001B017E", "name": "Interaction_AddResponseCounter75" },
+    { "address": "0x001B0188", "name": "Interaction_AddResponseCounter100" },
     { "address": "0x001B0192", "name": "Interaction_AddResponseCounter1000" },
+    { "address": "0x001B02B6", "name": "Interaction_DecrementResourceProgressCounter" },
     { "address": "0x001AF4C2", "name": "Actor_ReinitializeFromCollisionTemplate" },
     { "address": "0x001AF4D8", "name": "ActorType34_PlayerCollisionHandler" },
     { "address": "0x001B01AC", "name": "Interaction_UpdateResourceState" }
