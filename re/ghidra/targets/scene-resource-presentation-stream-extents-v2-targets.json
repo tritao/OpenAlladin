@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-presentation-streams-v2",
+    "purpose": "Bound the eight direct presentation-wrapper command streams immediately preceding the already classified scene-resource presentation ranges."
+  },
+  "interpreter": {
+    "address": "0x001B21F6",
+    "name": "SceneResource_ProcessCommandStream",
+    "terminator": "command byte 0x00"
+  },
+  "streams": [
+    { "address": "0x001270A8", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12E34A_1270A8", "resource": "0x0012E34A", "wrapper": "0x001B4BB8 SceneResource_Run12E34AStream1270A8", "range": ["0x001270A8", "0x00127133"], "terminator": "0x00127133" },
+    { "address": "0x00127134", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12E176_127134", "resource": "0x0012E176", "wrapper": "0x001B4BDC SceneResource_Run12E176Stream127134", "range": ["0x00127134", "0x00127206"], "terminator": "0x00127206" },
+    { "address": "0x00127207", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207", "resource": "0x0012DD76", "wrapper": "0x001B4C02 SceneResource_Run12DD76Stream127207", "range": ["0x00127207", "0x00127337"], "terminator": "0x00127337" },
+    { "address": "0x00127338", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338", "resource": "0x0012DD76", "wrapper": "0x001B4C28 SceneResource_Run12DD76Stream127338", "range": ["0x00127338", "0x001273E8"], "terminator": "0x001273E8" },
+    { "address": "0x001273E9", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9", "resource": "0x0012DA04", "wrapper": "0x001B4C4E SceneResource_Run12DA04Stream1273E9", "range": ["0x001273E9", "0x001274EF"], "terminator": "0x001274EF" },
+    { "address": "0x00127571", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571", "resource": "0x0012DD76", "wrapper": "0x001B4C74 SceneResource_Run12DD76Stream127571", "range": ["0x00127571", "0x001275ED"], "terminator": "0x001275ED" },
+    { "address": "0x001275EE", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE", "resource": "0x0012DD76", "wrapper": "0x001B4C9A SceneResource_Run12DD76Stream1275EE", "range": ["0x001275EE", "0x0012772C"], "terminator": "0x0012772C" },
+    { "address": "0x0012772D", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D", "resource": "0x0012D870", "wrapper": "0x001B4CC0 SceneResource_Run12D870Stream12772D", "range": ["0x0012772D", "0x001277C4"], "terminator": "0x001277C4" }
+  ],
+  "boundaries": {
+    "unclaimed_gap_after_1274EF": ["0x001274F0", "0x00127570"],
+    "unclaimed_gap_inside_scene_resource_region": ["0x001277C5", "0x00127833"],
+    "next_claimed_stream": "0x00127834"
+  },
+  "evidence": [
+    "Each stream is loaded by a named presentation wrapper and passed to the shared interpreter.",
+    "Interpreter-aware command walking reaches the listed command-0 terminal for every stream.",
+    "The eight ranges are non-overlapping and preserve the separately unresolved gaps between wrapper families."
+  ],
+  "limitations": [
+    "The higher-level presentation identity remains represented by the direct resource and wrapper names.",
+    "The unreferenced gaps at 0x001274F0-0x00127570 and 0x001277C5-0x00127833 are not claimed."
+  ]
+}

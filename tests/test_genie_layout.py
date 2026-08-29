@@ -415,6 +415,27 @@ def test_canonical_scene_resource_mode_streams_are_exact_and_contiguous():
     assert all(left[1] + 1 == right[0] for left, right in zip(actual, actual[1:]))
 
 
+def test_canonical_scene_resource_presentation_streams_have_exact_terminals():
+    symbols = SymbolStore()
+    expected = (
+        (0x001270A8, 0x00127133, "SCENE_RESOURCE_PRESENTATION_STREAM_12E34A_1270A8"),
+        (0x00127134, 0x00127206, "SCENE_RESOURCE_PRESENTATION_STREAM_12E176_127134"),
+        (0x00127207, 0x00127337, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207"),
+        (0x00127338, 0x001273E8, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338"),
+        (0x001273E9, 0x001274EF, "SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9"),
+        (0x00127571, 0x001275ED, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571"),
+        (0x001275EE, 0x0012772C, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE"),
+        (0x0012772D, 0x001277C4, "SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D"),
+    )
+    for start, end, name in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == end - start + 1
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "scene_resource_stream"
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(

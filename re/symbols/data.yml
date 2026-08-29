@@ -449,6 +449,70 @@
   description: NUL-terminated scene-resource mode-0x19 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x19 and consumed by SceneResource_InstantiateActors.
   evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
 
+0x001270A8:
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_12E34A_1270A8
+  type: scene_resource_stream
+  size: 0x8C
+  confidence: decompiled
+  description: Scene-resource presentation command stream loaded with resource 0x0012E34A by SceneResource_Run12E34AStream1270A8; the shared interpreter reaches its command-0 terminator at 0x00127133.
+  evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
+
+0x00127134:
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_12E176_127134
+  type: scene_resource_stream
+  size: 0xD3
+  confidence: decompiled
+  description: Scene-resource presentation command stream loaded with resource 0x0012E176 by SceneResource_Run12E176Stream127134; the shared interpreter reaches its command-0 terminator at 0x00127206.
+  evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
+
+0x00127207:
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207
+  type: scene_resource_stream
+  size: 0x131
+  confidence: decompiled
+  description: Scene-resource presentation command stream loaded with resource 0x0012DD76 by SceneResource_Run12DD76Stream127207; the shared interpreter reaches its command-0 terminator at 0x00127337.
+  evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
+
+0x00127338:
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338
+  type: scene_resource_stream
+  size: 0xB1
+  confidence: decompiled
+  description: Scene-resource presentation command stream loaded with resource 0x0012DD76 by SceneResource_Run12DD76Stream127338; the shared interpreter reaches its command-0 terminator at 0x001273E8.
+  evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
+
+0x001273E9:
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9
+  type: scene_resource_stream
+  size: 0x107
+  confidence: decompiled
+  description: Scene-resource presentation command stream loaded with resource 0x0012DA04 by SceneResource_Run12DA04Stream1273E9; the shared interpreter reaches its command-0 terminator at 0x001274EF.
+  evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
+
+0x00127571:
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571
+  type: scene_resource_stream
+  size: 0x7D
+  confidence: decompiled
+  description: Scene-resource presentation command stream loaded with resource 0x0012DD76 by SceneResource_Run12DD76Stream127571; the shared interpreter reaches its command-0 terminator at 0x001275ED.
+  evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
+
+0x001275EE:
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE
+  type: scene_resource_stream
+  size: 0x13F
+  confidence: decompiled
+  description: Scene-resource presentation command stream loaded with resource 0x0012DD76 by SceneResource_Run12DD76Stream1275EE; the shared interpreter reaches its command-0 terminator at 0x0012772C.
+  evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
+
+0x0012772D:
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D
+  type: scene_resource_stream
+  size: 0x98
+  confidence: decompiled
+  description: Scene-resource presentation command stream loaded with resource 0x0012D870 by SceneResource_Run12D870Stream12772D; the shared interpreter reaches its command-0 terminator at 0x001277C4.
+  evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data

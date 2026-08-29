@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-resource-presentation-stream-extents-v2-targets.json",
+  "streams": [
+    { "address": "0x001270A8", "range": ["0x001270A8", "0x00127133"], "resource": "0x0012E34A", "terminator": "0x00127133" },
+    { "address": "0x00127134", "range": ["0x00127134", "0x00127206"], "resource": "0x0012E176", "terminator": "0x00127206" },
+    { "address": "0x00127207", "range": ["0x00127207", "0x00127337"], "resource": "0x0012DD76", "terminator": "0x00127337" },
+    { "address": "0x00127338", "range": ["0x00127338", "0x001273E8"], "resource": "0x0012DD76", "terminator": "0x001273E8" },
+    { "address": "0x001273E9", "range": ["0x001273E9", "0x001274EF"], "resource": "0x0012DA04", "terminator": "0x001274EF" },
+    { "address": "0x00127571", "range": ["0x00127571", "0x001275ED"], "resource": "0x0012DD76", "terminator": "0x001275ED" },
+    { "address": "0x001275EE", "range": ["0x001275EE", "0x0012772C"], "resource": "0x0012DD76", "terminator": "0x0012772C" },
+    { "address": "0x0012772D", "range": ["0x0012772D", "0x001277C4"], "resource": "0x0012D870", "terminator": "0x001277C4" }
+  ],
+  "evidence": [
+    "Direct LEA stream sources in SceneResource_Run12E34AStream1270A8, SceneResource_Run12E176Stream127134, SceneResource_Run12DD76Stream127207, SceneResource_Run12DD76Stream127338, SceneResource_Run12DA04Stream1273E9, SceneResource_Run12DD76Stream127571, SceneResource_Run12DD76Stream1275EE, and SceneResource_Run12D870Stream12772D.",
+    "Exact command-consumption walk through SceneResource_ProcessCommandStream to each first command-0 terminal.",
+    "Known scene-resource actor record commands at 0x00127194/0x0012719D and 0x0012766F remain inside the promoted streams."
+  ],
+  "conclusion": "Eight directly wrapper-selected scene-resource presentation streams are now canonical SCENE_TABLE ranges. The two intervening unreferenced gaps and the following narrative/object block remain separate audits.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
