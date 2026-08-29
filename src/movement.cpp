@@ -302,13 +302,25 @@ void MovementVm::tick(
                 continue;
             }
             case 0x8C:  // Movement_ClearActor.
-                if (read_u8(cursor + 1) == 0 && (actor.flags & 0x04) == 0) {
+                {
+                const std::uint8_t command_mode = read_u8(cursor + 1);
+                if (context.retire_actor != nullptr) {
+                    context.retire_actor(slot, command_mode);
+                    cursor_committed = true;
+                    break;
+                }
+                // Keep the VM independently testable without a lifecycle
+                // owner. Engine supplies the exact linked/resource cleanup
+                // callback above; the standalone path preserves the old
+                // record-only behavior.
+                if (command_mode == 0 && (actor.flags & 0x04) == 0) {
                     actor = ActorState{};
                     cursor_committed = true;
                     break;
                 }
                 cursor += 2;
                 continue;
+                }
             case 0x8D:  // Movement_FacePlayer.
                 actor.facing_x_flip = context.player_world_x < static_cast<int>(actor.x) ? 0xFF : 0;
                 cursor += 2;

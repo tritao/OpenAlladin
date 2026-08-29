@@ -131,6 +131,10 @@ struct AnimationSpawnRequest {
     int source_actor_slot = -1;
 };
 
+struct ActorRetirementRequest {
+    std::uint8_t command_mode = 0;
+};
+
 // PlayerAnimationVm is the player-facing slice of the original common actor
 // animation VM at 0x001AC784. With a ROM loaded it executes the original
 // frame-reference stream and command bytecode directly. The small Clip table
@@ -182,6 +186,7 @@ public:
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
     void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
     bool take_spawn_request(AnimationSpawnRequest& request);
+    bool take_actor_retirement_request(ActorRetirementRequest& request);
     void defer_spawn_request(const AnimationSpawnRequest& request);
     bool take_deferred_spawn_request(AnimationSpawnRequest& request);
     const std::optional<AnimationSpawnRequest>& deferred_spawn_request() const {
@@ -303,6 +308,7 @@ private:
     std::uint32_t active_command_pc_ = 0;
     std::vector<std::uint32_t> writer_pcs_;
     std::vector<AnimationSpawnRequest> spawn_requests_{};
+    std::optional<ActorRetirementRequest> actor_retirement_request_;
     std::optional<AnimationSpawnRequest> deferred_spawn_request_;
     std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;

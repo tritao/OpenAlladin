@@ -1,0 +1,67 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-render-service-targets.json",
+  "functions": [
+    {
+      "address": "0x001B2E88",
+      "name": "VDP_PrepareTileRowCommandsStride16",
+      "range": ["0x001B2E88", "0x001B2E99"],
+      "confidence": "decompiled",
+      "body": "Writes 0x9010 to VDP_CONTROL, loads D1 with 0x40, calls VDP_BuildTileRowCommandTables at 0x001B2142, and returns.",
+      "effect": "Configures the VDP increment and prepares the fixed 0x40-word tile-row command set."
+    },
+    {
+      "address": "0x001B2EC2",
+      "name": "SceneResource_RunServiceFramesWhileReady",
+      "range": ["0x001B2EC2", "0x001B2EDF"],
+      "confidence": "decompiled",
+      "body": "Tests SCENE_RESOURCE_STATUS at 0x00FF7E22. When clear, preserves D0 around each iteration, calls Terrain_QueryFlagDispatcher at 0x001B319C, calls Frame_RunServicePass at 0x001B28AE, waits through Frame_WaitForVBlankWork at 0x001B249E, restores D0, and repeats with DBF.",
+      "effect": "Runs a caller-counted scene/resource service loop that is suppressed while the resource status latch is set."
+    },
+    {
+      "address": "0x001B2EE2",
+      "name": "SceneResource_RunSingleServiceFrame",
+      "range": ["0x001B2EE2", "0x001B2EFF"],
+      "confidence": "decompiled",
+      "body": "Tests SCENE_RESOURCE_STATUS, waits through Frame_WaitForVBlankWork, preserves the full D0-D7/A0-A7 register set around Terrain_QueryFlagDispatcher and Frame_RunServicePass, and returns.",
+      "effect": "Provides one gated scene/resource service frame with full register preservation."
+    },
+    {
+      "address": "0x001B2F00",
+      "name": "Render_FadePaletteBandToWhite",
+      "range": ["0x001B2F00", "0x001B2F7D"],
+      "confidence": "decompiled",
+      "body": "Sets the VDP palette address to 0xC000, snapshots 16 words into CURRENT_VDP_PALETTE, then repeats 16 outer passes. Each pass waits for VBlank and advances every palette word's 0x000E, 0x00E0, and 0x0E00 component groups by +2 until each group reaches its maximum mask value, writing each result through VDP_DATA.",
+      "effect": "Fades one 16-word palette band toward white in 16 VBlank-paced passes."
+    },
+    {
+      "address": "0x001B2F7E",
+      "name": "Render_FadePaletteToWhite",
+      "range": ["0x001B2F7E", "0x001B2FFA"],
+      "confidence": "decompiled",
+      "body": "Sets the VDP palette address to 0xC000, snapshots 64 words into CURRENT_VDP_PALETTE, then repeats 16 outer passes. Each pass waits for VBlank and advances every palette word's 0x000E, 0x00E0, and 0x0E00 component groups by +2 until each group reaches its maximum mask value, writing each result through VDP_DATA.",
+      "effect": "Fades the complete 64-word palette toward white in 16 VBlank-paced passes."
+    }
+  ],
+  "relationships": {
+    "shared_helpers": [
+      "0x001B2142 VDP_BuildTileRowCommandTables",
+      "0x001B249E Frame_WaitForVBlankWork",
+      "0x001B28AE Frame_RunServicePass",
+      "0x001B319C Terrain_QueryFlagDispatcher"
+    ],
+    "palette_masks": ["0x000E", "0x00E0", "0x0E00"],
+    "palette_destination": "0x00C00000 VDP_DATA after VDP_CONTROL setup"
+  },
+  "limitations": [
+    "No direct static caller was exported for the five entries, so the record establishes their local contracts without assigning a particular scene-state or UI presentation.",
+    "The two palette fades are named by their exact monotonic component behavior; runtime evidence is still needed to identify which scene transitions invoke them."
+  ],
+  "conclusion": "The adjacent scene/render gap contains two gated service wrappers, one VDP stride setup wrapper, and two complete monotonic palette-to-white fades. Their non-overlapping boundaries and exact VBlank/word/component counts are now recorded."
+}

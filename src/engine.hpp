@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include "animation.hpp"
+#include "actor_lifecycle.hpp"
 #include "game_state.hpp"
 #include "movement.hpp"
 #include "player_terrain.hpp"
@@ -181,6 +182,7 @@ private:
     CameraState& camera_;
     InteractionMap& interaction_map_;
     ActorSystem& actors_;
+    ActorLifecycleSystem actor_lifecycle_;
     SceneSystem scene_;
     PlayerTerrainSystem terrain_;
     SpriteDatabase sprites_;

@@ -30,13 +30,13 @@ int main() {
     actor.frame_ptr = 1;
 
     openaladdin::MovementVm vm;
-    vm.tick(actors, openaladdin::MovementContext{rom, 0, 0});
+    vm.tick(actors, openaladdin::MovementContext{rom, 0, 0, nullptr, {}});
     assert(actor.x == 103);
     assert(actor.y == 198);
     assert(actor.facing_x_flip == 0xFF);
     assert(actor.movement_pc == 0x200);
 
-    vm.tick(actors, openaladdin::MovementContext{rom, 0, 0});
+    vm.tick(actors, openaladdin::MovementContext{rom, 0, 0, nullptr, {}});
     assert(actor.x == 102);
     assert(actor.y == 200);
     return 0;

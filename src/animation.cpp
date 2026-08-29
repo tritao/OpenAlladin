@@ -198,6 +198,7 @@ void PlayerAnimationVm::reset() {
     active_command_pc_ = 0;
     writer_pcs_.clear();
     spawn_requests_.clear();
+    actor_retirement_request_.reset();
     deferred_spawn_request_.reset();
     sound_requests_.clear();
     update_count_ = 0;
@@ -487,7 +488,8 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         // use F6 00 after their short 0x8C/0x7B animation, and the same
         // callback is used by the short type-0x84 child effect. The player
         // VM must consume the opcode without clearing its own state.
-        if (actor_tick_ && read_rom8(cursor + 1) == 0) {
+        if (actor_tick_) {
+            actor_retirement_request_ = ActorRetirementRequest{read_rom8(cursor + 1)};
             actor_[0] = 0;
         }
         cursor += 2;
@@ -825,6 +827,13 @@ bool PlayerAnimationVm::take_spawn_request(AnimationSpawnRequest& request) {
     return true;
 }
 
+bool PlayerAnimationVm::take_actor_retirement_request(ActorRetirementRequest& request) {
+    if (!actor_retirement_request_) return false;
+    request = *actor_retirement_request_;
+    actor_retirement_request_.reset();
+    return true;
+}
+
 void PlayerAnimationVm::defer_spawn_request(const AnimationSpawnRequest& request) {
     deferred_spawn_request_ = request;
 }
@@ -1137,6 +1146,8 @@ void PlayerAnimationVm::write_checkpoint(std::ostream& output) const {
     writer.u32(return_pc_);
     writer.u8(random_value_);
     writer.boolean(actor_tick_);
+    writer.boolean(actor_retirement_request_.has_value());
+    if (actor_retirement_request_) writer.u8(actor_retirement_request_->command_mode);
     writer.u8(static_cast<std::uint8_t>(actor_service_boundary_));
     writer.boolean(clear_timer_next_update_);
     writer.boolean(tracking_memory_writes_);
@@ -1181,6 +1192,11 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     const auto return_pc = reader.u32();
     const auto random_value = reader.u8();
     const bool actor_tick = reader.boolean();
+    const bool has_actor_retirement_request = reader.boolean();
+    std::optional<ActorRetirementRequest> actor_retirement_request;
+    if (has_actor_retirement_request) {
+        actor_retirement_request = ActorRetirementRequest{reader.u8()};
+    }
     const auto actor_service_boundary = reader.u8();
     const bool clear_timer_next_update = reader.boolean();
     const bool tracking_memory_writes = reader.boolean();
@@ -1226,6 +1242,7 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     return_pc_ = return_pc;
     random_value_ = random_value;
     actor_tick_ = actor_tick;
+    actor_retirement_request_ = actor_retirement_request;
     actor_service_boundary_ = static_cast<ActorServiceBoundary>(actor_service_boundary);
     clear_timer_next_update_ = clear_timer_next_update;
     tracking_memory_writes_ = tracking_memory_writes;

@@ -4679,3 +4679,48 @@
     - ghidra_disassembly_001B2A26
     - ghidra_progressive_palette_services_targets
     - progressive_palette_services_static_decompilation
+0x001B2E88:
+  name: VDP_PrepareTileRowCommandsStride16
+  confidence: decompiled
+  size: 18
+  description: Programs the VDP control register with the 0x10 increment configuration and invokes VDP_BuildTileRowCommandTables with a 0x40-word count.
+  evidence:
+    - ghidra_disassembly_001B2E88
+    - ghidra_scene-render-service-targets
+    - scene-render-service-static-decompilation
+0x001B2EC2:
+  name: SceneResource_RunServiceFramesWhileReady
+  confidence: decompiled
+  size: 30
+  description: While SCENE_RESOURCE_STATUS is clear, runs the requested DBF-counted service frames; each frame samples the terrain/query dispatcher, runs Frame_RunServicePass, and waits for VBlank while preserving the loop counter.
+  evidence:
+    - ghidra_disassembly_001B2EC2
+    - ghidra_scene-render-service-targets
+    - scene-render-service-static-decompilation
+0x001B2EE2:
+  name: SceneResource_RunSingleServiceFrame
+  confidence: decompiled
+  size: 30
+  description: If SCENE_RESOURCE_STATUS is clear, waits for VBlank, samples the terrain/query dispatcher, and runs one Frame_RunServicePass while preserving the caller's register set.
+  evidence:
+    - ghidra_disassembly_001B2EE2
+    - ghidra_scene-render-service-targets
+    - scene-render-service-static-decompilation
+0x001B2F00:
+  name: Render_FadePaletteBandToWhite
+  confidence: decompiled
+  size: 126
+  description: Snapshots 16 current palette words, then performs 16 VBlank-paced passes that add the next two-unit component step toward the maximum Genesis color components and write the band at VDP palette address 0xC000.
+  evidence:
+    - ghidra_disassembly_001B2F00
+    - ghidra_scene-render-service-targets
+    - scene-render-service-static-decompilation
+0x001B2F7E:
+  name: Render_FadePaletteToWhite
+  confidence: decompiled
+  size: 125
+  description: Snapshots all 64 current palette words, then performs 16 VBlank-paced passes that add the next two-unit component step toward the maximum Genesis color components and write the full palette at VDP palette address 0xC000.
+  evidence:
+    - ghidra_disassembly_001B2F7E
+    - ghidra_scene-render-service-targets
+    - scene-render-service-static-decompilation

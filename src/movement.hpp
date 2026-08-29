@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstdint>
+#include <functional>
 #include <vector>
 
 namespace openaladdin {
@@ -13,6 +14,7 @@ struct MovementContext {
     int player_world_x = 0;
     int player_world_y = 0;
     const std::array<bool, 32>* deferred_actors = nullptr;
+    std::function<void(ActorIndex, std::uint8_t)> retire_actor;
 };
 
 // Shared actor movement interpreter. It owns no actor records and therefore

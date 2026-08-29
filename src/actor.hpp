@@ -1,12 +1,15 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <optional>
 #include <vector>
 
 namespace openaladdin {
+
+using ActorIndex = std::size_t;
 
 struct ActorState {
     std::uint8_t type = 0;
@@ -37,9 +40,9 @@ struct ActorState {
     std::uint8_t resource_count = 0;
     std::uint16_t interaction_resource_offset = 0;
     std::uint8_t interaction_selector = 0;
-    bool spawned_by_interaction = false;
-    bool spawned_by_animation = false;
-    bool spawned_by_apple = false;
+    // This is the Genesis record link at +0x3E. Unlike spawn provenance it is
+    // part of the actor's observable runtime state and is therefore kept in
+    // the record itself.
     int linked_actor_slot = -1;
 };
 
@@ -49,6 +52,50 @@ enum class ActorAllocationPool {
     GameplayForward,
     GameplayReverse,
     AuxiliaryForward,
+};
+
+using ActorPool = ActorAllocationPool;
+
+struct ActorResourceAllocation {
+    std::uint8_t first_slot = 0;
+    std::uint8_t slot_count = 0;
+    std::uint32_t genesis_vram_base = 0;
+
+    bool valid() const { return slot_count != 0; }
+};
+
+// The ROM's logical sprite-resource allocator is independent of SDL/VRAM.
+// It is still semantic state: allocation failure retires actors, and the
+// allocation is released by the actor lifecycle helpers.
+class ActorSpriteResources {
+public:
+    static constexpr std::size_t kSlotCount = 0x74;
+    static constexpr std::uint32_t kSlotBitmapAddress = 0x00FFF008;
+    static constexpr std::uint32_t kVramBaseTableAddress = 0x0011F500;
+    static constexpr std::uint32_t kVramBaseStart = 0x00008600;
+
+    void reset();
+    std::optional<ActorResourceAllocation> allocate(std::uint8_t resource_count);
+    void release(const ActorResourceAllocation& allocation);
+
+    const std::array<std::uint8_t, kSlotCount>& slot_bitmap() const {
+        return slot_bitmap_;
+    }
+    void restore_slot_bitmap(const std::array<std::uint8_t, kSlotCount>& bitmap) {
+        slot_bitmap_ = bitmap;
+    }
+
+private:
+    std::array<std::uint8_t, kSlotCount> slot_bitmap_{};
+};
+
+// Spawn origin is host bookkeeping used by the current parity scheduler. It
+// is deliberately parallel to the ROM-shaped actor records rather than being
+// mistaken for an actor field.
+struct ActorHostMeta {
+    bool spawned_by_interaction = false;
+    bool spawned_by_animation = false;
+    bool spawned_by_apple = false;
 };
 
 struct SpawnDescriptor {
@@ -78,6 +125,9 @@ public:
 
     ActorSystem& operator=(const Table& table) {
         static_cast<Table&>(*this) = table;
+        host_meta_.fill({});
+        resource_allocations_.fill(std::nullopt);
+        sprite_resources_.reset();
         return *this;
     }
 
@@ -89,6 +139,17 @@ public:
     Table& templates() { return templates_; }
     const Table& templates() const { return templates_; }
     std::optional<std::size_t> allocate_actor_slot(ActorAllocationPool pool) const;
+
+    ActorHostMeta& host_meta(ActorIndex slot) { return host_meta_.at(slot); }
+    const ActorHostMeta& host_meta(ActorIndex slot) const { return host_meta_.at(slot); }
+
+    std::optional<ActorResourceAllocation> allocate_sprite_resources(
+        ActorIndex slot,
+        std::uint8_t resource_count
+    );
+    void release_sprite_resources(ActorIndex slot);
+    std::optional<ActorResourceAllocation> resource_allocation(ActorIndex slot) const;
+    const ActorSpriteResources& sprite_resources() const { return sprite_resources_; }
 
     std::vector<std::size_t> cull_interaction_actors(
         int left,
@@ -103,6 +164,9 @@ public:
 
 private:
     std::array<bool, 32> culled_this_frame_{};
+    std::array<ActorHostMeta, 32> host_meta_{};
+    std::array<std::optional<ActorResourceAllocation>, 32> resource_allocations_{};
+    ActorSpriteResources sprite_resources_{};
     Table templates_{};
     bool snapshot_mode_ = false;
 };

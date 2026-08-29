@@ -235,12 +235,11 @@ void write_actor(std::ostream& output, std::size_t slot, const ActorState& actor
            << actor.interaction_resource_offset
            << ",\"interaction_selector\":"
            << static_cast<unsigned>(actor.interaction_selector)
-           << ",\"spawned_by_interaction\":"
-           << (actor.spawned_by_interaction ? "true" : "false")
-           << ",\"spawned_by_animation\":"
-           << (actor.spawned_by_animation ? "true" : "false")
-           << ",\"spawned_by_apple\":"
-           << (actor.spawned_by_apple ? "true" : "false")
+           // This low-level fixture owns a raw actor table rather than the
+           // ActorSystem, so host provenance is intentionally absent.
+           << ",\"spawned_by_interaction\":false"
+           << ",\"spawned_by_animation\":false"
+           << ",\"spawned_by_apple\":false"
            << ",\"linked_actor_slot\":" << actor.linked_actor_slot
            << "}";
 }
@@ -304,7 +303,7 @@ int main(int argc, char** argv) {
             }
             movement_vm.tick(
                 actors,
-                MovementContext{rom, 0, 0}
+                MovementContext{rom, 0, 0, nullptr, {}}
             );
             write_state(output, frame + 1, actors);
         }

@@ -1,0 +1,62 @@
+{
+  "format": "openaladdin-scene-render-services-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "focus": {
+    "name": "scene-render-services",
+    "purpose": "Bound the complete scene-resource service wrappers and palette fade variants adjacent to the established VDP and transition helpers."
+  },
+  "targets": [
+    {
+      "address": "0x001B2E88",
+      "name": "VDP_PrepareTileRowCommandsStride16",
+      "size": 18,
+      "end": "0x001B2E99",
+      "contract": "Write the 0x9010 VDP control value, load D1 with 0x40, call VDP_BuildTileRowCommandTables, and return."
+    },
+    {
+      "address": "0x001B2EC2",
+      "name": "SceneResource_RunServiceFramesWhileReady",
+      "size": 30,
+      "end": "0x001B2EDF",
+      "contract": "If SCENE_RESOURCE_STATUS is clear, execute D0+1 iterations of Terrain_QueryFlagDispatcher, Frame_RunServicePass, and Frame_WaitForVBlankWork."
+    },
+    {
+      "address": "0x001B2EE2",
+      "name": "SceneResource_RunSingleServiceFrame",
+      "size": 30,
+      "end": "0x001B2EFF",
+      "contract": "If SCENE_RESOURCE_STATUS is clear, execute one VBlank/query/frame-service sequence while preserving the full register set."
+    },
+    {
+      "address": "0x001B2F00",
+      "name": "Render_FadePaletteBandToWhite",
+      "size": 126,
+      "end": "0x001B2F7D",
+      "contract": "Snapshot 16 palette words and perform 16 VBlank-paced positive component-step passes at VDP palette address 0xC000."
+    },
+    {
+      "address": "0x001B2F7E",
+      "name": "Render_FadePaletteToWhite",
+      "size": 125,
+      "end": "0x001B2FFA",
+      "contract": "Snapshot 64 palette words and perform 16 VBlank-paced positive component-step passes at VDP palette address 0xC000."
+    }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E22", "name": "SCENE_RESOURCE_STATUS" },
+    { "address": "0x00FF8800", "name": "CURRENT_VDP_PALETTE" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ],
+  "relationships": [
+    "0x001B2E88 calls VDP_BuildTileRowCommandTables at 0x001B2142 with D1=0x40.",
+    "0x001B2EC2 and 0x001B2EE2 call Terrain_QueryFlagDispatcher, Frame_RunServicePass, and Frame_WaitForVBlankWork according to their respective contracts.",
+    "0x001B2F00 and 0x001B2F7E share the component masks 0x000E, 0x00E0, and 0x0E00 with the established palette convergence helpers, but always increment toward maximum component values rather than a caller-supplied palette."
+  ],
+  "limitations": [
+    "The current whole-ROM export reports no direct static callers for these formerly unassigned entries; they may be reached through indirect service tables or alternate entry paths.",
+    "The higher-level scene-state meaning of the stride wrapper and the palette fade callers remains unresolved."
+  ]
+}

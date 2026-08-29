@@ -142,7 +142,7 @@ constexpr std::array<std::uint8_t, 0xD4> kCameraVerticalDampening = {
     0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
     0x0F, 0x0F, 0x0F, 0x00
 };
-constexpr std::uint32_t kCheckpointVersion = 8;
+constexpr std::uint32_t kCheckpointVersion = 9;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
     writer.u8(selector.animation_gate);
@@ -359,6 +359,7 @@ Engine::Engine()
       camera_(state_.camera),
       interaction_map_(state_.interactions),
       actors_(state_.actors),
+      actor_lifecycle_(actors_),
       random_state_(state_.random.value),
       frame_(state_.frame.number),
       frame_phase_(state_.frame.phase) {
@@ -411,6 +412,7 @@ void Engine::load(
     } else {
         rom_bytes_.clear();
     }
+    actor_lifecycle_.bind_rom(rom_bytes_);
     scene_.load_rom_bytes(rom_bytes_);
     scene_.reset(level_.scene_state());
     actors_.set_snapshot_mode(!actor_records_path.empty() || !actor_timeline_path.empty());
@@ -675,56 +677,18 @@ std::optional<SpawnDescriptor> Engine::spawn_descriptor(std::uint8_t selector) c
 }
 
 std::optional<std::size_t> Engine::allocate_actor_slot(ActorAllocationPool pool) const {
-    return actors_.allocate_actor_slot(pool);
+    return actor_lifecycle_.allocate(pool);
 }
 
 ActorState Engine::actor_from_template(std::uint32_t template_address) const {
-    ActorState actor;
-    const auto read_u8 = [this](std::uint32_t address) -> std::uint8_t {
-        return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
-    };
-    const auto read_u32 = [&read_u8](std::uint32_t address) -> std::uint32_t {
-        return (static_cast<std::uint32_t>(read_u8(address)) << 24)
-            | (static_cast<std::uint32_t>(read_u8(address + 1)) << 16)
-            | (static_cast<std::uint32_t>(read_u8(address + 2)) << 8)
-            | read_u8(address + 3);
-    };
-    const auto read_u16 = [&read_u8](std::uint32_t address) -> std::uint16_t {
-        return static_cast<std::uint16_t>(
-            (static_cast<std::uint16_t>(read_u8(address)) << 8)
-            | read_u8(address + 1)
-        );
-    };
-    if (template_address + 0x12 >= rom_bytes_.size()) return actor;
-    actor.type = read_u8(template_address);
-    actor.movement_flags = read_u8(template_address + 2);
-    actor.facing_x_flip = read_u8(template_address + 5);
-    actor.movement_pc = read_u32(template_address + 6);
-    actor.sprite_attribute = read_u16(template_address + 0x0A);
-    actor.animation_pc = read_u32(template_address + 0x0C);
-    actor.resource_count = read_u8(template_address + 0x10);
-    actor.facing_y_flip = read_u8(template_address + 0x11);
-    actor.flags = read_u8(template_address + 0x12);
-    return actor;
+    return actor_lifecycle_.from_template(template_address);
 }
 
 ActorState Engine::initialize_actor_from_template(
     const ActorState& destination,
     std::uint32_t template_address
 ) const {
-    // Actor_InitializeFromTemplate (0x001AE30A) is a partial record
-    // initializer. These are the destination fields the ROM does not write:
-    // coordinates at +0x02/+0x04, movement-loop cursor/timer at
-    // +0x0E/+0x12, and movement return cursor at +0x38. Keep those fields
-    // explicit here so every replacement path gets the same slot-reuse
-    // semantics before its caller applies new coordinates or overrides.
-    ActorState actor = actor_from_template(template_address);
-    actor.x = destination.x;
-    actor.y = destination.y;
-    actor.movement_loop_pc = destination.movement_loop_pc;
-    actor.movement_loop_timer = destination.movement_loop_timer;
-    actor.movement_return_pc = destination.movement_return_pc;
-    return actor;
+    return actor_lifecycle_.initialize_record(destination, template_address);
 }
 
 void Engine::dispatch_interaction(
@@ -762,8 +726,8 @@ void Engine::dispatch_interaction(
     actor.y = static_cast<std::uint16_t>(base_y + descriptor->post_offset_y);
     actor.interaction_resource_offset = record.resource_offset;
     actor.interaction_selector = selector;
-    actor.spawned_by_interaction = true;
-    actors_[*slot] = actor;
+    if (!actor_lifecycle_.install(*slot, actor)) return;
+    actors_.host_meta(*slot).spawned_by_interaction = true;
     if (actor.movement_pc != 0) {
         actor_movement_deferred_[*slot] = true;
     }
@@ -870,20 +834,18 @@ void Engine::flush_surface_actor_spawn() {
     const int spawn_y = surface_actor_spawn_y_;
     surface_actor_spawn_pending_ = false;
 
-    for (std::size_t slot = 3; slot <= 22 && slot < actors_.size(); ++slot) {
-        if (actors_[slot].type != 0) continue;
-        // The ROM's surface allocator reuses the compact actor record after
-        // F6 has cleared its type. That clear retires only the live identity;
-        // the movement-loop words at +0x0E/+0x12 and return PC at +0x38
-        // remain stale when the slot is refilled.
-        ActorState spawned_actor = initialize_actor_from_template(
-            actors_[slot], kTerrainSpawnTemplate);
-        spawned_actor.x = static_cast<std::uint16_t>(spawn_x);
-        spawned_actor.y = static_cast<std::uint16_t>(spawn_y);
-        actors_[slot] = spawned_actor;
-        actor_animations_[slot].clear_actor_service_boundary();
-        return;
-    }
+    const auto slot = actor_lifecycle_.allocate(ActorPool::CommonForward);
+    if (!slot) return;
+    // The ROM's surface allocator reuses the compact actor record after F6
+    // has cleared its type. That clear retires only the live identity; the
+    // movement-loop words at +0x0E/+0x12 and return PC at +0x38 remain stale
+    // when the slot is refilled.
+    ActorState spawned_actor = initialize_actor_from_template(
+        actors_[*slot], kTerrainSpawnTemplate);
+    spawned_actor.x = static_cast<std::uint16_t>(spawn_x);
+    spawned_actor.y = static_cast<std::uint16_t>(spawn_y);
+    if (!actor_lifecycle_.install(*slot, spawned_actor)) return;
+    actor_animations_[*slot].clear_actor_service_boundary();
 }
 
 void Engine::update_dynamic_actor_culling() {
@@ -897,10 +859,10 @@ void Engine::update_dynamic_actor_culling() {
     const int top = camera_.y - 0x120;
     const int bottom = camera_.y + kScreenHeight + 0x120;
     for (const std::size_t slot : actors_.cull_interaction_actors(left, right, top, bottom)) {
-        // FUN_001AE0B0 clears only the record type before releasing its linked
-        // resources. ActorSystem preserves the remaining compact words for
-        // the next template reuse; Engine only resets the VM attached to the
-        // retired slot.
+        // FUN_001AE0B0 clears/releases the record and follows its +0x3E link.
+        // ActorSystem performs the spatial query; lifecycle owns the actual
+        // retirement and resource/link cleanup.
+        actor_lifecycle_.retire(slot, ActorRetirementMode::RetireLinkedActor);
         actor_animations_[slot].reset();
     }
 }
@@ -920,7 +882,7 @@ void Engine::sync_player_actor() {
     actor.animation_timer = static_cast<std::uint8_t>(animation_.timer());
     actor.flags = 0;
     actor.terminal_timer = 0;
-    actor.spawned_by_interaction = false;
+    actors_.host_meta(0) = {};
 }
 
 void Engine::publish_player_world_coordinates() {
@@ -941,7 +903,10 @@ void Engine::update_actor_movement() {
             rom_bytes_,
             player_world_x(),
             player_world_y(),
-            &actor_movement_deferred_
+            &actor_movement_deferred_,
+            [this](ActorIndex slot, std::uint8_t command_mode) {
+                actor_lifecycle_.retire_from_vm(slot, command_mode);
+            }
         }
     );
     actor_movement_deferred_.fill(false);
@@ -1025,7 +990,7 @@ void Engine::update_actor_animations() {
             // pass. Use the same one-boundary defer used by the short 0x06
             // refill effect below.
             if (actor_animations_[slot].consume_actor_retirement_defer()) {
-                actor = ActorState{};
+                actor_lifecycle_.retire(slot, ActorRetirementMode::RetireLinkedActor);
                 actor_animations_[slot].reset();
             } else {
                 actor_animations_[slot].defer_actor_retirement();
@@ -1040,7 +1005,7 @@ void Engine::update_actor_animations() {
         if (actor.type == 0x06 && actor.animation_pc == 0x00123200
             && actor.x == 1849 && actor.y == 775
             && (!actor_animations_[slot].actor_service_deferred() || frame_ >= 522)) {
-            actor = ActorState{};
+            actor_lifecycle_.retire(slot);
             actor_animations_[slot].reset();
             continue;
         }
@@ -1049,18 +1014,22 @@ void Engine::update_actor_animations() {
         // collision: the guard remains type 0x0A while the sword at
         // animation cursor 0x00122B5A becomes type 0x84 at the next pass.
         if (actor.type == kActorSwordType
-            && !actor.spawned_by_apple
+            && !actors_.host_meta(slot).spawned_by_apple
             && actor.animation_pc == 0x00122B5A
             && actor.flags == 0x08) {
-            actor.type = kActorTerminalType;
-            actor.sprite_attribute = actor_from_template(kActorSwordDeathTemplate).sprite_attribute;
-            actor.movement_pc = 0;
-            actor.animation_pc = kActorSwordDeathAnimationStream;
-            actor.frame_ptr = 0;
-            actor.flags = 0;
-            actor.facing_x_flip = 0;
-            actor.facing_y_flip = 0;
-            actor.terminal_timer = kActorSwordTerminalFrames;
+            ActorState terminal = actor;
+            const ActorState template_record = actor_from_template(kActorSwordDeathTemplate);
+            terminal.type = kActorTerminalType;
+            terminal.sprite_attribute = template_record.sprite_attribute;
+            terminal.resource_count = template_record.resource_count;
+            terminal.movement_pc = 0;
+            terminal.animation_pc = kActorSwordDeathAnimationStream;
+            terminal.frame_ptr = 0;
+            terminal.flags = 0;
+            terminal.facing_x_flip = 0;
+            terminal.facing_y_flip = 0;
+            terminal.terminal_timer = kActorSwordTerminalFrames;
+            (void)actor_lifecycle_.install(slot, terminal);
         }
         // The scene-state-5 terrain response installs the terminal template
         // two VBlank passes before AnimationVM begins servicing it. Death
@@ -1069,7 +1038,7 @@ void Engine::update_actor_animations() {
         // The apple child has its own every-other-VBlank cadence beginning
         // at allocation; unlike the shared table, it is serviced on both
         // phases of the global actor gate while it remains type 0x80.
-        const bool apple_actor_service = actor.spawned_by_apple;
+        const bool apple_actor_service = actors_.host_meta(slot).spawned_by_apple;
         const bool force_service = actor_animations_[slot].actor_service_forced();
         const bool actor_service = actor_animations_[slot].consume_actor_service(
             service_actor_table || apple_actor_service,
@@ -1096,7 +1065,7 @@ void Engine::update_actor_animations() {
         // scene-state-5 terrain records hold on odd phases, while sword/death
         // records hold on even phases during their terminal lifetime.
         const bool hold_scene5_phase = actor.type == kActorTerminalType
-            && !actor.spawned_by_animation
+            && !actors_.host_meta(slot).spawned_by_animation
             && actor.terminal_timer == 0
             && !force_service
             && !service_actor_table;
@@ -1140,6 +1109,12 @@ void Engine::update_actor_animations() {
         actor.animation_pc = animation_state.animation_pc;
         actor.frame_ptr = animation_state.frame_ptr;
         actor.animation_timer = animation_state.animation_timer;
+        ActorRetirementRequest retirement_request;
+        if (previous_type != 0
+            && actor.type == 0
+            && actor_animations_[slot].take_actor_retirement_request(retirement_request)) {
+            actor_lifecycle_.retire_from_vm(slot, retirement_request.command_mode);
+        }
         if (previous_type != 0 && actor.type == 0
             && actor.linked_actor_slot >= 0
             && static_cast<std::size_t>(actor.linked_actor_slot) < actors_.size()) {
@@ -1184,9 +1159,6 @@ void Engine::update_actor_animations() {
             spawn_request.source_facing_y_flip = actor.facing_y_flip;
             spawn_request.source_actor_slot = static_cast<int>(slot);
             if (const auto spawned_slot = apply_animation_spawn_request(spawn_request)) {
-                if (spawn_request.mode == 5 || spawn_request.mode == 6) {
-                    actor.flags = static_cast<std::uint8_t>(actor.flags | 0x04U);
-                }
                 (void)spawned_slot;
             }
         }
@@ -1356,88 +1328,38 @@ void Engine::update_bounce_actor_interaction() {
 }
 
 std::optional<std::size_t> Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request) {
-        // The recovered F5 allocator has two paths used by the live Level 01
-        // slice. Mode 0 is the common actor path (the opening player stream
-        // uses it to create the type-0x84 actor in slot 3); mode 3 is the
-        // auxiliary weapon/effect path used by the sword stream.
-        if (!request.valid
-            || (request.mode != 0 && request.mode != 1 && request.mode != 2
-                && request.mode != 3 && request.mode != 5 && request.mode != 6)) {
-            return std::nullopt;
-        }
+    // F5 decoding remains in AnimationVM. ActorLifecycleSystem owns the
+    // recovered pool selection, partial template initializer, link contract,
+    // and sprite-resource allocation.
+    F5Command command;
+    command.valid = request.valid;
+    command.mode = request.mode;
+    command.template_address = request.template_address;
+    command.offset_x = request.offset_x;
+    command.offset_y = request.offset_y;
+    command.animation_override = request.animation_override;
+    command.movement_override = request.movement_override;
+    command.source_world_x = request.source_world_x;
+    command.source_world_y = request.source_world_y;
+    command.source_facing_x_flip = request.source_facing_x_flip;
+    command.source_facing_y_flip = request.source_facing_y_flip;
+    command.apple_action = request.apple_action;
 
-        if (request.template_address + 0x12 >= rom_bytes_.size()) return std::nullopt;
+    const ActorIndex source = request.source_actor_slot >= 0
+        ? static_cast<ActorIndex>(request.source_actor_slot)
+        : 0;
+    const auto slot = actor_lifecycle_.spawn_f5(source, command);
+    if (!slot) return std::nullopt;
 
-        int offset_x = request.offset_x;
-        int offset_y = request.offset_y;
-        if (request.source_facing_x_flip != 0) offset_x = -offset_x;
-        if (request.source_facing_y_flip != 0) offset_y = -offset_y;
-        const int source_world_x = request.source_world_x;
-        const int source_world_y = request.source_world_y;
-
-        int first_slot = 3;
-        int last_slot = 22;
-        int step = 1;
-        switch (request.mode) {
-        case 1:
-        case 5:
-            // FUN_001AE27A: gameplay allocator, slots 1..24.
-            first_slot = 1;
-            last_slot = 24;
-            break;
-        case 2:
-        case 6:
-            // FUN_001AE2AA: reverse common allocator, slots 20..1.
-            first_slot = 20;
-            last_slot = 1;
-            step = -1;
-            break;
-        case 3:
-            // FUN_001AE2DA: auxiliary allocator, slots 25..30.
-            first_slot = 25;
-            last_slot = 30;
-            break;
-        default:
-            // Mode 0 uses FUN_001AE262, the common forward allocator
-            // spanning slots 3..22.
-            break;
-        }
-        for (int slot = first_slot; step > 0 ? slot <= last_slot : slot >= last_slot; slot += step) {
-            const std::size_t index = static_cast<std::size_t>(slot);
-            if (actors_[index].type != 0 || actors_.was_culled_this_frame(index)) continue;
-            // F5 invokes Actor_InitializeFromTemplate on the selected record.
-            // Build that partial initialization from the actual destination
-            // so its retained coordinates/continuation fields are explicit,
-            // then apply the F5 source-relative and override writes.
-            ActorState spawned = initialize_actor_from_template(
-                actors_[index], request.template_address);
-            spawned.facing_x_flip = request.source_facing_x_flip;
-            spawned.facing_y_flip = request.source_facing_y_flip;
-            spawned.spawned_by_animation = true;
-            spawned.spawned_by_apple = request.apple_action;
-            if (request.mode == 5 || request.mode == 6) {
-                spawned.linked_actor_slot = request.source_actor_slot;
-            }
-            if (request.animation_override != 0) {
-                spawned.animation_pc = request.animation_override;
-            }
-            if (request.movement_override != 0) {
-                spawned.movement_pc = request.movement_override;
-            }
-            spawned.x = static_cast<std::uint16_t>(source_world_x + offset_x);
-            spawned.y = static_cast<std::uint16_t>(source_world_y + offset_y);
-            actors_[index] = spawned;
-            actor_animations_[static_cast<std::size_t>(slot)].reset();
-            if (request.apple_action) {
-                // The allocated projectile reaches the common actor table on
-                // the current boundary, but its first frame is consumed on
-                // the next one. Keep that producer boundary with the actor
-                // VM rather than adding a field to the Genesis record.
-                actor_animations_[static_cast<std::size_t>(slot)].defer_actor_service();
-            }
-            return static_cast<std::size_t>(slot);
-        }
-        return std::nullopt;
+    actors_.host_meta(*slot).spawned_by_animation = true;
+    actors_.host_meta(*slot).spawned_by_apple = request.apple_action;
+    actor_animations_[*slot].reset();
+    if (request.apple_action) {
+        // The allocated projectile reaches the common actor table on the
+        // current boundary, but its first frame is consumed on the next one.
+        actor_animations_[*slot].defer_actor_service();
+    }
+    return slot;
 }
 
 std::vector<std::size_t> Engine::apply_animation_spawns(
@@ -1503,19 +1425,23 @@ void Engine::update_actor_actor_collisions() {
     // cursor starts at FF7E82 (record index 1) and scans slots 1..24. This
     // is deliberately separate from the player/actor pass:
     // the player sword is itself an actor by the time the guard handler runs.
-    const auto terminalize = [this](ActorState& actor, std::uint32_t animation_stream, std::uint8_t frames) {
-        actor.type = kActorTerminalType;
+    const auto terminalize = [this](ActorIndex slot, std::uint32_t animation_stream, std::uint8_t frames) {
+        ActorState terminal = actors_[slot];
+        terminal.type = kActorTerminalType;
         const std::uint32_t template_address = animation_stream == kActorDeathAnimationStream
             ? kActorDeathTemplate
             : kActorSwordDeathTemplate;
-        actor.sprite_attribute = actor_from_template(template_address).sprite_attribute;
-        actor.movement_pc = 0;
-        actor.animation_pc = animation_stream;
-        actor.frame_ptr = 0;
-        actor.flags = 0;
-        actor.facing_x_flip = 0;
-        actor.facing_y_flip = 0;
-        actor.terminal_timer = frames;
+        const ActorState template_record = actor_from_template(template_address);
+        terminal.sprite_attribute = template_record.sprite_attribute;
+        terminal.resource_count = template_record.resource_count;
+        terminal.movement_pc = 0;
+        terminal.animation_pc = animation_stream;
+        terminal.frame_ptr = 0;
+        terminal.flags = 0;
+        terminal.facing_x_flip = 0;
+        terminal.facing_y_flip = 0;
+        terminal.terminal_timer = frames;
+        (void)actor_lifecycle_.install(slot, terminal);
     };
 
     for (std::size_t source_slot = 24; source_slot <= 30; ++source_slot) {
@@ -1539,7 +1465,7 @@ void Engine::update_actor_actor_collisions() {
 
         // The no-target sword edge belongs to this one ROM invocation. It
         // used to be emulated by a pre-motion call and a second normal pass.
-        if (source.type == kActorSwordType && !source.spawned_by_apple
+        if (source.type == kActorSwordType && !actors_.host_meta(source_slot).spawned_by_apple
             && source.animation_pc == 0x00122B5A && source.flags == 0x08) {
             bool overlaps_target = false;
             for (std::size_t target_slot = 1; target_slot <= 24; ++target_slot) {
@@ -1565,7 +1491,7 @@ void Engine::update_actor_actor_collisions() {
             if (!overlaps_target) {
                 // The interaction pass consumes one timer tick on the same
                 // frame that installs this terminal record.
-                terminalize(source, kActorSwordDeathAnimationStream,
+                terminalize(source_slot, kActorSwordDeathAnimationStream,
                     kActorSwordTerminalFrames + 1);
                 continue;
             }
@@ -1599,10 +1525,10 @@ void Engine::update_actor_actor_collisions() {
             // streams are distinct in the ROM (0x122FA2 vs 0x122DD8), and
             // their cleanup lifetimes are distinct as well: 43 frames for
             // the guard, 19 for the one-frame sword actor.
-            if (source.type == kActorSwordType && !source.spawned_by_apple
+            if (source.type == kActorSwordType && !actors_.host_meta(source_slot).spawned_by_apple
                 && target.type == kActorGuardType) {
-                terminalize(target, kActorDeathAnimationStream, kActorDeathFrames);
-                terminalize(source, kActorSwordDeathAnimationStream, kActorSwordTerminalFrames);
+                terminalize(target_slot, kActorDeathAnimationStream, kActorDeathFrames);
+                terminalize(source_slot, kActorSwordDeathAnimationStream, kActorSwordTerminalFrames);
             } else if (source.type == 0x7F && target.type == 0x1D) {
                 // The type-0x7F auxiliary stream is the transient child
                 // created by the bounce actor's F5 command.  ROM handler
@@ -1616,16 +1542,18 @@ void Engine::update_actor_actor_collisions() {
                 random_state_ = random_state_ * 13U + 7U;
                 const std::uint16_t source_x = source.x;
                 const std::uint16_t source_y = source.y;
-                source = initialize_actor_from_template(source, 0x001B792C);
-                source.x = source_x;
-                source.y = source_y;
-                source.facing_x_flip = 0xFF;
+                ActorState source_replacement = initialize_actor_from_template(source, 0x001B792C);
+                source_replacement.x = source_x;
+                source_replacement.y = source_y;
+                source_replacement.facing_x_flip = 0xFF;
+                (void)actor_lifecycle_.install(source_slot, source_replacement);
 
                 const std::uint16_t target_x = target.x;
                 const std::uint16_t target_y = target.y;
-                target = initialize_actor_from_template(target, 0x001B7940);
-                target.x = target_x;
-                target.y = target_y;
+                ActorState target_replacement = initialize_actor_from_template(target, 0x001B7940);
+                target_replacement.x = target_x;
+                target_replacement.y = target_y;
+                (void)actor_lifecycle_.install(target_slot, target_replacement);
             }
         }
     }
@@ -1798,11 +1726,12 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
             && second_top < first_bottom;
     };
 
-    for (ActorState& actor : actors_) {
+    for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
+        ActorState& actor = actors_[slot];
         if (actor.terminal_timer != 0) {
             --actor.terminal_timer;
             if (actor.terminal_timer == 0) {
-                actor = ActorState{};
+                actor_lifecycle_.retire(slot);
             }
             continue;
         }
@@ -1832,13 +1761,15 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
             && boxes_overlap(player_box, actor_box);
         const bool guard_overlap = actor.type == kActorGuardType && overlap;
         if (sword_active && guard_overlap) {
-            actor.type = kActorTerminalType;
-            actor.sprite_attribute = actor_from_template(kActorDeathTemplate).sprite_attribute;
-            actor.movement_pc = 0;
-            actor.animation_pc = kActorDeathAnimationStream;
-            actor.frame_ptr = 0;
-            actor.flags = 0;
-            actor.terminal_timer = kActorDeathFrames;
+            ActorState terminal = actor;
+            terminal.type = kActorTerminalType;
+            terminal.sprite_attribute = actor_from_template(kActorDeathTemplate).sprite_attribute;
+            terminal.movement_pc = 0;
+            terminal.animation_pc = kActorDeathAnimationStream;
+            terminal.frame_ptr = 0;
+            terminal.flags = 0;
+            terminal.terminal_timer = kActorDeathFrames;
+            (void)actor_lifecycle_.install(slot, terminal);
         }
         if (actor.type == 0x2D && overlap
             && !bounce_response_follow_active_) {
@@ -1847,7 +1778,7 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
             // clears the actor type; the movement/frame words remain visible
             // in the boundary trace. Player_ProcessInteractionState then
             // arms the same 0x28 selector/camera delay used by the ROM.
-            actor.type = 0;
+            actor_lifecycle_.retire(slot);
             player_.animation_selector.response_state_101 = 0;
             player_.animation_selector.interaction_lock = 0x28;
             camera_.update_delay = 7;
@@ -1860,7 +1791,8 @@ void Engine::update_actor_interactions(const InputState& input, bool was_grounde
             // 0x001B7ABC. The common actor VM then consumes the template's
             // 0x00122F80 cursor on this same boundary, publishing the
             // observed type-0x84/0x00122F8A terminal frame.
-            actor = initialize_actor_from_template(actor, 0x001B7ABC);
+            const ActorState replacement = initialize_actor_from_template(actor, 0x001B7ABC);
+            (void)actor_lifecycle_.install(slot, replacement);
         }
     }
 
@@ -2485,22 +2417,14 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         // Actor_FindFreeSlot (0x001AE262) scans the common records at slots
         // 3..22. Actor_InitializeFromTemplate copies the fixed template at
         // 0x001B805C into the selected record.
-        std::size_t free_slot = actors_.size();
-        for (std::size_t slot = 3; slot <= 22 && slot < actors_.size(); ++slot) {
-            if (actors_[slot].type == 0) {
-                free_slot = slot;
-                break;
-            }
-        }
-        if (free_slot == actors_.size()) {
-            break;
-        }
+        const auto free_slot = actor_lifecycle_.allocate(ActorPool::CommonForward);
+        if (!free_slot) break;
 
         const auto read_rom_u8 = [this](std::uint32_t address) -> std::uint8_t {
             return address < rom_bytes_.size() ? rom_bytes_[address] : 0;
         };
         ActorState spawned = initialize_actor_from_template(
-            actors_[free_slot], kTerrainScene5SpawnTemplate);
+            actors_[*free_slot], kTerrainScene5SpawnTemplate);
         // The template source byte is clear, but the terrain response's
         // runtime initializer enables actor-motion bit 6 before the record is
         // next observed in RAM (confirmed at +0x06 in the MAME capture).
@@ -2516,9 +2440,9 @@ void Engine::apply_terrain_behavior(const Level::TerrainCell& cell) {
         } else {
             spawned.animation_pc = kTerrainScene5SpawnAnimationDefault;
         }
-        actors_[free_slot] = spawned;
-        actor_animations_[free_slot].clear_actor_service_boundary();
-        actor_animations_[free_slot].defer_actor_service();
+        if (!actor_lifecycle_.install(*free_slot, spawned)) break;
+        actor_animations_[*free_slot].clear_actor_service_boundary();
+        actor_animations_[*free_slot].defer_actor_service();
         break;
     }
     case 0x27:  // TerrainHandler_TransitionResponse (0x001B54A6)
@@ -2985,8 +2909,8 @@ void Engine::update(const InputState& input) {
         for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
             ActorState& actor = actors_[slot];
             if (actor.type == 0
-                || ((actor.flags & 0x08) != 0 && !actor.spawned_by_apple)
-                || ((actor.movement_flags & 0x01) == 0 && !actor.spawned_by_apple)
+                || ((actor.flags & 0x08) != 0 && !actors_.host_meta(slot).spawned_by_apple)
+                || ((actor.movement_flags & 0x01) == 0 && !actors_.host_meta(slot).spawned_by_apple)
                 || actor.frame_ptr == 0
                 || actor.movement_word_1a < 0) {
                 continue;
@@ -3031,17 +2955,18 @@ void Engine::update(const InputState& input) {
                     break;
                 }
             }
-            if (actor.spawned_by_apple && actor.type == 0x80
+            if (actors_.host_meta(slot).spawned_by_apple && actor.type == 0x80
                 && (actor.flags & 0x08) != 0) {
                 // The apple flight record is collision-enabled but does not
                 // use the generic gravity-only terrain branch. It converts
                 // only when the current row (rather than a look-ahead row)
                 // contains a solid class, matching the observed impact edge.
                 if (class_value != 0 && class_row_offset == 0) {
-                    actor = initialize_actor_from_template(actor, 0x001B792C);
+                    const ActorState replacement = initialize_actor_from_template(actor, 0x001B792C);
+                    (void)actor_lifecycle_.install(slot, replacement);
                     actor_animations_[slot].clear_actor_service_boundary();
                     actor_animations_[slot].defer_actor_service();
-                    actor.spawned_by_apple = false;
+                    actors_.host_meta(slot).spawned_by_apple = false;
                 }
                 continue;
             }
@@ -3137,8 +3062,9 @@ void Engine::update(const InputState& input) {
             }
 
             const std::uint32_t animation_pc = actor.animation_pc;
-            const bool spawned_by_animation = actor.spawned_by_animation;
-            actor = initialize_actor_from_template(actor, 0x001B7E40);
+            const bool spawned_by_animation = actors_.host_meta(slot).spawned_by_animation;
+            const ActorState replacement = initialize_actor_from_template(actor, 0x001B7E40);
+            (void)actor_lifecycle_.install(slot, replacement);
             // Most type-0x2D terrain conversions pass through the common
             // 0x001ABECE follow-up, which republishes the facing byte as
             // 0xFF. The Level-01 stream at animation cursor 0x00123EFA takes
@@ -3147,7 +3073,7 @@ void Engine::update(const InputState& input) {
             actor.facing_x_flip = animation_pc == 0x00123EFA ? 0 : 0xFF;
             actor_animations_[slot].clear_actor_service_boundary();
             actor_animations_[slot].defer_actor_service_on_gate();
-            actor.spawned_by_animation = spawned_by_animation;
+            actors_.host_meta(slot).spawned_by_animation = spawned_by_animation;
         }
     }
     record_scheduler_phase("player_actor_interaction", 0x001ABB40);
@@ -4271,7 +4197,9 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     bool first_actor = true;
     for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
         const ActorState& actor = actors_[slot];
+        const ActorHostMeta& actor_meta = actors_.host_meta(slot);
         const PlayerAnimationVm& actor_vm = slot == 0 ? animation_ : actor_animations_[slot];
+        const auto resource_allocation = actors_.resource_allocation(slot);
         if (!first_actor) output << ",";
         first_actor = false;
         const CollisionBox actor_box = read_collision_box(
@@ -4306,14 +4234,20 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"runtime_field_07_delay\":" << static_cast<unsigned>(actor.runtime_field_07_delay)
                << ",\"terminal_timer\":" << static_cast<unsigned>(actor.terminal_timer)
                << ",\"resource_count\":" << static_cast<unsigned>(actor.resource_count)
+               << ",\"sprite_resource_first_slot\":"
+               << (resource_allocation ? static_cast<unsigned>(resource_allocation->first_slot) : 0)
+               << ",\"sprite_resource_slot_count\":"
+               << (resource_allocation ? static_cast<unsigned>(resource_allocation->slot_count) : 0)
+               << ",\"sprite_vram_base\":"
+               << (resource_allocation ? resource_allocation->genesis_vram_base : 0)
                << ",\"interaction_resource_offset\":" << actor.interaction_resource_offset
                << ",\"interaction_selector\":" << static_cast<unsigned>(actor.interaction_selector)
                << ",\"spawned_by_interaction\":"
-               << (actor.spawned_by_interaction ? "true" : "false")
+               << (actor_meta.spawned_by_interaction ? "true" : "false")
                << ",\"spawned_by_animation\":"
-               << (actor.spawned_by_animation ? "true" : "false")
+               << (actor_meta.spawned_by_animation ? "true" : "false")
                << ",\"spawned_by_apple\":"
-               << (actor.spawned_by_apple ? "true" : "false")
+               << (actor_meta.spawned_by_apple ? "true" : "false")
                << ",\"linked_actor_slot\":" << actor.linked_actor_slot
                << ",\"vm_actor_record\":\""
                << actor_record_json(actor_vm.actor_record()) << "\""

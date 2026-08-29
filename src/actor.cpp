@@ -32,9 +32,6 @@ void write_actor_state(checkpoint::Writer& writer, const ActorState& actor) {
     writer.u8(actor.resource_count);
     writer.u16(actor.interaction_resource_offset);
     writer.u8(actor.interaction_selector);
-    writer.boolean(actor.spawned_by_interaction);
-    writer.boolean(actor.spawned_by_animation);
-    writer.boolean(actor.spawned_by_apple);
     writer.i32(static_cast<std::int32_t>(actor.linked_actor_slot));
 }
 
@@ -65,14 +62,67 @@ ActorState read_actor_state(checkpoint::Reader& reader) {
     actor.resource_count = reader.u8();
     actor.interaction_resource_offset = reader.u16();
     actor.interaction_selector = reader.u8();
-    actor.spawned_by_interaction = reader.boolean();
-    actor.spawned_by_animation = reader.boolean();
-    actor.spawned_by_apple = reader.boolean();
     actor.linked_actor_slot = reader.i32();
     return actor;
 }
 
+void write_host_meta(checkpoint::Writer& writer, const ActorHostMeta& meta) {
+    writer.boolean(meta.spawned_by_interaction);
+    writer.boolean(meta.spawned_by_animation);
+    writer.boolean(meta.spawned_by_apple);
+}
+
+ActorHostMeta read_host_meta(checkpoint::Reader& reader) {
+    ActorHostMeta meta;
+    meta.spawned_by_interaction = reader.boolean();
+    meta.spawned_by_animation = reader.boolean();
+    meta.spawned_by_apple = reader.boolean();
+    return meta;
+}
+
 }  // namespace
+
+void ActorSpriteResources::reset() {
+    slot_bitmap_.fill(0);
+}
+
+std::optional<ActorResourceAllocation> ActorSpriteResources::allocate(
+    std::uint8_t resource_count
+) {
+    const std::size_t requested_slots = static_cast<std::size_t>(resource_count) + 1;
+    if (requested_slots > slot_bitmap_.size()) return std::nullopt;
+
+    for (std::size_t first = 0; first + requested_slots <= slot_bitmap_.size(); ++first) {
+        bool free = true;
+        for (std::size_t slot = first; slot < first + requested_slots; ++slot) {
+            if (slot_bitmap_[slot] != 0) {
+                free = false;
+                break;
+            }
+        }
+        if (!free) continue;
+
+        for (std::size_t slot = first; slot < first + requested_slots; ++slot) {
+            slot_bitmap_[slot] = 0xFF;
+        }
+        return ActorResourceAllocation{
+            static_cast<std::uint8_t>(first),
+            static_cast<std::uint8_t>(requested_slots),
+            kVramBaseStart + static_cast<std::uint32_t>(first * 0x80)
+        };
+    }
+    return std::nullopt;
+}
+
+void ActorSpriteResources::release(const ActorResourceAllocation& allocation) {
+    if (!allocation.valid()) return;
+    const std::size_t first = allocation.first_slot;
+    const std::size_t count = allocation.slot_count;
+    if (first >= slot_bitmap_.size() || count > slot_bitmap_.size() - first) return;
+    for (std::size_t slot = first; slot < first + count; ++slot) {
+        slot_bitmap_[slot] = 0;
+    }
+}
 
 void ActorSystem::begin_frame() {
     culled_this_frame_.fill(false);
@@ -81,6 +131,9 @@ void ActorSystem::begin_frame() {
 void ActorSystem::reset(const Table& templates, bool snapshot_mode) {
     templates_ = templates;
     snapshot_mode_ = snapshot_mode;
+    host_meta_.fill({});
+    resource_allocations_.fill(std::nullopt);
+    sprite_resources_.reset();
     if (snapshot_mode) {
         static_cast<Table&>(*this) = templates;
     } else {
@@ -123,6 +176,31 @@ std::optional<std::size_t> ActorSystem::allocate_actor_slot(ActorAllocationPool 
     return std::nullopt;
 }
 
+std::optional<ActorResourceAllocation> ActorSystem::allocate_sprite_resources(
+    ActorIndex slot,
+    std::uint8_t resource_count
+) {
+    if (slot >= size()) return std::nullopt;
+    release_sprite_resources(slot);
+    const auto allocation = sprite_resources_.allocate(resource_count);
+    if (!allocation) return std::nullopt;
+    resource_allocations_[slot] = *allocation;
+    return allocation;
+}
+
+void ActorSystem::release_sprite_resources(ActorIndex slot) {
+    if (slot >= size()) return;
+    if (resource_allocations_[slot]) {
+        sprite_resources_.release(*resource_allocations_[slot]);
+        resource_allocations_[slot].reset();
+    }
+}
+
+std::optional<ActorResourceAllocation> ActorSystem::resource_allocation(ActorIndex slot) const {
+    if (slot >= size()) return std::nullopt;
+    return resource_allocations_[slot];
+}
+
 std::vector<std::size_t> ActorSystem::cull_interaction_actors(
     int left,
     int right,
@@ -132,14 +210,13 @@ std::vector<std::size_t> ActorSystem::cull_interaction_actors(
     std::vector<std::size_t> culled;
     for (std::size_t slot = 1; slot < size(); ++slot) {
         ActorState& actor = (*this)[slot];
-        if (!actor.spawned_by_interaction || actor.type == 0 || actor.terminal_timer != 0) {
+        if (!host_meta_[slot].spawned_by_interaction
+            || actor.type == 0 || actor.terminal_timer != 0) {
             continue;
         }
         if (static_cast<int>(actor.x) < left || static_cast<int>(actor.x) > right
             || static_cast<int>(actor.y) < top || static_cast<int>(actor.y) > bottom) {
             culled_this_frame_[slot] = true;
-            actor.type = 0;
-            actor.spawned_by_interaction = false;
             culled.push_back(slot);
         }
     }
@@ -153,9 +230,26 @@ bool ActorSystem::was_culled_this_frame(std::size_t slot) const {
 void ActorSystem::write_checkpoint(std::ostream& output) const {
     checkpoint::Writer writer(output);
     writer.boolean(snapshot_mode_);
-    for (const ActorState& actor : templates_) write_actor_state(writer, actor);
-    for (const ActorState& actor : *this) write_actor_state(writer, actor);
+    for (std::size_t slot = 0; slot < templates_.size(); ++slot) {
+        write_actor_state(writer, templates_[slot]);
+        write_host_meta(writer, {});
+    }
+    for (std::size_t slot = 0; slot < size(); ++slot) {
+        write_actor_state(writer, (*this)[slot]);
+        write_host_meta(writer, host_meta_[slot]);
+    }
     for (const bool culled : culled_this_frame_) writer.boolean(culled);
+    for (const auto& allocation : resource_allocations_) {
+        writer.boolean(allocation.has_value());
+        if (allocation) {
+            writer.u8(allocation->first_slot);
+            writer.u8(allocation->slot_count);
+            writer.u32(allocation->genesis_vram_base);
+        }
+    }
+    for (const std::uint8_t occupied : sprite_resources_.slot_bitmap()) {
+        writer.u8(occupied);
+    }
 }
 
 void ActorSystem::read_checkpoint(std::istream& input) {
@@ -163,13 +257,34 @@ void ActorSystem::read_checkpoint(std::istream& input) {
     const bool snapshot_mode = reader.boolean();
     Table templates{};
     Table records{};
+    std::array<ActorHostMeta, 32> host_meta{};
     std::array<bool, 32> culled{};
-    for (ActorState& actor : templates) actor = read_actor_state(reader);
-    for (ActorState& actor : records) actor = read_actor_state(reader);
+    for (ActorState& actor : templates) {
+        actor = read_actor_state(reader);
+        (void)read_host_meta(reader);
+    }
+    for (std::size_t slot = 0; slot < records.size(); ++slot) {
+        records[slot] = read_actor_state(reader);
+        host_meta[slot] = read_host_meta(reader);
+    }
     for (bool& value : culled) value = reader.boolean();
+    std::array<std::optional<ActorResourceAllocation>, 32> allocations{};
+    for (auto& allocation : allocations) {
+        if (!reader.boolean()) continue;
+        allocation = ActorResourceAllocation{
+            reader.u8(),
+            reader.u8(),
+            reader.u32()
+        };
+    }
+    std::array<std::uint8_t, ActorSpriteResources::kSlotCount> bitmap{};
+    for (std::uint8_t& occupied : bitmap) occupied = reader.u8();
     templates_ = templates;
     static_cast<Table&>(*this) = records;
+    host_meta_ = host_meta;
     culled_this_frame_ = culled;
+    resource_allocations_ = allocations;
+    sprite_resources_.restore_slot_bitmap(bitmap);
     snapshot_mode_ = snapshot_mode;
 }
 
