@@ -1,0 +1,70 @@
+{
+  "format": "openaladdin-type84-interaction-fd-fe-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Classify the selector-0xFD/0xFE Type-0x84 interaction AnimationVM family selected by ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE.",
+  "template": {
+    "address": "0x001B8354",
+    "name": "ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE",
+    "consumers": ["0x001B6896 selector 0xFD", "0x001B68B0 selector 0xFE"],
+    "runtime_type": "0x84",
+    "animation_stream": "0x00125DEA",
+    "resource_count": "0x04"
+  },
+  "streams": [
+    {
+      "address": "0x00125DEA",
+      "name": "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_ROOT",
+      "range": ["0x00125DEA", "0x00125E07"],
+      "size": 30,
+      "decoded": [
+        "Frame 0x12B6",
+        "FB callback parameter 0x001ACB7A",
+        "F4 actor-field compare loops to 0x00125DEA",
+        "FD proximity branch targets 0x00125E08"
+      ]
+    },
+    {
+      "address": "0x00125E08",
+      "name": "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A",
+      "range": ["0x00125E08", "0x00125E3F"],
+      "size": 56,
+      "decoded": [
+        "F0 random branch targets 0x00125E40",
+        "Frames 0x12B6, 0x12BA, and 0x12BE",
+        "F4/FD conditional response entries",
+        "FB callback parameter 0x001ACB7A",
+        "EA returns to 0x00125DEA"
+      ]
+    },
+    {
+      "address": "0x00125E40",
+      "name": "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_B",
+      "range": ["0x00125E40", "0x00125E71"],
+      "size": 50,
+      "decoded": [
+        "Frames 0x12B6, 0x12BA, and 0x12BE",
+        "F4/FD conditional response entries",
+        "FB callback parameter 0x001ACB7A",
+        "EA returns to 0x00125DEA"
+      ]
+    }
+  ],
+  "boundary_basis": [
+    "The template is directly selected by the 0xFD and 0xFE interaction dispatch entries.",
+    "AnimationDecoder consumes the root and both conditional entries at exact non-overlapping boundaries.",
+    "The final response entry ends at 0x00125E71 immediately before the separately owned stream beginning at 0x00125E72."
+  ],
+  "evidence": [
+    "Direct selector-0xFD/0xFE template consumers",
+    "Exact template animation pointer",
+    "Lossless AnimationDecoder output",
+    "Exact conditional-entry and following-stream boundaries"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

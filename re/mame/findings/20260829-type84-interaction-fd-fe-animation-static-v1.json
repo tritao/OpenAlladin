@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type84-interaction-fd-fe-animation-static-targets.json",
+  "template": {
+    "address": "0x001B8354",
+    "name": "ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE",
+    "consumers": ["0x001B6896 selector 0xFD", "0x001B68B0 selector 0xFE"],
+    "animation_root": "0x00125DEA"
+  },
+  "streams": [
+    {
+      "address": "0x00125DEA",
+      "name": "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_ROOT",
+      "range": "0x00125DEA-0x00125E07",
+      "bytes": 30,
+      "conditional_entry": "0x00125E08"
+    },
+    {
+      "address": "0x00125E08",
+      "name": "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A",
+      "range": "0x00125E08-0x00125E3F",
+      "bytes": 56,
+      "random_entry": "0x00125E40"
+    },
+    {
+      "address": "0x00125E40",
+      "name": "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_B",
+      "range": "0x00125E40-0x00125E71",
+      "bytes": 50,
+      "return": "0x00125DEA"
+    }
+  ],
+  "evidence": [
+    "Direct 0xFD/0xFE interaction-template consumers",
+    "Exact template pointer and resource contract",
+    "Lossless AnimationDecoder output",
+    "Non-overlapping boundary before the following 0x00125E72 stream"
+  ],
+  "conclusion": "The selector-0xFD/0xFE Type-0x84 interaction family now owns the complete 0x00125DEA-0x00125E71 band as a 30-byte root and two exact conditional response entries, without absorbing the following animation stream."
+}

@@ -4926,6 +4926,36 @@
     - type84_terminal_interaction_static_decompilation
     - animation_stream_decoder
 
+0x00125DEA:
+  name: ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_ROOT
+  type: animation_stream
+  size: 30
+  confidence: decompiled
+  description: Type-0x84 interaction root installed by ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE for dispatch selectors 0xFD and 0xFE. Its exact 30-byte owner presents frame 0x12B6, pushes Type84ChildEvent_1ACB7A, loops on the actor-field compare, and conditionally enters ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A at 0x00125E08 before returning to its root.
+  evidence:
+    - actor_template_late_dispatch_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125E08:
+  name: ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A
+  type: animation_stream
+  size: 56
+  confidence: decompiled
+  description: First Type-0x84 interaction response entry selected by the proximity branch in ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_ROOT. Its exact 56-byte owner uses the random branch to select the second response entry, presents the 0x12B6/0x12BA/0x12BE sequence, pushes Type84ChildEvent_1ACB82 and returns to the shared root at 0x00125DEA.
+  evidence:
+    - actor_template_late_dispatch_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125E40:
+  name: ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_B
+  type: animation_stream
+  size: 50
+  confidence: decompiled
+  description: Second Type-0x84 interaction response entry selected by the random branch in ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A. Its exact 50-byte owner presents the 0x12B6/0x12BA/0x12BE sequence, pushes Type84ChildEvent_1ACB7A, and returns to the shared root at 0x00125DEA immediately before the following animation stream.
+  evidence:
+    - actor_template_late_dispatch_family_static_decompilation
+    - animation_stream_decoder
+
 0x00125D7E:
   name: ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE
   type: animation_stream

@@ -1277,6 +1277,62 @@ def test_actor_type41_interaction_response_animation_is_exact():
     assert decoded["instructions"][-1]["branch_target"] == "0x00125D90"
 
 
+def test_type84_interaction_fd_fe_animation_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00125DEA: (0x00125E07, 30, "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_ROOT"),
+        0x00125E08: (0x00125E3F, 56, "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A"),
+        0x00125E40: (0x00125E71, 50, "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_B"),
+    }
+    for address, (end, size, name) in expected.items():
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.end == end
+        assert stream.size == size
+        assert stream.metadata["type"] == "animation_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = load_animation_decoder().AnimationDecoder(rom)
+    for address, (end, size, _) in expected.items():
+        decoded = decoder.decode_stream(
+            address,
+            max_instructions=128,
+            max_bytes=size,
+            follow_control_flow=False,
+        )
+        assert decoded["bytes_decoded"] == size
+        assert decoded["stopped_reason"] == "unconditional_jump"
+        assert decoded["instructions"][-1].get("branch_target") == "0x00125DEA"
+
+    root = decoder.decode_stream(
+        0x00125DEA,
+        max_instructions=128,
+        max_bytes=128,
+        follow_control_flow=True,
+    )
+    assert root["bytes_decoded"] == 30
+    assert root["stopped_reason"] == "control_flow_cycle"
+    root_branch = next(
+        instruction
+        for instruction in root["instructions"]
+        if instruction.get("opcode") == "0xFD"
+    )
+    assert root_branch["branch_target"] == "0x00125E08"
+
+    variant_a = decoder.decode_stream(
+        0x00125E08,
+        max_instructions=128,
+        max_bytes=128,
+        follow_control_flow=True,
+    )
+    assert variant_a["bytes_decoded"] == 86
+    assert variant_a["stopped_reason"] == "control_flow_cycle"
+    random_branch = variant_a["instructions"][0]
+    assert random_branch["branch_target"] == "0x00125E40"
+
+
 def test_scene_reset_secondary_animation_and_embedded_entry_are_exact():
     symbols = SymbolStore()
     root = symbols.at(0x00125EEE, include_ranges=False)
