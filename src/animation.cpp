@@ -11,6 +11,15 @@
 namespace openaladdin {
 namespace {
 
+class RamContextScope {
+public:
+    explicit RamContextScope(GameRamView& ram) : ram_(ram) {}
+    ~RamContextScope() { ram_.clear_context(); }
+
+private:
+    GameRamView& ram_;
+};
+
 // Player_ProcessInteractionState dispatches this fixed event through the
 // shared 68K-to-Z80 audio path at 0x001AE5A6.
 constexpr std::uint8_t kInteractionEventSoundId = 0x31;
@@ -145,6 +154,10 @@ AnimationSpawnRequest read_spawn_request(checkpoint::Reader& reader) {
 
 }  // namespace
 
+PlayerAnimationVm::PlayerAnimationVm() {
+    ram_.bind_actor_record(actor_);
+}
+
 const PlayerAnimationVm::Clip& PlayerAnimationVm::clip(SpritePose pose) {
     switch (pose) {
     case SpritePose::Idle: return kIdleClip;
@@ -180,6 +193,7 @@ void PlayerAnimationVm::reset() {
     actor_tick_ = false;
     actor_service_boundary_ = ActorServiceBoundary::None;
     tracking_memory_writes_ = false;
+    ram_.set_write_tracking(false);
     active_command_pc_ = 0;
     writer_pcs_.clear();
     spawn_requests_.clear();
@@ -188,8 +202,8 @@ void PlayerAnimationVm::reset() {
     update_count_ = 0;
     landing_finished_ = false;
     landing_reselect_pending_ = false;
-    memory_.fill(0);
-    memory_write_flags_.fill(0);
+    ram_.reset();
+    ram_.bind_actor_record(actor_);
     actor_.fill(0);
     actor_[0] = 1;
 }
@@ -240,20 +254,15 @@ std::uint32_t PlayerAnimationVm::read_rom32(std::uint32_t address) const {
 }
 
 std::uint8_t PlayerAnimationVm::read_memory8(std::uint32_t address) const {
-    if (address < actor_.size()) return actor_[address];
-    if (address >= 0xFF0000 && address <= 0xFFFFFF) return memory_[address - 0xFF0000];
-    return 0;
+    return ram_.read8(address);
 }
 
 std::uint16_t PlayerAnimationVm::read_memory16(std::uint32_t address) const {
-    return static_cast<std::uint16_t>((static_cast<std::uint16_t>(read_memory8(address)) << 8) | read_memory8(address + 1));
+    return ram_.read16(address);
 }
 
 std::uint32_t PlayerAnimationVm::read_memory32(std::uint32_t address) const {
-    return (static_cast<std::uint32_t>(read_memory8(address)) << 24)
-        | (static_cast<std::uint32_t>(read_memory8(address + 1)) << 16)
-        | (static_cast<std::uint32_t>(read_memory8(address + 2)) << 8)
-        | read_memory8(address + 3);
+    return ram_.read32(address);
 }
 
 void PlayerAnimationVm::write_memory8(std::uint32_t address, std::uint8_t value) {
@@ -262,78 +271,27 @@ void PlayerAnimationVm::write_memory8(std::uint32_t address, std::uint8_t value)
         writer_pcs_.push_back(active_command_pc_);
     }
     if (address < actor_.size()) actor_[address] = value;
-    else if (address >= 0xFF0000 && address <= 0xFFFFFF) {
-        const auto offset = address - 0xFF0000;
-        memory_[offset] = value;
-        if (tracking_memory_writes_) memory_write_flags_[offset] = 1;
-    }
+    else ram_.write8(address, value);
 }
 
 void PlayerAnimationVm::write_memory16(std::uint32_t address, std::uint16_t value) {
-    write_memory8(address, static_cast<std::uint8_t>(value >> 8));
-    write_memory8(address + 1, static_cast<std::uint8_t>(value));
+    ram_.write16(address, value);
 }
 
 void PlayerAnimationVm::write_memory32(std::uint32_t address, std::uint32_t value) {
-    write_memory8(address, static_cast<std::uint8_t>(value >> 24));
-    write_memory8(address + 1, static_cast<std::uint8_t>(value >> 16));
-    write_memory8(address + 2, static_cast<std::uint8_t>(value >> 8));
-    write_memory8(address + 3, static_cast<std::uint8_t>(value));
-}
-
-void PlayerAnimationVm::sync_selector_context(
-    const AnimationSelectorState& selector,
-    bool grounded
-) {
-    // These bytes are inputs to the player stream selector, not VM-local
-    // scratch. Synchronize the complete selector surface at every actor
-    // boundary so a previous response cannot leak into a later idle/run
-    // decision. The fallback values retain the historical checkpoint
-    // behavior for callers that only provide the basic physics fields.
-    write_memory8(0xFFF0E7, selector.animation_gate);
-    write_memory8(0xFFF0E6, selector.terminal_transition);
-    write_memory8(0xFFF0E9, selector.scene_script_countdown);
-    write_memory8(0xFFF0F2, selector.interaction_lock);
-    write_memory8(0xFFF0BE, selector.response_active);
-    write_memory8(0xFFF0C1, selector.landing_state != 0
-        ? selector.landing_state
-        : grounded ? 1 : 0);
-    write_memory8(0xFFF0D0, selector.transition_gate);
-    write_memory8(0xFFF0D7, selector.transition_lock);
-    write_memory8(0xFFF0DB, selector.transition_state);
-    write_memory8(0xFFF0CD, selector.transition_mode);
-    write_memory8(0xFFF0D2, selector.transition_flag);
-    write_memory8(0xFFF0D4, selector.transition_response);
-    write_memory8(0xFFF0DE, selector.transition_state_de);
-    write_memory8(0xFFF0DF, selector.transition_state_df);
-    write_memory8(0xFFF173, selector.camera_special_mode);
-    write_memory8(0xFFF115, selector.response_latch);
-    write_memory8(0xFFF0ED, selector.response_animation);
-    write_memory8(0xFFF0EE, selector.response_state_ee);
-    write_memory8(0xFFF0EF, selector.response_state_ef);
-    write_memory8(0xFFF0F0, selector.response_state_f0);
-    write_memory8(0xFFF101, selector.response_state_101);
-    write_memory16(0xFFF0B0, as_u16(selector.horizontal_response));
-    write_memory8(0xFFF0CC, selector.response_timer);
-    write_memory8(0xFFEFFF, selector.interaction_pending);
-    write_memory8(0xFFF11F, selector.state_lock);
+    ram_.write32(address, value);
 }
 
 void PlayerAnimationVm::sync_context(const AnimationContext& context) {
-    write_memory16(0xFF7DFA, as_u16(context.player_x));
-    write_memory16(0xFF7DFC, as_u16(context.player_y));
-    write_memory16(0xFF7E02, as_u16(context.world_x));
-    write_memory16(0xFF7E04, as_u16(context.world_y));
-    write_memory16(0xFF7E58, as_u16(context.player_vx));
-    write_memory16(0xFF7E5A, as_u16(context.player_vy));
-    write_memory16(0xFF7E00, context.camera_vertical_threshold);
+    ram_.bind_context(context);
     // The player record's actor-relative movement words are inputs to F2/F9
-    // branches in the jump streams.  The byte at +0x1A is the integral/high
+    // branches in the jump streams. The byte at +0x1A is the integral/high
     // byte of the vertical word, not an independent VM scratch byte.
     write_memory16(0x18, as_u16(context.player_vx));
     write_memory16(0x1A, as_u16(context.player_vy));
-    write_memory8(0xFFF0C3, context.terrain_behavior);
-    sync_selector_context(context.selector, context.grounded);
+    // FF7E28 is the common animation-service gate. It is not yet a typed
+    // GameState field, so retain it in the sparse VM-local portion of the
+    // address view.
     write_memory8(0xFF7E28, 1);
     write_memory16(2, as_u16(context.player_x));
     write_memory16(4, as_u16(context.player_y));
@@ -344,14 +302,7 @@ void PlayerAnimationVm::sync_actor_context(
     const ActorAnimationState& actor,
     const AnimationContext& context
 ) {
-    write_memory16(0xFF7DFA, as_u16(context.player_x));
-    write_memory16(0xFF7DFC, as_u16(context.player_y));
-    write_memory16(0xFF7E02, as_u16(context.world_x));
-    write_memory16(0xFF7E04, as_u16(context.world_y));
-    write_memory16(0xFF7E58, as_u16(context.player_vx));
-    write_memory16(0xFF7E5A, as_u16(context.player_vy));
-    write_memory8(0xFFF0C3, context.terrain_behavior);
-    sync_selector_context(context.selector, context.grounded);
+    ram_.bind_context(context);
     write_memory8(0xFF7E28, actor.type);
     write_memory8(0x07, actor.runtime_field_07);
     write_memory32(0x0A, actor.movement_pc);
@@ -607,6 +558,7 @@ void PlayerAnimationVm::tick_rom(const AnimationContext& context) {
     active_command_pc_ = 0;
     if (animation_pc_ == 0 || rom_.empty()) return;
     sync_context(context);
+    RamContextScope context_scope(ram_);
     std::uint32_t cursor = animation_pc_;
     const std::uint16_t reference = read_rom16(cursor);
     cursor += 2;
@@ -618,20 +570,24 @@ void PlayerAnimationVm::tick_rom(const AnimationContext& context) {
     if (timer_ != 0) { --timer_; actor_[0x37] = timer_; return; }
 
     tracking_memory_writes_ = true;
+    ram_.set_write_tracking(true);
     for (int instruction = 0; instruction < 1024; ++instruction) {
         const std::uint8_t opcode = read_rom8(cursor);
         if (!is_command(opcode)) {
             tracking_memory_writes_ = false;
+            ram_.set_write_tracking(false);
             animation_pc_ = cursor;
             return;
         }
         if (command(opcode, cursor, context)) {
             tracking_memory_writes_ = false;
+            ram_.set_write_tracking(false);
             animation_pc_ = cursor;
             return;
         }
     }
     tracking_memory_writes_ = false;
+    ram_.set_write_tracking(false);
     throw std::runtime_error("animation VM command loop exceeded 1024 instructions");
 }
 
@@ -642,6 +598,7 @@ void PlayerAnimationVm::tick_actor_rom(
     active_command_pc_ = 0;
     if (animation_pc_ == 0 || rom_.empty()) return;
     sync_actor_context(actor, context);
+    RamContextScope context_scope(ram_);
     std::uint32_t cursor = animation_pc_;
     const std::uint16_t reference = read_rom16(cursor);
     cursor += 2;
@@ -667,20 +624,24 @@ void PlayerAnimationVm::tick_actor_rom(
     }
 
     tracking_memory_writes_ = true;
+    ram_.set_write_tracking(true);
     for (int instruction = 0; instruction < 1024; ++instruction) {
         const std::uint8_t opcode = read_rom8(cursor);
         if (!is_command(opcode)) {
             tracking_memory_writes_ = false;
+            ram_.set_write_tracking(false);
             animation_pc_ = cursor;
             return;
         }
         if (command(opcode, cursor, context)) {
             tracking_memory_writes_ = false;
+            ram_.set_write_tracking(false);
             animation_pc_ = cursor;
             return;
         }
     }
     tracking_memory_writes_ = false;
+    ram_.set_write_tracking(false);
     throw std::runtime_error("actor animation VM command loop exceeded 1024 instructions");
 }
 
@@ -822,6 +783,7 @@ void PlayerAnimationVm::update_actor(
     actor_[0x3C] = actor.flags;
 
     actor_tick_ = true;
+    RamContextScope context_scope(ram_);
     tick_actor_rom(context, actor);
     actor_tick_ = false;
 
@@ -870,12 +832,7 @@ bool PlayerAnimationVm::take_memory_write(
     std::uint32_t address,
     std::uint8_t& value
 ) {
-    if (address < 0xFF0000 || address > 0xFFFFFF) return false;
-    const auto offset = address - 0xFF0000;
-    if (memory_write_flags_[offset] == 0) return false;
-    memory_write_flags_[offset] = 0;
-    value = memory_[offset];
-    return true;
+    return ram_.take_write(address, value);
 }
 
 void PlayerAnimationVm::select_stream_entry(
@@ -1089,6 +1046,7 @@ void PlayerAnimationVm::update(
     }
     horizontal_direction_ = horizontal_direction;
     sync_context(context);
+    RamContextScope context_scope(ram_);
     if (context.selector.interaction_lock == 0x28) {
         // Actor flag bit 5 restarts the Genesis run stream. The surface
         // interaction path uses the same lock after selecting the stop
@@ -1150,8 +1108,12 @@ void PlayerAnimationVm::write_checkpoint(std::ostream& output) const {
     writer.u8(static_cast<std::uint8_t>(horizontal_direction_));
     writer.u8(static_cast<std::uint8_t>(stream_kind_));
     writer.boolean(rom_mode_);
-    writer.bytes(memory_.data(), memory_.size());
-    writer.bytes(memory_write_flags_.data(), memory_write_flags_.size());
+    std::array<std::uint8_t, 0x10000> memory{};
+    std::array<std::uint8_t, 0x10000> memory_write_flags{};
+    ram_.copy_legacy_memory(memory);
+    ram_.copy_legacy_write_flags(memory_write_flags);
+    writer.bytes(memory.data(), memory.size());
+    writer.bytes(memory_write_flags.data(), memory_write_flags.size());
     writer.bytes(actor_.data(), actor_.size());
     writer.u32(animation_pc_);
     writer.u32(frame_pointer_);
@@ -1240,8 +1202,7 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     facing_left_ = facing_left;
     horizontal_direction_ = static_cast<HorizontalDirection>(horizontal_direction);
     stream_kind_ = static_cast<AnimationStreamKind>(stream_kind);
-    memory_ = memory;
-    memory_write_flags_ = memory_write_flags;
+    ram_.restore_legacy_memory(memory, memory_write_flags);
     actor_ = actor;
     animation_pc_ = animation_pc;
     frame_pointer_ = frame_pointer;
@@ -1252,6 +1213,7 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     actor_service_boundary_ = static_cast<ActorServiceBoundary>(actor_service_boundary);
     clear_timer_next_update_ = clear_timer_next_update;
     tracking_memory_writes_ = tracking_memory_writes;
+    ram_.set_write_tracking(tracking_memory_writes_);
     spawn_requests_ = std::move(spawn_requests);
     deferred_spawn_request_ = std::move(deferred_spawn_request);
     sound_requests_ = std::move(sound_requests);

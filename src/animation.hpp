@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game_ram.hpp"
 #include "sprites.hpp"
 
 #include <array>
@@ -140,6 +141,8 @@ struct AnimationSpawnRequest {
 // animation API.
 class PlayerAnimationVm {
 public:
+    PlayerAnimationVm();
+
     struct Clip {
         std::uint32_t stream_entry;
         std::vector<AnimationStep> steps;
@@ -148,6 +151,9 @@ public:
     };
 
     void load_rom(const std::string& path);
+    // Bind VM address commands to the single semantic runtime state. The VM
+    // remains usable without a binding for ROM-less/unit-test callers.
+    void bind_state(GameState& state) { ram_.bind_state(state); }
     bool rom_loaded() const { return !rom_.empty(); }
     void reset();
     void update(
@@ -260,7 +266,6 @@ private:
     bool compare_command(std::uint32_t& cursor);
     bool flag_command(std::uint32_t& cursor);
     void sync_context(const AnimationContext& context);
-    void sync_selector_context(const AnimationSelectorState& selector, bool grounded);
     void sync_actor_context(const ActorAnimationState& actor, const AnimationContext& context);
     bool response_stream_needs_recovery() const;
 
@@ -272,8 +277,7 @@ private:
     AnimationStreamKind stream_kind_ = AnimationStreamKind::Locomotion;
     bool rom_mode_ = false;
     std::vector<std::uint8_t> rom_;
-    std::array<std::uint8_t, 0x10000> memory_{};
-    std::array<std::uint8_t, 0x10000> memory_write_flags_{};
+    GameRamView ram_;
     std::array<std::uint8_t, 0x42> actor_{};
     std::uint32_t animation_pc_ = 0;
     std::uint32_t frame_pointer_ = 0;

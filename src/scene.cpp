@@ -35,14 +35,14 @@ void SceneSystem::load_rom_bytes(const std::vector<std::uint8_t>& rom) {
 }
 
 void SceneSystem::reset(int scene_state) {
-    runtime_ = {};
-    runtime_.state = scene_state;
-    runtime_.transition_active = scene_state == 8;
+    runtime_state() = {};
+    runtime_state().state = scene_state;
+    runtime_state().transition_active = scene_state == 8;
 }
 
 void SceneSystem::select(int scene_state) {
-    runtime_.state = scene_state;
-    runtime_.transition_active = scene_state == 8;
+    runtime_state().state = scene_state;
+    runtime_state().transition_active = scene_state == 8;
 }
 
 const LevelDescriptor* SceneSystem::descriptor(int scene_state) const {
@@ -58,7 +58,7 @@ bool SceneSystem::update_transition(
     int& player_y,
     bool& grounded
 ) {
-    if (!runtime_.transition_active) return false;
+    if (!runtime_state().transition_active) return false;
     if (input.right && player_x < 0x130) player_x += 8;
     if (input.left && player_x >= 0x10) player_x -= 8;
     if (input.up && player_y >= 0x10) player_y -= 8;
@@ -69,13 +69,14 @@ bool SceneSystem::update_transition(
 
 void SceneSystem::write_checkpoint(std::ostream& output) const {
     checkpoint::Writer writer(output);
-    writer.i32(runtime_.state);
-    writer.u32(runtime_.script_cursor);
-    writer.u8(runtime_.script_countdown);
-    writer.u8(runtime_.script_pending);
-    writer.u8(runtime_.resource_status);
-    writer.u8(runtime_.transition_event);
-    writer.boolean(runtime_.transition_active);
+    const auto& runtime = runtime_state();
+    writer.i32(runtime.state);
+    writer.u32(runtime.script_cursor);
+    writer.u8(runtime.script_countdown);
+    writer.u8(runtime.script_pending);
+    writer.u8(runtime.resource_status);
+    writer.u8(runtime.transition_event);
+    writer.boolean(runtime.transition_active);
 }
 
 void SceneSystem::read_checkpoint(std::istream& input) {
@@ -95,14 +96,15 @@ void SceneSystem::read_checkpoint(std::istream& input) {
     if (runtime.transition_active != (runtime.state == 8)) {
         throw std::runtime_error("invalid scene transition state in OpenAladdin checkpoint");
     }
-    runtime_ = runtime;
+    runtime_state() = runtime;
 }
 
 bool SceneSystem::advance_script() {
-    if (runtime_.script_countdown == 0) return false;
-    if (runtime_.script_countdown != 0xFF) {
-        --runtime_.script_countdown;
-        if (runtime_.script_countdown != 0) return false;
+    auto& runtime = runtime_state();
+    if (runtime.script_countdown == 0) return false;
+    if (runtime.script_countdown != 0xFF) {
+        --runtime.script_countdown;
+        if (runtime.script_countdown != 0) return false;
     }
     // The native loader has no script payload/cursor table to consume. The
     // countdown gate is still serviced, and the caller reaches the next
@@ -139,14 +141,15 @@ bool SceneSystem::service_level_exit(
 
 bool SceneSystem::transition_completion_ready() const {
     // FUN_001AE0F6 waits only while pending != 2 and DAT_00FFF140 is nonzero.
-    return runtime_.script_pending == 2 || runtime_.resource_status == 0;
+    return runtime_state().script_pending == 2 || runtime_state().resource_status == 0;
 }
 
 bool SceneSystem::complete_script_to_state1() {
-    if (runtime_.script_pending != 1 || runtime_.script_cursor == 0) return false;
-    runtime_.script_pending = 0;
-    runtime_.state = 1;
-    runtime_.transition_active = false;
+    auto& runtime = runtime_state();
+    if (runtime.script_pending != 1 || runtime.script_cursor == 0) return false;
+    runtime.script_pending = 0;
+    runtime.state = 1;
+    runtime.transition_active = false;
     return true;
 }
 

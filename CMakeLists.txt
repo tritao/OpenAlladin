@@ -103,6 +103,9 @@ endfunction()
 add_library(openaladdin_core STATIC
     src/animation.cpp
     src/animation.hpp
+    src/game_ram.cpp
+    src/game_ram.hpp
+    src/game_state.hpp
     src/sprites.cpp
     src/sprites.hpp
 )
@@ -252,6 +255,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(checkpoint_state_test)
     openaladdin_enable_test_assertions(checkpoint_state_test)
 
+    add_executable(game_ram_test tests/game_ram.cpp)
+    target_link_libraries(game_ram_test PRIVATE openaladdin_engine)
+    target_compile_features(game_ram_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(game_ram_test)
+    openaladdin_enable_test_assertions(game_ram_test)
+
     add_executable(native_actor_vm_fixture tests/native_actor_vm_fixture.cpp)
     target_link_libraries(native_actor_vm_fixture PRIVATE openaladdin_engine)
     target_compile_features(native_actor_vm_fixture PRIVATE cxx_std_20)
@@ -320,6 +329,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME checkpoint_state COMMAND checkpoint_state_test)
     set_tests_properties(checkpoint_state PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME game_ram COMMAND game_ram_test)
+    set_tests_properties(game_ram PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME psg COMMAND psg_test)

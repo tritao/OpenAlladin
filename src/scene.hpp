@@ -37,15 +37,18 @@ class SceneSystem {
 public:
     void load_rom(const std::string& rom_path);
     void load_rom_bytes(const std::vector<std::uint8_t>& rom);
+    // Engine binds this service to GameState so scene runtime fields have one
+    // owner. Standalone SceneSystem users retain the internal fallback state.
+    void bind_runtime(SceneRuntimeState& runtime) { runtime_override_ = &runtime; }
 
     void reset(int scene_state = 1);
     void select(int scene_state);
 
-    int scene_state() const { return runtime_.state; }
-    bool is_transition() const { return runtime_.transition_active; }
-    const SceneRuntimeState& runtime() const { return runtime_; }
+    int scene_state() const { return runtime_state().state; }
+    bool is_transition() const { return runtime_state().transition_active; }
+    const SceneRuntimeState& runtime() const { return runtime_state(); }
     const LevelDescriptor* descriptor(int scene_state) const;
-    const LevelDescriptor* current_descriptor() const { return descriptor(runtime_.state); }
+    const LevelDescriptor* current_descriptor() const { return descriptor(runtime_state().state); }
     void write_checkpoint(std::ostream& output) const;
     void read_checkpoint(std::istream& input);
 
@@ -72,8 +75,12 @@ public:
     bool complete_script_to_state1();
 
 private:
+    SceneRuntimeState& runtime_state() { return runtime_override_ != nullptr ? *runtime_override_ : runtime_; }
+    const SceneRuntimeState& runtime_state() const { return runtime_override_ != nullptr ? *runtime_override_ : runtime_; }
+
     std::vector<LevelDescriptor> descriptors_;
     SceneRuntimeState runtime_{};
+    SceneRuntimeState* runtime_override_ = nullptr;
 };
 
 }  // namespace openaladdin

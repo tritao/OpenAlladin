@@ -382,6 +382,21 @@ int actor_palette_line(const ActorState& actor) {
 
 }  // namespace
 
+Engine::Engine()
+    : player_(state_.player),
+      camera_(state_.camera),
+      interaction_map_(state_.interactions),
+      actors_(state_.actors),
+      random_state_(state_.random.value),
+      frame_(state_.frame.number),
+      frame_phase_(state_.frame.phase) {
+    scene_.bind_runtime(state_.scene);
+    animation_.bind_state(state_);
+    for (auto& actor_animation : actor_animations_) {
+        actor_animation.bind_state(state_);
+    }
+}
+
 void Engine::load(
     const std::string& asset_root,
     const std::string& sprite_root,
