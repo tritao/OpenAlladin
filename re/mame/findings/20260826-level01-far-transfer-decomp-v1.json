@@ -176,7 +176,7 @@
     {
       "address": "0x001AEE40",
       "name": "ActorType2D_PlayerCollisionHandler",
-      "result": "The type-0x2D player-collision handler is a transient actor cleanup/spawn path. With the actor/VDP gate clear it releases the current actor and processes player interaction state; on the alternate path it can create a temporary type-0x7F record from template 0x001209BE, queue event 0x21 when the VDP update flag is active, and otherwise reinitialize/copy the actor position. It does not inject the player's launch/bounce velocity and does not write SCENE_STATE.",
+      "result": "The type-0x2D player-collision handler is a transient actor cleanup/spawn path. With the actor/VDP gate clear it releases the current actor and processes player interaction state; on the alternate path it publishes a temporary type-0x7F record, installs ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE at 0x001209BE, initializes from the separate template 0x001B7E40, queues event 0x21 when the VDP update flag is active, and otherwise reinitializes/copies the actor position. It does not inject the player's launch/bounce velocity and does not write SCENE_STATE.",
       "confidence": "confirmed-static"
     }
   ],

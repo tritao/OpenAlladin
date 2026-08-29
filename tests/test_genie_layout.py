@@ -6,6 +6,7 @@ from pathlib import Path
 
 from genie.ghidra.database import AnalysisDatabase
 from genie.ghidra.validate import validate_database
+from genie.games.aladdin.vm.movement import MovementDecoder, load_animation_decoder
 from genie.layout.classifier import build_layout
 from genie.layout.model import Layout, LayoutRange
 from genie.layout.validate import validate_layout
@@ -371,6 +372,35 @@ def test_mid_actor_collision_animation_family_is_exact():
     assert template.name == "ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD"
     assert template.end == 0x001B79B7
     assert template.size == 20
+
+
+def test_direct_movement_response_streams_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x001209BE: (0x001209C5, "ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE"),
+        0x001209F0: (0x001209F7, "ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A"),
+        0x001209F8: (0x001209FF, "ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B"),
+        0x00120A42: (0x00120ACB, "ACTOR_MOVE_TYPE75_LEVEL_EXIT"),
+    }
+    for address, (end, name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "movement_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = MovementDecoder(rom)
+    for address, (end, _) in expected.items():
+        decoded = decoder.decode_stream(
+            address,
+            max_steps=256,
+            max_bytes=512,
+            follow_control_flow=True,
+        )
+        assert decoded["bytes_decoded"] == end - address + 1
+        assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
 def test_type03_collision_response_animation_family_is_exact():

@@ -27,8 +27,8 @@
     { "address": "0x001241EA", "role": "terminal alternate loop entry" }
   ],
   "memory_references": [
-    { "address": "0x001209F0", "name": "TYPE84_RESPONSE_STATE_A" },
-    { "address": "0x001209F8", "name": "TYPE84_RESPONSE_STATE_B" },
+    { "address": "0x001209F0", "name": "ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A" },
+    { "address": "0x001209F8", "name": "ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B" },
     { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" }
   ]
 }

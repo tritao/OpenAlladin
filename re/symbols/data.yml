@@ -1789,6 +1789,50 @@
     - level01_behavior46_lower_band_runtime
     - movement_stream_decoder
 
+0x001209BE:
+  name: ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE
+  type: movement_stream
+  size: 8
+  confidence: decompiled
+  description: Type-0x7F player-collision response movement root written by ActorType2D_PlayerCollisionHandler at 0x001AEE66 after publishing actor type 0x7F. Its exact 8-byte stream applies a (+2, 0) delta and loops unconditionally back to 0x001209BE.
+  evidence:
+    - direct-movement-response-streams-static-decompilation
+    - ghidra_disassembly_001AEE40
+    - movement_stream_decoder
+
+0x001209F0:
+  name: ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A
+  type: movement_stream
+  size: 8
+  confidence: decompiled
+  description: Type-0x84 random-variant-A movement root written by Actor_ConvertType89To84RandomVariantA at 0x001ACDF8 while converting a type-0x89 actor. Its exact 8-byte stream applies a (+1, 0) delta and loops unconditionally back to 0x001209F0.
+  evidence:
+    - direct-movement-response-streams-static-decompilation
+    - actor_runtime_type84_static_decompilation
+    - movement_stream_decoder
+
+0x001209F8:
+  name: ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B
+  type: movement_stream
+  size: 8
+  confidence: decompiled
+  description: Type-0x84 random-variant-B movement root written by Actor_ConvertType89To84RandomVariantB at 0x001ACE58 while converting a type-0x89 actor. Its exact 8-byte stream applies a (-1, 0) delta and loops unconditionally back to 0x001209F8.
+  evidence:
+    - direct-movement-response-streams-static-decompilation
+    - actor_runtime_type84_static_decompilation
+    - movement_stream_decoder
+
+0x00120A42:
+  name: ACTOR_MOVE_TYPE75_LEVEL_EXIT
+  type: movement_stream
+  size: 138
+  confidence: decompiled
+  description: Type-0x75 level-exit movement root written by ActorType74_75_PlayerCollisionHandler at 0x001AFB08 during the type-0x74 response. Its exact 138-byte region contains the signed vertical profile, 0x84 timer 0x09, 0x85 movement-loop delay, the 0x8A type/state compare and write, random branches, and the local 0x00120AA4 loop, ending at 0x00120ACB before unresolved bytes.
+  evidence:
+    - direct-movement-response-streams-static-decompilation
+    - player_collision_transition_family_static_decompilation
+    - movement_stream_decoder
+
 0x001235AC:
   name: ACTOR_ANIM_TYPE_21_PROXIMITY
   size: 54
@@ -2605,7 +2649,7 @@
   name: ACTOR_ANIM_LEVEL_EXIT_TERMINAL_ALTERNATE
   size: 48
   confidence: decompiled
-  description: Alternate terminal-transition animation selected by Level_ExitAndTerminalTransition at 0x001AFA76. Its exact 48-byte region publishes the 0x001209F8 response state through the Type-0x84 conversion path, calls the terminal actor-event callback at 0x001ACE30, and loops from 0x001241F2 to 0x001241EA before ACTOR_ANIM_TYPE89_RANDOM_VARIANT.
+  description: Alternate terminal-transition animation selected by Level_ExitAndTerminalTransition at 0x001AFA76. Its exact 48-byte region publishes ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B at 0x001209F8 to the actor movement field through the Type-0x84 conversion path, calls the terminal actor-event callback at 0x001ACE30, and loops from 0x001241F2 to 0x001241EA before ACTOR_ANIM_TYPE89_RANDOM_VARIANT.
   evidence:
     - level_exit_terminal_transition_decompile
     - type8d-type76-terminal-animation_static_decompilation

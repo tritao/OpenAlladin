@@ -27,7 +27,7 @@
       "bytes": 52,
       "template": "0x001B7DB4 ACTOR_TEMPLATE_TYPE_76_INTERACTION",
       "alternate_entry": "0x00124198",
-      "response_state_write": "ED at 0x001241A6 writes 0x001209F0; ED at 0x001241B0 publishes actor type 0x84",
+      "movement_stream_write": "ED at 0x001241A6 writes ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A (0x001209F0) to actor movement field +0x0A; ED at 0x001241B0 publishes actor type 0x84",
       "callbacks": ["0x001ACB6A ActorEvent_SetActorFlag40", "0x001ACDD0 Actor_ConvertType89To84RandomVariantA"],
       "loop": "0x001241C2 EA -> 0x001241BA"
     },
@@ -37,7 +37,7 @@
       "range": "0x001241C8-0x001241F7",
       "bytes": 48,
       "producer": "0x001AFA76 inside Level_ExitAndTerminalTransition",
-      "response_state_write": "ED at 0x001241D6 writes 0x001209F8; ED at 0x001241E0 publishes actor type 0x84",
+      "movement_stream_write": "ED at 0x001241D6 writes ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B (0x001209F8) to actor movement field +0x0A; ED at 0x001241E0 publishes actor type 0x84",
       "callbacks": ["0x001ACB6A ActorEvent_SetActorFlag40", "0x001ACE30 Actor_ConvertType89To84RandomVariantB"],
       "loop": "0x001241F2 EA -> 0x001241EA"
     }
@@ -53,7 +53,7 @@
     "Exact Level_ExitAndTerminalTransition animation assignment",
     "Existing Type-0x34 wall collision and Type-0x76 spawn analysis"
   ],
-  "conclusion": "The shared animation block is now partitioned without ambiguity: Type-0x8D owns its 198-byte response prefix and embedded F5 entry stubs, Type-0x76 owns the directly referenced 52-byte continuation, and Level_ExitAndTerminalTransition owns the separate 48-byte alternate immediately before Type-0x89. The decoder's larger traversal is documented as shared control flow rather than used as a single overlapping range.",
+  "conclusion": "The shared animation block is now partitioned without ambiguity: Type-0x8D owns its 198-byte response prefix and embedded F5 entry stubs, Type-0x76 owns the directly referenced 52-byte continuation, and Level_ExitAndTerminalTransition owns the separate 48-byte alternate immediately before Type-0x89. The two ED writes now resolve to the separately classified movement roots ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A/B, while the decoder's larger traversal remains documented as shared control flow rather than used as a single overlapping range.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

@@ -22,12 +22,12 @@
     {
       "address": "0x001ACDD0",
       "name": "Actor_ConvertType89To84RandomVariantA",
-      "animation_root": "0x001209F0"
+      "movement_stream": "0x001209F0"
     },
     {
       "address": "0x001ACE30",
       "name": "Actor_ConvertType89To84RandomVariantB",
-      "animation_root": "0x001209F8"
+      "movement_stream": "0x001209F8"
     }
   ]
 }

@@ -44,7 +44,7 @@
         "clear actor state command EC 01",
         "set timer/field commands EE 89 and EE 82",
         "push parameters 0x001ACB6A and 0x001ACDD0",
-        "write values 0x001209F0 and 0x0084 through ED records"
+        "write ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A (0x001209F0) and 0x0084 through ED records"
       ]
     }
   },

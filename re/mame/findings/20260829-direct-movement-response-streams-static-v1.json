@@ -1,0 +1,67 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/direct-movement-response-streams-static-targets.json",
+  "purpose": "Promote four directly installed actor MovementVM roots from exact producer writes and exact decoder boundaries.",
+  "field_contract": {
+    "actor_record_size": "0x42",
+    "movement_root_field": "+0x0A",
+    "animation_root_field": "+0x20",
+    "source": "Actor_InitializeFromTemplate at 0x001AE30A and the direct producer instructions listed below"
+  },
+  "streams": [
+    {
+      "address": "0x001209BE",
+      "name": "ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE",
+      "range": "0x001209BE-0x001209C5",
+      "bytes": 8,
+      "producer": "0x001AEE66 ActorType2D_PlayerCollisionHandler",
+      "write": "move.l #0x001209BE,(0x0A,A1) after move.b #0x7F,(A1)",
+      "decoded": ["(+2,0)", "0x80 -> 0x001209BE"]
+    },
+    {
+      "address": "0x001209F0",
+      "name": "ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A",
+      "range": "0x001209F0-0x001209F7",
+      "bytes": 8,
+      "producer": "0x001ACDF8 Actor_ConvertType89To84RandomVariantA",
+      "write": "move.l #0x001209F0,(0x0A,A0) after move.b #0x84,(A0)",
+      "decoded": ["(+1,0)", "0x80 -> 0x001209F0"]
+    },
+    {
+      "address": "0x001209F8",
+      "name": "ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B",
+      "range": "0x001209F8-0x001209FF",
+      "bytes": 8,
+      "producer": "0x001ACE58 Actor_ConvertType89To84RandomVariantB",
+      "write": "move.l #0x001209F8,(0x0A,A0) after move.b #0x84,(A0)",
+      "decoded": ["(-1,0)", "0x80 -> 0x001209F8"]
+    },
+    {
+      "address": "0x00120A42",
+      "name": "ACTOR_MOVE_TYPE75_LEVEL_EXIT",
+      "range": "0x00120A42-0x00120ACB",
+      "bytes": 138,
+      "producer": "0x001AFB08 ActorType74_75_PlayerCollisionHandler",
+      "write": "move.l #0x00120A42,(0x0A,A1) before clearing actor +0x36 and publishing type 0x75",
+      "decoded": [
+        "138 bytes through the local 0x00120AA4 loop",
+        "0x84 0x09 timer, 0x85 loop delay, 0x8A compare/write/clear phase, random branches, and terminal 0x81/0x80 return",
+        "No bytes after 0x00120ACB are claimed; the next unresolved region begins at 0x00120ACC"
+      ]
+    }
+  ],
+  "evidence": [
+    "Fresh whole-ROM instructions.json records the four absolute-long producer writes and their containing canonical functions.",
+    "MovementDecoder losslessly decodes all four roots with exact self-loop/control-flow termination.",
+    "Actor_InitializeFromTemplate documents +0x0A as the actor movement root and +0x20 as the animation root.",
+    "The existing Type-0x75 collision finding independently identifies 0x00120A42 as the movement stream installed by the level-exit response."
+  ],
+  "conclusion": "The four formerly unknown roots are actor movement programs, not actor-template records. The three compact roots are exact self-loop responses, while 0x00120A42 is the complete directly installed Type-0x75 level-exit movement program through its local loop boundary.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
