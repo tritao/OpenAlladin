@@ -351,7 +351,7 @@ def build_parser() -> argparse.ArgumentParser:
     audio_parity.add_argument("--mame-source", default="z80")
     audio_parity.add_argument("--native-frame-offset", type=int, default=0)
     audio_parity.set_defaults(function=lambda args: run_tool(
-        "mame/audio_parity.py",
+        "genie/games/aladdin/mame/audio_parity.py",
         [str(resolve(args.mame_trace)), str(resolve(args.native_trace)),
          "--section", args.section,
          "--mame-source", args.mame_source,
