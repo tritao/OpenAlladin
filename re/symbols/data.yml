@@ -1445,6 +1445,16 @@
     - ghidra_player_animation_selector_001AD150
     - animation_stream_classifier
 
+0x00125AFE:
+  name: ACTOR_ANIM_TYPE59_SCENE_EVENT
+  size: 296
+  confidence: decompiled
+  description: Type-0x59 scene-event animation region installed by the two Level 12 entry branches at 0x001B62FC and 0x001B6324. The primary entry at 0x00125AFE and alternate entry at 0x00125B42 each spawn the shared Type-0x59 template with distinct inline animation continuations, then run the timed scene-event frame/child-spawn sequence and hand off at 0x00125C24 to the separate ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN root.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - ghidra_level12_scene_event_decompilation
+    - animation_stream_decoder
+
 0x00125C26:
   name: ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN
   size: 44

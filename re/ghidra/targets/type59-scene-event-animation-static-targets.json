@@ -1,0 +1,47 @@
+{
+  "format": "openaladdin-type59-scene-event-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Range-bound the two direct Type-0x59 Level 12 scene-event animation entry points as one shared packed region.",
+  "animation": {
+    "address": "0x00125AFE",
+    "name": "ACTOR_ANIM_TYPE59_SCENE_EVENT",
+    "range": ["0x00125AFE", "0x00125C25"],
+    "bytes": 296,
+    "primary_consumers": ["0x001B62FC", "0x001B6308"],
+    "alternate_consumers": ["0x001B6324", "0x001B6330"],
+    "entries": {
+      "primary": "0x00125AFE",
+      "alternate": "0x00125B42"
+    },
+    "behavior": "Both entries spawn ACTOR_TEMPLATE_TYPE_59_SCENE_EVENT with inline animation continuations, run the Type-0x59 timed frame and child-spawn sequence, and terminate at the 0x00125C24 clear command before the separate terminal-terrain root."
+  },
+  "inline_continuations": [
+    { "address": "0x00125B18", "producer": "F5 at 0x00125B00", "role": "primary-entry scene-event continuation" },
+    { "address": "0x00125B5C", "producer": "F5 at 0x00125B44", "role": "alternate-entry scene-event continuation" }
+  ],
+  "template": {
+    "address": "0x001B8278",
+    "name": "ACTOR_TEMPLATE_TYPE_59_SCENE_EVENT",
+    "runtime_type": "0x59",
+    "movement_stream": null,
+    "record_animation": "0x00125AFE",
+    "resource_count": "0x04",
+    "post_initialize": "Callers publish the selected animation entry and fixed position (0x0184,0x0166); the alternate branch also sets facing to 0xFF."
+  },
+  "boundary": {
+    "start": "The direct primary template/animation publication at 0x001B6308 points to 0x00125AFE.",
+    "end": "F600 at 0x00125C24 is followed by the independently tracked ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN root at 0x00125C26."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact Level 12 primary and alternate entry publications",
+    "Exact Type-0x59 template record",
+    "Exact boundary before terminal-terrain animation"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
