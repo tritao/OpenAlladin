@@ -1,0 +1,79 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type03-collision-response-animation-targets.json",
+  "producer": {
+    "address": "0x001AED86",
+    "name": "ActorType03_PlayerCollisionHandler",
+    "effect": "The gated path converts the source actor to type 0x84, installs animation 0x00122E16, clears actor animation state, and clears the linked interaction byte."
+  },
+  "streams": [
+    {
+      "address": "0x00122E16",
+      "name": "ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE",
+      "range": "0x00122E16-0x00122EDF",
+      "size": 202,
+      "decoded": [
+        "0x147E lead-in",
+        "ED writes actor type 0x84",
+        "Six F5 placements for ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE at 0x001B7F08",
+        "F3 sound 0x2D",
+        "FB callback 0x001ACB6A",
+        "Embedded 0x00122E96 default child root with a zero-payload F5",
+        "EA 0x00122EDA -> 0x00122EAE"
+      ]
+    },
+    {
+      "address": "0x00122EE0",
+      "name": "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_SPAWN_ENTRY",
+      "range": "0x00122EE0-0x00122EFD",
+      "size": 30,
+      "decoded": [
+        "Frame 0x144A",
+        "F5 at 0x00122EE2 selects ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD and entry 0x00122EFE",
+        "FB callback 0x001ACD5A",
+        "EA 0x00122EF8 -> 0x00122F06"
+      ]
+    },
+    {
+      "address": "0x00122EFE",
+      "name": "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE",
+      "range": "0x00122EFE-0x00122F37",
+      "size": 58,
+      "decoded": [
+        "Frame 0x144A and FB callback 0x001ACD5A",
+        "Embedded 0x00122F06 loop entry",
+        "Repeated 0x144A-0x145E frames with timer 0x07",
+        "EF advance at 0x00122F34",
+        "F600 child clear at 0x00122F36"
+      ]
+    }
+  ],
+  "aliases": [
+    {
+      "address": "0x00122E96",
+      "name": "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_ROOT",
+      "alias_of": "ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE",
+      "entry_offset": 128
+    },
+    {
+      "address": "0x00122F06",
+      "name": "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE_LOOP",
+      "alias_of": "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE",
+      "entry_offset": 8
+    }
+  ],
+  "boundary_basis": [
+    "Direct 0x001AED96 animation-root installation",
+    "Exact AnimationVM F5 payloads and callback parameters",
+    "Lossless stream decoding",
+    "Non-overlapping EA/F600 terminals and established neighboring roots"
+  ],
+  "conclusion": "The formerly unknown 0x00122E16-0x00122F37 band is a closed Type-0x03 collision-response family: one direct Type-0x84 response root, one F5 spawn entry, and one shared moving-child response loop. The two internal roots are recorded as aliases, so every promoted byte has one owner.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,90 @@
+{
+  "format": "openaladdin-type03-collision-response-animation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the exact Type-0x03 player-collision response and its nested Type-0x84 moving-child AnimationVM entries.",
+  "producer": {
+    "address": "0x001AED86",
+    "name": "ActorType03_PlayerCollisionHandler",
+    "contract": "On the gated player-collision path, convert the source actor to type 0x84, install animation 0x00122E16, clear its animation state, and clear the linked actor interaction byte."
+  },
+  "streams": [
+    {
+      "address": "0x00122E16",
+      "name": "ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE",
+      "range": ["0x00122E16", "0x00122EDF"],
+      "size": 202,
+      "f5_sites": [
+        "0x00122E1E", "0x00122E32", "0x00122E44", "0x00122E56",
+        "0x00122E68", "0x00122E7A", "0x00122E9E"
+      ],
+      "decoded": [
+        "Initial frame 0x147E and ED publication of actor type 0x84",
+        "Six F5 placements using ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE at 0x001B7F08 with payloads 0x10F8, 0xF010, 0xE8E8, 0x1808, 0xF8F0, and 0x0818",
+        "F3 sound 0x2D at 0x00122E30",
+        "FB callback parameter 0x001ACB6A at 0x00122E8A",
+        "Embedded default moving-child entry at 0x00122E96 issues the zero-payload F5 at 0x00122E9E",
+        "EA at 0x00122EDA loops to 0x00122EAE"
+      ],
+      "embedded_entries": [
+        {
+          "address": "0x00122E96",
+          "name": "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_ROOT",
+          "entry_offset": 128,
+          "ownership": "alias"
+        }
+      ]
+    },
+    {
+      "address": "0x00122EE0",
+      "name": "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_SPAWN_ENTRY",
+      "range": ["0x00122EE0", "0x00122EFD"],
+      "size": 30,
+      "producer_sites": [
+        "0x00122EE2",
+        "0x00125FCA", "0x00125FDA", "0x00125FFC", "0x0012600C", "0x0012601C"
+      ],
+      "decoded": [
+        "Frame 0x144A",
+        "F5 at 0x00122EE2 selects ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD at 0x001B837C and entry 0x00122EFE",
+        "FB callback parameter 0x001ACD5A at 0x00122EF2",
+        "EA at 0x00122EF8 transfers to the shared response loop entry 0x00122F06"
+      ]
+    },
+    {
+      "address": "0x00122EFE",
+      "name": "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE",
+      "range": ["0x00122EFE", "0x00122F37"],
+      "size": 58,
+      "producer_sites": ["0x00122EE2"],
+      "decoded": [
+        "Frame 0x144A and FB callback parameter 0x001ACD5A",
+        "Embedded loop entry at 0x00122F06 delays the repeated 0x144A-0x145E frame sequence with timer 0x07",
+        "EF at 0x00122F34 advances the frame delay",
+        "F600 at 0x00122F36 clears the child"
+      ],
+      "embedded_entries": [
+        {
+          "address": "0x00122F06",
+          "name": "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE_LOOP",
+          "entry_offset": 8,
+          "ownership": "alias"
+        }
+      ]
+    }
+  ],
+  "boundary_basis": [
+    "Direct animation installation at 0x001AED96",
+    "Lossless AnimationDecoder output for each root and inline entry",
+    "EA terminal at 0x00122EDA and next independent root at 0x00122EE0",
+    "EA terminal at 0x00122EF8 and next independent entry at 0x00122EFE",
+    "F600 terminal at 0x00122F36 and established ACTOR_ANIM_TYPE84_CHILD at 0x00122F38",
+    "Embedded entries 0x00122E96 and 0x00122F06 remain aliases into their owning streams"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

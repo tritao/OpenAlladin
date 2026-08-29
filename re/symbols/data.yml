@@ -1964,6 +1964,63 @@
     - actor_template_interaction_dispatch_family_static_decompilation
     - animation_stream_decoder
 
+0x00122E16:
+  name: ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE
+  type: animation_stream
+  size: 202
+  confidence: decompiled
+  description: Type-0x84 collision-response animation installed by ActorType03_PlayerCollisionHandler after it converts the source actor from runtime type 0x03. Its exact 202-byte region publishes type 0x84, spawns six ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD records with signed placements, plays sound 0x2D, invokes the shared child-event callback, and enters the embedded moving-child response sequence at 0x00122E96 before looping at 0x00122EAE.
+  evidence:
+    - player_collision_response_entry_family_static_decompilation
+    - actor_template_f5_moving_child_base_static_decompilation
+    - animation_f5_nested_child_family_static_decompilation
+    - animation_stream_decoder
+
+0x00122E96:
+  name: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_ROOT
+  type: animation_stream
+  alias_of: ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE
+  entry_offset: 128
+  confidence: decompiled
+  description: Embedded default root for ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD and ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE. It begins inside ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE and therefore does not claim a second ROM ownership range.
+  evidence:
+    - actor_template_f5_moving_child_base_static_decompilation
+    - animation_f5_nested_child_family_static_decompilation
+    - animation_stream_decoder
+
+0x00122EE0:
+  name: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_SPAWN_ENTRY
+  type: animation_stream
+  size: 30
+  confidence: decompiled
+  description: Compact Type-0x84 moving-child spawn entry selected by the nested presentation/response F5 family. Its exact 30-byte region spawns ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD with the supplied payload, invokes the shared child-event callback, and jumps to ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE_LOOP at 0x00122F06.
+  evidence:
+    - animation_f5_nested_child_family_static_decompilation
+    - actor_template_f5_moving_child_base_static_decompilation
+    - animation_stream_decoder
+
+0x00122EFE:
+  name: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE
+  type: animation_stream
+  size: 58
+  confidence: decompiled
+  description: Type-0x84 moving-child response entry selected by the F5 command at 0x00122EE2. Its exact 58-byte region invokes the shared child-event callback, delays the repeated 0x144A-0x145E frame sequence with timer 0x07, advances the frame delay, and clears the child at its terminal F600 command.
+  evidence:
+    - animation_f5_nested_child_family_static_decompilation
+    - actor_template_f5_moving_child_base_static_decompilation
+    - animation_stream_decoder
+
+0x00122F06:
+  name: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE_LOOP
+  type: animation_stream
+  alias_of: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE
+  entry_offset: 8
+  confidence: decompiled
+  description: Embedded loop entry shared by the 0x00122EE0 spawn entry and the nested 0x00125F5A F5 records. It begins eight bytes into ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE and does not claim a second ROM ownership range.
+  evidence:
+    - animation_f5_nested_child_family_static_decompilation
+    - animation_stream_decoder
+
 0x00122DB2:
   name: ACTOR_ANIM_TYPE84_TYPE01_RESPONSE
   size: 38

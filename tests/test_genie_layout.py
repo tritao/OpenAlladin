@@ -271,6 +271,35 @@ def test_mid_actor_animation_stream_ranges_are_exact():
     assert all(right < next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
 
 
+def test_type03_collision_response_animation_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00122E16: (0x00122EDF, "ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE"),
+        0x00122EE0: (0x00122EFD, "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_SPAWN_ENTRY"),
+        0x00122EFE: (0x00122F37, "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE"),
+    }
+    owners = []
+    for address, (end, name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        owners.append((symbol.address, symbol.end))
+    assert all(right < next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
+
+    root = symbols.at(0x00122E96, include_ranges=False)
+    assert root is not None
+    assert root.name == "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_ROOT"
+    assert root.metadata["alias_of"] == "ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE"
+    assert root.metadata["entry_offset"] == 128
+
+    loop = symbols.at(0x00122F06, include_ranges=False)
+    assert loop is not None
+    assert loop.name == "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE_LOOP"
+    assert loop.metadata["alias_of"] == "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE"
+    assert loop.metadata["entry_offset"] == 8
+
+
 def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)
