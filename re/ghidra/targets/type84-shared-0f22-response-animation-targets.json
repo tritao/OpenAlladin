@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-type84-shared-0f22-response-animation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the shared Type-0x84 0x0F22 response stream referenced by the established queued-actor and collision templates.",
+  "stream": {
+    "address": "0x00122F80",
+    "name": "ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE",
+    "range": ["0x00122F80", "0x00122FA1"],
+    "size": 34,
+    "template_consumers": [
+      {
+        "address": "0x001B797C",
+        "name": "ACTOR_TEMPLATE_SCENE_RESOURCE_QUEUED",
+        "record_contract": "Type 0x84, no movement stream, template word 0x6000, one resource"
+      },
+      {
+        "address": "0x001B7ABC",
+        "name": "ACTOR_TEMPLATE_COLLISION_RESPONSE",
+        "record_contract": "Type 0x84, no movement stream, template word 0x6000, one resource"
+      },
+      {
+        "address": "0x001B7B5C",
+        "name": "unclassified Type-0x84 template record",
+        "record_contract": "Type 0x84, payload 0x40000000, no movement stream, template word 0x6000, one resource"
+      }
+    ],
+    "decoded": [
+      "Frame 0x0F22",
+      "F0 0x9A at 0x00122F82 branches to 0x00122F8A",
+      "EB 0x00 at 0x00122F88 clears the actor flag on the non-branch path",
+      "Frames 0x0F26, 0x0F2A, 0x0F2E, 0x0F32, 0x0F36, 0x0F3A, 0x0F3E, 0x0F42, 0x0F46, 0x0F4A, and 0x0F4E",
+      "F600 at 0x00122FA0 clears the actor"
+    ]
+  },
+  "boundary_basis": [
+    "Exact animation-root pointers in ACTOR_TEMPLATE_SCENE_RESOURCE_QUEUED and ACTOR_TEMPLATE_COLLISION_RESPONSE",
+    "Additional exact pointer in the adjacent 20-byte Type-0x84 template record at 0x001B7B5C",
+    "Lossless AnimationDecoder output",
+    "F600 terminal at 0x00122FA0 and established ACTOR_ANIM_DEATH_122FA2 at 0x00122FA2"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

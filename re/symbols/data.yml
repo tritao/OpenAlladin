@@ -3533,6 +3533,18 @@
     - type01_type84_child_animation_static_decompilation
     - mame_type01_child_chain_trace
 
+0x00122F80:
+  name: ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE
+  type: animation_stream
+  size: 34
+  confidence: decompiled
+  description: Shared Type-0x84 response animation referenced by the queued scene-resource, collision-reinitialization, and level-object template records. Its exact 34-byte region presents frame 0x0F22, conditionally clears the actor flag through the random branch at 0x00122F82, cycles frames 0x0F26-0x0F4E, and terminates with F600 at 0x00122FA0 before the separate ACTOR_ANIM_DEATH_122FA2 stream.
+  evidence:
+    - scene_resource_queued_actor_static_decompilation
+    - actor_collision_reinitialization
+    - level01_actor_lifecycle_extension
+    - animation_stream_decoder
+
 0x00123E7E:
   name: ACTOR_ANIM_TYPE84_COLLISION_RESPONSE
   size: 106

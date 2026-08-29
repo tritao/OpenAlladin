@@ -42,7 +42,7 @@
   "limitations": [
     "No direct static caller was recovered in the current whole-ROM export.",
     "The full coordinate-record extent and spawn-gate producer are not claimed.",
-    "The animation stream at 0x00122F80 remains unnamed beyond its fixed template reference."
+    "The shared animation stream is classified separately as ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE; its broader scene-resource role remains intentionally limited to the fixed template reference."
   ],
   "conclusion": "The compact code-like gap is a scene-resource queued-actor allocator wrapper, not data. Its fixed Type-0x84 template and success-only coordinate-cursor publication are now represented as structured metadata; the surrounding producer path remains open."
 }

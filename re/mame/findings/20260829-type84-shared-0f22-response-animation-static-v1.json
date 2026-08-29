@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type84-shared-0f22-response-animation-targets.json",
+  "stream": {
+    "address": "0x00122F80",
+    "name": "ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE",
+    "range": "0x00122F80-0x00122FA1",
+    "size": 34,
+    "templates": [
+      "0x001B797C ACTOR_TEMPLATE_SCENE_RESOURCE_QUEUED",
+      "0x001B7ABC ACTOR_TEMPLATE_COLLISION_RESPONSE",
+      "0x001B7B5C unclassified Type-0x84 template record"
+    ],
+    "decoded": [
+      "0x0F22 lead-in",
+      "F0 0x9A at 0x00122F82 -> 0x00122F8A",
+      "EB 0x00 at 0x00122F88",
+      "0x0F26-0x0F4E frame sequence",
+      "F600 at 0x00122FA0"
+    ]
+  },
+  "boundary_basis": [
+    "Exact template animation pointers",
+    "Exact 20-byte template record at 0x001B7B5C adjacent to established template records",
+    "Lossless AnimationDecoder output",
+    "Terminal F600 immediately before ACTOR_ANIM_DEATH_122FA2"
+  ],
+  "conclusion": "The formerly unknown 0x00122F80-0x00122FA1 band is a shared Type-0x84 0x0F22 response stream. Its random flag gate, ordered frame sequence, and clear terminal are now range-bounded without absorbing the separate death stream at 0x00122FA2.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

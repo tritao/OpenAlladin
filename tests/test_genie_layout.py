@@ -300,6 +300,20 @@ def test_type03_collision_response_animation_family_is_exact():
     assert loop.metadata["entry_offset"] == 8
 
 
+def test_shared_type84_0f22_response_range_is_exact():
+    symbols = SymbolStore()
+    symbol = symbols.at(0x00122F80, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE"
+    assert symbol.end == 0x00122FA1
+    assert symbol.size == 34
+
+    following = symbols.at(0x00122FA2, include_ranges=False)
+    assert following is not None
+    assert following.name == "ACTOR_ANIM_DEATH_122FA2"
+    assert symbol.end < following.address
+
+
 def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)
