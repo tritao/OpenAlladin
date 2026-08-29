@@ -1016,6 +1016,36 @@ def test_shared_type3c_3d_3e_3f_movement_is_exact():
     assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
+def test_type84_presentation_response_movement_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x001214B2, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_MOVE_TYPE84_PRESENTATION_RESPONSE"
+    assert stream.end == 0x00121529
+    assert stream.size == 120
+    assert stream.metadata["type"] == "movement_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = MovementDecoder(load_animation_decoder().RomReader(rom_path.read_bytes()))
+    decoded = decoder.decode_stream(
+        0x001214B2,
+        max_steps=256,
+        max_bytes=120,
+        follow_control_flow=False,
+    )
+    assert decoded["bytes_decoded"] == 120
+    assert decoded["stopped_reason"] == "byte_limit"
+    assert decoded["steps"][-1]["next_address"] == "0x0012152A"
+
+    alternate = next(
+        command
+        for step in decoded["steps"]
+        for command in step["commands"]
+        if command["opcode"] == "0x88"
+    )
+    assert alternate["branch_target"] == "0x00121502"
+
+
 def test_level08_exit_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x0012152A, include_ranges=False)

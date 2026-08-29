@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-type84-presentation-response-movement-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Classify the directly installed Type-0x84 presentation-child MovementVM response before the Level-08 exit stream.",
+  "stream": {
+    "address": "0x001214B2",
+    "name": "ACTOR_MOVE_TYPE84_PRESENTATION_RESPONSE",
+    "range": ["0x001214B2", "0x00121529"],
+    "size": 120,
+    "producer": "ACTOR_ANIM_TYPE84_PRESENTATION_CHILD at 0x00124986 writes 0x001214B2 into actor movement field 0x14",
+    "decoded": [
+      "Initial (+0, 0) step with 0x88 flag gate targeting the alternate entry at 0x00121502",
+      "Staged (+1,-1) through (+3,+2) trajectory under command-timer 0x87",
+      "Terminal (+1,-2) through (+3,+1) settle under timers 0x09, 0x27, and 0x0B",
+      "0x83 writes 0x001249F0 through actor field 0x14 and 0x82 clears movement state"
+    ],
+    "alternate_entry": {
+      "address": "0x00121502",
+      "selected_by": "0x001214B4 flag gate",
+      "role": "Signed (-124, +9) alternate entry into the shared terminal settle"
+    }
+  },
+  "boundary_basis": [
+    "The AnimationVM producer writes the root directly into the Type-0x84 actor movement field.",
+    "MovementDecoder consumes exactly 120 linear bytes through the terminal actor-field write and movement-state clear.",
+    "The owner ends at 0x00121529 immediately before the independently selected ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION stream at 0x0012152A."
+  ],
+  "evidence": [
+    "Exact ED movement-field publication at 0x00124986",
+    "Lossless MovementDecoder output",
+    "Conditional alternate entry at 0x00121502 remains inside the bounded owner",
+    "Exact boundary before ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

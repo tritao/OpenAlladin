@@ -2905,6 +2905,16 @@
     - actor_template_type3d_collision_static_decompilation
     - movement_stream_decoder
 
+0x001214B2:
+  name: ACTOR_MOVE_TYPE84_PRESENTATION_RESPONSE
+  type: movement_stream
+  size: 120
+  confidence: decompiled
+  description: Type-0x84 presentation-child movement response installed by ACTOR_ANIM_TYPE84_PRESENTATION_CHILD at 0x00124986. Its exact 120-byte owner applies the staged (+1,-1) through (+3,+1) trajectory with command-timer 0x87, conditionally enters the alternate settle at 0x00121502, writes the presentation terminal value through actor field 0x14, clears movement state, and ends immediately before ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION.
+  evidence:
+    - type14_type84_presentation_animation_static_decompilation
+    - movement_stream_decoder
+
 0x00121256:
   name: ACTOR_MOVE_TYPE84_RUNTIME47_4C_CHILD_SHARED
   type: movement_stream
