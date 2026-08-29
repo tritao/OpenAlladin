@@ -29,6 +29,39 @@ struct GenesisTileWrite {
     std::uint16_t tile_base = 0;
 };
 
+struct GenesisTilePlaneState {
+    static constexpr std::size_t kWidthTiles = 32;
+    static constexpr std::size_t kHeightTiles = 32;
+    static constexpr std::size_t kTileCount = kWidthTiles * kHeightTiles;
+
+    std::uint16_t vram_base = 0;
+    std::uint16_t row_stride = 0x40;
+    std::array<std::uint16_t, kTileCount> words{};
+    std::array<bool, kTileCount> written{};
+
+    void clear() {
+        words.fill(0);
+        written.fill(false);
+    }
+
+    bool write(
+        std::uint16_t x,
+        std::uint16_t y,
+        std::uint16_t tile_word
+    ) {
+        if (x >= kWidthTiles || y >= kHeightTiles) return false;
+        const std::size_t index = static_cast<std::size_t>(y) * kWidthTiles + x;
+        words[index] = tile_word;
+        written[index] = true;
+        return true;
+    }
+
+    std::uint16_t word(std::uint16_t x, std::uint16_t y) const {
+        if (x >= kWidthTiles || y >= kHeightTiles) return 0;
+        return words[static_cast<std::size_t>(y) * kWidthTiles + x];
+    }
+};
+
 // Typed state for scene-resource operations that do not yet have a complete
 // direct plane-map representation. The recovered VDP row-command table still
 // determines the final destination of a tile write, so retain the operation
@@ -37,8 +70,15 @@ struct GenesisTileWrite {
 // no checkpoint-backed VDP memory is loaded.
 struct GenesisSceneResourceState {
     std::vector<GenesisTileWrite> tile_writes;
+    GenesisTilePlaneState c000_plane{0xC000};
+    GenesisTilePlaneState e000_plane{0xE000};
+    bool e000_first = false;
     bool c000_cleared = false;
-    bool frame_palette_prepared = false;
+};
+
+struct GenesisPaletteState {
+    std::array<GenesisColor, 64> colors{};
+    bool frame_prepared = false;
 };
 
 struct GenesisScrollState {
@@ -130,6 +170,10 @@ public:
     );
     void clear_c000();
     void prepare_frame_and_palette();
+    void configure_scene_tile_rows(
+        bool e000_first,
+        std::uint16_t row_stride = 0x40
+    );
 
     void render(
         std::vector<std::uint32_t>& framebuffer,
@@ -140,7 +184,10 @@ public:
     const GenesisPlaneState& plane_a() const { return plane_a_; }
     const GenesisPlaneState& plane_b() const { return plane_b_; }
     const GenesisScrollState& scroll() const { return scroll_; }
-    const std::array<GenesisColor, 64>& palette() const { return palette_; }
+    const GenesisPaletteState& palette_state() const { return palette_state_; }
+    const std::array<GenesisColor, 64>& palette() const {
+        return palette_state_.colors;
+    }
     const GenesisSpriteList& sprites() const { return sprites_; }
 
     const std::vector<std::uint8_t>& checkpoint_vram() const { return vram_; }
@@ -155,11 +202,12 @@ public:
     }
     bool c000_cleared() const { return scene_resources_.c000_cleared; }
     bool frame_palette_prepared() const {
-        return scene_resources_.frame_palette_prepared;
+        return palette_state_.frame_prepared;
     }
 
 private:
     void refresh_views();
+    void refresh_tile_planes();
     std::uint16_t word(int address) const;
 
     bool loaded_ = false;
@@ -182,10 +230,11 @@ private:
     GenesisPlaneState plane_a_{};
     GenesisPlaneState plane_b_{};
     GenesisScrollState scroll_{};
-    std::array<GenesisColor, 64> palette_{};
+    GenesisPaletteState palette_state_{};
     GenesisSpriteList sprites_{};
 
     GenesisSceneResourceState scene_resources_{};
+    std::vector<std::uint8_t> live_vram_;
 };
 
 }  // namespace openaladdin

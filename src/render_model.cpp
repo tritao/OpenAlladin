@@ -92,9 +92,10 @@ void GenesisRenderModel::reset() {
     plane_a_ = {};
     plane_b_ = {};
     scroll_ = {};
-    palette_.fill({});
+    palette_state_ = {};
     sprites_ = {};
     scene_resources_ = {};
+    live_vram_.clear();
 }
 
 void GenesisRenderModel::load_preview(
@@ -135,6 +136,14 @@ void GenesisRenderModel::load_checkpoint(
     registers_ = registers;
     loaded_ = loaded;
     scene_resources_ = {};
+    live_vram_ = vram_;
+    palette_state_ = {};
+    for (std::size_t index = 0;
+         index < std::min<std::size_t>(64, checkpoint_palette_.size());
+         ++index) {
+        palette_state_.colors[index] = checkpoint_palette_[index];
+    }
+    refresh_tile_planes();
     refresh_views();
 }
 
@@ -144,22 +153,58 @@ void GenesisRenderModel::write_tile(
     std::uint8_t tile_row,
     std::uint16_t tile_base
 ) {
+    if (live_vram_.size() < kVramSize) {
+        live_vram_.assign(kVramSize, 0);
+    }
+    const std::uint16_t tile_word = static_cast<std::uint16_t>(
+        static_cast<std::uint16_t>(tile_base | tile_row) - 0x7840U
+    );
+    GenesisTilePlaneState& plane = scene_resources_.e000_first
+        ? scene_resources_.e000_plane
+        : scene_resources_.c000_plane;
+    plane.write(x, y, tile_word);
     scene_resources_.tile_writes.push_back(GenesisTileWrite{
         x, y, tile_row, tile_base
     });
+    if (x < GenesisTilePlaneState::kWidthTiles
+        && y < GenesisTilePlaneState::kHeightTiles) {
+        const std::size_t address = static_cast<std::size_t>(plane.vram_base)
+            + static_cast<std::size_t>(y) * plane.row_stride
+            + static_cast<std::size_t>(x) * 2;
+        if (address + 1 < live_vram_.size()) {
+            live_vram_[address] = static_cast<std::uint8_t>(tile_word >> 8);
+            live_vram_[address + 1] = static_cast<std::uint8_t>(tile_word);
+        }
+    }
+    refresh_views();
 }
 
 void GenesisRenderModel::clear_c000() {
     scene_resources_.c000_cleared = true;
+    scene_resources_.c000_plane.clear();
+    if (live_vram_.size() < kVramSize) {
+        live_vram_.assign(kVramSize, 0);
+    }
+    std::fill(live_vram_.begin() + 0xC000, live_vram_.begin() + 0xE000, 0);
     if (loaded_ && vram_.size() >= 0xE000) {
         std::fill(vram_.begin() + 0xC000, vram_.begin() + 0xE000, 0);
-        refresh_views();
     }
+    refresh_views();
 }
 
 void GenesisRenderModel::prepare_frame_and_palette() {
     clear_c000();
-    scene_resources_.frame_palette_prepared = true;
+    palette_state_.frame_prepared = true;
+}
+
+void GenesisRenderModel::configure_scene_tile_rows(
+    bool e000_first,
+    std::uint16_t row_stride
+) {
+    scene_resources_.e000_first = e000_first;
+    scene_resources_.c000_plane.row_stride = row_stride;
+    scene_resources_.e000_plane.row_stride = row_stride;
+    refresh_tile_planes();
 }
 
 void GenesisRenderModel::render_preview_background(
@@ -258,13 +303,41 @@ void GenesisRenderModel::render_preview_background(
 }
 
 std::uint16_t GenesisRenderModel::word(int address) const {
-    if (address < 0 || address + 1 >= static_cast<int>(vram_.size())) {
+    const std::vector<std::uint8_t>& memory = live_vram_.empty()
+        ? vram_
+        : live_vram_;
+    if (address < 0 || address + 1 >= static_cast<int>(memory.size())) {
         return 0;
     }
     return static_cast<std::uint16_t>(
-        (static_cast<std::uint16_t>(vram_[static_cast<std::size_t>(address)]) << 8)
-        | vram_[static_cast<std::size_t>(address + 1)]
+        (static_cast<std::uint16_t>(memory[static_cast<std::size_t>(address)]) << 8)
+        | memory[static_cast<std::size_t>(address + 1)]
     );
+}
+
+void GenesisRenderModel::refresh_tile_planes() {
+    const auto refresh = [this](GenesisTilePlaneState& plane) {
+        plane.clear();
+        for (std::size_t row = 0; row < GenesisTilePlaneState::kHeightTiles; ++row) {
+            for (std::size_t column = 0;
+                 column < GenesisTilePlaneState::kWidthTiles;
+                 ++column) {
+                const auto x = static_cast<std::uint16_t>(column);
+                const auto y = static_cast<std::uint16_t>(row);
+                plane.write(
+                    x,
+                    y,
+                    word(
+                        static_cast<int>(plane.vram_base)
+                        + static_cast<int>(row * plane.row_stride)
+                        + static_cast<int>(column * 2)
+                    )
+                );
+            }
+        }
+    };
+    refresh(scene_resources_.c000_plane);
+    refresh(scene_resources_.e000_plane);
 }
 
 void GenesisRenderModel::refresh_views() {
@@ -293,11 +366,6 @@ void GenesisRenderModel::refresh_views() {
     scroll_.vertical_a = vsram_word(0);
     scroll_.vertical_b = vsram_word(1);
 
-    palette_.fill({});
-    for (std::size_t index = 0; index < std::min<std::size_t>(64, checkpoint_palette_.size()); ++index) {
-        palette_[index] = checkpoint_palette_[index];
-    }
-
     sprites_ = {};
     sprites_.vram_base = static_cast<std::uint16_t>((registers_[5] & 0x7F) << 9);
     for (std::size_t index = 0; index < sprites_.records.size(); ++index) {
@@ -316,7 +384,7 @@ void GenesisRenderModel::render(
     int width,
     int height
 ) const {
-    if (!loaded_ || vram_.size() < kVramSize || vsram_.size() < kVsramSize
+    if (!loaded_ || live_vram_.size() < kVramSize || vsram_.size() < kVsramSize
         || checkpoint_palette_.size() < 64) {
         throw std::runtime_error("VDP checkpoint has incomplete memory state");
     }
@@ -330,7 +398,8 @@ void GenesisRenderModel::render(
         return value < 0 ? value + size : value;
     };
     const auto color = [this](int palette_index) {
-        const GenesisColor& value = palette_[static_cast<std::size_t>(palette_index & 0x3F)];
+        const GenesisColor& value = palette_state_.colors[
+            static_cast<std::size_t>(palette_index & 0x3F)];
         return rgba(value.r, value.g, value.b);
     };
     const auto tile_pixel = [this](std::uint16_t tile_word, int x, int y) {
