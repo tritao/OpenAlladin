@@ -2718,3 +2718,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-actor-template-interaction-dispatch-static-decompilation-v1` | recorded-static-decompilation | Type-0x87 interaction-response template named from the reverse-slot dispatch entry |
 | `20260829-actor-template-interaction-family-static-decompilation-v1` | recorded-static-decompilation | Type-0x29, type-0x10, and type-0x2F interaction templates named from direct dispatch spawn bodies |
 | `20260829-actor-template-interaction-dispatch-family-static-decompilation-v1` | recorded-static-decompilation | Type-0x03, type-0x05, type-0x23, type-0x2B, and type-0x84 interaction templates named from direct dispatch bodies |
+| `20260829-actor-template-early-interaction-family-static-decompilation-v1` | recorded-static-decompilation | Earlier type-0x5E/type-0x84 pair, type-0x5F, type-0x67, and shared type-0x84 interaction templates named from direct consumers |

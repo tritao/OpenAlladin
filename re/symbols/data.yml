@@ -1435,3 +1435,53 @@
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
+
+0x001B78A0:
+  name: ACTOR_TEMPLATE_TYPE_5E_INTERACTION_PAIR_BASE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x5E source template for the paired interaction spawn paths at 0x001B6902, 0x001B6958, and 0x001B6A0C; it uses movement stream 0x0011F746, animation stream 0x00123072, and owns eleven resources before the caller links a type-0x84 companion.
+  evidence:
+    - ghidra_early_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B78B4:
+  name: ACTOR_TEMPLATE_TYPE_5F_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x5F interaction template loaded by the direct reverse-slot spawn entry at 0x001B68DE; it has no movement stream, uses animation stream 0x0012312C, and owns eleven resources.
+  evidence:
+    - ghidra_early_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B78C8:
+  name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_PAIR_COMPANION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 companion template for the paired type-0x5E interaction spawns; it uses movement stream 0x0011F7A6, animation stream 0x00123154, and owns two resources before the caller links and positions it.
+  evidence:
+    - ghidra_early_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B78DC:
+  name: ACTOR_TEMPLATE_TYPE_67_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x67 interaction template loaded by the forward-slot entry at 0x001B6BF0; it has no movement stream, uses animation stream 0x00123274, and owns five resources.
+  evidence:
+    - ghidra_early_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B78F0:
+  name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Shared type-0x84 interaction base loaded by six direct reverse-slot entries at 0x001B7110, 0x001B713C, 0x001B7160, 0x001B7184, 0x001B71A8, and 0x001B71C4; callers publish the specific animation root and vertical placement after allocation.
+  evidence:
+    - ghidra_early_interaction_dispatch_block
+    - actor_template_grid_xrefs
