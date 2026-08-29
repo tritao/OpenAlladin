@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-actor-frame-phase-child-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the frame-phase actor allocator block and its zero-type moving-child template.",
+  "code_block": {
+    "address": "0x001ABF28",
+    "name": "Actor_SpawnFramePhaseChild",
+    "range": ["0x001ABF28", "0x001ABF8D"],
+    "allocator": "0x001AE262 Actor_FindFreeSlot",
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "template": "0x001B79F4 ACTOR_TEMPLATE_TYPE_00_FRAME_PHASE_CHILD",
+    "incoming_edges": "No static incoming edge was recovered by the current whole-ROM export."
+  },
+  "behavior": {
+    "position": "Copies source actor X/Y words from A2 offsets +0x02/+0x04 into the allocated actor.",
+    "phase_selection": "Masks FRAME_PHASE_COUNTER at 0x00FF7E28 to its low two bits, indexes a phase table at A6+0x49A9, and copies the selected type byte and animation longword into the new actor.",
+    "velocity": "Sets actor vertical velocity to -0x0400 and horizontal velocity to +0x0200 or -0x0200 according to PLAYER_WORLD_X relative to the copied actor X.",
+    "facing": "Sets actor facing byte 0xFF when FRAME_PHASE_COUNTER bit 3 is set."
+  },
+  "template": {
+    "address": "0x001B79F4",
+    "name": "ACTOR_TEMPLATE_TYPE_00_FRAME_PHASE_CHILD",
+    "range": ["0x001B79F4", "0x001B7A07"],
+    "size": 20,
+    "raw_bytes": "0000010000000011F6EC60000000000002000000",
+    "runtime_type": "0x00 before phase-table publication",
+    "template_payload": "0x00010000",
+    "movement_stream": "0x0011F6EC embedded in ACTOR_MOVE_SHARED_CHILD_ENTRY",
+    "template_word": "0x6000",
+    "animation_stream": null,
+    "resource_count": "0x02",
+    "trailing_flags": "0x0000"
+  },
+  "evidence": [
+    "Exact 68000 disassembly from 0x001ABF28 through the success/failure return paths",
+    "Direct template load at 0x001ABF2E and initializer call at 0x001ABF34",
+    "Exact phase-indexed type/animation publication and velocity writes",
+    "Exact 20-byte actor-template boundary between ACTOR_TEMPLATE_TYPE_43 and ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT"
+  ]
+}

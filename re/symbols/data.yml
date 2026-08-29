@@ -2399,6 +2399,17 @@
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets
 
+0x001B79F4:
+  name: ACTOR_TEMPLATE_TYPE_00_FRAME_PHASE_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Zero-type frame-phase child template loaded by Actor_SpawnFramePhaseChild at 0x001ABF2E; it carries payload 0x00010000, enters the shared ACTOR_MOVE_SHARED_CHILD_ENTRY movement stream at 0x0011F6EC, uses template word 0x6000, leaves animation selection to the phase table, and owns two resources.
+  evidence:
+    - actor_frame_phase_child_static_decompilation
+    - ghidra_disassembly_001ABF28
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B8098:
   name: ACTOR_TEMPLATE_F5_TYPE_7F
   type: actor_template

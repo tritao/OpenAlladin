@@ -1543,6 +1543,14 @@
   evidence:
     - ghidra_decompile_collision_damage_targets
     - ghidra_disassembly_001ABE8A
+0x001ABF28:
+  name: Actor_SpawnFramePhaseChild
+  confidence: decompiled
+  description: Allocates a free actor slot, initializes ACTOR_TEMPLATE_TYPE_00_FRAME_PHASE_CHILD, copies the source actor position, selects a phase-indexed runtime type and animation entry from the caller-owned table, applies VY=-0x0400 and horizontal velocity +/-0x0200 relative to PLAYER_WORLD_X, and publishes the frame-phase facing bit when present. No static incoming edge to this block is recovered in the current database.
+  evidence:
+    - actor_frame_phase_child_static_decompilation
+    - ghidra_disassembly_001ABF28
+    - ghidra_actor_template_initializer_001AE30A
 0x001AE3FC:
   name: InteractionTable_ProcessRowsA
   confidence: confirmed
