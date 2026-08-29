@@ -400,10 +400,12 @@
     - movement_stream_decoder
 
 0x00120432:
-  name: ACTOR_MOVE_STATE_120432
-  confidence: probable
-  description: Actor movement state-stream root containing player-distance, flag, and value comparisons before looping.
+  name: ACTOR_MOVE_TYPE1F_PROXIMITY_GATE
+  size: 58
+  confidence: decompiled
+  description: Type-0x1F movement gate; its packed 58-byte state-machine region applies a fixed +2 horizontal delta, tests player X distance 0x40, actor field/flag values 0x0080 and 0x0081, and on the transition branch writes animation root 0x00123900 before clearing actor state and looping back.
   evidence:
+    - actor_type1f_movement_stream_static_decode
     - mame_actor_movement_cursor_trace
     - movement_stream_decoder
 
@@ -1182,7 +1184,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Selector-0x10 actor template for runtime type 0x1F; it uses movement stream 0x00120432 and animation stream 0x00123900.
+  description: Selector-0x10 actor template for runtime type 0x1F; it uses movement stream ACTOR_MOVE_TYPE1F_PROXIMITY_GATE and animation stream 0x00123900.
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets

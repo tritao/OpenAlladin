@@ -1,0 +1,47 @@
+{
+  "format": "openaladdin-type1f-movement-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "movement": {
+    "address": "0x00120432",
+    "name": "ACTOR_MOVE_TYPE1F_PROXIMITY_GATE",
+    "decoded_bytes": 58,
+    "decoded_steps": 3,
+    "packed_region": "0x00120432-0x00120469",
+    "deltas": [[2, 0], [0, 0], [0, 0]],
+    "conditions": [
+      "0x93 player-within-X distance 0x40 -> 0x00120462",
+      "0x88 actor field/flag fields 0x87/0x00/0x09 -> 0x00120452",
+      "0x8A actor field/compare fields 0x91/0x00/0x3D value 0x0080 -> 0x00120462",
+      "0x8A actor field/compare fields 0x91/0x00/0x3D value 0x0081 -> 0x00120462"
+    ],
+    "transition": [
+      "0x00120462 0x83 write animation root 0x00123900 using target fields 0x14/0x00/0x20",
+      "0x0012046A 0x82 clear actor state"
+    ],
+    "loops": [
+      "0x0012044C opcode 0x80 -> 0x00120432",
+      "0x0012045C opcode 0x80 -> 0x00120432"
+    ],
+    "non_linear_runtime_state": true
+  },
+  "consumer": {
+    "runtime_type": "0x1F",
+    "template": "0x001B7C38 ACTOR_TEMPLATE_TYPE_1F",
+    "animation_root": "0x00123900",
+    "player_collision_handler": "0x001AE796",
+    "actor_collision_handler": "0x001AC2E0",
+    "route_status": "not_verified_as_connector"
+  },
+  "evidence": [
+    "Lossless MovementDecoder output for 0x00120432",
+    "Exact packed branch region through 0x00120469",
+    "Existing type-0x1F settle and upper-route traces"
+  ],
+  "conclusion": "The type-0x1F movement gate is statically closed at its packed branch region, field comparisons, animation transition, clear operation, and loop-back targets. The conditional outcomes remain runtime-state dependent, and no connector behavior is claimed.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
