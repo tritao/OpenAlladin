@@ -1,0 +1,71 @@
+{
+  "format": "openaladdin-menu-transition-template-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the exact menu-presentation child records and the adjacent scene-table transition actor record.",
+  "templates": [
+    {
+      "address": "0x001B7D3C",
+      "name": "ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A",
+      "consumer": "first F5 record at 0x00125BE6 in the ACTOR_TEMPLATE_MENU_TYPE_84 animation stream at 0x00125BC6",
+      "range": ["0x001B7D3C", "0x001B7D4F"],
+      "size": 20,
+      "raw_bytes": "84000800000000121684600000125F5A04000000",
+      "runtime_type": "0x84",
+      "movement_stream": "0x00121684",
+      "template_word": "0x6000",
+      "animation_stream": "0x00125F5A",
+      "resource_count": "0x04",
+      "template_payload": "0x08000000",
+      "f5_payload": "0xD890"
+    },
+    {
+      "address": "0x001B7D50",
+      "name": "ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_B",
+      "consumer": "second F5 record at 0x00125BF6 in the ACTOR_TEMPLATE_MENU_TYPE_84 animation stream at 0x00125BC6",
+      "range": ["0x001B7D50", "0x001B7D63"],
+      "size": 20,
+      "raw_bytes": "840008000000001216AA60000012603001000000",
+      "runtime_type": "0x84",
+      "movement_stream": "0x001216AA",
+      "template_word": "0x6000",
+      "animation_stream": "0x00126030",
+      "resource_count": "0x01",
+      "template_payload": "0x08000000",
+      "f5_payload": "0xD8A8"
+    },
+    {
+      "address": "0x001B7D64",
+      "name": "ACTOR_TEMPLATE_SCENE_TABLE_TRANSITION",
+      "consumer": "direct Actor_InitializeFromTemplate load at 0x001B3D0E inside SceneTable_SelectNextState",
+      "range": ["0x001B7D64", "0x001B7D77"],
+      "size": 20,
+      "raw_bytes": "840008000000001209C6600000123EC20C000000",
+      "runtime_type": "0x84",
+      "movement_stream": "0x001209C6",
+      "template_word": "0x6000",
+      "animation_stream": "0x00123EC2",
+      "resource_count": "0x0C",
+      "template_payload": "0x08000000",
+      "caller_position": "X=0x0058; Y=0x0164"
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "boundary": "The three records exactly fill 0x001B7D3C-0x001B7D77 immediately before ACTOR_TEMPLATE_TYPE_69_INTERACTION at 0x001B7D78."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for the menu presentation F5 records",
+    "Direct scene-table transition initializer at 0x001B3D0E",
+    "Exact 20-byte record boundaries and raw ROM bytes",
+    "Known menu presentation template at 0x001B7D28 and common actor-template initializer contract"
+  ],
+  "conclusion": "The 0x001B7D3C and 0x001B7D50 records are exact Type-0x84 menu-presentation children selected by the known parent animation's F5 commands. The adjacent 0x001B7D64 record is a separate Type-0x84 scene-table transition actor selected directly by SceneTable_SelectNextState; no broader user-facing roles are inferred.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

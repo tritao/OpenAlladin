@@ -1273,7 +1273,7 @@
 0x001B3B96:
   name: Menu_RunOptionsAndSelectNextState
   confidence: decompiled
-  description: Runs the startup/options screen, including option-marker setup, difficulty/music/sound-test selection, and exit handling, then advances SCENE_TABLE_INDEX and publishes SCENE_STATE plus the next scene script pointer from the ROM transition table.
+  description: Runs the startup/options screen, including option-marker setup, menu presentation actor setup, difficulty/music/sound-test selection, and exit handling, then advances SCENE_TABLE_INDEX and publishes SCENE_STATE plus the next scene script pointer from the ROM transition table.
   evidence:
     - ghidra_level_transition_targeted_decompile
     - ghidra_memory_reference_scene_state

@@ -2458,6 +2458,39 @@
     - ghidra_menu_scene_table_transition
     - level01_upper_frontier_initializer_targets
 
+0x001B7D3C:
+  name: ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 menu-presentation child template supplied by the first F5 record in ACTOR_TEMPLATE_MENU_TYPE_84's animation stream; it uses movement stream 0x00121684, animation stream 0x00125F5A, owns four resources, and carries template payload 0x08000000.
+  evidence:
+    - menu_template_child_targets
+    - menu_scene_animation_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B7D50:
+  name: ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_B
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 menu-presentation secondary child template supplied by the second F5 record in ACTOR_TEMPLATE_MENU_TYPE_84's animation stream; it uses movement stream 0x001216AA, animation stream 0x00126030, owns one resource, and carries template payload 0x08000000.
+  evidence:
+    - menu_template_child_targets
+    - menu_scene_animation_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B7D64:
+  name: ACTOR_TEMPLATE_SCENE_TABLE_TRANSITION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene-table transition actor template directly initialized by SceneTable_SelectNextState at 0x001B3D0E; it uses movement stream 0x001209C6, animation stream 0x00123EC2, owns twelve resources, and the caller places it at (0x0058,0x0164).
+  evidence:
+    - menu_template_child_targets
+    - ghidra_scene_table_transition_initializer
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B7968:
   name: ACTOR_TEMPLATE_SCENE_RESOURCE_BASE
   type: actor_template
