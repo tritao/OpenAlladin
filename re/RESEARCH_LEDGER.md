@@ -2714,3 +2714,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-actor-template-additional-family-static-decompilation-v1` | recorded-static-decompilation | Six additional actor-template records tied to exact interaction, F5, terrain, and landing producers |
 | `20260829-actor-template-presentation-response-static-decompilation-v1` | recorded-static-decompilation | Transition-presentation, collision-response, and scene/menu type-0x84 template records named by direct consumers |
 | `20260829-actor-template-service-family-static-decompilation-v1` | recorded-static-decompilation | Scene-resource, menu, exit, Level 08, and typed interaction template records named from direct consumers |
+| `20260829-actor-template-collision-interaction-static-decompilation-v1` | recorded-static-decompilation | Type-0x2D interaction and type-0x11 collision response templates named from direct consumers |

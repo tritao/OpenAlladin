@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-actor-template-collision-interaction-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name actor-template records selected by the generic type-0x2D interaction path and the type-0x11 collision handler.",
+  "templates": [
+    {
+      "address": "0x001B792C",
+      "name": "ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE",
+      "consumer": "0x001ABE8A Actor_HandleType2DInteraction",
+      "selection": "Used when the source actor type is not 0x2D; the type-0x2D branch selects ACTOR_TEMPLATE_TYPE_84 instead.",
+      "runtime_type": "0x84",
+      "movement_stream": null,
+      "animation_stream": "0x00122DD8",
+      "resource_count": "0x03"
+    },
+    {
+      "address": "0x001B7E90",
+      "name": "ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE",
+      "consumer": "0x001AC4E8 ActorType11_ActorCollisionHandler",
+      "runtime_type": "0x11",
+      "movement_stream": "0x00142000",
+      "animation_stream": "0x00124518",
+      "resource_count": "0x10",
+      "post_initialize": "Installed after the collision source is cleared and before the response palette upload."
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "conclusion": "Both records have direct named consumers and align exactly with the established 20-byte actor-template cadence. No adjacent record is promoted by association alone.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

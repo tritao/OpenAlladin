@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-collision-interaction-targets.json",
+  "templates": [
+    {
+      "address": "0x001B792C",
+      "name": "ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE",
+      "consumer": "Actor_HandleType2DInteraction at 0x001ABE8A",
+      "static_behavior": [
+        "Selected after the source actor is not identified as type 0x2D.",
+        "Initializes the destination actor through Actor_InitializeFromTemplate.",
+        "Carries animation root 0x00122DD8, no movement stream, and resource count 3."
+      ]
+    },
+    {
+      "address": "0x001B7E90",
+      "name": "ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE",
+      "consumer": "ActorType11_ActorCollisionHandler at 0x001AC4E8",
+      "static_behavior": [
+        "Selected after the type-0x11 collision source is cleared and a response slot is prepared.",
+        "Initializes the response through Actor_InitializeFromTemplate before Render_UploadPaletteBand2.",
+        "Carries runtime type 0x11, movement stream 0x00142000, animation root 0x00124518, and resource count 0x10."
+      ]
+    }
+  ],
+  "conclusion": "The two records are direct, named-consumer actor templates and can be promoted as exact 20-byte records. The nearby type-0x12 record at 0x001B7EA4 remains unresolved because its current consumers are inside an unclassified service block.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

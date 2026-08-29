@@ -1305,3 +1305,23 @@
   evidence:
     - level01_upper_frontier_initializer_targets
     - actor_template_grid_xrefs
+
+0x001B792C:
+  name: ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 interaction-response template selected by Actor_HandleType2DInteraction for the non-type-0x2D branch; it has no movement stream, uses animation stream 0x00122DD8, and owns three resources.
+  evidence:
+    - ghidra_actor_handle_type2d_interaction
+    - actor_template_grid_xrefs
+
+0x001B7E90:
+  name: ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x11 collision-response template installed by ActorType11_ActorCollisionHandler after the source actor is cleared; it uses movement stream 0x00142000, animation stream 0x00124518, and owns sixteen resources.
+  evidence:
+    - ghidra_actor_type11_collision_handler
+    - actor_template_grid_xrefs
