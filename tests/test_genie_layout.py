@@ -1257,6 +1257,24 @@ def test_canonical_scene_palette_banks_have_exact_transition_source_extents():
         assert symbol.metadata["type"] == "palette_data"
 
 
+def test_menu_palette_record_bank_has_exact_record_partition():
+    symbols = SymbolStore()
+    bank = symbols.at(0x001296B2, include_ranges=False)
+    assert bank is not None
+    assert bank.name == "MENU_PALETTE_RECORD_BANK_1296B2"
+    assert bank.end == 0x001297F1
+    assert bank.size == 0x140
+    assert bank.metadata["type"] == "palette_data"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    payload = rom[0x001296B2:0x001297F2]
+    assert len(payload) == 10 * 0x20
+    words = [int.from_bytes(payload[offset:offset + 2], "big") for offset in range(0, len(payload), 2)]
+    assert len(words) == 10 * 16
+    assert all(word <= 0x0EEE and word & 0x1111 == 0 for word in words)
+    assert symbols.at(0x001297F2, include_ranges=False).name == "MENU_PALETTE_BAND1_SOURCE"
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(

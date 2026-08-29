@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/menu-palette-record-bank-static-targets.json",
+  "bank": {
+    "address": "0x001296B2",
+    "name": "MENU_PALETTE_RECORD_BANK_1296B2",
+    "range": "0x001296B2-0x001297F1",
+    "bytes": 320,
+    "records": 10,
+    "record_bytes": 32,
+    "staged_by": "Menu_RunOptionsAndSelectNextState at 0x001B3C56"
+  },
+  "evidence": [
+    "The 320-byte range divides exactly into ten 16-word records.",
+    "All 160 decoded words use the 12-bit Genesis CRAM palette shape.",
+    "The range is directly staged by the menu routine and is bounded by independently classified palette sources at 0x00129632 and 0x001297F2."
+  ],
+  "limitation": "The path after the direct LEA does not establish a resolved copy loop or per-record selector; the owner is a conservative palette-record classification, not a claim that all ten records are actively uploaded by the menu path.",
+  "conclusion": "The menu palette-shaped bank is now explicit GRAPHICS evidence with exact record boundaries, while its unresolved transfer semantics remain visible for a later audit.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

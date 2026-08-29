@@ -789,6 +789,16 @@
   description: Four-band level palette source selected by LEVEL_TABLE state 12 through the active-level palette transition service.
   evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
 
+0x001296B2:
+  name: MENU_PALETTE_RECORD_BANK_1296B2
+  type: palette_data
+  size: 0x140
+  confidence: decompiled
+  description: Ten contiguous 16-word Genesis palette records occupying 0x001296B2-0x001297F1. Menu_RunOptionsAndSelectNextState stages the bank base at 0x001B3C56; the following path does not expose a resolved palette-upload loop, so this owner records the exact palette-shaped corpus without assigning individual runtime roles.
+  evidence:
+    - menu_palette_record_bank_static_decompilation
+    - ghidra_menu_palette_bank_load
+
 0x00129152:
   name: INTERACTION_TYPE13_PALETTE_SOURCE
   type: palette_data

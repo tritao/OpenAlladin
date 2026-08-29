@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "focus": {
+    "name": "menu-palette-record-bank",
+    "purpose": "Bound the palette-shaped bank staged by the options-menu path while preserving the unresolved runtime transfer semantics."
+  },
+  "bank": {
+    "address": "0x001296B2",
+    "name": "MENU_PALETTE_RECORD_BANK_1296B2",
+    "range": ["0x001296B2", "0x001297F1"],
+    "size": 320,
+    "record_size": 32,
+    "record_count": 10,
+    "staging_load": "0x001B3C56 Menu_RunOptionsAndSelectNextState: lea (0x001296B2).l,A0"
+  },
+  "format_evidence": {
+    "record_unit": "16 big-endian words",
+    "word_rule": "Every word is a valid 12-bit Genesis CRAM color encoding with zero high nibble and even RGB nibbles.",
+    "known_neighbor_before": "0x00129632-0x001296B1 LEVEL_PALETTE_SOURCE_STATE_12",
+    "known_neighbor_after": "0x001297F2-0x00129811 MENU_PALETTE_BAND1_SOURCE"
+  },
+  "boundary": {
+    "previous_claimed_range": "0x00129632 LEVEL_PALETTE_SOURCE_STATE_12",
+    "next_claimed_range": "0x001297F2 MENU_PALETTE_BAND1_SOURCE",
+    "gap_free": true
+  },
+  "limitations": [
+    "The direct LEA stages A0, but the subsequent path branches over an unresolved 0x001B3C5E-0x001B3C63 fragment and no palette-copy loop consuming A0 is established.",
+    "The bank is therefore classified by exact palette-record shape and menu staging context; individual record themes and active upload timing remain unresolved."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
