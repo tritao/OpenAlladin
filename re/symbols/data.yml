@@ -214,6 +214,20 @@
     - scene_resource_transition_command_interpreter
     - rom_credits_stream_00127E8C
 
+0x0012675E:
+  name: SOUND_TEST_ENTRY_TABLE
+  type: sound_test_entry_table
+  entry_size: 0x10
+  count: 95
+  active_count: 94
+  size: 0x5F0
+  confidence: decompiled
+  description: Fixed 0x10-byte sound-test menu records published by Menu_ResetInitialization through SOUND_TEST_ENTRY_PTR. The first byte is the queued audio command and the remaining bytes are the padded display label; 94 active records run from 0x0012675E through 0x00126D3D, followed by the 0xFF sentinel record at 0x00126D3E-0x00126D4D.
+  evidence:
+    - ghidra_startup_initialization
+    - ghidra_menu_media_subservices
+    - rom_sound_test_entry_table_0012675E
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data

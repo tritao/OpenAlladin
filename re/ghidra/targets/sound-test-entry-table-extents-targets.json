@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-sound-test-entry-table-extents-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "table": {
+    "address": "0x0012675E",
+    "name": "SOUND_TEST_ENTRY_TABLE",
+    "entry_size": 16,
+    "active_count": 94,
+    "sentinel_count": 1,
+    "count": 95,
+    "range": ["0x0012675E", "0x00126D4D"],
+    "sentinel": {
+      "address": "0x00126D3E",
+      "byte": "0xFF",
+      "range": ["0x00126D3E", "0x00126D4D"]
+    }
+  },
+  "consumers": [
+    "0x001B4436 SoundTest_RunScreen",
+    "0x001B45CC SoundTest_SelectPreviousEntry",
+    "0x001B45D8 SoundTest_SelectNextEntry",
+    "0x001B45F4 SoundTest_PlaySelectedEntry"
+  ],
+  "evidence": [
+    "Startup/reset publishes SOUND_TEST_ENTRY_PTR=0x0012675E.",
+    "Previous/next selection moves the pointer by exactly 0x10 bytes and rejects a first-byte 0xFF sentinel.",
+    "The ROM contains 94 consecutive command/label records followed by one complete 0xFF sentinel record.",
+    "Every record occupies exactly 16 bytes and ends with a NUL-padded display label."
+  ],
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled"
+}

@@ -293,6 +293,25 @@ def test_layout_uses_scene_resource_stream_extents(tmp_path):
     assert stream.name == "SCENE_TRANSITION_RESOURCE_STREAM_STATE_00"
 
 
+def test_layout_classifies_sound_test_entry_table_as_scene_data(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    (tmp_path / "re/symbols/data.yml").write_text(
+        """
+0x00000020:
+  name: SOUND_TEST_ENTRY_TABLE
+  type: sound_test_entry_table
+  size: 16
+""",
+        encoding="utf-8",
+    )
+    database_root = _write_database(tmp_path)
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path, include_artifacts=False)
+    table = layout.at(0x20)
+    assert table is not None
+    assert table.layout_class == "SCENE_TABLE"
+
+
 def test_canonical_scene_resource_presentation_stream_ranges_are_exact_and_adjacent():
     symbols = SymbolStore()
     expected = (
@@ -326,6 +345,19 @@ def test_canonical_credits_stream_has_exact_interpreter_terminal():
     assert symbol.size == 0xFB9
     assert symbol.end == 0x00128E44
     assert symbol.metadata["type"] == "scene_resource_stream"
+
+
+def test_canonical_sound_test_entry_table_has_complete_sentinel_record():
+    symbols = SymbolStore()
+    symbol = symbols.at(0x0012675E, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "SOUND_TEST_ENTRY_TABLE"
+    assert symbol.size == 0x5F0
+    assert symbol.end == 0x00126D4D
+    assert symbol.metadata["type"] == "sound_test_entry_table"
+    assert symbol.metadata["entry_size"] == 0x10
+    assert symbol.metadata["count"] == 95
+    assert symbol.metadata["active_count"] == 94
 
 
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):

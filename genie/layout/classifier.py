@@ -31,7 +31,11 @@ def _class_for_symbol(symbol: Symbol) -> str:
         return "GRAPHICS"
     if name == "LEVEL_TABLE":
         return "SCENE_TABLE"
-    if "scene_resource" in symbol_type or "scene_transition" in symbol_type:
+    if (
+        "scene_resource" in symbol_type
+        or "scene_transition" in symbol_type
+        or symbol_type == "sound_test_entry_table"
+    ):
         return "SCENE_TABLE"
     if "terrain" in symbol_type or "collision_profile" in symbol_type:
         return "TERRAIN_DATA"
