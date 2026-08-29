@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include "animation.hpp"
+#include "actor_animation_system.hpp"
 #include "actor_lifecycle.hpp"
 #include "camera.hpp"
 #include "collision.hpp"
@@ -106,8 +107,6 @@ private:
     void load_actor_timeline(const std::string& path);
     void apply_actor_timeline(int frame);
     void update_actor_movement();
-    void update_terminal_actor_motion(ActorState& actor);
-    void update_actor_animations();
     void update_level_events();
     void start_level_event_stream_after_exit();
     void update_scene_resources();
@@ -122,15 +121,6 @@ private:
         const AnimationContext& context,
         bool response_dynamic_handoff,
         bool bounce_response_finished
-    );
-    AnimationServices animation_services(
-        ActorIndex source_actor,
-        bool defer_player_spawns = false,
-        bool defer_mode3_spawns = false
-    );
-    std::optional<ActorIndex> spawn_animation_actor(
-        ActorIndex source_actor,
-        const F5Command& command
     );
     void flush_deferred_animation_spawn();
     ActorState actor_from_template(std::uint32_t template_address) const;
@@ -159,6 +149,7 @@ private:
     ActorSystem& actors_;
     ActorLifecycleSystem actor_lifecycle_;
     CollisionSystem collisions_;
+    ActorAnimationSystem actor_animation_system_;
     SceneSystem scene_;
     SceneResourceVm scene_resources_;
     GenesisRenderModel render_model_;
@@ -167,7 +158,6 @@ private:
     SpriteDatabase sprites_;
     PlayerAnimationVm animation_;
     MovementVm movement_vm_;
-    std::array<PlayerAnimationVm, 32> actor_animations_{};
     LevelEventSystem level_event_system_;
     CameraSystem camera_system_;
     FrameScheduler scheduler_;

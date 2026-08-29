@@ -173,6 +173,8 @@ openaladdin_enable_warnings(openaladdin_audio_sdl)
 add_library(openaladdin_engine STATIC
     src/actor.cpp
     src/actor.hpp
+    src/actor_animation_system.cpp
+    src/actor_animation_system.hpp
     src/actor_lifecycle.cpp
     src/actor_lifecycle.hpp
     src/camera.cpp
