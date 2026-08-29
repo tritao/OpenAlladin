@@ -4,6 +4,7 @@
 
 #include "animation.hpp"
 #include "actor_lifecycle.hpp"
+#include "collision.hpp"
 #include "game_state.hpp"
 #include "movement.hpp"
 #include "player_terrain.hpp"
@@ -98,14 +99,6 @@ public:
     const LevelDescriptor& level_descriptor() const { return level_.descriptor(); }
 
 private:
-    struct CollisionBox {
-        bool valid = false;
-        int left = 0;
-        int top = 0;
-        int right = 0;
-        int bottom = 0;
-    };
-
     void integrate_motion();
     void update_terrain_input(const InputState& input);
     void update_terrain_connector_response();
@@ -154,24 +147,10 @@ private:
     // ROM uses it at four distinct causal boundaries in the frame loop.
     void publish_player_world_coordinates();
     void sync_player_actor();
-    void update_actor_actor_collisions();
     void record_scheduler_phase(const char* name, std::uint32_t rom_entry_pc = 0);
     void collect_scheduler_writer_pcs();
     void render_vdp_checkpoint();
-    void update_actor_interactions(const InputState& input, bool was_grounded);
     AnimationContext player_animation_context(bool grounded);
-    CollisionBox read_collision_box(
-        std::uint32_t frame_pointer,
-        int origin_x,
-        int origin_y,
-        bool facing_left
-    ) const;
-    CollisionBox read_collision_hitbox(
-        std::uint32_t frame_pointer,
-        int origin_x,
-        int origin_y,
-        bool facing_left
-    ) const;
     SpritePose sprite_pose() const;
     int visual_x() const;
     int visual_y() const;
@@ -183,6 +162,7 @@ private:
     InteractionMap& interaction_map_;
     ActorSystem& actors_;
     ActorLifecycleSystem actor_lifecycle_;
+    CollisionSystem collisions_;
     SceneSystem scene_;
     PlayerTerrainSystem terrain_;
     SpriteDatabase sprites_;

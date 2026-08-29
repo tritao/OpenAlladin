@@ -360,6 +360,7 @@ Engine::Engine()
       interaction_map_(state_.interactions),
       actors_(state_.actors),
       actor_lifecycle_(actors_),
+      collisions_(actor_lifecycle_),
       random_state_(state_.random.value),
       frame_(state_.frame.number),
       frame_phase_(state_.frame.phase) {
@@ -413,6 +414,7 @@ void Engine::load(
         rom_bytes_.clear();
     }
     actor_lifecycle_.bind_rom(rom_bytes_);
+    collisions_.bind_rom(rom_bytes_);
     scene_.load_rom_bytes(rom_bytes_);
     scene_.reset(level_.scene_state());
     actors_.set_snapshot_mode(!actor_records_path.empty() || !actor_timeline_path.empty());
@@ -1167,22 +1169,20 @@ void Engine::update_actor_animations() {
         // the actor animation pass; arming the selector when the record is
         // merely present fires too early while the player is still braking,
         // and can select the hurt/stop stream on the wrong frame.
-        const CollisionBox player_interaction_box = read_collision_hitbox(
+        const CollisionBox player_interaction_box = collisions_.hitbox(
             animation_.frame_pointer(),
             player_world_x(),
             player_world_y(),
             animation_.facing_left());
-        const CollisionBox actor_interaction_box = read_collision_hitbox(
+        const CollisionBox actor_interaction_box = collisions_.hitbox(
             actor.frame_ptr,
             static_cast<int>(actor.x),
             static_cast<int>(actor.y),
             actor.facing_x_flip != 0);
-        const bool surface_boxes_overlap = player_interaction_box.valid
-            && actor_interaction_box.valid
-            && actor_interaction_box.left <= player_interaction_box.right
-            && actor_interaction_box.top <= player_interaction_box.bottom
-            && player_interaction_box.left < actor_interaction_box.right
-            && player_interaction_box.top < actor_interaction_box.bottom;
+        const bool surface_boxes_overlap = CollisionSystem::overlaps(
+            player_interaction_box,
+            actor_interaction_box
+        );
         if (animation_state.type == 0x7B
             && previous_type == kTerrainSpawnActorType
             && player_.animation_selector.interaction_lock == 0
@@ -1271,35 +1271,16 @@ void Engine::update_bounce_actor_interaction() {
         return;
     }
 
-    const CollisionBox player_box = read_collision_hitbox(
-        animation_.frame_pointer(),
-        player_world_x(),
-        player_world_y(),
-        animation_.facing_left());
-    if (!player_box.valid) return;
-
-    const auto boxes_overlap = [](const CollisionBox& first, const CollisionBox& second) {
-        const int first_left = std::min(first.left, first.right);
-        const int first_right = std::max(first.left, first.right);
-        const int second_left = std::min(second.left, second.right);
-        const int second_right = std::max(second.left, second.right);
-        const int first_top = std::min(first.top, first.bottom);
-        const int first_bottom = std::max(first.top, first.bottom);
-        const int second_top = std::min(second.top, second.bottom);
-        const int second_bottom = std::max(second.top, second.bottom);
-        return first_left <= second_right
-            && first_top <= second_bottom
-            && second_left < first_right
-            && second_top < first_bottom;
-    };
     for (ActorState& actor : actors_) {
-        if (actor.type != kActorBounceType || actor.frame_ptr == 0) continue;
-        const CollisionBox actor_box = read_collision_hitbox(
-            actor.frame_ptr,
-            static_cast<int>(actor.x),
-            static_cast<int>(actor.y),
-            actor.facing_x_flip != 0);
-        if (!actor_box.valid || !boxes_overlap(player_box, actor_box)) continue;
+        const std::size_t slot = static_cast<std::size_t>(&actor - actors_.data());
+        if (actor.type != kActorBounceType
+            || !collisions_.player_actor_overlap(
+                state_,
+                animation_.frame_pointer(),
+                animation_.facing_left(),
+                slot)) {
+            continue;
+        }
 
         // The bounce actor is tested after Player_IntegrateMotion. That is
         // why contact is visible on the first boundary whose descending
@@ -1417,148 +1398,6 @@ std::vector<std::size_t> Engine::apply_animation_spawns(
     return spawned_slots;
 }
 
-void Engine::update_actor_actor_collisions() {
-    if (rom_bytes_.empty()) return;
-
-    // FUN_001ABD7E starts at FF84B2 (record index 24) and scans seven
-    // auxiliary records (slots 24..30) as collision sources. Its target
-    // cursor starts at FF7E82 (record index 1) and scans slots 1..24. This
-    // is deliberately separate from the player/actor pass:
-    // the player sword is itself an actor by the time the guard handler runs.
-    const auto terminalize = [this](ActorIndex slot, std::uint32_t animation_stream, std::uint8_t frames) {
-        ActorState terminal = actors_[slot];
-        terminal.type = kActorTerminalType;
-        const std::uint32_t template_address = animation_stream == kActorDeathAnimationStream
-            ? kActorDeathTemplate
-            : kActorSwordDeathTemplate;
-        const ActorState template_record = actor_from_template(template_address);
-        terminal.sprite_attribute = template_record.sprite_attribute;
-        terminal.resource_count = template_record.resource_count;
-        terminal.movement_pc = 0;
-        terminal.animation_pc = animation_stream;
-        terminal.frame_ptr = 0;
-        terminal.flags = 0;
-        terminal.facing_x_flip = 0;
-        terminal.facing_y_flip = 0;
-        terminal.terminal_timer = frames;
-        (void)actor_lifecycle_.install(slot, terminal);
-    };
-
-    for (std::size_t source_slot = 24; source_slot <= 30; ++source_slot) {
-        ActorState& source = actors_[source_slot];
-        if (source.type == 0 || source.type >= 0x83 || source.frame_ptr == 0) {
-            continue;
-        }
-
-        // The actor-to-actor routine does not consult either facing byte.
-        // It adds the raw +2..+5 frame bytes to each actor origin. Do not
-        // substitute the player-facing collision helper here: left-facing
-        // guard records intentionally have reversed displayed bounds, while
-        // this ROM pass compares the raw unsigned values.
-        const CollisionBox source_box = read_collision_box(
-            source.frame_ptr,
-            static_cast<int>(source.x),
-            static_cast<int>(source.y),
-            false
-        );
-        if (!source_box.valid) continue;
-
-        // The no-target sword edge belongs to this one ROM invocation. It
-        // used to be emulated by a pre-motion call and a second normal pass.
-        if (source.type == kActorSwordType && !actors_.host_meta(source_slot).spawned_by_apple
-            && source.animation_pc == 0x00122B5A && source.flags == 0x08) {
-            bool overlaps_target = false;
-            for (std::size_t target_slot = 1; target_slot <= 24; ++target_slot) {
-                const ActorState& target = actors_[target_slot];
-                if (target.type == 0 || target.type >= 0x32 || target.frame_ptr == 0) {
-                    continue;
-                }
-                const CollisionBox target_box = read_collision_box(
-                    target.frame_ptr,
-                    static_cast<int>(target.x),
-                    static_cast<int>(target.y),
-                    false
-                );
-                if (target_box.valid
-                    && target_box.left <= source_box.right
-                    && target_box.top <= source_box.bottom
-                    && source_box.left < target_box.right
-                    && source_box.top < target_box.bottom) {
-                    overlaps_target = true;
-                    break;
-                }
-            }
-            if (!overlaps_target) {
-                // The interaction pass consumes one timer tick on the same
-                // frame that installs this terminal record.
-                terminalize(source_slot, kActorSwordDeathAnimationStream,
-                    kActorSwordTerminalFrames + 1);
-                continue;
-            }
-        }
-
-        for (std::size_t target_slot = 1; target_slot <= 24; ++target_slot) {
-            ActorState& target = actors_[target_slot];
-            if (target.type == 0 || target.type >= 0x32 || target.frame_ptr == 0) {
-                continue;
-            }
-            const CollisionBox target_box = read_collision_box(
-                target.frame_ptr,
-                static_cast<int>(target.x),
-                static_cast<int>(target.y),
-                false
-            );
-            if (!target_box.valid) continue;
-
-            // This is the four unsigned half-open comparisons in the
-            // decompiled 0x001ABD7E routine, written in terms of the same
-            // raw boxes for readability.
-            const bool overlap = target_box.left <= source_box.right
-                && target_box.top <= source_box.bottom
-                && source_box.left < target_box.right
-                && source_box.top < target_box.bottom;
-            if (!overlap) continue;
-
-            // The live guard encounter dispatches target type 0x0A through
-            // the actor-to-actor table and replaces both the guard and its
-            // temporary sword actor with the shared terminal type. The two
-            // streams are distinct in the ROM (0x122FA2 vs 0x122DD8), and
-            // their cleanup lifetimes are distinct as well: 43 frames for
-            // the guard, 19 for the one-frame sword actor.
-            if (source.type == kActorSwordType && !actors_.host_meta(source_slot).spawned_by_apple
-                && target.type == kActorGuardType) {
-                terminalize(target_slot, kActorDeathAnimationStream, kActorDeathFrames);
-                terminalize(source_slot, kActorSwordDeathAnimationStream, kActorSwordTerminalFrames);
-            } else if (source.type == 0x7F && target.type == 0x1D) {
-                // The type-0x7F auxiliary stream is the transient child
-                // created by the bounce actor's F5 command.  ROM handler
-                // 0x001AC350 is selected for the receiving type-0x1D
-                // record. It calls the common 0x001B3032 RNG helper before
-                // the cleanup/reinitialization chain (the resulting folded
-                // byte only affects the ROM's internal branch here), then
-                // clears that source into the 0x1B792C terminal template and
-                // reinitializes the type-0x1D target from 0x1B7940,
-                // preserving both actors' world coordinates.
-                random_state_ = random_state_ * 13U + 7U;
-                const std::uint16_t source_x = source.x;
-                const std::uint16_t source_y = source.y;
-                ActorState source_replacement = initialize_actor_from_template(source, 0x001B792C);
-                source_replacement.x = source_x;
-                source_replacement.y = source_y;
-                source_replacement.facing_x_flip = 0xFF;
-                (void)actor_lifecycle_.install(source_slot, source_replacement);
-
-                const std::uint16_t target_x = target.x;
-                const std::uint16_t target_y = target.y;
-                ActorState target_replacement = initialize_actor_from_template(target, 0x001B7940);
-                target_replacement.x = target_x;
-                target_replacement.y = target_y;
-                (void)actor_lifecycle_.install(target_slot, target_replacement);
-            }
-        }
-    }
-}
-
 void Engine::load_actor_records(const std::string& path) {
     std::ifstream input(path);
     if (!input) {
@@ -1619,183 +1458,6 @@ void Engine::load_actor_records(const std::string& path) {
         actor.movement_word_1a = static_cast<std::int16_t>(parse(movement_word_1a));
         actor.sprite_attribute = static_cast<std::uint16_t>(parse(sprite_attribute));
     }
-}
-
-Engine::CollisionBox Engine::read_collision_box(
-    std::uint32_t frame_pointer,
-    int origin_x,
-    int origin_y,
-    bool facing_left
-) const {
-    CollisionBox box;
-    if (frame_pointer == 0 || static_cast<std::size_t>(frame_pointer) + 5 >= rom_bytes_.size()) {
-        return box;
-    }
-
-    const auto byte = [&](std::size_t offset) {
-        return rom_bytes_[static_cast<std::size_t>(frame_pointer) + offset];
-    };
-    const auto signed_byte = [](std::uint8_t value) {
-        return static_cast<int>(static_cast<std::int8_t>(value));
-    };
-
-    // FUN_001ABB40 reads the four bounds from the current animation frame
-    // record at +2..+5. Facing uses signed mirrored offsets exactly as the
-    // 68000 byte loads do; the unmirrored path uses the raw unsigned bytes.
-    box.top = origin_y + byte(3);
-    box.bottom = origin_y + byte(5);
-    if (!facing_left) {
-        box.left = origin_x + byte(2);
-        box.right = origin_x + byte(4);
-    } else {
-        // The mirrored path subtracts the signed frame offsets from the
-        // origin. Keep the arithmetic widened; wrapping the negated byte
-        // turns the guard's right bound at 0x4B8 into a false far-right box.
-        box.left = origin_x - signed_byte(byte(4));
-        box.right = origin_x - signed_byte(byte(2));
-    }
-    box.valid = true;
-    return box;
-}
-
-Engine::CollisionBox Engine::read_collision_hitbox(
-    std::uint32_t frame_pointer,
-    int origin_x,
-    int origin_y,
-    bool facing_left
-) const {
-    CollisionBox box;
-    if (frame_pointer == 0 || static_cast<std::size_t>(frame_pointer) + 5 >= rom_bytes_.size()) {
-        return box;
-    }
-
-    const auto byte = [&](std::size_t offset) {
-        return rom_bytes_[static_cast<std::size_t>(frame_pointer) + offset];
-    };
-    if (!facing_left) {
-        box.left = origin_x + byte(2);
-        box.right = origin_x + byte(4);
-    } else {
-        // Actor_PlayerCollisionPass negates the signed frame byte and stores
-        // the result in an unsigned byte before adding the actor origin.
-        // That is distinct from the signed display bounds emitted by
-        // read_collision_box: a mirrored frame's hit range stays narrow and
-        // moves to the actor's facing side.
-        const auto negated_byte = [](std::uint8_t value) {
-            return static_cast<int>(static_cast<std::uint8_t>(
-                -static_cast<int>(static_cast<std::int8_t>(value))));
-        };
-        box.left = origin_x + negated_byte(byte(4));
-        box.right = origin_x + negated_byte(byte(2));
-    }
-    box.top = origin_y + byte(3);
-    box.bottom = origin_y + byte(5);
-    box.valid = true;
-    return box;
-}
-
-void Engine::update_actor_interactions(const InputState& input, bool was_grounded) {
-    const int world_x = player_world_x();
-    const int world_y = player_world_y();
-    const auto boxes_overlap = [](const CollisionBox& first, const CollisionBox& second) {
-        const int first_left = std::min(first.left, first.right);
-        const int first_right = std::max(first.left, first.right);
-        const int second_left = std::min(second.left, second.right);
-        const int second_right = std::max(second.left, second.right);
-        const int first_top = std::min(first.top, first.bottom);
-        const int first_bottom = std::max(first.top, first.bottom);
-        const int second_top = std::min(second.top, second.bottom);
-        const int second_bottom = std::max(second.top, second.bottom);
-        return first_left <= second_right
-            && first_top <= second_bottom
-            && second_left < first_right
-            && second_top < first_bottom;
-    };
-    const auto strict_boxes_overlap = [](const CollisionBox& first, const CollisionBox& second) {
-        const int first_left = std::min(first.left, first.right);
-        const int first_right = std::max(first.left, first.right);
-        const int second_left = std::min(second.left, second.right);
-        const int second_right = std::max(second.left, second.right);
-        const int first_top = std::min(first.top, first.bottom);
-        const int first_bottom = std::max(first.top, first.bottom);
-        const int second_top = std::min(second.top, second.bottom);
-        const int second_bottom = std::max(second.top, second.bottom);
-        return first_left < second_right
-            && first_top < second_bottom
-            && second_left < first_right
-            && second_top < first_bottom;
-    };
-
-    for (std::size_t slot = 0; slot < actors_.size(); ++slot) {
-        ActorState& actor = actors_[slot];
-        if (actor.terminal_timer != 0) {
-            --actor.terminal_timer;
-            if (actor.terminal_timer == 0) {
-                actor_lifecycle_.retire(slot);
-            }
-            continue;
-        }
-        if (actor.type == 0) continue;
-
-        // Player/actor collision entry 0x001ABB40 dispatches the actor type
-        // after the player and actor rectangles overlap. Both rectangles are
-        // addressed by the current animation frame pointer at actor +0x14;
-        // this is the same pointer the animation VM writes before the next
-        // collision pass. The fixed-ROM guard handler then replaces type
-        // 0x0A in place with the shared type-0x84 terminal template.
-        const bool sword_active = was_grounded
-            && (input.attack_pressed || player_.attack_timer != 0);
-        const CollisionBox player_box = read_collision_hitbox(
-            animation_.frame_pointer(),
-            world_x,
-            world_y,
-            animation_.facing_left()
-        );
-        const CollisionBox actor_box = read_collision_hitbox(
-            actor.frame_ptr,
-            static_cast<int>(actor.x),
-            static_cast<int>(actor.y),
-            actor.facing_x_flip != 0
-        );
-        const bool overlap = player_box.valid && actor_box.valid
-            && boxes_overlap(player_box, actor_box);
-        const bool guard_overlap = actor.type == kActorGuardType && overlap;
-        if (sword_active && guard_overlap) {
-            ActorState terminal = actor;
-            terminal.type = kActorTerminalType;
-            terminal.sprite_attribute = actor_from_template(kActorDeathTemplate).sprite_attribute;
-            terminal.movement_pc = 0;
-            terminal.animation_pc = kActorDeathAnimationStream;
-            terminal.frame_ptr = 0;
-            terminal.flags = 0;
-            terminal.terminal_timer = kActorDeathFrames;
-            (void)actor_lifecycle_.install(slot, terminal);
-        }
-        if (actor.type == 0x2D && overlap
-            && !bounce_response_follow_active_) {
-            // Actor_PlayerCollisionPass dispatches type 0x2D to
-            // ActorType2D_PlayerCollisionHandler. Its FFF0D8==0 path only
-            // clears the actor type; the movement/frame words remain visible
-            // in the boundary trace. Player_ProcessInteractionState then
-            // arms the same 0x28 selector/camera delay used by the ROM.
-            actor_lifecycle_.retire(slot);
-            player_.animation_selector.response_state_101 = 0;
-            player_.animation_selector.interaction_lock = 0x28;
-            camera_.update_delay = 7;
-            player_collision_interaction_pending_ = true;
-        }
-        if (actor.type == 0x40 && strict_boxes_overlap(player_box, actor_box)) {
-            // Actor type 0x40 dispatches to ROM helper 0x001AF468. With the
-            // Level-01 counter gate clear, that helper releases the current
-            // record through 0x001ABE6E and reinitializes it from template
-            // 0x001B7ABC. The common actor VM then consumes the template's
-            // 0x00122F80 cursor on this same boundary, publishing the
-            // observed type-0x84/0x00122F8A terminal frame.
-            const ActorState replacement = initialize_actor_from_template(actor, 0x001B7ABC);
-            (void)actor_lifecycle_.install(slot, replacement);
-        }
-    }
-
 }
 
 void Engine::reset() {
@@ -3077,7 +2739,17 @@ void Engine::update(const InputState& input) {
         }
     }
     record_scheduler_phase("player_actor_interaction", 0x001ABB40);
-    update_actor_interactions(input, was_grounded);
+    const CollisionEffects collision_effects = collisions_.player_actor(
+        state_,
+        PlayerCollisionInput{
+            animation_.frame_pointer(),
+            animation_.facing_left(),
+            was_grounded && (input.attack_pressed || player_.attack_timer != 0),
+            bounce_response_follow_active_
+        }
+    );
+    player_collision_interaction_pending_ =
+        collision_effects.player_collision_interaction_pending;
     record_scheduler_phase("terrain_resolution", 0x001B1E38);
     resolve_terrain(previous_world_y);
     // The camera's tile reference is consumed before the actor traversal in
@@ -3536,7 +3208,7 @@ void Engine::update(const InputState& input) {
     // sword terminal edge is handled inside this one source/target scan;
     // there is deliberately no pre-motion companion call.
     record_scheduler_phase("actor_collision", 0x001ABD7E);
-    update_actor_actor_collisions();
+    collisions_.actor_actor(state_);
     record_scheduler_phase("level_exit_transition", 0x001A8F0C);
     (void) scene_.service_level_exit(
         player_world_y(),
@@ -3653,33 +3325,16 @@ void Engine::update(const InputState& input) {
     // this is why the interaction first becomes visible when the response
     // stream publishes frame 0x001EA062, even though the same actor was
     // already present at the earlier wall-response boundary.
-    bool surface_actor_collision = false;
-    if (!stable_terrain_handler_fixture && animation_.rom_loaded()) {
-        const CollisionBox player_interaction_box = read_collision_hitbox(
+    const bool surface_actor_collision = !stable_terrain_handler_fixture
+        && animation_.rom_loaded()
+        && collisions_.any_player_actor_overlap(
+            state_,
             animation_.frame_pointer(),
-            player_world_x(),
-            player_world_y(),
-            animation_.facing_left());
-        if (player_interaction_box.valid) {
-            for (std::size_t slot = 1; slot <= 24 && slot < actors_.size(); ++slot) {
-                const ActorState& actor = actors_[slot];
-                if (actor.type != 0x7B || actor.frame_ptr == 0) continue;
-                const CollisionBox actor_interaction_box = read_collision_hitbox(
-                    actor.frame_ptr,
-                    static_cast<int>(actor.x),
-                    static_cast<int>(actor.y),
-                    actor.facing_x_flip != 0);
-                if (!actor_interaction_box.valid) continue;
-                if (actor_interaction_box.left <= player_interaction_box.right
-                    && actor_interaction_box.top <= player_interaction_box.bottom
-                    && player_interaction_box.left < actor_interaction_box.right
-                    && player_interaction_box.top < actor_interaction_box.bottom) {
-                    surface_actor_collision = true;
-                    break;
-                }
-            }
-        }
-    }
+            animation_.facing_left(),
+            0x7B,
+            1,
+            24
+        );
     if (surface_actor_collision
         && player_.animation_selector.interaction_lock == 0) {
         AnimationContext collision_selector_context =
@@ -3909,7 +3564,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
         }
         return result;
     };
-    const CollisionBox player_box = read_collision_box(
+    const CollisionBox player_box = collisions_.frame_bounds(
         animation_.frame_pointer(),
         player_world_x(),
         player_world_y(),
@@ -4202,7 +3857,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
         const auto resource_allocation = actors_.resource_allocation(slot);
         if (!first_actor) output << ",";
         first_actor = false;
-        const CollisionBox actor_box = read_collision_box(
+        const CollisionBox actor_box = collisions_.frame_bounds(
             actor.frame_ptr,
             static_cast<int>(actor.x),
             static_cast<int>(actor.y),

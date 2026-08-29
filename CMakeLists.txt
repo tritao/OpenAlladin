@@ -175,6 +175,8 @@ add_library(openaladdin_engine STATIC
     src/actor.hpp
     src/actor_lifecycle.cpp
     src/actor_lifecycle.hpp
+    src/collision.cpp
+    src/collision.hpp
     src/engine.cpp
     src/engine.hpp
     src/level.cpp
@@ -252,6 +254,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     target_compile_features(actor_system_test PRIVATE cxx_std_20)
     openaladdin_enable_warnings(actor_system_test)
     openaladdin_enable_test_assertions(actor_system_test)
+
+    add_executable(collision_system_test tests/collision_system.cpp)
+    target_link_libraries(collision_system_test PRIVATE openaladdin_engine)
+    target_compile_features(collision_system_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(collision_system_test)
+    openaladdin_enable_test_assertions(collision_system_test)
 
     add_executable(checkpoint_state_test tests/checkpoint_state.cpp)
     target_link_libraries(checkpoint_state_test PRIVATE openaladdin_engine)
@@ -335,6 +343,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME actor_system COMMAND actor_system_test)
     set_tests_properties(actor_system PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME collision_system COMMAND collision_system_test)
+    set_tests_properties(collision_system PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME checkpoint_state COMMAND checkpoint_state_test)
