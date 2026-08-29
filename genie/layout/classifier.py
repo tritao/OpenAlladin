@@ -33,6 +33,8 @@ def _class_for_symbol(symbol: Symbol) -> str:
         return "SCENE_TABLE"
     if "scene_resource" in symbol_type or "scene_transition" in symbol_type:
         return "SCENE_TABLE"
+    if "terrain" in symbol_type or "collision_profile" in symbol_type:
+        return "TERRAIN_DATA"
     if "graphics" in symbol_type or "sprite" in symbol_type:
         return "GRAPHICS"
     if symbol_type == "rom_pointer_table":

@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": {
+    "landing_resolver": "build/re/full-rom/decompile/001AD7B4.txt",
+    "actor_collision": "build/re/full-rom/decompile/001ADB5C.txt",
+    "difficulty_renderer": "build/re/full-rom/decompile/001B434E.txt",
+    "instructions": "build/re/full-rom/instructions.json"
+  },
+  "terrain_profile_table": {
+    "range": "0x00002FD2-0x00003FD1",
+    "size": 4096,
+    "shape": "256 entries x 16 horizontal subcell bytes",
+    "consumers": [
+      "Player_TerrainLandingResolver",
+      "Actor_TerrainCollisionLoop"
+    ],
+    "contract": "Both consumers load a terrain tile ID as an unsigned byte, multiply it by 0x10, add a horizontal subcell offset, mask the selected byte's low six bits, and use the result to decide/support terrain contact."
+  },
+  "difficulty_label_data": {
+    "pointer_table": "0x00003FD2-0x00003FDD",
+    "streams": "0x00003FDE-0x00003FFF",
+    "pointers": [
+      { "address": "0x00003FD2", "target": "0x00003FDE", "label": "PRACTICE" },
+      { "address": "0x00003FD6", "target": "0x00003FE9", "label": "NORMAL" },
+      { "address": "0x00003FDA", "target": "0x00003FF4", "label": "DIFFICULT" }
+    ]
+  },
+  "conclusion": "The largest remaining early-ROM gap is a terrain collision-profile corpus, not opaque padding: two independent terrain consumers use the same complete 256x16 lookup geometry. The following 12 bytes and 34 bytes are the difficulty-label pointer table and its three scene-resource text streams, respectively."
+}

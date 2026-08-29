@@ -35,6 +35,42 @@
     - ghidra_scene_resource_command_stream_consumer
     - scene_transition_resource_stream_static_v1
 
+0x00002FD2:
+  name: TERRAIN_TILE_COLLISION_PROFILE_TABLE
+  type: terrain_collision_profile_table
+  entry_size: 0x10
+  count: 0x100
+  size: 0x1000
+  confidence: decompiled
+  description: Complete 256-entry terrain collision-profile table. Player_TerrainLandingResolver and Actor_TerrainCollisionLoop select one 16-byte profile with an unsigned terrain tile ID and then index its horizontal subcell; the low six bits are the collision-height/result value and the remaining bits carry profile flags used by the same routines.
+  evidence:
+    - ghidra_decompile_001AD7B4
+    - ghidra_decompile_001ADB5C
+    - terrain_collision_profile_table_static_v1
+
+0x00003FD2:
+  name: MENU_DIFFICULTY_LABEL_POINTER_TABLE
+  type: rom_pointer_table
+  entry_size: 4
+  count: 3
+  size: 0x0C
+  confidence: decompiled
+  description: Three-entry pointer table indexed by GAME_DIFFICULTY_MODE in Menu_RenderDifficultyLabel. The pointers select the practice, normal, and difficult scene-resource label streams at 0x00003FDE, 0x00003FE9, and 0x00003FF4.
+  evidence:
+    - ghidra_decompile_001B434E
+    - difficulty_label_pointer_table_static_v1
+
+0x00003FDE:
+  name: MENU_DIFFICULTY_LABEL_STREAMS
+  type: text_data
+  size: 0x22
+  confidence: decompiled
+  description: Three compact scene-resource text streams selected through MENU_DIFFICULTY_LABEL_POINTER_TABLE. Each begins with a line-feed command, contains one difficulty label, and terminates with NUL; the final stream is followed by one aligned zero byte at 0x00003FFF.
+  evidence:
+    - ghidra_decompile_001B434E
+    - difficulty_label_stream_terminators
+    - difficulty_label_pointer_table_static_v1
+
 0x00004B1C:
   name: SCENE_TRANSITION_RESOURCE_STREAM_STATE_00
   type: scene_resource_stream

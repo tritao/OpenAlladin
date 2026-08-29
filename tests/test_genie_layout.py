@@ -171,6 +171,28 @@ def test_layout_uses_canonical_padding_ranges(tmp_path):
     assert layout.at(0x30).layout_class == "PADDING"
 
 
+def test_layout_uses_canonical_terrain_collision_profile_range(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    (tmp_path / "re/symbols/data.yml").write_text(
+        """
+0x00000020:
+  name: TERRAIN_TILE_COLLISION_PROFILE_TABLE
+  type: terrain_collision_profile_table
+  entry_size: 16
+  count: 256
+  size: 4096
+""",
+        encoding="utf-8",
+    )
+    database_root = _write_database(tmp_path, rom_size=0x1100)
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path, include_artifacts=False)
+    item = layout.at(0x101F)
+    assert item is not None
+    assert item.layout_class == "TERRAIN_DATA"
+    assert item.start == 0x20 and item.end == 0x101F
+
+
 def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)

@@ -25,6 +25,7 @@ _CLASS_PREFIX = {
     "ANIMATION_STREAM": "AnimationStream",
     "MOVEMENT_STREAM": "MovementStream",
     "LEVEL_DATA": "LevelData",
+    "TERRAIN_DATA": "TerrainData",
     "ACTOR_TEMPLATE": "ActorTemplate",
     "SCENE_TABLE": "SceneTable",
     "AUDIO_DATA": "AudioData",

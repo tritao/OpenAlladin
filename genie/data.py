@@ -28,6 +28,7 @@ SEMANTIC_LAYOUT_CLASSES = {
     "POINTER_TABLE": "pointer-table",
     "JUMP_TABLE": "jump-table",
     "LEVEL_DATA": "level-data",
+    "TERRAIN_DATA": "terrain-data",
     "SCENE_TABLE": "scene-table",
     "AUDIO_DATA": "audio-data",
     "GRAPHICS": "graphics",
