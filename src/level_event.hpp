@@ -32,6 +32,10 @@ public:
     void bind_rom(const std::vector<std::uint8_t>& rom) { rom_ = &rom; }
     void reset();
     void start(RomAddress stream);
+    // Restore the live cursor/tick pair at a checkpoint boundary. The event
+    // stream is ROM-owned, so only the address and elapsed byte are runtime
+    // state; bind_rom() must have been called before the next update.
+    void restore(RomAddress stream, std::uint8_t tick);
     void update(GameState& state, LevelEventServices& services);
 
     bool active() const { return cursor_.present(); }

@@ -16,6 +16,12 @@ void LevelEventVm::start(RomAddress stream) {
     faulted_ = false;
 }
 
+void LevelEventVm::restore(RomAddress stream, std::uint8_t tick) {
+    cursor_ = stream;
+    tick_ = stream.present() ? tick : 0;
+    faulted_ = false;
+}
+
 bool LevelEventVm::can_read(std::size_t count) const {
     if (rom_ == nullptr) return false;
     const auto offset = static_cast<std::size_t>(cursor_.value);

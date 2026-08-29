@@ -6,6 +6,7 @@
 #include "actor_lifecycle.hpp"
 #include "collision.hpp"
 #include "game_state.hpp"
+#include "level_event.hpp"
 #include "movement.hpp"
 #include "player_terrain.hpp"
 #include "scene_resource.hpp"
@@ -118,6 +119,23 @@ private:
     void update_actor_animations();
     void update_interaction_actor_flags();
     void update_bounce_actor_interaction();
+    void update_level_events();
+    void dispatch_level_event(const LevelEventCommand& event);
+    bool spawn_level_event_actor(
+        std::uint32_t template_address,
+        std::uint16_t x,
+        std::uint16_t y,
+        std::uint32_t animation_override = 0,
+        std::uint32_t movement_override = 0,
+        bool override_type = false,
+        std::uint8_t type = 0,
+        bool override_movement_flags = false,
+        std::uint8_t movement_flags = 0,
+        bool override_sprite_attribute = false,
+        std::uint16_t sprite_attribute = 0,
+        bool set_facing_from_x = false
+    );
+    void start_level_event_stream_after_exit();
     void update_scene_resources();
     SceneServices scene_services();
     bool instantiate_scene_actor(const SceneActorRecord& record);
@@ -174,6 +192,7 @@ private:
     CollisionSystem collisions_;
     SceneSystem scene_;
     SceneResourceVm scene_resources_;
+    LevelEventVm level_events_;
     PlayerTerrainSystem terrain_;
     SpriteDatabase sprites_;
     PlayerAnimationVm animation_;
@@ -233,6 +252,8 @@ private:
     bool checkpoint_terrain_behavior_override_ = false;
     std::uint8_t checkpoint_terrain_behavior_ = 0;
     std::vector<std::uint8_t> rom_bytes_;
+    std::vector<std::uint8_t> level_event_sound_requests_;
+    bool level_event_exit_started_ = false;
     bool scheduler_trace_enabled_ = false;
     std::vector<SchedulerPhase> scheduler_phases_;
     std::vector<std::uint32_t> scheduler_writer_pcs_;

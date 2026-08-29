@@ -100,6 +100,35 @@ constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
 constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
 constexpr std::uint32_t kActorDeathTemplate = 0x001B7940;
 constexpr std::uint32_t kActorSwordDeathTemplate = 0x001B792C;
+constexpr std::uint32_t kLevel02ExitCallback = 0x001B6394;
+constexpr std::uint32_t kLevel06ExitCallback = 0x001B644E;
+constexpr std::uint32_t kLevel02EventStream = 0x00002128;
+constexpr std::uint32_t kLevel06EventStream = 0x000024FC;
+constexpr std::uint32_t kLevelEventTemplateType05 = 0x001B7A94;
+constexpr std::uint32_t kLevelEventTemplateType2A = 0x001B7AF8;
+constexpr std::uint32_t kLevelEventTemplateType2F = 0x001B7BD4;
+constexpr std::uint32_t kLevelEventTemplateBaseZero = 0x001B79B8;
+constexpr std::uint32_t kLevelEventTemplateType46 = 0x001B79CC;
+constexpr std::uint32_t kLevelEventTemplateType7C = 0x001B819C;
+constexpr std::uint32_t kLevelEventTemplateType7D = 0x001B81D8;
+constexpr std::uint32_t kLevelEventTemplateType84 = 0x001B8138;
+constexpr std::uint32_t kLevelEventTemplateType42 = 0x001B814C;
+constexpr std::uint32_t kLevelEventTemplateType54 = 0x001B8160;
+constexpr std::uint32_t kLevelEventTemplateUpperType20 = 0x001B7C10;
+constexpr std::uint32_t kLevelEventAnimationType2F = 0x00123A68;
+constexpr std::uint32_t kLevelEventAnimationType3A = 0x00122BD8;
+constexpr std::uint32_t kLevelEventAnimationType34 = 0x00122C1E;
+constexpr std::uint32_t kLevelEventAnimationType40 = 0x00122C12;
+constexpr std::uint32_t kLevelEventAnimationType84A = 0x0012585C;
+constexpr std::uint32_t kLevelEventAnimationType84B = 0x00125864;
+constexpr std::uint32_t kLevelEventAnimationType84C = 0x0012586C;
+constexpr std::uint32_t kLevelEventMovementType2F = 0x00121082;
+constexpr std::uint32_t kLevelEventMovementType3A = 0x00121034;
+constexpr std::uint32_t kLevelEventMovementType40 = 0x00121034;
+constexpr std::uint32_t kLevelEventMovementType84A = 0x00120FA0;
+constexpr std::uint32_t kLevelEventMovementType84B = 0x00120F8A;
+constexpr std::uint32_t kLevelEventMovementType84C = 0x00120FB4;
+constexpr std::uint32_t kLevelEventMovementType46 = 0x00120FFE;
 constexpr std::uint8_t kActorDeathFrames = 43;
 constexpr std::uint8_t kActorSwordTerminalFrames = 19;
 
@@ -142,7 +171,7 @@ constexpr std::array<std::uint8_t, 0xD4> kCameraVerticalDampening = {
     0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
     0x0F, 0x0F, 0x0F, 0x00
 };
-constexpr std::uint32_t kCheckpointVersion = 9;
+constexpr std::uint32_t kCheckpointVersion = 10;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
     writer.u8(selector.animation_gate);
@@ -416,6 +445,7 @@ void Engine::load(
     actor_lifecycle_.bind_rom(rom_bytes_);
     collisions_.bind_rom(rom_bytes_);
     scene_resources_.bind_rom(rom_bytes_);
+    level_events_.bind_rom(rom_bytes_);
     scene_.load_rom_bytes(rom_bytes_);
     scene_.reset(level_.scene_state());
     actors_.set_snapshot_mode(!actor_records_path.empty() || !actor_timeline_path.empty());
@@ -1232,6 +1262,294 @@ void Engine::update_interaction_actor_flags() {
     }
 }
 
+bool Engine::spawn_level_event_actor(
+    std::uint32_t template_address,
+    std::uint16_t x,
+    std::uint16_t y,
+    std::uint32_t animation_override,
+    std::uint32_t movement_override,
+    bool override_type,
+    std::uint8_t type,
+    bool override_movement_flags,
+    std::uint8_t movement_flags,
+    bool override_sprite_attribute,
+    std::uint16_t sprite_attribute,
+    bool set_facing_from_x
+) {
+    const auto slot = actor_lifecycle_.allocate(ActorPool::CommonForward);
+    if (!slot) return false;
+
+    ActorState destination = actors_[*slot];
+    destination.x = x;
+    destination.y = y;
+    ActorState actor = actor_lifecycle_.initialize_record(destination, template_address);
+    actor.x = x;
+    actor.y = y;
+    if (animation_override != 0) actor.animation_pc = animation_override;
+    if (movement_override != 0) actor.movement_pc = movement_override;
+    if (override_type) actor.type = type;
+    if (override_movement_flags) actor.movement_flags = movement_flags;
+    if (override_sprite_attribute) actor.sprite_attribute = sprite_attribute;
+    if (set_facing_from_x) {
+        actor.facing_x_flip = x >= 0x8D ? 0xFF : 0;
+    }
+    if (!actor_lifecycle_.install(*slot, actor)) return false;
+    actor_animations_[*slot].reset();
+    return true;
+}
+
+void Engine::dispatch_level_event(const LevelEventCommand& event) {
+    // The command handlers use D1/D2 as direct actor coordinates. The small
+    // set of level-entry handlers that use D6 instead are relative to the
+    // live player record; the callback does not publish another semantic
+    // coordinate, so the native player world position is the corresponding
+    // source here.
+    const auto relative_x = [this]() {
+        return static_cast<std::uint16_t>(player_world_x() + 0x140);
+    };
+    const auto relative_y = [this]() {
+        return static_cast<std::uint16_t>(player_world_y() + 0x100);
+    };
+    const auto direct_x = event.arg0;
+    const auto direct_y = event.arg1;
+    const auto spawn_direct = [this, direct_x, direct_y](
+        std::uint32_t template_address,
+        std::uint32_t animation_override = 0,
+        std::uint32_t movement_override = 0,
+        bool override_type = false,
+        std::uint8_t type = 0,
+        bool override_movement_flags = false,
+        std::uint8_t movement_flags = 0,
+        bool override_sprite_attribute = false,
+        std::uint16_t sprite_attribute = 0,
+        bool set_facing_from_x = false
+    ) {
+        return spawn_level_event_actor(
+            template_address,
+            direct_x,
+            direct_y,
+            animation_override,
+            movement_override,
+            override_type,
+            type,
+            override_movement_flags,
+            movement_flags,
+            override_sprite_attribute,
+            sprite_attribute,
+            set_facing_from_x
+        );
+    };
+
+    switch (event.command) {
+    case 0xE6: // LevelEvent_SpawnType05WithPaletteRefresh
+        (void)spawn_direct(kLevelEventTemplateType05, 0, 0, false, 0, false, 0, false, 0, true);
+        break;
+    case 0xE7: // LevelEvent_QueueSound5D
+        if (camera_.vdp_update != 0) level_event_sound_requests_.push_back(0x5D);
+        break;
+    case 0xE8: // LevelEvent_SpawnType7DWithPaletteRefresh
+        (void)spawn_direct(
+            kLevelEventTemplateType7D,
+            0,
+            0,
+            false,
+            0,
+            false,
+            0,
+            true,
+            0x4000,
+            true
+        );
+        break;
+    case 0xE9: // LevelEvent_SpawnType7C
+        (void)spawn_direct(kLevelEventTemplateType7C, 0, 0, false, 0, false, 0, false, 0, true);
+        break;
+    case 0xEA: // LevelEvent_ArmPlayerPresentation
+        player_.animation_selector.animation_gate = 0xFF;
+        player_.animation_selector.scene_script_countdown = 0xC8;
+        state_.scene.script_countdown = 0xC8;
+        animation_.select_stream_entry(0x001258D2);
+        animation_.clear_animation_timer_next_update();
+        break;
+    case 0xEB: // LevelEvent_SpawnType2FWithMovement
+        (void)spawn_direct(
+            kLevelEventTemplateType2F,
+            0,
+            kLevelEventMovementType2F,
+            false,
+            0,
+            false,
+            0,
+            false,
+            0,
+            true
+        );
+        break;
+    case 0xEC: // LevelEvent_SpawnType20
+        (void)spawn_direct(kLevelEventTemplateUpperType20, 0, 0, false, 0, false, 0, false, 0, true);
+        break;
+    case 0xED: // LevelEvent_SpawnType3AWithMovement
+        (void)spawn_direct(
+            kLevelEventTemplateBaseZero,
+            kLevelEventAnimationType3A,
+            kLevelEventMovementType3A,
+            true,
+            0x3A,
+            true,
+            1
+        );
+        break;
+    case 0xEE: // LevelEvent_SpawnType40
+        (void)spawn_direct(
+            kLevelEventTemplateBaseZero,
+            kLevelEventAnimationType40,
+            kLevelEventMovementType40,
+            true,
+            0x40,
+            true,
+            1
+        );
+        break;
+    case 0xEF: // LevelEvent_SpawnType2A
+        (void)spawn_direct(kLevelEventTemplateType2A);
+        break;
+    case 0xF0: // LevelEvent_SpawnType46WhenModeReady
+        // The ROM gate is GAME_DIFFICULTY_COUNTER (FF7E3C), which is not
+        // currently represented in GameState. Do not substitute the
+        // unrelated scene-resource status byte here.
+        (void)spawn_direct(kLevelEventTemplateType46, 0, kLevelEventMovementType46);
+        break;
+    case 0xF1: // LevelEvent_SpawnType2F
+        (void)spawn_direct(kLevelEventTemplateType2F, 0, 0, false, 0, false, 0, false, 0, true);
+        break;
+    case 0xF2: // LevelEvent_ArmSceneScriptTransition
+        player_.animation_selector.scene_script_countdown = 1;
+        state_.scene.script_countdown = 1;
+        break;
+    case 0xF3: // LevelEvent_SetPresentationStateByte
+        // FFF10B is not yet part of the typed state surface. Keep this
+        // command decoded and owned by this boundary until its consumer is
+        // extracted from the presentation path.
+        break;
+    case 0xF4: // LevelEvent_SpawnType84VariantA
+        (void)spawn_level_event_actor(
+            kLevelEventTemplateType84,
+            relative_x(),
+            relative_y(),
+            kLevelEventAnimationType84C
+        );
+        break;
+    case 0xF5: // LevelEvent_SpawnType3AFromCounter
+        (void)spawn_level_event_actor(
+            kLevelEventTemplateBaseZero,
+            relative_x(),
+            relative_y(),
+            kLevelEventAnimationType3A,
+            0,
+            true,
+            0x3A
+        );
+        break;
+    case 0xF6: // LevelEvent_SpawnType34
+        (void)spawn_level_event_actor(
+            kLevelEventTemplateBaseZero,
+            relative_x(),
+            relative_y(),
+            kLevelEventAnimationType34,
+            0x001217B4,
+            true,
+            0x34,
+            true,
+            6
+        );
+        break;
+    case 0xF7: // LevelEvent_SpawnType54Pair
+        (void)spawn_level_event_actor(kLevelEventTemplateType54, relative_x(), relative_y());
+        (void)spawn_level_event_actor(
+            kLevelEventTemplateType54,
+            static_cast<std::uint16_t>(relative_x() + 0x20),
+            relative_y()
+        );
+        break;
+    case 0xF8: // LevelEvent_SpawnType46WhenSceneReady
+        (void)spawn_level_event_actor(
+            kLevelEventTemplateType46,
+            relative_x(),
+            relative_y()
+        );
+        break;
+    case 0xF9: // LevelEvent_SpawnType84Pair
+        (void)spawn_level_event_actor(
+            kLevelEventTemplateType84,
+            0x018E,
+            0x0164,
+            kLevelEventAnimationType84A,
+            kLevelEventMovementType84A
+        );
+        (void)spawn_level_event_actor(
+            kLevelEventTemplateType84,
+            0x018E,
+            0x0178,
+            kLevelEventAnimationType84B,
+            kLevelEventMovementType84B
+        );
+        break;
+    case 0xFA: // LevelEvent_SpawnType84VariantB
+        (void)spawn_level_event_actor(
+            kLevelEventTemplateType84,
+            0x018E,
+            0x0164,
+            kLevelEventAnimationType84A
+        );
+        break;
+    case 0xFB: // LevelEvent_SpawnType84VariantC
+        (void)spawn_level_event_actor(
+            kLevelEventTemplateType84,
+            0x018E,
+            0x0164,
+            kLevelEventAnimationType84B,
+            kLevelEventMovementType84B
+        );
+        break;
+    case 0xFC:
+    case 0xFD:
+    case 0xFF:
+        break;
+    case 0xFE: // LevelEvent_SpawnType42
+        (void)spawn_level_event_actor(kLevelEventTemplateType42, relative_x(), relative_y());
+        break;
+    default:
+        // The ROM dispatch table is limited to E6..FF. Unknown commands are
+        // intentionally ignored here after the VM has decoded the record;
+        // the VM itself remains responsible for stream framing/faults.
+        break;
+    }
+}
+
+void Engine::start_level_event_stream_after_exit() {
+    if (level_event_exit_started_ || level_events_.active() || rom_bytes_.empty()) return;
+
+    const std::uint32_t exit_callback = level_.descriptor().exit_function.value;
+    std::uint32_t stream = 0;
+    if (exit_callback == kLevel02ExitCallback) {
+        stream = kLevel02EventStream;
+    } else if (exit_callback == kLevel06ExitCallback) {
+        stream = kLevel06EventStream;
+    }
+    if (stream == 0 || stream >= rom_bytes_.size()) return;
+
+    level_events_.start(RomAddress{stream});
+    level_event_exit_started_ = true;
+}
+
+void Engine::update_level_events() {
+    if (!level_events_.active()) return;
+    LevelEventServices services{
+        [this](const LevelEventCommand& event) { dispatch_level_event(event); },
+    };
+    level_events_.update(state_, services);
+}
+
 void Engine::update_scene_resources() {
     // SceneSystem retains the recovered countdown gate. Service it at the
     // same boundary as the compact resource interpreter so the frame loop
@@ -1506,6 +1824,9 @@ void Engine::reset() {
     surface_actor_spawn_x_ = 0;
     surface_actor_spawn_y_ = 0;
     scene_resources_.reset();
+    level_events_.reset();
+    level_event_sound_requests_.clear();
+    level_event_exit_started_ = false;
     actor_movement_deferred_.fill(false);
     player_collision_interaction_pending_ = false;
     checkpoint_animation_selector_pending_ = false;
@@ -1600,6 +1921,12 @@ std::vector<std::uint8_t> Engine::take_sound_requests() {
         auto actor_requests = actor_animation.take_sound_requests();
         requests.insert(requests.end(), actor_requests.begin(), actor_requests.end());
     }
+    requests.insert(
+        requests.end(),
+        level_event_sound_requests_.begin(),
+        level_event_sound_requests_.end()
+    );
+    level_event_sound_requests_.clear();
     return requests;
 }
 
@@ -3242,16 +3569,18 @@ void Engine::update(const InputState& input) {
     record_scheduler_phase("actor_collision", 0x001ABD7E);
     collisions_.actor_actor(state_);
     record_scheduler_phase("level_exit_transition", 0x001A8F0C);
-    (void) scene_.service_level_exit(
+    const bool level_exit_callback = scene_.service_level_exit(
         player_world_y(),
         camera_.level_height,
         player_.terrain_terminal_transition,
         player_.animation_selector.interaction_lock
     );
-    // 0x001A8F04 is the recovered empty-return block between the exit and
-    // interaction services; preserving its ordinal is useful for trace
-    // comparison but it has no native state effect.
+    if (level_exit_callback) start_level_event_stream_after_exit();
+    // 0x001A8F04 is the recovered level callback boundary. Level 02 and 06
+    // install their timed stream from the exit callback above, then dispatch
+    // one record tick here on the same subsequent callback cadence.
     record_scheduler_phase("empty_return", 0x001A8F04);
+    update_level_events();
     // FUN_001B01AC is the late interaction resource service. Its actor refill
     // edge is visible at the same game-loop boundary on either phase of
     // FRAME_PHASE_COUNTER; only the common actor animation table walk is
@@ -3777,6 +4106,10 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"state\":" << static_cast<unsigned>(player_.terrain_state)
            << ",\"response_latch\":" << static_cast<unsigned>(player_.terrain_response_latch) << "}"
            << ",\"scheduler\":{\"frame_phase\":" << static_cast<unsigned>(frame_phase_)
+           << ",\"level_event_cursor\":" << level_events_.cursor().value
+           << ",\"level_event_tick\":" << static_cast<unsigned>(level_events_.tick())
+           << ",\"level_event_active\":" << (level_events_.active() ? "true" : "false")
+           << ",\"level_event_faulted\":" << (level_events_.faulted() ? "true" : "false")
            << ",\"interaction_scan_initialized\":"
            << (interaction_scan_initialized_ ? "true" : "false")
            << ",\"interaction_selector_pending\":"
@@ -3959,6 +4292,10 @@ void Engine::write_checkpoint(std::ostream& output) const {
     for (const PlayerAnimationVm& actor_animation : actor_animations_) {
         actor_animation.write_checkpoint(output);
     }
+    writer.u32(level_events_.cursor().value);
+    writer.u8(level_events_.tick());
+    writer.boolean(level_event_exit_started_);
+    writer.byte_vector(level_event_sound_requests_);
 
     writer.boolean(interaction_scan_initialized_);
     writer.boolean(interaction_selector_pending_);
@@ -4023,6 +4360,13 @@ void Engine::read_checkpoint(std::istream& input) {
     animation_.read_checkpoint(input);
     for (PlayerAnimationVm& actor_animation : actor_animations_) {
         actor_animation.read_checkpoint(input);
+    }
+    const auto level_event_cursor = reader.u32();
+    const auto level_event_tick = reader.u8();
+    const bool level_event_exit_started = reader.boolean();
+    const auto level_event_sound_requests = reader.byte_vector(0x10000);
+    if (level_event_cursor != 0 && level_event_cursor >= rom_bytes_.size()) {
+        throw std::runtime_error("level-event cursor is outside the OpenAladdin ROM");
     }
 
     const bool interaction_scan_initialized = reader.boolean();
@@ -4106,6 +4450,9 @@ void Engine::read_checkpoint(std::istream& input) {
     frame_phase_ = frame_phase;
     last_ground_direction_ = last_ground_direction;
     quit_ = quit;
+    level_events_.restore(RomAddress{level_event_cursor}, level_event_tick);
+    level_event_exit_started_ = level_event_exit_started;
+    level_event_sound_requests_ = level_event_sound_requests;
     camera_render_x_ = 0;
     camera_render_y_ = 0;
 }

@@ -40,6 +40,12 @@ int main() {
     assert(vm.tick() == 2);
     assert(events.empty());
 
+    vm.restore(openaladdin::RomAddress{0x10}, 1);
+    vm.update(state, services);
+    assert(vm.active());
+    assert(vm.tick() == 2);
+    assert(events.empty());
+
     vm.update(state, services);
     assert(vm.active());
     assert(vm.cursor().value == 0x16);

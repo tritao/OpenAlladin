@@ -57,5 +57,33 @@ int main() {
         assert(uninterrupted->frame() == restored->frame());
         assert(checkpoint(*uninterrupted) == checkpoint(*restored));
     }
+
+    // Exercise the separate timed level-event cursor/tick state while a
+    // Level 02 exit stream is active. This catches checkpoints that preserve
+    // ordinary actor state but restart the event stream from its first byte.
+    auto event_uninterrupted = std::make_unique<openaladdin::Engine>();
+    event_uninterrupted->load(
+        "build/assets/levels/level02",
+        kSprites,
+        kRom
+    );
+    event_uninterrupted->set_checkpoint(150, 1000, 0, 0, false);
+    event_uninterrupted->update({});
+    const std::string event_saved = checkpoint(*event_uninterrupted);
+
+    auto event_restored = std::make_unique<openaladdin::Engine>();
+    event_restored->load(
+        "build/assets/levels/level02",
+        kSprites,
+        kRom
+    );
+    std::istringstream event_input(event_saved, std::ios::in | std::ios::binary);
+    event_restored->read_checkpoint(event_input);
+    assert(checkpoint(*event_uninterrupted) == checkpoint(*event_restored));
+    for (int frame = 0; frame < 4; ++frame) {
+        event_uninterrupted->update({});
+        event_restored->update({});
+        assert(checkpoint(*event_uninterrupted) == checkpoint(*event_restored));
+    }
     return 0;
 }
