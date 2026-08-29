@@ -1205,3 +1205,33 @@
   evidence:
     - player_terrain_experiments
     - level01_upper_frontier_initializer_targets
+
+0x001B7B48:
+  name: ACTOR_TEMPLATE_TRANSITION_TYPE_84
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 transition-presentation template instantiated by SceneResource_InitializeTransitionPresentation; it uses movement stream 0x00120360, animation stream 0x001232D8, and resource count 0x35.
+  evidence:
+    - ghidra_scene_resource_transition_presentation
+    - level01_upper_frontier_initializer_targets
+
+0x001B7CC4:
+  name: ACTOR_TEMPLATE_COLLISION_TYPE_84
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Shared type-0x84 collision-response template used by the type-0x11 and type-0x13 actor-collision paths and the type-0x13 player-collision response; it has no movement stream and uses animation stream 0x00123E7E.
+  evidence:
+    - actor_collision_handler_xrefs
+    - level01_upper_frontier_initializer_targets
+
+0x001B7D28:
+  name: ACTOR_TEMPLATE_MENU_TYPE_84
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene/menu presentation template instantiated by Menu_RunOptionsAndSelectNextState after its scene-table actor reset; it has no movement stream and uses animation stream 0x00125BC6.
+  evidence:
+    - ghidra_menu_scene_table_transition
+    - level01_upper_frontier_initializer_targets

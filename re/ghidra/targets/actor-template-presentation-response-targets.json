@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-actor-template-presentation-response-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name actor-template records used by transition presentation, collision response, and scene/menu reset services.",
+  "templates": [
+    {
+      "address": "0x001B7B48",
+      "name": "ACTOR_TEMPLATE_TRANSITION_TYPE_84",
+      "consumer": "0x001B1486 SceneResource_InitializeTransitionPresentation",
+      "references": 4,
+      "runtime_type": "0x84",
+      "movement": "0x00120360",
+      "animation": "0x001232D8",
+      "resource_count": "0x35"
+    },
+    {
+      "address": "0x001B7CC4",
+      "name": "ACTOR_TEMPLATE_COLLISION_TYPE_84",
+      "consumers": [
+        "0x001AC1D0 ActorType13_ActorCollisionHandler",
+        "0x001AC4E8 ActorType11_ActorCollisionHandler",
+        "0x001AF1AC ActorType13_PlayerCollisionHandler"
+      ],
+      "runtime_type": "0x84",
+      "movement": null,
+      "animation": "0x00123E7E",
+      "resource_count": "0x12"
+    },
+    {
+      "address": "0x001B7D28",
+      "name": "ACTOR_TEMPLATE_MENU_TYPE_84",
+      "consumer": "0x001B3B96 Menu_RunOptionsAndSelectNextState",
+      "reference": "0x001B3C04",
+      "runtime_type": "0x84",
+      "movement": null,
+      "animation": "0x00125BC6",
+      "resource_count": "0x10"
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  }
+}
