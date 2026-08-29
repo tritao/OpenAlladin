@@ -791,7 +791,7 @@
 0x001ADB5C:
   name: Actor_TerrainCollisionLoop
   confidence: confirmed
-  description: Per-frame actor-terrain service called by Game_FrameUpdateLoop. It scans actor records 1..31, clears the per-record terrain flag, samples current/adjacent terrain rows, publishes the decoded resource byte 2 to actor +0x3D, applies gravity or grounded facing/vertical response, and retires flagged actors through Actor_HandleType2DInteraction when their terrain sample is nonempty or invalid.
+  description: Per-frame actor-terrain service called by Game_FrameUpdateLoop. It scans actor records 1..31, clears the per-record terrain flag, samples current/adjacent terrain rows through TERRAIN_ROW_POINTER_TABLE and TERRAIN_CONTOUR_RESOURCE, publishes the response byte at actor +0x3D, snaps grounded actors to the contour and sets actor +0x07 bit 0x10, or clears actor +0x06 bit 0 and sets bit 0x40 when no valid sample exists. The +0x3C bit 0x08 resource path can retire an actor through Actor_HandleType2DInteraction.
   evidence:
     - ghidra_targeted_decompile_scheduler
     - ghidra_actor_interaction_state_producer
@@ -1721,7 +1721,7 @@
 0x001A9B90:
   name: Player_IntegrateMotion
   confidence: confirmed
-  description: Integrates horizontal and vertical player motion. It consumes the signed high byte of the 8.8 velocities, accelerates horizontal velocity by 0x28 and vertical velocity by 0x3C, and updates PLAYER_X/PLAYER_Y.
+  description: Integrates player motion from the 8.8 horizontal and vertical velocities. Horizontal velocity moves toward zero by 0x28 and its signed high byte is consumed into PLAYER_X unless a stop flag or boundary blocks it. Vertical velocity consumes its signed high byte into PLAYER_Y when the magnitude exceeds 0x3C, adding 0x3C while rising and subtracting 0x3C while falling; blocked motion sets TERRAIN_VERTICAL_STOP and clears PLAYER_VY, with the upward-stop path optionally issuing sound command 7.
   evidence:
     - ghidra_disassembly_001A9B90
     - ghidra_decompile_player_movement_collision_targets
@@ -1729,7 +1729,7 @@
 0x001A9D98:
   name: Player_TerrainResponseStateMachine
   confidence: confirmed
-  description: Applies the terrain flags produced earlier in the frame, calls Player_IntegrateMotion, updates the world-relative player position, and selects the run/stop/landing animation and horizontal response paths. Scene state 8 uses a dedicated camera/transition branch instead of normal player integration.
+  description: Consumes the terrain flags produced earlier in the frame, calls Player_IntegrateMotion, updates the world-relative player position, and selects the run/stop/landing animation and horizontal response paths. The normal path uses the terrain vertical-stop latch and collision flags; scene state 8 takes a dedicated camera/transition branch instead of normal player integration.
   evidence:
     - ghidra_decompile_player_movement_collision_targets
     - ghidra_level_transition_targeted_decompile
@@ -1739,7 +1739,7 @@
 0x001B1E38:
   name: Terrain_ResolvePlayerCell
   confidence: confirmed
-  description: Resolves the player's current terrain cell from camera-relative X/Y, the row-pointer table at 0x00FF9884, and the terrain behavior index table at 0x00FFAE86; it dispatches the selected behavior through the ROM handler table at 0x004554.
+  description: Resolves the player's current terrain cell from camera-relative X/Y. Outside scene state 8, it clears the terrain query/response latches and transition lock, decrements the transition countdown, computes row as WORLD_CAMERA_Y + PLAYER_Y - 0xF0 and column as (PLAYER_X + WORLD_CAMERA_X + 0x10) >> 4, then reads the row pointer table at 0x00FF9884 and terrain behavior index table at 0x00FFAE86. A behavior other than ASCII G clears the surface latch; a nonzero behavior returns to the caller for the selected terrain response.
   evidence:
     - ghidra_decompile_player_movement_collision_targets
     - ghidra_disassembly_001B1E38
@@ -2147,7 +2147,7 @@
 0x001ADE36:
   name: MovementVM_TickActors
   confidence: confirmed
-  description: Common actor movement interpreter; iterates 32 actor records, consumes each non-null movement_pc stream at actor offset 0x0A, applies signed per-step deltas, and dispatches movement commands 0x80-0x94 through the shared table at 0x004954 (mapped to animation handlers 0xEA-0xFE).
+  description: Common actor movement interpreter. It iterates all 32 actor records, applies residual horizontal/vertical movement with thresholds 0x28 and 0x3C, consumes signed movement-stream deltas at actor +0x0A with facing-dependent signs, and dispatches commands 0x80-0x94 through the shared table at 0x004954 after the actor command timer at +0x36 expires. Actor type 0x83 receives a special player-relative update, and linked actors marked by +0x3C bit 0x04 inherit the source world position and screen delta.
   evidence:
     - ghidra_disassembly_001ADE36
     - mame_natural_actor_type_2D_trace

@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-movement-terrain-handshake-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "functions": [
+    { "address": "0x001ADE36", "name": "MovementVM_TickActors" },
+    { "address": "0x001ADB5C", "name": "Actor_TerrainCollisionLoop" },
+    { "address": "0x001B1E38", "name": "Terrain_ResolvePlayerCell" },
+    { "address": "0x001A9D98", "name": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001A9B90", "name": "Player_IntegrateMotion" }
+  ],
+  "movement_vm": {
+    "actor_table": { "start": "0x00FF7E40", "count": 32, "stride": "0x42" },
+    "residual_fields": { "horizontal": "+0x18", "vertical": "+0x1A" },
+    "thresholds": { "horizontal": "0x28", "vertical": "0x3C" },
+    "movement_cursor": "+0x0A",
+    "command_timer": "+0x36",
+    "command_range": "0x80..0x94",
+    "dispatch_table": "0x004954",
+    "linked_actor_flag": "+0x3C bit 0x04"
+  },
+  "actor_terrain": {
+    "actor_slots": "1..31",
+    "response_byte": "+0x3D",
+    "grounded_flag": "+0x07 bit 0x10",
+    "no_sample_flags": "+0x06 bit 0x40 and cleared bit 0x01",
+    "terrain_sources": ["0x00FF9884", "0x00FF7DB4", "0x00FFAE84", "0x00FFAE86"]
+  },
+  "player_cell": {
+    "row": "WORLD_CAMERA_Y + PLAYER_Y - 0xF0",
+    "column": "(PLAYER_X + WORLD_CAMERA_X + 0x10) >> 4",
+    "row_pointer_table": "0x00FF9884",
+    "behavior_table": "0x00FFAE86",
+    "surface_behavior": "ASCII G (0x47)",
+    "scene_state_8_excluded": true
+  },
+  "evidence": [
+    "Cached Ghidra decompilation of MovementVM_TickActors",
+    "Cached Ghidra decompilation of Actor_TerrainCollisionLoop",
+    "Cached Ghidra decompilation of Terrain_ResolvePlayerCell",
+    "Cached Ghidra decompilation of Player_TerrainResponseStateMachine and Player_IntegrateMotion"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

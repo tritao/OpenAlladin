@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "movement_vm": {
+    "address": "0x001ADE36",
+    "contract": "All 32 actor records are visited. Residual motion is applied at horizontal/vertical thresholds 0x28/0x3C; signed stream deltas are consumed at +0x0A, command bytes 0x80..0x94 are dispatched through 0x004954 after +0x36 expires, and linked actors marked by +0x3C bit 0x04 inherit source position and screen delta.",
+    "special_actor": "Type 0x83 receives the player-relative movement update."
+  },
+  "actor_terrain": {
+    "address": "0x001ADB5C",
+    "contract": "Actor records 1..31 clear +0x07 bit 0x10, sample the row-pointer/contour resources, publish the response byte at +0x3D, snap valid grounded actors to the contour, and use +0x06 bit 0x40 as the no-valid-sample gravity/cleanup state.",
+    "resource_path": "+0x3C bit 0x08 can clear owned resources and invoke Actor_HandleType2DInteraction."
+  },
+  "player_terrain": {
+    "resolve_address": "0x001B1E38",
+    "resolve_contract": "Outside scene state 8, reset terrain query/response latches and transition lock, decrement the transition countdown, derive row from WORLD_CAMERA_Y + PLAYER_Y - 0xF0 and column from (PLAYER_X + WORLD_CAMERA_X + 0x10) >> 4, then resolve the behavior through 0x00FF9884 and 0x00FFAE86.",
+    "integrate_address": "0x001A9B90",
+    "integrate_contract": "Consume the signed high bytes of the 8.8 velocities into PLAYER_X/PLAYER_Y, move horizontal velocity toward zero by 0x28, use 0x3C as the vertical movement threshold, and publish TERRAIN_VERTICAL_STOP with zero PLAYER_VY when vertical motion is blocked.",
+    "response_address": "0x001A9D98",
+    "response_contract": "Consume the terrain latches, run the motion integrator, update world-relative coordinates, and select grounded, landing, airborne, and horizontal response paths; scene state 8 uses the camera/transition branch."
+  },
+  "evidence": [
+    "Exact cached 68000 decompilations of the five named functions",
+    "Existing actor, terrain resource, camera, player velocity, and terrain-latch symbols"
+  ],
+  "conclusion": "MovementVM, actor terrain sampling, player terrain-cell resolution, and player motion integration are now recorded as one explicit frame-handshake contract rather than independent approximations.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
