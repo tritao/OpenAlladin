@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-direct-transfer-family",
+    "purpose": "Canonicalize the two player-collision handlers that directly write the high vertical launch responses and shared transition animation state."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x4E"], "address": "0x001AFCD2" },
+      { "actor_types": ["0x4F"], "address": "0x001AFC4E" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AFC4E", "name": "ActorType4F_PlayerCollisionHandler" },
+    { "address": "0x001AFCD2", "name": "ActorType4E_PlayerCollisionHandler" },
+    { "address": "0x001AFD32", "name": "ActorType4E_ResponseAudioHelper" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E02", "name": "PLAYER_WORLD_X" },
+    { "address": "0x00FF7E58", "name": "PLAYER_VX" },
+    { "address": "0x00FF7E5A", "name": "PLAYER_VY" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF0BE", "name": "TERRAIN_RESPONSE_ACTIVE" },
+    { "address": "0x00FFF0C0", "name": "TERRAIN_VERTICAL_STOP" },
+    { "address": "0x00FFF0E7", "name": "PLAYER_INTERACTION_ANIMATION_GATE" }
+  ]
+}

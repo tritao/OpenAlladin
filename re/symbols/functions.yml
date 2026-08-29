@@ -2139,6 +2139,26 @@
     - ghidra_disassembly_001AF110
     - level01_player_motion_writer_audit
     - player_collision_launch_placement_family_static_decompilation
+0x001AFC4E:
+  name: ActorType4F_PlayerCollisionHandler
+  size: 132
+  confidence: confirmed
+  description: Player-collision handler for runtime actor type 0x4F. It requires non-upward player motion and a clear interaction-animation gate, accepts the actor within the encoded +/-0x18 horizontal window, writes PLAYER_VY=-0x0800, installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE at 0x00121C62, arms TERRAIN_RESPONSE_ACTIVE, clears TERRAIN_VERTICAL_STOP, optionally queues event 0x4B, and converts the source actor to a type-0x84 response with animation 0x00124B3E.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AFC4E
+    - level01_transfer_capable_mechanism_graph
+    - player_collision_launch_placement_family_static_decompilation
+0x001AFCD2:
+  name: ActorType4E_PlayerCollisionHandler
+  size: 96
+  confidence: confirmed
+  description: Player-collision handler for runtime actor type 0x4E. It requires non-upward player motion and a clear interaction-animation gate, chooses PLAYER_VX=+0x0700 or -0x0700 from the actor-facing byte, writes PLAYER_VY=-0x0700, installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE at 0x00121C62, arms TERRAIN_RESPONSE_ACTIVE, clears TERRAIN_VERTICAL_STOP, converts the source actor to a type-0x84 response with animation 0x00124B1A, and dispatches the associated event/audio helper at 0x001AFD32.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AFCD2
+    - level01_transfer_capable_mechanism_graph
+    - player_collision_launch_placement_family_static_decompilation
 0x001AF1AC:
   name: ActorType13_PlayerCollisionHandler
   confidence: decompiled

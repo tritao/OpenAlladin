@@ -1,0 +1,54 @@
+{
+  "format": "openaladdin-player-collision-direct-transfer-family-finding-v1",
+  "recorded_at": "2026-08-29",
+  "status": "static-family-closed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": [
+    "re/ghidra/targets/player-collision-direct-transfer-family-targets.json",
+    "re/mame/findings/20260827-level01-player-motion-writer-audit-v1.json",
+    "re/mame/findings/20260827-level01-transfer-capable-mechanism-graph-v1.json",
+    "re/symbols/functions.yml",
+    "build/re/dasm-1A8000.txt"
+  ],
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "address_space": "68000 ROM addresses",
+    "handlers": [
+      {
+        "address": "0x001AFC4E",
+        "size": 132,
+        "actor_types": ["0x4F"],
+        "name": "ActorType4F_PlayerCollisionHandler",
+        "range": "0x001AFC4E-0x001AFCD1",
+        "semantics": "Within the +/-0x18 actor/player X window and with the interaction-animation gate clear, writes PLAYER_VY=-0x0800, installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE, arms TERRAIN_RESPONSE_ACTIVE, clears TERRAIN_VERTICAL_STOP, optionally queues event 0x4B, and installs the type-0x84 response animation at 0x00124B3E."
+      },
+      {
+        "address": "0x001AFCD2",
+        "size": 96,
+        "actor_types": ["0x4E"],
+        "name": "ActorType4E_PlayerCollisionHandler",
+        "range": "0x001AFCD2-0x001AFD31",
+        "semantics": "With non-upward motion and the interaction-animation gate clear, writes PLAYER_VX=+0x0700 or -0x0700 from actor facing, PLAYER_VY=-0x0700, installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE, arms TERRAIN_RESPONSE_ACTIVE, clears TERRAIN_VERTICAL_STOP, installs the type-0x84 response animation at 0x00124B1A, and calls the event/audio helper at 0x001AFD32."
+      }
+    ]
+  },
+  "shared_contract": {
+    "animation": "0x00121C62 PLAYER_ANIM_TRANSITION_FLAG_RESPONSE",
+    "terrain_response": "TERRAIN_RESPONSE_ACTIVE set; TERRAIN_VERTICAL_STOP cleared",
+    "source_actor": "converted to type 0x84 and response animation installed",
+    "scene_state": "neither direct handler writes SCENE_STATE"
+  },
+  "boundary_checks": {
+    "ranges": [
+      "0x001AFC4E-0x001AFCD1",
+      "0x001AFCD2-0x001AFD31"
+    ],
+    "result": "Both direct table bodies end at their RTS immediately before the next helper/entry; no promoted ranges overlap."
+  },
+  "reachability_qualification": "The existing Level 01 transfer-capable mechanism audit records these as real launch writers but found no live Level 01 producer chain reaching the unresolved upper corridor.",
+  "conclusion": "The two strongest remaining direct transfer writers are now canonicalized with exact velocity, terrain-response, animation, and source-actor contracts. They are available for static deasm naming and future reachability/parity checks without treating them as proven Level 01 route producers."
+}
