@@ -1160,52 +1160,58 @@
     - animation_stream_decoder
 
 0x00121F6A:
-  name: PLAYER_ANIM_STATE_121F6A
+  name: PLAYER_ANIM_SPECIAL_CAMERA_GROUNDING_PRELUDE
+  size: 10
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Special-camera grounding prelude selected by Player_TerrainLandingResolver after a settled landing with a nonzero terrain response timer. It presents frame 0x06D6 twice, then jumps to PLAYER_ANIM_SPECIAL_CAMERA_RUN at 0x00121FD4.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_terrain_landing_resolver
+    - animation_stream_decoder
 
 0x00121F74:
-  name: PLAYER_ANIM_STATE_121F74
+  name: PLAYER_ANIM_SPECIAL_CAMERA_LANDING
+  size: 16
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Special-camera landing stream selected by Player_TerrainLandingResolver when the player settles with a clear terrain response timer. It presents frame 0x06D6, clears player animation field 0xF0CC, presents 0x06D6/0x06DA/0x06DA, and enters dynamic state selection.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_terrain_landing_resolver
+    - animation_stream_decoder
 
 0x00121F84:
-  name: PLAYER_ANIM_STATE_121F84
+  name: PLAYER_ANIM_LANDING_RECOVERY
+  size: 24
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Ordinary-camera landing recovery stream selected by Player_TerrainLandingResolver after the landing response settles. It clears player animation fields 0xF0CC and 0xF0B0, presents frame 0x095A followed by 0x095A/0x0932/0x0932/0x0932, and enters dynamic state selection.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_terrain_landing_resolver
+    - animation_stream_decoder
 
 0x00121FA0:
-  name: PLAYER_ANIM_STATE_121FA0
+  name: PLAYER_ANIM_GROUNDED_RECOVERY
+  size: 6
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Short grounded-recovery stream selected by Player_TerrainResponseStateMachine while landing is active and the horizontal terrain response has completed. It presents frame 0x09AE twice before dynamic state selection.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_terrain_response_state_machine
+    - animation_stream_decoder
 
 0x00121FA6:
-  name: PLAYER_ANIM_STATE_121FA6
+  name: PLAYER_ANIM_TERRAIN_HORIZONTAL_RESPONSE
+  size: 46
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Horizontal terrain-response stream selected by Player_TerrainResponseStateMachine for the signed left/right response phases and stop-response cleanup. It presents the 0x09AE/0x09B2-0x09CE sequence, plays sound 0x3B, and loops back to its timer-setting entry at 0x00121FAC.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_terrain_response_state_machine
+    - animation_stream_decoder
 
 0x00121FD4:
-  name: PLAYER_ANIM_STATE_121FD4
+  name: PLAYER_ANIM_SPECIAL_CAMERA_RUN
+  size: 50
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Special-camera locomotion stream selected by Player_SelectRunOrSpecialAnimation after a horizontal terrain response. It initializes player animation fields 0xF0B0 and 0xF101, presents the 0x072A-0x074A frame sequence, and loops back to its own entry at 0x00121FD4.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_run_or_special_selector
+    - animation_stream_decoder
 
 0x00122080:
   name: PLAYER_ANIM_STATE_122080

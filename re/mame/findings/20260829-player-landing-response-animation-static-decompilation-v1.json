@@ -1,0 +1,89 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-landing-response-animation-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00121F6A",
+      "name": "PLAYER_ANIM_SPECIAL_CAMERA_GROUNDING_PRELUDE",
+      "range": "0x00121F6A-0x00121F73",
+      "bytes": 10,
+      "frames": ["0x06D6", "0x06D6"],
+      "handoff": "EA at 0x00121F6E -> PLAYER_ANIM_SPECIAL_CAMERA_RUN at 0x00121FD4",
+      "selector": "Player_TerrainLandingResolver selects this entry only on the special-camera branch after a settled landing with a nonzero terrain response timer."
+    },
+    {
+      "address": "0x00121F74",
+      "name": "PLAYER_ANIM_SPECIAL_CAMERA_LANDING",
+      "range": "0x00121F74-0x00121F83",
+      "bytes": 16,
+      "frames": ["0x06D6", "0x06D6", "0x06DA", "0x06DA"],
+      "state_writes": ["ED at 0x00121F76 clears player animation field 0xF0CC"],
+      "handoff": "F8 at 0x00121F82 -> dynamic player animation state selection",
+      "selector": "Player_TerrainLandingResolver selects this entry when the settled landing has a clear terrain response timer and CAMERA_SPECIAL_MODE is nonzero."
+    },
+    {
+      "address": "0x00121F84",
+      "name": "PLAYER_ANIM_LANDING_RECOVERY",
+      "range": "0x00121F84-0x00121F9B",
+      "bytes": 24,
+      "frames": ["0x095A", "0x095A", "0x0932", "0x0932", "0x0932"],
+      "state_writes": [
+        "ED at 0x00121F86 clears player animation field 0xF0CC",
+        "ED at 0x00121F8C clears player animation field 0xF0B0"
+      ],
+      "handoff": "F8 at 0x00121F9A -> dynamic player animation state selection",
+      "selector": "Player_TerrainLandingResolver selects this entry on the ordinary-camera branch after landing response resolution, including the nonzero-timer path when no horizontal response overrides it."
+    },
+    {
+      "address": "0x00121FA0",
+      "name": "PLAYER_ANIM_GROUNDED_RECOVERY",
+      "range": "0x00121FA0-0x00121FA5",
+      "bytes": 6,
+      "frames": ["0x09AE", "0x09AE"],
+      "handoff": "F8 at 0x00121FA4 -> dynamic player animation state selection",
+      "selector": "Player_TerrainResponseStateMachine selects this short entry while landing is active, terrain response is inactive, and PLAYER_TERRAIN_RESPONSE_PHASE is nonzero."
+    },
+    {
+      "address": "0x00121FA6",
+      "name": "PLAYER_ANIM_TERRAIN_HORIZONTAL_RESPONSE",
+      "range": "0x00121FA6-0x00121FD3",
+      "bytes": 46,
+      "frames": ["0x09AE", "0x09AE", "0x09AE", "0x09B2", "0x09B6", "0x09BA", "0x09BE", "0x09C2", "0x09C6", "0x09CA", "0x09CE"],
+      "timers": ["EE 0x84 at 0x00121FAC", "EE 0x83 at 0x00121FB0", "EE 0x84 at 0x00121FB4", "EE 0x83 at 0x00121FB8", "EE 0x84 at 0x00121FBE", "EE 0x83 at 0x00121FC2", "EE 0x84 at 0x00121FC6", "EE 0x83 at 0x00121FCA"],
+      "audio": "F3 at 0x00121FBC plays sound 0x3B",
+      "loop": "EA at 0x00121FCE -> 0x00121FAC, preserving the timer-setting response cycle",
+      "selector": "Player_TerrainResponseStateMachine selects this entry for the signed left/right terrain response phases and the stop-response cleanup path."
+    },
+    {
+      "address": "0x00121FD4",
+      "name": "PLAYER_ANIM_SPECIAL_CAMERA_RUN",
+      "range": "0x00121FD4-0x00122005",
+      "bytes": 50,
+      "frames": ["0x072A", "0x072A", "0x072E", "0x072E", "0x0732", "0x0732", "0x0736", "0x073A", "0x073A", "0x073E", "0x073E", "0x0742", "0x0742", "0x0746", "0x0746", "0x074A"],
+      "state_writes": [
+        "ED at 0x00121FD6 writes player animation field 0xF0B0 to 0x0003",
+        "ED at 0x00121FDC clears player terrain/brake field 0xF101"
+      ],
+      "loop": "EA at 0x00122000 -> 0x00121FD4",
+      "selector": "Player_SelectRunOrSpecialAnimation selects this root when CAMERA_SPECIAL_MODE is nonzero; Player_TerrainLandingResolver also reaches it through the 0x00121F6A prelude."
+    }
+  ],
+  "boundaries": {
+    "first_group": "The six entries are independently bounded by their exact VM terminators and adjacent known roots. 0x00121F6A, 0x00121F74, and 0x00121FA0 are 10, 16, and 6 bytes respectively; 0x00121F84 ends before the separate 0x00121F9C state bytes; 0x00121FA6 ends immediately before 0x00121FD4; 0x00121FD4 ends immediately before PLAYER_ANIM_RUN at 0x00122006."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Player_TerrainLandingResolver static selector branches",
+    "Player_TerrainResponseStateMachine static response branches",
+    "Player_SelectRunOrSpecialAnimation special-camera branch",
+    "Exact non-overlapping stream boundaries"
+  ],
+  "conclusion": "The post-idle player state block is a set of distinct landing and terrain-response entries rather than one anonymous stream. Special-camera grounding uses a short prelude into the special-camera locomotion loop; ordinary landing clears the player animation fields before dynamic selection; horizontal terrain response has its own timed, sound-producing loop; and the grounded recovery entry is a separate two-frame tail. No runtime or native behavior is inferred beyond the static selector contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-landing-response-animation-static",
+    "purpose": "Resolve the packed player animation entries selected by landing resolution and terrain-response state, including special-camera grounding, ordinary landing recovery, horizontal response, and special-camera locomotion."
+  },
+  "targets": [
+    { "address": "0x00121F6A", "name": "PLAYER_ANIM_SPECIAL_CAMERA_GROUNDING_PRELUDE" },
+    { "address": "0x00121F74", "name": "PLAYER_ANIM_SPECIAL_CAMERA_LANDING" },
+    { "address": "0x00121F84", "name": "PLAYER_ANIM_LANDING_RECOVERY" },
+    { "address": "0x00121FA0", "name": "PLAYER_ANIM_GROUNDED_RECOVERY" },
+    { "address": "0x00121FA6", "name": "PLAYER_ANIM_TERRAIN_HORIZONTAL_RESPONSE" },
+    { "address": "0x00121FD4", "name": "PLAYER_ANIM_SPECIAL_CAMERA_RUN" },
+    { "address": "0x001AD7B4", "name": "Player_TerrainLandingResolver" },
+    { "address": "0x001A9D98", "name": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001B1FFE", "name": "Player_SelectRunOrSpecialAnimation" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF0B0", "name": "PLAYER_ANIMATION_FIELD_B0" },
+    { "address": "0x00FFF0C0", "name": "PLAYER_ANIMATION_FIELD_C0" },
+    { "address": "0x00FFF0CC", "name": "PLAYER_ANIMATION_FIELD_CC" },
+    { "address": "0x00FFF0ED", "name": "PLAYER_TERRAIN_RESPONSE_PHASE" },
+    { "address": "0x00FFF0EE", "name": "PLAYER_TERRAIN_RESPONSE_TIMER" },
+    { "address": "0x00FFF0EF", "name": "PLAYER_TERRAIN_RESPONSE_LEFT" },
+    { "address": "0x00FFF0F0", "name": "PLAYER_TERRAIN_RESPONSE_RIGHT" },
+    { "address": "0x00FFF101", "name": "PLAYER_TERRAIN_BRAKE_STATE" },
+    { "address": "0x00FFF173", "name": "CAMERA_SPECIAL_MODE" }
+  ]
+}
