@@ -2748,3 +2748,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-interaction-spawn-late-level-object-family-static-v1` | recorded-static-decompilation | Selectors 14/16/1C/26/3C/3E/EA late level-object and interaction handlers named from exact templates and side effects |
 | `20260829-interaction-spawn-runtime47-4c-static-v1` | recorded-static-decompilation | Selectors B1-B6 shared zero-template runtime-type 47-4C handlers named from exact allocator, animation, movement, flag, and gate contracts |
 | `20260829-interaction-spawn-type84-base-static-v1` | recorded-static-decompilation | Selectors B7-B9/BA/CA shared type-0x84 interaction-base handlers named from exact gates, animation roots, and Y adjustments |
+| `20260829-interaction-spawn-runtime37-3b-type43-static-v1` | recorded-static-decompilation | Selectors 40/66/6B/FF zero-template and type-0x43 runtime overrides named from exact compare, allocation, field, animation, and flag contracts |

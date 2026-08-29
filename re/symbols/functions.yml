@@ -4106,3 +4106,35 @@
     - ghidra_disassembly_001B71C4
     - interaction_spawn_type84-base-targets
     - interaction_spawn_type84-base-static-decompilation
+0x001B71E0:
+  name: InteractionSpawn_RuntimeType3B_66
+  confidence: decompiled
+  description: Interaction selector 0x66 handler that skips the spawn when 0x00FFEFE2 equals 0x3939; otherwise it uses the zero-type base, promotes the actor to runtime type 0x3B, installs animation root 0x00122BD8, and sets actor flag byte +0x29 to 1.
+  evidence:
+    - ghidra_disassembly_001B71E0
+    - interaction_spawn_runtime37-3b-type43-targets
+    - interaction_spawn_runtime37-3b-type43-static-decompilation
+0x001B720C:
+  name: InteractionSpawn_RuntimeType37_6B
+  confidence: decompiled
+  description: Interaction selector 0x6B handler that uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x37, writes 0x21 to actor field +0x06, installs animation root 0x00123F10, and sets actor flag byte +0x29 to 2.
+  evidence:
+    - ghidra_disassembly_001B720C
+    - interaction_spawn_runtime37-3b-type43-targets
+    - interaction_spawn_runtime37-3b-type43-static-decompilation
+0x001B7232:
+  name: InteractionSpawn_RuntimeType43_40
+  confidence: decompiled
+  description: Interaction selector 0x40 handler that uses the established type-0x43 template through the 0x40 interaction helper.
+  evidence:
+    - ghidra_disassembly_001B7232
+    - interaction_spawn_runtime37-3b-type43-targets
+    - interaction_spawn_runtime37-3b-type43-static-decompilation
+0x001B723E:
+  name: InteractionSpawn_RuntimeType8A_FF
+  confidence: decompiled
+  description: Interaction selector 0xFF handler that reverse-spawns from the type-0x43 template, then promotes the actor to runtime type 0x8A and installs animation root 0x00124494 when allocation succeeds.
+  evidence:
+    - ghidra_disassembly_001B723E
+    - interaction_spawn_runtime37-3b-type43-targets
+    - interaction_spawn_runtime37-3b-type43-static-decompilation

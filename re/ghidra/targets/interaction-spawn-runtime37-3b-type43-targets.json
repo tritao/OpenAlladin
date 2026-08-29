@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-interaction-spawn-runtime37-3b-type43-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0x40, 0x66, 0x6B, 0xFF",
+    "newly_named_targets": 4,
+    "handlers": [
+      { "selector": "0x66", "address": "0x001B71E0", "name": "InteractionSpawn_RuntimeType3B_66", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "skip_if": "0x00FFEFE2 == 0x3939", "runtime_type": "0x3B", "animation_root": "0x00122BD8", "flag_value": "0x01" },
+      { "selector": "0x6B", "address": "0x001B720C", "name": "InteractionSpawn_RuntimeType37_6B", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "runtime_type": "0x37", "actor_field_06": "0x21", "animation_root": "0x00123F10", "flag_value": "0x02" },
+      { "selector": "0x40", "address": "0x001B7232", "name": "InteractionSpawn_RuntimeType43_40", "template": "0x001B79E0 ACTOR_TEMPLATE_TYPE_43", "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper" },
+      { "selector": "0xFF", "address": "0x001B723E", "name": "InteractionSpawn_RuntimeType8A_FF", "template": "0x001B79E0 ACTOR_TEMPLATE_TYPE_43", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot", "runtime_type": "0x8A", "animation_root": "0x00124494" }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Established zero-type and type-0x43 template contracts",
+    "Direct compare, runtime-type, actor-field, animation-root, and flag writes"
+  ],
+  "conclusion": "This subset is statically closed at selector membership, allocation helper, runtime-type overrides, animation roots, and special field/flag writes. Selector 0x66's progress compare is preserved as an address/value contract rather than assigned a user-facing meaning.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

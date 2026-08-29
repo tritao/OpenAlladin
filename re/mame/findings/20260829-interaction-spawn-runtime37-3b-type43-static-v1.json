@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-spawn-runtime37-3b-type43-targets.json",
+  "dispatch_table": {
+    "address": "0x004154",
+    "name": "INTERACTION_HANDLER_TABLE",
+    "newly_named_targets": 4
+  },
+  "handler_contracts": [
+    { "address": "0x001B71E0", "selector": "0x66", "template": "ACTOR_TEMPLATE_BASE_ZERO", "effect": "skip when 0x00FFEFE2 == 0x3939; otherwise runtime type 0x3B, animation 0x00122BD8, flag +0x29 = 1" },
+    { "address": "0x001B720C", "selector": "0x6B", "template": "ACTOR_TEMPLATE_BASE_ZERO", "effect": "runtime type 0x37, actor +0x06 = 0x21, animation 0x00123F10, flag +0x29 = 2" },
+    { "address": "0x001B7232", "selector": "0x40", "template": "ACTOR_TEMPLATE_TYPE_43", "effect": "0x40-helper spawn" },
+    { "address": "0x001B723E", "selector": "0xFF", "template": "ACTOR_TEMPLATE_TYPE_43", "effect": "reverse-slot spawn, runtime type 0x8A, animation 0x00124494" }
+  ],
+  "evidence": [
+    "Direct template loads and terminating helper calls",
+    "Exact selector membership from INTERACTION_HANDLER_TABLE",
+    "Selector-specific post-allocation field writes"
+  ],
+  "conclusion": "The runtime-type 0x37/0x3B and type-0x43/0x8A handlers are statically closed at direct allocation and post-initialization contracts without assigning unresolved actor roles.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
