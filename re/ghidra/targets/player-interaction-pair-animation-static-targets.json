@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-interaction-pair-animation-static",
+    "purpose": "Range-bound the player interaction-pair setup stream and preserve its two conditional child-spawn records before dynamic state selection."
+  },
+  "targets": [
+    { "address": "0x00121BB6", "name": "PLAYER_ANIM_INTERACTION_PAIR_SETUP" },
+    { "address": "0x00121C26", "name": "Player interaction-pair dynamic state selection" },
+    { "address": "0x001B8110", "name": "ACTOR_TEMPLATE_INTERACTION_PAIR_CHILD" },
+    { "address": "0x00123154", "name": "ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION" },
+    { "address": "0x001AD150", "name": "Player_ResetAnimationResponseGate" }
+  ],
+  "memory_references": [
+    { "address": "0x001E85B0", "name": "SPRITE_FRAME_INTERACTION_PAIR_SETUP" },
+    { "address": "0x00FFF0C5", "name": "PLAYER_INTERACTION_PAIR_GATE_A" },
+    { "address": "0x00FFF0C6", "name": "PLAYER_INTERACTION_PAIR_GATE_B" },
+    { "address": "0x00FFF0C8", "name": "PLAYER_INTERACTION_PAIR_GATE_C" },
+    { "address": "0x00FFF0C9", "name": "PLAYER_INTERACTION_PAIR_GATE_D" }
+  ]
+}

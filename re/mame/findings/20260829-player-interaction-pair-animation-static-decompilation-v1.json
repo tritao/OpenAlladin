@@ -1,0 +1,56 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-interaction-pair-animation-static-targets.json",
+  "stream": {
+    "address": "0x00121BB6",
+    "name": "PLAYER_ANIM_INTERACTION_PAIR_SETUP",
+    "range": "0x00121BB6-0x00121C27",
+    "bytes": 114,
+    "opening_frames": ["0x088E", "0x0892", "0x0896"],
+    "sound": "F3 0x2F at 0x00121BC0",
+    "child_spawns": [
+      {
+        "address": "0x00121BD2",
+        "raw": "F502001B81100000000012315800000000",
+        "template": "0x001B8110 ACTOR_TEMPLATE_INTERACTION_PAIR_CHILD",
+        "entry": "0x00123158"
+      },
+      {
+        "address": "0x00121BF2",
+        "raw": "F502001B81100000000012316600000000",
+        "template": "0x001B8110 ACTOR_TEMPLATE_INTERACTION_PAIR_CHILD",
+        "entry": "0x00123166"
+      }
+    ],
+    "response_gates": [
+      "F4 at 0x00121BC2 compares the 0x00FFF0C5 response field and branches to 0x00121BE2.",
+      "F4 at 0x00121BCC compares the 0x00FFF0C6 response field and branches to 0x00121BE2.",
+      "F4 at 0x00121BE2 compares the 0x00FFF0C8 response field and branches to 0x00121C06.",
+      "F4 at 0x00121BEC compares the 0x00FFF0C9 response field and branches to 0x00121C06."
+    ],
+    "dynamic_handoff": "F8 at 0x00121C26 selects the next player state dynamically."
+  },
+  "related_stream": {
+    "address": "0x00123154",
+    "name": "ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION",
+    "relationship": "The two F5 records enter embedded entries 0x00123158 and 0x00123166 in the separately owned Type-0x84 companion stream."
+  },
+  "boundaries": {
+    "start": "The setup stream begins at 0x00121BB6 after the preceding terrain-response body.",
+    "end": "The exact 114-byte stream ends at 0x00121C27 after F8; the following 0x00121C62 state remains outside the range."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Existing interaction-pair companion animation finding",
+    "Exact dual F5 payloads and embedded continuation entries",
+    "Player animation cursor classification"
+  ],
+  "conclusion": "The player interaction-pair setup stream is now range-bounded through its dynamic state handoff. Its two child-spawn records are linked to the separately owned Type-0x84 companion stream without claiming the adjacent player-state region.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

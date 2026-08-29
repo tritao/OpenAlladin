@@ -1088,6 +1088,14 @@ prefix, which presents frame `0x09D2` nine times before falling through to
 `0x00121D9A-0x00121F39` (416 bytes), including its terrain/interaction
 response branches, conditional Type-0x46 F5 spawn, and local loop.
 
+The player interaction-pair setup stream is recorded in
+`re/mame/findings/20260829-player-interaction-pair-animation-static-decompilation-v1.json`.
+`PLAYER_ANIM_INTERACTION_PAIR_SETUP` owns the exact
+`0x00121BB6-0x00121C27` region (114 bytes), including sound `0x2F`, both
+conditional F5 records targeting the embedded `0x00123158`/`0x00123166`
+entries of the Type-0x84 companion stream, and the terminal dynamic state
+selection at `0x00121C26`.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2888,3 +2896,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-player-response-animation-static-decompilation-v1` | recorded-static-decompilation | Level-event presentation and shared terrain-response player streams range-bounded with exact loops and cross-stream handoffs |
 | `20260829-type29-transition-shared-animation-static-decompilation-v1` | recorded-static-decompilation | Shared Type-0x29 interaction/transition animation range-bounded with exact random branches and transition handoff |
 | `20260829-player-idle-animation-static-decompilation-v1` | recorded-static-decompilation | Player idle pre-roll and root range-bounded with exact response branches, Type-0x46 F5 spawn, and self-loop |
+| `20260829-player-interaction-pair-animation-static-decompilation-v1` | recorded-static-decompilation | Player interaction-pair setup range-bounded with dual Type-0x84 child spawns and dynamic state handoff |
