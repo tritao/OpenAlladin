@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type84-unreferenced-response-family-static-targets.json",
+  "template": {
+    "address": "0x001B8304",
+    "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_0F22_RESPONSE",
+    "range": "0x001B8304-0x001B8317",
+    "raw_bytes": "84000100000000121412600000125D5801000200"
+  },
+  "movement": {
+    "address": "0x00121412",
+    "name": "ACTOR_MOVE_TYPE84_UNREFERENCED_RESPONSE_PREFIX",
+    "range": "0x00121412-0x0012146B",
+    "bytes": 90,
+    "continuation": "0x0012146C ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE"
+  },
+  "animation": {
+    "address": "0x00125D58",
+    "name": "ACTOR_ANIM_TYPE84_UNREFERENCED_0F22_LOOP",
+    "range": "0x00125D58-0x00125D7D",
+    "bytes": 38,
+    "loop": "0x00125D78 -> 0x00125D58"
+  },
+  "evidence": [
+    "Common 20-byte actor-template record layout",
+    "Exact movement and animation pointers in the record",
+    "Lossless VM decoder boundaries",
+    "No recovered static producer or consumer for the template record"
+  ],
+  "conclusion": "The 0x001B8304 record and its pointed movement/animation streams are now explicit provisional ownership metadata. The family is structurally decoded and non-overlapping, but remains a reachability hypothesis until a producer or runtime trace confirms that the record is live."
+}

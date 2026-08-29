@@ -25,13 +25,13 @@
     "runtime_type": "0x41",
     "condition": "The handler allocates from the zero-type base, promotes the actor to runtime type 0x41, and installs this stream into the actor animation field."
   },
-  "boundary": "The exact 70-byte owner ends at 0x00125DC3, immediately before ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY at 0x00125DC4; the preceding 0x00125D58-0x00125D7D fragment remains unresolved.",
+  "boundary": "The exact 70-byte owner ends at 0x00125DC3, immediately before ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY at 0x00125DC4; the preceding 0x00125D58-0x00125D7D loop is separately recorded as the provisional ACTOR_ANIM_TYPE84_UNREFERENCED_0F22_LOOP.",
   "evidence": [
     "Fresh instructions.json DATA reference from 0x001B729E to 0x00125D7E",
     "Lossless AnimationDecoder output",
     "InteractionSpawn_RuntimeType41_C8 disassembly showing the runtime-type and animation-field writes"
   ],
-  "conclusion": "The direct selector-0xC8 animation root is a runtime type-0x41 interaction response with two child records and a local loop, not an extension of the preceding unresolved fragment.",
+  "conclusion": "The direct selector-0xC8 animation root is a runtime type-0x41 interaction response with two child records and a local loop, not an extension of the separately recorded provisional Type-0x84 0x0F22 loop.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

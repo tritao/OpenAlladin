@@ -1,0 +1,59 @@
+{
+  "format": "openaladdin-type84-unreferenced-response-family-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Record the exact Type-0x84 template-shaped response family at 0x001B8304 while preserving its unresolved runtime reachability.",
+  "template": {
+    "address": "0x001B8304",
+    "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_0F22_RESPONSE",
+    "range": ["0x001B8304", "0x001B8317"],
+    "size": 20,
+    "raw_bytes": "84000100000000121412600000125D5801000200",
+    "runtime_type": "0x84",
+    "movement_stream": "0x00121412",
+    "animation_stream": "0x00125D58",
+    "resource_count": "0x01",
+    "trailing_flags": "0x0200"
+  },
+  "movement": {
+    "address": "0x00121412",
+    "name": "ACTOR_MOVE_TYPE84_UNREFERENCED_RESPONSE_PREFIX",
+    "range": ["0x00121412", "0x0012146B"],
+    "size": 90,
+    "decoded": [
+      "Two flag-gated child-spawn phases use ACTOR_TEMPLATE_TYPE_84_WALL_RESPONSE_CHILD at 0x001B7CD8.",
+      "The first phase targets actor field 0x1A with value 0x0800; the second targets fields 0x18 and 0x1A with values 0x0005 and 0x000A.",
+      "The prefix falls through to ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C."
+    ]
+  },
+  "animation": {
+    "address": "0x00125D58",
+    "name": "ACTOR_ANIM_TYPE84_UNREFERENCED_0F22_LOOP",
+    "range": ["0x00125D58", "0x00125D7D"],
+    "size": 38,
+    "decoded": [
+      "Frame 0x0F22 opening",
+      "F0 random branch at 0x00125D5A to 0x00125D62",
+      "Frame sequence 0x0F26 through 0x0F4E",
+      "EA at 0x00125D78 loops to 0x00125D58"
+    ]
+  },
+  "boundary_basis": [
+    "The record has the common 20-byte Actor_InitializeFromTemplate layout and sits between established actor-template records.",
+    "MovementDecoder consumes exactly 90 bytes before the established shared movement owner at 0x0012146C.",
+    "AnimationDecoder consumes exactly 38 bytes through its self-loop before ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE at 0x00125D7E.",
+    "No static code producer or consumer for the 0x001B8304 record was recovered; the family is recorded provisionally and makes no runtime-reachability claim."
+  ],
+  "evidence": [
+    "Exact 20-byte actor-template-shaped record",
+    "Lossless MovementDecoder output",
+    "Lossless AnimationDecoder output",
+    "Non-overlapping boundaries before established movement and animation owners"
+  ],
+  "confidence": "provisional",
+  "status": "recorded-static-decompilation"
+}

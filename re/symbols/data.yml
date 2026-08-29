@@ -2905,6 +2905,16 @@
     - actor_template_type3d_collision_static_decompilation
     - movement_stream_decoder
 
+0x00121412:
+  name: ACTOR_MOVE_TYPE84_UNREFERENCED_RESPONSE_PREFIX
+  type: movement_stream
+  size: 90
+  confidence: provisional
+  description: Provisional Type-0x84 response movement prefix selected by the otherwise unreferenced actor-template-shaped record at 0x001B8304. Its exact 90-byte body performs two flag-gated child-spawn phases with actor-field arithmetic, then falls through to ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C; no live producer or consumer for the template record has been recovered.
+  evidence:
+    - type84_unreferenced_template_static_decompilation
+    - movement_stream_decoder
+
 0x001214B2:
   name: ACTOR_MOVE_TYPE84_PRESENTATION_RESPONSE
   type: movement_stream
@@ -4927,6 +4937,16 @@
     - actor_type41_interaction_response_animation_static_decompilation
     - animation_stream_decoder
 
+0x00125D58:
+  name: ACTOR_ANIM_TYPE84_UNREFERENCED_0F22_LOOP
+  type: animation_stream
+  size: 38
+  confidence: provisional
+  description: Provisional Type-0x84 animation loop selected by the otherwise unreferenced actor-template-shaped record at 0x001B8304. Its exact 38-byte body presents the 0x0F22-0x0F4E frame sequence, uses the random gate at 0x00125D5A, and loops from 0x00125D78 back to its root; no live producer or consumer for the template record has been recovered.
+  evidence:
+    - type84_unreferenced_template_static_decompilation
+    - animation_stream_decoder
+
 0x00126042:
   name: ACTOR_ANIM_TYPE84_LEVEL_EVENT
   size: 50
@@ -6181,6 +6201,16 @@
   evidence:
     - ghidra_scene_initialize_active_scene
     - actor_template_grid_xrefs
+
+0x001B8304:
+  name: ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_0F22_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: provisional
+  description: Provisional 20-byte Type-0x84 actor-template-shaped record with movement pointer 0x00121412, animation pointer 0x00125D58, one resource, and trailing flags 0x0200. The record is structurally complete and adjacent to established template records, but no static producer or consumer has been recovered, so this name does not claim runtime reachability.
+  evidence:
+    - type84_unreferenced_template_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
 
 0x001B832C:
   name: ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY

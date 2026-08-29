@@ -1016,6 +1016,56 @@ def test_shared_type3c_3d_3e_3f_movement_is_exact():
     assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
+def test_unreferenced_type84_response_family_is_exact_and_provisional():
+    symbols = SymbolStore()
+    template = symbols.at(0x001B8304, include_ranges=False)
+    assert template is not None
+    assert template.name == "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_0F22_RESPONSE"
+    assert template.size == 20
+    assert template.metadata["type"] == "actor_template"
+    assert template.confidence == "provisional"
+
+    movement = symbols.at(0x00121412, include_ranges=False)
+    assert movement is not None
+    assert movement.name == "ACTOR_MOVE_TYPE84_UNREFERENCED_RESPONSE_PREFIX"
+    assert movement.end == 0x0012146B
+    assert movement.size == 90
+    assert movement.metadata["type"] == "movement_stream"
+    assert movement.confidence == "provisional"
+
+    animation = symbols.at(0x00125D58, include_ranges=False)
+    assert animation is not None
+    assert animation.name == "ACTOR_ANIM_TYPE84_UNREFERENCED_0F22_LOOP"
+    assert animation.end == 0x00125D7D
+    assert animation.size == 38
+    assert animation.metadata["type"] == "animation_stream"
+    assert animation.confidence == "provisional"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    movement_decoder = MovementDecoder(rom)
+    movement_decoded = movement_decoder.decode_stream(
+        0x00121412,
+        max_steps=256,
+        max_bytes=90,
+        follow_control_flow=False,
+    )
+    assert movement_decoded["bytes_decoded"] == 90
+    assert movement_decoded["stopped_reason"] == "byte_limit"
+    assert movement_decoded["steps"][-1]["next_address"] == "0x0012146C"
+
+    animation_decoder = load_animation_decoder().AnimationDecoder(rom)
+    animation_decoded = animation_decoder.decode_stream(
+        0x00125D58,
+        max_instructions=64,
+        max_bytes=128,
+        follow_control_flow=True,
+    )
+    assert animation_decoded["bytes_decoded"] == 38
+    assert animation_decoded["stopped_reason"] == "control_flow_cycle"
+    assert animation_decoded["instructions"][-1]["branch_target"] == "0x00125D58"
+
+
 def test_type84_presentation_response_movement_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001214B2, include_ranges=False)
