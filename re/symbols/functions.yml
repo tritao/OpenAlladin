@@ -2776,6 +2776,14 @@
   evidence:
     - ghidra_decompile_001B1B3C
     - ghidra_scene_resource_animated_palette_targets
+0x001B1DD8:
+  name: VDP_PatternLoopNoOpHook
+  confidence: confirmed
+  description: RTS-only hook in the 0x28-iteration VDP pattern loop, called after the frame-phase increment and before VDP_WriteDescendingBytePatternAtVRAMStart; its higher-level presentation purpose is unresolved.
+  evidence:
+    - ghidra_disassembly_001B1DD8
+    - vdp_pattern_loop_hook_targets
+    - vdp_pattern_loop_hook_static_decompilation
 0x001B0022:
   name: System_ResetDisplayNoOpHook
   confidence: confirmed
