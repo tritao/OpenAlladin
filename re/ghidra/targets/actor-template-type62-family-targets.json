@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-actor-template-type62-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the scene-gated type-0x62 response-template pair used by the interaction dispatch block.",
+  "templates": [
+    {
+      "address": "0x001B7FD0",
+      "name": "ACTOR_TEMPLATE_TYPE_62_DEFAULT_RESPONSE",
+      "consumer_site": "0x001B660E via 0x001B65FE",
+      "dispatch_entry": "0x004510 selector 0xEF",
+      "spawn_helper": "0x001B52A0 LevelObjectSpawnVariant",
+      "runtime_type": "0x62",
+      "movement_stream": null,
+      "animation_stream": "0x00124CE0",
+      "resource_count": "0x07",
+      "selection": "Chosen when the gate at 0x00FFF10E is set and SCENE_STATE at 0x00FF7E26 is not 0x05."
+    },
+    {
+      "address": "0x001B7FE4",
+      "name": "ACTOR_TEMPLATE_TYPE_62_SCENE5_RESPONSE",
+      "consumer_site": "0x001B65FE",
+      "dispatch_entry": "0x004524 selector 0xF4 reaches the wrapper at 0x001B65F4",
+      "spawn_helper": "0x001B52A0 LevelObjectSpawnVariant",
+      "runtime_type": "0x62",
+      "movement_stream": null,
+      "animation_stream": "0x00124CDC",
+      "resource_count": "0x06",
+      "selection": "Chosen when the gate at 0x00FFF10E is set and SCENE_STATE equals 0x05."
+    }
+  ],
+  "shared_post_spawn": "Both paths subtract 0x08 from the allocated actor's Y position when LevelObjectSpawnVariant succeeds; the helper does not consume the interaction byte.",
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "conclusion": "The type-0x62 pair is an explicit scene-gated response selection: the default and scene-5 records differ only in their animation roots and resource counts, and both share the same spawn helper and Y correction.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1835,3 +1835,23 @@
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
+
+0x001B7FD0:
+  name: ACTOR_TEMPLATE_TYPE_62_DEFAULT_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Default type-0x62 response template selected by the gated interaction body at 0x001B65FE when SCENE_STATE is not 0x05; it has no movement stream, uses animation stream 0x00124CE0, and owns seven resources before LevelObjectSpawnVariant applies the caller's position adjustment.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7FE4:
+  name: ACTOR_TEMPLATE_TYPE_62_SCENE5_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Scene-5 type-0x62 response template selected by the gated interaction body at 0x001B65FE when SCENE_STATE equals 0x05; it has no movement stream, uses animation stream 0x00124CDC, and owns six resources before LevelObjectSpawnVariant applies the caller's position adjustment.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
