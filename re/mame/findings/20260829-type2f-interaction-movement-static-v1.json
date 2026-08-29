@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type2f-interaction-movement-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00120ACC",
+      "name": "ACTOR_MOVE_TYPE2F_INTERACTION_RESPONSE",
+      "range": "0x00120ACC-0x00120B13",
+      "bytes": 72,
+      "templates": ["0x001B7BD4", "0x001B7BFC"],
+      "loop_target": "0x00120AEA"
+    },
+    {
+      "address": "0x00120B14",
+      "name": "ACTOR_MOVE_TYPE2F_INTERACTION_STATE84_ENTRY",
+      "range": "0x00120B14-0x00120B1F",
+      "bytes": 12,
+      "state_value": "0x0084",
+      "loop_target": "0x00120AEA"
+    },
+    {
+      "address": "0x00120B20",
+      "name": "ACTOR_MOVE_TYPE2F_INTERACTION_STATE83_ENTRY",
+      "range": "0x00120B20-0x00120B2B",
+      "bytes": 12,
+      "state_value": "0x0083",
+      "loop_target": "0x00120AEA"
+    },
+    {
+      "address": "0x00120B2C",
+      "name": "ACTOR_MOVE_TYPE2F_INTERACTION_STATE87_TRANSITION",
+      "range": "0x00120B2C-0x00120B35",
+      "bytes": 10,
+      "state_value": "0x0087",
+      "continuation": "0x00120B36 ACTOR_MOVE_TYPE64_INTERACTION"
+    }
+  ],
+  "evidence": [
+    "Exact Type-0x2F template movement pointers",
+    "Lossless MovementDecoder output for the main root and all three conditional entries",
+    "Branch targets in the main root identify the 0x84, 0x83, and 0x87 entries",
+    "Exact boundary before ACTOR_MOVE_TYPE64_INTERACTION at 0x00120B36"
+  ],
+  "conclusion": "The Type-0x2F interaction movement block is now represented as four exact non-overlapping entries covering 0x00120ACC-0x00120B35; the 0x87 path hands off to the existing Type-0x64 interaction stream."
+}

@@ -2046,6 +2046,47 @@
     - ghidra_disassembly_001AEE40
     - movement_stream_decoder
 
+0x00120ACC:
+  name: ACTOR_MOVE_TYPE2F_INTERACTION_RESPONSE
+  type: movement_stream
+  size: 72
+  confidence: decompiled
+  description: Type-0x2F interaction-response movement root selected by ACTOR_TEMPLATE_TYPE_2F_INTERACTION at 0x001B7BD4 and its child template at 0x001B7BFC. Its exact 72-byte owner applies the initial parameter/timer setup, three (+3, 0) phases, compares actor field 0x3D against 0x0087, 0x0084, and 0x0083, and loops from 0x00120B0E back to 0x00120AEA; the conditional state entries following the loop are represented separately.
+  evidence:
+    - actor_template_interaction_family_static_decompilation
+    - type10_animation_static_decompilation
+    - movement_stream_decoder
+
+0x00120B14:
+  name: ACTOR_MOVE_TYPE2F_INTERACTION_STATE84_ENTRY
+  type: movement_stream
+  size: 12
+  confidence: decompiled
+  description: Type-0x2F interaction movement entry selected when actor field 0x3D equals 0x0084. Its exact 12-byte body applies the (-125, +17) and (0, +9) steps, then loops through 0x00120AEA; it is a conditional entry following ACTOR_MOVE_TYPE2F_INTERACTION_RESPONSE and claims no bytes from the neighboring entries.
+  evidence:
+    - actor_template_interaction_family_static_decompilation
+    - movement_stream_decoder
+
+0x00120B20:
+  name: ACTOR_MOVE_TYPE2F_INTERACTION_STATE83_ENTRY
+  type: movement_stream
+  size: 12
+  confidence: decompiled
+  description: Type-0x2F interaction movement entry selected when actor field 0x3D equals 0x0083. Its exact 12-byte body applies the (-125, +17) and (0, +9) steps, then loops through 0x00120AEA; it is a conditional entry following ACTOR_MOVE_TYPE2F_INTERACTION_RESPONSE and claims no bytes from the neighboring entries.
+  evidence:
+    - actor_template_interaction_family_static_decompilation
+    - movement_stream_decoder
+
+0x00120B2C:
+  name: ACTOR_MOVE_TYPE2F_INTERACTION_STATE87_TRANSITION
+  type: movement_stream
+  size: 10
+  confidence: decompiled
+  description: Type-0x2F interaction movement transition selected when actor field 0x3D equals 0x0087. Its exact ten-byte prefix applies the (-125, +20), (0, +32), (0, +18), and (+58, -106) steps, clears actor state, and falls through into ACTOR_MOVE_TYPE64_INTERACTION at 0x00120B36; the Type-0x64 continuation is not claimed here.
+  evidence:
+    - actor_template_interaction_family_static_decompilation
+    - movement_stream_decoder
+
 0x001209F0:
   name: ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A
   type: movement_stream

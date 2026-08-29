@@ -634,6 +634,60 @@ def test_type64_movement_stream_is_exact():
     assert jump["branch_target"] == "0x00120B38"
 
 
+def test_type2f_interaction_movement_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00120ACC: (0x00120B13, 72, "ACTOR_MOVE_TYPE2F_INTERACTION_RESPONSE"),
+        0x00120B14: (0x00120B1F, 12, "ACTOR_MOVE_TYPE2F_INTERACTION_STATE84_ENTRY"),
+        0x00120B20: (0x00120B2B, 12, "ACTOR_MOVE_TYPE2F_INTERACTION_STATE83_ENTRY"),
+        0x00120B2C: (0x00120B35, 10, "ACTOR_MOVE_TYPE2F_INTERACTION_STATE87_TRANSITION"),
+    }
+    for address, (end, size, name) in expected.items():
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.end == end
+        assert stream.size == size
+        assert stream.metadata["type"] == "movement_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = MovementDecoder(rom)
+    for address, (end, size, _) in expected.items():
+        linear = decoder.decode_stream(
+            address,
+            max_steps=256,
+            max_bytes=size,
+            follow_control_flow=False,
+        )
+        assert linear["bytes_decoded"] == size
+        assert linear["stopped_reason"] == "byte_limit"
+        assert linear["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
+
+        decoded = decoder.decode_stream(
+            address,
+            max_steps=256,
+            max_bytes=512,
+            follow_control_flow=True,
+        )
+        expected_flow = 56 if address == 0x00120B2C else size
+        assert decoded["bytes_decoded"] == expected_flow
+        assert decoded["stopped_reason"] == "control_flow_cycle"
+
+    root = decoder.decode_stream(0x00120ACC, 256, 512, True)
+    targets = {
+        command["branch_target"]
+        for step in root["steps"]
+        for command in step["commands"]
+        if command.get("branch_target")
+    }
+    assert {
+        "0x00120B14",
+        "0x00120B20",
+        "0x00120B2C",
+    } <= targets
+
+
 def test_type7b_level11_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x0012120E, include_ranges=False)
