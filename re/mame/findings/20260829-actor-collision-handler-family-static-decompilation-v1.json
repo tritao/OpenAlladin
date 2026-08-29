@@ -1,0 +1,97 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-collision-handler-family-static-targets.json",
+  "dispatch": {
+    "table": "0x001EBA ACTOR_COLLISION_HANDLER_TABLE",
+    "pass": "0x001ABD7E Actor_ActorCollisionPass"
+  },
+  "handlers": [
+    {
+      "address": "0x001AC614",
+      "name": "ActorType14_ActorCollisionHandler",
+      "receiver_type": "0x14",
+      "writes": [
+        "clear source actor type at +0x00",
+        "release source actor resources",
+        "run Actor_HandleType2DInteraction on the receiving actor",
+        "when SCENE_VDP_UPDATE_FLAG is set, prepare audio event 3"
+      ],
+      "scene_effect": "No direct player launch or scene-state write."
+    },
+    {
+      "address": "0x001AC63C",
+      "name": "ActorType2B_ActorCollisionHandler",
+      "receiver_type": "0x2B",
+      "writes": [
+        "run Actor_HandleType2DInteraction",
+        "set ACTOR_COLLISION_EVENT_FLAG to 0xFF",
+        "promote the receiving actor to type 0x84",
+        "install animation stream 0x00123FF8",
+        "set receiving actor flags +0x06 to 0x40",
+        "when a forward gameplay slot is available, initialize it from the selected template and copy the receiving actor position"
+      ],
+      "scene_effect": "No direct player transfer or scene-state write."
+    },
+    {
+      "address": "0x001AC676",
+      "name": "ActorType2F_ActorCollisionHandler",
+      "receiver_type": "0x2F",
+      "writes": [
+        "clear source actor type at +0x00",
+        "release source actor resources",
+        "run Actor_HandleType2DInteraction"
+      ],
+      "scene_effect": "No audio, player launch, or direct scene-state write in this body."
+    },
+    {
+      "address": "0x001AC682",
+      "name": "ActorType30_ActorCollisionHandler",
+      "receiver_type": "0x30",
+      "writes": [
+        "clear source actor type at +0x00",
+        "release source actor resources",
+        "release receiving actor resources through Actor_ClearOwnedResourcesFromA2",
+        "initialize the receiving actor from the collision-response template",
+        "install animation stream 0x00123024 on the receiving actor"
+      ],
+      "scene_effect": "An in-place receiver replacement; no direct player transfer or scene-state write."
+    },
+    {
+      "address": "0x001AC6A2",
+      "name": "ActorType2D2E31_ActorCollisionHandler",
+      "receiver_types": ["0x2D", "0x2E", "0x31"],
+      "source_path": {
+        "condition": "source type is 0x80",
+        "writes": [
+          "promote source type to 0x84",
+          "install animation stream 0x00122B6E",
+          "clear source movement/continuation fields at +0x0A..+0x0D and +0x37"
+        ]
+      },
+      "source_gate": "A source type of 0x82 skips the source promotion but continues; any other source type returns without changing the receiver.",
+      "receiver_writes": [
+        "promote receiving actor to type 0x84",
+        "set receiving actor flags +0x06 to 0x40"
+      ],
+      "scene_effect": "No direct player launch or scene-state write."
+    }
+  ],
+  "shared_contracts": {
+    "0x001ABE8A": "Actor_HandleType2DInteraction reinitializes the receiving actor through the shared Type-0x2D interaction template while preserving the caller's placement/facing contract.",
+    "0x001AE3CE": "Actor_ClearOwnedResourcesFromA2 releases the selected receiving actor's owned resource list using the A2 calling convention."
+  },
+  "evidence": [
+    "Exact 68000 decompilation of all five handler bodies",
+    "ACTOR_COLLISION_HANDLER_TABLE membership at 0x001EBA",
+    "Existing Actor_HandleType2DInteraction and actor-resource cleanup contracts",
+    "Non-overlapping source/receiver write paths"
+  ],
+  "conclusion": "The compact actor-collision family is now separated by lifecycle effect: Type 0x14 and 0x2F retire the source before shared interaction handling, Type 0x2B promotes the receiver and raises the collision event flag, Type 0x30 performs an in-place template replacement, and Type 0x2D/0x2E/0x31 uses a source-type gate before promoting the receiver. None directly writes player coordinates or scene state.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "actor-collision-handler-family-static",
+    "purpose": "Resolve the remaining compact actor-to-actor collision handlers and separate source cleanup, receiver promotion, and linked-record behavior."
+  },
+  "targets": [
+    { "address": "0x001AC614", "name": "ActorType14_ActorCollisionHandler" },
+    { "address": "0x001AC63C", "name": "ActorType2B_ActorCollisionHandler" },
+    { "address": "0x001AC676", "name": "ActorType2F_ActorCollisionHandler" },
+    { "address": "0x001AC682", "name": "ActorType30_ActorCollisionHandler" },
+    { "address": "0x001AC6A2", "name": "ActorType2D2E31_ActorCollisionHandler" },
+    { "address": "0x001ABE8A", "name": "Actor_HandleType2DInteraction" },
+    { "address": "0x001AE3CE", "name": "Actor_ClearOwnedResourcesFromA2" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF100", "name": "ACTOR_COLLISION_EVENT_FLAG" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" },
+    { "address": "0x00FFAE87", "name": "INTERACTION_VALUE_TABLE" }
+  ]
+}

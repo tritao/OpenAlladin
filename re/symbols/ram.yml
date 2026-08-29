@@ -383,6 +383,15 @@
   description: Interaction lock checked by Player_ProcessInteractionState before selecting a recovery animation stream.
   evidence:
     - ghidra_disassembly_001AE4F8
+0xFFF100:
+  name: ACTOR_COLLISION_EVENT_FLAG
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Actor-collision event flag raised by the runtime type-0x2B collision handler before it promotes the receiving actor to the type-0x84 event response.
+  evidence:
+    - ghidra_unclassified_actor_collision_decompile
+    - actor_collision_handler_family_static_decompilation
 0xFFF003:
   name: PLAYER_INTERACTION_COUNTER
   type: u8

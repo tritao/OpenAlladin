@@ -1793,6 +1793,19 @@ shared collision response. This family is an actor terminal replacement and
 counter/countdown producer; it does not directly write `SCENE_STATE` or player
 coordinates, so it does not alter the existing Level 01 transfer conclusion.
 
+The compact actor-collision handler family at `0x001AC614-0x001AC6C1` is now
+separated by lifecycle effect. Type `0x14` and `0x2F` clear/release the source
+before entering the shared Type-0x2D interaction path. Type `0x2B` raises the
+actor-collision event flag, promotes the receiver to type `0x84` with animation
+`0x00123FF8`, and may create a forward-slot response copy. Type `0x30` clears
+both resource sides and performs an in-place receiver template replacement
+with animation `0x00123024`. The shared Type `0x2D/0x2E/0x31` body promotes a
+source type `0x80` to the type-`0x84` animation `0x00122B6E`, permits source
+type `0x82` without that promotion, rejects other source types, and then
+promotes the receiver with flag `+0x06=0x40`. None of these bodies directly
+writes player coordinates or scene state. Details are recorded in
+`re/mame/findings/20260829-actor-collision-handler-family-static-decompilation-v1.json`.
+
 The static result is recorded in
 `re/mame/findings/20260828-actor-collision-terminal-response-v1.json`.
 
@@ -2948,3 +2961,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-terminal-transition-animation-static-decompilation-v1` | recorded-static-decompilation | Primary and secondary Type-0x84 terminal-transition presentation streams independently named and range-bounded before the shared Type-0x29 transition stream |
 | `20260829-player-transition-response-animation-static-decompilation-v1` | recorded-static-decompilation | Player transition-flag response prefix and shared terrain-bounce prelude named and range-bounded with exact selector and stream handoffs |
 | `20260829-actor-vm-lifecycle-static-decompilation-v1` | recorded-static-decompilation | F6/8C actor retirement paths separated from EC/82 cursor clearing, with exact linked cleanup and F7/8D player-facing semantics |
+| `20260829-actor-collision-handler-family-static-decompilation-v1` | recorded-static-decompilation | Type 0x14/0x2B/0x2F/0x30 and shared 0x2D/0x2E/0x31 collision lifecycles separated by exact source/receiver writes and cleanup paths |
