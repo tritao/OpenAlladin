@@ -1335,3 +1335,33 @@
   evidence:
     - ghidra_interaction_handler_0x80
     - actor_template_grid_xrefs
+
+0x001B7B70:
+  name: ACTOR_TEMPLATE_TYPE_29_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x29 interaction template loaded by two direct reverse-slot spawn entries in the interaction dispatch block; it has no movement stream, uses animation stream 0x00121D5A, and owns fourteen resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7B84:
+  name: ACTOR_TEMPLATE_TYPE_10_INTERACTION_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x10 interaction-response template loaded by the direct reverse-slot spawn entry at 0x001B6C5A; the entry queues the actor's interaction audio when VDP updates are enabled, and the record has no movement stream, animation stream 0x001239CA, and twelve resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
+
+0x001B7BD4:
+  name: ACTOR_TEMPLATE_TYPE_2F_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x2F interaction template loaded by direct reverse-slot spawn entries at 0x001B6C96 and 0x001B6CA2; it uses movement stream 0x00120ACC, animation stream 0x00123A68, and four resources.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs

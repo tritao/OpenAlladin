@@ -2716,3 +2716,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-actor-template-service-family-static-decompilation-v1` | recorded-static-decompilation | Scene-resource, menu, exit, Level 08, and typed interaction template records named from direct consumers |
 | `20260829-actor-template-collision-interaction-static-decompilation-v1` | recorded-static-decompilation | Type-0x2D interaction and type-0x11 collision response templates named from direct consumers |
 | `20260829-actor-template-interaction-dispatch-static-decompilation-v1` | recorded-static-decompilation | Type-0x87 interaction-response template named from the reverse-slot dispatch entry |
+| `20260829-actor-template-interaction-family-static-decompilation-v1` | recorded-static-decompilation | Type-0x29, type-0x10, and type-0x2F interaction templates named from direct dispatch spawn bodies |
