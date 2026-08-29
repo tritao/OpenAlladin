@@ -2701,3 +2701,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-actor-scene-resource-mode-static-decompilation-v1` | recorded-static-decompilation | Conditional mode-0x11 and unconditional mode-0x16 scene-resource actor instantiation services |
 | `20260829-vdp-descending-pattern-static-decompilation-v1` | recorded-static-decompilation | VRAM-start VDP writer for the 40-word descending low-byte pattern |
 | `20260829-random-scaled-step-static-decompilation-v1` | recorded-static-decompilation | Shared PRNG advance with counter-scaled mixed-word output |
+| `20260829-reset-bootstrap-static-decompilation-v1` | recorded-static-decompilation | Reset-vector hardware bootstrap, inline initialization table, region detection, Z80/VDP setup, and reset-time service entry |

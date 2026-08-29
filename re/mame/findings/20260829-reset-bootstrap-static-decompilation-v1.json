@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "function": {
+    "address": "0x0000021A",
+    "name": "System_ResetBootstrap",
+    "confidence": "decompiled",
+    "hardware_guard": "The reset entry reads 0x00A10008 and 0x00A1000C; only when both are zero does it execute the initial hardware setup block.",
+    "inline_table": "The setup block loads its initial values from 0x000002A8-0x000002DE: VDP control/data pointers, Z80 bus/reset/RAM pointers, the initial VDP register base, and the Z80/VDP initialization bytes.",
+    "hardware_setup": "The guarded block identifies the console region through 0x00A10001, optionally writes the SEGA marker at 0x00A12F00, initializes VDP registers, clears VDP memory regions, copies the Z80 driver bytes to 0x00A00000, and releases the Z80 reset/bus handoff.",
+    "continuation": "The bootstrap branches to 0x00000314 for region selection and then continues through the reset-time system initialization path.",
+    "service_order": [
+      "0x001AA344 System_InitializeRuntime",
+      "0x001AA41C Startup_InitializeSceneState",
+      "scene/resource presentation and initial frame-service setup"
+    ]
+  },
+  "limitations": [
+    "Ghidra currently models the reset entry as one oversized function ending at 0x001A8C15; this finding names the reset-vector entry and documents its bootstrap prefix without treating that artificial boundary as a single semantic service.",
+    "The exact meanings of the hardware initialization table bytes are preserved as addresses and observed port roles rather than assigned new symbolic enums."
+  ],
+  "status": "recorded-static-decompilation"
+}

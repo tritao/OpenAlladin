@@ -4,6 +4,14 @@
 #   name: Actor_ApplyHorizontalMovement
 #   confidence: provisional
 #   evidence: [mame_trace_run_right]
+0x0000021A:
+  name: System_ResetBootstrap
+  confidence: decompiled
+  description: Reset-vector entry that conditionally initializes Genesis hardware from the inline bootstrap table, then enters the reset-time runtime, scene, rendering, actor, and frame-service initialization path.
+  evidence:
+    - ghidra_decompile_0000021A
+    - reset_bootstrap_targets
+    - reset_bootstrap_static_decompilation
 0x001A8C16:
   name: Game_FrameUpdateLoop
   confidence: confirmed
