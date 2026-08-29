@@ -1,0 +1,65 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type14-type84-presentation-animation-static-targets.json",
+  "type14": {
+    "address": "0x00124766",
+    "name": "ACTOR_ANIM_TYPE14_INTERACTION",
+    "range": "0x00124766-0x001248E9",
+    "bytes": 388,
+    "opening_frames": "0x1A96, 0x1A9A, 0x1A9E, 0x1AA2, 0x1AA6, 0x1AAA",
+    "opening_write": "ED at 0x00124768 writes actor field 0x11 = 0x0014",
+    "response": "Publishes type 0x15 at 0x001247EA, installs movement 0x001203FA at 0x001247F0, plays sound 0x4F at 0x00124802 and 0x00124844, and loops through the proximity-controlled response frames.",
+    "terminal": "Publishes type 0x84 at 0x001248B8, plays sound 0x42 at 0x001248BE, spawns ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE at 0x001248C0, and enters 0x001249F0 through EA at 0x001248E4."
+  },
+  "type84_child": {
+    "address": "0x001248EA",
+    "name": "ACTOR_ANIM_TYPE84_PRESENTATION_CHILD",
+    "range": "0x001248EA-0x00124A2D",
+    "bytes": 324,
+    "opening": "Publishes type 0x84, presents 0x19B6-0x19DE, reloads timer 0x01, and pushes 0x001ACB7A/0x001ACB82 twice.",
+    "child_spawn": "F5 at 0x00124966 uses ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD at 0x001B7F58 with inline placement/movement payload bytes.",
+    "movement_write": "ED at 0x00124986 writes actor movement field 0x14 = 0x001214B2.",
+    "terminal": "ED at 0x001249EA and 0x001249F2 publish type 0x84, FB at 0x00124A26 pushes 0x001B52FA, and F600 at 0x00124A2C clears the actor."
+  },
+  "templates": [
+    {
+      "address": "0x001B7F30",
+      "name": "ACTOR_TEMPLATE_TYPE_14_INTERACTION",
+      "consumer": "selector 0x13 handler at 0x001B6D84",
+      "animation": "0x00124766"
+    },
+    {
+      "address": "0x001B7F44",
+      "name": "ACTOR_TEMPLATE_TYPE_84_PRESENTATION_CHILD",
+      "consumers": ["0x00124A4A", "0x00124A88", "0x00124ABE", "0x00124AF4"],
+      "animation": "0x001248EA"
+    },
+    {
+      "address": "0x001B7F58",
+      "name": "ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD",
+      "consumer": "0x00124966",
+      "movement": "0x001203C8",
+      "animation": "0x0012510A"
+    }
+  ],
+  "boundary": {
+    "type14_root": "The Type-0x14 root owns 0x00124766-0x001248E9 and does not claim the adjacent Type-0x84 stream.",
+    "type84_child": "The Type-0x84 stream owns 0x001248EA-0x00124A2D and ends at its exact F600 command; 0x00124A2E is the next presentation root."
+  },
+  "evidence": [
+    "Lossless linear AnimationDecoder output",
+    "Direct selector-0x13 body and Type-0x14 template pointer",
+    "Four exact Type-0x8B F5 references to the Type-0x84 child template",
+    "Exact Type-0x30 child template pointer and payload",
+    "Exact root jump and F600 terminator boundaries"
+  ],
+  "conclusion": "The selector-0x13 Type-0x14 interaction is a bounded 388-byte root with a terminal jump into the tail of the separately owned Type-0x84 presentation-child stream. The Type-0x84 stream is a closed 324-byte response program that creates a Type-0x30 presentation child, installs its movement response, and clears the actor at F600.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

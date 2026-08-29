@@ -3749,10 +3749,9 @@
 0x001B6D84:
   name: InteractionSpawn_Type14_13
   confidence: decompiled
-  description: Interaction selector 0x13 handler that loads ACTOR_TEMPLATE_TYPE_14_INTERACTION through LevelObjectSpawnEntry; the template enters the separate Type-0x14 animation root at 0x00124766.
+  description: Interaction selector 0x13 handler that loads ACTOR_TEMPLATE_TYPE_14_INTERACTION through LevelObjectSpawnEntry; the template enters ACTOR_ANIM_TYPE14_INTERACTION at 0x00124766, whose terminal response publishes type 0x84 and enters the presentation-child tail.
   evidence:
-    - type13_interaction_animation_static_decompilation
-    - interaction_spawn_type13_static_decompilation
+    - type14_type84_presentation_animation_static_decompilation
     - ghidra_disassembly_001B6D84
 0x001B68D6:
   name: InteractionSpawn_Type5FWhenReady

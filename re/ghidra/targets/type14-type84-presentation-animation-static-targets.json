@@ -1,0 +1,80 @@
+{
+  "format": "openaladdin-type14-type84-presentation-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "type14_root": {
+    "address": "0x00124766",
+    "name": "ACTOR_ANIM_TYPE14_INTERACTION",
+    "range": ["0x00124766", "0x001248E9"],
+    "bytes": 388,
+    "consumer": "0x001B7F30 ACTOR_TEMPLATE_TYPE_14_INTERACTION",
+    "producer": "InteractionSpawn_Type14_13 at 0x001B6D84",
+    "opening": "Publishes actor field 0x11 = 0x0014, presents the 0x1A96-0x1AAA sequence, and gates the response on player-X distances 0x20/0x78 and encoded random branches.",
+    "response": "The 0x1AAE-0x1ADA path publishes actor field 0x11 = 0x0015, installs movement stream 0x001203FA, plays sound 0x4F twice, and returns through the proximity-controlled frame loop.",
+    "terminal": "The 0x1A7A-0x1A92 path reloads timer 0x93, publishes actor field 0x11 = 0x0084, plays sound 0x42, spawns ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE at 0x001B7CD8, and jumps to 0x001249F0.",
+    "continuation": "EA at 0x001248E4 enters the final 0x001249F0-0x00124A2D tail, which is physically owned by the separate Type-0x84 presentation-child stream."
+  },
+  "type84_child": {
+    "address": "0x001248EA",
+    "name": "ACTOR_ANIM_TYPE84_PRESENTATION_CHILD",
+    "range": ["0x001248EA", "0x00124A2D"],
+    "bytes": 324,
+    "consumer": "0x001B7F44 ACTOR_TEMPLATE_TYPE_84_PRESENTATION_CHILD",
+    "producers": [
+      "F5 at 0x00124A4A",
+      "F5 at 0x00124A88",
+      "F5 at 0x00124ABE",
+      "F5 at 0x00124AF4"
+    ],
+    "opening": "Publishes actor field 0x11 = 0x0084 and presents the 0x19B6-0x19DE frame sequence with EE01 and paired callback parameters 0x001ACB7A/0x001ACB82.",
+    "response": "Writes actor field 0x11 = 0x0018, gates a random/proximity branch, spawns ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD at 0x00124966, plays sound 0x4C, installs movement stream 0x001214B2, then writes actor field 0x11 = 0x0019 and presents the 0x1A02-0x1A2E response.",
+    "terminal": "The tail at 0x001249EA republishes actor field 0x11 = 0x0084, pushes 0x001B52FA, and clears the actor with F600 at 0x00124A2C."
+  },
+  "templates": [
+    {
+      "address": "0x001B7F30",
+      "name": "ACTOR_TEMPLATE_TYPE_14_INTERACTION",
+      "runtime_type": "0x14",
+      "animation": "0x00124766 ACTOR_ANIM_TYPE14_INTERACTION",
+      "movement": null,
+      "resource_count": "0x07",
+      "consumer": "selector 0x13 handler at 0x001B6D84"
+    },
+    {
+      "address": "0x001B7F44",
+      "name": "ACTOR_TEMPLATE_TYPE_84_PRESENTATION_CHILD",
+      "runtime_type": "0x84",
+      "animation": "0x001248EA ACTOR_ANIM_TYPE84_PRESENTATION_CHILD",
+      "movement": null,
+      "resource_count": "0x02",
+      "consumers": ["F5 at 0x00124A4A", "F5 at 0x00124A88", "F5 at 0x00124ABE", "F5 at 0x00124AF4"]
+    },
+    {
+      "address": "0x001B7F58",
+      "name": "ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD",
+      "runtime_type": "0x30",
+      "animation": "0x0012510A",
+      "movement": "0x001203C8",
+      "resource_count": "0x06",
+      "consumer": "F5 at 0x00124966"
+    }
+  ],
+  "boundary": {
+    "type14_root_end": "0x001248E9",
+    "type84_child_start": "0x001248EA",
+    "type84_child_end": "0x00124A2D",
+    "next_known_presentation_root": "0x00124A2E",
+    "reason": "The Type-0x14 root ends at its unconditional EA jump; the adjacent Type-0x84 child begins immediately afterward and ends at its exact F600 terminator before the established Type-0x8B presentation root."
+  },
+  "evidence": [
+    "Lossless linear AnimationDecoder output",
+    "Direct selector-0x13 template load at 0x001B6D84",
+    "Exact Type-0x8B F5 references to 0x001B7F44",
+    "Exact Type-0x30 F5 reference at 0x00124966",
+    "Non-overlapping root and child ranges",
+    "Exact F600 terminator at 0x00124A2C"
+  ]
+}
