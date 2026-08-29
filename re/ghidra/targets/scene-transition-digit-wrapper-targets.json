@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-scene-transition-digit-wrappers-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "focus": {
+    "name": "scene-transition-digit-wrappers",
+    "purpose": "Name the fixed-divisor wrappers around SceneTransition_WriteDecimalDigit while preserving the units fallthrough alias into the shared helper."
+  },
+  "shared_helper": {
+    "address": "0x001B34B4",
+    "name": "SceneTransition_WriteDecimalDigit",
+    "contract": "Extract the next decimal digit from D3 using D4, emit it through VDP_WriteTileWord, increment D0, and return with the remainder in D3."
+  },
+  "targets": [
+    { "address": "0x001B3454", "name": "SceneTransition_WriteBillionsDigit", "size": 10, "end": "0x001B345D", "divisor": 1000000000 },
+    { "address": "0x001B345E", "name": "SceneTransition_WriteHundredMillionsDigit", "size": 10, "end": "0x001B3467", "divisor": 100000000 },
+    { "address": "0x001B3468", "name": "SceneTransition_WriteTenMillionsDigit", "size": 10, "end": "0x001B3471", "divisor": 10000000 },
+    { "address": "0x001B3472", "name": "SceneTransition_WriteMillionsDigit", "size": 10, "end": "0x001B347B", "divisor": 1000000 },
+    { "address": "0x001B347C", "name": "SceneTransition_WriteHundredThousandsDigit", "size": 10, "end": "0x001B3485", "divisor": 100000 },
+    { "address": "0x001B3486", "name": "SceneTransition_WriteTenThousandsDigit", "size": 10, "end": "0x001B348F", "divisor": 10000 },
+    { "address": "0x001B3490", "name": "SceneTransition_WriteThousandsDigit", "size": 10, "end": "0x001B3499", "divisor": 1000 },
+    { "address": "0x001B349A", "name": "SceneTransition_WriteHundredsDigit", "size": 10, "end": "0x001B34A3", "divisor": 100 },
+    { "address": "0x001B34A4", "name": "SceneTransition_WriteTensDigit", "size": 10, "end": "0x001B34AD", "divisor": 10 },
+    { "address": "0x001B34AE", "name": "SceneTransition_WriteUnitsDigit_FallthroughAlias", "size": 6, "end": "0x001B34B3", "divisor": 1, "alias_of": "0x001B34B4" }
+  ],
+  "relationships": [
+    "The seven existing and five newly named wrappers load fixed decimal divisors in descending order before calling the shared helper, forming the complete 1,000,000,000 through 1 digit sequence.",
+    "The units entry at 0x001B34AE has no local RTS; it falls through directly to SceneTransition_WriteDecimalDigit and is therefore recorded as an alias, not an independent function."
+  ],
+  "limitations": [
+    "The surrounding caller and displayed numeric field are not assigned here; only the fixed-divisor formatter contract is established."
+  ]
+}

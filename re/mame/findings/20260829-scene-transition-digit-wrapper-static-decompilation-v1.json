@@ -1,0 +1,62 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-transition-digit-wrapper-targets.json",
+  "functions": [
+    {
+      "address": "0x001B3454",
+      "name": "SceneTransition_WriteBillionsDigit",
+      "range": ["0x001B3454", "0x001B345D"],
+      "confidence": "decompiled",
+      "body": "Loads D4 with 1,000,000,000 and calls SceneTransition_WriteDecimalDigit at 0x001B34B4."
+    },
+    {
+      "address": "0x001B345E",
+      "name": "SceneTransition_WriteHundredMillionsDigit",
+      "range": ["0x001B345E", "0x001B3467"],
+      "confidence": "decompiled",
+      "body": "Loads D4 with 100,000,000 and calls SceneTransition_WriteDecimalDigit at 0x001B34B4."
+    },
+    {
+      "address": "0x001B3468",
+      "name": "SceneTransition_WriteTenMillionsDigit",
+      "range": ["0x001B3468", "0x001B3471"],
+      "confidence": "decompiled",
+      "body": "Loads D4 with 10,000,000 and calls SceneTransition_WriteDecimalDigit at 0x001B34B4."
+    },
+    {
+      "address": "0x001B349A",
+      "name": "SceneTransition_WriteHundredsDigit",
+      "range": ["0x001B349A", "0x001B34A3"],
+      "confidence": "decompiled",
+      "body": "Loads D4 with 100 and calls SceneTransition_WriteDecimalDigit at 0x001B34B4."
+    },
+    {
+      "address": "0x001B34A4",
+      "name": "SceneTransition_WriteTensDigit",
+      "range": ["0x001B34A4", "0x001B34AD"],
+      "confidence": "decompiled",
+      "body": "Loads D4 with 10 and calls SceneTransition_WriteDecimalDigit at 0x001B34B4."
+    }
+  ],
+  "alias": {
+    "address": "0x001B34AE",
+    "name": "SceneTransition_WriteUnitsDigit_FallthroughAlias",
+    "range": ["0x001B34AE", "0x001B34B3"],
+    "behavior": "Loads D4 with 1 and falls through to the shared SceneTransition_WriteDecimalDigit body at 0x001B34B4."
+  },
+  "relationships": {
+    "shared_helper": "0x001B34B4 SceneTransition_WriteDecimalDigit",
+    "emitter": "0x001B21A8 VDP_WriteTileWord",
+    "divisor_sequence": [1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10, 1]
+  },
+  "limitations": [
+    "The target manifests establish the complete fixed-divisor wrapper family but do not identify the higher-level value being formatted."
+  ],
+  "conclusion": "The remaining unknown digit-wrapper bytes are now partitioned into five standalone fixed-divisor functions and one explicit units fallthrough alias, completing the descending decimal formatter without duplicating the shared helper."
+}

@@ -4751,3 +4751,48 @@
     - ghidra_disassembly_001B3406
     - ghidra_scene-terrain-utility-targets
     - scene-terrain-utility-static-decompilation
+0x001B3454:
+  name: SceneTransition_WriteBillionsDigit
+  confidence: decompiled
+  size: 10
+  description: Loads the 1,000,000,000 divisor into D4 and delegates digit extraction and tile emission to SceneTransition_WriteDecimalDigit.
+  evidence:
+    - ghidra_disassembly_001B3454
+    - ghidra_scene-transition-digit-wrapper-targets
+    - scene-transition-digit-wrapper-static-decompilation
+0x001B345E:
+  name: SceneTransition_WriteHundredMillionsDigit
+  confidence: decompiled
+  size: 10
+  description: Loads the 100,000,000 divisor into D4 and delegates digit extraction and tile emission to SceneTransition_WriteDecimalDigit.
+  evidence:
+    - ghidra_disassembly_001B345E
+    - ghidra_scene-transition-digit-wrapper-targets
+    - scene-transition-digit-wrapper-static-decompilation
+0x001B3468:
+  name: SceneTransition_WriteTenMillionsDigit
+  confidence: decompiled
+  size: 10
+  description: Loads the 10,000,000 divisor into D4 and delegates digit extraction and tile emission to SceneTransition_WriteDecimalDigit.
+  evidence:
+    - ghidra_disassembly_001B3468
+    - ghidra_scene-transition-digit-wrapper-targets
+    - scene-transition-digit-wrapper-static-decompilation
+0x001B349A:
+  name: SceneTransition_WriteHundredsDigit
+  confidence: decompiled
+  size: 10
+  description: Loads the 100 divisor into D4 and delegates digit extraction and tile emission to SceneTransition_WriteDecimalDigit.
+  evidence:
+    - ghidra_disassembly_001B349A
+    - ghidra_scene-transition-digit-wrapper-targets
+    - scene-transition-digit-wrapper-static-decompilation
+0x001B34A4:
+  name: SceneTransition_WriteTensDigit
+  confidence: decompiled
+  size: 10
+  description: Loads the 10 divisor into D4 and delegates digit extraction and tile emission to SceneTransition_WriteDecimalDigit.
+  evidence:
+    - ghidra_disassembly_001B34A4
+    - ghidra_scene-transition-digit-wrapper-targets
+    - scene-transition-digit-wrapper-static-decompilation
