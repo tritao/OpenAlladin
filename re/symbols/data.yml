@@ -1427,6 +1427,106 @@
     - interaction_spawn_early_family_static_decompilation
     - animation_stream_decoder
 
+0x00120D7A:
+  name: ACTOR_MOVE_TYPE52_INTERACTION_BASE
+  size: 102
+  confidence: decompiled
+  description: Type-0x52 interaction movement stream installed by ACTOR_TEMPLATE_TYPE_52. Its packed 102-byte body presents the signed zero/vertical-step profile and loops through the local command at 0x00120DDA back to 0x00120D7A.
+  evidence:
+    - actor_template_service_family_static_decompilation
+    - movement_stream_decoder
+
+0x00120DE0:
+  name: ACTOR_MOVE_TYPE53_INTERACTION
+  size: 406
+  confidence: decompiled
+  description: Shared Type-0x53 interaction movement region entered by ACTOR_TEMPLATE_TYPE_53_INTERACTION at 0x00120EAA. Its packed 406-byte body contains the long signed delta path and loops from 0x00120F70 back to 0x00120DE0.
+  evidence:
+    - actor_template_presentation_family_static_decompilation
+    - movement_stream_decoder
+
+0x0012548E:
+  name: ACTOR_ANIM_TYPE52_INTERACTION_BASE
+  size: 186
+  confidence: decompiled
+  description: Base Type-0x52 interaction animation installed by ACTOR_TEMPLATE_TYPE_52. Its packed region presents the 0x13A2-0x13B2 frame sequence, applies the encoded interaction gates, spawns the response children, and loops through 0x0012548E.
+  evidence:
+    - interaction_spawn_runtime52_presentation_static_decompilation
+    - actor_template_service_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125548:
+  name: ACTOR_ANIM_TYPE52_SELECTOR_CB
+  size: 10
+  confidence: decompiled
+  description: Selector-0xCB Type-0x52 presentation setup stream. It presents frame 0x13B2, pushes the encoded callback parameter, and clears the actor state.
+  evidence:
+    - interaction_spawn_runtime52_presentation_static_decompilation
+    - animation_stream_decoder
+
+0x00125552:
+  name: ACTOR_ANIM_TYPE52_SELECTOR_CC
+  size: 10
+  confidence: decompiled
+  description: Selector-0xCC Type-0x52 presentation setup stream. It presents frame 0x13AE, pushes the encoded callback parameter, and clears the actor state.
+  evidence:
+    - interaction_spawn_runtime52_presentation_static_decompilation
+    - animation_stream_decoder
+
+0x0012555C:
+  name: ACTOR_ANIM_TYPE52_SELECTOR_CD
+  size: 10
+  confidence: decompiled
+  description: Selector-0xCD Type-0x52 presentation setup stream. It presents frame 0x13AA, pushes the encoded callback parameter, and clears the actor state.
+  evidence:
+    - interaction_spawn_runtime52_presentation_static_decompilation
+    - animation_stream_decoder
+
+0x00125566:
+  name: ACTOR_ANIM_TYPE52_SELECTOR_CE
+  size: 10
+  confidence: decompiled
+  description: Selector-0xCE Type-0x52 presentation setup stream. It presents frame 0x13A6, pushes the encoded callback parameter, and clears the actor state.
+  evidence:
+    - interaction_spawn_runtime52_presentation_static_decompilation
+    - animation_stream_decoder
+
+0x00125570:
+  name: ACTOR_ANIM_TYPE52_SELECTOR_CF
+  size: 10
+  confidence: decompiled
+  description: Selector-0xCF Type-0x52 presentation setup stream. It presents frame 0x13A2, pushes the encoded callback parameter, and clears the actor state.
+  evidence:
+    - interaction_spawn_runtime52_presentation_static_decompilation
+    - animation_stream_decoder
+
+0x0012557A:
+  name: ACTOR_ANIM_TYPE52_SELECTOR_5B
+  size: 186
+  confidence: decompiled
+  description: Gated selector-0x5B Type-0x52 animation variant. Its packed region starts at frame 0x13A2, waits on the encoded actor-field comparison, spawns the response children, and loops through 0x0012557A.
+  evidence:
+    - interaction_spawn_runtime52_presentation_static_decompilation
+    - animation_stream_decoder
+
+0x00125634:
+  name: ACTOR_ANIM_TYPE52_SELECTOR_5D
+  size: 186
+  confidence: decompiled
+  description: Gated selector-0x5D Type-0x52 animation variant. Its packed region follows the alternate 0x13A2-0x13B2 presentation and child-spawn sequence, then loops through 0x00125634.
+  evidence:
+    - interaction_spawn_runtime52_presentation_static_decompilation
+    - animation_stream_decoder
+
+0x001256EE:
+  name: ACTOR_ANIM_TYPE53_INTERACTION
+  size: 30
+  confidence: decompiled
+  description: Type-0x53 interaction animation installed by ACTOR_TEMPLATE_TYPE_53_INTERACTION. Its packed 30-byte region presents four 0x13B2 frames, spawns the encoded child actor, and loops from 0x00125706 back to 0x001256EE.
+  evidence:
+    - actor_template_presentation_family_static_decompilation
+    - animation_stream_decoder
+
 0x00122D92:
   name: ACTOR_ANIM_TYPE01
   confidence: confirmed

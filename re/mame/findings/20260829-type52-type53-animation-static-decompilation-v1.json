@@ -1,0 +1,102 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type52-type53-animation-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00120D7A",
+      "name": "ACTOR_MOVE_TYPE52_INTERACTION_BASE",
+      "range": "0x00120D7A-0x00120DDB",
+      "bytes": 102,
+      "template": "ACTOR_TEMPLATE_TYPE_52",
+      "behavior": "Signed zero/vertical-step movement profile with loop at 0x00120DDA."
+    },
+    {
+      "address": "0x00120DE0",
+      "name": "ACTOR_MOVE_TYPE53_INTERACTION",
+      "entry": "0x00120EAA",
+      "range": "0x00120DE0-0x00120F75",
+      "bytes": 406,
+      "template": "ACTOR_TEMPLATE_TYPE_53_INTERACTION",
+      "behavior": "Long signed movement path entered at 0x00120EAA and looped from 0x00120F70 to 0x00120DE0."
+    },
+    {
+      "address": "0x0012548E",
+      "name": "ACTOR_ANIM_TYPE52_INTERACTION_BASE",
+      "range": "0x0012548E-0x00125547",
+      "bytes": 186,
+      "template": "ACTOR_TEMPLATE_TYPE_52",
+      "behavior": "Base Type-0x52 gated frame, callback, child-spawn, and loop sequence."
+    },
+    {
+      "address": "0x00125548",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_CB",
+      "range": "0x00125548-0x00125551",
+      "bytes": 10,
+      "consumer": "InteractionSpawn_RuntimeType52_CB"
+    },
+    {
+      "address": "0x00125552",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_CC",
+      "range": "0x00125552-0x0012555B",
+      "bytes": 10,
+      "consumer": "InteractionSpawn_RuntimeType52_CC"
+    },
+    {
+      "address": "0x0012555C",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_CD",
+      "range": "0x0012555C-0x00125565",
+      "bytes": 10,
+      "consumer": "InteractionSpawn_RuntimeType52_CD"
+    },
+    {
+      "address": "0x00125566",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_CE",
+      "range": "0x00125566-0x0012556F",
+      "bytes": 10,
+      "consumer": "InteractionSpawn_RuntimeType52_CE"
+    },
+    {
+      "address": "0x00125570",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_CF",
+      "range": "0x00125570-0x00125579",
+      "bytes": 10,
+      "consumer": "InteractionSpawn_RuntimeType52_CF"
+    },
+    {
+      "address": "0x0012557A",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_5B",
+      "range": "0x0012557A-0x00125633",
+      "bytes": 186,
+      "consumer": "InteractionSpawn_RuntimeType52_5B"
+    },
+    {
+      "address": "0x00125634",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_5D",
+      "range": "0x00125634-0x001256ED",
+      "bytes": 186,
+      "consumer": "InteractionSpawn_RuntimeType52_5D"
+    },
+    {
+      "address": "0x001256EE",
+      "name": "ACTOR_ANIM_TYPE53_INTERACTION",
+      "range": "0x001256EE-0x0012570B",
+      "bytes": 30,
+      "consumer": "InteractionSpawn_RuntimeType53_17"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder and MovementDecoder output",
+    "Exact template records and direct stream pointers",
+    "Exact selector-specific animation publications",
+    "Exact movement and animation loop boundaries"
+  ],
+  "conclusion": "The Type-0x52 presentation family and Type-0x53 interaction stream are now represented by canonical, non-overlapping ranges. The Type-0x53 movement entry at 0x00120EAA is retained as an internal entry within its complete shared region, and the next Type-0x36 animation begins immediately after the Type-0x53 stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

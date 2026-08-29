@@ -1,0 +1,117 @@
+{
+  "format": "openaladdin-type52-type53-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Range-bound the Type-0x52 presentation variants, the Type-0x53 interaction animation, and their movement streams.",
+  "movement": [
+    {
+      "address": "0x00120D7A",
+      "name": "ACTOR_MOVE_TYPE52_INTERACTION_BASE",
+      "range": ["0x00120D7A", "0x00120DDB"],
+      "bytes": 102,
+      "template": "0x001B80C0 ACTOR_TEMPLATE_TYPE_52",
+      "behavior": "Signed zero/vertical-step profile ending in an unconditional loop at 0x00120DDA back to 0x00120D7A."
+    },
+    {
+      "address": "0x00120DE0",
+      "name": "ACTOR_MOVE_TYPE53_INTERACTION",
+      "entry": "0x00120EAA",
+      "range": ["0x00120DE0", "0x00120F75"],
+      "bytes": 406,
+      "template": "0x001B80E8 ACTOR_TEMPLATE_TYPE_53_INTERACTION",
+      "behavior": "The template enters at 0x00120EAA; the complete shared movement region follows the signed delta path and loops at 0x00120F70 back to 0x00120DE0."
+    }
+  ],
+  "animations": [
+    {
+      "address": "0x0012548E",
+      "name": "ACTOR_ANIM_TYPE52_INTERACTION_BASE",
+      "range": ["0x0012548E", "0x00125547"],
+      "bytes": 186,
+      "template": "0x001B80C0 ACTOR_TEMPLATE_TYPE_52",
+      "behavior": "Base Type-0x52 frame, gate, callback, child-spawn, and loop sequence."
+    },
+    {
+      "address": "0x00125548",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_CB",
+      "range": ["0x00125548", "0x00125551"],
+      "bytes": 10,
+      "consumer": "0x001B7550 InteractionSpawn_RuntimeType52_CB",
+      "behavior": "0x13B2 frame, callback parameter, and actor clear."
+    },
+    {
+      "address": "0x00125552",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_CC",
+      "range": ["0x00125552", "0x0012555B"],
+      "bytes": 10,
+      "consumer": "0x001B7566 InteractionSpawn_RuntimeType52_CC",
+      "behavior": "0x13AE frame, callback parameter, and actor clear."
+    },
+    {
+      "address": "0x0012555C",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_CD",
+      "range": ["0x0012555C", "0x00125565"],
+      "bytes": 10,
+      "consumer": "0x001B757C InteractionSpawn_RuntimeType52_CD",
+      "behavior": "0x13AA frame, callback parameter, and actor clear."
+    },
+    {
+      "address": "0x00125566",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_CE",
+      "range": ["0x00125566", "0x0012556F"],
+      "bytes": 10,
+      "consumer": "0x001B7592 InteractionSpawn_RuntimeType52_CE",
+      "behavior": "0x13A6 frame, callback parameter, and actor clear."
+    },
+    {
+      "address": "0x00125570",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_CF",
+      "range": ["0x00125570", "0x00125579"],
+      "bytes": 10,
+      "consumer": "0x001B75A8 InteractionSpawn_RuntimeType52_CF",
+      "behavior": "0x13A2 frame, callback parameter, and actor clear."
+    },
+    {
+      "address": "0x0012557A",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_5B",
+      "range": ["0x0012557A", "0x00125633"],
+      "bytes": 186,
+      "consumer": "0x001B750C InteractionSpawn_RuntimeType52_5B",
+      "behavior": "Gated Type-0x52 presentation and response child sequence."
+    },
+    {
+      "address": "0x00125634",
+      "name": "ACTOR_ANIM_TYPE52_SELECTOR_5D",
+      "range": ["0x00125634", "0x001256ED"],
+      "bytes": 186,
+      "consumer": "0x001B752E InteractionSpawn_RuntimeType52_5D",
+      "behavior": "Alternate gated Type-0x52 presentation and response child sequence."
+    },
+    {
+      "address": "0x001256EE",
+      "name": "ACTOR_ANIM_TYPE53_INTERACTION",
+      "range": ["0x001256EE", "0x0012570B"],
+      "bytes": 30,
+      "template": "0x001B80E8 ACTOR_TEMPLATE_TYPE_53_INTERACTION",
+      "consumer": "0x001B75BE InteractionSpawn_RuntimeType53_17",
+      "behavior": "Four-frame presentation, encoded F5 child spawn, and unconditional loop."
+    }
+  ],
+  "boundaries": [
+    { "from": "0x00125548", "to": "0x0012557A", "reason": "The five selector-CB/CC/CD/CE/CF setup roots occupy five consecutive 10-byte records before the larger selector-5B variant." },
+    { "from": "0x00125634", "to": "0x001256EE", "reason": "The selector-5D variant ends at 0x001256ED; the Type-0x53 root begins at 0x001256EE." },
+    { "from": "0x001256EE", "to": "0x0012570C", "reason": "The Type-0x53 stream ends at 0x0012570B; the separately tracked Type-0x36 animation begins at 0x0012570C." }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder and MovementDecoder output",
+    "Exact Type-0x52 and Type-0x53 template pointers",
+    "Exact interaction-table selector consumers",
+    "Exact movement and animation loop boundaries"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
