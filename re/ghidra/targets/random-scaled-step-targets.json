@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-random-scaled-step-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "targets": [
+    { "address": "0x001B2FFC", "name": "Random_AdvanceScaledByCounter" },
+    { "address": "0x001B3032", "name": "TerrainScene5RandomStep" },
+    { "address": "0x00FF7DEA", "name": "GLOBAL_PRNG_STATE" }
+  ],
+  "contract": {
+    "state_update": "state = state * 13 + 7 modulo 32 bits",
+    "mix": "mixed = low_word(state) XOR high_word(state)",
+    "counter": "D7 = D7 + 1 before multiplication",
+    "result": "D7 = high_word(counter * mixed)",
+    "preserved_registers": "D1-D3 are saved and restored; D7 carries the result"
+  }
+}

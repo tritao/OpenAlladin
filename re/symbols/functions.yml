@@ -1957,6 +1957,14 @@
   evidence:
     - ghidra_disassembly_001B3032
     - mame_terrain_handler_25_scene5_spawn_trace
+0x001B2FFC:
+  name: Random_AdvanceScaledByCounter
+  confidence: decompiled
+  description: Advances the shared 32-bit pseudo-random state at 0x00FF7DEA with state = state * 13 + 7, mixes the new state halves, increments the incoming D7 counter, and returns the high word of counter times the mixed value in D7.
+  evidence:
+    - ghidra_disassembly_001B2FFC
+    - random_scaled_step_targets
+    - random_scaled_step_static_decompilation
 0x001AE262:
   name: Actor_FindFreeSlot
   confidence: confirmed

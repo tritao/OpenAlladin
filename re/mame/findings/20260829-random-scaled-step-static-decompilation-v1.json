@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "function": {
+    "address": "0x001B2FFC",
+    "name": "Random_AdvanceScaledByCounter",
+    "state_address": "0x00FF7DEA",
+    "state_update": "state = state * 13 + 7 modulo 32 bits",
+    "mix": "low_word(new_state) XOR high_word(new_state)",
+    "result": "increment D7, multiply its low word by the mixed word, swap the product, and leave the high product word in D7",
+    "register_behavior": "preserves D1-D3; D7 is an input counter and output value"
+  },
+  "comparison": {
+    "terrain_scene5_step": "0x001B3032 returns the mixed word directly in D7",
+    "scaled_step": "0x001B2FFC returns a counter-scaled high product word in D7"
+  },
+  "runtime_status": "not yet observed in the current trace corpus",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
