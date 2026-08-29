@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-shared-entry-family",
+    "purpose": "Recover shared and fall-through player-collision entries that Ghidra currently groups into a broad multi-entry function."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x18", "0x19"], "address": "0x001AEA48" },
+      { "actor_types": ["0x32", "0x79"], "address": "0x001AEB7C" },
+      { "actor_types": ["0x7D"], "address": "0x001AEBA4" },
+      { "actor_types": ["0x78", "0x7A"], "address": "0x001AEBDC" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AEA48", "name": "ActorType18_19_PlayerCollisionHandler" },
+    { "address": "0x001AEB7C", "name": "ActorType32_79_PlayerCollisionHandler" },
+    { "address": "0x001AEBA4", "name": "ActorType7D_PlayerCollisionHandler" },
+    { "address": "0x001AEBDC", "name": "ActorType78_7A_PlayerCollisionHandler" }
+  ],
+  "fallthrough": {
+    "from": "0x001AEBA4",
+    "to": "0x001AEBDC",
+    "condition": "CAMERA_SPECIAL_MODE is clear"
+  },
+  "memory_references": [
+    { "address": "0x00FFF0D8", "name": "PLAYER_INTERACTION_GATE" },
+    { "address": "0x00FFF0E6", "name": "PLAYER_TERMINAL_TRANSITION" },
+    { "address": "0x00FFF0E7", "name": "PLAYER_INTERACTION_ANIMATION_GATE" },
+    { "address": "0x00FFF0F2", "name": "PLAYER_INTERACTION_LOCK" },
+    { "address": "0x00FFF0CC", "name": "TERRAIN_RESPONSE_TIMER_STATE" },
+    { "address": "0x00FFF173", "name": "CAMERA_SPECIAL_MODE" },
+    { "address": "0x00FF7E02", "name": "PLAYER_WORLD_X" },
+    { "address": "0x001B7CC4", "name": "ACTOR_TEMPLATE_COLLISION_TYPE_84" }
+  ]
+}

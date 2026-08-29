@@ -1,0 +1,65 @@
+{
+  "format": "openaladdin-player-collision-shared-entry-family-finding-v1",
+  "recorded_at": "2026-08-29",
+  "status": "static-family-closed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": [
+    "re/ghidra/targets/player-collision-shared-entry-family-targets.json",
+    "re/symbols/functions.yml",
+    "re/symbols/data.yml",
+    "build/re/dasm-1A8000.txt"
+  ],
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "address_space": "68000 ROM addresses",
+    "handlers": [
+      {
+        "address": "0x001AEA48",
+        "size": 306,
+        "actor_types": ["0x18", "0x19"],
+        "name": "ActorType18_19_PlayerCollisionHandler",
+        "range": "0x001AEA48-0x001AEB79",
+        "semantics": "Shared interaction/response family. Ungated contacts route through Player_ProcessInteractionState. Type 0x19 has an additional interaction-lock/sound branch. The proximity path installs a type-0x84 response state with animation 0x001248B6; the terminal path clears/reinitializes through ACTOR_TEMPLATE_COLLISION_TYPE_84 and publishes the response counter/event path.",
+        "negative_findings": ["no direct PLAYER_Y write", "no direct PLAYER_VY write", "no direct SCENE_STATE write"]
+      },
+      {
+        "address": "0x001AEB7C",
+        "size": 40,
+        "actor_types": ["0x32", "0x79"],
+        "name": "ActorType32_79_PlayerCollisionHandler",
+        "range": "0x001AEB7C-0x001AEBA3",
+        "semantics": "Three-gate interaction check followed by TERRAIN_RESPONSE_TIMER_STATE clear and Player_ProcessInteractionState; otherwise no response writes."
+      },
+      {
+        "address": "0x001AEBA4",
+        "actor_types": ["0x7D"],
+        "name": "ActorType7D_PlayerCollisionHandler",
+        "semantics": "CAMERA_SPECIAL_MODE selects the player terrain-response animation and interaction-pending latch. The non-special path arms PLAYER_TERMINAL_TRANSITION and falls through to the type-0x78/0x7A proximity body at 0x001AEBDC.",
+        "shared_tail": "0x001AEBDC"
+      },
+      {
+        "address": "0x001AEBDC",
+        "size": 34,
+        "actor_types": ["0x78", "0x7A"],
+        "name": "ActorType78_7A_PlayerCollisionHandler",
+        "range": "0x001AEBDC-0x001AEBFD",
+        "semantics": "Direct interaction-state recovery when ungated; otherwise a bounded actor/player X proximity check before Player_ProcessInteractionState."
+      }
+    ]
+  },
+  "boundary_checks": {
+    "owned_ranges": [
+      "0x001AEA48-0x001AEB79",
+      "0x001AEB7C-0x001AEBA3",
+      "0x001AEBDC-0x001AEBFD"
+    ],
+    "fallthrough_bytes": "0x001AEBA4-0x001AEBDB are an entry-specific prefix whose non-special branch falls through to the separately named 0x001AEBDC shared tail.",
+    "padding": "0x001AEB7A-0x001AEB7B remains the two-byte gap between the type-0x18/0x19 body and the type-0x32/0x79 entry.",
+    "result": "The table entries and the type-0x7D shared-tail relationship are explicit without assigning the fall-through prefix a false independent range."
+  },
+  "conclusion": "The broad Ghidra multi-entry region is now split into four canonical dispatch identities: a type-0x18/0x19 interaction response, a type-0x32/0x79 timer-clearing recovery, a type-0x7D special-camera/terminal prefix, and a type-0x78/0x7A proximity response. These are interaction and presentation handlers, not the missing Level 01 vertical transfer writer."
+}
