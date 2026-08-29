@@ -1,0 +1,74 @@
+{
+  "format": "openaladdin-targeted-data-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "audio-z80-rom-tables",
+    "purpose": "Bound the ROM-resident Z80 patch, channel-parameter, and sound-sequence tables passed by the 68K startup path."
+  },
+  "initializer": {
+    "address": "0x001AA344",
+    "name": "System_InitializeRuntime",
+    "callee": "0x001E584A",
+    "callee_name": "Audio_Initialize",
+    "pointer_arguments": [
+      { "address": "0x001B9D06", "name": "AUDIO_Z80_PATCH_TABLE" },
+      { "address": "0x001BAF46", "name": "AUDIO_Z80_CHANNEL_PARAMETER_TABLE" },
+      { "address": "0x001BAF6F", "name": "AUDIO_Z80_SEQUENCE_POINTER_TABLE" },
+      { "address": "0x001C73CB", "name": "AUDIO_Z80_WAVEFORM_PARAMETER_TABLE" }
+    ]
+  },
+  "z80_consumers": [
+    {
+      "address": "0x1737",
+      "name": "Z80_LoadPatchState",
+      "pointer": "0x001B9D06",
+      "record_size": 39
+    },
+    {
+      "address": "0x0E2D",
+      "name": "Z80_LoadChannelParameters",
+      "pointer": "0x001BAF46",
+      "record_size": 32
+    },
+    {
+      "address": "0x0BDF",
+      "name": "Z80_LoadSoundSequenceHeader",
+      "pointer": "0x001BAF6F",
+      "header_size": 33
+    }
+  ],
+  "tables": [
+    {
+      "address": "0x001B9D06",
+      "name": "AUDIO_Z80_PATCH_TABLE",
+      "size": 4672,
+      "end": "0x001BAF45",
+      "layout_class": "AUDIO_DATA",
+      "pointer_count": 125,
+      "pointer_width": 2,
+      "pointer_endianness": "little",
+      "record_size": 39,
+      "first_record_offset": "0x00FA",
+      "last_record_offset": "0x1219"
+    },
+    {
+      "address": "0x001BAF46",
+      "name": "AUDIO_Z80_CHANNEL_PARAMETER_TABLE",
+      "size": 41,
+      "end": "0x001BAF6E",
+      "layout_class": "AUDIO_DATA"
+    },
+    {
+      "address": "0x001BAF6F",
+      "name": "AUDIO_Z80_SEQUENCE_POINTER_TABLE",
+      "size": 228,
+      "end": "0x001BB052",
+      "layout_class": "AUDIO_DATA",
+      "pointer_count": 114,
+      "pointer_width": 2,
+      "pointer_endianness": "little",
+      "first_header_offset": "0x00E4"
+    }
+  ],
+  "boundary": "The three ranges are contiguous. The patch records end immediately before the secondary table, and the sequence pointer table ends immediately before its first 0x21-byte header at 0x001BB053."
+}

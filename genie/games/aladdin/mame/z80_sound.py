@@ -16,11 +16,11 @@ if str(_ROOT) not in sys.path:
 from genie.common import ROOT, load_yaml, parse_int, write_json
 
 
-# Audio_Init (68K 0x001E573A) copies this inclusive ROM range to Z80 RAM at
-# 0x0000 before releasing the sound CPU. Keep the source range explicit: it is
-# the stable bridge from the 68K ROM dump to the native sound-driver analysis.
+# Audio_LoadZ80Driver (68K 0x001E573A) copies this inclusive ROM range to Z80
+# RAM at 0x0000 before releasing the sound CPU. The 68K loop uses 0x001B9D06 as
+# an exclusive end pointer, so the last copied byte is 0x001B9D05.
 DRIVER_ROM_START = 0x001B8480
-DRIVER_ROM_END = 0x001B9D06
+DRIVER_ROM_END = 0x001B9D05
 DRIVER_Z80_START = 0x0000
 
 QUEUE_CURSOR = 0x0036

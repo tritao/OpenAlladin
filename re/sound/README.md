@@ -2,6 +2,8 @@
 
 The 68000 sound initialization routine at `0x001E573A` copies the driver
 image described in [z80-driver.yml](z80-driver.yml) from ROM into Z80 RAM.
+The copy is `0x001B8480-0x001B9D05` inclusive; the following byte begins the
+separate ROM-resident audio tables.
 Regenerate the extracted image and machine-readable map with:
 
 ```sh

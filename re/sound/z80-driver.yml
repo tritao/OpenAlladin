@@ -4,9 +4,9 @@ format: openaladdin-z80-sound-driver-v1
 
 rom_copy:
   source_start: 0x001B8480
-  source_end_inclusive: 0x001B9D06
+  source_end_inclusive: 0x001B9D05
   z80_destination: 0x0000
-  size: 6279
+  size: 6278
   loader_68k: 0x001E573A
 
 entry_points:

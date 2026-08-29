@@ -10,6 +10,43 @@
     - ghidra_audio_bootstrap_disassembly
     - audio_z80_bootstrap
 
+0x001B9D06:
+  name: AUDIO_Z80_PATCH_TABLE
+  type: z80_pointer_table
+  entry_size: 2
+  count: 0x7D
+  size: 0x1240
+  confidence: confirmed
+  description: ROM-resident Z80 patch table initialized through Audio_Initialize. Its 125 little-endian offsets occupy 0x001B9D06-0x001B9DFF; the first 0x27-byte patch record begins at offset 0x00FA and the final record ends at 0x001BAF45.
+  evidence:
+    - z80_patch_loader_001737
+    - audio_initialize_pointer_tuple
+    - z80_audio_patch_table_static_v1
+
+0x001BAF46:
+  name: AUDIO_Z80_CHANNEL_PARAMETER_TABLE
+  type: z80_data
+  size: 0x29
+  confidence: decompiled
+  description: Secondary ROM-resident Z80 channel-parameter table passed by Audio_Initialize. The Z80 channel setup helper at 0x0E2D selects a two-byte offset here and copies a 0x20-byte parameter record before the sequence pointer table begins at 0x001BAF6F.
+  evidence:
+    - z80_channel_parameter_loader_000E2D
+    - audio_initialize_pointer_tuple
+    - z80_audio_channel_parameter_table_static_v1
+
+0x001BAF6F:
+  name: AUDIO_Z80_SEQUENCE_POINTER_TABLE
+  type: rom_pointer_table
+  entry_size: 2
+  count: 0x72
+  size: 0xE4
+  confidence: confirmed
+  description: The 0x72-entry little-endian Z80 sound-sequence pointer table consumed by command 0x10. Its first 0x21-byte header begins at 0x001BB053, so the pointer table occupies 0x001BAF6F-0x001BB052.
+  evidence:
+    - z80_sequence_loader_000BDF
+    - audio_initialize_pointer_tuple
+    - z80_audio_sequence_table_static_v1
+
 0xFF0000:
   name: WORK_RAM_BASE
   type: address
