@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-scene-setup-targets.json",
+  "templates": [
+    {
+      "address": "0x001B7B98",
+      "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_A",
+      "consumer": "0x001B6568",
+      "behavior": "Initializes fixed actor slot 0x00FF7EC4 with animation 0x00124C9C at position (0x0184,0x0156)."
+    },
+    {
+      "address": "0x001B7BAC",
+      "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_B",
+      "consumer": "0x001B65A4",
+      "behavior": "Initializes fixed actor slot 0x00FF7F48 with animation 0x00124CC0 at position (0x0176,0x01B8)."
+    },
+    {
+      "address": "0x001B7BC0",
+      "name": "ACTOR_TEMPLATE_TYPE_04_SCENE_SETUP",
+      "consumer": "0x001B6586",
+      "behavior": "Initializes fixed actor slot 0x00FF7F06 with animation 0x00124BDC at position (0x0176,0x01B8)."
+    },
+    {
+      "address": "0x001B7D14",
+      "name": "ACTOR_TEMPLATE_TYPE_84_INTERACTION_OFFSET",
+      "consumer": "0x001B65C0",
+      "behavior": "Reverse-slot type-0x84 spawn using animation 0x00122F4E followed by a +0x0A Y adjustment."
+    }
+  ],
+  "conclusion": "The scene-setup block establishes four additional exact 20-byte actor-template records from direct consumers and literal destination/position behavior.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

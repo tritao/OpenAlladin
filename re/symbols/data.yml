@@ -1595,3 +1595,43 @@
   evidence:
     - ghidra_presentation_interaction_dispatch_block
     - actor_template_grid_xrefs
+
+0x001B7B98:
+  name: ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_A
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene-setup template initialized directly into the actor slot at 0x00FF7EC4 by the setup body at 0x001B6568; it has no movement stream, uses animation stream 0x00124C9C, and owns nine resources before the caller writes position (0x0184,0x0156).
+  evidence:
+    - ghidra_scene_setup_actor_block
+    - actor_template_grid_xrefs
+
+0x001B7BAC:
+  name: ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_B
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene-setup template initialized directly into the actor slot at 0x00FF7F48 by the setup body at 0x001B65A4; it has no movement stream, uses animation stream 0x00124CC0, and owns fifteen resources before the caller writes position (0x0176,0x01B8).
+  evidence:
+    - ghidra_scene_setup_actor_block
+    - actor_template_grid_xrefs
+
+0x001B7BC0:
+  name: ACTOR_TEMPLATE_TYPE_04_SCENE_SETUP
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x04 scene-setup template initialized directly into the actor slot at 0x00FF7F06 by the setup body at 0x001B6586; it has no movement stream, uses animation stream 0x00124BDC, and owns five resources before the caller writes position (0x0176,0x01B8).
+  evidence:
+    - ghidra_scene_setup_actor_block
+    - actor_template_grid_xrefs
+
+0x001B7D14:
+  name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_OFFSET
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 interaction template loaded by the reverse-slot entry at 0x001B65C0; it has no movement stream, uses animation stream 0x00122F4E, and owns one resource, with the caller adding 0x0A to the spawned actor's Y position.
+  evidence:
+    - ghidra_scene_setup_actor_block
+    - actor_template_grid_xrefs
