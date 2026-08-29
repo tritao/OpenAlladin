@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-actor-template-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote actor-template entry points already established by allocation, collision, and runtime trace evidence without inferring unproven template extents.",
+  "templates": [
+    { "address": "0x001B7904", "name": "ACTOR_TEMPLATE_TYPE_6E_73_BASE", "evidence": "runtime type 0x6E through 0x73 spawn family" },
+    { "address": "0x001B7AF8", "name": "ACTOR_TEMPLATE_TYPE_2A", "evidence": "upper-route type-0x2A object" },
+    { "address": "0x001B7ABC", "name": "ACTOR_TEMPLATE_COLLISION_RESPONSE", "evidence": "shared collision reinitialization" },
+    { "address": "0x001B7C10", "name": "ACTOR_TEMPLATE_UPPER_TYPE20", "evidence": "selector-0x1B upper spawn" },
+    { "address": "0x001B7C24", "name": "ACTOR_TEMPLATE_UPPER_TYPE1E", "evidence": "selector-0x11 upper spawn" },
+    { "address": "0x001B7D8C", "name": "ACTOR_TEMPLATE_TYPE_6A_6B", "evidence": "selector-0x0D remote actor family" },
+    { "address": "0x001B7E40", "name": "ACTOR_TEMPLATE_TYPE_84", "evidence": "type-0x84 reinitialization" },
+    { "address": "0x001B7E54", "name": "ACTOR_TEMPLATE_TYPE_65_BOUNCE", "evidence": "selector-0x74 terrain response" },
+    { "address": "0x001B7ECC", "name": "ACTOR_TEMPLATE_F5_TYPE_84", "evidence": "opening AnimationVM F5 spawn" }
+  ],
+  "scope": {
+    "claimed": "entry-point identity and established producer/consumer role",
+    "not_claimed": "full template size, adjacent packing, and all field meanings"
+  }
+}

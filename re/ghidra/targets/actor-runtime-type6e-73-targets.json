@@ -10,7 +10,7 @@
     "duplicate_check": "0x001AE2F2 Actor_FindActorByType",
     "allocator": "0x001AE2AA Actor_FindFreeSlotReverse20",
     "initializer": "0x001AE30A Actor_InitializeFromTemplate",
-    "template": "0x001B7904"
+    "template": "0x001B7904 ACTOR_TEMPLATE_TYPE_6E_73_BASE"
   },
   "services": [
     { "address": "0x001ACE90", "name": "InteractionSpawn_RuntimeType6E", "type": "0x6E", "animation_root": "0x00120584" },

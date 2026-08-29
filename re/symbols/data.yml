@@ -950,6 +950,15 @@
     - actor_spawn_variation_targets
     - actor_refill_vm_static_decompilation
 
+0x001B7904:
+  name: ACTOR_TEMPLATE_TYPE_6E_73_BASE
+  type: actor_template_base
+  confidence: decompiled
+  description: Shared actor-template base used by the runtime type 0x6E through 0x73 interaction-spawn family; each service overwrites the runtime type, animation root, and source coordinates after initialization.
+  evidence:
+    - actor_runtime_type6e_73_targets
+    - actor_runtime_type6e_73_static_decompilation
+
 0x001B7A30:
   name: ACTOR_TEMPLATE_TYPE01
   confidence: confirmed
@@ -1039,3 +1048,76 @@
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - mame_type_34_handler_overlap_trace
+
+0x001B7AF8:
+  name: ACTOR_TEMPLATE_TYPE_2A
+  type: actor_template
+  confidence: confirmed
+  description: Type-0x2A actor template used by the upper-route moving object; its movement stream is ACTOR_MOVE_STATE_120F76 and its animation stream is ACTOR_ANIM_STATE_1231DC.
+  evidence:
+    - actor_type2a_targets
+    - level01_actor_type2a_decomp
+
+0x001B7ABC:
+  name: ACTOR_TEMPLATE_COLLISION_RESPONSE
+  type: actor_template
+  confidence: decompiled
+  description: Shared collision-response template installed by Actor_ReinitializeFromCollisionTemplate after the source actor and owned resources are cleared; the exact full template extent remains unclaimed.
+  evidence:
+    - actor_collision_response_targets
+    - actor_collision_reinitialization
+
+0x001B7C10:
+  name: ACTOR_TEMPLATE_UPPER_TYPE20
+  type: actor_template
+  confidence: confirmed
+  description: Upper interaction template used by the runtime type-0x20 spawn path; the caller initializes the record and then writes animation root 0x0012337A and runtime type 0x20.
+  evidence:
+    - level01_upper_actor_response_targets
+    - level01_upper_activation_trace
+
+0x001B7C24:
+  name: ACTOR_TEMPLATE_UPPER_TYPE1E
+  type: actor_template
+  confidence: confirmed
+  description: Upper interaction template used by the direct runtime type-0x1E spawn path from interaction selector 0x11.
+  evidence:
+    - level01_upper_actor_response_targets
+    - level01_upper_activation_trace
+
+0x001B7D8C:
+  name: ACTOR_TEMPLATE_TYPE_6A_6B
+  type: actor_template
+  confidence: trace_validated
+  description: Shared selector-0x0D actor template used by the natural remote interaction producers; the initialized actor family is observed as runtime type 0x6A and can align into type 0x6B.
+  evidence:
+    - level01_transfer_reachability_closure
+    - actor_runtime_type6a_trace
+
+0x001B7E40:
+  name: ACTOR_TEMPLATE_TYPE_84
+  type: actor_template
+  confidence: confirmed
+  description: Type-0x84 response template used by Actor_ReinitializeAsType84 and the type-0x2D collision transition; the exact full template extent remains unclaimed.
+  evidence:
+    - actor_type84_reinitialize_targets
+    - actor_type84_reinitialize_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B7E54:
+  name: ACTOR_TEMPLATE_TYPE_65_BOUNCE
+  type: actor_template
+  confidence: trace_validated
+  description: Type-0x65 bounce-actor template installed by the selector-0x74 terrain response; its natural Level 01 producer uses the generic level-object allocation path.
+  evidence:
+    - level01_early_top_frontier
+    - level01_transfer_reachability_closure
+
+0x001B7ECC:
+  name: ACTOR_TEMPLATE_F5_TYPE_84
+  type: actor_template
+  confidence: trace_validated
+  description: Type-0x84 actor template supplied by the opening player AnimationVM F5 spawn; the common initializer is followed by caller/stream-specific runtime field publication.
+  evidence:
+    - level01_f5_actor_boundary
+    - ghidra_actor_template_initializer_001AE30A
