@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/exit-type84-animation-static-targets.json",
+  "stream": {
+    "address": "0x0012434C",
+    "name": "ACTOR_ANIM_EXIT_TYPE84_PRESENTATION",
+    "range": "0x0012434C-0x001243B3",
+    "bytes": 104,
+    "opening_frames": "0x12F2, 0x12F6, 0x12FA, 0x12FE, 0x1302, and 0x1306 with EE82 timing and EF00 at the 0x1306 step",
+    "clear_command": "F600 at 0x0012437C",
+    "child_spawn": "F5 at 0x00124380 uses template 0x001B7E18",
+    "terminal_frames": "0x17A6, 0x17A2, 0x179E, and 0x179A",
+    "loop_target": "0x00124390"
+  },
+  "consumer": {
+    "template": "0x001B7E04 ACTOR_TEMPLATE_EXIT_TYPE_84",
+    "service": "0x001A8F0C Level_ExitAndTerminalTransition",
+    "reference_sites": ["0x001B06E0", "0x001B07B6"]
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact pointer in the Type-0x84 exit-transition template",
+    "Encoded actor clear and child-spawn commands",
+    "Exact boundary before the following stream at 0x001243B4"
+  ],
+  "conclusion": "The Type-0x84 exit-transition animation is closed as a bounded 104-byte presentation stream. It owns the opening response, current-actor clear, child spawn, terminal frame sequence, and unconditional loop while the following 0x001243B4 stream remains separate.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

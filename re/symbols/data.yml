@@ -765,6 +765,17 @@
     - interaction_spawn_type84_base_static_decompilation
     - animation_stream_decoder
 
+0x0012434C:
+  name: ACTOR_ANIM_EXIT_TYPE84_PRESENTATION
+  size: 104
+  confidence: decompiled
+  description: Type-0x84 exit-transition presentation stream installed by ACTOR_TEMPLATE_EXIT_TYPE_84. Its packed 104-byte region presents the 0x12F2-0x1306 opening sequence with timer field 0x82, clears the current actor, spawns the 0x001B7E18 child record, presents the 0x17A6/0x17A2/0x179E/0x179A terminal sequence, and loops from 0x001243AE to 0x00124390.
+  evidence:
+    - exit_type84_animation_static_decompilation
+    - actor_template_exit_type84
+    - level_exit_terminal_transition
+    - animation_stream_decoder
+
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
   confidence: probable

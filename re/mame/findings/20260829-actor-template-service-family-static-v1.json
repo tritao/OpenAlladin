@@ -32,7 +32,7 @@
       "name": "ACTOR_TEMPLATE_EXIT_TYPE_84",
       "consumer": "Level_ExitAndTerminalTransition",
       "runtime_type": "0x84",
-      "animation_stream": "0x0012434C",
+      "animation_stream": "0x0012434C ACTOR_ANIM_EXIT_TYPE84_PRESENTATION",
       "reference_sites": ["0x001B06E0", "0x001B07B6"]
     },
     {

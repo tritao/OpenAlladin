@@ -2782,3 +2782,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type89-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x89 random-variant animation range-bounded with its alternate post-spawn entry |
 | `20260829-type84-terrain-response-animation-static-decompilation-v1` | recorded-static-decompilation | Shared Type-0x84 terrain-response animation range-bounded with state publication and descending frame loop |
 | `20260829-type84-interaction-base-animation-static-decompilation-v1` | recorded-static-decompilation | Five selector-owned Type-0x84 interaction-base animation loops range-bounded and connected to B7–B9/BA/CA spawn roots |
+| `20260829-exit-type84-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x84 exit-transition presentation stream range-bounded with actor clear, child spawn, terminal frame sequence, and loop |

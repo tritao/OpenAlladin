@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-exit-type84-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x0012434C",
+    "name": "ACTOR_ANIM_EXIT_TYPE84_PRESENTATION",
+    "range": ["0x0012434C", "0x001243B3"],
+    "bytes": 104,
+    "opening": "Frames 0x12F2, 0x12F6, 0x12FA, 0x12FE, 0x1302, and 0x1306 with encoded timer field 0x82; the 0x1306 step includes EF00.",
+    "clear": "F600 at 0x0012437C clears the current actor before the terminal presentation.",
+    "child_spawn": "F5 at 0x00124380 uses child template 0x001B7E18 with the encoded zero child/root pointer.",
+    "terminal": "Frames 0x17A6, 0x17A2, 0x179E, and 0x179A form the terminal presentation sequence.",
+    "loop": "0x001243AE -> 0x00124390"
+  },
+  "consumer": {
+    "template": "0x001B7E04 ACTOR_TEMPLATE_EXIT_TYPE_84",
+    "service": "0x001A8F0C Level_ExitAndTerminalTransition",
+    "reference_sites": ["0x001B06E0", "0x001B07B6"]
+  },
+  "boundary": {
+    "next_stream": "0x001243B4",
+    "reason": "The next frame-root sequence starts immediately after the closed 104-byte region."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for 0x0012434C",
+    "Exact animation pointer in ACTOR_TEMPLATE_EXIT_TYPE_84",
+    "Encoded F600 clear and F5 child-spawn commands",
+    "Control-flow cycle at 0x001243AE"
+  ]
+}
