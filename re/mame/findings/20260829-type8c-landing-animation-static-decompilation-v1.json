@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type8c-landing-animation-static-targets.json",
+  "stream": {
+    "address": "0x00124408",
+    "name": "ACTOR_ANIM_TYPE8C_LANDING_RESPONSE",
+    "range": "0x00124408-0x0012444F",
+    "bytes": 72,
+    "sound": "0x4C at 0x0012440A",
+    "state_write": "ED field 0x11 = 0x007B at 0x0012441A",
+    "clear_command": "F600 at 0x00124434",
+    "loop_target": "0x00124436"
+  },
+  "consumer": {
+    "template": "0x001B7E2C ACTOR_TEMPLATE_TYPE_8C",
+    "producer": "terrain resolver landing-state spawn path",
+    "references": ["0x001B6732", "0x001B537A"]
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact Type-0x8C template animation pointer",
+    "Landing-state runtime and terrain evidence",
+    "Exact boundary before the following stream at 0x00124450"
+  ],
+  "conclusion": "The Type-0x8C landing-response template now owns a bounded 72-byte animation cycle. The stream's sound, actor-field publication, actor clear, repeated response frames, and loop are recorded without folding in the following Type-0x43 stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -796,6 +796,17 @@
     - level_table_enter_exit_decompilation
     - animation_stream_decoder
 
+0x00124408:
+  name: ACTOR_ANIM_TYPE8C_LANDING_RESPONSE
+  size: 72
+  confidence: decompiled
+  description: Type-0x8C landing-response animation selected by ACTOR_TEMPLATE_TYPE_8C. Its packed 72-byte region plays sound 0x4C, presents the 0x1BD6-0x1BF2 ascent, writes actor field 0x11 to 0x007B, clears the actor, repeats the response frames, and loops from 0x0012444A to 0x00124436.
+  evidence:
+    - type8c_landing_animation_static_decompilation
+    - actor_template_type8c
+    - player_terrain_experiments
+    - animation_stream_decoder
+
 0x001EF4D4:
   name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
   confidence: probable
@@ -1531,7 +1542,7 @@
   type: actor_template
   size: 20
   confidence: trace_validated
-  description: Type-0x8C landing-response template used by the terrain resolver's landing-state spawn path; its animation stream is 0x00124408.
+  description: Type-0x8C landing-response template used by the terrain resolver's landing-state spawn path; its animation stream is ACTOR_ANIM_TYPE8C_LANDING_RESPONSE at 0x00124408.
   evidence:
     - player_terrain_experiments
     - level01_upper_frontier_initializer_targets

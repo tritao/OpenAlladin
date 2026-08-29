@@ -50,7 +50,7 @@
       "name": "ACTOR_TEMPLATE_TYPE_8C",
       "producer": "terrain landing-state spawn path",
       "runtime_type": "0x8C",
-      "animation_stream": "0x00124408"
+      "animation_stream": "0x00124408 ACTOR_ANIM_TYPE8C_LANDING_RESPONSE"
     }
   ],
   "conclusion": "Six additional actor-template entries have direct producer and runtime evidence. Each is recorded as a 20-byte compact source record; no neighboring unclassified record is promoted by association alone.",

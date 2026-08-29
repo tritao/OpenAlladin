@@ -13,7 +13,7 @@
     { "address": "0x001B79E0", "name": "ACTOR_TEMPLATE_TYPE_43", "producer": "selector 0x40 / 0x001B7232", "runtime_type": "0x43", "animation": "0x00124450", "movement": null },
     { "address": "0x001B8098", "name": "ACTOR_TEMPLATE_F5_TYPE_7F", "producer": "type-0x43 AnimationVM F5 child path", "runtime_type": "0x7F", "movement": null },
     { "address": "0x001B805C", "name": "ACTOR_TEMPLATE_TERRAIN_TYPE_84", "producer": "TerrainScene5SpawnResponse / behavior 0x25", "runtime_type": "0x84" },
-    { "address": "0x001B7E2C", "name": "ACTOR_TEMPLATE_TYPE_8C", "producer": "terrain landing-state spawn path", "runtime_type": "0x8C", "animation": "0x00124408" }
+    { "address": "0x001B7E2C", "name": "ACTOR_TEMPLATE_TYPE_8C", "producer": "terrain landing-state spawn path", "runtime_type": "0x8C", "animation": "0x00124408 ACTOR_ANIM_TYPE8C_LANDING_RESPONSE" }
   ],
   "record_contract": {
     "size": 20,

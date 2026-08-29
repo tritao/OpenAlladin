@@ -2785,3 +2785,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-exit-type84-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x84 exit-transition presentation stream range-bounded with actor clear, child spawn, terminal frame sequence, and loop |
 | `20260829-exit-type84-child-animation-static-decompilation-v1` | recorded-static-decompilation | Exit-transition F5 child promoted to a Type-0x8C template with its event-driven random animation cycle range-bounded |
 | `20260829-type7b-level11-animation-static-decompilation-v1` | recorded-static-decompilation | Level 11 Type-0x7B event animation range-bounded and connected to its direct template load, with the shared second template pointer left unresolved |
+| `20260829-type8c-landing-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x8C landing-response animation range-bounded with sound, actor-field publication, clear, and repeated response loop |
