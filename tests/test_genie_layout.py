@@ -1333,6 +1333,50 @@ def test_type84_interaction_fd_fe_animation_family_is_exact():
     assert random_branch["branch_target"] == "0x00125E40"
 
 
+def test_type84_menu_presentation_child_a_animation_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x00125F5A, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_ANIM_TYPE84_MENU_PRESENTATION_CHILD_A"
+    assert stream.end == 0x0012602F
+    assert stream.size == 214
+    assert stream.metadata["type"] == "animation_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = load_animation_decoder().AnimationDecoder(rom)
+    decoded = decoder.decode_stream(
+        0x00125F5A,
+        max_instructions=256,
+        max_bytes=214,
+        follow_control_flow=False,
+    )
+    assert decoded["bytes_decoded"] == 214
+    assert decoded["stopped_reason"] == "byte_limit"
+    assert decoded["instructions"][-1]["address"] == "0x0012602E"
+    assert decoded["instructions"][-1]["opcode"] == "0xEC"
+
+    f5_sites = [
+        instruction["address"]
+        for instruction in decoded["instructions"]
+        if instruction.get("opcode") == "0xF5"
+    ]
+    assert f5_sites == [
+        "0x00125F66",
+        "0x00125F76",
+        "0x00125F86",
+        "0x00125F96",
+        "0x00125FAA",
+        "0x00125FBA",
+        "0x00125FCA",
+        "0x00125FDA",
+        "0x00125FEA",
+        "0x00125FFC",
+        "0x0012600C",
+        "0x0012601C",
+    ]
+
+
 def test_scene_reset_secondary_animation_and_embedded_entry_are_exact():
     symbols = SymbolStore()
     root = symbols.at(0x00125EEE, include_ranges=False)

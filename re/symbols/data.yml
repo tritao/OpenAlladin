@@ -4977,6 +4977,17 @@
     - type84_unreferenced_template_static_decompilation
     - animation_stream_decoder
 
+0x00125F5A:
+  name: ACTOR_ANIM_TYPE84_MENU_PRESENTATION_CHILD_A
+  type: animation_stream
+  size: 214
+  confidence: decompiled
+  description: Type-0x84 menu-presentation child-A animation installed by ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A at 0x001B7D3C. Its exact 214-byte owner presents the 0x148E lead-in, emits the four moving-child and seven flagged-child F5 records, clears the parent state, and ends immediately before ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE at 0x00126030; the child-B animation remains separately owned.
+  evidence:
+    - menu_transition_template_family_static_decompilation
+    - animation_f5_nested_child_family_static_decompilation
+    - animation_stream_decoder
+
 0x00126042:
   name: ACTOR_ANIM_TYPE84_LEVEL_EVENT
   size: 50

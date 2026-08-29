@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-type84-menu-presentation-child-a-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Range-bound the menu-selected Type-0x84 child-A AnimationVM stream and its nested F5 producer family.",
+  "template": {
+    "address": "0x001B7D3C",
+    "name": "ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A",
+    "producer": "First F5 record at 0x00125BE6 in ACTOR_TEMPLATE_MENU_TYPE_84 at 0x00125BC6",
+    "runtime_type": "0x84",
+    "animation_stream": "0x00125F5A",
+    "movement_stream": "0x00121684",
+    "resource_count": "0x04"
+  },
+  "stream": {
+    "address": "0x00125F5A",
+    "name": "ACTOR_ANIM_TYPE84_MENU_PRESENTATION_CHILD_A",
+    "range": ["0x00125F5A", "0x0012602F"],
+    "size": 214,
+    "decoded": [
+      "Four 0x148E lead-in frames",
+      "Sound commands 0xDC and 0x2D",
+      "F5 moving-child records at 0x00125F66, 0x00125F76, 0x00125F86, and 0x00125F96",
+      "EC01 state clear and 0x1492 frame entry",
+      "F5 flagged-child records at 0x00125FAA and 0x00125FBA",
+      "F5 moving-child response records at 0x00125FCA, 0x00125FDA, 0x00125FEA, 0x00125FFC, 0x0012600C, and 0x0012601C",
+      "F600/EC01 terminal cleanup at 0x0012602C-0x0012602F"
+    ],
+    "following_stream": "0x00126030 ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE"
+  },
+  "boundary_basis": [
+    "The menu parent directly selects ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A, whose record points to 0x00125F5A.",
+    "AnimationDecoder consumes exactly 214 linear bytes through the parent EC01 cleanup command.",
+    "The owner ends immediately before the separately selected child-B stream at 0x00126030."
+  ],
+  "evidence": [
+    "Direct menu-parent F5 template pointer",
+    "Exact Type-0x84 child-A template record",
+    "Lossless AnimationDecoder output for all twelve nested F5 records",
+    "Exact boundary before ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
