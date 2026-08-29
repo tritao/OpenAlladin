@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "function": {
+    "address": "0x001B1CE4",
+    "name": "VDP_RunPatternServiceFrames",
+    "range": ["0x001B1CE4", "0x001B1CFC"],
+    "confidence": "decompiled",
+    "body": "Loads D0 with 0x27, then repeats 0x28 times: pushes D0, calls Frame_RunServicePass at 0x001B28AE, calls the RTS-only VDP_PatternLoopNoOpHook at 0x001B1DD8, calls VDP_WriteDescendingBytePatternAtVRAMStart at 0x001B33D8, restores D0, and executes DBF. The function returns at 0x001B1CFC.",
+    "effect": "Apart from its stack-local loop counter, the helper has no direct persistent memory write and does not select a user-facing presentation mode."
+  },
+  "relationships": {
+    "callers": [
+      "0x001B1C0C mode-0x17 caller block"
+    ],
+    "callees": [
+      "0x001B28AE Frame_RunServicePass",
+      "0x001B1DD8 VDP_PatternLoopNoOpHook",
+      "0x001B33D8 VDP_WriteDescendingBytePatternAtVRAMStart"
+    ]
+  },
+  "conclusion": "The block is a canonical 0x28-iteration frame/VDP service helper. Its local contract is established independently of the unresolved higher-level purpose of the surrounding mode-0x17 caller."
+}

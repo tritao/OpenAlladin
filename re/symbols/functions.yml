@@ -2920,6 +2920,15 @@
   evidence:
     - ghidra_decompile_001B1B3C
     - ghidra_scene_resource_animated_palette_targets
+0x001B1CE4:
+  name: VDP_RunPatternServiceFrames
+  confidence: decompiled
+  size: 25
+  description: Runs 0x28 iterations of the frame-phase service, the RTS-only VDP pattern hook, and VDP_WriteDescendingBytePatternAtVRAMStart; the helper preserves the loop counter on the stack and does not assign a broader presentation meaning to the surrounding caller.
+  evidence:
+    - ghidra_disassembly_001B1CE4
+    - vdp_pattern_service_frames_targets
+    - vdp_pattern_service_frames_static_decompilation
 0x001B1DD8:
   name: VDP_PatternLoopNoOpHook
   confidence: confirmed

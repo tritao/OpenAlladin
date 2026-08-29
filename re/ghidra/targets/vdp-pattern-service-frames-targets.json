@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-vdp-pattern-service-frames-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target": {
+    "address": "0x001B1CE4",
+    "name": "VDP_RunPatternServiceFrames",
+    "size": 25,
+    "end": "0x001B1CFC"
+  },
+  "contract": {
+    "iterations": 40,
+    "loop_counter": "D0 starts at 0x27 and is decremented by DBF",
+    "sequence": [
+      "push the loop counter",
+      "call Frame_RunServicePass at 0x001B28AE",
+      "call VDP_PatternLoopNoOpHook at 0x001B1DD8",
+      "call VDP_WriteDescendingBytePatternAtVRAMStart at 0x001B33D8",
+      "restore the loop counter and continue"
+    ],
+    "register_behavior": "preserves the loop counter around each callee call via the stack; no other persistent state is written directly by this helper"
+  }
+}

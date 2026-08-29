@@ -2260,6 +2260,18 @@ The static decompilation and exact VDP command/value pairs are recorded in
 `re/mame/findings/20260829-scene-resource-animated-palette-v1.json` and
 `re/ghidra/targets/scene-resource-animated-palette-targets.json`.
 
+## VDP pattern service frame helper (20260829)
+
+The previously unassigned block at `0x001B1CE4` is now named
+`VDP_RunPatternServiceFrames`. It runs exactly `0x28` iterations, preserving
+the loop counter around `Frame_RunServicePass`, the RTS-only
+`VDP_PatternLoopNoOpHook`, and `VDP_WriteDescendingBytePatternAtVRAMStart`.
+The helper's local contract is established without assigning an unsupported
+higher-level meaning to the surrounding mode-`0x17` presentation path. The
+static contract is recorded in
+`re/mame/findings/20260829-vdp-pattern-service-frames-static-decompilation-v1.json`
+and `re/ghidra/targets/vdp-pattern-service-frames-targets.json`.
+
 ## Actor lifecycle helper services (20260829)
 
 The actor cleanup path now has an explicit interaction-table publication helper.
@@ -2859,6 +2871,7 @@ valuable because it prevents repeating the same input family.
 | `20260829-reset-bootstrap-data-objects-v1` | recorded-static-decompilation | Canonical labels for reset-bootstrap initial words, hardware-pointer tuple, VDP register bytes, and follow-up VDP command |
 | `20260829-no-op-service-boundaries-static-decompilation-v1` | recorded-static-decompilation | Five RTS-only reset, exit, scene-script, and scene-resource extension boundaries with proven caller positions |
 | `20260829-vdp-pattern-loop-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only boundary between frame-phase service and the descending VDP pattern writer; surrounding presentation purpose remains unresolved |
+| `20260829-vdp-pattern-service-frames-static-decompilation-v1` | recorded-static-decompilation | Exact 0x28-iteration frame-phase and descending VDP pattern service helper at 0x001B1CE4; surrounding mode-0x17 presentation purpose remains unresolved |
 | `20260829-scene-resource-mode-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only scene-resource mode hook called after modes 0x1B, 0x1C, and 0x04 are selected |
 | `20260829-terrain-actor-collision-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only actor terrain-collision hook between terrain-row selection and behavior-byte lookup |
 | `20260829-interrupt-vector-static-decompilation-v1` | recorded-static-decompilation | Exception vector fan-in, line-1010 VDP loop, level-4 RTE stub, and spurious interrupt RTE stub |
