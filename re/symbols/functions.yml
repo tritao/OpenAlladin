@@ -4298,3 +4298,83 @@
     - ghidra_disassembly_001B7500
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+0x001B750C:
+  name: InteractionSpawn_RuntimeType52_5B
+  confidence: decompiled
+  description: Interaction selector 0x5B handler that uses the shared type-0x52 template at 0x001B80C0 through InteractionSpawn_ReverseSlot; when 0x00FF7E21 is nonzero it installs animation root 0x0012557A, otherwise it falls through to the selector-0xCB type-0x52 variant.
+  evidence:
+    - ghidra_disassembly_001B750C
+    - interaction-spawn-runtime52-presentation-targets
+    - interaction-spawn-runtime52-presentation-static-decompilation
+0x001B752E:
+  name: InteractionSpawn_RuntimeType52_5D
+  confidence: decompiled
+  description: Interaction selector 0x5D handler that uses the shared type-0x52 template at 0x001B80C0 through InteractionSpawn_ReverseSlot; when 0x00FF7E21 is nonzero it installs animation root 0x00125634, otherwise it falls through to the selector-0xCB type-0x52 variant.
+  evidence:
+    - ghidra_disassembly_001B752E
+    - interaction-spawn-runtime52-presentation-targets
+    - interaction-spawn-runtime52-presentation-static-decompilation
+0x001B7550:
+  name: InteractionSpawn_RuntimeType52_CB
+  confidence: decompiled
+  description: Interaction selector 0xCB handler that reverse-spawns the shared type-0x52 template at 0x001B80C0 and installs animation root 0x00125548 when allocation succeeds.
+  evidence:
+    - ghidra_disassembly_001B7550
+    - interaction-spawn-runtime52-presentation-targets
+    - interaction-spawn-runtime52-presentation-static-decompilation
+0x001B7566:
+  name: InteractionSpawn_RuntimeType52_CC
+  confidence: decompiled
+  description: Interaction selector 0xCC handler that reverse-spawns the shared type-0x52 template at 0x001B80C0 and installs animation root 0x00125552 when allocation succeeds.
+  evidence:
+    - ghidra_disassembly_001B7566
+    - interaction-spawn-runtime52-presentation-targets
+    - interaction-spawn-runtime52-presentation-static-decompilation
+0x001B757C:
+  name: InteractionSpawn_RuntimeType52_CD
+  confidence: decompiled
+  description: Interaction selector 0xCD handler that reverse-spawns the shared type-0x52 template at 0x001B80C0 and installs animation root 0x0012555C when allocation succeeds.
+  evidence:
+    - ghidra_disassembly_001B757C
+    - interaction-spawn-runtime52-presentation-targets
+    - interaction-spawn-runtime52-presentation-static-decompilation
+0x001B7592:
+  name: InteractionSpawn_RuntimeType52_CE
+  confidence: decompiled
+  description: Interaction selector 0xCE handler that reverse-spawns the shared type-0x52 template at 0x001B80C0 and installs animation root 0x00125566 when allocation succeeds.
+  evidence:
+    - ghidra_disassembly_001B7592
+    - interaction-spawn-runtime52-presentation-targets
+    - interaction-spawn-runtime52-presentation-static-decompilation
+0x001B75A8:
+  name: InteractionSpawn_RuntimeType52_CF
+  confidence: decompiled
+  description: Interaction selector 0xCF handler that reverse-spawns the shared type-0x52 template at 0x001B80C0 and installs animation root 0x00125570 when allocation succeeds.
+  evidence:
+    - ghidra_disassembly_001B75A8
+    - interaction-spawn-runtime52-presentation-targets
+    - interaction-spawn-runtime52-presentation-static-decompilation
+0x001B75BE:
+  name: InteractionSpawn_RuntimeType53_17
+  confidence: decompiled
+  description: Interaction selector 0x17 handler that uses ACTOR_TEMPLATE_TYPE_53_INTERACTION at 0x001B80E8 through LevelObjectSpawnEntry, then adds 0x18 to the actor X coordinate and subtracts 0x0E from Y.
+  evidence:
+    - ghidra_disassembly_001B75BE
+    - interaction-spawn-runtime52-presentation-targets
+    - interaction-spawn-runtime52-presentation-static-decompilation
+0x001B75D6:
+  name: InteractionSpawn_RuntimeType17_2D_2E_2F_4E_4F
+  confidence: decompiled
+  description: Shared interaction handler for selectors 0x2D, 0x2E, 0x2F, 0x4E, and 0x4F that loads ACTOR_TEMPLATE_TYPE_17_INTERACTION at 0x001B8174 through LevelObjectSpawnEntry and, when allocation succeeds and 0x00FFF175 is clear, uploads palette data from 0x001292B2.
+  evidence:
+    - ghidra_disassembly_001B75D6
+    - interaction-spawn-runtime52-presentation-targets
+    - interaction-spawn-runtime52-presentation-static-decompilation
+0x001B75F6:
+  name: InteractionSpawn_RuntimeType84_30
+  confidence: decompiled
+  description: Interaction selector 0x30 handler that uses ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT at 0x001B8390 through LevelObjectSpawnEntry and adds 0x0C to the actor Y coordinate when allocation succeeds.
+  evidence:
+    - ghidra_disassembly_001B75F6
+    - interaction-spawn-runtime52-presentation-targets
+    - interaction-spawn-runtime52-presentation-static-decompilation

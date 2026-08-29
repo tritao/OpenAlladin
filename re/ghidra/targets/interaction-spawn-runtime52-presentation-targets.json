@@ -1,0 +1,107 @@
+{
+  "format": "openaladdin-interaction-spawn-runtime52-presentation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0x17, 0x2D-0x30, 0x4E-0x4F, 0x5B, 0x5D, 0xCB-0xCF",
+    "newly_named_targets": 10,
+    "handlers": [
+      {
+        "selector": "0x5B",
+        "address": "0x001B750C",
+        "name": "InteractionSpawn_RuntimeType52_5B",
+        "gate": "0x00FF7E21 != 0 selects the 0x0012557A branch; clear falls through to 0x001B7550",
+        "template": "0x001B80C0 ACTOR_TEMPLATE_TYPE_52",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+        "animation_root": "0x0012557A"
+      },
+      {
+        "selector": "0x5D",
+        "address": "0x001B752E",
+        "name": "InteractionSpawn_RuntimeType52_5D",
+        "gate": "0x00FF7E21 != 0 selects the 0x00125634 branch; clear falls through to 0x001B7550",
+        "template": "0x001B80C0 ACTOR_TEMPLATE_TYPE_52",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+        "animation_root": "0x00125634"
+      },
+      {
+        "selector": "0xCB",
+        "address": "0x001B7550",
+        "name": "InteractionSpawn_RuntimeType52_CB",
+        "template": "0x001B80C0 ACTOR_TEMPLATE_TYPE_52",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+        "animation_root": "0x00125548"
+      },
+      {
+        "selector": "0xCC",
+        "address": "0x001B7566",
+        "name": "InteractionSpawn_RuntimeType52_CC",
+        "template": "0x001B80C0 ACTOR_TEMPLATE_TYPE_52",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+        "animation_root": "0x00125552"
+      },
+      {
+        "selector": "0xCD",
+        "address": "0x001B757C",
+        "name": "InteractionSpawn_RuntimeType52_CD",
+        "template": "0x001B80C0 ACTOR_TEMPLATE_TYPE_52",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+        "animation_root": "0x0012555C"
+      },
+      {
+        "selector": "0xCE",
+        "address": "0x001B7592",
+        "name": "InteractionSpawn_RuntimeType52_CE",
+        "template": "0x001B80C0 ACTOR_TEMPLATE_TYPE_52",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+        "animation_root": "0x00125566"
+      },
+      {
+        "selector": "0xCF",
+        "address": "0x001B75A8",
+        "name": "InteractionSpawn_RuntimeType52_CF",
+        "template": "0x001B80C0 ACTOR_TEMPLATE_TYPE_52",
+        "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+        "animation_root": "0x00125570"
+      },
+      {
+        "selector": "0x17",
+        "address": "0x001B75BE",
+        "name": "InteractionSpawn_RuntimeType53_17",
+        "template": "0x001B80E8 ACTOR_TEMPLATE_TYPE_53_INTERACTION",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "coordinate_adjustment": "X + 0x18, Y - 0x0E"
+      },
+      {
+        "selectors": ["0x2D", "0x2E", "0x2F", "0x4E", "0x4F"],
+        "address": "0x001B75D6",
+        "name": "InteractionSpawn_RuntimeType17_2D_2E_2F_4E_4F",
+        "template": "0x001B8174 ACTOR_TEMPLATE_TYPE_17_INTERACTION",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "optional_side_effect": "when 0x00FFF175 == 0 after successful allocation, call palette upload service 0x001B2650 with source 0x001292B2"
+      },
+      {
+        "selector": "0x30",
+        "address": "0x001B75F6",
+        "name": "InteractionSpawn_RuntimeType84_30",
+        "template": "0x001B8390 ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "coordinate_adjustment": "Y + 0x0C"
+      }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Established template records at 0x001B80C0, 0x001B80E8, 0x001B8174, and 0x001B8390",
+    "Direct animation-root, gate, palette, and coordinate writes"
+  ],
+  "conclusion": "This family is statically closed at selector membership, shared template choice, allocation helper, branch-specific animation roots, palette side effect, and coordinate adjustments. The 0x00FF7E21 and 0x00FFF175 bytes remain mechanical state predicates without speculative semantic labels.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
