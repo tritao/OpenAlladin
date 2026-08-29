@@ -374,6 +374,15 @@
     - mame_actor_movement_cursor_trace
     - movement_stream_decoder
 
+0x001216C6:
+  name: ACTOR_MOVE_TYPE07_MOVING_INTERACTION
+  size: 26
+  confidence: decompiled
+  description: Type-0x07 moving-interaction movement stream installed by ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION. Its packed 26-byte body applies a zero-delta timer setup, then repeated (+1, 0) steps with flag clear and timer reload before looping through the local entry at 0x001216CE.
+  evidence:
+    - actor_template_late_interaction_family_static_decompilation
+    - movement_stream_decoder
+
 0x0011F728:
   name: ACTOR_MOVE_SCENE_RESOURCE_DEFAULT
   size: 30
@@ -1378,6 +1387,35 @@
   description: Type-0x05 interaction variant C installed by ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_C. It uses a 0x64 player-X proximity gate, then runs the timer/spawn response at 0x00125236, including the Type-0x05 child F5 record and repeated actor-field arithmetic through the loop at 0x00125262.
   evidence:
     - actor_template_interaction_dispatch_family_static_decompilation
+    - animation_stream_decoder
+
+0x001252F0:
+  name: ACTOR_ANIM_TYPE07_MOVING_INTERACTION
+  size: 88
+  confidence: decompiled
+  description: Type-0x07 moving-interaction animation installed by ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION. Its packed region presents the 0x1A46-0x1A5A sequence, faces/clears the actor flip, branches on player-X distance 0x55 to the internal entry at 0x00125324, and loops through 0x001252F4.
+  evidence:
+    - actor_template_late_interaction_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125348:
+  name: ACTOR_ANIM_TYPE58_INTERACTION_ALTERNATE
+  size: 74
+  confidence: decompiled
+  description: Alternate Type-0x58 interaction animation published by InteractionSpawn_Type58AlternateAnimation after allocation. Its packed 74-byte region writes actor type 0x84, waits on the encoded interaction-field comparisons, cycles the 0x1582-0x1592 frame sequence, and loops through 0x00125350.
+  evidence:
+    - actor_template_late_interaction_family_static_decompilation
+    - interaction_spawn_early_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125392:
+  name: ACTOR_ANIM_TYPE58_INTERACTION
+  size: 86
+  confidence: decompiled
+  description: Primary Type-0x58 interaction animation installed by ACTOR_TEMPLATE_TYPE_58_INTERACTION. Its packed 86-byte region publishes actor type 0x84, applies the encoded interaction gate, performs the actor-field write at 0x001253A6, cycles the 0x1582-0x1592 response frames, republishes type 0x58, and loops through 0x0012539A.
+  evidence:
+    - actor_template_late_interaction_family_static_decompilation
+    - interaction_spawn_early_family_static_decompilation
     - animation_stream_decoder
 
 0x00122D92:
