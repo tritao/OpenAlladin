@@ -2698,3 +2698,4 @@ valuable because it prevents repeating the same input family.
 
 | `20260829-level08-event-vdp-static-decompilation-v1` | recorded-static-decompilation | Level 08 event-counter update, rotating VDP record emission, timed event-stream dispatch, and conditional actor setup |
 | `20260829-actor-type84-reinitialize-static-decompilation-v1` | recorded-static-decompilation | Standalone actor resource cleanup, type-0x84 template reinitialization, and transient-field reset primitive |
+| `20260829-actor-scene-resource-mode-static-decompilation-v1` | recorded-static-decompilation | Conditional mode-0x11 and unconditional mode-0x16 scene-resource actor instantiation services |

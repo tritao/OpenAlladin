@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "family": {
+    "mode11_service": "0x001AFF40 SceneResource_EnsureMode11Actors",
+    "mode16_service": "0x001AFF66 SceneResource_InstantiateMode16Actors",
+    "shared_instantiator": "0x001B2238 SceneResource_InstantiateActors"
+  },
+  "mode11_service": {
+    "guard": "Actor_FindActorByType with D0 low byte 0x85",
+    "existing_type85": "return without changing scene-resource mode",
+    "missing_type85": [
+      "write SCENE_RESOURCE_MODE = 0x11",
+      "call SceneResource_InstantiateActors",
+      "set byte at 0x00FFF114 to 0xFF"
+    ]
+  },
+  "mode16_service": {
+    "actions": [
+      "write SCENE_RESOURCE_MODE = 0x16",
+      "call SceneResource_InstantiateActors",
+      "set byte at 0x00FFF114 to 0xFF"
+    ]
+  },
+  "shared_behavior": "all registers are saved and restored around the service",
+  "runtime_status": "not yet observed in the current trace corpus",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
