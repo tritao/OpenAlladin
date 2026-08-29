@@ -2695,3 +2695,5 @@ The static result is recorded in
 
 When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
+
+| `20260829-level08-event-vdp-static-decompilation-v1` | recorded-static-decompilation | Level 08 event-counter update, rotating VDP record emission, timed event-stream dispatch, and conditional actor setup |

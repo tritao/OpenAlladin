@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-level08-event-vdp-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "targets": [
+    { "address": "0x001B5D46", "name": "VDP_WriteRotatingCommandRecord" },
+    { "address": "0x001B6066", "name": "Level08_EnterRoutine" },
+    { "address": "0x001B634E", "name": "LevelEvent_DispatchTimedCommand" },
+    { "address": "0x0020C0", "name": "LEVEL_EVENT_COMMAND_DISPATCH_TABLE" },
+    { "address": "0x0029E0", "name": "LEVEL08_ROTATING_VDP_RECORD_TABLE" },
+    { "address": "0x00FFF084", "name": "LEVEL08_EVENT_PHASE" },
+    { "address": "0x00FFF086", "name": "LEVEL08_EVENT_COUNTER_HIGH" },
+    { "address": "0x00FFF088", "name": "LEVEL08_EVENT_COUNTER_LOW" },
+    { "address": "0x00FFF08A", "name": "LEVEL08_VDP_RECORD_OFFSET" },
+    { "address": "0x00FFF12E", "name": "LEVEL_EVENT_SCRIPT_CURSOR" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ],
+  "contracts": {
+    "rotating_record": {
+      "source": "0x0029E0",
+      "record_size": "0x6",
+      "control_word": "long at record offset 0",
+      "data_word": "word at record offset 4",
+      "offset_range": "0x00..0x5A",
+      "wrap": "offset >= 0x60 becomes zero"
+    },
+    "level08_entry": {
+      "address": "0x001B6066",
+      "rotating_records_per_update": 2,
+      "event_cursor": "0x00FFF12E",
+      "event_dispatch_table": "0x0020C0",
+      "event_record": "delay byte, command byte, two word payload values",
+      "conditional_actor_setup": "camera-relative actor allocation after event/animation gates"
+    }
+  }
+}

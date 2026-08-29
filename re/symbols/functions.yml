@@ -1163,6 +1163,22 @@
     - ghidra_level_transition_targeted_decompile
     - level_table_entry_1
     - controlled_level01_transition_campaign
+0x001B5D46:
+  name: VDP_WriteRotatingCommandRecord
+  confidence: decompiled
+  description: Emits one six-byte VDP command/data record from a caller-supplied table at the rotating word offset in D0, advances that offset by six bytes, and wraps it to zero at 0x60.
+  evidence:
+    - ghidra_disassembly_001B5D46
+    - level08_event_vdp_targets
+    - level08_event_vdp_static_decompilation
+0x001B6066:
+  name: Level08_EnterRoutine
+  confidence: decompiled
+  description: Level-table entry-8 update; advances the level-8 event counters, emits two rotating VDP records from ROM table 0x0029E0, consumes timed records through the level-event dispatch table at 0x0020C0, and conditionally instantiates a camera-relative actor.
+  evidence:
+    - ghidra_level_table_enter_exit_targeted_decompile
+    - level08_event_vdp_targets
+    - level08_event_vdp_static_decompilation
 0x001B56B6:
   name: TerrainHandler_BouncePlayerBlock
   confidence: confirmed

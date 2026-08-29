@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "family": {
+    "level_entry": "0x001B6066 Level08_EnterRoutine",
+    "rotating_vdp_helper": "0x001B5D46 VDP_WriteRotatingCommandRecord",
+    "event_dispatcher": "0x001B634E LevelEvent_DispatchTimedCommand"
+  },
+  "rotating_vdp_helper": {
+    "input": "A0 points to six-byte records and D0 is the current byte offset",
+    "writes": [
+      "long at A0+D0 to VDP_CONTROL",
+      "word at A0+D0+4 to VDP_DATA"
+    ],
+    "advance": "D0 += 6",
+    "wrap": "D0 = 0 when D0 >= 0x60"
+  },
+  "level08_entry": {
+    "record_table": "0x0029E0",
+    "rotating_records": 2,
+    "event_state": [
+      "advances the low event counter and carries into the high counter",
+      "increments the event phase on the animation cadence",
+      "consumes delay/command/word/word records from 0x00FFF12E",
+      "dispatches command handlers through 0x0020C0",
+      "conditionally allocates an actor using the camera-relative player state"
+    ]
+  },
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
