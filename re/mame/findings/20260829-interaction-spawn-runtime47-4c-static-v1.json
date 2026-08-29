@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-spawn-runtime47-4c-targets.json",
+  "dispatch_table": {
+    "address": "0x004154",
+    "name": "INTERACTION_HANDLER_TABLE",
+    "newly_named_targets": 6
+  },
+  "shared_contract": {
+    "template": "ACTOR_TEMPLATE_BASE_ZERO",
+    "animation_root": "0x00123E36",
+    "post_spawn": ["clear actor movement pointer at offset 0x0A", "set actor flag byte at offset 0x29 to 1"]
+  },
+  "handler_contracts": [
+    { "address": "0x001B7018", "selector": "0xB1", "runtime_type": "0x47", "effect": "reverse-slot spawn" },
+    { "address": "0x001B703C", "selector": "0xB2", "runtime_type": "0x48", "effect": "LevelObjectSpawnEntry allocation" },
+    { "address": "0x001B7060", "selector": "0xB3", "runtime_type": "0x49", "effect": "LevelObjectSpawnEntry allocation" },
+    { "address": "0x001B7084", "selector": "0xB4", "runtime_type": "0x4A", "effect": "gate 0x00FFF179, then LevelObjectSpawnEntry allocation" },
+    { "address": "0x001B70B0", "selector": "0xB5", "runtime_type": "0x4B", "effect": "LevelObjectSpawnEntry allocation" },
+    { "address": "0x001B70D4", "selector": "0xB6", "runtime_type": "0x4C", "effect": "LevelObjectSpawnEntry allocation" }
+  ],
+  "evidence": [
+    "Direct zero-template loads and terminating helper calls",
+    "Exact selector membership from INTERACTION_HANDLER_TABLE",
+    "Runtime-type, animation-root, movement-clear, flag-set, and selector-B4 gate instructions"
+  ],
+  "conclusion": "The runtime-type 0x47-0x4C family is statically closed at its shared initialization contract and per-selector allocator/gate differences.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

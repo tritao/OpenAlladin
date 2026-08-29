@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-interaction-spawn-runtime47-4c-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0xB1-B6",
+    "newly_named_targets": 6,
+    "shared_template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+    "shared_animation_root": "0x00123E36",
+    "shared_post_spawn": ["clear actor movement pointer at offset 0x0A", "set actor flag byte at offset 0x29 to 1"],
+    "handlers": [
+      { "selector": "0xB1", "address": "0x001B7018", "name": "InteractionSpawn_RuntimeType47_B1", "runtime_type": "0x47", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot" },
+      { "selector": "0xB2", "address": "0x001B703C", "name": "InteractionSpawn_RuntimeType48_B2", "runtime_type": "0x48", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry" },
+      { "selector": "0xB3", "address": "0x001B7060", "name": "InteractionSpawn_RuntimeType49_B3", "runtime_type": "0x49", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry" },
+      { "selector": "0xB4", "address": "0x001B7084", "name": "InteractionSpawn_RuntimeType4A_B4", "runtime_type": "0x4A", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry", "gate": "0x00FFF179 != 0" },
+      { "selector": "0xB5", "address": "0x001B70B0", "name": "InteractionSpawn_RuntimeType4B_B5", "runtime_type": "0x4B", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry" },
+      { "selector": "0xB6", "address": "0x001B70D4", "name": "InteractionSpawn_RuntimeType4C_B6", "runtime_type": "0x4C", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry" }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Established zero-type actor-template base and post-initialization field contract",
+    "Per-handler runtime-type writes and common animation/movement/flag writes"
+  ],
+  "conclusion": "Selectors B1-B6 are a shared zero-template runtime-type family. The handlers differ by runtime type and allocator choice, with selector B4 additionally gated by 0x00FFF179; all six share animation root 0x00123E36 and the same movement/flag initialization.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
