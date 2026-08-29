@@ -1,0 +1,52 @@
+{
+  "format": "openaladdin-progressive-palette-services-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "focus": {
+    "name": "progressive-palette-services",
+    "purpose": "Bound the complete palette transition variants adjacent to the shared palette-step and scene-transition helpers without promoting overlapping alternate entries."
+  },
+  "targets": [
+    {
+      "address": "0x001B26F0",
+      "name": "Render_RunProgressivePaletteTransition",
+      "size": 148,
+      "end": "0x001B2783",
+      "contract": "Initialize four palette-band pointers, snapshot 64 current palette words, clear the convergence index, then run 47 VBlank-paced transition iterations."
+    },
+    {
+      "address": "0x001B29B0",
+      "name": "Render_ConvergePaletteWordsByProgress",
+      "size": 118,
+      "end": "0x001B2A25",
+      "contract": "Move each selected current palette word toward the source by one masked component step, using 0x00FFEFF6 as the inclusive word-count index, and write the result through VDP_DATA."
+    },
+    {
+      "address": "0x001B2A26",
+      "name": "Render_ConvergePaletteBandFromBlack",
+      "size": 140,
+      "end": "0x001B2AB1",
+      "contract": "Clear a 16-word working band and perform 16 VBlank-paced positive component-step passes at VDP palette address 0xC020."
+    }
+  ],
+  "memory_references": [
+    { "address": "0x00FFEFF6", "name": "PALETTE_CONVERGENCE_WORD_INDEX" },
+    { "address": "0x00FF7262", "name": "PALETTE_BAND_0" },
+    { "address": "0x00FF7266", "name": "PALETTE_BAND_1" },
+    { "address": "0x00FF726A", "name": "PALETTE_BAND_2" },
+    { "address": "0x00FF726E", "name": "PALETTE_BAND_3" },
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
+    { "address": "0x00FF7DF2", "name": "PALETTE_TRANSITION_SOURCE" },
+    { "address": "0x00FF8800", "name": "CURRENT_VDP_PALETTE" },
+    { "address": "0x00FF8880", "name": "VDP_COMMAND_ADDRESS_LATCH" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ],
+  "excluded_overlapping_entries": [
+    "0x001B25AC",
+    "0x001B25DA",
+    "0x001B2618",
+    "0x001B28DC"
+  ]
+}

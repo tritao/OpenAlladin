@@ -1,0 +1,55 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/progressive-palette-services-targets.json",
+  "functions": [
+    {
+      "address": "0x001B26F0",
+      "name": "Render_RunProgressivePaletteTransition",
+      "range": ["0x001B26F0", "0x001B2783"],
+      "confidence": "decompiled",
+      "body": "Publishes A0 to the transition source scratch at 0x00FF7DF2, derives four 16-word palette-band pointers at 0x00FF7262/66/6A/6E, snapshots 64 words from VDP palette memory into 0x00FF8800, clears the progress word at 0x00FFEFF6, and executes 47 iterations. Each iteration waits for VBlank, writes FRAME_PHASE_COUNTER bit 0 to the VDP control/data sequence, calls Render_ConvergePaletteWordsByProgress, increments the progress word and FRAME_PHASE_COUNTER, and returns after the DBF loop.",
+      "effect": "A VBlank-paced palette transition driver with an exact 47-iteration contract; its surrounding presentation meaning is not assigned here."
+    },
+    {
+      "address": "0x001B29B0",
+      "name": "Render_ConvergePaletteWordsByProgress",
+      "range": ["0x001B29B0", "0x001B2A25"],
+      "confidence": "decompiled",
+      "body": "Loads the progress index from 0x00FFEFF6, selects the current palette at 0x00FF8800 and the VDP palette destination at 0xC000, then processes index+1 words. For each word it compares the source components against the current value in masks 0x000E, 0x00E0, and 0x0E00, adjusts differing components by one two-unit step toward the source, and writes the resulting word through VDP_DATA.",
+      "effect": "Mutates the current palette snapshot and VDP palette contents; the helper is called by Render_RunProgressivePaletteTransition at 0x001B26F0."
+    },
+    {
+      "address": "0x001B2A26",
+      "name": "Render_ConvergePaletteBandFromBlack",
+      "range": ["0x001B2A26", "0x001B2AB1"],
+      "confidence": "decompiled",
+      "body": "Publishes A0 to 0x00FF8880, clears all 16 words at 0x00FF8800, then repeats 16 times: waits for VBlank three times, reloads the source and current palette pointers, selects VDP palette address 0xC020, and for each of 16 words adds one positive two-unit component step toward the source for masks 0x000E, 0x00E0, and 0x0E00 before writing the word to VDP_DATA.",
+      "effect": "Converges one 16-word palette band from black at VDP palette address 0xC020; no direct caller was recovered in the current static export."
+    }
+  ],
+  "relationships": {
+    "shared_helpers": [
+      "0x001B28AE Frame_RunServicePass",
+      "0x001B249E Frame_WaitForVBlankWork",
+      "0x001B293C Render_ConvergePaletteWords"
+    ],
+    "published_state": [
+      "0x00FF7262 PALETTE_BAND_0",
+      "0x00FF7266 PALETTE_BAND_1",
+      "0x00FF726A PALETTE_BAND_2",
+      "0x00FF726E PALETTE_BAND_3",
+      "0x00FF8800 CURRENT_VDP_PALETTE"
+    ]
+  },
+  "limitations": [
+    "The entries at 0x001B25AC, 0x001B25DA, 0x001B2618, and 0x001B28DC are alternate entries into already-owned common tails and are intentionally not promoted as standalone ranges.",
+    "The higher-level scene or presentation identity of the 47-frame driver and the from-black band helper remains unresolved without a direct caller or runtime capture."
+  ],
+  "conclusion": "Three complete, non-overlapping palette service bodies are now named and range-bounded. Their exact VDP destinations, iteration counts, component masks, and persistent scratch state are recorded without duplicating the overlapping alternate-entry tails."
+}

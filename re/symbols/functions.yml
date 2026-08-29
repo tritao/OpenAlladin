@@ -4652,3 +4652,30 @@
     - ghidra_disassembly_001B75F6
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+0x001B26F0:
+  name: Render_RunProgressivePaletteTransition
+  confidence: decompiled
+  size: 148
+  description: Initializes four palette-band source pointers from A0, snapshots 64 current VDP palette words into CURRENT_VDP_PALETTE, clears the palette convergence index, and runs 47 VBlank-paced frames that write the phase bit and converge the published palette words toward the selected sources.
+  evidence:
+    - ghidra_disassembly_001B26F0
+    - ghidra_progressive_palette_services_targets
+    - progressive_palette_services_static_decompilation
+0x001B29B0:
+  name: Render_ConvergePaletteWordsByProgress
+  confidence: decompiled
+  size: 118
+  description: Converges the selected palette words at VDP palette address 0xC000 toward the caller's source words by one masked Genesis color-component step per invocation; the number of words is controlled by the convergence index at 0x00FFEFF6.
+  evidence:
+    - ghidra_disassembly_001B29B0
+    - ghidra_progressive_palette_services_targets
+    - progressive_palette_services_static_decompilation
+0x001B2A26:
+  name: Render_ConvergePaletteBandFromBlack
+  confidence: decompiled
+  size: 140
+  description: Publishes the caller's palette pointer, clears the 16-word working palette at CURRENT_VDP_PALETTE, then performs 16 VBlank-paced passes that add one masked Genesis color-component step toward the source and write the band at VDP palette address 0xC020.
+  evidence:
+    - ghidra_disassembly_001B2A26
+    - ghidra_progressive_palette_services_targets
+    - progressive_palette_services_static_decompilation
