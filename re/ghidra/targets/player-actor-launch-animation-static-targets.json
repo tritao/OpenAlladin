@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-actor-launch-animation-static",
+    "purpose": "Resolve the final generic player animation entry from its direct collision-response selector and exact VM decode."
+  },
+  "targets": [
+    { "address": "0x0012222E", "name": "PLAYER_ANIM_ACTOR_LAUNCH_RESPONSE" },
+    { "address": "0x001AED24", "name": "Actor_PlayerCollisionVerticalLaunchHandler" },
+    { "address": "0x001AED40", "name": "PLAYER_ANIMATION_PC direct assignment" },
+    { "address": "0x001AE4F8", "name": "Player_ProcessInteractionState" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
+    { "address": "0x001B7940", "name": "ACTOR_TEMPLATE_BASE_ZERO" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E04", "name": "PLAYER_WORLD_Y" },
+    { "address": "0x00FF7E5A", "name": "PLAYER_VY" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF0BE", "name": "TERRAIN_RESPONSE_ACTIVE" },
+    { "address": "0x00FFF0C0", "name": "TERRAIN_VERTICAL_STOP" },
+    { "address": "0x00FFF0C1", "name": "TERRAIN_LANDING_STATE" },
+    { "address": "0x00FFF14E", "name": "ACTOR_RESPONSE_COUNTER" }
+  ]
+}

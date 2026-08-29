@@ -1,0 +1,52 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-actor-launch-animation-static-targets.json",
+  "animation_stream": {
+    "address": "0x0012222E",
+    "name": "PLAYER_ANIM_ACTOR_LAUNCH_RESPONSE",
+    "range": "0x0012222E-0x00122235",
+    "bytes": 8,
+    "instructions": [
+      { "address": "0x0012222E", "raw": "0942", "kind": "frame_ref", "resolved_frame": "0x001E964E" },
+      { "address": "0x00122230", "raw": "EC01", "kind": "clear_actor_state", "value": "0x01" },
+      { "address": "0x00122232", "raw": "0B16", "kind": "frame_ref", "resolved_frame": "0x001EC06C" },
+      { "address": "0x00122234", "raw": "F800", "kind": "select_state_stream" }
+    ],
+    "handoff": "F8 at 0x00122234 enters the dynamic player animation-state selector."
+  },
+  "selector": {
+    "handler": "0x001AED24",
+    "assignment": "MOVE.L #0x0012222E,(PLAYER_ANIMATION_PC) at 0x001AED40",
+    "conditions": [
+      "TERRAIN_LANDING_STATE is clear",
+      "PLAYER_WORLD_Y is greater than the actor record world-Y field at +0x04"
+    ],
+    "state_writes": [
+      "PLAYER_VY = -0x0400",
+      "TERRAIN_RESPONSE_ACTIVE = 0xFF",
+      "TERRAIN_VERTICAL_STOP = 0",
+      "PLAYER_ANIMATION_TIMER = 0",
+      "ACTOR_RESPONSE_COUNTER += actor byte +0x08"
+    ],
+    "actor_lifecycle": "The source actor is cleared and its owned resources released, then the destination slot is initialized from ACTOR_TEMPLATE_BASE_ZERO. The fallback path calls Player_ProcessInteractionState."
+  },
+  "boundaries": {
+    "stream_end": "The F8 command at 0x00122234 consumes the final two bytes at 0x00122235; PLAYER_ANIM_TERRAIN_PUSH_UP_RESPONSE begins at 0x00122236.",
+    "code_block": "The handler occupies 0x001AED24-0x001AED7F and returns before the adjacent response helpers at 0x001AED80."
+  },
+  "evidence": [
+    "Exact big-endian ROM bytes",
+    "Lossless AnimationDecoder output",
+    "Direct PLAYER_ANIMATION_PC assignment at 0x001AED40",
+    "68K disassembly of the surrounding collision-response block",
+    "Existing canonical RAM symbols and ACTOR_TEMPLATE_BASE_ZERO"
+  ],
+  "conclusion": "The last generic player animation entry is a statically selected actor-launch response, not an unresolved arbitrary state. Its 8-byte range is now explicitly owned, and the previously unlisted selector block is named conservatively without claiming a specific runtime actor type.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

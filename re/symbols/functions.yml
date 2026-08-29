@@ -1656,6 +1656,14 @@
     - ghidra_disassembly_001AEC00
     - ghidra_decompile_collision_damage_targets
     - mame_guard_collision_watchpoint
+0x001AED24:
+  name: Actor_PlayerCollisionVerticalLaunchHandler
+  confidence: decompiled
+  description: Player-collision response block for an actor-side vertical launch. When TERRAIN_LANDING_STATE is clear and the actor's world-Y field is below PLAYER_WORLD_Y, it writes PLAYER_VY=-0x0400, publishes PLAYER_ANIM_ACTOR_LAUNCH_RESPONSE, clears PLAYER_ANIMATION_TIMER, arms TERRAIN_RESPONSE_ACTIVE, clears TERRAIN_VERTICAL_STOP, adds the actor response byte at +0x08 to ACTOR_RESPONSE_COUNTER, clears the source actor and owned resources, and reinitializes the slot from ACTOR_TEMPLATE_BASE_ZERO; otherwise it dispatches through Player_ProcessInteractionState.
+  evidence:
+    - ghidra_actor_player_collision_vertical_launch
+    - ghidra_disassembly_001AED24
+    - actor_template_base_zero
 0x001AF1AC:
   name: ActorType13_PlayerCollisionHandler
   confidence: decompiled
