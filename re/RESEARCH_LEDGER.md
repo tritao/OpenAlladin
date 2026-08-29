@@ -2733,3 +2733,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-actor-template-level05-timed-static-decompilation-v1` | recorded-static-decompilation | Directly selected Level 05 type-0x7C timed-spawn template named from the level callback |
 | `20260829-hud-display-frame-hooks-static-v1` | recorded-static-decompilation | Final two runtime-observed HUD presentation phase hooks named as inert RTS extension points |
 | `20260829-actor-template-bootstrap-static-v1` | recorded-static-decompilation | Player boot and terminal-transition actor templates named from direct initialization consumers |
+| `20260829-level-callback-family-static-v1` | recorded-static-decompilation | Complete level-table frame and exit callback matrix named from direct pointer fields |

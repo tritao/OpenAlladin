@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-level-callback-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "table": {
+    "address": "0x00002C78",
+    "name": "LEVEL_TABLE",
+    "entry_size": 66,
+    "count": 13,
+    "frame_callback_offset": "0x2C",
+    "exit_callback_offset": "0x28"
+  },
+  "callbacks": [
+    { "level": 0, "frame": "0x001B5B66", "frame_name": "Level00_EnterRoutine", "exit": "0x001B63EA", "exit_name": "Level00_ExitRoutine" },
+    { "level": 1, "frame": "0x001B5B4A", "frame_name": "Level01_EnterRoutine", "exit": "0x001B6406", "exit_name": "Level01_ExitRoutine" },
+    { "level": 2, "frame": "0x001B5B94", "frame_name": "Level02_EnterRoutine", "exit": "0x001B6394", "exit_name": "Level02_ExitRoutine" },
+    { "level": 3, "frame": "0x001B5B9A", "frame_name": "Level03_EnterRoutine", "exit": "0x001B6414", "exit_name": "Level03_ExitRoutine" },
+    { "level": 4, "frame": "0x001B5B9C", "frame_name": "Level04_EnterRoutine", "exit": "0x001B642E", "exit_name": "Level04_ExitRoutine" },
+    { "level": 5, "frame": "0x001B5C20", "frame_name": "Level05_EnterRoutine", "exit": "0x001B6434", "exit_name": "Level05_ExitRoutine" },
+    { "level": 6, "frame": "0x001B5D3A", "frame_name": "Level06_EnterRoutine", "exit": "0x001B644E", "exit_name": "Level06_ExitRoutine" },
+    { "level": 7, "frame": "0x001B5D68", "frame_name": "Level07_EnterRoutine", "exit": "0x001B64C2", "exit_name": "Level07_ExitRoutine" },
+    { "level": 8, "frame": "0x001B6066", "frame_name": "Level08_EnterRoutine", "exit": "0x001B64D0", "exit_name": "Level08_ExitRoutine" },
+    { "level": 9, "frame": "0x001B614C", "frame_name": "Level09_EnterRoutine", "exit": "0x001B653E", "exit_name": "Level09_ExitRoutine" },
+    { "level": 10, "frame": "0x001B623A", "frame_name": "Level10_EnterRoutine", "exit": "0x001B6554", "exit_name": "Level10_ExitRoutine" },
+    { "level": 11, "frame": "0x001B6258", "frame_name": "Level11_EnterRoutine", "exit": "0x001B655C", "exit_name": "Level11_ExitRoutine" },
+    { "level": 12, "frame": "0x001B62B6", "frame_name": "Level12_EnterRoutine", "exit": "0x001B6562", "exit_name": "Level12_ExitRoutine" }
+  ],
+  "scope": "Names the callback entry points proven by LEVEL_TABLE pointer fields. Descriptions summarize direct static behavior; callback reachability in a particular scene remains a separate runtime question."
+}

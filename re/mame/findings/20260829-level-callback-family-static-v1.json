@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/level-callback-family-targets.json",
+  "table": "LEVEL_TABLE at 0x00002C78, 13 records of 66 bytes",
+  "new_symbols": [
+    "Level00_EnterRoutine", "Level00_ExitRoutine",
+    "Level02_EnterRoutine", "Level02_ExitRoutine",
+    "Level03_EnterRoutine", "Level03_ExitRoutine",
+    "Level04_EnterRoutine", "Level04_ExitRoutine",
+    "Level05_EnterRoutine", "Level05_ExitRoutine",
+    "Level06_EnterRoutine", "Level06_ExitRoutine",
+    "Level07_EnterRoutine", "Level07_ExitRoutine",
+    "Level08_ExitRoutine",
+    "Level09_EnterRoutine", "Level09_ExitRoutine",
+    "Level10_EnterRoutine", "Level10_ExitRoutine",
+    "Level11_EnterRoutine", "Level11_ExitRoutine",
+    "Level12_ExitRoutine"
+  ],
+  "evidence": {
+    "pointer_fields": "Each new address is stored in a level-table frame callback field at +0x2C or exit callback field at +0x28.",
+    "callback_bodies": "The targets disassemble as bounded callback bodies ending in RTS, including timed level-event dispatch, coordinate-gated actor/resource setup, VDP transition preparation, and intentional no-op entries.",
+    "existing_family_members": "Level01_EnterRoutine, Level01_ExitRoutine, Level08_EnterRoutine, and the common indirect invokers were already named and are included in the complete manifest for continuity."
+  },
+  "conclusion": "The complete level callback matrix is now represented by canonical level-indexed function names; this closes the remaining mechanically unnamed direct LEVEL_TABLE code targets without claiming scene reachability."
+}
