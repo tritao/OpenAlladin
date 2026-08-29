@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-response-entry-family",
+    "purpose": "Recover the remaining compact player-collision dispatch entries around directional terrain response, no-op handlers, and type-0x84 response/companion allocation."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x08", "0x09"], "address": "0x001AE722" },
+      { "actor_types": ["0x7B"], "address": "0x001AE9D4" },
+      { "actor_types": ["0x0D"], "address": "0x001AEB7A" },
+      { "actor_types": ["0x03"], "address": "0x001AED86" },
+      { "actor_types": ["0x04"], "address": "0x001AEDA6" },
+      { "actor_types": ["0x2F"], "address": "0x001AEDA8" },
+      { "actor_types": ["0x30"], "address": "0x001AEE18" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AE722", "name": "ActorType08_09_PlayerCollisionHandler" },
+    { "address": "0x001AE9D4", "name": "ActorType7B_PlayerCollisionHandler" },
+    { "address": "0x001AEB7A", "name": "ActorType0D_PlayerCollisionHandler" },
+    { "address": "0x001AED86", "name": "ActorType03_PlayerCollisionHandler" },
+    { "address": "0x001AEDA6", "name": "ActorType04_PlayerCollisionHandler" },
+    { "address": "0x001AEDA8", "name": "ActorType2F_PlayerCollisionHandler" },
+    { "address": "0x001AEE18", "name": "ActorType30_PlayerCollisionHandler" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E02", "name": "PLAYER_WORLD_X" },
+    { "address": "0x00FF7E5A", "name": "PLAYER_VY" },
+    { "address": "0x00FFF07C", "name": "TERRAIN_PUSH_RIGHT" },
+    { "address": "0x00FFF07D", "name": "TERRAIN_PUSH_LEFT" },
+    { "address": "0x00FFF0D8", "name": "PLAYER_INTERACTION_GATE" },
+    { "address": "0x001B7E40", "name": "ACTOR_TEMPLATE_TYPE_84" },
+    { "address": "0x001B7940", "name": "ACTOR_TEMPLATE_DEATH_84" }
+  ]
+}
