@@ -23,7 +23,7 @@
   "consumer": {
     "runtime_type": "0x2A",
     "template": "0x001B7AF8 ACTOR_TEMPLATE_TYPE_2A",
-    "animation_root": "0x001231DC",
+    "animation_root": "0x001231DC ACTOR_ANIM_TYPE2A_VERTICAL_BOB",
     "route_status": "not_verified_as_connector"
   },
   "evidence": [

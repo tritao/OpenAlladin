@@ -433,6 +433,16 @@
     - animation_stream_decoder
     - mame_type21_settle_trace
 
+0x001231DC:
+  name: ACTOR_ANIM_TYPE2A_VERTICAL_BOB
+  size: 36
+  confidence: decompiled
+  description: Type-0x2A upper-route actor animation root; its lossless 36-byte stream writes 0x02A4 through the actor-field arithmetic command, cycles frame references 0x1C1A, 0x1C1E, 0x1C22, 0x1C26, 0x1C2A, and 0x1C2E, then loops back to its entry.
+  evidence:
+    - actor_type2a_animation_stream_static_decode
+    - actor_template_runtime_trace
+    - animation_stream_decoder
+
 0x00120F76:
   name: ACTOR_MOVE_TYPE2A_VERTICAL_BOB
   size: 62
@@ -1081,7 +1091,7 @@
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Type-0x2A actor template used by the upper-route moving object; its movement stream is ACTOR_MOVE_TYPE2A_VERTICAL_BOB and its animation stream is ACTOR_ANIM_STATE_1231DC.
+  description: Type-0x2A actor template used by the upper-route moving object; its movement stream is ACTOR_MOVE_TYPE2A_VERTICAL_BOB and its animation stream is ACTOR_ANIM_TYPE2A_VERTICAL_BOB.
   evidence:
     - actor_type2a_targets
     - level01_actor_type2a_decomp
