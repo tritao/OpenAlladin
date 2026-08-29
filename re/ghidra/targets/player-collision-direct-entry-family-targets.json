@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-direct-entry-family",
+    "purpose": "Recover the small direct entry points in the player-collision dispatch table, preserving exact function boundaries and the shared cleanup/template contract."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x43"], "address": "0x001AE64C" },
+      { "actor_types": ["0x0C"], "address": "0x001AE9A8" },
+      { "actor_types": ["0x06", "0x0F"], "address": "0x001AE9DA" },
+      { "actor_types": ["0x1A"], "address": "0x001AE9E0" },
+      { "actor_types": ["0x1B"], "address": "0x001AEA00" },
+      { "actor_types": ["0x1C"], "address": "0x001AEA24" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AE64C", "name": "ActorType43_PlayerCollisionHandler" },
+    { "address": "0x001AE9A8", "name": "ActorType0C_PlayerCollisionHandler" },
+    { "address": "0x001AE9DA", "name": "ActorType06_0F_PlayerCollisionHandler" },
+    { "address": "0x001AE9E0", "name": "ActorType1A_PlayerCollisionHandler" },
+    { "address": "0x001AEA00", "name": "ActorType1B_PlayerCollisionHandler" },
+    { "address": "0x001AEA24", "name": "ActorType1C_PlayerCollisionHandler" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0D8", "name": "PLAYER_INTERACTION_GATE" },
+    { "address": "0x00FFF10E", "name": "PLAYER_INTERACTION_TYPE1A_LATCH" },
+    { "address": "0x00FFF10F", "name": "PLAYER_INTERACTION_TYPE1B_LATCH" },
+    { "address": "0x00FFF110", "name": "PLAYER_INTERACTION_TYPE1C_LATCH" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x001B7940", "name": "ACTOR_TEMPLATE_DEATH_84" }
+  ]
+}

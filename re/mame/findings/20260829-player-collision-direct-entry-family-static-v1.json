@@ -1,0 +1,82 @@
+{
+  "format": "openaladdin-player-collision-direct-entry-family-finding-v1",
+  "recorded_at": "2026-08-29",
+  "status": "static-family-closed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": [
+    "re/ghidra/targets/player-collision-direct-entry-family-targets.json",
+    "re/symbols/functions.yml",
+    "re/symbols/data.yml",
+    "build/re/dasm-1A8000.txt",
+    "re/mame/findings/20260826-level01-tower-type43-interaction-v1.json",
+    "re/mame/findings/20260827-level01-player-motion-writer-audit-v1.json"
+  ],
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "address_space": "68000 ROM addresses",
+    "handlers": [
+      {
+        "address": "0x001AE64C",
+        "size": 104,
+        "actor_types": ["0x43"],
+        "name": "ActorType43_PlayerCollisionHandler",
+        "semantics": "Terrain-landing-gated local interaction conversion: temporarily copies actor X to PLAYER_X, changes the actor to type 0x8A, installs the interaction animation state, arms the event-99 flag, rebuilds derived coordinates, and restores PLAYER_X.",
+        "writes": ["actor type/animation fields", "PLAYER_X temporarily", "event-99 latch"],
+        "negative_findings": ["no PLAYER_Y write", "no PLAYER_VY write", "no SCENE_STATE write"]
+      },
+      {
+        "address": "0x001AE9A8",
+        "size": 30,
+        "actor_types": ["0x0C"],
+        "name": "ActorType0C_PlayerCollisionHandler",
+        "semantics": "When PLAYER_INTERACTION_GATE is set, clears the source actor and owned resources and reloads ACTOR_TEMPLATE_DEATH_84 from 0x001B7940 into the slot; otherwise returns.",
+        "calls": ["Actor_ClearOwnedResources", "Actor_InitializeFromTemplate"]
+      },
+      {
+        "address": "0x001AE9DA",
+        "size": 6,
+        "actor_types": ["0x06", "0x0F"],
+        "name": "ActorType06_0F_PlayerCollisionHandler",
+        "semantics": "Directly delegates to Actor_HandlePlayerCollisionBlock and returns.",
+        "negative_findings": ["no direct player-coordinate write", "no direct player-velocity write", "no direct SCENE_STATE write"]
+      },
+      {
+        "address": "0x001AE9E0",
+        "size": 32,
+        "actor_types": ["0x1A"],
+        "name": "ActorType1A_PlayerCollisionHandler",
+        "semantics": "Interaction-gated type-0x1A latch at 0x00FFF10E followed by source cleanup and ACTOR_TEMPLATE_DEATH_84 reinitialization."
+      },
+      {
+        "address": "0x001AEA00",
+        "size": 36,
+        "actor_types": ["0x1B"],
+        "name": "ActorType1B_PlayerCollisionHandler",
+        "semantics": "Interaction-gated 0x001AC386 preparation, type-0x1B latch at 0x00FFF10F, source cleanup, and ACTOR_TEMPLATE_DEATH_84 reinitialization."
+      },
+      {
+        "address": "0x001AEA24",
+        "size": 36,
+        "actor_types": ["0x1C"],
+        "name": "ActorType1C_PlayerCollisionHandler",
+        "semantics": "Interaction-gated 0x001AC3BC preparation, type-0x1C latch at 0x00FFF110, source cleanup, and ACTOR_TEMPLATE_DEATH_84 reinitialization."
+      }
+    ]
+  },
+  "boundary_checks": {
+    "ranges": [
+      "0x001AE64C-0x001AE6B3",
+      "0x001AE9A8-0x001AE9C5",
+      "0x001AE9DA-0x001AE9DF",
+      "0x001AE9E0-0x001AE9FF",
+      "0x001AEA00-0x001AEA23",
+      "0x001AEA24-0x001AEA47"
+    ],
+    "result": "Each range ends immediately before the next direct entry or existing canonical function boundary; no bytes are claimed twice."
+  },
+  "conclusion": "The six direct table entries are now canonicalized. The type-0x43 entry is a local interaction/resource conversion, type 0x06/0x0F shares the common player-collision response block, and types 0x0C/0x1A/0x1B/0x1C share the interaction-gated death-template cleanup contract. None is a missing Level 01 vertical transfer writer."
+}
