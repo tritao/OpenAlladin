@@ -23,7 +23,7 @@
       "consumer_site": "0x001B6C5A",
       "runtime_type": "0x10",
       "movement_stream": null,
-      "animation_stream": "0x001239CA",
+      "animation_stream": "0x001239CA ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE",
       "resource_count": "0x0C",
       "post_spawn": "Queues the actor interaction audio through Audio_PrepareCommand(0x32) when SCENE_VDP_UPDATE_FLAG is set."
     },

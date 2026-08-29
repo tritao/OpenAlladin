@@ -507,6 +507,16 @@
     - actor_template_type2f_level12_event
     - animation_stream_decoder
 
+0x001239CA:
+  name: ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE
+  size: 158
+  confidence: decompiled
+  description: Type-0x10 interaction-response animation selected by the direct reverse-slot spawn path. Its packed 158-byte region presents the 0x1912 lead-in and 0x18F6-0x1932 response frames, reloads timer 0x31, conditionally spawns the template at 0x001B7BFC, and loops through the local response branch at 0x00123A26.
+  evidence:
+    - type10_animation_static_decompilation
+    - actor_template_type10_interaction_response
+    - animation_stream_decoder
+
 0x001231DC:
   name: ACTOR_ANIM_TYPE2A_VERTICAL_BOB
   size: 36
@@ -1446,7 +1456,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x10 interaction-response template loaded by the direct reverse-slot spawn entry at 0x001B6C5A; the entry queues the actor's interaction audio when VDP updates are enabled, and the record has no movement stream, animation stream 0x001239CA, and twelve resources.
+  description: Type-0x10 interaction-response template loaded by the direct reverse-slot spawn entry at 0x001B6C5A; the entry queues the actor's interaction audio when VDP updates are enabled, and the record has no movement stream, animation stream ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE, and twelve resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
