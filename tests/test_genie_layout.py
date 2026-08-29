@@ -1265,6 +1265,54 @@ def test_type62_63_player_collision_movement_stream_is_exact():
     assert decoded["steps"][-1]["next_address"] == "0x001215D8"
 
 
+def test_type29_player_collision_response_streams_are_exact():
+    symbols = SymbolStore()
+
+    function = symbols.at(0x001AF400, include_ranges=False)
+    assert function is not None
+    assert function.name == "ActorType29_PlayerCollisionHandler"
+    assert function.end == 0x001AF467
+    assert function.size == 104
+
+    movement = symbols.at(0x001215E0, include_ranges=False)
+    assert movement is not None
+    assert movement.name == "ACTOR_MOVE_TYPE29_PLAYER_COLLISION_RESPONSE"
+    assert movement.end == 0x00121617
+    assert movement.size == 56
+    assert movement.metadata["type"] == "movement_stream"
+
+    animation = symbols.at(0x00121C30, include_ranges=False)
+    assert animation is not None
+    assert animation.name == "ACTOR_ANIM_TYPE29_PLAYER_COLLISION_RESPONSE"
+    assert animation.end == 0x00121C61
+    assert animation.size == 50
+    assert animation.metadata["type"] == "animation_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+    reader = load_animation_decoder().RomReader(rom)
+    movement_decoder = MovementDecoder(reader)
+    movement_decoded = movement_decoder.decode_stream(
+        0x001215E0,
+        max_steps=256,
+        max_bytes=56,
+        follow_control_flow=False,
+    )
+    assert movement_decoded["bytes_decoded"] == 56
+    assert movement_decoded["stopped_reason"] == "byte_limit"
+    assert movement_decoded["steps"][-1]["next_address"] == "0x00121618"
+
+    animation_decoded = load_animation_decoder().AnimationDecoder(reader).decode_stream(
+        0x00121C30,
+        max_instructions=256,
+        max_bytes=50,
+        follow_control_flow=False,
+    )
+    assert animation_decoded["bytes_decoded"] == 50
+    assert animation_decoded["stopped_reason"] == "unconditional_jump"
+    assert animation_decoded["instructions"][-1]["branch_target"] == "0x00121C38"
+
+
 def test_level_event_movement_stream_family_is_exact():
     symbols = SymbolStore()
     expected = {

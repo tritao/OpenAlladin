@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "objects": [
+    {
+      "address": "0x001AF400",
+      "end": "0x001AF467",
+      "name": "ActorType29_PlayerCollisionHandler",
+      "size": 104,
+      "role": "Type-0x29 player-collision response producer"
+    },
+    {
+      "address": "0x001215E0",
+      "end": "0x00121617",
+      "name": "ACTOR_MOVE_TYPE29_PLAYER_COLLISION_RESPONSE",
+      "size": 56,
+      "role": "Type-0x29 response MovementVM root"
+    },
+    {
+      "address": "0x00121C30",
+      "end": "0x00121C61",
+      "name": "ACTOR_ANIM_TYPE29_PLAYER_COLLISION_RESPONSE",
+      "size": 50,
+      "role": "Type-0x29 response AnimationVM root"
+    }
+  ],
+  "behavior": "The Type-0x29 collision dispatch entry creates a type-0x84 response actor, publishes the paired AnimationVM and MovementVM roots, clears transient state, optionally queues event 0x5D, and applies the type-0x29 placement template. The paired streams are bounded by their terminal loops and the separately owned neighboring entries.",
+  "evidence": [
+    "rom_player_collision_handler_table_001CBE",
+    "gnu_m68k_disassembly_001AF400",
+    "type29_player_collision_response_static_v1",
+    "movement_stream_decoder",
+    "animation_stream_decoder"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}
