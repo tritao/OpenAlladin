@@ -1,0 +1,60 @@
+{
+  "format": "openaladdin-actor-allocation-initialization-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "functions": [
+    { "address": "0x001AE262", "name": "Actor_FindFreeSlot", "pool": "common", "start": "0x00FF7F06", "count": 20, "stride": "0x42" },
+    { "address": "0x001AE27A", "name": "Actor_FindFreeSlotForward", "pool": "forward", "start": "0x00FF7E82", "count": 24, "stride": "0x42" },
+    { "address": "0x001AE292", "name": "Actor_FindFreeSlotBackward", "pool": "backward", "start": "0x00FF8470", "count": 24, "stride": "0x42" },
+    { "address": "0x001AE2AA", "name": "Actor_FindFreeSlotReverse20", "pool": "reverse20", "start": "0x00FF8368", "count": 20, "stride": "0x42" },
+    { "address": "0x001AE2DA", "name": "Actor_FindAuxiliaryFreeSlot", "pool": "auxiliary", "start": "0x00FF84B2", "count": 6, "stride": "0x42" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
+    { "address": "0x001AD00E", "name": "AnimationVM_SpawnOrCopyActor" }
+  ],
+  "actor_record": {
+    "size": "0x42",
+    "coordinates": ["+0x02", "+0x04"],
+    "link": "+0x3E",
+    "link_flag": "+0x3C bit 0x04"
+  },
+  "initializer": {
+    "template_to_actor": {
+      "+0x00": "+0x00",
+      "+0x01": "+0x01",
+      "+0x02..+0x05": "+0x06..+0x09",
+      "+0x06": "+0x0A",
+      "+0x0A": "+0x1E",
+      "+0x0C": "+0x20",
+      "+0x10": "+0x29",
+      "+0x11": "+0x35",
+      "+0x12": "+0x3C"
+    },
+    "cleared_actor_fields": ["+0x13", "+0x14", "+0x18", "+0x1A", "+0x1C", "+0x1D", "+0x2A", "+0x2E", "+0x32", "+0x34", "+0x36", "+0x37", "+0x3D", "+0x3E"],
+    "untouched_actor_fields": ["+0x02", "+0x04", "caller-owned movement-loop/return state"]
+  },
+  "f5": {
+    "record_size": 16,
+    "mode_byte": "+0x01",
+    "modes": {
+      "0": "common slot scan",
+      "1": "forward slot scan",
+      "2": "reverse-20 slot scan",
+      "3": "auxiliary slot scan",
+      "4": "special in-place path",
+      "5": "linked forward child",
+      "6": "linked reverse-20 child"
+    },
+    "offsets": { "x": "+0x06", "y": "+0x07" },
+    "overrides": { "animation": "+0x08", "movement": "+0x0C" }
+  },
+  "evidence": [
+    "Cached Ghidra decompilation of the five allocator helpers and Actor_InitializeFromTemplate",
+    "Cached Ghidra decompilation of AnimationVM_SpawnOrCopyActor",
+    "Existing actor-table stride and F5 runtime traces"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,52 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "allocator": {
+    "record_size": "0x42",
+    "pools": [
+      { "name": "common", "start": "0x00FF7F06", "count": 20, "direction": "forward" },
+      { "name": "forward", "start": "0x00FF7E82", "count": 24, "direction": "forward" },
+      { "name": "backward", "start": "0x00FF8470", "count": 24, "direction": "backward" },
+      { "name": "reverse20", "start": "0x00FF8368", "count": 20, "direction": "backward" },
+      { "name": "auxiliary", "start": "0x00FF84B2", "count": 6, "direction": "forward" }
+    ],
+    "free_condition": "first actor record whose type byte is zero"
+  },
+  "initializer": {
+    "function": "0x001AE30A Actor_InitializeFromTemplate",
+    "template_size": 20,
+    "actor_size": 66,
+    "copied_fields": {
+      "template +0/+1": "actor +0/+1",
+      "template +2..+5": "actor +0x06..+0x09",
+      "template +6": "actor +0x0A",
+      "template +0x0A": "actor +0x1E",
+      "template +0x0C": "actor +0x20",
+      "template +0x10": "actor +0x29",
+      "template +0x11": "actor +0x35",
+      "template +0x12": "actor +0x3C"
+    },
+    "cleared_fields": ["+0x13", "+0x14", "+0x18", "+0x1A", "+0x1C", "+0x1D", "+0x2A", "+0x2E", "+0x32", "+0x34", "+0x36", "+0x37", "+0x3D", "+0x3E"],
+    "caller_owned_fields": ["+0x02", "+0x04", "movement-loop cursor/timer", "movement return cursor"]
+  },
+  "f5": {
+    "function": "0x001AD00E AnimationVM_SpawnOrCopyActor",
+    "record_size": 16,
+    "linked_modes": [5, 6],
+    "link_contract": "child +0x3E = source, source +0x3E = child, child +0x3C bit 0x04 set",
+    "placement": "signed +0x06/+0x07 offsets are added to source coordinates with source facing signs",
+    "overrides": "nonzero +0x08 animation and +0x0C movement pointers replace initialized roots"
+  },
+  "evidence": [
+    "Cached Ghidra decompilation of allocator and initializer helpers",
+    "Exact field writes in Actor_InitializeFromTemplate",
+    "Exact mode/link/offset/override operations in AnimationVM_SpawnOrCopyActor"
+  ],
+  "conclusion": "Actor allocation and template initialization are now recorded as an explicit ROM lifecycle contract, including which fields are cleared, copied, or left for the caller.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
