@@ -444,6 +444,38 @@
     - animation_stream_decoder
     - mame_type21_settle_trace
 
+0x0012355A:
+  name: ACTOR_ANIM_PROXIMITY_SECONDARY
+  size: 82
+  confidence: decompiled
+  description: Shared proximity animation substream called by the Type-0x21 and Type-0x1E actor roots. Its packed 82-byte body presents the short 0x1102/0x1106 frame sequence, tests player Y distance 0x78, then selects the timed 0x110A/0x110E/0x1112/0x1116 response sequence before returning through FC 0x80.
+  evidence:
+    - type1e_animation_static_decompilation
+    - type21_proximity_static_decompilation
+    - animation_stream_decoder
+
+0x00123614:
+  name: ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE
+  size: 434
+  confidence: decompiled
+  description: Normal Type-0x1E proximity/interaction animation state machine. Its packed 434-byte region presents frame 0x11E2, tests actor state 0x46, player Y/X proximity, actor flag/value fields 0x0080 and 0x0081, calls ACTOR_ANIM_PROXIMITY_SECONDARY, and loops through local response substreams before returning.
+  evidence:
+    - type1e_animation_static_decompilation
+    - type1e_movement_static_decompilation
+    - level01_upper_pair_animation_decode
+    - animation_stream_decoder
+
+0x001237C6:
+  name: ACTOR_ANIM_TYPE1E_STATE46_EXTENDED
+  size: 132
+  confidence: decompiled
+  description: Extended Type-0x1E state-0x46 response animation. Its packed 132-byte cycle presents the 0x11D2/0x11BE/0x11C2/0x11C6/0x11CA/0x11CE/0x11D6/0x11DA/0x11DE frame sequence, writes ACTOR_MOVE_TYPE1E_STATE46_RESPONSE to actor movement field +0x0A, queues callback 0x001ACC5E through FB, and returns after rechecking state 0x46.
+  evidence:
+    - type1e_animation_static_decompilation
+    - type1e_movement_static_decompilation
+    - level01_upper_pair_extended_interaction
+    - animation_stream_decoder
+
 0x001231DC:
   name: ACTOR_ANIM_TYPE2A_VERTICAL_BOB
   size: 36

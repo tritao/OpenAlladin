@@ -12,7 +12,8 @@
     { "address": "0x001ACBF2", "name": "ActorAnimationSelector" },
     { "address": "0x001AE30A", "name": "ActorInitializeFromTemplate" },
     { "address": "0x001B7C24", "name": "ActorTemplate_Type1E" },
-    { "address": "0x0012355A", "name": "Type1E_ProximitySecondaryStream" },
-    { "address": "0x00123614", "name": "Type1E_ProximityAnimationStream" }
+    { "address": "0x0012355A", "name": "ACTOR_ANIM_PROXIMITY_SECONDARY" },
+    { "address": "0x00123614", "name": "ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE" },
+    { "address": "0x001237C6", "name": "ACTOR_ANIM_TYPE1E_STATE46_EXTENDED" }
   ]
 }

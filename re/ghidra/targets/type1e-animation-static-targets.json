@@ -1,0 +1,75 @@
+{
+  "format": "openaladdin-type1e-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": [
+    {
+      "address": "0x0012355A",
+      "name": "ACTOR_ANIM_PROXIMITY_SECONDARY",
+      "packed_region": ["0x0012355A", "0x001235AB"],
+      "packed_bytes": 82,
+      "entry": {
+        "frames": ["0x1102", "0x1106"],
+        "proximity_test": "FE 0x78 -> 0x00123570",
+        "response_frames": ["0x110A", "0x110E", "0x1112", "0x1116"],
+        "return": "0x001235AA FC 0x80"
+      },
+      "consumers": ["0x001235AC ACTOR_ANIM_TYPE_21_PROXIMITY", "0x00123614 ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE"]
+    },
+    {
+      "address": "0x00123614",
+      "name": "ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE",
+      "packed_region": ["0x00123614", "0x001237C5"],
+      "packed_bytes": 434,
+      "entry": {
+        "frame": "0x11E2",
+        "state_test": "F4 actor +0x3D == 0x0046 -> 0x001237C6",
+        "y_test": "FE 0x40 -> 0x00123634",
+        "secondary_call": "FC -> 0x0012355A",
+        "loop": "EA -> 0x00123614"
+      },
+      "response_tests": [
+        "player X distance 0x73 and 0x78",
+        "actor flag field 0x0009 through F2 0x87",
+        "actor +0x3D equals 0x0080 or 0x0081",
+        "local substream at 0x00123730"
+      ],
+      "movement_contract": "Movement roots 0x0012046C and 0x001204E2 select this root when the extended state-0x46 response is cleared."
+    },
+    {
+      "address": "0x001237C6",
+      "name": "ACTOR_ANIM_TYPE1E_STATE46_EXTENDED",
+      "packed_region": ["0x001237C6", "0x00123849"],
+      "packed_bytes": 132,
+      "entry": {
+        "frames": ["0x11D2", "0x11BE", "0x11C2", "0x11C6", "0x11CA", "0x11CE", "0x11D6", "0x11DA", "0x11DE"],
+        "movement_write": {
+          "address": "0x001237CA",
+          "target_fields": "0x14 0x00 0x0A",
+          "value": "0x0012046C",
+          "meaning": "actor +0x0A = ACTOR_MOVE_TYPE1E_STATE46_RESPONSE"
+        },
+        "callback_parameters": [
+          { "address": "0x001237E4", "value": "0x001ACC5E" },
+          { "address": "0x001237F8", "value": "0x001ACC5E" },
+          { "address": "0x0012380E", "value": "0x001ACC5E" }
+        ],
+        "state_loop": "F4 actor +0x3D == 0x0046 -> 0x001237D6",
+        "return": "0x00123848 FC 0x80"
+      },
+      "consumer": "Type-0x1E movement roots 0x0012046C and 0x001204E2"
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output for all three entries",
+    "Exact movement handoff at 0x001237CA",
+    "Existing Type-0x21 proximity stream consumer",
+    "Level 01 Type-0x1E runtime and extended-branch findings"
+  ],
+  "conclusion": "The Type-0x1E animation family is statically bounded and semantically connected to the already closed movement family. The normal root is a proximity/state gate, while the extended root is a state-0x46 response cycle that installs movement and queues the deferred interaction callback. No scene-state or player-transfer write is present in these animation regions.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

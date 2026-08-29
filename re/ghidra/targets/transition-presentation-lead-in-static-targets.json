@@ -18,7 +18,7 @@
       "timer": "0x84 0xAF"
     },
     "return_profile": {
-      "steps_after_callbacks": 20,
+      "steps_after_callbacks": 19,
       "final_delta": [-4, 4],
       "clear_command": "0x82 0x00",
       "next_stream": "0x001203C0 ACTOR_MOVE_TRANSITION_PRESENTATION_LOOP"
