@@ -528,6 +528,16 @@
     - actor_template_type0f_interaction
     - animation_stream_decoder
 
+0x0012312C:
+  name: ACTOR_ANIM_TYPE5F_INTERACTION
+  size: 40
+  confidence: decompiled
+  description: Type-0x5F interaction animation selected by the direct reverse-slot spawn entry. Its packed 40-byte region presents the 0x1032/0x1036/0x103A/0x103E/0x1042 frame sequence, clears actor state, tests actor fields 0xF0E5/0x0001, and loops through the local frame sequence.
+  evidence:
+    - type5f_animation_static_decompilation
+    - actor_template_type5f_interaction
+    - animation_stream_decoder
+
 0x001231DC:
   name: ACTOR_ANIM_TYPE2A_VERTICAL_BOB
   size: 36
@@ -1567,7 +1577,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x5F interaction template loaded by the direct reverse-slot spawn entry at 0x001B68DE; it has no movement stream, uses animation stream 0x0012312C, and owns eleven resources.
+  description: Type-0x5F interaction template loaded by the direct reverse-slot spawn entry at 0x001B68DE; it has no movement stream, uses animation stream ACTOR_ANIM_TYPE5F_INTERACTION, and owns eleven resources.
   evidence:
     - ghidra_early_interaction_dispatch_block
     - actor_template_grid_xrefs
