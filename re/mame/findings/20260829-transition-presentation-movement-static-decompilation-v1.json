@@ -15,7 +15,7 @@
     "loop_target": "0x001203C0"
   },
   "consumer": {
-    "movement_root": "0x00120360",
+    "movement_root": "0x00120360 ACTOR_MOVE_TRANSITION_PRESENTATION_LEAD_IN",
     "template": "0x001B7B48",
     "runtime_type": "0x84",
     "animation_root": "0x001232D8"

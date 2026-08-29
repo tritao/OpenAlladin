@@ -15,7 +15,7 @@
     "non_linear_runtime_state": false
   },
   "consumer": {
-    "root": "0x00120360",
+    "root": "0x00120360 ACTOR_MOVE_TRANSITION_PRESENTATION_LEAD_IN",
     "template": "0x001B7B48 ACTOR_TEMPLATE_TRANSITION_TYPE_84",
     "runtime_type": "0x84",
     "animation_root": "0x001232D8",

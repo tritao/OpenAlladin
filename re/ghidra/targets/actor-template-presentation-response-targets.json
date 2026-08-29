@@ -14,7 +14,7 @@
       "consumer": "0x001B1486 SceneResource_InitializeTransitionPresentation",
       "references": 4,
       "runtime_type": "0x84",
-      "movement": "0x00120360",
+      "movement": "0x00120360 ACTOR_MOVE_TRANSITION_PRESENTATION_LEAD_IN",
       "animation": "0x001232D8",
       "resource_count": "0x35"
     },

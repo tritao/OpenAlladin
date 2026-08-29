@@ -385,19 +385,20 @@
     - movement_stream_decoder
 
 0x00120360:
-  name: ACTOR_MOVE_STATE_120360
-  confidence: probable
-  description: Actor movement state-stream root observed in scene actor templates; it contains signed deltas and shared movement command handlers.
+  name: ACTOR_MOVE_TRANSITION_PRESENTATION_LEAD_IN
+  size: 96
+  confidence: decompiled
+  description: Transition-presentation movement lead-in used by the type-0x84 scene-resource actor. Its lossless 96-byte body applies the fixed signed approach profile, pushes the scene-resource callbacks 0x001B1640 and 0x001B1656, reloads timer 0xAF, clears movement state, and continues into ACTOR_MOVE_TRANSITION_PRESENTATION_LOOP at 0x001203C0.
   evidence:
     - ghidra_actor_movement_vm_001ADE36
-    - actor_template_runtime_trace
+    - transition_presentation_movement_static_decompilation
     - movement_stream_decoder
 
 0x001203C0:
   name: ACTOR_MOVE_TRANSITION_PRESENTATION_LOOP
   size: 8
   confidence: decompiled
-  description: Transition-presentation movement substream; its lossless 8-byte body applies a fixed (+4, 0) delta and loops unconditionally from 0x001203C6 back to 0x001203C0.
+  description: Transition-presentation movement terminal substream following ACTOR_MOVE_TRANSITION_PRESENTATION_LEAD_IN; its lossless 8-byte body applies a fixed (+4, 0) delta and loops unconditionally from 0x001203C6 back to 0x001203C0.
   evidence:
     - transition_presentation_movement_static_decode
     - mame_actor_movement_cursor_trace
