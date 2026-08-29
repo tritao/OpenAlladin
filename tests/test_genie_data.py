@@ -197,3 +197,55 @@ def test_data_context_includes_animation_f5_template_consumer(tmp_path):
     assert context is not None
     assert context["consumers"][0]["name"] == "PlayerAnimation"
     assert context["references"][0]["type"] == "ANIMATION_F5_TEMPLATE"
+
+
+def test_data_index_accepts_injected_semantic_provider(tmp_path):
+    database_root = _database(tmp_path)
+    seen: dict[str, object] = {}
+
+    class Provider:
+        def classify_symbol(self, symbol):
+            return "custom-data" if symbol.name == "CustomObject" else None
+
+        def decoded_references(self, obj):
+            seen["decoded"] = obj["decoded"]
+            value = obj["value"]
+            if value["kind"] != "custom-data":
+                return ()
+            return ({
+                "from": "0x00000020",
+                "from_function_name": "CustomConsumer",
+                "to": value["start"],
+                "type": "CUSTOM_EVIDENCE",
+            },)
+
+    symbols = SymbolStore(symbols=(Symbol(0x40, "CustomObject", "data", size=4),))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x100, (LayoutRange(0, 0xFF, "UNKNOWN", "test"),)),
+        providers=(Provider(),),
+    )
+
+    context = index.context(0x40)
+    assert context is not None
+    assert context["object"]["kind"] == "custom-data"
+    assert context["references"][0]["type"] == "CUSTOM_EVIDENCE"
+    assert isinstance(seen["decoded"], dict)
+
+
+def test_data_index_without_providers_keeps_core_fallback_generic(tmp_path):
+    database_root = _database(tmp_path)
+    symbols = SymbolStore(symbols=(Symbol(0x40, "PlayerAnimation", "data", size=4),))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x100, (LayoutRange(0, 0xFF, "UNKNOWN", "test"),)),
+        providers=(),
+    )
+
+    value = index.at(0x40)
+    assert value is not None
+    assert value["kind"] == "rom-data"

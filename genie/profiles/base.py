@@ -3,6 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any, Callable
+
+
+def _empty_semantic_providers() -> tuple[Any, ...]:
+    return ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,3 +43,9 @@ class GameProfile:
     input_mapping: str = "mame-genesis-3button-v1"
     segments_format: str = "openaladdin-segments-v1"
     run_format: str = "openaladdin-input-run-v1"
+    semantic_provider_factory: Callable[[], tuple[Any, ...]] = _empty_semantic_providers
+
+    def semantic_providers(self) -> tuple[Any, ...]:
+        """Instantiate semantic evidence providers for this profile."""
+
+        return tuple(self.semantic_provider_factory())

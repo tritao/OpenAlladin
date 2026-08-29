@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from genie.profiles import ALADDIN, GameProfile, load_profile
+from genie.games.aladdin.data import AladdinSemanticDataClassifier
 from genie import runtime
 
 
@@ -29,6 +30,12 @@ def test_runtime_aliases_are_profile_backed():
     assert tuple(runtime.DEFAULT_PARITY_FIELDS) == ALADDIN.parity_fields
     assert runtime.ATOMIC_STATE_FIELDS == ALADDIN.atomic_state_fields
     assert runtime.ATOMIC_ACTOR_FIELDS == ALADDIN.atomic_actor_fields
+
+
+def test_aladdin_profile_supplies_semantic_data_provider():
+    providers = ALADDIN.semantic_providers()
+    assert len(providers) == 1
+    assert isinstance(providers[0], AladdinSemanticDataClassifier)
 
 
 def test_profile_is_immutable():

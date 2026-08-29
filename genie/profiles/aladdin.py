@@ -5,6 +5,14 @@ from __future__ import annotations
 from .base import GameProfile
 
 
+def _semantic_providers():
+    # Keep the profile module lightweight and avoid a core-data/game-data
+    # import cycle until a DataIndex is actually constructed.
+    from genie.games.aladdin.data import semantic_providers
+
+    return semantic_providers()
+
+
 ALADDIN = GameProfile(
     id="aladdin",
     platform="genesis",
@@ -59,6 +67,7 @@ ALADDIN = GameProfile(
         "movement_command_timer",
         "collision_box",
     ),
+    semantic_provider_factory=_semantic_providers,
 )
 
 

@@ -12,11 +12,12 @@ from __future__ import annotations
 from collections import Counter
 import json
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Protocol, TypeAlias
 
 from genie.common import ROOT, parse_int
 from genie.ghidra.database import AnalysisDatabase
 from genie.layout.model import Layout, LayoutRange
+from genie.profiles import load_profile
 from genie.symbols import Symbol, SymbolStore
 
 
@@ -35,6 +36,23 @@ SEMANTIC_LAYOUT_CLASSES = {
 }
 
 STREAM_KINDS = {"animation", "movement"}
+
+Reference: TypeAlias = dict[str, Any]
+
+
+class SemanticDataClassifier(Protocol):
+    """Game or platform evidence that enriches :class:`DataIndex` objects."""
+
+    def classify_symbol(self, symbol: Symbol) -> str | None:
+        """Return a semantic kind, or ``None`` when the provider has no opinion."""
+
+    def decoded_references(self, obj: dict[str, Any]) -> Iterable[Reference]:
+        """Return references discovered in decoded data for an object.
+
+        ``obj`` contains the object being queried under ``value`` and the
+        decoded stream maps under ``decoded``. Providers may ignore either
+        value when their evidence does not need it.
+        """
 
 
 def _address(value: Any) -> int:
@@ -66,24 +84,14 @@ def _stream_values(document: Any) -> Iterable[tuple[str, dict[str, Any]]]:
     return ()
 
 
-def _symbol_class(symbol: Symbol) -> str:
-    metadata = {str(key): value for key, value in symbol.metadata.items()}
-    type_name = str(metadata.get("type", "")).casefold()
-    name = symbol.name.upper()
-    if type_name in {"actor_template", "actor_template_base"}:
-        return "actor-template"
-    if "ANIM" in name or "ANIMATION" in name:
-        return "animation"
-    if "MOVE" in name or "MOVEMENT" in name:
-        return "movement"
-    if "ACTOR_FRAME" in name:
-        return "graphics"
-    if "pointer_table" in type_name or "POINTER_TABLE" in name:
-        return "pointer-table"
-    if type_name == "rom_table":
-        return "scene-table" if name == "LEVEL_TABLE" else "level-data"
-    if "table" in type_name or "TABLE" in name:
-        return "rom-data"
+def _symbol_class(
+    symbol: Symbol,
+    providers: Iterable[SemanticDataClassifier] = (),
+) -> str:
+    for provider in providers:
+        kind = provider.classify_symbol(symbol)
+        if kind is not None:
+            return kind
     return "rom-data"
 
 
@@ -134,10 +142,14 @@ class DataIndex:
         coverage_path: Path | None = None,
         animation_path: Path | None = None,
         movement_path: Path | None = None,
+        providers: Iterable[SemanticDataClassifier] | None = None,
     ):
         self.root = Path(root).resolve()
         self.database = database or AnalysisDatabase(self.root / "build/re/full-rom")
         self.symbols = symbols or SymbolStore(root=self.root)
+        self.providers = tuple(
+            load_profile().semantic_providers() if providers is None else providers
+        )
         self.layout = layout
         if self.layout is None:
             path = Path(layout_path) if layout_path else self.database.root / "layout.json"
@@ -234,7 +246,7 @@ class DataIndex:
         range_bounded = symbol_range is not None
         symbol_range = symbol_range or (symbol.address, symbol.address)
         start, end = symbol_range
-        kind = _symbol_class(symbol)
+        kind = _symbol_class(symbol, self.providers)
         return {
             "id": f"{kind}:{start:08X}:{end:08X}",
             "address": _hex(start),
@@ -360,44 +372,12 @@ class DataIndex:
         ))
 
     def _decoded_template_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
-        """Recover actor-template consumers encoded in AnimationVM F5 records."""
+        """Collect decoded references supplied by semantic evidence providers."""
 
-        if value["kind"] != "actor-template":
-            return []
-        start, end = _address(value["start"]), _address(value["end"])
+        context = {"value": value, "decoded": self._decoded}
         result: list[dict[str, Any]] = []
-        for kind, streams in self._decoded.items():
-            for entry, stream in streams.items():
-                stream_name = str(stream.get("name") or f"{kind.title()}_{entry:08X}")
-                records = stream.get("instructions", []) if kind == "animation" else []
-                for record in records if isinstance(records, list) else ():
-                    if not isinstance(record, dict) or record.get("opcode") != "0xF5":
-                        continue
-                    raw_text = record.get("raw")
-                    if not isinstance(raw_text, str):
-                        continue
-                    try:
-                        raw = bytes.fromhex(raw_text)
-                    except ValueError:
-                        continue
-                    # F5 stores its template pointer immediately after the
-                    # opcode and mode byte; the remaining ten bytes are the
-                    # child placement/override payload.
-                    if len(raw) < 6:
-                        continue
-                    target = int.from_bytes(raw[2:6], "big")
-                    if not start <= target <= end:
-                        continue
-                    result.append({
-                        "from": record.get("address", _hex(entry)),
-                        "from_function_name": stream_name,
-                        "to": _hex(target),
-                        "type": "ANIMATION_F5_TEMPLATE",
-                        "read": False,
-                        "write": False,
-                        "source": "animation_streams",
-                        "instruction": "F5 template pointer",
-                    })
+        for provider in self.providers:
+            result.extend(dict(reference) for reference in provider.decoded_references(context))
         return result
 
     def _consumer_records(self, references: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -706,6 +686,8 @@ def _normalize_kind(kind: str | None) -> str | None:
 
 __all__ = [
     "DataIndex",
+    "Reference",
     "SEMANTIC_LAYOUT_CLASSES",
+    "SemanticDataClassifier",
     "STREAM_KINDS",
 ]

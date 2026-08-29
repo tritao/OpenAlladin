@@ -7,6 +7,7 @@ import json
 
 from genie.data import DataIndex
 from genie.ghidra.database import AnalysisDatabase
+from genie.profiles import load_profile
 from genie.runtime import ROOT, resolve
 from genie.semantic_coverage import build_semantic_coverage
 from genie.symbols import SymbolStore
@@ -23,6 +24,7 @@ def command_coverage_report(args: argparse.Namespace) -> int:
         coverage_path=coverage_path,
         animation_path=resolve(args.animation) if args.animation else None,
         movement_path=resolve(args.movement) if args.movement else None,
+        providers=load_profile().semantic_providers(),
     )
     report = build_semantic_coverage(
         index.database,

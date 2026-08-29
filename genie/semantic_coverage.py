@@ -10,6 +10,7 @@ from typing import Any
 from genie.common import ROOT, parse_int
 from genie.data import DataIndex, STREAM_KINDS
 from genie.ghidra.database import AnalysisDatabase
+from genie.profiles import load_profile
 from genie.symbols import Symbol, SymbolStore
 from genie.symbols.naming import is_mechanical_name
 
@@ -328,6 +329,7 @@ def build_semantic_coverage(
             root=root,
             symbols=symbols,
             coverage_path=runtime_path,
+            providers=load_profile().semantic_providers(),
         )
     functions = _function_coverage(database, symbols, runtime_path)
     objects, contexts = _object_coverage(data_index)

@@ -7,6 +7,7 @@ import json
 
 from genie.data import DataIndex
 from genie.ghidra.database import AnalysisDatabase
+from genie.profiles import load_profile
 from genie.runtime import ROOT, resolve
 from genie.symbols import SymbolStore
 
@@ -31,6 +32,7 @@ def _index(args: argparse.Namespace) -> DataIndex:
         coverage_path=resolve(args.coverage) if getattr(args, "coverage", None) else None,
         animation_path=resolve(args.animation) if getattr(args, "animation", None) else None,
         movement_path=resolve(args.movement) if getattr(args, "movement", None) else None,
+        providers=load_profile().semantic_providers(),
     )
 
 
