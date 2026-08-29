@@ -1,0 +1,53 @@
+{
+  "format": "openaladdin-startup-region-warning-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Classify the startup routine that initializes the VDP/font path and renders the regional compatibility warning.",
+  "routine": {
+    "address": "0x00000344",
+    "end": "0x0000044D",
+    "size": 266,
+    "name": "System_DisplayRegionCompatibilityWarning",
+    "terminator": "rts at 0x0000044C",
+    "behavior": [
+      "Initializes VDP control/data ports.",
+      "Expands the startup font bank into VRAM.",
+      "Renders the regional compatibility warning and selected regional variant.",
+      "Spins after the warning display is complete."
+    ]
+  },
+  "data": [
+    {
+      "address": "0x0000044E",
+      "end": "0x00000451",
+      "size": 4,
+      "name": "SYSTEM_REGION_SELECTOR_BYTES",
+      "role": "console-region selector bytes"
+    },
+    {
+      "address": "0x00000452",
+      "end": "0x00000465",
+      "size": 20,
+      "name": "SYSTEM_REGION_WARNING_VARIANT_TABLE",
+      "entry_size": 6,
+      "count": 3,
+      "role": "country-character to warning-text relative-offset records"
+    },
+    {
+      "address": "0x00000466",
+      "end": "0x000004CF",
+      "size": 106,
+      "name": "SYSTEM_REGION_WARNING_TEXT",
+      "role": "control-byte-prefixed compatibility warning text"
+    }
+  ],
+  "boundaries": {
+    "preceding_code": "The sequential reset path branches away at 0x00000340; this routine has its own aligned entry at 0x00000344.",
+    "following_padding": "FONT_GLYPH_ALIGNMENT_PADDING begins at 0x000004D0."
+  },
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}

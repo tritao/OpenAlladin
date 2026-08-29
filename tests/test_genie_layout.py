@@ -214,6 +214,37 @@ def test_startup_font_glyph_bank_is_exact_and_precedes_reset_code():
     assert glyphs[:8] == bytes.fromhex("1818181800181800")
 
 
+def test_startup_region_warning_partition_is_exact():
+    symbols = SymbolStore()
+
+    routine = symbols.at(0x00000344, include_ranges=False)
+    assert routine is not None
+    assert routine.name == "System_DisplayRegionCompatibilityWarning"
+    assert routine.end == 0x0000044D
+    assert routine.size == 266
+
+    selector = symbols.at(0x0000044E, include_ranges=False)
+    assert selector is not None
+    assert selector.name == "SYSTEM_REGION_SELECTOR_BYTES"
+    assert selector.end == 0x00000451
+    assert selector.size == 4
+    assert selector.metadata["type"] == "text_data"
+
+    variants = symbols.at(0x00000452, include_ranges=False)
+    assert variants is not None
+    assert variants.name == "SYSTEM_REGION_WARNING_VARIANT_TABLE"
+    assert variants.end == 0x00000465
+    assert variants.size == 20
+    assert variants.metadata["entry_size"] == 6
+    assert variants.metadata["count"] == 3
+
+    text = symbols.at(0x00000466, include_ranges=False)
+    assert text is not None
+    assert text.name == "SYSTEM_REGION_WARNING_TEXT"
+    assert text.end == 0x000004CF
+    assert text.size == 106
+
+
 def test_layout_uses_canonical_terrain_collision_profile_range(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(

@@ -21,6 +21,38 @@
   evidence:
     - startup_font_bank_static_v1
 
+0x0000044E:
+  name: SYSTEM_REGION_SELECTOR_BYTES
+  type: text_data
+  size: 4
+  confidence: decompiled
+  description: Four-byte selector sequence consulted by System_ResetBootstrap after extracting the console region bits from the Genesis version register.
+  evidence:
+    - startup_region_warning_static_disassembly
+    - gnu_m68k_disassembly_00000344
+
+0x00000452:
+  name: SYSTEM_REGION_WARNING_VARIANT_TABLE
+  type: text_data
+  size: 20
+  entry_size: 6
+  count: 3
+  confidence: decompiled
+  description: Three six-byte regional warning records keyed by the country-string characters J, U, and E, each carrying a relative offset into SYSTEM_REGION_WARNING_TEXT, followed by a zero terminator.
+  evidence:
+    - startup_region_warning_static_disassembly
+    - gnu_m68k_disassembly_00000344
+
+0x00000466:
+  name: SYSTEM_REGION_WARNING_TEXT
+  type: text_data
+  size: 106
+  confidence: decompiled
+  description: Control-byte-prefixed regional compatibility warning text and its NTSC/PAL Mega Drive or Genesis variants, ending immediately before FONT_GLYPH_ALIGNMENT_PADDING.
+  evidence:
+    - startup_region_warning_static_disassembly
+    - gnu_m68k_disassembly_00000344
+
 0x000004D8:
   name: FONT_GLYPH_DATA
   type: graphics_data

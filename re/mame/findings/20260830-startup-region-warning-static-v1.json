@@ -1,0 +1,47 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "objects": [
+    {
+      "address": "0x00000344",
+      "end": "0x0000044D",
+      "name": "System_DisplayRegionCompatibilityWarning",
+      "size": 266,
+      "role": "VDP/font initialization and regional compatibility warning renderer"
+    },
+    {
+      "address": "0x0000044E",
+      "end": "0x00000451",
+      "name": "SYSTEM_REGION_SELECTOR_BYTES",
+      "size": 4,
+      "role": "console-region selector bytes"
+    },
+    {
+      "address": "0x00000452",
+      "end": "0x00000465",
+      "name": "SYSTEM_REGION_WARNING_VARIANT_TABLE",
+      "size": 20,
+      "role": "regional warning variant records"
+    },
+    {
+      "address": "0x00000466",
+      "end": "0x000004CF",
+      "name": "SYSTEM_REGION_WARNING_TEXT",
+      "size": 106,
+      "role": "regional compatibility warning text"
+    }
+  ],
+  "behavior": "The routine prepares VDP output, expands the startup font glyphs, selects a compatibility-warning suffix using the console country string, writes the warning text, and intentionally never returns to gameplay. The exact partition ends before the eight-byte font alignment padding at 0x000004D0.",
+  "evidence": [
+    "startup_region_warning_static_disassembly",
+    "gnu_m68k_disassembly_00000344",
+    "exact_rts_boundary_0000044C",
+    "regional_warning_text_partition"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}

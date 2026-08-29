@@ -12,6 +12,14 @@
     - ghidra_decompile_0000021A
     - reset_bootstrap_targets
     - reset_bootstrap_static_decompilation
+0x00000344:
+  name: System_DisplayRegionCompatibilityWarning
+  size: 266
+  confidence: decompiled
+  description: Initializes the Genesis VDP, expands the startup font bank into VRAM, renders the regional compatibility warning selected from the console region and country string, and spins after the warning is displayed.
+  evidence:
+    - startup_region_warning_static_disassembly
+    - gnu_m68k_disassembly_00000344
 0x001A8C16:
   name: Game_FrameUpdateLoop
   confidence: confirmed
