@@ -1,0 +1,57 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-level-spawn-family-targets.json",
+  "templates": [
+    {
+      "address": "0x001B7D78",
+      "name": "ACTOR_TEMPLATE_TYPE_69_INTERACTION",
+      "consumer": "0x001B681C and 0x001B683E",
+      "behavior": "Reverse-slot type-0x69 source; the second branch converts the resulting actor to type 0x6C with animation 0x00124034."
+    },
+    {
+      "address": "0x001B7DA0",
+      "name": "ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT",
+      "consumer": "0x001B67CC and 0x001B67E6",
+      "behavior": "Backward-slot type-0x89 source followed by Actor_ApplyRandomSpawnVariation."
+    },
+    {
+      "address": "0x001B7DB4",
+      "name": "ACTOR_TEMPLATE_TYPE_76_INTERACTION",
+      "consumer": "0x001B673E",
+      "behavior": "LevelObjectSpawnEntry type-0x76 object with animation 0x00124194."
+    },
+    {
+      "address": "0x001B7DDC",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE",
+      "consumer": "0x001B6760",
+      "behavior": "Type-0x84 terrain response selected outside terrain mode 0x0B."
+    },
+    {
+      "address": "0x001B7DF0",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE_ALT",
+      "consumer": "0x001B6774",
+      "behavior": "Type-0x84 terrain response selected for terrain mode 0x0B when the response countdown is clear, with optional palette upload."
+    },
+    {
+      "address": "0x001B7E68",
+      "name": "ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE",
+      "consumer": "0x001B674A",
+      "behavior": "Direct reverse-slot type-0x74 terrain-response spawn."
+    },
+    {
+      "address": "0x001B7EF4",
+      "name": "ACTOR_TEMPLATE_TYPE_32_INTERACTION",
+      "consumer": "0x001B65E0",
+      "behavior": "Reverse-slot type-0x32 spawn followed by an eight-pixel Y adjustment."
+    }
+  ],
+  "conclusion": "The level/terrain spawn block establishes seven additional exact 20-byte actor-template records from direct static consumers and bounded post-spawn behavior.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

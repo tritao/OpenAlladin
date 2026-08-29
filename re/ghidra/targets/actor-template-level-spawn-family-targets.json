@@ -1,0 +1,95 @@
+{
+  "format": "openaladdin-actor-template-level-spawn-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name direct actor-template records used by level-object, terrain-response, and random-variant spawn bodies.",
+  "templates": [
+    {
+      "address": "0x001B7D78",
+      "name": "ACTOR_TEMPLATE_TYPE_69_INTERACTION",
+      "consumer_sites": ["0x001B681C", "0x001B683E"],
+      "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
+      "runtime_type": "0x69",
+      "movement_stream": null,
+      "animation_stream": "0x00124046",
+      "resource_count": "0x05",
+      "post_spawn": "The 0x001B683E branch converts the allocated actor to type 0x6C and installs animation 0x00124034."
+    },
+    {
+      "address": "0x001B7DA0",
+      "name": "ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT",
+      "consumer_sites": ["0x001B67CC", "0x001B67E6"],
+      "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
+      "runtime_type": "0x89",
+      "movement_stream": null,
+      "animation_stream": "0x001241F8",
+      "resource_count": "0x02",
+      "post_spawn": "Both branches invoke Actor_ApplyRandomSpawnVariation after allocation."
+    },
+    {
+      "address": "0x001B7DB4",
+      "name": "ACTOR_TEMPLATE_TYPE_76_INTERACTION",
+      "consumer_site": "0x001B673E",
+      "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+      "runtime_type": "0x76",
+      "movement_stream": null,
+      "animation_stream": "0x00124194",
+      "resource_count": "0x05"
+    },
+    {
+      "address": "0x001B7DDC",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE",
+      "consumer_site": "0x001B6760",
+      "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
+      "runtime_type": "0x84",
+      "movement_stream": null,
+      "animation_stream": "0x00124226",
+      "resource_count": "0x05",
+      "selection": "Chosen when the terrain mode byte at 0x00FF7E26 is not 0x0B."
+    },
+    {
+      "address": "0x001B7DF0",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE_ALT",
+      "consumer_site": "0x001B6774",
+      "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
+      "runtime_type": "0x84",
+      "movement_stream": null,
+      "animation_stream": "0x00124226",
+      "resource_count": "0x05",
+      "selection": "Chosen when the terrain mode byte is 0x0B and 0x00FFF123 is clear.",
+      "post_spawn": "Queues the palette upload from ROM source 0x00129612 when 0x00FFF175 is clear."
+    },
+    {
+      "address": "0x001B7E68",
+      "name": "ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE",
+      "consumer_site": "0x001B674A",
+      "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+      "runtime_type": "0x74",
+      "movement_stream": null,
+      "animation_stream": "0x001244E6",
+      "resource_count": "0x05"
+    },
+    {
+      "address": "0x001B7EF4",
+      "name": "ACTOR_TEMPLATE_TYPE_32_INTERACTION",
+      "consumer_site": "0x001B65E0",
+      "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+      "runtime_type": "0x32",
+      "movement_stream": null,
+      "animation_stream": "0x00124616",
+      "resource_count": "0x0E",
+      "post_spawn": "The caller adds eight pixels to the spawned actor's Y position when allocation succeeds."
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "conclusion": "All seven records are directly selected by complete level/terrain spawn bodies with explicit branch conditions or post-spawn behavior. Nearby records without equally bounded consumers remain unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1485,3 +1485,73 @@
   evidence:
     - ghidra_early_interaction_dispatch_block
     - actor_template_grid_xrefs
+
+0x001B7D78:
+  name: ACTOR_TEMPLATE_TYPE_69_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x69 interaction template loaded by the reverse-slot entries at 0x001B681C and 0x001B683E; it has no movement stream, uses animation stream 0x00124046, and owns five resources before the first path promotes the actor to type 0x6C.
+  evidence:
+    - ghidra_level_actor_spawn_block
+    - actor_template_grid_xrefs
+
+0x001B7DA0:
+  name: ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x89 source template loaded by the two random-variant spawn branches at 0x001B67CC and 0x001B67E6; it has no movement stream, uses animation stream 0x001241F8, and owns two resources before Actor_ApplyRandomSpawnVariation applies the branch-specific variation.
+  evidence:
+    - ghidra_level_actor_spawn_block
+    - actor_template_grid_xrefs
+
+0x001B7DB4:
+  name: ACTOR_TEMPLATE_TYPE_76_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x76 interaction template loaded through LevelObjectSpawnEntry at 0x001B673E; it has no movement stream, uses animation stream 0x00124194, and owns five resources.
+  evidence:
+    - ghidra_level_actor_spawn_block
+    - actor_template_grid_xrefs
+
+0x001B7DDC:
+  name: ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: First type-0x84 terrain-response template selected by the branch at 0x001B6760 when the terrain mode byte is not 0x0B; it has no movement stream, uses animation stream 0x00124226, and owns five resources.
+  evidence:
+    - ghidra_level_actor_spawn_block
+    - actor_template_grid_xrefs
+
+0x001B7DF0:
+  name: ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE_ALT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Alternate type-0x84 terrain-response template selected by the 0x0B terrain-mode branch at 0x001B676C when the response countdown is clear; it has no movement stream, uses animation stream 0x00124226, owns five resources, and triggers the palette upload path when permitted.
+  evidence:
+    - ghidra_level_actor_spawn_block
+    - actor_template_grid_xrefs
+
+0x001B7E68:
+  name: ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x74 terrain-response template loaded by the reverse-slot entry at 0x001B674A; it has no movement stream, uses animation stream 0x001244E6, and owns five resources.
+  evidence:
+    - ghidra_level_actor_spawn_block
+    - actor_template_grid_xrefs
+
+0x001B7EF4:
+  name: ACTOR_TEMPLATE_TYPE_32_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x32 interaction template loaded by the reverse-slot entry at 0x001B65E0; it has no movement stream, uses animation stream 0x00124616, and owns fourteen resources before the caller adjusts the spawned Y position.
+  evidence:
+    - ghidra_level_actor_spawn_block
+    - actor_template_grid_xrefs
