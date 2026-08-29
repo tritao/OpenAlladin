@@ -5,6 +5,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <vector>
 
 namespace openaladdin {
@@ -26,6 +27,10 @@ struct PlayerCollisionInput {
     bool facing_left = false;
     bool sword_active = false;
     bool bounce_response_follow_active = false;
+    // FFF0D8 gates the shared placement/launch handler family. It is kept as
+    // an explicit scheduler input until that interaction byte has a typed
+    // GameState owner of its own.
+    bool interaction_gate = false;
 };
 
 // The player-collision table is a semantic dispatch table, not just an
@@ -58,6 +63,10 @@ struct PlayerActorCollision {
 
 struct CollisionEffects {
     bool player_collision_interaction_pending = false;
+    // Collision handlers publish animation/audio work to their scheduler
+    // owners; CollisionSystem does not reach into either VM or sound driver.
+    std::optional<std::uint32_t> player_animation_stream;
+    std::vector<std::uint8_t> sound_requests;
     // These are diagnostic parity edges, not Genesis state. They make a
     // colliding table entry visible until its recovered behavior is attached
     // to the corresponding native service.

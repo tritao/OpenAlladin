@@ -2621,10 +2621,19 @@ void Engine::update(const InputState& input) {
             animation_.frame_pointer(),
             animation_.facing_left(),
             was_grounded && (input.attack_pressed || player_.attack_timer != 0),
-            interactions_.bounce_response_follow_active()
+            interactions_.bounce_response_follow_active(),
+            false
         }
     );
     interactions_.consume_collision_effects(collision_effects);
+    if (collision_effects.player_animation_stream) {
+        animation_.select_stream_entry(*collision_effects.player_animation_stream);
+    }
+    level_event_sound_requests_.insert(
+        level_event_sound_requests_.end(),
+        collision_effects.sound_requests.begin(),
+        collision_effects.sound_requests.end()
+    );
     record_scheduler_phase("terrain_resolution", 0x001B1E38);
     resolve_terrain(previous_world_y);
     // The camera's tile reference is consumed before the actor traversal in

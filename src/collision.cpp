@@ -15,6 +15,10 @@ constexpr std::uint32_t kActorSwordDeathTemplate = 0x001B792C;
 constexpr std::uint8_t kActorDeathFrames = 43;
 constexpr std::uint8_t kActorSwordTerminalFrames = 19;
 constexpr std::uint32_t kPlayerCollisionHandlerTable = 0x001CBE;
+constexpr std::uint32_t kPlayerResponseAnimationStream = 0x00121C62;
+constexpr std::uint32_t kType4EActorAnimationStream = 0x00124B1A;
+constexpr std::uint32_t kType4FActorAnimationStream = 0x00124B3E;
+constexpr std::uint32_t kType12ActorAnimationStream = 0x0012512C;
 
 PlayerCollisionHandlerKind player_handler_kind(std::uint8_t actor_type) {
     switch (actor_type) {
@@ -297,7 +301,11 @@ PlayerCollisionHandlerInfo CollisionSystem::player_collision_handler(
     info.kind = player_handler_kind(actor_type);
     info.native_implemented = actor_type == kActorGuardType
         || actor_type == 0x2D
-        || actor_type == 0x40;
+        || actor_type == 0x40
+        || actor_type == 0x11
+        || actor_type == 0x12
+        || actor_type == 0x4E
+        || actor_type == 0x4F;
     return info;
 }
 
@@ -399,6 +407,85 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
             0x001B7ABC
         );
         (void)actor_lifecycle_.install(collision.actor, replacement);
+        return effects;
+    }
+
+    if (actor.type == 0x11 || actor.type == 0x12) {
+        // Player_ProcessInteractionState owns the ungated branch. Type 0x12
+        // additionally selects the source actor's interaction response.
+        if (!input.interaction_gate) {
+            if (actor.type == 0x12) {
+                actor.animation_pc = kType12ActorAnimationStream;
+                actor.animation_timer = 0;
+            }
+            return effects;
+        }
+
+        const std::uint16_t player_world_x = static_cast<std::uint16_t>(
+            state.camera.x + state.player.x);
+        // The 68K comparison takes actor_x - player_world_x and the BCC
+        // branch selects -0x400 for an actor at or to the right of the
+        // player; the other side receives +0x600.
+        state.player.vx = actor.x >= player_world_x ? -0x0400 : 0x0600;
+        state.player.vy = -0x0400;
+        state.player.terrain_response_active = 0xFF;
+        state.player.animation_selector.response_active = 0xFF;
+        state.player.terrain_vertical_stop = 0;
+        state.player.terrain_response_timer_state = 0;
+        state.player.animation_selector.response_timer = 0;
+        state.camera.horizontal_threshold = 0x00B0;
+        state.camera.vertical_threshold = 0x0160;
+        effects.player_animation_stream = kPlayerResponseAnimationStream;
+        if (state.camera.vdp_update != 0) effects.sound_requests.push_back(0x31);
+        return effects;
+    }
+
+    if (actor.type == 0x4E) {
+        if (state.player.vy < 0
+            || state.player.animation_selector.animation_gate != 0) {
+            return effects;
+        }
+        state.player.vx = actor.facing_x_flip != 0 ? -0x0700 : 0x0700;
+        state.player.vy = -0x0700;
+        state.player.terrain_response_active = 0xFF;
+        state.player.animation_selector.response_active = 0xFF;
+        state.player.terrain_vertical_stop = 0;
+        actor.type = kActorTerminalType;
+        actor.animation_pc = kType4EActorAnimationStream;
+        actor.animation_timer = 0;
+        effects.player_animation_stream = kPlayerResponseAnimationStream;
+        state.random.value = state.random.value * 13U + 7U;
+        if (state.camera.vdp_update != 0) {
+            const std::uint16_t random_value = static_cast<std::uint16_t>(
+                state.random.value ^ (state.random.value >> 16));
+            effects.sound_requests.push_back(
+                (random_value & 1U) != 0 ? 0x47 : 0x46);
+        }
+        return effects;
+    }
+
+    if (actor.type == 0x4F) {
+        if (state.player.vy < 0
+            || state.player.animation_selector.animation_gate != 0) {
+            return effects;
+        }
+        const int actor_x = static_cast<int>(actor.x);
+        const int player_world_x = static_cast<int>(static_cast<std::uint16_t>(
+            state.camera.x + state.player.x));
+        if (player_world_x > actor_x + 0x18
+            || player_world_x <= actor_x - 0x18) {
+            return effects;
+        }
+        state.player.vy = -0x0800;
+        state.player.terrain_response_active = 0xFF;
+        state.player.animation_selector.response_active = 0xFF;
+        state.player.terrain_vertical_stop = 0;
+        effects.player_animation_stream = kPlayerResponseAnimationStream;
+        actor.type = kActorTerminalType;
+        actor.animation_pc = kType4FActorAnimationStream;
+        actor.animation_timer = 0;
+        if (state.camera.vdp_update != 0) effects.sound_requests.push_back(0x4B);
+        return effects;
     }
     return effects;
 }
@@ -431,6 +518,14 @@ CollisionEffects CollisionSystem::player_actor(
         effects.player_collision_interaction_pending =
             effects.player_collision_interaction_pending
             || handler_effects.player_collision_interaction_pending;
+        if (handler_effects.player_animation_stream) {
+            effects.player_animation_stream = handler_effects.player_animation_stream;
+        }
+        effects.sound_requests.insert(
+            effects.sound_requests.end(),
+            handler_effects.sound_requests.begin(),
+            handler_effects.sound_requests.end()
+        );
         effects.unhandled_player_collision_types.insert(
             effects.unhandled_player_collision_types.end(),
             handler_effects.unhandled_player_collision_types.begin(),
