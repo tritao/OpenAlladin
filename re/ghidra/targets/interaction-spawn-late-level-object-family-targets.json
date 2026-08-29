@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-interaction-spawn-late-level-object-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0x14, 0x16, 0x1C, 0x26, 0x3C, 0x3E, 0xEA",
+    "newly_named_targets": 7,
+    "handlers": [
+      { "selector": "0x14", "address": "0x001B6F76", "name": "InteractionSpawn_GuardTemplate_14", "template": "0x001B80AC ACTOR_TEMPLATE_GUARD", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry" },
+      { "selector": "0x3E", "address": "0x001B6F82", "name": "InteractionSpawn_Type0B_3E", "gate": "0x00FF7E21 != 0", "template": "0x001B8228 ACTOR_TEMPLATE_TYPE_0B_LEVEL_EVENT", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry", "palette_resource": "0x00129532 when 0x00FFF175 is clear" },
+      { "selector": "0x3C", "address": "0x001B6FAE", "name": "InteractionSpawn_Type0C_3C", "template": "0x001B81EC ACTOR_TEMPLATE_TYPE_0C_LEVEL_EVENT", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry", "palette_resource": "0x001294F2 unless 0x00FF7E26 == 5", "special_case": "write 0x6000 to actor offset 0x1E when 0x00FF7E26 == 5" },
+      { "selector": "0x26", "address": "0x001B6FE2", "name": "InteractionSpawn_Type0F_26", "template": "0x001B7C74 ACTOR_TEMPLATE_TYPE_0F_INTERACTION", "spawn_helper": "0x001B524E InteractionSpawn_ForwardSlot" },
+      { "selector": "0x16", "address": "0x001B6FEE", "name": "InteractionSpawn_Type0F_Facing_16", "template": "0x001B7C74 ACTOR_TEMPLATE_TYPE_0F_INTERACTION", "spawn_helper": "0x001B524E InteractionSpawn_ForwardSlot", "post_spawn": "set actor facing byte at offset 0x09" },
+      { "selector": "0x1C", "address": "0x001B7000", "name": "InteractionSpawn_Type16_1C", "template": "0x001B8020 ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT", "spawn_helper": "0x001B5266 LevelObjectSpawnEntry" },
+      { "selector": "0xEA", "address": "0x001B700C", "name": "InteractionSpawn_Type36_EA", "template": "0x001B80FC ACTOR_TEMPLATE_TYPE_36_INTERACTION", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot" }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Previously established guard, level-event, type-0F, type-0x16, and type-0x36 template records",
+    "Direct gate, palette, special-field, and facing-byte side effects"
+  ],
+  "conclusion": "This late level-object/interaction subset is statically closed at selector membership, template selection, allocator choice, and direct side-effect contracts. User-facing event roles remain intentionally unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

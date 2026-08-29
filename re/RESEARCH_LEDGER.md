@@ -2745,3 +2745,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-interaction-spawn-type8b-presentation-static-v1` | recorded-static-decompilation | F5-F8 shared type-0x8B presentation handlers named from exact animation-root, palette, and gate contracts |
 | `20260829-interaction-spawn-upper-gated-family-static-v1` | recorded-static-decompilation | Selectors 10/12/63/64 upper-route direct and gated spawns named from exact template and flag contracts |
 | `20260829-interaction-spawn-type79-type7a-static-v1` | recorded-static-decompilation | Selectors 06-08/0A-0C shared type-0x79/type-0x7A scene-interaction handlers named from exact animation-root contracts |
+| `20260829-interaction-spawn-late-level-object-family-static-v1` | recorded-static-decompilation | Selectors 14/16/1C/26/3C/3E/EA late level-object and interaction handlers named from exact templates and side effects |

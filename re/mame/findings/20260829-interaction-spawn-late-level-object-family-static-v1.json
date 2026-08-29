@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/interaction-spawn-late-level-object-family-targets.json",
+  "dispatch_table": {
+    "address": "0x004154",
+    "name": "INTERACTION_HANDLER_TABLE",
+    "newly_named_targets": 7
+  },
+  "handler_contracts": [
+    { "address": "0x001B6F76", "selector": "0x14", "template": "ACTOR_TEMPLATE_GUARD", "effect": "LevelObjectSpawnEntry allocation" },
+    { "address": "0x001B6F82", "selector": "0x3E", "template": "ACTOR_TEMPLATE_TYPE_0B_LEVEL_EVENT", "effect": "gate 0x00FF7E21, palette 0x00129532 when 0x00FFF175 is clear" },
+    { "address": "0x001B6FAE", "selector": "0x3C", "template": "ACTOR_TEMPLATE_TYPE_0C_LEVEL_EVENT", "effect": "palette 0x001294F2 except 0x00FF7E26 == 5, which writes 0x6000 to actor offset 0x1E" },
+    { "address": "0x001B6FE2", "selector": "0x26", "template": "ACTOR_TEMPLATE_TYPE_0F_INTERACTION", "effect": "forward-slot spawn" },
+    { "address": "0x001B6FEE", "selector": "0x16", "template": "ACTOR_TEMPLATE_TYPE_0F_INTERACTION", "effect": "forward-slot spawn and set facing byte at actor offset 0x09" },
+    { "address": "0x001B7000", "selector": "0x1C", "template": "ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT", "effect": "LevelObjectSpawnEntry allocation" },
+    { "address": "0x001B700C", "selector": "0xEA", "template": "ACTOR_TEMPLATE_TYPE_36_INTERACTION", "effect": "reverse-slot spawn" }
+  ],
+  "evidence": [
+    "Direct template loads and terminating helper calls",
+    "Exact selector membership from INTERACTION_HANDLER_TABLE",
+    "Gate, palette, field override, and facing-byte instructions"
+  ],
+  "conclusion": "The late level-object/interaction handlers are statically closed at direct allocation and observed side-effect level, without asserting unresolved scene semantics.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
