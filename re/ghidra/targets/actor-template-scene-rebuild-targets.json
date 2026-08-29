@@ -1,0 +1,68 @@
+{
+  "format": "openaladdin-actor-template-scene-rebuild-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the two fixed actor-template records directly loaded by SceneResource_RebuildAfterInteraction and bound their scene/resource animation evidence.",
+  "function": {
+    "address": "0x001B16E0",
+    "name": "SceneResource_RebuildAfterInteraction",
+    "gate": "SCENE_STATE != 0x0A and PLAYER_INTERACTION_COUNTER != 0",
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "animation_stream": {
+    "address": "0x001260DA",
+    "name": "ACTOR_ANIM_TYPE84_SCENE_REBUILD",
+    "range": ["0x001260DA", "0x00126117"],
+    "size": 62,
+    "default_consumer": "0x001B8430 ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_A",
+    "selected_entry": "0x001260E6",
+    "behavior": "The opening clears actor state between frames 0x19A6, 0x19AA, 0x19AE, 0x19B2, and 0x090A, then presents the 0x0A0A-0x0A2E sequence and loops at 0x001260EE."
+  },
+  "templates": [
+    {
+      "address": "0x001B8430",
+      "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_A",
+      "load_site": "0x001B176C",
+      "range": ["0x001B8430", "0x001B8443"],
+      "raw_bytes": "840008000000000000006000001260DA0D000000",
+      "runtime_type": "0x84",
+      "template_payload": "0x08000000",
+      "movement_stream": null,
+      "template_word": "0x6000",
+      "animation_stream": "0x001260DA",
+      "resource_count": "0x0D",
+      "actor_slot": "0x00FF7E82",
+      "caller_position": ["0x0126", "0x0198"],
+      "caller_animation_override": "0x001260E6"
+    },
+    {
+      "address": "0x001B8444",
+      "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_WALL",
+      "load_site": "0x001B178E",
+      "range": ["0x001B8444", "0x001B8457"],
+      "raw_bytes": "84000800000000000000600000122C1E06000000",
+      "runtime_type": "0x84",
+      "template_payload": "0x08000000",
+      "movement_stream": "0x001217B4",
+      "template_word": "0x6000",
+      "animation_stream": "0x00122C1E",
+      "resource_count": "0x06",
+      "actor_slot": "0x00FF7F8A",
+      "caller_position": ["0x0178", "0x0194"],
+      "caller_movement_override": "0x001217B4"
+    }
+  ],
+  "evidence": [
+    "Exact LEA template loads at 0x001B176C and 0x001B178E",
+    "Exact fixed-slot position and cursor/movement writes in SceneResource_RebuildAfterInteraction",
+    "Exact adjacent 20-byte records and non-overlapping animation boundary",
+    "Lossless AnimationDecoder output for the scene/resource-rebuild entry"
+  ],
+  "conclusion": "The two records are direct fixed-slot scene/resource-rebuild actors. The first owns the 0x001260DA presentation stream with a caller-selected entry at 0x001260E6; the second is a Type-0x84 actor using the established Type-0x34 wall animation and movement pair. No broader gameplay role is inferred.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

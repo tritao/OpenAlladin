@@ -2045,6 +2045,16 @@
     - actor_template_type84_type4d_child_family_static_decompilation
     - animation_stream_decoder
 
+0x001260DA:
+  name: ACTOR_ANIM_TYPE84_SCENE_REBUILD
+  size: 62
+  confidence: decompiled
+  description: Type-0x84 scene/resource-rebuild animation installed by ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_A during SceneResource_RebuildAfterInteraction. Its 62-byte region clears the actor between the 0x19A6-0x19B2 opening frames, enters the 0x0A0A-0x0A2E frame loop at 0x001260EE, and is optionally entered at 0x001260E6 by the fixed-slot initializer.
+  evidence:
+    - actor_template_scene_rebuild_static_decompilation
+    - ghidra_scene_resource_rebuild
+    - animation_stream_decoder
+
 0x00126118:
   name: ACTOR_ANIM_MENU_TYPE84_SECONDARY
   size: 184
@@ -3280,6 +3290,28 @@
   description: Type-0x4D interaction-response child template supplied by the three F5 commands at 0x0012514C, 0x00125162, and 0x0012517C inside ACTOR_ANIM_TYPE12_INTERACTION_RESPONSE. It uses movement stream 0x00121710, template word 0x6000, animation entry 0x00126074, owns one resource, and carries no trailing flags; the three producer payloads select the response placement words.
   evidence:
     - actor_template_type84_type4d_child_family_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B8430:
+  name: ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_A
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Fixed Type-0x84 scene/resource-rebuild template loaded by SceneResource_RebuildAfterInteraction into actor slot 0x00FF7E82. It has no movement stream, defaults to ACTOR_ANIM_TYPE84_SCENE_REBUILD at 0x001260DA, owns thirteen resources, and the caller places it at (0x0126,0x0198) before entering the animation at 0x001260E6.
+  evidence:
+    - actor_template_scene_rebuild_static_decompilation
+    - ghidra_scene_resource_rebuild
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B8444:
+  name: ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_WALL
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Fixed Type-0x84 scene/resource-rebuild wall actor template loaded by SceneResource_RebuildAfterInteraction into actor slot 0x00FF7F8A. It defaults to ACTOR_ANIM_TYPE_34_WALL at 0x00122C1E, owns six resources, and the caller installs movement stream 0x001217B4 before placing it at (0x0178,0x0194).
+  evidence:
+    - actor_template_scene_rebuild_static_decompilation
+    - ghidra_scene_resource_rebuild
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B846C:
