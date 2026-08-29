@@ -74,6 +74,7 @@ into a gap-free partition:
 genie layout build
 genie layout show 0x001223DA
 genie layout gaps
+genie layout candidates --limit 50
 genie layout stats
 genie layout validate
 
@@ -82,6 +83,12 @@ genie data todo --kind animation
 genie data next --kind actor-template
 genie data context 0x00121964
 ```
+
+`layout candidates` is an offline triage report for remaining `UNKNOWN`
+ranges. It ranks gaps using incoming Ghidra references, decoded animation or
+movement streams, and direct pointers in established actor-template records.
+It is advisory only; promotion into the canonical layout still requires a
+reviewed symbol, boundary test, and evidence record.
 
 Generate a complete local ROM representation from the validated layout and
 canonical instruction export. The output is ignored and can be regenerated

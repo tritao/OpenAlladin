@@ -127,6 +127,19 @@ def build_parser() -> argparse.ArgumentParser:
     layout_validate.add_argument("--layout", type=Path, default=ROOT / "build/re/full-rom/layout.json")
     layout_validate.add_argument("--json", action="store_true", dest="json_output")
     layout_validate.set_defaults(function=command_layout_validate)
+    layout_candidates = layout_commands.add_parser(
+        "candidates",
+        help="rank unknown layout gaps using offline references and decoder evidence",
+    )
+    layout_candidates.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    layout_candidates.add_argument("--layout", type=Path, default=ROOT / "build/re/full-rom/layout.json")
+    layout_candidates.add_argument("--rom", type=Path, default=default_rom())
+    layout_candidates.add_argument("--animation", type=Path, help="override decoded animation-stream report")
+    layout_candidates.add_argument("--movement", type=Path, help="override decoded movement-stream report")
+    layout_candidates.add_argument("--limit", type=int, default=50, help="maximum rows; zero means all")
+    layout_candidates.add_argument("--max-references", type=int, default=12, help="evidence rows retained per candidate")
+    layout_candidates.add_argument("--json", action="store_true", dest="json_output")
+    layout_candidates.set_defaults(function=command_layout_candidates)
 
     deasm = commands.add_parser("deasm", help="generate and inspect the complete ROM deassembly")
     deasm_commands = deasm.add_subparsers(dest="deasm_command", required=True)
