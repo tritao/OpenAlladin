@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-interaction-spawn-type5e-threshold-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0x3D, 0x57, 0xC0-C7, 0xFB",
+    "newly_named_targets": 4,
+    "handlers": [
+      { "selectors": ["0xFB"], "address": "0x001B6BB2", "name": "InteractionSpawn_Type5E_Threshold2646", "template": "0x001B78A0 ACTOR_TEMPLATE_TYPE_5E_INTERACTION_PAIR_BASE", "movement_stream": "0x0011F754", "threshold_address": "0x00FF7E02", "threshold": "0x2646", "post_spawn_clear": "0x00FFF0E5" },
+      { "selectors": ["0xC0", "0xC1", "0xC2", "0xC3", "0xC4", "0xC5", "0xC6", "0xC7"], "address": "0x001B6BD8", "name": "InteractionSpawn_Type29_C0C7", "template": "0x001B7B70 ACTOR_TEMPLATE_TYPE_29_INTERACTION", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot" },
+      { "selectors": ["0x57"], "address": "0x001B6BE4", "name": "InteractionSpawn_Type29_57", "template": "0x001B7B70 ACTOR_TEMPLATE_TYPE_29_INTERACTION", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot" },
+      { "selectors": ["0x3D"], "address": "0x001B6BF0", "name": "InteractionSpawn_Type67_3D", "template": "0x001B78DC ACTOR_TEMPLATE_TYPE_67_INTERACTION", "spawn_helper": "0x001B524E InteractionSpawn_ForwardSlot" }
+    ]
+  },
+  "evidence": [
+    "Exact 68000 disassembly of each direct interaction-table target",
+    "INTERACTION_HANDLER_TABLE at ROM 0x004154",
+    "Previously established type-0x5E, type-0x29, and type-0x67 template records",
+    "Direct helper calls and the selector-FB threshold/cleanup writes"
+  ],
+  "conclusion": "This bounded dispatch subset is named by selector membership, direct template loads, helper choice, and the selector-FB threshold and cleanup contract. No user-facing actor role is asserted.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

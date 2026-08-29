@@ -3786,3 +3786,35 @@
     - ghidra_disassembly_001B6B5C
     - interaction_spawn_type5e84_pair_targets
     - interaction_spawn_type5e84_pair_static_decompilation
+0x001B6BB2:
+  name: InteractionSpawn_Type5E_Threshold2646
+  confidence: decompiled
+  description: Interaction selector 0xFB handler that reverse-spawns the type-0x5E interaction template only when 0x00FF7E02 has reached the unsigned threshold 0x2646, installs movement stream 0x0011F754, and clears 0x00FFF0E5 after allocation.
+  evidence:
+    - ghidra_disassembly_001B6BB2
+    - interaction_spawn_type5e-threshold-targets
+    - interaction_spawn_type5e-threshold-static-decompilation
+0x001B6BD8:
+  name: InteractionSpawn_Type29_C0C7
+  confidence: decompiled
+  description: Interaction selectors 0xC0 through 0xC7 handler that reverse-spawns the established type-0x29 interaction template.
+  evidence:
+    - ghidra_disassembly_001B6BD8
+    - interaction_spawn_type5e-threshold-targets
+    - interaction_spawn_type5e-threshold-static-decompilation
+0x001B6BE4:
+  name: InteractionSpawn_Type29_57
+  confidence: decompiled
+  description: Interaction selector 0x57 handler that reverse-spawns the established type-0x29 interaction template.
+  evidence:
+    - ghidra_disassembly_001B6BE4
+    - interaction_spawn_type5e-threshold-targets
+    - interaction_spawn_type5e-threshold-static-decompilation
+0x001B6BF0:
+  name: InteractionSpawn_Type67_3D
+  confidence: decompiled
+  description: Interaction selector 0x3D handler that forward-spawns the established type-0x67 interaction template.
+  evidence:
+    - ghidra_disassembly_001B6BF0
+    - interaction_spawn_type5e-threshold-targets
+    - interaction_spawn_type5e-threshold-static-decompilation
