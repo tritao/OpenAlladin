@@ -44,11 +44,11 @@ def main() -> int:
     assert not (ROOT / "tools/oa.py").exists()
 
     module_names = (
-        "genie.analysis.actors",
+        "genie.games.aladdin.analysis.actors",
         "genie.assets.extract",
         "genie.ghidra.import_rom",
         "genie.mame.compare_state",
-        "genie.vm.animation",
+        "genie.games.aladdin.vm.animation",
     )
     for module_name in module_names:
         importlib.import_module(module_name)

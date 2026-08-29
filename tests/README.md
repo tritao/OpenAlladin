@@ -107,7 +107,7 @@ parity.
 The checkpoint extraction and native replay can be automated with:
 
 ```bash
-PYTHONPATH=. python3 genie/analysis/audit_visual.py \
+PYTHONPATH=. python3 genie/games/aladdin/analysis/audit_visual.py \
   --trace-dir build/re/visual-audit/mame \
   --frame 1300 \
   --reference build/re/visual-audit/mame/snapshots/gameplay.png \
@@ -134,7 +134,7 @@ audit helper uses frame `N-1` by default for a screenshot captured at frame
 `N`; override it with `--vdp-frame` when the capture timing differs:
 
 ```bash
-PYTHONPATH=. python3 genie/analysis/audit_visual.py \
+PYTHONPATH=. python3 genie/games/aladdin/analysis/audit_visual.py \
   --trace-dir build/re/visual-audit/mame \
   --frame 1300 \
   --reference build/re/visual-audit/mame/snapshots/gameplay.png \

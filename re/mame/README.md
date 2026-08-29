@@ -62,7 +62,7 @@ states 0 through 12 at `0x001AA484`, retains synchronized traces under
 with:
 
 ```sh
-PYTHONPATH=. python genie/mame/validate_level_loader_matrix.py
+PYTHONPATH=. python genie/games/aladdin/mame/validate_level_loader_matrix.py
 ```
 
 ## Audio-bus trace
@@ -78,7 +78,7 @@ python -m genie trace title-menu --frames 360 \
   --audio --audio-commands --capture state \
   --trace-dir build/re/traces/audio-title
 
-PYTHONPATH=. python genie/mame/audio_trace.py \
+PYTHONPATH=. python genie/games/aladdin/mame/audio_trace.py \
   build/re/traces/audio-title
 ```
 
@@ -258,7 +258,7 @@ snapshots and reports type intervals, cursor positions, and ROM-decoder probes:
 OPENALADDIN_TRACE_ACTORS=1 OPENALADDIN_TRACE_FRAMES=1550 \
   OPENALADDIN_TRACE_DIR=build/re/actor-gameplay \
   ./genie/mame/run.sh
-PYTHONPATH=. python3 genie/analysis/actors.py
+PYTHONPATH=. python3 genie/games/aladdin/analysis/actors.py
 ```
 
 The generated `build/re/actor_animation_inventory.json` is intentionally
@@ -305,7 +305,7 @@ OPENALADDIN_TRACE_FRAMES=240 OPENALADDIN_INJECT_ACTOR_FRAME=2 \
 OPENALADDIN_INJECT_ACTOR_SLOT=31 OPENALADDIN_INJECT_ACTOR_TYPE=125 \
 OPENALADDIN_TRACE_DIR=build/re/actor-injection-template \
   ./genie/mame/run.sh
-PYTHONPATH=. python3 genie/analysis/actors.py \
+PYTHONPATH=. python3 genie/games/aladdin/analysis/actors.py \
   --trace-dir build/re/actor-injection-template \
   --output build/re/actor-injection-template/actor_animation_inventory.json
 ```
@@ -326,7 +326,7 @@ OPENALADDIN_TRACE_FRAMES=2880 \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*1400,none*255' \
 OPENALADDIN_TRACE_DIR=build/re/actor-init-gameplay \
   ./genie/mame/run.sh
-PYTHONPATH=. python3 genie/analysis/actor_initializers.py \
+PYTHONPATH=. python3 genie/games/aladdin/analysis/actor_initializers.py \
   --log debug.log \
   --output build/re/actor-init-gameplay/actor_initializers.json
 ```
@@ -515,7 +515,7 @@ The decoder preserves each step, raw command bytes, shared opcode, operands,
 and statically visible branch targets:
 
 ```sh
-PYTHONPATH=. python3 genie/vm/movement.py \
+PYTHONPATH=. python3 genie/games/aladdin/vm/movement.py \
   rom/Disneys_Aladdin_U_p1.bin \
   --output build/re/movement_streams.json
 ```
@@ -806,7 +806,7 @@ OPENALADDIN_TRACE_FRAMES=5000 \
 OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right+a*3755' \
 OPENALADDIN_TRACE_DIR=build/re/level-transition-watch \
   ./genie/mame/run.sh rom/Disneys_Aladdin_U_p1.bin
-PYTHONPATH=. python3 genie/analysis/transition_watch.py \
+PYTHONPATH=. python3 genie/games/aladdin/analysis/transition_watch.py \
   --log debug.log \
   --output build/re/level-transition-watch/transition_watch.json
 ```
@@ -908,7 +908,7 @@ OPENALADDIN_TRACE_RNC_LOADS=1 OPENALADDIN_TRACE_SCENE_STATES=1 \
 PYTHONPATH=. python3 genie/assets/rnc_load_trace.py \
   --log debug.log \
   --output build/re/rnc-loader-gameplay/rnc_loads.json
-PYTHONPATH=. python3 genie/analysis/scenes.py \
+PYTHONPATH=. python3 genie/games/aladdin/analysis/scenes.py \
   --trace build/re/rnc-loader-gameplay \
   --load-trace build/re/rnc-loader-gameplay/rnc_loads.json
 ```
@@ -918,7 +918,7 @@ state restores the emulated frame counter.  Pass that offset when correlating
 the loader log with the Lua trace, for example:
 
 ```sh
-PYTHONPATH=. python3 genie/analysis/scenes.py \
+PYTHONPATH=. python3 genie/games/aladdin/analysis/scenes.py \
   --trace build/re/state03-transition-final-20260825 \
   --load-trace build/re/state03-transition-final-20260825/rnc_loads.json \
   --machine-frame-offset 3247 \
@@ -936,7 +936,7 @@ For repeatable multi-scene coverage, edit the controller schedules in
 `re/mame/experiments/capture_matrix.yml` and run:
 
 ```sh
-PYTHONPATH=. python3 genie/mame/capture_matrix.py rom/Disneys_Aladdin_U_p1.bin
+PYTHONPATH=. python3 genie/games/aladdin/mame/capture_matrix.py rom/Disneys_Aladdin_U_p1.bin
 ```
 
 Each scenario gets its own ignored directory under
@@ -953,7 +953,7 @@ build/assets/rnc/runtime_analysis.json
 Run only selected scenarios while iterating:
 
 ```sh
-PYTHONPATH=. python3 genie/mame/capture_matrix.py \
+PYTHONPATH=. python3 genie/games/aladdin/mame/capture_matrix.py \
   --scenario first-gameplay \
   --scenario gameplay-progression
 ```

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from genie.assets.genesis import decode_tile as legacy_decode_tile
 from genie.platforms.genesis.input import (
     Genesis3ButtonInput,
     INPUT_BUTTONS,
@@ -25,9 +24,11 @@ def test_genesis_input_preserves_runtime_contract():
     assert client_input_tokens({"controller_mapping": INPUT_MAPPING}, ["a+b"]) == ["a+b"]
 
 
-def test_genesis_vdp_helpers_keep_legacy_import_compatible():
+def test_genesis_vdp_helpers_are_platform_services():
     tile_data = bytes(range(32))
-    assert legacy_decode_tile(tile_data, 0) == decode_tile(tile_data, 0)
+    decoded = decode_tile(tile_data, 0)
+    assert len(decoded) == 8
+    assert decoded[0] == [0, 0, 0, 1, 0, 2, 0, 3]
     assert genesis_color(0xEEE) == (255, 255, 255, 255)
     assert vdp_word(0xE123) == {
         "raw": 0xE123,

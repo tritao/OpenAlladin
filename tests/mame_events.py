@@ -11,20 +11,36 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-import genie.api as genie
+from genie.common import hashes
+from genie.games.aladdin.mame.experiments import derive_events_from_state, event_detector_protocol
+from genie.games.aladdin.mame.runs import (
+    _client_input_tokens,
+    _mame_segment_input_tokens,
+    _write_segments,
+    _write_sliced_state,
+    load_segments,
+    native_checkpoint_arguments,
+    select_segment,
+)
+from genie.games.aladdin.mame.state import (
+    _normalize_animation_write_order,
+    load_state_trace,
+    normalize_animation_state_trace,
+)
+from genie.runtime import EVENT_FORMAT, INPUT_FORMAT, INPUT_MAPPING
 
 
 def main() -> int:
-    protocol = genie.event_detector_protocol()
+    protocol = event_detector_protocol()
     assert protocol is not None
     assert "level01-entry" in protocol
     assert "scene-state-08" in protocol
     assert "|once|" in protocol
-    assert genie._client_input_tokens(None, ["a+b", "c", "right"]) == [
+    assert _client_input_tokens(None, ["a+b", "c", "right"]) == [
         "b+c", "a", "right"
     ]
-    assert genie._client_input_tokens(
-        {"controller_mapping": genie.INPUT_MAPPING}, ["a+b", "c"]
+    assert _client_input_tokens(
+        {"controller_mapping": INPUT_MAPPING}, ["a+b", "c"]
     ) == ["a+b", "c"]
 
     animation_states = {
@@ -32,7 +48,7 @@ def main() -> int:
         1: {"player": {"animation_pc": 0x122028, "frame_ptr": 0x1EA410}},
         2: {"player": {"animation_pc": 0x12202A, "frame_ptr": 0x1EA410}},
     }
-    assert genie._normalize_animation_write_order(animation_states) == 1
+    assert _normalize_animation_write_order(animation_states) == 1
     assert animation_states[1]["player"]["animation_pc"] == 0x12202A
 
     timer_states = {
@@ -40,7 +56,7 @@ def main() -> int:
         1: {"player": {"animation_pc": 0x12227C, "frame_ptr": 0x1E9F7E, "animation_timer": 3}},
         2: {"player": {"animation_pc": 0x12227C, "frame_ptr": 0x1E9F7E, "animation_timer": 2}},
     }
-    assert genie._normalize_animation_write_order(timer_states) == 1
+    assert _normalize_animation_write_order(timer_states) == 1
     assert timer_states[1]["player"]["animation_timer"] == 2
 
     duplicate_frame_states = {
@@ -48,7 +64,7 @@ def main() -> int:
         1: {"player": {"animation_pc": 0x122028, "frame_ptr": 0x1EA3C2}},
         2: {"player": {"animation_pc": 0x12202A, "frame_ptr": 0x1EA410}},
     }
-    assert genie._normalize_animation_write_order(duplicate_frame_states) == 0
+    assert _normalize_animation_write_order(duplicate_frame_states) == 0
 
     with tempfile.TemporaryDirectory(prefix="openaladdin-events-test-") as name:
         run_dir = Path(name)
@@ -57,7 +73,7 @@ def main() -> int:
         checkpoint.write_bytes(b"checkpoint")
         (run_dir / "events.jsonl").write_text(
             "\n".join([
-                json.dumps({"type": "header", "format": genie.EVENT_FORMAT}),
+                json.dumps({"type": "header", "format": EVENT_FORMAT}),
                 json.dumps({
                     "type": "event",
                     "frame": 12,
@@ -112,13 +128,13 @@ def main() -> int:
         )
         raw_bytes = (run_dir / "state.jsonl").read_bytes()
         semantic = run_dir / "state.semantic.jsonl"
-        assert genie.normalize_animation_state_trace(run_dir / "state.jsonl", semantic) == 0
+        assert normalize_animation_state_trace(run_dir / "state.jsonl", semantic) == 0
         assert (run_dir / "state.jsonl").read_bytes() == raw_bytes
-        derived_header, derived_states, _ = genie.load_state_trace(semantic)
+        derived_header, derived_states, _ = load_state_trace(semantic)
         assert derived_states[0]["frame"] == 0
         assert derived_header["source_artifact"] == "state.jsonl"
         input_records = [
-            {"type": "header", "format": genie.INPUT_FORMAT},
+            {"type": "header", "format": INPUT_FORMAT},
             *[
                 {"frame": frame, "mask": 8 if frame >= 12 else 0, "buttons": ["right"] if frame >= 12 else []}
                 for frame in range(30)
@@ -129,14 +145,14 @@ def main() -> int:
             encoding="utf-8",
         )
 
-        event_count, segment_count = genie._write_segments(run_dir, 30)
+        event_count, segment_count = _write_segments(run_dir, 30)
         assert (event_count, segment_count) == (1, 1)
         document = json.loads((run_dir / "segments.json").read_text(encoding="utf-8"))
         segment = document["segments"][0]
         assert segment["event_frame"] == 12
         assert segment["start_frame"] == 13
         assert segment["end_frame"] == 29
-        assert segment["mame_state_sha256"] == genie.hashes(checkpoint)["sha256"]
+        assert segment["mame_state_sha256"] == hashes(checkpoint)["sha256"]
         assert segment["native_start_frame"] == 15
         assert segment["native_ready"]["status"] == "ready"
         assert segment["native_start"]["player"]["x"] == 115
@@ -144,23 +160,23 @@ def main() -> int:
         assert segment["native_start"]["terrain"]["behavior"] == 0x10
         assert segment["native_start"]["terrain"]["landing_state"] == 1
 
-        segments = genie.load_segments(run_dir)
-        selected = genie.select_segment(run_dir, "level01-entry")
+        segments = load_segments(run_dir)
+        selected = select_segment(run_dir, "level01-entry")
         assert segments[0]["id"] == selected["id"]
         reference = run_dir / "replay/native/level01-entry/genesis.jsonl"
-        initial = genie._write_sliced_state(run_dir / "state.jsonl", reference, 13, 15, "level01-entry")
+        initial = _write_sliced_state(run_dir / "state.jsonl", reference, 13, 15, "level01-entry")
         assert initial["frame"] == 13
-        _, sliced_states, _ = genie.load_state_trace(reference)
+        _, sliced_states, _ = load_state_trace(reference)
         assert sorted(sliced_states) == [0, 1, 2]
         assert sliced_states[0]["player"]["x"] == 113
-        arguments = genie.native_checkpoint_arguments(initial)
+        arguments = native_checkpoint_arguments(initial)
         assert "--checkpoint-terrain-behavior" in arguments
         assert "--checkpoint-terrain-landing-state" in arguments
         assert "--checkpoint-player" in arguments
-        arguments = genie.native_checkpoint_arguments(initial)
+        arguments = native_checkpoint_arguments(initial)
         assert "--checkpoint-frame-phase" in arguments
         rebased = run_dir / "replay/mame/level01-entry/state.jsonl"
-        genie._write_sliced_state(
+        _write_sliced_state(
             run_dir / "state.jsonl",
             rebased,
             13,
@@ -168,16 +184,16 @@ def main() -> int:
             "level01-entry",
             input_tokens=["left", "right", "none"],
         )
-        _, rebased_states, _ = genie.load_state_trace(rebased)
+        _, rebased_states, _ = load_state_trace(rebased)
         assert [rebased_states[index]["input"] for index in range(3)] == [
             "left", "right", "none"
         ]
         # A loaded MAME checkpoint has one discarded pre-emulation sample; the
         # first real emulated frame must consume the first segment token.
-        assert genie._mame_segment_input_tokens(["right", "none"]) == ["right", "none"]
+        assert _mame_segment_input_tokens(["right", "none"]) == ["right", "none"]
 
         derived_events = run_dir / "derived-events.jsonl"
-        events = genie.derive_events_from_state(run_dir / "state.jsonl", derived_events)
+        events = derive_events_from_state(run_dir / "state.jsonl", derived_events)
         assert [(event["onset_frame"], event["confirmed_frame"]) for event in events] == [(1, 3)]
 
     print("MAME semantic events: ok")

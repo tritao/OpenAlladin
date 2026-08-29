@@ -12,7 +12,7 @@ import tempfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COMPARATOR = ROOT / "genie/mame/compare_scheduler.py"
+COMPARATOR = ROOT / "genie/games/aladdin/mame/compare_scheduler.py"
 
 
 def write_trace(path: Path, records: list[dict]) -> None:

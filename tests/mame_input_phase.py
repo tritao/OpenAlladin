@@ -17,7 +17,10 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-import genie.api as genie
+from genie.common import hashes
+from genie.games.aladdin.mame.runs import _clean_mame_environment
+from genie.games.aladdin.mame.state import load_state_trace, synchronize_state_trace
+from genie.runtime import default_rom, run_shell_tool
 
 
 def main() -> int:
@@ -44,7 +47,7 @@ def main() -> int:
     schedule = f"none*{args.right_frame},right*1,none*{args.settle_frames}"
     with tempfile.TemporaryDirectory(prefix="openaladdin-input-phase-") as name:
         trace = Path(name)
-        environment = genie._clean_mame_environment()
+        environment = _clean_mame_environment()
         environment.update({
             "OPENALADDIN_TRACE_DIR": str(trace),
             "OPENALADDIN_TRACE_FRAMES": str(frame_count - 1),
@@ -56,15 +59,15 @@ def main() -> int:
             "OPENALADDIN_MAME_VIDEO": "none",
             "OPENALADDIN_MAME_SOUND": "none",
             "OPENALADDIN_EXECUTION_PROFILE": "analysis",
-            "OPENALADDIN_ROM_SHA256": genie.hashes(genie.default_rom())["sha256"],
+            "OPENALADDIN_ROM_SHA256": hashes(default_rom())["sha256"],
         })
-        status = genie.run_shell_tool(
-            "mame/run.sh", [str(genie.default_rom())], env=environment
+        status = run_shell_tool(
+            "mame/run.sh", [str(default_rom())], env=environment
         )
         if status != 0:
             return status
-        genie.synchronize_state_trace(trace)
-        _, states, _ = genie.load_state_trace(trace / "state.jsonl")
+        synchronize_state_trace(trace)
+        _, states, _ = load_state_trace(trace / "state.jsonl")
 
         assert states[args.right_frame]["input"] == "right", (
             f"I[{args.right_frame}] was not recorded at the requested input edge"

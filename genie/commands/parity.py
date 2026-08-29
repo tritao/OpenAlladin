@@ -44,7 +44,7 @@ def command_parity(args: argparse.Namespace) -> int:
             "--require-left-atomic",
             "--left-atomic-only",
         ]
-        statuses.append(run_tool("genie/games/aladdin/mame/compare_actors.py", actor_args))
+        statuses.append(run_tool("games/aladdin/mame/compare_actors.py", actor_args))
     if state_fields:
         state_args = [str(genesis), str(native)]
         for field in state_fields:
@@ -71,7 +71,7 @@ def command_scheduler_compare(args: argparse.Namespace) -> int:
         forwarded.extend(["--start-frame", str(args.start_frame)])
     if args.end_frame is not None:
         forwarded.extend(["--end-frame", str(args.end_frame)])
-    return run_tool("genie/games/aladdin/mame/compare_scheduler.py", forwarded)
+    return run_tool("games/aladdin/mame/compare_scheduler.py", forwarded)
 
 def command_compare(args: argparse.Namespace) -> int:
     forwarded = [str(resolve(args.genesis)), str(resolve(args.openaladdin))]

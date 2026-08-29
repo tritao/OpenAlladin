@@ -114,7 +114,7 @@ def command_trace(args: argparse.Namespace) -> int:
 
 def command_audio_driver(args: argparse.Namespace) -> int:
     return run_tool(
-        "genie/games/aladdin/mame/z80_sound.py",
+        "games/aladdin/mame/z80_sound.py",
         [str(resolve(args.rom)), "--output", str(resolve(args.output))],
     )
 

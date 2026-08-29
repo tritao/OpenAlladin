@@ -168,7 +168,7 @@ It boots through the real menu sequence, aligns at the first gameplay frame,
 walks through the opening refill window with no actor fixture, and compares
 shared actor-table fields by slot. The actor comparator ignores slot 0 by
 default because player parity is reported separately; use
-`genie/mame/compare_actors.py --include-player` when needed. Until
+`genie/games/aladdin/mame/compare_actors.py --include-player` when needed. Until
 scene-created actors are recovered, this probe intentionally reports the first
 remaining actor-spawn divergence and exits non-zero.
 
@@ -255,7 +255,7 @@ player, camera, terrain, scene, and all 32 actor slots read at one game-loop
 boundary. `state.raw.jsonl` remains the video-boundary observation and
 `state.synced.jsonl` is the pre-normalization derived view. Strict actor
 comparisons reject traces without this qualification; use
-`compare_state.py --require-left-atomic --left-atomic-only` or the actor
+`genie/core/mame/trace.py --require-left-atomic --left-atomic-only` or the actor
 comparator's equivalent flags when comparing against a native trace.
 Native state output uses `openaladdin-frame-state-v3`: it adds scheduler gates,
 all causal actor fields, and the 0x42-byte per-slot VM actor record as hex.

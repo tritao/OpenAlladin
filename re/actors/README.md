@@ -8,7 +8,7 @@ decoded interaction map in `floor.bin`.
 Regenerate it from another captured state with:
 
 ```bash
-python3 genie/analysis/export_actor_records.py \
+python3 genie/games/aladdin/analysis/export_actor_records.py \
   --trace build/re/actor-flags-final/state.jsonl \
   --frame 1436 \
   --output re/actors/level01.tsv
@@ -39,7 +39,7 @@ from the fixed ROM by the native collision pass. The fixture is used by
 For a frame-accurate replay slice, export a range from the same state trace:
 
 ```bash
-python3 genie/analysis/export_actor_timeline.py \
+python3 genie/games/aladdin/analysis/export_actor_timeline.py \
   --trace build/re/actor-flags-final/state.jsonl \
   --start-frame 1436 \
   --end-frame 1450 \
