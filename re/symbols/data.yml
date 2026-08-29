@@ -475,9 +475,11 @@
 
 0x001240CE:
   name: ACTOR_ANIM_TYPE_8D_WALL_RESPONSE
-  confidence: probable
-  description: Animation stream installed when the type-0x34 wall actor collides with the player; the runtime actor changes to type 0x8D and begins at this response stream.
+  confidence: decompiled
+  description: Animation stream installed when the type-0x34 wall actor collides with the player; its statically decoded 224-byte control-flow cycle opens with six response frames, plays sound 0x09, emits four F5 child-spawn records, clears the actor, and continues through the response-state writes before looping.
   evidence:
+    - ghidra_type34_handler_decompile
+    - actor_type8d_response_stream_decode
     - mame_type_34_handler_overlap_trace
 
 0x001EF4D4:
@@ -1059,10 +1061,12 @@
   name: ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE
   type: actor_template
   size: 20
-  confidence: probable
-  description: Compact actor response template selected by the type-0x34 player-collision handler; its type byte is 0x8D and its initialized animation begins at ACTOR_ANIM_TYPE_8D_WALL_RESPONSE.
+  confidence: decompiled
+  description: Compact actor response template selected by the type-0x34 player-collision handler; the exact 20-byte record has type byte 0x8D, movement pointer 0, animation pointer ACTOR_ANIM_TYPE_8D_WALL_RESPONSE, and resource count 7, with the handler installing it in the cleared source slot.
   evidence:
     - ghidra_actor_template_initializer_001AE30A
+    - ghidra_type34_handler_decompile
+    - actor_type8d_response_template_static_decompilation
     - mame_type_34_handler_overlap_trace
 
 0x001B7AF8:

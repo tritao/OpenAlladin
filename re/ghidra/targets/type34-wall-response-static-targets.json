@@ -1,0 +1,59 @@
+{
+  "format": "openaladdin-type34-wall-response-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "collision_path": {
+    "handler": {
+      "address": "0x001AF4D8",
+      "name": "ActorType34_PlayerCollisionHandler",
+      "operations": [
+        "increment 0x00FFF003 PLAYER_INTERACTION_COUNTER",
+        "when 0x00FFF57D is set, prepare and send audio command 0x69",
+        "call 0x001B016A Interaction_AddResponseCounter25",
+        "call 0x001ABE6E Actor_ClearAndRelease",
+        "initialize from template 0x001B7CD8"
+      ]
+    },
+    "template": {
+      "address": "0x001B7CD8",
+      "name": "ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE",
+      "size": 20,
+      "record_bytes": "8D0000000000000000006000001240CE07000000",
+      "runtime_type": "0x8D",
+      "movement_pointer": "0x00000000",
+      "animation_root": "0x001240CE",
+      "resource_count": "0x07"
+    },
+    "animation": {
+      "address": "0x001240CE",
+      "name": "ACTOR_ANIM_TYPE_8D_WALL_RESPONSE",
+      "decoded_bytes": 224,
+      "decoded_instructions": 71,
+      "control_flow": "cycle via 0x00124160 -> 0x00124180 -> 0x001241C2 -> 0x001241BA",
+      "opening": [
+        "six frame references resolving to 0x001EF4D4, 0x001EF4E6, 0x001EF504, 0x001EF504, 0x001EF546, 0x001EF546",
+        "play sound command 0x09",
+        "four F5 spawn/copy records using template field 0x001B7CEC and child roots 0x0012415E, 0x00124166, 0x00124170, and 0x0012417A",
+        "clear actor command F6 00"
+      ],
+      "follow_up": [
+        "clear actor state command EC 01",
+        "set timer/field commands EE 89 and EE 82",
+        "push parameters 0x001ACB6A and 0x001ACDD0",
+        "write values 0x001209F0 and 0x0084 through ED records"
+      ]
+    }
+  },
+  "evidence": [
+    "Exact 68000 disassembly and cached Ghidra decompile of 0x001AF4D8",
+    "Exact 20-byte template record at 0x001B7CD8",
+    "Lossless AnimationDecoder output for 0x001240CE with control-flow cycle"
+  ],
+  "conclusion": "The type-0x34 player-collision replacement is statically closed through the type-0x8D template and its response-stream root. The F5 payload contract and the meanings of the response-state addresses remain recorded as raw VM fields rather than speculative high-level names.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
