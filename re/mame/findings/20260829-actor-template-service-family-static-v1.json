@@ -1,0 +1,71 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-service-family-targets.json",
+  "templates": [
+    {
+      "address": "0x001B7968",
+      "name": "ACTOR_TEMPLATE_SCENE_RESOURCE_BASE",
+      "consumers": [
+        "SceneResource_InstantiateActors at 0x001B2238",
+        "SceneResource_RebuildAfterInteraction at 0x001B16E0"
+      ],
+      "runtime_type": "0x85",
+      "role": "Shared source record whose resource-specific animation, movement, and position fields are published by the callers."
+    },
+    {
+      "address": "0x001B7A44",
+      "name": "ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84",
+      "consumer": "Menu_RunOptionsAndSelectNextState at 0x001B3B96",
+      "runtime_type": "0x84",
+      "movement_stream": "0x0011F6FE",
+      "animation_stream": "0x00122DEE"
+    },
+    {
+      "address": "0x001B7E04",
+      "name": "ACTOR_TEMPLATE_EXIT_TYPE_84",
+      "consumer": "Level_ExitAndTerminalTransition",
+      "runtime_type": "0x84",
+      "animation_stream": "0x0012434C",
+      "reference_sites": ["0x001B06E0", "0x001B07B6"]
+    },
+    {
+      "address": "0x001B7EE0",
+      "name": "ACTOR_TEMPLATE_LEVEL08_TYPE_84",
+      "consumer": "Level08_EnterRoutine at 0x001B611E",
+      "runtime_type": "0x84",
+      "animation_stream": "0x001245E4"
+    },
+    {
+      "address": "0x001B80C0",
+      "name": "ACTOR_TEMPLATE_TYPE_52",
+      "runtime_type": "0x52",
+      "reference_sites": ["0x001B7518", "0x001B753A", "0x001B7550", "0x001B7566", "0x001B757C", "0x001B7592", "0x001B75A8"],
+      "movement_stream": "0x00120D7A",
+      "animation_stream": "0x0012548E"
+    },
+    {
+      "address": "0x001B8160",
+      "name": "ACTOR_TEMPLATE_TYPE_54",
+      "runtime_type": "0x54",
+      "reference_sites": ["0x001B597E", "0x001B59AE"],
+      "animation_stream": "0x00125878"
+    },
+    {
+      "address": "0x001B7FBC",
+      "name": "ACTOR_TEMPLATE_TYPE_64",
+      "runtime_type": "0x64",
+      "reference_sites": ["0x001B6622"],
+      "movement_stream": "0x00120B36",
+      "animation_stream": "0x00124CD8"
+    }
+  ],
+  "conclusion": "These seven 20-byte actor-template records are named from direct consumer or typed interaction evidence. The unreferenced and target-focus-only records around types 0x67 and 0x68 remain unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
