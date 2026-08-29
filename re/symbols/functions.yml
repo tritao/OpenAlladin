@@ -4795,6 +4795,14 @@
     - ghidra_disassembly_001B70D4
     - interaction_spawn_runtime47-4c-targets
     - interaction_spawn_runtime47-4c-static-decompilation
+0x001B70F8:
+  name: InteractionSpawn_Type84Base_B6
+  confidence: decompiled
+  description: Interaction selector 0xB6 handler. It requires PLAYER_INTERACTION_TYPE47_LATCH at 0x00FFF126 with the Type-0x48 and Type-0x49 latches clear, reverse-spawns ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE, installs ACTOR_ANIM_TYPE84_BASE_B6 at 0x001242B0, and subtracts eight from the spawned actor Y coordinate.
+  evidence:
+    - ghidra_disassembly_001B70F8
+    - interaction_spawn_type84_base_static_decompilation
+    - interaction_spawn_type84_base_b6_static_decompilation
 0x001B712C:
   name: InteractionSpawn_Type84Base_B7
   confidence: decompiled

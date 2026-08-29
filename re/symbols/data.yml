@@ -2522,6 +2522,17 @@
     - actor_template_type84_terrain_response_alt
     - animation_stream_decoder
 
+0x001242B0:
+  name: ACTOR_ANIM_TYPE84_BASE_B6
+  type: animation_stream
+  size: 26
+  confidence: decompiled
+  description: Selector-B6 Type-0x84 interaction-base animation loop. Its exact 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACE90, and loops at 0x001242C4 to the post-prefix frame at 0x001242B8.
+  evidence:
+    - type84_interaction_base_b6_static_decompilation
+    - interaction_spawn_type84_base_static_decompilation
+    - animation_stream_decoder
+
 0x001242CA:
   name: ACTOR_ANIM_TYPE84_BASE_B7
   size: 26
