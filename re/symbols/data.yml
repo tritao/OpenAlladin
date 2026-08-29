@@ -2025,6 +2025,17 @@
     - actor_runtime_type84_static_decompilation
     - movement_stream_decoder
 
+0x0012120E:
+  name: ACTOR_MOVE_TYPE7B_LEVEL11_EVENT
+  type: movement_stream
+  size: 24
+  confidence: decompiled
+  description: Type-0x7B Level-11 event movement root installed by ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT at 0x001B8214. Its exact 24-byte primary loop applies the initial (+3, 0) step, checks actor field 0xB2 against 0x0008, gates on player X distance 0xC8, and loops at 0x00121220 back to the root; the conditional alternate entries at 0x00121226 and 0x0012123E remain separate unresolved/shared bytes.
+  evidence:
+    - type7b_level11_animation_static_decompilation
+    - ghidra_level_table_enter_exit_targeted_decompile
+    - movement_stream_decoder
+
 0x00120A42:
   name: ACTOR_MOVE_TYPE75_LEVEL_EXIT
   type: movement_stream

@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type7b-level11-movement-static-targets.json",
+  "stream": {
+    "address": "0x0012120E",
+    "name": "ACTOR_MOVE_TYPE7B_LEVEL11_EVENT",
+    "range": "0x0012120E-0x00121225",
+    "bytes": 24,
+    "template": "0x001B8214 ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT",
+    "movement_field": "actor offset 0x0A",
+    "loop_target": "0x0012120E"
+  },
+  "alternate_entries": {
+    "distance_gate": "0x00121226",
+    "compare_gate": "0x0012123E",
+    "note": "These conditional targets are adjacent alternate/shared entries and remain outside the canonical primary owner."
+  },
+  "evidence": [
+    "Exact Type-0x7B template movement pointer",
+    "Level11_EnterRoutine direct template selection",
+    "Lossless MovementDecoder output",
+    "Terminal local loop at 0x00121220"
+  ],
+  "conclusion": "The Level-11 Type-0x7B event template now has a canonical 24-byte primary MovementVM owner at 0x0012120E."
+}
