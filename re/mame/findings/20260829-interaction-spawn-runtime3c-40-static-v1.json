@@ -25,17 +25,17 @@
     {
       "address": "0x001B738A",
       "name": "InteractionSpawn_RuntimeType3C_42",
-      "behavior": "Selector 0x42 requires 0x00FFF177 and 0x00FFF178 set, uses the forward-offset allocator with the zero-type base, and installs type 0x3C, animation root 0x0012437E, movement stream 0x0012146C, and actor byte +0x29 = 1."
+      "behavior": "Selector 0x42 requires 0x00FFF177 and 0x00FFF178 set, uses the forward-offset allocator with the zero-type base, and installs type 0x3C, animation root 0x0012437E, ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C, and actor byte +0x29 = 1."
     },
     {
       "address": "0x001B73C2",
       "name": "InteractionSpawn_RuntimeType3E_5F",
-      "behavior": "Selector 0x5F requires 0x00FFF177 clear, uses the forward-offset allocator with the zero-type base, and installs type 0x3E, animation root 0x0012437E, movement stream 0x0012146C, and actor byte +0x29 = 1."
+      "behavior": "Selector 0x5F requires 0x00FFF177 clear, uses the forward-offset allocator with the zero-type base, and installs type 0x3E, animation root 0x0012437E, ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C, and actor byte +0x29 = 1."
     },
     {
       "address": "0x001B73F2",
       "name": "InteractionSpawn_RuntimeType3F_41",
-      "behavior": "Selector 0x41 requires 0x00FFF177 set and 0x00FFF178 clear, uses the forward-offset allocator with the zero-type base, and installs type 0x3F, animation root 0x0012437E, movement stream 0x0012146C, and actor byte +0x29 = 1."
+      "behavior": "Selector 0x41 requires 0x00FFF177 set and 0x00FFF178 clear, uses the forward-offset allocator with the zero-type base, and installs type 0x3F, animation root 0x0012437E, ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C, and actor byte +0x29 = 1."
     }
   ],
   "confidence": "decompiled",

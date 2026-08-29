@@ -10,7 +10,7 @@
     "address": "0x001B8368",
     "range": ["0x001B8368", "0x001B837B"],
     "runtime_type": "0x3D",
-    "movement_stream": "0x0012146C",
+    "movement_stream": "0x0012146C ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE",
     "template_word": "0x6000",
     "animation_stream": "0x00124390",
     "resource_count": "0x01"

@@ -51,7 +51,7 @@
         "spawn_helper": "0x001B524E InteractionSpawn_ForwardOffset",
         "runtime_type": "0x3C",
         "animation_root": "0x0012437E",
-        "movement_stream": "0x0012146C",
+        "movement_stream": "0x0012146C ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE",
         "flag_value": "0x01"
       },
       {
@@ -63,7 +63,7 @@
         "spawn_helper": "0x001B524E InteractionSpawn_ForwardOffset",
         "runtime_type": "0x3E",
         "animation_root": "0x0012437E",
-        "movement_stream": "0x0012146C",
+        "movement_stream": "0x0012146C ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE",
         "flag_value": "0x01"
       },
       {
@@ -75,7 +75,7 @@
         "spawn_helper": "0x001B524E InteractionSpawn_ForwardOffset",
         "runtime_type": "0x3F",
         "animation_root": "0x0012437E",
-        "movement_stream": "0x0012146C",
+        "movement_stream": "0x0012146C ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE",
         "flag_value": "0x01"
       }
     ]
