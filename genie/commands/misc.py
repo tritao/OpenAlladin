@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import os
 
+from genie.core.mame.runner import run_shell_tool, run_tool
 from genie.ghidra import verify_rom
 from genie.runtime import *
 from genie.knowledge import *
@@ -134,7 +135,7 @@ def command_regression(args: argparse.Namespace) -> int:
         compare_args: list[str] = [str(aligned), str(native_trace)]
         for field in state_fields:
             compare_args.extend(["--field", field])
-        state_status = run_tool("mame/compare_state.py", compare_args)
+        state_status = run_tool("core/mame/trace.py", compare_args)
     status = actor_status or state_status
     print(f"regression: MAME trace {mame_trace}")
     print(f"regression: aligned trace {aligned}")
@@ -189,7 +190,7 @@ def command_coverage_merge(args: argparse.Namespace) -> int:
     else:
         forwarded.extend(["--trace-root", str(resolve(args.trace_root))])
     forwarded.extend(["--output", str(resolve(args.output))])
-    return run_tool("mame/coverage.py", forwarded)
+    return run_tool("core/mame/coverage.py", forwarded)
 
 def command_coverage_import_ghidra(args: argparse.Namespace) -> int:
     forwarded = [str(resolve(args.coverage)), "--output", str(resolve(args.output))]

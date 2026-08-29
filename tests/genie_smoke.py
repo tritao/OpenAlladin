@@ -47,7 +47,7 @@ def main() -> int:
         "genie.games.aladdin.analysis.actors",
         "genie.assets.extract",
         "genie.ghidra.import_rom",
-        "genie.mame.compare_state",
+        "genie.core.mame.trace",
         "genie.games.aladdin.vm.animation",
     )
     for module_name in module_names:

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 
+from genie.core.mame.runner import run_tool
 from genie.runtime import *
 from genie.games.aladdin.mame.state import *
 from genie.games.aladdin.mame.runs import *
@@ -49,7 +50,7 @@ def command_parity(args: argparse.Namespace) -> int:
         state_args = [str(genesis), str(native)]
         for field in state_fields:
             state_args.extend(["--field", field])
-        statuses.append(run_tool("mame/compare_state.py", state_args))
+        statuses.append(run_tool("core/mame/trace.py", state_args))
     return next((status for status in statuses if status), 0)
 
 def command_inputs_summarize(args: argparse.Namespace) -> int:
@@ -85,6 +86,6 @@ def command_compare(args: argparse.Namespace) -> int:
     ):
         if getattr(args, option):
             forwarded.append("--" + option.replace("_", "-"))
-    return run_tool("mame/compare_state.py", forwarded)
+    return run_tool("core/mame/trace.py", forwarded)
 
 __all__ = [name for name in globals() if not name.startswith("__")]

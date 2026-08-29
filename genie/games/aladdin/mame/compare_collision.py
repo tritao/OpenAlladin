@@ -19,7 +19,7 @@ if __package__ in (None, ""):
 
     sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
 
-from genie.mame.compare_state import first_difference, load_states
+from genie.core.mame.trace import first_difference, load_states
 
 
 def actor_map(record: dict[str, Any]) -> dict[int, dict[str, Any]]:

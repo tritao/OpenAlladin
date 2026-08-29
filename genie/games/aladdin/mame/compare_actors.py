@@ -17,7 +17,7 @@ if __package__ in (None, ""):
 
     sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
 
-from genie.mame.compare_state import load_states, require_atomic_trace
+from genie.core.mame.trace import load_states, require_atomic_trace
 
 
 DEFAULT_FIELDS = [

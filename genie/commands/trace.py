@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import os
 
+from genie.core.mame.runner import run_shell_tool, run_tool
 from genie.runtime import *
 from genie.knowledge import validate_knowledge
 from genie.games.aladdin.mame.experiments import *

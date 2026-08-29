@@ -11,7 +11,7 @@ import tempfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COMPARE_STATE = ROOT / "genie/mame/compare_state.py"
+COMPARE_STATE = ROOT / "genie/core/mame/trace.py"
 COMPARE_ACTORS = ROOT / "genie/games/aladdin/mame/compare_actors.py"
 
 

@@ -20,7 +20,8 @@ sys.path.insert(0, str(ROOT))
 from genie.common import hashes
 from genie.games.aladdin.mame.runs import _clean_mame_environment
 from genie.games.aladdin.mame.state import load_state_trace, synchronize_state_trace
-from genie.runtime import default_rom, run_shell_tool
+from genie.core.mame.runner import run_shell_tool
+from genie.runtime import default_rom
 
 
 def main() -> int:

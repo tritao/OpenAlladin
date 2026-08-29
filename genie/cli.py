@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from collections.abc import Sequence
 
+from genie.core.mame.runner import run_tool
 from genie.runtime import *
 from genie.commands.ghidra import *
 from genie.commands.layout import *

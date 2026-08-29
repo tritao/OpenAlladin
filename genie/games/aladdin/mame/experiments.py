@@ -12,8 +12,8 @@ from genie.common import hashes, load_yaml, normalize_symbols, parse_int
 from genie.runtime import (
     EVENTS, EXPERIMENTS, EVENT_FORMAT, _event_detector_definitions,
     _readiness_compare, _state_path_value,
-    run_shell_tool,
 )
+from genie.core.mame.runner import run_shell_tool
 from genie.games.aladdin.mame.state import load_state_trace
 
 def load_experiment(name: str) -> dict[str, Any]:

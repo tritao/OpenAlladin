@@ -74,20 +74,6 @@ def default_rom() -> Path:
         return configured
     return ROOT / "rom/aladdin-usa.bin"
 
-def tool_path(name: str) -> Path:
-    return ROOT / "genie" / name
-
-def run_tool(name: str, args: Iterable[str] = (), *, env: dict[str, str] | None = None) -> int:
-    command = [sys.executable, str(tool_path(name)), *map(str, args)]
-    environment = dict(env or os.environ)
-    python_path = environment.get("PYTHONPATH")
-    environment["PYTHONPATH"] = str(ROOT) + (os.pathsep + python_path if python_path else "")
-    return subprocess.run(command, cwd=ROOT, env=environment, check=False).returncode
-
-def run_shell_tool(name: str, args: Iterable[str] = (), *, env: dict[str, str] | None = None) -> int:
-    command = [str(tool_path(name)), *map(str, args)]
-    return subprocess.run(command, cwd=ROOT, env=env, check=False).returncode
-
 def add_rom_argument(parser: argparse.ArgumentParser, *, positional: bool = False) -> None:
     if positional:
         parser.add_argument("rom", nargs="?", type=Path, default=default_rom())

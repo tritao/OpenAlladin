@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import os
 
+from genie.core.mame.runner import run_shell_tool, run_tool
 from genie.runtime import *
 from genie.games.aladdin.mame.experiments import *
 from genie.games.aladdin.mame.state import *
@@ -76,7 +77,7 @@ def command_replay(args: argparse.Namespace) -> int:
                         input_tokens=tokens,
                     )
                     status = run_tool(
-                        "mame/compare_state.py",
+                        "core/mame/trace.py",
                         [str(reference), str(trace), "--allow-additional-fields"],
                     )
             _update_replay_manifest(run_dir, manifest, args.client, trace, status, segment_id)
@@ -133,7 +134,7 @@ def command_replay(args: argparse.Namespace) -> int:
                             "legacy-full-replay",
                         )
                     status = run_tool(
-                        "mame/compare_state.py",
+                        "core/mame/trace.py",
                         [
                             str(original),
                             str(trace),
