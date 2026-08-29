@@ -2046,6 +2046,16 @@
     - actor_runtime_type6e_73_targets
     - movement_stream_decoder
 
+0x001205CA:
+  name: ACTOR_MOVE_TYPE6E_INTERACTION_SECONDARY
+  type: movement_stream
+  size: 42
+  confidence: decompiled
+  description: Packed secondary MovementVM entry associated with ACTOR_MOVE_TYPE6E_INTERACTION. Its exact 42-byte owner contains the signed response step, random child-spawn branch, and local alternate entry before the Type-0x6F root.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
+    - movement_stream_decoder
+
 0x001205F4:
   name: ACTOR_MOVE_TYPE6F_INTERACTION
   type: movement_stream
@@ -2055,6 +2065,16 @@
   evidence:
     - actor_runtime_type6e_73_movement_static_decompilation
     - actor_runtime_type6e_73_targets
+    - movement_stream_decoder
+
+0x0012063A:
+  name: ACTOR_MOVE_TYPE6F_INTERACTION_SECONDARY
+  type: movement_stream
+  size: 42
+  confidence: decompiled
+  description: Packed secondary MovementVM entry associated with ACTOR_MOVE_TYPE6F_INTERACTION. Its exact 42-byte owner contains the signed response step, random child-spawn branch, and local alternate entry before the Type-0x70 root.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
     - movement_stream_decoder
 
 0x00120664:
@@ -2068,6 +2088,16 @@
     - actor_runtime_type6e_73_targets
     - movement_stream_decoder
 
+0x001206BC:
+  name: ACTOR_MOVE_TYPE70_INTERACTION_SECONDARY
+  type: movement_stream
+  size: 82
+  confidence: decompiled
+  description: Packed secondary MovementVM entry associated with ACTOR_MOVE_TYPE70_INTERACTION. Its exact 82-byte owner contains the response and child-spawn entries, the dynamic shared-response handoff, and the internal alternate path before the Type-0x71 root.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
+    - movement_stream_decoder
+
 0x0012070E:
   name: ACTOR_MOVE_TYPE71_INTERACTION
   type: movement_stream
@@ -2077,6 +2107,16 @@
   evidence:
     - actor_runtime_type6e_73_movement_static_decompilation
     - actor_runtime_type6e_73_targets
+    - movement_stream_decoder
+
+0x0012075E:
+  name: ACTOR_MOVE_TYPE71_INTERACTION_SECONDARY
+  type: movement_stream
+  size: 266
+  confidence: decompiled
+  description: Packed secondary MovementVM bank associated with ACTOR_MOVE_TYPE71_INTERACTION. Its exact 266-byte owner contains the signed-response, timed horizontal, child-spawn, and alternate-entry paths plus the dynamic shared-response handoff before the Type-0x72 root.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
     - movement_stream_decoder
 
 0x00120868:
@@ -2090,6 +2130,16 @@
     - actor_runtime_type6e_73_targets
     - movement_stream_decoder
 
+0x001208AE:
+  name: ACTOR_MOVE_TYPE72_INTERACTION_SECONDARY
+  type: movement_stream
+  size: 42
+  confidence: decompiled
+  description: Packed secondary MovementVM entry associated with ACTOR_MOVE_TYPE72_INTERACTION. Its exact 42-byte owner contains the signed response step, random child-spawn branch, and local alternate entry before the Type-0x73 root.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
+    - movement_stream_decoder
+
 0x001208D8:
   name: ACTOR_MOVE_TYPE73_INTERACTION
   type: movement_stream
@@ -2099,6 +2149,16 @@
   evidence:
     - actor_runtime_type6e_73_movement_static_decompilation
     - actor_runtime_type6e_73_targets
+    - movement_stream_decoder
+
+0x0012091E:
+  name: ACTOR_MOVE_TYPE73_INTERACTION_SECONDARY
+  type: movement_stream
+  size: 42
+  confidence: decompiled
+  description: Packed secondary MovementVM entry associated with ACTOR_MOVE_TYPE73_INTERACTION. Its exact 42-byte owner contains the signed response step, random child-spawn branch, and local alternate entry before the shared Type-0x6E-0x73 response continuation.
+  evidence:
+    - actor_runtime_type6e_73_movement_static_decompilation
     - movement_stream_decoder
 
 0x00120948:

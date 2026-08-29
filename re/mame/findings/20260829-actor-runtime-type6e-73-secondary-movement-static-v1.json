@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "family": "Runtime actor type 0x6E-0x73 packed MovementVM secondary entries",
+  "members": [
+    { "address": "0x001205CA", "end": "0x001205F3", "name": "ACTOR_MOVE_TYPE6E_INTERACTION_SECONDARY", "associated_root": "ACTOR_MOVE_TYPE6E_INTERACTION" },
+    { "address": "0x0012063A", "end": "0x00120663", "name": "ACTOR_MOVE_TYPE6F_INTERACTION_SECONDARY", "associated_root": "ACTOR_MOVE_TYPE6F_INTERACTION" },
+    { "address": "0x001206BC", "end": "0x0012070D", "name": "ACTOR_MOVE_TYPE70_INTERACTION_SECONDARY", "associated_root": "ACTOR_MOVE_TYPE70_INTERACTION" },
+    { "address": "0x0012075E", "end": "0x00120867", "name": "ACTOR_MOVE_TYPE71_INTERACTION_SECONDARY", "associated_root": "ACTOR_MOVE_TYPE71_INTERACTION" },
+    { "address": "0x001208AE", "end": "0x001208D7", "name": "ACTOR_MOVE_TYPE72_INTERACTION_SECONDARY", "associated_root": "ACTOR_MOVE_TYPE72_INTERACTION" },
+    { "address": "0x0012091E", "end": "0x00120947", "name": "ACTOR_MOVE_TYPE73_INTERACTION_SECONDARY", "associated_root": "ACTOR_MOVE_TYPE73_INTERACTION" }
+  ],
+  "behavior": "Each exact packed entry is the secondary/alternate path following its associated runtime-type root. The entries retain signed response steps, random child-spawn branches, and internal alternate targets; they are named by association without assigning unverified gameplay identities.",
+  "evidence": [
+    "actor_runtime_type6e_73_movement_static_decompilation",
+    "actor_runtime_type6e_73_secondary_movement_static_targets",
+    "movement_stream_decoder"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

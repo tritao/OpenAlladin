@@ -2345,6 +2345,17 @@ movement classification is recorded in
 `re/mame/findings/20260829-actor-runtime-type6e-73-movement-static-v1.json` and
 `re/ghidra/targets/actor-runtime-type6e-73-movement-static-targets.json`.
 
+The same packed family also contains six secondary MovementVM entries between
+the direct roots: `0x001205CA-0x001205F3`, `0x0012063A-0x00120663`,
+`0x001206BC-0x0012070D`, `0x0012075E-0x00120867`, `0x001208AE-0x001208D7`,
+and `0x0012091E-0x00120947`. Each linear decoder pass reaches the next known
+root or the shared continuation exactly, so the gaps are now named as
+per-type secondary entries without claiming more specific gameplay roles. The
+static result is recorded in
+`re/mame/findings/20260829-actor-runtime-type6e-73-secondary-movement-static-v1.json`
+and
+`re/ghidra/targets/actor-runtime-type6e-73-secondary-movement-static-targets.json`.
+
 ## Actor spawn variation and runtime type 0x40 (20260829)
 
 `Actor_ApplyRandomSpawnVariation` at `0x001B6794` is shared by the adjacent
@@ -3166,3 +3177,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type4d-type7b-response-child-movement-static-v1` | recorded-static-decompilation | Promoted the exact Type-0x4D and Type-0x7B response-child MovementVM owners at 0x00121710-0x0012171B and 0x0012171C-0x001217A1 from their direct template pointers and decoder loop boundaries |
 | `20260829-menu-transition-scene-table-movement-static-v1` | recorded-static-decompilation | Promoted the exact 42-byte Type-0x84 scene-table transition MovementVM stream at 0x001209C6-0x001209EF from its direct template pointer and internal random alternatives |
 | `20260829-actor-runtime-type6e-73-movement-static-v1` | recorded-static-decompilation | Promoted six directly installed runtime-type 0x6E-0x73 MovementVM roots and their shared 118-byte response continuation, correcting the actor +0x0A movement-field classification and preserving the Type-0x7F boundary |
+| `20260829-actor-runtime-type6e-73-secondary-movement-static-v1` | recorded-static-decompilation | Promoted six exact packed secondary MovementVM entries between the runtime-type 0x6E-0x73 roots, removing the false UNKNOWN gaps while preserving conservative per-type naming |

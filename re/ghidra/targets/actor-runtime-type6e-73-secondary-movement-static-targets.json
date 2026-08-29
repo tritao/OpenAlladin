@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-actor-runtime-type6e-73-secondary-movement-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Bound the packed secondary MovementVM entries between the directly installed runtime type 0x6E-0x73 roots.",
+  "entries": [
+    { "address": "0x001205CA", "end": "0x001205F3", "size": 42, "name": "ACTOR_MOVE_TYPE6E_INTERACTION_SECONDARY", "associated_root": "0x00120584" },
+    { "address": "0x0012063A", "end": "0x00120663", "size": 42, "name": "ACTOR_MOVE_TYPE6F_INTERACTION_SECONDARY", "associated_root": "0x001205F4" },
+    { "address": "0x001206BC", "end": "0x0012070D", "size": 82, "name": "ACTOR_MOVE_TYPE70_INTERACTION_SECONDARY", "associated_root": "0x00120664" },
+    { "address": "0x0012075E", "end": "0x00120867", "size": 266, "name": "ACTOR_MOVE_TYPE71_INTERACTION_SECONDARY", "associated_root": "0x0012070E" },
+    { "address": "0x001208AE", "end": "0x001208D7", "size": 42, "name": "ACTOR_MOVE_TYPE72_INTERACTION_SECONDARY", "associated_root": "0x00120868" },
+    { "address": "0x0012091E", "end": "0x00120947", "size": 42, "name": "ACTOR_MOVE_TYPE73_INTERACTION_SECONDARY", "associated_root": "0x001208D8" }
+  ],
+  "boundary_basis": {
+    "decoder": "MovementDecoder linear decode reaches each declared end exactly.",
+    "ordering": "Each secondary owner ends immediately before the next directly installed root or the shared continuation.",
+    "internal_targets": "Random and unconditional branch targets remain inside the declared packed owner or point to the associated root family."
+  },
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
