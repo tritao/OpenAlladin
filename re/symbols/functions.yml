@@ -1035,6 +1035,14 @@
     - ghidra_decompile_001B2238
     - ghidra_level_transition_targeted_decompile
     - ghidra_actor_table_layout
+0x001B22FA:
+  name: SceneResource_InterpreterEpilogue
+  size: 6
+  confidence: decompiled
+  description: Shared scene-resource interpreter epilogue. Restores the saved A1/A2 registers and returns to the caller; the command-0 terminator reaches it after removing the dispatch return address.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+    - ghidra_decompile_001B21F6
 0x001B2236:
   name: SceneResource_ModeNoOpHook
   confidence: confirmed

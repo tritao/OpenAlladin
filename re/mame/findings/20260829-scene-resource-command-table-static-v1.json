@@ -12,6 +12,11 @@
     "count": 16,
     "index": "scene-resource stream command byte 0x00-0x0F"
   },
+  "shared_epilogue": {
+    "address": "0x001B22FA",
+    "name": "SceneResource_InterpreterEpilogue",
+    "contract": "Restore the saved A1/A2 registers and return from either scene-resource interpreter."
+  },
   "handlers": [
     { "command": "0x00", "address": "0x001B2300", "name": "SceneResource_EndCommandStream", "contract": "Exit the active interpreter through the shared A1/A2 epilogue." },
     { "command": "0x01", "address": "0x001B2304", "name": "SceneResource_AdvanceX", "contract": "Add one signed stream byte to D0." },

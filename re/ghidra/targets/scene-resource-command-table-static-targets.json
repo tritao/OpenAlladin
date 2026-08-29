@@ -35,6 +35,12 @@
     "gap_free": true,
     "notes": "Commands 0x00-0x0C occupy the previously unclassified 0x001B2300-0x001B23E9 block; commands 0x0D-0x0F are the already named handlers immediately following it."
   },
+  "shared_epilogue": {
+    "address": "0x001B22FA",
+    "name": "SceneResource_InterpreterEpilogue",
+    "size": 6,
+    "used_by": ["SceneResource_ProcessCommandStream", "SceneResource_InstantiateActors"]
+  },
   "evidence": [
     "Big-endian ROM pointer-table decode at 0x0049D8",
     "Exact 68000 disassembly of 0x001B2300-0x001B23E9",
