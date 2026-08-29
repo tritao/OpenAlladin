@@ -2297,6 +2297,17 @@ fixed bodies and ranges are recorded in
 `re/mame/findings/20260829-interaction-response-counter-complete-static-decompilation-v1.json`
 and `re/ghidra/targets/interaction-response-counter-complete-targets.json`.
 
+## Actor terrain-response tail dispatch (20260829)
+
+The 46-byte block at `0x001B1E0A` is now named
+`Terrain_DispatchFirstActorResponse`. It scans actor records 1 through 24,
+selects the first active record with a nonzero `+0x3D` terrain-response byte,
+and tail-dispatches through `TERRAIN_RESPONSE_HANDLER_TABLE` at `0x004554`.
+Its boundary immediately before `Terrain_ResolvePlayerCell` is explicit; no
+static caller or scheduler role is inferred. The contract is recorded in
+`re/mame/findings/20260829-terrain-actor-response-dispatch-static-decompilation-v1.json`
+and `re/ghidra/targets/terrain-actor-response-dispatch-targets.json`.
+
 ## Actor lifecycle helper services (20260829)
 
 The actor cleanup path now has an explicit interaction-table publication helper.
@@ -2899,6 +2910,7 @@ valuable because it prevents repeating the same input family.
 | `20260829-vdp-pattern-service-frames-static-decompilation-v1` | recorded-static-decompilation | Exact 0x28-iteration frame-phase and descending VDP pattern service helper at 0x001B1CE4; surrounding mode-0x17 presentation purpose remains unresolved |
 | `20260829-scene-resource-mode17-static-decompilation-v1` | recorded-static-decompilation | Exact mode-0x17 scene-resource service/setup blocks at 0x001B1C0C and 0x001B1D00, with explicit boundaries and conservative presentation naming |
 | `20260829-interaction-response-counter-complete-static-decompilation-v1` | recorded-static-decompilation | Complete fixed response-counter increment family and three-digit interaction/resource progress decrement helper |
+| `20260829-terrain-actor-response-dispatch-static-decompilation-v1` | recorded-static-decompilation | First-match non-player actor terrain-response tail dispatch through the 256-entry terrain handler table |
 | `20260829-scene-resource-mode-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only scene-resource mode hook called after modes 0x1B, 0x1C, and 0x04 are selected |
 | `20260829-terrain-actor-collision-hook-static-decompilation-v1` | recorded-static-decompilation | RTS-only actor terrain-collision hook between terrain-row selection and behavior-byte lookup |
 | `20260829-interrupt-vector-static-decompilation-v1` | recorded-static-decompilation | Exception vector fan-in, line-1010 VDP loop, level-4 RTE stub, and spurious interrupt RTE stub |

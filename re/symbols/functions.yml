@@ -1930,6 +1930,15 @@
     - ghidra_disassembly_001B1E38
     - rom_terrain_handler_table_004554
     - mame_player_run_trace
+0x001B1E0A:
+  name: Terrain_DispatchFirstActorResponse
+  confidence: decompiled
+  size: 46
+  description: Scans non-player actor records 1 through 24 for the first active record with a nonzero terrain-response byte at offset +0x3D, then tail-dispatches through TERRAIN_RESPONSE_HANDLER_TABLE at 0x004554; returns when no such record exists.
+  evidence:
+    - ghidra_disassembly_001B1E0A
+    - terrain_actor_response_dispatch_targets
+    - terrain_actor_response_dispatch_static_decompilation
 0x001AD7B4:
   name: Player_TerrainLandingResolver
   confidence: confirmed

@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-terrain-actor-response-dispatch-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target": {
+    "address": "0x001B1E0A",
+    "name": "Terrain_DispatchFirstActorResponse",
+    "size": 46,
+    "end": "0x001B1E37"
+  },
+  "scan": {
+    "actor_table_start": "0x00FF7E82",
+    "record_count": 24,
+    "record_stride": "0x42",
+    "active_byte": "+0x00",
+    "response_byte": "+0x3D",
+    "dispatch_table": "0x004554 TERRAIN_RESPONSE_HANDLER_TABLE"
+  },
+  "contract": {
+    "for_each_record": [
+      "skip inactive records whose type byte is zero",
+      "read the response byte at actor +0x3D",
+      "skip records whose response byte is zero",
+      "multiply the response byte by four and load the handler pointer from 0x004554",
+      "push the handler address and return through the stack as a tail dispatch"
+    ],
+    "no_match": "advance by 0x42 through 24 non-player records and return"
+  }
+}
