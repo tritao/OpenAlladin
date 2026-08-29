@@ -344,6 +344,20 @@ def test_type87_interaction_response_animation_family_is_exact():
     assert loop.metadata["entry_offset"] == 306
 
 
+def test_type37_interaction_response_animation_range_is_exact():
+    symbols = SymbolStore()
+    symbol = symbols.at(0x00123F10, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "ACTOR_ANIM_TYPE37_INTERACTION_RESPONSE"
+    assert symbol.end == 0x00123F7D
+    assert symbol.size == 110
+
+    following = symbols.at(0x00123F7E, include_ranges=False)
+    assert following is not None
+    assert following.name == "ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX"
+    assert symbol.end < following.address
+
+
 def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)

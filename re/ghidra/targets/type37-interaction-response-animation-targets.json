@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-type37-interaction-response-animation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the exact Type-0x37 interaction-response animation installed by selector 0x6B.",
+  "producer": {
+    "address": "0x001B720C",
+    "name": "InteractionSpawn_RuntimeType37_6B",
+    "selector": "0x6B",
+    "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+    "runtime_type": "0x37",
+    "actor_field_06": "0x21",
+    "flag_value": "0x02",
+    "animation_root": "0x00123F10"
+  },
+  "stream": {
+    "address": "0x00123F10",
+    "name": "ACTOR_ANIM_TYPE37_INTERACTION_RESPONSE",
+    "range": ["0x00123F10", "0x00123F7D"],
+    "size": 110,
+    "decoded": [
+      "Frames 0x1726-0x1762 with the repeated response cadence",
+      "EE timer 0x0F at 0x00123F5E",
+      "Frame 0x1766 and EF advance at 0x00123F62",
+      "F0 0x86 at 0x00123F64 branches to the local flag-clear phase at 0x00123F5E",
+      "EB 0x00 at 0x00123F6A",
+      "Random gates at 0x00123F6C and 0x00123F72 select the local frame loop",
+      "EA at 0x00123F78 loops to 0x00123F40"
+    ]
+  },
+  "boundary_basis": [
+    "Direct animation-root installation by InteractionSpawn_RuntimeType37_6B",
+    "Lossless AnimationDecoder output",
+    "EA terminal at 0x00123F78",
+    "Next established root ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX at 0x00123F7E"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

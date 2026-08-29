@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type37-interaction-response-animation-targets.json",
+  "producer": {
+    "address": "0x001B720C",
+    "name": "InteractionSpawn_RuntimeType37_6B",
+    "selector": "0x6B",
+    "runtime_type": "0x37",
+    "animation_root": "0x00123F10"
+  },
+  "stream": {
+    "address": "0x00123F10",
+    "name": "ACTOR_ANIM_TYPE37_INTERACTION_RESPONSE",
+    "range": "0x00123F10-0x00123F7D",
+    "size": 110,
+    "decoded": [
+      "0x1726-0x1762 frame sequence",
+      "EE 0x0F",
+      "EF advance",
+      "F0 0x86 local gate and EB 0x00 flag clear",
+      "F0 0x5E random gates",
+      "EA 0x00123F78 -> 0x00123F40"
+    ]
+  },
+  "boundary_basis": [
+    "Direct selector-0x6B animation assignment",
+    "Exact AnimationVM decoding",
+    "Terminal EA before ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX at 0x00123F7E"
+  ],
+  "conclusion": "The formerly unknown 0x00123F10-0x00123F7D band is the Type-0x37 interaction-response stream installed by selector 0x6B. Its timer, flag gate, random branches, frame loop, and exact boundary are now canonical.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

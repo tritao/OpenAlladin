@@ -3627,6 +3627,16 @@
     - actor_template_scene_resource_family_static_decompilation
     - animation_stream_decoder
 
+0x00123F10:
+  name: ACTOR_ANIM_TYPE37_INTERACTION_RESPONSE
+  type: animation_stream
+  size: 110
+  confidence: decompiled
+  description: Type-0x37 interaction-response animation installed by InteractionSpawn_RuntimeType37_6B. Its exact 110-byte region presents the 0x1726-0x1766 frame sequence with timer 0x0F, advances the frame delay, clears the actor flag through the random gate at 0x00123F64, and loops through the local response frames at 0x00123F78.
+  evidence:
+    - interaction_spawn_runtime37_3b_type43_static_decompilation
+    - animation_stream_decoder
+
 0x00123EE8:
   name: ACTOR_ANIM_TYPE2D_GUARD_SWORD_ATTACK
   size: 40
