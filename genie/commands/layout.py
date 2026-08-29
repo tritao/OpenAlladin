@@ -139,6 +139,8 @@ def command_layout_candidates(args: argparse.Namespace) -> int:
         evidence = (
             f"{counts['actor_template_pointers']} template, "
             f"{counts['decoded_streams']} decoded, "
+            f"{counts['vm_probes']} probes, "
+            f"{counts['boundary_conflicts']} boundary conflicts, "
             f"{counts['direct_references']} refs"
         )
         print(

@@ -145,6 +145,106 @@ def _template_pointer_evidence(
     return result
 
 
+def _vm_probe_evidence(
+    layout: Layout,
+    gaps: list[LayoutRange],
+    anchors: dict[int, set[int]],
+    rom: bytes | None,
+) -> dict[int, list[dict[str, Any]]]:
+    """Probe evidence-backed Aladdin VM anchors that are not yet catalogued."""
+
+    if rom is None:
+        return {}
+    try:
+        from genie.games.aladdin.vm.movement import MovementDecoder, load_animation_decoder
+
+        module = load_animation_decoder()
+        reader = module.RomReader(rom)
+        animation_decoder = module.AnimationDecoder(reader)
+        movement_decoder = MovementDecoder(reader)
+    except (ImportError, OSError, RuntimeError, TypeError, ValueError):
+        return {}
+
+    result: dict[int, list[dict[str, Any]]] = {}
+    for gap in gaps:
+        for entry in sorted(anchors.get(gap.start, ())):
+            if entry < 0x00120000 or entry >= 0x00130000 or entry & 1:
+                continue
+            probes: list[tuple[str, dict[str, Any]]] = []
+            try:
+                decoded = movement_decoder.decode_stream(
+                    entry,
+                    max_steps=64,
+                    max_bytes=0x400,
+                    follow_control_flow=True,
+                )
+                steps = decoded.get("steps", [])
+                command_count = sum(
+                    len(step.get("commands", ()))
+                    for step in steps
+                    if isinstance(step, dict)
+                )
+                if (
+                    steps
+                    and command_count
+                    and _address(decoded.get("bytes_decoded", 0)) >= 8
+                ):
+                    end = entry + _address(decoded["bytes_decoded"]) - 1
+                    probes.append(("movement", {
+                        "bytes_decoded": _address(decoded["bytes_decoded"]),
+                        "end": end,
+                        "stopped_reason": decoded.get("stopped_reason"),
+                        "commands": command_count,
+                    }))
+            except (KeyError, TypeError, ValueError, IndexError):
+                pass
+            try:
+                decoded = animation_decoder.decode_stream(
+                    entry,
+                    max_instructions=64,
+                    max_bytes=0x400,
+                    follow_control_flow=True,
+                )
+                instructions = decoded.get("instructions", [])
+                first = instructions[0] if instructions else {}
+                frame_pointer = _address(first.get("resolved_frame")) if first.get("resolved_frame") else -1
+                command_count = sum(
+                    1
+                    for instruction in instructions
+                    if isinstance(instruction, dict) and instruction.get("kind") == "command"
+                )
+                if (
+                    first.get("kind") == "frame_ref"
+                    and 0x001E0000 <= frame_pointer < 0x00200000
+                    and _address(decoded.get("bytes_decoded", 0)) >= 4
+                    and (command_count or decoded.get("stopped_reason") in {
+                        "unconditional_jump", "control_flow_cycle", "dynamic_call",
+                    })
+                ):
+                    end = entry + _address(decoded["bytes_decoded"]) - 1
+                    probes.append(("animation", {
+                        "bytes_decoded": _address(decoded["bytes_decoded"]),
+                        "end": end,
+                        "stopped_reason": decoded.get("stopped_reason"),
+                        "commands": command_count,
+                    }))
+            except (KeyError, TypeError, ValueError, IndexError):
+                pass
+            for kind, probe in probes:
+                result.setdefault(gap.start, []).append({
+                    "kind": "vm_probe",
+                    "stream_kind": kind,
+                    "entry": _hex(entry),
+                    "decoded_range": [_hex(entry), _hex(probe["end"])],
+                    "bytes_decoded": probe["bytes_decoded"],
+                    "stopped_reason": probe["stopped_reason"],
+                    "commands": probe["commands"],
+                    "within_gap": entry >= gap.start and probe["end"] <= gap.end,
+                    "source": "offline_vm_probe",
+                })
+    return result
+
+
 def build_layout_candidates(
     database: AnalysisDatabase | Path,
     layout: Layout,
@@ -236,12 +336,33 @@ def build_layout_candidates(
                 "basis": "actor_template_pointer",
             })
 
+    anchors: dict[int, set[int]] = {gap.start: set() for gap in gaps}
+    for gap_start, item in by_start.items():
+        for row in item["evidence"]:
+            for field in ("to", "entry", "target"):
+                try:
+                    anchors[gap_start].add(_address(row[field]))
+                except (KeyError, TypeError, ValueError):
+                    continue
+    vm_probes = _vm_probe_evidence(layout, gaps, anchors, rom)
+    for gap_start, rows in vm_probes.items():
+        by_start[gap_start]["evidence"].extend(rows)
+        for row in rows:
+            by_start[gap_start]["proposed_ranges"].append({
+                "start": row["entry"],
+                "end": row["decoded_range"][1],
+                "basis": f"{row['stream_kind']}_decoder_probe",
+            })
+
     result: list[dict[str, Any]] = []
     for gap in gaps:
         item = by_start[gap.start]
         evidence = item["evidence"]
         direct = [row for row in evidence if row["kind"] == "direct_reference"]
-        streams = [row for row in evidence if row["kind"] == "decoded_stream"]
+        streams = [row for row in evidence if row["kind"] in {"decoded_stream", "vm_probe"}]
+        catalogued_streams = [row for row in evidence if row["kind"] == "decoded_stream"]
+        probes = [row for row in evidence if row["kind"] == "vm_probe"]
+        boundary_conflicts = [row for row in probes if not row.get("within_gap", True)]
         templates = [row for row in evidence if row["kind"] == "actor_template_pointer"]
         if not evidence:
             continue
@@ -262,19 +383,25 @@ def build_layout_candidates(
                 suggested_class = "OPAQUE_DATA"
         else:
             suggested_class = "UNKNOWN"
-        confidence = "high" if streams or templates else "medium"
+        confidence = "high" if catalogued_streams or templates else "medium"
         score = (
-            len(streams) * 1000
+            len(catalogued_streams) * 1000
+            + len(probes) * 600
             + len(templates) * 750
             + min(len(direct), 100) * 5
             + len({row.get("from_function") for row in direct}) * 10
             + (25 if gap.size <= 256 else 0)
+            - len(boundary_conflicts) * 100
         )
         reasons = []
         if templates:
             reasons.append("direct_actor_template_pointer")
         if streams:
             reasons.append("decoder_overlap")
+        if probes:
+            reasons.append("decoder_probe")
+        if boundary_conflicts:
+            reasons.append("decoder_crosses_layout_boundary")
         if direct:
             reasons.append("incoming_ghidra_references")
         result.append({
@@ -285,7 +412,9 @@ def build_layout_candidates(
             "confidence": confidence,
             "evidence_counts": {
                 "direct_references": len(direct),
-                "decoded_streams": len(streams),
+                "decoded_streams": len(catalogued_streams),
+                "vm_probes": len(probes),
+                "boundary_conflicts": len(boundary_conflicts),
                 "actor_template_pointers": len(templates),
             },
             "proposed_ranges": sorted(
@@ -295,7 +424,10 @@ def build_layout_candidates(
             "reasons": reasons,
             "evidence": sorted(
                 evidence,
-                key=lambda value: (_address(value.get("to", value.get("entry", value.get("target", "0x0")))), value["kind"]),
+                key=lambda value: (
+                    _address(value.get("to", value.get("entry", value.get("target", "0x0")))),
+                    value["kind"],
+                ),
             )[:max(0, max_references)],
             "evidence_truncated": max(0, len(evidence) - max(0, max_references)),
         })

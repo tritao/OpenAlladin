@@ -60,6 +60,8 @@ def test_layout_candidates_join_decoder_and_actor_template_pointer_evidence(tmp_
     assert item["evidence_counts"] == {
         "direct_references": 1,
         "decoded_streams": 1,
+        "vm_probes": 0,
+        "boundary_conflicts": 0,
         "actor_template_pointers": 1,
     }
     assert "direct_actor_template_pointer" in item["reasons"]
