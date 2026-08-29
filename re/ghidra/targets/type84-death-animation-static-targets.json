@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "type84-death-animation-static",
+    "purpose": "Range-bound the Type-0x84 death animation prefix and its shared continuation without absorbing the adjacent Type-0x5F interaction stream."
+  },
+  "targets": [
+    { "address": "0x00122FA2", "name": "ACTOR_ANIM_DEATH_122FA2" },
+    { "address": "0x00123014", "name": "ACTOR_ANIM_DEATH_84_SHARED_CONTINUATION" },
+    { "address": "0x001B7940", "name": "ACTOR_TEMPLATE_DEATH_84" },
+    { "address": "0x001AC4B0", "name": "Actor terminal-template replacement block" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
+    { "address": "0x0012312C", "name": "ACTOR_ANIM_TYPE5F_INTERACTION" },
+    { "address": "0x00123130", "name": "Type5F shared-entry branch" }
+  ],
+  "memory_references": [
+    { "address": "0x001F9014", "name": "SPRITE_FRAME_DEATH_84_OPENING" },
+    { "address": "0x001F8F9C", "name": "SPRITE_FRAME_DEATH_84_CONTINUATION" },
+    { "address": "0x00FF7F8A", "name": "ACTOR_TABLE_TYPE_BYTE" },
+    { "address": "0x00FF7F9A", "name": "ACTOR_TABLE_ANIMATION_CURSOR" }
+  ]
+}

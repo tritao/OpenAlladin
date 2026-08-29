@@ -1,0 +1,98 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type84-death-animation-static-targets.json",
+  "animation_family": {
+    "root": {
+      "address": "0x00122FA2",
+      "name": "ACTOR_ANIM_DEATH_122FA2",
+      "range": "0x00122FA2-0x00123013",
+      "bytes": 114,
+      "opening_frames": [
+        "0x17F6", "0x17F6", "0x17FA", "0x17FA",
+        "0x17FE", "0x17FE", "0x1802", "0x1802",
+        "0x1806", "0x1806", "0x180A", "0x180A",
+        "0x180E", "0x180E", "0x1812", "0x1812",
+        "0x1816", "0x1816", "0x181A", "0x181A",
+        "0x181E", "0x181E"
+      ],
+      "sound": "F3 0x09 at 0x00122FA4",
+      "child_spawns": [
+        {
+          "address": "0x00122FAC",
+          "raw": "F500001B7954000000122FFE00000000",
+          "template": "0x001B7954 within ACTOR_TEMPLATE_DEATH_84",
+          "entry": "0x00122FFE"
+        },
+        {
+          "address": "0x00122FBE",
+          "raw": "F500001B7954000000122FF200000000",
+          "template": "0x001B7954 within ACTOR_TEMPLATE_DEATH_84",
+          "entry": "0x00122FF2"
+        }
+      ],
+      "terminal": "F600 at 0x00122FF0, followed by frame 0x17E2 and EB00/EB01 state flags",
+      "continuation": "EA at 0x00122FF8 -> 0x00123014",
+      "inline_entries": [
+        "0x00122FFE: frame 0x17E2, EB01, EA -> 0x00123014",
+        "0x00123008: frame 0x17E2, EB00, EA -> 0x00123014",
+        "0x00123012: frame 0x17E2, then fall-through -> 0x00123014"
+      ]
+    },
+    "shared_continuation": {
+      "address": "0x00123014",
+      "name": "ACTOR_ANIM_DEATH_84_SHARED_CONTINUATION",
+      "range": "0x00123014-0x0012312B",
+      "bytes": 280,
+      "opening_frames": [
+        "0x17E6", "0x17EA", "0x17EA", "0x17EE", "0x17EE",
+        "0x17F2", "0x17F2"
+      ],
+      "cleanup": "F600 at 0x00123022, followed by the 0x0E4E/0x0E52/0x0E56 and 0x17F6-0x181E frame groups",
+      "publication": [
+        "ED at 0x00123044 writes actor field 0x11 to 0x0084",
+        "ED at 0x0012304A clears actor field 0x0A",
+        "ED at 0x0012305C writes movement stream 0x00120352 to actor field 0x0A"
+      ],
+      "response_loop": {
+        "entry": "0x00123074",
+        "frames": [
+          "0x1032", "0x1036", "0x103A", "0x103E", "0x1042",
+          "0x1062", "0x1066", "0x106A", "0x106E", "0x1072",
+          "0x1076", "0x107A"
+        ],
+        "comparison": "Repeated F4 checks compare actor field 0xF0D3 with 0x005E.",
+        "shared_entry": "Matching comparisons branch to 0x00123130, an internal entry of ACTOR_ANIM_TYPE5F_INTERACTION.",
+        "loop": "EA at 0x00123126 -> 0x00123074"
+      }
+    }
+  },
+  "consumer": {
+    "template": "0x001B7940 ACTOR_TEMPLATE_DEATH_84",
+    "template_animation_pointer": "0x001B7954 -> 0x00122FA2",
+    "replacement_block": "0x001AC4B0",
+    "initializer": "0x001AE30A",
+    "runtime_type": "0x84",
+    "runtime_observation": "The guard record is replaced in place with type 0x84 at the sword-hit transition, then clears after the terminal sequence."
+  },
+  "boundaries": {
+    "root_end": "The 114-byte root prefix ends at 0x00123013 immediately before the shared continuation entry at 0x00123014.",
+    "shared_end": "The 280-byte shared continuation ends at 0x0012312B immediately before ACTOR_ANIM_TYPE5F_INTERACTION at 0x0012312C.",
+    "type5f_handoff": "The death continuation branches to 0x00123130, an internal Type-0x5F entry, but no overlapping symbol is introduced."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for 0x00122FA2 and 0x00123014",
+    "Exact ACTOR_TEMPLATE_DEATH_84 animation pointer",
+    "Exact F5 child-spawn payloads and packed inline entries",
+    "Static replacement block at 0x001AC4B0",
+    "Existing guard sword-hit runtime trace",
+    "Existing bounded Type-0x5F interaction stream"
+  ],
+  "conclusion": "The Type-0x84 death animation is now partitioned into a 114-byte root prefix and a separate 280-byte shared continuation. The root's two child records and three inline continuation stubs remain inside its packed range; the continuation owns the type publication and terminal response loop, while its branch into the existing Type-0x5F range is recorded as a shared internal entry rather than an overlapping data claim.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1052,6 +1052,16 @@ payload installs `ACTOR_MOVE_GUARD_SWORD_ATTACK` while the alternate retains
 the template default movement; the terminal `0x152E` pair loops back to the
 guard root immediately before `ACTOR_ANIM_TYPE52_INTERACTION_BASE`.
 
+The Type-0x84 death animation family is recorded in
+`re/mame/findings/20260829-type84-death-animation-static-decompilation-v1.json`.
+The root `ACTOR_ANIM_DEATH_122FA2` now owns the exact
+`0x00122FA2-0x00123013` prefix (114 bytes), including both embedded death
+template F5 records and the inline continuation stubs. The shared
+`ACTOR_ANIM_DEATH_84_SHARED_CONTINUATION` entry owns
+`0x00123014-0x0012312B` (280 bytes), publishes the type-0x84 terminal state
+and movement stream `0x00120352`, and branches through the internal
+`0x00123130` entry of the separately owned Type-0x5F stream.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2848,3 +2858,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type34-wall-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x34 wall actor animation range-bounded with exact frames, timers, random branch, loop, and selector-0x53 installation contract |
 | `20260829-type8d-type76-terminal-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x8D response prefix, direct Type-0x76 shared continuation, and level-exit terminal alternate partitioned with exact non-overlapping boundaries |
 | `20260829-guard-attack-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x0A guard parent animation range-bounded with exact frame groups, distance gate, dual Type-0x2D F5 payloads, movement contract, and terminal loop |
+| `20260829-type84-death-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x84 death root and shared continuation range-bounded with exact child spawns, type/movement publication, response loop, and Type-0x5F internal handoff |
