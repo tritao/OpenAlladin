@@ -1291,11 +1291,12 @@
 0x001ABB40:
   name: Actor_PlayerCollisionPass
   confidence: confirmed
-  description: Per-frame player collision pass. It derives the player collision bounds, scans 24 actor records at 0x00FF7E82 with stride 0x42, checks their frame rectangles, and dispatches a hit through the handler table at ROM address 0x001CBE.
+  description: Per-frame player collision pass. It resets the transient player-collision outputs, derives the player frame bounds from PLAYER_FRAME_PTR with facing-aware horizontal extents, scans common actor records 1..24 at 0x00FF7E82 with stride 0x42, rejects empty/type-0x7F-or-higher/no-frame actors, checks rectangle overlap using each actor frame pointer at +0x14 and facing byte +0x09, and dispatches the actor type through PLAYER_COLLISION_HANDLER_TABLE at 0x001CBE. A handled actor with +0x06 bit 0x10 can settle the player response, clear vertical velocity/timers, publish the response actor type, and republish world coordinates.
   evidence:
     - ghidra_decompile_collision_damage_targets
     - ghidra_disassembly_001ABB40
     - mame_guard_collision_watchpoint
+    - collision_pass_geometry_static_decompilation
 0x001AC458:
   name: ActorType0A_ActorCollisionHandler
   confidence: confirmed
@@ -1390,10 +1391,11 @@
 0x001ABD7E:
   name: Actor_ActorCollisionPass
   confidence: confirmed
-  description: Scans seven records at 0x00FF84B2 against the 24 records at 0x00FF7E82, performs frame-rectangle overlap tests, and dispatches the receiving actor through the handler table at ROM address 0x001EBA.
+  description: Per-frame actor-to-actor collision pass. It scans auxiliary records 25..31 at 0x00FF84B2 with stride 0x42, rejects empty/type-0x83-or-higher/no-frame sources, checks each against common records 1..24 at 0x00FF7E82 using the two actors' frame rectangles from record offset +0x14, and dispatches the receiving common actor type through ACTOR_COLLISION_HANDLER_TABLE at 0x001EBA when the strict X/Y overlap tests pass.
   evidence:
     - ghidra_decompile_collision_damage_targets
     - ghidra_disassembly_001ABD7E
+    - collision_pass_geometry_static_decompilation
 0x001ABE8A:
   name: Actor_HandleType2DInteraction
   confidence: confirmed

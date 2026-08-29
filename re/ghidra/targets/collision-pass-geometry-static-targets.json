@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-collision-pass-geometry-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "passes": [
+    {
+      "address": "0x001ABB40",
+      "name": "Actor_PlayerCollisionPass",
+      "pool": { "start": "0x00FF7E82", "count": 24, "stride": "0x42", "slots": "1..24" },
+      "actor_guards": ["type != 0", "type < 0x7F", "record +0x14 frame pointer != 0"],
+      "frame_fields": { "pointer": "+0x14", "facing": "+0x09", "bounds": "frame bytes +2/+4 and +3/+5" },
+      "dispatch": { "table": "0x001CBE PLAYER_COLLISION_HANDLER_TABLE", "index": "actor type * 4" },
+      "post_handler": "A handled actor with +0x06 bit 0x10 may settle the player response, clear PLAYER_VY and response timers, publish the actor type, and call Player_PublishWorldCoordinates."
+    },
+    {
+      "address": "0x001ABD7E",
+      "name": "Actor_ActorCollisionPass",
+      "source_pool": { "start": "0x00FF84B2", "count": 7, "stride": "0x42", "slots": "25..31" },
+      "receiver_pool": { "start": "0x00FF7E82", "count": 24, "stride": "0x42", "slots": "1..24" },
+      "guards": ["source type != 0", "source type < 0x83", "source frame pointer +0x14 != 0", "receiver type != 0", "receiver type < 0x32", "receiver frame pointer +0x14 != 0"],
+      "frame_fields": { "pointer": "+0x14", "bounds": "frame bytes +2/+4 and +3/+5" },
+      "dispatch": { "table": "0x001EBA ACTOR_COLLISION_HANDLER_TABLE", "index": "receiving actor type * 4" },
+      "overlap": "Strict X and Y interval overlap using source and receiver world coordinates plus their frame bounds."
+    }
+  ],
+  "evidence": [
+    "Cached Ghidra decompilation of Actor_PlayerCollisionPass",
+    "Cached Ghidra decompilation of Actor_ActorCollisionPass",
+    "Collision table extents and actor-record layout"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

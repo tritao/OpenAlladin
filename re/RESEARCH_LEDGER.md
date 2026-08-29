@@ -2992,3 +2992,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type8d-wall-response-frame-extents-static-v1` | recorded-static-decompilation | First Type-0x8D wall-response Chopper frame bounded as the exact 18-byte record at 0x001EF4D4-0x001EF4E5 before the next frame |
 | `20260829-type34-wall-response-frame-extents-static-v1` | recorded-static-decompilation | Four Type-0x34 wall-response Chopper frames bounded as exact 66/66/42/66-byte records at 0x001F3DEE-0x001F3EDD |
 | `20260829-actor-allocation-initialization-static-v1` | recorded-static-decompilation | Actor allocator pools, template-to-record field initialization, cleared/untouched fields, and linked F5 child lifecycle recorded from the shared VM helpers |
+| `20260829-collision-pass-geometry-static-v1` | recorded-static-decompilation | Player and actor collision passes recorded with exact actor pools, type guards, frame-bound geometry, and dispatch direction |
