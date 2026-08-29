@@ -194,6 +194,8 @@ add_library(openaladdin_engine STATIC
     src/movement.cpp
     src/movement.hpp
     src/player_terrain.cpp
+    src/render_model.cpp
+    src/render_model.hpp
     src/scene.cpp
     src/scene.hpp
     src/scene_resource.cpp
@@ -315,6 +317,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(camera_system_test)
     openaladdin_enable_test_assertions(camera_system_test)
 
+    add_executable(render_model_test tests/render_model.cpp)
+    target_link_libraries(render_model_test PRIVATE openaladdin_engine)
+    target_compile_features(render_model_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(render_model_test)
+    openaladdin_enable_test_assertions(render_model_test)
+
     add_executable(native_actor_vm_fixture tests/native_actor_vm_fixture.cpp)
     target_link_libraries(native_actor_vm_fixture PRIVATE openaladdin_engine)
     target_compile_features(native_actor_vm_fixture PRIVATE cxx_std_20)
@@ -411,6 +419,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME camera_system COMMAND camera_system_test)
     set_tests_properties(camera_system PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME render_model COMMAND render_model_test)
+    set_tests_properties(render_model PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME psg COMMAND psg_test)

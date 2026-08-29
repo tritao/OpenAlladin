@@ -13,6 +13,7 @@
 #include "level_event_system.hpp"
 #include "movement.hpp"
 #include "player_terrain.hpp"
+#include "render_model.hpp"
 #include "scene_resource.hpp"
 #include "sprites.hpp"
 
@@ -172,6 +173,7 @@ private:
     CollisionSystem collisions_;
     SceneSystem scene_;
     SceneResourceVm scene_resources_;
+    GenesisRenderModel render_model_;
     LevelEventVm level_events_;
     PlayerTerrainSystem terrain_;
     SpriteDatabase sprites_;
@@ -215,13 +217,6 @@ private:
     bool scheduler_trace_enabled_ = false;
     std::vector<SchedulerPhase> scheduler_phases_;
     std::vector<std::uint32_t> scheduler_writer_pcs_;
-    struct VdpCheckpoint {
-        bool loaded = false;
-        std::vector<std::uint8_t> vram;
-        std::vector<std::uint8_t> vsram;
-        std::vector<SDL_Color> palette;
-        std::array<std::uint8_t, 32> registers{};
-    } vdp_checkpoint_;
     int& frame_;
     // FF7E28 is incremented at Game_FrameUpdateLoop entry. Keep the ROM
     // phase separately from the host frame label so scene/checkpoint
