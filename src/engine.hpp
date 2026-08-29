@@ -127,11 +127,16 @@ private:
         bool response_dynamic_handoff,
         bool bounce_response_finished
     );
-    std::vector<std::size_t> apply_animation_spawns(
+    AnimationServices animation_services(
+        ActorIndex source_actor,
         bool defer_player_spawns = false,
         bool defer_mode3_spawns = false
     );
-    std::optional<std::size_t> apply_animation_spawn_request(const AnimationSpawnRequest& request);
+    std::optional<ActorIndex> spawn_animation_actor(
+        ActorIndex source_actor,
+        const F5Command& command
+    );
+    void flush_deferred_animation_spawn();
     void scan_interaction_refill_window();
     void flush_surface_actor_spawn();
     void dispatch_interaction(const Level::InteractionRecord& record, int base_x, int base_y);

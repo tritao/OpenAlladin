@@ -119,38 +119,40 @@ bool is_response_stream_cursor(std::uint32_t cursor) {
 
 std::uint16_t as_u16(int value) { return static_cast<std::uint16_t>(value & 0xFFFF); }
 
-void write_spawn_request(checkpoint::Writer& writer, const AnimationSpawnRequest& request) {
-    writer.boolean(request.valid);
-    writer.u8(request.mode);
-    writer.u32(request.template_address);
-    writer.u8(static_cast<std::uint8_t>(request.offset_x));
-    writer.u8(static_cast<std::uint8_t>(request.offset_y));
-    writer.u32(request.animation_override);
-    writer.u32(request.movement_override);
-    writer.i32(request.source_world_x);
-    writer.i32(request.source_world_y);
-    writer.u8(request.source_facing_x_flip);
-    writer.u8(request.source_facing_y_flip);
-    writer.boolean(request.apple_action);
-    writer.i32(request.source_actor_slot);
+void write_spawn_command(checkpoint::Writer& writer, const F5Command& command) {
+    writer.boolean(command.valid);
+    writer.u8(command.mode);
+    writer.u32(command.template_address);
+    writer.u8(static_cast<std::uint8_t>(command.offset_x));
+    writer.u8(static_cast<std::uint8_t>(command.offset_y));
+    writer.u32(command.animation_override);
+    writer.u32(command.movement_override);
+    writer.i32(command.source_world_x);
+    writer.i32(command.source_world_y);
+    writer.u8(command.source_facing_x_flip);
+    writer.u8(command.source_facing_y_flip);
+    writer.boolean(command.apple_action);
+    // Retain the former request's source-slot wire field for checkpoint
+    // compatibility. The source is now supplied by AnimationServices.
+    writer.i32(-1);
 }
 
-AnimationSpawnRequest read_spawn_request(checkpoint::Reader& reader) {
-    AnimationSpawnRequest request;
-    request.valid = reader.boolean();
-    request.mode = reader.u8();
-    request.template_address = reader.u32();
-    request.offset_x = static_cast<std::int8_t>(reader.u8());
-    request.offset_y = static_cast<std::int8_t>(reader.u8());
-    request.animation_override = reader.u32();
-    request.movement_override = reader.u32();
-    request.source_world_x = reader.i32();
-    request.source_world_y = reader.i32();
-    request.source_facing_x_flip = reader.u8();
-    request.source_facing_y_flip = reader.u8();
-    request.apple_action = reader.boolean();
-    request.source_actor_slot = reader.i32();
-    return request;
+F5Command read_spawn_command(checkpoint::Reader& reader) {
+    F5Command command;
+    command.valid = reader.boolean();
+    command.mode = reader.u8();
+    command.template_address = reader.u32();
+    command.offset_x = static_cast<std::int8_t>(reader.u8());
+    command.offset_y = static_cast<std::int8_t>(reader.u8());
+    command.animation_override = reader.u32();
+    command.movement_override = reader.u32();
+    command.source_world_x = reader.i32();
+    command.source_world_y = reader.i32();
+    command.source_facing_x_flip = reader.u8();
+    command.source_facing_y_flip = reader.u8();
+    command.apple_action = reader.boolean();
+    (void)reader.i32();
+    return command;
 }
 
 }  // namespace
@@ -197,9 +199,9 @@ void PlayerAnimationVm::reset() {
     ram_.set_write_tracking(false);
     active_command_pc_ = 0;
     writer_pcs_.clear();
-    spawn_requests_.clear();
-    actor_retirement_request_.reset();
-    deferred_spawn_request_.reset();
+    unhandled_spawn_commands_.clear();
+    deferred_spawn_command_.reset();
+    actor_retired_ = false;
     sound_requests_.clear();
     update_count_ = 0;
     landing_finished_ = false;
@@ -237,7 +239,7 @@ void PlayerAnimationVm::select_rom_stream(
     timer_ = 0;
     landing_finished_ = false;
     landing_reselect_pending_ = pose == SpritePose::Landing;
-    if (execute_now) tick_rom({});
+    if (execute_now) tick_rom({}, nullptr);
 }
 
 std::uint8_t PlayerAnimationVm::read_rom8(std::uint32_t address) const {
@@ -392,7 +394,12 @@ bool PlayerAnimationVm::flag_command(std::uint32_t& cursor) {
     return true;
 }
 
-bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, const AnimationContext& context) {
+bool PlayerAnimationVm::command(
+    std::uint8_t opcode,
+    std::uint32_t& cursor,
+    const AnimationContext& context,
+    AnimationServices* services
+) {
     active_command_pc_ = cursor;
     switch (opcode) {
     case 0xEA: cursor = read_rom32(cursor + 2); return false;
@@ -465,21 +472,42 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
     case 0xF4: compare_command(cursor); return false;
     case 0xF5: {
         // AnimationVM_SpawnOrCopyActor (0x001AD00E) consumes a fixed 16-byte
-        // record. Keep the request lossless here; Engine applies the ROM
-        // template to the live actor table after the VM tick.
-        AnimationSpawnRequest request;
-        request.valid = true;
-        request.mode = read_rom8(cursor + 1);
-        request.template_address = read_rom32(cursor + 2);
-        request.offset_x = static_cast<std::int8_t>(read_rom8(cursor + 6));
-        request.offset_y = static_cast<std::int8_t>(read_rom8(cursor + 7));
-        request.animation_override = read_rom32(cursor + 8);
-        request.movement_override = read_rom32(cursor + 12);
-        request.source_world_x = static_cast<int>(read_memory16(0xFF7E02));
-        request.source_world_y = static_cast<int>(read_memory16(0xFF7E04));
-        request.source_facing_x_flip = actor_[9];
-        request.source_facing_y_flip = actor_[0x35];
-        spawn_requests_.push_back(request);
+        // record. With services bound, apply the semantic lifecycle effect at
+        // this command boundary instead of returning a packet to Engine for a
+        // second decode/reconstruction pass.
+        F5Command command;
+        command.valid = true;
+        command.mode = read_rom8(cursor + 1);
+        command.template_address = read_rom32(cursor + 2);
+        command.offset_x = static_cast<std::int8_t>(read_rom8(cursor + 6));
+        command.offset_y = static_cast<std::int8_t>(read_rom8(cursor + 7));
+        command.animation_override = read_rom32(cursor + 8);
+        command.movement_override = read_rom32(cursor + 12);
+        command.source_world_x = static_cast<int>(
+            actor_tick_ ? read_memory16(2) : read_memory16(0xFF7E02)
+        );
+        command.source_world_y = static_cast<int>(
+            actor_tick_ ? read_memory16(4) : read_memory16(0xFF7E04)
+        );
+        command.source_facing_x_flip = actor_[9];
+        command.source_facing_y_flip = actor_[0x35];
+        command.apple_action = !actor_tick_ && stream_entry_ == kAppleActionStream;
+
+        const bool defer = !actor_tick_
+            && ((command.mode == 0 && services != nullptr
+                    && services->defer_player_spawns)
+                || (command.mode == 3 && services != nullptr
+                    && services->defer_mode3_spawns)
+                || command.apple_action);
+        if (defer) {
+            deferred_spawn_command_ = command;
+        } else if (services != nullptr && services->spawn_f5) {
+            (void)services->spawn_f5(services->source_actor, command);
+        } else {
+            // Preserve a useful standalone VM fallback for fixture tools that
+            // intentionally do not bind gameplay services.
+            unhandled_spawn_commands_.push_back(command);
+        }
         cursor += 16;
         return false;
     }
@@ -489,7 +517,11 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
         // callback is used by the short type-0x84 child effect. The player
         // VM must consume the opcode without clearing its own state.
         if (actor_tick_) {
-            actor_retirement_request_ = ActorRetirementRequest{read_rom8(cursor + 1)};
+            const std::uint8_t command_mode = read_rom8(cursor + 1);
+            if (services != nullptr && services->retire_actor) {
+                services->retire_actor(services->source_actor, command_mode);
+                actor_retired_ = true;
+            }
             actor_[0] = 0;
         }
         cursor += 2;
@@ -569,7 +601,10 @@ bool PlayerAnimationVm::command(std::uint8_t opcode, std::uint32_t& cursor, cons
     }
 }
 
-void PlayerAnimationVm::tick_rom(const AnimationContext& context) {
+void PlayerAnimationVm::tick_rom(
+    const AnimationContext& context,
+    AnimationServices* services
+) {
     active_command_pc_ = 0;
     if (animation_pc_ == 0 || rom_.empty()) return;
     sync_context(context);
@@ -594,7 +629,7 @@ void PlayerAnimationVm::tick_rom(const AnimationContext& context) {
             animation_pc_ = cursor;
             return;
         }
-        if (command(opcode, cursor, context)) {
+        if (command(opcode, cursor, context, services)) {
             tracking_memory_writes_ = false;
             ram_.set_write_tracking(false);
             animation_pc_ = cursor;
@@ -608,7 +643,8 @@ void PlayerAnimationVm::tick_rom(const AnimationContext& context) {
 
 void PlayerAnimationVm::tick_actor_rom(
     const AnimationContext& context,
-    const ActorAnimationState& actor
+    const ActorAnimationState& actor,
+    AnimationServices* services
 ) {
     active_command_pc_ = 0;
     if (animation_pc_ == 0 || rom_.empty()) return;
@@ -649,7 +685,7 @@ void PlayerAnimationVm::tick_actor_rom(
             animation_pc_ = cursor;
             return;
         }
-        if (command(opcode, cursor, context)) {
+        if (command(opcode, cursor, context, services)) {
             tracking_memory_writes_ = false;
             ram_.set_write_tracking(false);
             animation_pc_ = cursor;
@@ -769,11 +805,13 @@ bool PlayerAnimationVm::actor_service_forced() const {
     return actor_service_boundary_ == ActorServiceBoundary::ForceNextUpdate;
 }
 
-void PlayerAnimationVm::update_actor(
+bool PlayerAnimationVm::update_actor(
     ActorAnimationState& actor,
-    const AnimationContext& context
+    const AnimationContext& context,
+    AnimationServices* services
 ) {
-    if (!rom_mode_ || actor.animation_pc == 0) return;
+    actor_retired_ = false;
+    if (!rom_mode_ || actor.animation_pc == 0) return false;
 
     animation_pc_ = actor.animation_pc;
     timer_ = actor.animation_timer;
@@ -800,8 +838,10 @@ void PlayerAnimationVm::update_actor(
 
     actor_tick_ = true;
     RamContextScope context_scope(ram_);
-    tick_actor_rom(context, actor);
+    tick_actor_rom(context, actor, services);
     actor_tick_ = false;
+
+    if (actor_retired_) return true;
 
     actor.type = actor_[0];
     actor.runtime_field_07 = actor_[0x07];
@@ -818,30 +858,24 @@ void PlayerAnimationVm::update_actor(
     actor.movement_word_18 = static_cast<std::int16_t>(read_memory16(0x18));
     actor.movement_word_1a = static_cast<std::int16_t>(read_memory16(0x1A));
     actor.sprite_attribute = read_memory16(0x1E);
+    return false;
 }
 
-bool PlayerAnimationVm::take_spawn_request(AnimationSpawnRequest& request) {
-    if (spawn_requests_.empty()) return false;
-    request = spawn_requests_.front();
-    spawn_requests_.erase(spawn_requests_.begin());
+bool PlayerAnimationVm::take_spawn_command(F5Command& command) {
+    if (unhandled_spawn_commands_.empty()) return false;
+    command = unhandled_spawn_commands_.front();
+    unhandled_spawn_commands_.erase(unhandled_spawn_commands_.begin());
     return true;
 }
 
-bool PlayerAnimationVm::take_actor_retirement_request(ActorRetirementRequest& request) {
-    if (!actor_retirement_request_) return false;
-    request = *actor_retirement_request_;
-    actor_retirement_request_.reset();
-    return true;
+void PlayerAnimationVm::defer_spawn_command(const F5Command& command) {
+    deferred_spawn_command_ = command;
 }
 
-void PlayerAnimationVm::defer_spawn_request(const AnimationSpawnRequest& request) {
-    deferred_spawn_request_ = request;
-}
-
-bool PlayerAnimationVm::take_deferred_spawn_request(AnimationSpawnRequest& request) {
-    if (!deferred_spawn_request_) return false;
-    request = *deferred_spawn_request_;
-    deferred_spawn_request_.reset();
+bool PlayerAnimationVm::take_deferred_spawn_command(F5Command& command) {
+    if (!deferred_spawn_command_) return false;
+    command = *deferred_spawn_command_;
+    deferred_spawn_command_.reset();
     return true;
 }
 
@@ -1036,7 +1070,8 @@ void PlayerAnimationVm::update(
     SpritePose desired_pose,
     HorizontalDirection horizontal_direction,
     const AnimationContext& context,
-    std::optional<std::uint8_t> scheduler_phase
+    std::optional<std::uint8_t> scheduler_phase,
+    AnimationServices* services
 ) {
     if (clear_timer_next_update_) {
         timer_ = 0;
@@ -1108,11 +1143,11 @@ void PlayerAnimationVm::update(
         landing_reselect_pending_ = false;
     }
     if (scheduler_phase) {
-        if (scheduler_service) tick_rom(context);
+        if (scheduler_service) tick_rom(context, services);
         return;
     }
     if ((update_count_++ & 1U) == 0) {
-        tick_rom(context);
+        tick_rom(context, services);
     }
 }
 
@@ -1146,17 +1181,18 @@ void PlayerAnimationVm::write_checkpoint(std::ostream& output) const {
     writer.u32(return_pc_);
     writer.u8(random_value_);
     writer.boolean(actor_tick_);
-    writer.boolean(actor_retirement_request_.has_value());
-    if (actor_retirement_request_) writer.u8(actor_retirement_request_->command_mode);
+    // The former deferred retirement packet is no longer used by the bound
+    // runtime; retain its empty wire slot for checkpoint compatibility.
+    writer.boolean(false);
     writer.u8(static_cast<std::uint8_t>(actor_service_boundary_));
     writer.boolean(clear_timer_next_update_);
     writer.boolean(tracking_memory_writes_);
-    writer.u32(static_cast<std::uint32_t>(spawn_requests_.size()));
-    for (const AnimationSpawnRequest& request : spawn_requests_) {
-        write_spawn_request(writer, request);
+    writer.u32(static_cast<std::uint32_t>(unhandled_spawn_commands_.size()));
+    for (const F5Command& command : unhandled_spawn_commands_) {
+        write_spawn_command(writer, command);
     }
-    writer.boolean(deferred_spawn_request_.has_value());
-    if (deferred_spawn_request_) write_spawn_request(writer, *deferred_spawn_request_);
+    writer.boolean(deferred_spawn_command_.has_value());
+    if (deferred_spawn_command_) write_spawn_command(writer, *deferred_spawn_command_);
     writer.byte_vector(sound_requests_);
     writer.u32(update_count_);
     writer.boolean(landing_finished_);
@@ -1193,10 +1229,7 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     const auto random_value = reader.u8();
     const bool actor_tick = reader.boolean();
     const bool has_actor_retirement_request = reader.boolean();
-    std::optional<ActorRetirementRequest> actor_retirement_request;
-    if (has_actor_retirement_request) {
-        actor_retirement_request = ActorRetirementRequest{reader.u8()};
-    }
+    if (has_actor_retirement_request) (void)reader.u8();
     const auto actor_service_boundary = reader.u8();
     const bool clear_timer_next_update = reader.boolean();
     const bool tracking_memory_writes = reader.boolean();
@@ -1204,15 +1237,15 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     if (spawn_count > 4096) {
         throw std::runtime_error("oversized animation spawn queue in OpenAladdin checkpoint");
     }
-    std::vector<AnimationSpawnRequest> spawn_requests;
-    spawn_requests.reserve(spawn_count);
+    std::vector<F5Command> unhandled_spawn_commands;
+    unhandled_spawn_commands.reserve(spawn_count);
     for (std::uint32_t index = 0; index < spawn_count; ++index) {
-        spawn_requests.push_back(read_spawn_request(reader));
+        unhandled_spawn_commands.push_back(read_spawn_command(reader));
     }
-    const bool has_deferred_spawn_request = reader.boolean();
-    std::optional<AnimationSpawnRequest> deferred_spawn_request;
-    if (has_deferred_spawn_request) {
-        deferred_spawn_request = read_spawn_request(reader);
+    const bool has_deferred_spawn_command = reader.boolean();
+    std::optional<F5Command> deferred_spawn_command;
+    if (has_deferred_spawn_command) {
+        deferred_spawn_command = read_spawn_command(reader);
     }
     auto sound_requests = reader.byte_vector(4096);
     const auto update_count = reader.u32();
@@ -1242,13 +1275,13 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     return_pc_ = return_pc;
     random_value_ = random_value;
     actor_tick_ = actor_tick;
-    actor_retirement_request_ = actor_retirement_request;
     actor_service_boundary_ = static_cast<ActorServiceBoundary>(actor_service_boundary);
     clear_timer_next_update_ = clear_timer_next_update;
     tracking_memory_writes_ = tracking_memory_writes;
     ram_.set_write_tracking(tracking_memory_writes_);
-    spawn_requests_ = std::move(spawn_requests);
-    deferred_spawn_request_ = std::move(deferred_spawn_request);
+    unhandled_spawn_commands_ = std::move(unhandled_spawn_commands);
+    deferred_spawn_command_ = std::move(deferred_spawn_command);
+    actor_retired_ = false;
     sound_requests_ = std::move(sound_requests);
     update_count_ = update_count;
     landing_finished_ = landing_finished;

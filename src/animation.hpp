@@ -1,10 +1,12 @@
 #pragma once
 
+#include "actor_lifecycle.hpp"
 #include "game_ram.hpp"
 #include "sprites.hpp"
 
 #include <array>
 #include <cstdint>
+#include <functional>
 #include <iosfwd>
 #include <optional>
 #include <string>
@@ -83,6 +85,24 @@ struct AnimationContext {
     std::optional<std::uint8_t> response_timer_override;
 };
 
+// Animation commands are interpreted in the VM, but their effects belong to
+// the owning gameplay service. The callbacks keep the interpreter independent
+// of Engine while allowing F5/F6 to act on the authoritative actor table at
+// the command boundary.
+struct AnimationServices {
+    using SpawnF5 = std::function<std::optional<ActorIndex>(
+        ActorIndex,
+        const F5Command&
+    )>;
+    using RetireActor = std::function<void(ActorIndex, std::uint8_t)>;
+
+    ActorIndex source_actor = 0;
+    bool defer_player_spawns = false;
+    bool defer_mode3_spawns = false;
+    SpawnF5 spawn_f5;
+    RetireActor retire_actor;
+};
+
 struct ActorAnimationState {
     std::uint8_t type = 0;
     std::uint16_t x = 0;
@@ -105,34 +125,6 @@ struct ActorAnimationState {
     std::uint32_t animation_pc = 0;
     std::uint32_t frame_ptr = 0;
     std::uint8_t animation_timer = 0;
-};
-
-// A decoded animation-VM F5 request. The VM owns the bytecode cursor, while
-// Engine owns the 32 live actor records and performs the actual allocation.
-struct AnimationSpawnRequest {
-    bool valid = false;
-    std::uint8_t mode = 0;
-    std::uint32_t template_address = 0;
-    std::int8_t offset_x = 0;
-    std::int8_t offset_y = 0;
-    std::uint32_t animation_override = 0;
-    std::uint32_t movement_override = 0;
-    int source_world_x = 0;
-    int source_world_y = 0;
-    std::uint8_t source_facing_x_flip = 0;
-    std::uint8_t source_facing_y_flip = 0;
-    // The player uses the same template for the physical apple action and
-    // for other mode-3 effects. Preserve the originating stream so Engine
-    // can apply the apple-specific lifecycle only to the former.
-    bool apple_action = false;
-    // Actor-originated linked F5 modes (5/6) store a back-reference in the
-    // compact Genesis records. The host uses the slot index to mirror the
-    // corresponding parent-flag cleanup when the child retires.
-    int source_actor_slot = -1;
-};
-
-struct ActorRetirementRequest {
-    std::uint8_t command_mode = 0;
 };
 
 // PlayerAnimationVm is the player-facing slice of the original common actor
@@ -161,7 +153,8 @@ public:
         SpritePose desired_pose,
         HorizontalDirection horizontal_direction,
         const AnimationContext& context = {},
-        std::optional<std::uint8_t> scheduler_phase = std::nullopt
+        std::optional<std::uint8_t> scheduler_phase = std::nullopt,
+        AnimationServices* services = nullptr
     );
     bool set_frame(int sprite_frame);
     void set_frame_pointer(std::uint32_t frame_pointer);
@@ -184,13 +177,16 @@ public:
     bool actor_service_deferred() const;
     bool actor_service_forced() const;
     void set_facing_left(bool facing_left) { facing_left_ = facing_left; }
-    void update_actor(ActorAnimationState& actor, const AnimationContext& context = {});
-    bool take_spawn_request(AnimationSpawnRequest& request);
-    bool take_actor_retirement_request(ActorRetirementRequest& request);
-    void defer_spawn_request(const AnimationSpawnRequest& request);
-    bool take_deferred_spawn_request(AnimationSpawnRequest& request);
-    const std::optional<AnimationSpawnRequest>& deferred_spawn_request() const {
-        return deferred_spawn_request_;
+    bool update_actor(
+        ActorAnimationState& actor,
+        const AnimationContext& context = {},
+        AnimationServices* services = nullptr
+    );
+    bool take_spawn_command(F5Command& command);
+    void defer_spawn_command(const F5Command& command);
+    bool take_deferred_spawn_command(F5Command& command);
+    const std::optional<F5Command>& deferred_spawn_command() const {
+        return deferred_spawn_command_;
     }
     std::vector<std::uint8_t> take_sound_requests();
     // Consume a global-RAM byte written by the player VM during its most
@@ -252,8 +248,12 @@ private:
         bool execute_now,
         const AnimationContext* context = nullptr
     );
-    void tick_rom(const AnimationContext& context);
-    void tick_actor_rom(const AnimationContext& context, const ActorAnimationState& actor);
+    void tick_rom(const AnimationContext& context, AnimationServices* services);
+    void tick_actor_rom(
+        const AnimationContext& context,
+        const ActorAnimationState& actor,
+        AnimationServices* services
+    );
     std::uint32_t dynamic_stream(const AnimationContext& context) const;
     std::uint8_t read_rom8(std::uint32_t address) const;
     std::uint16_t read_rom16(std::uint32_t address) const;
@@ -264,7 +264,12 @@ private:
     void write_memory8(std::uint32_t address, std::uint8_t value);
     void write_memory16(std::uint32_t address, std::uint16_t value);
     void write_memory32(std::uint32_t address, std::uint32_t value);
-    bool command(std::uint8_t opcode, std::uint32_t& cursor, const AnimationContext& context);
+    bool command(
+        std::uint8_t opcode,
+        std::uint32_t& cursor,
+        const AnimationContext& context,
+        AnimationServices* services
+    );
     bool compare_command(std::uint32_t& cursor);
     bool flag_command(std::uint32_t& cursor);
     void sync_context(const AnimationContext& context);
@@ -307,9 +312,12 @@ private:
     bool writer_trace_enabled_ = false;
     std::uint32_t active_command_pc_ = 0;
     std::vector<std::uint32_t> writer_pcs_;
-    std::vector<AnimationSpawnRequest> spawn_requests_{};
-    std::optional<ActorRetirementRequest> actor_retirement_request_;
-    std::optional<AnimationSpawnRequest> deferred_spawn_request_;
+    // Only service-less callers retain decoded commands locally. The Engine
+    // always supplies AnimationServices, so its normal path never queues a
+    // decoded F5 request for later reinterpretation.
+    std::vector<F5Command> unhandled_spawn_commands_{};
+    std::optional<F5Command> deferred_spawn_command_;
+    bool actor_retired_ = false;
     std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;
     bool landing_finished_ = false;

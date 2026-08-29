@@ -231,6 +231,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(player_animation_test)
     openaladdin_enable_test_assertions(player_animation_test)
 
+    add_executable(animation_services_test tests/animation_services.cpp)
+    target_link_libraries(animation_services_test PRIVATE openaladdin_engine)
+    target_compile_features(animation_services_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(animation_services_test)
+    openaladdin_enable_test_assertions(animation_services_test)
+
     add_executable(level_descriptor_test tests/level_descriptor.cpp)
     target_link_libraries(level_descriptor_test PRIVATE openaladdin_engine)
     target_compile_features(level_descriptor_test PRIVATE cxx_std_20)
@@ -327,6 +333,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME player_animation COMMAND player_animation_test)
     set_tests_properties(player_animation PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME animation_services COMMAND animation_services_test)
+    set_tests_properties(animation_services PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME level_descriptor COMMAND level_descriptor_test)

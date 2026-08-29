@@ -1096,7 +1096,19 @@ void Engine::update_actor_animations() {
         animation_state.animation_timer = actor.animation_timer;
         const std::uint8_t previous_type = actor.type;
         const std::uint32_t previous_animation_pc = actor.animation_pc;
-        actor_animations_[slot].update_actor(animation_state, context);
+        AnimationServices services = animation_services(slot);
+        const bool retired_by_animation = actor_animations_[slot].update_actor(
+            animation_state,
+            context,
+            &services
+        );
+        if (retired_by_animation) {
+            // F6 has already retired the authoritative record through the
+            // lifecycle service. Do not copy the VM's transient record back
+            // over the cleared slot, and reset this VM only after it returns.
+            actor_animations_[slot].reset();
+            continue;
+        }
         actor.type = animation_state.type;
         actor.x = animation_state.x;
         actor.y = animation_state.y;
@@ -1111,12 +1123,6 @@ void Engine::update_actor_animations() {
         actor.animation_pc = animation_state.animation_pc;
         actor.frame_ptr = animation_state.frame_ptr;
         actor.animation_timer = animation_state.animation_timer;
-        ActorRetirementRequest retirement_request;
-        if (previous_type != 0
-            && actor.type == 0
-            && actor_animations_[slot].take_actor_retirement_request(retirement_request)) {
-            actor_lifecycle_.retire_from_vm(slot, retirement_request.command_mode);
-        }
         if (previous_type != 0 && actor.type == 0
             && actor.linked_actor_slot >= 0
             && static_cast<std::size_t>(actor.linked_actor_slot) < actors_.size()) {
@@ -1149,20 +1155,6 @@ void Engine::update_actor_animations() {
             // VBlank services that freshly published cursor even when the
             // shared gate is on its opposite phase.
             actor_animations_[slot].force_actor_service_next_update();
-        }
-        AnimationSpawnRequest spawn_request;
-        while (actor_animations_[slot].take_spawn_request(spawn_request)) {
-            // F5 resolves its source through the actor record being serviced,
-            // not through the player context shared by the VM. Preserve the
-            // post-command actor coordinates and facing for mode-0 requests.
-            spawn_request.source_world_x = actor.x;
-            spawn_request.source_world_y = actor.y;
-            spawn_request.source_facing_x_flip = actor.facing_x_flip;
-            spawn_request.source_facing_y_flip = actor.facing_y_flip;
-            spawn_request.source_actor_slot = static_cast<int>(slot);
-            if (const auto spawned_slot = apply_animation_spawn_request(spawn_request)) {
-                (void)spawned_slot;
-            }
         }
         // Surface interaction records notify the player when their short
         // animation changes from type 0x8C to 0x7B. The ROM does this after
@@ -1246,6 +1238,7 @@ void Engine::update_animation_vm_ordinal_30(
     bool response_dynamic_handoff,
     bool bounce_response_finished
 ) {
+    AnimationServices services = animation_services(0, false, true);
     if (response_dynamic_handoff) {
         animation_.select_locomotion_entry(0x00121AD8, true);
     } else if (bounce_response_finished) {
@@ -1255,12 +1248,8 @@ void Engine::update_animation_vm_ordinal_30(
             SpritePose::Run
         );
     } else {
-        animation_.update(desired_pose, direction, context, frame_phase_);
+        animation_.update(desired_pose, direction, context, frame_phase_, &services);
     }
-    // F5 is nested in the animation service. Allocate player-originated
-    // records before the sole table walk, so a new record joins this same
-    // invocation without an optional-slot follow-up.
-    (void) apply_animation_spawns(false, true);
     update_actor_animations();
     update_interaction_actor_flags();
 }
@@ -1308,34 +1297,36 @@ void Engine::update_bounce_actor_interaction() {
     }
 }
 
-std::optional<std::size_t> Engine::apply_animation_spawn_request(const AnimationSpawnRequest& request) {
-    // F5 decoding remains in AnimationVM. ActorLifecycleSystem owns the
-    // recovered pool selection, partial template initializer, link contract,
-    // and sprite-resource allocation.
-    F5Command command;
-    command.valid = request.valid;
-    command.mode = request.mode;
-    command.template_address = request.template_address;
-    command.offset_x = request.offset_x;
-    command.offset_y = request.offset_y;
-    command.animation_override = request.animation_override;
-    command.movement_override = request.movement_override;
-    command.source_world_x = request.source_world_x;
-    command.source_world_y = request.source_world_y;
-    command.source_facing_x_flip = request.source_facing_x_flip;
-    command.source_facing_y_flip = request.source_facing_y_flip;
-    command.apple_action = request.apple_action;
+AnimationServices Engine::animation_services(
+    ActorIndex source_actor,
+    bool defer_player_spawns,
+    bool defer_mode3_spawns
+) {
+    AnimationServices services;
+    services.source_actor = source_actor;
+    services.defer_player_spawns = defer_player_spawns;
+    services.defer_mode3_spawns = defer_mode3_spawns;
+    services.spawn_f5 = [this](ActorIndex source, const F5Command& command) {
+        return spawn_animation_actor(source, command);
+    };
+    services.retire_actor = [this](ActorIndex actor, std::uint8_t command_mode) {
+        actor_lifecycle_.retire_from_vm(actor, command_mode);
+    };
+    return services;
+}
 
-    const ActorIndex source = request.source_actor_slot >= 0
-        ? static_cast<ActorIndex>(request.source_actor_slot)
-        : 0;
-    const auto slot = actor_lifecycle_.spawn_f5(source, command);
+std::optional<ActorIndex> Engine::spawn_animation_actor(
+    ActorIndex source_actor,
+    const F5Command& command
+) {
+    // F5 decoding and dispatch now meet at the lifecycle boundary. This
+    // method only reconnects the newly live record to its persistent actor VM;
+    // it does not recreate or reinterpret the decoded command.
+    const auto slot = actor_lifecycle_.spawn_f5(source_actor, command);
     if (!slot) return std::nullopt;
 
-    actors_.host_meta(*slot).spawned_by_animation = true;
-    actors_.host_meta(*slot).spawned_by_apple = request.apple_action;
     actor_animations_[*slot].reset();
-    if (request.apple_action) {
+    if (command.apple_action) {
         // The allocated projectile reaches the common actor table on the
         // current boundary, but its first frame is consumed on the next one.
         actor_animations_[*slot].defer_actor_service();
@@ -1343,59 +1334,22 @@ std::optional<std::size_t> Engine::apply_animation_spawn_request(const Animation
     return slot;
 }
 
-std::vector<std::size_t> Engine::apply_animation_spawns(
-    bool defer_player_spawns,
-    bool defer_mode3_spawns
-) {
-    std::vector<std::size_t> spawned_slots;
-    AnimationSpawnRequest request;
-    if (animation_.take_deferred_spawn_request(request)) {
-        if (request.mode == 0) {
-            // Player VM context is captured before movement integration, but
-            // the ROM's player F5 allocator reads the live player record.
-            request.source_world_x = player_world_x();
-            request.source_world_y = player_world_y();
-        }
-        if (const auto slot = apply_animation_spawn_request(request)) {
-            spawned_slots.push_back(*slot);
-        }
-        if (request.apple_action) {
-            // The selector lock clears when the deferred record becomes live,
-            // at the same boundary that publishes the first projectile state.
-            player_.animation_selector.state_lock = 0;
-        }
-    }
+void Engine::flush_deferred_animation_spawn() {
+    F5Command command;
+    if (!animation_.take_deferred_spawn_command(command)) return;
 
-    while (animation_.take_spawn_request(request)) {
-        if (!request.valid
-            || (request.mode != 0 && request.mode != 1 && request.mode != 2
-                && request.mode != 3 && request.mode != 5 && request.mode != 6)) {
-            continue;
-        }
-        // 0x1B7918 is shared by the physical apple action and generic
-        // mode-3 effects. Only the request emitted by the player's apple
-        // stream follows the deferred apple lifecycle.
-        if (request.mode == 3 && animation_.stream_entry() == kPlayerAppleActionStream) {
-            request.apple_action = true;
-        }
-        const bool defer_apple_spawn = request.apple_action;
-        if ((request.mode == 0 && defer_player_spawns)
-            || (request.mode == 3 && defer_mode3_spawns)
-            || defer_apple_spawn) {
-            animation_.defer_spawn_request(request);
-            continue;
-        }
-        if (request.mode == 0) {
-            // See the deferred path above: player-originated mode-0 requests
-            // resolve their source after this frame's movement pass.
-            request.source_world_x = player_world_x();
-            request.source_world_y = player_world_y();
-        }
-        if (const auto slot = apply_animation_spawn_request(request)) {
-            spawned_slots.push_back(*slot);
-        }
+    if (command.mode == 0) {
+        // Player VM context is captured before movement integration, but the
+        // ROM's player F5 allocator reads the live player record.
+        command.source_world_x = player_world_x();
+        command.source_world_y = player_world_y();
     }
-    return spawned_slots;
+    (void)spawn_animation_actor(0, command);
+    if (command.apple_action) {
+        // The selector lock clears when the deferred record becomes live, at
+        // the same boundary that publishes the first projectile state.
+        player_.animation_selector.state_lock = 0;
+    }
 }
 
 void Engine::load_actor_records(const std::string& path) {
@@ -2458,13 +2412,10 @@ void Engine::update(const InputState& input) {
         interaction_actor_lock_pending_ = false;
         interaction_camera_delay_pending_ = false;
     }
-    // FUN_001A91C6 is the unconditional input/resource service. F5 spawn
-    // requests are produced by the player animation VM on the
-    // previous frame. Genesis allocates the record before the next actor
-    // animation pass, so drain the request at the frame boundary rather than
-    // after the current pass has already completed.
+    // FUN_001A91C6 is the unconditional input/resource service. A player F5
+    // command deferred by the previous animation boundary becomes live here.
     record_scheduler_phase("input_resource", 0x001A91C6);
-    (void) apply_animation_spawns();
+    flush_deferred_animation_spawn();
     const bool transition_frame = scene_.is_transition();
     if (transition_frame) {
         scene_.update_transition(
@@ -3416,10 +3367,10 @@ void Engine::update(const InputState& input) {
     if (player_.attack_timer == 0
         && animation_.stream_entry() != kPlayerAttackTransitionStream
         && animation_.stream_entry() != kPlayerSwordStableStream) {
-        // Requests not owned by ordinal 30 (notably the physical apple's
-        // deferred lifecycle) remain queued for the next input/resource
-        // boundary. No actor VM is invoked here.
-        (void) apply_animation_spawns(true);
+        // Flush the one player-side command whose semantic effect was
+        // intentionally held until this post-selector boundary. No actor VM
+        // is invoked here.
+        flush_deferred_animation_spawn();
     }
     }
     if (transition_frame) {
@@ -3788,8 +3739,8 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"actor_system_snapshot_mode\":"
            << (actors_.snapshot_mode() ? "true" : "false")
            << ",\"deferred_animation_spawn\":";
-    if (animation_.deferred_spawn_request()) {
-        const AnimationSpawnRequest& request = *animation_.deferred_spawn_request();
+    if (animation_.deferred_spawn_command()) {
+        const F5Command& request = *animation_.deferred_spawn_command();
         output << "{\"valid\":" << (request.valid ? "true" : "false")
                << ",\"mode\":" << static_cast<unsigned>(request.mode)
                << ",\"template_address\":" << request.template_address
@@ -3804,7 +3755,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
                << ",\"source_facing_y_flip\":"
                << static_cast<unsigned>(request.source_facing_y_flip)
                << ",\"apple_action\":" << (request.apple_action ? "true" : "false")
-               << ",\"source_actor_slot\":" << request.source_actor_slot << "}";
+               << ",\"source_actor_slot\":-1}";
     } else {
         output << "null";
     }
