@@ -33,18 +33,34 @@ def function_name(function, tracked_symbols):
     return name
 
 
+def address_set_ranges(address_set):
+    """Serialize every contiguous range in a Ghidra address set."""
+
+    ranges = []
+    iterator = address_set.getAddressRanges()
+    while iterator.hasNext():
+        address_range = iterator.next()
+        ranges.append({
+            "start": address_value(address_range.getMinAddress()),
+            "end": address_value(address_range.getMaxAddress()),
+        })
+    return ranges
+
+
 def function_value(function, tracked_symbols):
     if function is None:
         return None
     entry = function.getEntryPoint()
     body = function.getBody()
-    start = body.getMinAddress()
-    end = body.getMaxAddress()
+    ranges = address_set_ranges(body)
+    start = ranges[0]["start"] if ranges else address_value(entry)
+    end = ranges[-1]["end"] if ranges else address_value(entry)
     return {
         "address": address_value(entry),
         "name": function_name(function, tracked_symbols),
-        "start": address_value(start),
-        "end": address_value(end),
+        "start": start,
+        "end": end,
+        "ranges": ranges,
         "size": int(body.getNumAddresses()),
         "thunk": bool(function.isThunk()),
     }
@@ -257,14 +273,19 @@ def address_classes(program, functions, tracked_symbols):
     classes = []
     function_ranges = []
     for function in functions:
-        function_ranges.append((function["start"], function["end"]))
-        classes.append({
+        ranges = function.get("ranges") or [{
             "start": function["start"],
             "end": function["end"],
-            "class": "CODE",
-            "source": "ghidra.function",
-            "name": function["name"],
-        })
+        }]
+        for item in ranges:
+            function_ranges.append((item["start"], item["end"]))
+            classes.append({
+                "start": item["start"],
+                "end": item["end"],
+                "class": "CODE",
+                "source": "ghidra.function",
+                "name": function["name"],
+            })
 
     data_ranges = []
     data_iterator = listing.getDefinedData(True)

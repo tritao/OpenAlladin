@@ -103,6 +103,26 @@ def test_layout_uses_recovered_jump_table_extents(tmp_path):
     assert item.end == 0x47
 
 
+def test_layout_preserves_sparse_function_body_ranges(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    database_root = _write_database(tmp_path)
+    _write_json(database_root / "functions.json", [{
+        "address": "0x10",
+        "name": "SparseFunction",
+        "start": "0x10",
+        "end": "0x2F",
+        "ranges": [
+            {"start": "0x10", "end": "0x17"},
+            {"start": "0x28", "end": "0x2F"},
+        ],
+    }])
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path, include_artifacts=False)
+    assert layout.at(0x10).layout_class == "CODE"
+    assert layout.at(0x20).layout_class == "UNKNOWN"
+    assert layout.at(0x28).layout_class == "CODE"
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(

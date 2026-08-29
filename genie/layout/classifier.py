@@ -221,23 +221,47 @@ def _symbol_candidates(
             continue
         if symbol.kind == "function" and symbol.address in functions:
             function = functions[symbol.address]
-            try:
-                start = parse_int(function.get("start", function["address"]))
-                end = parse_int(function.get("end", function["address"]))
-            except (KeyError, TypeError, ValueError):
-                start, end = extent_for_symbol(symbol)
+            ranges = _record_ranges(function)
         else:
-            start, end = extent_for_symbol(symbol)
-        result.append(Candidate(
-            start,
-            end,
-            _class_for_symbol(symbol),
-            "tracked.symbol",
-            100,
-            symbol.name,
-            tuple(symbol.provenance),
-        ))
+            ranges = [extent_for_symbol(symbol)]
+        for start, end in ranges:
+            result.append(Candidate(
+                start,
+                end,
+                _class_for_symbol(symbol),
+                "tracked.symbol",
+                100,
+                symbol.name,
+                tuple(symbol.provenance),
+            ))
     return result
+
+
+def _record_ranges(record: dict[str, Any]) -> list[tuple[int, int]]:
+    """Return sparse ranges when an exporter preserved them, with fallback."""
+
+    raw_ranges = record.get("ranges")
+    if isinstance(raw_ranges, list) and raw_ranges:
+        result = []
+        for value in raw_ranges:
+            if not isinstance(value, dict):
+                continue
+            try:
+                start = parse_int(value["start"])
+                end = parse_int(value["end"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            if start <= end:
+                result.append((start, end))
+        if result:
+            return result
+    try:
+        return [(
+            parse_int(record.get("start", record["address"])),
+            parse_int(record.get("end", record["address"])),
+        )]
+    except (KeyError, TypeError, ValueError):
+        return []
 
 
 def build_layout(
@@ -259,12 +283,8 @@ def build_layout(
     candidates: list[Candidate] = []
 
     for function in database.functions:
-        try:
-            start = parse_int(function.get("start", function["address"]))
-            end = parse_int(function.get("end", function["address"]))
-        except (KeyError, TypeError, ValueError):
-            continue
-        candidates.append(Candidate(start, end, "CODE", "ghidra.function", 40, function.get("name")))
+        for start, end in _record_ranges(function):
+            candidates.append(Candidate(start, end, "CODE", "ghidra.function", 40, function.get("name")))
 
     classes = database.load("address_classes.json")
     for item in classes.get("classes", []) if isinstance(classes, dict) else []:

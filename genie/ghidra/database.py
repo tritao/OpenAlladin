@@ -20,6 +20,31 @@ def _address_text(value: Any) -> str:
     return f"0x{_address(value):08X}"
 
 
+def _record_ranges(record: dict[str, Any]) -> list[tuple[int, int]]:
+    raw_ranges = record.get("ranges")
+    if isinstance(raw_ranges, list) and raw_ranges:
+        result = []
+        for value in raw_ranges:
+            if not isinstance(value, dict):
+                continue
+            try:
+                start = _address(value["start"])
+                end = _address(value["end"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            if start <= end:
+                result.append((start, end))
+        if result:
+            return result
+    try:
+        return [(
+            _address(record.get("start") or record["address"]),
+            _address(record.get("end") or record["address"]),
+        )]
+    except (KeyError, TypeError, ValueError):
+        return []
+
+
 class AnalysisDatabase:
     """Lazy reader for the deterministic files emitted by ``ghidra scan``."""
 
@@ -64,9 +89,7 @@ class AnalysisDatabase:
             if _address(function["address"]) == address:
                 return function
         for function in self.functions:
-            start = _address(function.get("start") or function["address"])
-            end = _address(function.get("end") or function["address"])
-            if start <= address <= end:
+            if any(start <= address <= end for start, end in _record_ranges(function)):
                 return function
         return None
 
@@ -109,8 +132,7 @@ class AnalysisDatabase:
         function = self.function(address)
         if function is None:
             return []
-        start = _address(function.get("start") or function["address"])
-        end = _address(function.get("end") or function["address"])
+        ranges = _record_ranges(function)
         result = []
         for item in self._records(filename, "references"):
             try:
@@ -122,7 +144,7 @@ class AnalysisDatabase:
                 belongs = raw_function is not None and _address(raw_function) == start
             except (TypeError, ValueError):
                 belongs = False
-            if belongs or start <= origin <= end:
+            if belongs or any(start <= origin <= end for start, end in ranges):
                 result.append(item)
         return sorted(
             result,
