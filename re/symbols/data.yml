@@ -2211,6 +2211,17 @@
     - transition-presentation-animation-static-decompilation
     - ghidra_actor_template_initializer_001AE30A
 
+0x001B8124:
+  name: ACTOR_TEMPLATE_TYPE_84_F5_FLAGGED_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 AnimationVM child template supplied by the paired F5 records at 0x00125FAA and 0x00125FBA; it has template payload 0x08000000, no movement stream, animation root 0x00123158, and four resources, while each parent payload selects its inline child entry.
+  evidence:
+    - animation_f5_nested_child_targets
+    - menu_scene_animation_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B80AC:
   name: ACTOR_TEMPLATE_GUARD
   type: actor_template
@@ -3192,6 +3203,17 @@
     - ghidra_disassembly_001AF1AC
     - actor_template_type3d_collision_targets
     - actor_template_grid_xrefs
+
+0x001B837C:
+  name: ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 AnimationVM child template supplied by the F5 records in the 0x00122EE0 response entry and the nested 0x00125F5A stream; it carries template payload 0x08000000, movement stream 0x00120AA4, default animation root 0x00122E96, and no owned resources, while parent payloads select inline entries 0x00122EFE, 0x00122F06, or 0x00122EE0.
+  evidence:
+    - animation_f5_nested_child_targets
+    - animation_f5_response_entry_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
 
 0x001B79CC:
   name: ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN

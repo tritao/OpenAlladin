@@ -1,0 +1,86 @@
+{
+  "format": "openaladdin-animation-f5-nested-child-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the remaining exact AnimationVM F5 child records in the nested response/presentation stream family.",
+  "producer_streams": [
+    {
+      "address": "0x00122EE0",
+      "f5_sites": ["0x00122EE2"],
+      "purpose": "Response-entry F5 that selects the 0x00122EFE child entry."
+    },
+    {
+      "address": "0x00125F5A",
+      "f5_sites": [
+        "0x00125F66", "0x00125F76", "0x00125F86", "0x00125F96",
+        "0x00125FAA", "0x00125FBA", "0x00125FCA", "0x00125FDA",
+        "0x00125FFC", "0x0012600C", "0x0012601C"
+      ],
+      "purpose": "Nested presentation/response stream with payload-specific child entries."
+    }
+  ],
+  "templates": [
+    {
+      "address": "0x001B8124",
+      "name": "ACTOR_TEMPLATE_TYPE_84_F5_FLAGGED_CHILD",
+      "range": ["0x001B8124", "0x001B8137"],
+      "size": 20,
+      "raw_bytes": "8400080000000000000060000012315804000000",
+      "runtime_type": "0x84",
+      "template_payload": "0x08000000",
+      "movement_stream": null,
+      "template_word": "0x6000",
+      "animation_stream": "0x00123158",
+      "resource_count": "0x04",
+      "f5_records": [
+        { "address": "0x00125FAA", "payload": "0x0000", "animation_entry": "0x00123158" },
+        { "address": "0x00125FBA", "payload": "0x0000", "animation_entry": "0x00123166" }
+      ]
+    },
+    {
+      "address": "0x001B837C",
+      "name": "ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD",
+      "range": ["0x001B837C", "0x001B838F"],
+      "size": 20,
+      "raw_bytes": "84000800000000120AA4600000122E9600000000",
+      "runtime_type": "0x84",
+      "template_payload": "0x08000000",
+      "movement_stream": "0x00120AA4",
+      "template_word": "0x6000",
+      "animation_stream": "0x00122E96",
+      "resource_count": "0x00",
+      "f5_records": [
+        { "address": "0x00122EE2", "payload": "0x0000", "animation_entry": "0x00122EFE" },
+        { "address": "0x00125F66", "payload": "0x1000", "animation_entry": "0x00122F06" },
+        { "address": "0x00125F76", "payload": "0x0008", "animation_entry": "0x00122F06" },
+        { "address": "0x00125F86", "payload": "0xF010", "animation_entry": "0x00122F06" },
+        { "address": "0x00125F96", "payload": "0xE8F0", "animation_entry": "0x00122F06" },
+        { "address": "0x00125FCA", "payload": "0xFA06", "animation_entry": "0x00122EE0" },
+        { "address": "0x00125FDA", "payload": "0xFA06", "animation_entry": "0x00122EE0" },
+        { "address": "0x00125FFC", "payload": "0xFA06", "animation_entry": "0x00122EE0" },
+        { "address": "0x0012600C", "payload": "0xFA06", "animation_entry": "0x00122EE0" },
+        { "address": "0x0012601C", "payload": "0xFA06", "animation_entry": "0x00122EE0" }
+      ]
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "boundaries": [
+      "0x001B8124-0x001B8137 is immediately after ACTOR_TEMPLATE_INTERACTION_PAIR_CHILD at 0x001B8110.",
+      "0x001B837C-0x001B838F is immediately after ACTOR_TEMPLATE_TYPE_3D_COLLISION_RESPONSE_CHILD at 0x001B8368."
+    ]
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for every listed F5 record",
+    "Exact raw F5 payloads, template pointers, and inline animation entries",
+    "Exact 20-byte record boundaries and common actor-template initializer contract"
+  ],
+  "conclusion": "Both records are statically closed as AnimationVM F5 child templates. The producer and payload contracts are recorded, while the broader user-facing scene role remains intentionally unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
