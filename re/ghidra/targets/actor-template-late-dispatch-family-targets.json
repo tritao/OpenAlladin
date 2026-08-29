@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-actor-template-late-dispatch-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the remaining late actor-template records with complete level-exit and interaction-table consumers.",
+  "templates": [
+    {
+      "address": "0x001B82F0",
+      "name": "ACTOR_TEMPLATE_TYPE_74_LEVEL06_EXIT",
+      "consumer_site": "0x001B644E Level06_ExitRoutine",
+      "spawn_helper": "0x001AE2AA Actor_FindFreeSlotReverse20 + 0x001AE30A Actor_InitializeFromTemplate",
+      "runtime_type": "0x74",
+      "movement_stream": null,
+      "animation_stream": "0x001244E6",
+      "resource_count": "0x05",
+      "post_initialize": "On a free reverse slot, initializes facing byte 0xFF and position (0x00A0,0x01C0), then arms the exit transition flags."
+    },
+    {
+      "address": "0x001B8354",
+      "name": "ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE",
+      "consumer_sites": ["0x001B6896", "0x001B68B0"],
+      "dispatch_entries": ["0x004548 selector 0xFD", "0x00454C selector 0xFE"],
+      "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+      "runtime_type": "0x84",
+      "movement_stream": null,
+      "animation_stream": "0x00125DEA",
+      "resource_count": "0x04",
+      "post_initialize": "The 0x001B6896 consumer adds (+0x14,-1) to the spawned position; the 0x001B68B0 consumer adds (+0x0B,+6)."
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "conclusion": "Both records are exact 20-byte templates selected by complete static consumers. The Level 06 exit record is isolated by the level callback table, while the type-0x84 record is shared by the 0xFD/0xFE interaction handlers; adjacent late records without equally bounded consumers remain unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

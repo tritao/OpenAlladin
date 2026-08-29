@@ -2723,3 +2723,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-actor-template-presentation-family-static-decompilation-v1` | recorded-static-decompilation | Shared type-0x8B/type-0x1A presentation sources and type-0x53/type-0x17 interaction templates named from direct consumers |
 | `20260829-actor-template-scene-setup-static-decompilation-v1` | recorded-static-decompilation | Fixed scene-setup templates and an offset type-0x84 interaction template named from direct consumers |
 | `20260829-actor-template-scene-level-family-static-decompilation-v1` | recorded-static-decompilation | Scene initialization, level-event, and terminal-transition templates named from direct consumers |
+| `20260829-actor-template-late-dispatch-family-static-decompilation-v1` | recorded-static-decompilation | Level 06 exit and selector-0xFD/0xFE interaction templates named from complete consumers |

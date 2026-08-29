@@ -1745,3 +1745,23 @@
   evidence:
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
+
+0x001B82F0:
+  name: ACTOR_TEMPLATE_TYPE_74_LEVEL06_EXIT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x74 template selected by Level06_ExitRoutine at 0x001B644E after a reverse-slot availability check; it has no movement stream, uses animation stream 0x001244E6, and owns five resources before the caller initializes position (0x00A0,0x01C0), facing, and transition flags.
+  evidence:
+    - ghidra_level_table_enter_exit_targeted_decompile
+    - actor_template_grid_xrefs
+
+0x001B8354:
+  name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Shared type-0x84 interaction template selected by INTERACTION_HANDLER_TABLE entries 0xFD and 0xFE at ROM 0x004548/0x00454C; reverse-slot consumers at 0x001B6896 and 0x001B68B0 use no movement stream, animation stream 0x00125DEA, and four resources before applying offsets (+0x14,-1) and (+0x0B,+6), respectively.
+  evidence:
+    - ghidra_interaction_dispatch_block
+    - actor_template_grid_xrefs
