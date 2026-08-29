@@ -46,7 +46,7 @@
     {
       "function": "0x001AC350 ActorType20_ActorCollisionHandler",
       "entry": "0x001233CC",
-      "note": "The collision-response entry is immediately after this family and remains a separate unclaimed range."
+      "note": "The collision-response entry is immediately after this family and is separately owned as ACTOR_ANIM_TYPE20_COLLISION_RESPONSE."
     }
   ],
   "evidence": [
@@ -55,7 +55,7 @@
     "Existing upper-pair animation decode and VM trace",
     "Packed boundary immediately before the collision-response entry at 0x001233CC"
   ],
-  "conclusion": "The upper Type-0x20 animation is one 116-byte composite family: a callable frame prelude, the template entry at 0x0012337A with X/Y proximity gates, and a timer-driven response branch with one child spawn. The collision-selected entry at 0x001233CC is not included.",
+  "conclusion": "The upper Type-0x20 animation is one 116-byte composite family: a callable frame prelude, the template entry at 0x0012337A with X/Y proximity gates, and a timer-driven response branch with one child spawn. The collision-selected entry at 0x001233CC is separately classified as ACTOR_ANIM_TYPE20_COLLISION_RESPONSE."
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

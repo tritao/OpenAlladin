@@ -33,7 +33,7 @@
       "address": "0x001AC350",
       "name": "ActorType20_ActorCollisionHandler",
       "entry": "0x001233CC",
-      "note": "Separate collision-response stream immediately follows the owned range."
+      "note": "Separate collision-response stream immediately follows the owned range and is classified as ACTOR_ANIM_TYPE20_COLLISION_RESPONSE."
     }
   ],
   "evidence": [
@@ -42,7 +42,7 @@
     "Existing upper-route runtime traces",
     "Collision handler reference establishes the next entry boundary"
   ],
-  "conclusion": "The upper Type-0x20 animation family is closed as a composite callable/prelude and proximity-gated response region. Its collision-response entry at 0x001233CC is deliberately left separate for a follow-up campaign.",
+  "conclusion": "The upper Type-0x20 animation family is closed as a composite callable/prelude and proximity-gated response region. Its collision-response entry at 0x001233CC is separately classified as ACTOR_ANIM_TYPE20_COLLISION_RESPONSE."
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }
