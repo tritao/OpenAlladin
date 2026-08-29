@@ -1635,3 +1635,113 @@
   evidence:
     - ghidra_scene_setup_actor_block
     - actor_template_grid_xrefs
+
+0x001B81EC:
+  name: ACTOR_TEMPLATE_TYPE_0C_LEVEL_EVENT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x0C level-event template loaded through LevelObjectSpawnEntry at 0x001B6FAE; it has no movement stream, uses animation stream 0x00125952, and owns ten resources before the optional palette upload path.
+  evidence:
+    - ghidra_scene_level_actor_block
+    - actor_template_grid_xrefs
+
+0x001B8228:
+  name: ACTOR_TEMPLATE_TYPE_0B_LEVEL_EVENT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x0B level-event template loaded through LevelObjectSpawnEntry at 0x001B6F8E when the event gate is set; it has no movement stream, uses animation stream 0x001259C0, and owns five resources.
+  evidence:
+    - ghidra_scene_level_actor_block
+    - actor_template_grid_xrefs
+
+0x001B8250:
+  name: ACTOR_TEMPLATE_TYPE_79_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x79 interaction template loaded by the reverse-slot entry at 0x001B6F1E; it has no movement stream, uses animation stream 0x00125A4C, and owns two resources.
+  evidence:
+    - ghidra_scene_level_actor_block
+    - actor_template_grid_xrefs
+
+0x001B8264:
+  name: ACTOR_TEMPLATE_TYPE_7A_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x7A interaction template loaded by the backward-slot entries at 0x001B6F34, 0x001B6F4A, and 0x001B6F60; it has no movement stream, uses animation stream 0x00125A68, and owns three resources.
+  evidence:
+    - ghidra_scene_level_actor_block
+    - actor_template_grid_xrefs
+
+0x001B8278:
+  name: ACTOR_TEMPLATE_TYPE_59_SCENE_EVENT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x59 scene-event template initialized into the primary actor slot by the two branches at 0x001B62FC and 0x001B6324; it has no movement stream, uses base animation stream 0x00125AFE, and owns four resources while callers publish the branch-specific animation root and position.
+  evidence:
+    - ghidra_scene_level_actor_block
+    - actor_template_grid_xrefs
+
+0x001B82A0:
+  name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_TERRAIN
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 terminal terrain template initialized by TerrainHandler_TerminalTransition after clearing the current actor; it has no movement stream, uses animation stream 0x00125C26, and owns five resources before inheriting the player position.
+  evidence:
+    - ghidra_terrain_terminal_transition
+    - actor_template_grid_xrefs
+
+0x001B82B4:
+  name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 terminal-interaction template loaded by the reverse-slot entry at 0x001B65D4; it has no movement stream, uses animation stream 0x00125CC6, owns five resources, and carries the template's terminal flag byte.
+  evidence:
+    - ghidra_scene_level_actor_block
+    - actor_template_grid_xrefs
+
+0x001B8318:
+  name: ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene-initialization template used by SceneResource_InitializeActiveScene for the fixed actor slot at 0x00FF7EC4; it uses movement stream 0x001203D8, animation stream 0x00125DC4, and owns five resources before the caller sets the initial facing state.
+  evidence:
+    - ghidra_scene_initialize_active_scene
+    - actor_template_grid_xrefs
+
+0x001B832C:
+  name: ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene-initialization template used by SceneResource_InitializeActiveScene for the primary gameplay actor slot at 0x00FF7E82; it uses movement stream 0x001203D8, animation stream 0x001261D0, and owns sixteen resources before the caller sets the initial facing state.
+  evidence:
+    - ghidra_scene_initialize_active_scene
+    - actor_template_grid_xrefs
+
+0x001B8340:
+  name: ACTOR_TEMPLATE_TYPE_84_SCENE_RESET
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 scene-reset template initialized by Scene_ResetToState0 at 0x001B500A; it uses movement stream 0x001217A2, animation stream 0x0012620A, and owns five resources.
+  evidence:
+    - ghidra_scene_level_actor_block
+    - actor_template_grid_xrefs
+
+0x001B8390:
+  name: ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x84 level-event template loaded through LevelObjectSpawnEntry at 0x001B75F6; it has no movement stream, uses animation stream 0x00126042, and owns four resources before the caller adds 0x0C to the spawned actor's Y position.
+  evidence:
+    - ghidra_scene_level_actor_block
+    - actor_template_grid_xrefs

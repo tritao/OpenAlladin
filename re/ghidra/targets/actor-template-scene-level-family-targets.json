@@ -1,0 +1,134 @@
+{
+  "format": "openaladdin-actor-template-scene-level-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name later actor-template records used by scene initialization, level events, and terminal transitions.",
+  "templates": [
+    {
+      "address": "0x001B81EC",
+      "name": "ACTOR_TEMPLATE_TYPE_0C_LEVEL_EVENT",
+      "consumer_site": "0x001B6FAE",
+      "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+      "runtime_type": "0x0C",
+      "movement_stream": null,
+      "animation_stream": "0x00125952",
+      "resource_count": "0x0A"
+    },
+    {
+      "address": "0x001B8228",
+      "name": "ACTOR_TEMPLATE_TYPE_0B_LEVEL_EVENT",
+      "consumer_site": "0x001B6F8E",
+      "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+      "runtime_type": "0x0B",
+      "movement_stream": null,
+      "animation_stream": "0x001259C0",
+      "resource_count": "0x05",
+      "selection": "Requires the event gate at 0x00FF7E21."
+    },
+    {
+      "address": "0x001B8250",
+      "name": "ACTOR_TEMPLATE_TYPE_79_INTERACTION",
+      "consumer_site": "0x001B6F1E",
+      "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+      "runtime_type": "0x79",
+      "movement_stream": null,
+      "animation_stream": "0x00125A4C",
+      "resource_count": "0x02"
+    },
+    {
+      "address": "0x001B8264",
+      "name": "ACTOR_TEMPLATE_TYPE_7A_INTERACTION",
+      "consumer_sites": ["0x001B6F34", "0x001B6F4A", "0x001B6F60"],
+      "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
+      "runtime_type": "0x7A",
+      "movement_stream": null,
+      "animation_stream": "0x00125A68",
+      "resource_count": "0x03"
+    },
+    {
+      "address": "0x001B8278",
+      "name": "ACTOR_TEMPLATE_TYPE_59_SCENE_EVENT",
+      "consumer_sites": ["0x001B62FC", "0x001B6324"],
+      "destination": "0x00FF7E82",
+      "runtime_type": "0x59",
+      "movement_stream": null,
+      "animation_stream": "0x00125AFE",
+      "resource_count": "0x04",
+      "post_initialize": "Branches publish animation roots 0x00125AFE or 0x00125B42 and position (0x0184,0x0166); the second branch also sets facing to 0xFF."
+    },
+    {
+      "address": "0x001B82A0",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TERRAIN",
+      "consumer_site": "0x001B53DA TerrainHandler_TerminalTransition",
+      "runtime_type": "0x84",
+      "movement_stream": null,
+      "animation_stream": "0x00125C26",
+      "resource_count": "0x05",
+      "post_initialize": "Inherits the player position from 0x00FF7E02/0x00FF7E04 after the current actor is cleared."
+    },
+    {
+      "address": "0x001B82B4",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION",
+      "consumer_site": "0x001B65D4",
+      "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot",
+      "runtime_type": "0x84",
+      "movement_stream": null,
+      "animation_stream": "0x00125CC6",
+      "resource_count": "0x05",
+      "template_flags": "source byte +0x05 is 0xFF"
+    },
+    {
+      "address": "0x001B8318",
+      "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY",
+      "consumer_sites": ["0x001B0992", "0x001B09E4"],
+      "consumer": "SceneResource_InitializeActiveScene",
+      "destination": "0x00FF7EC4",
+      "runtime_type": "0x84",
+      "movement_stream": "0x001203D8",
+      "animation_stream": "0x00125DC4",
+      "resource_count": "0x05"
+    },
+    {
+      "address": "0x001B832C",
+      "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY",
+      "consumer_sites": ["0x001B08AE", "0x001B09A6", "0x001B09F8"],
+      "consumer": "SceneResource_InitializeActiveScene",
+      "destination": "0x00FF7E82",
+      "runtime_type": "0x84",
+      "movement_stream": "0x001203D8",
+      "animation_stream": "0x001261D0",
+      "resource_count": "0x10"
+    },
+    {
+      "address": "0x001B8340",
+      "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_RESET",
+      "consumer_site": "0x001B500A Scene_ResetToState0",
+      "runtime_type": "0x84",
+      "movement_stream": "0x001217A2",
+      "animation_stream": "0x0012620A",
+      "resource_count": "0x05"
+    },
+    {
+      "address": "0x001B8390",
+      "name": "ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT",
+      "consumer_site": "0x001B75F6",
+      "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+      "runtime_type": "0x84",
+      "movement_stream": null,
+      "animation_stream": "0x00126042",
+      "resource_count": "0x04",
+      "post_initialize": "Adds 0x0C to the allocated actor's Y position."
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "conclusion": "All eleven records have direct scene/level consumers or named fixed-scene consumers, and their 20-byte extents do not overlap neighboring promoted records.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

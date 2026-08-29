@@ -1,0 +1,81 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-scene-level-family-targets.json",
+  "templates": [
+    {
+      "address": "0x001B81EC",
+      "name": "ACTOR_TEMPLATE_TYPE_0C_LEVEL_EVENT",
+      "consumer": "0x001B6FAE",
+      "behavior": "LevelObjectSpawnEntry type-0x0C object using animation 0x00125952 and ten resources."
+    },
+    {
+      "address": "0x001B8228",
+      "name": "ACTOR_TEMPLATE_TYPE_0B_LEVEL_EVENT",
+      "consumer": "0x001B6F8E",
+      "behavior": "Conditionally spawned type-0x0B object using animation 0x001259C0 and five resources."
+    },
+    {
+      "address": "0x001B8250",
+      "name": "ACTOR_TEMPLATE_TYPE_79_INTERACTION",
+      "consumer": "0x001B6F1E",
+      "behavior": "Reverse-slot type-0x79 interaction spawn using animation 0x00125A4C."
+    },
+    {
+      "address": "0x001B8264",
+      "name": "ACTOR_TEMPLATE_TYPE_7A_INTERACTION",
+      "consumer": "0x001B6F34, 0x001B6F4A, and 0x001B6F60",
+      "behavior": "Backward-slot type-0x7A interaction spawn using animation 0x00125A68."
+    },
+    {
+      "address": "0x001B8278",
+      "name": "ACTOR_TEMPLATE_TYPE_59_SCENE_EVENT",
+      "consumer": "0x001B62FC and 0x001B6324",
+      "behavior": "Fixed primary-slot scene-event source; callers choose animation 0x00125AFE or 0x00125B42 and set position (0x0184,0x0166)."
+    },
+    {
+      "address": "0x001B82A0",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TERRAIN",
+      "consumer": "TerrainHandler_TerminalTransition at 0x001B53DA",
+      "behavior": "Terminal terrain replacement inheriting the player position."
+    },
+    {
+      "address": "0x001B82B4",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION",
+      "consumer": "0x001B65D4",
+      "behavior": "Reverse-slot terminal interaction response with template flag byte 0xFF."
+    },
+    {
+      "address": "0x001B8318",
+      "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY",
+      "consumer": "SceneResource_InitializeActiveScene at 0x001B0992/0x001B09E4",
+      "behavior": "Fixed slot 0x00FF7EC4 initialization using movement 0x001203D8 and animation 0x00125DC4."
+    },
+    {
+      "address": "0x001B832C",
+      "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY",
+      "consumer": "SceneResource_InitializeActiveScene at 0x001B08AE/0x001B09A6/0x001B09F8",
+      "behavior": "Primary gameplay slot initialization using movement 0x001203D8 and animation 0x001261D0."
+    },
+    {
+      "address": "0x001B8340",
+      "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_RESET",
+      "consumer": "Scene_ResetToState0 at 0x001B500A",
+      "behavior": "Scene-reset type-0x84 initialization using movement 0x001217A2 and animation 0x0012620A."
+    },
+    {
+      "address": "0x001B8390",
+      "name": "ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT",
+      "consumer": "0x001B75F6",
+      "behavior": "LevelObjectSpawnEntry type-0x84 object using animation 0x00126042 and a +0x0C Y adjustment."
+    }
+  ],
+  "conclusion": "The scene/level block establishes eleven additional exact 20-byte actor-template records from direct consumers and fixed-scene initialization behavior.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
