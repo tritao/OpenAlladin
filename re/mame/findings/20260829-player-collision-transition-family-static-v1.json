@@ -1,0 +1,60 @@
+{
+  "format": "openaladdin-player-collision-transition-family-finding-v1",
+  "recorded_at": "2026-08-29",
+  "status": "static-family-closed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": [
+    "re/ghidra/targets/player-collision-transition-family-targets.json",
+    "re/mame/findings/20260827-level01-player-motion-writer-audit-v1.json",
+    "re/mame/findings/20260827-level01-transfer-capable-mechanism-graph-v1.json",
+    "re/mame/findings/20260829-type8d-type76-terminal-animation-static-decompilation-v1.json",
+    "re/mame/findings/20260829-level-exit-type84-child-template-static-v1.json",
+    "re/mame/findings/20260829-actor-template-family-static-v1.json",
+    "re/symbols/functions.yml",
+    "build/re/dasm-1A8000.txt"
+  ],
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "address_space": "68000 ROM addresses",
+    "handlers": [
+      {
+        "address": "0x001AF9F6",
+        "size": 142,
+        "actor_types": ["0x76", "0x77"],
+        "name": "ActorType76_77_PlayerCollisionHandler",
+        "range": "0x001AF9F6-0x001AFA83",
+        "semantics": "Gated actor-relative placement at PLAYER_Y = actor Y - WORLD_CAMERA_Y - 0x0B within 12 pixels, signed actor +0x1C horizontal offset into PLAYER_X, and interaction publication. Type 0x76 promotes to type 0x77 and chooses the 0x00124198 or 0x001241C8 continuation from PLAYER_WORLD_X relative to actor X."
+      },
+      {
+        "address": "0x001AFA84",
+        "size": 178,
+        "actor_types": ["0x74", "0x75"],
+        "name": "ActorType74_75_PlayerCollisionHandler",
+        "range": "0x001AFA84-0x001AFB35",
+        "semantics": "Gated actor-relative placement at PLAYER_Y = actor Y - WORLD_CAMERA_Y - 0x0B within 10 pixels. The type-0x74 left-side response installs movement 0x00120A42, clears actor +0x36, promotes to type 0x75, allocates ACTOR_TEMPLATE_TYPE_84_LEVEL_EXIT_CHILD, and copies source X/Y to the child."
+      },
+      {
+        "address": "0x001AFB36",
+        "size": 190,
+        "actor_types": ["0x6E", "0x6F", "0x70", "0x71", "0x72", "0x73"],
+        "name": "ActorType6E_73_PlayerCollisionHandler",
+        "range": "0x001AFB36-0x001AFBF3",
+        "semantics": "Interaction-gated actor-relative placement at PLAYER_X = actor X - WORLD_CAMERA_X within 12 pixels and PLAYER_Y = actor Y - WORLD_CAMERA_Y + 0x10. It arms the player transition lock/gate and LEVEL_TIMER=4; when the prior LEVEL_TIMER is clear, it also selects PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE, clears the terrain response fields, and restores camera thresholds 0x00B0/0x0150."
+      }
+    ]
+  },
+  "boundary_checks": {
+    "ranges": [
+      "0x001AF9F6-0x001AFA83",
+      "0x001AFA84-0x001AFB35",
+      "0x001AFB36-0x001AFBF3"
+    ],
+    "result": "The three bodies terminate immediately before the next dispatch entries at 0x001AFA84, 0x001AFB36, and 0x001AFBF4; no promoted ranges overlap."
+  },
+  "reachability_qualification": "The three handlers are statically closed and connected to already recovered Type-0x76, level-exit Type-0x84, and Type-0x6E through Type-0x73 producer families. Their exact static behavior does not by itself establish live reachability on the retained Level 01 route; the existing producer and runtime audits remain authoritative for that question.",
+  "conclusion": "The dense transition block is now canonicalized with exact dispatch mappings, placement windows, coordinate formulas, state latches, type promotion, child allocation, animation/movement roots, and non-overlapping internal boundaries."
+}

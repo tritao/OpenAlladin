@@ -1,0 +1,53 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-transition-family",
+    "purpose": "Canonicalize the remaining dense player-collision transition entries for Type-0x76/0x77, Type-0x74/0x75, and Type-0x6E through Type-0x73 actors."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x76", "0x77"], "address": "0x001AF9F6" },
+      { "actor_types": ["0x74", "0x75"], "address": "0x001AFA84" },
+      { "actor_types": ["0x6E", "0x6F", "0x70", "0x71", "0x72", "0x73"], "address": "0x001AFB36" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AF9F6", "name": "ActorType76_77_PlayerCollisionHandler" },
+    { "address": "0x001AFA84", "name": "ActorType74_75_PlayerCollisionHandler" },
+    { "address": "0x001AFB36", "name": "ActorType6E_73_PlayerCollisionHandler" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7DF6", "name": "WORLD_CAMERA_X" },
+    { "address": "0x00FF7DF8", "name": "WORLD_CAMERA_Y" },
+    { "address": "0x00FF7DFA", "name": "PLAYER_X" },
+    { "address": "0x00FF7DFC", "name": "PLAYER_Y" },
+    { "address": "0x00FF7DFE", "name": "CAMERA_HORIZONTAL_THRESHOLD" },
+    { "address": "0x00FF7E00", "name": "CAMERA_VERTICAL_THRESHOLD" },
+    { "address": "0x00FF7E02", "name": "PLAYER_WORLD_X" },
+    { "address": "0x00FF7E5A", "name": "PLAYER_VY" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF0B0", "name": "TERRAIN_HORIZONTAL_RESPONSE" },
+    { "address": "0x00FFF0BE", "name": "TERRAIN_RESPONSE_ACTIVE" },
+    { "address": "0x00FFF0C0", "name": "TERRAIN_VERTICAL_STOP" },
+    { "address": "0x00FFF0CC", "name": "TERRAIN_RESPONSE_TIMER_STATE" },
+    { "address": "0x00FFF0D0", "name": "PLAYER_TRANSITION_GATE" },
+    { "address": "0x00FFF0D7", "name": "PLAYER_INTERACTION_TRANSITION_LOCK" },
+    { "address": "0x00FFF0D8", "name": "PLAYER_INTERACTION_GATE" },
+    { "address": "0x00FFF0E7", "name": "PLAYER_INTERACTION_ANIMATION_GATE" },
+    { "address": "0x00FFF103", "name": "LEVEL_TIMER" }
+  ],
+  "rom_references": [
+    { "address": "0x00124198", "name": "ACTOR_ANIM_TYPE76_ALTERNATE_ENTRY" },
+    { "address": "0x001241C8", "name": "ACTOR_ANIM_TYPE76_TERMINAL_ENTRY" },
+    { "address": "0x00120A42", "name": "ACTOR_MOVE_TYPE75_LEVEL_EXIT" },
+    { "address": "0x00121964", "name": "PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE" },
+    { "address": "0x001B7E7C", "name": "ACTOR_TEMPLATE_TYPE_84_LEVEL_EXIT_CHILD" },
+    { "address": "0x001AE262", "name": "Actor_FindFreeSlot" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
+    { "address": "0x001AE6DE", "name": "Actor_PublishInteractionValue" }
+  ]
+}
