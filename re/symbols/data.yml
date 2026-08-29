@@ -1870,6 +1870,45 @@
     - actor_template_type0f_interaction
     - animation_stream_decoder
 
+0x00123D34:
+  name: ACTOR_ANIM_TYPE84_TYPE0F_CHILD
+  size: 174
+  confidence: decompiled
+  description: Type-0x84 child animation installed by ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD. Its exact 174-byte region queues callbacks 0x001ACB7A and 0x001ACB82, uses player-X proximity and random gates to revisit local frame entries, clears the actor-facing flag, presents the 0x1B76-0x1B92 sequence, writes 0x00120A00 through ED, and loops to its root; the adjacent 0x00123DE2 self-loop is not folded into this stream.
+  evidence:
+    - animation_f5_child_template_family_static_v1
+    - type0f_animation_static_decompilation
+    - animation_stream_decoder
+
+0x00123DEA:
+  name: ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT
+  size: 76
+  confidence: decompiled
+  description: Default animation stream stored in ACTOR_TEMPLATE_TYPE_6E_73_BASE at 0x001B7904. Its exact 76-byte region plays sound 0x2C, presents the repeated 0x1652-0x168A frame sequence, and loops through the internal 0x00123E18 entry; the six runtime type 0x6E-0x73 spawners overwrite this template field with their per-type roots.
+  evidence:
+    - actor_runtime_type6e_73_static_decompilation
+    - actor_template_type6e_73_base
+    - animation_stream_decoder
+
+0x00123E36:
+  name: ACTOR_ANIM_TYPE84_RUNTIME47_4C
+  size: 64
+  confidence: decompiled
+  description: Shared Type-0x84 child-spawn animation installed by the runtime type 0x47-0x4C interaction family. Its exact 64-byte region presents the 0x176A frame phases, conditionally executes the two F5 records for ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD with inline entries 0x00125B86 and 0x00125BA6, and loops from 0x00123E70 to its root.
+  evidence:
+    - actor_template_type84_runtime47_4c_child_static_decompilation
+    - interaction_spawn_runtime47-4c-static-decompilation
+    - animation_stream_decoder
+
+0x00123E76:
+  name: ACTOR_ANIM_TYPE84_INTERACTION_RESPONSE
+  size: 8
+  confidence: decompiled
+  description: Compact Type-0x84 interaction-response animation installed by ACTOR_TEMPLATE_TYPE_84_INTERACTION_RESPONSE at 0x001B7C9C. Its exact 8-byte entry presents frames 0x0D8E and 0x17DE with EC 0x01 actor-state clears between the two phases, immediately before the separately owned collision-response stream.
+  evidence:
+    - actor_template_interaction_dispatch_family_static_decompilation
+    - animation_stream_decoder
+
 0x0012312C:
   name: ACTOR_ANIM_TYPE5F_INTERACTION
   size: 40

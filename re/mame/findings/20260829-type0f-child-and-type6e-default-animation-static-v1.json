@@ -1,0 +1,69 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "streams": [
+    {
+      "address": "0x00123D34",
+      "name": "ACTOR_ANIM_TYPE84_TYPE0F_CHILD",
+      "range": "0x00123D34-0x00123DE1",
+      "size": 174,
+      "template": "0x001B7C88 ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD",
+      "producer": "0x00123CF8 ACTOR_ANIM_TYPE0F_INTERACTION",
+      "decoded": [
+        "frame 0x1B76 lead-in",
+        "callbacks 0x001ACB7A and 0x001ACB82",
+        "player-X distance and random gates",
+        "ED write of 0x00120A00",
+        "EA loop at 0x00123DDC"
+      ],
+      "adjacent_unresolved": "0x00123DE2-0x00123DE9 self-loop"
+    },
+    {
+      "address": "0x00123DEA",
+      "name": "ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT",
+      "range": "0x00123DEA-0x00123E35",
+      "size": 76,
+      "template": "0x001B7904 ACTOR_TEMPLATE_TYPE_6E_73_BASE",
+      "decoded": [
+        "F3 sound 0x2C",
+        "repeated frame sequence 0x1652-0x168A",
+        "EA loop from 0x00123E30 to internal entry 0x00123E18"
+      ],
+      "runtime_note": "InteractionSpawn_RuntimeType6E through InteractionSpawn_RuntimeType73 replace the shared base animation pointer with per-type roots 0x00120584, 0x001205F4, 0x00120664, 0x0012070E, 0x00120868, and 0x001208D8."
+    },
+    {
+      "address": "0x00123E36",
+      "name": "ACTOR_ANIM_TYPE84_RUNTIME47_4C",
+      "range": "0x00123E36-0x00123E75",
+      "size": 64,
+      "producer": "InteractionSpawn_RuntimeType47_B1 through InteractionSpawn_RuntimeType4C_B6",
+      "decoded": [
+        "0x176A frame phases",
+        "F5 child records at 0x00123E44 and 0x00123E60",
+        "child entries 0x00125B86 and 0x00125BA6",
+        "EA loop from 0x00123E70 to 0x00123E36"
+      ],
+      "child_template": "0x001B828C ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD"
+    },
+    {
+      "address": "0x00123E76",
+      "name": "ACTOR_ANIM_TYPE84_INTERACTION_RESPONSE",
+      "range": "0x00123E76-0x00123E7D",
+      "size": 8,
+      "template": "0x001B7C9C ACTOR_TEMPLATE_TYPE_84_INTERACTION_RESPONSE",
+      "decoded": [
+        "frame 0x0D8E",
+        "EC 0x01 actor-state clear",
+        "frame 0x17DE",
+        "EC 0x01 actor-state clear"
+      ]
+    }
+  ],
+  "conclusion": "The Type-0x0F F5 child root, shared Type-0x6E-through-0x73 base-template default animation, runtime-0x47-through-0x4C child-spawn root, and compact Type-0x84 interaction response are independently bounded AnimationVM streams. The intervening 0x00123DE2 self-loop is deliberately not assigned to any owner.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

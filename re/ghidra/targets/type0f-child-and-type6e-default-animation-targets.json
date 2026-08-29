@@ -1,0 +1,66 @@
+{
+  "format": "openaladdin-type0f-child-and-type6e-default-animation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "streams": [
+    {
+      "address": "0x00123D34",
+      "name": "ACTOR_ANIM_TYPE84_TYPE0F_CHILD",
+      "range": ["0x00123D34", "0x00123DE1"],
+      "template": "0x001B7C88 ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD",
+      "producer": "0x00123CF8 ACTOR_ANIM_TYPE0F_INTERACTION",
+      "terminal": "0x00123DDC EA -> 0x00123D34",
+      "excluded_adjacent_fragment": ["0x00123DE2", "0x00123DE9"]
+    },
+    {
+      "address": "0x00123DEA",
+      "name": "ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT",
+      "range": ["0x00123DEA", "0x00123E35"],
+      "template": "0x001B7904 ACTOR_TEMPLATE_TYPE_6E_73_BASE",
+      "terminal": "0x00123E30 EA -> 0x00123E18",
+      "internal_entry": "0x00123E18"
+    },
+    {
+      "address": "0x00123E36",
+      "name": "ACTOR_ANIM_TYPE84_RUNTIME47_4C",
+      "range": ["0x00123E36", "0x00123E75"],
+      "producer": "InteractionSpawn_RuntimeType47_B1 through InteractionSpawn_RuntimeType4C_B6",
+      "child_template": "0x001B828C ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD",
+      "f5_records": ["0x00123E44", "0x00123E60"],
+      "terminal": "0x00123E70 EA -> 0x00123E36"
+    },
+    {
+      "address": "0x00123E76",
+      "name": "ACTOR_ANIM_TYPE84_INTERACTION_RESPONSE",
+      "range": ["0x00123E76", "0x00123E7D"],
+      "template": "0x001B7C9C ACTOR_TEMPLATE_TYPE_84_INTERACTION_RESPONSE",
+      "terminal": "EC 0x01 at 0x00123E7C before next root 0x00123E7E"
+    }
+  ],
+  "decoder_checks": {
+    "type0f_child_bytes": 174,
+    "type0f_child_stop": "unconditional_jump",
+    "type6e_73_default_bytes": 76,
+    "type6e_73_default_stop": "unconditional_jump",
+    "runtime47_4c_bytes": 64,
+    "runtime47_4c_stop": "unconditional_jump",
+    "interaction_response_bytes": 8
+  },
+  "boundary_basis": [
+    "Exact F5 template animation pointer at 0x001B7C94",
+    "Exact base-template animation pointer at 0x001B7910",
+    "Lossless AnimationDecoder command/frame boundaries",
+    "Independent next-root boundary at 0x00123E36",
+    "Exact interaction-response template pointer at 0x001B7CA8",
+    "Independent next-root boundary at 0x00123E7E"
+  ],
+  "limitations": [
+    "The 8-byte 0x00123DE2 self-loop has no independently proven external root and remains unresolved.",
+    "The type-0x6E through 0x73 producers replace the shared base animation pointer with six per-type roots before the actor runs."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -227,6 +227,29 @@ def test_canonical_actor_animation_family_has_exact_non_overlapping_ranges():
     assert alias.metadata["alias_of"] == "ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE"
 
 
+def test_type0f_child_and_type6e_default_animation_ranges_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00123D34: (0x00123DE1, "ACTOR_ANIM_TYPE84_TYPE0F_CHILD"),
+        0x00123DEA: (0x00123E35, "ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT"),
+        0x00123E36: (0x00123E75, "ACTOR_ANIM_TYPE84_RUNTIME47_4C"),
+        0x00123E76: (0x00123E7D, "ACTOR_ANIM_TYPE84_INTERACTION_RESPONSE"),
+    }
+    owners = []
+    for address, (end, name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        owners.append((symbol.address, symbol.end))
+    assert all(right < next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
+
+    child = symbols.at(0x00123D34, include_ranges=False)
+    assert child is not None
+    assert child.size == 174
+    assert symbols.at(0x00123DE2, include_ranges=False) is None
+
+
 def test_layout_treats_rnc_manifest_end_as_exclusive(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     database_root = _write_database(tmp_path)
