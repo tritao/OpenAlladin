@@ -1,0 +1,74 @@
+{
+  "format": "openaladdin-type84-interaction-base-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation_family": {
+    "template": "0x001B78F0 ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE",
+    "streams": [
+      {
+        "address": "0x001242CA",
+        "name": "ACTOR_ANIM_TYPE84_BASE_B7",
+        "range": ["0x001242CA", "0x001242E3"],
+        "bytes": 26,
+        "parameter": "0x001ACECC",
+        "loop": "0x001242DE -> 0x001242D2"
+      },
+      {
+        "address": "0x001242E4",
+        "name": "ACTOR_ANIM_TYPE84_BASE_B8",
+        "range": ["0x001242E4", "0x001242FD"],
+        "bytes": 26,
+        "parameter": "0x001ACF08",
+        "loop": "0x001242F8 -> 0x001242EC"
+      },
+      {
+        "address": "0x001242FE",
+        "name": "ACTOR_ANIM_TYPE84_BASE_B9",
+        "range": ["0x001242FE", "0x00124317"],
+        "bytes": 26,
+        "parameter": "0x001ACF44",
+        "loop": "0x00124312 -> 0x00124306"
+      },
+      {
+        "address": "0x00124318",
+        "name": "ACTOR_ANIM_TYPE84_BASE_BA",
+        "range": ["0x00124318", "0x00124331"],
+        "bytes": 26,
+        "parameter": "0x001ACF80",
+        "loop": "0x0012432C -> 0x00124320"
+      },
+      {
+        "address": "0x00124332",
+        "name": "ACTOR_ANIM_TYPE84_BASE_CA",
+        "range": ["0x00124332", "0x0012434B"],
+        "bytes": 26,
+        "parameter": "0x001ACFBC",
+        "loop": "0x00124346 -> 0x0012433A"
+      }
+    ]
+  },
+  "consumers": [
+    { "selector": "0xB7", "handler": "0x001B712C InteractionSpawn_Type84Base_B7", "animation": "ACTOR_ANIM_TYPE84_BASE_B7" },
+    { "selector": "0xB8", "handler": "0x001B7158 InteractionSpawn_Type84Base_B8", "animation": "ACTOR_ANIM_TYPE84_BASE_B8" },
+    { "selector": "0xB9", "handler": "0x001B717C InteractionSpawn_Type84Base_B9", "animation": "ACTOR_ANIM_TYPE84_BASE_B9" },
+    { "selector": "0xBA", "handler": "0x001B71A0 InteractionSpawn_Type84Base_BA", "animation": "ACTOR_ANIM_TYPE84_BASE_BA" },
+    { "selector": "0xCA", "handler": "0x001B71C4 InteractionSpawn_Type84Base_CA", "animation": "ACTOR_ANIM_TYPE84_BASE_CA" }
+  ],
+  "unclaimed_adjacent": {
+    "address": "0x001242B0",
+    "bytes": 26,
+    "reason": "The preceding animation-like fragment is assigned by the adjacent non-table code at 0x001B7110 rather than by the five selector handlers, so it is not folded into these ranges."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for all five direct roots",
+    "Exact per-selector animation writes in the interaction dispatch bodies",
+    "Shared Type-0x84 template and reverse-slot helper",
+    "Contiguous 26-byte boundaries between each direct root"
+  ],
+  "conclusion": "Selectors B7, B8, B9, BA, and CA each own a distinct 26-byte Type-0x84 interaction-base animation loop. The five ranges are recorded independently, while the adjacent 0x001242B0 fragment remains explicitly unclaimed pending its non-table caller contract.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

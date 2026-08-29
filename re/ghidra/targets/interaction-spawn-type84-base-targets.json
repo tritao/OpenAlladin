@@ -14,11 +14,11 @@
     "shared_helper": "0x001B525E InteractionSpawn_ReverseSlot",
     "shared_post_spawn": "subtract 8 from actor Y at offset 0x04",
     "handlers": [
-      { "selector": "0xB7", "address": "0x001B712C", "name": "InteractionSpawn_Type84Base_B7", "gate": "0x00FFF127 != 0 and 0x00FFF128 == 0", "animation_root": "0x001242CA" },
-      { "selector": "0xB8", "address": "0x001B7158", "name": "InteractionSpawn_Type84Base_B8", "gate": "0x00FFF128 != 0", "animation_root": "0x001242E4" },
-      { "selector": "0xB9", "address": "0x001B717C", "name": "InteractionSpawn_Type84Base_B9", "gate": "0x00FFF129 != 0", "animation_root": "0x001242FE" },
-      { "selector": "0xBA", "address": "0x001B71A0", "name": "InteractionSpawn_Type84Base_BA", "gate": "0x00FFF12A != 0", "animation_root": "0x00124318" },
-      { "selector": "0xCA", "address": "0x001B71C4", "name": "InteractionSpawn_Type84Base_CA", "gate": null, "animation_root": "0x00124332" }
+      { "selector": "0xB7", "address": "0x001B712C", "name": "InteractionSpawn_Type84Base_B7", "gate": "0x00FFF127 != 0 and 0x00FFF128 == 0", "animation_root": "0x001242CA ACTOR_ANIM_TYPE84_BASE_B7" },
+      { "selector": "0xB8", "address": "0x001B7158", "name": "InteractionSpawn_Type84Base_B8", "gate": "0x00FFF128 != 0", "animation_root": "0x001242E4 ACTOR_ANIM_TYPE84_BASE_B8" },
+      { "selector": "0xB9", "address": "0x001B717C", "name": "InteractionSpawn_Type84Base_B9", "gate": "0x00FFF129 != 0", "animation_root": "0x001242FE ACTOR_ANIM_TYPE84_BASE_B9" },
+      { "selector": "0xBA", "address": "0x001B71A0", "name": "InteractionSpawn_Type84Base_BA", "gate": "0x00FFF12A != 0", "animation_root": "0x00124318 ACTOR_ANIM_TYPE84_BASE_BA" },
+      { "selector": "0xCA", "address": "0x001B71C4", "name": "InteractionSpawn_Type84Base_CA", "gate": null, "animation_root": "0x00124332 ACTOR_ANIM_TYPE84_BASE_CA" }
     ]
   },
   "evidence": [

@@ -52,7 +52,7 @@
       "consumer_sites": ["0x001B7110", "0x001B713C", "0x001B7160", "0x001B7184", "0x001B71A8", "0x001B71C4"],
       "runtime_type": "0x84",
       "movement_stream": null,
-      "animation_stream": "0x00124318",
+      "animation_stream": "0x00124318 ACTOR_ANIM_TYPE84_BASE_BA",
       "resource_count": "0x00",
       "post_initialize": "Each caller replaces the animation root with its event-specific stream and subtracts eight from the spawned actor's Y position."
     }
