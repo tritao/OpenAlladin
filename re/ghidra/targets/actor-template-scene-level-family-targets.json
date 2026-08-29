@@ -88,7 +88,7 @@
       "consumer": "SceneResource_InitializeActiveScene",
       "destination": "0x00FF7EC4",
       "runtime_type": "0x84",
-      "movement_stream": "0x001203D8",
+      "movement_stream": "0x001203D8 ACTOR_MOVE_TYPE84_SHARED_STEP_2",
       "animation_stream": "0x00125DC4",
       "resource_count": "0x05"
     },
@@ -99,7 +99,7 @@
       "consumer": "SceneResource_InitializeActiveScene",
       "destination": "0x00FF7E82",
       "runtime_type": "0x84",
-      "movement_stream": "0x001203D8",
+      "movement_stream": "0x001203D8 ACTOR_MOVE_TYPE84_SHARED_STEP_2",
       "animation_stream": "0x001261D0",
       "resource_count": "0x10"
     },

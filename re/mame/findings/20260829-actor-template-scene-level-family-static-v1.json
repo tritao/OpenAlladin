@@ -54,13 +54,13 @@
       "address": "0x001B8318",
       "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY",
       "consumer": "SceneResource_InitializeActiveScene at 0x001B0992/0x001B09E4",
-      "behavior": "Fixed slot 0x00FF7EC4 initialization using movement 0x001203D8 and animation 0x00125DC4."
+      "behavior": "Fixed slot 0x00FF7EC4 initialization using ACTOR_MOVE_TYPE84_SHARED_STEP_2 at 0x001203D8 and animation 0x00125DC4."
     },
     {
       "address": "0x001B832C",
       "name": "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY",
       "consumer": "SceneResource_InitializeActiveScene at 0x001B08AE/0x001B09A6/0x001B09F8",
-      "behavior": "Primary gameplay slot initialization using movement 0x001203D8 and animation 0x001261D0."
+      "behavior": "Primary gameplay slot initialization using ACTOR_MOVE_TYPE84_SHARED_STEP_2 at 0x001203D8 and animation 0x001261D0."
     },
     {
       "address": "0x001B8340",

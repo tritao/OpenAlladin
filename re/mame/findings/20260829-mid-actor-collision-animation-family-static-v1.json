@@ -13,7 +13,7 @@
     "name": "ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD",
     "record_bytes": "8400400000FF001203E0600000122B9C00000000",
     "runtime_type": "0x84",
-    "default_movement": "0x001203E0",
+    "default_movement": "0x001203E0 ACTOR_MOVE_TYPE84_SHARED_STEP_1",
     "default_animation": "0x00122B9C"
   },
   "streams": [
@@ -28,7 +28,7 @@
         "0x00122BBC ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_B"
       ],
       "decoded": [
-        "F5 child records use ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD",
+        "F5 child records use ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD with ACTOR_MOVE_TYPE84_SHARED_STEP_2/ACTOR_MOVE_TYPE84_SHARED_STEP_1 overrides",
         "F600 clears the source actor",
         "FA applies the 0x001A0A actor-field adjustment and EB clears the actor flag",
         "The local loop is 0x00122BB6 -> 0x00122BA6"

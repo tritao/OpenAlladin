@@ -1759,6 +1759,84 @@
     - actor_template_type30_presentation_child
     - movement_stream_decoder
 
+0x001203D0:
+  name: ACTOR_MOVE_TYPE2F_LEVEL12_TERMINAL_EVENT
+  type: movement_stream
+  size: 8
+  confidence: decompiled
+  description: Type-0x2F Level-12 terminal-event movement root supplied by ACTOR_TEMPLATE_TYPE_2F_LEVEL12_EVENT at 0x001B7BE8. Its exact 8-byte stream applies a (+3, 0) delta and loops unconditionally back to 0x001203D0.
+  evidence:
+    - shared-movement-root-family-static-decompilation
+    - actor_template_special_event_family_static_decompilation
+    - movement_stream_decoder
+
+0x001203D8:
+  name: ACTOR_MOVE_TYPE84_SHARED_STEP_2
+  type: movement_stream
+  size: 8
+  confidence: decompiled
+  description: Shared Type-0x84 movement root used by the two scene-initialization templates and the Type-0x84 collision-child F5 override. Its exact 8-byte stream applies a (+2, 0) delta and loops unconditionally back to 0x001203D8.
+  evidence:
+    - shared-movement-root-family-static-decompilation
+    - actor_template_scene_level_family_static_decompilation
+    - mid_actor_collision_animation_family_static_decompilation
+    - movement_stream_decoder
+
+0x001203E0:
+  name: ACTOR_MOVE_TYPE84_SHARED_STEP_1
+  type: movement_stream
+  size: 8
+  confidence: decompiled
+  description: Shared Type-0x84 movement root supplied by ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD and its second F5 override. Its exact 8-byte stream applies a (+1, 0) delta and loops unconditionally back to 0x001203E0.
+  evidence:
+    - shared-movement-root-family-static-decompilation
+    - mid_actor_collision_animation_family_static_decompilation
+    - movement_stream_decoder
+
+0x001203F2:
+  name: ACTOR_MOVE_TYPE50_LEVEL09_SPAWN
+  type: movement_stream
+  size: 8
+  confidence: decompiled
+  description: Type-0x50 Level-09 spawn movement root written by Level09_EnterRoutine at 0x001B619C into the newly initialized actor movement field. Its exact 8-byte stream applies a (+2, 0) delta and loops unconditionally back to 0x001203F2.
+  evidence:
+    - shared-movement-root-family-static-decompilation
+    - level09_type50_template_static_decompilation
+    - movement_stream_decoder
+
+0x001203FA:
+  name: ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE
+  type: movement_stream
+  size: 56
+  confidence: decompiled
+  description: Type-0x15 proximity-response movement root installed by ACTOR_ANIM_TYPE14_INTERACTION at 0x001247F0. Its exact 56-byte owner contains the three-step response loop, conditional entries at 0x00120418 and 0x00120428, the encoded actor/animation update, and the terminal movement clear immediately before ACTOR_MOVE_TYPE1F_PROXIMITY_GATE.
+  evidence:
+    - shared-movement-root-family-static-decompilation
+    - type14_type84_presentation_animation_static_decompilation
+    - movement_stream_decoder
+
+0x00120418:
+  name: ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE_CONDITION_ENTRY
+  type: movement_stream
+  alias_of: ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE
+  entry_offset: 30
+  confidence: decompiled
+  description: Conditional Type-0x15 movement entry embedded in ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE. It aliases the parent owner and does not claim a second ROM range.
+  evidence:
+    - shared-movement-root-family-static-decompilation
+    - movement_stream_decoder
+
+0x00120428:
+  name: ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE_UPDATE_ENTRY
+  type: movement_stream
+  alias_of: ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE
+  entry_offset: 46
+  confidence: decompiled
+  description: Conditional Type-0x15 movement update entry embedded in ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE. It aliases the parent owner and does not claim a second ROM range.
+  evidence:
+    - shared-movement-root-family-static-decompilation
+    - movement_stream_decoder
+
 0x00120432:
   name: ACTOR_MOVE_TYPE1F_PROXIMITY_GATE
   size: 58
@@ -2847,7 +2925,7 @@
   name: ACTOR_ANIM_TYPE14_INTERACTION
   size: 388
   confidence: decompiled
-  description: Type-0x14 interaction animation selected by ACTOR_TEMPLATE_TYPE_14_INTERACTION through selector 0x13. Its packed root publishes actor field 0x11 as 0x0014, presents the 0x1A96-0x1AAA opening with player-X and random gates, changes the actor to type 0x15 with movement stream 0x001203FA for the response, and later publishes type 0x84, plays sound 0x42, and spawns ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE. The terminal EA at 0x001248E4 enters the separately owned response tail at 0x001249F0.
+  description: Type-0x14 interaction animation selected by ACTOR_TEMPLATE_TYPE_14_INTERACTION through selector 0x13. Its packed root publishes actor field 0x11 as 0x0014, presents the 0x1A96-0x1AAA opening with player-X and random gates, changes the actor to type 0x15 with ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE at 0x001203FA for the response, and later publishes type 0x84, plays sound 0x42, and spawns ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE. The terminal EA at 0x001248E4 enters the separately owned response tail at 0x001249F0.
   evidence:
     - type14_type84_presentation_animation_static_decompilation
     - actor_template_type14_interaction
@@ -4804,7 +4882,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 collision-child template supplied by the two F5 records in ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE. Its default movement and animation roots are 0x001203E0 and 0x00122B9C, while the F5 records provide the alternate child overrides 0x001203D8/0x00122B9C and 0x001203E0/0x00122BBC.
+  description: Type-0x84 collision-child template supplied by the two F5 records in ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE. Its default movement and animation roots are ACTOR_MOVE_TYPE84_SHARED_STEP_1 at 0x001203E0 and 0x00122B9C, while the F5 records provide the alternate child overrides ACTOR_MOVE_TYPE84_SHARED_STEP_2/0x00122B9C and ACTOR_MOVE_TYPE84_SHARED_STEP_1/0x00122BBC.
   evidence:
     - mid-actor-collision-animation-family-static-decompilation
     - actor_collision_handler_family_static_decompilation
@@ -5445,7 +5523,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 scene-initialization template used by SceneResource_InitializeActiveScene for the fixed actor slot at 0x00FF7EC4; it uses movement stream 0x001203D8, animation stream 0x00125DC4, and owns five resources before the caller sets the initial facing state.
+  description: Type-0x84 scene-initialization template used by SceneResource_InitializeActiveScene for the fixed actor slot at 0x00FF7EC4; it uses ACTOR_MOVE_TYPE84_SHARED_STEP_2 at 0x001203D8, animation stream 0x00125DC4, and owns five resources before the caller sets the initial facing state.
   evidence:
     - ghidra_scene_initialize_active_scene
     - actor_template_grid_xrefs
@@ -5455,7 +5533,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 scene-initialization template used by SceneResource_InitializeActiveScene for the primary gameplay actor slot at 0x00FF7E82; it uses movement stream 0x001203D8, animation stream 0x001261D0, and owns sixteen resources before the caller sets the initial facing state.
+  description: Type-0x84 scene-initialization template used by SceneResource_InitializeActiveScene for the primary gameplay actor slot at 0x00FF7E82; it uses ACTOR_MOVE_TYPE84_SHARED_STEP_2 at 0x001203D8, animation stream 0x001261D0, and owns sixteen resources before the caller sets the initial facing state.
   evidence:
     - ghidra_scene_initialize_active_scene
     - actor_template_grid_xrefs
@@ -5698,7 +5776,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x50 Level-09 spawn base selected by Level09_EnterRoutine at 0x001B6186; its template supplies the type, base flags, template word 0x4000, and eleven resources, while the callback installs movement 0x001203F2, animation 0x00124B94, facing 0xFF, response byte 2, and the level-relative position.
+  description: Type-0x50 Level-09 spawn base selected by Level09_EnterRoutine at 0x001B6186; its template supplies the type, base flags, template word 0x4000, and eleven resources, while the callback installs ACTOR_MOVE_TYPE50_LEVEL09_SPAWN at 0x001203F2, animation 0x00124B94, facing 0xFF, response byte 2, and the level-relative position.
   evidence:
     - ghidra_decompile_001B614C
     - level09_type50_template_targets
@@ -5719,7 +5797,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2F final-scene event template selected by Level12_EnterRoutine at 0x001B62B6 when its event byte is 0x0D; it uses movement stream 0x001203D0, animation stream ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
+  description: Type-0x2F final-scene event template selected by Level12_EnterRoutine at 0x001B62B6 when its event byte is 0x0D; it uses ACTOR_MOVE_TYPE2F_LEVEL12_TERMINAL_EVENT at 0x001203D0, animation stream ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs

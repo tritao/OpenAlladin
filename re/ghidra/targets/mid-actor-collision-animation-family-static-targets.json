@@ -13,7 +13,7 @@
     "size": 20,
     "record_bytes": "8400400000FF001203E0600000122B9C00000000",
     "default_runtime_type": "0x84",
-    "default_movement": "0x001203E0",
+    "default_movement": "0x001203E0 ACTOR_MOVE_TYPE84_SHARED_STEP_1",
     "default_animation": "0x00122B9C",
     "producer": "F5 records at 0x00122B70 and 0x00122B80"
   },
@@ -26,8 +26,8 @@
       "producer": "0x001AC6B4 ActorType2D2E31_ActorCollisionHandler",
       "decoded": [
         "Frame 0x1C96 opens the Type-0x84 response",
-        "F5 at 0x00122B70 selects ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD with animation 0x00122B9C and movement 0x001203D8",
-        "F5 at 0x00122B80 selects the same template with animation 0x00122BBC and movement 0x001203E0",
+        "F5 at 0x00122B70 selects ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD with animation 0x00122B9C and movement ACTOR_MOVE_TYPE84_SHARED_STEP_2 at 0x001203D8",
+        "F5 at 0x00122B80 selects the same template with animation 0x00122BBC and movement ACTOR_MOVE_TYPE84_SHARED_STEP_1 at 0x001203E0",
         "The parent clears the source actor, applies the 0x001A0A adjustment through FA, clears the actor flag, and loops from 0x00122BB6 to 0x00122BA6"
       ],
       "embedded_entries": [

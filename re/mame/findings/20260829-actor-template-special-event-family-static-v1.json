@@ -18,7 +18,7 @@
       "address": "0x001B7BE8",
       "name": "ACTOR_TEMPLATE_TYPE_2F_LEVEL12_EVENT",
       "consumer": "Level12_EnterRoutine at 0x001B62CC",
-      "behavior": "Conditional type-0x2F final-scene event source using movement 0x001203D0, animation 0x00123A7E, four resources, and fixed position (0x02B1,0x022A)."
+      "behavior": "Conditional type-0x2F final-scene event source using ACTOR_MOVE_TYPE2F_LEVEL12_TERMINAL_EVENT at 0x001203D0, animation 0x00123A7E, four resources, and fixed position (0x02B1,0x022A)."
     }
   ],
   "conclusion": "The special-event block establishes one interaction template and one Level 12 event template as exact 20-byte records from complete static consumers.",

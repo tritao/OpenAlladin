@@ -14,7 +14,7 @@
     "bytes": 388,
     "opening_frames": "0x1A96, 0x1A9A, 0x1A9E, 0x1AA2, 0x1AA6, 0x1AAA",
     "opening_write": "ED at 0x00124768 writes actor field 0x11 = 0x0014",
-    "response": "Publishes type 0x15 at 0x001247EA, installs movement 0x001203FA at 0x001247F0, plays sound 0x4F at 0x00124802 and 0x00124844, and loops through the proximity-controlled response frames.",
+    "response": "Publishes type 0x15 at 0x001247EA, installs ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE at 0x001203FA, plays sound 0x4F at 0x00124802 and 0x00124844, and loops through the proximity-controlled response frames.",
     "terminal": "Publishes type 0x84 at 0x001248B8, plays sound 0x42 at 0x001248BE, spawns ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE at 0x001248C0, and enters 0x001249F0 through EA at 0x001248E4."
   },
   "type84_child": {

@@ -13,7 +13,7 @@
     "consumer": "0x001B7F30 ACTOR_TEMPLATE_TYPE_14_INTERACTION",
     "producer": "InteractionSpawn_Type14_13 at 0x001B6D84",
     "opening": "Publishes actor field 0x11 = 0x0014, presents the 0x1A96-0x1AAA sequence, and gates the response on player-X distances 0x20/0x78 and encoded random branches.",
-    "response": "The 0x1AAE-0x1ADA path publishes actor field 0x11 = 0x0015, installs movement stream 0x001203FA, plays sound 0x4F twice, and returns through the proximity-controlled frame loop.",
+    "response": "The 0x1AAE-0x1ADA path publishes actor field 0x11 = 0x0015, installs ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE at 0x001203FA, plays sound 0x4F twice, and returns through the proximity-controlled frame loop.",
     "terminal": "The 0x1A7A-0x1A92 path reloads timer 0x93, publishes actor field 0x11 = 0x0084, plays sound 0x42, spawns ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE at 0x001B7CD8, and jumps to 0x001249F0.",
     "continuation": "EA at 0x001248E4 enters the final 0x001249F0-0x00124A2D tail, which is physically owned by the separate Type-0x84 presentation-child stream."
   },

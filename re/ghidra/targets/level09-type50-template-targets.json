@@ -27,7 +27,7 @@
     "resource_count": "0x0B"
   },
   "caller_overrides": {
-    "movement_stream": "0x001203F2",
+    "movement_stream": "0x001203F2 ACTOR_MOVE_TYPE50_LEVEL09_SPAWN",
     "animation_stream": "0x00124B94",
     "facing_byte": "0xFF",
     "response_byte": "0x02",
