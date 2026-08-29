@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-reset-secondary-animation-static-targets.json",
+  "stream": {
+    "address": "0x00125EEE",
+    "name": "ACTOR_ANIM_SCENE_RESET_SECONDARY",
+    "range": "0x00125EEE-0x00125F59",
+    "bytes": 108,
+    "opening_frames": ["0x097A", "0x097A", "0x097E", "0x097E", "0x0982", "0x0982", "0x0986", "0x0986", "0x098A", "0x098A", "0x098E", "0x098E", "0x0992", "0x0992", "0x0996", "0x0996", "0x099A", "0x099A", "0x099E"],
+    "clear": "EC 0x01 at 0x00125F16",
+    "response_entry": "0x00125F18",
+    "response_frames": ["0x09D2", "0x0B16", "0x0B1A", "0x0B1E", "0x0B22", "0x0B26", "0x0B2A"],
+    "random_branches": ["0x00125F2C -> 0x00125F28", "0x00125F44 -> 0x00125F40"],
+    "loop": "EA at 0x00125F54 -> 0x00125F24",
+    "stopped_reason": "control_flow_cycle"
+  },
+  "producers": [
+    {
+      "address": "0x001B4F7C",
+      "name": "Scene_ResetToState0",
+      "selection_site": "0x001B508E",
+      "entry": "0x00125EEE"
+    },
+    {
+      "address": "0x001B080E",
+      "name": "SceneResource_InitializeActiveScene",
+      "selection_site": "0x001B08C4",
+      "entry": "0x00125F18",
+      "entry_offset": 42
+    }
+  ],
+  "boundary": "The exact 108-byte owner ends at 0x00125F59. The nested F5 stream beginning at 0x00125F5A remains a separate adjacent family.",
+  "evidence": [
+    "Fresh instructions.json DATA references from 0x001B508E and 0x001B08C4",
+    "Lossless AnimationDecoder output from root and embedded entry",
+    "Scene_ResetToState0 and SceneResource_InitializeActiveScene disassembly showing the actor animation-field writes"
+  ],
+  "conclusion": "The reset path owns the full 0x00125EEE root, while active-scene initialization deliberately enters its embedded 0x00125F18 response phase; the alias is not a second data range.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -655,6 +655,46 @@ def test_actor_type41_interaction_response_animation_is_exact():
     assert decoded["instructions"][-1]["branch_target"] == "0x00125D90"
 
 
+def test_scene_reset_secondary_animation_and_embedded_entry_are_exact():
+    symbols = SymbolStore()
+    root = symbols.at(0x00125EEE, include_ranges=False)
+    assert root is not None
+    assert root.name == "ACTOR_ANIM_SCENE_RESET_SECONDARY"
+    assert root.end == 0x00125F59
+    assert root.size == 108
+    assert root.metadata["type"] == "animation_stream"
+
+    entry = symbols.at(0x00125F18, include_ranges=False)
+    assert entry is not None
+    assert entry.name == "ACTOR_ANIM_SCENE_RESET_SECONDARY_ENTRY"
+    assert entry.metadata["alias_of"] == "ACTOR_ANIM_SCENE_RESET_SECONDARY"
+    assert entry.metadata["entry_offset"] == 42
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = load_animation_decoder().AnimationDecoder(rom)
+    decoded = decoder.decode_stream(
+        0x00125EEE,
+        max_instructions=128,
+        max_bytes=256,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 108
+    assert decoded["stopped_reason"] == "control_flow_cycle"
+    assert decoded["instructions"][20]["opcode"] == "0xEC"
+    assert decoded["instructions"][-1]["branch_target"] == "0x00125F24"
+
+    embedded = decoder.decode_stream(
+        0x00125F18,
+        max_instructions=64,
+        max_bytes=128,
+        follow_control_flow=True,
+    )
+    assert embedded["bytes_decoded"] == 66
+    assert embedded["stopped_reason"] == "control_flow_cycle"
+    assert embedded["instructions"][-1]["branch_target"] == "0x00125F24"
+
+
 def test_type03_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {

@@ -4532,6 +4532,29 @@
     - player_terrain_experiments
     - animation_stream_decoder
 
+0x00125EEE:
+  name: ACTOR_ANIM_SCENE_RESET_SECONDARY
+  type: animation_stream
+  size: 108
+  confidence: decompiled
+  description: Scene-reset secondary actor animation installed by Scene_ResetToState0 at 0x001B508E after the type-0x84 secondary template initialization. It presents the 0x097A-0x099E sequence, clears actor state 0x01, presents the 0x09D2/0x0B16-0x0B2A response sequence with random branches, and loops from 0x00125F24.
+  evidence:
+    - scene_reset_secondary_animation_static_decompilation
+    - ghidra_scene_reset_to_state0
+    - animation_stream_decoder
+
+0x00125F18:
+  name: ACTOR_ANIM_SCENE_RESET_SECONDARY_ENTRY
+  type: animation_stream
+  alias_of: ACTOR_ANIM_SCENE_RESET_SECONDARY
+  entry_offset: 42
+  confidence: decompiled
+  description: Embedded entry into ACTOR_ANIM_SCENE_RESET_SECONDARY selected by SceneResource_InitializeActiveScene at 0x001B08C4. It starts at the 0x09D2 response phase and does not claim a second ROM ownership range.
+  evidence:
+    - scene_reset_secondary_animation_static_decompilation
+    - ghidra_scene_resource_initialize_active_scene
+    - animation_stream_decoder
+
 0x00125AFE:
   name: ACTOR_ANIM_TYPE59_SCENE_EVENT
   size: 296

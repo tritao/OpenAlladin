@@ -442,7 +442,7 @@
 0x001B080E:
   name: SceneResource_InitializeActiveScene
   confidence: decompiled
-  description: Initializes an active scene resource when the scene-entry gate is set, rebuilding VDP state, actor records, resource-backed actors, palettes, and the recurring frame service pass.
+  description: Initializes an active scene resource when the scene-entry gate is set, rebuilding VDP state, actor records, resource-backed actors, palettes, and the recurring frame service pass; its secondary actor enters ACTOR_ANIM_SCENE_RESET_SECONDARY_ENTRY at 0x00125F18.
   evidence:
     - ghidra_decompile_001B080E
     - ghidra_scene_camera_orchestration_targets
@@ -1349,7 +1349,7 @@
 0x001B4F7C:
   name: Scene_ResetToState0
   confidence: confirmed
-  description: Reinitializes the scene system and explicitly sets SCENE_STATE to 0 before loading the initial scene resources.
+  description: Reinitializes the scene system and explicitly sets SCENE_STATE to 0 before loading the initial scene resources; its secondary actor enters ACTOR_ANIM_SCENE_RESET_SECONDARY at 0x00125EEE.
   evidence:
     - ghidra_level_transition_targeted_decompile
     - ghidra_memory_reference_scene_state

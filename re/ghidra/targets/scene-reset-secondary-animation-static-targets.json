@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-scene-reset-secondary-animation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Resolve the scene-reset secondary actor AnimationVM stream and its active-scene embedded entry.",
+  "targets": [
+    {
+      "address": "0x00125EEE",
+      "name": "ACTOR_ANIM_SCENE_RESET_SECONDARY",
+      "range": ["0x00125EEE", "0x00125F59"],
+      "size": 108,
+      "producer": "Scene_ResetToState0 at 0x001B508E",
+      "decoded": [
+        "Frame 0x097A opening",
+        "EE 0x8B timer/field command",
+        "Frame sequence 0x097A-0x099E",
+        "EC 0x01 actor-state clear at 0x00125F16",
+        "Random branches at 0x00125F2C and 0x00125F44",
+        "EA at 0x00125F54 -> 0x00125F24"
+      ]
+    },
+    {
+      "address": "0x00125F18",
+      "name": "ACTOR_ANIM_SCENE_RESET_SECONDARY_ENTRY",
+      "alias_of": "ACTOR_ANIM_SCENE_RESET_SECONDARY",
+      "entry_offset": 42,
+      "producer": "SceneResource_InitializeActiveScene at 0x001B08C4"
+    }
+  ],
+  "boundary_basis": "The direct reset root decodes exactly through 0x00125F59. The active-scene selection at 0x00125F18 is an embedded entry 42 bytes into that owner, and the adjacent nested F5 stream begins separately at 0x00125F5A.",
+  "evidence": [
+    "Fresh instructions.json DATA reference from 0x001B508E to 0x00125EEE",
+    "Fresh instructions.json DATA reference from 0x001B08C4 to 0x00125F18",
+    "Lossless AnimationDecoder output from both entry points",
+    "Scene reset and active-scene actor initialization contracts"
+  ],
+  "conclusion": "The previously unknown 0x00125EEE-0x00125F59 range is one scene-reset secondary AnimationVM owner with an embedded active-scene entry at 0x00125F18; it does not absorb the adjacent nested F5 stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
