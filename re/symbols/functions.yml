@@ -2206,6 +2206,17 @@
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF894
     - player_collision_actor_relative_placement_family_static_decompilation
+0x001AF8F6:
+  name: ActorType50_51_PlayerCollisionHandler
+  size: 130
+  confidence: decompiled
+  description: Shared player-collision handler for runtime actor types 0x50 and 0x51. When terrain response is eligible and the actor has the collision flag, it accepts an actor-relative Y position within a 10-pixel window, writes PLAYER_X = actor X - WORLD_CAMERA_X and PLAYER_Y = actor Y - WORLD_CAMERA_Y + 0x20, arms PLAYER_INTERACTION_TRANSITION_LOCK and PLAYER_TRANSITION_GATE, and selects a 0x00A0 horizontal camera threshold; type 0x50 is then converted to type 0x51 with animation 0x00124BA6 and a cleared animation timer.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF8F6
+    - level01_player_motion_writer_audit
+    - level01_transfer_capable_mechanism_graph
+    - player_collision_global_placement_family_static_decompilation
 0x001AF1AC:
   name: ActorType13_PlayerCollisionHandler
   confidence: decompiled

@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-player-collision-global-placement-family-finding-v1",
+  "recorded_at": "2026-08-29",
+  "status": "static-family-closed",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "sources": [
+    "re/ghidra/targets/player-collision-global-placement-family-targets.json",
+    "re/mame/findings/20260827-level01-player-motion-writer-audit-v1.json",
+    "re/mame/findings/20260827-level01-transfer-capable-mechanism-graph-v1.json",
+    "re/symbols/functions.yml",
+    "build/re/dasm-1A8000.txt"
+  ],
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "address_space": "68000 ROM addresses",
+    "handler": {
+      "address": "0x001AF8F6",
+      "size": 130,
+      "actor_types": ["0x50", "0x51"],
+      "name": "ActorType50_51_PlayerCollisionHandler",
+      "range": "0x001AF8F6-0x001AF977",
+      "semantics": "After the terrain-response and actor-collision-flag gates, accepts actor Y - WORLD_CAMERA_Y + 0x20 when it is within 10 pixels of PLAYER_Y, copies actor X - WORLD_CAMERA_X to PLAYER_X, arms PLAYER_INTERACTION_TRANSITION_LOCK and PLAYER_TRANSITION_GATE, and selects CAMERA_HORIZONTAL_THRESHOLD=0x00A0. Runtime type 0x50 promotes to type 0x51 with animation 0x00124BA6 and clears the actor animation timer."
+    }
+  },
+  "boundary_checks": {
+    "range": "0x001AF8F6-0x001AF977",
+    "result": "The 130-byte body terminates at RTS immediately before the existing 0x001AF978 handhold handler; no promoted range overlaps."
+  },
+  "reachability_qualification": "This is a real actor-relative player placement and transition handler. Existing static producer analysis assigns the type-0x50 spawn path to level-table entry 9 rather than the retained Level 01 route, so static presence and exact behavior do not establish live Level 01 reachability.",
+  "conclusion": "The shared type-0x50/0x51 handler is now canonicalized with its local-coordinate placement formula, transition latches, camera threshold, type promotion, animation root, and exact dispatch boundary."
+}

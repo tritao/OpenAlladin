@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-global-placement-family",
+    "purpose": "Canonicalize the shared type-0x50/0x51 player-collision handler that copies an actor position into player local coordinates and arms the transition/camera state."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x50", "0x51"], "address": "0x001AF8F6" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AF8F6", "name": "ActorType50_51_PlayerCollisionHandler" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7DF6", "name": "WORLD_CAMERA_X" },
+    { "address": "0x00FF7DF8", "name": "WORLD_CAMERA_Y" },
+    { "address": "0x00FF7DFA", "name": "PLAYER_X" },
+    { "address": "0x00FF7DFC", "name": "PLAYER_Y" },
+    { "address": "0x00FF7DFE", "name": "CAMERA_HORIZONTAL_THRESHOLD" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF0BE", "name": "TERRAIN_RESPONSE_ACTIVE" },
+    { "address": "0x00FFF0C0", "name": "TERRAIN_VERTICAL_STOP" },
+    { "address": "0x00FFF0D0", "name": "PLAYER_TRANSITION_GATE" },
+    { "address": "0x00FFF0D7", "name": "PLAYER_INTERACTION_TRANSITION_LOCK" }
+  ]
+}
