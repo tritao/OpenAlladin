@@ -1,7 +1,9 @@
 #include "level_event.hpp"
+#include "level_event_system.hpp"
 
 #include "game_state.hpp"
 
+#include <array>
 #include <cassert>
 #include <cstdint>
 #include <vector>
@@ -84,6 +86,41 @@ int main() {
     vm.update(state, services);
     assert(!vm.active());
     assert(vm.faulted());
+
+    // Command effects are owned by the semantic service, not by the timed
+    // record interpreter. Keep the audio gate behavior independently tested
+    // from stream timing.
+    openaladdin::ActorSystem actors;
+    openaladdin::ActorLifecycleSystem lifecycle(actors);
+    openaladdin::PlayerAnimationVm animation;
+    std::array<openaladdin::PlayerAnimationVm, 32> actor_animations;
+    openaladdin::LevelEventSystem event_system(
+        lifecycle,
+        animation,
+        actor_animations
+    );
+    openaladdin::GameState effect_state;
+    effect_state.camera.vdp_update = 1;
+    const auto sound_effects = event_system.dispatch(
+        effect_state,
+        openaladdin::LevelEventCommand{0, 0xE7, 0, 0}
+    );
+    assert(sound_effects.sound_requests.size() == 1);
+    assert(sound_effects.sound_requests.front() == 0x5D);
+
+    effect_state.camera.vdp_update = 0;
+    const auto gated_sound_effects = event_system.dispatch(
+        effect_state,
+        openaladdin::LevelEventCommand{0, 0xE7, 0, 0}
+    );
+    assert(gated_sound_effects.sound_requests.empty());
+
+    event_system.dispatch(
+        effect_state,
+        openaladdin::LevelEventCommand{0, 0xF2, 0, 0}
+    );
+    assert(effect_state.scene.script_countdown == 1);
+    assert(effect_state.player.animation_selector.scene_script_countdown == 1);
 
     return 0;
 }

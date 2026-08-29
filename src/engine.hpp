@@ -8,6 +8,7 @@
 #include "game_state.hpp"
 #include "interaction.hpp"
 #include "level_event.hpp"
+#include "level_event_system.hpp"
 #include "movement.hpp"
 #include "player_terrain.hpp"
 #include "scene_resource.hpp"
@@ -119,21 +120,6 @@ private:
     void update_terminal_actor_motion(ActorState& actor);
     void update_actor_animations();
     void update_level_events();
-    void dispatch_level_event(const LevelEventCommand& event);
-    bool spawn_level_event_actor(
-        std::uint32_t template_address,
-        std::uint16_t x,
-        std::uint16_t y,
-        std::uint32_t animation_override = 0,
-        std::uint32_t movement_override = 0,
-        bool override_type = false,
-        std::uint8_t type = 0,
-        bool override_movement_flags = false,
-        std::uint8_t movement_flags = 0,
-        bool override_sprite_attribute = false,
-        std::uint16_t sprite_attribute = 0,
-        bool set_facing_from_x = false
-    );
     void start_level_event_stream_after_exit();
     void update_scene_resources();
     SceneServices scene_services();
@@ -192,6 +178,7 @@ private:
     PlayerAnimationVm animation_;
     MovementVm movement_vm_;
     std::array<PlayerAnimationVm, 32> actor_animations_{};
+    LevelEventSystem level_event_system_;
     // Actor records allocated by the late interaction refill service are not
     // visited by the movement pass until the following game-loop boundary.
     // Keep this transient scheduling edge separate from the actor record so

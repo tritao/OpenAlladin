@@ -185,6 +185,8 @@ add_library(openaladdin_engine STATIC
     src/level.hpp
     src/level_event.cpp
     src/level_event.hpp
+    src/level_event_system.cpp
+    src/level_event_system.hpp
     src/movement.cpp
     src/movement.hpp
     src/player_terrain.cpp
