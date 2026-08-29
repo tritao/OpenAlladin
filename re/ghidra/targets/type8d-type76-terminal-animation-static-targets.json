@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "type8d-type76-terminal-animation-static",
+    "purpose": "Separate the Type-0x8D response prefix, the directly referenced Type-0x76 shared continuation, and the level-exit alternate stream before the Type-0x89 root."
+  },
+  "targets": [
+    { "address": "0x001240CE", "name": "ACTOR_ANIM_TYPE_8D_WALL_RESPONSE" },
+    { "address": "0x00124194", "name": "ACTOR_ANIM_TYPE76_INTERACTION" },
+    { "address": "0x001241C8", "name": "ACTOR_ANIM_LEVEL_EXIT_TERMINAL_ALTERNATE" },
+    { "address": "0x001B7CD8", "name": "ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE" },
+    { "address": "0x001B7DB4", "name": "ACTOR_TEMPLATE_TYPE_76_INTERACTION" },
+    { "address": "0x001AF4D8", "name": "ActorType34_PlayerCollisionHandler" },
+    { "address": "0x001B673E", "name": "InteractionSpawn_Type76" },
+    { "address": "0x001A8F0C", "name": "Level_ExitAndTerminalTransition" },
+    { "address": "0x001ACB6A", "name": "ActorEvent_SetActorFlag40" },
+    { "address": "0x001ACDD0", "name": "Actor_ConvertType89To84RandomVariantA" },
+    { "address": "0x001ACE30", "name": "Actor_ConvertType89To84RandomVariantB" }
+  ],
+  "embedded_entries": [
+    { "address": "0x0012415E", "role": "Type-0x8D F5 child entry A" },
+    { "address": "0x00124166", "role": "Type-0x8D F5 child entry B" },
+    { "address": "0x00124170", "role": "Type-0x8D F5 child entry C" },
+    { "address": "0x0012417A", "role": "Type-0x8D F5 child entry D" },
+    { "address": "0x00124198", "role": "Type-0x76 alternate entry" },
+    { "address": "0x001241EA", "role": "terminal alternate loop entry" }
+  ],
+  "memory_references": [
+    { "address": "0x001209F0", "name": "TYPE84_RESPONSE_STATE_A" },
+    { "address": "0x001209F8", "name": "TYPE84_RESPONSE_STATE_B" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" }
+  ]
+}

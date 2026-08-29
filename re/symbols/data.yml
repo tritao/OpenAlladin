@@ -770,12 +770,34 @@
 
 0x001240CE:
   name: ACTOR_ANIM_TYPE_8D_WALL_RESPONSE
+  size: 198
   confidence: decompiled
-  description: Animation stream installed when the type-0x34 wall actor collides with the player; its statically decoded 224-byte control-flow cycle opens with six response frames, plays sound 0x09, emits four F5 child-spawn records, clears the actor, and continues through the response-state writes before looping.
+  description: Animation stream installed when the type-0x34 wall actor collides with the player. Its exact 198-byte packed prefix opens with six response frames, plays sound 0x09, emits four F5 child-entry records at 0x0012415E/0x00124166/0x00124170/0x0012417A, clears the actor, and reaches the shared Type-0x76 continuation at 0x00124194; the lossless control-flow walk totals 224 bytes because it traverses that separately owned continuation.
   evidence:
     - ghidra_type34_handler_decompile
     - actor_type8d_response_stream_decode
     - mame_type_34_handler_overlap_trace
+    - type8d-type76-terminal-animation_static_decompilation
+
+0x00124194:
+  name: ACTOR_ANIM_TYPE76_INTERACTION
+  size: 52
+  confidence: decompiled
+  description: Type-0x76 interaction animation and shared Type-0x8D response continuation. Its exact 52-byte region begins with the direct ACTOR_TEMPLATE_TYPE_76_INTERACTION entry, has the alternate entry at 0x00124198 used by Level_ExitAndTerminalTransition, publishes the type-0x84 response through the named actor-event callbacks, and loops from 0x001241C2 to 0x001241BA.
+  evidence:
+    - actor_template_level_spawn_family_static_decompilation
+    - type8d-type76-terminal-animation_static_decompilation
+    - animation_stream_decoder
+
+0x001241C8:
+  name: ACTOR_ANIM_LEVEL_EXIT_TERMINAL_ALTERNATE
+  size: 48
+  confidence: decompiled
+  description: Alternate terminal-transition animation selected by Level_ExitAndTerminalTransition at 0x001AFA76. Its exact 48-byte region publishes the 0x001209F8 response state through the Type-0x84 conversion path, calls the terminal actor-event callback at 0x001ACE30, and loops from 0x001241F2 to 0x001241EA before ACTOR_ANIM_TYPE89_RANDOM_VARIANT.
+  evidence:
+    - level_exit_terminal_transition_decompile
+    - type8d-type76-terminal-animation_static_decompilation
+    - animation_stream_decoder
 
 0x001241F8:
   name: ACTOR_ANIM_TYPE89_RANDOM_VARIANT

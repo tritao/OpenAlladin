@@ -1030,6 +1030,19 @@ the `0x12E6/0x12EA/0x12EE` response frames, EE timer values, the F0 random
 branch, and the EA loop through `0x00122C20`. The separate movement root at
 `0x001217B4` remains independently bounded.
 
+The shared Type-0x8D/Type-0x76/terminal animation block is recorded in
+`re/mame/findings/20260829-type8d-type76-terminal-animation-static-decompilation-v1.json`.
+The Type-0x8D response owns its packed prefix at `0x001240CE-0x00124193`,
+including the four embedded F5 child entries and the `F600` response cleanup.
+The direct Type-0x76 template root is independently named and bounded at
+`0x00124194-0x001241C7`, including its alternate entry at `0x00124198`.
+Finally, `Level_ExitAndTerminalTransition`'s direct assignment at
+`0x001AFA76` selects the separate 48-byte terminal alternate at
+`0x001241C8-0x001241F7`, immediately before the Type-0x89 stream. The old
+224-byte Type-8D decoder total is retained as a traversal fact because it
+walks through the shared Type-0x76 continuation; it is not used as an
+overlapping layout range.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2824,3 +2837,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type2d-guard-sword-attack-animation-static-decompilation-v1` | recorded-static-decompilation | Natural Type-0x2D guard sword-attack child animation closed through its exact template pointer, parent F5 producer, sound command, paired frame cycle, and self-loop boundary |
 | `20260829-type01-type84-child-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x01 upper-resource root and F5-spawned Type-0x84 child range-bounded with exact frames, callbacks, template records, and explicit adjacent-stream boundaries |
 | `20260829-type34-wall-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x34 wall actor animation range-bounded with exact frames, timers, random branch, loop, and selector-0x53 installation contract |
+| `20260829-type8d-type76-terminal-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x8D response prefix, direct Type-0x76 shared continuation, and level-exit terminal alternate partitioned with exact non-overlapping boundaries |
