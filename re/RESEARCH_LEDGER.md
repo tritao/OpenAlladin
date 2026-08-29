@@ -2155,6 +2155,22 @@ multi-position type-`0x40` spawn pattern. The exact contracts are recorded in
 `re/mame/findings/20260829-actor-spawn-variation-v1.json` and
 `re/ghidra/targets/actor-spawn-variation-targets.json`.
 
+## Actor type-0x89 to type-0x84 conversion variants (20260829)
+
+The paired routines at `0x001ACDD0` and `0x001ACE30` scan the 24 primary
+actor slots from `0x00FF8470` in reverse record order for an existing type
+`0x89`. On the first match they consume `TerrainScene5RandomStep`, add the
+signed offset `-3..+4` to actor offset `+0x18`, convert the record to runtime
+type `0x84`, install shared frame data `0x00124208`, set actor flag bit
+`0x40`, and republish the actor interaction byte through
+`INTERACTION_TABLE_RUNTIME`. The variants differ only in animation roots
+`0x001209F0` and `0x001209F8`, so they are named by their exact conversion
+contract rather than an unverified actor identity.
+
+The static results are recorded in
+`re/mame/findings/20260829-actor-runtime-type84-v1.json` and
+`re/ghidra/targets/actor-runtime-type84-targets.json`.
+
 The static result is recorded in
 `re/mame/findings/20260829-vdp-fill-c000-v1.json`.
 

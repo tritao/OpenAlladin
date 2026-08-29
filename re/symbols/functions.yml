@@ -2549,6 +2549,23 @@
     - ghidra_disassembly_001ACFBC
     - ghidra_actor_runtime_type6e_73_targets
 
+0x001ACDD0:
+  name: Actor_ConvertType89To84RandomVariantA
+  confidence: decompiled
+  description: Scans the 24 primary actor slots for type 0x89, applies a random X offset in the range -3..+4, converts the slot to type 0x84, installs animation root 0x001209F0 and frame data 0x00124208, sets actor flag bit 0x40, and republishes its interaction byte.
+  evidence:
+    - ghidra_disassembly_001ACDD0
+    - ghidra_decompile_001ACDD0
+    - ghidra_actor_runtime_type84_targets
+0x001ACE30:
+  name: Actor_ConvertType89To84RandomVariantB
+  confidence: decompiled
+  description: Scans the 24 primary actor slots for type 0x89, applies a random X offset in the range -3..+4, converts the slot to type 0x84, installs animation root 0x001209F8 and frame data 0x00124208, sets actor flag bit 0x40, and republishes its interaction byte.
+  evidence:
+    - ghidra_disassembly_001ACE30
+    - ghidra_decompile_001ACE30
+    - ghidra_actor_runtime_type84_targets
+
 0x001B6794:
   name: Actor_ApplyRandomSpawnVariation
   confidence: decompiled
