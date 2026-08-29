@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "recorded_at_detail": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-record-layout-targets.json",
+  "record": {
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "source_register": "A6",
+    "sequential_source_bytes": "0x00-0x12",
+    "consumed_bytes": 19,
+    "record_size": 20,
+    "trailing_byte": "Retained as part of the compact ROM record; its independent field meaning is not asserted."
+  },
+  "evidence": [
+    "The initializer advances A6 once for each source byte through source offset 0x12.",
+    "The promoted actor-template starts follow the observed 0x14-byte record cadence where adjacent boundaries are available.",
+    "All promoted records are non-overlapping at the 0x14-byte extent and remain inside the ROM address space."
+  ],
+  "scope": {
+    "established": "Canonical actor-template records occupy 20 bytes and are classified as ACTOR_TEMPLATE.",
+    "not_established": "The trailing alignment byte and every source-field semantic are not independently named here."
+  },
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

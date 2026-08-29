@@ -2710,3 +2710,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-interrupt-vector-static-decompilation-v1` | recorded-static-decompilation | Exception vector fan-in, line-1010 VDP loop, level-4 RTE stub, and spurious interrupt RTE stub |
 | `20260829-actor-template-base-zero-static-decompilation-v1` | recorded-static-decompilation | Shared zero-type actor-template base at 0x001B79B8; exact surrounding template extent deliberately left unresolved |
 | `20260829-actor-template-family-static-decompilation-v1` | recorded-static-decompilation | Nine established actor-template entry points promoted to canonical labels without asserting unproven full ranges |
+| `20260829-actor-template-record-layout-static-decompilation-v1` | recorded-static-decompilation | Established the 20-byte compact actor-template record extent from the common initializer's 19 sequential source reads and the observed record cadence |

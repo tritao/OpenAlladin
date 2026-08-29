@@ -943,6 +943,7 @@
 0x001B79B8:
   name: ACTOR_TEMPLATE_BASE_ZERO
   type: actor_template_base
+  size: 20
   confidence: confirmed
   description: Shared zero-type actor-template base passed to Actor_InitializeFromTemplate; caller-specific spawn paths overwrite the live actor type, animation, movement, and placement fields after initialization. The exact full template extent remains intentionally unclaimed.
   evidence:
@@ -953,6 +954,7 @@
 0x001B7904:
   name: ACTOR_TEMPLATE_TYPE_6E_73_BASE
   type: actor_template_base
+  size: 20
   confidence: decompiled
   description: Shared actor-template base used by the runtime type 0x6E through 0x73 interaction-spawn family; each service overwrites the runtime type, animation root, and source coordinates after initialization.
   evidence:
@@ -961,6 +963,8 @@
 
 0x001B7A30:
   name: ACTOR_TEMPLATE_TYPE01
+  type: actor_template
+  size: 20
   confidence: confirmed
   description: Compact Type-0x01 upper-resource template with no movement stream and animation ACTOR_ANIM_TYPE01.
   evidence:
@@ -969,6 +973,8 @@
 
 0x001B7D00:
   name: ACTOR_TEMPLATE_TYPE84_CHILD
+  type: actor_template
+  size: 20
   confidence: confirmed
   description: Compact Type-0x84 child-effect template with no movement stream, animation ACTOR_ANIM_TYPE84_CHILD, and one owned resource.
   evidence:
@@ -1009,6 +1015,8 @@
 
 0x001B7CB0:
   name: ACTOR_TEMPLATE_GUARD_SWORD_ATTACK
+  type: actor_template
+  size: 20
   confidence: confirmed
   description: Compact actor template for the guard sword-attack child; its type byte is 0x2D, movement stream pointer is 0x0011F6D4, and animation stream pointer is 0x00123EE8. It is spawned by the type 0x0A guard animation through the F5 handler.
   evidence:
@@ -1018,6 +1026,8 @@
 
 0x001B7940:
   name: ACTOR_TEMPLATE_DEATH_84
+  type: actor_template
+  size: 20
   confidence: confirmed
   description: Shared terminal actor template with type byte 0x84, cleanup/resource count 6, and animation stream ACTOR_ANIM_DEATH_122FA2; the guard sword-hit path installs it in the guard's existing record.
   evidence:
@@ -1027,6 +1037,8 @@
 
 0x001B80AC:
   name: ACTOR_TEMPLATE_GUARD
+  type: actor_template
+  size: 20
   confidence: confirmed
   description: Compact common actor template for type 0x0A; its animation stream is ACTOR_ANIM_GUARD_ATTACK and its natural animation spawns ACTOR_TEMPLATE_GUARD_SWORD_ATTACK.
   evidence:
@@ -1035,6 +1047,8 @@
 
 0x001B81D8:
   name: ACTOR_TEMPLATE_TYPE_7D
+  type: actor_template
+  size: 20
   confidence: confirmed
   description: Compact common actor template whose type byte is 0x7D, movement stream pointer at source offset 0x06 is 0x001211C4, and animation stream pointer at source offset 0x0C is 0x00125940.
   evidence:
@@ -1043,6 +1057,8 @@
 
 0x001B7CD8:
   name: ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE
+  type: actor_template
+  size: 20
   confidence: probable
   description: Compact actor response template selected by the type-0x34 player-collision handler; its type byte is 0x8D and its initialized animation begins at ACTOR_ANIM_TYPE_8D_WALL_RESPONSE.
   evidence:
@@ -1052,6 +1068,7 @@
 0x001B7AF8:
   name: ACTOR_TEMPLATE_TYPE_2A
   type: actor_template
+  size: 20
   confidence: confirmed
   description: Type-0x2A actor template used by the upper-route moving object; its movement stream is ACTOR_MOVE_STATE_120F76 and its animation stream is ACTOR_ANIM_STATE_1231DC.
   evidence:
@@ -1061,6 +1078,7 @@
 0x001B7ABC:
   name: ACTOR_TEMPLATE_COLLISION_RESPONSE
   type: actor_template
+  size: 20
   confidence: decompiled
   description: Shared collision-response template installed by Actor_ReinitializeFromCollisionTemplate after the source actor and owned resources are cleared; the exact full template extent remains unclaimed.
   evidence:
@@ -1070,6 +1088,7 @@
 0x001B7C10:
   name: ACTOR_TEMPLATE_UPPER_TYPE20
   type: actor_template
+  size: 20
   confidence: confirmed
   description: Upper interaction template used by the runtime type-0x20 spawn path; the caller initializes the record and then writes animation root 0x0012337A and runtime type 0x20.
   evidence:
@@ -1079,6 +1098,7 @@
 0x001B7C24:
   name: ACTOR_TEMPLATE_UPPER_TYPE1E
   type: actor_template
+  size: 20
   confidence: confirmed
   description: Upper interaction template used by the direct runtime type-0x1E spawn path from interaction selector 0x11.
   evidence:
@@ -1088,6 +1108,7 @@
 0x001B7D8C:
   name: ACTOR_TEMPLATE_TYPE_6A_6B
   type: actor_template
+  size: 20
   confidence: trace_validated
   description: Shared selector-0x0D actor template used by the natural remote interaction producers; the initialized actor family is observed as runtime type 0x6A and can align into type 0x6B.
   evidence:
@@ -1097,6 +1118,7 @@
 0x001B7E40:
   name: ACTOR_TEMPLATE_TYPE_84
   type: actor_template
+  size: 20
   confidence: confirmed
   description: Type-0x84 response template used by Actor_ReinitializeAsType84 and the type-0x2D collision transition; the exact full template extent remains unclaimed.
   evidence:
@@ -1107,6 +1129,7 @@
 0x001B7E54:
   name: ACTOR_TEMPLATE_TYPE_65_BOUNCE
   type: actor_template
+  size: 20
   confidence: trace_validated
   description: Type-0x65 bounce-actor template installed by the selector-0x74 terrain response; its natural Level 01 producer uses the generic level-object allocation path.
   evidence:
@@ -1116,6 +1139,7 @@
 0x001B7ECC:
   name: ACTOR_TEMPLATE_F5_TYPE_84
   type: actor_template
+  size: 20
   confidence: trace_validated
   description: Type-0x84 actor template supplied by the opening player AnimationVM F5 spawn; the common initializer is followed by caller/stream-specific runtime field publication.
   evidence:
