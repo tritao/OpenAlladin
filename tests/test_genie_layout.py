@@ -471,6 +471,25 @@ def test_canonical_scene_resource_palette_sources_have_exact_loader_extents():
         assert symbol.metadata["type"] == "palette_data"
 
 
+def test_canonical_scene_reset_credits_palette_sources_have_exact_extents():
+    symbols = SymbolStore()
+    expected = (
+        (0x00129E00, 0x00129E7F, "SCENE_RESET_TRANSITION_PALETTE_SOURCE"),
+        (0x00129E80, 0x00129EFF, "CREDITS_TRANSITION_PALETTE_SOURCE"),
+    )
+    actual = []
+    for start, end, name in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == 0x80
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "palette_data"
+        actual.append((symbol.address, symbol.end))
+    assert actual == [(start, end) for start, end, _ in expected]
+    assert actual[0][1] + 1 == actual[1][0]
+
+
 def test_canonical_credits_stream_has_exact_interpreter_terminal():
     symbols = SymbolStore()
     symbol = symbols.at(0x00127E8C, include_ranges=False)

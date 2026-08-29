@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-reset-credits-palette-extents",
+    "purpose": "Bound the two four-band palette sources directly selected by the reset-scene and credits transition services."
+  },
+  "service": {
+    "address": "0x001B278A",
+    "name": "Render_RunPaletteTransitionFrom",
+    "contract": "Publishes four 0x20-byte bands and converges 0x40 words from the source."
+  },
+  "sources": [
+    { "address": "0x00129E00", "name": "SCENE_RESET_TRANSITION_PALETTE_SOURCE", "consumer": "0x001B50A4 Scene_ResetToState0", "range": ["0x00129E00", "0x00129E7F"], "bytes": 128 },
+    { "address": "0x00129E80", "name": "CREDITS_TRANSITION_PALETTE_SOURCE", "consumer": "0x001B4698 Credits_RunRoll", "range": ["0x00129E80", "0x00129EFF"], "bytes": 128 }
+  ],
+  "evidence": [
+    "Both callers load a direct ROM source into A0 immediately before Render_RunPaletteTransitionFrom.",
+    "The shared transition helper consumes exactly four 16-word bands from each source.",
+    "The two 0x80-byte ranges are adjacent and cover the unresolved 0x00129E00-0x00129EFF block without overlap."
+  ],
+  "limitations": [
+    "The palette bands are not split into individual semantic color roles.",
+    "The source bytes are classified as graphics evidence only through their direct transition-service contract."
+  ]
+}

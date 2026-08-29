@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-reset-credits-palette-extents-targets.json",
+  "sources": [
+    { "name": "SCENE_RESET_TRANSITION_PALETTE_SOURCE", "range": ["0x00129E00", "0x00129E7F"], "bytes": 128, "consumer": "Scene_ResetToState0" },
+    { "name": "CREDITS_TRANSITION_PALETTE_SOURCE", "range": ["0x00129E80", "0x00129EFF"], "bytes": 128, "consumer": "Credits_RunRoll" }
+  ],
+  "evidence": [
+    "Direct source loads at 0x001B50A4 and 0x001B4698.",
+    "Render_RunPaletteTransitionFrom publishes and consumes four 16-word source bands.",
+    "The sources are adjacent, non-overlapping, and exactly partition the 0x00129E00-0x00129EFF block."
+  ],
+  "conclusion": "Reset-scene and credits transition palette sources are now explicit GRAPHICS layout evidence.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

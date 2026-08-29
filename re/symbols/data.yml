@@ -952,6 +952,22 @@
   description: Shared scene-resource palette source supplied as the band-1 input to the 0x0012D870, 0x0012DA04, and 0x0012DF6C C000 resource frame preparations.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
+0x00129E00:
+  name: SCENE_RESET_TRANSITION_PALETTE_SOURCE
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band reset-scene palette source passed directly by Scene_ResetToState0 to Render_RunPaletteTransitionFrom.
+  evidence: [ghidra_scene_reset_palette_target, ghidra_palette_transition_source_contract, scene_reset_credits_palette_extents_static_v1]
+
+0x00129E80:
+  name: CREDITS_TRANSITION_PALETTE_SOURCE
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band credits palette source passed directly by Credits_RunRoll to Render_RunPaletteTransitionFrom.
+  evidence: [ghidra_credits_palette_target, ghidra_palette_transition_source_contract, scene_reset_credits_palette_extents_static_v1]
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data
