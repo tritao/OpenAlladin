@@ -3866,3 +3866,35 @@
     - ghidra_disassembly_001B6CA2
     - interaction_spawn_response_family_targets
     - interaction_spawn_response_family_static_decompilation
+0x001B6D90:
+  name: InteractionSpawn_Type8BPresentation_F5
+  confidence: decompiled
+  description: Interaction selector 0xF5 handler that uses the type-0x8B presentation-response template through the 0x40 interaction helper, installs animation root 0x00124A2E, and refreshes palette resource 0x001292F2 after the shared presentation gates pass.
+  evidence:
+    - ghidra_disassembly_001B6D90
+    - interaction_spawn_type8b-presentation-targets
+    - interaction_spawn_type8b-presentation-static-decompilation
+0x001B6DEC:
+  name: InteractionSpawn_Type8BPresentation_F6
+  confidence: decompiled
+  description: Interaction selector 0xF6 handler that uses the type-0x8B presentation-response template through the 0x40 interaction helper, installs animation root 0x00124A6C, and refreshes palette resource 0x001292F2 after the shared presentation gates pass.
+  evidence:
+    - ghidra_disassembly_001B6DEC
+    - interaction_spawn_type8b-presentation-targets
+    - interaction_spawn_type8b-presentation-static-decompilation
+0x001B6E18:
+  name: InteractionSpawn_Type8BPresentation_F7
+  confidence: decompiled
+  description: Interaction selector 0xF7 handler that uses the type-0x8B presentation-response template through the 0x40 interaction helper, installs animation root 0x00124AAA, and refreshes palette resource 0x001292F2 after the shared presentation gates pass.
+  evidence:
+    - ghidra_disassembly_001B6E18
+    - interaction_spawn_type8b-presentation-targets
+    - interaction_spawn_type8b-presentation-static-decompilation
+0x001B6E44:
+  name: InteractionSpawn_Type8BPresentation_F8
+  confidence: decompiled
+  description: Interaction selector 0xF8 handler that uses the type-0x8B presentation-response template through the 0x40 interaction helper, installs animation root 0x00124AE0, and refreshes palette resource 0x001292F2 after the shared presentation gates pass.
+  evidence:
+    - ghidra_disassembly_001B6E44
+    - interaction_spawn_type8b-presentation-targets
+    - interaction_spawn_type8b-presentation-static-decompilation
