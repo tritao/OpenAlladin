@@ -1,0 +1,67 @@
+{
+  "format": "openaladdin-level-event-movement-stream-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Classify four directly installed level-event or actor-template MovementVM streams in the 0x00120FB4-0x001210FD band.",
+  "streams": [
+    {
+      "address": "0x00120FB4",
+      "name": "ACTOR_MOVE_TYPE84_LEVEL_EVENT_VARIANT_B",
+      "range": ["0x00120FB4", "0x00120FDD"],
+      "size": 42,
+      "producer": "LevelEvent_SpawnType84VariantB at 0x001B5AEC",
+      "decoded": [
+        "The exact path rises from six -2/-3/-4 vertical phases through the zero point into the +1/+2/+3 return profile.",
+        "0x80 at 0x00120FD8 jumps back to 0x00120FB4."
+      ]
+    },
+    {
+      "address": "0x00120FDE",
+      "name": "ACTOR_MOVE_TYPE17_INTERACTION",
+      "range": ["0x00120FDE", "0x00120FFD"],
+      "size": 32,
+      "producer": "ACTOR_TEMPLATE_TYPE_17_INTERACTION at 0x001B8174",
+      "decoded": [
+        "The exact path applies the signed horizontal/vertical interaction phases and ends with the encoded face/offset prefix.",
+        "0x80 at 0x00120FF2 jumps back to 0x00120FDE."
+      ]
+    },
+    {
+      "address": "0x00120FFE",
+      "name": "ACTOR_MOVE_TYPE46_LEVEL_EVENT_MODE_READY",
+      "range": ["0x00120FFE", "0x00121033"],
+      "size": 54,
+      "producer": "LevelEvent_SpawnType46WhenModeReady at 0x001B7726",
+      "decoded": [
+        "The exact profile holds at zero and then applies the repeated 0/+1 vertical phases.",
+        "0x84 0xE3 at 0x0012102A sets the movement timer before 0x80 at 0x0012102E returns to 0x00120FFE."
+      ]
+    },
+    {
+      "address": "0x00121082",
+      "name": "ACTOR_MOVE_TYPE2F_LEVEL_EVENT_MOVING_VARIANT",
+      "range": ["0x00121082", "0x001210FD"],
+      "size": 124,
+      "producer": "LevelEvent_SpawnType2FWithMovement at 0x001B76EA",
+      "decoded": [
+        "The root starts with (+2,0), tests actor field +0x07, pushes parameter 0x001ACC56, and sets movement timer 0x84.",
+        "The following repeated (+2,-4) through (+2,+3) phases use timer 0x84 and end in the local 0x001210F2/0x001210F4 loop.",
+        "The exact owner ends at 0x001210FD before the following defined data at 0x001210FE."
+      ]
+    }
+  ],
+  "unresolved": [
+    "0x00121038-0x00121081 remains outside the Type-0x2F override owner because the direct producer selects 0x00121082."
+  ],
+  "boundary_basis": [
+    "Each promoted root is selected directly by a level-event handler or the Type-0x17 actor-template record for actor movement field +0x0A.",
+    "Each decoder boundary is checked against the next non-owned bytes, including generic Ghidra data ranges that are superseded by the direct movement evidence.",
+    "Unselected preceding movement-looking bytes remain unresolved rather than being absorbed by a nearby direct target."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

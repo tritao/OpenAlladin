@@ -2567,6 +2567,50 @@
     - actor_type2a_movement_stream_static_decode
     - movement_stream_decoder
 
+0x00120FB4:
+  name: ACTOR_MOVE_TYPE84_LEVEL_EVENT_VARIANT_B
+  type: movement_stream
+  size: 42
+  confidence: decompiled
+  description: Type-0x84 level-event variant-B movement root written by LevelEvent_SpawnType84VariantB at 0x001B5AEC. Its exact 42-byte region follows the signed vertical rise/fall profile and loops from 0x00120FD8 back to 0x00120FB4.
+  evidence:
+    - level_event_movement_stream_family_static_decompilation
+    - level_event_command_family_static_decompilation
+    - movement_stream_decoder
+
+0x00120FDE:
+  name: ACTOR_MOVE_TYPE17_INTERACTION
+  type: movement_stream
+  size: 32
+  confidence: decompiled
+  description: Type-0x17 interaction movement root supplied by ACTOR_TEMPLATE_TYPE_17_INTERACTION at 0x001B8174. Its exact 32-byte region applies the signed interaction phases, emits the encoded face/offset prefix, and loops from 0x00120FF2 back to 0x00120FDE.
+  evidence:
+    - level_event_movement_stream_family_static_decompilation
+    - actor_template_presentation_family_static_decompilation
+    - movement_stream_decoder
+
+0x00120FFE:
+  name: ACTOR_MOVE_TYPE46_LEVEL_EVENT_MODE_READY
+  type: movement_stream
+  size: 54
+  confidence: decompiled
+  description: Type-0x46 level-event movement root written by LevelEvent_SpawnType46WhenModeReady at 0x001B7726. Its exact 54-byte region follows the zero/+1 vertical profile, sets movement timer 0xE3 at 0x0012102A, and loops from 0x0012102E back to 0x00120FFE.
+  evidence:
+    - level_event_movement_stream_family_static_decompilation
+    - level_event_command_family_static_decompilation
+    - movement_stream_decoder
+
+0x00121082:
+  name: ACTOR_MOVE_TYPE2F_LEVEL_EVENT_MOVING_VARIANT
+  type: movement_stream
+  size: 124
+  confidence: decompiled
+  description: Type-0x2F level-event moving variant written by LevelEvent_SpawnType2FWithMovement at 0x001B76EA. Its exact 124-byte region tests actor field +0x07, pushes parameter 0x001ACC56, applies repeated (+2, vertical) steps with timer 0x84, and ends in the local 0x001210F2/0x001210F4 loop before the following bytes.
+  evidence:
+    - level_event_movement_stream_family_static_decompilation
+    - level_event_command_family_static_decompilation
+    - movement_stream_decoder
+
 0x0012146C:
   name: ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE
   type: movement_stream

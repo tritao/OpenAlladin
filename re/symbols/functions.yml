@@ -3909,7 +3909,7 @@
 0x001B5AD2:
   name: LevelEvent_SpawnType84VariantB
   confidence: decompiled
-  description: Level-event command handler that allocates a type-0x84 actor from the shared level-entry template, selects movement stream 0x00120FB4 and animation stream 0x0012585C, and places it at the event coordinates.
+  description: Level-event command handler that allocates a type-0x84 actor from the shared level-entry template, selects ACTOR_MOVE_TYPE84_LEVEL_EVENT_VARIANT_B at 0x00120FB4 and animation stream 0x0012585C, and places it at the event coordinates.
   evidence:
     - ghidra_disassembly_001B5AD2
     - level_event_command_family_targets
@@ -3973,7 +3973,7 @@
 0x001B76D4:
   name: LevelEvent_SpawnType2FWithMovement
   confidence: decompiled
-  description: Level-event command handler that allocates the type-0x2F interaction template, overrides its movement stream with 0x00121082, and places it at the event coordinates with the conditional horizontal-facing flag.
+  description: Level-event command handler that allocates the type-0x2F interaction template, overrides its movement stream with ACTOR_MOVE_TYPE2F_LEVEL_EVENT_MOVING_VARIANT at 0x00121082, and places it at the event coordinates with the conditional horizontal-facing flag.
   evidence:
     - ghidra_disassembly_001B76D4
     - level_event_command_family_targets
@@ -3981,7 +3981,7 @@
 0x001B7706:
   name: LevelEvent_SpawnType46WhenModeReady
   confidence: decompiled
-  description: Level-event command handler that suppresses the spawn for mode value 0x39, otherwise allocates the shared type-0x46 template with movement stream 0x00120FFE at the event coordinates.
+  description: Level-event command handler that suppresses the spawn for mode value 0x39, otherwise allocates the shared type-0x46 template with ACTOR_MOVE_TYPE46_LEVEL_EVENT_MODE_READY at 0x00120FFE at the event coordinates.
   evidence:
     - ghidra_disassembly_001B7706
     - level_event_command_family_targets

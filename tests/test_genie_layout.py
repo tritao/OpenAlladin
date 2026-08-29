@@ -477,6 +477,36 @@ def test_level08_exit_movement_stream_is_exact():
     assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
+def test_level_event_movement_stream_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00120FB4: (0x00120FDD, "ACTOR_MOVE_TYPE84_LEVEL_EVENT_VARIANT_B"),
+        0x00120FDE: (0x00120FFD, "ACTOR_MOVE_TYPE17_INTERACTION"),
+        0x00120FFE: (0x00121033, "ACTOR_MOVE_TYPE46_LEVEL_EVENT_MODE_READY"),
+        0x00121082: (0x001210FD, "ACTOR_MOVE_TYPE2F_LEVEL_EVENT_MOVING_VARIANT"),
+    }
+    for address, (end, name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        assert symbol.size == end - address + 1
+        assert symbol.metadata["type"] == "movement_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = MovementDecoder(rom)
+    for address, (end, _) in expected.items():
+        decoded = decoder.decode_stream(
+            address,
+            max_steps=256,
+            max_bytes=512,
+            follow_control_flow=True,
+        )
+        assert decoded["bytes_decoded"] == end - address + 1
+        assert decoded["stopped_reason"] == "control_flow_cycle"
+
+
 def test_type03_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {

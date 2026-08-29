@@ -1,0 +1,52 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/level-event-movement-stream-family-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00120FB4",
+      "name": "ACTOR_MOVE_TYPE84_LEVEL_EVENT_VARIANT_B",
+      "range": "0x00120FB4-0x00120FDD",
+      "bytes": 42,
+      "producer": "LevelEvent_SpawnType84VariantB at 0x001B5AEC",
+      "decoded": ["Vertical rise/fall profile", "0x80 -> 0x00120FB4"]
+    },
+    {
+      "address": "0x00120FDE",
+      "name": "ACTOR_MOVE_TYPE17_INTERACTION",
+      "range": "0x00120FDE-0x00120FFD",
+      "bytes": 32,
+      "producer": "ACTOR_TEMPLATE_TYPE_17_INTERACTION at 0x001B8174",
+      "decoded": ["Signed interaction phases", "face/offset prefix", "0x80 -> 0x00120FDE"]
+    },
+    {
+      "address": "0x00120FFE",
+      "name": "ACTOR_MOVE_TYPE46_LEVEL_EVENT_MODE_READY",
+      "range": "0x00120FFE-0x00121033",
+      "bytes": 54,
+      "producer": "LevelEvent_SpawnType46WhenModeReady at 0x001B7726",
+      "decoded": ["Zero/+1 vertical profile", "0x84 0xE3", "0x80 -> 0x00120FFE"]
+    },
+    {
+      "address": "0x00121082",
+      "name": "ACTOR_MOVE_TYPE2F_LEVEL_EVENT_MOVING_VARIANT",
+      "range": "0x00121082-0x001210FD",
+      "bytes": 124,
+      "producer": "LevelEvent_SpawnType2FWithMovement at 0x001B76EA",
+      "decoded": ["Actor-field flag gate", "0x001ACC56 parameter push", "repeated +2 horizontal movement with 0x84 timers"]
+    }
+  ],
+  "unresolved": "The bytes 0x00121038-0x00121081 remain unowned because the direct Type-0x2F producer selects 0x00121082 rather than the preceding movement-looking prefix.",
+  "evidence": [
+    "Fresh instructions.json records the three direct absolute-long movement-root assignments, while the Type-0x17 template supplies the fourth root through its compact actor-template record.",
+    "MovementDecoder confirms exact 42-, 32-, 54-, and 124-byte control-flow cycles.",
+    "The direct targets are kept distinct from nearby movement-looking bytes without producer evidence."
+  ],
+  "conclusion": "Four directly selected MovementVM programs are now canonical owners in the previously unresolved upper movement band.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
