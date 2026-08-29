@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-queued-actor",
+    "purpose": "Bound the compact scene-resource actor-instantiation helper and identify its gate, coordinate cursor, allocator, and fixed template inputs."
+  },
+  "targets": [
+    {
+      "address": "0x001B4802",
+      "name": "SceneResource_InstantiateQueuedActor",
+      "size": 52,
+      "end": "0x001B4835"
+    }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0FF", "name": "SCENE_RESOURCE_ACTOR_SPAWN_GATE" },
+    { "address": "0x00FF7282", "name": "SCENE_RESOURCE_ACTOR_RECORD_CURSOR" },
+    { "address": "0x001B797C", "name": "ACTOR_TEMPLATE_SCENE_RESOURCE_QUEUED" },
+    { "address": "0x001AE262", "name": "Actor_FindFreeSlot" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" }
+  ],
+  "limitations": [
+    "No direct static caller is present in the current whole-ROM reference export; the helper may be reached through an indirect or externally selected scene-resource path.",
+    "The coordinate-record stream extent and the independent runtime producer for the spawn gate remain unresolved."
+  ]
+}

@@ -2354,6 +2354,15 @@
     - ghidra_actor_template_initializer_001AE30A
     - mame_actor_initializer_trace
     - actor_template_initializer_static_field_map
+0x001B4802:
+  name: SceneResource_InstantiateQueuedActor
+  size: 52
+  confidence: decompiled
+  description: Checks SCENE_RESOURCE_ACTOR_SPAWN_GATE, consumes the next nonzero X/Y word pair from SCENE_RESOURCE_ACTOR_RECORD_CURSOR, allocates a free actor slot, initializes it from ACTOR_TEMPLATE_SCENE_RESOURCE_QUEUED, writes the pair to actor offsets +0x02/+0x04, and publishes the advanced cursor after successful allocation. The helper returns without consuming the pair when the gate, X word, or free-slot check fails.
+  evidence:
+    - ghidra_scene_resource_queued_actor_targets
+    - scene-resource-queued-actor-static-decompilation
+    - ghidra_actor_table_layout
 0x001AE372:
   name: Actor_ClearOwnedResources
   confidence: confirmed

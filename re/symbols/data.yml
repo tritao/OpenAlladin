@@ -2390,6 +2390,17 @@
     - ghidra_scene_resource_actor_instantiation
     - ghidra_scene_resource_rebuild_after_interaction
 
+0x001B797C:
+  name: ACTOR_TEMPLATE_SCENE_RESOURCE_QUEUED
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: "Type-0x84 scene-resource queued-actor template consumed by SceneResource_InstantiateQueuedActor. Its template bytes are 0x84000800000000000000600000122F8001000000: no movement root, template word 0x6000, animation root 0x00122F80, and one owned resource; the caller supplies the destination coordinates after initialization."
+  evidence:
+    - ghidra_scene_resource_queued_actor_targets
+    - scene-resource-queued-actor-static-decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B7A44:
   name: ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84
   type: actor_template

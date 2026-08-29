@@ -1217,6 +1217,24 @@
     - rom_menu_selection_marker_tiles_00129DAA
     - ghidra_decompile_001B1676
     - ghidra_decompile_001B07D0
+0xFF7282:
+  name: SCENE_RESOURCE_ACTOR_RECORD_CURSOR
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Cursor into scene-resource actor coordinate records consumed by SceneResource_InstantiateQueuedActor; the helper reads an X/Y word pair and publishes the cursor advanced by four bytes after successful actor allocation.
+  evidence:
+    - ghidra_scene_resource_queued_actor_targets
+    - scene-resource-queued-actor-static-decompilation
+0xFFF0FF:
+  name: SCENE_RESOURCE_ACTOR_SPAWN_GATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Scene-resource actor-instantiation gate tested before consuming SCENE_RESOURCE_ACTOR_RECORD_CURSOR.
+  evidence:
+    - ghidra_scene_resource_queued_actor_targets
+    - scene-resource-queued-actor-static-decompilation
 0xFF7272:
   name: SCENE_TRANSITION_SELECTION_INDEX
   type: u8

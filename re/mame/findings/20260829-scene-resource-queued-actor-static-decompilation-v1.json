@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/scene-resource-queued-actor-targets.json",
+  "function": {
+    "address": "0x001B4802",
+    "name": "SceneResource_InstantiateQueuedActor",
+    "range": ["0x001B4802", "0x001B4835"],
+    "size": 52,
+    "body": "Tests SCENE_RESOURCE_ACTOR_SPAWN_GATE. When enabled, reads the next X word from SCENE_RESOURCE_ACTOR_RECORD_CURSOR and returns on zero; reads the Y word, calls Actor_FindFreeSlot, and returns if no slot is available. It initializes the selected slot from ACTOR_TEMPLATE_SCENE_RESOURCE_QUEUED, stores the X/Y pair at actor offsets +0x02/+0x04, and publishes the cursor advanced past the pair."
+  },
+  "template": {
+    "address": "0x001B797C",
+    "name": "ACTOR_TEMPLATE_SCENE_RESOURCE_QUEUED",
+    "size": 20,
+    "record_bytes": "84000800000000000000600000122F8001000000",
+    "runtime_type": "0x84",
+    "movement_pointer": "0x00000000",
+    "template_word": "0x6000",
+    "animation_root": "0x00122F80",
+    "resource_count": "0x01"
+  },
+  "memory": {
+    "0x00FFF0FF": {
+      "name": "SCENE_RESOURCE_ACTOR_SPAWN_GATE",
+      "access": "byte read before cursor consumption"
+    },
+    "0x00FF7282": {
+      "name": "SCENE_RESOURCE_ACTOR_RECORD_CURSOR",
+      "access": "longword cursor read, then advanced by four bytes after successful allocation"
+    }
+  },
+  "callees": [
+    "0x001AE262 Actor_FindFreeSlot",
+    "0x001AE30A Actor_InitializeFromTemplate"
+  ],
+  "limitations": [
+    "No direct static caller was recovered in the current whole-ROM export.",
+    "The full coordinate-record extent and spawn-gate producer are not claimed.",
+    "The animation stream at 0x00122F80 remains unnamed beyond its fixed template reference."
+  ],
+  "conclusion": "The compact code-like gap is a scene-resource queued-actor allocator wrapper, not data. Its fixed Type-0x84 template and success-only coordinate-cursor publication are now represented as structured metadata; the surrounding producer path remains open."
+}
