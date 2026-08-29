@@ -845,25 +845,75 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.terrain = &terrain_;
     context.terrain_behavior = &terrain_behavior_;
     context.level_events = &level_events_;
-    context.level_event_system = &level_event_system_;
-    context.scene_resources = &scene_resources_;
-    context.scene_services = scene_services();
     context.rom_bytes = &rom_bytes_;
-    context.level_event_sound_requests = &level_event_sound_requests_;
     context.runtime = &frame_runtime_;
-    context.clear_scheduler_trace = [this]() {
+    context.services = &scheduler_services_;
+
+    scheduler_services_.clear_scheduler_trace = [this]() {
         frame_runtime_.scheduler_phases.clear();
         frame_runtime_.scheduler_writer_pcs.clear();
         animation_system_.clear_writer_trace();
     };
-    context.flush_deferred_animation_spawn = [this]() {
+    scheduler_services_.flush_deferred_animation_spawn = [this]() {
         animation_system_.flush_deferred_spawn(
             state_, player_world_x(), player_world_y());
     };
-    context.update_dynamic_actor_culling = [this]() {
+    scheduler_services_.update_dynamic_actor_culling = [this]() {
         update_dynamic_actor_culling();
     };
-    context.update_animation_vm_ordinal_30 =
+    scheduler_services_.update_level_events = [this]() {
+        if (!level_events_.active()) return;
+        LevelEventServices services{
+            [this](const LevelEventCommand& event) {
+                const LevelEventEffects effects = level_event_system_.dispatch(
+                    state_,
+                    event
+                );
+                level_event_sound_requests_.insert(
+                    level_event_sound_requests_.end(),
+                    effects.sound_requests.begin(),
+                    effects.sound_requests.end()
+                );
+            },
+        };
+        level_events_.update(state_, services);
+    };
+    scheduler_services_.update_scene_resources = [this]() {
+        // SceneSystem retains the recovered countdown gate. Service it at the
+        // same boundary as the compact resource interpreter so the frame loop
+        // has one owner for scene-script advancement.
+        (void) scene_.advance_script();
+        if (!scene_resources_.started()) {
+            // Ordinary gameplay has no scene-resource stream and remains a
+            // no-op after the scene-state gate has been serviced.
+            if (state_.scene.script_cursor == 0) return;
+            scene_resources_.start(state_.scene.script_cursor);
+        }
+
+        SceneServices scene_services = this->scene_services();
+        const SceneResourceRunResult result = scene_resources_.tick(
+            state_,
+            scene_services
+        );
+        // Publish the VM's live A0 command cursor through the existing scene
+        // checkpoint field instead of creating a second scheduler cursor.
+        state_.scene.script_cursor = scene_resources_.cursor();
+        if (result == SceneResourceRunResult::InvalidStream) {
+            // A malformed native stream follows the ROM's nonzero-status exit
+            // boundary so the interpreter will not be re-entered.
+            state_.scene.resource_status = 0xFF;
+        }
+    };
+    scheduler_services_.append_sound_requests = [this](
+        const std::vector<std::uint8_t>& requests
+    ) {
+        level_event_sound_requests_.insert(
+            level_event_sound_requests_.end(),
+            requests.begin(),
+            requests.end()
+        );
+    };
+    scheduler_services_.update_animation_vm_ordinal_30 =
         [this](SpritePose pose, HorizontalDirection direction,
                const AnimationContext& animation_context,
                bool response_dynamic_handoff, bool bounce_response_finished) {
@@ -894,30 +944,30 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
                         || frame_runtime_.checkpoint_terrain_behavior == 0x2D
                         || frame_runtime_.checkpoint_terrain_behavior == 0x27));
         };
-    context.publish_player_world_coordinates = [this]() {
+    scheduler_services_.publish_player_world_coordinates = [this]() {
         publish_player_world_coordinates();
     };
-    context.sync_player_actor = [this]() { sync_player_actor(); };
-    context.player_animation_context = [this](bool grounded) {
+    scheduler_services_.sync_player_actor = [this]() { sync_player_actor(); };
+    scheduler_services_.player_animation_context = [this](bool grounded) {
         return animation_system_.player_context(state_, grounded);
     };
-    context.apply_actor_timeline = [this](int frame) {
+    scheduler_services_.apply_actor_timeline = [this](int frame) {
         apply_actor_timeline(frame);
     };
-    context.player_world_x = [this]() { return player_world_x(); };
-    context.player_world_y = [this]() { return player_world_y(); };
-    context.record_scheduler_phase = [this](const char* name, std::uint32_t pc) {
+    scheduler_services_.player_world_x = [this]() { return player_world_x(); };
+    scheduler_services_.player_world_y = [this]() { return player_world_y(); };
+    scheduler_services_.record_scheduler_phase =
+        [this](const char* name, std::uint32_t pc) {
         record_scheduler_phase(name, pc);
     };
-    context.collect_scheduler_writer_pcs = [this]() {
+    scheduler_services_.collect_scheduler_writer_pcs = [this]() {
         collect_scheduler_writer_pcs();
     };
     return context;
 }
 
 void Engine::update(const InputState& input) {
-    auto context = frame_scheduler_context();
-    scheduler_.update(input, context);
+    scheduler_.update(input, scheduler_context_);
 }
 
 void Engine::set_scheduler_trace_enabled(bool enabled) {

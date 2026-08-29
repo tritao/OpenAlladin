@@ -152,9 +152,9 @@ private:
     RenderPipeline render_pipeline_;
     SdlRenderBackend render_backend_;
     // Bound once because all scheduler dependencies are stable for the
-    // lifetime of Engine. Runtime scalars are referenced through Context so
-    // checkpoint and trace setters remain visible without rebuilding the
-    // callback table every frame.
+    // lifetime of Engine. Runtime scalars are referenced through Context and
+    // the service callbacks remain valid across checkpoint and trace updates.
+    FrameScheduler::Services scheduler_services_;
     FrameScheduler::Context scheduler_context_;
 
 public:

@@ -82,7 +82,30 @@ public:
         bool
     )>;
     using ApplyTimeline = std::function<void(int)>;
+    using AppendSoundRequests =
+        std::function<void(const std::vector<std::uint8_t>&)>;
     using RecordPhase = std::function<void(const char*, std::uint32_t)>;
+
+    // Operations that cross from the recovered frame ordering into host-side
+    // runtime services. Keeping these together leaves Context focused on the
+    // semantic systems whose ordering the scheduler owns.
+    struct Services {
+        NoArg clear_scheduler_trace;
+        NoArg flush_deferred_animation_spawn;
+        NoArg update_dynamic_actor_culling;
+        NoArg update_level_events;
+        NoArg update_scene_resources;
+        AppendSoundRequests append_sound_requests;
+        UpdateAnimation update_animation_vm_ordinal_30;
+        NoArg publish_player_world_coordinates;
+        NoArg sync_player_actor;
+        PlayerAnimationContext player_animation_context;
+        ApplyTimeline apply_actor_timeline;
+        std::function<int()> player_world_x;
+        std::function<int()> player_world_y;
+        RecordPhase record_scheduler_phase;
+        NoArg collect_scheduler_writer_pcs;
+    };
 
     struct Context {
         GameState* state = nullptr;
@@ -100,25 +123,9 @@ public:
         PlayerTerrainSystem* terrain = nullptr;
         TerrainBehaviorSystem* terrain_behavior = nullptr;
         LevelEventVm* level_events = nullptr;
-        LevelEventSystem* level_event_system = nullptr;
-        SceneResourceVm* scene_resources = nullptr;
-        SceneServices scene_services;
         const std::vector<std::uint8_t>* rom_bytes = nullptr;
-        std::vector<std::uint8_t>* level_event_sound_requests = nullptr;
         FrameRuntime* runtime = nullptr;
-
-        NoArg clear_scheduler_trace;
-        NoArg flush_deferred_animation_spawn;
-        NoArg update_dynamic_actor_culling;
-        UpdateAnimation update_animation_vm_ordinal_30;
-        NoArg publish_player_world_coordinates;
-        NoArg sync_player_actor;
-        PlayerAnimationContext player_animation_context;
-        ApplyTimeline apply_actor_timeline;
-        std::function<int()> player_world_x;
-        std::function<int()> player_world_y;
-        RecordPhase record_scheduler_phase;
-        NoArg collect_scheduler_writer_pcs;
+        Services* services = nullptr;
     };
 
     void update(const InputState& input, Context& context) const;

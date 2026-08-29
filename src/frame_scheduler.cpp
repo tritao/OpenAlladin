@@ -3,7 +3,6 @@
 #include "actor_movement.hpp"
 #include "actor_terrain.hpp"
 #include "level_event.hpp"
-#include "level_event_system.hpp"
 #include "player_motion.hpp"
 #include "terrain_behavior.hpp"
 
@@ -52,12 +51,9 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& terrain_ = *context.terrain;
     auto& terrain_behavior_ = *context.terrain_behavior;
     auto& level_events_ = *context.level_events;
-    auto& level_event_system_ = *context.level_event_system;
-    auto& scene_resources_ = *context.scene_resources;
-    auto& scene_services_ = context.scene_services;
     const auto& rom_bytes_ = *context.rom_bytes;
-    auto& level_event_sound_requests_ = *context.level_event_sound_requests;
     auto& runtime_ = *context.runtime;
+    auto& services_ = *context.services;
 
     auto& checkpoint_animation_selector_pending_ =
         runtime_.checkpoint_animation_selector_pending;
@@ -76,69 +72,10 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         runtime_.checkpoint_terrain_behavior;
     const bool scheduler_trace_enabled_ = runtime_.scheduler_trace_enabled;
 
-    auto& clear_scheduler_trace = context.clear_scheduler_trace;
-    auto& flush_deferred_animation_spawn = context.flush_deferred_animation_spawn;
-    auto& update_dynamic_actor_culling = context.update_dynamic_actor_culling;
-    auto& update_animation_vm_ordinal_30 =
-        context.update_animation_vm_ordinal_30;
-    auto& publish_player_world_coordinates =
-        context.publish_player_world_coordinates;
-    auto& sync_player_actor = context.sync_player_actor;
-    auto& player_animation_context = context.player_animation_context;
-    auto& apply_actor_timeline = context.apply_actor_timeline;
-    auto& player_world_x = context.player_world_x;
-    auto& player_world_y = context.player_world_y;
-    auto& record_scheduler_phase = context.record_scheduler_phase;
-    auto& collect_scheduler_writer_pcs = context.collect_scheduler_writer_pcs;
-
-    const auto update_level_events = [&]() {
-        if (!level_events_.active()) return;
-        LevelEventServices services{
-            [&](const LevelEventCommand& event) {
-                const LevelEventEffects effects = level_event_system_.dispatch(
-                    state_,
-                    event
-                );
-                level_event_sound_requests_.insert(
-                    level_event_sound_requests_.end(),
-                    effects.sound_requests.begin(),
-                    effects.sound_requests.end()
-                );
-            },
-        };
-        level_events_.update(state_, services);
-    };
-
-    const auto update_scene_resources = [&]() {
-        // SceneSystem retains the recovered countdown gate. Service it at the
-        // same boundary as the compact resource interpreter so the frame loop
-        // has one owner for scene-script advancement.
-        (void)scene_.advance_script();
-        if (!scene_resources_.started()) {
-            // Ordinary gameplay has no scene-resource stream and remains a
-            // no-op after the scene-state gate has been serviced.
-            if (state_.scene.script_cursor == 0) return;
-            scene_resources_.start(state_.scene.script_cursor);
-        }
-
-        const SceneResourceRunResult result = scene_resources_.tick(
-            state_,
-            scene_services_
-        );
-        // Publish the VM's live A0 command cursor through the existing scene
-        // checkpoint field instead of creating a second scheduler cursor.
-        state_.scene.script_cursor = scene_resources_.cursor();
-        if (result == SceneResourceRunResult::InvalidStream) {
-            // A malformed native stream follows the ROM's nonzero-status exit
-            // boundary so the interpreter will not be re-entered.
-            state_.scene.resource_status = 0xFF;
-        }
-    };
-
     if (scheduler_trace_enabled_) {
-        clear_scheduler_trace();
+        services_.clear_scheduler_trace();
     }
-    record_scheduler_phase("frame_latch", 0x001A8C16);
+    services_.record_scheduler_phase("frame_latch", 0x001A8C16);
     // Game_FrameUpdateLoop begins with ADDQ.B #1,$FF7E28. All later gate
     // decisions in this update consume this single recovered ROM phase.
     frame_phase_ = static_cast<std::uint8_t>(frame_phase_ + 1);
@@ -162,8 +99,8 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     }
     // FUN_001A91C6 is the unconditional input/resource service. A player F5
     // command deferred by the previous animation boundary becomes live here.
-    record_scheduler_phase("input_resource", 0x001A91C6);
-    flush_deferred_animation_spawn();
+    services_.record_scheduler_phase("input_resource", 0x001A91C6);
+    services_.flush_deferred_animation_spawn();
     const bool transition_frame = scene_.is_transition();
     if (transition_frame) {
         scene_.update_transition(
@@ -180,10 +117,10 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         input.right,
         input.jump_pressed,
     });
-    record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
-    publish_player_world_coordinates();
-    terrain_input_world_x_ = player_world_x();
-    terrain_input_world_y_ = player_world_y();
+    services_.record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
+    services_.publish_player_world_coordinates();
+    terrain_input_world_x_ = services_.player_world_x();
+    terrain_input_world_y_ = services_.player_world_y();
     const bool grounded_before_contour = player_.grounded;
     const bool contour_ground_motion_before = contour_ground_motion_;
     const bool stable_terrain_handler_fixture = checkpoint_terrain_behavior_override_
@@ -197,11 +134,11 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // 0x001A9D98 movement integrator, and the fixture supplies the already
     // resolved landing state that the ROM would have in RAM.
     if (!checkpoint_terrain_behavior_override_) {
-        record_scheduler_phase("terrain_contour", 0x001AD7B4);
+        services_.record_scheduler_phase("terrain_contour", 0x001AD7B4);
         terrain_.apply_contour(state_, level_, terrain_fall_phase_);
     }
-    record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
-    publish_player_world_coordinates();
+    services_.record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
+    services_.publish_player_world_coordinates();
     // The launch frame itself keeps the prior landing value visible. On the
     // first following pass the contour resolver clears it; one pass later
     // the ROM re-arms FFF0C1 for the falling phase. Apply the delayed arm
@@ -232,7 +169,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // Terrain_ResolvePlayerCell consumes the world coordinate captured before
     // MovementVM. Its one invocation is placed after the actor terrain and
     // player collision services, and before the player response integrator.
-    const int previous_world_y = player_world_y();
+    const int previous_world_y = services_.player_world_y();
     if (player_.attack_timer != 0) {
         --player_.attack_timer;
     }
@@ -240,7 +177,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         player_.attack_timer = 10;
     }
     const auto collision = level_.query_player_collision(
-        player_world_x(), player_world_y(),
+        services_.player_world_x(), services_.player_world_y(),
         player_.terrain_landing_state);
     player_.terrain_stop_left_motion = collision.stop_left ? 0xFF : 0;
     player_.terrain_stop_right_motion = collision.stop_right ? 0xFF : 0;
@@ -265,17 +202,17 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // The ROM's movement VM performs its cull before integrating actor
     // deltas. Use the pre-motion actor coordinates and pre-follow camera so
     // edge retirement lines up with the synchronized MAME boundary.
-    update_dynamic_actor_culling();
-    record_scheduler_phase("movement_vm", 0x001ADE36);
+    services_.update_dynamic_actor_culling();
+    services_.record_scheduler_phase("movement_vm", 0x001ADE36);
     actor_movement_.update(state_, runtime_, rom_bytes_);
-    record_scheduler_phase("actor_terrain_collision", 0x001ADB5C);
+    services_.record_scheduler_phase("actor_terrain_collision", 0x001ADB5C);
     actor_terrain_.update(
         state_,
         level_,
         rom_bytes_,
         stable_terrain_handler_fixture
     );
-    record_scheduler_phase("player_actor_interaction", 0x001ABB40);
+    services_.record_scheduler_phase("player_actor_interaction", 0x001ABB40);
     const CollisionEffects collision_effects = collisions_.player_actor(
         state_,
         PlayerCollisionInput{
@@ -290,12 +227,8 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     if (collision_effects.player_animation_stream) {
         animation_.select_stream_entry(*collision_effects.player_animation_stream);
     }
-    level_event_sound_requests_.insert(
-        level_event_sound_requests_.end(),
-        collision_effects.sound_requests.begin(),
-        collision_effects.sound_requests.end()
-    );
-    record_scheduler_phase("terrain_resolution", 0x001B1E38);
+    services_.append_sound_requests(collision_effects.sound_requests);
+    services_.record_scheduler_phase("terrain_resolution", 0x001B1E38);
     const auto terrain_cell = terrain_.resolve(
         state_,
         level_,
@@ -319,7 +252,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     interactions_.apply_surface_interaction_lock(state_, arm_surface_interaction);
     const bool vertical_stop_before_frame = player_.terrain_vertical_stop != 0;
     const bool start_jump = input.jump_pressed && was_grounded;
-    AnimationContext animation_context = player_animation_context(was_grounded);
+    AnimationContext animation_context = services_.player_animation_context(was_grounded);
 
     const bool blocked_right_wall_response = was_grounded
         && (player_.grounded || contour_ground_motion)
@@ -365,7 +298,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         // keeps the row-crossing frame airborne and lands on the following
         // pass, matching the original resolver's ordering.
         const auto contour = level_.query_player_contour(
-            player_world_x(), player_world_y(), player_.terrain_surface_mode);
+            services_.player_world_x(), services_.player_world_y(), player_.terrain_surface_mode);
         if (contour.valid) {
             const int target_y = contour.target_world_y - camera_.y;
             if (std::abs(target_y - player_.y) <= 8) {
@@ -380,7 +313,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
             }
         }
     }
-    record_scheduler_phase("player_movement", 0x001A9D98);
+    services_.record_scheduler_phase("player_movement", 0x001A9D98);
     player_motion_.integrate(state_);
     interactions_.bounce_actor_interaction(state_, terrain_fall_phase_);
     if (player_.terrain_response_active != 0
@@ -531,8 +464,8 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // Player_HandleJumpAndVerticalState and the terrain response service have
     // now finished writing local position. Publish the third ROM coordinate
     // boundary before Camera_UpdateFollow consumes it.
-    record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
-    publish_player_world_coordinates();
+    services_.record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
+    services_.publish_player_world_coordinates();
 
     // The ROM consumes a pending 16-pixel reference shift before the actor
     // traversal and then runs the damped follow below. This leaves the
@@ -547,7 +480,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // same-frame damped follow.
     const bool camera_follow_deferred = camera_vertical_reference_rebased;
     interactions_.hold_bounce_camera_delay(state_, bounce_response_finished);
-    record_scheduler_phase("camera_follow", 0x001AA90C);
+    services_.record_scheduler_phase("camera_follow", 0x001AA90C);
     const bool same_frame_vertical_rebase =
         camera_reference_moved_up && !checkpoint_terrain_behavior_override_;
     if (camera_follow_deferred && !same_frame_vertical_rebase
@@ -670,11 +603,11 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // Actor_ActorCollisionPass follows the player selectors in the ROM. Its
     // sword terminal edge is handled inside this one source/target scan;
     // there is deliberately no pre-motion companion call.
-    record_scheduler_phase("actor_collision", 0x001ABD7E);
+    services_.record_scheduler_phase("actor_collision", 0x001ABD7E);
     collisions_.actor_actor(state_);
-    record_scheduler_phase("level_exit_transition", 0x001A8F0C);
+    services_.record_scheduler_phase("level_exit_transition", 0x001A8F0C);
     const bool level_exit_callback = scene_.service_level_exit(
-        player_world_y(),
+        services_.player_world_y(),
         camera_.level_height,
         player_.terrain_terminal_transition,
         player_.animation_selector.interaction_lock
@@ -698,34 +631,34 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // 0x001A8F04 is the recovered level callback boundary. Level 02 and 06
     // install their timed stream from the exit callback above, then dispatch
     // one record tick here on the same subsequent callback cadence.
-    record_scheduler_phase("empty_return", 0x001A8F04);
-    update_level_events();
+    services_.record_scheduler_phase("empty_return", 0x001A8F04);
+    services_.update_level_events();
     // FUN_001B01AC is the late interaction resource service. Its actor refill
     // edge is visible at the same game-loop boundary on either phase of
     // FRAME_PHASE_COUNTER; only the common actor animation table walk is
     // phase-gated.
-    record_scheduler_phase("interaction_counter", 0x001B00CA);
-    record_scheduler_phase("interaction_resource", 0x001B01AC);
+    services_.record_scheduler_phase("interaction_counter", 0x001B00CA);
+    services_.record_scheduler_phase("interaction_resource", 0x001B01AC);
     if (!stable_terrain_handler_fixture) {
     interactions_.scan_refill_window(state_, level_, stable_terrain_handler_fixture);
     }
     interactions_.flush_surface_actor_spawn(state_);
-    record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
-    publish_player_world_coordinates();
+    services_.record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
+    services_.publish_player_world_coordinates();
     // The camera tile-update boundary does not suppress the common player VM
     // pass: the ROM services animation after the horizontal follow even when
     // the vertical reference tile is rebased. Keep the separate catch-up
     // marker only for the post-follow downward rebase path above.
-    record_scheduler_phase("scene_advance", 0x001A8E3E);
-    update_scene_resources();
-    record_scheduler_phase("animation_vm", 0x001AC784);
+    services_.record_scheduler_phase("scene_advance", 0x001A8E3E);
+    services_.update_scene_resources();
+    services_.record_scheduler_phase("animation_vm", 0x001AC784);
     if (!stable_terrain_handler_fixture) {
         // The bounce response's F8 command publishes the dynamic 0x121AD8
         // root at this boundary but leaves the previous frame pointer in
         // place. Do not consume the new root until the following VBlank.
         const bool response_dynamic_handoff =
             animation_.animation_pc() == 0x001221E8;
-        update_animation_vm_ordinal_30(
+        services_.update_animation_vm_ordinal_30(
             desired_pose,
             horizontal_direction(input),
             vm_context,
@@ -800,7 +733,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // already present at the earlier wall-response boundary.
     interactions_.process_surface_actor_collision(
         state_,
-        player_animation_context(player_.grounded),
+        services_.player_animation_context(player_.grounded),
         stable_terrain_handler_fixture,
         contour_ground_motion);
     // Player_ProcessInteractionState at 0x001AE4F8 is a RAM-driven stream
@@ -851,39 +784,39 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         // Flush the one player-side command whose semantic effect was
         // intentionally held until this post-selector boundary. No actor VM
         // is invoked here.
-        flush_deferred_animation_spawn();
+        services_.flush_deferred_animation_spawn();
     }
     }
     if (transition_frame) {
-        record_scheduler_phase("scene_advance", 0x001A8E3E);
-        update_scene_resources();
+        services_.record_scheduler_phase("scene_advance", 0x001A8E3E);
+        services_.update_scene_resources();
         // Scene_EnterTransitionMode owns the transition movement, but the
         // frame loop still reaches its common ordinal-30 animation service.
         // Keeping that service here removes the native early-return path.
-        record_scheduler_phase("animation_vm", 0x001AC784);
-        update_animation_vm_ordinal_30(
+        services_.record_scheduler_phase("animation_vm", 0x001AC784);
+        services_.update_animation_vm_ordinal_30(
             SpritePose::Idle,
             horizontal_direction(input),
-            player_animation_context(player_.grounded),
+            services_.player_animation_context(player_.grounded),
             false,
             false
         );
     }
-    record_scheduler_phase("transition_completion", 0x001AE0F6);
+    services_.record_scheduler_phase("transition_completion", 0x001AE0F6);
     (void) scene_.transition_completion_ready();
     // Camera scroll publication is presentation-owned in the native build;
     // retaining the ROM boundary in the trace makes that classification
     // explicit without inventing a second camera gameplay pass.
-    record_scheduler_phase("camera_scroll_publish", 0x001AAA2A);
-    record_scheduler_phase("scene_completion", 0x001B315C);
+    services_.record_scheduler_phase("camera_scroll_publish", 0x001AAA2A);
+    services_.record_scheduler_phase("scene_completion", 0x001B315C);
     (void) scene_.complete_script_to_state1();
     // State serialization needs the final player record after ordinal 30.
     // This mirror is not a gameplay scheduler phase.
-    sync_player_actor();
-    apply_actor_timeline(frame_ + 1);
+    services_.sync_player_actor();
+    services_.apply_actor_timeline(frame_ + 1);
     checkpoint_animation_selector_pending_ = false;
-    record_scheduler_phase("state_boundary", 0);
-    collect_scheduler_writer_pcs();
+    services_.record_scheduler_phase("state_boundary", 0);
+    services_.collect_scheduler_writer_pcs();
     ++frame_;
 }
 
