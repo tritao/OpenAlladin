@@ -1005,11 +1005,14 @@
 
 0x00121D9A:
   name: PLAYER_ANIM_IDLE
+  size: 416
   confidence: confirmed
-  description: Player idle animation stream entry.
+  description: Player idle animation stream selected by the slot-0 bootstrap template. Its exact 416-byte body presents the idle frame cycle, checks terrain/interaction response fields, can spawn the shared Type-0x46 actor through the encoded F5 record at 0x00121E24, and loops from 0x00121F34 back to its root.
   evidence:
     - ghidra_player_animation_stream
     - mame_player_state_trace
+    - actor_template_bootstrap_static_decompilation
+    - animation_stream_decoder
 
 0x00122006:
   name: PLAYER_ANIM_RUN
@@ -1107,12 +1110,14 @@
     - animation_stream_decoder
 
 0x00121D88:
-  name: PLAYER_ANIM_STATE_121D88
+  name: PLAYER_ANIM_IDLE_PREROLL
+  size: 18
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Player idle pre-roll entry. Its exact 18-byte prefix presents frame 0x09D2 nine times and falls through to PLAYER_ANIM_IDLE at 0x00121D9A.
   evidence:
     - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - player_animation_stream
+    - animation_stream_decoder
 
 0x00121F6A:
   name: PLAYER_ANIM_STATE_121F6A

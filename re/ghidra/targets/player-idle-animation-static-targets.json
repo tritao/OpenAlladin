@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-idle-animation-static",
+    "purpose": "Partition the player idle pre-roll from the main idle stream and retain the idle stream's encoded actor-spawn branch."
+  },
+  "targets": [
+    { "address": "0x00121D88", "name": "PLAYER_ANIM_IDLE_PREROLL" },
+    { "address": "0x00121D9A", "name": "PLAYER_ANIM_IDLE" },
+    { "address": "0x001B7864", "name": "ACTOR_TEMPLATE_TYPE_83_PLAYER_BOOT" },
+    { "address": "0x001B79CC", "name": "ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" }
+  ],
+  "memory_references": [
+    { "address": "0x001E8FC4", "name": "SPRITE_FRAME_PLAYER_IDLE" },
+    { "address": "0x00FFF0C1", "name": "TERRAIN_LANDING_STATE" },
+    { "address": "0x00FFF0D3", "name": "PLAYER_INTERACTION_MARKER" },
+    { "address": "0x001B79CC", "name": "ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN" }
+  ]
+}
