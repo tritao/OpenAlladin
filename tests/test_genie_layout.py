@@ -733,6 +733,53 @@ def test_type7c_type7d_level_event_movement_family_is_exact():
         assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
+def test_menu_presentation_child_movement_prefixes_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00121684: (0x001216A9, 38, "ACTOR_MOVE_MENU_PRESENTATION_CHILD_A"),
+        0x001216AA: (0x001216C5, 28, "ACTOR_MOVE_MENU_PRESENTATION_CHILD_B"),
+    }
+    for address, (end, size, name) in expected.items():
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.end == end
+        assert stream.size == size
+        assert stream.metadata["type"] == "movement_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = MovementDecoder(rom)
+    for address, (end, size, _) in expected.items():
+        decoded = decoder.decode_stream(
+            address,
+            max_steps=256,
+            max_bytes=size,
+            follow_control_flow=False,
+        )
+        assert decoded["bytes_decoded"] == size
+        assert decoded["stopped_reason"] == "byte_limit"
+        assert decoded["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
+
+    child_a = decoder.decode_stream(
+        0x00121684,
+        max_steps=256,
+        max_bytes=512,
+        follow_control_flow=True,
+    )
+    assert child_a["bytes_decoded"] == 92
+    assert child_a["stopped_reason"] == "control_flow_cycle"
+
+    child_b = decoder.decode_stream(
+        0x001216AA,
+        max_steps=256,
+        max_bytes=512,
+        follow_control_flow=True,
+    )
+    assert child_b["bytes_decoded"] == 54
+    assert child_b["stopped_reason"] == "control_flow_cycle"
+
+
 def test_scene_table_transition_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001209C6, include_ranges=False)

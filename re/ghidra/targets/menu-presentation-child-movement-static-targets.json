@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-menu-presentation-child-movement-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Classify the two directly selected menu-presentation child MovementVM entry prefixes without duplicating their shared continuation.",
+  "streams": [
+    {
+      "address": "0x00121684",
+      "name": "ACTOR_MOVE_MENU_PRESENTATION_CHILD_A",
+      "range": ["0x00121684", "0x001216A9"],
+      "size": 38,
+      "template": "0x001B7D3C ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A",
+      "decoded": [
+        "Timer values 0x81, 0x83, 0x85, 0x87, 0x89, and 0x8B",
+        "(+0, +9) staged movement phase",
+        "Sound/event 0x50, write 0x00125FA8, and actor-state clear"
+      ],
+      "continuation": "0x001216AA ACTOR_MOVE_MENU_PRESENTATION_CHILD_B"
+    },
+    {
+      "address": "0x001216AA",
+      "name": "ACTOR_MOVE_MENU_PRESENTATION_CHILD_B",
+      "range": ["0x001216AA", "0x001216C5"],
+      "size": 28,
+      "template": "0x001B7D50 ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_B",
+      "decoded": [
+        "Timer values 0x81, 0x83, 0x85, 0x87, 0x89, and 0x8B",
+        "(+0, +9) staged movement phase",
+        "Actor-state clear at 0x001216C2"
+      ],
+      "continuation": "0x001216C6 ACTOR_MOVE_TYPE07_MOVING_INTERACTION"
+    }
+  ],
+  "boundary_basis": [
+    "The two exact F5 child templates supply the entry pointers.",
+    "MovementDecoder linear decode covers exactly 38 bytes from 0x00121684 to the child-B entry and exactly 28 bytes from 0x001216AA to the established Type-0x07 movement owner.",
+    "The shared continuation is represented by its own canonical entries and is not duplicated in either child range."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1774,6 +1774,28 @@
     - actor_template_late_interaction_family_static_decompilation
     - movement_stream_decoder
 
+0x00121684:
+  name: ACTOR_MOVE_MENU_PRESENTATION_CHILD_A
+  type: movement_stream
+  size: 38
+  confidence: decompiled
+  description: Type-0x84 menu-presentation child-A movement entry supplied by ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A at 0x001B7D3C. Its exact 38-byte prefix runs through the staged timer/offset sequence and the terminal actor-state clear at 0x0012169C, then falls through into the child-B entry at 0x001216AA; shared continuation bytes are not claimed by this range.
+  evidence:
+    - menu_transition_template_family_static_decompilation
+    - menu_scene_animation_static_decompilation
+    - movement_stream_decoder
+
+0x001216AA:
+  name: ACTOR_MOVE_MENU_PRESENTATION_CHILD_B
+  type: movement_stream
+  size: 28
+  confidence: decompiled
+  description: Type-0x84 menu-presentation child-B movement entry supplied by ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_B at 0x001B7D50. Its exact 28-byte prefix repeats the staged timer/offset sequence and clears the actor state at 0x001216C2, then falls through into ACTOR_MOVE_TYPE07_MOVING_INTERACTION at 0x001216C6; shared continuation bytes are not claimed by this range.
+  evidence:
+    - menu_transition_template_family_static_decompilation
+    - menu_scene_animation_static_decompilation
+    - movement_stream_decoder
+
 0x0011F728:
   name: ACTOR_MOVE_SCENE_RESOURCE_DEFAULT
   size: 30
