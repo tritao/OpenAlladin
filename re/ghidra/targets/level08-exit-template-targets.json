@@ -21,7 +21,7 @@
     "size": 20,
     "raw_bytes": "6000000000000012152A6000001231300B000200",
     "runtime_type": "0x60",
-    "movement_stream": "0x0012152A",
+    "movement_stream": "0x0012152A ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION",
     "template_word": "0x6000",
     "animation_stream": "0x00123130",
     "resource_count": "0x0B",

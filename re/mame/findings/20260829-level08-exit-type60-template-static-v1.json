@@ -15,7 +15,7 @@
     "address": "0x001B7DC8",
     "range": ["0x001B7DC8", "0x001B7DDB"],
     "runtime_type": "0x60",
-    "movement_stream": "0x0012152A",
+    "movement_stream": "0x0012152A ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION",
     "template_word": "0x6000",
     "animation_stream": "0x00123130",
     "resource_count": "0x0B",

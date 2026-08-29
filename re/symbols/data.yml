@@ -2589,6 +2589,17 @@
     - actor_template_runtime_trace
     - movement_stream_decoder
 
+0x0012152A:
+  name: ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION
+  type: movement_stream
+  size: 110
+  confidence: decompiled
+  description: Type-0x60 Level-08 exit-presentation movement root supplied by ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT at 0x001B7DC8 and selected by Level08_ExitRoutine. Its exact 110-byte region follows the fixed approach/settle profile and loops from 0x00121590 back to 0x0012152A, ending immediately before the defined pointer data at 0x00121598.
+  evidence:
+    - level08_exit_movement_stream_static_decompilation
+    - level08_exit_type60_template_static_decompilation
+    - movement_stream_decoder
+
 0x001217A2:
   name: ACTOR_MOVE_TYPE84_SCENE_RESET
   size: 18
@@ -5220,7 +5231,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x60 Level 08 exit-presentation template selected by Level08_ExitRoutine; it uses movement stream 0x0012152A, default animation entry 0x00123130, owns eleven resources, and carries trailing flags 0x0200 before the caller copies the player position and publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350.
+  description: Type-0x60 Level 08 exit-presentation template selected by Level08_ExitRoutine; it uses ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION at 0x0012152A, default animation entry 0x00123130, owns eleven resources, and carries trailing flags 0x0200 before the caller copies the player position and publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350.
   evidence:
     - ghidra_level08_exit_routine
     - level08_exit_template_targets

@@ -456,6 +456,27 @@ def test_shared_type3c_3d_3e_3f_movement_is_exact():
     assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
+def test_level08_exit_movement_stream_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x0012152A, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION"
+    assert stream.end == 0x00121597
+    assert stream.size == 110
+    assert stream.metadata["type"] == "movement_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoded = MovementDecoder(rom).decode_stream(
+        0x0012152A,
+        max_steps=256,
+        max_bytes=512,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 110
+    assert decoded["stopped_reason"] == "control_flow_cycle"
+
+
 def test_type03_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {

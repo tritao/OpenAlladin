@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/level08-exit-movement-stream-static-targets.json",
+  "stream": {
+    "address": "0x0012152A",
+    "name": "ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION",
+    "range": "0x0012152A-0x00121597",
+    "bytes": 110,
+    "producer": "ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT at 0x001B7DC8",
+    "consumer": "Level08_ExitRoutine at 0x001B6504",
+    "decoded": [
+      "The lossless movement path follows the fixed approach/settle delta profile.",
+      "0x80 at 0x00121590 returns to 0x0012152A."
+    ]
+  },
+  "evidence": [
+    "Exact 20-byte Type-0x60 template record and Level08_ExitRoutine initializer contract.",
+    "MovementDecoder reports 110 bytes through the local self-loop.",
+    "The next defined object starts at 0x00121598, giving an exact non-overlapping boundary."
+  ],
+  "conclusion": "The Level-08 Type-0x60 exit-presentation movement program is now a canonical 110-byte owner at 0x0012152A-0x00121597.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

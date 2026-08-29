@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-level08-exit-movement-stream-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Classify the exact Level-08 Type-0x60 exit movement stream selected by ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT.",
+  "stream": {
+    "address": "0x0012152A",
+    "name": "ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION",
+    "range": ["0x0012152A", "0x00121597"],
+    "size": 110,
+    "producer": "ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT at 0x001B7DC8, selected by Level08_ExitRoutine at 0x001B6504",
+    "decoded": [
+      "The exact stream contains the fixed horizontal approach/settle profile, followed by the terminal local loop.",
+      "0x80 at 0x00121590 jumps back to 0x0012152A.",
+      "The owner ends at 0x00121597, immediately before the known pointer data beginning at 0x00121598."
+    ]
+  },
+  "boundary_basis": [
+    "The Type-0x60 template directly supplies 0x0012152A as its movement pointer.",
+    "MovementDecoder reports an exact 110-byte self-looping stream.",
+    "The next address 0x00121598 is an existing defined pointer object and is not claimed by this stream."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
