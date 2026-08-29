@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-actor-spawn-variation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "services": [
+    {
+      "address": "0x001B6794",
+      "name": "Actor_ApplyRandomSpawnVariation",
+      "callers": ["0x001B67DA", "0x001B67FE"],
+      "random_source": "0x001B3032 TerrainScene5RandomStep",
+      "effects": [
+        "Adds (random_low_3_bits - 3) to actor A5 offset 0x02.",
+        "If the next random value bit 0 is set, writes animation root 0x001241FC to actor offset 0x20.",
+        "If the next random value bit 1 is set, sets actor offset 0x35."
+      ]
+    },
+    {
+      "address": "0x001B7332",
+      "name": "InteractionSpawn_RuntimeType40",
+      "caller": "0x001B72FC",
+      "allocator": "0x001B52A0 LevelObjectSpawnVariant",
+      "template": "0x001B79B8",
+      "runtime_type": "0x40",
+      "animation_root": "0x00122C12",
+      "post_init_clear": "actor offset 0x29"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "services": [
+    {
+      "address": "0x001B6794",
+      "name": "Actor_ApplyRandomSpawnVariation",
+      "behavior": "The helper calls TerrainScene5RandomStep, masks the result to three bits, subtracts three, and adds the signed result to actor A5 offset 0x02. A second random value controls animation-root replacement at offset 0x20 through bit 0 and sets actor offset 0x35 through bit 1.",
+      "callers": ["0x001B67DA", "0x001B67FE"]
+    },
+    {
+      "address": "0x001B7332",
+      "name": "InteractionSpawn_RuntimeType40",
+      "behavior": "Calls LevelObjectSpawnVariant with template 0x001B79B8. If allocation succeeds, writes type 0x40, animation root 0x00122C12, and zero to actor offset 0x29.",
+      "caller": "0x001B72FC",
+      "parent_pattern": "The caller adjusts the destination actor coordinates around four calls, producing a four-position type-0x40 spawn pattern when its display-counter gate is satisfied."
+    }
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

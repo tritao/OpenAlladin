@@ -2138,6 +2138,23 @@ individual types. The exact mapping is recorded in
 `re/mame/findings/20260829-actor-runtime-type6e-73-v1.json` and
 `re/ghidra/targets/actor-runtime-type6e-73-targets.json`.
 
+## Actor spawn variation and runtime type 0x40 (20260829)
+
+`Actor_ApplyRandomSpawnVariation` at `0x001B6794` is shared by the adjacent
+scene-resource actor producers. It consumes `TerrainScene5RandomStep`, adds a
+random signed offset from `-3` through `+4` to the destination actor's X word,
+optionally replaces its animation root with `0x001241FC`, and optionally sets
+the actor byte at offset `+0x35`. The helper is now named without assigning an
+unverified visual identity to the variation.
+
+`InteractionSpawn_RuntimeType40` at `0x001B7332` calls
+`LevelObjectSpawnVariant` with template `0x001B79B8` and, on success, installs
+runtime type `0x40`, animation root `0x00122C12`, and a cleared byte at `+0x29`.
+Its parent adjusts the destination coordinates around four calls, defining a
+multi-position type-`0x40` spawn pattern. The exact contracts are recorded in
+`re/mame/findings/20260829-actor-spawn-variation-v1.json` and
+`re/ghidra/targets/actor-spawn-variation-targets.json`.
+
 The static result is recorded in
 `re/mame/findings/20260829-vdp-fill-c000-v1.json`.
 

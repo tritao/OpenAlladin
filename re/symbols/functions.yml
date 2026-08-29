@@ -2549,6 +2549,21 @@
     - ghidra_disassembly_001ACFBC
     - ghidra_actor_runtime_type6e_73_targets
 
+0x001B6794:
+  name: Actor_ApplyRandomSpawnVariation
+  confidence: decompiled
+  description: Applies two PRNG-derived post-spawn variations to the actor record in A5; it adds an X displacement in the range -3..+4, optionally replaces the animation root with 0x001241FC, and optionally sets the transient flag at actor offset 0x35.
+  evidence:
+    - ghidra_disassembly_001B6794
+    - ghidra_actor_spawn_variation_targets
+0x001B7332:
+  name: InteractionSpawn_RuntimeType40
+  confidence: decompiled
+  description: Interaction spawner that uses LevelObjectSpawnVariant with template 0x001B79B8, then assigns runtime actor type 0x40, animation root 0x00122C12, and a cleared actor byte at offset 0x29 when allocation succeeds.
+  evidence:
+    - ghidra_disassembly_001B7332
+    - ghidra_actor_spawn_variation_targets
+
 0x001B07D0:
   name: Level_RenderTerminalTransitionTileBand
   confidence: decompiled
