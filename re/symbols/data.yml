@@ -241,6 +241,214 @@
     - scene_resource_mode_record_table_static_v1
     - rom_scene_resource_mode_record_table_00126D7E
 
+0x00126F0E:
+  name: SCENE_RESOURCE_MODE_STREAM_00
+  type: scene_resource_stream
+  size: 0x11
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x00 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x00 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126F1F:
+  name: SCENE_RESOURCE_MODE_STREAM_01
+  type: scene_resource_stream
+  size: 0x0F
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x01 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x01 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126F2E:
+  name: SCENE_RESOURCE_MODE_STREAM_02
+  type: scene_resource_stream
+  size: 0x0F
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x02 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x02 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126F3D:
+  name: SCENE_RESOURCE_MODE_STREAM_03
+  type: scene_resource_stream
+  size: 0x0B
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x03 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x03 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126F48:
+  name: SCENE_RESOURCE_MODE_STREAM_04
+  type: scene_resource_stream
+  size: 0x11
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x04 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x04 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126F59:
+  name: SCENE_RESOURCE_MODE_STREAM_05
+  type: scene_resource_stream
+  size: 0x10
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x05 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x05 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126F69:
+  name: SCENE_RESOURCE_MODE_STREAM_06
+  type: scene_resource_stream
+  size: 0x10
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x06 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x06 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126F79:
+  name: SCENE_RESOURCE_MODE_STREAM_07
+  type: scene_resource_stream
+  size: 0x0B
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x07 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x07 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126F84:
+  name: SCENE_RESOURCE_MODE_STREAM_08
+  type: scene_resource_stream
+  size: 0x09
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x08 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x08 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126F8D:
+  name: SCENE_RESOURCE_MODE_STREAM_09
+  type: scene_resource_stream
+  size: 0x10
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x09 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x09 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126F9D:
+  name: SCENE_RESOURCE_MODE_STREAM_0A
+  type: scene_resource_stream
+  size: 0x10
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x0A text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x0A and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126FAD:
+  name: SCENE_RESOURCE_MODE_STREAM_0B
+  type: scene_resource_stream
+  size: 0x0F
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x0B text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x0B and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126FBC:
+  name: SCENE_RESOURCE_MODE_STREAM_0C
+  type: scene_resource_stream
+  size: 0x11
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x0C text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x0C and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126FCD:
+  name: SCENE_RESOURCE_MODE_STREAM_0D
+  type: scene_resource_stream
+  size: 0x13
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x0D text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x0D and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126FE0:
+  name: SCENE_RESOURCE_MODE_STREAM_0E
+  type: scene_resource_stream
+  size: 0x0A
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x0E text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x0E and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126FEA:
+  name: SCENE_RESOURCE_MODE_STREAM_0F
+  type: scene_resource_stream
+  size: 0x12
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x0F text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x0F and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00126FFC:
+  name: SCENE_RESOURCE_MODE_STREAM_10
+  type: scene_resource_stream
+  size: 0x14
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x10 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x10 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00127010:
+  name: SCENE_RESOURCE_MODE_STREAM_11
+  type: scene_resource_stream
+  size: 0x13
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x11 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x11 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00127045:
+  name: SCENE_RESOURCE_MODE_STREAM_12
+  type: scene_resource_stream
+  size: 0x10
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x12 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x12 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00127055:
+  name: SCENE_RESOURCE_MODE_STREAM_13
+  type: scene_resource_stream
+  size: 0x0B
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x13 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x13 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00127023:
+  name: SCENE_RESOURCE_MODE_STREAM_14
+  type: scene_resource_stream
+  size: 0x10
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x14 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x14 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00127033:
+  name: SCENE_RESOURCE_MODE_STREAM_15
+  type: scene_resource_stream
+  size: 0x12
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x15 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x15 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00127060:
+  name: SCENE_RESOURCE_MODE_STREAM_16
+  type: scene_resource_stream
+  size: 0x0E
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x16 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x16 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x0012706E:
+  name: SCENE_RESOURCE_MODE_STREAM_17
+  type: scene_resource_stream
+  size: 0x15
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x17 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x17 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00127083:
+  name: SCENE_RESOURCE_MODE_STREAM_18
+  type: scene_resource_stream
+  size: 0x10
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x18 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x18 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
+0x00127093:
+  name: SCENE_RESOURCE_MODE_STREAM_19
+  type: scene_resource_stream
+  size: 0x14
+  confidence: decompiled
+  description: NUL-terminated scene-resource mode-0x19 text stream selected by SCENE_RESOURCE_MODE_RECORD_TABLE entry 0x19 and consumed by SceneResource_InstantiateActors.
+  evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data

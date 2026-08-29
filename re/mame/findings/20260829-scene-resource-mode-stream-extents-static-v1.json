@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-resource-mode-stream-extents-targets.json",
+  "corpus": {
+    "first": "0x00126F0E",
+    "last": "0x001270A6",
+    "bytes": 409,
+    "streams": 26,
+    "terminator": "Each selected stream ends at its first command/text NUL byte."
+  },
+  "selection": {
+    "table": "0x00126D7E SCENE_RESOURCE_MODE_RECORD_TABLE",
+    "consumer": "0x001B2238 SceneResource_InstantiateActors",
+    "interpreter": "0x001B21F6 SceneResource_ProcessCommandStream"
+  },
+  "evidence": [
+    "Every table record supplies one direct stream pointer to the shared command interpreter.",
+    "All 26 selected pointers resolve to a complete NUL-terminated stream.",
+    "The 26 stream ranges are mutually adjacent in ROM address order and cover 0x00126F0E-0x001270A6 without gaps.",
+    "The final terminator at 0x001270A6 is followed by one alignment zero and a separate stream at 0x001270A8."
+  ],
+  "conclusion": "The mode-selected text/command corpus is a canonical SCENE_TABLE range with one mechanically named stream per table index. The separate following stream and preceding text object remain independent audits.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

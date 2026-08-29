@@ -372,6 +372,49 @@ def test_canonical_scene_resource_mode_record_table_has_exact_records_and_bounda
     assert symbol.metadata["count"] == 26
 
 
+def test_canonical_scene_resource_mode_streams_are_exact_and_contiguous():
+    symbols = SymbolStore()
+    expected = (
+        (0x00126F0E, 0x00126F1E, "SCENE_RESOURCE_MODE_STREAM_00"),
+        (0x00126F1F, 0x00126F2D, "SCENE_RESOURCE_MODE_STREAM_01"),
+        (0x00126F2E, 0x00126F3C, "SCENE_RESOURCE_MODE_STREAM_02"),
+        (0x00126F3D, 0x00126F47, "SCENE_RESOURCE_MODE_STREAM_03"),
+        (0x00126F48, 0x00126F58, "SCENE_RESOURCE_MODE_STREAM_04"),
+        (0x00126F59, 0x00126F68, "SCENE_RESOURCE_MODE_STREAM_05"),
+        (0x00126F69, 0x00126F78, "SCENE_RESOURCE_MODE_STREAM_06"),
+        (0x00126F79, 0x00126F83, "SCENE_RESOURCE_MODE_STREAM_07"),
+        (0x00126F84, 0x00126F8C, "SCENE_RESOURCE_MODE_STREAM_08"),
+        (0x00126F8D, 0x00126F9C, "SCENE_RESOURCE_MODE_STREAM_09"),
+        (0x00126F9D, 0x00126FAC, "SCENE_RESOURCE_MODE_STREAM_0A"),
+        (0x00126FAD, 0x00126FBB, "SCENE_RESOURCE_MODE_STREAM_0B"),
+        (0x00126FBC, 0x00126FCC, "SCENE_RESOURCE_MODE_STREAM_0C"),
+        (0x00126FCD, 0x00126FDF, "SCENE_RESOURCE_MODE_STREAM_0D"),
+        (0x00126FE0, 0x00126FE9, "SCENE_RESOURCE_MODE_STREAM_0E"),
+        (0x00126FEA, 0x00126FFB, "SCENE_RESOURCE_MODE_STREAM_0F"),
+        (0x00126FFC, 0x0012700F, "SCENE_RESOURCE_MODE_STREAM_10"),
+        (0x00127010, 0x00127022, "SCENE_RESOURCE_MODE_STREAM_11"),
+        (0x00127023, 0x00127032, "SCENE_RESOURCE_MODE_STREAM_14"),
+        (0x00127033, 0x00127044, "SCENE_RESOURCE_MODE_STREAM_15"),
+        (0x00127045, 0x00127054, "SCENE_RESOURCE_MODE_STREAM_12"),
+        (0x00127055, 0x0012705F, "SCENE_RESOURCE_MODE_STREAM_13"),
+        (0x00127060, 0x0012706D, "SCENE_RESOURCE_MODE_STREAM_16"),
+        (0x0012706E, 0x00127082, "SCENE_RESOURCE_MODE_STREAM_17"),
+        (0x00127083, 0x00127092, "SCENE_RESOURCE_MODE_STREAM_18"),
+        (0x00127093, 0x001270A6, "SCENE_RESOURCE_MODE_STREAM_19"),
+    )
+    actual = []
+    for start, end, name in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == end - start + 1
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "scene_resource_stream"
+        actual.append((symbol.address, symbol.end))
+    assert actual == [(start, end) for start, end, _ in expected]
+    assert all(left[1] + 1 == right[0] for left, right in zip(actual, actual[1:]))
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(

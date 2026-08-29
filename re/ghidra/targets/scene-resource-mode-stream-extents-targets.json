@@ -1,0 +1,56 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-mode-streams",
+    "purpose": "Bound every command/text stream directly selected by SCENE_RESOURCE_MODE_RECORD_TABLE and consumed by SceneResource_InstantiateActors."
+  },
+  "interpreter": {
+    "address": "0x001B21F6",
+    "name": "SceneResource_ProcessCommandStream",
+    "terminator": "command byte 0x00"
+  },
+  "table": {
+    "address": "0x00126D7E",
+    "name": "SCENE_RESOURCE_MODE_RECORD_TABLE",
+    "entry_size": 12,
+    "count": 26
+  },
+  "streams": [
+    { "mode": "0x00", "address": "0x00126F0E", "name": "SCENE_RESOURCE_MODE_STREAM_00", "range": ["0x00126F0E", "0x00126F1E"] },
+    { "mode": "0x01", "address": "0x00126F1F", "name": "SCENE_RESOURCE_MODE_STREAM_01", "range": ["0x00126F1F", "0x00126F2D"] },
+    { "mode": "0x02", "address": "0x00126F2E", "name": "SCENE_RESOURCE_MODE_STREAM_02", "range": ["0x00126F2E", "0x00126F3C"] },
+    { "mode": "0x03", "address": "0x00126F3D", "name": "SCENE_RESOURCE_MODE_STREAM_03", "range": ["0x00126F3D", "0x00126F47"] },
+    { "mode": "0x04", "address": "0x00126F48", "name": "SCENE_RESOURCE_MODE_STREAM_04", "range": ["0x00126F48", "0x00126F58"] },
+    { "mode": "0x05", "address": "0x00126F59", "name": "SCENE_RESOURCE_MODE_STREAM_05", "range": ["0x00126F59", "0x00126F68"] },
+    { "mode": "0x06", "address": "0x00126F69", "name": "SCENE_RESOURCE_MODE_STREAM_06", "range": ["0x00126F69", "0x00126F78"] },
+    { "mode": "0x07", "address": "0x00126F79", "name": "SCENE_RESOURCE_MODE_STREAM_07", "range": ["0x00126F79", "0x00126F83"] },
+    { "mode": "0x08", "address": "0x00126F84", "name": "SCENE_RESOURCE_MODE_STREAM_08", "range": ["0x00126F84", "0x00126F8C"] },
+    { "mode": "0x09", "address": "0x00126F8D", "name": "SCENE_RESOURCE_MODE_STREAM_09", "range": ["0x00126F8D", "0x00126F9C"] },
+    { "mode": "0x0A", "address": "0x00126F9D", "name": "SCENE_RESOURCE_MODE_STREAM_0A", "range": ["0x00126F9D", "0x00126FAC"] },
+    { "mode": "0x0B", "address": "0x00126FAD", "name": "SCENE_RESOURCE_MODE_STREAM_0B", "range": ["0x00126FAD", "0x00126FBB"] },
+    { "mode": "0x0C", "address": "0x00126FBC", "name": "SCENE_RESOURCE_MODE_STREAM_0C", "range": ["0x00126FBC", "0x00126FCC"] },
+    { "mode": "0x0D", "address": "0x00126FCD", "name": "SCENE_RESOURCE_MODE_STREAM_0D", "range": ["0x00126FCD", "0x00126FDF"] },
+    { "mode": "0x0E", "address": "0x00126FE0", "name": "SCENE_RESOURCE_MODE_STREAM_0E", "range": ["0x00126FE0", "0x00126FE9"] },
+    { "mode": "0x0F", "address": "0x00126FEA", "name": "SCENE_RESOURCE_MODE_STREAM_0F", "range": ["0x00126FEA", "0x00126FFB"] },
+    { "mode": "0x10", "address": "0x00126FFC", "name": "SCENE_RESOURCE_MODE_STREAM_10", "range": ["0x00126FFC", "0x0012700F"] },
+    { "mode": "0x11", "address": "0x00127010", "name": "SCENE_RESOURCE_MODE_STREAM_11", "range": ["0x00127010", "0x00127022"] },
+    { "mode": "0x14", "address": "0x00127023", "name": "SCENE_RESOURCE_MODE_STREAM_14", "range": ["0x00127023", "0x00127032"] },
+    { "mode": "0x15", "address": "0x00127033", "name": "SCENE_RESOURCE_MODE_STREAM_15", "range": ["0x00127033", "0x00127044"] },
+    { "mode": "0x12", "address": "0x00127045", "name": "SCENE_RESOURCE_MODE_STREAM_12", "range": ["0x00127045", "0x00127054"] },
+    { "mode": "0x13", "address": "0x00127055", "name": "SCENE_RESOURCE_MODE_STREAM_13", "range": ["0x00127055", "0x0012705F"] },
+    { "mode": "0x16", "address": "0x00127060", "name": "SCENE_RESOURCE_MODE_STREAM_16", "range": ["0x00127060", "0x0012706D"] },
+    { "mode": "0x17", "address": "0x0012706E", "name": "SCENE_RESOURCE_MODE_STREAM_17", "range": ["0x0012706E", "0x00127082"] },
+    { "mode": "0x18", "address": "0x00127083", "name": "SCENE_RESOURCE_MODE_STREAM_18", "range": ["0x00127083", "0x00127092"] },
+    { "mode": "0x19", "address": "0x00127093", "name": "SCENE_RESOURCE_MODE_STREAM_19", "range": ["0x00127093", "0x001270A6"] }
+  ],
+  "boundary": {
+    "following_alignment": ["0x001270A7", "0x001270A7"],
+    "following_stream": "0x001270A8",
+    "description": "The mode-0x19 terminator is at 0x001270A6; one alignment zero follows before the separately selected stream at 0x001270A8."
+  },
+  "limitations": [
+    "The user-facing names of the modes remain represented mechanically by their table indices.",
+    "The separate stream beginning at 0x001270A8 is not claimed by this manifest."
+  ]
+}
