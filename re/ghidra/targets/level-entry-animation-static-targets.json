@@ -1,0 +1,72 @@
+{
+  "format": "openaladdin-level-entry-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Range-bound direct Level-entry animation roots and shared handoffs for the Type-0x84, 0x42, 0x54, 0x7C, and 0x7D actor templates.",
+  "animations": [
+    {
+      "address": "0x0012585C",
+      "name": "ACTOR_ANIM_TYPE84_LEVEL_ENTRY_SHARED",
+      "range": ["0x0012585C", "0x00125873"],
+      "bytes": 24,
+      "consumer": "0x001B8138 ACTOR_TEMPLATE_TYPE_84_LEVEL_ENTRY_SHARED",
+      "handoff": "Continues at 0x00125874."
+    },
+    {
+      "address": "0x00125874",
+      "name": "ACTOR_ANIM_TYPE42_LEVEL_ENTRY_OPENING",
+      "range": ["0x00125874", "0x00125877"],
+      "bytes": 4,
+      "consumer": "0x001B814C ACTOR_TEMPLATE_TYPE_42_LEVEL_ENTRY",
+      "handoff": "Continues at 0x00125878."
+    },
+    {
+      "address": "0x00125878",
+      "name": "ACTOR_ANIM_TYPE54_LEVEL_ENTRY",
+      "range": ["0x00125878", "0x001258A5"],
+      "bytes": 46,
+      "consumer": "0x001B8160 ACTOR_TEMPLATE_TYPE_54",
+      "behavior": "Actor-state clear, 0x128A-0x129E frame sequence, and loop from 0x001258A0 to 0x0012587C."
+    },
+    {
+      "address": "0x001258A6",
+      "name": "ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD_OPENING",
+      "range": ["0x001258A6", "0x001258D1"],
+      "bytes": 44,
+      "consumer": "0x001B8188 ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_CHILD",
+      "handoff": "Continues at PLAYER_ANIM_STATE_1258D2 after F600 at 0x001258D0."
+    },
+    {
+      "address": "0x00125916",
+      "name": "ACTOR_ANIM_TYPE7C_LEVEL05_TIMED_SPAWN",
+      "range": ["0x00125916", "0x0012593F"],
+      "bytes": 42,
+      "consumer": "0x001B819C ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN",
+      "handoff": "Continues at ACTOR_ANIM_TYPE7D_LEVEL_ENTRY at 0x00125940."
+    },
+    {
+      "address": "0x00125940",
+      "name": "ACTOR_ANIM_TYPE7D_LEVEL_ENTRY",
+      "range": ["0x00125940", "0x00125951"],
+      "bytes": 18,
+      "consumer": "0x001B81D8 ACTOR_TEMPLATE_TYPE_7D",
+      "behavior": "Paired 0x1B3A/0x1B3E/0x1B42 frame loop."
+    }
+  ],
+  "handoffs": [
+    { "from": "0x0012585C", "to": "0x00125874", "reason": "Type-0x84 opening ends before the Type-0x42 entry." },
+    { "from": "0x00125874", "to": "0x00125878", "reason": "Type-0x42 opening enters the shared Type-0x54 loop." },
+    { "from": "0x001258A6", "to": "0x001258D2", "reason": "Type-0x84 child opening clears the actor before the shared player-state entry." },
+    { "from": "0x00125916", "to": "0x00125940", "reason": "Type-0x7C timed-spawn phase clears the actor before the Type-0x7D loop." }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact actor-template animation pointers",
+    "Exact F600 and EA control-flow boundaries"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

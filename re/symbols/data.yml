@@ -688,6 +688,60 @@
     - actor_template_runtime_trace
     - movement_stream_decoder
 
+0x0012585C:
+  name: ACTOR_ANIM_TYPE84_LEVEL_ENTRY_SHARED
+  size: 24
+  confidence: decompiled
+  description: Shared Type-0x84 level-entry animation opening installed by ACTOR_TEMPLATE_TYPE_84_LEVEL_ENTRY_SHARED. It runs three timed frame/clear phases for frame references 0x107E, 0x1082, and 0x1086, then hands off at 0x00125874 to the Type-0x42/0x54 entry family.
+  evidence:
+    - actor_template_level_entry_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125874:
+  name: ACTOR_ANIM_TYPE42_LEVEL_ENTRY_OPENING
+  size: 4
+  confidence: decompiled
+  description: Type-0x42 level-entry opening installed by ACTOR_TEMPLATE_TYPE_42_LEVEL_ENTRY. It presents frame 0x108A, clears actor state, and continues at ACTOR_ANIM_TYPE54_LEVEL_ENTRY at 0x00125878.
+  evidence:
+    - actor_template_level_entry_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125878:
+  name: ACTOR_ANIM_TYPE54_LEVEL_ENTRY
+  size: 46
+  confidence: decompiled
+  description: Type-0x54 level-entry animation installed by ACTOR_TEMPLATE_TYPE_54. It clears actor state, cycles the 0x128A-0x129E frame sequence, and loops from 0x001258A0 to 0x0012587C.
+  evidence:
+    - actor_template_level_entry_family_static_decompilation
+    - animation_stream_decoder
+
+0x001258A6:
+  name: ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD_OPENING
+  size: 44
+  confidence: decompiled
+  description: Type-0x84 level-event child animation opening supplied by ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_CHILD. It presents the 0x10B6-0x10D2 lead-in and clears the actor at 0x001258D0 before continuing at PLAYER_ANIM_STATE_1258D2.
+  evidence:
+    - actor_template_scene_level_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125916:
+  name: ACTOR_ANIM_TYPE7C_LEVEL05_TIMED_SPAWN
+  size: 42
+  confidence: decompiled
+  description: Type-0x7C Level-05 timed-spawn animation installed by ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN. It presents the 0x0F9A-0x0FB2 sequence, publishes actor type 0x84, clears the actor at 0x0012593E, and hands off to the embedded ACTOR_ANIM_TYPE7D_LEVEL_ENTRY at 0x00125940.
+  evidence:
+    - actor_template_level_entry_family_static_decompilation
+    - animation_stream_decoder
+
+0x00125940:
+  name: ACTOR_ANIM_TYPE7D_LEVEL_ENTRY
+  size: 18
+  confidence: decompiled
+  description: Type-0x7D level-entry animation installed by ACTOR_TEMPLATE_TYPE_7D. It loops the paired 0x1B3A, 0x1B3E, and 0x1B42 frame sequence at 0x0012594C.
+  evidence:
+    - actor_template_level_entry_family_static_decompilation
+    - animation_stream_decoder
+
 0x00122C1E:
   name: ACTOR_ANIM_TYPE_34_WALL
   confidence: probable
