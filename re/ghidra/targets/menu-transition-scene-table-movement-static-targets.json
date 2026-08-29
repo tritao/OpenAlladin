@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-menu-transition-scene-table-movement-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Classify the directly selected scene-table transition actor MovementVM stream.",
+  "stream": {
+    "address": "0x001209C6",
+    "name": "ACTOR_MOVE_TYPE84_SCENE_TABLE_TRANSITION",
+    "range": ["0x001209C6", "0x001209EF"],
+    "size": 42,
+    "producer": "ACTOR_TEMPLATE_SCENE_TABLE_TRANSITION at 0x001B7D64 loads 0x001209C6 into actor movement field +0x0A",
+    "decoded": [
+      "Signed horizontal response phases (+2,0), (+1,0), (+2,0), and the two random alternatives (+2,+1)/(+2,-1)",
+      "0x80 at 0x001209DA loops to 0x001209C6",
+      "The exact owner ends before ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A at 0x001209F0"
+    ]
+  },
+  "boundary_basis": [
+    "The exact scene-table transition template record supplies the movement root alongside animation stream 0x00123EC2.",
+    "MovementDecoder linear decode covers exactly 42 contiguous bytes through the local terminal jump.",
+    "The range stops before the independently owned Type-0x84 random-variant movement roots at 0x001209F0 and 0x001209F8."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
