@@ -1,0 +1,55 @@
+{
+  "format": "openaladdin-level07-type7c-template-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the directly selected Type-0x7C template shared by the Level-07 callback's coordinate-gated spawn branches.",
+  "consumer": {
+    "address": "0x001B5D68",
+    "name": "Level07_EnterRoutine",
+    "selection_sites": ["0x001B5DC6", "0x001B5E1E", "0x001B5E90"],
+    "allocator": "0x001AE262 Actor_FindFreeSlot",
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "template": "0x001B81C4 ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN"
+  },
+  "spawn_branches": [
+    {
+      "selection_site": "0x001B5DC6",
+      "position": "X=0x18F0, Y=0x0100",
+      "post_initialize": "actor word +0x1A = 0x0400"
+    },
+    {
+      "selection_site": "0x001B5E1E",
+      "position": "X=0x0820 or 0x0860, Y=0x0110, selected from TerrainScene5RandomStep bit 0x20",
+      "post_initialize": "actor word +0x1A = 0x0400"
+    },
+    {
+      "selection_site": "0x001B5E90",
+      "position": "X=0x0AE0, Y=0x0110",
+      "post_initialize": "actor word +0x1A = 0x0400"
+    }
+  ],
+  "template": {
+    "address": "0x001B81C4",
+    "name": "ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN",
+    "range": ["0x001B81C4", "0x001B81D7"],
+    "size": 20,
+    "runtime_type": "0x7C",
+    "movement_stream": "0x0012118A",
+    "template_word": "0x2000",
+    "animation_stream": "0x00125916",
+    "resource_count": "0x03"
+  },
+  "evidence": [
+    "Exact Level07_EnterRoutine disassembly and cached decompilation",
+    "Three direct template loads at 0x001B5DC6, 0x001B5E1E, and 0x001B5E90",
+    "Shared Actor_FindFreeSlot plus Actor_InitializeFromTemplate sequence",
+    "Exact 20-byte record immediately before ACTOR_TEMPLATE_TYPE_7D"
+  ],
+  "conclusion": "The Type-0x7C record at 0x001B81C4 is directly selected by three complete Level-07 spawn branches. The adjacent Type-0x7C record at 0x001B81B0 remains unresolved because it has no direct static consumer.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

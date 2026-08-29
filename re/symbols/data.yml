@@ -3307,6 +3307,17 @@
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
+
+0x001B81C4:
+  name: ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x7C Level-07 callback spawn template selected at three direct sites in Level07_EnterRoutine; it uses movement stream 0x0012118A, animation stream 0x00125916, template word 0x2000, and three resources, while the callback supplies one of the level-relative positions and sets actor word +0x1A to 0x0400.
+  evidence:
+    - ghidra_decompile_001B5D68
+    - level07_type7c_template_targets
+    - actor_template_grid_xrefs
 0x001B7864:
   name: ACTOR_TEMPLATE_TYPE_83_PLAYER_BOOT
   type: actor_template

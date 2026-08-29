@@ -3196,6 +3196,7 @@
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
+    - level07_type7c_template_targets
 0x001B64C2:
   name: Level07_ExitRoutine
   confidence: decompiled
