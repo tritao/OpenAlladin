@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "menu-options-presentation",
+    "purpose": "Recover the compact menu presentation helper that prepares VDP state and renders the startup/options text."
+  },
+  "targets": [
+    { "address": "0x001B437E", "name": "Menu_PrepareOptionsScreen" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF157", "name": "MENU_OPTIONS_PRESENTATION_GATE" },
+    { "address": "0x00126679", "name": "ROM_PRESS_START_OPTIONS_PROMPT" },
+    { "address": "0x00126692", "name": "ROM_DIFFICULTY_LABEL" },
+    { "address": "0x001266A0", "name": "ROM_MUSIC_OPTIONS_PROMPT" },
+    { "address": "0x001B434E", "name": "Menu_RenderDifficultyLabel" },
+    { "address": "0x001B21F6", "name": "SceneResource_ProcessCommandStream" },
+    { "address": "0x001B2E44", "name": "VDP_CopyScenePlaneF800" }
+  ],
+  "range": {
+    "start": "0x001B437E",
+    "end": "0x001B43C3",
+    "size": 70,
+    "next_function": "0x001B43C4 Menu_SetPrimarySelectionMarkerPosition"
+  }
+}

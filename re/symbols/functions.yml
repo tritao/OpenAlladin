@@ -4836,3 +4836,13 @@
     - ghidra_decompile_001B1656
     - ghidra_scene_transition_palette_callbacks
     - scene-transition-palette-callback-static-decompilation
+0x001B437E:
+  name: Menu_PrepareOptionsScreen
+  confidence: decompiled
+  size: 70
+  description: Prepares the options/menu presentation by copying the caller-selected VDP words, clearing VRAM C000 and E000, clearing the palette, copying the fixed F800 scene plane, and rendering either the press-start/options prompt or the difficulty/music prompt according to the 0x00FFF157 presentation gate.
+  evidence:
+    - ghidra_disassembly_001B437E
+    - ghidra_decompile_001B437E
+    - ghidra_menu_options_presentation
+    - menu-options-presentation-static-decompilation
