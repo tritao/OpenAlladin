@@ -1,0 +1,81 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-action-transition-animation-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00122470",
+      "name": "PLAYER_ANIM_ACTION_TERRAIN_TRANSITION",
+      "range": "0x00122470-0x001224B9",
+      "bytes": 74,
+      "frames": ["0x0C06", "0x0C0A", "0x0C0A", "0x0C0E", "0x0C12"],
+      "state_writes": "ED writes player animation field 0xF0DA to 1 after each frame phase",
+      "gates": [
+        "F2 at 0x00122498 tests flag target 0x870009",
+        "F4 at 0x001224A0 and 0x001224AA compare terrain stop fields 0xF0C5 and 0xF0C6"
+      ],
+      "selector": "Player_SelectLocomotionOrAction selects this stream in the settled terrain branch when the action lock is acquired, the terrain landing state is active, and DAT_00FFF0DE is nonzero; its upstream transition gates are already satisfied or suppressed by the corresponding terrain push conditions."
+    },
+    {
+      "address": "0x00122504",
+      "name": "PLAYER_ANIM_ACTION_TRANSITION_LOCK",
+      "range": "0x00122504-0x0012257B",
+      "bytes": 120,
+      "frames": ["0x0C1A", "0x0C1A", "0x0C1E", "0x0C1E", "0x0C1E", "0x0C22", "0x0C26"],
+      "state_writes": [
+        "ED writes player animation field 0xF0DA to 1 after each opening frame phase",
+        "FB at 0x0012254C pushes callback 0x001B0360",
+        "ED at 0x00122552 writes value 1 through target fields 0xF11F",
+        "F3 at 0x00122558 plays sound 0x03"
+      ],
+      "child_spawn": "F5 at 0x0012253C uses the exact actor-template address 0x001B7918",
+      "gates": [
+        "F2 at 0x0012255A tests flag target 0x870009",
+        "F4 at 0x00122562 and 0x0012256C compare terrain stop fields 0xF0C5 and 0xF0C6"
+      ],
+      "selector": "Player_SelectLocomotionOrAction selects this stream when PLAYER_TRANSITION_GATE or PLAYER_INTERACTION_TRANSITION_LOCK is active."
+    },
+    {
+      "address": "0x001225A2",
+      "name": "PLAYER_ANIM_ACTION_TERRAIN_TIMER",
+      "range": "0x001225A2-0x001225E1",
+      "bytes": 64,
+      "frames": ["0x0C32", "0x0C36", "0x0C36", "0x0C3A", "0x0C3A"],
+      "state_writes": "ED writes player animation field 0xF0DA to 1 after each frame phase",
+      "gates": [
+        "F2 at 0x001225CA tests flag target 0x870009",
+        "F4 at 0x001225D2 compares terrain stop field 0xF0C5"
+      ],
+      "selector": "Player_SelectLocomotionOrAction selects this stream when the terrain response timer is nonzero and the landing state is active."
+    },
+    {
+      "address": "0x0012262A",
+      "name": "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE",
+      "range": "0x0012262A-0x00122671",
+      "bytes": 72,
+      "frames": ["0x0C4A", "0x0C4A", "0x0C4E", "0x0C4E", "0x0C52", "0x0C52"],
+      "state_writes": "ED writes player animation field 0xF0DA to 1 after each frame phase",
+      "gates": [
+        "F2 at 0x0012265A tests flag target 0x870009",
+        "F4 at 0x00122662 compares terrain stop field 0xF0C5"
+      ],
+      "selector": "Player_SelectLocomotionOrAction selects this stream when terrain response is active or the landing state is clear."
+    }
+  ],
+  "boundaries": {
+    "stream_group": "The four direct action roots are bounded at 0x001224B9, 0x0012257B, 0x001225E1, and 0x00122671. Each root stops before its branch-target continuation, so the embedded continuation bytes remain outside the sized root and available for later shared-stream classification."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Player_SelectLocomotionOrAction exact selector branches",
+    "Exact F5/FB/ED/F3 command records in the transition-lock stream",
+    "Exact non-overlapping root boundaries"
+  ],
+  "conclusion": "The first player action-animation family is now partitioned into four selector-owned roots. Their distinction is controlled by transition locks, terrain landing/timer state, and active response state; the transition-lock root additionally spawns the 0x001B7918 actor record and queues callback 0x001B0360. The static evidence does not assign a semantic actor type to that still-unclassified template address.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

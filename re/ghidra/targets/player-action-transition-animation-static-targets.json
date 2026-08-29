@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-action-transition-animation-static",
+    "purpose": "Resolve the first player action-animation family selected by Player_SelectLocomotionOrAction, including terrain/transition gates, repeated animation-state publication, and the encoded actor spawn."
+  },
+  "targets": [
+    { "address": "0x00122470", "name": "PLAYER_ANIM_ACTION_TERRAIN_TRANSITION" },
+    { "address": "0x00122504", "name": "PLAYER_ANIM_ACTION_TRANSITION_LOCK" },
+    { "address": "0x001225A2", "name": "PLAYER_ANIM_ACTION_TERRAIN_TIMER" },
+    { "address": "0x0012262A", "name": "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE" },
+    { "address": "0x001A9304", "name": "Player_SelectLocomotionOrAction" },
+    { "address": "0x001B7918", "name": "PLAYER_ACTION_F5_ACTOR_TEMPLATE" },
+    { "address": "0x001B0360", "name": "Player_ActionAnimationCallback" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF0DA", "name": "PLAYER_ACTION_ANIMATION_STATE" },
+    { "address": "0x00FFF0C5", "name": "TERRAIN_STOP_LEFT_MOTION" },
+    { "address": "0x00FFF0C6", "name": "TERRAIN_LEFT_INNER_PROBE" },
+    { "address": "0x00FFF0D8", "name": "PLAYER_ACTION_RESPONSE_STATE_A" },
+    { "address": "0x00FFF0DE", "name": "PLAYER_TERRAIN_PUSH_DOWN_STATE" },
+    { "address": "0x00FFF0E7", "name": "PLAYER_INTERACTION_ANIMATION_GATE" },
+    { "address": "0x00FFF115", "name": "TERRAIN_RESPONSE_LATCH" }
+  ]
+}

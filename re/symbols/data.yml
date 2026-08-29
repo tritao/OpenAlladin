@@ -1329,36 +1329,40 @@
     - animation_stream_decoder
 
 0x00122470:
-  name: PLAYER_ANIM_STATE_122470
+  name: PLAYER_ANIM_ACTION_TERRAIN_TRANSITION
+  size: 74
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Player action stream selected by Player_SelectLocomotionOrAction when the terrain landing state and transition-response field are active. It presents the 0x0C06-0x0C12 sequence, writes player animation field 0xF0DA to 1 for each phase, and gates its continuation on the interaction flag and terrain stop fields.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_locomotion_action_selector
+    - animation_stream_decoder
 
 0x00122504:
-  name: PLAYER_ANIM_STATE_122504
+  name: PLAYER_ANIM_ACTION_TRANSITION_LOCK
+  size: 120
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Player action stream selected by Player_SelectLocomotionOrAction while PLAYER_TRANSITION_GATE or PLAYER_INTERACTION_TRANSITION_LOCK is active. It presents the 0x0C1A-0x0C26 sequence, writes player animation field 0xF0DA to 1, spawns the exact actor record at 0x001B7918, queues callback 0x001B0360 with FB, writes field 0xF11F, plays sound 0x03, and gates the response on the interaction flag and terrain stop fields.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_locomotion_action_selector
+    - animation_stream_decoder
 
 0x001225A2:
-  name: PLAYER_ANIM_STATE_1225A2
+  name: PLAYER_ANIM_ACTION_TERRAIN_TIMER
+  size: 64
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Player action stream selected by Player_SelectLocomotionOrAction when TERRAIN_RESPONSE_TIMER_STATE is active and the player is grounded. It presents the 0x0C32-0x0C3A sequence, writes player animation field 0xF0DA to 1 for each phase, and gates its continuation on the interaction flag and terrain stop field.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_locomotion_action_selector
+    - animation_stream_decoder
 
 0x0012262A:
-  name: PLAYER_ANIM_STATE_12262A
+  name: PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE
+  size: 72
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Player action stream selected by Player_SelectLocomotionOrAction when terrain response is active or the player has no settled landing. It presents the 0x0C4A-0x0C52 sequence, writes player animation field 0xF0DA to 1 for each phase, and gates its continuation on the interaction flag and terrain stop field.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_locomotion_action_selector
+    - animation_stream_decoder
 
 0x001226B2:
   name: PLAYER_ANIM_STATE_1226B2
