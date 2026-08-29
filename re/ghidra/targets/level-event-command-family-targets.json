@@ -1,0 +1,47 @@
+{
+  "format": "openaladdin-level-event-command-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "dispatch": {
+    "table": "0x0020C0 LEVEL_EVENT_COMMAND_DISPATCH_TABLE",
+    "commands": "0xE6-0xFF",
+    "record_payload": "D1/D2 carry the two event-coordinate words; handlers may also consume established event-side state in D6 and RAM.",
+    "entries": 26,
+    "unique_handlers": 24,
+    "handlers": [
+      { "command": "0xE6", "address": "0x001B7634", "name": "LevelEvent_SpawnType05WithPaletteRefresh" },
+      { "command": "0xE7", "address": "0x001B7840", "name": "LevelEvent_QueueSound5D" },
+      { "command": "0xE8", "address": "0x001B766C", "name": "LevelEvent_SpawnType7DWithPaletteRefresh" },
+      { "command": "0xE9", "address": "0x001B760A", "name": "LevelEvent_SpawnType7C" },
+      { "command": "0xEA", "address": "0x001B781A", "name": "LevelEvent_ArmPlayerPresentation" },
+      { "command": "0xEB", "address": "0x001B76D4", "name": "LevelEvent_SpawnType2FWithMovement" },
+      { "command": "0xEC", "address": "0x001B77F0", "name": "LevelEvent_SpawnType20" },
+      { "command": "0xED", "address": "0x001B77A4", "name": "LevelEvent_SpawnType3AWithMovement" },
+      { "command": "0xEE", "address": "0x001B7758", "name": "LevelEvent_SpawnType40" },
+      { "command": "0xEF", "address": "0x001B7738", "name": "LevelEvent_SpawnType2A" },
+      { "command": "0xF0", "address": "0x001B7706", "name": "LevelEvent_SpawnType46WhenModeReady" },
+      { "command": "0xF1", "address": "0x001B76AA", "name": "LevelEvent_SpawnType2F" },
+      { "command": "0xF2", "address": "0x001B5B3A", "name": "LevelEvent_ArmSceneScriptTransition" },
+      { "command": "0xF3", "address": "0x001B5B32", "name": "LevelEvent_SetPresentationStateByte" },
+      { "command": "0xF4", "address": "0x001B5AAA", "name": "LevelEvent_SpawnType84VariantA" },
+      { "command": "0xF5", "address": "0x001B58DA", "name": "LevelEvent_SpawnType3AFromCounter" },
+      { "command": "0xF6", "address": "0x001B592A", "name": "LevelEvent_SpawnType34" },
+      { "command": "0xF7", "address": "0x001B5976", "name": "LevelEvent_SpawnType54Pair" },
+      { "command": "0xF8", "address": "0x001B59DE", "name": "LevelEvent_SpawnType46WhenSceneReady" },
+      { "command": "0xF9", "address": "0x001B5A4C", "name": "LevelEvent_SpawnType84Pair" },
+      { "command": "0xFA", "address": "0x001B5AD2", "name": "LevelEvent_SpawnType84VariantB" },
+      { "command": "0xFB", "address": "0x001B5B02", "name": "LevelEvent_SpawnType84VariantC" },
+      { "command": "0xFC", "address": "0x001B58D8", "name": "LevelEvent_NoOpHandler" },
+      { "command": "0xFD", "address": "0x001B58D8", "name": "LevelEvent_NoOpHandler" },
+      { "command": "0xFE", "address": "0x001B5A1A", "name": "LevelEvent_SpawnType42" },
+      { "command": "0xFF", "address": "0x001B58D8", "name": "LevelEvent_NoOpHandler" }
+    ]
+  },
+  "conclusion": "The complete 26-entry level-event command table is now represented by 24 named handlers. The family is primarily event-driven actor presentation/spawn logic, with explicit scene/player/audio side-effect commands and three intentional no-op entries.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -3146,3 +3146,195 @@
     - ghidra_disassembly_001AD3C2
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+0x001B58D8:
+  name: LevelEvent_NoOpHandler
+  confidence: confirmed
+  description: Empty level-event command handler used by three entries in LEVEL_EVENT_COMMAND_DISPATCH_TABLE; it returns without changing the event or actor state.
+  evidence:
+    - ghidra_disassembly_001B58D8
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B58DA:
+  name: LevelEvent_SpawnType3AFromCounter
+  confidence: decompiled
+  description: Level-event command handler that checks the secondary interaction counter, allocates a type-0x3A actor from the shared zero-type template, assigns animation 0x00122BD8 and resource count 1, and places it from the event coordinates with a conditional facing flag.
+  evidence:
+    - ghidra_disassembly_001B58DA
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B592A:
+  name: LevelEvent_SpawnType34
+  confidence: decompiled
+  description: Level-event command handler that allocates a type-0x34 actor with movement stream 0x001217B4, animation stream 0x00122C1E, resource count 6, and event-supplied coordinates plus the conditional facing flag.
+  evidence:
+    - ghidra_disassembly_001B592A
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B5976:
+  name: LevelEvent_SpawnType54Pair
+  confidence: decompiled
+  description: Level-event command handler that attempts two type-0x54 actor allocations from the shared template, placing them at the event coordinates and at an additional position 0x20 pixels to the right while publishing their palette-band presentation data.
+  evidence:
+    - ghidra_disassembly_001B5976
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B59DE:
+  name: LevelEvent_SpawnType46WhenSceneReady
+  confidence: decompiled
+  description: Level-event command handler that suppresses the spawn for scene value 0x39, otherwise allocates a type-0x46 actor with animation 0x00122C66 and resource count 2 at the event coordinates.
+  evidence:
+    - ghidra_disassembly_001B59DE
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B5A1A:
+  name: LevelEvent_SpawnType42
+  confidence: decompiled
+  description: Level-event command handler that allocates a type-0x42 actor from its dedicated template, using animation stream 0x00125874 and resource count 1 at the event coordinates.
+  evidence:
+    - ghidra_disassembly_001B5A1A
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B5A4C:
+  name: LevelEvent_SpawnType84Pair
+  confidence: decompiled
+  description: Level-event command handler that attempts two type-0x84 actor allocations from the shared level-entry template, selecting the two recorded animation/movement variants and fixed event-relative positions.
+  evidence:
+    - ghidra_disassembly_001B5A4C
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B5AAA:
+  name: LevelEvent_SpawnType84VariantA
+  confidence: decompiled
+  description: Level-event command handler that allocates a type-0x84 actor from the shared level-entry template, selects animation stream 0x0012586C, and places it at the event coordinates.
+  evidence:
+    - ghidra_disassembly_001B5AAA
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B5AD2:
+  name: LevelEvent_SpawnType84VariantB
+  confidence: decompiled
+  description: Level-event command handler that allocates a type-0x84 actor from the shared level-entry template, selects movement stream 0x00120FB4 and animation stream 0x0012585C, and places it at the event coordinates.
+  evidence:
+    - ghidra_disassembly_001B5AD2
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B5B02:
+  name: LevelEvent_SpawnType84VariantC
+  confidence: decompiled
+  description: Level-event command handler that allocates a type-0x84 actor from the shared level-entry template, selects movement stream 0x00120F8A and animation stream 0x00125864, and places it at the event coordinates.
+  evidence:
+    - ghidra_disassembly_001B5B02
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B5B32:
+  name: LevelEvent_SetPresentationStateByte
+  confidence: decompiled
+  description: Level-event command handler that publishes the current event-side byte from D6 into the level presentation state slot at 0x00FFF10B.
+  evidence:
+    - ghidra_disassembly_001B5B32
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B5B3A:
+  name: LevelEvent_ArmSceneScriptTransition
+  confidence: decompiled
+  description: Level-event command handler that arms SCENE_SCRIPT_COUNTDOWN with one frame and sets the companion scene transition latch at 0x00FFF005.
+  evidence:
+    - ghidra_disassembly_001B5B3A
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B760A:
+  name: LevelEvent_SpawnType7C
+  confidence: decompiled
+  description: Level-event command handler that allocates the type-0x7C timed-spawn template and places the actor at the event coordinates with the conditional horizontal-facing flag.
+  evidence:
+    - ghidra_disassembly_001B760A
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B7634:
+  name: LevelEvent_SpawnType05WithPaletteRefresh
+  confidence: decompiled
+  description: Level-event command handler that allocates the type-0x05 interaction variant, places it at the event coordinates, and refreshes palette band 2 from ROM source 0x001292B2.
+  evidence:
+    - ghidra_disassembly_001B7634
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B766C:
+  name: LevelEvent_SpawnType7DWithPaletteRefresh
+  confidence: decompiled
+  description: Level-event command handler that allocates the type-0x7D template, sets actor field +0x1E to 0x4000, places it at the event coordinates, and refreshes palette band 2 from ROM source 0x00129332.
+  evidence:
+    - ghidra_disassembly_001B766C
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B76AA:
+  name: LevelEvent_SpawnType2F
+  confidence: decompiled
+  description: Level-event command handler that allocates the type-0x2F interaction template and places it at the event coordinates with the conditional horizontal-facing flag.
+  evidence:
+    - ghidra_disassembly_001B76AA
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B76D4:
+  name: LevelEvent_SpawnType2FWithMovement
+  confidence: decompiled
+  description: Level-event command handler that allocates the type-0x2F interaction template, overrides its movement stream with 0x00121082, and places it at the event coordinates with the conditional horizontal-facing flag.
+  evidence:
+    - ghidra_disassembly_001B76D4
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B7706:
+  name: LevelEvent_SpawnType46WhenModeReady
+  confidence: decompiled
+  description: Level-event command handler that suppresses the spawn for mode value 0x39, otherwise allocates the shared type-0x46 template with movement stream 0x00120FFE at the event coordinates.
+  evidence:
+    - ghidra_disassembly_001B7706
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B7738:
+  name: LevelEvent_SpawnType2A
+  confidence: decompiled
+  description: Level-event command handler that allocates the type-0x2A template, then places it at the event coordinates.
+  evidence:
+    - ghidra_disassembly_001B7738
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B7758:
+  name: LevelEvent_SpawnType40
+  confidence: decompiled
+  description: Level-event command handler that suppresses a duplicate event-coordinate record, otherwise allocates a type-0x40 actor with animation stream 0x00122C12, movement stream 0x00121034, resource count 1, and event-supplied coordinates.
+  evidence:
+    - ghidra_disassembly_001B7758
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B77A4:
+  name: LevelEvent_SpawnType3AWithMovement
+  confidence: decompiled
+  description: Level-event command handler that suppresses a duplicate event-coordinate record, otherwise allocates a type-0x3A actor with animation stream 0x00122BD8, movement stream 0x00121034, and event-supplied coordinates.
+  evidence:
+    - ghidra_disassembly_001B77A4
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B77F0:
+  name: LevelEvent_SpawnType20
+  confidence: decompiled
+  description: Level-event command handler that allocates the upper type-0x20 template and places it at the event coordinates with the conditional horizontal-facing flag.
+  evidence:
+    - ghidra_disassembly_001B77F0
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B781A:
+  name: LevelEvent_ArmPlayerPresentation
+  confidence: decompiled
+  description: Level-event command handler that arms the player interaction-animation gate, publishes animation stream 0x001258D2, clears the player animation timer, sets SCENE_SCRIPT_COUNTDOWN to 0xC8, and raises the scene presentation latch at 0x00FFF570.
+  evidence:
+    - ghidra_disassembly_001B781A
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
+0x001B7840:
+  name: LevelEvent_QueueSound5D
+  confidence: decompiled
+  description: Level-event command handler that, when SCENE_VDP_UPDATE_FLAG is set, queues sound command 0x5D through the standard prepare-and-send audio path.
+  evidence:
+    - ghidra_disassembly_001B7840
+    - level_event_command_family_targets
+    - level_event_command_family_static_decompilation
