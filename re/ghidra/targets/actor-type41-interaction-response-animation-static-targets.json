@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-actor-type41-interaction-response-animation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Resolve the runtime type-0x41 interaction-response AnimationVM stream installed by selector 0xC8.",
+  "targets": [
+    {
+      "address": "0x00125D7E",
+      "name": "ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE",
+      "range": ["0x00125D7E", "0x00125DC3"],
+      "size": 70,
+      "producer": "InteractionSpawn_RuntimeType41_C8 at 0x001B729E",
+      "decoded": [
+        "Frame 0x16CE opening",
+        "F5 child records at 0x00125D80 and 0x00125D96",
+        "0x16CE/0x16D2/0x16D6 response sequence",
+        "EA at 0x00125DBE -> 0x00125D90"
+      ]
+    },
+    {
+      "address": "0x001B728E",
+      "name": "InteractionSpawn_RuntimeType41_C8",
+      "selection_site": "0x001B729E",
+      "runtime_type": "0x41",
+      "selector": "0xC8"
+    }
+  ],
+  "boundary_basis": "The direct root is selected by the runtime type-0x41 initialization body and its exact 70-byte loop ends immediately before ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY at 0x00125DC4. The unselected 0x00125D58-0x00125D7D fragment is not absorbed.",
+  "evidence": [
+    "Fresh instructions.json DATA reference from 0x001B729E to 0x00125D7E",
+    "Lossless AnimationDecoder output",
+    "Interaction selector 0xC8 runtime-type and animation-field initialization"
+  ],
+  "conclusion": "The previously unknown 0x00125D7E-0x00125DC3 range is the runtime type-0x41 interaction-response AnimationVM stream installed by selector 0xC8, including its two F5 child records and local loop.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

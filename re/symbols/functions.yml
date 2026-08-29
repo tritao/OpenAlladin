@@ -4886,7 +4886,7 @@
 0x001B728E:
   name: InteractionSpawn_RuntimeType41_C8
   confidence: decompiled
-  description: Interaction selector 0xC8 handler that uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x41, installs animation root 0x00125D7E, and sets actor flag byte +0x29 to 2.
+  description: Interaction selector 0xC8 handler that uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x41, installs ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE at 0x00125D7E, and sets actor flag byte +0x29 to 2.
   evidence:
     - ghidra_disassembly_001B728E
     - interaction_spawn_runtime3a-41-targets

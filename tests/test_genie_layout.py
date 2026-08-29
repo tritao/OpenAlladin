@@ -631,6 +631,30 @@ def test_player_animation_lookup_family_is_exact():
         assert decoded["instructions"][-1]["branch_target"] == "0x00121964"
 
 
+def test_actor_type41_interaction_response_animation_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x00125D7E, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE"
+    assert stream.end == 0x00125DC3
+    assert stream.size == 70
+    assert stream.metadata["type"] == "animation_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoded = load_animation_decoder().AnimationDecoder(rom).decode_stream(
+        0x00125D7E,
+        max_instructions=64,
+        max_bytes=128,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 70
+    assert decoded["stopped_reason"] == "control_flow_cycle"
+    assert decoded["instructions"][1]["opcode"] == "0xF5"
+    assert decoded["instructions"][5]["opcode"] == "0xF5"
+    assert decoded["instructions"][-1]["branch_target"] == "0x00125D90"
+
+
 def test_type03_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {

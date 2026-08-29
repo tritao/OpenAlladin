@@ -14,7 +14,7 @@
   },
   "handler_contracts": [
     { "address": "0x001B7258", "selector": "0xAC", "template": "ACTOR_TEMPLATE_BASE_ZERO", "effect": "require 0x00FFF170, skip when 0x00FFEFE2 == 0x3939, runtime type 0x3A, animation 0x00122BD8, flag +0x29 = 1" },
-    { "address": "0x001B728E", "selector": "0xC8", "template": "ACTOR_TEMPLATE_BASE_ZERO", "effect": "runtime type 0x41, animation 0x00125D7E, flag +0x29 = 2" },
+    { "address": "0x001B728E", "selector": "0xC8", "template": "ACTOR_TEMPLATE_BASE_ZERO", "effect": "runtime type 0x41, animation ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE at 0x00125D7E, flag +0x29 = 2" },
     { "address": "0x001B72AE", "selector": "0xC9", "template": "ACTOR_TEMPLATE_BASE_ZERO", "effect": "0x40-helper spawn, runtime type 0x84, actor +0x06 = 0x21, animation 0x00123E7A, flag +0x29 = 2" },
     { "address": "0x001B72D4", "selector": "0x53", "template": "ACTOR_TEMPLATE_BASE_ZERO", "effect": "runtime type 0x34, animation 0x00122C1E, movement 0x001217B4, flag +0x29 = 6" }
   ],

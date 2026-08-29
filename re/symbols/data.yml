@@ -4571,6 +4571,17 @@
     - type84_terminal_interaction_static_decompilation
     - animation_stream_decoder
 
+0x00125D7E:
+  name: ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE
+  type: animation_stream
+  size: 70
+  confidence: decompiled
+  description: Runtime type-0x41 interaction-response animation installed by InteractionSpawn_RuntimeType41_C8 for selector 0xC8. It opens on frame 0x16CE, emits two F5 child records, presents the 0x16CE/0x16D2/0x16D6 response sequence, and loops from 0x00125D90.
+  evidence:
+    - interaction_spawn_runtime3a-41_static_decompilation
+    - actor_type41_interaction_response_animation_static_decompilation
+    - animation_stream_decoder
+
 0x00126042:
   name: ACTOR_ANIM_TYPE84_LEVEL_EVENT
   size: 50
