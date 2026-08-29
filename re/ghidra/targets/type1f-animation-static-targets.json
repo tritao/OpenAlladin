@@ -1,0 +1,59 @@
+{
+  "format": "openaladdin-type1f-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x00123900",
+    "name": "ACTOR_ANIM_TYPE1F_PROXIMITY_GATE",
+    "packed_region": ["0x00123900", "0x0012399F"],
+    "packed_bytes": 160,
+    "entry": {
+      "frames": ["0x124A", "0x126A", "0x126E", "0x1272", "0x1276", "0x127A", "0x127E", "0x1282", "0x1286"],
+      "facing_commands": ["0x00123902", "0x00123906"],
+      "player_x_tests": ["0x4B -> 0x00123964", "0x40 -> 0x00123964"],
+      "actor_tests": [
+        "F2 fields 0x87/0x00/0x09 -> 0x00123926",
+        "F4 actor +0x3D == 0x0080 -> 0x00123900",
+        "F4 actor +0x3D == 0x0081 -> 0x00123900"
+      ]
+    },
+    "movement_handoffs": [
+      {
+        "address": "0x00123930",
+        "target_fields": "0x14 0x00 0x0A",
+        "value": "0x00120432",
+        "meaning": "actor +0x0A = ACTOR_MOVE_TYPE1F_PROXIMITY_GATE"
+      },
+      {
+        "address": "0x00123964",
+        "target_fields": "0x14 0x00 0x0A",
+        "value": "0x00000000",
+        "meaning": "clear actor movement cursor"
+      }
+    ],
+    "callback_parameters": [
+      { "address": "0x00123978", "value": "0x001ACC18" },
+      { "address": "0x0012398A", "value": "0x001ACC20" }
+    ],
+    "loop": "0x0012399A EA -> 0x00123900"
+  },
+  "consumer": {
+    "template": "0x001B7C38 ACTOR_TEMPLATE_TYPE_1F",
+    "runtime_type": "0x1F",
+    "movement_root": "0x00120432 ACTOR_MOVE_TYPE1F_PROXIMITY_GATE",
+    "player_collision_handler": "0x001AE796",
+    "actor_collision_handler": "0x001AC2E0"
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for 0x00123900",
+    "Exact Type-0x1F template and movement contracts",
+    "Level 01 Type-0x1F settle trace",
+    "Packed boundary immediately before the next animation root at 0x001239A0"
+  ],
+  "conclusion": "The Type-0x1F animation root is a bounded proximity gate paired with the already closed horizontal movement stream. Its static writes install or clear actor movement and do not provide a vertical transfer or scene-transition mechanism.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -476,6 +476,17 @@
     - level01_upper_pair_extended_interaction
     - animation_stream_decoder
 
+0x00123900:
+  name: ACTOR_ANIM_TYPE1F_PROXIMITY_GATE
+  size: 160
+  confidence: decompiled
+  description: Type-0x1F proximity animation state machine paired with ACTOR_MOVE_TYPE1F_PROXIMITY_GATE. Its packed 160-byte region presents the 0x124A and 0x126A-0x1286 frame sequences, tests player X distances 0x4B and 0x40 plus actor flag/value fields, installs the movement root 0x00120432 on the active path, clears movement on the response path, and loops through the local callback sequence.
+  evidence:
+    - type1f_animation_static_decompilation
+    - type1f_movement_static_decompilation
+    - level01_type1f_settle_trace
+    - animation_stream_decoder
+
 0x001231DC:
   name: ACTOR_ANIM_TYPE2A_VERTICAL_BOB
   size: 36
@@ -1225,7 +1236,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Selector-0x10 actor template for runtime type 0x1F; it uses movement stream ACTOR_MOVE_TYPE1F_PROXIMITY_GATE and animation stream 0x00123900.
+  description: Selector-0x10 actor template for runtime type 0x1F; it uses movement stream ACTOR_MOVE_TYPE1F_PROXIMITY_GATE and animation stream ACTOR_ANIM_TYPE1F_PROXIMITY_GATE.
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets

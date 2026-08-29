@@ -19,7 +19,7 @@
   "consumer": {
     "template": "0x001B7C38",
     "runtime_type": "0x1F",
-    "animation_root": "0x00123900"
+    "animation_root": "0x00123900 ACTOR_ANIM_TYPE1F_PROXIMITY_GATE"
   },
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"

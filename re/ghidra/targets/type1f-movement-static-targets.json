@@ -31,7 +31,7 @@
   "consumer": {
     "runtime_type": "0x1F",
     "template": "0x001B7C38 ACTOR_TEMPLATE_TYPE_1F",
-    "animation_root": "0x00123900",
+    "animation_root": "0x00123900 ACTOR_ANIM_TYPE1F_PROXIMITY_GATE",
     "player_collision_handler": "0x001AE796",
     "actor_collision_handler": "0x001AC2E0",
     "route_status": "not_verified_as_connector"
