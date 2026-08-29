@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-level08-terminal-terrain-animation-static",
+    "purpose": "Range-bound the Level 08 exit presentation stream and the player continuation reached after the terminal-terrain actor clears itself."
+  },
+  "targets": [
+    { "address": "0x00122350", "name": "PLAYER_ANIM_LEVEL08_EXIT_RESPONSE" },
+    { "address": "0x00125C52", "name": "PLAYER_ANIM_TERMINAL_TERRAIN_RESPONSE" },
+    { "address": "0x001B64D0", "name": "Level08_ExitRoutine" },
+    { "address": "0x001B1F28", "name": "Player_ResetTerrainMotionState" },
+    { "address": "0x00125C26", "name": "ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN" },
+    { "address": "0x00121AD8", "name": "PLAYER_ANIM_TERRAIN_BOUNCE_ROOT" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF10B", "name": "LEVEL_EVENT_PRESENTATION_STATE" },
+    { "address": "0x00FFF154", "name": "RAW_TERRAIN_QUERY_STATE" },
+    { "address": "0x00FFF173", "name": "CAMERA_SPECIAL_MODE" }
+  ]
+}

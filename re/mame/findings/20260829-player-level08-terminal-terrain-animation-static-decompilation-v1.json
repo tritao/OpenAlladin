@@ -1,0 +1,47 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-level08-terminal-terrain-animation-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00122350",
+      "name": "PLAYER_ANIM_LEVEL08_EXIT_RESPONSE",
+      "range": "0x00122350-0x001223A1",
+      "bytes": 82,
+      "opening": ["0x08BA", "0x08BA", "0x08BA", "0x08BE", "0x08BE", "0x08C2", "0x08C2", "0x08C6", "0x08C6", "0x08CA", "0x08CA"],
+      "phase_gate": "F4 at 0x00122366 compares level-event presentation state 0x00FFF10B with zero and F4 at 0x00122388 compares it with one.",
+      "directional_phase": ["0x0862", "0x0862", "0x0866", "0x086A", "EE 0x82", "0x086E", "EE 0x82", "0x0872", "EE 0x82", "0x0876", "EE 0x82", "0x087A"],
+      "loop": "EA at 0x0012239C -> 0x00122352",
+      "selector": "Level08_ExitRoutine writes 0x00122350 to PLAYER_ANIMATION_PC at 0x001B6524 after initializing the Level 08 exit presentation actor and resource phase."
+    },
+    {
+      "address": "0x00125C52",
+      "name": "PLAYER_ANIM_TERMINAL_TERRAIN_RESPONSE",
+      "range": "0x00125C52-0x00125C8B",
+      "bytes": 60,
+      "opening": ["0x0BE6", "0x0BE6", "0x0BE2", "0x0BE2", "0x0BDE"],
+      "sound": "F3 0x70 at 0x00125C5C",
+      "frames": ["0x0BDE", "0x0BDA", "0x0BDA", "0x0BD6", "0x0BD6", "0x0BD2", "0x0BD2", "0x0BCE", "0x0BCE", "0x0BCA", "0x0BCA", "0x0BC6", "0x0BC6", "0x0BC2", "0x0BC2", "0x0BBE", "0x0BBE", "0x0BBA", "0x0BBA", "0x0BB6", "0x0BB6"],
+      "loop": "EA at 0x00125C88 -> PLAYER_ANIM_TERRAIN_BOUNCE_ROOT at 0x00121AD8",
+      "selector": "Player_ResetTerrainMotionState writes 0x00125C52 to PLAYER_ANIMATION_PC at 0x001B1F4E when the raw terrain/query state is active, SCENE_STATE is not 8, and CAMERA_SPECIAL_MODE is clear.",
+      "handoff": "The stream immediately follows F600 at 0x00125C50 in ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN and is the player-side continuation of that terminal-terrain presentation."
+    }
+  ],
+  "boundaries": {
+    "level08_exit": "The 82-byte Level 08 exit stream ends at 0x001223A1 immediately before PLAYER_ANIM_INTERACTION_PUSH_DOWN_RESPONSE at 0x001223A2.",
+    "terminal_terrain_response": "The 60-byte player continuation ends at 0x00125C8B immediately after its six-byte EA command; the next bytes are outside this stream."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact Level08_ExitRoutine PLAYER_ANIMATION_PC assignment",
+    "Exact Player_ResetTerrainMotionState PLAYER_ANIMATION_PC assignment",
+    "Existing terminal-terrain actor handoff finding"
+  ],
+  "conclusion": "The directly selected Level 08 exit stream and the terminal-terrain player continuation are now represented as distinct, non-overlapping semantic ranges. The adjacent 0x0012222E dynamic-state entry remains generic because no direct selector has yet been proven.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

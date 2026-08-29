@@ -1312,12 +1312,14 @@
     - animation_stream_decoder
 
 0x00122350:
-  name: PLAYER_ANIM_STATE_122350
+  name: PLAYER_ANIM_LEVEL08_EXIT_RESPONSE
+  size: 82
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Level 08 exit presentation stream installed by Level08_ExitRoutine at 0x001B6524 through PLAYER_ANIMATION_PC. Its exact 82-byte region presents the 0x08BA-0x08CA opening, compares the level-event state field 0x00FFF10B against zero and one to control the directional phase, presents the 0x0862-0x087A return sequence with EE 0x82 timing commands, and loops from 0x0012239C to 0x00122352.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_level08_exit_routine
+    - level_table_enter_exit_decomp
+    - animation_stream_decoder
 
 0x001223A2:
   name: PLAYER_ANIM_INTERACTION_PUSH_DOWN_RESPONSE
@@ -1825,12 +1827,14 @@
     - animation_stream_decoder
 
 0x00125C52:
-  name: PLAYER_ANIM_STATE_125C52
+  name: PLAYER_ANIM_TERMINAL_TERRAIN_RESPONSE
+  size: 60
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Player terminal-terrain response continuation selected by Player_ResetTerrainMotionState when the raw terrain/query state is active outside scene 8 and special-camera mode. Its exact 60-byte region presents the descending 0x0BE6-0x0BB6 sequence, plays sound 0x70, and returns through the terminal EA at 0x00125C88 to PLAYER_ANIM_TERRAIN_BOUNCE_ROOT at 0x00121AD8. The stream begins immediately after the Type-0x84 terminal-terrain actor's F600 at 0x00125C50.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_reset_terrain_motion_state
+    - terminal_scene_animation_static_decompilation
+    - animation_stream_decoder
 
 0x00125E72:
   name: PLAYER_ANIM_TERRAIN_RESPONSE_SHARED
