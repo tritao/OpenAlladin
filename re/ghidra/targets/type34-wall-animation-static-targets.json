@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "type34-wall-animation-static",
+    "purpose": "Range-bound the directly installed Type-0x34 wall actor animation root and preserve its exact random/timer loop."
+  },
+  "targets": [
+    { "address": "0x00122C1E", "name": "ACTOR_ANIM_TYPE_34_WALL" },
+    { "address": "0x001217B4", "name": "ACTOR_MOVE_STATE_1217B4" },
+    { "address": "0x001B72D4", "name": "InteractionSpawn_RuntimeType34_53" },
+    { "address": "0x001B79B8", "name": "ACTOR_TEMPLATE_BASE_ZERO" },
+    { "address": "0x001F3DEE", "name": "ACTOR_FRAME_TYPE_34_WALL" }
+  ],
+  "memory_references": [
+    { "address": "0x001F3DEE", "name": "ACTOR_FRAME_TYPE_34_WALL_0" },
+    { "address": "0x001F3E30", "name": "ACTOR_FRAME_TYPE_34_WALL_1" },
+    { "address": "0x001F3E72", "name": "ACTOR_FRAME_TYPE_34_WALL_2" },
+    { "address": "0x001F3E9C", "name": "ACTOR_FRAME_TYPE_34_WALL_3" },
+    { "address": "0x00FF7E40", "name": "ACTOR_TABLE_BASE" }
+  ]
+}

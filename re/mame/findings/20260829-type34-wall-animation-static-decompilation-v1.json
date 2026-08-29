@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type34-wall-animation-static-targets.json",
+  "animation": {
+    "address": "0x00122C1E",
+    "name": "ACTOR_ANIM_TYPE_34_WALL",
+    "range": "0x00122C1E-0x00122C3F",
+    "bytes": 34,
+    "consumer": "0x001B72D4 InteractionSpawn_RuntimeType34_53",
+    "runtime_type": "0x34",
+    "movement": "0x001217B4 ACTOR_MOVE_STATE_1217B4",
+    "frame_sequence": [
+      "0x001F3DEE", "0x001F3DEE", "0x001F3DEE", "0x001F3DEE",
+      "0x001F3E30", "0x001F3E72", "0x001F3E9C"
+    ],
+    "timer_commands": ["EE 0x89", "EE 0x83", "EE 0x82"],
+    "random_branch": "0x00122C28 F0 -> 0x00122C24",
+    "loop": "0x00122C3A EA -> 0x00122C20"
+  },
+  "boundaries": {
+    "start": "The selector-0x53 runtime-type-0x34 spawn path installs animation root 0x00122C1E after generic allocation and actor initialization.",
+    "end": "The unconditional EA at 0x00122C3A returns to the post-prefix entry 0x00122C20; the following bytes are outside the 34-byte root."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output from 0x00122C1E",
+    "Exact selector-0x53 runtime-type-0x34 spawn contract",
+    "Existing type-0x34 natural actor trace",
+    "Existing type-0x34 movement decode"
+  ],
+  "conclusion": "The Type-0x34 wall actor animation is now a confirmed 34-byte range with an exact frame/timer/random loop. Its animation and movement roots are independently bounded and tied to the selector-0x53 runtime installation path.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

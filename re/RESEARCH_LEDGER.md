@@ -1022,6 +1022,14 @@ bounded at `0x00122F38-0x00122F7F` (72 bytes), with its five paired frames,
 adjacent `0x00122DB2` and `0x00122F80` fragments remain explicitly unclaimed
 by these roots rather than being absorbed by proximity.
 
+The Type-0x34 wall actor animation is recorded in
+`re/mame/findings/20260829-type34-wall-animation-static-decompilation-v1.json`.
+The selector-0x53 runtime installation path now owns the exact
+`0x00122C1E-0x00122C3F` range (34 bytes): four `0x12E2` frame references,
+the `0x12E6/0x12EA/0x12EE` response frames, EE timer values, the F0 random
+branch, and the EA loop through `0x00122C20`. The separate movement root at
+`0x001217B4` remains independently bounded.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2815,3 +2823,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-type0c-directional-response-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x0C directional response and Type-0x2E child animation closed through the common directional selector, exact F5 template record, parent return, and child self-loop boundaries |
 | `20260829-type2d-guard-sword-attack-animation-static-decompilation-v1` | recorded-static-decompilation | Natural Type-0x2D guard sword-attack child animation closed through its exact template pointer, parent F5 producer, sound command, paired frame cycle, and self-loop boundary |
 | `20260829-type01-type84-child-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x01 upper-resource root and F5-spawned Type-0x84 child range-bounded with exact frames, callbacks, template records, and explicit adjacent-stream boundaries |
+| `20260829-type34-wall-animation-static-decompilation-v1` | recorded-static-decompilation | Type-0x34 wall actor animation range-bounded with exact frames, timers, random branch, loop, and selector-0x53 installation contract |

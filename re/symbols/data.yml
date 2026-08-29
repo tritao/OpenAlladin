@@ -753,11 +753,13 @@
 
 0x00122C1E:
   name: ACTOR_ANIM_TYPE_34_WALL
-  confidence: probable
-  description: Type-0x34 wall actor animation root; it cycles frame reference 0x12E2 and adjacent frames through EE timer commands, takes an F0 random branch, and loops back to 0x00122C20.
+  size: 34
+  confidence: confirmed
+  description: Type-0x34 wall actor animation root. Its exact 34-byte region presents frame references 0x12E2, 0x12E6, 0x12EA, and 0x12EE with EE timer values 0x89, 0x83, and 0x82, takes the F0 random branch at 0x00122C28, and loops from 0x00122C3A to 0x00122C20.
   evidence:
     - mame_type_34_wall_actor_probe
     - actor_type_34_stream_decode
+    - type34_wall_animation_static_decompilation
 
 0x001F3DEE:
   name: ACTOR_FRAME_TYPE_34_WALL
