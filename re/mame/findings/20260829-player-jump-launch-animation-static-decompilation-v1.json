@@ -1,0 +1,94 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-jump-launch-animation-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00122080",
+      "name": "PLAYER_ANIM_LANDING_RESPONSE_SPAWN",
+      "range": "0x00122080-0x001220A9",
+      "bytes": 42,
+      "frames": ["0x09FE", "0x0A02", "0x0A02", "0x0A06", "0x0A06"],
+      "gate": "F4 at 0x00122084 compares player animation field 0xF0C3 with 0x0011",
+      "child_spawn": "F5 at 0x0012208E uses ACTOR_TEMPLATE_F5_TYPE_84 at 0x001B7ECC",
+      "handoff": "EA at 0x001220A4 -> shared player animation entry 0x0012202C",
+      "selector": "Player_TerrainLandingResolver installs this stream when the settled ordinary-camera landing has a nonzero horizontal terrain response."
+    },
+    {
+      "address": "0x001220B8",
+      "name": "PLAYER_ANIM_TRANSITION_JUMP",
+      "range": "0x001220B8-0x001220EF",
+      "bytes": 56,
+      "frames": ["0x090E", "0x0912", "0x0916", "0x091A", "0x091E", "0x091E", "0x0922", "0x0922", "0x0926", "0x0926", "0x092A", "0x092E", "0x092E", "0x092E", "0x092E", "0x092E"],
+      "gates": [
+        "F4 at 0x001220C0 compares actor field 0x7E5A with 0xFF06 and loops the 0x0916 phase",
+        "F2 at 0x001220CC tests actor flag byte 0x1A and loops the 0x091A phase"
+      ],
+      "handoff": "F8 at 0x001220EE -> dynamic player animation state selection",
+      "selector": "Player_HandleJumpAndVerticalState installs this entry only when PLAYER_TRANSITION_GATE is active; the clear-gate branches override it with the normal or special-camera roots."
+    },
+    {
+      "address": "0x001220F0",
+      "name": "PLAYER_ANIM_SPECIAL_CAMERA_JUMP",
+      "range": "0x001220F0-0x00122127",
+      "bytes": 56,
+      "frames": ["0x06D6", "0x06D6", "0x06DA", "0x06DA", "0x06DA", "0x06DE", "0x06E2", "0x06E2", "0x06E2", "0x06E2", "0x06E6", "0x06E6", "0x06E6", "0x06E6"],
+      "state_writes": ["ED at 0x00122106 writes player animation field 0xF0C0 to 1"],
+      "gates": [
+        "F4 at 0x001220FC compares actor field 0x7E5A with 0x0100",
+        "F4 at 0x0012211C compares actor field 0xF0C1 with zero"
+      ],
+      "handoff": "F8 at 0x00122126 -> dynamic player animation state selection",
+      "selector": "Player_HandleJumpAndVerticalState installs this entry when PLAYER_TRANSITION_GATE is clear and CAMERA_SPECIAL_MODE is nonzero."
+    },
+    {
+      "address": "0x0012214E",
+      "name": "PLAYER_ANIM_TERRAIN_RESPONSE_JUMP",
+      "range": "0x0012214E-0x0012219D",
+      "bytes": 80,
+      "frames": ["0x095E", "0x0962", "0x0962", "0x0966", "0x096A", "0x096E", "0x0972", "0x0976"],
+      "state_writes": [
+        "ED at 0x0012215C writes player animation field 0xF0C0 to 1",
+        "ED at 0x0012217E clears player animation field 0xF0BE"
+      ],
+      "gates": [
+        "F4 at 0x00122162, 0x00122170, 0x00122184, and 0x00122190 compare player animation field 0xF0C1 with zero",
+        "EE values 0x82, 0x83, 0x84, 0x85, and 0x86 encode the response timing phases"
+      ],
+      "handoff": "F8 at 0x0012219C -> dynamic player animation state selection",
+      "selector": "Player_HandleJumpAndVerticalState installs this entry for ordinary-camera jumps while TERRAIN_RESPONSE_TIMER_STATE is nonzero."
+    },
+    {
+      "address": "0x001221B8",
+      "name": "PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE",
+      "range": "0x001221B8-0x001221E7",
+      "bytes": 48,
+      "frames": ["0x093A", "0x093E", "0x0942", "0x0942"],
+      "state_writes": ["ED at 0x001221CE writes player animation field 0xF0C0 to 1"],
+      "gates": [
+        "F4 at 0x001221BA compares actor field 0x7E5A with 0xFF06 and loops the opening",
+        "F2 at 0x001221C6 tests actor flag byte 0x1A",
+        "F4 at 0x001221DC compares player animation field 0xF0C1 with zero"
+      ],
+      "handoff": "F8 at 0x001221E6 -> dynamic player animation state selection",
+      "selector": "TerrainHandler_LaunchPlayerBlock installs this stream after applying PLAYER_VY=-0x0500, PLAYER_VX=-0x0400, and TERRAIN_RESPONSE_ACTIVE."
+    }
+  ],
+  "boundaries": {
+    "stream_group": "The five entries are independently bounded by their exact VM terminators and adjacent packed state entries. The landing-response spawn entry ends at 0x001220A9; the transition, special-camera, terrain-response, and launch entries end at 0x001220EF, 0x00122127, 0x0012219D, and 0x001221E7 respectively."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Player_HandleJumpAndVerticalState static selector branches",
+    "Player_TerrainLandingResolver horizontal-response branch",
+    "TerrainHandler_LaunchPlayerBlock static launch contract",
+    "Exact Type-0x84 F5 template reference and non-overlapping stream boundaries"
+  ],
+  "conclusion": "The player jump/launch block is now partitioned into five semantic streams. Landing with horizontal response can spawn the shared Type-0x84 response actor; transition-gated and special-camera jumps use distinct rising sequences; an ordinary-camera terrain-response jump has its own timed variant; and the behavior-0x29 launch handler uses a dedicated launch-response stream. These static contracts do not assert additional runtime route reachability.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

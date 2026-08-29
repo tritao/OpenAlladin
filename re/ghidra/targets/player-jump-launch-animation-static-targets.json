@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-jump-launch-animation-static",
+    "purpose": "Resolve the player animation entries selected by landing-response, jump/vertical-state, and terrain-launch services, including their exact gates, state writes, child spawn, and dynamic handoffs."
+  },
+  "targets": [
+    { "address": "0x00122080", "name": "PLAYER_ANIM_LANDING_RESPONSE_SPAWN" },
+    { "address": "0x001220B8", "name": "PLAYER_ANIM_TRANSITION_JUMP" },
+    { "address": "0x001220F0", "name": "PLAYER_ANIM_SPECIAL_CAMERA_JUMP" },
+    { "address": "0x0012214E", "name": "PLAYER_ANIM_TERRAIN_RESPONSE_JUMP" },
+    { "address": "0x001221B8", "name": "PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE" },
+    { "address": "0x001A9716", "name": "Player_HandleJumpAndVerticalState" },
+    { "address": "0x001AD7B4", "name": "Player_TerrainLandingResolver" },
+    { "address": "0x001B557E", "name": "TerrainHandler_LaunchPlayerBlock" },
+    { "address": "0x001B7ECC", "name": "ACTOR_TEMPLATE_F5_TYPE_84" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" },
+    { "address": "0x00FFF0B0", "name": "PLAYER_ANIMATION_FIELD_B0" },
+    { "address": "0x00FFF0BE", "name": "PLAYER_ANIMATION_FIELD_BE" },
+    { "address": "0x00FFF0C0", "name": "PLAYER_ANIMATION_FIELD_C0" },
+    { "address": "0x00FFF0C1", "name": "PLAYER_ANIMATION_FIELD_C1" },
+    { "address": "0x00FFF0C3", "name": "PLAYER_ANIMATION_FIELD_C3" },
+    { "address": "0x00FFF115", "name": "TERRAIN_RESPONSE_LATCH" },
+    { "address": "0x00FFF173", "name": "CAMERA_SPECIAL_MODE" }
+  ]
+}

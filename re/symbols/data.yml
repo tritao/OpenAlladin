@@ -1214,44 +1214,50 @@
     - animation_stream_decoder
 
 0x00122080:
-  name: PLAYER_ANIM_STATE_122080
+  name: PLAYER_ANIM_LANDING_RESPONSE_SPAWN
+  size: 42
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Landing-response stream selected by Player_TerrainLandingResolver when a horizontal terrain response is active. It presents frames 0x09FE and 0x0A02, conditionally spawns the Type-0x84 record at 0x001B7ECC when player animation field 0xF0C3 equals 0x0011, then continues through the 0x0A02/0x0A06 response and jumps to the shared entry at 0x0012202C.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_terrain_landing_resolver
+    - actor_template_f5_type84
+    - animation_stream_decoder
 
 0x001220B8:
-  name: PLAYER_ANIM_STATE_1220B8
+  name: PLAYER_ANIM_TRANSITION_JUMP
+  size: 56
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Transition-gated jump stream selected by Player_HandleJumpAndVerticalState when PLAYER_TRANSITION_GATE remains active. It presents the 0x090E-0x092E rising sequence, gates repeated phases on actor field 0x7E5A and flag byte 0x1A, and enters dynamic state selection.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_jump_vertical_state
+    - animation_stream_decoder
 
 0x001220F0:
-  name: PLAYER_ANIM_STATE_1220F0
+  name: PLAYER_ANIM_SPECIAL_CAMERA_JUMP
+  size: 56
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Special-camera jump stream selected by Player_HandleJumpAndVerticalState when the transition gate is clear and CAMERA_SPECIAL_MODE is nonzero. It presents the 0x06D6-0x06E6 sequence, sets player animation field 0xF0C0 to 1, gates the final phase on field 0xF0C1, and enters dynamic state selection.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_jump_vertical_state
+    - animation_stream_decoder
 
 0x0012214E:
-  name: PLAYER_ANIM_STATE_12214E
+  name: PLAYER_ANIM_TERRAIN_RESPONSE_JUMP
+  size: 80
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Terrain-response jump variant selected by Player_HandleJumpAndVerticalState for ordinary-camera jumps with a nonzero terrain response timer. It presents the 0x095E-0x0976 sequence, sets player animation field 0xF0C0 to 1, clears field 0xF0BE in the later phase, gates each phase on field 0xF0C1, and enters dynamic state selection.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_player_jump_vertical_state
+    - animation_stream_decoder
 
 0x001221B8:
-  name: PLAYER_ANIM_STATE_1221B8
+  name: PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE
+  size: 48
   confidence: confirmed
-  description: Player animation state stream selected through PLAYER_ANIMATION_PC.
+  description: Terrain-launch response stream selected by TerrainHandler_LaunchPlayerBlock after it applies the -0x0500/-0x0400 player launch. It gates the opening on actor field 0x7E5A and flag byte 0x1A, sets player animation field 0xF0C0 to 1, presents the 0x093A/0x093E/0x0942 response frames, and enters dynamic state selection.
   evidence:
-    - ghidra_player_animation_pc_assignment
-    - animation_stream_classifier
+    - ghidra_terrain_launch_player_block
+    - animation_stream_decoder
 
 0x0012222E:
   name: PLAYER_ANIM_STATE_12222E
