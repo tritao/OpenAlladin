@@ -2209,6 +2209,20 @@ The exact dispatch and packet behavior is recorded in
 The static result is recorded in
 `re/mame/findings/20260829-vdp-fill-c000-v1.json`.
 
+## Interaction resource progress pointer (20260829)
+
+`Interaction_GetResourceProgressPointer` at `0x001B003A` is the small shared
+getter used by `Interaction_UpdateResourceState` at `0x001B01AC`. It returns
+the address `0x00FF7E38`, which holds the three-digit ASCII
+`INTERACTION_RESOURCE_PROGRESS_COUNTER` and its terminator. The resource-state
+service increments this counter and compares the resulting value against
+milestones before issuing the corresponding scene-resource work, so the
+pointer now has an explicit contract instead of remaining an anonymous leaf.
+
+The static result is recorded in
+`re/mame/findings/20260829-interaction-resource-progress-v1.json` and
+`re/ghidra/targets/interaction-resource-progress-targets.json`.
+
 ## Camera terrain viewport renderer (20260829)
 
 The helper at `0x001AA81A` is now named `Camera_RenderTerrainViewport`. It
