@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/terminal-transition-animation-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00121CB0",
+      "name": "ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_PRIMARY",
+      "range": "0x00121CB0-0x00121CCD",
+      "bytes": 30,
+      "frames": ["0x06F2", "0x06F6", "0x06FA", "0x06FE", "0x0702", "0x0706"],
+      "timers": ["EE 0x82 at 0x00121CB8", "EE 0x82 at 0x00121CBC", "EE 0x82 at 0x00121CC4"],
+      "sound": "F3 0x6E at 0x00121CC2",
+      "loop": "EA at 0x00121CC8 -> 0x00121CB0",
+      "consumer": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TRANSITION_PRIMARY at 0x001B788C loads this stream into the primary temporary actor."
+    },
+    {
+      "address": "0x00121CCE",
+      "name": "ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_SECONDARY",
+      "range": "0x00121CCE-0x00121D59",
+      "bytes": 140,
+      "frames": ["0x07DA", "0x07DE", "0x07E2", "0x07E6", "0x07EA", "0x07EE", "0x07F2", "0x07F6", "0x07FA", "0x07FE", "0x0802", "0x0806", "0x080A", "0x080E", "0x0812", "0x0816", "0x081A", "0x081E", "0x0822", "0x0826", "0x082A", "0x082E", "0x0832", "0x0836", "0x083A", "0x083E", "0x0842", "0x0846", "0x084A", "0x084E"],
+      "timers": "Encoded EE values 0x82 and 0x83 pace the secondary presentation sequence.",
+      "sounds": ["F3 0x3B at 0x00121CD4", "F3 0x2A at 0x00121D10", "F3 0x3A at 0x00121D3A"],
+      "loop": "EA at 0x00121D54 -> 0x00121D3C",
+      "consumer": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TRANSITION_SECONDARY at 0x001B7878 loads this stream into the secondary temporary actor."
+    }
+  ],
+  "boundaries": {
+    "primary": "The 30-byte primary stream ends at 0x00121CCD; the secondary stream begins immediately at 0x00121CCE.",
+    "secondary": "The 140-byte secondary stream ends at 0x00121D59; ACTOR_ANIM_TYPE29_TRANSITION_SHARED begins immediately at 0x00121D5A."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact primary and secondary terminal-transition template animation pointers",
+    "Distinct temporary actor destinations from Level_ExitAndTerminalTransition",
+    "Adjacent non-overlapping stream boundaries"
+  ],
+  "conclusion": "The primary and secondary Type-0x84 terminal-transition presentation streams are now independently named and range-bounded as 30-byte and 140-byte loops. Their template ownership and exact boundaries are explicit without absorbing the following Type-0x29 transition stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

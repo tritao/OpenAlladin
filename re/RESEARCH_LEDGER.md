@@ -1113,6 +1113,15 @@ grid. Its transition/terrain gates, encoded timer phases, randomized frame
 loops, and separate dynamic selector at `0x00121AC8` are retained without
 absorbing the following terrain-bounce root at `0x00121AD8`.
 
+The terminal-transition presentation streams are recorded in
+`re/mame/findings/20260829-terminal-transition-animation-static-decompilation-v1.json`.
+`ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_PRIMARY` owns the exact
+`0x00121CB0-0x00121CCD` region (30 bytes) loaded by the primary temporary
+actor template, while `ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_SECONDARY` owns
+`0x00121CCE-0x00121D59` (140 bytes) loaded by the secondary template. Their
+timer/sound sequences and boundaries are explicit; the shared Type-0x29
+transition stream begins immediately at `0x00121D5A`.
+
 The adjacent terrain-handler inventory is recorded in
 `re/ghidra/targets/level01-terrain-handler-inventory-targets.json`. The
 behavior-0x24 upper-stop handler at `0x001B54D2` sets both terrain query-state
@@ -2916,3 +2925,4 @@ valuable because it prevents repeating the same input family.
 | `20260829-player-interaction-pair-animation-static-decompilation-v1` | recorded-static-decompilation | Player interaction-pair setup range-bounded with dual Type-0x84 child spawns and dynamic state handoff |
 | `20260829-player-terrain-bounce-animation-static-decompilation-v1` | recorded-static-decompilation | Player terrain-bounce response root range-bounded with actor-state write, shared response handoffs, terminal frame loop, and exact boundary before interaction-pair setup |
 | `20260829-player-terrain-alignment-animation-static-decompilation-v1` | recorded-static-decompilation | Player terrain-alignment response range-bounded with snap-to-grid selection, timer phases, state gates, randomized loops, and exact boundary before the dynamic selector |
+| `20260829-terminal-transition-animation-static-decompilation-v1` | recorded-static-decompilation | Primary and secondary Type-0x84 terminal-transition presentation streams independently named and range-bounded before the shared Type-0x29 transition stream |

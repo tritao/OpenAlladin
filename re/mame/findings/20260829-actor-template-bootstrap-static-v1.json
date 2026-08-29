@@ -18,13 +18,13 @@
       "address": "0x001B7878",
       "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TRANSITION_SECONDARY",
       "consumer": "Level_ExitAndTerminalTransition at 0x001A8FF4",
-      "behavior": "Initializes the secondary temporary presentation actor, then publishes position (0x0120,0x0178); the record carries animation 0x00121CCE and resource count 0x18."
+      "behavior": "Initializes the secondary temporary presentation actor, then publishes position (0x0120,0x0178); the record carries ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_SECONDARY at 0x00121CCE and resource count 0x18."
     },
     {
       "address": "0x001B788C",
       "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TRANSITION_PRIMARY",
       "consumer": "Level_ExitAndTerminalTransition at 0x001A8FD8",
-      "behavior": "Initializes the primary temporary presentation actor, then publishes position (0x016A,0x018A); the record carries animation 0x00121CB0 and resource count 0x08."
+      "behavior": "Initializes the primary temporary presentation actor, then publishes position (0x016A,0x018A); the record carries ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_PRIMARY at 0x00121CB0 and resource count 0x08."
     }
   ],
   "evidence": {

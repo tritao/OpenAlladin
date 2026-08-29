@@ -1107,6 +1107,26 @@
     - ghidra_player_animation_pc_assignment
     - animation_stream_classifier
 
+0x00121CB0:
+  name: ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_PRIMARY
+  size: 30
+  confidence: confirmed
+  description: Primary Type-0x84 terminal-transition presentation stream. Its exact 30-byte loop presents the 0x06F2-0x0706 frame sequence, plays sound 0x6E, and returns to its root; it is installed by the primary terminal-transition template at 0x001B788C.
+  evidence:
+    - actor_template_bootstrap_targets
+    - actor_template_terminal_transition_static_decompilation
+    - animation_stream_decoder
+
+0x00121CCE:
+  name: ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_SECONDARY
+  size: 140
+  confidence: confirmed
+  description: Secondary Type-0x84 terminal-transition presentation stream. Its exact 140-byte loop presents the 0x07DA-0x083E frame sequence with encoded timers, sound 0x3B, and the terminal 0x084E pair before returning to its root; it is installed by the secondary terminal-transition template at 0x001B7878.
+  evidence:
+    - actor_template_bootstrap_targets
+    - actor_template_terminal_transition_static_decompilation
+    - animation_stream_decoder
+
 0x00121D5A:
   name: ACTOR_ANIM_TYPE29_TRANSITION_SHARED
   size: 46
@@ -3007,7 +3027,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 terminal-transition presentation template loaded into the secondary temporary actor slot by Level_ExitAndTerminalTransition; it has no movement stream, uses animation stream 0x00121CCE, and owns twenty-four resources before the caller supplies position 0x0120,0x0178.
+  description: Type-0x84 terminal-transition presentation template loaded into the secondary temporary actor slot by Level_ExitAndTerminalTransition; it has no movement stream, uses ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_SECONDARY at 0x00121CCE, and owns twenty-four resources before the caller supplies position 0x0120,0x0178.
   evidence:
     - ghidra_level_exit_terminal_transition
     - actor_template_bootstrap_targets
@@ -3017,7 +3037,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 terminal-transition presentation template loaded into the primary temporary actor slot by Level_ExitAndTerminalTransition; it has no movement stream, uses animation stream 0x00121CB0, and owns eight resources before the caller supplies position 0x016A,0x018A.
+  description: Type-0x84 terminal-transition presentation template loaded into the primary temporary actor slot by Level_ExitAndTerminalTransition; it has no movement stream, uses ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_PRIMARY at 0x00121CB0, and owns eight resources before the caller supplies position 0x016A,0x018A.
   evidence:
     - ghidra_level_exit_terminal_transition
     - actor_template_bootstrap_targets

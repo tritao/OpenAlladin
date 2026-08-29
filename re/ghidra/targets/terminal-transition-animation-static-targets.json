@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "terminal-transition-animation-static",
+    "purpose": "Range-bound the two Type-0x84 terminal-transition presentation streams selected by the primary and secondary bootstrap templates."
+  },
+  "targets": [
+    { "address": "0x00121CB0", "name": "ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_PRIMARY" },
+    { "address": "0x00121CCE", "name": "ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_SECONDARY" },
+    { "address": "0x001B788C", "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TRANSITION_PRIMARY" },
+    { "address": "0x001B7878", "name": "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TRANSITION_SECONDARY" },
+    { "address": "0x001A8F0C", "name": "Level_ExitAndTerminalTransition" }
+  ],
+  "memory_references": [
+    { "address": "0x001E5DEA", "name": "SPRITE_FRAME_TERMINAL_TRANSITION_PRIMARY" },
+    { "address": "0x001E6DC2", "name": "SPRITE_FRAME_TERMINAL_TRANSITION_SECONDARY" },
+    { "address": "0x00FF7E82", "name": "ACTOR_TEMPORARY_PRIMARY_RECORD" },
+    { "address": "0x00FF7EC4", "name": "ACTOR_TEMPORARY_SECONDARY_RECORD" }
+  ]
+}
