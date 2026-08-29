@@ -96,6 +96,10 @@ def _has_inferred_extent(symbol: Symbol) -> bool:
 
     if symbol.range is not None:
         return True
+    if symbol.metadata.get("alias_of"):
+        # Alternate stream entries are semantic aliases into an already
+        # bounded owner and intentionally do not claim a second byte range.
+        return True
     metadata_type = str(symbol.metadata.get("type", "")).casefold()
     if metadata_type == "rom_pointer":
         return True

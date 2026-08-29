@@ -1,0 +1,57 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "entries": [
+    {
+      "name": "PLAYER_ANIM_RUN",
+      "range": "0x00122006-0x0012207F",
+      "bytes": 122,
+      "reason": "The packed run entry ends immediately before the separately named landing-response root at 0x00122080."
+    },
+    {
+      "name": "PLAYER_ANIM_JUMP",
+      "range": "0x001221B0-0x001221B7",
+      "bytes": 8,
+      "reason": "The opening frames and F4 gate occupy the eight-byte prelude; the selected terrain-launch response begins at 0x001221B8."
+    },
+    {
+      "name": "PLAYER_ANIM_THROW_APPLE",
+      "range": "0x001223DA-0x0012246F",
+      "bytes": 150,
+      "reason": "The root's conditional branches converge on the local response body and dynamic F8 handoff immediately before the next action stream at 0x00122470."
+    },
+    {
+      "name": "PLAYER_ANIM_SWORD",
+      "range": "0x0012271A-0x001227AF",
+      "bytes": 150,
+      "reason": "The root's field-gated paths converge on the sound/dynamic-selector body before the distinct 0x001227B0 sword-response continuation."
+    },
+    {
+      "name": "PLAYER_ANIM_SWORD_RESPONSE",
+      "range": "0x001227B0-0x001227C1",
+      "bytes": 18,
+      "reason": "The branch target contains the 0x07AA/0x0A76/0x0A72 response sequence, sound 0x21, timer reload, and F8 handoff before the Type-0x1E response root."
+    },
+    {
+      "name": "PLAYER_ANIM_BRAKE",
+      "alias_of": "ACTOR_ANIM_TRANSITION_PRESENTATION",
+      "owner_range": "0x001232D8-0x00123357",
+      "entry_offset": 8,
+      "reason": "The player selector enters at 0x001232E0, eight bytes into the already bounded Type-0x84 transition presentation stream."
+    }
+  ],
+  "verification": {
+    "run_end": "0x00122006 + 122 - 1 = 0x0012207F",
+    "jump_end": "0x001221B0 + 8 - 1 = 0x001221B7",
+    "throw_end": "0x001223DA + 150 - 1 = 0x0012246F",
+    "sword_end": "0x0012271A + 150 - 1 = 0x001227AF",
+    "sword_response_end": "0x001227B0 + 18 - 1 = 0x001227C1"
+  },
+  "conclusion": "The player selector roots are now distinguished from their separately entered/shared continuation streams, while the brake entry is represented as an alias rather than a competing ROM range.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

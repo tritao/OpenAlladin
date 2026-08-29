@@ -1052,8 +1052,9 @@
 
 0x00122006:
   name: PLAYER_ANIM_RUN
+  size: 122
   confidence: confirmed
-  description: Player running animation stream entry selected by the player state logic.
+  description: Player running animation stream entry selected by the player state logic. Its exact 122-byte entry region ends at 0x0012207F, immediately before the separately entered PLAYER_ANIM_LANDING_RESPONSE_SPAWN at 0x00122080; the run path contains its own shared loop and F5 child-spawn branches.
   evidence:
     - ghidra_disassembly_001B1FFE
     - mame_player_animation_trace
@@ -1070,35 +1071,53 @@
 
 0x001221B0:
   name: PLAYER_ANIM_JUMP
+  size: 8
   confidence: confirmed
-  description: Player jump animation stream entry selected with the jump vertical state.
+  description: Player jump animation prelude selected with the jump vertical state. Its exact 8-byte entry at 0x001221B0 presents the opening jump frames and gates continuation into the separately owned PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE at 0x001221B8.
   evidence:
     - ghidra_disassembly_001A9716
     - mame_player_animation_trace
 
 0x001223DA:
   name: PLAYER_ANIM_THROW_APPLE
+  size: 150
   confidence: confirmed
-  description: Player apple-throw animation stream entry.
+  description: Player apple-throw animation stream entry. Its exact 150-byte packed region at 0x001223DA-0x0012246F contains the action-response writes, flag/field gates, Type-0x84 child spawn, callback parameter, and dynamic state handoff before PLAYER_ANIM_ACTION_TERRAIN_TRANSITION at 0x00122470.
   evidence:
     - ghidra_disassembly_001A9430
     - mame_player_animation_trace
+    - player_core_animation_entry_extents_static_decompilation
 
 0x0012271A:
   name: PLAYER_ANIM_SWORD
+  size: 150
   confidence: confirmed
-  description: Player sword animation stream entry.
+  description: Player sword animation stream entry. Its exact 150-byte packed region at 0x0012271A-0x001227AF contains the action-response writes, field-gated branches, sound phase, and dynamic state handoff before the separately entered PLAYER_ANIM_SWORD_RESPONSE at 0x001227B0.
   evidence:
     - ghidra_disassembly_001A96FC
     - mame_player_animation_trace
+    - player_core_animation_entry_extents_static_decompilation
+
+0x001227B0:
+  name: PLAYER_ANIM_SWORD_RESPONSE
+  size: 18
+  confidence: decompiled
+  description: Player sword-response continuation selected by the field-gated branches in PLAYER_ANIM_SWORD. Its exact 18-byte region presents the 0x07AA/0x0A76/0x0A72 response frames, plays sound 0x21, reloads the encoded timer, and returns through the dynamic player-state selector before PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE at 0x001227C2.
+  evidence:
+    - player_core_animation_entry_extents_static_decompilation
+    - ghidra_disassembly_001A96FC
+    - animation_stream_decoder
 
 0x001232E0:
   name: PLAYER_ANIM_BRAKE
+  alias_of: ACTOR_ANIM_TRANSITION_PRESENTATION
+  entry_offset: 8
   confidence: confirmed
-  description: Player braking/deceleration animation stream entry selected after horizontal input is released.
+  description: Player braking/deceleration entry selected after horizontal input is released. This is an alternate entry eight bytes into ACTOR_ANIM_TRANSITION_PRESENTATION at 0x001232D8, so it is a semantic alias and does not claim a second ROM ownership range.
   evidence:
     - ghidra_disassembly_001AA112
     - mame_player_animation_trace
+    - player_core_animation_entry_extents_static_decompilation
 
 # Additional animation roots classified from their 68K selection context.
 # PLAYER_ANIMATION_PC assignments and the player selector are confirmed as
