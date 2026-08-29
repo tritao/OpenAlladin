@@ -1,0 +1,64 @@
+{
+  "format": "openaladdin-actor-template-type31-f5-child-family-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Promote the paired Type-0x31 actor templates selected by direct AnimationVM F5 records in the 0x00124F30 stream region.",
+  "stream_region": {
+    "range": ["0x00124F30", "0x0012503F"],
+    "role": "AnimationVM frame, child-spawn, and response-loop region"
+  },
+  "templates": [
+    {
+      "address": "0x001B8034",
+      "name": "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A",
+      "f5_sites": ["0x00124F3A", "0x00124F5E", "0x00124F82", "0x00124F9E", "0x00125030"],
+      "f5_records": [
+        { "site": "0x00124F3A", "parameter_byte": "0x00", "payload_bytes": "0xFEF00000000000000000" },
+        { "site": "0x00124F5E", "parameter_byte": "0x00", "payload_bytes": "0x01F80000000000000000" },
+        { "site": "0x00124F82", "parameter_byte": "0x00", "payload_bytes": "0x00000000000000000000" },
+        { "site": "0x00124F9E", "parameter_byte": "0x00", "payload_bytes": "0x00000000000000000000" },
+        { "site": "0x00125030", "parameter_byte": "0x00", "payload_bytes": "0x00000000000000000000" }
+      ],
+      "raw_bytes": "31000100000000120B62400000124F9600001000",
+      "runtime_type": "0x31",
+      "template_payload": "0x01000000",
+      "movement_stream": "0x00120B62",
+      "template_word": "0x4000",
+      "animation_stream": "0x00124F96",
+      "resource_count": "0x00",
+      "trailing_flags": "0x1000"
+    },
+    {
+      "address": "0x001B8048",
+      "name": "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B",
+      "f5_sites": ["0x00124F4C", "0x00124F70"],
+      "f5_records": [
+        { "site": "0x00124F4C", "parameter_byte": "0x00", "payload_bytes": "0x02100000000000000000" },
+        { "site": "0x00124F70", "parameter_byte": "0x00", "payload_bytes": "0xFC080000000000000000" }
+      ],
+      "raw_bytes": "31000100000000120B6240000012502800001000",
+      "runtime_type": "0x31",
+      "template_payload": "0x01000000",
+      "movement_stream": "0x00120B62",
+      "template_word": "0x4000",
+      "animation_stream": "0x00125028",
+      "resource_count": "0x00",
+      "trailing_flags": "0x1000"
+    }
+  ],
+  "record_contract": {
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "boundaries": "The paired 20-byte records occupy 0x001B8034-0x001B805B immediately after ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT at 0x001B8020.",
+    "scope": "The exact F5 producer records and template fields are established; the higher-level gameplay trigger for the 0x00124F30 region remains intentionally unnamed."
+  },
+  "evidence": [
+    "Seven exact F5 template pointers and payloads in the 0x00124F30 animation region",
+    "Exact adjacent 20-byte Type-0x31 records",
+    "Common Actor_InitializeFromTemplate record layout",
+    "Shared movement stream and distinct child animation entries"
+  ]
+}

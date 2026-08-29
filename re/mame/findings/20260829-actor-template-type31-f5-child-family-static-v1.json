@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-type31-f5-child-family-targets.json",
+  "templates": [
+    {
+      "address": "0x001B8034",
+      "name": "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A",
+      "producer_sites": ["0x00124F3A", "0x00124F5E", "0x00124F82", "0x00124F9E", "0x00125030"],
+      "runtime_type": "0x31",
+      "movement_stream": "0x00120B62",
+      "animation_stream": "0x00124F96",
+      "resource_count": "0x00",
+      "template_word": "0x4000",
+      "trailing_flags": "0x1000"
+    },
+    {
+      "address": "0x001B8048",
+      "name": "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B",
+      "producer_sites": ["0x00124F4C", "0x00124F70"],
+      "runtime_type": "0x31",
+      "movement_stream": "0x00120B62",
+      "animation_stream": "0x00125028",
+      "resource_count": "0x00",
+      "template_word": "0x4000",
+      "trailing_flags": "0x1000"
+    }
+  ],
+  "evidence": [
+    "Direct F5 template pointers and payloads in the 0x00124F30 animation region",
+    "Exact raw adjacent 20-byte records between established templates",
+    "Common Actor_InitializeFromTemplate record layout"
+  ],
+  "conclusion": "The formerly unassigned 0x001B8034 and 0x001B8048 records are statically closed as a paired Type-0x31 AnimationVM child-template family. Their direct F5 producers, shared movement contract, distinct animation entries, and exact boundaries are established without inferring a narrower gameplay trigger.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

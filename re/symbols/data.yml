@@ -3390,6 +3390,26 @@
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs
 
+0x001B8034:
+  name: ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x31 AnimationVM child template supplied by five direct F5 commands in the 0x00124F30 animation region. It uses movement stream 0x00120B62, animation entry 0x00124F96, template word 0x4000, no owned resources, and trailing flags 0x1000; the producer payloads select the child-specific placement/response words.
+  evidence:
+    - actor_template_type31_f5_child_family_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
+0x001B8048:
+  name: ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  description: Type-0x31 AnimationVM child template supplied by two direct F5 commands in the 0x00124F30 animation region. It shares movement stream 0x00120B62 and template word 0x4000 with the paired Type-0x31 record, uses animation entry 0x00125028, owns no resources, and carries trailing flags 0x1000; the producer payloads select the child-specific placement/response words.
+  evidence:
+    - actor_template_type31_f5_child_family_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+
 0x001B8070:
   name: ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION
   type: actor_template
