@@ -1,0 +1,87 @@
+{
+  "format": "openaladdin-scene-resource-presentation-stream-extents-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "interpreter": {
+    "address": "0x001B21F6",
+    "name": "SceneResource_ProcessCommandStream",
+    "terminator": "command byte 0x00"
+  },
+  "streams": [
+    {
+      "address": "0x00127834",
+      "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_10",
+      "range": ["0x00127834", "0x0012792A"],
+      "size": 247,
+      "wrapper": "0x001B4D0C SceneResource_RunState10Presentation",
+      "load_site": "0x001B4D3A"
+    },
+    {
+      "address": "0x0012792B",
+      "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_0B",
+      "range": ["0x0012792B", "0x001279B6"],
+      "size": 140,
+      "wrapper": "0x001B4DD2 SceneResource_Run12DF6CStream12792B",
+      "load_site": "0x001B4DDC"
+    },
+    {
+      "address": "0x001279B7",
+      "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_01",
+      "range": ["0x001279B7", "0x00127AED"],
+      "size": 311,
+      "wrapper": "0x001B4DF8 SceneResource_RunBlankStream1279B7",
+      "load_site": "0x001B4E02"
+    },
+    {
+      "address": "0x00127AEE",
+      "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_03",
+      "range": ["0x00127AEE", "0x00127BD1"],
+      "size": 228,
+      "wrapper": "0x001B4E1E SceneResource_RunBlankStream127AEE",
+      "load_site": "0x001B4E28"
+    },
+    {
+      "address": "0x00127BD2",
+      "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_04_A",
+      "range": ["0x00127BD2", "0x00127C41"],
+      "size": 112,
+      "wrapper": "0x001B4E6A SceneResource_RunBlankStream127BD2",
+      "load_site": "0x001B4E74"
+    },
+    {
+      "address": "0x00127C42",
+      "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_0B",
+      "range": ["0x00127C42", "0x00127CB3"],
+      "size": 114,
+      "wrapper": "0x001B4E90 SceneResource_RunBlankStream127C42",
+      "load_site": "0x001B4E9A"
+    },
+    {
+      "address": "0x00127CB4",
+      "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_04_B",
+      "range": ["0x00127CB4", "0x00127D73"],
+      "size": 192,
+      "wrapper": "0x001B4EB6 SceneResource_RunBlankStream127CB4",
+      "load_site": "0x001B4EC0"
+    },
+    {
+      "address": "0x00127D74",
+      "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_09",
+      "range": ["0x00127D74", "0x00127E7F"],
+      "size": 268,
+      "wrapper": "0x001B4EDC SceneResource_RunBlankStream127D74",
+      "load_site": "0x001B4EE6"
+    }
+  ],
+  "evidence": [
+    "Each stream start is loaded by a direct LEA in a fixed scene-resource wrapper.",
+    "SceneResource_ProcessCommandStream dispatches command bytes below 0x20 and exits on command 0x00.",
+    "Each recorded endpoint contains the observed command-0 terminator and the next wrapper stream begins at the following byte.",
+    "The adjacent 0x001277C5-0x00127833 narrative/object block has no direct pointer in the scanned code and remains unclassified."
+  ],
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled"
+}

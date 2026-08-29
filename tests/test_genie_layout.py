@@ -293,6 +293,31 @@ def test_layout_uses_scene_resource_stream_extents(tmp_path):
     assert stream.name == "SCENE_TRANSITION_RESOURCE_STREAM_STATE_00"
 
 
+def test_canonical_scene_resource_presentation_stream_ranges_are_exact_and_adjacent():
+    symbols = SymbolStore()
+    expected = (
+        (0x00127834, 0x0012792A, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_10"),
+        (0x0012792B, 0x001279B6, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_0B"),
+        (0x001279B7, 0x00127AED, "SCENE_RESOURCE_BLANK_STREAM_STATE_01"),
+        (0x00127AEE, 0x00127BD1, "SCENE_RESOURCE_BLANK_STREAM_STATE_03"),
+        (0x00127BD2, 0x00127C41, "SCENE_RESOURCE_BLANK_STREAM_STATE_04_A"),
+        (0x00127C42, 0x00127CB3, "SCENE_RESOURCE_BLANK_STREAM_STATE_0B"),
+        (0x00127CB4, 0x00127D73, "SCENE_RESOURCE_BLANK_STREAM_STATE_04_B"),
+        (0x00127D74, 0x00127E7F, "SCENE_RESOURCE_BLANK_STREAM_STATE_09"),
+    )
+    actual = []
+    for address, end, name in expected:
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == end - address + 1
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "scene_resource_stream"
+        actual.append((symbol.address, symbol.end))
+    assert actual == [(start, end) for start, end, _ in expected]
+    assert all(left[1] + 1 == right[0] for left, right in zip(actual, actual[1:]))
+
+
 def test_layout_does_not_split_owner_for_embedded_symbol_alias(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(

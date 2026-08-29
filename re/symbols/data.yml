@@ -115,6 +115,94 @@
     - scene_resource_command_stream_terminators
     - scene_transition_resource_stream_static_v1
 
+0x00127834:
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_10
+  type: scene_resource_stream
+  size: 0xF7
+  confidence: decompiled
+  description: State-0x10 scene-resource presentation command stream loaded directly by SceneResource_RunState10Presentation. Its exact range 0x00127834-0x0012792A ends with command 0, immediately before the fixed state-0x0B resource stream.
+  evidence:
+    - ghidra_scene_resource_presentation_wrappers
+    - scene_resource_command_stream_terminators
+    - scene_resource_presentation_stream_extents_static_v1
+
+0x0012792B:
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_0B
+  type: scene_resource_stream
+  size: 0x8C
+  confidence: decompiled
+  description: State-0x0B scene-resource presentation command stream loaded directly by SceneResource_Run12DF6CStream12792B. Its exact range 0x0012792B-0x001279B6 ends with command 0 before the blank-frame stream at 0x001279B7.
+  evidence:
+    - ghidra_scene_resource_presentation_wrappers
+    - scene_resource_command_stream_terminators
+    - scene_resource_presentation_stream_extents_static_v1
+
+0x001279B7:
+  name: SCENE_RESOURCE_BLANK_STREAM_STATE_01
+  type: scene_resource_stream
+  size: 0x137
+  confidence: decompiled
+  description: Blank-frame scene-resource command stream for state 0x01 loaded directly by SceneResource_RunBlankStream1279B7. Its exact range 0x001279B7-0x00127AED ends with command 0 before the state-0x03 blank-frame stream.
+  evidence:
+    - ghidra_scene_resource_presentation_wrappers
+    - scene_resource_command_stream_terminators
+    - scene_resource_presentation_stream_extents_static_v1
+
+0x00127AEE:
+  name: SCENE_RESOURCE_BLANK_STREAM_STATE_03
+  type: scene_resource_stream
+  size: 0xE4
+  confidence: decompiled
+  description: Blank-frame scene-resource command stream for state 0x03 loaded directly by SceneResource_RunBlankStream127AEE. Its exact range 0x00127AEE-0x00127BD1 ends with command 0 before the state-0x04 blank-frame stream.
+  evidence:
+    - ghidra_scene_resource_presentation_wrappers
+    - scene_resource_command_stream_terminators
+    - scene_resource_presentation_stream_extents_static_v1
+
+0x00127BD2:
+  name: SCENE_RESOURCE_BLANK_STREAM_STATE_04_A
+  type: scene_resource_stream
+  size: 0x70
+  confidence: decompiled
+  description: First state-0x04 blank-frame scene-resource command stream loaded directly by SceneResource_RunBlankStream127BD2. Its exact range 0x00127BD2-0x00127C41 ends with command 0 before the state-0x0B blank-frame stream.
+  evidence:
+    - ghidra_scene_resource_presentation_wrappers
+    - scene_resource_command_stream_terminators
+    - scene_resource_presentation_stream_extents_static_v1
+
+0x00127C42:
+  name: SCENE_RESOURCE_BLANK_STREAM_STATE_0B
+  type: scene_resource_stream
+  size: 0x72
+  confidence: decompiled
+  description: State-0x0B blank-frame scene-resource command stream loaded directly by SceneResource_RunBlankStream127C42. Its exact range 0x00127C42-0x00127CB3 ends with command 0 before the second state-0x04 blank-frame stream.
+  evidence:
+    - ghidra_scene_resource_presentation_wrappers
+    - scene_resource_command_stream_terminators
+    - scene_resource_presentation_stream_extents_static_v1
+
+0x00127CB4:
+  name: SCENE_RESOURCE_BLANK_STREAM_STATE_04_B
+  type: scene_resource_stream
+  size: 0xC0
+  confidence: decompiled
+  description: Second state-0x04 blank-frame scene-resource command stream loaded directly by SceneResource_RunBlankStream127CB4. Its exact range 0x00127CB4-0x00127D73 ends with command 0 before the state-0x09 blank-frame stream.
+  evidence:
+    - ghidra_scene_resource_presentation_wrappers
+    - scene_resource_command_stream_terminators
+    - scene_resource_presentation_stream_extents_static_v1
+
+0x00127D74:
+  name: SCENE_RESOURCE_BLANK_STREAM_STATE_09
+  type: scene_resource_stream
+  size: 0x10C
+  confidence: decompiled
+  description: Blank-frame scene-resource command stream for state 0x09 loaded directly by SceneResource_RunBlankStream127D74. Its exact range 0x00127D74-0x00127E7F ends with command 0 immediately before the following defined bonus-record data.
+  evidence:
+    - ghidra_scene_resource_presentation_wrappers
+    - scene_resource_command_stream_terminators
+    - scene_resource_presentation_stream_extents_static_v1
+
 0x000069E0:
   name: ROM_PADDING_FF_000069E0
   type: padding_data
