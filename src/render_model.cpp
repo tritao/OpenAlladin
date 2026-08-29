@@ -13,6 +13,28 @@ namespace {
 constexpr int kBackgroundPlaneOriginOffset = 0x10;
 constexpr int kParallaxSourceX = 0x79;
 
+constexpr std::array<GenesisPreviewSprite, 16> kPreviewSprites = {{
+    {16, 184, 3, 3, 0x11EDE0, 3},
+    {42, 200, 1, 1, 0x11ED00, 3},
+    {270, 192, 2, 2, 0x11EF00, 3},
+    {288, 200, 1, 1, 0x11ECC0, 3},
+    {296, 200, 1, 1, 0x11ECA0, 3},
+    {18, 20, 4, 3, 0x11E0A0, 3},
+    {50, 20, 2, 2, 0x11E220, 3},
+    {66, 12, 1, 2, 0x11E2A0, 3},
+    // The screenshot is sampled before the following VBlank's SAT upload.
+    // These carpet links still point at the 0x6C0 tile bases represented by
+    // the ROM regions below; frame-1300 VRAM has the next 0x6D0 set.
+    {74, 12, 1, 2, 0x11E8A0, 3},
+    {82, 12, 1, 2, 0x11E8E0, 3},
+    {90, 12, 1, 2, 0x11E920, 3},
+    {98, 12, 1, 2, 0x11E960, 3},
+    {106, 12, 1, 2, 0x11E9A0, 3},
+    {114, 12, 1, 2, 0x11E9E0, 3},
+    {122, 12, 1, 2, 0x11EA20, 3},
+    {130, 12, 1, 2, 0x11EA60, 3},
+}};
+
 std::uint32_t rgba(
     std::uint8_t r,
     std::uint8_t g,
@@ -62,6 +84,7 @@ void GenesisRenderModel::reset() {
     preview_background_rgba_.clear();
     preview_parallax_rgba_.clear();
     preview_palette_.clear();
+    preview_sprites_.clear();
     vram_.clear();
     vsram_.clear();
     checkpoint_palette_.clear();
@@ -93,6 +116,10 @@ void GenesisRenderModel::load_preview(
     preview_background_rgba_ = background_rgba;
     preview_parallax_rgba_ = parallax_rgba;
     preview_palette_ = palette;
+    preview_sprites_.clear();
+    if (rom_loaded) {
+        preview_sprites_.assign(kPreviewSprites.begin(), kPreviewSprites.end());
+    }
 }
 
 void GenesisRenderModel::load_checkpoint(

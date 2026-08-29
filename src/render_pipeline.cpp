@@ -65,43 +65,11 @@ bool RenderPipeline::render(
         render_model.render_preview_background(
             framebuffer_, width_, height_, state);
 
-    // The level-01 SAT contains a small set of fixed HUD/static sprites
-    // before the player chain. Their tile attributes are stable at the
-    // synchronized scene checkpoint and their pattern data comes from these
-    // ROM regions. Keep these as VDP sprites rather than folding them into a
-    // background bitmap so their Genesis colour-zero transparency remains
-    // observable to the native renderer.
+    // Static preview SAT entries are owned by the Genesis render model. Keep
+    // them as VDP sprites rather than folding them into a background bitmap
+    // so their Genesis colour-zero transparency remains observable.
     if (!rom.empty()) {
-        struct VdpSpriteSpec {
-            int x;
-            int y;
-            int width_tiles;
-            int height_tiles;
-            int tile_address;
-        };
-        static constexpr VdpSpriteSpec kLevel01HudSprites[] = {
-            {16, 184, 3, 3, 0x11EDE0},
-            {42, 200, 1, 1, 0x11ED00},
-            {270, 192, 2, 2, 0x11EF00},
-            {288, 200, 1, 1, 0x11ECC0},
-            {296, 200, 1, 1, 0x11ECA0},
-            {18, 20, 4, 3, 0x11E0A0},
-            {50, 20, 2, 2, 0x11E220},
-            {66, 12, 1, 2, 0x11E2A0},
-            // The screenshot is sampled before the following VBlank's SAT
-            // upload. Its carpet links still point at tile bases 0x6C0..,
-            // which are the ROM regions below; frame-1300 VRAM already has
-            // the next 0x6D0.. tile set installed.
-            {74, 12, 1, 2, 0x11E8A0},
-            {82, 12, 1, 2, 0x11E8E0},
-            {90, 12, 1, 2, 0x11E920},
-            {98, 12, 1, 2, 0x11E960},
-            {106, 12, 1, 2, 0x11E9A0},
-            {114, 12, 1, 2, 0x11E9E0},
-            {122, 12, 1, 2, 0x11EA20},
-            {130, 12, 1, 2, 0x11EA60},
-        };
-        for (const VdpSpriteSpec& sprite : kLevel01HudSprites) {
+        for (const GenesisPreviewSprite& sprite : render_model.preview_sprites()) {
             SpriteRenderer::draw_vdp_sprite(
                 rom,
                 sprite.tile_address,
@@ -111,9 +79,9 @@ bool RenderPipeline::render(
                 framebuffer_,
                 width_,
                 height_,
-                sprite.x,
-                sprite.y,
-                3
+                sprite.screen_x,
+                sprite.screen_y,
+                sprite.palette_line
             );
         }
     }

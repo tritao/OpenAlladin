@@ -40,6 +40,19 @@ struct GenesisSpriteList {
     std::array<GenesisSpriteRecord, 80> records{};
 };
 
+// A preview sprite is a decoded descriptor for a static Genesis sprite whose
+// pattern data is still sourced from the original ROM. It is kept separate
+// from GenesisSpriteRecord because preview assets do not have a live SAT
+// address when no VDP checkpoint is loaded.
+struct GenesisPreviewSprite {
+    int screen_x = 0;
+    int screen_y = 0;
+    int width_tiles = 0;
+    int height_tiles = 0;
+    int tile_address = 0;
+    int palette_line = 0;
+};
+
 // Semantic frontend state for the Genesis VDP. The raw VRAM/VSRAM and
 // register arrays remain as a compatibility backing store for existing VDP
 // checkpoints; the public views expose the planes, palette, scroll and SAT
@@ -78,6 +91,9 @@ public:
 
     int preview_background_width() const { return preview_background_width_; }
     int preview_background_height() const { return preview_background_height_; }
+    const std::vector<GenesisPreviewSprite>& preview_sprites() const {
+        return preview_sprites_;
+    }
 
     void render_preview_background(
         std::vector<std::uint32_t>& framebuffer,
@@ -129,6 +145,7 @@ private:
     std::vector<std::uint8_t> preview_background_rgba_;
     std::vector<std::uint8_t> preview_parallax_rgba_;
     std::vector<GenesisColor> preview_palette_;
+    std::vector<GenesisPreviewSprite> preview_sprites_;
 
     std::vector<std::uint8_t> vram_;
     std::vector<std::uint8_t> vsram_;

@@ -76,5 +76,25 @@ int main() {
     assert(model.scene_tile_writes().empty());
     assert(model.checkpoint_vram().empty());
 
+    std::vector<GenesisColor> preview_palette(64);
+    model.load_preview(
+        320,
+        224,
+        {},
+        320,
+        224,
+        {},
+        preview_palette,
+        true
+    );
+    assert(model.preview_background_width() == 320);
+    assert(model.preview_background_height() == 224);
+    assert(model.preview_sprites().size() == 16);
+    assert(model.preview_sprites().front().tile_address == 0x11EDE0);
+    assert(model.preview_sprites().back().palette_line == 3);
+
+    model.reset();
+    assert(model.preview_sprites().empty());
+
     return 0;
 }
