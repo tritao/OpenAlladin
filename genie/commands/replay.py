@@ -6,9 +6,9 @@ import argparse
 import os
 
 from genie.runtime import *
-from genie.mame.experiments import *
-from genie.mame.state import *
-from genie.mame.runs import *
+from genie.games.aladdin.mame.experiments import *
+from genie.games.aladdin.mame.state import *
+from genie.games.aladdin.mame.runs import *
 def command_replay(args: argparse.Namespace) -> int:
     run_dir, manifest = _load_run_manifest(args.name)
     rom = _run_rom(args, manifest)

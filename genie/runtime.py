@@ -37,13 +37,13 @@ ROM_DEFAULT = ROOT / PROFILE.default_rom
 
 
 def _load_state_trace(path: Path):
-    from genie.mame.state import load_state_trace
+    from genie.games.aladdin.mame.state import load_state_trace
 
     return load_state_trace(path)
 
 
 def _animation_selector_spec(player: dict[str, Any]) -> str | None:
-    from genie.mame.state import animation_selector_spec
+    from genie.games.aladdin.mame.state import animation_selector_spec
 
     return animation_selector_spec(player)
 
@@ -253,7 +253,7 @@ def select_segment(run_dir: Path, segment_id: str) -> dict[str, Any]:
             selected = dict(segment)
             selected["start_frame"] = start_frame
             selected["end_frame"] = end_frame
-            from genie.mame.runs import _backfill_native_boundary
+            from genie.games.aladdin.mame.runs import _backfill_native_boundary
 
             _backfill_native_boundary(run_dir, selected)
             native_start_frame = selected.get("native_start_frame")
@@ -565,7 +565,7 @@ def native_checkpoint_descriptor(state: dict[str, Any]) -> dict[str, Any]:
     for name in ("frame_ptr", "animation_pc", "animation_timer", "facing_x_flip"):
         if name in player:
             descriptor["player"][name] = _state_int(player, name)
-    from genie.mame.state import ANIMATION_SELECTOR_FIELDS
+    from genie.games.aladdin.mame.state import ANIMATION_SELECTOR_FIELDS
 
     selector = player.get("animation_selector")
     if isinstance(selector, dict):

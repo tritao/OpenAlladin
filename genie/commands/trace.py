@@ -7,9 +7,9 @@ import os
 
 from genie.runtime import *
 from genie.knowledge import validate_knowledge
-from genie.mame.experiments import *
-from genie.mame.state import *
-from genie.mame.runs import *
+from genie.games.aladdin.mame.experiments import *
+from genie.games.aladdin.mame.state import *
+from genie.games.aladdin.mame.runs import *
 def command_trace(args: argparse.Namespace) -> int:
     experiment = load_experiment(args.scenario)
     rom = resolve(args.rom)

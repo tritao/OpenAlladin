@@ -5,8 +5,8 @@ from __future__ import annotations
 import argparse
 
 from genie.runtime import *
-from genie.mame.state import *
-from genie.mame.runs import *
+from genie.games.aladdin.mame.state import *
+from genie.games.aladdin.mame.runs import *
 def command_parity(args: argparse.Namespace) -> int:
     run_dir, _ = _load_run_manifest(args.name)
     segment = select_segment(run_dir, args.segment) if args.segment else None

@@ -8,9 +8,9 @@ import os
 from genie.ghidra import verify_rom
 from genie.runtime import *
 from genie.knowledge import *
-from genie.mame.experiments import *
-from genie.mame.state import *
-from genie.mame.runs import *
+from genie.games.aladdin.mame.experiments import *
+from genie.games.aladdin.mame.state import *
+from genie.games.aladdin.mame.runs import *
 def command_regression(args: argparse.Namespace) -> int:
     experiment = load_experiment(args.scenario)
     regression = experiment.get("regression") or {}
