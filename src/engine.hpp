@@ -4,7 +4,9 @@
 
 #include "animation.hpp"
 #include "actor_lifecycle.hpp"
+#include "camera.hpp"
 #include "collision.hpp"
+#include "game_data.hpp"
 #include "game_state.hpp"
 #include "interaction.hpp"
 #include "level_event.hpp"
@@ -108,9 +110,6 @@ private:
     void update_terrain_connector_response();
     void apply_floor_contour();
     void resolve_terrain(int previous_world_y);
-    void update_camera(bool suppress_vertical_follow = false);
-    void initialize_camera_alignment();
-    bool rebase_camera_reference();
     void apply_ground_movement(const InputState& input);
     void apply_terrain_behavior(const Level::TerrainCell& cell);
     void load_actor_records(const std::string& path);
@@ -163,6 +162,7 @@ private:
     int visual_y() const;
 
     Level level_;
+    GameData game_data_;
     GameState state_;
     PlayerState& player_;
     CameraState& camera_;
@@ -179,6 +179,7 @@ private:
     MovementVm movement_vm_;
     std::array<PlayerAnimationVm, 32> actor_animations_{};
     LevelEventSystem level_event_system_;
+    CameraSystem camera_system_;
     // Actor records allocated by the late interaction refill service are not
     // visited by the movement pass until the following game-loop boundary.
     // Keep this transient scheduling edge separate from the actor record so

@@ -102,45 +102,6 @@ constexpr std::uint32_t kLevel06EventStream = 0x000024FC;
 constexpr std::uint8_t kActorDeathFrames = 43;
 constexpr std::uint8_t kActorSwordTerminalFrames = 19;
 
-// Camera_UpdateFollow (0x001AA90C) indexes these fixed-ROM byte tables by
-// the absolute local-coordinate error. The horizontal table occupies ROM
-// 0x002A52..0x002B51. The vertical table ends at the level table at 0x002C78;
-// the original camera never presents an error outside this 0xD4-byte range.
-constexpr std::array<std::uint8_t, 0x100> kCameraHorizontalDampening = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
-    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x01, 0x02, 0x02, 0x02,
-    0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-    0x03, 0x03, 0x04, 0x03, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x04, 0x05, 0x05,
-    0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-    0x06, 0x07, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x07, 0x08, 0x08,
-    0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x09, 0x08, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09,
-    0x09, 0x09, 0x09, 0x09, 0x0A, 0x09, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
-    0x0A, 0x0B, 0x0A, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B,
-    0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0C, 0x0B, 0x0C, 0x0C, 0x0C,
-    0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
-    0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
-    0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0E, 0x0D, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
-    0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
-    0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
-    0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E
-};
-
-constexpr std::array<std::uint8_t, 0xD4> kCameraVerticalDampening = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-    0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04,
-    0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07,
-    0x07, 0x07, 0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09,
-    0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
-    0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B, 0x0B,
-    0x0B, 0x0B, 0x0B, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C,
-    0x0C, 0x0C, 0x0C, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
-    0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
-    0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
-    0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0F,
-    0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
-    0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F,
-    0x0F, 0x0F, 0x0F, 0x00
-};
 constexpr std::uint32_t kCheckpointVersion = 10;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
@@ -419,6 +380,7 @@ void Engine::load(
     } else {
         rom_bytes_.clear();
     }
+    game_data_.bind_rom(rom_bytes_);
     actor_lifecycle_.bind_rom(rom_bytes_);
     collisions_.bind_rom(rom_bytes_);
     interactions_.bind_rom(rom_bytes_);
@@ -1149,7 +1111,7 @@ void Engine::reset() {
     camera_.vdp_update = 1;
     player_.grounded = true;
     player_.attack_timer = 0;
-    initialize_camera_alignment();
+    camera_system_.initialize(state_, level_);
     const auto initial_cell = level_.resolve_player_cell(player_world_x(), player_world_y());
     player_.terrain_behavior = initial_cell.valid ? initial_cell.behavior : 0;
     player_.terrain_landing_state = player_.terrain_behavior != 0 ? 1 : 0;
@@ -1891,139 +1853,6 @@ void Engine::apply_ground_movement(const InputState& input) {
     player_.vx = 0;
 }
 
-void Engine::initialize_camera_alignment() {
-    camera_.pixel_x = (camera_.x & 0x0F) + player_.x;
-    camera_.pixel_y = (camera_.y & 0x0F) + player_.y;
-    camera_.tile_x = camera_.x & ~0x0F;
-    camera_.tile_y = camera_.y & ~0x0F;
-}
-
-bool Engine::rebase_camera_reference() {
-    bool reference_rebased = false;
-    // The ROM consumes the accumulated scroll on the next update pass, not
-    // immediately after the pass that reaches a 16-pixel boundary.  The
-    // pending flags are video/update bookkeeping and are cleared at the end
-    // of the native frame, so the accumulator itself is the authoritative
-    // condition here.
-    if (camera_.scroll_x >= 0x10) {
-        camera_.scroll_x -= 0x10;
-        camera_.reference_x += 0x10;
-        camera_.scroll_left_pending = false;
-        camera_.scroll_right_pending = false;
-        reference_rebased = true;
-    } else if (camera_.scroll_x < -0x0F) {
-        camera_.scroll_x += 0x10;
-        camera_.reference_x -= 0x10;
-        camera_.scroll_left_pending = false;
-        camera_.scroll_right_pending = false;
-        reference_rebased = true;
-    }
-    if (camera_.scroll_y >= 0x10) {
-        camera_.scroll_y -= 0x10;
-        camera_.reference_y += 0x10;
-        camera_.scroll_up_pending = false;
-        camera_.scroll_down_pending = false;
-        reference_rebased = true;
-    } else if (camera_.scroll_y < -0x0F) {
-        camera_.scroll_y += 0x10;
-        camera_.reference_y -= 0x10;
-        camera_.scroll_up_pending = false;
-        camera_.scroll_down_pending = false;
-        reference_rebased = true;
-    }
-    // The ROM dispatcher consumes the pending byte every frame. A reference
-    // rebase is conditional on the accumulator crossing 16 pixels, but the
-    // pending marker itself is not sticky.
-    camera_.scroll_left_pending = false;
-    camera_.scroll_right_pending = false;
-    camera_.scroll_up_pending = false;
-    camera_.scroll_down_pending = false;
-    return reference_rebased;
-}
-
-void Engine::update_camera(bool suppress_vertical_follow) {
-    // 0x001AA8FA delays the follow pass after a player mode/threshold change.
-    // The delay is observable in the jump trace: the camera remains still for
-    // seven frames after the jump threshold is installed.
-    if (camera_.update_delay > 0) {
-        --camera_.update_delay;
-        return;
-    }
-    if (camera_.special_mode != 0 || scene_.is_transition()) {
-        return;
-    }
-
-    const auto horizontal_delta = [&]() {
-        const int difference = player_.x - camera_.horizontal_threshold;
-        if (difference == 0) {
-            return;
-        }
-        const int magnitude = std::abs(difference);
-        const int index = std::min(magnitude, static_cast<int>(kCameraHorizontalDampening.size() - 1));
-        const int delta = kCameraHorizontalDampening[static_cast<std::size_t>(index)];
-        if (delta == 0) {
-            return;
-        }
-        if (difference < 0) {
-            if (camera_.reference_x < 0x11) {
-                return;
-            }
-            player_.x += delta;
-            camera_.x -= delta;
-            camera_.scroll_x -= delta;
-            camera_.scroll_left_pending = true;
-            return;
-        }
-        const int effective = camera_.reference_x + camera_.scroll_x + delta;
-        if (effective >= camera_.level_width - 0x161) {
-            return;
-        }
-        player_.x -= delta;
-        camera_.x += delta;
-        camera_.scroll_x += delta;
-        camera_.scroll_right_pending = true;
-    };
-
-    const auto vertical_delta = [&]() {
-        const int difference = player_.y - camera_.vertical_threshold;
-        if (difference == 0) {
-            return;
-        }
-        const int magnitude = std::abs(difference);
-        // The vertical table is immediately followed by the level table in
-        // the ROM at 0x2C78. Valid camera errors stop at its final byte.
-        const int index = std::min(magnitude, 0xD3);
-        const int delta = kCameraVerticalDampening[static_cast<std::size_t>(index)];
-        if (delta == 0) {
-            return;
-        }
-        if (difference < 0) {
-            if (camera_.reference_y < 0x11) {
-                return;
-            }
-            player_.y += delta;
-            camera_.y -= delta;
-            camera_.scroll_y -= delta;
-            camera_.scroll_up_pending = true;
-            return;
-        }
-        const int effective = camera_.reference_y + camera_.scroll_y + delta;
-        if (effective >= camera_.level_height - 0xF1) {
-            return;
-        }
-        player_.y -= delta;
-        camera_.y += delta;
-        camera_.scroll_y += delta;
-        camera_.scroll_down_pending = true;
-    };
-
-    horizontal_delta();
-    if (!suppress_vertical_follow) {
-        vertical_delta();
-    }
-
-}
-
 void Engine::update(const InputState& input) {
     if (scheduler_trace_enabled_) {
         scheduler_phases_.clear();
@@ -2359,7 +2188,7 @@ void Engine::update(const InputState& input) {
     // the ROM. Rebase it now so the refill edge and the common actor gate see
     // the same newly crossed tile on this VBlank.
     const int camera_reference_y_before_rebase = camera_.reference_y;
-    rebase_camera_reference();
+    camera_system_.rebase(state_, level_);
     const bool camera_vertical_reference_rebased =
         camera_.reference_y != camera_reference_y_before_rebase;
     const bool camera_reference_moved_up =
@@ -2661,10 +2490,10 @@ void Engine::update(const InputState& input) {
         && !interactions_.bounce_response_active()) {
         // The reference-tile write occupies this camera pass. The vertical
         // damped lookup resumes on the following VBlank; horizontal follow
-        // is still handled by update_camera().
-        update_camera(true);
+        // is still handled by CameraSystem.
+        camera_system_.update(state_, level_, game_data_, true);
     } else {
-        update_camera();
+        camera_system_.update(state_, level_, game_data_);
         // A downward follow step can land exactly on the next camera tile
         // boundary. The ROM applies that reference update after the follow
         // pass; an earlier sub-tile crossing remains pending for the next
@@ -2673,7 +2502,7 @@ void Engine::update(const InputState& input) {
             && player_.terrain_jump_response_counter == 0
             && camera_.y >= camera_.reference_y + 0x10
             && (camera_.y & 0x0F) == 0) {
-            (void) rebase_camera_reference();
+            (void) camera_system_.rebase(state_, level_);
         }
     }
     if (was_grounded && (player_.grounded || contour_ground_motion) && input_direction != 0) {

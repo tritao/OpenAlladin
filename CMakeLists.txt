@@ -175,10 +175,14 @@ add_library(openaladdin_engine STATIC
     src/actor.hpp
     src/actor_lifecycle.cpp
     src/actor_lifecycle.hpp
+    src/camera.cpp
+    src/camera.hpp
     src/collision.cpp
     src/collision.hpp
     src/engine.cpp
     src/engine.hpp
+    src/game_data.cpp
+    src/game_data.hpp
     src/interaction.cpp
     src/interaction.hpp
     src/level.cpp
@@ -305,6 +309,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(player_terrain_test)
     openaladdin_enable_test_assertions(player_terrain_test)
 
+    add_executable(camera_system_test tests/camera_system.cpp)
+    target_link_libraries(camera_system_test PRIVATE openaladdin_engine)
+    target_compile_features(camera_system_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(camera_system_test)
+    openaladdin_enable_test_assertions(camera_system_test)
+
     add_executable(native_actor_vm_fixture tests/native_actor_vm_fixture.cpp)
     target_link_libraries(native_actor_vm_fixture PRIVATE openaladdin_engine)
     target_compile_features(native_actor_vm_fixture PRIVATE cxx_std_20)
@@ -397,6 +407,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME player_terrain COMMAND player_terrain_test)
     set_tests_properties(player_terrain PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME camera_system COMMAND camera_system_test)
+    set_tests_properties(camera_system PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME psg COMMAND psg_test)
