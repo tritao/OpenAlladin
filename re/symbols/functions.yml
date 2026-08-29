@@ -1022,7 +1022,7 @@
 0x001B21F6:
   name: SceneResource_ProcessCommandStream
   confidence: decompiled
-  description: Runs a scene-resource command stream until SCENE_RESOURCE_STATUS changes. Commands below 0x20 dispatch through the shared resource command table; object commands invoke the scene/VDP helper and continue at the next stream record.
+  description: Runs a scene-resource command stream until SCENE_RESOURCE_STATUS changes. Commands below 0x20 dispatch through SCENE_RESOURCE_COMMAND_TABLE at 0x0049D8; object commands invoke the scene/VDP helper and continue at the next stream record.
   evidence:
     - ghidra_decompile_001B21F6
     - ghidra_decompile_001B2238
@@ -1030,7 +1030,7 @@
 0x001B2238:
   name: SceneResource_InstantiateActors
   confidence: decompiled
-  description: Selects the active scene-resource record, initializes its render origin, interprets resource commands, and creates actors from nonzero object entries by finding a free gameplay slot, applying the common template initializer, and assigning the resource animation, movement, and position fields.
+  description: Selects the active scene-resource record, initializes its render origin, interprets commands through SCENE_RESOURCE_COMMAND_TABLE at 0x0049D8, and creates actors from nonzero object entries by finding a free gameplay slot, applying the common template initializer, and assigning the resource animation, movement, and position fields.
   evidence:
     - ghidra_decompile_001B2238
     - ghidra_level_transition_targeted_decompile
@@ -1043,6 +1043,101 @@
     - ghidra_disassembly_001B2236
     - scene_resource_mode_hook_targets
     - scene_resource_mode_hook_static_decompilation
+0x001B2300:
+  name: SceneResource_EndCommandStream
+  size: 4
+  confidence: decompiled
+  description: Scene-resource command 0 terminator. It removes the dispatch return address and exits the active command-stream interpreter through its shared A1/A2 epilogue.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+    - ghidra_decompile_001B21F6
+0x001B2304:
+  name: SceneResource_AdvanceX
+  size: 8
+  confidence: decompiled
+  description: Scene-resource command 1. Consumes one signed stream byte and adds it to the current tile X word in D0.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+0x001B230C:
+  name: SceneResource_AdvanceY
+  size: 8
+  confidence: decompiled
+  description: Scene-resource command 2. Consumes one signed stream byte and adds it to the current tile Y word in D1.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+0x001B2314:
+  name: SceneResource_FillTileRow
+  size: 28
+  confidence: decompiled
+  description: Scene-resource command 3. Consumes a count and tile-row selector, then writes a horizontal run through VDP_WriteTileWord while advancing D0.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+    - ghidra_decompile_001B21F6
+0x001B2330:
+  name: SceneResource_FillTileColumn
+  size: 28
+  confidence: decompiled
+  description: Scene-resource command 4. Consumes a count and tile-row selector, then writes a vertical run through VDP_WriteTileWord while advancing D1.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+0x001B234C:
+  name: SceneResource_FillTileRectangle
+  size: 52
+  confidence: decompiled
+  description: Scene-resource command 5. Consumes width, height, and tile-row selector, then writes a nested tile rectangle through VDP_WriteTileWord, advancing D0 across each row and D1 between rows.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+0x001B2380:
+  name: SceneResource_RunServiceFrames
+  size: 44
+  confidence: decompiled
+  description: Scene-resource command 6. Consumes a frame count, services the actor/render frame pass through Frame_RunServicePass, samples controller/resource state, and stops early when the VBlank/query latch is published.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+    - ghidra_decompile_001B28AE
+    - ghidra_disassembly_001B34CA
+0x001B23AC:
+  name: SceneResource_AdvanceTileRow
+  size: 6
+  confidence: decompiled
+  description: Scene-resource command 7. Advances D1 by one tile row and clears the low-byte tile X cursor in D0.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+0x001B23B2:
+  name: SceneResource_SetTileBase0000
+  size: 10
+  confidence: decompiled
+  description: Scene-resource command 8. Selects tile base offset 0x0000 for subsequent VDP tile-word writes.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+0x001B23BC:
+  name: SceneResource_SetTileBase2000
+  size: 10
+  confidence: decompiled
+  description: Scene-resource command 9. Selects tile base offset 0x2000 for subsequent VDP tile-word writes.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+0x001B23C6:
+  name: SceneResource_SetTileBase4000
+  size: 10
+  confidence: decompiled
+  description: Scene-resource command 0x0A. Selects tile base offset 0x4000 for subsequent VDP tile-word writes.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+0x001B23D0:
+  name: SceneResource_SetTileBase6000
+  size: 10
+  confidence: decompiled
+  description: Scene-resource command 0x0B. Selects tile base offset 0x6000 for subsequent VDP tile-word writes.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+0x001B23DA:
+  name: SceneResource_LoadStreamPointer
+  size: 16
+  confidence: decompiled
+  description: Scene-resource command 0x0C. Consumes a 24-bit stream pointer and installs it in A4 for the active scene-resource interpreter.
+  evidence:
+    - scene_resource_command_table_static_decompilation
 0x001B21A8:
   name: VDP_WriteTileWord
   confidence: decompiled

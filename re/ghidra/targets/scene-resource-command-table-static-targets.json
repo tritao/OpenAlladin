@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-scene-resource-command-table-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "table": {
+    "address": "0x0049D8",
+    "name": "SCENE_RESOURCE_COMMAND_TABLE",
+    "entry_size": 4,
+    "count": 16,
+    "commands": {
+      "0x00": "0x001B2300 SceneResource_EndCommandStream",
+      "0x01": "0x001B2304 SceneResource_AdvanceX",
+      "0x02": "0x001B230C SceneResource_AdvanceY",
+      "0x03": "0x001B2314 SceneResource_FillTileRow",
+      "0x04": "0x001B2330 SceneResource_FillTileColumn",
+      "0x05": "0x001B234C SceneResource_FillTileRectangle",
+      "0x06": "0x001B2380 SceneResource_RunServiceFrames",
+      "0x07": "0x001B23AC SceneResource_AdvanceTileRow",
+      "0x08": "0x001B23B2 SceneResource_SetTileBase0000",
+      "0x09": "0x001B23BC SceneResource_SetTileBase2000",
+      "0x0A": "0x001B23C6 SceneResource_SetTileBase4000",
+      "0x0B": "0x001B23D0 SceneResource_SetTileBase6000",
+      "0x0C": "0x001B23DA SceneResource_LoadStreamPointer",
+      "0x0D": "0x001B23EA SceneResource_LoadOrClearC000",
+      "0x0E": "0x001B2412 SceneResource_PrepareFrameAndPalette",
+      "0x0F": "0x001B2432 SceneResource_InstantiateActorRecord"
+    }
+  },
+  "handler_range": {
+    "start": "0x001B2300",
+    "end": "0x001B246D",
+    "gap_free": true,
+    "notes": "Commands 0x00-0x0C occupy the previously unclassified 0x001B2300-0x001B23E9 block; commands 0x0D-0x0F are the already named handlers immediately following it."
+  },
+  "evidence": [
+    "Big-endian ROM pointer-table decode at 0x0049D8",
+    "Exact 68000 disassembly of 0x001B2300-0x001B23E9",
+    "SceneResource_ProcessCommandStream dispatch loop at 0x001B21F6"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

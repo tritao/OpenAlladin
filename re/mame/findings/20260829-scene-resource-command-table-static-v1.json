@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "dispatcher": {
+    "address": "0x0049D8",
+    "name": "SCENE_RESOURCE_COMMAND_TABLE",
+    "entry_size": 4,
+    "count": 16,
+    "index": "scene-resource stream command byte 0x00-0x0F"
+  },
+  "handlers": [
+    { "command": "0x00", "address": "0x001B2300", "name": "SceneResource_EndCommandStream", "contract": "Exit the active interpreter through the shared A1/A2 epilogue." },
+    { "command": "0x01", "address": "0x001B2304", "name": "SceneResource_AdvanceX", "contract": "Add one signed stream byte to D0." },
+    { "command": "0x02", "address": "0x001B230C", "name": "SceneResource_AdvanceY", "contract": "Add one signed stream byte to D1." },
+    { "command": "0x03", "address": "0x001B2314", "name": "SceneResource_FillTileRow", "contract": "Write a counted horizontal VDP tile run." },
+    { "command": "0x04", "address": "0x001B2330", "name": "SceneResource_FillTileColumn", "contract": "Write a counted vertical VDP tile run." },
+    { "command": "0x05", "address": "0x001B234C", "name": "SceneResource_FillTileRectangle", "contract": "Write a counted width-by-height VDP tile rectangle." },
+    { "command": "0x06", "address": "0x001B2380", "name": "SceneResource_RunServiceFrames", "contract": "Run counted actor/render service frames with VBlank and query-latch termination." },
+    { "command": "0x07", "address": "0x001B23AC", "name": "SceneResource_AdvanceTileRow", "contract": "Increment D1 and clear the tile X cursor." },
+    { "command": "0x08", "address": "0x001B23B2", "name": "SceneResource_SetTileBase0000", "contract": "Set scene-resource tile base offset to 0x0000." },
+    { "command": "0x09", "address": "0x001B23BC", "name": "SceneResource_SetTileBase2000", "contract": "Set scene-resource tile base offset to 0x2000." },
+    { "command": "0x0A", "address": "0x001B23C6", "name": "SceneResource_SetTileBase4000", "contract": "Set scene-resource tile base offset to 0x4000." },
+    { "command": "0x0B", "address": "0x001B23D0", "name": "SceneResource_SetTileBase6000", "contract": "Set scene-resource tile base offset to 0x6000." },
+    { "command": "0x0C", "address": "0x001B23DA", "name": "SceneResource_LoadStreamPointer", "contract": "Consume a 24-bit pointer and install it in A4." },
+    { "command": "0x0D", "address": "0x001B23EA", "name": "SceneResource_LoadOrClearC000", "contract": "Load the installed C000 resource or clear VRAM C000." },
+    { "command": "0x0E", "address": "0x001B2412", "name": "SceneResource_PrepareFrameAndPalette", "contract": "Wait, begin palette transition, clear C000, and upload palette band 3." },
+    { "command": "0x0F", "address": "0x001B2432", "name": "SceneResource_InstantiateActorRecord", "contract": "Consume a template/X/Y record and initialize one scene-resource actor." }
+  ],
+  "evidence": [
+    "Exact ROM pointer table and handler targets",
+    "68000 disassembly of every newly named handler",
+    "SceneResource_ProcessCommandStream and SceneResource_InstantiateActors callers"
+  ],
+  "conclusion": "The scene-resource stream is now represented by a complete canonical 16-command table and named handler family, including the previously opaque 0x001B2300-0x001B23E9 code block.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

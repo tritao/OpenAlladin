@@ -150,6 +150,18 @@
     - ghidra_actor_movement_vm_001ADE36
     - animation_stream_decoder
 
+0x0049D8:
+  name: SCENE_RESOURCE_COMMAND_TABLE
+  type: rom_pointer_table
+  entry_size: 4
+  count: 16
+  size: 64
+  confidence: decompiled
+  description: Exact 16-entry scene-resource command dispatcher for command bytes 0x00-0x0F. It selects the stream terminator, X/Y cursor adjustments, tile row/column/rectangle fills, VBlank service frames, tile-base changes, stream-pointer installation, C000/palette preparation, and actor-record instantiation handlers at 0x001B2300-0x001B2431.
+  evidence:
+    - ghidra_decompile_001B21F6
+    - scene_resource_command_table_static_decompilation
+
 0x004154:
   name: INTERACTION_HANDLER_TABLE
   type: rom_pointer_table
