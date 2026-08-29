@@ -30,7 +30,7 @@
       "address": "0x001B78DC",
       "name": "ACTOR_TEMPLATE_TYPE_67_INTERACTION",
       "consumer": "0x001B6BF0",
-      "behavior": "Direct forward-slot spawn with animation 0x00123274."
+      "behavior": "Direct forward-slot spawn with animation 0x00123274 ACTOR_ANIM_TYPE67_INTERACTION."
     },
     {
       "address": "0x001B78F0",

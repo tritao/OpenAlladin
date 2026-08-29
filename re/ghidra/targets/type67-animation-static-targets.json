@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-type67-animation-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "animation": {
+    "address": "0x00123274",
+    "name": "ACTOR_ANIM_TYPE67_INTERACTION",
+    "packed_region": ["0x00123274", "0x001232D7"],
+    "packed_bytes": 100,
+    "frame_sequence": ["0x1092", "0x1092", "0x1092", "0x109E", "0x109E", "0x10A2", "0x10A2", "0x10A2", "0x10A2", "0x10A6", "0x10A6", "0x10A6", "0x10A6", "0x10AA", "0x10AA", "0x10AE", "0x10AE", "0x10B2", "0x10B2"],
+    "entry": {
+      "publish_type": "0x00123276 ED actor type <- 0x67",
+      "clear_actor_state": "0x0012327C EC 0x01",
+      "child_spawn": "0x00123280 F5 template 0x001B8188",
+      "event_parameter": "0x00123290 FB 0x001ACD02",
+      "conditional_repeat": "0x001232B0 F4 fields 0x11/0xF0/0xD3 value 0x0068 -> 0x001232AC",
+      "conditional_child_spawn": "0x001232BA F5 template 0x001B8188",
+      "loop": "0x001232D2 EA -> 0x00123274"
+    }
+  },
+  "consumer": {
+    "handler": "0x001B6BF0 InteractionSpawn_Type67_3D",
+    "selector": "0x3D",
+    "template": "0x001B78DC ACTOR_TEMPLATE_TYPE_67_INTERACTION",
+    "runtime_type": "0x67",
+    "movement": null,
+    "resource_count": "0x05"
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output for 0x00123274",
+    "Exact Type-0x67 template and selector-0x3D consumer",
+    "Two F5 records target the same child template at 0x001B8188",
+    "Packed boundary immediately before the next animation root at 0x001232D8"
+  ],
+  "conclusion": "The Type-0x67 animation root is a bounded 100-byte interaction loop. It publishes type 0x67, clears the actor, performs its initial child spawn and event push, conditionally repeats the child spawn after the encoded 0x0068 comparison, then loops through the local frame tail.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

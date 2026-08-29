@@ -43,7 +43,7 @@
       "consumer_site": "0x001B6BF0",
       "runtime_type": "0x67",
       "movement_stream": null,
-      "animation_stream": "0x00123274",
+      "animation_stream": "0x00123274 ACTOR_ANIM_TYPE67_INTERACTION",
       "resource_count": "0x05"
     },
     {

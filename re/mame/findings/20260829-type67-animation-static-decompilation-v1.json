@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type67-animation-static-targets.json",
+  "stream": {
+    "address": "0x00123274",
+    "name": "ACTOR_ANIM_TYPE67_INTERACTION",
+    "range": "0x00123274-0x001232D7",
+    "bytes": 100,
+    "published_type": "0x67",
+    "actor_state_clear": "0x01",
+    "initial_child_spawn": "0x001B8188",
+    "event_parameter": "0x001ACD02",
+    "frame_sequence": ["0x1092", "0x1092", "0x1092", "0x109E", "0x109E", "0x10A2", "0x10A2", "0x10A2", "0x10A2", "0x10A6", "0x10A6", "0x10A6", "0x10A6", "0x10AA", "0x10AA", "0x10AE", "0x10AE", "0x10B2", "0x10B2"],
+    "comparison": "fields 0x11/0xF0/0xD3 against 0x0068",
+    "conditional_child_spawn": "0x001B8188",
+    "loop_target": "0x00123274"
+  },
+  "consumer": {
+    "address": "0x001B6BF0",
+    "name": "InteractionSpawn_Type67_3D",
+    "selector": "0x3D",
+    "template": "0x001B78DC ACTOR_TEMPLATE_TYPE_67_INTERACTION",
+    "runtime_type": "0x67",
+    "movement": null
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Direct Type-0x67 template consumer",
+    "Existing interaction-spawn family finding",
+    "Packed boundary immediately before the next animation root"
+  ],
+  "conclusion": "The Type-0x67 animation is closed as a local timed interaction loop with two conditional child-spawn sites and no movement, player-coordinate, or scene-state write.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
