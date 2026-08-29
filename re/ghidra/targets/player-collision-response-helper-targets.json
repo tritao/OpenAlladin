@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-response-helper",
+    "purpose": "Canonicalize the Type-0x23 collision-response pair builder and its zero-template/source-position allocation helper."
+  },
+  "caller": {
+    "address": "0x001AEECA",
+    "name": "ActorType23_PlayerCollisionHandler",
+    "gate": "PLAYER_INTERACTION_GATE at 0x00FFF0D8"
+  },
+  "targets": [
+    { "address": "0x001ABFFA", "name": "ActorType23_SpawnCollisionResponsePair" },
+    { "address": "0x001AC0BA", "name": "Actor_SpawnZeroTemplateAtSourcePosition" }
+  ],
+  "memory_references": [
+    { "address": "0x00FF7E02", "name": "PLAYER_WORLD_X" },
+    { "address": "0x00FFF0D8", "name": "PLAYER_INTERACTION_GATE" }
+  ],
+  "rom_references": [
+    { "address": "0x00122BD8", "name": "ACTOR_ANIM_TYPE3A_3B_RESPONSE" },
+    { "address": "0x0012319C", "name": "ACTOR_ANIM_TYPE84_COLLISION_RESPONSE" },
+    { "address": "0x001B79B8", "name": "ACTOR_TEMPLATE_BASE_ZERO" },
+    { "address": "0x001B7CC4", "name": "ACTOR_TEMPLATE_COLLISION_TYPE_84" },
+    { "address": "0x001AE262", "name": "Actor_FindFreeSlot" },
+    { "address": "0x001AE27A", "name": "Actor_FindFreeSlotForward" },
+    { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" }
+  ]
+}
