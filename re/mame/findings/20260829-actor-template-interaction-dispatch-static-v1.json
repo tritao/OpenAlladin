@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/actor-template-interaction-dispatch-targets.json",
+  "template": {
+    "address": "0x001B7C4C",
+    "name": "ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE",
+    "consumer": "InteractionHandler_0x80 at 0x001B6F0C",
+    "static_behavior": [
+      "The dispatch entry clears INTERACTION_RESPONSE_FLAG at 0x00FFF104.",
+      "It invokes InteractionSpawn_ReverseSlot with the template address in A6.",
+      "The record initializes runtime type 0x87, has no movement stream, uses animation root 0x00123B38, and owns eleven resources."
+    ]
+  },
+  "conclusion": "0x001B7C4C is a directly consumed type-0x87 interaction-response template. The surrounding type-0x84 record at 0x001B7C60 remains unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
