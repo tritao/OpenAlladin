@@ -434,11 +434,12 @@
     - mame_type21_settle_trace
 
 0x00120F76:
-  name: ACTOR_MOVE_STATE_120F76
-  confidence: probable
-  description: Actor movement state-stream root selected by a scene actor template and decoded with the shared movement command set.
+  name: ACTOR_MOVE_TYPE2A_VERTICAL_BOB
+  confidence: decompiled
+  description: Type-0x2A upper-route actor movement root; its lossless 62-byte stream performs the shared flag-test/write/clear prefix, follows a fixed vertical profile of 0, +2, +2, +3, +3, +4, +4, 0, -1, -1, -1, -2, -2, -2, -3, -2, -2, -1, -1, and loops from 0x00120FAC back to 0x00120F8A.
   evidence:
     - actor_template_runtime_trace
+    - actor_type2a_movement_stream_static_decode
     - movement_stream_decoder
 
 0x00121240:
