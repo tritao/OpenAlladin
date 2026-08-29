@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-type34-movement-static-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "movement": {
+    "address": "0x001217B4",
+    "name": "ACTOR_MOVE_STATE_1217B4",
+    "decoded_bytes": 102,
+    "decoded_steps": 32,
+    "pattern": "zero horizontal delta with signed vertical deltas +1 and -1",
+    "timer_commands": ["0x84 0x80", "0x84 0x81", "0x84 0x82", "0x84 0x83", "0x84 0x84"],
+    "loop": "0x00121812 opcode 0x80 -> 0x001217B4",
+    "non_linear_runtime_state": false
+  },
+  "consumer": {
+    "runtime_type": "0x34",
+    "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+    "animation_root": "0x00122C1E",
+    "interaction_selector": "0x53",
+    "handler": "0x001B72D4 InteractionSpawn_RuntimeType34_53"
+  },
+  "evidence": [
+    "Lossless MovementDecoder output for 0x001217B4",
+    "Exact selector-0x53 spawn contract",
+    "Existing type-0x34 runtime trace and animation decode"
+  ],
+  "conclusion": "The type-0x34 wall actor movement root is statically closed as a deterministic vertical oscillation stream with no horizontal displacement or conditional command state. Its loop target and timer values are preserved as raw VM facts.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

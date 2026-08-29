@@ -451,11 +451,12 @@
 
 0x001217B4:
   name: ACTOR_MOVE_STATE_1217B4
-  confidence: probable
-  description: Type-0x34 wall actor movement root; it applies zero horizontal delta, oscillates by one pixel vertically through opcode 0x84 timer values, and loops back with opcode 0x80.
+  confidence: decompiled
+  description: Type-0x34 wall actor movement root; its lossless 102-byte decode contains zero horizontal deltas, a signed one-pixel vertical oscillation controlled by opcode 0x84 values 0x80 through 0x84, and an opcode-0x80 loop back to the root.
   evidence:
     - mame_type_34_wall_actor_probe
     - actor_type_34_stream_decode
+    - actor_type34_movement_stream_static_decode
     - actor_template_runtime_trace
     - movement_stream_decoder
 

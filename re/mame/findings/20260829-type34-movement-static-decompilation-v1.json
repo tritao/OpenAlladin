@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-29",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type34-movement-static-targets.json",
+  "stream": {
+    "address": "0x001217B4",
+    "name": "ACTOR_MOVE_STATE_1217B4",
+    "decoded_bytes": 102,
+    "decoded_steps": 32,
+    "vertical_deltas": ["+1", "0", "-1"],
+    "horizontal_delta": "0",
+    "timer_values": ["0x80", "0x81", "0x82", "0x83", "0x84"],
+    "loop_target": "0x001217B4"
+  },
+  "consumer": {
+    "handler": "0x001B72D4",
+    "selector": "0x53",
+    "runtime_type": "0x34",
+    "animation_root": "0x00122C1E"
+  },
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
