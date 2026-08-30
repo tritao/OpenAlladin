@@ -445,6 +445,21 @@ def test_real_player_counter_has_a_provisional_life_projection_alias():
     assert counter.metadata["format"] == "ascii_digit"
 
 
+def test_real_player_interaction_animation_selector_contract():
+    symbols = SymbolStore()
+
+    selector = symbols.at(0x00FFF16A, include_ranges=False)
+    assert selector is not None
+    assert selector.name == "PLAYER_INTERACTION_ANIMATION_INDEX"
+    assert selector.metadata["type"] == "u8"
+
+    table = symbols.at(0x001218D8, include_ranges=False)
+    assert table is not None
+    assert table.name == "PLAYER_INTERACTION_ANIMATION_TABLE"
+    assert table.size == 40
+    assert table.confidence == "confirmed"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

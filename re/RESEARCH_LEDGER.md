@@ -2249,6 +2249,21 @@ This closes the review queue without claiming a selector, VDP destination, or
 live reachability; a future selector or consumer recovery should reopen the
 item.
 
+## Player interaction-animation selector contract (20260830)
+
+The previously unnamed byte at `0x00FFF16A` is now tracked as
+`PLAYER_INTERACTION_ANIMATION_INDEX`. `Player_ResolveTerrainContact` clears
+the byte on ordinary contact and increments it for left/right push responses,
+wrapping after `0x27`; `Player_SelectInteractionAnimation` masks its low two
+bits and uses the result as a byte offset into the ten-entry
+`PLAYER_INTERACTION_ANIMATION_TABLE` at `0x001218D8`.
+
+The table's exact `0x28`-byte extent (`0x001218D8`–`0x001218FF`) and all ten
+selected interaction-animation roots are therefore confirmed as one static
+selector contract. The selector byte and its higher-level terrain/contact
+meaning remain decompiled/static; no user-facing action label or new runtime
+claim is made.
+
 ## Secondary interaction counter reset (20260828)
 
 InteractionCounter_ResetSecondaryDigits at `0x001AA664` resets the separate
@@ -3579,6 +3594,7 @@ valuable because it prevents repeating the same input family.
 | `20260830-difficulty-counter-consumer-closure-static-v1` | recorded-static-decompilation | Closed the direct GAME_DIFFICULTY_COUNTER reader/writer family and all four Game_IncrementDifficultyCounter callers; corrected Type-0x46 ASCII-'9' gate wording while retaining conservative user-facing semantics |
 | `20260830-player-life-counter-runtime-v1` | recorded-runtime-evidence | Added the provisional PLAYER_LIFE_COUNT_DIGIT projection for FF7E3C from its portrait-adjacent HUD record, terminal decrement/zero branch, and independent runtime separation from the apple count; retained GAME_DIFFICULTY_COUNTER as canonical and did not claim native health semantics |
 | `20260830-sprite-vdp-control-word-review-closure-v1` | recorded-negative-runtime-audit | Closed the last open data review item, SPRITE_VDP_CONTROL_WORD_PAIR_1CB6, as an exact structural 8-byte owner after the 1400-frame negative read audit; retained unresolved consumer and reachability as a future reopen condition |
+| `20260830-player-interaction-animation-selector-static-v1` | recorded-static-decompilation | Named PLAYER_INTERACTION_ANIMATION_INDEX at FFF16A and confirmed the exact ten-entry PLAYER_INTERACTION_ANIMATION_TABLE extent and mask-based selector contract; retained the higher-level terrain/contact meaning as decompiled/static |
 | `20260830-type7e-function-boundary-correction-v1` | tooling-validation | Corrected ActorType7E_PlayerCollisionHandler from the stale 358-byte overlapping symbol size to its exact 292-byte body ending at 0x001AFF3F before the separate mode-11 and mode-16 helpers |
 | `20260830-rnc-title-boundary-audit-correction-v2` | tooling-validation | Corrected the RNC manifest end interpretation: its exclusive 0x001434C3 endpoint means the title payload ends at 0x001434C2 and the zero at 0x001434C3 remains alignment padding before the next RNC header at 0x001434C4 |
 | `20260830-scene-resource-stream-boundary-correction-static-v1` | tooling-validation | Corrected SCENE_RESOURCE_BLANK_STREAM_STATE_03 to its 0x00127AEE-0x00127B5F terminator and separated the independently selected 0x00127B60-0x00127BD1 stream |

@@ -5864,11 +5864,12 @@
   type: rom_pointer_table
   entry_size: 4
   count: 10
-  confidence: decompiled
+  confidence: confirmed
   description: Ten-entry player interaction-animation root table indexed by PLAYER_INTERACTION_ANIMATION_INDEX in Player_SelectInteractionAnimation. Its exact 40-byte table occupies 0x001218D8-0x001218FF and points to PLAYER_ANIM_INTERACTION_VARIANT_00 through PLAYER_ANIM_INTERACTION_VARIANT_09.
   evidence:
     - player_vertical_animation_lookup_family_static_decompilation
     - ghidra_player_terrain_state_targets
+    - player_interaction_animation_table_extent_static_v1
 
 0x00121900:
   name: PLAYER_ANIM_INTERACTION_VARIANT_00

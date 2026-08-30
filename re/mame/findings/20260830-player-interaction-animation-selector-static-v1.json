@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-interaction-animation-selector-static-targets.json",
+  "selector": {
+    "address": "0x00FFF16A",
+    "name": "PLAYER_INTERACTION_ANIMATION_INDEX",
+    "size": 1,
+    "producer": "Player_ResolveTerrainContact at 0x001A99F0",
+    "consumer": "Player_SelectInteractionAnimation at 0x001A9B38",
+    "contract": "The contact resolver clears the byte on ordinary contact and increments it for left/right push responses, wrapping after 0x27. The selector masks the low two bits, so values 0x00, 0x04, ..., 0x24 select table entries 0 through 9."
+  },
+  "table": {
+    "address": "0x001218D8",
+    "name": "PLAYER_INTERACTION_ANIMATION_TABLE",
+    "entry_size": 4,
+    "count": 10,
+    "range": "0x001218D8-0x001218FF",
+    "next_range": "0x00121900-0x00121963",
+    "targets": "The ten longwords point to PLAYER_ANIM_INTERACTION_VARIANT_00 through PLAYER_ANIM_INTERACTION_VARIANT_09, each with a contiguous ten-byte prelude ending in the shared terrain-alignment continuation."
+  },
+  "static_evidence": [
+    "The 0x001A9B38 instruction sequence reads 0x00FFF16A, masks the low two bits through an 0xFFFC byte offset, loads a longword from 0x001218D8, clears PLAYER_ANIMATION_TIMER, and writes TERRAIN_HORIZONTAL_RESPONSE=2.",
+    "The 0x001A99F0 instruction sequence increments 0x00FFF16A on directional push branches and wraps values above 0x27 to zero.",
+    "The exact 0x001218D8-0x001218FF table and all ten selected stream roots are already bounded by lossless animation decoding."
+  ],
+  "conclusion": "The former DAT_00FFF16A byte is now a canonical RAM symbol, and the interaction-animation table has a confirmed exact extent and mask-based selector contract.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

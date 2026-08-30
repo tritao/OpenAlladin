@@ -1,0 +1,56 @@
+{
+  "format": "openaladdin-player-interaction-animation-selector-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "services": [
+    {
+      "address": "0x001A99F0",
+      "name": "Player_ResolveTerrainContact",
+      "role": "clears PLAYER_INTERACTION_ANIMATION_INDEX on ordinary contact and increments it for directional push responses, wrapping after 0x27"
+    },
+    {
+      "address": "0x001A9B38",
+      "name": "Player_SelectInteractionAnimation",
+      "role": "masks PLAYER_INTERACTION_ANIMATION_INDEX with 0xFC and loads the selected longword root"
+    }
+  ],
+  "ram": {
+    "address": "0x00FFF16A",
+    "name": "PLAYER_INTERACTION_ANIMATION_INDEX",
+    "size": 1,
+    "range": ["0x00FFF16A", "0x00FFF16A"]
+  },
+  "table": {
+    "address": "0x001218D8",
+    "name": "PLAYER_INTERACTION_ANIMATION_TABLE",
+    "entry_size": 4,
+    "count": 10,
+    "range": ["0x001218D8", "0x001218FF"],
+    "selection": "(PLAYER_INTERACTION_ANIMATION_INDEX & 0xFC) / 4",
+    "targets": [
+      { "index": 0, "target": "0x00121900", "name": "PLAYER_ANIM_INTERACTION_VARIANT_00" },
+      { "index": 1, "target": "0x0012190A", "name": "PLAYER_ANIM_INTERACTION_VARIANT_01" },
+      { "index": 2, "target": "0x00121914", "name": "PLAYER_ANIM_INTERACTION_VARIANT_02" },
+      { "index": 3, "target": "0x0012191E", "name": "PLAYER_ANIM_INTERACTION_VARIANT_03" },
+      { "index": 4, "target": "0x00121928", "name": "PLAYER_ANIM_INTERACTION_VARIANT_04" },
+      { "index": 5, "target": "0x00121932", "name": "PLAYER_ANIM_INTERACTION_VARIANT_05" },
+      { "index": 6, "target": "0x0012193C", "name": "PLAYER_ANIM_INTERACTION_VARIANT_06" },
+      { "index": 7, "target": "0x00121946", "name": "PLAYER_ANIM_INTERACTION_VARIANT_07" },
+      { "index": 8, "target": "0x00121950", "name": "PLAYER_ANIM_INTERACTION_VARIANT_08" },
+      { "index": 9, "target": "0x0012195A", "name": "PLAYER_ANIM_INTERACTION_VARIANT_09" }
+    ]
+  },
+  "evidence": [
+    "ghidra_decompile_001A99F0",
+    "ghidra_decompile_001A9B38",
+    "player_vertical_animation_lookup_family_static_decompilation",
+    "player_interaction_animation_table_extent_static_v1"
+  ],
+  "limitations": [
+    "The selector byte is named from its exact table-selection role; no user-facing interaction/action label is claimed.",
+    "This is a static contract; no new runtime confidence is claimed for the selector byte or its higher-level terrain/contact meaning."
+  ]
+}

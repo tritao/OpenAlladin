@@ -157,10 +157,11 @@
 0x001A9B38:
   name: Player_SelectInteractionAnimation
   confidence: decompiled
-  description: When the interaction-animation gate is clear, selects the player animation root from PLAYER_INTERACTION_ANIMATION_TABLE at ROM 0x001218D8, clears the animation timer, and publishes horizontal terrain response state 2.
+  description: When the interaction-animation gate is clear, masks PLAYER_INTERACTION_ANIMATION_INDEX with 0xFC to select one of ten player animation roots from PLAYER_INTERACTION_ANIMATION_TABLE at ROM 0x001218D8, clears the animation timer, and publishes horizontal terrain response state 2.
   evidence:
     - ghidra_decompile_001A9B38
     - ghidra_player_terrain_state_targets
+    - player_interaction_animation_selector_static_v1
 0x001AAA2A:
   name: Camera_PublishScroll
   confidence: trace_validated

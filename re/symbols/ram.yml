@@ -469,6 +469,16 @@
   description: Animation/interaction gate checked by Player_ProcessInteractionState and asserted by its special-mode branch.
   evidence:
     - ghidra_disassembly_001AE4F8
+0xFFF16A:
+  name: PLAYER_INTERACTION_ANIMATION_INDEX
+  type: u8
+  format: index
+  confidence: decompiled
+  description: Player terrain-contact animation selector byte. Player_ResolveTerrainContact clears it on ordinary contact and increments it for directional push responses with a 0x27 wrap; Player_SelectInteractionAnimation masks the low two bits to select one of ten longword roots from PLAYER_INTERACTION_ANIMATION_TABLE.
+  evidence:
+    - ghidra_decompile_001A99F0
+    - ghidra_decompile_001A9B38
+    - player_interaction_animation_selector_static_v1
 0xFFF0F1:
   name: HUD_DISPLAY_UPDATE_PENDING
   type: u8
