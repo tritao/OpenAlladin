@@ -810,6 +810,7 @@ class DataIndex:
             "parameter",
             "return_target",
             "stream_target",
+            "template",
             "target",
         }
         pointers: list[tuple[int, str]] = []

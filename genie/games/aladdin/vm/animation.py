@@ -249,6 +249,8 @@ class AnimationDecoder:
             instruction["flags"] = f"0x{raw[3]:02X}"
         elif opcode == 0xFB and len(raw) >= 6:
             instruction["parameter"] = hex_address(struct.unpack_from(">I", raw, 2)[0])
+        elif opcode == 0xF5 and len(raw) >= 6:
+            instruction["template"] = hex_address(struct.unpack_from(">I", raw, 2)[0])
 
         if opcode == 0xF8:
             instruction["control_flow"] = "dynamic_state_selection"

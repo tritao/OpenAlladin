@@ -127,6 +127,63 @@ def test_data_context_exposes_decoded_vm_callback_references(tmp_path):
     }]
 
 
+def test_data_context_exposes_decoded_f5_template_references(tmp_path):
+    database_root = _database(tmp_path)
+    rom_path = tmp_path / "rom" / "Disneys_Aladdin_U_p1.bin"
+    rom_path.parent.mkdir()
+    rom_path.symlink_to(Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin")
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0x1213E2,
+            "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX",
+            "data",
+            confidence="provisional",
+            size=0x30,
+            metadata={"type": "movement_stream"},
+        ),
+        Symbol(
+            0x1B52E2,
+            "Camera_SetScrollDataCursor6952",
+            "function",
+        ),
+        Symbol(
+            0x1B7CD8,
+            "ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE",
+            "data",
+            confidence="decompiled",
+            size=20,
+            metadata={"type": "actor_template"},
+        ),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x200000, (LayoutRange(0, 0x1FFFFF, "UNKNOWN", "test"),)),
+    )
+
+    value = index.context(0x1213E2)
+    assert value is not None
+    assert value["outgoing_decoded_refs"] == [
+        {
+            "address": "0x001B52E2",
+            "name": "Camera_SetScrollDataCursor6952",
+            "kind": "function",
+            "references": 1,
+            "reference_types": ["parameter"],
+            "source": "decoded VM",
+        },
+        {
+            "address": "0x001B7CD8",
+            "name": "ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE",
+            "kind": "data",
+            "references": 1,
+            "reference_types": ["template"],
+            "source": "decoded VM",
+        },
+    ]
+
+
 def test_data_context_decodes_bounded_canonical_stream_without_report(tmp_path):
     database_root = _database(tmp_path)
     rom_path = tmp_path / "rom" / "Disneys_Aladdin_U_p1.bin"
