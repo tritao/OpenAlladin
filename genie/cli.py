@@ -90,6 +90,11 @@ def build_parser() -> argparse.ArgumentParser:
     context.add_argument("--layout", type=Path)
     context.add_argument("--coverage", type=Path)
     context.add_argument("--radius", type=int, default=2, help="nearby layout objects on each side")
+    context.add_argument(
+        "--include-decompile",
+        action="store_true",
+        help="include cached pseudocode; never invokes Ghidra",
+    )
     context.add_argument("--json", action="store_true", dest="json_output")
     context.set_defaults(function=command_ghidra_context)
     unknown = ghidra_commands.add_parser("unknown", help="show unclassified ROM ranges")

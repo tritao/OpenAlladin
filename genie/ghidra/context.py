@@ -76,6 +76,7 @@ def build_context(
     layout_path: Path | None = None,
     coverage_path: Path | None = None,
     radius: int = 2,
+    include_decompile: bool = False,
 ) -> dict[str, Any]:
     address = _address(address)
     function = database.function(address)
@@ -115,6 +116,14 @@ def build_context(
         if symbol is not None
     ]
     decompile_path = database.root / "decompile" / f"{function_address:08X}.txt"
+    decompile: dict[str, Any] | None = None
+    if function:
+        decompile = {
+            "available": decompile_path.is_file(),
+            "path": str(decompile_path),
+        }
+        if include_decompile and decompile_path.is_file():
+            decompile["text"] = decompile_path.read_text(encoding="utf-8")
     return {
         "address": f"0x{address:08X}",
         "symbol": _symbol_value(symbols, address, include_ranges=True),
@@ -130,10 +139,7 @@ def build_context(
         "layout": layout_range.to_dict() if layout_range else None,
         "nearby_layout": nearby,
         "runtime": _runtime(database, function_address, coverage_path) if function else None,
-        "decompile": {
-            "available": decompile_path.is_file(),
-            "path": str(decompile_path),
-        } if function else None,
+        "decompile": decompile,
     }
 
 

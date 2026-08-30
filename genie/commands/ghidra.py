@@ -186,6 +186,9 @@ def _render_context(value: dict) -> None:
     if value.get("decompile"):
         decompile = value["decompile"]
         print(f"decompile   {'cached' if decompile['available'] else 'not cached'}  {decompile['path']}")
+        if decompile.get("text"):
+            print("decompile source")
+            print(decompile["text"].rstrip())
     runtime = value.get("runtime")
     if runtime:
         scenarios = ", ".join(runtime.get("scenarios", [])) or "-"
@@ -214,6 +217,7 @@ def command_ghidra_context(args: argparse.Namespace) -> int:
             layout_path=resolve(args.layout) if args.layout else None,
             coverage_path=resolve(args.coverage) if args.coverage else None,
             radius=args.radius,
+            include_decompile=args.include_decompile,
         )
     except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
         print(f"ERROR {error}")

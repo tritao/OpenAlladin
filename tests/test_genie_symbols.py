@@ -162,6 +162,25 @@ def test_context_combines_function_references_and_layout(tmp_path):
     assert value["nearby_layout"]
 
 
+def test_context_can_include_cached_pseudocode(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    (database_root / "decompile").mkdir()
+    (database_root / "decompile/00000010.txt").write_text(
+        "void First(void) {}\n", encoding="utf-8"
+    )
+
+    value = build_context(
+        AnalysisDatabase(database_root),
+        0x14,
+        SymbolStore(symbols=(Symbol(0x10, "FirstFunction", "function"),)),
+        include_decompile=True,
+    )
+
+    assert value["decompile"]["available"] is True
+    assert value["decompile"]["text"] == "void First(void) {}\n"
+
+
 def _write_database(root: Path) -> None:
     root.mkdir(parents=True)
     documents = {

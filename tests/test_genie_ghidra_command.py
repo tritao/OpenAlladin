@@ -22,7 +22,9 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     deasm_build = build_parser().parse_args(["deasm", "build"])
     deasm_stats = build_parser().parse_args(["deasm", "stats", "--json"])
     deasm_todo = build_parser().parse_args(["deasm", "todo", "--limit", "3"])
-    context = build_parser().parse_args(["ghidra", "context", "0x1234", "--json"])
+    context = build_parser().parse_args(
+        ["ghidra", "context", "0x1234", "--json", "--include-decompile"]
+    )
     decompile = build_parser().parse_args(["ghidra", "decompile", "0x1234", "--force"])
     data_decode = build_parser().parse_args(["data", "decode", "0x1234", "--json"])
 
@@ -47,6 +49,7 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert deasm_todo.limit == 3
     assert context.function is ghidra.command_ghidra_context
     assert context.radius == 2
+    assert context.include_decompile is True
     assert decompile.function is ghidra.command_ghidra_decompile
     assert decompile.force is True
     assert data_decode.function is data.command_data_decode
