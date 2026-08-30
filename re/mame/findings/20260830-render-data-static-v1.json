@@ -1,0 +1,10 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/render-data-static-targets.json",
+  "conclusion": "Promoted the direct player-sprite VDP control word and the terminated HUD interaction frame sequence from their render-service consumers."
+}

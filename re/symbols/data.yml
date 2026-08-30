@@ -43,6 +43,28 @@
     - scene_resource_mode_stream_terminators
     - scene_resource_presentation_stream_extents_static_v1
 
+0x00001CB2:
+  name: PLAYER_SPRITE_VDP_CONTROL_WORD
+  type: vdp_control_word
+  size: 4
+  confidence: decompiled
+  description: Four-byte VDP control word loaded by Render_SubmitPlayerSprites before the generated player sprite records are written to the VDP data port. It ends immediately before the player-collision handler table at 0x00001CBE.
+  evidence:
+    - ghidra_decompile_001AB776
+    - render_player_sprite_submission_static_v1
+
+0x000029A6:
+  name: HUD_INTERACTION_FRAME_SEQUENCE
+  type: rom_table
+  entry_size: 2
+  count: 28
+  size: 0x3A
+  confidence: decompiled
+  description: Terminated 16-bit frame-address sequence used by Render_BuildActorRecords for the interaction/HUD presentation branch. The renderer starts with the default word at 0x000029A6, advances through 0x000029DC, and wraps on the zero sentinel at 0x000029DE before the following Level-08 VDP record table at 0x000029E0.
+  evidence:
+    - ghidra_decompile_001AB7C4
+    - render_hud_frame_sequence_static_v1
+
 0x000006AE:
   name: SPRITE_FRAME_POINTER_TABLE
   type: rom_pointer_table

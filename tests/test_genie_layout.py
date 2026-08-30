@@ -282,6 +282,33 @@ def test_genesis_header_tail_and_scene_stream_padding_are_exact():
     assert rom[padding.address] == 0
 
 
+def test_render_vdp_word_and_hud_frame_sequence_are_exact():
+    symbols = SymbolStore()
+    vdp = symbols.at(0x00001CB2, include_ranges=False)
+    assert vdp is not None
+    assert vdp.name == "PLAYER_SPRITE_VDP_CONTROL_WORD"
+    assert vdp.end == 0x00001CB5
+    assert vdp.size == 4
+    assert vdp.metadata["type"] == "vdp_control_word"
+    assert vdp.confidence == "decompiled"
+
+    sequence = symbols.at(0x000029A6, include_ranges=False)
+    assert sequence is not None
+    assert sequence.name == "HUD_INTERACTION_FRAME_SEQUENCE"
+    assert sequence.end == 0x000029DF
+    assert sequence.size == 0x3A
+    assert sequence.metadata["type"] == "rom_table"
+    assert sequence.metadata["entry_size"] == 2
+    assert sequence.metadata["count"] == 28
+    assert sequence.confidence == "decompiled"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+    assert rom[vdp.address:vdp.end + 1] == bytes.fromhex("74000003")
+    assert rom[sequence.address:sequence.address + 4] == bytes.fromhex("E6AEE6AE")
+    assert rom[sequence.end - 1:sequence.end + 1] == bytes.fromhex("0000")
+
+
 def test_startup_region_warning_partition_is_exact():
     symbols = SymbolStore()
 

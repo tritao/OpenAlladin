@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-render-data-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ranges": [
+    {
+      "start": "0x00001CB2",
+      "end": "0x00001CB5",
+      "name": "PLAYER_SPRITE_VDP_CONTROL_WORD",
+      "class": "DATA",
+      "size": 4,
+      "consumer": "Render_SubmitPlayerSprites at 0x001AB776"
+    },
+    {
+      "start": "0x000029A6",
+      "end": "0x000029DF",
+      "name": "HUD_INTERACTION_FRAME_SEQUENCE",
+      "class": "DATA",
+      "size": 58,
+      "entry_size": 2,
+      "value_count": 28,
+      "sentinel": "0x0000 at 0x000029DE",
+      "consumer": "Render_BuildActorRecords at 0x001AB7C4"
+    }
+  ],
+  "evidence": [
+    "Render_SubmitPlayerSprites reads the four-byte word at 0x00001CB2 as its VDP control value.",
+    "System_InitializeRuntime initializes the HUD frame cursor to 0x000029A6.",
+    "Render_BuildActorRecords advances the cursor by one word and wraps to 0x000029A8 when the 0x000029DE sentinel is reached.",
+    "The sequence ends immediately before the separately bounded Level-08 VDP record table at 0x000029E0."
+  ]
+}
