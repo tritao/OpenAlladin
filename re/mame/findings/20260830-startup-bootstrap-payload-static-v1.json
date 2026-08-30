@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-startup-bootstrap-payload-static-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "confirmed",
+  "target_manifest": "re/ghidra/targets/startup-bootstrap-payload-static-targets.json",
+  "promoted_ranges": [
+    {
+      "address": "0x000002DE",
+      "name": "RESET_BOOTSTRAP_COPIED_PAYLOAD_SUFFIX_002DE",
+      "range": ["0x000002DE", "0x000002E7"],
+      "size": 10,
+      "semantics": "The final ten bytes of the reset routine's 38-byte post-table copy into Z80 RAM. The surrounding copy is a confirmed operation; the internal meaning of this payload suffix is intentionally not assigned."
+    },
+    {
+      "address": "0x000002E8",
+      "name": "RESET_BOOTSTRAP_POST_COPY_HARDWARE_VALUES",
+      "range": ["0x000002E8", "0x000002F7"],
+      "size": 16,
+      "semantics": "The reset path reads two longwords at 0x2E8 and 0x2EC through the VDP control pointer, reads a third longword at 0x2F0 through the same pointer, and writes the four bytes at 0x2F4 through 0x2F7 to the post-copy VDP data-base destination."
+    }
+  ],
+  "byte_checks": {
+    "0x000002DE-0x000002E7": "AF01D91F112700212600",
+    "0x000002E8-0x000002F7": "F977EDB0DDE1FDE1ED47ED4FD1E1F108"
+  },
+  "conclusion": "Two formerly unknown startup gaps now have exact ownership based on direct reset-path consumption. The unconsumed 0x000002F8-0x00000313 tail remains deliberately open for a later Z80/bootstrap investigation."
+}

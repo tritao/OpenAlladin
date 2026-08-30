@@ -266,6 +266,32 @@ def test_startup_checksum_spin_routine_is_exact_and_separate_from_reset_entry():
     assert int.from_bytes(rom[0x04:0x08], "big") == reset.address
 
 
+def test_reset_bootstrap_payload_suffix_and_post_copy_values_are_exact():
+    symbols = SymbolStore()
+    copied = symbols.at(0x000002DE, include_ranges=False)
+    assert copied is not None
+    assert copied.name == "RESET_BOOTSTRAP_COPIED_PAYLOAD_SUFFIX_002DE"
+    assert copied.end == 0x000002E7
+    assert copied.size == 10
+    assert copied.metadata["type"] == "u8[10]"
+    assert copied.confidence == "confirmed"
+
+    hardware = symbols.at(0x000002E8, include_ranges=False)
+    assert hardware is not None
+    assert hardware.name == "RESET_BOOTSTRAP_POST_COPY_HARDWARE_VALUES"
+    assert hardware.end == 0x000002F7
+    assert hardware.size == 16
+    assert hardware.metadata["type"] == "u8[16]"
+    assert hardware.confidence == "confirmed"
+    assert copied.end + 1 == hardware.address
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[copied.address:copied.end + 1] == bytes.fromhex("AF01D91F112700212600")
+    assert rom[hardware.address:hardware.end + 1] == bytes.fromhex(
+        "F977EDB0DDE1FDE1ED47ED4FD1E1F108"
+    )
+
+
 def test_unindexed_graphics_bands_and_padding_are_exact():
     symbols = SymbolStore()
     tile_band = symbols.at(0x0011E160, include_ranges=False)

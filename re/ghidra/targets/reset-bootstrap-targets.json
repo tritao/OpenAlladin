@@ -14,7 +14,9 @@
   "bootstrap": {
     "entry": "0x0000021A",
     "hardware_guard": ["0x00A10008", "0x00A1000C"],
-    "inline_constants": "0x000002A8-0x000002DE",
+    "inline_constants": "0x000002A8-0x000002DD",
+    "copied_payload": "0x000002C2-0x000002E7",
+    "post_copy_hardware_values": "0x000002E8-0x000002F7",
     "continuation": "0x00000314",
     "data_objects": [
       { "address": "0x000002A8", "name": "RESET_BOOTSTRAP_INITIAL_WORDS", "size": 6 },

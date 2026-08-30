@@ -10,7 +10,7 @@
     "name": "System_ResetBootstrap",
     "confidence": "decompiled",
     "hardware_guard": "The reset entry reads 0x00A10008 and 0x00A1000C; only when both are zero does it execute the initial hardware setup block.",
-    "inline_table": "The setup block loads its initial values from 0x000002A8-0x000002DE: VDP control/data pointers, Z80 bus/reset/RAM pointers, the initial VDP register base, and the Z80/VDP initialization bytes.",
+    "inline_table": "The setup block loads its initial values from 0x000002A8-0x000002DD: VDP control/data pointers, Z80 bus/reset/RAM pointers, the initial VDP register base, and the Z80/VDP initialization bytes. The following copied-payload suffix and post-copy hardware values are separately recorded by startup_bootstrap_payload_static_v1.",
     "data_objects": [
       {
         "address": "0x000002A8",

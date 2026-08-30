@@ -2821,6 +2821,24 @@
   evidence:
     - ghidra_disassembly_0000021A
     - reset_bootstrap_data_targets
+0x002DE:
+  name: RESET_BOOTSTRAP_COPIED_PAYLOAD_SUFFIX_002DE
+  type: u8[10]
+  size: 10
+  confidence: confirmed
+  description: Final ten bytes of the 38-byte reset startup payload copied from ROM 0x000002C2-0x000002E7 into Z80 RAM at 0x00A00000; the exact copied role is established, while the payload's internal Z80 interpretation remains unresolved.
+  evidence:
+    - ghidra_disassembly_0000021A
+    - startup_bootstrap_payload_static_v1
+0x002E8:
+  name: RESET_BOOTSTRAP_POST_COPY_HARDWARE_VALUES
+  type: u8[16]
+  size: 16
+  confidence: confirmed
+  description: 'Sixteen bytes consumed immediately after the reset startup copy: two longwords are emitted through the VDP control pointer, one following longword is emitted through the same pointer, and the final four bytes are written to the VDP data-base offset used by the reset sequence.'
+  evidence:
+    - ghidra_disassembly_0000021A
+    - startup_bootstrap_payload_static_v1
 
 0x001CBE:
   name: PLAYER_COLLISION_HANDLER_TABLE
