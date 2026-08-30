@@ -12,7 +12,7 @@
       "name": "ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800",
       "range": ["0x0011F800", "0x0011F8A3"],
       "size": 164,
-      "confidence": "provisional",
+      "confidence": "decompiled",
       "decoded": "The bounded MovementDecoder consumes 28 steps: the signed displacement grid, timer-parameter phases using opcodes 0x91/0x84, and the terminal 0x85/0x83/0x82 clear-state step.",
       "boundary": "The owner begins immediately after LEVEL_F800_TILEMAP_SOURCE at 0x0011F7FF and ends immediately before ACTOR_MOVE_TYPE5E84_PAIR_E1E2 at 0x0011F8A4.",
       "reachability": "No external template, producer, instruction reference, or runtime consumer currently selects this entry."
@@ -22,7 +22,7 @@
       "name": "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8",
       "range": ["0x001203E8", "0x001203F1"],
       "size": 10,
-      "confidence": "provisional",
+      "confidence": "decompiled",
       "decoded": "The bounded MovementDecoder consumes a (+2, 0) step, a (+1, 0) step, and an unconditional 0x80 jump from 0x001203EA back to 0x001203E8.",
       "boundary": "The owner is the exact gap between ACTOR_MOVE_TYPE84_SHARED_STEP_1 through 0x001203E7 and ACTOR_MOVE_TYPE50_LEVEL09_SPAWN at 0x001203F2.",
       "reachability": "No external template, producer, instruction reference, or runtime consumer currently selects this entry."
@@ -34,5 +34,5 @@
     "Non-overlapping neighboring canonical stream boundaries",
     "No raw-ROM pointer occurrence for either entry"
   ],
-  "conclusion": "Both former UNKNOWN gaps are exact MovementVM stream owners. They are promoted provisionally for deasm/layout ownership only; no runtime reachability is claimed."
+  "conclusion": "Both former UNKNOWN gaps are exact decompiled MovementVM stream owners. Their producers and runtime reachability remain unresolved."
 }

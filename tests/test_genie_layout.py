@@ -1008,7 +1008,7 @@ def test_type0f_child_and_type6e_default_animation_ranges_are_exact():
     loop = symbols.at(0x00123DE2, include_ranges=False)
     assert loop is not None
     assert loop.size == 8
-    assert loop.confidence == "provisional"
+    assert loop.confidence == "decompiled"
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     assert rom[0x00123DE2:0x00123DEA] == bytes.fromhex("1ADEEA0000123DE2")
     decoded = load_animation_decoder().AnimationDecoder(
@@ -1292,7 +1292,7 @@ def test_unindexed_movement_stream_bands_are_exact_with_evidence_confidence():
         assert decoded["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
 
 
-def test_unreferenced_movement_streams_are_exact_and_provisional():
+def test_unreferenced_movement_streams_are_exact_and_decompiled():
     symbols = SymbolStore()
     expected = [
         (0x0011F800, 0x0011F8A3, "ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800", 164),
@@ -1307,7 +1307,7 @@ def test_unreferenced_movement_streams_are_exact_and_provisional():
         assert stream.end == end
         assert stream.size == size
         assert stream.metadata["type"] == "movement_stream"
-        assert stream.confidence == "provisional"
+        assert stream.confidence == "decompiled"
 
         decoded = decoder.decode_stream(
             address,
@@ -2020,7 +2020,7 @@ def test_shared_movement_root_family_is_exact():
     unresolved_loop = symbols.at(0x001203E8, include_ranges=False)
     assert unresolved_loop is not None
     assert unresolved_loop.name == "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8"
-    assert unresolved_loop.confidence == "provisional"
+    assert unresolved_loop.confidence == "decompiled"
 
 
 def test_shared_type3c_3d_3e_3f_movement_is_exact():

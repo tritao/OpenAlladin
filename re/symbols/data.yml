@@ -3538,8 +3538,8 @@
   name: ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800
   type: movement_stream
   size: 164
-  confidence: provisional
-  description: Provisional 164-byte MovementVM stream immediately after LEVEL_F800_TILEMAP_SOURCE and before ACTOR_MOVE_TYPE5E84_PAIR_E1E2. Its exact decoder coverage contains the signed displacement grid, timer-parameter phases, and terminal clear-state step through 0x0011F8A3; no external template, producer, or runtime consumer currently selects this entry.
+  confidence: decompiled
+  description: 164-byte MovementVM stream immediately after LEVEL_F800_TILEMAP_SOURCE and before ACTOR_MOVE_TYPE5E84_PAIR_E1E2. Its exact decoder coverage contains the signed displacement grid, timer-parameter phases, and terminal clear-state step through 0x0011F8A3; no external template, producer, or runtime consumer currently selects this entry.
   evidence:
     - unreferenced_movement_streams_static_v1
     - movement_stream_decoder
@@ -3693,8 +3693,8 @@
   name: ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8
   type: movement_stream
   size: 10
-  confidence: provisional
-  description: Provisional ten-byte MovementVM self-loop between ACTOR_MOVE_TYPE84_SHARED_STEP_1 and ACTOR_MOVE_TYPE50_LEVEL09_SPAWN. Its exact body applies a (+2, 0) step followed by a (+1, 0) step and an unconditional jump back to 0x001203E8; no external template, producer, or instruction reference currently selects this entry.
+  confidence: decompiled
+  description: Ten-byte MovementVM self-loop between ACTOR_MOVE_TYPE84_SHARED_STEP_1 and ACTOR_MOVE_TYPE50_LEVEL09_SPAWN. Its exact body applies a (+2, 0) step followed by a (+1, 0) step and an unconditional jump back to 0x001203E8; no external template, producer, or instruction reference currently selects this entry.
   evidence:
     - unreferenced_movement_streams_static_v1
     - movement_stream_decoder
@@ -4306,8 +4306,8 @@
   name: ACTOR_ANIM_UNREFERENCED_SELF_LOOP_123DE2
   type: animation_stream
   size: 8
-  confidence: provisional
-  description: Provisional eight-byte AnimationVM self-loop containing frame reference 0x001ADE followed by EA back to its own entry. Its exact range is bounded between ACTOR_ANIM_TYPE84_TYPE0F_CHILD and ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT, but no external template or producer currently establishes runtime reachability.
+  confidence: decompiled
+  description: Eight-byte AnimationVM self-loop containing frame reference 0x001ADE followed by EA back to its own entry. Its exact range is bounded between ACTOR_ANIM_TYPE84_TYPE0F_CHILD and ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT, but no external template or producer currently establishes runtime reachability.
   evidence:
     - type0f_child_and_type6e_default_animation_static_v1
     - unreferenced_animation_self_loop_static_v1

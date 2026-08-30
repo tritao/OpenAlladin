@@ -12,7 +12,7 @@
       "name": "ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800",
       "range": "0x0011F800-0x0011F8A3",
       "size": 164,
-      "confidence": "provisional",
+      "confidence": "decompiled",
       "decoded": "28 MovementVM steps, including the signed grid and terminal clear-state step",
       "boundary": "After LEVEL_F800_TILEMAP_SOURCE; before ACTOR_MOVE_TYPE5E84_PAIR_E1E2",
       "reachability": "unresolved"
@@ -22,7 +22,7 @@
       "name": "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8",
       "range": "0x001203E8-0x001203F1",
       "size": 10,
-      "confidence": "provisional",
+      "confidence": "decompiled",
       "decoded": "(+2,0), (+1,0), then 0x80 -> 0x001203E8",
       "boundary": "Between ACTOR_MOVE_TYPE84_SHARED_STEP_1 and ACTOR_MOVE_TYPE50_LEVEL09_SPAWN",
       "reachability": "unresolved"
@@ -33,5 +33,5 @@
     "Adjacent canonical stream ownership",
     "No external pointer or producer recovered"
   ],
-  "conclusion": "The two exact MovementVM-shaped gaps are now explicit provisional owners for layout and deasm coverage. Their names intentionally describe the decoded mechanics without claiming a live actor or scene producer."
+  "conclusion": "The two exact MovementVM-shaped gaps are now decompiled stream owners. Their names intentionally describe the decoded mechanics without claiming a live actor or scene producer."
 }

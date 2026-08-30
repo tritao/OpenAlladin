@@ -19,6 +19,6 @@
     "AnimationDecoder consumes exactly the frame reference and six-byte EA self-loop, stopping on a control-flow cycle."
   ],
   "reachability": "No external actor-template pointer or producer has been recovered; runtime ownership remains unresolved.",
-  "confidence": "provisional",
+  "confidence": "decompiled",
   "status": "recorded-static-disassembly"
 }

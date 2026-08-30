@@ -24,5 +24,5 @@
     "Lossless AnimationDecoder boundary and control-flow cycle",
     "Independent canonical boundaries on both sides"
   ],
-  "conclusion": "The 0x00123DE2-0x00123DE9 fragment is a complete eight-byte AnimationVM self-loop. It is promoted as a provisional exact range for deasm ownership, without assigning an external actor or runtime producer."
+  "conclusion": "The 0x00123DE2-0x00123DE9 fragment is a complete eight-byte decompiled AnimationVM self-loop, without an assigned external actor or runtime producer."
 }
