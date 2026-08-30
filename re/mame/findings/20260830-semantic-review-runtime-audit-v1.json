@@ -1,0 +1,79 @@
+{
+  "format": "openaladdin-semantic-review-runtime-audit-v1",
+  "recorded_at": "2026-08-30",
+  "repository_commit_at_capture": "20bbcb7dac5b6d1b62d93a3970eb96af0b90ba66",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Exercise the remaining semantic review queue with the existing Level-01 actor route, a long traversal, and the corrected scene-state loader matrix before promoting any further names.",
+  "probes": [
+    {
+      "name": "semantic-actor-overnight",
+      "trace": "build/re/traces/semantic-actor-overnight",
+      "frames": 3045,
+      "pc_samples": 3045,
+      "unique_pcs": 604,
+      "unique_indirect_edges": 49,
+      "input": "first-level boot followed by right for 1800 frames"
+    },
+    {
+      "name": "semantic-long-traversal",
+      "trace": "build/re/traces/semantic-long-traversal",
+      "frames": 5000,
+      "pc_samples": 5000,
+      "unique_pcs": 595,
+      "unique_indirect_edges": 48,
+      "input": "confirmed opening cadence followed by right+a for 3755 frames"
+    },
+    {
+      "name": "level-loader-matrix",
+      "campaign": "re/mame/campaigns/20260827-level-loader-matrix-v1.json",
+      "trace_roots": [
+        "build/re/campaigns/20260827-level-loader-matrix-v1-run",
+        "build/re/campaigns/20260827-level-loader-matrix-v1-run2"
+      ],
+      "scenario_count": 16,
+      "pc_samples": 19200,
+      "unique_pcs": 483,
+      "unique_indirect_edges": 0,
+      "scene_states": "0x00 through 0x0C, including corrected 0x0A through 0x0C captures"
+    }
+  ],
+  "function_targets": [
+    "0x001B1DD8 VDP_PatternLoopNoOpHook",
+    "0x001B4F04 SceneResource_RunSharedC000Presentation",
+    "0x001B4836 SceneResource_ClearC000AndWritePhaseRows",
+    "0x001B4A96 SceneResource_LoadC000AndRunFrameService",
+    "0x001B69A6 InteractionSpawn_Type5E84Pair_AnchorResponse",
+    "0x001ADA98 Player_SetTransitionFlagResponse",
+    "0x001ABFD0 Actor_ReinitializeCollisionResponse",
+    "0x001B6BFC InteractionSpawn_RuntimeType57_AnchorResponse",
+    "0x001B7474 InteractionSpawn_RuntimeType45_Actor",
+    "0x001B74A0 InteractionSpawn_RuntimeType5B_Actor"
+  ],
+  "data_and_stream_targets": [
+    "0x000049A9 ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE",
+    "0x00120A42 ACTOR_MOVE_TYPE75_LEVEL_EXIT",
+    "0x0011FAA8 ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE",
+    "0x00128F52 MENU_OPTIONS_PALETTE_BANK_128F52",
+    "0x000049C1 UNREFERENCED_PHASE_CHILD_SELECTION_TABLE_DUPLICATE_PREFIX_49C1",
+    "0x00121180 ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSET_PRELUDE",
+    "0x00121412 ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX",
+    "0x00125D58 ACTOR_ANIM_TYPE84_0F22_WALL_RESPONSE_LOOP",
+    "0x00126EB6 ROM_ASCII_NUMERIC_LABELS_126EB6",
+    "0x001274F0 SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM",
+    "0x001B7990 ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10",
+    "0x001B7A58 ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400",
+    "0x001B82DC ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_ANIM_124CE4",
+    "0x001B8304 ACTOR_TEMPLATE_TYPE_84_0F22_WALL_RESPONSE"
+  ],
+  "observations": {
+    "function_frame_pc_hits": 0,
+    "stream_or_template_actor_pc_hits": 0,
+    "static_selector_discovery": "No new selector, caller, or raw ROM pointer was found for the open function targets. Existing direct static evidence remains unchanged.",
+    "coverage_limit": "Frame-PC sampling and actor state snapshots are negative evidence only; they do not prove that an unobserved body or data object is globally dead."
+  },
+  "conclusion": "The boot, long Level-01 traversal, and all-scene-state loader probes do not reach the remaining review targets. No symbol was promoted on this evidence. The next productive probe requires a later-level or presentation checkpoint, or an explicit resource/scene selector trace, rather than another repetition of the current Level-01 route."
+}

@@ -57,6 +57,14 @@ the finding or commit message.
 - Relative saved-state paths are normalized by `run.sh`; the load-state smoke
   test is recorded in the platform-chain investigation.
 - The normal trace path is headless, with Xvfb available through `MAME_XVFB=1`.
+- `re/mame/findings/20260830-semantic-review-runtime-audit-v1.json` records a
+  bounded negative runtime audit of the remaining semantic review queue. A
+  3,045-frame actor/refill replay, a 5,000-frame movement/attack traversal, and
+  the corrected 16-trace scene-state loader matrix produced no frame-PC or
+  actor-stream hits for the open function/template families. This does not
+  prove they are globally dead; it establishes that the next useful probe must
+  start from a later-level or presentation checkpoint rather than repeating the
+  current Level-01 route.
 
 ### Gameplay and actor behavior
 
@@ -3337,3 +3345,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-reset-bootstrap-tail-confidence-static-v1` | recorded-static-disassembly | Promoted the exact 0x00000310-0x00000313 reset-bootstrap tail to decompiled body confidence from the corrected post-increment boundaries and proven reset-path non-consumption, while retaining its original data meaning as unresolved |
 | `20260830-ram-state-contract-confidence-static-v1` | recorded-static-decompilation | Promoted 37 named scene/menu, player-transition, interaction, terrain, and actor-response RAM symbols from probable to decompiled confidence after closing their exact address, width, and static access contracts; unresolved latch producers and natural runtime causes remain explicitly open |
 | `20260830-reset-bootstrap-z80-stub-static-v1` | recorded-static-disassembly | Decoded the 38-byte Z80 reset image at 0x000002DE as the RAM-clear-and-spin stub installed at Z80 address 0 until Audio_LoadZ80Driver replaces it with the full sound-driver image |
+| `20260830-semantic-review-runtime-audit-v1` | recorded-runtime-negative-evidence | Exercised the remaining semantic review queue through the Level-01 actor/refill replay, a 5,000-frame traversal, and all corrected scene-state loader captures; no open function or actor-stream/template target was observed, so no speculative promotion was made |
