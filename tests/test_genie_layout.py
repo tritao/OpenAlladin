@@ -2207,6 +2207,35 @@ def test_player_surface_recovery_animation_is_exact():
     assert decoded["instructions"][-1]["opcode"] == "0xF8"
 
 
+def test_player_action_continuation_banks_are_exact():
+    symbols = SymbolStore()
+    cases = (
+        (0x001224BA, 0x00122503, "PLAYER_ANIM_ACTION_TERRAIN_TRANSITION_CONTINUATION", 74, "0xF8"),
+        (0x0012257C, 0x001225A1, "PLAYER_ANIM_ACTION_TRANSITION_LOCK_CONTINUATION", 38, "0xF8"),
+        (0x0012280C, 0x0012289F, "PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN_CONTINUATION", 148, "0xF8"),
+        (0x001229C2, 0x00122A0F, "PLAYER_ANIM_ACTION_AIRBORNE_CONTINUATION", 78, "0xEA"),
+    )
+    for address, end, name, size, terminal_opcode in cases:
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.end == end
+        assert stream.size == size
+        assert stream.metadata["type"] == "animation_stream"
+
+        rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+        rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+        decoded = load_animation_decoder().AnimationDecoder(rom).decode_stream(
+            address,
+            max_instructions=512,
+            max_bytes=size,
+            follow_control_flow=False,
+            continue_after_control_flow=True,
+        )
+        assert decoded["bytes_decoded"] == size
+        assert decoded["instructions"][-1]["opcode"] == terminal_opcode
+
+
 def test_actor_type41_interaction_response_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00125D7E, include_ranges=False)

@@ -5629,6 +5629,16 @@
     - ghidra_player_locomotion_action_selector
     - animation_stream_decoder
 
+0x001224BA:
+  name: PLAYER_ANIM_ACTION_TERRAIN_TRANSITION_CONTINUATION
+  type: animation_stream
+  size: 74
+  confidence: decompiled
+  description: Branch continuation of PLAYER_ANIM_ACTION_TERRAIN_TRANSITION. Its exact 74-byte region applies the action-field gates, presents the 0x0C16 response, writes PLAYER_ACTION_RESPONSE_STATE, spawns the transition child through PLAYER_ACTION_F5_ACTOR_TEMPLATE, publishes the action callback field, and ends at the dynamic player-animation selector before PLAYER_ANIM_ACTION_TRANSITION_LOCK at 0x00122504.
+  evidence:
+    - player_action_transition_animation_static_decompilation
+    - animation_stream_decoder
+
 0x00122504:
   name: PLAYER_ANIM_ACTION_TRANSITION_LOCK
   size: 120
@@ -5645,6 +5655,16 @@
   description: Player action stream selected by Player_SelectLocomotionOrAction when TERRAIN_RESPONSE_TIMER_STATE is active and the player is grounded. It presents the 0x0C32-0x0C3A sequence, writes player animation field 0xF0DA to 1 for each phase, and gates its continuation on the interaction flag and terrain stop field.
   evidence:
     - ghidra_player_locomotion_action_selector
+    - animation_stream_decoder
+
+0x0012257C:
+  name: PLAYER_ANIM_ACTION_TRANSITION_LOCK_CONTINUATION
+  type: animation_stream
+  size: 38
+  confidence: decompiled
+  description: Branch continuation of PLAYER_ANIM_ACTION_TRANSITION_LOCK. Its exact 38-byte region checks the action fields 0xF0C8 and 0xF0C9, presents the 0x0C2A/0x0C2E response pairs, and enters dynamic player-animation state selection before PLAYER_ANIM_ACTION_TERRAIN_TIMER at 0x001225A2.
+  evidence:
+    - player_action_transition_animation_static_decompilation
     - animation_stream_decoder
 
 0x0012262A:
@@ -5722,6 +5742,16 @@
     - actor_type1e_player_collision_handler
     - animation_stream_decoder
 
+0x0012280C:
+  name: PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN_CONTINUATION
+  type: animation_stream
+  size: 148
+  confidence: decompiled
+  description: Branch continuation of PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN. Its exact 148-byte region carries the repeated action-response writes and gates, the local response entries, the Type-0x84 child presentation/spawn phase, and the final dynamic player-animation selector before PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE_ALTERNATE at 0x001228A0.
+  evidence:
+    - player_action_state_animation_static_decompilation
+    - animation_stream_decoder
+
 0x001228AC:
   name: PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED
   size: 100
@@ -5747,6 +5777,16 @@
   description: Grounded push-up action stream selected by Player_SelectActionAnimation when TERRAIN_LANDING_STATE is active and TERRAIN_PUSH_UP is set. It publishes action-response fields 0xF0D9 and 0xF0D8, includes the encoded one-frame delay and sound-0 phases, and enters dynamic state selection after the 0x0AE6-0x0B12 sequence.
   evidence:
     - ghidra_player_action_animation_selector
+    - animation_stream_decoder
+
+0x001229C2:
+  name: PLAYER_ANIM_ACTION_AIRBORNE_CONTINUATION
+  type: animation_stream
+  size: 78
+  confidence: decompiled
+  description: Branch continuation family of PLAYER_ANIM_ACTION_AIRBORNE. Its exact 78-byte region gates action fields, presents the 0x0AC6/0x0ACA response, plays sound 0x21, spawns the Type-0x84 response actor, presents the 0x0A9E pair, and returns to PLAYER_ANIM_TERRAIN_RESPONSE_JUMP_TAIL at 0x0012219E.
+  evidence:
+    - player_action_state_animation_static_decompilation
     - animation_stream_decoder
 
 0x00122AF6:

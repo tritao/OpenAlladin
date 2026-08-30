@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-action-continuation-banks-static",
+    "purpose": "Replace split generated AnimationVM fragments with canonical contiguous continuation owners for the player action-state bank."
+  },
+  "targets": [
+    { "address": "0x001224BA", "name": "PLAYER_ANIM_ACTION_TERRAIN_TRANSITION_CONTINUATION" },
+    { "address": "0x0012257C", "name": "PLAYER_ANIM_ACTION_TRANSITION_LOCK_CONTINUATION" },
+    { "address": "0x0012280C", "name": "PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN_CONTINUATION" },
+    { "address": "0x001229C2", "name": "PLAYER_ANIM_ACTION_AIRBORNE_CONTINUATION" },
+    { "address": "0x00122470", "name": "PLAYER_ANIM_ACTION_TERRAIN_TRANSITION" },
+    { "address": "0x00122504", "name": "PLAYER_ANIM_ACTION_TRANSITION_LOCK" },
+    { "address": "0x001227D2", "name": "PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN" },
+    { "address": "0x0012295E", "name": "PLAYER_ANIM_ACTION_AIRBORNE" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0C5", "name": "PLAYER_TERRAIN_STOP_FIELD_C5" },
+    { "address": "0x00FFF0C6", "name": "PLAYER_TERRAIN_STOP_FIELD_C6" },
+    { "address": "0x00FFF0C8", "name": "PLAYER_ACTION_RESPONSE_FIELD_C8" },
+    { "address": "0x00FFF0C9", "name": "PLAYER_ACTION_RESPONSE_FIELD_C9" },
+    { "address": "0x00FFF0D8", "name": "PLAYER_ACTION_RESPONSE_STATE_A" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" }
+  ]
+}

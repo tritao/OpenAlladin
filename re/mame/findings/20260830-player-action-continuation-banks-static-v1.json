@@ -1,0 +1,52 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-action-continuation-banks-static-targets.json",
+  "continuations": [
+    {
+      "address": "0x001224BA",
+      "name": "PLAYER_ANIM_ACTION_TERRAIN_TRANSITION_CONTINUATION",
+      "range": "0x001224BA-0x00122503",
+      "bytes": 74,
+      "entry": "F2/F4 branches from PLAYER_ANIM_ACTION_TERRAIN_TRANSITION enter the gate and callback body; F8 at 0x00122502 ends the continuation.",
+      "boundary": "PLAYER_ANIM_ACTION_TRANSITION_LOCK begins at 0x00122504."
+    },
+    {
+      "address": "0x0012257C",
+      "name": "PLAYER_ANIM_ACTION_TRANSITION_LOCK_CONTINUATION",
+      "range": "0x0012257C-0x001225A1",
+      "bytes": 38,
+      "entry": "F4 at 0x0012255A branches to the continuation family; its two action-field gates lead to the 0x0C2A/0x0C2E response body.",
+      "boundary": "PLAYER_ANIM_ACTION_TERRAIN_TIMER begins at 0x001225A2."
+    },
+    {
+      "address": "0x0012280C",
+      "name": "PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN_CONTINUATION",
+      "range": "0x0012280C-0x0012289F",
+      "bytes": 148,
+      "entry": "F2 at 0x001227EA and the action-field gates enter the continuation; its Type-0x84 response phase ends at F8 0x0012289E.",
+      "boundary": "PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE_ALTERNATE begins at 0x001228A0."
+    },
+    {
+      "address": "0x001229C2",
+      "name": "PLAYER_ANIM_ACTION_AIRBORNE_CONTINUATION",
+      "range": "0x001229C2-0x00122A0F",
+      "bytes": 78,
+      "entry": "The action-field continuation gates enter the 0x0AC6/0x0ACA response body; the sound/Type-0x84 spawn variant returns through EA at 0x00122A0A.",
+      "boundary": "PLAYER_ANIM_ACTION_TERRAIN_PUSH_UP begins at 0x00122A10."
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Neighboring player action roots and exact branch targets",
+    "Existing generated fragments split at non-instruction boundaries",
+    "Exact contiguous boundaries before the next canonical player entry"
+  ],
+  "conclusion": "Four player action continuation banks are now canonical contiguous owners. Their ranges preserve complete VM commands, replace split generic fragments, and keep the next semantic player roots independently owned.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
