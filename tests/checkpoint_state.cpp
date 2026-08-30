@@ -51,6 +51,8 @@ int main() {
     uninterrupted->state().scene.resource_completion = 0xFF;
     uninterrupted->state().scene.resource_mode = 0x14;
     uninterrupted->state().player.terrain_bounce_animation_state = 0x28;
+    uninterrupted->state().frame.vblank_ready_latch = 0xFF;
+    uninterrupted->state().frame.frame_wait_latch = 0x01;
     const std::string saved = checkpoint(*uninterrupted);
     // The checkpoint contains the per-VM 64 KiB RAM images and should not
     // silently collapse to a visual/semantic pose snapshot.
@@ -73,6 +75,8 @@ int main() {
     assert(restored->state().scene.resource_completion == 0xFF);
     assert(restored->state().scene.resource_mode == 0x14);
     assert(restored->state().player.terrain_bounce_animation_state == 0x28);
+    assert(restored->state().frame.vblank_ready_latch == 0xFF);
+    assert(restored->state().frame.frame_wait_latch == 0x01);
 
     for (int frame = kCheckpointFrame; frame < kEndFrame; ++frame) {
         const auto input_state = input_for_frame(frame);

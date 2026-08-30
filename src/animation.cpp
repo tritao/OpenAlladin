@@ -844,16 +844,17 @@ void PlayerAnimationVm::defer_actor_service() {
     actor_service_boundary_ = ActorServiceBoundary::ActorDeferUntilGate;
 }
 
+void PlayerAnimationVm::defer_actor_service_then_every_phase() {
+    if (!rom_mode_) return;
+    actor_service_boundary_ = ActorServiceBoundary::ActorDeferUntilGateThenEveryPhase;
+}
+
 void PlayerAnimationVm::defer_actor_service_on_gate() {
     if (rom_mode_) actor_service_boundary_ = ActorServiceBoundary::ActorDeferOnGate;
 }
 
 void PlayerAnimationVm::defer_actor_service_then_force() {
     if (rom_mode_) actor_service_boundary_ = ActorServiceBoundary::ActorDeferThenForce;
-}
-
-void PlayerAnimationVm::force_actor_service_next_update() {
-    if (rom_mode_) actor_service_boundary_ = ActorServiceBoundary::ForceNextUpdate;
 }
 
 void PlayerAnimationVm::defer_actor_retirement() {
@@ -870,6 +871,14 @@ bool PlayerAnimationVm::consume_actor_service(bool scheduler_service, bool defer
         if (!defer_gate) return false;
         actor_service_boundary_ = ActorServiceBoundary::None;
         return false;
+    case ActorServiceBoundary::ActorDeferUntilGateThenEveryPhase:
+        if (!defer_gate) return false;
+        // Apple/action children are published before the shared actor pass.
+        // The ROM services that child on every subsequent phase until its
+        // terrain handoff clears/replaces this boundary. Keep that cadence
+        // on the VM instead of inferring it from ActorHostMeta in the loop.
+        actor_service_boundary_ = ActorServiceBoundary::ActorServiceEveryPhase;
+        return false;
     case ActorServiceBoundary::ActorDeferOnGate:
         if (!defer_gate) return false;
         actor_service_boundary_ = ActorServiceBoundary::None;
@@ -880,6 +889,8 @@ bool PlayerAnimationVm::consume_actor_service(bool scheduler_service, bool defer
         return false;
     case ActorServiceBoundary::ForceNextUpdate:
         actor_service_boundary_ = ActorServiceBoundary::None;
+        return true;
+    case ActorServiceBoundary::ActorServiceEveryPhase:
         return true;
     default:
         return scheduler_service;
@@ -894,6 +905,7 @@ bool PlayerAnimationVm::consume_actor_retirement_defer() {
 
 bool PlayerAnimationVm::actor_service_deferred() const {
     return actor_service_boundary_ == ActorServiceBoundary::ActorDeferUntilGate
+        || actor_service_boundary_ == ActorServiceBoundary::ActorDeferUntilGateThenEveryPhase
         || actor_service_boundary_ == ActorServiceBoundary::ActorDeferOnGate
         || actor_service_boundary_ == ActorServiceBoundary::ActorDeferThenForce;
 }
@@ -1324,7 +1336,7 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     if (timer < 0) {
         throw std::runtime_error("invalid animation VM timer in OpenAladdin checkpoint");
     }
-    if (actor_service_boundary > static_cast<std::uint8_t>(ActorServiceBoundary::ActorRetireNextUpdate)) {
+    if (actor_service_boundary > static_cast<std::uint8_t>(ActorServiceBoundary::ActorServiceEveryPhase)) {
         throw std::runtime_error("invalid animation service boundary in OpenAladdin checkpoint");
     }
 

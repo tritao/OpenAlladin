@@ -143,9 +143,9 @@ public:
     // ordinal-30 traversal. Keep that producer-to-VM boundary on the actor's
     // VM rather than adding synthetic fields to the Genesis actor record.
     void defer_actor_service();
+    void defer_actor_service_then_every_phase();
     void defer_actor_service_on_gate();
     void defer_actor_service_then_force();
-    void force_actor_service_next_update();
     void defer_actor_retirement();
     void clear_actor_service_boundary();
     bool consume_actor_service(bool scheduler_service, bool defer_gate);
@@ -284,9 +284,11 @@ private:
         None,
         ForceNextUpdate,
         ActorDeferUntilGate,
+        ActorDeferUntilGateThenEveryPhase,
         ActorDeferOnGate,
         ActorDeferThenForce,
         ActorRetireNextUpdate,
+        ActorServiceEveryPhase,
     };
     ActorServiceBoundary actor_service_boundary_ = ActorServiceBoundary::None;
     bool clear_timer_next_update_ = false;

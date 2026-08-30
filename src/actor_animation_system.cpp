@@ -67,7 +67,7 @@ std::optional<ActorIndex> ActorAnimationSystem::spawn_f5(
     if (command.apple_action) {
         // The allocated projectile reaches the common actor table on the
         // current boundary, but its first frame is consumed on the next one.
-        vm(*slot).defer_actor_service();
+        vm(*slot).defer_actor_service_then_every_phase();
     }
     return slot;
 }
@@ -96,17 +96,14 @@ void ActorAnimationSystem::update(
         if (actor.type == 0 || actor.animation_pc == 0) {
             continue;
         }
-        // The apple child has its own every-other-VBlank cadence beginning at
-        // allocation; unlike the shared table, it is serviced on both phases.
-        const bool apple_actor_service = state.actors.host_meta(slot).spawned_by_apple;
         const bool force_service = vm(slot).actor_service_forced();
         const bool actor_service = vm(slot).consume_actor_service(
-            service_actor_table || apple_actor_service,
+            service_actor_table,
             service_actor_table
         );
         if (!actor_service) {
             if (!service_actor_table
-                && !apple_actor_service && actor.type == kActorTerminalType
+                && actor.type == kActorTerminalType
                 && actor.terminal_timer == 0) {
                 MovementVm::integrate_actor(actor);
             }

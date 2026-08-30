@@ -121,6 +121,13 @@ struct FrameState {
     // semantic scheduler state and must survive a checkpoint boundary.
     int number = 0;
     std::uint8_t phase = 0;
+
+    // The wait helper uses FRAME_WAIT_LATCH only for its optional Z80
+    // handshake. VBLANK_READY_LATCH is the interrupt-to-wait release byte;
+    // they are distinct Genesis fields even though native update() does not
+    // emulate the 68K interrupt or busy-wait itself.
+    std::uint8_t vblank_ready_latch = 0; // FF7E1E
+    std::uint8_t frame_wait_latch = 0;   // FF7E25
 };
 
 struct RandomState {

@@ -146,6 +146,24 @@ int main() {
     assert(sound_requests.front() == 0x4C);
     assert(sound_vm.take_sound_requests().empty());
 
+    // An animation-spawned child defers its first service until the shared
+    // actor gate, then keeps its cadence in VM-private boundary state. The
+    // actor animation traversal must not need an origin flag to schedule it.
+    PlayerAnimationVm child_service_vm;
+    child_service_vm.load_rom(test_rom);
+    child_service_vm.defer_actor_service_then_every_phase();
+    assert(!child_service_vm.consume_actor_service(false, false));
+    assert(!child_service_vm.consume_actor_service(true, true));
+    assert(child_service_vm.consume_actor_service(false, false));
+
+    PlayerAnimationVm handoff_service_vm;
+    handoff_service_vm.load_rom(test_rom);
+    handoff_service_vm.defer_actor_service();
+    assert(!handoff_service_vm.consume_actor_service(false, false));
+    assert(!handoff_service_vm.consume_actor_service(true, true));
+    assert(!handoff_service_vm.consume_actor_service(false, false));
+    assert(handoff_service_vm.consume_actor_service(true, true));
+
     // Player_ProcessInteractionState emits the fixed 0x31 event from its
     // common non-special convergence block, including the FFF0CC response
     // handoff. The native caller supplies the scene VDP gate separately from

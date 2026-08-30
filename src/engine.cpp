@@ -600,6 +600,8 @@ void Engine::reset() {
     frame_runtime_.terrain_input_world_x = 0;
     frame_runtime_.terrain_input_world_y = 0;
     frame_phase_ = 0;
+    state_.frame.vblank_ready_latch = 0;
+    state_.frame.frame_wait_latch = 0;
     camera_ = CameraState{};
     player_.x = level_.start_x();
     player_.y = level_.start_y();
@@ -653,6 +655,8 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     frame_runtime_.contour_ground_motion = false;
     frame_ = 0;
     frame_phase_ = 0;
+    state_.frame.vblank_ready_latch = 0;
+    state_.frame.frame_wait_latch = 0;
     quit_ = false;
     frame_runtime_.actor_movement_deferred.fill(false);
     animation_system_.player().reset();
@@ -1521,6 +1525,8 @@ void Engine::write_checkpoint(std::ostream& output) const {
     writer.u8(state_.progress.active_scene_entry_gate);
     writer.u8(state_.player.health);
     writer.u8(state_.player.hurt_cooldown);
+    writer.u8(state_.frame.vblank_ready_latch);
+    writer.u8(state_.frame.frame_wait_latch);
 }
 
 void Engine::read_checkpoint(std::istream& input) {
@@ -1601,6 +1607,8 @@ void Engine::read_checkpoint(std::istream& input) {
     std::uint8_t checkpoint_health = PlayerState::kDefaultHealth;
     std::uint8_t checkpoint_hurt_cooldown = 0;
     ProgressState progress;
+    std::uint8_t vblank_ready_latch = 0;
+    std::uint8_t frame_wait_latch = 0;
     if (reader.has_more()) {
         interaction_state.target_current = reader.u8();
         if (reader.has_more()) interaction_state.response_current = reader.u8();
@@ -1618,6 +1626,8 @@ void Engine::read_checkpoint(std::istream& input) {
         }
         if (reader.has_more()) checkpoint_health = reader.u8();
         if (reader.has_more()) checkpoint_hurt_cooldown = reader.u8();
+        if (reader.has_more()) vblank_ready_latch = reader.u8();
+        if (reader.has_more()) frame_wait_latch = reader.u8();
     }
     if (vdp_checkpoint_loaded
         && (vdp_checkpoint_vram.size() != 0x10000
@@ -1631,6 +1641,8 @@ void Engine::read_checkpoint(std::istream& input) {
     camera_ = camera;
     state_.interaction_state = interaction_state;
     state_.progress = progress;
+    state_.frame.vblank_ready_latch = vblank_ready_latch;
+    state_.frame.frame_wait_latch = frame_wait_latch;
     interactions_.restore_runtime(interaction_runtime);
     frame_runtime_.checkpoint_animation_selector_pending = checkpoint_animation_selector_pending;
     frame_runtime_.jump_landing_state_arm_pending = jump_landing_state_arm_pending;

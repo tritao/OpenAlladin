@@ -24,6 +24,10 @@ int main() {
     assert(ram.read8(0xFFF0BE) == 0x42);
     state.frame.phase = 0xA5;
     assert(ram.read8(0xFF7E28) == 0xA5);
+    state.frame.vblank_ready_latch = 0xFF;
+    state.frame.frame_wait_latch = 0x7E;
+    assert(ram.read8(0xFF7E1E) == 0xFF);
+    assert(ram.read8(0xFF7E25) == 0x7E);
     state.player.terrain_bounce_animation_state = 0x27;
     assert(ram.read8(0xFFF0EB) == 0x27);
     state.interaction_state.target_current = 0x12;
@@ -51,6 +55,8 @@ int main() {
     ram.write16(0xFF7DFA, 0xFEDC);
     ram.write8(0xFFF0BE, 0x11);
     ram.write8(0xFF7E28, 0x12);
+    ram.write8(0xFF7E1E, 0x34);
+    ram.write8(0xFF7E25, 0x56);
     ram.write8(0xFFF0EB, 0x28);
     ram.write8(0xFFF0EC, 0x21);
     ram.write8(0xFFEFFA, 0x43);
@@ -64,6 +70,8 @@ int main() {
     assert(state.player.x == static_cast<std::int16_t>(0xFEDC));
     assert(state.player.animation_selector.response_active == 0x11);
     assert(state.frame.phase == 0x12);
+    assert(state.frame.vblank_ready_latch == 0x34);
+    assert(state.frame.frame_wait_latch == 0x56);
     assert(state.player.terrain_bounce_animation_state == 0x28);
     assert(state.interaction_state.target_current == 0x21);
     assert(state.interaction_state.response_current == 0x43);
@@ -79,6 +87,8 @@ int main() {
     assert(ram.take_write(0xFF7DFB, value) && value == 0xDC);
     assert(ram.take_write(0xFFF0BE, value) && value == 0x11);
     assert(ram.take_write(0xFF7E28, value) && value == 0x12);
+    assert(ram.take_write(0xFF7E1E, value) && value == 0x34);
+    assert(ram.take_write(0xFF7E25, value) && value == 0x56);
     assert(ram.take_write(0xFFF0EB, value) && value == 0x28);
     assert(ram.take_write(0xFFF0EC, value) && value == 0x21);
     assert(ram.take_write(0xFFEFFA, value) && value == 0x43);

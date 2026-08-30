@@ -59,6 +59,8 @@ bool GameRamView::is_typed_address(RamAddress address) {
     case 0xFF7E00: case 0xFF7E01:
     case 0xFF7E02: case 0xFF7E03:
     case 0xFF7E04: case 0xFF7E05:
+    case 0xFF7E1E:
+    case 0xFF7E25:
     case 0xFF7E3C:
     case 0xFF7E3F:
     case 0xFF7E28:
@@ -156,6 +158,8 @@ std::uint8_t GameRamView::read_typed8(RamAddress address, bool& handled) const {
         return static_cast<std::uint8_t>(as_u16(world_y));
     }
     case 0xFF7E28: return state_->frame.phase;
+    case 0xFF7E1E: return state_->frame.vblank_ready_latch;
+    case 0xFF7E25: return state_->frame.frame_wait_latch;
     case 0xFF7E58: return static_cast<std::uint8_t>(static_cast<std::uint16_t>(
         player.vx) >> 8);
     case 0xFF7E59: return static_cast<std::uint8_t>(static_cast<std::uint16_t>(
@@ -274,6 +278,8 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
         auto word = as_u16(state_->camera.vertical_threshold); update_word(word, address, 0xFF7E00); state_->camera.vertical_threshold = word; return;
     }
     case 0xFF7E28: state_->frame.phase = value; return;
+    case 0xFF7E1E: state_->frame.vblank_ready_latch = value; return;
+    case 0xFF7E25: state_->frame.frame_wait_latch = value; return;
     case 0xFF7E3C: state_->progress.difficulty_counter = value; return;
     case 0xFF7E3F: state_->progress.active_scene_entry_gate = value; return;
     case 0xFF7E58: {
