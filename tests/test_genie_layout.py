@@ -2287,6 +2287,34 @@ def test_canonical_scene_resource_mode_record_table_has_exact_records_and_bounda
     assert symbol.metadata["count"] == 26
 
 
+def test_canonical_level_event_streams_have_exact_records_and_terminators():
+    symbols = SymbolStore()
+    expected = (
+        (0x00002128, 0x000024FB, 0x000024FA, 163, "LEVEL_EVENT_STREAM_LEVEL02"),
+        (0x000024FC, 0x0000262E, 0x0000262E, 51, "LEVEL_EVENT_STREAM_LEVEL06"),
+    )
+    for start, end, terminator, count, name in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        assert symbol.size == end - start + 1
+        assert symbol.metadata["type"] == "level_event_stream"
+        assert symbol.metadata["record_size"] == 6
+        assert symbol.metadata["count"] == count
+        assert symbol.metadata["terminator"] == terminator
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+    for start, end, terminator, count, _ in expected:
+        assert terminator - start == count * 6
+        assert all(rom[start + offset] != 0 for offset in range(0, terminator - start, 6))
+        assert rom[terminator] == 0
+        assert end >= terminator
+    assert rom[0x24FC:0x24FC + 6] == bytes.fromhex("B4ED00620100")
+    assert rom[0x262F:0x2631] == bytes.fromhex("FE60")
+
+
 def test_canonical_scene_resource_mode_streams_are_exact_and_contiguous():
     symbols = SymbolStore()
     expected = (

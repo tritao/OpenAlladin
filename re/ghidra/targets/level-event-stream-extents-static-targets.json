@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-level-event-stream-extents-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "dispatcher": {
+    "address": "0x001B634E",
+    "name": "LevelEvent_DispatchTimedCommand",
+    "cursor": "0x00FFF132 LEVEL_EVENT_SCRIPT_CURSOR",
+    "record_size": 6,
+    "record": ["delay byte", "command byte", "word payload", "word payload"],
+    "dispatch_table": "0x0020C0 LEVEL_EVENT_COMMAND_DISPATCH_TABLE"
+  },
+  "streams": [
+    {
+      "address": "0x00002128",
+      "name": "LEVEL_EVENT_STREAM_LEVEL02",
+      "range": ["0x00002128", "0x000024FB"],
+      "size": 980,
+      "record_size": 6,
+      "records": 163,
+      "terminator": "0x000024FA",
+      "terminator_value": "0x00",
+      "producer": "0x001B6394 Level02_ExitRoutine",
+      "next_stream": "0x000024FC LEVEL_EVENT_STREAM_LEVEL06"
+    },
+    {
+      "address": "0x000024FC",
+      "name": "LEVEL_EVENT_STREAM_LEVEL06",
+      "range": ["0x000024FC", "0x0000262E"],
+      "size": 307,
+      "record_size": 6,
+      "records": 51,
+      "terminator": "0x0000262E",
+      "terminator_value": "0x00",
+      "producer": "0x001B644E Level06_ExitRoutine",
+      "next_object": "0x0000262F Level08_ExitRoutine animation cursor target"
+    }
+  ],
+  "boundary_basis": [
+    "LevelEvent_DispatchTimedCommand advances LEVEL_EVENT_SCRIPT_CURSOR by six bytes after each dispatched record.",
+    "Level02_ExitRoutine installs 0x00002128 and Level06_ExitRoutine installs 0x000024FC.",
+    "The first byte at each recorded terminator is zero, disabling further dispatch.",
+    "The Level-06 terminator is immediately followed by the 0x0000262F animation stream selected by Level08_ExitRoutine."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

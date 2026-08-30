@@ -1609,6 +1609,34 @@
     - ghidra_disassembly_001B634E
     - rom_level_event_command_table_0020C0
 
+0x00002128:
+  name: LEVEL_EVENT_STREAM_LEVEL02
+  type: level_event_stream
+  record_size: 6
+  count: 163
+  size: 0x3D4
+  terminator: 0x24FA
+  confidence: decompiled
+  description: Level-02 timed event stream installed by Level02_ExitRoutine into LEVEL_EVENT_SCRIPT_CURSOR. Its 163 six-byte delay/command/coordinate records end at 0x000024F9, followed by the zero-duration terminator at 0x000024FA and one alignment byte before the Level-06 stream.
+  evidence:
+    - level_event_stream_static_decompilation
+    - ghidra_disassembly_001B634E
+    - ghidra_disassembly_001B6394
+
+0x000024FC:
+  name: LEVEL_EVENT_STREAM_LEVEL06
+  type: level_event_stream
+  record_size: 6
+  count: 51
+  size: 0x133
+  terminator: 0x262E
+  confidence: decompiled
+  description: Level-06 timed event stream installed by Level06_ExitRoutine into LEVEL_EVENT_SCRIPT_CURSOR. Its 51 six-byte delay/command/coordinate records end at 0x0000262D, followed by the zero-duration terminator at 0x0000262E immediately before the Level-08 animation stream selected from 0x0000262F.
+  evidence:
+    - level_event_stream_static_decompilation
+    - ghidra_disassembly_001B634E
+    - ghidra_disassembly_001B644E
+
 0x004554:
   name: TERRAIN_RESPONSE_HANDLER_TABLE
   type: rom_pointer_table

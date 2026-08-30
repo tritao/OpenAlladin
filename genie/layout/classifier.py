@@ -48,6 +48,8 @@ def _class_for_symbol(symbol: Symbol) -> str:
         return "GRAPHICS"
     if symbol_type == "rom_table":
         return "LEVEL_DATA"
+    if "level_event" in symbol_type:
+        return "LEVEL_DATA"
     if "AUDIO" in name or "SOUND" in name:
         return "AUDIO_DATA"
     return "OPAQUE_DATA"

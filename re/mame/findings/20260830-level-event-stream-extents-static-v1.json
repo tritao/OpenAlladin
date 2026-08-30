@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-level-event-stream-extents-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "dispatcher": {
+    "address": "0x001B634E",
+    "name": "LevelEvent_DispatchTimedCommand",
+    "record_size": 6,
+    "cursor": "0x00FFF132 LEVEL_EVENT_SCRIPT_CURSOR"
+  },
+  "streams": [
+    {
+      "name": "LEVEL_EVENT_STREAM_LEVEL02",
+      "range": ["0x00002128", "0x000024FB"],
+      "records": 163,
+      "terminator": "0x000024FA",
+      "setter": "0x001B6394 Level02_ExitRoutine"
+    },
+    {
+      "name": "LEVEL_EVENT_STREAM_LEVEL06",
+      "range": ["0x000024FC", "0x0000262E"],
+      "records": 51,
+      "terminator": "0x0000262E",
+      "setter": "0x001B644E Level06_ExitRoutine"
+    }
+  ],
+  "conclusion": "The two ROM ranges installed into LEVEL_EVENT_SCRIPT_CURSOR are six-byte timed event streams. The Level-02 stream ends at its zero-duration record before the Level-06 stream; the Level-06 stream ends at its zero-duration record immediately before the Level-08 animation bytes."
+}
