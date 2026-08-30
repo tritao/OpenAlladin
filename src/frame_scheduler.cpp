@@ -3,8 +3,6 @@
 #include "actor_movement.hpp"
 #include "actor_terrain.hpp"
 #include "level_event.hpp"
-#include "player_motion.hpp"
-#include "terrain_behavior.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -44,11 +42,9 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     auto& interactions_ = *context.interactions;
     auto& camera_system_ = *context.camera_system;
     auto& animation_ = context.animation_system->player();
-    auto& player_motion_ = *context.player_motion;
     auto& actor_movement_ = *context.actor_movement;
     auto& actor_terrain_ = *context.actor_terrain;
-    auto& terrain_ = *context.terrain;
-    auto& terrain_behavior_ = *context.terrain_behavior;
+    auto& player_system_ = *context.player_system;
     auto& level_events_ = *context.level_events;
     const auto& rom_bytes_ = *context.rom_bytes;
     auto& runtime_ = *context.runtime;
@@ -109,7 +105,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
             player_.grounded
         );
     } else {
-    terrain_.sample(state_, TerrainInput{
+    player_system_.sample(state_, TerrainInput{
         input.up,
         input.down,
         input.left,
@@ -135,7 +131,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // resolved landing state that the ROM would have in RAM.
     if (!checkpoint_terrain_behavior_override_) {
         services_.record_scheduler_phase("terrain_contour", 0x001AD7B4);
-        terrain_.apply_contour(state_, level_, terrain_fall_phase_);
+        player_system_.apply_contour(state_, level_, terrain_fall_phase_);
     }
     services_.record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
     services_.publish_player_world_coordinates();
@@ -194,7 +190,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     player_.terrain_left_outer_probe = collision.left_outer ? 0xFF : 0;
     player_.terrain_right_inner_probe = collision.right_inner ? 0xFF : 0;
     player_.terrain_right_outer_probe = collision.right_outer ? 0xFF : 0;
-    terrain_.apply_response(state_, TerrainResponseContext{
+    player_system_.apply_response(state_, TerrainResponseContext{
         frame_,
         scene_.is_transition(),
         animation_.stream_entry() == 0x00122006,
@@ -247,7 +243,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     }
     services_.append_sound_requests(collision_effects.sound_requests);
     services_.record_scheduler_phase("terrain_resolution", 0x001B1E38);
-    const auto terrain_cell = terrain_.resolve(
+    const auto terrain_cell = player_system_.resolve(
         state_,
         level_,
         previous_world_y,
@@ -256,7 +252,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
             : std::nullopt
     );
     if (terrain_cell) {
-        terrain_behavior_.apply(state_, *terrain_cell, runtime_, rom_bytes_);
+        player_system_.apply_behavior(state_, *terrain_cell, runtime_, rom_bytes_);
     }
     // The camera's tile reference is consumed before the actor traversal in
     // the ROM. Rebase it now so the refill edge and the common actor gate see
@@ -291,7 +287,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
             }
         }
     }
-    const PlayerMotionResult motion = player_motion_.update_horizontal(
+    const PlayerMotionResult motion = player_system_.update_horizontal(
         state_,
         runtime_,
         input,
@@ -332,7 +328,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         }
     }
     services_.record_scheduler_phase("player_movement", 0x001A9D98);
-    player_motion_.integrate(state_);
+    player_system_.integrate(state_);
     const CollisionEffects bounce_effects = collisions_.bounce_player_actor(
         state_,
         PlayerCollisionInput{
@@ -434,7 +430,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
                 // fallback for staged fixtures that intentionally expose a
                 // stopped response while retaining the fall-phase latch.
                 player_.vy = static_cast<std::int16_t>(player_.vy + 0x0078);
-            } else if (terrain_.advance_bounce_state(state_)) {
+            } else if (player_system_.advance_bounce_state(state_)) {
                 animation_.select_locomotion_entry(0x00121AD8);
             }
         }
@@ -485,7 +481,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         // animation pass selects the ROM brake stream on this boundary;
         // camera threshold changes are owned by that stream rather than being
         // inferred from the input edge here.
-        player_motion_.finish_ground_release(
+        player_system_.finish_ground_release(
             state_, runtime_, ground_release_direction);
     }
 

@@ -205,6 +205,8 @@ add_library(openaladdin_engine STATIC
     src/movement.hpp
     src/player_motion.cpp
     src/player_motion.hpp
+    src/player_system.cpp
+    src/player_system.hpp
     src/player_terrain.cpp
     src/render_pipeline.cpp
     src/render_pipeline.hpp

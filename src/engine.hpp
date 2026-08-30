@@ -15,14 +15,12 @@
 #include "level_event.hpp"
 #include "level_event_system.hpp"
 #include "movement.hpp"
-#include "player_motion.hpp"
-#include "player_terrain.hpp"
+#include "player_system.hpp"
 #include "render_pipeline.hpp"
 #include "render_model.hpp"
 #include "scene_resource.hpp"
 #include "sdl_render_backend.hpp"
 #include "sprites.hpp"
-#include "terrain_behavior.hpp"
 
 #include <array>
 #include <cstdint>
@@ -124,8 +122,6 @@ private:
     SceneResourceVm scene_resources_;
     GenesisRenderModel render_model_;
     LevelEventVm level_events_;
-    PlayerTerrainSystem terrain_;
-    PlayerMotionSystem player_motion_;
     SpriteDatabase sprites_;
     MovementVm movement_vm_;
     ActorMovementSystem actor_movement_;
@@ -134,7 +130,7 @@ private:
     FrameScheduler scheduler_;
     FrameRuntime frame_runtime_;
     InteractionSystem interactions_;
-    TerrainBehaviorSystem terrain_behavior_;
+    PlayerSystem player_system_;
     ActorTerrainSystem actor_terrain_;
     std::map<int, ActorSystem::Table> actor_timeline_;
     // FUN_001B3032 is the shared fixed-ROM PRNG used by terrain responses and

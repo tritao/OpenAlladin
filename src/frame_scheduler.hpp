@@ -7,8 +7,8 @@
 #include "game_state.hpp"
 #include "interaction.hpp"
 #include "level.hpp"
+#include "player_system.hpp"
 #include "scene_resource.hpp"
-#include "player_terrain.hpp"
 #include "scene.hpp"
 
 #include <array>
@@ -23,9 +23,7 @@ class ActorMovementSystem;
 class ActorTerrainSystem;
 class LevelEventSystem;
 class LevelEventVm;
-class PlayerMotionSystem;
 class SceneResourceVm;
-class TerrainBehaviorSystem;
 
 struct InputState {
     bool up = false;
@@ -124,11 +122,9 @@ public:
         InteractionSystem* interactions = nullptr;
         CameraSystem* camera_system = nullptr;
         AnimationSystem* animation_system = nullptr;
-        PlayerMotionSystem* player_motion = nullptr;
         ActorMovementSystem* actor_movement = nullptr;
         ActorTerrainSystem* actor_terrain = nullptr;
-        PlayerTerrainSystem* terrain = nullptr;
-        TerrainBehaviorSystem* terrain_behavior = nullptr;
+        PlayerSystem* player_system = nullptr;
         LevelEventVm* level_events = nullptr;
         const std::vector<std::uint8_t>* rom_bytes = nullptr;
         FrameRuntime* runtime = nullptr;

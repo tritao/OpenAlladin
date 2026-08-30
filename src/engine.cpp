@@ -230,10 +230,7 @@ Engine::Engine()
           collisions_,
           animation_system_,
           frame_runtime_.actor_movement_deferred),
-      terrain_behavior_(TerrainBehaviorServices{
-          actor_lifecycle_,
-          animation_system_,
-          interactions_}),
+      player_system_(actor_lifecycle_, animation_system_, interactions_),
       actor_terrain_(actor_lifecycle_, animation_system_),
       random_state_(state_.random.value),
       frame_(state_.frame.number),
@@ -849,11 +846,9 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
     context.interactions = &interactions_;
     context.camera_system = &camera_system_;
     context.animation_system = &animation_system_;
-    context.player_motion = &player_motion_;
     context.actor_movement = &actor_movement_;
     context.actor_terrain = &actor_terrain_;
-    context.terrain = &terrain_;
-    context.terrain_behavior = &terrain_behavior_;
+    context.player_system = &player_system_;
     context.level_events = &level_events_;
     context.rom_bytes = &rom_bytes_;
     context.runtime = &frame_runtime_;
