@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-reset-bootstrap-z80-stub-static-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "confirmed",
+  "target_manifest": "re/ghidra/targets/reset-bootstrap-z80-stub-static-targets.json",
+  "supersedes": [
+    "reset-bootstrap-copy-boundaries-static-v1 internal-payload limitation"
+  ],
+  "range": {
+    "name": "AUDIO_Z80_RESET_CLEAR_AND_SPIN_STUB",
+    "address": "0x000002DE",
+    "end_inclusive": "0x00000303",
+    "size": 38,
+    "type": "z80_code",
+    "raw_bytes": "AF01D91F112700212600F977EDB0DDE1FDE1ED47ED4FD1E1F108D9C1D1E1F1F9F3ED5636E9E9"
+  },
+  "copy_contract": {
+    "consumer": "System_ResetBootstrap",
+    "rom_source": ["0x000002DE", "0x00000303"],
+    "z80_destination": ["0x0000", "0x0025"],
+    "copy_size": 38
+  },
+  "decoded_behavior": {
+    "ram_clear": "XOR A followed by LD (0x0026),A and LDIR with HL=0x0026, DE=0x0027, BC=0x1FD9 clears every byte from Z80 RAM 0x0026 through 0x1FFF.",
+    "register_reset": "The cleared stack area supplies zero values for IX, IY, the main and alternate BC/DE/HL/AF sets, I, R, and the final SP value.",
+    "interrupt_state": "DI and IM 1 leave the temporary reset image without active Z80 interrupts.",
+    "halt_loop": "The image writes opcode 0xE9 (JP (HL)) at Z80 address 0 while HL is zero, then executes it indefinitely."
+  },
+  "conclusion": "The 38-byte copied payload is a temporary Z80 RAM-clear-and-spin image installed by the reset vector. It is intentionally replaced by Audio_LoadZ80Driver's full sound-driver copy later in startup, so the payload is now fully understood without claiming internal boundaries for the separate driver image."
+}

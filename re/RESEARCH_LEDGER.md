@@ -1703,6 +1703,15 @@ commands. Audio_ReleaseZ80Bus at 0x001E5730 is the shared release primitive.
 The static result is recorded in
 re/mame/findings/20260828-audio-z80-bootstrap-v1.json.
 
+The 38-byte startup image copied by System_ResetBootstrap at 0x000002DE is
+now decoded as `AUDIO_Z80_RESET_CLEAR_AND_SPIN_STUB`. It is Z80 code loaded at
+address 0: `LDIR` clears RAM from 0x0026 through 0x1FFF, the register sets are
+restored from that cleared stack area, interrupts are disabled, IM 1 is
+selected, and `JP (HL)` is installed at address 0 and executed with HL equal
+to zero. This is a temporary inert image; Audio_LoadZ80Driver later replaces
+it with the full `AUDIO_Z80_DRIVER_IMAGE`. The exact static result is recorded
+in `re/mame/findings/20260830-reset-bootstrap-z80-stub-static-v1.json`.
+
 ## Z80 audio bank-window synchronization (20260829)
 
 The former `Z80_SOUND_QUEUE_MARKER` label at `A01B20` was incorrect. The
@@ -3327,3 +3336,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-reset-bootstrap-skipped-word-confidence-static-v1` | recorded-static-disassembly | Promoted the exact 0x00000334-0x00000335 word to decompiled body confidence because the unconditional branch at 0x00000332 skips it, while retaining its intended padding/data role as unresolved |
 | `20260830-reset-bootstrap-tail-confidence-static-v1` | recorded-static-disassembly | Promoted the exact 0x00000310-0x00000313 reset-bootstrap tail to decompiled body confidence from the corrected post-increment boundaries and proven reset-path non-consumption, while retaining its original data meaning as unresolved |
 | `20260830-ram-state-contract-confidence-static-v1` | recorded-static-decompilation | Promoted 37 named scene/menu, player-transition, interaction, terrain, and actor-response RAM symbols from probable to decompiled confidence after closing their exact address, width, and static access contracts; unresolved latch producers and natural runtime causes remain explicitly open |
+| `20260830-reset-bootstrap-z80-stub-static-v1` | recorded-static-disassembly | Decoded the 38-byte Z80 reset image at 0x000002DE as the RAM-clear-and-spin stub installed at Z80 address 0 until Audio_LoadZ80Driver replaces it with the full sound-driver image |

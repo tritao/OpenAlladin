@@ -270,11 +270,13 @@ def test_reset_bootstrap_payload_and_post_copy_values_are_exact():
     symbols = SymbolStore()
     copied = symbols.at(0x000002DE, include_ranges=False)
     assert copied is not None
-    assert copied.name == "RESET_BOOTSTRAP_COPIED_PAYLOAD_002DE"
+    assert copied.name == "AUDIO_Z80_RESET_CLEAR_AND_SPIN_STUB"
     assert copied.end == 0x00000303
     assert copied.size == 38
-    assert copied.metadata["type"] == "u8[38]"
+    assert copied.metadata["type"] == "z80_code"
     assert copied.confidence == "confirmed"
+    assert "LDIR" in copied.description
+    assert "spins there" in copied.description
 
     hardware = symbols.at(0x00000304, include_ranges=False)
     assert hardware is not None

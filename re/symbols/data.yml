@@ -2857,14 +2857,15 @@
     - ghidra_disassembly_0000021A
     - reset_bootstrap_data_targets
 0x002DE:
-  name: RESET_BOOTSTRAP_COPIED_PAYLOAD_002DE
-  type: u8[38]
+  name: AUDIO_Z80_RESET_CLEAR_AND_SPIN_STUB
+  type: z80_code
   size: 38
   confidence: confirmed
-  description: Exact 38-byte reset startup payload copied from ROM 0x000002DE-0x00000303 into Z80 RAM at 0x00A00000 after the inline VDP command; the copied role and boundary are established, while the payload's internal Z80 interpretation remains unresolved.
+  description: Exact 38-byte Z80 reset image copied by System_ResetBootstrap from ROM 0x000002DE-0x00000303 into Z80 RAM at 0x0000. It zeroes the Z80 RAM span 0x0026-0x1FFF with LDIR, initializes the main and alternate register sets from the cleared stack area, disables interrupts, selects IM 1, writes the JP (HL) opcode at address 0, and spins there with HL equal to zero until Audio_LoadZ80Driver replaces the temporary image.
   evidence:
     - ghidra_disassembly_0000021A
     - reset_bootstrap_copy_boundaries_static_v1
+    - reset_bootstrap_z80_stub_static_v1
 0x00304:
   name: RESET_BOOTSTRAP_POST_COPY_HARDWARE_VALUES
   type: u8[12]
