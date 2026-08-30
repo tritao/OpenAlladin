@@ -1,0 +1,54 @@
+{
+  "format": "openaladdin-rnc-boundary-padding-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "source": {
+    "manifest": "build/assets/rnc/manifest.json",
+    "classification": "build/assets/rnc/classification.json"
+  },
+  "ranges": [
+    { "address": "0x0012B427", "name": "RNC_ALIGNMENT_PADDING_0012B427", "preceding_end": "0x0012B426", "following_start": "0x0012B428" },
+    { "address": "0x0012BE17", "name": "RNC_ALIGNMENT_PADDING_0012BE17", "preceding_end": "0x0012BE16", "following_start": "0x0012BE18" },
+    { "address": "0x0012C86D", "name": "RNC_ALIGNMENT_PADDING_0012C86D", "preceding_end": "0x0012C86C", "following_start": "0x0012C86E" },
+    { "address": "0x0012CCD7", "name": "RNC_ALIGNMENT_PADDING_0012CCD7", "preceding_end": "0x0012CCD6", "following_start": "0x0012CCD8" },
+    { "address": "0x0012CD73", "name": "RNC_ALIGNMENT_PADDING_0012CD73", "preceding_end": "0x0012CD72", "following_start": "0x0012CD74" },
+    { "address": "0x0012CE05", "name": "RNC_ALIGNMENT_PADDING_0012CE05", "preceding_end": "0x0012CE04", "following_start": "0x0012CE06" },
+    { "address": "0x0012D0F9", "name": "RNC_ALIGNMENT_PADDING_0012D0F9", "preceding_end": "0x0012D0F8", "following_start": "0x0012D0FA" },
+    { "address": "0x0012D86F", "name": "RNC_ALIGNMENT_PADDING_0012D86F", "preceding_end": "0x0012D86E", "following_start": "0x0012D870" },
+    { "address": "0x0012DD75", "name": "RNC_ALIGNMENT_PADDING_0012DD75", "preceding_end": "0x0012DD74", "following_start": "0x0012DD76" },
+    { "address": "0x0012DF6B", "name": "RNC_ALIGNMENT_PADDING_0012DF6B", "preceding_end": "0x0012DF6A", "following_start": "0x0012DF6C" },
+    { "address": "0x0012E4BD", "name": "RNC_ALIGNMENT_PADDING_0012E4BD", "preceding_end": "0x0012E4BC", "following_start": "0x0012E4BE" },
+    { "address": "0x0012E7E9", "name": "RNC_ALIGNMENT_PADDING_0012E7E9", "preceding_end": "0x0012E7E8", "following_start": "0x0012E7EA" },
+    { "address": "0x0012EA11", "name": "RNC_ALIGNMENT_PADDING_0012EA11", "preceding_end": "0x0012EA10", "following_start": "0x0012EA12" },
+    { "address": "0x0012F12D", "name": "RNC_ALIGNMENT_PADDING_0012F12D", "preceding_end": "0x0012F12C", "following_start": "0x0012F12E" },
+    { "address": "0x0012F4EB", "name": "RNC_ALIGNMENT_PADDING_0012F4EB", "preceding_end": "0x0012F4EA", "following_start": "0x0012F4EC" },
+    { "address": "0x00132F8D", "name": "RNC_ALIGNMENT_PADDING_00132F8D", "preceding_end": "0x00132F8C", "following_start": "0x00132F8E" },
+    { "address": "0x00136911", "name": "RNC_ALIGNMENT_PADDING_00136911", "preceding_end": "0x00136910", "following_start": "0x00136912" },
+    { "address": "0x001434C3", "name": "RNC_ALIGNMENT_PADDING_001434C3", "preceding_end": "0x001434C2", "following_start": "0x001434C4" },
+    { "address": "0x0014433B", "name": "RNC_ALIGNMENT_PADDING_0014433B", "preceding_end": "0x0014433A", "following_start": "0x0014433C" },
+    { "address": "0x0014476D", "name": "RNC_ALIGNMENT_PADDING_0014476D", "preceding_end": "0x0014476C", "following_start": "0x0014476E" },
+    { "address": "0x0014520F", "name": "RNC_ALIGNMENT_PADDING_0014520F", "preceding_end": "0x0014520E", "following_start": "0x00145210" },
+    { "address": "0x00145A55", "name": "RNC_ALIGNMENT_PADDING_00145A55", "preceding_end": "0x00145A54", "following_start": "0x00145A56" },
+    { "address": "0x00181931", "name": "RNC_ALIGNMENT_PADDING_00181931", "preceding_end": "0x00181930", "following_start": "0x00181932" },
+    { "address": "0x0018C289", "name": "RNC_ALIGNMENT_PADDING_0018C289", "preceding_end": "0x0018C288", "following_start": "0x0018C28A" },
+    { "address": "0x00192B81", "name": "RNC_ALIGNMENT_PADDING_00192B81", "preceding_end": "0x00192B80", "following_start": "0x00192B82" },
+    { "address": "0x00195175", "name": "RNC_ALIGNMENT_PADDING_00195175", "preceding_end": "0x00195174", "following_start": "0x00195176" },
+    { "address": "0x0019759B", "name": "RNC_ALIGNMENT_PADDING_0019759B", "preceding_end": "0x0019759A", "following_start": "0x0019759C" },
+    { "address": "0x0019DB97", "name": "RNC_ALIGNMENT_PADDING_0019DB97", "preceding_end": "0x0019DB96", "following_start": "0x0019DB98" },
+    { "address": "0x001A08FB", "name": "RNC_ALIGNMENT_PADDING_001A08FB", "preceding_end": "0x001A08FA", "following_start": "0x001A08FC" },
+    { "address": "0x001A2C25", "name": "RNC_ALIGNMENT_PADDING_001A2C25", "preceding_end": "0x001A2C24", "following_start": "0x001A2C26" },
+    { "address": "0x001A4693", "name": "RNC_ALIGNMENT_PADDING_001A4693", "preceding_end": "0x001A4692", "following_start": "0x001A4694" }
+  ],
+  "evidence": [
+    "Each range is exactly one byte and contains 0x00.",
+    "Each preceding extent is an exact RNC payload boundary from the asset manifest.",
+    "Each following address begins with the RNC\\x01 signature.",
+    "The gaps occur only at compressed-resource boundaries and do not absorb payload bytes."
+  ],
+  "conclusion": "The 31 isolated zero bytes between exact RNC resources are alignment padding rather than unresolved payload data.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

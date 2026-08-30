@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-rnc-boundary-padding-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "evidence": [
+    "build/assets/rnc/manifest.json exact compressed extents",
+    "build/assets/rnc/classification.json resource classification",
+    "ROM byte inspection of each one-byte gap and following RNC\\x01 header",
+    "Existing scene, level, character, map, and floor resource manifests"
+  ],
+  "ranges": [
+    "0x0012B427", "0x0012BE17", "0x0012C86D", "0x0012CCD7", "0x0012CD73", "0x0012CE05", "0x0012D0F9", "0x0012D86F", "0x0012DD75", "0x0012DF6B", "0x0012E4BD", "0x0012E7E9", "0x0012EA11", "0x0012F12D", "0x0012F4EB", "0x00132F8D", "0x00136911", "0x001434C3", "0x0014433B", "0x0014476D", "0x0014520F", "0x00145A55", "0x00181931", "0x0018C289", "0x00192B81", "0x00195175", "0x0019759B", "0x0019DB97", "0x001A08FB", "0x001A2C25", "0x001A4693"
+  ],
+  "conclusion": "All 31 isolated one-byte gaps in the indexed RNC resource bands are confirmed zero alignment padding. The promotion preserves every compressed payload's exact manifest extent and leaves mixed-content gaps untouched.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

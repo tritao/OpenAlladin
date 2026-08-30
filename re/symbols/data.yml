@@ -171,6 +171,254 @@
     - genesis_4bpp_graphics_pattern
     - game_initializer_boundary_001A8A4A
 
+0x0012B427:
+  name: RNC_ALIGNMENT_PADDING_0012B427
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012B426 and the following RNC payload beginning at 0x0012B428.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012BE17:
+  name: RNC_ALIGNMENT_PADDING_0012BE17
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012BE16 and the following RNC payload beginning at 0x0012BE18.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012C86D:
+  name: RNC_ALIGNMENT_PADDING_0012C86D
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012C86C and the following RNC payload beginning at 0x0012C86E.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012CCD7:
+  name: RNC_ALIGNMENT_PADDING_0012CCD7
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012CCD6 and the following RNC payload beginning at 0x0012CCD8.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012CD73:
+  name: RNC_ALIGNMENT_PADDING_0012CD73
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012CD72 and the following RNC payload beginning at 0x0012CD74.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012CE05:
+  name: RNC_ALIGNMENT_PADDING_0012CE05
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012CE04 and the following RNC payload beginning at 0x0012CE06.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012D0F9:
+  name: RNC_ALIGNMENT_PADDING_0012D0F9
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012D0F8 and the following RNC payload beginning at 0x0012D0FA.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012D86F:
+  name: RNC_ALIGNMENT_PADDING_0012D86F
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012D86E and the following RNC payload beginning at 0x0012D870.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012DD75:
+  name: RNC_ALIGNMENT_PADDING_0012DD75
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012DD74 and the following RNC payload beginning at 0x0012DD76.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012DF6B:
+  name: RNC_ALIGNMENT_PADDING_0012DF6B
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012DF6A and the following RNC payload beginning at 0x0012DF6C.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012E4BD:
+  name: RNC_ALIGNMENT_PADDING_0012E4BD
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012E4BC and the following RNC payload beginning at 0x0012E4BE.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012E7E9:
+  name: RNC_ALIGNMENT_PADDING_0012E7E9
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012E7E8 and the following RNC payload beginning at 0x0012E7EA.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012EA11:
+  name: RNC_ALIGNMENT_PADDING_0012EA11
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012EA10 and the following RNC payload beginning at 0x0012EA12.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012F12D:
+  name: RNC_ALIGNMENT_PADDING_0012F12D
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012F12C and the following RNC payload beginning at 0x0012F12E.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0012F4EB:
+  name: RNC_ALIGNMENT_PADDING_0012F4EB
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0012F4EA and the following RNC payload beginning at 0x0012F4EC.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x00132F8D:
+  name: RNC_ALIGNMENT_PADDING_00132F8D
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x00132F8C and the following RNC payload beginning at 0x00132F8E.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x00136911:
+  name: RNC_ALIGNMENT_PADDING_00136911
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x00136910 and the following RNC payload beginning at 0x00136912.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x001434C3:
+  name: RNC_ALIGNMENT_PADDING_001434C3
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x001434C2 and the following RNC payload beginning at 0x001434C4.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0014433B:
+  name: RNC_ALIGNMENT_PADDING_0014433B
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0014433A and the following RNC payload beginning at 0x0014433C.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0014476D:
+  name: RNC_ALIGNMENT_PADDING_0014476D
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0014476C and the following RNC payload beginning at 0x0014476E.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0014520F:
+  name: RNC_ALIGNMENT_PADDING_0014520F
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0014520E and the following RNC payload beginning at 0x00145210.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x00145A55:
+  name: RNC_ALIGNMENT_PADDING_00145A55
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x00145A54 and the following RNC payload beginning at 0x00145A56.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x00181931:
+  name: RNC_ALIGNMENT_PADDING_00181931
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x00181930 and the following RNC payload beginning at 0x00181932.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0018C289:
+  name: RNC_ALIGNMENT_PADDING_0018C289
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0018C288 and the following RNC payload beginning at 0x0018C28A.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x00192B81:
+  name: RNC_ALIGNMENT_PADDING_00192B81
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x00192B80 and the following RNC payload beginning at 0x00192B82.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x00195175:
+  name: RNC_ALIGNMENT_PADDING_00195175
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x00195174 and the following RNC payload beginning at 0x00195176.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0019759B:
+  name: RNC_ALIGNMENT_PADDING_0019759B
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0019759A and the following RNC payload beginning at 0x0019759C.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x0019DB97:
+  name: RNC_ALIGNMENT_PADDING_0019DB97
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x0019DB96 and the following RNC payload beginning at 0x0019DB98.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x001A08FB:
+  name: RNC_ALIGNMENT_PADDING_001A08FB
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x001A08FA and the following RNC payload beginning at 0x001A08FC.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x001A2C25:
+  name: RNC_ALIGNMENT_PADDING_001A2C25
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x001A2C24 and the following RNC payload beginning at 0x001A2C26.
+  evidence: [rnc_boundary_padding_static_v1]
+
+0x001A4693:
+  name: RNC_ALIGNMENT_PADDING_001A4693
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact RNC payload ending at 0x001A4692 and the following RNC payload beginning at 0x001A4694.
+  evidence: [rnc_boundary_padding_static_v1]
+
 0x0012B7A4:
   name: LEVEL08_EXIT_C000_GRAPHICS
   type: graphics_data

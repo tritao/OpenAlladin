@@ -285,6 +285,56 @@ def test_unindexed_graphics_bands_and_padding_are_exact():
     )
 
 
+def test_rnc_boundary_alignment_padding_is_exact():
+    symbols = SymbolStore()
+    addresses = (
+        0x0012B427,
+        0x0012BE17,
+        0x0012C86D,
+        0x0012CCD7,
+        0x0012CD73,
+        0x0012CE05,
+        0x0012D0F9,
+        0x0012D86F,
+        0x0012DD75,
+        0x0012DF6B,
+        0x0012E4BD,
+        0x0012E7E9,
+        0x0012EA11,
+        0x0012F12D,
+        0x0012F4EB,
+        0x00132F8D,
+        0x00136911,
+        0x001434C3,
+        0x0014433B,
+        0x0014476D,
+        0x0014520F,
+        0x00145A55,
+        0x00181931,
+        0x0018C289,
+        0x00192B81,
+        0x00195175,
+        0x0019759B,
+        0x0019DB97,
+        0x001A08FB,
+        0x001A2C25,
+        0x001A4693,
+    )
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+
+    for address in addresses:
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == f"RNC_ALIGNMENT_PADDING_{address:08X}"
+        assert symbol.end == address
+        assert symbol.size == 1
+        assert symbol.metadata["type"] == "padding_data"
+        assert symbol.confidence == "confirmed"
+        assert rom[address] == 0
+        assert rom[address + 1:address + 5] == b"RNC\x01"
+
+
 def test_genesis_header_tail_and_scene_stream_padding_are_exact():
     symbols = SymbolStore()
     header = symbols.at(0x000001A4, include_ranges=False)
