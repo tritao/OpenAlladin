@@ -42,13 +42,22 @@
       "reachability": "No current actor-collision table pointer or other static xref reaches this body; selector and runtime reachability remain unresolved."
     }
   ],
+  "alignment_padding": {
+    "address": "0x001AC456",
+    "size": 2,
+    "name": "ACTOR_COLLISION_HANDLER_ALIGNMENT_NOP_001AC456",
+    "bytes": "4E71",
+    "preceding": "ActorType1C_ActorCollisionHandler ends at 0x001AC455.",
+    "following": "ActorType0A_ActorCollisionHandler begins at 0x001AC458.",
+    "semantics": "A single 68000 NOP used to align the shared collision-response entry."
+  },
   "boundary_basis": [
     "Every promoted start is a direct pointer-table target at 0x001EBA plus actor_type*4.",
     "Each body ends immediately before the next distinct table target or existing canonical handler.",
     "Types 0x02, 0x08, and 0x09 share the exact 12-byte body at 0x001ABF8E.",
     "Types 0x18 and 0x19 share the exact 10-byte body at 0x001AC4DE.",
     "The Type-0x23 entry is an intentional ten-byte prefix that falls through to ActorType23_SpawnCollisionResponsePair at 0x001ABFFA.",
-    "The Type-0x1C body ends at its branch target preparation before the alignment NOP at 0x001AC456 and the existing common response at 0x001AC458."
+    "The Type-0x1C body ends at its branch target preparation before the exact alignment NOP at 0x001AC456 and the existing common response at 0x001AC458."
   ],
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"

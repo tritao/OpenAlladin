@@ -8823,3 +8823,13 @@
     - ghidra_level_exit_terminal_transition
     - actor_template_bootstrap_targets
     - actor_template_grid_xrefs
+
+0x001AC456:
+  name: ACTOR_COLLISION_HANDLER_ALIGNMENT_NOP_001AC456
+  type: padding_data
+  size: 2
+  confidence: confirmed
+  description: Single 68000 NOP alignment instruction between the Type-0x1C actor-collision handler at 0x001AC444-0x001AC455 and the shared ActorType0A_ActorCollisionHandler entry at 0x001AC458.
+  evidence:
+    - actor_collision_handler_family_extended_static_decompilation
+    - rom_padding_uniform_static_v1

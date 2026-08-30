@@ -14,6 +14,14 @@
     "shared_bodies": 2,
     "fallthrough_prefixes": 1
   },
+  "alignment_padding": {
+    "address": "0x001AC456",
+    "size": 2,
+    "name": "ACTOR_COLLISION_HANDLER_ALIGNMENT_NOP_001AC456",
+    "bytes": "4E71",
+    "semantics": "Single 68000 NOP between the Type-0x1C handler and the shared Type-0A/common collision-response entry.",
+    "confidence": "confirmed"
+  },
   "families": [
     {
       "types": ["0x01"],

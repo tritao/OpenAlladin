@@ -3826,6 +3826,15 @@ def test_extended_actor_collision_handler_dispatch_family_is_exact():
         assert int.from_bytes(data[address:address + 4], "big") == target
         assert address == 0x001EBA + actor_type * 4
 
+    padding = symbols.at(0x001AC456, include_ranges=False)
+    assert padding is not None
+    assert padding.name == "ACTOR_COLLISION_HANDLER_ALIGNMENT_NOP_001AC456"
+    assert padding.size == 2
+    assert padding.end == 0x001AC457
+    assert padding.metadata["type"] == "padding_data"
+    assert padding.confidence == "confirmed"
+    assert data[0x001AC456:0x001AC458] == bytes.fromhex("4E71")
+
 
 def test_final_mechanical_function_closure_is_exact():
     symbols = SymbolStore()
