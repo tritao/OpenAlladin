@@ -859,6 +859,12 @@ The decompressed terrain bound is also canonical. `TERRAIN_WORK_END` at
 computed from the active row stride and level height and checked before player
 and actor terrain probes index the decompressed map.
 
+The adjacent presentation state is now named as well. `LEVEL08_VDP_SCROLL_OFFSET`
+at `FFF0A2` is initialized to `0x140` by the Level-08 exit path, advanced by
+the Level-08 event cadence, and consumed by that level's camera-scroll VDP
+callback. `VDP_TILE_PLANE_ORDER` at `FFF165` selects whether the generated tile
+row command tables use C000/E000 or E000/C000 order.
+
 The adjacent compact scene-resource loader variants are recorded in
 `re/mame/findings/20260828-scene-resource-loader-variants-v1.json`.
 `0x001B4896`, `0x001B48C4`, and `0x001B48F2` load exact two-resource VRAM

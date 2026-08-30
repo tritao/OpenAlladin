@@ -1442,6 +1442,27 @@
     - ghidra_disassembly_001B5470
     - ghidra_disassembly_001B5492
     - ghidra_disassembly_001B549C
+0xFFF0A2:
+  name: LEVEL08_VDP_SCROLL_OFFSET
+  type: u16
+  format: vdp_offset
+  confidence: decompiled
+  description: Level-08 presentation VDP offset used by Level08_CameraScrollCallback for its repeated tile writes. Level08_ExitRoutine initializes it to 0x140 and Level08_EnterRoutine advances it on the event presentation cadence.
+  evidence:
+    - ghidra_disassembly_001B64F6
+    - ghidra_disassembly_001B60C2
+    - ghidra_disassembly_001AAF68
+    - level08_event_vdp_static_decompilation
+0xFFF165:
+  name: VDP_TILE_PLANE_ORDER
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Active C000/E000 tile-plane order selector. Level_LoadFromSceneState publishes the level-table value, presentation setup paths clear it for their default order, and VDP_BuildTileRowCommandTables swaps the two plane bases when it is set.
+  evidence:
+    - ghidra_disassembly_001AA536
+    - ghidra_decompile_001B2142
+    - ghidra_scene_vdp_audio_service_targets
 0xFF98C4:
   name: TERRAIN_LANDING_ROW_POINTERS
   type: pointer_table

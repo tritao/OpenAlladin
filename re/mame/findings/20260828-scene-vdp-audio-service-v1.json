@@ -65,5 +65,10 @@
       "role": "Active-low directional/controller query byte"
     }
   ],
+  "plane_order_state": {
+    "address": "0x00FFF165",
+    "name": "VDP_TILE_PLANE_ORDER",
+    "role": "C000/E000 tile-plane order selector"
+  },
   "conclusion": "The shared transition helpers now expose the tile-row command-table builder, its scene-transition wrapper, the resource completion wait, both raw/controller query sampling paths, conditional scene-update audio notification, and the two-word VDP setup primitive."
 }

@@ -571,6 +571,19 @@ def test_real_terrain_work_end_has_canonical_role():
     assert symbol.metadata["format"] == "byte_offset"
 
 
+def test_real_level08_vdp_state_has_canonical_roles():
+    symbols = SymbolStore()
+
+    offset = symbols.at(0x00FFF0A2, include_ranges=False)
+    order = symbols.at(0x00FFF165, include_ranges=False)
+    assert offset is not None
+    assert offset.name == "LEVEL08_VDP_SCROLL_OFFSET"
+    assert offset.metadata["format"] == "vdp_offset"
+    assert order is not None
+    assert order.name == "VDP_TILE_PLANE_ORDER"
+    assert order.metadata["format"] == "boolean"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 
