@@ -9,6 +9,7 @@ constexpr std::uint8_t kActorGuardType = 0x0A;
 constexpr std::uint8_t kActorBounceType = 0x65;
 constexpr std::uint8_t kActorSwordType = 0x80;
 constexpr std::uint8_t kActorTerminalType = 0x84;
+constexpr std::uint8_t kApplePickupSoundId = 0x0B;
 constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
 constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
 constexpr std::uint32_t kActorDeathTemplate = 0x001B7940;
@@ -16,6 +17,16 @@ constexpr std::uint32_t kActorSwordDeathTemplate = 0x001B792C;
 constexpr std::uint8_t kActorDeathFrames = 43;
 constexpr std::uint8_t kActorSwordTerminalFrames = 19;
 constexpr std::uint32_t kPlayerCollisionHandlerTable = 0x001CBE;
+constexpr std::uint32_t kHandlerGuardShared = 0x001AE9C6;
+constexpr std::uint32_t kHandlerEnemySwordShared = 0x001AEE40;
+constexpr std::uint32_t kHandlerApplePickupShared = 0x001AF468;
+constexpr std::uint32_t kHandlerType3E = 0x001AF2B0;
+constexpr std::uint32_t kHandlerType3F = 0x001AF2FA;
+constexpr std::uint32_t kHandlerType4D = 0x001AF0B8;
+constexpr std::uint32_t kHandlerLaunchShared = 0x001AF110;
+constexpr std::uint32_t kHandlerBounce = 0x001AFBF4;
+constexpr std::uint32_t kHandlerType4E = 0x001AFCD2;
+constexpr std::uint32_t kHandlerType4F = 0x001AFC4E;
 constexpr std::uint32_t kPlayerResponseAnimationStream = 0x00121C62;
 constexpr std::uint32_t kType4EActorAnimationStream = 0x00124B1A;
 constexpr std::uint32_t kType4FActorAnimationStream = 0x00124B3E;
@@ -129,6 +140,36 @@ std::uint32_t known_player_handler_address(std::uint8_t actor_type) {
     case 0x7B: return 0x001AE9D4;
     case 0x7D: return 0x001AEBA4;
     default: return 0;
+    }
+}
+
+bool native_player_handler(
+    std::uint8_t actor_type,
+    std::uint32_t handler_address
+) {
+    switch (handler_address) {
+    case kHandlerGuardShared:
+        return actor_type == kActorGuardType;
+    case kHandlerEnemySwordShared:
+        return actor_type == 0x2D;
+    case kHandlerApplePickupShared:
+        return actor_type == 0x35 || actor_type == 0x40;
+    case kHandlerType3E:
+        return actor_type == 0x3E;
+    case kHandlerType3F:
+        return actor_type == 0x3F;
+    case kHandlerType4D:
+        return actor_type == 0x4D;
+    case kHandlerLaunchShared:
+        return actor_type == 0x11 || actor_type == 0x12;
+    case kHandlerBounce:
+        return actor_type == kActorBounceType;
+    case kHandlerType4E:
+        return actor_type == 0x4E;
+    case kHandlerType4F:
+        return actor_type == 0x4F;
+    default:
+        return false;
     }
 }
 
@@ -308,17 +349,7 @@ PlayerCollisionHandlerInfo CollisionSystem::player_collision_handler(
         if (table_address + 3 < rom_->size()) info.address = table_entry;
     }
     info.kind = player_handler_kind(actor_type);
-    info.native_implemented = actor_type == kActorGuardType
-        || actor_type == 0x2D
-        || actor_type == 0x40
-        || actor_type == 0x3E
-        || actor_type == 0x3F
-        || actor_type == kActorBounceType
-        || actor_type == 0x11
-        || actor_type == 0x12
-        || actor_type == 0x4D
-        || actor_type == 0x4E
-        || actor_type == 0x4F;
+    info.native_implemented = native_player_handler(actor_type, info.address);
     return info;
 }
 
@@ -381,7 +412,8 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
     );
     if (!player_box.valid || !actor_box.valid) return effects;
 
-    if (actor.type == kActorGuardType) {
+    if (collision.handler.address == kHandlerGuardShared
+        && actor.type == kActorGuardType) {
         if (!input.sword_active) return effects;
         ActorState terminal = actor;
         terminal.type = kActorTerminalType;
@@ -400,7 +432,8 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         return effects;
     }
 
-    if (actor.type == 0x2D) {
+    if (collision.handler.address == kHandlerEnemySwordShared
+        && actor.type == 0x2D) {
         if (input.bounce_response_follow_active) return effects;
         // The guard's type-0x2D child is the enemy sword/contact effect. It
         // is still consumed on contact, but it must not cancel a player
@@ -421,9 +454,22 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         return effects;
     }
 
-    // Type-0x40 uses the handler's strict secondary rectangle test after the
-    // common pass has accepted the candidate.
-    if (actor.type == 0x40 && strict_overlaps(player_box, actor_box)) {
+    // Types 0x35 and 0x40 share Actor_FarTransferPlayerCollisionHandler in
+    // the ROM. Its counter helper is the apple pickup path: increment the
+    // bounded inventory before the actor is replaced by its terminal record.
+    // The handler's strict secondary rectangle test runs after the common
+    // collision pass has accepted the candidate.
+    if (collision.handler.address == kHandlerApplePickupShared
+        && (actor.type == 0x35 || actor.type == 0x40)
+        && strict_overlaps(player_box, actor_box)) {
+        state.inventory.collect_apple();
+        // Actor_FarTransferPlayerCollisionHandler queues event 0x0B through
+        // Audio_PrepareCommand/Audio_SendCommand when the frame's VDP/audio
+        // update gate is active. Keep the pickup cue attached to the
+        // collision side effect so both actor types follow the same ROM path.
+        if (state.camera.vdp_update != 0) {
+            effects.sound_requests.push_back(kApplePickupSoundId);
+        }
         const ActorState replacement = actor_lifecycle_.initialize_record(
             actor,
             0x001B7ABC
@@ -432,7 +478,8 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         return effects;
     }
 
-    if (actor.type == kActorBounceType) {
+    if (collision.handler.address == kHandlerBounce
+        && actor.type == kActorBounceType) {
         // ActorType65_PlayerCollisionHandler is reached at the post-motion
         // player collision boundary. It only accepts a falling player while
         // the interaction-animation gate is clear.
@@ -456,11 +503,12 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         return effects;
     }
 
-    if (actor.type == 0x3E || actor.type == 0x3F) {
+    if (collision.handler.address == kHandlerType3E
+        || collision.handler.address == kHandlerType3F) {
         // ActorType3E/3F_PlayerCollisionHandler mutate the source record in
         // place. The only difference between the two shared handlers is the
         // response latch they publish for the later interaction selectors.
-        if (actor.type == 0x3E) {
+        if (collision.handler.address == kHandlerType3E) {
             state.interaction_state.type3e_response_latch = 0xFF;
         } else {
             state.interaction_state.type3f_response_latch = 0xFF;
@@ -474,7 +522,7 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         return effects;
     }
 
-    if (actor.type == 0x4D) {
+    if (collision.handler.address == kHandlerType4D) {
         // ActorType4D_PlayerCollisionHandler first searches the gameplay
         // records for the paired type-0x12 actor. The helper leaves the
         // first match selected, so preserve that ordering here.
@@ -510,7 +558,8 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         return effects;
     }
 
-    if (actor.type == 0x11 || actor.type == 0x12) {
+    if (collision.handler.address == kHandlerLaunchShared
+        && (actor.type == 0x11 || actor.type == 0x12)) {
         // Player_ProcessInteractionState owns the ungated branch. Type 0x12
         // additionally selects the source actor's interaction response.
         if (!input.interaction_gate) {
@@ -540,7 +589,8 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         return effects;
     }
 
-    if (actor.type == 0x4E) {
+    if (collision.handler.address == kHandlerType4E
+        && actor.type == 0x4E) {
         if (state.player.vy < 0
             || state.player.animation_selector.animation_gate != 0) {
             return effects;
@@ -564,7 +614,8 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         return effects;
     }
 
-    if (actor.type == 0x4F) {
+    if (collision.handler.address == kHandlerType4F
+        && actor.type == 0x4F) {
         if (state.player.vy < 0
             || state.player.animation_selector.animation_gate != 0) {
             return effects;

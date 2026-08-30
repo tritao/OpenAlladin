@@ -51,6 +51,47 @@ int main() {
     assert(effects.player_collision_interaction_pending);
     assert(state.actors[1].type == 0);
 
+    // Type 0x40 is the checkpoint fixture for the apple pickup record. Its
+    // strict secondary overlap increments the gameplay-owned counter before
+    // replacing the collected actor.
+    state.actors.fill({});
+    state.player = {};
+    state.camera = {};
+    state.camera.x = 0;
+    state.camera.y = 0;
+    state.camera.vdp_update = 1;
+    state.inventory.apple_count = 10;
+    state.actors[1].type = 0x40;
+    state.actors[1].frame_ptr = frame;
+    const auto apple_pickup = collision.player_actor(
+        state,
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(apple_pickup.unhandled_player_collision_types.empty());
+    assert(state.inventory.apple_count == 11);
+    assert(state.actors[1].type == 0);
+    assert(apple_pickup.sound_requests.size() == 1);
+    assert(apple_pickup.sound_requests.front() == 0x0B);
+
+    // The ROM suppresses the pickup cue when the VDP/audio update gate is
+    // clear, while the inventory and actor replacement still occur.
+    state.actors.fill({});
+    state.player = {};
+    state.camera = {};
+    state.camera.x = 0;
+    state.camera.y = 0;
+    state.camera.vdp_update = 0;
+    state.inventory.apple_count = 10;
+    state.actors[1].type = 0x35;
+    state.actors[1].frame_ptr = frame;
+    const auto gated_apple_pickup = collision.player_actor(
+        state,
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(gated_apple_pickup.sound_requests.empty());
+    assert(state.inventory.apple_count == 11);
+    assert(state.actors[1].type == 0);
+
     const auto launch_handler = collision.player_collision_handler(0x11);
     assert(launch_handler.address == 0x001AF110);
     assert(launch_handler.kind
@@ -69,6 +110,12 @@ int main() {
     assert(type65_handler.address == 0x001AFBF4);
     assert(type65_handler.kind == openaladdin::PlayerCollisionHandlerKind::ActorResponse);
     assert(type65_handler.native_implemented);
+    const auto apple_handler = collision.player_collision_handler(0x35);
+    assert(apple_handler.address == 0x001AF468);
+    assert(apple_handler.native_implemented);
+    const auto type4d_handler = collision.player_collision_handler(0x4D);
+    assert(type4d_handler.address == 0x001AF0B8);
+    assert(type4d_handler.native_implemented);
 
     const auto noop_handler = collision.player_collision_handler(0x0D);
     assert(noop_handler.address == 0x001AEB7A);
