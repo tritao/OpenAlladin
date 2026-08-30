@@ -3419,6 +3419,15 @@
     - ghidra_decompile_001AD150
     - ghidra_decompile_001AE796
     - ghidra_decompile_001AEC00
+0x001ADA98:
+  name: Player_SetTransitionFlagResponseAnimation
+  size: 24
+  confidence: provisional
+  description: Installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE at 0x00121C62, clears PLAYER_ANIMATION_TIMER and PLAYER_INTERACTION_ANIMATION_GATE, and returns; the direct producer or selector for this compact helper remains unresolved.
+  evidence:
+    - player_transition_flag_response_helper_static_disassembly
+    - player_transition_response_animation_static_decompilation
+    - ghidra_player_animation_selector
 0x001A92DC:
   name: Actor_ClearType85Slots
   confidence: confirmed

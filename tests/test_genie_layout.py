@@ -3855,6 +3855,21 @@ def test_actor_linked_cleanup_helper_is_exact():
     )
 
 
+def test_player_transition_flag_response_helper_is_exact():
+    symbols = SymbolStore()
+    helper = symbols.at(0x001ADA98, include_ranges=False)
+    assert helper is not None
+    assert helper.name == "Player_SetTransitionFlagResponseAnimation"
+    assert helper.end == 0x001ADAAF
+    assert helper.size == 24
+    assert helper.confidence == "provisional"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001ADA98:0x001ADAB0] == bytes.fromhex(
+        "23FC00121C6200FF7E60423900FF7E77423900FFF0E74E75"
+    )
+
+
 def test_final_mechanical_function_closure_is_exact():
     symbols = SymbolStore()
     expected = {

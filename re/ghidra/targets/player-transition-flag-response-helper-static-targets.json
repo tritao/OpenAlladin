@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-player-transition-flag-response-helper-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target": {
+    "address": "0x001ADA98",
+    "end": "0x001ADAAF",
+    "size": 24,
+    "name": "Player_SetTransitionFlagResponseAnimation",
+    "animation_root": "0x00121C62 PLAYER_ANIM_TRANSITION_FLAG_RESPONSE",
+    "writes": [
+      "PLAYER_ANIMATION_PC = 0x00121C62",
+      "PLAYER_ANIMATION_TIMER = 0",
+      "PLAYER_INTERACTION_ANIMATION_GATE = 0"
+    ]
+  },
+  "boundary_basis": [
+    "The helper begins immediately after the first Ghidra range of Player_TerrainLandingResolver at 0x001ADA97.",
+    "Its direct RTS ends at 0x001ADAAF, immediately before the second Ghidra range of Player_TerrainLandingResolver at 0x001ADAB0.",
+    "No direct static caller is currently recovered; this target records exact writes without assigning selector reachability."
+  ],
+  "confidence": "provisional",
+  "status": "recorded-static-disassembly"
+}
