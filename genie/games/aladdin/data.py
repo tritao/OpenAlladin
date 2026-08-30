@@ -31,6 +31,8 @@ class AladdinSemanticDataClassifier:
             return "movement"
         if "ACTOR_FRAME" in name:
             return "graphics"
+        if type_name == "palette_data" or "PALETTE" in name:
+            return "graphics"
         if "pointer_table" in type_name or "POINTER_TABLE" in name:
             return "pointer-table"
         if type_name == "rom_table":
