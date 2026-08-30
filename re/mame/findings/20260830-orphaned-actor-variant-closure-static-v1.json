@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-orphaned-actor-variant-closure-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "functions": [
+    {
+      "address": "0x001ADA98",
+      "name": "Player_SetTransitionFlagResponseAnimation",
+      "range": ["0x001ADA98", "0x001ADAAF"]
+    },
+    {
+      "address": "0x001ABFD0",
+      "name": "Actor_ReinitializeCollisionResponseAfterType2D",
+      "range": ["0x001ABFD0", "0x001ABFEF"]
+    },
+    {
+      "address": "0x001B69A6",
+      "name": "InteractionSpawn_Type5E84Pair_AnchorResponse",
+      "range": ["0x001B69A6", "0x001B69FF"]
+    },
+    {
+      "address": "0x001B6BFC",
+      "name": "InteractionSpawn_RuntimeType57_AdjacentVariant",
+      "range": ["0x001B6BFC", "0x001B6C0D"]
+    },
+    {
+      "address": "0x001B7474",
+      "name": "InteractionSpawn_RuntimeType45_AdjacentVariant",
+      "range": ["0x001B7474", "0x001B7493"]
+    },
+    {
+      "address": "0x001B74A0",
+      "name": "InteractionSpawn_RuntimeType5B_AdjacentVariant",
+      "range": ["0x001B74A0", "0x001B74B1"]
+    }
+  ],
+  "evidence": [
+    "Exact function boundaries from the canonical whole-ROM instruction export",
+    "Static decompilation of each complete body and its referenced templates/streams",
+    "No incoming Ghidra xref or exported dispatch-table pointer for any listed body",
+    "No runtime entry sample in the merged coverage archive"
+  ],
+  "conclusion": "These six bodies have complete, evidence-backed semantic contracts but no current exported selector or runtime reachability. They are retained as canonical unreferenced variants; future selector discovery can promote them without renaming or rebounding their code ranges.",
+  "confidence": "decompiled",
+  "status": "recorded-static-negative-reachability"
+}

@@ -3501,7 +3501,7 @@
   name: Player_SetTransitionFlagResponseAnimation
   size: 24
   confidence: decompiled
-  description: Installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE at 0x00121C62, clears PLAYER_ANIMATION_TIMER and PLAYER_INTERACTION_ANIMATION_GATE, and returns; the direct producer or selector for this compact helper remains unresolved.
+  description: Installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE at 0x00121C62, clears PLAYER_ANIMATION_TIMER and PLAYER_INTERACTION_ANIMATION_GATE, and returns. The exact entry has no static incoming xref or runtime hit, so it is retained as a complete unreferenced helper without assigning a historical selector.
   evidence:
     - player_transition_flag_response_helper_static_disassembly
     - player_transition_response_animation_static_decompilation
@@ -5129,7 +5129,7 @@
   name: InteractionSpawn_Type5E84Pair_AnchorResponse
   size: 90
   confidence: decompiled
-  description: Type-0x5E plus Type-0x84 paired-spawn handler. Its exact body allocates the two linked records, installs ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE, and publishes the companion anchor at (base X - 0x20, base Y + 0x40); no active INTERACTION_HANDLER_TABLE entry currently targets this body, so runtime reachability remains unresolved.
+  description: Type-0x5E plus Type-0x84 paired-spawn handler. Its exact body allocates the two linked records, installs ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE, and publishes the companion anchor at (base X - 0x20, base Y + 0x40). No active INTERACTION_HANDLER_TABLE entry or runtime sample targets this body, so it is retained as a complete unreferenced variant without assigning a selector.
   evidence:
     - interaction_spawn_type5e84_unindexed_static_disassembly
     - gnu_m68k_disassembly_001B69A6
@@ -5209,7 +5209,7 @@
   name: InteractionSpawn_RuntimeType57_AdjacentVariant
   size: 0x12
   confidence: decompiled
-  description: Complete adjacent interaction-spawn variant that reverse-spawns ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E at 0x001B7A1C and, on successful allocation, promotes the initialized actor to runtime type 0x57. No current INTERACTION_HANDLER_TABLE pointer or other static xref reaches this body, so its selector and runtime reachability remain unresolved.
+  description: Complete adjacent interaction-spawn variant that reverse-spawns ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E at 0x001B7A1C and, on successful allocation, promotes the initialized actor to runtime type 0x57. No current INTERACTION_HANDLER_TABLE pointer or other static xref reaches this body, so it is retained as a complete unreferenced variant without assigning a selector.
   evidence:
     - ghidra_disassembly_001B6BFC
     - actor_template_mid_dispatch_family_static_decompilation
@@ -5666,7 +5666,7 @@
   name: InteractionSpawn_RuntimeType45_AdjacentVariant
   size: 0x20
   confidence: decompiled
-  description: Complete adjacent interaction-spawn variant that allocates the zero-type base through LevelObjectSpawnEntry and, on success, publishes runtime type 0x45, animation root 0x00122C40, and actor byte +0x29 as 1. The current INTERACTION_HANDLER_TABLE has no direct pointer to this body, so its selector and runtime reachability remain unresolved.
+  description: Complete adjacent interaction-spawn variant that allocates the zero-type base through LevelObjectSpawnEntry and, on success, publishes runtime type 0x45, animation root 0x00122C40, and actor byte +0x29 as 1. The current INTERACTION_HANDLER_TABLE has no direct pointer to this body, so it is retained as a complete unreferenced variant without assigning a selector.
   evidence:
     - ghidra_disassembly_001B7474
     - interaction-spawn-type46-5a-response-static-decompilation
@@ -5683,7 +5683,7 @@
   name: InteractionSpawn_RuntimeType5B_AdjacentVariant
   size: 0x12
   confidence: decompiled
-  description: Complete adjacent interaction-spawn variant that allocates ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT through LevelObjectSpawnEntry and, on successful allocation, promotes the initialized record to runtime type 0x5B. The current INTERACTION_HANDLER_TABLE has no direct pointer to this body, so its selector and runtime reachability remain unresolved.
+  description: Complete adjacent interaction-spawn variant that allocates ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT through LevelObjectSpawnEntry and, on successful allocation, promotes the initialized record to runtime type 0x5B. The current INTERACTION_HANDLER_TABLE has no direct pointer to this body, so it is retained as a complete unreferenced variant without assigning a selector.
   evidence:
     - ghidra_disassembly_001B74A0
     - interaction-spawn-type46-5a-response-static-decompilation
@@ -6349,7 +6349,7 @@
   name: Actor_ReinitializeCollisionResponseAfterType2D
   size: 0x20
   confidence: decompiled
-  description: Complete adjacent collision-response lifecycle variant. It clears and releases the actor in A1, runs Actor_HandleType2DInteraction, releases that actor's owned resources again, initializes the A2 destination from ACTOR_TEMPLATE_COLLISION_RESPONSE at 0x001B7ABC, and adds response counter 0x000F. No current actor-collision table pointer or other static xref reaches this body, so its selector and runtime reachability remain unresolved.
+  description: Complete adjacent collision-response lifecycle variant. It clears and releases the actor in A1, runs Actor_HandleType2DInteraction, releases that actor's owned resources again, initializes the A2 destination from ACTOR_TEMPLATE_COLLISION_RESPONSE at 0x001B7ABC, and adds response counter 0x000F. No current actor-collision table pointer or other static xref reaches this body, so it is retained as a complete unreferenced variant without assigning a selector.
   evidence:
     - ghidra_disassembly_001ABFD0
     - actor_collision_handler_family_extended_static_decompilation
