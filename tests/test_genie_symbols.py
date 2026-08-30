@@ -608,6 +608,14 @@ def test_real_scene_resource_rebuild_phase_counter_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_level_timer_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF103, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "LEVEL_TIMER"
+    assert symbol.metadata["format"] == "countdown"
+    assert symbol.confidence == "decompiled"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

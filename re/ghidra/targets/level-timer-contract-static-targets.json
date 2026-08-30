@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-level-timer-contract-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Close the exact RAM contract for the short level timer used by actor-relative player alignment.",
+  "producer": {
+    "address": "0x001AFB36",
+    "name": "ActorType6E_73_PlayerCollisionHandler",
+    "test": "0x001AFB9E gates the first alignment-response initialization when the timer is nonzero.",
+    "reload": "0x001AFBEA stores 0x04 after a successful player/actor placement and transition-gate arm."
+  },
+  "consumer": {
+    "address": "0x001B5B66",
+    "name": "Level00_EnterRoutine",
+    "test": "0x001B5B84 skips the update when the timer is zero.",
+    "decrement": "0x001B5B8C subtracts one while the timer is nonzero."
+  },
+  "state": {
+    "reload_value": "0x04",
+    "decrement_unit": "1 callback tick",
+    "zero_behavior": "The next eligible alignment may initialize the terrain-alignment response again."
+  },
+  "evidence": [
+    "Exact Type-0x6E through Type-0x73 player-collision decompilation",
+    "Exact Level-00 entry callback decrement body",
+    "Existing player-collision and level-table target manifests refer to this byte as LEVEL_TIMER"
+  ],
+  "conclusion": "FFF103 is the short LEVEL_TIMER countdown shared by the player alignment response and Level-00 callback decrement path. Its exact width, reload, test, and decrement behavior are closed; no broader scene-timer role is claimed.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

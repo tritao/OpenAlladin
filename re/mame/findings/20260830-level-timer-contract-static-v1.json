@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/level-timer-contract-static-targets.json",
+  "symbol": {
+    "address": "0x00FFF103",
+    "name": "LEVEL_TIMER",
+    "type": "u8",
+    "format": "countdown"
+  },
+  "contract": {
+    "alignment_handler": "ActorType6E_73_PlayerCollisionHandler at 0x001AFB36",
+    "alignment_test": "0x001AFB9E",
+    "reload_value": "0x04 at 0x001AFBEA",
+    "level_callback": "Level00_EnterRoutine at 0x001B5B66",
+    "decrement": "0x001B5B8C, guarded by 0x001B5B84"
+  },
+  "conclusion": "The timer suppresses repeated terrain-alignment initialization for four Level-00 callback ticks after a successful actor-relative placement.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

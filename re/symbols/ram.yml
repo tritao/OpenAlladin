@@ -1496,6 +1496,17 @@
     - ghidra_disassembly_001B1842
     - ghidra_disassembly_001B18A4
     - ghidra_disassembly_001B19AE
+0xFFF103:
+  name: LEVEL_TIMER
+  type: u8
+  format: countdown
+  confidence: decompiled
+  description: Shared short level timer used by the player alignment collision response. ActorType6E_73_PlayerCollisionHandler tests it before selecting the terrain-alignment response, reloads it to 4 after successful placement, and Level00_EnterRoutine decrements it on later level-entry callbacks.
+  evidence:
+    - ghidra_disassembly_001AFB9E
+    - ghidra_disassembly_001AFBEA
+    - ghidra_disassembly_001B5B84
+    - ghidra_disassembly_001B5B8C
 0xFF98C4:
   name: TERRAIN_LANDING_ROW_POINTERS
   type: pointer_table

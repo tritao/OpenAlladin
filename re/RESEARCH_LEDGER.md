@@ -884,6 +884,13 @@ it to `0x28`, derives the neighboring four-frame phase delay by shifting it righ
 two bits, and decrements it after each completed resource/VDP/audio phase while
 preserving the terminal value `1`.
 
+The previously address-only `LEVEL_TIMER` at `FFF103` is now canonical. The
+Type-0x6E through Type-0x73 player-collision handler tests it before initializing
+the terrain-alignment response, reloads it to `4` after successful actor-relative
+placement, and `Level00_EnterRoutine` decrements it on later callbacks. The
+promotion closes the short alignment cooldown without assigning a broader scene
+timer meaning.
+
 The adjacent compact scene-resource loader variants are recorded in
 `re/mame/findings/20260828-scene-resource-loader-variants-v1.json`.
 `0x001B4896`, `0x001B48C4`, and `0x001B48F2` load exact two-resource VRAM
