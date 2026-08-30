@@ -13,7 +13,7 @@
     { "address": "0x00FFF0D3", "name": "PLAYER_INTERACTION_MARKER", "role": "published collision/interaction marker; 0x5E and 0x60 have dedicated selector cases" },
     { "address": "0x00FFF0DE", "name": "PLAYER_TERRAIN_PUSH_DOWN_STATE", "role": "grounded push-down response state" },
     { "address": "0x00FFF0DF", "name": "PLAYER_TERRAIN_PUSH_UP_STATE", "role": "grounded push-up response state" },
-    { "address": "0x00FFF0ED", "name": "PLAYER_TERRAIN_RESPONSE_PHASE", "role": "signed terrain-response phase" },
+    { "address": "0x00FFF0ED", "name": "PLAYER_TERRAIN_RESPONSE_PHASE", "role": "terrain-response animation latch" },
     { "address": "0x00FFF0EE", "name": "PLAYER_TERRAIN_RESPONSE_TIMER", "role": "short response timer loaded with 4 by type-0x02/0x08/0x09 handlers" },
     { "address": "0x00FFF0EF", "name": "PLAYER_TERRAIN_RESPONSE_LEFT", "role": "left-direction response latch" },
     { "address": "0x00FFF0F0", "name": "PLAYER_TERRAIN_RESPONSE_RIGHT", "role": "right-direction response latch" },

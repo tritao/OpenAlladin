@@ -25,7 +25,7 @@
     {
       "address": "0x00FFF0ED",
       "name": "PLAYER_TERRAIN_RESPONSE_PHASE",
-      "evidence": "Player_TerrainResponseStateMachine and the action selectors consume the latch as a signed response phase, with exact branches for -3, -1, 1, and 3."
+      "evidence": "Collision/terrain response paths arm the latch, locomotion/action selectors gate on it, and Player_TerrainResponseStateMachine clears it as the response converges; the separate signed values -3, -1, 1, and 3 belong to TERRAIN_RESPONSE_TIMER_STATE at 0x00FFF0CC."
     },
     {
       "address": "0x00FFF0EE",

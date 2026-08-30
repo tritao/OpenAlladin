@@ -2269,13 +2269,14 @@ claim is made.
 The remaining unnamed player response bytes used by the already decoded
 terrain/collision state machine now have conservative canonical roles:
 `PLAYER_INTERACTION_MARKER` at `0x00FFF0D3`, the up/down response states at
-`0x00FFF0DE`/`0x00FFF0DF`, the signed response phase at `0x00FFF0ED`, the
+`0x00FFF0DE`/`0x00FFF0DF`, the response-animation phase latch at `0x00FFF0ED`, the
 short response timer at `0x00FFF0EE`, left/right direction latches at
 `0x00FFF0EF`/`0x00FFF0F0`, and the brake latch at `0x00FFF101`.
 
 The names follow exact static producers/consumers and the existing animation
 selector manifests. The interaction marker's `0x5E`/`0x60` cases, the timer's
-four-pass load/decrement behavior, and the signed phase values are recorded;
+four-pass load/decrement behavior, and the separate signed phase values in
+`TERRAIN_RESPONSE_TIMER_STATE` are recorded;
 direct indirect-VM setters remain unresolved where Ghidra does not export an
 absolute write. No new runtime confidence or user-facing action labels are
 claimed.

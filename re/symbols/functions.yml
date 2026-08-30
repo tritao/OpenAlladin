@@ -2649,7 +2649,7 @@
 0x001A9D98:
   name: Player_TerrainResponseStateMachine
   confidence: confirmed
-  description: Consumes the terrain flags produced earlier in the frame, calls Player_IntegrateMotion, updates the world-relative player position, and selects the run/stop/landing animation and horizontal response paths. PLAYER_TERRAIN_PUSH_UP_STATE, PLAYER_TERRAIN_PUSH_DOWN_STATE, PLAYER_TERRAIN_RESPONSE_PHASE, PLAYER_TERRAIN_RESPONSE_TIMER, PLAYER_TERRAIN_RESPONSE_LEFT, PLAYER_TERRAIN_RESPONSE_RIGHT, and PLAYER_TERRAIN_BRAKE_STATE gate the signed response branches; scene state 8 takes a dedicated camera/transition branch instead of normal player integration.
+  description: Consumes the terrain flags produced earlier in the frame, calls Player_IntegrateMotion, updates the world-relative player position, and selects the run/stop/landing animation and horizontal response paths. PLAYER_TERRAIN_PUSH_UP_STATE, PLAYER_TERRAIN_PUSH_DOWN_STATE, PLAYER_TERRAIN_RESPONSE_PHASE, PLAYER_TERRAIN_RESPONSE_TIMER, PLAYER_TERRAIN_RESPONSE_LEFT, PLAYER_TERRAIN_RESPONSE_RIGHT, and PLAYER_TERRAIN_BRAKE_STATE gate the response branches; signed horizontal phase values are held in TERRAIN_RESPONSE_TIMER_STATE, and scene state 8 takes a dedicated camera/transition branch instead of normal player integration.
   evidence:
     - ghidra_decompile_player_movement_collision_targets
     - ghidra_level_transition_targeted_decompile

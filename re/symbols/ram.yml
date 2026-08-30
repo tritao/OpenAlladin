@@ -1207,10 +1207,10 @@
     - ghidra_disassembly_001B557E
 0xFFF0ED:
   name: PLAYER_TERRAIN_RESPONSE_PHASE
-  type: i8
-  format: enum
+  type: u8
+  format: boolean
   confidence: decompiled
-  description: Signed player terrain-response phase latch consumed by locomotion/action selection and Player_TerrainResponseStateMachine. Collision/terrain paths arm it for response animation, and the state machine uses signed phases including -3, -1, 1, and 3 before clearing or advancing the response.
+  description: Player terrain-response animation latch consumed by locomotion/action selection and Player_TerrainResponseStateMachine. Collision/terrain paths arm it for response animation, and the state machine clears it as the response converges; signed horizontal phase values are held separately in TERRAIN_RESPONSE_TIMER_STATE.
   evidence:
     - player_vertical_interaction_response_animation_static
     - player_landing_response_animation_static
