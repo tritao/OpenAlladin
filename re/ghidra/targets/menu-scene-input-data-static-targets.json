@@ -17,6 +17,14 @@
     "initializer": "0x001AA3EE System_InitializeRuntime",
     "consumer": "0x001B4410 Menu_RenderControlBindings"
   },
+  "reserved_record": {
+    "address": "0x00004000",
+    "name": "MENU_CONTROL_LAYOUT_RESERVED_X_RECORD",
+    "range": ["0x00004000", "0x00004011"],
+    "size": 18,
+    "bytes": "000000000000000000000000580058005800",
+    "confidence": "provisional"
+  },
   "initial_scene_script": {
     "address": "0x00004082",
     "name": "INITIAL_SCENE_SCRIPT",
@@ -69,7 +77,8 @@
   "evidence": [
     "Direct 68000 consumers and selectors",
     "Exact ROM pointer/record extents",
-    "Existing menu, scene-script, VDP-stream, and input-pattern service contracts"
+    "Existing menu, scene-script, VDP-stream, and input-pattern service contracts",
+    "The adjacent 18-byte X-labelled reserved record is tracked separately without a consumer claim"
   ],
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"

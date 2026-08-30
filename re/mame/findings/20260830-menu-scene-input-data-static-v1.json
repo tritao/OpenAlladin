@@ -9,6 +9,14 @@
   "target_manifest": "re/ghidra/targets/menu-scene-input-data-static-targets.json",
   "objects": [
     {
+      "address": "0x00004000",
+      "name": "MENU_CONTROL_LAYOUT_RESERVED_X_RECORD",
+      "range": "0x00004000-0x00004011",
+      "bytes": 18,
+      "labels": ["X", "X", "X"],
+      "confidence": "provisional"
+    },
+    {
       "address": "0x00004012",
       "name": "MENU_CONTROL_LAYOUT_TABLE",
       "range": "0x00004012-0x0000407D",
@@ -57,7 +65,7 @@
     "Level_LoadFromSceneState installs the Level-08 VDP stream pointer and 0x70-byte bound",
     "Input selectors install the two pattern-table pointers and Input_ProcessMenuPattern stops on 0xFF00"
   ],
-  "conclusion": "The 0x00004012-0x00004153 region is now represented as exact menu-control, startup-scene, Level-08 VDP-stream, and controller-pattern objects. The preceding 0x00004000-0x00004011 bytes remain unresolved because no direct consumer currently establishes their ownership.",
+  "conclusion": "The 0x00004000-0x00004153 region is now represented as a provisional reserved X-labelled menu record followed by exact menu-control, startup-scene, Level-08 VDP-stream, and controller-pattern objects. The reserved record's runtime selector and purpose remain unresolved.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }
