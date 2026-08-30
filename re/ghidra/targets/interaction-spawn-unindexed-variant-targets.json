@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-interaction-spawn-unindexed-variant-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "variant": {
+    "address": "0x001B6BFC",
+    "end": "0x001B6C0D",
+    "size": 18,
+    "name": "InteractionSpawn_RuntimeType57_AdjacentVariant",
+    "template": "0x001B7A1C ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E",
+    "allocator": "0x001B525E InteractionSpawn_ReverseSlot",
+    "post_initialize": "On successful allocation, writes runtime actor type 0x57 to the destination record."
+  },
+  "boundary_basis": [
+    "The body starts at the exact instruction after InteractionSpawn_Type67_3D and ends at its direct RTS immediately before InteractionSpawn_Type05VariantA_23_24.",
+    "The direct template load and reverse-slot call identify the actor-spawn contract; the 0x57 byte write is the only post-allocation mutation."
+  ],
+  "reachability": "No current INTERACTION_HANDLER_TABLE pointer or other static xref reaches this body; selector and runtime reachability remain unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

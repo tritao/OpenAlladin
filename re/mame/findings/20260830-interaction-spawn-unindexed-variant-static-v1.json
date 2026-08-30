@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/interaction-spawn-unindexed-variant-targets.json",
+  "variant": {
+    "address": "0x001B6BFC",
+    "end": "0x001B6C0D",
+    "size": 18,
+    "name": "InteractionSpawn_RuntimeType57_AdjacentVariant",
+    "semantics": "Loads ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E, enters InteractionSpawn_ReverseSlot, and writes runtime type 0x57 after a successful allocation.",
+    "evidence": [
+      "Exact 68000 disassembly at 0x001B6BFC",
+      "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E record contract",
+      "InteractionSpawn_ReverseSlot contract"
+    ]
+  },
+  "reachability": "No current INTERACTION_HANDLER_TABLE pointer or other static xref reaches this body; selector and runtime reachability remain unresolved.",
+  "conclusion": "The complete 18-byte runtime-type-0x57 interaction-spawn variant is now range-bounded and named without claiming an unresolved selector or caller."
+}

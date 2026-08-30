@@ -2002,6 +2002,24 @@ def test_extended_player_collision_handler_family_is_exact():
     assert action_response.name == "PLAYER_ACTION_RESPONSE_FIELD"
 
 
+def test_unindexed_interaction_spawn_variant_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001B6BFC, include_ranges=False)
+    assert function is not None
+    assert function.name == "InteractionSpawn_RuntimeType57_AdjacentVariant"
+    assert function.end == 0x001B6C0D
+    assert function.size == 0x12
+
+    rom = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    assert rom.read_bytes()[0x001B6BFC:0x001B6C0E] == bytes.fromhex(
+        "4DF9001B7A1C"
+        "6100E65A"
+        "6604"
+        "1ABC0057"
+        "4E75"
+    )
+
+
 def test_adjacent_interaction_spawn_variants_have_exact_bodies():
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     assert rom[0x001B7474:0x001B7494] == bytes.fromhex(

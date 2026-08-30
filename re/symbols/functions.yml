@@ -4901,6 +4901,15 @@
     - ghidra_disassembly_001B6BF0
     - interaction_spawn_type5e-threshold-targets
     - interaction_spawn_type5e-threshold-static-decompilation
+0x001B6BFC:
+  name: InteractionSpawn_RuntimeType57_AdjacentVariant
+  size: 0x12
+  confidence: decompiled
+  description: Complete adjacent interaction-spawn variant that reverse-spawns ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E at 0x001B7A1C and, on successful allocation, promotes the initialized actor to runtime type 0x57. No current INTERACTION_HANDLER_TABLE pointer or other static xref reaches this body, so its selector and runtime reachability remain unresolved.
+  evidence:
+    - ghidra_disassembly_001B6BFC
+    - actor_template_mid_dispatch_family_static_decompilation
+    - interaction_spawn_unindexed_variant_static_decompilation
 0x001B6C0E:
   name: InteractionSpawn_Type05VariantA_23_24
   confidence: decompiled
