@@ -2349,6 +2349,17 @@ These names identify byte-level relationships only; no runtime consumer or
 higher-level presentation role is inferred. The result is recorded in
 `re/mame/findings/20260830-exact-duplicate-data-owners-static-v1.json`.
 
+## Unreferenced data runtime audit (20260830)
+
+A fresh-boot 1400-frame route covering title/menu entry and a sustained
+rightward gameplay segment placed ROM-read taps over every byte of the nine
+remaining data-review ranges. No tap fired. This is useful negative evidence,
+but it does not establish global unreachable status; selector and consumer
+recovery remain the next actionable step for these objects.
+
+The result is recorded in
+`re/mame/findings/20260830-unreferenced-data-runtime-audit-v1.json`.
+
 ## Menu selection-marker tile animation (20260829)
 
 `Menu_AnimateSelectionMarkerTiles` at `0x001B3B4A` runs on even
@@ -3498,3 +3509,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-hud-display-initializer-runtime-v1` | recorded-repeated-runtime-observation | Observed Interaction_InitializePendingDisplayValue execute on two fresh-boot runs and seed 0x00FF7E30 with ASCII 100000; promoted function reachability while retaining neutral display semantics |
 | `20260830-scene-e000-graphics-loader-names-static-v1` | recorded-static-decompilation | Replaced address-only names for the 0x0012D654 and 0x0012E666 E000 graphics payloads with direct loader- and destination-specific canonical names |
 | `20260830-exact-duplicate-data-owners-static-v1` | recorded-static-disassembly | Split the 0x00129A32-0x00129A91 palette bank into three exact duplicate-band owners and named the 0x000049C1 phase-child table duplicate prefix by its canonical source |
+| `20260830-unreferenced-data-runtime-audit-v1` | recorded-runtime-negative-evidence | Exercised ROM-read taps across all nine remaining data-review ranges for a 1400-frame fresh-boot/title/menu/gameplay route; no range was read, so selector recovery remains open |
