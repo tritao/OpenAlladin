@@ -815,6 +815,17 @@
     - type14_type84_presentation_animation_static_decompilation
     - ghidra_disassembly_001B6434
 
+0xFFF113:
+  name: LEVEL07_SPAWN_COOLDOWN
+  type: u8
+  format: countdown
+  confidence: decompiled
+  description: Level-07 coordinate-gated spawn cooldown. Level07_EnterRoutine reloads it to 0x3C after each successful distant Type-0x7C callback spawn and decrements it on later callback calls before another spawn may be selected.
+  evidence:
+    - ghidra_disassembly_001B5EB0
+    - ghidra_disassembly_001B5EB8
+    - level07_spawn_cooldown_static_decompilation
+
 0xFFF12E:
   name: LEVEL_EVENT_SCRIPT_CURSOR
   type: rom_pointer

@@ -584,6 +584,14 @@ def test_real_level08_vdp_state_has_canonical_roles():
     assert order.metadata["format"] == "boolean"
 
 
+def test_real_level07_spawn_cooldown_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF113, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "LEVEL07_SPAWN_COOLDOWN"
+    assert symbol.metadata["format"] == "countdown"
+    assert symbol.confidence == "decompiled"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 
