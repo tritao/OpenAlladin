@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "actor-collision-response-family",
+    "purpose": "Promote compact actor-collision cleanup, staged-response, and response-pair dispatch entries to behavior-based canonical names."
+  },
+  "pointer_table": {
+    "address": "0x001EBA",
+    "entries": [
+      { "actor_type": "0x02", "address": "0x001ABF8E" },
+      { "actor_type": "0x08", "address": "0x001ABF8E" },
+      { "actor_type": "0x09", "address": "0x001ABF8E" },
+      { "actor_type": "0x10", "address": "0x001AC2BC", "pointer": "0x001EFA" },
+      { "actor_type": "0x23", "address": "0x001ABFF0" },
+      { "actor_type": "0x2F", "address": "0x001AC676", "pointer": "0x001F76" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001ABF8E", "name": "ActorCollision_ClearSourceAndHandleType02_08_09", "legacy_name": "ActorType02_08_09_ActorCollisionHandler", "range": "0x001ABF8E-0x001ABF99", "size": 12 },
+    { "address": "0x001ABFF0", "name": "ActorCollision_StartType23ResponsePair", "legacy_name": "ActorType23_ActorCollisionHandler", "range": "0x001ABFF0-0x001ABFF9", "size": 10 },
+    { "address": "0x001AC2BC", "name": "ActorCollision_AdvanceType10Response", "legacy_name": "ActorType10_ActorCollisionHandler", "range": "0x001AC2BC-0x001AC2DF", "size": 36 },
+    { "address": "0x001AC676", "name": "ActorCollision_ClearSourceAndHandleType2F", "legacy_name": "ActorType2F_ActorCollisionHandler", "range": "0x001AC676-0x001AC681", "size": 12 }
+  ],
+  "contracts": {
+    "type02_08_09": "clear source actor and owned resources, then run Actor_HandleType2DInteraction on the receiver",
+    "type23": "clear source actor and owned resources, then enter the Type-0x23 response-pair allocator at 0x001ABFFA",
+    "type10": "run the Type-0x10 staged response, decrementing its phase with ACTOR_ANIM_TYPE10_COLLISION_RESPONSE and completing through the terminal Type-0x84 template",
+    "type2f": "clear source actor and owned resources, then run Actor_HandleType2DInteraction without receiver replacement"
+  },
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

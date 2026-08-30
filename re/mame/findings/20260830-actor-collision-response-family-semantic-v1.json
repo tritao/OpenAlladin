@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-collision-response-family-semantic-targets.json",
+  "promotions": [
+    { "address": "0x001ABF8E", "old_name": "ActorType02_08_09_ActorCollisionHandler", "name": "ActorCollision_ClearSourceAndHandleType02_08_09", "alias": "ActorType02_08_09_ActorCollisionHandler" },
+    { "address": "0x001ABFF0", "old_name": "ActorType23_ActorCollisionHandler", "name": "ActorCollision_StartType23ResponsePair", "alias": "ActorType23_ActorCollisionHandler" },
+    { "address": "0x001AC2BC", "old_name": "ActorType10_ActorCollisionHandler", "name": "ActorCollision_AdvanceType10Response", "alias": "ActorType10_ActorCollisionHandler" },
+    { "address": "0x001AC676", "old_name": "ActorType2F_ActorCollisionHandler", "name": "ActorCollision_ClearSourceAndHandleType2F", "alias": "ActorType2F_ActorCollisionHandler" }
+  ],
+  "conclusion": "Promoted four compact actor-collision response entries to behavior-based canonical names while retaining their dispatch-type aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

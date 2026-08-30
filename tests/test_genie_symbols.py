@@ -482,6 +482,20 @@ def test_player_position_response_family_has_behavior_names_and_legacy_aliases()
         assert legacy in symbol.aliases
 
 
+def test_actor_collision_response_family_has_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001ABF8E: ("ActorCollision_ClearSourceAndHandleType02_08_09", "ActorType02_08_09_ActorCollisionHandler"),
+        0x001ABFF0: ("ActorCollision_StartType23ResponsePair", "ActorType23_ActorCollisionHandler"),
+        0x001AC2BC: ("ActorCollision_AdvanceType10Response", "ActorType10_ActorCollisionHandler"),
+        0x001AC676: ("ActorCollision_ClearSourceAndHandleType2F", "ActorType2F_ActorCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

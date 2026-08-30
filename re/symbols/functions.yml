@@ -1696,9 +1696,11 @@
     - ghidra_decompile_001AC458
     - rom_actor_collision_handler_table_001EBA
 0x001AC2BC:
-  name: ActorType10_ActorCollisionHandler
+  name: ActorCollision_AdvanceType10Response
+  aliases: [ActorType10_ActorCollisionHandler]
+  size: 36
   confidence: confirmed
-  description: Actor-to-actor collision dispatch target for receiving actor type 0x10 at ROM pointer-table address 0x001EFA. Its terminal branch clears the source and receiving actor resources, arms SCENE_SCRIPT_COUNTDOWN=0x20, and installs the type-0x84 terminal template.
+  description: Advances the receiving Type-0x10 actor through its staged collision response. It clears the source and owned resources, runs Actor_HandleType2DInteraction, decrements the receiver phase while installing ACTOR_ANIM_TYPE10_COLLISION_RESPONSE when active, and on completion adds the response counter, arms SCENE_SCRIPT_COUNTDOWN for selected receiver types, releases linked state, and reinitializes the receiver from the terminal Type-0x84 template.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_level01_countdown_producer_decompile
@@ -1752,9 +1754,11 @@
     - ghidra_unclassified_actor_collision_decompile
     - actor_collision_handler_family_static_decompilation
 0x001AC676:
-  name: ActorType2F_ActorCollisionHandler
+  name: ActorCollision_ClearSourceAndHandleType2F
+  aliases: [ActorType2F_ActorCollisionHandler]
+  size: 12
   confidence: confirmed
-  description: Actor-collision dispatch target for runtime actor type 0x2F. It clears/releases the source actor and runs Actor_HandleType2DInteraction on the receiver, with no audio, player transfer, or direct scene-state write.
+  description: Clears the source of a Type-0x2F actor collision, releases its owned resources, and runs Actor_HandleType2DInteraction on the receiver without a receiver replacement, audio dispatch, player transfer, or direct scene-state write.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_unclassified_actor_collision_decompile
@@ -6383,10 +6387,11 @@
     - actor_animation_callback_family_static_decompilation
 
 0x001ABF8E:
-  name: ActorType02_08_09_ActorCollisionHandler
+  name: ActorCollision_ClearSourceAndHandleType02_08_09
+  aliases: [ActorType02_08_09_ActorCollisionHandler]
   size: 12
   confidence: decompiled
-  description: Shared actor-collision handler for receiving actor types 0x02, 0x08, and 0x09. It clears the source actor, runs the shared Type-0x2D interaction path, and returns without a receiver-specific replacement.
+  description: Shared actor-collision cleanup for receiving actor types 0x02, 0x08, and 0x09. It clears the source actor, releases its owned resources, runs the shared Type-0x2D interaction path on the receiver, and returns without a receiver-specific replacement.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_disassembly_001ABF8E
@@ -6423,10 +6428,11 @@
     - actor_collision_reinitialization
 
 0x001ABFF0:
-  name: ActorType23_ActorCollisionHandler
+  name: ActorCollision_StartType23ResponsePair
+  aliases: [ActorType23_ActorCollisionHandler]
   size: 10
   confidence: decompiled
-  description: Type-0x23 actor-collision dispatch prefix. It clears the source actor and enters ActorType23_SpawnCollisionResponsePair at 0x001ABFFA, preserving the table target's intentional fall-through into the shared response allocator.
+  description: Starts the Type-0x23 actor-collision response pair. It clears the source actor, releases its owned resources, and enters ActorType23_SpawnCollisionResponsePair at 0x001ABFFA for the receiver-side Type-0x84/Type-0x3B allocations.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_disassembly_001ABFF0
