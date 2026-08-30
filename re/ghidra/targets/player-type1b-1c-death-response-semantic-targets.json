@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-player-type1b-1c-death-response-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace type-only labels for the gated Type-0x1B and Type-0x1C death-response paths.",
+  "promotions": [
+    {
+      "address": "0x001AEA00",
+      "old_name": "ActorType1B_PlayerCollisionHandler",
+      "name": "PlayerCollision_SpawnType1BDeathResponse",
+      "alias": "ActorType1B_PlayerCollisionHandler",
+      "range": ["0x001AEA00", "0x001AEA23"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x1B",
+        "gate": "Runs only when PLAYER_ACTION_RESPONSE_FIELD is nonzero",
+        "cleanup": "Clears terrain map words through Terrain_ClearMapWordsForBehaviorPair4F_FE and latches PLAYER_INTERACTION_TYPE1B_LATCH",
+        "replacement": "Releases the current actor and initializes ACTOR_TEMPLATE_DEATH_84"
+      },
+      "evidence": [
+        "Exact 36-byte body ending at RTS 0x001AEA22",
+        "Direct action-response gate and Type-0x1B latch write",
+        "Direct 4F/FE terrain cleanup, actor release, and death-template initialization calls"
+      ]
+    },
+    {
+      "address": "0x001AEA24",
+      "old_name": "ActorType1C_PlayerCollisionHandler",
+      "name": "PlayerCollision_SpawnType1CDeathResponse",
+      "alias": "ActorType1C_PlayerCollisionHandler",
+      "range": ["0x001AEA24", "0x001AEA47"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x1C",
+        "gate": "Runs only when PLAYER_ACTION_RESPONSE_FIELD is nonzero",
+        "cleanup": "Clears terrain map words through Terrain_ClearMapWordsForBehaviorPair4E_FD and latches PLAYER_INTERACTION_TYPE1C_LATCH",
+        "replacement": "Releases the current actor and initializes ACTOR_TEMPLATE_DEATH_84"
+      },
+      "evidence": [
+        "Exact 36-byte body ending at RTS 0x001AEA46",
+        "Direct action-response gate and Type-0x1C latch write",
+        "Direct 4E/FD terrain cleanup, actor release, and death-template initialization calls"
+      ]
+    }
+  ],
+  "conclusion": "The promoted names distinguish the Type-0x1B and Type-0x1C gated death-response paths while retaining dispatch-type aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

@@ -345,6 +345,18 @@ def test_player_transition_alignment_family_has_behavior_names_and_legacy_aliase
         assert legacy in symbol.aliases
 
 
+def test_player_type1b_1c_death_response_has_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001AEA00: ("PlayerCollision_SpawnType1BDeathResponse", "ActorType1B_PlayerCollisionHandler"),
+        0x001AEA24: ("PlayerCollision_SpawnType1CDeathResponse", "ActorType1C_PlayerCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

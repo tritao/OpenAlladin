@@ -1930,7 +1930,8 @@
     - actor_template_death_84
     - player_collision_direct_entry_family_static_decompilation
 0x001AEA00:
-  name: ActorType1B_PlayerCollisionHandler
+  name: PlayerCollision_SpawnType1BDeathResponse
+  aliases: [ActorType1B_PlayerCollisionHandler]
   size: 36
   confidence: decompiled
   description: Player-collision handler for runtime actor type 0x1B. It requires PLAYER_INTERACTION_GATE, runs the existing 0x001AC386 preparation helper, latches the type-0x1B interaction at 0x00FFF10F, clears the source actor and owned resources, and reinitializes the slot from ACTOR_TEMPLATE_DEATH_84 at 0x001B7940.
@@ -1940,7 +1941,8 @@
     - actor_template_death_84
     - player_collision_direct_entry_family_static_decompilation
 0x001AEA24:
-  name: ActorType1C_PlayerCollisionHandler
+  name: PlayerCollision_SpawnType1CDeathResponse
+  aliases: [ActorType1C_PlayerCollisionHandler]
   size: 36
   confidence: decompiled
   description: Player-collision handler for runtime actor type 0x1C. It requires PLAYER_INTERACTION_GATE, runs the existing 0x001AC3BC preparation helper, latches the type-0x1C interaction at 0x00FFF110, clears the source actor and owned resources, and reinitializes the slot from ACTOR_TEMPLATE_DEATH_84 at 0x001B7940.
