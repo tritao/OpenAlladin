@@ -412,6 +412,14 @@ def test_render_vdp_word_and_hud_frame_sequence_are_exact():
     assert vdp.metadata["type"] == "vdp_control_word"
     assert vdp.confidence == "decompiled"
 
+    companion = symbols.at(0x00001CB6, include_ranges=False)
+    assert companion is not None
+    assert companion.name == "UNREFERENCED_SPRITE_VDP_CONTROL_WORD_PAIR_1CB6"
+    assert companion.end == 0x00001CBD
+    assert companion.size == 8
+    assert companion.metadata["type"] == "vdp_control_word"
+    assert companion.confidence == "provisional"
+
     sequence = symbols.at(0x000029A6, include_ranges=False)
     assert sequence is not None
     assert sequence.name == "HUD_INTERACTION_FRAME_SEQUENCE"
@@ -425,6 +433,7 @@ def test_render_vdp_word_and_hud_frame_sequence_are_exact():
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
     rom = rom_path.read_bytes()
     assert rom[vdp.address:vdp.end + 1] == bytes.fromhex("74000003")
+    assert rom[companion.address:companion.end + 1] == bytes.fromhex("6000000340000003")
     assert rom[sequence.address:sequence.address + 4] == bytes.fromhex("E6AEE6AE")
     assert rom[sequence.end - 1:sequence.end + 1] == bytes.fromhex("0000")
 
