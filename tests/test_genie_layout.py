@@ -3509,8 +3509,8 @@ def test_canonical_scene_resource_palette_sources_have_exact_loader_extents():
 def test_unreferenced_palette_data_has_exact_structural_extents():
     symbols = SymbolStore()
     expected = (
-        (0x00129312, 0x00129331, "UNREFERENCED_PALETTE_SOURCE_129312", "provisional"),
-        (0x00129A32, 0x00129A91, "UNREFERENCED_PALETTE_BAND_BANK_129A32", "provisional"),
+        (0x00129312, 0x00129331, "UNREFERENCED_PALETTE_SOURCE_129312", "decompiled"),
+        (0x00129A32, 0x00129A91, "UNREFERENCED_PALETTE_BAND_BANK_129A32", "decompiled"),
     )
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     for start, end, name, confidence in expected:
@@ -3625,7 +3625,7 @@ def test_static_header_text_and_shared_palette_families_are_exact():
 
     princess_stream = symbols.at(0x001274F0, include_ranges=False)
     assert princess_stream is not None
-    assert princess_stream.confidence == "provisional"
+    assert princess_stream.confidence == "decompiled"
     assert princess_stream.metadata["type"] == "scene_resource_stream"
     assert princess_stream.size == 0x81
     princess_text = symbols.at(0x0012755A, include_ranges=False)
@@ -3661,9 +3661,9 @@ def test_static_header_text_and_shared_palette_families_are_exact():
 def test_unreferenced_scene_palette_data_has_exact_structural_owners():
     symbols = SymbolStore()
     expected = (
-        (0x00128E4B, 0x00128E4C, "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B", "scene_resource_stream", "provisional"),
+        (0x00128E4B, 0x00128E4C, "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B", "scene_resource_stream", "decompiled"),
         (0x00128EB1, 0x00128EB1, "SCENE_SOUND_TEST_PALETTE_ALIGNMENT_PADDING", "padding_data", "confirmed"),
-        (0x00128EB2, 0x00128ED1, "UNREFERENCED_PALETTE_SOURCE_128EB2", "palette_data", "provisional"),
+        (0x00128EB2, 0x00128ED1, "UNREFERENCED_PALETTE_SOURCE_128EB2", "palette_data", "decompiled"),
         (0x00128F52, 0x00128FD1, "MENU_OPTIONS_PALETTE_BANK_128F52", "palette_data", "decompiled"),
     )
     for start, end, name, symbol_type, confidence in expected:

@@ -1,0 +1,65 @@
+{
+  "format": "openaladdin-scene-palette-body-confidence-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Close body-level confidence for exact scene-resource and Genesis palette objects while retaining unresolved selectors and higher-level roles.",
+  "objects": [
+    {
+      "address": "0x001274F0",
+      "end": "0x00127570",
+      "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM",
+      "size": 129,
+      "type": "scene_resource_stream",
+      "decoded": "0x06 frame count 0x78, 0x0E frame/palette preparation, positioned text records, and command-0 terminator"
+    },
+    {
+      "address": "0x00128E4B",
+      "end": "0x00128E4C",
+      "name": "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B",
+      "size": 2,
+      "type": "scene_resource_stream",
+      "decoded": "0x09/0x00 tile-base-0x2000 command record"
+    },
+    {
+      "address": "0x00128EB2",
+      "end": "0x00128ED1",
+      "name": "UNREFERENCED_PALETTE_SOURCE_128EB2",
+      "size": 32,
+      "type": "palette_data",
+      "bands": 1,
+      "decoded": "sixteen 0x0EEE Genesis palette words"
+    },
+    {
+      "address": "0x00129312",
+      "end": "0x00129331",
+      "name": "UNREFERENCED_PALETTE_SOURCE_129312",
+      "size": 32,
+      "type": "palette_data",
+      "bands": 1,
+      "decoded": "sixteen Genesis palette words"
+    },
+    {
+      "address": "0x00129A32",
+      "end": "0x00129A91",
+      "name": "UNREFERENCED_PALETTE_BAND_BANK_129A32",
+      "size": 96,
+      "type": "palette_data",
+      "bands": 3,
+      "decoded": "three Genesis palette bands with exact duplicate matches to existing palette sources"
+    }
+  ],
+  "evidence": [
+    "The scene-resource command table defines the decoded command widths and operations used by the bounded scene records.",
+    "The palette objects are even-aligned and divide into exact 16-word Genesis palette bands satisfying the encoding constraints.",
+    "Each extent is bounded by independently established neighboring ROM ownership."
+  ],
+  "limitations": [
+    "No direct runtime consumer or selector is recovered for these objects.",
+    "The names intentionally retain neutral UNREFERENCED wording where no subsystem role is established."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}

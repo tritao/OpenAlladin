@@ -1221,11 +1221,12 @@
   name: SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B
   type: scene_resource_stream
   size: 2
-  confidence: provisional
-  description: Provisional two-byte scene-resource command stream containing the 0x09/0x00 tile-base-0x2000 command immediately after SCENE_TRANSITION_CLOSING_STREAM. It is a complete command-table record, but no external consumer currently selects this entry.
+  confidence: decompiled
+  description: Exact two-byte scene-resource command record containing the 0x09/0x00 tile-base-0x2000 operation immediately after SCENE_TRANSITION_CLOSING_STREAM. Its command encoding and boundary are fully decoded, while no external consumer or higher-level presentation role is claimed.
   evidence:
     - unreferenced_scene_palette_data_static_v1
     - scene_resource_command_table
+    - scene_palette_body_confidence_static_v1
 
 0x00128E4D:
   name: SOUND_TEST_PRESENTATION_STREAM
@@ -1273,11 +1274,12 @@
   name: UNREFERENCED_PALETTE_SOURCE_128EB2
   type: palette_data
   size: 0x20
-  confidence: provisional
-  description: Provisional exact 16-word Genesis palette source containing 0x0EEE in every word between the menu/sound-test presentation data and SCENE_BLANK_PALETTE. No direct consumer is recovered.
+  confidence: decompiled
+  description: Exact 16-word Genesis palette source containing 0x0EEE in every word between the menu/sound-test presentation data and SCENE_BLANK_PALETTE. Its palette encoding and boundary are fully decoded, while no direct consumer or higher-level presentation role is claimed.
   evidence:
     - unreferenced_scene_palette_data_static_v1
     - fixed_palette_source_extents_static_v1
+    - scene_palette_body_confidence_static_v1
 
 0x0012675E:
   name: SOUND_TEST_ENTRY_TABLE
@@ -1615,11 +1617,12 @@
   name: SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM
   type: scene_resource_stream
   size: 0x81
-  confidence: provisional
-  description: Unwrapped scene-resource presentation stream beginning with command 0x06 frame count 0x78, command 0x0E frame/palette preparation, and positioned text records through the NUL terminator at 0x00127570. Its direct runtime wrapper remains unresolved; the exact command grammar and terminal establish the bounded extent.
+  confidence: decompiled
+  description: Exact unwrapped scene-resource presentation stream beginning with command 0x06 frame count 0x78, command 0x0E frame/palette preparation, and positioned text records through the NUL terminator at 0x00127570. Its command grammar, embedded response text, and boundary are decoded; the direct runtime wrapper remains unresolved.
   evidence:
     - scene_resource_command_table_static_decompilation
     - scene_resource_princess_response_stream_static_v1
+    - scene_palette_body_confidence_static_v1
 
 0x0012755A:
   name: SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT
@@ -1858,11 +1861,12 @@
   name: UNREFERENCED_PALETTE_SOURCE_129312
   type: palette_data
   size: 0x20
-  confidence: provisional
-  description: Exact 16-word Genesis palette-shaped source between the known INTERACTION_TYPE8B_PALETTE_SOURCE and INTERACTION_TYPE7D_PALETTE_SOURCE. No direct consumer is recovered, so this symbol records structural ownership without assigning a runtime role.
+  confidence: decompiled
+  description: Exact 16-word Genesis palette source between the known INTERACTION_TYPE8B_PALETTE_SOURCE and INTERACTION_TYPE7D_PALETTE_SOURCE. Its palette encoding and boundary are fully decoded, while no direct consumer or runtime role is assigned.
   evidence:
     - unreferenced_palette_data_static_v1
     - fixed_palette_source_extents_static_v1
+    - scene_palette_body_confidence_static_v1
 
 0x001294F2:
   name: INTERACTION_TYPE0C_PALETTE_SOURCE
@@ -2125,11 +2129,12 @@
   name: UNREFERENCED_PALETTE_BAND_BANK_129A32
   type: palette_data
   size: 0x60
-  confidence: provisional
-  description: Three contiguous 16-word Genesis palette bands between the known SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12 and SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92. The bands are structurally valid and include exact duplicates of palette data used elsewhere, but no direct consumer is recovered.
+  confidence: decompiled
+  description: Three contiguous 16-word Genesis palette bands between the known SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12 and SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92. The bands are structurally valid and include exact duplicates of palette data used elsewhere; no direct consumer or runtime role is assigned.
   evidence:
     - unreferenced_palette_data_static_v1
     - scene_resource_palette_source_extents_static_v1
+    - scene_palette_body_confidence_static_v1
 
 0x00129A92:
   name: SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92

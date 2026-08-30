@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-recorded-static-disassembly-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/scene-palette-body-confidence-static-targets.json",
+  "objects": [
+    { "range": ["0x001274F0", "0x00127570"], "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM", "size": 129, "decoded": "scene-resource command stream with positioned response text and terminal command 0" },
+    { "range": ["0x00128E4B", "0x00128E4C"], "name": "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B", "size": 2, "decoded": "09 00 tile-base-0x2000 command" },
+    { "range": ["0x00128EB2", "0x00128ED1"], "name": "UNREFERENCED_PALETTE_SOURCE_128EB2", "size": 32, "decoded": "sixteen 0x0EEE palette words" },
+    { "range": ["0x00129312", "0x00129331"], "name": "UNREFERENCED_PALETTE_SOURCE_129312", "size": 32, "decoded": "one exact Genesis palette band" },
+    { "range": ["0x00129A32", "0x00129A91"], "name": "UNREFERENCED_PALETTE_BAND_BANK_129A32", "size": 96, "decoded": "three exact Genesis palette bands with duplicate matches" }
+  ],
+  "evidence": [
+    "Exact ROM bytes and non-overlapping canonical boundaries",
+    "Established scene-resource command grammar",
+    "Exact Genesis palette-band geometry and encoding checks"
+  ],
+  "limitations": [
+    "Runtime consumers, selectors, and higher-level presentation roles remain unresolved; this is a body-level confidence promotion only."
+  ],
+  "conclusion": "The five scene/palette objects are fully decoded at the byte and format level without fabricating runtime ownership."
+}
