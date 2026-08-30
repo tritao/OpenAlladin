@@ -624,6 +624,15 @@ def test_real_scene_resource_rebuild_phase_state_has_canonical_roles():
         assert symbol.confidence == "decompiled"
 
 
+def test_real_scene_resource_fast_path_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF11B, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "SCENE_RESOURCE_FAST_PATH"
+    assert symbol.metadata["type"] == "u8"
+    assert symbol.metadata["format"] == "boolean"
+    assert symbol.confidence == "decompiled"
+
+
 def test_real_global_prng_state_has_canonical_role():
     symbol = SymbolStore().at(0x00FF7DEA, include_ranges=False)
     assert symbol is not None

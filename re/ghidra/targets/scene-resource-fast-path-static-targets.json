@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-scene-resource-fast-path-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the scene/resource presentation selector that chooses the fast frame-service path during palette transitions.",
+  "state": {
+    "address": "0x00FFF11B",
+    "name": "SCENE_RESOURCE_FAST_PATH",
+    "type": "u8",
+    "format": "boolean"
+  },
+  "consumer": {
+    "address": "0x001B278A",
+    "name": "Render_RunPaletteTransitionFrom",
+    "set_behavior": "Call Frame_RunServicePass at 0x001B28AE when the byte is nonzero.",
+    "clear_behavior": "Call Frame_WaitForVBlankWork at 0x001B249E when the byte is zero."
+  },
+  "writers": [
+    {
+      "address": "0x001AA376",
+      "name": "System_InitializeRuntime",
+      "operation": "Clear the selector during startup."
+    },
+    {
+      "address": "0x001B3CAE",
+      "name": "Menu_RunOptionsPresentationContinuation",
+      "operation": "Set before the alternate palette transition and clear after it."
+    },
+    {
+      "address": "0x001B3D40",
+      "name": "Menu_RunOptionsPresentationContinuation",
+      "operation": "Set before the second palette transition and clear after it."
+    }
+  ],
+  "evidence": [
+    "Exact selector branch in Render_RunPaletteTransitionFrom at 0x001B27DA-0x001B27F0",
+    "Startup clear at 0x001AA376",
+    "Menu presentation set/clear pairs at 0x001B3CAE/0x001B3CBE and 0x001B3D40/0x001B3D50"
+  ],
+  "conclusion": "FFF11B selects the fast frame-service path for palette transitions and is otherwise cleared for the normal VBlank wait path.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

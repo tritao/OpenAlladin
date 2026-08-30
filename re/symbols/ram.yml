@@ -1719,6 +1719,19 @@
     - ghidra_disassembly_001B18B2
     - ghidra_disassembly_001B1966
     - ghidra_disassembly_001B1998
+0xFFF11B:
+  name: SCENE_RESOURCE_FAST_PATH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Scene/resource presentation fast-path selector. Render_RunPaletteTransitionFrom uses Frame_RunServicePass when it is set and Frame_WaitForVBlankWork when it is clear; startup clears it, while the menu presentation continuation sets and clears it around alternate palette transitions.
+  evidence:
+    - ghidra_disassembly_001AA376
+    - ghidra_decompile_001B278A
+    - ghidra_disassembly_001B3CAE
+    - ghidra_disassembly_001B3CBE
+    - ghidra_disassembly_001B3D40
+    - ghidra_disassembly_001B3D50
 
 0xFFF103:
   name: LEVEL_TIMER
