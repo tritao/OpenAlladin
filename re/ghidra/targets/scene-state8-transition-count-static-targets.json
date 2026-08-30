@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-scene-state8-transition-count-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the state-8 terminal-transition count shared by the exit and presentation paths.",
+  "state": {
+    "address": "0x00FFF006",
+    "name": "SCENE_STATE8_TRANSITION_COUNT",
+    "type": "u8",
+    "format": "counter"
+  },
+  "producer": {
+    "address": "0x001A8F0C",
+    "name": "Level_ExitAndTerminalTransition",
+    "condition": "SCENE_STATE == 0x08 and PLAYER_TERMINAL_TRANSITION has completed.",
+    "operation": "Increment the count and stop the terminal path when it reaches 3."
+  },
+  "consumer": {
+    "address": "0x001B0D70",
+    "name": "SceneResource_RunStatePresentation",
+    "condition": "SCENE_STATE == 0x08.",
+    "operation": "Use count >= 3 to select the alternate state-8 resource load."
+  },
+  "evidence": [
+    "Exact increment and threshold branch at 0x001A8F64-0x001A8F74",
+    "Exact state-8 threshold branch at 0x001B0DEC-0x001B0DF6",
+    "No direct references outside the two named scene services"
+  ],
+  "conclusion": "FFF006 counts completed state-8 terminal transitions and selects the alternate state-8 presentation after the third.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

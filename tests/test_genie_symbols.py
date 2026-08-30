@@ -809,6 +809,15 @@ def test_real_level00_type13_palette_delay_has_canonical_role():
     assert symbol.metadata["format"] == "countdown"
 
 
+def test_real_scene_state8_transition_count_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF006, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "SCENE_STATE8_TRANSITION_COUNT"
+    assert symbol.metadata["type"] == "u8"
+    assert symbol.metadata["format"] == "counter"
+    assert symbol.confidence == "decompiled"
+
+
 def test_real_actor_type42_collision_step_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF10A, include_ranges=False)
     assert symbol is not None

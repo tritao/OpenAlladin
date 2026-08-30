@@ -1042,6 +1042,19 @@
     - ghidra_decompile_001B5B66
     - ghidra_disassembly_001B5B66
 
+0xFFF006:
+  name: SCENE_STATE8_TRANSITION_COUNT
+  type: u8
+  format: counter
+  confidence: decompiled
+  description: Scene-state-8 terminal-transition count. Level_ExitAndTerminalTransition increments it when the terminal transition completes in scene state 0x08 and stops the path after it reaches three; SceneResource_RunStatePresentation uses the same threshold to select the alternate state-8 resource load.
+  evidence:
+    - ghidra_decompile_001A8F0C
+    - ghidra_decompile_001B0D70
+    - ghidra_disassembly_001A8F64
+    - ghidra_disassembly_001A8F6A
+    - ghidra_disassembly_001B0DEC
+
 0xFFF114:
   name: PLAYER_TERRAIN_TRANSITION_GATE
   type: u8
