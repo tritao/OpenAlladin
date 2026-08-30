@@ -3862,7 +3862,7 @@ def test_player_transition_flag_response_helper_is_exact():
     assert helper.name == "Player_SetTransitionFlagResponseAnimation"
     assert helper.end == 0x001ADAAF
     assert helper.size == 24
-    assert helper.confidence == "provisional"
+    assert helper.confidence == "decompiled"
 
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     assert rom[0x001ADA98:0x001ADAB0] == bytes.fromhex(
@@ -4343,7 +4343,7 @@ def test_audio_command_wrapper_family_is_exact():
     assert reader.name == "Audio_ReadZ80IndexedResult"
     assert reader.end == 0x001E5A17
     assert reader.size == 38
-    assert reader.confidence == "provisional"
+    assert reader.confidence == "decompiled"
     assert rom[0x001E59F2:0x001E59F8] == bytes.fromhex("40E7007C0700")
     assert rom[0x001E5A14:0x001E5A18] == bytes.fromhex("46DF4E75")
 

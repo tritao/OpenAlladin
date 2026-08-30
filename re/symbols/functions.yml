@@ -3252,7 +3252,7 @@
 0x001E59F2:
   name: Audio_ReadZ80IndexedResult
   size: 38
-  confidence: provisional
+  confidence: decompiled
   description: Masks interrupts, acquires the Z80 bus, reads a byte from the Z80 result table at 0x00A01B22 indexed by the caller's stack byte, releases the bus, restores status, and returns the result.
   evidence:
     - audio_command_wrapper_family_static_disassembly
@@ -3422,7 +3422,7 @@
 0x001ADA98:
   name: Player_SetTransitionFlagResponseAnimation
   size: 24
-  confidence: provisional
+  confidence: decompiled
   description: Installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE at 0x00121C62, clears PLAYER_ANIMATION_TIMER and PLAYER_INTERACTION_ANIMATION_GATE, and returns; the direct producer or selector for this compact helper remains unresolved.
   evidence:
     - player_transition_flag_response_helper_static_disassembly

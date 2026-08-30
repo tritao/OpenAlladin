@@ -22,6 +22,6 @@
     "Its direct RTS ends at 0x001ADAAF, immediately before the second Ghidra range of Player_TerrainLandingResolver at 0x001ADAB0.",
     "No direct static caller is currently recovered; this target records exact writes without assigning selector reachability."
   ],
-  "confidence": "provisional",
+  "confidence": "decompiled",
   "status": "recorded-static-disassembly"
 }
