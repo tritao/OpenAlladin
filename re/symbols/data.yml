@@ -1685,11 +1685,12 @@
   type: palette_data
   size: 0x80
   confidence: decompiled
-  description: Four-band Genesis palette bank between SCENE_BLANK_PALETTE and SCENE_TRANSITION_PALETTE_SOURCE. Its first three 16-word bands are zero-filled and its final band is a valid nonzero palette source; the recovered menu continuation passes its base pointer to Render_RunPaletteTransitionFrom, while live runtime reachability remains unresolved.
+  description: Four-band Genesis palette bank between SCENE_BLANK_PALETTE and SCENE_TRANSITION_PALETTE_SOURCE. Its first three 16-word bands are zero-filled and its final band is a valid nonzero palette source; the recovered menu continuation passes its base pointer to Render_RunPaletteTransitionFrom. The static consumer and targeted startup/primary-to-secondary menu probes are recorded, but no execution of the 0x001B3CB4 load or ROM read from this bank was observed.
   evidence:
     - unreferenced_scene_palette_data_static_v1
     - scene_palette_bank_extents_static_v1
     - menu_unreachable_continuation_palette_consumer_static_v1
+    - menu_palette_selection_runtime_audit_v1
 
 0x00128FD2:
   name: SCENE_TRANSITION_PALETTE_SOURCE

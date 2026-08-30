@@ -1,0 +1,59 @@
+{
+  "format": "openaladdin-menu-palette-selection-runtime-audit-v1",
+  "recorded_at": "2026-08-30",
+  "repository_commit_at_capture": "0278c9bba882c6db05aadd103c21dfd615423627",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target": {
+    "address": "0x00128F52",
+    "range": ["0x00128F52", "0x00128FD1"],
+    "name": "MENU_OPTIONS_PALETTE_BANK_128F52",
+    "static_consumer": "0x001B3CB4 lea (0x00128F52).l,A0; bsr 0x001B278A"
+  },
+  "probe": {
+    "trace": "build/re/traces/semantic-menu-palette-selection-v8",
+    "frames": 700,
+    "input": "none*450,down*2,none*30,b*2,none*200",
+    "breakpoint_supporting_trace": "build/re/traces/semantic-menu-palette-selection-v7",
+    "breakpoints": [
+      "0x001B3F52",
+      "0x001B3F86",
+      "0x001B3F9C",
+      "0x001B4056",
+      "0x001B4060",
+      "0x001B3CB4",
+      "0x001B409A"
+    ],
+    "rom_read_range": "0x00128F52-0x00128FD1"
+  },
+  "observations": {
+    "primary_menu_entry": {
+      "address": "0x001B3B96",
+      "reported_post_instruction_pc": "0x001B3B98",
+      "frame": "0x00000006"
+    },
+    "selection_input": {
+      "down_input_frames": [450, 451],
+      "active_low_second_phase": "0xFF7D",
+      "index_update": "MENU_SELECTION_INDEX becomes 1 at the 0x001B4000 write path"
+    },
+    "secondary_branch": {
+      "branch_address": "0x001B4056",
+      "reported_post_instruction_pc": "0x001B4058",
+      "frame": "0x000001E1",
+      "follow_on": "0x001B409A secondary-options frame loop"
+    },
+    "palette_consumer": {
+      "address": "0x001B3CB4",
+      "executed": false
+    },
+    "palette_rom_reads": {
+      "count": 0,
+      "executed": false
+    }
+  },
+  "conclusion": "The deterministic probe reaches the real primary-to-secondary options branch and exercises its alternate input loop, but neither the statically recovered 0x001B3CB4 palette load nor any read from 0x00128F52-0x00128FD1 occurs. The bank remains a fully decoded, statically owned menu palette asset; its tested runtime reachability is negative and no stronger promotion is justified."
+}

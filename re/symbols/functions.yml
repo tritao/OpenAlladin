@@ -574,7 +574,7 @@
   name: SceneResource_LoadC000AndRunFrameService
   size: 146
   confidence: decompiled
-  description: Loads a caller-selected scene resource into VRAM C000, performs one actor/render frame pass, uploads the caller-selected palette band followed by the three fixed scene palette bands, processes the caller-selected scene command stream, waits 250 frames, and clears the active scene actors and fixed VDP header. The direct selector for this complete service remains unresolved.
+  description: Loads a caller-selected scene resource into VRAM C000, performs one actor/render frame pass, uploads the caller-selected palette band followed by the three fixed scene palette bands, processes the caller-selected scene command stream, waits 250 frames, and clears the active scene actors and fixed VDP header. This complete isolated VDP/service body has no exported direct selector or incoming ROM pointer in the current database; the existing Level-01, long-traversal, and scene-state matrix probes did not execute it.
   evidence:
     - gnu_m68k_disassembly_001B4A96
     - scene_resource_service_gap_closures_static_v1
@@ -845,7 +845,7 @@
   name: SceneResource_RunSharedC000Presentation
   size: 120
   confidence: decompiled
-  description: Programs the scene VDP mode, decompresses the shared graphics resource at 0x0012D0FA to VRAM C000, uploads palette source 0x00129812, emits the fixed C000 presentation fill through the frame-phase loop at 0x00FFF0A0, and performs the shared wait/fade/reset completion. The direct selector for this complete presentation service remains unresolved.
+  description: Programs the scene VDP mode, decompresses the shared graphics resource at 0x0012D0FA to VRAM C000, uploads palette source 0x00129812, emits the fixed C000 presentation fill through the frame-phase loop at 0x00FFF0A0, and performs the shared wait/fade/reset completion. This complete isolated presentation body has no exported direct selector or incoming ROM pointer in the current database; the existing Level-01, long-traversal, and scene-state matrix probes did not execute it.
   evidence:
     - gnu_m68k_disassembly_001B4F04
     - scene_resource_service_gap_closures_static_v1
@@ -3095,7 +3095,7 @@
   name: SceneResource_ClearC000AndWritePhaseRows
   size: 96
   confidence: decompiled
-  description: Programs the scene VDP mode, clears the initial C000 scene block with 0x00 words, and writes sixteen phase-selected row pairs using SCENE_VDP_TRANSITION_PLANE_OFFSET_TABLE at 0x00002080 and FRAME_PHASE_COUNTER. The direct selector for this complete VDP helper remains unresolved.
+  description: Programs the scene VDP mode, clears the initial C000 scene block with 0x00 words, and writes sixteen phase-selected row pairs using SCENE_VDP_TRANSITION_PLANE_OFFSET_TABLE at 0x00002080 and FRAME_PHASE_COUNTER. This complete isolated VDP helper has no exported direct selector or incoming ROM pointer in the current database; the existing Level-01, long-traversal, and scene-state matrix probes did not execute it.
   evidence:
     - gnu_m68k_disassembly_001B4836
     - scene_vdp_transition_plane_offset_table_static_v1
