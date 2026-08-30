@@ -3839,6 +3839,7 @@ def test_extended_actor_collision_handler_dispatch_family_is_exact():
 def test_final_mechanical_function_closure_is_exact():
     symbols = SymbolStore()
     expected = {
+        0x001AF228: (0x001AF263, "ActorType3A_PlayerCollisionHandler"),
         0x001AE6B4: (0x001AE6BB, "Player_SuppressCollisionResponse"),
         0x001AF562: (0x001AF56B, "ActorType5D_PlayerCollisionHandler"),
         0x001AF56C: (0x001AF58F, "PlayerCollision_ClearMatchingActorTypeRecords"),
@@ -3857,6 +3858,7 @@ def test_final_mechanical_function_closure_is_exact():
     assert suppression.metadata["type"] == "u8"
 
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001AF262:0x001AF264] == bytes.fromhex("4E75")
     assert rom[0x001AE6B4:0x001AE6BC] == bytes.fromhex("50F900FFF0F54E75")
     assert rom[0x001B03BE:0x001B03F2][-2:] == bytes.fromhex("4E75")
 

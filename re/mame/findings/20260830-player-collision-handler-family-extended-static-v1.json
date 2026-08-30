@@ -14,6 +14,15 @@
     "actor_collision_entries": 1,
     "distinct_actor_bodies": 1
   },
+  "internal_tail_closures": [
+    {
+      "owner": "ActorType3A_PlayerCollisionHandler",
+      "range": ["0x001AF262", "0x001AF263"],
+      "bytes": "4E75",
+      "semantics": "Terminal RTS branch target reached by the Type-0x3A handler and included in its canonical 60-byte owner range.",
+      "confidence": "confirmed"
+    }
+  ],
   "families": [
     {
       "types": ["0x01"],

@@ -68,11 +68,22 @@
       "description": "Shared cleanup loop selected by the type-0x5C and type-0x5D dispatch prefixes; it clears matching common actor records and transfers to the shared response handler."
     }
   ],
+  "internal_tail_closures": [
+    {
+      "owner": "ActorType3A_PlayerCollisionHandler",
+      "owner_range": ["0x001AF228", "0x001AF263"],
+      "address": "0x001AF262",
+      "size": 2,
+      "bytes": "4E75",
+      "semantics": "Terminal RTS branch target reached by the Type-0x3A handler's unconditional branch; included in the owner range even though the direct Ghidra range ended at 0x001AF261."
+    }
+  ],
   "boundary_basis": [
     "Each player handler start is a direct pointer-table target at 0x001CBE plus actor_type*4.",
     "Each promoted body ends immediately before the next distinct dispatch target or the next already-owned canonical handler; shared entries retain one owner range.",
     "The actor Type-0x0D entry is the direct target at 0x001EEE and ends at the RTS before ActorType14_ActorCollisionHandler.",
     "The Type-0x3B body is an intentional ten-byte prefix that falls through to ActorType3A_PlayerCollisionHandler when its gate is clear.",
+    "The Type-0x3A owner includes its internal branch-target RTS at 0x001AF262-0x001AF263, extending two bytes beyond the direct Ghidra function range.",
     "The Type-0x5D table target owns only its ten-byte prefix; the following 36 bytes are the separately callable cleanup helper at 0x001AF56C."
   ],
   "confidence": "decompiled",
