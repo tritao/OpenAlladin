@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-player-terrain-bounce-state-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/player-terrain-bounce-state-static-targets.json",
+  "helper": {
+    "address": "0x001ADAB0",
+    "end": "0x001ADB21",
+    "size": 114,
+    "name": "Player_AdvanceTerrainBounceState",
+    "bytes": "4A3900FFF0BE670A4A3900FFF0C0670000684A3900FFF0D06600005E4A3900FFF0D7660000544A3900FFF0DB6600004A303900FF7E5A064000780C400800064033C000FF7E5A0C3900FF00FFF0EB6706523900FFF0EB0C39002800FFF0EB661823FC00121AD800FF7E60423900FF7E774E75",
+    "semantics": "When the terrain-response and transition gates permit, advances PLAYER_VY by 0x0078 up to 0x0800, advances the terrain-bounce animation state, and on state 0x28 restarts PLAYER_ANIM_TERRAIN_BOUNCE_ROOT with a cleared timer."
+  },
+  "consumer": {
+    "address": "0x001AD7B4",
+    "name": "Player_TerrainLandingResolver",
+    "calls": "The resolver reaches the helper from its terrain landing/response branches, including the direct call at 0x001AD900."
+  },
+  "boundaries": {
+    "start": "The helper begins immediately after Player_SetTransitionFlagResponseAnimation at 0x001ADA98-0x001ADAAF.",
+    "end": "The helper returns at 0x001ADB20-0x001ADB21; the following 0x001ADB22-0x001ADB29 branch target is the separate landing-state setter."
+  },
+  "evidence": [
+    "Ghidra targeted decompilation of 0x001ADAB0",
+    "Exact GNU m68k disassembly and ROM bytes",
+    "Player_TerrainLandingResolver caller/xref inventory",
+    "PLAYER_TERRAIN_BOUNCE_ANIMATION_STATE and PLAYER_ANIM_TERRAIN_BOUNCE_ROOT contracts"
+  ],
+  "conclusion": "The formerly mechanical 0x001ADAB0 function is the terrain-bounce state/velocity advancement helper. Its gate checks, capped vertical acceleration, state counter, and terminal animation restart are now canonical without absorbing the adjacent landing-state branch target."
+}

@@ -3428,6 +3428,15 @@
     - player_transition_flag_response_helper_static_disassembly
     - player_transition_response_animation_static_decompilation
     - ghidra_player_animation_selector
+0x001ADAB0:
+  name: Player_AdvanceTerrainBounceState
+  size: 114
+  confidence: decompiled
+  description: Advances the player terrain-bounce response when terrain and transition gates permit. It adds 0x0078 to PLAYER_VY up to the 0x0800 cap, increments PLAYER_TERRAIN_BOUNCE_ANIMATION_STATE when active, and after state 0x28 restarts PLAYER_ANIM_TERRAIN_BOUNCE_ROOT while clearing PLAYER_ANIMATION_TIMER.
+  evidence:
+    - ghidra_decompile_001ADAB0
+    - player_terrain_bounce_animation_static_decompilation
+    - ghidra_player_terrain_landing_resolver
 0x001ADB22:
   name: Player_TerrainLandingResolver_SetLandingState
   size: 8

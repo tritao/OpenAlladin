@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-player-terrain-bounce-state-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target": {
+    "address": "0x001ADAB0",
+    "end": "0x001ADB21",
+    "size": 114,
+    "name": "Player_AdvanceTerrainBounceState",
+    "caller": "0x001AD7B4 Player_TerrainLandingResolver",
+    "writes": [
+      "PLAYER_VY += 0x0078 while below 0x0800",
+      "PLAYER_TERRAIN_BOUNCE_ANIMATION_STATE += 1 when active",
+      "PLAYER_ANIMATION_PC = 0x00121AD8 at state 0x28",
+      "PLAYER_ANIMATION_TIMER = 0"
+    ]
+  },
+  "gates": [
+    "TERRAIN_RESPONSE_ACTIVE == 0 or TERRAIN_VERTICAL_STOP != 0",
+    "PLAYER_TRANSITION_GATE == 0",
+    "PLAYER_INTERACTION_TRANSITION_LOCK == 0",
+    "PLAYER_TRANSITION_LOCK == 0"
+  ],
+  "boundary_basis": [
+    "Player_TerrainLandingResolver calls this complete helper from its terrain-response branches.",
+    "The body has one conditional terminal return at 0x001ADB20-0x001ADB21.",
+    "The following 0x001ADB22 branch target is a separate eight-byte landing-state setter owned by Player_TerrainLandingResolver."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
