@@ -21,6 +21,16 @@ REVIEW_MARKERS = (
     "selector remains",
     "consumer remains",
     "producer remains",
+    "user-facing game meaning remains unassigned",
+    "user-facing gameplay meaning remains unassigned",
+    "higher-level scene identity remains intentionally neutral",
+    "higher-level presentation role is claimed",
+    "higher-level function role is claimed",
+    "no external consumer",
+    "no direct consumer",
+    "no exported consumer",
+    "no static incoming reference",
+    "live entry remains unclaimed",
 )
 
 

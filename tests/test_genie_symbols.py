@@ -203,6 +203,35 @@ def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     assert queue[0]["description"] == "The selector remains unresolved."
 
 
+def test_symbol_review_queue_catches_conservative_identity_and_reachability_language(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    queue = symbol_review_queue(
+        AnalysisDatabase(database_root),
+        SymbolStore(symbols=(
+            Symbol(
+                0x10,
+                "NeutralAsset",
+                "data",
+                confidence="decompiled",
+                description=(
+                    "Exact payload; its higher-level scene identity remains intentionally neutral. "
+                    "No external consumer or live entry remains unclaimed."
+                ),
+            ),
+            Symbol(0x20, "ClosedData", "data", confidence="confirmed"),
+        )),
+    )
+
+    assert len(queue) == 1
+    assert queue[0]["address"] == "0x00000010"
+    assert queue[0]["review_markers"] == [
+        "higher-level scene identity remains intentionally neutral",
+        "no external consumer",
+        "live entry remains unclaimed",
+    ]
+
+
 def test_context_combines_function_references_and_layout(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
