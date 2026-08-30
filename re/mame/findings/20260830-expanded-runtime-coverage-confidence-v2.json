@@ -1,0 +1,47 @@
+{
+  "format": "openaladdin-expanded-runtime-coverage-confidence-v2",
+  "recorded_at": "2026-08-30",
+  "status": "recorded-runtime-evidence",
+  "repository_commit_at_capture": "7b3cfac",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "source": {
+    "trace_root": "build/re/traces",
+    "merged_coverage": "build/re/coverage-expanded.json",
+    "scenario_count": 118,
+    "pc_sample_count": 124425,
+    "unique_pc_count": 1587,
+    "mapping": "Each covered PC was mapped to the canonical whole-ROM function range containing that address.",
+    "promotion": "Promote already-decompiled canonical functions covered in at least three scenarios; retain two-scenario observations as decompiled unless independently justified."
+  },
+  "promotions": [
+    { "address": "0x001AAA88", "name": "Level_CameraScrollCallback_Levels00_01_02", "covered_pcs": 8, "sample_count": 150, "scenario_count": 75 },
+    { "address": "0x001AC86C", "name": "ActorVM_ClearAnimationOrMovementCursor", "covered_pcs": 2, "sample_count": 75, "scenario_count": 75 },
+    { "address": "0x001ACA14", "name": "ActorVM_CompareBranch", "covered_pcs": 12, "sample_count": 18, "scenario_count": 13 },
+    { "address": "0x001AC8E0", "name": "ActorVM_SetStreamTimerAndLoop", "covered_pcs": 6, "sample_count": 10, "scenario_count": 9 },
+    { "address": "0x001B02B6", "name": "Interaction_DecrementResourceProgressCounter", "covered_pcs": 1, "sample_count": 15, "scenario_count": 8 },
+    { "address": "0x001AB55A", "name": "Camera_ScrollDownAndRefill", "covered_pcs": 5, "sample_count": 7, "scenario_count": 5 },
+    { "address": "0x001AD314", "name": "ActorVM_AddOrSubtractValue", "covered_pcs": 3, "sample_count": 4, "scenario_count": 4 },
+    { "address": "0x001AC926", "name": "ActorVM_RewindStreamAfterTimer", "covered_pcs": 7, "sample_count": 139, "scenario_count": 3 },
+    { "address": "0x001AC98E", "name": "ActorVM_FlagTestBranch", "covered_pcs": 4, "sample_count": 5, "scenario_count": 3 },
+    { "address": "0x001AC850", "name": "ActorVM_JumpToStreamPointer", "covered_pcs": 2, "sample_count": 4, "scenario_count": 3 },
+    { "address": "0x001B00D6", "name": "Interaction_DrainResponseCounter", "covered_pcs": 2, "sample_count": 11, "scenario_count": 3 },
+    { "address": "0x001AE9D4", "name": "ActorType7B_PlayerCollisionHandler", "covered_pcs": 1, "sample_count": 12, "scenario_count": 3 }
+  ],
+  "retained_decompiled": [
+    { "address": "0x001AD372", "name": "ActorVM_PushStreamParameter", "covered_pcs": 1, "sample_count": 5, "scenario_count": 2 },
+    { "address": "0x001AD392", "name": "ActorVM_PlayerWithinXBranch", "covered_pcs": 1, "sample_count": 2, "scenario_count": 2 },
+    { "address": "0x001AD3C2", "name": "ActorVM_PlayerWithinYBranch", "covered_pcs": 2, "sample_count": 2, "scenario_count": 2 },
+    { "address": "0x001A986E", "name": "Player_ApplyTerrainResponse", "covered_pcs": 1, "sample_count": 2, "scenario_count": 2 },
+    { "address": "0x001AA724", "name": "Camera_RebuildView", "covered_pcs": 1, "sample_count": 2, "scenario_count": 2 },
+    { "address": "0x001AAC14", "name": "Level03_CameraScrollCallback", "covered_pcs": 1, "sample_count": 2, "scenario_count": 2 },
+    { "address": "0x001AB66C", "name": "Camera_ScrollUpAndRefill", "covered_pcs": 1, "sample_count": 2, "scenario_count": 2 },
+    { "address": "0x001AC726", "name": "Render_SubmitActorSprites", "covered_pcs": 1, "sample_count": 2, "scenario_count": 2 },
+    { "address": "0x001AC950", "name": "ActorVM_RandomBranch", "covered_pcs": 1, "sample_count": 2, "scenario_count": 2 },
+    { "address": "0x001AE0D4", "name": "Actor_RepublishInteractionValueOnCull", "covered_pcs": 1, "sample_count": 2, "scenario_count": 2 }
+  ],
+  "conclusion": "The expanded archive provides repeated multi-scenario runtime evidence for twelve already-understood functions. The promotion is confidence-only: names, ROM ownership, and generated deasm bytes are unchanged."
+}

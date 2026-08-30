@@ -184,11 +184,12 @@
     - ghidra_interaction_dispatch_callers
 0x001AB55A:
   name: Camera_ScrollDownAndRefill
-  confidence: decompiled
+  confidence: trace_validated
   description: Consumes the down-scroll refill path, adjusts the vertical camera state by one 0x10-pixel step, writes 23 terrain-derived entries to the VDP column, and processes the refreshed interaction rows through InteractionTable_ProcessRowsB.
   evidence:
     - ghidra_decompile_001AB55A
     - ghidra_interaction_dispatch_callers
+    - expanded_runtime_coverage_20260830
 0x001AB66C:
   name: Camera_ScrollUpAndRefill
   confidence: decompiled
@@ -1423,11 +1424,12 @@
     - ghidra_interaction_counter_reset_audit
 0x001B00D6:
   name: Interaction_DrainResponseCounter
-  confidence: decompiled
+  confidence: trace_validated
   description: Unthrottled response-counter drain used by Interaction_SynchronizeResponseState; decrements ACTOR_RESPONSE_COUNTER, advances the decimal interaction counter, and invokes the response reset helper at the configured budget.
   evidence:
     - ghidra_decompile_001B00D6
     - ghidra_interaction_counter_reset_audit
+    - expanded_runtime_coverage_20260830
 0x001B0138:
   name: Interaction_AddResponseCounter1
   confidence: decompiled
@@ -1981,12 +1983,13 @@
 0x001AE9D4:
   name: ActorType7B_PlayerCollisionHandler
   size: 6
-  confidence: decompiled
+  confidence: trace_validated
   description: Player-collision handler for runtime actor type 0x7B. It delegates directly to Player_ProcessInteractionState and returns.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AE9D4
     - player_collision_response_entry_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AEB7A:
   name: ActorType0D_PlayerCollisionHandler
   size: 2
@@ -2305,7 +2308,7 @@
 
 0x001B02B6:
   name: Interaction_DecrementResourceProgressCounter
-  confidence: decompiled
+  confidence: trace_validated
   size: 52
   description: Decrements the three-digit ASCII INTERACTION_RESOURCE_PROGRESS_COUNTER with decimal borrow, leaves 000 unchanged, then returns its base pointer through Interaction_GetResourceProgressPointer.
   evidence:
@@ -2313,6 +2316,7 @@
     - ghidra_decompile_001B02B6
     - interaction_response_counter_complete_targets
     - interaction_response_counter_complete_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001B0336:
   name: FarTransfer_InteractionCounterStep
   confidence: confirmed
@@ -3805,11 +3809,12 @@
 0x001AAA88:
   name: Level_CameraScrollCallback_Levels00_01_02
   size: 396
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared level camera-scroll callback selected by LEVEL_TABLE records 0, 1, and 2. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X, CAMERA_SCROLL_X, and the active scene state, then returns at 0x001AAC13.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AAA88
+    - expanded_runtime_coverage_20260830
 0x001AAC14:
   name: Level03_CameraScrollCallback
   size: 386
@@ -4299,12 +4304,13 @@
     - level_callback_family_targets
 0x001AC850:
   name: ActorVM_JumpToStreamPointer
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM jump handler for animation opcode EA and movement opcode 80; advances past the command header and replaces the stream cursor with the following 32-bit pointer.
   evidence:
     - ghidra_disassembly_001AC850
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AC856:
   name: ActorVM_ToggleFacingState
   confidence: decompiled
@@ -4315,12 +4321,13 @@
     - actor_vm_dispatch_family_static_decompilation
 0x001AC86C:
   name: ActorVM_ClearAnimationOrMovementCursor
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM clear handler for animation opcode EC and movement opcode 82; clears the actor animation cursor at +0x20 or movement cursor at +0x0A according to the command byte and publishes the current VM stream scratch pointer.
   evidence:
     - ghidra_disassembly_001AC86C
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AC89A:
   name: ActorVM_WriteActorOrRamValue
   confidence: decompiled
@@ -4331,28 +4338,31 @@
     - actor_vm_dispatch_family_static_decompilation
 0x001AC8E0:
   name: ActorVM_SetStreamTimerAndLoop
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM timer handler for animation opcode EE and movement opcode 84; stores the command byte in the selected animation or movement timer field and publishes the current stream pointer as its loop target.
   evidence:
     - ghidra_disassembly_001AC8E0
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AC926:
   name: ActorVM_RewindStreamAfterTimer
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM loop-delay handler for animation opcode EF and movement opcode 85; consumes the command header, decrements the selected actor timer, and restores the corresponding stream cursor when the timer remains active.
   evidence:
     - ghidra_disassembly_001AC926
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AC950:
   name: ActorVM_RandomBranch
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM random-branch handler for animation opcode F0 and movement opcode 86; compares the next random byte with the stream operand and either follows the inline pointer or skips the pointer payload.
   evidence:
     - ghidra_disassembly_001AC950
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AC968:
   name: ActorVM_ApplyRelativeOffset
   confidence: decompiled
@@ -4363,20 +4373,22 @@
     - actor_vm_dispatch_family_static_decompilation
 0x001AC98E:
   name: ActorVM_FlagTestBranch
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM flag-test handler for animation opcode F2 and movement opcode 88; tests a selected bit in an actor-relative or absolute byte and follows the inline pointer or skips it according to the command condition.
   evidence:
     - ghidra_disassembly_001AC98E
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001ACA14:
   name: ActorVM_CompareBranch
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM compare handler for animation opcode F4 and movement opcode 8A; compares a byte, word, or long stream value against an actor-relative or absolute target using the encoded equality and ordering condition, then follows or skips the inline pointer.
   evidence:
     - ghidra_disassembly_001ACA14
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AD0FC:
   name: ActorVM_DestroyOrClearActor
   confidence: decompiled
@@ -4405,12 +4417,13 @@
     - actor_vm_dispatch_family_static_decompilation
 0x001AD314:
   name: ActorVM_AddOrSubtractValue
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM arithmetic handler for animation opcode FA and movement opcode 90; selects actor-relative or absolute byte/word/long storage and adds or subtracts the stream operand according to the encoded mode bits.
   evidence:
     - ghidra_disassembly_001AD314
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AD372:
   name: ActorVM_PushStreamParameter
   confidence: decompiled
