@@ -2197,3 +2197,128 @@
     - ghidra_disassembly_001AE6B4
     - ghidra_player_collision_pass
     - final_mechanical_function_closure_static_decompilation
+
+0xFFF10E:
+  name: PLAYER_INTERACTION_TYPE1A_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Type-0x1A player-interaction latch. The actor- and player-collision Type-0x1A handlers set it after an accepted contact, and InteractionGate_Type62ByScene tests it before selecting the scene-specific Type-0x62 response.
+  evidence:
+    - ghidra_disassembly_001AC408
+    - ghidra_disassembly_001AE9E0
+    - ghidra_disassembly_001B65F4
+    - actor-template-type62-family-targets
+
+0xFFF10F:
+  name: PLAYER_INTERACTION_TYPE1B_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Type-0x1B player-interaction latch set by ActorType1B_PlayerCollisionHandler after its gated preparation and retained for the downstream interaction response path.
+  evidence:
+    - player-collision-direct-entry-family-targets
+    - 20260829-player-collision-direct-entry-family-static-v1
+
+0xFFF110:
+  name: PLAYER_INTERACTION_TYPE1C_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Type-0x1C player-interaction latch set by ActorType1C_PlayerCollisionHandler after its gated preparation and retained for the downstream interaction response path.
+  evidence:
+    - player-collision-direct-entry-family-targets
+    - 20260829-player-collision-direct-entry-family-static-v1
+
+0xFFF123:
+  name: INTERACTION_TYPE12_PRESENTATION_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Type-0x12 interaction presentation latch. The selector-0x4D spawn handler sets it after successful Type-0x12 actor allocation and scene-resource spawn selection tests it to choose the alternate presentation template.
+  evidence:
+    - ghidra_disassembly_001B6CCE
+    - ghidra_disassembly_001B6756
+    - interaction-spawn-type12-presentation-targets
+
+0xFFF125:
+  name: ACTOR_TYPE18_19_CONTACT_COUNT
+  type: u8
+  format: counter
+  confidence: decompiled
+  description: Contact counter for the shared runtime type-0x18/0x19 player-collision handler. It increments once per accepted contact and selects the terminal response when it reaches ten.
+  evidence:
+    - ghidra_disassembly_001AEA48
+    - 20260829-player-collision-response-counter-family-static-v1
+
+0xFFF129:
+  name: PLAYER_INTERACTION_TYPE4A_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Type-0x4A player-interaction latch set by ActorType4A_PlayerCollisionHandler and consumed by the Type-0x84 B9 interaction-spawn response branch.
+  evidence:
+    - ghidra_disassembly_001AF034
+    - ghidra_disassembly_001B717C
+    - interaction-spawn-type84-base-targets
+
+0xFFF12A:
+  name: PLAYER_INTERACTION_TYPE4C_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Type-0x4C player-interaction latch set by ActorType4C_PlayerCollisionHandler and consumed by the Type-0x84 BA interaction-spawn response branch.
+  evidence:
+    - ghidra_disassembly_001AF08C
+    - ghidra_disassembly_001B71A0
+    - interaction-spawn-type84-base-targets
+
+0xFFF13E:
+  name: MENU_PRESENTATION_TIMEOUT
+  type: u16
+  format: countdown
+  confidence: decompiled
+  description: Menu presentation timeout initialized to 0x05DC and decremented by the menu presentation loop until the next presentation phase is serviced.
+  evidence:
+    - ghidra_disassembly_001B3C7C
+
+0xFFF154:
+  name: RAW_TERRAIN_QUERY_STATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Raw terrain-query response latch. The player collision response path sets it after the terrain helper, and Player_ResetTerrainMotionState tests it when selecting the corresponding animation and motion reset branch.
+  evidence:
+    - ghidra_disassembly_001AE64C
+    - ghidra_disassembly_001B1F28
+    - player-level08-terminal-terrain-animation-static-targets
+
+0xFFF570:
+  name: SCENE_PRESENTATION_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Scene presentation latch set by LevelEvent_ArmPlayerPresentation and tested by SceneResource_RunStatePresentation when selecting the alternate scene-resource presentation path.
+  evidence:
+    - ghidra_disassembly_001B781A
+    - ghidra_disassembly_001B0D70
+    - 20260828-scene-state-resource-presentations-v1
+
+0xFFF0A0:
+  name: SCENE_RESOURCE_PRESENTATION_FILL_STATE
+  type: u16
+  format: counter
+  confidence: decompiled
+  description: Scene-resource C000 presentation fill cursor. SceneResource_RunSharedC000Presentation advances it in two-byte steps, masks the VDP word offset, and stops the fill after the 0x120-byte span.
+  evidence:
+    - ghidra_disassembly_001B4F04
+    - scene-resource-service-gap-closures-static-targets
+
+0xFFF109:
+  name: LEVEL09_CALLBACK_PHASE
+  type: u8
+  format: counter
+  confidence: decompiled
+  description: Level-09 callback phase byte advanced modulo 0x80 by Level09_EnterRoutine; the callback uses it as independent per-frame phase state alongside the Type-0x50 spawn cooldown.
+  evidence:
+    - ghidra_disassembly_001B614C

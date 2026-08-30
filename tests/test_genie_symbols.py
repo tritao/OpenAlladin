@@ -854,6 +854,30 @@ def test_real_actor_type42_collision_step_has_canonical_role():
     assert symbol.metadata["format"] == "counter"
 
 
+def test_real_collision_and_presentation_state_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FFF10E: ("PLAYER_INTERACTION_TYPE1A_LATCH", "boolean"),
+        0x00FFF10F: ("PLAYER_INTERACTION_TYPE1B_LATCH", "boolean"),
+        0x00FFF110: ("PLAYER_INTERACTION_TYPE1C_LATCH", "boolean"),
+        0x00FFF123: ("INTERACTION_TYPE12_PRESENTATION_LATCH", "boolean"),
+        0x00FFF125: ("ACTOR_TYPE18_19_CONTACT_COUNT", "counter"),
+        0x00FFF129: ("PLAYER_INTERACTION_TYPE4A_LATCH", "boolean"),
+        0x00FFF12A: ("PLAYER_INTERACTION_TYPE4C_LATCH", "boolean"),
+        0x00FFF13E: ("MENU_PRESENTATION_TIMEOUT", "countdown"),
+        0x00FFF154: ("RAW_TERRAIN_QUERY_STATE", "boolean"),
+        0x00FFF570: ("SCENE_PRESENTATION_LATCH", "boolean"),
+        0x00FFF0A0: ("SCENE_RESOURCE_PRESENTATION_FILL_STATE", "counter"),
+        0x00FFF109: ("LEVEL09_CALLBACK_PHASE", "counter"),
+    }
+    for address, (name, format_name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == "decompiled"
+
+
 def test_real_player_terrain_transition_gate_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF114, include_ranges=False)
     assert symbol is not None

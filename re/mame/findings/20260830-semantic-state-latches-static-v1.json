@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/semantic-state-latches-static-targets.json",
+  "conclusion": "Promoted twelve directly bounded collision, presentation, menu, terrain, scene-resource, and Level-09 state bytes/words from their exact producer/consumer instruction contracts. Ambiguous menu/debug bytes remain unresolved.",
+  "fields": [
+    "0x00FFF10E PLAYER_INTERACTION_TYPE1A_LATCH",
+    "0x00FFF10F PLAYER_INTERACTION_TYPE1B_LATCH",
+    "0x00FFF110 PLAYER_INTERACTION_TYPE1C_LATCH",
+    "0x00FFF123 INTERACTION_TYPE12_PRESENTATION_LATCH",
+    "0x00FFF125 ACTOR_TYPE18_19_CONTACT_COUNT",
+    "0x00FFF129 PLAYER_INTERACTION_TYPE4A_LATCH",
+    "0x00FFF12A PLAYER_INTERACTION_TYPE4C_LATCH",
+    "0x00FFF13E MENU_PRESENTATION_TIMEOUT",
+    "0x00FFF154 RAW_TERRAIN_QUERY_STATE",
+    "0x00FFF570 SCENE_PRESENTATION_LATCH",
+    "0x00FFF0A0 SCENE_RESOURCE_PRESENTATION_FILL_STATE",
+    "0x00FFF109 LEVEL09_CALLBACK_PHASE"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

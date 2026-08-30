@@ -1,0 +1,91 @@
+{
+  "format": "openaladdin-semantic-state-latches-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "state_fields": [
+    {
+      "address": "0x00FFF10E",
+      "name": "PLAYER_INTERACTION_TYPE1A_LATCH",
+      "writers": ["0x001AC408 ActorType1A_ActorCollisionHandler", "0x001AE9E0 ActorType1A_PlayerCollisionHandler"],
+      "reader": "0x001B65F4 InteractionGate_Type62ByScene",
+      "contract": "set after an accepted type-0x1A contact and tested before the scene-specific type-0x62 response"
+    },
+    {
+      "address": "0x00FFF10F",
+      "name": "PLAYER_INTERACTION_TYPE1B_LATCH",
+      "writers": ["ActorType1B_PlayerCollisionHandler"],
+      "contract": "type-0x1B player-collision latch retained for the downstream interaction response path"
+    },
+    {
+      "address": "0x00FFF110",
+      "name": "PLAYER_INTERACTION_TYPE1C_LATCH",
+      "writers": ["ActorType1C_PlayerCollisionHandler"],
+      "contract": "type-0x1C player-collision latch retained for the downstream interaction response path"
+    },
+    {
+      "address": "0x00FFF123",
+      "name": "INTERACTION_TYPE12_PRESENTATION_LATCH",
+      "writer": "0x001B6CCE InteractionSpawn_Type12",
+      "reader": "0x001B6756 SceneResource_RunLevelObjectPresentation",
+      "contract": "set after successful selector-0x4D Type-0x12 allocation and tested to choose the alternate presentation template"
+    },
+    {
+      "address": "0x00FFF125",
+      "name": "ACTOR_TYPE18_19_CONTACT_COUNT",
+      "consumer": "0x001AEA48 ActorType18_19_PlayerCollisionHandler",
+      "contract": "increments once per accepted contact and selects the terminal response at ten"
+    },
+    {
+      "address": "0x00FFF129",
+      "name": "PLAYER_INTERACTION_TYPE4A_LATCH",
+      "writer": "0x001AF034 ActorType4A_PlayerCollisionHandler",
+      "reader": "0x001B717C InteractionSpawn_Type84Base_B9",
+      "contract": "type-0x4A collision latch selecting the B9 response branch"
+    },
+    {
+      "address": "0x00FFF12A",
+      "name": "PLAYER_INTERACTION_TYPE4C_LATCH",
+      "writer": "0x001AF08C ActorType4C_PlayerCollisionHandler",
+      "reader": "0x001B71A0 InteractionSpawn_Type84Base_BA",
+      "contract": "type-0x4C collision latch selecting the BA response branch"
+    },
+    {
+      "address": "0x00FFF13E",
+      "name": "MENU_PRESENTATION_TIMEOUT",
+      "consumer": "0x001B3C7C Menu_RunOptionsPresentationContinuation",
+      "contract": "initialized to 0x05DC and decremented by the menu presentation loop"
+    },
+    {
+      "address": "0x00FFF154",
+      "name": "RAW_TERRAIN_QUERY_STATE",
+      "writer": "0x001AE64C Player_TerrainResponseStateMachine",
+      "reader": "0x001B1F28 Player_ResetTerrainMotionState",
+      "contract": "terrain-query response latch selecting the corresponding player animation and motion-reset branch"
+    },
+    {
+      "address": "0x00FFF570",
+      "name": "SCENE_PRESENTATION_LATCH",
+      "writer": "0x001B781A LevelEvent_ArmPlayerPresentation",
+      "reader": "0x001B0D70 SceneResource_RunStatePresentation",
+      "contract": "selects the alternate scene-resource presentation path after a level-event player presentation command"
+    },
+    {
+      "address": "0x00FFF0A0",
+      "name": "SCENE_RESOURCE_PRESENTATION_FILL_STATE",
+      "consumer": "0x001B4F04 SceneResource_RunSharedC000Presentation",
+      "contract": "two-byte C000 presentation-fill cursor bounded by the 0x120-byte fill span"
+    },
+    {
+      "address": "0x00FFF109",
+      "name": "LEVEL09_CALLBACK_PHASE",
+      "consumer": "0x001B614C Level09_EnterRoutine",
+      "contract": "per-callback phase byte advanced modulo 0x80 alongside the independent type-0x50 spawn cooldown"
+    }
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
