@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-orphaned-rts-stub-confidence-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Close the low-level confidence gap for exact two-byte RTS owners without asserting unsupported function roles or reachability.",
+  "stubs": [
+    { "address": "0x001B0020", "end": "0x001B0021", "name": "Orphaned_RtsStub_001B0020", "bytes": "4E75", "preceding": "System_ResetDisplayNoOpHook" },
+    { "address": "0x001B0042", "end": "0x001B0043", "name": "Orphaned_RtsStub_001B0042", "bytes": "4E75", "preceding": "Interaction_GetResourceProgressPointer", "following": "Game_InitializeDifficultyCounter" },
+    { "address": "0x001B0044", "end": "0x001B0045", "name": "Orphaned_RtsStub_001B0044", "bytes": "4E75", "following": "Game_InitializeDifficultyCounter" },
+    { "address": "0x001B1CFE", "end": "0x001B1CFF", "name": "Orphaned_RtsStub_001B1CFE", "bytes": "4E75", "preceding": "VDP_RunPatternServiceFrames", "following": "SceneResource_InitializeMode17Service" },
+    { "address": "0x001B4624", "end": "0x001B4625", "name": "Orphaned_RtsStub_001B4624", "bytes": "4E75", "preceding": "SoundTest_PlaySelectedEntry", "following": "SoundTest_RenderSelectedEntry" },
+    { "address": "0x001B4F02", "end": "0x001B4F03", "name": "Orphaned_RtsStub_001B4F02", "bytes": "4E75", "preceding": "SceneResource_RunBlankStream127D74", "following": "SceneResource_RunSharedC000Presentation" },
+    { "address": "0x001B634C", "end": "0x001B634D", "name": "Orphaned_RtsStub_001B634C", "bytes": "4E75", "preceding": "Level12_ExitRoutine", "following": "LevelEvent_DispatchTimedCommand" }
+  ],
+  "evidence": [
+    "Each owner is exactly one 68000 RTS instruction (4E75).",
+    "Each two-byte boundary is between already owned ROM code ranges and preserves the complete gap-free partition.",
+    "No static incoming references or runtime reachability are assigned; the unresolved question is only the higher-level role of each stub."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}

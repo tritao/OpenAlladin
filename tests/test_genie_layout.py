@@ -4842,20 +4842,20 @@ def test_actor_interaction_value_a5_variant_is_exact():
     )
 
 
-def test_orphaned_code_islands_have_conservative_complete_owners():
+def test_orphaned_code_islands_have_complete_owners_and_decoded_rts_bodies():
     symbols = SymbolStore()
     layout = build_layout()
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     expected = {
-        0x001B0020: ("Orphaned_RtsStub_001B0020", 2, "4E75", "provisional"),
-        0x001B0042: ("Orphaned_RtsStub_001B0042", 2, "4E75", "provisional"),
-        0x001B0044: ("Orphaned_RtsStub_001B0044", 2, "4E75", "provisional"),
-        0x001B1CFE: ("Orphaned_RtsStub_001B1CFE", 2, "4E75", "provisional"),
+        0x001B0020: ("Orphaned_RtsStub_001B0020", 2, "4E75", "decompiled"),
+        0x001B0042: ("Orphaned_RtsStub_001B0042", 2, "4E75", "decompiled"),
+        0x001B0044: ("Orphaned_RtsStub_001B0044", 2, "4E75", "decompiled"),
+        0x001B1CFE: ("Orphaned_RtsStub_001B1CFE", 2, "4E75", "decompiled"),
         0x001B3C5E: ("Menu_UnreachableCodeIsland_001B3C5E", 6, "EB2C6100FEE8", "decompiled"),
         0x001B3C7C: ("Menu_UnreachableCodeIsland_001B3C7C", 316, None, "decompiled"),
-        0x001B4624: ("Orphaned_RtsStub_001B4624", 2, "4E75", "provisional"),
-        0x001B4F02: ("Orphaned_RtsStub_001B4F02", 2, "4E75", "provisional"),
-        0x001B634C: ("Orphaned_RtsStub_001B634C", 2, "4E75", "provisional"),
+        0x001B4624: ("Orphaned_RtsStub_001B4624", 2, "4E75", "decompiled"),
+        0x001B4F02: ("Orphaned_RtsStub_001B4F02", 2, "4E75", "decompiled"),
+        0x001B634C: ("Orphaned_RtsStub_001B634C", 2, "4E75", "decompiled"),
     }
     for address, (name, size, prefix, confidence) in expected.items():
         function = symbols.at(address, include_ranges=False)
