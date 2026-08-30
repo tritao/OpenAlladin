@@ -1615,6 +1615,43 @@
     - ghidra_disassembly_001B1842
     - ghidra_disassembly_001B18A4
     - ghidra_disassembly_001B19AE
+
+0xFFF121:
+  name: SCENE_RESOURCE_REBUILD_PHASE_DELAY
+  type: u8
+  format: countdown
+  confidence: decompiled
+  description: Per-phase scene-resource rebuild delay. SceneResource_RebuildAfterInteraction derives an initial value of 0x0A from SCENE_RESOURCE_REBUILD_PHASE_COUNTER, decrements it only while the rebuild wait gate is clear, and reloads it to 0x3C after each completed phase.
+  evidence:
+    - ghidra_disassembly_001B1830
+    - ghidra_disassembly_001B1850
+    - ghidra_disassembly_001B18A4
+    - ghidra_disassembly_001B19B8
+
+0xFFF120:
+  name: SCENE_RESOURCE_REBUILD_WAIT_GATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Scene-resource rebuild wait gate. SceneResource_RebuildAfterInteraction sets it before the repeated service loop and after phase finalization, tests it before decrementing SCENE_RESOURCE_REBUILD_PHASE_DELAY, and clears it in the Z80 status-bit-4 completion path so the next phase delay may advance.
+  evidence:
+    - ghidra_disassembly_001B183C
+    - ghidra_disassembly_001B1848
+    - ghidra_disassembly_001B195C
+    - ghidra_disassembly_001B1992
+
+0xFFF11E:
+  name: SCENE_RESOURCE_REBUILD_PHASE_PENDING
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: One-shot scene-resource rebuild phase marker. SceneResource_RebuildAfterInteraction clears it during initialization and phase finalization, sets it when the per-phase delay expires before resource/VDP/audio work, and tests it to enter the phase-finalization path.
+  evidence:
+    - ghidra_disassembly_001B1836
+    - ghidra_disassembly_001B18B2
+    - ghidra_disassembly_001B1966
+    - ghidra_disassembly_001B1998
+
 0xFFF103:
   name: LEVEL_TIMER
   type: u8

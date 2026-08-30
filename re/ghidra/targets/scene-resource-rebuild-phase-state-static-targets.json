@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-scene-resource-rebuild-phase-state-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the three neighboring scene-resource rebuild bytes that control per-phase delay, wait release, and phase finalization.",
+  "owner": {
+    "address": "0x001B16E0",
+    "name": "SceneResource_RebuildAfterInteraction"
+  },
+  "states": [
+    {
+      "address": "0x00FFF121",
+      "name": "SCENE_RESOURCE_REBUILD_PHASE_DELAY",
+      "type": "u8",
+      "format": "countdown",
+      "initialize": "0x001B1830 derives 0x0A from SCENE_RESOURCE_REBUILD_PHASE_COUNTER; 0x001B19B8 reloads 0x3C after phase finalization.",
+      "consume": "0x001B1850 decrements it while SCENE_RESOURCE_REBUILD_WAIT_GATE is clear.",
+      "evidence": ["0x001B1830", "0x001B1850", "0x001B18A4", "0x001B19B8"]
+    },
+    {
+      "address": "0x00FFF120",
+      "name": "SCENE_RESOURCE_REBUILD_WAIT_GATE",
+      "type": "u8",
+      "format": "boolean",
+      "initialize": "0x001B183C sets it before the repeated service loop.",
+      "consume": "0x001B1848 tests it before phase-delay decrement.",
+      "clear": "0x001B195C clears it after the Z80 status-bit-4 completion path.",
+      "rearm": "0x001B1992 sets it after phase finalization.",
+      "evidence": ["0x001B183C", "0x001B1848", "0x001B195C", "0x001B1992"]
+    },
+    {
+      "address": "0x00FFF11E",
+      "name": "SCENE_RESOURCE_REBUILD_PHASE_PENDING",
+      "type": "u8",
+      "format": "boolean",
+      "initialize": "0x001B1836 clears it during rebuild initialization.",
+      "set": "0x001B18B2 sets it after the phase delay expires and phase work is prepared.",
+      "consume": "0x001B1966 tests it to select phase finalization.",
+      "clear": "0x001B1998 clears it after phase finalization.",
+      "evidence": ["0x001B1836", "0x001B18B2", "0x001B1966", "0x001B1998"]
+    }
+  ],
+  "conclusion": "FFF121, FFF120, and FFF11E are the scene-resource rebuild's per-phase delay, wait-release gate, and one-shot phase-pending marker; all three have accesses confined to SceneResource_RebuildAfterInteraction.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

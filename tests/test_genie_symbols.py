@@ -608,6 +608,22 @@ def test_real_scene_resource_rebuild_phase_counter_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_scene_resource_rebuild_phase_state_has_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FFF121: ("SCENE_RESOURCE_REBUILD_PHASE_DELAY", "countdown"),
+        0x00FFF120: ("SCENE_RESOURCE_REBUILD_WAIT_GATE", "boolean"),
+        0x00FFF11E: ("SCENE_RESOURCE_REBUILD_PHASE_PENDING", "boolean"),
+    }
+    for address, (name, format_name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["type"] == "u8"
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == "decompiled"
+
+
 def test_real_level_timer_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF103, include_ranges=False)
     assert symbol is not None
