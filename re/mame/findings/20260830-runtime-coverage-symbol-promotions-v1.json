@@ -13,7 +13,8 @@
     "coverage_format": "ghidra-runtime-coverage-v1",
     "observed_function_entries": 74,
     "selection": "Promote canonical functions currently at decompiled confidence when the imported runtime coverage reports at least two distinct covered PCs across at least two scenarios.",
-    "new_confidence": "trace_validated"
+    "new_confidence": "trace_validated",
+    "follow_up_selection": "A later pass may promote a single-PC function when its coverage is present in at least two scenarios; single-PC, single-scenario observations remain decompiled."
   },
   "promotions": [
     { "address": "0x0000021A", "name": "System_ResetBootstrap", "pc_count": 41, "scenario_count": 51 },
@@ -44,7 +45,13 @@
     { "address": "0x001B38B8", "name": "TerrainResource_DecodeSymbol", "pc_count": 19, "scenario_count": 23 },
     { "address": "0x001B38FA", "name": "TerrainResource_RefillBitBuffer", "pc_count": 6, "scenario_count": 23 },
     { "address": "0x001B391E", "name": "TerrainResource_BuildDecodeTable", "pc_count": 4, "scenario_count": 23 },
-    { "address": "0x001E573A", "name": "Audio_LoadZ80Driver", "pc_count": 2, "scenario_count": 38 }
+    { "address": "0x001E573A", "name": "Audio_LoadZ80Driver", "pc_count": 2, "scenario_count": 38 },
+    { "address": "0x001A91C6", "name": "Frame_InputAndResourceService", "pc_count": 1, "scenario_count": 2 },
+    { "address": "0x001AAA2A", "name": "Camera_PublishScroll", "pc_count": 1, "scenario_count": 2 },
+    { "address": "0x001ABE52", "name": "Actor_ClearAndReleaseLinked", "pc_count": 1, "scenario_count": 2 },
+    { "address": "0x001B21F6", "name": "SceneResource_ProcessCommandStream", "pc_count": 1, "scenario_count": 4 },
+    { "address": "0x001B376C", "name": "RNC_ReadBits", "pc_count": 1, "scenario_count": 33 },
+    { "address": "0x001B3912", "name": "TerrainResource_ReadDecodedSize", "pc_count": 1, "scenario_count": 13 }
   ],
-  "conclusion": "The promoted names are not new semantic guesses: each already had a canonical body and static contract, and the imported coverage reached multiple PCs in that body across multiple scenarios. The promotion records runtime reachability only; exact behavior and parity confidence remain governed by each symbol's existing evidence and later targeted traces. Functions with only one covered PC or one scenario were intentionally left decompiled."
+  "conclusion": "The promoted names are not new semantic guesses: each already had a canonical body and static contract, and the imported coverage reached the body across multiple scenarios. The promotion records runtime reachability only; exact behavior and parity confidence remain governed by each symbol's existing evidence and later targeted traces. Single-PC observations from only one scenario remain decompiled."
 }

@@ -162,7 +162,7 @@
     - ghidra_player_terrain_state_targets
 0x001AAA2A:
   name: Camera_PublishScroll
-  confidence: decompiled
+  confidence: trace_validated
   description: Consumes pending camera scroll flags when CAMERA_SCROLL_APPLY_GATE is clear, dispatches the corresponding horizontal or vertical refill helper, and clears each flag after its refill path returns.
   evidence:
     - ghidra_decompile_001AAA2A
@@ -1165,7 +1165,7 @@
     - mame_level_transition_watch
 0x001B21F6:
   name: SceneResource_ProcessCommandStream
-  confidence: decompiled
+  confidence: trace_validated
   description: Runs a scene-resource command stream until SCENE_RESOURCE_STATUS changes. Commands below 0x20 dispatch through SCENE_RESOURCE_COMMAND_TABLE at 0x0049D8; object commands invoke the scene/VDP helper and continue at the next stream record.
   evidence:
     - ghidra_decompile_001B21F6
@@ -1457,7 +1457,7 @@
     - interaction_response_counter_complete_static_decompilation
 0x001A91C6:
   name: Frame_InputAndResourceService
-  confidence: decompiled
+  confidence: trace_validated
   description: Handles the frame-wait/resource gate, samples the VDP status and controller/resource state, runs the scene/resource service helpers, waits for VBlank work, and returns after the scene countdown becomes active.
   evidence:
     - ghidra_decompile_001A91C6
@@ -2352,7 +2352,7 @@
     - ghidra_decompile_collision_damage_targets
 0x001ABE52:
   name: Actor_ClearAndReleaseLinked
-  confidence: decompiled
+  confidence: trace_validated
   description: "Collision-response cleanup helper equivalent to Actor_ClearAndRelease: clears the current actor type and owned resources, then clears and releases a linked actor through the record link at offset 0x3E. This is the duplicate call-site variant used by the shared terminal response path."
   evidence:
     - ghidra_decompile_001ABE52
@@ -2722,7 +2722,7 @@
     - level01_transfer_reachability_closure
 0x001B3912:
   name: TerrainResource_ReadDecodedSize
-  confidence: decompiled
+  confidence: trace_validated
   description: Reads the four-byte decoded-size header from the terrain resource stream and returns it for the destination-range calculation used by TerrainBehaviorTable_Decode.
   evidence:
     - ghidra_decompile_001B3912
@@ -3392,7 +3392,7 @@
     - ghidra_rnc_loader_analysis
 0x001B376C:
   name: RNC_ReadBits
-  confidence: decompiled
+  confidence: trace_validated
   description: Reads a variable-width field from the RNC bit buffer, refilling the buffer from the compressed source when the current word does not contain enough bits.
   evidence:
     - ghidra_decompile_001B376C
