@@ -658,6 +658,43 @@
   evidence:
     - ghidra_disassembly_001B634E
     - ghidra_level_event_dispatch_targets
+0xFFF084:
+  name: LEVEL08_EVENT_PHASE
+  type: u16
+  format: integer
+  confidence: decompiled
+  description: Level-08 event presentation phase word. Level08_EnterRoutine initializes it, adds the high event counter when the phase reaches its 0xC0 threshold, and resets it to the post-threshold remainder.
+  evidence:
+    - ghidra_disassembly_001B6066
+    - level08_event_vdp_static_decompilation
+0xFFF086:
+  name: LEVEL08_EVENT_COUNTER_HIGH
+  type: u16
+  format: integer
+  confidence: decompiled
+  description: High word of the Level-08 event counter pair. Level08_EnterRoutine increments it when LEVEL08_EVENT_COUNTER_LOW wraps at 0x136 and combines it with LEVEL08_EVENT_PHASE for the presentation threshold.
+  evidence:
+    - ghidra_disassembly_001B6066
+    - level08_event_vdp_static_decompilation
+0xFFF088:
+  name: LEVEL08_EVENT_COUNTER_LOW
+  type: u16
+  format: integer
+  confidence: decompiled
+  description: Low word of the Level-08 event counter pair. Level08_EnterRoutine increments it once per entry and wraps it to zero after reaching 0x136.
+  evidence:
+    - ghidra_disassembly_001B6066
+    - level08_event_vdp_static_decompilation
+0xFFF08A:
+  name: LEVEL08_VDP_RECORD_OFFSET
+  type: u16
+  format: byte_offset
+  confidence: decompiled
+  description: Byte offset into LEVEL08_ROTATING_VDP_RECORD_TABLE. Level08_EnterRoutine passes it to VDP_WriteRotatingCommandRecord twice per update and stores the returned offset for the next update.
+  evidence:
+    - ghidra_disassembly_001B6066
+    - level08_event_vdp_static_decompilation
+
 0xFFF111:
   name: RANDOM_PARITY_STATE
   type: u8
@@ -670,7 +707,7 @@
     - type14_type84_presentation_animation_static_decompilation
     - ghidra_disassembly_001B6434
 
-0xFFF132:
+0xFFF12E:
   name: LEVEL_EVENT_SCRIPT_CURSOR
   type: rom_pointer
   format: address

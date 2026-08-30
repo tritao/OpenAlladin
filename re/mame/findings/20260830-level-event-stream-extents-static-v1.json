@@ -11,7 +11,7 @@
     "address": "0x001B634E",
     "name": "LevelEvent_DispatchTimedCommand",
     "record_size": 6,
-    "cursor": "0x00FFF132 LEVEL_EVENT_SCRIPT_CURSOR"
+    "cursor": "0x00FFF12E LEVEL_EVENT_SCRIPT_CURSOR"
   },
   "streams": [
     {

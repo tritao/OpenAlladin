@@ -2710,6 +2710,14 @@ The static result is recorded in
 `re/mame/findings/20260829-level-event-dispatch-v1.json` and
 `re/ghidra/targets/level-event-dispatch-targets.json`.
 
+The event-state addresses are now aligned with the emitted instructions.
+`LEVEL_EVENT_SCRIPT_CURSOR` is at `FFF12E` (the first longword in the cleared
+scene-event scratch block), not `FFF132`. The Level-08 entry additionally owns
+`LEVEL08_EVENT_PHASE` at `FFF084`, the high/low counter words at `FFF086` and
+`FFF088`, and `LEVEL08_VDP_RECORD_OFFSET` at `FFF08A`; the low counter wraps at
+`0x136`, the VDP helper advances two six-byte records per update, and the phase
+word is folded at `0xC0`.
+
 ## Shared actor-VM sound event command (20260829)
 
 The shared dispatch-table entry at `0x001AC9D2` is now named

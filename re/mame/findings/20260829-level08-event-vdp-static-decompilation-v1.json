@@ -28,6 +28,13 @@
       "consumes command/parameter pairs from 0x00FFF12E",
       "dispatches command handlers through 0x0020C0",
       "conditionally allocates an actor using the camera-relative player state"
+    ],
+    "state_fields": [
+      { "address": "0x00FFF084", "name": "LEVEL08_EVENT_PHASE" },
+      { "address": "0x00FFF086", "name": "LEVEL08_EVENT_COUNTER_HIGH" },
+      { "address": "0x00FFF088", "name": "LEVEL08_EVENT_COUNTER_LOW" },
+      { "address": "0x00FFF08A", "name": "LEVEL08_VDP_RECORD_OFFSET" },
+      { "address": "0x00FFF12E", "name": "LEVEL_EVENT_SCRIPT_CURSOR" }
     ]
   },
   "confidence": "decompiled",
