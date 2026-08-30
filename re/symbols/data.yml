@@ -318,6 +318,14 @@
   description: Single zero alignment byte between the exact RNC payload ending at 0x00136910 and the following RNC payload beginning at 0x00136912.
   evidence: [rnc_boundary_padding_static_v1]
 
+0x001434C3:
+  name: RNC_ALIGNMENT_PADDING_001434C3
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the exact title RNC payload ending at 0x001434C2 and the following RNC payload beginning at 0x001434C4.
+  evidence: [rnc_boundary_padding_static_v1, rnc_title_boundary_audit_correction_v2]
+
 0x0014433B:
   name: RNC_ALIGNMENT_PADDING_0014433B
   type: padding_data
@@ -751,7 +759,7 @@
 0x001401DA:
   name: TITLE_BASE_RNC_GRAPHICS_001401DA
   type: graphics_data
-  size: 0x32EA
+  size: 0x32E9
   confidence: decompiled
   description: Exact RNC-compressed Genesis graphics payload loaded to VRAM base by Startup_RunTitlePresentation.
   evidence: [rnc_graphics_resource_static_v1]

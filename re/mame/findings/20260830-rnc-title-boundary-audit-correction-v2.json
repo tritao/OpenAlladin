@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-rnc-title-boundary-audit-correction-v2",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "source": {
+    "manifest": "build/assets/rnc/manifest.json",
+    "block": "0x001401DA",
+    "next_block": "0x001434C4",
+    "end_convention": "exclusive"
+  },
+  "correction": {
+    "payload_name": "TITLE_BASE_RNC_GRAPHICS_001401DA",
+    "payload_range": ["0x001401DA", "0x001434C2"],
+    "payload_bytes": 13033,
+    "manifest_end": "0x001434C3",
+    "padding_name": "RNC_ALIGNMENT_PADDING_001434C3",
+    "padding_range": ["0x001434C3", "0x001434C3"],
+    "next_header": "RNC\\x01 at 0x001434C4"
+  },
+  "evidence": [
+    "The manifest records total_bytes=13033 (0x32E9) and end=0x001434C3 as an exclusive endpoint.",
+    "The ROM byte at 0x001434C3 is zero and the next four bytes at 0x001434C4 are RNC\\x01.",
+    "The payload therefore ends at the byte before the exclusive endpoint, 0x001434C2; the intervening zero is alignment padding."
+  ],
+  "conclusion": "The prior v1 interpretation was superseded: TITLE_BASE_RNC_GRAPHICS_001401DA owns 0x001401DA-0x001434C2, and RNC_ALIGNMENT_PADDING_001434C3 owns the one-byte gap before the next RNC block."
+}

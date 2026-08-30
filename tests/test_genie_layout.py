@@ -484,6 +484,7 @@ def test_rnc_boundary_alignment_padding_is_exact():
         0x0012F4EB,
         0x00132F8D,
         0x00136911,
+        0x001434C3,
         0x0014433B,
         0x0014476D,
         0x0014520F,
@@ -538,7 +539,7 @@ def test_unindexed_rnc_graphics_resources_are_exactly_bounded():
         (0x001319EC, 0x00132F8C),
         (0x0013A892, 0x0013C373),
         (0x0013C374, 0x001401D9),
-        (0x001401DA, 0x001434C3),
+        (0x001401DA, 0x001434C2),
     )
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
     rom = rom_path.read_bytes()
