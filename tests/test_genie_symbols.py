@@ -660,6 +660,15 @@ def test_real_game_runtime_mode_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_hud_display_nonzero_seen_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF0FE, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "HUD_DISPLAY_NONZERO_SEEN"
+    assert symbol.metadata["type"] == "u8"
+    assert symbol.metadata["format"] == "boolean"
+    assert symbol.confidence == "decompiled"
+
+
 def test_real_interaction_row_pointer_has_canonical_role():
     symbol = SymbolStore().at(0x00FF7DAC, include_ranges=False)
     assert symbol is not None

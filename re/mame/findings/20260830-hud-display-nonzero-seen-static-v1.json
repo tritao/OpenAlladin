@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/hud-display-nonzero-seen-static-targets.json",
+  "symbol": {
+    "address": "0x00FFF0FE",
+    "name": "HUD_DISPLAY_NONZERO_SEEN",
+    "type": "u8",
+    "format": "boolean"
+  },
+  "contract": {
+    "clear": "Render_BuildActorRecords clears the latch before its six-digit HUD loop.",
+    "leading_zeroes": "ASCII zero digits are skipped while the latch is clear.",
+    "first_nonzero": "The first nonzero digit sets the latch and emits a sprite record; all subsequent digits are emitted."
+  },
+  "conclusion": "FFF0FE is a per-build HUD leading-zero suppression latch.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

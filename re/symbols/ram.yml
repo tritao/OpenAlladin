@@ -1959,6 +1959,17 @@
   description: Pending interaction marker tested by Player_ProcessInteractionState and set by its special-mode branch.
   evidence:
     - ghidra_disassembly_001AE4F8
+0xFFF0FE:
+  name: HUD_DISPLAY_NONZERO_SEEN
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: HUD digit-emission latch used by Render_BuildActorRecords. The renderer clears it before scanning HUD_DISPLAY_DIGITS, skips leading ASCII zeroes while it is clear, then sets it when the first nonzero digit is emitted so following zero digits remain visible.
+  evidence:
+    - ghidra_decompile_001AB7C4
+    - ghidra_disassembly_001AB7C4
+    - ghidra_disassembly_001AB9DA
+    - ghidra_disassembly_001AB9E2
 0xFFF11F:
   name: PLAYER_INTERACTION_STATE_LOCK
   type: u8
