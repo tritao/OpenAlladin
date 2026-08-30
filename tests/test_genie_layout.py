@@ -3114,6 +3114,20 @@ def test_vdp_interaction_digit_writers_are_exact():
     )
 
 
+def test_scene_resource_thirty_one_vblank_loop_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001B1AA0, include_ranges=False)
+    assert function is not None
+    assert function.name == "Frame_WaitThirtyOneVBlanks"
+    assert function.end == 0x001B1AB5
+    assert function.size == 22
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B1AA0:0x001B1AB6] == bytes.fromhex(
+        "383C001E3F04610009F6523900FF7E28381F51CCFFF0"
+    )
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)

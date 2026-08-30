@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-scene-resource-rebuild-wait-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target": {
+    "address": "0x001B1AA0",
+    "name": "Frame_WaitThirtyOneVBlanks",
+    "range": ["0x001B1AA0", "0x001B1AB5"],
+    "size": 22,
+    "iterations": 31,
+    "wait_service": "0x001B249E Frame_WaitForVBlankWork",
+    "phase_counter": "0x00FF7E28 FRAME_PHASE_COUNTER",
+    "continuation": "0x001B1AB6 SceneResource_RebuildAfterInteraction continuation"
+  },
+  "boundary_basis": [
+    "D4 is initialized to 30 and the DBF loop is inclusive, producing 31 VBlank waits.",
+    "Each iteration calls Frame_WaitForVBlankWork and increments FRAME_PHASE_COUNTER by one.",
+    "The final DBF completion falls through to the existing movem prologue at 0x001B1AB6 rather than returning from this block."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1278,6 +1278,14 @@
   evidence:
     - ghidra_disassembly_001B047A
     - vdp-interaction-digit-writers-static-decompilation
+0x001B1AA0:
+  name: Frame_WaitThirtyOneVBlanks
+  confidence: decompiled
+  size: 22
+  description: Performs 31 iterations of Frame_WaitForVBlankWork, incrementing FRAME_PHASE_COUNTER once per iteration; the final DBF completion falls through into the scene-resource continuation at 0x001B1AB6.
+  evidence:
+    - ghidra_disassembly_001B1AA0
+    - scene-resource-rebuild-static-decompilation
 0x001B0078:
   name: Interaction_SynchronizeResponseState
   confidence: decompiled

@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-scene-resource-rebuild-wait-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/scene-resource-rebuild-wait-static-targets.json",
+  "promoted": {
+    "address": "0x001B1AA0",
+    "name": "Frame_WaitThirtyOneVBlanks",
+    "range": ["0x001B1AA0", "0x001B1AB5"],
+    "size": 22
+  },
+  "semantics": "The block loads D4 with 30, saves it, waits for VBlank, increments FRAME_PHASE_COUNTER, restores D4, and repeats with DBF. Since DBF includes the zero iteration, the loop waits 31 VBlanks and advances the phase counter 31 times.",
+  "control_flow": "This is a fall-through wait-loop block: after the final DBF completion it enters the existing scene-resource continuation at 0x001B1AB6.",
+  "conclusion": "The former 0x001B1AA0-0x001B1AB5 UNKNOWN range is a fixed 31-VBlank scene-resource rebuild delay block."
+}
