@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-actor-slot-allocator-family-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "allocators": [
+    {
+      "address": "0x001AE2C2",
+      "name": "Actor_FindFreeSlotExtendedForward",
+      "range": ["0x001AE2C2", "0x001AE2D9"],
+      "size": 24,
+      "base": "0x00FF7E82",
+      "record_count": 31,
+      "stride": "0x42",
+      "caller": "0x001B5786 InteractionAnchor_ForwardSpawn"
+    },
+    {
+      "address": "0x001AE27A",
+      "name": "Actor_FindFreeSlotForward",
+      "range": ["0x001AE27A", "0x001AE291"],
+      "record_count": 24,
+      "stride": "0x42",
+      "role": "common forward interaction-pool scan"
+    }
+  ],
+  "boundary_basis": [
+    "The extended scan begins with its own LEA after Actor_FindFreeSlotReverse20 and ends at the direct RTS before Actor_FindAuxiliaryFreeSlot.",
+    "Its loop body is the same zero-type test and 0x42-byte advance used by the existing forward allocator, with DBF count 0x001E."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

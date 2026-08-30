@@ -3038,3 +3038,17 @@ def test_actor_resource_clear_a0_variant_is_exact():
         "2F0E3F002C68002ABDFC00000000671842A8002A42A8002E4240"
         "1028002942280029421E51C8FFFC301F2C5F4E75"
     )
+
+
+def test_actor_extended_forward_slot_allocator_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001AE2C2, include_ranges=False)
+    assert function is not None
+    assert function.name == "Actor_FindFreeSlotExtendedForward"
+    assert function.end == 0x001AE2D9
+    assert function.size == 24
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001AE2C2:0x001AE2DA] == bytes.fromhex(
+        "4BF900FF7E82303C001E4A156708DAFC004251C8FFF64E75"
+    )

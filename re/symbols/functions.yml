@@ -3096,6 +3096,16 @@
   evidence:
     - ghidra_level01_interaction_inventory_targeted_decompile
 
+0x001AE2C2:
+  name: Actor_FindFreeSlotExtendedForward
+  size: 24
+  confidence: decompiled
+  description: Scans 31 actor records forward from 0x00FF7E82 with stride 0x42 for a zero-type slot, extending the common forward allocator's search across the broader gameplay pool.
+  evidence:
+    - ghidra_disassembly_001AE2C2
+    - actor_slot_allocator_family_static_decompilation
+    - ghidra_interaction_anchor_targets
+
 0x001B6F0C:
   name: InteractionHandler_0x80
   confidence: confirmed
