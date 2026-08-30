@@ -183,6 +183,7 @@ class DataIndex:
         self._canonical_decoders: dict[str, Any] = {}
         self._canonical_rom_path: Path | None = None
         self._bounded_validation: dict[tuple[str, int, int], dict[str, Any] | None] = {}
+        self._bounded_decoded: dict[tuple[str, int], dict[str, Any]] = {}
         self._stream_producer_references: dict[int, list[dict[str, Any]]] | None = None
         self._record_cache: dict[tuple[str, str], list[dict[str, Any]]] = {}
         self._reference_index_cache: dict[str, tuple[list[int], list[dict[str, Any]]]] = {}
@@ -806,6 +807,7 @@ class DataIndex:
                 and int(decoded.get("bytes_decoded", 0)) == declared_size
                 and decoded.get("stopped_reason") == "byte_limit"
             ):
+                self._bounded_decoded[(kind, entry)] = decoded
                 result = {
                     "size_matches": True,
                     "bounded_bytes": declared_size,
@@ -887,6 +889,7 @@ class DataIndex:
         decoded = dict(decoded)
         decoded["name"] = value.get("name")
         self._decoded[kind][entry] = decoded
+        self._bounded_decoded[(kind, entry)] = decoded
         source = str(self._canonical_rom_path) if self._canonical_rom_path else "configured ROM"
         self._decoded_sources[kind][entry] = f"{source} (canonical symbol fallback)"
 
@@ -973,7 +976,8 @@ class DataIndex:
         if not decoded or not decoded.get("available"):
             return []
         kind = value["kind"]
-        stream = self._decoded[kind].get(_address(value["start"]), {})
+        entry = _address(value["start"])
+        stream = self._bounded_decoded.get((kind, entry)) or self._decoded[kind].get(entry, {})
         pointer_keys = {
             "branch_target", "target", "stream_target", "animation_target",
             "movement_target", "continuation", "return_target", "value",
@@ -1024,7 +1028,7 @@ class DataIndex:
             return []
         kind = value["kind"]
         root_entry = _address(decoded["root_entry"])
-        stream = self._decoded[kind].get(root_entry)
+        stream = self._bounded_decoded.get((kind, root_entry)) or self._decoded[kind].get(root_entry)
         if not isinstance(stream, dict):
             return []
 
@@ -1168,7 +1172,8 @@ class DataIndex:
                 "stream": None,
             }
         root_entry = _address(decoder["root_entry"])
-        stream = self._decoded[value["kind"]].get(root_entry)
+        kind = value["kind"]
+        stream = self._bounded_decoded.get((kind, root_entry)) or self._decoded[kind].get(root_entry)
         return {
             "address": _hex(_address(address)),
             "object": value,
