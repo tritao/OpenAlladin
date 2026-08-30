@@ -1,0 +1,17 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-slots-five-seven-animation-cursors-static-targets.json",
+  "conclusion": "Named the +0x20 animation-stream cursor fields for fixed actor-table slots 5 through 7; slots 6 and 7 are directly overwritten by the quotient/remainder-selected interaction animation roots.",
+  "fields": [
+    "0x00FF7FAA ACTOR_SLOT_5_ANIMATION_PC",
+    "0x00FF7FEC ACTOR_SLOT_6_ANIMATION_PC",
+    "0x00FF802E ACTOR_SLOT_7_ANIMATION_PC"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

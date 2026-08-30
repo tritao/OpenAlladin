@@ -612,6 +612,21 @@ def test_real_scene_rebuild_actor_slots_have_structural_canonical_roles():
         assert symbol.confidence == confidence
 
 
+def test_real_scene_rebuild_actor_animation_cursors_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FF7FAA: "ACTOR_SLOT_5_ANIMATION_PC",
+        0x00FF7FEC: "ACTOR_SLOT_6_ANIMATION_PC",
+        0x00FF802E: "ACTOR_SLOT_7_ANIMATION_PC",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == "rom_pointer"
+        assert symbol.confidence == "decompiled"
+
+
 def test_real_palette_render_state_has_canonical_roles():
     symbols = SymbolStore()
 

@@ -1,0 +1,54 @@
+{
+  "format": "openaladdin-actor-slots-five-seven-animation-cursors-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the animation-stream cursor fields in the fixed scene/resource-rebuild actor records.",
+  "fields": [
+    {
+      "address": "0x00FF7FAA",
+      "name": "ACTOR_SLOT_5_ANIMATION_PC",
+      "record": "ACTOR_TABLE_SLOT_5_BASE",
+      "offset": "0x20",
+      "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+      "template": "0x001B8444 ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_WALL",
+      "animation_root": "0x00122C1E"
+    },
+    {
+      "address": "0x00FF7FEC",
+      "name": "ACTOR_SLOT_6_ANIMATION_PC",
+      "record": "ACTOR_TABLE_SLOT_6_BASE",
+      "offset": "0x20",
+      "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+      "template": "0x001B7968 ACTOR_TEMPLATE_SCENE_RESOURCE_BASE",
+      "override": "0x001B1B00 InteractionCounter_ConfigureActors",
+      "override_source": "INTERACTION_COUNTER_ANIMATION_ROOT_TABLE quotient entry"
+    },
+    {
+      "address": "0x00FF802E",
+      "name": "ACTOR_SLOT_7_ANIMATION_PC",
+      "record": "ACTOR_TABLE_SLOT_7_BASE",
+      "offset": "0x20",
+      "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+      "template": "0x001B7968 ACTOR_TEMPLATE_SCENE_RESOURCE_BASE",
+      "override": "0x001B1B2A InteractionCounter_ConfigureActors",
+      "override_source": "INTERACTION_COUNTER_ANIMATION_ROOT_TABLE remainder entry"
+    }
+  ],
+  "record_contract": {
+    "actor_record_size": "0x42",
+    "animation_cursor_offset": "0x20",
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "evidence": [
+    "Shared actor-template initializer field layout",
+    "SceneResource_RebuildAfterInteraction template destinations",
+    "Direct quotient/remainder animation-root writes for slots 6 and 7"
+  ],
+  "conclusion": "The three fixed scene/resource-rebuild actor records expose canonical animation-stream cursor fields at their established +0x20 offset; slots 6 and 7 additionally receive counter-selected roots through the interaction animation bank.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

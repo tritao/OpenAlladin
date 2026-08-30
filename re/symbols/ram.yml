@@ -2955,6 +2955,38 @@
     - ghidra_disassembly_001B080E
     - ghidra_disassembly_001B4F7C
 
+0xFF7FAA:
+  name: ACTOR_SLOT_5_ANIMATION_PC
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Animation-stream cursor at offset +0x20 in fixed actor-table slot 5. Actor_InitializeFromTemplate installs the scene/resource-rebuild template animation root here.
+  evidence:
+    - ghidra_disassembly_001AE30A
+    - actor_template_scene_rebuild_static_decompilation
+
+0xFF7FEC:
+  name: ACTOR_SLOT_6_ANIMATION_PC
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Animation-stream cursor at offset +0x20 in fixed actor-table slot 6. SceneResource_RebuildAfterInteraction initializes it from the scene-resource template, and InteractionCounter_ConfigureActors replaces it with the quotient-selected interaction animation root.
+  evidence:
+    - ghidra_disassembly_001AE30A
+    - actor_template_scene_rebuild_static_decompilation
+    - interaction_counter_actors_static_decompilation
+
+0xFF802E:
+  name: ACTOR_SLOT_7_ANIMATION_PC
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Animation-stream cursor at offset +0x20 in fixed actor-table slot 7. SceneResource_RebuildAfterInteraction initializes it from the scene-resource template, and InteractionCounter_ConfigureActors replaces it with the remainder-selected interaction animation root.
+  evidence:
+    - ghidra_disassembly_001AE30A
+    - actor_template_scene_rebuild_static_decompilation
+    - interaction_counter_actors_static_decompilation
+
 0xFF7E46:
   name: PLAYER_ACTOR_BEHAVIOR_FLAGS
   type: u8
