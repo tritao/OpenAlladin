@@ -569,6 +569,24 @@ def test_real_presentation_actor_slot_has_structural_canonical_roles():
     assert "OPTION_SELECTION_MARKER_Y" in y.aliases
 
 
+def test_real_scene_setup_actor_slots_have_structural_canonical_roles():
+    symbols = SymbolStore()
+
+    expected = {
+        0x00FF7F06: ("ACTOR_TABLE_SLOT_3_BASE", "address"),
+        0x00FF7F08: ("ACTOR_SLOT_3_X", "pixels"),
+        0x00FF7F0A: ("ACTOR_SLOT_3_Y", "pixels"),
+        0x00FF7F48: ("ACTOR_TABLE_SLOT_4_BASE", "address"),
+        0x00FF7F4A: ("ACTOR_SLOT_4_X", "pixels"),
+        0x00FF7F4C: ("ACTOR_SLOT_4_Y", "pixels"),
+    }
+    for address, (name, value_format) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == value_format
+
+
 def test_real_palette_render_state_has_canonical_roles():
     symbols = SymbolStore()
 

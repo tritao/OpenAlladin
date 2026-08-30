@@ -59,6 +59,63 @@
     - ghidra_actor_table_layout
     - ghidra_options_menu_targets
     - options_menu_scene_table_static
+0xFF7F06:
+  name: ACTOR_TABLE_SLOT_3_BASE
+  type: actor_record
+  format: address
+  confidence: confirmed
+  description: Fixed actor-table slot 3 base at ACTOR_TABLE_BASE plus three 0x42-byte records. The common actor allocator scans this record as its first non-player slot, and Level12_ExitRoutine initializes it from the type-0x04 scene-setup template.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_allocation_initialization_static_decompilation
+    - actor_template_scene_setup_static_decompilation
+0xFF7F08:
+  name: ACTOR_SLOT_3_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: X coordinate word at offset +0x02 in fixed actor-table slot 3. Level12_ExitRoutine writes the scene-setup position here after initializing the record, while general actor allocation and collision code treat the record as the first common-pool slot.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_setup_static_decompilation
+    - actor_allocation_initialization_static_decompilation
+0xFF7F0A:
+  name: ACTOR_SLOT_3_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Y coordinate word at offset +0x04 in fixed actor-table slot 3. Level12_ExitRoutine writes the scene-setup position here after initializing the record, while general actor allocation and collision code treat the record as the first common-pool slot.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_setup_static_decompilation
+    - actor_allocation_initialization_static_decompilation
+0xFF7F48:
+  name: ACTOR_TABLE_SLOT_4_BASE
+  type: actor_record
+  format: address
+  confidence: confirmed
+  description: Fixed actor-table slot 4 base at ACTOR_TABLE_BASE plus four 0x42-byte records. Level12_ExitRoutine initializes this record from the type-0x84 scene-setup template; the same address remains part of the common actor-record stride.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_setup_static_decompilation
+0xFF7F4A:
+  name: ACTOR_SLOT_4_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: X coordinate word at offset +0x02 in fixed actor-table slot 4. Level12_ExitRoutine writes the type-0x84 scene-setup position here after initializing the record.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_setup_static_decompilation
+0xFF7F4C:
+  name: ACTOR_SLOT_4_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Y coordinate word at offset +0x04 in fixed actor-table slot 4. Level12_ExitRoutine writes the type-0x84 scene-setup position here after initializing the record.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_setup_static_decompilation
 0xFF84B2:
   name: ACTOR_AUXILIARY_POOL_BASE
   type: actor_pool

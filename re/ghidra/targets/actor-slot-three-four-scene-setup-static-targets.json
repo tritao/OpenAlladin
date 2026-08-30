@@ -1,0 +1,72 @@
+{
+  "format": "openaladdin-actor-slot-three-four-scene-setup-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Name the fixed actor-table slots and coordinate words used by Level12_ExitRoutine while preserving their general common-pool record identities.",
+  "records": [
+    {
+      "address": "0x00FF7F06",
+      "name": "ACTOR_TABLE_SLOT_3_BASE",
+      "record_index": 3,
+      "record_stride": "0x42",
+      "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+      "template": "0x001B7BC0 ACTOR_TEMPLATE_TYPE_04_SCENE_SETUP",
+      "consumer": "0x001B6562 Level12_ExitRoutine",
+      "role": "First non-player common-pool record; Level 12 scene setup destination."
+    },
+    {
+      "address": "0x00FF7F08",
+      "name": "ACTOR_SLOT_3_X",
+      "offset": "0x02",
+      "writer": "0x001B6574 Level12_ExitRoutine",
+      "value": "0x0184",
+      "role": "Slot 3 scene-setup X coordinate."
+    },
+    {
+      "address": "0x00FF7F0A",
+      "name": "ACTOR_SLOT_3_Y",
+      "offset": "0x04",
+      "writer": "0x001B657A Level12_ExitRoutine",
+      "value": "0x0156",
+      "role": "Slot 3 scene-setup Y coordinate."
+    },
+    {
+      "address": "0x00FF7F48",
+      "name": "ACTOR_TABLE_SLOT_4_BASE",
+      "record_index": 4,
+      "record_stride": "0x42",
+      "initializer": "0x001AE30A Actor_InitializeFromTemplate",
+      "template": "0x001B7BAC ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_B",
+      "consumer": "0x001B6562 Level12_ExitRoutine",
+      "role": "Fixed scene-setup actor record at the fourth actor-table slot."
+    },
+    {
+      "address": "0x00FF7F4A",
+      "name": "ACTOR_SLOT_4_X",
+      "offset": "0x02",
+      "writer": "0x001B65B0 Level12_ExitRoutine",
+      "value": "0x0176",
+      "role": "Slot 4 scene-setup X coordinate."
+    },
+    {
+      "address": "0x00FF7F4C",
+      "name": "ACTOR_SLOT_4_Y",
+      "offset": "0x04",
+      "writer": "0x001B65B6 Level12_ExitRoutine",
+      "value": "0x01B8",
+      "role": "Slot 4 scene-setup Y coordinate."
+    }
+  ],
+  "record_contract": {
+    "size": 20,
+    "actor_record_size": "0x42",
+    "initializer": "0x001AE30A Actor_InitializeFromTemplate"
+  },
+  "conclusion": "Level12_ExitRoutine directly initializes the records at FF7F06 and FF7F48 and writes their bounded coordinate words. The addresses also conform to the established actor-table stride, so the neutral slot identities are safe beyond this one scene setup.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
