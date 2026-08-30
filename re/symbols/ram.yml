@@ -950,6 +950,17 @@
     - ghidra_decompile_001B21A8
     - scene_resource_command_table_static_decompilation
     - scene_transition_tile_base_static_decompilation
+0xFFEFF6:
+  name: PALETTE_TRANSITION_STEP
+  type: u16
+  format: counter
+  confidence: confirmed
+  description: Palette-transition step counter. Render_RunProgressivePaletteTransition clears it before the VBlank-paced fade, Render_ConvergePaletteWordsByProgress uses its current value as the per-word convergence count, and the transition increments it once after each palette update.
+  evidence:
+    - ghidra_decompile_001B26F0
+    - ghidra_decompile_001B29B0
+    - ghidra_disassembly_001B273A
+    - ghidra_disassembly_001B2770
 0xFFF105:
   name: INTERACTION_GATE_TYPE1F
   type: u8

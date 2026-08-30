@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-palette-transition-step-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the palette-fade progress counter shared by the transition driver and palette convergence loop.",
+  "state": {
+    "address": "0x00FFEFF6",
+    "name": "PALETTE_TRANSITION_STEP",
+    "type": "u16",
+    "format": "counter",
+    "initial_value": "0x0000",
+    "iterations": 47
+  },
+  "owner": {
+    "address": "0x001B26F0",
+    "name": "Render_RunProgressivePaletteTransition",
+    "clear": "Clear the step counter before entering the transition loop at 0x001B273A.",
+    "increment": "Increment it once after each VBlank-paced palette update at 0x001B2770.",
+    "loop": "Run the update loop for 47 iterations."
+  },
+  "consumer": {
+    "address": "0x001B29B0",
+    "name": "Render_ConvergePaletteWordsByProgress",
+    "operation": "Load the current step counter as the per-palette-word convergence count while moving the 64 working palette words toward the target."
+  },
+  "evidence": [
+    "Exact progressive palette-transition decompilation",
+    "Exact palette convergence decompilation",
+    "Clear, increment, and bounded loop disassembly"
+  ],
+  "conclusion": "FFEFF6 is the 16-bit palette-transition step counter, not palette data or a scene-resource gate.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}
