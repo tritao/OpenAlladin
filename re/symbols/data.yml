@@ -171,6 +171,156 @@
     - genesis_4bpp_graphics_pattern
     - game_initializer_boundary_001A8A4A
 
+0x0012B7A4:
+  name: LEVEL08_EXIT_C000_GRAPHICS
+  type: graphics_data
+  size: 0x673
+  confidence: decompiled
+  description: RNC-compressed Genesis tile payload loaded to VRAM C000 by Level08_ExitRoutine before it initializes the type-0x60 exit actor. Its exact compressed extent ends at 0x0012BE16.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - level08_exit_resource_loader
+
+0x0012CCD8:
+  name: SCENE_SETUP_C000_GRAPHICS
+  type: graphics_data
+  size: 0x9B
+  confidence: decompiled
+  description: RNC-compressed Genesis tile payload loaded to VRAM C000 by SceneResource_LoadVRAMTriple12CCD8 during scene setup. Its exact compressed extent ends at 0x0012CD72.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_setup_loader_targets
+
+0x0012CD74:
+  name: SCENE_SETUP_E000_GRAPHICS
+  type: graphics_data
+  size: 0x91
+  confidence: decompiled
+  description: RNC-compressed Genesis tile payload loaded to VRAM E000 by SceneResource_LoadVRAMTriple12CCD8 during scene setup. Its exact compressed extent ends at 0x0012CE04.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_setup_loader_targets
+
+0x0012CE06:
+  name: SCENE_SETUP_SECONDARY_E000_GRAPHICS
+  type: graphics_data
+  size: 0x2F3
+  confidence: decompiled
+  description: Secondary RNC-compressed Genesis tile payload loaded to VRAM E000 by the compact scene setup loader at 0x001B47BE. Its exact compressed extent ends at 0x0012D0F8.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_setup_loader_targets
+
+0x0012D0FA:
+  name: SCENE_SHARED_GRAPHICS_RESOURCE
+  type: graphics_data
+  size: 0x55A
+  confidence: decompiled
+  description: Shared RNC-compressed Genesis tile payload used by the scene setup, state-0A, and blank/presentation resource paths. Its exact compressed extent ends at 0x0012D653.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_loader_targets
+
+0x0012D870:
+  name: SCENE_STATE07_C000_GRAPHICS
+  type: graphics_data
+  size: 0x194
+  confidence: decompiled
+  description: RNC-compressed Genesis tile payload loaded to VRAM C000 by the state-07 scene-resource loader. Its exact compressed extent ends at 0x0012DA03.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_c000_loader_targets
+
+0x0012DD76:
+  name: SCENE_SHARED_C000_GRAPHICS
+  type: graphics_data
+  size: 0x1F5
+  confidence: decompiled
+  description: Shared RNC-compressed Genesis tile payload loaded to VRAM C000 by the state-00, state-03, and state-05 presentation paths. Its exact compressed extent ends at 0x0012DF6A.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_c000_loader_targets
+
+0x0012DF6C:
+  name: SCENE_STATE0B_C000_GRAPHICS
+  type: graphics_data
+  size: 0x20A
+  confidence: decompiled
+  description: RNC-compressed Genesis tile payload loaded to VRAM C000 by the state-0B scene-resource loader. Its exact compressed extent ends at 0x0012E175.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_c000_loader_targets
+
+0x0012E4BE:
+  name: SCENE_STATE00_E000_GRAPHICS
+  type: graphics_data
+  size: 0x1A8
+  confidence: decompiled
+  description: RNC-compressed Genesis tile payload loaded to VRAM E000 by the state-00 scene-resource loader. Its exact compressed extent ends at 0x0012E665.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_variant_loader_targets
+
+0x0012E7EA:
+  name: SCENE_COMMON_E000_GRAPHICS
+  type: graphics_data
+  size: 0x227
+  confidence: decompiled
+  description: Common RNC-compressed Genesis tile payload loaded to VRAM E000 by the common state-01, state-03, state-04, state-09, and state-0B resource paths. Its exact compressed extent ends at 0x0012EA10.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_variant_loader_targets
+
+0x0012EA12:
+  name: SCENE_TRANSITION_E000_GRAPHICS
+  type: graphics_data
+  size: 0x71B
+  confidence: decompiled
+  description: RNC-compressed Genesis tile payload loaded to VRAM E000 by SceneResource_InitializeTransitionPresentation for the transition/camera presentation. Its exact compressed extent ends at 0x0012F12C.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_transition_presentation_loader
+
+0x0012F12E:
+  name: SCENE_TRANSITION_C000_GRAPHICS
+  type: graphics_data
+  size: 0x270
+  confidence: decompiled
+  description: RNC-compressed Genesis tile payload loaded to VRAM C000 by the transition branch of SceneResource_Dispatch. Its exact compressed extent ends at 0x0012F39D.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_transition_resource_loader
+
+0x0012F4EC:
+  name: SCENE_COMMON_C000_GRAPHICS
+  type: graphics_data
+  size: 0x226
+  confidence: decompiled
+  description: Common RNC-compressed Genesis tile payload loaded to VRAM C000 by the shared scene setup and blank-frame resource helpers. Its exact compressed extent ends at 0x0012F711.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_transfer_targets
+
+0x00132F8E:
+  name: SCENE_COMMON_BASE_GRAPHICS
+  type: graphics_data
+  size: 0x3983
+  confidence: decompiled
+  description: Common RNC-compressed Genesis tile payload loaded to VRAM base 000000 by the state-resource variants. Its exact compressed extent ends at 0x00136910.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_variant_loader_targets
+
+0x00136912:
+  name: SCENE_SHARED_BASE_GRAPHICS
+  type: graphics_data
+  size: 0x3F80
+  confidence: decompiled
+  description: Shared RNC-compressed Genesis tile payload loaded to VRAM base 000000 by scene setup, transition, and state-0A paths. Its exact compressed extent ends at 0x0013A891.
+  evidence:
+    - scene_rnc_graphics_blocks_static_v1
+    - scene_resource_setup_loader_targets
+
 0x00004B04:
   name: ROM_SCENE_TRANSITION_TABLE
   type: rom_pointer_table

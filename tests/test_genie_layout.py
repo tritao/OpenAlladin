@@ -2672,6 +2672,39 @@ def test_canonical_title_menu_graphics_have_exact_service_extents():
     assert all(left[1] + 1 == right[0] for left, right in zip(actual, actual[1:]))
 
 
+def test_canonical_scene_rnc_graphics_have_exact_loader_extents():
+    symbols = SymbolStore()
+    expected = (
+        (0x0012B7A4, 0x0012BE16, "LEVEL08_EXIT_C000_GRAPHICS"),
+        (0x0012CCD8, 0x0012CD72, "SCENE_SETUP_C000_GRAPHICS"),
+        (0x0012CD74, 0x0012CE04, "SCENE_SETUP_E000_GRAPHICS"),
+        (0x0012CE06, 0x0012D0F8, "SCENE_SETUP_SECONDARY_E000_GRAPHICS"),
+        (0x0012D0FA, 0x0012D653, "SCENE_SHARED_GRAPHICS_RESOURCE"),
+        (0x0012D870, 0x0012DA03, "SCENE_STATE07_C000_GRAPHICS"),
+        (0x0012DD76, 0x0012DF6A, "SCENE_SHARED_C000_GRAPHICS"),
+        (0x0012DF6C, 0x0012E175, "SCENE_STATE0B_C000_GRAPHICS"),
+        (0x0012E4BE, 0x0012E665, "SCENE_STATE00_E000_GRAPHICS"),
+        (0x0012E7EA, 0x0012EA10, "SCENE_COMMON_E000_GRAPHICS"),
+        (0x0012EA12, 0x0012F12C, "SCENE_TRANSITION_E000_GRAPHICS"),
+        (0x0012F12E, 0x0012F39D, "SCENE_TRANSITION_C000_GRAPHICS"),
+        (0x0012F4EC, 0x0012F711, "SCENE_COMMON_C000_GRAPHICS"),
+        (0x00132F8E, 0x00136910, "SCENE_COMMON_BASE_GRAPHICS"),
+        (0x00136912, 0x0013A891, "SCENE_SHARED_BASE_GRAPHICS"),
+    )
+    actual = []
+    for start, end, name in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == end - start + 1
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "graphics_data"
+        assert not symbol.is_mechanical
+        actual.append((symbol.address, symbol.end))
+    assert actual == [(start, end) for start, end, _ in expected]
+    assert all(left[1] < right[0] for left, right in zip(actual, actual[1:]))
+
+
 def test_canonical_scene_resource_palette_sources_have_exact_loader_extents():
     symbols = SymbolStore()
     expected = (
