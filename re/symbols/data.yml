@@ -3340,11 +3340,11 @@
     - movement_stream_decoder
 
 0x001212C0:
-  name: ACTOR_MOVE_INTERACTION_ANCHOR_RESPONSE_BANK_001212C0
+  name: ACTOR_MOVE_INTERACTION_ANCHOR_RESPONSE_BANK
   type: movement_stream
   size: 0x40
-  confidence: provisional
-  description: Provisional decoder-bounded interaction-anchor response bank at 0x001212C0-0x001212FF. Its exact entries compare the interaction marker at 0x00FFF0D3, publish Actor_ApplyInteractionAnchorMovementStep and Actor_SetInteractionAnchorFromActor through the movement callback parameter convention, and clear actor state before ACTOR_MOVE_TYPE52_LEVEL09_ENTRY; no direct template or producer reference has been recovered.
+  confidence: decompiled
+  description: Exact decoder-bounded interaction-anchor response bank at 0x001212C0-0x001212FF. Its entries compare the interaction marker at 0x00FFF0D3, publish Actor_ApplyInteractionAnchorMovementStep and Actor_SetInteractionAnchorFromActor through the movement callback parameter convention, and clear actor state before ACTOR_MOVE_TYPE52_LEVEL09_ENTRY; no direct template or producer reference has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
     - interaction_anchor_callback_static_v1
@@ -4073,11 +4073,11 @@
     - movement_stream_decoder
 
 0x001210FE:
-  name: ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE_001210FE
+  name: ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE
   type: movement_stream
   size: 0x82
-  confidence: provisional
-  description: Provisional decoder-bounded movement response stream in the unindexed 0x001210FE-0x0012117F band. Its exact body publishes ActorEvent_SetFlag20 and ActorEvent_ClearFlag20 through the shared AnimationVM callback parameter, compares the 0x00FFF07C terrain-query state before each timed phase, applies the encoded (-124,-113), (-111,+26), and leftward (-1..-12,0) response steps with timer 0x83, and clears the actor before ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE; no direct template or producer reference has been recovered.
+  confidence: decompiled
+  description: Exact decoder-bounded movement response stream in the unindexed 0x001210FE-0x0012117F band. Its body publishes ActorEvent_SetFlag20 and ActorEvent_ClearFlag20 through the shared AnimationVM callback parameter, compares the 0x00FFF07C terrain-query state before each timed phase, applies the encoded (-124,-113), (-111,+26), and leftward (-1..-12,0) response steps with timer 0x83, and clears the actor before ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE; no direct template or producer reference has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
     - actor_animation_callback_family_extended_static_v1
@@ -4097,8 +4097,8 @@
   name: ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX
   type: movement_stream
   size: 0x30
-  confidence: provisional
-  description: Provisional decoder-bounded Type-0x8D wall-response child-spawn prefix immediately after the Type-0x52 stream and before ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX. Its exact 48-byte body applies a (0,-4) step, adjusts actor residual fields +0x18/+0x1A by +0x0500/+0x0600, gates a spawn through actor flag +0x07, publishes Camera_SetScrollDataCursor6952, selects ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE, and clears the source actor; no direct runtime producer has been recovered.
+  confidence: decompiled
+  description: Exact decoder-bounded Type-0x8D wall-response child-spawn prefix immediately after the Type-0x52 stream and before ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX. Its 48-byte body applies a (0,-4) step, adjusts actor residual fields +0x18/+0x1A by +0x0500/+0x0600, gates a spawn through actor flag +0x07, publishes Camera_SetScrollDataCursor6952, selects ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE, and clears the source actor; no direct runtime producer has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
     - type34_wall_response_static_decompilation

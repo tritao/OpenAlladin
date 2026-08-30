@@ -37,17 +37,19 @@
     },
     {
       "address": "0x001210FE",
-      "name": "ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE_001210FE",
+      "name": "ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE",
       "range": ["0x001210FE", "0x0012117F"],
       "size": 130,
+      "confidence": "decompiled",
       "boundary": "Linear MovementDecoder coverage ends immediately before ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE at 0x00121180.",
       "semantic_evidence": "The exact body publishes ActorEvent_SetFlag20 and ActorEvent_ClearFlag20 through the shared AnimationVM callback parameter, compares the 0x00FFF07C terrain-query state, applies the encoded timed leftward response, and clears the actor."
     },
     {
       "address": "0x001212C0",
-      "name": "ACTOR_MOVE_INTERACTION_ANCHOR_RESPONSE_BANK_001212C0",
+      "name": "ACTOR_MOVE_INTERACTION_ANCHOR_RESPONSE_BANK",
       "range": ["0x001212C0", "0x001212FF"],
       "size": 64,
+      "confidence": "decompiled",
       "boundary": "The four-entry bank ends immediately before ACTOR_MOVE_TYPE52_LEVEL09_ENTRY at 0x00121300.",
       "semantic_evidence": "The bank publishes Actor_ApplyInteractionAnchorMovementStep at 0x001B5850 and Actor_SetInteractionAnchorFromActor at 0x001B58BA through movement callback parameters, then clears actor state."
     },
@@ -56,6 +58,7 @@
       "name": "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX",
       "range": ["0x001213E2", "0x00121411"],
       "size": 48,
+      "confidence": "decompiled",
       "boundary": "The child-response prefix ends immediately before ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX at 0x00121412.",
       "semantic_evidence": "The exact prefix adjusts actor residual fields, tests actor flag +0x07, publishes Camera_SetScrollDataCursor6952, selects ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE, and clears the source actor."
     },
