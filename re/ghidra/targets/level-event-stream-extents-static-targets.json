@@ -8,7 +8,7 @@
   "dispatcher": {
     "address": "0x001B634E",
     "name": "LevelEvent_DispatchTimedCommand",
-    "cursor": "0x00FFF12E LEVEL_EVENT_SCRIPT_CURSOR",
+    "cursor": "0x00FFF132 LEVEL_EVENT_SCRIPT_CURSOR",
     "record_size": 6,
     "record": ["delay byte", "command byte", "word payload", "word payload"],
     "dispatch_table": "0x0020C0 LEVEL_EVENT_COMMAND_DISPATCH_TABLE"

@@ -25,7 +25,7 @@
     "event_state": [
       "advances the low event counter and carries into the high counter",
       "increments the event phase on the animation cadence",
-      "consumes command/parameter pairs from 0x00FFF12E",
+      "consumes command/parameter pairs from LEVEL08_EVENT_COMMAND_CURSOR at 0x00FFF12E",
       "dispatches command handlers through 0x0020C0",
       "conditionally allocates an actor using the camera-relative player state"
     ],
@@ -35,7 +35,7 @@
       { "address": "0x00FFF086", "name": "LEVEL08_EVENT_COUNTER_HIGH" },
       { "address": "0x00FFF088", "name": "LEVEL08_EVENT_COUNTER_LOW" },
       { "address": "0x00FFF08A", "name": "LEVEL08_VDP_RECORD_OFFSET" },
-      { "address": "0x00FFF12E", "name": "LEVEL_EVENT_SCRIPT_CURSOR" }
+      { "address": "0x00FFF12E", "name": "LEVEL08_EVENT_COMMAND_CURSOR" }
     ]
   },
   "confidence": "decompiled",

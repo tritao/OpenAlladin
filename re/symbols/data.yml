@@ -2626,7 +2626,7 @@
   count: 443
   size: 0x376
   confidence: decompiled
-  description: Exact 443-record, two-byte Level-08 event command stream installed by Level08_ExitRoutine at 0x001B64D8 into the Level-08 event cursor at 0x00FFF12E. Level08_EnterRoutine consumes each command/parameter pair, dispatches commands through LEVEL_EVENT_COMMAND_DISPATCH_TABLE, and ends with F2 01 at 0x000029A3-0x000029A4; a zero alignment byte at 0x000029A5 separates it from HUD_INTERACTION_FRAME_SEQUENCE.
+  description: Exact 443-record, two-byte Level-08 event command stream installed by Level08_ExitRoutine at 0x001B64D8 into LEVEL08_EVENT_COMMAND_CURSOR at 0x00FFF12E. Level08_EnterRoutine consumes each command/parameter pair, dispatches commands through LEVEL_EVENT_COMMAND_DISPATCH_TABLE, and ends with F2 01 at 0x000029A3-0x000029A4; a zero alignment byte at 0x000029A5 separates it from HUD_INTERACTION_FRAME_SEQUENCE.
   evidence:
     - ghidra_level08_exit_routine
     - ghidra_level08_enter_routine

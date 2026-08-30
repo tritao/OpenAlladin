@@ -13,7 +13,7 @@
     "record_size": 2,
     "records": 443,
     "producer": "0x001B64D0 Level08_ExitRoutine",
-    "cursor": "0x00FFF12E",
+    "cursor": "0x00FFF12E LEVEL08_EVENT_COMMAND_CURSOR",
     "dispatch_table": "0x0020C0 LEVEL_EVENT_COMMAND_DISPATCH_TABLE",
     "first_record": "FE 60",
     "terminal_record": "F2 01 at 0x000029A3"

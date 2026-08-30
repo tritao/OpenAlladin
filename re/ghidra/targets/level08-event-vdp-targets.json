@@ -16,7 +16,7 @@
     { "address": "0x00FFF086", "name": "LEVEL08_EVENT_COUNTER_HIGH" },
     { "address": "0x00FFF088", "name": "LEVEL08_EVENT_COUNTER_LOW" },
     { "address": "0x00FFF08A", "name": "LEVEL08_VDP_RECORD_OFFSET" },
-    { "address": "0x00FFF12E", "name": "LEVEL_EVENT_SCRIPT_CURSOR" },
+    { "address": "0x00FFF12E", "name": "LEVEL08_EVENT_COMMAND_CURSOR" },
     { "address": "0x00C00000", "name": "VDP_DATA" },
     { "address": "0x00C00004", "name": "VDP_CONTROL" }
   ],

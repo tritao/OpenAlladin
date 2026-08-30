@@ -515,13 +515,13 @@ def test_real_level08_event_state_has_canonical_roles():
         0x00FFF086: "LEVEL08_EVENT_COUNTER_HIGH",
         0x00FFF088: "LEVEL08_EVENT_COUNTER_LOW",
         0x00FFF08A: "LEVEL08_VDP_RECORD_OFFSET",
-        0x00FFF12E: "LEVEL_EVENT_SCRIPT_CURSOR",
+        0x00FFF12E: "LEVEL08_EVENT_COMMAND_CURSOR",
+        0x00FFF132: "LEVEL_EVENT_SCRIPT_CURSOR",
     }
     for address, name in expected.items():
         symbol = symbols.at(address, include_ranges=False)
         assert symbol is not None
         assert symbol.name == name
-    assert symbols.at(0x00FFF132, include_ranges=False) is None
 
 
 def test_real_presentation_actor_slot_has_structural_canonical_roles():

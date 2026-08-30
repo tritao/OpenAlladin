@@ -17,7 +17,7 @@
     "terminal_record": "F2 01",
     "terminal_address": "0x000029A3",
     "command_family": "0xF2-0xFF",
-    "cursor": "0x00FFF12E",
+    "cursor": "0x00FFF12E LEVEL08_EVENT_COMMAND_CURSOR",
     "dispatch_table": "0x0020C0"
   },
   "producer": {
