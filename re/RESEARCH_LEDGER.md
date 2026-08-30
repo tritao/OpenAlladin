@@ -67,10 +67,10 @@ the finding or commit message.
   current Level-01 route.
 - `re/mame/findings/20260830-runtime-coverage-symbol-promotions-v1.json`
   records 29 decompiled canonical functions promoted to `trace_validated` from
-  repeated observations in the imported whole-ROM coverage corpus. The filter
-  required at least two executions across at least two scenarios; it records
-  runtime reachability only and intentionally leaves single-hit observations
-  and unresolved semantic review targets unchanged.
+  multiple covered PCs in the imported whole-ROM coverage corpus. The filter
+  required at least two distinct covered PCs across at least two scenarios; it
+  records runtime reachability only and intentionally leaves single-PC
+  observations and unresolved semantic review targets unchanged.
 - `re/mame/findings/20260830-actor-template-type84-type1a-presentation-variant-static-v1.json`
   records the static promotion of `0x001B82DC` to
   `ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT`. Its animation pointer
@@ -3368,4 +3368,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-ram-state-contract-confidence-static-v1` | recorded-static-decompilation | Promoted 37 named scene/menu, player-transition, interaction, terrain, and actor-response RAM symbols from probable to decompiled confidence after closing their exact address, width, and static access contracts; unresolved latch producers and natural runtime causes remain explicitly open |
 | `20260830-reset-bootstrap-z80-stub-static-v1` | recorded-static-disassembly | Decoded the 38-byte Z80 reset image at 0x000002DE as the RAM-clear-and-spin stub installed at Z80 address 0 until Audio_LoadZ80Driver replaces it with the full sound-driver image |
 | `20260830-semantic-review-runtime-audit-v1` | recorded-runtime-negative-evidence | Exercised the remaining semantic review queue through the Level-01 actor/refill replay, a 5,000-frame traversal, and all corrected scene-state loader captures; no open function or actor-stream/template target was observed, so no speculative promotion was made |
-| `20260830-runtime-coverage-symbol-promotions-v1` | recorded-runtime-evidence | Promoted 29 already-named decompiled functions to trace_validated from repeated imported runtime observations, requiring at least two executions across at least two scenarios and leaving single-hit or unresolved review targets unchanged |
+| `20260830-runtime-coverage-symbol-promotions-v1` | recorded-runtime-evidence | Promoted 29 already-named decompiled functions to trace_validated from multiple covered PCs across at least two imported runtime scenarios, leaving single-PC or unresolved review targets unchanged |
