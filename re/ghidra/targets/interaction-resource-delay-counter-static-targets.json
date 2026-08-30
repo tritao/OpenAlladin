@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-interaction-resource-delay-counter-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "counter": {
+    "address": "0x00FFF159",
+    "name": "INTERACTION_RESOURCE_DELAY_COUNTER",
+    "consumer": "0x001B01AC Interaction_UpdateResourceState",
+    "phase_gate": "FRAME_PHASE_COUNTER bit 0 == 0",
+    "decrement": "subq.b #1,(0x00FFF159).l"
+  },
+  "helpers": [
+    {
+      "address": "0x001B019C",
+      "name": "Interaction_AddResourceDelay1",
+      "range": ["0x001B019C", "0x001B01A3"],
+      "instruction": "addq.b #1,(0x00FFF159).l; rts"
+    },
+    {
+      "address": "0x001B01A4",
+      "name": "Interaction_AddResourceDelay7",
+      "range": ["0x001B01A4", "0x001B01AB"],
+      "instruction": "addq.b #7,(0x00FFF159).l; rts"
+    }
+  ],
+  "boundary_basis": [
+    "Both helpers are complete fixed-increment routines ending in RTS.",
+    "The following routine at 0x001B01AC is the named consumer and decrements the same byte.",
+    "The helpers and consumer form a contiguous block immediately after the response-counter adjustment family."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

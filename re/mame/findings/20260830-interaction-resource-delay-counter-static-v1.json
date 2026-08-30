@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-interaction-resource-delay-counter-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/interaction-resource-delay-counter-static-targets.json",
+  "promoted": [
+    {
+      "address": "0x001B019C",
+      "name": "Interaction_AddResourceDelay1",
+      "range": ["0x001B019C", "0x001B01A3"],
+      "size": 8
+    },
+    {
+      "address": "0x001B01A4",
+      "name": "Interaction_AddResourceDelay7",
+      "range": ["0x001B01A4", "0x001B01AB"],
+      "size": 8
+    }
+  ],
+  "semantics": "The two adjacent helpers add fixed one- and seven-frame amounts to INTERACTION_RESOURCE_DELAY_COUNTER at 0x00FFF159. Interaction_UpdateResourceState tests and decrements that byte only on even FRAME_PHASE_COUNTER phases before advancing INTERACTION_RESOURCE_PROGRESS_COUNTER.",
+  "conclusion": "The previously unknown 0x001B019C-0x001B01AB block is a complete interaction/resource delay-counter helper family, not padding or an untyped hook."
+}

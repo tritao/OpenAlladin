@@ -1179,6 +1179,17 @@
   description: Shared actor-response counter advanced by 0x19 when the type-0x34 wall actor is consumed by its player-collision handler.
   evidence:
     - ghidra_type34_handler_decompile
+0xFFF159:
+  name: INTERACTION_RESOURCE_DELAY_COUNTER
+  type: u8
+  format: countdown
+  confidence: decompiled
+  description: Frame-gated interaction/resource delay counter. Interaction_UpdateResourceState tests it on even FRAME_PHASE_COUNTER phases and decrements it before advancing the ASCII resource-progress counter; adjacent fixed-increment helpers add one or seven delay ticks.
+  evidence:
+    - ghidra_decompile_001B01AC
+    - ghidra_disassembly_001B019C
+    - ghidra_disassembly_001B01A4
+    - interaction_resource_delay_counter_static_decompilation
 0xFFF0CE:
   name: TERRAIN_QUERY_STATE_A
   type: u8

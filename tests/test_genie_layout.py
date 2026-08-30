@@ -3025,6 +3025,29 @@ def test_interaction_resource_progress_reset_is_exact():
     )
 
 
+def test_interaction_resource_delay_counter_helpers_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x001B019C: (0x001B01A3, "Interaction_AddResourceDelay1"),
+        0x001B01A4: (0x001B01AB, "Interaction_AddResourceDelay7"),
+    }
+    for address, (end, name) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == end - address + 1
+
+    ram = symbols.at(0x00FFF159, include_ranges=False)
+    assert ram is not None
+    assert ram.name == "INTERACTION_RESOURCE_DELAY_COUNTER"
+    assert ram.metadata["format"] == "countdown"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B019C:0x001B01A4] == bytes.fromhex("523900FFF1594E75")
+    assert rom[0x001B01A4:0x001B01AC] == bytes.fromhex("5E3900FFF1594E75")
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)
