@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 
 from genie.deasm import DeasmInput, DeasmError, InstructionRecord, collect, emit, validate_input
+from genie.deasm.labels import is_mechanical_label, range_labels
 from genie.deasm.syntax import Gnu68000Syntax
 from genie.layout.model import Layout, LayoutRange
 from genie.symbols import Symbol, SymbolStore
@@ -73,6 +74,22 @@ def test_deasm_stats_separates_semantic_and_mechanical_labels():
     assert measured.instructionized == 2
     assert measured.raw_fallback == 1
     assert '"raw_fallback": 1' in json.dumps(measured.to_dict(), sort_keys=True)
+
+
+def test_split_ghidra_function_fragment_keeps_semantic_owner_name():
+    layout = Layout(
+        rom_size=8,
+        ranges=(
+            LayoutRange(0x00, 0x03, "CODE", "tracked.symbol", "MenuFunction"),
+            LayoutRange(0x04, 0x07, "CODE", "ghidra.function", "MenuFunction"),
+        ),
+    )
+    symbols = SymbolStore(symbols=(Symbol(0x00, "MenuFunction", "function"),))
+
+    labels = range_labels(layout.ranges, symbols)
+
+    assert labels == {0x00: "MenuFunction", 0x04: "MenuFunction_2"}
+    assert not is_mechanical_label(labels[0x04])
 
 
 def test_deasm_rejects_instruction_bytes_that_do_not_match_rom():

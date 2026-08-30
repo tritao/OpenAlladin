@@ -56,11 +56,16 @@ def _candidate(item: LayoutRange, symbols: SymbolStore) -> str | None:
     symbol = symbols.at(item.start, include_ranges=False)
     if symbol is not None:
         return symbol.name
-    # Ghidra's broad function bodies can win many partition fragments.  Their
-    # display name belongs to the entry point, not to every fragment, so only
-    # keep non-canonical names from evidence that describes the fragment
-    # itself.  Canonical tracked symbols above remain authoritative.
-    if item.source in {"ghidra.function", "ghidra.jump_table"}:
+    # Ghidra's broad function bodies can win partition fragments.  Preserve a
+    # non-automatic function name on those fragments when canonical metadata
+    # has already supplied that name; otherwise the fragment falls back to a
+    # stable address label below.  Jump-table evidence is still intentionally
+    # not allowed to borrow its owner's display name.
+    if item.source == "ghidra.function":
+        if item.name and not _GHIDRA_AUTO_NAME.fullmatch(str(item.name)) and not str(item.name).startswith("s_"):
+            return str(item.name)
+        return None
+    if item.source == "ghidra.jump_table":
         return None
     if item.name and not _GHIDRA_AUTO_NAME.fullmatch(str(item.name)) and not str(item.name).startswith("s_"):
         return str(item.name)
