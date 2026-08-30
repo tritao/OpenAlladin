@@ -561,6 +561,25 @@ def test_player_response_cleanup_family_has_behavior_names_and_legacy_aliases():
         assert legacy in symbol.aliases
 
 
+def test_actor_response_setup_family_has_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001AC076: ("ActorCollision_EnterType84Response", "ActorType26_ActorCollisionHandler"),
+        0x001AC0EE: ("ActorCollision_InstallType03Response", "ActorType03_ActorCollisionHandler"),
+        0x001AC1B4: ("ActorCollision_InstallType05Response", "ActorType05_ActorCollisionHandler"),
+        0x001AC2E0: ("ActorCollision_InstallType1FResponse", "ActorType1F_ActorCollisionHandler"),
+        0x001AC2FC: ("ActorCollision_InstallType22Response", "ActorType22_ActorCollisionHandler"),
+        0x001AC318: ("ActorCollision_InstallType1EResponse", "ActorType1E_ActorCollisionHandler"),
+        0x001AC334: ("ActorCollision_InstallType21Response", "ActorType21_ActorCollisionHandler"),
+        0x001AC4DE: ("ActorCollision_PromoteSourceAndToggleFacing", "ActorType18_19_ActorCollisionHandler"),
+        0x001AC60E: ("ActorCollision_ToggleFacing", "ActorType0D_ActorCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

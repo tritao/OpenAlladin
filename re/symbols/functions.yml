@@ -1721,7 +1721,8 @@
     - rom_actor_collision_handler_table_001EBA
     - ghidra_level01_countdown_producer_decompile
 0x001AC318:
-  name: ActorType1E_ActorCollisionHandler
+  name: ActorCollision_InstallType1EResponse
+  aliases: [ActorType1E_ActorCollisionHandler]
   confidence: confirmed
   description: Actor-to-actor collision handler for receiving actor type 0x1E. It applies the shared interaction/response path and does not assign SCENE_STATE; the successful v6 wall-opening trace shows the distinct player-collision target at 0x001AE796 performing the type-0x1E to type-0x84 replacement.
   evidence:
@@ -2107,7 +2108,8 @@
     - mame_type1e_sword_open_trace
     - mame_type1e_handler_breakpoint_context
 0x001AC334:
-  name: ActorType21_ActorCollisionHandler
+  name: ActorCollision_InstallType21Response
+  aliases: [ActorType21_ActorCollisionHandler]
   confidence: confirmed
   description: Actor-collision dispatch target for type 0x21. It clears/reinitializes the actor through the shared type-0x2D interaction cleanup family and does not provide a vertical transfer or direct scene-state write.
   evidence:
@@ -6289,7 +6291,8 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AC60E:
-  name: ActorType0D_ActorCollisionHandler
+  name: ActorCollision_ToggleFacing
+  aliases: [ActorType0D_ActorCollisionHandler]
   size: 6
   confidence: decompiled
   description: Actor-to-actor collision dispatch entry for receiving actor type 0x0D. It delegates to Actor_ToggleHorizontalFacing and returns; the handler is reached through ACTOR_COLLISION_HANDLER_TYPE_0D at 0x001EEE.
@@ -6478,7 +6481,8 @@
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001AC076:
-  name: ActorType26_ActorCollisionHandler
+  name: ActorCollision_EnterType84Response
+  aliases: [ActorType26_ActorCollisionHandler]
   size: 6
   confidence: decompiled
   description: Compact actor-collision handler for receiving actor type 0x26. It enters the shared type-0x84 transition initializer and returns.
@@ -6510,7 +6514,8 @@
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001AC0EE:
-  name: ActorType03_ActorCollisionHandler
+  name: ActorCollision_InstallType03Response
+  aliases: [ActorType03_ActorCollisionHandler]
   size: 20
   confidence: decompiled
   description: Actor-collision handler for receiving actor type 0x03. It installs the type-0x84 collision animation state, clears transient actor fields, and transfers into ActorCollision_HandleTerminalInteraction at 0x001AC458 for the common terminal response.
@@ -6531,7 +6536,8 @@
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001AC1B4:
-  name: ActorType05_ActorCollisionHandler
+  name: ActorCollision_InstallType05Response
+  aliases: [ActorType05_ActorCollisionHandler]
   size: 28
   confidence: decompiled
   description: Actor-collision handler for receiving actor type 0x05. It installs the type-0x52A8 animation and type-0x0D4C movement state, clears transient actor fields, and enters the common type-0x0A terminal response path.
@@ -6541,7 +6547,8 @@
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001AC2E0:
-  name: ActorType1F_ActorCollisionHandler
+  name: ActorCollision_InstallType1FResponse
+  aliases: [ActorType1F_ActorCollisionHandler]
   size: 28
   confidence: decompiled
   description: Actor-collision handler for receiving actor type 0x1F. It installs the type-0x84 response state with animation 0x0012384A, clears transient fields, and enters the shared terminal response path.
@@ -6551,7 +6558,8 @@
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001AC2FC:
-  name: ActorType22_ActorCollisionHandler
+  name: ActorCollision_InstallType22Response
+  aliases: [ActorType22_ActorCollisionHandler]
   size: 28
   confidence: decompiled
   description: Actor-collision handler for receiving actor type 0x22. It installs the type-0x84 response state with animation 0x0012387A, clears transient fields, and enters the shared terminal response path.
@@ -6594,7 +6602,8 @@
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001AC4DE:
-  name: ActorType18_19_ActorCollisionHandler
+  name: ActorCollision_PromoteSourceAndToggleFacing
+  aliases: [ActorType18_19_ActorCollisionHandler]
   size: 10
   confidence: decompiled
   description: Shared actor-collision handler for receiving actor types 0x18 and 0x19. It promotes the receiver to type 0x84, toggles its horizontal facing through Actor_ToggleHorizontalFacing, and returns.

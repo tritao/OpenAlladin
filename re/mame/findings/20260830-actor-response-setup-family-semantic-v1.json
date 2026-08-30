@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-response-setup-family-semantic-targets.json",
+  "promotions": [
+    { "address": "0x001AC076", "old_name": "ActorType26_ActorCollisionHandler", "name": "ActorCollision_EnterType84Response", "alias": "ActorType26_ActorCollisionHandler" },
+    { "address": "0x001AC0EE", "old_name": "ActorType03_ActorCollisionHandler", "name": "ActorCollision_InstallType03Response", "alias": "ActorType03_ActorCollisionHandler" },
+    { "address": "0x001AC1B4", "old_name": "ActorType05_ActorCollisionHandler", "name": "ActorCollision_InstallType05Response", "alias": "ActorType05_ActorCollisionHandler" },
+    { "address": "0x001AC2E0", "old_name": "ActorType1F_ActorCollisionHandler", "name": "ActorCollision_InstallType1FResponse", "alias": "ActorType1F_ActorCollisionHandler" },
+    { "address": "0x001AC2FC", "old_name": "ActorType22_ActorCollisionHandler", "name": "ActorCollision_InstallType22Response", "alias": "ActorType22_ActorCollisionHandler" },
+    { "address": "0x001AC318", "old_name": "ActorType1E_ActorCollisionHandler", "name": "ActorCollision_InstallType1EResponse", "alias": "ActorType1E_ActorCollisionHandler" },
+    { "address": "0x001AC334", "old_name": "ActorType21_ActorCollisionHandler", "name": "ActorCollision_InstallType21Response", "alias": "ActorType21_ActorCollisionHandler" },
+    { "address": "0x001AC4DE", "old_name": "ActorType18_19_ActorCollisionHandler", "name": "ActorCollision_PromoteSourceAndToggleFacing", "alias": "ActorType18_19_ActorCollisionHandler" },
+    { "address": "0x001AC60E", "old_name": "ActorType0D_ActorCollisionHandler", "name": "ActorCollision_ToggleFacing", "alias": "ActorType0D_ActorCollisionHandler" }
+  ],
+  "conclusion": "Promoted nine actor-collision response setup and facing entries to behavior-based canonical names while retaining dispatch-type aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

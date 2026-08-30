@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "actor-response-setup-family",
+    "purpose": "Promote actor-collision Type-0x84 response setup, animation installation, and facing helpers to behavior-based canonical names."
+  },
+  "pointer_table": {
+    "address": "0x001EBA",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x03"], "address": "0x001AC0EE" },
+      { "actor_types": ["0x05"], "address": "0x001AC1B4" },
+      { "actor_types": ["0x0D"], "address": "0x001AC60E" },
+      { "actor_types": ["0x18", "0x19"], "address": "0x001AC4DE" },
+      { "actor_types": ["0x1E"], "address": "0x001AC318" },
+      { "actor_types": ["0x1F"], "address": "0x001AC2E0" },
+      { "actor_types": ["0x21"], "address": "0x001AC334" },
+      { "actor_types": ["0x22"], "address": "0x001AC2FC" },
+      { "actor_types": ["0x26"], "address": "0x001AC076" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AC076", "name": "ActorCollision_EnterType84Response", "legacy_name": "ActorType26_ActorCollisionHandler", "range": "0x001AC076-0x001AC07B", "size": 6 },
+    { "address": "0x001AC0EE", "name": "ActorCollision_InstallType03Response", "legacy_name": "ActorType03_ActorCollisionHandler", "range": "0x001AC0EE-0x001AC101", "size": 20 },
+    { "address": "0x001AC1B4", "name": "ActorCollision_InstallType05Response", "legacy_name": "ActorType05_ActorCollisionHandler", "range": "0x001AC1B4-0x001AC1CF", "size": 28 },
+    { "address": "0x001AC2E0", "name": "ActorCollision_InstallType1FResponse", "legacy_name": "ActorType1F_ActorCollisionHandler", "range": "0x001AC2E0-0x001AC2FB", "size": 28 },
+    { "address": "0x001AC2FC", "name": "ActorCollision_InstallType22Response", "legacy_name": "ActorType22_ActorCollisionHandler", "range": "0x001AC2FC-0x001AC317", "size": 28 },
+    { "address": "0x001AC318", "name": "ActorCollision_InstallType1EResponse", "legacy_name": "ActorType1E_ActorCollisionHandler", "range": "0x001AC318-0x001AC333", "size": 28 },
+    { "address": "0x001AC334", "name": "ActorCollision_InstallType21Response", "legacy_name": "ActorType21_ActorCollisionHandler", "range": "0x001AC334-0x001AC34F", "size": 28 },
+    { "address": "0x001AC4DE", "name": "ActorCollision_PromoteSourceAndToggleFacing", "legacy_name": "ActorType18_19_ActorCollisionHandler", "range": "0x001AC4DE-0x001AC4E7", "size": 10 },
+    { "address": "0x001AC60E", "name": "ActorCollision_ToggleFacing", "legacy_name": "ActorType0D_ActorCollisionHandler", "range": "0x001AC60E-0x001AC613", "size": 6 }
+  ],
+  "contracts": {
+    "type84_setup": "install the type-specific animation/movement response fields, clear transient actor state, and enter the common terminal response path",
+    "type26": "enter the shared Actor_EnterType84Animation12319C transition block",
+    "facing": "promote the source to Type 0x84 and toggle horizontal facing for Types 0x18/0x19, or toggle facing directly for Type 0x0D"
+  },
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
