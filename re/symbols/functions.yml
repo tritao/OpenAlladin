@@ -340,7 +340,8 @@
 0x001AFFE4:
   name: Interaction_InitializePendingDisplayValue
   confidence: trace_validated
-  description: Seeds INTERACTION_PENDING_DISPLAY_VALUE with the initial ASCII string "100000" and a trailing NUL during runtime initialization. The buffer is the pending snapshot side of the HUD_DISPLAY_DIGITS synchronization path; its narrower user-facing gameplay meaning remains unassigned.
+  review_status: closed
+  description: Seeds INTERACTION_PENDING_DISPLAY_VALUE with the initial ASCII string "100000" and a trailing NUL during runtime initialization. The buffer is the pending snapshot side of the HUD_DISPLAY_DIGITS synchronization path; the narrower user-facing gameplay meaning remains tracked on the RAM field rather than this fully decoded initializer.
   evidence:
     - ghidra_decompile_001AFFE4
     - ghidra_interaction_display_initialization_targets
