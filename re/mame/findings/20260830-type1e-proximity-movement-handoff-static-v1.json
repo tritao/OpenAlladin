@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type1e-proximity-movement-handoff-static-targets.json",
+  "stream": {
+    "address": "0x001235E2",
+    "name": "ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF",
+    "range": "0x001235E2-0x00123613",
+    "bytes": 50,
+    "entry": "ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE branches through FD 0xF0 at 0x00123666",
+    "movement_write": "ED at 0x001235E4 publishes 0x001204DA, the shared Type-0x1E movement continuation",
+    "response_frames": ["0x1212", "0x1216", "0x121A", "0x121E", "0x1222", "0x1226", "0x122A", "0x122E"],
+    "internal_loop": "EA at 0x0012360E -> 0x001235EC",
+    "internal_entry": {
+      "address": "0x001235EC",
+      "name": "ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_LOOP",
+      "entry_offset": 10
+    }
+  },
+  "runtime_correlation": {
+    "finding": "20260827-level01-behavior46-lower-band-movement-decode-v1",
+    "actor_type": "0x1E",
+    "animation_cursor_sequence": ["0x001235EC", "0x001235F0"],
+    "interpretation": "The lower-band Type-0x1E trace enters the internal loop after the static handoff publishes movement state."
+  },
+  "boundary_basis": [
+    "Direct Type-0x1E root branch",
+    "Lossless AnimationDecoder output",
+    "Terminal EA before the separately owned Type-0x1E root at 0x00123614"
+  ],
+  "conclusion": "The former UNKNOWN gap is a bounded Type-0x1E proximity-response continuation, not an independent Type-0x21 root or generic data."
+}

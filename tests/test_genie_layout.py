@@ -2236,6 +2236,42 @@ def test_player_action_continuation_banks_are_exact():
         assert decoded["instructions"][-1]["opcode"] == terminal_opcode
 
 
+def test_type1e_proximity_movement_handoff_animation_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x001235E2, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF"
+    assert stream.end == 0x00123613
+    assert stream.size == 50
+    assert stream.metadata["type"] == "animation_stream"
+
+    loop = symbols.at(0x001235EC, include_ranges=False)
+    assert loop is not None
+    assert loop.name == "ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_LOOP"
+    assert loop.metadata["alias_of"] == "ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF"
+    assert loop.metadata["entry_offset"] == 10
+
+    following = symbols.at(0x00123614, include_ranges=False)
+    assert following is not None
+    assert following.name == "ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE"
+    assert stream.end + 1 == following.address
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = load_animation_decoder().AnimationDecoder(rom)
+    decoded = decoder.decode_stream(
+        0x001235E2,
+        max_instructions=64,
+        max_bytes=50,
+        follow_control_flow=False,
+        continue_after_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 50
+    assert decoded["stopped_reason"] == "byte_limit"
+    assert decoded["instructions"][1]["value"] == "001204DA"
+    assert decoded["instructions"][-1]["branch_target"] == "0x001235EC"
+
+
 def test_actor_type41_interaction_response_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00125D7E, include_ranges=False)

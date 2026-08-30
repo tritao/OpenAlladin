@@ -3418,6 +3418,30 @@
     - animation_stream_decoder
     - mame_type21_settle_trace
 
+0x001235E2:
+  name: ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF
+  type: animation_stream
+  size: 50
+  confidence: decompiled
+  description: Type-0x1E proximity-response movement handoff entered by the X-distance branch at 0x00123666 of ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE. Its exact 50-byte region presents the 0x1212-0x122E response cadence, publishes the shared ACTOR_MOVE_TYPE1E_STATE46_RESPONSE continuation at 0x001204DA, and loops from 0x0012360E to its internal 0x001235EC entry before the following Type-0x1E root.
+  evidence:
+    - type1e_animation_static_decompilation
+    - type1e_movement_static_decompilation
+    - level01_behavior46_lower_band_movement_decode
+    - animation_stream_decoder
+
+0x001235EC:
+  name: ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_LOOP
+  type: animation_stream
+  alias_of: ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF
+  entry_offset: 10
+  confidence: decompiled
+  description: Internal Type-0x1E proximity-response movement-loop entry beginning after the handoff's movement publication. It aliases ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF and does not claim a second ROM range.
+  evidence:
+    - type1e_animation_static_decompilation
+    - level01_behavior46_lower_band_movement_decode
+    - animation_stream_decoder
+
 0x0012355A:
   name: ACTOR_ANIM_PROXIMITY_SECONDARY
   size: 82

@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-type1e-proximity-movement-handoff-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "stream": {
+    "address": "0x001235E2",
+    "name": "ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF",
+    "range": ["0x001235E2", "0x00123613"],
+    "bytes": 50,
+    "producer": {
+      "address": "0x00123666",
+      "name": "ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE",
+      "condition": "FD 0xF0 branches to 0x001235E2"
+    },
+    "decoded": [
+      "Presents frame 0x1212 and writes ACTOR_MOVE_TYPE1E_STATE46_RESPONSE continuation 0x001204DA through ED",
+      "Presents the 0x1212/0x1216/0x121A/0x121E/0x1222/0x1226/0x122A/0x122E response pairs with F7 facing clear",
+      "EA at 0x0012360E loops to the internal 0x001235EC entry"
+    ]
+  },
+  "internal_entry": {
+    "address": "0x001235EC",
+    "name": "ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_LOOP",
+    "entry_offset": 10,
+    "purpose": "Runtime-observed loop entry after the movement publication"
+  },
+  "boundary_basis": [
+    "Direct conditional branch from the known Type-0x1E proximity-response root",
+    "Lossless AnimationDecoder output consumes exactly 50 bytes",
+    "The owner ends at the terminal EA before ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE at 0x00123614"
+  ],
+  "runtime_correlation": {
+    "finding": "re/mame/findings/20260827-level01-behavior46-lower-band-movement-decode-v1.json",
+    "observed_animation_entries": ["0x001235EC", "0x001235F0"],
+    "observed_actor_type": "0x1E"
+  },
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
