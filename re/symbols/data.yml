@@ -2185,10 +2185,21 @@
   type: z80_waveform_data
   size: 0x1E18C
   confidence: confirmed
-  description: Contiguous waveform/sample payload selected by AUDIO_Z80_SAMPLE_DESCRIPTOR_TABLE. Descriptor offsets and lengths cover this payload without gaps from 0x001C7533 through 0x001E56BE; the following byte is the boundary padding before Audio_AcquireZ80BankWindow at 0x001E56C0.
+  description: Contiguous waveform/sample payload selected by AUDIO_Z80_SAMPLE_DESCRIPTOR_TABLE. Descriptor offsets and lengths cover this payload without gaps from 0x001C7533 through 0x001E56BE; the following byte at 0x001E56BF is boundary padding before Audio_AcquireZ80BankWindow at 0x001E56C0.
   evidence:
     - z80_sample_descriptor_loader_001336
     - z80_sample_descriptor_extent_static_v1
+
+0x001E56BF:
+  name: AUDIO_Z80_SAMPLE_DATA_ALIGNMENT_PADDING
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero boundary byte after AUDIO_Z80_SAMPLE_WAVEFORM_DATA through 0x001E56BE and before Audio_AcquireZ80BankWindow at 0x001E56C0.
+  evidence:
+    - audio_z80_sample_data_static_v1
+    - audio_bank_window_static_v1
+    - rom_padding_uniform_static_v1
 
 0xFF0000:
   name: WORK_RAM_BASE
@@ -7174,13 +7185,24 @@
   count: 16
   size: 0x20
   confidence: decompiled
-  description: Sixteen signed camera-scroll delta words consumed through CAMERA_SCROLL_DATA_CURSOR. The AnimationVM camera callbacks select offsets 0x0000693E, 0x00006952, and 0x0000695A within this table; the following camera-scroll resource begins at 0x0000695E.
+  description: Sixteen signed camera-scroll delta words consumed through CAMERA_SCROLL_DATA_CURSOR. The AnimationVM camera callbacks select offsets 0x0000693E, 0x00006952, and 0x0000695A within this table; two zero alignment bytes at 0x0000695E-0x0000695F precede SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS at 0x00006960.
   evidence:
     - gnu_m68k_disassembly_001B52D6
     - gnu_m68k_disassembly_001B52E2
     - gnu_m68k_disassembly_001B52EE
     - ghidra_disassembly_001AB148
     - actor_surface_flags_table_static_decompilation
+
+0x0000695E:
+  name: SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS_ALIGNMENT_PADDING
+  type: padding_data
+  size: 2
+  confidence: confirmed
+  description: Two zero alignment bytes between CAMERA_SCROLL_DELTA_TABLE through 0x0000695D and SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS at 0x00006960.
+  evidence:
+    - camera_scroll_cursor_callback_static_v1
+    - scene_random_actor_selection_static_v1
+    - rom_padding_uniform_static_v1
 
 
 0x001B7CB0:

@@ -114,5 +114,5 @@
       "descriptor_table": "0x001C73CB"
     }
   ],
-  "boundary": "The patch, channel, and sequence-pointer ranges are contiguous. The sample descriptor table is independently bounded by 30 twelve-byte records; its relative offsets and lengths cover the following waveform payload exactly through 0x001E56BE, followed by one boundary byte before Audio_AcquireZ80BankWindow at 0x001E56C0."
+  "boundary": "The patch, channel, and sequence-pointer ranges are contiguous. The sample descriptor table is independently bounded by 30 twelve-byte records; its relative offsets and lengths cover the following waveform payload exactly through 0x001E56BE, followed by the one-byte AUDIO_Z80_SAMPLE_DATA_ALIGNMENT_PADDING at 0x001E56BF before Audio_AcquireZ80BankWindow at 0x001E56C0."
 }

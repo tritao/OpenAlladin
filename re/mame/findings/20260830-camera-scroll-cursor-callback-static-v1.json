@@ -32,13 +32,19 @@
       "name": "CAMERA_SCROLL_DELTA_TABLE",
       "range": ["0x0000693E", "0x0000695D"],
       "size": 32
+    },
+    {
+      "address": "0x0000695E",
+      "name": "SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS_ALIGNMENT_PADDING",
+      "range": ["0x0000695E", "0x0000695F"],
+      "size": 2
     }
   ],
   "semantics": "The three callbacks write ROM addresses 0x0000693E, 0x00006952, and 0x0000695A to CAMERA_SCROLL_DATA_CURSOR at 0x00FF7E1A. The level camera callback consumes signed words from that cursor, while the 16-word table at 0x0000693E provides the selected compact scroll-delta sequences.",
   "boundary_basis": [
     "Each callback is a complete 12-byte absolute-pointer setter ending in RTS.",
     "The callbacks are separated by their own RTS instructions and the random-parity callback begins immediately at 0x001B52FA.",
-    "The 32-byte table ends at 0x0000695D, immediately before the next camera-scroll resource at 0x0000695E."
+    "The 32-byte table ends at 0x0000695D; two zero alignment bytes at 0x0000695E-0x0000695F precede SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS at 0x00006960."
   ],
   "evidence": [
     "Exact GNU m68k disassembly",

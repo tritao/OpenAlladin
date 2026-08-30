@@ -42,5 +42,11 @@
     "last_descriptor_length": "0x038D",
     "end_exclusive": "0x001E56BF"
   },
-  "boundary_check": "For every descriptor, next_offset equals current_offset + current_length. The first payload byte is table_base + 0x168, and the final payload byte is table_base + 0x1E2F3. Byte 0x001E56BF precedes Audio_AcquireZ80BankWindow at 0x001E56C0."
+  "padding": {
+    "address": "0x001E56BF",
+    "name": "AUDIO_Z80_SAMPLE_DATA_ALIGNMENT_PADDING",
+    "size": 1,
+    "fill_byte": "0x00"
+  },
+  "boundary_check": "For every descriptor, next_offset equals current_offset + current_length. The first payload byte is table_base + 0x168, and the final payload byte is table_base + 0x1E2F3. The zero padding byte at 0x001E56BF precedes Audio_AcquireZ80BankWindow at 0x001E56C0."
 }

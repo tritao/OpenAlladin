@@ -4160,6 +4160,27 @@ def test_camera_scroll_cursor_callback_family_is_exact():
         assert rom[address:address + 4] == bytes.fromhex("001B52EE")
 
 
+def test_audio_and_scene_boundary_padding_is_exact():
+    symbols = SymbolStore()
+    boundaries = {
+        0x0000695E: (2, "SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS_ALIGNMENT_PADDING", 0x00006960),
+        0x001E56BF: (1, "AUDIO_Z80_SAMPLE_DATA_ALIGNMENT_PADDING", 0x001E56C0),
+    }
+    for address, (size, name, next_address) in boundaries.items():
+        padding = symbols.at(address, include_ranges=False)
+        assert padding is not None
+        assert padding.name == name
+        assert padding.size == size
+        assert padding.end == address + size - 1
+        assert padding.metadata["type"] == "padding_data"
+        assert padding.confidence == "confirmed"
+        assert symbols.at(next_address, include_ranges=False) is not None
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x0000695E:0x00006960] == b"\x00\x00"
+    assert rom[0x001E56BF] == 0x00
+
+
 def test_interaction_anchor_forward_spawn_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001B5786, include_ranges=False)

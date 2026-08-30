@@ -39,6 +39,12 @@
     "entry_size": 2,
     "count": 16
   },
+  "padding": {
+    "address": "0x0000695E",
+    "name": "SCENE_RESOURCE_RANDOM_ACTOR_VARIANTS_ALIGNMENT_PADDING",
+    "range": ["0x0000695E", "0x0000695F"],
+    "fill_byte": "0x00"
+  },
   "evidence": [
     "Exact GNU m68k disassembly of all three callback bodies",
     "AnimationVM stream pointers at 0x001211D0, 0x001211E6, 0x00121196, 0x001213FC, 0x00121426, 0x00121456, 0x001211AC, and 0x00121204",
