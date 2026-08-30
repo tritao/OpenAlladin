@@ -1,0 +1,75 @@
+{
+  "format": "openaladdin-static-rom-data-family-targets-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "targets": [
+    {
+      "address": "0x00000100",
+      "name": "ROM_SEGA_HEADER_FIELDS",
+      "range": ["0x00000100", "0x000001A3"],
+      "size": 164,
+      "type": "rom_header",
+      "evidence": "Standard Genesis header fields through the ROM-end field; the following mixed/padding bytes are not claimed."
+    },
+    {
+      "address": "0x00121034",
+      "name": "ACTOR_MOVE_TYPE40_TYPE3A_LEVEL_EVENT_PRELUDE",
+      "range": ["0x00121034", "0x00121081"],
+      "size": 78,
+      "type": "movement_stream",
+      "evidence": "Direct movement-root assignments from LevelEvent_SpawnType40 and LevelEvent_SpawnType3AWithMovement; decoder stops at the final 0x82 clear-state command before the Type-0x2F root."
+    },
+    {
+      "address": "0x0012659C",
+      "name": "SCENE_TRANSITION_LEVEL_NAME_TABLE",
+      "range": ["0x0012659C", "0x00126678"],
+      "size": 221,
+      "type": "text_data",
+      "evidence": "Thirteen contiguous NUL-terminated level-name strings bounded by adjacent transition/menu streams."
+    },
+    {
+      "address": "0x00126EC0",
+      "name": "LEVEL_RESULT_MESSAGE_TABLE",
+      "range": ["0x00126EC0", "0x00126F0D"],
+      "size": 78,
+      "type": "text_data",
+      "evidence": "Six contiguous NUL-terminated level-result messages immediately before the mode-stream bank."
+    },
+    {
+      "address": "0x0012755A",
+      "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT",
+      "range": ["0x0012755A", "0x00127570"],
+      "size": 23,
+      "type": "text_data",
+      "evidence": "Fixed-width NUL-terminated WITH A PRINCESS! response line ending the adjacent narrative/object corpus."
+    },
+    {
+      "address": "0x00127E80",
+      "name": "BONUS_LEVEL_LABEL_STREAM",
+      "range": ["0x00127E80", "0x00127E8B"],
+      "size": 12,
+      "type": "text_data",
+      "evidence": "BONUS LEVEL followed by NUL between the state-09 stream and credits stream."
+    },
+    {
+      "address": "0x00128E4F",
+      "name": "MENU_PRESENTS_LABEL_STREAM",
+      "range": ["0x00128E4F", "0x00128E5A"],
+      "size": 12,
+      "type": "text_data",
+      "evidence": "0x0B/0x00 positioning prefix followed by PRESENTS and NUL before the shared menu/sound-test stream."
+    },
+    {
+      "address": "0x00129AD2",
+      "name": "SCENE_DISPATCH_PALETTE_SOURCE",
+      "range": ["0x00129AD2", "0x00129B51"],
+      "size": 128,
+      "type": "palette_data",
+      "evidence": "SceneResource_Dispatch loads this exact four-band source at 0x001B1366 before Render_RunPaletteTransitionFrom."
+    }
+  ],
+  "status": "recorded-static-disassembly"
+}

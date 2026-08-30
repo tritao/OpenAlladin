@@ -13,6 +13,16 @@
     - gnu_m68k_disassembly_0000021A
     - rom_header_vector_extent_static_v1
 
+0x00000100:
+  name: ROM_SEGA_HEADER_FIELDS
+  type: rom_header
+  size: 0xA4
+  confidence: confirmed
+  description: Exact Sega Genesis header field block from 0x00000100 through the ROM-end field at 0x000001A3. The following bytes are outside this canonical field extent and remain independently classified.
+  evidence:
+    - genesis_header_fields_static_v1
+    - ghidra_defined_data_sega_header
+
 0x000006AE:
   name: SPRITE_FRAME_POINTER_TABLE
   type: rom_pointer_table
@@ -366,6 +376,17 @@
   description: NUL-terminated scene-resource prompt stream consumed by Menu_ShowWishPrompt after the options/presentation palette setup; it renders the David Perry wish prompt text.
   evidence: [ghidra_menu_wish_prompt_consumer, scene_resource_command_stream_terminators, scene_transition_menu_stream_extents_static_v1]
 
+0x0012659C:
+  name: SCENE_TRANSITION_LEVEL_NAME_TABLE
+  type: text_data
+  size: 0xDD
+  count: 13
+  confidence: decompiled
+  description: Thirteen NUL-terminated level-name strings used by the transition/menu presentation data. The exact text corpus runs from AGRABAH ROOFTOPS at 0x0012659C through JAFAR'S QUARTERS at 0x00126678, immediately before MENU_OPTIONS_HEADER_STREAM.
+  evidence:
+    - rom_scene_transition_level_names_static_v1
+    - scene_transition_menu_text_layout
+
 0x00126679:
   name: MENU_OPTIONS_HEADER_STREAM
   type: scene_resource_stream
@@ -467,6 +488,16 @@
     - scene_resource_command_stream_terminators
     - scene_resource_presentation_stream_extents_static_v1
 
+0x00127E80:
+  name: BONUS_LEVEL_LABEL_STREAM
+  type: text_data
+  size: 0x0C
+  confidence: decompiled
+  description: NUL-terminated BONUS LEVEL label immediately after the state-09 blank-frame stream and before ROM_CREDITS_STREAM. The label is kept separate from both neighboring command-stream owners.
+  evidence:
+    - rom_bonus_level_label_static_v1
+    - scene_resource_text_terminator_layout
+
 0x00127E8C:
   name: ROM_CREDITS_STREAM
   type: scene_resource_stream
@@ -512,6 +543,16 @@
     - ghidra_sound_test_render_selected_entry
     - scene_resource_command_table
 
+0x00128E4F:
+  name: MENU_PRESENTS_LABEL_STREAM
+  type: text_data
+  size: 0x0C
+  confidence: decompiled
+  description: Compact command/text record containing the PRESENTS label, beginning with the 0x0B/0x00 positioning prefix and terminating at 0x00128E5A immediately before MENU_SOUND_TEST_SHARED_PRESENTATION_STREAM.
+  evidence:
+    - rom_menu_presents_label_static_v1
+    - scene_resource_text_terminator_layout
+
 0x00128E5B:
   name: MENU_SOUND_TEST_SHARED_PRESENTATION_STREAM
   type: scene_resource_stream
@@ -549,6 +590,17 @@
     - ghidra_scene_resource_mode_record_consumer
     - scene_resource_mode_record_table_static_v1
     - rom_scene_resource_mode_record_table_00126D7E
+
+0x00126EC0:
+  name: LEVEL_RESULT_MESSAGE_TABLE
+  type: text_data
+  size: 0x4E
+  count: 6
+  confidence: decompiled
+  description: Six NUL-terminated level-result messages (FIND GEMS, YOU HAVE ENOUGH, GREAT, LEVEL COMPLETED, SAVING CONTINUE, and HIGH SCORE). The exact corpus ends at 0x00126F0D immediately before the scene-resource mode stream bank.
+  evidence:
+    - rom_level_result_messages_static_v1
+    - scene_resource_mode_text_layout
 
 0x00126F0E:
   name: SCENE_RESOURCE_MODE_STREAM_00
@@ -805,6 +857,16 @@
   confidence: decompiled
   description: Scene-resource presentation command stream loaded with resource 0x0012DD76 by SceneResource_Run12DD76Stream127571; the shared interpreter reaches its command-0 terminator at 0x001275ED.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
+
+0x0012755A:
+  name: SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT
+  type: text_data
+  size: 0x17
+  confidence: decompiled
+  description: NUL-terminated scene-resource response text containing the fixed-width line WITH A PRINCESS! at the end of the adjacent narrative/object corpus. Its exact extent ends at 0x00127570 immediately before the directly selected presentation stream at 0x00127571.
+  evidence:
+    - rom_scene_resource_princess_response_static_v1
+    - scene_resource_text_terminator_layout
 
 0x001275EE:
   name: SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE
@@ -1289,6 +1351,17 @@
   confidence: decompiled
   description: Shared scene-resource palette source supplied as the band-1 input to the 0x0012D870, 0x0012DA04, and 0x0012DF6C C000 resource frame preparations.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129AD2:
+  name: SCENE_DISPATCH_PALETTE_SOURCE
+  type: palette_data
+  size: 0x80
+  confidence: decompiled
+  description: Four-band palette source passed by SceneResource_Dispatch to Render_RunPaletteTransitionFrom at 0x001B1366. The exact 128-byte source occupies 0x00129AD2-0x00129B51 and ends immediately before the transition palette-band records.
+  evidence:
+    - ghidra_scene_resource_dispatch_palette_target
+    - ghidra_palette_transition_source_contract
+    - scene_dispatch_palette_source_static_v1
 
 0x00129E00:
   name: SCENE_RESET_TRANSITION_PALETTE_SOURCE
@@ -3720,6 +3793,17 @@
   evidence:
     - level_event_movement_stream_family_static_decompilation
     - level_event_command_family_static_decompilation
+    - movement_stream_decoder
+
+0x00121034:
+  name: ACTOR_MOVE_TYPE40_TYPE3A_LEVEL_EVENT_PRELUDE
+  type: movement_stream
+  size: 0x4E
+  confidence: decompiled
+  description: Shared Type-0x40/0x3A level-event movement prelude installed by LevelEvent_SpawnType40 and LevelEvent_SpawnType3AWithMovement. Its exact 78-byte body tests actor field 0x07, pushes ActorEvent_SetActorFlag40, runs the 0x82-0x85 timer sequence, and ends with the clear-state command at 0x00121080 immediately before the independent Type-0x2F stream.
+  evidence:
+    - level_event_type40_type3a_movement_static_v1
+    - ghidra_level_event_spawn_type40_type3a
     - movement_stream_decoder
 
 0x00121082:

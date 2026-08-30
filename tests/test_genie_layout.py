@@ -2507,6 +2507,48 @@ def test_canonical_credits_stream_has_exact_interpreter_terminal():
     assert symbol.metadata["type"] == "scene_resource_stream"
 
 
+def test_static_header_text_and_shared_palette_families_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00000100: (0x000001A3, "ROM_SEGA_HEADER_FIELDS", "rom_header"),
+        0x0012659C: (0x00126678, "SCENE_TRANSITION_LEVEL_NAME_TABLE", "text_data"),
+        0x00126EC0: (0x00126F0D, "LEVEL_RESULT_MESSAGE_TABLE", "text_data"),
+        0x0012755A: (0x00127570, "SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT", "text_data"),
+        0x00127E80: (0x00127E8B, "BONUS_LEVEL_LABEL_STREAM", "text_data"),
+        0x00128E4F: (0x00128E5A, "MENU_PRESENTS_LABEL_STREAM", "text_data"),
+        0x00129AD2: (0x00129B51, "SCENE_DISPATCH_PALETTE_SOURCE", "palette_data"),
+        0x00121034: (0x00121081, "ACTOR_MOVE_TYPE40_TYPE3A_LEVEL_EVENT_PRELUDE", "movement_stream"),
+    }
+    for address, (end, name, symbol_type) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        assert symbol.size == end - address + 1
+        assert symbol.metadata["type"] == symbol_type
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x00000100:0x00000110] == b"SEGA GENESIS    "
+    assert rom[0x0012659C:0x00126679].count(b"\0") == 13
+    assert rom[0x00126EC0:0x00126F0E].count(b"\0") == 6
+    assert rom[0x0012755A:0x00127571].endswith(b"WITH A PRINCESS!\0")
+    assert rom[0x00127E80:0x00127E8C] == b"BONUS LEVEL\0"
+    assert rom[0x00128E4F:0x00128E5B].endswith(b"PRESENTS\0")
+    assert rom[0x00129AD2:0x00129ADA] == bytes.fromhex("0006000000020024")
+    assert rom[0x00129B4E:0x00129B52] == bytes.fromhex("0e ee 00 00")
+
+    decoder = MovementDecoder(load_animation_decoder().RomReader(rom))
+    decoded = decoder.decode_stream(
+        0x00121034,
+        max_steps=128,
+        max_bytes=0x4E,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 0x4E
+    assert decoded["stopped_reason"] == "byte_limit"
+    assert decoded["steps"][-1]["next_address"] == "0x00121082"
+
+
 def test_canonical_sound_test_entry_table_has_complete_sentinel_record():
     symbols = SymbolStore()
     symbol = symbols.at(0x0012675E, include_ranges=False)

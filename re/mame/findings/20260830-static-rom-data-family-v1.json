@@ -1,0 +1,67 @@
+{
+  "format": "openaladdin-recorded-static-disassembly-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "families": [
+    {
+      "name": "ROM_SEGA_HEADER_FIELDS",
+      "range": ["0x00000100", "0x000001A3"],
+      "size": 164,
+      "confidence": "confirmed",
+      "reason": "Standard Genesis header fields through the ROM-end field, without absorbing the following unresolved bytes."
+    },
+    {
+      "name": "ACTOR_MOVE_TYPE40_TYPE3A_LEVEL_EVENT_PRELUDE",
+      "range": ["0x00121034", "0x00121081"],
+      "size": 78,
+      "confidence": "decompiled",
+      "reason": "Directly installed by the Type-0x40 and Type-0x3A level-event producers; exact movement decode ends at the 0x82 clear-state command."
+    },
+    {
+      "name": "SCENE_TRANSITION_LEVEL_NAME_TABLE",
+      "range": ["0x0012659C", "0x00126678"],
+      "size": 221,
+      "confidence": "decompiled",
+      "reason": "Thirteen exact NUL-terminated level-name records bounded by adjacent known scene/menu streams."
+    },
+    {
+      "name": "LEVEL_RESULT_MESSAGE_TABLE",
+      "range": ["0x00126EC0", "0x00126F0D"],
+      "size": 78,
+      "confidence": "decompiled",
+      "reason": "Six exact NUL-terminated completion/result messages bounded by the mode-stream bank."
+    },
+    {
+      "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT",
+      "range": ["0x0012755A", "0x00127570"],
+      "size": 23,
+      "confidence": "decompiled",
+      "reason": "Exact fixed-width response line and NUL terminator before the next directly selected presentation stream."
+    },
+    {
+      "name": "BONUS_LEVEL_LABEL_STREAM",
+      "range": ["0x00127E80", "0x00127E8B"],
+      "size": 12,
+      "confidence": "decompiled",
+      "reason": "Exact BONUS LEVEL label separated from both neighboring command streams."
+    },
+    {
+      "name": "MENU_PRESENTS_LABEL_STREAM",
+      "range": ["0x00128E4F", "0x00128E5A"],
+      "size": 12,
+      "confidence": "decompiled",
+      "reason": "Exact positioned PRESENTS record before the shared menu/sound-test presentation stream."
+    },
+    {
+      "name": "SCENE_DISPATCH_PALETTE_SOURCE",
+      "range": ["0x00129AD2", "0x00129B51"],
+      "size": 128,
+      "confidence": "decompiled",
+      "reason": "Direct palette-transition source loaded by SceneResource_Dispatch at 0x001B1366."
+    }
+  ],
+  "status": "recorded-static-disassembly"
+}
