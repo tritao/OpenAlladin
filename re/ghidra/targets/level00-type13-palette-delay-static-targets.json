@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-level00-type13-palette-delay-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the Level-00 palette delay loaded by Type-0x13 collision responses.",
+  "state": {
+    "address": "0x00FFF124",
+    "name": "LEVEL00_TYPE13_PALETTE_DELAY",
+    "type": "u8",
+    "format": "countdown",
+    "reload_value": 8
+  },
+  "producers": [
+    {
+      "address": "0x001AF1AC",
+      "name": "ActorType13_PlayerCollisionHandler",
+      "operation": "Reload the delay to 8 after creating the replacement actor and queuing the response event."
+    },
+    {
+      "address": "0x001AC1D0",
+      "name": "ActorType13_ActorCollisionHandler",
+      "operation": "Reload the delay to 8 after the actor-collision Type-0x13 replacement path."
+    }
+  ],
+  "consumer": {
+    "address": "0x001B5B66",
+    "name": "Level00_EnterRoutine",
+    "decrement": "Subtract one on each Level-00 callback while nonzero.",
+    "expiry": "Call Render_UploadPaletteBand2 when the decrement reaches zero."
+  },
+  "evidence": [
+    "Exact Type-0x13 player-collision decompilation",
+    "Exact Type-0x13 actor-collision decompilation",
+    "Exact Level-00 callback decrement and palette-upload body"
+  ],
+  "conclusion": "FFF124 is the eight-callback Level-00 palette delay associated with Type-0x13 collision response replacement.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

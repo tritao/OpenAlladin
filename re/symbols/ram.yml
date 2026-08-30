@@ -900,6 +900,18 @@
     - ghidra_disassembly_001B614C
     - level09_type50_template_targets
 
+0xFFF124:
+  name: LEVEL00_TYPE13_PALETTE_DELAY
+  type: u8
+  format: countdown
+  confidence: decompiled
+  description: Level-00 Type-0x13 palette-delay countdown. The Type-0x13 player- and actor-collision handlers reload it to 8 after creating the replacement response actor, and Level00_EnterRoutine decrements it once per callback and uploads palette band 2 when it reaches zero.
+  evidence:
+    - ghidra_decompile_001AF1AC
+    - ghidra_decompile_001AC1D0
+    - ghidra_decompile_001B5B66
+    - ghidra_disassembly_001B5B66
+
 0xFFF114:
   name: PLAYER_TERRAIN_TRANSITION_GATE
   type: u8
