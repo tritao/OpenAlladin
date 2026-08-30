@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-interaction-family",
+    "purpose": "Promote Type-0x1A actor interaction and Type-0x7D/0x78/0x7A player interaction-proximity paths to behavior-based canonical names."
+  },
+  "dispatch_tables": [
+    {
+      "address": "0x001CBE",
+      "entry_width": 4,
+      "entries": [
+        { "actor_types": ["0x78", "0x7A"], "address": "0x001AEBDC" },
+        { "actor_types": ["0x7D"], "address": "0x001AEBA4" }
+      ]
+    },
+    {
+      "address": "0x001EBA",
+      "entry_width": 4,
+      "entries": [
+        { "actor_types": ["0x1A"], "address": "0x001AC408" }
+      ]
+    }
+  ],
+  "targets": [
+    { "address": "0x001AEBA4", "name": "PlayerCollision_ProcessCameraOrTerminalInteraction", "legacy_name": "ActorType7D_PlayerCollisionHandler", "range": "0x001AEBA4-0x001AEBDB", "size": 56 },
+    { "address": "0x001AEBDC", "name": "PlayerCollision_ProcessInteractionProximity", "legacy_name": "ActorType78_7A_PlayerCollisionHandler", "range": "0x001AEBDC-0x001AEBFD", "size": 34 },
+    { "address": "0x001AC408", "name": "ActorCollision_ProcessType1AInteraction", "legacy_name": "ActorType1A_ActorCollisionHandler", "range": "0x001AC408-0x001AC431", "size": 42 }
+  ],
+  "contracts": {
+    "type1a": "align receiver facing with PLAYER_WORLD_X when permitted, then publish PLAYER_INTERACTION_TYPE1A_LATCH or run the shared terminal-response sequence according to receiver phase",
+    "type7d": "handle special-camera interaction animation and pending state, or arm PLAYER_TERMINAL_TRANSITION and invoke the proximity continuation",
+    "type78_7a": "call Player_ProcessInteractionState when PLAYER_ACTION_RESPONSE_FIELD is clear or the actor lies within the encoded +/-8-pixel X window"
+  },
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
