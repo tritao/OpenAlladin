@@ -72,9 +72,20 @@ def build_parser() -> argparse.ArgumentParser:
     add_analysis_query("xrefs", "show references to an address", command_ghidra_xrefs)
     decompile = ghidra_commands.add_parser(
         "decompile",
-        help="decompile and cache one containing function",
+        help="decompile and cache one function or the semantic review queue",
     )
-    decompile.add_argument("address", type=lambda value: int(value, 0))
+    decompile.add_argument("address", type=lambda value: int(value, 0), nargs="?")
+    decompile.add_argument(
+        "--review",
+        action="store_true",
+        help="batch-decompile the named functions with open semantic review questions",
+    )
+    decompile.add_argument(
+        "--limit",
+        type=int,
+        default=0,
+        help="maximum review functions to decompile; zero means all",
+    )
     decompile.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
     decompile.add_argument("--cache-dir", type=Path)
     decompile.add_argument("--project-dir", type=Path)

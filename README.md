@@ -57,12 +57,15 @@ project; later requests reuse the cached pseudocode:
 
 ```bash
 genie ghidra decompile 0x001AC784
+genie ghidra decompile --review
 genie ghidra context 0x001AC784 --include-decompile
 ```
 
 `--include-decompile` includes cached pseudocode in the context output; it
 never launches Ghidra, so it is safe for fast offline triage after a
-decompilation has been cached.
+decompilation has been cached. `--review` decompiles every named function
+with an open semantic-review question in one Ghidra launch and fills the same
+per-function cache.
 
 Validate a generated scan against the recovered scheduler, canonical symbols,
 dispatch-table xrefs, and normalized ROM coverage before consuming it:

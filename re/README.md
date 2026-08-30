@@ -54,8 +54,13 @@ python -m genie ghidra readers 0x00FF7E28
 python -m genie ghidra xrefs 0x001B557E
 python -m genie ghidra context 0x00184320
 python -m genie ghidra decompile 0x00184320
+python -m genie ghidra decompile --review
 python -m genie ghidra unknown
 ```
+
+The review form batches all named functions with open semantic-review
+questions into one Ghidra launch and caches each pseudocode body under
+`build/re/full-rom/decompile/`.
 
 Before using a scan as deassembly input, run its known-fact trust gate:
 

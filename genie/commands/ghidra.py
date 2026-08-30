@@ -11,10 +11,18 @@ from __future__ import annotations
 import argparse
 import json
 
-from genie.ghidra import decompile_function, rebuild_project, scan_project, setup_ghidra, verify_rom
+from genie.ghidra import (
+    decompile_function,
+    decompile_functions,
+    rebuild_project,
+    scan_project,
+    setup_ghidra,
+    verify_rom,
+)
 from genie.ghidra.context import build_context
 from genie.ghidra.database import AnalysisDatabase, render_records
 from genie.ghidra.validate import validate_database
+from genie.ghidra.worklist import symbol_review_queue
 from genie.knowledge import validate_knowledge
 from genie.runtime import ROOT, resolve
 from genie.symbols import SymbolStore
@@ -131,17 +139,47 @@ def command_ghidra_xrefs(args: argparse.Namespace) -> int:
 
 def command_ghidra_decompile(args: argparse.Namespace) -> int:
     try:
+        if args.review and args.address is not None:
+            raise ValueError("ghidra decompile accepts an address or --review, not both")
+        if not args.review and args.address is None:
+            raise ValueError("ghidra decompile requires an address or --review")
         database = _database(args)
-        result = decompile_function(
-            args.address,
-            database=database,
-            cache_dir=resolve(args.cache_dir) if args.cache_dir else None,
-            project_dir=resolve(args.project_dir) if args.project_dir else None,
-            force=args.force,
-        )
+        cache_dir = resolve(args.cache_dir) if args.cache_dir else None
+        project_dir = resolve(args.project_dir) if args.project_dir else None
+        if args.review:
+            queue = symbol_review_queue(database, SymbolStore(root=ROOT), kind="function")
+            limit = args.limit if args.limit > 0 else len(queue)
+            addresses = [int(item["address"], 0) for item in queue[:limit]]
+            if not addresses:
+                print("No semantic function review entries remain")
+                return 1
+            results = decompile_functions(
+                addresses,
+                database=database,
+                cache_dir=cache_dir,
+                project_dir=project_dir,
+                force=args.force,
+            )
+        else:
+            result = decompile_function(
+                args.address,
+                database=database,
+                cache_dir=cache_dir,
+                project_dir=project_dir,
+                force=args.force,
+            )
     except (OSError, TypeError, ValueError, RuntimeError, json.JSONDecodeError) as error:
         print(f"ERROR {error}")
         return 1
+    if args.review:
+        if args.json_output:
+            print(json.dumps({"count": len(results), "results": results}, indent=2, sort_keys=True))
+        else:
+            print(f"Decompiled {len(results)} semantic review functions")
+            for item in results:
+                print(f"{item['status'].capitalize()} {item['name']} ({item['address']})")
+                print(f"Pseudocode: {item['path']}")
+        return 0
     if args.json_output:
         print(json.dumps(result, indent=2, sort_keys=True))
     else:

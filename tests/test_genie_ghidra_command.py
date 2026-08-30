@@ -6,7 +6,7 @@ from genie.commands import deasm
 from genie.commands import data
 from genie.commands import ghidra
 from genie.ghidra.database import AnalysisDatabase
-from genie.ghidra.decompile import decompile_function
+from genie.ghidra.decompile import decompile_function, decompile_functions
 
 
 def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
@@ -26,6 +26,9 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
         ["ghidra", "context", "0x1234", "--json", "--include-decompile"]
     )
     decompile = build_parser().parse_args(["ghidra", "decompile", "0x1234", "--force"])
+    review_decompile = build_parser().parse_args(
+        ["ghidra", "decompile", "--review", "--limit", "10", "--json"]
+    )
     data_decode = build_parser().parse_args(["data", "decode", "0x1234", "--json"])
 
     assert setup.function is ghidra.command_ghidra_setup
@@ -52,6 +55,12 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert context.include_decompile is True
     assert decompile.function is ghidra.command_ghidra_decompile
     assert decompile.force is True
+    assert decompile.address == 0x1234
+    assert decompile.review is False
+    assert review_decompile.address is None
+    assert review_decompile.review is True
+    assert review_decompile.limit == 10
+    assert review_decompile.json_output is True
     assert data_decode.function is data.command_data_decode
     assert data_decode.json_output is True
 
@@ -135,3 +144,75 @@ def test_single_function_decompile_reuses_cached_pseudocode(tmp_path):
     assert result["status"] == "cached"
     assert result["address"] == "0x00000010"
     assert result["path"] == str(cached)
+
+
+def test_batch_decompile_reuses_all_cached_pseudocode(tmp_path):
+    database_root = tmp_path / "full-rom"
+    database_root.mkdir()
+    (database_root / "metadata.json").write_text(
+        json.dumps({"rom": {}, "rom_size": 0x40}),
+        encoding="utf-8",
+    )
+    (database_root / "functions.json").write_text(
+        json.dumps([
+            {"address": "0x00000010", "start": "0x00000010", "end": "0x00000018", "name": "First"},
+            {"address": "0x00000020", "start": "0x00000020", "end": "0x00000028", "name": "Second"},
+        ]),
+        encoding="utf-8",
+    )
+    cache = database_root / "decompile"
+    cache.mkdir()
+    (cache / "00000010.txt").write_text("void First(void) {}\n", encoding="utf-8")
+    (cache / "00000020.txt").write_text("void Second(void) {}\n", encoding="utf-8")
+
+    results = decompile_functions(
+        [0x14, 0x20],
+        database=AnalysisDatabase(database_root),
+    )
+
+    assert [item["status"] for item in results] == ["cached", "cached"]
+    assert [item["address"] for item in results] == ["0x00000010", "0x00000020"]
+
+
+def test_batch_decompile_uses_one_request_for_pending_functions(tmp_path, monkeypatch):
+    database_root = tmp_path / "full-rom"
+    database_root.mkdir()
+    (database_root / "metadata.json").write_text(
+        json.dumps({"rom": {"sha256": "test"}, "rom_size": 0x40}),
+        encoding="utf-8",
+    )
+    (database_root / "functions.json").write_text(
+        json.dumps([
+            {"address": "0x00000010", "start": "0x00000010", "end": "0x00000018", "name": "First"},
+            {"address": "0x00000020", "start": "0x00000020", "end": "0x00000028", "name": "Second"},
+        ]),
+        encoding="utf-8",
+    )
+    calls = []
+
+    def fake_request(database, request_path, report_path, *, project_dir):
+        calls.append((request_path, report_path, project_dir))
+        request = json.loads(request_path.read_text(encoding="utf-8"))
+        assert [target["address"] for target in request["targets"]] == [
+            "0x00000010",
+            "0x00000020",
+        ]
+        return {
+            "targets": [
+                {"address": target["address"], "status": "decompiled", "c": f"void {target['name']}(void) {{}}"}
+                for target in request["targets"]
+            ]
+        }
+
+    monkeypatch.setattr("genie.ghidra.decompile._run_targeted_request", fake_request)
+    results = decompile_functions(
+        [0x14, 0x24],
+        database=AnalysisDatabase(database_root),
+    )
+
+    assert len(calls) == 1
+    assert [item["status"] for item in results] == ["decompiled", "decompiled"]
+    assert (database_root / "decompile/00000010.txt").is_file()
+    assert (database_root / "decompile/00000020.txt").is_file()
+    assert (database_root / "decompile/00000010.json").is_file()
+    assert (database_root / "decompile/00000020.json").is_file()
