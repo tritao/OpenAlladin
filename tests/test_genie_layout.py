@@ -898,6 +898,37 @@ def test_type5e84_e1e2_movement_stream_is_exact():
     assert decoded["steps"][-1]["next_address"] == "0x0011FAA8"
 
 
+def test_unindexed_movement_stream_bands_are_exact_and_provisional():
+    symbols = SymbolStore()
+    expected = [
+        (0x0011FAA8, 0x0011FD17, "ACTOR_MOVE_TYPE5E84_PAIR_UNINDEXED", 0x270),
+        (0x001210FE, 0x0012117F, "ACTOR_MOVE_UNINDEXED_RESPONSE_001210FE", 0x82),
+        (0x001212C0, 0x001212FF, "ACTOR_MOVE_UNINDEXED_RESPONSE_BANK_001212C0", 0x40),
+        (0x001213E2, 0x00121411, "ACTOR_MOVE_UNINDEXED_CHILD_RESPONSE_001213E2", 0x30),
+        (0x001215D8, 0x001215DF, "ACTOR_MOVE_UNINDEXED_STEP_LOOP_001215D8", 8),
+    ]
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = MovementDecoder(load_animation_decoder().RomReader(rom_path.read_bytes()))
+    for address, end, name, size in expected:
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.end == end
+        assert stream.size == size
+        assert stream.metadata["type"] == "movement_stream"
+        assert stream.confidence == "provisional"
+
+        decoded = decoder.decode_stream(
+            address,
+            max_steps=1024,
+            max_bytes=size,
+            follow_control_flow=False,
+        )
+        assert decoded["bytes_decoded"] == size
+        assert decoded["stopped_reason"] == "byte_limit"
+        assert decoded["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
+
+
 def test_type5e84_pair_movement_stream_family_is_exact_and_contiguous():
     symbols = SymbolStore()
     expected = [

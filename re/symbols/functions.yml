@@ -4820,6 +4820,14 @@
     - ghidra_disassembly_001B694C
     - interaction_spawn_type5e84_pair_targets
     - interaction_spawn_type5e84_pair_static_decompilation
+0x001B69A6:
+  name: InteractionSpawn_Type5E84Pair_Unindexed
+  size: 90
+  confidence: provisional
+  description: Unindexed duplicate of the Type-0x5E plus Type-0x84 paired-spawn handler shape. Its exact body allocates the two linked records, installs the movement root at 0x0011FAA8, and publishes the companion anchor at (base X - 0x20, base Y + 0x40); no active INTERACTION_HANDLER_TABLE entry currently targets this body, so runtime reachability remains unresolved.
+  evidence:
+    - interaction_spawn_type5e84_unindexed_static_disassembly
+    - gnu_m68k_disassembly_001B69A6
 0x001B6A00:
   name: InteractionSpawn_Type5E84Pair_E3E5
   confidence: decompiled

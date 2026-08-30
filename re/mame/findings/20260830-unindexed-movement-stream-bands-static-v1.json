@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/unindexed-movement-stream-bands-static-targets.json",
+  "conclusion": "Promoted five exact MovementVM ownership bands that were previously split into generic Ghidra fragments or layout gaps. The Type-0x5E/0x84 pair bank has a matching unindexed handler-shaped producer body; the other four banks are decoder-bounded but remain provisional because no live template or producer reference has been recovered.",
+  "streams": [
+    { "address": "0x0011FAA8", "range": "0x0011FAA8-0x0011FD17", "size": 624, "confidence": "provisional" },
+    { "address": "0x001210FE", "range": "0x001210FE-0x0012117F", "size": 130, "confidence": "provisional" },
+    { "address": "0x001212C0", "range": "0x001212C0-0x001212FF", "size": 64, "confidence": "provisional" },
+    { "address": "0x001213E2", "range": "0x001213E2-0x00121411", "size": 48, "confidence": "provisional" },
+    { "address": "0x001215D8", "range": "0x001215D8-0x001215DF", "size": 8, "confidence": "provisional" }
+  ],
+  "handler": {
+    "address": "0x001B69A6",
+    "range": "0x001B69A6-0x001B69FF",
+    "name": "InteractionSpawn_Type5E84Pair_Unindexed",
+    "confidence": "provisional"
+  },
+  "evidence": [
+    "GNU m68k 68000 disassembly",
+    "MovementDecoder exact byte limits",
+    "non-overlapping neighboring canonical streams"
+  ],
+  "status": "recorded-static-disassembly"
+}

@@ -2707,6 +2707,16 @@
     - interaction_spawn_type5e84_pair_e1e2_movement_static_v1
     - movement_stream_decoder
 
+0x0011FAA8:
+  name: ACTOR_MOVE_TYPE5E84_PAIR_UNINDEXED
+  type: movement_stream
+  size: 0x270
+  confidence: provisional
+  description: Provisional decoder-bounded Type-0x5E plus Type-0x84 paired-response movement bank selected by the unindexed handler-shaped body at 0x001B69A6. Its exact 624-byte owner contains the signed trajectory, repeated parameter/timer phases, and terminal jump at 0x0011FD12 into the shared continuation at 0x0011F890; no active interaction-table entry has been linked to the producer.
+  evidence:
+    - interaction_spawn_type5e84_unindexed_static_disassembly
+    - movement_stream_decoder
+
 0x0012004E:
   name: ACTOR_MOVE_TYPE5E84_PAIR_E6
   type: movement_stream
@@ -3177,6 +3187,16 @@
   description: Two-byte Type-0x7B Level-11 compare-transition entry selected by the actor-field 0xB2 gate at 0x00121210. Its exact signed (-116, 0) delta falls through into ACTOR_MOVE_GUARD_SWORD_ATTACK at 0x00121240; the neighboring guard-sword owner is not duplicated.
   evidence:
     - type7b_level11_movement_static_decompilation
+    - movement_stream_decoder
+
+0x001212C0:
+  name: ACTOR_MOVE_UNINDEXED_RESPONSE_BANK_001212C0
+  type: movement_stream
+  size: 0x40
+  confidence: provisional
+  description: Provisional decoder-bounded four-entry movement response bank at 0x001212C0-0x001212FF. The bank contains the actor/RAM compare loop, its parameter-push loop, a timed compare entry, and the terminal clear-state entry before ACTOR_MOVE_TYPE52_LEVEL09_ENTRY; no direct producer reference has been recovered.
+  evidence:
+    - unindexed_movement_stream_bands_static_disassembly
     - movement_stream_decoder
 
 0x00120A42:
@@ -3901,6 +3921,16 @@
     - level_event_command_family_static_decompilation
     - movement_stream_decoder
 
+0x001210FE:
+  name: ACTOR_MOVE_UNINDEXED_RESPONSE_001210FE
+  type: movement_stream
+  size: 0x82
+  confidence: provisional
+  description: Provisional decoder-bounded movement response stream in the unindexed 0x001210FE-0x0012117F band. It contains the signed opening step, two shared AnimationVM parameter publications, the flag/distance-gated loop, and terminal actor clear before ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE; no direct template or producer reference has been recovered.
+  evidence:
+    - unindexed_movement_stream_bands_static_disassembly
+    - movement_stream_decoder
+
 0x00121300:
   name: ACTOR_MOVE_TYPE52_LEVEL09_ENTRY
   type: movement_stream
@@ -3909,6 +3939,16 @@
   description: Level-09 Type-0x52 movement stream installed by ACTOR_TEMPLATE_TYPE_52_LEVEL09 during Level09_EnterRoutine. Its exact 226-byte owner contains the signed rise/fall trajectory, actor-field gates, Type-0x84 child-spawn response, and the terminal jump at 0x001213DC back to the root.
   evidence:
     - type52_level09_animation_static_decompilation
+    - movement_stream_decoder
+
+0x001213E2:
+  name: ACTOR_MOVE_UNINDEXED_CHILD_RESPONSE_001213E2
+  type: movement_stream
+  size: 0x30
+  confidence: provisional
+  description: Provisional decoder-bounded child-response prefix immediately after the Type-0x52 stream and before ACTOR_MOVE_TYPE84_UNREFERENCED_RESPONSE_PREFIX. Its exact 48-byte body performs the compact field update, flag-gated Type-0x84 child spawn, and actor clear; no direct template or producer reference has been recovered.
+  evidence:
+    - unindexed_movement_stream_bands_static_disassembly
     - movement_stream_decoder
 
 0x0012146C:
@@ -3952,6 +3992,16 @@
   evidence:
     - player_collision_actor_relative_placement_family_static_decompilation
     - ghidra_disassembly_001AF81C
+    - movement_stream_decoder
+
+0x001215D8:
+  name: ACTOR_MOVE_UNINDEXED_STEP_LOOP_001215D8
+  type: movement_stream
+  size: 8
+  confidence: provisional
+  description: Provisional eight-byte movement entry containing a (+0, +1) step and an unconditional self-loop at 0x001215DA. It is separated from the Type-0x62/0x63 player-collision owner and ACTOR_MOVE_TYPE29_PLAYER_COLLISION_RESPONSE; no direct producer reference has been recovered.
+  evidence:
+    - unindexed_movement_stream_bands_static_disassembly
     - movement_stream_decoder
 
 0x001215E0:

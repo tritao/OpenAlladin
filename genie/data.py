@@ -172,6 +172,10 @@ class DataIndex:
         self.coverage_path = Path(coverage_path) if coverage_path else self.database.root.parent / "coverage.json"
         self._decoded: dict[str, dict[int, dict[str, Any]]] = {"animation": {}, "movement": {}}
         self._decoded_sources: dict[str, dict[int, str]] = {"animation": {}, "movement": {}}
+        self._canonical_stream_attempts: set[tuple[str, int]] = set()
+        self._canonical_reader: Any | None = None
+        self._canonical_decoders: dict[str, Any] = {}
+        self._canonical_rom_path: Path | None = None
         self._record_cache: dict[tuple[str, str], list[dict[str, Any]]] = {}
         self._reference_index_cache: dict[str, tuple[list[int], list[dict[str, Any]]]] = {}
         self._coverage_document: Any = None
@@ -555,6 +559,9 @@ class DataIndex:
             }
         entry = _address(value["start"])
         stream = self._decoded[kind].get(entry)
+        if stream is None:
+            self._decode_canonical_stream(value)
+            stream = self._decoded[kind].get(entry)
         root_entry = entry
         covered_by_root = False
         if stream is None:
@@ -588,6 +595,82 @@ class DataIndex:
                 else decoded_bytes == declared_size
             ),
         }
+
+    def _decode_canonical_stream(self, value: dict[str, Any]) -> None:
+        """Decode one bounded canonical stream when reports are stale or absent.
+
+        The generated VM reports remain the preferred shared cache.  This
+        narrow fallback keeps the semantic queue useful immediately after a
+        symbol promotion: a range-bounded canonical stream can be decoded
+        directly from the configured ROM without requiring a separate report
+        regeneration step.  It deliberately does not probe unbounded or
+        generic Ghidra objects.
+        """
+
+        kind = str(value.get("kind", ""))
+        entry = _address(value.get("start"))
+        key = (kind, entry)
+        if kind not in STREAM_KINDS or key in self._canonical_stream_attempts:
+            return
+        self._canonical_stream_attempts.add(key)
+
+        canonical = value.get("canonical_symbol") or {}
+        metadata_type = str(canonical.get("type", "")).casefold()
+        expected_type = "animation_stream" if kind == "animation" else "movement_stream"
+        if metadata_type != expected_type or not value.get("range_bounded"):
+            return
+        try:
+            declared_size = int(value["size"])
+        except (KeyError, TypeError, ValueError):
+            return
+        if declared_size <= 0:
+            return
+
+        try:
+            if self._canonical_reader is None:
+                profile = load_profile()
+                rom_path = self.root / profile.default_rom
+                if not rom_path.is_file():
+                    return
+                from genie.games.aladdin.vm.movement import load_animation_decoder
+
+                module = load_animation_decoder()
+                self._canonical_reader = module.RomReader(rom_path.read_bytes())
+                self._canonical_rom_path = rom_path
+            if kind not in self._canonical_decoders:
+                if kind == "animation":
+                    from genie.games.aladdin.vm.animation import AnimationDecoder
+
+                    self._canonical_decoders[kind] = AnimationDecoder(self._canonical_reader)
+                else:
+                    from genie.games.aladdin.vm.movement import MovementDecoder
+
+                    self._canonical_decoders[kind] = MovementDecoder(self._canonical_reader)
+            decoder = self._canonical_decoders[kind]
+            if kind == "animation":
+                decoded = decoder.decode_stream(
+                    entry,
+                    max_instructions=max(1024, declared_size // 2 + 16),
+                    max_bytes=declared_size,
+                    follow_control_flow=False,
+                )
+            else:
+                decoded = decoder.decode_stream(
+                    entry,
+                    max_steps=max(1024, declared_size // 2 + 16),
+                    max_bytes=declared_size,
+                    follow_control_flow=False,
+                )
+        except (ImportError, OSError, RuntimeError, TypeError, ValueError, IndexError):
+            return
+
+        if not isinstance(decoded, dict):
+            return
+        decoded = dict(decoded)
+        decoded["name"] = value.get("name")
+        self._decoded[kind][entry] = decoded
+        source = str(self._canonical_rom_path) if self._canonical_rom_path else "configured ROM"
+        self._decoded_sources[kind][entry] = f"{source} (canonical symbol fallback)"
 
     def _stream_decoded_bytes(self, stream: dict[str, Any], entry: int) -> int:
         decoded_bytes = stream.get("bytes_decoded")
