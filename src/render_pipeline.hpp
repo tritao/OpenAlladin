@@ -31,7 +31,7 @@ public:
 
     bool render(
         const GameState& state,
-        const GenesisRenderModel& render_model,
+        GenesisRenderModel& render_model,
         const SpriteDatabase& sprites,
         const PlayerRenderState& player,
         const std::vector<std::uint8_t>& rom

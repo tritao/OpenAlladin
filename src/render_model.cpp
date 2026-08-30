@@ -89,6 +89,8 @@ void GenesisRenderModel::reset() {
     vsram_.clear();
     checkpoint_palette_.clear();
     registers_.fill(0);
+    checkpoint_health_digit_index_ = -1;
+    checkpoint_health_digit_size_link_ = 0;
     plane_a_ = {};
     plane_b_ = {};
     scroll_ = {};
@@ -117,6 +119,8 @@ void GenesisRenderModel::load_preview(
     preview_background_rgba_ = background_rgba;
     preview_parallax_rgba_ = parallax_rgba;
     preview_palette_ = palette;
+    checkpoint_health_digit_index_ = -1;
+    checkpoint_health_digit_size_link_ = 0;
     preview_sprites_.clear();
     if (rom_loaded) {
         preview_sprites_.assign(kPreviewSprites.begin(), kPreviewSprites.end());
@@ -137,6 +141,8 @@ void GenesisRenderModel::load_checkpoint(
     loaded_ = loaded;
     scene_resources_ = {};
     live_vram_ = vram_;
+    checkpoint_health_digit_index_ = -1;
+    checkpoint_health_digit_size_link_ = 0;
     palette_state_ = {};
     for (std::size_t index = 0;
          index < std::min<std::size_t>(64, checkpoint_palette_.size());
@@ -503,6 +509,54 @@ void GenesisRenderModel::render(
     draw_plane(plane_b_, true, true);
     draw_plane(plane_a_, false, true);
     draw_sprites(true);
+}
+
+void GenesisRenderModel::sync_checkpoint_health_hud(std::uint8_t health) {
+    if (!loaded_ || live_vram_.size() < kVramSize) return;
+
+    if (checkpoint_health_digit_index_ < 0) {
+        for (std::size_t index = 0; index < sprites_.records.size(); ++index) {
+            const GenesisSpriteRecord& record = sprites_.records[index];
+            const std::uint16_t tile = record.tile & 0x07FFU;
+            if (record.x != GenesisHealthHudLayout::kDigitX
+                || record.y != GenesisHealthHudLayout::kDigitY
+                || tile < (GenesisHealthHudLayout::kDigitTile & 0x07FFU)
+                || tile > ((GenesisHealthHudLayout::kDigitTile + 0x12U) & 0x07FFU)) {
+                continue;
+            }
+            checkpoint_health_digit_index_ = static_cast<int>(index);
+            checkpoint_health_digit_size_link_ = record.size_link;
+            break;
+        }
+    }
+
+    if (checkpoint_health_digit_index_ < 0) return;
+
+    const auto write_word = [this](std::size_t address, std::uint16_t value) {
+        if (address + 1 >= live_vram_.size()) return;
+        live_vram_[address] = static_cast<std::uint8_t>(value >> 8);
+        live_vram_[address + 1] = static_cast<std::uint8_t>(value);
+    };
+    const int index = checkpoint_health_digit_index_;
+    const std::size_t address = static_cast<std::size_t>(sprites_.vram_base)
+        + static_cast<std::size_t>(index) * 8;
+    GenesisSpriteRecord digit = sprites_.records[static_cast<std::size_t>(index)];
+    if (health == 0) {
+        digit.y = 1;
+    } else {
+        const std::uint8_t bounded_health = std::min(
+            health, PlayerState::kMaximumHealth);
+        digit.y = GenesisHealthHudLayout::kDigitY;
+        digit.x = GenesisHealthHudLayout::kDigitX;
+        digit.tile = static_cast<std::uint16_t>(
+            GenesisHealthHudLayout::kDigitTile + bounded_health * 2U);
+        digit.size_link = checkpoint_health_digit_size_link_;
+    }
+    write_word(address, digit.y);
+    write_word(address + 2, digit.size_link);
+    write_word(address + 4, digit.tile);
+    write_word(address + 6, digit.x);
+    refresh_views();
 }
 
 }  // namespace openaladdin

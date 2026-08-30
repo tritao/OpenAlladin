@@ -113,6 +113,21 @@ struct GenesisPreviewSprite {
     int palette_line = 0;
 };
 
+// The opening HUD's portrait is followed by a single digit at the same
+// screen/VDP coordinate in both the preview and checkpoint-backed renderers.
+// Keep the digit source separate from inventory because it represents player
+// health rather than the apple counter.
+struct GenesisHealthHudLayout {
+    static constexpr std::uint16_t kDigitTile = 0xE6E0;
+    static constexpr std::uint16_t kDigitX = 0x00AA;
+    static constexpr std::uint16_t kDigitY = 0x0148;
+
+    static constexpr int kPreviewDigitScreenX = 42;
+    static constexpr int kPreviewDigitScreenY = 200;
+    static constexpr int kDigitRomBase = 0x11ECA0;
+    static constexpr int kDigitRomStride = 0x20;
+};
+
 // Semantic frontend state for the Genesis VDP. The raw VRAM/VSRAM and
 // register arrays remain as a compatibility backing store for existing VDP
 // checkpoints; the public views expose the planes, palette, scroll and SAT
@@ -181,6 +196,8 @@ public:
         int height
     ) const;
 
+    void sync_checkpoint_health_hud(std::uint8_t health);
+
     const GenesisPlaneState& plane_a() const { return plane_a_; }
     const GenesisPlaneState& plane_b() const { return plane_b_; }
     const GenesisScrollState& scroll() const { return scroll_; }
@@ -232,6 +249,9 @@ private:
     GenesisScrollState scroll_{};
     GenesisPaletteState palette_state_{};
     GenesisSpriteList sprites_{};
+
+    int checkpoint_health_digit_index_ = -1;
+    std::uint16_t checkpoint_health_digit_size_link_ = 0;
 
     GenesisSceneResourceState scene_resources_{};
     std::vector<std::uint8_t> live_vram_;

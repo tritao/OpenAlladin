@@ -1501,6 +1501,8 @@ void Engine::write_checkpoint(std::ostream& output) const {
     writer.u8(state_.interaction_state.type3e_response_latch);
     writer.u8(state_.interaction_state.type3f_response_latch);
     writer.u8(state_.player.terrain_bounce_animation_state);
+    writer.u8(state_.player.health);
+    writer.u8(state_.player.hurt_cooldown);
 }
 
 void Engine::read_checkpoint(std::istream& input) {
@@ -1577,6 +1579,8 @@ void Engine::read_checkpoint(std::istream& input) {
     const int last_ground_direction = reader.i32();
     const bool quit = reader.boolean();
     InteractionState interaction_state;
+    std::uint8_t checkpoint_health = PlayerState::kDefaultHealth;
+    std::uint8_t checkpoint_hurt_cooldown = 0;
     if (reader.has_more()) {
         interaction_state.target_current = reader.u8();
         if (reader.has_more()) interaction_state.response_current = reader.u8();
@@ -1584,6 +1588,8 @@ void Engine::read_checkpoint(std::istream& input) {
         if (reader.has_more()) interaction_state.type3e_response_latch = reader.u8();
         if (reader.has_more()) interaction_state.type3f_response_latch = reader.u8();
         if (reader.has_more()) player.terrain_bounce_animation_state = reader.u8();
+        if (reader.has_more()) checkpoint_health = reader.u8();
+        if (reader.has_more()) checkpoint_hurt_cooldown = reader.u8();
     } else if (reader.has_more()) {
         player.terrain_bounce_animation_state = reader.u8();
     }
@@ -1594,6 +1600,8 @@ void Engine::read_checkpoint(std::istream& input) {
     }
 
     player_ = player;
+    player_.health = checkpoint_health;
+    player_.hurt_cooldown = checkpoint_hurt_cooldown;
     camera_ = camera;
     state_.interaction_state = interaction_state;
     interactions_.restore_runtime(interaction_runtime);

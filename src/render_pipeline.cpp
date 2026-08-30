@@ -11,6 +11,34 @@ namespace {
 constexpr int kPlayerVisualOffsetY = 0x100;
 constexpr int kActorVisualOffsetX = 3;
 
+void draw_preview_health_hud(
+    const GameState& state,
+    const std::vector<std::uint8_t>& rom,
+    const std::vector<SDL_Color>& palette,
+    std::vector<std::uint32_t>& framebuffer,
+    int width,
+    int height
+) {
+    const std::uint8_t health = std::min(
+        state.player.health, PlayerState::kMaximumHealth);
+    if (health == 0 || rom.empty()) return;
+
+    SpriteRenderer::draw_vdp_sprite(
+        rom,
+        GenesisHealthHudLayout::kDigitRomBase
+            + health * GenesisHealthHudLayout::kDigitRomStride,
+        1,
+        1,
+        palette,
+        framebuffer,
+        width,
+        height,
+        GenesisHealthHudLayout::kPreviewDigitScreenX,
+        GenesisHealthHudLayout::kPreviewDigitScreenY,
+        3
+    );
+}
+
 int actor_palette_line(const ActorState& actor) {
     return static_cast<int>((actor.sprite_attribute >> 13) & 0x03);
 }
@@ -37,7 +65,7 @@ void RenderPipeline::resize(int width, int height) {
 
 bool RenderPipeline::render(
     const GameState& state,
-    const GenesisRenderModel& render_model,
+    GenesisRenderModel& render_model,
     const SpriteDatabase& sprites,
     const PlayerRenderState& player,
     const std::vector<std::uint8_t>& rom
@@ -60,6 +88,7 @@ bool RenderPipeline::render(
         std::max(0, render_model.preview_background_height() - height_));
 
     if (render_model.loaded()) {
+        render_model.sync_checkpoint_health_hud(state.player.health);
         render_model.render(framebuffer_, width_, height_);
     } else {
         render_model.render_preview_background(
@@ -70,6 +99,11 @@ bool RenderPipeline::render(
     // so their Genesis colour-zero transparency remains observable.
     if (!rom.empty()) {
         for (const GenesisPreviewSprite& sprite : render_model.preview_sprites()) {
+            if (sprite.tile_address
+                == GenesisHealthHudLayout::kDigitRomBase
+                    + 3 * GenesisHealthHudLayout::kDigitRomStride) {
+                continue;
+            }
             SpriteRenderer::draw_vdp_sprite(
                 rom,
                 sprite.tile_address,
@@ -84,6 +118,14 @@ bool RenderPipeline::render(
                 sprite.palette_line
             );
         }
+        draw_preview_health_hud(
+            state,
+            rom,
+            sprites.palette(),
+            framebuffer_,
+            width_,
+            height_
+        );
     }
 
     int player_frame_index = player.sprite_frame;

@@ -10,6 +10,7 @@ constexpr std::uint8_t kActorBounceType = 0x65;
 constexpr std::uint8_t kActorSwordType = 0x80;
 constexpr std::uint8_t kActorTerminalType = 0x84;
 constexpr std::uint8_t kApplePickupSoundId = 0x0B;
+constexpr std::uint8_t kPlayerHurtInvulnerabilityFrames = 30;
 constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
 constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
 constexpr std::uint32_t kActorDeathTemplate = 0x001B7940;
@@ -36,6 +37,11 @@ constexpr std::uint32_t kType4DResponseAnimation = 0x00124498;
 constexpr std::uint32_t kType3E3FResponseMovementStream = 0x00121618;
 constexpr std::uint32_t kType65ActorAnimationStream = 0x001244B0;
 constexpr std::uint32_t kType65PlayerAnimationStream = 0x001221B8;
+constexpr std::uint32_t kOpeningFireAnimationStart = 0x001245CC;
+constexpr std::uint32_t kOpeningFireAnimationEnd = 0x001245E2;
+constexpr std::uint32_t kOpeningFireFrameStart = 0x001EF9A2;
+constexpr std::uint32_t kOpeningFireFrameEnd = 0x001EF9EA;
+constexpr int kOpeningFireContactTolerance = 4;
 
 PlayerCollisionHandlerKind player_handler_kind(std::uint8_t actor_type) {
     switch (actor_type) {
@@ -206,6 +212,76 @@ bool CollisionSystem::valid_frame(std::uint32_t frame_pointer) const {
     return rom_ != nullptr
         && frame_pointer != 0
         && static_cast<std::size_t>(frame_pointer) + 5 < rom_->size();
+}
+
+bool CollisionSystem::is_opening_fire_actor(const ActorState& actor) const {
+    // These are the exact F5 child identities emitted by the opening player
+    // animation. The normal collision table intentionally rejects 0x7F+
+    // records, so this hazard needs its own ROM-owned classification.
+    return actor.type == kActorTerminalType
+        && actor.animation_pc >= kOpeningFireAnimationStart
+        && actor.animation_pc < kOpeningFireAnimationEnd
+        && actor.frame_ptr >= kOpeningFireFrameStart
+        && actor.frame_ptr <= kOpeningFireFrameEnd;
+}
+
+bool CollisionSystem::opening_fire_contacts_player(
+    const GameState& state,
+    const PlayerCollisionInput& input,
+    const ActorState& actor
+) const {
+    const CollisionBox player_box = hitbox(
+        input.frame_pointer,
+        state.camera.x + state.player.x,
+        state.camera.y + state.player.y,
+        input.facing_left
+    );
+    const CollisionBox fire_box = hitbox(
+        actor.frame_ptr,
+        static_cast<int>(actor.x),
+        static_cast<int>(actor.y),
+        actor.facing_x_flip != 0
+    );
+    if (!player_box.valid || !fire_box.valid) return false;
+
+    const bool horizontal_overlap =
+        normalized_left(player_box) < normalized_right(fire_box)
+        && normalized_left(fire_box) < normalized_right(player_box);
+    if (!horizontal_overlap) return false;
+
+    // The opening flame's frame records describe a thin contact line. In
+    // the captured opening state that line touches Aladdin's feet exactly,
+    // so a generic strict rectangle overlap misses it. Preserve the ROM
+    // frame geometry and apply the same small contact tolerance at the feet.
+    const int player_feet = normalized_bottom(player_box);
+    const int fire_top = normalized_top(fire_box);
+    const int fire_bottom = normalized_bottom(fire_box);
+    return fire_top <= player_feet + kOpeningFireContactTolerance
+        && fire_bottom >= player_feet - kOpeningFireContactTolerance;
+}
+
+CollisionEffects CollisionSystem::detect_fire_damage(
+    GameState& state,
+    const PlayerCollisionInput& input
+) const {
+    CollisionEffects effects;
+    if (state.player.health == 0 || state.player.hurt_cooldown != 0) {
+        return effects;
+    }
+
+    for (ActorIndex slot = 1; slot <= 24 && slot < state.actors.size(); ++slot) {
+        const ActorState& actor = state.actors[slot];
+        if (!is_opening_fire_actor(actor)
+            || !opening_fire_contacts_player(state, input, actor)) {
+            continue;
+        }
+
+        --state.player.health;
+        state.player.hurt_cooldown = kPlayerHurtInvulnerabilityFrames;
+        effects.player_damage_taken = true;
+        break;
+    }
+    return effects;
 }
 
 CollisionBox CollisionSystem::frame_bounds(
@@ -648,6 +724,10 @@ CollisionEffects CollisionSystem::player_actor(
     CollisionEffects effects;
     auto& actors = state.actors;
 
+    if (state.player.hurt_cooldown != 0) {
+        --state.player.hurt_cooldown;
+    }
+
     // Terminal countdown ownership is part of the player/actor service, but
     // the geometry scan itself is the recovered non-player pool 1..24.
     for (ActorIndex slot = 0; slot < actors.size(); ++slot) {
@@ -659,6 +739,8 @@ CollisionEffects CollisionSystem::player_actor(
         }
     }
     if (rom_ == nullptr) return effects;
+
+    effects.player_damage_taken = detect_fire_damage(state, input).player_damage_taken;
 
     for (const PlayerActorCollision& collision : detect_player_actor(state, input)) {
         // Type 0x65 is handled at the post-motion boundary below. The

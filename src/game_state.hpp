@@ -50,6 +50,13 @@ struct CameraState {
 };
 
 struct PlayerState {
+    static constexpr std::uint8_t kDefaultHealth = 3;
+    static constexpr std::uint8_t kMaximumHealth = 3;
+    // Keep the gameplay resource and its ROM response lockout together so
+    // one flame cannot drain multiple points while the same response is active.
+    std::uint8_t health = kDefaultHealth;
+    std::uint8_t hurt_cooldown = 0;
+
     // These are the same local coordinates and 8.8 velocity fields recovered
     // from the Genesis RAM map (PLAYER_X/Y, PLAYER_VX/VY).
     int x = 0;

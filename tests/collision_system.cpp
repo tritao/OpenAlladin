@@ -472,5 +472,69 @@ int main() {
     assert(!gated_out.player_animation_stream.has_value());
     assert(state.actors[1].type == 0x4F);
     assert(state.player.vy == 0);
+
+    // Opening flames are type-0x84 AnimationVM children and are therefore
+    // outside the ordinary 0..0x7E player-collision table. Their contact
+    // line touches the player's feet, so the dedicated hazard path must
+    // accept that ROM geometry, consume one health point, and lock out
+    // repeated drain while the existing hurt response is active.
+    std::vector<std::uint8_t> fire_rom(0x1F0000, 0);
+    constexpr std::uint32_t fire_frame = 0x001EF9A2;
+    fire_rom[frame + 2] = 2;
+    fire_rom[frame + 3] = 3;
+    fire_rom[frame + 4] = 8;
+    fire_rom[frame + 5] = 12;
+    fire_rom[fire_frame + 2] = 0;
+    fire_rom[fire_frame + 3] = 0;
+    fire_rom[fire_frame + 4] = 4;
+    fire_rom[fire_frame + 5] = 4;
+    collision.bind_rom(fire_rom);
+    state.actors.fill({});
+    state.player = {};
+    state.camera = {};
+    state.camera.y = 0;
+    state.camera.vdp_update = 1;
+    state.actors[1].type = 0x84;
+    state.actors[1].x = 4;
+    state.actors[1].y = 8;
+    state.actors[1].frame_ptr = fire_frame;
+    state.actors[1].animation_pc = 0x001245D0;
+    const auto fire_hit = collision.player_actor(
+        state,
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(fire_hit.player_damage_taken);
+    assert(!fire_hit.player_animation_state_immediate);
+    assert(!fire_hit.player_animation_stream.has_value());
+    assert(fire_hit.sound_requests.empty());
+    assert(state.player.health == 2);
+    assert(state.player.hurt_cooldown == 30);
+    assert(state.actors[1].type == 0x84);
+
+    const auto fire_lockout = collision.player_actor(
+        state,
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(!fire_lockout.player_damage_taken);
+    assert(!fire_lockout.player_animation_stream.has_value());
+    assert(state.player.health == 2);
+    assert(state.player.hurt_cooldown == 29);
+
+    state.player.hurt_cooldown = 0;
+    const auto fire_second_hit = collision.player_actor(
+        state,
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(fire_second_hit.player_damage_taken);
+    assert(state.player.health == 1);
+
+    state.player.hurt_cooldown = 0;
+    state.actors[1].animation_pc = 0x001245E4;
+    const auto non_fire_type84 = collision.player_actor(
+        state,
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(!non_fire_type84.player_damage_taken);
+    assert(state.player.health == 1);
     return 0;
 }

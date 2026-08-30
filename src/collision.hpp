@@ -64,6 +64,7 @@ struct PlayerActorCollision {
 struct CollisionEffects {
     bool player_collision_interaction_pending = false;
     bool player_bounce_response_started = false;
+    bool player_damage_taken = false;
     // Collision handlers publish animation/audio work to their scheduler
     // owners; CollisionSystem does not reach into either VM or sound driver.
     std::optional<std::uint32_t> player_animation_stream;
@@ -144,6 +145,16 @@ public:
     void actor_actor(GameState& state);
 
 private:
+    bool is_opening_fire_actor(const ActorState& actor) const;
+    bool opening_fire_contacts_player(
+        const GameState& state,
+        const PlayerCollisionInput& input,
+        const ActorState& actor
+    ) const;
+    CollisionEffects detect_fire_damage(
+        GameState& state,
+        const PlayerCollisionInput& input
+    ) const;
     bool valid_frame(std::uint32_t frame_pointer) const;
     void terminalize(
         GameState& state,
