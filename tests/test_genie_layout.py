@@ -781,6 +781,28 @@ def test_runtime_type6e_73_secondary_movement_family_is_exact():
         assert decoded["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
 
 
+def test_type5e84_e1e2_movement_stream_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x0011F8A4, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_MOVE_TYPE5E84_PAIR_E1E2"
+    assert stream.end == 0x0011FAA7
+    assert stream.size == 0x204
+    assert stream.metadata["type"] == "movement_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = MovementDecoder(load_animation_decoder().RomReader(rom_path.read_bytes()))
+    decoded = decoder.decode_stream(
+        0x0011F8A4,
+        max_steps=512,
+        max_bytes=0x204,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 0x204
+    assert decoded["stopped_reason"] == "byte_limit"
+    assert decoded["steps"][-1]["next_address"] == "0x0011FAA8"
+
+
 def test_type5e84_pair_movement_stream_family_is_exact_and_contiguous():
     symbols = SymbolStore()
     expected = [

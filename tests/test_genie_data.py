@@ -161,6 +161,42 @@ def test_data_index_collapses_interior_layout_fragment_owned_by_canonical_symbol
     assert index.at(0x44)["name"] == "DispatchTableEntry01"
 
 
+def test_data_index_collapses_generic_fragment_inside_canonical_stream(tmp_path):
+    database_root = _database(tmp_path)
+    layout = Layout(
+        rom_size=0x100,
+        ranges=(
+            LayoutRange(0x00, 0x3F, "UNKNOWN", "test"),
+            LayoutRange(0x40, 0x43, "MOVEMENT_STREAM", "tracked.symbol", "MovementRoot"),
+            LayoutRange(0x44, 0x47, "OPAQUE_DATA", "ghidra.defined_data"),
+            LayoutRange(0x48, 0x4F, "UNKNOWN", "test"),
+            LayoutRange(0x50, 0xFF, "UNKNOWN", "test"),
+        ),
+    )
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0x40,
+            "MovementRoot",
+            "data",
+            confidence="decompiled",
+            size=0x10,
+            metadata={"type": "movement_stream"},
+        ),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=layout,
+    )
+
+    objects = index.objects(kind="all")
+    assert [(item["start"], item["end"]) for item in objects if item["start"] == "0x00000040"] == [
+        ("0x00000040", "0x0000004F"),
+    ]
+    assert index.at(0x44)["name"] == "MovementRoot"
+
+
 def test_data_index_collapses_palette_bank_layout_fragment(tmp_path):
     database_root = _database(tmp_path)
     layout = Layout(

@@ -2623,6 +2623,17 @@
     - interaction_spawn_type5e84_pair_static_decompilation
     - movement_stream_decoder
 
+0x0011F8A4:
+  name: ACTOR_MOVE_TYPE5E84_PAIR_E1E2
+  type: movement_stream
+  size: 0x204
+  confidence: decompiled
+  description: Type-0x5E interaction-pair movement stream selected by InteractionSpawn_Type5E84Pair_E1E2 for selectors 0xE1 and 0xE2. Its exact 516-byte owner performs the shared parameter/timer phases, traverses the signed movement trajectory, and ends with the clear-state command at 0x0011FAA6-0x0011FAA7 immediately before the following independent movement entry.
+  evidence:
+    - interaction_spawn_type5e84_pair_static_decompilation
+    - interaction_spawn_type5e84_pair_e1e2_movement_static_v1
+    - movement_stream_decoder
+
 0x0012004E:
   name: ACTOR_MOVE_TYPE5E84_PAIR_E6
   type: movement_stream

@@ -309,16 +309,23 @@ class DataIndex:
                     # Layout generation deliberately splits a tracked table
                     # around individually named entries.  Those fragments
                     # are useful for ROM ownership, but are not independent
-                    # investigation targets when a same-class canonical
-                    # symbol already covers the complete range.  Keep an
-                    # exact-start symbol (including a nested pointer entry)
-                    # visible; collapse only anonymous interior fragments.
+                    # investigation targets when a range-bounded canonical
+                    # symbol already covers the complete range.  A generic
+                    # Ghidra data guess may have a different class from the
+                    # canonical stream/table that owns it, so canonical
+                    # ownership takes precedence over the guessed class.
+                    # Keep an exact-start symbol (including a nested pointer
+                    # entry) visible; collapse only anonymous interior
+                    # fragments.
                     item_end = item.end
                     covered = any(
-                        candidate["kind"] == object_kind
-                        and _address(candidate["start"]) <= item.start
+                        _address(candidate["start"]) <= item.start
                         and item_end <= _address(candidate["end"])
                         and candidate["range_bounded"]
+                        and (
+                            candidate["kind"] == object_kind
+                            or item.source in {"ghidra.defined_data", "layout.gap"}
+                        )
                         and (
                             _address(candidate["start"]) != item.start
                             or _address(candidate["end"]) != item_end
