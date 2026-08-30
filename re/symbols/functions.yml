@@ -76,11 +76,12 @@
     - mame_player_camera_follow_trace
 0x001AA724:
   name: Camera_RebuildView
-  confidence: decompiled
+  confidence: trace_validated
   description: Rebuilds the camera viewport either by writing the full 16-by-23 terrain matrix in special mode or by sweeping the camera right and left in 0x10-pixel steps while servicing actors, interaction rows, and sprites.
   evidence:
     - ghidra_decompile_001AA724
     - ghidra_scene_camera_orchestration_targets
+    - expanded_runtime_coverage_20260830
 0x001AA66E:
   name: InteractionCounter_Initialize
   confidence: decompiled
@@ -192,11 +193,12 @@
     - expanded_runtime_coverage_20260830
 0x001AB66C:
   name: Camera_ScrollUpAndRefill
-  confidence: decompiled
+  confidence: trace_validated
   description: Consumes the up-scroll refill path, adjusts the vertical camera state by one 0x10-pixel step, writes 23 terrain-derived entries to the VDP column, and processes the refreshed interaction rows through InteractionTable_ProcessRowsB.
   evidence:
     - ghidra_decompile_001AB66C
     - ghidra_interaction_dispatch_callers
+    - expanded_runtime_coverage_20260830
 0x001AB776:
   name: Render_SubmitPlayerSprites
   confidence: decompiled
@@ -213,11 +215,12 @@
     - ghidra_render_submission_targets
 0x001AC726:
   name: Render_SubmitActorSprites
-  confidence: decompiled
+  confidence: trace_validated
   description: Transfers the actor sprite payload records from FF769A to the VDP after programming the actor-sprite destination, waits for the VDP FIFO before finalizing the transfer, and uses FFEFEE as the record count.
   evidence:
     - ghidra_decompile_001AC726
     - ghidra_render_submission_targets
+    - expanded_runtime_coverage_20260830
 0x001AC6D0:
   name: Render_BuildActorSpritePayload
   confidence: trace_validated
@@ -3619,12 +3622,13 @@
     - ghidra_hud_display_targets
 0x001A986E:
   name: Player_ApplyTerrainResponse
-  confidence: decompiled
+  confidence: trace_validated
   description: Applies the resolved terrain response to the player, handling upward/downward pixel corrections, camera thresholds, animation refresh, velocity cancellation, and PLAYER_TRANSITION_GATE publication while respecting the terrain stop and interaction gates.
   evidence:
     - ghidra_decompile_001A986E
     - ghidra_player_terrain_response_targets
     - ghidra_disassembly_001A8C16
+    - expanded_runtime_coverage_20260830
 0x001A997A:
   name: Player_SelectVerticalBandAnimationOnOddFrame
   confidence: decompiled
@@ -3818,11 +3822,12 @@
 0x001AAC14:
   name: Level03_CameraScrollCallback
   size: 386
-  confidence: decompiled
+  confidence: trace_validated
   description: Level-table record-3 camera-scroll callback. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X and camera scroll state, then returns at 0x001AAD95.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AAC14
+    - expanded_runtime_coverage_20260830
 0x001AAD96:
   name: Level10_CameraScrollCallback
   size: 358
@@ -3891,12 +3896,13 @@
 
 0x001AE0D4:
   name: Actor_RepublishInteractionValueOnCull
-  confidence: decompiled
+  confidence: trace_validated
   description: During linked-actor cleanup, republishes a nonzero actor interaction selector from offsets 0x32/0x34 into INTERACTION_TABLE_RUNTIME when the actor flag at offset 0x06 has bit 0x20 set.
   evidence:
     - ghidra_disassembly_001AE0B0
     - ghidra_disassembly_001AE0D4
     - ghidra_actor_lifecycle_helpers_targets
+    - expanded_runtime_coverage_20260830
 
 0x001ACD54:
   name: ActorType1E_PrepareRecoveryPlane
@@ -4426,12 +4432,13 @@
     - expanded_runtime_coverage_20260830
 0x001AD372:
   name: ActorVM_PushStreamParameter
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM parameter handler for animation opcode FB and movement opcode 91; advances past the command header and pushes the following longword value for the deferred callback convention.
   evidence:
     - ghidra_disassembly_001AD372
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AD378:
   name: ActorVM_CallOrReturnStream
   confidence: decompiled
@@ -4442,20 +4449,22 @@
     - actor_vm_dispatch_family_static_decompilation
 0x001AD392:
   name: ActorVM_PlayerWithinXBranch
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM horizontal-distance handler for animation opcode FD and movement opcode 93; follows the inline pointer when the player's X distance from the actor is within the supplied threshold and otherwise skips it.
   evidence:
     - ghidra_disassembly_001AD392
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AD3C2:
   name: ActorVM_PlayerWithinYBranch
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM vertical-distance handler for animation opcode FE and movement opcode 94; follows the inline pointer when the player's Y distance from the actor is within the supplied threshold and otherwise skips it.
   evidence:
     - ghidra_disassembly_001AD3C2
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001B58D8:
   name: LevelEvent_NoOpHandler
   confidence: confirmed
