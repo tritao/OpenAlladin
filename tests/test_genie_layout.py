@@ -4774,6 +4774,7 @@ def test_interaction_spawn_and_player_gate_entrypoints_have_semantic_names():
         0x001B52A0: ("InteractionSpawn_AllocatePreserveRow", "decompiled"),
         0x001B6ED0: ("InteractionSpawn_RuntimeType21_1A", "confirmed"),
         0x001B2E9A: ("VDP_SetControl9001AndBuildTileRows", "decompiled"),
+        0x001ADB36: ("Terrain_RenderViewportWithPhaseOffset", "decompiled"),
     }
     for address, (name, confidence) in expected.items():
         symbol = symbols.at(address, include_ranges=False)
@@ -4785,6 +4786,10 @@ def test_interaction_spawn_and_player_gate_entrypoints_have_semantic_names():
     assert symbols.at(0x001B52A0, include_ranges=False).aliases == ("LevelObjectSpawnVariant",)
     assert symbols.at(0x001B6ED0, include_ranges=False).aliases == ("InteractionHandler_Type21",)
     assert symbols.at(0x001B2E9A, include_ranges=False).aliases == ("SceneTransition_VDPHelper",)
+    assert symbols.at(0x001ADB36, include_ranges=False).aliases == (
+        "Terrain_ContourLookupHelper",
+        "Terrain_TemporaryLookupHelper",
+    )
 
 
 def test_low_confidence_scene_terrain_services_are_closed():
@@ -4793,7 +4798,7 @@ def test_low_confidence_scene_terrain_services_are_closed():
         0x001A8E3E: ("SceneScript_AdvanceState", "trace_validated"),
         0x001B2ACE: ("Scene_EnterTransitionMode", "decompiled"),
         0x001B315C: ("SceneScript_CompleteToState1", "decompiled"),
-        0x001ADB36: ("Terrain_ContourLookupHelper", "decompiled"),
+        0x001ADB36: ("Terrain_RenderViewportWithPhaseOffset", "decompiled"),
     }
     for address, (name, confidence) in expected.items():
         function = symbols.at(address, include_ranges=False)

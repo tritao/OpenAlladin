@@ -29,7 +29,7 @@
     },
     {
       "address": "0x001ADB36",
-      "name": "Terrain_ContourLookupHelper",
+      "name": "Terrain_RenderViewportWithPhaseOffset",
       "range": ["0x001ADB36", "0x001ADB5B"],
       "confidence": "decompiled",
       "evidence": ["ghidra_disassembly_001ADB36", "level01_surface_mode_consumer_static_decompilation"]

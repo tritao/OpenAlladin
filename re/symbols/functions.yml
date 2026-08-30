@@ -2680,9 +2680,10 @@
     - terrain_actor_collision_hook_targets
     - terrain_actor_collision_hook_static_decompilation
 0x001ADB36:
-  name: Terrain_ContourLookupHelper
+  name: Terrain_RenderViewportWithPhaseOffset
+  aliases: [Terrain_ContourLookupHelper, Terrain_TemporaryLookupHelper]
   confidence: decompiled
-  description: Separate helper that temporarily replaces the word at A0 with FF7E28 shifted left by three, calls 0x001AA81A, and restores the word; the landing resolver's direct calls target the preceding no-op at 0x001ADB34 instead.
+  description: Separate terrain-viewport wrapper that temporarily replaces the word at A0 with FRAME_PHASE_COUNTER shifted left by three, calls Camera_RenderTerrainViewport, and restores the original word; the landing resolver's direct calls target the preceding no-op at 0x001ADB34 instead.
   evidence:
     - ghidra_level01_surface_mode_consumer_targeted_decompile
     - ghidra_disassembly_001ADB36

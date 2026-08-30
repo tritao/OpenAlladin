@@ -10,7 +10,7 @@
     {"address": "0x001A8E3E", "name": "SceneScript_AdvanceState", "confidence": "trace_validated"},
     {"address": "0x001B2ACE", "name": "Scene_EnterTransitionMode", "confidence": "decompiled"},
     {"address": "0x001B315C", "name": "SceneScript_CompleteToState1", "confidence": "decompiled"},
-    {"address": "0x001ADB36", "name": "Terrain_ContourLookupHelper", "confidence": "decompiled"}
+    {"address": "0x001ADB36", "name": "Terrain_RenderViewportWithPhaseOffset", "confidence": "decompiled"}
   ],
   "evidence": [
     "Exact 68000 disassembly and bounded ranges for all four routines",

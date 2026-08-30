@@ -7,7 +7,7 @@
   },
   "targets": [
     { "address": "0x001AD7B4", "name": "Player_TerrainLandingResolver" },
-    { "address": "0x001ADB36", "name": "Terrain_ContourLookupHelper" },
+    { "address": "0x001ADB36", "name": "Terrain_RenderViewportWithPhaseOffset" },
     { "address": "0x001AF53E", "name": "TerrainHandler_ClearSurfaceModeEntry" },
     { "address": "0x001AF54A", "name": "TerrainHandler_SetSurfaceModeEntry" },
     { "address": "0x001B5470", "name": "Behavior_0x47_SurfaceModeHandler" },
