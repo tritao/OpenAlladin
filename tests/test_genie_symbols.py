@@ -1020,6 +1020,25 @@ def test_real_fixed_actor_render_and_terrain_fields_have_canonical_roles():
         assert symbol.confidence == "decompiled"
 
 
+def test_real_scene_script_refresh_and_menu_latches_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FF7E27: ("VIDEO_REFRESH_RATE_HZ", "integer"),
+        0x00FFF005: ("SCENE_SCRIPT_WAIT", "boolean"),
+        0x00FFF119: ("MENU_OPTIONS_INITIAL_PRESENTATION_LATCH", "boolean"),
+    }
+    for address, (name, format_name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == "decompiled"
+
+    refresh = symbols.at(0x00FF7E27, include_ranges=False)
+    assert refresh is not None
+    assert "STARTUP_FRAME_LIMIT" in refresh.aliases
+
+
 def test_real_actor_vm_domain_selector_has_canonical_role():
     symbol = SymbolStore().at(0x00FF7DA2, include_ranges=False)
     assert symbol is not None

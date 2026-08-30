@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-scene-script-refresh-menu-latches-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "symbols": [
+    {
+      "address": "0x00FF7E27",
+      "name": "VIDEO_REFRESH_RATE_HZ",
+      "width": 1,
+      "initialization": "System_InitializeRuntime writes 0x32, or 0x3C when VDP status bit 0 is clear",
+      "consumer": "Scene_EnterTransitionMode compares against 0x32 to select the transition presentation row"
+    },
+    {
+      "address": "0x00FFF005",
+      "name": "SCENE_SCRIPT_WAIT",
+      "width": 1,
+      "writer": "LevelEvent_ArmSceneScriptTransition at 0x001B5B42",
+      "consumer": "SceneScript_AdvanceState at 0x001A8EAE when the scene-script record type is 2"
+    },
+    {
+      "address": "0x00FFF119",
+      "name": "MENU_OPTIONS_INITIAL_PRESENTATION_LATCH",
+      "width": 1,
+      "writer": "Menu_RunOptionsPresentationContinuation at 0x001B3CF4",
+      "consumer": "Menu_RunOptionsPresentationContinuation at 0x001B3DBC before transition audio command 0x1A"
+    }
+  ],
+  "evidence": [
+    "build/re/full-rom/instructions.json",
+    "build/re/full-rom/memory_reads.json",
+    "build/re/full-rom/memory_writes.json",
+    "ghidra_decompile_001AA344",
+    "ghidra_decompile_001A8E3E",
+    "ghidra_decompile_001B3C7C",
+    "ghidra_disassembly_001B2ACE",
+    "ghidra_disassembly_001B5B3A"
+  ],
+  "limitations": [
+    "SCENE_SCRIPT_WAIT has one direct writer in the exported code; its startup zeroing is implicit in the reset/runtime initialization path.",
+    "MENU_OPTIONS_INITIAL_PRESENTATION_LATCH is a one-shot presentation/audio gate; no higher-level menu-state meaning is claimed.",
+    "VIDEO_REFRESH_RATE_HZ retains STARTUP_FRAME_LIMIT as a compatibility alias for older target manifests."
+  ],
+  "conclusion": "The direct scene-script, video-timing, and options-presentation RAM contracts now have canonical identities backed by exact writer/reader instruction pairs."
+}

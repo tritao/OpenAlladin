@@ -15,7 +15,7 @@
     { "address": "0x00FF7E21", "name": "GAME_DIFFICULTY_MODE" },
     { "address": "0x00FF7E25", "name": "FRAME_WAIT_LATCH" },
     { "address": "0x00FF7E26", "name": "SCENE_STATE" },
-    { "address": "0x00FF7E27", "name": "STARTUP_FRAME_LIMIT" },
+    { "address": "0x00FF7E27", "name": "VIDEO_REFRESH_RATE_HZ" },
     { "address": "0x00FF7E3F", "name": "ACTIVE_SCENE_ENTRY_GATE" },
     { "address": "0x00FF7DE2", "name": "SOUND_TEST_ENTRY_PTR" },
     { "address": "0x00FFF572", "name": "SCENE_SCRIPT_CURSOR" },

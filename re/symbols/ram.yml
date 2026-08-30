@@ -2724,3 +2724,39 @@
     - ghidra_disassembly_001ADB5C
     - ghidra_disassembly_001B1E0A
     - actor_terrain_collision_loop_static_decompilation
+
+0xFF7E27:
+  name: VIDEO_REFRESH_RATE_HZ
+  aliases:
+    - STARTUP_FRAME_LIMIT
+  type: u8
+  format: integer
+  confidence: decompiled
+  description: Detected video refresh rate in hertz. System_InitializeRuntime seeds 50 and selects 60 when the VDP status bit indicates the alternate timing; Scene_EnterTransitionMode uses the 50 Hz value to select the corresponding transition presentation row.
+  evidence:
+    - ghidra_disassembly_001AA344
+    - ghidra_disassembly_001B2ACE
+    - startup_initialization_targets
+    - scene_transition_menu_stream_extents_static_v1
+
+0xFFF005:
+  name: SCENE_SCRIPT_WAIT
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Scene-script wait latch set by LevelEvent_ArmSceneScriptTransition for the level-event F2 command. SceneScript_AdvanceState tests it when the current scene-script record is type 2, accepting that transition record only when the latch is clear.
+  evidence:
+    - ghidra_disassembly_001A8E3E
+    - ghidra_disassembly_001B5B3A
+    - level01_exit_data_reference_audit
+
+0xFFF119:
+  name: MENU_OPTIONS_INITIAL_PRESENTATION_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: One-shot options-screen presentation latch set after the initial long presentation path. Menu_RunOptionsPresentationContinuation tests it in the shared epilogue to suppress the transition audio command on that first presentation.
+  evidence:
+    - ghidra_disassembly_001B3C7C
+    - ghidra_decompile_001B3C7C
+    - menu_options_presentation_static_decompilation

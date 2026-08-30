@@ -27,7 +27,7 @@
     "The selected ranges are non-overlapping; their intervening and following text/data objects remain separate layout evidence."
   ],
   "limitations": [
-    "The transition status byte at 0x00FF7E27 remains unnamed; the two branch-selected rows are therefore named by their observed selector value.",
+    "VIDEO_REFRESH_RATE_HZ at 0x00FF7E27 selects the 50 Hz transition row; the two rows remain named by their observed timing selector.",
     "The adjacent user-facing strings after these streams are not claimed unless independently selected by a direct consumer."
   ]
 }
