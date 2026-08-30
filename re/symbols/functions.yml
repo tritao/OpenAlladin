@@ -1774,7 +1774,9 @@
     - ghidra_unclassified_actor_collision_decompile
     - actor_collision_handler_family_static_decompilation
 0x001AC6A2:
-  name: ActorType2D2E31_ActorCollisionHandler
+  name: ActorCollision_ConvertType2D2E31Response
+  aliases: [ActorType2D2E31_ActorCollisionHandler]
+  size: 46
   confidence: confirmed
   description: Shared actor-collision dispatch target for runtime actor types 0x2D, 0x2E, and 0x31. It promotes a source type 0x80 to type 0x84 with animation 0x00122B6E and cleared continuation fields, allows source type 0x82 to pass without promotion, rejects other source types, then promotes the receiver to type 0x84 with flags +0x06=0x40; it does not launch the player or write scene state.
   evidence:
@@ -2024,7 +2026,8 @@
     - player_collision_response_entry_family_static_decompilation
     - expanded_runtime_coverage_20260830
 0x001AEB7A:
-  name: ActorType0D_PlayerCollisionHandler
+  name: PlayerCollision_NoopType0D
+  aliases: [ActorType0D_PlayerCollisionHandler]
   size: 2
   confidence: decompiled
   description: Empty player-collision handler for runtime actor type 0x0D; it returns without changing player, actor, interaction, terrain, or scene state.
@@ -2033,7 +2036,8 @@
     - ghidra_disassembly_001AEB7A
     - player_collision_response_entry_family_static_decompilation
 0x001AED86:
-  name: ActorType03_PlayerCollisionHandler
+  name: PlayerCollision_HandleType03Interaction
+  aliases: [ActorType03_PlayerCollisionHandler]
   size: 32
   confidence: decompiled
   description: Player-collision handler for runtime actor type 0x03. When PLAYER_INTERACTION_GATE is clear it routes through ActorShared_PlayerCollisionHandler; otherwise it converts the source actor to type 0x84, installs animation 0x00122E16, clears the actor animation state, and clears the linked actor interaction byte at offset 0x34.
@@ -2042,7 +2046,8 @@
     - ghidra_disassembly_001AED86
     - player_collision_response_entry_family_static_decompilation
 0x001AEDA6:
-  name: ActorType04_PlayerCollisionHandler
+  name: PlayerCollision_NoopType04
+  aliases: [ActorType04_PlayerCollisionHandler]
   size: 2
   confidence: decompiled
   description: Empty player-collision handler for runtime actor type 0x04; it returns without changing player, actor, interaction, terrain, or scene state.
@@ -2129,7 +2134,8 @@
     - ghidra_disassembly_001AEECA
     - player_collision_response_counter_family_static_decompilation
 0x001AEEDE:
-  name: ActorType24_28_PlayerCollisionHandler
+  name: PlayerCollision_NoopType24_28
+  aliases: [ActorType24_28_PlayerCollisionHandler]
   size: 2
   confidence: decompiled
   description: Shared empty player-collision handler for runtime actor types 0x24 through 0x28; it returns without changing player, actor, interaction, terrain, or scene state.
@@ -2228,7 +2234,8 @@
     - ghidra_disassembly_001AF08C
     - player_collision_response_counter_family_static_decompilation
 0x001AEBFE:
-  name: ActorType2B_PlayerCollisionHandler
+  name: PlayerCollision_NoopType2B
+  aliases: [ActorType2B_PlayerCollisionHandler]
   confidence: confirmed
   description: Empty player-collision handler for runtime actor type 0x2B at pointer-table address 0x001D6A; it performs no state, position, velocity, interaction, actor, or scene writes.
   evidence:
@@ -6101,7 +6108,8 @@
     - menu-options-presentation-static-decompilation
 
 0x001AF21E:
-  name: ActorType3B_PlayerCollisionHandler
+  name: PlayerCollision_GateType3BResponse
+  aliases: [ActorType3B_PlayerCollisionHandler]
   size: 10
   confidence: decompiled
   description: Player-collision dispatch entry for actor type 0x3B. It suppresses the following type-0x3A interaction path while PLAYER_ACTION_RESPONSE_FIELD is active; when the field is clear, control falls through to ActorType3A_PlayerCollisionHandler.
@@ -6427,7 +6435,8 @@
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001ABF9A:
-  name: ActorType01_ActorCollisionHandler
+  name: ActorCollision_NoopType01
+  aliases: [ActorType01_ActorCollisionHandler]
   size: 2
   confidence: decompiled
   description: Empty actor-collision dispatch handler for receiving actor type 0x01. The table entry is a direct RTS at 0x001ABF9A.

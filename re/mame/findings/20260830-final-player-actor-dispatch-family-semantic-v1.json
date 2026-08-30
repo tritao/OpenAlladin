@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/final-player-actor-dispatch-family-semantic-targets.json",
+  "promotions": [
+    { "address": "0x001AED86", "old_name": "ActorType03_PlayerCollisionHandler", "name": "PlayerCollision_HandleType03Interaction", "alias": "ActorType03_PlayerCollisionHandler" },
+    { "address": "0x001AF21E", "old_name": "ActorType3B_PlayerCollisionHandler", "name": "PlayerCollision_GateType3BResponse", "alias": "ActorType3B_PlayerCollisionHandler" },
+    { "address": "0x001ABF9A", "old_name": "ActorType01_ActorCollisionHandler", "name": "ActorCollision_NoopType01", "alias": "ActorType01_ActorCollisionHandler" },
+    { "address": "0x001AC6A2", "old_name": "ActorType2D2E31_ActorCollisionHandler", "name": "ActorCollision_ConvertType2D2E31Response", "alias": "ActorType2D2E31_ActorCollisionHandler" },
+    { "address": "0x001AEB7A", "old_name": "ActorType0D_PlayerCollisionHandler", "name": "PlayerCollision_NoopType0D", "alias": "ActorType0D_PlayerCollisionHandler" },
+    { "address": "0x001AEBFE", "old_name": "ActorType2B_PlayerCollisionHandler", "name": "PlayerCollision_NoopType2B", "alias": "ActorType2B_PlayerCollisionHandler" },
+    { "address": "0x001AEDA6", "old_name": "ActorType04_PlayerCollisionHandler", "name": "PlayerCollision_NoopType04", "alias": "ActorType04_PlayerCollisionHandler" },
+    { "address": "0x001AEEDE", "old_name": "ActorType24_28_PlayerCollisionHandler", "name": "PlayerCollision_NoopType24_28", "alias": "ActorType24_28_PlayerCollisionHandler" }
+  ],
+  "conclusion": "Canonicalized the final player/actor dispatch entries, including explicit no-op names for direct RTS handlers, leaving no semantic queue candidates.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

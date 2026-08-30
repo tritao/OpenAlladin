@@ -598,6 +598,24 @@ def test_player_terrain_contact_family_has_behavior_names_and_legacy_aliases():
         assert legacy in symbol.aliases
 
 
+def test_final_player_and_actor_dispatch_entries_have_canonical_names():
+    expected = {
+        0x001AED86: ("PlayerCollision_HandleType03Interaction", "ActorType03_PlayerCollisionHandler"),
+        0x001AF21E: ("PlayerCollision_GateType3BResponse", "ActorType3B_PlayerCollisionHandler"),
+        0x001ABF9A: ("ActorCollision_NoopType01", "ActorType01_ActorCollisionHandler"),
+        0x001AC6A2: ("ActorCollision_ConvertType2D2E31Response", "ActorType2D2E31_ActorCollisionHandler"),
+        0x001AEB7A: ("PlayerCollision_NoopType0D", "ActorType0D_PlayerCollisionHandler"),
+        0x001AEBFE: ("PlayerCollision_NoopType2B", "ActorType2B_PlayerCollisionHandler"),
+        0x001AEDA6: ("PlayerCollision_NoopType04", "ActorType04_PlayerCollisionHandler"),
+        0x001AEEDE: ("PlayerCollision_NoopType24_28", "ActorType24_28_PlayerCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
