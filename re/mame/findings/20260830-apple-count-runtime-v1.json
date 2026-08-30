@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-apple-count-runtime-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/apple-count-runtime-targets.json",
+  "trace": {
+    "directory": "build/re/analysis/player-attack-ram",
+    "raw_ram": "ram_frames.bin",
+    "ram_start": "0x00FF0000",
+    "ram_offset": "0xEFE0",
+    "input_schedule": "... A/apple action at frames 1635-1636 ..."
+  },
+  "observations": [
+    {
+      "frame": 5,
+      "field": "0x00FFEFE0",
+      "value": "0x3130",
+      "ascii": "10",
+      "meaning": "initial player apple count in the recorded normal-mode run"
+    },
+    {
+      "frames": [1635, 1636],
+      "input": "a",
+      "player_animation_pcs": ["0x00122034", "0x001232E0"]
+    },
+    {
+      "frame": 1637,
+      "player_animation_pc": "0x001223E2",
+      "meaning": "player apple-animation body is executing"
+    },
+    {
+      "frame": 1647,
+      "field": "0x00FFEFE0",
+      "before": "0x3130",
+      "after": "0x3039",
+      "ascii_after": "09"
+    }
+  ],
+  "static_correlation": [
+    "PLAYER_ANIM_THROW_APPLE at 0x001223DA is a canonical player action stream.",
+    "Its data-driven path reaches the FB callback that invokes InteractionCounter_DecrementPrimaryDigits.",
+    "Render_BuildActorRecords emits the same ASCII word in the HUD when it is nonzero.",
+    "InteractionCounter_Initialize selects 15, 10, or 05 from GAME_DIFFICULTY_MODE."
+  ],
+  "qualification": "This closes the player-facing resource projection of FFEFE0 without claiming that shared interaction/resource callers use a different storage location.",
+  "conclusion": "The shared ASCII word at FFEFE0 is the player apple count in the recorded gameplay path. It starts at 10, the A/apple action enters PLAYER_ANIM_THROW_APPLE, and the word becomes 09 after the decrement callback. INTERACTION_COUNTER_DIGITS remains the address-level canonical name; PLAYER_APPLE_COUNT_DIGITS is its semantic alias."
+}

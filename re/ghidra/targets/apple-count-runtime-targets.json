@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-apple-count-runtime-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-apple-count",
+    "purpose": "Confirm the gameplay projection of the shared ASCII counter from the player apple action and HUD path."
+  },
+  "ram": {
+    "address": "0x00FFEFE0",
+    "canonical_name": "INTERACTION_COUNTER_DIGITS",
+    "semantic_alias": "PLAYER_APPLE_COUNT_DIGITS",
+    "representation": "two ASCII decimal digits",
+    "initial_values_by_difficulty_mode": {
+      "0": "15",
+      "1": "10",
+      "other": "05"
+    }
+  },
+  "rom_evidence": [
+    {
+      "address": "0x001223DA",
+      "name": "PLAYER_ANIM_THROW_APPLE",
+      "effect": "Its data-driven AnimationVM path pushes InteractionCounter_DecrementPrimaryDigits at 0x00122450 before returning to the player animation selector."
+    },
+    {
+      "address": "0x001AB7C4",
+      "name": "Render_BuildActorRecords",
+      "effect": "It emits the two ASCII digits at 0x00FFEFE0 as HUD actor records when the word is nonzero."
+    }
+  ],
+  "runtime_evidence": {
+    "trace": "build/re/analysis/player-attack-ram",
+    "input_frames": [1635, 1636],
+    "input": "a",
+    "counter_before": "0x3130",
+    "counter_after": "0x3039",
+    "counter_transition_frame": 1647,
+    "player_animation_pcs": [
+      "0x00122034",
+      "0x001232E0",
+      "0x001223E2",
+      "0x00122438",
+      "0x0012245C"
+    ],
+    "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "qualification": "The alias identifies the player-facing resource represented by this word. Shared interaction/resource callers remain valid and are not reclassified as separate storage.",
+  "conclusion": "The FFEFE0 word is the player apple count in the recorded gameplay path: it begins at ASCII 10, the A/apple action enters the apple animation path, and the counter becomes ASCII 09 after the callback. The neutral INTERACTION_COUNTER_DIGITS name is retained as the canonical address-level name, with PLAYER_APPLE_COUNT_DIGITS exposed as its semantic alias."
+}

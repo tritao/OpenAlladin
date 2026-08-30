@@ -2202,6 +2202,21 @@ of its call paths. The updated result is recorded in
 the earlier focused decrement evidence remains in
 `re/mame/findings/20260828-interaction-counter-decrement-v1.json`.
 
+## Player apple-count projection (20260830)
+
+The shared ASCII word at `FFEFE0` now has the semantic alias
+`PLAYER_APPLE_COUNT_DIGITS`. The ROM initializes it to `15`, `10`, or `05`
+from the selected difficulty/menu mode, renders it in the HUD, and the
+`PLAYER_ANIM_THROW_APPLE` AnimationVM path pushes
+`InteractionCounter_DecrementPrimaryDigits`. A recorded MAME apple-action
+trace starts with `FFEFE0=0x3130` (`"10"`) and reaches `0x3039` (`"09"`) at
+frame 1647 after the `A` input at frames 1635-1636.
+
+The address-level canonical name `INTERACTION_COUNTER_DIGITS` remains in
+place because shared interaction and scene-resource paths also update the
+same word. The semantic alias and runtime evidence are recorded in
+`re/ghidra/targets/apple-count-runtime-targets.json`.
+
 ## Secondary interaction counter reset (20260828)
 
 InteractionCounter_ResetSecondaryDigits at `0x001AA664` resets the separate
@@ -3527,6 +3542,7 @@ valuable because it prevents repeating the same input family.
 | `20260830-scheduler-latch-contract-closure-v1` | recorded-static-decompilation | Closed the remaining RAM wording gap: FRAME_WAIT_LATCH is the transition-only optional Z80-handshake gate with writers at 0x001AA3A8/0x001B2DF4/0x001B2E02, while VBLANK_READY_LATCH is the interrupt-to-wait release latch consumed and cleared by Frame_WaitForVBlankWork |
 | `20260830-actor-response-template-field-closure-static-v1` | recorded-static-decompilation | Closed the remaining actor-template extent wording gaps for the zero base, shared collision-response record, and Type-0x84 response record with exact 20-byte boundaries and initializer-mapped fields; surrounding family roles remain conservative |
 | `20260830-primary-interaction-counter-contract-static-v1` | recorded-static-decompilation | Renamed the former FarTransfer counter helpers at 0x001B0336/0x001B0360 as primary interaction-counter advance/decrement services and closed their cross-subsystem caller and step-count contracts while retaining neutral resource semantics |
+| `20260830-apple-count-runtime-v1` | recorded-runtime-evidence | Confirmed the player-facing apple-count projection of the shared FFEFE0 ASCII word from PLAYER_ANIM_THROW_APPLE, HUD emission, and the MAME 10-to-9 transition after the recorded A action; retained INTERACTION_COUNTER_DIGITS as the address-level canonical name |
 | `20260830-difficulty-counter-type7e-consumer-static-v1` | recorded-static-decompilation | Closed ActorType7E_PlayerCollisionHandler's exact secondary-counter thresholds, five/ten-step countdown paths, GAME_DIFFICULTY_COUNTER cap branch, scene-resource mode selection, and camera-threshold tail without assigning a user-facing counter name |
 | `20260830-difficulty-counter-consumer-closure-static-v1` | recorded-static-decompilation | Closed the direct GAME_DIFFICULTY_COUNTER reader/writer family and all four Game_IncrementDifficultyCounter callers; corrected Type-0x46 ASCII-'9' gate wording while retaining conservative user-facing semantics |
 | `20260830-type7e-function-boundary-correction-v1` | tooling-validation | Corrected ActorType7E_PlayerCollisionHandler from the stale 358-byte overlapping symbol size to its exact 292-byte body ending at 0x001AFF3F before the separate mode-11 and mode-16 helpers |

@@ -425,6 +425,16 @@ def test_real_hud_display_buffers_have_canonical_ram_symbols():
     assert active.address + 7 == pending.address
 
 
+def test_real_apple_counter_has_a_semantic_projection_alias():
+    symbols = SymbolStore()
+
+    counter = symbols.at(0x00FFEFE0, include_ranges=False)
+    assert counter is not None
+    assert counter.name == "INTERACTION_COUNTER_DIGITS"
+    assert "PLAYER_APPLE_COUNT_DIGITS" in counter.aliases
+    assert counter.metadata["format"] == "ascii_digits"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

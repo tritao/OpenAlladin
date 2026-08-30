@@ -514,14 +514,18 @@
     - mame_transition_resource_prerequisite_probe
 0xFFEFE0:
   name: INTERACTION_COUNTER_DIGITS
+  aliases:
+    - PLAYER_APPLE_COUNT_DIGITS
   type: u16
   format: ascii_digits
   confidence: confirmed
-  description: Two ASCII counter digits initialized by InteractionCounter_Initialize and advanced or decremented by the interaction-counter helpers during far-transfer and actor-response flows.
+  description: Two ASCII digits for the player apple inventory, initialized to 15, 10, or 05 from GAME_DIFFICULTY_MODE and decremented by the PLAYER_ANIM_THROW_APPLE AnimationVM callback. The same word is also advanced/decremented by shared interaction and scene-resource handlers, so INTERACTION_COUNTER_DIGITS remains the address-level canonical name while PLAYER_APPLE_COUNT_DIGITS is the gameplay resource projection.
   evidence:
     - ghidra_decompile_001AA66E
     - ghidra_decompile_001B0336
     - ghidra_decompile_001B0360
+    - player_animation_fb_primary_counter_callback_static_v1
+    - apple_count_runtime_transition_v1
 0xFFEFE2:
   name: INTERACTION_COUNTER_SECONDARY_DIGITS
   type: u16

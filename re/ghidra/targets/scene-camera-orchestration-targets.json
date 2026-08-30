@@ -27,6 +27,6 @@
     { "address": "0x00FFF0B2", "name": "CAMERA_SCROLL_X" },
     { "address": "0x00FF7E21", "name": "GAME_DIFFICULTY_MODE" },
     { "address": "0x00FF7E29", "name": "HUD_DISPLAY_DIGITS" },
-    { "address": "0x00FF7E3C", "name": "GAME_MODE_COUNTER" }
+    { "address": "0x00FF7E3C", "name": "GAME_DIFFICULTY_COUNTER" }
   ]
 }
