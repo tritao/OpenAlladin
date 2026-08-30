@@ -1703,16 +1703,18 @@
     - rom_actor_collision_handler_table_001EBA
     - ghidra_level01_countdown_producer_decompile
 0x001AC4E8:
-  name: ActorType11_ActorCollisionHandler
+  name: ActorCollision_HandleWallTerminalResponse
+  aliases: [ActorType11_ActorCollisionHandler]
   confidence: confirmed
-  description: Actor-to-actor collision dispatch target for receiving actor type 0x11 at ROM pointer-table address 0x001EFE. Its timed cleanup branch arms SCENE_SCRIPT_COUNTDOWN=0x14 and does not directly assign SCENE_STATE.
+  description: Actor-to-actor collision response for receiving actor type 0x11 at ROM pointer-table address 0x001EFE. It clears the source, allocates the Type-0x8D wall-response actor, and on the terminal branch clears/reinitializes the receiver from the Type-0x84 template, arms SCENE_SCRIPT_COUNTDOWN=0x14, and performs the shared cleanup/audio work without directly assigning SCENE_STATE.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_level01_countdown_producer_decompile
 0x001AC1D0:
-  name: ActorType13_ActorCollisionHandler
+  name: ActorCollision_ProcessType13Response
+  aliases: [ActorType13_ActorCollisionHandler]
   confidence: confirmed
-  description: Actor-to-actor collision dispatch target for receiving actor type 0x13 at ROM pointer-table address 0x001F06. Its recovered special cleanup path has no direct SCENE_SCRIPT_COUNTDOWN or SCENE_STATE assignment.
+  description: Actor-to-actor collision response for receiving actor type 0x13 at ROM pointer-table address 0x001F06. It clears the source, runs Actor_HandleType2DInteraction, then either replaces the receiver with the Type-0x84 response and spawns a vertically offset child or decrements the receiver phase and installs the staged movement response; the path has no direct SCENE_STATE assignment.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_level01_countdown_producer_decompile
@@ -1946,10 +1948,11 @@
     - actor_template_death_84
     - player_collision_direct_entry_family_static_decompilation
 0x001AEA48:
-  name: ActorType18_19_PlayerCollisionHandler
+  name: PlayerCollision_HandleInteractionProximityResponse
+  aliases: [ActorType18_19_PlayerCollisionHandler]
   size: 306
   confidence: decompiled
-  description: Shared player-collision handler for runtime actor types 0x18 and 0x19. It routes ungated contacts through Player_ProcessInteractionState, applies the type-0x19 sound/lock branch, checks actor/player X proximity, then installs a type-0x84 response actor with animation 0x001248B6 or clears/reinitializes the source through ACTOR_TEMPLATE_COLLISION_TYPE_84 while publishing the interaction response and optional event-0x23 audio.
+  description: Shared player-collision interaction/proximity response for runtime actor types 0x18 and 0x19. It routes ungated contacts through Player_ProcessInteractionState, applies the type-0x19 sound/lock branch, checks actor/player X proximity, then installs a Type-0x84 response actor with animation 0x001248B6 or clears/reinitializes the source through ACTOR_TEMPLATE_COLLISION_TYPE_84 while publishing the interaction response and optional event-0x23 audio.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AEA48

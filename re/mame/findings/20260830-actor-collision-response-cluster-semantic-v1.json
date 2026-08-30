@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-collision-response-cluster-semantic-targets.json",
+  "promotions": [
+    {
+      "address": "0x001AC1D0",
+      "old_name": "ActorType13_ActorCollisionHandler",
+      "name": "ActorCollision_ProcessType13Response",
+      "alias": "ActorType13_ActorCollisionHandler"
+    },
+    {
+      "address": "0x001AC4E8",
+      "old_name": "ActorType11_ActorCollisionHandler",
+      "name": "ActorCollision_HandleWallTerminalResponse",
+      "alias": "ActorType11_ActorCollisionHandler"
+    },
+    {
+      "address": "0x001AEA48",
+      "old_name": "ActorType18_19_PlayerCollisionHandler",
+      "name": "PlayerCollision_HandleInteractionProximityResponse",
+      "alias": "ActorType18_19_PlayerCollisionHandler"
+    }
+  ],
+  "conclusion": "Promoted three large collision response bodies to behavior-based names: staged Type-0x13 actor response, Type-0x11 wall/terminal response, and Type-0x18/0x19 player interaction/proximity response.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
