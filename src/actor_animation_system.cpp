@@ -9,10 +9,8 @@
 namespace openaladdin {
 namespace {
 
-constexpr std::uint8_t kActorSwordType = 0x80;
 constexpr std::uint8_t kActorTerminalType = 0x84;
 constexpr std::uint32_t kActorSwordDeathAnimationStream = 0x00122DD8;
-constexpr std::uint32_t kActorSwordDeathTemplate = 0x001B792C;
 
 }  // namespace
 
@@ -98,32 +96,6 @@ void ActorAnimationSystem::update(
         if (actor.type == 0 || actor.animation_pc == 0) {
             continue;
         }
-        // The live sword trace reaches the terminal actor template at the
-        // end of its common effect stream.
-        if (actor.type == kActorSwordType
-            && !state.actors.host_meta(slot).spawned_by_apple
-            && actor.animation_pc == 0x00122B5A
-            && actor.flags == 0x08) {
-            ActorState terminal = actor;
-            const ActorState template_record =
-                actor_lifecycle_.from_template(kActorSwordDeathTemplate);
-            terminal.type = kActorTerminalType;
-            terminal.sprite_attribute = template_record.sprite_attribute;
-            terminal.resource_count = template_record.resource_count;
-            terminal.movement_pc = 0;
-            terminal.animation_pc = kActorSwordDeathAnimationStream;
-            terminal.frame_ptr = 0;
-            terminal.flags = 0;
-            terminal.facing_x_flip = 0;
-            terminal.facing_y_flip = 0;
-            terminal.terminal_timer = 19;
-            if (actor_lifecycle_.install(slot, terminal)) {
-                // Preserve ownership across the in-place type conversion so
-                // the generated sword death stream is not mistaken for a
-                // scene terminal actor by the phase hold below.
-                state.actors.host_meta(slot).spawned_by_animation = true;
-            }
-        }
         // The apple child has its own every-other-VBlank cadence beginning at
         // allocation; unlike the shared table, it is serviced on both phases.
         const bool apple_actor_service = state.actors.host_meta(slot).spawned_by_apple;
@@ -160,7 +132,6 @@ void ActorAnimationSystem::update(
         }
 
         const std::uint8_t previous_type = actor.type;
-        const std::uint32_t previous_animation_pc = actor.animation_pc;
         const std::uint8_t previous_flags = actor.flags;
         AnimationServices animation_services = services(slot);
         const bool retired_by_animation = vm(slot).update_actor(
@@ -187,17 +158,6 @@ void ActorAnimationSystem::update(
                     & ~0x04U
                 );
             actor.linked_actor_slot = -1;
-        }
-        if (previous_type == kActorTerminalType
-            && previous_animation_pc == 0x00122F80
-            && actor.animation_pc == 0x00122F8A) {
-            actor.facing_x_flip = 0xFF;
-        }
-        if (previous_type != kActorTerminalType
-            && actor.type == kActorTerminalType
-            && actor.terminal_timer == 0
-            && previous_type != 0x2A) {
-            vm(slot).force_actor_service_next_update();
         }
         if (observe_transition) {
             observe_transition(state, actor, previous_type, actor.type);
