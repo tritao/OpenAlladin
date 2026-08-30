@@ -357,6 +357,25 @@ def test_player_type1b_1c_death_response_has_behavior_names_and_legacy_aliases()
         assert legacy in symbol.aliases
 
 
+def test_player_collision_latch_family_has_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001AEFB0: ("PlayerCollision_LatchType47Gate", "ActorType47_PlayerCollisionHandler"),
+        0x001AEFDC: ("PlayerCollision_LatchType48Gate", "ActorType48_PlayerCollisionHandler"),
+        0x001AF008: ("PlayerCollision_LatchType49Gate", "ActorType49_PlayerCollisionHandler"),
+        0x001AF034: ("PlayerCollision_LatchType4AInteraction", "ActorType4A_PlayerCollisionHandler"),
+        0x001AF060: ("PlayerCollision_LatchType4BInteraction", "ActorType4B_PlayerCollisionHandler"),
+        0x001AF08C: ("PlayerCollision_LatchType4CInteraction", "ActorType4C_PlayerCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+    latch = SymbolStore().at(0x00FFF116, include_ranges=False)
+    assert latch is not None
+    assert latch.name == "PLAYER_INTERACTION_TYPE4B_LATCH"
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

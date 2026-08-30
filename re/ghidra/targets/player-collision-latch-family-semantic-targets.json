@@ -1,0 +1,67 @@
+{
+  "format": "openaladdin-player-collision-latch-family-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace type-only labels for the Type-0x47 through Type-0x4C player-collision latch wrappers and record the missing Type-0x4B RAM latch.",
+  "promotions": [
+    {
+      "address": "0x001AEFB0",
+      "old_name": "ActorType47_PlayerCollisionHandler",
+      "name": "PlayerCollision_LatchType47Gate",
+      "alias": "ActorType47_PlayerCollisionHandler",
+      "range": ["0x001AEFB0", "0x001AEFDB"],
+      "latch": "0x00FFF126 PLAYER_COLLISION_GATE_TYPE47"
+    },
+    {
+      "address": "0x001AEFDC",
+      "old_name": "ActorType48_PlayerCollisionHandler",
+      "name": "PlayerCollision_LatchType48Gate",
+      "alias": "ActorType48_PlayerCollisionHandler",
+      "range": ["0x001AEFDC", "0x001AF007"],
+      "latch": "0x00FFF127 PLAYER_COLLISION_GATE_TYPE48"
+    },
+    {
+      "address": "0x001AF008",
+      "old_name": "ActorType49_PlayerCollisionHandler",
+      "name": "PlayerCollision_LatchType49Gate",
+      "alias": "ActorType49_PlayerCollisionHandler",
+      "range": ["0x001AF008", "0x001AF033"],
+      "latch": "0x00FFF128 PLAYER_COLLISION_GATE_TYPE49"
+    },
+    {
+      "address": "0x001AF034",
+      "old_name": "ActorType4A_PlayerCollisionHandler",
+      "name": "PlayerCollision_LatchType4AInteraction",
+      "alias": "ActorType4A_PlayerCollisionHandler",
+      "range": ["0x001AF034", "0x001AF05F"],
+      "latch": "0x00FFF129 PLAYER_INTERACTION_TYPE4A_LATCH"
+    },
+    {
+      "address": "0x001AF060",
+      "old_name": "ActorType4B_PlayerCollisionHandler",
+      "name": "PlayerCollision_LatchType4BInteraction",
+      "alias": "ActorType4B_PlayerCollisionHandler",
+      "range": ["0x001AF060", "0x001AF08B"],
+      "latch": "0x00FFF116 PLAYER_INTERACTION_TYPE4B_LATCH"
+    },
+    {
+      "address": "0x001AF08C",
+      "old_name": "ActorType4C_PlayerCollisionHandler",
+      "name": "PlayerCollision_LatchType4CInteraction",
+      "alias": "ActorType4C_PlayerCollisionHandler",
+      "range": ["0x001AF08C", "0x001AF0B7"],
+      "latch": "0x00FFF12A PLAYER_INTERACTION_TYPE4C_LATCH"
+    }
+  ],
+  "shared_contract": {
+    "audio": "Each wrapper optionally queues audio command 0x67 when SCENE_VDP_UPDATE_FLAG is active",
+    "handoff": "Each wrapper enters Actor_ReinitializeFromCollisionTemplate after setting its latch"
+  },
+  "conclusion": "The promoted names distinguish the Type-0x47 through Type-0x4C latch setters while retaining dispatch-type aliases; the previously unnamed Type-0x4B latch is now canonicalized at 0x00FFF116.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

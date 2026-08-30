@@ -2308,6 +2308,17 @@
   evidence:
     - ghidra_disassembly_001B1E38
     - ghidra_disassembly_001B537A
+
+0xFFF116:
+  name: PLAYER_INTERACTION_TYPE4B_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Type-0x4B player-interaction latch set by PlayerCollision_LatchType4BInteraction. No direct consumer is currently recovered in the exported absolute-reference corpus.
+  evidence:
+    - ghidra_disassembly_001AF060
+    - interaction-spawn-runtime47-4c-targets
+
 0xFF7280:
   name: VDP_ANIMATION_FRAME_OFFSET
   type: u16

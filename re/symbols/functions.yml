@@ -2146,55 +2146,61 @@
     - ghidra_disassembly_001AEF5C
     - player_collision_response_counter_family_static_decompilation
 0x001AEFB0:
-  name: ActorType47_PlayerCollisionHandler
+  name: PlayerCollision_LatchType47Gate
+  aliases: [ActorType47_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x47. It latches 0x00FFF126, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Player-collision Type-0x47 response-gate setter. It sets PLAYER_COLLISION_GATE_TYPE47, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AEFB0
     - player_collision_response_counter_family_static_decompilation
 0x001AEFDC:
-  name: ActorType48_PlayerCollisionHandler
+  name: PlayerCollision_LatchType48Gate
+  aliases: [ActorType48_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x48. It latches 0x00FFF127, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Player-collision Type-0x48 response-gate setter. It sets PLAYER_COLLISION_GATE_TYPE48, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AEFDC
     - player_collision_response_counter_family_static_decompilation
 0x001AF008:
-  name: ActorType49_PlayerCollisionHandler
+  name: PlayerCollision_LatchType49Gate
+  aliases: [ActorType49_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x49. It latches 0x00FFF128, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Player-collision Type-0x49 response-gate setter. It sets PLAYER_COLLISION_GATE_TYPE49, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF008
     - player_collision_response_counter_family_static_decompilation
 0x001AF034:
-  name: ActorType4A_PlayerCollisionHandler
+  name: PlayerCollision_LatchType4AInteraction
+  aliases: [ActorType4A_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x4A. It latches 0x00FFF129, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Player-collision Type-0x4A interaction-latch setter. It sets PLAYER_INTERACTION_TYPE4A_LATCH, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF034
     - player_collision_response_counter_family_static_decompilation
 0x001AF060:
-  name: ActorType4B_PlayerCollisionHandler
+  name: PlayerCollision_LatchType4BInteraction
+  aliases: [ActorType4B_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x4B. It latches 0x00FFF116, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Player-collision Type-0x4B interaction-latch setter. It sets PLAYER_INTERACTION_TYPE4B_LATCH at 0x00FFF116, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate; no direct consumer of this latch is currently recovered.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF060
     - player_collision_response_counter_family_static_decompilation
 0x001AF08C:
-  name: ActorType4C_PlayerCollisionHandler
+  name: PlayerCollision_LatchType4CInteraction
+  aliases: [ActorType4C_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x4C. It latches 0x00FFF12A, optionally queues event 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Player-collision Type-0x4C interaction-latch setter. It sets PLAYER_INTERACTION_TYPE4C_LATCH, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF08C
