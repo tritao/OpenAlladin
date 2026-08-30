@@ -299,6 +299,17 @@
     - ghidra_disassembly_001B3032
     - ghidra_disassembly_001B3EE2
     - random_scaled_step_static_decompilation
+0xFF7DF2:
+  name: PALETTE_TRANSITION_SOURCE
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Current four-band ROM palette source pointer. Render_RunProgressivePaletteTransition and Render_RunPaletteTransitionFrom publish their A0 source here, and the transition services consume the pointer as four contiguous 16-word palette bands.
+  evidence:
+    - ghidra_decompile_001B26F0
+    - ghidra_decompile_001B278A
+    - ghidra_progressive_palette_services
+    - ghidra_scene_resource_palette_source_extents
 0xFF7DAC:
   name: INTERACTION_ROW_POINTER
   type: rom_pointer

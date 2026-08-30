@@ -642,6 +642,15 @@ def test_real_global_prng_state_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_palette_transition_source_has_canonical_role():
+    symbol = SymbolStore().at(0x00FF7DF2, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "PALETTE_TRANSITION_SOURCE"
+    assert symbol.metadata["type"] == "rom_pointer"
+    assert symbol.metadata["format"] == "address"
+    assert symbol.confidence == "decompiled"
+
+
 def test_real_interaction_row_pointer_has_canonical_role():
     symbol = SymbolStore().at(0x00FF7DAC, include_ranges=False)
     assert symbol is not None
