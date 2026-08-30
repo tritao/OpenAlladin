@@ -2238,6 +2238,17 @@ or continues, and this closure does not identify the separate native health
 model. The full evidence is recorded in
 `re/ghidra/targets/player-life-counter-runtime-targets.json`.
 
+## Final open data review closure (20260830)
+
+The last open data review item, `SPRITE_VDP_CONTROL_WORD_PAIR_1CB6` at
+`0x00001CB6`, is now closed as an exact structural owner. Its eight-byte
+extent and the two control words `0x60000003` and `0x40000003` are bounded by
+the neighboring player-sprite control word and collision-handler table, and a
+fresh 1400-frame runtime read audit found no consumer on the exercised route.
+This closes the review queue without claiming a selector, VDP destination, or
+live reachability; a future selector or consumer recovery should reopen the
+item.
+
 ## Secondary interaction counter reset (20260828)
 
 InteractionCounter_ResetSecondaryDigits at `0x001AA664` resets the separate
@@ -3567,6 +3578,7 @@ valuable because it prevents repeating the same input family.
 | `20260830-difficulty-counter-type7e-consumer-static-v1` | recorded-static-decompilation | Closed ActorType7E_PlayerCollisionHandler's exact secondary-counter thresholds, five/ten-step countdown paths, GAME_DIFFICULTY_COUNTER cap branch, scene-resource mode selection, and camera-threshold tail without assigning a user-facing counter name |
 | `20260830-difficulty-counter-consumer-closure-static-v1` | recorded-static-decompilation | Closed the direct GAME_DIFFICULTY_COUNTER reader/writer family and all four Game_IncrementDifficultyCounter callers; corrected Type-0x46 ASCII-'9' gate wording while retaining conservative user-facing semantics |
 | `20260830-player-life-counter-runtime-v1` | recorded-runtime-evidence | Added the provisional PLAYER_LIFE_COUNT_DIGIT projection for FF7E3C from its portrait-adjacent HUD record, terminal decrement/zero branch, and independent runtime separation from the apple count; retained GAME_DIFFICULTY_COUNTER as canonical and did not claim native health semantics |
+| `20260830-sprite-vdp-control-word-review-closure-v1` | recorded-negative-runtime-audit | Closed the last open data review item, SPRITE_VDP_CONTROL_WORD_PAIR_1CB6, as an exact structural 8-byte owner after the 1400-frame negative read audit; retained unresolved consumer and reachability as a future reopen condition |
 | `20260830-type7e-function-boundary-correction-v1` | tooling-validation | Corrected ActorType7E_PlayerCollisionHandler from the stale 358-byte overlapping symbol size to its exact 292-byte body ending at 0x001AFF3F before the separate mode-11 and mode-16 helpers |
 | `20260830-rnc-title-boundary-audit-correction-v2` | tooling-validation | Corrected the RNC manifest end interpretation: its exclusive 0x001434C3 endpoint means the title payload ends at 0x001434C2 and the zero at 0x001434C3 remains alignment padding before the next RNC header at 0x001434C4 |
 | `20260830-scene-resource-stream-boundary-correction-static-v1` | tooling-validation | Corrected SCENE_RESOURCE_BLANK_STREAM_STATE_03 to its 0x00127AEE-0x00127B5F terminator and separated the independently selected 0x00127B60-0x00127BD1 stream |

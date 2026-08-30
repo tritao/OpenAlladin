@@ -58,12 +58,13 @@
   type: vdp_control_word
   size: 8
   confidence: decompiled
-  review_status: open
-  description: Two exact adjacent sprite-area VDP control words 0x60000003 and 0x40000003 after PLAYER_SPRITE_VDP_CONTROL_WORD and before PLAYER_COLLISION_HANDLER_TABLE. Their encoding and boundary are decoded from the neighboring player-sprite control word; no direct consumer or specific renderer path is claimed.
+  review_status: closed
+  description: Exact structural owner for two adjacent sprite-area VDP control words 0x60000003 and 0x40000003 after PLAYER_SPRITE_VDP_CONTROL_WORD and before PLAYER_COLLISION_HANDLER_TABLE. The encoding and boundary are closed from neighboring control-word structure and a negative runtime read audit; no direct consumer, VDP destination, or live reachability is claimed. Reopen only if a selector or consumer is recovered.
   evidence:
     - unreferenced_sprite_vdp_control_words_static_v1
     - render_player_sprite_submission_static_v1
     - structural_data_body_confidence_static_v1
+    - unreferenced_data_runtime_audit_v1
 
 0x000029A6:
   name: HUD_INTERACTION_FRAME_SEQUENCE
