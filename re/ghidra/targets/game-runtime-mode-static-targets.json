@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-game-runtime-mode-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Promote the shared runtime mode byte while retaining a conservative gate-level interpretation.",
+  "state": {
+    "address": "0x00FF7E20",
+    "name": "GAME_RUNTIME_MODE",
+    "type": "u8",
+    "format": "mode"
+  },
+  "readers": [
+    {"address": "0x001A90B0", "name": "Level_ExitAndTerminalTransition", "operation": "Consult the mode gate during exit/terminal handling."},
+    {"address": "0x001B0402", "name": "Player_ArmTerminalOrInteractionLock", "operation": "Consult the mode gate before arming terminal or interaction state."},
+    {"address": "0x001B2BE4", "name": "Scene_EnterTransitionMode", "operation": "Consult the mode gate during transition entry."}
+  ],
+  "writers": [
+    {"address": "0x001AA3A2", "name": "System_InitializeRuntime", "operation": "Clear the mode byte during startup."},
+    {"address": "0x001B2D7E", "name": "Scene_EnterTransitionMode", "operation": "Set the mode byte on the transition-mode branch."},
+    {"address": "0x001B2D8C", "name": "Scene_EnterTransitionMode", "operation": "Clear the mode byte on transition-mode completion."}
+  ],
+  "evidence": [
+    "Exact direct reader/writer inventory for FF7E20",
+    "Existing startup-initialization and scene-transition static targets"
+  ],
+  "conclusion": "FF7E20 is a shared game runtime mode gate. Its user-facing mode values remain intentionally unspecified.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

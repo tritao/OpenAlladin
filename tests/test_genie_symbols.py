@@ -651,6 +651,15 @@ def test_real_palette_transition_source_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_game_runtime_mode_has_canonical_role():
+    symbol = SymbolStore().at(0x00FF7E20, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "GAME_RUNTIME_MODE"
+    assert symbol.metadata["type"] == "u8"
+    assert symbol.metadata["format"] == "mode"
+    assert symbol.confidence == "decompiled"
+
+
 def test_real_interaction_row_pointer_has_canonical_role():
     symbol = SymbolStore().at(0x00FF7DAC, include_ranges=False)
     assert symbol is not None

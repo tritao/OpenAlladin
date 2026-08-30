@@ -502,6 +502,19 @@
   evidence:
     - ghidra_targeted_decompile_001AC784
     - mame_actor_animation_gate_trace
+0xFF7E20:
+  name: GAME_RUNTIME_MODE
+  type: u8
+  format: mode
+  confidence: decompiled
+  description: Shared runtime mode gate consulted by Level_ExitAndTerminalTransition, Player_ArmTerminalOrInteractionLock, and Scene_EnterTransitionMode. System_InitializeRuntime clears it, while Scene_EnterTransitionMode sets and clears it around its transition-mode service path.
+  evidence:
+    - ghidra_disassembly_001AA3A2
+    - ghidra_disassembly_001A90B0
+    - ghidra_disassembly_001B0402
+    - ghidra_disassembly_001B2BE4
+    - ghidra_disassembly_001B2D7E
+    - ghidra_disassembly_001B2D8C
 0xFF7E25:
   name: FRAME_WAIT_LATCH
   type: u8
