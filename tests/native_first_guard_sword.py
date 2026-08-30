@@ -46,17 +46,11 @@ def main() -> int:
     subprocess.run(command, cwd=ROOT, env=environment, check=True, stdout=subprocess.DEVNULL)
 
     frame_states = states(OUTPUT)
-    sword_states = [
-        actor
-        for record in frame_states
-        for actor in record["actors"]
-        if actor["slot"] == 25 and actor["type"] == 0x80
-    ]
-
     attack_frame = next(record for record in frame_states if record["input"] == "a")
     assert attack_frame["player"]["attack_timer"] == 10
     assert attack_frame["player"]["world_x"] == 1273
-    assert sword_states, "the live sword F5 did not create an auxiliary actor"
+    attack_boundary = frame_states[attack_frame["frame"] + 1]
+    assert attack_boundary["player"]["animation_pc"] == 0x0012271A
 
     previous_guard_type = {}
     guard_hit_frame = None
@@ -72,12 +66,6 @@ def main() -> int:
                 break
             previous_guard_type[4] = guard["type"]
     assert guard_hit_frame is not None, "the opening guard was never hit"
-    sword_spawn_frame = next(
-        record["frame"]
-        for record in frame_states
-        if any(actor["slot"] == 25 and actor["type"] == 0x80 for actor in record["actors"])
-    )
-    assert guard_hit_frame >= sword_spawn_frame
 
     print("native first-guard sword: ok")
     return 0

@@ -11,9 +11,12 @@
 namespace openaladdin {
 namespace {
 
+// The input edge enters PLAYER_ANIM_SWORD at the next game-loop boundary.
+// 0x001223E2 is the first data cursor inside the separate apple stream.
+constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
+constexpr std::uint32_t kPlayerSwordAnimationEnd = 0x001227AE;
 constexpr std::uint32_t kPlayerAppleActionStream = 0x001223DA;
 constexpr std::uint32_t kPlayerAttackTransitionStream = 0x00122034;
-constexpr std::uint32_t kPlayerSwordStableStream = 0x001223E2;
 constexpr std::uint32_t kPlayerSwordFirstFrame = 0x001ED34A;
 constexpr std::uint32_t kPlayerUpAnimationStream = 0x00122236;
 constexpr std::uint32_t kPlayerDownAnimationStream = 0x001222D2;
@@ -221,11 +224,11 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // keeps the sword action live through the stable animation stream, where
     // the player hitbox is still active after that timer has expired.
     const std::uint32_t current_animation = animation_.animation_pc();
-    const bool sword_stream_active = current_animation >= kPlayerSwordStableStream
-        && current_animation <= 0x0012246C;
+    const bool sword_stream_active = current_animation >= kPlayerSwordAnimationStream
+        && current_animation <= kPlayerSwordAnimationEnd;
     const bool player_sword_active = input.attack_pressed
         || player_.attack_timer != 0
-        || animation_.stream_entry() == kPlayerSwordStableStream
+        || animation_.stream_entry() == kPlayerSwordAnimationStream
         || sword_stream_active;
     const CollisionEffects collision_effects = collisions_.player_actor(
         state_,
@@ -823,21 +826,20 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         && was_grounded
         && animation_.rom_loaded()) {
         // A live sword press keeps a run/idle cursor for the input frame. On
-        // the next boundary it enters the stable sword stream, whose F5
-        // command at 0x00122440 creates the type-0x80 sword actor. A
+        // the next boundary it enters PLAYER_ANIM_SWORD at 0x0012271A. A
         // synchronized action checkpoint may already be inside the sword
-        // transition, so that case is restarted on the edge itself.
+        // stream, so that case is restarted on the edge itself.
         const auto current_animation = animation_.animation_pc();
         const bool already_in_sword_transition =
-            current_animation >= kPlayerSwordStableStream
-            && current_animation <= 0x0012246A;
+            current_animation >= kPlayerSwordAnimationStream
+            && current_animation <= kPlayerSwordAnimationEnd;
         const bool checkpoint_action_cursor =
             input.attack_pressed
             && (already_in_sword_transition
                 || current_animation == kPlayerAttackTransitionStream
                 || current_animation == 0x001232E0);
         if (attack_followup || checkpoint_action_cursor) {
-            animation_.select_stream_entry(kPlayerSwordStableStream);
+            animation_.select_stream_entry(kPlayerSwordAnimationStream);
             animation_.set_frame_pointer(kPlayerSwordFirstFrame);
         }
     }
@@ -847,7 +849,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // next frame boundary above while its attack timer is active.
     if (player_.attack_timer == 0
         && animation_.stream_entry() != kPlayerAttackTransitionStream
-        && animation_.stream_entry() != kPlayerSwordStableStream) {
+        && animation_.stream_entry() != kPlayerSwordAnimationStream) {
         // Flush the one player-side command whose semantic effect was
         // intentionally held until this post-selector boundary. No actor VM
         // is invoked here.

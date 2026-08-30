@@ -161,19 +161,22 @@ def check_trace(
         assert state_by_frame[81]["player"]["grounded"]
     elif route == "sword":
         assert any(record["player"]["attack_active"] for record in state_frames)
-        # The live sword action must reach the stable stream and publish its
-        # type-0x80 auxiliary actor. Checking only attack_active would miss a
-        # broken selector that arms the timer but never executes the sword F5.
+        # The live sword action must reach PLAYER_ANIM_SWORD. Checking only
+        # attack_active would miss a broken selector that arms the timer but
+        # leaves the player in locomotion or apple animation.
         state_by_frame = {record["frame"]: record for record in state_frames}
         assert state_by_frame[31]["player"]["attack_timer"] == 10
         assert state_by_frame[32]["player"]["attack_timer"] == 9
-        sword_actors = [
-            actor
+        assert state_by_frame[32]["player"]["animation_pc"] == 0x0012271A
+        assert any(
+            0x0012271A <= record["player"]["animation_pc"] <= 0x001227AE
+            for record in state_frames
+        )
+        assert not any(
+            actor.get("spawned_by_apple")
             for record in state_frames
             for actor in record["actors"]
-            if actor.get("type") == 0x80
-        ]
-        assert sword_actors
+        )
     elif route == "apple":
         assert any(
             actor.get("spawned_by_apple")
