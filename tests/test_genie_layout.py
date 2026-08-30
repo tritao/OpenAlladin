@@ -603,6 +603,14 @@ def test_level_camera_scroll_callback_family_matches_level_table():
 
 def test_menu_scene_and_input_data_extents_are_exact():
     symbols = SymbolStore()
+    reserved = symbols.at(0x00004000, include_ranges=False)
+    assert reserved is not None
+    assert reserved.name == "MENU_CONTROL_LAYOUT_RESERVED_X_RECORD"
+    assert reserved.end == 0x00004011
+    assert reserved.size == 0x12
+    assert reserved.metadata["type"] == "menu_control_layout"
+    assert reserved.confidence == "provisional"
+
     expected = {
         0x00004012: (0x6C, "MENU_CONTROL_LAYOUT_TABLE", "menu_control_layout_table"),
         0x00004082: (0x36, "INITIAL_SCENE_SCRIPT", "scene_script"),
@@ -632,6 +640,7 @@ def test_menu_scene_and_input_data_extents_are_exact():
         assert symbol.metadata["entry_offset"] == offset
 
     rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[reserved.address:reserved.end + 1] == bytes.fromhex("000000000000000000000000580058005800")
     assert rom[0x4138:0x413A] == bytes.fromhex("FF00")
     assert rom[0x4152:0x4154] == bytes.fromhex("FF00")
 

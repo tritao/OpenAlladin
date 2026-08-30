@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-unreferenced-menu-control-record-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "record": {
+    "address": "0x00004000",
+    "name": "MENU_CONTROL_LAYOUT_RESERVED_X_RECORD",
+    "range": ["0x00004000", "0x00004011"],
+    "size": 18,
+    "bytes": "000000000000000000000000580058005800"
+  },
+  "boundary": {
+    "following": "0x00004012 MENU_CONTROL_LAYOUT_TABLE",
+    "following_entry_size": 18,
+    "following_entry_count": 6
+  },
+  "evidence": [
+    "The range is exactly one 18-byte record, matching every entry in MENU_CONTROL_LAYOUT_TABLE.",
+    "The record contains null callback pointers and three NUL-terminated X labels immediately adjacent to the known six-record table.",
+    "No direct instruction or data consumer is currently recovered."
+  ],
+  "conclusion": "The X-labelled record is tracked as provisional menu-layout data without assigning its runtime selector or purpose."
+}

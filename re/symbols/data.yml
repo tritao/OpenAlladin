@@ -826,6 +826,16 @@
     - ghidra_disassembly_001B423C
     - ghidra_disassembly_001AA3EE
 
+0x00004000:
+  name: MENU_CONTROL_LAYOUT_RESERVED_X_RECORD
+  type: menu_control_layout
+  size: 0x12
+  confidence: provisional
+  description: Reserved 18-byte menu control-layout-shaped record immediately before MENU_CONTROL_LAYOUT_TABLE. It contains three null callback pointers followed by the NUL-terminated labels X, X, and X; no consumer or selector currently establishes its runtime role.
+  evidence:
+    - unreferenced_menu_control_record_static_v1
+    - menu_input_audio_static_decompilation
+
 0x00004024:
   name: MENU_CONTROL_LAYOUT_VARIANT_A_C_B
   type: menu_control_layout
