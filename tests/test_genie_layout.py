@@ -1632,7 +1632,7 @@ def test_shared_type3c_3d_3e_3f_movement_is_exact():
     assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
-def test_type84_0f22_response_family_is_exact_and_provisional():
+def test_type84_0f22_response_family_is_exact_with_template_reachability_provisional():
     symbols = SymbolStore()
     template = symbols.at(0x001B8304, include_ranges=False)
     assert template is not None
@@ -1647,7 +1647,7 @@ def test_type84_0f22_response_family_is_exact_and_provisional():
     assert movement.end == 0x0012146B
     assert movement.size == 90
     assert movement.metadata["type"] == "movement_stream"
-    assert movement.confidence == "provisional"
+    assert movement.confidence == "decompiled"
 
     animation = symbols.at(0x00125D58, include_ranges=False)
     assert animation is not None
@@ -1655,7 +1655,7 @@ def test_type84_0f22_response_family_is_exact_and_provisional():
     assert animation.end == 0x00125D7D
     assert animation.size == 38
     assert animation.metadata["type"] == "animation_stream"
-    assert animation.confidence == "provisional"
+    assert animation.confidence == "decompiled"
 
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
     rom = load_animation_decoder().RomReader(rom_path.read_bytes())

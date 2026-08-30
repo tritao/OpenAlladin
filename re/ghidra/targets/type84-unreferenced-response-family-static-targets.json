@@ -24,6 +24,7 @@
     "name": "ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX",
     "range": ["0x00121412", "0x0012146B"],
     "size": 90,
+    "confidence": "decompiled",
     "decoded": [
       "Two flag-gated child-spawn phases use ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE at 0x001B7CD8.",
       "The first phase targets actor field 0x1A with value 0x0800; the second targets fields 0x18 and 0x1A with values 0x0005 and 0x000A.",
@@ -35,6 +36,7 @@
     "name": "ACTOR_ANIM_TYPE84_0F22_WALL_RESPONSE_LOOP",
     "range": ["0x00125D58", "0x00125D7D"],
     "size": 38,
+    "confidence": "decompiled",
     "decoded": [
       "Frame 0x0F22 opening",
       "F0 random branch at 0x00125D5A to 0x00125D62",

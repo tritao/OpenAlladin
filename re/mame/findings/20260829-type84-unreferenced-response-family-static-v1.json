@@ -18,6 +18,7 @@
     "name": "ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX",
     "range": "0x00121412-0x0012146B",
     "bytes": 90,
+    "confidence": "decompiled",
     "continuation": "0x0012146C ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE"
   },
   "animation": {
@@ -25,6 +26,7 @@
     "name": "ACTOR_ANIM_TYPE84_0F22_WALL_RESPONSE_LOOP",
     "range": "0x00125D58-0x00125D7D",
     "bytes": 38,
+    "confidence": "decompiled",
     "loop": "0x00125D78 -> 0x00125D58"
   },
   "evidence": [
@@ -33,5 +35,5 @@
     "Lossless VM decoder boundaries",
     "No recovered static producer or consumer for the template record"
   ],
-  "conclusion": "The 0x001B8304 record and its pointed movement/animation streams are now explicit provisional ownership metadata. The family is structurally decoded and non-overlapping, but remains a reachability hypothesis until a producer or runtime trace confirms that the record is live."
+  "conclusion": "The 0x001B8304 record and its pointed movement/animation streams are now explicit non-overlapping ownership metadata. The two pointed VM streams are statically decompiled; the template family remains a reachability hypothesis until a producer or runtime trace confirms that the record is live."
 }
