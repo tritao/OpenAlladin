@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-level08-rotating-vdp-record-table-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "table": {
+    "address": "0x000029E0",
+    "range": ["0x000029E0", "0x00002A3F"],
+    "records": 16,
+    "record_size": 6,
+    "fields": ["VDP control longword", "VDP data word"],
+    "entry_consumer": "0x001B5D46 VDP_WriteRotatingCommandRecord",
+    "stream_owner": "0x001B6066 Level08_EnterRoutine"
+  },
+  "conclusion": "The Level-08 rotating VDP data at 0x000029E0 is an exact sixteen-record table. Its cursor advances in six-byte units and wraps after the record at 0x00002A3A, so the following bytes at 0x00002A40 are outside the table."
+}

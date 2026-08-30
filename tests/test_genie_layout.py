@@ -454,6 +454,25 @@ def test_canonical_scene_resource_object_animation_table_has_exact_extent():
     ]
 
 
+def test_level08_rotating_vdp_record_table_has_exact_extent():
+    symbols = SymbolStore()
+    table = symbols.at(0x000029E0, include_ranges=False)
+    assert table is not None
+    assert table.name == "LEVEL08_ROTATING_VDP_RECORD_TABLE"
+    assert table.end == 0x00002A3F
+    assert table.size == 0x60
+    assert table.metadata["type"] == "scene_resource_vdp_record_table"
+    assert table.metadata["entry_size"] == 6
+    assert table.metadata["count"] == 16
+
+    rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    records = [rom[offset:offset + 6] for offset in range(0x29E0, 0x2A40, 6)]
+    assert len(records) == 16
+    assert records[0] == bytes.fromhex("C0020000006E")
+    assert records[-1] == bytes.fromhex("C01A00000008")
+    assert rom[0x2A40:0x2A48] == bytes.fromhex("0001000080100001")
+
+
 def test_interaction_counter_animation_table_and_bank_are_exact():
     symbols = SymbolStore()
     table = symbols.at(0x00004A58, include_ranges=False)

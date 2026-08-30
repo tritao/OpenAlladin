@@ -1650,6 +1650,19 @@
     - ghidra_disassembly_001B634E
     - ghidra_disassembly_001B644E
 
+0x0029E0:
+  name: LEVEL08_ROTATING_VDP_RECORD_TABLE
+  type: scene_resource_vdp_record_table
+  entry_size: 6
+  count: 16
+  size: 0x60
+  confidence: decompiled
+  description: Exact sixteen-entry Level-08 rotating VDP record table consumed by Level08_EnterRoutine and VDP_WriteRotatingCommandRecord. Each six-byte record stores a longword VDP control word followed by one data word; the runtime advances by six bytes and wraps at the exclusive offset 0x60, ending immediately before the unresolved Level-08 initialization constants.
+  evidence:
+    - level08_rotating_vdp_record_table_static_decompilation
+    - ghidra_disassembly_001B6066
+    - ghidra_disassembly_001B5D46
+
 0x004554:
   name: TERRAIN_RESPONSE_HANDLER_TABLE
   type: rom_pointer_table
