@@ -1923,7 +1923,8 @@
     - mame_level01_type06_collision_trace
     - player_collision_direct_entry_family_static_decompilation
 0x001AE9E0:
-  name: ActorType1A_PlayerCollisionHandler
+  name: PlayerCollision_SpawnType1ADeathResponse
+  aliases: [ActorType1A_PlayerCollisionHandler]
   size: 32
   confidence: decompiled
   description: Player-collision handler for runtime actor type 0x1A. It requires PLAYER_INTERACTION_GATE, latches the type-0x1A interaction at 0x00FFF10E, clears the source actor and owned resources, and reinitializes the slot from ACTOR_TEMPLATE_DEATH_84 at 0x001B7940.
@@ -2061,7 +2062,8 @@
     - actor_template_death_84
     - player_collision_response_entry_family_static_decompilation
 0x001AE978:
-  name: ActorType15_PlayerCollisionHandler
+  name: PlayerCollision_DecrementPrimaryCounterResponse
+  aliases: [ActorType15_PlayerCollisionHandler]
   confidence: confirmed
   description: Player-collision handler for runtime actor type 0x15. It recovers player interaction state, decrements INTERACTION_COUNTER_DIGITS three times through InteractionCounter_DecrementPrimaryDigits, selects animation stream 0x001226CE, and converts the source actor to type 0x14; it does not write player coordinates, velocity, or scene state.
   evidence:
