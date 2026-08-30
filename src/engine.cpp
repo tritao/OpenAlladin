@@ -1186,7 +1186,11 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"response_current\":"
            << static_cast<unsigned>(interaction_state.response_current)
            << ",\"response_pending\":"
-           << static_cast<unsigned>(interaction_state.response_pending) << "}"
+           << static_cast<unsigned>(interaction_state.response_pending)
+           << ",\"type3e_response_latch\":"
+           << static_cast<unsigned>(interaction_state.type3e_response_latch)
+           << ",\"type3f_response_latch\":"
+           << static_cast<unsigned>(interaction_state.type3f_response_latch) << "}"
            << ",\"scene\":{\"state\":" << scene_runtime.state
            << ",\"script_cursor\":" << scene_runtime.script_cursor
            << ",\"script_data_cursor\":0"
@@ -1500,6 +1504,8 @@ void Engine::write_checkpoint(std::ostream& output) const {
     writer.u8(state_.interaction_state.target_current);
     writer.u8(state_.interaction_state.response_current);
     writer.u8(state_.interaction_state.response_pending);
+    writer.u8(state_.interaction_state.type3e_response_latch);
+    writer.u8(state_.interaction_state.type3f_response_latch);
 }
 
 void Engine::read_checkpoint(std::istream& input) {
@@ -1578,8 +1584,10 @@ void Engine::read_checkpoint(std::istream& input) {
     InteractionState interaction_state;
     if (reader.has_more()) {
         interaction_state.target_current = reader.u8();
-        interaction_state.response_current = reader.u8();
-        interaction_state.response_pending = reader.u8();
+        if (reader.has_more()) interaction_state.response_current = reader.u8();
+        if (reader.has_more()) interaction_state.response_pending = reader.u8();
+        if (reader.has_more()) interaction_state.type3e_response_latch = reader.u8();
+        if (reader.has_more()) interaction_state.type3f_response_latch = reader.u8();
     }
     if (vdp_checkpoint_loaded
         && (vdp_checkpoint_vram.size() != 0x10000

@@ -57,6 +57,15 @@ int main() {
         == openaladdin::PlayerCollisionHandlerKind::PlayerLaunch);
     assert(launch_handler.native_implemented);
 
+    const auto type3e_handler = collision.player_collision_handler(0x3E);
+    assert(type3e_handler.address == 0x001AF2B0);
+    assert(type3e_handler.kind == openaladdin::PlayerCollisionHandlerKind::ActorResponse);
+    assert(type3e_handler.native_implemented);
+    const auto type3f_handler = collision.player_collision_handler(0x3F);
+    assert(type3f_handler.address == 0x001AF2FA);
+    assert(type3f_handler.kind == openaladdin::PlayerCollisionHandlerKind::ActorResponse);
+    assert(type3f_handler.native_implemented);
+
     const auto noop_handler = collision.player_collision_handler(0x0D);
     assert(noop_handler.address == 0x001AEB7A);
     assert(noop_handler.kind == openaladdin::PlayerCollisionHandlerKind::NoOp);
@@ -214,6 +223,69 @@ int main() {
     assert(type4f.player_animation_stream == 0x00121C62);
     assert(type4f.sound_requests.size() == 1);
     assert(type4f.sound_requests.front() == 0x4B);
+
+    // Types 0x3E and 0x3F share an in-place Type-0x84 response movement
+    // stream. Each handler publishes its own interaction latch, updates the
+    // camera thresholds, and gates sound 0x64 on the VDP-update byte.
+    state.actors.fill({});
+    state.player = {};
+    state.camera = {};
+    state.camera.vdp_update = 1;
+    state.camera.horizontal_threshold = 0x0123;
+    state.camera.vertical_threshold = 0x0456;
+    state.interaction_state.type3e_response_latch = 0;
+    state.interaction_state.type3f_response_latch = 0;
+    state.actors[1].type = 0x3E;
+    state.actors[1].frame_ptr = frame;
+    state.actors[1].animation_timer = 9;
+    state.actors[1].movement_pc = 0x00123456;
+    state.actors[1].movement_word_18 = 0x1234;
+    state.actors[1].movement_word_1a = 0x2345;
+    const auto type3e = collision.dispatch_player_handler(
+        state,
+        openaladdin::PlayerActorCollision{
+            1, collision.player_collision_handler(0x3E)},
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(type3e.unhandled_player_collision_types.empty());
+    assert(collision.player_collision_handler(0x3E).native_implemented);
+    assert(state.interaction_state.type3e_response_latch == 0xFF);
+    assert(state.interaction_state.type3f_response_latch == 0);
+    assert(state.actors[1].type == 0x84);
+    assert(state.actors[1].movement_pc == 0x00121618);
+    assert(state.actors[1].animation_timer == 0);
+    assert(state.actors[1].movement_word_18 == 0x1234);
+    assert(state.actors[1].movement_word_1a == 0x2345);
+    assert(state.camera.horizontal_threshold == 0x0070);
+    assert(state.camera.vertical_threshold == 0x0190);
+    assert(type3e.sound_requests.size() == 1);
+    assert(type3e.sound_requests.front() == 0x64);
+
+    state.actors.fill({});
+    state.camera = {};
+    state.camera.vdp_update = 0;
+    state.interaction_state.type3e_response_latch = 0xFF;
+    state.interaction_state.type3f_response_latch = 0;
+    state.actors[1].type = 0x3F;
+    state.actors[1].frame_ptr = frame;
+    state.actors[1].animation_timer = 7;
+    state.actors[1].movement_pc = 0x00654321;
+    const auto type3f = collision.dispatch_player_handler(
+        state,
+        openaladdin::PlayerActorCollision{
+            1, collision.player_collision_handler(0x3F)},
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(type3f.unhandled_player_collision_types.empty());
+    assert(collision.player_collision_handler(0x3F).native_implemented);
+    assert(state.interaction_state.type3e_response_latch == 0xFF);
+    assert(state.interaction_state.type3f_response_latch == 0xFF);
+    assert(state.actors[1].type == 0x84);
+    assert(state.actors[1].movement_pc == 0x00121618);
+    assert(state.actors[1].animation_timer == 0);
+    assert(state.camera.horizontal_threshold == 0x0070);
+    assert(state.camera.vertical_threshold == 0x0190);
+    assert(type3f.sound_requests.empty());
 
     // Type 0x4D uses the first Type-0x12 gameplay actor as its paired
     // response context. The pair receives the dedicated response animation,

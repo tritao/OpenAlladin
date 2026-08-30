@@ -21,6 +21,7 @@ constexpr std::uint32_t kType4FActorAnimationStream = 0x00124B3E;
 constexpr std::uint32_t kType12ActorAnimationStream = 0x0012512C;
 constexpr std::uint32_t kType4DType12ResponseAnimation = 0x001222C2;
 constexpr std::uint32_t kType4DResponseAnimation = 0x00124498;
+constexpr std::uint32_t kType3E3FResponseMovementStream = 0x00121618;
 
 PlayerCollisionHandlerKind player_handler_kind(std::uint8_t actor_type) {
     switch (actor_type) {
@@ -47,6 +48,7 @@ PlayerCollisionHandlerKind player_handler_kind(std::uint8_t actor_type) {
     case 0x1A: case 0x1B: case 0x1C:
     case 0x34: case 0x35:
     case 0x43: case 0x44:
+    case 0x3E: case 0x3F:
     case 0x4D:
     case 0x62: case 0x63: case 0x64: case 0x65:
     case 0x67: case 0x68: case 0x6A:
@@ -93,6 +95,8 @@ std::uint32_t known_player_handler_address(std::uint8_t actor_type) {
     case 0x32: case 0x79: return 0x001AEB7C;
     case 0x34: return 0x001AF4D8;
     case 0x35: case 0x40: return 0x001AF468;
+    case 0x3E: return 0x001AF2B0;
+    case 0x3F: return 0x001AF2FA;
     case 0x43: return 0x001AE64C;
     case 0x44: return 0x001AEF12;
     case 0x45: return 0x001AEEE0;
@@ -304,6 +308,8 @@ PlayerCollisionHandlerInfo CollisionSystem::player_collision_handler(
     info.native_implemented = actor_type == kActorGuardType
         || actor_type == 0x2D
         || actor_type == 0x40
+        || actor_type == 0x3E
+        || actor_type == 0x3F
         || actor_type == 0x11
         || actor_type == 0x12
         || actor_type == 0x4D
@@ -410,6 +416,24 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
             0x001B7ABC
         );
         (void)actor_lifecycle_.install(collision.actor, replacement);
+        return effects;
+    }
+
+    if (actor.type == 0x3E || actor.type == 0x3F) {
+        // ActorType3E/3F_PlayerCollisionHandler mutate the source record in
+        // place. The only difference between the two shared handlers is the
+        // response latch they publish for the later interaction selectors.
+        if (actor.type == 0x3E) {
+            state.interaction_state.type3e_response_latch = 0xFF;
+        } else {
+            state.interaction_state.type3f_response_latch = 0xFF;
+        }
+        actor.type = kActorTerminalType;
+        actor.movement_pc = kType3E3FResponseMovementStream;
+        actor.animation_timer = 0;
+        state.camera.horizontal_threshold = 0x0070;
+        state.camera.vertical_threshold = 0x0190;
+        if (state.camera.vdp_update != 0) effects.sound_requests.push_back(0x64);
         return effects;
     }
 

@@ -42,6 +42,8 @@ int main() {
     uninterrupted->state().interaction_state.target_current = 7;
     uninterrupted->state().interaction_state.response_current = 3;
     uninterrupted->state().interaction_state.response_pending = 9;
+    uninterrupted->state().interaction_state.type3e_response_latch = 0xFF;
+    uninterrupted->state().interaction_state.type3f_response_latch = 0x7F;
     const std::string saved = checkpoint(*uninterrupted);
     // The checkpoint contains the per-VM 64 KiB RAM images and should not
     // silently collapse to a visual/semantic pose snapshot.
@@ -55,6 +57,8 @@ int main() {
     assert(restored->state().interaction_state.target_current == 7);
     assert(restored->state().interaction_state.response_current == 3);
     assert(restored->state().interaction_state.response_pending == 9);
+    assert(restored->state().interaction_state.type3e_response_latch == 0xFF);
+    assert(restored->state().interaction_state.type3f_response_latch == 0x7F);
 
     for (int frame = kCheckpointFrame; frame < kEndFrame; ++frame) {
         const auto input_state = input_for_frame(frame);

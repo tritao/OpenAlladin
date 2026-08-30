@@ -125,6 +125,9 @@ struct InteractionState {
     std::uint8_t target_current = 0;    // FFF0EC
     std::uint8_t response_current = 0;  // FFEFFA
     std::uint8_t response_pending = 0;  // FFEFFB
+    // Collision response latches consumed by interaction spawn gates.
+    std::uint8_t type3e_response_latch = 0;  // FFF177
+    std::uint8_t type3f_response_latch = 0;  // FFF178
 };
 
 // Genesis-semantic runtime state. Services, rendering resources, trace

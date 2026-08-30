@@ -81,6 +81,7 @@ bool GameRamView::is_typed_address(RamAddress address) {
     case 0xFFF115:
     case 0xFFF11F:
     case 0xFFF173:
+    case 0xFFF177: case 0xFFF178:
     case 0xFFF57D:
     case 0xFFF0EC:
     case 0xFFEFFA:
@@ -190,6 +191,8 @@ std::uint8_t GameRamView::read_typed8(RamAddress address, bool& handled) const {
     case 0xFFF115: return player.terrain_response_latch;
     case 0xFFF11F: return context_u8(&AnimationSelectorState::state_lock);
     case 0xFFF173: return static_cast<std::uint8_t>(state_->camera.special_mode);
+    case 0xFFF177: return state_->interaction_state.type3e_response_latch;
+    case 0xFFF178: return state_->interaction_state.type3f_response_latch;
     case 0xFFF57D: return static_cast<std::uint8_t>(state_->camera.vdp_update);
     case 0xFFF0EC: return state_->interaction_state.target_current;
     case 0xFFEFFA: return state_->interaction_state.response_current;
@@ -297,6 +300,8 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
         state_->camera.special_mode = value;
         update_selector_u8(&AnimationSelectorState::camera_special_mode);
         return;
+    case 0xFFF177: state_->interaction_state.type3e_response_latch = value; return;
+    case 0xFFF178: state_->interaction_state.type3f_response_latch = value; return;
     case 0xFFF57D: state_->camera.vdp_update = value; return;
     case 0xFFF0EC: state_->interaction_state.target_current = value; return;
     case 0xFFEFFA: state_->interaction_state.response_current = value; return;

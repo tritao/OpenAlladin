@@ -27,9 +27,13 @@ int main() {
     state.interaction_state.target_current = 0x12;
     state.interaction_state.response_current = 0x34;
     state.interaction_state.response_pending = 0x56;
+    state.interaction_state.type3e_response_latch = 0x78;
+    state.interaction_state.type3f_response_latch = 0x9A;
     assert(ram.read8(0xFFF0EC) == 0x12);
     assert(ram.read8(0xFFEFFA) == 0x34);
     assert(ram.read8(0xFFEFFB) == 0x56);
+    assert(ram.read8(0xFFF177) == 0x78);
+    assert(ram.read8(0xFFF178) == 0x9A);
 
     ram.set_write_tracking(true);
     ram.write16(0xFF7DFA, 0xFEDC);
@@ -38,12 +42,16 @@ int main() {
     ram.write8(0xFFF0EC, 0x21);
     ram.write8(0xFFEFFA, 0x43);
     ram.write8(0xFFEFFB, 0x65);
+    ram.write8(0xFFF177, 0x87);
+    ram.write8(0xFFF178, 0xA9);
     assert(state.player.x == static_cast<std::int16_t>(0xFEDC));
     assert(state.player.animation_selector.response_active == 0x11);
     assert(state.frame.phase == 0x12);
     assert(state.interaction_state.target_current == 0x21);
     assert(state.interaction_state.response_current == 0x43);
     assert(state.interaction_state.response_pending == 0x65);
+    assert(state.interaction_state.type3e_response_latch == 0x87);
+    assert(state.interaction_state.type3f_response_latch == 0xA9);
     std::uint8_t value = 0;
     assert(ram.take_write(0xFF7DFA, value) && value == 0xFE);
     assert(ram.take_write(0xFF7DFB, value) && value == 0xDC);
@@ -52,6 +60,8 @@ int main() {
     assert(ram.take_write(0xFFF0EC, value) && value == 0x21);
     assert(ram.take_write(0xFFEFFA, value) && value == 0x43);
     assert(ram.take_write(0xFFEFFB, value) && value == 0x65);
+    assert(ram.take_write(0xFFF177, value) && value == 0x87);
+    assert(ram.take_write(0xFFF178, value) && value == 0xA9);
     assert(!ram.take_write(0xFFF0BE, value));
 
     ram.write8(0xFF1234, 0xA5);
