@@ -79,6 +79,47 @@ def test_data_context_joins_layout_decoder_and_consumer(tmp_path):
     assert value["overlap"] == []
 
 
+def test_data_context_joins_layout_fragment_to_decoder_root(tmp_path):
+    database_root = _database(tmp_path)
+    layout = Layout(
+        rom_size=0x100,
+        ranges=(
+            LayoutRange(0x00, 0x3F, "UNKNOWN", "test"),
+            LayoutRange(0x40, 0x43, "ANIMATION_STREAM", "tracked.symbol", "AnimationRoot"),
+            LayoutRange(0x44, 0x4F, "ANIMATION_STREAM", "animation_streams.json", "ANIM_STREAM_0044"),
+            LayoutRange(0x50, 0xFF, "UNKNOWN", "test"),
+        ),
+    )
+    symbols = SymbolStore(symbols=(
+        Symbol(0x40, "AnimationRoot", "data", confidence="confirmed", size=4),
+    ))
+    animation_path = tmp_path / "animation.json"
+    animation_path.write_text(json.dumps({
+        "streams": {
+            "AnimationRoot": {
+                "entry": "0x40",
+                "bytes_decoded": 16,
+                "stopped_reason": "control_flow_cycle",
+                "instructions": [{"address": "0x40", "size": 16}],
+            },
+        },
+    }), encoding="utf-8")
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=layout,
+        animation_path=animation_path,
+    )
+
+    value = index.context(0x44)
+    assert value is not None
+    assert value["decoder"]["available"] is True
+    assert value["decoder"]["covered_by_root"] is True
+    assert value["decoder"]["root_entry"] == "0x00000040"
+    assert value["decoder"]["size_matches"] is True
+
+
 def test_data_todo_filters_aliases_and_prioritizes_missing_decode(tmp_path):
     database_root = _database(tmp_path)
     symbols = SymbolStore(symbols=(

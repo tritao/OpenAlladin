@@ -492,35 +492,61 @@ class DataIndex:
             }
         entry = _address(value["start"])
         stream = self._decoded[kind].get(entry)
+        root_entry = entry
+        covered_by_root = False
+        if stream is None:
+            # Layout classification can split a decoder root at a known
+            # embedded entry or at a separately tracked owner boundary. Join
+            # those fragments back to the decoder root before reporting a
+            # false "not decoded" item in the data queue.
+            for candidate_entry, candidate in sorted(self._decoded[kind].items()):
+                candidate_bytes = self._stream_decoded_bytes(candidate, candidate_entry)
+                if candidate_entry <= entry < candidate_entry + candidate_bytes:
+                    stream = candidate
+                    root_entry = candidate_entry
+                    covered_by_root = True
+                    break
         if stream is None:
             return {"available": False}
+        decoded_bytes = self._stream_decoded_bytes(stream, root_entry)
+        declared_size = int(value["size"])
+        decoded_end = root_entry + decoded_bytes - 1
+        return {
+            "available": True,
+            "source": self._decoded_sources[kind].get(root_entry),
+            "name": stream.get("name"),
+            "bytes_decoded": decoded_bytes,
+            "stopped_reason": stream.get("stopped_reason"),
+            "root_entry": _hex(root_entry),
+            "covered_by_root": covered_by_root,
+            "size_matches": (
+                entry + declared_size - 1 <= decoded_end
+                if covered_by_root
+                else decoded_bytes == declared_size
+            ),
+        }
+
+    def _stream_decoded_bytes(self, stream: dict[str, Any], entry: int) -> int:
         decoded_bytes = stream.get("bytes_decoded")
         try:
             decoded_bytes = _address(decoded_bytes) if decoded_bytes is not None else 0
         except (TypeError, ValueError):
             decoded_bytes = 0
-        if not decoded_bytes:
-            records = stream.get("instructions", []) if kind == "animation" else stream.get("steps", [])
-            ends = []
-            for record in records if isinstance(records, list) else ():
-                if not isinstance(record, dict):
-                    continue
-                try:
-                    record_start = _address(record["address"])
-                    record_size = _address(record.get("size", 0))
-                except (KeyError, TypeError, ValueError):
-                    continue
-                ends.append(record_start + record_size - entry)
-            decoded_bytes = max(ends, default=0)
-        declared_size = int(value["size"])
-        return {
-            "available": True,
-            "source": self._decoded_sources[kind].get(entry),
-            "name": stream.get("name"),
-            "bytes_decoded": decoded_bytes,
-            "stopped_reason": stream.get("stopped_reason"),
-            "size_matches": decoded_bytes == declared_size,
-        }
+        if decoded_bytes:
+            return decoded_bytes
+        kind = "animation" if "instructions" in stream else "movement"
+        records = stream.get("instructions", []) if kind == "animation" else stream.get("steps", [])
+        ends = []
+        for record in records if isinstance(records, list) else ():
+            if not isinstance(record, dict):
+                continue
+            try:
+                record_start = _address(record["address"])
+                record_size = _address(record.get("size", 0))
+            except (KeyError, TypeError, ValueError):
+                continue
+            ends.append(record_start + record_size - entry)
+        return max(ends, default=0)
 
     def _stream_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
         decoded = self._decoded_for(value)
