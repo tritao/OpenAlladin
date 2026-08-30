@@ -8,7 +8,6 @@ namespace {
 
 constexpr int kTerrainVisualOffsetY = 0xF0;
 constexpr std::uint8_t kTerrainSpawnActorType = 0x8C;
-constexpr std::uint8_t kActorBounceType = 0x65;
 constexpr std::uint32_t kTerrainSpawnTemplate = 0x001B7E2C;
 
 }  // namespace
@@ -305,45 +304,6 @@ void InteractionSystem::hold_bounce_camera_delay(
     if (runtime_.bounce_camera_delay_hold_pending && !bounce_response_finished) {
         state.camera.update_delay = 7;
         runtime_.bounce_camera_delay_hold_pending = false;
-    }
-}
-
-void InteractionSystem::bounce_actor_interaction(
-    GameState& state,
-    bool& terrain_fall_phase
-) {
-    if (rom_ == nullptr || rom_->empty() || state.player.vy <= 0
-        || state.player.animation_selector.animation_gate != 0) {
-        return;
-    }
-
-    for (ActorIndex slot = 0; slot < state.actors.size(); ++slot) {
-        ActorState& actor = state.actors[slot];
-        if (actor.type != kActorBounceType
-            || !collisions_.player_actor_overlap(
-                state,
-                animation_system_.player().frame_pointer(),
-                animation_system_.player().facing_left(),
-                slot)) {
-            continue;
-        }
-
-        actor.type = 0x66;
-        actor.animation_pc = 0x001244B0;
-        actor.animation_timer = 0;
-        runtime_.bounce_response_active = true;
-        runtime_.bounce_response_follow_active = false;
-        runtime_.bounce_camera_delay_hold_pending = false;
-        state.player.y = static_cast<int>(actor.y) - 0x1F - state.camera.y;
-        state.player.vy = static_cast<std::int16_t>(-0x500 + 0x003C);
-        animation_system_.player().set_animation_state(0x001221B8, 0);
-        state.player.terrain_response_active = 0xFF;
-        state.player.terrain_vertical_stop = 0;
-        state.player.terrain_response_timer_state = 0;
-        state.player.terrain_jump_response_counter = 1;
-        state.player.animation_selector.response_timer = 0;
-        terrain_fall_phase = false;
-        return;
     }
 }
 

@@ -119,7 +119,6 @@ public:
     void clear_response_handoff();
     bool finish_bounce_response(GameState& state, bool terrain_response_was_active);
     void hold_bounce_camera_delay(GameState& state, bool bounce_response_finished);
-    void bounce_actor_interaction(GameState& state, bool& terrain_fall_phase);
 
     void scan_refill_window(GameState& state, const Level& level, bool stable_fixture);
     void flush_surface_actor_spawn(GameState& state);

@@ -315,7 +315,28 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     }
     services_.record_scheduler_phase("player_movement", 0x001A9D98);
     player_motion_.integrate(state_);
-    interactions_.bounce_actor_interaction(state_, terrain_fall_phase_);
+    const CollisionEffects bounce_effects = collisions_.bounce_player_actor(
+        state_,
+        PlayerCollisionInput{
+            animation_.frame_pointer(),
+            animation_.facing_left(),
+            false,
+            interactions_.bounce_response_follow_active(),
+            false
+        }
+    );
+    if (bounce_effects.player_bounce_response_started) {
+        interactions_.start_bounce_response();
+        terrain_fall_phase_ = false;
+    }
+    if (bounce_effects.player_animation_stream) {
+        if (bounce_effects.player_animation_state_immediate) {
+            animation_.set_animation_state(*bounce_effects.player_animation_stream, 0);
+        } else {
+            animation_.select_stream_entry(*bounce_effects.player_animation_stream);
+        }
+    }
+    services_.append_sound_requests(bounce_effects.sound_requests);
     if (player_.terrain_response_active != 0
         && player_.terrain_jump_response_counter != 0
         && player_.terrain_jump_response_counter < 10) {
@@ -370,8 +391,22 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
             && (vertical_stop_before_frame || player_.vy != 0)) {
             player_.vy = 0x003C;
             terrain_fall_phase_ = true;
-        } else if (terrain_fall_phase_ && player_.vy < 0x800) {
-            player_.vy = static_cast<std::int16_t>(player_.vy + 0x0078);
+        } else if (terrain_fall_phase_) {
+            const bool bounce_state_gated =
+                (player_.terrain_response_active != 0
+                    && player_.terrain_vertical_stop != 0)
+                || player_.terrain_transition_gate != 0
+                || player_.animation_selector.transition_lock != 0
+                || player_.animation_selector.transition_state != 0;
+            if (bounce_state_gated && player_.vy < 0x0800) {
+                // The recovered helper is entered from the resolver's
+                // accepted branches. Keep the existing post-integrator
+                // fallback for staged fixtures that intentionally expose a
+                // stopped response while retaining the fall-phase latch.
+                player_.vy = static_cast<std::int16_t>(player_.vy + 0x0078);
+            } else if (terrain_.advance_bounce_state(state_)) {
+                animation_.select_locomotion_entry(0x00121AD8);
+            }
         }
         // FFF0C0 remains set after the residual-upward stop. The original
         // contour routine uses that latched bit to distinguish the later

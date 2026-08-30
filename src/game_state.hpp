@@ -88,6 +88,9 @@ struct PlayerState {
     // FFF0BF counts the initial active-response jump phase. The ROM applies
     // an extra -0x6C vertical impulse until this counter reaches ten.
     std::uint8_t terrain_jump_response_counter = 0;
+    // FFF0EB counts the terrain-bounce animation phase independently from
+    // the launch-response counter above.
+    std::uint8_t terrain_bounce_animation_state = 0;
     std::uint8_t terrain_transition_countdown = 0;
     std::uint8_t terrain_query_state_a = 0;
     std::uint8_t terrain_query_state_b = 0;

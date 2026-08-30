@@ -65,6 +65,10 @@ int main() {
     assert(type3f_handler.address == 0x001AF2FA);
     assert(type3f_handler.kind == openaladdin::PlayerCollisionHandlerKind::ActorResponse);
     assert(type3f_handler.native_implemented);
+    const auto type65_handler = collision.player_collision_handler(0x65);
+    assert(type65_handler.address == 0x001AFBF4);
+    assert(type65_handler.kind == openaladdin::PlayerCollisionHandlerKind::ActorResponse);
+    assert(type65_handler.native_implemented);
 
     const auto noop_handler = collision.player_collision_handler(0x0D);
     assert(noop_handler.address == 0x001AEB7A);
@@ -286,6 +290,52 @@ int main() {
     assert(state.camera.horizontal_threshold == 0x0070);
     assert(state.camera.vertical_threshold == 0x0190);
     assert(type3f.sound_requests.empty());
+
+    // Type 0x65 is dispatched after player integration. The collision pass
+    // therefore converts it through the dedicated post-motion entry while
+    // leaving the ordinary pre-motion player scan free to continue.
+    state.actors.fill({});
+    state.player = {};
+    state.camera = {};
+    state.camera.x = 0;
+    state.camera.y = 0;
+    state.actors[1].type = 0x65;
+    state.actors[1].frame_ptr = frame;
+    state.player.vy = 0x0100;
+    const auto bounce = collision.bounce_player_actor(
+        state,
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(bounce.unhandled_player_collision_types.empty());
+    assert(bounce.player_bounce_response_started);
+    assert(bounce.player_animation_stream == 0x001221B8);
+    assert(bounce.player_animation_state_immediate);
+    assert(state.actors[1].type == 0x66);
+    assert(state.actors[1].animation_pc == 0x001244B0);
+    assert(state.actors[1].animation_timer == 0);
+    assert(state.player.y == -0x1F);
+    assert(state.player.vy == -0x04C4);
+    assert(state.player.terrain_response_active == 0xFF);
+    assert(state.player.terrain_vertical_stop == 0);
+    assert(state.player.terrain_response_timer_state == 0);
+    assert(state.player.terrain_jump_response_counter == 1);
+    assert(state.player.animation_selector.response_timer == 0);
+
+    state.actors.fill({});
+    state.player = {};
+    state.camera = {};
+    state.camera.x = 0;
+    state.camera.y = 0;
+    state.player.vy = 0x0100;
+    state.player.animation_selector.animation_gate = 0xFF;
+    state.actors[1].type = 0x65;
+    state.actors[1].frame_ptr = frame;
+    const auto gated_bounce = collision.bounce_player_actor(
+        state,
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(!gated_bounce.player_bounce_response_started);
+    assert(state.actors[1].type == 0x65);
 
     // Type 0x4D uses the first Type-0x12 gameplay actor as its paired
     // response context. The pair receives the dedicated response animation,

@@ -72,6 +72,7 @@ bool GameRamView::is_typed_address(RamAddress address) {
     case 0xFFF0E6:
     case 0xFFF0E7:
     case 0xFFF0E9:
+    case 0xFFF0EB:
     case 0xFFF0ED:
     case 0xFFF0EE:
     case 0xFFF0EF:
@@ -179,6 +180,7 @@ std::uint8_t GameRamView::read_typed8(RamAddress address, bool& handled) const {
     case 0xFFF0E6: return player.terrain_terminal_transition;
     case 0xFFF0E7: return context_u8(&AnimationSelectorState::animation_gate);
     case 0xFFF0E9: return context_u8(&AnimationSelectorState::scene_script_countdown);
+    case 0xFFF0EB: return player.terrain_bounce_animation_state;
     case 0xFFF0ED: return context_u8(&AnimationSelectorState::response_animation);
     case 0xFFF0EE: return context_u8(&AnimationSelectorState::response_state_ee);
     case 0xFFF0EF: return context_u8(&AnimationSelectorState::response_state_ef);
@@ -285,6 +287,7 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
         return;
     case 0xFFF0E7: update_selector_u8(&AnimationSelectorState::animation_gate); return;
     case 0xFFF0E9: update_selector_u8(&AnimationSelectorState::scene_script_countdown); return;
+    case 0xFFF0EB: player.terrain_bounce_animation_state = value; return;
     case 0xFFF0ED: update_selector_u8(&AnimationSelectorState::response_animation); return;
     case 0xFFF0EE: update_selector_u8(&AnimationSelectorState::response_state_ee); return;
     case 0xFFF0EF: update_selector_u8(&AnimationSelectorState::response_state_ef); return;

@@ -118,6 +118,36 @@ void PlayerTerrainSystem::apply_response(
     player.terrain_transition_gate = 0;
 }
 
+bool PlayerTerrainSystem::advance_bounce_state(GameState& state) const {
+    PlayerState& player = state.player;
+    const AnimationSelectorState& selector = player.animation_selector;
+
+    // Player_AdvanceTerrainBounceState returns through the resolver when an
+    // active response has already reached its vertical stop, or while any
+    // of the three transition gates is asserted.
+    if ((player.terrain_response_active != 0
+            && player.terrain_vertical_stop != 0)
+        || player.terrain_transition_gate != 0
+        || selector.transition_lock != 0
+        || selector.transition_state != 0) {
+        return false;
+    }
+
+    const int next_velocity = static_cast<int>(player.vy) + 0x0078;
+    if (next_velocity < 0x0800) {
+        player.vy = static_cast<std::int16_t>(next_velocity);
+    }
+    if (player.terrain_bounce_animation_state != 0xFF) {
+        ++player.terrain_bounce_animation_state;
+    }
+    if (player.terrain_bounce_animation_state != 0x28) return false;
+
+    // The helper writes the animation root and clears FF7E77. The VM owns
+    // the corresponding PC/timer representation, so report the restart to
+    // the scheduler instead of reaching into AnimationVM here.
+    return true;
+}
+
 void PlayerTerrainSystem::apply_contour(
     GameState& state,
     const Level& level,

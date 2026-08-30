@@ -32,6 +32,9 @@ class PlayerTerrainSystem {
 public:
     void sample(GameState&, const TerrainInput&) const;
     void apply_response(GameState&, const TerrainResponseContext&) const;
+    // Advances Player_AdvanceTerrainBounceState. Returns true when the ROM
+    // restarts the shared terrain-bounce animation root.
+    bool advance_bounce_state(GameState&) const;
     void apply_contour(GameState&, const Level&, bool& terrain_fall_phase) const;
 
     // Returns the behavior cell whose handler should run at this boundary.

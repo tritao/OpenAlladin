@@ -1260,6 +1260,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"right_inner_probe\":" << static_cast<unsigned>(player_.terrain_right_inner_probe)
            << ",\"right_outer_probe\":" << static_cast<unsigned>(player_.terrain_right_outer_probe)
            << ",\"response_timer_state\":" << static_cast<unsigned>(player_.terrain_response_timer_state)
+           << ",\"bounce_animation_state\":" << static_cast<unsigned>(player_.terrain_bounce_animation_state)
            << ",\"transition_countdown\":" << static_cast<unsigned>(player_.terrain_transition_countdown)
            << ",\"query_state_a\":" << static_cast<unsigned>(player_.terrain_query_state_a)
            << ",\"query_state_b\":" << static_cast<unsigned>(player_.terrain_query_state_b)
@@ -1506,6 +1507,7 @@ void Engine::write_checkpoint(std::ostream& output) const {
     writer.u8(state_.interaction_state.response_pending);
     writer.u8(state_.interaction_state.type3e_response_latch);
     writer.u8(state_.interaction_state.type3f_response_latch);
+    writer.u8(state_.player.terrain_bounce_animation_state);
 }
 
 void Engine::read_checkpoint(std::istream& input) {
@@ -1588,6 +1590,9 @@ void Engine::read_checkpoint(std::istream& input) {
         if (reader.has_more()) interaction_state.response_pending = reader.u8();
         if (reader.has_more()) interaction_state.type3e_response_latch = reader.u8();
         if (reader.has_more()) interaction_state.type3f_response_latch = reader.u8();
+        if (reader.has_more()) player.terrain_bounce_animation_state = reader.u8();
+    } else if (reader.has_more()) {
+        player.terrain_bounce_animation_state = reader.u8();
     }
     if (vdp_checkpoint_loaded
         && (vdp_checkpoint_vram.size() != 0x10000

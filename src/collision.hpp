@@ -63,9 +63,13 @@ struct PlayerActorCollision {
 
 struct CollisionEffects {
     bool player_collision_interaction_pending = false;
+    bool player_bounce_response_started = false;
     // Collision handlers publish animation/audio work to their scheduler
     // owners; CollisionSystem does not reach into either VM or sound driver.
     std::optional<std::uint32_t> player_animation_stream;
+    // Some recovered handlers write the player animation PC and timer
+    // directly rather than selecting a new action stream.
+    bool player_animation_state_immediate = false;
     std::vector<std::uint8_t> sound_requests;
     // These are diagnostic parity edges, not Genesis state. They make a
     // colliding table entry visible until its recovered behavior is attached
@@ -128,6 +132,12 @@ public:
     );
 
     CollisionEffects player_actor(
+        GameState& state,
+        const PlayerCollisionInput& input
+    );
+    // Type 0x65 is dispatched after player motion integration in the ROM
+    // frame loop, so it has a dedicated post-motion collision boundary.
+    CollisionEffects bounce_player_actor(
         GameState& state,
         const PlayerCollisionInput& input
     );

@@ -6,6 +6,7 @@ namespace openaladdin {
 namespace {
 
 constexpr std::uint8_t kActorGuardType = 0x0A;
+constexpr std::uint8_t kActorBounceType = 0x65;
 constexpr std::uint8_t kActorSwordType = 0x80;
 constexpr std::uint8_t kActorTerminalType = 0x84;
 constexpr std::uint32_t kActorDeathAnimationStream = 0x00122FA2;
@@ -22,6 +23,8 @@ constexpr std::uint32_t kType12ActorAnimationStream = 0x0012512C;
 constexpr std::uint32_t kType4DType12ResponseAnimation = 0x001222C2;
 constexpr std::uint32_t kType4DResponseAnimation = 0x00124498;
 constexpr std::uint32_t kType3E3FResponseMovementStream = 0x00121618;
+constexpr std::uint32_t kType65ActorAnimationStream = 0x001244B0;
+constexpr std::uint32_t kType65PlayerAnimationStream = 0x001221B8;
 
 PlayerCollisionHandlerKind player_handler_kind(std::uint8_t actor_type) {
     switch (actor_type) {
@@ -310,6 +313,7 @@ PlayerCollisionHandlerInfo CollisionSystem::player_collision_handler(
         || actor_type == 0x40
         || actor_type == 0x3E
         || actor_type == 0x3F
+        || actor_type == kActorBounceType
         || actor_type == 0x11
         || actor_type == 0x12
         || actor_type == 0x4D
@@ -416,6 +420,30 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
             0x001B7ABC
         );
         (void)actor_lifecycle_.install(collision.actor, replacement);
+        return effects;
+    }
+
+    if (actor.type == kActorBounceType) {
+        // ActorType65_PlayerCollisionHandler is reached at the post-motion
+        // player collision boundary. It only accepts a falling player while
+        // the interaction-animation gate is clear.
+        if (state.player.vy <= 0
+            || state.player.animation_selector.animation_gate != 0) {
+            return effects;
+        }
+        actor.type = 0x66;
+        actor.animation_pc = kType65ActorAnimationStream;
+        actor.animation_timer = 0;
+        state.player.y = static_cast<int>(actor.y) - 0x1F - state.camera.y;
+        state.player.vy = static_cast<std::int16_t>(-0x0500 + 0x003C);
+        state.player.terrain_response_active = 0xFF;
+        state.player.terrain_vertical_stop = 0;
+        state.player.terrain_response_timer_state = 0;
+        state.player.terrain_jump_response_counter = 1;
+        state.player.animation_selector.response_timer = 0;
+        effects.player_bounce_response_started = true;
+        effects.player_animation_stream = kType65PlayerAnimationStream;
+        effects.player_animation_state_immediate = true;
         return effects;
     }
 
@@ -573,6 +601,9 @@ CollisionEffects CollisionSystem::player_actor(
     if (rom_ == nullptr) return effects;
 
     for (const PlayerActorCollision& collision : detect_player_actor(state, input)) {
+        // Type 0x65 is handled at the post-motion boundary below. The
+        // ordinary player collision pass must not consume it early.
+        if (state.actors[collision.actor].type == kActorBounceType) continue;
         CollisionEffects handler_effects = dispatch_player_handler(
             state,
             collision,
@@ -594,6 +625,26 @@ CollisionEffects CollisionSystem::player_actor(
             handler_effects.unhandled_player_collision_types.begin(),
             handler_effects.unhandled_player_collision_types.end()
         );
+    }
+    return effects;
+}
+
+CollisionEffects CollisionSystem::bounce_player_actor(
+    GameState& state,
+    const PlayerCollisionInput& input
+) {
+    CollisionEffects effects;
+    if (rom_ == nullptr) return effects;
+
+    // Use the same 1..24 gameplay scan and geometry as the common player
+    // collision pass, but dispatch the Type-0x65 handler only after motion
+    // integration has published the falling position.
+    for (const PlayerActorCollision& collision : detect_player_actor(state, input)) {
+        if (collision.actor >= state.actors.size()
+            || state.actors[collision.actor].type != kActorBounceType) {
+            continue;
+        }
+        return dispatch_player_handler(state, collision, input);
     }
     return effects;
 }
