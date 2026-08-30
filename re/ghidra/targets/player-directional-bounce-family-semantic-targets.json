@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-directional-bounce-family",
+    "purpose": "Promote the Type-0x4E directional bounce handler and its randomized response-audio helper to behavior-based canonical names."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x4E"], "address": "0x001AFCD2" }
+    ]
+  },
+  "targets": [
+    {
+      "address": "0x001AFCD2",
+      "name": "PlayerCollision_StartDirectionalBounce",
+      "legacy_name": "ActorType4E_PlayerCollisionHandler",
+      "range": "0x001AFCD2-0x001AFD31",
+      "size": 96
+    },
+    {
+      "address": "0x001AFD32",
+      "name": "PlayerCollision_QueueDirectionalBounceAudio",
+      "legacy_name": "ActorType4E_QueueRandomResponseAudio",
+      "range": "0x001AFD32-0x001AFD83",
+      "size": 82
+    }
+  ],
+  "contracts": {
+    "directional_bounce": [
+      "requires PLAYER_VY to be non-upward",
+      "requires PLAYER_INTERACTION_ANIMATION_GATE to be clear",
+      "chooses PLAYER_VX=+0x0700 or -0x0700 from actor-facing byte +0x09",
+      "writes PLAYER_VY=-0x0700",
+      "installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE",
+      "sets TERRAIN_RESPONSE_ACTIVE and clears TERRAIN_VERTICAL_STOP",
+      "converts the source actor to Type 0x84 and installs animation entry 0x00124B1A"
+    ],
+    "audio": [
+      "advances TerrainScene5RandomStep",
+      "selects event 0x47 when the returned low bit is set and 0x46 otherwise",
+      "sends the selected command only when SCENE_VDP_UPDATE_FLAG is nonzero"
+    ]
+  },
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

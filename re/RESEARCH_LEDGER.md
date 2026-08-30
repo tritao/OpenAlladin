@@ -3780,3 +3780,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-player-type3e-3f-response-semantic-v1` | recorded-semantic-promotion | Promoted the Type-0x3E and Type-0x3F player-collision response starters to behavior-based names while retaining their type-only aliases |
 | `20260830-player-type62-63-settle-semantic-v1` | recorded-semantic-promotion | Promoted the shared Type-0x62/0x63 player-collision settling path to a behavior-based name while retaining its type-only alias |
 | `20260830-player-type15-1a-response-semantic-v1` | recorded-semantic-promotion | Promoted the Type-0x15 primary-counter response and Type-0x1A gated death-response paths to behavior-based names while retaining dispatch-type aliases |
+| `20260830-player-directional-bounce-family-semantic-v1` | recorded-semantic-promotion | Promoted the Type-0x4E directional bounce and randomized event-0x46/0x47 audio helper to behavior-based names while retaining their Type-0x4E aliases |
