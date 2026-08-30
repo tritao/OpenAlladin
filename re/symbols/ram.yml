@@ -2987,6 +2987,17 @@
     - actor_template_scene_rebuild_static_decompilation
     - interaction_counter_actors_static_decompilation
 
+0xFF7E75:
+  name: PLAYER_ACTOR_FACING_Y_FLIP
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Player actor record's vertical sprite-flip state at offset +0x35. Render_BuildActorRecords maps it to sprite-attribute bit 0x1000, while ActorVM_ToggleFacingState and AnimationVM_SpawnOrCopyActor toggle or copy the same per-actor field.
+  evidence:
+    - ghidra_disassembly_001AB7C4
+    - ghidra_disassembly_001AC856
+    - ghidra_disassembly_001AD00E
+
 0xFF7E46:
   name: PLAYER_ACTOR_BEHAVIOR_FLAGS
   type: u8
