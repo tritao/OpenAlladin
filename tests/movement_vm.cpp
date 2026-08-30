@@ -98,5 +98,14 @@ int main() {
         openaladdin::MovementContext{write_rom, 0, 0, nullptr, {}, &ram}
     );
     assert(ram.read32(0xFF1234) == 0xDEADBEEF);
+
+    // All VM views bound to the game see the same absolute work RAM.
+    openaladdin::GameRamView second_view;
+    second_view.bind_state(state);
+    assert(second_view.read32(0xFF1234) == 0xDEADBEEF);
+    second_view.write8(0xFF1234, 0x12);
+    assert(ram.read8(0xFF1234) == 0x12);
+    state.ram.clear();
+    assert(ram.read8(0xFF1234) == 0);
     return 0;
 }

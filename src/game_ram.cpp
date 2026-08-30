@@ -18,9 +18,17 @@ std::int16_t as_i16(std::uint16_t value) {
 
 }  // namespace
 
+void GameRamView::bind_state(GameState& state) {
+    state_ = &state;
+    store_ = &state.ram;
+}
+
 void GameRamView::bind_context(const AnimationContext& context) {
     context_ = &context;
-    if (context.state != nullptr) state_ = context.state;
+    if (context.state != nullptr) {
+        state_ = context.state;
+        store_ = &context.state->ram;
+    }
     // A command write is an actual state mutation. It must be visible to
     // subsequent commands even though the context itself is an input view.
     // Overlay bytes provide that read-after-write behavior without mutating a
@@ -38,7 +46,8 @@ void GameRamView::clear_context() {
 }
 
 void GameRamView::reset() {
-    sparse_memory_.clear();
+    // The sparse backing belongs to GameState and is cleared only when the
+    // game itself resets. Resetting one VM must not erase another VM's RAM.
     context_overrides_.clear();
     pending_writes_.clear();
     tracking_writes_ = false;
@@ -315,8 +324,9 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
 }
 
 std::uint8_t GameRamView::read_sparse8(RamAddress address) const {
-    const auto found = sparse_memory_.find(address);
-    return found == sparse_memory_.end() ? 0 : found->second;
+    if (store_ == nullptr) return 0;
+    const auto found = store_->sparse_memory_.find(address);
+    return found == store_->sparse_memory_.end() ? 0 : found->second;
 }
 
 std::uint8_t GameRamView::read_actor8(RamAddress address, bool& handled) const {
@@ -495,8 +505,8 @@ void GameRamView::write8(RamAddress address, std::uint8_t value) {
     if (!handled) {
         if (actor_record_ != nullptr && address < actor_record_->size()) {
             (*actor_record_)[address] = value;
-        } else {
-            sparse_memory_[address] = value;
+        } else if (store_ != nullptr) {
+            store_->sparse_memory_[address] = value;
         }
     } else if (context_ != nullptr) {
         // Keep command-local read-after-write semantics for typed addresses.
@@ -546,15 +556,15 @@ void GameRamView::restore_legacy_memory(
     const std::array<std::uint8_t, 0x10000>& memory,
     const std::array<std::uint8_t, 0x10000>& flags
 ) {
-    sparse_memory_.clear();
+    if (store_ != nullptr) store_->sparse_memory_.clear();
     context_overrides_.clear();
     pending_writes_.clear();
     for (std::size_t offset = 0; offset < memory.size(); ++offset) {
         const RamAddress address = 0xFF0000U + static_cast<RamAddress>(offset);
         // Typed state was restored by GameState's checkpoint section. Do not
         // let the legacy mirror overwrite that authoritative representation.
-        if (!is_typed_address(address) && memory[offset] != 0) {
-            sparse_memory_[address] = memory[offset];
+        if (!is_typed_address(address) && memory[offset] != 0 && store_ != nullptr) {
+            store_->sparse_memory_[address] = memory[offset];
         }
         if (flags[offset] != 0) pending_writes_[address] = flags[offset];
     }

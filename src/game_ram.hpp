@@ -12,6 +12,18 @@ struct GameState;
 
 using RamAddress = std::uint32_t;
 
+// Unknown absolute work-RAM bytes are still part of the one Genesis address
+// space. Keep that sparse backing in GameState so every VM view observes the
+// same writes without recreating a dense 64 KiB mirror.
+class GameRamStore {
+public:
+    void clear() { sparse_memory_.clear(); }
+
+private:
+    friend class GameRamView;
+    std::map<RamAddress, std::uint8_t> sparse_memory_;
+};
+
 // Address-based VM commands still use the original Genesis addresses, but
 // this view resolves recovered addresses to typed runtime state. Unclassified
 // addresses use a sparse byte store so the animation interpreter can preserve
@@ -20,7 +32,7 @@ class GameRamView {
 public:
     GameRamView() = default;
 
-    void bind_state(GameState& state) { state_ = &state; }
+    void bind_state(GameState& state);
     void bind_context(const AnimationContext& context);
     void clear_context();
     std::uint32_t* random_state();
@@ -76,10 +88,10 @@ private:
     std::array<std::uint8_t, 0x42> actor_record_snapshot() const;
 
     GameState* state_ = nullptr;
+    GameRamStore* store_ = nullptr;
     const AnimationContext* context_ = nullptr;
     ActorState* actor_state_ = nullptr;
     std::array<std::uint8_t, 0x42>* actor_record_ = nullptr;
-    std::map<RamAddress, std::uint8_t> sparse_memory_;
     std::map<RamAddress, std::uint8_t> context_overrides_;
     std::map<RamAddress, std::uint8_t> pending_writes_;
     bool tracking_writes_ = false;

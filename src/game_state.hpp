@@ -145,6 +145,7 @@ struct GameState {
     InteractionState interaction_state{};
     ActorSystem actors{};
     RandomState random{};
+    GameRamStore ram{};
 };
 
 }  // namespace openaladdin

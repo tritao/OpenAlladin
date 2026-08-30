@@ -579,6 +579,7 @@ void Engine::load_actor_records(const std::string& path) {
 void Engine::reset() {
     player_ = PlayerState{};
     state_.interaction_state = InteractionState{};
+    state_.ram.clear();
     interaction_map_.reset();
     interactions_.reset();
     scene_resources_.reset();
