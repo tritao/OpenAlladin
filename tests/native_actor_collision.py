@@ -73,7 +73,7 @@ def main() -> int:
     # actual PLAYER_ANIM_SWORD stream on the following boundary. The apple
     # stream begins at 0x1223DA and must never be selected by sword input.
     assert first["player"]["animation_pc"] == 0x00121DA8
-    assert states[2]["player"]["animation_pc"] == 0x001223E2
+    assert states[2]["player"]["animation_pc"] == 0x0012271A
     assert guard["type"] == 0x84
     assert guard["collision_box"] is None
     assert guard["animation_pc"] == 0x00122FA2

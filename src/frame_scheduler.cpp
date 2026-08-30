@@ -11,11 +11,10 @@
 namespace openaladdin {
 namespace {
 
-// The live first-guard action enters the stable sword stream at the next
-// game-loop boundary. 0x0012271A is an isolated action branch, not the
-// player/sword sequence observed by MAME in this encounter.
-constexpr std::uint32_t kPlayerSwordAnimationStream = 0x001223E2;
-constexpr std::uint32_t kPlayerSwordAnimationEnd = 0x0012246C;
+// The input edge enters PLAYER_ANIM_SWORD at the next game-loop boundary.
+// 0x001223E2 is the first data cursor inside the separate apple stream.
+constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
+constexpr std::uint32_t kPlayerSwordAnimationEnd = 0x001227AE;
 constexpr std::uint32_t kPlayerAppleActionStream = 0x001223DA;
 constexpr std::uint32_t kPlayerAttackTransitionStream = 0x00122034;
 constexpr std::uint32_t kPlayerSwordFirstFrame = 0x001ED34A;
@@ -828,7 +827,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         && was_grounded
         && animation_.rom_loaded()) {
         // A live sword press keeps a run/idle cursor for the input frame. On
-        // the next boundary it enters PLAYER_ANIM_SWORD at 0x001223E2. A
+        // the next boundary it enters PLAYER_ANIM_SWORD at 0x0012271A. A
         // synchronized action checkpoint may already be inside the sword
         // stream, so that case is restarted on the edge itself.
         const auto current_animation = animation_.animation_pc();
