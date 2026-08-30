@@ -822,6 +822,22 @@
   description: Scene-resource presentation command stream loaded with resource 0x0012D870 by SceneResource_Run12D870Stream12772D; the shared interpreter reaches its command-0 terminator at 0x001277C4.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
+0x001277C5:
+  name: SCENE_RESOURCE_BLANK_STREAM_1277C5
+  type: scene_resource_stream
+  size: 0x6F
+  confidence: decompiled
+  description: Blank-frame scene-resource command/text stream loaded directly by SceneResource_RunBlankStream1277C5. The shared interpreter reaches its command-0 terminator at 0x00127833, immediately before SCENE_RESOURCE_PRESENTATION_STREAM_STATE_10.
+  evidence: [gnu_m68k_disassembly_001B4CE6, scene_resource_presentation_stream_extents_static_v1]
+
+0x00127B60:
+  name: SCENE_RESOURCE_BLANK_STREAM_127B60
+  type: scene_resource_stream
+  size: 0x72
+  confidence: decompiled
+  description: Blank-frame scene-resource command/text stream loaded directly by SceneResource_RunBlankStream127B60. The shared interpreter reaches its command-0 terminator at 0x00127BD1, immediately before the state-0x04 blank-frame stream.
+  evidence: [gnu_m68k_disassembly_001B4E44, scene_resource_presentation_stream_extents_static_v1]
+
 0x00128ED2:
   name: SCENE_BLANK_PALETTE
   type: palette_data

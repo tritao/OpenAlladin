@@ -17,13 +17,15 @@
     { "address": "0x001B4C74", "name": "SceneResource_Run12DD76Stream127571", "scene_states": [5], "resource": "0x0012DD76", "stream": "0x00127571", "parameters": [18, 8] },
     { "address": "0x001B4C9A", "name": "SceneResource_Run12DD76Stream1275EE", "scene_states": [5], "resource": "0x0012DD76", "stream": "0x001275EE", "parameters": [17, 7] },
     { "address": "0x001B4CC0", "name": "SceneResource_Run12D870Stream12772D", "scene_states": [7], "resource": "0x0012D870", "stream": "0x0012772D", "parameters": [21, 10] },
+    { "address": "0x001B4CE6", "name": "SceneResource_RunBlankStream1277C5", "scene_states": [7], "resource": "blank", "stream": "0x001277C5", "parameters": [4, 5] },
     { "address": "0x001B4DD2", "name": "SceneResource_Run12DF6CStream12792B", "scene_states": [11], "resource": "0x0012DF6C", "stream": "0x0012792B", "parameters": [18, 7] },
     { "address": "0x001B4DF8", "name": "SceneResource_RunBlankStream1279B7", "scene_states": [1], "resource": "blank", "stream": "0x001279B7", "parameters": [3, 6] },
     { "address": "0x001B4E1E", "name": "SceneResource_RunBlankStream127AEE", "scene_states": [3], "resource": "blank", "stream": "0x00127AEE", "parameters": [3, 12] },
+    { "address": "0x001B4E44", "name": "SceneResource_RunBlankStream127B60", "scene_states": [4], "resource": "blank", "stream": "0x00127B60", "parameters": [3, 11] },
     { "address": "0x001B4E6A", "name": "SceneResource_RunBlankStream127BD2", "scene_states": [4], "resource": "blank", "stream": "0x00127BD2", "parameters": [3, 11] },
     { "address": "0x001B4E90", "name": "SceneResource_RunBlankStream127C42", "scene_states": [11], "resource": "blank", "stream": "0x00127C42", "parameters": [3, 11] },
     { "address": "0x001B4EB6", "name": "SceneResource_RunBlankStream127CB4", "scene_states": [4], "resource": "blank", "stream": "0x00127CB4", "parameters": [3, 11] },
     { "address": "0x001B4EDC", "name": "SceneResource_RunBlankStream127D74", "scene_states": [9], "resource": "blank", "stream": "0x00127D74", "parameters": [3, 6] }
   ],
-  "conclusion": "The anonymous 0x001B4BB8..0x001B4EDC bodies are fixed scene-state presentation wrappers. Their resource sources, command streams, dimensions, and common completion path are exact static facts; the stream-internal record meanings remain owned by SceneResource_ProcessCommandStream."
+  "conclusion": "The 0x001B4BB8..0x001B4EDC bodies are fixed scene-state presentation wrappers. Their resource sources, command streams, dimensions, and common completion path are exact static facts; the two formerly split wrapper entries at 0x001B4CE6 and 0x001B4E44 are now included, while stream-internal record meanings remain owned by SceneResource_ProcessCommandStream."
 }

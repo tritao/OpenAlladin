@@ -560,6 +560,14 @@
   evidence:
     - ghidra_disassembly_001B47AC
     - ghidra_scene_resource_setup_targets
+0x001B47BE:
+  name: SceneResource_LoadE000Resource12CE06
+  size: 18
+  confidence: decompiled
+  description: Decompresses ROM source 0x0012CE06 to VRAM destination 0xE000 through RNC_To_VDP_Loader.
+  evidence:
+    - gnu_m68k_disassembly_001B47BE
+    - scene_resource_setup_loader_gap_static_decompilation
 0x001B47D0:
   name: SceneResource_LoadC000ResourceAndBase136912
   confidence: decompiled
@@ -718,6 +726,15 @@
     - ghidra_disassembly_001B4CC0
     - ghidra_scene_resource_dispatch
     - scene_resource_presentation_wrappers
+0x001B4CE6:
+  name: SceneResource_RunBlankStream1277C5
+  size: 38
+  confidence: decompiled
+  description: Prepares the shared blank frame, marks the scene VDP update scratch state, processes command stream 0x001277C5 with parameters 0x04 and 0x05, clears the scratch state, and runs the shared fade/reset completion.
+  evidence:
+    - gnu_m68k_disassembly_001B4CE6
+    - scene_resource_presentation_wrapper_gap_static_decompilation
+    - scene_resource_presentation_stream_extents_static_v1
 0x001B4DD2:
   name: SceneResource_Run12DF6CStream12792B
   confidence: decompiled
@@ -742,6 +759,15 @@
     - ghidra_disassembly_001B4E1E
     - ghidra_scene_resource_dispatch
     - scene_resource_presentation_wrappers
+0x001B4E44:
+  name: SceneResource_RunBlankStream127B60
+  size: 38
+  confidence: decompiled
+  description: Prepares the shared blank frame, marks the scene VDP update scratch state, processes command stream 0x00127B60 with parameters 0x03 and 0x0B, clears the scratch state, and runs the shared fade/reset completion.
+  evidence:
+    - gnu_m68k_disassembly_001B4E44
+    - scene_resource_presentation_wrapper_gap_static_decompilation
+    - scene_resource_presentation_stream_extents_static_v1
 0x001B4E6A:
   name: SceneResource_RunBlankStream127BD2
   confidence: decompiled

@@ -14,14 +14,16 @@
     { "address": "0x001273E9", "range": ["0x001273E9", "0x001274EF"], "resource": "0x0012DA04", "terminator": "0x001274EF" },
     { "address": "0x00127571", "range": ["0x00127571", "0x001275ED"], "resource": "0x0012DD76", "terminator": "0x001275ED" },
     { "address": "0x001275EE", "range": ["0x001275EE", "0x0012772C"], "resource": "0x0012DD76", "terminator": "0x0012772C" },
-    { "address": "0x0012772D", "range": ["0x0012772D", "0x001277C4"], "resource": "0x0012D870", "terminator": "0x001277C4" }
+    { "address": "0x0012772D", "range": ["0x0012772D", "0x001277C4"], "resource": "0x0012D870", "terminator": "0x001277C4" },
+    { "address": "0x001277C5", "range": ["0x001277C5", "0x00127833"], "resource": "blank", "wrapper": "0x001B4CE6", "terminator": "0x00127833" },
+    { "address": "0x00127B60", "range": ["0x00127B60", "0x00127BD1"], "resource": "blank", "wrapper": "0x001B4E44", "terminator": "0x00127BD1" }
   ],
   "evidence": [
     "Direct LEA stream sources in SceneResource_Run12E34AStream1270A8, SceneResource_Run12E176Stream127134, SceneResource_Run12DD76Stream127207, SceneResource_Run12DD76Stream127338, SceneResource_Run12DA04Stream1273E9, SceneResource_Run12DD76Stream127571, SceneResource_Run12DD76Stream1275EE, and SceneResource_Run12D870Stream12772D.",
-    "Exact command-consumption walk through SceneResource_ProcessCommandStream to each first command-0 terminal.",
+    "Exact command-consumption walk through SceneResource_ProcessCommandStream to each first command-0 terminal, including the two newly recovered blank-frame wrapper streams.",
     "Known scene-resource actor record commands at 0x00127194/0x0012719D and 0x0012766F remain inside the promoted streams."
   ],
-  "conclusion": "Eight directly wrapper-selected scene-resource presentation streams are now canonical SCENE_TABLE ranges. The two intervening unreferenced gaps and the following narrative/object block remain separate audits.",
+  "conclusion": "Ten directly wrapper-selected scene-resource presentation streams are now canonical SCENE_TABLE ranges. The intervening 0x001274F0-0x00127570 gap remains a separate audit; the formerly unresolved 0x001277C5-0x00127833 block and 0x00127B60-0x00127BD1 block are now bounded by their direct blank-frame wrappers.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

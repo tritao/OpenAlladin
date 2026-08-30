@@ -3174,6 +3174,48 @@ def test_random_parity_callback_is_exact():
     )
 
 
+def test_scene_resource_loader_and_blank_wrapper_gaps_are_exact():
+    symbols = SymbolStore()
+    functions = {
+        0x001B47BE: (18, "SceneResource_LoadE000Resource12CE06"),
+        0x001B4CE6: (38, "SceneResource_RunBlankStream1277C5"),
+        0x001B4E44: (38, "SceneResource_RunBlankStream127B60"),
+    }
+    for address, (size, name) in functions.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.size == size
+        assert function.end == address + size - 1
+
+    streams = {
+        0x001277C5: (0x6F, "SCENE_RESOURCE_BLANK_STREAM_1277C5"),
+        0x00127B60: (0x72, "SCENE_RESOURCE_BLANK_STREAM_127B60"),
+    }
+    for address, (size, name) in streams.items():
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.size == size
+        assert stream.end == address + size - 1
+        assert stream.metadata["type"] == "scene_resource_stream"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B47BE:0x001B47D0] == bytes.fromhex(
+        "41F90012CE0643F90000E0006100EC4A4E75"
+    )
+    assert rom[0x001B4CE6:0x001B4D0C] == bytes.fromhex(
+        "6100FD9250F900FFEFFC41F9001277C5303C0004"
+        "323C00056100D4F6423900FFEFFC6000FE54"
+    )
+    assert rom[0x001B4E44:0x001B4E6A] == bytes.fromhex(
+        "6100FC3450F900FFEFFC41F900127B60303C0003"
+        "323C000B6100D398423900FFEFFC6000FCF6"
+    )
+    assert rom[0x001277C5 + 0x6E] == 0x00
+    assert rom[0x00127B60 + 0x71] == 0x00
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)
