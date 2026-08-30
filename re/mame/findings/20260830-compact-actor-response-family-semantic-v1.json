@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/compact-actor-response-family-semantic-targets.json",
+  "promotions": [
+    {
+      "address": "0x001AC03E",
+      "old_name": "ActorType24_ActorCollisionHandler",
+      "name": "ActorCollision_SpawnType40CompanionFromType24",
+      "alias": "ActorType24_ActorCollisionHandler"
+    },
+    {
+      "address": "0x001AC05A",
+      "old_name": "ActorType25_ActorCollisionHandler",
+      "name": "ActorCollision_SpawnType40CompanionFromType25",
+      "alias": "ActorType25_ActorCollisionHandler"
+    },
+    {
+      "address": "0x001AC07C",
+      "old_name": "ActorType27_ActorCollisionHandler",
+      "name": "ActorCollision_SpawnType46CompanionFromType27",
+      "alias": "ActorType27_ActorCollisionHandler"
+    },
+    {
+      "address": "0x001AC098",
+      "old_name": "ActorType28_ActorCollisionHandler",
+      "name": "ActorCollision_SpawnType84CompanionFromType28",
+      "alias": "ActorType28_ActorCollisionHandler"
+    },
+    {
+      "address": "0x001AC682",
+      "old_name": "ActorType30_ActorCollisionHandler",
+      "name": "ActorCollision_ReinitializeType30Response",
+      "alias": "ActorType30_ActorCollisionHandler"
+    }
+  ],
+  "conclusion": "Promoted the compact Type-0x24/0x25/0x27/0x28 and Type-0x30 actor-collision response entries to behavior-based names.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
