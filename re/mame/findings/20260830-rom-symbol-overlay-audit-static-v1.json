@@ -1,0 +1,82 @@
+{
+  "format": "openaladdin-rom-symbol-overlay-audit-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Distinguish intentional semantic overlay views from illegal emitted-range overlap.",
+  "overlays": [
+    {
+      "container": {
+        "name": "LEVEL_F800_TILEMAP_SOURCE",
+        "range": ["0x0011F000", "0x0011F7FF"],
+        "consumer": "VDP_CopyLevelF800Tilemap copies 0x400 words to VRAM F800."
+      },
+      "view": {
+        "name": "ACTOR_SPRITE_VRAM_BASE_TABLE",
+        "range": ["0x0011F500", "0x0011F6D3"],
+        "consumer": "Actor_AllocateSpriteVRAM indexes 117 longwords for actor sprite tile bases."
+      },
+      "interpretation": "The actor table is a child semantic view over bytes also included in the level F800 transfer source; layout emission gives the child view ownership of those bytes while retaining the container range as an analysis alias."
+    },
+    {
+      "container": {
+        "name": "SCENE_TRANSITION_PALETTE_SOURCE",
+        "range": ["0x00128FD2", "0x00129051"],
+        "consumer": "Render_RunPaletteTransitionFrom consumes four 16-word bands."
+      },
+      "view": {
+        "name": "MENU_PALETTE_BAND_SOURCE_129012",
+        "range": ["0x00129012", "0x00129031"],
+        "consumer": "Menu_RunOptionsAndSelectNextState uploads one fixed palette band."
+      },
+      "interpretation": "The fixed menu band is a direct view of one band inside the four-band transition source."
+    },
+    {
+      "container": {
+        "name": "LEVEL_PALETTE_SOURCE_STATE_00_02",
+        "range": ["0x00129052", "0x001290D1"],
+        "consumer": "Scene_ApplyActiveLevelPaletteTransition consumes four bands for level states 00 and 02."
+      },
+      "view": {
+        "name": "LEVEL00_PALETTE_BAND_SOURCE",
+        "range": ["0x00129092", "0x001290B1"],
+        "consumer": "Level00_EnterRoutine uploads one fixed palette band."
+      },
+      "interpretation": "The Level 00 fixed band is a direct view of one band inside the shared level transition source."
+    },
+    {
+      "container": {
+        "name": "LEVEL_PALETTE_SOURCE_STATE_05_06",
+        "range": ["0x00129272", "0x001292F1"],
+        "consumer": "Scene_ApplyActiveLevelPaletteTransition consumes four bands for level states 05 and 06."
+      },
+      "view": {
+        "name": "INTERACTION_PALETTE_SOURCE_1292B2",
+        "range": ["0x001292B2", "0x001292D1"],
+        "consumer": "Type-0x05 and related interaction/level-event spawners upload one fixed palette band."
+      },
+      "interpretation": "The interaction palette is a direct view of one band inside the shared level transition source."
+    },
+    {
+      "container": {
+        "name": "LEVEL_PALETTE_SOURCE_STATE_10",
+        "range": ["0x001294B2", "0x00129531"],
+        "consumer": "Scene_ApplyActiveLevelPaletteTransition consumes four bands for level state 10."
+      },
+      "view": {
+        "name": "INTERACTION_TYPE0C_PALETTE_SOURCE",
+        "range": ["0x001294F2", "0x00129511"],
+        "consumer": "The Type-0x0C/0x3C interaction handler family uploads one fixed palette band."
+      },
+      "interpretation": "The Type-0x0C palette is a direct view of one band inside the level-state transition source."
+    }
+  ],
+  "validation": [
+    "The five overlays are declared at distinct addresses and are not emitted as overlapping layout ranges.",
+    "genie layout validate reports complete gap-free ownership.",
+    "genie deasm verify remains byte-exact after the overlay views are applied."
+  ],
+  "conclusion": "These five canonical range overlaps are intentional container/view aliases. They must remain representable in the symbol database while the layout and generated deassembly maintain exactly one emitted owner for every ROM byte."
+}
