@@ -725,7 +725,9 @@ def test_player_action_transition_child_animation_is_exact():
     assert symbol.end == 0x00122B6D
     assert symbol.size == 22
     assert symbol.metadata["type"] == "animation_stream"
-    assert symbols.at(0x00122B6E, include_ranges=False) is None
+    collision_response = symbols.at(0x00122B6E, include_ranges=False)
+    assert collision_response is not None
+    assert collision_response.name == "ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE"
 
 
 def test_type10_collision_response_animation_is_exact():
