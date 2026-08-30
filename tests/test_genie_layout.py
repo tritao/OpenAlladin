@@ -348,6 +348,35 @@ def test_runtime_type22_interaction_handler_is_canonical():
     assert "0x001238B2" in handler.description
 
 
+def test_level_camera_scroll_callback_family_matches_level_table():
+    symbols = SymbolStore()
+    callbacks = {
+        0x001AAA88: (395, "Level_CameraScrollCallback_Levels00_01_02", (0, 1, 2)),
+        0x001AAC14: (385, "Level03_CameraScrollCallback", (3,)),
+        0x001AAD96: (357, "Level10_CameraScrollCallback", (10,)),
+        0x001AAEFC: (235, "Level08_CameraScrollCallback", (8,)),
+        0x001AAFE8: (125, "Level_CameraScrollCallback_Levels11_12", (11, 12)),
+        0x001AB066: (285, "Level07_CameraScrollCallback", (7,)),
+        0x001AB184: (169, "Level09_CameraScrollCallback", (9,)),
+        0x001AB22E: (141, "Level_CameraScrollCallback_Levels05_06", (5, 6)),
+        0x001AB2BC: (145, "Level04_CameraScrollCallback", (4,)),
+    }
+    rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    seen_levels = set()
+    for address, (size, name, levels) in callbacks.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == size
+        assert symbol.end == address + size - 1
+        for level in levels:
+            record = 0x00002C78 + level * 66
+            pointer = int.from_bytes(rom[record + 0x34:record + 0x38], "big")
+            assert pointer == address
+            seen_levels.add(level)
+    assert seen_levels == set(range(13))
+
+
 def test_interaction_counter_animation_table_and_bank_are_exact():
     symbols = SymbolStore()
     table = symbols.at(0x00004A58, include_ranges=False)

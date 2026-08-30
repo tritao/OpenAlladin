@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-level-camera-scroll-callback-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "table": {
+    "address": "0x00002C78",
+    "name": "LEVEL_TABLE",
+    "entry_size": 66,
+    "count": 13,
+    "camera_scroll_callback_offset": "0x34"
+  },
+  "callbacks": [
+    { "levels": [0, 1, 2], "address": "0x001AAA88", "name": "Level_CameraScrollCallback_Levels00_01_02", "range": ["0x001AAA88", "0x001AAC12"], "bytes": 395 },
+    { "levels": [3], "address": "0x001AAC14", "name": "Level03_CameraScrollCallback", "range": ["0x001AAC14", "0x001AAD94"], "bytes": 385 },
+    { "levels": [10], "address": "0x001AAD96", "name": "Level10_CameraScrollCallback", "range": ["0x001AAD96", "0x001AAEFA"], "bytes": 357 },
+    { "levels": [8], "address": "0x001AAEFC", "name": "Level08_CameraScrollCallback", "range": ["0x001AAEFC", "0x001AAFE6"], "bytes": 235 },
+    { "levels": [11, 12], "address": "0x001AAFE8", "name": "Level_CameraScrollCallback_Levels11_12", "range": ["0x001AAFE8", "0x001AB064"], "bytes": 125 },
+    { "levels": [7], "address": "0x001AB066", "name": "Level07_CameraScrollCallback", "range": ["0x001AB066", "0x001AB182"], "bytes": 285 },
+    { "levels": [9], "address": "0x001AB184", "name": "Level09_CameraScrollCallback", "range": ["0x001AB184", "0x001AB22C"], "bytes": 169 },
+    { "levels": [5, 6], "address": "0x001AB22E", "name": "Level_CameraScrollCallback_Levels05_06", "range": ["0x001AB22E", "0x001AB2BA"], "bytes": 141 },
+    { "levels": [4], "address": "0x001AB2BC", "name": "Level04_CameraScrollCallback", "range": ["0x001AB2BC", "0x001AB34C"], "bytes": 145 }
+  ],
+  "common_contract": "Each callback is selected by one or more LEVEL_TABLE records, performs level-specific VDP scroll/row updates, and returns through RTS at the inclusive range end. Level_InvokeCameraScrollCallback at 0x001AAA80 tail-dispatches the published pointer before Camera_PublishScroll handles pending directional refills.",
+  "boundary_basis": [
+    "Exact camera-scroll callback pointers from all 13 LEVEL_TABLE records",
+    "RTS at each recorded inclusive end",
+    "Next callback or Camera_ScrollLeftAndRefill at 0x001AB34E provides the following boundary"
+  ],
+  "evidence": [
+    "Direct LEVEL_TABLE field reads at offset 0x34",
+    "Exact 68000 disassembly of every unique callback body",
+    "Level_InvokeCameraScrollCallback and Camera_PublishScroll dispatch contract"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
