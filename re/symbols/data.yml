@@ -2559,6 +2559,17 @@
     - ghidra_actor_movement_vm_001ADE36
     - animation_stream_decoder
 
+0x0049A8:
+  name: ACTOR_FRAME_PHASE_CHILD_TABLE_ALIGNMENT_PADDING
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between ACTOR_VM_DISPATCH_TABLE through 0x000049A7 and ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE at 0x000049A9. The phase table's six-byte records put their selected animation longwords at even addresses, requiring the odd table base at 0x000049A9.
+  evidence:
+    - actor_frame_phase_child_animation_table_static_v1
+    - actor_frame_phase_child_static_decompilation
+    - rom_padding_uniform_static_v1
+
 0x0049A9:
   name: ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE
   type: actor_spawn_phase_animation_table

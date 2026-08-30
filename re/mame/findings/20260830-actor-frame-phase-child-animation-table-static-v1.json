@@ -21,5 +21,11 @@
     "runtime_types": ["0x00", "0x40", "0x00", "0x40"],
     "animation_roots": ["0x00000000", "0x00122C12", "0x00000000", "0x00122C12"]
   },
+  "padding": {
+    "address": "0x000049A8",
+    "name": "ACTOR_FRAME_PHASE_CHILD_TABLE_ALIGNMENT_PADDING",
+    "size": 1,
+    "fill_byte": "0x00"
+  },
   "conclusion": "The first four phase-child records are exactly bounded by the consumer's 6-byte indexing and end at 0x000049C0. The repeated tail from 0x000049C1 through 0x000049D7 remains outside this proven table."
 }

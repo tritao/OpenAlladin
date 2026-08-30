@@ -671,6 +671,14 @@ def test_canonical_scene_resource_object_animation_table_has_exact_extent():
 
 def test_actor_frame_phase_child_animation_table_has_exact_extent():
     symbols = SymbolStore()
+    padding = symbols.at(0x000049A8, include_ranges=False)
+    assert padding is not None
+    assert padding.name == "ACTOR_FRAME_PHASE_CHILD_TABLE_ALIGNMENT_PADDING"
+    assert padding.end == 0x000049A8
+    assert padding.size == 1
+    assert padding.metadata["type"] == "padding_data"
+    assert padding.confidence == "confirmed"
+
     table = symbols.at(0x000049A9, include_ranges=False)
     assert table is not None
     assert table.name == "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE"
@@ -688,6 +696,7 @@ def test_actor_frame_phase_child_animation_table_has_exact_extent():
         bytes.fromhex("000000000000"),
         bytes.fromhex("4000122C1200"),
     ]
+    assert rom[0x000049A8] == 0x00
 
 
 def test_level08_rotating_vdp_record_table_has_exact_extent():
