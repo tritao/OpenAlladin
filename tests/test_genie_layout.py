@@ -3216,6 +3216,53 @@ def test_scene_resource_loader_and_blank_wrapper_gaps_are_exact():
     assert rom[0x00127B60 + 0x71] == 0x00
 
 
+def test_camera_scroll_cursor_callback_family_is_exact():
+    symbols = SymbolStore()
+    callbacks = {
+        0x001B52D6: (12, "Camera_SetScrollDataCursor693E"),
+        0x001B52E2: (12, "Camera_SetScrollDataCursor6952"),
+        0x001B52EE: (12, "Camera_SetScrollDataCursor695A"),
+    }
+    for address, (size, name) in callbacks.items():
+        callback = symbols.at(address, include_ranges=False)
+        assert callback is not None
+        assert callback.name == name
+        assert callback.size == size
+        assert callback.end == address + size - 1
+
+    cursor = symbols.at(0x00FF7E1A, include_ranges=False)
+    assert cursor is not None
+    assert cursor.name == "CAMERA_SCROLL_DATA_CURSOR"
+
+    table = symbols.at(0x0000693E, include_ranges=False)
+    assert table is not None
+    assert table.name == "CAMERA_SCROLL_DELTA_TABLE"
+    assert table.size == 0x20
+    assert table.end == 0x0000695D
+    assert table.metadata["type"] == "rom_table"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B52D6:0x001B52E2] == bytes.fromhex(
+        "23FC0000693E00FF7E1A4E75"
+    )
+    assert rom[0x001B52E2:0x001B52EE] == bytes.fromhex(
+        "23FC0000695200FF7E1A4E75"
+    )
+    assert rom[0x001B52EE:0x001B52FA] == bytes.fromhex(
+        "23FC0000695A00FF7E1A4E75"
+    )
+    assert rom[0x0000693E:0x0000695E] == bytes.fromhex(
+        "0004FFFC0004FFFC0003FFFD0003FFFD"
+        "0002FFFE0002FFFE0001FFFF0001FFFF"
+    )
+    for address in (0x001211D0, 0x001211E6):
+        assert rom[address:address + 4] == bytes.fromhex("001B52D6")
+    for address in (0x00121196, 0x001213FC, 0x00121426, 0x00121456):
+        assert rom[address:address + 4] == bytes.fromhex("001B52E2")
+    for address in (0x001211AC, 0x00121204):
+        assert rom[address:address + 4] == bytes.fromhex("001B52EE")
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)

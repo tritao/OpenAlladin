@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-camera-scroll-cursor-callback-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "focus": {
+    "name": "camera-scroll-cursor-callback-static",
+    "purpose": "Bound the three AnimationVM callbacks that select camera-scroll data and identify the compact delta table consumed by the level camera callbacks."
+  },
+  "callbacks": [
+    {
+      "address": "0x001B52D6",
+      "name": "Camera_SetScrollDataCursor693E",
+      "selected_cursor": "0x0000693E"
+    },
+    {
+      "address": "0x001B52E2",
+      "name": "Camera_SetScrollDataCursor6952",
+      "selected_cursor": "0x00006952"
+    },
+    {
+      "address": "0x001B52EE",
+      "name": "Camera_SetScrollDataCursor695A",
+      "selected_cursor": "0x0000695A"
+    }
+  ],
+  "cursor": {
+    "address": "0x00FF7E1A",
+    "name": "CAMERA_SCROLL_DATA_CURSOR",
+    "consumer": "0x001AB148 Level07_CameraScrollCallback"
+  },
+  "table": {
+    "address": "0x0000693E",
+    "name": "CAMERA_SCROLL_DELTA_TABLE",
+    "range": ["0x0000693E", "0x0000695D"],
+    "entry_size": 2,
+    "count": 16
+  },
+  "evidence": [
+    "Exact GNU m68k disassembly of all three callback bodies",
+    "AnimationVM stream pointers at 0x001211D0, 0x001211E6, 0x00121196, 0x001213FC, 0x00121426, 0x00121456, 0x001211AC, and 0x00121204",
+    "Level_LoadFromSceneState initializes the same RAM cursor",
+    "Level07_CameraScrollCallback reads a signed word and advances the cursor"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

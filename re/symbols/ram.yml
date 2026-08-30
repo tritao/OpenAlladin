@@ -51,6 +51,18 @@
   description: Scene resource/status byte checked by the scene dispatcher while a resource group is being prepared.
   evidence:
     - ghidra_memory_reference_scene_resource_status
+0xFF7E1A:
+  name: CAMERA_SCROLL_DATA_CURSOR
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Active camera-scroll data cursor consumed by the level camera-scroll callbacks; level initialization publishes a default ROM cursor and AnimationVM callbacks select the compact delta-table offsets at 0x0000693E, 0x00006952, and 0x0000695A.
+  evidence:
+    - gnu_m68k_disassembly_001B52D6
+    - gnu_m68k_disassembly_001B52E2
+    - gnu_m68k_disassembly_001B52EE
+    - ghidra_disassembly_001AB148
+    - ghidra_disassembly_001AA604
 0xFF7E23:
   name: SCENE_RESOURCE_ERROR
   type: u8

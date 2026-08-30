@@ -6097,6 +6097,21 @@
     - actor_terrain_collision_loop_static_decompilation
     - ghidra_disassembly_001ADB5C
 
+0x0000693E:
+  name: CAMERA_SCROLL_DELTA_TABLE
+  type: rom_table
+  entry_size: 2
+  count: 16
+  size: 0x20
+  confidence: decompiled
+  description: Sixteen signed camera-scroll delta words consumed through CAMERA_SCROLL_DATA_CURSOR. The AnimationVM camera callbacks select offsets 0x0000693E, 0x00006952, and 0x0000695A within this table; the following camera-scroll resource begins at 0x0000695E.
+  evidence:
+    - gnu_m68k_disassembly_001B52D6
+    - gnu_m68k_disassembly_001B52E2
+    - gnu_m68k_disassembly_001B52EE
+    - ghidra_disassembly_001AB148
+    - actor_surface_flags_table_static_decompilation
+
 
 0x001B7CB0:
   name: ACTOR_TEMPLATE_GUARD_SWORD_ATTACK

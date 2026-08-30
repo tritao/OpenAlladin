@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-camera-scroll-cursor-callback-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/camera-scroll-cursor-callback-static-targets.json",
+  "promoted": [
+    {
+      "address": "0x001B52D6",
+      "name": "Camera_SetScrollDataCursor693E",
+      "range": ["0x001B52D6", "0x001B52E1"],
+      "size": 12
+    },
+    {
+      "address": "0x001B52E2",
+      "name": "Camera_SetScrollDataCursor6952",
+      "range": ["0x001B52E2", "0x001B52ED"],
+      "size": 12
+    },
+    {
+      "address": "0x001B52EE",
+      "name": "Camera_SetScrollDataCursor695A",
+      "range": ["0x001B52EE", "0x001B52F9"],
+      "size": 12
+    },
+    {
+      "address": "0x0000693E",
+      "name": "CAMERA_SCROLL_DELTA_TABLE",
+      "range": ["0x0000693E", "0x0000695D"],
+      "size": 32
+    }
+  ],
+  "semantics": "The three callbacks write ROM addresses 0x0000693E, 0x00006952, and 0x0000695A to CAMERA_SCROLL_DATA_CURSOR at 0x00FF7E1A. The level camera callback consumes signed words from that cursor, while the 16-word table at 0x0000693E provides the selected compact scroll-delta sequences.",
+  "boundary_basis": [
+    "Each callback is a complete 12-byte absolute-pointer setter ending in RTS.",
+    "The callbacks are separated by their own RTS instructions and the random-parity callback begins immediately at 0x001B52FA.",
+    "The 32-byte table ends at 0x0000695D, immediately before the next camera-scroll resource at 0x0000695E."
+  ],
+  "evidence": [
+    "Exact GNU m68k disassembly",
+    "AnimationVM callback pointers embedded in the player and collision streams",
+    "Level07_CameraScrollCallback cursor-consumption logic",
+    "Level_LoadFromSceneState cursor initialization"
+  ],
+  "conclusion": "The former 0x001B52D6-0x001B52F9 UNKNOWN range is a three-entry AnimationVM camera-scroll selector family, and the formerly untyped 0x0000693E-0x0000695D data is a compact signed delta table. Both are now canonical."
+}
