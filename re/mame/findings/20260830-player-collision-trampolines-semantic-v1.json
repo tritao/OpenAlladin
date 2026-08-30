@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-collision-trampolines-semantic-targets.json",
+  "promotions": [
+    {
+      "address": "0x001AE9D4",
+      "old_name": "ActorType7B_PlayerCollisionHandler",
+      "name": "PlayerCollision_ProcessInteractionState",
+      "alias": "ActorType7B_PlayerCollisionHandler"
+    },
+    {
+      "address": "0x001AE9DA",
+      "old_name": "ActorType06_0F_PlayerCollisionHandler",
+      "name": "PlayerCollision_DelegateToActorBlock",
+      "alias": "ActorType06_0F_PlayerCollisionHandler"
+    }
+  ],
+  "conclusion": "Promoted the two runtime-relevant compact player-collision entries to behavior-based trampoline names.",
+  "confidence": "confirmed-static-and-runtime",
+  "status": "recorded-semantic-promotion"
+}

@@ -219,6 +219,20 @@ def test_real_proximity_collision_handler_has_semantic_name_and_legacy_alias():
     assert symbol.confidence == "confirmed"
 
 
+def test_real_collision_trampolines_have_behavior_names_and_legacy_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x001AE9D4: ("PlayerCollision_ProcessInteractionState", "ActorType7B_PlayerCollisionHandler", "trace_validated"),
+        0x001AE9DA: ("PlayerCollision_DelegateToActorBlock", "ActorType06_0F_PlayerCollisionHandler", "confirmed"),
+    }
+    for address, (name, alias, confidence) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence == confidence
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
