@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-interaction-anchor-forward-spawn-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/interaction-anchor-forward-spawn-static-targets.json",
+  "promoted": {
+    "address": "0x001B5786",
+    "name": "InteractionAnchor_ForwardSpawn",
+    "range": ["0x001B5786", "0x001B57C3"],
+    "size": 62
+  },
+  "semantics": "The routine uses the extended forward actor-slot scan, initializes the type-0x84 interaction-response template at 0x001B792C, and places the resulting actor relative to the source A1 coordinates. Each coordinate is independently adjusted by 0x10 minus a low-five-bit sample from the shared random step routine.",
+  "boundary_basis": [
+    "The routine begins with its own BSR to Actor_FindFreeSlotExtendedForward and an allocation-failure branch.",
+    "It ends at the direct RTS immediately before Actor_ApplyInteractionMarkerMovementStep at 0x001B57C4.",
+    "The selected template and allocator are already canonical and match the established interaction-anchor callback family."
+  ],
+  "exact_body": "61008B3A66364DF9001B792C61008B76322900026100D8960247001F0641001092473B410002322900046100D8800247001F0641001092473B4100044E75"
+}

@@ -3263,6 +3263,26 @@ def test_camera_scroll_cursor_callback_family_is_exact():
         assert rom[address:address + 4] == bytes.fromhex("001B52EE")
 
 
+def test_interaction_anchor_forward_spawn_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001B5786, include_ranges=False)
+    assert function is not None
+    assert function.name == "InteractionAnchor_ForwardSpawn"
+    assert function.end == 0x001B57C3
+    assert function.size == 62
+
+    template = symbols.at(0x001B792C, include_ranges=False)
+    assert template is not None
+    assert template.name == "ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B5786:0x001B57C4] == bytes.fromhex(
+        "61008B3A66364DF9001B792C61008B76322900026100D8960247001F"
+        "0641001092473B410002322900046100D8800247001F064100109247"
+        "3B4100044E75"
+    )
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)

@@ -4171,6 +4171,17 @@
     - ghidra_disassembly_001B58D8
     - level_event_command_family_targets
     - level_event_command_family_static_decompilation
+0x001B5786:
+  name: InteractionAnchor_ForwardSpawn
+  size: 62
+  confidence: decompiled
+  description: Allocates an extended-forward interaction actor slot, initializes ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE, and places the spawned actor at the source coordinates plus 16 minus an independent low-five-bit PRNG offset on both axes.
+  evidence:
+    - gnu_m68k_disassembly_001B5786
+    - actor_slot_allocator_family_static_decompilation
+    - actor_template_collision_interaction_static_v1
+    - interaction_anchor_callback_static_v1
+    - movement_vm_callback_convention
 0x001B57C4:
   name: Actor_ApplyInteractionMarkerMovementStep
   size: 140
