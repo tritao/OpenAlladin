@@ -10,10 +10,10 @@
   "streams": [
     {
       "address": "0x00121180",
-      "name": "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE",
+      "name": "ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE",
       "range": "0x00121180-0x00121189",
       "bytes": 10,
-      "template": "0x001B81B0 adjacent Type-0x7C record",
+      "template": "0x001B81B0 ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT",
       "next_entry": "0x0012118A"
     },
     {

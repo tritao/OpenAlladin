@@ -1365,7 +1365,7 @@ def test_type7c_type7d_level_event_movement_family_is_exact():
     symbols = SymbolStore()
     prelude = symbols.at(0x00121180, include_ranges=False)
     assert prelude is not None
-    assert prelude.name == "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE"
+    assert prelude.name == "ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE"
     assert prelude.end == 0x00121189
     assert prelude.size == 10
     assert prelude.metadata["type"] == "movement_stream"
@@ -1383,8 +1383,26 @@ def test_type7c_type7d_level_event_movement_family_is_exact():
     assert alias.metadata["alias_of"] == "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED"
     assert alias.metadata["entry_offset"] == 58
 
+    template = symbols.at(0x001B81B0, include_ranges=False)
+    assert template is not None
+    assert template.name == "ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT"
+    assert template.end == 0x001B81C3
+    assert template.size == 20
+    assert template.metadata["type"] == "actor_template"
+    assert template.confidence == "provisional"
+
+    animation = symbols.at(0x00125916, include_ranges=False)
+    assert animation is not None
+    assert animation.name == "ACTOR_ANIM_TYPE7C_LEVEL_EVENT_SHARED"
+    assert animation.end == 0x0012593F
+    assert animation.size == 42
+
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
-    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    rom_bytes = rom_path.read_bytes()
+    assert rom_bytes[template.address:template.end + 1] == bytes.fromhex(
+        "7C00400000000012118020000012591603001000"
+    )
+    rom = load_animation_decoder().RomReader(rom_bytes)
     decoder = MovementDecoder(rom)
     prelude_decode = decoder.decode_stream(
         0x00121180,
@@ -1394,6 +1412,13 @@ def test_type7c_type7d_level_event_movement_family_is_exact():
     )
     assert prelude_decode["bytes_decoded"] == 10
     assert prelude_decode["stopped_reason"] == "byte_limit"
+    assert prelude_decode["steps"][0]["delta_x"] == 0
+    assert prelude_decode["steps"][0]["delta_y"] == -4
+    assert [command["name"] for command in prelude_decode["steps"][0]["commands"]] == [
+        "push_parameter",
+        "clear_actor_state",
+    ]
+    assert prelude_decode["steps"][0]["commands"][0]["parameter"] == "0x001ACD5A"
     assert prelude_decode["steps"][-1]["next_address"] == "0x0012118A"
 
     shared_decode = decoder.decode_stream(

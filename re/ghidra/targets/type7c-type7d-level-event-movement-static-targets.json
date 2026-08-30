@@ -9,10 +9,10 @@
   "streams": [
     {
       "address": "0x00121180",
-      "name": "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE",
+      "name": "ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE",
       "range": ["0x00121180", "0x00121189"],
       "size": 10,
-      "producer": "Adjacent Type-0x7C template record at 0x001B81B0 supplies the pointer; runtime producer unresolved",
+      "producer": "ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT at 0x001B81B0 supplies the pointer; runtime producer unresolved",
       "decoded": [
         "Push parameter 0x001ACD5A",
         "Clear actor state through opcode 0x82",

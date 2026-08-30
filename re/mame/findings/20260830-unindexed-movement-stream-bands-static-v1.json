@@ -23,7 +23,7 @@
   "template": {
     "address": "0x001B81B0",
     "range": "0x001B81B0-0x001B81C3",
-    "name": "ACTOR_TEMPLATE_TYPE_7C_UNINDEXED_LEVEL_EVENT",
+    "name": "ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT",
     "movement_stream": "0x00121180",
     "animation_stream": "0x00125916",
     "confidence": "provisional"

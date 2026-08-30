@@ -18,11 +18,11 @@
     "address": "0x001B81B0",
     "range": ["0x001B81B0", "0x001B81C3"],
     "size": 20,
-    "name": "ACTOR_TEMPLATE_TYPE_7C_UNINDEXED_LEVEL_EVENT",
+    "name": "ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT",
     "movement_stream": "0x00121180",
     "animation_stream": "0x00125916",
     "resource_count": "0x03",
-    "reachability": "The record is structurally complete and directly selects the named movement/animation roots, but no runtime producer for this specific record has been recovered."
+    "reachability": "The record is structurally complete and directly selects the wide-random-offset prelude plus shared Type-0x7C level-event animation, but no runtime producer for this specific record has been recovered."
   },
   "streams": [
     {
@@ -38,7 +38,7 @@
       "name": "ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE_001210FE",
       "range": ["0x001210FE", "0x0012117F"],
       "size": 130,
-      "boundary": "Linear MovementDecoder coverage ends immediately before ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE at 0x00121180.",
+      "boundary": "Linear MovementDecoder coverage ends immediately before ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE at 0x00121180.",
       "semantic_evidence": "The exact body publishes ActorEvent_SetFlag20 and ActorEvent_ClearFlag20 through the shared AnimationVM callback parameter, compares the 0x00FFF07C terrain-query state, applies the encoded timed leftward response, and clears the actor."
     },
     {
