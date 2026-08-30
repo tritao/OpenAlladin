@@ -124,6 +124,28 @@ def test_function_work_queue_ranks_runtime_unknowns(tmp_path):
     assert queue[0]["callers"] == 1
 
 
+def test_function_work_queue_reads_merged_per_pc_archive(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    (tmp_path / "coverage-expanded.json").write_text(
+        json.dumps({"pcs": {
+            "0x00000022": {"sample_count": 3, "scenarios": ["menu", "game"]},
+        }}),
+        encoding="utf-8",
+    )
+    queue = function_work_queue(
+        AnalysisDatabase(database_root),
+        SymbolStore(symbols=(Symbol(0x10, "FirstFunction", "function", confidence="confirmed"),)),
+        coverage_path=tmp_path / "coverage-expanded.json",
+    )
+
+    assert len(queue) == 1
+    assert queue[0]["address"] == "0x00000020"
+    assert queue[0]["runtime_observed"] is True
+    assert queue[0]["runtime_pc_count"] == 1
+    assert queue[0]["runtime_scenarios"] == ["game", "menu"]
+
+
 def test_function_work_queue_includes_low_confidence_canonical_functions(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

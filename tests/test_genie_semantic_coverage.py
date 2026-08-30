@@ -110,3 +110,33 @@ def test_semantic_coverage_cli_surface_dispatches():
     args = build_parser().parse_args(["coverage", "report", "--json"])
     assert args.function.__name__ == "command_coverage_report"
     assert args.json_output is True
+
+
+def test_semantic_coverage_aggregates_merged_per_pc_archive(tmp_path):
+    database_root = _database(tmp_path)
+    symbols = SymbolStore(symbols=(
+        Symbol(0x10, "SemanticFunction", "function", confidence="decompiled"),
+        Symbol(0x20, "Func_00000020", "function"),
+    ))
+    coverage = tmp_path / "coverage-expanded.json"
+    coverage.write_text(json.dumps({"pcs": {
+        "0x00000012": {"sample_count": 4, "scenarios": ["first", "second"]},
+        "0x00000020": {"sample_count": 2, "scenarios": ["second"]},
+    }}), encoding="utf-8")
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        coverage_path=coverage,
+    )
+
+    report = build_semantic_coverage(
+        index.database,
+        data_index=index,
+        symbols=symbols,
+        coverage_path=coverage,
+        root=tmp_path,
+    )
+
+    assert report["functions"]["runtime_observed"] == 2
+    assert report["functions"]["runtime_pc_count"] == 2

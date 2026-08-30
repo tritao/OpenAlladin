@@ -58,7 +58,14 @@ def _runtime_functions(database: AnalysisDatabase, path: Path) -> dict[int, dict
         return result
 
     pcs = document.get("pcs", [])
-    for item in pcs if isinstance(pcs, list) else ():
+    if isinstance(pcs, dict):
+        pc_items = [
+            {"address": raw_address, **(raw_value if isinstance(raw_value, dict) else {})}
+            for raw_address, raw_value in pcs.items()
+        ]
+    else:
+        pc_items = pcs if isinstance(pcs, list) else []
+    for item in pc_items:
         if not isinstance(item, dict):
             continue
         try:

@@ -54,7 +54,14 @@ def _runtime_functions(database: AnalysisDatabase, path: Path | None) -> dict[in
         return result
 
     pcs = document.get("pcs", []) if isinstance(document, dict) else []
-    for raw_pc in pcs if isinstance(pcs, list) else ():
+    if isinstance(pcs, dict):
+        pc_items = [
+            {"address": raw_address, **(raw_value if isinstance(raw_value, dict) else {})}
+            for raw_address, raw_value in pcs.items()
+        ]
+    else:
+        pc_items = pcs if isinstance(pcs, list) else []
+    for raw_pc in pc_items:
         try:
             function = database.function(_address(raw_pc.get("address")))
         except (AttributeError, TypeError, ValueError):
