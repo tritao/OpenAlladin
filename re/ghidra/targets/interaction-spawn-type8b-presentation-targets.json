@@ -11,7 +11,7 @@
     "selector_range": "0xF5-0xF8",
     "newly_named_targets": 4,
     "shared_template": "0x001B7F6C ACTOR_TEMPLATE_TYPE_8B_PRESENTATION_RESPONSE",
-    "shared_helper": "0x001B5256 InteractionHandler_0x40_Helper",
+    "shared_helper": "0x001B5256 InteractionSpawn_BackwardSlot",
     "handlers": [
       { "selector": "0xF5", "address": "0x001B6D90", "name": "InteractionSpawn_Type8BPresentation_F5", "animation_root": "0x00124A2E", "palette_resource": "0x001292F2" },
       { "selector": "0xF6", "address": "0x001B6DEC", "name": "InteractionSpawn_Type8BPresentation_F6", "animation_root": "0x00124A6C", "palette_resource": "0x001292F2" },

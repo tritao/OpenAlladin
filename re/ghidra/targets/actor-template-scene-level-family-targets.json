@@ -43,7 +43,7 @@
       "address": "0x001B8264",
       "name": "ACTOR_TEMPLATE_TYPE_7A_INTERACTION",
       "consumer_sites": ["0x001B6F34", "0x001B6F4A", "0x001B6F60"],
-      "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
+      "spawn_helper": "0x001B5256 InteractionSpawn_BackwardSlot",
       "runtime_type": "0x7A",
       "movement_stream": null,
       "animation_stream": "0x00125A68",

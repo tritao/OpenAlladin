@@ -35,7 +35,7 @@
       "name": "ACTOR_TEMPLATE_TYPE_58_INTERACTION",
       "consumer_sites": ["0x001B668A", "0x001B6696"],
       "dispatch_entries": ["0x004328 selector 0x75", "0x00432C selector 0x76"],
-      "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
+      "spawn_helper": "0x001B5256 InteractionSpawn_BackwardSlot",
       "runtime_type": "0x58",
       "movement_stream": null,
       "animation_stream": "0x00125392",

@@ -2332,9 +2332,9 @@
     - ghidra_interaction_counter_targets
     - ghidra_decompile_001AF228
 0x001B5256:
-  name: InteractionHandler_0x40_Helper
+  name: InteractionSpawn_BackwardSlot
   confidence: confirmed
-  description: Allocates and initializes an actor from an interaction-row payload, writes the payload word/byte fields at actor offsets 0x32/0x34, positions it from the global interaction coordinates, and consumes the interaction byte.
+  description: Selects the backward free-slot allocator at 0x001AE292 and enters the shared interaction-spawn initializer at 0x001B5266; it has no selector-specific actor mutation of its own.
   evidence:
     - ghidra_far_transfer_targeted_decompile_v1
     - ghidra_level01_interaction_handler_targeted_decompile
@@ -2354,9 +2354,9 @@
     - ghidra_decompile_001AC484
     - ghidra_decompile_001AC350
 0x001B03F2:
-  name: Player_InteractionHelper
+  name: Player_ArmTerminalOrInteractionLock
   confidence: confirmed
-  description: Under scene/terminal/interaction gates, arms PLAYER_TERMINAL_TRANSITION or decrements the interaction counter and arms PLAYER_INTERACTION_LOCK. It does not write SCENE_STATE.
+  description: When the scene-script, terminal-transition, and player-interaction gates are clear, arms PLAYER_TERMINAL_TRANSITION with 10 when no response is pending; otherwise decrements INTERACTION_RESPONSE_CURRENT and arms PLAYER_INTERACTION_LOCK with 0x28. It does not write SCENE_STATE.
   evidence:
     - ghidra_far_transfer_targeted_decompile_v1
     - ghidra_decompile_collision_damage_targets
@@ -3459,9 +3459,9 @@
     - ghidra_interaction_anchor_targets
 
 0x001B6F0C:
-  name: InteractionHandler_0x80
+  name: InteractionSpawn_RuntimeType87_80
   confidence: confirmed
-  description: Clears the interaction-side flag at 0x00FFF104 and allocates an actor through InteractionSpawn_ReverseSlot.
+  description: Interaction selector 0x80 handler that clears INTERACTION_RESPONSE_FLAG at 0x00FFF104, loads ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE at 0x001B7C4C, and reverse-spawns the runtime type-0x87 actor through InteractionSpawn_ReverseSlot.
   evidence:
     - ghidra_level01_interaction_inventory_targeted_decompile
 0x001A9304:

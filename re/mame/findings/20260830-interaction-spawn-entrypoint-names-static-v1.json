@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "targets": [
+    {
+      "address": "0x001B5256",
+      "old_name": "InteractionHandler_0x40_Helper",
+      "name": "InteractionSpawn_BackwardSlot",
+      "body": "jsr Actor_FindFreeSlotBackward; branch on allocation result; enter shared initializer at 0x001B5266",
+      "boundary": "0x001B5256-0x001B525D"
+    },
+    {
+      "address": "0x001B6F0C",
+      "old_name": "InteractionHandler_0x80",
+      "name": "InteractionSpawn_RuntimeType87_80",
+      "body": "clear INTERACTION_RESPONSE_FLAG; load ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE; call InteractionSpawn_ReverseSlot",
+      "boundary": "0x001B6F0C-0x001B6F1D",
+      "dispatch": "selector 0x80; runtime type 0x87"
+    },
+    {
+      "address": "0x001B03F2",
+      "old_name": "Player_InteractionHelper",
+      "name": "Player_ArmTerminalOrInteractionLock",
+      "body": "when scene/terminal/player gates are clear, arm terminal transition 10 for no pending response, otherwise decrement the current response and arm interaction lock 0x28",
+      "boundary": "0x001B03F2-0x001B0433"
+    }
+  ],
+  "evidence": [
+    "Exact 68000 instruction boundaries from the whole-ROM instruction export",
+    "Ghidra targeted decompilation for 0x001B03F2, 0x001B5256, and 0x001B6F0C",
+    "Existing interaction dispatch and actor-template manifests",
+    "Known RAM contracts for INTERACTION_RESPONSE_CURRENT, PLAYER_TERMINAL_TRANSITION, and PLAYER_INTERACTION_LOCK"
+  ],
+  "conclusion": "The three entries are renamed by their stable allocator, dispatch, and RAM-state contracts. No user-facing interaction meaning is inferred beyond the established runtime type and response-template labels.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

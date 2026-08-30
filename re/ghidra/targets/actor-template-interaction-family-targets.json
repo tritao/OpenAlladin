@@ -42,7 +42,7 @@
     "initializer": "0x001AE30A Actor_InitializeFromTemplate",
     "spawn_helpers": [
       "0x001B525E InteractionSpawn_ReverseSlot",
-      "0x001B5256 InteractionHandler_0x40_Helper"
+      "0x001B5256 InteractionSpawn_BackwardSlot"
     ]
   },
   "conclusion": "All three records are loaded by direct, terminating interaction spawn bodies and align with the established 20-byte actor-template cadence. Neighboring records without an equally complete consumer remain unresolved.",

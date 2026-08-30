@@ -2007,6 +2007,21 @@ whose type byte is `0x85`, including their owned resources, before decoding new
 actor records. This extends the allocation contract with the observed marked-
 slot retirement step without assigning a higher-level meaning to type `0x85`.
 
+## Interaction spawn entrypoint names (20260830)
+
+The shared interaction-spawn entrypoints now use names that reflect their
+actual contracts. `InteractionSpawn_BackwardSlot` at `0x001B5256` selects the
+backward free-slot scan at `0x001AE292` and enters the shared initializer;
+it is not a selector-`0x40` handler. `InteractionSpawn_RuntimeType87_80` at
+`0x001B6F0C` is the selector-`0x80` dispatch entry that clears
+INTERACTION_RESPONSE_FLAG and reverse-spawns the type-`0x87` response template.
+`Player_ArmTerminalOrInteractionLock` at `0x001B03F2` arms terminal transition
+for an empty response or decrements the current response and arms the player
+interaction lock under the established scene/terminal gates.
+
+The static result is recorded in
+`re/mame/findings/20260830-interaction-spawn-entrypoint-names-static-v1.json`.
+
 ## Scene/resource orchestration and camera rebuild (20260828)
 
 The larger scene/resource entrypoints are now separated from their lower-level

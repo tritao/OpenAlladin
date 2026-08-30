@@ -4764,6 +4764,20 @@ def test_interaction_anchor_forward_spawn_is_exact():
     )
 
 
+def test_interaction_spawn_and_player_gate_entrypoints_have_semantic_names():
+    symbols = SymbolStore()
+    expected = {
+        0x001B5256: ("InteractionSpawn_BackwardSlot", "confirmed"),
+        0x001B6F0C: ("InteractionSpawn_RuntimeType87_80", "confirmed"),
+        0x001B03F2: ("Player_ArmTerminalOrInteractionLock", "confirmed"),
+    }
+    for address, (name, confidence) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.confidence == confidence
+
+
 def test_low_confidence_scene_terrain_services_are_closed():
     symbols = SymbolStore()
     expected = {

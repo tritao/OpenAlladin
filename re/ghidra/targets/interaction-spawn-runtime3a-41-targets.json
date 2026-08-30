@@ -13,7 +13,7 @@
     "handlers": [
       { "selector": "0xAC", "address": "0x001B7258", "name": "InteractionGate_RuntimeType3A_AC", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "gates": ["0x00FFF170 != 0", "0x00FFEFE2 != 0x3939"], "runtime_type": "0x3A", "animation_root": "0x00122BD8", "flag_value": "0x01" },
       { "selector": "0xC8", "address": "0x001B728E", "name": "InteractionSpawn_RuntimeType41_C8", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "runtime_type": "0x41", "animation_root": "0x00125D7E ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE", "flag_value": "0x02" },
-      { "selector": "0xC9", "address": "0x001B72AE", "name": "InteractionSpawn_RuntimeType84_C9", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper", "runtime_type": "0x84", "actor_field_06": "0x21", "animation_root": "0x00123E7A", "flag_value": "0x02" },
+      { "selector": "0xC9", "address": "0x001B72AE", "name": "InteractionSpawn_RuntimeType84_C9", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "spawn_helper": "0x001B5256 InteractionSpawn_BackwardSlot", "runtime_type": "0x84", "actor_field_06": "0x21", "animation_root": "0x00123E7A", "flag_value": "0x02" },
       { "selector": "0x53", "address": "0x001B72D4", "name": "InteractionSpawn_RuntimeType34_53", "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO", "runtime_type": "0x34", "animation_root": "0x00122C1E", "movement_stream": "0x001217B4", "flag_value": "0x06" }
     ]
   },

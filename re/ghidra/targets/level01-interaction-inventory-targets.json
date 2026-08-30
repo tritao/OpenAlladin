@@ -24,7 +24,7 @@
     { "address": "0x001B6870", "name": "InteractionHandler_0x5C" },
     { "address": "0x001B735E", "name": "InteractionHandler_0x60" },
     { "address": "0x001B670C", "name": "InteractionHandler_0x74" },
-    { "address": "0x001B6F0C", "name": "InteractionHandler_0x80" },
+    { "address": "0x001B6F0C", "name": "InteractionSpawn_RuntimeType87_80" },
     { "address": "0x001B74D6", "name": "InteractionHandler_0x87" },
     { "address": "0x001B744A", "name": "InteractionHandler_0xAB" },
     { "address": "0x001B728E", "name": "InteractionHandler_0xC8" },

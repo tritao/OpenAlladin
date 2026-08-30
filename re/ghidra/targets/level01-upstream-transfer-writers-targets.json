@@ -77,7 +77,7 @@
     { "address": "0x001B7262", "name": "InteractionHandler_0x51_Type3A" },
     { "address": "0x001B6EA6", "name": "InteractionHandler_0x10_Type1F" },
     { "address": "0x001B7232", "name": "InteractionHandler_0x40_Type43" },
-    { "address": "0x001B6F0C", "name": "InteractionHandler_0x80" },
+    { "address": "0x001B6F0C", "name": "InteractionSpawn_RuntimeType87_80" },
     { "address": "0x001B74D6", "name": "InteractionHandler_0x87" },
     { "address": "0x001B5266", "name": "ActorAlloc_CameraRelativeForward" },
     { "address": "0x001B5256", "name": "ActorAlloc_CameraRelativeBackward" },

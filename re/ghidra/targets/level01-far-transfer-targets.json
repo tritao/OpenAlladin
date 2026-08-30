@@ -26,8 +26,8 @@
     { "address": "0x001B56B6", "name": "TerrainHandler_0x2D_Bounce" },
     { "address": "0x001B0336", "name": "FarTransfer_InteractionHelper" },
     { "address": "0x001ABE6E", "name": "Actor_ClearAndRelease" },
-    { "address": "0x001B03F2", "name": "Player_InteractionHelper" },
-    { "address": "0x001B5256", "name": "InteractionHandler_0x40_Helper" },
+    { "address": "0x001B03F2", "name": "Player_ArmTerminalOrInteractionLock" },
+    { "address": "0x001B5256", "name": "InteractionSpawn_BackwardSlot" },
     { "address": "0x001AEE40", "name": "ActorType2D_PlayerCollisionHandler" }
   ]
 }

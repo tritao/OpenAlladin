@@ -10,7 +10,7 @@
   "template": {
     "address": "0x001B7C4C",
     "name": "ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE",
-    "consumer": "0x001B6F0C InteractionHandler_0x80",
+    "consumer": "0x001B6F0C InteractionSpawn_RuntimeType87_80",
     "runtime_type": "0x87",
     "movement_stream": null,
     "animation_stream": "0x00123B38",

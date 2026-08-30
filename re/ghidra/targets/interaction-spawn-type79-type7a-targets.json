@@ -12,9 +12,9 @@
     "newly_named_targets": 4,
     "handlers": [
       { "selectors": ["0x0A", "0x0B", "0x0C"], "address": "0x001B6F1E", "name": "InteractionSpawn_Type79_0A0C", "template": "0x001B8250 ACTOR_TEMPLATE_TYPE_79_INTERACTION", "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot", "animation_root": "0x00125A4C" },
-      { "selectors": ["0x06"], "address": "0x001B6F34", "name": "InteractionSpawn_Type7A_06", "template": "0x001B8264 ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper", "animation_root": "0x00125A68" },
-      { "selectors": ["0x07"], "address": "0x001B6F4A", "name": "InteractionSpawn_Type7A_07", "template": "0x001B8264 ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper", "animation_root": "0x00125A88" },
-      { "selectors": ["0x08"], "address": "0x001B6F60", "name": "InteractionSpawn_Type7A_08", "template": "0x001B8264 ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper", "animation_root": "0x00125AA8" }
+      { "selectors": ["0x06"], "address": "0x001B6F34", "name": "InteractionSpawn_Type7A_06", "template": "0x001B8264 ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "spawn_helper": "0x001B5256 InteractionSpawn_BackwardSlot", "animation_root": "0x00125A68" },
+      { "selectors": ["0x07"], "address": "0x001B6F4A", "name": "InteractionSpawn_Type7A_07", "template": "0x001B8264 ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "spawn_helper": "0x001B5256 InteractionSpawn_BackwardSlot", "animation_root": "0x00125A88" },
+      { "selectors": ["0x08"], "address": "0x001B6F60", "name": "InteractionSpawn_Type7A_08", "template": "0x001B8264 ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "spawn_helper": "0x001B5256 InteractionSpawn_BackwardSlot", "animation_root": "0x00125AA8" }
     ]
   },
   "evidence": [

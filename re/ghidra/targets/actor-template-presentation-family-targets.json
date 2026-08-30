@@ -12,7 +12,7 @@
       "address": "0x001B7F6C",
       "name": "ACTOR_TEMPLATE_TYPE_8B_PRESENTATION_RESPONSE",
       "consumer_sites": ["0x001B6D98", "0x001B6DA4", "0x001B6DBA", "0x001B6DF4", "0x001B6E20", "0x001B6E4C"],
-      "spawn_helper": "0x001B5256 InteractionHandler_0x40_Helper",
+      "spawn_helper": "0x001B5256 InteractionSpawn_BackwardSlot",
       "runtime_type": "0x8B",
       "movement_stream": null,
       "animation_stream": "0x00124A2E",
