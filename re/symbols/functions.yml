@@ -14,7 +14,7 @@
     - startup_checksum_spin_static_v1
 0x0000021A:
   name: System_ResetBootstrap
-  confidence: decompiled
+  confidence: trace_validated
   description: Reset-vector entry that conditionally initializes Genesis hardware from the inline bootstrap table, then enters the reset-time runtime, scene, rendering, actor, and frame-service initialization path.
   evidence:
     - ghidra_decompile_0000021A
@@ -170,14 +170,14 @@
     - mame_player_camera_follow_trace
 0x001AB34E:
   name: Camera_ScrollLeftAndRefill
-  confidence: decompiled
+  confidence: trace_validated
   description: Consumes the left-scroll refill path, adjusts the horizontal camera state by one 0x10-pixel step when outside the deadband, writes 16 terrain-derived entries to the VDP, and processes the refreshed interaction rows through InteractionTable_ProcessRowsA.
   evidence:
     - ghidra_decompile_001AB34E
     - ghidra_interaction_dispatch_callers
 0x001AB44C:
   name: Camera_ScrollRightAndRefill
-  confidence: decompiled
+  confidence: trace_validated
   description: Consumes the right-scroll refill path, adjusts the horizontal camera state by one 0x10-pixel step when inside the level bounds, writes 16 terrain-derived entries to the VDP, and processes the refreshed interaction rows through InteractionTable_ProcessRowsA.
   evidence:
     - ghidra_decompile_001AB44C
@@ -205,7 +205,7 @@
     - ghidra_render_submission_targets
 0x001AB7C4:
   name: Render_BuildActorRecords
-  confidence: decompiled
+  confidence: trace_validated
   description: Builds the camera-relative sprite attribute list at FF729A, including player/status records and visible actor frame records, applies facing and priority bits, terminates the list, and publishes its count through FFEFEC.
   evidence:
     - ghidra_decompile_001AB7C4
@@ -219,7 +219,7 @@
     - ghidra_render_submission_targets
 0x001AC6D0:
   name: Render_BuildActorSpritePayload
-  confidence: decompiled
+  confidence: trace_validated
   description: Expands an actor animation frame record into 14-byte VDP sprite payload entries at the renderer output pointer, applies the actor's sprite attribute and horizontal state, and increments the payload count at FFEFEE for Render_SubmitActorSprites.
   evidence:
     - ghidra_decompile_001AC6D0
@@ -974,7 +974,7 @@
     - interrupt_vector_static_decompilation
 0x001B249E:
   name: Frame_WaitForVBlankWork
-  confidence: decompiled
+  confidence: trace_validated
   description: Blocks until VBlankInterrupt publishes VBLANK_READY_LATCH; when FRAME_WAIT_LATCH is set, it acquires the Z80 bus, services the sound-side handshake, and releases the bus before waiting for the next VBlank boundary.
   evidence:
     - ghidra_decompile_001B249E
@@ -982,14 +982,14 @@
     - mame_vblank_state_synchronization
 0x001B255C:
   name: VDP_CopyWordsToVRAM
-  confidence: decompiled
+  confidence: trace_validated
   description: Copies a caller-supplied word count from A0 to the VDP data port after programming the VRAM destination command from A1; preserves the caller registers across the transfer.
   evidence:
     - ghidra_decompile_001B255C
     - ghidra_disassembly_001B255C
 0x001B2534:
   name: VDP_FillWords
-  confidence: decompiled
+  confidence: trace_validated
   description: Programs a sequential VRAM destination from A0 and writes D0 copies of the word in D1 through the VDP data port.
   evidence:
     - ghidra_decompile_001B2534
@@ -1173,7 +1173,7 @@
     - ghidra_level_transition_targeted_decompile
 0x001B2238:
   name: SceneResource_InstantiateActors
-  confidence: decompiled
+  confidence: trace_validated
   description: Selects the active scene-resource record, initializes its render origin, interprets commands through SCENE_RESOURCE_COMMAND_TABLE at 0x0049D8, and creates actors from nonzero object entries by finding a free gameplay slot, applying the common template initializer, and assigning the resource animation, movement, and position fields.
   evidence:
     - ghidra_decompile_001B2238
@@ -1292,7 +1292,7 @@
     - scene_resource_command_table_static_decompilation
 0x001B21A8:
   name: VDP_WriteTileWord
-  confidence: decompiled
+  confidence: trace_validated
   description: Programs one VDP control address from the tile-row command table at FF8680 and the caller's word offset, then writes the computed tile word through VDP_DATA while preserving the caller's working registers.
   evidence:
     - ghidra_decompile_001B21A8
@@ -1330,21 +1330,21 @@
     - ghidra_scene_resource_transfer_targets
 0x001B00CA:
   name: Interaction_UpdateCounter
-  confidence: decompiled
+  confidence: trace_validated
   description: On even FRAME_PHASE_COUNTER phases, drains ACTOR_RESPONSE_COUNTER, advances the decimal interaction counter, and invokes the response reset helper when the configured response budget is exhausted.
   evidence:
     - ghidra_decompile_001B00CA
     - ghidra_targeted_decompile_scheduler
 0x001B01AC:
   name: Interaction_UpdateResourceState
-  confidence: decompiled
+  confidence: trace_validated
   description: Advances the scene/resource decimal counter on even frame phases, triggers the matching resource command and optional audio event at resource milestones, and arms the transition countdown for the terminal resource state.
   evidence:
     - ghidra_decompile_001B01AC
     - ghidra_targeted_decompile_scheduler
 0x001B02EC:
   name: Interaction_UpdateTarget
-  confidence: decompiled
+  confidence: trace_validated
   description: On even FRAME_PHASE_COUNTER phases, moves the current interaction target value one step toward the target value published by the active interaction state.
   evidence:
     - ghidra_decompile_001B02EC
@@ -1464,7 +1464,7 @@
     - ghidra_targeted_decompile_scheduler
 0x001AD632:
   name: Player_TerrainEdgeProbe
-  confidence: decompiled
+  confidence: trace_validated
   description: Probes the terrain around the player for left, right, and upward blocking cells, publishing the corresponding stop and inner/outer edge flags while respecting the scene-state, player-frame, map-boundary, and landing-state gates.
   evidence:
     - ghidra_decompile_001AD632
@@ -1472,7 +1472,7 @@
     - ghidra_lower_frontier_terrain_response
 0x001A8F0C:
   name: Level_ExitAndTerminalTransition
-  confidence: decompiled
+  confidence: trace_validated
   description: Coordinates level-boundary and terminal-transition handling; performs out-of-bounds cleanup, consumes the terminal transition countdown, resets actor/resource state, reloads level and scene resources, refills camera data, and re-enters the frame/render pipeline for the resulting state.
   evidence:
     - ghidra_decompile_001A8F0C
@@ -2736,21 +2736,21 @@
     - ghidra_decompile_001B3818
 0x001B38B8:
   name: TerrainResource_DecodeSymbol
-  confidence: decompiled
+  confidence: trace_validated
   description: Decodes one terrain-resource Huffman symbol from the bit buffer and advances through the table entry selected by its code width and value fields.
   evidence:
     - ghidra_decompile_001B38B8
     - ghidra_decompile_001B3818
 0x001B38FA:
   name: TerrainResource_RefillBitBuffer
-  confidence: decompiled
+  confidence: trace_validated
   description: Refills the terrain-resource bit buffer from the compressed source and restores the available-bit count after a variable-width read crosses a word boundary.
   evidence:
     - ghidra_decompile_001B38FA
     - ghidra_decompile_001B38EE
 0x001B391E:
   name: TerrainResource_BuildDecodeTable
-  confidence: decompiled
+  confidence: trace_validated
   description: Builds the terrain-resource Huffman decode table from the compressed code lengths before TerrainBehaviorTable_Decode expands the stream into the runtime behavior resource.
   evidence:
     - ghidra_decompile_001B391E
@@ -2817,7 +2817,7 @@
     - mame_terrain_callback_trace
 0x001B323A:
   name: Terrain_QueryCallbackB_Impl
-  confidence: decompiled
+  confidence: trace_validated
   description: Tests bit 4 of the raw terrain query byte at 0x00FFF155 and returns the condition code for the configured terrain callback.
   evidence:
     - ghidra_decompile_001B323A
@@ -2833,7 +2833,7 @@
     - mame_terrain_callback_trace
 0x001B324E:
   name: Terrain_QueryCallbackC_Impl
-  confidence: decompiled
+  confidence: trace_validated
   description: Tests bit 5 of TERRAIN_QUERY_FLAGS at 0x00FFF156 and returns the condition code for the configured terrain callback.
   evidence:
     - ghidra_decompile_001B324E
@@ -2993,7 +2993,7 @@
     - mame_player_state_trace
 0x001AC796:
   name: AnimationVM_RunActorPass
-  confidence: decompiled
+  confidence: trace_validated
   description: Services all 32 actor records with a 0x42-byte stride, filters live records with a valid resource/link condition and nonzero animation cursor, synchronizes frame pointers through the actor animation cursor, dispatches EA-FE animation commands through ACTOR_VM_DISPATCH_TABLE, and decrements the per-actor animation timer when command execution is deferred.
   evidence:
     - ghidra_decompile_001AC796
@@ -3353,7 +3353,7 @@
 
 0x001E573A:
   name: Audio_LoadZ80Driver
-  confidence: decompiled
+  confidence: trace_validated
   description: Holds the Z80 in reset, acquires the bus, copies the ROM sound driver from 0x001B8480 through 0x001B9D05 into Z80 RAM at 0x00A00000, clears the remaining RAM through 0x00A02000, and restores the caller status.
   evidence:
     - ghidra_decompile_001E573A
@@ -3385,7 +3385,7 @@
 
 0x001B35D0:
   name: RNC_DecodePayloadToVRAM
-  confidence: decompiled
+  confidence: trace_validated
   description: Decodes the compressed RNC payload using its bitstream tables and streams the reconstructed words to the VDP data port while honoring the source block dimensions and VRAM ring position.
   evidence:
     - ghidra_decompile_001B35D0
@@ -3399,21 +3399,21 @@
     - ghidra_decompile_001B35D0
 0x001B3790:
   name: RNC_BuildDecodeTable
-  confidence: decompiled
+  confidence: trace_validated
   description: Builds the RNC Huffman decode table from the compressed code lengths and bitstream entries used by the payload decoder.
   evidence:
     - ghidra_decompile_001B3790
     - ghidra_decompile_001B35D0
 0x001B3736:
   name: RNC_DecodeSymbol
-  confidence: decompiled
+  confidence: trace_validated
   description: Decodes one RNC Huffman symbol from the bit buffer and advances the compressed-stream state using the table entry's code width and value fields.
   evidence:
     - ghidra_decompile_001B3736
     - ghidra_decompile_001B35D0
 0x001B3778:
   name: RNC_RefillBitBuffer
-  confidence: decompiled
+  confidence: trace_validated
   description: Refills the RNC bit buffer from the compressed source and restores the available-bit count after a variable-width read crosses a word boundary.
   evidence:
     - ghidra_decompile_001B3778
@@ -3472,7 +3472,7 @@
     - ghidra_level01_interaction_inventory_targeted_decompile
 0x001A9304:
   name: Player_SelectLocomotionOrAction
-  confidence: decompiled
+  confidence: trace_validated
   description: "Selects the player locomotion/action animation stream from terrain, transition, interaction, and scene state before the common ordinal-30 service; resets PLAYER_ANIMATION_TIMER and publishes PLAYER_ANIMATION_PC."
   evidence:
     - ghidra_decompile_001A9304
@@ -3559,7 +3559,7 @@
     - ghidra_decompile_001AD00E
 0x001AE2F2:
   name: Actor_FindActorByType
-  confidence: decompiled
+  confidence: trace_validated
   description: Scans non-player records 1..24 at 0x00FF7E82 with stride 0x42 for the first record whose type byte equals the caller's D0 value.
   evidence:
     - ghidra_decompile_001AE2F2
@@ -3787,7 +3787,7 @@
 
 0x001A8F04:
   name: Level_InvokeFrameCallback
-  confidence: decompiled
+  confidence: trace_validated
   description: Tail-dispatches to the active level's per-frame callback through LEVEL_FRAME_CALLBACK, which Level_LoadFromSceneState installs from the level-table record at offset 0x2C; Game_FrameUpdateLoop invokes this trampoline once per frame.
   evidence:
     - ghidra_disassembly_001A8F04

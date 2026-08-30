@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-runtime-coverage-symbol-promotions-v1",
+  "recorded_at": "2026-08-30",
+  "status": "recorded-repeated-runtime-observation",
+  "repository_commit_at_capture": "3f7067a",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "source": {
+    "coverage": "build/re/coverage-ghidra.json",
+    "coverage_format": "ghidra-runtime-coverage-v1",
+    "observed_function_entries": 74,
+    "selection": "Promote canonical functions currently at decompiled confidence when the imported runtime coverage reports at least two executions across at least two scenarios.",
+    "new_confidence": "trace_validated"
+  },
+  "promotions": [
+    { "address": "0x0000021A", "name": "System_ResetBootstrap", "pc_count": 41, "scenario_count": 51 },
+    { "address": "0x001A8F04", "name": "Level_InvokeFrameCallback", "pc_count": 3, "scenario_count": 19 },
+    { "address": "0x001A8F0C", "name": "Level_ExitAndTerminalTransition", "pc_count": 10, "scenario_count": 20 },
+    { "address": "0x001A9304", "name": "Player_SelectLocomotionOrAction", "pc_count": 29, "scenario_count": 20 },
+    { "address": "0x001AB34E", "name": "Camera_ScrollLeftAndRefill", "pc_count": 4, "scenario_count": 23 },
+    { "address": "0x001AB44C", "name": "Camera_ScrollRightAndRefill", "pc_count": 4, "scenario_count": 23 },
+    { "address": "0x001AB7C4", "name": "Render_BuildActorRecords", "pc_count": 226, "scenario_count": 26 },
+    { "address": "0x001AC6D0", "name": "Render_BuildActorSpritePayload", "pc_count": 23, "scenario_count": 26 },
+    { "address": "0x001AC796", "name": "AnimationVM_RunActorPass", "pc_count": 39, "scenario_count": 23 },
+    { "address": "0x001AD632", "name": "Player_TerrainEdgeProbe", "pc_count": 2, "scenario_count": 3 },
+    { "address": "0x001AE2F2", "name": "Actor_FindActorByType", "pc_count": 8, "scenario_count": 19 },
+    { "address": "0x001B00CA", "name": "Interaction_UpdateCounter", "pc_count": 4, "scenario_count": 3 },
+    { "address": "0x001B01AC", "name": "Interaction_UpdateResourceState", "pc_count": 8, "scenario_count": 22 },
+    { "address": "0x001B02EC", "name": "Interaction_UpdateTarget", "pc_count": 6, "scenario_count": 2 },
+    { "address": "0x001B21A8", "name": "VDP_WriteTileWord", "pc_count": 3, "scenario_count": 28 },
+    { "address": "0x001B2238", "name": "SceneResource_InstantiateActors", "pc_count": 2, "scenario_count": 23 },
+    { "address": "0x001B249E", "name": "Frame_WaitForVBlankWork", "pc_count": 4, "scenario_count": 28 },
+    { "address": "0x001B2534", "name": "VDP_FillWords", "pc_count": 4, "scenario_count": 34 },
+    { "address": "0x001B255C", "name": "VDP_CopyWordsToVRAM", "pc_count": 4, "scenario_count": 34 },
+    { "address": "0x001B323A", "name": "Terrain_QueryCallbackB_Impl", "pc_count": 4, "scenario_count": 2 },
+    { "address": "0x001B324E", "name": "Terrain_QueryCallbackC_Impl", "pc_count": 3, "scenario_count": 18 },
+    { "address": "0x001B35D0", "name": "RNC_DecodePayloadToVRAM", "pc_count": 96, "scenario_count": 34 },
+    { "address": "0x001B3736", "name": "RNC_DecodeSymbol", "pc_count": 24, "scenario_count": 33 },
+    { "address": "0x001B3778", "name": "RNC_RefillBitBuffer", "pc_count": 12, "scenario_count": 30 },
+    { "address": "0x001B3790", "name": "RNC_BuildDecodeTable", "pc_count": 12, "scenario_count": 32 },
+    { "address": "0x001B38B8", "name": "TerrainResource_DecodeSymbol", "pc_count": 19, "scenario_count": 23 },
+    { "address": "0x001B38FA", "name": "TerrainResource_RefillBitBuffer", "pc_count": 6, "scenario_count": 23 },
+    { "address": "0x001B391E", "name": "TerrainResource_BuildDecodeTable", "pc_count": 4, "scenario_count": 23 },
+    { "address": "0x001E573A", "name": "Audio_LoadZ80Driver", "pc_count": 2, "scenario_count": 38 }
+  ],
+  "conclusion": "The promoted names are not new semantic guesses: each already had a canonical body and static contract, and the imported coverage repeatedly observed its entry point. The promotion records runtime reachability only; exact behavior and parity confidence remain governed by each symbol's existing evidence and later targeted traces. Single-hit or single-scenario observations were intentionally left decompiled."
+}
