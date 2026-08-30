@@ -59,6 +59,8 @@ def test_layout_candidates_join_decoder_and_actor_template_pointer_evidence(tmp_
     assert item["confidence"] == "high"
     assert item["evidence_counts"] == {
         "direct_references": 1,
+        "code_backed_references": 1,
+        "data_only_references": 0,
         "decoded_streams": 1,
         "vm_probes": 0,
         "boundary_conflicts": 0,
@@ -88,3 +90,48 @@ def test_layout_candidates_identify_dense_pointer_reference_gaps(tmp_path):
 
     assert len(items) == 1
     assert items[0]["suggested_class"] == "POINTER_TABLE"
+    assert items[0]["confidence"] == "low"
+    assert items[0]["evidence_counts"]["code_backed_references"] == 0
+    assert items[0]["evidence_counts"]["data_only_references"] == 8
+
+
+def test_layout_candidates_rank_code_backed_references_above_data_only_hits(tmp_path):
+    database = _database(tmp_path)
+    xrefs = [
+        {
+            "from": f"0x{0x80 + index * 2:08X}",
+            "to": f"0x{0x10 + index:08X}",
+            "type": "DATA",
+        }
+        for index in range(8)
+    ]
+    xrefs.extend(
+        {
+            "from": f"0x{0xA0 + index * 2:08X}",
+            "from_function_name": "DecodeResource",
+            "to": f"0x{0x50 + index:08X}",
+            "type": "DATA",
+            "instruction": "move.l",
+        }
+        for index in range(8)
+    )
+    (database / "xrefs.json").write_text(json.dumps({"references": xrefs}), encoding="utf-8")
+    layout = Layout(
+        rom_size=0x100,
+        ranges=(
+            LayoutRange(0x00, 0x1F, "UNKNOWN", "layout.gap"),
+            LayoutRange(0x20, 0x3F, "CODE", "test"),
+            LayoutRange(0x40, 0x5F, "UNKNOWN", "layout.gap"),
+            LayoutRange(0x60, 0xFF, "CODE", "test"),
+        ),
+    )
+
+    items = build_layout_candidates(AnalysisDatabase(database), layout, root=tmp_path)
+
+    assert [item["gap"]["start"] for item in items] == [
+        "0x00000040",
+        "0x00000000",
+    ]
+    assert items[0]["score"] > items[1]["score"]
+    assert items[0]["evidence_counts"]["code_backed_references"] == 8
+    assert items[1]["evidence_counts"]["data_only_references"] == 8

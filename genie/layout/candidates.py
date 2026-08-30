@@ -296,6 +296,11 @@ def build_layout_candidates(
             "type": reference.get("type"),
             "from_function": reference.get("from_function_name") or reference.get("from_function"),
             "instruction": reference.get("instruction"),
+            "code_backed": bool(
+                reference.get("from_function_name")
+                or reference.get("from_function")
+                or reference.get("instruction")
+            ),
         }
         by_start[gap.start]["evidence"].append(row)
         by_start[gap.start]["proposed_ranges"].append({
@@ -359,6 +364,8 @@ def build_layout_candidates(
         item = by_start[gap.start]
         evidence = item["evidence"]
         direct = [row for row in evidence if row["kind"] == "direct_reference"]
+        code_direct = [row for row in direct if row.get("code_backed")]
+        data_only_direct = [row for row in direct if not row.get("code_backed")]
         streams = [row for row in evidence if row["kind"] in {"decoded_stream", "vm_probe"}]
         catalogued_streams = [row for row in evidence if row["kind"] == "decoded_stream"]
         probes = [row for row in evidence if row["kind"] == "vm_probe"]
@@ -383,13 +390,26 @@ def build_layout_candidates(
                 suggested_class = "OPAQUE_DATA"
         else:
             suggested_class = "UNKNOWN"
-        confidence = "high" if catalogued_streams or templates else "medium"
+        if catalogued_streams or templates:
+            confidence = "high"
+        elif code_direct:
+            confidence = "medium"
+        elif direct:
+            confidence = "low"
+        else:
+            confidence = "medium"
+        function_sources = {
+            row.get("from_function")
+            for row in code_direct
+            if row.get("from_function")
+        }
         score = (
             len(catalogued_streams) * 1000
             + len(probes) * 600
             + len(templates) * 750
-            + min(len(direct), 100) * 5
-            + len({row.get("from_function") for row in direct}) * 10
+            + min(len(code_direct), 100) * 5
+            + min(len(data_only_direct), 100)
+            + len(function_sources) * 10
             + (25 if gap.size <= 256 else 0)
             - len(boundary_conflicts) * 100
         )
@@ -404,6 +424,10 @@ def build_layout_candidates(
             reasons.append("decoder_crosses_layout_boundary")
         if direct:
             reasons.append("incoming_ghidra_references")
+        if code_direct:
+            reasons.append("code_backed_references")
+        if data_only_direct:
+            reasons.append("data_only_references")
         result.append({
             "rank": 0,
             "score": score,
@@ -412,6 +436,8 @@ def build_layout_candidates(
             "confidence": confidence,
             "evidence_counts": {
                 "direct_references": len(direct),
+                "code_backed_references": len(code_direct),
+                "data_only_references": len(data_only_direct),
                 "decoded_streams": len(catalogued_streams),
                 "vm_probes": len(probes),
                 "boundary_conflicts": len(boundary_conflicts),

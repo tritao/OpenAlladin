@@ -141,7 +141,9 @@ def command_layout_candidates(args: argparse.Namespace) -> int:
             f"{counts['decoded_streams']} decoded, "
             f"{counts['vm_probes']} probes, "
             f"{counts['boundary_conflicts']} boundary conflicts, "
-            f"{counts['direct_references']} refs"
+            f"{counts['direct_references']} refs "
+            f"({counts['code_backed_references']} code, "
+            f"{counts['data_only_references']} data-only)"
         )
         print(
             f"{item['rank']:>4} {item['score']:>5} "
