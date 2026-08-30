@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-semantic-review-pair-runtime-audit-v1",
+  "recorded_at": "2026-08-30",
+  "repository_commit_at_capture": "28c1cb2",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Exercise the unindexed Type-0x5E/Type-0x84 paired-spawn producer and inspect all actor-template initializations from the existing upper-response checkpoint.",
+  "checkpoint": "build/re/analysis/20260826-level01-canonical-recording-v6/upper-activation-canonical/states/genesis/actor-pair.sta",
+  "probes": [
+    {
+      "name": "semantic-type5e84-pair-loaded",
+      "trace": "build/re/traces/semantic-type5e84-pair-loaded",
+      "frames": 300,
+      "input": "none",
+      "breakpoints": ["0x001B69A6"],
+      "hits": 0,
+      "result": "The compatible upper-response checkpoint does not execute the unindexed Type-0x5E/Type-0x84 paired-spawn producer during this settled window."
+    },
+    {
+      "name": "semantic-actor-init-pair-loaded",
+      "trace": "build/re/traces/semantic-actor-init-pair-loaded",
+      "frames": 900,
+      "input": "none",
+      "actor_initializer": "0x001AE30A",
+      "initialized_templates": [
+        "0x001B7A44 ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84",
+        "0x001B7D28 ACTOR_TEMPLATE_MENU_TYPE_84",
+        "0x001B846C ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY"
+      ],
+      "unresolved_template_hits": 0,
+      "result": "No initialization of the unresolved Type-5E/Type-0x84 pair templates or other open template records was observed."
+    }
+  ],
+  "limitations": [
+    "The checkpoint and 900-frame settled replay cover one upper-response route only.",
+    "No global dead-code or unreachable-data conclusion is made from these negative observations."
+  ],
+  "conclusion": "This checkpoint does not select the unindexed paired-spawn handler or its movement bank. The next useful probe must begin at a later-level or presentation selector that can publish the unresolved interaction row, not another replay of this upper-response state."
+}
