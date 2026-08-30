@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-actor-slot-status-flags-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "record": {
+    "base": "0x00FF7E40 ACTOR_TABLE_BASE",
+    "stride": "0x42",
+    "status_offset": "0x3C"
+  },
+  "fields": [
+    {
+      "address": "0x00FF7EBE",
+      "name": "ACTOR_SLOT_1_STATUS_FLAGS",
+      "slot": 1,
+      "offset": "0x3C",
+      "width": 1,
+      "consumer": "Actor_TerrainCollisionLoop at 0x001ADB7C tests bit 3",
+      "shared_writers": "ActorVM callbacks manipulate lifecycle bits through the actor-record base"
+    },
+    {
+      "address": "0x00FF7F00",
+      "name": "ACTOR_SLOT_2_STATUS_FLAGS",
+      "slot": 2,
+      "offset": "0x3C",
+      "width": 1,
+      "consumer": "Actor_TerrainCollisionLoop applies the same status-field contract to slot 2"
+    }
+  ],
+  "shared_bit_contract": {
+    "bit_2": "tested by ActorVM_F6/8C destroy handling",
+    "bit_3": "tested by Actor_TerrainCollisionLoop before terrain processing",
+    "bit_4": "set/cleared by ActorVM callback entries",
+    "bit_5": "set/cleared by ActorVM callback entries"
+  },
+  "evidence": [
+    "ghidra_actor_table_layout",
+    "ghidra_disassembly_001ADB5C",
+    "actor_animation_callback_family_static_v1",
+    "actor_vm_lifecycle_static_decompilation"
+  ],
+  "limitations": [
+    "The fixed addresses are views onto the shared actor-record status field.",
+    "The bit roles are shared contract evidence; no actor-specific presentation meaning is assigned."
+  ],
+  "conclusion": "Fixed slot-one and slot-two status/lifecycle flag bytes now resolve to the shared actor-record +0x3C field contract."
+}

@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-slot-status-flags-static-targets.json",
+  "promoted_symbols": [
+    "ACTOR_SLOT_1_STATUS_FLAGS",
+    "ACTOR_SLOT_2_STATUS_FLAGS"
+  ],
+  "contract": "Both aliases expose the +0x3C status/lifecycle byte in fixed common actor records. Terrain processing tests the field, and shared actor VM callbacks and retirement paths manipulate its lifecycle bits.",
+  "limitations": [
+    "The names intentionally stop at the shared status/lifecycle contract; actor-specific flag meanings remain encoded by the common VM and terrain services."
+  ],
+  "conclusion": "The remaining fixed actor-record status references now have canonical names consistent with the established +0x3C field contract."
+}

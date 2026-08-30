@@ -2806,3 +2806,26 @@
     - ghidra_actor_table_layout
     - ghidra_disassembly_001AB7C4
     - ghidra_disassembly_001A8F0C
+
+0xFF7EBE:
+  name: ACTOR_SLOT_1_STATUS_FLAGS
+  type: u8
+  format: bitfield
+  confidence: decompiled
+  description: Actor-table slot 1 status/lifecycle flags at offset +0x3C. Actor_TerrainCollisionLoop tests bit 3 before terrain processing, while the shared actor VM callbacks and destroy path use neighboring bits for actor lifecycle state.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001ADB5C
+    - actor_animation_callback_family_static_v1
+    - actor_vm_lifecycle_static_decompilation
+
+0xFF7F00:
+  name: ACTOR_SLOT_2_STATUS_FLAGS
+  type: u8
+  format: bitfield
+  confidence: decompiled
+  description: Actor-table slot 2 status/lifecycle flags at offset +0x3C. Actor_TerrainCollisionLoop applies the same shared actor-record status contract to this fixed presentation slot.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001ADB5C
+    - actor_animation_callback_family_static_v1

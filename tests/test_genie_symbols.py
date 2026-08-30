@@ -932,6 +932,7 @@ def test_real_actor_slot_one_fields_have_canonical_roles():
         0x00FF7E89: ("ACTOR_SLOT_1_STATE_FLAGS", "bitfield", "decompiled"),
         0x00FF7E8B: ("ACTOR_SLOT_1_FACING_X_FLIP", "boolean", "decompiled"),
         0x00FF7E8C: ("ACTOR_SLOT_1_MOVEMENT_PC", "rom_pointer", "decompiled"),
+        0x00FF7EBE: ("ACTOR_SLOT_1_STATUS_FLAGS", "bitfield", "decompiled"),
         0x00FF7E96: ("ACTOR_SLOT_1_FRAME_PTR", "rom_pointer", "confirmed"),
         0x00FF7EA2: ("ACTOR_SLOT_1_ANIMATION_PC", "rom_pointer", "decompiled"),
     }
@@ -950,6 +951,7 @@ def test_real_actor_slot_two_fields_and_transition_option_have_canonical_roles()
         0x00FF7ECB: ("ACTOR_SLOT_2_STATE_FLAGS", "bitfield", "decompiled"),
         0x00FF7ECD: ("ACTOR_SLOT_2_FACING_X_FLIP", "boolean", "decompiled"),
         0x00FF7ECE: ("ACTOR_SLOT_2_MOVEMENT_PC", "rom_pointer", "decompiled"),
+        0x00FF7F00: ("ACTOR_SLOT_2_STATUS_FLAGS", "bitfield", "decompiled"),
         0x00FF7ED8: ("ACTOR_SLOT_2_FRAME_PTR", "rom_pointer", "confirmed"),
         0x00FF7EE4: ("ACTOR_SLOT_2_ANIMATION_PC", "rom_pointer", "decompiled"),
         0x00FF7273: ("SCENE_TRANSITION_OPTION_3_ENABLED", "boolean", "decompiled"),
