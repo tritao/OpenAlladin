@@ -423,6 +423,13 @@ def test_player_type3e_3f_response_has_behavior_names_and_legacy_aliases():
         assert legacy in symbol.aliases
 
 
+def test_player_type62_63_settle_has_behavior_name_and_legacy_alias():
+    symbol = SymbolStore().at(0x001AF81C, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "PlayerCollision_SettleType62Response"
+    assert "ActorType62_63_PlayerCollisionHandler" in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-player-type62-63-settle-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace the type-only label for the shared Type-0x62/0x63 player-collision settling path.",
+  "promotion": {
+    "address": "0x001AF81C",
+    "old_name": "ActorType62_63_PlayerCollisionHandler",
+    "name": "PlayerCollision_SettleType62Response",
+    "alias": "ActorType62_63_PlayerCollisionHandler",
+    "range": ["0x001AF81C", "0x001AF893"],
+    "contract": {
+      "dispatch": "Shared player-collision entry for actor types 0x62 and 0x63",
+      "eligibility": "Requires eligible terrain response and actor collision flag bit 0x10",
+      "settling": "Snaps PLAYER_Y to actor Y minus WORLD_CAMERA_Y within a 10-pixel window",
+      "transition": "Promotes Type-0x62 to Type-0x63, installs ACTOR_MOVE_TYPE62_63_PLAYER_COLLISION_RESPONSE, and optionally queues audio command 0x45",
+      "rejection": "Raises the collision-response suppress flag when the contact cannot settle"
+    },
+    "evidence": [
+      "Exact 120-byte body ending at RTS 0x001AF892",
+      "Direct terrain/actor-flag eligibility and 10-pixel Y-window comparison",
+      "Direct Type-0x63 promotion, movement-root, audio, and suppress-flag writes"
+    ]
+  },
+  "conclusion": "The promoted name identifies the Type-0x62 to Type-0x63 settling transition while retaining the shared dispatch-type alias.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

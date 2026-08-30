@@ -2552,10 +2552,11 @@
     - ghidra_disassembly_001AF7F2
     - player_collision_actor_relative_placement_family_static_decompilation
 0x001AF81C:
-  name: ActorType62_63_PlayerCollisionHandler
+  name: PlayerCollision_SettleType62Response
+  aliases: [ActorType62_63_PlayerCollisionHandler]
   size: 120
   confidence: decompiled
-  description: Shared player-collision handler for runtime actor types 0x62 and 0x63. It snaps PLAYER_Y to actor Y minus WORLD_CAMERA_Y within a 10-pixel window; type 0x62 is converted to type 0x63 with movement root ACTOR_MOVE_TYPE62_63_PLAYER_COLLISION_RESPONSE at 0x00121598, and optionally queues event-0x45 audio.
+  description: Shared player-collision Type-0x62/0x63 settling path. When terrain response is eligible and the actor has collision flag bit 0x10, it snaps PLAYER_Y to actor Y minus WORLD_CAMERA_Y within a 10-pixel window; a Type-0x62 actor is promoted to Type-0x63 with movement root ACTOR_MOVE_TYPE62_63_PLAYER_COLLISION_RESPONSE at 0x00121598 and optionally queues audio command 0x45, while rejected contacts raise the collision-response suppress flag.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF81C
