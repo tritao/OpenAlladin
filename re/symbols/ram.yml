@@ -1486,6 +1486,16 @@
     - ghidra_disassembly_001A92C6
     - ghidra_disassembly_001A92D4
     - ghidra_disassembly_001AA3CE
+0xFFF122:
+  name: SCENE_RESOURCE_REBUILD_PHASE_COUNTER
+  type: u8
+  format: countdown
+  confidence: decompiled
+  description: Remaining scene-resource rebuild phases. SceneResource_RebuildAfterInteraction initializes it to 0x28, derives the four-frame phase delay from it, and decrements it after each completed resource/VDP/audio phase while preserving the terminal value 1.
+  evidence:
+    - ghidra_disassembly_001B1842
+    - ghidra_disassembly_001B18A4
+    - ghidra_disassembly_001B19AE
 0xFF98C4:
   name: TERRAIN_LANDING_ROW_POINTERS
   type: pointer_table

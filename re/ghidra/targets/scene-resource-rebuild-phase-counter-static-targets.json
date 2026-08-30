@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-scene-resource-rebuild-phase-counter-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the scene-resource rebuild counter that controls the repeated resource/VDP/audio phase loop.",
+  "consumer": {
+    "address": "0x001B16E0",
+    "name": "SceneResource_RebuildAfterInteraction",
+    "initialize": "0x001B1842 stores 0x28 before the repeated phase loop.",
+    "derive_phase_delay": "0x001B18A4 shifts the counter right by two and publishes the derived delay to the neighboring phase-delay byte.",
+    "decrement": "0x001B19AE subtracts one after a completed resource/VDP/audio phase unless the counter is already 1."
+  },
+  "state": {
+    "initial_value": "0x28",
+    "terminal_value": "0x01",
+    "derived_delay": "SCENE_RESOURCE_REBUILD_PHASE_COUNTER >> 2"
+  },
+  "evidence": [
+    "Exact SceneResource_RebuildAfterInteraction instruction flow",
+    "Initialization, derived-delay publication, and guarded decrement sites",
+    "Counter is consumed only by the scene-resource rebuild phase loop"
+  ],
+  "conclusion": "FFF122 is the remaining phase count for the scene-resource rebuild sequence, distinct from the neighboring per-phase delay and completion gates.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

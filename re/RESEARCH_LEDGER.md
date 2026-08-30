@@ -878,6 +878,12 @@ completion. The Z80 status-bit-5 retry branch clears it and loops back through
 the VBlank wait, while startup clears it at initialization. This is distinct
 from `FRAME_WAIT_LATCH` and `VBLANK_READY_LATCH`.
 
+The scene-resource rebuild phase count is now named
+`SCENE_RESOURCE_REBUILD_PHASE_COUNTER` at `FFF122`. The rebuild loop initializes
+it to `0x28`, derives the neighboring four-frame phase delay by shifting it right
+two bits, and decrements it after each completed resource/VDP/audio phase while
+preserving the terminal value `1`.
+
 The adjacent compact scene-resource loader variants are recorded in
 `re/mame/findings/20260828-scene-resource-loader-variants-v1.json`.
 `0x001B4896`, `0x001B48C4`, and `0x001B48F2` load exact two-resource VRAM
