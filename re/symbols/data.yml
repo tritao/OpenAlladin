@@ -4148,11 +4148,11 @@
     - movement_stream_decoder
 
 0x001215D8:
-  name: ACTOR_MOVE_UNINDEXED_STEP_LOOP_001215D8
+  name: ACTOR_MOVE_UNIT_VERTICAL_STEP_LOOP
   type: movement_stream
   size: 8
-  confidence: provisional
-  description: Provisional eight-byte movement entry containing a (+0, +1) step and an unconditional self-loop at 0x001215DA. It is separated from the Type-0x62/0x63 player-collision owner and ACTOR_MOVE_TYPE29_PLAYER_COLLISION_RESPONSE; no direct producer reference has been recovered.
+  confidence: decompiled
+  description: Exact eight-byte MovementVM entry containing a (+0, +1) unit vertical step and an unconditional self-loop at 0x001215DA. It is separated from the Type-0x62/0x63 player-collision owner and ACTOR_MOVE_TYPE29_PLAYER_COLLISION_RESPONSE; no direct producer reference has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
     - movement_stream_decoder
