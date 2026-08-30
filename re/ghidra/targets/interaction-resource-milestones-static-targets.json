@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-interaction-resource-milestones-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the difficulty-selected ASCII interaction/resource thresholds and their scene-resource mode destinations.",
+  "progress": {
+    "address": "0x00FF7E38",
+    "name": "INTERACTION_RESOURCE_PROGRESS_COUNTER"
+  },
+  "owner": {
+    "address": "0x001B01AC",
+    "name": "Interaction_UpdateResourceState"
+  },
+  "thresholds": [
+    {
+      "address": "0x00FF7E12",
+      "name": "INTERACTION_RESOURCE_MODE_1B_MILESTONE",
+      "type": "u8[4]",
+      "values_by_difficulty": {"0": "006", "1": "008", "2+": "010"},
+      "consumer": "When INTERACTION_RESOURCE_PROGRESS_COUNTER equals this word, enter scene-resource mode 0x1B."
+    },
+    {
+      "address": "0x00FF7E16",
+      "name": "INTERACTION_RESOURCE_MODE_1C_MILESTONE",
+      "type": "u8[4]",
+      "values_by_difficulty": {"0": "003", "1": "006", "2+": "009"},
+      "consumer": "When INTERACTION_RESOURCE_PROGRESS_COUNTER equals this word, enter scene-resource mode 0x1C."
+    }
+  ],
+  "producer": {
+    "address": "0x001AA484",
+    "name": "Level_LoadFromSceneState",
+    "operation": "Select both four-byte ASCII thresholds from GAME_DIFFICULTY_MODE."
+  },
+  "evidence": [
+    "Exact threshold stores at 0x001AA60E-0x001AA654",
+    "Exact mode-1C comparison/dispatch at 0x001B01F8-0x001B022E",
+    "Exact mode-1B comparison/dispatch at 0x001B023C-0x001B0270"
+  ],
+  "conclusion": "FF7E12 and FF7E16 are difficulty-selected ASCII milestones for the interaction/resource progress state machine, distinguished by their scene-resource mode targets.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

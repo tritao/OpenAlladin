@@ -224,6 +224,32 @@
     - ghidra_disassembly_001B003A
     - ghidra_disassembly_001B01AC
     - ghidra_interaction_resource_progress_targets
+0xFF7E12:
+  name: INTERACTION_RESOURCE_MODE_1B_MILESTONE
+  type: u8[4]
+  format: ascii_milestone
+  confidence: decompiled
+  description: Four-byte ASCII interaction/resource threshold selected by Level_LoadFromSceneState from GAME_DIFFICULTY_MODE. Interaction_UpdateResourceState compares INTERACTION_RESOURCE_PROGRESS_COUNTER against it and enters scene-resource mode 0x1B when equal.
+  evidence:
+    - ghidra_decompile_001AA484
+    - ghidra_decompile_001B01AC
+    - ghidra_disassembly_001AA60E
+    - ghidra_disassembly_001AA62C
+    - ghidra_disassembly_001AA64A
+    - ghidra_disassembly_001B023C
+0xFF7E16:
+  name: INTERACTION_RESOURCE_MODE_1C_MILESTONE
+  type: u8[4]
+  format: ascii_milestone
+  confidence: decompiled
+  description: Four-byte ASCII interaction/resource threshold selected by Level_LoadFromSceneState from GAME_DIFFICULTY_MODE. Interaction_UpdateResourceState compares INTERACTION_RESOURCE_PROGRESS_COUNTER against it and enters scene-resource mode 0x1C when equal.
+  evidence:
+    - ghidra_decompile_001AA484
+    - ghidra_decompile_001B01AC
+    - ghidra_disassembly_001AA618
+    - ghidra_disassembly_001AA636
+    - ghidra_disassembly_001AA654
+    - ghidra_disassembly_001B01F8
 0xFFF155:
   name: TERRAIN_QUERY_INPUT_RAW
   type: u8

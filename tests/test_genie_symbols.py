@@ -687,6 +687,21 @@ def test_real_hud_interaction_frame_cursor_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_interaction_resource_milestones_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FF7E12: "INTERACTION_RESOURCE_MODE_1B_MILESTONE",
+        0x00FF7E16: "INTERACTION_RESOURCE_MODE_1C_MILESTONE",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["type"] == "u8[4]"
+        assert symbol.metadata["format"] == "ascii_milestone"
+        assert symbol.confidence == "decompiled"
+
+
 def test_real_interaction_coordinate_scratch_has_canonical_roles():
     symbols = SymbolStore()
     expected = {
