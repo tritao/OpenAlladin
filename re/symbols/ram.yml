@@ -309,6 +309,52 @@
     - ghidra_camera_scroll_refill
     - ghidra_interaction_dispatch_callers
     - ghidra_level01_interaction_inventory
+0xFF7DB0:
+  name: INTERACTION_HANDLER_X
+  type: u16
+  format: coordinate
+  confidence: decompiled
+  description: Current world-X coordinate passed to an interaction handler. The horizontal and vertical interaction-row processors publish the aligned camera coordinate for each dispatched row entry, and the generic interaction spawners add INTERACTION_SPAWN_X_OFFSET before storing the actor position.
+  evidence:
+    - ghidra_disassembly_001AE420
+    - ghidra_disassembly_001AE4DE
+    - ghidra_disassembly_001B5278
+    - ghidra_disassembly_001B52B2
+0xFF7DB2:
+  name: INTERACTION_HANDLER_Y
+  type: u16
+  format: coordinate
+  confidence: decompiled
+  description: Current world-Y coordinate passed to an interaction handler. The horizontal and vertical interaction-row processors publish the aligned camera coordinate for each dispatched row entry, and the generic interaction spawners add INTERACTION_SPAWN_Y_OFFSET before storing the actor position.
+  evidence:
+    - ghidra_disassembly_001AE462
+    - ghidra_disassembly_001AE4A2
+    - ghidra_disassembly_001B5288
+    - ghidra_disassembly_001B52C2
+0xFFF150:
+  name: INTERACTION_SPAWN_X_OFFSET
+  type: u16
+  format: coordinate_offset
+  confidence: decompiled
+  description: X offset applied by the generic interaction spawners to INTERACTION_HANDLER_X. The row-processing wrappers initialize it to -0x10 before dispatching their interaction windows.
+  evidence:
+    - ghidra_disassembly_001AE3FC
+    - ghidra_disassembly_001AE406
+    - ghidra_disassembly_001AE490
+    - ghidra_disassembly_001B5278
+    - ghidra_disassembly_001B52B2
+0xFFF152:
+  name: INTERACTION_SPAWN_Y_OFFSET
+  type: u16
+  format: coordinate_offset
+  confidence: decompiled
+  description: Y offset applied by the generic interaction spawners to INTERACTION_HANDLER_Y. The row-processing wrappers initialize it to 0xF0 before dispatching their interaction windows.
+  evidence:
+    - ghidra_disassembly_001AE40E
+    - ghidra_disassembly_001AE47E
+    - ghidra_disassembly_001AE488
+    - ghidra_disassembly_001B5288
+    - ghidra_disassembly_001B52C2
 0xFFF15B:
   name: SOUND_TEST_INPUT_REPEAT_TIMER
   type: u8

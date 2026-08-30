@@ -642,6 +642,23 @@ def test_real_interaction_row_pointer_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_interaction_coordinate_scratch_has_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FF7DB0: ("INTERACTION_HANDLER_X", "coordinate"),
+        0x00FF7DB2: ("INTERACTION_HANDLER_Y", "coordinate"),
+        0x00FFF150: ("INTERACTION_SPAWN_X_OFFSET", "coordinate_offset"),
+        0x00FFF152: ("INTERACTION_SPAWN_Y_OFFSET", "coordinate_offset"),
+    }
+    for address, (name, format_name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["type"] == "u16"
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == "decompiled"
+
+
 def test_real_level_timer_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF103, include_ranges=False)
     assert symbol is not None
