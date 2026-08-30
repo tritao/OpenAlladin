@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-system-exception-vector-table-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "table": {
+    "address": "0x00000000",
+    "name": "SYSTEM_EXCEPTION_VECTOR_TABLE",
+    "range": ["0x00000000", "0x000000FF"],
+    "size": 256,
+    "entry_size": 4,
+    "count": 64,
+    "reset_stack": "0x00FFEFD8",
+    "reset_entry": "0x0000021A",
+    "vblank_vector": "0x001B246E",
+    "level4_vector": "0x001B249C"
+  },
+  "boundary_basis": [
+    "The Genesis 68000 vector table occupies 64 four-byte entries from ROM offset 0 through 0xFF.",
+    "The initial stack pointer and reset entry match the bootstrap code at 0x0000021A.",
+    "The populated interrupt vectors resolve to the known VBlank, Level-4, spurious, and exception handlers; the reserved tail is zero-filled."
+  ],
+  "confidence": "confirmed",
+  "status": "recorded-static-disassembly"
+}

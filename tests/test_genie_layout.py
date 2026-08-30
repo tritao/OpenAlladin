@@ -412,6 +412,24 @@ def test_menu_scene_and_input_data_extents_are_exact():
     assert rom[0x4152:0x4154] == bytes.fromhex("FF00")
 
 
+def test_canonical_exception_vector_table_has_complete_rom_header_extent():
+    symbols = SymbolStore()
+    table = symbols.at(0x00000000, include_ranges=False)
+    assert table is not None
+    assert table.name == "SYSTEM_EXCEPTION_VECTOR_TABLE"
+    assert table.end == 0x000000FF
+    assert table.size == 0x100
+    assert table.metadata["type"] == "rom_pointer_table"
+    assert table.metadata["entry_size"] == 4
+    assert table.metadata["count"] == 64
+
+    rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert int.from_bytes(rom[0x00:0x04], "big") == 0x00FFEFD8
+    assert int.from_bytes(rom[0x04:0x08], "big") == 0x0000021A
+    assert int.from_bytes(rom[0x70:0x74], "big") == 0x001B249C
+    assert rom[0xC0:0x100] == bytes(0x40)
+
+
 def test_interaction_counter_animation_table_and_bank_are_exact():
     symbols = SymbolStore()
     table = symbols.at(0x00004A58, include_ranges=False)

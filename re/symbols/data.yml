@@ -1,5 +1,18 @@
 # Address-keyed data knowledge. Hardware names are deliberately explicit so
 # both Ghidra and MAME can use the same names.
+0x00000000:
+  name: SYSTEM_EXCEPTION_VECTOR_TABLE
+  type: rom_pointer_table
+  entry_size: 4
+  count: 64
+  size: 0x100
+  confidence: confirmed
+  description: Complete 64-entry 68000 exception and interrupt vector table at the ROM origin. It contains the initial stack pointer, reset entry, reset-bootstrap handler vectors, interrupt vectors, and reserved zero vectors through 0x000000FF.
+  evidence:
+    - genesis_vector_table_header
+    - gnu_m68k_disassembly_0000021A
+    - rom_header_vector_extent_static_v1
+
 0x000006AE:
   name: SPRITE_FRAME_POINTER_TABLE
   type: rom_pointer_table
