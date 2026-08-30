@@ -318,6 +318,21 @@ class DataIndex:
                     # entry) visible; collapse only anonymous interior
                     # fragments.
                     item_end = item.end
+                    validated_layout_owner = (
+                        item.source == "ghidra.defined_data"
+                        and any(
+                            owner.source in LAYOUT_SOURCE_CONFIDENCE
+                            and owner.start <= item.start
+                            and item_end <= owner.end
+                            and (
+                                owner.start != item.start
+                                or owner.end != item_end
+                            )
+                            for owner in self.layout.ranges
+                        )
+                    )
+                    if validated_layout_owner:
+                        continue
                     covered = any(
                         _address(candidate["start"]) <= item.start
                         and item_end <= _address(candidate["end"])
