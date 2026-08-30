@@ -10,7 +10,7 @@
     "address": "0x001B69A6",
     "range": ["0x001B69A6", "0x001B69FF"],
     "size": 90,
-    "name": "InteractionSpawn_Type5E84Pair_Unindexed",
+    "name": "InteractionSpawn_Type5E84Pair_AnchorResponse",
     "behavior": "Allocates the established Type-0x5E base and Type-0x84 companion, installs 0x0011FAA8 into the base movement field, and publishes the companion anchor at (base X - 0x20, base Y + 0x40).",
     "reachability": "No active INTERACTION_HANDLER_TABLE entry currently targets this body."
   },
