@@ -268,12 +268,13 @@
     - ghidra_transition_render_targets
 0x001B28AE:
   name: Frame_RunServicePass
-  confidence: decompiled
+  confidence: trace_validated
   description: Advances FRAME_PHASE_COUNTER, services MovementVM and AnimationVM, builds actor-only render records, waits for VBlank, and submits actor and player sprites.
   evidence:
     - ghidra_decompile_001B28AE
     - ghidra_transition_resource_lifecycle
     - ghidra_transition_render_targets
+    - expanded_runtime_coverage_20260830
 0x001B2916:
   name: Render_ApplyPaletteStep
   confidence: decompiled
@@ -3046,12 +3047,13 @@
     - actor_spawn_mode_static_decompilation
 0x001AD3E8:
   name: Actor_AllocateSpriteVRAM
-  confidence: decompiled
+  confidence: trace_validated
   description: Allocates a contiguous actor-owned sprite-resource run from the first 0x74 occupancy bytes at 0x00FFF008. It marks resource_count+1 bytes, stores the run pointer at actor offset +0x2A, and selects the corresponding 0x80-byte VRAM base from ACTOR_SPRITE_VRAM_BASE_TABLE at 0x0011F500 into actor offset +0x2E; when no run fits, it publishes and clears the current actor and any linked actor.
   evidence:
     - ghidra_decompile_001AD3E8
     - ghidra_animation_vm_core_001AC796
     - ghidra_actor_resource_clear_contract
+    - expanded_runtime_coverage_20260830
 0x001ACB7A:
   name: ActorEvent_SetFlag20
   confidence: confirmed
@@ -4336,12 +4338,13 @@
     - expanded_runtime_coverage_20260830
 0x001AC89A:
   name: ActorVM_WriteActorOrRamValue
-  confidence: decompiled
+  confidence: trace_validated
   description: Shared actor-VM write handler for animation opcode ED and movement opcode 83; selects actor-relative or absolute addressing, chooses byte/word/long width, and writes the following stream value.
   evidence:
     - ghidra_disassembly_001AC89A
     - actor_vm_dispatch_family_targets
     - actor_vm_dispatch_family_static_decompilation
+    - expanded_runtime_coverage_20260830
 0x001AC8E0:
   name: ActorVM_SetStreamTimerAndLoop
   confidence: trace_validated
