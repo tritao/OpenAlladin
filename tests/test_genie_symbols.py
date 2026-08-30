@@ -259,6 +259,33 @@ def test_symbol_review_queue_ignores_closed_range_owners(tmp_path):
     assert [item["address"] for item in queue] == ["0x00000020"]
 
 
+def test_symbol_review_queue_ignores_closed_data_owners(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    queue = symbol_review_queue(
+        AnalysisDatabase(database_root),
+        SymbolStore(symbols=(
+            Symbol(
+                0x10,
+                "DuplicatePaletteBand",
+                "data",
+                confidence="decompiled",
+                description="Exact duplicate; no direct consumer remains open.",
+                metadata={"review_status": "closed"},
+            ),
+            Symbol(
+                0x20,
+                "UnresolvedPaletteBand",
+                "data",
+                confidence="decompiled",
+                description="No direct consumer remains open.",
+            ),
+        )),
+    )
+
+    assert [item["address"] for item in queue] == ["0x00000020"]
+
+
 def test_context_combines_function_references_and_layout(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

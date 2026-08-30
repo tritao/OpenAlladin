@@ -58,6 +58,7 @@
   type: vdp_control_word
   size: 8
   confidence: decompiled
+  review_status: open
   description: Two exact adjacent sprite-area VDP control words 0x60000003 and 0x40000003 after PLAYER_SPRITE_VDP_CONTROL_WORD and before PLAYER_COLLISION_HANDLER_TABLE. Their encoding and boundary are decoded from the neighboring player-sprite control word; no direct consumer or specific renderer path is claimed.
   evidence:
     - unreferenced_sprite_vdp_control_words_static_v1
@@ -1357,6 +1358,7 @@
   size: 0x0A
   count: 3
   confidence: decompiled
+  review_status: closed
   description: Exact ten-byte ASCII text object containing the NUL-terminated labels "30", "60", and "90" immediately after SCENE_RESOURCE_MODE_RECORD_TABLE and before LEVEL_RESULT_MESSAGE_TABLE. The text records, terminators, and boundary are fully decoded; no exported consumer or runtime sample references this object, so it is retained as an unreferenced static text asset without assigning a higher-level menu role.
   evidence:
     - scene_resource_mode_record_table_extents_static_v1
@@ -2139,6 +2141,7 @@
   type: palette_data
   size: 0x20
   confidence: decompiled
+  review_status: closed
   duplicate_of: MENU_PALETTE_BAND_SOURCE_129012
   duplicate_address: 0x00129012
   description: Physical 16-word Genesis palette band that is byte-for-byte identical to MENU_PALETTE_BAND_SOURCE_129012 at 0x00129012. No direct consumer or higher-level presentation role is assigned to this duplicate copy.
@@ -2153,6 +2156,7 @@
   type: palette_data
   size: 0x20
   confidence: decompiled
+  review_status: closed
   duplicate_of: SCENE_TRANSITION_PALETTE_SOURCE
   duplicate_address: 0x00129032
   description: Physical 16-word Genesis palette band that is byte-for-byte identical to band 4 at 0x00129032 inside SCENE_TRANSITION_PALETTE_SOURCE. No direct consumer or higher-level presentation role is assigned to this duplicate copy.
@@ -2167,6 +2171,7 @@
   type: palette_data
   size: 0x20
   confidence: decompiled
+  review_status: closed
   duplicate_of: SCENE_RESET_TRANSITION_PALETTE_SOURCE
   duplicate_address: 0x00129E60
   description: Physical 16-word Genesis palette band that is byte-for-byte identical to band 4 at 0x00129E60 inside SCENE_RESET_TRANSITION_PALETTE_SOURCE. No direct consumer or higher-level presentation role is assigned to this duplicate copy.
@@ -2732,6 +2737,7 @@
   duplicate_of: ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE
   duplicate_address: 0x000049A9
   confidence: decompiled
+  review_status: closed
   description: Exact 23-byte physical prefix repeating the four six-byte records of ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE at 0x000049A9. Its fourth record's unused trailing zero is shared with the leading zero byte of SCENE_RESOURCE_COMMAND_TABLE at 0x000049D8, so this owner deliberately stops at 0x000049D7. No exported consumer targets this physical duplicate prefix.
   evidence:
     - actor_frame_phase_child_repeated_tail_static_v1
