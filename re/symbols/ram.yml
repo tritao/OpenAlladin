@@ -369,6 +369,16 @@
   evidence:
     - ghidra_player_animation_selector
     - native_animation_selector_contract
+0xFFF0D3:
+  name: PLAYER_INTERACTION_MARKER
+  type: u8
+  format: enum
+  confidence: decompiled
+  description: Player interaction marker published from the colliding actor type/marker byte and consumed by player terrain, idle-animation, and interaction-anchor paths. Values 0x5E and 0x60 select distinct interaction responses; the full producer domain remains broader than those two cases.
+  evidence:
+    - ghidra_disassembly_001ABB40
+    - player_interaction_response_animation_static
+    - player_idle_animation_static
 0xFFF0D7:
   name: PLAYER_INTERACTION_TRANSITION_LOCK
   type: u8
@@ -387,6 +397,16 @@
     - ghidra_disassembly_001AF21E
     - ghidra_player_animation_selector
     - player_collision_handler_family_extended_static_decompilation
+0xFFF0D9:
+  name: PLAYER_ACTION_RESPONSE_STATE_B
+  type: u8
+  format: enum
+  confidence: decompiled
+  description: Secondary player action-response state tested by Player_TerrainResponseStateMachine and cleared at the start of AnimationVM_RunActorPass. Its direct AnimationVM publisher is not resolved as an absolute RAM write in the current database.
+  evidence:
+    - player_action_state_animation_static
+    - player_vertical_interaction_response_animation_static
+    - ghidra_disassembly_001AC842
 0xFFF0CD:
   name: PLAYER_INTERACTION_MODE
   type: u8
@@ -421,6 +441,25 @@
   evidence:
     - ghidra_memory_reference_player_transition_countdown
     - mame_level_transition_watch
+0xFFF0DE:
+  name: PLAYER_TERRAIN_PUSH_DOWN_STATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Player downward terrain-response state set by Player_TerrainResponseStateMachine when a grounded push-down response starts and cleared when that response converges or a jump begins. It gates locomotion/action selection and the push-down animation response stream.
+  evidence:
+    - player_vertical_interaction_response_animation_static
+    - player_action_state_animation_static
+    - ghidra_decompile_player_movement_collision_targets
+0xFFF0DF:
+  name: PLAYER_TERRAIN_PUSH_UP_STATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Player upward terrain-response state set by Player_TerrainResponseStateMachine when a grounded push-up response starts and cleared when that response converges or a jump begins. It gates terrain/action selection and the push-up animation response stream.
+  evidence:
+    - player_vertical_interaction_response_animation_static
+    - ghidra_decompile_player_movement_collision_targets
 0xFFF0E6:
   name: PLAYER_TERMINAL_TRANSITION
   type: u8
@@ -515,6 +554,16 @@
   evidence:
     - ghidra_unclassified_actor_collision_decompile
     - actor_collision_handler_family_static_decompilation
+0xFFF101:
+  name: PLAYER_TERRAIN_BRAKE_STATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Player terrain-brake latch consumed by Player_TerrainResponseStateMachine to select PLAYER_ANIM_BRAKE after a settled landing; collision, landing, and terrain reset paths clear it. Its direct setter is not recovered as an absolute RAM write in the current database.
+  evidence:
+    - player_landing_response_animation_static
+    - player_vertical_interaction_response_animation_static
+    - ghidra_disassembly_001ABB40
 0xFFF003:
   name: PLAYER_INTERACTION_COUNTER
   type: u8
@@ -1156,6 +1205,46 @@
     - player_terrain_bounce_animation_static_decompilation
     - ghidra_disassembly_001AD7B4
     - ghidra_disassembly_001B557E
+0xFFF0ED:
+  name: PLAYER_TERRAIN_RESPONSE_PHASE
+  type: i8
+  format: enum
+  confidence: decompiled
+  description: Signed player terrain-response phase latch consumed by locomotion/action selection and Player_TerrainResponseStateMachine. Collision/terrain paths arm it for response animation, and the state machine uses signed phases including -3, -1, 1, and 3 before clearing or advancing the response.
+  evidence:
+    - player_vertical_interaction_response_animation_static
+    - player_landing_response_animation_static
+    - player_action_state_animation_static
+0xFFF0EE:
+  name: PLAYER_TERRAIN_RESPONSE_TIMER
+  type: u8
+  format: integer
+  confidence: decompiled
+  description: Short player terrain-response timer loaded with 4 by the type-0x02/0x08/0x09 collision handlers and decremented once per Actor_PlayerCollisionPass; the terrain state machine uses its nonzero state to hold the corresponding response path.
+  evidence:
+    - player_landing_response_animation_static
+    - player_collision_response_entry_family_static_decompilation
+    - ghidra_disassembly_001ABB40
+0xFFF0EF:
+  name: PLAYER_TERRAIN_RESPONSE_LEFT
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Left-direction terrain-response latch set by the shared type-0x08/0x09 player-collision handler, cleared at the start of Actor_PlayerCollisionPass, and consumed by Player_TerrainResponseStateMachine to select the signed horizontal response path.
+  evidence:
+    - player_landing_response_animation_static
+    - player_collision_response_entry_family_static_decompilation
+    - ghidra_disassembly_001ABB40
+0xFFF0F0:
+  name: PLAYER_TERRAIN_RESPONSE_RIGHT
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Right-direction terrain-response latch set by the shared type-0x08/0x09 player-collision handler, cleared at the start of Actor_PlayerCollisionPass, and consumed by Player_TerrainResponseStateMachine to select the signed horizontal response path.
+  evidence:
+    - player_landing_response_animation_static
+    - player_collision_response_entry_family_static_decompilation
+    - ghidra_disassembly_001ABB40
 0xFFF0A4:
   name: TERRAIN_SURFACE_MODE
   type: u16

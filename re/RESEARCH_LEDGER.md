@@ -2264,6 +2264,22 @@ selector contract. The selector byte and its higher-level terrain/contact
 meaning remain decompiled/static; no user-facing action label or new runtime
 claim is made.
 
+## Player terrain-response latch roles (20260830)
+
+The remaining unnamed player response bytes used by the already decoded
+terrain/collision state machine now have conservative canonical roles:
+`PLAYER_INTERACTION_MARKER` at `0x00FFF0D3`, the up/down response states at
+`0x00FFF0DE`/`0x00FFF0DF`, the signed response phase at `0x00FFF0ED`, the
+short response timer at `0x00FFF0EE`, left/right direction latches at
+`0x00FFF0EF`/`0x00FFF0F0`, and the brake latch at `0x00FFF101`.
+
+The names follow exact static producers/consumers and the existing animation
+selector manifests. The interaction marker's `0x5E`/`0x60` cases, the timer's
+four-pass load/decrement behavior, and the signed phase values are recorded;
+direct indirect-VM setters remain unresolved where Ghidra does not export an
+absolute write. No new runtime confidence or user-facing action labels are
+claimed.
+
 ## Secondary interaction counter reset (20260828)
 
 InteractionCounter_ResetSecondaryDigits at `0x001AA664` resets the separate
@@ -3595,6 +3611,7 @@ valuable because it prevents repeating the same input family.
 | `20260830-player-life-counter-runtime-v1` | recorded-runtime-evidence | Added the provisional PLAYER_LIFE_COUNT_DIGIT projection for FF7E3C from its portrait-adjacent HUD record, terminal decrement/zero branch, and independent runtime separation from the apple count; retained GAME_DIFFICULTY_COUNTER as canonical and did not claim native health semantics |
 | `20260830-sprite-vdp-control-word-review-closure-v1` | recorded-negative-runtime-audit | Closed the last open data review item, SPRITE_VDP_CONTROL_WORD_PAIR_1CB6, as an exact structural 8-byte owner after the 1400-frame negative read audit; retained unresolved consumer and reachability as a future reopen condition |
 | `20260830-player-interaction-animation-selector-static-v1` | recorded-static-decompilation | Named PLAYER_INTERACTION_ANIMATION_INDEX at FFF16A and confirmed the exact ten-entry PLAYER_INTERACTION_ANIMATION_TABLE extent and mask-based selector contract; retained the higher-level terrain/contact meaning as decompiled/static |
+| `20260830-player-terrain-response-latches-static-v1` | recorded-static-decompilation | Canonized the interaction marker, vertical push states, signed response phase, short response timer, left/right response latches, and brake latch used by the player terrain/collision state machine; retained indirect-VM setters and higher-level action labels as unresolved |
 | `20260830-type7e-function-boundary-correction-v1` | tooling-validation | Corrected ActorType7E_PlayerCollisionHandler from the stale 358-byte overlapping symbol size to its exact 292-byte body ending at 0x001AFF3F before the separate mode-11 and mode-16 helpers |
 | `20260830-rnc-title-boundary-audit-correction-v2` | tooling-validation | Corrected the RNC manifest end interpretation: its exclusive 0x001434C3 endpoint means the title payload ends at 0x001434C2 and the zero at 0x001434C3 remains alignment padding before the next RNC header at 0x001434C4 |
 | `20260830-scene-resource-stream-boundary-correction-static-v1` | tooling-validation | Corrected SCENE_RESOURCE_BLANK_STREAM_STATE_03 to its 0x00127AEE-0x00127B5F terminator and separated the independently selected 0x00127B60-0x00127BD1 stream |

@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-player-terrain-response-latches-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "consumer": {
+    "address": "0x001A9D98",
+    "name": "Player_TerrainResponseStateMachine"
+  },
+  "ram": [
+    { "address": "0x00FFF0D3", "name": "PLAYER_INTERACTION_MARKER", "role": "published collision/interaction marker; 0x5E and 0x60 have dedicated selector cases" },
+    { "address": "0x00FFF0DE", "name": "PLAYER_TERRAIN_PUSH_DOWN_STATE", "role": "grounded push-down response state" },
+    { "address": "0x00FFF0DF", "name": "PLAYER_TERRAIN_PUSH_UP_STATE", "role": "grounded push-up response state" },
+    { "address": "0x00FFF0ED", "name": "PLAYER_TERRAIN_RESPONSE_PHASE", "role": "signed terrain-response phase" },
+    { "address": "0x00FFF0EE", "name": "PLAYER_TERRAIN_RESPONSE_TIMER", "role": "short response timer loaded with 4 by type-0x02/0x08/0x09 handlers" },
+    { "address": "0x00FFF0EF", "name": "PLAYER_TERRAIN_RESPONSE_LEFT", "role": "left-direction response latch" },
+    { "address": "0x00FFF0F0", "name": "PLAYER_TERRAIN_RESPONSE_RIGHT", "role": "right-direction response latch" },
+    { "address": "0x00FFF101", "name": "PLAYER_TERRAIN_BRAKE_STATE", "role": "brake response latch consumed by the settled-landing path" }
+  ],
+  "evidence": [
+    "player_vertical_interaction_response_animation_static",
+    "player_landing_response_animation_static",
+    "player_action_state_animation_static",
+    "player_interaction_response_animation_static",
+    "ghidra_disassembly_001ABB40",
+    "ghidra_decompile_player_movement_collision_targets"
+  ],
+  "limitations": [
+    "Indirect AnimationVM setters are not represented as absolute RAM writes in all exported Ghidra records.",
+    "The marker and latches are named by static control/data-flow roles, not by a user-facing action vocabulary."
+  ]
+}

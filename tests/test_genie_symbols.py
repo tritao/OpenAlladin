@@ -460,6 +460,25 @@ def test_real_player_interaction_animation_selector_contract():
     assert table.confidence == "confirmed"
 
 
+def test_real_player_terrain_response_latches_have_canonical_roles():
+    symbols = SymbolStore()
+
+    expected = {
+        0x00FFF0D3: "PLAYER_INTERACTION_MARKER",
+        0x00FFF0DE: "PLAYER_TERRAIN_PUSH_DOWN_STATE",
+        0x00FFF0DF: "PLAYER_TERRAIN_PUSH_UP_STATE",
+        0x00FFF0ED: "PLAYER_TERRAIN_RESPONSE_PHASE",
+        0x00FFF0EE: "PLAYER_TERRAIN_RESPONSE_TIMER",
+        0x00FFF0EF: "PLAYER_TERRAIN_RESPONSE_LEFT",
+        0x00FFF0F0: "PLAYER_TERRAIN_RESPONSE_RIGHT",
+        0x00FFF101: "PLAYER_TERRAIN_BRAKE_STATE",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 
