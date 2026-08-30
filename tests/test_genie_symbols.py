@@ -926,6 +926,24 @@ def test_real_actor_slot_one_fields_have_canonical_roles():
         assert symbol.confidence == confidence
 
 
+def test_real_actor_slot_two_fields_and_transition_option_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FF7ECA: ("ACTOR_SLOT_2_FLAGS", "bitfield", "confirmed"),
+        0x00FF7ECB: ("ACTOR_SLOT_2_STATE_FLAGS", "bitfield", "decompiled"),
+        0x00FF7ECD: ("ACTOR_SLOT_2_FACING_X_FLIP", "boolean", "decompiled"),
+        0x00FF7ED8: ("ACTOR_SLOT_2_FRAME_PTR", "rom_pointer", "confirmed"),
+        0x00FF7EE4: ("ACTOR_SLOT_2_ANIMATION_PC", "rom_pointer", "decompiled"),
+        0x00FF7273: ("SCENE_TRANSITION_OPTION_3_ENABLED", "boolean", "decompiled"),
+    }
+    for address, (name, format_name, confidence) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == confidence
+
+
 def test_real_player_terrain_transition_gate_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF114, include_ranges=False)
     assert symbol is not None

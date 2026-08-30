@@ -2452,3 +2452,66 @@
     - ghidra_actor_table_layout
     - actor_allocation_initialization_static_decompilation
     - scene_state_resource_targets
+
+0xFF7ECA:
+  name: ACTOR_SLOT_2_FLAGS
+  type: u8
+  format: bitfield
+  confidence: confirmed
+  description: Behavior flags byte at offset +0x06 in fixed actor-table slot 2. Terrain collision updates its terrain-processing bits and the renderer consumes the resulting actor flags.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001B1E38
+
+0xFF7ECB:
+  name: ACTOR_SLOT_2_STATE_FLAGS
+  type: u8
+  format: bitfield
+  confidence: decompiled
+  description: State-flags byte at offset +0x07 in fixed actor-table slot 2. Terrain collision clears its transient terrain-state bit while processing the record.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001B1E38
+
+0xFF7ECD:
+  name: ACTOR_SLOT_2_FACING_X_FLIP
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Horizontal orientation marker at offset +0x09 in fixed actor-table slot 2. Scene/resource initialization publishes the slot orientation for renderer and collision consumers.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001B0D70
+
+0xFF7ED8:
+  name: ACTOR_SLOT_2_FRAME_PTR
+  type: u32
+  format: rom_pointer
+  confidence: confirmed
+  description: Frame-record pointer at offset +0x14 in fixed actor-table slot 2, consumed by renderer and actor collision/terrain passes when the presentation actor is active.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001AB7C4
+    - ghidra_disassembly_001AE6B4
+
+0xFF7EE4:
+  name: ACTOR_SLOT_2_ANIMATION_PC
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Animation-stream pointer at offset +0x20 in fixed actor-table slot 2. Scene/resource presentation and level-entry paths install ROM animation roots here.
+  evidence:
+    - ghidra_actor_table_layout
+    - scene_state_resource_targets
+    - ghidra_disassembly_001B0D70
+
+0xFF7273:
+  name: SCENE_TRANSITION_OPTION_3_ENABLED
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Fourth scene-transition menu option state. Scene_EnterTransitionMode toggles it and selects the ON/OFF label at ROM 0x00126512 or 0x00126516; Player_TerrainResponseStateMachine uses the enabled state to select its simplified terrain-response path.
+  evidence:
+    - ghidra_disassembly_001B2ACE
+    - ghidra_disassembly_001A9D98
+    - scene-transition-menu-stream-extents-targets
