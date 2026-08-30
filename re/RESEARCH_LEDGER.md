@@ -848,6 +848,12 @@ separately. The `0x001B4666` branch is the credits roll, consuming the
 command/text stream at `0x127E8C` while servicing the actor and VDP frame
 pipeline until its terminator.
 
+The renderer's palette working state is now canonical. `PALETTE_BAND_0` through
+`PALETTE_BAND_3` at `FF7262`, `FF7266`, `FF726A`, and `FF726E` hold the four
+active ROM palette-source pointers. `CURRENT_VDP_PALETTE` is the 64-word
+working snapshot at `FF8800`, and `VDP_COMMAND_ADDRESS_LATCH` at `FF8880`
+holds the command/address word used by the presentation transfer helpers.
+
 The adjacent compact scene-resource loader variants are recorded in
 `re/mame/findings/20260828-scene-resource-loader-variants-v1.json`.
 `0x001B4896`, `0x001B48C4`, and `0x001B48F2` load exact two-resource VRAM

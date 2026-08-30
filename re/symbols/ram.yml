@@ -272,6 +272,44 @@
   evidence:
     - ghidra_disassembly_001B0A46
     - ghidra_input_pattern_targets
+0xFF7262:
+  name: PALETTE_BAND_0
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Active ROM source pointer for the first 16-word Genesis palette band; scene-resource initialization and palette-transition helpers publish it before VDP uploads or convergence steps.
+  evidence:
+    - ghidra_scene_initial_vdp_palette_targets
+    - ghidra_progressive_palette_services_targets
+    - progressive_palette_services_static_decompilation
+0xFF7266:
+  name: PALETTE_BAND_1
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Active ROM source pointer for the second 16-word Genesis palette band, published alongside PALETTE_BAND_0 and consumed by the scene/palette upload services.
+  evidence:
+    - ghidra_scene_initial_vdp_palette_targets
+    - ghidra_progressive_palette_services_targets
+    - progressive_palette_services_static_decompilation
+0xFF726A:
+  name: PALETTE_BAND_2
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Active ROM source pointer for the third 16-word Genesis palette band, published by the progressive palette transition setup and consumed by palette reload/convergence services.
+  evidence:
+    - ghidra_progressive_palette_services_targets
+    - progressive_palette_services_static_decompilation
+0xFF726E:
+  name: PALETTE_BAND_3
+  type: rom_pointer
+  format: address
+  confidence: decompiled
+  description: Active ROM source pointer for the fourth 16-word Genesis palette band, published by the progressive palette transition setup and consumed by palette reload/convergence services.
+  evidence:
+    - ghidra_progressive_palette_services_targets
+    - progressive_palette_services_static_decompilation
 0xFF727A:
   name: INPUT_PATTERN_MIRROR_CURSOR
   type: rom_pointer
@@ -310,6 +348,25 @@
   evidence:
     - ghidra_scene_resource_transfer_targets
     - ghidra_scene_resource_variant_targets
+0xFF8800:
+  name: CURRENT_VDP_PALETTE
+  type: u16[64]
+  size: 0x80
+  format: vdp_words
+  confidence: decompiled
+  description: 64-word working snapshot of the current Genesis VDP palette. Progressive palette services read, clear, and converge these words before writing palette bands back through VDP_DATA.
+  evidence:
+    - ghidra_progressive_palette_services_targets
+    - progressive_palette_services_static_decompilation
+0xFF8880:
+  name: VDP_COMMAND_ADDRESS_LATCH
+  type: u32
+  format: vdp_command
+  confidence: decompiled
+  description: Working VDP command/address word published by palette and scene-resource presentation helpers before their VDP data transfers.
+  evidence:
+    - ghidra_progressive_palette_services_targets
+    - ghidra_scene_render_service_targets
 0xFF7E28:
   name: FRAME_PHASE_COUNTER
   aliases:

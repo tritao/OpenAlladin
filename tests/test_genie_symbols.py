@@ -541,6 +541,29 @@ def test_real_presentation_actor_slot_has_structural_canonical_roles():
     assert "OPTION_SELECTION_MARKER_Y" in y.aliases
 
 
+def test_real_palette_render_state_has_canonical_roles():
+    symbols = SymbolStore()
+
+    for address, name in {
+        0x00FF7262: "PALETTE_BAND_0",
+        0x00FF7266: "PALETTE_BAND_1",
+        0x00FF726A: "PALETTE_BAND_2",
+        0x00FF726E: "PALETTE_BAND_3",
+    }.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == "address"
+
+    palette = symbols.at(0x00FF8800, include_ranges=False)
+    latch = symbols.at(0x00FF8880, include_ranges=False)
+    assert palette is not None
+    assert palette.name == "CURRENT_VDP_PALETTE"
+    assert palette.size == 0x80
+    assert latch is not None
+    assert latch.name == "VDP_COMMAND_ADDRESS_LATCH"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

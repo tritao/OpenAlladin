@@ -45,7 +45,8 @@
       "0x00FF726A PALETTE_BAND_2",
       "0x00FF726E PALETTE_BAND_3",
       "0x00FF8800 CURRENT_VDP_PALETTE"
-    ]
+    ],
+    "working_command": "0x00FF8880 VDP_COMMAND_ADDRESS_LATCH"
   },
   "limitations": [
     "The entries at 0x001B25AC, 0x001B25DA, 0x001B2618, and 0x001B28DC are alternate entries into already-owned common tails and are intentionally not promoted as standalone ranges.",
