@@ -2207,9 +2207,10 @@
     - rom_player_collision_handler_table_001CBE
     - ghidra_far_transfer_targeted_decompile_v1
 0x001AF4D8:
-  name: ActorType34_PlayerCollisionHandler
+  name: PlayerCollision_ReplaceWithWallResponse
+  aliases: [ActorType34_PlayerCollisionHandler]
   confidence: confirmed
-  description: Player-collision dispatch target for actor type 0x34. It increments the global interaction counter at 0x00FFF003, conditionally queues event/sound 0x69, advances the response counter at 0x00FFF14E by 0x19, clears the actor and owned resources through 0x001ABE6E, then replaces the destination record with ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE through Actor_InitializeFromTemplate.
+  description: Player-collision wall-response path for actor type 0x34. It increments the global interaction counter at 0x00FFF003, conditionally queues event/sound 0x69, advances the response counter at 0x00FFF14E by 0x19, clears the actor and owned resources through 0x001ABE6E, then replaces the destination record with ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE through Actor_InitializeFromTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - mame_type_34_wall_actor_probe
@@ -6064,30 +6065,33 @@
     - primary_interaction_counter_contract_static_v1
 
 0x001AF344:
-  name: ActorType37_3C_PlayerCollisionHandler
+  name: PlayerCollision_ApplyTimedResponse
+  aliases: [ActorType37_3C_PlayerCollisionHandler]
   size: 64
   confidence: decompiled
-  description: Shared player-collision handler for actor types 0x37 and 0x3C. It arms SCENE_SCRIPT_COUNTDOWN=0x20, clears the current actor, reinitializes it from ACTOR_TEMPLATE_COLLISION_RESPONSE, optionally queues event 0x64, and adds 100 to ACTOR_RESPONSE_COUNTER.
+  description: Shared player-collision timed-response path for actor types 0x37 and 0x3C. It arms SCENE_SCRIPT_COUNTDOWN=0x20, clears the current actor, reinitializes it from ACTOR_TEMPLATE_COLLISION_RESPONSE, optionally queues event 0x64, and adds 100 to ACTOR_RESPONSE_COUNTER.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF344
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AF384:
-  name: ActorType3D_PlayerCollisionHandler
+  name: PlayerCollision_ApplyCountedGateResponse
+  aliases: [ActorType3D_PlayerCollisionHandler]
   size: 62
   confidence: decompiled
-  description: Player-collision handler for actor type 0x3D. It performs the shared collision-response-template replacement and response-counter increment, optionally queues event 0x64, and publishes the type-specific gate at 0x00FFF179.
+  description: Player-collision counted-response path for actor type 0x3D. It performs the shared collision-response-template replacement and response-counter increment, optionally queues event 0x64, and publishes the type-specific gate at 0x00FFF179.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF384
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AF3C2:
-  name: ActorType41_PlayerCollisionHandler
+  name: PlayerCollision_ApplyWallResponseWithSceneGate
+  aliases: [ActorType41_PlayerCollisionHandler]
   size: 62
   confidence: decompiled
-  description: Player-collision handler for actor type 0x41. It publishes SCENE_SCRIPT_GATE, optionally queues event 0x69, adds 25 to ACTOR_RESPONSE_COUNTER, clears the current actor, and reinitializes it from ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE.
+  description: Player-collision wall-response path for actor type 0x41. It publishes SCENE_SCRIPT_GATE, optionally queues event 0x69, adds 25 to ACTOR_RESPONSE_COUNTER, clears the current actor, and reinitializes it from ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF3C2

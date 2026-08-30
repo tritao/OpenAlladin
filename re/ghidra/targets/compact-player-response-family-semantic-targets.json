@@ -1,0 +1,87 @@
+{
+  "format": "openaladdin-compact-player-response-family-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace type-only labels for the compact counted, gated, and wall-response family.",
+  "promotions": [
+    {
+      "address": "0x001AF344",
+      "old_name": "ActorType37_3C_PlayerCollisionHandler",
+      "name": "PlayerCollision_ApplyTimedResponse",
+      "alias": "ActorType37_3C_PlayerCollisionHandler",
+      "range": ["0x001AF344", "0x001AF383"],
+      "contract": {
+        "dispatch": "Shared player-collision entry for actor types 0x37 and 0x3C",
+        "response": "Clears the actor and reinitializes ACTOR_TEMPLATE_COLLISION_RESPONSE",
+        "timing": "Arms SCENE_SCRIPT_COUNTDOWN=0x20",
+        "counter": "Optionally queues event 0x64 and adds 100 to ACTOR_RESPONSE_COUNTER"
+      },
+      "evidence": [
+        "Exact 64-byte body ending at RTS 0x001AF382",
+        "Direct SCENE_SCRIPT_COUNTDOWN=0x20 and ACTOR_RESPONSE_COUNTER+100 operations",
+        "Direct collision-response template load and optional event-0x64 audio"
+      ]
+    },
+    {
+      "address": "0x001AF384",
+      "old_name": "ActorType3D_PlayerCollisionHandler",
+      "name": "PlayerCollision_ApplyCountedGateResponse",
+      "alias": "ActorType3D_PlayerCollisionHandler",
+      "range": ["0x001AF384", "0x001AF3C1"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x3D",
+        "response": "Clears the actor and reinitializes ACTOR_TEMPLATE_COLLISION_RESPONSE",
+        "counter": "Adds 100 to ACTOR_RESPONSE_COUNTER and optionally queues event 0x64",
+        "gate": "Publishes the type-specific response gate at 0x00FFF179"
+      },
+      "evidence": [
+        "Exact 62-byte body ending at RTS 0x001AF3C0",
+        "Direct collision-response template load and response-counter helper call",
+        "Direct 0x00FFF179 gate write"
+      ]
+    },
+    {
+      "address": "0x001AF3C2",
+      "old_name": "ActorType41_PlayerCollisionHandler",
+      "name": "PlayerCollision_ApplyWallResponseWithSceneGate",
+      "alias": "ActorType41_PlayerCollisionHandler",
+      "range": ["0x001AF3C2", "0x001AF3FF"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x41",
+        "gate": "Publishes SCENE_SCRIPT_GATE",
+        "audio": "Optionally queues event 0x69",
+        "response": "Adds 25 to ACTOR_RESPONSE_COUNTER, clears the actor, and reinitializes ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE"
+      },
+      "evidence": [
+        "Exact 62-byte body ending at RTS 0x001AF3FE",
+        "Direct SCENE_SCRIPT_GATE and response-counter writes",
+        "Direct Type-0x8D wall-response template load"
+      ]
+    },
+    {
+      "address": "0x001AF4D8",
+      "old_name": "ActorType34_PlayerCollisionHandler",
+      "name": "PlayerCollision_ReplaceWithWallResponse",
+      "alias": "ActorType34_PlayerCollisionHandler",
+      "range": ["0x001AF4D8", "0x001AF515"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x34",
+        "counter": "Advances the global interaction counter and adds 25 to ACTOR_RESPONSE_COUNTER",
+        "audio": "Conditionally queues event/sound 0x69",
+        "response": "Clears the actor and replaces it with ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE"
+      },
+      "evidence": [
+        "Exact 62-byte body ending at RTS 0x001AF514",
+        "Direct interaction-counter and response-counter updates",
+        "Existing type-0x34 handler trace observes the installed Type-0x8D actor"
+      ]
+    }
+  ],
+  "conclusion": "The compact family now exposes counted, gated, scene-gated, and wall-response behavior without relying on type-only handler names.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
