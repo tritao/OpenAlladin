@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-actor-template-body-confidence-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Close body-level confidence for exact actor-template records using the compact initializer contract and paired VM decoders, without claiming live producers or consumers.",
+  "initializer": {
+    "address": "0x001AE30A",
+    "record_size": 20,
+    "contract": "Actor_InitializeFromTemplate copies the compact template fields and initializes the selected actor state from each 20-byte source record."
+  },
+  "records": [
+    { "address": "0x001B7990", "end": "0x001B79A3", "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10", "bytes": "840008000000000000006000000000000A000000", "runtime_type": "0x84", "resource_count": 10 },
+    { "address": "0x001B7A58", "end": "0x001B7A6B", "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400", "bytes": "8401400014000000000060000000000000000000", "runtime_type": "0x84", "resource_count": 0 },
+    { "address": "0x001B81B0", "end": "0x001B81C3", "name": "ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT", "bytes": "7C00400000000012118020000012591603001000", "runtime_type": "0x7C", "movement_stream": "0x00121180", "animation_stream": "0x00125916", "resource_count": 3 },
+    { "address": "0x001B82DC", "end": "0x001B82EF", "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_ANIM_124CE4", "bytes": "84050000000000000000000000124CE409000400", "runtime_type": "0x84", "animation_stream": "0x00124CE4", "resource_count": 9 },
+    { "address": "0x001B8304", "end": "0x001B8317", "name": "ACTOR_TEMPLATE_TYPE_84_0F22_WALL_RESPONSE", "bytes": "84000100000000121412600000125D5801000200", "runtime_type": "0x84", "movement_stream": "0x00121412", "animation_stream": "0x00125D58", "resource_count": 1 }
+  ],
+  "evidence": [
+    "Each record occupies exactly one 20-byte actor-template source record between canonical neighboring templates.",
+    "The compact initializer contract identifies the runtime type, movement/animation pointers, resource count, and trailing flags without relying on a guessed higher-level role.",
+    "The Type-0x7C and Type-0x84 0x0F22 records point to independently decoded VM streams with exact non-overlapping extents."
+  ],
+  "limitations": [
+    "No static producer, active dispatch-table entry, or runtime consumer is recovered for these specific records.",
+    "The neutral UNREFERENCED names are retained where no subsystem identity is established."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}

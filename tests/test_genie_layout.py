@@ -1812,7 +1812,7 @@ def test_type7c_type7d_level_event_movement_family_is_exact():
     assert template.end == 0x001B81C3
     assert template.size == 20
     assert template.metadata["type"] == "actor_template"
-    assert template.confidence == "provisional"
+    assert template.confidence == "decompiled"
 
     animation = symbols.at(0x00125916, include_ranges=False)
     assert animation is not None
@@ -2057,14 +2057,14 @@ def test_shared_type3c_3d_3e_3f_movement_is_exact():
     assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
-def test_type84_0f22_response_family_is_exact_with_template_reachability_provisional():
+def test_type84_0f22_response_family_is_exact_with_template_reachability_unresolved():
     symbols = SymbolStore()
     template = symbols.at(0x001B8304, include_ranges=False)
     assert template is not None
     assert template.name == "ACTOR_TEMPLATE_TYPE_84_0F22_WALL_RESPONSE"
     assert template.size == 20
     assert template.metadata["type"] == "actor_template"
-    assert template.confidence == "provisional"
+    assert template.confidence == "decompiled"
 
     movement = symbols.at(0x00121412, include_ranges=False)
     assert movement is not None
@@ -2107,7 +2107,7 @@ def test_type84_0f22_response_family_is_exact_with_template_reachability_provisi
     assert animation_decoded["instructions"][-1]["branch_target"] == "0x00125D58"
 
 
-def test_unreferenced_actor_template_records_are_exact_and_provisional():
+def test_unreferenced_actor_template_records_are_exact_and_decoded():
     symbols = SymbolStore()
     expected = {
         0x001B7990: ("ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10", 0x001B79A3),
@@ -2127,7 +2127,7 @@ def test_unreferenced_actor_template_records_are_exact_and_provisional():
         assert symbol.end == end
         assert symbol.size == 20
         assert symbol.metadata["type"] == "actor_template"
-        assert symbol.confidence == "provisional"
+        assert symbol.confidence == "decompiled"
         assert rom[address:end + 1] == bytes.fromhex(expected_bytes[address])
 
 
