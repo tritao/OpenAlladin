@@ -162,6 +162,7 @@ private:
         std::uint32_t animation_stream,
         std::uint8_t frames
     );
+    void reinitialize_from_collision_template(GameState&, ActorIndex);
 
     ActorLifecycleSystem& actor_lifecycle_;
     const std::vector<std::uint8_t>* rom_ = nullptr;

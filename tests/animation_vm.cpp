@@ -126,6 +126,7 @@ int main() {
     add_callback_stream(callback_stream + 0x0E0, 0x001ACD5A);
     add_callback_stream(callback_stream + 0x100, 0x001ACD7E);
     add_callback_stream(callback_stream + 0x120, 0x001ACBD8);
+    add_callback_stream(callback_stream + 0x130, 0x001B0360);
     rom[callback_frame_reference] = 0;
     rom[callback_frame_reference + 1] = 0;
     const char* test_rom = "/tmp/openaladdin-animation-sound-test.bin";
@@ -256,6 +257,16 @@ int main() {
     run_callback(0x120);
     assert(callback_actor.x == 0x1234);
     assert(callback_actor.y == 0x5678);
+
+    callback_state.interaction_state.primary_digits = 0x3130;
+    run_callback(0x130);
+    assert(callback_state.interaction_state.primary_digits == 0x3039);
+    callback_state.interaction_state.primary_digits = 0x3230;
+    run_callback(0x130);
+    assert(callback_state.interaction_state.primary_digits == 0x3139);
+    callback_state.interaction_state.primary_digits = 0x3030;
+    run_callback(0x130);
+    assert(callback_state.interaction_state.primary_digits == 0x3030);
 
     std::remove(test_rom);
     return 0;

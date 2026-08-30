@@ -19,7 +19,7 @@ namespace {
 // WORLD_Y - 0xF0, while the VDP sprite origin uses WORLD_Y - 0x100.
 constexpr int kPlayerVisualOffsetY = 0x100;
 
-constexpr std::uint32_t kCheckpointVersion = 10;
+constexpr std::uint32_t kCheckpointVersion = 11;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
     writer.u8(selector.animation_gate);
@@ -578,6 +578,7 @@ void Engine::load_actor_records(const std::string& path) {
 void Engine::reset() {
     player_ = PlayerState{};
     state_.interaction_state = InteractionState{};
+    state_.progress = ProgressState{};
     state_.ram.clear();
     interaction_map_.reset();
     interactions_.reset();
@@ -627,7 +628,11 @@ void Engine::reset() {
 }
 
 void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded) {
+    const std::uint16_t primary_digits = state_.interaction_state.primary_digits;
+    const std::uint16_t secondary_digits = state_.interaction_state.secondary_digits;
     state_.interaction_state = InteractionState{};
+    state_.interaction_state.primary_digits = primary_digits;
+    state_.interaction_state.secondary_digits = secondary_digits;
     player_.x = x;
     player_.y = y;
     player_.vx = vx;
@@ -1080,7 +1085,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v3\""
            << ",\"frame\":" << frame_
            << ",\"input\":\"" << input_token << "\""
-           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"interaction_state\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"sprite_attribute\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
+           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"interaction_state\",\"progress\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"sprite_attribute\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
            << ",\"player\":{\"x\":" << player_.x
            << ",\"y\":" << player_.y
            << ",\"world_x\":" << player_world_x()
@@ -1174,6 +1179,16 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"terrain_transition_gate\":" << static_cast<unsigned>(player_.terrain_transition_gate)
            << ",\"terrain_terminal_transition\":" << static_cast<unsigned>(player_.terrain_terminal_transition)
            << ",\"grounded\":" << (trace_grounded ? "true" : "false") << "}"
+           << ",\"inventory\":{\"apple_count\":"
+           << static_cast<unsigned>(state_.interaction_state.primary_count()) << "}"
+           << ",\"interaction_counters\":{\"primary_digits\":"
+           << static_cast<unsigned>(state_.interaction_state.primary_digits)
+           << ",\"secondary_digits\":"
+           << static_cast<unsigned>(state_.interaction_state.secondary_digits) << "}"
+           << ",\"progress\":{\"difficulty_counter\":"
+           << static_cast<unsigned>(state_.progress.difficulty_counter)
+           << ",\"active_scene_entry_gate\":"
+           << static_cast<unsigned>(state_.progress.active_scene_entry_gate) << "}"
            << ",\"interaction_state\":{\"target_current\":"
            << static_cast<unsigned>(interaction_state.target_current)
            << ",\"response_current\":"
@@ -1492,15 +1507,18 @@ void Engine::write_checkpoint(std::ostream& output) const {
     writer.u8(frame_phase_);
     writer.i32(frame_runtime_.last_ground_direction);
     writer.boolean(quit_);
-    // Append newly typed interaction bytes so existing checkpoint prefixes
-    // remain readable by older builds. New readers default them to zero when
-    // loading an older checkpoint without this extension.
+    // Append newly typed interaction/progression bytes so the checkpoint keeps
+    // the ROM's raw representations at the game-loop boundary.
     writer.u8(state_.interaction_state.target_current);
     writer.u8(state_.interaction_state.response_current);
     writer.u8(state_.interaction_state.response_pending);
     writer.u8(state_.interaction_state.type3e_response_latch);
     writer.u8(state_.interaction_state.type3f_response_latch);
     writer.u8(state_.player.terrain_bounce_animation_state);
+    writer.u16(state_.interaction_state.primary_digits);
+    writer.u16(state_.interaction_state.secondary_digits);
+    writer.u8(state_.progress.difficulty_counter);
+    writer.u8(state_.progress.active_scene_entry_gate);
     writer.u8(state_.player.health);
     writer.u8(state_.player.hurt_cooldown);
 }
@@ -1508,7 +1526,8 @@ void Engine::write_checkpoint(std::ostream& output) const {
 void Engine::read_checkpoint(std::istream& input) {
     checkpoint::Reader reader(input);
     checkpoint::expect_magic(reader, "OACP", 4);
-    if (reader.u32() != kCheckpointVersion) {
+    const auto checkpoint_version = reader.u32();
+    if (checkpoint_version != 10 && checkpoint_version != kCheckpointVersion) {
         throw std::runtime_error("unsupported OpenAladdin checkpoint version");
     }
     if (reader.u32() != rom_bytes_.size()) {
@@ -1518,7 +1537,7 @@ void Engine::read_checkpoint(std::istream& input) {
         throw std::runtime_error("level does not match OpenAladdin checkpoint");
     }
 
-    scene_.read_checkpoint(input);
+    scene_.read_checkpoint(input, checkpoint_version >= kCheckpointVersion);
     scene_resources_.reset();
     interaction_map_.read_checkpoint(input);
     actors_.read_checkpoint(input);
@@ -1581,6 +1600,7 @@ void Engine::read_checkpoint(std::istream& input) {
     InteractionState interaction_state;
     std::uint8_t checkpoint_health = PlayerState::kDefaultHealth;
     std::uint8_t checkpoint_hurt_cooldown = 0;
+    ProgressState progress;
     if (reader.has_more()) {
         interaction_state.target_current = reader.u8();
         if (reader.has_more()) interaction_state.response_current = reader.u8();
@@ -1588,10 +1608,16 @@ void Engine::read_checkpoint(std::istream& input) {
         if (reader.has_more()) interaction_state.type3e_response_latch = reader.u8();
         if (reader.has_more()) interaction_state.type3f_response_latch = reader.u8();
         if (reader.has_more()) player.terrain_bounce_animation_state = reader.u8();
+        if (checkpoint_version >= kCheckpointVersion) {
+            if (reader.has_more()) interaction_state.primary_digits = reader.u16();
+            if (reader.has_more()) interaction_state.secondary_digits = reader.u16();
+            if (reader.has_more()) progress.difficulty_counter = reader.u8();
+            if (reader.has_more()) progress.active_scene_entry_gate = reader.u8();
+        } else if (reader.has_more()) {
+            interaction_state.primary_digits = encode_ascii_decimal(reader.u8());
+        }
         if (reader.has_more()) checkpoint_health = reader.u8();
         if (reader.has_more()) checkpoint_hurt_cooldown = reader.u8();
-    } else if (reader.has_more()) {
-        player.terrain_bounce_animation_state = reader.u8();
     }
     if (vdp_checkpoint_loaded
         && (vdp_checkpoint_vram.size() != 0x10000
@@ -1604,6 +1630,7 @@ void Engine::read_checkpoint(std::istream& input) {
     player_.hurt_cooldown = checkpoint_hurt_cooldown;
     camera_ = camera;
     state_.interaction_state = interaction_state;
+    state_.progress = progress;
     interactions_.restore_runtime(interaction_runtime);
     frame_runtime_.checkpoint_animation_selector_pending = checkpoint_animation_selector_pending;
     frame_runtime_.jump_landing_state_arm_pending = jump_landing_state_arm_pending;

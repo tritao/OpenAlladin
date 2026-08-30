@@ -192,10 +192,12 @@ LevelEventEffects LevelEventSystem::dispatch(
         (void)spawn_direct(kLevelEventTemplateType2A);
         break;
     case 0xF0: // LevelEvent_SpawnType46WhenModeReady
-        // The ROM gate is GAME_DIFFICULTY_COUNTER (FF7E3C), which is not
-        // currently represented in GameState. Do not substitute the
-        // unrelated scene-resource status byte here.
-        (void)spawn_direct(kLevelEventTemplateType46, 0, kLevelEventMovementType46);
+        if (state.progress.difficulty_counter != '9') {
+            (void)spawn_direct(
+                kLevelEventTemplateType46,
+                0,
+                kLevelEventMovementType46);
+        }
         break;
     case 0xF1: // LevelEvent_SpawnType2F
         (void)spawn_direct(kLevelEventTemplateType2F, 0, 0, false, 0, false, 0, false, 0, true);
@@ -254,12 +256,14 @@ LevelEventEffects LevelEventSystem::dispatch(
         );
         break;
     case 0xF8: // LevelEvent_SpawnType46WhenSceneReady
-        (void)spawn_actor(
-            state,
-            kLevelEventTemplateType46,
-            relative_x(),
-            relative_y()
-        );
+        if (state.progress.difficulty_counter != '9') {
+            (void)spawn_actor(
+                state,
+                kLevelEventTemplateType46,
+                relative_x(),
+                relative_y()
+            );
+        }
         break;
     case 0xF9: // LevelEvent_SpawnType84Pair
         (void)spawn_actor(

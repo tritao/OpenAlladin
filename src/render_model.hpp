@@ -115,8 +115,8 @@ struct GenesisPreviewSprite {
 
 // The opening HUD's portrait is followed by a single digit at the same
 // screen/VDP coordinate in both the preview and checkpoint-backed renderers.
-// Keep the digit source separate from inventory because it represents player
-// health rather than the apple counter.
+// Keep the digit source separate from the apple counter because it represents
+// player health rather than inventory.
 struct GenesisHealthHudLayout {
     static constexpr std::uint16_t kDigitTile = 0xE6E0;
     static constexpr std::uint16_t kDigitX = 0x00AA;
@@ -124,6 +124,28 @@ struct GenesisHealthHudLayout {
 
     static constexpr int kPreviewDigitScreenX = 42;
     static constexpr int kPreviewDigitScreenY = 200;
+    static constexpr int kDigitRomBase = 0x11ECA0;
+    static constexpr int kDigitRomStride = 0x20;
+};
+
+// The apple counter is emitted as a small SAT group in the original HUD and
+// as the equivalent fixed-position sprite group in the native preview. Keep
+// its recovered ROM/VDP coordinates in one place so both render paths cannot
+// drift apart.
+struct GenesisAppleHudLayout {
+    static constexpr std::uint16_t kIconTile = 0xE6F3;
+    static constexpr std::uint16_t kDigitTile = 0xE6E0;
+    static constexpr std::uint16_t kIconX = 0x018E;
+    static constexpr std::uint16_t kIconY = 0x0140;
+    static constexpr std::uint16_t kDigitX = 0x01A0;
+    static constexpr std::uint16_t kSecondDigitX = 0x01A8;
+
+    static constexpr int kPreviewIconScreenX = 270;
+    static constexpr int kPreviewIconScreenY = 192;
+    static constexpr int kPreviewDigitScreenX = 288;
+    static constexpr int kPreviewSecondDigitScreenX = 296;
+    static constexpr int kPreviewDigitScreenY = 200;
+    static constexpr int kIconRomAddress = 0x11EF00;
     static constexpr int kDigitRomBase = 0x11ECA0;
     static constexpr int kDigitRomStride = 0x20;
 };
@@ -197,6 +219,10 @@ public:
     ) const;
 
     void sync_checkpoint_health_hud(std::uint8_t health);
+    // Checkpoint VDP memory contains the HUD's SAT records. Rewrite only the
+    // apple records from authoritative gameplay state before the normal VDP
+    // renderer consumes that memory.
+    void sync_checkpoint_apple_hud(std::uint8_t apple_count);
 
     const GenesisPlaneState& plane_a() const { return plane_a_; }
     const GenesisPlaneState& plane_b() const { return plane_b_; }
@@ -252,6 +278,11 @@ private:
 
     int checkpoint_health_digit_index_ = -1;
     std::uint16_t checkpoint_health_digit_size_link_ = 0;
+    int checkpoint_apple_icon_index_ = -1;
+    int checkpoint_apple_first_digit_index_ = -1;
+    int checkpoint_apple_second_digit_index_ = -1;
+    std::uint16_t checkpoint_apple_first_size_link_ = 0;
+    std::uint16_t checkpoint_apple_second_size_link_ = 0;
 
     GenesisSceneResourceState scene_resources_{};
     std::vector<std::uint8_t> live_vram_;

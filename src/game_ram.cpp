@@ -3,8 +3,6 @@
 #include "animation.hpp"
 #include "game_state.hpp"
 
-#include <algorithm>
-
 namespace openaladdin {
 namespace {
 
@@ -61,9 +59,13 @@ bool GameRamView::is_typed_address(RamAddress address) {
     case 0xFF7E00: case 0xFF7E01:
     case 0xFF7E02: case 0xFF7E03:
     case 0xFF7E04: case 0xFF7E05:
+    case 0xFF7E3C:
+    case 0xFF7E3F:
     case 0xFF7E28:
     case 0xFF7E58: case 0xFF7E59:
     case 0xFF7E5A: case 0xFF7E5B:
+    case 0xFFF07C: case 0xFFF07D:
+    case 0xFFF07E: case 0xFFF07F:
     case 0xFFF0B0: case 0xFFF0B1:
     case 0xFFF0BE:
     case 0xFFF0C0:
@@ -89,6 +91,8 @@ bool GameRamView::is_typed_address(RamAddress address) {
     case 0xFFF0F2:
     case 0xFFF101:
     case 0xFFF115:
+    case 0xFFF114:
+    case 0xFFF15A:
     case 0xFFF11F:
     case 0xFFF173:
     case 0xFFF177: case 0xFFF178:
@@ -97,6 +101,8 @@ bool GameRamView::is_typed_address(RamAddress address) {
     case 0xFFEFFA:
     case 0xFFEFFB:
     case 0xFFEFFF:
+    case 0xFFEFE0: case 0xFFEFE1:
+    case 0xFFEFE2: case 0xFFEFE3:
         return true;
     default:
         return false;
@@ -160,6 +166,10 @@ std::uint8_t GameRamView::read_typed8(RamAddress address, bool& handled) const {
     case 0xFF7E5B: return static_cast<std::uint8_t>(static_cast<std::uint16_t>(
         context_ != nullptr && context_->player_vy_override
             ? *context_->player_vy_override : player.vy));
+    case 0xFFF07C: return player.terrain_push_right;
+    case 0xFFF07D: return player.terrain_push_left;
+    case 0xFFF07E: return player.terrain_push_up;
+    case 0xFFF07F: return player.terrain_push_down;
     case 0xFFF0B0: return static_cast<std::uint8_t>(
         static_cast<std::uint16_t>(player.terrain_horizontal_response) >> 8);
     case 0xFFF0B1: return static_cast<std::uint8_t>(
@@ -200,6 +210,8 @@ std::uint8_t GameRamView::read_typed8(RamAddress address, bool& handled) const {
             : context_u8(&AnimationSelectorState::interaction_lock);
     case 0xFFF101: return context_u8(&AnimationSelectorState::response_state_101);
     case 0xFFF115: return player.terrain_response_latch;
+    case 0xFFF114: return state_->scene.resource_completion;
+    case 0xFFF15A: return state_->scene.resource_mode;
     case 0xFFF11F: return context_u8(&AnimationSelectorState::state_lock);
     case 0xFFF173: return static_cast<std::uint8_t>(state_->camera.special_mode);
     case 0xFFF177: return state_->interaction_state.type3e_response_latch;
@@ -209,6 +221,16 @@ std::uint8_t GameRamView::read_typed8(RamAddress address, bool& handled) const {
     case 0xFFEFFA: return state_->interaction_state.response_current;
     case 0xFFEFFB: return state_->interaction_state.response_pending;
     case 0xFFEFFF: return context_u8(&AnimationSelectorState::interaction_pending);
+    case 0xFF7E3C: return state_->progress.difficulty_counter;
+    case 0xFF7E3F: return state_->progress.active_scene_entry_gate;
+    case 0xFFEFE0:
+        return static_cast<std::uint8_t>(state_->interaction_state.primary_digits >> 8);
+    case 0xFFEFE1:
+        return static_cast<std::uint8_t>(state_->interaction_state.primary_digits);
+    case 0xFFEFE2:
+        return static_cast<std::uint8_t>(state_->interaction_state.secondary_digits >> 8);
+    case 0xFFEFE3:
+        return static_cast<std::uint8_t>(state_->interaction_state.secondary_digits);
     default: return 0;
     }
 }
@@ -252,6 +274,8 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
         auto word = as_u16(state_->camera.vertical_threshold); update_word(word, address, 0xFF7E00); state_->camera.vertical_threshold = word; return;
     }
     case 0xFF7E28: state_->frame.phase = value; return;
+    case 0xFF7E3C: state_->progress.difficulty_counter = value; return;
+    case 0xFF7E3F: state_->progress.active_scene_entry_gate = value; return;
     case 0xFF7E58: {
         auto word = static_cast<std::uint16_t>(player.vx); update_word(word, address, 0xFF7E58); player.vx = as_i16(word); return;
     }
@@ -264,6 +288,10 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
     case 0xFF7E5B: {
         auto word = static_cast<std::uint16_t>(player.vy); update_word(word, address, 0xFF7E5A); player.vy = as_i16(word); return;
     }
+    case 0xFFF07C: player.terrain_push_right = value; return;
+    case 0xFFF07D: player.terrain_push_left = value; return;
+    case 0xFFF07E: player.terrain_push_up = value; return;
+    case 0xFFF07F: player.terrain_push_down = value; return;
     case 0xFFF0B0: case 0xFFF0B1:
         update_i16(player.terrain_horizontal_response, 0xFFF0B0);
         selector.horizontal_response = player.terrain_horizontal_response;
@@ -308,6 +336,8 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
         update_selector_u8(&AnimationSelectorState::response_latch);
         return;
     case 0xFFF11F: update_selector_u8(&AnimationSelectorState::state_lock); return;
+    case 0xFFF114: state_->scene.resource_completion = value; return;
+    case 0xFFF15A: state_->scene.resource_mode = value; return;
     case 0xFFF173:
         state_->camera.special_mode = value;
         update_selector_u8(&AnimationSelectorState::camera_special_mode);
@@ -319,6 +349,14 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
     case 0xFFEFFA: state_->interaction_state.response_current = value; return;
     case 0xFFEFFB: state_->interaction_state.response_pending = value; return;
     case 0xFFEFFF: update_selector_u8(&AnimationSelectorState::interaction_pending); return;
+    case 0xFFEFE0:
+    case 0xFFEFE1:
+        update_word(state_->interaction_state.primary_digits, address, 0xFFEFE0);
+        return;
+    case 0xFFEFE2:
+    case 0xFFEFE3:
+        update_word(state_->interaction_state.secondary_digits, address, 0xFFEFE2);
+        return;
     default: return;
     }
 }

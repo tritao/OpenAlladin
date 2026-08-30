@@ -26,6 +26,10 @@ struct SceneRuntimeState {
     std::uint8_t script_pending = 0;
     // DAT_00FFF140 is the status polled by the ordinal-35 completion gate.
     std::uint8_t resource_status = 0;
+    // SCENE_RESOURCE_COMPLETION and SCENE_RESOURCE_MODE are the separate
+    // publication fields used by collision/resource transition handlers.
+    std::uint8_t resource_completion = 0; // FFF114
+    std::uint8_t resource_mode = 0;       // FFF15A
     std::uint8_t transition_event = 0;
     bool transition_active = false;
 };
@@ -50,7 +54,7 @@ public:
     const LevelDescriptor* descriptor(int scene_state) const;
     const LevelDescriptor* current_descriptor() const { return descriptor(runtime_state().state); }
     void write_checkpoint(std::ostream& output) const;
-    void read_checkpoint(std::istream& input);
+    void read_checkpoint(std::istream& input, bool extended_state = true);
 
     // Returns true when this scene owns the update. The transition scene uses
     // eight-pixel local-coordinate movement and bypasses normal physics.

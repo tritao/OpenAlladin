@@ -387,6 +387,16 @@ void PlayerAnimationVm::dispatch_callback(
             static_cast<std::uint8_t>((random_y & 0x07U) - 7U));
         return;
     }
+    case 0x001B0360: { // InteractionCounter_DecrementPrimaryDigits
+        // FB carries the ROM helper address. Keep the helper's decimal-borrow
+        // semantics shared with collision/resource code while addressing the
+        // authoritative big-endian ASCII word through GameRamView.
+        std::uint16_t digits = read_memory16(0xFFEFE0);
+        if (decrement_ascii_decimal(digits)) {
+            write_memory16(0xFFEFE0, digits);
+        }
+        return;
+    }
     default:
         // FB parameters are ROM function addresses. Unknown callbacks remain
         // consumed at the command boundary until their RAM contract is

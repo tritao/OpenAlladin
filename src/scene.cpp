@@ -75,11 +75,13 @@ void SceneSystem::write_checkpoint(std::ostream& output) const {
     writer.u8(runtime.script_countdown);
     writer.u8(runtime.script_pending);
     writer.u8(runtime.resource_status);
+    writer.u8(runtime.resource_completion);
+    writer.u8(runtime.resource_mode);
     writer.u8(runtime.transition_event);
     writer.boolean(runtime.transition_active);
 }
 
-void SceneSystem::read_checkpoint(std::istream& input) {
+void SceneSystem::read_checkpoint(std::istream& input, bool extended_state) {
     checkpoint::Reader reader(input);
     SceneRuntimeState runtime;
     runtime.state = reader.i32();
@@ -87,6 +89,10 @@ void SceneSystem::read_checkpoint(std::istream& input) {
     runtime.script_countdown = reader.u8();
     runtime.script_pending = reader.u8();
     runtime.resource_status = reader.u8();
+    if (extended_state) {
+        runtime.resource_completion = reader.u8();
+        runtime.resource_mode = reader.u8();
+    }
     runtime.transition_event = reader.u8();
     runtime.transition_active = reader.boolean();
     if (!descriptors_.empty()

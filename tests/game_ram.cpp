@@ -31,11 +31,21 @@ int main() {
     state.interaction_state.response_pending = 0x56;
     state.interaction_state.type3e_response_latch = 0x78;
     state.interaction_state.type3f_response_latch = 0x9A;
+    state.interaction_state.primary_digits = 0x3432;
+    state.interaction_state.secondary_digits = 0x3737;
+    state.progress.difficulty_counter = '6';
+    state.progress.active_scene_entry_gate = 0x2A;
     assert(ram.read8(0xFFF0EC) == 0x12);
     assert(ram.read8(0xFFEFFA) == 0x34);
     assert(ram.read8(0xFFEFFB) == 0x56);
     assert(ram.read8(0xFFF177) == 0x78);
     assert(ram.read8(0xFFF178) == 0x9A);
+    assert(ram.read16(0xFFEFE0) == 0x3432);
+    assert(ram.read8(0xFFEFE0) == '4');
+    assert(ram.read8(0xFFEFE1) == '2');
+    assert(ram.read16(0xFFEFE2) == 0x3737);
+    assert(ram.read8(0xFF7E3C) == '6');
+    assert(ram.read8(0xFF7E3F) == 0x2A);
 
     ram.set_write_tracking(true);
     ram.write16(0xFF7DFA, 0xFEDC);
@@ -47,6 +57,10 @@ int main() {
     ram.write8(0xFFEFFB, 0x65);
     ram.write8(0xFFF177, 0x87);
     ram.write8(0xFFF178, 0xA9);
+    ram.write16(0xFFEFE0, 0x3737);
+    ram.write16(0xFFEFE2, 0x3938);
+    ram.write8(0xFF7E3C, '8');
+    ram.write8(0xFF7E3F, 0x2B);
     assert(state.player.x == static_cast<std::int16_t>(0xFEDC));
     assert(state.player.animation_selector.response_active == 0x11);
     assert(state.frame.phase == 0x12);
@@ -56,6 +70,10 @@ int main() {
     assert(state.interaction_state.response_pending == 0x65);
     assert(state.interaction_state.type3e_response_latch == 0x87);
     assert(state.interaction_state.type3f_response_latch == 0xA9);
+    assert(state.interaction_state.primary_digits == 0x3737);
+    assert(state.interaction_state.secondary_digits == 0x3938);
+    assert(state.progress.difficulty_counter == '8');
+    assert(state.progress.active_scene_entry_gate == 0x2B);
     std::uint8_t value = 0;
     assert(ram.take_write(0xFF7DFA, value) && value == 0xFE);
     assert(ram.take_write(0xFF7DFB, value) && value == 0xDC);
@@ -67,6 +85,12 @@ int main() {
     assert(ram.take_write(0xFFEFFB, value) && value == 0x65);
     assert(ram.take_write(0xFFF177, value) && value == 0x87);
     assert(ram.take_write(0xFFF178, value) && value == 0xA9);
+    assert(ram.take_write(0xFFEFE0, value) && value == '7');
+    assert(ram.take_write(0xFFEFE1, value) && value == '7');
+    assert(ram.take_write(0xFFEFE2, value) && value == '9');
+    assert(ram.take_write(0xFFEFE3, value) && value == '8');
+    assert(ram.take_write(0xFF7E3C, value) && value == '8');
+    assert(ram.take_write(0xFF7E3F, value) && value == 0x2B);
     assert(!ram.take_write(0xFFF0BE, value));
 
     ram.write8(0xFF1234, 0xA5);

@@ -24,6 +24,8 @@ constexpr std::uint32_t kHandlerApplePickupShared = 0x001AF468;
 constexpr std::uint32_t kHandlerType3E = 0x001AF2B0;
 constexpr std::uint32_t kHandlerType3F = 0x001AF2FA;
 constexpr std::uint32_t kHandlerType4D = 0x001AF0B8;
+constexpr std::uint32_t kHandlerType46 = 0x001AEF5C;
+constexpr std::uint32_t kHandlerType7E = 0x001AFE1C;
 constexpr std::uint32_t kHandlerLaunchShared = 0x001AF110;
 constexpr std::uint32_t kHandlerBounce = 0x001AFBF4;
 constexpr std::uint32_t kHandlerType4E = 0x001AFCD2;
@@ -82,6 +84,7 @@ PlayerCollisionHandlerKind player_handler_kind(std::uint8_t actor_type) {
         return PlayerCollisionHandlerKind::PlayerLaunch;
     case 0x6E: case 0x6F: case 0x70: case 0x71: case 0x72: case 0x73:
     case 0x74: case 0x75: case 0x76: case 0x77:
+    case 0x7E:
         return PlayerCollisionHandlerKind::TransitionResponse;
     default:
         return PlayerCollisionHandlerKind::Unknown;
@@ -142,6 +145,7 @@ std::uint32_t known_player_handler_address(std::uint8_t actor_type) {
         return 0x001AFB36;
     case 0x74: case 0x75: return 0x001AFA84;
     case 0x76: case 0x77: return 0x001AF9F6;
+    case 0x7E: return 0x001AFE1C;
     case 0x78: case 0x7A: return 0x001AEBDC;
     case 0x7B: return 0x001AE9D4;
     case 0x7D: return 0x001AEBA4;
@@ -166,6 +170,10 @@ bool native_player_handler(
         return actor_type == 0x3F;
     case kHandlerType4D:
         return actor_type == 0x4D;
+    case kHandlerType46:
+        return actor_type == 0x46;
+    case kHandlerType7E:
+        return actor_type == 0x7E;
     case kHandlerLaunchShared:
         return actor_type == 0x11 || actor_type == 0x12;
     case kHandlerBounce:
@@ -212,6 +220,21 @@ bool CollisionSystem::valid_frame(std::uint32_t frame_pointer) const {
     return rom_ != nullptr
         && frame_pointer != 0
         && static_cast<std::size_t>(frame_pointer) + 5 < rom_->size();
+}
+
+void CollisionSystem::reinitialize_from_collision_template(
+    GameState& state,
+    ActorIndex slot
+) {
+    if (slot >= state.actors.size()) return;
+    // Actor_ReinitializeFromCollisionTemplate is the common 0x001AF4C2 tail:
+    // release the selected record and install the shared response template in
+    // the same slot, preserving the caller-owned coordinates/continuations.
+    const ActorState replacement = actor_lifecycle_.initialize_record(
+        state.actors[slot],
+        0x001B7ABC
+    );
+    (void)actor_lifecycle_.install(slot, replacement);
 }
 
 bool CollisionSystem::is_opening_fire_actor(const ActorState& actor) const {
@@ -530,6 +553,93 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         return effects;
     }
 
+    if (collision.handler.address == kHandlerType46
+        && actor.type == 0x46) {
+        // ActorType46_PlayerCollisionHandler is a compact gate around the
+        // shared collision-template tail. At the ASCII cap the ROM returns
+        // without consuming/replacing the actor.
+        if (state.progress.difficulty_counter == '9') return effects;
+        if (state.progress.difficulty_counter < '0'
+            || state.progress.difficulty_counter > '9') {
+            return effects;
+        }
+        if (!state.progress.increment_difficulty_counter()) return effects;
+        if (state.camera.vdp_update != 0) {
+            effects.sound_requests.push_back(0x66);
+        }
+        reinitialize_from_collision_template(state, collision.actor);
+        return effects;
+    }
+
+    if (collision.handler.address == kHandlerType7E
+        && actor.type == 0x7E) {
+        // The handler always republishes these camera thresholds through its
+        // common tail, including ordinary contacts and gated returns.
+        state.camera.horizontal_threshold = 0x00B0;
+        state.camera.vertical_threshold = 0x0180;
+
+        // FFF0E7, TERRAIN_PUSH_UP, and the scene-resource completion byte are
+        // tested before the position-dependent transition body.
+        if (state.player.animation_selector.animation_gate != 0) {
+            return effects;
+        }
+        if (state.player.terrain_push_up == 0) {
+            state.scene.resource_completion = 0;
+            return effects;
+        }
+        if (state.scene.resource_completion != 0) {
+            return effects;
+        }
+
+        const auto ensure_mode11 = [&]() {
+            for (ActorIndex slot = 1; slot <= 24 && slot < state.actors.size(); ++slot) {
+                if (state.actors[slot].type == 0x85) return;
+            }
+            state.scene.resource_mode = 0x11;
+            state.scene.resource_completion = 0xFF;
+        };
+        const std::uint16_t player_world_x = static_cast<std::uint16_t>(
+            state.camera.x + state.player.x);
+        const bool player_left_of_actor = player_world_x < actor.x;
+
+        if (player_left_of_actor) {
+            if (state.interaction_state.secondary_digits < 0x3035) {
+                ensure_mode11();
+                return effects;
+            }
+            if (state.progress.difficulty_counter == '9') {
+                state.scene.resource_mode = 0x16;
+                state.scene.resource_completion = 0xFF;
+                return effects;
+            }
+            for (int count = 0; count < 5; ++count) {
+                state.interaction_state.decrement_secondary();
+            }
+            if (!state.progress.increment_difficulty_counter()) return effects;
+            if (state.camera.vdp_update != 0) {
+                effects.sound_requests.push_back(0x48);
+            }
+            state.scene.resource_mode = 0x14;
+            state.scene.resource_completion = 0xFF;
+            return effects;
+        }
+
+        if (state.interaction_state.secondary_digits < 0x3130) {
+            ensure_mode11();
+            return effects;
+        }
+        for (int count = 0; count < 10; ++count) {
+            state.interaction_state.decrement_secondary();
+        }
+        if (state.camera.vdp_update != 0) {
+            effects.sound_requests.push_back(0x48);
+        }
+        ++state.progress.active_scene_entry_gate;
+        state.scene.resource_mode = 0x14;
+        state.scene.resource_completion = 0xFF;
+        return effects;
+    }
+
     // Types 0x35 and 0x40 share Actor_FarTransferPlayerCollisionHandler in
     // the ROM. Its counter helper is the apple pickup path: increment the
     // bounded inventory before the actor is replaced by its terminal record.
@@ -538,7 +648,7 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
     if (collision.handler.address == kHandlerApplePickupShared
         && (actor.type == 0x35 || actor.type == 0x40)
         && strict_overlaps(player_box, actor_box)) {
-        state.inventory.collect_apple();
+        state.interaction_state.increment_primary();
         // Actor_FarTransferPlayerCollisionHandler queues event 0x0B through
         // Audio_PrepareCommand/Audio_SendCommand when the frame's VDP/audio
         // update gate is active. Keep the pickup cue attached to the

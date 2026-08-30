@@ -13,12 +13,9 @@ namespace {
 constexpr int kBackgroundPlaneOriginOffset = 0x10;
 constexpr int kParallaxSourceX = 0x79;
 
-constexpr std::array<GenesisPreviewSprite, 16> kPreviewSprites = {{
+constexpr std::array<GenesisPreviewSprite, 13> kPreviewSprites = {{
     {16, 184, 3, 3, 0x11EDE0, 3},
     {42, 200, 1, 1, 0x11ED00, 3},
-    {270, 192, 2, 2, 0x11EF00, 3},
-    {288, 200, 1, 1, 0x11ECC0, 3},
-    {296, 200, 1, 1, 0x11ECA0, 3},
     {18, 20, 4, 3, 0x11E0A0, 3},
     {50, 20, 2, 2, 0x11E220, 3},
     {66, 12, 1, 2, 0x11E2A0, 3},
@@ -91,6 +88,11 @@ void GenesisRenderModel::reset() {
     registers_.fill(0);
     checkpoint_health_digit_index_ = -1;
     checkpoint_health_digit_size_link_ = 0;
+    checkpoint_apple_icon_index_ = -1;
+    checkpoint_apple_first_digit_index_ = -1;
+    checkpoint_apple_second_digit_index_ = -1;
+    checkpoint_apple_first_size_link_ = 0;
+    checkpoint_apple_second_size_link_ = 0;
     plane_a_ = {};
     plane_b_ = {};
     scroll_ = {};
@@ -121,6 +123,11 @@ void GenesisRenderModel::load_preview(
     preview_palette_ = palette;
     checkpoint_health_digit_index_ = -1;
     checkpoint_health_digit_size_link_ = 0;
+    checkpoint_apple_icon_index_ = -1;
+    checkpoint_apple_first_digit_index_ = -1;
+    checkpoint_apple_second_digit_index_ = -1;
+    checkpoint_apple_first_size_link_ = 0;
+    checkpoint_apple_second_size_link_ = 0;
     preview_sprites_.clear();
     if (rom_loaded) {
         preview_sprites_.assign(kPreviewSprites.begin(), kPreviewSprites.end());
@@ -143,6 +150,11 @@ void GenesisRenderModel::load_checkpoint(
     live_vram_ = vram_;
     checkpoint_health_digit_index_ = -1;
     checkpoint_health_digit_size_link_ = 0;
+    checkpoint_apple_icon_index_ = -1;
+    checkpoint_apple_first_digit_index_ = -1;
+    checkpoint_apple_second_digit_index_ = -1;
+    checkpoint_apple_first_size_link_ = 0;
+    checkpoint_apple_second_size_link_ = 0;
     palette_state_ = {};
     for (std::size_t index = 0;
          index < std::min<std::size_t>(64, checkpoint_palette_.size());
@@ -509,6 +521,100 @@ void GenesisRenderModel::render(
     draw_plane(plane_b_, true, true);
     draw_plane(plane_a_, false, true);
     draw_sprites(true);
+}
+
+void GenesisRenderModel::sync_checkpoint_apple_hud(std::uint8_t apple_count) {
+    if (!loaded_ || live_vram_.size() < kVramSize) return;
+
+    if (checkpoint_apple_icon_index_ < 0) {
+        for (std::size_t index = 0; index < sprites_.records.size(); ++index) {
+            const GenesisSpriteRecord& record = sprites_.records[index];
+            if (record.x != GenesisAppleHudLayout::kIconX
+                || record.y != GenesisAppleHudLayout::kIconY
+                || record.tile != GenesisAppleHudLayout::kIconTile) {
+                continue;
+            }
+            const int first_digit = record.size_link & 0x7F;
+            if (first_digit < 0
+                || first_digit >= static_cast<int>(sprites_.records.size())) {
+                continue;
+            }
+            const int second_digit = sprites_.records[
+                static_cast<std::size_t>(first_digit)].size_link & 0x7F;
+            if (second_digit < 0
+                || second_digit >= static_cast<int>(sprites_.records.size())) {
+                continue;
+            }
+            checkpoint_apple_icon_index_ = static_cast<int>(index);
+            checkpoint_apple_first_digit_index_ = first_digit;
+            checkpoint_apple_second_digit_index_ = second_digit;
+            checkpoint_apple_first_size_link_ = sprites_.records[
+                static_cast<std::size_t>(first_digit)].size_link;
+            checkpoint_apple_second_size_link_ = sprites_.records[
+                static_cast<std::size_t>(second_digit)].size_link;
+            break;
+        }
+    }
+
+    if (checkpoint_apple_icon_index_ < 0) return;
+
+    const auto write_word = [this](std::size_t address, std::uint16_t value) {
+        if (address + 1 >= live_vram_.size()) return;
+        live_vram_[address] = static_cast<std::uint8_t>(value >> 8);
+        live_vram_[address + 1] = static_cast<std::uint8_t>(value);
+    };
+    const auto write_record = [&](int index, const GenesisSpriteRecord& record) {
+        if (index < 0 || index >= static_cast<int>(sprites_.records.size())) return;
+        const std::size_t address = static_cast<std::size_t>(sprites_.vram_base)
+            + static_cast<std::size_t>(index) * 8;
+        write_word(address, record.y);
+        write_word(address + 2, record.size_link);
+        write_word(address + 4, record.tile);
+        write_word(address + 6, record.x);
+    };
+
+    GenesisSpriteRecord icon = sprites_.records[
+        static_cast<std::size_t>(checkpoint_apple_icon_index_)];
+    GenesisSpriteRecord first_digit = sprites_.records[
+        static_cast<std::size_t>(checkpoint_apple_first_digit_index_)];
+    GenesisSpriteRecord second_digit = sprites_.records[
+        static_cast<std::size_t>(checkpoint_apple_second_digit_index_)];
+    const int next_after_hud = checkpoint_apple_second_size_link_ & 0x7F;
+    const std::uint8_t bounded_count = std::min(
+        apple_count, InteractionState::kMaximumCount);
+
+    if (bounded_count == 0) {
+        icon.y = 1;
+        first_digit.y = 1;
+        second_digit.y = 1;
+    } else {
+        icon.y = GenesisAppleHudLayout::kIconY;
+        icon.x = GenesisAppleHudLayout::kIconX;
+        icon.tile = GenesisAppleHudLayout::kIconTile;
+        first_digit.y = 0x0148;
+        first_digit.x = GenesisAppleHudLayout::kDigitX;
+        first_digit.tile = static_cast<std::uint16_t>(
+            GenesisAppleHudLayout::kDigitTile + (bounded_count >= 10
+                ? (bounded_count / 10) * 2 : bounded_count * 2));
+        if (bounded_count >= 10) {
+            first_digit.size_link = checkpoint_apple_first_size_link_;
+            second_digit.y = 0x0148;
+            second_digit.x = GenesisAppleHudLayout::kSecondDigitX;
+            second_digit.tile = static_cast<std::uint16_t>(
+                GenesisAppleHudLayout::kDigitTile + (bounded_count % 10) * 2);
+            second_digit.size_link = checkpoint_apple_second_size_link_;
+        } else {
+            first_digit.size_link = static_cast<std::uint16_t>(
+                (checkpoint_apple_first_size_link_ & 0xFF80U)
+                | static_cast<std::uint16_t>(next_after_hud));
+            second_digit.y = 1;
+        }
+    }
+
+    write_record(checkpoint_apple_icon_index_, icon);
+    write_record(checkpoint_apple_first_digit_index_, first_digit);
+    write_record(checkpoint_apple_second_digit_index_, second_digit);
+    refresh_views();
 }
 
 void GenesisRenderModel::sync_checkpoint_health_hud(std::uint8_t health) {

@@ -60,7 +60,7 @@ int main() {
     state.camera.x = 0;
     state.camera.y = 0;
     state.camera.vdp_update = 1;
-    state.inventory.apple_count = 10;
+    state.interaction_state.primary_digits = 0x3130;
     state.actors[1].type = 0x40;
     state.actors[1].frame_ptr = frame;
     const auto apple_pickup = collision.player_actor(
@@ -68,7 +68,7 @@ int main() {
         openaladdin::PlayerCollisionInput{frame, false, false, false, false}
     );
     assert(apple_pickup.unhandled_player_collision_types.empty());
-    assert(state.inventory.apple_count == 11);
+    assert(state.interaction_state.primary_digits == 0x3131);
     assert(state.actors[1].type == 0);
     assert(apple_pickup.sound_requests.size() == 1);
     assert(apple_pickup.sound_requests.front() == 0x0B);
@@ -81,7 +81,7 @@ int main() {
     state.camera.x = 0;
     state.camera.y = 0;
     state.camera.vdp_update = 0;
-    state.inventory.apple_count = 10;
+    state.interaction_state.primary_digits = 0x3130;
     state.actors[1].type = 0x35;
     state.actors[1].frame_ptr = frame;
     const auto gated_apple_pickup = collision.player_actor(
@@ -89,7 +89,7 @@ int main() {
         openaladdin::PlayerCollisionInput{frame, false, false, false, false}
     );
     assert(gated_apple_pickup.sound_requests.empty());
-    assert(state.inventory.apple_count == 11);
+    assert(state.interaction_state.primary_digits == 0x3131);
     assert(state.actors[1].type == 0);
 
     const auto launch_handler = collision.player_collision_handler(0x11);
@@ -472,6 +472,138 @@ int main() {
     assert(!gated_out.player_animation_stream.has_value());
     assert(state.actors[1].type == 0x4F);
     assert(state.player.vy == 0);
+
+    // Type 0x46 and Type 0x7E are table-dispatched through their recovered
+    // ROM handler addresses.  Keep their ASCII progression counters in the
+    // same semantic state the handlers observe in the game.
+    std::vector<std::uint8_t> counter_rom(0x001CBE + 0x100 * 4 + 0x20, 0);
+    constexpr std::uint32_t counter_frame = 0x00100000;
+    counter_rom.resize(0x001B7ABC + 0x42, 0);
+    counter_rom[counter_frame + 2] = 0;
+    counter_rom[counter_frame + 3] = 0;
+    counter_rom[counter_frame + 4] = 8;
+    counter_rom[counter_frame + 5] = 8;
+    const auto set_handler = [&](std::uint8_t type, std::uint32_t address) {
+        const auto table = static_cast<std::size_t>(0x001CBE + type * 4);
+        counter_rom[table + 0] = static_cast<std::uint8_t>(address >> 24);
+        counter_rom[table + 1] = static_cast<std::uint8_t>(address >> 16);
+        counter_rom[table + 2] = static_cast<std::uint8_t>(address >> 8);
+        counter_rom[table + 3] = static_cast<std::uint8_t>(address);
+    };
+    set_handler(0x46, 0x001AEF5C);
+    set_handler(0x7E, 0x001AFE1C);
+    counter_rom[0x001B7ABC + 0] = 0x84;
+    counter_rom[0x001B7ABC + 0x0C] = 0;
+    counter_rom[0x001B7ABC + 0x0D] = 0;
+    counter_rom[0x001B7ABC + 0x0E] = 0;
+    counter_rom[0x001B7ABC + 0x0F] = 0;
+    counter_rom[0x001B7ABC + 0x12] = 0;
+    counter_rom[0x001B7ABC + 0x13] = 0;
+    counter_rom[0x001B7ABC + 0x14] = 0;
+    counter_rom[0x001B7ABC + 0x15] = 0;
+    lifecycle.bind_rom(counter_rom);
+    collision.bind_rom(counter_rom);
+
+    state.actors.fill({});
+    state.player = {};
+    state.camera = {};
+    state.camera.vdp_update = 1;
+    state.progress.difficulty_counter = '2';
+    state.actors[1].type = 0x46;
+    state.actors[1].x = 40;
+    state.actors[1].y = 50;
+    state.actors[1].frame_ptr = counter_frame;
+    const auto type46 = collision.dispatch_player_handler(
+        state,
+        openaladdin::PlayerActorCollision{
+            1, collision.player_collision_handler(0x46)},
+        openaladdin::PlayerCollisionInput{
+            counter_frame, false, false, false, false}
+    );
+    assert(type46.unhandled_player_collision_types.empty());
+    assert(state.progress.difficulty_counter == '3');
+    assert(state.actors[1].type == 0x84);
+    assert(state.actors[1].x == 40 && state.actors[1].y == 50);
+    assert(type46.sound_requests.size() == 1);
+    assert(type46.sound_requests.front() == 0x66);
+
+    state.actors[1].type = 0x46;
+    state.actors[1].frame_ptr = counter_frame;
+    state.progress.difficulty_counter = '9';
+    const auto type46_capped = collision.dispatch_player_handler(
+        state,
+        openaladdin::PlayerActorCollision{
+            1, collision.player_collision_handler(0x46)},
+        openaladdin::PlayerCollisionInput{
+            counter_frame, false, false, false, false}
+    );
+    assert(type46_capped.sound_requests.empty());
+    assert(state.progress.difficulty_counter == '9');
+    assert(state.actors[1].type == 0x46);
+
+    state.actors.fill({});
+    state.player = {};
+    state.camera = {};
+    state.camera.vdp_update = 1;
+    state.player.terrain_push_up = 0xFF;
+    state.progress.difficulty_counter = '2';
+    state.interaction_state.secondary_digits = 0x3035;
+    state.actors[1].type = 0x7E;
+    state.actors[1].x = 40;
+    state.actors[1].frame_ptr = counter_frame;
+    const auto type7e_left = collision.dispatch_player_handler(
+        state,
+        openaladdin::PlayerActorCollision{
+            1, collision.player_collision_handler(0x7E)},
+        openaladdin::PlayerCollisionInput{
+            counter_frame, false, false, false, false}
+    );
+    assert(type7e_left.unhandled_player_collision_types.empty());
+    assert(state.interaction_state.secondary_digits == 0x3030);
+    assert(state.progress.difficulty_counter == '3');
+    assert(state.scene.resource_mode == 0x14);
+    assert(state.scene.resource_completion == 0xFF);
+    assert(state.camera.horizontal_threshold == 0x00B0);
+    assert(state.camera.vertical_threshold == 0x0180);
+    assert(type7e_left.sound_requests.size() == 1);
+    assert(type7e_left.sound_requests.front() == 0x48);
+
+    state.scene.resource_completion = 0;
+    state.progress.difficulty_counter = '9';
+    state.interaction_state.secondary_digits = 0x3035;
+    state.actors[1].type = 0x7E;
+    const auto type7e_terminal = collision.dispatch_player_handler(
+        state,
+        openaladdin::PlayerActorCollision{
+            1, collision.player_collision_handler(0x7E)},
+        openaladdin::PlayerCollisionInput{
+            counter_frame, false, false, false, false}
+    );
+    assert(type7e_terminal.sound_requests.empty());
+    assert(state.interaction_state.secondary_digits == 0x3035);
+    assert(state.scene.resource_mode == 0x16);
+    assert(state.scene.resource_completion == 0xFF);
+
+    state.scene.resource_completion = 0;
+    state.progress.difficulty_counter = '2';
+    state.interaction_state.secondary_digits = 0x3130;
+    state.progress.active_scene_entry_gate = 4;
+    state.player.x = 40;
+    state.actors[1].type = 0x7E;
+    state.actors[1].x = 20;
+    const auto type7e_right = collision.dispatch_player_handler(
+        state,
+        openaladdin::PlayerActorCollision{
+            1, collision.player_collision_handler(0x7E)},
+        openaladdin::PlayerCollisionInput{
+            counter_frame, false, false, false, false}
+    );
+    assert(type7e_right.sound_requests.size() == 1);
+    assert(type7e_right.sound_requests.front() == 0x48);
+    assert(state.interaction_state.secondary_digits == 0x3030);
+    assert(state.progress.active_scene_entry_gate == 5);
+    assert(state.scene.resource_mode == 0x14);
+    assert(state.scene.resource_completion == 0xFF);
 
     // Opening flames are type-0x84 AnimationVM children and are therefore
     // outside the ordinary 0..0x7E player-collision table. Their contact

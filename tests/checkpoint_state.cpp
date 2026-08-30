@@ -44,6 +44,12 @@ int main() {
     uninterrupted->state().interaction_state.response_pending = 9;
     uninterrupted->state().interaction_state.type3e_response_latch = 0xFF;
     uninterrupted->state().interaction_state.type3f_response_latch = 0x7F;
+    uninterrupted->state().interaction_state.primary_digits = 0x3037;
+    uninterrupted->state().interaction_state.secondary_digits = 0x3132;
+    uninterrupted->state().progress.difficulty_counter = '6';
+    uninterrupted->state().progress.active_scene_entry_gate = 4;
+    uninterrupted->state().scene.resource_completion = 0xFF;
+    uninterrupted->state().scene.resource_mode = 0x14;
     uninterrupted->state().player.terrain_bounce_animation_state = 0x28;
     const std::string saved = checkpoint(*uninterrupted);
     // The checkpoint contains the per-VM 64 KiB RAM images and should not
@@ -60,6 +66,12 @@ int main() {
     assert(restored->state().interaction_state.response_pending == 9);
     assert(restored->state().interaction_state.type3e_response_latch == 0xFF);
     assert(restored->state().interaction_state.type3f_response_latch == 0x7F);
+    assert(restored->state().interaction_state.primary_digits == 0x3037);
+    assert(restored->state().interaction_state.secondary_digits == 0x3132);
+    assert(restored->state().progress.difficulty_counter == '6');
+    assert(restored->state().progress.active_scene_entry_gate == 4);
+    assert(restored->state().scene.resource_completion == 0xFF);
+    assert(restored->state().scene.resource_mode == 0x14);
     assert(restored->state().player.terrain_bounce_animation_state == 0x28);
 
     for (int frame = kCheckpointFrame; frame < kEndFrame; ++frame) {

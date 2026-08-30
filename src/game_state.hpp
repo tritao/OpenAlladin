@@ -128,18 +128,106 @@ struct RandomState {
     std::uint32_t value = 0;
 };
 
-// Interaction response state is distinct from InteractionRuntimeState, which
-// contains host-side deferred calls. These bytes are the Genesis fields used
-// by response-target convergence and indirect target-state dispatch.
+inline std::uint16_t encode_ascii_decimal(std::uint8_t value) {
+    if (value > 99) value = 99;
+    return static_cast<std::uint16_t>(
+        (static_cast<std::uint16_t>('0' + value / 10) << 8)
+        | static_cast<std::uint16_t>('0' + value % 10));
+}
+
+inline std::uint8_t decode_ascii_decimal(std::uint16_t digits) {
+    const auto high = static_cast<std::uint8_t>(digits >> 8);
+    const auto low = static_cast<std::uint8_t>(digits);
+    if (high < '0' || high > '9' || low < '0' || low > '9') return 0;
+    return static_cast<std::uint8_t>((high - '0') * 10 + (low - '0'));
+}
+
+inline bool increment_ascii_decimal(std::uint16_t& digits) {
+    if (digits == 0x3939) return false;
+    auto high = static_cast<std::uint8_t>(digits >> 8);
+    auto low = static_cast<std::uint8_t>(digits);
+    if (high < '0' || high > '9' || low < '0' || low > '9') return false;
+    if (low == '9') {
+        low = '0';
+        if (high == '9') return false;
+        ++high;
+    } else {
+        ++low;
+    }
+    digits = static_cast<std::uint16_t>(
+        (static_cast<std::uint16_t>(high) << 8) | low);
+    return true;
+}
+
+inline bool decrement_ascii_decimal(std::uint16_t& digits) {
+    if (digits == 0x3030) return false;
+    auto high = static_cast<std::uint8_t>(digits >> 8);
+    auto low = static_cast<std::uint8_t>(digits);
+    if (high < '0' || high > '9' || low < '0' || low > '9') return false;
+    if (low == '0') {
+        low = '9';
+        if (high == '0') return false;
+        --high;
+    } else {
+        --low;
+    }
+    digits = static_cast<std::uint16_t>(
+        (static_cast<std::uint16_t>(high) << 8) | low);
+    return true;
+}
+
+// These are Genesis-visible interaction/resource words. They deliberately
+// retain the ROM's big-endian ASCII representation instead of projecting the
+// primary word into a native binary count.
 struct InteractionState {
+    static constexpr std::uint16_t kDefaultPrimaryDigits = 0x3130;
+    static constexpr std::uint16_t kDefaultSecondaryDigits = 0x3030;
+    static constexpr std::uint8_t kMaximumCount = 99;
+
+    std::uint16_t primary_digits = kDefaultPrimaryDigits;    // FFEFE0
+    std::uint16_t secondary_digits = kDefaultSecondaryDigits; // FFEFE2
+
+    std::uint8_t primary_count() const {
+        return decode_ascii_decimal(primary_digits);
+    }
+    bool can_throw_apple() const { return primary_count() != 0; }
+    bool decrement_primary() { return decrement_ascii_decimal(primary_digits); }
+    bool increment_primary() { return increment_ascii_decimal(primary_digits); }
+    bool decrement_secondary() {
+        return decrement_ascii_decimal(secondary_digits);
+    }
+    bool increment_secondary() {
+        return increment_ascii_decimal(secondary_digits);
+    }
+
+    // Interaction response fields (FFF0EC/FFEFFA/FFEFFB and the recovered
+    // response latches) live beside the two counter words in the same RAM
+    // region/state owner.
     std::uint8_t target_current = 0;    // FFF0EC
     std::uint8_t response_current = 0;  // FFEFFA
     std::uint8_t response_pending = 0;  // FFEFFB
-    // Collision response latches consumed by interaction spawn gates.
     std::uint8_t type3e_response_latch = 0;  // FFF177
     std::uint8_t type3f_response_latch = 0;  // FFF178
+
 };
 
+struct ProgressState {
+    // GAME_DIFFICULTY_COUNTER is an ASCII byte, not a native ordinal.
+    std::uint8_t difficulty_counter = '3'; // FF7E3C
+    std::uint8_t active_scene_entry_gate = 0; // FF7E3F
+
+    bool increment_difficulty_counter() {
+        if (difficulty_counter < '0' || difficulty_counter >= '9') {
+            return false;
+        }
+        ++difficulty_counter;
+        return true;
+    }
+};
+
+// Interaction response state is distinct from InteractionRuntimeState, which
+// contains host-side deferred calls. These bytes are the Genesis fields used
+// by response-target convergence and indirect target-state dispatch.
 // Genesis-semantic runtime state. Services, rendering resources, trace
 // buffers, and deferred host scheduling flags intentionally remain outside
 // this aggregate while the runtime is migrated incrementally.
@@ -150,6 +238,7 @@ struct GameState {
     SceneRuntimeState scene{};
     InteractionMap interactions{};
     InteractionState interaction_state{};
+    ProgressState progress{};
     ActorSystem actors{};
     RandomState random{};
     GameRamStore ram{};

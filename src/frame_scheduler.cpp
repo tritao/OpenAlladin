@@ -16,6 +16,7 @@ namespace {
 constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
 constexpr std::uint32_t kPlayerSwordAnimationEnd = 0x001227AE;
 constexpr std::uint32_t kPlayerAppleActionStream = 0x001223DA;
+constexpr std::uint8_t kPlayerAppleThrowSoundId = 0x03;
 constexpr std::uint32_t kPlayerAttackTransitionStream = 0x00122034;
 constexpr std::uint32_t kPlayerSwordFirstFrame = 0x001ED34A;
 constexpr std::uint32_t kPlayerUpAnimationStream = 0x00122236;
@@ -663,13 +664,25 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         player_.animation_selector.transition_state_df = 0xFF;
         player_.terrain_response_timer_state = 0;
     }
-    if (input.apple_pressed && was_grounded && animation_.rom_loaded()) {
+    if (input.apple_pressed
+        && was_grounded
+        && state_.interaction_state.can_throw_apple()
+        && animation_.rom_loaded()) {
         // Player_SelectLocomotionOrAction publishes the throw root before
         // the single AnimationVM_TickActors traversal. Let that traversal
         // consume the root directly; the old post-pass apple boundary was a
         // native ordering workaround rather than a ROM state field.
         animation_.select_stream_entry(kPlayerAppleActionStream);
         player_.animation_selector.state_lock = 0x0E;
+        // The ROM's selector queues OBJECT THROW (0x03) at this same
+        // boundary when SCENE_VDP_UPDATE_FLAG is active. The native shortcut
+        // above bypasses that selector body, so preserve its audio side
+        // effect explicitly.
+        if (camera_.vdp_update != 0) {
+            services_.append_sound_requests(
+                std::vector<std::uint8_t>{kPlayerAppleThrowSoundId}
+            );
+        }
     }
     // Actor_ActorCollisionPass follows the player selectors in the ROM. Its
     // sword terminal edge is handled inside this one source/target scan;

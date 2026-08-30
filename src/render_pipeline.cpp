@@ -39,6 +39,57 @@ void draw_preview_health_hud(
     );
 }
 
+void draw_preview_apple_hud(
+    const GameState& state,
+    const std::vector<std::uint8_t>& rom,
+    const std::vector<SDL_Color>& palette,
+    std::vector<std::uint32_t>& framebuffer,
+    int width,
+    int height
+) {
+    const std::uint8_t count = state.interaction_state.primary_count();
+    if (count == 0 || rom.empty()) return;
+
+    SpriteRenderer::draw_vdp_sprite(
+        rom,
+        GenesisAppleHudLayout::kIconRomAddress,
+        2,
+        2,
+        palette,
+        framebuffer,
+        width,
+        height,
+        GenesisAppleHudLayout::kPreviewIconScreenX,
+        GenesisAppleHudLayout::kPreviewIconScreenY,
+        3
+    );
+
+    const auto draw_digit = [&](int screen_x, int digit) {
+        SpriteRenderer::draw_vdp_sprite(
+            rom,
+            GenesisAppleHudLayout::kDigitRomBase
+                + digit * GenesisAppleHudLayout::kDigitRomStride,
+            1,
+            1,
+            palette,
+            framebuffer,
+            width,
+            height,
+            screen_x,
+            GenesisAppleHudLayout::kPreviewDigitScreenY,
+            3
+        );
+    };
+    if (count >= 10) {
+        draw_digit(
+            GenesisAppleHudLayout::kPreviewDigitScreenX, count / 10);
+        draw_digit(
+            GenesisAppleHudLayout::kPreviewSecondDigitScreenX, count % 10);
+    } else {
+        draw_digit(GenesisAppleHudLayout::kPreviewDigitScreenX, count);
+    }
+}
+
 int actor_palette_line(const ActorState& actor) {
     return static_cast<int>((actor.sprite_attribute >> 13) & 0x03);
 }
@@ -89,6 +140,8 @@ bool RenderPipeline::render(
 
     if (render_model.loaded()) {
         render_model.sync_checkpoint_health_hud(state.player.health);
+        render_model.sync_checkpoint_apple_hud(
+            state.interaction_state.primary_count());
         render_model.render(framebuffer_, width_, height_);
     } else {
         render_model.render_preview_background(
@@ -119,6 +172,14 @@ bool RenderPipeline::render(
             );
         }
         draw_preview_health_hud(
+            state,
+            rom,
+            sprites.palette(),
+            framebuffer_,
+            width_,
+            height_
+        );
+        draw_preview_apple_hud(
             state,
             rom,
             sprites.palette(),
