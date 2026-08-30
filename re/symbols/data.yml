@@ -3190,13 +3190,14 @@
     - movement_stream_decoder
 
 0x001212C0:
-  name: ACTOR_MOVE_UNINDEXED_RESPONSE_BANK_001212C0
+  name: ACTOR_MOVE_INTERACTION_ANCHOR_RESPONSE_BANK_001212C0
   type: movement_stream
   size: 0x40
   confidence: provisional
-  description: Provisional decoder-bounded four-entry movement response bank at 0x001212C0-0x001212FF. The bank contains the actor/RAM compare loop, its parameter-push loop, a timed compare entry, and the terminal clear-state entry before ACTOR_MOVE_TYPE52_LEVEL09_ENTRY; no direct producer reference has been recovered.
+  description: Provisional decoder-bounded interaction-anchor response bank at 0x001212C0-0x001212FF. Its exact entries compare the interaction marker at 0x00FFF0D3, publish Actor_ApplyInteractionAnchorMovementStep and Actor_SetInteractionAnchorFromActor through the movement callback parameter convention, and clear actor state before ACTOR_MOVE_TYPE52_LEVEL09_ENTRY; no direct template or producer reference has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
+    - interaction_anchor_callback_static_v1
     - movement_stream_decoder
 
 0x00120A42:
@@ -3942,13 +3943,14 @@
     - movement_stream_decoder
 
 0x001213E2:
-  name: ACTOR_MOVE_UNINDEXED_CHILD_RESPONSE_001213E2
+  name: ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_PREFIX_001213E2
   type: movement_stream
   size: 0x30
   confidence: provisional
-  description: Provisional decoder-bounded child-response prefix immediately after the Type-0x52 stream and before ACTOR_MOVE_TYPE84_UNREFERENCED_RESPONSE_PREFIX. Its exact 48-byte body performs the compact field update, flag-gated Type-0x84 child spawn, and actor clear; no direct template or producer reference has been recovered.
+  description: Provisional decoder-bounded Type-0x8D wall-response child prefix immediately after the Type-0x52 stream and before ACTOR_MOVE_TYPE84_UNREFERENCED_RESPONSE_PREFIX. Its exact 48-byte body adjusts actor residual fields +0x18/+0x1A, gates a spawn through actor flag +0x07, publishes Camera_SetScrollDataCursor6952, selects ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE, and clears the source actor; no direct runtime producer has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
+    - type34_wall_response_static_decompilation
     - movement_stream_decoder
 
 0x0012146C:
