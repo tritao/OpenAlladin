@@ -500,8 +500,7 @@ class DataIndex:
         for kind in STREAM_KINDS:
             for stream in self.objects(kind=kind):
                 canonical = stream.get("canonical_symbol") or {}
-                expected_type = "animation_stream" if kind == "animation" else "movement_stream"
-                if canonical.get("type") != expected_type or not stream.get("range_bounded"):
+                if not canonical or not stream.get("range_bounded"):
                     continue
                 start, end = _address(stream["start"]), _address(stream["end"])
                 if not reader.has(start, end - start + 1):
