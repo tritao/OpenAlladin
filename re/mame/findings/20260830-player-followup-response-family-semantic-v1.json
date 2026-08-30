@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-followup-response-family-semantic-targets.json",
+  "promotions": [
+    { "address": "0x001AFF82", "old_name": "ActorType02_PlayerCollisionHandler", "name": "PlayerCollision_ResolveType02GroundContact", "alias": "ActorType02_PlayerCollisionHandler" },
+    { "address": "0x001AE9A8", "old_name": "ActorType0C_PlayerCollisionHandler", "name": "PlayerCollision_ReinitializeType0CResponse", "alias": "ActorType0C_PlayerCollisionHandler" },
+    { "address": "0x001AEF5C", "old_name": "ActorType46_PlayerCollisionHandler", "name": "PlayerCollision_AdvanceDifficultyCounter", "alias": "ActorType46_PlayerCollisionHandler" },
+    { "address": "0x001AF7F2", "old_name": "ActorType54_PlayerCollisionHandler", "name": "PlayerCollision_TriggerTerminalTransition", "alias": "ActorType54_PlayerCollisionHandler" },
+    { "address": "0x001AC432", "old_name": "ActorType1B_ActorCollisionHandler", "name": "ActorCollision_TriggerType1BInteraction", "alias": "ActorType1B_ActorCollisionHandler" },
+    { "address": "0x001AC444", "old_name": "ActorType1C_ActorCollisionHandler", "name": "ActorCollision_TriggerType1CInteraction", "alias": "ActorType1C_ActorCollisionHandler" }
+  ],
+  "conclusion": "Promoted six compact player/actor collision follow-up entries to behavior-based canonical names while retaining dispatch-type aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

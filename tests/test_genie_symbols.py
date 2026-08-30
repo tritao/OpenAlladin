@@ -454,6 +454,22 @@ def test_player_directional_bounce_family_has_behavior_names_and_legacy_aliases(
         assert legacy in symbol.aliases
 
 
+def test_player_followup_response_family_has_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001AF7F2: ("PlayerCollision_TriggerTerminalTransition", "ActorType54_PlayerCollisionHandler"),
+        0x001AFF82: ("PlayerCollision_ResolveType02GroundContact", "ActorType02_PlayerCollisionHandler"),
+        0x001AE9A8: ("PlayerCollision_ReinitializeType0CResponse", "ActorType0C_PlayerCollisionHandler"),
+        0x001AEF5C: ("PlayerCollision_AdvanceDifficultyCounter", "ActorType46_PlayerCollisionHandler"),
+        0x001AC432: ("ActorCollision_TriggerType1BInteraction", "ActorType1B_ActorCollisionHandler"),
+        0x001AC444: ("ActorCollision_TriggerType1CInteraction", "ActorType1C_ActorCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-followup-response-family",
+    "purpose": "Promote compact player and actor collision follow-up entries whose exact state, transition, and response behavior is established by static decompilation."
+  },
+  "dispatch_tables": [
+    {
+      "address": "0x001CBE",
+      "entry_width": 4,
+      "entries": [
+        { "actor_types": ["0x02"], "address": "0x001AFF82" },
+        { "actor_types": ["0x0C"], "address": "0x001AE9A8" },
+        { "actor_types": ["0x46"], "address": "0x001AEF5C" },
+        { "actor_types": ["0x54"], "address": "0x001AF7F2" }
+      ]
+    },
+    {
+      "address": "0x001EBA",
+      "entry_width": 4,
+      "entries": [
+        { "actor_types": ["0x1B"], "address": "0x001AC432" },
+        { "actor_types": ["0x1C"], "address": "0x001AC444" }
+      ]
+    }
+  ],
+  "targets": [
+    { "address": "0x001AFF82", "name": "PlayerCollision_ResolveType02GroundContact", "legacy_name": "ActorType02_PlayerCollisionHandler", "range": "0x001AFF82-0x001AFFE3", "size": 98 },
+    { "address": "0x001AE9A8", "name": "PlayerCollision_ReinitializeType0CResponse", "legacy_name": "ActorType0C_PlayerCollisionHandler", "range": "0x001AE9A8-0x001AE9C5", "size": 30 },
+    { "address": "0x001AEF5C", "name": "PlayerCollision_AdvanceDifficultyCounter", "legacy_name": "ActorType46_PlayerCollisionHandler", "range": "0x001AEF5C-0x001AEF6F", "size": 20 },
+    { "address": "0x001AF7F2", "name": "PlayerCollision_TriggerTerminalTransition", "legacy_name": "ActorType54_PlayerCollisionHandler", "range": "0x001AF7F2-0x001AF81B", "size": 42 },
+    { "address": "0x001AC432", "name": "ActorCollision_TriggerType1BInteraction", "legacy_name": "ActorType1B_ActorCollisionHandler", "range": "0x001AC432-0x001AC443", "size": 18 },
+    { "address": "0x001AC444", "name": "ActorCollision_TriggerType1CInteraction", "legacy_name": "ActorType1C_ActorCollisionHandler", "range": "0x001AC444-0x001AC455", "size": 18 }
+  ],
+  "contracts": {
+    "type02": [
+      "arms PLAYER_TERRAIN_RESPONSE_TIMER=4 and PLAYER_TERRAIN_RESPONSE_PHASE=0xFF within the vertical contact window",
+      "nudges the actor X coordinate toward PLAYER_WORLD_X and enters Player_SuppressCollisionResponse",
+      "otherwise raises PLAYER_COLLISION_RESPONSE_SUPPRESS during an active terrain response or places PLAYER_Y from actor Y and WORLD_CAMERA_Y"
+    ],
+    "type0c": "when PLAYER_ACTION_RESPONSE_FIELD is nonzero, clears the actor and owned resources and reinitializes the response slot",
+    "type46": "increments GAME_DIFFICULTY_COUNTER below ASCII '9' and reinitializes the collision template",
+    "type54": "queues event 0x65 when SCENE_VDP_UPDATE_FLAG is active and sets PLAYER_TERMINAL_TRANSITION=0xFF",
+    "type1b_1c": "clear their respective terrain-map pair and publish their interaction latch when the actor phase byte is clear, then enter the shared terminal-response continuation"
+  },
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

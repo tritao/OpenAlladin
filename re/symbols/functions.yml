@@ -1902,10 +1902,11 @@
     - mame_type43_tower_interaction_trace
     - player_collision_direct_entry_family_static_decompilation
 0x001AE9A8:
-  name: ActorType0C_PlayerCollisionHandler
+  name: PlayerCollision_ReinitializeType0CResponse
+  aliases: [ActorType0C_PlayerCollisionHandler]
   size: 30
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x0C. When PLAYER_INTERACTION_GATE is set, it clears the source actor and owned resources, then reinitializes the slot through Actor_InitializeFromTemplate using ACTOR_TEMPLATE_DEATH_84 at 0x001B7940; otherwise it returns without modifying the actor.
+  description: Reinitializes the Type-0x0C response actor when PLAYER_ACTION_RESPONSE_FIELD is nonzero. It clears the source actor and owned resources, then reinitializes the slot through Actor_InitializeFromTemplate; otherwise it returns without modifying the actor.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AE9A8
@@ -2143,10 +2144,11 @@
     - ghidra_disassembly_001AEF12
     - player_collision_response_counter_family_static_decompilation
 0x001AEF5C:
-  name: ActorType46_PlayerCollisionHandler
+  name: PlayerCollision_AdvanceDifficultyCounter
+  aliases: [ActorType46_PlayerCollisionHandler]
   size: 20
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x46. If GAME_DIFFICULTY_COUNTER is below its ASCII '9' cap it advances that counter through Game_IncrementDifficultyCounter, then enters Actor_ReinitializeFromCollisionTemplate; at the cap it returns through the existing gameplay path.
+  description: Advances GAME_DIFFICULTY_COUNTER for the Type-0x46 response when it is below the ASCII '9' cap, then reinitializes the collision-template actor; at the cap it returns without changing the response.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AEF5C
@@ -2547,10 +2549,11 @@
     - level01_transfer_capable_mechanism_graph
     - player_collision_actor_relative_placement_family_static_decompilation
 0x001AF7F2:
-  name: ActorType54_PlayerCollisionHandler
+  name: PlayerCollision_TriggerTerminalTransition
+  aliases: [ActorType54_PlayerCollisionHandler]
   size: 42
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x54. It optionally queues event 0x65 when the scene VDP-update flag is set, then arms PLAYER_TERMINAL_TRANSITION.
+  description: Triggers the Type-0x54 terminal transition. It queues audio event 0x65 when SCENE_VDP_UPDATE_FLAG is set, then arms PLAYER_TERMINAL_TRANSITION.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF7F2
@@ -6252,10 +6255,11 @@
     - ghidra_decompile_001AFE1C
 
 0x001AFF82:
-  name: ActorType02_PlayerCollisionHandler
+  name: PlayerCollision_ResolveType02GroundContact
+  aliases: [ActorType02_PlayerCollisionHandler]
   size: 98
   confidence: decompiled
-  description: Player-collision handler for actor type 0x02. It applies the actor-relative vertical correction when the actor is above the player; otherwise it arms the interaction response fields and adjusts the actor X coordinate toward PLAYER_WORLD_X before entering the shared terrain-response exit path.
+  description: Resolves ground contact for player-collision actor type 0x02. For an actor within the vertical contact window it arms the terrain-response timer/phase, nudges the actor X toward PLAYER_WORLD_X, and suppresses the shared collision response; when the contact is outside that window it either raises the suppression latch during an active terrain response or places PLAYER_Y from the actor and camera coordinates.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AFF82
@@ -6542,20 +6546,22 @@
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001AC432:
-  name: ActorType1B_ActorCollisionHandler
+  name: ActorCollision_TriggerType1BInteraction
+  aliases: [ActorType1B_ActorCollisionHandler]
   size: 18
   confidence: decompiled
-  description: Actor-collision handler for receiving actor type 0x1B. It skips the response when the actor phase byte is active; otherwise it clears the type-0x4F/0xFE terrain map words, publishes the type-0x1B interaction flag at 0x00FFF10F, and enters the shared response path.
+  description: Actor-collision entry for receiving actor type 0x1B. When the actor phase byte is clear it clears the type-0x4F/0xFE terrain map words, publishes PLAYER_INTERACTION_TYPE1B_LATCH, and enters the shared terminal-response path; an active phase branches directly to that continuation.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_disassembly_001AC432
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001AC444:
-  name: ActorType1C_ActorCollisionHandler
+  name: ActorCollision_TriggerType1CInteraction
+  aliases: [ActorType1C_ActorCollisionHandler]
   size: 18
   confidence: decompiled
-  description: Actor-collision handler for receiving actor type 0x1C. It skips the response when the actor phase byte is active; otherwise it clears the type-0x4E/0xFD terrain map words, publishes the type-0x1C interaction flag at 0x00FFF110, and enters the shared response path.
+  description: Actor-collision entry for receiving actor type 0x1C. When the actor phase byte is clear it clears the type-0x4E/0xFD terrain map words, publishes PLAYER_INTERACTION_TYPE1C_LATCH, and enters the shared terminal-response path; an active phase branches directly to that continuation.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_disassembly_001AC444
