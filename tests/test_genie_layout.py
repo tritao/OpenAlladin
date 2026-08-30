@@ -1909,6 +1909,38 @@ def test_type84_interaction_fd_fe_animation_family_is_exact():
     assert random_branch["branch_target"] == "0x00125E40"
 
 
+def test_player_airborne_action_continuation_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x00122672, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE_CONTINUATION"
+    assert stream.end == 0x001226B1
+    assert stream.size == 64
+    assert stream.confidence == "decompiled"
+    assert stream.metadata["type"] == "animation_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = load_animation_decoder().AnimationDecoder(rom)
+    decoded = decoder.decode_stream(
+        0x00122672,
+        max_instructions=128,
+        max_bytes=64,
+        follow_control_flow=False,
+    )
+    assert decoded["bytes_decoded"] == 64
+    assert decoded["stopped_reason"] == "unconditional_jump"
+    assert rom.slice(0x00122672, 64).hex().upper() == (
+        "F421F0C800000012269A0C56ED01F0DA0001F503001B791828DC0000000000000000"
+        "FB00001B0360ED01F11F00010C5AED01F0DA00010C5E0C5EEA000012217A"
+    )
+    f5 = next(instruction for instruction in decoded["instructions"] if instruction.get("opcode") == "0xF5")
+    assert f5["raw"] == "F503001B791828DC0000000000000000"
+    callback = next(instruction for instruction in decoded["instructions"] if instruction.get("opcode") == "0xFB")
+    assert callback["parameter"] == "0x001B0360"
+    assert decoded["instructions"][-1]["branch_target"] == "0x0012217A"
+
+
 def test_type84_menu_presentation_child_a_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00125F5A, include_ranges=False)

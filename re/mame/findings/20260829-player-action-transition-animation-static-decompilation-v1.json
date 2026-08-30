@@ -64,10 +64,17 @@
         "F4 at 0x00122662 compares terrain stop field 0xF0C5"
       ],
       "selector": "Player_SelectLocomotionOrAction selects this stream when terrain response is active or the landing state is clear."
+    },
+    {
+      "address": "0x00122672",
+      "name": "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE_CONTINUATION",
+      "range": "0x00122672-0x001226B1",
+      "bytes": 64,
+      "selector": "The F2 branch at 0x0012265A enters this separately bounded continuation."
     }
   ],
   "boundaries": {
-    "stream_group": "The four direct action roots are bounded at 0x001224B9, 0x0012257B, 0x001225E1, and 0x00122671. Each root stops before its branch-target continuation, so the embedded continuation bytes remain outside the sized root and available for later shared-stream classification."
+    "stream_group": "The four direct action roots are bounded at 0x001224B9, 0x0012257B, 0x001225E1, and 0x00122671. The airborne root's F2 continuation is separately bounded at 0x00122672-0x001226B1, before PLAYER_ANIM_INTERACTION_CAMERA_RESPONSE at 0x001226B2."
   },
   "evidence": [
     "Lossless AnimationDecoder output",
@@ -75,7 +82,7 @@
     "Exact F5/FB/ED/F3 command records in the transition-lock stream",
     "Exact non-overlapping root boundaries"
   ],
-  "conclusion": "The first player action-animation family is now partitioned into four selector-owned roots. Their distinction is controlled by transition locks, terrain landing/timer state, and active response state; the transition-lock root additionally spawns the 0x001B7918 actor record and queues callback 0x001B0360. The static evidence does not assign a semantic actor type to that still-unclassified template address.",
+  "conclusion": "The first player action-animation family is now partitioned into four selector-owned roots plus the directly reached 0x00122672 airborne continuation. Their distinction is controlled by transition locks, terrain landing/timer state, and active response state; the transition-lock and airborne paths additionally expose the 0x001B7918 actor record and queue callback 0x001B0360. The continuation remains separately bounded so it does not absorb the adjacent interaction-response stream.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

@@ -5164,6 +5164,17 @@
     - ghidra_player_locomotion_action_selector
     - animation_stream_decoder
 
+0x00122672:
+  name: PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE_CONTINUATION
+  type: animation_stream
+  size: 64
+  confidence: decompiled
+  description: Branch continuation of PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE selected by its F2 gate at 0x0012265A. Its exact 64-byte body compares player action field 0xF0C8, presents frame 0x0C56, spawns ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD at 0x001B7918, queues Player_ActionAnimationCallback at 0x001B0360, publishes player field 0xF11F, presents the 0x0C5A/0x0C5E response, and returns through the existing jump at 0x001226AC to 0x0012217A.
+  evidence:
+    - player_action_airborne_continuation_static_decompilation
+    - player_action_transition_animation_static_decompilation
+    - animation_stream_decoder
+
 0x001226B2:
   name: PLAYER_ANIM_INTERACTION_CAMERA_RESPONSE
   size: 28

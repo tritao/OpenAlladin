@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "recorded_at": "2026-08-30",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-action-airborne-continuation-static",
+    "purpose": "Bound and name the direct F2 continuation of the player airborne action AnimationVM stream."
+  },
+  "targets": [
+    { "address": "0x0012262A", "name": "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE" },
+    { "address": "0x00122672", "name": "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE_CONTINUATION" },
+    { "address": "0x001B7918", "name": "PLAYER_ACTION_F5_ACTOR_TEMPLATE" },
+    { "address": "0x001B0360", "name": "Player_ActionAnimationCallback" }
+  ],
+  "continuation": {
+    "address": "0x00122672",
+    "range": ["0x00122672", "0x001226B1"],
+    "size": 64,
+    "entry": "F2 branch target from 0x0012265A",
+    "terminal_jump": "0x001226AC -> 0x0012217A"
+  },
+  "decoded": [
+    "F4 compares player action field 0xF0C8 against zero and branches to 0x0012269A",
+    "Presents frame 0x0C56 and writes player animation field 0xF0DA to 1",
+    "F5 spawns PLAYER_ACTION_F5_ACTOR_TEMPLATE at 0x001B7918",
+    "FB queues Player_ActionAnimationCallback at 0x001B0360",
+    "Writes player field 0xF11F to 1 and presents the 0x0C5A/0x0C5E response",
+    "EA returns to the existing player response path at 0x0012217A"
+  ],
+  "evidence": [
+    "Exact F2 branch target from PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE",
+    "Lossless AnimationDecoder output",
+    "Exact F5 template pointer and FB callback parameter",
+    "Non-overlapping boundary before PLAYER_ANIM_INTERACTION_CAMERA_RESPONSE"
+  ],
+  "conclusion": "The former 0x00122672-0x001226B1 layout fragment is a direct airborne-action continuation, not opaque data. It is now canonically named and range-bounded while the owning player action root remains separately owned.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

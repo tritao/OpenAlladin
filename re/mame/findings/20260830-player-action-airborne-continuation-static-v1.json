@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-action-airborne-continuation-static-targets.json",
+  "source": {
+    "address": "0x0012262A",
+    "name": "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE",
+    "branch_site": "0x0012265A",
+    "branch": "F2 -> 0x00122672"
+  },
+  "continuation": {
+    "address": "0x00122672",
+    "name": "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE_CONTINUATION",
+    "range": "0x00122672-0x001226B1",
+    "bytes": 64,
+    "raw_bytes": "F421F0C800000012269A0C56ED01F0DA0001F503001B791828DC0000000000000000FB00001B0360ED01F11F00010C5AED01F0DA00010C5E0C5EEA000012217A"
+  },
+  "effects": [
+    "Compare player action field 0xF0C8 and branch to the field-publication phase",
+    "Present frame 0x0C56 and publish player animation field 0xF0DA",
+    "Spawn PLAYER_ACTION_F5_ACTOR_TEMPLATE at 0x001B7918",
+    "Queue Player_ActionAnimationCallback at 0x001B0360",
+    "Publish player field 0xF11F and present 0x0C5A/0x0C5E",
+    "Return through EA 0x001226AC -> 0x0012217A"
+  ],
+  "evidence": [
+    "Direct branch from the canonical airborne action root",
+    "Lossless AnimationDecoder output with exact 64-byte bounded decode",
+    "Exact F5 actor-template and FB callback operands",
+    "Boundary immediately before PLAYER_ANIM_INTERACTION_CAMERA_RESPONSE"
+  ],
+  "conclusion": "The former ANIM_STREAM_12262A layout fragment is a direct player airborne-action continuation. Its exact ownership and semantic effects are now represented without absorbing the adjacent interaction-response stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
