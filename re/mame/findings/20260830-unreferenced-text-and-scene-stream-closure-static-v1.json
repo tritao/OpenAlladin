@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-unreferenced-text-and-scene-stream-closure-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "objects": [
+    {
+      "address": "0x00126EB6",
+      "name": "ROM_ASCII_NUMERIC_LABELS_126EB6",
+      "range": ["0x00126EB6", "0x00126EBF"],
+      "role": "three NUL-terminated ASCII labels: 30, 60, and 90"
+    },
+    {
+      "address": "0x001274F0",
+      "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM",
+      "range": ["0x001274F0", "0x00127570"],
+      "role": "complete scene-resource presentation command stream with embedded response text"
+    }
+  ],
+  "evidence": [
+    "Exact gap-free layout boundaries and terminators",
+    "Scene-resource command grammar and embedded text decode",
+    "No exported Ghidra consumer or runtime sample references either object"
+  ],
+  "conclusion": "Both ROM objects are fully decoded static assets with no current exported consumer. They are retained as canonical unreferenced text/presentation data; later selector evidence can add a higher-level role without changing their ownership.",
+  "confidence": "decompiled",
+  "status": "recorded-static-negative-reachability"
+}
