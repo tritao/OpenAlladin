@@ -32,6 +32,23 @@ The default is 120 frames and the default capture profile is `state`. Select
 deeper captures explicitly with `OPENALADDIN_CAPTURE=ram`, `vdp`, or `full`.
 Override the frame count with `OPENALADDIN_TRACE_FRAMES`.
 
+To test whether a runtime path reads a neutral ROM object, enable narrow ROM
+read taps. Each matching access is appended to `trace_boot.jsonl` with its
+ROM address, value, 68000 PC, and frame. Keep the ranges small because a wide
+tap can produce a very large trace:
+
+```sh
+OPENALADDIN_TRACE_FRAMES=360 \
+OPENALADDIN_TRACE_ROM_READS=1 \
+OPENALADDIN_ROM_READ_RANGES=0x00128EB2-0x00128ED1,0x00129312-0x00129331 \
+OPENALADDIN_TRACE_DIR=build/re/traces/neutral-palette-reads \
+./genie/mame/run.sh
+```
+
+An empty result is negative runtime evidence for the exercised route; a
+nonempty result identifies the actual consuming PC for follow-up context and
+symbol promotion.
+
 The MAME wrapper has two execution profiles. `analysis` (the default) uses
 `-nothrottle`, no sound, and a headless renderer. `interactive` enables normal
 speed, visible video, and sound; the unified `genie record` command uses it only

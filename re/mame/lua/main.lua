@@ -71,6 +71,8 @@ local trace_audio = os.getenv("OPENALADDIN_TRACE_AUDIO") == "1"
 local trace_audio_mailbox = os.getenv("OPENALADDIN_TRACE_AUDIO_MAILBOX") == "1"
 local trace_audio_mailbox_reads = os.getenv("OPENALADDIN_TRACE_AUDIO_MAILBOX_READS") == "1"
 local trace_audio_commands = os.getenv("OPENALADDIN_TRACE_AUDIO_COMMANDS") == "1"
+local trace_rom_reads = os.getenv("OPENALADDIN_TRACE_ROM_READS") == "1"
+local rom_read_ranges = os.getenv("OPENALADDIN_ROM_READ_RANGES") or ""
 local state_sync = os.getenv("OPENALADDIN_STATE_SYNC") == "1"
 local trace_scheduler = os.getenv("OPENALADDIN_TRACE_SCHEDULER") == "1"
 local trace_scheduler_calls = os.getenv("OPENALADDIN_TRACE_SCHEDULER_CALLS") == "1"
@@ -1112,6 +1114,8 @@ write_record({
         end
         return values
     end)()) },
+    { "rom_read_trace", json_bool(trace_rom_reads) },
+    { "rom_read_ranges", json_string(rom_read_ranges) },
     { "actor_trace", json_bool(trace_actors) },
     { "actor_table_base", tostring(actor_table_base) },
     { "actor_stride", tostring(actor_stride) },

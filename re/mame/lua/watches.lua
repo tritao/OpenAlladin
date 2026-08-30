@@ -41,7 +41,34 @@ return function(options)
             callback)
     end
 
+    local function add_read_tap(start_address, end_address, name)
+        -- The 68000 address space is word-oriented in MAME and requires an
+        -- even tap start. Expand only the tap, while retaining the exact
+        -- requested range in every record so odd-byte data objects remain
+        -- distinguishable during offline analysis.
+        local tap_start = start_address & 0xfffffe
+        local tap_end = end_address | 1
+        taps[#taps + 1] = space:install_read_tap(
+            tap_start,
+            tap_end,
+            name,
+            function(offset, data, mem_mask)
+                write_record({
+                    { "type", json_string("rom_read") },
+                    { "frame", tostring(current_frame()) },
+                    { "address", tostring(offset) },
+                    { "range_start", tostring(start_address) },
+                    { "range_end", tostring(end_address) },
+                    { "data", tostring(data) },
+                    { "mask", tostring(mem_mask) },
+                    { "pc", tostring(read_register("PC") or 0) }
+                })
+            end)
+    end
+
     local watch_list = os.getenv("OPENALADDIN_WATCH_ADDRESSES") or ""
+    local trace_rom_reads = os.getenv("OPENALADDIN_TRACE_ROM_READS") == "1"
+    local rom_read_ranges = os.getenv("OPENALADDIN_ROM_READ_RANGES") or ""
     local debugger_watch = os.getenv("OPENALADDIN_DEBUG_WATCH") == "1"
     local breakpoint_list = os.getenv("OPENALADDIN_BREAKPOINTS") or ""
     local breakpoint_registers = os.getenv("OPENALADDIN_BREAKPOINT_REGISTERS") == "1"
@@ -133,6 +160,32 @@ return function(options)
                 local action = "printf \"OPENALADDIN_WRITE PC=%08X ADDR=%08X DATA=%08X FRAME=%08X\\n\",pc,wpaddr,wpdata,frame ; g"
                 cpu.debug:wpset(space, "w", tap_start, 2, "", action)
             end
+        end
+    end
+
+    local read_ranges = {}
+    if trace_rom_reads then
+        if rom_read_ranges == "" then
+            error("OPENALADDIN_TRACE_ROM_READS requires OPENALADDIN_ROM_READ_RANGES")
+        end
+        for item in rom_read_ranges:gmatch("[^,]+") do
+            local start_text, end_text = item:match("^%s*([^%-]+)%s*%-%s*(.-)%s*$")
+            local start_address = start_text and parse_hex_address(start_text) or nil
+            local end_address = end_text and parse_hex_address(end_text) or nil
+            if not start_address or not end_address or end_address < start_address then
+                error("OPENALADDIN_ROM_READ_RANGES entries must use start-end: " .. item)
+            end
+            read_ranges[#read_ranges + 1] = {
+                start = start_address,
+                ending = end_address
+            }
+            add_read_tap(
+                start_address,
+                end_address,
+                string.format("openaladdin_rom_read_%06X_%06X", start_address, end_address))
+        end
+        if #read_ranges == 0 then
+            error("OPENALADDIN_ROM_READ_RANGES contains no valid ranges")
         end
     end
 
@@ -452,6 +505,7 @@ return function(options)
 
     return {
         watched_addresses = watched_addresses,
-        taps = taps
+        taps = taps,
+        rom_read_ranges = read_ranges
     }
 end
