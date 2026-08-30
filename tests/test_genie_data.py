@@ -109,6 +109,34 @@ def test_data_context_decodes_bounded_canonical_stream_without_report(tmp_path):
     assert "canonical symbol fallback" in value["decoder"]["source"]
 
 
+def test_data_decode_returns_canonical_stream_steps(tmp_path):
+    database_root = _database(tmp_path)
+    rom_path = tmp_path / "rom" / "Disneys_Aladdin_U_p1.bin"
+    rom_path.parent.mkdir()
+    rom_path.symlink_to(Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin")
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0x1215D8,
+            "ACTOR_MOVE_UNINDEXED_STEP_LOOP_001215D8",
+            "data",
+            confidence="provisional",
+            size=8,
+            metadata={"type": "movement_stream"},
+        ),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x200000, (LayoutRange(0, 0x1FFFFF, "UNKNOWN", "test"),)),
+    )
+
+    value = index.decode(0x1215D8)
+    assert value is not None
+    assert value["decoder"]["available"] is True
+    assert value["stream"]["steps"][0]["commands"][0]["name"] == "jump"
+
+
 def test_data_context_exposes_canonical_actor_template_stream_pointer(tmp_path):
     database_root = _database(tmp_path)
     rom_path = tmp_path / "rom" / "Disneys_Aladdin_U_p1.bin"

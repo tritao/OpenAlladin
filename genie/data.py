@@ -847,6 +847,29 @@ class DataIndex:
             "runtime": self._runtime(value),
         }
 
+    def decode(self, address: int) -> dict[str, Any] | None:
+        """Return the cached or canonical VM decode for one ROM stream."""
+
+        value = self.at(address)
+        if value is None or value["kind"] not in STREAM_KINDS:
+            return None
+        decoder = self._decoded_for(value)
+        if not decoder or not decoder.get("available"):
+            return {
+                "address": _hex(_address(address)),
+                "object": value,
+                "decoder": decoder,
+                "stream": None,
+            }
+        root_entry = _address(decoder["root_entry"])
+        stream = self._decoded[value["kind"]].get(root_entry)
+        return {
+            "address": _hex(_address(address)),
+            "object": value,
+            "decoder": decoder,
+            "stream": stream,
+        }
+
     def todo(
         self,
         *,

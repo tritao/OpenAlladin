@@ -3,6 +3,7 @@ import json
 
 from genie.cli import build_parser
 from genie.commands import deasm
+from genie.commands import data
 from genie.commands import ghidra
 from genie.ghidra.database import AnalysisDatabase
 from genie.ghidra.decompile import decompile_function
@@ -21,6 +22,7 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     deasm_todo = build_parser().parse_args(["deasm", "todo", "--limit", "3"])
     context = build_parser().parse_args(["ghidra", "context", "0x1234", "--json"])
     decompile = build_parser().parse_args(["ghidra", "decompile", "0x1234", "--force"])
+    data_decode = build_parser().parse_args(["data", "decode", "0x1234", "--json"])
 
     assert setup.function is ghidra.command_ghidra_setup
     assert verify.function is ghidra.command_ghidra_verify
@@ -44,6 +46,8 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert context.radius == 2
     assert decompile.function is ghidra.command_ghidra_decompile
     assert decompile.force is True
+    assert data_decode.function is data.command_data_decode
+    assert data_decode.json_output is True
 
 
 def test_ghidra_rebuild_calls_existing_service(monkeypatch, capsys):

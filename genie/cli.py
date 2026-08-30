@@ -607,6 +607,14 @@ def build_parser() -> argparse.ArgumentParser:
     add_data_sources(data_context)
     data_context.add_argument("--json", action="store_true", dest="json_output")
     data_context.set_defaults(function=command_data_context)
+    data_decode = data_commands.add_parser(
+        "decode",
+        help="show cached or canonical VM instructions for one ROM stream",
+    )
+    data_decode.add_argument("address", type=lambda value: int(value, 0))
+    add_data_sources(data_decode)
+    data_decode.add_argument("--json", action="store_true", dest="json_output")
+    data_decode.set_defaults(function=command_data_decode)
 
     status = commands.add_parser("status", help="show repository and RE progress status")
     add_rom_argument(status)

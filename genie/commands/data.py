@@ -145,9 +145,66 @@ def command_data_context(args: argparse.Namespace) -> int:
     return _render_context(value, json_output=args.json_output)
 
 
+def _render_decode(value: dict, *, json_output: bool) -> int:
+    if json_output:
+        print(json.dumps(value, indent=2, sort_keys=True))
+        return 0 if value.get("stream") is not None else 1
+
+    item = value["object"]
+    print(item["name"])
+    print(f"{item['address']}..{item['end']}  {item['size']} bytes")
+    decoder = value.get("decoder")
+    if not decoder or not decoder.get("available"):
+        if decoder and decoder.get("aliased"):
+            print(f"decode: alias of {decoder.get('alias_of')}")
+        else:
+            print("decode: unavailable")
+        return 1
+
+    stream = value.get("stream") or {}
+    print(
+        f"decode: {decoder.get('bytes_decoded', 0)} bytes, "
+        f"{decoder.get('stopped_reason', 'unknown')}"
+    )
+    records = stream.get("steps", []) if item["kind"] == "movement" else stream.get("instructions", [])
+    for record in records if isinstance(records, list) else ():
+        if not isinstance(record, dict):
+            continue
+        address = record.get("address", "?")
+        size = record.get("size", "?")
+        if item["kind"] == "movement":
+            delta = f"delta=({record.get('delta_x')},{record.get('delta_y')})"
+            print(f"  {address} size={size} {delta}")
+            commands = record.get("commands", [])
+            for command in commands if isinstance(commands, list) else ():
+                if not isinstance(command, dict):
+                    continue
+                details = [str(command.get("name", command.get("opcode", "command")))]
+                for key in ("parameter", "value", "branch_target"):
+                    if command.get(key) is not None:
+                        details.append(f"{key}={command[key]}")
+                print(f"    {command.get('address', address)} {' '.join(details)}")
+        else:
+            details = [str(record.get("kind", "instruction"))]
+            for key in ("name", "opcode", "branch_target", "raw"):
+                if record.get(key) is not None:
+                    details.append(f"{key}={record[key]}")
+            print(f"  {address} size={size} {' '.join(details)}")
+    return 0
+
+
+def command_data_decode(args: argparse.Namespace) -> int:
+    value = _index(args).decode(args.address)
+    if value is None:
+        print(f"No decoded data stream contains 0x{args.address:08X}")
+        return 1
+    return _render_decode(value, json_output=args.json_output)
+
+
 __all__ = [
     "DATA_KINDS",
     "command_data_context",
+    "command_data_decode",
     "command_data_next",
     "command_data_stats",
     "command_data_todo",
