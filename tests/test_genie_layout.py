@@ -214,6 +214,48 @@ def test_startup_font_glyph_bank_is_exact_and_precedes_reset_code():
     assert glyphs[:8] == bytes.fromhex("1818181800181800")
 
 
+def test_unindexed_graphics_bands_and_padding_are_exact():
+    symbols = SymbolStore()
+    tile_band = symbols.at(0x0011E160, include_ranges=False)
+    assert tile_band is not None
+    assert tile_band.name == "UNINDEXED_SPRITE_TILE_DATA"
+    assert tile_band.end == 0x0011EFFF
+    assert tile_band.size == 0xEA0
+    assert tile_band.metadata["type"] == "graphics_data"
+    assert tile_band.confidence == "decompiled"
+
+    padding = symbols.at(0x001A830A, include_ranges=False)
+    assert padding is not None
+    assert padding.name == "ROM_PADDING_ZERO_001A830A"
+    assert padding.end == 0x001A831F
+    assert padding.size == 0x16
+    assert padding.metadata["type"] == "padding_data"
+    assert padding.confidence == "confirmed"
+
+    graphics = symbols.at(0x001A8320, include_ranges=False)
+    assert graphics is not None
+    assert graphics.name == "UNCOMPRESSED_GRAPHICS_BAND_001A8320"
+    assert graphics.end == 0x001A8A49
+    assert graphics.size == 0x72A
+    assert graphics.metadata["type"] == "graphics_data"
+    assert graphics.confidence == "decompiled"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+    assert len(rom[padding.address:padding.end + 1]) == padding.size
+    assert set(rom[padding.address:padding.end + 1]) == {0}
+    assert tile_band.size % 32 == 0
+    assert rom[tile_band.address:tile_band.address + 16] == bytes.fromhex(
+        "0F200000F4E20000F44400000F3F0000"
+    )
+    assert rom[graphics.address:graphics.address + 16] == bytes.fromhex(
+        "0000AA000000AAA000007AAA00007AAA"
+    )
+    assert rom[graphics.end - 15:graphics.end + 1] == bytes.fromhex(
+        "EAAA7777EAAAA77AEAAAAAAAEEAAAAAA"
+    )
+
+
 def test_startup_region_warning_partition_is_exact():
     symbols = SymbolStore()
 

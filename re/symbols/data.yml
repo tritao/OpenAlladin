@@ -98,6 +98,37 @@
     - chopper_frame_parser
     - sprite_tile_data_extent_static_v1
 
+0x0011E160:
+  name: UNINDEXED_SPRITE_TILE_DATA
+  type: graphics_data
+  size: 0xEA0
+  confidence: decompiled
+  description: Exact 117-tile Genesis 4bpp graphics band immediately after the Chopper-manifest tile payload and immediately before LEVEL_F800_TILEMAP_SOURCE. No frame-manifest consumer is currently known, so the neutral name preserves the physical graphics classification without assigning an asset family.
+  evidence:
+    - unindexed_graphics_gap_static_v1
+    - genesis_4bpp_tile_geometry
+
+0x001A830A:
+  name: ROM_PADDING_ZERO_001A830A
+  type: padding_data
+  size: 0x16
+  confidence: confirmed
+  description: Zero-filled alignment gap after the level12.map RNC block and before the following uncompressed graphics band at 0x001A8320.
+  evidence:
+    - unindexed_graphics_gap_static_v1
+    - rom_padding_uniform_static_v1
+
+0x001A8320:
+  name: UNCOMPRESSED_GRAPHICS_BAND_001A8320
+  type: graphics_data
+  size: 0x72A
+  confidence: decompiled
+  description: Exact uncompressed Genesis 4bpp graphics band after level12.map and before Game_InitializeAndEnterFrameLoop at 0x001A8A4A. The band includes its internal zero-filled tile padding; no narrower resource consumer has been recovered.
+  evidence:
+    - unindexed_graphics_gap_static_v1
+    - genesis_4bpp_graphics_pattern
+    - game_initializer_boundary_001A8A4A
+
 0x00004B04:
   name: ROM_SCENE_TRANSITION_TABLE
   type: rom_pointer_table
