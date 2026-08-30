@@ -886,8 +886,9 @@
     - ghidra_scene_resource_service_targets
 0x001ADB5C:
   name: Actor_TerrainCollisionLoop
+  size: 0x2DA
   confidence: confirmed
-  description: Per-frame actor-terrain service called by Game_FrameUpdateLoop. It scans actor records 1..31, clears the per-record terrain flag, samples current/adjacent terrain rows through TERRAIN_ROW_POINTER_TABLE and TERRAIN_CONTOUR_RESOURCE, publishes the response byte at actor +0x3D, snaps grounded actors to the contour and sets actor +0x07 bit 0x10, or clears actor +0x06 bit 0 and sets bit 0x40 when no valid sample exists. The +0x3C bit 0x08 resource path can retire an actor through Actor_HandleType2DInteraction.
+  description: Per-frame actor-terrain service called by Game_FrameUpdateLoop. It scans actor records 1..31, clears the per-record terrain flag, samples current/adjacent terrain rows through TERRAIN_ROW_POINTER_TABLE and TERRAIN_CONTOUR_RESOURCE, publishes the response byte at actor +0x3D, snaps grounded actors to the contour and sets actor +0x07 bit 0x10, or clears actor +0x06 bit 0 and sets bit 0x40 when no valid sample exists. The +0x3C bit 0x08 resource path can retire an actor through Actor_HandleType2DInteraction. Its complete 0x001ADB5C-0x001ADE35 body includes the camera-relative player-Y comparison and the shared grounded/invalid response tail that Ghidra exports as a second internal function fragment at 0x001ADE08.
   evidence:
     - ghidra_targeted_decompile_scheduler
     - ghidra_actor_interaction_state_producer

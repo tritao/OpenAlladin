@@ -124,6 +124,35 @@ def test_layout_preserves_sparse_function_body_ranges(tmp_path):
     assert layout.at(0x28).layout_class == "CODE"
 
 
+def test_layout_prefers_explicit_canonical_function_extent_over_sparse_ghidra_ranges(tmp_path):
+    _write_empty_symbol_tree(tmp_path)
+    (tmp_path / "re/symbols/functions.yml").write_text(
+        """
+0x00000010:
+  name: CanonicalFunction
+  size: 0x20
+  confidence: decompiled
+""",
+        encoding="utf-8",
+    )
+    database_root = _write_database(tmp_path)
+    _write_json(database_root / "functions.json", [{
+        "address": "0x10",
+        "name": "CanonicalFunction",
+        "start": "0x10",
+        "end": "0x2F",
+        "ranges": [
+            {"start": "0x10", "end": "0x17"},
+            {"start": "0x28", "end": "0x2F"},
+        ],
+    }])
+
+    layout = build_layout(AnalysisDatabase(database_root), root=tmp_path, include_artifacts=False)
+    assert layout.at(0x20).layout_class == "CODE"
+    assert layout.at(0x20).source == "tracked.symbol"
+    assert layout.at(0x10).end == 0x2F
+
+
 def test_layout_preserves_explicit_pointer_table_type_before_animation_name(tmp_path):
     _write_empty_symbol_tree(tmp_path)
     (tmp_path / "re/symbols/data.yml").write_text(
@@ -3965,6 +3994,16 @@ def test_low_confidence_scene_terrain_services_are_closed():
         "23C800FFF5764E75201F6100B0946100F5FC6100F51013FC000100FF"
         "7E264EF9001A8B24"
     )
+
+
+def test_actor_terrain_collision_loop_owns_complete_body():
+    symbols = SymbolStore()
+    function = symbols.at(0x001ADB5C, include_ranges=False)
+    assert function is not None
+    assert function.name == "Actor_TerrainCollisionLoop"
+    assert function.end == 0x001ADE35
+    assert function.size == 0x2DA
+
 
 
 def test_actor_resource_clear_a0_variant_is_exact():

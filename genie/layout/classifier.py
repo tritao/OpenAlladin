@@ -378,7 +378,13 @@ def _symbol_candidates(
             # Alternate entries describe control-flow into an existing ROM
             # object; they must not split or compete for layout ownership.
             continue
-        if symbol.kind == "function" and symbol.address in functions:
+        if symbol.kind == "function" and symbol.range is not None:
+            # A canonical function extent is an explicit ownership contract.
+            # It may intentionally close a Ghidra sparse-range split (for
+            # example an inline branch body that Ghidra exported as a second
+            # internal fragment), so prefer it over the exporter ranges.
+            ranges = [symbol.range]
+        elif symbol.kind == "function" and symbol.address in functions:
             function = functions[symbol.address]
             ranges = _record_ranges(function)
         else:

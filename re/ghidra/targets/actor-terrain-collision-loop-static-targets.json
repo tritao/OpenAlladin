@@ -6,7 +6,7 @@
     "purpose": "Resolve the per-frame actor terrain sampler, actor interaction-state publication, grounded response, and terrain-invalid cleanup boundary."
   },
   "targets": [
-    { "address": "0x001ADB5C", "name": "Actor_TerrainCollisionLoop" },
+    { "address": "0x001ADB5C", "name": "Actor_TerrainCollisionLoop", "range": ["0x001ADB5C", "0x001ADE35"], "size": 730 },
     { "address": "0x001ADB32", "name": "Terrain_ActorCollisionNoOpHook" },
     { "address": "0x001ABE8A", "name": "Actor_HandleType2DInteraction" },
     { "address": "0x001AE372", "name": "Actor_ClearOwnedResources" }

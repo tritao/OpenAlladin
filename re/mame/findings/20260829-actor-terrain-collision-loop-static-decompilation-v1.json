@@ -9,6 +9,9 @@
   "function": {
     "address": "0x001ADB5C",
     "name": "Actor_TerrainCollisionLoop",
+    "range": ["0x001ADB5C", "0x001ADE35"],
+    "size": 730,
+    "body_end": "0x001ADE35",
     "caller": "0x001A8C16 Game_FrameUpdateLoop",
     "record_range": "actor records 1..31 at ACTOR_TABLE_BASE + 0x42*n",
     "per_record_prelude": [
@@ -43,7 +46,7 @@
     "Three-row terrain sampling through TERRAIN_ROW_POINTER_TABLE and TERRAIN_ROW_BYTE_STRIDE",
     "Actor interaction-state producer finding and actor cleanup contracts"
   ],
-  "conclusion": "The actor-terrain boundary is explicit: live non-player actors sample current/adjacent terrain rows, publish resource byte 2 to actor +0x3D, apply either gravity or a grounded/facing/vertical response, and set the per-record terrain-contact flag. The flagged path retires/reinitializes actors whose sampled terrain is nonempty or invalid. This service is distinct from Player_TerrainLandingResolver and does not write player coordinates or scene state directly.",
+  "conclusion": "The actor-terrain boundary is explicit: live non-player actors sample current/adjacent terrain rows, publish resource byte 2 to actor +0x3D, apply either gravity or a grounded/facing/vertical response, and set the per-record terrain-contact flag. The flagged path retires/reinitializes actors whose sampled terrain is nonempty or invalid. The canonical body includes the camera-relative player-Y comparison at 0x001ADDC4-0x001ADE07 before the shared response tail resumes at 0x001ADE08. This service is distinct from Player_TerrainLandingResolver and does not write player coordinates or scene state directly.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }
