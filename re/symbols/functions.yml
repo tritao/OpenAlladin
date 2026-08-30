@@ -845,17 +845,19 @@
     - scene_resource_service_gap_closures_static_v1
     - ghidra_scene_resource_service
 0x001B5266:
-  name: LevelObjectSpawnEntry
+  name: InteractionSpawn_AllocateAndConsumeRow
+  aliases: [LevelObjectSpawnEntry]
   confidence: confirmed
-  description: Allocates a common actor slot through Actor_FindFreeSlot, initializes it from the caller's template, stores the interaction index and selector at actor offsets 0x32/0x34, positions the actor from the current interaction coordinates, and clears the consumed interaction byte.
+  description: Allocates a common actor slot through Actor_FindFreeSlot, initializes it from the caller's template, stores the interaction index and selector at actor offsets 0x32/0x34, positions the actor from the current interaction coordinates, and clears the consumed interaction-row byte.
   evidence:
     - ghidra_decompile_001B5266
     - ghidra_level01_resource_record_targets
     - mame_level01_upper_dispatch_trace
 0x001B52A0:
-  name: LevelObjectSpawnVariant
+  name: InteractionSpawn_AllocatePreserveRow
+  aliases: [LevelObjectSpawnVariant]
   confidence: decompiled
-  description: Allocates a common actor slot through Actor_FindFreeSlot, initializes it from the caller's template, stores the interaction index and selector at actor offsets 0x32/0x34, and positions the actor from the current interaction coordinates without consuming the interaction byte.
+  description: Allocates a common actor slot through Actor_FindFreeSlot, initializes it from the caller's template, stores the interaction index and selector at actor offsets 0x32/0x34, and positions the actor from the current interaction coordinates without consuming the interaction-row byte.
   evidence:
     - ghidra_decompile_001B52A0
     - ghidra_level01_resource_record_targets

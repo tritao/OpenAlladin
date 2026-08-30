@@ -2022,6 +2022,17 @@ interaction lock under the established scene/terminal gates.
 The static result is recorded in
 `re/mame/findings/20260830-interaction-spawn-entrypoint-names-static-v1.json`.
 
+The shared initializer family is now named by its row-consumption contract.
+`InteractionSpawn_AllocateAndConsumeRow` at `0x001B5266` performs the common
+template-backed actor allocation and clears the consumed interaction-row byte;
+`InteractionSpawn_AllocatePreserveRow` at `0x001B52A0` performs the same
+initialization and placement without clearing that source byte. Their old
+`LevelObjectSpawnEntry` and `LevelObjectSpawnVariant` labels remain aliases so
+older recorded target manifests stay searchable.
+
+The static result is recorded in
+`re/mame/findings/20260830-interaction-spawn-family-contract-static-v1.json`.
+
 ## Scene/resource orchestration and camera rebuild (20260828)
 
 The larger scene/resource entrypoints are now separated from their lower-level

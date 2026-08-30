@@ -4770,12 +4770,17 @@ def test_interaction_spawn_and_player_gate_entrypoints_have_semantic_names():
         0x001B5256: ("InteractionSpawn_BackwardSlot", "confirmed"),
         0x001B6F0C: ("InteractionSpawn_RuntimeType87_80", "confirmed"),
         0x001B03F2: ("Player_ArmTerminalOrInteractionLock", "confirmed"),
+        0x001B5266: ("InteractionSpawn_AllocateAndConsumeRow", "confirmed"),
+        0x001B52A0: ("InteractionSpawn_AllocatePreserveRow", "decompiled"),
     }
     for address, (name, confidence) in expected.items():
         symbol = symbols.at(address, include_ranges=False)
         assert symbol is not None
         assert symbol.name == name
         assert symbol.confidence == confidence
+
+    assert symbols.at(0x001B5266, include_ranges=False).aliases == ("LevelObjectSpawnEntry",)
+    assert symbols.at(0x001B52A0, include_ranges=False).aliases == ("LevelObjectSpawnVariant",)
 
 
 def test_low_confidence_scene_terrain_services_are_closed():
