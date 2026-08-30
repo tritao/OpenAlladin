@@ -1,0 +1,68 @@
+{
+  "format": "openaladdin-counter-and-interaction-response-family-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace type-only labels for the Type-0x20 interaction, Type-0x42 counter, and Type-0x29 response paths.",
+  "promotions": [
+    {
+      "address": "0x001AC350",
+      "old_name": "ActorType20_ActorCollisionHandler",
+      "name": "ActorCollision_ProcessType20Interaction",
+      "alias": "ActorType20_ActorCollisionHandler",
+      "range": ["0x001AC350", "0x001AC385"],
+      "contract": {
+        "dispatch": "Receiving Type-0x20 actor-collision entry",
+        "terminal": "Routes a Type-0x82 source through Actor_ApplyTerminalCollisionResponse",
+        "interaction": "Otherwise clears the source, runs Actor_HandleType2DInteraction, and advances TerrainScene5RandomStep",
+        "selection": "Chooses the common terminal response below 0xC8 or installs animation 0x001233CC and clears transient fields"
+      },
+      "evidence": [
+        "Exact 54-byte body ending at RTS 0x001AC384",
+        "Direct Type-0x82 source test and shared terminal-response transfers",
+        "Direct TerrainScene5RandomStep call and Type-0x20 interaction animation write"
+      ]
+    },
+    {
+      "address": "0x001AF264",
+      "old_name": "ActorType42_PlayerCollisionHandler",
+      "name": "PlayerCollision_AdvancePrimaryCounter",
+      "alias": "ActorType42_PlayerCollisionHandler",
+      "range": ["0x001AF264", "0x001AF2AF"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x42",
+        "counter": "Advances INTERACTION_COUNTER_DIGITS through four primary-digit steps unless it is already 99",
+        "response": "Resets the Type-0x42 collision step, optionally queues event 0x0C, and transfers to PlayerCollision_ReinitializeResponseActor"
+      },
+      "evidence": [
+        "Exact 76-byte body ending at the branch into the shared response tail",
+        "Direct INTERACTION_COUNTER_DIGITS comparison and four InteractionCounter_AdvancePrimaryDigits calls",
+        "Direct ACTOR_TYPE42_COLLISION_STEP reset and event-0x0C audio path"
+      ]
+    },
+    {
+      "address": "0x001AF400",
+      "old_name": "ActorType29_PlayerCollisionHandler",
+      "name": "PlayerCollision_SpawnType29Response",
+      "alias": "ActorType29_PlayerCollisionHandler",
+      "range": ["0x001AF400", "0x001AF467"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x29",
+        "setup": "Publishes PLAYER_COLLISION_TYPE29_SPAWN_GATE and installs the Type-0x84 actor animation/movement response",
+        "allocation": "Allocates a forward-slot companion from ACTOR_TEMPLATE_COLLISION_TYPE_84 and copies source X/Y",
+        "audio": "Optionally queues event 0x5D"
+      },
+      "evidence": [
+        "Exact 104-byte body ending at RTS 0x001AF466",
+        "Direct gate write and Type-0x29 animation/movement stream references",
+        "Existing Type-0x29 response placement description and template load"
+      ]
+    }
+  ],
+  "conclusion": "The promoted names distinguish the Type-0x20 interaction response, Type-0x42 primary-counter response, and Type-0x29 response allocator while retaining dispatch-type aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
