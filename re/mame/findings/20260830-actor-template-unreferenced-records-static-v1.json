@@ -24,15 +24,16 @@
     {
       "address": "0x001B82DC",
       "end": "0x001B82EF",
-      "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_ANIM_124CE4",
-      "semantics": "Type 0x84, no movement root, template word 0x0000, animation root 0x00124CE4, nine resources, trailing flags 0x0400."
+      "name": "ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT",
+      "semantics": "Type 0x84 presentation variant sharing animation root 0x00124CE4 (ACTOR_ANIM_TYPE1A_PRESENTATION), with no movement root, template word 0x0000, nine resources, and trailing flags 0x0400."
     }
   ],
   "evidence": [
     "Exact 20-byte boundaries between canonical actor-template records",
     "Actor_InitializeFromTemplate compact record contract at 0x001AE30A",
-    "Exact ROM bytes and Type-0x84 fields"
+    "Exact ROM bytes and Type-0x84 fields",
+    "Static data context at 0x00124CE4 shows the shared ACTOR_ANIM_TYPE1A_PRESENTATION consumer set"
   ],
-  "reachability": "No static producer or runtime consumer has been recovered; no runtime role is claimed.",
-  "conclusion": "Three structurally complete Type-0x84 template records are now represented in the layout while retaining provisional confidence and explicit unresolved reachability."
+  "reachability": "The 0x001B82DC record has a proven static animation-pointer relationship to ACTOR_ANIM_TYPE1A_PRESENTATION, but no direct producer or runtime selection is claimed. The other two records remain producer-free structural records.",
+  "conclusion": "Three structurally complete Type-0x84 template records are represented in the layout. The 0x001B82DC record is now identified as a Type-1A presentation variant while retaining unresolved producer reachability."
 }

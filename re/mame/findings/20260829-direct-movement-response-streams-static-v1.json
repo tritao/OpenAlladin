@@ -51,7 +51,7 @@
       "decoded": [
         "138 bytes through the local 0x00120AA4 loop",
         "0x84 0x09 timer, 0x85 loop delay, 0x8A compare/write/clear phase, random branches, and terminal 0x81/0x80 return",
-        "No bytes after 0x00120ACB are claimed; the next unresolved region begins at 0x00120ACC"
+        "No bytes after 0x00120ACB are claimed; the separately owned neighboring region begins at 0x00120ACC"
       ]
     }
   ],

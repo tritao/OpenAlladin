@@ -2115,7 +2115,7 @@ def test_unreferenced_actor_template_records_are_exact_and_decoded():
     expected = {
         0x001B7990: ("ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10", 0x001B79A3),
         0x001B7A58: ("ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400", 0x001B7A6B),
-        0x001B82DC: ("ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_ANIM_124CE4", 0x001B82EF),
+        0x001B82DC: ("ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT", 0x001B82EF),
     }
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     expected_bytes = {

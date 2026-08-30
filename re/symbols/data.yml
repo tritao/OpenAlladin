@@ -2678,7 +2678,7 @@
   count: 4
   size: 0x18
   confidence: decompiled
-  description: Exact four-entry phase-child selection table consumed by Actor_SpawnFramePhaseChild. FRAME_PHASE_COUNTER masked to its low two bits selects one six-byte record containing the spawned runtime-type byte, its animation-root longword, and one unused trailing byte; the proven table ends at 0x000049C0 before the unresolved repeated tail.
+  description: Exact four-entry phase-child selection table consumed by Actor_SpawnFramePhaseChild. FRAME_PHASE_COUNTER masked to its low two bits selects one six-byte record containing the spawned runtime-type byte, its animation-root longword, and one unused trailing byte; the proven table ends at 0x000049C0, with the repeated physical prefix separately owned at 0x000049C1.
   evidence:
     - actor_frame_phase_child_static_decompilation
     - ghidra_disassembly_001ABF28
@@ -4098,7 +4098,7 @@
   type: movement_stream
   size: 138
   confidence: decompiled
-  description: Type-0x75 level-exit movement root written by ActorType74_75_PlayerCollisionHandler at 0x001AFB08 during the type-0x74 response. Its exact 138-byte region contains the signed vertical profile, 0x84 timer 0x09, 0x85 movement-loop delay, the 0x8A type/state compare and write, random branches, and the local 0x00120AA4 loop, ending at 0x00120ACB before unresolved bytes.
+  description: Type-0x75 level-exit movement root written by ActorType74_75_PlayerCollisionHandler at 0x001AFB08 during the type-0x74 response. Its exact 138-byte region contains the signed vertical profile, 0x84 timer 0x09, 0x85 movement-loop delay, the 0x8A type/state compare and write, random branches, and the local 0x00120AA4 loop, ending at 0x00120ACB before the separately owned region beginning at 0x00120ACC.
   evidence:
     - direct-movement-response-streams-static-decompilation
     - player_collision_transition_family_static_decompilation
@@ -5565,7 +5565,7 @@
   type: animation_stream
   size: 84
   confidence: decompiled
-  description: Shared type-0x1A/0x1B/0x1C presentation animation selected by ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE. Its exact 84-byte body spawns the type-0x84 presentation child, pushes the 0x001ACBD8, 0x001ACB82, and 0x001ACB7A callback parameters, and loops through the local presentation response entries.
+  description: Shared type-0x1A/0x1B/0x1C presentation animation selected by ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE; ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT also points at this root. Its exact 84-byte body spawns the type-0x84 presentation child, pushes the 0x001ACBD8, 0x001ACB82, and 0x001ACB7A callback parameters, and loops through the local presentation response entries.
   evidence:
     - actor_template_presentation_family_static_decompilation
     - actor_template_type84_type1a_presentation_child_static_v1
@@ -8510,16 +8510,17 @@
     - animation_stream_decoder
 
 0x001B82DC:
-  name: ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_ANIM_124CE4
+  name: ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT
   type: actor_template
   size: 20
   confidence: decompiled
-  description: "Exact 20-byte Type-0x84 actor-template record with no movement root, template word 0x0000, animation root 0x00124CE4, nine owned resources, and trailing flags 0x0400. Its compact initializer fields are decoded; no static producer or runtime consumer is claimed."
+  description: "Exact 20-byte Type-0x84 presentation variant sharing ACTOR_ANIM_TYPE1A_PRESENTATION at 0x00124CE4 with ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE and its Type-0x84 child. It has no movement root, template word 0x0000, nine owned resources, and trailing flags 0x0400; no direct producer for this alternate record is claimed."
   evidence:
     - actor_template_record_layout_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
     - actor_template_unreferenced_records_static_decompilation
     - actor_template_body_confidence_static_v1
+    - actor_template_type84_type1a_presentation_variant_static_v1
 
 0x001B828C:
   name: ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD

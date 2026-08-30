@@ -40,13 +40,19 @@
     {
       "address": "0x001B82DC",
       "end": "0x001B82EF",
-      "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_ANIM_124CE4",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT",
       "bytes": "84050000000000000000000000124CE409000400",
       "runtime_type": "0x84",
       "initializer_payload": "0x00000000",
       "movement_stream": null,
       "template_word": "0x0000",
       "animation_stream": "0x00124CE4",
+      "shared_stream": "ACTOR_ANIM_TYPE1A_PRESENTATION",
+      "shared_stream_consumers": [
+        "ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE",
+        "ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_CHILD",
+        "ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT"
+      ],
       "resource_count": "0x09",
       "trailing_flags": "0x0400"
     }
@@ -55,7 +61,7 @@
     "Each record occupies exactly one 20-byte initializer record between canonical actor-template records.",
     "All three records carry the Type-0x84 runtime byte and fields consistent with the established compact template layout."
   ],
-  "reachability": "No static producer or runtime consumer has been recovered for these three records; the provisional names describe exact structure only.",
+  "reachability": "The 0x001B82DC record has a proven static animation-pointer relationship to the established ACTOR_ANIM_TYPE1A_PRESENTATION stream, but no direct producer or runtime selection is claimed. The other two records remain producer-free structural records.",
   "confidence": "provisional",
   "status": "recorded-static-disassembly"
 }

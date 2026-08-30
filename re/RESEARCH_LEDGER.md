@@ -65,6 +65,12 @@ the finding or commit message.
   prove they are globally dead; it establishes that the next useful probe must
   start from a later-level or presentation checkpoint rather than repeating the
   current Level-01 route.
+- `re/mame/findings/20260830-actor-template-type84-type1a-presentation-variant-static-v1.json`
+  records the static promotion of `0x001B82DC` to
+  `ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT`. Its animation pointer
+  is the established `ACTOR_ANIM_TYPE1A_PRESENTATION` root shared with the
+  Type-1A presentation base and Type-0x84 child; only the alternate record's
+  producer/reachability remains open.
 
 ### Gameplay and actor behavior
 
@@ -3339,6 +3345,7 @@ valuable because it prevents repeating the same input family.
 | `20260830-fixed-width-text-confidence-static-v1` | recorded-static-disassembly | Promoted the exact four-record and three-record FF/space/NUL banks at 0x0012671E and 0x00126D4E plus the 30/60/90 NUL-terminated text object at 0x00126EB6 to decompiled body confidence, retaining their runtime consumers and higher-level menu roles as unresolved |
 | `20260830-scene-palette-body-confidence-static-v1` | recorded-static-disassembly | Promoted the exact 0x001274F0 scene-resource response stream, 0x00128E4B tile-base command, and palette bodies at 0x00128EB2, 0x00129312, and 0x00129A32 to decompiled body confidence, retaining their runtime selectors and higher-level roles as unresolved |
 | `20260830-actor-template-body-confidence-static-v1` | recorded-static-disassembly | Promoted the five exact actor-template records at 0x001B7990, 0x001B7A58, 0x001B81B0, 0x001B82DC, and 0x001B8304 to decompiled body confidence from the compact initializer contract and paired VM evidence, retaining their live producers and consumers as unresolved |
+| `20260830-actor-template-type84-type1a-presentation-variant-static-v1` | recorded-static-decompilation | Promoted 0x001B82DC from an address-only Type-0x84 record to a Type-1A presentation variant after proving its 0x00124CE4 animation pointer is shared with the established Type-1A presentation family; producer reachability remains open |
 | `20260830-structural-data-body-confidence-static-v1` | recorded-static-disassembly | Promoted the exact VDP control pair at 0x00001CB6, repeated phase-child prefix at 0x000049C1, fixed record bank at 0x00001F82, and reserved menu-layout record at 0x00004000 to decompiled body confidence while retaining their consumers and higher-level roles as unresolved |
 | `20260830-reset-bootstrap-copy-boundaries-static-v1` | recorded-static-disassembly | Corrected the reset-bootstrap partition from the actual post-increment instruction sequence: the Z80 payload is 0x000002DE-0x00000303, post-copy hardware values are 0x00000304-0x0000030F, and only 0x00000310-0x00000313 remains an unresolved tail |
 | `20260830-reset-bootstrap-skipped-word-confidence-static-v1` | recorded-static-disassembly | Promoted the exact 0x00000334-0x00000335 word to decompiled body confidence because the unconditional branch at 0x00000332 skips it, while retaining its intended padding/data role as unresolved |

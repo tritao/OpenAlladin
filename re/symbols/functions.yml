@@ -4069,7 +4069,7 @@
 0x001B1DD8:
   name: VDP_PatternLoopNoOpHook
   confidence: confirmed
-  description: RTS-only hook in the 0x28-iteration VDP pattern loop, called after the frame-phase increment and before VDP_WriteDescendingBytePatternAtVRAMStart; its higher-level presentation purpose is unresolved.
+  description: RTS-only no-op hook in the 0x28-iteration VDP pattern loop, called after the frame-phase increment and before VDP_WriteDescendingBytePatternAtVRAMStart. It has no memory, register, control-flow, or return-value effect beyond the call/return boundary; the surrounding loop owns the observable service work.
   evidence:
     - ghidra_disassembly_001B1DD8
     - vdp_pattern_loop_hook_targets

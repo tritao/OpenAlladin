@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-actor-template-type84-presentation-variant-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "template": {
+    "address": "0x001B82DC",
+    "range": ["0x001B82DC", "0x001B82EF"],
+    "name": "ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT",
+    "bytes": "84050000000000000000000000124CE409000400",
+    "runtime_type": "0x84",
+    "movement_stream": null,
+    "animation_stream": "0x00124CE4",
+    "resource_count": 9,
+    "trailing_flags": "0x0400"
+  },
+  "shared_stream": {
+    "address": "0x00124CE4",
+    "name": "ACTOR_ANIM_TYPE1A_PRESENTATION",
+    "consumers": [
+      "ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE",
+      "ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_CHILD",
+      "ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT"
+    ],
+    "decoder": "animation_stream_decoder"
+  },
+  "evidence": [
+    "The compact actor-template record contract at 0x001AE30A identifies the Type-0x84 record and its nine-resource field.",
+    "The record's animation pointer at 0x001B82E8 is exactly 0x00124CE4.",
+    "The offline data context for 0x00124CE4 resolves the existing Type-1A presentation base, its Type-0x84 child, and this alternate Type-0x84 record as consumers of one decoded stream."
+  ],
+  "reachability": "The shared presentation stream is established, but no direct producer or runtime selection for this alternate template record is claimed.",
+  "conclusion": "The 0x001B82DC record is more specific than an unreferenced Type-0x84 blob: it is a Type-1A presentation variant sharing the established ACTOR_ANIM_TYPE1A_PRESENTATION stream. Its producer reachability remains open."
+}

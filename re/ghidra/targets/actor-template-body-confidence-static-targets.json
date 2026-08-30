@@ -15,7 +15,7 @@
     { "address": "0x001B7990", "end": "0x001B79A3", "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10", "bytes": "840008000000000000006000000000000A000000", "runtime_type": "0x84", "resource_count": 10 },
     { "address": "0x001B7A58", "end": "0x001B7A6B", "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400", "bytes": "8401400014000000000060000000000000000000", "runtime_type": "0x84", "resource_count": 0 },
     { "address": "0x001B81B0", "end": "0x001B81C3", "name": "ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT", "bytes": "7C00400000000012118020000012591603001000", "runtime_type": "0x7C", "movement_stream": "0x00121180", "animation_stream": "0x00125916", "resource_count": 3 },
-    { "address": "0x001B82DC", "end": "0x001B82EF", "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_ANIM_124CE4", "bytes": "84050000000000000000000000124CE409000400", "runtime_type": "0x84", "animation_stream": "0x00124CE4", "resource_count": 9 },
+    { "address": "0x001B82DC", "end": "0x001B82EF", "name": "ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT", "bytes": "84050000000000000000000000124CE409000400", "runtime_type": "0x84", "animation_stream": "0x00124CE4", "shared_stream": "ACTOR_ANIM_TYPE1A_PRESENTATION", "resource_count": 9 },
     { "address": "0x001B8304", "end": "0x001B8317", "name": "ACTOR_TEMPLATE_TYPE_84_0F22_WALL_RESPONSE", "bytes": "84000100000000121412600000125D5801000200", "runtime_type": "0x84", "movement_stream": "0x00121412", "animation_stream": "0x00125D58", "resource_count": 1 }
   ],
   "evidence": [
