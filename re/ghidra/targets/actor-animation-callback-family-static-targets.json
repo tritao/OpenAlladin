@@ -1,0 +1,78 @@
+{
+  "format": "openaladdin-actor-animation-callback-family-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "callbacks": [
+    {
+      "address": "0x001ACC18",
+      "name": "ActorEvent_SetActorField3CBit5",
+      "range": ["0x001ACC18", "0x001ACC1F"],
+      "size": 8,
+      "producers": ["0x00123978", "0x001238D0"]
+    },
+    {
+      "address": "0x001ACC20",
+      "name": "ActorEvent_ClearActorField3CBit5",
+      "range": ["0x001ACC20", "0x001ACC27"],
+      "size": 8,
+      "producers": ["0x0012398A", "0x001238E2"]
+    },
+    {
+      "address": "0x001ACC28",
+      "name": "ActorEvent_SetActorActiveBit",
+      "range": ["0x001ACC28", "0x001ACC2F"],
+      "size": 8,
+      "producers": ["0x00120AE6"]
+    },
+    {
+      "address": "0x001ACC56",
+      "name": "ActorEvent_ClearActorActiveBit",
+      "range": ["0x001ACC56", "0x001ACC5D"],
+      "size": 8,
+      "producers": ["0x00120AD0", "0x00121040", "0x0012108E"]
+    },
+    {
+      "address": "0x001ACC5E",
+      "name": "ActorEvent_QueueRandomVariantAudio",
+      "alias": "AnimationExtendedInteractionCallback",
+      "range": ["0x001ACC5E", "0x001ACD01"],
+      "size": 164,
+      "producers": ["0x001237E4", "0x001237F8", "0x0012380E", "0x00123820"],
+      "memory_references": ["0x00FF7DEA", "0x00FFF57D"]
+    },
+    {
+      "address": "0x001ACD02",
+      "name": "ActorEvent_QueueParityAudio",
+      "range": ["0x001ACD02", "0x001ACD53"],
+      "size": 82,
+      "producers": ["0x00123290"],
+      "memory_references": ["0x00FF7DEA", "0x00FFF57D"]
+    },
+    {
+      "address": "0x001ACD5A",
+      "name": "ActorEvent_ApplyWideRandomOffsets",
+      "range": ["0x001ACD5A", "0x001ACD7D"],
+      "size": 36,
+      "producers": ["0x00122EF2", "0x00124F9A"],
+      "memory_references": ["actor+0x18", "actor+0x1A"]
+    },
+    {
+      "address": "0x001ACD7E",
+      "name": "ActorEvent_ApplyNarrowRandomOffsets",
+      "range": ["0x001ACD7E", "0x001ACDA1"],
+      "size": 36,
+      "memory_references": ["actor+0x18", "actor+0x1A"]
+    }
+  ],
+  "boundary_basis": [
+    "The four compact flag callbacks end at their direct RTS instructions.",
+    "The random-audio callbacks end immediately before the next callback or existing canonical helper.",
+    "The 0x001ACC5E family contains four internal variant returns but one externally pushed callback entry.",
+    "The 0x001ACD5A and 0x001ACD7E helpers each preserve D7 and terminate at their local RTS."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -5699,6 +5699,81 @@
     - ghidra_actor_type7e_transition_handler
     - final_mechanical_function_closure_static_decompilation
 
+0x001ACC18:
+  name: ActorEvent_SetActorField3CBit5
+  size: 8
+  confidence: decompiled
+  description: AnimationVM callback that sets bit 5 in the current actor's field at offset 0x3C and returns.
+  evidence:
+    - ghidra_disassembly_001ACC18
+    - actor_animation_callback_family_static_decompilation
+
+0x001ACC20:
+  name: ActorEvent_ClearActorField3CBit5
+  size: 8
+  confidence: decompiled
+  description: AnimationVM callback that clears bit 5 in the current actor's field at offset 0x3C and returns.
+  evidence:
+    - ghidra_disassembly_001ACC20
+    - actor_animation_callback_family_static_decompilation
+
+0x001ACC28:
+  name: ActorEvent_SetActorActiveBit
+  size: 8
+  confidence: decompiled
+  description: AnimationVM callback that sets bit 0 in the current actor's flags field at offset 0x06 and returns.
+  evidence:
+    - ghidra_disassembly_001ACC28
+    - actor_animation_callback_family_static_decompilation
+
+0x001ACC56:
+  name: ActorEvent_ClearActorActiveBit
+  size: 8
+  confidence: decompiled
+  description: AnimationVM callback that clears bit 0 in the current actor's flags field at offset 0x06 and returns.
+  evidence:
+    - ghidra_disassembly_001ACC56
+    - actor_animation_callback_family_static_decompilation
+
+0x001ACC5E:
+  name: ActorEvent_QueueRandomVariantAudio
+  aliases:
+    - AnimationExtendedInteractionCallback
+  size: 164
+  confidence: decompiled
+  description: Deferred AnimationVM callback that advances the shared random state, selects one of four low-bit variants, and queues audio events 0x5E through 0x61 when VDP_UPDATE_FLAG is active. It first publishes the interaction value and has no direct scene-state or player-coordinate side effect.
+  evidence:
+    - ghidra_disassembly_001ACC5E
+    - level01_upper_pair_extended_interaction_static_decompilation
+    - actor_animation_callback_family_static_decompilation
+
+0x001ACD02:
+  name: ActorEvent_QueueParityAudio
+  size: 82
+  confidence: decompiled
+  description: Deferred AnimationVM callback that publishes the interaction value, selects the low bit of the random result, and queues audio event 0x44 or 0x40 when VDP_UPDATE_FLAG is active.
+  evidence:
+    - ghidra_disassembly_001ACD02
+    - actor_animation_callback_family_static_decompilation
+
+0x001ACD5A:
+  name: ActorEvent_ApplyWideRandomOffsets
+  size: 36
+  confidence: decompiled
+  description: AnimationVM callback that preserves the incoming random word, derives signed X and Y offsets from its low nibble, and writes them to actor offsets 0x18 and 0x1A.
+  evidence:
+    - ghidra_disassembly_001ACD5A
+    - actor_animation_callback_family_static_decompilation
+
+0x001ACD7E:
+  name: ActorEvent_ApplyNarrowRandomOffsets
+  size: 36
+  confidence: decompiled
+  description: Companion AnimationVM callback that preserves the incoming random word, derives narrower signed X and Y offsets from its low three bits, and writes them to actor offsets 0x18 and 0x1A.
+  evidence:
+    - ghidra_disassembly_001ACD7E
+    - actor_animation_callback_family_static_decompilation
+
 0x001ABF8E:
   name: ActorType02_08_09_ActorCollisionHandler
   size: 12

@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-actor-animation-callback-family-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/actor-animation-callback-family-static-targets.json",
+  "promoted_callbacks": {
+    "count": 8,
+    "owned_bytes": 278,
+    "indirect_animation_entries": 7,
+    "random_audio_entries": 2,
+    "actor_flag_entries": 4,
+    "random_offset_entries": 2
+  },
+  "families": [
+    {
+      "range": ["0x001ACC18", "0x001ACC2F"],
+      "semantics": "Set/clear callbacks for actor field +0x3C bit 5 and actor flags +0x06 bit 0, used by AnimationVM and MovementVM streams."
+    },
+    {
+      "range": ["0x001ACC5E", "0x001ACD53"],
+      "semantics": "Deferred random/audio callbacks selecting variant event IDs 0x5E-0x61 or parity events 0x44/0x40 under the VDP update gate."
+    },
+    {
+      "range": ["0x001ACD5A", "0x001ACDA1"],
+      "semantics": "Randomized actor offset callbacks deriving wide or narrow signed placement offsets from the incoming D7 value."
+    }
+  ],
+  "conclusion": "The indirect AnimationVM callback family is now canonical and owns the formerly opaque 0x001ACC18-0x001ACDA1 callback regions, while preserving the existing helper at 0x001ACC30 and palette reload routine at 0x001ACDA2."
+}

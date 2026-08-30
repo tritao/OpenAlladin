@@ -2929,3 +2929,31 @@ def test_actor_type04_collision_animation_entry_is_exact():
     assert decoded["bytes_decoded"] == 34
     assert decoded["stopped_reason"] == "unconditional_jump"
     assert decoded["instructions"][-1]["branch_target"] == "0x00124BDC"
+
+
+def test_actor_animation_callback_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x001ACC18: (0x001ACC1F, "ActorEvent_SetActorField3CBit5"),
+        0x001ACC20: (0x001ACC27, "ActorEvent_ClearActorField3CBit5"),
+        0x001ACC28: (0x001ACC2F, "ActorEvent_SetActorActiveBit"),
+        0x001ACC56: (0x001ACC5D, "ActorEvent_ClearActorActiveBit"),
+        0x001ACC5E: (0x001ACD01, "ActorEvent_QueueRandomVariantAudio"),
+        0x001ACD02: (0x001ACD53, "ActorEvent_QueueParityAudio"),
+        0x001ACD5A: (0x001ACD7D, "ActorEvent_ApplyWideRandomOffsets"),
+        0x001ACD7E: (0x001ACDA1, "ActorEvent_ApplyNarrowRandomOffsets"),
+    }
+    for address, (end, name) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == end - address + 1
+
+    callback = symbols.at(0x001ACC5E, include_ranges=False)
+    assert callback.aliases == ("AnimationExtendedInteractionCallback",)
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001ACC18:0x001ACC20] == bytes.fromhex("08E90005003C4E75")
+    assert rom[0x001ACC20:0x001ACC28] == bytes.fromhex("08A90005003C4E75")
+    assert rom[0x001ACC28:0x001ACC30] == bytes.fromhex("08E9000000064E75")
+    assert rom[0x001ACC56:0x001ACC5E] == bytes.fromhex("08A9000000064E75")
