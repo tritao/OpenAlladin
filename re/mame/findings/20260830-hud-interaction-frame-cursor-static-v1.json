@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/hud-interaction-frame-cursor-static-targets.json",
+  "symbol": {
+    "address": "0x00FF7DA8",
+    "name": "HUD_INTERACTION_FRAME_CURSOR",
+    "type": "rom_pointer",
+    "format": "address"
+  },
+  "contract": {
+    "seed": "Startup points the cursor at HUD_INTERACTION_FRAME_SEQUENCE at 0x000029A6.",
+    "consumer": "Render_BuildActorRecords reads and advances the cursor while building interaction/HUD records.",
+    "sentinel": "The zero terminator at 0x000029DE causes the cursor to wrap to 0x000029A8."
+  },
+  "conclusion": "FF7DA8 is a transient HUD frame-table cursor, not an actor or scene pointer.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

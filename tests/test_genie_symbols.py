@@ -678,6 +678,15 @@ def test_real_interaction_row_pointer_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_hud_interaction_frame_cursor_has_canonical_role():
+    symbol = SymbolStore().at(0x00FF7DA8, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "HUD_INTERACTION_FRAME_CURSOR"
+    assert symbol.metadata["type"] == "rom_pointer"
+    assert symbol.metadata["format"] == "address"
+    assert symbol.confidence == "decompiled"
+
+
 def test_real_interaction_coordinate_scratch_has_canonical_roles():
     symbols = SymbolStore()
     expected = {

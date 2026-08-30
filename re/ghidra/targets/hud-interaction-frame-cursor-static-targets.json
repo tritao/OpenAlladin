@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-hud-interaction-frame-cursor-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the runtime cursor for the HUD interaction-frame sequence.",
+  "state": {
+    "address": "0x00FF7DA8",
+    "name": "HUD_INTERACTION_FRAME_CURSOR",
+    "type": "rom_pointer",
+    "format": "address"
+  },
+  "source": {
+    "address": "0x000029A6",
+    "name": "HUD_INTERACTION_FRAME_SEQUENCE",
+    "end": "0x000029DF",
+    "sentinel": "0x000029DE"
+  },
+  "owner": {
+    "address": "0x001AB7C4",
+    "name": "Render_BuildActorRecords"
+  },
+  "contract": {
+    "initialize": "System_InitializeRuntime stores 0x000029A6.",
+    "advance": "The renderer reads one frame word and stores the post-read cursor after each interaction/HUD record.",
+    "wrap": "When the read word is zero at 0x000029DE, the cursor resets to 0x000029A8."
+  },
+  "evidence": [
+    "Existing HUD_INTERACTION_FRAME_SEQUENCE extent and consumer contract",
+    "Exact pointer initialization at 0x001AA382",
+    "Exact read/advance/sentinel path at 0x001AB98A-0x001AB99A"
+  ],
+  "conclusion": "FF7DA8 is the per-runtime cursor into the HUD interaction frame table.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
