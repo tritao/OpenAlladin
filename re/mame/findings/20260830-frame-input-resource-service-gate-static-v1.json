@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/frame-input-resource-service-gate-static-targets.json",
+  "symbol": {
+    "address": "0x00FFF168",
+    "name": "FRAME_INPUT_RESOURCE_SERVICE_GATE",
+    "type": "u8",
+    "format": "boolean"
+  },
+  "lifecycle": {
+    "initial_clear": "System_InitializeRuntime at 0x001AA3CE",
+    "entry_test": "Frame_InputAndResourceService at 0x001A91DA",
+    "service_set": "0x001A91F0",
+    "retry_clear": "0x001A9280 when Z80 status bit 5 is set",
+    "completion_set": "0x001A92C6"
+  },
+  "conclusion": "The gate is clear at initialization, set while the input/resource service owns the frame handoff, cleared only for the Z80 retry loop, and set on the normal completion path. A nonzero entry value suppresses another service body.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1474,6 +1474,18 @@
     - ghidra_disassembly_001AA536
     - ghidra_decompile_001B2142
     - ghidra_scene_vdp_audio_service_targets
+0xFFF168:
+  name: FRAME_INPUT_RESOURCE_SERVICE_GATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: One-shot gate for Frame_InputAndResourceService. System_InitializeRuntime and the Z80-status retry path clear it; the frame service sets it before palette/VDP servicing and leaves it set after the service completes, suppressing repeat entry until a retry is required.
+  evidence:
+    - ghidra_decompile_001A91C6
+    - ghidra_disassembly_001A9280
+    - ghidra_disassembly_001A92C6
+    - ghidra_disassembly_001A92D4
+    - ghidra_disassembly_001AA3CE
 0xFF98C4:
   name: TERRAIN_LANDING_ROW_POINTERS
   type: pointer_table

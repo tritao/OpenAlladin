@@ -592,6 +592,14 @@ def test_real_level07_spawn_cooldown_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_frame_input_resource_service_gate_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF168, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "FRAME_INPUT_RESOURCE_SERVICE_GATE"
+    assert symbol.metadata["format"] == "boolean"
+    assert symbol.confidence == "decompiled"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

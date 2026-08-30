@@ -871,6 +871,13 @@ while each of the six distant coordinate-window spawn branches reloads it with
 `0x3C` after a successful Type-0x7C actor initialization. This closes the byte's
 exact access contract without treating it as a general scene timer.
 
+The input/resource service gate is now named `FRAME_INPUT_RESOURCE_SERVICE_GATE`
+at `FFF168`. `Frame_InputAndResourceService` tests it before entering the
+palette/VDP service body, sets it before servicing, and leaves it set on normal
+completion. The Z80 status-bit-5 retry branch clears it and loops back through
+the VBlank wait, while startup clears it at initialization. This is distinct
+from `FRAME_WAIT_LATCH` and `VBLANK_READY_LATCH`.
+
 The adjacent compact scene-resource loader variants are recorded in
 `re/mame/findings/20260828-scene-resource-loader-variants-v1.json`.
 `0x001B4896`, `0x001B48C4`, and `0x001B48F2` load exact two-resource VRAM
