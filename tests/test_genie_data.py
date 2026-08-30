@@ -653,6 +653,21 @@ def test_data_infers_bounded_pointer_and_table_extents(tmp_path):
     assert table["end"] == "0x0000002B"
 
 
+def test_data_todo_ignores_structural_pointer_table_entries(tmp_path):
+    database_root = _database(tmp_path)
+    symbols = SymbolStore(symbols=(
+        Symbol(0x10, "DispatchEntry01", "data", metadata={"type": "rom_pointer"}),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x100, (LayoutRange(0, 0xFF, "UNKNOWN", "test"),)),
+    )
+
+    assert index.todo(kind="pointer-table") == []
+
+
 def test_data_context_includes_animation_f5_template_consumer(tmp_path):
     database_root = _database(tmp_path)
     symbols = SymbolStore(symbols=(

@@ -4,6 +4,7 @@ from pathlib import Path
 
 from genie.profiles import ALADDIN, GameProfile, load_profile
 from genie.games.aladdin.data import AladdinSemanticDataClassifier
+from genie.symbols import Symbol
 from genie import runtime
 
 
@@ -36,6 +37,46 @@ def test_aladdin_profile_supplies_semantic_data_provider():
     providers = ALADDIN.semantic_providers()
     assert len(providers) == 1
     assert isinstance(providers[0], AladdinSemanticDataClassifier)
+
+
+def test_aladdin_data_provider_prioritizes_table_semantics():
+    provider = AladdinSemanticDataClassifier()
+    assert provider.classify_symbol(Symbol(
+        0x40,
+        "SCENE_RESOURCE_OBJECT_ANIMATION_TABLE",
+        "data",
+        metadata={"type": "rom_pointer_table"},
+    )) == "pointer-table"
+    assert provider.classify_symbol(Symbol(
+        0x40,
+        "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE",
+        "data",
+        metadata={"type": "actor_spawn_phase_animation_table"},
+    )) == "pointer-table"
+    assert provider.classify_symbol(Symbol(
+        0x40,
+        "INITIAL_SCENE_SCRIPT",
+        "data",
+        metadata={"type": "scene_script"},
+    )) == "scene-table"
+    assert provider.classify_symbol(Symbol(
+        0x40,
+        "LEVEL_TABLE",
+        "data",
+        metadata={"type": "rom_table"},
+    )) == "scene-table"
+    assert provider.classify_symbol(Symbol(
+        0x40,
+        "UNCOMPRESSED_GRAPHICS_BAND_001A8320",
+        "data",
+        metadata={"type": "graphics_data"},
+    )) == "graphics"
+    assert provider.classify_symbol(Symbol(
+        0x40,
+        "PLAYER_COLLISION_HANDLER_TYPE_01",
+        "data",
+        metadata={"type": "rom_pointer"},
+    )) == "pointer-table"
 
 
 def test_profile_is_immutable():

@@ -141,6 +141,12 @@ def _is_alias(value: dict[str, Any]) -> bool:
     return bool((value.get("canonical_symbol") or {}).get("alias_of"))
 
 
+def _is_structural_pointer_entry(value: dict[str, Any]) -> bool:
+    """Whether an object is an entry owned by a tracked pointer table."""
+
+    return str((value.get("canonical_symbol") or {}).get("type", "")).casefold() == "rom_pointer"
+
+
 class DataIndex:
     """Join canonical ROM-object evidence into deterministic query records."""
 
@@ -1105,6 +1111,11 @@ class DataIndex:
             if _is_alias(value):
                 # An alternate stream entry is useful context, but it does
                 # not own bytes or require a second decoder result.
+                continue
+            if _is_structural_pointer_entry(value):
+                # Individual dispatch pointers are useful through their
+                # containing table and should not outrank real semantic data
+                # merely because no separate xref points at the table entry.
                 continue
             context = self.context(_address(value["start"]))
             consumers = context["consumers"] if context else []

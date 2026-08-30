@@ -25,6 +25,27 @@ class AladdinSemanticDataClassifier:
         name = symbol.name.upper()
         if type_name in {"actor_template", "actor_template_base"}:
             return "actor-template"
+        if (
+            type_name in {"rom_pointer_table", "rom_pointer", "actor_spawn_phase_animation_table"}
+            or "pointer_table" in type_name
+        ):
+            return "pointer-table"
+        if type_name == "rom_table":
+            return "scene-table" if name == "LEVEL_TABLE" else "level-data"
+        if (
+            type_name == "sound_test_entry_table"
+            or type_name.startswith("scene_")
+            or "scene_resource" in type_name
+            or "scene_transition" in type_name
+            or type_name == "scene_script"
+        ):
+            return "scene-table"
+        if "terrain" in type_name or "collision_profile" in type_name:
+            return "terrain-data"
+        if "graphics" in type_name or "sprite" in type_name:
+            return "graphics"
+        if type_name.startswith("z80_") or name.startswith("AUDIO_"):
+            return "audio-data"
         if "ANIM" in name or "ANIMATION" in name:
             return "animation"
         if "MOVE" in name or "MOVEMENT" in name:

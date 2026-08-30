@@ -23,7 +23,7 @@ def _class_for_symbol(symbol: Symbol) -> str:
         return "MOVEMENT_STREAM"
     if "ACTOR_TEMPLATE" in name:
         return "ACTOR_TEMPLATE"
-    if symbol_type == "rom_pointer_table":
+    if symbol_type in {"rom_pointer_table", "rom_pointer", "actor_spawn_phase_animation_table"}:
         return "POINTER_TABLE"
     if "ANIM" in name or "ANIMATION_STREAM" in symbol_type:
         return "ANIMATION_STREAM"
