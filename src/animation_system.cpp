@@ -46,7 +46,8 @@ void AnimationSystem::update_common(
     bool response_dynamic_handoff,
     bool bounce_response_finished,
     const ObserveTransition& observe_transition,
-    const ObserveActorFlags& observe_actor_flags
+    const ObserveActorFlags& observe_actor_flags,
+    const IntegrateTerminalActor& integrate_terminal_actor
 ) {
     // PLAYER_ANIM_SWORD contains no player F5 child spawn. Keep mode-3
     // requests on the normal deferred boundary; the apple stream owns the
@@ -68,7 +69,8 @@ void AnimationSystem::update_common(
         frame_phase,
         context,
         observe_transition,
-        observe_actor_flags
+        observe_actor_flags,
+        integrate_terminal_actor
     );
 }
 

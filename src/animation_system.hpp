@@ -16,6 +16,7 @@ class AnimationSystem {
 public:
     using ObserveTransition = ActorAnimationSystem::ObserveTransition;
     using ObserveActorFlags = ActorAnimationSystem::ObserveActorFlags;
+    using IntegrateTerminalActor = ActorAnimationSystem::IntegrateTerminalActor;
 
     explicit AnimationSystem(ActorLifecycleSystem& actor_lifecycle)
         : actor_animation_(actor_lifecycle) {}
@@ -45,7 +46,8 @@ public:
         bool response_dynamic_handoff,
         bool bounce_response_finished,
         const ObserveTransition& observe_transition,
-        const ObserveActorFlags& observe_actor_flags
+        const ObserveActorFlags& observe_actor_flags,
+        const IntegrateTerminalActor& integrate_terminal_actor
     );
 
     void flush_deferred_spawn(GameState& state, int source_world_x, int source_world_y);

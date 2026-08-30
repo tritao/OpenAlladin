@@ -1,7 +1,6 @@
 #include "actor_animation_system.hpp"
 
 #include "game_state.hpp"
-#include "movement.hpp"
 
 #include <algorithm>
 #include <cstddef>
@@ -77,7 +76,8 @@ void ActorAnimationSystem::update(
     std::uint8_t frame_phase,
     const AnimationContext& context,
     const ObserveTransition& observe_transition,
-    const ObserveActorFlags& observe_actor_flags
+    const ObserveActorFlags& observe_actor_flags,
+    const IntegrateTerminalActor& integrate_terminal_actor
 ) {
     if (!rom_loaded()) return;
 
@@ -105,7 +105,7 @@ void ActorAnimationSystem::update(
             if (!service_actor_table
                 && actor.type == kActorTerminalType
                 && actor.terminal_timer == 0) {
-                MovementVm::integrate_actor(actor);
+                integrate_terminal_actor(actor);
             }
             continue;
         }
@@ -124,7 +124,7 @@ void ActorAnimationSystem::update(
             && service_actor_table
             && !generated_sword_death;
         if (hold_scene5_phase || hold_death_phase) {
-            MovementVm::integrate_actor(actor);
+            integrate_terminal_actor(actor);
             continue;
         }
 
@@ -161,7 +161,7 @@ void ActorAnimationSystem::update(
         }
         if (actor.type == kActorTerminalType
             && previous_type == kActorTerminalType) {
-            MovementVm::integrate_actor(actor);
+            integrate_terminal_actor(actor);
         }
     }
 }

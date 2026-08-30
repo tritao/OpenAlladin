@@ -482,6 +482,9 @@ SceneServices Engine::scene_services() {
             ) {
                 interactions_.observe_actor_flag_transition(
                     state, actor, previous_flags);
+            },
+            [this](ActorState& actor) {
+                actor_movement_.integrate_terminal_actor(actor);
             }
         );
     };
@@ -954,6 +957,9 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
                 ) {
                     interactions_.observe_actor_flag_transition(
                         state, actor, previous_flags);
+                },
+                [this](ActorState& actor) {
+                    actor_movement_.integrate_terminal_actor(actor);
                 }
             );
         };

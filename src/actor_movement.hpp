@@ -30,6 +30,14 @@ public:
         std::span<const std::uint8_t> rom
     );
 
+    // Terminal records have no movement cursor, but the recovered actor
+    // animation boundary still advances their shared fixed-point motion. Keep
+    // that arithmetic owned by the movement service while callers preserve
+    // the ROM-defined eligibility and ordering.
+    void integrate_terminal_actor(ActorState& actor) const {
+        MovementVm::integrate_actor(actor);
+    }
+
 private:
     MovementVm& vm_;
     ActorLifecycleSystem& lifecycle_;

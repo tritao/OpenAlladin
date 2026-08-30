@@ -31,6 +31,7 @@ public:
         const ActorState&,
         std::uint8_t
     )>;
+    using IntegrateTerminalActor = std::function<void(ActorState&)>;
 
     explicit ActorAnimationSystem(ActorLifecycleSystem& actor_lifecycle)
         : actor_lifecycle_(actor_lifecycle) {}
@@ -61,7 +62,8 @@ public:
         std::uint8_t frame_phase,
         const AnimationContext& context,
         const ObserveTransition& observe_transition,
-        const ObserveActorFlags& observe_actor_flags
+        const ObserveActorFlags& observe_actor_flags,
+        const IntegrateTerminalActor& integrate_terminal_actor
     );
 
     std::vector<std::uint8_t> take_sound_requests();
