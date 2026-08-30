@@ -401,6 +401,7 @@ def test_data_index_collapses_interior_layout_fragment_owned_by_canonical_symbol
         ("0x00000044", "0x00000047"),
     ]
     assert index.at(0x44)["name"] == "DispatchTableEntry01"
+    assert index.at(0x46)["name"] == "DispatchTable"
 
 
 def test_data_index_collapses_generic_fragment_inside_canonical_stream(tmp_path):

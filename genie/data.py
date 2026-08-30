@@ -190,6 +190,8 @@ class DataIndex:
         self._coverage_document: Any = None
         self._coverage_loaded = False
         self._overlap_cache: dict[str, list[dict[str, Any]]] | None = None
+        self._object_starts: tuple[int, ...] | None = None
+        self._object_prefix_ends: tuple[int, ...] | None = None
         self._load_streams("animation", animation_path)
         self._load_streams("movement", movement_path)
         self._objects: tuple[dict[str, Any], ...] | None = None
@@ -412,12 +414,37 @@ class DataIndex:
 
     def at(self, address: int) -> dict[str, Any] | None:
         address = _address(address)
-        exact = [value for value in self.objects() if _address(value["start"]) == address]
-        if exact:
-            return exact[0]
-        for value in self.objects():
-            if _address(value["start"]) <= address <= _address(value["end"]):
-                return value
+        values = self.objects()
+        if self._object_starts is None or self._object_prefix_ends is None:
+            starts: list[int] = []
+            prefix_ends: list[int] = []
+            maximum_end = -1
+            for value in values:
+                starts.append(_address(value["start"]))
+                maximum_end = max(maximum_end, _address(value["end"]))
+                prefix_ends.append(maximum_end)
+            self._object_starts = tuple(starts)
+            self._object_prefix_ends = tuple(prefix_ends)
+
+        starts = self._object_starts
+        prefix_ends = self._object_prefix_ends
+        exact = bisect_left(starts, address)
+        if exact < len(values) and starts[exact] == address:
+            # Preserve the historical first-object result when a tracked
+            # entry is nested at the same address as its owning range.
+            return values[exact]
+
+        right = bisect_right(starts, address) - 1
+        if right >= 0:
+            # The first prefix maximum reaching the address is the first
+            # object in start order whose end contains it.  This preserves
+            # the old ordering semantics while avoiding a full scan for
+            # every xref target in the coverage integrity pass.
+            candidate = bisect_left(prefix_ends, address, 0, right + 1)
+            if candidate <= right:
+                value = values[candidate]
+                if _address(value["start"]) <= address <= _address(value["end"]):
+                    return value
         symbol = self.symbols.at(address, include_ranges=True)
         if symbol is not None and symbol.kind == "ram":
             return self._ram_object(symbol)
