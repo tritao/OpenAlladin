@@ -2303,6 +2303,37 @@ def test_type7a_interaction_roots_include_terminal_jumps():
         assert decoded["instructions"][-1]["branch_target"] == target
 
 
+def test_type84_type0f_child_movement_response_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x00120A00, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_MOVE_TYPE84_TYPE0F_CHILD_RESPONSE"
+    assert stream.end == 0x00120A41
+    assert stream.size == 66
+    assert stream.metadata["type"] == "movement_stream"
+
+    following = symbols.at(0x00120A42, include_ranges=False)
+    assert following is not None
+    assert following.name == "ACTOR_MOVE_TYPE75_LEVEL_EXIT"
+    assert stream.end + 1 == following.address
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoded = MovementDecoder(rom).decode_stream(
+        0x00120A00,
+        max_steps=128,
+        max_bytes=66,
+        follow_control_flow=False,
+        continue_after_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 66
+    assert decoded["stopped_reason"] == "byte_limit"
+    assert decoded["steps"][0]["delta_x"] == -1
+    assert decoded["steps"][0]["delta_y"] == 0
+    assert decoded["steps"][-1]["commands"][-1]["opcode"] == "0x82"
+    assert decoded["steps"][-1]["commands"][-1]["address"] == "0x00120A40"
+
+
 def test_actor_type41_interaction_response_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00125D7E, include_ranges=False)

@@ -3111,6 +3111,17 @@
     - menu_transition_template_family_static_decompilation
     - movement_stream_decoder
 
+0x00120A00:
+  name: ACTOR_MOVE_TYPE84_TYPE0F_CHILD_RESPONSE
+  type: movement_stream
+  size: 66
+  confidence: decompiled
+  description: Type-0x84 child movement response published by ACTOR_ANIM_TYPE84_TYPE0F_CHILD at 0x00123D8C. Its exact 66-byte owner applies the signed settle profile, gates the terminal phase on player-X distance 0x40, randomly returns to the root, and clears actor movement state at 0x00120A40 before ACTOR_MOVE_TYPE75_LEVEL_EXIT.
+  evidence:
+    - type0f_child_animation_static_decompilation
+    - type0f_child_movement_static_decompilation
+    - movement_stream_decoder
+
 0x00120584:
   name: ACTOR_MOVE_TYPE6E_INTERACTION
   type: movement_stream
