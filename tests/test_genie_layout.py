@@ -292,6 +292,26 @@ def test_reset_bootstrap_payload_suffix_and_post_copy_values_are_exact():
     )
 
 
+def test_scene_script_prefix_is_exact_and_cursor_boundary_is_preserved():
+    symbols = SymbolStore()
+    prefix = symbols.at(0x0000407E, include_ranges=False)
+    assert prefix is not None
+    assert prefix.name == "SCENE_SCRIPT_ALIGNMENT_PADDING_407E"
+    assert prefix.end == 0x00004081
+    assert prefix.size == 4
+    assert prefix.metadata["type"] == "padding_data"
+    assert prefix.confidence == "confirmed"
+
+    script = symbols.at(0x00004082, include_ranges=False)
+    assert script is not None
+    assert script.name == "INITIAL_SCENE_SCRIPT"
+    assert prefix.end + 1 == script.address
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[prefix.address:prefix.end + 1] == bytes(4)
+    assert rom[script.address:script.address + 4] == bytes.fromhex("00010002")
+
+
 def test_unindexed_graphics_bands_and_padding_are_exact():
     symbols = SymbolStore()
     tile_band = symbols.at(0x0011E160, include_ranges=False)

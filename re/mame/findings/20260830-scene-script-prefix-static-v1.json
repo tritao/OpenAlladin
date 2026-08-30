@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-scene-script-prefix-static-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "confirmed",
+  "target_manifest": "re/ghidra/targets/scene-script-prefix-static-targets.json",
+  "promoted_range": {
+    "address": "0x0000407E",
+    "name": "SCENE_SCRIPT_ALIGNMENT_PADDING_407E",
+    "range": ["0x0000407E", "0x00004081"],
+    "size": 4,
+    "bytes": "00000000"
+  },
+  "boundary": "The four zero bytes end immediately before INITIAL_SCENE_SCRIPT at 0x00004082. The live startup cursor is explicitly initialized to 0x00004082, so this owner does not change the established scene-script entry point.",
+  "conclusion": "The four-byte gap is confirmed boundary padding between the menu control-layout corpus and the established initial scene-script entry."
+}

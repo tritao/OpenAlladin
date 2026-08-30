@@ -897,6 +897,16 @@
     - startup_initialization_static_decompilation
     - ghidra_scene_script_targeted_decompile
 
+0x0000407E:
+  name: SCENE_SCRIPT_ALIGNMENT_PADDING_407E
+  type: padding_data
+  size: 4
+  confidence: confirmed
+  description: Four zero bytes between the six-record menu control-layout corpus ending at 0x0000407D and INITIAL_SCENE_SCRIPT at 0x00004082. The zero-filled boundary is classified as alignment padding; startup publishes SCENE_SCRIPT_CURSOR at 0x00004082.
+  evidence:
+    - startup_scene_script_static_v1
+    - scene_script_prefix_static_v1
+
 0x000040B8:
   name: SCENE_RESOURCE_VDP_STREAM_LEVEL08
   type: scene_resource_vdp_stream
