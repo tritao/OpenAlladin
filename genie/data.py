@@ -784,6 +784,85 @@ class DataIndex:
             }
         return sorted(result.values(), key=lambda item: (_address(item["address"]), item["kind"]))
 
+    def _decoded_symbol_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
+        """Expose decoded VM pointers to canonical functions and data.
+
+        ``outgoing_stream_refs`` intentionally reports only stream-to-stream
+        edges.  VM callback parameters are just as important during semantic
+        reconstruction, though, and otherwise require investigators to
+        inspect the raw decoder document separately.  Keep this view distinct
+        so existing stream-reference consumers retain their narrow contract.
+        """
+
+        decoded = self._decoded_for(value)
+        if not decoded or not decoded.get("available"):
+            return []
+        kind = value["kind"]
+        root_entry = _address(decoded["root_entry"])
+        stream = self._decoded[kind].get(root_entry)
+        if not isinstance(stream, dict):
+            return []
+
+        pointer_keys = {
+            "branch_target",
+            "continuation",
+            "movement_target",
+            "parameter",
+            "return_target",
+            "stream_target",
+            "target",
+        }
+        pointers: list[tuple[int, str]] = []
+
+        def visit(node: Any) -> None:
+            if isinstance(node, dict):
+                for key, child in node.items():
+                    if key in pointer_keys:
+                        try:
+                            pointers.append((_address(child), key))
+                        except (TypeError, ValueError):
+                            pass
+                    visit(child)
+            elif isinstance(node, list):
+                for child in node:
+                    visit(child)
+
+        visit(stream)
+        current_start = _address(value["start"])
+        current_end = _address(value["end"])
+        grouped: dict[tuple[int, str, str], dict[str, Any]] = {}
+        for pointer, reference_type in pointers:
+            if current_start <= pointer <= current_end:
+                continue
+            symbol = self.symbols.at(pointer, include_ranges=False)
+            if symbol is not None:
+                name = symbol.name
+                target_kind = symbol.kind
+            else:
+                target = self.at(pointer)
+                if target is None:
+                    continue
+                name = target["name"]
+                target_kind = target["kind"]
+            key = (pointer, name, target_kind)
+            item = grouped.setdefault(key, {
+                "address": _hex(pointer),
+                "name": name,
+                "kind": target_kind,
+                "references": 0,
+                "reference_types": set(),
+                "source": "decoded VM",
+            })
+            item["references"] += 1
+            item["reference_types"].add(reference_type)
+
+        result = []
+        for item in grouped.values():
+            normalized = dict(item)
+            normalized["reference_types"] = sorted(item["reference_types"])
+            result.append(normalized)
+        return sorted(result, key=lambda item: (_address(item["address"]), item["kind"], item["name"]))
+
     def _overlaps(self, value: dict[str, Any]) -> list[dict[str, Any]]:
         if self._overlap_cache is None:
             self._build_overlap_cache()
@@ -840,6 +919,7 @@ class DataIndex:
             "consumers": self._consumer_records(references),
             "references": references,
             "outgoing_stream_refs": self._stream_references(value),
+            "outgoing_decoded_refs": self._decoded_symbol_references(value),
             "decoded": decoded["available"] if decoded else None,
             "decoder": decoded,
             "range_bounded": bool(value["range_bounded"]),

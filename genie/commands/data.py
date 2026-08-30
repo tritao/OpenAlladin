@@ -115,6 +115,13 @@ def _render_context(value: dict, *, json_output: bool) -> int:
     print("outgoing stream refs:")
     for reference in value["outgoing_stream_refs"]:
         print(f"  {reference['name']} ({reference['address']})")
+    print("outgoing decoded refs:")
+    for reference in value["outgoing_decoded_refs"]:
+        kinds = ",".join(reference["reference_types"])
+        print(
+            f"  {reference['name']} ({reference['address']}) "
+            f"[{reference['references']} references; {kinds}]"
+        )
     decoder = value.get("decoder")
     if decoder and decoder.get("available"):
         suffix = "" if decoder.get("size_matches") else " (size mismatch)"
