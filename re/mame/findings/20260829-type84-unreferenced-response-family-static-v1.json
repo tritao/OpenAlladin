@@ -9,20 +9,20 @@
   "target_manifest": "re/ghidra/targets/type84-unreferenced-response-family-static-targets.json",
   "template": {
     "address": "0x001B8304",
-    "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_0F22_RESPONSE",
+    "name": "ACTOR_TEMPLATE_TYPE_84_0F22_RESPONSE",
     "range": "0x001B8304-0x001B8317",
     "raw_bytes": "84000100000000121412600000125D5801000200"
   },
   "movement": {
     "address": "0x00121412",
-    "name": "ACTOR_MOVE_TYPE84_UNREFERENCED_RESPONSE_PREFIX",
+    "name": "ACTOR_MOVE_TYPE84_0F22_RESPONSE_PREFIX",
     "range": "0x00121412-0x0012146B",
     "bytes": 90,
     "continuation": "0x0012146C ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE"
   },
   "animation": {
     "address": "0x00125D58",
-    "name": "ACTOR_ANIM_TYPE84_UNREFERENCED_0F22_LOOP",
+    "name": "ACTOR_ANIM_TYPE84_0F22_RESPONSE_LOOP",
     "range": "0x00125D58-0x00125D7D",
     "bytes": 38,
     "loop": "0x00125D78 -> 0x00125D58"

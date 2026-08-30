@@ -29,7 +29,7 @@
       "selector": "0xC8"
     }
   ],
-  "boundary_basis": "The direct root is selected by the runtime type-0x41 initialization body and its exact 70-byte loop ends immediately before ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY at 0x00125DC4. The separate 0x00125D58-0x00125D7D fragment is now recorded provisionally as ACTOR_ANIM_TYPE84_UNREFERENCED_0F22_LOOP and is not absorbed.",
+  "boundary_basis": "The direct root is selected by the runtime type-0x41 initialization body and its exact 70-byte loop ends immediately before ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY at 0x00125DC4. The separate 0x00125D58-0x00125D7D fragment is now recorded provisionally as ACTOR_ANIM_TYPE84_0F22_RESPONSE_LOOP and is not absorbed.",
   "evidence": [
     "Fresh instructions.json DATA reference from 0x001B729E to 0x00125D7E",
     "Lossless AnimationDecoder output",

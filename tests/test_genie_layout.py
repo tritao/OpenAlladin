@@ -1564,18 +1564,18 @@ def test_shared_type3c_3d_3e_3f_movement_is_exact():
     assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
-def test_unreferenced_type84_response_family_is_exact_and_provisional():
+def test_type84_0f22_response_family_is_exact_and_provisional():
     symbols = SymbolStore()
     template = symbols.at(0x001B8304, include_ranges=False)
     assert template is not None
-    assert template.name == "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_0F22_RESPONSE"
+    assert template.name == "ACTOR_TEMPLATE_TYPE_84_0F22_RESPONSE"
     assert template.size == 20
     assert template.metadata["type"] == "actor_template"
     assert template.confidence == "provisional"
 
     movement = symbols.at(0x00121412, include_ranges=False)
     assert movement is not None
-    assert movement.name == "ACTOR_MOVE_TYPE84_UNREFERENCED_RESPONSE_PREFIX"
+    assert movement.name == "ACTOR_MOVE_TYPE84_0F22_RESPONSE_PREFIX"
     assert movement.end == 0x0012146B
     assert movement.size == 90
     assert movement.metadata["type"] == "movement_stream"
@@ -1583,7 +1583,7 @@ def test_unreferenced_type84_response_family_is_exact_and_provisional():
 
     animation = symbols.at(0x00125D58, include_ranges=False)
     assert animation is not None
-    assert animation.name == "ACTOR_ANIM_TYPE84_UNREFERENCED_0F22_LOOP"
+    assert animation.name == "ACTOR_ANIM_TYPE84_0F22_RESPONSE_LOOP"
     assert animation.end == 0x00125D7D
     assert animation.size == 38
     assert animation.metadata["type"] == "animation_stream"
