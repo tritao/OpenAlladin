@@ -1,0 +1,65 @@
+{
+  "format": "openaladdin-actor-animation-callback-family-extended-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "callbacks": [
+    {
+      "address": "0x001ACB5A",
+      "name": "ActorEvent_SetActorField3CBit4",
+      "range": ["0x001ACB5A", "0x001ACB61"],
+      "size": 8,
+      "indirect_animation_entries": []
+    },
+    {
+      "address": "0x001ACB62",
+      "name": "ActorEvent_ClearActorField3CBit4",
+      "range": ["0x001ACB62", "0x001ACB69"],
+      "size": 8,
+      "indirect_animation_entries": ["0x001211F6"]
+    },
+    {
+      "address": "0x001ACB8A",
+      "name": "ActorEvent_SetActorFlagsBit4",
+      "range": ["0x001ACB8A", "0x001ACB91"],
+      "size": 8,
+      "indirect_animation_entries": [
+        "0x001254AE",
+        "0x0012554C",
+        "0x00125556",
+        "0x00125560",
+        "0x0012556A",
+        "0x00125574",
+        "0x0012559A",
+        "0x00125654"
+      ]
+    },
+    {
+      "address": "0x001ACB92",
+      "name": "ActorEvent_ClearActorFlagsBit4",
+      "range": ["0x001ACB92", "0x001ACB99"],
+      "size": 8,
+      "indirect_animation_entries": [
+        "0x00125536",
+        "0x00125622",
+        "0x001256DC"
+      ]
+    },
+    {
+      "address": "0x001ACBD8",
+      "name": "ActorEvent_CopyLinkedActorCoordinates",
+      "range": ["0x001ACBD8", "0x001ACBF1"],
+      "size": 26,
+      "indirect_animation_entries": ["0x00124CFC"]
+    }
+  ],
+  "boundary_basis": [
+    "The four compact flag callbacks end at their direct RTS instructions.",
+    "The coordinate-copy callback begins after the preceding RTS and ends at its direct RTS immediately before Actor_SelectDirectionalAnimation.",
+    "The indirect-animation entry locations are the exact longwords that encode the callback targets in the ROM streams."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -2957,3 +2957,29 @@ def test_actor_animation_callback_family_is_exact():
     assert rom[0x001ACC20:0x001ACC28] == bytes.fromhex("08A90005003C4E75")
     assert rom[0x001ACC28:0x001ACC30] == bytes.fromhex("08E9000000064E75")
     assert rom[0x001ACC56:0x001ACC5E] == bytes.fromhex("08A9000000064E75")
+
+
+def test_extended_actor_animation_callback_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x001ACB5A: (0x001ACB61, "ActorEvent_SetActorField3CBit4"),
+        0x001ACB62: (0x001ACB69, "ActorEvent_ClearActorField3CBit4"),
+        0x001ACB8A: (0x001ACB91, "ActorEvent_SetActorFlagsBit4"),
+        0x001ACB92: (0x001ACB99, "ActorEvent_ClearActorFlagsBit4"),
+        0x001ACBD8: (0x001ACBF1, "ActorEvent_CopyLinkedActorCoordinates"),
+    }
+    for address, (end, name) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == end - address + 1
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001ACB5A:0x001ACB62] == bytes.fromhex("08E90004003C4E75")
+    assert rom[0x001ACB62:0x001ACB6A] == bytes.fromhex("08A90004003C4E75")
+    assert rom[0x001ACB8A:0x001ACB92] == bytes.fromhex("08E9000400064E75")
+    assert rom[0x001ACB92:0x001ACB9A] == bytes.fromhex("08A9000400064E75")
+    assert rom[0x001ACBD8:0x001ACBF2] == bytes.fromhex(
+        "2E29003E67122F082047336800020002336800040004205F4E75"
+    )

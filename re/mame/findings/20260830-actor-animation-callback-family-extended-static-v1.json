@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-actor-animation-callback-family-extended-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/actor-animation-callback-family-extended-static-targets.json",
+  "promoted_callbacks": {
+    "count": 5,
+    "owned_bytes": 58,
+    "indirect_animation_entries": 13,
+    "actor_field_entries": 2,
+    "actor_flags_entries": 2,
+    "linked_coordinate_entries": 1
+  },
+  "families": [
+    {
+      "range": ["0x001ACB5A", "0x001ACB69"],
+      "semantics": "Set/clear callbacks for actor field +0x3C bit 4. The clear entry is pushed by the 0x001211F6 animation record; the set entry is retained as its exact paired body."
+    },
+    {
+      "range": ["0x001ACB8A", "0x001ACB9A"],
+      "semantics": "Set/clear callbacks for actor flags field +0x06 bit 4, used by the repeated upper-route animation records at 0x001254AE-0x001256DC."
+    },
+    {
+      "range": ["0x001ACBD8", "0x001ACBF1"],
+      "semantics": "Linked-actor coordinate-copy callback used by the animation record at 0x00124CFC; it copies the linked record's coordinates through the pointer at actor offset +0x3E."
+    }
+  ],
+  "conclusion": "The extended indirect AnimationVM callback family is now canonical and owns the exact 0x001ACB5A-0x001ACB69, 0x001ACB8A-0x001ACB99, and 0x001ACBD8-0x001ACBF1 bodies without absorbing the adjacent random-spawn helper or Actor_SelectDirectionalAnimation."
+}
