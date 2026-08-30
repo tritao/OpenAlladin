@@ -1,5 +1,7 @@
 #include "movement.hpp"
 
+#include "game_ram.hpp"
+
 #include <cstdlib>
 
 namespace openaladdin {
@@ -30,37 +32,8 @@ void MovementVm::tick(
             (static_cast<std::uint16_t>(read_u8(address)) << 8)
             | read_u8(address + 1));
     };
-    const auto write_actor_value = [](ActorState& actor, std::uint16_t offset, int size, std::uint32_t value) {
-        if (size == 1) {
-            const auto byte = static_cast<std::uint8_t>(value);
-            switch (offset) {
-            case 0x00: actor.type = byte; break;
-            case 0x06: actor.movement_flags = byte; break;
-            case 0x09: actor.facing_x_flip = byte; break;
-            case 0x12: actor.movement_loop_timer = byte; break;
-            case 0x35: actor.facing_y_flip = byte; break;
-            case 0x36: actor.movement_command_timer = byte; break;
-            case 0x3C: actor.flags = byte; break;
-            default: break;
-            }
-        } else if (size == 2) {
-            const auto word = static_cast<std::uint16_t>(value);
-            switch (offset) {
-            case 0x02: actor.x = word; break;
-            case 0x04: actor.y = word; break;
-            default: break;
-            }
-        } else {
-            switch (offset) {
-            case 0x0A: actor.movement_pc = value; break;
-            case 0x0E: actor.movement_loop_pc = value; break;
-            case 0x14: actor.frame_ptr = value; break;
-            case 0x20: actor.animation_pc = value; break;
-            case 0x38: actor.movement_return_pc = value; break;
-            default: break;
-            }
-        }
-    };
+    GameRamView fallback_ram;
+    GameRamView* ram = context.ram != nullptr ? context.ram : &fallback_ram;
 
     for (std::size_t slot = 0; slot < actors.size(); ++slot) {
         ActorState& actor = actors[slot];
@@ -74,6 +47,7 @@ void MovementVm::tick(
             || (actor.frame_ptr == 0 && actor.type != 0x34 && actor.type != 0x80)) {
             continue;
         }
+        ram->bind_actor(actor);
 
         const std::uint32_t step_pc = actor.movement_pc;
         std::uint32_t cursor = step_pc;
@@ -160,19 +134,21 @@ void MovementVm::tick(
                 cursor += 2;
                 continue;
             case 0x83: {  // Movement_WriteActorOrRamValue.
-                const std::uint8_t operand = read_u8(cursor + 1);
-                const int size = (operand & 0x0F) == 1 || (operand & 0x0F) == 2 ? 2 : 4;
+                const std::uint8_t mode = read_u8(cursor + 1);
+                const std::uint8_t width = mode & 0x0F;
+                // The byte form still consumes a word-sized stream operand;
+                // this is the same ED contract used by AnimationVM.
+                const int encoded_size = width == 1 || width == 2 ? 2 : 4;
                 const std::uint16_t offset = read_u16(cursor + 2);
-                const std::uint32_t value = size == 2
+                const std::uint32_t value = encoded_size == 2
                     ? read_u16(cursor + 4)
                     : read_u32(cursor + 4);
-                // Absolute work-RAM writes need a RAM model. Actor-relative
-                // writes are safe to mirror now and cover the confirmed
-                // movement streams that update animation/state cursors.
-                if ((operand & 0x10) != 0) {
-                    write_actor_value(actor, offset, size, value);
-                }
-                cursor += static_cast<std::uint32_t>(4 + size);
+                const RamAddress address = (mode & 0x10) != 0
+                    ? offset : 0xFF0000U + offset;
+                if (width == 1) ram->write8(address, static_cast<std::uint8_t>(value));
+                else if (width == 2) ram->write16(address, static_cast<std::uint16_t>(value));
+                else ram->write32(address, value);
+                cursor += static_cast<std::uint32_t>(4 + encoded_size);
                 continue;
             }
             case 0x84:  // Movement_SetCommandTimer.
@@ -229,13 +205,9 @@ void MovementVm::tick(
                 const std::uint8_t flags = read_u8(cursor + 1);
                 const int bit = flags & 7;
                 const std::uint16_t offset = read_u16(cursor + 2);
-                const bool set = [&]() {
-                    if (offset == 0x09) return (actor.facing_x_flip & (1U << bit)) != 0;
-                    if (offset == 0x35) return (actor.facing_y_flip & (1U << bit)) != 0;
-                    if (offset == 0x07) return (actor.runtime_field_07 & (1U << bit)) != 0;
-                    if (offset == 0x3C) return (actor.flags & (1U << bit)) != 0;
-                    return false;
-                }();
+                const RamAddress address = (flags & 0x80) != 0
+                    ? offset : 0xFF0000U + offset;
+                const bool set = (ram->read8(address) & (1U << bit)) != 0;
                 const bool branch = (flags & 0x40) != 0 ? set : !set;
                 const std::uint32_t target = read_u32(cursor + 4);
                 cursor = branch ? target : cursor + 8;
@@ -250,15 +222,16 @@ void MovementVm::tick(
             case 0x8A: {  // Movement_ActorFieldCompare.
                 const std::uint8_t flags = read_u8(cursor + 1);
                 const std::uint8_t operation = flags & 0x70;
+                const std::uint8_t width = flags & 0x07;
                 const std::uint16_t offset = read_u16(cursor + 2);
-                const std::uint16_t value = read_u16(cursor + 4);
-                const std::uint32_t current = [&]() -> std::uint32_t {
-                    if (offset == 0x09) return actor.facing_x_flip;
-                    if (offset == 0x35) return actor.facing_y_flip;
-                    if (offset == 0x3C) return actor.flags;
-                    if (offset == 0x3D) return actor.interaction_state;
-                    return 0;
-                }();
+                const RamAddress address = (flags & 0x80) != 0
+                    ? offset : 0xFF0000U + offset;
+                cursor += 4;
+                const std::uint32_t value = width == 1 || width == 2
+                    ? read_u16(cursor) : read_u32(cursor);
+                const std::uint32_t current = width == 1 ? ram->read8(address)
+                    : width == 2 ? ram->read16(address) : ram->read32(address);
+                cursor += width == 1 || width == 2 ? 2 : 4;
                 bool branch = false;
                 switch (operation) {
                 case 0x10: branch = current == value; break;
@@ -266,8 +239,8 @@ void MovementVm::tick(
                 case 0x30: branch = current >= value; break;
                 default: branch = current < value; break;
                 }
-                const std::uint32_t target = read_u32(cursor + 6);
-                cursor = branch ? target : cursor + 10;
+                const std::uint32_t target = read_u32(cursor);
+                cursor = branch ? target : cursor + 4;
                 if (branch
                     && (read_u8(cursor) < 0x80 || read_u8(cursor) > 0x94)) {
                     actor.movement_pc = cursor;

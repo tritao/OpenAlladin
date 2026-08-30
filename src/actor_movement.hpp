@@ -1,6 +1,7 @@
 #pragma once
 
 #include "actor_lifecycle.hpp"
+#include "game_ram.hpp"
 #include "movement.hpp"
 
 #include <span>
@@ -33,6 +34,7 @@ private:
     MovementVm& vm_;
     ActorLifecycleSystem& lifecycle_;
     AnimationSystem& animation_;
+    GameRamView ram_;
 };
 
 }  // namespace openaladdin

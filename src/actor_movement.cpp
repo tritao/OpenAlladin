@@ -22,6 +22,7 @@ void ActorMovementSystem::update(
         previous_types[slot] = state.actors[slot].type;
     }
 
+    ram_.bind_state(state);
     vm_.tick(
         state.actors,
         MovementContext{
@@ -31,7 +32,8 @@ void ActorMovementSystem::update(
             &runtime.actor_movement_deferred,
             [this](ActorIndex slot, std::uint8_t command_mode) {
                 lifecycle_.retire_from_vm(slot, command_mode);
-            }
+            },
+            &ram_
         }
     );
     runtime.actor_movement_deferred.fill(false);

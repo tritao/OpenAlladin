@@ -10,12 +10,18 @@
 
 namespace openaladdin {
 
+class GameRamView;
+
 struct MovementContext {
     std::span<const std::uint8_t> rom;
     int player_world_x = 0;
     int player_world_y = 0;
     const std::array<bool, 32>* deferred_actors = nullptr;
     std::function<void(ActorIndex, std::uint8_t)> retire_actor;
+    // ActorVM commands use the same address-based memory contract as the
+    // animation VM. The owner keeps this view alive across ticks so absolute
+    // writes have normal Genesis RAM lifetime.
+    GameRamView* ram = nullptr;
 };
 
 // Shared actor movement interpreter. It owns no actor records and therefore

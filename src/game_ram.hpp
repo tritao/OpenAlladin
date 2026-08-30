@@ -38,6 +38,10 @@ public:
         actor_state_ = &actor;
         actor_record_ = &private_bytes;
     }
+    void bind_actor(ActorState& actor) {
+        actor_state_ = &actor;
+        actor_record_ = nullptr;
+    }
 
     void reset();
     void set_write_tracking(bool enabled) { tracking_writes_ = enabled; }
