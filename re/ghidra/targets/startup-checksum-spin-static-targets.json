@@ -20,7 +20,7 @@
     "terminal": "The routine branches back to 0x00000216 after the final iteration and remains there forever.",
     "reset_boundary": "The reset vector points to 0x0000021A, immediately after this 26-byte body."
   },
-  "confidence": "provisional",
+  "confidence": "decompiled",
   "limitations": [
     "No direct ROM pointer or runtime entry to 0x00000200 is currently recovered.",
     "The checksum consumer and whether the loop is boot-time, diagnostic, or unreachable remain unresolved."

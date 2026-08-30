@@ -7,8 +7,8 @@
 0x00000200:
   name: System_AccumulateRomChecksumAndSpin
   size: 26
-  confidence: provisional
-  description: Provisional non-returning post-header routine that accumulates one 16-bit ROM word per iteration from 0x00000200 into D3 for 0x000FFF00 iterations, then spins forever at 0x00000216; the reset vector instead enters System_ResetBootstrap at 0x0000021A, so no live caller or checksum consumer is claimed.
+  confidence: decompiled
+  description: Non-returning post-header routine that accumulates one 16-bit ROM word per iteration from 0x00000200 into D3 for 0x000FFF00 iterations, then spins forever at 0x00000216; the reset vector instead enters System_ResetBootstrap at 0x0000021A, so no live caller or checksum consumer is claimed.
   evidence:
     - gnu_m68k_disassembly_00000200
     - startup_checksum_spin_static_v1
@@ -6577,7 +6577,7 @@
 0x001B3C5E:
   name: Menu_UnreachableCodeIsland_001B3C5E
   size: 6
-  confidence: provisional
+  confidence: decompiled
   description: Exact six-byte menu code island containing an LSLB followed by a BSR to Menu_AnimateSelectionMarkerTiles and falling into the known menu body at 0x001B3C64. Ghidra marks this block unreachable and no static incoming reference is claimed; the symbol records physical code ownership without asserting a live entry point.
   evidence:
     - gnu_m68k_disassembly_001B3C5E
@@ -6586,7 +6586,7 @@
 0x001B3C7C:
   name: Menu_UnreachableCodeIsland_001B3C7C
   size: 316
-  confidence: provisional
+  confidence: decompiled
   description: Exact 316-byte menu continuation beginning with a DBF loop back to 0x001B3C68, containing menu palette, sound, and actor setup, and ending by branching into the known parent body at 0x001B3DB8. Ghidra marks this block unreachable and no static incoming reference is claimed; the symbol records physical code ownership without asserting a live entry point.
   evidence:
     - gnu_m68k_disassembly_001B3C7C

@@ -250,7 +250,7 @@ def test_startup_checksum_spin_routine_is_exact_and_separate_from_reset_entry():
     assert routine.name == "System_AccumulateRomChecksumAndSpin"
     assert routine.end == 0x00000219
     assert routine.size == 26
-    assert routine.confidence == "provisional"
+    assert routine.confidence == "decompiled"
     assert "0x000FFF00 iterations" in routine.description
 
     reset = symbols.at(0x0000021A, include_ranges=False)
@@ -4834,24 +4834,24 @@ def test_orphaned_code_islands_have_conservative_complete_owners():
     layout = build_layout()
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     expected = {
-        0x001B0020: ("Orphaned_RtsStub_001B0020", 2, "4E75"),
-        0x001B0042: ("Orphaned_RtsStub_001B0042", 2, "4E75"),
-        0x001B0044: ("Orphaned_RtsStub_001B0044", 2, "4E75"),
-        0x001B1CFE: ("Orphaned_RtsStub_001B1CFE", 2, "4E75"),
-        0x001B3C5E: ("Menu_UnreachableCodeIsland_001B3C5E", 6, "EB2C6100FEE8"),
-        0x001B3C7C: ("Menu_UnreachableCodeIsland_001B3C7C", 316, None),
-        0x001B4624: ("Orphaned_RtsStub_001B4624", 2, "4E75"),
-        0x001B4F02: ("Orphaned_RtsStub_001B4F02", 2, "4E75"),
-        0x001B634C: ("Orphaned_RtsStub_001B634C", 2, "4E75"),
+        0x001B0020: ("Orphaned_RtsStub_001B0020", 2, "4E75", "provisional"),
+        0x001B0042: ("Orphaned_RtsStub_001B0042", 2, "4E75", "provisional"),
+        0x001B0044: ("Orphaned_RtsStub_001B0044", 2, "4E75", "provisional"),
+        0x001B1CFE: ("Orphaned_RtsStub_001B1CFE", 2, "4E75", "provisional"),
+        0x001B3C5E: ("Menu_UnreachableCodeIsland_001B3C5E", 6, "EB2C6100FEE8", "decompiled"),
+        0x001B3C7C: ("Menu_UnreachableCodeIsland_001B3C7C", 316, None, "decompiled"),
+        0x001B4624: ("Orphaned_RtsStub_001B4624", 2, "4E75", "provisional"),
+        0x001B4F02: ("Orphaned_RtsStub_001B4F02", 2, "4E75", "provisional"),
+        0x001B634C: ("Orphaned_RtsStub_001B634C", 2, "4E75", "provisional"),
     }
-    for address, (name, size, prefix) in expected.items():
+    for address, (name, size, prefix, confidence) in expected.items():
         function = symbols.at(address, include_ranges=False)
         assert function is not None
         assert function.kind == "function"
         assert function.name == name
         assert function.size == size
         assert function.end == address + size - 1
-        assert function.confidence == "provisional"
+        assert function.confidence == confidence
         item = layout.at(address)
         assert item is not None
         assert item.layout_class == "CODE"
@@ -4862,3 +4862,13 @@ def test_orphaned_code_islands_have_conservative_complete_owners():
 
     assert rom[0x001B3C7C:0x001B3C80] == bytes.fromhex("51CCFFEA")
     assert rom[0x001B3C7C + 316 - 6:0x001B3C7C + 316] == bytes.fromhex("7E2266000002")
+
+
+def test_startup_checksum_body_is_decompiled_but_reachability_remains_open():
+    symbols = SymbolStore()
+    function = symbols.at(0x00000200, include_ranges=False)
+    assert function is not None
+    assert function.name == "System_AccumulateRomChecksumAndSpin"
+    assert function.size == 26
+    assert function.end == 0x00000219
+    assert function.confidence == "decompiled"
