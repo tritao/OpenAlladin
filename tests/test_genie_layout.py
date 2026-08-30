@@ -3088,6 +3088,32 @@ def test_interaction_response_target_helper_is_exact():
     )
 
 
+def test_vdp_interaction_digit_writers_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x001B044E: (0x001B045F, "VDP_WriteAsciiDigit"),
+        0x001B0460: (0x001B0479, "VDP_WriteThreeDigitValue"),
+        0x001B047A: (0x001B048F, "VDP_WriteDecimalDigit"),
+    }
+    for address, (end, name) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == end - address + 1
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B044E:0x001B0460] == bytes.fromhex(
+        "343CE00114190402003033C200C000004E75"
+    )
+    assert rom[0x001B0460:0x001B047A] == bytes.fromhex(
+        "283C0000006461000012283C0000000A61000008283C00000001"
+    )
+    assert rom[0x001B047A:0x001B0490] == bytes.fromhex(
+        "343C0010B68465065202968460F661001D1E52004E75"
+    )
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)

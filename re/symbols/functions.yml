@@ -1254,6 +1254,30 @@
   evidence:
     - ghidra_disassembly_001B0434
     - interaction_response_target_static_decompilation
+0x001B044E:
+  name: VDP_WriteAsciiDigit
+  confidence: decompiled
+  size: 18
+  description: Reads the next ASCII digit from A1, converts it from 0-9 text to the VDP tile encoding, and writes the resulting word to the VDP data port at 0x00C00000.
+  evidence:
+    - ghidra_disassembly_001B044E
+    - vdp-interaction-digit-writers-static-decompilation
+0x001B0460:
+  name: VDP_WriteThreeDigitValue
+  confidence: decompiled
+  size: 26
+  description: Prepares the 100, 10, and 1 divisors for decimal output of D3 and delegates each digit to VDP_WriteDecimalDigit; its final iteration falls through into the shared helper at 0x001B047A.
+  evidence:
+    - ghidra_disassembly_001B0460
+    - vdp-interaction-digit-writers-static-decompilation
+0x001B047A:
+  name: VDP_WriteDecimalDigit
+  confidence: decompiled
+  size: 22
+  description: Extracts one decimal digit from D3 using the divisor in D4, emits the tile word through VDP_WriteTileWord, increments the output position in D0, and returns the remaining value in D3.
+  evidence:
+    - ghidra_disassembly_001B047A
+    - vdp-interaction-digit-writers-static-decompilation
 0x001B0078:
   name: Interaction_SynchronizeResponseState
   confidence: decompiled

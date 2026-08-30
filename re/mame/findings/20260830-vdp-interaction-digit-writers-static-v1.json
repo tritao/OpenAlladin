@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-vdp-interaction-digit-writers-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/vdp-interaction-digit-writers-static-targets.json",
+  "promoted": [
+    {
+      "address": "0x001B044E",
+      "name": "VDP_WriteAsciiDigit",
+      "range": ["0x001B044E", "0x001B045F"],
+      "size": 18
+    },
+    {
+      "address": "0x001B0460",
+      "name": "VDP_WriteThreeDigitValue",
+      "range": ["0x001B0460", "0x001B0479"],
+      "size": 26
+    },
+    {
+      "address": "0x001B047A",
+      "name": "VDP_WriteDecimalDigit",
+      "range": ["0x001B047A", "0x001B048F"],
+      "size": 22
+    }
+  ],
+  "semantics": "The block provides two decimal-output paths: an ASCII digit writer that converts text to a VDP tile word, and a numeric three-digit formatter that uses 100/10/1 divisors and VDP_WriteTileWord. The one-digit helper is an independent copy of the existing transition-screen decimal extractor.",
+  "conclusion": "The former 0x001B044E-0x001B048F UNKNOWN block is a complete VDP decimal-output utility family; no owning caller or higher-level display label is asserted yet."
+}
