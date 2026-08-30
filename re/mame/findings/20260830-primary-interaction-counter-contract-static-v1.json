@@ -1,0 +1,75 @@
+{
+  "format": "openaladdin-primary-interaction-counter-contract-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "ram_word": {
+    "address": "0x00FFEFE0",
+    "name": "INTERACTION_COUNTER_DIGITS",
+    "format": "two ASCII decimal digits",
+    "contract": [
+      "InteractionCounter_Initialize selects ASCII 15, 10, or 05 from GAME_DIFFICULTY_MODE.",
+      "The increment and decrement services bound the word to the inclusive range 00 through 99.",
+      "The ROM statically proves a primary interaction/resource counter; this closure does not assign apple-specific ownership to every call path."
+    ]
+  },
+  "advance_function": {
+    "address": "0x001B0336",
+    "name": "InteractionCounter_AdvancePrimaryDigits",
+    "range": ["0x001B0336", "0x001B035F"],
+    "behavior": [
+      "Returns without changing the word when it is ASCII 99.",
+      "Increments the low ASCII digit.",
+      "When the low digit reaches ':' through '?', reloads it to '0' and increments the high ASCII digit."
+    ],
+    "callers": [
+      {
+        "function": "ActorType42_PlayerCollisionHandler",
+        "address": "0x001AF264",
+        "calls": 4
+      },
+      {
+        "function": "Actor_FarTransferPlayerCollisionHandler",
+        "address": "0x001AF468",
+        "calls": 1
+      },
+      {
+        "function": "SceneResource_RebuildAfterInteraction",
+        "address": "0x001B16E0",
+        "condition": "PLAYER_INTERACTION_COUNTER == 3",
+        "calls": 5
+      }
+    ]
+  },
+  "decrement_function": {
+    "address": "0x001B0360",
+    "name": "InteractionCounter_DecrementPrimaryDigits",
+    "range": ["0x001B0360", "0x001B0393"],
+    "behavior": [
+      "Returns without changing the word when it is ASCII 00.",
+      "Decrements the low ASCII digit.",
+      "When the low digit crosses below '0', reloads it to '9' and decrements the high ASCII digit."
+    ],
+    "callers": [
+      {
+        "function": "ActorType15_PlayerCollisionHandler",
+        "address": "0x001AE978",
+        "calls": 3
+      }
+    ]
+  },
+  "related_dispatch": {
+    "address": "0x001B16E0",
+    "name": "SceneResource_RebuildAfterInteraction",
+    "counter_cases": [
+      "PLAYER_INTERACTION_COUNTER == 1 calls Game_IncrementDifficultyCounter.",
+      "PLAYER_INTERACTION_COUNTER == 2 calls InteractionCounter_AdvanceSecondaryDigits.",
+      "PLAYER_INTERACTION_COUNTER == 3 calls InteractionCounter_AdvancePrimaryDigits five times.",
+      "PLAYER_INTERACTION_COUNTER == 4 clears PLAYER_INTERACTION_COUNTER."
+    ]
+  },
+  "conclusion": "The static call graph and decompiled bodies establish INTERACTION_COUNTER_DIGITS as a bounded primary two-digit interaction/resource counter with increment, decrement, and scene-resource lifecycle paths. The neutral canonical name is retained because these paths do not, by themselves, prove that the word is exclusively an apple inventory."
+}

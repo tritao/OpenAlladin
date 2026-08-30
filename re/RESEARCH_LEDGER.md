@@ -2182,17 +2182,24 @@ normal run or camera-special root. Both selectors clear the animation timer.
 The static result is recorded in
 `re/mame/findings/20260828-player-terrain-state-v1.json`.
 
-## Interaction-counter decrement helper (20260828)
+## Primary interaction-counter contract (20260830)
 
-FarTransfer_InteractionCounterStepBack at `0x001B0360` is now named as the
-counterpart to FarTransfer_InteractionCounterStep at `0x001B0336`. It
-decrements the two ASCII digits at `FFEFE0`, rolls a low digit below `'0'`
-back to `'9'` while decrementing the high digit, and stops at `"00"`.
-ActorType15_PlayerCollisionHandler invokes it three times before selecting its
-player response animation. The interaction counter therefore has explicit
-bounded increment/decrement operations in the collision/resource lifecycle.
+The former far-transfer helper names at `0x001B0336` and `0x001B0360` were too
+narrow for their recovered caller set. `InteractionCounter_AdvancePrimaryDigits`
+at `0x001B0336` advances the bounded ASCII word at `FFEFE0`, saturating at
+`"99"`; it is called four times by `ActorType42_PlayerCollisionHandler`, once
+by `Actor_FarTransferPlayerCollisionHandler`, and five times by
+`SceneResource_RebuildAfterInteraction` when `PLAYER_INTERACTION_COUNTER` is
+3. `InteractionCounter_DecrementPrimaryDigits` at `0x001B0360` performs the
+matching decimal-borrow decrement to `"00"`, and ActorType15 invokes it three
+times before selecting its response animation.
 
-The static result is recorded in
+The ROM therefore proves a bounded primary interaction/resource counter with
+cross-subsystem update paths. Its exact two-digit storage and lifecycle are
+canonical; this static closure does not assign apple-specific ownership to all
+of its call paths. The updated result is recorded in
+`re/mame/findings/20260830-primary-interaction-counter-contract-static-v1.json`;
+the earlier focused decrement evidence remains in
 `re/mame/findings/20260828-interaction-counter-decrement-v1.json`.
 
 ## Secondary interaction counter reset (20260828)
@@ -3388,3 +3395,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-scene-resource-isolated-service-closure-v1` | recorded-runtime-negative-evidence | Closed the three complete scene-resource VDP/service bodies at 0x001B4836, 0x001B4A96, and 0x001B4F04 as isolated canonical helpers after combining absent static selectors/incoming pointers with the existing Level-01, long-traversal, and scene-state matrix negative probes |
 | `20260830-scheduler-latch-contract-closure-v1` | recorded-static-decompilation | Closed the remaining RAM wording gap: FRAME_WAIT_LATCH is the transition-only optional Z80-handshake gate with writers at 0x001AA3A8/0x001B2DF4/0x001B2E02, while VBLANK_READY_LATCH is the interrupt-to-wait release latch consumed and cleared by Frame_WaitForVBlankWork |
 | `20260830-actor-response-template-field-closure-static-v1` | recorded-static-decompilation | Closed the remaining actor-template extent wording gaps for the zero base, shared collision-response record, and Type-0x84 response record with exact 20-byte boundaries and initializer-mapped fields; surrounding family roles remain conservative |
+| `20260830-primary-interaction-counter-contract-static-v1` | recorded-static-decompilation | Renamed the former FarTransfer counter helpers at 0x001B0336/0x001B0360 as primary interaction-counter advance/decrement services and closed their cross-subsystem caller and step-count contracts while retaining neutral resource semantics |
