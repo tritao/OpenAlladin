@@ -250,7 +250,7 @@
   type: u8
   format: boolean
   confidence: decompiled
-  description: Frame-service latch tested by the ROM's wait helper at 0x001B249E and by the input/resource service at 0x001A91C6; its producer is not yet named.
+  description: Conditional frame-service latch tested by Frame_WaitForVBlankWork at 0x001B249E and Frame_InputAndResourceService at 0x001A91C6. System startup clears it at 0x001AA3A8; Scene_EnterTransitionMode's transition pair sets it at 0x001B2DF4 and clears it at 0x001B2E02, enabling the wait helper's Z80 bus-handshake path.
   evidence:
     - ghidra_targeted_decompile_scheduler
 0xFF7E1E:
@@ -258,7 +258,7 @@
   type: u8
   format: boolean
   confidence: confirmed
-  description: VBlank-side latch written to 0xFF by VBlankInterrupt at 0x001B246E; its consumer relationship with FRAME_WAIT_LATCH is not yet resolved.
+  description: VBlank-ready release latch written to 0xFF by VBlankInterrupt at 0x001B246E, cleared at the start of Frame_WaitForVBlankWork at 0x001B249E, and polled at 0x001B24EC until the next interrupt boundary. It is distinct from FRAME_WAIT_LATCH, which only gates the optional Z80 handshake.
   evidence:
     - ghidra_targeted_decompile_scheduler
 0xFF7E26:

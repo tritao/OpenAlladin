@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-scheduler-latch-contract-closure-v1",
+  "recorded_at": "2026-08-30",
+  "repository_commit_at_capture": "79af8b1",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "contracts": {
+    "FRAME_WAIT_LATCH": {
+      "address": "0x00FF7E25",
+      "width": "u8",
+      "role": "optional Z80 bus-handshake gate inside Frame_WaitForVBlankWork",
+      "writers": [
+        { "address": "0x001AA3A8", "operation": "clear during system initialization" },
+        { "address": "0x001B2DF4", "operation": "set on Scene_EnterTransitionMode entry" },
+        { "address": "0x001B2E02", "operation": "clear on transition/service completion" }
+      ],
+      "readers": [
+        { "address": "0x001A91C6", "operation": "input/resource service tests gate" },
+        { "address": "0x001B24A4", "operation": "wait helper tests gate" }
+      ]
+    },
+    "VBLANK_READY_LATCH": {
+      "address": "0x00FF7E1E",
+      "width": "u8",
+      "role": "interrupt-to-wait release handshake",
+      "writers": [
+        { "address": "0x001B246E", "operation": "VBlankInterrupt publishes 0xFF" }
+      ],
+      "readers": [
+        { "address": "0x001B249E", "operation": "Frame_WaitForVBlankWork clears before waiting" },
+        { "address": "0x001B24EC", "operation": "Frame_WaitForVBlankWork polls until nonzero" }
+      ]
+    }
+  },
+  "evidence": [
+    "build/re/full-rom/instructions.json exact writer/reader inventory",
+    "re/mame/findings/20260827-frame-wait-lifecycle-v1.json",
+    "re/mame/findings/20260827-scheduler-static-dynamic-v1.json",
+    "re/symbols/functions.yml Frame_WaitForVBlankWork and Scene_EnterTransitionMode"
+  ],
+  "conclusion": "The two latches have distinct, complete static contracts. FRAME_WAIT_LATCH is not the VBlank release condition; it only enables the wait helper's transition/service Z80 handshake. VBLANK_READY_LATCH is the per-interrupt release signal that the wait helper clears and polls. Dynamic transition reachability remains a route question, but no producer or consumer is semantically unidentified."
+}
