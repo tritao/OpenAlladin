@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-collision-response-gates-type47-49-static-targets.json",
+  "gates": {
+    "0x00FFF126": "PLAYER_COLLISION_GATE_TYPE47",
+    "0x00FFF127": "PLAYER_COLLISION_GATE_TYPE48",
+    "0x00FFF128": "PLAYER_COLLISION_GATE_TYPE49"
+  },
+  "producers": {
+    "type47": "ActorType47_PlayerCollisionHandler at 0x001AEFB0",
+    "type48": "ActorType48_PlayerCollisionHandler at 0x001AEFDC",
+    "type49": "ActorType49_PlayerCollisionHandler at 0x001AF008"
+  },
+  "consumers": [
+    "InteractionSpawn_Type84Base_B6 at 0x001B70F8",
+    "InteractionSpawn_Type84Base_B7 at 0x001B712C",
+    "InteractionSpawn_Type84Base_B8 at 0x001B7158"
+  ],
+  "selector": {
+    "type47_only": "B6 / animation 0x001242B0",
+    "type48_without_type49": "B7 / animation 0x001242CA",
+    "type49": "B8 / animation 0x001242E4"
+  },
+  "conclusion": "The three gates select mutually prioritized Type-0x84 base interaction response branches. The exact selector relationship is recorded, while reset/clear timing remains unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

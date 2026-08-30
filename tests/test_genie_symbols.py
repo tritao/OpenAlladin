@@ -628,6 +628,20 @@ def test_real_player_collision_response_gates_have_canonical_roles():
     assert type3f.metadata["format"] == "boolean"
 
 
+def test_real_type47_49_collision_gates_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FFF126: "PLAYER_COLLISION_GATE_TYPE47",
+        0x00FFF127: "PLAYER_COLLISION_GATE_TYPE48",
+        0x00FFF128: "PLAYER_COLLISION_GATE_TYPE49",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == "boolean"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

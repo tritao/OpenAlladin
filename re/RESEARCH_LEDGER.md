@@ -898,6 +898,12 @@ flags, and the three follow-up interaction spawners select runtime Type-0x3E,
 Type-0x3F, or Type-0x3C families from the exact `00/any`, `01/00`, and `01/01`
 truth table. No unsupported clear timing is assigned.
 
+The neighboring Type-0x47/0x48/0x49 response gates are now canonical at
+`FFF126`, `FFF127`, and `FFF128`. Their player-collision handlers publish the
+three flags, and the B6/B7/B8 Type-0x84 base spawners select the exact priority
+order: Type-0x49 selects B8, Type-0x48 without Type-0x49 selects B7, and the
+remaining Type-0x47-only case selects B6. Clear timing remains unresolved.
+
 The adjacent compact scene-resource loader variants are recorded in
 `re/mame/findings/20260828-scene-resource-loader-variants-v1.json`.
 `0x001B4896`, `0x001B48C4`, and `0x001B48F2` load exact two-resource VRAM

@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-player-collision-response-gates-type47-49-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Close the three player-collision gates that select the Type-0x84 base interaction response branches.",
+  "gates": [
+    { "address": "0x00FFF126", "name": "PLAYER_COLLISION_GATE_TYPE47", "producer": "ActorType47_PlayerCollisionHandler at 0x001AEFB0" },
+    { "address": "0x00FFF127", "name": "PLAYER_COLLISION_GATE_TYPE48", "producer": "ActorType48_PlayerCollisionHandler at 0x001AEFDC" },
+    { "address": "0x00FFF128", "name": "PLAYER_COLLISION_GATE_TYPE49", "producer": "ActorType49_PlayerCollisionHandler at 0x001AF008" }
+  ],
+  "selector_family": [
+    {
+      "address": "0x001B70F8",
+      "name": "InteractionSpawn_Type84Base_B6",
+      "condition": "TYPE47 gate nonzero, TYPE48 gate zero, and TYPE49 gate zero",
+      "animation": "0x001242B0 ACTOR_ANIM_TYPE84_BASE_B6",
+      "effect": "Reverse-slot spawn followed by actor Y minus 8"
+    },
+    {
+      "address": "0x001B712C",
+      "name": "InteractionSpawn_Type84Base_B7",
+      "condition": "TYPE48 gate nonzero and TYPE49 gate zero",
+      "animation": "0x001242CA ACTOR_ANIM_TYPE84_BASE_B7",
+      "effect": "Reverse-slot spawn followed by actor Y minus 8"
+    },
+    {
+      "address": "0x001B7158",
+      "name": "InteractionSpawn_Type84Base_B8",
+      "condition": "TYPE49 gate nonzero",
+      "animation": "0x001242E4 ACTOR_ANIM_TYPE84_BASE_B8",
+      "effect": "Reverse-slot spawn followed by actor Y minus 8"
+    }
+  ],
+  "priority": "B8 excludes B6/B7 through TYPE49 nonzero; B7 excludes B6 through TYPE48 nonzero; B6 is the remaining TYPE47-only branch.",
+  "evidence": [
+    "Exact Type-0x47, Type-0x48, and Type-0x49 player-collision gate stores",
+    "Exact B6/B7/B8 consumer branch conditions",
+    "Shared Type-0x84 base template and reverse-slot spawn contract"
+  ],
+  "conclusion": "FFF126, FFF127, and FFF128 are the Type-0x47/0x48/0x49 player-collision gates for the B6/B7/B8 Type-0x84 response selector. Their static producers and priority order are closed; clear timing remains unassigned.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

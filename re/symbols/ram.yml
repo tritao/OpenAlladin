@@ -1528,6 +1528,36 @@
     - ghidra_disassembly_001AF2FA
     - ghidra_decompile_001B738A
     - ghidra_decompile_001B73F2
+0xFFF126:
+  name: PLAYER_COLLISION_GATE_TYPE47
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Player-collision response gate set by ActorType47_PlayerCollisionHandler and consumed by the Type-0x84 base interaction-spawn family as the first branch of its B6/B7/B8 response selector.
+  evidence:
+    - ghidra_disassembly_001AEFB0
+    - ghidra_decompile_001B70F8
+0xFFF127:
+  name: PLAYER_COLLISION_GATE_TYPE48
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Player-collision response gate set by ActorType48_PlayerCollisionHandler and consumed by the Type-0x84 base interaction-spawn family to select its B6 or B7 response branch.
+  evidence:
+    - ghidra_disassembly_001AEFDC
+    - ghidra_decompile_001B70F8
+    - ghidra_disassembly_001B712C
+0xFFF128:
+  name: PLAYER_COLLISION_GATE_TYPE49
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Player-collision response gate set by ActorType49_PlayerCollisionHandler and consumed by the Type-0x84 base interaction-spawn family to select the B8 response branch or exclude earlier B6/B7 branches.
+  evidence:
+    - ghidra_disassembly_001AF008
+    - ghidra_decompile_001B70F8
+    - ghidra_disassembly_001B712C
+    - ghidra_disassembly_001B7158
 0xFF98C4:
   name: TERRAIN_LANDING_ROW_POINTERS
   type: pointer_table
