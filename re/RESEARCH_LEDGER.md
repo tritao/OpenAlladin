@@ -3788,3 +3788,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-player-contact-state-family-semantic-v1` | recorded-semantic-promotion | Promoted Type-0x69/0x6A handhold contact, Type-0x32/0x79 interaction-state entry, and Type-0x50/0x51 transition contact while retaining dispatch-type aliases |
 | `20260830-player-surface-bounce-family-semantic-v1` | recorded-semantic-promotion | Promoted Type-0x65 bounce response and Type-0x5A/0x5B surface-mode entries while retaining dispatch-type aliases |
 | `20260830-player-interaction-family-semantic-v1` | recorded-semantic-promotion | Promoted Type-0x1A actor interaction and Type-0x7D/0x78/0x7A player interaction-proximity paths while retaining dispatch-type aliases |
+| `20260830-player-response-cleanup-family-semantic-v1` | recorded-semantic-promotion | Promoted Type-0x23 response-pair activation and Type-0x5C/0x5D matching-actor cleanup prefixes while retaining dispatch-type aliases |

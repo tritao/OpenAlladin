@@ -2115,10 +2115,11 @@
     - ghidra_type21_targeted_decompile
     - mame_type21_settle_trace
 0x001AEECA:
-  name: ActorType23_PlayerCollisionHandler
+  name: PlayerCollision_ActivateType23ResponsePair
+  aliases: [ActorType23_PlayerCollisionHandler]
   size: 20
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x23. When PLAYER_INTERACTION_GATE is set it temporarily passes the current actor in A2 to the shared helper at 0x001ABFFA, then restores A2; otherwise it returns without a response call.
+  description: Activates the Type-0x23 response pair when PLAYER_ACTION_RESPONSE_FIELD is nonzero. It passes the current actor to ActorCollision_SpawnType23ResponsePair at 0x001ABFFA and otherwise returns without a response call.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AEECA
@@ -6180,20 +6181,22 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AF556:
-  name: ActorType5C_PlayerCollisionHandler
+  name: PlayerCollision_CleanupType08Actors
+  aliases: [ActorType5C_PlayerCollisionHandler]
   size: 12
   confidence: decompiled
-  description: Player-collision dispatch entry for actor type 0x5C. It selects actor cleanup type 0x08 from the phase-specific cleanup loop and transfers into ActorType5D_PlayerCollisionHandler.
+  description: Selects actor type 0x08 for the shared matching-record cleanup sweep and transfers into PlayerCollision_ClearMatchingActorTypeRecords.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF556
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AF562:
-  name: ActorType5D_PlayerCollisionHandler
+  name: PlayerCollision_CleanupType09Actors
+  aliases: [ActorType5D_PlayerCollisionHandler]
   size: 10
   confidence: decompiled
-  description: Player-collision dispatch prefix for actor type 0x5D. It selects cleanup type 0x09 when the type-specific gate is clear and transfers into PlayerCollision_ClearMatchingActorTypeRecords at 0x001AF56C.
+  description: Selects actor type 0x09 for the shared matching-record cleanup sweep and transfers into PlayerCollision_ClearMatchingActorTypeRecords at 0x001AF56C.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF562
