@@ -1116,12 +1116,23 @@
   description: Scene-resource presentation command stream loaded with resource 0x0012DD76 by SceneResource_Run12DD76Stream127571; the shared interpreter reaches its command-0 terminator at 0x001275ED.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
+0x001274F0:
+  name: SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM
+  type: scene_resource_stream
+  size: 0x81
+  confidence: provisional
+  description: Unwrapped scene-resource presentation stream beginning with command 0x06 frame count 0x78, command 0x0E frame/palette preparation, and positioned text records through the NUL terminator at 0x00127570. Its direct runtime wrapper remains unresolved; the exact command grammar and terminal establish the bounded extent.
+  evidence:
+    - scene_resource_command_table_static_decompilation
+    - scene_resource_princess_response_stream_static_v1
+
 0x0012755A:
   name: SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT
   type: text_data
-  size: 0x17
+  alias_of: SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM
+  entry_offset: 0x6A
   confidence: decompiled
-  description: NUL-terminated scene-resource response text containing the fixed-width line WITH A PRINCESS! at the end of the adjacent narrative/object corpus. Its exact extent ends at 0x00127570 immediately before the directly selected presentation stream at 0x00127571.
+  description: Interior NUL-terminated response text containing the fixed-width line WITH A PRINCESS! inside SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM. It aliases the parent stream and does not claim a second ROM range.
   evidence:
     - rom_scene_resource_princess_response_static_v1
     - scene_resource_text_terminator_layout

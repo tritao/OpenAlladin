@@ -3173,7 +3173,7 @@ def test_static_header_text_and_shared_palette_families_are_exact():
         0x00126D4E: (0x00126D7D, "ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E", "text_data"),
         0x00126EB6: (0x00126EBF, "ROM_ASCII_NUMERIC_LABELS_126EB6", "text_data"),
         0x00126EC0: (0x00126F0D, "LEVEL_RESULT_MESSAGE_TABLE", "text_data"),
-        0x0012755A: (0x00127570, "SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT", "text_data"),
+        0x001274F0: (0x00127570, "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM", "scene_resource_stream"),
         0x00127E80: (0x00127E8B, "BONUS_LEVEL_LABEL_STREAM", "text_data"),
         0x00128E4F: (0x00128E5A, "MENU_PRESENTS_LABEL_STREAM", "text_data"),
         0x00129AD2: (0x00129B51, "SCENE_DISPATCH_PALETTE_SOURCE", "palette_data"),
@@ -3197,13 +3197,24 @@ def test_static_header_text_and_shared_palette_families_are_exact():
     assert blank_records.metadata["count"] == 3
     assert blank_records.confidence == "provisional"
 
+    princess_stream = symbols.at(0x001274F0, include_ranges=False)
+    assert princess_stream is not None
+    assert princess_stream.confidence == "provisional"
+    assert princess_stream.metadata["type"] == "scene_resource_stream"
+    assert princess_stream.size == 0x81
+    princess_text = symbols.at(0x0012755A, include_ranges=False)
+    assert princess_text is not None
+    assert princess_text.metadata["alias_of"] == "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM"
+    assert princess_text.metadata["entry_offset"] == 0x6A
+    assert princess_text.size is None
+
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     assert rom[0x00000100:0x00000110] == b"SEGA GENESIS    "
     assert rom[0x0012659C:0x00126679].count(b"\0") == 13
     assert rom[0x00126D4E:0x00126D7E] == (b"\xff" + b" " * 14 + b"\0") * 3
     assert rom[0x00126EB6:0x00126EC0] == b"30\00060\00090\000\000"
     assert rom[0x00126EC0:0x00126F0E].count(b"\0") == 6
-    assert rom[0x0012755A:0x00127571].endswith(b"WITH A PRINCESS!\0")
+    assert rom[0x001274F0:0x00127571].endswith(b"WITH A PRINCESS!\0")
     assert rom[0x00127E80:0x00127E8C] == b"BONUS LEVEL\0"
     assert rom[0x00128E4F:0x00128E5B].endswith(b"PRESENTS\0")
     assert rom[0x00129AD2:0x00129ADA] == bytes.fromhex("0006000000020024")
@@ -3394,6 +3405,7 @@ def test_canonical_scene_resource_presentation_streams_have_exact_terminals():
         (0x00127207, 0x00127337, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207"),
         (0x00127338, 0x001273E8, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338"),
         (0x001273E9, 0x001274EF, "SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9"),
+        (0x001274F0, 0x00127570, "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM"),
         (0x00127571, 0x001275ED, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571"),
         (0x001275EE, 0x0012772C, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE"),
         (0x0012772D, 0x001277C4, "SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D"),

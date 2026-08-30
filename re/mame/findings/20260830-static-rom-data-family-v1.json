@@ -49,11 +49,20 @@
       "reason": "Exact ten-byte ASCII corpus containing the NUL-terminated labels 30, 60, and 90 at the immediate boundary after the scene-resource mode table. The format and extent are certain from the bytes and neighboring objects; no runtime consumer has yet been identified."
     },
     {
+      "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM",
+      "range": ["0x001274F0", "0x00127570"],
+      "size": 129,
+      "confidence": "provisional",
+      "reason": "Established scene-resource command grammar (0x06/0x0E/0x01/0x02), positioned text records, and a terminal 0x00; direct runtime wrapper remains unresolved."
+    },
+    {
       "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT",
       "range": ["0x0012755A", "0x00127570"],
       "size": 23,
       "confidence": "decompiled",
-      "reason": "Exact fixed-width response line and NUL terminator before the next directly selected presentation stream."
+      "alias_of": "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM",
+      "entry_offset": "0x6A",
+      "reason": "Exact fixed-width response line and NUL terminator embedded inside the bounded princess-response stream; it does not claim a second range."
     },
     {
       "name": "BONUS_LEVEL_LABEL_STREAM",

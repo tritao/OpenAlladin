@@ -55,12 +55,22 @@
       "evidence": "Exact ASCII bytes for the three NUL-terminated labels 30, 60, and 90 immediately after the scene-resource mode record table; the bytes and adjacent canonical boundaries establish the extent, while the runtime consumer remains unresolved."
     },
     {
+      "address": "0x001274F0",
+      "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM",
+      "range": ["0x001274F0", "0x00127570"],
+      "size": 129,
+      "type": "scene_resource_stream",
+      "evidence": "Established scene-resource command grammar (0x06/0x0E/0x01/0x02), positioned text records, and a terminal 0x00; direct runtime wrapper remains unresolved."
+    },
+    {
       "address": "0x0012755A",
       "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT",
       "range": ["0x0012755A", "0x00127570"],
       "size": 23,
       "type": "text_data",
-      "evidence": "Fixed-width NUL-terminated WITH A PRINCESS! response line ending the adjacent narrative/object corpus."
+      "alias_of": "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM",
+      "entry_offset": "0x6A",
+      "evidence": "Fixed-width NUL-terminated WITH A PRINCESS! response line embedded in the bounded princess-response stream; it does not claim a second range."
     },
     {
       "address": "0x00127E80",

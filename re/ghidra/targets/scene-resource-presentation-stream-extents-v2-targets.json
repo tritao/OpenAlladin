@@ -16,22 +16,24 @@
     { "address": "0x00127207", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207", "resource": "0x0012DD76", "wrapper": "0x001B4C02 SceneResource_Run12DD76Stream127207", "range": ["0x00127207", "0x00127337"], "terminator": "0x00127337" },
     { "address": "0x00127338", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338", "resource": "0x0012DD76", "wrapper": "0x001B4C28 SceneResource_Run12DD76Stream127338", "range": ["0x00127338", "0x001273E8"], "terminator": "0x001273E8" },
     { "address": "0x001273E9", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9", "resource": "0x0012DA04", "wrapper": "0x001B4C4E SceneResource_Run12DA04Stream1273E9", "range": ["0x001273E9", "0x001274EF"], "terminator": "0x001274EF" },
+    { "address": "0x001274F0", "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM", "resource": "unresolved", "wrapper": "unresolved", "range": ["0x001274F0", "0x00127570"], "terminator": "0x00127570", "confidence": "provisional" },
     { "address": "0x00127571", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571", "resource": "0x0012DD76", "wrapper": "0x001B4C74 SceneResource_Run12DD76Stream127571", "range": ["0x00127571", "0x001275ED"], "terminator": "0x001275ED" },
     { "address": "0x001275EE", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE", "resource": "0x0012DD76", "wrapper": "0x001B4C9A SceneResource_Run12DD76Stream1275EE", "range": ["0x001275EE", "0x0012772C"], "terminator": "0x0012772C" },
     { "address": "0x0012772D", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D", "resource": "0x0012D870", "wrapper": "0x001B4CC0 SceneResource_Run12D870Stream12772D", "range": ["0x0012772D", "0x001277C4"], "terminator": "0x001277C4" }
   ],
   "boundaries": {
-    "unclaimed_gap_after_1274EF": ["0x001274F0", "0x00127570"],
+    "provisional_unwrapped_stream_after_1274EF": ["0x001274F0", "0x00127570"],
+    "interior_text_alias": { "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT", "range": ["0x0012755A", "0x00127570"], "entry_offset": "0x6A" },
     "direct_wrapper_selected_block_with_new_extent": ["0x001277C5", "0x00127833"],
     "next_claimed_stream": "0x00127834"
   },
   "evidence": [
-    "Each stream is loaded by a named presentation wrapper and passed to the shared interpreter.",
+    "Each established stream is loaded by a named presentation wrapper and passed to the shared interpreter; the princess-response stream is the recorded provisional exception.",
     "Interpreter-aware command walking reaches the listed command-0 terminal for every stream.",
-    "The eight ranges are non-overlapping and preserve the separately unresolved gaps between wrapper families."
+    "The 0x001274F0 stream uses the established command table: 0x06/0x0E/0x06 frame setup, 0x01/0x02 cursor movement, text records, and a command-0 terminal at 0x00127570; the WITH A PRINCESS! text is an interior alias."
   ],
   "limitations": [
     "The higher-level presentation identity remains represented by the direct resource and wrapper names.",
-    "The gap at 0x001274F0-0x00127570 remains unclaimed. The former 0x001277C5-0x00127833 narrative/object block is directly selected by SceneResource_RunBlankStream1277C5 and is now a separately promoted stream range."
+    "The 0x001274F0-0x00127570 stream has no recovered direct wrapper and remains provisional. The former 0x001277C5-0x00127833 narrative/object block is directly selected by SceneResource_RunBlankStream1277C5 and is now a separately promoted stream range."
   ]
 }
