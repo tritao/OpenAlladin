@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-resource-tile-base-static-targets.json",
+  "symbol": {
+    "address": "0x00FFEFF0",
+    "name": "SCENE_RESOURCE_TILE_BASE",
+    "type": "u16",
+    "format": "vram_tile_offset"
+  },
+  "contract": {
+    "consumer": "VDP_WriteTileWord at 0x001B21A8 ORs SCENE_RESOURCE_TILE_BASE into the tile word before publishing it to VDP_DATA.",
+    "command_setters": {
+      "0x08": "0x0000",
+      "0x09": "0x2000",
+      "0x0A": "0x4000",
+      "0x0B": "0x6000"
+    },
+    "transition_setup": "Scene_EnterTransitionMode at 0x001B2ACE writes 0x4000 before transition tile output."
+  },
+  "conclusion": "The 16-bit word selects the active VRAM tile base for scene-resource tile emission.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-scene-resource-tile-base-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the scene-resource VRAM tile-base word used by the tile-word writer and command interpreter.",
+  "state": {
+    "address": "0x00FFEFF0",
+    "name": "SCENE_RESOURCE_TILE_BASE",
+    "type": "u16",
+    "values": ["0x0000", "0x2000", "0x4000", "0x6000"]
+  },
+  "writer": {
+    "address": "0x001B21A8",
+    "name": "VDP_WriteTileWord",
+    "operation": "OR the active tile base with the caller's tile word before writing VDP_DATA."
+  },
+  "setters": [
+    { "address": "0x001B23B2", "name": "SceneResource_SetTileBase0000", "value": "0x0000" },
+    { "address": "0x001B23BC", "name": "SceneResource_SetTileBase2000", "value": "0x2000" },
+    { "address": "0x001B23C6", "name": "SceneResource_SetTileBase4000", "value": "0x4000" },
+    { "address": "0x001B23D0", "name": "SceneResource_SetTileBase6000", "value": "0x6000" }
+  ],
+  "direct_transition_setup": {
+    "address": "0x001B2ACE",
+    "values": ["0x4000"],
+    "description": "Scene_EnterTransitionMode selects the 0x4000 base before its transition tile writes."
+  },
+  "evidence": [
+    "Exact VDP_WriteTileWord decompilation",
+    "Complete scene-resource command table mapping for commands 0x08-0x0B",
+    "Exact transition-mode tile-base writes"
+  ],
+  "conclusion": "FFEFF0 is a 16-bit VRAM tile-base selector, not a general presentation flag; its value is consumed only as the tile-word base by VDP_WriteTileWord.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

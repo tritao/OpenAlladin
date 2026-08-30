@@ -650,6 +650,14 @@ def test_real_scene_resource_state10_vdp_progress_has_canonical_role():
     assert symbol.metadata["format"] == "integer"
 
 
+def test_real_scene_resource_tile_base_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFEFF0, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "SCENE_RESOURCE_TILE_BASE"
+    assert symbol.metadata["type"] == "u16"
+    assert symbol.metadata["format"] == "vram_tile_offset"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

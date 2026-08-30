@@ -875,6 +875,16 @@
     - ghidra_disassembly_001B21E4
     - ghidra_scene_resource_presentation_wrappers
     - scene_resource_presentation_scratch_static_decompilation
+0xFFEFF0:
+  name: SCENE_RESOURCE_TILE_BASE
+  type: u16
+  format: vram_tile_offset
+  confidence: confirmed
+  description: Active scene-resource VRAM tile-base offset ORed into tile words by VDP_WriteTileWord. Scene-resource commands select 0x0000, 0x2000, 0x4000, or 0x6000 through the four tile-base setters, while transition presentation setup selects 0x4000 directly.
+  evidence:
+    - ghidra_decompile_001B21A8
+    - scene_resource_command_table_static_decompilation
+    - scene_transition_tile_base_static_decompilation
 0xFFF105:
   name: INTERACTION_GATE_TYPE1F
   type: u8
