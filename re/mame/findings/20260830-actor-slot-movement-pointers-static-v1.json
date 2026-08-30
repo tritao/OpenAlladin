@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-slot-movement-pointers-static-targets.json",
+  "promoted_symbols": [
+    "ACTOR_SLOT_1_MOVEMENT_PC",
+    "ACTOR_SLOT_2_MOVEMENT_PC"
+  ],
+  "contract": "Both addresses are the +0x0A movement-stream field of fixed records in the common actor table. The shared template initializer writes the ROM root, scene/resource setup may publish a replacement root, and scene reset paths clear the field.",
+  "limitations": [
+    "These names identify the actor-record field and do not assign a higher-level actor behavior to each pointed-to stream."
+  ],
+  "conclusion": "Fixed slot-one and slot-two movement-pointer references now have canonical identities without changing the shared actor-table model."
+}

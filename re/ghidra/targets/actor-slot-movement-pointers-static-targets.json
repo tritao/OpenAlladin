@@ -1,0 +1,55 @@
+{
+  "format": "openaladdin-actor-slot-movement-pointers-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "record": {
+    "base": "0x00FF7E40 ACTOR_TABLE_BASE",
+    "stride": "0x42",
+    "movement_offset": "0x0A"
+  },
+  "fields": [
+    {
+      "address": "0x00FF7E8C",
+      "name": "ACTOR_SLOT_1_MOVEMENT_PC",
+      "slot": 1,
+      "offset": "0x0A",
+      "width": 4,
+      "writers": [
+        "Actor_InitializeFromTemplate at 0x001AE320",
+        "SceneResource_InstantiateActors at 0x001B22E6"
+      ],
+      "clearers": [
+        "SceneResource_InitializeActiveScene at 0x001B08A4",
+        "Scene_ResetToState0 at 0x001B5096"
+      ]
+    },
+    {
+      "address": "0x00FF7ECE",
+      "name": "ACTOR_SLOT_2_MOVEMENT_PC",
+      "slot": 2,
+      "offset": "0x0A",
+      "width": 4,
+      "writer": "Actor_InitializeFromTemplate at 0x001AE320",
+      "clearers": [
+        "SceneResource_InitializeActiveScene at 0x001B08CC",
+        "Scene_ResetToState0 at 0x001B5096"
+      ]
+    }
+  ],
+  "evidence": [
+    "ghidra_actor_table_layout",
+    "ghidra_disassembly_001AE30A",
+    "ghidra_disassembly_001B080E",
+    "ghidra_disassembly_001B2238",
+    "ghidra_disassembly_001B4F7C"
+  ],
+  "limitations": [
+    "The pointers are fixed-address views onto the common actor-record contract, not separate storage.",
+    "The exact movement-stream semantics remain represented by the pointed-to MovementVM records."
+  ],
+  "conclusion": "The remaining fixed presentation actor movement roots now resolve to canonical actor-record field identities with exact initializer and reset-path evidence."
+}

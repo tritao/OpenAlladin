@@ -2760,3 +2760,26 @@
     - ghidra_disassembly_001B3C7C
     - ghidra_decompile_001B3C7C
     - menu_options_presentation_static_decompilation
+
+0xFF7E8C:
+  name: ACTOR_SLOT_1_MOVEMENT_PC
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Movement-stream pointer at offset +0x0A in common actor-table slot 1. Actor_InitializeFromTemplate installs the template movement root here, while scene-resource initialization and reset paths clear it before a new actor is published.
+  evidence:
+    - ghidra_disassembly_001AE30A
+    - ghidra_disassembly_001B080E
+    - ghidra_disassembly_001B2238
+    - ghidra_disassembly_001B4F7C
+
+0xFF7ECE:
+  name: ACTOR_SLOT_2_MOVEMENT_PC
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Movement-stream pointer at offset +0x0A in fixed actor-table slot 2. Actor_InitializeFromTemplate installs the template movement root here, while scene initialization clears the slot before its presentation actor is created.
+  evidence:
+    - ghidra_disassembly_001AE30A
+    - ghidra_disassembly_001B080E
+    - ghidra_disassembly_001B4F7C
