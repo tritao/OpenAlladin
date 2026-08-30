@@ -1,0 +1,60 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifests": [
+    "re/ghidra/targets/scene-initial-palette-helper-variants-static-targets.json",
+    "re/ghidra/targets/palette-transition-helper-variants-static-targets.json",
+    "re/ghidra/targets/scene-transition-counter-digit-family-static-targets.json"
+  ],
+  "code_islands": [
+    {
+      "address": "0x001B25AC",
+      "range": ["0x001B25AC", "0x001B25D9"],
+      "name": "SceneResource_LoadInitialC000AndFourPaletteSources",
+      "semantics": "Publishes four palette-source pointers and copies 64 words to VDP C000 before the shared return body."
+    },
+    {
+      "address": "0x001B25DA",
+      "range": ["0x001B25DA", "0x001B25FD"],
+      "name": "SceneResource_LoadInitialC000AndThreePaletteSources",
+      "semantics": "Publishes three palette-source pointers and copies 48 words to VDP C000 before the shared return body."
+    },
+    {
+      "address": "0x001B2618",
+      "range": ["0x001B2618", "0x001B2623"],
+      "name": "SceneResource_LoadInitialC000AndOnePaletteSource",
+      "semantics": "Publishes one palette-source pointer and copies 16 words to VDP C000 before the shared return body."
+    },
+    {
+      "address": "0x001B28DC",
+      "range": ["0x001B28DC", "0x001B28F3"],
+      "name": "Render_ApplyPaletteTwoBands",
+      "semantics": "Publishes two palette-source pointers and enters the shared 32-word palette convergence loop."
+    },
+    {
+      "address": "0x001B28F4",
+      "range": ["0x001B28F4", "0x001B2915"],
+      "name": "Render_ApplyPaletteThreeBands",
+      "semantics": "Publishes three palette-source pointers and enters the shared 48-word palette convergence loop."
+    },
+    {
+      "address": "0x001B34AE",
+      "range": ["0x001B34AE", "0x001B34B3"],
+      "name": "SceneTransition_WriteOnesDigit",
+      "semantics": "Loads decimal divisor 1 before entering the shared transition-counter digit emitter."
+    }
+  ],
+  "evidence": [
+    "Exact GNU m68k disassembly and original ROM bytes",
+    "Instruction-aligned entry boundaries and immediate shared-tail continuations",
+    "Existing canonical palette/VRAM helper and transition digit families"
+  ],
+  "reachability": "The bodies are structurally decoded, but no direct producer is claimed for the five compact palette variants. The decimal-ones wrapper is part of the adjacent digit family.",
+  "conclusion": "Six code islands previously represented as UNKNOWN are now canonical named code owners without inventing runtime selectors or higher-level roles."
+}

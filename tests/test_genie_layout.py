@@ -2118,6 +2118,33 @@ def test_unreferenced_actor_template_records_are_exact_and_provisional():
         assert rom[address:end + 1] == bytes.fromhex(expected_bytes[address])
 
 
+def test_omitted_palette_and_transition_digit_code_islands_are_exact():
+    symbols = SymbolStore()
+    layout = build_layout()
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    expected = {
+        0x001B25AC: ("SceneResource_LoadInitialC000AndFourPaletteSources", 46),
+        0x001B25DA: ("SceneResource_LoadInitialC000AndThreePaletteSources", 36),
+        0x001B2618: ("SceneResource_LoadInitialC000AndOnePaletteSource", 12),
+        0x001B28DC: ("Render_ApplyPaletteTwoBands", 24),
+        0x001B28F4: ("Render_ApplyPaletteThreeBands", 34),
+        0x001B34AE: ("SceneTransition_WriteOnesDigit", 6),
+    }
+    for address, (name, size) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.kind == "function"
+        assert symbol.name == name
+        assert symbol.size == size
+        assert symbol.confidence == "decompiled"
+        item = layout.at(address)
+        assert item is not None
+        assert item.layout_class == "CODE"
+        assert item.source == "tracked.symbol"
+        assert item.name == name
+        assert len(rom[address:address + size]) == size
+
+
 def test_type84_presentation_response_movement_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001214B2, include_ranges=False)

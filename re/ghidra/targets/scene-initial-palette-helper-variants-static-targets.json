@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-scene-initial-palette-helper-variants-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Recover the compact initial-scene palette/VRAM helper entry points omitted from the sparse Ghidra function body.",
+  "shared_body": {
+    "address": "0x001B2624",
+    "name": "SceneResource_CopyWordsToInitialC000",
+    "range": ["0x001B2624", "0x001B263B"],
+    "contract": "Uses D0 as a DBF count, writes the VDP C000 command, copies words from A0 to VDP_DATA, restores the caller's D0, and returns."
+  },
+  "entries": [
+    {
+      "address": "0x001B25AC",
+      "end": "0x001B25D9",
+      "size": 46,
+      "name": "SceneResource_LoadInitialC000AndFourPaletteSources",
+      "palette_sources": 4,
+      "copied_words": 64,
+      "continuation": "0x001B2624"
+    },
+    {
+      "address": "0x001B25DA",
+      "end": "0x001B25FD",
+      "size": 36,
+      "name": "SceneResource_LoadInitialC000AndThreePaletteSources",
+      "palette_sources": 3,
+      "copied_words": 48,
+      "continuation": "0x001B2624"
+    },
+    {
+      "address": "0x001B2618",
+      "end": "0x001B2623",
+      "size": 12,
+      "name": "SceneResource_LoadInitialC000AndOnePaletteSource",
+      "palette_sources": 1,
+      "copied_words": 16,
+      "continuation": "0x001B2624"
+    }
+  ],
+  "boundary_basis": [
+    "Each entry begins at an instruction-aligned prologue and ends immediately before the shared 0x001B2624 word-copy body.",
+    "The source-pointer publications and DBF counts establish four, three, and one 16-word source variants exactly.",
+    "No direct producer is claimed for any of the compact variants."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-palette-transition-helper-variants-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Recover the two compact palette-transition setup variants before the shared palette convergence loop.",
+  "shared_body": {
+    "address": "0x001B2940",
+    "name": "Render_ConvergePaletteWords",
+    "range": ["0x001B293C", "0x001B29AF"],
+    "contract": "Uses D0 as the selected palette-word DBF count, compares each source word with the current VDP palette word, adjusts one masked Genesis color component step, and writes the result to VDP."
+  },
+  "entries": [
+    {
+      "address": "0x001B28DC",
+      "end": "0x001B28F3",
+      "size": 24,
+      "name": "Render_ApplyPaletteTwoBands",
+      "palette_sources": 2,
+      "converged_words": 32,
+      "continuation": "0x001B2940"
+    },
+    {
+      "address": "0x001B28F4",
+      "end": "0x001B2915",
+      "size": 34,
+      "name": "Render_ApplyPaletteThreeBands",
+      "palette_sources": 3,
+      "converged_words": 48,
+      "continuation": "0x001B2940"
+    }
+  ],
+  "boundary_basis": [
+    "Each entry publishes exactly one additional 0x20-byte source pointer and loads the matching DBF word count.",
+    "The entries end immediately before the existing Render_ConvergePaletteWords setup instruction at 0x001B293C.",
+    "No direct producer is claimed for either compact variant."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

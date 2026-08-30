@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-scene-transition-counter-digit-family-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Recover the final decimal-divisor wrapper in the scene-transition counter digit family.",
+  "shared_helper": {
+    "address": "0x001B34B4",
+    "name": "SceneTransition_WriteDecimalDigit",
+    "contract": "Consumes D4 as the decimal divisor, extracts and emits one counter digit, and returns through the transition formatter."
+  },
+  "entry": {
+    "address": "0x001B34AE",
+    "end": "0x001B34B3",
+    "size": 6,
+    "name": "SceneTransition_WriteOnesDigit",
+    "divisor": 1,
+    "continuation": "0x001B34B4"
+  },
+  "boundary_basis": [
+    "The entry is the aligned move-immediate divisor instruction immediately after the tens wrapper.",
+    "Its six bytes end immediately before SceneTransition_WriteDecimalDigit."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
