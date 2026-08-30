@@ -3203,6 +3203,23 @@ def test_static_header_text_and_shared_palette_families_are_exact():
     assert decoded["steps"][-1]["next_address"] == "0x00121082"
 
 
+def test_menu_fixed_width_blank_records_are_exact_and_provisional():
+    symbols = SymbolStore()
+    symbol = symbols.at(0x0012671E, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "ROM_FIXED_WIDTH_BLANK_RECORDS_12671E"
+    assert symbol.end == 0x0012675D
+    assert symbol.size == 0x40
+    assert symbol.metadata["type"] == "text_data"
+    assert symbol.metadata["entry_size"] == 0x10
+    assert symbol.metadata["count"] == 4
+    assert symbol.confidence == "provisional"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    record = b"\xff" + b" " * 14 + b"\0"
+    assert rom[0x0012671E:0x0012675E] == record * 4
+
+
 def test_canonical_sound_test_entry_table_has_complete_sentinel_record():
     symbols = SymbolStore()
     symbol = symbols.at(0x0012675E, include_ranges=False)

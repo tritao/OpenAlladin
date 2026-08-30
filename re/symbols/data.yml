@@ -801,6 +801,18 @@
     - ghidra_menu_media_subservices
     - rom_sound_test_entry_table_0012675E
 
+0x0012671E:
+  name: ROM_FIXED_WIDTH_BLANK_RECORDS_12671E
+  type: text_data
+  entry_size: 0x10
+  count: 4
+  size: 0x40
+  confidence: provisional
+  description: Exact 64-byte bank of four fixed-width blank records immediately after MENU_OPTIONS_PRESENTATION_STREAM and before SOUND_TEST_ENTRY_TABLE. Each record is FF followed by fourteen spaces and a NUL; no runtime consumer has been established, so these records are kept separate from the live sound-test table.
+  evidence:
+    - scene_transition_menu_stream_extents_static_v1
+    - static_rom_data_family_static_v1
+
 0x00126D4E:
   name: ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E
   type: text_data
