@@ -2848,25 +2848,6 @@
     - ghidra_disassembly_001B1E38
     - mame_level01_floor_runtime_match
 
-0xFFF155:
-  name: TERRAIN_QUERY_INPUT_RAW
-  type: u8
-  confidence: decompiled
-  description: Raw byte sampled from IO_PORT1_DATA by Terrain_QueryFlagDispatcher and consumed by the scene/resource gate and terrain query callbacks.
-  evidence:
-    - ghidra_decompile_001B319C
-    - ghidra_scene_vdp_audio_service_targets
-
-0xFFF156:
-  name: TERRAIN_QUERY_FLAGS
-  type: u8
-  confidence: confirmed
-  description: Active-low directional/controller query byte tested by Terrain_TestQueryFlag0 through Terrain_TestQueryFlag3 before the frame's terrain resolver runs; the main loop converts its direction bits into TERRAIN_PUSH_RIGHT/LEFT/UP/DOWN.
-  evidence:
-    - ghidra_disassembly_001B3212
-    - ghidra_disassembly_001B3230
-    - mame_player_run_trace
-
 0x002A8:
   name: RESET_BOOTSTRAP_INITIAL_WORDS
   type: u16[3]

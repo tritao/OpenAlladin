@@ -493,6 +493,20 @@ def test_real_interaction_anchor_pair_has_canonical_roles():
         assert symbol.metadata["format"] == "pixels"
 
 
+def test_real_query_input_bytes_have_canonical_roles():
+    symbols = SymbolStore()
+
+    expected = {
+        0x00FFF155: "TERRAIN_QUERY_INPUT_RAW",
+        0x00FFF156: "TERRAIN_QUERY_FLAGS",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == "bitfield"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

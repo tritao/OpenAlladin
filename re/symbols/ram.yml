@@ -152,6 +152,28 @@
     - ghidra_disassembly_001B003A
     - ghidra_disassembly_001B01AC
     - ghidra_interaction_resource_progress_targets
+0xFFF155:
+  name: TERRAIN_QUERY_INPUT_RAW
+  type: u8
+  format: bitfield
+  confidence: confirmed
+  description: Raw scene/resource query byte sampled from the Genesis controller port. Terrain_QueryFlagDispatcher publishes it directly, while Input_SampleControllerState stores it after the directional controller phase; scene-resource and VBlank gate helpers test its bits.
+  evidence:
+    - ghidra_decompile_001B319C
+    - ghidra_disassembly_001B34CA
+    - ghidra_scene_vdp_audio_service_targets
+0xFFF156:
+  name: TERRAIN_QUERY_FLAGS
+  type: u8
+  format: bitfield
+  confidence: confirmed
+  description: Active-low directional/controller query byte sampled by Input_SampleControllerState and consumed by the four terrain query bit-test callbacks. Its low bits publish the player terrain push states, while scene-resource diagnostic streaming can also write the byte to VDP data.
+  evidence:
+    - ghidra_disassembly_001B34CA
+    - ghidra_disassembly_001B3212
+    - ghidra_disassembly_001B323A
+    - ghidra_scene_vdp_audio_service_targets
+    - player_terrain_experiments
 0xFFF15A:
   name: SCENE_RESOURCE_MODE
   type: u8

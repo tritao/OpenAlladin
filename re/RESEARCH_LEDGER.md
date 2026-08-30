@@ -2011,6 +2011,14 @@ and data commands used by the scene and terrain paths.
 The static result is recorded in
 re/mame/findings/20260828-scene-vdp-audio-service-v1.json.
 
+The two query bytes used by these services are now canonical. The raw
+scene/resource byte `TERRAIN_QUERY_INPUT_RAW` at `FFF155` is published by the
+single-phase query dispatcher and the second controller phase. The directional
+byte `TERRAIN_QUERY_FLAGS` at `FFF156` is sampled by the controller service,
+tested by the terrain bit callbacks, and exposed to the scene-resource query
+diagnostic stream. Its active-low low bits feed the existing terrain push-state
+flags.
+
 The former SceneTransition_VDPHelper label at 0x001B2E9A is now
 VDP_SetControl9001AndBuildTileRows. Its exact body writes VDP control word
 0x9001 and calls VDP_BuildTileRowCommandTables; the earlier name remains an

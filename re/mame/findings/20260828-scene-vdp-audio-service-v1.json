@@ -53,5 +53,17 @@
       "behavior": "Writes D2 and D3 through the two VDP control/data command pairs used by scene and terrain setup paths."
     }
   ],
+  "published_state": [
+    {
+      "address": "0x00FFF155",
+      "name": "TERRAIN_QUERY_INPUT_RAW",
+      "role": "Raw scene/resource query byte"
+    },
+    {
+      "address": "0x00FFF156",
+      "name": "TERRAIN_QUERY_FLAGS",
+      "role": "Active-low directional/controller query byte"
+    }
+  ],
   "conclusion": "The shared transition helpers now expose the tile-row command-table builder, its scene-transition wrapper, the resource completion wait, both raw/controller query sampling paths, conditional scene-update audio notification, and the two-word VDP setup primitive."
 }
