@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-scene-resource-object-animation-table-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "table": {
+    "address": "0x00004A18",
+    "name": "SCENE_RESOURCE_OBJECT_ANIMATION_TABLE",
+    "range": ["0x00004A18", "0x00004A57"],
+    "size": 64,
+    "entry_size": 4,
+    "count": 16,
+    "command_range": ["0x20", "0x2F"],
+    "index": "object command byte minus 0x20",
+    "consumer": "0x001B2238 SceneResource_InstantiateActors",
+    "following": "0x00004A58 INTERACTION_COUNTER_ANIMATION_ROOT_TABLE"
+  },
+  "boundary_basis": [
+    "SceneResource_InstantiateActors loads the base at 0x00004A18 and indexes it with a four-byte stride.",
+    "The object-command path accepts command bytes at or above 0x20 and the sixteen-entry range ends at 0x00004A57.",
+    "The following 0x00004A58 table is the separately indexed interaction-counter animation-root table."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

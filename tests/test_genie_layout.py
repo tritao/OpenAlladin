@@ -430,6 +430,30 @@ def test_canonical_exception_vector_table_has_complete_rom_header_extent():
     assert rom[0xC0:0x100] == bytes(0x40)
 
 
+def test_canonical_scene_resource_object_animation_table_has_exact_extent():
+    symbols = SymbolStore()
+    table = symbols.at(0x00004A18, include_ranges=False)
+    assert table is not None
+    assert table.name == "SCENE_RESOURCE_OBJECT_ANIMATION_TABLE"
+    assert table.end == 0x00004A57
+    assert table.size == 0x40
+    assert table.metadata["type"] == "rom_pointer_table"
+    assert table.metadata["entry_size"] == 4
+    assert table.metadata["count"] == 16
+
+    rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    pointers = [
+        int.from_bytes(rom[offset:offset + 4], "big")
+        for offset in range(0x4A18, 0x4A58, 4)
+    ]
+    assert pointers == [
+        0x00000000, 0x00122D40, 0x00000000, 0x00000000,
+        0x00000000, 0x00000000, 0x00000000, 0x00122D4C,
+        0x00000000, 0x00000000, 0x00000000, 0x00000000,
+        0x00122D50, 0x00000000, 0x00122D44, 0x00000000,
+    ]
+
+
 def test_interaction_counter_animation_table_and_bank_are_exact():
     symbols = SymbolStore()
     table = symbols.at(0x00004A58, include_ranges=False)

@@ -1674,6 +1674,19 @@
     - ghidra_actor_movement_vm_001ADE36
     - animation_stream_decoder
 
+0x004A18:
+  name: SCENE_RESOURCE_OBJECT_ANIMATION_TABLE
+  type: rom_pointer_table
+  entry_size: 4
+  count: 16
+  size: 0x40
+  confidence: decompiled
+  description: Exact 16-entry longword table indexed by scene-resource object command bytes 0x20-0x2F in SceneResource_InstantiateActors. Nonzero entries select actor animation roots, while zero slots remain reserved; the table ends immediately before INTERACTION_COUNTER_ANIMATION_ROOT_TABLE at 0x00004A58.
+  evidence:
+    - scene_resource_object_animation_table_static_decompilation
+    - ghidra_decompile_001B2238
+    - scene_resource_command_decoder
+
 0x004A58:
   name: INTERACTION_COUNTER_ANIMATION_ROOT_TABLE
   type: rom_pointer_table

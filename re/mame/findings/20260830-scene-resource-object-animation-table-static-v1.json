@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-scene-resource-object-animation-table-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "consumer": {
+    "address": "0x001B2238",
+    "name": "SceneResource_InstantiateActors",
+    "index": "(object command byte - 0x20) * 4",
+    "command_range": ["0x20", "0x2F"]
+  },
+  "table": {
+    "address": "0x00004A18",
+    "range": ["0x00004A18", "0x00004A57"],
+    "entry_size": 4,
+    "count": 16,
+    "nonzero_entries": [
+      { "command": "0x21", "pointer": "0x00122D40" },
+      { "command": "0x27", "pointer": "0x00122D4C" },
+      { "command": "0x2C", "pointer": "0x00122D50" },
+      { "command": "0x2E", "pointer": "0x00122D44" }
+    ],
+    "zero_entries": ["0x20", "0x22", "0x23", "0x24", "0x25", "0x26", "0x28", "0x29", "0x2A", "0x2B", "0x2D", "0x2F"]
+  },
+  "conclusion": "The bytes at 0x00004A18 form an exact sixteen-entry scene-resource object-animation pointer table. Its four nonzero entries select known actor animation roots, and its final byte is immediately followed by the separately indexed interaction-counter table at 0x00004A58."
+}
