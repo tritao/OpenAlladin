@@ -2816,3 +2816,63 @@ def test_menu_sound_test_shared_presentation_stream_has_exact_terminal():
     assert rom[0x00128E88:0x00128EB0] == bytes([0x20]) * 40
     assert rom[0x00128EB0] == 0x00
     assert symbols.at(0x00128ED2, include_ranges=False).name == "SCENE_BLANK_PALETTE"
+
+
+def test_extended_actor_collision_handler_dispatch_family_is_exact():
+    symbols = SymbolStore()
+    expected_functions = {
+        0x001ABF8E: (0x001ABF99, "ActorType02_08_09_ActorCollisionHandler"),
+        0x001ABF9A: (0x001ABF9B, "ActorType01_ActorCollisionHandler"),
+        0x001ABFF0: (0x001ABFF9, "ActorType23_ActorCollisionHandler"),
+        0x001AC03E: (0x001AC059, "ActorType24_ActorCollisionHandler"),
+        0x001AC05A: (0x001AC075, "ActorType25_ActorCollisionHandler"),
+        0x001AC076: (0x001AC07B, "ActorType26_ActorCollisionHandler"),
+        0x001AC07C: (0x001AC097, "ActorType27_ActorCollisionHandler"),
+        0x001AC098: (0x001AC0B9, "ActorType28_ActorCollisionHandler"),
+        0x001AC0EE: (0x001AC101, "ActorType03_ActorCollisionHandler"),
+        0x001AC102: (0x001AC1B3, "ActorType04_ActorCollisionHandler"),
+        0x001AC1B4: (0x001AC1CF, "ActorType05_ActorCollisionHandler"),
+        0x001AC2E0: (0x001AC2FB, "ActorType1F_ActorCollisionHandler"),
+        0x001AC2FC: (0x001AC317, "ActorType22_ActorCollisionHandler"),
+        0x001AC408: (0x001AC431, "ActorType1A_ActorCollisionHandler"),
+        0x001AC432: (0x001AC443, "ActorType1B_ActorCollisionHandler"),
+        0x001AC444: (0x001AC455, "ActorType1C_ActorCollisionHandler"),
+        0x001AC4DE: (0x001AC4E7, "ActorType18_19_ActorCollisionHandler"),
+    }
+    for address, (end, name) in expected_functions.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == end - address + 1
+
+    expected_pointers = {
+        0x001EBE: (0x01, 0x001ABF9A),
+        0x001EC2: (0x02, 0x001ABF8E),
+        0x001EC6: (0x03, 0x001AC0EE),
+        0x001ECA: (0x04, 0x001AC102),
+        0x001ECE: (0x05, 0x001AC1B4),
+        0x001EDA: (0x08, 0x001ABF8E),
+        0x001EDE: (0x09, 0x001ABF8E),
+        0x001F1A: (0x18, 0x001AC4DE),
+        0x001F1E: (0x19, 0x001AC4DE),
+        0x001F22: (0x1A, 0x001AC408),
+        0x001F26: (0x1B, 0x001AC432),
+        0x001F2A: (0x1C, 0x001AC444),
+        0x001F36: (0x1F, 0x001AC2E0),
+        0x001F42: (0x22, 0x001AC2FC),
+        0x001F46: (0x23, 0x001ABFF0),
+        0x001F4A: (0x24, 0x001AC03E),
+        0x001F4E: (0x25, 0x001AC05A),
+        0x001F52: (0x26, 0x001AC076),
+        0x001F56: (0x27, 0x001AC07C),
+        0x001F5A: (0x28, 0x001AC098),
+    }
+    rom = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    data = rom.read_bytes()
+    for address, (actor_type, target) in expected_pointers.items():
+        pointer = symbols.at(address, include_ranges=False)
+        assert pointer is not None
+        assert pointer.metadata["type"] == "rom_pointer"
+        assert int.from_bytes(data[address:address + 4], "big") == target
+        assert address == 0x001EBA + actor_type * 4

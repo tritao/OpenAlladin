@@ -1,0 +1,52 @@
+{
+  "format": "openaladdin-actor-collision-handler-family-extended-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/actor-collision-handler-family-extended-static-targets.json",
+  "promoted_handlers": {
+    "dispatch_entries": 20,
+    "distinct_bodies": 17,
+    "shared_bodies": 2,
+    "fallthrough_prefixes": 1
+  },
+  "families": [
+    {
+      "types": ["0x01"],
+      "name": "ActorType01_ActorCollisionHandler",
+      "range": ["0x001ABF9A", "0x001ABF9B"],
+      "semantics": "Empty RTS dispatch entry."
+    },
+    {
+      "types": ["0x02", "0x08", "0x09"],
+      "name": "ActorType02_08_09_ActorCollisionHandler",
+      "range": ["0x001ABF8E", "0x001ABF99"],
+      "semantics": "Source cleanup followed by the shared Type-0x2D interaction path."
+    },
+    {
+      "types": ["0x03", "0x04", "0x05"],
+      "name": "early actor collision response family",
+      "semantics": "Type-0x84 animation/state installation with shared terminal-response or phase-specific follow-up behavior."
+    },
+    {
+      "types": ["0x18", "0x19", "0x1A", "0x1B", "0x1C"],
+      "name": "interaction/map actor collision family",
+      "semantics": "Facing correction and interaction-type publication, including the paired terrain-map clearing paths."
+    },
+    {
+      "types": ["0x1F", "0x22"],
+      "name": "type-0x84 response animation family",
+      "semantics": "Type-specific response animation installation followed by the shared terminal response."
+    },
+    {
+      "types": ["0x23", "0x24", "0x25", "0x26", "0x27", "0x28"],
+      "name": "actor response allocation family",
+      "semantics": "Collision-response actor initialization, zero-template companion allocation, and type-specific response animation selection."
+    }
+  ],
+  "conclusion": "The actor collision table now has canonical symbols for the remaining direct targets in the early, interaction, response-animation, and companion-allocation families, with shared bodies and the Type-0x23 fall-through represented explicitly."
+}

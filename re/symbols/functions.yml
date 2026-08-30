@@ -5668,3 +5668,173 @@
     - rom_actor_collision_handler_table_001EBA
     - ghidra_disassembly_001AC60E
     - actor_collision_handler_family_extended_static_decompilation
+
+0x001ABF8E:
+  name: ActorType02_08_09_ActorCollisionHandler
+  size: 12
+  confidence: decompiled
+  description: Shared actor-collision handler for receiving actor types 0x02, 0x08, and 0x09. It clears the source actor, runs the shared Type-0x2D interaction path, and returns without a receiver-specific replacement.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001ABF8E
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001ABF9A:
+  name: ActorType01_ActorCollisionHandler
+  size: 2
+  confidence: decompiled
+  description: Empty actor-collision dispatch handler for receiving actor type 0x01. The table entry is a direct RTS at 0x001ABF9A.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001ABF9A
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001ABFF0:
+  name: ActorType23_ActorCollisionHandler
+  size: 10
+  confidence: decompiled
+  description: Type-0x23 actor-collision dispatch prefix. It clears the source actor and enters ActorType23_SpawnCollisionResponsePair at 0x001ABFFA, preserving the table target's intentional fall-through into the shared response allocator.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001ABFF0
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC03E:
+  name: ActorType24_ActorCollisionHandler
+  size: 28
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x24. It installs the common type-0x84 transition state, allocates a zero-template companion when a slot is available, and assigns the type-0x40 response animation.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC03E
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC05A:
+  name: ActorType25_ActorCollisionHandler
+  size: 28
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x25. It installs the common type-0x84 transition state, allocates a zero-template companion when a slot is available, and assigns the type-0x40 response animation.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC05A
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC076:
+  name: ActorType26_ActorCollisionHandler
+  size: 6
+  confidence: decompiled
+  description: Compact actor-collision handler for receiving actor type 0x26. It enters the shared type-0x84 transition initializer and returns.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC076
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC07C:
+  name: ActorType27_ActorCollisionHandler
+  size: 28
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x27. It installs the common type-0x84 transition state, allocates a zero-template companion when a slot is available, and assigns the type-0x46 response animation.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC07C
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC098:
+  name: ActorType28_ActorCollisionHandler
+  size: 34
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x28. It installs the common type-0x84 transition state, then initializes a companion from the type-0x84 collision template and copies the source position when allocation succeeds.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC098
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC0EE:
+  name: ActorType03_ActorCollisionHandler
+  size: 20
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x03. It installs the type-0x84 collision animation state, clears transient actor fields, and transfers into ActorType0A_ActorCollisionHandler at 0x001AC458 for the common terminal response.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC0EE
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC102:
+  name: ActorType04_ActorCollisionHandler
+  size: 178
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x04. It installs the type-0x84 response animation, clears the source and owned resources, selects a follow-up animation from the actor phase byte, and either decrements that phase or completes through the shared terminal response path.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC102
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC1B4:
+  name: ActorType05_ActorCollisionHandler
+  size: 28
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x05. It installs the type-0x52A8 animation and type-0x0D4C movement state, clears transient actor fields, and enters the common type-0x0A terminal response path.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC1B4
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC2E0:
+  name: ActorType1F_ActorCollisionHandler
+  size: 28
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x1F. It installs the type-0x84 response state with animation 0x0012384A, clears transient fields, and enters the shared terminal response path.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC2E0
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC2FC:
+  name: ActorType22_ActorCollisionHandler
+  size: 28
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x22. It installs the type-0x84 response state with animation 0x0012387A, clears transient fields, and enters the shared terminal response path.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC2FC
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC408:
+  name: ActorType1A_ActorCollisionHandler
+  size: 42
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x1A. It compares the receiver X position with PLAYER_WORLD_X, toggles the receiver's facing when the directional relation disagrees, then either follows the common response path or publishes the type-0x1A interaction flag at 0x00FFF10E.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC408
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC432:
+  name: ActorType1B_ActorCollisionHandler
+  size: 18
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x1B. It skips the response when the actor phase byte is active; otherwise it clears the type-0x4F/0xFE terrain map words, publishes the type-0x1B interaction flag at 0x00FFF10F, and enters the shared response path.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC432
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC444:
+  name: ActorType1C_ActorCollisionHandler
+  size: 18
+  confidence: decompiled
+  description: Actor-collision handler for receiving actor type 0x1C. It skips the response when the actor phase byte is active; otherwise it clears the type-0x4E/0xFD terrain map words, publishes the type-0x1C interaction flag at 0x00FFF110, and enters the shared response path.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC444
+    - actor_collision_dispatch_family_extended_static_decompilation
+
+0x001AC4DE:
+  name: ActorType18_19_ActorCollisionHandler
+  size: 10
+  confidence: decompiled
+  description: Shared actor-collision handler for receiving actor types 0x18 and 0x19. It promotes the receiver to type 0x84, toggles its horizontal facing through Actor_ToggleHorizontalFacing, and returns.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC4DE
+    - actor_collision_dispatch_family_extended_static_decompilation

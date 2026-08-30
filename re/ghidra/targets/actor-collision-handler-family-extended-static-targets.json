@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-actor-collision-handler-family-extended-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "dispatch_table": {
+    "address": "0x001EBA",
+    "name": "ACTOR_COLLISION_HANDLER_TABLE",
+    "entry_width": 4,
+    "entries": [
+      { "type": "0x01", "address": "0x001ABF9A", "size": 2, "name": "ActorType01_ActorCollisionHandler", "range": ["0x001ABF9A", "0x001ABF9B"] },
+      { "type": "0x02", "address": "0x001ABF8E", "size": 12, "name": "ActorType02_08_09_ActorCollisionHandler", "range": ["0x001ABF8E", "0x001ABF99"] },
+      { "type": "0x03", "address": "0x001AC0EE", "size": 20, "name": "ActorType03_ActorCollisionHandler", "range": ["0x001AC0EE", "0x001AC101"] },
+      { "type": "0x04", "address": "0x001AC102", "size": 178, "name": "ActorType04_ActorCollisionHandler", "range": ["0x001AC102", "0x001AC1B3"] },
+      { "type": "0x05", "address": "0x001AC1B4", "size": 28, "name": "ActorType05_ActorCollisionHandler", "range": ["0x001AC1B4", "0x001AC1CF"] },
+      { "type": "0x08", "address": "0x001ABF8E", "size": 12, "name": "ActorType02_08_09_ActorCollisionHandler", "range": ["0x001ABF8E", "0x001ABF99"] },
+      { "type": "0x09", "address": "0x001ABF8E", "size": 12, "name": "ActorType02_08_09_ActorCollisionHandler", "range": ["0x001ABF8E", "0x001ABF99"] },
+      { "type": "0x18", "address": "0x001AC4DE", "size": 10, "name": "ActorType18_19_ActorCollisionHandler", "range": ["0x001AC4DE", "0x001AC4E7"] },
+      { "type": "0x19", "address": "0x001AC4DE", "size": 10, "name": "ActorType18_19_ActorCollisionHandler", "range": ["0x001AC4DE", "0x001AC4E7"] },
+      { "type": "0x1A", "address": "0x001AC408", "size": 42, "name": "ActorType1A_ActorCollisionHandler", "range": ["0x001AC408", "0x001AC431"] },
+      { "type": "0x1B", "address": "0x001AC432", "size": 18, "name": "ActorType1B_ActorCollisionHandler", "range": ["0x001AC432", "0x001AC443"] },
+      { "type": "0x1C", "address": "0x001AC444", "size": 18, "name": "ActorType1C_ActorCollisionHandler", "range": ["0x001AC444", "0x001AC455"] },
+      { "type": "0x1F", "address": "0x001AC2E0", "size": 28, "name": "ActorType1F_ActorCollisionHandler", "range": ["0x001AC2E0", "0x001AC2FB"] },
+      { "type": "0x22", "address": "0x001AC2FC", "size": 28, "name": "ActorType22_ActorCollisionHandler", "range": ["0x001AC2FC", "0x001AC317"] },
+      { "type": "0x23", "address": "0x001ABFF0", "size": 10, "name": "ActorType23_ActorCollisionHandler", "range": ["0x001ABFF0", "0x001ABFF9"] },
+      { "type": "0x24", "address": "0x001AC03E", "size": 28, "name": "ActorType24_ActorCollisionHandler", "range": ["0x001AC03E", "0x001AC059"] },
+      { "type": "0x25", "address": "0x001AC05A", "size": 28, "name": "ActorType25_ActorCollisionHandler", "range": ["0x001AC05A", "0x001AC075"] },
+      { "type": "0x26", "address": "0x001AC076", "size": 6, "name": "ActorType26_ActorCollisionHandler", "range": ["0x001AC076", "0x001AC07B"] },
+      { "type": "0x27", "address": "0x001AC07C", "size": 28, "name": "ActorType27_ActorCollisionHandler", "range": ["0x001AC07C", "0x001AC097"] },
+      { "type": "0x28", "address": "0x001AC098", "size": 34, "name": "ActorType28_ActorCollisionHandler", "range": ["0x001AC098", "0x001AC0B9"] }
+    ]
+  },
+  "boundary_basis": [
+    "Every promoted start is a direct pointer-table target at 0x001EBA plus actor_type*4.",
+    "Each body ends immediately before the next distinct table target or existing canonical handler.",
+    "Types 0x02, 0x08, and 0x09 share the exact 12-byte body at 0x001ABF8E.",
+    "Types 0x18 and 0x19 share the exact 10-byte body at 0x001AC4DE.",
+    "The Type-0x23 entry is an intentional ten-byte prefix that falls through to ActorType23_SpawnCollisionResponsePair at 0x001ABFFA.",
+    "The Type-0x1C body ends at its branch target preparation before the alignment NOP at 0x001AC456 and the existing common response at 0x001AC458."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
