@@ -326,6 +326,16 @@
   description: Interaction-state transition lock tested by Player_ProcessInteractionState before selecting a recovery animation stream.
   evidence:
     - ghidra_disassembly_001AE4F8
+0xFFF0D8:
+  name: PLAYER_ACTION_RESPONSE_FIELD
+  type: u8
+  format: enum
+  confidence: decompiled
+  description: Player action-response selector published by collision and animation services. Player-collision handlers use it as a gate, while action animation streams write values such as 1 or 2 before dynamic state selection.
+  evidence:
+    - ghidra_disassembly_001AF21E
+    - ghidra_player_animation_selector
+    - player_collision_handler_family_extended_static_decompilation
 0xFFF0CD:
   name: PLAYER_INTERACTION_MODE
   type: u8

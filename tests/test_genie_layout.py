@@ -1589,10 +1589,81 @@ def test_type3e_3f_player_collision_response_family_is_exact():
     assert decoded["bytes_decoded"] == 108
     assert decoded["stopped_reason"] == "byte_limit"
     assert decoded["steps"][-1]["next_address"] == "0x00121684"
-
     assert rom_path.read_bytes()[0x001B7B5C:0x001B7B70] == bytes.fromhex(
         "84004000000000000000600000122F8001000000"
     )
+
+
+def test_extended_player_collision_handler_family_is_exact():
+    symbols = SymbolStore()
+    expected_functions = {
+        0x001AF21E: (0x001AF227, "ActorType3B_PlayerCollisionHandler"),
+        0x001AF264: (0x001AF2AF, "ActorType42_PlayerCollisionHandler"),
+        0x001AF344: (0x001AF383, "ActorType37_3C_PlayerCollisionHandler"),
+        0x001AF384: (0x001AF3C1, "ActorType3D_PlayerCollisionHandler"),
+        0x001AF3C2: (0x001AF3FF, "ActorType41_PlayerCollisionHandler"),
+        0x001AF4A0: (0x001AF4D7, "ActorType33_38_39_PlayerCollisionHandler"),
+        0x001AF53E: (0x001AF549, "ActorType5A_PlayerCollisionHandler"),
+        0x001AF54A: (0x001AF555, "ActorType5B_PlayerCollisionHandler"),
+        0x001AF556: (0x001AF561, "ActorType5C_PlayerCollisionHandler"),
+        0x001AF562: (0x001AF58F, "ActorType5D_PlayerCollisionHandler"),
+        0x001AF590: (0x001AF5EF, "ActorType55_56_57_PlayerCollisionHandler"),
+        0x001AF5F0: (0x001AF637, "ActorType58_PlayerCollisionHandler"),
+        0x001AF638: (0x001AF6AB, "ActorType5E_PlayerCollisionHandler"),
+        0x001AF6AC: (0x001AF6DB, "ActorType5F_PlayerCollisionHandler"),
+        0x001AF6DC: (0x001AF73F, "ActorType60_61_PlayerCollisionHandler"),
+        0x001AFD84: (0x001AFE1B, "ActorType01_PlayerCollisionHandler"),
+        0x001AFE1C: (0x001AFF81, "ActorType7E_PlayerCollisionHandler"),
+        0x001AFF82: (0x001AFFE3, "ActorType02_PlayerCollisionHandler"),
+        0x001AC60E: (0x001AC613, "ActorType0D_ActorCollisionHandler"),
+    }
+    for address, (end, name) in expected_functions.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == end - address + 1
+
+    expected_pointers = {
+        0x001CC2: (0x01, 0x001AFD84),
+        0x001CC6: (0x02, 0x001AFF82),
+        0x001D8A: (0x33, 0x001AF4A0),
+        0x001D9A: (0x37, 0x001AF344),
+        0x001D9E: (0x38, 0x001AF4A0),
+        0x001DA2: (0x39, 0x001AF4A0),
+        0x001DAA: (0x3B, 0x001AF21E),
+        0x001DAE: (0x3C, 0x001AF344),
+        0x001DB2: (0x3D, 0x001AF384),
+        0x001DC2: (0x41, 0x001AF3C2),
+        0x001DC6: (0x42, 0x001AF264),
+        0x001E12: (0x55, 0x001AF590),
+        0x001E16: (0x56, 0x001AF590),
+        0x001E1A: (0x57, 0x001AF590),
+        0x001E1E: (0x58, 0x001AF5F0),
+        0x001E26: (0x5A, 0x001AF53E),
+        0x001E2A: (0x5B, 0x001AF54A),
+        0x001E2E: (0x5C, 0x001AF556),
+        0x001E32: (0x5D, 0x001AF562),
+        0x001E36: (0x5E, 0x001AF638),
+        0x001E3A: (0x5F, 0x001AF6AC),
+        0x001E3E: (0x60, 0x001AF6DC),
+        0x001E42: (0x61, 0x001AF6DC),
+        0x001EB6: (0x7E, 0x001AFE1C),
+        0x001EEE: (0x0D, 0x001AC60E),
+    }
+    rom = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    data = rom.read_bytes()
+    for address, (actor_type, target) in expected_pointers.items():
+        pointer = symbols.at(address, include_ranges=False)
+        assert pointer is not None
+        assert pointer.metadata["type"] == "rom_pointer"
+        assert int.from_bytes(data[address:address + 4], "big") == target
+        table_base = 0x001CBE if address <= 0x001EB9 else 0x001EBA
+        assert address == table_base + actor_type * 4
+
+    action_response = symbols.at(0x00FFF0D8, include_ranges=False)
+    assert action_response is not None
+    assert action_response.name == "PLAYER_ACTION_RESPONSE_FIELD"
 
 
 def test_interaction_anchor_callback_family_is_exact():

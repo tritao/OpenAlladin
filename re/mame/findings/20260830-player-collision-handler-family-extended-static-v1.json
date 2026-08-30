@@ -1,0 +1,102 @@
+{
+  "format": "openaladdin-player-collision-handler-family-extended-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/player-collision-handler-family-extended-static-targets.json",
+  "promoted_handlers": {
+    "player_collision_entries": 24,
+    "distinct_player_bodies": 18,
+    "actor_collision_entries": 1,
+    "distinct_actor_bodies": 1
+  },
+  "families": [
+    {
+      "types": ["0x01"],
+      "name": "ActorType01_PlayerCollisionHandler",
+      "range": ["0x001AFD84", "0x001AFE1B"],
+      "semantics": "Terrain-gated launch and type-0x84 response initialization with PLAYER_VY=-0x0800 and the shared jump-response animation."
+    },
+    {
+      "types": ["0x02"],
+      "name": "ActorType02_PlayerCollisionHandler",
+      "range": ["0x001AFF82", "0x001AFFE3"],
+      "semantics": "Actor-relative vertical correction or interaction response followed by horizontal movement toward PLAYER_WORLD_X."
+    },
+    {
+      "types": ["0x33", "0x38", "0x39"],
+      "name": "ActorType33_38_39_PlayerCollisionHandler",
+      "range": ["0x001AF4A0", "0x001AF4D7"],
+      "semantics": "Optional event-0x0B audio, response-counter increment, actor cleanup, and collision-template reinitialization."
+    },
+    {
+      "types": ["0x37", "0x3C"],
+      "name": "ActorType37_3C_PlayerCollisionHandler",
+      "range": ["0x001AF344", "0x001AF383"],
+      "semantics": "Scene countdown 0x20, collision-template replacement, optional event-0x64 audio, and response-counter increment."
+    },
+    {
+      "types": ["0x3B"],
+      "name": "ActorType3B_PlayerCollisionHandler",
+      "range": ["0x001AF21E", "0x001AF227"],
+      "semantics": "Action-response gate prefix that returns while PLAYER_ACTION_RESPONSE_FIELD is active and otherwise falls through to the Type-0x3A body."
+    },
+    {
+      "types": ["0x3D"],
+      "name": "ActorType3D_PlayerCollisionHandler",
+      "range": ["0x001AF384", "0x001AF3C1"],
+      "semantics": "Collision-template replacement with event-0x64 audio and the type-specific response gate publication."
+    },
+    {
+      "types": ["0x41"],
+      "name": "ActorType41_PlayerCollisionHandler",
+      "range": ["0x001AF3C2", "0x001AF3FF"],
+      "semantics": "Wall-response template replacement with SCENE_SCRIPT_GATE publication, event-0x69 audio, and a 25-unit response delay."
+    },
+    {
+      "types": ["0x42"],
+      "name": "ActorType42_PlayerCollisionHandler",
+      "range": ["0x001AF264", "0x001AF2AF"],
+      "semantics": "Primary interaction-counter phase advancement with an event-0x0C branch before the shared collision-template tail."
+    },
+    {
+      "types": ["0x55", "0x56", "0x57", "0x58", "0x5F"],
+      "name": "terrain-response handler family",
+      "semantics": "Terrain-response-active and actor-flag-gated vertical alignment handlers that publish PLAYER_Y and select the encoded response animation where applicable."
+    },
+    {
+      "types": ["0x5A", "0x5B", "0x5C", "0x5D"],
+      "name": "cleanup/mode handler family",
+      "semantics": "Mode-selecting and type-selecting entries that clear matching actor records before transferring into the shared response path."
+    },
+    {
+      "types": ["0x5E"],
+      "name": "ActorType5E_PlayerCollisionHandler",
+      "range": ["0x001AF638", "0x001AF6AB"],
+      "semantics": "Player/actor coordinate alignment and camera-threshold response path with optional action-animation selection."
+    },
+    {
+      "types": ["0x60", "0x61"],
+      "name": "ActorType60_61_PlayerCollisionHandler",
+      "range": ["0x001AF6DC", "0x001AF73F"],
+      "semantics": "Copies player world coordinates into the actor, publishes landing state, resets camera thresholds, and selects the type-0x61 response animation."
+    },
+    {
+      "types": ["0x7E"],
+      "name": "ActorType7E_PlayerCollisionHandler",
+      "range": ["0x001AFE1C", "0x001AFF81"],
+      "semantics": "Position-, counter-, and scene-resource-gated transition handler that schedules the corresponding resource presentation work."
+    },
+    {
+      "types": ["0x0D", "actor table"],
+      "name": "ActorType0D_ActorCollisionHandler",
+      "range": ["0x001AC60E", "0x001AC613"],
+      "semantics": "Six-byte actor-collision entry that delegates to Actor_ToggleHorizontalFacing and returns."
+    }
+  ],
+  "conclusion": "The pointer-table audit closes the remaining unnamed player-collision dispatch targets in the 0x001AF21E-0x001AFFE3 family and the missing actor Type-0x0D entry, preserving shared bodies and intentional fall-through boundaries."
+}

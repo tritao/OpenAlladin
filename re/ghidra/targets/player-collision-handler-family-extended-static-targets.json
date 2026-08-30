@@ -1,0 +1,69 @@
+{
+  "format": "openaladdin-player-collision-handler-family-extended-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "dispatch_tables": [
+    {
+      "address": "0x001CBE",
+      "name": "PLAYER_COLLISION_HANDLER_TABLE",
+      "entry_width": 4,
+      "handlers": [
+        { "type": "0x01", "address": "0x001AFD84", "size": 152, "name": "ActorType01_PlayerCollisionHandler", "range": ["0x001AFD84", "0x001AFE1B"] },
+        { "type": "0x02", "address": "0x001AFF82", "size": 98, "name": "ActorType02_PlayerCollisionHandler", "range": ["0x001AFF82", "0x001AFFE3"] },
+        { "type": "0x33", "address": "0x001AF4A0", "size": 56, "name": "ActorType33_38_39_PlayerCollisionHandler", "range": ["0x001AF4A0", "0x001AF4D7"] },
+        { "type": "0x37", "address": "0x001AF344", "size": 64, "name": "ActorType37_3C_PlayerCollisionHandler", "range": ["0x001AF344", "0x001AF383"] },
+        { "type": "0x38", "address": "0x001AF4A0", "size": 56, "name": "ActorType33_38_39_PlayerCollisionHandler", "range": ["0x001AF4A0", "0x001AF4D7"] },
+        { "type": "0x39", "address": "0x001AF4A0", "size": 56, "name": "ActorType33_38_39_PlayerCollisionHandler", "range": ["0x001AF4A0", "0x001AF4D7"] },
+        { "type": "0x3B", "address": "0x001AF21E", "size": 10, "name": "ActorType3B_PlayerCollisionHandler", "range": ["0x001AF21E", "0x001AF227"] },
+        { "type": "0x3C", "address": "0x001AF344", "size": 64, "name": "ActorType37_3C_PlayerCollisionHandler", "range": ["0x001AF344", "0x001AF383"] },
+        { "type": "0x3D", "address": "0x001AF384", "size": 62, "name": "ActorType3D_PlayerCollisionHandler", "range": ["0x001AF384", "0x001AF3C1"] },
+        { "type": "0x41", "address": "0x001AF3C2", "size": 62, "name": "ActorType41_PlayerCollisionHandler", "range": ["0x001AF3C2", "0x001AF3FF"] },
+        { "type": "0x42", "address": "0x001AF264", "size": 76, "name": "ActorType42_PlayerCollisionHandler", "range": ["0x001AF264", "0x001AF2AF"] },
+        { "type": "0x55", "address": "0x001AF590", "size": 96, "name": "ActorType55_56_57_PlayerCollisionHandler", "range": ["0x001AF590", "0x001AF5EF"] },
+        { "type": "0x56", "address": "0x001AF590", "size": 96, "name": "ActorType55_56_57_PlayerCollisionHandler", "range": ["0x001AF590", "0x001AF5EF"] },
+        { "type": "0x57", "address": "0x001AF590", "size": 96, "name": "ActorType55_56_57_PlayerCollisionHandler", "range": ["0x001AF590", "0x001AF5EF"] },
+        { "type": "0x58", "address": "0x001AF5F0", "size": 72, "name": "ActorType58_PlayerCollisionHandler", "range": ["0x001AF5F0", "0x001AF637"] },
+        { "type": "0x5A", "address": "0x001AF53E", "size": 12, "name": "ActorType5A_PlayerCollisionHandler", "range": ["0x001AF53E", "0x001AF549"] },
+        { "type": "0x5B", "address": "0x001AF54A", "size": 12, "name": "ActorType5B_PlayerCollisionHandler", "range": ["0x001AF54A", "0x001AF555"] },
+        { "type": "0x5C", "address": "0x001AF556", "size": 12, "name": "ActorType5C_PlayerCollisionHandler", "range": ["0x001AF556", "0x001AF561"] },
+        { "type": "0x5D", "address": "0x001AF562", "size": 46, "name": "ActorType5D_PlayerCollisionHandler", "range": ["0x001AF562", "0x001AF58F"] },
+        { "type": "0x5E", "address": "0x001AF638", "size": 116, "name": "ActorType5E_PlayerCollisionHandler", "range": ["0x001AF638", "0x001AF6AB"] },
+        { "type": "0x5F", "address": "0x001AF6AC", "size": 48, "name": "ActorType5F_PlayerCollisionHandler", "range": ["0x001AF6AC", "0x001AF6DB"] },
+        { "type": "0x60", "address": "0x001AF6DC", "size": 100, "name": "ActorType60_61_PlayerCollisionHandler", "range": ["0x001AF6DC", "0x001AF73F"] },
+        { "type": "0x61", "address": "0x001AF6DC", "size": 100, "name": "ActorType60_61_PlayerCollisionHandler", "range": ["0x001AF6DC", "0x001AF73F"] },
+        { "type": "0x7E", "address": "0x001AFE1C", "size": 358, "name": "ActorType7E_PlayerCollisionHandler", "range": ["0x001AFE1C", "0x001AFF81"] }
+      ]
+    },
+    {
+      "address": "0x001EBA",
+      "name": "ACTOR_COLLISION_HANDLER_TABLE",
+      "entry_width": 4,
+      "handlers": [
+        { "type": "0x0D", "address": "0x001AC60E", "size": 6, "name": "ActorType0D_ActorCollisionHandler", "range": ["0x001AC60E", "0x001AC613"] }
+      ]
+    }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0D8", "name": "PLAYER_ACTION_RESPONSE_FIELD" },
+    { "address": "0x00FFF0BE", "name": "TERRAIN_RESPONSE_ACTIVE" },
+    { "address": "0x00FFF0C0", "name": "TERRAIN_VERTICAL_STOP" },
+    { "address": "0x00FF7DFC", "name": "PLAYER_Y" },
+    { "address": "0x00FF7E02", "name": "PLAYER_WORLD_X" },
+    { "address": "0x00FF7E5A", "name": "PLAYER_VY" },
+    { "address": "0x00FFEFE0", "name": "INTERACTION_COUNTER_DIGITS" },
+    { "address": "0x00FFF179", "name": "type-0x3D response gate" },
+    { "address": "0x001B7ABC", "name": "ACTOR_TEMPLATE_COLLISION_RESPONSE" },
+    { "address": "0x001B7CD8", "name": "ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE" }
+  ],
+  "boundary_basis": [
+    "Each player handler start is a direct pointer-table target at 0x001CBE plus actor_type*4.",
+    "Each promoted body ends immediately before the next distinct dispatch target or the next already-owned canonical handler; shared entries retain one owner range.",
+    "The actor Type-0x0D entry is the direct target at 0x001EEE and ends at the RTS before ActorType14_ActorCollisionHandler.",
+    "The Type-0x3B body is an intentional ten-byte prefix that falls through to ActorType3A_PlayerCollisionHandler when its gate is clear."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -5478,3 +5478,193 @@
     - ghidra_decompile_001B437E
     - ghidra_menu_options_presentation
     - menu-options-presentation-static-decompilation
+
+0x001AF21E:
+  name: ActorType3B_PlayerCollisionHandler
+  size: 10
+  confidence: decompiled
+  description: Player-collision dispatch entry for actor type 0x3B. It suppresses the following type-0x3A interaction path while PLAYER_ACTION_RESPONSE_FIELD is active; when the field is clear, control falls through to ActorType3A_PlayerCollisionHandler.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF21E
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF264:
+  name: ActorType42_PlayerCollisionHandler
+  size: 76
+  confidence: decompiled
+  description: Player-collision handler for actor type 0x42. It advances the primary interaction counter through four phases unless the counter is already 99, resets the phase byte, optionally queues event 0x0C, and transfers to the shared collision-template reinitialization tail.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF264
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF344:
+  name: ActorType37_3C_PlayerCollisionHandler
+  size: 64
+  confidence: decompiled
+  description: Shared player-collision handler for actor types 0x37 and 0x3C. It arms SCENE_SCRIPT_COUNTDOWN=0x20, clears the current actor, reinitializes it from ACTOR_TEMPLATE_COLLISION_RESPONSE, optionally queues event 0x64, and adds 100 to ACTOR_RESPONSE_COUNTER.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF344
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF384:
+  name: ActorType3D_PlayerCollisionHandler
+  size: 62
+  confidence: decompiled
+  description: Player-collision handler for actor type 0x3D. It performs the shared collision-response-template replacement and response-counter increment, optionally queues event 0x64, and publishes the type-specific gate at 0x00FFF179.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF384
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF3C2:
+  name: ActorType41_PlayerCollisionHandler
+  size: 62
+  confidence: decompiled
+  description: Player-collision handler for actor type 0x41. It publishes SCENE_SCRIPT_GATE, optionally queues event 0x69, adds 25 to ACTOR_RESPONSE_COUNTER, clears the current actor, and reinitializes it from ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF3C2
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF4A0:
+  name: ActorType33_38_39_PlayerCollisionHandler
+  size: 56
+  confidence: decompiled
+  description: Shared player-collision handler for actor types 0x33, 0x38, and 0x39. It optionally queues event 0x0B, adds 15 to ACTOR_RESPONSE_COUNTER, clears the current actor, and reinitializes the slot from ACTOR_TEMPLATE_COLLISION_RESPONSE.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF4A0
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF53E:
+  name: ActorType5A_PlayerCollisionHandler
+  size: 12
+  confidence: decompiled
+  description: Player-collision dispatch entry for actor type 0x5A. It selects interaction-response mode 0, then transfers to the shared type-0x33/0x38/0x39 response handler.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF53E
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF54A:
+  name: ActorType5B_PlayerCollisionHandler
+  size: 12
+  confidence: decompiled
+  description: Player-collision dispatch entry for actor type 0x5B. It selects interaction-response mode 1, then transfers to the shared type-0x33/0x38/0x39 response handler.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF54A
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF556:
+  name: ActorType5C_PlayerCollisionHandler
+  size: 12
+  confidence: decompiled
+  description: Player-collision dispatch entry for actor type 0x5C. It selects actor cleanup type 0x08 from the phase-specific cleanup loop and transfers into ActorType5D_PlayerCollisionHandler.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF556
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF562:
+  name: ActorType5D_PlayerCollisionHandler
+  size: 46
+  confidence: decompiled
+  description: Player-collision handler for actor type 0x5D. It scans common actor records for the selected type 0x08 or 0x09, clears matching records and their owned resources, then transfers to the shared collision-response handler.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF562
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF590:
+  name: ActorType55_56_57_PlayerCollisionHandler
+  size: 96
+  confidence: decompiled
+  description: Shared player-collision terrain-response handler for actor types 0x55, 0x56, and 0x57. It gates on active terrain response and actor flag bit 4, aligns PLAYER_Y to the actor's vertical position within the encoded six-pixel window, and selects the type-0x56 animation response when the source is not already type 0x56 or 0x57.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF590
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF5F0:
+  name: ActorType58_PlayerCollisionHandler
+  size: 72
+  confidence: decompiled
+  description: Player-collision terrain-response handler for actor type 0x58. It applies the same terrain-response and actor-flag gates as the type-0x55/0x56/0x57 family, aligns PLAYER_Y using the two-pixel offset variant, and accepts a twelve-pixel vertical window.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF5F0
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF638:
+  name: ActorType5E_PlayerCollisionHandler
+  size: 116
+  confidence: decompiled
+  description: Player-collision handler for actor type 0x5E. It aligns the player's X/Y position to the actor, publishes the horizontal and vertical response state, optionally selects the player animation at 0x00122336, clears the action gate, and resets the camera thresholds to the encoded 0x00B0/0x0170 pair.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF638
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF6AC:
+  name: ActorType5F_PlayerCollisionHandler
+  size: 48
+  confidence: decompiled
+  description: Player-collision terrain-response handler for actor type 0x5F. It gates on active terrain response and actor flag bit 4, computes the actor-relative vertical position, and publishes PLAYER_Y through the response field at 0x00FF7DFC.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF6AC
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AF6DC:
+  name: ActorType60_61_PlayerCollisionHandler
+  size: 100
+  confidence: decompiled
+  description: Shared player-collision handler for actor types 0x60 and 0x61. It copies PLAYER_WORLD_X/Y into the actor, resets the camera thresholds to 0x00B0/0x0170, publishes the landing state, and selects the type-0x61 animation response when the source is not already type 0x61.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AF6DC
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AFD84:
+  name: ActorType01_PlayerCollisionHandler
+  size: 152
+  confidence: decompiled
+  description: Player-collision handler for actor type 0x01. It rejects active terminal/terrain gates, aligns PLAYER_Y to the actor within six pixels, launches the player with PLAYER_VY=-0x0800, selects the shared jump-response animation, enables terrain response, and initializes a type-0x84 response actor with the encoded horizontal offset.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AFD84
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AFE1C:
+  name: ActorType7E_PlayerCollisionHandler
+  size: 358
+  confidence: decompiled
+  description: Player-collision handler for actor type 0x7E. It gates the level/resource transition path on player position, interaction/scene-resource state, and the secondary counter, then schedules the corresponding resource presentation and transition actor work while leaving ordinary contacts to the caller's shared pass.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AFE1C
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AFF82:
+  name: ActorType02_PlayerCollisionHandler
+  size: 98
+  confidence: decompiled
+  description: Player-collision handler for actor type 0x02. It applies the actor-relative vertical correction when the actor is above the player; otherwise it arms the interaction response fields and adjusts the actor X coordinate toward PLAYER_WORLD_X before entering the shared terrain-response exit path.
+  evidence:
+    - rom_player_collision_handler_table_001CBE
+    - ghidra_disassembly_001AFF82
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001AC60E:
+  name: ActorType0D_ActorCollisionHandler
+  size: 6
+  confidence: decompiled
+  description: Actor-to-actor collision dispatch entry for receiving actor type 0x0D. It delegates to Actor_ToggleHorizontalFacing and returns; the handler is reached through ACTOR_COLLISION_HANDLER_TYPE_0D at 0x001EEE.
+  evidence:
+    - rom_actor_collision_handler_table_001EBA
+    - ghidra_disassembly_001AC60E
+    - actor_collision_handler_family_extended_static_decompilation

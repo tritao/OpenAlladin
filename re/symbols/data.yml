@@ -1989,6 +1989,222 @@
     - rom_handler_table_decode
     - player_collision_table_correction
 
+0x001CC2:
+  name: PLAYER_COLLISION_HANDLER_TYPE_01
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x01; its big-endian ROM value is 0x001AFD84.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001CC6:
+  name: PLAYER_COLLISION_HANDLER_TYPE_02
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x02; its big-endian ROM value is 0x001AFF82.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001D8A:
+  name: PLAYER_COLLISION_HANDLER_TYPE_33
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x33; its big-endian ROM value is 0x001AF4A0.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001D9A:
+  name: PLAYER_COLLISION_HANDLER_TYPE_37
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x37; its big-endian ROM value is 0x001AF344.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001D9E:
+  name: PLAYER_COLLISION_HANDLER_TYPE_38
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x38; its big-endian ROM value is 0x001AF4A0.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001DA2:
+  name: PLAYER_COLLISION_HANDLER_TYPE_39
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x39; its big-endian ROM value is 0x001AF4A0.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001DAA:
+  name: PLAYER_COLLISION_HANDLER_TYPE_3B
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x3B; its big-endian ROM value is 0x001AF21E.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001DAE:
+  name: PLAYER_COLLISION_HANDLER_TYPE_3C
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x3C; its big-endian ROM value is 0x001AF344.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001DB2:
+  name: PLAYER_COLLISION_HANDLER_TYPE_3D
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x3D; its big-endian ROM value is 0x001AF384.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001DC2:
+  name: PLAYER_COLLISION_HANDLER_TYPE_41
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x41; its big-endian ROM value is 0x001AF3C2.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001DC6:
+  name: PLAYER_COLLISION_HANDLER_TYPE_42
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x42; its big-endian ROM value is 0x001AF264.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E12:
+  name: PLAYER_COLLISION_HANDLER_TYPE_55
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x55; its big-endian ROM value is 0x001AF590.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E16:
+  name: PLAYER_COLLISION_HANDLER_TYPE_56
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x56; its big-endian ROM value is 0x001AF590.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E1A:
+  name: PLAYER_COLLISION_HANDLER_TYPE_57
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x57; its big-endian ROM value is 0x001AF590.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E1E:
+  name: PLAYER_COLLISION_HANDLER_TYPE_58
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x58; its big-endian ROM value is 0x001AF5F0.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E26:
+  name: PLAYER_COLLISION_HANDLER_TYPE_5A
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x5A; its big-endian ROM value is 0x001AF53E.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E2A:
+  name: PLAYER_COLLISION_HANDLER_TYPE_5B
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x5B; its big-endian ROM value is 0x001AF54A.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E2E:
+  name: PLAYER_COLLISION_HANDLER_TYPE_5C
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x5C; its big-endian ROM value is 0x001AF556.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E32:
+  name: PLAYER_COLLISION_HANDLER_TYPE_5D
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x5D; its big-endian ROM value is 0x001AF562.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E36:
+  name: PLAYER_COLLISION_HANDLER_TYPE_5E
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x5E; its big-endian ROM value is 0x001AF638.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E3A:
+  name: PLAYER_COLLISION_HANDLER_TYPE_5F
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x5F; its big-endian ROM value is 0x001AF6AC.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E3E:
+  name: PLAYER_COLLISION_HANDLER_TYPE_60
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x60; its big-endian ROM value is 0x001AF6DC.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001E42:
+  name: PLAYER_COLLISION_HANDLER_TYPE_61
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x61; its big-endian ROM value is 0x001AF6DC.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
+0x001EB6:
+  name: PLAYER_COLLISION_HANDLER_TYPE_7E
+  type: rom_pointer
+  confidence: decompiled
+  description: Player-collision dispatch pointer for actor type 0x7E; its big-endian ROM value is 0x001AFE1C.
+  evidence:
+    - rom_handler_table_decode
+    - player_collision_handler_family_extended_static_decompilation
+
 0x001EBA:
   name: ACTOR_COLLISION_HANDLER_TABLE
   type: rom_pointer_table
@@ -2008,6 +2224,15 @@
   evidence:
     - rom_handler_table_decode
     - ghidra_disassembly_001AC458
+
+0x001EEE:
+  name: ACTOR_COLLISION_HANDLER_TYPE_0D
+  type: rom_pointer
+  confidence: decompiled
+  description: Actor-collision dispatch pointer for receiving actor type 0x0D; its big-endian ROM value is 0x001AC60E, the horizontal-facing toggle entry.
+  evidence:
+    - rom_handler_table_decode
+    - actor_collision_handler_family_extended_static_decompilation
 
 0x001EFA:
   name: ACTOR_COLLISION_HANDLER_TYPE_10
