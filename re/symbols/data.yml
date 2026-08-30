@@ -1979,11 +1979,35 @@
   size: 0x133
   terminator: 0x262E
   confidence: decompiled
-  description: Level-06 timed event stream installed by Level06_ExitRoutine into LEVEL_EVENT_SCRIPT_CURSOR. Its 51 six-byte delay/command/coordinate records end at 0x0000262D, followed by the zero-duration terminator at 0x0000262E immediately before the Level-08 animation stream selected from 0x0000262F.
+  description: Level-06 timed event stream installed by Level06_ExitRoutine into LEVEL_EVENT_SCRIPT_CURSOR. Its 51 six-byte delay/command/coordinate records end at 0x0000262D, followed by the zero-duration terminator at 0x0000262E immediately before the Level-08 event command stream selected from 0x0000262F.
   evidence:
     - level_event_stream_static_decompilation
     - ghidra_disassembly_001B634E
     - ghidra_disassembly_001B644E
+
+0x0000262F:
+  name: LEVEL08_EXIT_EVENT_COMMAND_STREAM
+  type: level_event_stream
+  record_size: 2
+  count: 443
+  size: 0x376
+  confidence: decompiled
+  description: Exact 443-record, two-byte Level-08 event command stream installed by Level08_ExitRoutine at 0x001B64D8 into the Level-08 event cursor at 0x00FFF12E. Level08_EnterRoutine consumes each command/parameter pair, dispatches commands through LEVEL_EVENT_COMMAND_DISPATCH_TABLE, and ends with F2 01 at 0x000029A3-0x000029A4; a zero alignment byte at 0x000029A5 separates it from HUD_INTERACTION_FRAME_SEQUENCE.
+  evidence:
+    - ghidra_level08_exit_routine
+    - ghidra_level08_enter_routine
+    - level08_event_vdp_static_decompilation
+    - level_event_command_family_static_decompilation
+
+0x000029A5:
+  name: LEVEL08_EVENT_STREAM_ALIGNMENT_PADDING
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte after LEVEL08_EXIT_EVENT_COMMAND_STREAM at 0x000029A4 and before HUD_INTERACTION_FRAME_SEQUENCE at 0x000029A6.
+  evidence:
+    - level08_event_vdp_static_decompilation
+    - rom_padding_uniform_static_v1
 
 0x0029E0:
   name: LEVEL08_ROTATING_VDP_RECORD_TABLE

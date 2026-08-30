@@ -36,14 +36,14 @@
       "terminator": "0x0000262E",
       "terminator_value": "0x00",
       "producer": "0x001B644E Level06_ExitRoutine",
-      "next_object": "0x0000262F Level08_ExitRoutine animation cursor target"
+      "next_object": "0x0000262F Level08_ExitRoutine event cursor target"
     }
   ],
   "boundary_basis": [
     "LevelEvent_DispatchTimedCommand advances LEVEL_EVENT_SCRIPT_CURSOR by six bytes after each dispatched record.",
     "Level02_ExitRoutine installs 0x00002128 and Level06_ExitRoutine installs 0x000024FC.",
     "The first byte at each recorded terminator is zero, disabling further dispatch.",
-    "The Level-06 terminator is immediately followed by the 0x0000262F animation stream selected by Level08_ExitRoutine."
+    "The Level-06 terminator is immediately followed by the 0x0000262F event command stream selected by Level08_ExitRoutine."
   ],
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"

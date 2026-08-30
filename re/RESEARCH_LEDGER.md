@@ -2915,6 +2915,7 @@ When a campaign is superseded, leave it in this table. A negative result is
 valuable because it prevents repeating the same input family.
 
 | `20260829-level08-event-vdp-static-decompilation-v1` | recorded-static-decompilation | Level 08 event-counter update, rotating VDP record emission, timed event-stream dispatch, and conditional actor setup |
+| `20260830-level08-event-command-stream-static-v1` | recorded-static-decompilation | Promoted the exact 443-record, two-byte Level-08 event command stream at 0x0000262F-0x000029A4 selected by Level08_ExitRoutine, including its terminal F2 01 scene-transition command and the zero alignment byte before HUD_INTERACTION_FRAME_SEQUENCE |
 | `20260829-actor-type84-reinitialize-static-decompilation-v1` | recorded-static-decompilation | Standalone actor resource cleanup, type-0x84 template reinitialization, and transient-field reset primitive |
 | `20260829-actor-scene-resource-mode-static-decompilation-v1` | recorded-static-decompilation | Conditional mode-0x11 and unconditional mode-0x16 scene-resource actor instantiation services |
 | `20260829-vdp-descending-pattern-static-decompilation-v1` | recorded-static-decompilation | VRAM-start VDP writer for the 40-word descending low-byte pattern |

@@ -2891,6 +2891,37 @@ def test_canonical_level_event_streams_have_exact_records_and_terminators():
     assert rom[0x262F:0x2631] == bytes.fromhex("FE60")
 
 
+def test_canonical_level08_event_command_stream_has_exact_pairs_and_boundaries():
+    symbols = SymbolStore()
+    stream = symbols.at(0x0000262F, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "LEVEL08_EXIT_EVENT_COMMAND_STREAM"
+    assert stream.end == 0x000029A4
+    assert stream.size == 0x376
+    assert stream.metadata["type"] == "level_event_stream"
+    assert stream.metadata["record_size"] == 2
+    assert stream.metadata["count"] == 443
+
+    padding = symbols.at(0x000029A5, include_ranges=False)
+    assert padding is not None
+    assert padding.name == "LEVEL08_EVENT_STREAM_ALIGNMENT_PADDING"
+    assert padding.size == 1
+    assert padding.confidence == "confirmed"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+    assert rom[0x1B64D8:0x1B64E2] == bytes.fromhex("23FC0000262F00FFF12E")
+    records = rom[0x262F:0x29A5]
+    assert len(records) == 0x376
+    assert len(records) % 2 == 0
+    opcodes = records[::2]
+    assert len(opcodes) == 443
+    assert all(0xF2 <= opcode <= 0xFF for opcode in opcodes)
+    assert records[-2:] == bytes.fromhex("F201")
+    assert rom[0x29A5] == 0
+    assert rom[0x29A6:0x29A6 + 4] == bytes.fromhex("E6AEE6AE")
+
+
 def test_canonical_actor_surface_flags_table_has_byte_indexed_extent():
     symbols = SymbolStore()
     table = symbols.at(0x0000683E, include_ranges=False)

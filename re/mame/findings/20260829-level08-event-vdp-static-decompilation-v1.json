@@ -25,7 +25,7 @@
     "event_state": [
       "advances the low event counter and carries into the high counter",
       "increments the event phase on the animation cadence",
-      "consumes delay/command/word/word records from 0x00FFF12E",
+      "consumes command/parameter pairs from 0x00FFF12E",
       "dispatches command handlers through 0x0020C0",
       "conditionally allocates an actor using the camera-relative player state"
     ]

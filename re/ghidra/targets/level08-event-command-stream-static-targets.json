@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-level08-event-command-stream-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "stream": {
+    "address": "0x0000262F",
+    "name": "LEVEL08_EXIT_EVENT_COMMAND_STREAM",
+    "range": ["0x0000262F", "0x000029A4"],
+    "size": 886,
+    "record_size": 2,
+    "records": 443,
+    "producer": "0x001B64D0 Level08_ExitRoutine",
+    "cursor": "0x00FFF12E",
+    "dispatch_table": "0x0020C0 LEVEL_EVENT_COMMAND_DISPATCH_TABLE",
+    "first_record": "FE 60",
+    "terminal_record": "F2 01 at 0x000029A3"
+  },
+  "padding": {
+    "address": "0x000029A5",
+    "name": "LEVEL08_EVENT_STREAM_ALIGNMENT_PADDING",
+    "size": 1,
+    "value": "0x00"
+  },
+  "evidence": [
+    "Exact move.l #0x262F,$FFF12E at 0x001B64D8",
+    "Level08_EnterRoutine reads command/parameter pairs and increments cursor by two",
+    "All 443 command bytes are in the established 0xF2-0xFF LevelEvent handler family",
+    "Terminal F2 01 arms scene transition; zero alignment at 0x29A5 precedes HUD_INTERACTION_FRAME_SEQUENCE"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
