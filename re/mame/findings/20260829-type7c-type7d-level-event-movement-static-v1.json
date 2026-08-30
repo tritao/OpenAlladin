@@ -13,6 +13,7 @@
       "name": "ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE",
       "range": "0x00121180-0x00121189",
       "bytes": 10,
+      "confidence": "decompiled",
       "template": "0x001B81B0 ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT",
       "next_entry": "0x0012118A"
     },
@@ -41,5 +42,5 @@
     "Exact boundary before ACTOR_MOVE_TYPE7B_LEVEL11_EVENT at 0x0012120E",
     "Type-0x7D pointer is an entry inside the shared Type-0x7C owner"
   ],
-  "conclusion": "The contiguous 0x00121180-0x0012120D body is now represented as a ten-byte Type-0x7C prelude plus a 132-byte shared Type-0x7C/Type-0x7D movement owner, with the Type-0x7D pointer recorded as an alias entry."
+  "conclusion": "The contiguous 0x00121180-0x0012120D body is now represented as a decompiled ten-byte Type-0x7C prelude plus a 132-byte shared Type-0x7C/Type-0x7D movement owner, with the Type-0x7D pointer recorded as an alias entry. The prelude's stream semantics are established even though the specific template's live producer remains unresolved."
 }

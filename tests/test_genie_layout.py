@@ -1369,6 +1369,7 @@ def test_type7c_type7d_level_event_movement_family_is_exact():
     assert prelude.end == 0x00121189
     assert prelude.size == 10
     assert prelude.metadata["type"] == "movement_stream"
+    assert prelude.confidence == "decompiled"
 
     shared = symbols.at(0x0012118A, include_ranges=False)
     assert shared is not None

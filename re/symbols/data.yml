@@ -3280,8 +3280,8 @@
   name: ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE
   type: movement_stream
   size: 10
-  confidence: provisional
-  description: Short provisional Type-0x7C wide-random-offset event prelude selected by the adjacent template record at 0x001B81B0. Its exact ten-byte body applies a (0,-4) step, pushes ActorEvent_ApplyWideRandomOffsets at 0x001ACD5A, clears the actor state through opcode 0x82, and falls through into ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED at 0x0012118A; the template's runtime producer remains unresolved.
+  confidence: decompiled
+  description: Type-0x7C wide-random-offset event prelude selected by the adjacent template record at 0x001B81B0. Its exact ten-byte body applies a (0,-4) step, pushes ActorEvent_ApplyWideRandomOffsets at 0x001ACD5A, clears the actor state through opcode 0x82, and falls through into ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED at 0x0012118A; the template's runtime producer remains unresolved.
   evidence:
     - actor_template_level_event_record_partition
     - movement_stream_decoder
