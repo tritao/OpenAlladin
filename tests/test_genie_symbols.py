@@ -101,6 +101,25 @@ def test_symbol_editor_promotes_and_annotates_a_tracked_symbol(tmp_path):
     assert "  name: Scene_Init" in (tmp_path / "re/symbols/functions.yml").read_text()
 
 
+def test_actor_and_interaction_runtime_bases_have_canonical_aliases():
+    symbols = SymbolStore()
+
+    common = symbols.at(0x00FF7E82, include_ranges=False)
+    auxiliary = symbols.at(0x00FF84B2, include_ranges=False)
+    interaction = symbols.at(0x00FFAE87, include_ranges=False)
+
+    assert common is not None
+    assert common.name == "ACTOR_COMMON_POOL_BASE"
+    assert common.metadata["alias_of"] == "ACTOR_TABLE_BASE"
+    assert common.metadata["entry_offset"] == 0x42
+    assert auxiliary is not None
+    assert auxiliary.name == "ACTOR_AUXILIARY_POOL_BASE"
+    assert auxiliary.metadata["entry_offset"] == 0x672
+    assert interaction is not None
+    assert interaction.name == "INTERACTION_RUNTIME_TABLE_BASE"
+    assert interaction.metadata["entry_offset"] == 3
+
+
 def test_function_work_queue_ranks_runtime_unknowns(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

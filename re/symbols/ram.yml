@@ -8,6 +8,30 @@
   evidence:
     - ghidra_actor_table_layout
     - mame_actor_animation_trace
+0xFF7E82:
+  name: ACTOR_COMMON_POOL_BASE
+  type: actor_pool
+  alias_of: ACTOR_TABLE_BASE
+  entry_offset: 0x42
+  format: address
+  confidence: confirmed
+  description: Base of the non-player actor pool at actor-table slot 1. The common gameplay allocators and collision passes walk this pool with 0x42-byte records; the broader forward allocator can extend through slot 31.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_allocation_initialization_static_decompilation
+    - collision_pass_geometry_static_decompilation
+0xFF84B2:
+  name: ACTOR_AUXILIARY_POOL_BASE
+  type: actor_pool
+  alias_of: ACTOR_TABLE_BASE
+  entry_offset: 0x672
+  format: address
+  confidence: confirmed
+  description: Base of the auxiliary actor pool at actor-table slot 25. Auxiliary allocators and actor-to-actor collision scanning use this address with the same 0x42-byte record stride.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_allocation_initialization_static_decompilation
+    - collision_pass_geometry_static_decompilation
 0xFFF008:
   name: ACTOR_SPRITE_RESOURCE_SLOT_BITMAP
   type: u8[0x74]
@@ -1132,6 +1156,19 @@
     - ghidra_level01_surface_mode_consumer_targeted_decompile
     - ghidra_disassembly_001B3434
     - mame_level01_surface_mode_resolver_offset
+0xFFAE87:
+  name: INTERACTION_RUNTIME_TABLE_BASE
+  type: byte_array
+  alias_of: TERRAIN_CONTOUR_RESOURCE
+  entry_offset: 3
+  format: decompressed level interaction resource offset
+  confidence: confirmed
+  description: Base of the decompressed scene interaction resource at offset 3. Camera refill processors index it with the current map row word divided by two, and actor cleanup publishes interaction values back through the same indexed buffer.
+  evidence:
+    - ghidra_disassembly_001AE3FC
+    - ghidra_disassembly_001AE47E
+    - ghidra_decompile_actor_combat_targets
+    - level01_interaction_dispatch_callers
 0xFFF0C2:
   name: TERRAIN_SURFACE_LATCH
   type: u8
