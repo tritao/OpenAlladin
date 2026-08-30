@@ -35,6 +35,13 @@
       "reason": "Six exact NUL-terminated completion/result messages bounded by the mode-stream bank."
     },
     {
+      "name": "ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E",
+      "range": ["0x00126D4E", "0x00126D7D"],
+      "size": 48,
+      "confidence": "provisional",
+      "reason": "Exact three-record FF/space/NUL fixed-width corpus immediately after the live sound-test sentinel and before the scene-resource mode table; no runtime consumer has been identified."
+    },
+    {
       "name": "ROM_ASCII_NUMERIC_LABELS_126EB6",
       "range": ["0x00126EB6", "0x00126EBF"],
       "size": 10,

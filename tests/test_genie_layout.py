@@ -3050,6 +3050,7 @@ def test_static_header_text_and_shared_palette_families_are_exact():
     expected = {
         0x00000100: (0x000001A3, "ROM_SEGA_HEADER_FIELDS", "rom_header"),
         0x0012659C: (0x00126678, "SCENE_TRANSITION_LEVEL_NAME_TABLE", "text_data"),
+        0x00126D4E: (0x00126D7D, "ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E", "text_data"),
         0x00126EB6: (0x00126EBF, "ROM_ASCII_NUMERIC_LABELS_126EB6", "text_data"),
         0x00126EC0: (0x00126F0D, "LEVEL_RESULT_MESSAGE_TABLE", "text_data"),
         0x0012755A: (0x00127570, "SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT", "text_data"),
@@ -3070,9 +3071,16 @@ def test_static_header_text_and_shared_palette_families_are_exact():
     assert numeric_labels is not None
     assert numeric_labels.confidence == "provisional"
 
+    blank_records = symbols.at(0x00126D4E, include_ranges=False)
+    assert blank_records is not None
+    assert blank_records.metadata["entry_size"] == 0x10
+    assert blank_records.metadata["count"] == 3
+    assert blank_records.confidence == "provisional"
+
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     assert rom[0x00000100:0x00000110] == b"SEGA GENESIS    "
     assert rom[0x0012659C:0x00126679].count(b"\0") == 13
+    assert rom[0x00126D4E:0x00126D7E] == (b"\xff" + b" " * 14 + b"\0") * 3
     assert rom[0x00126EB6:0x00126EC0] == b"30\00060\00090\000\000"
     assert rom[0x00126EC0:0x00126F0E].count(b"\0") == 6
     assert rom[0x0012755A:0x00127571].endswith(b"WITH A PRINCESS!\0")

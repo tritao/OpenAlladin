@@ -17,9 +17,18 @@
   "evidence": [
     "Direct SOUND_TEST_ENTRY_PTR initialization and sound-test consumers",
     "Fixed +/-0x10 navigation in the menu helpers",
-    "Exact 0xFF sentinel record after the 94 active command/label records"
+    "Exact 0xFF sentinel record after the 94 active command/label records",
+    "The following 0x00126D4E-0x00126D7D bytes form three additional FF/space/NUL records and are not included in the live table"
   ],
-  "conclusion": "The complete sound-test command/label table is now a canonical scene/menu range; its audio command meanings remain owned by the audio command service.",
+  "following_object": {
+    "name": "ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E",
+    "range": ["0x00126D4E", "0x00126D7D"],
+    "entry_size": 16,
+    "count": 3,
+    "confidence": "provisional",
+    "reason": "Exact FF/space/NUL record shape after the live sentinel; no runtime consumer has been identified."
+  },
+  "conclusion": "The complete sound-test command/label table is a canonical scene/menu range, ending at its single live sentinel. The following three FF/space/NUL records are separately bounded as ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E and remain unselected data; audio command meanings remain owned by the audio command service.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

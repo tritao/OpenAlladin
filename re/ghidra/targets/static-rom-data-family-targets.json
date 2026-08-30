@@ -39,6 +39,14 @@
       "evidence": "Six contiguous NUL-terminated level-result messages immediately before the mode-stream bank."
     },
     {
+      "address": "0x00126D4E",
+      "name": "ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E",
+      "range": ["0x00126D4E", "0x00126D7D"],
+      "size": 48,
+      "type": "text_data",
+      "evidence": "Three exact 16-byte FF/space/NUL records after the live sound-test sentinel and before the scene-resource mode table; no runtime consumer is established."
+    },
+    {
       "address": "0x00126EB6",
       "name": "ROM_ASCII_NUMERIC_LABELS_126EB6",
       "range": ["0x00126EB6", "0x00126EBF"],

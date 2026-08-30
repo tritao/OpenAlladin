@@ -17,6 +17,14 @@
       "address": "0x00126D3E",
       "byte": "0xFF",
       "range": ["0x00126D3E", "0x00126D4D"]
+    },
+    "following_object": {
+      "address": "0x00126D4E",
+      "name": "ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E",
+      "range": ["0x00126D4E", "0x00126D7D"],
+      "entry_size": 16,
+      "count": 3,
+      "description": "Three unselected FF/space/NUL fixed-width records after the live sentinel and before SCENE_RESOURCE_MODE_RECORD_TABLE; no runtime consumer is established."
     }
   },
   "consumers": [

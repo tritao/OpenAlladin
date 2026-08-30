@@ -801,6 +801,18 @@
     - ghidra_menu_media_subservices
     - rom_sound_test_entry_table_0012675E
 
+0x00126D4E:
+  name: ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E
+  type: text_data
+  entry_size: 0x10
+  count: 3
+  size: 0x30
+  confidence: provisional
+  description: Exact 48-byte bank of three fixed-width blank records immediately after the live SOUND_TEST_ENTRY_TABLE sentinel and before SCENE_RESOURCE_MODE_RECORD_TABLE. Each record is FF followed by fourteen spaces and a NUL; no runtime consumer has been established, so these records are kept separate from the live sound-test table.
+  evidence:
+    - sound_test_entry_table_extents_static_v1
+    - static_rom_data_family_static_v1
+
 0x00126D7E:
   name: SCENE_RESOURCE_MODE_RECORD_TABLE
   type: scene_resource_record_table
