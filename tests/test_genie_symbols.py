@@ -587,6 +587,31 @@ def test_real_scene_setup_actor_slots_have_structural_canonical_roles():
         assert symbol.metadata["format"] == value_format
 
 
+def test_real_scene_rebuild_actor_slots_have_structural_canonical_roles():
+    symbols = SymbolStore()
+
+    expected = {
+        0x00FF7F8A: ("ACTOR_TABLE_SLOT_5_BASE", "address", "confirmed"),
+        0x00FF7F8C: ("ACTOR_SLOT_5_X", "pixels", "confirmed"),
+        0x00FF7F8E: ("ACTOR_SLOT_5_Y", "pixels", "confirmed"),
+        0x00FF7F94: ("ACTOR_SLOT_5_MOVEMENT_PC", "rom_pointer", "decompiled"),
+        0x00FF7FCC: ("ACTOR_TABLE_SLOT_6_BASE", "address", "confirmed"),
+        0x00FF7FCE: ("ACTOR_SLOT_6_X", "pixels", "confirmed"),
+        0x00FF7FD0: ("ACTOR_SLOT_6_Y", "pixels", "confirmed"),
+        0x00FF7FD6: ("ACTOR_SLOT_6_MOVEMENT_PC", "rom_pointer", "decompiled"),
+        0x00FF800E: ("ACTOR_TABLE_SLOT_7_BASE", "address", "confirmed"),
+        0x00FF8010: ("ACTOR_SLOT_7_X", "pixels", "confirmed"),
+        0x00FF8012: ("ACTOR_SLOT_7_Y", "pixels", "confirmed"),
+        0x00FF8018: ("ACTOR_SLOT_7_MOVEMENT_PC", "rom_pointer", "decompiled"),
+    }
+    for address, (name, value_format, confidence) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == value_format
+        assert symbol.confidence == confidence
+
+
 def test_real_palette_render_state_has_canonical_roles():
     symbols = SymbolStore()
 

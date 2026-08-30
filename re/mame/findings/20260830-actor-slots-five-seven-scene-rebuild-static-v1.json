@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-slots-five-seven-scene-rebuild-static-targets.json",
+  "conclusion": "Named fixed actor-table slots 5 through 7 and their X/Y/movement fields from exact scene-resource rebuild writes; slots 6 and 7 are additionally confirmed as the counter-selected interaction actors.",
+  "fields": [
+    "0x00FF7F8A ACTOR_TABLE_SLOT_5_BASE",
+    "0x00FF7F8C ACTOR_SLOT_5_X",
+    "0x00FF7F8E ACTOR_SLOT_5_Y",
+    "0x00FF7F94 ACTOR_SLOT_5_MOVEMENT_PC",
+    "0x00FF7FCC ACTOR_TABLE_SLOT_6_BASE",
+    "0x00FF7FCE ACTOR_SLOT_6_X",
+    "0x00FF7FD0 ACTOR_SLOT_6_Y",
+    "0x00FF7FD6 ACTOR_SLOT_6_MOVEMENT_PC",
+    "0x00FF800E ACTOR_TABLE_SLOT_7_BASE",
+    "0x00FF8010 ACTOR_SLOT_7_X",
+    "0x00FF8012 ACTOR_SLOT_7_Y",
+    "0x00FF8018 ACTOR_SLOT_7_MOVEMENT_PC"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

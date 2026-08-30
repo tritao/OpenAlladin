@@ -116,6 +116,120 @@
   evidence:
     - ghidra_actor_table_layout
     - actor_template_scene_setup_static_decompilation
+0xFF7F8A:
+  name: ACTOR_TABLE_SLOT_5_BASE
+  type: actor_record
+  format: address
+  confidence: confirmed
+  description: Fixed actor-table slot 5 base at ACTOR_TABLE_BASE plus five 0x42-byte records. SceneResource_RebuildAfterInteraction initializes this record as the Type-0x84 wall-animation actor in the scene/resource rebuild path.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_rebuild_static_decompilation
+0xFF7F8C:
+  name: ACTOR_SLOT_5_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: X coordinate word at offset +0x02 in fixed actor-table slot 5. SceneResource_RebuildAfterInteraction writes the wall-animation actor position after initializing the record.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_rebuild_static_decompilation
+0xFF7F8E:
+  name: ACTOR_SLOT_5_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Y coordinate word at offset +0x04 in fixed actor-table slot 5. SceneResource_RebuildAfterInteraction writes the wall-animation actor position after initializing the record.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_rebuild_static_decompilation
+0xFF7F94:
+  name: ACTOR_SLOT_5_MOVEMENT_PC
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Movement-stream pointer at offset +0x0A in fixed actor-table slot 5. SceneResource_RebuildAfterInteraction overrides it with the Type-0x84 wall-animation movement root.
+  evidence:
+    - ghidra_disassembly_001AE30A
+    - actor_template_scene_rebuild_static_decompilation
+0xFF7FCC:
+  name: ACTOR_TABLE_SLOT_6_BASE
+  type: actor_record
+  format: address
+  confidence: confirmed
+  description: Fixed actor-table slot 6 base at ACTOR_TABLE_BASE plus six 0x42-byte records. Scene/resource rebuild and the interaction-counter actor configurator reuse this record for a counter-selected interaction actor.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_rebuild_static_decompilation
+    - interaction_counter_actors_static_decompilation
+0xFF7FCE:
+  name: ACTOR_SLOT_6_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: X coordinate word at offset +0x02 in fixed actor-table slot 6. SceneResource_RebuildAfterInteraction and InteractionCounter_ConfigureActors write this counter-selected interaction actor position.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_rebuild_static_decompilation
+    - interaction_counter_actors_static_decompilation
+0xFF7FD0:
+  name: ACTOR_SLOT_6_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Y coordinate word at offset +0x04 in fixed actor-table slot 6. SceneResource_RebuildAfterInteraction and InteractionCounter_ConfigureActors write this counter-selected interaction actor position.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_rebuild_static_decompilation
+    - interaction_counter_actors_static_decompilation
+0xFF7FD6:
+  name: ACTOR_SLOT_6_MOVEMENT_PC
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Movement-stream pointer at offset +0x0A in fixed actor-table slot 6. SceneResource_RebuildAfterInteraction installs the interaction actor's movement root after template initialization.
+  evidence:
+    - ghidra_disassembly_001AE30A
+    - actor_template_scene_rebuild_static_decompilation
+0xFF800E:
+  name: ACTOR_TABLE_SLOT_7_BASE
+  type: actor_record
+  format: address
+  confidence: confirmed
+  description: Fixed actor-table slot 7 base at ACTOR_TABLE_BASE plus seven 0x42-byte records. Scene/resource rebuild and the interaction-counter actor configurator reuse this record for a counter-selected interaction actor.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_rebuild_static_decompilation
+    - interaction_counter_actors_static_decompilation
+0xFF8010:
+  name: ACTOR_SLOT_7_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: X coordinate word at offset +0x02 in fixed actor-table slot 7. SceneResource_RebuildAfterInteraction and InteractionCounter_ConfigureActors write this counter-selected interaction actor position.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_rebuild_static_decompilation
+    - interaction_counter_actors_static_decompilation
+0xFF8012:
+  name: ACTOR_SLOT_7_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Y coordinate word at offset +0x04 in fixed actor-table slot 7. SceneResource_RebuildAfterInteraction and InteractionCounter_ConfigureActors write this counter-selected interaction actor position.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_template_scene_rebuild_static_decompilation
+    - interaction_counter_actors_static_decompilation
+0xFF8018:
+  name: ACTOR_SLOT_7_MOVEMENT_PC
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Movement-stream pointer at offset +0x0A in fixed actor-table slot 7. SceneResource_RebuildAfterInteraction installs the interaction actor's movement root after template initialization.
+  evidence:
+    - ghidra_disassembly_001AE30A
+    - actor_template_scene_rebuild_static_decompilation
 0xFF84B2:
   name: ACTOR_AUXILIARY_POOL_BASE
   type: actor_pool
