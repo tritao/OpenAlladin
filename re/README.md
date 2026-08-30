@@ -55,12 +55,15 @@ python -m genie ghidra xrefs 0x001B557E
 python -m genie ghidra context 0x00184320
 python -m genie ghidra decompile 0x00184320
 python -m genie ghidra decompile --review
+python -m genie ghidra context --review --include-decompile
 python -m genie ghidra unknown
 ```
 
 The review form batches all named functions with open semantic-review
 questions into one Ghidra launch and caches each pseudocode body under
-`build/re/full-rom/decompile/`.
+`build/re/full-rom/decompile/`; the matching context form prints their
+callers, callees, RAM/xref evidence, layout neighbors, and cached bodies in
+one offline report.
 
 Before using a scan as deassembly input, run its known-fact trust gate:
 

@@ -247,19 +247,47 @@ def _render_context(value: dict) -> None:
 
 def command_ghidra_context(args: argparse.Namespace) -> int:
     try:
+        if args.review and args.address is not None:
+            raise ValueError("ghidra context accepts an address or --review, not both")
+        if not args.review and args.address is None:
+            raise ValueError("ghidra context requires an address or --review")
         database = _database(args)
-        value = build_context(
-            database,
-            args.address,
-            SymbolStore(root=ROOT),
-            layout_path=resolve(args.layout) if args.layout else None,
-            coverage_path=resolve(args.coverage) if args.coverage else None,
-            radius=args.radius,
-            include_decompile=args.include_decompile,
-        )
+        common = {
+            "layout_path": resolve(args.layout) if args.layout else None,
+            "coverage_path": resolve(args.coverage) if args.coverage else None,
+            "radius": args.radius,
+            "include_decompile": args.include_decompile,
+        }
+        if args.review:
+            queue = symbol_review_queue(database, SymbolStore(root=ROOT), kind="function")
+            limit = args.limit if args.limit > 0 else len(queue)
+            addresses = [int(item["address"], 0) for item in queue[:limit]]
+            if not addresses:
+                print("No semantic function review entries remain")
+                return 1
+            values = [
+                build_context(database, address, SymbolStore(root=ROOT), **common)
+                for address in addresses
+            ]
+        else:
+            value = build_context(
+                database,
+                args.address,
+                SymbolStore(root=ROOT),
+                **common,
+            )
     except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
         print(f"ERROR {error}")
         return 1
+    if args.review:
+        if args.json_output:
+            print(json.dumps({"count": len(values), "contexts": values}, indent=2, sort_keys=True))
+        else:
+            for index, review_value in enumerate(values):
+                if index:
+                    print("\n---\n")
+                _render_context(review_value)
+        return 0
     if args.json_output:
         print(json.dumps(value, indent=2, sort_keys=True))
     else:

@@ -25,6 +25,9 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     context = build_parser().parse_args(
         ["ghidra", "context", "0x1234", "--json", "--include-decompile"]
     )
+    review_context = build_parser().parse_args(
+        ["ghidra", "context", "--review", "--limit", "10", "--json"]
+    )
     decompile = build_parser().parse_args(["ghidra", "decompile", "0x1234", "--force"])
     review_decompile = build_parser().parse_args(
         ["ghidra", "decompile", "--review", "--limit", "10", "--json"]
@@ -53,6 +56,12 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert context.function is ghidra.command_ghidra_context
     assert context.radius == 2
     assert context.include_decompile is True
+    assert context.address == 0x1234
+    assert context.review is False
+    assert review_context.address is None
+    assert review_context.review is True
+    assert review_context.limit == 10
+    assert review_context.json_output is True
     assert decompile.function is ghidra.command_ghidra_decompile
     assert decompile.force is True
     assert decompile.address == 0x1234

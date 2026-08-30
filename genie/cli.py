@@ -94,9 +94,20 @@ def build_parser() -> argparse.ArgumentParser:
     decompile.set_defaults(function=command_ghidra_decompile)
     context = ghidra_commands.add_parser(
         "context",
-        help="show the combined RE context for an address",
+        help="show the combined RE context for an address or the review queue",
     )
-    context.add_argument("address", type=lambda value: int(value, 0))
+    context.add_argument("address", type=lambda value: int(value, 0), nargs="?")
+    context.add_argument(
+        "--review",
+        action="store_true",
+        help="show context for named functions with open semantic-review questions",
+    )
+    context.add_argument(
+        "--limit",
+        type=int,
+        default=0,
+        help="maximum review functions to show; zero means all",
+    )
     context.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
     context.add_argument("--layout", type=Path)
     context.add_argument("--coverage", type=Path)
