@@ -671,6 +671,20 @@ def test_presentation_graphics_have_stable_consumer_names():
         assert legacy in symbol.aliases
 
 
+def test_title_and_menu_graphics_have_stable_consumer_names():
+    expected = {
+        0x00130709: ("MENU_WISH_PROMPT_GRAPHICS", "MENU_WISH_PROMPT_GRAPHICS_00130709"),
+        0x001307D5: ("TITLE_E000_GRAPHICS", "TITLE_RNC_GRAPHICS_001307D5"),
+        0x00130EA1: ("TITLE_C000_GRAPHICS_PRIMARY", "TITLE_RNC_GRAPHICS_00130EA1"),
+        0x00131020: ("TITLE_C000_GRAPHICS_SECONDARY", "TITLE_RNC_GRAPHICS_00131020"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

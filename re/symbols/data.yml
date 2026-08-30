@@ -692,15 +692,17 @@
   evidence: [rnc_graphics_resource_static_v1]
 
 0x00130709:
-  name: MENU_WISH_PROMPT_GRAPHICS_00130709
+  name: MENU_WISH_PROMPT_GRAPHICS
+  aliases: [MENU_WISH_PROMPT_GRAPHICS_00130709]
   type: graphics_data
   size: 0xCC
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload loaded by Menu_ShowWishPrompt for the wish prompt presentation.
+  description: Exact RNC-compressed Genesis graphics payload loaded by Menu_ShowWishPrompt for the wish-prompt presentation.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x001307D5:
-  name: TITLE_RNC_GRAPHICS_001307D5
+  name: TITLE_E000_GRAPHICS
+  aliases: [TITLE_RNC_GRAPHICS_001307D5]
   type: graphics_data
   size: 0x6CC
   confidence: decompiled
@@ -708,19 +710,21 @@
   evidence: [rnc_graphics_resource_static_v1]
 
 0x00130EA1:
-  name: TITLE_RNC_GRAPHICS_00130EA1
+  name: TITLE_C000_GRAPHICS_PRIMARY
+  aliases: [TITLE_RNC_GRAPHICS_00130EA1]
   type: graphics_data
   size: 0x17F
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM C000 by Startup_RunTitlePresentation.
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM C000 by the first C000 resource load in Startup_RunTitlePresentation.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x00131020:
-  name: TITLE_RNC_GRAPHICS_00131020
+  name: TITLE_C000_GRAPHICS_SECONDARY
+  aliases: [TITLE_RNC_GRAPHICS_00131020]
   type: graphics_data
   size: 0x3DD
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload grouped with the title/presentation resource family; its narrower loader role remains neutral.
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM C000 by the second C000 resource load in Startup_RunTitlePresentation after the title fade and blank-palette step.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x001313FD:

@@ -1,0 +1,56 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "title-and-menu-graphics-identities",
+    "purpose": "Replace address-bearing names for title and wish-prompt RNC graphics resources with identities derived from exact consumers, VRAM destinations, and title load order."
+  },
+  "targets": [
+    {
+      "address": "0x00130709",
+      "name": "MENU_WISH_PROMPT_GRAPHICS",
+      "legacy_name": "MENU_WISH_PROMPT_GRAPHICS_00130709",
+      "range": "0x00130709-0x001307D4",
+      "size": 204,
+      "consumer": "0x001B3324 Menu_ShowWishPrompt"
+    },
+    {
+      "address": "0x001307D5",
+      "name": "TITLE_E000_GRAPHICS",
+      "legacy_name": "TITLE_RNC_GRAPHICS_001307D5",
+      "range": "0x001307D5-0x00130EA0",
+      "size": 1740,
+      "consumer": "0x001B202A Startup_RunTitlePresentation",
+      "destination": "0x00E000",
+      "load_order": 1
+    },
+    {
+      "address": "0x00130EA1",
+      "name": "TITLE_C000_GRAPHICS_PRIMARY",
+      "legacy_name": "TITLE_RNC_GRAPHICS_00130EA1",
+      "range": "0x00130EA1-0x0013101F",
+      "size": 383,
+      "consumer": "0x001B202A Startup_RunTitlePresentation",
+      "destination": "0x00C000",
+      "load_order": 2
+    },
+    {
+      "address": "0x00131020",
+      "name": "TITLE_C000_GRAPHICS_SECONDARY",
+      "legacy_name": "TITLE_RNC_GRAPHICS_00131020",
+      "range": "0x00131020-0x001313FC",
+      "size": 989,
+      "consumer": "0x001B202A Startup_RunTitlePresentation",
+      "destination": "0x00C000",
+      "load_order": 3
+    }
+  ],
+  "evidence": [
+    "exact ROM boundaries",
+    "direct named consumer references",
+    "explicit title loader VRAM destinations",
+    "title-path load order"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
