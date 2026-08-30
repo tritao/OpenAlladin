@@ -1379,6 +1379,33 @@ def test_type3e_3f_player_collision_response_family_is_exact():
     )
 
 
+def test_interaction_anchor_callback_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x001B57C4: (0x001B584F, "Actor_ApplyInteractionMarkerMovementStep"),
+        0x001B5850: (0x001B58B9, "Actor_ApplyInteractionAnchorMovementStep"),
+        0x001B58BA: (0x001B58D7, "Actor_SetInteractionAnchorFromActor"),
+    }
+    owners = []
+    for address, (end, name) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == end - address + 1
+        owners.append((function.address, function.end))
+    assert all(right < next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+    for address, (end, _) in expected.items():
+        assert rom[end - 1:end + 1] == bytes.fromhex("4E75")
+
+    assert rom[0x001B58BA:0x001B58D8] == bytes.fromhex(
+        "3E2900020447002033C700FFF0943E2900040647004033C700FFF0964E75"
+    )
+
+
 def test_level_event_movement_stream_family_is_exact():
     symbols = SymbolStore()
     expected = {

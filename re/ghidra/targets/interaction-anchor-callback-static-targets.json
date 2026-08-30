@@ -1,0 +1,54 @@
+{
+  "format": "openaladdin-interaction-anchor-callback-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Range-bound the three contiguous actor movement callbacks that maintain the interaction anchor and apply anchored response steps.",
+  "callbacks": [
+    {
+      "address": "0x001B57C4",
+      "end": "0x001B584F",
+      "name": "Actor_ApplyInteractionMarkerMovementStep",
+      "size": 140,
+      "role": "Marker-sensitive anchored movement callback",
+      "step": "(+3,-2)",
+      "anchor": "0x00FFF094/0x00FFF096"
+    },
+    {
+      "address": "0x001B5850",
+      "end": "0x001B58B9",
+      "name": "Actor_ApplyInteractionAnchorMovementStep",
+      "size": 106,
+      "role": "Type-0x84 response anchored movement callback",
+      "step": "(+1,-2)",
+      "anchor": "0x00FFF094/0x00FFF096",
+      "vm_parameter_sites": ["0x001212CE"]
+    },
+    {
+      "address": "0x001B58BA",
+      "end": "0x001B58D7",
+      "name": "Actor_SetInteractionAnchorFromActor",
+      "size": 30,
+      "role": "Interaction-anchor publication callback",
+      "anchor_formula": "FFF094 = actor X - 0x20; FFF096 = actor Y + 0x40",
+      "vm_parameter_sites": ["0x0011F7A8", "0x0011F7B8", "0x001212EE"]
+    }
+  ],
+  "behavior": [
+    "The two movement-step callbacks adjust actor residual movement words at +0x18/+0x1A toward the published interaction anchor with independent clamps 0x68 and 0x7C.",
+    "The marker-sensitive callback additionally updates actor facing from the interaction marker 0x00FFF0D3 when it is 0x5E or 0x60.",
+    "The anchor callback publishes the actor-relative target used by paired interaction movement streams before their response steps."
+  ],
+  "evidence": [
+    "gnu_m68k_disassembly_001B57C4",
+    "gnu_m68k_disassembly_001B5850",
+    "gnu_m68k_disassembly_001B58BA",
+    "interaction_spawn_type5e84_pair_static_v1",
+    "actor_template_type84_runtime47_4c_child_static_decompilation",
+    "movement_vm_callback_convention"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}
