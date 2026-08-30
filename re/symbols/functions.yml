@@ -2087,6 +2087,17 @@
     - ghidra_disassembly_001B003A
     - ghidra_disassembly_001B01AC
     - ghidra_interaction_resource_progress_targets
+
+0x001B0024:
+  name: Interaction_ResetResourceProgressCounter
+  size: 22
+  confidence: decompiled
+  description: Resets the three-digit ASCII interaction/resource progress counter at INTERACTION_RESOURCE_PROGRESS_COUNTER to "000" and writes its trailing terminator byte.
+  evidence:
+    - ghidra_disassembly_001B0024
+    - interaction_resource_progress_reset_static_decompilation
+    - ghidra_interaction_resource_progress_targets
+
 0x001B02B6:
   name: Interaction_DecrementResourceProgressCounter
   confidence: decompiled

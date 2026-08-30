@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-interaction-resource-progress-reset-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "reset": {
+    "address": "0x001B0024",
+    "name": "Interaction_ResetResourceProgressCounter",
+    "range": ["0x001B0024", "0x001B0039"],
+    "size": 22,
+    "counter": "0x00FF7E38 INTERACTION_RESOURCE_PROGRESS_COUNTER",
+    "writes": [
+      "three ASCII zero digits at offsets 0x00-0x02",
+      "terminator byte 0x00 at offset 0x03"
+    ]
+  },
+  "boundary_basis": [
+    "The body begins at the LEA of INTERACTION_RESOURCE_PROGRESS_COUNTER after the preceding RTS-only hook.",
+    "The body ends at its direct RTS immediately before Interaction_GetResourceProgressPointer at 0x001B003A."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

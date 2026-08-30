@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-interaction-resource-progress-reset-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/interaction-resource-progress-reset-static-targets.json",
+  "reset": {
+    "address": "0x001B0024",
+    "name": "Interaction_ResetResourceProgressCounter",
+    "range": ["0x001B0024", "0x001B0039"],
+    "counter": "0x00FF7E38 INTERACTION_RESOURCE_PROGRESS_COUNTER",
+    "behavior": "Writes ASCII '0' to the first three counter bytes through a DBF loop, then writes the NUL terminator."
+  },
+  "conclusion": "The interaction/resource progress reset service is now a canonical 22-byte code range between the reset hook and the existing counter-pointer getter."
+}
