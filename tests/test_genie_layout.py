@@ -496,6 +496,30 @@ def test_scene_vdp_fixed_data_has_exact_extents():
     assert rom[0x2A48:0x2A52] == bytes.fromhex("00000000FFFF00002A48")
 
 
+def test_scene_vdp_transition_plane_offset_table_has_exact_extent():
+    symbols = SymbolStore()
+    table = symbols.at(0x00002080, include_ranges=False)
+    assert table is not None
+    assert table.name == "SCENE_VDP_TRANSITION_PLANE_OFFSET_TABLE"
+    assert table.end == 0x000020BF
+    assert table.size == 0x40
+    assert table.metadata["type"] == "scene_resource_vdp_offset_table"
+    assert table.metadata["entry_size"] == 2
+    assert table.metadata["count"] == 32
+
+    rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    words = [
+        int.from_bytes(rom[offset:offset + 2], "big")
+        for offset in range(0x2080, 0x20C0, 2)
+    ]
+    assert words == [
+        0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0000, 0x0000, 0x0000,
+        0x0001, 0x0000, 0x0000, 0x0001, 0x0000, 0x0000, 0x0000, 0x0000,
+        0x0000, 0x0000, 0x0000, 0x0000, 0xFFFF, 0x0000, 0x0000, 0xFFFF,
+        0x0000, 0x0000, 0x0000, 0xFFFF, 0x0000, 0x0000, 0x0000, 0x0000,
+    ]
+
+
 def test_interaction_counter_animation_table_and_bank_are_exact():
     symbols = SymbolStore()
     table = symbols.at(0x00004A58, include_ranges=False)

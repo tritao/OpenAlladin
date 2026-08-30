@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-scene-vdp-transition-plane-offset-table-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "table": {
+    "address": "0x00002080",
+    "name": "SCENE_VDP_TRANSITION_PLANE_OFFSET_TABLE",
+    "range": ["0x00002080", "0x000020BF"],
+    "size": 64,
+    "entry_size": 2,
+    "count": 32,
+    "consumer": "0x001B1432 Scene_VDP_ClearTransitionPlane",
+    "following": "0x000020C0 LEVEL_EVENT_COMMAND_DISPATCH_TABLE"
+  },
+  "indexing": {
+    "source": "0x00FF7E28 FRAME_PHASE_COUNTER",
+    "mask": "0x3E",
+    "step": 2,
+    "indices": "0x00 through 0x3E"
+  },
+  "boundary_basis": [
+    "Scene_VDP_ClearTransitionPlane loads A1=0x00002080 and masks FRAME_PHASE_COUNTER with 0x3E before indexing by even byte offsets.",
+    "The routine therefore selects 32 words from 0x00002080 through 0x000020BF.",
+    "The next ROM object is the separate 26-entry LEVEL_EVENT_COMMAND_DISPATCH_TABLE at 0x000020C0."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
