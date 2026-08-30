@@ -825,6 +825,17 @@
     - rom_level_result_messages_static_v1
     - scene_resource_mode_text_layout
 
+0x00126EB6:
+  name: ROM_ASCII_NUMERIC_LABELS_126EB6
+  type: text_data
+  size: 0x0A
+  count: 3
+  confidence: provisional
+  description: Exact ten-byte ASCII text object containing the NUL-terminated labels "30", "60", and "90" immediately after SCENE_RESOURCE_MODE_RECORD_TABLE and before LEVEL_RESULT_MESSAGE_TABLE. The format and extent are established by the bytes and adjacent canonical boundaries; its runtime consumer remains unresolved.
+  evidence:
+    - scene_resource_mode_record_table_extents_static_v1
+    - static_rom_data_family_static_v1
+
 0x00126F0E:
   name: SCENE_RESOURCE_MODE_STREAM_00
   type: scene_resource_stream

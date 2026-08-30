@@ -31,15 +31,17 @@
   },
   "boundary": {
     "following_address": "0x00126EB6",
-    "following_object": "ASCII scene/menu text",
+    "following_object": "ROM_ASCII_NUMERIC_LABELS_126EB6",
+    "following_range": ["0x00126EB6", "0x00126EBF"],
     "proof": "26 * 12 = 0x138 bytes; 0x00126D7E + 0x138 = 0x00126EB6"
   },
   "evidence": [
     "Direct table-base and stride arithmetic in SceneResource_InstantiateActors",
     "Exact 26-record ROM corpus and complete four-field record shape",
-    "Immediate following text boundary after the final record"
+    "Immediate following ROM_ASCII_NUMERIC_LABELS_126EB6 boundary after the final record",
+    "The following ten bytes decode exactly as the NUL-terminated ASCII labels 30, 60, and 90"
   ],
-  "conclusion": "The 26 fixed scene-resource mode records are a canonical SCENE_TABLE range. This slice claims only the table itself; the pointed command streams and the following text corpus remain separate data-family audits.",
+  "conclusion": "The 26 fixed scene-resource mode records are a canonical SCENE_TABLE range. The immediately following ten-byte numeric-label text object is separately bounded as ROM_ASCII_NUMERIC_LABELS_126EB6; the pointed command streams and its runtime consumer remain separate data-family audits.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

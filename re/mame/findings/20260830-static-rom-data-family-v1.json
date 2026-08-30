@@ -35,6 +35,13 @@
       "reason": "Six exact NUL-terminated completion/result messages bounded by the mode-stream bank."
     },
     {
+      "name": "ROM_ASCII_NUMERIC_LABELS_126EB6",
+      "range": ["0x00126EB6", "0x00126EBF"],
+      "size": 10,
+      "confidence": "provisional",
+      "reason": "Exact ten-byte ASCII corpus containing the NUL-terminated labels 30, 60, and 90 at the immediate boundary after the scene-resource mode table. The format and extent are certain from the bytes and neighboring objects; no runtime consumer has yet been identified."
+    },
+    {
       "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT",
       "range": ["0x0012755A", "0x00127570"],
       "size": 23,

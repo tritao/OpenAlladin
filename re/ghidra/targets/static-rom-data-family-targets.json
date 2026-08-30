@@ -39,6 +39,14 @@
       "evidence": "Six contiguous NUL-terminated level-result messages immediately before the mode-stream bank."
     },
     {
+      "address": "0x00126EB6",
+      "name": "ROM_ASCII_NUMERIC_LABELS_126EB6",
+      "range": ["0x00126EB6", "0x00126EBF"],
+      "size": 10,
+      "type": "text_data",
+      "evidence": "Exact ASCII bytes for the three NUL-terminated labels 30, 60, and 90 immediately after the scene-resource mode record table; the bytes and adjacent canonical boundaries establish the extent, while the runtime consumer remains unresolved."
+    },
+    {
       "address": "0x0012755A",
       "name": "SCENE_RESOURCE_PRINCESS_RESPONSE_TEXT",
       "range": ["0x0012755A", "0x00127570"],
