@@ -2315,6 +2315,27 @@ def test_canonical_level_event_streams_have_exact_records_and_terminators():
     assert rom[0x262F:0x2631] == bytes.fromhex("FE60")
 
 
+def test_canonical_actor_surface_flags_table_has_byte_indexed_extent():
+    symbols = SymbolStore()
+    table = symbols.at(0x0000683E, include_ranges=False)
+    assert table is not None
+    assert table.name == "TERRAIN_ACTOR_SURFACE_FLAGS_TABLE"
+    assert table.end == 0x0000693D
+    assert table.size == 0x100
+    assert table.metadata["type"] == "terrain_actor_surface_flags_table"
+    assert table.metadata["entry_size"] == 1
+    assert table.metadata["count"] == 256
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+    assert len(rom[0x683E:0x693E]) == 0x100
+    assert rom[0x683E:0x684E] == bytes(0x10)
+    assert rom[0x693E:0x6960] == bytes.fromhex(
+        "0004FFFC0004FFFC0003FFFD0003FFFD"
+        "0002FFFE0002FFFE0001FFFF0001FFFF0000"
+    )
+
+
 def test_canonical_scene_resource_mode_streams_are_exact_and_contiguous():
     symbols = SymbolStore()
     expected = (
