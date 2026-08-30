@@ -2310,6 +2310,19 @@ assigning a narrower user-facing meaning to the displayed value.
 The result is recorded in
 `re/mame/findings/20260830-hud-display-buffer-contract-static-v1.json`.
 
+## HUD display initializer runtime audit (20260830)
+
+Debugger write watches on two fresh-boot runs reached the complete
+`Interaction_InitializePendingDisplayValue` body at `0x001AFFE4` and observed
+the first two stores of the exact `100000` ASCII seed at `FF7E30`/`FF7E31` from
+the expected instruction PCs. This promotes the already-decoded function to
+`trace_validated` for runtime reachability and preserves the neutral
+`INTERACTION_PENDING_DISPLAY_VALUE` name; the watch does not establish whether
+the displayed value is score, reward, inventory, or another user-facing field.
+
+The runtime result is recorded in
+`re/mame/findings/20260830-hud-display-initializer-runtime-v1.json`.
+
 ## Menu selection-marker tile animation (20260829)
 
 `Menu_AnimateSelectionMarkerTiles` at `0x001B3B4A` runs on even
@@ -3456,3 +3469,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-scene-resource-stream-boundary-correction-static-v1` | tooling-validation | Corrected SCENE_RESOURCE_BLANK_STREAM_STATE_03 to its 0x00127AEE-0x00127B5F terminator and separated the independently selected 0x00127B60-0x00127BD1 stream |
 | `20260830-rom-symbol-overlay-audit-static-v1` | tooling-validation | Recorded the five intentional container/view aliases in the ROM symbol database and confirmed that layout emission still assigns exactly one owner to every byte |
 | `20260830-hud-display-buffer-contract-static-v1` | recorded-static-decompilation | Named HUD_DISPLAY_DIGITS at 0x00FF7E29-0x00FF7E2F and corrected Interaction_SynchronizeResponseState's exact current-to-pending snapshot/update direction |
+| `20260830-hud-display-initializer-runtime-v1` | recorded-repeated-runtime-observation | Observed Interaction_InitializePendingDisplayValue execute on two fresh-boot runs and seed 0x00FF7E30 with ASCII 100000; promoted function reachability while retaining neutral display semantics |

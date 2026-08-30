@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-hud-display-initializer-runtime-v1",
+  "recorded_at": "2026-08-30",
+  "status": "recorded-repeated-runtime-observation",
+  "repository_commit_at_capture": "6d43b67",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "function": {
+    "address": "0x001AFFE4",
+    "name": "Interaction_InitializePendingDisplayValue",
+    "range": ["0x001AFFE4", "0x001B0007"],
+    "new_confidence": "trace_validated",
+    "static_contract": "Writes ASCII 100000 followed by NUL to INTERACTION_PENDING_DISPLAY_VALUE at 0x00FF7E30-0x00FF7E36."
+  },
+  "runs": [
+    {
+      "trace_dir": "build/re/traces/hud-counter-watch",
+      "frames": 360,
+      "input": "none*360",
+      "observed_writes": [
+        {"pc": "0x001AFFF0", "address": "0x00FF7E30", "value": "0x31", "frame": 4},
+        {"pc": "0x001AFFF4", "address": "0x00FF7E31", "value": "0x30", "frame": 4}
+      ]
+    },
+    {
+      "trace_dir": "build/re/traces/hud-counter-player-run",
+      "frames": 1400,
+      "input": "none*120,start*5,none*120,start*5,none*110,right*1045",
+      "observed_writes": [
+        {"pc": "0x001AFFF0", "address": "0x00FF7E30", "value": "0x31", "frame": 4},
+        {"pc": "0x001AFFF4", "address": "0x00FF7E31", "value": "0x30", "frame": 4}
+      ]
+    }
+  ],
+  "conclusion": "Both fresh-boot runs execute the canonical initializer body and begin the exact ASCII 100000 seed at the expected ROM PCs. This validates runtime reachability and the initialization contract only; the displayed value's narrower user-facing meaning remains intentionally unassigned."
+}
