@@ -7,8 +7,10 @@
   },
   "targets": [
     { "address": "0x00122470", "name": "PLAYER_ANIM_ACTION_TERRAIN_TRANSITION" },
+    { "address": "0x001224BA", "name": "PLAYER_ANIM_ACTION_TERRAIN_TRANSITION_CONTINUATION" },
     { "address": "0x00122504", "name": "PLAYER_ANIM_ACTION_TRANSITION_LOCK" },
     { "address": "0x001225A2", "name": "PLAYER_ANIM_ACTION_TERRAIN_TIMER" },
+    { "address": "0x001225E2", "name": "PLAYER_ANIM_ACTION_TERRAIN_TIMER_CONTINUATION" },
     { "address": "0x0012262A", "name": "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE" },
     { "address": "0x00122672", "name": "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE_CONTINUATION" },
     { "address": "0x001A9304", "name": "Player_SelectLocomotionOrAction" },

@@ -2760,6 +2760,41 @@ def test_player_action_continuation_banks_are_exact():
         assert decoded["instructions"][-1]["opcode"] == terminal_opcode
 
 
+def test_player_action_primary_counter_callback_family_is_exact():
+    symbols = SymbolStore()
+    cases = (
+        (0x001223DA, 150, "PLAYER_ANIM_THROW_APPLE", 0x00122450),
+        (0x001224BA, 74, "PLAYER_ANIM_ACTION_TERRAIN_TRANSITION_CONTINUATION", 0x001224E6),
+        (0x00122504, 120, "PLAYER_ANIM_ACTION_TRANSITION_LOCK", 0x0012254C),
+        (0x001225E2, 72, "PLAYER_ANIM_ACTION_TERRAIN_TIMER_CONTINUATION", 0x0012260C),
+        (0x00122672, 64, "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE_CONTINUATION", 0x00122694),
+    )
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = load_animation_decoder().AnimationDecoder(
+        load_animation_decoder().RomReader(rom_path.read_bytes())
+    )
+    for address, size, name, callback_address in cases:
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        decoded = decoder.decode_stream(
+            address,
+            max_instructions=512,
+            max_bytes=size,
+            follow_control_flow=False,
+            continue_after_control_flow=True,
+        )
+        assert decoded["bytes_decoded"] == size
+        callbacks = [
+            instruction for instruction in decoded["instructions"]
+            if instruction.get("opcode") == "0xFB"
+            and instruction.get("parameter") == "0x001B0360"
+        ]
+        assert [instruction["address"] for instruction in callbacks] == [
+            f"0x{callback_address:08X}"
+        ]
+
+
 def test_type1e_proximity_movement_handoff_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001235E2, include_ranges=False)

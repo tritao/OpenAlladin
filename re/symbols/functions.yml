@@ -2334,12 +2334,13 @@
 0x001B0360:
   name: InteractionCounter_DecrementPrimaryDigits
   confidence: decompiled
-  description: Decrements the bounded primary ASCII interaction/resource counter at INTERACTION_COUNTER_DIGITS. It leaves "00" unchanged, subtracts from the low digit, and when the low digit crosses below '0' reloads it to '9' while decrementing the high digit. Its current caller, ActorType15_PlayerCollisionHandler, invokes it three times before selecting the player response animation.
+  description: Decrements the bounded primary ASCII interaction/resource counter at INTERACTION_COUNTER_DIGITS. It leaves "00" unchanged, subtracts from the low digit, and when the low digit crosses below '0' reloads it to '9' while decrementing the high digit. Its direct Ghidra caller, ActorType15_PlayerCollisionHandler, invokes it three times before selecting the player response animation; the same service is also pushed as an AnimationVM FB callback by PLAYER_ANIM_THROW_APPLE, PLAYER_ANIM_ACTION_TRANSITION_LOCK, PLAYER_ANIM_ACTION_TERRAIN_TIMER_CONTINUATION, and PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE_CONTINUATION.
   evidence:
     - ghidra_decompile_001B0360
     - ghidra_level01_observed_unknown_player_collision_targets
     - ghidra_decompile_001AE978
     - primary_interaction_counter_contract_static_v1
+    - player_animation_fb_primary_counter_callback_static_v1
 0x001B0394:
   name: InteractionCounter_AdvanceSecondaryDigits
   confidence: confirmed

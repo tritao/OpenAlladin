@@ -1,0 +1,66 @@
+{
+  "format": "openaladdin-player-animation-fb-primary-counter-callback-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/player-action-transition-animation-static-targets.json",
+  "callback": {
+    "address": "0x001B0360",
+    "name": "InteractionCounter_DecrementPrimaryDigits",
+    "direct_ghidra_caller": {
+      "address": "0x001AE978",
+      "name": "ActorType15_PlayerCollisionHandler",
+      "effect": "Calls the helper three times before selecting the player response animation."
+    },
+    "semantics": "Decrements the bounded ASCII primary interaction/resource counter at INTERACTION_COUNTER_DIGITS with decimal borrow and a zero floor."
+  },
+  "animation_vm_references": [
+    {
+      "stream_address": "0x001223DA",
+      "stream_name": "PLAYER_ANIM_THROW_APPLE",
+      "callback_address": "0x00122450",
+      "raw": "FB00001B0360",
+      "role": "Apple-throw action stream callback phase."
+    },
+    {
+      "stream_address": "0x001224BA",
+      "stream_name": "PLAYER_ANIM_ACTION_TERRAIN_TRANSITION_CONTINUATION",
+      "callback_address": "0x001224E6",
+      "raw": "FB00001B0360",
+      "role": "Terrain-transition action continuation callback phase."
+    },
+    {
+      "stream_address": "0x00122504",
+      "stream_name": "PLAYER_ANIM_ACTION_TRANSITION_LOCK",
+      "callback_address": "0x0012254C",
+      "raw": "FB00001B0360",
+      "role": "Transition-lock action callback phase."
+    },
+    {
+      "stream_address": "0x001225E2",
+      "stream_name": "PLAYER_ANIM_ACTION_TERRAIN_TIMER_CONTINUATION",
+      "callback_address": "0x0012260C",
+      "raw": "FB00001B0360",
+      "role": "F2 continuation callback phase entered from PLAYER_ANIM_ACTION_TERRAIN_TIMER at 0x001225CA."
+    },
+    {
+      "stream_address": "0x00122672",
+      "stream_name": "PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE_CONTINUATION",
+      "callback_address": "0x00122694",
+      "raw": "FB00001B0360",
+      "role": "Airborne-response action continuation callback phase."
+    }
+  ],
+  "evidence": [
+    "Lossless AnimationDecoder output over each exact canonical stream extent",
+    "Five exact FB00001B0360 operands in the player action-animation bank",
+    "The callback body at 0x001B0360 updates INTERACTION_COUNTER_DIGITS with decimal borrow",
+    "Ordinary Ghidra callgraph callers do not include data-driven AnimationVM FB parameters"
+  ],
+  "qualification": "The apple-throw stream proves that the primary interaction/resource counter is decremented at this action callback point, but the shared callback and other static consumers do not justify renaming INTERACTION_COUNTER_DIGITS to an apple-only field.",
+  "conclusion": "InteractionCounter_DecrementPrimaryDigits is both a direct collision-handler service and a shared data-driven AnimationVM callback. The five player action-stream references are now canonical, including the previously automatic continuation at 0x001225E2, closing the missing callback edges without treating them as ordinary code calls."
+}

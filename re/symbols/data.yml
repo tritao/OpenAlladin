@@ -5947,11 +5947,12 @@
   name: PLAYER_ANIM_THROW_APPLE
   size: 150
   confidence: confirmed
-  description: Player apple-throw animation stream entry. Its exact 150-byte packed region at 0x001223DA-0x0012246F contains the action-response writes, flag/field gates, Type-0x84 child spawn, callback parameter, and dynamic state handoff before PLAYER_ANIM_ACTION_TERRAIN_TRANSITION at 0x00122470.
+  description: Player apple-throw animation stream entry. Its exact 150-byte packed region at 0x001223DA-0x0012246F contains the action-response writes, flag/field gates, Type-0x84 child spawn, an FB push of InteractionCounter_DecrementPrimaryDigits at 0x00122450, and the dynamic state handoff before PLAYER_ANIM_ACTION_TERRAIN_TRANSITION at 0x00122470.
   evidence:
     - ghidra_disassembly_001A9430
     - mame_player_animation_trace
     - player_core_animation_entry_extents_static_decompilation
+    - player_animation_fb_primary_counter_callback_static_v1
 
 0x0012271A:
   name: PLAYER_ANIM_SWORD
@@ -6367,28 +6368,42 @@
   type: animation_stream
   size: 74
   confidence: decompiled
-  description: Branch continuation of PLAYER_ANIM_ACTION_TERRAIN_TRANSITION. Its exact 74-byte region applies the action-field gates, presents the 0x0C16 response, writes PLAYER_ACTION_RESPONSE_STATE, spawns the transition child through PLAYER_ACTION_F5_ACTOR_TEMPLATE, publishes the action callback field, and ends at the dynamic player-animation selector before PLAYER_ANIM_ACTION_TRANSITION_LOCK at 0x00122504.
+  description: Branch continuation of PLAYER_ANIM_ACTION_TERRAIN_TRANSITION. Its exact 74-byte region applies the action-field gates, presents the 0x0C16 response, writes PLAYER_ACTION_RESPONSE_STATE, spawns the transition child through PLAYER_ACTION_F5_ACTOR_TEMPLATE, queues InteractionCounter_DecrementPrimaryDigits at 0x001224E6 with FB, publishes the action callback field, and ends at the dynamic player-animation selector before PLAYER_ANIM_ACTION_TRANSITION_LOCK at 0x00122504.
   evidence:
     - player_action_transition_animation_static_decompilation
     - animation_stream_decoder
+    - player_animation_fb_primary_counter_callback_static_v1
 
 0x00122504:
   name: PLAYER_ANIM_ACTION_TRANSITION_LOCK
   size: 120
   confidence: confirmed
-  description: Player action stream selected by Player_SelectLocomotionOrAction while PLAYER_TRANSITION_GATE or PLAYER_INTERACTION_TRANSITION_LOCK is active. It presents the 0x0C1A-0x0C26 sequence, writes player animation field 0xF0DA to 1, spawns the exact actor record at 0x001B7918, queues callback 0x001B0360 with FB, writes field 0xF11F, plays sound 0x03, and gates the response on the interaction flag and terrain stop fields.
+  description: Player action stream selected by Player_SelectLocomotionOrAction while PLAYER_TRANSITION_GATE or PLAYER_INTERACTION_TRANSITION_LOCK is active. It presents the 0x0C1A-0x0C26 sequence, writes player animation field 0xF0DA to 1, spawns the exact actor record at 0x001B7918, queues InteractionCounter_DecrementPrimaryDigits at 0x0012254C with FB, writes field 0xF11F, plays sound 0x03, and gates the response on the interaction flag and terrain stop fields.
   evidence:
     - ghidra_player_locomotion_action_selector
     - animation_stream_decoder
+    - player_animation_fb_primary_counter_callback_static_v1
 
 0x001225A2:
   name: PLAYER_ANIM_ACTION_TERRAIN_TIMER
   size: 64
   confidence: confirmed
-  description: Player action stream selected by Player_SelectLocomotionOrAction when TERRAIN_RESPONSE_TIMER_STATE is active and the player is grounded. It presents the 0x0C32-0x0C3A sequence, writes player animation field 0xF0DA to 1 for each phase, and gates its continuation on the interaction flag and terrain stop field.
+  description: Player action stream selected by Player_SelectLocomotionOrAction when TERRAIN_RESPONSE_TIMER_STATE is active and the player is grounded. It presents the 0x0C32-0x0C3A sequence, writes player animation field 0xF0DA to 1 for each phase, and branches at 0x001225CA into PLAYER_ANIM_ACTION_TERRAIN_TIMER_CONTINUATION, whose packed response body queues InteractionCounter_DecrementPrimaryDigits.
   evidence:
     - ghidra_player_locomotion_action_selector
     - animation_stream_decoder
+    - player_animation_fb_primary_counter_callback_static_v1
+
+0x001225E2:
+  name: PLAYER_ANIM_ACTION_TERRAIN_TIMER_CONTINUATION
+  type: animation_stream
+  size: 72
+  confidence: decompiled
+  description: F2 continuation of PLAYER_ANIM_ACTION_TERRAIN_TIMER entered from 0x001225CA. Its exact 72-byte packed body checks player action field 0xF0C8, presents frames 0x0C3E-0x0C46, spawns ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD at 0x001B7918, queues InteractionCounter_DecrementPrimaryDigits at 0x0012260C with FB, publishes player field 0xF11F, and returns through the existing player response path at 0x0012201A.
+  evidence:
+    - player_action_transition_animation_static_decompilation
+    - animation_stream_decoder
+    - player_animation_fb_primary_counter_callback_static_v1
 
 0x0012257C:
   name: PLAYER_ANIM_ACTION_TRANSITION_LOCK_CONTINUATION
@@ -6414,11 +6429,12 @@
   type: animation_stream
   size: 64
   confidence: decompiled
-  description: Branch continuation of PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE selected by its F2 gate at 0x0012265A. Its exact 64-byte body compares player action field 0xF0C8, presents frame 0x0C56, spawns ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD at 0x001B7918, queues Player_ActionAnimationCallback at 0x001B0360, publishes player field 0xF11F, presents the 0x0C5A/0x0C5E response, and returns through the existing jump at 0x001226AC to 0x0012217A.
+  description: Branch continuation of PLAYER_ANIM_ACTION_AIRBORNE_RESPONSE selected by its F2 gate at 0x0012265A. Its exact 64-byte body compares player action field 0xF0C8, presents frame 0x0C56, spawns ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD at 0x001B7918, queues InteractionCounter_DecrementPrimaryDigits at 0x00122694 with FB, publishes player field 0xF11F, presents the 0x0C5A/0x0C5E response, and returns through the existing jump at 0x001226AC to 0x0012217A.
   evidence:
     - player_action_airborne_continuation_static_decompilation
     - player_action_transition_animation_static_decompilation
     - animation_stream_decoder
+    - player_animation_fb_primary_counter_callback_static_v1
 
 0x001226B2:
   name: PLAYER_ANIM_INTERACTION_CAMERA_RESPONSE

@@ -2232,6 +2232,23 @@ This proves the counter's transition-gate role and exact cap use without
 assigning a user-facing resource name. The static result is recorded in
 `re/mame/findings/20260830-difficulty-counter-type7e-consumer-static-v1.json`.
 
+## Player AnimationVM primary-counter callback family (20260830)
+
+The player action-animation bank contains five data-driven `FB` pushes of
+`InteractionCounter_DecrementPrimaryDigits` at `0x001B0360`: the apple-throw
+stream at `0x00122450`, the terrain-transition continuation at `0x001224E6`,
+the transition-lock stream at `0x0012254C`, the terrain-timer continuation at
+`0x0012260C`, and the airborne-response continuation at `0x00122694`.
+The ordinary Ghidra call graph reports only the direct Type-0x15 caller, so
+these VM callback edges are recorded separately. The formerly automatic
+`0x001225E2` fragment is now canonically named
+`PLAYER_ANIM_ACTION_TERRAIN_TIMER_CONTINUATION` and range-bounded.
+
+This proves a shared primary interaction/resource-counter callback without
+assigning `INTERACTION_COUNTER_DIGITS` an apple-only meaning; its other ROM
+consumers remain active. The result is recorded in
+`re/mame/findings/20260830-player-animation-fb-primary-counter-callback-static-v1.json`.
+
 ## Level-loader scratch helpers (20260828)
 
 The level-loader initialization family is now named at five documented
