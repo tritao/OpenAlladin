@@ -54,7 +54,7 @@
     "extended_callback": {
       "address": "0x001ACC5E",
       "rng_helper": "0x001B3032",
-      "effect": "Advances GAME_RANDOM_STATE at 0x00FF7DEA with state = state*13 + 7, selects the low two bits, and conditionally queues audio/event IDs 0x5E, 0x5F, 0x60, or 0x61 when VDP_UPDATE_FLAG is set.",
+      "effect": "Advances GLOBAL_PRNG_STATE at 0x00FF7DEA with state = state*13 + 7, selects the low two bits, and conditionally queues audio/event IDs 0x5E, 0x5F, 0x60, or 0x61 when VDP_UPDATE_FLAG is set.",
       "scene_effect": "No write to SCENE_STATE, SCENE_SCRIPT_COUNTDOWN, PLAYER_WORLD_X, PLAYER_WORLD_Y, PLAYER_VX, or PLAYER_VY."
     }
   },

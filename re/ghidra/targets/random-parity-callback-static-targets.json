@@ -35,7 +35,7 @@
     },
     {
       "address": "0x00FF7DEA",
-      "name": "RANDOM_STATE"
+      "name": "GLOBAL_PRNG_STATE"
     }
   ]
 }

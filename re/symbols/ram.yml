@@ -287,6 +287,18 @@
     - ghidra_decompile_001B45F4
     - ghidra_sound_test_targets
     - rom_sound_test_entry_table_0012675E
+0xFF7DEA:
+  name: GLOBAL_PRNG_STATE
+  type: u32
+  format: prng_state
+  confidence: decompiled
+  description: Shared 32-bit pseudo-random generator state. Random_AdvanceScaledByCounter and TerrainScene5RandomStep update it with state = state * 13 + 7, while startup and the options presentation seed it to 0x00BC614E.
+  evidence:
+    - ghidra_disassembly_001A8C0C
+    - ghidra_disassembly_001B2FFC
+    - ghidra_disassembly_001B3032
+    - ghidra_disassembly_001B3EE2
+    - random_scaled_step_static_decompilation
 0xFFF15B:
   name: SOUND_TEST_INPUT_REPEAT_TIMER
   type: u8

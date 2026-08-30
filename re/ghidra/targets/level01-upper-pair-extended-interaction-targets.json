@@ -14,7 +14,7 @@
     { "address": "0x0012046C", "name": "ACTOR_MOVE_TYPE1E_STATE46_RESPONSE" }
   ],
   "memory_references": [
-    { "address": "0x00FF7DEA", "name": "GAME_RANDOM_STATE" },
+    { "address": "0x00FF7DEA", "name": "GLOBAL_PRNG_STATE" },
     { "address": "0x00FFF57D", "name": "VDP_UPDATE_FLAG" },
     { "address": "0x00FF7E26", "name": "SCENE_STATE" },
     { "address": "0x00FFF0E9", "name": "SCENE_SCRIPT_COUNTDOWN" }

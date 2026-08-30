@@ -624,6 +624,15 @@ def test_real_scene_resource_rebuild_phase_state_has_canonical_roles():
         assert symbol.confidence == "decompiled"
 
 
+def test_real_global_prng_state_has_canonical_role():
+    symbol = SymbolStore().at(0x00FF7DEA, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "GLOBAL_PRNG_STATE"
+    assert symbol.metadata["type"] == "u32"
+    assert symbol.metadata["format"] == "prng_state"
+    assert symbol.confidence == "decompiled"
+
+
 def test_real_level_timer_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF103, include_ranges=False)
     assert symbol is not None
