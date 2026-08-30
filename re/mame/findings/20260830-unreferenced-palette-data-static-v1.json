@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-unreferenced-palette-data-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "provisional-structural-classification",
+  "confidence": "provisional",
+  "target_manifest": "re/ghidra/targets/unreferenced-palette-data-static-targets.json",
+  "ranges": [
+    { "name": "UNREFERENCED_PALETTE_SOURCE_129312", "range": ["0x00129312", "0x00129331"], "bytes": 32, "bands": 1 },
+    { "name": "UNREFERENCED_PALETTE_BAND_BANK_129A32", "range": ["0x00129A32", "0x00129A91"], "bytes": 96, "bands": 3 }
+  ],
+  "structural_checks": [
+    "Each band contains exactly 16 big-endian words.",
+    "All words satisfy the Genesis palette encoding bounds.",
+    "The three 0x00129A32 bands include exact byte matches to existing palette sources at 0x00129012, 0x00129032, and 0x00129E60."
+  ],
+  "limitations": [
+    "No direct ROM consumer or published runtime pointer is known for either range.",
+    "The names deliberately avoid assigning a scene, actor, level, or palette color role."
+  ],
+  "conclusion": "The two formerly unknown palette-shaped regions are now represented as provisional GRAPHICS data while their consumers remain unresolved."
+}

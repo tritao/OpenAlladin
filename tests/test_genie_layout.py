@@ -3205,6 +3205,31 @@ def test_canonical_scene_resource_palette_sources_have_exact_loader_extents():
         assert symbol.metadata["type"] == "palette_data"
 
 
+def test_unreferenced_palette_data_has_exact_structural_extents():
+    symbols = SymbolStore()
+    expected = (
+        (0x00129312, 0x00129331, "UNREFERENCED_PALETTE_SOURCE_129312", "provisional"),
+        (0x00129A32, 0x00129A91, "UNREFERENCED_PALETTE_BAND_BANK_129A32", "provisional"),
+    )
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    for start, end, name, confidence in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == end - start + 1
+        assert symbol.end == end
+        assert symbol.metadata["type"] == "palette_data"
+        assert symbol.confidence == confidence
+        payload = rom[start:end + 1]
+        assert len(payload) % 0x20 == 0
+        words = [int.from_bytes(payload[offset:offset + 2], "big") for offset in range(0, len(payload), 2)]
+        assert all(word <= 0x0EEE and not (word & 0x1111) for word in words)
+
+    assert rom[0x00129A32:0x00129A52] == rom[0x00129012:0x00129032]
+    assert rom[0x00129A52:0x00129A72] == rom[0x00129032:0x00129052]
+    assert rom[0x00129A72:0x00129A92] == rom[0x00129E60:0x00129E80]
+
+
 def test_canonical_scene_reset_credits_palette_sources_have_exact_extents():
     symbols = SymbolStore()
     expected = (

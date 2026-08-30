@@ -1780,6 +1780,16 @@
   description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x8B presentation-response handlers.
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
+0x00129312:
+  name: UNREFERENCED_PALETTE_SOURCE_129312
+  type: palette_data
+  size: 0x20
+  confidence: provisional
+  description: Exact 16-word Genesis palette-shaped source between the known INTERACTION_TYPE8B_PALETTE_SOURCE and INTERACTION_TYPE7D_PALETTE_SOURCE. No direct consumer is recovered, so this symbol records structural ownership without assigning a runtime role.
+  evidence:
+    - unreferenced_palette_data_static_v1
+    - fixed_palette_source_extents_static_v1
+
 0x001294F2:
   name: INTERACTION_TYPE0C_PALETTE_SOURCE
   type: palette_data
@@ -2036,6 +2046,16 @@
   confidence: decompiled
   description: Common scene-resource palette source published for palette band 2 by SceneResource_LoadCommonVRAMPair.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
+
+0x00129A32:
+  name: UNREFERENCED_PALETTE_BAND_BANK_129A32
+  type: palette_data
+  size: 0x60
+  confidence: provisional
+  description: Three contiguous 16-word Genesis palette bands between the known SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12 and SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92. The bands are structurally valid and include exact duplicates of palette data used elsewhere, but no direct consumer is recovered.
+  evidence:
+    - unreferenced_palette_data_static_v1
+    - scene_resource_palette_source_extents_static_v1
 
 0x00129A92:
   name: SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92
