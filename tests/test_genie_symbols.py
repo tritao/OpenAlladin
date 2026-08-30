@@ -674,6 +674,14 @@ def test_real_player_terrain_transition_gate_has_canonical_role():
     assert symbol.metadata["format"] == "boolean"
 
 
+def test_real_actor_vm_domain_selector_has_canonical_role():
+    symbol = SymbolStore().at(0x00FF7DA2, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "ACTOR_VM_MOVEMENT_PASS"
+    assert symbol.metadata["type"] == "u8"
+    assert symbol.metadata["format"] == "boolean"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

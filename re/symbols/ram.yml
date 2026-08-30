@@ -161,6 +161,17 @@
     - ghidra_decompile_001AFE1C
     - difficulty_counter_consumer_closure_static_v1
     - player_life_counter_runtime_v1
+0xFF7DA2:
+  name: ACTOR_VM_MOVEMENT_PASS
+  type: u8
+  format: boolean
+  confidence: confirmed
+  description: Shared actor-VM domain selector. AnimationVM_RunActorPass clears it before dispatching animation streams, MovementVM_TickActors sets it to 0xFF before dispatching movement streams, and the shared VM opcode handlers use zero versus nonzero to select the actor record's animation or movement cursor, timer, and loop fields.
+  evidence:
+    - ghidra_decompile_001AC796
+    - ghidra_decompile_001ADE36
+    - ghidra_decompile_001AC86C
+    - ghidra_decompile_001AC8E0
 0xFF7E29:
   name: HUD_DISPLAY_DIGITS
   type: u8[7]
