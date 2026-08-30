@@ -3481,12 +3481,13 @@
     - mame_player_state_trace
 0x001AD150:
   name: Player_ResetAnimationResponseGate
-  confidence: decompiled
+  confidence: trace_validated
   description: Clears the player's animation timer and interaction-animation gate when terrain, camera, transition, and response latches permit the player animation response to converge.
   evidence:
     - ghidra_decompile_001AD150
     - ghidra_decompile_001AE796
     - ghidra_decompile_001AEC00
+    - player_transition_flag_response_runtime_attribution_v1
 0x001ADA98:
   name: Player_SetTransitionFlagResponseAnimation
   size: 24
