@@ -20,7 +20,7 @@
         "ED write of 0x00120A00",
         "EA loop at 0x00123DDC"
       ],
-      "adjacent_unresolved": "0x00123DE2-0x00123DE9 self-loop"
+      "adjacent_provisional": "0x00123DE2-0x00123DE9 self-loop; separately bounded with unresolved external reachability"
     },
     {
       "address": "0x00123DEA",
@@ -63,7 +63,7 @@
       ]
     }
   ],
-  "conclusion": "The Type-0x0F F5 child root, shared Type-0x6E-through-0x73 base-template default animation, runtime-0x47-through-0x4C child-spawn root, and compact Type-0x84 interaction response are independently bounded AnimationVM streams. The intervening 0x00123DE2 self-loop is deliberately not assigned to any owner.",
+  "conclusion": "The Type-0x0F F5 child root, the adjacent provisional self-loop, the shared Type-0x6E-through-0x73 base-template default animation, runtime-0x47-through-0x4C child-spawn root, and compact Type-0x84 interaction response are independently bounded AnimationVM streams. The self-loop has exact deasm ownership but no assigned external actor or producer.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

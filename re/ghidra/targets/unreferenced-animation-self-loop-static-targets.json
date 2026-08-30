@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-unreferenced-animation-self-loop-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "stream": {
+    "address": "0x00123DE2",
+    "end": "0x00123DE9",
+    "name": "ACTOR_ANIM_UNREFERENCED_SELF_LOOP_123DE2",
+    "bytes": "1ADEEA0000123DE2",
+    "frame": "0x001FD478",
+    "terminal": "EA -> 0x00123DE2"
+  },
+  "boundary_basis": [
+    "The stream begins immediately after ACTOR_ANIM_TYPE84_TYPE0F_CHILD at 0x00123DE1.",
+    "The stream ends immediately before ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT at 0x00123DEA.",
+    "AnimationDecoder consumes exactly the frame reference and six-byte EA self-loop, stopping on a control-flow cycle."
+  ],
+  "reachability": "No external actor-template pointer or producer has been recovered; runtime ownership remains unresolved.",
+  "confidence": "provisional",
+  "status": "recorded-static-disassembly"
+}

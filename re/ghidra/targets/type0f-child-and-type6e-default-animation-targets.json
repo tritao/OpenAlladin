@@ -13,7 +13,7 @@
       "template": "0x001B7C88 ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD",
       "producer": "0x00123CF8 ACTOR_ANIM_TYPE0F_INTERACTION",
       "terminal": "0x00123DDC EA -> 0x00123D34",
-      "excluded_adjacent_fragment": ["0x00123DE2", "0x00123DE9"]
+      "adjacent_provisional_fragment": ["0x00123DE2", "0x00123DE9"]
     },
     {
       "address": "0x00123DEA",
@@ -58,7 +58,7 @@
     "Independent next-root boundary at 0x00123E7E"
   ],
   "limitations": [
-    "The 8-byte 0x00123DE2 self-loop has no independently proven external root and remains unresolved.",
+    "The 8-byte 0x00123DE2 self-loop is separately classified as a provisional exact animation range; its external root remains unresolved.",
     "The type-0x6E through 0x73 producers replace the shared base animation pointer with six per-type roots before the actor runs."
   ],
   "confidence": "decompiled",

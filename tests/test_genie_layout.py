@@ -706,6 +706,7 @@ def test_type0f_child_and_type6e_default_animation_ranges_are_exact():
     symbols = SymbolStore()
     expected = {
         0x00123D34: (0x00123DE1, "ACTOR_ANIM_TYPE84_TYPE0F_CHILD"),
+        0x00123DE2: (0x00123DE9, "ACTOR_ANIM_UNREFERENCED_SELF_LOOP_123DE2"),
         0x00123DEA: (0x00123E35, "ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT"),
         0x00123E36: (0x00123E75, "ACTOR_ANIM_TYPE84_RUNTIME47_4C"),
         0x00123E76: (0x00123E7D, "ACTOR_ANIM_TYPE84_INTERACTION_RESPONSE"),
@@ -722,7 +723,24 @@ def test_type0f_child_and_type6e_default_animation_ranges_are_exact():
     child = symbols.at(0x00123D34, include_ranges=False)
     assert child is not None
     assert child.size == 174
-    assert symbols.at(0x00123DE2, include_ranges=False) is None
+
+    loop = symbols.at(0x00123DE2, include_ranges=False)
+    assert loop is not None
+    assert loop.size == 8
+    assert loop.confidence == "provisional"
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x00123DE2:0x00123DEA] == bytes.fromhex("1ADEEA0000123DE2")
+    decoded = load_animation_decoder().AnimationDecoder(
+        load_animation_decoder().RomReader(rom)
+    ).decode_stream(
+        0x00123DE2,
+        max_instructions=16,
+        max_bytes=16,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 8
+    assert decoded["stopped_reason"] == "control_flow_cycle"
+    assert decoded["instructions"][-1]["branch_target"] == "0x00123DE2"
 
 
 def test_mid_actor_animation_stream_ranges_are_exact():
