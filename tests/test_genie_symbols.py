@@ -435,6 +435,16 @@ def test_real_apple_counter_has_a_semantic_projection_alias():
     assert counter.metadata["format"] == "ascii_digits"
 
 
+def test_real_player_counter_has_a_provisional_life_projection_alias():
+    symbols = SymbolStore()
+
+    counter = symbols.at(0x00FF7E3C, include_ranges=False)
+    assert counter is not None
+    assert counter.name == "GAME_DIFFICULTY_COUNTER"
+    assert "PLAYER_LIFE_COUNT_DIGIT" in counter.aliases
+    assert counter.metadata["format"] == "ascii_digit"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

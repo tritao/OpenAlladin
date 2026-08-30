@@ -2217,6 +2217,27 @@ place because shared interaction and scene-resource paths also update the
 same word. The semantic alias and runtime evidence are recorded in
 `re/ghidra/targets/apple-count-runtime-targets.json`.
 
+## Player life/continue counter projection (20260830)
+
+The single ASCII byte at `FF7E3C` now has the provisional semantic alias
+`PLAYER_LIFE_COUNT_DIGIT`, while `GAME_DIFFICULTY_COUNTER` remains the
+address-level canonical name. Static analysis ties the byte to
+`Game_InitializeDifficultyCounter`, which selects `'5'`, `'3'`, or `'2'` from
+`GAME_DIFFICULTY_MODE`; `Render_BuildActorRecords`, which emits the digit
+beside the player portrait/status icon; and `Level_ExitAndTerminalTransition`,
+which decrements the byte before the nonzero terminal reload path and routes
+the zero case into `Hud_RunPendingDisplayPresentation` and
+`SceneResource_InitializeActiveScene`.
+
+The recorded `player-attack-ram` capture independently observes the byte at
+ASCII `'3'` while the separate `INTERACTION_COUNTER_DIGITS` word changes from
+`"10"` to `"09"` after the apple action. That separates the player status
+count from the apple inventory projection. The alias remains provisional:
+the ROM has no text label proving whether the product calls this value lives
+or continues, and this closure does not identify the separate native health
+model. The full evidence is recorded in
+`re/ghidra/targets/player-life-counter-runtime-targets.json`.
+
 ## Secondary interaction counter reset (20260828)
 
 InteractionCounter_ResetSecondaryDigits at `0x001AA664` resets the separate
@@ -3545,6 +3566,7 @@ valuable because it prevents repeating the same input family.
 | `20260830-apple-count-runtime-v1` | recorded-runtime-evidence | Confirmed the player-facing apple-count projection of the shared FFEFE0 ASCII word from PLAYER_ANIM_THROW_APPLE, HUD emission, and the MAME 10-to-9 transition after the recorded A action; retained INTERACTION_COUNTER_DIGITS as the address-level canonical name |
 | `20260830-difficulty-counter-type7e-consumer-static-v1` | recorded-static-decompilation | Closed ActorType7E_PlayerCollisionHandler's exact secondary-counter thresholds, five/ten-step countdown paths, GAME_DIFFICULTY_COUNTER cap branch, scene-resource mode selection, and camera-threshold tail without assigning a user-facing counter name |
 | `20260830-difficulty-counter-consumer-closure-static-v1` | recorded-static-decompilation | Closed the direct GAME_DIFFICULTY_COUNTER reader/writer family and all four Game_IncrementDifficultyCounter callers; corrected Type-0x46 ASCII-'9' gate wording while retaining conservative user-facing semantics |
+| `20260830-player-life-counter-runtime-v1` | recorded-runtime-evidence | Added the provisional PLAYER_LIFE_COUNT_DIGIT projection for FF7E3C from its portrait-adjacent HUD record, terminal decrement/zero branch, and independent runtime separation from the apple count; retained GAME_DIFFICULTY_COUNTER as canonical and did not claim native health semantics |
 | `20260830-type7e-function-boundary-correction-v1` | tooling-validation | Corrected ActorType7E_PlayerCollisionHandler from the stale 358-byte overlapping symbol size to its exact 292-byte body ending at 0x001AFF3F before the separate mode-11 and mode-16 helpers |
 | `20260830-rnc-title-boundary-audit-correction-v2` | tooling-validation | Corrected the RNC manifest end interpretation: its exclusive 0x001434C3 endpoint means the title payload ends at 0x001434C2 and the zero at 0x001434C3 remains alignment padding before the next RNC header at 0x001434C4 |
 | `20260830-scene-resource-stream-boundary-correction-static-v1` | tooling-validation | Corrected SCENE_RESOURCE_BLANK_STREAM_STATE_03 to its 0x00127AEE-0x00127B5F terminator and separated the independently selected 0x00127B60-0x00127BD1 stream |

@@ -1,0 +1,76 @@
+{
+  "format": "openaladdin-player-life-counter-runtime-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "focus": {
+    "address": "0x00FF7E3C",
+    "canonical_name": "GAME_DIFFICULTY_COUNTER",
+    "semantic_alias": "PLAYER_LIFE_COUNT_DIGIT",
+    "purpose": "Record the strongest player-facing life/continue projection without replacing the neutral address-level name or claiming the separate native health model."
+  },
+  "static_evidence": {
+    "initializer": {
+      "address": "0x001B0046",
+      "name": "Game_InitializeDifficultyCounter",
+      "values": {
+        "GAME_DIFFICULTY_MODE=0": "ASCII '5'",
+        "GAME_DIFFICULTY_MODE=1": "ASCII '3'",
+        "other": "ASCII '2'"
+      },
+      "reset_callers": [
+        "0x001A8A4A Game_InitializeAndEnterFrameLoop",
+        "0x001B202A Startup_RunTitlePresentation"
+      ]
+    },
+    "hud": {
+      "address": "0x001AB7C4",
+      "name": "Render_BuildActorRecords",
+      "icon_word": "0xE6EA",
+      "digit_tile_base": "0xE6E0",
+      "digit_position": "(0x00AA, 0x0148)",
+      "effect": "Seeds the player portrait/status record and converts GAME_DIFFICULTY_COUNTER minus ASCII '0' into the adjacent digit tile."
+    },
+    "terminal_lifecycle": {
+      "address": "0x001A8F0C",
+      "name": "Level_ExitAndTerminalTransition",
+      "nonzero_effect": "Decrements GAME_DIFFICULTY_COUNTER before the terminal reload path when the runtime-mode gate is clear.",
+      "zero_effect": "Runs Hud_RunPendingDisplayPresentation and SceneResource_InitializeActiveScene instead of taking the nonzero reload branch."
+    }
+  },
+  "runtime_evidence": {
+    "trace": "build/re/analysis/player-attack-ram",
+    "raw_ram": "build/re/analysis/player-attack-ram/ram_frames.bin",
+    "ram_frame_size": 65536,
+    "counter_offset": "0x7E3C",
+    "observations": [
+      {
+        "frame": 5,
+        "raw_value": "0x00",
+        "interpretation": "Pre-initialization RAM capture."
+      },
+      {
+        "frame": 337,
+        "raw_value": "0x33",
+        "ascii": "3",
+        "interpretation": "The reset/scene initialization has published the normal observed HUD count."
+      },
+      {
+        "frame": 1647,
+        "raw_value": "0x33",
+        "ascii": "3",
+        "interpretation": "The count remains independent while the apple word changes during the recorded A action."
+      }
+    ],
+    "independent_apple_projection": {
+      "address": "0x00FFEFE0",
+      "frame_337": "0x3130",
+      "frame_1647": "0x3039",
+      "interpretation": "The apple count changes from ASCII 10 to 09 while the player status digit remains ASCII 3."
+    },
+    "visual_snapshot": "build/re/headless-live-visual-20260830/snapshots/jump.png"
+  },
+  "qualification": "The alias is a provisional semantic projection supported by initialization values, the portrait-adjacent HUD record, terminal decrement/zero branching, and the independent runtime apple-count observation. The exact product wording (lives versus continues) and any relationship to native health remain unresolved."
+}

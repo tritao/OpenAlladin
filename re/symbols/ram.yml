@@ -108,10 +108,12 @@
     - ghidra_disassembly_001B434E
 0xFF7E3C:
   name: GAME_DIFFICULTY_COUNTER
+  aliases:
+    - PLAYER_LIFE_COUNT_DIGIT
   type: u8
   format: ascii_digit
   confidence: decompiled
-  description: Single ASCII-digit progression/transition counter initialized from GAME_DIFFICULTY_MODE, rendered in the HUD, decremented by the terminal level-transition path, and incremented by Game_IncrementDifficultyCounter up to '9'. ActorType46_PlayerCollisionHandler, ActorType7E_PlayerCollisionHandler, InteractionGate_Type46_AF, LevelEvent_SpawnType46WhenSceneReady, and LevelEvent_SpawnType46WhenModeReady use the cap to gate Type-0x46 or terminal scene-resource work. Its user-facing game meaning remains unassigned.
+  description: "Single ASCII-digit progression/transition counter initialized from GAME_DIFFICULTY_MODE, rendered beside the player portrait/status icon, decremented by the terminal level-transition path, and incremented by Game_IncrementDifficultyCounter up to '9'. ActorType46_PlayerCollisionHandler, ActorType7E_PlayerCollisionHandler, InteractionGate_Type46_AF, LevelEvent_SpawnType46WhenSceneReady, and LevelEvent_SpawnType46WhenModeReady use the cap to gate Type-0x46 or terminal scene-resource work. The strongest current semantic projection is a player life/continue count: the terminal coordinator decrements it before reload and routes the zero case into HUD/scene reset work. PLAYER_LIFE_COUNT_DIGIT remains provisional because the ROM exposes no text label and this contract does not identify the separate native health model."
   evidence:
     - ghidra_disassembly_001B0046
     - ghidra_decompile_001AEF70
@@ -119,6 +121,7 @@
     - ghidra_disassembly_001A8F0C
     - ghidra_decompile_001AFE1C
     - difficulty_counter_consumer_closure_static_v1
+    - player_life_counter_runtime_v1
 0xFF7E29:
   name: HUD_DISPLAY_DIGITS
   type: u8[7]
