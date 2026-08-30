@@ -55,9 +55,17 @@ def _runtime(database: AnalysisDatabase, function_address: int, path: Path | Non
             }
         return {"observed": False, "pc_count": 0, "scenarios": [], "source": str(path)}
 
+    pcs = document.get("pcs", []) if isinstance(document, dict) else []
+    if isinstance(pcs, dict):
+        pc_items = [
+            {"address": raw_address, **(raw_value if isinstance(raw_value, dict) else {})}
+            for raw_address, raw_value in pcs.items()
+        ]
+    else:
+        pc_items = pcs if isinstance(pcs, list) else []
     counts = 0
     scenarios: set[str] = set()
-    for item in document.get("pcs", []) if isinstance(document, dict) else ():
+    for item in pc_items:
         try:
             function = database.function(_address(item.get("address")))
         except (AttributeError, TypeError, ValueError):

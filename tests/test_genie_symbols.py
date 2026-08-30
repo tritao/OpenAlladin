@@ -230,6 +230,29 @@ def test_context_can_include_cached_pseudocode(tmp_path):
     assert value["decompile"]["text"] == "void First(void) {}\n"
 
 
+def test_context_reads_merged_per_pc_archive(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    coverage = tmp_path / "coverage-expanded.json"
+    coverage.write_text(json.dumps({"pcs": {
+        "0x00000014": {"sample_count": 3, "scenarios": ["first", "second"]},
+    }}), encoding="utf-8")
+
+    value = build_context(
+        AnalysisDatabase(database_root),
+        0x14,
+        SymbolStore(symbols=(Symbol(0x10, "FirstFunction", "function"),)),
+        coverage_path=coverage,
+    )
+
+    assert value["runtime"] == {
+        "observed": True,
+        "pc_count": 1,
+        "scenarios": ["first", "second"],
+        "source": str(coverage),
+    }
+
+
 def _write_database(root: Path) -> None:
     root.mkdir(parents=True)
     documents = {
