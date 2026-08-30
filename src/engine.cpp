@@ -464,7 +464,6 @@ SceneServices Engine::scene_services() {
         actor_movement_.update(state_, frame_runtime_, rom_bytes_);
         animation_system_.actors().update(
             state_,
-            frame_,
             frame_phase_,
             animation_system_.player_context(state_, player_.grounded),
             [this](
@@ -924,7 +923,6 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
                bool response_dynamic_handoff, bool bounce_response_finished) {
             animation_system_.update_common(
                 state_,
-                frame_,
                 frame_phase_,
                 pose,
                 direction,

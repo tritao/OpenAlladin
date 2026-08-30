@@ -38,7 +38,6 @@ public:
 
     void update_common(
         GameState& state,
-        int frame,
         std::uint8_t frame_phase,
         SpritePose desired_pose,
         HorizontalDirection direction,

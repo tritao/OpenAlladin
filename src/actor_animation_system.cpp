@@ -1,6 +1,7 @@
 #include "actor_animation_system.hpp"
 
 #include "game_state.hpp"
+#include "movement.hpp"
 
 #include <algorithm>
 #include <cstddef>
@@ -75,7 +76,6 @@ std::optional<ActorIndex> ActorAnimationSystem::spawn_f5(
 
 void ActorAnimationSystem::update(
     GameState& state,
-    int frame,
     std::uint8_t frame_phase,
     const AnimationContext& context,
     const ObserveTransition& observe_transition,
@@ -96,29 +96,6 @@ void ActorAnimationSystem::update(
             continue;
         }
         if (actor.type == 0 || actor.animation_pc == 0) {
-            continue;
-        }
-        // The transient type-0x84 child at (1434,704) is reclaimed by the
-        // ROM resource sweep before its next animation frame.
-        if (actor.type == kActorTerminalType
-            && actor.animation_pc == 0x001244A4
-            && actor.x == 1434 && actor.y == 704) {
-            if (vm(slot).consume_actor_retirement_defer()) {
-                actor_lifecycle_.retire(slot, ActorRetirementMode::RetireLinkedActor);
-                reset(slot);
-            } else {
-                vm(slot).defer_actor_retirement();
-                continue;
-            }
-            continue;
-        }
-        // The short type-0x06 resource effect reaches the ROM cleanup loop
-        // before its ED/FB animation commands publish the type-0x84 value.
-        if (actor.type == 0x06 && actor.animation_pc == 0x00123200
-            && actor.x == 1849 && actor.y == 775
-            && (!vm(slot).actor_service_deferred() || frame >= 522)) {
-            actor_lifecycle_.retire(slot);
-            reset(slot);
             continue;
         }
         // The live sword trace reaches the terminal actor template at the
@@ -159,7 +136,7 @@ void ActorAnimationSystem::update(
             if (!service_actor_table
                 && !apple_actor_service && actor.type == kActorTerminalType
                 && actor.terminal_timer == 0) {
-                update_terminal_actor_motion(actor);
+                MovementVm::integrate_actor(actor);
             }
             continue;
         }
@@ -178,7 +155,7 @@ void ActorAnimationSystem::update(
             && service_actor_table
             && !generated_sword_death;
         if (hold_scene5_phase || hold_death_phase) {
-            update_terminal_actor_motion(actor);
+            MovementVm::integrate_actor(actor);
             continue;
         }
 
@@ -227,37 +204,9 @@ void ActorAnimationSystem::update(
         }
         if (actor.type == kActorTerminalType
             && previous_type == kActorTerminalType) {
-            update_terminal_actor_motion(actor);
+            MovementVm::integrate_actor(actor);
         }
     }
-}
-
-void ActorAnimationSystem::update_terminal_actor_motion(ActorState& actor) const {
-    // The terminal scene records use the same movement integration as the
-    // common movement pass when their animation service is held.
-    if (actor.frame_ptr == 0) return;
-    if ((actor.movement_flags & 0x40) != 0) {
-        actor.movement_word_1a = static_cast<std::int16_t>(actor.movement_word_1a + 0x78);
-    }
-    actor.x = static_cast<std::uint16_t>(
-        static_cast<int>(actor.x) + (actor.movement_word_18 >> 8));
-    actor.y = static_cast<std::uint16_t>(
-        static_cast<int>(actor.y) + (actor.movement_word_1a >> 8));
-    auto decay_velocity = [](std::int16_t& value, std::int16_t step) {
-        if (value < 0) {
-            if (value > static_cast<std::int16_t>(-step)) {
-                value = 0;
-            } else {
-                value = static_cast<std::int16_t>(value + step);
-            }
-        } else if (value < step) {
-            value = 0;
-        } else {
-            value = static_cast<std::int16_t>(value - step);
-        }
-    };
-    decay_velocity(actor.movement_word_18, 0x28);
-    decay_velocity(actor.movement_word_1a, 0x3C);
 }
 
 std::vector<std::uint8_t> ActorAnimationSystem::take_sound_requests() {

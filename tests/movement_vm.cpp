@@ -33,6 +33,19 @@ int main() {
     actor.frame_ptr = 1;
 
     openaladdin::MovementVm vm;
+    openaladdin::ActorState integrated;
+    integrated.frame_ptr = 1;
+    integrated.x = 100;
+    integrated.y = 200;
+    integrated.movement_flags = 0x40;
+    integrated.movement_word_18 = 0x0120;
+    integrated.movement_word_1a = 0;
+    openaladdin::MovementVm::integrate_actor(integrated);
+    assert(integrated.x == 101);
+    assert(integrated.y == 200);
+    assert(integrated.movement_word_18 == 0x00F8);
+    assert(integrated.movement_word_1a == 0x003C);
+
     vm.tick(actors, openaladdin::MovementContext{rom, 0, 0, nullptr, {}});
     assert(actor.x == 103);
     assert(actor.y == 198);

@@ -39,7 +39,6 @@ AnimationServices AnimationSystem::services(
 
 void AnimationSystem::update_common(
     GameState& state,
-    int frame,
     std::uint8_t frame_phase,
     SpritePose desired_pose,
     HorizontalDirection direction,
@@ -66,7 +65,6 @@ void AnimationSystem::update_common(
     }
     actor_animation_.update(
         state,
-        frame,
         frame_phase,
         context,
         observe_transition,

@@ -6,8 +6,36 @@
 
 namespace openaladdin {
 
-namespace {
-constexpr std::uint8_t kActorTerminalType = 0x84;
+void MovementVm::integrate_actor(ActorState& actor) {
+    if (actor.frame_ptr == 0) return;
+
+    // MovementVM_TickActors applies gravity before integrating the two
+    // signed 8.8 velocity words. Animation-held terminal records use this
+    // same ROM helper even though their movement stream is not serviced on
+    // that frame.
+    if ((actor.movement_flags & 0x40) != 0) {
+        actor.movement_word_1a = static_cast<std::int16_t>(
+            actor.movement_word_1a + 0x78);
+    }
+    actor.x = static_cast<std::uint16_t>(
+        static_cast<int>(actor.x) + (actor.movement_word_18 >> 8));
+    actor.y = static_cast<std::uint16_t>(
+        static_cast<int>(actor.y) + (actor.movement_word_1a >> 8));
+    const auto decay_velocity = [](std::int16_t& velocity, std::int16_t step) {
+        if (velocity < 0) {
+            if (velocity > static_cast<std::int16_t>(-step)) {
+                velocity = 0;
+            } else {
+                velocity = static_cast<std::int16_t>(velocity + step);
+            }
+        } else if (velocity < step) {
+            velocity = 0;
+        } else {
+            velocity = static_cast<std::int16_t>(velocity - step);
+        }
+    };
+    decay_velocity(actor.movement_word_18, 0x28);
+    decay_velocity(actor.movement_word_1a, 0x3C);
 }
 
 void MovementVm::tick(
@@ -53,38 +81,11 @@ void MovementVm::tick(
         std::uint32_t cursor = step_pc;
         if (cursor + 1 >= context.rom.size()) continue;
 
-        // MovementVM_TickActors applies the per-record gravity increment
-        // before integrating the vertical accumulator. The increment is
-        // enabled by actor +0x06 bit 6; scene-created type-0x2D streams
-        // commonly arm it through a 0x91 callback in their first step.
-        if ((actor.movement_flags & 0x40) != 0) {
-            actor.movement_word_1a = static_cast<std::int16_t>(
-                actor.movement_word_1a + 0x78);
-        }
-
         // MovementVM_TickActors integrates the two actor velocity words
         // before consuming the next signed-delta step. The words are 8.8
         // fixed-point values: the ROM-visible pixel coordinate receives the
         // signed high byte, while the full word remains as the accumulator.
-        actor.x = static_cast<std::uint16_t>(
-            static_cast<int>(actor.x) + (actor.movement_word_18 >> 8));
-        actor.y = static_cast<std::uint16_t>(
-            static_cast<int>(actor.y) + (actor.movement_word_1a >> 8));
-        const auto decay_velocity = [](std::int16_t& velocity, std::int16_t step) {
-            if (velocity < 0) {
-                if (velocity > static_cast<std::int16_t>(-step)) {
-                    velocity = 0;
-                } else {
-                    velocity = static_cast<std::int16_t>(velocity + step);
-                }
-            } else if (velocity < step) {
-                velocity = 0;
-            } else {
-                velocity = static_cast<std::int16_t>(velocity - step);
-            }
-        };
-        decay_velocity(actor.movement_word_18, 0x28);
-        decay_velocity(actor.movement_word_1a, 0x3C);
+        integrate_actor(actor);
 
         int delta_x = static_cast<std::int8_t>(read_u8(cursor));
         int delta_y = static_cast<std::int8_t>(read_u8(cursor + 1));

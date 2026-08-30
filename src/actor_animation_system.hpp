@@ -58,7 +58,6 @@ public:
 
     void update(
         GameState& state,
-        int frame,
         std::uint8_t frame_phase,
         const AnimationContext& context,
         const ObserveTransition& observe_transition,
@@ -73,8 +72,6 @@ public:
     void read_checkpoint(std::istream& input);
 
 private:
-    void update_terminal_actor_motion(ActorState& actor) const;
-
     ActorLifecycleSystem& actor_lifecycle_;
     VmTable vms_{};
     GameState* state_ = nullptr;

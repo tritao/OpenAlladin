@@ -29,6 +29,11 @@ struct MovementContext {
 // table fixture.
 class MovementVm {
 public:
+    // Integrates the actor's 8.8 fixed-point velocity accumulator. This is
+    // the common movement step used by both the normal movement stream and
+    // animation-held actor records.
+    static void integrate_actor(ActorState& actor);
+
     void tick(
         std::array<ActorState, 32>& actors,
         const MovementContext& context
