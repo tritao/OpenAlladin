@@ -665,6 +665,7 @@ void CollisionSystem::terminalize(
     std::uint8_t frames
 ) {
     auto& actor = state.actors[slot];
+    const ActorHostMeta host_meta = state.actors.host_meta(slot);
     ActorState terminal = actor;
     terminal.type = kActorTerminalType;
     const std::uint32_t template_address = animation_stream == kActorDeathAnimationStream
@@ -680,7 +681,13 @@ void CollisionSystem::terminalize(
     terminal.facing_x_flip = 0;
     terminal.facing_y_flip = 0;
     terminal.terminal_timer = frames;
-    (void)actor_lifecycle_.install(slot, terminal);
+    if (actor_lifecycle_.install(slot, terminal)) {
+        // Collision terminalization replaces the ROM record in place. Keep
+        // the native origin marker so a generated sword child follows the
+        // generated-actor cadence, while fixture/static swords retain the
+        // ordinary terminal hold.
+        state.actors.host_meta(slot) = host_meta;
+    }
 }
 
 void CollisionSystem::actor_actor(GameState& state) {

@@ -88,7 +88,11 @@ void ActorAnimationSystem::update(
     const bool service_actor_table = (frame_phase & 1U) != 0;
     for (std::size_t slot = 0; slot < state.actors.size(); ++slot) {
         ActorState& actor = state.actors[slot];
-        if (!state.actors.snapshot_mode() && slot == 0) {
+        // Slot 0 is the player record. The player VM is serviced by the
+        // scheduler's ordinal-30 pass below; ticking its mirrored actor VM a
+        // second time would consume action streams twice and can fire an F5
+        // child spawn on the input frame.
+        if (slot == 0) {
             continue;
         }
         if (actor.type == 0 || actor.animation_pc == 0) {
@@ -136,7 +140,12 @@ void ActorAnimationSystem::update(
             terminal.facing_x_flip = 0;
             terminal.facing_y_flip = 0;
             terminal.terminal_timer = 19;
-            (void)actor_lifecycle_.install(slot, terminal);
+            if (actor_lifecycle_.install(slot, terminal)) {
+                // Preserve ownership across the in-place type conversion so
+                // the generated sword death stream is not mistaken for a
+                // scene terminal actor by the phase hold below.
+                state.actors.host_meta(slot).spawned_by_animation = true;
+            }
         }
         // The apple child has its own every-other-VBlank cadence beginning at
         // allocation; unlike the shared table, it is serviced on both phases.
@@ -159,9 +168,15 @@ void ActorAnimationSystem::update(
             && actor.terminal_timer == 0
             && !force_service
             && !service_actor_table;
+        const bool sword_death_stream = actor.type == kActorTerminalType
+            && actor.animation_pc >= kActorSwordDeathAnimationStream
+            && actor.animation_pc < 0x00122E20;
+        const bool generated_sword_death = sword_death_stream
+            && state.actors.host_meta(slot).spawned_by_animation;
         const bool hold_death_phase = actor.type == kActorTerminalType
             && actor.terminal_timer != 0
-            && service_actor_table;
+            && service_actor_table
+            && !generated_sword_death;
         if (hold_scene5_phase || hold_death_phase) {
             update_terminal_actor_motion(actor);
             continue;

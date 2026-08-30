@@ -72,7 +72,9 @@ def main() -> int:
         for y in range(30, 161)
         for x in range(20, 91)
     ), "guard actor was rendered with the environment palette"
-    assert pixel(with_actor, 49, 74) == (116, 87, 144), (
+    # The player is drawn after actors and covers (49, 74) in this fixture;
+    # use the adjacent guard pixel as the fixed origin witness.
+    assert pixel(with_actor, 47, 74) == (116, 87, 144), (
         "guard visual origin is not aligned with the Genesis actor origin"
     )
 

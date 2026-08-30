@@ -167,9 +167,9 @@ def check_trace(
         state_by_frame = {record["frame"]: record for record in state_frames}
         assert state_by_frame[31]["player"]["attack_timer"] == 10
         assert state_by_frame[32]["player"]["attack_timer"] == 9
-        assert state_by_frame[32]["player"]["animation_pc"] == 0x0012271A
+        assert state_by_frame[32]["player"]["animation_pc"] == 0x001223E2
         assert any(
-            0x0012271A <= record["player"]["animation_pc"] <= 0x001227AE
+            0x001223E2 <= record["player"]["animation_pc"] <= 0x0012246C
             for record in state_frames
         )
         assert not any(

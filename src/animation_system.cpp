@@ -3,6 +3,11 @@
 #include "game_state.hpp"
 
 namespace openaladdin {
+namespace {
+
+constexpr std::uint32_t kPlayerSwordStableStream = 0x001223E2;
+
+}  // namespace
 
 void AnimationSystem::bind_state(GameState& state) {
     player_.bind_state(state);
@@ -50,7 +55,12 @@ void AnimationSystem::update_common(
     const ObserveTransition& observe_transition,
     const ObserveActorFlags& observe_actor_flags
 ) {
-    AnimationServices services = this->services(0, false, true);
+    // The live sword F5 is part of the player's stable action stream. It is
+    // allocated before the shared actor-table pass so its first animation
+    // frame is visible on the same boundary as the ROM. Other player mode-3
+    // streams retain the deferred boundary used by the general VM path.
+    const bool defer_mode3_spawns = player_.stream_entry() != kPlayerSwordStableStream;
+    AnimationServices services = this->services(0, false, defer_mode3_spawns);
     if (response_dynamic_handoff) {
         player_.select_locomotion_entry(0x00121AD8, true);
     } else if (bounce_response_finished) {

@@ -11,10 +11,11 @@
 namespace openaladdin {
 namespace {
 
-// The input edge enters PLAYER_ANIM_SWORD at the next game-loop boundary.
-// 0x001223E2 is the first data cursor inside the separate apple stream.
-constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
-constexpr std::uint32_t kPlayerSwordAnimationEnd = 0x001227AE;
+// The live first-guard action enters the stable sword stream at the next
+// game-loop boundary. 0x0012271A is an isolated action branch, not the
+// player/sword sequence observed by MAME in this encounter.
+constexpr std::uint32_t kPlayerSwordAnimationStream = 0x001223E2;
+constexpr std::uint32_t kPlayerSwordAnimationEnd = 0x0012246C;
 constexpr std::uint32_t kPlayerAppleActionStream = 0x001223DA;
 constexpr std::uint32_t kPlayerAttackTransitionStream = 0x00122034;
 constexpr std::uint32_t kPlayerSwordFirstFrame = 0x001ED34A;
@@ -725,12 +726,13 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // marker only for the post-follow downward rebase path above.
     services_.record_scheduler_phase("scene_advance", 0x001A8E3E);
     services_.update_scene_resources();
+    const std::uint32_t animation_pc_before_common_vm = animation_.animation_pc();
     services_.record_scheduler_phase("animation_vm", 0x001AC784);
     if (!stable_terrain_handler_fixture) {
         // The bounce response's F8 command publishes the dynamic 0x121AD8
         // root at this boundary but leaves the previous frame pointer in
         // place. Do not consume the new root until the following VBlank.
-        const bool response_dynamic_handoff =
+    const bool response_dynamic_handoff =
             animation_.animation_pc() == 0x001221E8;
         services_.update_animation_vm_ordinal_30(
             desired_pose,
@@ -826,7 +828,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         && was_grounded
         && animation_.rom_loaded()) {
         // A live sword press keeps a run/idle cursor for the input frame. On
-        // the next boundary it enters PLAYER_ANIM_SWORD at 0x0012271A. A
+        // the next boundary it enters PLAYER_ANIM_SWORD at 0x001223E2. A
         // synchronized action checkpoint may already be inside the sword
         // stream, so that case is restarted on the edge itself.
         const auto current_animation = animation_.animation_pc();
@@ -836,7 +838,9 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         const bool checkpoint_action_cursor =
             input.attack_pressed
             && (already_in_sword_transition
+                || animation_.stream_entry() == kPlayerAttackTransitionStream
                 || current_animation == kPlayerAttackTransitionStream
+                || animation_pc_before_common_vm == kPlayerAttackTransitionStream
                 || current_animation == 0x001232E0);
         if (attack_followup || checkpoint_action_cursor) {
             animation_.select_stream_entry(kPlayerSwordAnimationStream);

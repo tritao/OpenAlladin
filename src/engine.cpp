@@ -430,7 +430,6 @@ void Engine::update_dynamic_actor_culling() {
 }
 
 void Engine::sync_player_actor() {
-    if (actors_.snapshot_mode()) return;
     ActorState& actor = actors_[0];
     actor.type = 0x83;
     actor.x = static_cast<std::uint16_t>(player_world_x());

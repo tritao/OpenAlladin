@@ -149,8 +149,23 @@ def field_value(record: dict[str, Any], field: str) -> Any:
     return value
 
 
+def inactive_actor_slot(record: dict[str, Any], slot: int) -> bool:
+    for actor in record.get("actors", []):
+        if isinstance(actor, dict) and actor.get("slot") == slot:
+            return int(actor.get("type", 0)) == 0 and int(actor.get("flags", 0)) == 0
+    return True
+
+
 def selected_difference(left: dict[str, Any], right: dict[str, Any], fields: list[str]) -> tuple[str, Any, Any] | None:
     for field in fields:
+        actor_match = re.fullmatch(r"actors\[(\d+)\]\..+", field)
+        if actor_match is not None:
+            slot = int(actor_match.group(1))
+            # MAME's actor capture omits inactive slots, while the native
+            # state schema emits the fixed-width table. Compare selected
+            # fields only while at least one side has a live actor.
+            if inactive_actor_slot(left, slot) and inactive_actor_slot(right, slot):
+                continue
         try:
             left_value = field_value(left, field)
         except KeyError:

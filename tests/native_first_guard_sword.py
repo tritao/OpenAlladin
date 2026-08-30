@@ -50,7 +50,21 @@ def main() -> int:
     assert attack_frame["player"]["attack_timer"] == 10
     assert attack_frame["player"]["world_x"] == 1273
     attack_boundary = frame_states[attack_frame["frame"] + 1]
-    assert attack_boundary["player"]["animation_pc"] == 0x0012271A
+    assert attack_boundary["player"]["animation_pc"] == 0x001223E2
+
+    sword_spawn_frame = next(
+        record["frame"]
+        for record in frame_states
+        if any(actor["slot"] == 25 and actor["type"] == 0x80 for actor in record["actors"])
+    )
+    assert sword_spawn_frame == attack_frame["frame"] + 11
+    sword = next(
+        actor
+        for actor in frame_states[sword_spawn_frame]["actors"]
+        if actor["slot"] == 25
+    )
+    assert sword["animation_pc"] == 0x00122B5A
+    assert sword["frame_ptr"] == 0x001FD478
 
     previous_guard_type = {}
     guard_hit_frame = None
@@ -66,6 +80,7 @@ def main() -> int:
                 break
             previous_guard_type[4] = guard["type"]
     assert guard_hit_frame is not None, "the opening guard was never hit"
+    assert guard_hit_frame >= sword_spawn_frame
 
     print("native first-guard sword: ok")
     return 0
