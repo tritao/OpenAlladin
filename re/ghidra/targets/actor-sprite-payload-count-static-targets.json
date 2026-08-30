@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-actor-sprite-payload-count-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the renderer word that counts buffered actor sprite payload records.",
+  "state": {
+    "address": "0x00FFEFEE",
+    "name": "ACTOR_SPRITE_PAYLOAD_COUNT",
+    "type": "u16",
+    "format": "record_count"
+  },
+  "producer": {
+    "address": "0x001AC6D0",
+    "name": "Render_BuildActorSpritePayload",
+    "operation": "Increment the low byte once for each 14-byte payload record copied to the renderer output buffer."
+  },
+  "initializers": [
+    {
+      "address": "0x001AC796",
+      "name": "AnimationVM_RunActorPass",
+      "operation": "Clear the count before building actor payloads."
+    },
+    {
+      "address": "0x001AC784",
+      "name": "AnimationVM_TickActors",
+      "operation": "Clear the count before the animation tick path."
+    }
+  ],
+  "consumer": {
+    "address": "0x001AC726",
+    "name": "Render_SubmitActorSprites",
+    "operation": "Use the count minus one to transfer the buffered 14-byte records to the VDP."
+  },
+  "evidence": [
+    "Exact sprite-payload expansion decompilation",
+    "Exact VDP submission count loop",
+    "Exact animation-pass count initialization"
+  ],
+  "conclusion": "FFEFEE is the 16-bit actor sprite payload record count; FFEFEF is its low-byte access, not an independent state.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

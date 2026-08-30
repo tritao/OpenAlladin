@@ -666,6 +666,14 @@ def test_real_interaction_response_elapsed_ticks_has_canonical_role():
     assert symbol.metadata["format"] == "ticks"
 
 
+def test_real_actor_sprite_payload_count_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFEFEE, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "ACTOR_SPRITE_PAYLOAD_COUNT"
+    assert symbol.metadata["type"] == "u16"
+    assert symbol.metadata["format"] == "record_count"
+
+
 def test_real_player_terrain_transition_gate_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF114, include_ranges=False)
     assert symbol is not None

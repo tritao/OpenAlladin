@@ -791,6 +791,16 @@
     - ghidra_decompile_001B00D6
     - ghidra_disassembly_001B00CA
     - interaction_response_counter_complete_static_decompilation
+0xFFEFEE:
+  name: ACTOR_SPRITE_PAYLOAD_COUNT
+  type: u16
+  format: record_count
+  confidence: confirmed
+  description: Number of 14-byte actor sprite payload records waiting in the renderer buffer. AnimationVM pass setup clears it, Render_BuildActorSpritePayload increments its low byte for each expanded frame record, and Render_SubmitActorSprites consumes the word to transfer exactly that many records to the VDP.
+  evidence:
+    - ghidra_decompile_001AC6D0
+    - ghidra_decompile_001AC726
+    - ghidra_decompile_001AC796
 0xFFF0E9:
   name: SCENE_SCRIPT_COUNTDOWN
   type: u8

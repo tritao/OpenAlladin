@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-sprite-payload-count-static-targets.json",
+  "symbol": {
+    "address": "0x00FFEFEE",
+    "name": "ACTOR_SPRITE_PAYLOAD_COUNT",
+    "type": "u16",
+    "format": "record_count"
+  },
+  "contract": {
+    "clear": "AnimationVM_TickActors and AnimationVM_RunActorPass clear the low byte before payload generation.",
+    "produce": "Render_BuildActorSpritePayload increments the low byte per 14-byte actor sprite payload.",
+    "consume": "Render_SubmitActorSprites uses the full word as the buffered-record count."
+  },
+  "conclusion": "The word counts actor sprite payload records pending VDP submission; its low-byte FFEFEF references are width-preserving accesses.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}
