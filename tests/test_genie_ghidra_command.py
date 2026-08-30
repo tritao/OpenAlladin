@@ -16,7 +16,9 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     scan = build_parser().parse_args(["ghidra", "scan", "--rom", "rom.bin", "--allow-unverified"])
     validate_db = build_parser().parse_args(["ghidra", "validate-db", "--json"])
     layout = build_parser().parse_args(["layout", "show", "0x1234", "--json"])
-    layout_candidates = build_parser().parse_args(["layout", "candidates", "--limit", "3", "--json"])
+    layout_candidates = build_parser().parse_args(
+        ["layout", "candidates", "--limit", "3", "--json", "--strong-only"]
+    )
     deasm_build = build_parser().parse_args(["deasm", "build"])
     deasm_stats = build_parser().parse_args(["deasm", "stats", "--json"])
     deasm_todo = build_parser().parse_args(["deasm", "todo", "--limit", "3"])
@@ -37,6 +39,7 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert layout.address == 0x1234
     assert layout_candidates.limit == 3
     assert layout_candidates.json_output is True
+    assert layout_candidates.strong_only is True
     assert deasm_build.function is deasm.command_deasm_build
     assert deasm_stats.function is deasm.command_deasm_stats
     assert deasm_stats.json_output is True

@@ -123,6 +123,7 @@ def command_layout_candidates(args: argparse.Namespace) -> int:
         animation_path=resolve(args.animation) if args.animation else None,
         movement_path=resolve(args.movement) if args.movement else None,
         max_references=args.max_references,
+        strong_only=args.strong_only,
     )
     limit = args.limit if args.limit > 0 else len(items)
     selected = items[:limit]
@@ -132,7 +133,7 @@ def command_layout_candidates(args: argparse.Namespace) -> int:
     print(f"ROM layout candidates ({len(selected)} of {len(items)})")
     if not selected:
         return 0
-    print("rank score gap                         class                         confidence evidence")
+    print("rank score gap                         class                         confidence quality promotion evidence")
     for item in selected:
         gap = item["gap"]
         counts = item["evidence_counts"]
@@ -148,7 +149,8 @@ def command_layout_candidates(args: argparse.Namespace) -> int:
         print(
             f"{item['rank']:>4} {item['score']:>5} "
             f"{gap['start']}-{gap['end']} {item['suggested_class']:<29} "
-            f"{item['confidence']:<10} {evidence}"
+            f"{item['confidence']:<10} {item['evidence_quality']:<7} "
+            f"{item['promotion']:<12} {evidence}"
         )
     return 0
 

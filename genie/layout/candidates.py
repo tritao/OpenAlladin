@@ -254,6 +254,7 @@ def build_layout_candidates(
     animation_path: Path | None = None,
     movement_path: Path | None = None,
     max_references: int = 12,
+    strong_only: bool = False,
 ) -> list[dict[str, Any]]:
     """Return ranked evidence records for unknown layout gaps.
 
@@ -380,14 +381,24 @@ def build_layout_candidates(
             suggested_class = "ANIMATION_STREAM"
         elif "movement" in stream_kinds:
             suggested_class = "MOVEMENT_STREAM"
-        elif direct or templates:
-            reference_types = {str(row.get("type") or "").upper() for row in direct}
+        elif code_direct or templates:
+            # Only code-originated references can establish that the gap is
+            # a table consumed as code.  Data-originated entries are useful
+            # corroboration, but must not inflate the format suggestion.
+            reference_types = {str(row.get("type") or "").upper() for row in code_direct}
             if "CONDITIONAL_JUMP" in reference_types or "UNCONDITIONAL_JUMP" in reference_types:
                 suggested_class = "JUMP_TABLE or POINTER_TABLE"
-            elif "DATA" in reference_types and len(direct) >= 8:
+            elif "DATA" in reference_types and len(code_direct) >= 8:
                 suggested_class = "POINTER_TABLE"
             else:
                 suggested_class = "OPAQUE_DATA"
+        elif direct:
+            # A data-only xref identifies a value that points into the gap,
+            # not the format of the target bytes.  In particular, dense data
+            # xrefs are not sufficient evidence for calling the target a
+            # pointer table; doing so made arbitrary coordinate/text gaps
+            # look ready for promotion.
+            suggested_class = "UNKNOWN"
         else:
             suggested_class = "UNKNOWN"
         if catalogued_streams or templates:
@@ -398,6 +409,15 @@ def build_layout_candidates(
             confidence = "low"
         else:
             confidence = "medium"
+        if catalogued_streams or templates:
+            evidence_quality = "strong"
+            promotion = "review"
+        elif probes or code_direct:
+            evidence_quality = "medium"
+            promotion = "review"
+        else:
+            evidence_quality = "weak"
+            promotion = "do_not_promote"
         function_sources = {
             row.get("from_function")
             for row in code_direct
@@ -428,12 +448,18 @@ def build_layout_candidates(
             reasons.append("code_backed_references")
         if data_only_direct:
             reasons.append("data_only_references")
+        if data_only_direct and not (streams or templates or code_direct):
+            reasons.append("data_only_refs_do_not_identify_format")
+        elif data_only_direct and code_direct:
+            reasons.append("data_only_refs_are_supporting_only")
         result.append({
             "rank": 0,
             "score": score,
             "gap": item["gap"],
             "suggested_class": suggested_class,
             "confidence": confidence,
+            "evidence_quality": evidence_quality,
+            "promotion": promotion,
             "evidence_counts": {
                 "direct_references": len(direct),
                 "code_backed_references": len(code_direct),
@@ -464,6 +490,8 @@ def build_layout_candidates(
             _address(value["gap"]["start"]),
         )
     )
+    if strong_only:
+        result = [item for item in result if item["evidence_quality"] != "weak"]
     for rank, item in enumerate(result, 1):
         item["rank"] = rank
     return result

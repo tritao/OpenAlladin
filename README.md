@@ -89,7 +89,10 @@ ranges. It ranks gaps using incoming Ghidra references, decoded animation or
 movement streams, direct pointers in established actor-template records, and
 conservative VM probes at referenced anchors. It is advisory only; promotion
 into the canonical layout still requires a reviewed symbol, boundary test,
-and evidence record.
+and evidence record. The report marks evidence quality and promotion advice;
+data-only xrefs alone do not establish a target format. Use
+`genie layout candidates --strong-only` to hide those weak data-only leads
+while working through the queue.
 
 Generate a complete local ROM representation from the validated layout and
 canonical instruction export. The output is ignored and can be regenerated

@@ -139,6 +139,11 @@ def build_parser() -> argparse.ArgumentParser:
     layout_candidates.add_argument("--movement", type=Path, help="override decoded movement-stream report")
     layout_candidates.add_argument("--limit", type=int, default=50, help="maximum rows; zero means all")
     layout_candidates.add_argument("--max-references", type=int, default=12, help="evidence rows retained per candidate")
+    layout_candidates.add_argument(
+        "--strong-only",
+        action="store_true",
+        help="hide gaps supported only by data-to-data references",
+    )
     layout_candidates.add_argument("--json", action="store_true", dest="json_output")
     layout_candidates.set_defaults(function=command_layout_candidates)
 

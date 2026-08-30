@@ -57,6 +57,8 @@ def test_layout_candidates_join_decoder_and_actor_template_pointer_evidence(tmp_
     assert item["gap"]["start"] == "0x00000000"
     assert item["suggested_class"] == "ANIMATION_STREAM"
     assert item["confidence"] == "high"
+    assert item["evidence_quality"] == "strong"
+    assert item["promotion"] == "review"
     assert item["evidence_counts"] == {
         "direct_references": 1,
         "code_backed_references": 1,
@@ -89,10 +91,36 @@ def test_layout_candidates_identify_dense_pointer_reference_gaps(tmp_path):
     items = build_layout_candidates(AnalysisDatabase(database), layout, root=tmp_path)
 
     assert len(items) == 1
-    assert items[0]["suggested_class"] == "POINTER_TABLE"
+    assert items[0]["suggested_class"] == "UNKNOWN"
     assert items[0]["confidence"] == "low"
+    assert items[0]["evidence_quality"] == "weak"
+    assert items[0]["promotion"] == "do_not_promote"
     assert items[0]["evidence_counts"]["code_backed_references"] == 0
     assert items[0]["evidence_counts"]["data_only_references"] == 8
+    assert "data_only_refs_do_not_identify_format" in items[0]["reasons"]
+
+
+def test_layout_candidates_can_hide_weak_data_only_evidence(tmp_path):
+    database = _database(tmp_path)
+    (database / "xrefs.json").write_text(json.dumps({"references": [
+        {
+            "from": f"0x{0x80 + index * 2:08X}",
+            "to": f"0x{0x10 + index:08X}",
+            "type": "DATA",
+        }
+        for index in range(8)
+    ]}), encoding="utf-8")
+    layout = Layout(
+        rom_size=0x100,
+        ranges=(
+            LayoutRange(0x00, 0x1F, "UNKNOWN", "layout.gap"),
+            LayoutRange(0x20, 0xFF, "CODE", "test"),
+        ),
+    )
+
+    items = build_layout_candidates(AnalysisDatabase(database), layout, root=tmp_path, strong_only=True)
+
+    assert items == []
 
 
 def test_layout_candidates_rank_code_backed_references_above_data_only_hits(tmp_path):
@@ -133,5 +161,8 @@ def test_layout_candidates_rank_code_backed_references_above_data_only_hits(tmp_
         "0x00000000",
     ]
     assert items[0]["score"] > items[1]["score"]
+    assert items[0]["suggested_class"] == "POINTER_TABLE"
+    assert items[0]["evidence_quality"] == "medium"
     assert items[0]["evidence_counts"]["code_backed_references"] == 8
     assert items[1]["evidence_counts"]["data_only_references"] == 8
+    assert "data_only_refs_do_not_identify_format" in items[1]["reasons"]
