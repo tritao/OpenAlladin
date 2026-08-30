@@ -668,6 +668,46 @@ def test_data_todo_ignores_structural_pointer_table_entries(tmp_path):
     assert index.todo(kind="pointer-table") == []
 
 
+def test_data_context_exposes_animation_movement_publication(tmp_path):
+    database_root = _database(tmp_path)
+    rom_path = tmp_path / "rom" / "Disneys_Aladdin_U_p1.bin"
+    rom_path.parent.mkdir()
+    rom_path.symlink_to(Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin")
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0x1216DC,
+            "ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE",
+            "data",
+            confidence="decompiled",
+            size=42,
+            metadata={"type": "movement_stream"},
+        ),
+        Symbol(
+            0x124658,
+            "ACTOR_ANIM_TYPE13_INTERACTION",
+            "data",
+            confidence="decompiled",
+            size=270,
+            metadata={"type": "animation_stream"},
+        ),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x200000, (LayoutRange(0, 0x1FFFFF, "UNKNOWN", "test"),)),
+    )
+
+    value = index.context(0x1216DC)
+    assert value is not None
+    assert value["consumers"] == [{
+        "address": None,
+        "name": "ACTOR_ANIM_TYPE13_INTERACTION",
+        "references": 1,
+    }]
+    assert value["references"][0]["type"] == "ANIMATION_MOVEMENT_POINTER"
+
+
 def test_data_context_includes_animation_f5_template_consumer(tmp_path):
     database_root = _database(tmp_path)
     symbols = SymbolStore(symbols=(

@@ -183,6 +183,7 @@ class DataIndex:
         self._canonical_decoders: dict[str, Any] = {}
         self._canonical_rom_path: Path | None = None
         self._bounded_validation: dict[tuple[str, int, int], dict[str, Any] | None] = {}
+        self._stream_producer_references: dict[int, list[dict[str, Any]]] | None = None
         self._record_cache: dict[tuple[str, str], list[dict[str, Any]]] = {}
         self._reference_index_cache: dict[str, tuple[list[int], list[dict[str, Any]]]] = {}
         self._coverage_document: Any = None
@@ -473,6 +474,7 @@ class DataIndex:
         result.extend(self._canonical_template_references(value))
         result.extend(self._decoded_template_references(value))
         result.extend(self._canonical_vm_template_references(value))
+        result.extend(self._canonical_vm_stream_references(value))
         unique: dict[tuple[Any, Any, Any], dict[str, Any]] = {}
         for reference in result:
             key = (reference.get("from"), reference.get("to"), reference.get("type"))
@@ -482,6 +484,86 @@ class DataIndex:
             _address(item.get("to", 0)),
             str(item.get("type", "")),
         ))
+
+    def _canonical_vm_stream_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
+        """Find canonical VM writes that install a movement stream.
+
+        Actor movement cursors are often published by an animation ``ED``
+        command rather than a 68K absolute reference.  Ghidra therefore
+        cannot expose that edge as a normal xref, even though it is the most
+        useful producer relationship during semantic reconstruction.
+        """
+
+        if value.get("kind") != "movement":
+            return []
+        target = _address(value["start"])
+        if self._stream_producer_references is None:
+            self._stream_producer_references = self._build_canonical_vm_stream_references()
+        return [dict(reference) for reference in self._stream_producer_references.get(target, ())]
+
+    def _build_canonical_vm_stream_references(self) -> dict[int, list[dict[str, Any]]]:
+        """Build the cached animation-to-movement publication index."""
+
+        reader = self._load_canonical_reader()
+        if reader is None:
+            return {}
+        try:
+            from genie.games.aladdin.vm.animation import AnimationDecoder
+
+            decoder = AnimationDecoder(reader)
+        except (ImportError, OSError, RuntimeError, TypeError, ValueError):
+            return {}
+
+        result: dict[int, list[dict[str, Any]]] = {}
+        for stream in self.objects(kind="animation"):
+            canonical = stream.get("canonical_symbol") or {}
+            if not canonical or _is_alias(stream) or not stream.get("range_bounded"):
+                continue
+            entry = _address(stream["start"])
+            try:
+                size = int(stream["size"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            if size <= 0 or not reader.has(entry, size):
+                continue
+            try:
+                decoded = decoder.decode_stream(
+                    entry,
+                    max_instructions=max(1024, size // 2 + 16),
+                    max_bytes=size,
+                    follow_control_flow=False,
+                    continue_after_control_flow=True,
+                )
+            except (TypeError, ValueError, IndexError):
+                continue
+            if decoded.get("bytes_decoded") != size:
+                continue
+            for instruction in decoded.get("instructions", ()):
+                if not isinstance(instruction, dict) or instruction.get("opcode") != "0xED":
+                    continue
+                if instruction.get("target_fields") != ["0x14", "0x00", "0x0A"]:
+                    continue
+                try:
+                    movement_target = int(str(instruction.get("value", "")), 16)
+                except (TypeError, ValueError):
+                    continue
+                if movement_target == 0:
+                    continue
+                result.setdefault(movement_target, []).append({
+                    "from": instruction.get("address", stream["address"]),
+                    "from_function": None,
+                    "from_function_name": stream["name"],
+                    "from_symbol": stream["address"],
+                    "to": _hex(movement_target),
+                    "type": "ANIMATION_MOVEMENT_POINTER",
+                    "read": False,
+                    "write": False,
+                    "source": "canonical VM bytes",
+                    "instruction": "ED actor movement PC write",
+                })
+        for references in result.values():
+            references.sort(key=lambda item: (_address(item["from"]), str(item["from_function_name"])))
+        return result
 
     def _decoded_template_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
         """Collect decoded references supplied by semantic evidence providers."""
