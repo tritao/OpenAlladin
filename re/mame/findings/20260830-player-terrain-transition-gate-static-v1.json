@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-terrain-transition-gate-static-targets.json",
+  "symbol": {
+    "address": "0x00FFF114",
+    "name": "PLAYER_TERRAIN_TRANSITION_GATE",
+    "type": "u8",
+    "format": "boolean"
+  },
+  "contract": {
+    "owner": "ActorType7E_PlayerCollisionHandler at 0x001AFE1C",
+    "clear": "TERRAIN_PUSH_UP == 0 clears the gate.",
+    "consume": "A zero gate permits one terrain-transition selection.",
+    "publish": "Mode-11 and mode-16 actor-instantiation helpers set it after actor publication."
+  },
+  "conclusion": "The byte suppresses repeated scene-resource transition actor creation during one continuous upward terrain response.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

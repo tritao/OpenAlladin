@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-player-terrain-transition-gate-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the one-shot gate that prevents repeated terrain-triggered mode-11/mode-16 actor transitions.",
+  "state": {
+    "address": "0x00FFF114",
+    "name": "PLAYER_TERRAIN_TRANSITION_GATE",
+    "type": "u8"
+  },
+  "owner": {
+    "address": "0x001AFE1C",
+    "name": "ActorType7E_PlayerCollisionHandler",
+    "clear": "Clear the gate when TERRAIN_PUSH_UP is zero at 0x001AFE30.",
+    "test": "Only enter the terrain-transition selection when the gate is zero at 0x001AFE52.",
+    "set_after_transition": [
+      "SceneResource_EnsureMode11Actors at 0x001AFF40",
+      "SceneResource_InstantiateMode16Actors at 0x001AFF66"
+    ]
+  },
+  "evidence": [
+    "Exact ActorType7E_PlayerCollisionHandler decompilation",
+    "Exact mode-11 and mode-16 actor-instantiation helper bodies",
+    "Clear-before-next-push and set-after-instantiation control flow"
+  ],
+  "conclusion": "FFF114 is a transient one-shot gate around terrain-triggered scene-resource actor transitions, not a general scene-resource status byte.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

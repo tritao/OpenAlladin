@@ -658,6 +658,22 @@ def test_real_scene_resource_tile_base_has_canonical_role():
     assert symbol.metadata["format"] == "vram_tile_offset"
 
 
+def test_real_interaction_response_elapsed_ticks_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFEFEA, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "ACTOR_RESPONSE_ELAPSED_TICKS"
+    assert symbol.metadata["type"] == "u16"
+    assert symbol.metadata["format"] == "ticks"
+
+
+def test_real_player_terrain_transition_gate_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF114, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "PLAYER_TERRAIN_TRANSITION_GATE"
+    assert symbol.metadata["type"] == "u8"
+    assert symbol.metadata["format"] == "boolean"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 
