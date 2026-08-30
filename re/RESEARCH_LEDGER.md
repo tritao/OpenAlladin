@@ -1970,6 +1970,14 @@ and data commands used by the scene and terrain paths.
 The static result is recorded in
 re/mame/findings/20260828-scene-vdp-audio-service-v1.json.
 
+The former SceneTransition_VDPHelper label at 0x001B2E9A is now
+VDP_SetControl9001AndBuildTileRows. Its exact body writes VDP control word
+0x9001 and calls VDP_BuildTileRowCommandTables; the earlier name remains an
+alias for historical traces and target records.
+
+The static result is recorded in
+re/mame/findings/20260830-vdp-row-build-wrapper-static-v1.json.
+
 `Input_SampleControllerState` at `0x001B34CA` is now named as the complete
 two-phase controller sampler. It selects the controller port phase, waits for
 the Z80 handoff, publishes the directional/query byte at `FFF156`, repeats

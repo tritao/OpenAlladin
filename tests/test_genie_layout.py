@@ -4773,6 +4773,7 @@ def test_interaction_spawn_and_player_gate_entrypoints_have_semantic_names():
         0x001B5266: ("InteractionSpawn_AllocateAndConsumeRow", "confirmed"),
         0x001B52A0: ("InteractionSpawn_AllocatePreserveRow", "decompiled"),
         0x001B6ED0: ("InteractionSpawn_RuntimeType21_1A", "confirmed"),
+        0x001B2E9A: ("VDP_SetControl9001AndBuildTileRows", "decompiled"),
     }
     for address, (name, confidence) in expected.items():
         symbol = symbols.at(address, include_ranges=False)
@@ -4783,6 +4784,7 @@ def test_interaction_spawn_and_player_gate_entrypoints_have_semantic_names():
     assert symbols.at(0x001B5266, include_ranges=False).aliases == ("LevelObjectSpawnEntry",)
     assert symbols.at(0x001B52A0, include_ranges=False).aliases == ("LevelObjectSpawnVariant",)
     assert symbols.at(0x001B6ED0, include_ranges=False).aliases == ("InteractionHandler_Type21",)
+    assert symbols.at(0x001B2E9A, include_ranges=False).aliases == ("SceneTransition_VDPHelper",)
 
 
 def test_low_confidence_scene_terrain_services_are_closed():

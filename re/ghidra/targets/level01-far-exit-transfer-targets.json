@@ -13,7 +13,7 @@
   },
   "targets": [
     { "address": "0x001B6406", "name": "Level01_ExitRoutine" },
-    { "address": "0x001B2E9A", "name": "SceneTransition_VDPHelper" },
+    { "address": "0x001B2E9A", "name": "VDP_SetControl9001AndBuildTileRows" },
     { "address": "0x001B5B4A", "name": "Level01_EnterAndExitPredicate" },
     { "address": "0x001B5318", "name": "TerrainHandler_SetTerminalCollisionBlock" },
     { "address": "0x001B5320", "name": "TerrainHandler_SurfaceInteractionBlock" },

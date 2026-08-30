@@ -303,9 +303,10 @@
     - palette_transition_helper_variants_static_decompilation
     - ghidra_transition_render_targets
 0x001B2E9A:
-  name: SceneTransition_VDPHelper
+  name: VDP_SetControl9001AndBuildTileRows
+  aliases: [SceneTransition_VDPHelper]
   confidence: decompiled
-  description: Programs VDP control word 0x9001, selects an 0x80-byte tile-row stride, and rebuilds the scene tile-row command tables.
+  description: Writes VDP control word 0x9001 and invokes VDP_BuildTileRowCommandTables to rebuild the scene tile-row command arrays using the caller's setup state.
   evidence:
     - ghidra_decompile_001B2E9A
     - ghidra_scene_vdp_audio_service_targets

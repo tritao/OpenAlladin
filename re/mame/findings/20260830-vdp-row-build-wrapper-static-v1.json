@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target": {
+    "address": "0x001B2E9A",
+    "old_name": "SceneTransition_VDPHelper",
+    "name": "VDP_SetControl9001AndBuildTileRows",
+    "body": [
+      "write VDP_CONTROL at 0x00C00004 with 0x9001",
+      "call VDP_BuildTileRowCommandTables at 0x001B2142",
+      "return"
+    ],
+    "boundary": "0x001B2E9A-0x001B2EAB",
+    "callers": 19
+  },
+  "evidence": [
+    "Exact 68000 instruction boundaries from the whole-ROM instruction export",
+    "Ghidra targeted decompilation for 0x001B2E9A",
+    "Known VDP_CONTROL and VDP_BuildTileRowCommandTables symbols"
+  ],
+  "conclusion": "The entrypoint is a VDP control-plus-row-command-table wrapper; no narrower scene-transition ownership is required by its body or caller set.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

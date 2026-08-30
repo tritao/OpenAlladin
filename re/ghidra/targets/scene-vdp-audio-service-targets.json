@@ -7,7 +7,7 @@
   },
   "targets": [
     { "address": "0x001B2142", "name": "VDP_BuildTileRowCommandTables" },
-    { "address": "0x001B2E9A", "name": "SceneTransition_VDPHelper" },
+    { "address": "0x001B2E9A", "name": "VDP_SetControl9001AndBuildTileRows" },
     { "address": "0x001B2EAC", "name": "SceneResource_WaitForCompletion" },
     { "address": "0x001B319C", "name": "Terrain_QueryFlagDispatcher" },
     { "address": "0x001B34CA", "name": "Input_SampleControllerState" },
