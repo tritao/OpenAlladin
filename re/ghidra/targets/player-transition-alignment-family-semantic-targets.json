@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-player-transition-alignment-family-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace type-only labels for the Type-0x6E through 0x73 terrain alignment path and Type-0x4F transition-bounce response.",
+  "promotions": [
+    {
+      "address": "0x001AFB36",
+      "old_name": "ActorType6E_73_PlayerCollisionHandler",
+      "name": "PlayerCollision_AlignToTerrainActor",
+      "alias": "ActorType6E_73_PlayerCollisionHandler",
+      "range": ["0x001AFB36", "0x001AFBF3"],
+      "contract": {
+        "dispatch": "Shared player-collision entry for actor types 0x6E through 0x73",
+        "eligibility": "Requires a clear interaction-animation gate, non-upward PLAYER_VY, eligible terrain response, and actor collision flag bit 0x10",
+        "placement": "Snaps the player to the actor within a 12-pixel horizontal window, writes actor-relative X/Y, arms the transition gates, and reloads LEVEL_TIMER to 4",
+        "initialization": "When LEVEL_TIMER is clear, installs PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE, resets its timer/terrain response state, and restores camera thresholds"
+      },
+      "evidence": [
+        "Exact 190-byte body ending at RTS 0x001AFBF2",
+        "Direct actor-relative X/Y placement and 12-pixel acceptance window",
+        "Direct terrain-alignment animation, transition-gate, and LEVEL_TIMER writes"
+      ]
+    },
+    {
+      "address": "0x001AFC4E",
+      "old_name": "ActorType4F_PlayerCollisionHandler",
+      "name": "PlayerCollision_StartTransitionBounce",
+      "alias": "ActorType4F_PlayerCollisionHandler",
+      "range": ["0x001AFC4E", "0x001AFCD1"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x4F",
+        "eligibility": "Requires non-upward PLAYER_VY, a clear interaction-animation gate, and PLAYER_WORLD_X inside the actor's encoded +/-0x18 horizontal window",
+        "player_response": "Writes PLAYER_VY as -0x0800, installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE, arms TERRAIN_RESPONSE_ACTIVE, and clears TERRAIN_VERTICAL_STOP",
+        "actor_response": "Optionally queues audio command 0x4B, converts the source actor to type 0x84, and installs animation entry 0x00124B3E"
+      },
+      "evidence": [
+        "Exact 132-byte body ending at RTS 0x001AFCD0",
+        "Direct horizontal-window comparison and -0x0800 vertical launch",
+        "Direct transition-animation, terrain-response, and Type-0x84 actor replacement writes"
+      ]
+    }
+  ],
+  "conclusion": "The promoted names distinguish actor-relative terrain alignment from the Type-0x4F transition-bounce response while retaining dispatch-type aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
