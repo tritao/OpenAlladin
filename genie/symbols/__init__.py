@@ -1,7 +1,7 @@
 """Canonical tracked-symbol services."""
 
 from .model import Symbol
-from .naming import is_mechanical_name, mechanical_name, name_for
+from .naming import is_low_information_name, is_mechanical_name, mechanical_name, name_for
 from .queries import find_symbols, list_symbols, symbol_at, validate_symbols
 from .edit import edit_symbol
 from .store import SymbolStore, load_symbols
@@ -11,6 +11,7 @@ __all__ = [
     "SymbolStore",
     "edit_symbol",
     "is_mechanical_name",
+    "is_low_information_name",
     "find_symbols",
     "list_symbols",
     "load_symbols",

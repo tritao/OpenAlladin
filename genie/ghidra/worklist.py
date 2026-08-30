@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from genie.common import parse_int
-from genie.symbols import SymbolStore
+from genie.symbols import SymbolStore, is_low_information_name
 
 from .database import AnalysisDatabase
 
@@ -119,8 +119,9 @@ def function_work_queue(
     symbols: SymbolStore,
     *,
     coverage_path: Path | None = None,
+    include_weak_names: bool = False,
 ) -> list[dict[str, Any]]:
-    """Rank mechanically named functions by actionable static/runtime evidence."""
+    """Rank mechanical or optionally weakly semantic functions by evidence."""
 
     runtime = _runtime_functions(database, coverage_path)
     dispatch = _jump_table_membership(database)
@@ -128,12 +129,15 @@ def function_work_queue(
     for function in database.functions:
         address = _address(function["address"])
         canonical = symbols.at(address, include_ranges=False)
-        if (
+        weak_name = canonical is not None and is_low_information_name(canonical.name)
+        resolved = (
             canonical is not None
             and canonical.kind == "function"
             and not canonical.is_mechanical
             and canonical.confidence not in LOW_CONFIDENCE
-        ):
+            and not (include_weak_names and weak_name)
+        )
+        if resolved:
             continue
         callers = database.callers(address)
         callees = database.callees(address)
@@ -172,6 +176,11 @@ def function_work_queue(
             "address": f"0x{address:08X}",
             "name": str(function.get("name") or f"Func_{address:08X}"),
             "canonical_name": canonical.name if canonical is not None else None,
+            "candidate_reason": (
+                "weak semantic name" if weak_name and include_weak_names
+                else "low confidence" if canonical is not None and canonical.confidence in LOW_CONFIDENCE
+                else "mechanical or missing name"
+            ),
             "confidence": canonical.confidence if canonical is not None else "unknown",
             "score": score,
             "callers": len(callers),

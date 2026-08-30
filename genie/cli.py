@@ -218,6 +218,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     deasm_todo.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
     deasm_todo.add_argument("--coverage", type=Path)
+    deasm_todo.add_argument(
+        "--semantic",
+        action="store_true",
+        help="include stable type-based names that still need semantic refinement",
+    )
     deasm_todo.add_argument("--limit", type=int, default=25, help="maximum rows; zero means all")
     deasm_todo.add_argument("--json", action="store_true", dest="json_output")
     deasm_todo.set_defaults(function=command_deasm_todo)
@@ -253,6 +258,11 @@ def build_parser() -> argparse.ArgumentParser:
     symbols_unknown.add_argument("--kind", choices=("function",), default="function")
     symbols_unknown.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
     symbols_unknown.add_argument("--coverage", type=Path)
+    symbols_unknown.add_argument(
+        "--semantic",
+        action="store_true",
+        help="include stable type-based names that still need semantic refinement",
+    )
     symbols_unknown.add_argument("--limit", type=int, default=0, help="maximum rows; zero means all")
     symbols_unknown.add_argument("--json", action="store_true", dest="json_output")
     symbols_unknown.set_defaults(function=command_symbols_unknown)
@@ -264,6 +274,11 @@ def build_parser() -> argparse.ArgumentParser:
     symbols_next.add_argument("--kind", choices=("function",), default="function")
     symbols_next.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
     symbols_next.add_argument("--coverage", type=Path)
+    symbols_next.add_argument(
+        "--semantic",
+        action="store_true",
+        help="include stable type-based names that still need semantic refinement",
+    )
     symbols_next.add_argument("--json", action="store_true", dest="json_output")
     symbols_next.set_defaults(function=command_symbols_next)
 

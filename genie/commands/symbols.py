@@ -118,6 +118,7 @@ def _function_queue(args: argparse.Namespace) -> list[dict[str, Any]]:
         database,
         _store(),
         coverage_path=resolve(args.coverage) if args.coverage else None,
+        include_weak_names=args.semantic,
     )
 
 
@@ -132,7 +133,7 @@ def command_symbols_unknown(args: argparse.Namespace) -> int:
         queue[:limit],
         total=len(queue),
         json_output=args.json_output,
-        title="Unknown/mechanical functions",
+        title=("Unknown/mechanical or weak-semantic functions" if args.semantic else "Unknown/mechanical functions"),
     )
     return 0
 
@@ -146,7 +147,12 @@ def command_symbols_next(args: argparse.Namespace) -> int:
     if not queue:
         print("No unknown/mechanical functions remain")
         return 1
-    render_work_queue(queue[:1], total=len(queue), json_output=args.json_output, title="Next function")
+    render_work_queue(
+        queue[:1],
+        total=len(queue),
+        json_output=args.json_output,
+        title=("Next semantic candidate" if args.semantic else "Next function"),
+    )
     return 0
 
 

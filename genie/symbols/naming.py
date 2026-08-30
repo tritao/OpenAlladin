@@ -6,6 +6,12 @@ import re
 
 
 _MECHANICAL_RE = re.compile(r"^(?:Func|Data|Table|Ram|Unknown)_[0-9A-Fa-f]+$")
+_LOW_INFORMATION_RE = re.compile(
+    r"^(?:"
+    r"ActorType[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*_(?:Actor|Player)CollisionHandler"
+    r"|ActorType[0-9A-Fa-f]+_PrepareRecoveryPlane"
+    r")$"
+)
 
 
 def _address(value: int) -> int:
@@ -41,6 +47,12 @@ def is_mechanical_name(name: str) -> bool:
     """Whether *name* has the generated address-name shape."""
 
     return bool(_MECHANICAL_RE.fullmatch(str(name).strip()))
+
+
+def is_low_information_name(name: str) -> bool:
+    """Whether a name is stable but still too type-oriented for semantic work."""
+
+    return bool(_LOW_INFORMATION_RE.fullmatch(str(name).strip()))
 
 
 def name_for(address: int, kind: str = "unknown", existing: str | None = None) -> str:

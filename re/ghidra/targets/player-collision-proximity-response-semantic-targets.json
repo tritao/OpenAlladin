@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-player-collision-proximity-response-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace the type-only name for the runtime-observed player-collision proximity/recovery path.",
+  "function": {
+    "address": "0x001AE796",
+    "old_name": "ActorType1E_PlayerCollisionHandler",
+    "name": "PlayerCollision_HandleProximityResponse",
+    "range": ["0x001AE796", "0x001AE977"]
+  },
+  "contract": {
+    "dispatch": "Entered through the player-collision Type-0x1E table entry",
+    "gates": ["PLAYER_FACING_BYTE at 0x00FF7E49", "PLAYER_ACTION_RESPONSE_FIELD at 0x00FFF0D8", "actor field +0x3C bit 0x05"],
+    "response_group": ["0x1E", "0x21", "0x1F", "0x22"],
+    "behavior": "Installs the corresponding type-0x84 response animation and clears transient actor/player response state, or routes the marked path through Player_ProcessInteractionState.",
+    "scene_state": "No direct SCENE_STATE write"
+  },
+  "evidence": [
+    "Exact 482-byte body at 0x001AE796-0x001AE977",
+    "Direct animation-root writes for response types 0x1E, 0x21, 0x1F, and 0x22",
+    "Runtime-observed in the semantic player transition helper traces"
+  ],
+  "conclusion": "The former Type-0x1E-only label understated a shared proximity/recovery response routine; the legacy name remains an alias for compatibility.",
+  "confidence": "confirmed",
+  "status": "recorded-semantic-promotion"
+}

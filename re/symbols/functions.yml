@@ -2070,9 +2070,10 @@
     - rom_player_collision_handler_table_001CBE
     - ghidra_observed_unknown_player_collision_decompile
 0x001AE796:
-  name: ActorType1E_PlayerCollisionHandler
+  name: PlayerCollision_HandleProximityResponse
+  aliases: [ActorType1E_PlayerCollisionHandler]
   confidence: confirmed
-  description: Player-collision handler for actor type 0x1E. It gates on the player-facing byte at 0x00FF7E49 and interaction gate 0x00FFF0D8; for an unmarked type-0x1E actor it installs the type-0x84 response state and clears the transient interaction fields, while the marked branch returns through Player_ProcessInteractionState. It does not write SCENE_STATE.
+  description: Shared player-collision proximity/recovery path entered by the Type-0x1E dispatch entry. It gates on the player-facing byte at 0x00FF7E49 and interaction gate 0x00FFF0D8; unmarked Type-0x1E/0x21/0x1F/0x22 actors receive their type-0x84 response animation and cleared transient state, while the marked branch returns through Player_ProcessInteractionState. It does not write SCENE_STATE.
   evidence:
     - ghidra_type1e_targeted_decompile
     - mame_type1e_sword_open_trace

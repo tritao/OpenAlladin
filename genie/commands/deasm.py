@@ -315,6 +315,7 @@ def command_deasm_todo(args: argparse.Namespace) -> int:
             database,
             _symbols(),
             coverage_path=resolve(args.coverage) if args.coverage else None,
+            include_weak_names=args.semantic,
         )
     except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
         print(f"ERROR {error}")
@@ -324,7 +325,7 @@ def command_deasm_todo(args: argparse.Namespace) -> int:
         queue[:limit],
         total=len(queue),
         json_output=args.json_output,
-        title="Deasm work queue",
+        title=("Deasm semantic candidate queue" if args.semantic else "Deasm work queue"),
     )
     return 0
 

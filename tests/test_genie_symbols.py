@@ -8,7 +8,14 @@ from genie.ghidra.context import build_context
 from genie.ghidra.database import AnalysisDatabase
 from genie.ghidra.worklist import function_work_queue, symbol_review_queue
 from genie.layout.model import Layout, LayoutRange
-from genie.symbols import Symbol, SymbolStore, edit_symbol, mechanical_name, name_for
+from genie.symbols import (
+    Symbol,
+    SymbolStore,
+    edit_symbol,
+    is_low_information_name,
+    mechanical_name,
+    name_for,
+)
 
 
 def _write_symbol_tree(root: Path) -> None:
@@ -63,11 +70,19 @@ def test_symbol_naming_preserves_semantic_names():
     assert name_for(0x184320, "function", "Func_00184320") == "Func_00184320"
 
 
+def test_symbol_naming_identifies_type_oriented_collision_names():
+    assert is_low_information_name("ActorType04_ActorCollisionHandler") is True
+    assert is_low_information_name("ActorType02_08_09_ActorCollisionHandler") is True
+    assert is_low_information_name("ActorType1E_PrepareRecoveryPlane") is True
+    assert is_low_information_name("Actor_ApplyTerminalCollisionResponse") is False
+
+
 def test_symbols_cli_surface_dispatches():
     show = build_parser().parse_args(["symbols", "show", "0x001AC784"])
     find = build_parser().parse_args(["symbols", "find", "AnimationVM", "--kind", "function"])
     stats = build_parser().parse_args(["symbols", "stats", "--json"])
     unknown = build_parser().parse_args(["symbols", "unknown", "--kind", "function", "--limit", "4"])
+    semantic = build_parser().parse_args(["symbols", "next", "--kind", "function", "--semantic"])
     review = build_parser().parse_args(["symbols", "review", "--kind", "data", "--limit", "4", "--json"])
     rename = build_parser().parse_args(["symbols", "rename", "0x20", "Scene_Init"])
     describe = build_parser().parse_args(["symbols", "describe", "0x20", "entry point"])
@@ -76,6 +91,7 @@ def test_symbols_cli_surface_dispatches():
     assert find.kind == "function"
     assert stats.json_output is True
     assert unknown.limit == 4
+    assert semantic.semantic is True
     assert review.kind == "data"
     assert review.limit == 4
     assert review.json_output is True
@@ -178,6 +194,29 @@ def test_function_work_queue_includes_low_confidence_canonical_functions(tmp_pat
 
     assert [item["address"] for item in queue] == ["0x00000010"]
     assert queue[0]["confidence"] == "probable"
+
+
+def test_function_work_queue_can_include_weak_semantic_names(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    database = AnalysisDatabase(database_root)
+    symbols = SymbolStore(symbols=(
+        Symbol(0x10, "ActorType04_ActorCollisionHandler", "function", confidence="confirmed"),
+        Symbol(0x20, "SecondFunction", "function", confidence="confirmed"),
+    ))
+
+    assert function_work_queue(database, symbols) == []
+    queue = function_work_queue(database, symbols, include_weak_names=True)
+    assert len(queue) == 1
+    assert queue[0]["candidate_reason"] == "weak semantic name"
+
+
+def test_real_proximity_collision_handler_has_semantic_name_and_legacy_alias():
+    symbol = SymbolStore().at(0x001AE796, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "PlayerCollision_HandleProximityResponse"
+    assert "ActorType1E_PlayerCollisionHandler" in symbol.aliases
+    assert symbol.confidence == "confirmed"
 
 
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
