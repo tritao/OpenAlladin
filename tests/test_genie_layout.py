@@ -1744,6 +1744,30 @@ def test_type84_0f22_response_family_is_exact_with_template_reachability_provisi
     assert animation_decoded["instructions"][-1]["branch_target"] == "0x00125D58"
 
 
+def test_unreferenced_actor_template_records_are_exact_and_provisional():
+    symbols = SymbolStore()
+    expected = {
+        0x001B7990: ("ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10", 0x001B79A3),
+        0x001B7A58: ("ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400", 0x001B7A6B),
+        0x001B82DC: ("ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_ANIM_124CE4", 0x001B82EF),
+    }
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    expected_bytes = {
+        0x001B7990: "840008000000000000006000000000000A000000",
+        0x001B7A58: "8401400014000000000060000000000000000000",
+        0x001B82DC: "84050000000000000000000000124CE409000400",
+    }
+    for address, (name, end) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        assert symbol.size == 20
+        assert symbol.metadata["type"] == "actor_template"
+        assert symbol.confidence == "provisional"
+        assert rom[address:end + 1] == bytes.fromhex(expected_bytes[address])
+
+
 def test_type84_presentation_response_movement_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001214B2, include_ranges=False)

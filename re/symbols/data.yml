@@ -7145,6 +7145,17 @@
     - scene-resource-queued-actor-static-decompilation
     - ghidra_actor_template_initializer_001AE30A
 
+0x001B7990:
+  name: ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10
+  type: actor_template
+  size: 20
+  confidence: provisional
+  description: "Provisional 20-byte Type-0x84 actor-template record with initializer payload 0x08000000, no movement or default animation root, template word 0x6000, ten owned resources, and no trailing flags. It is structurally complete in the compact template-record run, but no static producer or runtime consumer has been recovered."
+  evidence:
+    - actor_template_record_layout_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+    - actor_template_unreferenced_records_static_decompilation
+
 0x001B7918:
   name: ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD
   type: actor_template
@@ -7176,6 +7187,17 @@
   evidence:
     - ghidra_menu_state_selection
     - level01_upper_frontier_initializer_targets
+
+0x001B7A58:
+  name: ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400
+  type: actor_template
+  size: 20
+  confidence: provisional
+  description: "Provisional 20-byte Type-0x84 actor-template record with initializer payload 0x40001400, no movement or default animation root, zero resources, and no trailing flags. It is structurally complete in the compact template-record run, but no static producer or runtime consumer has been recovered."
+  evidence:
+    - actor_template_record_layout_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+    - actor_template_unreferenced_records_static_decompilation
 
 0x001B7E04:
   name: ACTOR_TEMPLATE_EXIT_TYPE_84
@@ -7785,6 +7807,17 @@
   evidence:
     - type84_terminal_interaction_static_decompilation
     - animation_stream_decoder
+
+0x001B82DC:
+  name: ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_ANIM_124CE4
+  type: actor_template
+  size: 20
+  confidence: provisional
+  description: "Provisional 20-byte Type-0x84 actor-template record with no movement root, template word 0x0000, animation root 0x00124CE4, nine owned resources, and trailing flags 0x0400. It is structurally complete in the compact template-record run, but no static producer or runtime consumer has been recovered."
+  evidence:
+    - actor_template_record_layout_static_decompilation
+    - ghidra_actor_template_initializer_001AE30A
+    - actor_template_unreferenced_records_static_decompilation
 
 0x001B828C:
   name: ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD

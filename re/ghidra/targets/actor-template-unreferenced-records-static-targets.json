@@ -1,0 +1,61 @@
+{
+  "format": "openaladdin-actor-template-unreferenced-records-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "initializer": {
+    "address": "0x001AE30A",
+    "record_size": 20,
+    "contract": "The compact actor-template initializer consumes the 20-byte source record fields used by the canonical templates."
+  },
+  "records": [
+    {
+      "address": "0x001B7990",
+      "end": "0x001B79A3",
+      "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10",
+      "bytes": "840008000000000000006000000000000A000000",
+      "runtime_type": "0x84",
+      "initializer_payload": "0x08000000",
+      "movement_stream": null,
+      "template_word": "0x6000",
+      "animation_stream": null,
+      "resource_count": "0x0A",
+      "trailing_flags": "0x0000"
+    },
+    {
+      "address": "0x001B7A58",
+      "end": "0x001B7A6B",
+      "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400",
+      "bytes": "8401400014000000000060000000000000000000",
+      "runtime_type": "0x84",
+      "initializer_payload": "0x40001400",
+      "movement_stream": null,
+      "template_word": "0x6000",
+      "animation_stream": null,
+      "resource_count": "0x00",
+      "trailing_flags": "0x0000"
+    },
+    {
+      "address": "0x001B82DC",
+      "end": "0x001B82EF",
+      "name": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_ANIM_124CE4",
+      "bytes": "84050000000000000000000000124CE409000400",
+      "runtime_type": "0x84",
+      "initializer_payload": "0x00000000",
+      "movement_stream": null,
+      "template_word": "0x0000",
+      "animation_stream": "0x00124CE4",
+      "resource_count": "0x09",
+      "trailing_flags": "0x0400"
+    }
+  ],
+  "boundary_basis": [
+    "Each record occupies exactly one 20-byte initializer record between canonical actor-template records.",
+    "All three records carry the Type-0x84 runtime byte and fields consistent with the established compact template layout."
+  ],
+  "reachability": "No static producer or runtime consumer has been recovered for these three records; the provisional names describe exact structure only.",
+  "confidence": "provisional",
+  "status": "recorded-static-disassembly"
+}
