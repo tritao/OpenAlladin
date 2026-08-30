@@ -790,6 +790,16 @@
     - ghidra_decompile_001B52A0
     - ghidra_level01_resource_record_targets
     - ghidra_disassembly_001B52A0
+0x001B52FA:
+  name: Random_AdvanceUntilParityChanges
+  size: 30
+  confidence: decompiled
+  description: Advances the shared 13x+7 pseudo-random state until the generated low bit differs from RANDOM_PARITY_STATE, then publishes that new bit while preserving the caller's D0 value.
+  evidence:
+    - gnu_m68k_disassembly_001B52FA
+    - ghidra_disassembly_001B3032
+    - type14_type84_presentation_animation_static_decompilation
+    - random_parity_callback_static_decompilation
 0x001B4B28:
   name: SceneResource_PrepareRenderFrame
   confidence: decompiled

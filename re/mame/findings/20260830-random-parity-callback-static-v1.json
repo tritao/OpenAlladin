@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-random-parity-callback-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/random-parity-callback-static-targets.json",
+  "promoted": {
+    "address": "0x001B52FA",
+    "name": "Random_AdvanceUntilParityChanges",
+    "range": ["0x001B52FA", "0x001B5317"],
+    "size": 30
+  },
+  "semantics": "The callback saves D0, reads RANDOM_PARITY_STATE, calls TerrainScene5RandomStep, masks the returned D7 value to one bit, and repeats until that bit differs from the previous state. It then writes the new bit to RANDOM_PARITY_STATE, restores D0, and returns.",
+  "boundary_basis": [
+    "The body begins with its own D0 save at 0x001B52FA after the preceding level-object template setters.",
+    "The loop branches back to the random step at 0x001B5302 and terminates at the dedicated RTS at 0x001B5317.",
+    "TerrainHandler_SetTerminalCollisionBlock begins immediately at 0x001B5318."
+  ],
+  "consumers": [
+    "The Type-0x84 presentation animation terminal pushes 0x001B52FA as an FB callback parameter before clearing the actor.",
+    "Level05_ExitRoutine seeds RANDOM_PARITY_STATE to one during its transition setup."
+  ],
+  "evidence": [
+    "Exact GNU m68k disassembly",
+    "Existing TerrainScene5RandomStep 13x+7 PRNG implementation",
+    "Type-0x84 presentation terminal callback evidence",
+    "Level-05 exit state write evidence"
+  ],
+  "conclusion": "The former 0x001B52FA-0x001B5317 UNKNOWN subrange is a complete random-parity AnimationVM callback. Its callback role and one-bit state publication are now represented canonically without claiming the neighboring level-object setters or terrain handler."
+}

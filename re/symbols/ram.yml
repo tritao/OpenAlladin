@@ -502,6 +502,17 @@
   evidence:
     - ghidra_disassembly_001B634E
     - ghidra_level_event_dispatch_targets
+0xFFF111:
+  name: RANDOM_PARITY_STATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: One-bit state used by Random_AdvanceUntilParityChanges; the helper repeatedly advances the shared pseudo-random generator until its low bit differs from this value, then publishes the result. The Level-05 exit path also seeds it to one.
+  evidence:
+    - gnu_m68k_disassembly_001B52FA
+    - ghidra_disassembly_001B3032
+    - type14_type84_presentation_animation_static_decompilation
+    - ghidra_disassembly_001B6434
 
 0xFFF132:
   name: LEVEL_EVENT_SCRIPT_CURSOR

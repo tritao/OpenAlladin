@@ -3159,6 +3159,21 @@ def test_player_facing_launch_motion_helper_is_exact():
     )
 
 
+def test_random_parity_callback_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001B52FA, include_ranges=False)
+    assert function is not None
+    assert function.name == "Random_AdvanceUntilParityChanges"
+    assert function.end == 0x001B5317
+    assert function.size == 30
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B52FA:0x001B5318] == bytes.fromhex(
+        "3F00103900FFF1116100DD2E02070001BE0067F4"
+        "13C700FFF111301F4E75"
+    )
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)
