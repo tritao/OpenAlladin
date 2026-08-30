@@ -20,6 +20,14 @@
     "name": "InteractionSpawn_Type5E84Pair_Unindexed",
     "confidence": "provisional"
   },
+  "template": {
+    "address": "0x001B81B0",
+    "range": "0x001B81B0-0x001B81C3",
+    "name": "ACTOR_TEMPLATE_TYPE_7C_UNINDEXED_LEVEL_EVENT",
+    "movement_stream": "0x00121180",
+    "animation_stream": "0x00125916",
+    "confidence": "provisional"
+  },
   "evidence": [
     "GNU m68k 68000 disassembly",
     "MovementDecoder exact byte limits",

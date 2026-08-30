@@ -14,6 +14,16 @@
     "behavior": "Allocates the established Type-0x5E base and Type-0x84 companion, installs 0x0011FAA8 into the base movement field, and publishes the companion anchor at (base X - 0x20, base Y + 0x40).",
     "reachability": "No active INTERACTION_HANDLER_TABLE entry currently targets this body."
   },
+  "template": {
+    "address": "0x001B81B0",
+    "range": ["0x001B81B0", "0x001B81C3"],
+    "size": 20,
+    "name": "ACTOR_TEMPLATE_TYPE_7C_UNINDEXED_LEVEL_EVENT",
+    "movement_stream": "0x00121180",
+    "animation_stream": "0x00125916",
+    "resource_count": "0x03",
+    "reachability": "The record is structurally complete and directly selects the named movement/animation roots, but no runtime producer for this specific record has been recovered."
+  },
   "streams": [
     {
       "address": "0x0011FAA8",

@@ -7826,6 +7826,16 @@
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
 
+0x001B81B0:
+  name: ACTOR_TEMPLATE_TYPE_7C_UNINDEXED_LEVEL_EVENT
+  type: actor_template
+  size: 20
+  confidence: provisional
+  description: Provisional Type-0x7C actor-template record between the established Level-05 and Level-07 records. Its movement pointer selects ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE at 0x00121180, its animation pointer selects 0x00125916, and it carries three resources; no direct runtime producer for this specific record has been recovered.
+  evidence:
+    - actor_template_grid_xrefs
+    - unindexed_movement_stream_bands_static_disassembly
+
 0x001B81C4:
   name: ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN
   type: actor_template

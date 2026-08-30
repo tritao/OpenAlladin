@@ -109,6 +109,42 @@ def test_data_context_decodes_bounded_canonical_stream_without_report(tmp_path):
     assert "canonical symbol fallback" in value["decoder"]["source"]
 
 
+def test_data_context_exposes_canonical_actor_template_stream_pointer(tmp_path):
+    database_root = _database(tmp_path)
+    rom_path = tmp_path / "rom" / "Disneys_Aladdin_U_p1.bin"
+    rom_path.parent.mkdir()
+    rom_path.symlink_to(Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin")
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0x121180,
+            "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE",
+            "data",
+            confidence="provisional",
+            size=10,
+            metadata={"type": "movement_stream"},
+        ),
+        Symbol(
+            0x1B81B0,
+            "ACTOR_TEMPLATE_TYPE_7C_UNINDEXED_LEVEL_EVENT",
+            "data",
+            confidence="provisional",
+            size=20,
+            metadata={"type": "actor_template"},
+        ),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x200000, (LayoutRange(0, 0x1FFFFF, "UNKNOWN", "test"),)),
+    )
+
+    value = index.context(0x121180)
+    assert value is not None
+    assert value["consumers"][0]["name"] == "ACTOR_TEMPLATE_TYPE_7C_UNINDEXED_LEVEL_EVENT"
+    assert value["references"][0]["type"] == "ACTOR_TEMPLATE_MOVEMENT_POINTER"
+
+
 def test_data_context_joins_layout_fragment_to_decoder_root(tmp_path):
     database_root = _database(tmp_path)
     layout = Layout(

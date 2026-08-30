@@ -463,6 +463,7 @@ class DataIndex:
                 enriched = dict(reference)
                 enriched.setdefault("source", filename)
                 result.append(enriched)
+        result.extend(self._canonical_template_references(value))
         result.extend(self._decoded_template_references(value))
         return sorted(result, key=lambda item: (
             _address(item.get("from", 0)),
@@ -627,16 +628,8 @@ class DataIndex:
             return
 
         try:
-            if self._canonical_reader is None:
-                profile = load_profile()
-                rom_path = self.root / profile.default_rom
-                if not rom_path.is_file():
-                    return
-                from genie.games.aladdin.vm.movement import load_animation_decoder
-
-                module = load_animation_decoder()
-                self._canonical_reader = module.RomReader(rom_path.read_bytes())
-                self._canonical_rom_path = rom_path
+            if self._canonical_reader is None and self._load_canonical_reader() is None:
+                return
             if kind not in self._canonical_decoders:
                 if kind == "animation":
                     from genie.games.aladdin.vm.animation import AnimationDecoder
@@ -671,6 +664,62 @@ class DataIndex:
         self._decoded[kind][entry] = decoded
         source = str(self._canonical_rom_path) if self._canonical_rom_path else "configured ROM"
         self._decoded_sources[kind][entry] = f"{source} (canonical symbol fallback)"
+
+    def _load_canonical_reader(self) -> Any | None:
+        """Load the configured ROM once for canonical evidence fallbacks."""
+
+        if self._canonical_reader is not None:
+            return self._canonical_reader
+        profile = load_profile()
+        rom_path = self.root / profile.default_rom
+        if not rom_path.is_file():
+            return None
+        try:
+            from genie.games.aladdin.vm.movement import load_animation_decoder
+
+            module = load_animation_decoder()
+            self._canonical_reader = module.RomReader(rom_path.read_bytes())
+        except (ImportError, OSError, RuntimeError, TypeError, ValueError):
+            return None
+        self._canonical_rom_path = rom_path
+        return self._canonical_reader
+
+    def _canonical_template_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
+        """Recover direct movement/animation pointers from canonical templates."""
+
+        if value.get("kind") not in STREAM_KINDS:
+            return []
+        reader = self._load_canonical_reader()
+        if reader is None:
+            return []
+        target_start, target_end = _address(value["start"]), _address(value["end"])
+        result: list[dict[str, Any]] = []
+        for template in self.symbols.list(kind="data"):
+            if str(template.metadata.get("type", "")).casefold() != "actor_template":
+                continue
+            template_range = template.range
+            if template_range is None or template_range[1] - template_range[0] + 1 < 16:
+                continue
+            pointer_offset = 0x06 if value["kind"] == "movement" else 0x0C
+            pointer_address = template.address + pointer_offset
+            if not reader.has(pointer_address, 4):
+                continue
+            pointer = reader.u32(pointer_address)
+            if not target_start <= pointer <= target_end:
+                continue
+            result.append({
+                "from": _hex(pointer_address),
+                "from_function": None,
+                "from_function_name": template.name,
+                "from_symbol": _hex(template.address),
+                "to": _hex(pointer),
+                "type": "ACTOR_TEMPLATE_MOVEMENT_POINTER" if value["kind"] == "movement" else "ACTOR_TEMPLATE_ANIMATION_POINTER",
+                "read": False,
+                "write": False,
+                "source": "canonical actor template",
+                "instruction": "actor-template stream pointer",
+            })
+        return result
 
     def _stream_decoded_bytes(self, stream: dict[str, Any], entry: int) -> int:
         decoded_bytes = stream.get("bytes_decoded")
