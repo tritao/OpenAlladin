@@ -3870,6 +3870,19 @@ def test_player_transition_flag_response_helper_is_exact():
     )
 
 
+def test_player_terrain_landing_state_tail_is_exact():
+    symbols = SymbolStore()
+    tail = symbols.at(0x001ADB22, include_ranges=False)
+    assert tail is not None
+    assert tail.name == "Player_TerrainLandingResolver_SetLandingState"
+    assert tail.end == 0x001ADB29
+    assert tail.size == 8
+    assert tail.confidence == "confirmed"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001ADB22:0x001ADB2A] == bytes.fromhex("50F900FFF0C14E75")
+
+
 def test_final_mechanical_function_closure_is_exact():
     symbols = SymbolStore()
     expected = {

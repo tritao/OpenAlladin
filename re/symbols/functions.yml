@@ -3428,6 +3428,14 @@
     - player_transition_flag_response_helper_static_disassembly
     - player_transition_response_animation_static_decompilation
     - ghidra_player_animation_selector
+0x001ADB22:
+  name: Player_TerrainLandingResolver_SetLandingState
+  size: 8
+  confidence: confirmed
+  description: Internal landing-state branch target of Player_TerrainLandingResolver. It sets TERRAIN_LANDING_STATE at 0x00FFF0C1 and returns through the adjacent RTS at 0x001ADB28.
+  evidence:
+    - player_terrain_landing_state_tail_static_disassembly
+    - ghidra_player_terrain_landing_resolver
 0x001A92DC:
   name: Actor_ClearType85Slots
   confidence: confirmed
