@@ -352,7 +352,7 @@ def test_unreferenced_fixed_record_bank_has_exact_extent_and_cadence():
     assert bank.metadata["type"] == "opaque_data_table"
     assert bank.metadata["entry_size"] == 10
     assert bank.metadata["count"] == 16
-    assert bank.confidence == "provisional"
+    assert bank.confidence == "decompiled"
 
     following = symbols.at(0x00002080, include_ranges=False)
     assert following is not None
@@ -594,7 +594,7 @@ def test_render_vdp_word_and_hud_frame_sequence_are_exact():
     assert companion.end == 0x00001CBD
     assert companion.size == 8
     assert companion.metadata["type"] == "vdp_control_word"
-    assert companion.confidence == "provisional"
+    assert companion.confidence == "decompiled"
 
     sequence = symbols.at(0x000029A6, include_ranges=False)
     assert sequence is not None
@@ -785,7 +785,7 @@ def test_menu_scene_and_input_data_extents_are_exact():
     assert reserved.end == 0x00004011
     assert reserved.size == 0x12
     assert reserved.metadata["type"] == "menu_control_layout"
-    assert reserved.confidence == "provisional"
+    assert reserved.confidence == "decompiled"
 
     expected = {
         0x00004012: (0x6C, "MENU_CONTROL_LAYOUT_TABLE", "menu_control_layout_table"),
@@ -2168,7 +2168,7 @@ def test_repeated_phase_child_table_prefix_has_shared_terminal_boundary():
     assert prefix.metadata["record_size"] == 6
     assert prefix.metadata["record_count"] == 4
     assert prefix.metadata["shared_terminal_byte"] == 0x0049D8
-    assert prefix.confidence == "provisional"
+    assert prefix.confidence == "decompiled"
 
     layout = build_layout()
     item = layout.at(0x000049C1)

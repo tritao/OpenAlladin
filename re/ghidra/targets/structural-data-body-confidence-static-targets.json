@@ -1,0 +1,61 @@
+{
+  "format": "openaladdin-structural-data-body-confidence-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Close body-level confidence for exact data objects whose formats and physical boundaries are established, without claiming unresolved consumers or higher-level roles.",
+  "objects": [
+    {
+      "address": "0x00001CB6",
+      "end": "0x00001CBD",
+      "size": 8,
+      "name": "UNREFERENCED_SPRITE_VDP_CONTROL_WORD_PAIR_1CB6",
+      "type": "vdp_control_word",
+      "values": ["0x60000003", "0x40000003"],
+      "bytes": "6000000340000003"
+    },
+    {
+      "address": "0x000049C1",
+      "end": "0x000049D7",
+      "size": 23,
+      "name": "UNREFERENCED_PHASE_CHILD_SELECTION_TABLE_DUPLICATE_PREFIX_49C1",
+      "type": "opaque_data_table",
+      "record_size": 6,
+      "record_count": 4,
+      "shared_terminal_byte": "0x000049D8",
+      "bytes": "0000000000004000122c12000000000000004000122c12"
+    },
+    {
+      "address": "0x00001F82",
+      "end": "0x00002021",
+      "size": 160,
+      "name": "UNREFERENCED_FIXED_RECORD_BANK_1F82",
+      "type": "opaque_data_table",
+      "entry_size": 10,
+      "count": 16,
+      "bytes": "9300940102000f00202093c0940001800b001820938094000100070010209340940000800300082093c0940001800e0020189390940001200a0018189360940000c006001018933094000060020008189380940001000d0020109360940000c00900181093409400008005001010932094000040010008109340940000800c002008933094000060080018089320940000400400100893109400002000000808"
+    },
+    {
+      "address": "0x00004000",
+      "end": "0x00004011",
+      "size": 18,
+      "name": "MENU_CONTROL_LAYOUT_RESERVED_X_RECORD",
+      "type": "menu_control_layout",
+      "fields": ["null callback pointer", "null callback pointer", "null callback pointer", "NUL-terminated label X", "NUL-terminated label X", "NUL-terminated label X"],
+      "bytes": "000000000000000000000000580058005800"
+    }
+  ],
+  "evidence": [
+    "Exact bytes and fixed physical boundaries are reproducible from the pinned ROM.",
+    "The VDP pair, repeated six-byte prefix, fixed ten-byte bank, and menu-layout-shaped record have deterministic body structures supported by established neighboring object formats.",
+    "No unsupported runtime consumer or higher-level semantic role is assigned by this promotion."
+  ],
+  "limitations": [
+    "Consumers, selectors, and runtime reachability remain unresolved for all four objects.",
+    "The neutral names are retained where the evidence establishes structure but not subsystem identity."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}
