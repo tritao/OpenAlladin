@@ -577,6 +577,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="exclude RAM and hardware-address objects from the queue",
     )
+    data_todo.add_argument(
+        "--unresolved-only",
+        action="store_true",
+        help="show only unknown and provisional objects",
+    )
     data_todo.add_argument("--limit", type=int, default=25, help="maximum rows; zero means all")
     data_todo.add_argument("--json", action="store_true", dest="json_output")
     data_todo.set_defaults(function=command_data_todo)
@@ -588,6 +593,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--rom-only",
         action="store_true",
         help="exclude RAM and hardware-address objects from the queue",
+    )
+    data_next.add_argument(
+        "--unresolved-only",
+        action="store_true",
+        help="show only unknown and provisional objects",
     )
     data_next.add_argument("--json", action="store_true", dest="json_output")
     data_next.set_defaults(function=command_data_next)

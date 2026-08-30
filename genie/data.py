@@ -652,11 +652,19 @@ class DataIndex:
             "runtime": self._runtime(value),
         }
 
-    def todo(self, *, kind: str | None = None, rom_only: bool = False) -> list[dict[str, Any]]:
+    def todo(
+        self,
+        *,
+        kind: str | None = None,
+        rom_only: bool = False,
+        unresolved_only: bool = False,
+    ) -> list[dict[str, Any]]:
         result = []
         rom_size = self.layout.rom_size if self.layout is not None else None
         for value in self.objects(kind=kind):
             if rom_only and (rom_size is None or _address(value["start"]) < 0 or _address(value["end"]) >= rom_size):
+                continue
+            if unresolved_only and value["confidence"] not in {"unknown", "provisional"}:
                 continue
             if _is_alias(value):
                 # An alternate stream entry is useful context, but it does
