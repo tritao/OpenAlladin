@@ -454,6 +454,27 @@ def test_canonical_scene_resource_object_animation_table_has_exact_extent():
     ]
 
 
+def test_actor_frame_phase_child_animation_table_has_exact_extent():
+    symbols = SymbolStore()
+    table = symbols.at(0x000049A9, include_ranges=False)
+    assert table is not None
+    assert table.name == "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE"
+    assert table.end == 0x000049C0
+    assert table.size == 0x18
+    assert table.metadata["type"] == "actor_spawn_phase_animation_table"
+    assert table.metadata["entry_size"] == 6
+    assert table.metadata["count"] == 4
+
+    rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    records = [rom[offset:offset + 6] for offset in range(0x49A9, 0x49C1, 6)]
+    assert records == [
+        bytes.fromhex("000000000000"),
+        bytes.fromhex("4000122C1200"),
+        bytes.fromhex("000000000000"),
+        bytes.fromhex("4000122C1200"),
+    ]
+
+
 def test_level08_rotating_vdp_record_table_has_exact_extent():
     symbols = SymbolStore()
     table = symbols.at(0x000029E0, include_ranges=False)

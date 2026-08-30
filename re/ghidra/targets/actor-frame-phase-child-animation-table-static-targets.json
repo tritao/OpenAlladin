@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-actor-frame-phase-child-animation-table-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "table": {
+    "address": "0x000049A9",
+    "name": "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE",
+    "range": ["0x000049A9", "0x000049C0"],
+    "size": 24,
+    "entry_size": 6,
+    "count": 4,
+    "record": ["runtime type byte", "animation-root longword", "unused byte"],
+    "consumer": "0x001ABF28 Actor_SpawnFramePhaseChild",
+    "index": "(FRAME_PHASE_COUNTER & 3) * 6"
+  },
+  "records": [
+    { "index": 0, "address": "0x000049A9", "runtime_type": "0x00", "animation": "0x00000000" },
+    { "index": 1, "address": "0x000049AF", "runtime_type": "0x40", "animation": "0x00122C12" },
+    { "index": 2, "address": "0x000049B5", "runtime_type": "0x00", "animation": "0x00000000" },
+    { "index": 3, "address": "0x000049BB", "runtime_type": "0x40", "animation": "0x00122C12" }
+  ],
+  "boundary_basis": [
+    "Actor_SpawnFramePhaseChild loads A6=0x000049A9 and selects offsets 0, 6, 12, or 18 from FRAME_PHASE_COUNTER & 3.",
+    "The consumer reads one byte and the following longword from the selected record, so four six-byte records occupy exactly 0x000049A9-0x000049C0.",
+    "The repeated bytes beginning at 0x000049C1 are not claimed, and the separate SCENE_RESOURCE_COMMAND_TABLE begins at 0x000049D8."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

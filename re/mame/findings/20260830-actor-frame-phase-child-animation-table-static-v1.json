@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-actor-frame-phase-child-animation-table-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "consumer": {
+    "address": "0x001ABF28",
+    "name": "Actor_SpawnFramePhaseChild",
+    "index": "(FRAME_PHASE_COUNTER & 3) * 6",
+    "base": "0x000049A9"
+  },
+  "table": {
+    "name": "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE",
+    "range": ["0x000049A9", "0x000049C0"],
+    "records": 4,
+    "record_size": 6,
+    "runtime_types": ["0x00", "0x40", "0x00", "0x40"],
+    "animation_roots": ["0x00000000", "0x00122C12", "0x00000000", "0x00122C12"]
+  },
+  "conclusion": "The first four phase-child records are exactly bounded by the consumer's 6-byte indexing and end at 0x000049C0. The repeated tail from 0x000049C1 through 0x000049D7 remains outside this proven table."
+}

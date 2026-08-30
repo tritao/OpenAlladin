@@ -1724,6 +1724,19 @@
     - ghidra_actor_movement_vm_001ADE36
     - animation_stream_decoder
 
+0x0049A9:
+  name: ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE
+  type: actor_spawn_phase_animation_table
+  entry_size: 6
+  count: 4
+  size: 0x18
+  confidence: decompiled
+  description: Exact four-entry phase-child selection table consumed by Actor_SpawnFramePhaseChild. FRAME_PHASE_COUNTER masked to its low two bits selects one six-byte record containing the spawned runtime-type byte, its animation-root longword, and one unused trailing byte; the proven table ends at 0x000049C0 before the unresolved repeated tail.
+  evidence:
+    - actor_frame_phase_child_static_decompilation
+    - ghidra_disassembly_001ABF28
+    - ghidra_actor_template_initializer_001AE30A
+
 0x004A18:
   name: SCENE_RESOURCE_OBJECT_ANIMATION_TABLE
   type: rom_pointer_table
