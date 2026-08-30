@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-terrain-stop-align-animation-static-targets.json",
+  "stream": {
+    "address": "0x0012181A",
+    "name": "PLAYER_ANIM_TERRAIN_STOP_ALIGNMENT",
+    "range": "0x0012181A-0x00121827",
+    "bytes": 14,
+    "opening_frame": "0x07BA",
+    "transition_gate": "F4 at 0x0012181C compares PLAYER_TRANSITION_GATE at 0x00FFF0D0 with zero and branches back to 0x0012181A while clear.",
+    "handoff": "F8 at 0x00121826 enters dynamic player-state selection when the transition gate is set."
+  },
+  "consumer": "TerrainHandler_StopAndAlignPlayerBlock at 0x001B5502 selects PLAYER_ANIM_TERRAIN_STOP_ALIGNMENT after stopping player velocities, clearing the response accumulator, and aligning player coordinates.",
+  "boundaries": {
+    "start": "The stream begins at 0x0012181A, immediately after the preceding player animation entry.",
+    "end": "The exact 14-byte stream ends at 0x00121827; PLAYER_VERTICAL_ANIMATION_TABLE begins at 0x00121828."
+  },
+  "evidence": [
+    "Exact behavior-0x2B terrain handler assignment",
+    "Level-01 behavior-0x2B runtime probe selecting 0x0012181A",
+    "Lossless AnimationDecoder output",
+    "Immediate non-overlapping boundary before PLAYER_VERTICAL_ANIMATION_TABLE"
+  ],
+  "conclusion": "The previously unknown 14-byte player terrain-block response prelude is a separately owned animation stream. Its direct behavior-0x2B consumer, transition-gate loop, dynamic handoff, and boundary before the vertical animation table are explicit.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-terrain-stop-align-animation-static",
+    "purpose": "Range-bound the player terrain-block stop/alignment response selected by the behavior-0x2B terrain handler without absorbing the following vertical animation table."
+  },
+  "targets": [
+    { "address": "0x0012181A", "name": "PLAYER_ANIM_TERRAIN_STOP_ALIGNMENT" },
+    { "address": "0x001B5502", "name": "TerrainHandler_StopAndAlignPlayerBlock" },
+    { "address": "0x00121828", "name": "PLAYER_VERTICAL_ANIMATION_TABLE" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0D0", "name": "PLAYER_TRANSITION_GATE" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" }
+  ]
+}

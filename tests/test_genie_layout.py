@@ -2118,6 +2118,36 @@ def test_player_animation_lookup_family_is_exact():
         assert decoded["instructions"][-1]["branch_target"] == "0x00121964"
 
 
+def test_player_terrain_stop_alignment_animation_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x0012181A, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "PLAYER_ANIM_TERRAIN_STOP_ALIGNMENT"
+    assert stream.end == 0x00121827
+    assert stream.size == 14
+    assert stream.metadata["type"] == "animation_stream"
+
+    vertical_table = symbols.at(0x00121828, include_ranges=False)
+    assert vertical_table is not None
+    assert vertical_table.name == "PLAYER_VERTICAL_ANIMATION_TABLE"
+    assert stream.end + 1 == vertical_table.address
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = load_animation_decoder().AnimationDecoder(rom)
+    decoded = decoder.decode_stream(
+        0x0012181A,
+        max_instructions=16,
+        max_bytes=32,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 14
+    assert decoded["stopped_reason"] == "dynamic_state_selection"
+    assert decoded["instructions"][0]["reference"] == "0x07BA"
+    assert decoded["instructions"][1]["branch_target"] == "0x0012181A"
+    assert decoded["instructions"][-1]["opcode"] == "0xF8"
+
+
 def test_actor_type41_interaction_response_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00125D7E, include_ranges=False)

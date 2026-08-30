@@ -5254,6 +5254,18 @@
 # Additional animation roots classified from their 68K selection context.
 # PLAYER_ANIMATION_PC assignments and the player selector are confirmed as
 # player-owned; the generic actor helper root remains provisional.
+0x0012181A:
+  name: PLAYER_ANIM_TERRAIN_STOP_ALIGNMENT
+  type: animation_stream
+  size: 14
+  confidence: confirmed
+  description: Player terrain-block stop/alignment response prelude selected by TerrainHandler_StopAndAlignPlayerBlock for behavior 0x2B. Its exact 14-byte region presents frame 0x07BA, loops while PLAYER_TRANSITION_GATE is clear, and enters dynamic player-state selection at 0x00121826; PLAYER_VERTICAL_ANIMATION_TABLE begins immediately at 0x00121828.
+  evidence:
+    - ghidra_disassembly_001B5502
+    - player_terrain_experiments
+    - terrain_stop_align_animation_static_decompilation
+    - animation_stream_decoder
+
 0x00121964:
   name: PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE
   size: 356
