@@ -37,7 +37,7 @@
   "boundary": {
     "following_objects": [
       { "range": ["0x00128EB1", "0x00128EB1"], "name": "SCENE_SOUND_TEST_PALETTE_ALIGNMENT_PADDING" },
-      { "range": ["0x00128EB2", "0x00128ED1"], "name": "UNREFERENCED_PALETTE_SOURCE_128EB2" }
+      { "range": ["0x00128EB2", "0x00128ED1"], "name": "PALETTE_ALL_0EEE_SOURCE_128EB2" }
     ],
     "next_claimed_range": "0x00128ED2 SCENE_BLANK_PALETTE"
   },

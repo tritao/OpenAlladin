@@ -6,7 +6,7 @@
   "objects": [
     {
       "address": "0x00128E4B",
-      "name": "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B",
+      "name": "SCENE_RESOURCE_TILE_BASE_2000_COMMAND_128E4B",
       "range": ["0x00128E4B", "0x00128E4C"],
       "size": 2,
       "type": "scene_resource_stream",
@@ -27,7 +27,7 @@
     },
     {
       "address": "0x00128EB2",
-      "name": "UNREFERENCED_PALETTE_SOURCE_128EB2",
+      "name": "PALETTE_ALL_0EEE_SOURCE_128EB2",
       "range": ["0x00128EB2", "0x00128ED1"],
       "size": 32,
       "type": "palette_data",

@@ -2360,6 +2360,17 @@ recovery remain the next actionable step for these objects.
 The result is recorded in
 `re/mame/findings/20260830-unreferenced-data-runtime-audit-v1.json`.
 
+## Structural data identities (20260830)
+
+Four conservative data labels now carry exact structural identities: the
+0x00001CB6 sprite-area VDP control-word pair, the 0x00128E4B tile-base-0x2000
+scene command, the all-0x0EEE palette source at 0x00128EB2, and the
+0x00129312 palette band whose final 15 words exactly match the Type-0x7D
+palette source. These names remain deliberately consumer-neutral.
+
+The result is recorded in
+`re/mame/findings/20260830-structural-data-identities-static-v1.json`.
+
 ## Menu selection-marker tile animation (20260829)
 
 `Menu_AnimateSelectionMarkerTiles` at `0x001B3B4A` runs on even
@@ -3510,3 +3521,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-scene-e000-graphics-loader-names-static-v1` | recorded-static-decompilation | Replaced address-only names for the 0x0012D654 and 0x0012E666 E000 graphics payloads with direct loader- and destination-specific canonical names |
 | `20260830-exact-duplicate-data-owners-static-v1` | recorded-static-disassembly | Split the 0x00129A32-0x00129A91 palette bank into three exact duplicate-band owners and named the 0x000049C1 phase-child table duplicate prefix by its canonical source |
 | `20260830-unreferenced-data-runtime-audit-v1` | recorded-runtime-negative-evidence | Exercised ROM-read taps across all nine remaining data-review ranges for a 1400-frame fresh-boot/title/menu/gameplay route; no range was read, so selector recovery remains open |
+| `20260830-structural-data-identities-static-v1` | recorded-static-disassembly | Replaced four address-only/unreferenced data labels with exact VDP, scene-command, all-0x0EEE palette, and 15-word palette-variant identities while retaining unresolved consumers |

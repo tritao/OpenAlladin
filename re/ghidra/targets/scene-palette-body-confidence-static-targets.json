@@ -18,7 +18,7 @@
     {
       "address": "0x00128E4B",
       "end": "0x00128E4C",
-      "name": "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B",
+      "name": "SCENE_RESOURCE_TILE_BASE_2000_COMMAND_128E4B",
       "size": 2,
       "type": "scene_resource_stream",
       "decoded": "0x09/0x00 tile-base-0x2000 command record"
@@ -26,7 +26,7 @@
     {
       "address": "0x00128EB2",
       "end": "0x00128ED1",
-      "name": "UNREFERENCED_PALETTE_SOURCE_128EB2",
+      "name": "PALETTE_ALL_0EEE_SOURCE_128EB2",
       "size": 32,
       "type": "palette_data",
       "bands": 1,
@@ -35,11 +35,12 @@
     {
       "address": "0x00129312",
       "end": "0x00129331",
-      "name": "UNREFERENCED_PALETTE_SOURCE_129312",
+      "name": "PALETTE_BAND_VARIANT_OF_INTERACTION_TYPE7D_129312",
       "size": 32,
       "type": "palette_data",
       "bands": 1,
-      "decoded": "sixteen Genesis palette words"
+      "variant_of": "0x00129332 INTERACTION_TYPE7D_PALETTE_SOURCE",
+      "decoded": "one Genesis palette band with an exact 15-word suffix match"
     },
     {
       "address": "0x00129A32",

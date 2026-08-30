@@ -8,7 +8,7 @@
   "ranges": [
     {
       "address": "0x00129312",
-      "name": "UNREFERENCED_PALETTE_SOURCE_129312",
+      "name": "PALETTE_BAND_VARIANT_OF_INTERACTION_TYPE7D_129312",
       "range": ["0x00129312", "0x00129331"],
       "size": 32,
       "bands": 1

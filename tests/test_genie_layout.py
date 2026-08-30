@@ -600,7 +600,7 @@ def test_render_vdp_word_and_hud_frame_sequence_are_exact():
 
     companion = symbols.at(0x00001CB6, include_ranges=False)
     assert companion is not None
-    assert companion.name == "UNREFERENCED_SPRITE_VDP_CONTROL_WORD_PAIR_1CB6"
+    assert companion.name == "SPRITE_VDP_CONTROL_WORD_PAIR_1CB6"
     assert companion.end == 0x00001CBD
     assert companion.size == 8
     assert companion.metadata["type"] == "vdp_control_word"
@@ -3557,7 +3557,7 @@ def test_canonical_scene_resource_palette_sources_have_exact_loader_extents():
 def test_unreferenced_palette_data_has_exact_structural_extents():
     symbols = SymbolStore()
     expected = (
-        (0x00129312, 0x00129331, "UNREFERENCED_PALETTE_SOURCE_129312", "decompiled"),
+        (0x00129312, 0x00129331, "PALETTE_BAND_VARIANT_OF_INTERACTION_TYPE7D_129312", "decompiled"),
         (0x00129A32, 0x00129A51, "PALETTE_DUPLICATE_OF_MENU_BAND_129012", "decompiled"),
         (0x00129A52, 0x00129A71, "PALETTE_DUPLICATE_OF_SCENE_TRANSITION_BAND4_129032", "decompiled"),
         (0x00129A72, 0x00129A91, "PALETTE_DUPLICATE_OF_SCENE_RESET_BAND4_129E60", "decompiled"),
@@ -3583,6 +3583,13 @@ def test_unreferenced_palette_data_has_exact_structural_extents():
     assert symbols.at(0x00129A32, include_ranges=False).metadata["duplicate_of"] == "MENU_PALETTE_BAND_SOURCE_129012"
     assert symbols.at(0x00129A52, include_ranges=False).metadata["duplicate_address"] == 0x00129032
     assert symbols.at(0x00129A72, include_ranges=False).metadata["duplicate_address"] == 0x00129E60
+
+    variant = symbols.at(0x00129312, include_ranges=False)
+    assert variant.metadata["variant_of"] == "INTERACTION_TYPE7D_PALETTE_SOURCE"
+    assert variant.metadata["variant_address"] == 0x00129332
+    assert rom[0x00129314:0x00129332] == rom[0x00129334:0x00129352]
+    assert rom[0x00129312:0x00129314] == bytes.fromhex("0660")
+    assert rom[0x00129332:0x00129334] == bytes.fromhex("000E")
 
 
 def test_canonical_scene_reset_credits_palette_sources_have_exact_extents():
@@ -3715,9 +3722,9 @@ def test_static_header_text_and_shared_palette_families_are_exact():
 def test_unreferenced_scene_palette_data_has_exact_structural_owners():
     symbols = SymbolStore()
     expected = (
-        (0x00128E4B, 0x00128E4C, "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B", "scene_resource_stream", "decompiled"),
+        (0x00128E4B, 0x00128E4C, "SCENE_RESOURCE_TILE_BASE_2000_COMMAND_128E4B", "scene_resource_stream", "decompiled"),
         (0x00128EB1, 0x00128EB1, "SCENE_SOUND_TEST_PALETTE_ALIGNMENT_PADDING", "padding_data", "confirmed"),
-        (0x00128EB2, 0x00128ED1, "UNREFERENCED_PALETTE_SOURCE_128EB2", "palette_data", "decompiled"),
+        (0x00128EB2, 0x00128ED1, "PALETTE_ALL_0EEE_SOURCE_128EB2", "palette_data", "decompiled"),
         (0x00128F52, 0x00128FD1, "MENU_OPTIONS_PALETTE_BANK_128F52", "palette_data", "decompiled"),
     )
     for start, end, name, symbol_type, confidence in expected:

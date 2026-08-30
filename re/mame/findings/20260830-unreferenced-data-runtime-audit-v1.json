@@ -14,12 +14,12 @@
     "rom_read_count": 0
   },
   "ranges": [
-    { "name": "UNREFERENCED_SPRITE_VDP_CONTROL_WORD_PAIR_1CB6", "range": ["0x00001CB6", "0x00001CBD"], "read_count": 0 },
+    { "name": "SPRITE_VDP_CONTROL_WORD_PAIR_1CB6", "range": ["0x00001CB6", "0x00001CBD"], "read_count": 0 },
     { "name": "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE_DUPLICATE_PREFIX_49C1", "range": ["0x000049C1", "0x000049D7"], "read_count": 0 },
     { "name": "ROM_ASCII_NUMERIC_LABELS_126EB6", "range": ["0x00126EB6", "0x00126EBF"], "read_count": 0 },
-    { "name": "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B", "range": ["0x00128E4B", "0x00128E4C"], "read_count": 0 },
-    { "name": "UNREFERENCED_PALETTE_SOURCE_128EB2", "range": ["0x00128EB2", "0x00128ED1"], "read_count": 0 },
-    { "name": "UNREFERENCED_PALETTE_SOURCE_129312", "range": ["0x00129312", "0x00129331"], "read_count": 0 },
+    { "name": "SCENE_RESOURCE_TILE_BASE_2000_COMMAND_128E4B", "range": ["0x00128E4B", "0x00128E4C"], "read_count": 0 },
+    { "name": "PALETTE_ALL_0EEE_SOURCE_128EB2", "range": ["0x00128EB2", "0x00128ED1"], "read_count": 0 },
+    { "name": "PALETTE_BAND_VARIANT_OF_INTERACTION_TYPE7D_129312", "range": ["0x00129312", "0x00129331"], "read_count": 0 },
     { "name": "PALETTE_DUPLICATE_OF_MENU_BAND_129012", "range": ["0x00129A32", "0x00129A51"], "read_count": 0 },
     { "name": "PALETTE_DUPLICATE_OF_SCENE_TRANSITION_BAND4_129032", "range": ["0x00129A52", "0x00129A71"], "read_count": 0 },
     { "name": "PALETTE_DUPLICATE_OF_SCENE_RESET_BAND4_129E60", "range": ["0x00129A72", "0x00129A91"], "read_count": 0 }
