@@ -7362,16 +7362,18 @@
     - ghidra_disassembly_001ADB5C
 
 0x00006744:
-  name: UNREFERENCED_FIXED_WORD_BANK_6744
-  type: opaque_data_table
-  entry_size: 2
-  count: 125
+  name: SCENE_RESOURCE_ACTOR_SPAWN_COORDINATES_6744
+  type: scene_resource_actor_coordinate_table
+  entry_size: 4
+  count: 62
+  terminator_size: 2
   size: 250
-  confidence: provisional
-  description: Provisional opaque bank of 125 exact big-endian words between the state-4 scene-resource stream corpus and TERRAIN_ACTOR_SURFACE_FLAGS_TABLE. Its fixed word cadence and coordinate-like values are recorded without assigning a narrower resource format or consumer.
+  confidence: decompiled
+  description: Scene-resource queued-actor coordinate stream consumed by SceneResource_InstantiateQueuedActor after the menu continuation installs its base at SCENE_RESOURCE_ACTOR_RECORD_CURSOR. It contains 62 big-endian X/Y word pairs followed by a zero X-word sentinel; successful allocations advance the cursor by four bytes, while the final 0x0000 terminates consumption before TERRAIN_ACTOR_SURFACE_FLAGS_TABLE.
   evidence:
     - unreferenced_fixed_word_bank_6744_static_v1
     - scene_transition_stream_extents
+    - scene_resource_actor_spawn_coordinates_static_v1
 
 0x0000693E:
   name: CAMERA_SCROLL_DELTA_TABLE

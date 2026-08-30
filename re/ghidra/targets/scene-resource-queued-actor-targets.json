@@ -21,7 +21,7 @@
     { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" }
   ],
   "limitations": [
-    "No direct static caller is present in the current whole-ROM reference export; the helper may be reached through an indirect or externally selected scene-resource path.",
-    "The coordinate-record stream extent and the independent runtime producer for the spawn gate remain unresolved."
+    "The direct static caller is a physically decoded but Ghidra-unreachable menu continuation; live runtime reachability remains unresolved.",
+    "The coordinate-record stream extent and 62-pair plus sentinel format are recorded in scene-resource-actor-spawn-coordinates-static-targets.json; the independent runtime producer for the spawn gate remains unresolved."
   ]
 }

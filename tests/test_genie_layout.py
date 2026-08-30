@@ -380,17 +380,18 @@ def test_unreferenced_fixed_record_bank_has_exact_extent_and_cadence():
     )
 
 
-def test_unreferenced_fixed_word_bank_has_exact_extent_and_terrain_boundary():
+def test_scene_resource_actor_spawn_coordinates_have_exact_extent_and_terrain_boundary():
     symbols = SymbolStore()
     bank = symbols.at(0x00006744, include_ranges=False)
     assert bank is not None
-    assert bank.name == "UNREFERENCED_FIXED_WORD_BANK_6744"
+    assert bank.name == "SCENE_RESOURCE_ACTOR_SPAWN_COORDINATES_6744"
     assert bank.end == 0x0000683D
     assert bank.size == 250
-    assert bank.metadata["type"] == "opaque_data_table"
-    assert bank.metadata["entry_size"] == 2
-    assert bank.metadata["count"] == 125
-    assert bank.confidence == "provisional"
+    assert bank.metadata["type"] == "scene_resource_actor_coordinate_table"
+    assert bank.metadata["entry_size"] == 4
+    assert bank.metadata["count"] == 62
+    assert bank.metadata["terminator_size"] == 2
+    assert bank.confidence == "decompiled"
 
     following = symbols.at(0x0000683E, include_ranges=False)
     assert following is not None
@@ -403,6 +404,18 @@ def test_unreferenced_fixed_word_bank_has_exact_extent_and_terrain_boundary():
     )
     assert rom[bank.end - 15:bank.end + 1] == bytes.fromhex(
         "013E00B8014000B8013E00C701460000"
+    )
+
+    words = [
+        int.from_bytes(rom[offset:offset + 2], "big")
+        for offset in range(bank.address, bank.end + 1, 2)
+    ]
+    assert len(words) == 125
+    assert words[-1] == 0
+    assert all(words[offset] != 0 for offset in range(0, 124, 2))
+
+    assert rom[0x001B3D68:0x001B3D72] == bytes.fromhex(
+        "23FC0000674400FF7282"
     )
 
 

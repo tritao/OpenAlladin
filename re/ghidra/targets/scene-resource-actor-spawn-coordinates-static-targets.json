@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-scene-resource-actor-spawn-coordinates-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Promote the fixed word bank at 0x00006744 after recovering its static scene-resource actor-coordinate consumer.",
+  "consumer": {
+    "address": "0x001B3D68",
+    "function": "Menu_UnreachableCodeIsland_001B3C7C",
+    "instruction": "move.l #0x6744, (0x00FF7282).l",
+    "cursor": "0x00FF7282 SCENE_RESOURCE_ACTOR_RECORD_CURSOR",
+    "helper": "0x001B4802 SceneResource_InstantiateQueuedActor"
+  },
+  "records": {
+    "address": "0x00006744",
+    "end": "0x0000683D",
+    "size": 250,
+    "name": "SCENE_RESOURCE_ACTOR_SPAWN_COORDINATES_6744",
+    "pair_count": 62,
+    "word_count": 125,
+    "record_size": 4,
+    "sentinel": "final 0x0000 X-word at 0x0000683C-0x0000683D",
+    "following": "0x0000683E TERRAIN_ACTOR_SURFACE_FLAGS_TABLE"
+  },
+  "evidence": [
+    "The menu continuation writes ROM address 0x00006744 into SCENE_RESOURCE_ACTOR_RECORD_CURSOR at 0x001B3D68.",
+    "SceneResource_InstantiateQueuedActor reads the cursor's first two words as X/Y coordinates, allocates and initializes the queued Type-0x84 actor, then publishes A0 advanced by four bytes on success.",
+    "The exact ROM range contains 62 nonzero X/Y pairs followed only by a final zero X-word sentinel, matching the helper's zero-X termination test and the established boundary before TERRAIN_ACTOR_SURFACE_FLAGS_TABLE."
+  ],
+  "reachability": "The static consumer is in a Ghidra-unreachable physical menu continuation, so this establishes static ownership and use but not live runtime reachability.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
