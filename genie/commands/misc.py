@@ -206,6 +206,20 @@ def command_coverage_gaps(args: argparse.Namespace) -> int:
     ]
     return run_tool("games/aladdin/mame/coverage_gaps.py", forwarded)
 
+def command_coverage_reads(args: argparse.Namespace) -> int:
+    forwarded: list[str] = []
+    if args.trace_dirs:
+        forwarded.extend(str(resolve(path)) for path in args.trace_dirs)
+    else:
+        forwarded.extend(["--trace-root", str(resolve(args.trace_root))])
+    forwarded.extend([
+        "--database", str(resolve(args.database)),
+        "--output", str(resolve(args.output)),
+    ])
+    if args.json_output:
+        forwarded.append("--json")
+    return run_tool("core/mame/rom_reads.py", forwarded)
+
 def command_validate(args: argparse.Namespace) -> int:
     rom = resolve(args.rom)
     status = verify_rom(rom, allow_unverified=args.allow_unverified)

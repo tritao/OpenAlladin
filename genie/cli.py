@@ -581,6 +581,16 @@ def build_parser() -> argparse.ArgumentParser:
     add_rom_argument(coverage_gaps)
     coverage_gaps.add_argument("--output", type=Path, default=ROOT / "build/re/coverage-gaps.json")
     coverage_gaps.set_defaults(function=command_coverage_gaps)
+    coverage_reads = coverage_commands.add_parser(
+        "reads",
+        help="map ROM-read tap records to canonical symbols and consumers",
+    )
+    coverage_reads.add_argument("trace_dirs", nargs="*", type=Path)
+    coverage_reads.add_argument("--trace-root", type=Path, default=ROOT / "build/re/traces")
+    coverage_reads.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    coverage_reads.add_argument("--output", type=Path, default=ROOT / "build/re/rom-reads.json")
+    coverage_reads.add_argument("--json", action="store_true", dest="json_output")
+    coverage_reads.set_defaults(function=command_coverage_reads)
 
     coverage_report = coverage_commands.add_parser(
         "report",

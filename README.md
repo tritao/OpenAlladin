@@ -163,6 +163,7 @@ python -m genie decode movement --verify
 python -m genie assets
 python -m genie validate
 python -m genie coverage report
+python -m genie coverage reads
 ```
 
 Named traces write to `build/re/traces/<scenario>/`. The `state` capture

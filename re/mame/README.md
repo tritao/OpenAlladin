@@ -49,6 +49,16 @@ An empty result is negative runtime evidence for the exercised route; a
 nonempty result identifies the actual consuming PC for follow-up context and
 symbol promotion.
 
+Summarize captured ROM-read records with canonical symbol and consumer
+context:
+
+```sh
+genie coverage reads --trace-root build/re/traces
+```
+
+The report is written to `build/re/rom-reads.json` and groups each requested
+tap range by read address, scenario, consuming PC, and containing function.
+
 The MAME wrapper has two execution profiles. `analysis` (the default) uses
 `-nothrottle`, no sound, and a headless renderer. `interactive` enables normal
 speed, visible video, and sound; the unified `genie record` command uses it only
