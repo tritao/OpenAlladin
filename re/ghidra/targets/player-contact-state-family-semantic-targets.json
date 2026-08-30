@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-contact-state-family",
+    "purpose": "Promote handhold contact, interaction-state entry, and transition-contact player-collision paths to behavior-based canonical names."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x32", "0x79"], "address": "0x001AEB7C" },
+      { "actor_types": ["0x50", "0x51"], "address": "0x001AF8F6" },
+      { "actor_types": ["0x69", "0x6A"], "address": "0x001AF978" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AEB7C", "name": "PlayerCollision_EnterInteractionState", "legacy_name": "ActorType32_79_PlayerCollisionHandler", "range": "0x001AEB7C-0x001AEBA3", "size": 40 },
+    { "address": "0x001AF8F6", "name": "PlayerCollision_EnterTransitionContact", "legacy_name": "ActorType50_51_PlayerCollisionHandler", "range": "0x001AF8F6-0x001AF977", "size": 130 },
+    { "address": "0x001AF978", "name": "PlayerCollision_ResolveHandholdContact", "legacy_name": "ActorType6A_PlayerCollisionHandler", "range": "0x001AF978-0x001AF9F5", "size": 126 }
+  ],
+  "contracts": {
+    "handhold": "resolve Type-0x69/0x6A contact in a 12-pixel vertical window, promote the actor to Type 0x6B with the matching handhold animation, and publish its interaction value",
+    "interaction": "when animation/action/interaction locks are clear, reset TERRAIN_RESPONSE_TIMER_STATE and call Player_ProcessInteractionState",
+    "transition": "resolve Type-0x50/0x51 contact in a 10-pixel vertical window, publish player position/transition locks, and promote Type 0x50 to Type 0x51"
+  },
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

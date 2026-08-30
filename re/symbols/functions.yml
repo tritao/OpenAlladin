@@ -1980,10 +1980,11 @@
     - ghidra_disassembly_001AEBA4
     - player_collision_direct_entry_family_static_decompilation
 0x001AEB7C:
-  name: ActorType32_79_PlayerCollisionHandler
+  name: PlayerCollision_EnterInteractionState
+  aliases: [ActorType32_79_PlayerCollisionHandler]
   size: 40
   confidence: decompiled
-  description: Shared player-collision handler for runtime actor types 0x32 and 0x79. It requires the animation gate, PLAYER_INTERACTION_GATE, and interaction-lock state to be clear, then clears TERRAIN_RESPONSE_TIMER_STATE and routes through Player_ProcessInteractionState; otherwise it returns without further writes.
+  description: Enters the interaction-state service for runtime actor types 0x32 and 0x79 when the animation gate, PLAYER_ACTION_RESPONSE_FIELD, and PLAYER_INTERACTION_LOCK are all clear. It clears TERRAIN_RESPONSE_TIMER_STATE and calls Player_ProcessInteractionState; otherwise it returns without further writes.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AEB7C
@@ -2419,9 +2420,11 @@
     - ghidra_far_transfer_targeted_decompile_v1
     - ghidra_decompile_collision_damage_targets
 0x001AF978:
-  name: ActorType6A_PlayerCollisionHandler
+  name: PlayerCollision_ResolveHandholdContact
+  aliases: [ActorType6A_PlayerCollisionHandler]
+  size: 126
   confidence: confirmed
-  description: Player-collision handler for handhold actors. When terrain response is idle or vertically stopped and actor flags bit 0x10 is set, it aligns PLAYER_Y to actor Y minus WORLD_CAMERA_Y minus 8 when the local Y difference is below 0x0C, changes type 0x69/0x6A to type 0x6B, resets the animation timer, and publishes the actor interaction value.
+  description: Resolves contact with the Type-0x69/0x6A handhold actors when terrain response is idle or vertically stopped and actor flags bit 0x10 is set. Within a 12-pixel vertical window it aligns PLAYER_Y to actor Y minus WORLD_CAMERA_Y minus 8, promotes the actor to Type 0x6B with the matching handhold animation, resets its animation state, and publishes the actor interaction value; rejected contacts raise PLAYER_COLLISION_RESPONSE_SUPPRESS.
   evidence:
     - ghidra_decompile_actor_combat_targets
     - mame_handhold_actor_type_transition
@@ -2584,10 +2587,11 @@
     - ghidra_disassembly_001AF894
     - player_collision_actor_relative_placement_family_static_decompilation
 0x001AF8F6:
-  name: ActorType50_51_PlayerCollisionHandler
+  name: PlayerCollision_EnterTransitionContact
+  aliases: [ActorType50_51_PlayerCollisionHandler]
   size: 130
   confidence: decompiled
-  description: Shared player-collision handler for runtime actor types 0x50 and 0x51. When terrain response is eligible and the actor has the collision flag, it accepts an actor-relative Y position within a 10-pixel window, writes PLAYER_X = actor X - WORLD_CAMERA_X and PLAYER_Y = actor Y - WORLD_CAMERA_Y + 0x20, arms PLAYER_INTERACTION_TRANSITION_LOCK and PLAYER_TRANSITION_GATE, and selects a 0x00A0 horizontal camera threshold; type 0x50 is then converted to type 0x51 with animation 0x00124BA6 and a cleared animation timer.
+  description: Enters the transition contact for runtime actor types 0x50 and 0x51 when terrain response is eligible and the actor has collision flag bit 0x10. Within a 10-pixel vertical window it writes PLAYER_X from actor/world-camera coordinates, places PLAYER_Y at actor Y minus WORLD_CAMERA_Y plus 0x20, arms PLAYER_INTERACTION_TRANSITION_LOCK and PLAYER_TRANSITION_GATE, selects a 0x00A0 horizontal camera threshold, and promotes Type 0x50 to Type 0x51 with ACTOR_ANIM_TYPE51_PLAYER_COLLISION_RESPONSE.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF8F6
