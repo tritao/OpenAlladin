@@ -27,10 +27,11 @@
   "streams": [
     {
       "address": "0x0011FAA8",
-      "name": "ACTOR_MOVE_TYPE5E84_PAIR_UNINDEXED",
+      "name": "ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE_0011FAA8",
       "range": ["0x0011FAA8", "0x0011FD17"],
       "size": 624,
-      "boundary": "Linear MovementDecoder coverage ends immediately before ACTOR_MOVE_TYPE5E84_PAIR_E3E5 at 0x0011FD18; the final local jump at 0x0011FD12 targets shared continuation 0x0011F890."
+      "boundary": "Linear MovementDecoder coverage ends immediately before ACTOR_MOVE_TYPE5E84_PAIR_E3E5 at 0x0011FD18; the final local jump at 0x0011FD12 targets shared continuation 0x0011F890.",
+      "semantic_evidence": "The opening phase publishes Actor_SetInteractionAnchorFromActor, gates on actor type 0x5E and the 0x00FFF0D3 interaction-anchor marker, and the bank repeats timer 0x93 across its signed 0x60-grid trajectory."
     },
     {
       "address": "0x001210FE",

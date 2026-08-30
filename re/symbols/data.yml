@@ -2708,11 +2708,11 @@
     - movement_stream_decoder
 
 0x0011FAA8:
-  name: ACTOR_MOVE_TYPE5E84_PAIR_UNINDEXED
+  name: ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE_0011FAA8
   type: movement_stream
   size: 0x270
   confidence: provisional
-  description: Provisional decoder-bounded Type-0x5E plus Type-0x84 paired-response movement bank selected by the unindexed handler-shaped body at 0x001B69A6. Its exact 624-byte owner contains the signed trajectory, repeated parameter/timer phases, and terminal jump at 0x0011FD12 into the shared continuation at 0x0011F890; no active interaction-table entry has been linked to the producer.
+  description: Provisional decoder-bounded Type-0x5E plus Type-0x84 paired anchor-response movement bank selected by the unindexed handler-shaped body at 0x001B69A6. Its exact 624-byte owner publishes Actor_SetInteractionAnchorFromActor, gates the opening on actor type 0x5E and the 0x00FFF0D3 interaction-anchor marker, emits the signed 0x60-grid trajectory with timer 0x93, and jumps at 0x0011FD12 into the shared continuation at 0x0011F890; no active interaction-table entry has been linked to the producer.
   evidence:
     - interaction_spawn_type5e84_unindexed_static_disassembly
     - movement_stream_decoder

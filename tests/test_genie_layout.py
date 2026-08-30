@@ -901,7 +901,7 @@ def test_type5e84_e1e2_movement_stream_is_exact():
 def test_unindexed_movement_stream_bands_are_exact_and_provisional():
     symbols = SymbolStore()
     expected = [
-        (0x0011FAA8, 0x0011FD17, "ACTOR_MOVE_TYPE5E84_PAIR_UNINDEXED", 0x270),
+        (0x0011FAA8, 0x0011FD17, "ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE_0011FAA8", 0x270),
         (0x001210FE, 0x0012117F, "ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE_001210FE", 0x82),
         (0x001212C0, 0x001212FF, "ACTOR_MOVE_INTERACTION_ANCHOR_RESPONSE_BANK_001212C0", 0x40),
         (0x001213E2, 0x00121411, "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_PREFIX_001213E2", 0x30),
@@ -927,6 +927,46 @@ def test_unindexed_movement_stream_bands_are_exact_and_provisional():
         assert decoded["bytes_decoded"] == size
         assert decoded["stopped_reason"] == "byte_limit"
         assert decoded["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
+
+
+def test_type5e84_anchor_response_bank_preserves_anchor_and_grid_evidence():
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = MovementDecoder(load_animation_decoder().RomReader(rom_path.read_bytes()))
+    decoded = decoder.decode_stream(
+        0x0011FAA8,
+        max_steps=1024,
+        max_bytes=0x270,
+        follow_control_flow=False,
+    )
+
+    assert decoded["bytes_decoded"] == 0x270
+    assert decoded["stopped_reason"] == "byte_limit"
+    assert decoded["steps"][-1]["next_address"] == "0x0011FD18"
+
+    commands = [
+        command
+        for step in decoded["steps"]
+        for command in step.get("commands", [])
+    ]
+    parameters = [command["parameter"] for command in commands if command.get("parameter")]
+    assert len(parameters) == 51
+    assert set(parameters) == {"0x001B58BA"}
+
+    opening_compare = next(command for command in commands if command.get("name") == "if_compare")
+    assert opening_compare["compare_fields"] == ["0x21", "0xF0", "0xD3"]
+    assert opening_compare["compare_value"] == "005E"
+    assert opening_compare["branch_target"] == "0x0011FAA8"
+
+    timers = [
+        command["value"]
+        for command in commands
+        if command.get("name") == "set_frame_timer_or_field"
+    ]
+    assert len(timers) == 50
+    assert set(timers) == {"0x93"}
+
+    terminal_jump = next(command for command in commands if command.get("name") == "jump")
+    assert terminal_jump["branch_target"] == "0x0011F890"
 
 
 def test_flag20_terrain_response_stream_preserves_callback_and_terrain_evidence():
