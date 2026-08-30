@@ -3584,7 +3584,7 @@
   type: movement_stream
   size: 0x270
   confidence: decompiled
-  description: Type-0x5E plus Type-0x84 paired anchor-response movement bank installed by the handler-shaped producer at 0x001B69A6. Its exact 624-byte owner publishes Actor_SetInteractionAnchorFromActor, gates the opening on actor type 0x5E and the 0x00FFF0D3 interaction-anchor marker, emits the signed 0x60-grid trajectory with timer 0x93, and jumps at 0x0011FD12 into the shared continuation at 0x0011F890; the producer's runtime reachability remains unresolved.
+  description: Type-0x5E plus Type-0x84 paired anchor-response movement bank installed by the handler-shaped producer at 0x001B69A6. Its exact 624-byte owner publishes Actor_SetInteractionAnchorFromActor, gates the opening on actor type 0x5E and the 0x00FFF0D3 interaction-anchor marker, emits the signed 0x60-grid trajectory with timer 0x93, and jumps at 0x0011FD12 into the shared continuation at 0x0011F890. The only known producer is a complete unreferenced variant with no exported selector or runtime sample, so this bank is retained as a complete unreferenced MovementVM asset.
   evidence:
     - interaction_spawn_type5e84_unindexed_static_disassembly
     - movement_stream_decoder

@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-unreferenced-anchor-response-movement-closure-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "stream": {
+    "address": "0x0011FAA8",
+    "name": "ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE",
+    "range": ["0x0011FAA8", "0x0011FD17"],
+    "size": 624,
+    "producer": "0x001B69A6 InteractionSpawn_Type5E84Pair_AnchorResponse"
+  },
+  "evidence": [
+    "Exact MovementVM decoder boundary and shared continuation at 0x0011F890",
+    "Static producer-to-stream installation at actor movement field +0x0A",
+    "The producer has no exported interaction-table pointer or incoming xref",
+    "No runtime entry sample reaches the producer or stream in merged coverage"
+  ],
+  "conclusion": "The anchor-response MovementVM bank is fully decoded and its only known producer is a complete unreferenced handler variant. It is therefore retained as a canonical unreferenced asset rather than an open decoding item; a future selector discovery can add reachability without changing the stream boundary.",
+  "confidence": "decompiled",
+  "status": "recorded-static-negative-reachability"
+}
