@@ -854,6 +854,11 @@ active ROM palette-source pointers. `CURRENT_VDP_PALETTE` is the 64-word
 working snapshot at `FF8800`, and `VDP_COMMAND_ADDRESS_LATCH` at `FF8880`
 holds the command/address word used by the presentation transfer helpers.
 
+The decompressed terrain bound is also canonical. `TERRAIN_WORK_END` at
+`FF725C` is the exclusive byte offset from the terrain work base `FF0000`,
+computed from the active row stride and level height and checked before player
+and actor terrain probes index the decompressed map.
+
 The adjacent compact scene-resource loader variants are recorded in
 `re/mame/findings/20260828-scene-resource-loader-variants-v1.json`.
 `0x001B4896`, `0x001B48C4`, and `0x001B48F2` load exact two-resource VRAM

@@ -564,6 +564,13 @@ def test_real_palette_render_state_has_canonical_roles():
     assert latch.name == "VDP_COMMAND_ADDRESS_LATCH"
 
 
+def test_real_terrain_work_end_has_canonical_role():
+    symbol = SymbolStore().at(0x00FF725C, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "TERRAIN_WORK_END"
+    assert symbol.metadata["format"] == "byte_offset"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

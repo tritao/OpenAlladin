@@ -7,6 +7,7 @@
       "ram_address": "0x00FF0000",
       "bytes": 27000,
       "active_end_address": "0x00FF725C",
+      "active_end_symbol": "TERRAIN_WORK_END",
       "row_pointer_table": "0x00FF9884",
       "row_band_pixels": 16,
       "row_stride_bytes": 600,

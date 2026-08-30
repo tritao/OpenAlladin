@@ -348,6 +348,18 @@
   evidence:
     - ghidra_scene_resource_transfer_targets
     - ghidra_scene_resource_variant_targets
+0xFF725C:
+  name: TERRAIN_WORK_END
+  type: u16
+  format: byte_offset
+  confidence: confirmed
+  description: Exclusive byte offset of the active decompressed terrain work area relative to 0x00FF0000. Level_LoadFromSceneState computes it from the active terrain row stride and level height; player and actor terrain probes reject row addresses at or beyond this bound.
+  evidence:
+    - ghidra_level01_terrain_query_callback_targeted_decompile
+    - ghidra_disassembly_001AA5EE
+    - ghidra_disassembly_001AD798
+    - ghidra_disassembly_001B1EE4
+    - player_terrain_findings
 0xFF8800:
   name: CURRENT_VDP_PALETTE
   type: u16[64]
