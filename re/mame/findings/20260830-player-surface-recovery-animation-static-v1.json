@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-surface-recovery-animation-static-targets.json",
+  "stream": {
+    "address": "0x001223D0",
+    "name": "PLAYER_ANIM_SURFACE_RECOVERY",
+    "range": "0x001223D0-0x001223D9",
+    "bytes": 10,
+    "frame": "0x0B16",
+    "state_write": "ED at 0x001223D2 clears PLAYER_INTERACTION_ANIMATION_GATE at 0x00FFF0E7.",
+    "handoff": "F8 at 0x001223D8 enters dynamic player-animation state selection."
+  },
+  "consumer": "TerrainHandler_EnterSurfaceRecovery at 0x001B54A6 selects this stream after setting TERRAIN_QUERY_STATE_B, moving PLAYER_Y upward by 0x50, clearing PLAYER_ANIMATION_TIMER, and arming the interaction-animation gate.",
+  "boundaries": {
+    "start": "The stream begins at 0x001223D0 after the preceding player response region.",
+    "end": "The exact 10-byte stream ends at 0x001223D9; PLAYER_ANIM_THROW_APPLE begins immediately at 0x001223DA."
+  },
+  "evidence": [
+    "Exact behavior-0x27 terrain handler assignment",
+    "Level-01 terrain probe selecting 0x001223D0",
+    "Lossless AnimationDecoder output",
+    "Immediate non-overlapping boundary before PLAYER_ANIM_THROW_APPLE"
+  ],
+  "conclusion": "The previously unknown 10-byte player surface-recovery response is a separately owned animation stream with a direct behavior-0x27 consumer, explicit interaction-gate clear, dynamic handoff, and exact boundary before the apple-throw action stream.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

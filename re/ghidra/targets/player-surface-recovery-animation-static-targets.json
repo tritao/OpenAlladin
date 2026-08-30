@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-surface-recovery-animation-static",
+    "purpose": "Range-bound the player surface-recovery animation selected by the behavior-0x27 terrain handler before the apple-throw action stream."
+  },
+  "targets": [
+    { "address": "0x001223D0", "name": "PLAYER_ANIM_SURFACE_RECOVERY" },
+    { "address": "0x001B54A6", "name": "TerrainHandler_EnterSurfaceRecovery" },
+    { "address": "0x001223DA", "name": "PLAYER_ANIM_THROW_APPLE" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0E7", "name": "PLAYER_INTERACTION_ANIMATION_GATE" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" }
+  ]
+}

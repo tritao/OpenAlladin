@@ -5599,6 +5599,18 @@
     - level_table_enter_exit_decomp
     - animation_stream_decoder
 
+0x001223D0:
+  name: PLAYER_ANIM_SURFACE_RECOVERY
+  type: animation_stream
+  size: 10
+  confidence: confirmed
+  description: Player surface-recovery response stream selected by TerrainHandler_EnterSurfaceRecovery for behavior 0x27. Its exact 10-byte region presents frame 0x0B16, clears PLAYER_INTERACTION_ANIMATION_GATE, and enters dynamic player-animation state selection immediately before PLAYER_ANIM_THROW_APPLE at 0x001223DA.
+  evidence:
+    - ghidra_disassembly_001B54A6
+    - player_terrain_experiments
+    - terrain_response_family_static_decompilation
+    - animation_stream_decoder
+
 0x001223A2:
   name: PLAYER_ANIM_INTERACTION_PUSH_DOWN_RESPONSE
   size: 46

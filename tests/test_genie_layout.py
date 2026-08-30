@@ -2178,6 +2178,35 @@ def test_player_animation_branch_continuations_are_exact():
         assert decoded["instructions"][-1]["opcode"] == terminal_opcode
 
 
+def test_player_surface_recovery_animation_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x001223D0, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "PLAYER_ANIM_SURFACE_RECOVERY"
+    assert stream.end == 0x001223D9
+    assert stream.size == 10
+    assert stream.metadata["type"] == "animation_stream"
+
+    apple_throw = symbols.at(0x001223DA, include_ranges=False)
+    assert apple_throw is not None
+    assert apple_throw.name == "PLAYER_ANIM_THROW_APPLE"
+    assert stream.end + 1 == apple_throw.address
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoded = load_animation_decoder().AnimationDecoder(rom).decode_stream(
+        0x001223D0,
+        max_instructions=16,
+        max_bytes=16,
+        follow_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 10
+    assert decoded["stopped_reason"] == "dynamic_state_selection"
+    assert decoded["instructions"][0]["reference"] == "0x0B16"
+    assert decoded["instructions"][1]["target_fields"] == ["0x01", "0xF0", "0xE7"]
+    assert decoded["instructions"][-1]["opcode"] == "0xF8"
+
+
 def test_actor_type41_interaction_response_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00125D7E, include_ranges=False)
