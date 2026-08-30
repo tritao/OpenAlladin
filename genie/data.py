@@ -1190,7 +1190,27 @@ class DataIndex:
     ) -> list[dict[str, Any]]:
         result = []
         rom_size = self.layout.rom_size if self.layout is not None else None
+        normalized_kind = _normalize_kind(kind)
+        seen_physical: set[tuple[int, int, str]] = set()
         for value in self.objects(kind=kind):
+            canonical = value.get("canonical_symbol") or {}
+            if str(canonical.get("review_status", "")).casefold() in {"closed", "resolved"}:
+                continue
+            if normalized_kind is None:
+                # A canonical symbol can be surfaced through multiple layout
+                # views (for example ANIMATION_STREAM and OPAQUE_DATA).  The
+                # physical owner is one work item when the caller asks for
+                # all kinds; kind-specific queries intentionally retain their
+                # selected view.
+                identity = canonical.get("address", value.get("name", ""))
+                physical_key = (
+                    _address(value["start"]),
+                    _address(value["end"]),
+                    str(identity),
+                )
+                if physical_key in seen_physical:
+                    continue
+                seen_physical.add(physical_key)
             if rom_only and (rom_size is None or _address(value["start"]) < 0 or _address(value["end"]) >= rom_size):
                 continue
             if unresolved_only and value["confidence"] not in {"unknown", "provisional"}:

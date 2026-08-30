@@ -542,6 +542,45 @@ def test_data_todo_filters_aliases_and_prioritizes_missing_decode(tmp_path):
     assert "not_decoded" in items[0]["reasons"]
 
 
+def test_data_todo_deduplicates_physical_views_and_skips_closed_owners(tmp_path):
+    database_root = _database(tmp_path)
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0x10,
+            "ClosedDuplicate",
+            "data",
+            size=0x10,
+            metadata={"review_status": "closed", "type": "opaque_data"},
+        ),
+        Symbol(
+            0x20,
+            "OpenPhysicalOwner",
+            "data",
+            size=0x10,
+            metadata={"type": "opaque_data"},
+        ),
+    ))
+    layout = Layout(
+        0x100,
+        (
+            LayoutRange(0x00, 0x0F, "UNKNOWN", "test"),
+            LayoutRange(0x10, 0x1F, "ANIMATION_STREAM", "test", "ClosedDuplicate"),
+            LayoutRange(0x20, 0x2F, "ANIMATION_STREAM", "test", "OpenPhysicalOwner"),
+            LayoutRange(0x30, 0xFF, "UNKNOWN", "test"),
+        ),
+    )
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=layout,
+    )
+
+    items = index.todo(kind="all")
+    assert [item["name"] for item in items].count("ClosedDuplicate") == 0
+    assert [item["name"] for item in items].count("OpenPhysicalOwner") == 1
+
+
 def test_data_todo_can_limit_queue_to_rom_objects(tmp_path):
     database_root = _database(tmp_path)
     symbols = SymbolStore(symbols=(
