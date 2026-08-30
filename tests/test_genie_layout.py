@@ -473,6 +473,29 @@ def test_level08_rotating_vdp_record_table_has_exact_extent():
     assert rom[0x2A40:0x2A48] == bytes.fromhex("0001000080100001")
 
 
+def test_scene_vdp_fixed_data_has_exact_extents():
+    symbols = SymbolStore()
+    header = symbols.at(0x00002A40, include_ranges=False)
+    assert header is not None
+    assert header.name == "SCENE_HEADER_VDP_WORDS"
+    assert header.end == 0x00002A47
+    assert header.size == 8
+    assert header.metadata["type"] == "scene_resource_vdp_header"
+    assert header.metadata["entry_size"] == 2
+    assert header.metadata["count"] == 4
+
+    stream = symbols.at(0x00002A48, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "SCENE_VDP_INDIRECT_ZERO_FILL_STREAM"
+    assert stream.end == 0x00002A51
+    assert stream.size == 0x0A
+    assert stream.metadata["type"] == "scene_resource_vdp_indirect_stream"
+
+    rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x2A40:0x2A48] == bytes.fromhex("0001000080100001")
+    assert rom[0x2A48:0x2A52] == bytes.fromhex("00000000FFFF00002A48")
+
+
 def test_interaction_counter_animation_table_and_bank_are_exact():
     symbols = SymbolStore()
     table = symbols.at(0x00004A58, include_ranges=False)

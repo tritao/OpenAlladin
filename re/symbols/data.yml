@@ -1657,11 +1657,35 @@
   count: 16
   size: 0x60
   confidence: decompiled
-  description: Exact sixteen-entry Level-08 rotating VDP record table consumed by Level08_EnterRoutine and VDP_WriteRotatingCommandRecord. Each six-byte record stores a longword VDP control word followed by one data word; the runtime advances by six bytes and wraps at the exclusive offset 0x60, ending immediately before the unresolved Level-08 initialization constants.
+  description: Exact sixteen-entry Level-08 rotating VDP record table consumed by Level08_EnterRoutine and VDP_WriteRotatingCommandRecord. Each six-byte record stores a longword VDP control word followed by one data word; the runtime advances by six bytes and wraps at the exclusive offset 0x60, ending immediately before SCENE_HEADER_VDP_WORDS at 0x00002A40.
   evidence:
     - level08_rotating_vdp_record_table_static_decompilation
     - ghidra_disassembly_001B6066
     - ghidra_disassembly_001B5D46
+
+0x002A40:
+  name: SCENE_HEADER_VDP_WORDS
+  type: scene_resource_vdp_header
+  entry_size: 2
+  count: 4
+  size: 8
+  confidence: decompiled
+  description: Exact four-word VDP header copied from ROM address 0x00002A40 to VRAM address 0xF400 by VDP_CopyFixedSceneHeader. The words are the fixed scene-header payload 0x0001, 0x0000, 0x8010, and 0x0001.
+  evidence:
+    - vdp_scene_header_words_static_decompilation
+    - ghidra_decompile_001B269C
+    - ghidra_disassembly_001B255C
+
+0x002A48:
+  name: SCENE_VDP_INDIRECT_ZERO_FILL_STREAM
+  type: scene_resource_vdp_indirect_stream
+  size: 0x0A
+  confidence: decompiled
+  description: Exact ten-byte indirect VDP source stream consumed by VDP_CopyIndirectWordStream. It emits two literal zero words, then follows the embedded pointer 0x00002A48 after the FFFF escape and repeats that zero-producing cycle for the 0x200-word transfer used by scene setup and presentation paths.
+  evidence:
+    - scene_vdp_indirect_zero_fill_stream_static_decompilation
+    - ghidra_decompile_001B2584
+    - ghidra_disassembly_001B2584
 
 0x004554:
   name: TERRAIN_RESPONSE_HANDLER_TABLE

@@ -25,7 +25,7 @@
   "boundary_basis": [
     "Level08_EnterRoutine loads 0x000029E0 into A0 before calling VDP_WriteRotatingCommandRecord.",
     "VDP_WriteRotatingCommandRecord reads one longword and one word, advances the cursor by six bytes, and wraps at the exclusive offset 0x60.",
-    "The sixteen six-byte records therefore occupy exactly 0x000029E0-0x00002A3F."
+    "The sixteen six-byte records therefore occupy exactly 0x000029E0-0x00002A3F, immediately before SCENE_HEADER_VDP_WORDS at 0x00002A40."
   ],
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"

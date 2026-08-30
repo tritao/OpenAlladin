@@ -16,5 +16,5 @@
     "entry_consumer": "0x001B5D46 VDP_WriteRotatingCommandRecord",
     "stream_owner": "0x001B6066 Level08_EnterRoutine"
   },
-  "conclusion": "The Level-08 rotating VDP data at 0x000029E0 is an exact sixteen-record table. Its cursor advances in six-byte units and wraps after the record at 0x00002A3A, so the following bytes at 0x00002A40 are outside the table."
+  "conclusion": "The Level-08 rotating VDP data at 0x000029E0 is an exact sixteen-record table. Its cursor advances in six-byte units and wraps after the record at 0x00002A3A; the following fixed scene-header words begin at 0x00002A40."
 }
