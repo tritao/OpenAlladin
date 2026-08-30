@@ -195,6 +195,31 @@ def test_data_index_collapses_palette_bank_layout_fragment(tmp_path):
     assert index.context(0x44)["object"]["name"] == "PaletteSource"
 
 
+def test_data_index_trusts_validated_manifest_extent_confidence(tmp_path):
+    database_root = _database(tmp_path)
+    layout = Layout(
+        rom_size=0x100,
+        ranges=(
+            LayoutRange(0x00, 0x3F, "UNKNOWN", "test"),
+            LayoutRange(0x40, 0x4F, "GRAPHICS", "sprites.frame_manifest", "SPRITE_FRAME_0000"),
+            LayoutRange(0x50, 0x5F, "COMPRESSED_DATA", "assets.manifest", "RNC_BLOCK_000050"),
+            LayoutRange(0x60, 0xFF, "UNKNOWN", "test"),
+        ),
+    )
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=SymbolStore(symbols=()),
+        layout=layout,
+    )
+
+    frame = index.at(0x40)
+    block = index.at(0x50)
+    assert frame is not None and frame["confidence"] == "confirmed"
+    assert block is not None and block["confidence"] == "confirmed"
+    assert index.todo(kind="all", unresolved_only=True) == []
+
+
 def test_data_todo_filters_aliases_and_prioritizes_missing_decode(tmp_path):
     database_root = _database(tmp_path)
     symbols = SymbolStore(symbols=(
