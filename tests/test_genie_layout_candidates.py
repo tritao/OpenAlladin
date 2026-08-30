@@ -63,6 +63,7 @@ def test_layout_candidates_join_decoder_and_actor_template_pointer_evidence(tmp_
         "direct_references": 1,
         "code_backed_references": 1,
         "data_only_references": 0,
+        "literal_constants": 0,
         "decoded_streams": 1,
         "vm_probes": 0,
         "boundary_conflicts": 0,
@@ -97,7 +98,35 @@ def test_layout_candidates_identify_dense_pointer_reference_gaps(tmp_path):
     assert items[0]["promotion"] == "do_not_promote"
     assert items[0]["evidence_counts"]["code_backed_references"] == 0
     assert items[0]["evidence_counts"]["data_only_references"] == 8
+    assert items[0]["evidence_counts"]["literal_constants"] == 0
     assert "data_only_refs_do_not_identify_format" in items[0]["reasons"]
+
+
+def test_layout_candidates_do_not_promote_immediate_literal_xrefs(tmp_path):
+    database = _database(tmp_path)
+    (database / "xrefs.json").write_text(json.dumps({"references": [
+        {
+            "from": "0x00000080",
+            "from_function_name": "SpawnActor",
+            "to": "0x00000010",
+            "type": "DATA",
+            "instruction": "move.w #0x10,(0x1e,A5)",
+        },
+    ]}), encoding="utf-8")
+    layout = Layout(
+        rom_size=0x100,
+        ranges=(
+            LayoutRange(0x00, 0x1F, "UNKNOWN", "layout.gap"),
+            LayoutRange(0x20, 0xFF, "CODE", "test"),
+        ),
+    )
+
+    items = build_layout_candidates(AnalysisDatabase(database), layout, root=tmp_path)
+
+    assert items[0]["suggested_class"] == "UNKNOWN"
+    assert items[0]["evidence_quality"] == "weak"
+    assert items[0]["evidence_counts"]["literal_constants"] == 1
+    assert "literal_constants" in items[0]["reasons"]
 
 
 def test_layout_candidates_can_hide_weak_data_only_evidence(tmp_path):

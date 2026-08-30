@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -18,6 +19,21 @@ def _address(value: Any) -> int:
 
 def _hex(value: int) -> str:
     return f"0x{value:08X}"
+
+
+_IMMEDIATE_LITERAL = re.compile(r"#\s*(?:0x|\$)([0-9A-Fa-f]+)")
+
+
+def _is_immediate_literal(reference: dict[str, Any], target: int) -> bool:
+    """Return whether an xref target is only an instruction immediate."""
+
+    instruction = reference.get("instruction")
+    if not isinstance(instruction, str):
+        return False
+    return any(
+        int(match.group(1), 16) == target
+        for match in _IMMEDIATE_LITERAL.finditer(instruction)
+    )
 
 
 def _read_json(path: Path) -> Any | None:
@@ -290,6 +306,7 @@ def build_layout_candidates(
         gap = _unknown_at(gaps, target)
         if gap is None:
             continue
+        literal_constant = _is_immediate_literal(reference, target)
         row = {
             "kind": "direct_reference",
             "from": _hex(_address(reference.get("from", 0))),
@@ -297,11 +314,12 @@ def build_layout_candidates(
             "type": reference.get("type"),
             "from_function": reference.get("from_function_name") or reference.get("from_function"),
             "instruction": reference.get("instruction"),
+            "literal_constant": literal_constant,
             "code_backed": bool(
                 reference.get("from_function_name")
                 or reference.get("from_function")
                 or reference.get("instruction")
-            ),
+            ) and not literal_constant,
         }
         by_start[gap.start]["evidence"].append(row)
         by_start[gap.start]["proposed_ranges"].append({
@@ -367,6 +385,7 @@ def build_layout_candidates(
         direct = [row for row in evidence if row["kind"] == "direct_reference"]
         code_direct = [row for row in direct if row.get("code_backed")]
         data_only_direct = [row for row in direct if not row.get("code_backed")]
+        literal_direct = [row for row in direct if row.get("literal_constant")]
         streams = [row for row in evidence if row["kind"] in {"decoded_stream", "vm_probe"}]
         catalogued_streams = [row for row in evidence if row["kind"] == "decoded_stream"]
         probes = [row for row in evidence if row["kind"] == "vm_probe"]
@@ -448,6 +467,8 @@ def build_layout_candidates(
             reasons.append("code_backed_references")
         if data_only_direct:
             reasons.append("data_only_references")
+        if literal_direct:
+            reasons.append("literal_constants")
         if data_only_direct and not (streams or templates or code_direct):
             reasons.append("data_only_refs_do_not_identify_format")
         elif data_only_direct and code_direct:
@@ -464,6 +485,7 @@ def build_layout_candidates(
                 "direct_references": len(direct),
                 "code_backed_references": len(code_direct),
                 "data_only_references": len(data_only_direct),
+                "literal_constants": len(literal_direct),
                 "decoded_streams": len(catalogued_streams),
                 "vm_probes": len(probes),
                 "boundary_conflicts": len(boundary_conflicts),
