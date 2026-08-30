@@ -1115,9 +1115,9 @@
 0x00127AEE:
   name: SCENE_RESOURCE_BLANK_STREAM_STATE_03
   type: scene_resource_stream
-  size: 0xE4
+  size: 0x72
   confidence: decompiled
-  description: Blank-frame scene-resource command stream for state 0x03 loaded directly by SceneResource_RunBlankStream127AEE. Its exact range 0x00127AEE-0x00127BD1 ends with command 0 before the state-0x04 blank-frame stream.
+  description: Blank-frame scene-resource command stream for state 0x03 loaded directly by SceneResource_RunBlankStream127AEE. Its exact range 0x00127AEE-0x00127B5F ends with command 0 before the separately selected stream at 0x00127B60.
   evidence:
     - ghidra_scene_resource_presentation_wrappers
     - scene_resource_command_stream_terminators

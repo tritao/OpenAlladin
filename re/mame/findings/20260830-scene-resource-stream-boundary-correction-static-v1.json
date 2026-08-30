@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-scene-resource-stream-boundary-correction-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "source": {
+    "stream": "0x00127AEE",
+    "wrapper": "0x001B4E1E SceneResource_RunBlankStream127AEE",
+    "following_stream": "0x00127B60"
+  },
+  "correction": {
+    "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_03",
+    "range": ["0x00127AEE", "0x00127B5F"],
+    "size": 114,
+    "terminator": "0x00127B5F",
+    "previous_declared_range": ["0x00127AEE", "0x00127BD1"]
+  },
+  "evidence": [
+    "The ROM stream at 0x00127AEE reaches its command-0 terminator at 0x00127B5F.",
+    "The next byte at 0x00127B60 begins a separate blank-frame stream selected by SceneResource_RunBlankStream127B60.",
+    "The direct wrapper sources are distinct, so the former 0xE4-byte owner incorrectly included the complete 0x00127B60-0x00127BD1 stream."
+  ],
+  "conclusion": "SCENE_RESOURCE_BLANK_STREAM_STATE_03 owns 0x00127AEE-0x00127B5F only; SCENE_RESOURCE_BLANK_STREAM_127B60 independently owns 0x00127B60-0x00127BD1."
+}

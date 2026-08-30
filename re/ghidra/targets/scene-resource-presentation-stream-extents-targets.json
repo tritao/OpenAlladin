@@ -38,8 +38,8 @@
     {
       "address": "0x00127AEE",
       "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_03",
-      "range": ["0x00127AEE", "0x00127BD1"],
-      "size": 228,
+      "range": ["0x00127AEE", "0x00127B5F"],
+      "size": 114,
       "wrapper": "0x001B4E1E SceneResource_RunBlankStream127AEE",
       "load_site": "0x001B4E28"
     },
