@@ -904,6 +904,11 @@ three flags, and the B6/B7/B8 Type-0x84 base spawners select the exact priority
 order: Type-0x49 selects B8, Type-0x48 without Type-0x49 selects B7, and the
 remaining Type-0x47-only case selects B6. Clear timing remains unresolved.
 
+The state-10 scene-resource VDP progress word is now canonical as
+`SCENE_RESOURCE_STATE10_VDP_PROGRESS` at `FFF0B6`. Its presentation service
+clears the 16-bit value, increments it on the frame-phase bit-1 cadence until
+`0x20`, and publishes each accepted value to `VDP_DATA`.
+
 The adjacent compact scene-resource loader variants are recorded in
 `re/mame/findings/20260828-scene-resource-loader-variants-v1.json`.
 `0x001B4896`, `0x001B48C4`, and `0x001B48F2` load exact two-resource VRAM

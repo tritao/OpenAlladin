@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-resource-state10-vdp-progress-static-targets.json",
+  "symbol": {
+    "address": "0x00FFF0B6",
+    "name": "SCENE_RESOURCE_STATE10_VDP_PROGRESS",
+    "type": "u16",
+    "format": "integer"
+  },
+  "contract": {
+    "owner": "SceneResource_RunState10Presentation at 0x001B4D0C",
+    "clear": "0x001B4D1E",
+    "increment": "0x001B4D96 when FRAME_PHASE_COUNTER bit 1 is set",
+    "terminal_compare": "0x001B4D8C compares against 0x20",
+    "vdp_publish": "0x001B4D9C"
+  },
+  "conclusion": "The word ramps from zero to 0x20 in the state-10 presentation loop and publishes each accepted step to VDP_DATA.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

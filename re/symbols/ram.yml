@@ -1558,6 +1558,18 @@
     - ghidra_decompile_001B70F8
     - ghidra_disassembly_001B712C
     - ghidra_disassembly_001B7158
+0xFFF0B6:
+  name: SCENE_RESOURCE_STATE10_VDP_PROGRESS
+  type: u16
+  format: integer
+  confidence: decompiled
+  description: State-10 scene-resource presentation VDP progress word. SceneResource_RunState10Presentation clears it, increments it on the gated frame cadence until 0x20, and writes each new value to the VDP data port.
+  evidence:
+    - ghidra_decompile_001B4D0C
+    - ghidra_disassembly_001B4D1E
+    - ghidra_disassembly_001B4D8C
+    - ghidra_disassembly_001B4D96
+    - ghidra_disassembly_001B4D9C
 0xFF98C4:
   name: TERRAIN_LANDING_ROW_POINTERS
   type: pointer_table
