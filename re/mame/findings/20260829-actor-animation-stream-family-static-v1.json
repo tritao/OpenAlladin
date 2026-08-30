@@ -24,7 +24,7 @@
     ],
     "scene_and_children": [
       "0x00124BDC-0x00124C17 ACTOR_ANIM_TYPE04_SCENE_SETUP",
-      "0x00124C1A-0x00124C39 ACTOR_ANIM_TYPE84_MOVING_CHILD_SPAWN_PREFIX",
+      "0x00124C18-0x00124C39 ACTOR_ANIM_TYPE04_COLLISION_RESPONSE; nested F5 entry at 0x00124C1A",
       "0x00124C3A-0x00124C9B ACTOR_ANIM_TYPE84_MOVING_CHILD_VARIANT_LOOP",
       "0x00124C9C-0x00124CBF ACTOR_ANIM_TYPE84_SCENE_SETUP_A",
       "0x00124CC0-0x00124CD7 ACTOR_ANIM_TYPE84_SCENE_SETUP_B",
@@ -49,7 +49,7 @@
     "Exact fixed stream boundaries at adjacent known roots",
     "Lossless AnimationDecoder output and original ROM bytes"
   ],
-  "conclusion": "The actor AnimationVM corpus now has a larger mechanically authoritative boundary map. The promoted ranges are direct roots or exact producer entries; the intervening gaps remain UNKNOWN until their own consumers are proven.",
+  "conclusion": "The actor AnimationVM corpus now has a larger mechanically authoritative boundary map. The promoted ranges are direct roots or exact producer entries; the Type-0x04 collision entry now owns the leading frame reference at 0x00124C18 and the nested F5 entry is represented as an alias. The remaining intervening gaps remain UNKNOWN until their own consumers are proven.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

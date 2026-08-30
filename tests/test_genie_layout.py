@@ -2901,3 +2901,31 @@ def test_final_mechanical_function_closure_is_exact():
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     assert rom[0x001AE6B4:0x001AE6BC] == bytes.fromhex("50F900FFF0F54E75")
     assert rom[0x001B03BE:0x001B03F2][-2:] == bytes.fromhex("4E75")
+
+
+def test_actor_type04_collision_animation_entry_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x00124C18, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "ACTOR_ANIM_TYPE04_COLLISION_RESPONSE"
+    assert stream.end == 0x00124C39
+    assert stream.size == 34
+    assert stream.metadata["type"] == "animation_stream"
+
+    nested = symbols.at(0x00124C1A, include_ranges=False)
+    assert nested is not None
+    assert nested.name == "ACTOR_ANIM_TYPE84_MOVING_CHILD_SPAWN_PREFIX"
+    assert nested.metadata["alias_of"] == "ACTOR_ANIM_TYPE04_COLLISION_RESPONSE"
+    assert nested.metadata["entry_offset"] == 2
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoded = load_animation_decoder().AnimationDecoder(rom).decode_stream(
+        0x00124C18,
+        max_instructions=64,
+        max_bytes=64,
+        follow_control_flow=False,
+    )
+    assert decoded["bytes_decoded"] == 34
+    assert decoded["stopped_reason"] == "unconditional_jump"
+    assert decoded["instructions"][-1]["branch_target"] == "0x00124BDC"

@@ -4312,12 +4312,24 @@
 0x00124C1A:
   name: ACTOR_ANIM_TYPE84_MOVING_CHILD_SPAWN_PREFIX
   type: animation_stream
-  size: 32
   confidence: decompiled
-  description: Exact F5 moving-child spawn prefix at 0x00124C1A. It supplies ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE, presents the 0x14F6 response frames, writes actor field 0x11 as 0x0004, and returns to ACTOR_ANIM_TYPE04_SCENE_SETUP; the later conditional variant region remains unpromoted.
+  alias_of: ACTOR_ANIM_TYPE04_COLLISION_RESPONSE
+  entry_offset: 2
+  description: Nested F5 moving-child spawn entry inside ACTOR_ANIM_TYPE04_COLLISION_RESPONSE. It supplies ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE, presents the 0x14F6 response frames, writes actor field 0x11 as 0x0004, and returns to ACTOR_ANIM_TYPE04_SCENE_SETUP without claiming a second ROM ownership range.
   evidence:
     - actor_template_f5_moving_child_base_static_decompilation
     - actor_animation_stream_family_static_decompilation
+    - animation_stream_decoder
+
+0x00124C18:
+  name: ACTOR_ANIM_TYPE04_COLLISION_RESPONSE
+  type: animation_stream
+  size: 34
+  confidence: decompiled
+  description: Type-0x04 actor-collision response entry installed by ActorType04_ActorCollisionHandler at 0x001AC102. It presents frame 0x14F6, spawns the Type-0x84 moving child through the nested F5 entry at 0x00124C1A, writes actor field 0x11 as 0x0004, and returns through the Type-0x04 scene-setup animation at 0x00124BDC.
+  evidence:
+    - actor_collision_dispatch_family_extended_static_decompilation
+    - ghidra_disassembly_001AC102
     - animation_stream_decoder
 
 0x00124C3A:
