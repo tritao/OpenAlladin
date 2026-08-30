@@ -312,6 +312,44 @@ def test_scene_script_prefix_is_exact_and_cursor_boundary_is_preserved():
     assert rom[script.address:script.address + 4] == bytes.fromhex("00010002")
 
 
+def test_unreferenced_fixed_record_bank_has_exact_extent_and_cadence():
+    symbols = SymbolStore()
+    bank = symbols.at(0x00001F82, include_ranges=False)
+    assert bank is not None
+    assert bank.name == "UNREFERENCED_FIXED_RECORD_BANK_1F82"
+    assert bank.end == 0x00002021
+    assert bank.size == 160
+    assert bank.metadata["type"] == "opaque_data_table"
+    assert bank.metadata["entry_size"] == 10
+    assert bank.metadata["count"] == 16
+    assert bank.confidence == "provisional"
+
+    following = symbols.at(0x00002080, include_ranges=False)
+    assert following is not None
+    assert following.name == "SCENE_VDP_TRANSITION_PLANE_OFFSET_TABLE"
+    assert bank.end + 1 < following.address
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[bank.address:bank.end + 1] == bytes.fromhex(
+        "9300940102000F002020"
+        "93C0940001800B001820"
+        "93809400010007001020"
+        "93409400008003000820"
+        "93C0940001800E002018"
+        "9390940001200A001818"
+        "9360940000C006001018"
+        "93309400006002000818"
+        "9380940001000D002010"
+        "9360940000C009001810"
+        "93409400008005001010"
+        "93209400004001000810"
+        "9340940000800C002008"
+        "93309400006008001808"
+        "93209400004004001008"
+        "93109400002000000808"
+    )
+
+
 def test_unindexed_graphics_bands_and_padding_are_exact():
     symbols = SymbolStore()
     tile_band = symbols.at(0x0011E160, include_ranges=False)

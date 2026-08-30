@@ -3160,6 +3160,18 @@
     - rom_handler_table_decode
     - ghidra_decompile_collision_damage_targets
 
+0x001F82:
+  name: UNREFERENCED_FIXED_RECORD_BANK_1F82
+  type: opaque_data_table
+  entry_size: 10
+  count: 16
+  size: 160
+  confidence: provisional
+  description: Provisional opaque bank of sixteen fixed ten-byte records immediately after ACTOR_COLLISION_HANDLER_TABLE and before the transition-plane padding. The record cadence and exact bytes are established, but no consumer or field interpretation is currently recovered.
+  evidence:
+    - unreferenced_fixed_record_bank_1f82_static_v1
+    - actor_collision_handler_table_extent
+
 0x001EE2:
   name: ACTOR_COLLISION_HANDLER_TYPE_0A
   type: rom_pointer

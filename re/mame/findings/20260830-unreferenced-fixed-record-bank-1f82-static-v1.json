@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-unreferenced-fixed-record-bank-1f82-static-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "provisional",
+  "target_manifest": "re/ghidra/targets/unreferenced-fixed-record-bank-1f82-static-targets.json",
+  "promoted_range": {
+    "address": "0x00001F82",
+    "name": "UNREFERENCED_FIXED_RECORD_BANK_1F82",
+    "range": ["0x00001F82", "0x00002021"],
+    "size": 160,
+    "entry_size": 10,
+    "count": 16
+  },
+  "boundary": "The bank follows ACTOR_COLLISION_HANDLER_TABLE at 0x00001EBA, which ends at 0x00001F81. It begins at the next byte 0x00001F82 and ends immediately before ROM_PADDING_FF_002022 at 0x00002022.",
+  "interpretation": "The exact ten-byte cadence is recorded as opaque fixed records. The repeated 0x93/0x94-leading byte pattern is not treated as a valid MovementVM stream because the established command format would require six-byte pointer-bearing conditions and the bank has no recovered VM consumer.",
+  "conclusion": "The former 160-byte mixed-content gap now has a neutral exact owner while its producer, consumer, and field semantics remain unresolved."
+}

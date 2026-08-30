@@ -1,0 +1,45 @@
+{
+  "format": "openaladdin-unreferenced-fixed-record-bank-1f82-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target": {
+    "address": "0x00001F82",
+    "name": "UNREFERENCED_FIXED_RECORD_BANK_1F82",
+    "range": ["0x00001F82", "0x00002021"],
+    "size": 160,
+    "entry_size": 10,
+    "count": 16,
+    "preceding": "0x00001EBA-0x00001F81 ACTOR_COLLISION_HANDLER_TABLE",
+    "following": "0x00002022-0x0000207F ROM_PADDING_FF_002022"
+  },
+  "structure": {
+    "record_bytes": [
+      "9300940102000F002020",
+      "93C0940001800B001820",
+      "93809400010007001020",
+      "93409400008003000820",
+      "93C0940001800E002018",
+      "9390940001200A001818",
+      "9360940000C006001018",
+      "93309400006002000818",
+      "9380940001000D002010",
+      "9360940000C009001810",
+      "93409400008005001010",
+      "93209400004001000810",
+      "9340940000800C002008",
+      "93309400006008001808",
+      "93209400004004001008",
+      "93109400002000000808"
+    ]
+  },
+  "evidence": [
+    "The range is exactly divisible into sixteen ten-byte records.",
+    "The bytes form a stable fixed-record cadence but do not decode as the established MovementVM command format when treated as a stream.",
+    "No current direct ROM reference selects the bank, so the name and confidence remain intentionally neutral."
+  ],
+  "confidence": "provisional",
+  "status": "recorded-static-disassembly"
+}
