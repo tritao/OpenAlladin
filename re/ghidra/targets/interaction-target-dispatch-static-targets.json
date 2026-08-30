@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-interaction-target-dispatch-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target": {
+    "address": "0x001B0316",
+    "name": "Interaction_DispatchTargetState",
+    "range": ["0x001B0316", "0x001B0333"],
+    "size": 30,
+    "selector": "0x00FFF0EC INTERACTION_TARGET_CURRENT",
+    "table_register": "A0",
+    "operation": "push longword from (A0, selector * 4) and tail-transfer through RTS",
+    "zero_selector_effect": "set 0x00FFF0E6 PLAYER_TERMINAL_TRANSITION"
+  },
+  "boundary_basis": [
+    "The helper begins at the previously unknown entry 0x001B0316 and ends immediately before the shared RTS at 0x001B0334.",
+    "Its indexed longword push is a computed control transfer rather than ordinary data movement.",
+    "The selector convergence service at 0x001B02EC updates the same selector byte before the dispatch helper consumes it."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

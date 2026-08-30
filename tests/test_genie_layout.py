@@ -3048,6 +3048,25 @@ def test_interaction_resource_delay_counter_helpers_are_exact():
     assert rom[0x001B01A4:0x001B01AC] == bytes.fromhex("5E3900FFF1594E75")
 
 
+def test_interaction_target_dispatch_helper_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001B0316, include_ranges=False)
+    assert function is not None
+    assert function.name == "Interaction_DispatchTargetState"
+    assert function.end == 0x001B0333
+    assert function.size == 30
+
+    ram = symbols.at(0x00FFF0EC, include_ranges=False)
+    assert ram is not None
+    assert ram.name == "INTERACTION_TARGET_CURRENT"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B0316:0x001B0334] == bytes.fromhex(
+        "4244183900FFF0ECD844D8442F3040004A3900FFF0EC"
+        "660650F900FFF0E6"
+    )
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)

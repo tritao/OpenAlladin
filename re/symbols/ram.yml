@@ -379,6 +379,16 @@
   evidence:
     - ghidra_memory_reference_player_terminal_transition
     - mame_level_transition_watch
+0xFFF0EC:
+  name: INTERACTION_TARGET_CURRENT
+  type: u8
+  format: integer
+  confidence: decompiled
+  description: Current interaction target selector converged toward the published target value by Interaction_UpdateTarget and used as the index by Interaction_DispatchTargetState.
+  evidence:
+    - ghidra_disassembly_001B02EC
+    - ghidra_disassembly_001B0316
+    - interaction_target_dispatch_static_decompilation
 0xFFF0E7:
   name: PLAYER_INTERACTION_ANIMATION_GATE
   type: u8
