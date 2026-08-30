@@ -646,6 +646,42 @@ def test_data_context_includes_animation_f5_template_consumer(tmp_path):
     assert context["references"][0]["type"] == "ANIMATION_F5_TEMPLATE"
 
 
+def test_data_context_includes_movement_f5_template_consumer(tmp_path):
+    database_root = _database(tmp_path)
+    symbols = SymbolStore(symbols=(
+        Symbol(0x40, "ActorMovement", "data", size=16),
+        Symbol(0x80, "ActorTemplate", "data", metadata={"type": "actor_template"}),
+    ))
+    (tmp_path / "movement.json").write_text(json.dumps({
+        "streams": {
+            "ActorMovement": {
+                "entry": "0x40",
+                "name": "ActorMovement",
+                "steps": [{
+                    "address": "0x40",
+                    "commands": [{
+                        "address": "0x42",
+                        "opcode": "0x8B",
+                        "template": "0x80",
+                    }],
+                }],
+            },
+        },
+    }), encoding="utf-8")
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x100, (LayoutRange(0, 0xFF, "UNKNOWN", "test"),)),
+        movement_path=tmp_path / "movement.json",
+    )
+
+    context = index.context(0x80)
+    assert context is not None
+    assert context["consumers"][0]["name"] == "ActorMovement"
+    assert context["references"][0]["type"] == "MOVEMENT_F5_TEMPLATE"
+
+
 def test_data_index_accepts_injected_semantic_provider(tmp_path):
     database_root = _database(tmp_path)
     seen: dict[str, object] = {}

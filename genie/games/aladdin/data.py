@@ -42,7 +42,7 @@ class AladdinSemanticDataClassifier:
         return None
 
     def decoded_references(self, obj: dict[str, Any]) -> Iterable[dict[str, Any]]:
-        """Recover actor-template consumers encoded in AnimationVM F5 records."""
+        """Recover actor-template consumers encoded in VM F5 records."""
 
         value = obj.get("value")
         decoded = obj.get("decoded")
@@ -59,33 +59,49 @@ class AladdinSemanticDataClassifier:
                 if not isinstance(stream, dict):
                     continue
                 stream_name = str(stream.get("name") or f"{kind.title()}_{entry:08X}")
-                records = stream.get("instructions", []) if kind == "animation" else []
+                if kind == "animation":
+                    records = stream.get("instructions", [])
+                else:
+                    records = [
+                        command
+                        for step in stream.get("steps", [])
+                        if isinstance(step, dict)
+                        for command in step.get("commands", [])
+                        if isinstance(command, dict)
+                    ]
                 for record in records if isinstance(records, list) else ():
-                    if not isinstance(record, dict) or record.get("opcode") != "0xF5":
-                        continue
-                    raw_text = record.get("raw")
-                    if not isinstance(raw_text, str):
-                        continue
-                    try:
-                        raw = bytes.fromhex(raw_text)
-                    except ValueError:
+                    if not isinstance(record, dict) or record.get("opcode") not in {"0xF5", "0x8B"}:
                         continue
                     # F5 stores its template pointer immediately after the
                     # opcode and mode byte; the remaining ten bytes are the
                     # child placement/override payload.
-                    if len(raw) < 6:
-                        continue
-                    target = int.from_bytes(raw[2:6], "big")
+                    target_text = record.get("template")
+                    if target_text is not None:
+                        try:
+                            target = _address(target_text)
+                        except (TypeError, ValueError):
+                            continue
+                    else:
+                        raw_text = record.get("raw")
+                        if not isinstance(raw_text, str):
+                            continue
+                        try:
+                            raw = bytes.fromhex(raw_text)
+                        except ValueError:
+                            continue
+                        if len(raw) < 6:
+                            continue
+                        target = int.from_bytes(raw[2:6], "big")
                     if not start <= target <= end:
                         continue
                     result.append({
                         "from": record.get("address", _hex(entry)),
                         "from_function_name": stream_name,
                         "to": _hex(target),
-                        "type": "ANIMATION_F5_TEMPLATE",
+                        "type": f"{kind.upper()}_F5_TEMPLATE",
                         "read": False,
                         "write": False,
-                        "source": "animation_streams",
+                        "source": f"{kind}_streams",
                         "instruction": "F5 template pointer",
                     })
         return result
