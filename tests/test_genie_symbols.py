@@ -909,6 +909,20 @@ def test_real_player_actor_coordinates_and_menu_gate_have_canonical_roles():
         assert symbol.confidence == confidence
 
 
+def test_real_input_and_menu_phase_state_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FFEFFD: ("INPUT_EDGE_LATCH", "boolean"),
+        0x00FF7274: ("MENU_OPTIONS_SUBPHASE", "counter"),
+    }
+    for address, (name, format_name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == "decompiled"
+
+
 def test_real_actor_slot_one_fields_have_canonical_roles():
     symbols = SymbolStore()
     expected = {

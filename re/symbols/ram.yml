@@ -2400,6 +2400,27 @@
     - ghidra_disassembly_001B437E
     - menu-options-presentation-targets
 
+0xFFEFFD:
+  name: INPUT_EDGE_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Shared input edge latch used by the options and sound-test loops. Directional/selection actions are accepted only while it is clear, accepted actions set it, and the button-release path clears it; level-entry paths also set it before handing control back to the frame loop.
+  evidence:
+    - ghidra_disassembly_001B3C7C
+    - ghidra_disassembly_001B4436
+    - ghidra_disassembly_001A8F0C
+    - ghidra_disassembly_001AA484
+
+0xFF7274:
+  name: MENU_OPTIONS_SUBPHASE
+  type: u8
+  format: counter
+  confidence: decompiled
+  description: Five-state secondary options-menu phase counter. Menu_RunOptionsPresentationContinuation initializes it at startup, advances it modulo five in the secondary selection path, and refreshes the menu presentation after each phase step; no independent gameplay meaning is claimed.
+  evidence:
+    - ghidra_disassembly_001B3C7C
+
 0xFF7E88:
   name: ACTOR_SLOT_1_FLAGS
   type: u8

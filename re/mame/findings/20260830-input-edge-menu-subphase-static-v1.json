@@ -1,0 +1,16 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/input-edge-menu-subphase-static-targets.json",
+  "conclusion": "Named the shared menu/sound-test input edge latch and the bounded secondary options-menu phase counter with neutral role-based identities; their user-facing semantics remain intentionally unspecified.",
+  "fields": [
+    "0x00FFEFFD INPUT_EDGE_LATCH",
+    "0x00FF7274 MENU_OPTIONS_SUBPHASE"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
