@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-slot-one-fields-static-targets.json",
+  "conclusion": "Completed the high-value absolute aliases for common actor-table slot 1: behavior/state flags, orientation, frame pointer, and animation-stream pointer.",
+  "fields": [
+    "0x00FF7E88 ACTOR_SLOT_1_FLAGS",
+    "0x00FF7E89 ACTOR_SLOT_1_STATE_FLAGS",
+    "0x00FF7E8B ACTOR_SLOT_1_FACING_X_FLIP",
+    "0x00FF7E96 ACTOR_SLOT_1_FRAME_PTR",
+    "0x00FF7EA2 ACTOR_SLOT_1_ANIMATION_PC"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -909,6 +909,23 @@ def test_real_player_actor_coordinates_and_menu_gate_have_canonical_roles():
         assert symbol.confidence == confidence
 
 
+def test_real_actor_slot_one_fields_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FF7E88: ("ACTOR_SLOT_1_FLAGS", "bitfield", "confirmed"),
+        0x00FF7E89: ("ACTOR_SLOT_1_STATE_FLAGS", "bitfield", "decompiled"),
+        0x00FF7E8B: ("ACTOR_SLOT_1_FACING_X_FLIP", "boolean", "decompiled"),
+        0x00FF7E96: ("ACTOR_SLOT_1_FRAME_PTR", "rom_pointer", "confirmed"),
+        0x00FF7EA2: ("ACTOR_SLOT_1_ANIMATION_PC", "rom_pointer", "decompiled"),
+    }
+    for address, (name, format_name, confidence) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == confidence
+
+
 def test_real_player_terrain_transition_gate_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF114, include_ranges=False)
     assert symbol is not None

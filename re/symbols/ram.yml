@@ -2399,3 +2399,56 @@
     - ghidra_disassembly_001B3C7C
     - ghidra_disassembly_001B437E
     - menu-options-presentation-targets
+
+0xFF7E88:
+  name: ACTOR_SLOT_1_FLAGS
+  type: u8
+  format: bitfield
+  confidence: confirmed
+  description: Behavior flags byte at offset +0x06 in common actor-table slot 1. Terrain collision clears bit 0 and sets bit 6 around terrain processing, while the player collision pass consumes bit 4 when settling the player response.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001AE6B4
+
+0xFF7E89:
+  name: ACTOR_SLOT_1_STATE_FLAGS
+  type: u8
+  format: bitfield
+  confidence: decompiled
+  description: State-flags byte at offset +0x07 in common actor-table slot 1. Terrain collision clears bit 4 and the renderer tests bit 5 while expanding the actor's sprite record.
+  evidence:
+    - ghidra_disassembly_001AB7C4
+    - ghidra_disassembly_001B1E38
+
+0xFF7E8B:
+  name: ACTOR_SLOT_1_FACING_X_FLIP
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Horizontal orientation marker at offset +0x09 in common actor-table slot 1. Actor collision tests it for directional handling, and scene actor initialization writes the slot's initial orientation.
+  evidence:
+    - ghidra_disassembly_001AE6B4
+    - ghidra_disassembly_001B0D70
+
+0xFF7E96:
+  name: ACTOR_SLOT_1_FRAME_PTR
+  type: u32
+  format: rom_pointer
+  confidence: confirmed
+  description: Frame-record pointer at offset +0x14 in common actor-table slot 1. Rendering, player collision, actor collision, and terrain collision reject or consume the actor through this pointer.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001AB7C4
+    - ghidra_disassembly_001AE6B4
+    - ghidra_disassembly_001B1E38
+
+0xFF7EA2:
+  name: ACTOR_SLOT_1_ANIMATION_PC
+  type: u32
+  format: rom_pointer
+  confidence: decompiled
+  description: Animation-stream pointer at offset +0x20 in common actor-table slot 1. Scene and level initialization paths install ROM animation roots here for the first common actor record.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_allocation_initialization_static_decompilation
+    - scene_state_resource_targets
