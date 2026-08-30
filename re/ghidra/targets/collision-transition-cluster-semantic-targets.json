@@ -1,0 +1,69 @@
+{
+  "format": "openaladdin-collision-transition-cluster-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace type-only collision labels with behavior-based names for death response, action response, and scene transition paths.",
+  "promotions": [
+    {
+      "address": "0x001AC102",
+      "old_name": "ActorType04_ActorCollisionHandler",
+      "name": "ActorCollision_HandleDeathResponse",
+      "alias": "ActorType04_ActorCollisionHandler",
+      "range": ["0x001AC102", "0x001AC1B3"],
+      "contract": {
+        "dispatch": "Receiving Type-0x04 actor-collision entry at ACTOR_COLLISION_HANDLER_TABLE + 0x18",
+        "setup": "Installs ACTOR_ANIM_TYPE04_COLLISION_RESPONSE as Type-0x84 state and clears the source actor",
+        "phase": "Decrements the receiver phase and selects ACTOR_ANIM_TYPE84_MOVING_CHILD_VARIANT_LOOP for phase values 0x07, 0x03, and 0x01",
+        "terminal": "Adds the receiver response weight, arms SCENE_SCRIPT_COUNTDOWN=0x20, clears linked state, and initializes ACTOR_TEMPLATE_DEATH_84"
+      },
+      "evidence": [
+        "Exact 178-byte body ending at RTS 0x001AC1B2",
+        "Direct ACTOR_ANIM_TYPE04_COLLISION_RESPONSE and ACTOR_ANIM_TYPE84_MOVING_CHILD_VARIANT_LOOP writes",
+        "Direct ACTOR_TEMPLATE_DEATH_84 load and SCENE_SCRIPT_COUNTDOWN=0x20 write"
+      ]
+    },
+    {
+      "address": "0x001AEE40",
+      "old_name": "ActorType2D_PlayerCollisionHandler",
+      "name": "PlayerCollision_HandleActionResponse",
+      "alias": "ActorType2D_PlayerCollisionHandler",
+      "range": ["0x001AEE40", "0x001AEEC9"],
+      "contract": {
+        "dispatch": "Runtime Type-0x2D player-collision entry at PLAYER_COLLISION_HANDLER_TABLE + 0xB4; Type-0x2C shares the body",
+        "ordinary": "When PLAYER_ACTION_RESPONSE_FIELD is clear, clears the source actor and routes through Player_ProcessInteractionState",
+        "action": "When the action-response gate is set, creates a Type-0x7F response with movement 0x001209BE and copies the source record",
+        "allocation": "Allocates the companion from ACTOR_TEMPLATE_TYPE_84 at 0x001B7E40 and optionally queues event 0x21"
+      },
+      "evidence": [
+        "Exact 138-byte body ending at RTS 0x001AEEC8",
+        "Direct PLAYER_ACTION_RESPONSE_FIELD gate and Type-0x7F writes",
+        "Direct ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE reference and ACTOR_TEMPLATE_TYPE_84 load"
+      ]
+    },
+    {
+      "address": "0x001AFE1C",
+      "old_name": "ActorType7E_PlayerCollisionHandler",
+      "name": "PlayerCollision_ProcessSceneTransition",
+      "alias": "ActorType7E_PlayerCollisionHandler",
+      "range": ["0x001AFE1C", "0x001AFF3F"],
+      "contract": {
+        "dispatch": "Runtime Type-0x7E player-collision entry",
+        "gates": "Requires the player interaction-animation and terrain-push gates before evaluating actor/player X proximity",
+        "modes": "Uses INTERACTION_COUNTER_SECONDARY_DIGITS thresholds 05 and 10 to select scene-resource modes 0x11, 0x14, and 0x16",
+        "completion": "Decrements the secondary counter, increments GAME_DIFFICULTY_COUNTER when permitted, advances ACTIVE_SCENE_ENTRY_GATE on the right-side path, and schedules resource presentation"
+      },
+      "evidence": [
+        "Exact 292-byte body ending at RTS 0x001AFF3E",
+        "Direct calls to InteractionCounter_DecrementSecondaryDigits and SceneResource_InstantiateActors",
+        "Direct SCENE_RESOURCE_MODE, GAME_DIFFICULTY_COUNTER, ACTIVE_SCENE_ENTRY_GATE, and camera-threshold writes"
+      ]
+    }
+  ],
+  "conclusion": "The promoted names distinguish actor death response, player action response, and player-driven scene transition behavior while retaining their dispatch-type aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

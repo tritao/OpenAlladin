@@ -267,6 +267,19 @@ def test_actor_collision_response_cluster_has_behavior_names_and_legacy_aliases(
         assert legacy in symbol.aliases
 
 
+def test_collision_transition_cluster_has_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001AC102: ("ActorCollision_HandleDeathResponse", "ActorType04_ActorCollisionHandler"),
+        0x001AEE40: ("PlayerCollision_HandleActionResponse", "ActorType2D_PlayerCollisionHandler"),
+        0x001AFE1C: ("PlayerCollision_ProcessSceneTransition", "ActorType7E_PlayerCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

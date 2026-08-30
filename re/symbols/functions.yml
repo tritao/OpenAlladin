@@ -2199,9 +2199,10 @@
     - rom_player_collision_handler_table_001CBE
     - ghidra_actor_type2a_targeted_decompile
 0x001AEE40:
-  name: ActorType2D_PlayerCollisionHandler
+  name: PlayerCollision_HandleActionResponse
+  aliases: [ActorType2D_PlayerCollisionHandler]
   confidence: confirmed
-  description: Player-collision dispatch target for runtime actor type 0x2D at ROM pointer-table address 0x001D72; the adjacent Type-0x2C entry points into the same interaction-gated body family. Its alternate branch publishes type 0x7F, installs ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE at 0x001209BE, and then initializes the record from the separate template at 0x001B7E40; it does not inject the terrain bounce velocity or write SCENE_STATE.
+  description: Player-collision action-response path for runtime actor type 0x2D at ROM pointer-table address 0x001D72; the adjacent Type-0x2C entry points into the same interaction-gated body family. With PLAYER_ACTION_RESPONSE_FIELD clear it routes through Player_ProcessInteractionState; otherwise it creates the Type-0x7F response using ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE at 0x001209BE and ACTOR_TEMPLATE_TYPE_84 at 0x001B7E40, without injecting terrain bounce velocity or writing SCENE_STATE.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_far_transfer_targeted_decompile_v1
@@ -6204,10 +6205,11 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AFE1C:
-  name: ActorType7E_PlayerCollisionHandler
+  name: PlayerCollision_ProcessSceneTransition
+  aliases: [ActorType7E_PlayerCollisionHandler]
   size: 292
   confidence: decompiled
-  description: Player-collision handler for actor type 0x7E. When the player interaction-animation and terrain-push gates permit, it compares PLAYER_WORLD_X with the actor position and uses INTERACTION_COUNTER_SECONDARY_DIGITS thresholds "05" and "10" to select scene-resource modes 0x11, 0x14, or 0x16. The completed transition branch decrements the secondary counter five or ten times, increments GAME_DIFFICULTY_COUNTER unless it is already '9', and advances ACTIVE_SCENE_ENTRY_GATE on the right-side path before scheduling resource presentation; ordinary contacts leave through the caller's shared pass.
+  description: Player-collision scene-transition path for actor type 0x7E. When the player interaction-animation and terrain-push gates permit, it compares PLAYER_WORLD_X with the actor position and uses INTERACTION_COUNTER_SECONDARY_DIGITS thresholds "05" and "10" to select scene-resource modes 0x11, 0x14, or 0x16. The completed transition branch decrements the secondary counter five or ten times, increments GAME_DIFFICULTY_COUNTER unless it is already '9', and advances ACTIVE_SCENE_ENTRY_GATE on the right-side path before scheduling resource presentation; ordinary contacts leave through the caller's shared pass.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AFE1C
@@ -6450,10 +6452,11 @@
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001AC102:
-  name: ActorType04_ActorCollisionHandler
+  name: ActorCollision_HandleDeathResponse
+  aliases: [ActorType04_ActorCollisionHandler]
   size: 178
   confidence: decompiled
-  description: Actor-collision handler for receiving actor type 0x04. It installs the type-0x84 response animation, clears the source and owned resources, selects a follow-up animation from the actor phase byte, and either decrements that phase or completes through the shared terminal response path.
+  description: Actor-collision death-response path for receiving actor type 0x04. It installs the Type-0x84 collision animation, clears the source and owned resources, selects the moving-child variant for phase values 0x07, 0x03, and 0x01, and otherwise reinitializes the receiver from ACTOR_TEMPLATE_DEATH_84 while arming SCENE_SCRIPT_COUNTDOWN=0x20.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_disassembly_001AC102
