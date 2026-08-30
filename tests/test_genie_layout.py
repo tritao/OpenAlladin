@@ -1932,6 +1932,7 @@ def test_extended_player_collision_handler_family_is_exact():
         0x001AF6DC: (0x001AF73F, "ActorType60_61_PlayerCollisionHandler"),
         0x001AFD84: (0x001AFE1B, "ActorType01_PlayerCollisionHandler"),
         0x001ABF9C: (0x001ABFCF, "Actor_InstallType01CollisionResponse"),
+        0x001ABFD0: (0x001ABFEF, "Actor_ReinitializeCollisionResponseAfterType2D"),
         0x001B7474: (0x001B7493, "InteractionSpawn_RuntimeType45_AdjacentVariant"),
         0x001B74A0: (0x001B74B1, "InteractionSpawn_RuntimeType5B_AdjacentVariant"),
         0x001AFE1C: (0x001AFF81, "ActorType7E_PlayerCollisionHandler"),
@@ -1944,6 +1945,19 @@ def test_extended_player_collision_handler_family_is_exact():
         assert function.name == name
         assert function.end == end
         assert function.size == end - address + 1
+
+    rom_data = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom_data[0x001ABFD0:0x001ABFF0] == bytes.fromhex(
+        "4211"
+        "6100239E"
+        "6100FEB2"
+        "61002396"
+        "2A4A"
+        "4DF9001B7ABC"
+        "61002322"
+        "6100416A"
+        "4E75"
+    )
 
 
     expected_pointers = {

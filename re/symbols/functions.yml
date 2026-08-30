@@ -6023,6 +6023,16 @@
     - ghidra_actor_collision_response_targets
     - ghidra_disassembly_001ABF9C
 
+0x001ABFD0:
+  name: Actor_ReinitializeCollisionResponseAfterType2D
+  size: 0x20
+  confidence: decompiled
+  description: Complete adjacent collision-response lifecycle variant. It clears and releases the actor in A1, runs Actor_HandleType2DInteraction, releases that actor's owned resources again, initializes the A2 destination from ACTOR_TEMPLATE_COLLISION_RESPONSE at 0x001B7ABC, and adds response counter 0x000F. No current actor-collision table pointer or other static xref reaches this body, so its selector and runtime reachability remain unresolved.
+  evidence:
+    - ghidra_disassembly_001ABFD0
+    - actor_collision_handler_family_extended_static_decompilation
+    - actor_collision_reinitialization
+
 0x001ABFF0:
   name: ActorType23_ActorCollisionHandler
   size: 10

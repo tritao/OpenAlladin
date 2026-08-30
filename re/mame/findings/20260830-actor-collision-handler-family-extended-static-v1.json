@@ -48,5 +48,20 @@
       "semantics": "Collision-response actor initialization, zero-template companion allocation, and type-specific response animation selection."
     }
   ],
-  "conclusion": "The actor collision table now has canonical symbols for the remaining direct targets in the early, interaction, response-animation, and companion-allocation families, with shared bodies and the Type-0x23 fall-through represented explicitly."
+  "unreferenced_variants": [
+    {
+      "address": "0x001ABFD0",
+      "end": "0x001ABFEF",
+      "size": 32,
+      "name": "Actor_ReinitializeCollisionResponseAfterType2D",
+      "semantics": "Clears/releases the A1 actor, runs Actor_HandleType2DInteraction, clears/releases A1-owned resources again, initializes the A2 destination from ACTOR_TEMPLATE_COLLISION_RESPONSE at 0x001B7ABC, and adds response counter 0x000F.",
+      "evidence": [
+        "Exact 68000 disassembly at 0x001ABFD0",
+        "Actor_HandleType2DInteraction contract",
+        "Actor_ReinitializeFromCollisionTemplate template and counter contract"
+      ],
+      "reachability": "No current actor-collision table pointer or other static xref reaches this body; selector and runtime reachability remain unresolved."
+    }
+  ],
+  "conclusion": "The actor collision table now has canonical symbols for the remaining direct targets in the early, interaction, response-animation, and companion-allocation families, with shared bodies and the Type-0x23 fall-through represented explicitly. The adjacent 0x001ABFD0 collision-response lifecycle variant is separately bounded and documented while its selector and runtime reachability remain unresolved."
 }

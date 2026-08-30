@@ -32,6 +32,16 @@
       { "type": "0x28", "address": "0x001AC098", "size": 34, "name": "ActorType28_ActorCollisionHandler", "range": ["0x001AC098", "0x001AC0B9"] }
     ]
   },
+  "unreferenced_variants": [
+    {
+      "address": "0x001ABFD0",
+      "end": "0x001ABFEF",
+      "size": 32,
+      "name": "Actor_ReinitializeCollisionResponseAfterType2D",
+      "behavior": "Clears and releases the A1 actor, runs Actor_HandleType2DInteraction, releases A1-owned resources again, initializes the A2 destination from ACTOR_TEMPLATE_COLLISION_RESPONSE at 0x001B7ABC, and adds response counter 0x000F.",
+      "reachability": "No current actor-collision table pointer or other static xref reaches this body; selector and runtime reachability remain unresolved."
+    }
+  ],
   "boundary_basis": [
     "Every promoted start is a direct pointer-table target at 0x001EBA plus actor_type*4.",
     "Each body ends immediately before the next distinct table target or existing canonical handler.",
