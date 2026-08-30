@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-actor-animation-response-helpers-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/actor-animation-response-helpers-static-targets.json",
+  "promoted_helpers": {
+    "count": 2,
+    "owned_bytes": 128,
+    "interaction_reinitialization_bytes": 66,
+    "collision_child_spawn_bytes": 62
+  },
+  "semantics": {
+    "interaction_reinitialization": "The first helper is an AnimationVM-side replacement path: it clears resources, reinstalls the Type-0x2D interaction-response template, preserves the linked-child flag, optionally sets facing, and returns through the pass continuation published at 0x00FF7D9E.",
+    "collision_child_spawn": "The second helper is a phase-gated child allocator using the shared collision-response template and a source-relative Y offset of 10."
+  },
+  "conclusion": "The final two exact code gaps in the 0x001ACB18-0x001ACBF1 actor-event block are now canonical without absorbing the already named flag callbacks or directional-animation selector."
+}

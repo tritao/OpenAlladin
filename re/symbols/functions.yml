@@ -5964,6 +5964,26 @@
     - ghidra_disassembly_001ACB5A
     - actor_animation_callback_family_extended_static_decompilation
 
+0x001ACB18:
+  name: ActorEvent_ReinitializeInteractionResponse
+  size: 66
+  confidence: decompiled
+  description: AnimationVM-side actor reinitialization helper that clears owned resources, initializes the current actor from ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE while preserving actor field +0x06 bit 3, sets actor byte +0x09 to 0xFF when FRAME_PHASE_COUNTER bit 0 is set, and uses the shared AnimationVM return trampoline at 0x00FF7D9E.
+  evidence:
+    - ghidra_disassembly_001ACB18
+    - actor_animation_callback_family_extended_static_decompilation
+    - actor_template_collision_interaction_static_decompilation
+
+0x001ACB9A:
+  name: ActorEvent_SpawnCollisionResponseChild
+  size: 62
+  confidence: decompiled
+  description: AnimationVM-side helper that, when FRAME_PHASE_COUNTER low bits equal 1 and a forward actor slot is available, initializes a child from ACTOR_TEMPLATE_COLLISION_RESPONSE, sets its flags field to 0x40, copies the source coordinates, adds 10 to its Y coordinate, and restores D0 before returning.
+  evidence:
+    - ghidra_disassembly_001ACB9A
+    - actor_animation_callback_family_extended_static_decompilation
+    - actor_template_family_static_decompilation
+
 0x001ACB62:
   name: ActorEvent_ClearActorField3CBit4
   size: 8

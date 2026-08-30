@@ -2985,6 +2985,32 @@ def test_extended_actor_animation_callback_family_is_exact():
     )
 
 
+def test_actor_animation_response_helpers_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x001ACB18: (0x001ACB59, "ActorEvent_ReinitializeInteractionResponse"),
+        0x001ACB9A: (0x001ACBD7, "ActorEvent_SpawnCollisionResponseChild"),
+    }
+    for address, (end, name) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == end - address + 1
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001ACB18:0x001ACB5A] == bytes.fromhex(
+        "6100185808290003000667142A494DF9001B792C610017DC"
+        "08ED00030006600C2A494DF9001B792C610017C80839000000"
+        "FF7E28670450ED00092EB900FF7D9E4E75"
+    )
+    assert rom[0x001ACB9A:0x001ACBD8] == bytes.fromhex(
+        "1E3900FF7E28020700070C070001662C3F00610016CC6622"
+        "4DF9001B7ABC610017501B7C004000063B69000200023E290004"
+        "0647000A3B470004301F4E75"
+    )
+
+
 def test_interaction_resource_progress_reset_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001B0024, include_ranges=False)
