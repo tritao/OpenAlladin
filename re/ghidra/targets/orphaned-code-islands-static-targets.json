@@ -44,7 +44,7 @@
       "address": "0x001B3C5E",
       "end": "0x001B3C63",
       "size": 6,
-      "name": "Menu_UnreachableCodeIsland_001B3C5E",
+      "name": "Menu_RunOptionsFrameLoopPrelude",
       "bytes": "EB2C6100FEE8",
       "disassembly": [
         "lslb %d5,%d4",
@@ -56,7 +56,7 @@
       "address": "0x001B3C7C",
       "end": "0x001B3DB7",
       "size": 316,
-      "name": "Menu_UnreachableCodeIsland_001B3C7C",
+      "name": "Menu_RunOptionsPresentationContinuation",
       "bytes_sha256": "85f54fbaabc61c0392e030fd6554e16b68e94ea7d2095c959a63d7e89409a61f",
       "first_instructions": [
         "dbf %d4,0x001B3C68",

@@ -8,7 +8,7 @@
   "purpose": "Promote the fixed word bank at 0x00006744 after recovering its static scene-resource actor-coordinate consumer.",
   "consumer": {
     "address": "0x001B3D68",
-    "function": "Menu_UnreachableCodeIsland_001B3C7C",
+    "function": "Menu_RunOptionsPresentationContinuation",
     "instruction": "move.l #0x6744, (0x00FF7282).l",
     "cursor": "0x00FF7282 SCENE_RESOURCE_ACTOR_RECORD_CURSOR",
     "helper": "0x001B4802 SceneResource_InstantiateQueuedActor"

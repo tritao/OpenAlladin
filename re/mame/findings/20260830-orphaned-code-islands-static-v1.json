@@ -13,8 +13,8 @@
     { "range": ["0x001B0042", "0x001B0043"], "name": "Orphaned_RtsStub_001B0042", "bytes": "4E75", "role": "physical-code-owner" },
     { "range": ["0x001B0044", "0x001B0045"], "name": "Orphaned_RtsStub_001B0044", "bytes": "4E75", "role": "physical-code-owner" },
     { "range": ["0x001B1CFE", "0x001B1CFF"], "name": "Orphaned_RtsStub_001B1CFE", "bytes": "4E75", "role": "physical-code-owner" },
-    { "range": ["0x001B3C5E", "0x001B3C63"], "name": "Menu_UnreachableCodeIsland_001B3C5E", "bytes": "EB2C6100FEE8", "role": "physical-code-owner", "falls_into": "0x001B3C64" },
-    { "range": ["0x001B3C7C", "0x001B3DB7"], "name": "Menu_UnreachableCodeIsland_001B3C7C", "size": 316, "bytes_sha256": "85f54fbaabc61c0392e030fd6554e16b68e94ea7d2095c959a63d7e89409a61f", "role": "physical-code-owner", "branches_into": "0x001B3DB8" },
+    { "range": ["0x001B3C5E", "0x001B3C63"], "name": "Menu_RunOptionsFrameLoopPrelude", "bytes": "EB2C6100FEE8", "role": "physical-code-owner", "falls_into": "0x001B3C64" },
+    { "range": ["0x001B3C7C", "0x001B3DB7"], "name": "Menu_RunOptionsPresentationContinuation", "size": 316, "bytes_sha256": "85f54fbaabc61c0392e030fd6554e16b68e94ea7d2095c959a63d7e89409a61f", "role": "physical-code-owner", "branches_into": "0x001B3DB8" },
     { "range": ["0x001B4624", "0x001B4625"], "name": "Orphaned_RtsStub_001B4624", "bytes": "4E75", "role": "physical-code-owner" },
     { "range": ["0x001B4F02", "0x001B4F03"], "name": "Orphaned_RtsStub_001B4F02", "bytes": "4E75", "role": "physical-code-owner" },
     { "range": ["0x001B634C", "0x001B634D"], "name": "Orphaned_RtsStub_001B634C", "bytes": "4E75", "role": "physical-code-owner" }

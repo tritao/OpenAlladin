@@ -8,7 +8,7 @@
   "purpose": "Promote the formerly unreferenced four-band palette bank after recovering its static menu-continuation consumer.",
   "consumer": {
     "address": "0x001B3CB4",
-    "function": "Menu_UnreachableCodeIsland_001B3C7C",
+    "function": "Menu_RunOptionsPresentationContinuation",
     "instruction": "lea (0x00128F52).l, A0",
     "next_call": "0x001B278A Render_RunPaletteTransitionFrom"
   },

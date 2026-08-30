@@ -6585,19 +6585,19 @@
     - orphaned_rts_stub_confidence_static_v1
 
 0x001B3C5E:
-  name: Menu_UnreachableCodeIsland_001B3C5E
+  name: Menu_RunOptionsFrameLoopPrelude
   size: 6
   confidence: decompiled
-  description: Exact six-byte menu code island containing an LSLB followed by a BSR to Menu_AnimateSelectionMarkerTiles and falling into the known menu body at 0x001B3C64. Ghidra marks this block unreachable and no static incoming reference is claimed; the symbol records physical code ownership without asserting a live entry point.
+  description: Six-byte option-screen frame-loop prelude containing the phase-counter shift and Menu_AnimateSelectionMarkerTiles call before falling into the shared continuation at 0x001B3C64. It is a physical continuation of Menu_RunOptionsAndSelectNextState rather than an independently named user-facing routine; live entry remains unclaimed.
   evidence:
     - gnu_m68k_disassembly_001B3C5E
     - orphaned_code_islands_static_v1
 
 0x001B3C7C:
-  name: Menu_UnreachableCodeIsland_001B3C7C
+  name: Menu_RunOptionsPresentationContinuation
   size: 316
   confidence: decompiled
-  description: Exact 316-byte menu continuation beginning with a DBF loop back to 0x001B3C68, containing menu palette, sound, and actor setup, and ending by branching into the known parent body at 0x001B3DB8. Ghidra marks this block unreachable and no static incoming reference is claimed; the symbol records physical code ownership without asserting a live entry point.
+  description: 316-byte option-screen presentation continuation beginning with the DBF frame loop at 0x001B3C68, then handling menu palette, sound, and actor setup before branching into the shared parent body at 0x001B3DB8. It is a physical continuation of Menu_RunOptionsAndSelectNextState, not an independently named entry point; live entry remains unclaimed.
   evidence:
     - gnu_m68k_disassembly_001B3C7C
     - orphaned_code_islands_static_v1

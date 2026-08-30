@@ -31,7 +31,7 @@
   "target": {
     "address": "0x00128F52",
     "name": "MENU_OPTIONS_PALETTE_BANK_128F52",
-    "static_consumer": "0x001B3CB4 in Menu_UnreachableCodeIsland_001B3C7C",
+    "static_consumer": "0x001B3CB4 in Menu_RunOptionsPresentationContinuation",
     "runtime_reached": false
   },
   "conclusion": "The no-input power-on trace reaches Menu_RunOptionsAndSelectNextState once during startup, validating the named entry, but does not enter the continuation containing the 0x00128F52 palette-bank load. The palette bank remains a statically identified menu asset with live reachability unresolved; future probing should target the option-selection branch rather than repeat the idle startup window."
