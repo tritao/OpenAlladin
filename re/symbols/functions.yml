@@ -1648,6 +1648,13 @@
   evidence:
     - ghidra_type21_targeted_decompile
     - mame_type21_settle_trace
+0x001B6EEE:
+  name: InteractionSpawn_RuntimeType22_19
+  confidence: decompiled
+  description: Selector-0x19 interaction handler that enters LevelObjectSpawnEntry with ACTOR_TEMPLATE_TYPE_1F, then clears the spawned actor movement state, installs animation root 0x001238B2, and publishes runtime actor type 0x22 when allocation succeeds.
+  evidence:
+    - interaction_spawn_runtime22_static_decompilation
+    - ghidra_disassembly_001B6EEE
 0x001AE47E:
   name: InteractionTable_ProcessRowsB
   confidence: confirmed

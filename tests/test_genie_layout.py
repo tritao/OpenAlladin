@@ -338,6 +338,16 @@ def test_type84_interaction_base_b6_animation_range_is_exact():
     assert symbol.end + 1 == following.address
 
 
+def test_runtime_type22_interaction_handler_is_canonical():
+    symbols = SymbolStore()
+    handler = symbols.at(0x001B6EEE, include_ranges=False)
+    assert handler is not None
+    assert handler.name == "InteractionSpawn_RuntimeType22_19"
+    assert handler.confidence == "decompiled"
+    assert "ACTOR_TEMPLATE_TYPE_1F" in handler.description
+    assert "0x001238B2" in handler.description
+
+
 def test_interaction_counter_animation_table_and_bank_are_exact():
     symbols = SymbolStore()
     table = symbols.at(0x00004A58, include_ranges=False)
