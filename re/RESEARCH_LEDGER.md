@@ -3793,3 +3793,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-player-terrain-contact-family-semantic-v1` | recorded-semantic-promotion | Promoted eight player-collision terrain contact and transition handlers while retaining dispatch-type aliases |
 | `20260830-final-player-actor-dispatch-family-semantic-v1` | recorded-semantic-promotion | Canonicalized the final player/actor dispatch entries, including explicit no-op names for direct RTS handlers |
 | `20260831-remaining-data-identities-semantic-v1` | recorded-semantic-promotion | Replaced address-bearing names for the last three structurally decoded data objects with stable resource identities while retaining legacy aliases |
+| `20260831-scene-resource-graphics-semantic-v1` | recorded-semantic-promotion | Replaced address-bearing names for four RNC graphics resources with stable scene-state and VRAM-destination identities while retaining legacy aliases |

@@ -629,6 +629,20 @@ def test_remaining_data_identities_have_stable_names_and_legacy_aliases():
         assert legacy in symbol.aliases
 
 
+def test_scene_graphics_resources_have_stable_state_and_destination_names():
+    expected = {
+        0x0012DA04: ("SCENE_STATE04_C000_GRAPHICS", "SCENE_RNC_GRAPHICS_0012DA04"),
+        0x0012E176: ("SCENE_STATE01_C000_GRAPHICS_SECONDARY", "SCENE_RNC_GRAPHICS_0012E176"),
+        0x0012E34A: ("SCENE_STATE01_C000_GRAPHICS_PRIMARY", "SCENE_RNC_GRAPHICS_0012E34A"),
+        0x0012F39E: ("SCENE_DISPATCH_E000_GRAPHICS", "SCENE_RNC_GRAPHICS_0012F39E"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

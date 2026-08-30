@@ -1,0 +1,63 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-graphics-identities",
+    "purpose": "Replace address-bearing names for four RNC graphics resources whose scene-state, VRAM destination, and consumer/order evidence are established."
+  },
+  "targets": [
+    {
+      "address": "0x0012DA04",
+      "name": "SCENE_STATE04_C000_GRAPHICS",
+      "legacy_name": "SCENE_RNC_GRAPHICS_0012DA04",
+      "range": "0x0012DA04-0x0012DD74",
+      "size": 881,
+      "scene_state": "0x04",
+      "destination": "0x00C000",
+      "loader": "0x001B49B2 SceneResource_LoadC000Resource12DA04",
+      "wrapper": "0x001B4C4E SceneResource_Run12DA04Stream1273E9"
+    },
+    {
+      "address": "0x0012E176",
+      "name": "SCENE_STATE01_C000_GRAPHICS_SECONDARY",
+      "legacy_name": "SCENE_RNC_GRAPHICS_0012E176",
+      "range": "0x0012E176-0x0012E349",
+      "size": 468,
+      "scene_state": "0x01",
+      "branch_order": 2,
+      "destination": "0x00C000",
+      "loader": "0x001B4A2A SceneResource_LoadC000Resource12E176",
+      "wrapper": "0x001B4BDC SceneResource_Run12E176Stream127134"
+    },
+    {
+      "address": "0x0012E34A",
+      "name": "SCENE_STATE01_C000_GRAPHICS_PRIMARY",
+      "legacy_name": "SCENE_RNC_GRAPHICS_0012E34A",
+      "range": "0x0012E34A-0x0012E4BC",
+      "size": 371,
+      "scene_state": "0x01",
+      "branch_order": 1,
+      "destination": "0x00C000",
+      "loader": "0x001B4A52 SceneResource_LoadC000Resource12E34A",
+      "wrapper": "0x001B4BB8 SceneResource_Run12E34AStream1270A8"
+    },
+    {
+      "address": "0x0012F39E",
+      "name": "SCENE_DISPATCH_E000_GRAPHICS",
+      "legacy_name": "SCENE_RNC_GRAPHICS_0012F39E",
+      "range": "0x0012F39E-0x0012F4EA",
+      "size": 333,
+      "consumer": "0x001B0F66 SceneResource_Dispatch+0x144",
+      "destination": "0x00E000",
+      "paired_resources": ["SCENE_TRANSITION_C000_GRAPHICS", "SCENE_SHARED_BASE_GRAPHICS"]
+    }
+  ],
+  "evidence": [
+    "exact ROM boundaries",
+    "scene-resource wrapper dispatch state mapping",
+    "explicit C000/E000 VRAM loader destinations",
+    "RNC graphics resource extents"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

@@ -593,27 +593,30 @@
     - scene_resource_variant_loader_targets
 
 0x0012DA04:
-  name: SCENE_RNC_GRAPHICS_0012DA04
+  name: SCENE_STATE04_C000_GRAPHICS
+  aliases: [SCENE_RNC_GRAPHICS_0012DA04]
   type: graphics_data
   size: 0x371
   confidence: decompiled
-  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_LoadC000Resource12DA04 and its presentation wrapper.
+  description: Exact RNC-compressed 112-tile Genesis graphics payload loaded to VRAM C000 by the state-04 presentation wrapper SceneResource_Run12DA04Stream1273E9.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0012E176:
-  name: SCENE_RNC_GRAPHICS_0012E176
+  name: SCENE_STATE01_C000_GRAPHICS_SECONDARY
+  aliases: [SCENE_RNC_GRAPHICS_0012E176]
   type: graphics_data
   size: 0x1D4
   confidence: decompiled
-  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_LoadC000Resource12E176 and its presentation wrapper.
+  description: Exact RNC-compressed 112-tile Genesis graphics payload loaded to VRAM C000 by the second state-01 C000 presentation wrapper, SceneResource_Run12E176Stream127134.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0012E34A:
-  name: SCENE_RNC_GRAPHICS_0012E34A
+  name: SCENE_STATE01_C000_GRAPHICS_PRIMARY
+  aliases: [SCENE_RNC_GRAPHICS_0012E34A]
   type: graphics_data
   size: 0x173
   confidence: decompiled
-  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_LoadC000Resource12E34A and its presentation wrapper.
+  description: Exact RNC-compressed 112-tile Genesis graphics payload loaded to VRAM C000 by the first state-01 C000 presentation wrapper, SceneResource_Run12E34AStream1270A8.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0012E666:
@@ -627,11 +630,12 @@
     - scene_reset_credits_palette_extents_static_v1
 
 0x0012F39E:
-  name: SCENE_RNC_GRAPHICS_0012F39E
+  name: SCENE_DISPATCH_E000_GRAPHICS
+  aliases: [SCENE_RNC_GRAPHICS_0012F39E]
   type: graphics_data
   size: 0x14D
   confidence: decompiled
-  description: Exact RNC-compressed 112-tile Genesis graphics payload selected by the transition branch of SceneResource_Dispatch.
+  description: Exact RNC-compressed 112-tile Genesis graphics payload loaded to VRAM E000 by the common post-dispatch resource phase at SceneResource_Dispatch+0x144, alongside SCENE_TRANSITION_C000_GRAPHICS and SCENE_SHARED_BASE_GRAPHICS.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0012F712:
