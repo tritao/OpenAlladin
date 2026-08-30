@@ -1017,6 +1017,27 @@
     - ghidra_disassembly_001B6066
     - level08_event_vdp_static_decompilation
 
+0xFFF090:
+  name: ACTOR_MOVEMENT_ORIGIN_X
+  type: s16
+  format: pixels
+  confidence: decompiled
+  description: Per-actor MovementVM X-origin snapshot. MovementVM_TickActors copies the current actor X coordinate here before applying movement, then subtracts it to publish the actor's signed one-byte X delta and propagate that delta to linked actors.
+  evidence:
+    - ghidra_disassembly_001ADE36
+    - ghidra_decompile_001ADE36
+    - actor_movement_origin_static_targets
+0xFFF092:
+  name: ACTOR_MOVEMENT_ORIGIN_Y
+  type: s16
+  format: pixels
+  confidence: decompiled
+  description: Per-actor MovementVM Y-origin snapshot. MovementVM_TickActors copies the current actor Y coordinate here before applying movement, then subtracts it to publish the actor's signed one-byte Y delta and propagate that delta to linked actors.
+  evidence:
+    - ghidra_disassembly_001ADE36
+    - ghidra_decompile_001ADE36
+    - actor_movement_origin_static_targets
+
 0xFFF111:
   name: RANDOM_PARITY_STATE
   type: u8

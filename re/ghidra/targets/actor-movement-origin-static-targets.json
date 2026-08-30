@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-actor-movement-origin-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "consumer": {
+    "address": "0x001ADE36",
+    "name": "MovementVM_TickActors",
+    "iteration": "one actor-table record per loop"
+  },
+  "state_fields": [
+    {
+      "address": "0x00FFF090",
+      "name": "ACTOR_MOVEMENT_ORIGIN_X",
+      "type": "s16",
+      "write": "copy actor offset +0x02 before movement",
+      "read": "subtract from the post-movement actor X coordinate"
+    },
+    {
+      "address": "0x00FFF092",
+      "name": "ACTOR_MOVEMENT_ORIGIN_Y",
+      "type": "s16",
+      "write": "copy actor offset +0x04 before movement",
+      "read": "subtract from the post-movement actor Y coordinate"
+    }
+  ],
+  "published_outputs": [
+    "actor record offsets +0x1C/+0x1D receive the low-byte movement deltas",
+    "linked actors receive the same signed movement displacement in their position and delta fields"
+  ],
+  "behavior": "The two words are transient per-iteration MovementVM origin snapshots, not persistent actor or camera coordinates.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

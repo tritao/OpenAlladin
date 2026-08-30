@@ -521,6 +521,20 @@ def test_real_actor_render_offsets_have_canonical_roles():
         assert symbol.metadata["format"] == "pixels"
 
 
+def test_real_actor_movement_origins_have_canonical_roles():
+    symbols = SymbolStore()
+
+    expected = {
+        0x00FFF090: "ACTOR_MOVEMENT_ORIGIN_X",
+        0x00FFF092: "ACTOR_MOVEMENT_ORIGIN_Y",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == "pixels"
+
+
 def test_real_level08_event_state_has_canonical_roles():
     symbols = SymbolStore()
 
