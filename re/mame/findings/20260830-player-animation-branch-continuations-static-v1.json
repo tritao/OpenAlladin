@@ -1,0 +1,71 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-animation-branch-continuations-static-targets.json",
+  "streams": [
+    {
+      "address": "0x00121AC8",
+      "name": "PLAYER_ANIM_TERRAIN_STATE_SELECTOR",
+      "range": "0x00121AC8-0x00121AC9",
+      "bytes": 2,
+      "handoff": "Standalone F8 dynamic player-animation state selection before PLAYER_ANIM_TERRAIN_BOUNCE_PRELUDE at 0x00121ACA."
+    },
+    {
+      "address": "0x00121F3A",
+      "name": "PLAYER_ANIM_IDLE_RANDOM_VARIANT",
+      "range": "0x00121F3A-0x00121F69",
+      "bytes": 48,
+      "frames": ["0x0B6E", "0x0B72", "0x0B76", "0x0B7A", "0x0B7E", "0x0B82", "0x0B86", "0x0B8A", "0x0B8E", "0x0B92", "0x0B96"],
+      "selection": "F0 at 0x00121EF4 in PLAYER_ANIM_IDLE branches here for the random idle variant.",
+      "handoff": "EA at 0x00121F64 returns to the idle cycle at 0x00121F0A."
+    },
+    {
+      "address": "0x00122128",
+      "name": "PLAYER_ANIM_SPECIAL_CAMERA_JUMP_CONTINUATION",
+      "range": "0x00122128-0x0012214D",
+      "bytes": 38,
+      "state_writes": "ED at 0x0012212A clears TERRAIN_RESPONSE_ACTIVE.",
+      "gates": "The first entry gates on TERRAIN_LANDING_STATE and the second entry loops on the same field.",
+      "handoff": "F8 commands at 0x0012213E and 0x0012214C enter dynamic player-animation state selection."
+    },
+    {
+      "address": "0x0012219E",
+      "name": "PLAYER_ANIM_TERRAIN_RESPONSE_JUMP_TAIL",
+      "range": "0x0012219E-0x001221AF",
+      "bytes": 18,
+      "frames": ["0x0976", "0x0976"],
+      "gates": "F4 at 0x001221A4 checks TERRAIN_LANDING_STATE and branches to the local F8 selector at 0x001221AE.",
+      "consumers": "EA handoffs from the action-response continuations at 0x001229EE and 0x00122A0A."
+    },
+    {
+      "address": "0x001221E8",
+      "name": "PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE_CONTINUATION",
+      "range": "0x001221E8-0x0012222D",
+      "bytes": 70,
+      "frames": ["0x094A", "0x094E", "0x0952", "0x0956"],
+      "state_writes": "ED at 0x001221EA clears TERRAIN_RESPONSE_ACTIVE at the opening phase.",
+      "gates": "Each response phase checks TERRAIN_LANDING_STATE before its local F8 handoff.",
+      "selection": "F4 at 0x001221DC in PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE branches here when the landing state is clear."
+    }
+  ],
+  "boundaries": {
+    "selector": "0x00121AC8-0x00121AC9 ends immediately before PLAYER_ANIM_TERRAIN_BOUNCE_PRELUDE at 0x00121ACA.",
+    "idle": "0x00121F3A-0x00121F69 ends immediately before PLAYER_ANIM_SPECIAL_CAMERA_GROUNDING_PRELUDE at 0x00121F6A.",
+    "jump": "0x00122128-0x0012214D ends immediately before PLAYER_ANIM_TERRAIN_RESPONSE_JUMP at 0x0012214E.",
+    "tail": "0x0012219E-0x001221AF ends immediately before PLAYER_ANIM_JUMP at 0x001221B0.",
+    "launch": "0x001221E8-0x0012222D ends immediately before PLAYER_ANIM_ACTOR_LAUNCH_RESPONSE at 0x0012222E."
+  },
+  "evidence": [
+    "Lossless AnimationDecoder output",
+    "Exact conditional and unconditional VM branch targets from neighboring player streams",
+    "Known player animation state and terrain-field contracts",
+    "Exact non-overlapping boundaries before existing canonical entries"
+  ],
+  "conclusion": "Five previously unowned blocks in the player AnimationVM bank are separately owned branch continuations or state-selection entries. Their selectors, frame phases, state writes, handoffs, and adjacent boundaries are explicit without merging unrelated player streams.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

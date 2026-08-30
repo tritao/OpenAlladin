@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-animation-branch-continuations-static",
+    "purpose": "Range-bound the unowned player AnimationVM branch continuations and state selector in the 0x00121AC8-0x0012222D bank."
+  },
+  "targets": [
+    { "address": "0x00121AC8", "name": "PLAYER_ANIM_TERRAIN_STATE_SELECTOR" },
+    { "address": "0x00121F3A", "name": "PLAYER_ANIM_IDLE_RANDOM_VARIANT" },
+    { "address": "0x00122128", "name": "PLAYER_ANIM_SPECIAL_CAMERA_JUMP_CONTINUATION" },
+    { "address": "0x0012219E", "name": "PLAYER_ANIM_TERRAIN_RESPONSE_JUMP_TAIL" },
+    { "address": "0x001221E8", "name": "PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE_CONTINUATION" },
+    { "address": "0x00121EF4", "name": "PLAYER_ANIM_IDLE random branch" },
+    { "address": "0x0012211C", "name": "PLAYER_ANIM_SPECIAL_CAMERA_JUMP landing branch" },
+    { "address": "0x001221DC", "name": "PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE landing branch" },
+    { "address": "0x001229EE", "name": "PLAYER_ANIM_ACTION_AIRBORNE continuation handoff" },
+    { "address": "0x00122A0A", "name": "PLAYER_ANIM_ACTION_TERRAIN_TIMER continuation handoff" }
+  ],
+  "memory_references": [
+    { "address": "0x00FFF0C1", "name": "TERRAIN_LANDING_STATE" },
+    { "address": "0x00FFF0D0", "name": "PLAYER_TRANSITION_GATE" },
+    { "address": "0x00FFF0D6", "name": "TERRAIN_STATE" },
+    { "address": "0x00FF7E60", "name": "PLAYER_ANIMATION_PC" },
+    { "address": "0x00FF7E77", "name": "PLAYER_ANIMATION_TIMER" }
+  ]
+}

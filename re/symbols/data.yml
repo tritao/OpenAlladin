@@ -5266,6 +5266,16 @@
     - terrain_stop_align_animation_static_decompilation
     - animation_stream_decoder
 
+0x00121AC8:
+  name: PLAYER_ANIM_TERRAIN_STATE_SELECTOR
+  type: animation_stream
+  size: 2
+  confidence: decompiled
+  description: Standalone dynamic player-animation state selector reached by terrain-alignment response branches when TERRAIN_STATE is clear. Its exact two-byte F8 command is followed by the separately owned PLAYER_ANIM_TERRAIN_BOUNCE_PRELUDE at 0x00121ACA.
+  evidence:
+    - player_terrain_alignment_animation_static_decompilation
+    - animation_stream_decoder
+
 0x00121964:
   name: PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE
   size: 356
@@ -5369,6 +5379,16 @@
     - player_animation_stream
     - animation_stream_decoder
 
+0x00121F3A:
+  name: PLAYER_ANIM_IDLE_RANDOM_VARIANT
+  type: animation_stream
+  size: 48
+  confidence: decompiled
+  description: Random idle-animation variant selected by the F0 random branch in PLAYER_ANIM_IDLE at 0x00121EF4. Its exact 48-byte region presents the 0x0B6E-0x0B96 frame sequence with encoded timer phases and returns through the idle cycle at 0x00121F0A; PLAYER_ANIM_SPECIAL_CAMERA_GROUNDING_PRELUDE begins at 0x00121F6A.
+  evidence:
+    - player_idle_animation_static_decompilation
+    - animation_stream_decoder
+
 0x00121F6A:
   name: PLAYER_ANIM_SPECIAL_CAMERA_GROUNDING_PRELUDE
   size: 10
@@ -5460,6 +5480,27 @@
     - ghidra_player_jump_vertical_state
     - animation_stream_decoder
 
+0x00122128:
+  name: PLAYER_ANIM_SPECIAL_CAMERA_JUMP_CONTINUATION
+  type: animation_stream
+  size: 38
+  confidence: decompiled
+  description: Branch continuation of PLAYER_ANIM_SPECIAL_CAMERA_JUMP selected when TERRAIN_LANDING_STATE is clear. Its exact 38-byte region clears TERRAIN_RESPONSE_ACTIVE, presents the 0x06EA/0x06EE response phases, and enters dynamic player-animation state selection through the two local F8 entries before PLAYER_ANIM_TERRAIN_RESPONSE_JUMP at 0x0012214E.
+  evidence:
+    - player_jump_launch_animation_static_decompilation
+    - animation_stream_decoder
+
+0x0012219E:
+  name: PLAYER_ANIM_TERRAIN_RESPONSE_JUMP_TAIL
+  type: animation_stream
+  size: 18
+  confidence: decompiled
+  description: Shared terminal tail for the player terrain-response jump family. Its exact 18-byte region repeats frame 0x0976 with timer 0x85, gates the handoff on TERRAIN_LANDING_STATE, and enters dynamic player-animation state selection at 0x001221AE; PLAYER_ANIM_JUMP begins at 0x001221B0.
+  evidence:
+    - player_jump_launch_animation_static_decompilation
+    - player_action_state_animation_static_decompilation
+    - animation_stream_decoder
+
 0x001221B8:
   name: PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE
   size: 48
@@ -5467,6 +5508,16 @@
   description: Terrain-launch response stream selected by TerrainHandler_LaunchPlayerBlock after it applies the -0x0500/-0x0400 player launch. It gates the opening on actor field 0x7E5A and flag byte 0x1A, sets player animation field 0xF0C0 to 1, presents the 0x093A/0x093E/0x0942 response frames, and enters dynamic state selection.
   evidence:
     - ghidra_terrain_launch_player_block
+    - animation_stream_decoder
+
+0x001221E8:
+  name: PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE_CONTINUATION
+  type: animation_stream
+  size: 70
+  confidence: decompiled
+  description: Branch continuation of PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE selected when TERRAIN_LANDING_STATE is clear. Its exact 70-byte region presents the 0x094A-0x0956 response phases, clears TERRAIN_RESPONSE_ACTIVE at the opening, and enters dynamic player-animation state selection after each gated phase; PLAYER_ANIM_ACTOR_LAUNCH_RESPONSE begins at 0x0012222E.
+  evidence:
+    - player_jump_launch_animation_static_decompilation
     - animation_stream_decoder
 
 0x0012222E:

@@ -2148,6 +2148,36 @@ def test_player_terrain_stop_alignment_animation_is_exact():
     assert decoded["instructions"][-1]["opcode"] == "0xF8"
 
 
+def test_player_animation_branch_continuations_are_exact():
+    symbols = SymbolStore()
+    cases = (
+        (0x00121AC8, 0x00121AC9, "PLAYER_ANIM_TERRAIN_STATE_SELECTOR", 2, "0xF8"),
+        (0x00121F3A, 0x00121F69, "PLAYER_ANIM_IDLE_RANDOM_VARIANT", 48, "0xEA"),
+        (0x00122128, 0x0012214D, "PLAYER_ANIM_SPECIAL_CAMERA_JUMP_CONTINUATION", 38, "0xF8"),
+        (0x0012219E, 0x001221AF, "PLAYER_ANIM_TERRAIN_RESPONSE_JUMP_TAIL", 18, "0xF8"),
+        (0x001221E8, 0x0012222D, "PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE_CONTINUATION", 70, "0xF8"),
+    )
+    for address, end, name, size, terminal_opcode in cases:
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.end == end
+        assert stream.size == size
+        assert stream.metadata["type"] == "animation_stream"
+
+        rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+        rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+        decoded = load_animation_decoder().AnimationDecoder(rom).decode_stream(
+            address,
+            max_instructions=256,
+            max_bytes=size,
+            follow_control_flow=False,
+            continue_after_control_flow=True,
+        )
+        assert decoded["bytes_decoded"] == size
+        assert decoded["instructions"][-1]["opcode"] == terminal_opcode
+
+
 def test_actor_type41_interaction_response_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00125D7E, include_ranges=False)
