@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/collision-terrain-latches-static-targets.json",
+  "promoted_symbols": [
+    "PLAYER_COLLISION_X_LEFT",
+    "PLAYER_COLLISION_X_RIGHT",
+    "PLAYER_ACTION_ANIMATION_STATE",
+    "PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE",
+    "LEVEL04_EVENT_38_PENDING",
+    "PLAYER_COLLISION_TYPE29_SPAWN_GATE",
+    "ACTOR_TYPE11_SURFACE_INTERACTION_BLOCK",
+    "LEVEL04_EVENT_45_PENDING"
+  ],
+  "evidence": [
+    "Exact instructions exported in build/re/full-rom/instructions.json",
+    "Actor_PlayerCollisionPass geometry and dispatch body at 0x001ABB40",
+    "ActorType18_19_PlayerCollisionHandler at 0x001AEA48",
+    "ActorType29_PlayerCollisionHandler at 0x001AF400",
+    "ActorType11_ActorCollisionHandler at 0x001AC4E8",
+    "Level04_EnterRoutine at 0x001B5B9C",
+    "TerrainHandler_SurfaceInteractionBlock at 0x001B5320"
+  ],
+  "limitations": [
+    "The Level-04 event latches have no direct producer in the exported absolute-reference corpus.",
+    "PLAYER_ACTION_ANIMATION_STATE has a confirmed clear and consumer but no direct setter in the exported corpus.",
+    "The names do not assert runtime reachability for the unresolved producer paths."
+  ],
+  "conclusion": "Collision geometry, collision-to-interaction gates, the Type-11 terrain block, and the two Level-04 event latches now have canonical address-level identities backed by exact static instruction contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

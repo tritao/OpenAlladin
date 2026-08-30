@@ -966,6 +966,26 @@ def test_real_player_terrain_transition_gate_has_canonical_role():
     assert symbol.metadata["format"] == "boolean"
 
 
+def test_real_collision_geometry_and_event_latches_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FFF08C: ("PLAYER_COLLISION_X_LEFT", "pixels"),
+        0x00FFF08E: ("PLAYER_COLLISION_X_RIGHT", "pixels"),
+        0x00FFF0DA: ("PLAYER_ACTION_ANIMATION_STATE", "boolean"),
+        0x00FFF112: ("PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE", "boolean"),
+        0x00FFF11A: ("LEVEL04_EVENT_38_PENDING", "boolean"),
+        0x00FFF11C: ("PLAYER_COLLISION_TYPE29_SPAWN_GATE", "boolean"),
+        0x00FFF11D: ("ACTOR_TYPE11_SURFACE_INTERACTION_BLOCK", "boolean"),
+        0x00FFF12C: ("LEVEL04_EVENT_45_PENDING", "boolean"),
+    }
+    for address, (name, format_name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == "decompiled"
+
+
 def test_real_actor_vm_domain_selector_has_canonical_role():
     symbol = SymbolStore().at(0x00FF7DA2, include_ranges=False)
     assert symbol is not None

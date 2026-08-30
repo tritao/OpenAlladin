@@ -1,0 +1,75 @@
+{
+  "format": "openaladdin-collision-terrain-latches-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "symbols": [
+    {
+      "address": "0x00FFF08C",
+      "name": "PLAYER_COLLISION_X_LEFT",
+      "width": 2,
+      "producer": "Actor_PlayerCollisionPass at 0x001ABB40",
+      "consumers": ["Actor_PlayerCollisionPass at 0x001ABC3E"]
+    },
+    {
+      "address": "0x00FFF08E",
+      "name": "PLAYER_COLLISION_X_RIGHT",
+      "width": 2,
+      "producer": "Actor_PlayerCollisionPass at 0x001ABB40",
+      "consumers": [
+        "Actor_PlayerCollisionPass at 0x001ABBFA",
+        "Actor_PlayerCollisionPass at 0x001ABC3E"
+      ]
+    },
+    {
+      "address": "0x00FFF0DA",
+      "name": "PLAYER_ACTION_ANIMATION_STATE",
+      "width": 1,
+      "producer": "AnimationVM_RunActorPass at 0x001AC7A2 clears the byte",
+      "consumers": ["Player_TerrainResponseStateMachine at 0x001AA152"],
+      "open_question": "No direct setter is present in the exported absolute-reference corpus."
+    },
+    {
+      "address": "0x00FFF112",
+      "name": "PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE",
+      "width": 1,
+      "producer": "ActorType18_19_PlayerCollisionHandler at 0x001AEB36",
+      "consumers": ["InteractionSpawn_Type5E84Pair_F9WhenReady at 0x001B6B5C"]
+    },
+    {
+      "address": "0x00FFF11A",
+      "name": "LEVEL04_EVENT_38_PENDING",
+      "width": 1,
+      "producer": "Indirect level-event producer unresolved",
+      "consumers": ["Level04_EnterRoutine at 0x001B5B9C"],
+      "effect": "Queues command 0x38 when SCENE_VDP_UPDATE_FLAG is set, then clears the latch."
+    },
+    {
+      "address": "0x00FFF11C",
+      "name": "PLAYER_COLLISION_TYPE29_SPAWN_GATE",
+      "width": 1,
+      "producer": "ActorType29_PlayerCollisionHandler at 0x001AF400",
+      "consumers": ["InteractionSpawn_Type5FWhenReady at 0x001B68D6"]
+    },
+    {
+      "address": "0x00FFF11D",
+      "name": "ACTOR_TYPE11_SURFACE_INTERACTION_BLOCK",
+      "width": 1,
+      "producer": "ActorType11_ActorCollisionHandler at 0x001AC5A4",
+      "consumers": ["TerrainHandler_SurfaceInteractionBlock at 0x001B532A"],
+      "effect": "Suppresses the scene-state-0x0B surface-interaction branch while set."
+    },
+    {
+      "address": "0x00FFF12C",
+      "name": "LEVEL04_EVENT_45_PENDING",
+      "width": 1,
+      "producer": "Indirect level-event producer unresolved",
+      "consumers": ["Level04_EnterRoutine at 0x001B5BCC"],
+      "effect": "Queues command 0x45 when SCENE_VDP_UPDATE_FLAG is set, then clears the latch."
+    }
+  ],
+  "conclusion": "The eight RAM symbols have exact byte/word widths and direct static producer-consumer contracts. The two Level-04 event producers and the action-animation setter remain intentionally open; names describe the proven access boundary rather than speculative upstream causes."
+}

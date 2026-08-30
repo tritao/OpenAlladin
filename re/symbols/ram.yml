@@ -2536,3 +2536,92 @@
     - ghidra_disassembly_001B2ACE
     - ghidra_disassembly_001A9D98
     - scene-transition-menu-stream-extents-targets
+
+0xFFF08C:
+  name: PLAYER_COLLISION_X_LEFT
+  type: u16
+  format: pixels
+  confidence: decompiled
+  description: Left X boundary of the player collision rectangle. Actor_PlayerCollisionPass derives it from PLAYER_FRAME_PTR and PLAYER_FACING_X_FLIP before scanning common actor records; it is the lower horizontal bound paired with PLAYER_COLLISION_X_RIGHT.
+  evidence:
+    - ghidra_disassembly_001ABB40
+    - ghidra_player_collision_pass
+    - collision_pass_geometry_static_decompilation
+
+0xFFF08E:
+  name: PLAYER_COLLISION_X_RIGHT
+  type: u16
+  format: pixels
+  confidence: decompiled
+  description: Right X boundary of the player collision rectangle. Actor_PlayerCollisionPass derives it from PLAYER_FRAME_PTR and PLAYER_FACING_X_FLIP before scanning common actor records; it is the upper horizontal bound paired with PLAYER_COLLISION_X_LEFT.
+  evidence:
+    - ghidra_disassembly_001ABB40
+    - ghidra_player_collision_pass
+    - collision_pass_geometry_static_decompilation
+
+0xFFF0DA:
+  name: PLAYER_ACTION_ANIMATION_STATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Player action-animation state marker cleared at the start of AnimationVM_RunActorPass and tested by Player_TerrainResponseStateMachine before selecting the idle/interaction animation path. No direct setter is present in the exported absolute-reference corpus, so the producer remains open.
+  evidence:
+    - ghidra_disassembly_001AC796
+    - ghidra_disassembly_001A9D98
+    - player-action-transition-animation-static-targets
+
+0xFFF112:
+  name: PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Collision-to-interaction gate set when the shared Type-0x18/0x19 player-collision handler reaches its terminal response path. InteractionSpawn_Type5E84Pair_F9WhenReady tests it before allocating the Type-0x5E/Type-0x84 pair; the reset/clear producer remains outside the exported direct-reference set.
+  evidence:
+    - ghidra_disassembly_001AEA48
+    - ghidra_disassembly_001B6B5C
+    - interaction-spawn-type5e84-pair-targets
+    - interaction-spawn-type5e84-pair-movement-streams-static-targets
+
+0xFFF11A:
+  name: LEVEL04_EVENT_38_PENDING
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Level-04 pending event latch consumed by Level04_EnterRoutine. When set, the callback optionally sends audio/event command 0x38 under SCENE_VDP_UPDATE_FLAG and then clears the latch; its indirect event producer is not yet identified.
+  evidence:
+    - ghidra_disassembly_001B5B9C
+    - level-callback-family-targets
+    - level-table-enter-exit-targets
+
+0xFFF11C:
+  name: PLAYER_COLLISION_TYPE29_SPAWN_GATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Collision-to-interaction gate set by ActorType29_PlayerCollisionHandler before its Type-0x84 response setup. InteractionSpawn_Type5FWhenReady tests it before allocating the Type-0x5F interaction actor; no separate direct clear is present in the exported absolute-reference corpus.
+  evidence:
+    - ghidra_disassembly_001AF400
+    - ghidra_disassembly_001B68D6
+    - interaction-spawn-mid-family-targets
+
+0xFFF11D:
+  name: ACTOR_TYPE11_SURFACE_INTERACTION_BLOCK
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Type-0x11 actor-collision block consumed by TerrainHandler_SurfaceInteractionBlock in scene state 0x0B. ActorType11_ActorCollisionHandler sets it on its alternate response path, causing the terrain handler to skip surface-interaction publication for that pass.
+  evidence:
+    - ghidra_disassembly_001AC4E8
+    - ghidra_disassembly_001B5320
+    - level01_far_exit_transfer_targets
+
+0xFFF12C:
+  name: LEVEL04_EVENT_45_PENDING
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Level-04 pending event latch consumed by Level04_EnterRoutine. When set, the callback optionally sends audio/event command 0x45 under SCENE_VDP_UPDATE_FLAG and then clears the latch; its indirect event producer is not yet identified.
+  evidence:
+    - ghidra_disassembly_001B5B9C
+    - level-callback-family-targets
+    - level-table-enter-exit-targets
