@@ -1001,6 +1001,25 @@ def test_real_interaction_resource_completion_latches_have_canonical_roles():
         assert symbol.confidence == "decompiled"
 
 
+def test_real_fixed_actor_render_and_terrain_fields_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FF7E5E: ("PLAYER_ACTOR_SPRITE_ATTRIBUTE_BASE", "vdp_attribute"),
+        0x00FF7E6E: ("PLAYER_ACTOR_SPRITE_VRAM_BASE", "vram_address"),
+        0x00FF7EBF: ("ACTOR_SLOT_1_TERRAIN_RESPONSE_BYTE", "terrain_response"),
+        0x00FF7EA0: ("ACTOR_SLOT_1_SPRITE_ATTRIBUTE_BASE", "vdp_attribute"),
+        0x00FF7EB0: ("ACTOR_SLOT_1_SPRITE_VRAM_BASE", "vram_address"),
+        0x00FF7EDE: ("ACTOR_SLOT_2_VERTICAL_MOTION", "motion_delta"),
+        0x00FF7F01: ("ACTOR_SLOT_2_TERRAIN_RESPONSE_BYTE", "terrain_response"),
+    }
+    for address, (name, format_name) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == "decompiled"
+
+
 def test_real_actor_vm_domain_selector_has_canonical_role():
     symbol = SymbolStore().at(0x00FF7DA2, include_ranges=False)
     assert symbol is not None

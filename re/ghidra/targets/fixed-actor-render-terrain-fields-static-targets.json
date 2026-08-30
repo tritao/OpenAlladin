@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-fixed-actor-render-terrain-fields-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "actor_record": {
+    "base": "0x00FF7E40 ACTOR_TABLE_BASE",
+    "stride": "0x42",
+    "fields": {
+      "+0x1A": "vertical residual motion",
+      "+0x1E": "VDP sprite attribute base",
+      "+0x2E": "sprite VRAM base",
+      "+0x3D": "terrain-response resource byte"
+    }
+  },
+  "fixed_addresses": [
+    { "address": "0x00FF7E5E", "name": "PLAYER_ACTOR_SPRITE_ATTRIBUTE_BASE", "slot": 0, "offset": "0x1E", "width": 2 },
+    { "address": "0x00FF7E6E", "name": "PLAYER_ACTOR_SPRITE_VRAM_BASE", "slot": 0, "offset": "0x2E", "width": 4 },
+    { "address": "0x00FF7EBF", "name": "ACTOR_SLOT_1_TERRAIN_RESPONSE_BYTE", "slot": 1, "offset": "0x3D", "width": 1 },
+    { "address": "0x00FF7EA0", "name": "ACTOR_SLOT_1_SPRITE_ATTRIBUTE_BASE", "slot": 1, "offset": "0x1E", "width": 2 },
+    { "address": "0x00FF7EB0", "name": "ACTOR_SLOT_1_SPRITE_VRAM_BASE", "slot": 1, "offset": "0x2E", "width": 4 },
+    { "address": "0x00FF7EDE", "name": "ACTOR_SLOT_2_VERTICAL_MOTION", "slot": 2, "offset": "0x1A", "width": 2 },
+    { "address": "0x00FF7F01", "name": "ACTOR_SLOT_2_TERRAIN_RESPONSE_BYTE", "slot": 2, "offset": "0x3D", "width": 1 }
+  ],
+  "evidence": [
+    "Actor_InitializeFromTemplate field map at 0x001AE30A",
+    "Actor_AllocateSpriteVRAM at 0x001AD3E8",
+    "Render_BuildActorRecords at 0x001AB7C4",
+    "Actor_TerrainCollisionLoop at 0x001ADB5C",
+    "Terrain_DispatchFirstActorResponse at 0x001B1E0A"
+  ],
+  "conclusion": "Fixed player and presentation-slot addresses now expose the exact actor-record fields used by rendering and terrain dispatch, while the generic stride/offset contract remains authoritative for all 32 records."
+}

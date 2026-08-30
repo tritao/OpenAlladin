@@ -2647,3 +2647,80 @@
     - ghidra_disassembly_001B01AC
     - ghidra_decompile_001B01AC
     - interaction-resource-milestones-static-targets
+
+0xFF7E5E:
+  name: PLAYER_ACTOR_SPRITE_ATTRIBUTE_BASE
+  type: u16
+  format: vdp_attribute
+  confidence: decompiled
+  description: Player actor record word at offset +0x1E, copied from the actor-template render word and added to the actor sprite VRAM tile base while Render_BuildActorRecords emits VDP sprite payloads.
+  evidence:
+    - ghidra_disassembly_001AB7C4
+    - ghidra_actor_template_initializer_001AE30A
+    - actor_allocation_initialization_static_targets
+
+0xFF7E6E:
+  name: PLAYER_ACTOR_SPRITE_VRAM_BASE
+  type: u32
+  format: vram_address
+  confidence: decompiled
+  description: Player actor record long at offset +0x2E, populated by Actor_AllocateSpriteVRAM from ACTOR_SPRITE_VRAM_BASE_TABLE and shifted into the rendered sprite tile index by Render_BuildActorRecords.
+  evidence:
+    - ghidra_disassembly_001AB7C4
+    - ghidra_decompile_001AD3E8
+    - actor_sprite_resource_allocation
+
+0xFF7EBF:
+  name: ACTOR_SLOT_1_TERRAIN_RESPONSE_BYTE
+  type: u8
+  format: terrain_response
+  confidence: decompiled
+  description: Terrain-response resource byte at offset +0x3D in common actor-table slot 1. Terrain_DispatchFirstActorResponse reads it to select the response handler after Actor_TerrainCollisionLoop publishes terrain resource state into each actor record.
+  evidence:
+    - ghidra_disassembly_001B1E0A
+    - ghidra_decompile_001ADB5C
+    - actor_terrain_collision_loop_static_decompilation
+
+0xFF7EA0:
+  name: ACTOR_SLOT_1_SPRITE_ATTRIBUTE_BASE
+  type: u16
+  format: vdp_attribute
+  confidence: decompiled
+  description: Actor-table slot 1 word at offset +0x1E, copied from the actor-template render word and added to the slot's sprite VRAM tile base while Render_BuildActorRecords emits VDP sprite payloads.
+  evidence:
+    - ghidra_disassembly_001AB7C4
+    - ghidra_actor_template_initializer_001AE30A
+    - actor_allocation_initialization_static_targets
+
+0xFF7EB0:
+  name: ACTOR_SLOT_1_SPRITE_VRAM_BASE
+  type: u32
+  format: vram_address
+  confidence: decompiled
+  description: Actor-table slot 1 long at offset +0x2E, populated by Actor_AllocateSpriteVRAM from ACTOR_SPRITE_VRAM_BASE_TABLE and shifted into the rendered sprite tile index by Render_BuildActorRecords.
+  evidence:
+    - ghidra_disassembly_001AB7C4
+    - ghidra_decompile_001AD3E8
+    - actor_sprite_resource_allocation
+
+0xFF7EDE:
+  name: ACTOR_SLOT_2_VERTICAL_MOTION
+  type: i16
+  format: motion_delta
+  confidence: decompiled
+  description: Actor-table slot 2 vertical residual-motion word at offset +0x1A. Actor_TerrainCollisionLoop tests it for downward motion and advances it by the fixed 0x78 step during ordinary actor terrain processing; actor initialization clears the field before a producer supplies movement.
+  evidence:
+    - ghidra_disassembly_001ADB5C
+    - ghidra_actor_template_initializer_001AE30A
+    - actor_terrain_collision_loop_static_decompilation
+
+0xFF7F01:
+  name: ACTOR_SLOT_2_TERRAIN_RESPONSE_BYTE
+  type: u8
+  format: terrain_response
+  confidence: decompiled
+  description: Terrain-response resource byte at offset +0x3D in common actor-table slot 2. Actor_TerrainCollisionLoop clears and publishes this field, and Terrain_DispatchFirstActorResponse reads it to select the corresponding terrain response handler.
+  evidence:
+    - ghidra_disassembly_001ADB5C
+    - ghidra_disassembly_001B1E0A
+    - actor_terrain_collision_loop_static_decompilation

@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/fixed-actor-render-terrain-fields-static-targets.json",
+  "promoted_symbols": [
+    "PLAYER_ACTOR_SPRITE_ATTRIBUTE_BASE",
+    "PLAYER_ACTOR_SPRITE_VRAM_BASE",
+    "ACTOR_SLOT_1_TERRAIN_RESPONSE_BYTE",
+    "ACTOR_SLOT_1_SPRITE_ATTRIBUTE_BASE",
+    "ACTOR_SLOT_1_SPRITE_VRAM_BASE",
+    "ACTOR_SLOT_2_VERTICAL_MOTION",
+    "ACTOR_SLOT_2_TERRAIN_RESPONSE_BYTE"
+  ],
+  "limitations": [
+    "Fixed-address names are views onto the common actor-table record contract, not separate global storage.",
+    "The field meanings are exact at the renderer/terrain access level; higher-level actor-specific behavior remains represented by the generic actor type and template symbols."
+  ],
+  "conclusion": "The remaining fixed actor-record absolute references in the renderer and terrain dispatcher now resolve to canonical field identities backed by the existing actor initializer, allocation, and terrain-loop evidence.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
