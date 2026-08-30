@@ -4886,3 +4886,53 @@ def test_startup_checksum_body_is_decompiled_but_reachability_remains_open():
     assert function.size == 26
     assert function.end == 0x00000219
     assert function.confidence == "decompiled"
+
+
+def test_ram_state_contract_confidence_closure_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0xFF7E22: "SCENE_RESOURCE_STATUS",
+        0xFF7E23: "SCENE_RESOURCE_ERROR",
+        0xFFF13C: "MENU_SELECTION_INDEX",
+        0xFF7DDE: "MENU_CONTROL_LAYOUT_PTR",
+        0xFF7276: "INPUT_PATTERN_CURSOR",
+        0xFF727A: "INPUT_PATTERN_MIRROR_CURSOR",
+        0xFF727E: "INPUT_PATTERN_MATCH_LATCH",
+        0xFF7290: "SCENE_RESOURCE_PALETTE_SOURCE",
+        0xFF7294: "SCENE_RESOURCE_C000_SOURCE",
+        0xFF7E25: "FRAME_WAIT_LATCH",
+        0xFF7E3F: "ACTIVE_SCENE_ENTRY_GATE",
+        0xFFF572: "SCENE_SCRIPT_CURSOR",
+        0xFFF576: "SCENE_SCRIPT_DATA",
+        0xFFF57A: "SCENE_TABLE_INDEX",
+        0xFFF57C: "SCENE_SCRIPT_PENDING",
+        0xFFF57D: "SCENE_VDP_UPDATE_FLAG",
+        0xFFF57E: "SCENE_VDP_CLEAR_FLAG",
+        0xFFF57F: "SCENE_TRANSITION_EVENT",
+        0xFFF0E9: "SCENE_SCRIPT_COUNTDOWN",
+        0xFFF176: "SCENE_SCRIPT_GATE",
+        0xFFF0D0: "PLAYER_TRANSITION_GATE",
+        0xFFF0D2: "PLAYER_TRANSITION_FLAG",
+        0xFFF0D7: "PLAYER_INTERACTION_TRANSITION_LOCK",
+        0xFFF0CD: "PLAYER_INTERACTION_MODE",
+        0xFFF0D4: "PLAYER_INTERACTION_RESPONSE",
+        0xFFF0DB: "PLAYER_TRANSITION_LOCK",
+        0xFFF0DC: "PLAYER_TRANSITION_COUNTDOWN",
+        0xFFF0E6: "PLAYER_TERMINAL_TRANSITION",
+        0xFFF0E7: "PLAYER_INTERACTION_ANIMATION_GATE",
+        0xFFF0F2: "PLAYER_INTERACTION_LOCK",
+        0xFFEFFF: "PLAYER_INTERACTION_PENDING",
+        0xFFF11F: "PLAYER_INTERACTION_STATE_LOCK",
+        0xFFF0CC: "TERRAIN_RESPONSE_TIMER_STATE",
+        0xFFF14E: "ACTOR_RESPONSE_COUNTER",
+        0xFFF0CE: "TERRAIN_QUERY_STATE_A",
+        0xFFF0CF: "TERRAIN_QUERY_STATE_B",
+        0xFFF115: "TERRAIN_RESPONSE_LATCH",
+    }
+    assert len(expected) == 37
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.kind == "ram"
+        assert symbol.name == name
+        assert symbol.confidence == "decompiled"

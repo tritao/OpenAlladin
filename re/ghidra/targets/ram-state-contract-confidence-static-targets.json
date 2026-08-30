@@ -1,0 +1,92 @@
+{
+  "format": "openaladdin-ram-state-contract-confidence-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Promote named RAM symbols from probable to decompiled confidence when their exact static access contract is established, without claiming unresolved producers or runtime reachability.",
+  "confidence_policy": {
+    "decompiled": "The address, width, and named consumer/producer contract are established by ROM disassembly or targeted decompilation.",
+    "remaining_open_questions": "A missing producer, causal state transition, or natural runtime route does not downgrade an otherwise exact access contract."
+  },
+  "groups": [
+    {
+      "name": "scene_and_menu_state",
+      "evidence": [
+        "ghidra_scene_resource_transfer_targets",
+        "ghidra_level_transition_targeted_decompile",
+        "ghidra_options_menu_targets",
+        "ghidra_input_pattern_targets"
+      ],
+      "symbols": [
+        ["0xFF7E22", "SCENE_RESOURCE_STATUS"],
+        ["0xFF7E23", "SCENE_RESOURCE_ERROR"],
+        ["0xFFF13C", "MENU_SELECTION_INDEX"],
+        ["0xFF7DDE", "MENU_CONTROL_LAYOUT_PTR"],
+        ["0xFF7276", "INPUT_PATTERN_CURSOR"],
+        ["0xFF727A", "INPUT_PATTERN_MIRROR_CURSOR"],
+        ["0xFF727E", "INPUT_PATTERN_MATCH_LATCH"],
+        ["0xFF7290", "SCENE_RESOURCE_PALETTE_SOURCE"],
+        ["0xFF7294", "SCENE_RESOURCE_C000_SOURCE"],
+        ["0xFF7E25", "FRAME_WAIT_LATCH"],
+        ["0xFF7E3F", "ACTIVE_SCENE_ENTRY_GATE"],
+        ["0xFFF572", "SCENE_SCRIPT_CURSOR"],
+        ["0xFFF576", "SCENE_SCRIPT_DATA"],
+        ["0xFFF57A", "SCENE_TABLE_INDEX"],
+        ["0xFFF57C", "SCENE_SCRIPT_PENDING"],
+        ["0xFFF57D", "SCENE_VDP_UPDATE_FLAG"],
+        ["0xFFF57E", "SCENE_VDP_CLEAR_FLAG"],
+        ["0xFFF57F", "SCENE_TRANSITION_EVENT"],
+        ["0xFFF0E9", "SCENE_SCRIPT_COUNTDOWN"],
+        ["0xFFF176", "SCENE_SCRIPT_GATE"]
+      ]
+    },
+    {
+      "name": "player_transition_and_interaction_state",
+      "evidence": [
+        "ghidra_player_animation_selector",
+        "ghidra_disassembly_001AE4F8",
+        "ghidra_memory_reference_player_transition_countdown",
+        "mame_level_transition_watch"
+      ],
+      "symbols": [
+        ["0xFFF0D0", "PLAYER_TRANSITION_GATE"],
+        ["0xFFF0D2", "PLAYER_TRANSITION_FLAG"],
+        ["0xFFF0D7", "PLAYER_INTERACTION_TRANSITION_LOCK"],
+        ["0xFFF0CD", "PLAYER_INTERACTION_MODE"],
+        ["0xFFF0D4", "PLAYER_INTERACTION_RESPONSE"],
+        ["0xFFF0DB", "PLAYER_TRANSITION_LOCK"],
+        ["0xFFF0DC", "PLAYER_TRANSITION_COUNTDOWN"],
+        ["0xFFF0E6", "PLAYER_TERMINAL_TRANSITION"],
+        ["0xFFF0E7", "PLAYER_INTERACTION_ANIMATION_GATE"],
+        ["0xFFF0F2", "PLAYER_INTERACTION_LOCK"],
+        ["0xFFEFFF", "PLAYER_INTERACTION_PENDING"],
+        ["0xFFF11F", "PLAYER_INTERACTION_STATE_LOCK"]
+      ]
+    },
+    {
+      "name": "terrain_and_actor_response_state",
+      "evidence": [
+        "ghidra_disassembly_001B1E38",
+        "ghidra_disassembly_001B537A",
+        "ghidra_disassembly_001B5502",
+        "ghidra_disassembly_001B557E",
+        "ghidra_type34_handler_decompile"
+      ],
+      "symbols": [
+        ["0xFFF0CC", "TERRAIN_RESPONSE_TIMER_STATE"],
+        ["0xFFF14E", "ACTOR_RESPONSE_COUNTER"],
+        ["0xFFF0CE", "TERRAIN_QUERY_STATE_A"],
+        ["0xFFF0CF", "TERRAIN_QUERY_STATE_B"],
+        ["0xFFF115", "TERRAIN_RESPONSE_LATCH"]
+      ]
+    }
+  ],
+  "limitations": [
+    "This promotion closes address/width/access contracts only.",
+    "The FRAME_WAIT_LATCH producer, some scene selectors, and several transition causes remain open questions.",
+    "No confidence is promoted to trace_validated or parity_validated by this manifest."
+  ],
+  "conclusion": "All 37 named RAM contracts in this target set are statically understood at the access level; unresolved causal ownership remains explicitly documented."
+}

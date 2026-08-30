@@ -47,7 +47,7 @@
   name: SCENE_RESOURCE_STATUS
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Scene resource/status byte checked by the scene dispatcher while a resource group is being prepared.
   evidence:
     - ghidra_memory_reference_scene_resource_status
@@ -67,7 +67,7 @@
   name: SCENE_RESOURCE_ERROR
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Scene resource status/error byte initialized to 0xFF by SceneResource_ResetStatus and cleared by the completion helper.
   evidence:
     - ghidra_targeted_decompile_001B3258
@@ -129,7 +129,7 @@
   name: MENU_SELECTION_INDEX
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Startup/options-screen selection index consumed by the option-marker positioning helpers and the difficulty, music, sound-test, and exit menu branches.
   evidence:
     - ghidra_options_menu_strings_00126680
@@ -138,7 +138,7 @@
   name: MENU_CONTROL_LAYOUT_PTR
   type: rom_pointer
   format: address
-  confidence: probable
+  confidence: decompiled
   description: Pointer to the selected menu control-layout record; its callback pointers are installed into the terrain/query callback slots and its three trigger labels are rendered by Menu_RenderControlBindings.
   evidence:
     - ghidra_disassembly_001AA344
@@ -167,7 +167,7 @@
   name: INPUT_PATTERN_CURSOR
   type: rom_pointer
   format: address
-  confidence: probable
+  confidence: decompiled
   description: Active controller-pattern table cursor used by the frame input service; selected from the primary table at 0x00004128 or alternate table at 0x0000413A.
   evidence:
     - ghidra_disassembly_001B0A46
@@ -176,7 +176,7 @@
   name: INPUT_PATTERN_MIRROR_CURSOR
   type: rom_pointer
   format: address
-  confidence: probable
+  confidence: decompiled
   description: Companion controller-pattern cursor slot initialized alongside INPUT_PATTERN_CURSOR by the two table selectors.
   evidence:
     - ghidra_disassembly_001B0B8E
@@ -186,7 +186,7 @@
   name: INPUT_PATTERN_MATCH_LATCH
   type: u8
   format: boolean
-  confidence: probable
+  confidence: decompiled
   description: Controller-pattern match/advance latch cleared when a primary or alternate input-pattern table is selected and set by the consuming services after a matching two-byte sample.
   evidence:
     - ghidra_disassembly_001B0A46
@@ -196,7 +196,7 @@
   name: SCENE_RESOURCE_PALETTE_SOURCE
   type: rom_pointer
   format: address
-  confidence: probable
+  confidence: decompiled
   description: Active ROM palette source published by the scene-resource loader wrappers before render-frame preparation.
   evidence:
     - ghidra_scene_resource_transfer_targets
@@ -205,7 +205,7 @@
   name: SCENE_RESOURCE_C000_SOURCE
   type: rom_pointer
   format: address
-  confidence: probable
+  confidence: decompiled
   description: Active ROM source pointer for the compressed resource loaded into VRAM C000 by scene-resource paths.
   evidence:
     - ghidra_scene_resource_transfer_targets
@@ -225,7 +225,7 @@
   name: FRAME_WAIT_LATCH
   type: u8
   format: boolean
-  confidence: probable
+  confidence: decompiled
   description: Frame-service latch tested by the ROM's wait helper at 0x001B249E and by the input/resource service at 0x001A91C6; its producer is not yet named.
   evidence:
     - ghidra_targeted_decompile_scheduler
@@ -251,7 +251,7 @@
   name: ACTIVE_SCENE_ENTRY_GATE
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Reset-time active-scene entry gate initialized from GAME_DIFFICULTY_MODE and consumed by SceneResource_InitializeActiveScene before the first scene presentation.
   evidence:
     - ghidra_decompile_001AA41C
@@ -260,14 +260,14 @@
 0xFFF572:
   name: SCENE_SCRIPT_CURSOR
   type: rom_pointer
-  confidence: probable
+  confidence: decompiled
   description: Cursor into the scene script records consumed by SceneScript_AdvanceState.
   evidence:
     - ghidra_level_transition_targeted_decompile
 0xFFF576:
   name: SCENE_SCRIPT_DATA
   type: rom_pointer
-  confidence: probable
+  confidence: decompiled
   description: Active scene script byte cursor consumed by SceneScript_CompleteToState1.
   evidence:
     - ghidra_level_transition_targeted_decompile
@@ -275,7 +275,7 @@
   name: SCENE_TABLE_INDEX
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Index into the ROM scene transition table advanced by Menu_RunOptionsAndSelectNextState.
   evidence:
     - ghidra_level_transition_targeted_decompile
@@ -283,7 +283,7 @@
   name: SCENE_SCRIPT_PENDING
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Indicates that SceneScript_CompleteToState1 should consume the pending scene script.
   evidence:
     - ghidra_level_transition_targeted_decompile
@@ -291,7 +291,7 @@
   name: SCENE_VDP_UPDATE_FLAG
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Scene/VDP update flag observed by the dispatcher and transition setup paths.
   evidence:
     - ghidra_level_transition_targeted_decompile
@@ -299,7 +299,7 @@
   name: SCENE_VDP_CLEAR_FLAG
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Scene/VDP clear flag used by the transition setup path.
   evidence:
     - ghidra_level_transition_targeted_decompile
@@ -308,7 +308,7 @@
   name: SCENE_TRANSITION_EVENT
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Scene transition event flag used by scene setup and resource loading paths.
   evidence:
     - ghidra_level_transition_targeted_decompile
@@ -316,7 +316,7 @@
   name: PLAYER_TRANSITION_GATE
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Player movement transition gate consulted by the scene/player update path.
   evidence:
     - ghidra_memory_reference_player_movement_transition_gate
@@ -325,7 +325,7 @@
   name: PLAYER_TRANSITION_FLAG
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Player transition flag tested by Player_ResetAnimationResponseGate; when set, the selector returns the 0x00121C62 transition-response animation entry.
   evidence:
     - ghidra_player_animation_selector
@@ -334,7 +334,7 @@
   name: PLAYER_INTERACTION_TRANSITION_LOCK
   type: u8
   format: boolean
-  confidence: probable
+  confidence: decompiled
   description: Interaction-state transition lock tested by Player_ProcessInteractionState before selecting a recovery animation stream.
   evidence:
     - ghidra_disassembly_001AE4F8
@@ -352,7 +352,7 @@
   name: PLAYER_INTERACTION_MODE
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Interaction-state mode byte tested by Player_ProcessInteractionState before selecting a recovery animation stream.
   evidence:
     - ghidra_disassembly_001AE4F8
@@ -360,7 +360,7 @@
   name: PLAYER_INTERACTION_RESPONSE
   type: u8
   format: boolean
-  confidence: probable
+  confidence: decompiled
   description: Interaction response gate tested by Player_ProcessInteractionState before selecting a recovery animation stream.
   evidence:
     - ghidra_disassembly_001AE4F8
@@ -368,7 +368,7 @@
   name: PLAYER_TRANSITION_LOCK
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Player transition lock byte used by the scene/player update path.
   evidence:
     - ghidra_memory_reference_player_transition_lock
@@ -377,7 +377,7 @@
   name: PLAYER_TRANSITION_COUNTDOWN
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Countdown byte used while the player is held in a transition path.
   evidence:
     - ghidra_memory_reference_player_transition_countdown
@@ -386,7 +386,7 @@
   name: PLAYER_TERMINAL_TRANSITION
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Terminal player transition flag checked by the scene/player update path.
   evidence:
     - ghidra_memory_reference_player_terminal_transition
@@ -426,7 +426,7 @@
   name: PLAYER_INTERACTION_ANIMATION_GATE
   type: u8
   format: boolean
-  confidence: probable
+  confidence: decompiled
   description: Animation/interaction gate checked by Player_ProcessInteractionState and asserted by its special-mode branch.
   evidence:
     - ghidra_disassembly_001AE4F8
@@ -444,7 +444,7 @@
   name: PLAYER_INTERACTION_LOCK
   type: u8
   format: boolean
-  confidence: probable
+  confidence: decompiled
   description: Interaction lock checked by Player_ProcessInteractionState before selecting a recovery animation stream.
   evidence:
     - ghidra_disassembly_001AE4F8
@@ -500,7 +500,7 @@
   name: SCENE_SCRIPT_COUNTDOWN
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Scene-script delay/countdown gate consumed by SceneScript_AdvanceState.
   evidence:
     - ghidra_targeted_decompile_001A8E3E
@@ -640,7 +640,7 @@
   name: SCENE_SCRIPT_GATE
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Scene-script execution gate tested before non-control script words are processed.
   evidence:
     - ghidra_targeted_decompile_001A8E3E
@@ -1212,7 +1212,7 @@
   name: TERRAIN_RESPONSE_TIMER_STATE
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Shared response latch cleared by the principal terrain handlers and by Player_ProcessInteractionState; Player_Update re-establishes it on the ordinary ground movement path.
   evidence:
     - ghidra_disassembly_001B537A
@@ -1224,7 +1224,7 @@
   name: PLAYER_INTERACTION_PENDING
   type: u8
   format: boolean
-  confidence: probable
+  confidence: decompiled
   description: Pending interaction marker tested by Player_ProcessInteractionState and set by its special-mode branch.
   evidence:
     - ghidra_disassembly_001AE4F8
@@ -1232,7 +1232,7 @@
   name: PLAYER_INTERACTION_STATE_LOCK
   type: u8
   format: boolean
-  confidence: probable
+  confidence: decompiled
   description: Secondary interaction-state lock tested before the player recovery stream is selected.
   evidence:
     - ghidra_disassembly_001AE4F8
@@ -1240,7 +1240,7 @@
   name: ACTOR_RESPONSE_COUNTER
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Shared actor-response counter advanced by 0x19 when the type-0x34 wall actor is consumed by its player-collision handler.
   evidence:
     - ghidra_type34_handler_decompile
@@ -1259,7 +1259,7 @@
   name: TERRAIN_QUERY_STATE_A
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Terrain interaction state cleared by Terrain_ResolvePlayerCell and set by one terrain handler.
   evidence:
     - ghidra_disassembly_001B1E38
@@ -1268,7 +1268,7 @@
   name: TERRAIN_QUERY_STATE_B
   type: u8
   format: integer
-  confidence: probable
+  confidence: decompiled
   description: Terrain interaction state cleared by Terrain_ResolvePlayerCell and set by terrain transition handlers.
   evidence:
     - ghidra_disassembly_001B1E38
@@ -1286,7 +1286,7 @@
   name: TERRAIN_RESPONSE_LATCH
   type: u8
   format: boolean
-  confidence: probable
+  confidence: decompiled
   description: Terrain response latch cleared by Terrain_ResolvePlayerCell and set by landing response paths.
   evidence:
     - ghidra_disassembly_001B1E38
