@@ -2819,6 +2819,16 @@
     - type13_interaction_movement_static_decompilation
     - movement_stream_decoder
 
+0x00121706:
+  name: ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE_SHARED_TAIL
+  type: movement_stream
+  size: 10
+  confidence: decompiled
+  description: Shared ten-byte Type-0x13 interaction-response movement tail targeted by the conditional branches in ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE. Its five signed delta pairs restore the Type-0x13 response presentation before the independently owned ACTOR_MOVE_TYPE4D_TYPE12_RESPONSE_CHILD root at 0x00121710.
+  evidence:
+    - type13_interaction_movement_static_decompilation
+    - movement_stream_decoder
+
 0x00121684:
   name: ACTOR_MOVE_MENU_PRESENTATION_CHILD_A
   type: movement_stream

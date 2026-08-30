@@ -24,11 +24,20 @@
       "producer": "0x001246D6 ACTOR_ANIM_TYPE13_INTERACTION",
       "consumer": "0x001B6D1E InteractionSpawn_Type13_28",
       "behavior": "The Type-0x13 animation installs this movement root in actor field +0x0A. Its packed body contains the actor-field/player-distance gate, the local 0x001216DC loop, the alternate response entry at 0x001216F6, and the shared continuation target at 0x00121706."
+    },
+    {
+      "address": "0x00121706",
+      "name": "ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE_SHARED_TAIL",
+      "range": ["0x00121706", "0x0012170F"],
+      "bytes": 10,
+      "producer": "conditional branches from ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE",
+      "behavior": "Five signed delta pairs targeted by the Type-0x13 response branches, ending immediately before ACTOR_MOVE_TYPE4D_TYPE12_RESPONSE_CHILD at 0x00121710."
     }
   ],
   "boundaries": [
     { "from": "0x001216C6", "to": "0x001216DC", "reason": "The Type-0x07 local loop owner ends at 0x001216DB; the Type-0x13 movement root is directly installed at 0x001216DC." },
-    { "from": "0x001216DC", "to": "0x00121706", "reason": "The Type-0x13 conditional paths end before their shared continuation at 0x00121706." }
+    { "from": "0x001216DC", "to": "0x00121706", "reason": "The Type-0x13 conditional paths end before their shared continuation at 0x00121706." },
+    { "from": "0x00121706", "to": "0x00121710", "reason": "The ten-byte shared tail ends immediately before the independently owned Type-0x4D response-child movement root." }
   ],
   "evidence": [
     "Lossless MovementDecoder output with bounded linear validation",

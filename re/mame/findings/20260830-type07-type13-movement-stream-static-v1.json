@@ -24,12 +24,19 @@
       "producer": "ACTOR_ANIM_TYPE13_INTERACTION at 0x001246D6",
       "consumer": "InteractionSpawn_Type13_28 at 0x001B6D1E",
       "behavior": "Actor-field/player-distance gate with a local response loop, alternate branch at 0x001216F6, and shared continuation at 0x00121706."
+    },
+    {
+      "address": "0x00121706",
+      "name": "ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE_SHARED_TAIL",
+      "range": "0x00121706-0x0012170F",
+      "bytes": 10,
+      "behavior": "Five signed delta pairs targeted by the Type-0x13 response branches before the separate Type-0x4D response-child root."
     }
   ],
   "correction": {
     "previous_extent": "ACTOR_MOVE_TYPE07_MOVING_INTERACTION 0x001216C6-0x001216DF (26 bytes)",
     "reason": "The previous extent used the follow-control-flow path byte count. That path revisits 0x001216CE and does not represent a contiguous ownership range; it also crosses into the directly installed 0x001216DC response entry.",
-    "corrected_partition": "0x001216C6-0x001216DB (22 bytes), then 0x001216DC-0x00121705 (42 bytes)."
+    "corrected_partition": "0x001216C6-0x001216DB (22 bytes), then 0x001216DC-0x00121705 (42 bytes), then the shared Type-0x13 tail at 0x00121706-0x0012170F (10 bytes)."
   },
   "evidence": [
     "Lossless MovementDecoder output",
@@ -37,7 +44,7 @@
     "Type-0x13 animation movement-field write at 0x001246D6",
     "Type-0x13 static decompilation and explicit branch/continuation targets"
   ],
-  "conclusion": "The Type-0x07 path and the Type-0x13 response root are now represented as adjacent, non-overlapping movement streams with a deterministic byte partition.",
+  "conclusion": "The Type-0x07 path, Type-0x13 response root, and its shared tail are now represented as adjacent, non-overlapping movement streams with a deterministic byte partition.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }
