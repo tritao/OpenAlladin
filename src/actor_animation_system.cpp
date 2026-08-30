@@ -78,7 +78,8 @@ void ActorAnimationSystem::update(
     int frame,
     std::uint8_t frame_phase,
     const AnimationContext& context,
-    const ObserveTransition& observe_transition
+    const ObserveTransition& observe_transition,
+    const ObserveActorFlags& observe_actor_flags
 ) {
     if (!rom_loaded()) return;
 
@@ -168,6 +169,7 @@ void ActorAnimationSystem::update(
 
         const std::uint8_t previous_type = actor.type;
         const std::uint32_t previous_animation_pc = actor.animation_pc;
+        const std::uint8_t previous_flags = actor.flags;
         AnimationServices animation_services = services(slot);
         const bool retired_by_animation = vm(slot).update_actor(
             actor,
@@ -179,6 +181,10 @@ void ActorAnimationSystem::update(
             // lifecycle service. Do not copy the transient record back.
             reset(slot);
             continue;
+        }
+        if (observe_actor_flags
+            && ((previous_flags ^ actor.flags) & 0x20U) != 0) {
+            observe_actor_flags(state, actor, previous_flags);
         }
         if (previous_type != 0 && actor.type == 0
             && actor.linked_actor_slot >= 0

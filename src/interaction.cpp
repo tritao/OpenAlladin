@@ -122,33 +122,29 @@ void InteractionSystem::apply_player_collision_selector(
     runtime_.player_collision_pending = false;
 }
 
-void InteractionSystem::update_actor_flags(GameState& state, bool stable_fixture) {
-    if (rom_ == nullptr || rom_->empty() || stable_fixture) return;
-
-    // The interaction actor raises its flag after AnimationVM_TickActors has
-    // published the current cursor. The next frame consumes this edge in the
-    // player selector.
+void InteractionSystem::observe_actor_flag_transition(
+    GameState& state,
+    const ActorState& actor,
+    std::uint8_t previous_flags
+) {
+    // ActorEvent_SetActorField3CBit5 publishes this edge in the authoritative
+    // actor record. The next frame consumes it in the player selector. This
+    // observes the state transition after the VM callback, without deriving
+    // the event from an animation cursor range.
     constexpr std::uint8_t kInteractionFlag = 0x20;
-    for (ActorState& actor : state.actors) {
-        if (actor.type != 0x1F) continue;
-        const bool interaction_frame = actor.animation_pc >= 0x0012397E
-            && actor.animation_pc <= 0x00123988;
-        const bool flag_was_set = (actor.flags & kInteractionFlag) != 0;
-        if (interaction_frame) {
-            actor.flags = static_cast<std::uint8_t>(actor.flags | kInteractionFlag);
-            if (!flag_was_set
-                && !runtime_.actor_triggered
-                && state.player.animation_selector.interaction_lock == 0) {
-                runtime_.selector_pending = true;
-                runtime_.actor_lock_pending = true;
-                runtime_.camera_delay_pending = true;
-                runtime_.actor_triggered = true;
-                state.player.animation_selector.response_state_101 = 1;
-            }
-        } else {
-            actor.flags = static_cast<std::uint8_t>(actor.flags & ~kInteractionFlag);
-        }
+    if (actor.type != 0x1F
+        || (previous_flags & kInteractionFlag) != 0
+        || (actor.flags & kInteractionFlag) == 0
+        || runtime_.actor_triggered
+        || state.player.animation_selector.interaction_lock != 0) {
+        return;
     }
+
+    runtime_.selector_pending = true;
+    runtime_.actor_lock_pending = true;
+    runtime_.camera_delay_pending = true;
+    runtime_.actor_triggered = true;
+    state.player.animation_selector.response_state_101 = 1;
 }
 
 void InteractionSystem::observe_surface_actor_transition(

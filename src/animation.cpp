@@ -286,6 +286,115 @@ void PlayerAnimationVm::write_memory32(std::uint32_t address, std::uint32_t valu
     ram_.write32(address, value);
 }
 
+std::uint16_t PlayerAnimationVm::advance_random() {
+    auto* random_state = ram_.random_state();
+    if (random_state == nullptr) return 0;
+
+    *random_state = *random_state * 13U + 7U;
+    const std::uint32_t state = *random_state;
+    // TerrainScene5RandomStep returns the low word after folding the new
+    // state's high word into it. Keep the complete result for callbacks that
+    // consume D7w, while retaining the byte used by F0's threshold branch.
+    const std::uint16_t folded = static_cast<std::uint16_t>(
+        (state & 0xFFFFU) ^ (state >> 16));
+    random_value_ = static_cast<std::uint8_t>(folded);
+    return folded;
+}
+
+void PlayerAnimationVm::dispatch_callback(
+    std::uint32_t callback,
+    const AnimationContext& context
+) {
+    switch (callback) {
+    case 0x001ACB5A: // ActorEvent_SetActorField3CBit4
+        write_memory8(0x3C, static_cast<std::uint8_t>(read_memory8(0x3C) | 0x10U));
+        return;
+    case 0x001ACB62: // ActorEvent_ClearActorField3CBit4
+        write_memory8(0x3C, static_cast<std::uint8_t>(read_memory8(0x3C) & ~0x10U));
+        return;
+    case 0x001ACB6A: // ActorEvent_SetActorFlag40
+        write_memory8(0x06, static_cast<std::uint8_t>(read_memory8(0x06) | 0x40U));
+        return;
+    case 0x001ACB72: // ActorEvent_ClearActorFlag40
+        write_memory8(0x06, static_cast<std::uint8_t>(read_memory8(0x06) & ~0x40U));
+        return;
+    case 0x001ACB7A: // ActorEvent_SetFlag20
+        write_memory8(0x07, static_cast<std::uint8_t>(read_memory8(0x07) | 0x20U));
+        return;
+    case 0x001ACB82: // ActorEvent_ClearFlag20
+        write_memory8(0x07, static_cast<std::uint8_t>(read_memory8(0x07) & ~0x20U));
+        return;
+    case 0x001ACB8A: // ActorEvent_SetActorFlagsBit4
+        write_memory8(0x06, static_cast<std::uint8_t>(read_memory8(0x06) | 0x10U));
+        return;
+    case 0x001ACB92: // ActorEvent_ClearActorFlagsBit4
+        write_memory8(0x06, static_cast<std::uint8_t>(read_memory8(0x06) & ~0x10U));
+        return;
+    case 0x001ACBD8: { // ActorEvent_CopyLinkedActorCoordinates
+        if (context.state == nullptr) return;
+        const std::uint32_t linked_slot = read_memory32(0x3E);
+        if (linked_slot >= context.state->actors.size()) return;
+        const ActorState& linked = context.state->actors[linked_slot];
+        write_memory16(0x02, linked.x);
+        write_memory16(0x04, linked.y);
+        return;
+    }
+    case 0x001ACC18: // ActorEvent_SetActorField3CBit5
+        write_memory8(0x3C, static_cast<std::uint8_t>(read_memory8(0x3C) | 0x20U));
+        return;
+    case 0x001ACC20: // ActorEvent_ClearActorField3CBit5
+        write_memory8(0x3C, static_cast<std::uint8_t>(read_memory8(0x3C) & ~0x20U));
+        return;
+    case 0x001ACC28: // ActorEvent_SetActorActiveBit
+        write_memory8(0x06, static_cast<std::uint8_t>(read_memory8(0x06) | 0x01U));
+        return;
+    case 0x001ACC56: // ActorEvent_ClearActorActiveBit
+        write_memory8(0x06, static_cast<std::uint8_t>(read_memory8(0x06) & ~0x01U));
+        return;
+    case 0x001ACC5E: { // ActorEvent_QueueRandomVariantAudio
+        const std::uint16_t random = advance_random();
+        if (read_memory8(0xFFF57D) != 0) {
+            sound_requests_.push_back(static_cast<std::uint8_t>(0x5E + (random & 3U)));
+        }
+        return;
+    }
+    case 0x001ACD02: { // ActorEvent_QueueParityAudio
+        const std::uint16_t random = advance_random();
+        if (read_memory8(0xFFF57D) != 0) {
+            sound_requests_.push_back((random & 1U) != 0 ? 0x44 : 0x40);
+        }
+        return;
+    }
+    case 0x001ACD5A: { // ActorEvent_ApplyWideRandomOffsets
+        const std::uint16_t random_x = advance_random();
+        write_memory8(
+            0x18,
+            static_cast<std::uint8_t>((random_x & 0x0FU) - 7U));
+        const std::uint16_t random_y = advance_random();
+        write_memory8(
+            0x1A,
+            static_cast<std::uint8_t>((random_y & 0x0FU) - 0x0FU));
+        return;
+    }
+    case 0x001ACD7E: { // ActorEvent_ApplyNarrowRandomOffsets
+        const std::uint16_t random_x = advance_random();
+        write_memory8(
+            0x18,
+            static_cast<std::uint8_t>((random_x & 0x07U) - 4U));
+        const std::uint16_t random_y = advance_random();
+        write_memory8(
+            0x1A,
+            static_cast<std::uint8_t>((random_y & 0x07U) - 7U));
+        return;
+    }
+    default:
+        // FB parameters are ROM function addresses. Unknown callbacks remain
+        // consumed at the command boundary until their RAM contract is
+        // recovered; they must not make the interpreter depend on host code.
+        return;
+    }
+}
+
 void PlayerAnimationVm::sync_context(const AnimationContext& context) {
     ram_.bind_context(context);
     const GameState* state = context.state;
@@ -430,13 +539,9 @@ bool PlayerAnimationVm::command(
         return false;
     case 0xF0: {
         const std::uint8_t threshold = read_rom8(cursor + 1);
-        if (auto* random_state = ram_.random_state(); random_state != nullptr) {
-            *random_state = *random_state * 13U + 7U;
-            const std::uint32_t state = *random_state;
-            // 0x1B3032 folds the high and low words into D7; F0 compares the
-            // low byte of that folded 16-bit value against its threshold.
-            random_value_ = static_cast<std::uint8_t>(state ^ (state >> 16));
-        }
+        // 0x1B3032 folds the high and low words into D7; F0 compares the
+        // low byte of that folded 16-bit value against its threshold.
+        (void)advance_random();
         cursor += 2;
         cursor = random_value_ < threshold ? read_rom32(cursor) : cursor + 4;
         return false;
@@ -556,18 +661,9 @@ bool PlayerAnimationVm::command(
     case 0xFB: {
         const std::uint32_t callback = read_rom32(cursor + 2);
         // FB performs a tail callback by replacing the VM return address.
-        // The common 1ACC5E callback is the actor animation's random sound
-        // selector; its first operation is the same 13x+7 LCG step used by
-        // F0, even though its audio result is outside this state VM.
-        if (callback == 0x001ACC5E) {
-            auto* random_state = ram_.random_state();
-            if (random_state != nullptr) {
-                *random_state = *random_state * 13U + 7U;
-            random_value_ = static_cast<std::uint8_t>(
-                *random_state ^ (*random_state >> 16)
-            );
-            }
-        }
+        // The callback itself remains a private VM dispatch so actor-relative
+        // writes go through the live GameRamView rather than a mirror record.
+        dispatch_callback(callback, context);
         cursor += 6;
         return false;
     }

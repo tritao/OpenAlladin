@@ -6,6 +6,22 @@
 #include <fstream>
 #include <vector>
 
+namespace {
+
+void write_u16(std::vector<std::uint8_t>& rom, std::size_t address, std::uint16_t value) {
+    rom[address] = static_cast<std::uint8_t>(value >> 8);
+    rom[address + 1] = static_cast<std::uint8_t>(value);
+}
+
+void write_u32(std::vector<std::uint8_t>& rom, std::size_t address, std::uint32_t value) {
+    rom[address] = static_cast<std::uint8_t>(value >> 24);
+    rom[address + 1] = static_cast<std::uint8_t>(value >> 16);
+    rom[address + 2] = static_cast<std::uint8_t>(value >> 8);
+    rom[address + 3] = static_cast<std::uint8_t>(value);
+}
+
+}  // namespace
+
 int main() {
     using namespace openaladdin;
 
@@ -84,6 +100,34 @@ int main() {
     constexpr std::size_t sound_stream = 0x12000;
     rom[sound_stream + 2] = 0xF3;
     rom[sound_stream + 3] = 0x4C;
+
+    constexpr std::size_t callback_frame_reference = 0x0200;
+    constexpr std::size_t callback_stream = 0x12100;
+    const auto add_callback_stream = [&](std::size_t stream, std::uint32_t callback) {
+        write_u16(rom, stream, static_cast<std::uint16_t>(callback_frame_reference));
+        rom[stream + 2] = 0xFB;
+        rom[stream + 3] = 0;
+        write_u32(rom, stream + 4, callback);
+    };
+    add_callback_stream(callback_stream + 0x000, 0x001ACB5A);
+    add_callback_stream(callback_stream + 0x010, 0x001ACB62);
+    add_callback_stream(callback_stream + 0x020, 0x001ACB6A);
+    add_callback_stream(callback_stream + 0x030, 0x001ACB72);
+    add_callback_stream(callback_stream + 0x040, 0x001ACB7A);
+    add_callback_stream(callback_stream + 0x050, 0x001ACB82);
+    add_callback_stream(callback_stream + 0x060, 0x001ACB8A);
+    add_callback_stream(callback_stream + 0x070, 0x001ACB92);
+    add_callback_stream(callback_stream + 0x080, 0x001ACC18);
+    add_callback_stream(callback_stream + 0x090, 0x001ACC20);
+    add_callback_stream(callback_stream + 0x0A0, 0x001ACC28);
+    add_callback_stream(callback_stream + 0x0B0, 0x001ACC56);
+    add_callback_stream(callback_stream + 0x0C0, 0x001ACC5E);
+    add_callback_stream(callback_stream + 0x0D0, 0x001ACD02);
+    add_callback_stream(callback_stream + 0x0E0, 0x001ACD5A);
+    add_callback_stream(callback_stream + 0x100, 0x001ACD7E);
+    add_callback_stream(callback_stream + 0x120, 0x001ACBD8);
+    rom[callback_frame_reference] = 0;
+    rom[callback_frame_reference + 1] = 0;
     const char* test_rom = "/tmp/openaladdin-animation-sound-test.bin";
     {
         std::ofstream output(test_rom, std::ios::binary);
@@ -122,6 +166,96 @@ int main() {
     interaction_state.camera.vdp_update = 0;
     assert(!interaction_vm.select_player_interaction_state(interaction_context));
     assert(interaction_vm.take_sound_requests().empty());
+
+    // FB callback parameters are dispatched against the live actor record.
+    // Verify the recovered flag families, including the older callback pair
+    // used by the shared movement/animation streams.
+    GameState callback_state;
+    AnimationContext callback_context;
+    callback_context.state = &callback_state;
+    ActorState callback_actor;
+    callback_actor.animation_timer = 0;
+    const auto run_callback = [&](std::size_t offset) {
+        callback_actor.animation_pc = static_cast<std::uint32_t>(callback_stream + offset);
+        PlayerAnimationVm callback_vm;
+        callback_vm.load_rom(test_rom);
+        callback_vm.bind_state(callback_state);
+        assert(!callback_vm.update_actor(callback_actor, callback_context));
+    };
+
+    run_callback(0x000);
+    assert((callback_actor.flags & 0x10U) != 0);
+    run_callback(0x010);
+    assert((callback_actor.flags & 0x10U) == 0);
+    run_callback(0x020);
+    assert((callback_actor.movement_flags & 0x40U) != 0);
+    run_callback(0x030);
+    assert((callback_actor.movement_flags & 0x40U) == 0);
+    run_callback(0x040);
+    assert((callback_actor.runtime_field_07 & 0x20U) != 0);
+    run_callback(0x050);
+    assert((callback_actor.runtime_field_07 & 0x20U) == 0);
+    run_callback(0x060);
+    assert((callback_actor.movement_flags & 0x10U) != 0);
+    run_callback(0x070);
+    assert((callback_actor.movement_flags & 0x10U) == 0);
+    run_callback(0x080);
+    assert((callback_actor.flags & 0x20U) != 0);
+    run_callback(0x090);
+    assert((callback_actor.flags & 0x20U) == 0);
+    run_callback(0x0A0);
+    assert((callback_actor.movement_flags & 0x01U) != 0);
+    run_callback(0x0B0);
+    assert((callback_actor.movement_flags & 0x01U) == 0);
+
+    callback_state.camera.vdp_update = 1;
+    callback_state.random.value = 1;
+    run_callback(0x0C0);
+    assert(callback_state.random.value == 20);
+    assert(callback_actor.animation_pc == callback_stream + 0x0C0 + 8);
+
+    PlayerAnimationVm random_audio_vm;
+    random_audio_vm.load_rom(test_rom);
+    random_audio_vm.bind_state(callback_state);
+    callback_actor.animation_pc = static_cast<std::uint32_t>(callback_stream + 0x0C0);
+    callback_state.random.value = 1;
+    assert(!random_audio_vm.update_actor(callback_actor, callback_context));
+    const auto random_audio = random_audio_vm.take_sound_requests();
+    assert(random_audio.size() == 1 && random_audio.front() == 0x5E);
+
+    callback_state.random.value = 1;
+    run_callback(0x0D0);
+    assert(callback_state.random.value == 20);
+    callback_state.random.value = 1;
+    PlayerAnimationVm parity_audio_vm;
+    parity_audio_vm.load_rom(test_rom);
+    parity_audio_vm.bind_state(callback_state);
+    callback_actor.animation_pc = static_cast<std::uint32_t>(callback_stream + 0x0D0);
+    assert(!parity_audio_vm.update_actor(callback_actor, callback_context));
+    const auto parity_audio = parity_audio_vm.take_sound_requests();
+    assert(parity_audio.size() == 1 && parity_audio.front() == 0x40);
+
+    callback_actor.movement_word_18 = 0x1234;
+    callback_actor.movement_word_1a = 0x5678;
+    callback_state.random.value = 1;
+    run_callback(0x0E0);
+    assert(callback_actor.movement_word_18 == static_cast<std::int16_t>(0xFD34));
+    assert(callback_actor.movement_word_1a == static_cast<std::int16_t>(0xFC78));
+    callback_actor.movement_word_18 = 0x1234;
+    callback_actor.movement_word_1a = 0x5678;
+    callback_state.random.value = 1;
+    run_callback(0x100);
+    assert(callback_actor.movement_word_18 == static_cast<std::int16_t>(0x0034));
+    assert(callback_actor.movement_word_1a == static_cast<std::int16_t>(0xFC78));
+
+    callback_state.actors[2].x = 0x1234;
+    callback_state.actors[2].y = 0x5678;
+    callback_actor.linked_actor_slot = 2;
+    callback_actor.x = 1;
+    callback_actor.y = 2;
+    run_callback(0x120);
+    assert(callback_actor.x == 0x1234);
+    assert(callback_actor.y == 0x5678);
 
     std::remove(test_rom);
     return 0;

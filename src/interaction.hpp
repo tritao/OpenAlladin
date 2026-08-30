@@ -77,7 +77,11 @@ public:
     }
     void apply_player_collision_selector(GameState& state, bool stable_fixture);
 
-    void update_actor_flags(GameState& state, bool stable_fixture);
+    void observe_actor_flag_transition(
+        GameState& state,
+        const ActorState& actor,
+        std::uint8_t previous_flags
+    );
     void observe_surface_actor_transition(
         GameState& state,
         const ActorState& actor,

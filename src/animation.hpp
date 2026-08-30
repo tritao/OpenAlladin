@@ -242,6 +242,11 @@ private:
     void write_memory8(std::uint32_t address, std::uint8_t value);
     void write_memory16(std::uint32_t address, std::uint16_t value);
     void write_memory32(std::uint32_t address, std::uint32_t value);
+    std::uint16_t advance_random();
+    void dispatch_callback(
+        std::uint32_t callback,
+        const AnimationContext& context
+    );
     bool command(
         std::uint8_t opcode,
         std::uint32_t& cursor,

@@ -47,7 +47,8 @@ void AnimationSystem::update_common(
     const AnimationContext& context,
     bool response_dynamic_handoff,
     bool bounce_response_finished,
-    const ObserveTransition& observe_transition
+    const ObserveTransition& observe_transition,
+    const ObserveActorFlags& observe_actor_flags
 ) {
     AnimationServices services = this->services(0, false, true);
     if (response_dynamic_handoff) {
@@ -66,7 +67,8 @@ void AnimationSystem::update_common(
         frame,
         frame_phase,
         context,
-        observe_transition
+        observe_transition,
+        observe_actor_flags
     );
 }
 

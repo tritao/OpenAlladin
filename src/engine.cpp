@@ -479,6 +479,14 @@ SceneServices Engine::scene_services() {
             ) {
                 interactions_.observe_surface_actor_transition(
                     state, actor, previous_type, published_type);
+            },
+            [this](
+                GameState& state,
+                const ActorState& actor,
+                std::uint8_t previous_flags
+            ) {
+                interactions_.observe_actor_flag_transition(
+                    state, actor, previous_flags);
             }
         );
     };
@@ -934,15 +942,16 @@ FrameScheduler::Context Engine::frame_scheduler_context() {
                 ) {
                     interactions_.observe_surface_actor_transition(
                         state, actor, previous_type, published_type);
+                },
+                [this](
+                    GameState& state,
+                    const ActorState& actor,
+                    std::uint8_t previous_flags
+                ) {
+                    interactions_.observe_actor_flag_transition(
+                        state, actor, previous_flags);
                 }
             );
-            interactions_.update_actor_flags(
-                state_,
-                frame_runtime_.checkpoint_terrain_behavior_override
-                    && (frame_runtime_.checkpoint_terrain_behavior == 0x28
-                        || frame_runtime_.checkpoint_terrain_behavior == 0x29
-                        || frame_runtime_.checkpoint_terrain_behavior == 0x2D
-                        || frame_runtime_.checkpoint_terrain_behavior == 0x27));
         };
     scheduler_services_.publish_player_world_coordinates = [this]() {
         publish_player_world_coordinates();

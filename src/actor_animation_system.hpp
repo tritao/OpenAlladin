@@ -26,6 +26,11 @@ public:
         std::uint8_t,
         std::uint8_t
     )>;
+    using ObserveActorFlags = std::function<void(
+        GameState&,
+        const ActorState&,
+        std::uint8_t
+    )>;
 
     explicit ActorAnimationSystem(ActorLifecycleSystem& actor_lifecycle)
         : actor_lifecycle_(actor_lifecycle) {}
@@ -56,7 +61,8 @@ public:
         int frame,
         std::uint8_t frame_phase,
         const AnimationContext& context,
-        const ObserveTransition& observe_transition
+        const ObserveTransition& observe_transition,
+        const ObserveActorFlags& observe_actor_flags
     );
 
     std::vector<std::uint8_t> take_sound_requests();

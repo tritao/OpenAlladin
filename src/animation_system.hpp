@@ -15,6 +15,7 @@ namespace openaladdin {
 class AnimationSystem {
 public:
     using ObserveTransition = ActorAnimationSystem::ObserveTransition;
+    using ObserveActorFlags = ActorAnimationSystem::ObserveActorFlags;
 
     explicit AnimationSystem(ActorLifecycleSystem& actor_lifecycle)
         : actor_animation_(actor_lifecycle) {}
@@ -44,7 +45,8 @@ public:
         const AnimationContext& context,
         bool response_dynamic_handoff,
         bool bounce_response_finished,
-        const ObserveTransition& observe_transition
+        const ObserveTransition& observe_transition,
+        const ObserveActorFlags& observe_actor_flags
     );
 
     void flush_deferred_spawn(GameState& state, int source_world_x, int source_world_y);
