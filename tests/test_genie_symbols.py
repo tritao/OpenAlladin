@@ -320,6 +320,19 @@ def test_counter_and_interaction_response_family_has_behavior_names_and_legacy_a
         assert legacy in symbol.aliases
 
 
+def test_player_response_difficulty_family_has_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001AE64C: ("PlayerCollision_ActivateType43Interaction", "ActorType43_PlayerCollisionHandler"),
+        0x001AEF12: ("PlayerCollision_ApplyDifficultyResponseStep", "ActorType44_PlayerCollisionHandler"),
+        0x001AEEE0: ("PlayerCollision_CommitPendingResponse", "ActorType45_PlayerCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

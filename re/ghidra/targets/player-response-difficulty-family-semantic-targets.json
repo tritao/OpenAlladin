@@ -1,0 +1,67 @@
+{
+  "format": "openaladdin-player-response-difficulty-family-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace type-only labels for the Type-0x43 interaction activation and Type-0x44/0x45 response-counter paths.",
+  "promotions": [
+    {
+      "address": "0x001AE64C",
+      "old_name": "ActorType43_PlayerCollisionHandler",
+      "name": "PlayerCollision_ActivateType43Interaction",
+      "alias": "ActorType43_PlayerCollisionHandler",
+      "range": ["0x001AE64C", "0x001AE6B3"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x43",
+        "activation": "When TERRAIN_LANDING_STATE is set, converts the actor to type 0x8A and installs the embedded Type-0x43/0x8A interaction animation entry",
+        "state": "Temporarily aligns PLAYER_X, rebuilds derived camera coordinates, publishes RAW_TERRAIN_QUERY_STATE as 0xFF, and restores PLAYER_X",
+        "audio": "Optionally queues audio command 0x63 when SCENE_VDP_UPDATE_FLAG is active"
+      },
+      "evidence": [
+        "Exact 104-byte body ending at RTS 0x001AE6B2",
+        "Direct actor type 0x8A and embedded animation-root writes",
+        "Direct camera rebuild, terrain-query publication, and command-0x63 audio path"
+      ]
+    },
+    {
+      "address": "0x001AEF12",
+      "old_name": "ActorType44_PlayerCollisionHandler",
+      "name": "PlayerCollision_ApplyDifficultyResponseStep",
+      "alias": "ActorType44_PlayerCollisionHandler",
+      "range": ["0x001AEF12", "0x001AEF5B"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x44",
+        "response": "Advances INTERACTION_RESPONSE_CURRENT by 3 minus GAME_DIFFICULTY_MODE and clamps it to INTERACTION_RESPONSE_PENDING",
+        "handoff": "Transfers to Actor_ReinitializeFromCollisionTemplate after the optional command-0x62 audio path"
+      },
+      "evidence": [
+        "Exact 74-byte body ending at RTS 0x001AEF5A",
+        "Direct GAME_DIFFICULTY_MODE, current-response, and pending-response accesses",
+        "Direct bounded update and shared collision-template reinitialization transfer"
+      ]
+    },
+    {
+      "address": "0x001AEEE0",
+      "old_name": "ActorType45_PlayerCollisionHandler",
+      "name": "PlayerCollision_CommitPendingResponse",
+      "alias": "ActorType45_PlayerCollisionHandler",
+      "range": ["0x001AEEE0", "0x001AEF11"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x45",
+        "response": "Copies INTERACTION_RESPONSE_PENDING directly into INTERACTION_RESPONSE_CURRENT",
+        "handoff": "Transfers to Actor_ReinitializeFromCollisionTemplate after the optional command-0x62 audio path"
+      },
+      "evidence": [
+        "Exact 50-byte body ending at RTS 0x001AEF10",
+        "Direct pending-to-current response copy",
+        "Direct shared collision-template reinitialization transfer"
+      ]
+    }
+  ],
+  "conclusion": "The promoted names distinguish Type-0x43 interaction activation from the Type-0x44 difficulty-scaled response step and Type-0x45 pending-response commit while retaining dispatch-type aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
