@@ -4824,7 +4824,7 @@
   name: InteractionSpawn_Type5E84Pair_AnchorResponse
   size: 90
   confidence: provisional
-  description: Provisional Type-0x5E plus Type-0x84 paired-spawn handler. Its exact body allocates the two linked records, installs ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE_0011FAA8, and publishes the companion anchor at (base X - 0x20, base Y + 0x40); no active INTERACTION_HANDLER_TABLE entry currently targets this body, so runtime reachability remains unresolved.
+  description: Provisional Type-0x5E plus Type-0x84 paired-spawn handler. Its exact body allocates the two linked records, installs ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE, and publishes the companion anchor at (base X - 0x20, base Y + 0x40); no active INTERACTION_HANDLER_TABLE entry currently targets this body, so runtime reachability remains unresolved.
   evidence:
     - interaction_spawn_type5e84_unindexed_static_disassembly
     - gnu_m68k_disassembly_001B69A6
