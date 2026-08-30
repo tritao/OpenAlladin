@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-actor-linked-cleanup-helper-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target": {
+    "address": "0x001ACFF8",
+    "end": "0x001AD00D",
+    "size": 22,
+    "name": "Actor_ClearLinkedActorResources",
+    "linked_record_field": "+0x3E",
+    "resource_helper": "0x001AE372 Actor_ClearOwnedResources"
+  },
+  "body": [
+    "Test the current actor's linked-record pointer at +0x3E.",
+    "Return through the terminal RTS when no linked actor is present.",
+    "Save the current actor pointer, load the linked record, clear its type byte, and release its owned resources.",
+    "Restore the current actor pointer and return."
+  ],
+  "boundary_basis": [
+    "The body begins immediately after InteractionSpawn_RuntimeType73 at 0x001ACFF7.",
+    "The body ends at its direct RTS at 0x001AD00D, immediately before AnimationVM_SpawnOrCopyActor at 0x001AD00E.",
+    "The link field and resource-clear helper match the established actor-record lifecycle contract; no caller or runtime reachability is asserted by this finding."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}

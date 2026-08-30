@@ -6,7 +6,7 @@
     "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
   },
   "family": {
-    "handlers": "0x001ACE90-0x001ACFFC",
+    "handlers": "0x001ACE90-0x001ACFF7",
     "template": "0x001B7904 ACTOR_TEMPLATE_TYPE_6E_73_BASE",
     "movement_field": "actor +0x0A",
     "shared_continuation": "0x00120948-0x001209BD"

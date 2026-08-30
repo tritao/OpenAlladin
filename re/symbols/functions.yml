@@ -3808,11 +3808,22 @@
     - ghidra_actor_runtime_type6e_73_targets
 0x001ACFBC:
   name: InteractionSpawn_RuntimeType73
+  size: 60
   confidence: decompiled
   description: Indirect interaction handler for runtime actor type 0x73; avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes template 0x001B7904, installs movement root 0x001208D8 into actor field +0x0A, and copies the source record's X/Y coordinates.
   evidence:
     - ghidra_disassembly_001ACFBC
     - ghidra_actor_runtime_type6e_73_targets
+
+0x001ACFF8:
+  name: Actor_ClearLinkedActorResources
+  size: 22
+  confidence: decompiled
+  description: Tests the current actor's linked-record pointer at offset +0x3E and, when present, clears the linked actor type, releases its owned resources through Actor_ClearOwnedResources, and returns while preserving the current actor pointer.
+  evidence:
+    - actor_linked_cleanup_helper_static_disassembly
+    - ghidra_actor_cleanup_001AE372
+    - actor_allocation_initialization_static_v1
 
 0x001ACDD0:
   name: Actor_ConvertType89To84RandomVariantA

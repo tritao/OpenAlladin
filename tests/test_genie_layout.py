@@ -3836,6 +3836,25 @@ def test_extended_actor_collision_handler_dispatch_family_is_exact():
     assert data[0x001AC456:0x001AC458] == bytes.fromhex("4E71")
 
 
+def test_actor_linked_cleanup_helper_is_exact():
+    symbols = SymbolStore()
+    helper = symbols.at(0x001ACFF8, include_ranges=False)
+    assert helper is not None
+    assert helper.name == "Actor_ClearLinkedActorResources"
+    assert helper.end == 0x001AD00D
+    assert helper.size == 22
+    assert helper.confidence == "decompiled"
+
+    runtime_type_73 = symbols.at(0x001ACFBC, include_ranges=False)
+    assert runtime_type_73 is not None
+    assert runtime_type_73.end == 0x001ACFF7
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001ACFF8:0x001AD00E] == bytes.fromhex(
+        "4AA9003E670E2F092269003E42116100136A225F4E75"
+    )
+
+
 def test_final_mechanical_function_closure_is_exact():
     symbols = SymbolStore()
     expected = {

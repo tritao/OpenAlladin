@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-actor-linked-cleanup-helper-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/actor-linked-cleanup-helper-static-targets.json",
+  "helper": {
+    "address": "0x001ACFF8",
+    "end": "0x001AD00D",
+    "size": 22,
+    "name": "Actor_ClearLinkedActorResources",
+    "semantics": "If the current actor has a linked record at +0x3E, clear that linked actor's type byte and release its owned resources through Actor_ClearOwnedResources; otherwise return without changing the current actor."
+  },
+  "boundary": {
+    "preceding": "InteractionSpawn_RuntimeType73 ends at 0x001ACFF7.",
+    "following": "AnimationVM_SpawnOrCopyActor begins at 0x001AD00E.",
+    "bytes": "4AA9003E670E2F092269003E42116100136A225F4E75"
+  },
+  "reachability": "No direct static caller or runtime observation is currently recorded; the name describes the exact body and established actor-link contract without assigning a producer."
+}
