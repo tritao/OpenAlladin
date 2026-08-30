@@ -2366,3 +2366,36 @@
     - ghidra_actor_table_layout
     - ghidra_disassembly_001AE6B4
     - ghidra_disassembly_001B6066
+
+0xFF7E42:
+  name: PLAYER_ACTOR_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: X coordinate word at offset +0x02 in the player actor record at ACTOR_TABLE_BASE. Player_PublishWorldCoordinates and the initial scene setup publish the same world-relative X used by actor rendering and collision scans.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001A8E0C
+    - ghidra_disassembly_001B04DE
+
+0xFF7E44:
+  name: PLAYER_ACTOR_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Y coordinate word at offset +0x04 in the player actor record at ACTOR_TABLE_BASE. Player_PublishWorldCoordinates and the initial scene setup publish the same world-relative Y used by actor rendering and collision scans.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001A8E0C
+    - ghidra_disassembly_001B04DE
+
+0xFFF157:
+  name: MENU_OPTIONS_PRESENTATION_GATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Options-screen presentation gate selecting the prompt/label rendering phase. Menu_RunOptionsPresentationContinuation clears it for the base prompt, sets it for the difficulty-label phase, and Menu_PrepareOptionsScreen tests it before selecting the presentation helper.
+  evidence:
+    - ghidra_disassembly_001B3C7C
+    - ghidra_disassembly_001B437E
+    - menu-options-presentation-targets

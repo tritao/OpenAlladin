@@ -894,6 +894,21 @@ def test_real_actor_slot_and_camera_callback_state_have_canonical_roles():
         assert symbol.confidence == confidence
 
 
+def test_real_player_actor_coordinates_and_menu_gate_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FF7E42: ("PLAYER_ACTOR_X", "pixels", "confirmed"),
+        0x00FF7E44: ("PLAYER_ACTOR_Y", "pixels", "confirmed"),
+        0x00FFF157: ("MENU_OPTIONS_PRESENTATION_GATE", "boolean", "decompiled"),
+    }
+    for address, (name, format_name, confidence) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == confidence
+
+
 def test_real_player_terrain_transition_gate_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF114, include_ranges=False)
     assert symbol is not None
