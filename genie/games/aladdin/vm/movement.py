@@ -128,7 +128,15 @@ class MovementDecoder:
         max_steps: int,
         max_bytes: int,
         follow_control_flow: bool,
+        continue_after_control_flow: bool = False,
     ) -> dict[str, Any]:
+        """Decode movement steps, optionally continuing through transfers.
+
+        Normal reports follow movement control flow.  Canonical bounded
+        streams can request linear fall-through so their declared range is
+        checked byte-for-byte even when a conditional or dynamic command
+        would normally stop the report.
+        """
         end = min(len(self.rom.data), entry + max_bytes)
         cursor = entry
         steps: list[dict[str, Any]] = []
@@ -181,23 +189,30 @@ class MovementDecoder:
                 if opcode == 0x80:
                     command_stop = "unconditional_jump"
                     if not follow_control_flow or target is None:
-                        break
-                    non_linear = True
-                    cursor = target
-                    continue
+                        if not continue_after_control_flow:
+                            break
+                    else:
+                        non_linear = True
+                        cursor = target
+                        continue
                 if opcode == 0x92:
                     if self.rom.u8(command_address + 1) & 0x80:
                         command_stop = "dynamic_return"
-                        break
-                    command_stop = "dynamic_call"
-                    if not follow_control_flow or target is None:
-                        break
-                    non_linear = True
-                    cursor = target
-                    continue
+                        if not continue_after_control_flow:
+                            break
+                    elif not follow_control_flow or target is None:
+                        command_stop = "dynamic_call"
+                        if not continue_after_control_flow:
+                            break
+                    else:
+                        command_stop = "dynamic_call"
+                        non_linear = True
+                        cursor = target
+                        continue
                 if opcode == 0x8E:
                     command_stop = "dynamic_state_selection"
-                    break
+                    if not continue_after_control_flow:
+                        break
 
                 # Conditional handlers expose their branch target, but the
                 # taken path depends on actor/RAM state.  Continue through the

@@ -125,7 +125,12 @@ def _render_context(value: dict, *, json_output: bool) -> int:
     decoder = value.get("decoder")
     if decoder and decoder.get("available"):
         suffix = "" if decoder.get("size_matches") else " (size mismatch)"
-        print(f"decoded: yes ({decoder.get('bytes_decoded', 0)} bytes){suffix}")
+        bounded = decoder.get("bounded_bytes")
+        if bounded is not None and bounded != decoder.get("bytes_decoded"):
+            detail = f"{decoder.get('bytes_decoded', 0)} path bytes; {bounded} bounded bytes"
+        else:
+            detail = f"{decoder.get('bytes_decoded', 0)} bytes"
+        print(f"decoded: yes ({detail}){suffix}")
     elif decoder is not None:
         print("decoded: no")
     else:

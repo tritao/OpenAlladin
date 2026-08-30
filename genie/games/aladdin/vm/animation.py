@@ -265,7 +265,17 @@ class AnimationDecoder:
         max_instructions: int,
         max_bytes: int,
         follow_control_flow: bool,
+        continue_after_control_flow: bool = False,
     ) -> dict[str, Any]:
+        """Decode a stream, optionally treating control flow as fall-through.
+
+        The normal report follows the VM's visible control flow and stops at
+        dynamic transfers.  A bounded canonical symbol can instead request a
+        lossless linear pass: this keeps the original instruction records but
+        continues through EA/FC/F8 boundaries until the declared byte extent
+        is consumed.  That mode validates packed ownership without confusing
+        path length with range length.
+        """
         instructions: list[dict[str, Any]] = []
         address = entry
         end = min(len(self.rom.data), entry + max_bytes)
@@ -320,22 +330,28 @@ class AnimationDecoder:
 
                 if opcode == 0xF8:
                     stopped_reason = "dynamic_state_selection"
-                    break
+                    if not continue_after_control_flow:
+                        break
                 if opcode == 0xEA:
                     if not follow_control_flow or target is None:
                         stopped_reason = "unconditional_jump"
-                        break
-                    address = target
-                    continue
+                        if not continue_after_control_flow:
+                            break
+                    else:
+                        address = target
+                        continue
                 if opcode == 0xFC:
                     if self.rom.u8(instruction_address + 1) & 0x80:
                         stopped_reason = "dynamic_return"
-                        break
-                    if not follow_control_flow or target is None:
+                        if not continue_after_control_flow:
+                            break
+                    elif not follow_control_flow or target is None:
                         stopped_reason = "dynamic_call"
-                        break
-                    address = target
-                    continue
+                        if not continue_after_control_flow:
+                            break
+                    else:
+                        address = target
+                        continue
         else:
             stopped_reason = "instruction_limit"
 

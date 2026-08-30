@@ -2800,11 +2800,23 @@
 
 0x001216C6:
   name: ACTOR_MOVE_TYPE07_MOVING_INTERACTION
-  size: 26
+  size: 22
   confidence: decompiled
-  description: Type-0x07 moving-interaction movement stream installed by ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION. Its packed 26-byte body applies a zero-delta timer setup, then repeated (+1, 0) steps with flag clear and timer reload before looping through the local entry at 0x001216CE.
+  description: Type-0x07 moving-interaction movement stream installed by ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION. Its exact 22-byte owner applies a zero-delta timer setup, then repeated (+1, 0) steps with flag clear and timer reload before looping through the local entry at 0x001216CE; the separately installed Type-0x13 response stream begins at 0x001216DC.
   evidence:
     - actor_template_late_interaction_family_static_decompilation
+    - type13_interaction_movement_static_decompilation
+    - movement_stream_decoder
+
+0x001216DC:
+  name: ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE
+  type: movement_stream
+  size: 42
+  confidence: decompiled
+  description: Type-0x13 interaction-response movement stream installed by ACTOR_ANIM_TYPE13_INTERACTION through its actor movement field write at 0x001246D6. Its exact 42-byte owner contains the player-distance/actor-field gate, the local 0x001216DC loop, the alternate response branch at 0x001216F6, and the shared continuation target at 0x00121706.
+  evidence:
+    - type13_interaction_animation_static_decompilation
+    - type13_interaction_movement_static_decompilation
     - movement_stream_decoder
 
 0x00121684:

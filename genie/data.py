@@ -176,6 +176,7 @@ class DataIndex:
         self._canonical_reader: Any | None = None
         self._canonical_decoders: dict[str, Any] = {}
         self._canonical_rom_path: Path | None = None
+        self._bounded_validation: dict[tuple[str, int, int], dict[str, Any] | None] = {}
         self._record_cache: dict[tuple[str, str], list[dict[str, Any]]] = {}
         self._reference_index_cache: dict[str, tuple[list[int], list[dict[str, Any]]]] = {}
         self._coverage_document: Any = None
@@ -629,7 +630,7 @@ class DataIndex:
         decoded_bytes = self._stream_decoded_bytes(stream, root_entry)
         declared_size = int(value["size"])
         decoded_end = root_entry + decoded_bytes - 1
-        return {
+        result = {
             "available": True,
             "source": self._decoded_sources[kind].get(root_entry),
             "name": stream.get("name"),
@@ -643,6 +644,89 @@ class DataIndex:
                 else decoded_bytes == declared_size
             ),
         }
+        if not result["size_matches"]:
+            bounded = self._bounded_canonical_validation(value)
+            if bounded is not None:
+                result.update(bounded)
+        return result
+
+    def _bounded_canonical_validation(self, value: dict[str, Any]) -> dict[str, Any] | None:
+        """Validate a canonical stream against its declared packed extent.
+
+        Generated reports intentionally follow visible control flow.  Their
+        ``bytes_decoded`` field therefore describes one explored path, not
+        necessarily the full range owned by a canonical symbol.  A bounded
+        linear decode is the appropriate secondary check here: it consumes
+        exactly the declared range while retaining the normal report as the
+        primary semantic view.
+        """
+
+        kind = str(value.get("kind", ""))
+        entry = _address(value.get("start"))
+        try:
+            declared_size = int(value["size"])
+        except (KeyError, TypeError, ValueError):
+            return None
+        canonical = value.get("canonical_symbol") or {}
+        expected_type = "animation_stream" if kind == "animation" else "movement_stream"
+        metadata_type = str(canonical.get("type", "")).casefold()
+        if (
+            kind not in STREAM_KINDS
+            or not value.get("range_bounded")
+            or not canonical
+            or (metadata_type and metadata_type != expected_type)
+            or declared_size <= 0
+        ):
+            return None
+        cache_key = (kind, entry, declared_size)
+        if cache_key in self._bounded_validation:
+            return self._bounded_validation[cache_key]
+
+        result: dict[str, Any] | None = None
+        try:
+            if self._canonical_reader is None and self._load_canonical_reader() is None:
+                self._bounded_validation[cache_key] = None
+                return None
+            if kind not in self._canonical_decoders:
+                if kind == "animation":
+                    from genie.games.aladdin.vm.animation import AnimationDecoder
+
+                    self._canonical_decoders[kind] = AnimationDecoder(self._canonical_reader)
+                else:
+                    from genie.games.aladdin.vm.movement import MovementDecoder
+
+                    self._canonical_decoders[kind] = MovementDecoder(self._canonical_reader)
+            decoder = self._canonical_decoders[kind]
+            if kind == "animation":
+                decoded = decoder.decode_stream(
+                    entry,
+                    max_instructions=max(1024, declared_size // 2 + 16),
+                    max_bytes=declared_size,
+                    follow_control_flow=False,
+                    continue_after_control_flow=True,
+                )
+            else:
+                decoded = decoder.decode_stream(
+                    entry,
+                    max_steps=max(1024, declared_size // 2 + 16),
+                    max_bytes=declared_size,
+                    follow_control_flow=False,
+                    continue_after_control_flow=True,
+                )
+            if (
+                isinstance(decoded, dict)
+                and int(decoded.get("bytes_decoded", 0)) == declared_size
+                and decoded.get("stopped_reason") == "byte_limit"
+            ):
+                result = {
+                    "size_matches": True,
+                    "bounded_bytes": declared_size,
+                    "size_validation": "bounded_linear",
+                }
+        except (ImportError, OSError, RuntimeError, TypeError, ValueError, IndexError):
+            result = None
+        self._bounded_validation[cache_key] = result
+        return result
 
     def _decode_canonical_stream(self, value: dict[str, Any]) -> None:
         """Decode one bounded canonical stream when reports are stale or absent.
@@ -665,7 +749,11 @@ class DataIndex:
         canonical = value.get("canonical_symbol") or {}
         metadata_type = str(canonical.get("type", "")).casefold()
         expected_type = "animation_stream" if kind == "animation" else "movement_stream"
-        if metadata_type != expected_type or not value.get("range_bounded"):
+        if (
+            not canonical
+            or (metadata_type and metadata_type != expected_type)
+            or not value.get("range_bounded")
+        ):
             return
         try:
             declared_size = int(value["size"])
@@ -693,6 +781,7 @@ class DataIndex:
                     max_instructions=max(1024, declared_size // 2 + 16),
                     max_bytes=declared_size,
                     follow_control_flow=False,
+                    continue_after_control_flow=True,
                 )
             else:
                 decoded = decoder.decode_stream(
@@ -700,6 +789,7 @@ class DataIndex:
                     max_steps=max(1024, declared_size // 2 + 16),
                     max_bytes=declared_size,
                     follow_control_flow=False,
+                    continue_after_control_flow=True,
                 )
         except (ImportError, OSError, RuntimeError, TypeError, ValueError, IndexError):
             return

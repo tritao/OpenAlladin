@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-type07-type13-movement-stream-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Correct the Type-0x07 movement extent and promote the directly installed Type-0x13 response movement stream.",
+  "movement": [
+    {
+      "address": "0x001216C6",
+      "name": "ACTOR_MOVE_TYPE07_MOVING_INTERACTION",
+      "range": ["0x001216C6", "0x001216DB"],
+      "bytes": 22,
+      "template": "0x001B8070 ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION",
+      "consumer": "0x001B6726 InteractionSpawn_Type07",
+      "behavior": "Zero-delta timer setup followed by repeated (+1, 0) steps, flag clear, timer reload, and a local loop through 0x001216CE. The shared response entry begins at 0x001216DC."
+    },
+    {
+      "address": "0x001216DC",
+      "name": "ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE",
+      "range": ["0x001216DC", "0x00121705"],
+      "bytes": 42,
+      "producer": "0x001246D6 ACTOR_ANIM_TYPE13_INTERACTION",
+      "consumer": "0x001B6D1E InteractionSpawn_Type13_28",
+      "behavior": "The Type-0x13 animation installs this movement root in actor field +0x0A. Its packed body contains the actor-field/player-distance gate, the local 0x001216DC loop, the alternate response entry at 0x001216F6, and the shared continuation target at 0x00121706."
+    }
+  ],
+  "boundaries": [
+    { "from": "0x001216C6", "to": "0x001216DC", "reason": "The Type-0x07 local loop owner ends at 0x001216DB; the Type-0x13 movement root is directly installed at 0x001216DC." },
+    { "from": "0x001216DC", "to": "0x00121706", "reason": "The Type-0x13 conditional paths end before their shared continuation at 0x00121706." }
+  ],
+  "evidence": [
+    "Lossless MovementDecoder output with bounded linear validation",
+    "Exact Type-0x07 template movement pointer",
+    "Exact Type-0x13 animation movement-field write at 0x001246D6",
+    "Type-0x13 animation static decompilation and loop targets"
+  ],
+  "conclusion": "The earlier 26-byte Type-0x07 extent measured a control-flow path and claimed the first four bytes of the separately installed Type-0x13 movement root. The canonical partition is Type-0x07 at 0x001216C6-0x001216DB (22 bytes), followed by the Type-0x13 root at 0x001216DC-0x00121705 (42 bytes).",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

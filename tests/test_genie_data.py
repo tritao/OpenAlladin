@@ -214,6 +214,46 @@ def test_data_context_decodes_bounded_canonical_stream_without_report(tmp_path):
     assert "canonical symbol fallback" in value["decoder"]["source"]
 
 
+def test_data_context_validates_control_flow_report_against_canonical_extent(tmp_path):
+    database_root = _database(tmp_path)
+    rom_path = tmp_path / "rom" / "Disneys_Aladdin_U_p1.bin"
+    rom_path.parent.mkdir()
+    rom_path.symlink_to(Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin")
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0x1223DA,
+            "PLAYER_ANIM_THROW_APPLE",
+            "data",
+            confidence="confirmed",
+            size=150,
+            metadata={"type": "animation_stream"},
+        ),
+    ))
+    (tmp_path / "animation.json").write_text(json.dumps({
+        "streams": {
+            "PLAYER_ANIM_THROW_APPLE": {
+                "entry": "0x1223DA",
+                "bytes_decoded": 130,
+                "stopped_reason": "dynamic_state_selection",
+                "instructions": [],
+            },
+        },
+    }), encoding="utf-8")
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x200000, (LayoutRange(0, 0x1FFFFF, "UNKNOWN", "test"),)),
+        animation_path=tmp_path / "animation.json",
+    )
+
+    value = index.context(0x1223DA)
+    assert value is not None
+    assert value["decoder"]["size_matches"] is True
+    assert value["decoder"]["bounded_bytes"] == 150
+    assert value["decoder"]["size_validation"] == "bounded_linear"
+
+
 def test_data_decode_returns_canonical_stream_steps(tmp_path):
     database_root = _database(tmp_path)
     rom_path = tmp_path / "rom" / "Disneys_Aladdin_U_p1.bin"

@@ -807,6 +807,34 @@ def test_direct_movement_response_streams_are_exact():
         assert decoded["stopped_reason"] == "control_flow_cycle"
 
 
+def test_type07_and_type13_movement_partition_is_exact():
+    symbols = SymbolStore()
+    type07 = symbols.at(0x001216C6, include_ranges=False)
+    type13 = symbols.at(0x001216DC, include_ranges=False)
+    assert type07 is not None and type07.name == "ACTOR_MOVE_TYPE07_MOVING_INTERACTION"
+    assert (type07.address, type07.end, type07.size) == (0x001216C6, 0x001216DB, 22)
+    assert type13 is not None and type13.name == "ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE"
+    assert (type13.address, type13.end, type13.size) == (0x001216DC, 0x00121705, 42)
+    assert type07.end + 1 == type13.address
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = MovementDecoder(load_animation_decoder().RomReader(rom_path.read_bytes()))
+    for address, size, end in (
+        (0x001216C6, 22, 0x001216DB),
+        (0x001216DC, 42, 0x00121705),
+    ):
+        decoded = decoder.decode_stream(
+            address,
+            max_steps=256,
+            max_bytes=size,
+            follow_control_flow=False,
+            continue_after_control_flow=True,
+        )
+        assert decoded["bytes_decoded"] == size
+        assert decoded["stopped_reason"] == "byte_limit"
+        assert decoded["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
+
+
 def test_runtime_type6e_73_movement_family_is_exact():
     symbols = SymbolStore()
     expected = [

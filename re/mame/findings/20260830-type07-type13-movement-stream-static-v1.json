@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/type07-type13-movement-stream-static-targets.json",
+  "streams": [
+    {
+      "address": "0x001216C6",
+      "name": "ACTOR_MOVE_TYPE07_MOVING_INTERACTION",
+      "range": "0x001216C6-0x001216DB",
+      "bytes": 22,
+      "template": "0x001B8070 ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION",
+      "behavior": "Zero-delta timer setup followed by repeated (+1, 0) movement steps, flag clear, timer reload, and a local loop through 0x001216CE."
+    },
+    {
+      "address": "0x001216DC",
+      "name": "ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE",
+      "range": "0x001216DC-0x00121705",
+      "bytes": 42,
+      "producer": "ACTOR_ANIM_TYPE13_INTERACTION at 0x001246D6",
+      "consumer": "InteractionSpawn_Type13_28 at 0x001B6D1E",
+      "behavior": "Actor-field/player-distance gate with a local response loop, alternate branch at 0x001216F6, and shared continuation at 0x00121706."
+    }
+  ],
+  "correction": {
+    "previous_extent": "ACTOR_MOVE_TYPE07_MOVING_INTERACTION 0x001216C6-0x001216DF (26 bytes)",
+    "reason": "The previous extent used the follow-control-flow path byte count. That path revisits 0x001216CE and does not represent a contiguous ownership range; it also crosses into the directly installed 0x001216DC response entry.",
+    "corrected_partition": "0x001216C6-0x001216DB (22 bytes), then 0x001216DC-0x00121705 (42 bytes)."
+  },
+  "evidence": [
+    "Lossless MovementDecoder output",
+    "Type-0x07 template movement pointer",
+    "Type-0x13 animation movement-field write at 0x001246D6",
+    "Type-0x13 static decompilation and explicit branch/continuation targets"
+  ],
+  "conclusion": "The Type-0x07 path and the Type-0x13 response root are now represented as adjacent, non-overlapping movement streams with a deterministic byte partition.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
