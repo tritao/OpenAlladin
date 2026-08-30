@@ -1,0 +1,47 @@
+{
+  "format": "openaladdin-hud-display-buffer-contract-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/interaction-display-initialization-targets.json",
+  "buffers": [
+    {
+      "address": "0x00FF7E29",
+      "name": "HUD_DISPLAY_DIGITS",
+      "range": ["0x00FF7E29", "0x00FF7E2F"],
+      "digits": "0x00FF7E29-0x00FF7E2E, six ASCII bytes",
+      "terminator": "0x00FF7E2F",
+      "consumers": [
+        "Hud_ResetDisplayDigits clears the six digits and terminator.",
+        "Interaction_SynchronizeResponseState compares the six digits with the pending snapshot.",
+        "Render_BuildActorRecords converts the digits into HUD actor records."
+      ]
+    },
+    {
+      "address": "0x00FF7E30",
+      "name": "INTERACTION_PENDING_DISPLAY_VALUE",
+      "range": ["0x00FF7E30", "0x00FF7E36"],
+      "digits": "0x00FF7E30-0x00FF7E35, six ASCII bytes",
+      "terminator": "0x00FF7E36",
+      "initializer": "Interaction_InitializePendingDisplayValue seeds ASCII 100000 followed by NUL."
+    }
+  ],
+  "synchronization": {
+    "address": "0x001B0078",
+    "name": "Interaction_SynchronizeResponseState",
+    "comparison": "After draining ACTOR_RESPONSE_COUNTER, compare the current six-byte display with the pending six-byte snapshot from most significant digit to least significant digit.",
+    "update": "When the pending digit is less than or equal to the current digit at the first difference, copy all six current bytes into the pending snapshot and set HUD_DISPLAY_UPDATE_PENDING. If the pending value is greater, leave both buffers unchanged."
+  },
+  "evidence": [
+    "Exact GNU m68k disassembly of Hud_ResetDisplayDigits at 0x001B0008",
+    "Cached Ghidra decompilation of Interaction_SynchronizeResponseState at 0x001B0078",
+    "Cached Ghidra decompilation of Interaction_InitializePendingDisplayValue at 0x001AFFE4",
+    "Render_BuildActorRecords reads the current display digits when constructing HUD records"
+  ],
+  "qualification": "The static contract establishes the two buffers and their update direction, but does not assign a narrower user-facing meaning such as score, reward, or inventory quantity.",
+  "conclusion": "The formerly unnamed current HUD display buffer at 0x00FF7E29 is now canonical as HUD_DISPLAY_DIGITS. The synchronization path is directionally corrected: current display digits are promoted into the pending snapshot on monotonic advancement, not the reverse."
+}

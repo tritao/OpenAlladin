@@ -332,7 +332,7 @@
 0x001B0008:
   name: Hud_ResetDisplayDigits
   confidence: confirmed
-  description: Clears the six-character ASCII display buffer at 0x00FF7E29 by writing six '0' bytes and a trailing NUL during reset and active-scene setup.
+  description: Clears HUD_DISPLAY_DIGITS at 0x00FF7E29 by writing six '0' bytes and a trailing NUL during reset and active-scene setup.
   evidence:
     - ghidra_disassembly_001B0008
     - ghidra_render_actor_records
@@ -340,7 +340,7 @@
 0x001AFFE4:
   name: Interaction_InitializePendingDisplayValue
   confidence: decompiled
-  description: Seeds INTERACTION_PENDING_DISPLAY_VALUE with the ASCII string "100000" and a trailing NUL during runtime initialization; the pending display's user-facing meaning remains intentionally unassigned.
+  description: Seeds INTERACTION_PENDING_DISPLAY_VALUE with the initial ASCII string "100000" and a trailing NUL during runtime initialization. The buffer is the pending snapshot side of the HUD_DISPLAY_DIGITS synchronization path; its narrower user-facing gameplay meaning remains unassigned.
   evidence:
     - ghidra_decompile_001AFFE4
     - ghidra_interaction_display_initialization_targets
@@ -1422,7 +1422,7 @@
 0x001B0078:
   name: Interaction_SynchronizeResponseState
   confidence: decompiled
-  description: Clears the response-sync flag, drains ACTOR_RESPONSE_COUNTER through Interaction_DrainResponseCounter, and copies the six-byte response state forward when the pending value has not passed the published value.
+  description: Clears the response-sync flag, drains ACTOR_RESPONSE_COUNTER through Interaction_DrainResponseCounter, compares six ASCII digits in HUD_DISPLAY_DIGITS against INTERACTION_PENDING_DISPLAY_VALUE, and copies the current display into the pending snapshot when the current value has reached or passed it, raising HUD_DISPLAY_UPDATE_PENDING.
   evidence:
     - ghidra_decompile_001B0078
     - ghidra_interaction_counter_reset_audit

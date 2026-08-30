@@ -1589,8 +1589,8 @@ re/mame/findings/20260828-interaction-state-services-v1.json.
 The reset-path response helper at 0x001B0078 is now named
 Interaction_SynchronizeResponseState. It clears the response-sync flag,
 drains ACTOR_RESPONSE_COUNTER through the unthrottled helper at 0x001B00D6,
-and copies the six-byte pending response state to the published state when
-the pending value has not passed it. The 0x001B00D6 helper is now named
+and copies the six current HUD display bytes into the pending snapshot when
+the current value has reached or passed it. The 0x001B00D6 helper is now named
 Interaction_DrainResponseCounter, distinct from the even-frame gameplay
 counter updater at 0x001B00CA.
 
@@ -2281,13 +2281,34 @@ The static result is recorded in
 `Interaction_InitializePendingDisplayValue` at `0x001AFFE4` seeds the
 seven-byte pending display buffer at `FF7E30` with ASCII `100000` followed by
 a NUL during `System_InitializeRuntime`. `Interaction_SynchronizeResponseState`
-at `0x001B0078` compares that pending six-character value with the active
-display at `FF7E29` and copies it forward when the pending value is ready.
-The field is therefore named by its synchronization role; its user-facing
-meaning is intentionally left unresolved.
+at `0x001B0078` compares that pending six-character snapshot with the current
+display at `FF7E29` and copies the current bytes into the pending buffer when
+the current value has reached or passed it. The field is therefore named by
+its synchronization role; its user-facing meaning is intentionally left
+unresolved.
 
 The static result is recorded in
 `re/mame/findings/20260829-interaction-display-initialization-v1.json`.
+
+## HUD display buffer contract (20260830)
+
+The adjacent seven-byte RAM object at `FF7E29` is now canonical as
+`HUD_DISPLAY_DIGITS`: six current ASCII display bytes followed by a NUL.
+`Hud_ResetDisplayDigits` clears this buffer, `Render_BuildActorRecords` reads
+it when constructing HUD records, and `Interaction_SynchronizeResponseState`
+compares it with the seven-byte `INTERACTION_PENDING_DISPLAY_VALUE` snapshot
+at `FF7E30`.
+
+The exact synchronization direction is current-to-pending. After draining the
+response counter, the service compares the two six-byte values from most
+significant digit to least significant digit. When the current display has
+reached or passed the pending snapshot, it copies the current six bytes into
+the pending buffer and raises `HUD_DISPLAY_UPDATE_PENDING`; a greater pending
+value leaves the buffers unchanged. This closes the buffer contract without
+assigning a narrower user-facing meaning to the displayed value.
+
+The result is recorded in
+`re/mame/findings/20260830-hud-display-buffer-contract-static-v1.json`.
 
 ## Menu selection-marker tile animation (20260829)
 
@@ -3434,3 +3455,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-rnc-title-boundary-audit-correction-v2` | tooling-validation | Corrected the RNC manifest end interpretation: its exclusive 0x001434C3 endpoint means the title payload ends at 0x001434C2 and the zero at 0x001434C3 remains alignment padding before the next RNC header at 0x001434C4 |
 | `20260830-scene-resource-stream-boundary-correction-static-v1` | tooling-validation | Corrected SCENE_RESOURCE_BLANK_STREAM_STATE_03 to its 0x00127AEE-0x00127B5F terminator and separated the independently selected 0x00127B60-0x00127BD1 stream |
 | `20260830-rom-symbol-overlay-audit-static-v1` | tooling-validation | Recorded the five intentional container/view aliases in the ROM symbol database and confirmed that layout emission still assigns exactly one owner to every byte |
+| `20260830-hud-display-buffer-contract-static-v1` | recorded-static-decompilation | Named HUD_DISPLAY_DIGITS at 0x00FF7E29-0x00FF7E2F and corrected Interaction_SynchronizeResponseState's exact current-to-pending snapshot/update direction |

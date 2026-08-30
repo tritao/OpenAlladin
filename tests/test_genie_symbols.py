@@ -326,6 +326,22 @@ def test_analysis_database_queries_generated_records(tmp_path):
     assert database.unknown()[0]["class"] == "UNKNOWN"
 
 
+def test_real_hud_display_buffers_have_canonical_ram_symbols():
+    symbols = SymbolStore()
+
+    active = symbols.at(0x00FF7E29, include_ranges=False)
+    assert active is not None
+    assert active.name == "HUD_DISPLAY_DIGITS"
+    assert active.metadata["type"] == "u8[7]"
+    assert active.confidence == "decompiled"
+
+    pending = symbols.at(0x00FF7E30, include_ranges=False)
+    assert pending is not None
+    assert pending.name == "INTERACTION_PENDING_DISPLAY_VALUE"
+    assert pending.metadata["type"] == "u8[7]"
+    assert active.address + 7 == pending.address
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

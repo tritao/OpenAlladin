@@ -118,12 +118,22 @@
     - ghidra_disassembly_001AB7C4
     - ghidra_disassembly_001A8F0C
     - ghidra_decompile_001AFE1C
+0xFF7E29:
+  name: HUD_DISPLAY_DIGITS
+  type: u8[7]
+  format: ascii_buffer
+  confidence: decompiled
+  description: Current seven-byte HUD display buffer. The first six bytes hold ASCII digits reset by Hud_ResetDisplayDigits, compared against the pending snapshot by Interaction_SynchronizeResponseState, and rendered by Render_BuildActorRecords; the seventh byte is the terminator.
+  evidence:
+    - ghidra_disassembly_001B0008
+    - ghidra_decompile_001B0078
+    - ghidra_decompile_001AB7C4
 0xFF7E30:
   name: INTERACTION_PENDING_DISPLAY_VALUE
   type: u8[7]
   format: ascii_buffer
   confidence: decompiled
-  description: Seven-byte pending display buffer compared with the active six-character display at 0x00FF7E29; the first six bytes hold ASCII digits and the seventh byte is the terminator. Interaction_SynchronizeResponseState copies it forward when the pending value is ready.
+  description: Seven-byte pending interaction display snapshot compared with HUD_DISPLAY_DIGITS at 0x00FF7E29; the first six bytes hold ASCII digits and the seventh byte is the terminator. Interaction_SynchronizeResponseState copies the current display into this snapshot when the current value has reached or passed it, then raises HUD_DISPLAY_UPDATE_PENDING.
   evidence:
     - ghidra_decompile_001AFFE4
     - ghidra_decompile_001B0078
