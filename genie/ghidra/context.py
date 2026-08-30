@@ -29,10 +29,14 @@ def _symbol_value(
 
 def _runtime(database: AnalysisDatabase, function_address: int, path: Path | None) -> dict[str, Any] | None:
     if path is None:
-        candidate = database.root.parent / "coverage-ghidra.json"
-        if not candidate.is_file():
-            candidate = database.root.parent / "coverage.json"
-        path = candidate
+        parent = database.root.parent
+        for name in ("coverage-expanded.json", "coverage-ghidra.json", "coverage.json"):
+            candidate = parent / name
+            if candidate.is_file():
+                path = candidate
+                break
+        else:
+            path = parent / "coverage.json"
     else:
         path = Path(path)
     if not path.is_file():

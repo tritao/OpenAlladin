@@ -30,10 +30,14 @@ def _address(value: Any) -> int:
 
 def _runtime_functions(database: AnalysisDatabase, path: Path | None) -> dict[int, dict[str, Any]]:
     if path is None:
-        candidate = database.root.parent / "coverage-ghidra.json"
-        if not candidate.is_file():
-            candidate = database.root.parent / "coverage.json"
-        path = candidate
+        parent = database.root.parent
+        for name in ("coverage-expanded.json", "coverage-ghidra.json", "coverage.json"):
+            candidate = parent / name
+            if candidate.is_file():
+                path = candidate
+                break
+        else:
+            path = parent / "coverage.json"
     if not path.is_file():
         return {}
     document = json.loads(path.read_text(encoding="utf-8"))

@@ -253,6 +253,27 @@ def test_context_reads_merged_per_pc_archive(tmp_path):
     }
 
 
+def test_context_prefers_newest_merged_archive_by_default(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    (tmp_path / "coverage-ghidra.json").write_text(json.dumps({"functions": {
+        "0x00000010": {"pc_count": 1, "scenarios": ["old"]},
+    }}), encoding="utf-8")
+    (tmp_path / "coverage-expanded.json").write_text(json.dumps({"pcs": {
+        "0x00000014": {"sample_count": 2, "scenarios": ["new"]},
+    }}), encoding="utf-8")
+
+    value = build_context(
+        AnalysisDatabase(database_root),
+        0x14,
+        SymbolStore(symbols=(Symbol(0x10, "FirstFunction", "function"),)),
+    )
+
+    assert value["runtime"]["observed"] is True
+    assert value["runtime"]["scenarios"] == ["new"]
+    assert value["runtime"]["source"].endswith("coverage-expanded.json")
+
+
 def _write_database(root: Path) -> None:
     root.mkdir(parents=True)
     documents = {

@@ -28,8 +28,11 @@ def _hex(value: int) -> str:
 
 def _default_coverage(database: AnalysisDatabase) -> Path:
     parent = database.root.parent
-    ghidra = parent / "coverage-ghidra.json"
-    return ghidra if ghidra.is_file() else parent / "coverage.json"
+    for name in ("coverage-expanded.json", "coverage-ghidra.json", "coverage.json"):
+        candidate = parent / name
+        if candidate.is_file():
+            return candidate
+    return parent / "coverage.json"
 
 
 def _load_json(path: Path) -> Any | None:
