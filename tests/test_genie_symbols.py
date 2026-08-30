@@ -383,6 +383,19 @@ def test_player_level_exit_response_has_behavior_name_and_legacy_alias():
     assert "ActorType74_75_PlayerCollisionHandler" in symbol.aliases
 
 
+def test_compact_actor_player_response_has_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001AC614: ("ActorCollision_ProcessType14Interaction", "ActorType14_ActorCollisionHandler"),
+        0x001AC63C: ("ActorCollision_StageType84EventResponse", "ActorType2B_ActorCollisionHandler"),
+        0x001AEE18: ("PlayerCollision_ReinitializeType30Response", "ActorType30_PlayerCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

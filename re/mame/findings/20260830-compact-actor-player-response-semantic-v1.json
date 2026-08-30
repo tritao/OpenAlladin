@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/compact-actor-player-response-semantic-targets.json",
+  "promotions": [
+    {
+      "address": "0x001AC614",
+      "old_name": "ActorType14_ActorCollisionHandler",
+      "name": "ActorCollision_ProcessType14Interaction",
+      "alias": "ActorType14_ActorCollisionHandler"
+    },
+    {
+      "address": "0x001AC63C",
+      "old_name": "ActorType2B_ActorCollisionHandler",
+      "name": "ActorCollision_StageType84EventResponse",
+      "alias": "ActorType2B_ActorCollisionHandler"
+    },
+    {
+      "address": "0x001AEE18",
+      "old_name": "ActorType30_PlayerCollisionHandler",
+      "name": "PlayerCollision_ReinitializeType30Response",
+      "alias": "ActorType30_PlayerCollisionHandler"
+    }
+  ],
+  "conclusion": "Promoted the Type-0x14 interaction cleanup, Type-0x2B Type-0x84 event staging, and Type-0x30 player response reinitialization paths to behavior-based names.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
