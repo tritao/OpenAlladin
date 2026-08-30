@@ -12,6 +12,9 @@ from genie.symbols import SymbolStore
 from .database import AnalysisDatabase
 
 
+LOW_CONFIDENCE = frozenset({"unknown", "provisional", "probable"})
+
+
 def _address(value: Any) -> int:
     return parse_int(value)
 
@@ -95,7 +98,12 @@ def function_work_queue(
     for function in database.functions:
         address = _address(function["address"])
         canonical = symbols.at(address, include_ranges=False)
-        if canonical is not None and canonical.kind == "function" and not canonical.is_mechanical:
+        if (
+            canonical is not None
+            and canonical.kind == "function"
+            and not canonical.is_mechanical
+            and canonical.confidence not in LOW_CONFIDENCE
+        ):
             continue
         callers = database.callers(address)
         callees = database.callees(address)
@@ -134,6 +142,7 @@ def function_work_queue(
             "address": f"0x{address:08X}",
             "name": str(function.get("name") or f"Func_{address:08X}"),
             "canonical_name": canonical.name if canonical is not None else None,
+            "confidence": canonical.confidence if canonical is not None else "unknown",
             "score": score,
             "callers": len(callers),
             "callees": len(callees),

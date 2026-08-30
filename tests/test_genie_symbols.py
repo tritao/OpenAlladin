@@ -111,13 +111,28 @@ def test_function_work_queue_ranks_runtime_unknowns(tmp_path):
     database = AnalysisDatabase(database_root)
     queue = function_work_queue(
         database,
-        SymbolStore(symbols=(Symbol(0x10, "FirstFunction", "function"),)),
+        SymbolStore(symbols=(Symbol(0x10, "FirstFunction", "function", confidence="confirmed"),)),
     )
 
     assert len(queue) == 1
     assert queue[0]["address"] == "0x00000020"
     assert queue[0]["runtime_observed"] is True
     assert queue[0]["callers"] == 1
+
+
+def test_function_work_queue_includes_low_confidence_canonical_functions(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    queue = function_work_queue(
+        AnalysisDatabase(database_root),
+        SymbolStore(symbols=(
+            Symbol(0x10, "ProbableFunction", "function", confidence="probable"),
+            Symbol(0x20, "ConfirmedFunction", "function", confidence="confirmed"),
+        )),
+    )
+
+    assert [item["address"] for item in queue] == ["0x00000010"]
+    assert queue[0]["confidence"] == "probable"
 
 
 def test_context_combines_function_references_and_layout(tmp_path):
