@@ -292,6 +292,36 @@ def test_reset_bootstrap_payload_suffix_and_post_copy_values_are_exact():
     )
 
 
+def test_reset_bootstrap_unconsumed_tail_and_skipped_word_are_exact():
+    symbols = SymbolStore()
+    tail = symbols.at(0x000002F8, include_ranges=False)
+    assert tail is not None
+    assert tail.name == "RESET_BOOTSTRAP_UNCONSUMED_TAIL_02F8"
+    assert tail.end == 0x00000313
+    assert tail.size == 28
+    assert tail.metadata["type"] == "opaque_data"
+    assert tail.confidence == "provisional"
+
+    skipped = symbols.at(0x00000334, include_ranges=False)
+    assert skipped is not None
+    assert skipped.name == "RESET_BOOTSTRAP_SKIPPED_WORD_0334"
+    assert skipped.end == 0x00000335
+    assert skipped.size == 2
+    assert skipped.metadata["type"] == "opaque_data"
+    assert skipped.confidence == "provisional"
+
+    renderer = symbols.at(0x00000344, include_ranges=False)
+    assert renderer is not None
+    assert renderer.name == "System_DisplayRegionCompatibilityWarning"
+    assert skipped.end + 1 < renderer.address
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[tail.address:tail.end + 1] == bytes.fromhex(
+        "D9C1D1E1F1F9F3ED5636E9E981048F02C0000000400000109FBFDFFF"
+    )
+    assert rom[skipped.address:skipped.end + 1] == bytes.fromhex("00E0")
+
+
 def test_scene_script_prefix_is_exact_and_cursor_boundary_is_preserved():
     symbols = SymbolStore()
     prefix = symbols.at(0x0000407E, include_ranges=False)
@@ -347,6 +377,32 @@ def test_unreferenced_fixed_record_bank_has_exact_extent_and_cadence():
         "93309400006008001808"
         "93209400004004001008"
         "93109400002000000808"
+    )
+
+
+def test_unreferenced_fixed_word_bank_has_exact_extent_and_terrain_boundary():
+    symbols = SymbolStore()
+    bank = symbols.at(0x00006744, include_ranges=False)
+    assert bank is not None
+    assert bank.name == "UNREFERENCED_FIXED_WORD_BANK_6744"
+    assert bank.end == 0x0000683D
+    assert bank.size == 250
+    assert bank.metadata["type"] == "opaque_data_table"
+    assert bank.metadata["entry_size"] == 2
+    assert bank.metadata["count"] == 125
+    assert bank.confidence == "provisional"
+
+    following = symbols.at(0x0000683E, include_ranges=False)
+    assert following is not None
+    assert following.name == "TERRAIN_ACTOR_SURFACE_FLAGS_TABLE"
+    assert bank.end + 1 == following.address
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[bank.address:bank.address + 16] == bytes.fromhex(
+        "00CC011400D4011400DC011400E30116"
+    )
+    assert rom[bank.end - 15:bank.end + 1] == bytes.fromhex(
+        "013E00B8014000B8013E00C701460000"
     )
 
 

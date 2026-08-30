@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-reset-bootstrap-unconsumed-tail-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "targets": [
+    {
+      "address": "0x000002F8",
+      "name": "RESET_BOOTSTRAP_UNCONSUMED_TAIL_02F8",
+      "range": ["0x000002F8", "0x00000313"],
+      "size": 28,
+      "raw_bytes": "D9C1D1E1F1F9F3ED5636E9E981048F02C0000000400000109FBFDFFF"
+    },
+    {
+      "address": "0x00000334",
+      "name": "RESET_BOOTSTRAP_SKIPPED_WORD_0334",
+      "range": ["0x00000334", "0x00000335"],
+      "size": 2,
+      "raw_bytes": "00E0",
+      "skipped_by": "0x00000332 BRA.W 0x00000336"
+    }
+  ],
+  "boundary": "The first range follows the last direct post-copy reset value at 0x000002F7 and ends before the reset continuation at 0x00000314. The second range is skipped by the branch at 0x00000332 and ends before System_DisplayRegionCompatibilityWarning at 0x00000344.",
+  "evidence": [
+    "Neither range is consumed by the 68K reset path as represented by the current instruction listing.",
+    "The byte contents are retained exactly and no internal Z80 or hardware interpretation is asserted."
+  ],
+  "confidence": "provisional",
+  "status": "recorded-static-disassembly"
+}

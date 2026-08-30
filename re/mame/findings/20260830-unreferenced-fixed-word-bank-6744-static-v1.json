@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-unreferenced-fixed-word-bank-6744-static-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "provisional",
+  "target_manifest": "re/ghidra/targets/unreferenced-fixed-word-bank-6744-static-targets.json",
+  "promoted_range": {
+    "address": "0x00006744",
+    "name": "UNREFERENCED_FIXED_WORD_BANK_6744",
+    "range": ["0x00006744", "0x0000683D"],
+    "size": 250,
+    "entry_size": 2,
+    "count": 125
+  },
+  "boundary": "The bank begins immediately after the state-4 scene-resource stream ending at 0x00006743 and ends immediately before TERRAIN_ACTOR_SURFACE_FLAGS_TABLE at 0x0000683E.",
+  "interpretation": "The values are retained as an opaque fixed-word bank. Earlier apparent references into the range are false literal matches from nearby sprite data, so no consumer or narrower data format is asserted.",
+  "conclusion": "The formerly unknown 250-byte gap now has an exact provisional opaque owner for deassembly and layout accounting."
+}

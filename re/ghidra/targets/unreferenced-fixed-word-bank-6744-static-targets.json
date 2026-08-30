@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-unreferenced-fixed-word-bank-6744-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target": {
+    "address": "0x00006744",
+    "name": "UNREFERENCED_FIXED_WORD_BANK_6744",
+    "range": ["0x00006744", "0x0000683D"],
+    "size": 250,
+    "entry_size": 2,
+    "count": 125,
+    "preceding": "0x0000603A-0x00006743 state-4 scene-resource stream corpus",
+    "following": "0x0000683E-0x0000693D TERRAIN_ACTOR_SURFACE_FLAGS_TABLE"
+  },
+  "evidence": [
+    "The range is exactly divisible into 125 big-endian words.",
+    "The values are coordinate-like and form a stable fixed-word bank, but no direct consumer or narrower resource format is recovered.",
+    "Known apparent references into this band are treated as false literal matches from the preceding sprite data and do not establish ownership semantics."
+  ],
+  "confidence": "provisional",
+  "status": "recorded-static-disassembly"
+}
