@@ -682,6 +682,14 @@ def test_real_palette_transition_step_has_canonical_role():
     assert symbol.metadata["format"] == "counter"
 
 
+def test_real_actor_type42_collision_step_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF10A, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "ACTOR_TYPE42_COLLISION_STEP"
+    assert symbol.metadata["type"] == "u8"
+    assert symbol.metadata["format"] == "counter"
+
+
 def test_real_player_terrain_transition_gate_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF114, include_ranges=False)
     assert symbol is not None

@@ -728,6 +728,16 @@
   evidence:
     - ghidra_actor_interaction_state_producer
     - actor_terrain_collision_loop_static_decompilation
+0xFFF10A:
+  name: ACTOR_TYPE42_COLLISION_STEP
+  type: u8
+  format: counter
+  confidence: decompiled
+  description: Four-contact step counter for the runtime type-0x42 player-collision handler. ActorType42_PlayerCollisionHandler increments it for each nonterminal interaction, advances INTERACTION_COUNTER_DIGITS after the fourth contact, then clears the step byte before reinitializing the actor.
+  evidence:
+    - ghidra_decompile_001AF264
+    - ghidra_disassembly_001AF270
+    - primary_interaction_counter_contract_static_v1
 0xFFF100:
   name: ACTOR_COLLISION_EVENT_FLAG
   type: u8
