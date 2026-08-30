@@ -245,6 +245,17 @@ def build_parser() -> argparse.ArgumentParser:
     symbols_next.add_argument("--json", action="store_true", dest="json_output")
     symbols_next.set_defaults(function=command_symbols_next)
 
+    symbols_review = symbol_commands.add_parser(
+        "review",
+        help="rank named symbols whose semantic descriptions retain open questions",
+    )
+    symbols_review.add_argument("--kind", choices=("function", "ram", "data"))
+    symbols_review.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    symbols_review.add_argument("--coverage", type=Path)
+    symbols_review.add_argument("--limit", type=int, default=25, help="maximum rows; zero means all")
+    symbols_review.add_argument("--json", action="store_true", dest="json_output")
+    symbols_review.set_defaults(function=command_symbols_review)
+
     symbols_rename = symbol_commands.add_parser("rename", help="rename or create a canonical symbol")
     symbols_rename.add_argument("address", type=parse_symbol_address)
     symbols_rename.add_argument("name")

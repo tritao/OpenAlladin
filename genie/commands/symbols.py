@@ -8,7 +8,12 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from genie.ghidra.database import AnalysisDatabase
-from genie.ghidra.worklist import function_work_queue, render_work_queue
+from genie.ghidra.worklist import (
+    function_work_queue,
+    render_symbol_review,
+    render_work_queue,
+    symbol_review_queue,
+)
 from genie.runtime import ROOT, default_rom, resolve
 from genie.symbols import Symbol, SymbolStore, edit_symbol, mechanical_name
 
@@ -142,6 +147,24 @@ def command_symbols_next(args: argparse.Namespace) -> int:
         print("No unknown/mechanical functions remain")
         return 1
     render_work_queue(queue[:1], total=len(queue), json_output=args.json_output, title="Next function")
+    return 0
+
+
+def command_symbols_review(args: argparse.Namespace) -> int:
+    try:
+        database = AnalysisDatabase(resolve(args.database))
+        database.load("metadata.json")
+        queue = symbol_review_queue(
+            database,
+            _store(),
+            kind=args.kind,
+            coverage_path=resolve(args.coverage) if args.coverage else None,
+        )
+    except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        print(f"ERROR {error}")
+        return 1
+    limit = args.limit if args.limit > 0 else len(queue)
+    render_symbol_review(queue[:limit], total=len(queue), json_output=args.json_output)
     return 0
 
 

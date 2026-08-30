@@ -6,7 +6,7 @@ from pathlib import Path
 from genie.cli import build_parser
 from genie.ghidra.context import build_context
 from genie.ghidra.database import AnalysisDatabase
-from genie.ghidra.worklist import function_work_queue
+from genie.ghidra.worklist import function_work_queue, symbol_review_queue
 from genie.layout.model import Layout, LayoutRange
 from genie.symbols import Symbol, SymbolStore, edit_symbol, mechanical_name, name_for
 
@@ -68,6 +68,7 @@ def test_symbols_cli_surface_dispatches():
     find = build_parser().parse_args(["symbols", "find", "AnimationVM", "--kind", "function"])
     stats = build_parser().parse_args(["symbols", "stats", "--json"])
     unknown = build_parser().parse_args(["symbols", "unknown", "--kind", "function", "--limit", "4"])
+    review = build_parser().parse_args(["symbols", "review", "--kind", "data", "--limit", "4", "--json"])
     rename = build_parser().parse_args(["symbols", "rename", "0x20", "Scene_Init"])
     describe = build_parser().parse_args(["symbols", "describe", "0x20", "entry point"])
     confidence = build_parser().parse_args(["symbols", "confidence", "0x20", "decompiled"])
@@ -75,6 +76,9 @@ def test_symbols_cli_surface_dispatches():
     assert find.kind == "function"
     assert stats.json_output is True
     assert unknown.limit == 4
+    assert review.kind == "data"
+    assert review.limit == 4
+    assert review.json_output is True
     assert rename.name == "Scene_Init"
     assert describe.description == "entry point"
     assert confidence.confidence == "decompiled"
@@ -133,6 +137,29 @@ def test_function_work_queue_includes_low_confidence_canonical_functions(tmp_pat
 
     assert [item["address"] for item in queue] == ["0x00000010"]
     assert queue[0]["confidence"] == "probable"
+
+
+def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    queue = symbol_review_queue(
+        AnalysisDatabase(database_root),
+        SymbolStore(symbols=(
+            Symbol(
+                0x10,
+                "NamedOpenQuestion",
+                "function",
+                confidence="decompiled",
+                description="The selector remains unresolved.",
+            ),
+            Symbol(0x20, "ClosedFunction", "function", confidence="confirmed"),
+        )),
+    )
+
+    assert len(queue) == 1
+    assert queue[0]["address"] == "0x00000010"
+    assert queue[0]["review_markers"] == ["unresolved", "selector remains"]
+    assert queue[0]["description"] == "The selector remains unresolved."
 
 
 def test_context_combines_function_references_and_layout(tmp_path):

@@ -13,6 +13,15 @@ from .database import AnalysisDatabase
 
 
 LOW_CONFIDENCE = frozenset({"unknown", "provisional", "probable"})
+REVIEW_MARKERS = (
+    "unresolved",
+    "no static producer",
+    "no static consumer",
+    "runtime reachability remains",
+    "selector remains",
+    "consumer remains",
+    "producer remains",
+)
 
 
 def _address(value: Any) -> int:
@@ -167,6 +176,111 @@ def function_work_queue(
     return result
 
 
+def _review_records(database: AnalysisDatabase, filename: str) -> list[dict[str, Any]]:
+    document = database.load(filename)
+    values = document.get("references", []) if isinstance(document, dict) else document
+    return [dict(item) for item in values if isinstance(item, dict)]
+
+
+def _in_symbol_range(value: Any, symbol) -> bool:
+    try:
+        address = _address(value)
+    except (TypeError, ValueError):
+        return False
+    symbol_range = symbol.range or (symbol.address, symbol.address)
+    return symbol_range[0] <= address <= symbol_range[1]
+
+
+def symbol_review_queue(
+    database: AnalysisDatabase,
+    symbols: SymbolStore,
+    *,
+    kind: str | None = None,
+    coverage_path: Path | None = None,
+) -> list[dict[str, Any]]:
+    """Rank named symbols whose descriptions retain explicit open questions.
+
+    The normal function queue intentionally disappears once every Ghidra
+    function has a canonical name. This queue keeps semantic follow-up work
+    visible without treating a conservative, already-named symbol as an
+    unknown. It uses only the generated database and optional cached coverage.
+    """
+
+    normalized_kind = str(kind).casefold() if kind else None
+    runtime = _runtime_functions(database, coverage_path)
+    dispatch = _jump_table_membership(database)
+    xrefs = _review_records(database, "xrefs.json")
+    reads = _review_records(database, "memory_reads.json")
+    writes = _review_records(database, "memory_writes.json")
+    result: list[dict[str, Any]] = []
+    for symbol in symbols.symbols:
+        if normalized_kind and symbol.kind.casefold() != normalized_kind:
+            continue
+        description = (symbol.description or "").casefold()
+        markers = tuple(marker for marker in REVIEW_MARKERS if marker in description)
+        if not markers:
+            continue
+
+        callers: list[dict[str, Any]] = []
+        callees: list[dict[str, Any]] = []
+        runtime_item = runtime.get(symbol.address, {})
+        dispatch_tables = dispatch.get(symbol.address, [])
+        if symbol.kind == "function":
+            callers = database.callers(symbol.address)
+            callees = database.callees(symbol.address)
+            function_reads = database.function_references(symbol.address, "memory_reads.json")
+            function_writes = database.function_references(symbol.address, "memory_writes.json")
+            incoming_xrefs = [
+                item for item in xrefs
+                if _address(item.get("to", -1)) == symbol.address
+            ]
+            read_count = len(function_reads)
+            write_count = len(function_writes)
+        else:
+            incoming_xrefs = [item for item in xrefs if _in_symbol_range(item.get("to"), symbol)]
+            read_count = sum(_in_symbol_range(item.get("to"), symbol) for item in reads)
+            write_count = sum(_in_symbol_range(item.get("to"), symbol) for item in writes)
+
+        score = (
+            (100_000 if runtime_item else 0)
+            + len(dispatch_tables) * 5_000
+            + len(callers) * 1_000
+            + len(incoming_xrefs) * 100
+            + write_count * 20
+            + read_count * 10
+            + len(callees)
+        )
+        result.append({
+            "rank": 0,
+            "score": score,
+            "address": f"0x{symbol.address:08X}",
+            "name": symbol.name,
+            "kind": symbol.kind,
+            "confidence": symbol.confidence,
+            "description": symbol.description or "",
+            "review_markers": list(markers),
+            "callers": len(callers),
+            "callees": len(callees),
+            "xrefs": len(incoming_xrefs),
+            "ram_reads": read_count,
+            "ram_writes": write_count,
+            "runtime_observed": bool(runtime_item),
+            "runtime_pc_count": int(runtime_item.get("pc_count", 0) or 0),
+            "runtime_scenarios": list(runtime_item.get("scenarios", ())),
+            "dispatch_tables": dispatch_tables,
+        })
+    result.sort(key=lambda item: (
+        -item["score"],
+        -int(item["runtime_observed"]),
+        -item["callers"],
+        -item["xrefs"],
+        _address(item["address"]),
+    ))
+    for rank, item in enumerate(result, 1):
+        item["rank"] = rank
+    return result
+
+
 def render_work_queue(
     items: list[dict[str, Any]],
     *,
@@ -190,4 +304,35 @@ def render_work_queue(
         )
 
 
-__all__ = ["function_work_queue", "render_work_queue"]
+def render_symbol_review(
+    items: list[dict[str, Any]],
+    *,
+    total: int,
+    json_output: bool,
+) -> None:
+    if json_output:
+        print(json.dumps({"total": total, "items": items}, indent=2, sort_keys=True))
+        return
+    print(f"Semantic review queue ({len(items)} of {total})")
+    if not items:
+        return
+    print("rank score address       kind     confidence    name                              evidence")
+    for item in items:
+        evidence = (
+            f"callers={item['callers']},xrefs={item['xrefs']},"
+            f"RAM-r={item['ram_reads']},RAM-w={item['ram_writes']},"
+            f"run={'yes' if item['runtime_observed'] else 'no'}"
+        )
+        print(
+            f"{item['rank']:>4} {item['score']:>5} {item['address']} "
+            f"{item['kind']:<8} {item['confidence']:<13} {item['name'][:32]:<32} {evidence}"
+        )
+        print(f"     review: {item['description']}")
+
+
+__all__ = [
+    "function_work_queue",
+    "render_symbol_review",
+    "render_work_queue",
+    "symbol_review_queue",
+]
