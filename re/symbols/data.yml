@@ -1226,11 +1226,12 @@
     - scene_resource_command_table
 
 0x00128E4B:
-  name: SCENE_RESOURCE_TILE_BASE_2000_COMMAND_128E4B
+  name: SCENE_RESOURCE_TILE_BASE_2000_COMMAND
+  aliases: [SCENE_RESOURCE_TILE_BASE_2000_COMMAND_128E4B]
   type: scene_resource_stream
   size: 2
   confidence: decompiled
-  description: Exact two-byte scene-resource command record containing the 0x09/0x00 tile-base-0x2000 operation immediately after SCENE_TRANSITION_CLOSING_STREAM. Its command encoding and boundary are fully decoded, while no external consumer or higher-level presentation role is claimed.
+  description: Exact two-byte scene-resource command record containing the 0x09/0x00 tile-base-0x2000 operation immediately after SCENE_TRANSITION_CLOSING_STREAM. Its command encoding and ROM ownership are fully decoded; a higher-level selector is not assigned by the current evidence.
   evidence:
     - unreferenced_scene_palette_data_static_v1
     - scene_resource_command_table
@@ -1279,11 +1280,12 @@
     - rom_padding_uniform_static_v1
 
 0x00128EB2:
-  name: PALETTE_ALL_0EEE_SOURCE_128EB2
+  name: PALETTE_UNIFORM_0EEE
+  aliases: [PALETTE_ALL_0EEE_SOURCE_128EB2]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Exact 16-word Genesis palette source containing 0x0EEE in every word between the menu/sound-test presentation data and SCENE_BLANK_PALETTE. Its palette encoding and boundary are fully decoded, while no direct consumer or higher-level presentation role is claimed.
+  description: Exact 16-word Genesis palette source containing 0x0EEE in every word between the menu/sound-test presentation data and SCENE_BLANK_PALETTE. Its palette encoding and ROM ownership are fully decoded; a higher-level selector is not assigned by the current evidence.
   evidence:
     - unreferenced_scene_palette_data_static_v1
     - fixed_palette_source_extents_static_v1
@@ -1868,13 +1870,14 @@
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x00129312:
-  name: PALETTE_BAND_VARIANT_OF_INTERACTION_TYPE7D_129312
+  name: INTERACTION_TYPE7D_PALETTE_VARIANT_0660
+  aliases: [PALETTE_BAND_VARIANT_OF_INTERACTION_TYPE7D_129312]
   type: palette_data
   size: 0x20
   confidence: decompiled
   variant_of: INTERACTION_TYPE7D_PALETTE_SOURCE
   variant_address: 0x00129332
-  description: Exact 16-word Genesis palette band between INTERACTION_TYPE8B_PALETTE_SOURCE and INTERACTION_TYPE7D_PALETTE_SOURCE. Its final 15 words are byte-for-byte identical to INTERACTION_TYPE7D_PALETTE_SOURCE at 0x00129332; only the first word differs, 0x0660 here versus 0x000E there. No direct consumer or runtime role is assigned.
+  description: Exact 16-word Genesis palette band between INTERACTION_TYPE8B_PALETTE_SOURCE and INTERACTION_TYPE7D_PALETTE_SOURCE. Its final 15 words are byte-for-byte identical to INTERACTION_TYPE7D_PALETTE_SOURCE at 0x00129332; only the first word differs, 0x0660 here versus 0x000E there. The distinct first-word variant is recorded without assigning a higher-level selector.
   evidence:
     - unreferenced_palette_data_static_v1
     - fixed_palette_source_extents_static_v1

@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "remaining-data-identities",
+    "purpose": "Replace address-bearing names for the last three structurally decoded data objects with stable resource identities without claiming an unproven runtime selector."
+  },
+  "targets": [
+    {
+      "address": "0x00128E4B",
+      "name": "SCENE_RESOURCE_TILE_BASE_2000_COMMAND",
+      "legacy_name": "SCENE_RESOURCE_TILE_BASE_2000_COMMAND_128E4B",
+      "range": "0x00128E4B-0x00128E4C",
+      "size": 2,
+      "identity": "exact 0x09/0x00 scene-resource tile-base-0x2000 command after SCENE_TRANSITION_CLOSING_STREAM"
+    },
+    {
+      "address": "0x00128EB2",
+      "name": "PALETTE_UNIFORM_0EEE",
+      "legacy_name": "PALETTE_ALL_0EEE_SOURCE_128EB2",
+      "range": "0x00128EB2-0x00128ED1",
+      "size": 32,
+      "identity": "16-word Genesis palette with 0x0EEE in every word"
+    },
+    {
+      "address": "0x00129312",
+      "name": "INTERACTION_TYPE7D_PALETTE_VARIANT_0660",
+      "legacy_name": "PALETTE_BAND_VARIANT_OF_INTERACTION_TYPE7D_129312",
+      "range": "0x00129312-0x00129331",
+      "size": 32,
+      "identity": "Type-0x7D palette variant whose first word is 0x0660 and remaining 15 words match INTERACTION_TYPE7D_PALETTE_SOURCE"
+    }
+  ],
+  "evidence": [
+    "exact ROM boundaries",
+    "scene-resource command decoding",
+    "Genesis palette word decoding",
+    "byte-for-byte comparison against adjacent established palette sources"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

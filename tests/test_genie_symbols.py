@@ -616,6 +616,19 @@ def test_final_player_and_actor_dispatch_entries_have_canonical_names():
         assert legacy in symbol.aliases
 
 
+def test_remaining_data_identities_have_stable_names_and_legacy_aliases():
+    expected = {
+        0x00128E4B: ("SCENE_RESOURCE_TILE_BASE_2000_COMMAND", "SCENE_RESOURCE_TILE_BASE_2000_COMMAND_128E4B"),
+        0x00128EB2: ("PALETTE_UNIFORM_0EEE", "PALETTE_ALL_0EEE_SOURCE_128EB2"),
+        0x00129312: ("INTERACTION_TYPE7D_PALETTE_VARIANT_0660", "PALETTE_BAND_VARIANT_OF_INTERACTION_TYPE7D_129312"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
