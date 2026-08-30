@@ -524,6 +524,23 @@ def test_real_level08_event_state_has_canonical_roles():
     assert symbols.at(0x00FFF132, include_ranges=False) is None
 
 
+def test_real_presentation_actor_slot_has_structural_canonical_roles():
+    symbols = SymbolStore()
+
+    actor = symbols.at(0x00FF7EC4, include_ranges=False)
+    x = symbols.at(0x00FF7EC6, include_ranges=False)
+    y = symbols.at(0x00FF7EC8, include_ranges=False)
+    assert actor is not None
+    assert actor.name == "ACTOR_TABLE_SLOT_2_BASE"
+    assert "OPTION_SELECTION_MARKER_ACTOR" in actor.aliases
+    assert x is not None
+    assert x.name == "ACTOR_SLOT_2_X"
+    assert "OPTION_SELECTION_MARKER_X" in x.aliases
+    assert y is not None
+    assert y.name == "ACTOR_SLOT_2_Y"
+    assert "OPTION_SELECTION_MARKER_Y" in y.aliases
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

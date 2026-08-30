@@ -20,6 +20,45 @@
     - ghidra_actor_table_layout
     - actor_allocation_initialization_static_decompilation
     - collision_pass_geometry_static_decompilation
+0xFF7EC4:
+  name: ACTOR_TABLE_SLOT_2_BASE
+  aliases:
+    - OPTION_SELECTION_MARKER_ACTOR
+    - PRESENTATION_ACTOR_RECORD
+    - ACTOR_TEMPORARY_SECONDARY_RECORD
+  type: actor_record
+  format: address
+  confidence: confirmed
+  description: Fixed actor-table slot 2 base at ACTOR_TABLE_BASE plus two 0x42-byte records. Startup/options presentation and several scene/transition paths reuse this slot; its common position words are ACTOR_SLOT_2_X and ACTOR_SLOT_2_Y.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_options_menu_targets
+    - actor_template_bootstrap_targets
+    - scene_state_resource_targets
+0xFF7EC6:
+  name: ACTOR_SLOT_2_X
+  aliases:
+    - OPTION_SELECTION_MARKER_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: X coordinate word at offset +0x02 in fixed actor-table slot 2. Menu selection-marker helpers and scene/actor paths write this reused presentation-slot coordinate.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_options_menu_targets
+    - options_menu_scene_table_static
+0xFF7EC8:
+  name: ACTOR_SLOT_2_Y
+  aliases:
+    - OPTION_SELECTION_MARKER_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Y coordinate word at offset +0x04 in fixed actor-table slot 2. Menu selection-marker helpers and scene/actor paths write this reused presentation-slot coordinate.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_options_menu_targets
+    - options_menu_scene_table_static
 0xFF84B2:
   name: ACTOR_AUXILIARY_POOL_BASE
   type: actor_pool

@@ -47,7 +47,12 @@
       "JUMP - C",
       "EXIT"
     ],
-    "selection_marker_record": "The menu initializes the actor record at 0x00FF7EC4; the helper writes its coordinate words at +0x02 (0x00FF7EC6) and +0x04 (0x00FF7EC8).",
+    "selection_marker_record": "The menu initializes actor-table slot 2 at 0x00FF7EC4; the helper writes its coordinate words at +0x02 (0x00FF7EC6) and +0x04 (0x00FF7EC8).",
+    "canonical_ram_state": [
+      { "address": "0x00FF7EC4", "name": "ACTOR_TABLE_SLOT_2_BASE" },
+      { "address": "0x00FF7EC6", "name": "ACTOR_SLOT_2_X" },
+      { "address": "0x00FF7EC8", "name": "ACTOR_SLOT_2_Y" }
+    ],
     "scene_table_contract": "The post-menu path indexes ROM table 0x00004B04 by SCENE_TABLE_INDEX*6, publishes the script pointer and state byte, then advances the index with the existing wrap behavior."
   },
   "conclusion": "The former SceneTable_SelectNextState label at 0x001B3B96 was too narrow. Static decompilation identifies one startup/options loop with three marker-position helpers and a final scene-table selection path; the helper names preserve exact coordinate formulas without assigning an unproven menu asset identity."

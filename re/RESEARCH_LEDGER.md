@@ -832,6 +832,12 @@ scene-table publication. Its three small coordinate helpers at `0x001B43C4`,
 `0x001B43E0`, and `0x001B43FC` are named by their exact marker-position
 contracts; the menu actor's higher-level art identity remains open.
 
+The reused presentation actor slot is now canonicalized structurally. The
+record at `FF7EC4` is actor-table slot 2 (`ACTOR_TABLE_BASE + 2*0x42`), with
+position words `ACTOR_SLOT_2_X` at `FF7EC6` and `ACTOR_SLOT_2_Y` at `FF7EC8`.
+`OPTION_SELECTION_MARKER_*` remains available as context aliases because the
+same fixed slot is reused by scene and terminal-transition presentation paths.
+
 The menu media subservices are recorded in
 `re/mame/findings/20260828-menu-soundtest-credits-v1.json`. The sound-test
 screen at `0x001B4436` owns the indexed records beginning at ROM `0x12675E`:
