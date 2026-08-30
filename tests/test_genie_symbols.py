@@ -507,6 +507,20 @@ def test_real_query_input_bytes_have_canonical_roles():
         assert symbol.metadata["format"] == "bitfield"
 
 
+def test_real_actor_render_offsets_have_canonical_roles():
+    symbols = SymbolStore()
+
+    expected = {
+        0x00FFF080: "ACTOR_RENDER_X_OFFSET",
+        0x00FFF082: "ACTOR_RENDER_Y_OFFSET",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == "pixels"
+
+
 def test_real_level08_event_state_has_canonical_roles():
     symbols = SymbolStore()
 

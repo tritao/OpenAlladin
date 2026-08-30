@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-render-camera-offsets-static-targets.json",
+  "consumer": {
+    "address": "0x001AB7C4",
+    "name": "Render_BuildActorRecords",
+    "x_formula": "ACTOR_RENDER_X_OFFSET + actor_x_delta",
+    "y_formula": "actor_y_delta - ACTOR_RENDER_Y_OFFSET"
+  },
+  "producers": [
+    {
+      "address": "0x001AB066",
+      "name": "Level07_CameraScrollCallback",
+      "writes": [
+        { "address": "0x00FFF080", "operation": "publishes horizontal camera-resource delta" },
+        { "address": "0x00FFF082", "operation": "publishes vertical camera-resource delta" }
+      ]
+    },
+    {
+      "address": "0x001AB22E",
+      "name": "Level_CameraScrollCallback_Levels05_06",
+      "writes": [
+        { "address": "0x00FFF080", "operation": "publishes horizontal camera-resource delta" }
+      ]
+    }
+  ],
+  "conclusion": "FFF080 and FFF082 are actor-render screen-space offsets, not independent gameplay coordinates. Their exact signed arithmetic is visible at the renderer consumer and their camera-callback writers.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

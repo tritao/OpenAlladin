@@ -968,6 +968,27 @@
   evidence:
     - ghidra_disassembly_001B6066
     - level08_event_vdp_static_decompilation
+0xFFF080:
+  name: ACTOR_RENDER_X_OFFSET
+  type: s16
+  format: pixels
+  confidence: decompiled
+  description: Signed horizontal screen-space offset added to each eligible actor's rendered X coordinate by Render_BuildActorRecords. Level07_CameraScrollCallback and the shared Levels-05/06 camera callback publish it from their active camera-resource records.
+  evidence:
+    - ghidra_disassembly_001AB066
+    - ghidra_disassembly_001AB22E
+    - ghidra_decompile_001AB7C4
+    - actor_render_camera_offsets_static_targets
+0xFFF082:
+  name: ACTOR_RENDER_Y_OFFSET
+  type: s16
+  format: pixels
+  confidence: decompiled
+  description: Signed vertical screen-space offset subtracted from each eligible actor's rendered Y coordinate by Render_BuildActorRecords. Level07_CameraScrollCallback publishes it while rebuilding the level-specific camera/VDP state.
+  evidence:
+    - ghidra_disassembly_001AB066
+    - ghidra_decompile_001AB7C4
+    - actor_render_camera_offsets_static_targets
 0xFFF086:
   name: LEVEL08_EVENT_COUNTER_HIGH
   type: u16
