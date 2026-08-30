@@ -3128,6 +3128,21 @@ def test_scene_resource_thirty_one_vblank_loop_is_exact():
     )
 
 
+def test_scene_resource_vdp_accumulator_stream_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001B1DDA, include_ranges=False)
+    assert function is not None
+    assert function.name == "VDP_WriteAccumulatedWordStream"
+    assert function.end == 0x001B1E09
+    assert function.size == 48
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B1DDA:0x001B1E0A] == bytes.fromhex(
+        "4240424123FC7000000300C00004383C00DF363C01FFD0712000"
+        "5402C04333C000C0000033C000C0000051CCFFEA4E75"
+    )
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)

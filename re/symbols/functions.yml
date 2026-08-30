@@ -1286,6 +1286,14 @@
   evidence:
     - ghidra_disassembly_001B1AA0
     - scene-resource-rebuild-static-decompilation
+0x001B1DDA:
+  name: VDP_WriteAccumulatedWordStream
+  confidence: decompiled
+  size: 48
+  description: Programs VDP command 0x70000003, accumulates 224 successive source words from A1 modulo 0x200, and writes each resulting word twice to the VDP data port at 0x00C00000.
+  evidence:
+    - ghidra_disassembly_001B1DDA
+    - scene-resource-vdp-accumulator-static-decompilation
 0x001B0078:
   name: Interaction_SynchronizeResponseState
   confidence: decompiled
