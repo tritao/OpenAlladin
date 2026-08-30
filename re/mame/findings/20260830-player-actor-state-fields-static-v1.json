@@ -1,0 +1,18 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-actor-state-fields-static-targets.json",
+  "promoted_symbols": [
+    "PLAYER_ACTOR_BEHAVIOR_FLAGS",
+    "PLAYER_ACTOR_STATE_FLAGS"
+  ],
+  "contract": "The aliases expose actor-table slot 0 offsets +0x06 and +0x07. The first is a behavior-flags byte consumed by rendering and the shared actor VM contract; the second is a renderer-visible state-flags byte cleared by the player transition-release path.",
+  "limitations": [
+    "No individual bit is promoted beyond the exact renderer and transition sites recorded in the target manifest."
+  ],
+  "conclusion": "The player actor's remaining fixed state bytes now have canonical names aligned with the already-established common actor-record layout."
+}

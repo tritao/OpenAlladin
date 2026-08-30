@@ -2783,3 +2783,26 @@
     - ghidra_disassembly_001AE30A
     - ghidra_disassembly_001B080E
     - ghidra_disassembly_001B4F7C
+
+0xFF7E46:
+  name: PLAYER_ACTOR_BEHAVIOR_FLAGS
+  type: u8
+  format: bitfield
+  confidence: decompiled
+  description: Player actor record behavior-flags byte at offset +0x06. The renderer consumes its flag bits while expanding player sprites, and the shared actor VM/terrain contracts use the same field offset for per-actor behavior flags.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001AB7C4
+    - ghidra_disassembly_001ADE36
+    - actor_animation_callback_family_static_v1
+
+0xFF7E47:
+  name: PLAYER_ACTOR_STATE_FLAGS
+  type: u8
+  format: bitfield
+  confidence: decompiled
+  description: Player actor record state-flags byte at offset +0x07. Render_BuildActorRecords tests bit 5 while expanding the player sprite, and Level_ExitAndTerminalTransition clears the field when releasing the player transition state.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001AB7C4
+    - ghidra_disassembly_001A8F0C

@@ -899,6 +899,8 @@ def test_real_player_actor_coordinates_and_menu_gate_have_canonical_roles():
     expected = {
         0x00FF7E42: ("PLAYER_ACTOR_X", "pixels", "confirmed"),
         0x00FF7E44: ("PLAYER_ACTOR_Y", "pixels", "confirmed"),
+        0x00FF7E46: ("PLAYER_ACTOR_BEHAVIOR_FLAGS", "bitfield", "decompiled"),
+        0x00FF7E47: ("PLAYER_ACTOR_STATE_FLAGS", "bitfield", "decompiled"),
         0x00FFF157: ("MENU_OPTIONS_PRESENTATION_GATE", "boolean", "decompiled"),
     }
     for address, (name, format_name, confidence) in expected.items():
