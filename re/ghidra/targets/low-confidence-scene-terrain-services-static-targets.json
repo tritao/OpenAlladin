@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-low-confidence-scene-terrain-services-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "targets": [
+    {
+      "address": "0x001A8E3E",
+      "name": "SceneScript_AdvanceState",
+      "range": ["0x001A8E3E", "0x001A8F03"],
+      "confidence": "trace_validated",
+      "evidence": ["ghidra_level_transition_targeted_decompile", "scene_script_state_writer_runtime_audit"]
+    },
+    {
+      "address": "0x001B2ACE",
+      "name": "Scene_EnterTransitionMode",
+      "range": ["0x001B2ACE", "0x001B2E43"],
+      "confidence": "decompiled",
+      "evidence": ["ghidra_targeted_decompile_001B2ACE", "ghidra_level_transition_targeted_decompile"]
+    },
+    {
+      "address": "0x001B315C",
+      "name": "SceneScript_CompleteToState1",
+      "range": ["0x001B315C", "0x001B319B"],
+      "confidence": "decompiled",
+      "evidence": ["ghidra_level_transition_targeted_decompile", "ghidra_memory_reference_scene_state"]
+    },
+    {
+      "address": "0x001ADB36",
+      "name": "Terrain_ContourLookupHelper",
+      "range": ["0x001ADB36", "0x001ADB5B"],
+      "confidence": "decompiled",
+      "evidence": ["ghidra_disassembly_001ADB36", "level01_surface_mode_consumer_static_decompilation"]
+    }
+  ],
+  "conclusion": "The four functions previously carrying probable/provisional confidence now have bounded bodies and evidence-backed names. SceneScript_AdvanceState is runtime-observed; the remaining three are closed by exact static disassembly and existing call/consumer evidence."
+}

@@ -3283,6 +3283,32 @@ def test_interaction_anchor_forward_spawn_is_exact():
     )
 
 
+def test_low_confidence_scene_terrain_services_are_closed():
+    symbols = SymbolStore()
+    expected = {
+        0x001A8E3E: ("SceneScript_AdvanceState", "trace_validated"),
+        0x001B2ACE: ("Scene_EnterTransitionMode", "decompiled"),
+        0x001B315C: ("SceneScript_CompleteToState1", "decompiled"),
+        0x001ADB36: ("Terrain_ContourLookupHelper", "decompiled"),
+    }
+    for address, (name, confidence) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.confidence == confidence
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001ADB36:0x001ADB5C] == bytes.fromhex(
+        "48E7FFFE42471E3900FF7E28E74F3010308748E780806100CCCC4CDF"
+        "010130804CDF7FFF4E75"
+    )
+    assert rom[0x001B315C:0x001B319C] == bytes.fromhex(
+        "0C39000100FFF57C6618207900FFF57610184A00670E13C000FFF156"
+        "23C800FFF5764E75201F6100B0946100F5FC6100F51013FC000100FF"
+        "7E264EF9001A8B24"
+    )
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)

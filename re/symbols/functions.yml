@@ -1021,7 +1021,7 @@
     - ghidra_transition_render_targets
 0x001A8E3E:
   name: SceneScript_AdvanceState
-  confidence: probable
+  confidence: trace_validated
   description: Consumes the scene script at SCENE_SCRIPT_CURSOR; when a record terminator is reached, loads the next scene-state byte into SCENE_STATE and re-enters the common scene/resource initialization path.
   evidence:
     - ghidra_level_transition_targeted_decompile
@@ -1050,7 +1050,7 @@
     - ghidra_level_transition_targeted_decompile
 0x001B2ACE:
   name: Scene_EnterTransitionMode
-  confidence: probable
+  confidence: decompiled
   description: Enters the VDP transition mode, resets transition display state, and invokes the common transition helpers.
   evidence:
     - ghidra_targeted_decompile_001B2ACE
@@ -1096,7 +1096,7 @@
     - ghidra_transition_render_targets
 0x001B315C:
   name: SceneScript_CompleteToState1
-  confidence: probable
+  confidence: decompiled
   description: Completes a scene script and resets SCENE_STATE to 1 before rebuilding the active scene.
   evidence:
     - ghidra_level_transition_targeted_decompile
@@ -2620,8 +2620,8 @@
     - terrain_actor_collision_hook_targets
     - terrain_actor_collision_hook_static_decompilation
 0x001ADB36:
-  name: Terrain_TemporaryLookupHelper
-  confidence: provisional
+  name: Terrain_ContourLookupHelper
+  confidence: decompiled
   description: Separate helper that temporarily replaces the word at A0 with FF7E28 shifted left by three, calls 0x001AA81A, and restores the word; the landing resolver's direct calls target the preceding no-op at 0x001ADB34 instead.
   evidence:
     - ghidra_level01_surface_mode_consumer_targeted_decompile
