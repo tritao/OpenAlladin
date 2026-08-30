@@ -1,0 +1,65 @@
+{
+  "format": "openaladdin-actor-vm-continuations-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Name the pass-specific saved-return continuations used by shared actor-VM opcodes.",
+  "state": [
+    {
+      "address": "0x00FF7D9A",
+      "name": "ACTOR_VM_COMMAND_CONTINUATION",
+      "type": "rom_pointer",
+      "animation_value": "0x001AC842",
+      "movement_value": "0x001AE048"
+    },
+    {
+      "address": "0x00FF7D9E",
+      "name": "ACTOR_VM_CURSOR_CLEAR_CONTINUATION",
+      "type": "rom_pointer",
+      "animation_value": "0x001AC846",
+      "movement_value": "0x001AE04C"
+    }
+  ],
+  "publishers": [
+    {
+      "address": "0x001AC796",
+      "name": "AnimationVM_RunActorPass",
+      "writes": {
+        "0x00FF7D9A": "0x001AC842",
+        "0x00FF7D9E": "0x001AC846"
+      }
+    },
+    {
+      "address": "0x001ADE36",
+      "name": "MovementVM_TickActors",
+      "writes": {
+        "0x00FF7D9A": "0x001AE048",
+        "0x00FF7D9E": "0x001AE04C"
+      }
+    }
+  ],
+  "consumers": [
+    {
+      "address": "0x001AC8E0",
+      "name": "ActorVM_SetStreamTimerAndLoop",
+      "state": "ACTOR_VM_COMMAND_CONTINUATION",
+      "effect": "Rewrites the saved return address after installing a loop/timer command."
+    },
+    {
+      "address": "0x001AC86C",
+      "name": "ActorVM_ClearAnimationOrMovementCursor",
+      "state": "ACTOR_VM_CURSOR_CLEAR_CONTINUATION",
+      "effect": "Rewrites the saved return address after clearing the selected VM cursor."
+    }
+  ],
+  "evidence": [
+    "Exact AnimationVM and MovementVM continuation writes",
+    "Exact shared timer/loop and cursor-clear saved-return updates",
+    "Distinct continuation addresses at the animation and movement pass tails"
+  ],
+  "conclusion": "FF7D9A and FF7D9E are two 32-bit pass-specific actor-VM continuation pointers, not persistent actor data.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

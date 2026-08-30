@@ -682,6 +682,18 @@ def test_real_actor_vm_domain_selector_has_canonical_role():
     assert symbol.metadata["format"] == "boolean"
 
 
+def test_real_actor_vm_continuations_have_canonical_roles():
+    symbols = SymbolStore()
+    command = symbols.at(0x00FF7D9A, include_ranges=False)
+    cursor = symbols.at(0x00FF7D9E, include_ranges=False)
+    assert command is not None
+    assert command.name == "ACTOR_VM_COMMAND_CONTINUATION"
+    assert command.metadata["type"] == "rom_pointer"
+    assert cursor is not None
+    assert cursor.name == "ACTOR_VM_CURSOR_CLEAR_CONTINUATION"
+    assert cursor.metadata["type"] == "rom_pointer"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

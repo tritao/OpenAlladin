@@ -172,6 +172,28 @@
     - ghidra_decompile_001ADE36
     - ghidra_decompile_001AC86C
     - ghidra_decompile_001AC8E0
+0xFF7D9A:
+  name: ACTOR_VM_COMMAND_CONTINUATION
+  type: rom_pointer
+  format: address
+  confidence: confirmed
+  description: Pass-specific ROM continuation installed before actor-VM dispatch and selected by the timer/loop opcode when it rewrites the saved return address. AnimationVM_RunActorPass publishes 0x001AC842, while MovementVM_TickActors publishes 0x001AE048.
+  evidence:
+    - ghidra_decompile_001AC796
+    - ghidra_decompile_001ADE36
+    - ghidra_decompile_001AC8E0
+    - ghidra_disassembly_001AC8F6
+0xFF7D9E:
+  name: ACTOR_VM_CURSOR_CLEAR_CONTINUATION
+  type: rom_pointer
+  format: address
+  confidence: confirmed
+  description: Pass-specific ROM continuation selected by the cursor-clear opcode when it rewrites the saved return address. AnimationVM_RunActorPass publishes 0x001AC846, while MovementVM_TickActors publishes 0x001AE04C.
+  evidence:
+    - ghidra_decompile_001AC796
+    - ghidra_decompile_001ADE36
+    - ghidra_decompile_001AC86C
+    - ghidra_disassembly_001AC87E
 0xFF7E29:
   name: HUD_DISPLAY_DIGITS
   type: u8[7]
