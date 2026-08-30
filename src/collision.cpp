@@ -402,9 +402,18 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
 
     if (actor.type == 0x2D) {
         if (input.bounce_response_follow_active) return effects;
-        // The type-0x2D handler retires the actor, then arms the player
-        // interaction selector for the scheduler's post-VM handoff.
+        // The guard's type-0x2D child is the enemy sword/contact effect. It
+        // is still consumed on contact, but it must not cancel a player
+        // sword action that is already in flight: doing so retires the child
+        // and arms the generic player response before the player's stable
+        // sword stream reaches its F5 child-spawn command. At close range
+        // that made the attack look completely inert and prevented the
+        // player sword from ever entering the actor/actor hit pass.
         actor_lifecycle_.retire(collision.actor);
+        if (input.sword_active) return effects;
+        // Outside a sword action, the type-0x2D handler retires the actor,
+        // then arms the player interaction selector for the scheduler's
+        // post-VM handoff.
         state.player.animation_selector.response_state_101 = 0;
         state.player.animation_selector.interaction_lock = 0x28;
         state.camera.update_delay = 7;
@@ -678,8 +687,8 @@ void CollisionSystem::actor_actor(GameState& state) {
     if (rom_ == nullptr) return;
 
     auto& actors = state.actors;
-    // FUN_001ABD7E scans auxiliary sources 24..30 and targets records 1..24.
-    for (ActorIndex source_slot = 24; source_slot <= 30; ++source_slot) {
+    // FUN_001ABD7E scans auxiliary sources 25..31 and targets records 1..24.
+    for (ActorIndex source_slot = 25; source_slot <= 31; ++source_slot) {
         ActorState& source = actors[source_slot];
         if (source.type == 0 || source.type >= 0x83 || source.frame_ptr == 0) {
             continue;

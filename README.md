@@ -130,8 +130,9 @@ genie play mame
 genie mame
 ```
 
-`genie play` launches the native OpenAladdin build by default. Use
-`genie play mame` (or `--client mame`) for a windowed MAME session; pass
+`genie play` launches the native OpenAladdin build by default. It delegates to
+the root `run.sh`, which performs an incremental native build before launch.
+Use `genie play mame` (or `--client mame`) for a windowed MAME session; pass
 `--headless` when running either client from automation.
 
 The direct Python form remains equivalent:
@@ -348,12 +349,15 @@ the complete conditional ROM VM. Chopper's 0x80/0x80 frame origin, part
 offsets, source-order layering, palette lines, and renderer X/Y flips are
 covered by the pure sprite renderer test.
 
-Regenerate the runtime-friendly PPM render and build it with:
+Regenerate the runtime-friendly PPM render and explicitly bootstrap the build
+with:
 
 ```bash
 ./build.sh
-./run.sh
 ```
+
+For normal native launches, use `genie play` (or `./run.sh` directly). Both
+launchers perform an incremental native build automatically.
 
 Audio is enabled by default. The native Level 01 music sequence is `0x49`;
 use `--sound-id ID` to audition any recovered ROM sequence (`0x00` through

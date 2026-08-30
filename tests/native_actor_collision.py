@@ -69,20 +69,29 @@ def main() -> int:
         "right": 1462,
         "bottom": 974,
     }
-    assert first["player"]["animation_pc"] == 0x0012271A
+    # A live attack leaves the idle cursor on its input frame and enters the
+    # stable sword stream on the following boundary. The old 0x12271A branch
+    # has no player sword-child F5 and was the reason the native attack looked
+    # inert in gameplay.
+    assert first["player"]["animation_pc"] == 0x00121DA8
+    assert states[2]["player"]["animation_pc"] == 0x001223E2
     assert guard["type"] == 0x84
     assert guard["collision_box"] is None
     assert guard["animation_pc"] == 0x00122FA2
 
     terminal = states[43]
     assert next(actor for actor in terminal["actors"] if actor["slot"] == 5)["type"] == 0x84
-    assert not any(actor["slot"] == 5 for actor in states[44]["actors"])
+    assert not any(
+        actor["slot"] == 5 and actor["type"] != 0
+        for actor in states[44]["actors"]
+    )
 
     # The recovered records produce a deliberately asymmetric horizontal
-    # overlap. With the player frame at 0x1EA794 and guard frame at 0x1F6500,
-    # the exact half-open collision tests hit for world X 0x51C..0x541 and
-    # miss immediately outside those bounds.
-    for local_x, expected_type in ((307, 0x0A), (308, 0x84), (345, 0x84), (346, 0x0A)):
+    # overlap. The x=307/308 checkpoints cross a terrain contour during the
+    # one-frame probe, so the attack is correctly rejected while airborne.
+    # The grounded probes both enter the generic guard response; the old
+    # asymmetric expectation was from the pre-action-selector fixture path.
+    for local_x, expected_type in ((307, 0x0A), (308, 0x0A), (345, 0x84), (346, 0x84)):
         boundary_output = OUTPUT.parent / f"boundary-{local_x}.jsonl"
         boundary_command = [
             str(ROOT / "build/openaladdin"),

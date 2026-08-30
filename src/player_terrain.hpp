@@ -17,6 +17,7 @@ struct TerrainInput {
     bool left = false;
     bool right = false;
     bool jump_pressed = false;
+    bool jump_held = false;
 };
 
 struct TerrainResponseContext {

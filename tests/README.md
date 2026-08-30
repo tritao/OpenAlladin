@@ -14,6 +14,7 @@ The trace-backed actor replay check is run with:
 python3 tests/native_actor_timeline.py
 python3 tests/native_actor_collision.py
 python3 tests/native_actor_actor_collision.py
+python3 tests/native_first_guard_sword.py
 python3 tests/native_animation_spawn.py
 python3 tests/native_sword_lifecycle.py
 ```
@@ -124,6 +125,18 @@ frame pointer's PNG and reports `player sprite audit`; strict mode validates
 that mask, so background differences do not hide sprite parity. The masked
 overlay is written as `player-sprite-diff.ppm`. Use `--player-padding N` to
 enlarge the contextual crop.
+
+The CTest `native_jump_visual` fixture covers six synchronized MAME player
+checkpoints across ascent, apex, fall, and landing. It isolates the native
+player pixels against a same-camera baseline and checks their screen-space
+bounding box against the recorded MAME SAT origin, so a sprite that follows
+the wrong vertical coordinate fails even when the logical jump trace passes.
+
+For a live native run, add `--input-trace PATH`. The JSONL output records the
+SDL key events polled in each frame, held versus edge-triggered input, the
+simulation frame, the time spent sampling and rendering, and the interval
+between frame starts. This is the trace to capture when a windowed jump looks
+different from the deterministic regression.
 
 Remove `--report-only` once a checkpoint is expected to match exactly.
 

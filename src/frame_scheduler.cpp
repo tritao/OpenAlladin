@@ -13,7 +13,6 @@
 namespace openaladdin {
 namespace {
 
-constexpr std::uint32_t kPlayerSwordAnimationStream = 0x0012271A;
 constexpr std::uint32_t kPlayerAppleActionStream = 0x001223DA;
 constexpr std::uint32_t kPlayerAttackTransitionStream = 0x00122034;
 constexpr std::uint32_t kPlayerSwordStableStream = 0x001223E2;
@@ -116,6 +115,7 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         input.left,
         input.right,
         input.jump_pressed,
+        input.jump_held,
     });
     services_.record_scheduler_phase("publish_player_world_coordinates", 0x001A8E0C);
     services_.publish_player_world_coordinates();
@@ -176,6 +176,14 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     if (input.attack_pressed && was_grounded) {
         player_.attack_timer = 10;
     }
+    // The attack edge arms the action delay, but the ROM does not leave the
+    // locomotion cursor for the sword stream until the following boundary.
+    // The value 9 is therefore the first post-input frame (10 was written on
+    // the input frame), and is a useful state-owned handoff marker without a
+    // second host-only attack latch.
+    const bool attack_followup = !input.attack_pressed
+        && was_grounded
+        && player_.attack_timer == 9;
     const auto collision = level_.query_player_collision(
         services_.player_world_x(), services_.player_world_y(),
         player_.terrain_landing_state);
@@ -213,12 +221,22 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         stable_terrain_handler_fixture
     );
     services_.record_scheduler_phase("player_actor_interaction", 0x001ABB40);
+    // The host attack timer only marks the ten-frame input handoff. The ROM
+    // keeps the sword action live through the stable animation stream, where
+    // the player hitbox is still active after that timer has expired.
+    const std::uint32_t current_animation = animation_.animation_pc();
+    const bool sword_stream_active = current_animation >= kPlayerSwordStableStream
+        && current_animation <= 0x0012246C;
+    const bool player_sword_active = input.attack_pressed
+        || player_.attack_timer != 0
+        || animation_.stream_entry() == kPlayerSwordStableStream
+        || sword_stream_active;
     const CollisionEffects collision_effects = collisions_.player_actor(
         state_,
         PlayerCollisionInput{
             animation_.frame_pointer(),
             animation_.facing_left(),
-            was_grounded && (input.attack_pressed || player_.attack_timer != 0),
+            player_sword_active,
             interactions_.bounce_response_follow_active(),
             false
         }
@@ -343,7 +361,9 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         // Player_HandleJumpAndVerticalState applies this extra impulse after
         // Player_IntegrateMotion during the first nine active-response ticks.
         ++player_.terrain_jump_response_counter;
-        if (animation_.stream_kind() != AnimationStreamKind::Response) {
+        if ((input.jump_held
+             || animation_.stream_kind() == AnimationStreamKind::Action)
+            && animation_.stream_kind() != AnimationStreamKind::Response) {
             player_.vy = static_cast<std::int16_t>(player_.vy - 0x006C);
         }
     }
@@ -391,6 +411,16 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
             && (vertical_stop_before_frame || player_.vy != 0)) {
             player_.vy = 0x003C;
             terrain_fall_phase_ = true;
+        } else if (!terrain_fall_phase_
+                   && player_.terrain_response_active != 0
+                   && player_.terrain_vertical_stop != 0
+                   && player_.vy == 0
+                   && vertical_stop_before_frame) {
+            // A held jump can reach the upward-stop boundary with the
+            // published stop byte already at 1 rather than FF. The ROM
+            // still enters its positive phase on the following frame.
+            player_.vy = 0x003C;
+            terrain_fall_phase_ = true;
         } else if (terrain_fall_phase_) {
             const bool bounce_state_gated =
                 (player_.terrain_response_active != 0
@@ -425,11 +455,11 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         contour_ground_motion = false;
         contour_ground_motion_ = false;
         player_.terrain_response_active = 0xFF;
-        // The live ROM's ten-step counter is observable when a jump follows
-        // a terrain-selected action stream. Keep direct locomotion fixtures
-        // on the ordinary integrator path used by their checkpoints.
-        player_.terrain_jump_response_counter =
-            animation_.stream_kind() == AnimationStreamKind::Action ? 1 : 0;
+        // FFF0BF starts at one for every ordinary jump and advances through
+        // the ten-frame launch-response window. The extra -0x6C impulse is
+        // conditional on the controller still being held; a one-frame tap
+        // keeps the same counter but follows the ordinary arc.
+        player_.terrain_jump_response_counter = 1;
         // A jump with a held horizontal direction follows the timed
         // terrain-response stream and retains FFF0CC=1. A neutral C press
         // takes the ordinary jump stream and clears the ground latch.
@@ -579,6 +609,13 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         desired_pose = SpritePose::Landing;
     } else if (input.left != input.right) {
         desired_pose = SpritePose::Run;
+    } else if (input.attack_pressed || player_.attack_timer != 0) {
+        // A sword press does not turn a running player into the brake stream.
+        // Preserve the current locomotion pose until the post-VM sword root
+        // handoff below, matching MAME's run -> stable-sword boundary.
+        desired_pose = animation_.pose() == SpritePose::Run
+            ? SpritePose::Run
+            : SpritePose::Idle;
     } else if (ground_release
                || animation_.pose() == SpritePose::Brake
                || (!player_.ground_braking && animation_.pose() == SpritePose::Run)) {
@@ -786,30 +823,26 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
         desired_pose,
         contour_ground_motion,
         interaction_selector_pending_at_start);
-    if (input.attack_pressed && was_grounded && animation_.rom_loaded()) {
-        // The live ROM trace has a two-stage action transition: the input
-        // frame leaves the player at 0x001232E0, and the following animation
-        // tick enters the sword stream at 0x001223E2. The older isolated
-        // collision fixture starts directly at 0x0012271A, so retain that
-        // entry when no live action cursor is present.
+    if ((input.attack_pressed || attack_followup)
+        && was_grounded
+        && animation_.rom_loaded()) {
+        // A live sword press keeps a run/idle cursor for the input frame. On
+        // the next boundary it enters the stable sword stream, whose F5
+        // command at 0x00122440 creates the type-0x80 sword actor. A
+        // synchronized action checkpoint may already be inside the sword
+        // transition, so that case is restarted on the edge itself.
         const auto current_animation = animation_.animation_pc();
-        const bool at_attack_action_root =
-            current_animation == 0x00122034 || current_animation == 0x00122040;
-        const bool already_in_attack_transition =
-            (current_animation >= 0x00122040 && current_animation <= 0x0012246A)
-            || current_animation == 0x001232E0;
-        if (at_attack_action_root) {
-            // State-synchronized traces observe the post-selector stable
-            // cursor, after the transient 0x1232E0 action state has handed
-            // control to the sword stream.
+        const bool already_in_sword_transition =
+            current_animation >= kPlayerSwordStableStream
+            && current_animation <= 0x0012246A;
+        const bool checkpoint_action_cursor =
+            input.attack_pressed
+            && (already_in_sword_transition
+                || current_animation == kPlayerAttackTransitionStream
+                || current_animation == 0x001232E0);
+        if (attack_followup || checkpoint_action_cursor) {
             animation_.select_stream_entry(kPlayerSwordStableStream);
             animation_.set_frame_pointer(kPlayerSwordFirstFrame);
-        } else if (!already_in_attack_transition) {
-            const auto attack_stream = current_animation == 0x0012202C
-                || animation_.frame_pointer() == 0x001EA48E
-                ? 0x001232E0U
-                : kPlayerSwordAnimationStream;
-            animation_.select_stream_entry(attack_stream);
         }
     }
     // Non-combat F5 streams publish their request on the current animation

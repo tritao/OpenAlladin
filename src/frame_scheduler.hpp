@@ -32,7 +32,14 @@ struct InputState {
     bool down = false;
     bool left = false;
     bool right = false;
+    // The ROM distinguishes the jump edge that starts a jump from the
+    // controller level remaining asserted during the launch response.
+    bool jump_held = false;
     bool jump_pressed = false;
+    // Sword input has the same controller-level/edge distinction. Keeping
+    // the held state here prevents a scheduled `a*2` replay from becoming
+    // two sword selections in the native loop.
+    bool attack_held = false;
     bool attack_pressed = false;
     // Explicit apple/throw action. The attack_pressed field remains
     // the sword path used by existing fixtures; the ROM's A-button stream

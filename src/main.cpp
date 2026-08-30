@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include <array>
+#include <chrono>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -12,6 +13,7 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <thread>
 #include <vector>
 
 #include "audio/mixer.hpp"
@@ -42,6 +44,7 @@ struct Options {
     bool demo = false;
     bool render_only = false;
     std::string state_output;
+    std::string input_trace;
     std::string framebuffer_output;
     int framebuffer_frame = -1;
     std::string input_schedule;
@@ -105,10 +108,11 @@ void apply_scheduled_token(const std::string& token, openaladdin::InputState& in
         } else if (part == "right") {
             input.right = true;
         } else if (part == "a" || part == "attack") {
-            input.attack_pressed = true;
+            input.attack_held = true;
         } else if (part == "apple" || part == "throw") {
             input.apple_pressed = true;
         } else if (part == "c" || part == "jump" || part == "space") {
+            input.jump_held = true;
             input.jump_pressed = true;
         }
         if (end == std::string::npos) {
@@ -250,6 +254,8 @@ Options parse_options(int argc, char** argv) {
             options.render_only = true;
         } else if (argument == "--state-output" && i + 1 < argc) {
             options.state_output = argv[++i];
+        } else if (argument == "--input-trace" && i + 1 < argc) {
+            options.input_trace = argv[++i];
         } else if (argument == "--framebuffer-out" && i + 1 < argc) {
             options.framebuffer_output = argv[++i];
         } else if (argument == "--framebuffer-frame" && i + 1 < argc) {
@@ -279,7 +285,7 @@ Options parse_options(int argc, char** argv) {
             options.checkpoint_camera = argv[++i];
         } else if (argument == "--help") {
             std::cout << "usage: openaladdin [--assets DIR] [--level-index N] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--sound-id ID] [--audio-trace PATH] [--scheduler-trace PATH] [--demo] [--render-checkpoint]\n"
-                         "       [--state-output PATH] [--framebuffer-out PATH] [--framebuffer-frame N]\n"
+                         "       [--state-output PATH] [--input-trace PATH] [--framebuffer-out PATH] [--framebuffer-frame N]\n"
                          "       [--input-schedule SCHEDULE]\n"
                          "       [--checkpoint-player X,Y,VX,VY[,GROUNDED]]\n"
                          "       [--checkpoint-terrain-behavior BYTE]\n"
@@ -504,6 +510,7 @@ int main(int argc, char** argv) {
 
         std::ofstream state_file;
         std::ofstream scheduler_file;
+        std::ofstream input_trace_file;
         if (!options.scheduler_trace.empty()) {
             const std::filesystem::path scheduler_path(options.scheduler_trace);
             if (scheduler_path.has_parent_path()) {
@@ -526,6 +533,17 @@ int main(int argc, char** argv) {
             }
             state_file << "{\"type\":\"header\",\"format\":\"openaladdin-frame-state-v3\",\"rom\":\"openaladdin\",\"rom_sha256\":\"\",\"state_boundary\":\"game-loop\",\"sync\":{\"boundary\":\"VBlankInterrupt\",\"state_boundary\":\"game-loop\",\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"sprite_attribute\",\"movement_flags\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"],\"actors_qualified\":true,\"actor_slot_count\":32,\"scheduler_trace\":" << (!options.scheduler_trace.empty() ? "true" : "false") << "}}\n";
             engine.write_state(state_file, "none");
+        }
+        if (!options.input_trace.empty()) {
+            const std::filesystem::path input_trace_path(options.input_trace);
+            if (input_trace_path.has_parent_path()) {
+                std::filesystem::create_directories(input_trace_path.parent_path());
+            }
+            input_trace_file.open(input_trace_path);
+            if (!input_trace_file) {
+                throw std::runtime_error("cannot open input trace: " + options.input_trace);
+            }
+            input_trace_file << "{\"type\":\"header\",\"format\":\"openaladdin-input-trace-v1\",\"clock\":\"steady_clock\",\"target_hz\":60,\"input_source\":\"SDL keyboard state or scheduled replay\"}\n";
         }
 
         SDL_Window* window = nullptr;
@@ -567,6 +585,17 @@ int main(int argc, char** argv) {
         const std::vector<std::string> scheduled_inputs = split_schedule(options.input_schedule);
         int rendered_frames = 0;
         bool framebuffer_written = false;
+        // Genesis advances gameplay at one NTSC VBlank per frame. Keep the
+        // interactive native client on that cadence instead of letting
+        // SDL_RenderPresent inherit the host monitor's refresh rate (for
+        // example, 120/144 Hz makes the frame-based jump finish too quickly).
+        // Headless runs intentionally remain unpaced for deterministic CI and
+        // reverse-engineering probes.
+        const auto native_frame_period = std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+            std::chrono::duration<double>(1.0 / 60.0));
+        auto next_native_frame = std::chrono::steady_clock::now();
+        std::chrono::steady_clock::time_point previous_frame_start;
+        bool have_previous_frame_start = false;
         if (options.render_only) {
             engine.render(renderer);
             if (!options.framebuffer_output.empty()
@@ -580,12 +609,33 @@ int main(int argc, char** argv) {
             }
         } else {
             while (!engine.quit_requested() && (options.frames < 0 || rendered_frames < options.frames)) {
+            const auto frame_start = std::chrono::steady_clock::now();
+            const auto frame_interval_us = have_previous_frame_start
+                ? std::chrono::duration_cast<std::chrono::microseconds>(
+                    frame_start - previous_frame_start).count()
+                : -1;
+            previous_frame_start = frame_start;
+            have_previous_frame_start = true;
             if (audio_trace) {
                 audio_trace->begin_frame(static_cast<std::uint64_t>(rendered_frames));
             }
             openaladdin::InputState input;
             SDL_Event event{};
+            std::ostringstream input_events;
+            bool first_input_event = true;
             while (SDL_PollEvent(&event)) {
+                if (input_trace_file
+                    && (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)) {
+                    if (!first_input_event) input_events << ',';
+                    first_input_event = false;
+                    input_events << "{\"type\":\""
+                                 << (event.type == SDL_KEYDOWN ? "keydown" : "keyup")
+                                 << "\",\"timestamp_ms\":" << event.key.timestamp
+                                 << ",\"scancode\":" << event.key.keysym.scancode
+                                 << ",\"keycode\":" << event.key.keysym.sym
+                                 << ",\"repeat\":" << static_cast<int>(event.key.repeat)
+                                 << '}';
+                }
                 if (event.type == SDL_QUIT) {
                     engine.request_quit();
                 }
@@ -600,27 +650,46 @@ int main(int argc, char** argv) {
             input.right = keys[SDL_SCANCODE_RIGHT] || keys[SDL_SCANCODE_D];
             const bool jump = keys[SDL_SCANCODE_SPACE] || keys[SDL_SCANCODE_C];
             const bool attack = keys[SDL_SCANCODE_X] || keys[SDL_SCANCODE_Z];
+            bool jump_held = jump;
+            bool attack_held = attack;
+            bool scheduled_input = false;
             input.jump_pressed = jump && !previous_jump;
+            input.jump_held = jump;
+            input.attack_held = attack;
             input.attack_pressed = attack && !previous_attack;
-            previous_jump = jump;
-            previous_attack = attack;
+            if (options.input_schedule.empty()) {
+                previous_jump = jump;
+                previous_attack = attack;
+            }
             std::string input_token;
 
             if (!options.input_schedule.empty()) {
+                scheduled_input = true;
                 input = openaladdin::InputState{};
                 input_token = rendered_frames < static_cast<int>(scheduled_inputs.size())
                     ? scheduled_inputs[static_cast<std::size_t>(rendered_frames)]
                     : "none";
                 apply_scheduled_token(input_token, input);
-                input.jump_pressed = input.jump_pressed && !previous_jump;
-                previous_jump = input.jump_pressed;
+                jump_held = input.jump_pressed;
+                attack_held = input.attack_held;
+                input.jump_held = jump_held;
+                input.jump_pressed = jump_held && !previous_jump;
+                input.attack_pressed = attack_held && !previous_attack;
+                previous_jump = jump_held;
+                previous_attack = attack_held;
             }
 
             if (options.demo) {
                 // Deterministic run/jump input for headless regression checks.
                 input.right = rendered_frames < 100;
                 input.jump_pressed = rendered_frames == 30;
+                input.jump_held = input.jump_pressed;
+                jump_held = input.jump_held;
             }
+
+            const auto input_sample_time = std::chrono::steady_clock::now();
+            const auto input_sample_us = std::chrono::duration_cast<std::chrono::microseconds>(
+                input_sample_time - frame_start).count();
 
             if (options.input_schedule.empty()) {
                 input_token = "none";
@@ -667,6 +736,31 @@ int main(int argc, char** argv) {
                 engine.write_state(state_file, input_token);
             }
             engine.render(renderer);
+            if (input_trace_file) {
+                const auto frame_end = std::chrono::steady_clock::now();
+                const auto work_us = std::chrono::duration_cast<std::chrono::microseconds>(
+                    frame_end - frame_start).count();
+                const auto boolean = [](bool value) { return value ? "true" : "false"; };
+                input_trace_file << "{\"type\":\"input\",\"frame\":" << engine.frame()
+                                 << ",\"rendered_frame\":" << rendered_frames
+                                 << ",\"frame_interval_us\":" << frame_interval_us
+                                 << ",\"input_sample_us\":" << input_sample_us
+                                 << ",\"work_us\":" << work_us
+                                 << ",\"source\":\""
+                                 << (scheduled_input ? "schedule" : "sdl")
+                                 << "\",\"token\":\"" << input_token
+                                 << "\",\"held\":{\"up\":" << boolean(input.up)
+                                 << ",\"down\":" << boolean(input.down)
+                                 << ",\"left\":" << boolean(input.left)
+                                 << ",\"right\":" << boolean(input.right)
+                                 << ",\"jump\":" << boolean(jump_held)
+                                 << ",\"attack\":" << boolean(attack_held)
+                                 << "},\"pressed\":{\"jump\":" << boolean(input.jump_pressed)
+                                 << ",\"attack\":" << boolean(input.attack_pressed)
+                                 << ",\"apple\":" << boolean(input.apple_pressed)
+                                 << "},\"events\":[" << input_events.str() << "]}\n";
+                input_trace_file.flush();
+            }
             ++rendered_frames;
             if (!options.framebuffer_output.empty()
                 && options.framebuffer_frame >= 0
@@ -681,6 +775,20 @@ int main(int argc, char** argv) {
             if (options.no_window) {
                 // Keep --no-window deterministic and fast for CI/smoke tests.
                 SDL_RenderPresent(renderer);
+            }
+            if (!options.no_window
+                && !engine.quit_requested()
+                && (options.frames < 0 || rendered_frames < options.frames)) {
+                next_native_frame += native_frame_period;
+                const auto now = std::chrono::steady_clock::now();
+                if (now < next_native_frame) {
+                    std::this_thread::sleep_until(next_native_frame);
+                } else {
+                    // Rendering or host scheduling took longer than one
+                    // frame. Drop the stale deadline rather than spinning
+                    // through catch-up updates and changing game semantics.
+                    next_native_frame = now;
+                }
             }
             }
         }

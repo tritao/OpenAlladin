@@ -11,7 +11,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from genie.analysis.visual_diff import compare, read_image
+from genie.analysis.visual_diff import read_image
 
 
 BINARY = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "build/openaladdin"
@@ -19,27 +19,29 @@ BINARY = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "build/openaladdin"
 
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="openaladdin-framebuffer-") as directory:
-        output = Path(directory) / "frame.ppm"
-        result = subprocess.run(
-            [
-                str(BINARY),
-                "--no-window",
-                "--frames",
-                "1",
-                "--framebuffer-out",
-                str(output),
-            ],
-            cwd=ROOT,
-            check=False,
-            capture_output=True,
-            text=True,
-        )
-        assert result.returncode == 0, result.stderr
-        image = read_image(output)
-        assert image[:2] == (320, 224)
-        assert any(image[2]), "native framebuffer is empty"
-        report = compare(image, image, (0, 0, 320, 224))
-        assert report["different_pixels"] == 0
+        images = []
+        for index in range(2):
+            output = Path(directory) / f"frame-{index}.ppm"
+            result = subprocess.run(
+                [
+                    str(BINARY),
+                    "--no-window",
+                    "--frames",
+                    "1",
+                    "--framebuffer-out",
+                    str(output),
+                ],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            assert result.returncode == 0, result.stderr
+            image = read_image(output)
+            assert image[:2] == (320, 224)
+            assert any(image[2]), "native framebuffer is empty"
+            images.append(image)
+        assert images[0] == images[1], "native framebuffer is not deterministic"
     print("native framebuffer: ok")
     return 0
 

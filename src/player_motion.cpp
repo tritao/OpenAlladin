@@ -24,11 +24,15 @@ PlayerMotionResult PlayerMotionSystem::update_horizontal(
 ) const {
     PlayerState& player = state.player;
     const int direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+    const bool action_holds_ground_position =
+        player.attack_timer != 0
+        || animation.stream_kind() == AnimationStreamKind::Action;
     const bool ground_release = context.was_grounded
         && !input.jump_pressed
         && direction == 0
         && runtime.last_ground_direction != 0
-        && player.vx == 0;
+        && player.vx == 0
+        && !action_holds_ground_position;
     PlayerMotionResult result{
         ground_release,
         ground_release ? runtime.last_ground_direction : 0,

@@ -139,8 +139,41 @@ def check_trace(
         assert causal["writer_pcs"] == scheduler_record["writer_pcs"]
     if route == "jump":
         assert any(record["player"]["vy"] < 0 for record in state_frames)
+    elif route == "held_jump":
+        # A scheduled token is a held controller state. It must produce one
+        # jump edge, not a new edge on every frame or another launch on
+        # landing while the button remains held. The ROM also applies its
+        # ten-frame held-launch impulse after the edge.
+        assert [
+            record["frame"]
+            for record in state_frames
+            if record["player"]["vy"] == -0x200
+        ] == [31]
+        state_by_frame = {record["frame"]: record for record in state_frames}
+        assert state_by_frame[32]["player"]["vy"] == -0x230
+        assert state_by_frame[35]["player"]["vy"] == -0x2C0
+        # The longer held launch must pass through the upward-stop boundary
+        # into the ROM's positive phase instead of freezing at the apex, and
+        # must land on the following contour boundary.
+        assert state_by_frame[56]["player"]["vy"] == 0
+        assert not state_by_frame[56]["player"]["grounded"]
+        assert state_by_frame[57]["player"]["vy"] == 0x003C
+        assert state_by_frame[81]["player"]["grounded"]
     elif route == "sword":
         assert any(record["player"]["attack_active"] for record in state_frames)
+        # The live sword action must reach the stable stream and publish its
+        # type-0x80 auxiliary actor. Checking only attack_active would miss a
+        # broken selector that arms the timer but never executes the sword F5.
+        state_by_frame = {record["frame"]: record for record in state_frames}
+        assert state_by_frame[31]["player"]["attack_timer"] == 10
+        assert state_by_frame[32]["player"]["attack_timer"] == 9
+        sword_actors = [
+            actor
+            for record in state_frames
+            for actor in record["actors"]
+            if actor.get("type") == 0x80
+        ]
+        assert sword_actors
     elif route == "apple":
         assert any(
             actor.get("spawned_by_apple")
@@ -199,6 +232,7 @@ def main() -> int:
             "idle": ("none*8", 8),
             "run": ("right*12", 12),
             "jump": ("right*30,jump*1,none*96", 127),
+            "held_jump": ("right*30,jump*35,none*20", 85),
             "sword": ("right*30,a*2,none*96", 128),
             "apple": ("right*30,apple*1,none*128", 159),
         }

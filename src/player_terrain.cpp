@@ -48,7 +48,9 @@ void PlayerTerrainSystem::sample(GameState& state, const TerrainInput& input) co
     if (input.down) player.terrain_query_result &= static_cast<std::uint8_t>(~0x02);
     if (input.left) player.terrain_query_result &= static_cast<std::uint8_t>(~0x04);
     if (input.right) player.terrain_query_result &= static_cast<std::uint8_t>(~0x08);
-    if (input.jump_pressed) player.terrain_query_result &= static_cast<std::uint8_t>(~0x20);
+    if (input.jump_pressed || input.jump_held) {
+        player.terrain_query_result &= static_cast<std::uint8_t>(~0x20);
+    }
 
     player.terrain_push_right = input.right ? 0xFF : 0;
     player.terrain_push_left = input.left ? 0xFF : 0;
@@ -176,7 +178,10 @@ void PlayerTerrainSystem::apply_contour(
 
     const int target_y = contour.target_world_y - camera.y;
     const int delta = target_y - player.y;
-    if (delta < -8 || delta > 8) {
+    // The ROM's contour landing check is strict at the eight-pixel edge.
+    // Treating exactly eight pixels as landable makes a stronger jump snap
+    // one frame early when its positive-motion probe first reaches the row.
+    if (delta <= -8 || delta >= 8) {
         player.terrain_landing_state = 0;
         player.grounded = false;
         return;
