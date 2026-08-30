@@ -1,0 +1,10 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/header-tail-and-scene-padding-static-targets.json",
+  "conclusion": "Completed the standard Genesis header ownership through 0x000001FF and promoted the single zero alignment byte between adjacent scene-resource streams."
+}

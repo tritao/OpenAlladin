@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-header-tail-and-scene-padding-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ranges": [
+    {
+      "start": "0x000001A4",
+      "end": "0x000001FF",
+      "name": "ROM_SEGA_HEADER_EXTENDED_FIELDS",
+      "class": "ROM_HEADER",
+      "size": 92,
+      "boundary": "Completes the standard 0x100-byte Genesis header and ends immediately before reset-path code at 0x00000200."
+    },
+    {
+      "start": "0x001270A7",
+      "end": "0x001270A7",
+      "name": "SCENE_RESOURCE_STREAM_ALIGNMENT_PADDING",
+      "class": "PADDING",
+      "size": 1,
+      "boundary": "The byte is zero and separates the bounded mode stream ending at 0x001270A6 from the next presentation stream at 0x001270A8."
+    }
+  ],
+  "evidence": [
+    "The header tail contains the standard ROM-end continuation, reserved fields, and the U region code at 0x000001F0.",
+    "The header tail is exactly the remaining 0x5C bytes through the conventional 0x000001FF boundary.",
+    "The scene-resource separator is a byte-uniform zero between two independently bounded stream owners."
+  ]
+}

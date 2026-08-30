@@ -256,6 +256,32 @@ def test_unindexed_graphics_bands_and_padding_are_exact():
     )
 
 
+def test_genesis_header_tail_and_scene_stream_padding_are_exact():
+    symbols = SymbolStore()
+    header = symbols.at(0x000001A4, include_ranges=False)
+    assert header is not None
+    assert header.name == "ROM_SEGA_HEADER_EXTENDED_FIELDS"
+    assert header.end == 0x000001FF
+    assert header.size == 0x5C
+    assert header.metadata["type"] == "rom_header"
+    assert header.confidence == "confirmed"
+
+    padding = symbols.at(0x001270A7, include_ranges=False)
+    assert padding is not None
+    assert padding.name == "SCENE_RESOURCE_STREAM_ALIGNMENT_PADDING"
+    assert padding.end == 0x001270A7
+    assert padding.size == 1
+    assert padding.metadata["type"] == "padding_data"
+    assert padding.confidence == "confirmed"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+    assert rom[0x001A4:0x001A8] == bytes.fromhex("001FFFFF")
+    assert rom[0x001F0] == ord("U")
+    assert rom[0x001F1:0x00200] == b" " * 15
+    assert rom[padding.address] == 0
+
+
 def test_startup_region_warning_partition_is_exact():
     symbols = SymbolStore()
 

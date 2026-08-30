@@ -23,6 +23,26 @@
     - genesis_header_fields_static_v1
     - ghidra_defined_data_sega_header
 
+0x000001A4:
+  name: ROM_SEGA_HEADER_EXTENDED_FIELDS
+  type: rom_header
+  size: 0x5C
+  confidence: confirmed
+  description: Remaining standard Sega Genesis header fields from the ROM-end continuation at 0x000001A4 through the region code and reserved header bytes at 0x000001FF. The region field contains U at 0x000001F0, and the complete tail ends immediately before reset-path code.
+  evidence:
+    - genesis_header_fields_static_v1
+    - rom_header_tail_region_code
+
+0x001270A7:
+  name: SCENE_RESOURCE_STREAM_ALIGNMENT_PADDING
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between the final scene-resource mode stream at 0x001270A6 and the directly selected presentation stream at 0x001270A8.
+  evidence:
+    - scene_resource_mode_stream_terminators
+    - scene_resource_presentation_stream_extents_static_v1
+
 0x000006AE:
   name: SPRITE_FRAME_POINTER_TABLE
   type: rom_pointer_table
