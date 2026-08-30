@@ -11,7 +11,7 @@
   ],
   "memory_references": [
     { "address": "0x00FF7E29", "name": "HUD_DISPLAY_DIGITS" },
-    { "address": "0x00FF7E30", "name": "HUD_DISPLAY_TARGET_DIGITS" },
+    { "address": "0x00FF7E30", "name": "INTERACTION_PENDING_DISPLAY_VALUE" },
     { "address": "0x00FFF0F1", "name": "HUD_DISPLAY_UPDATE_PENDING" },
     { "address": "0x00FFF0F2", "name": "PLAYER_INTERACTION_LOCK" },
     { "address": "0x00FFF15A", "name": "SCENE_RESOURCE_MODE" },
