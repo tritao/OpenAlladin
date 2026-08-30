@@ -682,6 +682,56 @@ def test_data_context_includes_movement_f5_template_consumer(tmp_path):
     assert context["references"][0]["type"] == "MOVEMENT_F5_TEMPLATE"
 
 
+def test_data_context_finds_canonical_movement_f5_template_consumer(tmp_path):
+    database_root = _database(tmp_path)
+    rom_path = tmp_path / "rom" / "Disneys_Aladdin_U_p1.bin"
+    rom_path.parent.mkdir()
+    rom_path.symlink_to(Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin")
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0x1213E2,
+            "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX",
+            "data",
+            confidence="provisional",
+            size=0x30,
+            metadata={"type": "movement_stream"},
+        ),
+        Symbol(
+            0x1B7CD8,
+            "ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE",
+            "data",
+            confidence="decompiled",
+            size=20,
+            metadata={"type": "actor_template"},
+        ),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x200000, (LayoutRange(0, 0x1FFFFF, "UNKNOWN", "test"),)),
+    )
+
+    context = index.context(0x1B7CD8)
+    assert context is not None
+    assert context["consumers"] == [{
+        "address": None,
+        "name": "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX",
+        "references": 1,
+    }]
+    assert context["references"] == [{
+        "from": "0x00121400",
+        "from_function": None,
+        "from_function_name": "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX",
+        "to": "0x001B7CD8",
+        "type": "MOVEMENT_F5_TEMPLATE",
+        "read": False,
+        "write": False,
+        "source": "canonical VM bytes",
+        "instruction": "F5 template pointer",
+    }]
+
+
 def test_data_index_accepts_injected_semantic_provider(tmp_path):
     database_root = _database(tmp_path)
     seen: dict[str, object] = {}

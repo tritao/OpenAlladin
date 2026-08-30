@@ -465,7 +465,12 @@ class DataIndex:
                 result.append(enriched)
         result.extend(self._canonical_template_references(value))
         result.extend(self._decoded_template_references(value))
-        return sorted(result, key=lambda item: (
+        result.extend(self._canonical_vm_template_references(value))
+        unique: dict[tuple[Any, Any, Any], dict[str, Any]] = {}
+        for reference in result:
+            key = (reference.get("from"), reference.get("to"), reference.get("type"))
+            unique.setdefault(key, reference)
+        return sorted(unique.values(), key=lambda item: (
             _address(item.get("from", 0)),
             _address(item.get("to", 0)),
             str(item.get("type", "")),
@@ -478,6 +483,49 @@ class DataIndex:
         result: list[dict[str, Any]] = []
         for provider in self.providers:
             result.extend(dict(reference) for reference in provider.decoded_references(context))
+        return result
+
+    def _canonical_vm_template_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
+        """Recover F5/8B template edges directly from bounded canonical streams."""
+
+        if value.get("kind") != "actor-template":
+            return []
+        reader = self._load_canonical_reader()
+        if reader is None:
+            return []
+        target = _address(value["start"])
+        needle = target.to_bytes(4, "big")
+        result: list[dict[str, Any]] = []
+        expected_opcode = {"animation": 0xF5, "movement": 0x8B}
+        for kind in STREAM_KINDS:
+            for stream in self.objects(kind=kind):
+                canonical = stream.get("canonical_symbol") or {}
+                expected_type = "animation_stream" if kind == "animation" else "movement_stream"
+                if canonical.get("type") != expected_type or not stream.get("range_bounded"):
+                    continue
+                start, end = _address(stream["start"]), _address(stream["end"])
+                if not reader.has(start, end - start + 1):
+                    continue
+                raw = reader.slice(start, end - start + 1)
+                offset = raw.find(needle)
+                while offset >= 2:
+                    command_offset = offset - 2
+                    if raw[command_offset] == expected_opcode[kind] and command_offset + 16 <= len(raw):
+                        result.append({
+                            "from": _hex(start + command_offset),
+                            "from_function": None,
+                            "from_function_name": stream["name"],
+                            "to": _hex(target),
+                            "type": f"{kind.upper()}_F5_TEMPLATE",
+                            "read": False,
+                            "write": False,
+                            "source": "canonical VM bytes",
+                            "instruction": "F5 template pointer",
+                        })
+                    next_offset = raw.find(needle, offset + 1)
+                    if next_offset < 0:
+                        break
+                    offset = next_offset
         return result
 
     def _consumer_records(self, references: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
