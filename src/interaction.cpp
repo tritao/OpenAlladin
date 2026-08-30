@@ -347,7 +347,7 @@ void InteractionSystem::bounce_actor_interaction(
     }
 }
 
-std::optional<SpawnDescriptor> InteractionSystem::spawn_descriptor(
+std::optional<SpawnDescriptor> InteractionSystem::describe_spawn(
     std::uint8_t selector
 ) const {
     // Compact templates selected by the Level-01 interaction handlers. The
@@ -469,6 +469,21 @@ std::optional<SpawnDescriptor> InteractionSystem::spawn_descriptor(
         descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
         descriptor.post_offset_x = -0x10;
         break;
+    case 0xFD:
+        // Both selectors consume the same compact Type-0x84 template. Its
+        // animation root and four-resource allocation are ROM-owned fields;
+        // only the selector-specific placement differs here.
+        descriptor.template_address = 0x001B8354;
+        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
+        descriptor.post_offset_x = 0x14;
+        descriptor.post_offset_y = -1;
+        break;
+    case 0xFE:
+        descriptor.template_address = 0x001B8354;
+        descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
+        descriptor.post_offset_x = 0x0B;
+        descriptor.post_offset_y = 6;
+        break;
     case 0x87:
         descriptor.template_address = 0x001B7A30;
         descriptor.allocation_pool = ActorAllocationPool::CommonReverse;
@@ -512,7 +527,7 @@ void InteractionSystem::dispatch_interaction(
     const std::uint8_t selector = state.interactions.selector(record);
     if (selector == 0 || selector == 0xAB || rom_ == nullptr || rom_->empty()) return;
 
-    const auto descriptor = spawn_descriptor(selector);
+    const auto descriptor = describe_spawn(selector);
     if (!descriptor) return;
     const auto slot = actor_lifecycle_.allocate(descriptor->allocation_pool);
     if (!slot) return;

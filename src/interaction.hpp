@@ -124,11 +124,15 @@ public:
     void scan_refill_window(GameState& state, const Level& level, bool stable_fixture);
     void flush_surface_actor_spawn(GameState& state);
 
+    // Returns the ROM-backed actor initialization contract for a confirmed
+    // interaction selector. The descriptor is data-only; dispatch still
+    // performs allocation, template initialization, and resource ownership.
+    std::optional<SpawnDescriptor> describe_spawn(std::uint8_t selector) const;
+
     const InteractionRuntimeState& runtime() const { return runtime_; }
     void restore_runtime(const InteractionRuntimeState& runtime) { runtime_ = runtime; }
 
 private:
-    std::optional<SpawnDescriptor> spawn_descriptor(std::uint8_t selector) const;
     void dispatch_interaction(
         GameState& state,
         const Level::InteractionRecord& record,

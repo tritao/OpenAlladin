@@ -53,5 +53,24 @@ int main() {
     assert(terminal.selector == 0);
     assert(terminal.terminal_transition);
     assert(state.player.terrain_terminal_transition == 0xFF);
+
+    const auto fd = interaction.describe_spawn(0xFD);
+    assert(fd);
+    assert(fd->valid && fd->selector == 0xFD);
+    assert(fd->template_address == 0x001B8354);
+    assert(fd->allocation_pool == ActorAllocationPool::CommonReverse);
+    assert(fd->post_offset_x == 0x14 && fd->post_offset_y == -1);
+    assert(!fd->override_type);
+    assert(!fd->override_animation);
+    assert(!fd->override_movement);
+    assert(!fd->override_resource_count);
+
+    const auto fe = interaction.describe_spawn(0xFE);
+    assert(fe);
+    assert(fe->valid && fe->selector == 0xFE);
+    assert(fe->template_address == fd->template_address);
+    assert(fe->allocation_pool == ActorAllocationPool::CommonReverse);
+    assert(fe->post_offset_x == 0x0B && fe->post_offset_y == 6);
+    assert(!interaction.describe_spawn(0xFC));
     return 0;
 }
