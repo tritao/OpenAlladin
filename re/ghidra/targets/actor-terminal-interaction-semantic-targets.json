@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-actor-terminal-interaction-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace the type-only name for the actor Type-0A terminal-interaction path.",
+  "function": {
+    "address": "0x001AC458",
+    "old_name": "ActorType0A_ActorCollisionHandler",
+    "name": "ActorCollision_HandleTerminalInteraction",
+    "alias": "ActorType0A_ActorCollisionHandler",
+    "range": ["0x001AC458", "0x001AC483"]
+  },
+  "contract": {
+    "dispatch": "Receiving type 0x0A entry at ACTOR_COLLISION_HANDLER_TABLE + 0x28",
+    "source": "Clears the colliding source actor and releases its owned resources",
+    "receiver": "Runs Actor_HandleType2DInteraction on the receiving actor",
+    "terminal": "Enters Actor_ApplyTerminalCollisionResponse, which clears/reinitializes the receiving record from the Type-0x84 terminal template",
+    "countdown": "The shared terminal response can arm SCENE_SCRIPT_COUNTDOWN=0x20 for receiving types 0x10, 0x11, and 0x13"
+  },
+  "evidence": [
+    "Exact 44-byte body at 0x001AC458-0x001AC483",
+    "Direct calls to Actor_ClearOwnedResources, Actor_HandleType2DInteraction, and Actor_ApplyTerminalCollisionResponse",
+    "Actor Type-0x03 entry falls through to this common terminal path"
+  ],
+  "conclusion": "The former Type-0A-only label understated a terminal interaction path shared by the Type-0x03 fall-through; the legacy name remains an alias.",
+  "confidence": "confirmed",
+  "status": "recorded-semantic-promotion"
+}

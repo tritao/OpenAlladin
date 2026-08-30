@@ -1679,9 +1679,10 @@
     - mame_guard_collision_watchpoint
     - collision_pass_geometry_static_decompilation
 0x001AC458:
-  name: ActorType0A_ActorCollisionHandler
+  name: ActorCollision_HandleTerminalInteraction
+  aliases: [ActorType0A_ActorCollisionHandler]
   confidence: confirmed
-  description: Actor-to-actor collision dispatch target for receiving actor type 0x0A at ROM pointer-table address 0x001EE2. It clears the colliding source actor, processes the type-0x2D interaction branch, and replaces the receiving actor with the type-0x84 terminal template; selected target types can arm SCENE_SCRIPT_COUNTDOWN=0x20.
+  description: Actor-to-actor terminal-interaction path entered by the receiving type-0x0A dispatch entry at ROM pointer-table address 0x001EE2. It clears the colliding source actor, processes the receiver through Actor_HandleType2DInteraction, and enters Actor_ApplyTerminalCollisionResponse to replace the receiver with the type-0x84 terminal template; selected receiving types can arm SCENE_SCRIPT_COUNTDOWN=0x20.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_actor_combat_targeted_decompile
@@ -6436,7 +6437,7 @@
   name: ActorType03_ActorCollisionHandler
   size: 20
   confidence: decompiled
-  description: Actor-collision handler for receiving actor type 0x03. It installs the type-0x84 collision animation state, clears transient actor fields, and transfers into ActorType0A_ActorCollisionHandler at 0x001AC458 for the common terminal response.
+  description: Actor-collision handler for receiving actor type 0x03. It installs the type-0x84 collision animation state, clears transient actor fields, and transfers into ActorCollision_HandleTerminalInteraction at 0x001AC458 for the common terminal response.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_disassembly_001AC0EE

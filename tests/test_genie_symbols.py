@@ -233,6 +233,14 @@ def test_real_collision_trampolines_have_behavior_names_and_legacy_aliases():
         assert symbol.confidence == confidence
 
 
+def test_real_actor_terminal_interaction_has_semantic_name_and_legacy_alias():
+    symbol = SymbolStore().at(0x001AC458, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "ActorCollision_HandleTerminalInteraction"
+    assert "ActorType0A_ActorCollisionHandler" in symbol.aliases
+    assert symbol.confidence == "confirmed"
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
