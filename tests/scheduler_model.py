@@ -87,7 +87,7 @@ def main() -> int:
         0x001B2DF4,
         0x001B2E02,
     ]
-    assert model["dynamic_validation"]["runtime_latches"]["FRAME_WAIT_LATCH"]["init_owner"] == "FUN_001AA344"
+    assert model["dynamic_validation"]["runtime_latches"]["FRAME_WAIT_LATCH"]["init_owner"] == "System_InitializeRuntime"
     assert model["dynamic_validation"]["runtime_latches"]["FRAME_WAIT_LATCH"]["helper_role"].startswith(
         "optional Z80 handshake"
     )

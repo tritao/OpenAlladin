@@ -2,7 +2,7 @@
 #
 # This file records the direct call order recovered from Game_FrameUpdateLoop;
 # it is deliberately not a copy of the native Engine::update phase names.
-# Unknown FUN_* entries stay unknown until their body and runtime role are
+# Unknown generated entries stay unknown until their body and runtime role are
 # independently established.
 format: openaladdin-scheduler-model-v1
 status: decompiled
@@ -51,22 +51,22 @@ entry_points:
     direct_services:
       - call_site: 0x001B247C
         entry: 0x001B3208
-        static_name: FUN_001B3208
+        static_name: VBlank_SceneResourceGate
         role: scene-resource/VBlank gate helper
         status: decompiled
       - call_site: 0x001B2482
         entry: 0x001B323A
-        static_name: FUN_001B323A
+        static_name: Terrain_QueryCallbackB_Impl
         role: VBlank query callback
         status: decompiled
       - call_site: 0x001B2488
         entry: 0x001B3244
-        static_name: FUN_001B3244
+        static_name: Terrain_QueryCallbackA_Impl
         role: VBlank query callback
         status: decompiled
       - call_site: 0x001B248E
         entry: 0x001B324E
-        static_name: FUN_001B324E
+        static_name: Terrain_QueryCallbackC_Impl
         role: VBlank query callback
         status: decompiled
     post_state_mutation:
@@ -84,7 +84,7 @@ ram_gates:
     writers:
       - address: 0x001AA3A8
         operation: clear byte
-        owner: FUN_001AA344
+        owner: System_InitializeRuntime
         caller: reset/level-entry path at 0x001A8A54
         role: initialization
       - address: 0x001B2DF4
@@ -126,7 +126,7 @@ call_sequence:
   - ordinal: 1
     call_site: 0x001A8C20
     entry: 0x001A91C6
-    static_name: FUN_001A91C6
+    static_name: Frame_InputAndResourceService
     role: input_and_resource_service
     gate_condition: unconditional call; body checks FRAME_WAIT_LATCH == 0
     ram_gates: [0x00FF7E25, 0x00FFF0E9]
@@ -152,7 +152,7 @@ call_sequence:
   - ordinal: 3
     call_site: 0x001A8C28
     entry: 0x001AD7B4
-    static_name: FUN_001AD7B4
+    static_name: Player_TerrainLandingResolver
     role: player_landing_contour_resolver
     gate_condition: unconditional call; body gates scene 0x08, player frame, interaction mode, and transition state
     ram_gates: [0x00FF7E26, 0x00FF7E54, 0x00FFF0CD, 0x00FFF0D0, 0x00FFF0D7, 0x00FFF0DB, 0x00FFF0DC]
@@ -178,7 +178,7 @@ call_sequence:
   - ordinal: 5
     call_site: 0x001A8C30
     entry: 0x001AD632
-    static_name: FUN_001AD632
+    static_name: Player_TerrainEdgeProbe
     role: terrain_edge_and_ceiling_probe
     gate_condition: unconditional call; body gates scene 0x08 and terrain bounds
     ram_gates: [0x00FF7E26, 0x00FF7E54, 0x00FF9884, 0x00FFAE86]
@@ -191,7 +191,7 @@ call_sequence:
   - ordinal: 6
     call_site: 0x001A8C34
     entry: 0x001A986E
-    static_name: FUN_001A986E
+    static_name: Player_ApplyTerrainResponse
     role: terrain_vertical_response
     gate_condition: unconditional call; body tests terrain query/response and upward-stop state
     ram_gates: [0x00FFF0BE, 0x00FFF0C0, 0x00FFF0C1, 0x00FFF0CC]
@@ -204,7 +204,7 @@ call_sequence:
   - ordinal: 7
     call_site: 0x001A8C38
     entry: 0x001A99F0
-    static_name: FUN_001A99F0
+    static_name: Player_ResolveTerrainContact
     role: terrain_horizontal_response
     gate_condition: unconditional call; body tests terrain state, velocity, and response activity
     ram_gates: [0x00FFF0BE, 0x00FFF0C1, 0x00FFF0CC]
@@ -382,7 +382,7 @@ call_sequence:
   - ordinal: 20
     call_site: 0x001A8CA6
     entry: 0x001A9304
-    static_name: FUN_001A9304
+    static_name: Player_SelectLocomotionOrAction
     role: player_locomotion_or_action_selector
     gate_condition: unconditional call; body gates interaction, transition, scene, camera, frame, and countdown state
     ram_gates: [0x00FFF0D8, 0x00FFF0D7, 0x00FFF0D0, 0x00FFF0DB, 0x00FFF0DC, 0x00FF7E26, 0x00FF7E54]
@@ -426,7 +426,7 @@ call_sequence:
   - ordinal: 23
     call_site: 0x001A8CB2
     entry: 0x001B02EC
-    static_name: FUN_001B02EC
+    static_name: Interaction_UpdateTarget
     role: interaction_target_smoothing
     gate_condition: unconditional call; body acts only when FRAME_PHASE_COUNTER bit 0 is clear
     ram_gates: [0x00FF7E28]
@@ -439,7 +439,7 @@ call_sequence:
   - ordinal: 24
     call_site: 0x001A8CB6
     entry: 0x001A8F0C
-    static_name: FUN_001A8F0C
+    static_name: Level_ExitAndTerminalTransition
     role: level_exit_and_terminal_transition_service
     gate_condition: unconditional call; body gates level height, terminal transition, interaction lock, scene state, and transition event
     ram_gates: [0x00FFF57F, 0x00FFF0E6, 0x00FFF0F2, 0x00FF7E26]
@@ -452,7 +452,7 @@ call_sequence:
   - ordinal: 25
     call_site: 0x001A8CBA
     entry: 0x001A8F04
-    static_name: FUN_001A8F04
+    static_name: Level_InvokeFrameCallback
     role: empty_return_block
     gate_condition: unconditional
     ram_gates: []
@@ -466,7 +466,7 @@ call_sequence:
   - ordinal: 26
     call_site: 0x001A8CBE
     entry: 0x001B00CA
-    static_name: FUN_001B00CA
+    static_name: Interaction_UpdateCounter
     role: interaction_counter_service
     gate_condition: unconditional call; body requires FRAME_PHASE_COUNTER bit 0 clear and a nonzero counter
     ram_gates: [0x00FF7E28, 0x00FFF14E]
@@ -479,7 +479,7 @@ call_sequence:
   - ordinal: 27
     call_site: 0x001A8CC2
     entry: 0x001B01AC
-    static_name: FUN_001B01AC
+    static_name: Interaction_UpdateResourceState
     role: interaction_resource_state_service
     gate_condition: unconditional call; body requires FRAME_PHASE_COUNTER bit 0 clear and a nonzero resource state
     ram_gates: [0x00FF7E28, 0x00FFF159, 0x00FFF57D, 0x00FFF0E9]
@@ -537,7 +537,7 @@ call_sequence:
   - ordinal: 31
     call_site: 0x001A8CD2
     entry: 0x001AB7C4
-    static_name: FUN_001AB7C4
+    static_name: Render_BuildActorRecords
     role: build_render_records
     gate_condition: unconditional; body contains scene/frame-phase dependent record construction
     ram_gates: [0x00FF7E28]
@@ -550,7 +550,7 @@ call_sequence:
   - ordinal: 32
     call_site: 0x001A8CD8
     entry: 0x001B249E
-    static_name: FUN_001B249E
+    static_name: Frame_WaitForVBlankWork
     role: frame_wait_helper
     gate_condition: unconditional call; body performs the Z80 handshake only when FRAME_WAIT_LATCH != 0, then spins until VBLANK_READY_LATCH != 0
     ram_gates: [0x00FF7E25, 0x00FF7E1E]
@@ -563,7 +563,7 @@ call_sequence:
   - ordinal: 33
     call_site: 0x001A8CDC
     entry: 0x001AC726
-    static_name: FUN_001AC726
+    static_name: Render_SubmitActorSprites
     role: submit_actor_sprite_records
     gate_condition: unconditional call; body requires nonzero render-record count
     ram_gates: [0x00FFEFEE]
@@ -576,7 +576,7 @@ call_sequence:
   - ordinal: 34
     call_site: 0x001A8CE0
     entry: 0x001AB776
-    static_name: FUN_001AB776
+    static_name: Render_SubmitPlayerSprites
     role: submit_player_or_camera_records
     gate_condition: unconditional call; body requires nonzero render-record count and clamps it to 0x7F
     ram_gates: [0x00FFEFEC]
@@ -589,7 +589,7 @@ call_sequence:
   - ordinal: 35
     call_site: 0x001A8CE4
     entry: 0x001AE0F6
-    static_name: FUN_001AE0F6
+    static_name: SceneResource_StreamVdpRecord
     role: scene_transition_completion_check
     gate_condition: unconditional call; body waits when SCENE_SCRIPT_PENDING != 2 and transition status is nonzero
     ram_gates: [0x00FFF140, 0x00FFF57C]
@@ -602,7 +602,7 @@ call_sequence:
   - ordinal: 36
     call_site: 0x001A8CE8
     entry: 0x001AAA2A
-    static_name: FUN_001AAA2A
+    static_name: Camera_PublishScroll
     role: publish_pending_camera_scroll
     gate_condition: unconditional call; body gates scroll application and individual pending directions
     ram_gates: [0x00FFF0A4]
@@ -656,7 +656,7 @@ dynamic_validation:
       observed_clean_boot_writes: 2
       observed_clean_boot_writer_pcs: [0x0000027A, 0x001AA3B0]
       observed_clean_boot_actual_writer_pcs: [0x0000027A, 0x001AA3A8]
-      init_owner: FUN_001AA344
+      init_owner: System_InitializeRuntime
       init_caller: 0x001A8A54
       transition_set_writer_pc: 0x001B2DF4
       transition_clear_writer_pc: 0x001B2E02
