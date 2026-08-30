@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-recorded-static-disassembly-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/fixed-width-text-confidence-static-targets.json",
+  "objects": [
+    { "range": ["0x0012671E", "0x0012675D"], "name": "ROM_FIXED_WIDTH_BLANK_RECORDS_12671E", "size": 64, "record": "FF followed by fourteen spaces and NUL", "count": 4 },
+    { "range": ["0x00126D4E", "0x00126D7D"], "name": "ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E", "size": 48, "record": "FF followed by fourteen spaces and NUL", "count": 3 },
+    { "range": ["0x00126EB6", "0x00126EBF"], "name": "ROM_ASCII_NUMERIC_LABELS_126EB6", "size": 10, "records": ["30", "60", "90"] }
+  ],
+  "evidence": [
+    "The ROM bytes exactly match the recorded fixed-width records and NUL-terminated strings.",
+    "The neighboring canonical boundaries establish each complete range independently of runtime selection."
+  ],
+  "limitations": [
+    "Runtime consumers and higher-level menu roles remain unresolved; this promotion is limited to exact data-body understanding."
+  ],
+  "conclusion": "The three text objects are fully decoded as byte-level records with exact extents. Their semantic consumers remain intentionally open."
+}

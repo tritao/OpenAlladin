@@ -1299,11 +1299,12 @@
   entry_size: 0x10
   count: 4
   size: 0x40
-  confidence: provisional
-  description: Exact 64-byte bank of four fixed-width blank records immediately after MENU_OPTIONS_PRESENTATION_STREAM and before SOUND_TEST_ENTRY_TABLE. Each record is FF followed by fourteen spaces and a NUL; no runtime consumer has been established, so these records are kept separate from the live sound-test table.
+  confidence: decompiled
+  description: Exact 64-byte bank of four fixed-width blank records immediately after MENU_OPTIONS_PRESENTATION_STREAM and before SOUND_TEST_ENTRY_TABLE. Each record is FF followed by fourteen spaces and a NUL; the byte format and boundary are fully decoded, while no runtime consumer or narrower menu role is claimed.
   evidence:
     - scene_transition_menu_stream_extents_static_v1
     - static_rom_data_family_static_v1
+    - fixed_width_text_confidence_static_v1
 
 0x00126D4E:
   name: ROM_FIXED_WIDTH_BLANK_RECORDS_126D4E
@@ -1311,11 +1312,12 @@
   entry_size: 0x10
   count: 3
   size: 0x30
-  confidence: provisional
-  description: Exact 48-byte bank of three fixed-width blank records immediately after the live SOUND_TEST_ENTRY_TABLE sentinel and before SCENE_RESOURCE_MODE_RECORD_TABLE. Each record is FF followed by fourteen spaces and a NUL; no runtime consumer has been established, so these records are kept separate from the live sound-test table.
+  confidence: decompiled
+  description: Exact 48-byte bank of three fixed-width blank records immediately after the live SOUND_TEST_ENTRY_TABLE sentinel and before SCENE_RESOURCE_MODE_RECORD_TABLE. Each record is FF followed by fourteen spaces and a NUL; the byte format and boundary are fully decoded, while no runtime consumer or narrower menu role is claimed.
   evidence:
     - sound_test_entry_table_extents_static_v1
     - static_rom_data_family_static_v1
+    - fixed_width_text_confidence_static_v1
 
 0x00126D7E:
   name: SCENE_RESOURCE_MODE_RECORD_TABLE
@@ -1346,11 +1348,12 @@
   type: text_data
   size: 0x0A
   count: 3
-  confidence: provisional
-  description: Exact ten-byte ASCII text object containing the NUL-terminated labels "30", "60", and "90" immediately after SCENE_RESOURCE_MODE_RECORD_TABLE and before LEVEL_RESULT_MESSAGE_TABLE. The format and extent are established by the bytes and adjacent canonical boundaries; its runtime consumer remains unresolved.
+  confidence: decompiled
+  description: Exact ten-byte ASCII text object containing the NUL-terminated labels "30", "60", and "90" immediately after SCENE_RESOURCE_MODE_RECORD_TABLE and before LEVEL_RESULT_MESSAGE_TABLE. The text records, terminators, and boundary are fully decoded, while their runtime consumer and higher-level menu role remain unresolved.
   evidence:
     - scene_resource_mode_record_table_extents_static_v1
     - static_rom_data_family_static_v1
+    - fixed_width_text_confidence_static_v1
 
 0x00126F0E:
   name: SCENE_RESOURCE_MODE_STREAM_00

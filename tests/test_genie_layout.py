@@ -3615,13 +3615,13 @@ def test_static_header_text_and_shared_palette_families_are_exact():
 
     numeric_labels = symbols.at(0x00126EB6, include_ranges=False)
     assert numeric_labels is not None
-    assert numeric_labels.confidence == "provisional"
+    assert numeric_labels.confidence == "decompiled"
 
     blank_records = symbols.at(0x00126D4E, include_ranges=False)
     assert blank_records is not None
     assert blank_records.metadata["entry_size"] == 0x10
     assert blank_records.metadata["count"] == 3
-    assert blank_records.confidence == "provisional"
+    assert blank_records.confidence == "decompiled"
 
     princess_stream = symbols.at(0x001274F0, include_ranges=False)
     assert princess_stream is not None
@@ -3688,7 +3688,7 @@ def test_unreferenced_scene_palette_data_has_exact_structural_owners():
     assert rom[0x00128FD2:0x00128FD6] == bytes.fromhex("0000006a")
 
 
-def test_menu_fixed_width_blank_records_are_exact_and_provisional():
+def test_menu_fixed_width_blank_records_are_exact_and_decoded():
     symbols = SymbolStore()
     symbol = symbols.at(0x0012671E, include_ranges=False)
     assert symbol is not None
@@ -3698,7 +3698,7 @@ def test_menu_fixed_width_blank_records_are_exact_and_provisional():
     assert symbol.metadata["type"] == "text_data"
     assert symbol.metadata["entry_size"] == 0x10
     assert symbol.metadata["count"] == 4
-    assert symbol.confidence == "provisional"
+    assert symbol.confidence == "decompiled"
 
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     record = b"\xff" + b" " * 14 + b"\0"
