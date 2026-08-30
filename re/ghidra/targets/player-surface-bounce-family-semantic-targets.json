@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-surface-bounce-family",
+    "purpose": "Promote the Type-0x65 bounce actor and Type-0x5A/0x5B surface-mode response entries to behavior-based canonical names."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x5A"], "address": "0x001AF53E" },
+      { "actor_types": ["0x5B"], "address": "0x001AF54A" },
+      { "actor_types": ["0x65"], "address": "0x001AFBF4" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AF53E", "name": "PlayerCollision_SetLowerSurfaceResponse", "legacy_name": "ActorType5A_PlayerCollisionHandler", "range": "0x001AF53E-0x001AF549", "size": 12 },
+    { "address": "0x001AF54A", "name": "PlayerCollision_SetUpperSurfaceResponse", "legacy_name": "ActorType5B_PlayerCollisionHandler", "range": "0x001AF54A-0x001AF555", "size": 12 },
+    { "address": "0x001AFBF4", "name": "PlayerCollision_StartBounceActorResponse", "legacy_name": "ActorType65_PlayerCollisionHandler", "range": "0x001AFBF4-0x001AFC33", "size": 64 }
+  ],
+  "contracts": {
+    "surface_mode": "set TERRAIN_SURFACE_MODE to 0 for Type 0x5A or 1 for Type 0x5B, then enter PlayerCollision_ReinitializeResponseActor",
+    "bounce": "on a falling overlap, promote Type 0x65 to Type 0x66 and install its bounce animation; if the interaction-animation gate is clear, launch PLAYER_VY=-0x0500 and arm/reset terrain response state"
+  },
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

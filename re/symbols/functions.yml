@@ -2430,9 +2430,11 @@
     - mame_handhold_actor_type_transition
     - mame_campaign_handhold_grab_checkpoint
 0x001AFBF4:
-  name: ActorType65_PlayerCollisionHandler
+  name: PlayerCollision_StartBounceActorResponse
+  aliases: [ActorType65_PlayerCollisionHandler]
+  size: 64
   confidence: confirmed
-  description: Player-collision handler for the bounce actor type 0x65. On a falling player overlap, it changes the actor to type 0x66, selects the bounce animation, and when the player interaction gate is clear launches PLAYER_VY at -0x0500 while arming the terrain response state and clearing the vertical stop/timer fields.
+  description: Starts the Type-0x65 bounce-actor response on a falling player overlap. It promotes the actor to Type 0x66, installs the bounce animation, and when PLAYER_INTERACTION_ANIMATION_GATE is clear launches PLAYER_VY=-0x0500 while arming TERRAIN_RESPONSE_ACTIVE, clearing TERRAIN_VERTICAL_STOP, and resetting TERRAIN_RESPONSE_TIMER_STATE.
   evidence:
     - ghidra_decompile_actor_combat_targets
     - mame_bounce_actor_collision_trace
@@ -6153,20 +6155,22 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AF53E:
-  name: ActorType5A_PlayerCollisionHandler
+  name: PlayerCollision_SetLowerSurfaceResponse
+  aliases: [ActorType5A_PlayerCollisionHandler]
   size: 12
   confidence: decompiled
-  description: Player-collision dispatch entry for actor type 0x5A. It selects interaction-response mode 0, then transfers to PlayerCollision_ReinitializeResponseActor.
+  description: Selects lower terrain surface mode 0 for the Type-0x5A player-collision response, then transfers to PlayerCollision_ReinitializeResponseActor.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF53E
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AF54A:
-  name: ActorType5B_PlayerCollisionHandler
+  name: PlayerCollision_SetUpperSurfaceResponse
+  aliases: [ActorType5B_PlayerCollisionHandler]
   size: 12
   confidence: decompiled
-  description: Player-collision dispatch entry for actor type 0x5B. It selects interaction-response mode 1, then transfers to PlayerCollision_ReinitializeResponseActor.
+  description: Selects upper terrain surface mode 1 for the Type-0x5B player-collision response, then transfers to PlayerCollision_ReinitializeResponseActor.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF54A
