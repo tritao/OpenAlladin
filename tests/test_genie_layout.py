@@ -1932,6 +1932,8 @@ def test_extended_player_collision_handler_family_is_exact():
         0x001AF6DC: (0x001AF73F, "ActorType60_61_PlayerCollisionHandler"),
         0x001AFD84: (0x001AFE1B, "ActorType01_PlayerCollisionHandler"),
         0x001ABF9C: (0x001ABFCF, "Actor_InstallType01CollisionResponse"),
+        0x001B7474: (0x001B7493, "InteractionSpawn_RuntimeType45_AdjacentVariant"),
+        0x001B74A0: (0x001B74B1, "InteractionSpawn_RuntimeType5B_AdjacentVariant"),
         0x001AFE1C: (0x001AFF81, "ActorType7E_PlayerCollisionHandler"),
         0x001AFF82: (0x001AFFE3, "ActorType02_PlayerCollisionHandler"),
         0x001AC60E: (0x001AC613, "ActorType0D_ActorCollisionHandler"),
@@ -1942,6 +1944,7 @@ def test_extended_player_collision_handler_family_is_exact():
         assert function.name == name
         assert function.end == end
         assert function.size == end - address + 1
+
 
     expected_pointers = {
         0x001CC2: (0x01, 0x001AFD84),
@@ -1983,6 +1986,19 @@ def test_extended_player_collision_handler_family_is_exact():
     action_response = symbols.at(0x00FFF0D8, include_ranges=False)
     assert action_response is not None
     assert action_response.name == "PLAYER_ACTION_RESPONSE_FIELD"
+
+
+def test_adjacent_interaction_spawn_variants_have_exact_bodies():
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B7474:0x001B7494] == bytes.fromhex(
+        "4DF9001B79B86100DDEA6612"
+        "1ABC00452B7C00122C400020"
+        "1B7C000100294E75"
+    )
+    assert rom[0x001B74A0:0x001B74B2] == bytes.fromhex(
+        "4DF9001B7A086100DDBE6604"
+        "1ABC005B4E75"
+    )
 
 
 def test_interaction_anchor_callback_family_is_exact():

@@ -58,6 +58,28 @@
       "behavior": "Selector 0xA6 reverse-spawns the type-0x4F template at 0x001B7F94."
     }
   ],
+  "unreferenced_variants": [
+    {
+      "address": "0x001B7474",
+      "name": "InteractionSpawn_RuntimeType45_AdjacentVariant",
+      "range": ["0x001B7474", "0x001B7493"],
+      "behavior": "Allocates the zero-type base through LevelObjectSpawnEntry and, on success, publishes runtime type 0x45, animation root 0x00122C40, and actor byte +0x29 = 1.",
+      "reachability": "No direct pointer from INTERACTION_HANDLER_TABLE or other current static xref; selector unresolved."
+    },
+    {
+      "address": "0x001B74A0",
+      "name": "InteractionSpawn_RuntimeType5B_AdjacentVariant",
+      "range": ["0x001B74A0", "0x001B74B1"],
+      "behavior": "Allocates ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT through LevelObjectSpawnEntry and, on success, promotes the initialized record to runtime type 0x5B.",
+      "reachability": "No direct pointer from INTERACTION_HANDLER_TABLE or other current static xref; selector unresolved."
+    }
+  ],
+  "evidence": [
+    "Exact 68000 disassembly of the two adjacent complete sibling bodies",
+    "Shared LevelObjectSpawnEntry and established actor-template contracts",
+    "Exact runtime-type and animation/flag mutations"
+  ],
+  "limitation": "The two variants are bounded and named by their exact behavior, but no active dispatch-table selector or runtime observation currently reaches either body.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

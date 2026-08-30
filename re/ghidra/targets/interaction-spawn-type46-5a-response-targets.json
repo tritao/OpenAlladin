@@ -92,6 +92,28 @@
         "template": "0x001B7F94 ACTOR_TEMPLATE_TYPE_4F_INTERACTION",
         "spawn_helper": "0x001B525E InteractionSpawn_ReverseSlot"
       }
+    ],
+    "unreferenced_variants": [
+      {
+        "address": "0x001B7474",
+        "range": ["0x001B7474", "0x001B7493"],
+        "name": "InteractionSpawn_RuntimeType45_AdjacentVariant",
+        "template": "0x001B79B8 ACTOR_TEMPLATE_BASE_ZERO",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "runtime_type": "0x45",
+        "animation_root": "0x00122C40",
+        "flag_value": "0x01",
+        "reachability": "No direct pointer from INTERACTION_HANDLER_TABLE or other current static xref."
+      },
+      {
+        "address": "0x001B74A0",
+        "range": ["0x001B74A0", "0x001B74B1"],
+        "name": "InteractionSpawn_RuntimeType5B_AdjacentVariant",
+        "template": "0x001B7A08 ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT",
+        "spawn_helper": "0x001B5266 LevelObjectSpawnEntry",
+        "runtime_type": "0x5B",
+        "reachability": "No direct pointer from INTERACTION_HANDLER_TABLE or other current static xref."
+      }
     ]
   },
   "evidence": [
@@ -100,7 +122,7 @@
     "Established actor-template records at 0x001B79CC, 0x001B7A08, 0x001B7A30, 0x001B7F80, and 0x001B7F94",
     "Direct gate, allocator, runtime-type, animation, flag, and facing-byte writes"
   ],
-  "conclusion": "This family is statically closed at selector membership, gates, template choice, allocator choice, and direct post-allocation mutations. The 0xAF compare against 0x00FF7E3C and the runtime meanings of the selector-specific flags remain unresolved state rather than being given speculative semantic names.",
+  "conclusion": "This family is statically closed at selector membership, gates, template choice, allocator choice, and direct post-allocation mutations. The two adjacent sibling bodies at 0x001B7474 and 0x001B74A0 are separately bounded as exact variants, while their selector membership and runtime reachability remain unresolved. The 0xAF compare against 0x00FF7E3C and the runtime meanings of the selector-specific flags remain unresolved state rather than being given speculative semantic names.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

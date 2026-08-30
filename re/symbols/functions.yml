@@ -5349,6 +5349,15 @@
     - ghidra_disassembly_001B7454
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+0x001B7474:
+  name: InteractionSpawn_RuntimeType45_AdjacentVariant
+  size: 0x20
+  confidence: decompiled
+  description: Complete adjacent interaction-spawn variant that allocates the zero-type base through LevelObjectSpawnEntry and, on success, publishes runtime type 0x45, animation root 0x00122C40, and actor byte +0x29 as 1. The current INTERACTION_HANDLER_TABLE has no direct pointer to this body, so its selector and runtime reachability remain unresolved.
+  evidence:
+    - ghidra_disassembly_001B7474
+    - interaction-spawn-type46-5a-response-static-decompilation
+    - actor_template_grid_xrefs
 0x001B7494:
   name: InteractionSpawn_RuntimeType5A_8E
   confidence: decompiled
@@ -5357,6 +5366,15 @@
     - ghidra_disassembly_001B7494
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+0x001B74A0:
+  name: InteractionSpawn_RuntimeType5B_AdjacentVariant
+  size: 0x12
+  confidence: decompiled
+  description: Complete adjacent interaction-spawn variant that allocates ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT through LevelObjectSpawnEntry and, on successful allocation, promotes the initialized record to runtime type 0x5B. The current INTERACTION_HANDLER_TABLE has no direct pointer to this body, so its selector and runtime reachability remain unresolved.
+  evidence:
+    - ghidra_disassembly_001B74A0
+    - interaction-spawn-type46-5a-response-static-decompilation
+    - actor_template_grid_xrefs
 0x001B74B2:
   name: InteractionSpawn_RuntimeType5C_90
   confidence: decompiled
