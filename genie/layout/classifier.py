@@ -38,6 +38,7 @@ def _class_for_symbol(symbol: Symbol) -> str:
     if (
         "scene_resource" in symbol_type
         or "scene_transition" in symbol_type
+        or "scene_script" in symbol_type
         or symbol_type == "sound_test_entry_table"
     ):
         return "SCENE_TABLE"

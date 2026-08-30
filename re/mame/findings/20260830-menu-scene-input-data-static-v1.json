@@ -1,0 +1,63 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/menu-scene-input-data-static-targets.json",
+  "objects": [
+    {
+      "address": "0x00004012",
+      "name": "MENU_CONTROL_LAYOUT_TABLE",
+      "range": "0x00004012-0x0000407D",
+      "bytes": 108,
+      "record_size": 18,
+      "records": 6,
+      "embedded_default": "0x00004036 DEFAULT_MENU_CONTROL_LAYOUT"
+    },
+    {
+      "address": "0x00004082",
+      "name": "INITIAL_SCENE_SCRIPT",
+      "range": "0x00004082-0x000040B7",
+      "bytes": 54,
+      "cursor": "0x00FFF572 SCENE_SCRIPT_CURSOR"
+    },
+    {
+      "address": "0x000040B8",
+      "name": "SCENE_RESOURCE_VDP_STREAM_LEVEL08",
+      "range": "0x000040B8-0x00004127",
+      "bytes": 112,
+      "record_size": 14,
+      "records": 8,
+      "producer": "LEVEL_TABLE record 8 pointer/length fields at offsets 0x14/0x18"
+    },
+    {
+      "address": "0x00004128",
+      "name": "PRIMARY_INPUT_PATTERN_TABLE",
+      "range": "0x00004128-0x00004139",
+      "bytes": 18,
+      "record_size": 2,
+      "records_including_sentinel": 9
+    },
+    {
+      "address": "0x0000413A",
+      "name": "ALTERNATE_INPUT_PATTERN_TABLE",
+      "range": "0x0000413A-0x00004153",
+      "bytes": 26,
+      "record_size": 2,
+      "records_including_sentinel": 13
+    }
+  ],
+  "evidence": [
+    "System_InitializeRuntime installs the 0x00004036 default control record",
+    "Menu_RunOptionsAndSelectNextState advances selected records by 0x12",
+    "Startup_InitializeSceneState installs SCENE_SCRIPT_CURSOR=0x00004082",
+    "Level_LoadFromSceneState installs the Level-08 VDP stream pointer and 0x70-byte bound",
+    "Input selectors install the two pattern-table pointers and Input_ProcessMenuPattern stops on 0xFF00"
+  ],
+  "conclusion": "The 0x00004012-0x00004153 region is now represented as exact menu-control, startup-scene, Level-08 VDP-stream, and controller-pattern objects. The preceding 0x00004000-0x00004011 bytes remain unresolved because no direct consumer currently establishes their ownership.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

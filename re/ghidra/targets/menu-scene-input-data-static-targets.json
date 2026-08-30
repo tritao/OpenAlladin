@@ -1,0 +1,76 @@
+{
+  "format": "openaladdin-menu-scene-input-data-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "menu_control_layout": {
+    "address": "0x00004012",
+    "name": "MENU_CONTROL_LAYOUT_TABLE",
+    "range": ["0x00004012", "0x0000407D"],
+    "bytes": 108,
+    "entry_size": 18,
+    "count": 6,
+    "entry_labels": ["A/B/C", "A/C/B", "B/A/C", "B/C/A", "C/A/B", "C/B/A"],
+    "default_entry": "0x00004036",
+    "initializer": "0x001AA3EE System_InitializeRuntime",
+    "consumer": "0x001B4410 Menu_RenderControlBindings"
+  },
+  "initial_scene_script": {
+    "address": "0x00004082",
+    "name": "INITIAL_SCENE_SCRIPT",
+    "range": ["0x00004082", "0x000040B7"],
+    "bytes": 54,
+    "cursor": "0x00FFF572 SCENE_SCRIPT_CURSOR",
+    "initializer": "0x001AA41C Startup_InitializeSceneState",
+    "consumer": "0x001A8E3E SceneScript_AdvanceState"
+  },
+  "scene_resource_vdp_stream": {
+    "address": "0x000040B8",
+    "name": "SCENE_RESOURCE_VDP_STREAM_LEVEL08",
+    "range": ["0x000040B8", "0x00004127"],
+    "bytes": 112,
+    "entry_size": 14,
+    "count": 8,
+    "level": 8,
+    "level_record_pointer_offset": "0x14",
+    "level_record_length_offset": "0x18",
+    "consumer": "0x001AE0F6 SceneResource_StreamVdpRecord"
+  },
+  "input_patterns": [
+    {
+      "address": "0x00004128",
+      "name": "PRIMARY_INPUT_PATTERN_TABLE",
+      "range": ["0x00004128", "0x00004139"],
+      "bytes": 18,
+      "entry_size": 2,
+      "count": 9,
+      "sentinel": "0xFF00",
+      "selector": "0x001B0B8E Input_SelectPrimaryPatternTable"
+    },
+    {
+      "address": "0x0000413A",
+      "name": "ALTERNATE_INPUT_PATTERN_TABLE",
+      "range": ["0x0000413A", "0x00004153"],
+      "bytes": 26,
+      "entry_size": 2,
+      "count": 13,
+      "sentinel": "0xFF00",
+      "selector": "0x001B0BA6 Input_SelectAlternatePatternTable"
+    }
+  ],
+  "boundary_basis": [
+    "Direct fixed-size menu record stepping by 0x12",
+    "Startup scene-script cursor initialization and the following Level-08 VDP stream pointer",
+    "Level-08 record pointer/length pair and 14-byte VDP service record contract",
+    "Input selector pointers, 0xFF00 terminators, and INTERACTION_HANDLER_TABLE at 0x00004154"
+  ],
+  "evidence": [
+    "Direct 68000 consumers and selectors",
+    "Exact ROM pointer/record extents",
+    "Existing menu, scene-script, VDP-stream, and input-pattern service contracts"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

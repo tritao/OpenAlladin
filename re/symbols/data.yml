@@ -124,6 +124,118 @@
     - difficulty_label_stream_terminators
     - difficulty_label_pointer_table_static_v1
 
+0x00004012:
+  name: MENU_CONTROL_LAYOUT_TABLE
+  aliases: [MENU_CONTROL_LAYOUT_VARIANT_A_B_C]
+  type: menu_control_layout_table
+  entry_size: 0x12
+  count: 6
+  size: 0x6C
+  confidence: decompiled
+  description: Six 18-byte menu control-layout records. Each record carries three input callback pointers followed by the three displayed trigger labels in one of the six A/B/C permutations; the selected record is published through MENU_CONTROL_LAYOUT_PTR.
+  evidence:
+    - menu_input_audio_static_decompilation
+    - ghidra_disassembly_001B423C
+    - ghidra_disassembly_001AA3EE
+
+0x00004024:
+  name: MENU_CONTROL_LAYOUT_VARIANT_A_C_B
+  type: menu_control_layout
+  alias_of: MENU_CONTROL_LAYOUT_TABLE
+  entry_offset: 0x12
+  confidence: decompiled
+  description: Embedded menu control-layout record with displayed trigger labels A/C/B; it aliases MENU_CONTROL_LAYOUT_TABLE and does not claim a second ROM range.
+  evidence:
+    - menu_input_audio_static_decompilation
+
+0x00004036:
+  name: DEFAULT_MENU_CONTROL_LAYOUT
+  type: menu_control_layout
+  alias_of: MENU_CONTROL_LAYOUT_TABLE
+  entry_offset: 0x24
+  confidence: decompiled
+  description: Default menu control-layout record installed by System_InitializeRuntime; its displayed trigger labels are B/A/C and its three callbacks are consumed by Menu_RenderControlBindings.
+  evidence:
+    - startup_initialization_static_decompilation
+    - menu_input_audio_static_decompilation
+
+0x00004048:
+  name: MENU_CONTROL_LAYOUT_VARIANT_B_C_A
+  type: menu_control_layout
+  alias_of: MENU_CONTROL_LAYOUT_TABLE
+  entry_offset: 0x36
+  confidence: decompiled
+  description: Embedded menu control-layout record with displayed trigger labels B/C/A; it aliases MENU_CONTROL_LAYOUT_TABLE and does not claim a second ROM range.
+  evidence:
+    - menu_input_audio_static_decompilation
+
+0x0000405A:
+  name: MENU_CONTROL_LAYOUT_VARIANT_C_A_B
+  type: menu_control_layout
+  alias_of: MENU_CONTROL_LAYOUT_TABLE
+  entry_offset: 0x48
+  confidence: decompiled
+  description: Embedded menu control-layout record with displayed trigger labels C/A/B; it aliases MENU_CONTROL_LAYOUT_TABLE and does not claim a second ROM range.
+  evidence:
+    - menu_input_audio_static_decompilation
+
+0x0000406C:
+  name: MENU_CONTROL_LAYOUT_VARIANT_C_B_A
+  type: menu_control_layout
+  alias_of: MENU_CONTROL_LAYOUT_TABLE
+  entry_offset: 0x5A
+  confidence: decompiled
+  description: Embedded menu control-layout record with displayed trigger labels C/B/A; it aliases MENU_CONTROL_LAYOUT_TABLE and does not claim a second ROM range.
+  evidence:
+    - menu_input_audio_static_decompilation
+
+0x00004082:
+  name: INITIAL_SCENE_SCRIPT
+  type: scene_script
+  size: 0x36
+  confidence: decompiled
+  description: Startup scene-script record stream installed into SCENE_SCRIPT_CURSOR by Startup_InitializeSceneState. Its exact 54-byte extent ends immediately before the Level-08 scene-resource VDP stream.
+  evidence:
+    - startup_initialization_static_decompilation
+    - ghidra_scene_script_targeted_decompile
+
+0x000040B8:
+  name: SCENE_RESOURCE_VDP_STREAM_LEVEL08
+  type: scene_resource_vdp_stream
+  entry_size: 0x0E
+  count: 8
+  size: 0x70
+  confidence: decompiled
+  description: Eight 14-byte scene-resource VDP command records selected by LEVEL_TABLE record 8 at offset 0x14, with stream length 0x70 at offset 0x18; Level_LoadFromSceneState installs the pointer and SceneResource_StreamVdpRecord rotates through these records.
+  evidence:
+    - scene_resource_vdp_record_static_decompilation
+    - ghidra_disassembly_001AA58E
+    - ghidra_level_table_002C78
+
+0x00004128:
+  name: PRIMARY_INPUT_PATTERN_TABLE
+  type: input_pattern_table
+  entry_size: 2
+  count: 9
+  size: 0x12
+  confidence: decompiled
+  description: Primary controller-pattern table selected by Input_SelectPrimaryPatternTable. It contains eight two-byte input patterns followed by the 0xFF00 sentinel consumed by Input_ProcessMenuPattern.
+  evidence:
+    - input_pattern_static_decompilation
+    - ghidra_disassembly_001B0B8E
+
+0x0000413A:
+  name: ALTERNATE_INPUT_PATTERN_TABLE
+  type: input_pattern_table
+  entry_size: 2
+  count: 13
+  size: 0x1A
+  confidence: decompiled
+  description: Alternate controller-pattern table selected by Input_SelectAlternatePatternTable. It contains twelve two-byte input patterns followed by the 0xFF00 sentinel consumed by Input_ProcessMenuPattern and ends immediately before INTERACTION_HANDLER_TABLE.
+  evidence:
+    - input_pattern_static_decompilation
+    - ghidra_disassembly_001B0BA6
+
 0x00004B1C:
   name: SCENE_TRANSITION_RESOURCE_STREAM_STATE_00
   type: scene_resource_stream

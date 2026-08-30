@@ -377,6 +377,41 @@ def test_level_camera_scroll_callback_family_matches_level_table():
     assert seen_levels == set(range(13))
 
 
+def test_menu_scene_and_input_data_extents_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x00004012: (0x6C, "MENU_CONTROL_LAYOUT_TABLE", "menu_control_layout_table"),
+        0x00004082: (0x36, "INITIAL_SCENE_SCRIPT", "scene_script"),
+        0x000040B8: (0x70, "SCENE_RESOURCE_VDP_STREAM_LEVEL08", "scene_resource_vdp_stream"),
+        0x00004128: (0x12, "PRIMARY_INPUT_PATTERN_TABLE", "input_pattern_table"),
+        0x0000413A: (0x1A, "ALTERNATE_INPUT_PATTERN_TABLE", "input_pattern_table"),
+    }
+    for address, (size, name, symbol_type) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == size
+        assert symbol.end == address + size - 1
+        assert symbol.metadata["type"] == symbol_type
+
+    for address, name, offset in (
+        (0x00004024, "MENU_CONTROL_LAYOUT_VARIANT_A_C_B", 0x12),
+        (0x00004036, "DEFAULT_MENU_CONTROL_LAYOUT", 0x24),
+        (0x00004048, "MENU_CONTROL_LAYOUT_VARIANT_B_C_A", 0x36),
+        (0x0000405A, "MENU_CONTROL_LAYOUT_VARIANT_C_A_B", 0x48),
+        (0x0000406C, "MENU_CONTROL_LAYOUT_VARIANT_C_B_A", 0x5A),
+    ):
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["alias_of"] == "MENU_CONTROL_LAYOUT_TABLE"
+        assert symbol.metadata["entry_offset"] == offset
+
+    rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x4138:0x413A] == bytes.fromhex("FF00")
+    assert rom[0x4152:0x4154] == bytes.fromhex("FF00")
+
+
 def test_interaction_counter_animation_table_and_bank_are_exact():
     symbols = SymbolStore()
     table = symbols.at(0x00004A58, include_ranges=False)
