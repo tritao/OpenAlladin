@@ -1264,3 +1264,14 @@
     - ghidra_decompile_001B1486
     - ghidra_scene_transition_palette_callbacks
     - scene-transition-palette-callback-static-decompilation
+
+0xFFF0F5:
+  name: PLAYER_COLLISION_RESPONSE_SUPPRESS
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Collision-pass response suppression flag. Actor_PlayerCollisionPass clears it before dispatch; handlers that reject settling the current contact set it to 0xFF, after which the pass skips player landing and response publication.
+  evidence:
+    - ghidra_disassembly_001AE6B4
+    - ghidra_player_collision_pass
+    - final_mechanical_function_closure_static_decompilation

@@ -29,7 +29,7 @@
         { "type": "0x5A", "address": "0x001AF53E", "size": 12, "name": "ActorType5A_PlayerCollisionHandler", "range": ["0x001AF53E", "0x001AF549"] },
         { "type": "0x5B", "address": "0x001AF54A", "size": 12, "name": "ActorType5B_PlayerCollisionHandler", "range": ["0x001AF54A", "0x001AF555"] },
         { "type": "0x5C", "address": "0x001AF556", "size": 12, "name": "ActorType5C_PlayerCollisionHandler", "range": ["0x001AF556", "0x001AF561"] },
-        { "type": "0x5D", "address": "0x001AF562", "size": 46, "name": "ActorType5D_PlayerCollisionHandler", "range": ["0x001AF562", "0x001AF58F"] },
+        { "type": "0x5D", "address": "0x001AF562", "size": 10, "name": "ActorType5D_PlayerCollisionHandler", "range": ["0x001AF562", "0x001AF56B"] },
         { "type": "0x5E", "address": "0x001AF638", "size": 116, "name": "ActorType5E_PlayerCollisionHandler", "range": ["0x001AF638", "0x001AF6AB"] },
         { "type": "0x5F", "address": "0x001AF6AC", "size": 48, "name": "ActorType5F_PlayerCollisionHandler", "range": ["0x001AF6AC", "0x001AF6DB"] },
         { "type": "0x60", "address": "0x001AF6DC", "size": 100, "name": "ActorType60_61_PlayerCollisionHandler", "range": ["0x001AF6DC", "0x001AF73F"] },
@@ -58,11 +58,22 @@
     { "address": "0x001B7ABC", "name": "ACTOR_TEMPLATE_COLLISION_RESPONSE" },
     { "address": "0x001B7CD8", "name": "ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE" }
   ],
+  "helper_entries": [
+    {
+      "address": "0x001AF56C",
+      "name": "PlayerCollision_ClearMatchingActorTypeRecords",
+      "size": 36,
+      "range": ["0x001AF56C", "0x001AF58F"],
+      "callers": ["0x001AF556", "0x001AF562"],
+      "description": "Shared cleanup loop selected by the type-0x5C and type-0x5D dispatch prefixes; it clears matching common actor records and transfers to the shared response handler."
+    }
+  ],
   "boundary_basis": [
     "Each player handler start is a direct pointer-table target at 0x001CBE plus actor_type*4.",
     "Each promoted body ends immediately before the next distinct dispatch target or the next already-owned canonical handler; shared entries retain one owner range.",
     "The actor Type-0x0D entry is the direct target at 0x001EEE and ends at the RTS before ActorType14_ActorCollisionHandler.",
-    "The Type-0x3B body is an intentional ten-byte prefix that falls through to ActorType3A_PlayerCollisionHandler when its gate is clear."
+    "The Type-0x3B body is an intentional ten-byte prefix that falls through to ActorType3A_PlayerCollisionHandler when its gate is clear.",
+    "The Type-0x5D table target owns only its ten-byte prefix; the following 36 bytes are the separately callable cleanup helper at 0x001AF56C."
   ],
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"

@@ -5571,9 +5571,9 @@
 
 0x001AF562:
   name: ActorType5D_PlayerCollisionHandler
-  size: 46
+  size: 10
   confidence: decompiled
-  description: Player-collision handler for actor type 0x5D. It scans common actor records for the selected type 0x08 or 0x09, clears matching records and their owned resources, then transfers to the shared collision-response handler.
+  description: Player-collision dispatch prefix for actor type 0x5D. It selects cleanup type 0x09 when the type-specific gate is clear and transfers into PlayerCollision_ClearMatchingActorTypeRecords at 0x001AF56C.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF562
@@ -5668,6 +5668,36 @@
     - rom_actor_collision_handler_table_001EBA
     - ghidra_disassembly_001AC60E
     - actor_collision_handler_family_extended_static_decompilation
+
+0x001AE6B4:
+  name: Player_SuppressCollisionResponse
+  size: 8
+  confidence: decompiled
+  description: Sets PLAYER_COLLISION_RESPONSE_SUPPRESS to 0xFF so Actor_PlayerCollisionPass does not settle the player from the current handler result. The compact setter is shared by the type-0x01 and type-0x02 player-collision paths.
+  evidence:
+    - ghidra_disassembly_001AE6B4
+    - ghidra_player_collision_pass
+    - final_mechanical_function_closure_static_decompilation
+
+0x001AF56C:
+  name: PlayerCollision_ClearMatchingActorTypeRecords
+  size: 36
+  confidence: decompiled
+  description: Shared player-collision cleanup helper entered by the type-0x5C and type-0x5D dispatch prefixes with the selected actor type in D7. It scans common actor records 1 through 24 at 0x00FF7E82 with stride 0x42, clears matching records and their owned resources, then transfers to ActorType33_38_39_PlayerCollisionHandler.
+  evidence:
+    - ghidra_disassembly_001AF56C
+    - ghidra_player_collision_pass
+    - final_mechanical_function_closure_static_decompilation
+
+0x001B03BE:
+  name: InteractionCounter_DecrementSecondaryDigits
+  size: 52
+  confidence: decompiled
+  description: Decrements the ASCII two-digit secondary interaction counter at INTERACTION_COUNTER_SECONDARY_DIGITS, borrowing from the high digit when the low digit rolls below ASCII '0' and stopping at "00". ActorType7E_PlayerCollisionHandler calls it repeatedly for transition countdown steps.
+  evidence:
+    - ghidra_disassembly_001B03BE
+    - ghidra_actor_type7e_transition_handler
+    - final_mechanical_function_closure_static_decompilation
 
 0x001ABF8E:
   name: ActorType02_08_09_ActorCollisionHandler

@@ -98,5 +98,5 @@
       "semantics": "Six-byte actor-collision entry that delegates to Actor_ToggleHorizontalFacing and returns."
     }
   ],
-  "conclusion": "The pointer-table audit closes the remaining unnamed player-collision dispatch targets in the 0x001AF21E-0x001AFFE3 family and the missing actor Type-0x0D entry, preserving shared bodies and intentional fall-through boundaries."
+  "conclusion": "The pointer-table audit closes the remaining unnamed player-collision dispatch targets in the 0x001AF21E-0x001AFFE3 family and the missing actor Type-0x0D entry, preserving shared bodies and intentional fall-through boundaries. The Type-0x5D prefix is now split from its separately callable cleanup helper at 0x001AF56C."
 }

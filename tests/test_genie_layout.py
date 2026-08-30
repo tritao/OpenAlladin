@@ -1606,7 +1606,7 @@ def test_extended_player_collision_handler_family_is_exact():
         0x001AF53E: (0x001AF549, "ActorType5A_PlayerCollisionHandler"),
         0x001AF54A: (0x001AF555, "ActorType5B_PlayerCollisionHandler"),
         0x001AF556: (0x001AF561, "ActorType5C_PlayerCollisionHandler"),
-        0x001AF562: (0x001AF58F, "ActorType5D_PlayerCollisionHandler"),
+        0x001AF562: (0x001AF56B, "ActorType5D_PlayerCollisionHandler"),
         0x001AF590: (0x001AF5EF, "ActorType55_56_57_PlayerCollisionHandler"),
         0x001AF5F0: (0x001AF637, "ActorType58_PlayerCollisionHandler"),
         0x001AF638: (0x001AF6AB, "ActorType5E_PlayerCollisionHandler"),
@@ -2876,3 +2876,28 @@ def test_extended_actor_collision_handler_dispatch_family_is_exact():
         assert pointer.metadata["type"] == "rom_pointer"
         assert int.from_bytes(data[address:address + 4], "big") == target
         assert address == 0x001EBA + actor_type * 4
+
+
+def test_final_mechanical_function_closure_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x001AE6B4: (0x001AE6BB, "Player_SuppressCollisionResponse"),
+        0x001AF562: (0x001AF56B, "ActorType5D_PlayerCollisionHandler"),
+        0x001AF56C: (0x001AF58F, "PlayerCollision_ClearMatchingActorTypeRecords"),
+        0x001B03BE: (0x001B03F1, "InteractionCounter_DecrementSecondaryDigits"),
+    }
+    for address, (end, name) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == end - address + 1
+
+    suppression = symbols.at(0x00FFF0F5, include_ranges=False)
+    assert suppression is not None
+    assert suppression.name == "PLAYER_COLLISION_RESPONSE_SUPPRESS"
+    assert suppression.metadata["type"] == "u8"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001AE6B4:0x001AE6BC] == bytes.fromhex("50F900FFF0F54E75")
+    assert rom[0x001B03BE:0x001B03F2][-2:] == bytes.fromhex("4E75")
