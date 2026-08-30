@@ -572,6 +572,11 @@ def build_parser() -> argparse.ArgumentParser:
     data_todo = data_commands.add_parser("todo", help="rank ROM objects needing semantic evidence")
     add_data_sources(data_todo)
     data_todo.add_argument("--kind", choices=DATA_KINDS, default="all")
+    data_todo.add_argument(
+        "--rom-only",
+        action="store_true",
+        help="exclude RAM and hardware-address objects from the queue",
+    )
     data_todo.add_argument("--limit", type=int, default=25, help="maximum rows; zero means all")
     data_todo.add_argument("--json", action="store_true", dest="json_output")
     data_todo.set_defaults(function=command_data_todo)
@@ -579,6 +584,11 @@ def build_parser() -> argparse.ArgumentParser:
     data_next = data_commands.add_parser("next", help="show the highest-priority ROM data object")
     add_data_sources(data_next)
     data_next.add_argument("--kind", choices=DATA_KINDS, default="all")
+    data_next.add_argument(
+        "--rom-only",
+        action="store_true",
+        help="exclude RAM and hardware-address objects from the queue",
+    )
     data_next.add_argument("--json", action="store_true", dest="json_output")
     data_next.set_defaults(function=command_data_next)
 

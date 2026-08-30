@@ -10,6 +10,7 @@ the generated layout remain authoritative for names and extents.
 from __future__ import annotations
 
 from collections import Counter
+from bisect import bisect_left, bisect_right
 import json
 from pathlib import Path
 from typing import Any, Iterable, Protocol, TypeAlias
@@ -160,6 +161,11 @@ class DataIndex:
         self.coverage_path = Path(coverage_path) if coverage_path else self.database.root.parent / "coverage.json"
         self._decoded: dict[str, dict[int, dict[str, Any]]] = {"animation": {}, "movement": {}}
         self._decoded_sources: dict[str, dict[int, str]] = {"animation": {}, "movement": {}}
+        self._record_cache: dict[tuple[str, str], list[dict[str, Any]]] = {}
+        self._reference_index_cache: dict[str, tuple[list[int], list[dict[str, Any]]]] = {}
+        self._coverage_document: Any = None
+        self._coverage_loaded = False
+        self._overlap_cache: dict[str, list[dict[str, Any]]] | None = None
         self._load_streams("animation", animation_path)
         self._load_streams("movement", movement_path)
         self._objects: tuple[dict[str, Any], ...] | None = None
@@ -342,12 +348,42 @@ class DataIndex:
         return None
 
     def _records(self, filename: str, key: str) -> list[dict[str, Any]]:
+        cache_key = (filename, key)
+        cached = self._record_cache.get(cache_key)
+        if cached is not None:
+            return cached
         try:
             document = self.database.load(filename)
         except (OSError, ValueError, TypeError):
-            return []
+            records: list[dict[str, Any]] = []
+            self._record_cache[cache_key] = records
+            return records
         values = document.get(key, []) if isinstance(document, dict) else document
-        return [dict(value) for value in values if isinstance(value, dict)]
+        records = [dict(value) for value in values if isinstance(value, dict)]
+        self._record_cache[cache_key] = records
+        return records
+
+    def _reference_index(self, filename: str) -> tuple[list[int], list[dict[str, Any]]]:
+        cached = self._reference_index_cache.get(filename)
+        if cached is not None:
+            return cached
+        records = []
+        for record in self._records(filename, "references"):
+            try:
+                target = _address(record.get("to"))
+            except (TypeError, ValueError):
+                continue
+            records.append((target, record))
+        records.sort(key=lambda item: (item[0], _address(item[1].get("from", 0))))
+        result = ([target for target, _ in records], [record for _, record in records])
+        self._reference_index_cache[filename] = result
+        return result
+
+    def _references_in_range(self, filename: str, start: int, end: int) -> list[dict[str, Any]]:
+        targets, records = self._reference_index(filename)
+        left = bisect_left(targets, start)
+        right = bisect_right(targets, end)
+        return records[left:right]
 
     def _incoming_references(self, value: dict[str, Any]) -> list[dict[str, Any]]:
         start, end = _address(value["start"]), _address(value["end"])
@@ -356,15 +392,10 @@ class DataIndex:
         if value["kind"] == "ram":
             filenames.extend(("memory_reads.json", "memory_writes.json"))
         for filename in filenames:
-            for reference in self._records(filename, "references"):
-                try:
-                    target = _address(reference.get("to"))
-                except (TypeError, ValueError):
-                    continue
-                if start <= target <= end:
-                    enriched = dict(reference)
-                    enriched.setdefault("source", filename)
-                    result.append(enriched)
+            for reference in self._references_in_range(filename, start, end):
+                enriched = dict(reference)
+                enriched.setdefault("source", filename)
+                result.append(enriched)
         result.extend(self._decoded_template_references(value))
         return sorted(result, key=lambda item: (
             _address(item.get("from", 0)),
@@ -405,7 +436,10 @@ class DataIndex:
         return sorted(grouped.values(), key=lambda item: (str(item["name"]), str(item["address"])))
 
     def _runtime(self, value: dict[str, Any]) -> dict[str, Any]:
-        document = _read_json(self.coverage_path)
+        if not self._coverage_loaded:
+            self._coverage_document = _read_json(self.coverage_path)
+            self._coverage_loaded = True
+        document = self._coverage_document
         result: dict[str, Any] = {
             "observed": False,
             "scenarios": [],
@@ -530,34 +564,48 @@ class DataIndex:
         return sorted(result.values(), key=lambda item: (_address(item["address"]), item["kind"]))
 
     def _overlaps(self, value: dict[str, Any]) -> list[dict[str, Any]]:
-        start, end = _address(value["start"]), _address(value["end"])
-        result = []
-        for other in self.objects():
-            if other["id"] == value["id"]:
-                continue
-            if not value["range_bounded"] or not other["range_bounded"]:
-                continue
-            # Individual named pointer entries are intentionally nested in
-            # their owning pointer table.  Keep overlap detection focused on
-            # competing ownership claims rather than this normal table shape.
-            value_type = str((value.get("canonical_symbol") or {}).get("type", "")).casefold()
-            other_type = str((other.get("canonical_symbol") or {}).get("type", "")).casefold()
-            if (
-                value_type == "rom_pointer" and other["kind"] == "pointer-table"
-            ) or (
-                other_type == "rom_pointer" and value["kind"] == "pointer-table"
-            ):
-                continue
-            other_start, other_end = _address(other["start"]), _address(other["end"])
-            if start <= other_end and other_start <= end:
-                result.append({
-                    "address": other["address"],
-                    "name": other["name"],
-                    "kind": other["kind"],
-                    "start": other["start"],
-                    "end": other["end"],
-                })
-        return sorted(result, key=lambda item: _address(item["start"]))
+        if self._overlap_cache is None:
+            self._build_overlap_cache()
+        return list(self._overlap_cache.get(value["id"], ()))
+
+    @staticmethod
+    def _overlap_record(value: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "address": value["address"],
+            "name": value["name"],
+            "kind": value["kind"],
+            "start": value["start"],
+            "end": value["end"],
+        }
+
+    @staticmethod
+    def _overlap_allowed(left: dict[str, Any], right: dict[str, Any]) -> bool:
+        # Individual named pointer entries are intentionally nested in their
+        # owning pointer table. Keep overlap detection focused on competing
+        # ownership claims rather than this normal table shape.
+        left_type = str((left.get("canonical_symbol") or {}).get("type", "")).casefold()
+        right_type = str((right.get("canonical_symbol") or {}).get("type", "")).casefold()
+        return not (
+            left_type == "rom_pointer" and right["kind"] == "pointer-table"
+            or right_type == "rom_pointer" and left["kind"] == "pointer-table"
+        )
+
+    def _build_overlap_cache(self) -> None:
+        values = [value for value in self.objects() if value["range_bounded"]]
+        ordered = sorted(values, key=lambda value: (_address(value["start"]), _address(value["end"])))
+        active: list[dict[str, Any]] = []
+        overlaps: dict[str, list[dict[str, Any]]] = {value["id"]: [] for value in values}
+        for value in ordered:
+            start = _address(value["start"])
+            active = [other for other in active if _address(other["end"]) >= start]
+            for other in active:
+                if self._overlap_allowed(value, other):
+                    overlaps[value["id"]].append(self._overlap_record(other))
+                    overlaps[other["id"]].append(self._overlap_record(value))
+            active.append(value)
+        for items in overlaps.values():
+            items.sort(key=lambda item: _address(item["start"]))
+        self._overlap_cache = overlaps
 
     def context(self, address: int) -> dict[str, Any] | None:
         value = self.at(address)
@@ -578,9 +626,12 @@ class DataIndex:
             "runtime": self._runtime(value),
         }
 
-    def todo(self, *, kind: str | None = None) -> list[dict[str, Any]]:
+    def todo(self, *, kind: str | None = None, rom_only: bool = False) -> list[dict[str, Any]]:
         result = []
+        rom_size = self.layout.rom_size if self.layout is not None else None
         for value in self.objects(kind=kind):
+            if rom_only and (rom_size is None or _address(value["start"]) < 0 or _address(value["end"]) >= rom_size):
+                continue
             if _is_alias(value):
                 # An alternate stream entry is useful context, but it does
                 # not own bytes or require a second decoder result.

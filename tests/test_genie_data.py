@@ -97,6 +97,25 @@ def test_data_todo_filters_aliases_and_prioritizes_missing_decode(tmp_path):
     assert "not_decoded" in items[0]["reasons"]
 
 
+def test_data_todo_can_limit_queue_to_rom_objects(tmp_path):
+    database_root = _database(tmp_path)
+    symbols = SymbolStore(symbols=(
+        Symbol(0x10, "RomObject", "data", size=4),
+        Symbol(0xFF0000, "RamObject", "data"),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=Layout(0x100, (LayoutRange(0, 0xFF, "UNKNOWN", "test"),)),
+    )
+
+    all_items = index.todo(kind="all")
+    rom_items = index.todo(kind="all", rom_only=True)
+    assert {item["name"] for item in all_items} == {"RomObject", "RamObject"}
+    assert [item["name"] for item in rom_items] == ["RomObject"]
+
+
 def test_data_todo_ignores_embedded_stream_alias(tmp_path):
     database_root = _database(tmp_path)
     symbols = SymbolStore(symbols=(
@@ -130,13 +149,19 @@ def test_data_todo_ignores_embedded_stream_alias(tmp_path):
 
 def test_data_cli_surface_dispatches():
     stats = build_parser().parse_args(["data", "stats", "--json"])
-    todo = build_parser().parse_args(["data", "todo", "--kind", "animation", "--limit", "4"])
-    next_item = build_parser().parse_args(["data", "next", "--kind", "actor-template"])
+    todo = build_parser().parse_args([
+        "data", "todo", "--kind", "animation", "--limit", "4", "--rom-only",
+    ])
+    next_item = build_parser().parse_args([
+        "data", "next", "--kind", "actor-template", "--rom-only",
+    ])
     context = build_parser().parse_args(["data", "context", "0x00121964", "--json"])
     assert stats.json_output is True
     assert todo.kind == "animation"
     assert todo.limit == 4
+    assert todo.rom_only is True
     assert next_item.kind == "actor-template"
+    assert next_item.rom_only is True
     assert context.address == 0x121964
 
 

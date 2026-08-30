@@ -72,14 +72,14 @@ def command_data_stats(args: argparse.Namespace) -> int:
 
 
 def command_data_todo(args: argparse.Namespace) -> int:
-    items = _index(args).todo(kind=args.kind)
+    items = _index(args).todo(kind=args.kind, rom_only=args.rom_only)
     limit = args.limit if args.limit > 0 else len(items)
     _render_todo(items[:limit], total=len(items), json_output=args.json_output, title="Data work queue")
     return 0
 
 
 def command_data_next(args: argparse.Namespace) -> int:
-    items = _index(args).todo(kind=args.kind)
+    items = _index(args).todo(kind=args.kind, rom_only=args.rom_only)
     if not items:
         print("No data work items remain")
         return 1
