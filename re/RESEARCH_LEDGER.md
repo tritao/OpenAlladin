@@ -891,6 +891,13 @@ placement, and `Level00_EnterRoutine` decrements it on later callbacks. The
 promotion closes the short alignment cooldown without assigning a broader scene
 timer meaning.
 
+The paired player-collision response gates are now canonical as
+`PLAYER_COLLISION_GATE_TYPE3E` and `PLAYER_COLLISION_GATE_TYPE3F` at `FFF177`
+and `FFF178`. Type-0x3E and Type-0x3F collision handlers publish the respective
+flags, and the three follow-up interaction spawners select runtime Type-0x3E,
+Type-0x3F, or Type-0x3C families from the exact `00/any`, `01/00`, and `01/01`
+truth table. No unsupported clear timing is assigned.
+
 The adjacent compact scene-resource loader variants are recorded in
 `re/mame/findings/20260828-scene-resource-loader-variants-v1.json`.
 `0x001B4896`, `0x001B48C4`, and `0x001B48F2` load exact two-resource VRAM

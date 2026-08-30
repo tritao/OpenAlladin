@@ -616,6 +616,18 @@ def test_real_level_timer_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_player_collision_response_gates_have_canonical_roles():
+    symbols = SymbolStore()
+    type3e = symbols.at(0x00FFF177, include_ranges=False)
+    type3f = symbols.at(0x00FFF178, include_ranges=False)
+    assert type3e is not None
+    assert type3e.name == "PLAYER_COLLISION_GATE_TYPE3E"
+    assert type3e.metadata["format"] == "boolean"
+    assert type3f is not None
+    assert type3f.name == "PLAYER_COLLISION_GATE_TYPE3F"
+    assert type3f.metadata["format"] == "boolean"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

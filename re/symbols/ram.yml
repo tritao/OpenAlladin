@@ -1507,6 +1507,27 @@
     - ghidra_disassembly_001AFBEA
     - ghidra_disassembly_001B5B84
     - ghidra_disassembly_001B5B8C
+0xFFF177:
+  name: PLAYER_COLLISION_GATE_TYPE3E
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Player-collision response gate set by ActorType3E_PlayerCollisionHandler and consumed by the Type-0x3C/0x3E/0x3F interaction-spawn selector family to choose a follow-up response variant.
+  evidence:
+    - ghidra_disassembly_001AF2B0
+    - ghidra_decompile_001B738A
+    - ghidra_decompile_001B73C2
+    - ghidra_decompile_001B73F2
+0xFFF178:
+  name: PLAYER_COLLISION_GATE_TYPE3F
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Player-collision response gate set by ActorType3F_PlayerCollisionHandler and consumed with PLAYER_COLLISION_GATE_TYPE3E by the Type-0x3C/0x3E/0x3F interaction-spawn selector family to choose a follow-up response variant.
+  evidence:
+    - ghidra_disassembly_001AF2FA
+    - ghidra_decompile_001B738A
+    - ghidra_decompile_001B73F2
 0xFF98C4:
   name: TERRAIN_LANDING_ROW_POINTERS
   type: pointer_table

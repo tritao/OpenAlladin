@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-player-collision-response-gates-type3e3f-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Close the paired player-collision gates that select the follow-up Type-0x3C/0x3E/0x3F interaction response.",
+  "gates": [
+    {
+      "address": "0x00FFF177",
+      "name": "PLAYER_COLLISION_GATE_TYPE3E",
+      "producer": "ActorType3E_PlayerCollisionHandler at 0x001AF2B0"
+    },
+    {
+      "address": "0x00FFF178",
+      "name": "PLAYER_COLLISION_GATE_TYPE3F",
+      "producer": "ActorType3F_PlayerCollisionHandler at 0x001AF2FA"
+    }
+  ],
+  "selector_family": [
+    { "address": "0x001B738A", "name": "InteractionSpawn_RuntimeType3C_42", "condition": "TYPE3E gate nonzero and TYPE3F gate nonzero", "result_type": "0x3C" },
+    { "address": "0x001B73C2", "name": "InteractionSpawn_RuntimeType3E_5F", "condition": "TYPE3E gate zero", "result_type": "0x3E" },
+    { "address": "0x001B73F2", "name": "InteractionSpawn_RuntimeType3F_41", "condition": "TYPE3E gate nonzero and TYPE3F gate zero", "result_type": "0x3F" }
+  ],
+  "truth_table": [
+    { "type3e": "0", "type3f": "0", "selected": "runtime Type-0x3E family" },
+    { "type3e": "0", "type3f": "1", "selected": "runtime Type-0x3E family" },
+    { "type3e": "1", "type3f": "0", "selected": "runtime Type-0x3F family" },
+    { "type3e": "1", "type3f": "1", "selected": "runtime Type-0x3C family" }
+  ],
+  "evidence": [
+    "Exact Type-0x3E and Type-0x3F player-collision handler stores",
+    "Three exact interaction-spawn consumers and their branch conditions",
+    "Shared base-zero template and MovementVM response publication in all selected variants"
+  ],
+  "conclusion": "FFF177 and FFF178 are the paired Type-0x3E/Type-0x3F player-collision response gates. Their selector truth table is closed; the database does not claim an independent clear site for either byte.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

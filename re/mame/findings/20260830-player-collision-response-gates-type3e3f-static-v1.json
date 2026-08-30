@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-collision-response-gates-type3e3f-static-targets.json",
+  "gates": {
+    "0x00FFF177": "PLAYER_COLLISION_GATE_TYPE3E",
+    "0x00FFF178": "PLAYER_COLLISION_GATE_TYPE3F"
+  },
+  "producers": {
+    "type3e": "ActorType3E_PlayerCollisionHandler at 0x001AF2B0 sets FFF177",
+    "type3f": "ActorType3F_PlayerCollisionHandler at 0x001AF2FA sets FFF178"
+  },
+  "consumers": [
+    "InteractionSpawn_RuntimeType3C_42 at 0x001B738A",
+    "InteractionSpawn_RuntimeType3E_5F at 0x001B73C2",
+    "InteractionSpawn_RuntimeType3F_41 at 0x001B73F2"
+  ],
+  "selector": {
+    "00_any": "runtime Type-0x3E family",
+    "01_00": "runtime Type-0x3F family",
+    "01_01": "runtime Type-0x3C family"
+  },
+  "conclusion": "The paired flags select the follow-up response actor family after Type-0x3E/Type-0x3F player collision handling. Their exact static producers and selector branches are recorded; clear timing remains unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
