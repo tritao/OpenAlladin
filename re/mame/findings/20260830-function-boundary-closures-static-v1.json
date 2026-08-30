@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/function-boundary-closures-static-targets.json",
+  "promoted": [
+    { "address": "0x001B0316", "name": "Interaction_DispatchTargetState", "range": ["0x001B0316", "0x001B0335"] },
+    { "address": "0x001B1AB6", "name": "SceneResource_RebuildAfterInteractionContinuation", "range": ["0x001B1AB6", "0x001B1AD5"] },
+    { "address": "0x001B2624", "name": "SceneResource_CopyWordsToInitialC000", "range": ["0x001B2624", "0x001B263B"] }
+  ],
+  "boundary_corrections": {
+    "level_camera_scroll_callbacks": 9,
+    "terminal_rts_extensions": 12,
+    "shared_body_promotions": 2
+  },
+  "validation": {
+    "layout_unknown_bytes": 0,
+    "layout_overlaps": 0,
+    "byte_exact_reassembly": true,
+    "rom_bytes": 2097152
+  },
+  "conclusion": "Canonical ownership now reaches the actual terminal instruction for the corrected functions and explicitly labels the two previously unnamed shared continuations, reducing generated deasm mechanical labels from 16 to 2 without changing ROM bytes."
+}

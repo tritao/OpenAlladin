@@ -1349,7 +1349,7 @@
 0x001B0316:
   name: Interaction_DispatchTargetState
   confidence: decompiled
-  size: 30
+  size: 32
   description: Indirectly dispatches the current interaction target state through the caller-supplied A0 longword table. It indexes the table by the byte at 0x00FFF0EC, pushes the selected destination for an RTS tail transfer, and marks PLAYER_TERMINAL_TRANSITION when the selector is zero.
   evidence:
     - ghidra_disassembly_001B0316
@@ -1394,6 +1394,15 @@
   evidence:
     - ghidra_disassembly_001B1AA0
     - scene-resource-rebuild-static-decompilation
+0x001B1AB6:
+  name: SceneResource_RebuildAfterInteractionContinuation
+  size: 32
+  confidence: decompiled
+  description: Fall-through scene-resource rebuild continuation after Frame_WaitThirtyOneVBlanks. It queues the scene update command, starts the palette transition, clears and republishes actor/resource state, copies the fixed scene header, initializes the rebuild actor, and returns before InteractionCounter_ConfigureActors.
+  evidence:
+    - ghidra_disassembly_001B1AB6
+    - scene-resource-rebuild-wait-static-decompilation
+    - scene_resource_rebuild_static_decompilation
 0x001B1DDA:
   name: VDP_WriteAccumulatedWordStream
   confidence: decompiled
@@ -3678,6 +3687,15 @@
     - gnu_m68k_disassembly_001B2618
     - scene_initial_vdp_palette_helper_variants_static_decompilation
     - ghidra_scene_initial_vdp_palette_targets
+0x001B2624:
+  name: SceneResource_CopyWordsToInitialC000
+  size: 24
+  confidence: decompiled
+  description: Shared initial-scene word-copy body reached by the compact palette/VRAM helper variants. It programs the VDP C000 destination, copies the caller's D0-counted words from A0 to VDP_DATA, restores the caller's saved D0 word, and returns.
+  evidence:
+    - gnu_m68k_disassembly_001B2624
+    - scene-initial-palette-helper-variants-static-v1
+    - scene_initial_vdp_palette_helper_variants_static_decompilation
 0x001B3B4A:
   name: Menu_AnimateSelectionMarkerTiles
   confidence: decompiled
@@ -3779,73 +3797,73 @@
 
 0x001AAA88:
   name: Level_CameraScrollCallback_Levels00_01_02
-  size: 395
+  size: 396
   confidence: decompiled
-  description: Shared level camera-scroll callback selected by LEVEL_TABLE records 0, 1, and 2. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X, CAMERA_SCROLL_X, and the active scene state, then returns at 0x001AAC12.
+  description: Shared level camera-scroll callback selected by LEVEL_TABLE records 0, 1, and 2. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X, CAMERA_SCROLL_X, and the active scene state, then returns at 0x001AAC13.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AAA88
 0x001AAC14:
   name: Level03_CameraScrollCallback
-  size: 385
+  size: 386
   confidence: decompiled
-  description: Level-table record-3 camera-scroll callback. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X and camera scroll state, then returns at 0x001AAD94.
+  description: Level-table record-3 camera-scroll callback. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X and camera scroll state, then returns at 0x001AAD95.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AAC14
 0x001AAD96:
   name: Level10_CameraScrollCallback
-  size: 357
+  size: 358
   confidence: decompiled
-  description: Level-table record-10 camera-scroll callback. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X and camera scroll state, then returns at 0x001AAEFA.
+  description: Level-table record-10 camera-scroll callback. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X and camera scroll state, then returns at 0x001AAEFB.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AAD96
 0x001AAEFC:
   name: Level08_CameraScrollCallback
-  size: 235
+  size: 236
   confidence: decompiled
-  description: Level-table record-8 camera-scroll callback. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X, WORLD_CAMERA_Y, and the active scene state, then returns at 0x001AAFE6.
+  description: Level-table record-8 camera-scroll callback. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X, WORLD_CAMERA_Y, and the active scene state, then returns at 0x001AAFE7.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AAEFC
 0x001AAFE8:
   name: Level_CameraScrollCallback_Levels11_12
-  size: 125
+  size: 126
   confidence: decompiled
-  description: Shared level camera-scroll callback selected by LEVEL_TABLE records 11 and 12. It emits the compact level-specific VDP scroll update using WORLD_CAMERA_X and WORLD_CAMERA_Y, then returns at 0x001AB064.
+  description: Shared level camera-scroll callback selected by LEVEL_TABLE records 11 and 12. It emits the compact level-specific VDP scroll update using WORLD_CAMERA_X and WORLD_CAMERA_Y, then returns at 0x001AB065.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AAFE8
 0x001AB066:
   name: Level07_CameraScrollCallback
-  size: 285
+  size: 286
   confidence: decompiled
-  description: Level-table record-7 camera-scroll callback. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X, WORLD_CAMERA_Y, and the active scene state, then returns at 0x001AB182.
+  description: Level-table record-7 camera-scroll callback. It emits the level-specific VDP scroll/row updates using WORLD_CAMERA_X, WORLD_CAMERA_Y, and the active scene state, then returns at 0x001AB183.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AB066
 0x001AB184:
   name: Level09_CameraScrollCallback
-  size: 169
+  size: 170
   confidence: decompiled
-  description: Level-table record-9 camera-scroll callback. It emits the level-specific VDP scroll update and consumes the level's camera resource cursor before returning at 0x001AB22C.
+  description: Level-table record-9 camera-scroll callback. It emits the level-specific VDP scroll update and consumes the level's camera resource cursor before returning at 0x001AB22D.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AB184
 0x001AB22E:
   name: Level_CameraScrollCallback_Levels05_06
-  size: 141
+  size: 142
   confidence: decompiled
-  description: Shared level camera-scroll callback selected by LEVEL_TABLE records 5 and 6. It emits the level-specific VDP scroll update and consumes the level's camera resource cursor before returning at 0x001AB2BA.
+  description: Shared level camera-scroll callback selected by LEVEL_TABLE records 5 and 6. It emits the level-specific VDP scroll update and consumes the level's camera resource cursor before returning at 0x001AB2BB.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AB22E
 0x001AB2BC:
   name: Level04_CameraScrollCallback
-  size: 145
+  size: 146
   confidence: decompiled
-  description: Level-table record-4 camera-scroll callback. It emits the level-specific VDP scroll update and consumes the level's camera resource cursor before returning at 0x001AB34C.
+  description: Level-table record-4 camera-scroll callback. It emits the level-specific VDP scroll update and consumes the level's camera resource cursor before returning at 0x001AB34D.
   evidence:
     - level_camera_scroll_callback_static_decompilation
     - ghidra_disassembly_001AB2BC
@@ -4037,7 +4055,7 @@
 0x001B1CE4:
   name: VDP_RunPatternServiceFrames
   confidence: decompiled
-  size: 25
+  size: 26
   description: Runs 0x28 iterations of the frame-phase service, the RTS-only VDP pattern hook, and VDP_WriteDescendingBytePatternAtVRAMStart; the helper preserves the loop counter on the stack and does not assign a broader presentation meaning to the surrounding caller.
   evidence:
     - ghidra_disassembly_001B1CE4
@@ -5832,7 +5850,7 @@
 0x001B2F7E:
   name: Render_FadePaletteToWhite
   confidence: decompiled
-  size: 125
+  size: 126
   description: Snapshots all 64 current palette words, then performs 16 VBlank-paced passes that add the next two-unit component step toward the maximum Genesis color components and write the full palette at VDP palette address 0xC000.
   evidence:
     - ghidra_disassembly_001B2F7E

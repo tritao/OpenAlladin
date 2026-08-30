@@ -738,15 +738,15 @@ def test_runtime_type22_interaction_handler_is_canonical():
 def test_level_camera_scroll_callback_family_matches_level_table():
     symbols = SymbolStore()
     callbacks = {
-        0x001AAA88: (395, "Level_CameraScrollCallback_Levels00_01_02", (0, 1, 2)),
-        0x001AAC14: (385, "Level03_CameraScrollCallback", (3,)),
-        0x001AAD96: (357, "Level10_CameraScrollCallback", (10,)),
-        0x001AAEFC: (235, "Level08_CameraScrollCallback", (8,)),
-        0x001AAFE8: (125, "Level_CameraScrollCallback_Levels11_12", (11, 12)),
-        0x001AB066: (285, "Level07_CameraScrollCallback", (7,)),
-        0x001AB184: (169, "Level09_CameraScrollCallback", (9,)),
-        0x001AB22E: (141, "Level_CameraScrollCallback_Levels05_06", (5, 6)),
-        0x001AB2BC: (145, "Level04_CameraScrollCallback", (4,)),
+        0x001AAA88: (396, "Level_CameraScrollCallback_Levels00_01_02", (0, 1, 2)),
+        0x001AAC14: (386, "Level03_CameraScrollCallback", (3,)),
+        0x001AAD96: (358, "Level10_CameraScrollCallback", (10,)),
+        0x001AAEFC: (236, "Level08_CameraScrollCallback", (8,)),
+        0x001AAFE8: (126, "Level_CameraScrollCallback_Levels11_12", (11, 12)),
+        0x001AB066: (286, "Level07_CameraScrollCallback", (7,)),
+        0x001AB184: (170, "Level09_CameraScrollCallback", (9,)),
+        0x001AB22E: (142, "Level_CameraScrollCallback_Levels05_06", (5, 6)),
+        0x001AB2BC: (146, "Level04_CameraScrollCallback", (4,)),
     }
     rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     seen_levels = set()
@@ -4415,17 +4415,17 @@ def test_interaction_target_dispatch_helper_is_exact():
     function = symbols.at(0x001B0316, include_ranges=False)
     assert function is not None
     assert function.name == "Interaction_DispatchTargetState"
-    assert function.end == 0x001B0333
-    assert function.size == 30
+    assert function.end == 0x001B0335
+    assert function.size == 32
 
     ram = symbols.at(0x00FFF0EC, include_ranges=False)
     assert ram is not None
     assert ram.name == "INTERACTION_TARGET_CURRENT"
 
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
-    assert rom[0x001B0316:0x001B0334] == bytes.fromhex(
+    assert rom[0x001B0316:0x001B0336] == bytes.fromhex(
         "4244183900FFF0ECD844D8442F3040004A3900FFF0EC"
-        "660650F900FFF0E6"
+        "660650F900FFF0E64E75"
     )
 
 
@@ -4488,6 +4488,51 @@ def test_scene_resource_thirty_one_vblank_loop_is_exact():
     assert rom[0x001B1AA0:0x001B1AB6] == bytes.fromhex(
         "383C001E3F04610009F6523900FF7E28381F51CCFFF0"
     )
+
+
+def test_scene_resource_rebuild_continuation_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001B1AB6, include_ranges=False)
+    assert function is not None
+    assert function.name == "SceneResource_RebuildAfterInteractionContinuation"
+    assert function.end == 0x001B1AD5
+    assert function.size == 32
+    assert function.confidence == "decompiled"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B1AB6:0x001B1AD6] == bytes.fromhex(
+        "48E7C0C24EB9001E58F44CDF430361000CBE6100C74E"
+        "61000BCE6100C7344E75"
+    )
+
+
+def test_scene_resource_initial_c000_word_copy_body_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001B2624, include_ranges=False)
+    assert function is not None
+    assert function.name == "SceneResource_CopyWordsToInitialC000"
+    assert function.end == 0x001B263B
+    assert function.size == 24
+    assert function.confidence == "decompiled"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B2624:0x001B263C] == bytes.fromhex(
+        "23FCC000000000C0000433D800C0000051C8FFF8301F4E75"
+    )
+
+
+def test_semantic_function_ranges_include_terminal_instructions():
+    symbols = SymbolStore()
+    expected = {
+        0x001B1CE4: (0x001B1CFD, 26, "VDP_RunPatternServiceFrames"),
+        0x001B2F7E: (0x001B2FFB, 126, "Render_FadePaletteToWhite"),
+    }
+    for address, (end, size, name) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == size
 
 
 def test_scene_resource_vdp_accumulator_stream_is_exact():
