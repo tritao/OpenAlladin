@@ -2322,3 +2322,47 @@
   description: Level-09 callback phase byte advanced modulo 0x80 by Level09_EnterRoutine; the callback uses it as independent per-frame phase state alongside the Type-0x50 spawn cooldown.
   evidence:
     - ghidra_disassembly_001B614C
+
+0xFFF179:
+  name: PLAYER_INTERACTION_TYPE3D_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Type-0x3D player-interaction latch. ActorType3D_PlayerCollisionHandler sets it after preparing the collision response, while the Type-0x28 and Type-0xB4 interaction selectors test it to choose their alternate spawn paths.
+  evidence:
+    - ghidra_disassembly_001AF384
+    - ghidra_disassembly_001B6D1E
+    - ghidra_disassembly_001B7084
+
+0xFFF09E:
+  name: CAMERA_SCROLL_RENDER_OFFSET
+  type: u16
+  format: integer
+  confidence: decompiled
+  description: Shared per-callback camera-render offset used by the Levels-00/01/02, Level-03, and Level-10 camera scroll callbacks. Those callbacks adjust it by one step, combine it with WORLD_CAMERA_X, and use the result to emit the level-specific VDP refill pattern.
+  evidence:
+    - ghidra_disassembly_001AAA88
+    - ghidra_disassembly_001AAC14
+    - ghidra_disassembly_001AAD96
+
+0xFF7E84:
+  name: ACTOR_SLOT_1_X
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: X coordinate word at offset +0x02 in common actor-table slot 1, the first record of ACTOR_COMMON_POOL_BASE. Collision, terrain, and Level-08 presentation paths consume this record coordinate.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001AE6B4
+    - ghidra_disassembly_001B6066
+
+0xFF7E86:
+  name: ACTOR_SLOT_1_Y
+  type: u16
+  format: pixels
+  confidence: confirmed
+  description: Y coordinate word at offset +0x04 in common actor-table slot 1, the first record of ACTOR_COMMON_POOL_BASE. Collision, terrain, and Level-08 presentation paths consume this record coordinate.
+  evidence:
+    - ghidra_actor_table_layout
+    - ghidra_disassembly_001AE6B4
+    - ghidra_disassembly_001B6066

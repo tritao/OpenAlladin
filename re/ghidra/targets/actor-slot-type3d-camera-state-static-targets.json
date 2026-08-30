@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-actor-slot-type3d-camera-state-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "state_fields": [
+    {
+      "address": "0x00FFF179",
+      "name": "PLAYER_INTERACTION_TYPE3D_LATCH",
+      "writer": "0x001AF384 ActorType3D_PlayerCollisionHandler",
+      "readers": ["0x001B6D1E InteractionSpawn_Type13_28", "0x001B7084 InteractionSpawn_RuntimeType4A_B4"],
+      "contract": "type-0x3D collision latch selecting the alternate Type-0x28 and Type-0xB4 interaction paths"
+    },
+    {
+      "address": "0x00FFF09E",
+      "name": "CAMERA_SCROLL_RENDER_OFFSET",
+      "writers": ["0x001AAA88 Level_CameraScrollCallback_Levels00_01_02", "0x001AAC14 Level03_CameraScrollCallback", "0x001AAD96 Level10_CameraScrollCallback"],
+      "contract": "shared word adjusted by one per callback and combined with WORLD_CAMERA_X for level-specific VDP refill patterns"
+    },
+    {
+      "address": "0x00FF7E84",
+      "name": "ACTOR_SLOT_1_X",
+      "container": "ACTOR_COMMON_POOL_BASE + 0x02",
+      "contract": "common actor-table slot-1 X coordinate"
+    },
+    {
+      "address": "0x00FF7E86",
+      "name": "ACTOR_SLOT_1_Y",
+      "container": "ACTOR_COMMON_POOL_BASE + 0x04",
+      "contract": "common actor-table slot-1 Y coordinate"
+    }
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -878,6 +878,22 @@ def test_real_collision_and_presentation_state_have_canonical_roles():
         assert symbol.confidence == "decompiled"
 
 
+def test_real_actor_slot_and_camera_callback_state_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FFF179: ("PLAYER_INTERACTION_TYPE3D_LATCH", "boolean", "decompiled"),
+        0x00FFF09E: ("CAMERA_SCROLL_RENDER_OFFSET", "integer", "decompiled"),
+        0x00FF7E84: ("ACTOR_SLOT_1_X", "pixels", "confirmed"),
+        0x00FF7E86: ("ACTOR_SLOT_1_Y", "pixels", "confirmed"),
+    }
+    for address, (name, format_name, confidence) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == format_name
+        assert symbol.confidence == confidence
+
+
 def test_real_player_terrain_transition_gate_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF114, include_ranges=False)
     assert symbol is not None
