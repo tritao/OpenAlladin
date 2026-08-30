@@ -479,6 +479,20 @@ def test_real_player_terrain_response_latches_have_canonical_roles():
         assert symbol.name == name
 
 
+def test_real_interaction_anchor_pair_has_canonical_roles():
+    symbols = SymbolStore()
+
+    expected = {
+        0x00FFF094: "INTERACTION_ANCHOR_X",
+        0x00FFF096: "INTERACTION_ANCHOR_Y",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["format"] == "pixels"
+
+
 def test_real_scene_graphics_have_loader_specific_canonical_names():
     symbols = SymbolStore()
 

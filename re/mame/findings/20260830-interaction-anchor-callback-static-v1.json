@@ -30,6 +30,10 @@
     }
   ],
   "behavior": "The callback family is contiguous and independently terminated: the first routine applies (+3,-2), moves actor residual words toward the FFF094/FFF096 anchor with 0x68/0x7C clamps, and handles marker-sensitive facing; the second applies (+1,-2) with the same anchored residual movement; the third derives FFF094 = actor X - 0x20 and FFF096 = actor Y + 0x40. Movement streams push the latter two routines through the opcode-0x91 deferred callback convention.",
+  "published_state": [
+    { "address": "0x00FFF094", "name": "INTERACTION_ANCHOR_X", "formula": "actor X - 0x20" },
+    { "address": "0x00FFF096", "name": "INTERACTION_ANCHOR_Y", "formula": "actor Y + 0x40" }
+  ],
   "boundaries": {
     "family": "0x001B57C4-0x001B58D7",
     "following": "LevelEvent_NoOpHandler at 0x001B58D8"

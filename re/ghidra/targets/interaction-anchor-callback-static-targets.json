@@ -6,6 +6,10 @@
     "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
   },
   "purpose": "Range-bound the three contiguous actor movement callbacks that maintain the interaction anchor and apply anchored response steps.",
+  "memory_references": [
+    { "address": "0x00FFF094", "name": "INTERACTION_ANCHOR_X" },
+    { "address": "0x00FFF096", "name": "INTERACTION_ANCHOR_Y" }
+  ],
   "callbacks": [
     {
       "address": "0x001B57C4",

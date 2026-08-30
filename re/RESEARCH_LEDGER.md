@@ -3044,6 +3044,20 @@ and writes the active-scene entry gate at `0xFF7E3F`. The gate is consumed by
 The static result is recorded in
 `re/mame/findings/20260828-startup-initialization-v1.json`.
 
+## Interaction-anchor callback state (20260830)
+
+The paired interaction-anchor state is now named. `INTERACTION_ANCHOR_X` at
+`0x00FFF094` and `INTERACTION_ANCHOR_Y` at `0x00FFF096` are published by
+`Actor_SetInteractionAnchorFromActor` at `0x001B58BA` as the current actor
+position minus `0x20` horizontally and plus `0x40` vertically. The two
+anchored movement callbacks at `0x001B57C4` and `0x001B5850` consume the
+published pair while steering actor residual movement words toward the target.
+This is shared interaction state, not an additional player-only animation
+cursor or terrain latch.
+
+The static result is recorded in
+`re/mame/findings/20260830-interaction-anchor-callback-static-v1.json`.
+
 ## Player terrain-contact resolution (20260828)
 
 The neighboring contact-side player routines are now named. `0x001A99F0`
