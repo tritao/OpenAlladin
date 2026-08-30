@@ -2401,6 +2401,14 @@
   evidence:
     - ghidra_decompile_actor_combat_targets
     - ghidra_disassembly_001AE6DE
+0x001AE700:
+  name: Actor_PublishInteractionValueA5
+  size: 34
+  confidence: decompiled
+  description: A5-register calling-convention variant of Actor_PublishInteractionValue; if the actor value at offset 0x34 is nonzero, publishes it to the global interaction table at 0x00FFAE87 indexed by actor offset 0x32.
+  evidence:
+    - ghidra_disassembly_001AE700
+    - actor_interaction_value_publisher_register_variants_static_decompilation
 0x001A9716:
   name: Player_HandleJumpAndVerticalState
   confidence: confirmed
