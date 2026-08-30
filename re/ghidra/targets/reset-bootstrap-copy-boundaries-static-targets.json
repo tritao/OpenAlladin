@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-reset-bootstrap-copy-boundaries-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Correct the reset-bootstrap inline-data boundaries from the actual 68000 post-increment sequence and isolate the only remaining unconsumed tail.",
+  "copy": {
+    "source": ["0x000002DE", "0x00000303"],
+    "destination": "0x00A00000",
+    "size": 38,
+    "bytes": "AF01D91F112700212600F977EDB0DDE1FDE1ED47ED4FD1E1F108D9C1D1E1F1F9F3ED5636E9E9",
+    "setup": "The 24-byte VDP-register loop advances A5 from 0x000002C2 to 0x000002DA; the preceding move.l consumes 0x000002DA-0x000002DD, leaving A5 at 0x000002DE for the 38-byte DBF copy loop."
+  },
+  "post_copy": {
+    "source": ["0x00000304", "0x0000030F"],
+    "size": 12,
+    "bytes": "81048F02C000000040000010",
+    "consumers": [
+      "Two move.l (A5)+ operations emit 0x00000304-0x0000030B through the VDP control pointer.",
+      "The four-byte move.b loop emits 0x0000030C-0x0000030F through the VDP data-base offset."
+    ]
+  },
+  "unconsumed_tail": {
+    "address": "0x00000310",
+    "end": "0x00000313",
+    "size": 4,
+    "bytes": "9FBFDFFF",
+    "name": "RESET_BOOTSTRAP_UNCONSUMED_TAIL_0310"
+  },
+  "evidence": [
+    "Exact 68000 instruction listing for System_ResetBootstrap at 0x0000021A.",
+    "A5 post-increment positions after the inline VDP-register loop, follow-up VDP command, copy loop, and post-copy hardware writes.",
+    "Exact ROM bytes and non-overlapping physical boundaries."
+  ],
+  "limitations": [
+    "The copied payload's internal Z80 instruction/data interpretation remains unresolved.",
+    "The four-byte 0x00000310-0x00000313 tail has no recovered 68K consumer or internal format."
+  ],
+  "status": "recorded-static-disassembly"
+}

@@ -2857,32 +2857,31 @@
     - ghidra_disassembly_0000021A
     - reset_bootstrap_data_targets
 0x002DE:
-  name: RESET_BOOTSTRAP_COPIED_PAYLOAD_SUFFIX_002DE
-  type: u8[10]
-  size: 10
+  name: RESET_BOOTSTRAP_COPIED_PAYLOAD_002DE
+  type: u8[38]
+  size: 38
   confidence: confirmed
-  description: Final ten bytes of the 38-byte reset startup payload copied from ROM 0x000002C2-0x000002E7 into Z80 RAM at 0x00A00000; the exact copied role is established, while the payload's internal Z80 interpretation remains unresolved.
+  description: Exact 38-byte reset startup payload copied from ROM 0x000002DE-0x00000303 into Z80 RAM at 0x00A00000 after the inline VDP command; the copied role and boundary are established, while the payload's internal Z80 interpretation remains unresolved.
   evidence:
     - ghidra_disassembly_0000021A
-    - startup_bootstrap_payload_static_v1
-0x002E8:
+    - reset_bootstrap_copy_boundaries_static_v1
+0x00304:
   name: RESET_BOOTSTRAP_POST_COPY_HARDWARE_VALUES
-  type: u8[16]
-  size: 16
+  type: u8[12]
+  size: 12
   confidence: confirmed
-  description: 'Sixteen bytes consumed immediately after the reset startup copy: two longwords are emitted through the VDP control pointer, one following longword is emitted through the same pointer, and the final four bytes are written to the VDP data-base offset used by the reset sequence.'
+  description: 'Exact twelve bytes consumed immediately after the reset startup copy at 0x00000304-0x0000030F: two longwords are emitted through the VDP control pointer and the final four bytes are written byte-by-byte to the VDP data-base offset used by the reset sequence.'
   evidence:
     - ghidra_disassembly_0000021A
-    - startup_bootstrap_payload_static_v1
-0x002F8:
-  name: RESET_BOOTSTRAP_UNCONSUMED_TAIL_02F8
+    - reset_bootstrap_copy_boundaries_static_v1
+0x00310:
+  name: RESET_BOOTSTRAP_UNCONSUMED_TAIL_0310
   type: opaque_data
-  size: 28
+  size: 4
   confidence: provisional
-  description: Provisional opaque 28-byte ROM tail following the reset path's last direct post-copy value at 0x000002F7 and ending before the continuation at 0x00000314. The 68K reset path does not consume this range, so no internal Z80 or hardware interpretation is assigned.
+  description: Provisional opaque four-byte ROM tail at 0x00000310-0x00000313 following the reset path's final direct VDP write at 0x0000030F and ending before the continuation at 0x00000314. The 68K reset path does not consume this range, so no internal Z80 or hardware interpretation is assigned.
   evidence:
-    - startup_bootstrap_payload_static_v1
-    - reset_bootstrap_unconsumed_tail_static_v1
+    - reset_bootstrap_copy_boundaries_static_v1
 0x00334:
   name: RESET_BOOTSTRAP_SKIPPED_WORD_0334
   type: opaque_data

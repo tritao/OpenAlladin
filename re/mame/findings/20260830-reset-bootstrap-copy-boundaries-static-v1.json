@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-recorded-static-disassembly-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "confirmed",
+  "target_manifest": "re/ghidra/targets/reset-bootstrap-copy-boundaries-static-targets.json",
+  "corrections": [
+    "RESET_BOOTSTRAP_COPIED_PAYLOAD_002DE is 0x000002DE-0x00000303, not only 0x000002DE-0x000002E7.",
+    "RESET_BOOTSTRAP_POST_COPY_HARDWARE_VALUES is 0x00000304-0x0000030F, not 0x000002E8-0x000002F7.",
+    "The remaining unconsumed tail is 0x00000310-0x00000313."
+  ],
+  "instruction_evidence": {
+    "register_setup": "The LEA/MOVEM sequence establishes A5 at 0x000002C2; the 24-byte register-byte loop and 4-byte follow-up VDP command advance it to 0x000002DE.",
+    "copy_loop": "The move.b (A5)+,(A0)+ loop with D2=0x25 copies 38 bytes through 0x00000303.",
+    "hardware_writes": "The following two move.l operations consume 0x00000304-0x0000030B and the four-iteration move.b loop consumes 0x0000030C-0x0000030F."
+  },
+  "conclusion": "The reset-bootstrap data partition is corrected to match the actual post-increment instruction sequence. Only the four-byte 0x00000310-0x00000313 tail remains provisional; the prior broader tail interpretation is superseded while its historical manifest is preserved."
+}

@@ -266,39 +266,42 @@ def test_startup_checksum_spin_routine_is_exact_and_separate_from_reset_entry():
     assert int.from_bytes(rom[0x04:0x08], "big") == reset.address
 
 
-def test_reset_bootstrap_payload_suffix_and_post_copy_values_are_exact():
+def test_reset_bootstrap_payload_and_post_copy_values_are_exact():
     symbols = SymbolStore()
     copied = symbols.at(0x000002DE, include_ranges=False)
     assert copied is not None
-    assert copied.name == "RESET_BOOTSTRAP_COPIED_PAYLOAD_SUFFIX_002DE"
-    assert copied.end == 0x000002E7
-    assert copied.size == 10
-    assert copied.metadata["type"] == "u8[10]"
+    assert copied.name == "RESET_BOOTSTRAP_COPIED_PAYLOAD_002DE"
+    assert copied.end == 0x00000303
+    assert copied.size == 38
+    assert copied.metadata["type"] == "u8[38]"
     assert copied.confidence == "confirmed"
 
-    hardware = symbols.at(0x000002E8, include_ranges=False)
+    hardware = symbols.at(0x00000304, include_ranges=False)
     assert hardware is not None
     assert hardware.name == "RESET_BOOTSTRAP_POST_COPY_HARDWARE_VALUES"
-    assert hardware.end == 0x000002F7
-    assert hardware.size == 16
-    assert hardware.metadata["type"] == "u8[16]"
+    assert hardware.end == 0x0000030F
+    assert hardware.size == 12
+    assert hardware.metadata["type"] == "u8[12]"
     assert hardware.confidence == "confirmed"
     assert copied.end + 1 == hardware.address
 
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
-    assert rom[copied.address:copied.end + 1] == bytes.fromhex("AF01D91F112700212600")
+    assert rom[copied.address:copied.end + 1] == bytes.fromhex(
+        "AF01D91F112700212600F977EDB0DDE1FDE1ED47ED4FD1E1F108"
+        "D9C1D1E1F1F9F3ED5636E9E9"
+    )
     assert rom[hardware.address:hardware.end + 1] == bytes.fromhex(
-        "F977EDB0DDE1FDE1ED47ED4FD1E1F108"
+        "81048F02C000000040000010"
     )
 
 
 def test_reset_bootstrap_unconsumed_tail_and_skipped_word_are_exact():
     symbols = SymbolStore()
-    tail = symbols.at(0x000002F8, include_ranges=False)
+    tail = symbols.at(0x00000310, include_ranges=False)
     assert tail is not None
-    assert tail.name == "RESET_BOOTSTRAP_UNCONSUMED_TAIL_02F8"
+    assert tail.name == "RESET_BOOTSTRAP_UNCONSUMED_TAIL_0310"
     assert tail.end == 0x00000313
-    assert tail.size == 28
+    assert tail.size == 4
     assert tail.metadata["type"] == "opaque_data"
     assert tail.confidence == "provisional"
 
@@ -316,9 +319,7 @@ def test_reset_bootstrap_unconsumed_tail_and_skipped_word_are_exact():
     assert skipped.end + 1 < renderer.address
 
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
-    assert rom[tail.address:tail.end + 1] == bytes.fromhex(
-        "D9C1D1E1F1F9F3ED5636E9E981048F02C0000000400000109FBFDFFF"
-    )
+    assert rom[tail.address:tail.end + 1] == bytes.fromhex("9FBFDFFF")
     assert rom[skipped.address:skipped.end + 1] == bytes.fromhex("00E0")
 
 
