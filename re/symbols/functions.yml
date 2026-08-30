@@ -6187,7 +6187,7 @@
 
 0x001AFE1C:
   name: ActorType7E_PlayerCollisionHandler
-  size: 358
+  size: 292
   confidence: decompiled
   description: Player-collision handler for actor type 0x7E. When the player interaction-animation and terrain-push gates permit, it compares PLAYER_WORLD_X with the actor position and uses INTERACTION_COUNTER_SECONDARY_DIGITS thresholds "05" and "10" to select scene-resource modes 0x11, 0x14, or 0x16. The completed transition branch decrements the secondary counter five or ten times, increments GAME_DIFFICULTY_COUNTER unless it is already '9', and advances ACTIVE_SCENE_ENTRY_GATE on the right-side path before scheduling resource presentation; ordinary contacts leave through the caller's shared pass.
   evidence:
