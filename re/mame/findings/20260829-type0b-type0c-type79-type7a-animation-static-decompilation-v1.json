@@ -40,9 +40,9 @@
     },
     "type7a": {
       "roots": [
-        { "address": "0x00125A68", "name": "ACTOR_ANIM_TYPE7A_INTERACTION_06", "value": "0x0001" },
-        { "address": "0x00125A88", "name": "ACTOR_ANIM_TYPE7A_INTERACTION_07", "value": "0x0055" },
-        { "address": "0x00125AA8", "name": "ACTOR_ANIM_TYPE7A_INTERACTION_08", "value": "0x00AB" }
+        { "address": "0x00125A68", "name": "ACTOR_ANIM_TYPE7A_INTERACTION_06", "value": "0x0001", "range": "0x00125A68-0x00125A87", "terminal_jump": "0x00125A82 -> 0x00125A70" },
+        { "address": "0x00125A88", "name": "ACTOR_ANIM_TYPE7A_INTERACTION_07", "value": "0x0055", "range": "0x00125A88-0x00125AA7", "terminal_jump": "0x00125AA2 -> 0x00125A90" },
+        { "address": "0x00125AA8", "name": "ACTOR_ANIM_TYPE7A_INTERACTION_08", "value": "0x00AB", "range": "0x00125AA8-0x00125AC7", "terminal_jump": "0x00125AC2 -> 0x00125AB0" }
       ],
       "shared_tail": {
         "address": "0x00125AC8",
@@ -74,7 +74,7 @@
     "Exact template records and direct consumers",
     "Exact stream terminators and shared-call boundaries"
   ],
-  "conclusion": "The directly referenced Type-0B/0C level-event and Type-79/7A interaction roots are now range-bounded and semantically named. The Type-0B child template records and Type-2C child animation are also tracked; the Type-7A roots share one exact response tail rather than overlapping ranges.",
+  "conclusion": "The directly referenced Type-0B/0C level-event and Type-79/7A interaction roots are now range-bounded and semantically named. The Type-0B child template records and Type-2C child animation are also tracked; each Type-0x7A root now includes its post-FC terminal EA loop before the shared response tail, rather than leaving those six-byte commands as false gaps.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

@@ -42,26 +42,29 @@
     {
       "address": "0x00125A68",
       "name": "ACTOR_ANIM_TYPE7A_INTERACTION_06",
-      "range": ["0x00125A68", "0x00125A81"],
-      "bytes": 26,
+      "range": ["0x00125A68", "0x00125A87"],
+      "bytes": 32,
       "consumer": "0x001B6F34 InteractionSpawn_Type7A_06",
-      "branch_value": "0x0001"
+      "branch_value": "0x0001",
+      "terminal_jump": "0x00125A82 EA -> 0x00125A70"
     },
     {
       "address": "0x00125A88",
       "name": "ACTOR_ANIM_TYPE7A_INTERACTION_07",
-      "range": ["0x00125A88", "0x00125AA1"],
-      "bytes": 26,
+      "range": ["0x00125A88", "0x00125AA7"],
+      "bytes": 32,
       "consumer": "0x001B6F4A InteractionSpawn_Type7A_07",
-      "branch_value": "0x0055"
+      "branch_value": "0x0055",
+      "terminal_jump": "0x00125AA2 EA -> 0x00125A90"
     },
     {
       "address": "0x00125AA8",
       "name": "ACTOR_ANIM_TYPE7A_INTERACTION_08",
-      "range": ["0x00125AA8", "0x00125AC1"],
-      "bytes": 26,
+      "range": ["0x00125AA8", "0x00125AC7"],
+      "bytes": 32,
       "consumer": "0x001B6F60 InteractionSpawn_Type7A_08",
-      "branch_value": "0x00AB"
+      "branch_value": "0x00AB",
+      "terminal_jump": "0x00125AC2 EA -> 0x00125AB0"
     },
     {
       "address": "0x00125AC8",

@@ -6263,27 +6263,30 @@
 
 0x00125A68:
   name: ACTOR_ANIM_TYPE7A_INTERACTION_06
-  size: 26
+  type: animation_stream
+  size: 32
   confidence: decompiled
-  description: Type-0x7A interaction animation for selector 0x06. It publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 1, and calls the shared Type-0x7A response tail at 0x00125AC8.
+  description: Type-0x7A interaction animation for selector 0x06. Its exact 32-byte owner publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 1, calls the shared Type-0x7A response tail at 0x00125AC8, and returns through the terminal jump at 0x00125A82 to its local response entry.
   evidence:
     - interaction_spawn_type79_type7a_static_decompilation
     - animation_stream_decoder
 
 0x00125A88:
   name: ACTOR_ANIM_TYPE7A_INTERACTION_07
-  size: 26
+  type: animation_stream
+  size: 32
   confidence: decompiled
-  description: Type-0x7A interaction animation for selector 0x07. It publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 0x55, and calls the shared Type-0x7A response tail at 0x00125AC8.
+  description: Type-0x7A interaction animation for selector 0x07. Its exact 32-byte owner publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 0x55, calls the shared Type-0x7A response tail at 0x00125AC8, and returns through the terminal jump at 0x00125AA2 to its local response entry.
   evidence:
     - interaction_spawn_type79_type7a_static_decompilation
     - animation_stream_decoder
 
 0x00125AA8:
   name: ACTOR_ANIM_TYPE7A_INTERACTION_08
-  size: 26
+  type: animation_stream
+  size: 32
   confidence: decompiled
-  description: Type-0x7A interaction animation for selector 0x08. It publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 0x00AB, and calls the shared Type-0x7A response tail at 0x00125AC8.
+  description: Type-0x7A interaction animation for selector 0x08. Its exact 32-byte owner publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 0x00AB, calls the shared Type-0x7A response tail at 0x00125AC8, and returns through the terminal jump at 0x00125AC2 to its local response entry.
   evidence:
     - interaction_spawn_type79_type7a_static_decompilation
     - animation_stream_decoder

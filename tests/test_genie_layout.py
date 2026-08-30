@@ -2272,6 +2272,37 @@ def test_type1e_proximity_movement_handoff_animation_is_exact():
     assert decoded["instructions"][-1]["branch_target"] == "0x001235EC"
 
 
+def test_type7a_interaction_roots_include_terminal_jumps():
+    symbols = SymbolStore()
+    cases = (
+        (0x00125A68, 0x00125A87, "ACTOR_ANIM_TYPE7A_INTERACTION_06", 32, "0x00125A70"),
+        (0x00125A88, 0x00125AA7, "ACTOR_ANIM_TYPE7A_INTERACTION_07", 32, "0x00125A90"),
+        (0x00125AA8, 0x00125AC7, "ACTOR_ANIM_TYPE7A_INTERACTION_08", 32, "0x00125AB0"),
+    )
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = load_animation_decoder().RomReader(rom_path.read_bytes())
+    decoder = load_animation_decoder().AnimationDecoder(rom)
+    for address, end, name, size, target in cases:
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.end == end
+        assert stream.size == size
+        assert stream.metadata["type"] == "animation_stream"
+
+        decoded = decoder.decode_stream(
+            address,
+            max_instructions=64,
+            max_bytes=size,
+            follow_control_flow=False,
+            continue_after_control_flow=True,
+        )
+        assert decoded["bytes_decoded"] == size
+        assert decoded["stopped_reason"] == "byte_limit"
+        assert decoded["instructions"][-1]["opcode"] == "0xEA"
+        assert decoded["instructions"][-1]["branch_target"] == target
+
+
 def test_actor_type41_interaction_response_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00125D7E, include_ranges=False)
