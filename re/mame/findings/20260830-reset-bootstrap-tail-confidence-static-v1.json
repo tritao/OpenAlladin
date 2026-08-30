@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-recorded-static-disassembly-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/reset-bootstrap-tail-confidence-static-targets.json",
+  "object": "0x00000310-0x00000313 RESET_BOOTSTRAP_UNCONSUMED_TAIL_0310",
+  "evidence": [
+    "Exact bytes 9FBFDFFF",
+    "Corrected reset post-increment boundaries",
+    "Direct branch from the guarded bootstrap to 0x00000314 leaves the range unconsumed"
+  ],
+  "limitations": [
+    "The bytes remain opaque and no independent consumer or higher-level role is claimed."
+  ],
+  "conclusion": "The four-byte tail is fully resolved as a physical opaque owner with proven reset-path non-consumption; only its original data meaning remains unknown."
+}

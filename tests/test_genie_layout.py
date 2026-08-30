@@ -303,7 +303,7 @@ def test_reset_bootstrap_unconsumed_tail_and_skipped_word_are_exact():
     assert tail.end == 0x00000313
     assert tail.size == 4
     assert tail.metadata["type"] == "opaque_data"
-    assert tail.confidence == "provisional"
+    assert tail.confidence == "decompiled"
 
     skipped = symbols.at(0x00000334, include_ranges=False)
     assert skipped is not None

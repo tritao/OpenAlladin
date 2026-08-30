@@ -2878,10 +2878,11 @@
   name: RESET_BOOTSTRAP_UNCONSUMED_TAIL_0310
   type: opaque_data
   size: 4
-  confidence: provisional
-  description: Provisional opaque four-byte ROM tail at 0x00000310-0x00000313 following the reset path's final direct VDP write at 0x0000030F and ending before the continuation at 0x00000314. The 68K reset path does not consume this range, so no internal Z80 or hardware interpretation is assigned.
+  confidence: decompiled
+  description: Exact opaque four-byte ROM tail at 0x00000310-0x00000313 following the reset path's final direct VDP write at 0x0000030F and ending before the continuation at 0x00000314. The 68K reset path does not consume this range; its bytes and boundary are decoded, while no internal Z80 or hardware interpretation is assigned.
   evidence:
     - reset_bootstrap_copy_boundaries_static_v1
+    - reset_bootstrap_tail_confidence_static_v1
 0x00334:
   name: RESET_BOOTSTRAP_SKIPPED_WORD_0334
   type: opaque_data
