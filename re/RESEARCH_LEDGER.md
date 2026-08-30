@@ -2216,6 +2216,22 @@ the secondary interaction counter from the primary response budget at
 The static result is recorded in
 `re/mame/findings/20260828-interaction-counter-secondary-v1.json`.
 
+## Type-0x7E transition-counter consumer (20260830)
+
+The decompiled body at `0x001AFE1C` closes the remaining static consumer
+contract around the single-digit `GAME_DIFFICULTY_COUNTER`. When the player
+interaction-animation and terrain-push gates allow the transition, the Type-
+0x7E handler compares the player's world X coordinate with the actor and uses
+the secondary ASCII counter thresholds `"05"` and `"10"` to select scene-
+resource modes `0x11`, `0x14`, and `0x16`. The completed left-side branch
+decrements the secondary counter five times and, unless the primary single
+digit is already `'9'`, increments it; the completed right-side branch
+decrements the secondary counter ten times and advances the active-scene gate.
+
+This proves the counter's transition-gate role and exact cap use without
+assigning a user-facing resource name. The static result is recorded in
+`re/mame/findings/20260830-difficulty-counter-type7e-consumer-static-v1.json`.
+
 ## Level-loader scratch helpers (20260828)
 
 The level-loader initialization family is now named at five documented
@@ -3396,3 +3412,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-scheduler-latch-contract-closure-v1` | recorded-static-decompilation | Closed the remaining RAM wording gap: FRAME_WAIT_LATCH is the transition-only optional Z80-handshake gate with writers at 0x001AA3A8/0x001B2DF4/0x001B2E02, while VBLANK_READY_LATCH is the interrupt-to-wait release latch consumed and cleared by Frame_WaitForVBlankWork |
 | `20260830-actor-response-template-field-closure-static-v1` | recorded-static-decompilation | Closed the remaining actor-template extent wording gaps for the zero base, shared collision-response record, and Type-0x84 response record with exact 20-byte boundaries and initializer-mapped fields; surrounding family roles remain conservative |
 | `20260830-primary-interaction-counter-contract-static-v1` | recorded-static-decompilation | Renamed the former FarTransfer counter helpers at 0x001B0336/0x001B0360 as primary interaction-counter advance/decrement services and closed their cross-subsystem caller and step-count contracts while retaining neutral resource semantics |
+| `20260830-difficulty-counter-type7e-consumer-static-v1` | recorded-static-decompilation | Closed ActorType7E_PlayerCollisionHandler's exact secondary-counter thresholds, five/ten-step countdown paths, GAME_DIFFICULTY_COUNTER cap branch, scene-resource mode selection, and camera-threshold tail without assigning a user-facing counter name |

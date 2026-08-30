@@ -1,0 +1,57 @@
+{
+  "format": "openaladdin-difficulty-counter-type7e-consumer-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "function": {
+    "address": "0x001AFE1C",
+    "name": "ActorType7E_PlayerCollisionHandler",
+    "range": ["0x001AFE1C", "0x001AFF3F"],
+    "confidence": "decompiled",
+    "entry_gates": [
+      "PLAYER_INTERACTION_ANIMATION_GATE must be clear.",
+      "TERRAIN_PUSH_UP must be set for the transition logic; otherwise the handler clears the scene-resource completion byte and returns through its camera-threshold tail.",
+      "The scene-resource completion byte at 0x00FFF114 must be clear before the handler selects a transition."
+    ],
+    "position_branches": [
+      {
+        "condition": "PLAYER_WORLD_X is left of the actor position and INTERACTION_COUNTER_SECONDARY_DIGITS is below ASCII 05",
+        "result": "Ensures scene-resource mode 0x11 actors and sets the completion byte when newly instantiated."
+      },
+      {
+        "condition": "PLAYER_WORLD_X is left of the actor position and INTERACTION_COUNTER_SECONDARY_DIGITS is at least ASCII 05",
+        "result": "If GAME_DIFFICULTY_COUNTER is not ASCII 09, decrements the secondary counter five times, optionally queues audio command 0x48, and increments GAME_DIFFICULTY_COUNTER. At ASCII 09 it selects scene-resource mode 0x16 directly."
+      },
+      {
+        "condition": "PLAYER_WORLD_X is at or right of the actor position and INTERACTION_COUNTER_SECONDARY_DIGITS is below ASCII 10",
+        "result": "Ensures scene-resource mode 0x11 actors."
+      },
+      {
+        "condition": "PLAYER_WORLD_X is at or right of the actor position and INTERACTION_COUNTER_SECONDARY_DIGITS is at least ASCII 10",
+        "result": "Decrements the secondary counter ten times, optionally queues audio command 0x48, advances ACTIVE_SCENE_ENTRY_GATE, and selects scene-resource mode 0x14."
+      }
+    ],
+    "tail_effects": [
+      "The handler publishes camera thresholds CAMERA_HORIZONTAL_THRESHOLD=0x00B0 and CAMERA_VERTICAL_THRESHOLD=0x0180 before returning."
+    ]
+  },
+  "counter_contract": {
+    "address": "0x00FF7E3C",
+    "name": "GAME_DIFFICULTY_COUNTER",
+    "role": "Single ASCII-digit progression/transition counter with an upper cap of '9'.",
+    "known_producers": [
+      "Game_InitializeDifficultyCounter",
+      "Game_IncrementDifficultyCounter"
+    ],
+    "known_consumers": [
+      "Render_BuildActorRecords",
+      "Level_ExitAndTerminalTransition",
+      "ActorType7E_PlayerCollisionHandler"
+    ],
+    "qualification": "The static closure does not assign a user-facing gameplay resource name."
+  },
+  "conclusion": "ActorType7E_PlayerCollisionHandler uses the secondary interaction counter as a position-dependent transition budget and uses GAME_DIFFICULTY_COUNTER == '9' as the terminal scene-resource selector. This closes the exact static consumer contract while retaining the conservative canonical RAM name."
+}
