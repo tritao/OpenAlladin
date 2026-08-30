@@ -1902,6 +1902,7 @@ def test_extended_player_collision_handler_family_is_exact():
         0x001AF6AC: (0x001AF6DB, "ActorType5F_PlayerCollisionHandler"),
         0x001AF6DC: (0x001AF73F, "ActorType60_61_PlayerCollisionHandler"),
         0x001AFD84: (0x001AFE1B, "ActorType01_PlayerCollisionHandler"),
+        0x001ABF9C: (0x001ABFCF, "Actor_InstallType01CollisionResponse"),
         0x001AFE1C: (0x001AFF81, "ActorType7E_PlayerCollisionHandler"),
         0x001AFF82: (0x001AFFE3, "ActorType02_PlayerCollisionHandler"),
         0x001AC60E: (0x001AC613, "ActorType0D_ActorCollisionHandler"),

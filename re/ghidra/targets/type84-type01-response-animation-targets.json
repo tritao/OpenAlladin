@@ -12,7 +12,7 @@
     "size": 38,
     "producers": [
       "0x001AFD84 Type-0x01 player-collision transition",
-      "0x001ABF9C collision-response helper"
+      "0x001ABF9C Actor_InstallType01CollisionResponse"
     ],
     "transition": "The producers initialize the actor as type 0x84 and install this stream; the ED command at 0x00122DCC publishes type 0x01 before the stream returns to 0x00122D92.",
     "terminal": "0x00122DD2 EA -> 0x00122D92"

@@ -5994,6 +5994,16 @@
     - ghidra_disassembly_001ABF9A
     - actor_collision_dispatch_family_extended_static_decompilation
 
+0x001ABF9C:
+  name: Actor_InstallType01CollisionResponse
+  size: 0x34
+  confidence: decompiled
+  description: Collision-response helper that marks the destination actor with the type-0x01 response setup. It optionally queues response audio 3 when the shared response gate is active, sets actor field +0x1A to -8, publishes type 0x84, installs ACTOR_ANIM_TYPE84_TYPE01_RESPONSE at +0x20, and clears +0x37 before returning.
+  evidence:
+    - type84_type01_response_animation_static_decompilation
+    - ghidra_actor_collision_response_targets
+    - ghidra_disassembly_001ABF9C
+
 0x001ABFF0:
   name: ActorType23_ActorCollisionHandler
   size: 10

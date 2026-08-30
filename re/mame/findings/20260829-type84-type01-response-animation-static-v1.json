@@ -17,7 +17,8 @@
       },
       {
         "address": "0x001ABF9C",
-        "effect": "Collision-response helper sets actor type 0x84, installs 0x00122DB2, and clears actor field +0x37 after its optional response audio call."
+        "name": "Actor_InstallType01CollisionResponse",
+        "effect": "Collision-response helper sets actor field +0x1A to -8, publishes actor type 0x84, installs 0x00122DB2, and clears actor field +0x37 after its optional response audio call."
       }
     ],
     "decoded": [
