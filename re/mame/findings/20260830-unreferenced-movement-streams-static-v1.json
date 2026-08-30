@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-recorded-static-disassembly-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/unreferenced-movement-streams-static-targets.json",
+  "streams": [
+    {
+      "address": "0x0011F800",
+      "name": "ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800",
+      "range": "0x0011F800-0x0011F8A3",
+      "size": 164,
+      "confidence": "provisional",
+      "decoded": "28 MovementVM steps, including the signed grid and terminal clear-state step",
+      "boundary": "After LEVEL_F800_TILEMAP_SOURCE; before ACTOR_MOVE_TYPE5E84_PAIR_E1E2",
+      "reachability": "unresolved"
+    },
+    {
+      "address": "0x001203E8",
+      "name": "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8",
+      "range": "0x001203E8-0x001203F1",
+      "size": 10,
+      "confidence": "provisional",
+      "decoded": "(+2,0), (+1,0), then 0x80 -> 0x001203E8",
+      "boundary": "Between ACTOR_MOVE_TYPE84_SHARED_STEP_1 and ACTOR_MOVE_TYPE50_LEVEL09_SPAWN",
+      "reachability": "unresolved"
+    }
+  ],
+  "evidence": [
+    "MovementDecoder exact byte limits",
+    "Adjacent canonical stream ownership",
+    "No external pointer or producer recovered"
+  ],
+  "conclusion": "The two exact MovementVM-shaped gaps are now explicit provisional owners for layout and deasm coverage. Their names intentionally describe the decoded mechanics without claiming a live actor or scene producer."
+}

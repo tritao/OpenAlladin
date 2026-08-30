@@ -1129,6 +1129,54 @@ def test_unindexed_movement_stream_bands_are_exact_with_evidence_confidence():
         assert decoded["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
 
 
+def test_unreferenced_movement_streams_are_exact_and_provisional():
+    symbols = SymbolStore()
+    expected = [
+        (0x0011F800, 0x0011F8A3, "ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800", 164),
+        (0x001203E8, 0x001203F1, "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8", 10),
+    ]
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = MovementDecoder(load_animation_decoder().RomReader(rom_path.read_bytes()))
+    for address, end, name, size in expected:
+        stream = symbols.at(address, include_ranges=False)
+        assert stream is not None
+        assert stream.name == name
+        assert stream.end == end
+        assert stream.size == size
+        assert stream.metadata["type"] == "movement_stream"
+        assert stream.confidence == "provisional"
+
+        decoded = decoder.decode_stream(
+            address,
+            max_steps=1024,
+            max_bytes=size,
+            follow_control_flow=False,
+        )
+        assert decoded["bytes_decoded"] == size
+        assert decoded["stopped_reason"] == "byte_limit"
+        assert decoded["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
+
+    grid = decoder.decode_stream(
+        0x0011F800,
+        max_steps=1024,
+        max_bytes=0xA4,
+        follow_control_flow=False,
+    )
+    assert grid["steps"][0]["delta_x"] == -111
+    assert grid["steps"][0]["delta_y"] == 0
+    assert grid["steps"][-1]["next_address"] == "0x0011F8A4"
+
+    loop = decoder.decode_stream(
+        0x001203E8,
+        max_steps=1024,
+        max_bytes=10,
+        follow_control_flow=False,
+    )
+    jump = next(command for step in loop["steps"] for command in step["commands"])
+    assert jump["opcode"] == "0x80"
+    assert jump["branch_target"] == "0x001203E8"
+
+
 def test_type5e84_anchor_response_bank_preserves_anchor_and_grid_evidence():
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
     decoder = MovementDecoder(load_animation_decoder().RomReader(rom_path.read_bytes()))
@@ -1806,7 +1854,10 @@ def test_shared_movement_root_family_is_exact():
     assert type15["stopped_reason"] == "control_flow_cycle"
     assert symbols.at(0x00120418, include_ranges=False).metadata["entry_offset"] == 30
     assert symbols.at(0x00120428, include_ranges=False).metadata["entry_offset"] == 46
-    assert symbols.at(0x001203E8, include_ranges=False) is None
+    unresolved_loop = symbols.at(0x001203E8, include_ranges=False)
+    assert unresolved_loop is not None
+    assert unresolved_loop.name == "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8"
+    assert unresolved_loop.confidence == "provisional"
 
 
 def test_shared_type3c_3d_3e_3f_movement_is_exact():
