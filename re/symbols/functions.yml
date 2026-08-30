@@ -538,6 +538,15 @@
   evidence:
     - ghidra_decompile_001B4A7A
     - ghidra_scene_resource_transfer_targets
+0x001B4A96:
+  name: SceneResource_LoadC000AndRunFrameService
+  size: 146
+  confidence: decompiled
+  description: Loads a caller-selected scene resource into VRAM C000, performs one actor/render frame pass, uploads the caller-selected palette band followed by the three fixed scene palette bands, processes the caller-selected scene command stream, waits 250 frames, and clears the active scene actors and fixed VDP header. The direct selector for this complete service remains unresolved.
+  evidence:
+    - gnu_m68k_disassembly_001B4A96
+    - scene_resource_service_gap_closures_static_v1
+    - ghidra_scene_resource_service
 0x001B47F0:
   name: SceneResource_LoadCommonPlaneC000
   confidence: decompiled
@@ -800,6 +809,15 @@
     - ghidra_disassembly_001B4EDC
     - ghidra_scene_resource_dispatch
     - scene_resource_presentation_wrappers
+0x001B4F04:
+  name: SceneResource_RunSharedC000Presentation
+  size: 120
+  confidence: decompiled
+  description: Programs the scene VDP mode, decompresses the shared graphics resource at 0x0012D0FA to VRAM C000, uploads palette source 0x00129812, emits the fixed C000 presentation fill through the frame-phase loop at 0x00FFF0A0, and performs the shared wait/fade/reset completion. The direct selector for this complete presentation service remains unresolved.
+  evidence:
+    - gnu_m68k_disassembly_001B4F04
+    - scene_resource_service_gap_closures_static_v1
+    - ghidra_scene_resource_service
 0x001B5266:
   name: LevelObjectSpawnEntry
   confidence: confirmed
@@ -3023,6 +3041,15 @@
     - ghidra_scene_resource_queued_actor_targets
     - scene-resource-queued-actor-static-decompilation
     - ghidra_actor_table_layout
+0x001B4836:
+  name: SceneResource_ClearC000AndWritePhaseRows
+  size: 96
+  confidence: decompiled
+  description: Programs the scene VDP mode, clears the initial C000 scene block with 0x00 words, and writes sixteen phase-selected row pairs using SCENE_VDP_TRANSITION_PLANE_OFFSET_TABLE at 0x00002080 and FRAME_PHASE_COUNTER. The direct selector for this complete VDP helper remains unresolved.
+  evidence:
+    - gnu_m68k_disassembly_001B4836
+    - scene_vdp_transition_plane_offset_table_static_v1
+    - scene_resource_service_gap_closures_static_v1
 0x001AE372:
   name: Actor_ClearOwnedResources
   confidence: confirmed

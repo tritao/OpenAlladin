@@ -3901,6 +3901,43 @@ def test_player_terrain_landing_state_tail_is_exact():
     assert rom[0x001ADB22:0x001ADB2A] == bytes.fromhex("50F900FFF0C14E75")
 
 
+def test_scene_resource_service_gap_closures_are_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x001B4836: (0x001B4895, 96, "SceneResource_ClearC000AndWritePhaseRows"),
+        0x001B4A96: (0x001B4B27, 146, "SceneResource_LoadC000AndRunFrameService"),
+        0x001B4F04: (0x001B4F7B, 120, "SceneResource_RunSharedC000Presentation"),
+    }
+    for address, (end, size, name) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == size
+        assert function.confidence == "decompiled"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B4836:0x001B4896] == bytes.fromhex(
+        "33FC8B0300C0000423FC7000000300C000044240383C00CF33C000C00000"
+        "33C000C0000051CCFFF2383C000F4242143900FF7E280242003E43F82080"
+        "363C01FF4245D071200054020202003EC04333C500C0000033C000C00000"
+        "51CCFFE64E75"
+    )
+    assert rom[0x001B4A96:0x001B4B28] == bytes.fromhex(
+        "2F0943F90000C0006100E97650F900FF7E284EB9001AC7964EB9001AB7A4"
+        "4EB9001AC7264EB9001AB7766100D9DC205F6100DBB041F9001298F26100"
+        "DB9241F9001290126100DB7441F9001290B26100DB5650F900FFEFFC2079"
+        "00FFEFDC42404241323C0006103900FFEFE4123900FFEFE56100D6EC4239"
+        "00FFEFFC303C00FA6100E3946100DC68610096F86100DB784E75"
+    )
+    assert rom[0x001B4F04:0x001B4F7C] == bytes.fromhex(
+        "33FC901100C0000441F90012D0FA43F90000C0006100E4FC41F900129812"
+        "6100D7546100D576303900FFF0A0544033C000FFF0A00C4001206416024"
+        "001FF23FC4000001000C0000433C000C0000060D2303C000A6100DF526100"
+        "D82633FC900100C0000423FC4000001000C00004424033C000C000004E75"
+    )
+
+
 def test_final_mechanical_function_closure_is_exact():
     symbols = SymbolStore()
     expected = {

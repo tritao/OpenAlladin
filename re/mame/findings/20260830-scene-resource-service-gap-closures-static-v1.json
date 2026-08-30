@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-scene-resource-service-gap-closures-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/scene-resource-service-gap-closures-static-targets.json",
+  "helpers": [
+    {
+      "address": "0x001B4836",
+      "range": ["0x001B4836", "0x001B4895"],
+      "size": 96,
+      "name": "SceneResource_ClearC000AndWritePhaseRows",
+      "bytes": "33FC8B0300C0000423FC7000000300C000044240383C00CF33C000C0000033C000C0000051CCFFF2383C000F4242143900FF7E280242003E43F82080363C01FF4245D071200054020202003EC04333C500C0000033C000C0000051CCFFE64E75",
+      "semantics": "Clears the initial C000 scene block and emits sixteen phase-selected row pairs using the 32-word table at 0x00002080."
+    },
+    {
+      "address": "0x001B4A96",
+      "range": ["0x001B4A96", "0x001B4B27"],
+      "size": 146,
+      "name": "SceneResource_LoadC000AndRunFrameService",
+      "bytes": "2F0943F90000C0006100E97650F900FF7E284EB9001AC7964EB9001AB7A44EB9001AC7264EB9001AB7766100D9DC205F6100DBB041F9001298F26100DB9241F9001290126100DB7441F9001290B26100DB5650F900FFEFFC207900FFEFDC42404241323C0006103900FFEFE4123900FFEFE56100D6EC423900FFEFFC303C00FA6100E3946100DC68610096F86100DB784E75",
+      "semantics": "Loads caller-provided C000 and palette/command-stream inputs, performs the actor/render service and fixed palette uploads, then waits, fades, and releases the scene presentation."
+    },
+    {
+      "address": "0x001B4F04",
+      "range": ["0x001B4F04", "0x001B4F7B"],
+      "size": 120,
+      "name": "SceneResource_RunSharedC000Presentation",
+      "bytes": "33FC901100C0000441F90012D0FA43F90000C0006100E4FC41F9001298126100D7546100D576303900FFF0A0544033C000FFF0A00C4001206416024001FF23FC4000001000C0000433C000C0000060D2303C000A6100DF526100D82633FC900100C0000423FC4000001000C00004424033C000C000004E75",
+      "semantics": "Loads the shared graphics resource to C000, uploads its palette, emits the fixed fill/presentation sequence, and completes through the common wait/fade/reset services."
+    }
+  ],
+  "reachability": "All three bodies are exact RTS-delimited code regions, but no direct static selector is exported. This finding records their low-level contracts without inventing a scene-state role.",
+  "conclusion": "Three complete scene-resource service bodies previously hidden inside UNKNOWN layout gaps are now canonical code owners. The neighboring 0x001B4F02-0x001B4F03 RTS stub and other alternate-entry gaps remain intentionally unresolved."
+}

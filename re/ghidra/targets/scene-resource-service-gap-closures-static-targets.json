@@ -1,0 +1,52 @@
+{
+  "format": "openaladdin-scene-resource-service-gap-closures-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "targets": [
+    {
+      "address": "0x001B4836",
+      "end": "0x001B4895",
+      "size": 96,
+      "name": "SceneResource_ClearC000AndWritePhaseRows",
+      "behavior": "Programs the scene VDP mode, clears the initial C000 block, and writes sixteen phase-selected row pairs using SCENE_VDP_TRANSITION_PLANE_OFFSET_TABLE and FRAME_PHASE_COUNTER.",
+      "reachability": "No direct static selector is currently recovered."
+    },
+    {
+      "address": "0x001B4A96",
+      "end": "0x001B4B27",
+      "size": 146,
+      "name": "SceneResource_LoadC000AndRunFrameService",
+      "behavior": "Loads a caller-selected resource to C000, performs one actor/render frame, uploads the caller-selected and fixed palette bands, processes the caller-selected scene command stream, waits 250 frames, and clears active actors and the fixed VDP header.",
+      "reachability": "No direct static selector is currently recovered."
+    },
+    {
+      "address": "0x001B4F04",
+      "end": "0x001B4F7B",
+      "size": 120,
+      "name": "SceneResource_RunSharedC000Presentation",
+      "behavior": "Programs the scene VDP mode, decompresses 0x0012D0FA to C000, uploads palette source 0x00129812, emits the fixed C000 presentation fill through 0x00FFF0A0, and performs the shared wait/fade/reset completion.",
+      "reachability": "No direct static selector is currently recovered."
+    }
+  ],
+  "memory_references": [
+    { "address": "0x00002080", "name": "SCENE_VDP_TRANSITION_PLANE_OFFSET_TABLE" },
+    { "address": "0x00FF7E28", "name": "FRAME_PHASE_COUNTER" },
+    { "address": "0x00FFF0A0", "name": "SCENE_RESOURCE_PRESENTATION_FILL_STATE" },
+    { "address": "0x00C00000", "name": "VDP_DATA" },
+    { "address": "0x00C00004", "name": "VDP_CONTROL" }
+  ],
+  "boundaries": {
+    "preceding": "Each owner begins after an adjacent RTS-delimited scene-resource helper or explicit stub.",
+    "following": "The owners end at their own RTS and stop before the next canonical scene-resource function. The 0x001B4F02-0x001B4F03 RTS stub remains unresolved."
+  },
+  "evidence": [
+    "Exact GNU m68k disassembly and ROM bytes",
+    "Adjacent canonical scene-resource loader and service boundaries",
+    "Shared VDP, palette, frame-service, and scene-resource contracts"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
