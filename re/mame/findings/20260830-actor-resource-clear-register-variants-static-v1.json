@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-actor-resource-clear-register-variants-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/actor-resource-clear-register-variants-static-targets.json",
+  "promoted": {
+    "address": "0x001AE3A0",
+    "name": "Actor_ClearOwnedResourcesFromA0",
+    "range": ["0x001AE3A0", "0x001AE3CD"],
+    "size": 46
+  },
+  "semantics": "The previously unresolved A0 entry is the register-specific twin of Actor_ClearOwnedResourcesFromA2. It clears actor-owned resource pointers and occupancy bytes, preserves the caller's D0/FP state, and returns without unrelated state changes.",
+  "conclusion": "The actor resource-clear register variants are now a contiguous canonical pair covering 0x001AE3A0-0x001AE3FB."
+}

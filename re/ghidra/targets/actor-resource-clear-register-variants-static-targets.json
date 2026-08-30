@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-actor-resource-clear-register-variants-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "variants": [
+    {
+      "address": "0x001AE3A0",
+      "name": "Actor_ClearOwnedResourcesFromA0",
+      "range": ["0x001AE3A0", "0x001AE3CD"],
+      "size": 46,
+      "record_register": "A0",
+      "behavior": "Clears the resource pointer at actor +0x2A, the VRAM/resource base at +0x2E, and each owned-resource occupancy byte counted by actor +0x29; restores D0 and FP before returning."
+    },
+    {
+      "address": "0x001AE3CE",
+      "name": "Actor_ClearOwnedResourcesFromA2",
+      "range": ["0x001AE3CE", "0x001AE3FB"],
+      "size": 46,
+      "record_register": "A2",
+      "behavior": "The equivalent A2-register variant used by linked collision-cleanup paths."
+    }
+  ],
+  "boundary_basis": [
+    "The A0 variant begins after Actor_ClearOwnedResources and ends at its direct RTS immediately before the A2 variant.",
+    "Both bodies have identical resource-clear logic with only the actor base register changed."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -2875,6 +2875,14 @@
   evidence:
     - ghidra_actor_cleanup_001AE372
     - mame_guard_sword_hit_trace
+0x001AE3A0:
+  name: Actor_ClearOwnedResourcesFromA0
+  size: 46
+  confidence: decompiled
+  description: A0-register calling-convention variant of Actor_ClearOwnedResources; clears the selected actor's owned resource list, count, and resource pointers while preserving the caller's D0 and FP registers.
+  evidence:
+    - ghidra_disassembly_001AE3A0
+    - actor_resource_clear_register_variants_static_decompilation
 0x001AE3CE:
   name: Actor_ClearOwnedResourcesFromA2
   confidence: decompiled

@@ -3023,3 +3023,18 @@ def test_interaction_resource_progress_reset_is_exact():
     assert rom[0x001B0024:0x001B003A] == bytes.fromhex(
         "41F900FF7E38303C000210FC003051C8FFFA10BC0000"
     )
+
+
+def test_actor_resource_clear_a0_variant_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001AE3A0, include_ranges=False)
+    assert function is not None
+    assert function.name == "Actor_ClearOwnedResourcesFromA0"
+    assert function.end == 0x001AE3CD
+    assert function.size == 46
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001AE3A0:0x001AE3CE] == bytes.fromhex(
+        "2F0E3F002C68002ABDFC00000000671842A8002A42A8002E4240"
+        "1028002942280029421E51C8FFFC301F2C5F4E75"
+    )
