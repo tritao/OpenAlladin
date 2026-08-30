@@ -19,6 +19,8 @@ constexpr std::uint32_t kPlayerResponseAnimationStream = 0x00121C62;
 constexpr std::uint32_t kType4EActorAnimationStream = 0x00124B1A;
 constexpr std::uint32_t kType4FActorAnimationStream = 0x00124B3E;
 constexpr std::uint32_t kType12ActorAnimationStream = 0x0012512C;
+constexpr std::uint32_t kType4DType12ResponseAnimation = 0x001222C2;
+constexpr std::uint32_t kType4DResponseAnimation = 0x00124498;
 
 PlayerCollisionHandlerKind player_handler_kind(std::uint8_t actor_type) {
     switch (actor_type) {
@@ -304,6 +306,7 @@ PlayerCollisionHandlerInfo CollisionSystem::player_collision_handler(
         || actor_type == 0x40
         || actor_type == 0x11
         || actor_type == 0x12
+        || actor_type == 0x4D
         || actor_type == 0x4E
         || actor_type == 0x4F;
     return info;
@@ -407,6 +410,42 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
             0x001B7ABC
         );
         (void)actor_lifecycle_.install(collision.actor, replacement);
+        return effects;
+    }
+
+    if (actor.type == 0x4D) {
+        // ActorType4D_PlayerCollisionHandler first searches the gameplay
+        // records for the paired type-0x12 actor. The helper leaves the
+        // first match selected, so preserve that ordering here.
+        ActorState* paired = nullptr;
+        for (ActorIndex slot = 1; slot <= 24 && slot < state.actors.size(); ++slot) {
+            if (state.actors[slot].type == 0x12) {
+                paired = &state.actors[slot];
+                break;
+            }
+        }
+        if (paired != nullptr) {
+            state.camera.horizontal_threshold = 0x00B0;
+            paired->animation_pc = kType4DType12ResponseAnimation;
+            paired->animation_timer = 0;
+
+            const std::uint16_t player_world_x = static_cast<std::uint16_t>(
+                state.camera.x + state.player.x);
+            if (paired->x >= player_world_x) {
+                state.player.vx = static_cast<std::int16_t>(state.player.vx + 0x0100);
+            } else {
+                state.player.vx = static_cast<std::int16_t>(state.player.vx - 0x0100);
+            }
+        }
+
+        // The source record remains in place but becomes the Type-0x84
+        // response actor. Its movement PC and other record fields are left
+        // intact; only the fields explicitly cleared by the ROM are reset.
+        actor.type = 0x84;
+        actor.animation_pc = kType4DResponseAnimation;
+        actor.animation_timer = 0;
+        actor.movement_word_18 = 0;
+        actor.movement_word_1a = 0;
         return effects;
     }
 

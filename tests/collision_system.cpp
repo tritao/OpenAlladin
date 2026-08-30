@@ -215,6 +215,79 @@ int main() {
     assert(type4f.sound_requests.size() == 1);
     assert(type4f.sound_requests.front() == 0x4B);
 
+    // Type 0x4D uses the first Type-0x12 gameplay actor as its paired
+    // response context. The pair receives the dedicated response animation,
+    // while the source becomes the Type-0x84 response actor and nudges the
+    // player horizontally according to the pair's world-X ordering.
+    state.actors.fill({});
+    state.player = {};
+    state.camera = {};
+    state.camera.x = 0;
+    state.camera.y = 0;
+    state.player.x = 15;
+    state.player.vx = 0x0200;
+    state.actors[1].type = 0x12;
+    state.actors[1].x = 20;
+    state.actors[1].frame_ptr = frame;
+    state.actors[1].animation_timer = 7;
+    state.actors[2].type = 0x4D;
+    state.actors[2].x = 15;
+    state.actors[2].frame_ptr = frame;
+    state.actors[2].movement_pc = 0x00123456;
+    state.actors[2].movement_word_18 = 0x1234;
+    state.actors[2].movement_word_1a = 0x2345;
+    const auto type4d = collision.dispatch_player_handler(
+        state,
+        openaladdin::PlayerActorCollision{
+            2, collision.player_collision_handler(0x4D)},
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(type4d.unhandled_player_collision_types.empty());
+    assert(state.camera.horizontal_threshold == 0x00B0);
+    assert(state.player.vx == 0x0300);
+    assert(state.actors[1].animation_pc == 0x001222C2);
+    assert(state.actors[1].animation_timer == 0);
+    assert(state.actors[2].type == 0x84);
+    assert(state.actors[2].animation_pc == 0x00124498);
+    assert(state.actors[2].animation_timer == 0);
+    assert(state.actors[2].movement_pc == 0x00123456);
+    assert(state.actors[2].movement_word_18 == 0);
+    assert(state.actors[2].movement_word_1a == 0);
+
+    // The opposite ordering takes the subtract branch, and no paired actor
+    // leaves the camera/VX response untouched while still converting source.
+    state.actors[1].x = 10;
+    state.actors[2].type = 0x4D;
+    state.actors[2].animation_pc = 0;
+    state.player.vx = 0x0200;
+    state.camera.horizontal_threshold = 0x0123;
+    const auto type4d_left = collision.dispatch_player_handler(
+        state,
+        openaladdin::PlayerActorCollision{
+            2, collision.player_collision_handler(0x4D)},
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(type4d_left.unhandled_player_collision_types.empty());
+    assert(state.camera.horizontal_threshold == 0x00B0);
+    assert(state.player.vx == 0x0100);
+    assert(state.actors[2].type == 0x84);
+
+    state.actors.fill({});
+    state.player.vx = 0x0200;
+    state.camera.horizontal_threshold = 0x0123;
+    state.actors[2].type = 0x4D;
+    state.actors[2].frame_ptr = frame;
+    const auto type4d_without_pair = collision.dispatch_player_handler(
+        state,
+        openaladdin::PlayerActorCollision{
+            2, collision.player_collision_handler(0x4D)},
+        openaladdin::PlayerCollisionInput{frame, false, false, false, false}
+    );
+    assert(type4d_without_pair.unhandled_player_collision_types.empty());
+    assert(state.camera.horizontal_threshold == 0x0123);
+    assert(state.player.vx == 0x0200);
+    assert(state.actors[2].type == 0x84);
+
     state.actors.fill({});
     state.player = {};
     state.camera = {};
