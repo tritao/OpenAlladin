@@ -1,0 +1,94 @@
+{
+  "format": "openaladdin-orphaned-code-islands-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Record structurally decodable code bodies omitted from Ghidra's reachable function ranges so the ROM partition has explicit conservative code ownership.",
+  "reachability_policy": "These entries assert physical code ownership only. No live caller, static incoming reference, or runtime reachability is claimed for the orphaned bodies.",
+  "objects": [
+    {
+      "address": "0x001B0020",
+      "end": "0x001B0021",
+      "size": 2,
+      "name": "Orphaned_RtsStub_001B0020",
+      "bytes": "4E75",
+      "disassembly": "rts"
+    },
+    {
+      "address": "0x001B0042",
+      "end": "0x001B0043",
+      "size": 2,
+      "name": "Orphaned_RtsStub_001B0042",
+      "bytes": "4E75",
+      "disassembly": "rts"
+    },
+    {
+      "address": "0x001B0044",
+      "end": "0x001B0045",
+      "size": 2,
+      "name": "Orphaned_RtsStub_001B0044",
+      "bytes": "4E75",
+      "disassembly": "rts"
+    },
+    {
+      "address": "0x001B1CFE",
+      "end": "0x001B1CFF",
+      "size": 2,
+      "name": "Orphaned_RtsStub_001B1CFE",
+      "bytes": "4E75",
+      "disassembly": "rts"
+    },
+    {
+      "address": "0x001B3C5E",
+      "end": "0x001B3C63",
+      "size": 6,
+      "name": "Menu_UnreachableCodeIsland_001B3C5E",
+      "bytes": "EB2C6100FEE8",
+      "disassembly": [
+        "lslb %d5,%d4",
+        "bsr 0x001B3B4A"
+      ],
+      "falls_into": "0x001B3C64"
+    },
+    {
+      "address": "0x001B3C7C",
+      "end": "0x001B3DB7",
+      "size": 316,
+      "name": "Menu_UnreachableCodeIsland_001B3C7C",
+      "bytes_sha256": "85f54fbaabc61c0392e030fd6554e16b68e94ea7d2095c959a63d7e89409a61f",
+      "first_instructions": [
+        "dbf %d4,0x001B3C68",
+        "move.b %d1,0x00FFF11B"
+      ],
+      "branches_into": "0x001B3DB8"
+    },
+    {
+      "address": "0x001B4624",
+      "end": "0x001B4625",
+      "size": 2,
+      "name": "Orphaned_RtsStub_001B4624",
+      "bytes": "4E75",
+      "disassembly": "rts"
+    },
+    {
+      "address": "0x001B4F02",
+      "end": "0x001B4F03",
+      "size": 2,
+      "name": "Orphaned_RtsStub_001B4F02",
+      "bytes": "4E75",
+      "disassembly": "rts"
+    },
+    {
+      "address": "0x001B634C",
+      "end": "0x001B634D",
+      "size": 2,
+      "name": "Orphaned_RtsStub_001B634C",
+      "bytes": "4E75",
+      "disassembly": "rts"
+    }
+  ],
+  "confidence": "provisional",
+  "status": "recorded-static-disassembly"
+}

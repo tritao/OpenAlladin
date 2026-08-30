@@ -6519,3 +6519,84 @@
   evidence:
     - ghidra_disassembly_001ACBD8
     - actor_animation_callback_family_extended_static_decompilation
+
+0x001B0020:
+  name: Orphaned_RtsStub_001B0020
+  size: 2
+  confidence: provisional
+  description: Exact two-byte RTS body immediately before System_ResetDisplayNoOpHook. No static incoming reference or runtime reachability is claimed; this symbol records physical code ownership for the complete ROM partition.
+  evidence:
+    - gnu_m68k_disassembly_001B0020
+    - orphaned_code_islands_static_v1
+
+0x001B0042:
+  name: Orphaned_RtsStub_001B0042
+  size: 2
+  confidence: provisional
+  description: Exact two-byte RTS body between Interaction_GetResourceProgressPointer and Game_InitializeDifficultyCounter. No static incoming reference or runtime reachability is claimed; this symbol records physical code ownership for the complete ROM partition.
+  evidence:
+    - gnu_m68k_disassembly_001B0042
+    - orphaned_code_islands_static_v1
+
+0x001B0044:
+  name: Orphaned_RtsStub_001B0044
+  size: 2
+  confidence: provisional
+  description: Exact two-byte RTS body immediately before Game_InitializeDifficultyCounter. No static incoming reference or runtime reachability is claimed; this symbol records physical code ownership for the complete ROM partition.
+  evidence:
+    - gnu_m68k_disassembly_001B0044
+    - orphaned_code_islands_static_v1
+
+0x001B1CFE:
+  name: Orphaned_RtsStub_001B1CFE
+  size: 2
+  confidence: provisional
+  description: Exact two-byte RTS body between VDP_RunPatternServiceFrames and SceneResource_InitializeMode17Service. No static incoming reference or runtime reachability is claimed; this symbol records physical code ownership for the complete ROM partition.
+  evidence:
+    - gnu_m68k_disassembly_001B1CFE
+    - orphaned_code_islands_static_v1
+
+0x001B3C5E:
+  name: Menu_UnreachableCodeIsland_001B3C5E
+  size: 6
+  confidence: provisional
+  description: Exact six-byte menu code island containing an LSLB followed by a BSR to Menu_AnimateSelectionMarkerTiles and falling into the known menu body at 0x001B3C64. Ghidra marks this block unreachable and no static incoming reference is claimed; the symbol records physical code ownership without asserting a live entry point.
+  evidence:
+    - gnu_m68k_disassembly_001B3C5E
+    - orphaned_code_islands_static_v1
+
+0x001B3C7C:
+  name: Menu_UnreachableCodeIsland_001B3C7C
+  size: 316
+  confidence: provisional
+  description: Exact 316-byte menu continuation beginning with a DBF loop back to 0x001B3C68, containing menu palette, sound, and actor setup, and ending by branching into the known parent body at 0x001B3DB8. Ghidra marks this block unreachable and no static incoming reference is claimed; the symbol records physical code ownership without asserting a live entry point.
+  evidence:
+    - gnu_m68k_disassembly_001B3C7C
+    - orphaned_code_islands_static_v1
+
+0x001B4624:
+  name: Orphaned_RtsStub_001B4624
+  size: 2
+  confidence: provisional
+  description: Exact two-byte RTS body between SoundTest_PlaySelectedEntry and SoundTest_RenderSelectedEntry. No static incoming reference or runtime reachability is claimed; this symbol records physical code ownership for the complete ROM partition.
+  evidence:
+    - gnu_m68k_disassembly_001B4624
+    - orphaned_code_islands_static_v1
+
+0x001B4F02:
+  name: Orphaned_RtsStub_001B4F02
+  size: 2
+  confidence: provisional
+  description: Exact two-byte RTS body between SceneResource_RunBlankStream127D74 and SceneResource_RunSharedC000Presentation. No static incoming reference or runtime reachability is claimed; this symbol records physical code ownership for the complete ROM partition.
+  evidence:
+    - gnu_m68k_disassembly_001B4F02
+    - orphaned_code_islands_static_v1
+
+0x001B634C:
+  name: Orphaned_RtsStub_001B634C
+  size: 2
+  confidence: provisional
+  description: Exact two-byte RTS body between Level12_ExitRoutine and LevelEvent_DispatchTimedCommand. No static incoming reference or runtime reachability is claimed; this symbol records physical code ownership for the complete ROM partition.
+  evidence:
+    - gnu_m68k_disassembly_001B634C
+    - orphaned_code_islands_static_v1

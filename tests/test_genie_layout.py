@@ -4782,3 +4782,38 @@ def test_actor_interaction_value_a5_variant_is_exact():
     assert rom[0x001AE700:0x001AE722] == bytes.fromhex(
         "4A2D0034671A2F0B3F0147F900FFAE87302D0032122D003417810000321F265F4E75"
     )
+
+
+def test_orphaned_code_islands_have_conservative_complete_owners():
+    symbols = SymbolStore()
+    layout = build_layout()
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    expected = {
+        0x001B0020: ("Orphaned_RtsStub_001B0020", 2, "4E75"),
+        0x001B0042: ("Orphaned_RtsStub_001B0042", 2, "4E75"),
+        0x001B0044: ("Orphaned_RtsStub_001B0044", 2, "4E75"),
+        0x001B1CFE: ("Orphaned_RtsStub_001B1CFE", 2, "4E75"),
+        0x001B3C5E: ("Menu_UnreachableCodeIsland_001B3C5E", 6, "EB2C6100FEE8"),
+        0x001B3C7C: ("Menu_UnreachableCodeIsland_001B3C7C", 316, None),
+        0x001B4624: ("Orphaned_RtsStub_001B4624", 2, "4E75"),
+        0x001B4F02: ("Orphaned_RtsStub_001B4F02", 2, "4E75"),
+        0x001B634C: ("Orphaned_RtsStub_001B634C", 2, "4E75"),
+    }
+    for address, (name, size, prefix) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.kind == "function"
+        assert function.name == name
+        assert function.size == size
+        assert function.end == address + size - 1
+        assert function.confidence == "provisional"
+        item = layout.at(address)
+        assert item is not None
+        assert item.layout_class == "CODE"
+        assert item.source == "tracked.symbol"
+        assert item.name == name
+        if prefix is not None:
+            assert rom[address:address + size] == bytes.fromhex(prefix)
+
+    assert rom[0x001B3C7C:0x001B3C80] == bytes.fromhex("51CCFFEA")
+    assert rom[0x001B3C7C + 316 - 6:0x001B3C7C + 316] == bytes.fromhex("7E2266000002")
