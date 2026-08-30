@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-rnc-title-boundary-correction-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "source": {
+    "manifest": "build/assets/rnc/manifest.json",
+    "block": "0x001401DA",
+    "next_block": "0x001434C4"
+  },
+  "correction": {
+    "name": "TITLE_BASE_RNC_GRAPHICS_001401DA",
+    "range": ["0x001401DA", "0x001434C3"],
+    "total_bytes": 13033,
+    "packed_bytes": 13015,
+    "header": "RNC\\x01",
+    "following_header": "RNC\\x01 at 0x001434C4"
+  },
+  "evidence": [
+    "The RNC manifest records total_bytes=13033 and end=0x001434C3.",
+    "The ROM byte at 0x001434C3 is the final compressed payload byte; the next four bytes at 0x001434C4 are RNC\\x01.",
+    "The previous RNC alignment-padding entry at 0x001434C3 therefore split a valid payload and has been removed."
+  ],
+  "conclusion": "0x001434C3 belongs to TITLE_BASE_RNC_GRAPHICS_001401DA. There is no alignment-padding byte between that payload and the following RNC block at 0x001434C4."
+}

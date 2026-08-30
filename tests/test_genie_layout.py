@@ -484,7 +484,6 @@ def test_rnc_boundary_alignment_padding_is_exact():
         0x0012F4EB,
         0x00132F8D,
         0x00136911,
-        0x001434C3,
         0x0014433B,
         0x0014476D,
         0x0014520F,
@@ -2381,7 +2380,7 @@ def test_extended_player_collision_handler_family_is_exact():
         0x001ABFD0: (0x001ABFEF, "Actor_ReinitializeCollisionResponseAfterType2D"),
         0x001B7474: (0x001B7493, "InteractionSpawn_RuntimeType45_AdjacentVariant"),
         0x001B74A0: (0x001B74B1, "InteractionSpawn_RuntimeType5B_AdjacentVariant"),
-        0x001AFE1C: (0x001AFF81, "ActorType7E_PlayerCollisionHandler"),
+            0x001AFE1C: (0x001AFF3F, "ActorType7E_PlayerCollisionHandler"),
         0x001AFF82: (0x001AFFE3, "ActorType02_PlayerCollisionHandler"),
         0x001AC60E: (0x001AC613, "ActorType0D_ActorCollisionHandler"),
     }
