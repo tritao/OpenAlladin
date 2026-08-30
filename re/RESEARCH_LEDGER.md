@@ -72,6 +72,12 @@ the finding or commit message.
   least two scenarios. It records runtime reachability only and intentionally
   leaves single-PC/single-scenario observations and unresolved semantic review
   targets unchanged.
+- `re/mame/findings/20260830-expanded-runtime-coverage-symbol-promotions-v1.json`
+  expands the reachability audit over 118 valid archived traces under
+  `build/re/traces`. It maps 1,587 covered PCs to canonical function ranges and
+  promotes nine additional named functions observed across at least two
+  scenarios, while retaining the isolated single-scenario observation as
+  decompiled.
 - `re/mame/findings/20260830-actor-template-type84-type1a-presentation-variant-static-v1.json`
   records the static promotion of `0x001B82DC` to
   `ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT`. Its animation pointer
@@ -3370,3 +3376,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-reset-bootstrap-z80-stub-static-v1` | recorded-static-disassembly | Decoded the 38-byte Z80 reset image at 0x000002DE as the RAM-clear-and-spin stub installed at Z80 address 0 until Audio_LoadZ80Driver replaces it with the full sound-driver image |
 | `20260830-semantic-review-runtime-audit-v1` | recorded-runtime-negative-evidence | Exercised the remaining semantic review queue through the Level-01 actor/refill replay, a 5,000-frame traversal, and all corrected scene-state loader captures; no open function or actor-stream/template target was observed, so no speculative promotion was made |
 | `20260830-runtime-coverage-symbol-promotions-v1` | recorded-runtime-evidence | Promoted 35 already-named decompiled functions to trace_validated: 29 with multiple covered PCs across at least two imported scenarios, plus six single-PC functions observed across multiple scenarios; single-PC/single-scenario and unresolved review targets remain unchanged |
+| `20260830-expanded-runtime-coverage-symbol-promotions-v1` | recorded-runtime-evidence | Merged 118 valid archived traces, mapped 1,587 covered PCs to canonical functions, and promoted nine additional named functions to trace_validated while retaining the one single-scenario observation as decompiled |

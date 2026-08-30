@@ -532,7 +532,7 @@
     - ghidra_actor_table_layout
 0x001B1F28:
   name: Player_ResetTerrainMotionState
-  confidence: decompiled
+  confidence: trace_validated
   description: Resets player vertical motion and terrain response state, chooses the scene/query/camera-specific player response animation, clears the animation timer, and publishes the reset landing/response flags.
   evidence:
     - ghidra_decompile_001B1F28
@@ -2729,7 +2729,7 @@
     - ghidra_decompile_001B3818
 0x001B38EE:
   name: TerrainResource_ReadBits
-  confidence: decompiled
+  confidence: trace_validated
   description: Reads a variable-width field from the terrain-resource bit buffer, refilling the compressed source word when the current buffer is exhausted.
   evidence:
     - ghidra_decompile_001B38EE
@@ -2809,7 +2809,7 @@
     - ghidra_decompile_player_movement_collision_targets
 0x001B3208:
   name: VBlank_SceneResourceGate
-  confidence: decompiled
+  confidence: trace_validated
   description: Tests bit 5 of the raw scene/resource query byte at 0x00FFF155 and returns the condition code used by the VBlank and resource service paths.
   evidence:
     - ghidra_decompile_001B3208
@@ -2825,7 +2825,7 @@
     - mame_terrain_callback_trace
 0x001B3244:
   name: Terrain_QueryCallbackA_Impl
-  confidence: decompiled
+  confidence: trace_validated
   description: Tests bit 4 of TERRAIN_QUERY_FLAGS at 0x00FFF156 and returns the condition code for the configured terrain callback.
   evidence:
     - ghidra_decompile_001B3244
@@ -3147,7 +3147,7 @@
 
 0x001E580E:
   name: Audio_QueueSingleByte
-  confidence: decompiled
+  confidence: trace_validated
   description: Opens a protected sound-command queue transaction, writes one caller-supplied byte, and closes the transaction.
   evidence:
     - ghidra_decompile_001E580E
@@ -4134,7 +4134,7 @@
     - hud_display_frame_hooks_static_decompilation
 0x001B5B66:
   name: Level00_EnterRoutine
-  confidence: decompiled
+  confidence: trace_validated
   description: Level-table entry-0 per-frame callback; counts down the level-0 resource timer, emits the associated presentation resource command when that timer expires, and decrements the shared level timer.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
@@ -4148,7 +4148,7 @@
     - level_callback_family_targets
 0x001B5B94:
   name: Level02_EnterRoutine
-  confidence: decompiled
+  confidence: trace_validated
   description: Level-table entry-2 per-frame callback; dispatches one timed level-event command through LevelEvent_DispatchTimedCommand.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
@@ -4677,7 +4677,7 @@
     - level_event_command_family_static_decompilation
 0x001B536C:
   name: TerrainHandler_PushPlayerRight
-  confidence: decompiled
+  confidence: trace_validated
   description: Terrain behavior 0x40 handler that advances PLAYER_X by eight pixels and clears the horizontal terrain response delta.
   evidence:
     - ghidra_disassembly_001B536C
@@ -4813,7 +4813,7 @@
     - terrain_response_family_static_decompilation
 0x001B65C0:
   name: InteractionSpawn_Type84OffsetY10
-  confidence: decompiled
+  confidence: trace_validated
   description: Interaction selector 0x20 handler that allocates the type-0x84 interaction-offset template and adds 0x0A to the spawned actor Y coordinate.
   evidence:
     - ghidra_disassembly_001B65C0

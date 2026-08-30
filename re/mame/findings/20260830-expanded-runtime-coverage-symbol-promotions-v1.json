@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-expanded-runtime-coverage-symbol-promotions-v1",
+  "recorded_at": "2026-08-30",
+  "status": "recorded-archive-coverage-expansion",
+  "repository_commit_at_capture": "69b3126",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "source": {
+    "trace_root": "build/re/traces",
+    "merged_coverage": "build/re/coverage-expanded.json",
+    "scenario_count": 118,
+    "pc_sample_count": 124425,
+    "unique_pc_count": 1587,
+    "mapping": "Each covered PC was mapped to the canonical whole-ROM function range containing that address.",
+    "promotion": "Promote decompiled canonical functions covered in at least two scenarios; retain one-function/single-scenario observations as decompiled."
+  },
+  "promotions": [
+    { "address": "0x001B1F28", "name": "Player_ResetTerrainMotionState", "covered_pcs": 1, "sample_count": 6, "scenario_count": 2 },
+    { "address": "0x001B38EE", "name": "TerrainResource_ReadBits", "covered_pcs": 1, "sample_count": 9, "scenario_count": 3 },
+    { "address": "0x001B3208", "name": "VBlank_SceneResourceGate", "covered_pcs": 1, "sample_count": 7, "scenario_count": 5 },
+    { "address": "0x001B3244", "name": "Terrain_QueryCallbackA_Impl", "covered_pcs": 2, "sample_count": 9, "scenario_count": 4 },
+    { "address": "0x001E580E", "name": "Audio_QueueSingleByte", "covered_pcs": 1, "sample_count": 4, "scenario_count": 4 },
+    { "address": "0x001B5B66", "name": "Level00_EnterRoutine", "covered_pcs": 3, "sample_count": 22, "scenario_count": 12 },
+    { "address": "0x001B5B94", "name": "Level02_EnterRoutine", "covered_pcs": 1, "sample_count": 6, "scenario_count": 4 },
+    { "address": "0x001B536C", "name": "TerrainHandler_PushPlayerRight", "covered_pcs": 1, "sample_count": 3, "scenario_count": 2 },
+    { "address": "0x001B65C0", "name": "InteractionSpawn_Type84OffsetY10", "covered_pcs": 1, "sample_count": 35, "scenario_count": 35 }
+  ],
+  "observed_but_not_promoted": [
+    { "address": "0x001B28AE", "name": "Frame_RunServicePass", "covered_pcs": 1, "sample_count": 1, "scenario_count": 1, "reason": "single-PC, single-scenario observation" }
+  ],
+  "conclusion": "The archive expansion adds nine runtime-validated canonical functions without changing names or ROM ownership. The source corpus is the existing 118-trace archive, and the single isolated Frame_RunServicePass observation remains intentionally conservative."
+}
