@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-audio-command-wrapper-family-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "queue": {
+    "begin": "0x001E57AC",
+    "marker_writer": "0x001E57F4",
+    "byte_writer": "0x001E5800",
+    "end": "0x001E57E2"
+  },
+  "wrappers": [
+    { "address": "0x001E58C2", "size": 10, "end": "0x001E58CB", "name": "Audio_QueueCommand05", "packet": "FF 05 + one payload byte" },
+    { "address": "0x001E5908", "size": 10, "end": "0x001E5911", "name": "Audio_QueueCommand1C", "packet": "FF 1C + one payload byte" },
+    { "address": "0x001E5912", "size": 10, "end": "0x001E591B", "name": "Audio_QueueCommand1D", "packet": "FF 1D + one payload byte" },
+    { "address": "0x001E591C", "size": 40, "end": "0x001E5943", "name": "Audio_QueueCommand02WithTwoBytes", "packet": "FF 02 + two payload bytes" },
+    { "address": "0x001E5944", "size": 10, "end": "0x001E594D", "name": "Audio_QueueCommand00WithTwoBytes", "packet": "FF 00 + two payload bytes" },
+    { "address": "0x001E594E", "size": 10, "end": "0x001E5957", "name": "Audio_QueueCommand01WithTwoBytes", "packet": "FF 01 + two payload bytes" },
+    { "address": "0x001E5958", "size": 10, "end": "0x001E5961", "name": "Audio_QueueCommand14WithTwoBytes", "packet": "FF 14 + two payload bytes" },
+    { "address": "0x001E5962", "size": 48, "end": "0x001E5991", "name": "Audio_QueueCommand05WithThreeBytes", "packet": "FF 05 + three payload bytes" },
+    { "address": "0x001E5992", "size": 10, "end": "0x001E599B", "name": "Audio_QueueCommand06WithTwoBytes", "packet": "FF 06 + two payload bytes" },
+    { "address": "0x001E599C", "size": 12, "end": "0x001E59A7", "name": "Audio_QueueCommand07WithTwoBytes", "packet": "FF 07 + two payload bytes" },
+    { "address": "0x001E59A8", "size": 12, "end": "0x001E59B3", "name": "Audio_QueueCommand0EWithTwoBytes", "packet": "FF 0E + two payload bytes" },
+    { "address": "0x001E59B4", "size": 50, "end": "0x001E59E5", "name": "Audio_QueueCommand17WithThreeBytes", "packet": "FF 17 + three payload bytes" },
+    { "address": "0x001E59E6", "size": 12, "end": "0x001E59F1", "name": "Audio_QueueCommand1BWithTwoBytes", "packet": "FF 1B + two payload bytes" },
+    { "address": "0x001E5A18", "size": 12, "end": "0x001E5A23", "name": "Audio_QueueCommand1AWithTwoBytes", "packet": "FF 1A + two payload bytes" }
+  ],
+  "reader": {
+    "address": "0x001E59F2",
+    "size": 38,
+    "end": "0x001E5A17",
+    "name": "Audio_ReadZ80IndexedResult",
+    "source": "0x00A01B22 indexed by the caller stack byte"
+  },
+  "boundary_basis": [
+    "Each wrapper begins with Audio_QueueBegin or its exact shared continuation and ends at the next wrapper boundary or Audio_QueueEnd jump.",
+    "The 0x001E5908-0x001E5A23 block is contiguous packet-wrapper and Z80-result-reader code immediately before SPRITE_FRAME_0000 at 0x001E5A24.",
+    "The command IDs are loaded explicitly in D0 before the shared marker/payload writers; no audio-engine semantic meaning is inferred beyond the packet format."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}

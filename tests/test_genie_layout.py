@@ -4244,6 +4244,45 @@ def test_audio_and_scene_boundary_padding_is_exact():
     assert rom[0x001E56BF] == 0x00
 
 
+def test_audio_command_wrapper_family_is_exact():
+    symbols = SymbolStore()
+    expected = {
+        0x001E58C2: (0x001E58CB, 10, "Audio_QueueCommand05", 0x05),
+        0x001E5908: (0x001E5911, 10, "Audio_QueueCommand1C", 0x1C),
+        0x001E5912: (0x001E591B, 10, "Audio_QueueCommand1D", 0x1D),
+        0x001E591C: (0x001E5943, 40, "Audio_QueueCommand02WithTwoBytes", 0x02),
+        0x001E5944: (0x001E594D, 10, "Audio_QueueCommand00WithTwoBytes", 0x00),
+        0x001E594E: (0x001E5957, 10, "Audio_QueueCommand01WithTwoBytes", 0x01),
+        0x001E5958: (0x001E5961, 10, "Audio_QueueCommand14WithTwoBytes", 0x14),
+        0x001E5962: (0x001E5991, 48, "Audio_QueueCommand05WithThreeBytes", 0x05),
+        0x001E5992: (0x001E599B, 10, "Audio_QueueCommand06WithTwoBytes", 0x06),
+        0x001E599C: (0x001E59A7, 12, "Audio_QueueCommand07WithTwoBytes", 0x07),
+        0x001E59A8: (0x001E59B3, 12, "Audio_QueueCommand0EWithTwoBytes", 0x0E),
+        0x001E59B4: (0x001E59E5, 50, "Audio_QueueCommand17WithThreeBytes", 0x17),
+        0x001E59E6: (0x001E59F1, 12, "Audio_QueueCommand1BWithTwoBytes", 0x1B),
+        0x001E5A18: (0x001E5A23, 12, "Audio_QueueCommand1AWithTwoBytes", 0x1A),
+    }
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    for address, (end, size, name, command) in expected.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == size
+        assert function.confidence == "decompiled"
+        assert rom[address:address + 6] == bytes.fromhex("4EB9001E57AC")
+        assert rom[address + 6:address + 8] == bytes((0x70, command))
+
+    reader = symbols.at(0x001E59F2, include_ranges=False)
+    assert reader is not None
+    assert reader.name == "Audio_ReadZ80IndexedResult"
+    assert reader.end == 0x001E5A17
+    assert reader.size == 38
+    assert reader.confidence == "provisional"
+    assert rom[0x001E59F2:0x001E59F8] == bytes.fromhex("40E7007C0700")
+    assert rom[0x001E5A14:0x001E5A18] == bytes.fromhex("46DF4E75")
+
+
 def test_interaction_anchor_forward_spawn_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001B5786, include_ranges=False)

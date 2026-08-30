@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-audio-command-wrapper-family-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/audio-command-wrapper-family-static-targets.json",
+  "summary": {
+    "packet_wrappers": 14,
+    "reader_helpers": 1,
+    "owned_bytes": 284,
+    "rom_range": ["0x001E5908", "0x001E5A23"]
+  },
+  "packet_wrappers": [
+    { "name": "Audio_QueueCommand05", "range": ["0x001E58C2", "0x001E58CB"], "packet": "FF 05 + one payload byte" },
+    { "name": "Audio_QueueCommand1C", "range": ["0x001E5908", "0x001E5911"], "packet": "FF 1C + one payload byte" },
+    { "name": "Audio_QueueCommand1D", "range": ["0x001E5912", "0x001E591B"], "packet": "FF 1D + one payload byte" },
+    { "name": "Audio_QueueCommand02WithTwoBytes", "range": ["0x001E591C", "0x001E5943"], "packet": "FF 02 + two payload bytes" },
+    { "name": "Audio_QueueCommand00WithTwoBytes", "range": ["0x001E5944", "0x001E594D"], "packet": "FF 00 + two payload bytes" },
+    { "name": "Audio_QueueCommand01WithTwoBytes", "range": ["0x001E594E", "0x001E5957"], "packet": "FF 01 + two payload bytes" },
+    { "name": "Audio_QueueCommand14WithTwoBytes", "range": ["0x001E5958", "0x001E5961"], "packet": "FF 14 + two payload bytes" },
+    { "name": "Audio_QueueCommand05WithThreeBytes", "range": ["0x001E5962", "0x001E5991"], "packet": "FF 05 + three payload bytes" },
+    { "name": "Audio_QueueCommand06WithTwoBytes", "range": ["0x001E5992", "0x001E599B"], "packet": "FF 06 + two payload bytes" },
+    { "name": "Audio_QueueCommand07WithTwoBytes", "range": ["0x001E599C", "0x001E59A7"], "packet": "FF 07 + two payload bytes" },
+    { "name": "Audio_QueueCommand0EWithTwoBytes", "range": ["0x001E59A8", "0x001E59B3"], "packet": "FF 0E + two payload bytes" },
+    { "name": "Audio_QueueCommand17WithThreeBytes", "range": ["0x001E59B4", "0x001E59E5"], "packet": "FF 17 + three payload bytes" },
+    { "name": "Audio_QueueCommand1BWithTwoBytes", "range": ["0x001E59E6", "0x001E59F1"], "packet": "FF 1B + two payload bytes" },
+    { "name": "Audio_QueueCommand1AWithTwoBytes", "range": ["0x001E5A18", "0x001E5A23"], "packet": "FF 1A + two payload bytes" }
+  ],
+  "reader": {
+    "name": "Audio_ReadZ80IndexedResult",
+    "range": ["0x001E59F2", "0x001E5A17"],
+    "semantics": "Protected indexed read from the Z80 result table at 0x00A01B22; its higher-level caller contract remains provisional."
+  },
+  "conclusion": "The previously unclassified audio block is a contiguous family of exact command-packet wrappers and one protected Z80-result reader. The packet IDs and byte widths are explicit in the 68000 code; meanings assigned by the Z80 driver to those commands remain outside this finding."
+}

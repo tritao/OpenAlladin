@@ -3132,6 +3132,141 @@
     - ghidra_audio_queue_decompile
     - mame_audio_mailbox_queue_trace
 
+0x001E58C2:
+  name: Audio_QueueCommand05
+  size: 10
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x05, and shares the one-byte payload continuation at 0x001E58A2.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E5908:
+  name: Audio_QueueCommand1C
+  size: 10
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x1C, and shares the one-byte payload continuation at 0x001E58A2.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E5912:
+  name: Audio_QueueCommand1D
+  size: 10
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x1D, and shares the one-byte payload continuation at 0x001E58A2.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E591C:
+  name: Audio_QueueCommand02WithTwoBytes
+  size: 40
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, queues command 0x02, writes the low bytes of two caller-frame arguments, and closes the transaction.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E5944:
+  name: Audio_QueueCommand00WithTwoBytes
+  size: 10
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x00, and shares the two-byte payload continuation at 0x001E5924.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E594E:
+  name: Audio_QueueCommand01WithTwoBytes
+  size: 10
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x01, and shares the two-byte payload continuation at 0x001E5924.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E5958:
+  name: Audio_QueueCommand14WithTwoBytes
+  size: 10
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x14, and shares the two-byte payload continuation at 0x001E5924.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E5962:
+  name: Audio_QueueCommand05WithThreeBytes
+  size: 48
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, queues command 0x05, writes a three-byte caller-derived payload, and closes the transaction.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E5992:
+  name: Audio_QueueCommand06WithTwoBytes
+  size: 10
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x06, and shares the two-byte payload continuation at 0x001E5924.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E599C:
+  name: Audio_QueueCommand07WithTwoBytes
+  size: 12
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x07, and shares the two-byte payload continuation at 0x001E5924.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E59A8:
+  name: Audio_QueueCommand0EWithTwoBytes
+  size: 12
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x0E, and shares the two-byte payload continuation at 0x001E5924.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E59B4:
+  name: Audio_QueueCommand17WithThreeBytes
+  size: 50
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, queues command 0x17, writes three caller-frame payload bytes, and closes the transaction.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E59E6:
+  name: Audio_QueueCommand1BWithTwoBytes
+  size: 12
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x1B, and shares the two-byte payload continuation at 0x001E5924.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E59F2:
+  name: Audio_ReadZ80IndexedResult
+  size: 38
+  confidence: provisional
+  description: Masks interrupts, acquires the Z80 bus, reads a byte from the Z80 result table at 0x00A01B22 indexed by the caller's stack byte, releases the bus, restores status, and returns the result.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
+0x001E5A18:
+  name: Audio_QueueCommand1AWithTwoBytes
+  size: 12
+  confidence: decompiled
+  description: Opens a protected sound-command queue transaction, selects packet command 0x1A, and shares the two-byte payload continuation at 0x001E5924.
+  evidence:
+    - audio_command_wrapper_family_static_disassembly
+    - ghidra_audio_queue_decompile
+
 0x001E571C:
   name: Audio_AcquireZ80Bus
   confidence: decompiled
