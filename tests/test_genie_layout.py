@@ -906,7 +906,7 @@ def test_unindexed_movement_stream_bands_are_exact_and_provisional():
         (0x0011FAA8, 0x0011FD17, "ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE_0011FAA8", 0x270),
         (0x001210FE, 0x0012117F, "ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE_001210FE", 0x82),
         (0x001212C0, 0x001212FF, "ACTOR_MOVE_INTERACTION_ANCHOR_RESPONSE_BANK_001212C0", 0x40),
-        (0x001213E2, 0x00121411, "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_PREFIX_001213E2", 0x30),
+        (0x001213E2, 0x00121411, "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX", 0x30),
         (0x001215D8, 0x001215DF, "ACTOR_MOVE_UNINDEXED_STEP_LOOP_001215D8", 8),
     ]
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
@@ -1635,14 +1635,14 @@ def test_type84_0f22_response_family_is_exact_and_provisional():
     symbols = SymbolStore()
     template = symbols.at(0x001B8304, include_ranges=False)
     assert template is not None
-    assert template.name == "ACTOR_TEMPLATE_TYPE_84_0F22_RESPONSE"
+    assert template.name == "ACTOR_TEMPLATE_TYPE_84_0F22_WALL_RESPONSE"
     assert template.size == 20
     assert template.metadata["type"] == "actor_template"
     assert template.confidence == "provisional"
 
     movement = symbols.at(0x00121412, include_ranges=False)
     assert movement is not None
-    assert movement.name == "ACTOR_MOVE_TYPE84_0F22_RESPONSE_PREFIX"
+    assert movement.name == "ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX"
     assert movement.end == 0x0012146B
     assert movement.size == 90
     assert movement.metadata["type"] == "movement_stream"
@@ -1650,7 +1650,7 @@ def test_type84_0f22_response_family_is_exact_and_provisional():
 
     animation = symbols.at(0x00125D58, include_ranges=False)
     assert animation is not None
-    assert animation.name == "ACTOR_ANIM_TYPE84_0F22_RESPONSE_LOOP"
+    assert animation.name == "ACTOR_ANIM_TYPE84_0F22_WALL_RESPONSE_LOOP"
     assert animation.end == 0x00125D7D
     assert animation.size == 38
     assert animation.metadata["type"] == "animation_stream"

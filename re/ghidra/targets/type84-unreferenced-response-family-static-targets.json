@@ -9,7 +9,7 @@
   "purpose": "Record the exact Type-0x84 0x0F22 response family at 0x001B8304 while preserving its unresolved runtime reachability.",
   "template": {
     "address": "0x001B8304",
-    "name": "ACTOR_TEMPLATE_TYPE_84_0F22_RESPONSE",
+    "name": "ACTOR_TEMPLATE_TYPE_84_0F22_WALL_RESPONSE",
     "range": ["0x001B8304", "0x001B8317"],
     "size": 20,
     "raw_bytes": "84000100000000121412600000125D5801000200",
@@ -21,18 +21,18 @@
   },
   "movement": {
     "address": "0x00121412",
-    "name": "ACTOR_MOVE_TYPE84_0F22_RESPONSE_PREFIX",
+    "name": "ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX",
     "range": ["0x00121412", "0x0012146B"],
     "size": 90,
     "decoded": [
-      "Two flag-gated child-spawn phases use ACTOR_TEMPLATE_TYPE_84_WALL_RESPONSE_CHILD at 0x001B7CD8.",
+      "Two flag-gated child-spawn phases use ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE at 0x001B7CD8.",
       "The first phase targets actor field 0x1A with value 0x0800; the second targets fields 0x18 and 0x1A with values 0x0005 and 0x000A.",
       "The prefix falls through to ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C."
     ]
   },
   "animation": {
     "address": "0x00125D58",
-    "name": "ACTOR_ANIM_TYPE84_0F22_RESPONSE_LOOP",
+    "name": "ACTOR_ANIM_TYPE84_0F22_WALL_RESPONSE_LOOP",
     "range": ["0x00125D58", "0x00125D7D"],
     "size": 38,
     "decoded": [
