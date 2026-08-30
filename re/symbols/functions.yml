@@ -4,6 +4,14 @@
 #   name: Actor_ApplyHorizontalMovement
 #   confidence: provisional
 #   evidence: [mame_trace_run_right]
+0x00000200:
+  name: System_AccumulateRomChecksumAndSpin
+  size: 26
+  confidence: provisional
+  description: Provisional non-returning post-header routine that accumulates one 16-bit ROM word per iteration from 0x00000200 into D3 for 0x000FFF00 iterations, then spins forever at 0x00000216; the reset vector instead enters System_ResetBootstrap at 0x0000021A, so no live caller or checksum consumer is claimed.
+  evidence:
+    - gnu_m68k_disassembly_00000200
+    - startup_checksum_spin_static_v1
 0x0000021A:
   name: System_ResetBootstrap
   confidence: decompiled

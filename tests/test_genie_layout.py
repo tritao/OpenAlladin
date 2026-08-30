@@ -243,6 +243,29 @@ def test_startup_font_glyph_bank_is_exact_and_precedes_reset_code():
     assert glyphs[:8] == bytes.fromhex("1818181800181800")
 
 
+def test_startup_checksum_spin_routine_is_exact_and_separate_from_reset_entry():
+    symbols = SymbolStore()
+    routine = symbols.at(0x00000200, include_ranges=False)
+    assert routine is not None
+    assert routine.name == "System_AccumulateRomChecksumAndSpin"
+    assert routine.end == 0x00000219
+    assert routine.size == 26
+    assert routine.confidence == "provisional"
+    assert "0x000FFF00 iterations" in routine.description
+
+    reset = symbols.at(0x0000021A, include_ranges=False)
+    assert reset is not None
+    assert reset.name == "System_ResetBootstrap"
+    assert routine.end + 1 == reset.address
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+    assert rom[routine.address:routine.end + 1] == bytes.fromhex(
+        "41F80200223C000FFF004283D65804810000000166F64EF80216"
+    )
+    assert int.from_bytes(rom[0x04:0x08], "big") == reset.address
+
+
 def test_unindexed_graphics_bands_and_padding_are_exact():
     symbols = SymbolStore()
     tile_band = symbols.at(0x0011E160, include_ranges=False)
