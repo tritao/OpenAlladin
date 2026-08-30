@@ -68,6 +68,10 @@ class Reader {
 public:
     explicit Reader(std::istream& input) : input_(input) {}
 
+    bool has_more() {
+        return input_.peek() != std::char_traits<char>::eof();
+    }
+
     std::uint8_t u8() {
         std::uint8_t value = 0;
         get(&value, sizeof(value));

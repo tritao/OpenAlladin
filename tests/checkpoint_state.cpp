@@ -39,6 +39,9 @@ int main() {
     for (int frame = 0; frame < kCheckpointFrame; ++frame) {
         uninterrupted->update(input_for_frame(frame));
     }
+    uninterrupted->state().interaction_state.target_current = 7;
+    uninterrupted->state().interaction_state.response_current = 3;
+    uninterrupted->state().interaction_state.response_pending = 9;
     const std::string saved = checkpoint(*uninterrupted);
     // The checkpoint contains the per-VM 64 KiB RAM images and should not
     // silently collapse to a visual/semantic pose snapshot.
@@ -49,6 +52,9 @@ int main() {
     std::istringstream input(saved, std::ios::in | std::ios::binary);
     restored->read_checkpoint(input);
     assert(checkpoint(*uninterrupted) == checkpoint(*restored));
+    assert(restored->state().interaction_state.target_current == 7);
+    assert(restored->state().interaction_state.response_current == 3);
+    assert(restored->state().interaction_state.response_pending == 9);
 
     for (int frame = kCheckpointFrame; frame < kEndFrame; ++frame) {
         const auto input_state = input_for_frame(frame);

@@ -60,6 +60,40 @@ InteractionFrameBoundary InteractionSystem::begin_frame(GameState& state) {
     return boundary;
 }
 
+void InteractionSystem::advance_response_target(GameState& state) const {
+    auto& interaction = state.interaction_state;
+    if (interaction.response_current < interaction.response_pending) {
+        ++interaction.response_current;
+    }
+}
+
+void InteractionSystem::update_target(GameState& state) const {
+    // Interaction_UpdateTarget is gated by bit 0 of FRAME_PHASE_COUNTER and
+    // converges the current selector toward the published response value.
+    if ((state.frame.phase & 1U) != 0) return;
+
+    auto& interaction = state.interaction_state;
+    if (interaction.target_current == interaction.response_current) return;
+    if (interaction.target_current < interaction.response_current) {
+        ++interaction.target_current;
+    } else {
+        --interaction.target_current;
+    }
+}
+
+InteractionTargetDispatch InteractionSystem::dispatch_target_state(
+    GameState& state
+) const {
+    const std::uint8_t selector = state.interaction_state.target_current;
+    const bool terminal_transition = selector == 0;
+    if (terminal_transition) {
+        // Interaction_DispatchTargetState arms PLAYER_TERMINAL_TRANSITION
+        // after selecting the zero entry in the caller-provided table.
+        state.player.terrain_terminal_transition = 0xFF;
+    }
+    return InteractionTargetDispatch{selector, terminal_transition};
+}
+
 void InteractionSystem::request_surface_actor_spawn(int world_x, int world_y) {
     runtime_.surface_actor_spawn_pending = true;
     runtime_.surface_actor_spawn_x = world_x;

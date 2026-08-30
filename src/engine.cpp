@@ -582,6 +582,7 @@ void Engine::load_actor_records(const std::string& path) {
 
 void Engine::reset() {
     player_ = PlayerState{};
+    state_.interaction_state = InteractionState{};
     interaction_map_.reset();
     interactions_.reset();
     scene_resources_.reset();
@@ -630,6 +631,7 @@ void Engine::reset() {
 }
 
 void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool grounded) {
+    state_.interaction_state = InteractionState{};
     player_.x = x;
     player_.y = y;
     player_.vx = vx;
@@ -1079,12 +1081,13 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     );
     const AnimationSelectorState animation_selector = player_.animation_selector;
     const SceneRuntimeState scene_runtime = scene_.runtime();
+    const InteractionState& interaction_state = state_.interaction_state;
     const InteractionRuntimeState& interaction_runtime = interactions_.runtime();
 
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v3\""
            << ",\"frame\":" << frame_
            << ",\"input\":\"" << input_token << "\""
-           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"sprite_attribute\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
+           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"interaction_state\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"sprite_attribute\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
            << ",\"player\":{\"x\":" << player_.x
            << ",\"y\":" << player_.y
            << ",\"world_x\":" << player_world_x()
@@ -1178,6 +1181,12 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"terrain_transition_gate\":" << static_cast<unsigned>(player_.terrain_transition_gate)
            << ",\"terrain_terminal_transition\":" << static_cast<unsigned>(player_.terrain_terminal_transition)
            << ",\"grounded\":" << (trace_grounded ? "true" : "false") << "}"
+           << ",\"interaction_state\":{\"target_current\":"
+           << static_cast<unsigned>(interaction_state.target_current)
+           << ",\"response_current\":"
+           << static_cast<unsigned>(interaction_state.response_current)
+           << ",\"response_pending\":"
+           << static_cast<unsigned>(interaction_state.response_pending) << "}"
            << ",\"scene\":{\"state\":" << scene_runtime.state
            << ",\"script_cursor\":" << scene_runtime.script_cursor
            << ",\"script_data_cursor\":0"
@@ -1485,6 +1494,12 @@ void Engine::write_checkpoint(std::ostream& output) const {
     writer.u8(frame_phase_);
     writer.i32(frame_runtime_.last_ground_direction);
     writer.boolean(quit_);
+    // Append newly typed interaction bytes so existing checkpoint prefixes
+    // remain readable by older builds. New readers default them to zero when
+    // loading an older checkpoint without this extension.
+    writer.u8(state_.interaction_state.target_current);
+    writer.u8(state_.interaction_state.response_current);
+    writer.u8(state_.interaction_state.response_pending);
 }
 
 void Engine::read_checkpoint(std::istream& input) {
@@ -1560,6 +1575,12 @@ void Engine::read_checkpoint(std::istream& input) {
     const auto frame_phase = reader.u8();
     const int last_ground_direction = reader.i32();
     const bool quit = reader.boolean();
+    InteractionState interaction_state;
+    if (reader.has_more()) {
+        interaction_state.target_current = reader.u8();
+        interaction_state.response_current = reader.u8();
+        interaction_state.response_pending = reader.u8();
+    }
     if (vdp_checkpoint_loaded
         && (vdp_checkpoint_vram.size() != 0x10000
             || vdp_checkpoint_vsram.size() != 0x80)) {
@@ -1568,6 +1589,7 @@ void Engine::read_checkpoint(std::istream& input) {
 
     player_ = player;
     camera_ = camera;
+    state_.interaction_state = interaction_state;
     interactions_.restore_runtime(interaction_runtime);
     frame_runtime_.checkpoint_animation_selector_pending = checkpoint_animation_selector_pending;
     frame_runtime_.jump_landing_state_arm_pending = jump_landing_state_arm_pending;

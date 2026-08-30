@@ -24,19 +24,34 @@ int main() {
     assert(ram.read8(0xFFF0BE) == 0x42);
     state.frame.phase = 0xA5;
     assert(ram.read8(0xFF7E28) == 0xA5);
+    state.interaction_state.target_current = 0x12;
+    state.interaction_state.response_current = 0x34;
+    state.interaction_state.response_pending = 0x56;
+    assert(ram.read8(0xFFF0EC) == 0x12);
+    assert(ram.read8(0xFFEFFA) == 0x34);
+    assert(ram.read8(0xFFEFFB) == 0x56);
 
     ram.set_write_tracking(true);
     ram.write16(0xFF7DFA, 0xFEDC);
     ram.write8(0xFFF0BE, 0x11);
     ram.write8(0xFF7E28, 0x12);
+    ram.write8(0xFFF0EC, 0x21);
+    ram.write8(0xFFEFFA, 0x43);
+    ram.write8(0xFFEFFB, 0x65);
     assert(state.player.x == static_cast<std::int16_t>(0xFEDC));
     assert(state.player.animation_selector.response_active == 0x11);
     assert(state.frame.phase == 0x12);
+    assert(state.interaction_state.target_current == 0x21);
+    assert(state.interaction_state.response_current == 0x43);
+    assert(state.interaction_state.response_pending == 0x65);
     std::uint8_t value = 0;
     assert(ram.take_write(0xFF7DFA, value) && value == 0xFE);
     assert(ram.take_write(0xFF7DFB, value) && value == 0xDC);
     assert(ram.take_write(0xFFF0BE, value) && value == 0x11);
     assert(ram.take_write(0xFF7E28, value) && value == 0x12);
+    assert(ram.take_write(0xFFF0EC, value) && value == 0x21);
+    assert(ram.take_write(0xFFEFFA, value) && value == 0x43);
+    assert(ram.take_write(0xFFEFFB, value) && value == 0x65);
     assert(!ram.take_write(0xFFF0BE, value));
 
     ram.write8(0xFF1234, 0xA5);

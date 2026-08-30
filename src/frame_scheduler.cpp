@@ -605,6 +605,9 @@ void FrameScheduler::update(const InputState& input, Context& context) const {
     // there is deliberately no pre-motion companion call.
     services_.record_scheduler_phase("actor_collision", 0x001ABD7E);
     collisions_.actor_actor(state_);
+    // Interaction_UpdateTarget runs immediately after the actor collision
+    // pass and converges the live Genesis selector on even frame phases.
+    interactions_.update_target(state_);
     services_.record_scheduler_phase("level_exit_transition", 0x001A8F0C);
     const bool level_exit_callback = scene_.service_level_exit(
         services_.player_world_y(),

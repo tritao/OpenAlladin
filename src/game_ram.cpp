@@ -82,6 +82,9 @@ bool GameRamView::is_typed_address(RamAddress address) {
     case 0xFFF11F:
     case 0xFFF173:
     case 0xFFF57D:
+    case 0xFFF0EC:
+    case 0xFFEFFA:
+    case 0xFFEFFB:
     case 0xFFEFFF:
         return true;
     default:
@@ -188,6 +191,9 @@ std::uint8_t GameRamView::read_typed8(RamAddress address, bool& handled) const {
     case 0xFFF11F: return context_u8(&AnimationSelectorState::state_lock);
     case 0xFFF173: return static_cast<std::uint8_t>(state_->camera.special_mode);
     case 0xFFF57D: return static_cast<std::uint8_t>(state_->camera.vdp_update);
+    case 0xFFF0EC: return state_->interaction_state.target_current;
+    case 0xFFEFFA: return state_->interaction_state.response_current;
+    case 0xFFEFFB: return state_->interaction_state.response_pending;
     case 0xFFEFFF: return context_u8(&AnimationSelectorState::interaction_pending);
     default: return 0;
     }
@@ -292,6 +298,9 @@ void GameRamView::write_typed8(RamAddress address, std::uint8_t value, bool& han
         update_selector_u8(&AnimationSelectorState::camera_special_mode);
         return;
     case 0xFFF57D: state_->camera.vdp_update = value; return;
+    case 0xFFF0EC: state_->interaction_state.target_current = value; return;
+    case 0xFFEFFA: state_->interaction_state.response_current = value; return;
+    case 0xFFEFFB: state_->interaction_state.response_pending = value; return;
     case 0xFFEFFF: update_selector_u8(&AnimationSelectorState::interaction_pending); return;
     default: return;
     }

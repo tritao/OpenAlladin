@@ -16,6 +16,11 @@ struct InteractionFrameBoundary {
     bool arm_surface_interaction = false;
 };
 
+struct InteractionTargetDispatch {
+    std::uint8_t selector = 0;
+    bool terminal_transition = false;
+};
+
 // Runtime edges owned by the interaction scheduler. These are not another
 // copy of Genesis RAM: they describe deferred calls whose effects become
 // visible at a later recovered frame boundary.
@@ -57,6 +62,13 @@ public:
     void clear_surface_interaction_state();
 
     InteractionFrameBoundary begin_frame(GameState& state);
+
+    // These operations model the small global interaction state helpers. The
+    // response bytes live in GameState; only deferred frame-boundary edges
+    // remain in InteractionRuntimeState.
+    void advance_response_target(GameState& state) const;
+    void update_target(GameState& state) const;
+    InteractionTargetDispatch dispatch_target_state(GameState& state) const;
 
     void request_surface_actor_spawn(int world_x, int world_y);
     void apply_surface_terrain_behavior(GameState& state);

@@ -323,6 +323,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(game_ram_test)
     openaladdin_enable_test_assertions(game_ram_test)
 
+    add_executable(interaction_state_test tests/interaction_state.cpp)
+    target_link_libraries(interaction_state_test PRIVATE openaladdin_engine)
+    target_compile_features(interaction_state_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(interaction_state_test)
+    openaladdin_enable_test_assertions(interaction_state_test)
+
     add_executable(player_terrain_test tests/player_terrain.cpp)
     target_link_libraries(player_terrain_test PRIVATE openaladdin_engine)
     target_compile_features(player_terrain_test PRIVATE cxx_std_20)
@@ -429,6 +435,10 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
 
     add_test(NAME game_ram COMMAND game_ram_test)
     set_tests_properties(game_ram PROPERTIES
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME interaction_state COMMAND interaction_state_test)
+    set_tests_properties(interaction_state PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
     add_test(NAME player_terrain COMMAND player_terrain_test)

@@ -118,6 +118,15 @@ struct RandomState {
     std::uint32_t value = 0;
 };
 
+// Interaction response state is distinct from InteractionRuntimeState, which
+// contains host-side deferred calls. These bytes are the Genesis fields used
+// by response-target convergence and indirect target-state dispatch.
+struct InteractionState {
+    std::uint8_t target_current = 0;    // FFF0EC
+    std::uint8_t response_current = 0;  // FFEFFA
+    std::uint8_t response_pending = 0;  // FFEFFB
+};
+
 // Genesis-semantic runtime state. Services, rendering resources, trace
 // buffers, and deferred host scheduling flags intentionally remain outside
 // this aggregate while the runtime is migrated incrementally.
@@ -127,6 +136,7 @@ struct GameState {
     CameraState camera{};
     SceneRuntimeState scene{};
     InteractionMap interactions{};
+    InteractionState interaction_state{};
     ActorSystem actors{};
     RandomState random{};
 };
