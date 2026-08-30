@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-player-type3e-3f-response-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace type-only labels for the Type-0x3E and Type-0x3F player-collision response starters.",
+  "promotions": [
+    {
+      "address": "0x001AF2B0",
+      "old_name": "ActorType3E_PlayerCollisionHandler",
+      "name": "PlayerCollision_StartType3EResponse",
+      "alias": "ActorType3E_PlayerCollisionHandler",
+      "range": ["0x001AF2B0", "0x001AF2F9"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x3E",
+        "gate": "Sets PLAYER_COLLISION_GATE_TYPE3E",
+        "actor": "Promotes the response actor to Type-0x84, installs ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE, and clears actor field +0x37",
+        "camera_audio": "Sets camera thresholds to 0x70/0x190 and optionally queues audio command 0x64"
+      },
+      "evidence": [
+        "Exact 74-byte body ending at RTS 0x001AF2F8",
+        "Direct Type-0x3E gate, Type-0x84, movement, and actor-state writes",
+        "Direct camera-threshold and command-0x64 audio writes"
+      ]
+    },
+    {
+      "address": "0x001AF2FA",
+      "old_name": "ActorType3F_PlayerCollisionHandler",
+      "name": "PlayerCollision_StartType3FResponse",
+      "alias": "ActorType3F_PlayerCollisionHandler",
+      "range": ["0x001AF2FA", "0x001AF343"],
+      "contract": {
+        "dispatch": "Player-collision entry for actor type 0x3F",
+        "gate": "Sets PLAYER_COLLISION_GATE_TYPE3F",
+        "actor": "Promotes the response actor to Type-0x84, installs ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE, and clears actor field +0x37",
+        "camera_audio": "Sets camera thresholds to 0x70/0x190 and optionally queues audio command 0x64"
+      },
+      "evidence": [
+        "Exact 74-byte body ending at RTS 0x001AF342",
+        "Direct Type-0x3F gate, Type-0x84, movement, and actor-state writes",
+        "Direct camera-threshold and command-0x64 audio writes"
+      ]
+    }
+  ],
+  "conclusion": "The promoted names distinguish the Type-0x3E and Type-0x3F response starters while retaining dispatch-type aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

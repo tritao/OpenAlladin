@@ -2451,19 +2451,21 @@
     - ghidra_disassembly_001AF0B8
     - player_collision_launch_placement_family_static_decompilation
 0x001AF2B0:
-  name: ActorType3E_PlayerCollisionHandler
+  name: PlayerCollision_StartType3EResponse
+  aliases: [ActorType3E_PlayerCollisionHandler]
   size: 74
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x3E. It marks the response actor as type 0x84, installs ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE at 0x00121618, clears transient actor motion state, sets the response camera values to 0x0070 and 0x0190, and optionally queues event 0x64 when scene VDP updates are active.
+  description: Player-collision Type-0x3E response starter. It sets PLAYER_COLLISION_GATE_TYPE3E, marks the response actor as Type-0x84, installs ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE at 0x00121618, clears transient actor motion state, sets camera thresholds to 0x0070 and 0x0190, and optionally queues audio command 0x64 when scene VDP updates are active.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - gnu_m68k_disassembly_001AF2B0
     - type3e_3f_player_collision_response_static_v1
 0x001AF2FA:
-  name: ActorType3F_PlayerCollisionHandler
+  name: PlayerCollision_StartType3FResponse
+  aliases: [ActorType3F_PlayerCollisionHandler]
   size: 74
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x3F. It marks the response actor as type 0x84, installs the shared ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE at 0x00121618, clears transient actor motion state, sets the response camera values to 0x0070 and 0x0190, and optionally queues event 0x64 when scene VDP updates are active.
+  description: Player-collision Type-0x3F response starter. It sets PLAYER_COLLISION_GATE_TYPE3F, marks the response actor as Type-0x84, installs the shared ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE at 0x00121618, clears transient actor motion state, sets camera thresholds to 0x0070 and 0x0190, and optionally queues audio command 0x64 when scene VDP updates are active.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - gnu_m68k_disassembly_001AF2B0
