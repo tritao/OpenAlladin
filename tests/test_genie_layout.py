@@ -902,7 +902,7 @@ def test_unindexed_movement_stream_bands_are_exact_and_provisional():
     symbols = SymbolStore()
     expected = [
         (0x0011FAA8, 0x0011FD17, "ACTOR_MOVE_TYPE5E84_PAIR_UNINDEXED", 0x270),
-        (0x001210FE, 0x0012117F, "ACTOR_MOVE_UNINDEXED_RESPONSE_001210FE", 0x82),
+        (0x001210FE, 0x0012117F, "ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE_001210FE", 0x82),
         (0x001212C0, 0x001212FF, "ACTOR_MOVE_INTERACTION_ANCHOR_RESPONSE_BANK_001212C0", 0x40),
         (0x001213E2, 0x00121411, "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_PREFIX_001213E2", 0x30),
         (0x001215D8, 0x001215DF, "ACTOR_MOVE_UNINDEXED_STEP_LOOP_001215D8", 8),
@@ -927,6 +927,46 @@ def test_unindexed_movement_stream_bands_are_exact_and_provisional():
         assert decoded["bytes_decoded"] == size
         assert decoded["stopped_reason"] == "byte_limit"
         assert decoded["steps"][-1]["next_address"] == f"0x{end + 1:08X}"
+
+
+def test_flag20_terrain_response_stream_preserves_callback_and_terrain_evidence():
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = MovementDecoder(load_animation_decoder().RomReader(rom_path.read_bytes()))
+    decoded = decoder.decode_stream(
+        0x001210FE,
+        max_steps=1024,
+        max_bytes=0x82,
+        follow_control_flow=False,
+    )
+
+    assert decoded["bytes_decoded"] == 0x82
+    commands = [
+        command
+        for step in decoded["steps"]
+        for command in step.get("commands", [])
+    ]
+    parameters = [command.get("parameter") for command in commands]
+    assert parameters.count("0x001ACB7A") == 2
+    assert parameters.count("0x001ACB82") == 2
+
+    compares = [command for command in commands if command.get("name") == "if_compare"]
+    assert len(compares) == 2
+    assert all(compare["compare_fields"] == ["0x24", "0xF0", "0x7C"] for compare in compares)
+
+    timer_values = [
+        command["value"]
+        for command in commands
+        if command.get("name") == "set_frame_timer_or_field"
+    ]
+    assert timer_values[:3] == ["0x87", "0x13", "0x07"]
+    assert len(timer_values) == 15
+    assert timer_values[3:] == ["0x83"] * 12
+
+    assert decoded["steps"][0]["delta_x"] == -124
+    assert decoded["steps"][0]["delta_y"] == -113
+    assert decoded["steps"][-1]["delta_x"] == -12
+    assert decoded["steps"][-1]["delta_y"] == 0
+    assert any(command.get("name") == "destroy_or_clear_actor" for command in commands)
 
 
 def test_type5e84_pair_movement_stream_family_is_exact_and_contiguous():

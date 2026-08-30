@@ -34,10 +34,11 @@
     },
     {
       "address": "0x001210FE",
-      "name": "ACTOR_MOVE_UNINDEXED_RESPONSE_001210FE",
+      "name": "ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE_001210FE",
       "range": ["0x001210FE", "0x0012117F"],
       "size": 130,
-      "boundary": "Linear MovementDecoder coverage ends immediately before ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE at 0x00121180."
+      "boundary": "Linear MovementDecoder coverage ends immediately before ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE at 0x00121180.",
+      "semantic_evidence": "The exact body publishes ActorEvent_SetFlag20 and ActorEvent_ClearFlag20 through the shared AnimationVM callback parameter, compares the 0x00FFF07C terrain-query state, applies the encoded timed leftward response, and clears the actor."
     },
     {
       "address": "0x001212C0",

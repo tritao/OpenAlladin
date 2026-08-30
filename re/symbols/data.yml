@@ -3923,13 +3923,14 @@
     - movement_stream_decoder
 
 0x001210FE:
-  name: ACTOR_MOVE_UNINDEXED_RESPONSE_001210FE
+  name: ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE_001210FE
   type: movement_stream
   size: 0x82
   confidence: provisional
-  description: Provisional decoder-bounded movement response stream in the unindexed 0x001210FE-0x0012117F band. It contains the signed opening step, two shared AnimationVM parameter publications, the flag/distance-gated loop, and terminal actor clear before ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE; no direct template or producer reference has been recovered.
+  description: Provisional decoder-bounded movement response stream in the unindexed 0x001210FE-0x0012117F band. Its exact body publishes ActorEvent_SetFlag20 and ActorEvent_ClearFlag20 through the shared AnimationVM callback parameter, compares the 0x00FFF07C terrain-query state before each timed phase, applies the encoded (-124,-113), (-111,+26), and leftward (-1..-12,0) response steps with timer 0x83, and clears the actor before ACTOR_MOVE_TYPE7C_LEVEL_EVENT_PRELUDE; no direct template or producer reference has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
+    - actor_animation_callback_family_extended_static_v1
     - movement_stream_decoder
 
 0x00121300:
