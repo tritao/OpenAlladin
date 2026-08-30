@@ -2692,7 +2692,7 @@
   record_count: 4
   shared_terminal_byte: 0x0049D8
   confidence: decompiled
-  description: Exact 23-byte physical prefix repeating the four six-byte records of ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE. Its fourth record's unused trailing zero is shared with the leading zero byte of SCENE_RESOURCE_COMMAND_TABLE at 0x000049D8, so this owner deliberately stops at 0x000049D7; the byte structure is decoded while its consumer remains unresolved.
+  description: Exact 23-byte physical prefix repeating the four six-byte records of ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE. Its fourth record's unused trailing zero is shared with the leading zero byte of SCENE_RESOURCE_COMMAND_TABLE at 0x000049D8, so this owner deliberately stops at 0x000049D7. No exported consumer targets this physical duplicate prefix, which is retained as a complete unreferenced table fragment.
   evidence:
     - actor_frame_phase_child_repeated_tail_static_v1
     - actor_frame_phase_child_animation_table_static_v1
@@ -4024,7 +4024,7 @@
   type: movement_stream
   size: 10
   confidence: decompiled
-  description: Type-0x7C wide-random-offset event prelude selected by the adjacent template record at 0x001B81B0. Its exact ten-byte body applies a (0,-4) step, pushes ActorEvent_ApplyWideRandomOffsets at 0x001ACD5A, clears the actor state through opcode 0x82, and falls through into ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED at 0x0012118A; the template's runtime producer remains unresolved.
+  description: Type-0x7C wide-random-offset event prelude selected by the adjacent template record at 0x001B81B0. Its exact ten-byte body applies a (0,-4) step, pushes ActorEvent_ApplyWideRandomOffsets at 0x001ACD5A, clears the actor state through opcode 0x82, and falls through into ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED at 0x0012118A. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
   evidence:
     - actor_template_level_event_record_partition
     - movement_stream_decoder
@@ -4899,7 +4899,7 @@
   type: movement_stream
   size: 90
   confidence: decompiled
-  description: Type-0x84 0x0F22 wall-response movement prefix selected by the actor-template record at 0x001B8304. Its exact 90-byte body performs two actor-flag-gated child-spawn phases using ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE, applies the encoded +0x0800 and (+0x0005,+0x000A) actor-field adjustments, then falls through to ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C; the template's live producer and runtime reachability remain unresolved.
+  description: Type-0x84 0x0F22 wall-response movement prefix selected by the actor-template record at 0x001B8304. Its exact 90-byte body performs two actor-flag-gated child-spawn phases using ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE, applies the encoded +0x0800 and (+0x0005,+0x000A) actor-field adjustments, then falls through to ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
   evidence:
     - type84_unreferenced_template_static_decompilation
     - movement_stream_decoder
@@ -7166,7 +7166,7 @@
   type: animation_stream
   size: 38
   confidence: decompiled
-  description: Type-0x84 0x0F22 wall-response animation loop selected by the actor-template record at 0x001B8304. Its exact 38-byte body presents the 0x0F22-0x0F4E frame sequence, uses the random gate at 0x00125D5A, and loops from 0x00125D78 back to its root; the template's live producer and runtime reachability remain unresolved.
+  description: Type-0x84 0x0F22 wall-response animation loop selected by the actor-template record at 0x001B8304. Its exact 38-byte body presents the 0x0F22-0x0F4E frame sequence, uses the random gate at 0x00125D5A, and loops from 0x00125D78 back to its root. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
   evidence:
     - type84_unreferenced_template_static_decompilation
     - animation_stream_decoder
@@ -7849,7 +7849,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: "Exact 20-byte Type-0x84 actor-template record with initializer payload 0x08000000, no movement or default animation root, template word 0x6000, ten owned resources, and no trailing flags. Its compact initializer fields are decoded; no static producer or runtime consumer is claimed."
+  description: "Exact 20-byte Type-0x84 actor-template record with initializer payload 0x08000000, no movement or default animation root, template word 0x6000, ten owned resources, and no trailing flags. Its compact initializer fields are decoded; no current exported producer, consumer, or runtime sample references this record, so it is retained as a complete unreferenced template."
   evidence:
     - actor_template_record_layout_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
@@ -7893,7 +7893,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: "Exact 20-byte Type-0x84 actor-template record with initializer payload 0x40001400, no movement or default animation root, template word 0x6000, zero resources, and no trailing flags. Its compact initializer fields are decoded; no static producer or runtime consumer is claimed."
+  description: "Exact 20-byte Type-0x84 actor-template record with initializer payload 0x40001400, no movement or default animation root, template word 0x6000, zero resources, and no trailing flags. Its compact initializer fields are decoded; no current exported producer, consumer, or runtime sample references this record, so it is retained as a complete unreferenced template."
   evidence:
     - actor_template_record_layout_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
@@ -8548,7 +8548,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Exact 20-byte Type-0x84 0x0F22 wall-response record with movement pointer ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX at 0x00121412, animation pointer ACTOR_ANIM_TYPE84_0F22_WALL_RESPONSE_LOOP at 0x00125D58, one resource, and trailing flags 0x0200. Its movement prefix spawns the Type-0x8D wall-response child template; the record and paired VM streams are decoded, but no static producer or runtime observation is claimed.
+  description: Exact 20-byte Type-0x84 0x0F22 wall-response record with movement pointer ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX at 0x00121412, animation pointer ACTOR_ANIM_TYPE84_0F22_WALL_RESPONSE_LOOP at 0x00125D58, one resource, and trailing flags 0x0200. Its movement prefix spawns the Type-0x8D wall-response child template; the record and paired VM streams are decoded, but no current exported producer or runtime sample references this family, so it is retained as a complete unreferenced template/VM family.
   evidence:
     - type84_unreferenced_template_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
