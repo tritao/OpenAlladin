@@ -683,11 +683,12 @@
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0013046F:
-  name: SCENE_RNC_GRAPHICS_0013046F
+  name: SCENE_ACTIVE_C000_GRAPHICS
+  aliases: [SCENE_RNC_GRAPHICS_0013046F]
   type: graphics_data
   size: 0x29A
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload selected by SceneResource_InitializeActiveScene.
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM C000 by SceneResource_InitializeActiveScene.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x00130709:
@@ -723,27 +724,30 @@
   evidence: [rnc_graphics_resource_static_v1]
 
 0x001313FD:
-  name: SCENE_STATE_RNC_GRAPHICS_001313FD
+  name: SCENE_STATE_PRESENTATION_C000_STANDARD_GRAPHICS
+  aliases: [SCENE_STATE_RNC_GRAPHICS_001313FD]
   type: graphics_data
   size: 0x285
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload selected by SceneResource_RunStatePresentation.
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM C000 by the standard branch of SceneResource_RunStatePresentation after the shared base resource.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x00131682:
-  name: SCENE_STATE_RNC_GRAPHICS_00131682
+  name: SCENE_STATE_PRESENTATION_C000_SPECIAL_GRAPHICS
+  aliases: [SCENE_STATE_RNC_GRAPHICS_00131682]
   type: graphics_data
   size: 0x1AE
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload selected by SceneResource_RunStatePresentation.
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM C000 by the state-8 or camera-special branch of SceneResource_RunStatePresentation after the common base resource.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x00131830:
-  name: SCENE_TRANSITION_RNC_GRAPHICS_00131830
+  name: SCENE_SCRIPT_TRANSITION_C000_GRAPHICS
+  aliases: [SCENE_TRANSITION_RNC_GRAPHICS_00131830]
   type: graphics_data
   size: 0x1BC
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload selected by SceneResource_InitializeScriptTransition.
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM C000 by SceneResource_InitializeScriptTransition.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x001319EC:
