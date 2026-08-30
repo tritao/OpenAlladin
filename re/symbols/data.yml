@@ -1207,6 +1207,16 @@
     - ghidra_sound_test_render_selected_entry
     - scene_resource_command_table
 
+0x00128E4B:
+  name: SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B
+  type: scene_resource_stream
+  size: 2
+  confidence: provisional
+  description: Provisional two-byte scene-resource command stream containing the 0x09/0x00 tile-base-0x2000 command immediately after SCENE_TRANSITION_CLOSING_STREAM. It is a complete command-table record, but no external consumer currently selects this entry.
+  evidence:
+    - unreferenced_scene_palette_data_static_v1
+    - scene_resource_command_table
+
 0x00128E4D:
   name: SOUND_TEST_PRESENTATION_STREAM
   type: scene_resource_stream
@@ -1233,11 +1243,31 @@
   type: scene_resource_stream
   size: 0x56
   confidence: decompiled
-  description: Shared 86-byte menu and sound-test presentation command stream loaded directly by Menu_RunOptionsAndSelectNextState and SoundTest_RunScreen. It selects tile base 0x4000, renders two fixed 40-byte space rows with the encoded X/Y advances 0xD8 and 0x01, and terminates at 0x00128EB0; the following 0x00128EB1-0x00128ED1 bytes remain outside this stream.
+  description: Shared 86-byte menu and sound-test presentation command stream loaded directly by Menu_RunOptionsAndSelectNextState and SoundTest_RunScreen. It selects tile base 0x4000, renders two fixed 40-byte space rows with the encoded X/Y advances 0xD8 and 0x01, and terminates at 0x00128EB0; the following alignment byte and provisional palette source remain outside this stream.
   evidence:
     - menu_sound_test_shared_presentation_stream_static_decompilation
     - ghidra_menu_sound_test_stream_consumers
     - scene_resource_command_table
+
+0x00128EB1:
+  name: SCENE_SOUND_TEST_PALETTE_ALIGNMENT_PADDING
+  type: padding_data
+  size: 1
+  confidence: confirmed
+  description: Single zero alignment byte between MENU_SOUND_TEST_SHARED_PRESENTATION_STREAM through 0x00128EB0 and the even-aligned unreferenced 16-word palette source at 0x00128EB2.
+  evidence:
+    - unreferenced_scene_palette_data_static_v1
+    - rom_padding_uniform_static_v1
+
+0x00128EB2:
+  name: UNREFERENCED_PALETTE_SOURCE_128EB2
+  type: palette_data
+  size: 0x20
+  confidence: provisional
+  description: Provisional exact 16-word Genesis palette source containing 0x0EEE in every word between the menu/sound-test presentation data and SCENE_BLANK_PALETTE. No direct consumer is recovered.
+  evidence:
+    - unreferenced_scene_palette_data_static_v1
+    - fixed_palette_source_extents_static_v1
 
 0x0012675E:
   name: SOUND_TEST_ENTRY_TABLE
@@ -1630,6 +1660,16 @@
   evidence:
     - ghidra_scene_resource_transfer_targets
     - ghidra_palette_transition_source_contract
+    - scene_palette_bank_extents_static_v1
+
+0x00128F52:
+  name: UNREFERENCED_PALETTE_BANK_128F52
+  type: palette_data
+  size: 0x80
+  confidence: provisional
+  description: Provisional four-band Genesis palette bank between SCENE_BLANK_PALETTE and SCENE_TRANSITION_PALETTE_SOURCE. Its first three 16-word bands are zero-filled and its final band is a valid nonzero palette source; no direct consumer is recovered.
+  evidence:
+    - unreferenced_scene_palette_data_static_v1
     - scene_palette_bank_extents_static_v1
 
 0x00128FD2:

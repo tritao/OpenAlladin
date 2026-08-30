@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-recorded-static-disassembly-v1",
+  "recorded_at": "2026-08-30",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "target_manifest": "re/ghidra/targets/unreferenced-scene-palette-data-static-targets.json",
+  "objects": [
+    {
+      "name": "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B",
+      "range": "0x00128E4B-0x00128E4C",
+      "size": 2,
+      "decoded": "09 00: tile-base-0x2000 command record",
+      "confidence": "provisional"
+    },
+    {
+      "name": "SCENE_SOUND_TEST_PALETTE_ALIGNMENT_PADDING",
+      "range": "0x00128EB1-0x00128EB1",
+      "size": 1,
+      "decoded": "zero alignment byte",
+      "confidence": "confirmed"
+    },
+    {
+      "name": "UNREFERENCED_PALETTE_SOURCE_128EB2",
+      "range": "0x00128EB2-0x00128ED1",
+      "size": 32,
+      "decoded": "sixteen 0x0EEE palette words",
+      "confidence": "provisional"
+    },
+    {
+      "name": "UNREFERENCED_PALETTE_BANK_128F52",
+      "range": "0x00128F52-0x00128FD1",
+      "size": 128,
+      "decoded": "four 16-word palette bands; first three zero-filled",
+      "confidence": "provisional"
+    }
+  ],
+  "evidence": [
+    "Scene-resource command grammar",
+    "Exact palette word geometry",
+    "Adjacent canonical owners",
+    "No direct pointer occurrence or runtime observation"
+  ],
+  "conclusion": "The menu/scene gaps are partitioned exactly without claiming that either provisional palette object is live."
+}

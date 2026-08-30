@@ -26,14 +26,19 @@
       "consumer": "0x001B2BC8 Scene_EnterTransitionMode -> 0x001B278A Render_RunPaletteTransitionFrom"
     }
   ],
-  "unclaimed_gap": ["0x00128F52", "0x00128FD1"],
+  "intervening_unreferenced_bank": {
+    "range": ["0x00128F52", "0x00128FD1"],
+    "name": "UNREFERENCED_PALETTE_BANK_128F52",
+    "bands": 4,
+    "confidence": "provisional"
+  },
   "evidence": [
     "The shared transition entry publishes four 0x20-byte source bands.",
     "The palette convergence loop consumes exactly 0x40 words per source.",
     "Both source pointers are direct ROM addresses from named scene/render callers."
   ],
   "limitations": [
-    "The zero-filled gap between the two banks is not assigned to either source.",
+    "The intervening four-band palette bank is separate from both directly consumed sources and has no recovered consumer.",
     "Other 16-word palette upload sources elsewhere in the ROM remain separate records."
   ]
 }

@@ -7,7 +7,7 @@
   },
   "focus": {
     "name": "menu-sound-test-shared-presentation-stream",
-    "purpose": "Bound the fixed scene-resource presentation stream shared by the options menu and sound-test screen without claiming the following unresolved bytes."
+    "purpose": "Bound the fixed scene-resource presentation stream shared by the options menu and sound-test screen while keeping the following alignment and palette objects separate."
   },
   "interpreter": {
     "address": "0x001B21F6",
@@ -35,7 +35,10 @@
     ]
   },
   "boundary": {
-    "unclaimed_after_stream": ["0x00128EB1", "0x00128ED1"],
+    "following_objects": [
+      { "range": ["0x00128EB1", "0x00128EB1"], "name": "SCENE_SOUND_TEST_PALETTE_ALIGNMENT_PADDING" },
+      { "range": ["0x00128EB2", "0x00128ED1"], "name": "UNREFERENCED_PALETTE_SOURCE_128EB2" }
+    ],
     "next_claimed_range": "0x00128ED2 SCENE_BLANK_PALETTE"
   },
   "evidence": [
@@ -44,7 +47,7 @@
     "Exact ROM command/text walk reaches the first command-0 terminator at 0x00128EB0",
     "Both menu and sound-test callers pass the identical stream root to the shared interpreter"
   ],
-  "conclusion": "The shared menu/sound-test presentation stream is now bounded at its interpreter terminator. The 33 following bytes before SCENE_BLANK_PALETTE remain intentionally unresolved and are not absorbed into the stream.",
+  "conclusion": "The shared menu/sound-test presentation stream is bounded at its interpreter terminator. The following byte is explicit alignment padding and the following 16-word 0x0EEE source is a separately bounded provisional palette object; neither is absorbed into the stream.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

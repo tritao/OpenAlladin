@@ -22,6 +22,15 @@
       "source": "Scene_EnterTransitionMode at 0x001B2BC8"
     }
   ],
+  "intervening_bank": {
+    "address": "0x00128F52",
+    "name": "UNREFERENCED_PALETTE_BANK_128F52",
+    "range": "0x00128F52-0x00128FD1",
+    "size": 128,
+    "bands": 4,
+    "confidence": "provisional",
+    "consumer": "unresolved"
+  },
   "contract": {
     "band_size": 32,
     "band_count": 4,
@@ -31,9 +40,9 @@
   "evidence": [
     "Render_RunPaletteTransitionFrom publishes source bands at A0+0x00/+0x20/+0x40/+0x60.",
     "Render_ApplyPaletteStep advances across exactly 0x40 source words.",
-    "The two direct source addresses are separated by an explicit unresolved zero-filled gap."
+    "The two direct source addresses are separated by a separately bounded four-band palette bank with no recovered consumer."
   ],
-  "conclusion": "The blank and scene-transition palette banks are canonical GRAPHICS ranges with exact four-band extents; the gap and other palette upload sources remain separate audits.",
+  "conclusion": "The blank and scene-transition palette banks are canonical GRAPHICS ranges with exact four-band extents; the intervening palette bank is separately bounded as provisional data and remains unassigned to a runtime consumer.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

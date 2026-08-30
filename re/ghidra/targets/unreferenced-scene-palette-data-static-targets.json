@@ -1,0 +1,58 @@
+{
+  "format": "openaladdin-unreferenced-scene-palette-data-v1",
+  "recorded_at": "2026-08-30",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "purpose": "Record exact scene-command, alignment, and palette-shaped owners in former menu/scene layout gaps without inventing runtime consumers.",
+  "objects": [
+    {
+      "address": "0x00128E4B",
+      "name": "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B",
+      "range": ["0x00128E4B", "0x00128E4C"],
+      "size": 2,
+      "type": "scene_resource_stream",
+      "bytes": "0900",
+      "decoded": "Scene-resource command 0x09 with operand 0x00 selects tile base 0x2000 and then reaches the command-0 terminator.",
+      "confidence": "provisional",
+      "consumer": "unresolved"
+    },
+    {
+      "address": "0x00128EB1",
+      "name": "SCENE_SOUND_TEST_PALETTE_ALIGNMENT_PADDING",
+      "range": ["0x00128EB1", "0x00128EB1"],
+      "size": 1,
+      "type": "padding_data",
+      "bytes": "00",
+      "confidence": "confirmed",
+      "boundary": "Between MENU_SOUND_TEST_SHARED_PRESENTATION_STREAM and the even-aligned palette source at 0x00128EB2."
+    },
+    {
+      "address": "0x00128EB2",
+      "name": "UNREFERENCED_PALETTE_SOURCE_128EB2",
+      "range": ["0x00128EB2", "0x00128ED1"],
+      "size": 32,
+      "type": "palette_data",
+      "bands": 1,
+      "bytes": "0eee repeated 16 times",
+      "confidence": "provisional",
+      "consumer": "unresolved"
+    },
+    {
+      "address": "0x00128F52",
+      "name": "UNREFERENCED_PALETTE_BANK_128F52",
+      "range": ["0x00128F52", "0x00128FD1"],
+      "size": 128,
+      "type": "palette_data",
+      "bands": 4,
+      "bytes": "three zero-filled 16-word bands followed by one valid nonzero 16-word band",
+      "confidence": "provisional",
+      "consumer": "unresolved"
+    }
+  ],
+  "evidence": [
+    "Exact ROM bytes and non-overlapping neighboring ownership",
+    "Scene-resource command table identifies 0x09 as tile-base selection",
+    "Even-aligned 16-word Genesis palette geometry",
+    "No runtime consumer is claimed for provisional palette objects"
+  ],
+  "conclusion": "The former mixed menu/scene gaps now have explicit structural owners: one unreferenced command record, one alignment byte, and two palette-shaped data objects. Runtime selection remains unresolved."
+}

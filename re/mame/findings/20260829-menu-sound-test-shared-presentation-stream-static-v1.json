@@ -21,13 +21,13 @@
       "00"
     ]
   },
-  "boundary": "The shared interpreter returns on the first command-0 byte at 0x00128EB0. Bytes 0x00128EB1-0x00128ED1 are not consumed by these callers and remain unresolved before SCENE_BLANK_PALETTE at 0x00128ED2.",
+  "boundary": "The shared interpreter returns on the first command-0 byte at 0x00128EB0. The following 0x00128EB1 byte is separate alignment padding and 0x00128EB2-0x00128ED1 is a separately bounded provisional 16-word palette source before SCENE_BLANK_PALETTE at 0x00128ED2.",
   "evidence": [
     "Direct LEA stream loads in the options-menu and sound-test routines",
     "Scene-resource command dispatch table at 0x000049D8",
     "Exact ROM bytes and interpreter-aware command walk"
   ],
-  "conclusion": "The fixed presentation stream shared by the options menu and sound-test screen is now an explicit bounded scene-resource range without speculative ownership of the following mixed/unreferenced bytes.",
+  "conclusion": "The fixed presentation stream shared by the options menu and sound-test screen is an explicit bounded scene-resource range. The following alignment byte and palette-shaped source are separately owned without claiming a runtime consumer for the provisional palette.",
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"
 }

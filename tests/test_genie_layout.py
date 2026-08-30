@@ -3426,6 +3426,36 @@ def test_static_header_text_and_shared_palette_families_are_exact():
     assert decoded["steps"][-1]["next_address"] == "0x00121082"
 
 
+def test_unreferenced_scene_palette_data_has_exact_structural_owners():
+    symbols = SymbolStore()
+    expected = (
+        (0x00128E4B, 0x00128E4C, "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B", "scene_resource_stream", "provisional"),
+        (0x00128EB1, 0x00128EB1, "SCENE_SOUND_TEST_PALETTE_ALIGNMENT_PADDING", "padding_data", "confirmed"),
+        (0x00128EB2, 0x00128ED1, "UNREFERENCED_PALETTE_SOURCE_128EB2", "palette_data", "provisional"),
+        (0x00128F52, 0x00128FD1, "UNREFERENCED_PALETTE_BANK_128F52", "palette_data", "provisional"),
+    )
+    for start, end, name, symbol_type, confidence in expected:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.end == end
+        assert symbol.size == end - start + 1
+        assert symbol.metadata["type"] == symbol_type
+        assert symbol.confidence == confidence
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x00128E4B:0x00128E4D] == bytes.fromhex("0900")
+    assert rom[0x00128EB1] == 0
+    assert rom[0x00128EB2:0x00128ED2] == bytes.fromhex("0eee") * 16
+
+    bank = rom[0x00128F52:0x00128FD2]
+    assert len(bank) == 0x80
+    assert bank[:0x60] == bytes(0x60)
+    words = [int.from_bytes(bank[offset:offset + 2], "big") for offset in range(0, len(bank), 2)]
+    assert all(word <= 0x0EEE and not (word & 0x1111) for word in words)
+    assert rom[0x00128FD2:0x00128FD6] == bytes.fromhex("0000006a")
+
+
 def test_menu_fixed_width_blank_records_are_exact_and_provisional():
     symbols = SymbolStore()
     symbol = symbols.at(0x0012671E, include_ranges=False)
