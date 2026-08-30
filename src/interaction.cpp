@@ -512,10 +512,6 @@ void InteractionSystem::dispatch_interaction(
     if (selector == 0x80) {
         animation_system_.actors().vm(*slot).defer_actor_service_then_force();
     }
-    if (actor.type == 0x06 && actor.animation_pc == 0x00123200
-        && actor.x == 1849 && actor.y == 775) {
-        animation_system_.actors().vm(*slot).defer_actor_service();
-    }
     state.interactions.consume(record.resource_offset);
 }
 
