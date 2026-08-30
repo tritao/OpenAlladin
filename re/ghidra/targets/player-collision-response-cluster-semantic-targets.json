@@ -1,0 +1,67 @@
+{
+  "format": "openaladdin-player-collision-response-cluster-semantic-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "purpose": "Replace three type-only collision labels with behavior-based names while preserving their legacy aliases.",
+  "promotions": [
+    {
+      "address": "0x001AF1AC",
+      "old_name": "ActorType13_PlayerCollisionHandler",
+      "name": "PlayerCollision_SpawnVerticalResponseActor",
+      "alias": "ActorType13_PlayerCollisionHandler",
+      "range": ["0x001AF1AC", "0x001AF21C"],
+      "contract": {
+        "dispatch": "Player-collision Type-0x13 entry",
+        "source": "Clears the source actor and its owned resources",
+        "response": "Allocates a backward-slot Type-0x84 response actor, copies source X/Y, and subtracts 0x20 from Y",
+        "timing": "Sets the response delay at 0x00FFF124 to 8 and conditionally queues the response audio command"
+      },
+      "evidence": [
+        "Exact body ends at RTS 0x001AF21C",
+        "Direct calls to Actor_ClearOwnedResources, Actor_InitializeFromTemplate, and Actor_FindFreeSlotBackward",
+        "Direct Type-0x84 template load at 0x001AF1C4 and vertical offset write at 0x001AF1DA"
+      ]
+    },
+    {
+      "address": "0x001ACD54",
+      "old_name": "ActorType1E_PrepareRecoveryPlane",
+      "name": "ActorCollision_PrepareRecoveryPlane",
+      "alias": "ActorType1E_PrepareRecoveryPlane",
+      "range": ["0x001ACD54", "0x001ACD59"],
+      "contract": {
+        "caller": "PlayerCollision_HandleProximityResponse",
+        "effect": "Delegates to VDP_FillC000WithTileEEEE to fill VRAM C000 with tile word 0x0EEE",
+        "role": "Prepares the recovery display plane before the caller's VBlank and palette-reload sequence"
+      },
+      "evidence": [
+        "Exact six-byte BSR/RTS wrapper",
+        "Direct call to VDP_FillC000WithTileEEEE at 0x001B26D0",
+        "Caller sequence at 0x001AE7CA-0x001AE7D2 performs the recovery preparation and VBlank/palette work"
+      ]
+    },
+    {
+      "address": "0x001AF4A0",
+      "old_name": "ActorType33_38_39_PlayerCollisionHandler",
+      "name": "PlayerCollision_ReinitializeResponseActor",
+      "alias": "ActorType33_38_39_PlayerCollisionHandler",
+      "range": ["0x001AF4A0", "0x001AF4D7"],
+      "contract": {
+        "dispatch": "Shared player-collision entry for actor types 0x33, 0x38, and 0x39",
+        "audio": "Conditionally queues event 0x0B when SCENE_VDP_UPDATE_FLAG is set",
+        "response": "Adds 15 to ACTOR_RESPONSE_COUNTER, clears the current actor, and reinitializes it from ACTOR_TEMPLATE_COLLISION_RESPONSE"
+      },
+      "evidence": [
+        "Exact 56-byte response block including the shared tail through RTS 0x001AF4D6",
+        "Direct calls to Interaction_AddResponseCounter15, Actor_ClearAndRelease, and Actor_InitializeFromTemplate",
+        "Type-0x5A, Type-0x5B, and Type-0x5C/0x5D cleanup paths transfer into this block"
+      ]
+    }
+  ],
+  "conclusion": "The promoted names describe response allocation, recovery-plane preparation, and shared response-template reinitialization without discarding the original dispatch labels.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

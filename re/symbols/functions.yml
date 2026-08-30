@@ -2583,9 +2583,10 @@
     - actor_runtime_type6e_73_static_decompilation
     - player_collision_transition_family_static_decompilation
 0x001AF1AC:
-  name: ActorType13_PlayerCollisionHandler
+  name: PlayerCollision_SpawnVerticalResponseActor
+  aliases: [ActorType13_PlayerCollisionHandler]
   confidence: decompiled
-  description: Player-collision handler for actor type 0x13. It clears the source actor's owned resources, allocates a backward-slot response actor, copies its position with a 0x20-pixel vertical offset, arms the response timer to 8, and conditionally queues the response audio command.
+  description: Player-collision response path entered by actor type 0x13. It clears the source actor's owned resources, allocates a backward-slot Type-0x84 response actor, copies the source position with a 0x20-pixel upward offset, arms the response timer to 8, and conditionally queues the response audio command.
   evidence:
     - ghidra_decompile_001AF1AC
     - ghidra_decompile_001AEC00
@@ -3920,9 +3921,10 @@
     - expanded_runtime_coverage_20260830
 
 0x001ACD54:
-  name: ActorType1E_PrepareRecoveryPlane
+  name: ActorCollision_PrepareRecoveryPlane
+  aliases: [ActorType1E_PrepareRecoveryPlane]
   confidence: decompiled
-  description: Collision-specific wrapper that fills VRAM C000 with tile word 0x0EEE through VDP_FillC000WithTileEEEE; ActorType1E_PlayerCollisionHandler calls it before its VBlank and palette-reload recovery sequence.
+  description: Collision-recovery wrapper that fills VRAM C000 with tile word 0x0EEE through VDP_FillC000WithTileEEEE; PlayerCollision_HandleProximityResponse calls it before its VBlank and palette-reload recovery sequence.
   evidence:
     - ghidra_disassembly_001ACD54
     - ghidra_decompile_001AE796
@@ -6088,10 +6090,11 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AF4A0:
-  name: ActorType33_38_39_PlayerCollisionHandler
+  name: PlayerCollision_ReinitializeResponseActor
+  aliases: [ActorType33_38_39_PlayerCollisionHandler]
   size: 56
   confidence: decompiled
-  description: Shared player-collision handler for actor types 0x33, 0x38, and 0x39. It optionally queues event 0x0B, adds 15 to ACTOR_RESPONSE_COUNTER, clears the current actor, and reinitializes the slot from ACTOR_TEMPLATE_COLLISION_RESPONSE.
+  description: Shared player-collision response path for actor types 0x33, 0x38, and 0x39. It optionally queues event 0x0B, adds 15 to ACTOR_RESPONSE_COUNTER, clears the current actor, and reinitializes the slot from ACTOR_TEMPLATE_COLLISION_RESPONSE.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF4A0
@@ -6101,7 +6104,7 @@
   name: ActorType5A_PlayerCollisionHandler
   size: 12
   confidence: decompiled
-  description: Player-collision dispatch entry for actor type 0x5A. It selects interaction-response mode 0, then transfers to the shared type-0x33/0x38/0x39 response handler.
+  description: Player-collision dispatch entry for actor type 0x5A. It selects interaction-response mode 0, then transfers to PlayerCollision_ReinitializeResponseActor.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF53E
@@ -6111,7 +6114,7 @@
   name: ActorType5B_PlayerCollisionHandler
   size: 12
   confidence: decompiled
-  description: Player-collision dispatch entry for actor type 0x5B. It selects interaction-response mode 1, then transfers to the shared type-0x33/0x38/0x39 response handler.
+  description: Player-collision dispatch entry for actor type 0x5B. It selects interaction-response mode 1, then transfers to PlayerCollision_ReinitializeResponseActor.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF54A
@@ -6242,7 +6245,7 @@
   name: PlayerCollision_ClearMatchingActorTypeRecords
   size: 36
   confidence: decompiled
-  description: Shared player-collision cleanup helper entered by the type-0x5C and type-0x5D dispatch prefixes with the selected actor type in D7. It scans common actor records 1 through 24 at 0x00FF7E82 with stride 0x42, clears matching records and their owned resources, then transfers to ActorType33_38_39_PlayerCollisionHandler.
+  description: Shared player-collision cleanup helper entered by the type-0x5C and type-0x5D dispatch prefixes with the selected actor type in D7. It scans common actor records 1 through 24 at 0x00FF7E82 with stride 0x42, clears matching records and their owned resources, then transfers to PlayerCollision_ReinitializeResponseActor.
   evidence:
     - ghidra_disassembly_001AF56C
     - ghidra_player_collision_pass

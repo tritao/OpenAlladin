@@ -241,6 +241,19 @@ def test_real_actor_terminal_interaction_has_semantic_name_and_legacy_alias():
     assert symbol.confidence == "confirmed"
 
 
+def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
+    expected = {
+        0x001AF1AC: ("PlayerCollision_SpawnVerticalResponseActor", "ActorType13_PlayerCollisionHandler"),
+        0x001ACD54: ("ActorCollision_PrepareRecoveryPlane", "ActorType1E_PrepareRecoveryPlane"),
+        0x001AF4A0: ("PlayerCollision_ReinitializeResponseActor", "ActorType33_38_39_PlayerCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
