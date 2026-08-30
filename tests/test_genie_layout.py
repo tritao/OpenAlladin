@@ -3143,6 +3143,22 @@ def test_scene_resource_vdp_accumulator_stream_is_exact():
     )
 
 
+def test_player_facing_launch_motion_helper_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001AE61A, include_ranges=False)
+    assert function is not None
+    assert function.name == "Player_InitializeFacingLaunchMotion"
+    assert function.end == 0x001AE64B
+    assert function.size == 50
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001AE61A:0x001AE64C] == bytes.fromhex(
+        "423900FFF0EB4A3900FF7E49661233FCFC0000FF7E58"
+        "33FCFC0000FF7E5A4E7533FC040000FF7E58"
+        "33FCFC0000FF7E5A4E75"
+    )
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)

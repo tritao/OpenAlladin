@@ -1069,6 +1069,17 @@
   evidence:
     - ghidra_disassembly_001B537A
     - ghidra_disassembly_001A9D98
+0xFFF0EB:
+  name: PLAYER_TERRAIN_BOUNCE_ANIMATION_STATE
+  type: u8
+  format: enum
+  confidence: decompiled
+  description: Player terrain-response animation state. Collision and terrain handlers clear it, animation-response streams publish state 0x29, and the terrain landing resolver consumes its values while progressing the bounce animation lifecycle.
+  evidence:
+    - gnu_m68k_disassembly_001AE61A
+    - player_terrain_bounce_animation_static_decompilation
+    - ghidra_disassembly_001AD7B4
+    - ghidra_disassembly_001B557E
 0xFFF0A4:
   name: TERRAIN_SURFACE_MODE
   type: u16

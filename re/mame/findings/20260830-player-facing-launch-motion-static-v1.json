@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-player-facing-launch-motion-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/player-facing-launch-motion-static-targets.json",
+  "promoted": {
+    "address": "0x001AE61A",
+    "name": "Player_InitializeFacingLaunchMotion",
+    "range": ["0x001AE61A", "0x001AE64B"],
+    "size": 50
+  },
+  "semantics": "The helper clears PLAYER_TERRAIN_BOUNCE_ANIMATION_STATE, tests PLAYER_FACING_X_FLIP, writes PLAYER_VX as -0x0400 when clear or +0x0400 when set, and writes PLAYER_VY=-0x0400 in both cases.",
+  "boundary_basis": [
+    "The routine begins after the preceding player animation service returns at 0x001AE618.",
+    "Both conditional paths terminate at their own RTS, with the second path ending at 0x001AE64B immediately before ActorType43_PlayerCollisionHandler at 0x001AE64C.",
+    "The complete 50-byte body is an isolated motion initializer and does not absorb the neighboring collision-handler range."
+  ],
+  "evidence": [
+    "Exact GNU m68k disassembly",
+    "PLAYER_FACING_X_FLIP branch controls only the horizontal launch sign",
+    "Both paths write the same upward PLAYER_VY",
+    "PLAYER_TERRAIN_BOUNCE_ANIMATION_STATE is the shared terrain-response state consumed by the existing landing/bounce services"
+  ],
+  "conclusion": "The former 0x001AE61A-0x001AE64B UNKNOWN range is a complete player-facing launch-motion initializer. Its exact velocity writes and terrain-response-state reset are now represented as a canonical function and RAM symbol.",
+  "limitations": [
+    "No direct ROM call/reference to the entry was identified in the current whole-ROM reference database; the promotion is based on the complete isolated body and its shared player terrain-state side effects."
+  ]
+}
