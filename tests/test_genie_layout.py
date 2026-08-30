@@ -3067,6 +3067,27 @@ def test_interaction_target_dispatch_helper_is_exact():
     )
 
 
+def test_interaction_response_target_helper_is_exact():
+    symbols = SymbolStore()
+    function = symbols.at(0x001B0434, include_ranges=False)
+    assert function is not None
+    assert function.name == "Interaction_AdvanceResponseTarget"
+    assert function.end == 0x001B044D
+    assert function.size == 26
+
+    current = symbols.at(0x00FFEFFA, include_ranges=False)
+    assert current is not None
+    assert current.name == "INTERACTION_RESPONSE_CURRENT"
+    pending = symbols.at(0x00FFEFFB, include_ranges=False)
+    assert pending is not None
+    assert pending.name == "INTERACTION_RESPONSE_PENDING"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x001B0434:0x001B044E] == bytes.fromhex(
+        "3F00103900FFEFFAB03900FFEFFB6406523900FFEFFA301F4E75"
+    )
+
+
 def test_actor_resource_clear_a0_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001AE3A0, include_ranges=False)

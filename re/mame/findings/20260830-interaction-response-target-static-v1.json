@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-interaction-response-target-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "decompiled",
+  "target_manifest": "re/ghidra/targets/interaction-response-target-static-targets.json",
+  "promoted": {
+    "address": "0x001B0434",
+    "name": "Interaction_AdvanceResponseTarget",
+    "range": ["0x001B0434", "0x001B044D"],
+    "size": 26
+  },
+  "memory": {
+    "current": {
+      "address": "0x00FFEFFA",
+      "name": "INTERACTION_RESPONSE_CURRENT",
+      "effect": "incremented by one when below the pending value"
+    },
+    "pending": {
+      "address": "0x00FFEFFB",
+      "name": "INTERACTION_RESPONSE_PENDING",
+      "effect": "upper bound compared by the helper"
+    }
+  },
+  "semantics": "The helper saves D0, reads the current and pending interaction response bytes, increments the current byte only when it is below the pending byte, restores D0, and returns.",
+  "conclusion": "The former 0x001B0434-0x001B044D UNKNOWN range is the response-target convergence step that precedes the active interaction selector update."
+}

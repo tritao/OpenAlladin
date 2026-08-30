@@ -389,6 +389,27 @@
     - ghidra_disassembly_001B02EC
     - ghidra_disassembly_001B0316
     - interaction_target_dispatch_static_decompilation
+0xFFEFFA:
+  name: INTERACTION_RESPONSE_CURRENT
+  type: u8
+  format: integer
+  confidence: decompiled
+  description: Current interaction response value advanced toward INTERACTION_RESPONSE_PENDING by Interaction_AdvanceResponseTarget and then toward INTERACTION_TARGET_CURRENT by Interaction_UpdateTarget.
+  evidence:
+    - ghidra_disassembly_001B02EC
+    - ghidra_disassembly_001B0434
+    - player_collision_response_family_static_decompilation
+    - interaction_response_target_static_decompilation
+0xFFEFFB:
+  name: INTERACTION_RESPONSE_PENDING
+  type: u8
+  format: integer
+  confidence: decompiled
+  description: Pending interaction response value copied or computed by player-collision handlers and consumed as the upper bound by Interaction_AdvanceResponseTarget.
+  evidence:
+    - ghidra_disassembly_001B0434
+    - player_collision_response_family_static_decompilation
+    - interaction_response_target_static_decompilation
 0xFFF0E7:
   name: PLAYER_INTERACTION_ANIMATION_GATE
   type: u8

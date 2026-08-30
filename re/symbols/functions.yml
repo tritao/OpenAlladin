@@ -1246,6 +1246,14 @@
   evidence:
     - ghidra_disassembly_001B0316
     - interaction_target_dispatch_static_decompilation
+0x001B0434:
+  name: Interaction_AdvanceResponseTarget
+  confidence: decompiled
+  size: 26
+  description: Advances INTERACTION_RESPONSE_CURRENT by one toward INTERACTION_RESPONSE_PENDING, preserving the caller's D0 word. It is the first step in the interaction response-target convergence chain before Interaction_UpdateTarget converges the active selector.
+  evidence:
+    - ghidra_disassembly_001B0434
+    - interaction_response_target_static_decompilation
 0x001B0078:
   name: Interaction_SynchronizeResponseState
   confidence: decompiled
