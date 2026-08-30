@@ -986,6 +986,21 @@ def test_real_collision_geometry_and_event_latches_have_canonical_roles():
         assert symbol.confidence == "decompiled"
 
 
+def test_real_interaction_resource_completion_latches_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FFF0F7: "INTERACTION_RESOURCE_FINALIZATION_GATE",
+        0x00FFF0F9: "INTERACTION_RESOURCE_COMPLETION_LATCH",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.metadata["type"] == "u8"
+        assert symbol.metadata["format"] == "boolean"
+        assert symbol.confidence == "decompiled"
+
+
 def test_real_actor_vm_domain_selector_has_canonical_role():
     symbol = SymbolStore().at(0x00FF7DA2, include_ranges=False)
     assert symbol is not None

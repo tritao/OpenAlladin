@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-resource-completion-latches-static-targets.json",
+  "promoted_symbols": [
+    "INTERACTION_RESOURCE_FINALIZATION_GATE",
+    "INTERACTION_RESOURCE_COMPLETION_LATCH"
+  ],
+  "evidence": [
+    "Interaction_UpdateResourceState exact instructions at 0x001B01AC-0x001B02B5",
+    "Terminal progress comparison at 0x001B0280-0x001B0290",
+    "Finalization gate test at 0x001B02A4-0x001B02AC",
+    "Existing interaction-resource milestone contract"
+  ],
+  "limitations": [
+    "The finalization gate has no direct setter in the exported absolute-reference corpus.",
+    "The completion latch has no direct consumer in the exported absolute-reference corpus."
+  ],
+  "conclusion": "The interaction-resource terminal state is now represented by exact canonical RAM identities without assuming a runtime route for the open edge of either latch.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

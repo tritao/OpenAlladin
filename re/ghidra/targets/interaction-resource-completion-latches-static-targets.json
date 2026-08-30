@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-interaction-resource-completion-latches-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "symbols": [
+    {
+      "address": "0x00FFF0F7",
+      "name": "INTERACTION_RESOURCE_FINALIZATION_GATE",
+      "width": 1,
+      "consumer": "Interaction_UpdateResourceState at 0x001B02A4",
+      "effect": "When set after the terminal progress check and scene state 0x14+, arms SCENE_SCRIPT_COUNTDOWN with 0xB4.",
+      "open_question": "Direct setter is not present in the exported absolute-reference corpus."
+    },
+    {
+      "address": "0x00FFF0F9",
+      "name": "INTERACTION_RESOURCE_COMPLETION_LATCH",
+      "width": 1,
+      "producer": "Interaction_UpdateResourceState at 0x001B0290",
+      "condition": "INTERACTION_RESOURCE_PROGRESS_COUNTER equals the ASCII bytes 010\\0",
+      "effect": "Marks resource completion and adds 1000 to ACTOR_RESPONSE_COUNTER.",
+      "open_question": "No direct consumer is present in the exported absolute-reference corpus."
+    }
+  ],
+  "conclusion": "The terminal interaction-resource completion write and its subsequent finalization gate now have canonical identities. The names describe exact local control-flow roles while retaining the unresolved external producer/consumer boundaries."
+}

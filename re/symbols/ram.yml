@@ -2625,3 +2625,25 @@
     - ghidra_disassembly_001B5B9C
     - level-callback-family-targets
     - level-table-enter-exit-targets
+
+0xFFF0F7:
+  name: INTERACTION_RESOURCE_FINALIZATION_GATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Finalization gate tested by Interaction_UpdateResourceState after the shared interaction progress reaches its terminal ASCII value and the scene state is at least 0x14; when set, the service arms the scene-script countdown. Its direct setter is not present in the exported absolute-reference corpus.
+  evidence:
+    - ghidra_disassembly_001B01AC
+    - ghidra_decompile_001B01AC
+    - interaction-resource-milestones-static-targets
+
+0xFFF0F9:
+  name: INTERACTION_RESOURCE_COMPLETION_LATCH
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Interaction-resource completion latch set by Interaction_UpdateResourceState when INTERACTION_RESOURCE_PROGRESS_COUNTER reaches the terminal ASCII value 010; the service then adds 1000 to ACTOR_RESPONSE_COUNTER. No direct consumer is present in the exported absolute-reference corpus.
+  evidence:
+    - ghidra_disassembly_001B01AC
+    - ghidra_decompile_001B01AC
+    - interaction-resource-milestones-static-targets
