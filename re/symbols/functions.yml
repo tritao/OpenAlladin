@@ -2032,10 +2032,11 @@
     - ghidra_disassembly_001AEDA6
     - player_collision_response_entry_family_static_decompilation
 0x001AEDA8:
-  name: ActorType2F_PlayerCollisionHandler
+  name: PlayerCollision_StageType84ActionResponse
+  aliases: [ActorType2F_PlayerCollisionHandler]
   size: 112
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x2F. It installs a type-0x84 response animation at 0x00123A96, routes ungated contacts through Player_ProcessInteractionState, and on the gated path optionally queues event-0x21 audio before allocating a backward-slot companion from ACTOR_TEMPLATE_TYPE_84 at 0x001B7E40 and copying the source actor position.
+  description: Player-collision Type-0x84 action-response path for runtime actor type 0x2F. It installs the response animation at 0x00123A96, routes ungated contacts through Player_ProcessInteractionState, and on the gated path optionally queues event-0x21 audio before allocating a forward-slot companion from ACTOR_TEMPLATE_TYPE_84 at 0x001B7E40 and copying the source actor position.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AEDA8
@@ -2060,10 +2061,11 @@
     - ghidra_observed_unknown_player_collision_decompile
     - ghidra_decompile_001B0360
 0x001AF228:
-  name: ActorType3A_PlayerCollisionHandler
+  name: PlayerCollision_AdvanceSecondaryResponse
+  aliases: [ActorType3A_PlayerCollisionHandler]
   size: 60
   confidence: confirmed
-  description: Player-collision handler for runtime actor type 0x3A. It optionally publishes an interaction value, queues event 0x0D, clears/reinitializes the effect actor, and reaches its terminal RTS through the internal branch target at 0x001AF262; it does not launch the player or write scene state.
+  description: Player-collision secondary-response path for runtime actor type 0x3A. When the secondary interaction counter is exhausted it optionally publishes an interaction value, advances the counter, queues event 0x0D, and transfers to PlayerCollision_ReinitializeResponseActor; it does not launch the player or write scene state.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_observed_unknown_player_collision_decompile
@@ -2451,10 +2453,11 @@
     - gnu_m68k_disassembly_001AF2B0
     - type3e_3f_player_collision_response_static_v1
 0x001AF110:
-  name: ActorType11_12_PlayerCollisionHandler
+  name: PlayerCollision_ProcessInteractionResponse
+  aliases: [ActorType11_12_PlayerCollisionHandler]
   size: 156
   confidence: confirmed
-  description: Shared player-collision handler for runtime actor types 0x11 and 0x12. With PLAYER_INTERACTION_GATE clear, type 0x12 selects animation 0x0012512C and routes through Player_ProcessInteractionState; with the gate set, the handler launches the player horizontally according to actor/player X ordering, writes PLAYER_VY=-0x0400, optionally queues event 0x31, installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE at 0x00121C62, sets camera thresholds, arms TERRAIN_RESPONSE_ACTIVE, and clears the vertical-stop/timer state.
+  description: Shared player-collision interaction-response path for runtime actor types 0x11 and 0x12. With PLAYER_ACTION_RESPONSE_FIELD clear, type 0x12 selects animation 0x0012512C and routes through Player_ProcessInteractionState while the gated interaction/recovery branches update camera and transition state; with the action gate set, it launches the player horizontally according to actor/player X ordering, writes PLAYER_VY=-0x0400, optionally queues event 0x31, installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE at 0x00121C62, arms TERRAIN_RESPONSE_ACTIVE, and clears the vertical-stop/timer state.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF110

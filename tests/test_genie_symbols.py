@@ -294,6 +294,19 @@ def test_compact_player_response_family_has_behavior_names_and_legacy_aliases():
         assert legacy in symbol.aliases
 
 
+def test_secondary_player_response_family_has_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001AEDA8: ("PlayerCollision_StageType84ActionResponse", "ActorType2F_PlayerCollisionHandler"),
+        0x001AF228: ("PlayerCollision_AdvanceSecondaryResponse", "ActorType3A_PlayerCollisionHandler"),
+        0x001AF110: ("PlayerCollision_ProcessInteractionResponse", "ActorType11_12_PlayerCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
