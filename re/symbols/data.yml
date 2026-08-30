@@ -639,35 +639,39 @@
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0012F712:
-  name: SCENE_RNC_GRAPHICS_0012F712
+  name: SCENE_REBUILD_C000_GRAPHICS
+  aliases: [SCENE_RNC_GRAPHICS_0012F712]
   type: graphics_data
   size: 0x2F0
   confidence: decompiled
-  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_RebuildAfterInteraction; its destination-specific role remains neutral.
+  description: Exact RNC-compressed 112-tile Genesis graphics payload loaded to VRAM C000 by SceneResource_RebuildAfterInteraction after the E000 companion resource.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0012FA02:
-  name: SCENE_RNC_GRAPHICS_0012FA02
+  name: SCENE_REBUILD_E000_GRAPHICS
+  aliases: [SCENE_RNC_GRAPHICS_0012FA02]
   type: graphics_data
   size: 0x50D
   confidence: decompiled
-  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_RebuildAfterInteraction; its destination-specific role remains neutral.
+  description: Exact RNC-compressed 112-tile Genesis graphics payload loaded to VRAM E000 by SceneResource_RebuildAfterInteraction before the C000 companion resource.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0012FF0F:
-  name: SCENE_RNC_GRAPHICS_0012FF0F
+  name: SCENE_ACTIVE_STATE01_C000_GRAPHICS
+  aliases: [SCENE_RNC_GRAPHICS_0012FF0F]
   type: graphics_data
   size: 0x22D
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload selected by Camera_InitializeCoordinateState as part of the scene resource setup.
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM C000 by Camera_InitializeCoordinateState after it publishes SCENE_STATE=1 for active-scene setup.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0013013C:
-  name: SCENE_RNC_GRAPHICS_0013013C
+  name: SCENE_ACTIVE_STATE01_E000_GRAPHICS
+  aliases: [SCENE_RNC_GRAPHICS_0013013C]
   type: graphics_data
   size: 0x1CF
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload selected by Camera_InitializeCoordinateState as part of the scene resource setup.
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM E000 by Camera_InitializeCoordinateState after it publishes SCENE_STATE=1 for active-scene setup.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0013030B:

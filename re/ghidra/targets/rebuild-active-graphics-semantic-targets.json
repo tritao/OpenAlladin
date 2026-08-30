@@ -1,0 +1,60 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "rebuild-and-active-scene-graphics-identities",
+    "purpose": "Replace address-bearing names for four RNC graphics resources with identities derived from exact consumer paths, scene state, VRAM destinations, and load order."
+  },
+  "targets": [
+    {
+      "address": "0x0012F712",
+      "name": "SCENE_REBUILD_C000_GRAPHICS",
+      "legacy_name": "SCENE_RNC_GRAPHICS_0012F712",
+      "range": "0x0012F712-0x0012FA01",
+      "size": 752,
+      "consumer": "0x001B16E0 SceneResource_RebuildAfterInteraction",
+      "destination": "0x00C000",
+      "load_order": 2,
+      "paired_resource": "SCENE_REBUILD_E000_GRAPHICS"
+    },
+    {
+      "address": "0x0012FA02",
+      "name": "SCENE_REBUILD_E000_GRAPHICS",
+      "legacy_name": "SCENE_RNC_GRAPHICS_0012FA02",
+      "range": "0x0012FA02-0x0012FF0E",
+      "size": 1293,
+      "consumer": "0x001B16E0 SceneResource_RebuildAfterInteraction",
+      "destination": "0x00E000",
+      "load_order": 1,
+      "paired_resource": "SCENE_REBUILD_C000_GRAPHICS"
+    },
+    {
+      "address": "0x0012FF0F",
+      "name": "SCENE_ACTIVE_STATE01_C000_GRAPHICS",
+      "legacy_name": "SCENE_RNC_GRAPHICS_0012FF0F",
+      "range": "0x0012FF0F-0x0013013B",
+      "size": 557,
+      "consumer": "0x001B04DE Camera_InitializeCoordinateState",
+      "scene_state": "0x01",
+      "destination": "0x00C000"
+    },
+    {
+      "address": "0x0013013C",
+      "name": "SCENE_ACTIVE_STATE01_E000_GRAPHICS",
+      "legacy_name": "SCENE_RNC_GRAPHICS_0013013C",
+      "range": "0x0013013C-0x0013030A",
+      "size": 463,
+      "consumer": "0x001B04DE Camera_InitializeCoordinateState",
+      "scene_state": "0x01",
+      "destination": "0x00E000"
+    }
+  ],
+  "evidence": [
+    "exact ROM boundaries",
+    "explicit RNC loader source and destination operands",
+    "rebuild-path load ordering",
+    "active-scene state publication before graphics loads"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
