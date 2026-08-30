@@ -7294,7 +7294,7 @@
   type: actor_template_base
   size: 20
   confidence: confirmed
-  description: Shared zero-type actor-template base passed to Actor_InitializeFromTemplate; caller-specific spawn paths overwrite the live actor type, animation, movement, and placement fields after initialization. The exact full template extent remains intentionally unclaimed.
+  description: Exact 20-byte shared zero-type actor-template record passed to Actor_InitializeFromTemplate. Its copied fields are 0x0000, 0x20000000, no movement root, template word 0x6000, no default animation root, two owned resources, and zero default-facing/flags/trailing bytes; caller-specific spawn paths overwrite the live actor type, animation, movement, and placement fields after initialization. The surrounding template-family extent remains intentionally unclaimed.
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - actor_spawn_variation_targets
@@ -7598,10 +7598,12 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Shared collision-response template installed by Actor_ReinitializeFromCollisionTemplate after the source actor and owned resources are cleared; the exact full template extent remains unclaimed.
+  description: Exact 20-byte shared collision-response template installed by Actor_ReinitializeFromCollisionTemplate after the source actor and owned resources are cleared. It has runtime type 0x84, no movement root, template word 0x6000, animation root 0x00122F80, one owned resource, zero default-facing/flags fields, and a zero trailing record byte.
   evidence:
     - actor_collision_response_targets
     - actor_collision_reinitialization
+    - actor_template_record_layout_static_decompilation
+    - actor_response_template_field_closure_static_v1
 
 0x001B7C10:
   name: ACTOR_TEMPLATE_UPPER_TYPE20
@@ -7638,11 +7640,12 @@
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Type-0x84 response template used by Actor_ReinitializeAsType84 and the type-0x2D collision transition; the exact full template extent remains unclaimed.
+  description: Exact 20-byte Type-0x84 response template used by Actor_ReinitializeAsType84 and the type-0x2D collision transition. It has no movement root, template word 0x6000, animation root 0x00124498, sixteen owned resources, zero default-facing/flags fields, and a zero trailing record byte.
   evidence:
     - actor_type84_reinitialize_targets
     - actor_type84_reinitialize_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
+    - actor_response_template_field_closure_static_v1
 
 0x001B7E54:
   name: ACTOR_TEMPLATE_TYPE_65_BOUNCE

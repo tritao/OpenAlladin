@@ -1,0 +1,75 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "initializer": {
+    "address": "0x001AE30A",
+    "name": "Actor_InitializeFromTemplate",
+    "record_size": 20,
+    "contract": "The initializer consumes source bytes 0x00-0x12 and advances through the complete 0x14-byte compact record; the final byte is retained as part of the ROM record."
+  },
+  "records": [
+    {
+      "address": "0x001B79B8",
+      "name": "ACTOR_TEMPLATE_BASE_ZERO",
+      "end": "0x001B79CB",
+      "bytes": "0000200000000000000060000000000002000000",
+      "fields": {
+        "template_header": "0x0000",
+        "copied_bytes_+2_to_+5": "0x20000000",
+        "movement_root": null,
+        "template_word": "0x6000",
+        "animation_root": null,
+        "resource_count": 2,
+        "default_facing": 0,
+        "flags": 0,
+        "trailing_byte": 0
+      },
+      "role": "Shared zero-type base whose caller-specific spawn paths publish the live type, movement, animation, and placement fields."
+    },
+    {
+      "address": "0x001B7ABC",
+      "name": "ACTOR_TEMPLATE_COLLISION_RESPONSE",
+      "end": "0x001B7ACF",
+      "bytes": "84000000000000000000600000122F8001000000",
+      "fields": {
+        "runtime_type": "0x84",
+        "movement_root": null,
+        "template_word": "0x6000",
+        "animation_root": "0x00122F80",
+        "resource_count": 1,
+        "default_facing": 0,
+        "flags": 0,
+        "trailing_byte": 0
+      },
+      "role": "Shared collision-response record installed after actor cleanup by Actor_ReinitializeFromCollisionTemplate."
+    },
+    {
+      "address": "0x001B7E40",
+      "name": "ACTOR_TEMPLATE_TYPE_84",
+      "end": "0x001B7E53",
+      "bytes": "8400000000000000000060000012449810000000",
+      "fields": {
+        "runtime_type": "0x84",
+        "movement_root": null,
+        "template_word": "0x6000",
+        "animation_root": "0x00124498",
+        "resource_count": 16,
+        "default_facing": 0,
+        "flags": 0,
+        "trailing_byte": 0
+      },
+      "role": "Type-0x84 response record selected by Actor_ReinitializeAsType84 and the type-0x2D collision transition."
+    }
+  ],
+  "boundary_evidence": [
+    "Each record is exactly 0x14 bytes, matching the common initializer cadence.",
+    "The following promoted record begins immediately at each recorded end plus one, so the three records do not rely on proximity-only bounds.",
+    "The field roles are mapped from the existing Actor_InitializeFromTemplate copy contract and direct template consumers."
+  ],
+  "conclusion": "The three previously hedged actor-template records have exact 20-byte ownership and decoded initializer fields. This closes record extent ambiguity without assigning unsupported semantics to the surrounding template family."
+}
