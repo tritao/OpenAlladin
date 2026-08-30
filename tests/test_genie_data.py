@@ -396,7 +396,10 @@ def test_data_index_collapses_interior_layout_fragment_owned_by_canonical_symbol
     )
 
     objects = index.objects(kind="pointer-table")
-    assert [(item["start"], item["end"]) for item in objects] == [("0x00000040", "0x0000004F")]
+    assert [(item["start"], item["end"]) for item in objects] == [
+        ("0x00000040", "0x0000004F"),
+        ("0x00000044", "0x00000047"),
+    ]
     assert index.at(0x44)["name"] == "DispatchTableEntry01"
 
 

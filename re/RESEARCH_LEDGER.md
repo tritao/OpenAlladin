@@ -2323,6 +2323,19 @@ the displayed value is score, reward, inventory, or another user-facing field.
 The runtime result is recorded in
 `re/mame/findings/20260830-hud-display-initializer-runtime-v1.json`.
 
+## Scene E000 graphics loader names (20260830)
+
+The remaining neutral graphics entries at `0x0012D654` and `0x0012E666`
+are now named from their direct loader contracts. The first is
+`SCENE_RESOURCE_PALETTE_1298F2_E000_GRAPHICS`: `SceneResource_LoadVRAMPairWithPalette1298F2`
+loads it to VRAM `E000` after the common base graphics and publishes palette
+source `SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2`. The second is
+`SCENE_RESET_E000_GRAPHICS`, loaded to VRAM `E000` by `Scene_ResetToState0`.
+Neither name claims an unsupported user-facing scene title.
+
+The static result is recorded in
+`re/mame/findings/20260830-scene-e000-graphics-loader-names-static-v1.json`.
+
 ## Menu selection-marker tile animation (20260829)
 
 `Menu_AnimateSelectionMarkerTiles` at `0x001B3B4A` runs on even
@@ -3470,3 +3483,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-rom-symbol-overlay-audit-static-v1` | tooling-validation | Recorded the five intentional container/view aliases in the ROM symbol database and confirmed that layout emission still assigns exactly one owner to every byte |
 | `20260830-hud-display-buffer-contract-static-v1` | recorded-static-decompilation | Named HUD_DISPLAY_DIGITS at 0x00FF7E29-0x00FF7E2F and corrected Interaction_SynchronizeResponseState's exact current-to-pending snapshot/update direction |
 | `20260830-hud-display-initializer-runtime-v1` | recorded-repeated-runtime-observation | Observed Interaction_InitializePendingDisplayValue execute on two fresh-boot runs and seed 0x00FF7E30 with ASCII 100000; promoted function reachability while retaining neutral display semantics |
+| `20260830-scene-e000-graphics-loader-names-static-v1` | recorded-static-decompilation | Replaced address-only names for the 0x0012D654 and 0x0012E666 E000 graphics payloads with direct loader- and destination-specific canonical names |

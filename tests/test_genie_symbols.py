@@ -371,6 +371,22 @@ def test_real_hud_display_buffers_have_canonical_ram_symbols():
     assert active.address + 7 == pending.address
 
 
+def test_real_scene_graphics_have_loader_specific_canonical_names():
+    symbols = SymbolStore()
+
+    resource_graphics = symbols.at(0x0012D654, include_ranges=False)
+    assert resource_graphics is not None
+    assert resource_graphics.name == "SCENE_RESOURCE_PALETTE_1298F2_E000_GRAPHICS"
+    assert resource_graphics.metadata["type"] == "graphics_data"
+    assert resource_graphics.size == 0x21B
+
+    reset_graphics = symbols.at(0x0012E666, include_ranges=False)
+    assert reset_graphics is not None
+    assert reset_graphics.name == "SCENE_RESET_E000_GRAPHICS"
+    assert reset_graphics.metadata["type"] == "graphics_data"
+    assert reset_graphics.size == 0x183
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-scene-e000-graphics-loader-names-static-v1",
+  "recorded_at": "2026-08-30",
+  "status": "recorded-static-decompilation",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "entries": [
+    {
+      "address": "0x0012D654",
+      "range": ["0x0012D654", "0x0012D86E"],
+      "name": "SCENE_RESOURCE_PALETTE_1298F2_E000_GRAPHICS",
+      "loader": "0x001B4896 SceneResource_LoadVRAMPairWithPalette1298F2",
+      "destination": "VRAM E000",
+      "contract": "Loaded after SCENE_COMMON_BASE_GRAPHICS at VRAM 000000; the loader then publishes SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2 at 0x00FF7290."
+    },
+    {
+      "address": "0x0012E666",
+      "range": ["0x0012E666", "0x0012E7E8"],
+      "name": "SCENE_RESET_E000_GRAPHICS",
+      "loader": "0x001B4F7C Scene_ResetToState0",
+      "destination": "VRAM E000",
+      "contract": "Loaded after SCENE_COMMON_BASE_GRAPHICS during the reset-scene presentation."
+    }
+  ],
+  "evidence": [
+    "Exact outgoing data references in SceneResource_LoadVRAMPairWithPalette1298F2 at 0x001B48A8 and Scene_ResetToState0 at 0x001B4FE2.",
+    "Cached Ghidra decompilation and canonical function boundaries for both loaders.",
+    "Validated RNC extents from rnc_graphics_resource_static_v1."
+  ],
+  "conclusion": "Both remaining scene graphics entries now have loader- and destination-specific canonical names. No user-facing scene title is inferred beyond the direct static loader contracts."
+}

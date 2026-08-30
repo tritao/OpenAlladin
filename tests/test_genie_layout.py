@@ -543,11 +543,18 @@ def test_unindexed_rnc_graphics_resources_are_exactly_bounded():
     )
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
     rom = rom_path.read_bytes()
+    semantic_names = {
+        0x0012D654: "SCENE_RESOURCE_PALETTE_1298F2_E000_GRAPHICS",
+        0x0012E666: "SCENE_RESET_E000_GRAPHICS",
+    }
 
     for start, end in resources:
         symbol = symbols.at(start, include_ranges=False)
         assert symbol is not None
-        assert symbol.name.endswith(f"_{start:08X}")
+        if start in semantic_names:
+            assert symbol.name == semantic_names[start]
+        else:
+            assert symbol.name.endswith(f"_{start:08X}")
         assert symbol.end == end
         assert symbol.size == end - start + 1
         assert symbol.metadata["type"] == "graphics_data"

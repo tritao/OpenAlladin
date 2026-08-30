@@ -581,12 +581,14 @@
     - scene_resource_setup_loader_targets
 
 0x0012D654:
-  name: SCENE_RNC_GRAPHICS_0012D654
+  name: SCENE_RESOURCE_PALETTE_1298F2_E000_GRAPHICS
   type: graphics_data
   size: 0x21B
   confidence: decompiled
-  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_LoadVRAMPairWithPalette1298F2; its higher-level scene identity remains intentionally neutral.
-  evidence: [rnc_graphics_resource_static_v1]
+  description: Exact RNC-compressed 112-tile Genesis graphics payload loaded to VRAM E000 by SceneResource_LoadVRAMPairWithPalette1298F2 after the common base graphics; the loader publishes palette source SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2 for the paired presentation.
+  evidence:
+    - rnc_graphics_resource_static_v1
+    - scene_resource_variant_loader_targets
 
 0x0012DA04:
   name: SCENE_RNC_GRAPHICS_0012DA04
@@ -613,12 +615,14 @@
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0012E666:
-  name: SCENE_RNC_GRAPHICS_0012E666
+  name: SCENE_RESET_E000_GRAPHICS
   type: graphics_data
   size: 0x183
   confidence: decompiled
-  description: Exact RNC-compressed 112-tile Genesis graphics payload selected by Scene_ResetToState0; its higher-level scene identity remains intentionally neutral.
-  evidence: [rnc_graphics_resource_static_v1]
+  description: Exact RNC-compressed 112-tile Genesis graphics payload loaded to VRAM E000 by Scene_ResetToState0 during reset-scene presentation.
+  evidence:
+    - rnc_graphics_resource_static_v1
+    - scene_reset_credits_palette_extents_static_v1
 
 0x0012F39E:
   name: SCENE_RNC_GRAPHICS_0012F39E
