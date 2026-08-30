@@ -65,6 +65,17 @@ sequence_table:
   logical_header_start: 0x001BB053
   logical_header_end: 0x001BB316
 
+# The menu's command/label table gives names to the sequence IDs that are
+# exposed by the sound-test screen. It contains 94 active records followed by
+# a fixed 0xFF sentinel; 20 sequence-table IDs are not listed in the menu.
+sound_test_table:
+  address: 0x0012675E
+  entry_width: 0x10
+  entry_count: 94
+  sentinel_address: 0x00126D3E
+  sentinel_value: 0xFF
+  label_encoding: ASCII, padded with spaces, NUL-terminated
+
 sequence_streams:
   terminator: 0x60
   bounds: decoded from each active track offset through its terminal event
@@ -88,12 +99,12 @@ sample_descriptor_table:
   payload_end_inclusive: 0x001E56BE
   payload_size: 123276
 
-# IDs confirmed by the Level 01 MAME command trace. The native runtime uses
-# the level music ID when no --sound-id override is supplied.
+# IDs confirmed by the Level 01 MAME command trace. Names in parentheses are
+# the corresponding labels from the sound-test menu.
 sound_ids:
-  level01_music: 0x49
-  animation_sfx: 0x4C
-  interaction_event: 0x31
+  level01_music: 0x49 # PRINCE ALI
+  animation_sfx: 0x4C # FIRE FROM COAL
+  interaction_event: 0x31 # ALADDIN HURT
 
 channel_state:
   base: 0x1B80

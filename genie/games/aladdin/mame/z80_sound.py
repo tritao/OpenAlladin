@@ -41,6 +41,15 @@ SEQUENCE_HEADER_DATA_END = 0x001BB316
 SEQUENCE_STREAM_DATA_START = 0x001BB317
 SEQUENCE_STREAM_DATA_END = 0x001C73CA
 
+# The sound-test screen uses a separate fixed-width table to associate the
+# command byte sent to the Z80 with the label shown to the player. It exposes
+# 94 of the 0x72 sequence-table entries; the remaining entries are valid
+# sequence IDs but have no sound-test label.
+SOUND_TEST_ENTRY_TABLE_BASE = 0x0012675E
+SOUND_TEST_ENTRY_SIZE = 0x10
+SOUND_TEST_ENTRY_COUNT = 94
+SOUND_TEST_ENTRY_SENTINEL = 0xFF
+
 # The fourth pointer sent by Audio_Initialize addresses thirty fixed-width
 # descriptors. Each descriptor points, relative to this table, into the
 # contiguous waveform payload that follows it.
@@ -114,6 +123,64 @@ def read_u16_le(data: bytes, address: int) -> int:
     return int.from_bytes(data[address:address + 2], "little")
 
 
+def sound_test_table_report(image: bytes) -> dict[str, Any]:
+    """Decode the sound-test command/label records from the ROM."""
+    entries: dict[str, Any] = {}
+    for index in range(SOUND_TEST_ENTRY_COUNT):
+        address = SOUND_TEST_ENTRY_TABLE_BASE + index * SOUND_TEST_ENTRY_SIZE
+        record = image[address:address + SOUND_TEST_ENTRY_SIZE]
+        if len(record) != SOUND_TEST_ENTRY_SIZE:
+            raise SystemExit(
+                f"sound-test entry {index:#x} exceeds ROM at {address:#x}"
+            )
+        command = record[0]
+        if command == SOUND_TEST_ENTRY_SENTINEL:
+            raise SystemExit(f"sound-test sentinel appeared early at {address:#x}")
+        if record[-1] != 0:
+            raise SystemExit(f"sound-test entry {index:#x} is not NUL-terminated")
+        try:
+            display_label = record[1:-1].decode("ascii")
+        except UnicodeDecodeError as error:
+            raise SystemExit(
+                f"sound-test entry {index:#x} has non-ASCII label"
+            ) from error
+        name = display_label.strip()
+        if not name:
+            raise SystemExit(f"sound-test entry {index:#x} has an empty label")
+        key = f"0x{command:02X}"
+        if key in entries:
+            raise SystemExit(f"sound-test command {key} is duplicated")
+        entries[key] = {
+            "table_address": hex_address(address),
+            "command": key,
+            "display_label": display_label,
+            "name": name,
+        }
+
+    sentinel_address = (
+        SOUND_TEST_ENTRY_TABLE_BASE
+        + SOUND_TEST_ENTRY_COUNT * SOUND_TEST_ENTRY_SIZE
+    )
+    sentinel = image[sentinel_address:sentinel_address + SOUND_TEST_ENTRY_SIZE]
+    if len(sentinel) != SOUND_TEST_ENTRY_SIZE:
+        raise SystemExit(
+            f"sound-test sentinel exceeds ROM at {sentinel_address:#x}"
+        )
+    if sentinel[0] != SOUND_TEST_ENTRY_SENTINEL or sentinel[-1] != 0:
+        raise SystemExit("sound-test table has no complete sentinel record")
+    if sentinel[1:-1] != b" " * (SOUND_TEST_ENTRY_SIZE - 2):
+        raise SystemExit("sound-test sentinel record has unexpected padding")
+
+    return {
+        "table_address": hex_address(SOUND_TEST_ENTRY_TABLE_BASE),
+        "entry_width": SOUND_TEST_ENTRY_SIZE,
+        "entry_count": SOUND_TEST_ENTRY_COUNT,
+        "sentinel_address": hex_address(sentinel_address),
+        "sentinel": f"0x{SOUND_TEST_ENTRY_SENTINEL:02X}",
+        "entries": entries,
+    }
+
+
 def sequence_table_report(image: bytes) -> dict[str, Any]:
     """Decode the ROM pointer table consumed by Z80 command 0x10."""
     first_header_offset = read_u16_le(image, SEQUENCE_TABLE_BASE)
@@ -121,6 +188,7 @@ def sequence_table_report(image: bytes) -> dict[str, Any]:
         raise SystemExit("sequence table has no even first-header offset")
     entry_count = first_header_offset // 2
     entries: dict[str, Any] = {}
+    sound_test_entries = sound_test_table_report(image)["entries"]
     header_addresses: list[int] = []
     for sound_id in range(entry_count):
         table_address = SEQUENCE_TABLE_BASE + sound_id * 2
@@ -140,7 +208,8 @@ def sequence_table_report(image: bytes) -> dict[str, Any]:
             read_u16_le(image, header_address + 1 + index * 2)
             for index in range(SEQUENCE_TRACK_COUNT)
         ]
-        entries[f"0x{sound_id:02X}"] = {
+        key = f"0x{sound_id:02X}"
+        entries[key] = {
             "table_address": hex_address(table_address),
             "header_offset": hex_address(header_offset),
             "header_address": hex_address(header_address),
@@ -154,6 +223,7 @@ def sequence_table_report(image: bytes) -> dict[str, Any]:
             "logical_header_end": hex_address(
                 header_address + track_count * 2
             ),
+            "name": sound_test_entries.get(key, {}).get("name"),
         }
     return {
         "table_address": hex_address(SEQUENCE_TABLE_BASE),
@@ -323,6 +393,17 @@ def build_report(rom: Path) -> tuple[dict[str, Any], bytes]:
         or parse_int(knowledge_sequence.get("header_size")) != SEQUENCE_HEADER_SIZE
     ):
         raise SystemExit("re/sound/z80-driver.yml sequence table map is stale")
+    knowledge_sound_test = knowledge.get("sound_test_table", {}) or {}
+    if (
+        parse_int(knowledge_sound_test.get("address")) != SOUND_TEST_ENTRY_TABLE_BASE
+        or parse_int(knowledge_sound_test.get("entry_width")) != SOUND_TEST_ENTRY_SIZE
+        or parse_int(knowledge_sound_test.get("entry_count")) != SOUND_TEST_ENTRY_COUNT
+        or parse_int(knowledge_sound_test.get("sentinel_address"))
+        != SOUND_TEST_ENTRY_TABLE_BASE + SOUND_TEST_ENTRY_COUNT * SOUND_TEST_ENTRY_SIZE
+        or parse_int(knowledge_sound_test.get("sentinel_value"))
+        != SOUND_TEST_ENTRY_SENTINEL
+    ):
+        raise SystemExit("re/sound/z80-driver.yml sound-test table map is stale")
     knowledge_samples = knowledge.get("sample_descriptor_table", {}) or {}
     if (
         parse_int(knowledge_samples.get("address")) != SAMPLE_DESCRIPTOR_TABLE_BASE
@@ -405,6 +486,7 @@ def build_report(rom: Path) -> tuple[dict[str, Any], bytes]:
                 for offset in find_all(driver, bytes.fromhex("21 11 7F"))
             ],
         },
+        "sound_test_table": sound_test_table_report(image),
         "sequence_table": sequence_table_report(image),
         "sequence_streams": {
             "terminator": "0x60",

@@ -30,6 +30,13 @@ effects `0x4C`, and the fixed interaction event `0x31`. The native runtime
 can audition any sequence-table entry with `--sound-id ID`; IDs are valid from
 `0x00` through `0x71`.
 
+The sound-test menu table at ROM `$12675E` provides the player-facing names for
+94 of those IDs. `driver.json` copies each matching label into the corresponding
+`sequence_table.entries` record as `name`; the remaining 20 sequence IDs are
+left as `null` because they have no sound-test record. The confirmed IDs are
+therefore `0x49` (`PRINCE ALI`), `0x4C` (`FIRE FROM COAL`), and `0x31`
+(`ALADDIN HURT`).
+
 The fourth pointer sent by the 68K audio initializer is ROM `$1C73CB`. Z80
 `$1336` selects one of thirty 12-byte sample descriptors. Their relative
 offsets and lengths form one contiguous waveform payload at `$1C7533-$1E56BE`;
