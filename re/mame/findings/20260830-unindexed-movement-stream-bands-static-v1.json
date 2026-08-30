@@ -18,7 +18,7 @@
     "address": "0x001B69A6",
     "range": "0x001B69A6-0x001B69FF",
     "name": "InteractionSpawn_Type5E84Pair_AnchorResponse",
-    "confidence": "provisional"
+    "confidence": "decompiled"
   },
   "template": {
     "address": "0x001B81B0",
