@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-difficulty-counter-consumer-closure-finding-v1",
+  "recorded_at": "2026-08-30",
+  "repository_commit_at_capture": "1fc1dbb",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "target_manifest": "re/ghidra/targets/difficulty-counter-consumer-closure-static-targets.json",
+  "counter": {
+    "address": "0x00FF7E3C",
+    "name": "GAME_DIFFICULTY_COUNTER",
+    "representation": "one ASCII digit, initialized from GAME_DIFFICULTY_MODE and clamped to '9'",
+    "direct_writers": [
+      "Game_InitializeDifficultyCounter at 0x001B0046",
+      "Game_IncrementDifficultyCounter at 0x001AEF70",
+      "Level_ExitAndTerminalTransition at 0x001A8F0C"
+    ],
+    "direct_readers": [
+      "Render_BuildActorRecords at 0x001AB7C4",
+      "ActorType7E_PlayerCollisionHandler at 0x001AFE1C",
+      "ActorType46_PlayerCollisionHandler at 0x001AEF5C",
+      "LevelEvent_SpawnType46WhenSceneReady at 0x001B59DE",
+      "InteractionGate_Type46_AF at 0x001B742A",
+      "LevelEvent_SpawnType46WhenModeReady at 0x001B7706"
+    ]
+  },
+  "increment_closure": {
+    "service": "Game_IncrementDifficultyCounter at 0x001AEF70",
+    "callers": [
+      "ActorType46_PlayerCollisionHandler at 0x001AEF5C",
+      "ActorType7E_PlayerCollisionHandler at 0x001AFE1C",
+      "Interaction_DrainResponseCounter at 0x001B00D6",
+      "SceneResource_RebuildAfterInteraction at 0x001B16E0"
+    ],
+    "behavior": [
+      "Increments the byte and clamps it at ASCII '9'.",
+      "Queues audio command 0x66 with the updated value when SCENE_VDP_UPDATE_FLAG is set."
+    ]
+  },
+  "corrections": [
+    "The Type-0x46 level-event gates compare GAME_DIFFICULTY_COUNTER with ASCII '9'; they are not scene/mode values.",
+    "The selector-0xAF gate has the same ASCII-'9' cap test."
+  ],
+  "limitations": [
+    "The static closure does not identify the user-facing resource represented by the displayed digit.",
+    "Runtime promotion is intentionally not claimed because the current coverage corpus does not contain the increment call sites."
+  ],
+  "conclusion": "The direct GAME_DIFFICULTY_COUNTER reader/writer family and all four known increment-service callers are now recorded as one closed static contract, while its conservative canonical name is retained."
+}

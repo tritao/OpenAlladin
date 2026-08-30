@@ -1,0 +1,102 @@
+{
+  "format": "openaladdin-difficulty-counter-consumer-closure-v1",
+  "recorded_at": "2026-08-30",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "address": "0x00FF7E3C",
+    "name": "GAME_DIFFICULTY_COUNTER",
+    "purpose": "Close the direct reader/writer and increment-call closure without assigning an unproven user-facing resource meaning."
+  },
+  "writers": [
+    {
+      "address": "0x001B0046",
+      "name": "Game_InitializeDifficultyCounter",
+      "sites": ["0x001B0066"],
+      "effect": "Initializes the ASCII counter to '5', '3', or '2' from GAME_DIFFICULTY_MODE."
+    },
+    {
+      "address": "0x001AEF70",
+      "name": "Game_IncrementDifficultyCounter",
+      "sites": ["0x001AEF84"],
+      "effect": "Increments and clamps the ASCII counter at '9', optionally queuing audio command 0x66."
+    },
+    {
+      "address": "0x001A8F0C",
+      "name": "Level_ExitAndTerminalTransition",
+      "sites": ["0x001A90C0"],
+      "effect": "Decrements the counter during the gated terminal-transition path."
+    }
+  ],
+  "direct_readers": [
+    {
+      "address": "0x001AB7C4",
+      "name": "Render_BuildActorRecords",
+      "sites": ["0x001AB804"],
+      "effect": "Converts the ASCII digit into the seeded HUD actor tile."
+    },
+    {
+      "address": "0x001AFE1C",
+      "name": "ActorType7E_PlayerCollisionHandler",
+      "sites": ["0x001AFE58"],
+      "effect": "Uses '9' as the terminal scene-resource branch after the secondary-counter transition tests."
+    },
+    {
+      "address": "0x001AEF5C",
+      "name": "ActorType46_PlayerCollisionHandler",
+      "sites": ["0x001AEF5C"],
+      "effect": "Tests the cap before invoking Game_IncrementDifficultyCounter and collision-template reinitialization."
+    },
+    {
+      "address": "0x001B59DE",
+      "name": "LevelEvent_SpawnType46WhenSceneReady",
+      "sites": ["0x001B59DE"],
+      "effect": "Suppresses the shared Type-0x46 spawn when the counter is already '9'."
+    },
+    {
+      "address": "0x001B742A",
+      "name": "InteractionGate_Type46_AF",
+      "sites": ["0x001B7434"],
+      "effect": "Suppresses the selector-0xAF shared Type-0x46 spawn when the counter is already '9'."
+    },
+    {
+      "address": "0x001B7706",
+      "name": "LevelEvent_SpawnType46WhenModeReady",
+      "sites": ["0x001B7706"],
+      "effect": "Suppresses the mode-ready shared Type-0x46 spawn when the counter is already '9'."
+    }
+  ],
+  "increment_callers": [
+    {
+      "address": "0x001AEF5C",
+      "name": "ActorType46_PlayerCollisionHandler",
+      "site": "0x001AEF68"
+    },
+    {
+      "address": "0x001AFE1C",
+      "name": "ActorType7E_PlayerCollisionHandler",
+      "site": "0x001AFE9A"
+    },
+    {
+      "address": "0x001B00D6",
+      "name": "Interaction_DrainResponseCounter",
+      "site": "0x001B0112"
+    },
+    {
+      "address": "0x001B16E0",
+      "name": "SceneResource_RebuildAfterInteraction",
+      "site": "0x001B19EE"
+    }
+  ],
+  "limitations": [
+    "The closure establishes the counter's initialization, progression, display, cap, and transition roles.",
+    "No user-facing name such as lives, wishes, score, or inventory quantity is assigned."
+  ],
+  "evidence": [
+    "instructions.json direct memory-reference records",
+    "Cached Ghidra decompilation of every listed function",
+    "game-difficulty-counter-targets",
+    "difficulty-counter-type7e-consumer-static-v1"
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

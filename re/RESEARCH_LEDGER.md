@@ -2232,6 +2232,22 @@ This proves the counter's transition-gate role and exact cap use without
 assigning a user-facing resource name. The static result is recorded in
 `re/mame/findings/20260830-difficulty-counter-type7e-consumer-static-v1.json`.
 
+## Difficulty-counter reader/writer closure (20260830)
+
+The direct `GAME_DIFFICULTY_COUNTER` reader/writer inventory is now closed at
+the generated instruction level. In addition to initialization, HUD
+construction, terminal-transition decrement, and the Type-0x7E branch, the
+counter is read by the Type-0x46 player-collision handler, the selector-0xAF
+interaction gate, and both Type-0x46 level-event producers. The increment
+service is called from the Type-0x46 collision path, the Type-0x7E transition
+path, the actor-response counter drain, and the scene-resource rebuild path.
+
+This confirms a shared progression/transition cap and corrects the two
+Type-0x46 event descriptions that had called ASCII `0x39` a scene or mode
+value. The static result is recorded in
+`re/mame/findings/20260830-difficulty-counter-consumer-closure-static-v1.json`;
+no user-facing resource meaning is inferred.
+
 ## Player AnimationVM primary-counter callback family (20260830)
 
 The player action-animation bank contains five data-driven `FB` pushes of
@@ -3512,6 +3528,7 @@ valuable because it prevents repeating the same input family.
 | `20260830-actor-response-template-field-closure-static-v1` | recorded-static-decompilation | Closed the remaining actor-template extent wording gaps for the zero base, shared collision-response record, and Type-0x84 response record with exact 20-byte boundaries and initializer-mapped fields; surrounding family roles remain conservative |
 | `20260830-primary-interaction-counter-contract-static-v1` | recorded-static-decompilation | Renamed the former FarTransfer counter helpers at 0x001B0336/0x001B0360 as primary interaction-counter advance/decrement services and closed their cross-subsystem caller and step-count contracts while retaining neutral resource semantics |
 | `20260830-difficulty-counter-type7e-consumer-static-v1` | recorded-static-decompilation | Closed ActorType7E_PlayerCollisionHandler's exact secondary-counter thresholds, five/ten-step countdown paths, GAME_DIFFICULTY_COUNTER cap branch, scene-resource mode selection, and camera-threshold tail without assigning a user-facing counter name |
+| `20260830-difficulty-counter-consumer-closure-static-v1` | recorded-static-decompilation | Closed the direct GAME_DIFFICULTY_COUNTER reader/writer family and all four Game_IncrementDifficultyCounter callers; corrected Type-0x46 ASCII-'9' gate wording while retaining conservative user-facing semantics |
 | `20260830-type7e-function-boundary-correction-v1` | tooling-validation | Corrected ActorType7E_PlayerCollisionHandler from the stale 358-byte overlapping symbol size to its exact 292-byte body ending at 0x001AFF3F before the separate mode-11 and mode-16 helpers |
 | `20260830-rnc-title-boundary-audit-correction-v2` | tooling-validation | Corrected the RNC manifest end interpretation: its exclusive 0x001434C3 endpoint means the title payload ends at 0x001434C2 and the zero at 0x001434C3 remains alignment padding before the next RNC header at 0x001434C4 |
 | `20260830-scene-resource-stream-boundary-correction-static-v1` | tooling-validation | Corrected SCENE_RESOURCE_BLANK_STREAM_STATE_03 to its 0x00127AEE-0x00127B5F terminator and separated the independently selected 0x00127B60-0x00127BD1 stream |

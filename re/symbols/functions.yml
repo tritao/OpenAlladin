@@ -372,11 +372,12 @@
 0x001AEF70:
   name: Game_IncrementDifficultyCounter
   confidence: decompiled
-  description: Increments the ASCII difficulty-initialized counter at 0x00FF7E3C up to '9' and, when SCENE_VDP_UPDATE_FLAG is set, queues audio command 0x66 with the updated value.
+  description: Increments the ASCII difficulty-initialized progression/transition counter at 0x00FF7E3C up to '9' and, when SCENE_VDP_UPDATE_FLAG is set, queues audio command 0x66 with the updated value. It is called by ActorType46_PlayerCollisionHandler, ActorType7E_PlayerCollisionHandler, Interaction_DrainResponseCounter, and SceneResource_RebuildAfterInteraction.
   evidence:
     - ghidra_decompile_001AEF70
     - ghidra_disassembly_001B00D6
     - ghidra_disassembly_001B19EE
+    - difficulty_counter_consumer_closure_static_v1
 0x001B434E:
   name: Menu_RenderDifficultyLabel
   confidence: confirmed
@@ -4549,11 +4550,12 @@
 0x001B59DE:
   name: LevelEvent_SpawnType46WhenSceneReady
   confidence: decompiled
-  description: Level-event command handler that suppresses the spawn for scene value 0x39, otherwise allocates a type-0x46 actor with animation 0x00122C66 and resource count 2 at the event coordinates.
+  description: Level-event command handler that suppresses the spawn when GAME_DIFFICULTY_COUNTER is ASCII '9', otherwise allocates a type-0x46 actor with animation 0x00122C66 and resource count 2 at the event coordinates.
   evidence:
     - ghidra_disassembly_001B59DE
     - level_event_command_family_targets
     - level_event_command_family_static_decompilation
+    - difficulty_counter_consumer_closure_static_v1
 0x001B5A1A:
   name: LevelEvent_SpawnType42
   confidence: decompiled
@@ -4653,11 +4655,12 @@
 0x001B7706:
   name: LevelEvent_SpawnType46WhenModeReady
   confidence: decompiled
-  description: Level-event command handler that suppresses the spawn for mode value 0x39, otherwise allocates the shared type-0x46 template with ACTOR_MOVE_TYPE46_LEVEL_EVENT_MODE_READY at 0x00120FFE at the event coordinates.
+  description: Level-event command handler that suppresses the spawn when GAME_DIFFICULTY_COUNTER is ASCII '9', otherwise allocates the shared type-0x46 template with ACTOR_MOVE_TYPE46_LEVEL_EVENT_MODE_READY at 0x00120FFE at the event coordinates.
   evidence:
     - ghidra_disassembly_001B7706
     - level_event_command_family_targets
     - level_event_command_family_static_decompilation
+    - difficulty_counter_consumer_closure_static_v1
 0x001B7738:
   name: LevelEvent_SpawnType2A
   confidence: decompiled
@@ -5647,11 +5650,12 @@
 0x001B742A:
   name: InteractionGate_Type46_AF
   confidence: decompiled
-  description: Interaction selector 0xAF gate that requires 0x00FFF172 set and 0x00FF7E3C not equal to 0x39, then forward-spawns from ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN at 0x001B79CC.
+  description: Interaction selector 0xAF gate that requires 0x00FFF172 set and GAME_DIFFICULTY_COUNTER not equal to ASCII '9', then forward-spawns from ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN at 0x001B79CC.
   evidence:
     - ghidra_disassembly_001B742A
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+    - difficulty_counter_consumer_closure_static_v1
 0x001B744A:
   name: InteractionSpawn_RuntimeType44_AB
   confidence: decompiled
