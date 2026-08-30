@@ -3137,6 +3137,17 @@
     - gnu_m68k_disassembly_001AF400
     - movement_stream_decoder
 
+0x00121618:
+  name: ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE
+  type: movement_stream
+  size: 108
+  confidence: decompiled
+  description: Shared Type-0x3E/0x3F player-collision MovementVM root installed by ActorType3E_PlayerCollisionHandler and ActorType3F_PlayerCollisionHandler. Its exact 108-byte region queues event 0x29, issues six F5-style spawn/copy commands for ACTOR_TEMPLATE_TYPE_84_TYPE3E_3F_COLLISION_CHILD at 0x001B7B5C with staged signed placements, and loops from the final step at 0x0012166A before ACTOR_MOVE_MENU_PRESENTATION_CHILD_A.
+  evidence:
+    - type3e_3f_player_collision_response_static_v1
+    - gnu_m68k_disassembly_001AF2B0
+    - movement_stream_decoder
+
 0x00121C30:
   name: ACTOR_ANIM_TYPE29_PLAYER_COLLISION_RESPONSE
   type: animation_stream
@@ -5658,6 +5669,22 @@
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets
+
+0x001B7B5C:
+  name: ACTOR_TEMPLATE_TYPE_84_TYPE3E_3F_COLLISION_CHILD
+  type: actor_template
+  size: 20
+  confidence: decompiled
+  runtime_type: 0x84
+  movement_stream: null
+  animation_stream: 0x00122F80
+  template_word: 0x6000
+  resource_count: 0x01
+  description: Type-0x84 collision-response child template supplied by the six F5-style spawn/copy commands in ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE. Its exact 20-byte record carries template word 0x6000, shared animation ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE at 0x00122F80, one owned resource, and no movement stream; it ends immediately before ACTOR_TEMPLATE_TYPE_29_INTERACTION.
+  evidence:
+    - type3e_3f_player_collision_response_static_v1
+    - gnu_m68k_disassembly_001AF2B0
+    - ghidra_actor_template_initializer_001AE30A
 
 0x001B7C38:
   name: ACTOR_TEMPLATE_TYPE_1F

@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-recorded-static-disassembly-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type3e-3f-player-collision-response-static-targets.json",
+  "objects": [
+    {
+      "address": "0x001AF2B0",
+      "end": "0x001AF2F9",
+      "name": "ActorType3E_PlayerCollisionHandler",
+      "size": 74,
+      "role": "Type-0x3E player-collision response producer"
+    },
+    {
+      "address": "0x001AF2FA",
+      "end": "0x001AF343",
+      "name": "ActorType3F_PlayerCollisionHandler",
+      "size": 74,
+      "role": "Type-0x3F player-collision response producer"
+    },
+    {
+      "address": "0x00121618",
+      "end": "0x00121683",
+      "name": "ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE",
+      "size": 108,
+      "role": "Shared Type-0x3E/0x3F response MovementVM root"
+    },
+    {
+      "address": "0x001B7B5C",
+      "end": "0x001B7B6F",
+      "name": "ACTOR_TEMPLATE_TYPE_84_TYPE3E_3F_COLLISION_CHILD",
+      "size": 20,
+      "role": "F5-style child template for the shared response stream"
+    }
+  ],
+  "behavior": "The Type-0x3E and Type-0x3F player-collision dispatch handlers are separate 74-byte producers with identical response setup: they publish the shared movement root at actor field +0x0A, clear transient motion state, set camera values 0x0070/0x0190, and optionally queue event 0x64. The 108-byte MovementVM root queues event 0x29, emits six spawn/copy records for the exact Type-0x84 child template at 0x001B7B5C, and loops through its final step before the next packed entry.",
+  "boundaries": {
+    "movement": "0x00121618-0x00121683, followed by ACTOR_MOVE_MENU_PRESENTATION_CHILD_A at 0x00121684",
+    "template": "0x001B7B5C-0x001B7B6F, followed by ACTOR_TEMPLATE_TYPE_29_INTERACTION at 0x001B7B70"
+  },
+  "confidence": "decompiled",
+  "status": "recorded-static-disassembly"
+}

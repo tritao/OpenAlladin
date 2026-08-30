@@ -1331,6 +1331,54 @@ def test_type29_player_collision_response_streams_are_exact():
     assert animation_decoded["instructions"][-1]["branch_target"] == "0x00121C38"
 
 
+def test_type3e_3f_player_collision_response_family_is_exact():
+    symbols = SymbolStore()
+
+    expected_functions = {
+        0x001AF2B0: (0x001AF2F9, "ActorType3E_PlayerCollisionHandler"),
+        0x001AF2FA: (0x001AF343, "ActorType3F_PlayerCollisionHandler"),
+    }
+    for address, (end, name) in expected_functions.items():
+        function = symbols.at(address, include_ranges=False)
+        assert function is not None
+        assert function.name == name
+        assert function.end == end
+        assert function.size == end - address + 1
+
+    movement = symbols.at(0x00121618, include_ranges=False)
+    assert movement is not None
+    assert movement.name == "ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE"
+    assert movement.end == 0x00121683
+    assert movement.size == 108
+    assert movement.metadata["type"] == "movement_stream"
+
+    template = symbols.at(0x001B7B5C, include_ranges=False)
+    assert template is not None
+    assert template.name == "ACTOR_TEMPLATE_TYPE_84_TYPE3E_3F_COLLISION_CHILD"
+    assert template.end == 0x001B7B6F
+    assert template.size == 20
+    assert template.metadata["type"] == "actor_template"
+    assert template.metadata["runtime_type"] == 0x84
+    assert template.metadata["animation_stream"] == 0x00122F80
+    assert template.metadata["resource_count"] == 0x01
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = MovementDecoder(load_animation_decoder().RomReader(rom_path.read_bytes()))
+    decoded = decoder.decode_stream(
+        0x00121618,
+        max_steps=256,
+        max_bytes=108,
+        follow_control_flow=False,
+    )
+    assert decoded["bytes_decoded"] == 108
+    assert decoded["stopped_reason"] == "byte_limit"
+    assert decoded["steps"][-1]["next_address"] == "0x00121684"
+
+    assert rom_path.read_bytes()[0x001B7B5C:0x001B7B70] == bytes.fromhex(
+        "84004000000000000000600000122F8001000000"
+    )
+
+
 def test_level_event_movement_stream_family_is_exact():
     symbols = SymbolStore()
     expected = {
