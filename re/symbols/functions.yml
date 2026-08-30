@@ -1482,13 +1482,14 @@
     - level_exit_type84_child_template_static_decompilation
 0x001B3B96:
   name: Menu_RunOptionsAndSelectNextState
-  confidence: decompiled
+  confidence: trace_validated
   description: Runs the startup/options screen, including option-marker setup, menu presentation actor setup, difficulty/music/sound-test selection, and exit handling, then advances SCENE_TABLE_INDEX and publishes SCENE_STATE plus the next scene script pointer from the ROM transition table.
   evidence:
     - ghidra_level_transition_targeted_decompile
     - ghidra_memory_reference_scene_state
     - ghidra_options_menu_strings_00126680
     - ghidra_options_menu_targets
+    - mame_menu_entry_trace_v1
 0x001B43C4:
   name: Menu_SetPrimarySelectionMarkerPosition
   confidence: decompiled

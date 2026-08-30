@@ -1,0 +1,47 @@
+{
+  "format": "openaladdin-player-transition-flag-response-runtime-attribution-v1",
+  "recorded_at": "2026-08-30",
+  "status": "negative-exact-entry-runtime-audit",
+  "repository_commit_at_capture": "91891c8",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "trace": {
+    "directory": "build/re/traces/semantic-player-transition-helper-v3",
+    "frames": 2300,
+    "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right,right*149,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c,right*195,b+right*50,right*100,none*15",
+    "start_condition": "MAME Genesis machine booted from power-on with no loaded state",
+    "watched_addresses": ["0x00FF7E60", "0x00FF7E77", "0x00FFF0E7"],
+    "requested_entry_breakpoint": "0x001ADA98",
+    "requested_entry_breakpoint_hits": 0
+  },
+  "static_writer_map": {
+    "0x001ADA84": "Player_TerrainLandingResolver writes PLAYER_ANIMATION_PC",
+    "0x001ADA8A": "Player_TerrainLandingResolver clears PLAYER_ANIMATION_TIMER",
+    "0x001ADA90": "Player_TerrainLandingResolver clears PLAYER_INTERACTION_ANIMATION_GATE",
+    "0x001ADA98": "Player_SetTransitionFlagResponseAnimation entry"
+  },
+  "observations": [
+    {
+      "reported_watchpoint_pc": "0x001ADA98",
+      "watched_address": "0x00FFF0E7",
+      "frames": ["0x00000549", "0x0000062E", "0x0000062F", "0x000007B0"],
+      "attribution": "The debugger reports the post-instruction PC. The preceding paired writes at 0x001ADA8A and 0x001ADA92, followed by this gate clear, match the contiguous Player_TerrainLandingResolver instructions at 0x001ADA84, 0x001ADA8A, and 0x001ADA90; they do not establish execution of the separate entry at 0x001ADA98."
+    },
+    {
+      "reported_watchpoint_pc": "0x001ADA3C",
+      "watched_address": "0x00FFF0E7",
+      "frames": ["0x000007AF"],
+      "attribution": "This is the post-instruction attribution for the earlier Player_TerrainLandingResolver writer at 0x001ADA34."
+    },
+    {
+      "reported_watchpoint_pc": "0x001AD178",
+      "watched_address": "0x00FFF0E7",
+      "frames": ["0x00000866"],
+      "attribution": "This is the post-instruction attribution for the Player_ResetAnimationResponseGate writer at 0x001AD170."
+    }
+  ],
+  "conclusion": "The natural Level 01 replay confirms repeated execution of the landing and response-gate writers, while the exact Player_SetTransitionFlagResponseAnimation entry breakpoint remains unhit. Keep that helper at decompiled confidence; a later-level or direct-selector probe is still required before promoting its runtime reachability."
+}
