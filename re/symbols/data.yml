@@ -2886,11 +2886,12 @@
   name: RESET_BOOTSTRAP_SKIPPED_WORD_0334
   type: opaque_data
   size: 2
-  confidence: provisional
-  description: Provisional two-byte word skipped by the unconditional branch at 0x00000332 before System_DisplayRegionCompatibilityWarning begins at 0x00000344; no independent consumer is currently known.
+  confidence: decompiled
+  description: Exact two-byte word at 0x00000334 skipped by the unconditional branch at 0x00000332 to 0x00000336 before System_DisplayRegionCompatibilityWarning begins at 0x00000344; its physical boundary and unreachable status are decoded, while its intended padding/data role has no independent consumer.
   evidence:
     - gnu_m68k_disassembly_0000021A
     - reset_bootstrap_unconsumed_tail_static_v1
+    - reset_bootstrap_skipped_word_confidence_static_v1
 
 0x001CBE:
   name: PLAYER_COLLISION_HANDLER_TABLE

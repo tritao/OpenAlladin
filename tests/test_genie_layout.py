@@ -311,7 +311,7 @@ def test_reset_bootstrap_unconsumed_tail_and_skipped_word_are_exact():
     assert skipped.end == 0x00000335
     assert skipped.size == 2
     assert skipped.metadata["type"] == "opaque_data"
-    assert skipped.confidence == "provisional"
+    assert skipped.confidence == "decompiled"
 
     renderer = symbols.at(0x00000344, include_ranges=False)
     assert renderer is not None
