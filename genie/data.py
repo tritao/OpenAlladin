@@ -281,10 +281,36 @@ class DataIndex:
         if self._objects is None:
             by_key: dict[tuple[str, int, int], dict[str, Any]] = {}
             symbols_by_start = self._symbols_at_start()
+            canonical_ranges = [
+                self._object_from_symbol(symbol)
+                for symbol in self.symbols.list(kind="data")
+                if 0 <= symbol.address <= 0xFFFFFF
+            ]
             if self.layout is not None:
                 for item in self.layout.ranges:
                     object_kind = SEMANTIC_LAYOUT_CLASSES.get(item.layout_class)
                     if object_kind is None:
+                        continue
+                    # Layout generation deliberately splits a tracked table
+                    # around individually named entries.  Those fragments
+                    # are useful for ROM ownership, but are not independent
+                    # investigation targets when a same-class canonical
+                    # symbol already covers the complete range.  Keep an
+                    # exact-start symbol (including a nested pointer entry)
+                    # visible; collapse only anonymous interior fragments.
+                    item_end = item.end
+                    covered = any(
+                        candidate["kind"] == object_kind
+                        and _address(candidate["start"]) <= item.start
+                        and item_end <= _address(candidate["end"])
+                        and candidate["range_bounded"]
+                        and (
+                            _address(candidate["start"]) != item.start
+                            or _address(candidate["end"]) != item_end
+                        )
+                        for candidate in canonical_ranges
+                    )
+                    if covered:
                         continue
                     value = self._object_from_layout(item, symbols_by_start.get(item.start))
                     by_key[(object_kind, item.start, item.end)] = value

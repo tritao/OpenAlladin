@@ -120,6 +120,47 @@ def test_data_context_joins_layout_fragment_to_decoder_root(tmp_path):
     assert value["decoder"]["size_matches"] is True
 
 
+def test_data_index_collapses_interior_layout_fragment_owned_by_canonical_symbol(tmp_path):
+    database_root = _database(tmp_path)
+    layout = Layout(
+        rom_size=0x100,
+        ranges=(
+            LayoutRange(0x00, 0x3F, "UNKNOWN", "test"),
+            LayoutRange(0x40, 0x43, "POINTER_TABLE", "tracked.symbol", "DispatchTable"),
+            LayoutRange(0x44, 0x47, "POINTER_TABLE", "tracked.symbol", "DispatchTable"),
+            LayoutRange(0x48, 0x4F, "POINTER_TABLE", "tracked.symbol", "DispatchTable"),
+            LayoutRange(0x50, 0xFF, "UNKNOWN", "test"),
+        ),
+    )
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0x40,
+            "DispatchTable",
+            "data",
+            confidence="confirmed",
+            size=0x10,
+            metadata={"type": "rom_pointer_table", "entry_size": 4, "count": 4},
+        ),
+        Symbol(
+            0x44,
+            "DispatchTableEntry01",
+            "data",
+            confidence="confirmed",
+            metadata={"type": "rom_pointer"},
+        ),
+    ))
+    index = DataIndex(
+        AnalysisDatabase(database_root),
+        root=tmp_path,
+        symbols=symbols,
+        layout=layout,
+    )
+
+    objects = index.objects(kind="pointer-table")
+    assert [(item["start"], item["end"]) for item in objects] == [("0x00000040", "0x0000004F")]
+    assert index.at(0x44)["name"] == "DispatchTableEntry01"
+
+
 def test_data_todo_filters_aliases_and_prioritizes_missing_decode(tmp_path):
     database_root = _database(tmp_path)
     symbols = SymbolStore(symbols=(
