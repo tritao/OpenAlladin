@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-actor-frame-phase-child-repeated-tail-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Bound the repeated unreferenced phase-child selection table prefix without overlapping the following command table.",
+  "reference_table": {
+    "address": "0x000049A9",
+    "name": "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE",
+    "record_size": 6,
+    "records": 4
+  },
+  "object": {
+    "address": "0x000049C1",
+    "end": "0x000049D7",
+    "size": 23,
+    "name": "UNREFERENCED_PHASE_CHILD_SELECTION_TABLE_DUPLICATE_PREFIX_49C1",
+    "record_size": 6,
+    "record_count": 4,
+    "shared_terminal_byte": "0x000049D8"
+  },
+  "records": [
+    { "index": 0, "address": "0x000049C1", "runtime_type": "0x00", "animation": "0x00000000", "terminal_byte": "0x00" },
+    { "index": 1, "address": "0x000049C7", "runtime_type": "0x40", "animation": "0x00122C12", "terminal_byte": "0x00" },
+    { "index": 2, "address": "0x000049CD", "runtime_type": "0x00", "animation": "0x00000000", "terminal_byte": "0x00" },
+    { "index": 3, "address": "0x000049D3", "runtime_type": "0x40", "animation": "0x00122C12", "terminal_byte": "0x00", "terminal_owner": "SCENE_RESOURCE_COMMAND_TABLE leading byte" }
+  ],
+  "boundary_basis": [
+    "The four six-byte records exactly repeat the values at 0x000049A9-0x000049C0 when indexed from 0x000049C1.",
+    "The repeated prefix is 23 bytes before the following SCENE_RESOURCE_COMMAND_TABLE at 0x000049D8; the fourth record's final unused byte is the following table's leading zero.",
+    "No external consumer or runtime selector for this duplicate prefix is claimed."
+  ],
+  "confidence": "provisional",
+  "status": "recorded-static-disassembly"
+}

@@ -2145,6 +2145,35 @@ def test_omitted_palette_and_transition_digit_code_islands_are_exact():
         assert len(rom[address:address + size]) == size
 
 
+def test_repeated_phase_child_table_prefix_has_shared_terminal_boundary():
+    symbols = SymbolStore()
+    prefix = symbols.at(0x000049C1, include_ranges=False)
+    assert prefix is not None
+    assert prefix.name == "UNREFERENCED_PHASE_CHILD_SELECTION_TABLE_DUPLICATE_PREFIX_49C1"
+    assert prefix.end == 0x000049D7
+    assert prefix.size == 23
+    assert prefix.metadata["record_size"] == 6
+    assert prefix.metadata["record_count"] == 4
+    assert prefix.metadata["shared_terminal_byte"] == 0x0049D8
+    assert prefix.confidence == "provisional"
+
+    layout = build_layout()
+    item = layout.at(0x000049C1)
+    assert item is not None
+    assert item.layout_class == "OPAQUE_DATA"
+    assert item.name == prefix.name
+    following = layout.at(0x000049D8)
+    assert following is not None
+    assert following.name == "SCENE_RESOURCE_COMMAND_TABLE"
+
+    rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    reference = rom[0x000049A9:0x000049C1]
+    assert rom[0x000049C1:0x000049D8] == reference[:-1]
+    assert rom[0x000049C1:0x000049D8] == bytes.fromhex(
+        "0000000000004000122C12000000000000004000122C12"
+    )
+
+
 def test_type84_presentation_response_movement_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001214B2, include_ranges=False)

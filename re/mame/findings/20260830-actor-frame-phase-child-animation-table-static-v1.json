@@ -27,5 +27,5 @@
     "size": 1,
     "fill_byte": "0x00"
   },
-  "conclusion": "The first four phase-child records are exactly bounded by the consumer's 6-byte indexing and end at 0x000049C0. The repeated tail from 0x000049C1 through 0x000049D7 remains outside this proven table."
+  "conclusion": "The first four phase-child records are exactly bounded by the consumer's 6-byte indexing and end at 0x000049C0. The repeated 23-byte physical prefix from 0x000049C1 through 0x000049D7 is separately recorded as an unreferenced duplicate-table prefix; its fourth record's unused terminal zero is shared with the leading byte of SCENE_RESOURCE_COMMAND_TABLE at 0x000049D8."
 }

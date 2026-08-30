@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-recorded-static-disassembly-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "provisional",
+  "target_manifest": "re/ghidra/targets/actor-frame-phase-child-repeated-tail-static-targets.json",
+  "object": {
+    "address": "0x000049C1",
+    "range": ["0x000049C1", "0x000049D7"],
+    "size": 23,
+    "name": "UNREFERENCED_PHASE_CHILD_SELECTION_TABLE_DUPLICATE_PREFIX_49C1",
+    "bytes": "0000000000004000122C120000000000004000122C12"
+  },
+  "comparison": {
+    "reference": "0x000049A9-0x000049C0",
+    "record_size": 6,
+    "record_count": 4,
+    "matching_records": true,
+    "shared_terminal_byte": "0x000049D8",
+    "following_object": "SCENE_RESOURCE_COMMAND_TABLE"
+  },
+  "reachability": "No external consumer or runtime selector is recovered. The object is a physical duplicate-table prefix only, not a second canonical phase-child table.",
+  "conclusion": "The repeated 23-byte prefix is now an explicit provisional opaque owner while the shared terminal byte remains owned by the following command table."
+}

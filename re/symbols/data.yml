@@ -2673,6 +2673,19 @@
     - ghidra_disassembly_001ABF28
     - ghidra_actor_template_initializer_001AE30A
 
+0x0049C1:
+  name: UNREFERENCED_PHASE_CHILD_SELECTION_TABLE_DUPLICATE_PREFIX_49C1
+  type: opaque_data_table
+  size: 0x17
+  record_size: 6
+  record_count: 4
+  shared_terminal_byte: 0x0049D8
+  confidence: provisional
+  description: Provisional 23-byte physical prefix repeating the four six-byte records of ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE. Its fourth record's unused trailing zero is shared with the leading zero byte of SCENE_RESOURCE_COMMAND_TABLE at 0x000049D8, so this owner deliberately stops at 0x000049D7 and does not claim a second consumer.
+  evidence:
+    - actor_frame_phase_child_repeated_tail_static_v1
+    - actor_frame_phase_child_animation_table_static_v1
+
 0x004A18:
   name: SCENE_RESOURCE_OBJECT_ANIMATION_TABLE
   type: rom_pointer_table
