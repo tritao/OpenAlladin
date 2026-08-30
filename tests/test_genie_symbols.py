@@ -580,6 +580,24 @@ def test_actor_response_setup_family_has_behavior_names_and_legacy_aliases():
         assert legacy in symbol.aliases
 
 
+def test_player_terrain_contact_family_has_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001AF516: ("PlayerCollision_CreateType36EffectActor", "ActorType36_PlayerCollisionHandler"),
+        0x001AF590: ("PlayerCollision_ResolveType55_57SurfaceContact", "ActorType55_56_57_PlayerCollisionHandler"),
+        0x001AF5F0: ("PlayerCollision_ResolveType58SurfaceContact", "ActorType58_PlayerCollisionHandler"),
+        0x001AF6AC: ("PlayerCollision_ResolveType5FVerticalContact", "ActorType5F_PlayerCollisionHandler"),
+        0x001AF740: ("PlayerCollision_ResolveType67_68Contact", "ActorType67_68_PlayerCollisionHandler"),
+        0x001AF79E: ("PlayerCollision_ApplyType52_53Offset", "ActorType52_53_PlayerCollisionHandler"),
+        0x001AF894: ("PlayerCollision_ApplyType64Offset", "ActorType64_PlayerCollisionHandler"),
+        0x001AF9F6: ("PlayerCollision_ResolveType76_77TransitionContact", "ActorType76_77_PlayerCollisionHandler"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

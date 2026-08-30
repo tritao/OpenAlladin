@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-terrain-contact-family",
+    "purpose": "Promote the remaining player-collision terrain contact and transition handlers to behavior-based canonical names."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x36"], "address": "0x001AF516" },
+      { "actor_types": ["0x52", "0x53"], "address": "0x001AF79E" },
+      { "actor_types": ["0x55", "0x56", "0x57"], "address": "0x001AF590" },
+      { "actor_types": ["0x58"], "address": "0x001AF5F0" },
+      { "actor_types": ["0x5F"], "address": "0x001AF6AC" },
+      { "actor_types": ["0x64"], "address": "0x001AF894" },
+      { "actor_types": ["0x67", "0x68"], "address": "0x001AF740" },
+      { "actor_types": ["0x76", "0x77"], "address": "0x001AF9F6" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AF516", "name": "PlayerCollision_CreateType36EffectActor", "legacy_name": "ActorType36_PlayerCollisionHandler", "range": "0x001AF516-0x001AF53D", "size": 40 },
+    { "address": "0x001AF590", "name": "PlayerCollision_ResolveType55_57SurfaceContact", "legacy_name": "ActorType55_56_57_PlayerCollisionHandler", "range": "0x001AF590-0x001AF5EF", "size": 96 },
+    { "address": "0x001AF5F0", "name": "PlayerCollision_ResolveType58SurfaceContact", "legacy_name": "ActorType58_PlayerCollisionHandler", "range": "0x001AF5F0-0x001AF637", "size": 72 },
+    { "address": "0x001AF6AC", "name": "PlayerCollision_ResolveType5FVerticalContact", "legacy_name": "ActorType5F_PlayerCollisionHandler", "range": "0x001AF6AC-0x001AF6DB", "size": 48 },
+    { "address": "0x001AF740", "name": "PlayerCollision_ResolveType67_68Contact", "legacy_name": "ActorType67_68_PlayerCollisionHandler", "range": "0x001AF740-0x001AF79D", "size": 94 },
+    { "address": "0x001AF79E", "name": "PlayerCollision_ApplyType52_53Offset", "legacy_name": "ActorType52_53_PlayerCollisionHandler", "range": "0x001AF79E-0x001AF7F1", "size": 84 },
+    { "address": "0x001AF894", "name": "PlayerCollision_ApplyType64Offset", "legacy_name": "ActorType64_PlayerCollisionHandler", "range": "0x001AF894-0x001AF8F5", "size": 98 },
+    { "address": "0x001AF9F6", "name": "PlayerCollision_ResolveType76_77TransitionContact", "legacy_name": "ActorType76_77_PlayerCollisionHandler", "range": "0x001AF9F6-0x001AFA83", "size": 142 }
+  ],
+  "contracts": {
+    "type36": "when eligible, replace the source with a Type-0x82 animation/effect record, copy the response words, and clear the original slot",
+    "surface_contacts": "gate on terrain response and actor collision flag, accept the exact vertical window, publish PLAYER_Y, and apply each type-specific animation/offset transition",
+    "type76_77": "resolve the six-pixel contact window and signed actor offset, publish interaction value, and select the Type-0x76 terminal continuation before promoting to Type 0x77"
+  },
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
