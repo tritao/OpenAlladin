@@ -237,6 +237,10 @@ def symbol_review_queue(
     for symbol in symbols.symbols:
         if normalized_kind and symbol.kind.casefold() != normalized_kind:
             continue
+        if str(symbol.metadata.get("review_status", "")).casefold() in {"closed", "resolved"}:
+            # Physical continuations and proven-unreferenced stubs can remain
+            # canonical range owners without polluting the semantic worklist.
+            continue
         description = (symbol.description or "").casefold()
         markers = tuple(marker for marker in REVIEW_MARKERS if marker in description)
         if not markers:

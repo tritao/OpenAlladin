@@ -232,6 +232,33 @@ def test_symbol_review_queue_catches_conservative_identity_and_reachability_lang
     ]
 
 
+def test_symbol_review_queue_ignores_closed_range_owners(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    queue = symbol_review_queue(
+        AnalysisDatabase(database_root),
+        SymbolStore(symbols=(
+            Symbol(
+                0x10,
+                "PhysicalContinuation",
+                "function",
+                confidence="decompiled",
+                description="Physical continuation; live entry remains unclaimed.",
+                metadata={"review_status": "closed"},
+            ),
+            Symbol(
+                0x20,
+                "OpenQuestion",
+                "function",
+                confidence="decompiled",
+                description="The selector remains unresolved.",
+            ),
+        )),
+    )
+
+    assert [item["address"] for item in queue] == ["0x00000020"]
+
+
 def test_context_combines_function_references_and_layout(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

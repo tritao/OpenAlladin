@@ -6586,6 +6586,7 @@
   name: Orphaned_RtsStub_001B0020
   size: 2
   confidence: decompiled
+  review_status: closed
   description: Exact two-byte RTS body immediately before System_ResetDisplayNoOpHook. Its instruction and physical boundary are fully decoded, but no static incoming reference, runtime reachability, or higher-level function role is claimed.
   evidence:
     - gnu_m68k_disassembly_001B0020
@@ -6596,6 +6597,7 @@
   name: Orphaned_RtsStub_001B0042
   size: 2
   confidence: decompiled
+  review_status: closed
   description: Exact two-byte RTS body between Interaction_GetResourceProgressPointer and Game_InitializeDifficultyCounter. Its instruction and physical boundary are fully decoded, but no static incoming reference, runtime reachability, or higher-level function role is claimed.
   evidence:
     - gnu_m68k_disassembly_001B0042
@@ -6606,6 +6608,7 @@
   name: Orphaned_RtsStub_001B0044
   size: 2
   confidence: decompiled
+  review_status: closed
   description: Exact two-byte RTS body immediately before Game_InitializeDifficultyCounter. Its instruction and physical boundary are fully decoded, but no static incoming reference, runtime reachability, or higher-level function role is claimed.
   evidence:
     - gnu_m68k_disassembly_001B0044
@@ -6616,6 +6619,7 @@
   name: Orphaned_RtsStub_001B1CFE
   size: 2
   confidence: decompiled
+  review_status: closed
   description: Exact two-byte RTS body between VDP_RunPatternServiceFrames and SceneResource_InitializeMode17Service. Its instruction and physical boundary are fully decoded, but no static incoming reference, runtime reachability, or higher-level function role is claimed.
   evidence:
     - gnu_m68k_disassembly_001B1CFE
@@ -6626,6 +6630,7 @@
   name: Menu_RunOptionsFrameLoopPrelude
   size: 6
   confidence: decompiled
+  review_status: closed
   description: Six-byte option-screen frame-loop prelude containing the phase-counter shift and Menu_AnimateSelectionMarkerTiles call before falling into the shared continuation at 0x001B3C64. It is a physical continuation of Menu_RunOptionsAndSelectNextState rather than an independently named user-facing routine; live entry remains unclaimed.
   evidence:
     - gnu_m68k_disassembly_001B3C5E
@@ -6635,6 +6640,7 @@
   name: Menu_RunOptionsPresentationContinuation
   size: 316
   confidence: decompiled
+  review_status: closed
   description: 316-byte option-screen presentation continuation beginning with the DBF frame loop at 0x001B3C68, then handling menu palette, sound, and actor setup before branching into the shared parent body at 0x001B3DB8. It is a physical continuation of Menu_RunOptionsAndSelectNextState, not an independently named entry point; live entry remains unclaimed.
   evidence:
     - gnu_m68k_disassembly_001B3C7C
@@ -6644,6 +6650,7 @@
   name: Orphaned_RtsStub_001B4624
   size: 2
   confidence: decompiled
+  review_status: closed
   description: Exact two-byte RTS body between SoundTest_PlaySelectedEntry and SoundTest_RenderSelectedEntry. Its instruction and physical boundary are fully decoded, but no static incoming reference, runtime reachability, or higher-level function role is claimed.
   evidence:
     - gnu_m68k_disassembly_001B4624
@@ -6654,6 +6661,7 @@
   name: Orphaned_RtsStub_001B4F02
   size: 2
   confidence: decompiled
+  review_status: closed
   description: Exact two-byte RTS body between SceneResource_RunBlankStream127D74 and SceneResource_RunSharedC000Presentation. Its instruction and physical boundary are fully decoded, but no static incoming reference, runtime reachability, or higher-level function role is claimed.
   evidence:
     - gnu_m68k_disassembly_001B4F02
@@ -6664,6 +6672,7 @@
   name: Orphaned_RtsStub_001B634C
   size: 2
   confidence: decompiled
+  review_status: closed
   description: Exact two-byte RTS body between Level12_ExitRoutine and LevelEvent_DispatchTimedCommand. Its instruction and physical boundary are fully decoded, but no static incoming reference, runtime reachability, or higher-level function role is claimed.
   evidence:
     - gnu_m68k_disassembly_001B634C
