@@ -1,0 +1,27 @@
+{
+  "format": "openaladdin-menu-unreachable-continuation-palette-consumer-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "purpose": "Promote the formerly unreferenced four-band palette bank after recovering its static menu-continuation consumer.",
+  "consumer": {
+    "address": "0x001B3CB4",
+    "function": "Menu_UnreachableCodeIsland_001B3C7C",
+    "instruction": "lea (0x00128F52).l, A0",
+    "next_call": "0x001B278A Render_RunPaletteTransitionFrom"
+  },
+  "palette": {
+    "address": "0x00128F52",
+    "end": "0x00128FD1",
+    "size": 128,
+    "name": "MENU_OPTIONS_PALETTE_BANK_128F52",
+    "bands": 4,
+    "band_size": 32,
+    "layout": "bands 0-2 are zero-filled; band 3 is the nonzero menu palette source"
+  },
+  "reachability": "The consumer is in a Ghidra-unreachable physical menu continuation, so this establishes static ownership and use but not live runtime reachability.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

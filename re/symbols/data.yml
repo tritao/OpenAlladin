@@ -1673,14 +1673,15 @@
     - scene_palette_bank_extents_static_v1
 
 0x00128F52:
-  name: UNREFERENCED_PALETTE_BANK_128F52
+  name: MENU_OPTIONS_PALETTE_BANK_128F52
   type: palette_data
   size: 0x80
-  confidence: provisional
-  description: Provisional four-band Genesis palette bank between SCENE_BLANK_PALETTE and SCENE_TRANSITION_PALETTE_SOURCE. Its first three 16-word bands are zero-filled and its final band is a valid nonzero palette source; no direct consumer is recovered.
+  confidence: decompiled
+  description: Four-band Genesis palette bank between SCENE_BLANK_PALETTE and SCENE_TRANSITION_PALETTE_SOURCE. Its first three 16-word bands are zero-filled and its final band is a valid nonzero palette source; the recovered menu continuation passes its base pointer to Render_RunPaletteTransitionFrom, while live runtime reachability remains unresolved.
   evidence:
     - unreferenced_scene_palette_data_static_v1
     - scene_palette_bank_extents_static_v1
+    - menu_unreachable_continuation_palette_consumer_static_v1
 
 0x00128FD2:
   name: SCENE_TRANSITION_PALETTE_SOURCE

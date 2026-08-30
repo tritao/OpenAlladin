@@ -3651,7 +3651,7 @@ def test_unreferenced_scene_palette_data_has_exact_structural_owners():
         (0x00128E4B, 0x00128E4C, "SCENE_RESOURCE_UNREFERENCED_TILE_BASE_2000_STREAM_128E4B", "scene_resource_stream", "provisional"),
         (0x00128EB1, 0x00128EB1, "SCENE_SOUND_TEST_PALETTE_ALIGNMENT_PADDING", "padding_data", "confirmed"),
         (0x00128EB2, 0x00128ED1, "UNREFERENCED_PALETTE_SOURCE_128EB2", "palette_data", "provisional"),
-        (0x00128F52, 0x00128FD1, "UNREFERENCED_PALETTE_BANK_128F52", "palette_data", "provisional"),
+        (0x00128F52, 0x00128FD1, "MENU_OPTIONS_PALETTE_BANK_128F52", "palette_data", "decompiled"),
     )
     for start, end, name, symbol_type, confidence in expected:
         symbol = symbols.at(start, include_ranges=False)
