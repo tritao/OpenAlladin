@@ -28,6 +28,14 @@
       "name": "Player_ArmTerminalOrInteractionLock",
       "body": "when scene/terminal/player gates are clear, arm terminal transition 10 for no pending response, otherwise decrement the current response and arm interaction lock 0x28",
       "boundary": "0x001B03F2-0x001B0433"
+    },
+    {
+      "address": "0x001B6ED0",
+      "old_name": "InteractionHandler_Type21",
+      "name": "InteractionSpawn_RuntimeType21_1A",
+      "body": "enter shared interaction-spawn initializer; publish runtime type 0x21 and animation stream 0x001235AC",
+      "boundary": "0x001B6ED0-0x001B6EED",
+      "dispatch": "selector 0x1A; runtime type 0x21"
     }
   ],
   "evidence": [

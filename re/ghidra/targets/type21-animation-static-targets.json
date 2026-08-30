@@ -25,7 +25,7 @@
     }
   },
   "consumer": {
-    "handler": "0x001B6ED0 InteractionHandler_Type21",
+    "handler": "0x001B6ED0 InteractionSpawn_RuntimeType21_1A",
     "selector": "0x1A",
     "template": "0x001B7C24 ACTOR_TEMPLATE_UPPER_TYPE1E",
     "runtime_type": "0x21",

@@ -2018,6 +2018,10 @@ INTERACTION_RESPONSE_FLAG and reverse-spawns the type-`0x87` response template.
 `Player_ArmTerminalOrInteractionLock` at `0x001B03F2` arms terminal transition
 for an empty response or decrements the current response and arms the player
 interaction lock under the established scene/terminal gates.
+The selector-`0x1A` entry at `0x001B6ED0` is now
+`InteractionSpawn_RuntimeType21_1A`; its established type-`0x21` actor and
+animation stream contract is unchanged, and `InteractionHandler_Type21`
+remains an alias.
 
 The static result is recorded in
 `re/mame/findings/20260830-interaction-spawn-entrypoint-names-static-v1.json`.

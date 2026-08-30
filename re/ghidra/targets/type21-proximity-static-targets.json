@@ -9,7 +9,7 @@
   "actor_path": {
     "handler": {
       "address": "0x001B6ED0",
-      "name": "InteractionHandler_Type21",
+      "name": "InteractionSpawn_RuntimeType21_1A",
       "selector": "0x1A",
       "template": "0x001B7C24 ACTOR_TEMPLATE_UPPER_TYPE1E",
       "runtime_type": "0x21",
@@ -36,7 +36,7 @@
     }
   },
   "evidence": [
-    "Exact 68000 disassembly of InteractionHandler_Type21",
+    "Exact 68000 disassembly of InteractionSpawn_RuntimeType21_1A",
     "Existing type-0x21 template and collision-table mappings",
     "Lossless AnimationDecoder output for 0x001235AC"
   ],

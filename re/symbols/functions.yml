@@ -1817,9 +1817,10 @@
     - ghidra_upper_interaction_targeted_decompile
     - mame_upper_activation_edge_trace
 0x001B6ED0:
-  name: InteractionHandler_Type21
+  name: InteractionSpawn_RuntimeType21_1A
+  aliases: [InteractionHandler_Type21]
   confidence: confirmed
-  description: Selector-0x1A interaction handler that calls the generic interaction spawn entry, then assigns runtime actor type 0x21 and animation stream 0x001235AC.
+  description: Interaction selector 0x1A handler that enters the shared interaction-spawn initializer, then assigns runtime actor type 0x21 and animation stream 0x001235AC.
   evidence:
     - ghidra_type21_targeted_decompile
     - mame_type21_settle_trace
