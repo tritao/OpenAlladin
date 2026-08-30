@@ -43,12 +43,33 @@
     },
     {
       "address": "0x00129A32",
-      "end": "0x00129A91",
-      "name": "UNREFERENCED_PALETTE_BAND_BANK_129A32",
-      "size": 96,
+      "end": "0x00129A51",
+      "name": "PALETTE_DUPLICATE_OF_MENU_BAND_129012",
+      "size": 32,
       "type": "palette_data",
-      "bands": 3,
-      "decoded": "three Genesis palette bands with exact duplicate matches to existing palette sources"
+      "bands": 1,
+      "duplicate_of": "0x00129012 MENU_PALETTE_BAND_SOURCE_129012",
+      "decoded": "one Genesis palette band exactly duplicating the menu band"
+    },
+    {
+      "address": "0x00129A52",
+      "end": "0x00129A71",
+      "name": "PALETTE_DUPLICATE_OF_SCENE_TRANSITION_BAND4_129032",
+      "size": 32,
+      "type": "palette_data",
+      "bands": 1,
+      "duplicate_of": "0x00129032 band 4 of SCENE_TRANSITION_PALETTE_SOURCE",
+      "decoded": "one Genesis palette band exactly duplicating scene-transition band 4"
+    },
+    {
+      "address": "0x00129A72",
+      "end": "0x00129A91",
+      "name": "PALETTE_DUPLICATE_OF_SCENE_RESET_BAND4_129E60",
+      "size": 32,
+      "type": "palette_data",
+      "bands": 1,
+      "duplicate_of": "0x00129E60 band 4 of SCENE_RESET_TRANSITION_PALETTE_SOURCE",
+      "decoded": "one Genesis palette band exactly duplicating scene-reset band 4"
     }
   ],
   "evidence": [
@@ -58,7 +79,7 @@
   ],
   "limitations": [
     "No direct runtime consumer or selector is recovered for these objects.",
-    "The names intentionally retain neutral UNREFERENCED wording where no subsystem role is established."
+    "The duplicate names identify only exact source-byte relationships; no runtime consumer or higher-level subsystem role is established."
   ],
   "confidence": "decompiled",
   "status": "recorded-static-disassembly"

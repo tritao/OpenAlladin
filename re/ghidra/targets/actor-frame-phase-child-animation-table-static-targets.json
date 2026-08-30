@@ -31,7 +31,7 @@
   "boundary_basis": [
     "Actor_SpawnFramePhaseChild loads A6=0x000049A9 and selects offsets 0, 6, 12, or 18 from FRAME_PHASE_COUNTER & 3.",
     "The consumer reads one byte and the following longword from the selected record, so four six-byte records occupy exactly 0x000049A9-0x000049C0.",
-    "The repeated bytes beginning at 0x000049C1 are separately recorded as the provisional UNREFERENCED_PHASE_CHILD_SELECTION_TABLE_DUPLICATE_PREFIX_49C1 owner through 0x000049D7; its final unused zero is physically shared with the leading byte of SCENE_RESOURCE_COMMAND_TABLE at 0x000049D8."
+    "The repeated bytes beginning at 0x000049C1 are separately recorded as the ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE_DUPLICATE_PREFIX_49C1 owner through 0x000049D7; its final unused zero is physically shared with the leading byte of SCENE_RESOURCE_COMMAND_TABLE at 0x000049D8."
   ],
   "confidence": "decompiled",
   "status": "recorded-static-decompilation"

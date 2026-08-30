@@ -2133,15 +2133,46 @@
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129A32:
-  name: UNREFERENCED_PALETTE_BAND_BANK_129A32
+  name: PALETTE_DUPLICATE_OF_MENU_BAND_129012
   type: palette_data
-  size: 0x60
+  size: 0x20
   confidence: decompiled
-  description: Three contiguous 16-word Genesis palette bands between the known SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12 and SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92. The bands are structurally valid and include exact duplicates of palette data used elsewhere; no direct consumer or runtime role is assigned.
+  duplicate_of: MENU_PALETTE_BAND_SOURCE_129012
+  duplicate_address: 0x00129012
+  description: Physical 16-word Genesis palette band that is byte-for-byte identical to MENU_PALETTE_BAND_SOURCE_129012 at 0x00129012. No direct consumer or higher-level presentation role is assigned to this duplicate copy.
   evidence:
     - unreferenced_palette_data_static_v1
     - scene_resource_palette_source_extents_static_v1
     - scene_palette_body_confidence_static_v1
+    - palette_duplicate_bands_static_v1
+
+0x00129A52:
+  name: PALETTE_DUPLICATE_OF_SCENE_TRANSITION_BAND4_129032
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  duplicate_of: SCENE_TRANSITION_PALETTE_SOURCE
+  duplicate_address: 0x00129032
+  description: Physical 16-word Genesis palette band that is byte-for-byte identical to band 4 at 0x00129032 inside SCENE_TRANSITION_PALETTE_SOURCE. No direct consumer or higher-level presentation role is assigned to this duplicate copy.
+  evidence:
+    - unreferenced_palette_data_static_v1
+    - scene_resource_palette_source_extents_static_v1
+    - scene_palette_body_confidence_static_v1
+    - palette_duplicate_bands_static_v1
+
+0x00129A72:
+  name: PALETTE_DUPLICATE_OF_SCENE_RESET_BAND4_129E60
+  type: palette_data
+  size: 0x20
+  confidence: decompiled
+  duplicate_of: SCENE_RESET_TRANSITION_PALETTE_SOURCE
+  duplicate_address: 0x00129E60
+  description: Physical 16-word Genesis palette band that is byte-for-byte identical to band 4 at 0x00129E60 inside SCENE_RESET_TRANSITION_PALETTE_SOURCE. No direct consumer or higher-level presentation role is assigned to this duplicate copy.
+  evidence:
+    - unreferenced_palette_data_static_v1
+    - scene_resource_palette_source_extents_static_v1
+    - scene_palette_body_confidence_static_v1
+    - palette_duplicate_bands_static_v1
 
 0x00129A92:
   name: SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92
@@ -2690,14 +2721,16 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x0049C1:
-  name: UNREFERENCED_PHASE_CHILD_SELECTION_TABLE_DUPLICATE_PREFIX_49C1
+  name: ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE_DUPLICATE_PREFIX_49C1
   type: opaque_data_table
   size: 0x17
   record_size: 6
   record_count: 4
   shared_terminal_byte: 0x0049D8
+  duplicate_of: ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE
+  duplicate_address: 0x000049A9
   confidence: decompiled
-  description: Exact 23-byte physical prefix repeating the four six-byte records of ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE. Its fourth record's unused trailing zero is shared with the leading zero byte of SCENE_RESOURCE_COMMAND_TABLE at 0x000049D8, so this owner deliberately stops at 0x000049D7. No exported consumer targets this physical duplicate prefix, which is retained as a complete unreferenced table fragment.
+  description: Exact 23-byte physical prefix repeating the four six-byte records of ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE at 0x000049A9. Its fourth record's unused trailing zero is shared with the leading zero byte of SCENE_RESOURCE_COMMAND_TABLE at 0x000049D8, so this owner deliberately stops at 0x000049D7. No exported consumer targets this physical duplicate prefix.
   evidence:
     - actor_frame_phase_child_repeated_tail_static_v1
     - actor_frame_phase_child_animation_table_static_v1

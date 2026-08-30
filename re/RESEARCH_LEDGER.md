@@ -2336,6 +2336,19 @@ Neither name claims an unsupported user-facing scene title.
 The static result is recorded in
 `re/mame/findings/20260830-scene-e000-graphics-loader-names-static-v1.json`.
 
+## Exact duplicate data owners (20260830)
+
+The former three-band owner at `0x00129A32` is now split into three physical
+palette bands. They are exact byte duplicates of the menu band at `0x00129012`,
+scene-transition band 4 at `0x00129032`, and scene-reset band 4 at `0x00129E60`.
+The physical prefix at `0x000049C1` is likewise named as an exact duplicate of
+`ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE` at `0x000049A9`, while its shared
+terminal byte remains owned by `SCENE_RESOURCE_COMMAND_TABLE`.
+
+These names identify byte-level relationships only; no runtime consumer or
+higher-level presentation role is inferred. The result is recorded in
+`re/mame/findings/20260830-exact-duplicate-data-owners-static-v1.json`.
+
 ## Menu selection-marker tile animation (20260829)
 
 `Menu_AnimateSelectionMarkerTiles` at `0x001B3B4A` runs on even
@@ -3484,3 +3497,4 @@ valuable because it prevents repeating the same input family.
 | `20260830-hud-display-buffer-contract-static-v1` | recorded-static-decompilation | Named HUD_DISPLAY_DIGITS at 0x00FF7E29-0x00FF7E2F and corrected Interaction_SynchronizeResponseState's exact current-to-pending snapshot/update direction |
 | `20260830-hud-display-initializer-runtime-v1` | recorded-repeated-runtime-observation | Observed Interaction_InitializePendingDisplayValue execute on two fresh-boot runs and seed 0x00FF7E30 with ASCII 100000; promoted function reachability while retaining neutral display semantics |
 | `20260830-scene-e000-graphics-loader-names-static-v1` | recorded-static-decompilation | Replaced address-only names for the 0x0012D654 and 0x0012E666 E000 graphics payloads with direct loader- and destination-specific canonical names |
+| `20260830-exact-duplicate-data-owners-static-v1` | recorded-static-disassembly | Split the 0x00129A32-0x00129A91 palette bank into three exact duplicate-band owners and named the 0x000049C1 phase-child table duplicate prefix by its canonical source |

@@ -15,10 +15,27 @@
     },
     {
       "address": "0x00129A32",
-      "name": "UNREFERENCED_PALETTE_BAND_BANK_129A32",
-      "range": ["0x00129A32", "0x00129A91"],
-      "size": 96,
-      "bands": 3
+      "name": "PALETTE_DUPLICATE_OF_MENU_BAND_129012",
+      "range": ["0x00129A32", "0x00129A51"],
+      "size": 32,
+      "bands": 1,
+      "duplicate_of": "0x00129012 MENU_PALETTE_BAND_SOURCE_129012"
+    },
+    {
+      "address": "0x00129A52",
+      "name": "PALETTE_DUPLICATE_OF_SCENE_TRANSITION_BAND4_129032",
+      "range": ["0x00129A52", "0x00129A71"],
+      "size": 32,
+      "bands": 1,
+      "duplicate_of": "0x00129032 band 4 of SCENE_TRANSITION_PALETTE_SOURCE"
+    },
+    {
+      "address": "0x00129A72",
+      "name": "PALETTE_DUPLICATE_OF_SCENE_RESET_BAND4_129E60",
+      "range": ["0x00129A72", "0x00129A91"],
+      "size": 32,
+      "bands": 1,
+      "duplicate_of": "0x00129E60 band 4 of SCENE_RESET_TRANSITION_PALETTE_SOURCE"
     }
   ],
   "format_check": {
@@ -27,10 +44,10 @@
     "genesis_word_rule": "Each big-endian word is at most 0x0EEE and has no nonzero low nibble in any color component."
   },
   "evidence": [
-    "Both ranges are even-aligned and partition into exact 0x20-byte palette bands.",
+    "All four ranges are even-aligned and partition into exact 0x20-byte palette bands.",
     "Every band satisfies the Genesis 16-word palette encoding constraints.",
-    "The 0x00129A32 bank contains exact duplicates of palette bands used by existing menu and credits sources.",
-    "No direct instruction or data consumer is currently recovered for either range."
+    "The 0x00129A32-0x00129A91 region is split into three physical bands with exact duplicates of existing menu, scene-transition, and scene-reset palette bands.",
+    "No direct instruction or data consumer is currently recovered for the provisional palette ranges."
   ],
-  "conclusion": "The two palette-shaped gaps are recorded as provisional palette data with neutral unreferenced names; runtime consumer and subsystem roles remain open."
+  "conclusion": "The palette-shaped gaps are recorded as provisional palette data; the three-band region now carries explicit byte-duplicate relationships while runtime consumers and higher-level roles remain open."
 }

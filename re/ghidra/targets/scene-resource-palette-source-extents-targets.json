@@ -34,10 +34,10 @@
   "evidence": [
     "Every fixed source is directly loaded or published by a named scene-resource/menu loader.",
     "The shared band helpers copy exactly 16 words, while the transition helper publishes four 16-word bands.",
-    "The promoted ranges are contiguous from 0x001297F2-0x00129A31 and 0x00129A92-0x00129AD1; the intervening 0x00129A32-0x00129A91 gap remains unresolved."
+    "The promoted ranges are contiguous from 0x001297F2-0x00129AD1 after the formerly unresolved 0x00129A32-0x00129A91 region was split into three exact duplicate palette bands."
   ],
   "limitations": [
     "Published RAM-pointer sources are named by their loader assignments; this slice does not infer palette color roles.",
-    "The unreferenced 0x00129A32-0x00129A91 region is intentionally not claimed."
+    "The 0x00129A32-0x00129A91 duplicate bands have no recovered runtime consumer and are named only by exact source-byte identity."
   ]
 }

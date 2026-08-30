@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-exact-duplicate-data-owners-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-disassembly",
+  "confidence": "decompiled",
+  "supersedes": [
+    "20260830-unreferenced-palette-data-static-v1",
+    "20260830-actor-frame-phase-child-repeated-tail-static-v1"
+  ],
+  "objects": [
+    {
+      "range": ["0x00129A32", "0x00129A51"],
+      "name": "PALETTE_DUPLICATE_OF_MENU_BAND_129012",
+      "duplicate_of": ["0x00129012", "MENU_PALETTE_BAND_SOURCE_129012"],
+      "bytes": 32,
+      "comparison": "exact byte match"
+    },
+    {
+      "range": ["0x00129A52", "0x00129A71"],
+      "name": "PALETTE_DUPLICATE_OF_SCENE_TRANSITION_BAND4_129032",
+      "duplicate_of": ["0x00129032", "band 4 of SCENE_TRANSITION_PALETTE_SOURCE"],
+      "bytes": 32,
+      "comparison": "exact byte match"
+    },
+    {
+      "range": ["0x00129A72", "0x00129A91"],
+      "name": "PALETTE_DUPLICATE_OF_SCENE_RESET_BAND4_129E60",
+      "duplicate_of": ["0x00129E60", "band 4 of SCENE_RESET_TRANSITION_PALETTE_SOURCE"],
+      "bytes": 32,
+      "comparison": "exact byte match"
+    },
+    {
+      "range": ["0x000049C1", "0x000049D7"],
+      "name": "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE_DUPLICATE_PREFIX_49C1",
+      "duplicate_of": ["0x000049A9", "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE"],
+      "bytes": 23,
+      "comparison": "exact repeated four-record prefix; final unused byte is shared with SCENE_RESOURCE_COMMAND_TABLE"
+    }
+  ],
+  "evidence": [
+    "The pinned ROM bytes compare equal for each palette-band pair.",
+    "The 0x000049C1-0x000049D7 bytes repeat the four six-byte records at 0x000049A9-0x000049C0, with the following zero owned by SCENE_RESOURCE_COMMAND_TABLE.",
+    "Each physical duplicate receives its own non-overlapping canonical ownership range.",
+    "No runtime consumer or higher-level role is inferred from byte identity alone."
+  ]
+}

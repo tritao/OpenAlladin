@@ -20,7 +20,7 @@
       "address": "0x000049C1",
       "end": "0x000049D7",
       "size": 23,
-      "name": "UNREFERENCED_PHASE_CHILD_SELECTION_TABLE_DUPLICATE_PREFIX_49C1",
+      "name": "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE_DUPLICATE_PREFIX_49C1",
       "type": "opaque_data_table",
       "record_size": 6,
       "record_count": 4,

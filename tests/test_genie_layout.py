@@ -2172,12 +2172,14 @@ def test_repeated_phase_child_table_prefix_has_shared_terminal_boundary():
     symbols = SymbolStore()
     prefix = symbols.at(0x000049C1, include_ranges=False)
     assert prefix is not None
-    assert prefix.name == "UNREFERENCED_PHASE_CHILD_SELECTION_TABLE_DUPLICATE_PREFIX_49C1"
+    assert prefix.name == "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE_DUPLICATE_PREFIX_49C1"
     assert prefix.end == 0x000049D7
     assert prefix.size == 23
     assert prefix.metadata["record_size"] == 6
     assert prefix.metadata["record_count"] == 4
     assert prefix.metadata["shared_terminal_byte"] == 0x0049D8
+    assert prefix.metadata["duplicate_of"] == "ACTOR_FRAME_PHASE_CHILD_ANIMATION_TABLE"
+    assert prefix.metadata["duplicate_address"] == 0x000049A9
     assert prefix.confidence == "decompiled"
 
     layout = build_layout()
@@ -3556,7 +3558,9 @@ def test_unreferenced_palette_data_has_exact_structural_extents():
     symbols = SymbolStore()
     expected = (
         (0x00129312, 0x00129331, "UNREFERENCED_PALETTE_SOURCE_129312", "decompiled"),
-        (0x00129A32, 0x00129A91, "UNREFERENCED_PALETTE_BAND_BANK_129A32", "decompiled"),
+        (0x00129A32, 0x00129A51, "PALETTE_DUPLICATE_OF_MENU_BAND_129012", "decompiled"),
+        (0x00129A52, 0x00129A71, "PALETTE_DUPLICATE_OF_SCENE_TRANSITION_BAND4_129032", "decompiled"),
+        (0x00129A72, 0x00129A91, "PALETTE_DUPLICATE_OF_SCENE_RESET_BAND4_129E60", "decompiled"),
     )
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     for start, end, name, confidence in expected:
@@ -3575,6 +3579,10 @@ def test_unreferenced_palette_data_has_exact_structural_extents():
     assert rom[0x00129A32:0x00129A52] == rom[0x00129012:0x00129032]
     assert rom[0x00129A52:0x00129A72] == rom[0x00129032:0x00129052]
     assert rom[0x00129A72:0x00129A92] == rom[0x00129E60:0x00129E80]
+
+    assert symbols.at(0x00129A32, include_ranges=False).metadata["duplicate_of"] == "MENU_PALETTE_BAND_SOURCE_129012"
+    assert symbols.at(0x00129A52, include_ranges=False).metadata["duplicate_address"] == 0x00129032
+    assert symbols.at(0x00129A72, include_ranges=False).metadata["duplicate_address"] == 0x00129E60
 
 
 def test_canonical_scene_reset_credits_palette_sources_have_exact_extents():

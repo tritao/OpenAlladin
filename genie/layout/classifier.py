@@ -19,6 +19,11 @@ def _class_for_symbol(symbol: Symbol) -> str:
     symbol_type = str(symbol.metadata.get("type", "")).lower()
     if symbol.kind == "function":
         return "CODE"
+    # An explicitly opaque table/data type is stronger evidence than a name
+    # fragment such as ANIMATION that may describe the table's payload rather
+    # than a decoder-owned AnimationVM stream.
+    if symbol_type.startswith("opaque"):
+        return "OPAQUE_DATA"
     if name.startswith("ACTOR_MOVE_") or "MOVEMENT_STREAM" in symbol_type:
         return "MOVEMENT_STREAM"
     if "ACTOR_TEMPLATE" in name:
