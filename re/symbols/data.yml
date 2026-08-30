@@ -569,6 +569,190 @@
     - scene_rnc_graphics_blocks_static_v1
     - scene_resource_setup_loader_targets
 
+0x0012D654:
+  name: SCENE_RNC_GRAPHICS_0012D654
+  type: graphics_data
+  size: 0x21B
+  confidence: decompiled
+  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_LoadVRAMPairWithPalette1298F2; its higher-level scene identity remains intentionally neutral.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0012DA04:
+  name: SCENE_RNC_GRAPHICS_0012DA04
+  type: graphics_data
+  size: 0x371
+  confidence: decompiled
+  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_LoadC000Resource12DA04 and its presentation wrapper.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0012E176:
+  name: SCENE_RNC_GRAPHICS_0012E176
+  type: graphics_data
+  size: 0x1D4
+  confidence: decompiled
+  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_LoadC000Resource12E176 and its presentation wrapper.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0012E34A:
+  name: SCENE_RNC_GRAPHICS_0012E34A
+  type: graphics_data
+  size: 0x173
+  confidence: decompiled
+  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_LoadC000Resource12E34A and its presentation wrapper.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0012E666:
+  name: SCENE_RNC_GRAPHICS_0012E666
+  type: graphics_data
+  size: 0x183
+  confidence: decompiled
+  description: Exact RNC-compressed 112-tile Genesis graphics payload selected by Scene_ResetToState0; its higher-level scene identity remains intentionally neutral.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0012F39E:
+  name: SCENE_RNC_GRAPHICS_0012F39E
+  type: graphics_data
+  size: 0x14D
+  confidence: decompiled
+  description: Exact RNC-compressed 112-tile Genesis graphics payload selected by the transition branch of SceneResource_Dispatch.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0012F712:
+  name: SCENE_RNC_GRAPHICS_0012F712
+  type: graphics_data
+  size: 0x2F0
+  confidence: decompiled
+  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_RebuildAfterInteraction; its destination-specific role remains neutral.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0012FA02:
+  name: SCENE_RNC_GRAPHICS_0012FA02
+  type: graphics_data
+  size: 0x50D
+  confidence: decompiled
+  description: Exact RNC-compressed 112-tile Genesis graphics payload used by SceneResource_RebuildAfterInteraction; its destination-specific role remains neutral.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0012FF0F:
+  name: SCENE_RNC_GRAPHICS_0012FF0F
+  type: graphics_data
+  size: 0x22D
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload selected by Camera_InitializeCoordinateState as part of the scene resource setup.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0013013C:
+  name: SCENE_RNC_GRAPHICS_0013013C
+  type: graphics_data
+  size: 0x1CF
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload selected by Camera_InitializeCoordinateState as part of the scene resource setup.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0013030B:
+  name: SCENE_RNC_GRAPHICS_0013030B
+  type: graphics_data
+  size: 0x164
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload shared by Camera_InitializeCoordinateState and Scene_ResetToState0.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0013046F:
+  name: SCENE_RNC_GRAPHICS_0013046F
+  type: graphics_data
+  size: 0x29A
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload selected by SceneResource_InitializeActiveScene.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x00130709:
+  name: MENU_WISH_PROMPT_GRAPHICS_00130709
+  type: graphics_data
+  size: 0xCC
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload loaded by Menu_ShowWishPrompt for the wish prompt presentation.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x001307D5:
+  name: TITLE_RNC_GRAPHICS_001307D5
+  type: graphics_data
+  size: 0x6CC
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM E000 by Startup_RunTitlePresentation.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x00130EA1:
+  name: TITLE_RNC_GRAPHICS_00130EA1
+  type: graphics_data
+  size: 0x17F
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM C000 by Startup_RunTitlePresentation.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x00131020:
+  name: TITLE_RNC_GRAPHICS_00131020
+  type: graphics_data
+  size: 0x3DD
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload grouped with the title/presentation resource family; its narrower loader role remains neutral.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x001313FD:
+  name: SCENE_STATE_RNC_GRAPHICS_001313FD
+  type: graphics_data
+  size: 0x285
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload selected by SceneResource_RunStatePresentation.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x00131682:
+  name: SCENE_STATE_RNC_GRAPHICS_00131682
+  type: graphics_data
+  size: 0x1AE
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload selected by SceneResource_RunStatePresentation.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x00131830:
+  name: SCENE_TRANSITION_RNC_GRAPHICS_00131830
+  type: graphics_data
+  size: 0x1BC
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload selected by SceneResource_InitializeScriptTransition.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x001319EC:
+  name: SCENE_COMMON_BASE_RNC_GRAPHICS_001319EC
+  type: graphics_data
+  size: 0x15A1
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload shared by title, scene-state, transition, and wish-prompt presentation paths.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0013A892:
+  name: SCENE_REBUILD_BASE_RNC_GRAPHICS_0013A892
+  type: graphics_data
+  size: 0x1AE2
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload used by SceneResource_RebuildAfterInteraction as its base resource.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x0013C374:
+  name: SCENE_SHARED_RNC_GRAPHICS_0013C374
+  type: graphics_data
+  size: 0x3E66
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload shared by active-scene, script-transition, state-presentation, and camera resource paths.
+  evidence: [rnc_graphics_resource_static_v1]
+
+0x001401DA:
+  name: TITLE_BASE_RNC_GRAPHICS_001401DA
+  type: graphics_data
+  size: 0x32EA
+  confidence: decompiled
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM base by Startup_RunTitlePresentation.
+  evidence: [rnc_graphics_resource_static_v1]
+
 0x00004B04:
   name: ROM_SCENE_TRANSITION_TABLE
   type: rom_pointer_table

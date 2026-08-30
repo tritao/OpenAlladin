@@ -335,6 +335,47 @@ def test_rnc_boundary_alignment_padding_is_exact():
         assert rom[address + 1:address + 5] == b"RNC\x01"
 
 
+def test_unindexed_rnc_graphics_resources_are_exactly_bounded():
+    symbols = SymbolStore()
+    resources = (
+        (0x0012D654, 0x0012D86E),
+        (0x0012DA04, 0x0012DD74),
+        (0x0012E176, 0x0012E349),
+        (0x0012E34A, 0x0012E4BC),
+        (0x0012E666, 0x0012E7E8),
+        (0x0012F39E, 0x0012F4EA),
+        (0x0012F712, 0x0012FA01),
+        (0x0012FA02, 0x0012FF0E),
+        (0x0012FF0F, 0x0013013B),
+        (0x0013013C, 0x0013030A),
+        (0x0013030B, 0x0013046E),
+        (0x0013046F, 0x00130708),
+        (0x00130709, 0x001307D4),
+        (0x001307D5, 0x00130EA0),
+        (0x00130EA1, 0x0013101F),
+        (0x00131020, 0x001313FC),
+        (0x001313FD, 0x00131681),
+        (0x00131682, 0x0013182F),
+        (0x00131830, 0x001319EB),
+        (0x001319EC, 0x00132F8C),
+        (0x0013A892, 0x0013C373),
+        (0x0013C374, 0x001401D9),
+        (0x001401DA, 0x001434C3),
+    )
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    rom = rom_path.read_bytes()
+
+    for start, end in resources:
+        symbol = symbols.at(start, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name.endswith(f"_{start:08X}")
+        assert symbol.end == end
+        assert symbol.size == end - start + 1
+        assert symbol.metadata["type"] == "graphics_data"
+        assert symbol.confidence == "decompiled"
+        assert rom[start:start + 4] == b"RNC\x01"
+
+
 def test_genesis_header_tail_and_scene_stream_padding_are_exact():
     symbols = SymbolStore()
     header = symbols.at(0x000001A4, include_ranges=False)

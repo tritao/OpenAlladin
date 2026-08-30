@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-rnc-graphics-resource-static-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "source": {
+    "manifest": "build/assets/rnc/manifest.json",
+    "classification": "build/assets/rnc/classification.json",
+    "loader_analysis": "build/assets/rnc/loader_analysis.json"
+  },
+  "resources": [
+    { "address": "0x0012D654", "name": "SCENE_RNC_GRAPHICS_0012D654", "end": "0x0012D86E", "consumer": "SceneResource_LoadVRAMPairWithPalette1298F2" },
+    { "address": "0x0012DA04", "name": "SCENE_RNC_GRAPHICS_0012DA04", "end": "0x0012DD74", "consumer": "SceneResource_LoadC000Resource12DA04" },
+    { "address": "0x0012E176", "name": "SCENE_RNC_GRAPHICS_0012E176", "end": "0x0012E349", "consumer": "SceneResource_LoadC000Resource12E176" },
+    { "address": "0x0012E34A", "name": "SCENE_RNC_GRAPHICS_0012E34A", "end": "0x0012E4BC", "consumer": "SceneResource_LoadC000Resource12E34A" },
+    { "address": "0x0012E666", "name": "SCENE_RNC_GRAPHICS_0012E666", "end": "0x0012E7E8", "consumer": "Scene_ResetToState0" },
+    { "address": "0x0012F39E", "name": "SCENE_RNC_GRAPHICS_0012F39E", "end": "0x0012F4EA", "consumer": "SceneResource_Dispatch" },
+    { "address": "0x0012F712", "name": "SCENE_RNC_GRAPHICS_0012F712", "end": "0x0012FA01", "consumer": "SceneResource_RebuildAfterInteraction" },
+    { "address": "0x0012FA02", "name": "SCENE_RNC_GRAPHICS_0012FA02", "end": "0x0012FF0E", "consumer": "SceneResource_RebuildAfterInteraction" },
+    { "address": "0x0012FF0F", "name": "SCENE_RNC_GRAPHICS_0012FF0F", "end": "0x0013013B", "consumer": "Camera_InitializeCoordinateState" },
+    { "address": "0x0013013C", "name": "SCENE_RNC_GRAPHICS_0013013C", "end": "0x0013030A", "consumer": "Camera_InitializeCoordinateState" },
+    { "address": "0x0013030B", "name": "SCENE_RNC_GRAPHICS_0013030B", "end": "0x0013046E", "consumer": "Camera_InitializeCoordinateState; Scene_ResetToState0" },
+    { "address": "0x0013046F", "name": "SCENE_RNC_GRAPHICS_0013046F", "end": "0x00130708", "consumer": "SceneResource_InitializeActiveScene" },
+    { "address": "0x00130709", "name": "MENU_WISH_PROMPT_GRAPHICS_00130709", "end": "0x001307D4", "consumer": "Menu_ShowWishPrompt" },
+    { "address": "0x001307D5", "name": "TITLE_RNC_GRAPHICS_001307D5", "end": "0x00130EA0", "consumer": "Startup_RunTitlePresentation" },
+    { "address": "0x00130EA1", "name": "TITLE_RNC_GRAPHICS_00130EA1", "end": "0x0013101F", "consumer": "Startup_RunTitlePresentation" },
+    { "address": "0x00131020", "name": "TITLE_RNC_GRAPHICS_00131020", "end": "0x001313FC", "consumer": "Startup_RunTitlePresentation" },
+    { "address": "0x001313FD", "name": "SCENE_STATE_RNC_GRAPHICS_001313FD", "end": "0x00131681", "consumer": "SceneResource_RunStatePresentation" },
+    { "address": "0x00131682", "name": "SCENE_STATE_RNC_GRAPHICS_00131682", "end": "0x0013182F", "consumer": "SceneResource_RunStatePresentation" },
+    { "address": "0x00131830", "name": "SCENE_TRANSITION_RNC_GRAPHICS_00131830", "end": "0x001319EB", "consumer": "SceneResource_InitializeScriptTransition" },
+    { "address": "0x001319EC", "name": "SCENE_COMMON_BASE_RNC_GRAPHICS_001319EC", "end": "0x00132F8C", "consumer": "shared scene/title/prompt presentation paths" },
+    { "address": "0x0013A892", "name": "SCENE_REBUILD_BASE_RNC_GRAPHICS_0013A892", "end": "0x0013C373", "consumer": "SceneResource_RebuildAfterInteraction" },
+    { "address": "0x0013C374", "name": "SCENE_SHARED_RNC_GRAPHICS_0013C374", "end": "0x001401D9", "consumer": "active-scene, script-transition, state-presentation, and camera paths" },
+    { "address": "0x001401DA", "name": "TITLE_BASE_RNC_GRAPHICS_001401DA", "end": "0x001434C3", "consumer": "Startup_RunTitlePresentation" }
+  ],
+  "evidence": [
+    "Every resource has an exact RNC manifest extent and decodes as Genesis tile data.",
+    "Loader analysis supplies direct ROM-source consumers for the named resources.",
+    "Names remain source-oriented where the resource's narrower scene identity is not established."
+  ],
+  "conclusion": "The remaining unnamed RNC payloads in the scene/presentation band are canonical graphics resources rather than opaque or unknown data.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
