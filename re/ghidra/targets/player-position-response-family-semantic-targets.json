@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-position-response-family",
+    "purpose": "Promote the Type-0x5E actor-position adoption path and Type-0x01 proximity-bounce path to behavior-based canonical names."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x01"], "address": "0x001AFD84" },
+      { "actor_types": ["0x5E"], "address": "0x001AF638" }
+    ]
+  },
+  "targets": [
+    {
+      "address": "0x001AF638",
+      "name": "PlayerCollision_AdoptActorPosition",
+      "legacy_name": "ActorType5E_PlayerCollisionHandler",
+      "range": "0x001AF638-0x001AF6AB",
+      "size": 116
+    },
+    {
+      "address": "0x001AFD84",
+      "name": "PlayerCollision_StartProximityBounce",
+      "legacy_name": "ActorType01_PlayerCollisionHandler",
+      "range": "0x001AFD84-0x001AFE1B",
+      "size": 152
+    }
+  ],
+  "contracts": {
+    "type5e": [
+      "requires terrain response to be inactive or vertically stopped and actor collision flag bit 0x10",
+      "copies actor X/Y minus WORLD_CAMERA_X/Y into PLAYER_X/Y",
+      "clears TERRAIN_HORIZONTAL_RESPONSE and restores camera thresholds to 0x00B0/0x0170",
+      "restarts PLAYER_ANIM_INTERACTION_RESPONSE_LOOP when TERRAIN_RESPONSE_TIMER_STATE is nonzero, otherwise raises PLAYER_COLLISION_RESPONSE_SUPPRESS"
+    ],
+    "type01": [
+      "requires non-upward PLAYER_VY and a clear PLAYER_INTERACTION_ANIMATION_GATE",
+      "requires vertical separation no greater than five pixels",
+      "writes PLAYER_VY=-0x0800 and PLAYER_Y from actor Y minus WORLD_CAMERA_Y",
+      "installs PLAYER_ANIM_TRANSITION_FLAG_RESPONSE and terrain-response latches",
+      "converts the source actor to Type 0x84 and derives signed PLAYER_VX from world-X separation"
+    ]
+  },
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

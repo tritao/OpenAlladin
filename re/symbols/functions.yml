@@ -6203,10 +6203,11 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AF638:
-  name: ActorType5E_PlayerCollisionHandler
+  name: PlayerCollision_AdoptActorPosition
+  aliases: [ActorType5E_PlayerCollisionHandler]
   size: 116
   confidence: decompiled
-  description: Player-collision handler for actor type 0x5E. It aligns the player's X/Y position to the actor, publishes the horizontal and vertical response state, optionally selects the player animation at 0x00122336, clears the action gate, and resets the camera thresholds to the encoded 0x00B0/0x0170 pair.
+  description: Adopts the Type-0x5E actor position as the player position when terrain response is eligible and the actor has collision flag 0x10. It copies actor X/Y into PLAYER_X/PLAYER_Y relative to the world camera, restarts PLAYER_ANIM_INTERACTION_RESPONSE_LOOP when a horizontal response phase is active, clears TERRAIN_HORIZONTAL_RESPONSE, restores the camera thresholds, and otherwise raises PLAYER_COLLISION_RESPONSE_SUPPRESS.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF638
@@ -6233,10 +6234,11 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AFD84:
-  name: ActorType01_PlayerCollisionHandler
+  name: PlayerCollision_StartProximityBounce
+  aliases: [ActorType01_PlayerCollisionHandler]
   size: 152
   confidence: decompiled
-  description: Player-collision handler for actor type 0x01. It rejects active terminal/terrain gates, aligns PLAYER_Y to the actor within six pixels, launches the player with PLAYER_VY=-0x0800, selects the shared jump-response animation, enables terrain response, and initializes a type-0x84 response actor with the encoded horizontal offset.
+  description: Starts the Type-0x01 proximity bounce when player motion is not upward, the interaction-animation gate is clear, and vertical separation is within five pixels. It launches PLAYER_VY=-0x0800, installs the transition animation and terrain-response latches, aligns PLAYER_Y to the actor, converts the source actor to Type 0x84 with ACTOR_ANIM_TYPE84_TYPE01_RESPONSE, and derives a signed horizontal response from the world-X separation.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AFD84
