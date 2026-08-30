@@ -889,6 +889,17 @@
     - ghidra_disassembly_001B5EB8
     - level07_spawn_cooldown_static_decompilation
 
+0xFFF118:
+  name: LEVEL09_TYPE50_SPAWN_COOLDOWN
+  type: u8
+  format: counter
+  confidence: decompiled
+  description: Level-09 Type-0x50 spawn cadence counter. Level09_EnterRoutine increments it on every callback, resets it at 0x50, and evaluates the coordinate-gated Type-0x50 spawn only on the wrapped cadence; the separate Level-09 Type-0x52 spawn uses FRAME_PHASE_COUNTER.
+  evidence:
+    - ghidra_decompile_001B614C
+    - ghidra_disassembly_001B614C
+    - level09_type50_template_targets
+
 0xFFF114:
   name: PLAYER_TERRAIN_TRANSITION_GATE
   type: u8

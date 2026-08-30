@@ -682,6 +682,14 @@ def test_real_palette_transition_step_has_canonical_role():
     assert symbol.metadata["format"] == "counter"
 
 
+def test_real_level09_type50_spawn_cooldown_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF118, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "LEVEL09_TYPE50_SPAWN_COOLDOWN"
+    assert symbol.metadata["type"] == "u8"
+    assert symbol.metadata["format"] == "counter"
+
+
 def test_real_actor_type42_collision_step_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF10A, include_ranges=False)
     assert symbol is not None
