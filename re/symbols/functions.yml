@@ -1998,10 +1998,11 @@
     - ghidra_disassembly_001AEBDC
     - player_collision_direct_entry_family_static_decompilation
 0x001AE722:
-  name: ActorType08_09_PlayerCollisionHandler
+  name: PlayerCollision_ArmDirectionalTerrainPush
+  aliases: [ActorType08_09_PlayerCollisionHandler]
   size: 116
   confidence: decompiled
-  description: Shared player-collision handler for runtime actor types 0x08 and 0x09. It compares the actor X coordinate against PLAYER_WORLD_X, consumes the directional terrain-push latches, publishes the encoded response state, and applies the corresponding left/right stop flags when the player is not already moving vertically or in an active terrain response.
+  description: Arms the signed terrain-push response for runtime actor types 0x08 and 0x09. It compares actor X against PLAYER_WORLD_X, consumes the matching TERRAIN_PUSH_LEFT or TERRAIN_PUSH_RIGHT latch, loads the terrain-response timer and phase, and raises the corresponding stop-motion flag when the player is moving vertically or already in an active terrain response.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AE722
@@ -2450,10 +2451,11 @@
     - ghidra_disassembly_001AED24
     - actor_template_base_zero
 0x001AF0B8:
-  name: ActorType4D_PlayerCollisionHandler
+  name: PlayerCollision_ProcessType4DPairedResponse
+  aliases: [ActorType4D_PlayerCollisionHandler]
   size: 88
   confidence: decompiled
-  description: Player-collision handler for runtime actor type 0x4D. It checks for an existing type-0x12 actor, prepares the camera threshold and installs ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE at 0x001222C2, adjusts PLAYER_VX by +/-0x0100 from the actor/player X ordering, then converts the source to a type-0x84 response with animation 0x00124498 and clears its transient motion words.
+  description: Processes the Type-0x4D paired response. It checks for an existing Type-0x12 actor, installs ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE at 0x001222C2 on that actor, adjusts PLAYER_VX by +/-0x0100 from the actor/player X ordering, then converts the source to a Type-0x84 response with animation 0x00124498 and clears its transient motion words.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF0B8
@@ -6228,10 +6230,11 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001AF6DC:
-  name: ActorType60_61_PlayerCollisionHandler
+  name: PlayerCollision_UpdateExitPresentationActor
+  aliases: [ActorType60_61_PlayerCollisionHandler]
   size: 100
   confidence: decompiled
-  description: Shared player-collision handler for actor types 0x60 and 0x61. It copies PLAYER_WORLD_X/Y into the actor, resets the camera thresholds to 0x00B0/0x0170, publishes the landing state, and selects the type-0x61 animation response when the source is not already type 0x61.
+  description: Updates the Level-08 exit-presentation actor for runtime types 0x60 and 0x61 when terrain response is inactive or vertically stopped. It copies PLAYER_WORLD_X/Y into the actor, restores camera thresholds to 0x00B0/0x0170, publishes TERRAIN_LANDING_STATE and PLAYER_INTERACTION_MODE, and selects PLAYER_ANIM_LEVEL08_EXIT_RESPONSE when the source is not already Type 0x61.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF6DC

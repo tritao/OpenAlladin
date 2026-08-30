@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-terrain-exit-family",
+    "purpose": "Promote directional terrain-push, Type-0x4D paired-response, and Level-08 exit-presentation player-collision paths."
+  },
+  "dispatch_table": {
+    "address": "0x001CBE",
+    "entry_width": 4,
+    "entries": [
+      { "actor_types": ["0x08", "0x09"], "address": "0x001AE722" },
+      { "actor_types": ["0x4D"], "address": "0x001AF0B8" },
+      { "actor_types": ["0x60", "0x61"], "address": "0x001AF6DC" }
+    ]
+  },
+  "targets": [
+    { "address": "0x001AE722", "name": "PlayerCollision_ArmDirectionalTerrainPush", "legacy_name": "ActorType08_09_PlayerCollisionHandler", "range": "0x001AE722-0x001AE795", "size": 116 },
+    { "address": "0x001AF0B8", "name": "PlayerCollision_ProcessType4DPairedResponse", "legacy_name": "ActorType4D_PlayerCollisionHandler", "range": "0x001AF0B8-0x001AF10F", "size": 88 },
+    { "address": "0x001AF6DC", "name": "PlayerCollision_UpdateExitPresentationActor", "legacy_name": "ActorType60_61_PlayerCollisionHandler", "range": "0x001AF6DC-0x001AF73F", "size": 100 }
+  ],
+  "contracts": {
+    "type08_09": "consume the matching directional terrain-push latch, arm the four-frame terrain response, and raise the corresponding stop-motion flag when vertical/terrain motion requires it",
+    "type4d": "update the paired Type-0x12 response actor, adjust PLAYER_VX by actor/player ordering, and install the Type-0x84 response actor",
+    "type60_61": "publish the player position and landing/interaction state into the Level-08 exit-presentation actor and select the exit animation for Type 0x60"
+  },
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
