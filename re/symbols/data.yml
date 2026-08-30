@@ -1624,6 +1624,16 @@
     - ghidra_disassembly_001B1432
     - level_transition_targets
 
+0x002022:
+  name: ROM_PADDING_FF_002022
+  type: padding_data
+  size: 0x5E
+  confidence: confirmed
+  description: Unused ROM fill between the preceding transition data and the scene transition-plane offset table. Every byte from 0x00002022 through 0x0000207F is 0xFF, and the next owned range begins at SCENE_VDP_TRANSITION_PLANE_OFFSET_TABLE 0x00002080.
+  evidence:
+    - rom_padding_uniform_static_v1
+    - scene_vdp_transition_plane_offset_table_static_decompilation
+
 0x0020C0:
   name: LEVEL_EVENT_COMMAND_DISPATCH_TABLE
   type: rom_pointer_table

@@ -541,6 +541,19 @@ def test_scene_vdp_transition_plane_offset_table_has_exact_extent():
     ]
 
 
+def test_scene_vdp_transition_padding_has_exact_extent():
+    symbols = SymbolStore()
+    padding = symbols.at(0x00002022, include_ranges=False)
+    assert padding is not None
+    assert padding.name == "ROM_PADDING_FF_002022"
+    assert padding.end == 0x0000207F
+    assert padding.size == 0x5E
+    assert padding.metadata["type"] == "padding_data"
+
+    rom = Path("rom/Disneys_Aladdin_U_p1.bin").read_bytes()
+    assert rom[0x2022:0x2080] == bytes([0xFF]) * 0x5E
+
+
 def test_interaction_counter_animation_table_and_bank_are_exact():
     symbols = SymbolStore()
     table = symbols.at(0x00004A58, include_ranges=False)

@@ -1,0 +1,17 @@
+{
+  "format": "openaladdin-rom-padding-002022-finding-v1",
+  "recorded_at": "2026-08-30",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-decompilation",
+  "confidence": "confirmed",
+  "range": {
+    "name": "ROM_PADDING_FF_002022",
+    "range": ["0x00002022", "0x0000207F"],
+    "size": 94,
+    "fill_byte": "0xFF"
+  },
+  "conclusion": "The byte-uniform range 0x00002022-0x0000207F is explicit ROM padding, bounded by unresolved mixed-content bytes at 0x00002021 and the decoded SCENE_VDP_TRANSITION_PLANE_OFFSET_TABLE at 0x00002080."
+}
