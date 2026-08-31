@@ -27,6 +27,10 @@ struct CoreTrace {
     std::size_t collision_contact_count = 0;
     RamAddress collision_player_handler = 0;
     RamAddress collision_actor_handler = 0;
+    std::uint8_t interaction_selector = 0;
+    RamAddress interaction_handler = 0;
+    std::uint16_t interaction_index = 0;
+    std::size_t interaction_spawn_slot = 0;
     bool frame_atomic = false;
 };
 

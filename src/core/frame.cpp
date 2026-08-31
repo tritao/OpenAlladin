@@ -105,6 +105,10 @@ void step_frame(
         trace->collision_contact_count = 0;
         trace->collision_player_handler = 0;
         trace->collision_actor_handler = 0;
+        trace->interaction_selector = 0;
+        trace->interaction_handler = 0;
+        trace->interaction_index = 0;
+        trace->interaction_spawn_slot = 0;
         trace_phase(*trace, kFrameEntry);
     }
 

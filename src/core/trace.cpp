@@ -139,6 +139,10 @@ void trace_begin(
     trace.collision_contact_count = 0;
     trace.collision_player_handler = 0;
     trace.collision_actor_handler = 0;
+    trace.interaction_selector = 0;
+    trace.interaction_handler = 0;
+    trace.interaction_index = 0;
+    trace.interaction_spawn_slot = 0;
     trace.frame_atomic = false;
     output << "{\"type\":\"header\",\"format\":\"openaladdin-core-trace-v1\""
            << ",\"state_boundary\":\"game-loop\""
@@ -262,6 +266,12 @@ void trace_state(
            << static_cast<unsigned>(read8(ram, kPlayerCollisionCurrentActorType))
            << ",\"response_suppress\":"
            << static_cast<unsigned>(read8(ram, kPlayerCollisionResponseSuppress))
+           << "}"
+           << ",\"interaction\":{\"selector\":"
+           << static_cast<unsigned>(trace.interaction_selector)
+           << ",\"handler_pc\":" << trace.interaction_handler
+           << ",\"index\":" << trace.interaction_index
+           << ",\"spawn_slot\":" << trace.interaction_spawn_slot
            << "}"
            << ",\"ram_bytes\":";
     write_ram_bytes(output, ram);
