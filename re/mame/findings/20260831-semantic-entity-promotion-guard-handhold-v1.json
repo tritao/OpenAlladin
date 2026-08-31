@@ -1,0 +1,41 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "guard-sword-attack-and-handhold-interaction",
+  "promotions": [
+    {
+      "semantic_name": "GUARD_SWORD_ATTACK",
+      "technical_types": ["0x1D", "0x2D"],
+      "symbols": [
+        "ACTOR_ANIM_GUARD_SPAWN",
+        "ACTOR_ANIM_GUARD_SWORD_ATTACK",
+        "ACTOR_TEMPLATE_GUARD_SWORD_ATTACK"
+      ],
+      "evidence": [
+        "guard-attack-animation-static-decompilation-v1",
+        "type2d-guard-sword-attack-animation-static-decompilation-v1",
+        "mame-natural-actor-type-2D-trace"
+      ]
+    },
+    {
+      "semantic_name": "HANDHOLD_INTERACTION",
+      "technical_types": ["0x69", "0x6A", "0x6B", "0x6C"],
+      "symbols": [
+        "ACTOR_ANIM_HANDHOLD_INTERACTION",
+        "ACTOR_ANIM_HANDHOLD_PROMOTION_RESPONSE",
+        "ACTOR_TEMPLATE_HANDHOLD_INTERACTION",
+        "ACTOR_TEMPLATE_HANDHOLD_REMOTE"
+      ],
+      "evidence": [
+        "type69-animation-static-decompilation-v1",
+        "type6c-animation-static-decompilation-v1",
+        "actor-runtime-type6a-trace"
+      ]
+    }
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false
+  }
+}

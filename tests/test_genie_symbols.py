@@ -16,7 +16,7 @@ from genie.symbols import (
     mechanical_name,
     name_for,
 )
-from genie.symbols.entities import SemanticMapping, validate_entity_mappings
+from genie.symbols.entities import SemanticMapping, load_entity_mappings, validate_entity_mappings
 from genie.symbols.type_worklist import (
     candidate_class,
     numeric_type_ids,
@@ -200,6 +200,27 @@ def test_numeric_type_work_queue_uses_reference_and_runtime_evidence(tmp_path):
     assert mapped[0]["candidate_class"] == "mapped"
     assert mapped[0]["mapping_status"] == "mapped"
     assert mapped[0]["mapping_matches"] == [{"match": "symbol", "name": "GUARD", "scope": "actor"}]
+
+
+def test_guard_and_handhold_numeric_identities_promote_to_semantic_names_with_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00123490: ("ACTOR_ANIM_GUARD_SPAWN", "ACTOR_ANIM_TYPE1D_GUARD_SPAWN"),
+        0x00123EE8: ("ACTOR_ANIM_GUARD_SWORD_ATTACK", "ACTOR_ANIM_TYPE2D_GUARD_SWORD_ATTACK"),
+        0x00124034: ("ACTOR_ANIM_HANDHOLD_PROMOTION_RESPONSE", "ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE"),
+        0x00124046: ("ACTOR_ANIM_HANDHOLD_INTERACTION", "ACTOR_ANIM_TYPE69_HANDHOLD"),
+        0x001B7D78: ("ACTOR_TEMPLATE_HANDHOLD_INTERACTION", "ACTOR_TEMPLATE_TYPE_69_INTERACTION"),
+        0x001B7D8C: ("ACTOR_TEMPLATE_HANDHOLD_REMOTE", "ACTOR_TEMPLATE_TYPE_6A_6B"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = load_entity_mappings()
+    assert validate_entity_mappings(mappings) == []
+    assert {mapping.name for mapping in mappings} == {"GUARD_SWORD_ATTACK", "HANDHOLD_INTERACTION"}
 
 
 def test_symbol_editor_promotes_and_annotates_a_tracked_symbol(tmp_path):

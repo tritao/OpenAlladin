@@ -1,3 +1,24 @@
 # Curated semantic mappings from technical actor/event selectors.
 # Keep technical_types and symbol_addresses even when a semantic name is added.
-mappings: []
+mappings:
+  - name: GUARD_SWORD_ATTACK
+    scope: actor
+    symbol_addresses: [0x00123490, 0x00123EE8, 0x001B7CB0]
+    technical_types: [0x1D, 0x2D]
+    confidence: trace_validated
+    evidence:
+      - guard-attack-animation-static-decompilation-v1
+      - type2d-guard-sword-attack-animation-static-decompilation-v1
+      - mame-natural-actor-type-2D-trace
+    description: Guard animation spawns and the Type-0x2D child template/animation are tied to the guard sword-attack entity.
+
+  - name: HANDHOLD_INTERACTION
+    scope: event
+    symbol_addresses: [0x00124034, 0x00124046, 0x001B7D78, 0x001B7D8C]
+    technical_types: [0x69, 0x6A, 0x6B, 0x6C]
+    confidence: trace_validated
+    evidence:
+      - type69-animation-static-decompilation-v1
+      - type6c-animation-static-decompilation-v1
+      - actor-runtime-type6a-trace
+    description: The Type-0x69 through Type-0x6C animation/template family is the handhold interaction and its promoted response.

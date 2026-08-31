@@ -4732,7 +4732,8 @@
     - animation_stream_decoder
 
 0x00123490:
-  name: ACTOR_ANIM_TYPE1D_GUARD_SPAWN
+  name: ACTOR_ANIM_GUARD_SPAWN
+  aliases: [ACTOR_ANIM_TYPE1D_GUARD_SPAWN]
   type: animation_stream
   alias_of: ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE
   entry_offset: 132
@@ -4864,10 +4865,11 @@
     - animation_stream_decoder
 
 0x00124034:
-  name: ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_HANDHOLD_PROMOTION_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE]
   size: 18
   confidence: decompiled
-  description: Type-0x6C promoted interaction response animation installed by InteractionSpawn_Type6C. Its packed 18-byte region presents frame 0x15DA, loops while the encoded actor-field comparison at 0x00124036 holds, and jumps into ACTOR_ANIM_TYPE69_HANDHOLD at its Type-0x6B entry 0x0012404E when the condition clears.
+  description: Type-0x6C promoted handhold interaction response animation installed by InteractionSpawn_Type6C. Its packed 18-byte region presents frame 0x15DA, loops while the encoded actor-field comparison at 0x00124036 holds, and jumps into ACTOR_ANIM_HANDHOLD_INTERACTION at its Type-0x6B entry 0x0012404E when the condition clears.
   evidence:
     - type6c_animation_static_decompilation
     - interaction_spawn_mid_family_static_decompilation
@@ -4875,7 +4877,8 @@
     - animation_stream_decoder
 
 0x00124046:
-  name: ACTOR_ANIM_TYPE69_HANDHOLD
+  name: ACTOR_ANIM_HANDHOLD_INTERACTION
+  aliases: [ACTOR_ANIM_TYPE69_HANDHOLD]
   size: 136
   confidence: decompiled
   description: Shared Type-0x69/0x6A handhold animation family. Its packed 136-byte region contains the Type-0x69 root at 0x00124046, the Type-0x6A template entry at 0x0012404A, the Type-0x69 to Type-0x6B alignment entry at 0x0012404E, and the Type-0x6A to Type-0x6B alignment entry at 0x0012408E; both response paths present paired frame sequences, push parameter 0x001ACB6A, write actor field 0x11 to 0x0084, and clear actor state before the following wall-response stream.
@@ -7031,7 +7034,8 @@
     - animation_stream_decoder
 
 0x00123EE8:
-  name: ACTOR_ANIM_TYPE2D_GUARD_SWORD_ATTACK
+  name: ACTOR_ANIM_GUARD_SWORD_ATTACK
+  aliases: [ACTOR_ANIM_TYPE2D_GUARD_SWORD_ATTACK]
   size: 40
   confidence: confirmed
   description: Type-0x2D guard sword-attack child animation supplied by ACTOR_TEMPLATE_GUARD_SWORD_ATTACK. Its 40-byte region cycles the paired 0x1B96-0x1BAE frame sequence, plays sound 0x20 at 0x00123EF2, and loops from 0x00123F0A back to 0x00123EE8.
@@ -7770,11 +7774,12 @@
     - level01_upper_activation_trace
 
 0x001B7D8C:
-  name: ACTOR_TEMPLATE_TYPE_6A_6B
+  name: ACTOR_TEMPLATE_HANDHOLD_REMOTE
+  aliases: [ACTOR_TEMPLATE_TYPE_6A_6B]
   type: actor_template
   size: 20
   confidence: trace_validated
-  description: Shared selector-0x0D actor template used by the natural remote interaction producers; its animation pointer enters ACTOR_ANIM_TYPE69_HANDHOLD at embedded entry 0x0012404A, the initialized actor is observed as runtime type 0x6A, and ActorType6A_PlayerCollisionHandler can align it into type 0x6B at embedded entry 0x0012408E.
+  description: Shared selector-0x0D handhold actor template used by the natural remote interaction producers; its animation pointer enters ACTOR_ANIM_HANDHOLD_INTERACTION at embedded entry 0x0012404A, the initialized actor is observed as runtime type 0x6A, and ActorType6A_PlayerCollisionHandler can align it into type 0x6B at embedded entry 0x0012408E.
   evidence:
     - level01_transfer_reachability_closure
     - actor_runtime_type6a_trace
@@ -8338,11 +8343,12 @@
     - actor_template_grid_xrefs
 
 0x001B7D78:
-  name: ACTOR_TEMPLATE_TYPE_69_INTERACTION
+  name: ACTOR_TEMPLATE_HANDHOLD_INTERACTION
+  aliases: [ACTOR_TEMPLATE_TYPE_69_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x69 interaction template loaded by the reverse-slot entries at 0x001B681C and 0x001B683E; it has no movement stream, uses ACTOR_ANIM_TYPE69_HANDHOLD at 0x00124046, and owns five resources before the second path promotes the actor to type 0x6C and installs ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE.
+  description: Type-0x69 handhold interaction template loaded by the reverse-slot entries at 0x001B681C and 0x001B683E; it has no movement stream, uses ACTOR_ANIM_HANDHOLD_INTERACTION at 0x00124046, and owns five resources before the second path promotes the actor to type 0x6C and installs ACTOR_ANIM_HANDHOLD_PROMOTION_RESPONSE.
   evidence:
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs
