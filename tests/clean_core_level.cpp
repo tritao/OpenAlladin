@@ -289,6 +289,9 @@ int main() {
         std::size_t c000_calls = 0;
         std::size_t palette_calls = 0;
         std::size_t object_hook_calls = 0;
+        std::size_t scene_palette_calls = 0;
+        RamAddress scene_palette_band0 = 0;
+        RamAddress scene_palette_band1 = 0;
     } capture;
     constexpr std::size_t kSceneResourceCommandTable = 0x0049D8;
     const SceneResourceEffects effects{
@@ -307,6 +310,12 @@ int main() {
         },
         [](void* context) {
             ++static_cast<TileCapture*>(context)->object_hook_calls;
+        },
+        [](void* context, RamAddress band0, RamAddress band1) {
+            TileCapture* capture = static_cast<TileCapture*>(context);
+            ++capture->scene_palette_calls;
+            capture->scene_palette_band0 = band0;
+            capture->scene_palette_band1 = band1;
         },
     };
     const std::size_t resource_stream = 0x0600;
@@ -443,6 +452,33 @@ int main() {
     assert(actor_stream_trace.scene_resource_object_stream == 0x0900);
     assert(actor_stream_trace.scene_resource_object_command_count == 1);
     assert(actor_stream_trace.scene_resource_object_actor_count == 1);
+
+    // The state-presentation selector publishes the wrapper's resource and
+    // palette identities before running its fixed command stream.
+    rom[0x001270A8] = 0x00;
+    rom[0x00127134] = 0x00;
+    CoreTrace presentation_trace;
+    const SceneResourcePresentationResult presentation =
+        scene_resource_run_state_presentation(
+            core, 1, false, effects, &presentation_trace);
+    assert(presentation.spec.supported);
+    assert(presentation.spec.loader_pc == 0x001B4A52);
+    assert(presentation.spec.wrapper_pc == 0x001B4BB8);
+    assert(presentation.spec.c000_source == 0x0012E34A);
+    assert(presentation.spec.palette_band0 == 0x001299B2);
+    assert(presentation.spec.palette_band1 == 0x00129A92);
+    assert(presentation.spec.command_stream == 0x001270A8);
+    assert(presentation.spec.initial_x == 0x15);
+    assert(presentation.spec.initial_y == 0x08);
+    assert(presentation.stream.status == SceneResourceRunStatus::Finished);
+    assert(read32(core.ram, kSceneResourceC000Source) == 0x0012E34A);
+    assert(read32(core.ram, kSceneResourcePaletteSource) == 0x001299B2);
+    assert(capture.scene_palette_calls == 1);
+    assert(capture.scene_palette_band0 == 0x001299B2);
+    assert(capture.scene_palette_band1 == 0x00129A92);
+    assert(presentation_trace.scene_resource_presentation_selected);
+    assert(presentation_trace.scene_resource_presentation_stream == 0x001270A8);
+    assert(read8(core.ram, kSceneResourcePresentationScratch) == 0);
 
     write8(core.ram, kSceneResourceStatus, 1);
     const SceneResourceRunResult blocked_resource =

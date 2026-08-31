@@ -33,6 +33,7 @@ struct SceneResourceEffects {
     void (*load_or_clear_c000)(void*, RamAddress) = nullptr;
     void (*prepare_frame_and_palette)(void*) = nullptr;
     void (*object_command_noop_hook)(void*) = nullptr;
+    void (*prepare_scene_palette)(void*, RamAddress, RamAddress) = nullptr;
 };
 
 struct SceneResourceRunResult {
@@ -80,6 +81,25 @@ struct SceneResourceActorRunResult {
     std::size_t actor_count = 0;
     std::size_t last_actor_slot = 0;
     SceneResourceRunResult setup_stream;
+};
+
+struct SceneResourcePresentationSpec {
+    bool supported = false;
+    std::uint8_t scene_state = 0;
+    bool secondary = false;
+    RamAddress loader_pc = 0;
+    RamAddress c000_source = 0;
+    RamAddress palette_band0 = 0;
+    RamAddress palette_band1 = 0;
+    RamAddress command_stream = 0;
+    std::uint16_t initial_x = 0;
+    std::uint16_t initial_y = 0;
+    RamAddress wrapper_pc = 0;
+};
+
+struct SceneResourcePresentationResult {
+    SceneResourcePresentationSpec spec;
+    SceneResourceRunResult stream;
 };
 
 // SceneScript_CompleteToState1 at 0x001B315C. The script cursor and pending
@@ -140,6 +160,18 @@ SceneResourceStreamsResult scene_resource_process_command_streams(
 // the Genesis actor table through the recovered scene-resource template path.
 SceneResourceActorRunResult scene_resource_instantiate_actors(
     CoreRuntime& core,
+    const SceneResourceEffects& effects = {},
+    CoreTrace* trace = nullptr,
+    std::size_t instruction_budget = 1'000'000
+);
+
+// State-specific scene-resource presentation wrappers in the recovered
+// 0x001B498A-0x001B4DF7 family. The selector is data-driven; resource decode,
+// palette upload, and fade completion remain explicit host/presentation sinks.
+SceneResourcePresentationResult scene_resource_run_state_presentation(
+    CoreRuntime& core,
+    std::uint8_t scene_state,
+    bool secondary,
     const SceneResourceEffects& effects = {},
     CoreTrace* trace = nullptr,
     std::size_t instruction_budget = 1'000'000

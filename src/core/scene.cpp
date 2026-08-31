@@ -622,6 +622,143 @@ SceneResourceActorRunResult scene_resource_instantiate_actors(
     return result;
 }
 
+SceneResourcePresentationResult scene_resource_run_state_presentation(
+    CoreRuntime& core,
+    std::uint8_t scene_state,
+    bool secondary,
+    const SceneResourceEffects& effects,
+    CoreTrace* trace,
+    std::size_t instruction_budget
+) {
+    SceneResourcePresentationResult result;
+    SceneResourcePresentationSpec& spec = result.spec;
+    spec.scene_state = scene_state;
+    spec.secondary = secondary;
+
+    // These are the direct wrapper identities and fixed stream parameters
+    // recovered from the 0x001B4BB8-0x001B4DF7 presentation family.
+    switch (scene_state) {
+    case 0x00:
+        spec.loader_pc = 0x001B49DA;
+        spec.c000_source = 0x0012D0FA;
+        spec.palette_band0 = 0x00129952;
+        spec.palette_band1 = 0x00129A92;
+        spec.command_stream = 0x00127338;
+        spec.initial_x = 0x0013;
+        spec.initial_y = 0x0005;
+        spec.wrapper_pc = 0x001B4C28;
+        break;
+    case 0x01:
+        if (secondary) {
+            spec.loader_pc = 0x001B4A2A;
+            spec.c000_source = 0x0012E176;
+            spec.palette_band0 = 0x00129992;
+            spec.palette_band1 = 0x00129A92;
+            spec.command_stream = 0x00127134;
+            spec.initial_x = 0x0002;
+            spec.initial_y = 0x000A;
+            spec.wrapper_pc = 0x001B4BDC;
+        } else {
+            spec.loader_pc = 0x001B4A52;
+            spec.c000_source = 0x0012E34A;
+            spec.palette_band0 = 0x001299B2;
+            spec.palette_band1 = 0x00129A92;
+            spec.command_stream = 0x001270A8;
+            spec.initial_x = 0x0015;
+            spec.initial_y = 0x0008;
+            spec.wrapper_pc = 0x001B4BB8;
+        }
+        break;
+    case 0x03:
+        spec.loader_pc = 0x001B49DA;
+        spec.c000_source = 0x0012D0FA;
+        spec.palette_band0 = 0x00129952;
+        spec.palette_band1 = 0x00129A92;
+        spec.command_stream = 0x00127207;
+        spec.initial_x = 0x0011;
+        spec.initial_y = 0x0005;
+        spec.wrapper_pc = 0x001B4C02;
+        break;
+    case 0x04:
+        spec.loader_pc = 0x001B49B2;
+        spec.c000_source = 0x0012DA04;
+        spec.palette_band0 = 0x00129932;
+        spec.palette_band1 = 0x00129AB2;
+        spec.command_stream = 0x001273E9;
+        spec.initial_x = 0x0013;
+        spec.initial_y = 0x0003;
+        spec.wrapper_pc = 0x001B4C4E;
+        break;
+    case 0x05:
+        spec.loader_pc = 0x001B49DA;
+        spec.c000_source = 0x0012D0FA;
+        spec.palette_band0 = 0x00129952;
+        spec.palette_band1 = 0x00129A92;
+        if (secondary) {
+            spec.command_stream = 0x001275EE;
+            spec.initial_x = 0x0011;
+            spec.initial_y = 0x0007;
+            spec.wrapper_pc = 0x001B4C9A;
+        } else {
+            spec.command_stream = 0x00127571;
+            spec.initial_x = 0x0012;
+            spec.initial_y = 0x0008;
+            spec.wrapper_pc = 0x001B4C74;
+        }
+        break;
+    case 0x07:
+        spec.loader_pc = 0x001B498A;
+        spec.c000_source = 0x0012D870;
+        spec.palette_band0 = 0x00129912;
+        spec.palette_band1 = 0x00129AB2;
+        spec.command_stream = 0x0012772D;
+        spec.initial_x = 0x0015;
+        spec.initial_y = 0x000A;
+        spec.wrapper_pc = 0x001B4CC0;
+        break;
+    case 0x0B:
+        spec.loader_pc = 0x001B4A02;
+        spec.c000_source = 0x0012DF6C;
+        spec.palette_band0 = 0x00129972;
+        spec.palette_band1 = 0x00129AB2;
+        spec.command_stream = 0x0012792B;
+        spec.initial_x = 0x0012;
+        spec.initial_y = 0x0007;
+        spec.wrapper_pc = 0x001B4DD2;
+        break;
+    default:
+        return result;
+    }
+    spec.supported = true;
+
+    write32(core.ram, kSceneResourceC000Source, spec.c000_source);
+    write32(core.ram, kSceneResourcePaletteSource, spec.palette_band0);
+    if (effects.load_or_clear_c000 != nullptr) {
+        effects.load_or_clear_c000(effects.context, spec.c000_source);
+    }
+    if (effects.prepare_scene_palette != nullptr) {
+        effects.prepare_scene_palette(
+            effects.context, spec.palette_band0, spec.palette_band1);
+    }
+    if (trace != nullptr) {
+        trace->scene_resource_presentation_selected = true;
+        trace->scene_resource_presentation_state = scene_state;
+        trace->scene_resource_presentation_secondary = secondary;
+        trace->scene_resource_presentation_loader = spec.loader_pc;
+        trace->scene_resource_presentation_wrapper = spec.wrapper_pc;
+        trace->scene_resource_presentation_c000_source = spec.c000_source;
+        trace->scene_resource_presentation_palette_band0 = spec.palette_band0;
+        trace->scene_resource_presentation_palette_band1 = spec.palette_band1;
+        trace->scene_resource_presentation_stream = spec.command_stream;
+        trace->scene_resource_presentation_initial_x = spec.initial_x;
+        trace->scene_resource_presentation_initial_y = spec.initial_y;
+    }
+    result.stream = scene_resource_process_command_stream_with_presentation_scratch(
+        core, spec.command_stream, spec.initial_x, spec.initial_y,
+        effects, trace, instruction_budget);
+    return result;
+}
+
 void scene_table_select_next_state(
     CoreRuntime& core,
     CoreTrace*

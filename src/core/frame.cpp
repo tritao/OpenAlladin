@@ -159,6 +159,17 @@ void step_frame(
         trace->scene_resource_object_actor_count = 0;
         trace->scene_resource_last_object_actor_slot = 0;
         trace->scene_resource_object_presentation_scratch_observed = false;
+        trace->scene_resource_presentation_selected = false;
+        trace->scene_resource_presentation_state = 0;
+        trace->scene_resource_presentation_secondary = false;
+        trace->scene_resource_presentation_loader = 0;
+        trace->scene_resource_presentation_wrapper = 0;
+        trace->scene_resource_presentation_c000_source = 0;
+        trace->scene_resource_presentation_palette_band0 = 0;
+        trace->scene_resource_presentation_palette_band1 = 0;
+        trace->scene_resource_presentation_stream = 0;
+        trace->scene_resource_presentation_initial_x = 0;
+        trace->scene_resource_presentation_initial_y = 0;
         trace_phase(*trace, kFrameEntry);
     }
 

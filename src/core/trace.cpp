@@ -44,7 +44,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         RamAddress address;
         std::uint8_t width;
     };
-    constexpr std::array<RawField, 65> fields = {{
+    constexpr std::array<RawField, 66> fields = {{
         {kPlayerX, 2}, {kPlayerY, 2}, {kWorldCameraX, 2}, {kWorldCameraY, 2},
         {kPlayerWorldX, 2}, {kPlayerWorldY, 2},
         {kCameraReferenceX, 2}, {kCameraReferenceY, 2},
@@ -80,6 +80,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         {kSceneResourceActorRecordCursor, 4},
         {kSceneResourceActorSpawnGate, 1},
         {kSceneResourceC000Source, 4},
+        {kSceneResourcePaletteSource, 4},
         {kSceneResourceMode, 1}, {kSceneResourceActorResource, 4},
         {kSceneResourceActorXAdvance, 1},
     }};
@@ -208,6 +209,17 @@ void trace_begin(
     trace.scene_resource_object_actor_count = 0;
     trace.scene_resource_last_object_actor_slot = 0;
     trace.scene_resource_object_presentation_scratch_observed = false;
+    trace.scene_resource_presentation_selected = false;
+    trace.scene_resource_presentation_state = 0;
+    trace.scene_resource_presentation_secondary = false;
+    trace.scene_resource_presentation_loader = 0;
+    trace.scene_resource_presentation_wrapper = 0;
+    trace.scene_resource_presentation_c000_source = 0;
+    trace.scene_resource_presentation_palette_band0 = 0;
+    trace.scene_resource_presentation_palette_band1 = 0;
+    trace.scene_resource_presentation_stream = 0;
+    trace.scene_resource_presentation_initial_x = 0;
+    trace.scene_resource_presentation_initial_y = 0;
     trace.frame_atomic = false;
     output << "{\"type\":\"header\",\"format\":\"openaladdin-core-trace-v1\""
            << ",\"state_boundary\":\"game-loop\""
@@ -383,6 +395,28 @@ void trace_state(
            << trace.scene_resource_last_object_actor_slot
            << ",\"scene_resource_object_presentation_scratch_observed\":"
            << (trace.scene_resource_object_presentation_scratch_observed ? "true" : "false")
+           << ",\"scene_resource_presentation_selected\":"
+           << (trace.scene_resource_presentation_selected ? "true" : "false")
+           << ",\"scene_resource_presentation_state\":"
+           << static_cast<unsigned>(trace.scene_resource_presentation_state)
+           << ",\"scene_resource_presentation_secondary\":"
+           << (trace.scene_resource_presentation_secondary ? "true" : "false")
+           << ",\"scene_resource_presentation_loader\":"
+           << trace.scene_resource_presentation_loader
+           << ",\"scene_resource_presentation_wrapper\":"
+           << trace.scene_resource_presentation_wrapper
+           << ",\"scene_resource_presentation_c000_source\":"
+           << trace.scene_resource_presentation_c000_source
+           << ",\"scene_resource_presentation_palette_band0\":"
+           << trace.scene_resource_presentation_palette_band0
+           << ",\"scene_resource_presentation_palette_band1\":"
+           << trace.scene_resource_presentation_palette_band1
+           << ",\"scene_resource_presentation_stream\":"
+           << trace.scene_resource_presentation_stream
+           << ",\"scene_resource_presentation_initial_x\":"
+           << trace.scene_resource_presentation_initial_x
+           << ",\"scene_resource_presentation_initial_y\":"
+           << trace.scene_resource_presentation_initial_y
            << "}"
            << ",\"scene\":{\"state\":" << static_cast<unsigned>(read8(ram, kSceneState))
            << ",\"level_exit_vdp_control\":" << trace.level_exit_vdp_control

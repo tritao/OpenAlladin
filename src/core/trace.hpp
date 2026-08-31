@@ -76,6 +76,17 @@ struct CoreTrace {
     std::size_t scene_resource_object_actor_count = 0;
     std::size_t scene_resource_last_object_actor_slot = 0;
     bool scene_resource_object_presentation_scratch_observed = false;
+    bool scene_resource_presentation_selected = false;
+    std::uint8_t scene_resource_presentation_state = 0;
+    bool scene_resource_presentation_secondary = false;
+    RamAddress scene_resource_presentation_loader = 0;
+    RamAddress scene_resource_presentation_wrapper = 0;
+    RamAddress scene_resource_presentation_c000_source = 0;
+    RamAddress scene_resource_presentation_palette_band0 = 0;
+    RamAddress scene_resource_presentation_palette_band1 = 0;
+    RamAddress scene_resource_presentation_stream = 0;
+    std::uint16_t scene_resource_presentation_initial_x = 0;
+    std::uint16_t scene_resource_presentation_initial_y = 0;
     bool frame_atomic = false;
 };
 
