@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type3c-3e-3f-response-semantic",
+    "purpose": "Replace runtime-type-and-selector-only names with the shared gated response-spawn role."
+  },
+  "shared_contract": {
+    "template": "ACTOR_TEMPLATE_BASE_ZERO",
+    "allocator": "InteractionSpawn_ForwardSlot",
+    "animation": "ACTOR_ANIM_EXIT_TYPE84_PRESENTATION + 0x32 at 0x0012437E",
+    "movement": "ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE",
+    "post_init": "actor byte +0x29 = 1"
+  },
+  "handlers": [
+    {
+      "address": "0x001B738A",
+      "name": "InteractionSpawn_CreateType3CResponse",
+      "legacy_name": "InteractionSpawn_RuntimeType3C_42",
+      "selector": "0x42",
+      "gates": ["PLAYER_COLLISION_GATE_TYPE3E != 0", "PLAYER_COLLISION_GATE_TYPE3F != 0"],
+      "runtime_type": "0x3C"
+    },
+    {
+      "address": "0x001B73C2",
+      "name": "InteractionSpawn_CreateType3EResponse",
+      "legacy_name": "InteractionSpawn_RuntimeType3E_5F",
+      "selector": "0x5F",
+      "gates": ["PLAYER_COLLISION_GATE_TYPE3E == 0"],
+      "runtime_type": "0x3E"
+    },
+    {
+      "address": "0x001B73F2",
+      "name": "InteractionSpawn_CreateType3FResponse",
+      "legacy_name": "InteractionSpawn_RuntimeType3F_41",
+      "selector": "0x41",
+      "gates": ["PLAYER_COLLISION_GATE_TYPE3E != 0", "PLAYER_COLLISION_GATE_TYPE3F == 0"],
+      "runtime_type": "0x3F"
+    }
+  ],
+  "evidence": [
+    "exact 68000 handler bodies",
+    "player-collision gate truth table",
+    "shared zero-template and forward-slot allocation contract",
+    "shared response animation and MovementVM identities"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
