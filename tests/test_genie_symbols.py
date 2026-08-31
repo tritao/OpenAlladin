@@ -706,6 +706,20 @@ def test_type23_actor_collision_pair_helpers_have_semantic_names_and_aliases():
         assert symbol.confidence == "decompiled"
 
 
+def test_shared_actor_collision_services_have_semantic_names_and_aliases():
+    expected = {
+        0x001ABE8A: ("ActorCollision_ReinitializeFromInteractionTemplate", "Actor_HandleType2DInteraction"),
+        0x001AC484: ("ActorCollision_ApplyTerminalResponse", "Actor_ApplyTerminalCollisionResponse"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence in {"confirmed", "decompiled"}
+
+
 def test_actor_collision_response_cluster_has_behavior_names_and_legacy_aliases():
     expected = {
         0x001AC1D0: ("ActorCollision_ProcessType13Response", "ActorType13_ActorCollisionHandler"),

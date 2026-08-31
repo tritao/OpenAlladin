@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "actor-collision-shared-reinitializer-semantic",
+    "purpose": "Promote the shared actor-collision interaction reinitializer and terminal-response tail to stable collision-service identities."
+  },
+  "targets": [
+    {
+      "address": "0x001ABE8A",
+      "name": "ActorCollision_ReinitializeFromInteractionTemplate",
+      "legacy_name": "Actor_HandleType2DInteraction",
+      "range": ["0x001ABE8A", "0x001ABF27"],
+      "callers": 14,
+      "contract": "Select the established interaction-response or Type-0x84 template according to the current actor state, perform guarded audio preparation, reinitialize the actor, and apply the phase-controlled facing mutation."
+    },
+    {
+      "address": "0x001AC484",
+      "name": "ActorCollision_ApplyTerminalResponse",
+      "legacy_name": "Actor_ApplyTerminalCollisionResponse",
+      "range": ["0x001AC484", "0x001AC4DD"],
+      "callers": ["0x001AC350 ActorCollision_ProcessType20Interaction", "0x001AC458 ActorCollision_HandleTerminalInteraction"],
+      "contract": "Accumulate the receiving actor response byte, arm the scene countdown for selected receiving types, clear linked/current resources, initialize the terminal Type-0x84 template, and conditionally queue audio command 3."
+    }
+  ],
+  "contracts": [
+    "The shared reinitializer remains the common actor-collision interaction cleanup path, including its Type-0x2D interaction-response and Type-0x84 replacement branches.",
+    "The terminal-response tail remains distinct from the shared reinitializer and owns response-counter, countdown, linked-cleanup, terminal-template, and optional audio behavior.",
+    "Both function ranges are exact and non-overlapping in the whole-ROM instruction database."
+  ],
+  "evidence": [
+    "actor-collision-handler-family-static-targets",
+    "actor-collision-response-family-semantic-targets",
+    "actor-terminal-interaction-semantic-targets",
+    "Exact whole-ROM caller/callee and RAM-access context"
+  ],
+  "limitations": [
+    "The names identify shared collision-service roles, not every user-facing interaction that reaches them.",
+    "The precise semantic meaning of the current-actor type discriminator in the reinitializer remains documented conservatively."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
