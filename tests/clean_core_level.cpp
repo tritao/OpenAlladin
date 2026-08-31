@@ -269,5 +269,15 @@ int main() {
     assert(read16(core.ram, kSceneResourceVdpStreamOffset) == 0);
     assert(read32(core.ram, kVdpCommandAddressLatch) == 0x00123456);
 
+    // SceneTable_SelectNextState publishes the selected six-byte ROM record
+    // and wraps the five-entry table index back to zero.
+    write_rom32(rom, 0x4B04 + 4 * 6, 0x00004567);
+    rom[0x4B04 + 4 * 6 + 4] = 0x08;
+    write16(core.ram, kSceneTableIndex, 4);
+    scene_table_select_next_state(core);
+    assert(read32(core.ram, kSceneScriptData) == 0x00004567);
+    assert(read8(core.ram, kSceneState) == 0x08);
+    assert(read16(core.ram, kSceneTableIndex) == 0);
+
     return 0;
 }

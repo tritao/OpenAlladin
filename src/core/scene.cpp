@@ -61,4 +61,25 @@ void scene_resource_stream_vdp_record(
     }
 }
 
+void scene_table_select_next_state(
+    CoreRuntime& core,
+    CoreTrace*
+) {
+    constexpr RamAddress kSceneTable = 0x00004B04;
+    constexpr std::uint16_t kSceneTableEntryCount = 5;
+    constexpr std::uint16_t kSceneTableEntrySize = 6;
+
+    std::uint16_t index = read16(core.ram, kSceneTableIndex);
+    const std::size_t entry = static_cast<std::size_t>(index)
+        * kSceneTableEntrySize;
+    write32(core.ram, kSceneScriptData,
+            rom_read32(core.rom, kSceneTable + entry));
+    write8(core.ram, kSceneState,
+           rom_read8(core.rom, kSceneTable + entry + 4));
+
+    index = static_cast<std::uint16_t>(index + 1);
+    if (index == kSceneTableEntryCount) index = 0;
+    write16(core.ram, kSceneTableIndex, index);
+}
+
 }  // namespace openaladdin::core

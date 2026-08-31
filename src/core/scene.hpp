@@ -22,4 +22,12 @@ void scene_resource_stream_vdp_record(
     CoreTrace* trace = nullptr
 );
 
+// SceneTable_SelectNextState's table-selection tail at 0x001B3EDC. The
+// five six-byte records are ROM-owned; only the selected pointer, state byte,
+// and wrapping index are published into Genesis RAM.
+void scene_table_select_next_state(
+    CoreRuntime& core,
+    CoreTrace* trace = nullptr
+);
+
 }  // namespace openaladdin::core
