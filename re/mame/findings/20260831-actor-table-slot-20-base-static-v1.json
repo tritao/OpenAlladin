@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "7357ce8e386a7ef6851a00cceeb9f576f87511c4",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-table-slot-20-base-static-targets.json",
+  "promoted_symbols": [
+    "ACTOR_TABLE_SLOT_20_BASE"
+  ],
+  "contracts": [
+    "ACTOR_TABLE_BASE is 0x00FF7E40 and actor records have a 0x42-byte stride.",
+    "0x00FF8368 is ACTOR_TABLE_BASE plus 20 records, so it is fixed actor-table slot 20.",
+    "Actor_FindFreeSlotReverse20 begins at 0x00FF8368 and scans slots 20 down to 1.",
+    "The reverse-slot interaction spawn path uses this allocator family and runtime captures observe slot 20 at this address."
+  ],
+  "evidence": [
+    "Exact actor-table base and record-stride arithmetic",
+    "Cached Ghidra decompilation of Actor_FindFreeSlotReverse20",
+    "Existing runtime interaction-spawn observations for actor slot 20"
+  ],
+  "limitations": [
+    "The symbol identifies a fixed actor-record boundary; it does not claim that slot 20 is permanently occupied by one gameplay actor.",
+    "No additional field semantics are inferred from this base-address promotion."
+  ],
+  "conclusion": "The generated Unknown_00FF8368 identity is replaced by the stable fixed actor-table slot-20 base while preserving reverse-pool reuse semantics.",
+  "confidence": "confirmed",
+  "status": "recorded-semantic-promotion"
+}

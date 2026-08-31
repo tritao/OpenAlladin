@@ -1832,6 +1832,16 @@ def test_real_actor_table_slot_24_base_has_canonical_role():
     assert "slots 24 down to 1" in symbol.description
 
 
+def test_real_actor_table_slot_20_base_has_canonical_role():
+    symbol = SymbolStore().at(0x00FF8368, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "ACTOR_TABLE_SLOT_20_BASE"
+    assert symbol.kind == "ram"
+    assert symbol.metadata["format"] == "address"
+    assert symbol.confidence == "confirmed"
+    assert "slots 20 down to 1" in symbol.description
+
+
 def test_real_actor_slot_two_fields_and_transition_option_have_canonical_roles():
     symbols = SymbolStore()
     expected = {

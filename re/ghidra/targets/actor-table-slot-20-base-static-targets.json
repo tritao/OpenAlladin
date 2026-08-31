@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "focus": "Canonicalize the fixed reverse-20 actor-table record boundary used by interaction spawns.",
+  "targets": [
+    { "address": "0x001AE2AA", "name": "Actor_FindFreeSlotReverse20", "pool": "reverse20", "start": "0x00FF8368", "count": 20, "stride": "0x42" },
+    { "address": "0x001B525E", "name": "InteractionSpawn_ReverseSlot", "pool_start": "0x00FF8368" },
+    { "address": "0x00FF8368", "name": "ACTOR_TABLE_SLOT_20_BASE" }
+  ],
+  "contracts": [
+    "ACTOR_TABLE_BASE is 0x00FF7E40 and each actor record is 0x42 bytes.",
+    "0x00FF8368 equals actor-table slot 20 and is the starting record for the reverse-20 scan.",
+    "Actor_FindFreeSlotReverse20 scans slots 20 down to 1 for a zero-type record, and InteractionSpawn_ReverseSlot uses that allocator family."
+  ],
+  "conclusion": "The fixed reverse-20 pool boundary is a canonical actor-table slot-20 base rather than an anonymous RAM address."
+}

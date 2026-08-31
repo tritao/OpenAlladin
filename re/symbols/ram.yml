@@ -230,6 +230,16 @@
   evidence:
     - ghidra_disassembly_001AE30A
     - actor_template_scene_rebuild_static_decompilation
+0xFF8368:
+  name: ACTOR_TABLE_SLOT_20_BASE
+  type: actor_record
+  format: address
+  confidence: confirmed
+  description: Fixed actor-table slot 20 base at ACTOR_TABLE_BASE plus 20 0x42-byte records. Actor_FindFreeSlotReverse20 starts here and scans slots 20 down to 1; the reverse-slot interaction spawn path also returns actor records from this pool.
+  evidence:
+    - ghidra_actor_table_layout
+    - actor_allocation_initialization_static_decompilation
+    - level01_upper_platform_selector87_runtime
 0xFF8470:
   name: ACTOR_TABLE_SLOT_24_BASE
   type: actor_record
