@@ -6994,7 +6994,8 @@
     - mame_natural_actor_type_2D_trace
 
 0x00122FA2:
-  name: ACTOR_ANIM_DEATH_122FA2
+  name: ACTOR_ANIM_TYPE84_TERMINAL_DEATH
+  aliases: [ACTOR_ANIM_DEATH_122FA2]
   size: 114
   confidence: confirmed
   description: Type-0x84 terminal actor animation root installed by the guard sword-hit replacement path. Its exact 114-byte prefix presents the opening death frames, spawns the two embedded ACTOR_TEMPLATE_DEATH_84 child records, clears/faces the actor, and enters the shared continuation at 0x00123014; the three inline 0x00122FFE/0x00123008/0x00123012 stubs are retained inside this packed prefix.
@@ -7007,7 +7008,7 @@
   name: ACTOR_ANIM_DEATH_84_SHARED_CONTINUATION
   size: 280
   confidence: decompiled
-  description: Shared type-0x84 terminal continuation entered by ACTOR_ANIM_DEATH_122FA2 and its inline entry stubs. Its exact 280-byte region presents the shared terminal frames, publishes type 0x84 and movement stream 0x00120352, then cycles the 0x1032-0x107A response frames with repeated actor-field checks; the compare branch may enter the existing ACTOR_ANIM_TYPE5F_INTERACTION range at its internal 0x00123130 entry.
+  description: Shared type-0x84 terminal continuation entered by ACTOR_ANIM_TYPE84_TERMINAL_DEATH and its inline entry stubs. Its exact 280-byte region presents the shared terminal frames, publishes type 0x84 and movement stream 0x00120352, then cycles the 0x1032-0x107A response frames with repeated actor-field checks; the compare branch may enter the existing ACTOR_ANIM_TYPE5F_INTERACTION range at its internal 0x00123130 entry.
   evidence:
     - death_84_animation_static_decompilation
     - actor_template_death_84
@@ -8703,7 +8704,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B83E0:
-  name: ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E
+  name: ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_OPENING
+  aliases: [ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8714,7 +8716,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B83F4:
-  name: ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA
+  name: ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_REBUILD
+  aliases: [ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8725,7 +8728,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8408:
-  name: ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E
+  name: ACTOR_TEMPLATE_TYPE84_COLLISION_RESPONSE
+  aliases: [ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8737,7 +8741,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B841C:
-  name: ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E
+  name: ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_RESPONSE
+  aliases: [ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E]
   type: actor_template
   size: 20
   confidence: decompiled

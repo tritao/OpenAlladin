@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "type84-scene-template-identities",
+    "purpose": "Replace address-bearing Type-0x84 scene-resource template and terminal-animation names with stable lifecycle identities."
+  },
+  "targets": [
+    { "address": "0x00122FA2", "name": "ACTOR_ANIM_TYPE84_TERMINAL_DEATH", "legacy_name": "ACTOR_ANIM_DEATH_122FA2", "range": "0x00122FA2-0x00123013", "consumer": "ACTOR_TEMPLATE_DEATH_84 / guard sword-hit replacement", "identity": "Type-0x84 terminal death animation root with packed child entries" },
+    { "address": "0x001B83E0", "name": "ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_OPENING", "legacy_name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E", "range": "0x001B83E0-0x001B83F3", "animation": "ACTOR_ANIM_TYPE84_SCENE_RESOURCE_OPENING", "identity": "state-05 scene-resource opening actor template" },
+    { "address": "0x001B83F4", "name": "ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_REBUILD", "legacy_name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA", "range": "0x001B83F4-0x001B8407", "animation": "ACTOR_ANIM_TYPE84_SCENE_REBUILD_ENTRY", "identity": "state-01 scene-resource rebuild actor template" },
+    { "address": "0x001B8408", "name": "ACTOR_TEMPLATE_TYPE84_COLLISION_RESPONSE", "legacy_name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E", "range": "0x001B8408-0x001B841B", "animation": "ACTOR_ANIM_TYPE84_COLLISION_RESPONSE", "identity": "scene-resource and F5-spawned Type-0x84 collision-response template" },
+    { "address": "0x001B841C", "name": "ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_RESPONSE", "legacy_name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E", "range": "0x001B841C-0x001B842F", "animation": "ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX", "identity": "state-07 scene-resource response template with Type-0x2B handoff" }
+  ],
+  "evidence": [
+    "exact 20-byte actor-template records",
+    "direct scene-resource command-0x0F consumers",
+    "bounded animation-stream pointers and F5 child relationship",
+    "guard sword-hit replacement path and existing terminal animation trace"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

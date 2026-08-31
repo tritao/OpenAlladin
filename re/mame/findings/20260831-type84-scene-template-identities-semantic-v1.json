@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/type84-scene-template-identities-semantic-targets.json",
+  "promotions": [
+    { "address": "0x00122FA2", "old_name": "ACTOR_ANIM_DEATH_122FA2", "name": "ACTOR_ANIM_TYPE84_TERMINAL_DEATH", "alias": "ACTOR_ANIM_DEATH_122FA2" },
+    { "address": "0x001B83E0", "old_name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E", "name": "ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_OPENING", "alias": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E" },
+    { "address": "0x001B83F4", "old_name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA", "name": "ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_REBUILD", "alias": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA" },
+    { "address": "0x001B8408", "old_name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E", "name": "ACTOR_TEMPLATE_TYPE84_COLLISION_RESPONSE", "alias": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E" },
+    { "address": "0x001B841C", "old_name": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E", "name": "ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_RESPONSE", "alias": "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E" }
+  ],
+  "conclusion": "Replaced address-bearing Type-0x84 scene-template and terminal-animation names with stable lifecycle identities while retaining legacy aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

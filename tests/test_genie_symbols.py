@@ -766,6 +766,21 @@ def test_direct_palette_sources_have_stable_loader_names():
         assert legacy in symbol.aliases
 
 
+def test_type84_scene_templates_and_terminal_animation_have_stable_names():
+    expected = {
+        0x00122FA2: ("ACTOR_ANIM_TYPE84_TERMINAL_DEATH", "ACTOR_ANIM_DEATH_122FA2"),
+        0x001B83E0: ("ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_OPENING", "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E"),
+        0x001B83F4: ("ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_REBUILD", "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA"),
+        0x001B8408: ("ACTOR_TEMPLATE_TYPE84_COLLISION_RESPONSE", "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E"),
+        0x001B841C: ("ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_RESPONSE", "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
