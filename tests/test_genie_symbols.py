@@ -718,6 +718,21 @@ def test_actor_vm_orphan_state08_finding_proves_transition_without_overclaiming(
     assert any("not exhaustive" in item for item in finding["limitations"])
 
 
+def test_actor_vm_orphan_transition_checkpoints_keep_reachability_bounded():
+    finding = json.loads(
+        Path("re/mame/findings/20260831-actor-vm-orphans-transition-checkpoints-runtime-negative-v1.json")
+        .read_text(encoding="utf-8")
+    )
+    assert finding["status"] == "recorded-runtime-negative-evidence"
+    assert finding["route"]["checkpoint_count"] == 6
+    assert finding["route"]["total_frame_limit"] == 720
+    assert finding["route"]["rom_read_count"] == 0
+    assert {item["final_scene_state"] for item in finding["route"]["checkpoints"]} == {1, 3}
+    assert len(finding["ranges"]) == 4
+    assert all(item["read_count"] == 0 for item in finding["ranges"])
+    assert any("not an exhaustive" in item for item in finding["limitations"])
+
+
 def test_scene_graphics_resources_have_stable_state_and_destination_names():
     expected = {
         0x0012DA04: ("SCENE_STATE04_C000_GRAPHICS", "SCENE_RNC_GRAPHICS_0012DA04"),

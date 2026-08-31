@@ -1,0 +1,112 @@
+{
+  "format": "openaladdin-actor-vm-orphans-transition-checkpoints-runtime-audit-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "0f567b3f2746eedc83d44d9b17adc4e96214aa39",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "source_findings": [
+    "re/mame/findings/20260831-actor-vm-orphans-natural-route-runtime-negative-v1.json",
+    "re/mame/findings/20260831-actor-vm-orphans-state08-runtime-negative-v1.json"
+  ],
+  "status": "recorded-runtime-negative-evidence",
+  "confidence": "provisional",
+  "route": {
+    "scenario": "saved-transition-checkpoint-matrix",
+    "checkpoint_count": 6,
+    "total_frame_limit": 720,
+    "capture_profile": "none",
+    "rom_read_ranges": [
+      ["0x0011F800", "0x0011F8A3"],
+      ["0x00123DE2", "0x00123DE9"],
+      ["0x001B7990", "0x001B79A3"],
+      ["0x001B7A58", "0x001B7A6B"]
+    ],
+    "rom_read_count": 0,
+    "checkpoints": [
+      {
+        "name": "clean-upper-platform",
+        "state_file": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/clean-upper-platform.sta",
+        "frame_limit": 120,
+        "final_scene_state": 1,
+        "trace_dir": "build/re/traces/codex-orphan-clean-upper.DX6zwQ",
+        "rom_read_count": 0
+      },
+      {
+        "name": "exit-countdown",
+        "state_file": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/exit-countdown.sta",
+        "frame_limit": 120,
+        "final_scene_state": 1,
+        "trace_dir": "build/re/traces/codex-orphan-exit-countdown.OHipcP",
+        "rom_read_count": 0
+      },
+      {
+        "name": "boundary-seeded",
+        "state_file": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/boundary-seeded.sta",
+        "frame_limit": 120,
+        "final_scene_state": 1,
+        "trace_dir": "build/re/traces/codex-orphan-boundary-seeded.GCogI7",
+        "rom_read_count": 0
+      },
+      {
+        "name": "scene-script-advanced",
+        "state_file": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/scene-script-advanced.sta",
+        "frame_limit": 120,
+        "final_scene_state": 3,
+        "trace_dir": "build/re/traces/codex-orphan-script-advanced.4dyFbX",
+        "rom_read_count": 0
+      },
+      {
+        "name": "scene3-active",
+        "state_file": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/scene3-active.sta",
+        "frame_limit": 120,
+        "final_scene_state": 3,
+        "trace_dir": "build/re/traces/codex-orphan-state3-active.06nluD",
+        "rom_read_count": 0
+      },
+      {
+        "name": "transition-settled",
+        "state_file": "build/re/campaigns/20260825-level01-canonical-v1/controlled-scene-transition-v1/states/genesis/transition-settled.sta",
+        "frame_limit": 120,
+        "final_scene_state": 3,
+        "trace_dir": "build/re/traces/codex-orphan-transition-settled.Z3q2Oy",
+        "rom_read_count": 0
+      }
+    ]
+  },
+  "ranges": [
+    {
+      "name": "ACTOR_MOVE_INTERACTION_ANCHOR_GRID_RESPONSE",
+      "range": ["0x0011F800", "0x0011F8A3"],
+      "read_count": 0
+    },
+    {
+      "name": "ACTOR_ANIM_SINGLE_FRAME_SELF_LOOP",
+      "range": ["0x00123DE2", "0x00123DE9"],
+      "read_count": 0
+    },
+    {
+      "name": "ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM",
+      "range": ["0x001B7990", "0x001B79A3"],
+      "read_count": 0
+    },
+    {
+      "name": "ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400",
+      "range": ["0x001B7A58", "0x001B7A6B"],
+      "read_count": 0
+    }
+  ],
+  "evidence": [
+    "The narrow ROM taps covered every byte of all four currently unresolved data ranges.",
+    "Six independent saved transition checkpoints exercised both scene state 1 and scene state 3 paths.",
+    "Every completed trace contains no matching rom_read records for any of the four ranges."
+  ],
+  "limitations": [
+    "This is a six-checkpoint transition matrix, not an exhaustive reachability proof.",
+    "The probes do not establish behavior for every scene, indirect selector, or unused template path.",
+    "The external producer or selector for each range remains unresolved."
+  ],
+  "conclusion": "None of the four remaining actor VM/template review ranges was read across the saved scene-1 and scene-3 transition checkpoints. Their behavior/field identities remain the strongest supported names; further progress requires indirect selector/table analysis or a new checkpoint that reaches a distinct scene/resource family."
+}

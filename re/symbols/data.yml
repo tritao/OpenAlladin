@@ -3799,6 +3799,7 @@
     - actor_vm_orphans_natural_route_runtime_v1
     - actor_vm_orphans_long_route_runtime_v1
     - actor_vm_orphans_state08_runtime_negative_v1
+    - actor_vm_orphans_transition_checkpoints_runtime_negative_v1
     - movement_stream_decoder
 
 0x001203F2:
@@ -4419,6 +4420,7 @@
     - actor_vm_orphans_natural_route_runtime_v1
     - actor_vm_orphans_long_route_runtime_v1
     - actor_vm_orphans_state08_runtime_negative_v1
+    - actor_vm_orphans_transition_checkpoints_runtime_negative_v1
     - animation_stream_decoder
 
 0x00123DEA:
@@ -7978,6 +7980,7 @@
     - actor_vm_orphans_natural_route_runtime_v1
     - actor_vm_orphans_long_route_runtime_v1
     - actor_vm_orphans_state08_runtime_negative_v1
+    - actor_vm_orphans_transition_checkpoints_runtime_negative_v1
 
 0x001B7918:
   name: ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD
@@ -8027,6 +8030,7 @@
     - actor_vm_orphans_natural_route_runtime_v1
     - actor_vm_orphans_long_route_runtime_v1
     - actor_vm_orphans_state08_runtime_negative_v1
+    - actor_vm_orphans_transition_checkpoints_runtime_negative_v1
 
 0x001B7E04:
   name: ACTOR_TEMPLATE_EXIT_TYPE_84
