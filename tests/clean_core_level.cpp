@@ -334,6 +334,7 @@ int main() {
     write8(core.ram, kSceneResourcePresentationScratch, 1);
     write8(core.ram, kSceneResourceStatus, 0);
     vdp_build_tile_row_command_tables(core.ram, 0x40);
+    core.vdp.vram[0xC100] = 0xAA;
     write_rom32(rom, kSceneResourceCommandTable + 0x00, 0x001B2300);
     write_rom32(rom, kSceneResourceCommandTable + 0x03 * 4, 0x001B2314);
     write_rom32(rom, kSceneResourceCommandTable + 0x06 * 4, 0x001B2380);
@@ -370,6 +371,7 @@ int main() {
     assert(capture.c000_calls == 1);
     assert(capture.palette_calls == 1);
     assert(capture.object_hook_calls == 1);
+    assert(core.vdp.vram[0xC100] == 0);
     assert(resource_result.actor_spawned);
     assert(actor_read8(actor_view(core.ram, resource_result.actor_spawn_slot),
                        kActorTypeOffset) == 0x84);

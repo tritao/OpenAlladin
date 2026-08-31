@@ -358,6 +358,9 @@ SceneResourceRunResult scene_resource_process_command_stream(
 
         case 0x0D:
             result.c000_load_requested = true;
+            if (result.c000_source == 0) {
+                vdp_clear_vram_c000(core.vdp);
+            }
             if (effects.load_or_clear_c000 != nullptr) {
                 effects.load_or_clear_c000(effects.context, result.c000_source);
             }
@@ -365,6 +368,7 @@ SceneResourceRunResult scene_resource_process_command_stream(
 
         case 0x0E:
             result.frame_palette_prepare_requested = true;
+            vdp_clear_vram_c000(core.vdp);
             if (effects.prepare_frame_and_palette != nullptr) {
                 effects.prepare_frame_and_palette(effects.context);
             }
