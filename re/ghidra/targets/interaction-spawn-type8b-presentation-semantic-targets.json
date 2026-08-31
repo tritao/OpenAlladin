@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type8b-presentation-semantic",
+    "purpose": "Promote the four Type-0x8B presentation-response handlers to stable creation identities while retaining selector-qualified historical names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "shared_template": "0x001B7F6C ACTOR_TEMPLATE_TYPE_8B_PRESENTATION_RESPONSE",
+    "shared_helper": "0x001B5256 InteractionSpawn_BackwardSlot",
+    "handlers": [
+      { "address": "0x001B6D90", "selector": "0xF5", "name": "InteractionSpawn_CreateType8BPresentation_F5", "legacy_name": "InteractionSpawn_Type8BPresentation_F5", "animation_root": "0x00124A2E", "palette_resource": "0x001292F2" },
+      { "address": "0x001B6DEC", "selector": "0xF6", "name": "InteractionSpawn_CreateType8BPresentation_F6", "legacy_name": "InteractionSpawn_Type8BPresentation_F6", "animation_root": "0x00124A6C", "palette_resource": "0x001292F2" },
+      { "address": "0x001B6E18", "selector": "0xF7", "name": "InteractionSpawn_CreateType8BPresentation_F7", "legacy_name": "InteractionSpawn_Type8BPresentation_F7", "animation_root": "0x00124AAA", "palette_resource": "0x001292F2" },
+      { "address": "0x001B6E44", "selector": "0xF8", "name": "InteractionSpawn_CreateType8BPresentation_F8", "legacy_name": "InteractionSpawn_Type8BPresentation_F8", "animation_root": "0x00124AE0", "palette_resource": "0x001292F2" }
+    ]
+  },
+  "gates": [
+    "0x00FFF175 must be clear before allocation",
+    "0x00FFF57F controls the optional prepared audio command 0x32"
+  ],
+  "contracts": [
+    "Selectors F5-F8 share the Type-0x8B presentation-response template, backward-slot helper, presentation gates, palette resource 0x001292F2, and optional audio path.",
+    "The exact static distinction between variants is the installed AnimationVM root: 0x00124A2E, 0x00124A6C, 0x00124AAA, and 0x00124AE0 respectively."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "Per-selector animation-root writes and common palette/audio path",
+    "re/ghidra/targets/interaction-spawn-type8b-presentation-targets.json",
+    "re/mame/findings/20260829-interaction-spawn-type8b-presentation-static-v1.json"
+  ],
+  "limitations": [
+    "The names identify the shared Type-0x8B presentation creation family, not user-facing object or scene roles.",
+    "The upstream lifecycle of the presentation and audio gates remains unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

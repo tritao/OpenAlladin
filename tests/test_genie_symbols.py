@@ -576,6 +576,22 @@ def test_type11_12_interaction_spawn_handlers_have_semantic_names_and_aliases():
         assert symbol.confidence == "decompiled"
 
 
+def test_type8b_presentation_handlers_have_semantic_names_and_aliases():
+    expected = {
+        0x001B6D90: ("InteractionSpawn_CreateType8BPresentation_F5", "InteractionSpawn_Type8BPresentation_F5"),
+        0x001B6DEC: ("InteractionSpawn_CreateType8BPresentation_F6", "InteractionSpawn_Type8BPresentation_F6"),
+        0x001B6E18: ("InteractionSpawn_CreateType8BPresentation_F7", "InteractionSpawn_Type8BPresentation_F7"),
+        0x001B6E44: ("InteractionSpawn_CreateType8BPresentation_F8", "InteractionSpawn_Type8BPresentation_F8"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence == "decompiled"
+
+
 def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
     expected = {
         0x001AF1AC: ("PlayerCollision_SpawnVerticalResponseActor", "ActorType13_PlayerCollisionHandler"),

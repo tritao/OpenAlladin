@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type8b-presentation-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType8BPresentation_F5",
+    "InteractionSpawn_CreateType8BPresentation_F6",
+    "InteractionSpawn_CreateType8BPresentation_F7",
+    "InteractionSpawn_CreateType8BPresentation_F8"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_Type8BPresentation_F5",
+    "InteractionSpawn_Type8BPresentation_F6",
+    "InteractionSpawn_Type8BPresentation_F7",
+    "InteractionSpawn_Type8BPresentation_F8"
+  ],
+  "contracts": [
+    "The four selectors retain the shared Type-0x8B template, backward-slot allocation, presentation/audio gates, and palette resource 0x001292F2.",
+    "Their exact variant identity remains the installed AnimationVM root: 0x00124A2E, 0x00124A6C, 0x00124AAA, or 0x00124AE0."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "interaction_spawn_type8b_presentation_semantic_v1"
+  ],
+  "limitations": [
+    "No user-facing object identity is claimed for the Type-0x8B presentation responses.",
+    "Dynamic reachability and gate-byte lifecycle remain unresolved."
+  ],
+  "conclusion": "The four Type-0x8B presentation handlers now have stable creation identities while preserving historical aliases and exact animation, palette, allocation, and gate contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
