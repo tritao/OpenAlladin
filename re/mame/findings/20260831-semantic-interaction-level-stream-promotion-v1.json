@@ -1,0 +1,46 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "interaction-level-animation-and-movement-streams",
+  "promotions": [
+    "ACTOR_MOVE_PROXIMITY_TRANSITION_GATE",
+    "ACTOR_MOVE_COMPACT_INTERACTION_RESPONSE",
+    "ACTOR_MOVE_LONG_INTERACTION_RESPONSE",
+    "ACTOR_MOVE_LEVEL_EVENT_INTERACTION",
+    "ACTOR_MOVE_WALL_RESPONSE_PREFIX",
+    "PLAYER_ANIM_COLLISION_RESPONSE",
+    "ACTOR_ANIM_DIRECT_SPAWN_INTERACTION",
+    "ACTOR_ANIM_VERTICAL_BOB_INTERACTION",
+    "ACTOR_ANIM_TERRAIN_RESPONSE",
+    "ACTOR_ANIM_RESOURCE_INTERACTION_RESPONSE",
+    "ACTOR_ANIM_COMPACT_TERMINAL_INTERACTION",
+    "ACTOR_ANIM_INTERACTION_PROXIMITY_VARIANT_A",
+    "ACTOR_ANIM_INTERACTION_PROXIMITY_VARIANT_B",
+    "ACTOR_ANIM_INTERACTION_PROXIMITY_VARIANT_C",
+    "ACTOR_ANIM_INTERACTION_CHILD_SPAWN",
+    "ACTOR_ANIM_LEVEL_EVENT_DIRECTIONAL",
+    "ACTOR_ANIM_LEVEL_EVENT_CHILD_CHAIN",
+    "ACTOR_ANIM_WALL_RESPONSE_LOOP",
+    "LEVEL07_EVENT_PALETTE_VARIANT",
+    "ACTOR_TEMPLATE_WALL_RESPONSE_VARIANT"
+  ],
+  "evidence": [
+    "movement_stream_decoder",
+    "animation_stream_decoder",
+    "type1e_state46_movement_static_decompilation",
+    "type05_interaction_animation_static_decompilation",
+    "type06_animation_static_decompilation",
+    "type32_interaction_animation_static_decompilation",
+    "type52_type53_animation_static_decompilation",
+    "type0b_type0c_type79_type7a_animation_static_decompilation",
+    "type84_terrain_response_animation_static_decompilation",
+    "type84_unreferenced_template_static_decompilation"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained_in_aliases_or_descriptions": true,
+    "names_describe_observed_stream_roles_not_unproven_character_identities": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "decoder-backed interaction and level-event roles"
+  }
+}

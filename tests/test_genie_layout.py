@@ -1643,7 +1643,7 @@ def test_type64_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00120B36, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE64_INTERACTION"
+    assert stream.name == "ACTOR_MOVE_COMPACT_INTERACTION_RESPONSE"
     assert stream.end == 0x00120B61
     assert stream.size == 44
     assert stream.metadata["type"] == "movement_stream"
@@ -2093,14 +2093,14 @@ def test_type84_0f22_response_family_is_exact_with_template_reachability_unresol
     symbols = SymbolStore()
     template = symbols.at(0x001B8304, include_ranges=False)
     assert template is not None
-    assert template.name == "ACTOR_TEMPLATE_TYPE_84_0F22_WALL_RESPONSE"
+    assert template.name == "ACTOR_TEMPLATE_WALL_RESPONSE_VARIANT"
     assert template.size == 20
     assert template.metadata["type"] == "actor_template"
     assert template.confidence == "decompiled"
 
     movement = symbols.at(0x00121412, include_ranges=False)
     assert movement is not None
-    assert movement.name == "ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX"
+    assert movement.name == "ACTOR_MOVE_WALL_RESPONSE_PREFIX"
     assert movement.end == 0x0012146B
     assert movement.size == 90
     assert movement.metadata["type"] == "movement_stream"
@@ -2108,7 +2108,7 @@ def test_type84_0f22_response_family_is_exact_with_template_reachability_unresol
 
     animation = symbols.at(0x00125D58, include_ranges=False)
     assert animation is not None
-    assert animation.name == "ACTOR_ANIM_TYPE84_0F22_WALL_RESPONSE_LOOP"
+    assert animation.name == "ACTOR_ANIM_WALL_RESPONSE_LOOP"
     assert animation.end == 0x00125D7D
     assert animation.size == 38
     assert animation.metadata["type"] == "animation_stream"
@@ -2543,7 +2543,7 @@ def test_level_event_movement_stream_family_is_exact():
     symbols = SymbolStore()
     expected = {
         0x00120FB4: (0x00120FDD, "ACTOR_MOVE_LEVEL_EVENT_VARIANT_B"),
-        0x00120FDE: (0x00120FFD, "ACTOR_MOVE_TYPE17_INTERACTION"),
+        0x00120FDE: (0x00120FFD, "ACTOR_MOVE_LEVEL_EVENT_INTERACTION"),
         0x00120FFE: (0x00121033, "ACTOR_MOVE_LEVEL_EVENT_MODE_READY"),
         0x00121082: (0x001210FD, "ACTOR_MOVE_LEVEL_EVENT_MOVING_VARIANT"),
     }
@@ -3148,7 +3148,7 @@ def test_type64_interaction_animation_entry_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00124CD8, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_ANIM_TYPE64_INTERACTION"
+    assert stream.name == "ACTOR_ANIM_COMPACT_TERMINAL_INTERACTION"
     assert stream.end == 0x00124CDB
     assert stream.size == 4
     assert stream.metadata["type"] == "animation_stream"
@@ -3643,7 +3643,7 @@ def test_canonical_scene_resource_palette_sources_have_exact_loader_extents():
 def test_unreferenced_palette_data_has_exact_structural_extents():
     symbols = SymbolStore()
     expected = (
-        (0x00129312, 0x00129331, "INTERACTION_TYPE7D_PALETTE_VARIANT_0660", "decompiled"),
+        (0x00129312, 0x00129331, "LEVEL07_EVENT_PALETTE_VARIANT", "decompiled"),
         (0x00129A32, 0x00129A51, "PALETTE_DUPLICATE_OF_MENU_BAND_129012", "decompiled"),
         (0x00129A52, 0x00129A71, "PALETTE_DUPLICATE_OF_SCENE_TRANSITION_BAND4_129032", "decompiled"),
         (0x00129A72, 0x00129A91, "PALETTE_DUPLICATE_OF_SCENE_RESET_BAND4_129E60", "decompiled"),
