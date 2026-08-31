@@ -327,6 +327,25 @@ def test_type47_4c_interaction_spawn_handlers_have_semantic_names_and_aliases():
         assert symbol.confidence == "decompiled"
 
 
+def test_type20_21_22_interaction_spawn_handlers_have_semantic_names_and_aliases():
+    expected = {
+        0x001B6EB2: ("InteractionSpawn_CreateType20UpperActor", "InteractionSpawn_RuntimeType20"),
+        0x001B6ED0: ("InteractionSpawn_CreateType21ProximityActor", "InteractionSpawn_RuntimeType21_1A"),
+        0x001B6EEE: ("InteractionSpawn_CreateType22ProximityActor", "InteractionSpawn_RuntimeType22_19"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence in {"confirmed", "decompiled"}
+
+    type21 = symbols.at(0x001B6ED0, include_ranges=False)
+    assert type21 is not None
+    assert "InteractionHandler_Type21" in type21.aliases
+
+
 def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
     expected = {
         0x001AF1AC: ("PlayerCollision_SpawnVerticalResponseActor", "ActorType13_PlayerCollisionHandler"),

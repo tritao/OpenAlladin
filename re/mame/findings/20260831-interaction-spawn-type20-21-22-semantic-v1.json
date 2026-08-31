@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type20-21-22-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType20UpperActor",
+    "InteractionSpawn_CreateType21ProximityActor",
+    "InteractionSpawn_CreateType22ProximityActor"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_RuntimeType20",
+    "InteractionSpawn_RuntimeType21_1A",
+    "InteractionHandler_Type21",
+    "InteractionSpawn_RuntimeType22_19"
+  ],
+  "contracts": [
+    "Selector 0x1B unconditionally allocates ACTOR_TEMPLATE_UPPER_TYPE20, publishes runtime type 0x20, and installs ACTOR_ANIM_UPPER_TYPE20 at entry 0x0012337A.",
+    "Selector 0x1A allocates ACTOR_TEMPLATE_UPPER_TYPE1E, publishes runtime type 0x21, and installs ACTOR_ANIM_TYPE_21_PROXIMITY at 0x001235AC.",
+    "Selector 0x19 allocates ACTOR_TEMPLATE_TYPE_1F, clears movement state, publishes runtime type 0x22, and installs ACTOR_ANIM_TYPE22_PROXIMITY_LOOP at 0x001238B2."
+  ],
+  "evidence": [
+    "Exact handler bodies at 0x001B6EB2, 0x001B6ED0, and 0x001B6EEE",
+    "INTERACTION_HANDLER_TABLE selector membership",
+    "Existing upper-route template and AnimationVM stream findings",
+    "Type-0x21 proximity and Type-0x22 collision/animation static contracts"
+  ],
+  "limitations": [
+    "No user-facing object identity is claimed for runtime types 0x20-0x22.",
+    "The Type-0x21 secondary stream's state-dependent behavior remains unresolved beyond its proximity role."
+  ],
+  "conclusion": "The upper Type-0x20 through Type-0x22 interaction handlers now have stable creation identities tied to their exact selector, template, runtime-type, and animation contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

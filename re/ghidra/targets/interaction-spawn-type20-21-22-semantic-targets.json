@@ -1,0 +1,58 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type20-21-22-semantic",
+    "purpose": "Promote the upper-route Type-0x20, Type-0x21, and Type-0x22 interaction handlers to stable creation identities."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selectors": ["0x1A", "0x19", "0x1B"]
+  },
+  "handlers": [
+    {
+      "address": "0x001B6EB2",
+      "name": "InteractionSpawn_CreateType20UpperActor",
+      "legacy_name": "InteractionSpawn_RuntimeType20",
+      "selector": "0x1B",
+      "runtime_type": "0x20",
+      "template": "ACTOR_TEMPLATE_UPPER_TYPE20",
+      "allocator": "LevelObjectSpawnEntry",
+      "animation": "ACTOR_ANIM_UPPER_TYPE20 entry 0x0012337A"
+    },
+    {
+      "address": "0x001B6ED0",
+      "name": "InteractionSpawn_CreateType21ProximityActor",
+      "legacy_name": "InteractionSpawn_RuntimeType21_1A",
+      "legacy_aliases": ["InteractionHandler_Type21"],
+      "selector": "0x1A",
+      "runtime_type": "0x21",
+      "template": "ACTOR_TEMPLATE_UPPER_TYPE1E",
+      "allocator": "shared interaction-spawn initializer",
+      "animation": "ACTOR_ANIM_TYPE_21_PROXIMITY at 0x001235AC"
+    },
+    {
+      "address": "0x001B6EEE",
+      "name": "InteractionSpawn_CreateType22ProximityActor",
+      "legacy_name": "InteractionSpawn_RuntimeType22_19",
+      "selector": "0x19",
+      "runtime_type": "0x22",
+      "template": "ACTOR_TEMPLATE_TYPE_1F",
+      "allocator": "LevelObjectSpawnEntry",
+      "animation": "ACTOR_ANIM_TYPE22_PROXIMITY_LOOP at 0x001238B2",
+      "post_spawn": ["clear actor movement longword at offset +0x0A"]
+    }
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies and selector membership",
+    "Established upper-route actor-template identities",
+    "Direct Type-0x20, Type-0x21, and Type-0x22 animation consumers",
+    "Existing Type-0x21 proximity and Type-0x22 collision/animation findings"
+  ],
+  "limitations": [
+    "The promoted names identify creation, runtime type, and established animation roles but do not assign user-facing object identities.",
+    "The legacy selector-qualified names remain aliases for historical findings and references.",
+    "The Type-0x21 secondary animation stream remains state-dependent and is not assigned a stronger gameplay interpretation."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
