@@ -544,6 +544,24 @@ def test_type5e_threshold_interaction_spawn_family_has_semantic_names_and_aliase
         assert symbol.confidence == "decompiled"
 
 
+def test_response_interaction_spawn_family_has_semantic_names_and_aliases():
+    expected = {
+        0x001B6C0E: ("InteractionSpawn_CreateType05VariantA_23_24", "InteractionSpawn_Type05VariantA_23_24"),
+        0x001B6C2E: ("InteractionSpawn_CreateType05VariantC_25", "InteractionSpawn_Type05VariantC_25"),
+        0x001B6C4E: ("InteractionSpawn_CreateType03_46", "InteractionSpawn_Type03_46"),
+        0x001B6C5A: ("InteractionSpawn_CreateType10WithAudio_18", "InteractionSpawn_Type10WithAudio_18"),
+        0x001B6C96: ("InteractionSpawn_CreateType2F_2A", "InteractionSpawn_Type2F_2A"),
+        0x001B6CA2: ("InteractionSpawn_CreateType2FWithFacing_29", "InteractionSpawn_Type2F_Facing_29"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence == "decompiled"
+
+
 def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
     expected = {
         0x001AF1AC: ("PlayerCollision_SpawnVerticalResponseActor", "ActorType13_PlayerCollisionHandler"),

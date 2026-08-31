@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-response-family-static-semantic",
+    "purpose": "Promote the six-handler response-spawn block to stable creation identities while retaining selector-qualified historical names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      { "address": "0x001B6C0E", "selectors": ["0x23", "0x24"], "name": "InteractionSpawn_CreateType05VariantA_23_24", "legacy_name": "InteractionSpawn_Type05VariantA_23_24", "template": "0x001B7A80 ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_A", "allocator": "LevelObjectSpawnEntry", "palette": "0x001292B2 when 0x00FFF175 is clear" },
+      { "address": "0x001B6C2E", "selectors": ["0x25"], "name": "InteractionSpawn_CreateType05VariantC_25", "legacy_name": "InteractionSpawn_Type05VariantC_25", "template": "0x001B7AA8 ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_C", "allocator": "LevelObjectSpawnEntry", "palette": "0x001292B2 when 0x00FFF175 is clear" },
+      { "address": "0x001B6C4E", "selectors": ["0x46"], "name": "InteractionSpawn_CreateType03_46", "legacy_name": "InteractionSpawn_Type03_46", "template": "0x001B7A6C ACTOR_TEMPLATE_TYPE_03_INTERACTION", "allocator": "InteractionSpawn_ForwardSlot" },
+      { "address": "0x001B6C5A", "selectors": ["0x18"], "name": "InteractionSpawn_CreateType10WithAudio_18", "legacy_name": "InteractionSpawn_Type10WithAudio_18", "template": "0x001B7B84 ACTOR_TEMPLATE_TYPE_10_INTERACTION_RESPONSE", "allocator": "InteractionSpawn_ReverseSlot", "audio": "prepared command 0x32 when 0x00FFF57F is active" },
+      { "address": "0x001B6C96", "selectors": ["0x2A"], "name": "InteractionSpawn_CreateType2F_2A", "legacy_name": "InteractionSpawn_Type2F_2A", "template": "0x001B7BD4 ACTOR_TEMPLATE_TYPE_2F_INTERACTION", "allocator": "InteractionSpawn_ReverseSlot" },
+      { "address": "0x001B6CA2", "selectors": ["0x29"], "name": "InteractionSpawn_CreateType2FWithFacing_29", "legacy_name": "InteractionSpawn_Type2F_Facing_29", "template": "0x001B7BD4 ACTOR_TEMPLATE_TYPE_2F_INTERACTION", "allocator": "InteractionSpawn_ReverseSlot", "post_spawn": "set actor facing byte at offset 0x09" }
+    ]
+  },
+  "contracts": [
+    "Selectors 0x23/0x24 and 0x25 create the two Type-0x05 interaction variants through LevelObjectSpawnEntry and refresh palette resource 0x001292B2 when the palette-update gate is clear.",
+    "Selector 0x46 forward-spawns Type-0x03; selector 0x18 reverse-spawns Type-0x10 and queues prepared audio command 0x32 when its audio gate is active.",
+    "Selectors 0x2A and 0x29 reverse-spawn the Type-0x2F template, with selector 0x29 additionally publishing the actor facing byte at offset 0x09."
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "Direct template loads, allocator calls, palette/audio side effects, and facing-byte write",
+    "re/ghidra/targets/interaction-spawn-response-family-targets.json",
+    "re/mame/findings/20260829-interaction-spawn-response-family-static-v1.json"
+  ],
+  "limitations": [
+    "The names identify runtime actor types and exact response-spawn contracts, not user-facing object or scene roles.",
+    "The upstream lifecycle of palette and audio gates remains unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
