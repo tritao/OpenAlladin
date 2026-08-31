@@ -587,7 +587,7 @@
   type: graphics_data
   size: 0x21B
   confidence: decompiled
-  description: Exact RNC-compressed 112-tile Genesis graphics payload loaded to VRAM E000 by SceneResource_LoadVRAMPairWithPalette1298F2 after the common base graphics; the loader publishes palette source SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2 for the paired presentation.
+  description: Exact RNC-compressed 112-tile Genesis graphics payload loaded to VRAM E000 by SceneResource_LoadCommonBaseAndE000ResourcePairA after the common base graphics; the loader publishes palette source SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_A for the paired presentation.
   evidence:
     - rnc_graphics_resource_static_v1
     - scene_resource_variant_loader_targets
@@ -2067,7 +2067,7 @@
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Scene-resource palette source published for palette band 2 by SceneResource_LoadVRAMPairWithPalette129812 and consumed by the common render-frame preparation service.
+  description: Scene-resource palette source published for palette band 2 by SceneResource_LoadSharedBaseAndSharedE000 and consumed by the common render-frame preparation service.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129832:
@@ -2104,7 +2104,7 @@
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Scene-resource variant palette source published for palette band 2 by SceneResource_LoadVRAMPairWithPalette1298F2.
+  description: Scene-resource variant palette source published for palette band 2 by SceneResource_LoadCommonBaseAndE000ResourcePairA.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129912:
@@ -2167,7 +2167,7 @@
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Scene-resource variant palette source published for palette band 2 by SceneResource_LoadVRAMPairWithPalette1299D2.
+  description: Scene-resource variant palette source published for palette band 2 by SceneResource_LoadCommonBaseAndState00E000.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x001299F2:

@@ -1934,6 +1934,32 @@ def test_scene_setup_loaders_have_stable_destination_identities():
         assert legacy in symbol.aliases
 
 
+def test_scene_resource_variant_loaders_have_stable_transfer_identities():
+    expected = {
+        0x001B4896: (
+            "SceneResource_LoadCommonBaseAndE000ResourcePairA",
+            "SceneResource_LoadVRAMPairWithPalette1298F2",
+        ),
+        0x001B48C4: (
+            "SceneResource_LoadCommonBaseAndState00E000",
+            "SceneResource_LoadVRAMPairWithPalette1299D2",
+        ),
+        0x001B48F2: (
+            "SceneResource_LoadSharedBaseAndSharedE000",
+            "SceneResource_LoadVRAMPairWithPalette129812",
+        ),
+        0x001B496C: (
+            "SceneResource_LoadCommonBaseForState01",
+            "SceneResource_LoadVRAMBaseWithPalette1290B2",
+        ),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

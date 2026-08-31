@@ -1,0 +1,69 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-variant-loader-identities",
+    "purpose": "Replace palette-address-bearing compact loader names with stable resource-role and scene-state identities."
+  },
+  "targets": [
+    {
+      "address": "0x001B4896",
+      "name": "SceneResource_LoadCommonBaseAndE000ResourcePairA",
+      "legacy_name": "SceneResource_LoadVRAMPairWithPalette1298F2",
+      "range": "0x001B4896-0x001B48C3",
+      "size": 46,
+      "loads": [
+        { "source": "SCENE_COMMON_BASE_GRAPHICS", "destination": "0x000000" },
+        { "source": "SCENE_RESOURCE_PALETTE_1298F2_E000_GRAPHICS", "destination": "0x00E000" }
+      ],
+      "palette": "SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_A",
+      "callers": ["SceneResource_Dispatch state 0x03 and state 0x07 branches"]
+    },
+    {
+      "address": "0x001B48C4",
+      "name": "SceneResource_LoadCommonBaseAndState00E000",
+      "legacy_name": "SceneResource_LoadVRAMPairWithPalette1299D2",
+      "range": "0x001B48C4-0x001B48F1",
+      "size": 46,
+      "loads": [
+        { "source": "SCENE_COMMON_BASE_GRAPHICS", "destination": "0x000000" },
+        { "source": "SCENE_STATE00_E000_GRAPHICS", "destination": "0x00E000" }
+      ],
+      "palette": "SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_B",
+      "callers": ["SceneResource_Dispatch state 0x00 branch"]
+    },
+    {
+      "address": "0x001B48F2",
+      "name": "SceneResource_LoadSharedBaseAndSharedE000",
+      "legacy_name": "SceneResource_LoadVRAMPairWithPalette129812",
+      "range": "0x001B48F2-0x001B491F",
+      "size": 46,
+      "loads": [
+        { "source": "SCENE_SHARED_BASE_GRAPHICS", "destination": "0x000000" },
+        { "source": "SCENE_SHARED_GRAPHICS_RESOURCE", "destination": "0x00E000" }
+      ],
+      "palette": "SCENE_RESOURCE_PALETTE_BAND2_FOR_C000_RESOURCE_VARIANT",
+      "callers": ["SceneResource_Dispatch state 0x0A branch"]
+    },
+    {
+      "address": "0x001B496C",
+      "name": "SceneResource_LoadCommonBaseForState01",
+      "legacy_name": "SceneResource_LoadVRAMBaseWithPalette1290B2",
+      "range": "0x001B496C-0x001B4989",
+      "size": 30,
+      "loads": [
+        { "source": "SCENE_COMMON_BASE_GRAPHICS", "destination": "0x000000" }
+      ],
+      "palette": "SCENE_RESOURCE_PALETTE_BAND_SOURCE",
+      "callers": ["SceneResource_Dispatch state 0x01 branch"]
+    }
+  ],
+  "evidence": [
+    "exact compact loader instruction bodies",
+    "explicit RNC source and VRAM destination operands",
+    "SceneResource_Dispatch state branch callers",
+    "canonical graphics and palette resource identities"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

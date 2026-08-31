@@ -657,33 +657,45 @@
     - scene_resource_manifest
     - ghidra_scene_resource_transfer_targets
 0x001B4896:
-  name: SceneResource_LoadVRAMPairWithPalette1298F2
+  name: SceneResource_LoadCommonBaseAndE000ResourcePairA
+  aliases:
+    - SceneResource_LoadVRAMPairWithPalette1298F2
   confidence: decompiled
-  description: Clears VRAM E000, decompresses ROM sources 0x00132F8E and 0x0012D654 to VRAM 0x0000 and 0xE000, and publishes palette source 0x001298F2.
+  description: Clears VRAM E000, loads SCENE_COMMON_BASE_GRAPHICS to VRAM base 0, loads the paired E000 resource SCENE_RESOURCE_PALETTE_1298F2_E000_GRAPHICS, and publishes SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_A.
   evidence:
     - ghidra_disassembly_001B4896
     - ghidra_scene_resource_variant_targets
+    - scene_resource_variant_loader_identity_promotion_static_v1
 0x001B48C4:
-  name: SceneResource_LoadVRAMPairWithPalette1299D2
+  name: SceneResource_LoadCommonBaseAndState00E000
+  aliases:
+    - SceneResource_LoadVRAMPairWithPalette1299D2
   confidence: decompiled
-  description: Clears VRAM E000, decompresses ROM sources 0x00132F8E and 0x0012E4BE to VRAM 0x0000 and 0xE000, and publishes palette source 0x001299D2.
+  description: Clears VRAM E000, loads SCENE_COMMON_BASE_GRAPHICS to VRAM base 0, loads SCENE_STATE00_E000_GRAPHICS to E000, and publishes SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_B for the state-00 resource path.
   evidence:
     - ghidra_disassembly_001B48C4
     - ghidra_scene_resource_variant_targets
+    - scene_resource_variant_loader_identity_promotion_static_v1
 0x001B48F2:
-  name: SceneResource_LoadVRAMPairWithPalette129812
+  name: SceneResource_LoadSharedBaseAndSharedE000
+  aliases:
+    - SceneResource_LoadVRAMPairWithPalette129812
   confidence: decompiled
-  description: Clears VRAM C000, decompresses ROM sources 0x00136912 and 0x0012D0FA to VRAM 0x0000 and 0xE000, and publishes palette source 0x00129812.
+  description: Clears VRAM C000, loads SCENE_SHARED_BASE_GRAPHICS to VRAM base 0, loads SCENE_SHARED_GRAPHICS_RESOURCE to E000, and publishes SCENE_RESOURCE_PALETTE_BAND2_FOR_C000_RESOURCE_VARIANT.
   evidence:
     - ghidra_disassembly_001B48F2
     - ghidra_scene_resource_variant_targets
+    - scene_resource_variant_loader_identity_promotion_static_v1
 0x001B496C:
-  name: SceneResource_LoadVRAMBaseWithPalette1290B2
+  name: SceneResource_LoadCommonBaseForState01
+  aliases:
+    - SceneResource_LoadVRAMBaseWithPalette1290B2
   confidence: decompiled
-  description: Clears VRAM E000, decompresses ROM source 0x00132F8E to VRAM 0x0000, and publishes palette source 0x001290B2.
+  description: State-01 scene-resource wrapper that clears VRAM E000, loads SCENE_COMMON_BASE_GRAPHICS to VRAM base 0, and publishes the shared scene palette source for the state-01 presentation path.
   evidence:
     - ghidra_disassembly_001B496C
     - ghidra_scene_resource_variant_targets
+    - scene_resource_variant_loader_identity_promotion_static_v1
 0x001B498A:
   name: SceneResource_LoadC000Resource12D870
   confidence: decompiled
