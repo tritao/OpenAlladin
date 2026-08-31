@@ -1076,7 +1076,7 @@ def test_mid_actor_animation_stream_ranges_are_exact():
         0x00122D54: (0x00122D91, "ACTOR_ANIM_TYPE55_INTERACTION"),
         0x00122DB2: (0x00122DD7, "ACTOR_ANIM_PLAYER_COLLISION_RECOVERY"),
         0x00122DD8: (0x00122DED, "ACTOR_ANIM_TYPE84_TYPE2D_INTERACTION_RESPONSE"),
-        0x00122DEE: (0x00122DF1, "ACTOR_ANIM_TYPE84_MENU_PRESENTATION"),
+        0x00122DEE: (0x00122DF1, "ACTOR_ANIM_MENU_PRESENTATION"),
         0x00122DF2: (0x00122E15, "ACTOR_ANIM_TYPE03_INTERACTION"),
     }
     owners = []
@@ -1093,7 +1093,7 @@ def test_player_action_transition_child_animation_is_exact():
     symbols = SymbolStore()
     symbol = symbols.at(0x00122B58, include_ranges=False)
     assert symbol is not None
-    assert symbol.name == "ACTOR_ANIM_TYPE80_ACTION_TRANSITION_CHILD"
+    assert symbol.name == "ACTOR_ANIM_PLAYER_ACTION_TRANSITION_CHILD"
     assert symbol.end == 0x00122B6D
     assert symbol.size == 22
     assert symbol.metadata["type"] == "animation_stream"
@@ -1122,7 +1122,7 @@ def test_mid_actor_collision_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {
         0x00122B6E: (0x00122BBB, "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE"),
-        0x00122BBC: (0x00122BD7, "ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_B"),
+        0x00122BBC: (0x00122BD7, "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_SECONDARY"),
         0x00122BD8: (0x00122C11, "ACTOR_ANIM_INTERACTION_RESPONSE_SHARED"),
         0x00122C12: (0x00122C1D, "ACTOR_ANIM_INTERACTION_SHARED"),
     }
@@ -1139,7 +1139,7 @@ def test_mid_actor_collision_animation_family_is_exact():
 
     child = symbols.at(0x00122B9C, include_ranges=False)
     assert child is not None
-    assert child.name == "ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_A"
+    assert child.name == "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_PRIMARY"
     assert child.metadata["alias_of"] == "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE"
     assert child.metadata["entry_offset"] == 46
 
@@ -3212,8 +3212,8 @@ def test_type03_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {
         0x00122E16: (0x00122EDF, "ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN"),
-        0x00122EE0: (0x00122EFD, "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_SPAWN_ENTRY"),
-        0x00122EFE: (0x00122F37, "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE"),
+        0x00122EE0: (0x00122EFD, "ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_SPAWN_ENTRY"),
+        0x00122EFE: (0x00122F37, "ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_RESPONSE"),
     }
     owners = []
     for address, (end, name) in expected.items():
@@ -3226,14 +3226,14 @@ def test_type03_collision_response_animation_family_is_exact():
 
     root = symbols.at(0x00122E96, include_ranges=False)
     assert root is not None
-    assert root.name == "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_ROOT"
+    assert root.name == "ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_ROOT"
     assert root.metadata["alias_of"] == "ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN"
     assert root.metadata["entry_offset"] == 128
 
     loop = symbols.at(0x00122F06, include_ranges=False)
     assert loop is not None
-    assert loop.name == "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE_LOOP"
-    assert loop.metadata["alias_of"] == "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE"
+    assert loop.name == "ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_RESPONSE_LOOP"
+    assert loop.metadata["alias_of"] == "ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_RESPONSE"
     assert loop.metadata["entry_offset"] == 8
 
 
@@ -3241,13 +3241,13 @@ def test_shared_type84_0f22_response_range_is_exact():
     symbols = SymbolStore()
     symbol = symbols.at(0x00122F80, include_ranges=False)
     assert symbol is not None
-    assert symbol.name == "ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE"
+    assert symbol.name == "ACTOR_ANIM_COLLISION_RESPONSE_CHILD_SHARED"
     assert symbol.end == 0x00122FA1
     assert symbol.size == 34
 
     following = symbols.at(0x00122FA2, include_ranges=False)
     assert following is not None
-    assert following.name == "ACTOR_ANIM_TYPE84_TERMINAL_DEATH"
+    assert following.name == "ACTOR_ANIM_GUARD_SWORD_TERMINAL_DEATH"
     assert symbol.end < following.address
 
 

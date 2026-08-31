@@ -3305,10 +3305,11 @@
     - structural_data_body_confidence_static_v1
 
 0x001EE2:
-  name: ACTOR_COLLISION_HANDLER_TYPE_0A
+  name: ACTOR_COLLISION_HANDLER_TERMINAL_INTERACTION
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_0A]
   type: rom_pointer
   confidence: confirmed
-  description: Actor-collision dispatch pointer for actor type 0x0A; its big-endian ROM value is 0x001AC458.
+  description: Actor-collision dispatch pointer for the terminal-interaction receiver; its big-endian ROM value is 0x001AC458 and resolves to ActorCollision_HandleTerminalInteraction.
   evidence:
     - rom_handler_table_decode
     - ghidra_disassembly_001AC458
@@ -3734,7 +3735,7 @@
   type: movement_stream
   size: 14
   confidence: decompiled
-  description: Type-0x84 terminal-death movement response written by ACTOR_ANIM_DEATH_84_SHARED_CONTINUATION at 0x0012305C. Its exact 14-byte owner applies the signed vertical step and actor-field arithmetic, then loops from 0x0012035A back to its own root.
+  description: Terminal-death movement response written by ACTOR_ANIM_TERMINAL_DEATH_SHARED_CONTINUATION at 0x0012305C. Its exact 14-byte owner applies the signed vertical step and actor-field arithmetic, then loops from 0x0012035A back to its own root.
   evidence:
     - type84_death_animation_static_decompilation
     - movement_stream_decoder
@@ -4539,10 +4540,11 @@
     - animation_stream_decoder
 
 0x00122DEE:
-  name: ACTOR_ANIM_TYPE84_MENU_PRESENTATION
+  name: ACTOR_ANIM_MENU_PRESENTATION
+  aliases: [ACTOR_ANIM_TYPE84_MENU_PRESENTATION]
   size: 4
   confidence: decompiled
-  description: Compact Type-0x84 menu-presentation entry installed by ACTOR_TEMPLATE_MENU_PRESENTATION. Its exact 4-byte body presents frame 0x16E2 and ends with EC 0x01 before the separately owned Type-0x03 interaction stream.
+  description: Compact menu-presentation entry installed by ACTOR_TEMPLATE_MENU_PRESENTATION. Its exact 4-byte body presents frame 0x16E2 and ends with EC 0x01 before the separately owned interaction stream.
   evidence:
     - actor_template_service_family_static_decompilation
     - animation_stream_decoder
@@ -4570,46 +4572,50 @@
     - animation_stream_decoder
 
 0x00122E96:
-  name: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_ROOT
+  name: ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_ROOT
+  aliases: [ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_ROOT]
   type: animation_stream
   alias_of: ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN
   entry_offset: 128
   confidence: decompiled
-  description: Embedded default root for ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD and ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE. It begins inside ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN and therefore does not claim a second ROM ownership range.
+  description: Embedded default root for the player-collision moving-child templates. It begins inside ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN and therefore does not claim a second ROM ownership range.
   evidence:
     - actor_template_f5_moving_child_base_static_decompilation
     - animation_f5_nested_child_family_static_decompilation
     - animation_stream_decoder
 
 0x00122EE0:
-  name: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_SPAWN_ENTRY
+  name: ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_SPAWN_ENTRY
+  aliases: [ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_SPAWN_ENTRY]
   type: animation_stream
   size: 30
   confidence: decompiled
-  description: Compact Type-0x84 moving-child spawn entry selected by the nested presentation/response F5 family. Its exact 30-byte region spawns ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD with the supplied payload, invokes the shared child-event callback, and jumps to ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE_LOOP at 0x00122F06.
+  description: Compact player-collision moving-child spawn entry selected by the nested presentation/response F5 family. Its exact 30-byte region spawns the moving-child template with the supplied payload, invokes the shared child-event callback, and jumps to ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_RESPONSE_LOOP at 0x00122F06.
   evidence:
     - animation_f5_nested_child_family_static_decompilation
     - actor_template_f5_moving_child_base_static_decompilation
     - animation_stream_decoder
 
 0x00122EFE:
-  name: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE
+  name: ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE]
   type: animation_stream
   size: 58
   confidence: decompiled
-  description: Type-0x84 moving-child response entry selected by the F5 command at 0x00122EE2. Its exact 58-byte region invokes the shared child-event callback, delays the repeated 0x144A-0x145E frame sequence with timer 0x07, advances the frame delay, and clears the child at its terminal F600 command.
+  description: Player-collision moving-child response entry selected by the F5 command at 0x00122EE2. Its exact 58-byte region invokes the shared child-event callback, delays the repeated 0x144A-0x145E frame sequence with timer 0x07, advances the frame delay, and clears the child at its terminal F600 command.
   evidence:
     - animation_f5_nested_child_family_static_decompilation
     - actor_template_f5_moving_child_base_static_decompilation
     - animation_stream_decoder
 
 0x00122F06:
-  name: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE_LOOP
+  name: ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_RESPONSE_LOOP
+  aliases: [ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE_LOOP]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE
+  alias_of: ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_RESPONSE
   entry_offset: 8
   confidence: decompiled
-  description: Embedded loop entry shared by the 0x00122EE0 spawn entry and the nested 0x00125F5A F5 records. It begins eight bytes into ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE and does not claim a second ROM ownership range.
+  description: Embedded loop entry shared by the 0x00122EE0 spawn entry and the nested 0x00125F5A F5 records. It begins eight bytes into ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_RESPONSE and does not claim a second ROM ownership range.
   evidence:
     - animation_f5_nested_child_family_static_decompilation
     - animation_stream_decoder
@@ -6773,7 +6779,8 @@
     - animation_stream_decoder
 
 0x00122B58:
-  name: ACTOR_ANIM_TYPE80_ACTION_TRANSITION_CHILD
+  name: ACTOR_ANIM_PLAYER_ACTION_TRANSITION_CHILD
+  aliases: [ACTOR_ANIM_TYPE80_ACTION_TRANSITION_CHILD]
   type: animation_stream
   size: 22
   confidence: decompiled
@@ -6796,22 +6803,24 @@
     - animation_stream_decoder
 
 0x00122B9C:
-  name: ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_A
+  name: ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_PRIMARY
+  aliases: [ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_A]
   type: animation_stream
   alias_of: ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE
   entry_offset: 46
   confidence: decompiled
-  description: Embedded first Type-0x84 collision-child animation entry selected by the first F5 record in ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE. It aliases the parent collision-response owner and does not claim a second ROM ownership range.
+  description: Embedded primary collision-child animation entry selected by the first F5 record in ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE. It aliases the parent collision-response owner and does not claim a second ROM ownership range.
   evidence:
     - mid-actor-collision-animation-family-static-decompilation
     - animation_stream_decoder
 
 0x00122BBC:
-  name: ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_B
+  name: ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_SECONDARY
+  aliases: [ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_B]
   type: animation_stream
   size: 28
   confidence: decompiled
-  description: Second Type-0x84 collision-child animation selected by the second F5 record in ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE. Its exact 28-byte region applies the encoded actor-field adjustment, clears the actor flag, presents the 0x1CA2-0x1CAE frame sequence, and loops through its local entry.
+  description: Secondary collision-child animation selected by the second F5 record in ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE. Its exact 28-byte region applies the encoded actor-field adjustment, clears the actor flag, presents the 0x1CA2-0x1CAE frame sequence, and loops through its local entry.
   evidence:
     - mid-actor-collision-animation-family-static-decompilation
     - animation_stream_decoder
@@ -7088,21 +7097,23 @@
     - mame_type01_child_chain_trace
 
 0x00122F38:
-  name: ACTOR_ANIM_TYPE84_CHILD
+  name: ACTOR_ANIM_ACTOR_COLLISION_CHILD_EFFECT
+  aliases: [ACTOR_ANIM_TYPE84_CHILD]
   size: 72
   confidence: confirmed
-  description: Short Type-0x84 child effect stream. Its exact 72-byte region cycles frames 0x001F8ECA, 0x001F8EDC, 0x001F8EEE, 0x001F8F18, and 0x001F8F42, clears the actor with F600, calls Type84ChildEvent_1ACB7A and conditionally Type84ChildEvent_1ACB82, then loops through the local 0x00122F4E entry; the following 0x00122F80 response stream is separately owned.
+  description: Actor-collision child effect stream. Its exact 72-byte region cycles frames 0x001F8ECA, 0x001F8EDC, 0x001F8EEE, 0x001F8F18, and 0x001F8F42, clears the actor with F600, calls ActorEvent_SetFlag20 and conditionally ActorEvent_ClearFlag20, then loops through the local 0x00122F4E entry; the following 0x00122F80 response stream is separately owned.
   evidence:
     - ghidra_type01_child_chain_decompile
     - type01_type84_child_animation_static_decompilation
     - mame_type01_child_chain_trace
 
 0x00122F80:
-  name: ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE
+  name: ACTOR_ANIM_COLLISION_RESPONSE_CHILD_SHARED
+  aliases: [ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE]
   type: animation_stream
   size: 34
   confidence: decompiled
-  description: Shared Type-0x84 response animation referenced by the queued scene-resource, collision-reinitialization, and level-object template records. Its exact 34-byte region presents frame 0x0F22, conditionally clears the actor flag through the random branch at 0x00122F82, cycles frames 0x0F26-0x0F4E, and terminates with F600 at 0x00122FA0 before the separate ACTOR_ANIM_DEATH_122FA2 stream.
+  description: Shared collision-response child animation referenced by the queued scene-resource, collision-reinitialization, and level-object template records. Its exact 34-byte region presents frame 0x0F22, conditionally clears the actor flag through the random branch at 0x00122F82, cycles frames 0x0F26-0x0F4E, and terminates with F600 at 0x00122FA0 before the separate terminal-death stream.
   evidence:
     - scene_resource_queued_actor_static_decompilation
     - actor_collision_reinitialization
@@ -7151,21 +7162,22 @@
     - mame_natural_actor_type_2D_trace
 
 0x00122FA2:
-  name: ACTOR_ANIM_TYPE84_TERMINAL_DEATH
-  aliases: [ACTOR_ANIM_DEATH_122FA2]
+  name: ACTOR_ANIM_GUARD_SWORD_TERMINAL_DEATH
+  aliases: [ACTOR_ANIM_TYPE84_TERMINAL_DEATH, ACTOR_ANIM_DEATH_122FA2]
   size: 114
   confidence: confirmed
-  description: Type-0x84 terminal actor animation root installed by the guard sword-hit replacement path. Its exact 114-byte prefix presents the opening death frames, spawns the two embedded ACTOR_TEMPLATE_DEATH_84 child records, clears/faces the actor, and enters the shared continuation at 0x00123014; the three inline 0x00122FFE/0x00123008/0x00123012 stubs are retained inside this packed prefix.
+  description: Guard-sword terminal actor animation root installed by the guard sword-hit replacement path. Its exact 114-byte prefix presents the opening death frames, spawns the two embedded death-child records, clears/faces the actor, and enters the shared continuation at 0x00123014; the three inline 0x00122FFE/0x00123008/0x00123012 stubs are retained inside this packed prefix.
   evidence:
     - ghidra_actor_death_transition_001AC4B0
     - mame_guard_sword_hit_trace
     - death_84_animation_static_decompilation
 
 0x00123014:
-  name: ACTOR_ANIM_DEATH_84_SHARED_CONTINUATION
+  name: ACTOR_ANIM_TERMINAL_DEATH_SHARED_CONTINUATION
+  aliases: [ACTOR_ANIM_DEATH_84_SHARED_CONTINUATION]
   size: 280
   confidence: decompiled
-  description: Shared type-0x84 terminal continuation entered by ACTOR_ANIM_TYPE84_TERMINAL_DEATH and its inline entry stubs. Its exact 280-byte region presents the shared terminal frames, publishes type 0x84 and movement stream 0x00120352, then cycles the 0x1032-0x107A response frames with repeated actor-field checks; the compare branch may enter the existing ACTOR_ANIM_TYPE5F_INTERACTION range at its internal 0x00123130 entry.
+  description: Shared terminal-death continuation entered by ACTOR_ANIM_GUARD_SWORD_TERMINAL_DEATH and its inline entry stubs. Its exact 280-byte region presents the shared terminal frames, publishes the terminal response state and movement stream 0x00120352, then cycles the 0x1032-0x107A response frames with repeated actor-field checks; the compare branch may enter the existing ACTOR_ANIM_TYPE5F_INTERACTION range at its internal 0x00123130 entry.
   evidence:
     - death_84_animation_static_decompilation
     - actor_template_death_84
@@ -7971,7 +7983,7 @@
   animation_stream: 0x00122F80
   template_word: 0x6000
   resource_count: 0x01
-  description: Collision-response child template supplied by the six F5-style spawn/copy commands in ACTOR_MOVE_PLAYER_COLLISION_CHILD_SPAWN. Its exact 20-byte record carries template word 0x6000, shared animation ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE at 0x00122F80, one owned resource, and no movement stream; it ends immediately before ACTOR_TEMPLATE_TYPE_29_INTERACTION.
+  description: Collision-response child template supplied by the six F5-style spawn/copy commands in ACTOR_MOVE_PLAYER_COLLISION_CHILD_SPAWN. Its exact 20-byte record carries template word 0x6000, shared animation ACTOR_ANIM_COLLISION_RESPONSE_CHILD_SHARED at 0x00122F80, one owned resource, and no movement stream; it ends immediately before ACTOR_TEMPLATE_TYPE_29_INTERACTION.
   evidence:
     - type3e_3f_player_collision_response_static_v1
     - gnu_m68k_disassembly_001AF2B0

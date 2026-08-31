@@ -1,0 +1,37 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "actor-collision-and-player-collision-animation-family",
+  "promotions": [
+    "ACTOR_COLLISION_HANDLER_TERMINAL_INTERACTION",
+    "ACTOR_ANIM_PLAYER_ACTION_TRANSITION_CHILD",
+    "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_PRIMARY",
+    "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_SECONDARY",
+    "ACTOR_ANIM_MENU_PRESENTATION",
+    "ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_ROOT",
+    "ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_SPAWN_ENTRY",
+    "ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_RESPONSE",
+    "ACTOR_ANIM_PLAYER_COLLISION_MOVING_CHILD_RESPONSE_LOOP",
+    "ACTOR_ANIM_ACTOR_COLLISION_CHILD_EFFECT",
+    "ACTOR_ANIM_COLLISION_RESPONSE_CHILD_SHARED",
+    "ACTOR_ANIM_GUARD_SWORD_TERMINAL_DEATH",
+    "ACTOR_ANIM_TERMINAL_DEATH_SHARED_CONTINUATION"
+  ],
+  "evidence": [
+    "ghidra_disassembly_001AC458",
+    "player-action-transition-child-animation-static-decompilation",
+    "mid-actor-collision-animation-family-static-decompilation",
+    "player_collision_response_entry_family_static_decompilation",
+    "animation_f5_nested_child_family_static_decompilation",
+    "ghidra_type01_child_chain_decompile",
+    "type01_type84_child_animation_static_decompilation",
+    "death_84_animation_static_decompilation",
+    "mame_guard_sword_hit_trace"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_collision_response_and_child_lifecycle_role"
+  }
+}
