@@ -6790,7 +6790,7 @@
   name: ACTOR_ANIM_TYPE58_INTERACTION
   size: 86
   confidence: decompiled
-  description: Primary Type-0x58 interaction animation installed by ACTOR_TEMPLATE_TYPE_58_INTERACTION. Its packed 86-byte region publishes actor type 0x84, applies the encoded interaction gate, arms LEVEL04_EVENT_45_PENDING with ED 01 F12C 0001 at 0x001253A6 and 0x001253CA, performs the actor-field write at 0x001253A6, cycles the 0x1582-0x1592 response frames, republishes type 0x58, and loops through 0x0012539A.
+  description: Primary Type-0x58 interaction animation installed by ACTOR_TEMPLATE_TYPE_58_INTERACTION. Its packed 86-byte region publishes actor type 0x84 with the actor-field write at 0x00125394, applies the encoded interaction gate, arms LEVEL04_EVENT_45_PENDING with ED 01 F12C 0001 at 0x001253A6 and 0x001253CA, cycles the 0x1582-0x1592 response frames, republishes type 0x58, and loops through 0x0012539A.
   evidence:
     - actor_template_late_interaction_family_static_decompilation
     - interaction_spawn_early_family_static_decompilation

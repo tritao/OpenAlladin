@@ -26,7 +26,11 @@
     "arm_commands": [
       { "address": "0x001253A6", "bytes": "ED01F12C0001" },
       { "address": "0x001253CA", "bytes": "ED01F12C0001" }
-    ]
+    ],
+    "actor_type_84_write": {
+      "address": "0x00125394",
+      "bytes": "ED1100000084"
+    }
   },
   "evidence": [
     "animation_stream_decoder",
