@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/level04-event45-animation-producer-static-targets.json",
+  "contracts": [
+    {
+      "address": "0x00FFF12C",
+      "name": "LEVEL04_EVENT_45_PENDING",
+      "evidence": "Level04_EnterRoutine consumes the latch and clears it at 0x001B5BF6; ACTOR_ANIM_TYPE58_INTERACTION contains two ED 01 F12C 0001 arm commands."
+    },
+    {
+      "address": "0x001253A6",
+      "name": "ACTOR_ANIM_TYPE58_INTERACTION",
+      "evidence": "The first Type-0x58 interaction stream arm command sets LEVEL04_EVENT_45_PENDING before the 0x1586 response phase."
+    },
+    {
+      "address": "0x001253CA",
+      "name": "ACTOR_ANIM_TYPE58_INTERACTION",
+      "evidence": "The second Type-0x58 interaction stream arm command sets LEVEL04_EVENT_45_PENDING before the 0x158E response phase."
+    }
+  ],
+  "conclusion": "The Level-04 event-0x45 pending-latch contract is statically closed from its Type-0x58 AnimationVM producer through the callback consumer and clear.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

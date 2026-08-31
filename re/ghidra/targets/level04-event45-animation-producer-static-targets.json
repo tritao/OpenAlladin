@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-level04-event45-animation-producer-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ram": {
+    "address": "0x00FFF12C",
+    "name": "LEVEL04_EVENT_45_PENDING",
+    "consumer": {
+      "address": "0x001B5B9C",
+      "function": "Level04_EnterRoutine",
+      "instruction": "tst.b (0x00fff12c).l"
+    },
+    "absolute_clear": {
+      "address": "0x001B5BF6",
+      "function": "Level04_EnterRoutine",
+      "instruction": "clr.b (0x00fff12c).l"
+    }
+  },
+  "animation_stream": {
+    "address": "0x00125392",
+    "name": "ACTOR_ANIM_TYPE58_INTERACTION",
+    "range": "0x00125392-0x001253E7",
+    "arm_commands": [
+      { "address": "0x001253A6", "bytes": "ED01F12C0001" },
+      { "address": "0x001253CA", "bytes": "ED01F12C0001" }
+    ]
+  },
+  "evidence": [
+    "animation_stream_decoder",
+    "ghidra_decompile_001B5B9C",
+    "rom_byte_scan_ed_f12c"
+  ],
+  "conclusion": "LEVEL04_EVENT_45_PENDING has a recovered indirect producer: the Type-0x58 interaction animation arms the latch at two points, and Level04_EnterRoutine consumes and clears it while optionally sending audio/event command 0x45.",
+  "limitations": [
+    "The static command inventory proves the producer and clear sites; it does not claim which Level-04 route reaches each Type-0x58 animation phase."
+  ],
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

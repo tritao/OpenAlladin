@@ -1123,6 +1123,16 @@ def test_real_player_action_animation_state_has_recovered_vm_producers():
     assert "0x001AC7A2" in state.description
 
 
+def test_real_level04_event45_has_animation_vm_producers():
+    symbols = SymbolStore()
+
+    event = symbols.at(0x00FFF12C, include_ranges=False)
+    assert event is not None
+    assert event.name == "LEVEL04_EVENT_45_PENDING"
+    assert "ED 01 F12C 0001" in event.description
+    assert "0x001253A6" in event.description
+
+
 def test_real_interaction_anchor_pair_has_canonical_roles():
     symbols = SymbolStore()
 

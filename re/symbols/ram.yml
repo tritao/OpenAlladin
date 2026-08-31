@@ -2805,11 +2805,12 @@
   type: u8
   format: boolean
   confidence: decompiled
-  description: Level-04 pending event latch consumed by Level04_EnterRoutine. When set, the callback optionally sends audio/event command 0x45 under SCENE_VDP_UPDATE_FLAG and then clears the latch; its indirect event producer is not yet identified.
+  description: Level-04 pending event latch consumed by Level04_EnterRoutine. When set, the callback optionally sends audio/event command 0x45 under SCENE_VDP_UPDATE_FLAG and then clears the latch; ACTOR_ANIM_TYPE58_INTERACTION arms it with ED 01 F12C 0001 at 0x001253A6 and 0x001253CA.
   evidence:
     - ghidra_disassembly_001B5B9C
     - level-callback-family-targets
     - level-table-enter-exit-targets
+    - level04_event45_animation_producer_static_v1
 
 0xFFF0F7:
   name: INTERACTION_RESOURCE_FINALIZATION_GATE
