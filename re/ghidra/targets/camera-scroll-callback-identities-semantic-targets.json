@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "camera-scroll-callback-identities",
+    "purpose": "Replace ROM-offset-bearing AnimationVM camera callback names with stable scroll-profile identities."
+  },
+  "targets": [
+    {
+      "address": "0x001B52D6",
+      "name": "Camera_SelectScrollDeltaProfileFull",
+      "legacy_name": "Camera_SetScrollDataCursor693E",
+      "range": "0x001B52D6-0x001B52E1",
+      "size": 12,
+      "table": "CAMERA_SCROLL_DELTA_TABLE",
+      "table_offset": "0x00000000",
+      "selected_cursor": "CAMERA_SCROLL_DATA_CURSOR"
+    },
+    {
+      "address": "0x001B52E2",
+      "name": "Camera_SelectScrollDeltaProfileReduced",
+      "legacy_name": "Camera_SetScrollDataCursor6952",
+      "range": "0x001B52E2-0x001B52ED",
+      "size": 12,
+      "table": "CAMERA_SCROLL_DELTA_TABLE",
+      "table_offset": "0x00000014",
+      "selected_cursor": "CAMERA_SCROLL_DATA_CURSOR"
+    },
+    {
+      "address": "0x001B52EE",
+      "name": "Camera_SelectScrollDeltaProfileTail",
+      "legacy_name": "Camera_SetScrollDataCursor695A",
+      "range": "0x001B52EE-0x001B52F9",
+      "size": 12,
+      "table": "CAMERA_SCROLL_DELTA_TABLE",
+      "table_offset": "0x0000001C",
+      "selected_cursor": "CAMERA_SCROLL_DATA_CURSOR"
+    }
+  ],
+  "evidence": [
+    "complete 12-byte absolute-pointer setter bodies",
+    "exact CAMERA_SCROLL_DELTA_TABLE offsets",
+    "shared CAMERA_SCROLL_DATA_CURSOR publication contract",
+    "existing camera-scroll callback static map"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/camera-scroll-callback-identities-semantic-targets.json",
+  "promoted_symbols": [
+    "Camera_SelectScrollDeltaProfileFull",
+    "Camera_SelectScrollDeltaProfileReduced",
+    "Camera_SelectScrollDeltaProfileTail"
+  ],
+  "legacy_aliases": [
+    "Camera_SetScrollDataCursor693E",
+    "Camera_SetScrollDataCursor6952",
+    "Camera_SetScrollDataCursor695A"
+  ],
+  "contracts": [
+    "The full profile callback publishes CAMERA_SCROLL_DELTA_TABLE at 0x0000693E.",
+    "The reduced profile callback publishes the same table at offset 0x14, ROM address 0x00006952.",
+    "The tail profile callback publishes the same table at offset 0x1C, ROM address 0x0000695A.",
+    "The level camera-scroll consumer reads signed delta words through CAMERA_SCROLL_DATA_CURSOR; the callback family has no separate storage or side effect."
+  ],
+  "limitations": [
+    "Full/reduced/tail describe the selected table positions and observed profile lengths, not an exhaustive semantic model of every camera motion that invokes them.",
+    "The legacy ROM-offset names remain aliases for historical findings and downstream references."
+  ],
+  "conclusion": "The three AnimationVM camera-scroll callbacks now have stable profile identities while preserving their exact table offsets and cursor-publication contract.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

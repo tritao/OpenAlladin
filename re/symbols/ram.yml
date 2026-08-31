@@ -290,7 +290,7 @@
   type: rom_pointer
   format: address
   confidence: decompiled
-  description: Active camera-scroll data cursor consumed by the level camera-scroll callbacks; level initialization publishes a default ROM cursor and AnimationVM callbacks select the compact delta-table offsets at 0x0000693E, 0x00006952, and 0x0000695A.
+  description: Active camera-scroll data cursor consumed by the level camera-scroll callbacks; level initialization publishes a default ROM cursor and AnimationVM callbacks select the full, reduced, and tail profiles within CAMERA_SCROLL_DELTA_TABLE.
   evidence:
     - gnu_m68k_disassembly_001B52D6
     - gnu_m68k_disassembly_001B52E2

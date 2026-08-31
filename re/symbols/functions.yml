@@ -966,32 +966,41 @@
     - ghidra_level01_resource_record_targets
     - ghidra_disassembly_001B52A0
 0x001B52D6:
-  name: Camera_SetScrollDataCursor693E
+  name: Camera_SelectScrollDeltaProfileFull
+  aliases:
+    - Camera_SetScrollDataCursor693E
   size: 12
   confidence: decompiled
-  description: AnimationVM callback that selects the camera-scroll data cursor at ROM address 0x0000693E by publishing it to CAMERA_SCROLL_DATA_CURSOR.
+  description: AnimationVM callback that selects the full CAMERA_SCROLL_DELTA_TABLE profile at ROM offset 0x0000693E by publishing it to CAMERA_SCROLL_DATA_CURSOR.
   evidence:
     - gnu_m68k_disassembly_001B52D6
     - camera_scroll_data_cursor_callback_static_decompilation
     - camera_scroll_callback_static_map
+    - camera_scroll_callback_identity_promotion_static_v1
 0x001B52E2:
-  name: Camera_SetScrollDataCursor6952
+  name: Camera_SelectScrollDeltaProfileReduced
+  aliases:
+    - Camera_SetScrollDataCursor6952
   size: 12
   confidence: decompiled
-  description: AnimationVM callback that selects the camera-scroll data cursor at ROM address 0x00006952 by publishing it to CAMERA_SCROLL_DATA_CURSOR.
+  description: AnimationVM callback that selects the reduced CAMERA_SCROLL_DELTA_TABLE profile at ROM offset 0x00006952 by publishing it to CAMERA_SCROLL_DATA_CURSOR.
   evidence:
     - gnu_m68k_disassembly_001B52E2
     - camera_scroll_data_cursor_callback_static_decompilation
     - camera_scroll_callback_static_map
+    - camera_scroll_callback_identity_promotion_static_v1
 0x001B52EE:
-  name: Camera_SetScrollDataCursor695A
+  name: Camera_SelectScrollDeltaProfileTail
+  aliases:
+    - Camera_SetScrollDataCursor695A
   size: 12
   confidence: decompiled
-  description: AnimationVM callback that selects the camera-scroll data cursor at ROM address 0x0000695A by publishing it to CAMERA_SCROLL_DATA_CURSOR.
+  description: AnimationVM callback that selects the tail CAMERA_SCROLL_DELTA_TABLE profile at ROM offset 0x0000695A by publishing it to CAMERA_SCROLL_DATA_CURSOR.
   evidence:
     - gnu_m68k_disassembly_001B52EE
     - camera_scroll_data_cursor_callback_static_decompilation
     - camera_scroll_callback_static_map
+    - camera_scroll_callback_identity_promotion_static_v1
 0x001B52FA:
   name: Random_AdvanceUntilParityChanges
   size: 30

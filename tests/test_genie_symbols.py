@@ -2032,6 +2032,19 @@ def test_scene_resource_blank_wrappers_have_stable_state_identities():
         assert legacy in symbol.aliases
 
 
+def test_camera_scroll_callbacks_have_stable_profile_identities():
+    expected = {
+        0x001B52D6: ("Camera_SelectScrollDeltaProfileFull", "Camera_SetScrollDataCursor693E"),
+        0x001B52E2: ("Camera_SelectScrollDeltaProfileReduced", "Camera_SetScrollDataCursor6952"),
+        0x001B52EE: ("Camera_SelectScrollDeltaProfileTail", "Camera_SetScrollDataCursor695A"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
