@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type5e-threshold-semantic",
+    "purpose": "Promote the bounded Type-0x5E threshold and adjacent Type-0x29/0x67 interaction handlers to stable creation identities while retaining selector-qualified historical names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      { "address": "0x001B6BB2", "selectors": ["0xFB"], "name": "InteractionSpawn_CreateType5EAtThreshold2646", "legacy_name": "InteractionSpawn_Type5E_Threshold2646", "template": "0x001B78A0 ACTOR_TEMPLATE_TYPE_5E_INTERACTION_PAIR_BASE", "movement_stream": "0x0011F754", "threshold_address": "0x00FF7E02", "threshold": "0x2646", "post_spawn_clear": "0x00FFF0E5" },
+      { "address": "0x001B6BD8", "selectors": ["0xC0-C7"], "name": "InteractionSpawn_CreateType29ForSelectorsC0ThroughC7", "legacy_name": "InteractionSpawn_Type29_C0C7", "template": "0x001B7B70 ACTOR_TEMPLATE_TYPE_29_INTERACTION" },
+      { "address": "0x001B6BE4", "selectors": ["0x57"], "name": "InteractionSpawn_CreateType29ForSelector57", "legacy_name": "InteractionSpawn_Type29_57", "template": "0x001B7B70 ACTOR_TEMPLATE_TYPE_29_INTERACTION" },
+      { "address": "0x001B6BF0", "selectors": ["0x3D"], "name": "InteractionSpawn_CreateType67ForSelector3D", "legacy_name": "InteractionSpawn_Type67_3D", "template": "0x001B78DC ACTOR_TEMPLATE_TYPE_67_INTERACTION" }
+    ]
+  },
+  "contracts": [
+    "Selector 0xFB reverse-spawns the Type-0x5E interaction record when 0x00FF7E02 is at least 0x2646, installs MovementVM stream 0x0011F754, and clears 0x00FFF0E5 after allocation.",
+    "Selectors 0xC0-0xC7 and 0x57 reverse-spawn the established Type-0x29 interaction template; selector 0x3D forward-spawns the established Type-0x67 interaction template.",
+    "The handlers retain their exact selector multiplicity and allocation-helper contracts from the static evidence."
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "Direct template loads, helper calls, selector-FB threshold compare, MovementVM literal, and cleanup write",
+    "re/ghidra/targets/interaction-spawn-type5e-threshold-targets.json",
+    "re/mame/findings/20260829-interaction-spawn-type5e-threshold-static-v1.json"
+  ],
+  "limitations": [
+    "The names identify runtime actor types and exact creation contracts, not user-facing object or scene roles.",
+    "The upstream lifecycle of the threshold and post-spawn cleanup bytes remains unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

@@ -528,6 +528,22 @@ def test_type5e84_pair_interaction_spawn_family_has_semantic_names_and_aliases()
         assert symbol.confidence == "decompiled"
 
 
+def test_type5e_threshold_interaction_spawn_family_has_semantic_names_and_aliases():
+    expected = {
+        0x001B6BB2: ("InteractionSpawn_CreateType5EAtThreshold2646", "InteractionSpawn_Type5E_Threshold2646"),
+        0x001B6BD8: ("InteractionSpawn_CreateType29ForSelectorsC0ThroughC7", "InteractionSpawn_Type29_C0C7"),
+        0x001B6BE4: ("InteractionSpawn_CreateType29ForSelector57", "InteractionSpawn_Type29_57"),
+        0x001B6BF0: ("InteractionSpawn_CreateType67ForSelector3D", "InteractionSpawn_Type67_3D"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence == "decompiled"
+
+
 def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
     expected = {
         0x001AF1AC: ("PlayerCollision_SpawnVerticalResponseActor", "ActorType13_PlayerCollisionHandler"),
