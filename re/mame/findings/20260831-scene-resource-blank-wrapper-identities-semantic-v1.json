@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-resource-blank-wrapper-identities-semantic-targets.json",
+  "promoted_symbols": [
+    "SceneResource_RunState07BlankPresentation",
+    "SceneResource_RunState01BlankPresentation",
+    "SceneResource_RunState03BlankPresentation",
+    "SceneResource_RunState04BlankPreludePresentation",
+    "SceneResource_RunState04BlankPresentationA",
+    "SceneResource_RunState0BBlankPresentation",
+    "SceneResource_RunState04BlankPresentationB",
+    "SceneResource_RunState09BlankPresentation"
+  ],
+  "legacy_aliases": [
+    "SceneResource_RunBlankStream1277C5",
+    "SceneResource_RunBlankStream1279B7",
+    "SceneResource_RunBlankStream127AEE",
+    "SceneResource_RunBlankStream127B60",
+    "SceneResource_RunBlankStream127BD2",
+    "SceneResource_RunBlankStream127C42",
+    "SceneResource_RunBlankStream127CB4",
+    "SceneResource_RunBlankStream127D74"
+  ],
+  "contracts": [
+    "Each promoted wrapper prepares the shared blank frame, sets and clears the scene VDP scratch state, processes its canonical state-specific blank stream with fixed parameters, and runs the shared fade/reset completion.",
+    "The duplicate state-04 wrappers are retained as A/B plus prelude identities because they select distinct ROM streams with distinct positions in the state-04 presentation path.",
+    "The state-07, state-01, state-03, state-0B, and state-09 wrappers are directly selected by the scene-resource dispatcher or its recorded state-specific presentation flow."
+  ],
+  "limitations": [
+    "These names identify exact blank-frame wrapper contracts and do not claim that every state-specific blank presentation path has been reached by a natural runtime route.",
+    "The legacy stream-address names remain aliases for historical findings and downstream references."
+  ],
+  "conclusion": "Eight blank presentation wrappers now have stable state and stream identities while preserving exact parameters and legacy aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

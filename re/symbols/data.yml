@@ -1142,7 +1142,7 @@
   type: scene_resource_stream
   size: 0x137
   confidence: decompiled
-  description: Blank-frame scene-resource command stream for state 0x01 loaded directly by SceneResource_RunBlankStream1279B7. Its exact range 0x001279B7-0x00127AED ends with command 0 before the state-0x03 blank-frame stream.
+  description: Blank-frame scene-resource command stream for state 0x01 loaded directly by SceneResource_RunState01BlankPresentation. Its exact range 0x001279B7-0x00127AED ends with command 0 before the state-0x03 blank-frame stream.
   evidence:
     - ghidra_scene_resource_presentation_wrappers
     - scene_resource_command_stream_terminators
@@ -1153,7 +1153,7 @@
   type: scene_resource_stream
   size: 0x72
   confidence: decompiled
-  description: Blank-frame scene-resource command stream for state 0x03 loaded directly by SceneResource_RunBlankStream127AEE. Its exact range 0x00127AEE-0x00127B5F ends with command 0 before the separately selected stream at 0x00127B60.
+  description: Blank-frame scene-resource command stream for state 0x03 loaded directly by SceneResource_RunState03BlankPresentation. Its exact range 0x00127AEE-0x00127B5F ends with command 0 before the separately selected stream at 0x00127B60.
   evidence:
     - ghidra_scene_resource_presentation_wrappers
     - scene_resource_command_stream_terminators
@@ -1164,7 +1164,7 @@
   type: scene_resource_stream
   size: 0x70
   confidence: decompiled
-  description: First state-0x04 blank-frame scene-resource command stream loaded directly by SceneResource_RunBlankStream127BD2. Its exact range 0x00127BD2-0x00127C41 ends with command 0 before the state-0x0B blank-frame stream.
+  description: First state-0x04 blank-frame scene-resource command stream loaded directly by SceneResource_RunState04BlankPresentationA. Its exact range 0x00127BD2-0x00127C41 ends with command 0 before the state-0x0B blank-frame stream.
   evidence:
     - ghidra_scene_resource_presentation_wrappers
     - scene_resource_command_stream_terminators
@@ -1175,7 +1175,7 @@
   type: scene_resource_stream
   size: 0x72
   confidence: decompiled
-  description: State-0x0B blank-frame scene-resource command stream loaded directly by SceneResource_RunBlankStream127C42. Its exact range 0x00127C42-0x00127CB3 ends with command 0 before the second state-0x04 blank-frame stream.
+  description: State-0x0B blank-frame scene-resource command stream loaded directly by SceneResource_RunState0BBlankPresentation. Its exact range 0x00127C42-0x00127CB3 ends with command 0 before the second state-0x04 blank-frame stream.
   evidence:
     - ghidra_scene_resource_presentation_wrappers
     - scene_resource_command_stream_terminators
@@ -1186,7 +1186,7 @@
   type: scene_resource_stream
   size: 0xC0
   confidence: decompiled
-  description: Second state-0x04 blank-frame scene-resource command stream loaded directly by SceneResource_RunBlankStream127CB4. Its exact range 0x00127CB4-0x00127D73 ends with command 0 before the state-0x09 blank-frame stream.
+  description: Second state-0x04 blank-frame scene-resource command stream loaded directly by SceneResource_RunState04BlankPresentationB. Its exact range 0x00127CB4-0x00127D73 ends with command 0 before the state-0x09 blank-frame stream.
   evidence:
     - ghidra_scene_resource_presentation_wrappers
     - scene_resource_command_stream_terminators
@@ -1197,7 +1197,7 @@
   type: scene_resource_stream
   size: 0x10C
   confidence: decompiled
-  description: Blank-frame scene-resource command stream for state 0x09 loaded directly by SceneResource_RunBlankStream127D74. Its exact range 0x00127D74-0x00127E7F ends with command 0 immediately before the following defined bonus-record data.
+  description: Blank-frame scene-resource command stream for state 0x09 loaded directly by SceneResource_RunState09BlankPresentation. Its exact range 0x00127D74-0x00127E7F ends with command 0 immediately before the following defined bonus-record data.
   evidence:
     - ghidra_scene_resource_presentation_wrappers
     - scene_resource_command_stream_terminators
@@ -1698,7 +1698,7 @@
   type: scene_resource_stream
   size: 0x6F
   confidence: decompiled
-  description: Blank-frame scene-resource command/text stream for state 0x07 loaded directly by SceneResource_RunBlankStream1277C5. The shared interpreter reaches its command-0 terminator at 0x00127833, immediately before SCENE_RESOURCE_PRESENTATION_STREAM_STATE_10.
+  description: Blank-frame scene-resource command/text stream for state 0x07 loaded directly by SceneResource_RunState07BlankPresentation. The shared interpreter reaches its command-0 terminator at 0x00127833, immediately before SCENE_RESOURCE_PRESENTATION_STREAM_STATE_10.
   evidence: [gnu_m68k_disassembly_001B4CE6, scene_resource_presentation_stream_extents_static_v1]
 
 0x00127B60:
@@ -1707,7 +1707,7 @@
   type: scene_resource_stream
   size: 0x72
   confidence: decompiled
-  description: Blank-frame scene-resource command/text stream for the state-0x04 presentation path loaded directly by SceneResource_RunBlankStream127B60. The shared interpreter reaches its command-0 terminator at 0x00127BD1, immediately before the first separately named state-0x04 blank-frame stream.
+  description: Blank-frame scene-resource command/text stream for the state-0x04 presentation path loaded directly by SceneResource_RunState04BlankPreludePresentation. The shared interpreter reaches its command-0 terminator at 0x00127BD1, immediately before the first separately named state-0x04 blank-frame stream.
   evidence: [gnu_m68k_disassembly_001B4E44, scene_resource_presentation_stream_extents_static_v1]
 
 0x00128ED2:

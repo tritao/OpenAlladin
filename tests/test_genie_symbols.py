@@ -2014,6 +2014,24 @@ def test_scene_resource_presentation_wrappers_have_stable_state_identities():
     assert "SceneResource_LoadC000ResourceAndPrepareFrame" in shared.aliases
 
 
+def test_scene_resource_blank_wrappers_have_stable_state_identities():
+    expected = {
+        0x001B4CE6: ("SceneResource_RunState07BlankPresentation", "SceneResource_RunBlankStream1277C5"),
+        0x001B4DF8: ("SceneResource_RunState01BlankPresentation", "SceneResource_RunBlankStream1279B7"),
+        0x001B4E1E: ("SceneResource_RunState03BlankPresentation", "SceneResource_RunBlankStream127AEE"),
+        0x001B4E44: ("SceneResource_RunState04BlankPreludePresentation", "SceneResource_RunBlankStream127B60"),
+        0x001B4E6A: ("SceneResource_RunState04BlankPresentationA", "SceneResource_RunBlankStream127BD2"),
+        0x001B4E90: ("SceneResource_RunState0BBlankPresentation", "SceneResource_RunBlankStream127C42"),
+        0x001B4EB6: ("SceneResource_RunState04BlankPresentationB", "SceneResource_RunBlankStream127CB4"),
+        0x001B4EDC: ("SceneResource_RunState09BlankPresentation", "SceneResource_RunBlankStream127D74"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

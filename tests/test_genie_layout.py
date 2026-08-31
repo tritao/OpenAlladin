@@ -4662,8 +4662,8 @@ def test_scene_resource_loader_and_blank_wrapper_gaps_are_exact():
     symbols = SymbolStore()
     functions = {
         0x001B47BE: (18, "SceneResource_LoadSceneSetupSecondaryE000Graphics"),
-        0x001B4CE6: (38, "SceneResource_RunBlankStream1277C5"),
-        0x001B4E44: (38, "SceneResource_RunBlankStream127B60"),
+        0x001B4CE6: (38, "SceneResource_RunState07BlankPresentation"),
+        0x001B4E44: (38, "SceneResource_RunState04BlankPreludePresentation"),
     }
     for address, (size, name) in functions.items():
         function = symbols.at(address, include_ranges=False)

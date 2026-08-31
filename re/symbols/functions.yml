@@ -838,14 +838,17 @@
     - scene_resource_presentation_wrappers
     - scene_resource_presentation_wrapper_identity_promotion_static_v1
 0x001B4CE6:
-  name: SceneResource_RunBlankStream1277C5
+  name: SceneResource_RunState07BlankPresentation
+  aliases:
+    - SceneResource_RunBlankStream1277C5
   size: 38
   confidence: decompiled
-  description: Prepares the shared blank frame, marks the scene VDP update scratch state, processes command stream 0x001277C5 with parameters 0x04 and 0x05, clears the scratch state, and runs the shared fade/reset completion.
+  description: State-07 blank presentation wrapper that prepares the shared blank frame, marks the scene VDP update scratch state, processes SCENE_RESOURCE_BLANK_STREAM_STATE_07 with parameters 0x04 and 0x05, clears the scratch state, and runs the shared fade/reset completion.
   evidence:
     - gnu_m68k_disassembly_001B4CE6
     - scene_resource_presentation_wrapper_gap_static_decompilation
     - scene_resource_presentation_stream_extents_static_v1
+    - scene_resource_blank_wrapper_identity_promotion_static_v1
 0x001B4DD2:
   name: SceneResource_RunState0BPresentation
   aliases:
@@ -858,62 +861,83 @@
     - scene_resource_presentation_wrappers
     - scene_resource_presentation_wrapper_identity_promotion_static_v1
 0x001B4DF8:
-  name: SceneResource_RunBlankStream1279B7
+  name: SceneResource_RunState01BlankPresentation
+  aliases:
+    - SceneResource_RunBlankStream1279B7
   confidence: decompiled
-  description: Prepares the shared blank frame, marks the scene VDP update scratch state, processes command stream 0x001279B7 with parameters 0x03 and 0x06, clears the scratch state, and runs the shared fade/reset completion.
+  description: State-01 blank presentation wrapper that prepares the shared blank frame, marks the scene VDP update scratch state, processes SCENE_RESOURCE_BLANK_STREAM_STATE_01 with parameters 0x03 and 0x06, clears the scratch state, and runs the shared fade/reset completion.
   evidence:
     - ghidra_disassembly_001B4DF8
     - ghidra_scene_resource_dispatch
     - scene_resource_presentation_wrappers
+    - scene_resource_blank_wrapper_identity_promotion_static_v1
 0x001B4E1E:
-  name: SceneResource_RunBlankStream127AEE
+  name: SceneResource_RunState03BlankPresentation
+  aliases:
+    - SceneResource_RunBlankStream127AEE
   confidence: decompiled
-  description: Prepares the shared blank frame, marks the scene VDP update scratch state, processes command stream 0x00127AEE with parameters 0x03 and 0x0C, clears the scratch state, and runs the shared fade/reset completion.
+  description: State-03 blank presentation wrapper that prepares the shared blank frame, marks the scene VDP update scratch state, processes SCENE_RESOURCE_BLANK_STREAM_STATE_03 with parameters 0x03 and 0x0C, clears the scratch state, and runs the shared fade/reset completion.
   evidence:
     - ghidra_disassembly_001B4E1E
     - ghidra_scene_resource_dispatch
     - scene_resource_presentation_wrappers
+    - scene_resource_blank_wrapper_identity_promotion_static_v1
 0x001B4E44:
-  name: SceneResource_RunBlankStream127B60
+  name: SceneResource_RunState04BlankPreludePresentation
+  aliases:
+    - SceneResource_RunBlankStream127B60
   size: 38
   confidence: decompiled
-  description: Prepares the shared blank frame, marks the scene VDP update scratch state, processes command stream 0x00127B60 with parameters 0x03 and 0x0B, clears the scratch state, and runs the shared fade/reset completion.
+  description: State-04 blank-presentation prelude wrapper that prepares the shared blank frame, marks the scene VDP update scratch state, processes SCENE_RESOURCE_BLANK_STREAM_STATE_04_PRELUDE with parameters 0x03 and 0x0B, clears the scratch state, and runs the shared fade/reset completion.
   evidence:
     - gnu_m68k_disassembly_001B4E44
     - scene_resource_presentation_wrapper_gap_static_decompilation
     - scene_resource_presentation_stream_extents_static_v1
+    - scene_resource_blank_wrapper_identity_promotion_static_v1
 0x001B4E6A:
-  name: SceneResource_RunBlankStream127BD2
+  name: SceneResource_RunState04BlankPresentationA
+  aliases:
+    - SceneResource_RunBlankStream127BD2
   confidence: decompiled
-  description: Prepares the shared blank frame, marks the scene VDP update scratch state, processes command stream 0x00127BD2 with parameters 0x03 and 0x0B, clears the scratch state, and runs the shared fade/reset completion.
+  description: First state-04 blank presentation wrapper that prepares the shared blank frame, marks the scene VDP update scratch state, processes SCENE_RESOURCE_BLANK_STREAM_STATE_04_A with parameters 0x03 and 0x0B, clears the scratch state, and runs the shared fade/reset completion.
   evidence:
     - ghidra_disassembly_001B4E6A
     - ghidra_scene_resource_dispatch
     - scene_resource_presentation_wrappers
+    - scene_resource_blank_wrapper_identity_promotion_static_v1
 0x001B4E90:
-  name: SceneResource_RunBlankStream127C42
+  name: SceneResource_RunState0BBlankPresentation
+  aliases:
+    - SceneResource_RunBlankStream127C42
   confidence: decompiled
-  description: Prepares the shared blank frame, marks the scene VDP update scratch state, processes command stream 0x00127C42 with parameters 0x03 and 0x0B, clears the scratch state, and runs the shared fade/reset completion.
+  description: State-0B blank presentation wrapper that prepares the shared blank frame, marks the scene VDP update scratch state, processes SCENE_RESOURCE_BLANK_STREAM_STATE_0B with parameters 0x03 and 0x0B, clears the scratch state, and runs the shared fade/reset completion.
   evidence:
     - ghidra_disassembly_001B4E90
     - ghidra_scene_resource_dispatch
     - scene_resource_presentation_wrappers
+    - scene_resource_blank_wrapper_identity_promotion_static_v1
 0x001B4EB6:
-  name: SceneResource_RunBlankStream127CB4
+  name: SceneResource_RunState04BlankPresentationB
+  aliases:
+    - SceneResource_RunBlankStream127CB4
   confidence: decompiled
-  description: Prepares the shared blank frame, marks the scene VDP update scratch state, processes command stream 0x00127CB4 with parameters 0x03 and 0x0B, clears the scratch state, and runs the shared fade/reset completion.
+  description: Second state-04 blank presentation wrapper that prepares the shared blank frame, marks the scene VDP update scratch state, processes SCENE_RESOURCE_BLANK_STREAM_STATE_04_B with parameters 0x03 and 0x0B, clears the scratch state, and runs the shared fade/reset completion.
   evidence:
     - ghidra_disassembly_001B4EB6
     - ghidra_scene_resource_dispatch
     - scene_resource_presentation_wrappers
+    - scene_resource_blank_wrapper_identity_promotion_static_v1
 0x001B4EDC:
-  name: SceneResource_RunBlankStream127D74
+  name: SceneResource_RunState09BlankPresentation
+  aliases:
+    - SceneResource_RunBlankStream127D74
   confidence: decompiled
-  description: Prepares the shared blank frame, marks the scene VDP update scratch state, processes command stream 0x00127D74 with parameters 0x03 and 0x06, clears the scratch state, and runs the shared fade/reset completion.
+  description: State-09 blank presentation wrapper that prepares the shared blank frame, marks the scene VDP update scratch state, processes SCENE_RESOURCE_BLANK_STREAM_STATE_09 with parameters 0x03 and 0x06, clears the scratch state, and runs the shared fade/reset completion.
   evidence:
     - ghidra_disassembly_001B4EDC
     - ghidra_scene_resource_dispatch
     - scene_resource_presentation_wrappers
+    - scene_resource_blank_wrapper_identity_promotion_static_v1
 0x001B4F04:
   name: SceneResource_RunSharedC000Presentation
   size: 120

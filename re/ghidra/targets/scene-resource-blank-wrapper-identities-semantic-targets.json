@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-blank-wrapper-identities",
+    "purpose": "Replace stream-address-bearing blank presentation wrapper names with stable state, stream, and parameter identities."
+  },
+  "targets": [
+    { "address": "0x001B4CE6", "name": "SceneResource_RunState07BlankPresentation", "legacy_name": "SceneResource_RunBlankStream1277C5", "range": "0x001B4CE6-0x001B4D0B", "size": 38, "scene_state": "0x07", "stream": "SCENE_RESOURCE_BLANK_STREAM_STATE_07", "parameters": [4, 5] },
+    { "address": "0x001B4DF8", "name": "SceneResource_RunState01BlankPresentation", "legacy_name": "SceneResource_RunBlankStream1279B7", "range": "0x001B4DF8-0x001B4E1D", "size": 38, "scene_state": "0x01", "stream": "SCENE_RESOURCE_BLANK_STREAM_STATE_01", "parameters": [3, 6] },
+    { "address": "0x001B4E1E", "name": "SceneResource_RunState03BlankPresentation", "legacy_name": "SceneResource_RunBlankStream127AEE", "range": "0x001B4E1E-0x001B4E43", "size": 38, "scene_state": "0x03", "stream": "SCENE_RESOURCE_BLANK_STREAM_STATE_03", "parameters": [3, 12] },
+    { "address": "0x001B4E44", "name": "SceneResource_RunState04BlankPreludePresentation", "legacy_name": "SceneResource_RunBlankStream127B60", "range": "0x001B4E44-0x001B4E69", "size": 38, "scene_state": "0x04", "branch": "prelude", "stream": "SCENE_RESOURCE_BLANK_STREAM_STATE_04_PRELUDE", "parameters": [3, 11] },
+    { "address": "0x001B4E6A", "name": "SceneResource_RunState04BlankPresentationA", "legacy_name": "SceneResource_RunBlankStream127BD2", "range": "0x001B4E6A-0x001B4E8F", "size": 38, "scene_state": "0x04", "branch": "A", "stream": "SCENE_RESOURCE_BLANK_STREAM_STATE_04_A", "parameters": [3, 11] },
+    { "address": "0x001B4E90", "name": "SceneResource_RunState0BBlankPresentation", "legacy_name": "SceneResource_RunBlankStream127C42", "range": "0x001B4E90-0x001B4EB5", "size": 38, "scene_state": "0x0B", "stream": "SCENE_RESOURCE_BLANK_STREAM_STATE_0B", "parameters": [3, 11] },
+    { "address": "0x001B4EB6", "name": "SceneResource_RunState04BlankPresentationB", "legacy_name": "SceneResource_RunBlankStream127CB4", "range": "0x001B4EB6-0x001B4EDB", "size": 38, "scene_state": "0x04", "branch": "B", "stream": "SCENE_RESOURCE_BLANK_STREAM_STATE_04_B", "parameters": [3, 11] },
+    { "address": "0x001B4EDC", "name": "SceneResource_RunState09BlankPresentation", "legacy_name": "SceneResource_RunBlankStream127D74", "range": "0x001B4EDC-0x001B4F03", "size": 40, "scene_state": "0x09", "stream": "SCENE_RESOURCE_BLANK_STREAM_STATE_09", "parameters": [3, 6] }
+  ],
+  "evidence": [
+    "exact blank wrapper instruction bodies",
+    "canonical state-specific blank streams",
+    "direct SceneResource_Dispatch callers",
+    "fixed interpreter parameter pairs"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
