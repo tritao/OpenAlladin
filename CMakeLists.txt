@@ -134,6 +134,8 @@ add_library(openaladdin_clean_core STATIC
     src/core/frame.hpp
     src/core/interaction.cpp
     src/core/interaction.hpp
+    src/core/level.cpp
+    src/core/level.hpp
     src/core/movement_vm.cpp
     src/core/movement_vm.hpp
     src/core/player.cpp
@@ -341,6 +343,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(clean_core_camera_test)
     openaladdin_enable_test_assertions(clean_core_camera_test)
 
+    add_executable(clean_core_level_test tests/clean_core_level.cpp)
+    target_link_libraries(clean_core_level_test PRIVATE openaladdin_clean_core)
+    target_compile_features(clean_core_level_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(clean_core_level_test)
+    openaladdin_enable_test_assertions(clean_core_level_test)
+
     add_executable(sprite_renderer_test tests/sprite_renderer.cpp)
     target_link_libraries(sprite_renderer_test PRIVATE openaladdin_core)
     target_compile_features(sprite_renderer_test PRIVATE cxx_std_20)
@@ -494,6 +502,7 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     add_test(NAME clean_core_collision COMMAND clean_core_collision_test)
     add_test(NAME clean_core_interaction COMMAND clean_core_interaction_test)
     add_test(NAME clean_core_camera COMMAND clean_core_camera_test)
+    add_test(NAME clean_core_level COMMAND clean_core_level_test)
 
     add_test(NAME player_animation COMMAND player_animation_test)
     set_tests_properties(player_animation PROPERTIES

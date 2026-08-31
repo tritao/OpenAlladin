@@ -44,7 +44,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         RamAddress address;
         std::uint8_t width;
     };
-    constexpr std::array<RawField, 44> fields = {{
+    constexpr std::array<RawField, 45> fields = {{
         {kPlayerX, 2}, {kPlayerY, 2}, {kWorldCameraX, 2}, {kWorldCameraY, 2},
         {kPlayerWorldX, 2}, {kPlayerWorldY, 2},
         {kCameraReferenceX, 2}, {kCameraReferenceY, 2},
@@ -68,6 +68,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         {kCameraScrollApplyGate, 1}, {kCameraScrollDataCursor, 4},
         {kInteractionRowPointer, 4}, {kInteractionHandlerX, 2},
         {kInteractionHandlerY, 2}, {kLevelCameraScrollCallback, 4},
+        {kLevelFrameCallback, 4},
     }};
     output << "[";
     for (std::size_t index = 0; index < fields.size(); ++index) {
@@ -150,6 +151,7 @@ void trace_begin(
     trace.interaction_index = 0;
     trace.interaction_spawn_slot = 0;
     trace.camera_callback = 0;
+    trace.frame_callback = 0;
     trace.frame_atomic = false;
     output << "{\"type\":\"header\",\"format\":\"openaladdin-core-trace-v1\""
            << ",\"state_boundary\":\"game-loop\""
@@ -238,6 +240,7 @@ void trace_state(
            << ",\"tile_y\":" << read16(ram, kCameraTileY)
            << ",\"scroll_data_cursor\":" << read32(ram, kCameraScrollDataCursor)
            << ",\"level_scroll_callback\":" << trace.camera_callback
+           << ",\"level_frame_callback\":" << trace.frame_callback
            << "}"
            << ",\"scene\":{\"state\":" << static_cast<unsigned>(read8(ram, kSceneState))
            << ",\"script_cursor\":" << read32(ram, kSceneScriptCursor)

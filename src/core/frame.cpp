@@ -3,6 +3,7 @@
 #include "core/animation_vm.hpp"
 #include "core/camera.hpp"
 #include "core/collision.hpp"
+#include "core/level.hpp"
 #include "core/movement_vm.hpp"
 #include "core/player.hpp"
 #include "core/terrain.hpp"
@@ -111,6 +112,7 @@ void step_frame(
         trace->interaction_index = 0;
         trace->interaction_spawn_slot = 0;
         trace->camera_callback = 0;
+        trace->frame_callback = 0;
         trace_phase(*trace, kFrameEntry);
     }
 
@@ -147,6 +149,8 @@ void step_frame(
                 trace->collision_contact_count += result.contact_count;
                 trace->collision_actor_handler = result.dispatch.handler;
             }
+        } else if (service.ordinal == 25) {
+            level_invoke_frame_callback(core, trace);
         } else if (service.ordinal == 30) {
             animation_vm_tick_actors(core);
         } else if (service.ordinal == 36) {
