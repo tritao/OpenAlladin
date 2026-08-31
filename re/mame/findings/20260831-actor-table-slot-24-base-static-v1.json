@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "e4dd3b273a83dd6512a383a033f03843443c3168",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-table-slot-24-base-static-targets.json",
+  "promoted_symbols": [
+    "ACTOR_TABLE_SLOT_24_BASE"
+  ],
+  "contracts": [
+    "ACTOR_TABLE_BASE is 0x00FF7E40 and actor records have a 0x42-byte stride.",
+    "0x00FF8470 is ACTOR_TABLE_BASE plus 24 records, so it is fixed actor-table slot 24.",
+    "Actor_FindFreeSlotBackward begins at 0x00FF8470 and scans slots 24 down to 1.",
+    "Reverse-slot consumers at 0x001ACDDE, 0x001ACE3E, and 0x001AE29C use the same upper pool boundary."
+  ],
+  "evidence": [
+    "Exact actor-table base and record-stride arithmetic",
+    "Cached Ghidra decompilation of Actor_FindFreeSlotBackward",
+    "Whole-ROM context for reverse-slot consumers"
+  ],
+  "limitations": [
+    "The symbol identifies a fixed actor-record boundary; it does not claim that slot 24 is permanently occupied by one gameplay actor.",
+    "No additional field semantics are inferred from this base-address promotion."
+  ],
+  "conclusion": "The generated Unknown_00FF8470 identity is replaced by the stable fixed actor-table slot-24 base while preserving the allocator/reuse distinction.",
+  "confidence": "confirmed",
+  "status": "recorded-semantic-promotion"
+}

@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "focus": "Canonicalize the fixed upper-end actor-table record used by the backward allocator and reverse-slot consumers.",
+  "targets": [
+    { "address": "0x001AE292", "name": "Actor_FindFreeSlotBackward", "pool": "backward", "start": "0x00FF8470", "count": 24, "stride": "0x42" },
+    { "address": "0x001ACDDE", "name": "Actor_ReversePoolConsumer_A", "ram": "0x00FF8470" },
+    { "address": "0x001ACE3E", "name": "Actor_ReversePoolConsumer_B", "ram": "0x00FF8470" },
+    { "address": "0x001AE29C", "name": "Actor_ReversePoolConsumer_C", "ram": "0x00FF8470" }
+  ],
+  "contracts": [
+    "ACTOR_TABLE_BASE is 0x00FF7E40 and each actor record is 0x42 bytes.",
+    "0x00FF8470 equals actor-table slot 24 and is the starting record for the backward pool scan.",
+    "Reverse-slot consumers address the same fixed record boundary; no independent object identity is assigned to the address."
+  ],
+  "conclusion": "The fixed upper-end backward-pool record is a canonical actor-table slot-24 base rather than an anonymous RAM address."
+}
