@@ -4495,7 +4495,7 @@
   name: Level08_ExitCallback
   aliases: [Level08_ExitRoutine]
   confidence: decompiled
-  description: Level-table entry-8 exit callback; prepares scene-resource VDP state, initializes ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT at 0x001B7DC8, copies the player position into the actor, publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350, and records the exit resource phase.
+  description: Level-table entry-8 exit callback; prepares scene-resource VDP state, initializes ACTOR_TEMPLATE_LEVEL08_EXIT_PRESENTATION at 0x001B7DC8, copies the player position into the actor, publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350, and records the exit resource phase.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
@@ -4504,7 +4504,7 @@
   name: Level09_FrameCallback
   aliases: [Level09_EnterRoutine]
   confidence: decompiled
-  description: Level-table entry-9 per-frame callback; advances its event cadence, evaluates player-coordinate windows, conditionally spawns ACTOR_TEMPLATE_TYPE_50_LEVEL09_SPAWN_BASE into a backward slot before installing the level-specific movement/animation and position fields, and increments its bounded event counter.
+  description: Level-table entry-9 per-frame callback; advances its event cadence, evaluates player-coordinate windows, conditionally spawns ACTOR_TEMPLATE_LEVEL09_SPAWN_BASE into a backward slot before installing the level-specific movement/animation and position fields, and increments its bounded event counter.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
@@ -6182,7 +6182,7 @@
   name: InteractionSpawn_CreateType01Actor
   aliases: [InteractionSpawn_RuntimeType01_87]
   confidence: decompiled
-  description: Interaction selector 0x87 handler that reverse-spawns ACTOR_TEMPLATE_TYPE01 at 0x001B7A30 through InteractionSpawn_ReverseSlot.
+  description: Interaction selector 0x87 handler that reverse-spawns ACTOR_TEMPLATE_PROXIMITY_BOUNCE_TRIGGER at 0x001B7A30 through InteractionSpawn_ReverseSlot.
   evidence:
     - ghidra_disassembly_001B74D6
     - interaction-spawn-type46-5a-response-targets

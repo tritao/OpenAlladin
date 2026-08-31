@@ -1,0 +1,78 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "promotions": [
+    {
+      "address": "0x001B7BE8",
+      "old_name": "ACTOR_TEMPLATE_TYPE_2F_LEVEL12_EVENT",
+      "name": "ACTOR_TEMPLATE_LEVEL12_TERMINAL_EVENT",
+      "reason": "Level-12 callback-selected final-scene terminal-event template."
+    },
+    {
+      "address": "0x001B7DC8",
+      "old_name": "ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT",
+      "name": "ACTOR_TEMPLATE_LEVEL08_EXIT_PRESENTATION",
+      "reason": "Level-08 exit callback template with the exact approach/settle movement stream."
+    },
+    {
+      "address": "0x001B7FA8",
+      "old_name": "ACTOR_TEMPLATE_TYPE_50_LEVEL09_SPAWN_BASE",
+      "name": "ACTOR_TEMPLATE_LEVEL09_SPAWN_BASE",
+      "reason": "Level-09 callback-selected spawn base template."
+    },
+    {
+      "address": "0x001B80D4",
+      "old_name": "ACTOR_TEMPLATE_TYPE_52_LEVEL09",
+      "name": "ACTOR_TEMPLATE_LEVEL09_ENTRY",
+      "reason": "Level-09 entry actor template with exact movement and animation links."
+    },
+    {
+      "address": "0x001B7A30",
+      "old_name": "ACTOR_TEMPLATE_TYPE01",
+      "name": "ACTOR_TEMPLATE_PROXIMITY_BOUNCE_TRIGGER",
+      "reason": "Upper-resource actor produced by selector 0x87 and tied to the Type-0x01 proximity-bounce collision path."
+    },
+    {
+      "address": "0x00122D92",
+      "old_name": "ACTOR_ANIM_TYPE01",
+      "name": "ACTOR_ANIM_PROXIMITY_BOUNCE_TRIGGER",
+      "reason": "Exact animation root for the Type-0x01 proximity-bounce trigger actor."
+    },
+    {
+      "address": "0x001F3DEE",
+      "old_name": "ACTOR_FRAME_TYPE_34_WALL",
+      "name": "ACTOR_FRAME_WALL_OSCILLATION_PRIMARY",
+      "reason": "Primary sprite-frame owner in the confirmed wall-oscillation sequence."
+    },
+    {
+      "address": "0x001F3E30",
+      "old_name": "ACTOR_FRAME_TYPE_34_WALL_VARIANT_1",
+      "name": "ACTOR_FRAME_WALL_OSCILLATION_VARIANT_A",
+      "reason": "Second sprite-frame owner in the confirmed wall-oscillation sequence."
+    },
+    {
+      "address": "0x001F3E72",
+      "old_name": "ACTOR_FRAME_TYPE_34_WALL_VARIANT_2",
+      "name": "ACTOR_FRAME_WALL_OSCILLATION_VARIANT_B",
+      "reason": "Third sprite-frame owner in the confirmed wall-oscillation sequence."
+    },
+    {
+      "address": "0x001F3E9C",
+      "old_name": "ACTOR_FRAME_TYPE_34_WALL_VARIANT_3",
+      "name": "ACTOR_FRAME_WALL_OSCILLATION_VARIANT_C",
+      "reason": "Fourth sprite-frame owner in the confirmed wall-oscillation sequence."
+    }
+  ],
+  "policy": {
+    "legacy_names_preserved_as_aliases": true,
+    "rom_ranges_changed": false,
+    "unobserved_natural_route_preserved": true,
+    "shared_or_unreferenced_records_deferred": true
+  },
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

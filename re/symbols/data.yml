@@ -3820,7 +3820,7 @@
   type: movement_stream
   size: 8
   confidence: decompiled
-  description: Type-0x2F Level-12 terminal-event movement root supplied by ACTOR_TEMPLATE_TYPE_2F_LEVEL12_EVENT at 0x001B7BE8. Its exact 8-byte stream applies a (+3, 0) delta and loops unconditionally back to 0x001203D0.
+  description: Type-0x2F Level-12 terminal-event movement root supplied by ACTOR_TEMPLATE_LEVEL12_TERMINAL_EVENT at 0x001B7BE8. Its exact 8-byte stream applies a (+3, 0) delta and loops unconditionally back to 0x001203D0.
   evidence:
     - shared-movement-root-family-static-decompilation
     - actor_template_special_event_family_static_decompilation
@@ -4589,7 +4589,7 @@
   name: ACTOR_ANIM_TYPE55_INTERACTION
   size: 62
   confidence: decompiled
-  description: Type-0x55 interaction animation installed by ACTOR_TEMPLATE_INTERACTION_POSITION_VARIANTS. Its exact 62-byte region clears the actor, presents the 0x1596-0x15BA sequence with timer 0x89, writes 0x40 to actor field +0x06, plays sound 0x4D, writes type 0x84, and ends with EC 0x01 immediately before ACTOR_ANIM_TYPE01 at 0x00122D92.
+  description: Type-0x55 interaction animation installed by ACTOR_TEMPLATE_INTERACTION_POSITION_VARIANTS. Its exact 62-byte region clears the actor, presents the 0x1596-0x15BA sequence with timer 0x89, writes 0x40 to actor field +0x06, plays sound 0x4D, writes type 0x84, and ends with EC 0x01 immediately before ACTOR_ANIM_PROXIMITY_BOUNCE_TRIGGER at 0x00122D92.
   evidence:
     - actor_template_interaction_dispatch_family_static_decompilation
     - animation_stream_decoder
@@ -4689,7 +4689,7 @@
   aliases: [ACTOR_ANIM_TYPE84_TYPE01_RESPONSE]
   size: 38
   confidence: decompiled
-  description: Shared player-collision recovery animation installed by the Type-0x01 player-collision transition at 0x001AFD84 and the collision-response helper at 0x001ABF9C. Its exact 38-byte region plays sound 0x05, presents the 0x1632-0x164E sequence, writes the recovered actor state through ED, and returns to ACTOR_ANIM_TYPE01 at 0x00122D92.
+  description: Shared player-collision recovery animation installed by the proximity-bounce trigger transition at 0x001AFD84 and the collision-response helper at 0x001ABF9C. Its exact 38-byte region plays sound 0x05, presents the 0x1632-0x164E sequence, writes the recovered actor state through ED, and returns to ACTOR_ANIM_PROXIMITY_BOUNCE_TRIGGER at 0x00122D92.
   evidence:
     - player_collision_transfer_capable_mechanism_graph
     - actor_collision_handler_family_static_decompilation
@@ -5100,7 +5100,7 @@
   type: movement_stream
   size: 226
   confidence: decompiled
-  description: Level-09 Type-0x52 movement stream installed by ACTOR_TEMPLATE_TYPE_52_LEVEL09 during Level09_FrameCallback. Its exact 226-byte owner contains the signed rise/fall trajectory, actor-field gates, Type-0x84 child-spawn response, and the terminal jump at 0x001213DC back to the root.
+  description: Level-09 Type-0x52 movement stream installed by ACTOR_TEMPLATE_LEVEL09_ENTRY during Level09_FrameCallback. Its exact 226-byte owner contains the signed rise/fall trajectory, actor-field gates, Type-0x84 child-spawn response, and the terminal jump at 0x001213DC back to the root.
   evidence:
     - type52_level09_animation_static_decompilation
     - movement_stream_decoder
@@ -5235,7 +5235,7 @@
   type: movement_stream
   size: 110
   confidence: decompiled
-  description: Type-0x60 Level-08 exit-presentation movement root supplied by ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT at 0x001B7DC8 and selected by Level08_ExitCallback. Its exact 110-byte region follows the fixed approach/settle profile and loops from 0x00121590 back to 0x0012152A, ending immediately before the defined pointer data at 0x00121598.
+  description: Type-0x60 Level-08 exit-presentation movement root supplied by ACTOR_TEMPLATE_LEVEL08_EXIT_PRESENTATION at 0x001B7DC8 and selected by Level08_ExitCallback. Its exact 110-byte region follows the fixed approach/settle profile and loops from 0x00121590 back to 0x0012152A, ending immediately before the defined pointer data at 0x00121598.
   evidence:
     - level08_exit_movement_stream_static_decompilation
     - level08_exit_type60_template_static_decompilation
@@ -5336,41 +5336,45 @@
     - type34_wall_animation_static_decompilation
 
 0x001F3DEE:
-  name: ACTOR_FRAME_TYPE_34_WALL
+  name: ACTOR_FRAME_WALL_OSCILLATION_PRIMARY
+  aliases: [ACTOR_FRAME_TYPE_34_WALL]
   frame_ref: 0x12E2
   size: 66
   confidence: confirmed
-  description: First Chopper sprite-frame record for the type-0x34 wall actor, referenced by animation frame 0x12E2. Its exact 66-byte record spans 0x001F3DEE-0x001F3E2F and is followed by the 0x12E6 frame at 0x001F3E30.
+  description: Primary Chopper sprite-frame record for the wall-oscillation actor, referenced by animation frame 0x12E2. Its exact 66-byte record spans 0x001F3DEE-0x001F3E2F and is followed by the 0x12E6 frame at 0x001F3E30.
   evidence:
     - actor_type_34_stream_decode
     - type34_wall_frame_manifest
 
 0x001F3E30:
-  name: ACTOR_FRAME_TYPE_34_WALL_VARIANT_1
+  name: ACTOR_FRAME_WALL_OSCILLATION_VARIANT_A
+  aliases: [ACTOR_FRAME_TYPE_34_WALL_VARIANT_1]
   frame_ref: 0x12E6
   size: 66
   confidence: confirmed
-  description: Second Chopper sprite-frame record for the type-0x34 wall actor, referenced by animation frame 0x12E6. Its exact 66-byte record spans 0x001F3E30-0x001F3E71 and is followed by the 0x12EA frame at 0x001F3E72.
+  description: Second Chopper sprite-frame record for the wall-oscillation actor, referenced by animation frame 0x12E6. Its exact 66-byte record spans 0x001F3E30-0x001F3E71 and is followed by the 0x12EA frame at 0x001F3E72.
   evidence:
     - actor_type_34_stream_decode
     - type34_wall_frame_manifest
 
 0x001F3E72:
-  name: ACTOR_FRAME_TYPE_34_WALL_VARIANT_2
+  name: ACTOR_FRAME_WALL_OSCILLATION_VARIANT_B
+  aliases: [ACTOR_FRAME_TYPE_34_WALL_VARIANT_2]
   frame_ref: 0x12EA
   size: 42
   confidence: confirmed
-  description: Third Chopper sprite-frame record for the type-0x34 wall actor, referenced by animation frame 0x12EA. Its exact 42-byte record spans 0x001F3E72-0x001F3E9B and is followed by the 0x12EE frame at 0x001F3E9C.
+  description: Third Chopper sprite-frame record for the wall-oscillation actor, referenced by animation frame 0x12EA. Its exact 42-byte record spans 0x001F3E72-0x001F3E9B and is followed by the 0x12EE frame at 0x001F3E9C.
   evidence:
     - actor_type_34_stream_decode
     - type34_wall_frame_manifest
 
 0x001F3E9C:
-  name: ACTOR_FRAME_TYPE_34_WALL_VARIANT_3
+  name: ACTOR_FRAME_WALL_OSCILLATION_VARIANT_C
+  aliases: [ACTOR_FRAME_TYPE_34_WALL_VARIANT_3]
   frame_ref: 0x12EE
   size: 66
   confidence: confirmed
-  description: Fourth Chopper sprite-frame record for the type-0x34 wall actor, referenced by animation frame 0x12EE. Its exact 66-byte record spans 0x001F3E9C-0x001F3EDD before the following graphics data.
+  description: Fourth Chopper sprite-frame record for the wall-oscillation actor, referenced by animation frame 0x12EE. Its exact 66-byte record spans 0x001F3E9C-0x001F3EDD before the following graphics data.
   evidence:
     - actor_type_34_stream_decode
     - type34_wall_frame_manifest
@@ -7009,7 +7013,7 @@
   name: ACTOR_ANIM_TYPE52_LEVEL09_ENTRY
   size: 18
   confidence: decompiled
-  description: Level-09 Type-0x52 entry animation installed by ACTOR_TEMPLATE_TYPE_52_LEVEL09. Its compact region presents frame 0x13B2, waits on the encoded interaction field through the F4 gate targeting ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX at 0x001253FA, and loops from 0x001253F4 back to 0x001253E8.
+  description: Level-09 Type-0x52 entry animation installed by ACTOR_TEMPLATE_LEVEL09_ENTRY. Its compact region presents frame 0x13B2, waits on the encoded interaction field through the F4 gate targeting ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX at 0x001253FA, and loops from 0x001253F4 back to 0x001253E8.
   evidence:
     - type52_level09_animation_static_decompilation
     - animation_stream_decoder
@@ -7191,10 +7195,11 @@
     - animation_stream_decoder
 
 0x00122D92:
-  name: ACTOR_ANIM_TYPE01
+  name: ACTOR_ANIM_PROXIMITY_BOUNCE_TRIGGER
+  aliases: [ACTOR_ANIM_TYPE01]
   size: 32
   confidence: confirmed
-  description: Type-0x01 upper-resource animation. Its exact 32-byte region holds sprite frame 0x001F7DC0 twice, conditionally executes F5 with ACTOR_TEMPLATE_ACTOR_COLLISION_CHILD_EFFECT at signed offset (+22,-12), and loops from 0x00122DAC back to the entry; the adjacent 0x00122DB2 fragment is not folded into this root.
+  description: Proximity-bounce trigger animation for the upper-resource actor. Its exact 32-byte region holds sprite frame 0x001F7DC0 twice, conditionally executes F5 with ACTOR_TEMPLATE_ACTOR_COLLISION_CHILD_EFFECT at signed offset (+22,-12), and loops from 0x00122DAC back to the entry; the adjacent 0x00122DB2 fragment is not folded into this root.
   evidence:
     - ghidra_type01_child_chain_decompile
     - type01_type84_child_animation_static_decompilation
@@ -7714,11 +7719,12 @@
     - actor_runtime_type6e_73_static_decompilation
 
 0x001B7A30:
-  name: ACTOR_TEMPLATE_TYPE01
+  name: ACTOR_TEMPLATE_PROXIMITY_BOUNCE_TRIGGER
+  aliases: [ACTOR_TEMPLATE_TYPE01]
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Compact Type-0x01 upper-resource template with no movement stream and animation ACTOR_ANIM_TYPE01.
+  description: Compact upper-resource template for the proximity-bounce trigger actor, with no movement stream and animation ACTOR_ANIM_PROXIMITY_BOUNCE_TRIGGER.
   evidence:
     - mame_upper_platform_selector87_trace
     - ghidra_type01_child_chain_decompile
@@ -8395,11 +8401,12 @@
     - actor_template_grid_xrefs
 
 0x001B80D4:
-  name: ACTOR_TEMPLATE_TYPE_52_LEVEL09
+  name: ACTOR_TEMPLATE_LEVEL09_ENTRY
+  aliases: [ACTOR_TEMPLATE_TYPE_52_LEVEL09]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Level-09 type-0x52 actor template initialized by Level09_FrameCallback; it carries movement stream 0x00121300 and animation stream ACTOR_ANIM_TYPE52_LEVEL09_ENTRY at 0x001253E8, with four resources and the encoded post-initialization flag word.
+  description: Level-09 entry actor template initialized by Level09_FrameCallback; it carries movement stream 0x00121300 and animation stream ACTOR_ANIM_TYPE52_LEVEL09_ENTRY at 0x001253E8, with four resources and the encoded post-initialization flag word.
   evidence:
     - type52_level09_animation_static_decompilation
     - level_callback_family_targets
@@ -8679,11 +8686,12 @@
     - actor_template_grid_xrefs
 
 0x001B7DC8:
-  name: ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT
+  name: ACTOR_TEMPLATE_LEVEL08_EXIT_PRESENTATION
+  aliases: [ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x60 Level 08 exit-presentation template selected by Level08_ExitCallback; it uses ACTOR_MOVE_LEVEL08_EXIT_PRESENTATION at 0x0012152A, default animation entry 0x00123130, owns eleven resources, and carries trailing flags 0x0200 before the caller copies the player position and publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350.
+  description: Level 08 exit-presentation template selected by Level08_ExitCallback; it uses ACTOR_MOVE_LEVEL08_EXIT_PRESENTATION at 0x0012152A, default animation entry 0x00123130, owns eleven resources, and carries trailing flags 0x0200 before the caller copies the player position and publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350.
   evidence:
     - ghidra_level08_exit_routine
     - level08_exit_template_targets
@@ -9327,11 +9335,12 @@
     - actor_template_grid_xrefs
 
 0x001B7FA8:
-  name: ACTOR_TEMPLATE_TYPE_50_LEVEL09_SPAWN_BASE
+  name: ACTOR_TEMPLATE_LEVEL09_SPAWN_BASE
+  aliases: [ACTOR_TEMPLATE_TYPE_50_LEVEL09_SPAWN_BASE]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x50 Level-09 spawn base selected by Level09_FrameCallback at 0x001B6186; its template supplies the type, base flags, template word 0x4000, and eleven resources, while the callback installs ACTOR_MOVE_LEVEL09_SPAWN at 0x001203F2, animation 0x00124B94, facing 0xFF, response byte 2, and the level-relative position.
+  description: Level-09 spawn base selected by Level09_FrameCallback at 0x001B6186; its template supplies the type, base flags, template word 0x4000, and eleven resources, while the callback installs ACTOR_MOVE_LEVEL09_SPAWN at 0x001203F2, animation 0x00124B94, facing 0xFF, response byte 2, and the level-relative position.
   evidence:
     - ghidra_decompile_001B614C
     - level09_type50_template_targets
@@ -9349,11 +9358,12 @@
     - actor_template_grid_xrefs
 
 0x001B7BE8:
-  name: ACTOR_TEMPLATE_TYPE_2F_LEVEL12_EVENT
+  name: ACTOR_TEMPLATE_LEVEL12_TERMINAL_EVENT
+  aliases: [ACTOR_TEMPLATE_TYPE_2F_LEVEL12_EVENT]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2F final-scene event template selected by Level12_FrameCallback at 0x001B62B6 when its event byte is 0x0D; it uses ACTOR_MOVE_LEVEL12_TERMINAL_EVENT at 0x001203D0, animation stream ACTOR_ANIM_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
+  description: Level-12 final-scene terminal-event template selected by Level12_FrameCallback at 0x001B62B6 when its event byte is 0x0D; it uses ACTOR_MOVE_LEVEL12_TERMINAL_EVENT at 0x001203D0, animation stream ACTOR_ANIM_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
