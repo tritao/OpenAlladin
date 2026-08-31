@@ -3796,6 +3796,7 @@
   evidence:
     - unreferenced_movement_streams_static_v1
     - actor_vm_orphan_identities_semantic_v1
+    - actor_vm_orphans_natural_route_runtime_v1
     - movement_stream_decoder
 
 0x001203F2:
@@ -4413,6 +4414,7 @@
     - unreferenced_animation_self_loop_static_v1
     - vm_stream_semantic_naming_static_v1
     - unresolved_vm_streams_natural_route_runtime_v1
+    - actor_vm_orphans_natural_route_runtime_v1
     - animation_stream_decoder
 
 0x00123DEA:
@@ -7969,6 +7971,7 @@
     - actor_template_unreferenced_records_static_decompilation
     - actor_template_body_confidence_static_v1
     - actor_vm_orphan_identities_semantic_v1
+    - actor_vm_orphans_natural_route_runtime_v1
 
 0x001B7918:
   name: ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD
@@ -8015,6 +8018,7 @@
     - actor_template_unreferenced_records_static_decompilation
     - actor_template_body_confidence_static_v1
     - actor_vm_orphan_identities_semantic_v1
+    - actor_vm_orphans_natural_route_runtime_v1
 
 0x001B7E04:
   name: ACTOR_TEMPLATE_EXIT_TYPE_84

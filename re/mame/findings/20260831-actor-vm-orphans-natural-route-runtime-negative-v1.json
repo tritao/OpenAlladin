@@ -1,0 +1,65 @@
+{
+  "format": "openaladdin-actor-vm-orphans-runtime-audit-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "source_finding": "re/mame/findings/20260831-unresolved-vm-streams-runtime-negative-v1.json",
+  "status": "recorded-runtime-negative-evidence",
+  "confidence": "provisional",
+  "route": {
+    "source_campaign": "re/mame/campaigns/20260826-level01-recording-fresh-v2.json",
+    "frames": 2296,
+    "input": "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*60,c+right*20,right*240,c+right*1,right*99,right*50,c+right*20,c*10,right*31,c+left*30,left*30,up*100,c*1,right*195,b+right*50,right*100,none*19",
+    "trace_dir": "build/re/traces/actor-vm-orphans-natural-20260831",
+    "capture_profile": "state",
+    "route_frontier": "Level 01 upper-edge frontier at frame 2296",
+    "rom_read_ranges": [
+      ["0x0011F800", "0x0011F8A3"],
+      ["0x001203E8", "0x001203F1"],
+      ["0x00123DE2", "0x00123DE9"],
+      ["0x001B7990", "0x001B79A3"],
+      ["0x001B7A58", "0x001B7A6B"]
+    ],
+    "rom_read_count": 0
+  },
+  "ranges": [
+    {
+      "name": "ACTOR_MOVE_INTERACTION_ANCHOR_GRID_RESPONSE",
+      "range": ["0x0011F800", "0x0011F8A3"],
+      "read_count": 0
+    },
+    {
+      "name": "ACTOR_MOVE_DRIFT_PLUS2_PLUS1_LOOP",
+      "range": ["0x001203E8", "0x001203F1"],
+      "read_count": 0
+    },
+    {
+      "name": "ACTOR_ANIM_SINGLE_FRAME_SELF_LOOP",
+      "range": ["0x00123DE2", "0x00123DE9"],
+      "read_count": 0
+    },
+    {
+      "name": "ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM",
+      "range": ["0x001B7990", "0x001B79A3"],
+      "read_count": 0
+    },
+    {
+      "name": "ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400",
+      "range": ["0x001B7A58", "0x001B7A6B"],
+      "read_count": 0
+    }
+  ],
+  "evidence": [
+    "The narrow ROM taps covered every byte of all five actor VM/template ranges.",
+    "The established natural route reached the Level 01 upper-edge frontier and exercised live actor and AnimationVM state.",
+    "The completed trace contains no matching rom_read records for any of the five ranges."
+  ],
+  "limitations": [
+    "This is one fresh-boot Level 01 route, not an exhaustive reachability proof.",
+    "A different scene, indirect selector, or unused template path may still consume one of these objects.",
+    "The external producer or selector for each range remains unresolved."
+  ],
+  "conclusion": "None of the five standalone actor VM/template ranges was read on the verified natural Level 01 route. Their behavior/field identities remain valid, while global reachability stays open for multi-scene and indirect-selector analysis."
+}
