@@ -612,6 +612,25 @@ def test_level04_event_response_names_preserve_numeric_aliases():
     assert mappings["LEVEL04_EVENT_RESPONSE"].scope == "event"
 
 
+def test_interaction_proximity_response_names_preserve_numeric_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00125DEA: ("ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE", "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_ROOT"),
+        0x00125E08: ("ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE_VARIANT_A", "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A"),
+        0x00125E40: ("ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE_VARIANT_B", "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_B"),
+        0x001B8354: ("ACTOR_TEMPLATE_INTERACTION_PROXIMITY_RESPONSE", "ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert mappings["INTERACTION_PROXIMITY_RESPONSE"].scope == "role"
+
+
 def test_random_collision_and_frame_response_names_preserve_aliases():
     symbols = SymbolStore()
     expected = {

@@ -228,6 +228,16 @@ mappings:
       - ghidra_scene_level_actor_block
     description: Terminal-interaction root, child, response, and actor-template family.
 
+  - name: INTERACTION_PROXIMITY_RESPONSE
+    scope: role
+    symbol_addresses: [0x00125DEA, 0x00125E08, 0x00125E40, 0x001B8354]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - actor_template_late_dispatch_family_static_decompilation
+      - ghidra_interaction_dispatch_block
+    description: Shared FD/FE interaction-proximity response root, variants, and actor template.
+
   - name: COLLISION_RESPONSE_CHILD
     scope: role
     symbol_addresses: [0x001B8368]

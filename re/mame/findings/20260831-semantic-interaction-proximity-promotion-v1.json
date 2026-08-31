@@ -1,0 +1,21 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "interaction-proximity-response-identities",
+  "promotions": [
+    "ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE",
+    "ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE_VARIANT_A",
+    "ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE_VARIANT_B",
+    "ACTOR_TEMPLATE_INTERACTION_PROXIMITY_RESPONSE"
+  ],
+  "evidence": [
+    "actor_template_late_dispatch_family_static_decompilation",
+    "ghidra_interaction_dispatch_block"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role"
+  }
+}

@@ -3015,9 +3015,9 @@ def test_actor_type41_interaction_response_animation_is_exact():
 def test_type84_interaction_fd_fe_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {
-        0x00125DEA: (0x00125E07, 30, "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_ROOT"),
-        0x00125E08: (0x00125E3F, 56, "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A"),
-        0x00125E40: (0x00125E71, 50, "ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_B"),
+        0x00125DEA: (0x00125E07, 30, "ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE"),
+        0x00125E08: (0x00125E3F, 56, "ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE_VARIANT_A"),
+        0x00125E40: (0x00125E71, 50, "ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE_VARIANT_B"),
     }
     for address, (end, size, name) in expected.items():
         stream = symbols.at(address, include_ranges=False)

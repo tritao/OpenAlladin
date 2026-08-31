@@ -7351,31 +7351,34 @@
     - animation_stream_decoder
 
 0x00125DEA:
-  name: ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_ROOT
+  name: ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_ROOT]
   type: animation_stream
   size: 30
   confidence: decompiled
-  description: Type-0x84 interaction root installed by ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE for dispatch selectors 0xFD and 0xFE. Its exact 30-byte owner presents frame 0x12B6, pushes Type84ChildEvent_1ACB7A, loops on the actor-field compare, and conditionally enters ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A at 0x00125E08 before returning to its root.
+  description: Interaction-proximity response root installed by ACTOR_TEMPLATE_INTERACTION_PROXIMITY_RESPONSE for dispatch selectors 0xFD and 0xFE. Its exact 30-byte owner presents frame 0x12B6, pushes Type84ChildEvent_1ACB7A, loops on the actor-field compare, and conditionally enters ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE_VARIANT_A at 0x00125E08 before returning to its root.
   evidence:
     - actor_template_late_dispatch_family_static_decompilation
     - animation_stream_decoder
 
 0x00125E08:
-  name: ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A
+  name: ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE_VARIANT_A
+  aliases: [ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A]
   type: animation_stream
   size: 56
   confidence: decompiled
-  description: First Type-0x84 interaction response entry selected by the proximity branch in ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_ROOT. Its exact 56-byte owner uses the random branch to select the second response entry, presents the 0x12B6/0x12BA/0x12BE sequence, pushes Type84ChildEvent_1ACB82 and returns to the shared root at 0x00125DEA.
+  description: First interaction-proximity response entry selected by the proximity branch in ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE. Its exact 56-byte owner uses the random branch to select the second response entry, presents the 0x12B6/0x12BA/0x12BE sequence, pushes Type84ChildEvent_1ACB82 and returns to the shared root at 0x00125DEA.
   evidence:
     - actor_template_late_dispatch_family_static_decompilation
     - animation_stream_decoder
 
 0x00125E40:
-  name: ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_B
+  name: ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE_VARIANT_B
+  aliases: [ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_B]
   type: animation_stream
   size: 50
   confidence: decompiled
-  description: Second Type-0x84 interaction response entry selected by the random branch in ACTOR_ANIM_TYPE84_INTERACTION_FD_FE_VARIANT_A. Its exact 50-byte owner presents the 0x12B6/0x12BA/0x12BE sequence, pushes Type84ChildEvent_1ACB7A, and returns to the shared root at 0x00125DEA immediately before the following animation stream.
+  description: Second interaction-proximity response entry selected by the random branch in ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE_VARIANT_A. Its exact 50-byte owner presents the 0x12B6/0x12BA/0x12BE sequence, pushes Type84ChildEvent_1ACB7A, and returns to the shared root at 0x00125DEA immediately before the following animation stream.
   evidence:
     - actor_template_late_dispatch_family_static_decompilation
     - animation_stream_decoder
@@ -9017,11 +9020,12 @@
     - animation_stream_decoder
 
 0x001B8354:
-  name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE
+  name: ACTOR_TEMPLATE_INTERACTION_PROXIMITY_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_84_INTERACTION_FD_FE]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Shared type-0x84 interaction template selected by INTERACTION_HANDLER_TABLE entries 0xFD and 0xFE at ROM 0x004548/0x00454C; reverse-slot consumers at 0x001B6896 and 0x001B68B0 use no movement stream, animation stream 0x00125DEA, and four resources before applying offsets (+0x14,-1) and (+0x0B,+6), respectively.
+  description: Shared interaction-proximity response template selected by INTERACTION_HANDLER_TABLE entries 0xFD and 0xFE at ROM 0x004548/0x00454C; reverse-slot consumers at 0x001B6896 and 0x001B68B0 use no movement stream, animation stream ACTOR_ANIM_INTERACTION_PROXIMITY_RESPONSE at 0x00125DEA, and four resources before applying offsets (+0x14,-1) and (+0x0B,+6), respectively.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
