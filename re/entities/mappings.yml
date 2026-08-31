@@ -197,6 +197,17 @@ mappings:
       - ghidra_level12_scene_event_decompilation
     description: Level 12 timed scene-event animation and primary actor template family.
 
+  - name: LEVEL04_EVENT_RESPONSE
+    scope: event
+    symbol_addresses: [0x00125348, 0x00125392, 0x001B8084]
+    technical_types: [0x58]
+    confidence: decompiled
+    evidence:
+      - actor_template_late_interaction_family_static_decompilation
+      - interaction_spawn_early_family_static_decompilation
+      - level04-event45-animation-producer-static-targets
+    description: Level 04 event-response template with primary and alternate AnimationVM roots; the primary path arms LEVEL04_EVENT_45_PENDING.
+
   - name: TERMINAL_TERRAIN_TRANSITION
     scope: event
     symbol_addresses: [0x00125C26, 0x001B82A0]

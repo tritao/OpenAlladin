@@ -594,6 +594,24 @@ def test_terminal_interaction_family_names_preserve_numeric_aliases():
     assert mappings["TERMINAL_INTERACTION"].scope == "event"
 
 
+def test_level04_event_response_names_preserve_numeric_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00125348: ("ACTOR_ANIM_LEVEL04_EVENT_RESPONSE_ALTERNATE", "ACTOR_ANIM_TYPE58_INTERACTION_ALTERNATE"),
+        0x00125392: ("ACTOR_ANIM_LEVEL04_EVENT_RESPONSE", "ACTOR_ANIM_TYPE58_INTERACTION"),
+        0x001B8084: ("ACTOR_TEMPLATE_LEVEL04_EVENT_RESPONSE", "ACTOR_TEMPLATE_TYPE_58_INTERACTION"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert mappings["LEVEL04_EVENT_RESPONSE"].scope == "event"
+
+
 def test_random_collision_and_frame_response_names_preserve_aliases():
     symbols = SymbolStore()
     expected = {

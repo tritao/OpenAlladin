@@ -6895,20 +6895,22 @@
     - animation_stream_decoder
 
 0x00125348:
-  name: ACTOR_ANIM_TYPE58_INTERACTION_ALTERNATE
+  name: ACTOR_ANIM_LEVEL04_EVENT_RESPONSE_ALTERNATE
+  aliases: [ACTOR_ANIM_TYPE58_INTERACTION_ALTERNATE]
   size: 74
   confidence: decompiled
-  description: Alternate Type-0x58 interaction animation published by InteractionSpawn_Type58AlternateAnimation after allocation. Its packed 74-byte region writes actor type 0x84, waits on the encoded interaction-field comparisons, cycles the 0x1582-0x1592 frame sequence, and loops through 0x00125350.
+  description: Alternate Level 04 event-response animation published by InteractionSpawn_Type58AlternateAnimation after allocation. Its packed 74-byte region writes actor type 0x84, waits on the encoded interaction-field comparisons, cycles the 0x1582-0x1592 frame sequence, and loops through 0x00125350.
   evidence:
     - actor_template_late_interaction_family_static_decompilation
     - interaction_spawn_early_family_static_decompilation
     - animation_stream_decoder
 
 0x00125392:
-  name: ACTOR_ANIM_TYPE58_INTERACTION
+  name: ACTOR_ANIM_LEVEL04_EVENT_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE58_INTERACTION]
   size: 86
   confidence: decompiled
-  description: Primary Type-0x58 interaction animation installed by ACTOR_TEMPLATE_TYPE_58_INTERACTION. Its packed 86-byte region publishes actor type 0x84 with the actor-field write at 0x00125394, applies the encoded interaction gate, arms LEVEL04_EVENT_45_PENDING with ED 01 F12C 0001 at 0x001253A6 and 0x001253CA, cycles the 0x1582-0x1592 response frames, republishes type 0x58, and loops through 0x0012539A.
+  description: Primary Level 04 event-response animation installed by ACTOR_TEMPLATE_LEVEL04_EVENT_RESPONSE. Its packed 86-byte region publishes actor type 0x84 with the actor-field write at 0x00125394, applies the encoded interaction gate, arms LEVEL04_EVENT_45_PENDING with ED 01 F12C 0001 at 0x001253A6 and 0x001253CA, cycles the 0x1582-0x1592 response frames, republishes the event-response actor, and loops through 0x0012539A.
   evidence:
     - actor_template_late_interaction_family_static_decompilation
     - interaction_spawn_early_family_static_decompilation
@@ -9197,11 +9199,12 @@
     - actor_template_grid_xrefs
 
 0x001B8084:
-  name: ACTOR_TEMPLATE_TYPE_58_INTERACTION
+  name: ACTOR_TEMPLATE_LEVEL04_EVENT_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_58_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x58 interaction template loaded through forward-slot consumers at 0x001B668A and 0x001B6696; it has no movement stream, uses animation stream 0x00125392, and owns four resources, while the latter consumer replaces the animation root with 0x00125348 after allocation.
+  description: Level 04 event-response template loaded through forward-slot consumers at 0x001B668A and 0x001B6696; it has no movement stream, uses ACTOR_ANIM_LEVEL04_EVENT_RESPONSE at 0x00125392, and owns four resources, while the latter consumer replaces the animation root with ACTOR_ANIM_LEVEL04_EVENT_RESPONSE_ALTERNATE at 0x00125348 after allocation.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs

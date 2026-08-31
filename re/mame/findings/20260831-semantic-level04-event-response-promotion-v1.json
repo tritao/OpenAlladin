@@ -1,0 +1,21 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "level04-event-response-identities",
+  "promotions": [
+    "ACTOR_ANIM_LEVEL04_EVENT_RESPONSE",
+    "ACTOR_ANIM_LEVEL04_EVENT_RESPONSE_ALTERNATE",
+    "ACTOR_TEMPLATE_LEVEL04_EVENT_RESPONSE"
+  ],
+  "evidence": [
+    "actor_template_late_interaction_family_static_decompilation",
+    "interaction_spawn_early_family_static_decompilation",
+    "level04-event45-animation-producer-static-targets"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_event"
+  }
+}
