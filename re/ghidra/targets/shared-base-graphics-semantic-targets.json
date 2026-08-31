@@ -1,0 +1,54 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "shared-base-graphics-identities",
+    "purpose": "Replace address-bearing names for the large shared/base RNC graphics payloads with stable identities derived from exact destination and consumer-family evidence."
+  },
+  "targets": [
+    {
+      "address": "0x001319EC",
+      "name": "SCENE_PRESENTATION_COMMON_BASE_GRAPHICS",
+      "legacy_name": "SCENE_COMMON_BASE_RNC_GRAPHICS_001319EC",
+      "range": "0x001319EC-0x00132F8C",
+      "size": 5538,
+      "destination": "0x000000",
+      "consumers": ["SceneResource_RunStatePresentation", "title presentation", "wish-prompt presentation", "transition presentation"]
+    },
+    {
+      "address": "0x0013A892",
+      "name": "SCENE_REBUILD_BASE_GRAPHICS",
+      "legacy_name": "SCENE_REBUILD_BASE_RNC_GRAPHICS_0013A892",
+      "range": "0x0013A892-0x0013C373",
+      "size": 6882,
+      "destination": "0x000000",
+      "consumer": "0x001B16E0 SceneResource_RebuildAfterInteraction"
+    },
+    {
+      "address": "0x0013C374",
+      "name": "SCENE_GLOBAL_SHARED_BASE_GRAPHICS",
+      "legacy_name": "SCENE_SHARED_RNC_GRAPHICS_0013C374",
+      "range": "0x0013C374-0x001401D9",
+      "size": 15974,
+      "destination": "0x000000",
+      "consumers": ["SceneResource_InitializeActiveScene", "SceneResource_InitializeScriptTransition", "SceneResource_RunStatePresentation", "Camera_InitializeCoordinateState"]
+    },
+    {
+      "address": "0x001401DA",
+      "name": "TITLE_BASE_GRAPHICS",
+      "legacy_name": "TITLE_BASE_RNC_GRAPHICS_001401DA",
+      "range": "0x001401DA-0x001434C2",
+      "size": 13033,
+      "destination": "0x000000",
+      "consumer": "0x001B202A Startup_RunTitlePresentation"
+    }
+  ],
+  "evidence": [
+    "exact ROM boundaries",
+    "RNC graphics resource extents",
+    "explicit base-address loader destinations",
+    "named consumer-family references"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

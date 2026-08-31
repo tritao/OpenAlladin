@@ -755,15 +755,17 @@
   evidence: [rnc_graphics_resource_static_v1]
 
 0x001319EC:
-  name: SCENE_COMMON_BASE_RNC_GRAPHICS_001319EC
+  name: SCENE_PRESENTATION_COMMON_BASE_GRAPHICS
+  aliases: [SCENE_COMMON_BASE_RNC_GRAPHICS_001319EC]
   type: graphics_data
   size: 0x15A1
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload shared by title, scene-state, transition, and wish-prompt presentation paths.
+  description: Exact RNC-compressed Genesis graphics payload shared by state-presentation, transition, title, and wish-prompt paths as their common base resource.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0013A892:
-  name: SCENE_REBUILD_BASE_RNC_GRAPHICS_0013A892
+  name: SCENE_REBUILD_BASE_GRAPHICS
+  aliases: [SCENE_REBUILD_BASE_RNC_GRAPHICS_0013A892]
   type: graphics_data
   size: 0x1AE2
   confidence: decompiled
@@ -771,15 +773,17 @@
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0013C374:
-  name: SCENE_SHARED_RNC_GRAPHICS_0013C374
+  name: SCENE_GLOBAL_SHARED_BASE_GRAPHICS
+  aliases: [SCENE_SHARED_RNC_GRAPHICS_0013C374]
   type: graphics_data
   size: 0x3E66
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload shared by active-scene, script-transition, state-presentation, and camera resource paths.
+  description: Exact RNC-compressed Genesis graphics payload loaded to VRAM base 000000 and shared by active-scene, script-transition, state-presentation, and camera resource paths.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x001401DA:
-  name: TITLE_BASE_RNC_GRAPHICS_001401DA
+  name: TITLE_BASE_GRAPHICS
+  aliases: [TITLE_BASE_RNC_GRAPHICS_001401DA]
   type: graphics_data
   size: 0x32E9
   confidence: decompiled
