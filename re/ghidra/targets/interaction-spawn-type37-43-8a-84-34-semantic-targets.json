@@ -1,0 +1,77 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type37-43-8a-84-34-semantic",
+    "purpose": "Promote the adjacent interaction-spawn handlers to stable type and established animation-role identities."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selectors": ["0x6B", "0x40", "0xFF", "0xC9", "0x53"]
+  },
+  "handlers": [
+    {
+      "address": "0x001B720C",
+      "name": "InteractionSpawn_CreateType37ResponseActor",
+      "legacy_name": "InteractionSpawn_RuntimeType37_6B",
+      "selector": "0x6B",
+      "runtime_type": "0x37",
+      "template": "ACTOR_TEMPLATE_BASE_ZERO",
+      "allocator": "InteractionSpawn_AllocateAndConsumeRow",
+      "animation": "ACTOR_ANIM_TYPE37_INTERACTION_RESPONSE at 0x00123F10",
+      "post_spawn": ["actor field +0x06 = 0x21", "actor flag byte +0x29 = 2"]
+    },
+    {
+      "address": "0x001B7232",
+      "name": "InteractionSpawn_CreateType43Actor",
+      "legacy_name": "InteractionSpawn_RuntimeType43_40",
+      "selector": "0x40",
+      "template": "ACTOR_TEMPLATE_TYPE_43",
+      "allocator": "InteractionSpawn_BackwardSlot"
+    },
+    {
+      "address": "0x001B723E",
+      "name": "InteractionSpawn_CreateType8AFromType43Template",
+      "legacy_name": "InteractionSpawn_RuntimeType8A_FF",
+      "selector": "0xFF",
+      "runtime_type": "0x8A",
+      "template": "ACTOR_TEMPLATE_TYPE_43",
+      "allocator": "InteractionSpawn_ReverseSlot",
+      "animation": "ACTOR_ANIM_TYPE43_8A_INTERACTION entry 0x00124494"
+    },
+    {
+      "address": "0x001B72AE",
+      "name": "InteractionSpawn_CreateType84InteractionActor",
+      "legacy_name": "InteractionSpawn_RuntimeType84_C9",
+      "selector": "0xC9",
+      "runtime_type": "0x84",
+      "template": "ACTOR_TEMPLATE_BASE_ZERO",
+      "allocator": "InteractionSpawn_BackwardSlot",
+      "animation": "animation root 0x00123E7A",
+      "post_spawn": ["actor field +0x06 = 0x21", "actor flag byte +0x29 = 2"]
+    },
+    {
+      "address": "0x001B72D4",
+      "name": "InteractionSpawn_CreateType34WallActor",
+      "legacy_name": "InteractionSpawn_RuntimeType34_53",
+      "selector": "0x53",
+      "runtime_type": "0x34",
+      "template": "ACTOR_TEMPLATE_BASE_ZERO",
+      "allocator": "InteractionSpawn_AllocateAndConsumeRow",
+      "animation": "ACTOR_ANIM_TYPE_34_WALL at 0x00122C1E",
+      "movement": "ACTOR_MOVE_TYPE34_WALL_OSCILLATION at 0x001217B4",
+      "post_spawn": ["actor flag byte +0x29 = 6"]
+    }
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies and selector membership",
+    "Established actor-template and allocation-helper identities",
+    "Direct runtime-type, actor-field, animation, movement, and flag writes",
+    "Existing Type-0x37/0x43 and Type-0x34/0x41 static findings"
+  ],
+  "limitations": [
+    "The promoted names identify stable creation and asset roles but do not assign unresolved user-facing object identities.",
+    "The Type-0x43 handler's runtime-type publication is inherited from its template/initializer path rather than written in this short wrapper."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

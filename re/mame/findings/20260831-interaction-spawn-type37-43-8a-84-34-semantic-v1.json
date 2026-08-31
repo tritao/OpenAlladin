@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type37-43-8a-84-34-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType37ResponseActor",
+    "InteractionSpawn_CreateType43Actor",
+    "InteractionSpawn_CreateType8AFromType43Template",
+    "InteractionSpawn_CreateType84InteractionActor",
+    "InteractionSpawn_CreateType34WallActor"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_RuntimeType37_6B",
+    "InteractionSpawn_RuntimeType43_40",
+    "InteractionSpawn_RuntimeType8A_FF",
+    "InteractionSpawn_RuntimeType84_C9",
+    "InteractionSpawn_RuntimeType34_53"
+  ],
+  "contracts": [
+    "Selector 0x6B creates runtime type 0x37 from ACTOR_TEMPLATE_BASE_ZERO, installs the Type-0x37 response animation, and publishes its actor field/flag values.",
+    "Selector 0x40 creates the established Type-0x43 template through the backward-slot helper.",
+    "Selector 0xFF reverse-spawns the Type-0x43 template, promotes the actor to runtime type 0x8A, and installs the embedded Type-0x43/0x8A animation entry.",
+    "Selector 0xC9 creates runtime type 0x84 from the zero template through the backward-slot helper and installs its established animation/flag contract.",
+    "Selector 0x53 creates runtime type 0x34 with the established wall animation and oscillation movement streams."
+  ],
+  "evidence": [
+    "Exact handler bodies at 0x001B720C, 0x001B7232, 0x001B723E, 0x001B72AE, and 0x001B72D4",
+    "INTERACTION_HANDLER_TABLE selector membership",
+    "Existing Type-0x37/0x43, Type-0x84, and Type-0x34 AnimationVM/MovementVM findings"
+  ],
+  "limitations": [
+    "No user-facing object identity is claimed for runtime types 0x34, 0x37, 0x43, 0x84, or 0x8A.",
+    "The Type-0x43 runtime type is inherited from the established template/initializer path and is not directly written by the short wrapper."
+  ],
+  "conclusion": "Five adjacent interaction handlers now have stable type- and asset-based creation identities while preserving the historical selector-qualified aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

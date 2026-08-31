@@ -5768,29 +5768,35 @@
     - interaction_spawn_runtime37-3b-type43-static-decompilation
     - interaction_spawn_response_family_semantic_v1
 0x001B720C:
-  name: InteractionSpawn_RuntimeType37_6B
+  name: InteractionSpawn_CreateType37ResponseActor
+  aliases: [InteractionSpawn_RuntimeType37_6B]
   confidence: decompiled
-  description: Interaction selector 0x6B handler that uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x37, writes 0x21 to actor field +0x06, installs animation root 0x00123F10, and sets actor flag byte +0x29 to 2.
+  description: Interaction selector 0x6B handler that allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry, publishes runtime type 0x37, writes 0x21 to actor field +0x06, installs ACTOR_ANIM_TYPE37_INTERACTION_RESPONSE at 0x00123F10, and sets actor flag byte +0x29 to 2.
   evidence:
     - ghidra_disassembly_001B720C
     - interaction_spawn_runtime37-3b-type43-targets
     - interaction_spawn_runtime37-3b-type43-static-decompilation
+    - interaction_spawn_type37_43_8a_84_34_semantic_v1
 0x001B7232:
-  name: InteractionSpawn_RuntimeType43_40
+  name: InteractionSpawn_CreateType43Actor
+  aliases: [InteractionSpawn_RuntimeType43_40]
   confidence: decompiled
-  description: Interaction selector 0x40 handler that uses the established type-0x43 template through the 0x40 interaction helper.
+  description: Interaction selector 0x40 handler that creates the established ACTOR_TEMPLATE_TYPE_43 actor through InteractionSpawn_BackwardSlot.
   evidence:
     - ghidra_disassembly_001B7232
     - interaction_spawn_runtime37-3b-type43-targets
     - interaction_spawn_runtime37-3b-type43-static-decompilation
+    - interaction_spawn_type37_43_8a_84_34_semantic_v1
 0x001B723E:
-  name: InteractionSpawn_RuntimeType8A_FF
+  name: InteractionSpawn_CreateType8AFromType43Template
+  aliases: [InteractionSpawn_RuntimeType8A_FF]
   confidence: decompiled
-  description: Interaction selector 0xFF handler that reverse-spawns from the type-0x43 template, then promotes the actor to runtime type 0x8A and installs the embedded ACTOR_ANIM_TYPE43_8A_INTERACTION entry at 0x00124494 when allocation succeeds.
+  description: Interaction selector 0xFF handler that reverse-spawns ACTOR_TEMPLATE_TYPE_43, publishes runtime type 0x8A, and installs the embedded ACTOR_ANIM_TYPE43_8A_INTERACTION entry at 0x00124494 when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B723E
     - interaction_spawn_runtime37-3b-type43-targets
     - interaction_spawn_runtime37-3b-type43-static-decompilation
+    - interaction_spawn_type37_43_8a_84_34_semantic_v1
 0x001B7258:
   name: InteractionGate_CreateType3AResponse
   aliases: [InteractionGate_RuntimeType3A_AC]
@@ -5812,21 +5818,25 @@
     - interaction_spawn_runtime3a-41-static-decompilation
     - interaction_spawn_response_family_semantic_v1
 0x001B72AE:
-  name: InteractionSpawn_RuntimeType84_C9
+  name: InteractionSpawn_CreateType84InteractionActor
+  aliases: [InteractionSpawn_RuntimeType84_C9]
   confidence: decompiled
-  description: Interaction selector 0xC9 handler that uses the zero-type base through the 0x40 helper, promotes the actor to runtime type 0x84, writes 0x21 to actor field +0x06, installs animation root 0x00123E7A, and sets actor flag byte +0x29 to 2.
+  description: Interaction selector 0xC9 handler that creates from ACTOR_TEMPLATE_BASE_ZERO through InteractionSpawn_BackwardSlot, publishes runtime type 0x84, writes 0x21 to actor field +0x06, installs animation root 0x00123E7A, and sets actor flag byte +0x29 to 2.
   evidence:
     - ghidra_disassembly_001B72AE
     - interaction_spawn_runtime3a-41-targets
     - interaction_spawn_runtime3a-41-static-decompilation
+    - interaction_spawn_type37_43_8a_84_34_semantic_v1
 0x001B72D4:
-  name: InteractionSpawn_RuntimeType34_53
+  name: InteractionSpawn_CreateType34WallActor
+  aliases: [InteractionSpawn_RuntimeType34_53]
   confidence: decompiled
-  description: Interaction selector 0x53 handler that uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x34, installs animation root 0x00122C1E and movement stream 0x001217B4, and sets actor flag byte +0x29 to 6.
+  description: Interaction selector 0x53 handler that allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry, publishes runtime type 0x34, installs ACTOR_ANIM_TYPE_34_WALL at 0x00122C1E and ACTOR_MOVE_TYPE34_WALL_OSCILLATION at 0x001217B4, and sets actor flag byte +0x29 to 6.
   evidence:
     - ghidra_disassembly_001B72D4
     - interaction_spawn_runtime3a-41-targets
     - interaction_spawn_runtime3a-41-static-decompilation
+    - interaction_spawn_type37_43_8a_84_34_semantic_v1
 0x001B72FC:
   name: InteractionSpawn_RuntimeType40_FourPosition_61
   confidence: decompiled
