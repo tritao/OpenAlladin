@@ -2301,7 +2301,7 @@
   aliases: [ActorType47_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision Type-0x47 response-gate setter. It sets PLAYER_COLLISION_GATE_TYPE47, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Primary player-collision response-gate setter. It sets PLAYER_COLLISION_BASE_RESPONSE_GATE_PRIMARY, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AEFB0
@@ -2311,7 +2311,7 @@
   aliases: [ActorType48_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision Type-0x48 response-gate setter. It sets PLAYER_COLLISION_GATE_TYPE48, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Secondary player-collision response-gate setter. It sets PLAYER_COLLISION_BASE_RESPONSE_GATE_SECONDARY, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AEFDC
@@ -2321,7 +2321,7 @@
   aliases: [ActorType49_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision Type-0x49 response-gate setter. It sets PLAYER_COLLISION_GATE_TYPE49, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Tertiary player-collision response-gate setter. It sets PLAYER_COLLISION_BASE_RESPONSE_GATE_TERTIARY, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF008
@@ -2331,7 +2331,7 @@
   aliases: [ActorType4A_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision Type-0x4A interaction-latch setter. It sets PLAYER_INTERACTION_TYPE4A_LATCH, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Primary player-interaction response-gate setter. It sets PLAYER_INTERACTION_BASE_RESPONSE_GATE_PRIMARY, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF034
@@ -2352,7 +2352,7 @@
   aliases: [ActorType4C_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
-  description: Player-collision Type-0x4C interaction-latch setter. It sets PLAYER_INTERACTION_TYPE4C_LATCH, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
+  description: Secondary player-interaction response-gate setter. It sets PLAYER_INTERACTION_BASE_RESPONSE_GATE_SECONDARY, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF08C
@@ -5896,60 +5896,60 @@
     - interaction_spawn_runtime47-4c-static-decompilation
     - interaction_spawn_type47_4c_semantic_v1
 0x001B70F8:
-  name: InteractionSpawn_CreateType84Base_B6
-  aliases: [InteractionSpawn_Type84Base_B6]
+  name: InteractionSpawn_CreateInteractionBaseCollisionGatePrimary
+  aliases: [InteractionSpawn_CreateType84Base_B6, InteractionSpawn_Type84Base_B6]
   confidence: decompiled
-  description: Interaction selector 0xB6 handler. It requires PLAYER_COLLISION_GATE_TYPE47 at 0x00FFF126 with PLAYER_COLLISION_GATE_TYPE48 and PLAYER_COLLISION_GATE_TYPE49 clear, reverse-spawns ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE, installs ACTOR_ANIM_TYPE84_BASE_B6 at 0x001242B0, and subtracts eight from the spawned actor Y coordinate.
+  description: Primary collision-response interaction-base spawn handler. It requires PLAYER_COLLISION_BASE_RESPONSE_GATE_PRIMARY at 0x00FFF126 with the secondary and tertiary collision gates clear, reverse-spawns ACTOR_TEMPLATE_INTERACTION_BASE, installs ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_PRIMARY at 0x001242B0, and subtracts eight from the spawned actor Y coordinate.
   evidence:
     - ghidra_disassembly_001B70F8
     - interaction_spawn_type84_base_static_decompilation
     - interaction_spawn_type84_base_b6_static_decompilation
     - interaction_spawn_type84_base_semantic_v1
 0x001B712C:
-  name: InteractionSpawn_CreateType84Base_B7
-  aliases: [InteractionSpawn_Type84Base_B7]
+  name: InteractionSpawn_CreateInteractionBaseCollisionGateSecondary
+  aliases: [InteractionSpawn_CreateType84Base_B7, InteractionSpawn_Type84Base_B7]
   confidence: decompiled
-  description: Interaction selector 0xB7 handler that requires PLAYER_COLLISION_GATE_TYPE48 at 0x00FFF127 set and PLAYER_COLLISION_GATE_TYPE49 at 0x00FFF128 clear, reverse-spawns ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE, installs ACTOR_ANIM_TYPE84_BASE_B7 at 0x001242CA, and subtracts eight from the actor Y coordinate.
+  description: Secondary collision-response interaction-base spawn handler. It requires PLAYER_COLLISION_BASE_RESPONSE_GATE_SECONDARY at 0x00FFF127 with the tertiary collision gate clear, reverse-spawns ACTOR_TEMPLATE_INTERACTION_BASE, installs ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_SECONDARY at 0x001242CA, and subtracts eight from the actor Y coordinate.
   evidence:
     - ghidra_disassembly_001B712C
     - interaction_spawn_type84-base-targets
     - interaction_spawn_type84-base-static-decompilation
     - interaction_spawn_type84_base_semantic_v1
 0x001B7158:
-  name: InteractionSpawn_CreateType84Base_B8
-  aliases: [InteractionSpawn_Type84Base_B8]
+  name: InteractionSpawn_CreateInteractionBaseCollisionGateTertiary
+  aliases: [InteractionSpawn_CreateType84Base_B8, InteractionSpawn_Type84Base_B8]
   confidence: decompiled
-  description: Interaction selector 0xB8 handler that requires PLAYER_COLLISION_GATE_TYPE49 at 0x00FFF128 set, reverse-spawns ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE, installs ACTOR_ANIM_TYPE84_BASE_B8 at 0x001242E4, and subtracts eight from the actor Y coordinate.
+  description: Tertiary collision-response interaction-base spawn handler. It requires PLAYER_COLLISION_BASE_RESPONSE_GATE_TERTIARY at 0x00FFF128, reverse-spawns ACTOR_TEMPLATE_INTERACTION_BASE, installs ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_TERTIARY at 0x001242E4, and subtracts eight from the actor Y coordinate.
   evidence:
     - ghidra_disassembly_001B7158
     - interaction_spawn_type84-base-targets
     - interaction_spawn_type84-base-static-decompilation
     - interaction_spawn_type84_base_semantic_v1
 0x001B717C:
-  name: InteractionSpawn_CreateType84Base_B9
-  aliases: [InteractionSpawn_Type84Base_B9]
+  name: InteractionSpawn_CreateInteractionBasePlayerInteractionPrimary
+  aliases: [InteractionSpawn_CreateType84Base_B9, InteractionSpawn_Type84Base_B9]
   confidence: decompiled
-  description: Interaction selector 0xB9 handler that requires the Type-0x84 base gate at 0x00FFF129 set, reverse-spawns ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE, installs ACTOR_ANIM_TYPE84_BASE_B9 at 0x001242FE, and subtracts eight from the actor Y coordinate.
+  description: Primary player-interaction response spawn handler. It requires PLAYER_INTERACTION_BASE_RESPONSE_GATE_PRIMARY at 0x00FFF129, reverse-spawns ACTOR_TEMPLATE_INTERACTION_BASE, installs ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_PRIMARY at 0x001242FE, and subtracts eight from the actor Y coordinate.
   evidence:
     - ghidra_disassembly_001B717C
     - interaction_spawn_type84-base-targets
     - interaction_spawn_type84-base-static-decompilation
     - interaction_spawn_type84_base_semantic_v1
 0x001B71A0:
-  name: InteractionSpawn_CreateType84Base_BA
-  aliases: [InteractionSpawn_Type84Base_BA]
+  name: InteractionSpawn_CreateInteractionBasePlayerInteractionSecondary
+  aliases: [InteractionSpawn_CreateType84Base_BA, InteractionSpawn_Type84Base_BA]
   confidence: decompiled
-  description: Interaction selector 0xBA handler that requires the Type-0x84 base gate at 0x00FFF12A set, reverse-spawns ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE, installs ACTOR_ANIM_TYPE84_BASE_BA at 0x00124318, and subtracts eight from the actor Y coordinate.
+  description: Secondary player-interaction response spawn handler. It requires PLAYER_INTERACTION_BASE_RESPONSE_GATE_SECONDARY at 0x00FFF12A, reverse-spawns ACTOR_TEMPLATE_INTERACTION_BASE, installs ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_SECONDARY at 0x00124318, and subtracts eight from the actor Y coordinate.
   evidence:
     - ghidra_disassembly_001B71A0
     - interaction_spawn_type84-base-targets
     - interaction_spawn_type84-base-static-decompilation
     - interaction_spawn_type84_base_semantic_v1
 0x001B71C4:
-  name: InteractionSpawn_CreateType84Base_CA
-  aliases: [InteractionSpawn_Type84Base_CA]
+  name: InteractionSpawn_CreateInteractionBaseUnconditional
+  aliases: [InteractionSpawn_CreateType84Base_CA, InteractionSpawn_Type84Base_CA]
   confidence: decompiled
-  description: Interaction selector 0xCA handler that reverse-spawns ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE, installs ACTOR_ANIM_TYPE84_BASE_CA at 0x00124332, and subtracts eight from the actor Y coordinate.
+  description: Unconditional interaction-base spawn handler. It reverse-spawns ACTOR_TEMPLATE_INTERACTION_BASE, installs ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_UNCONDITIONAL at 0x00124332, and subtracts eight from the actor Y coordinate.
   evidence:
     - ghidra_disassembly_001B71C4
     - interaction_spawn_type84-base-targets

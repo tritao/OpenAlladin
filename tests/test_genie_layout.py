@@ -754,18 +754,18 @@ def test_type84_interaction_base_b6_animation_range_is_exact():
     symbols = SymbolStore()
     handler = symbols.at(0x001B70F8, include_ranges=False)
     assert handler is not None
-    assert handler.name == "InteractionSpawn_CreateType84Base_B6"
+    assert handler.name == "InteractionSpawn_CreateInteractionBaseCollisionGatePrimary"
 
     symbol = symbols.at(0x001242B0, include_ranges=False)
     assert symbol is not None
-    assert symbol.name == "ACTOR_ANIM_TYPE84_BASE_B6"
+    assert symbol.name == "ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_PRIMARY"
     assert symbol.end == 0x001242C9
     assert symbol.size == 26
     assert symbol.metadata["type"] == "animation_stream"
 
     following = symbols.at(0x001242CA, include_ranges=False)
     assert following is not None
-    assert following.name == "ACTOR_ANIM_TYPE84_BASE_B7"
+    assert following.name == "ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_SECONDARY"
     assert symbol.end + 1 == following.address
 
 

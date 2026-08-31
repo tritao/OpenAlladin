@@ -1213,12 +1213,12 @@ def test_terrain_handler_actions_have_semantic_names_and_legacy_aliases():
 
 def test_type84_base_interaction_spawn_handlers_have_semantic_names_and_aliases():
     expected = {
-        0x001B70F8: ("InteractionSpawn_CreateType84Base_B6", "InteractionSpawn_Type84Base_B6"),
-        0x001B712C: ("InteractionSpawn_CreateType84Base_B7", "InteractionSpawn_Type84Base_B7"),
-        0x001B7158: ("InteractionSpawn_CreateType84Base_B8", "InteractionSpawn_Type84Base_B8"),
-        0x001B717C: ("InteractionSpawn_CreateType84Base_B9", "InteractionSpawn_Type84Base_B9"),
-        0x001B71A0: ("InteractionSpawn_CreateType84Base_BA", "InteractionSpawn_Type84Base_BA"),
-        0x001B71C4: ("InteractionSpawn_CreateType84Base_CA", "InteractionSpawn_Type84Base_CA"),
+        0x001B70F8: ("InteractionSpawn_CreateInteractionBaseCollisionGatePrimary", "InteractionSpawn_CreateType84Base_B6"),
+        0x001B712C: ("InteractionSpawn_CreateInteractionBaseCollisionGateSecondary", "InteractionSpawn_CreateType84Base_B7"),
+        0x001B7158: ("InteractionSpawn_CreateInteractionBaseCollisionGateTertiary", "InteractionSpawn_CreateType84Base_B8"),
+        0x001B717C: ("InteractionSpawn_CreateInteractionBasePlayerInteractionPrimary", "InteractionSpawn_CreateType84Base_B9"),
+        0x001B71A0: ("InteractionSpawn_CreateInteractionBasePlayerInteractionSecondary", "InteractionSpawn_CreateType84Base_BA"),
+        0x001B71C4: ("InteractionSpawn_CreateInteractionBaseUnconditional", "InteractionSpawn_CreateType84Base_CA"),
     }
     symbols = SymbolStore()
     for address, (name, alias) in expected.items():
@@ -1227,6 +1227,24 @@ def test_type84_base_interaction_spawn_handlers_have_semantic_names_and_aliases(
         assert symbol.name == name
         assert alias in symbol.aliases
         assert symbol.confidence == "decompiled"
+
+
+def test_interaction_base_response_family_names_preserve_selector_aliases():
+    expected = {
+        0x001242B0: ("ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_PRIMARY", "ACTOR_ANIM_TYPE84_BASE_B6"),
+        0x001242CA: ("ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_SECONDARY", "ACTOR_ANIM_TYPE84_BASE_B7"),
+        0x001242E4: ("ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_TERTIARY", "ACTOR_ANIM_TYPE84_BASE_B8"),
+        0x001242FE: ("ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_PRIMARY", "ACTOR_ANIM_TYPE84_BASE_B9"),
+        0x00124318: ("ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_SECONDARY", "ACTOR_ANIM_TYPE84_BASE_BA"),
+        0x00124332: ("ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_UNCONDITIONAL", "ACTOR_ANIM_TYPE84_BASE_CA"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.metadata["type"] == "animation_stream"
 
 
 def test_early_interaction_spawn_family_has_semantic_names_and_aliases():
@@ -2939,9 +2957,9 @@ def test_real_player_collision_response_gates_have_canonical_roles():
 def test_real_type47_49_collision_gates_have_canonical_roles():
     symbols = SymbolStore()
     expected = {
-        0x00FFF126: "PLAYER_COLLISION_BASE_RESPONSE_GATE_B6",
-        0x00FFF127: "PLAYER_COLLISION_BASE_RESPONSE_GATE_B7",
-        0x00FFF128: "PLAYER_COLLISION_BASE_RESPONSE_GATE_B8",
+        0x00FFF126: "PLAYER_COLLISION_BASE_RESPONSE_GATE_PRIMARY",
+        0x00FFF127: "PLAYER_COLLISION_BASE_RESPONSE_GATE_SECONDARY",
+        0x00FFF128: "PLAYER_COLLISION_BASE_RESPONSE_GATE_TERTIARY",
     }
     for address, name in expected.items():
         symbol = symbols.at(address, include_ranges=False)
@@ -3034,8 +3052,8 @@ def test_real_collision_and_presentation_state_have_canonical_roles():
         0x00FFF110: ("PLAYER_DEATH_RESPONSE_LATCH_VARIANT_B", "boolean"),
         0x00FFF123: ("INTERACTION_PRESENTATION_ALTERNATE_LATCH", "boolean"),
         0x00FFF125: ("PLAYER_COLLISION_CONTACT_COUNT", "counter"),
-        0x00FFF129: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_B9", "boolean"),
-        0x00FFF12A: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_BA", "boolean"),
+        0x00FFF129: ("PLAYER_INTERACTION_BASE_RESPONSE_GATE_PRIMARY", "boolean"),
+        0x00FFF12A: ("PLAYER_INTERACTION_BASE_RESPONSE_GATE_SECONDARY", "boolean"),
         0x00FFF13E: ("MENU_PRESENTATION_TIMEOUT", "countdown"),
         0x00FFF154: ("RAW_TERRAIN_QUERY_STATE", "boolean"),
         0x00FFF570: ("SCENE_PRESENTATION_LATCH", "boolean"),
@@ -3239,11 +3257,11 @@ def test_numeric_ram_identities_promote_behavior_roles_and_preserve_aliases():
         0x00FFF123: ("INTERACTION_PRESENTATION_ALTERNATE_LATCH", "INTERACTION_TYPE12_PRESENTATION_LATCH"),
         0x00FFF124: ("LEVEL00_RESPONSE_PALETTE_DELAY", "LEVEL00_TYPE13_PALETTE_DELAY"),
         0x00FFF125: ("PLAYER_COLLISION_CONTACT_COUNT", "ACTOR_TYPE18_19_CONTACT_COUNT"),
-        0x00FFF126: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_B6", "PLAYER_COLLISION_GATE_TYPE47"),
-        0x00FFF127: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_B7", "PLAYER_COLLISION_GATE_TYPE48"),
-        0x00FFF128: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_B8", "PLAYER_COLLISION_GATE_TYPE49"),
-        0x00FFF129: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_B9", "PLAYER_INTERACTION_TYPE4A_LATCH"),
-        0x00FFF12A: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_BA", "PLAYER_INTERACTION_TYPE4C_LATCH"),
+        0x00FFF126: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_PRIMARY", "PLAYER_COLLISION_GATE_TYPE47"),
+        0x00FFF127: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_SECONDARY", "PLAYER_COLLISION_GATE_TYPE48"),
+        0x00FFF128: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_TERTIARY", "PLAYER_COLLISION_GATE_TYPE49"),
+        0x00FFF129: ("PLAYER_INTERACTION_BASE_RESPONSE_GATE_PRIMARY", "PLAYER_INTERACTION_TYPE4A_LATCH"),
+        0x00FFF12A: ("PLAYER_INTERACTION_BASE_RESPONSE_GATE_SECONDARY", "PLAYER_INTERACTION_TYPE4C_LATCH"),
         0x00FFF16F: ("TERRAIN_RESPONSE_INTERACTION_GATE_SPECIAL_A", "INTERACTION_GATE_TYPE44"),
         0x00FFF170: ("TERRAIN_RESPONSE_INTERACTION_GATE_SPECIAL_B", "INTERACTION_GATE_TYPE3A"),
         0x00FFF171: ("TERRAIN_RESPONSE_INTERACTION_GATE_SPECIAL_C", "INTERACTION_GATE_TYPE40"),

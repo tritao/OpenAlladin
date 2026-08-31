@@ -1,0 +1,37 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "interaction-base-response-family",
+  "promotions": [
+    "ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_PRIMARY",
+    "ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_SECONDARY",
+    "ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_TERTIARY",
+    "ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_PRIMARY",
+    "ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_SECONDARY",
+    "ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_UNCONDITIONAL",
+    "InteractionSpawn_CreateInteractionBaseCollisionGatePrimary",
+    "InteractionSpawn_CreateInteractionBaseCollisionGateSecondary",
+    "InteractionSpawn_CreateInteractionBaseCollisionGateTertiary",
+    "InteractionSpawn_CreateInteractionBasePlayerInteractionPrimary",
+    "InteractionSpawn_CreateInteractionBasePlayerInteractionSecondary",
+    "InteractionSpawn_CreateInteractionBaseUnconditional",
+    "PLAYER_COLLISION_BASE_RESPONSE_GATE_PRIMARY",
+    "PLAYER_COLLISION_BASE_RESPONSE_GATE_SECONDARY",
+    "PLAYER_COLLISION_BASE_RESPONSE_GATE_TERTIARY",
+    "PLAYER_INTERACTION_BASE_RESPONSE_GATE_PRIMARY",
+    "PLAYER_INTERACTION_BASE_RESPONSE_GATE_SECONDARY"
+  ],
+  "evidence": [
+    "type84_interaction_base_b6_static_decompilation",
+    "type84_interaction_base_animation_static_decompilation",
+    "interaction_spawn_type84_base_static_decompilation",
+    "interaction_spawn_type84_base_semantic_v1",
+    "player_collision_response_counter_family_static_decompilation"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_gate_and_response_role"
+  }
+}

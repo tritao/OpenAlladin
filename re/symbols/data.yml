@@ -5350,61 +5350,72 @@
     - animation_stream_decoder
 
 0x001242B0:
-  name: ACTOR_ANIM_TYPE84_BASE_B6
+  name: ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_PRIMARY
+  aliases: [ACTOR_ANIM_TYPE84_BASE_B6]
   type: animation_stream
   size: 26
   confidence: decompiled
-  description: Selector-B6 Type-0x84 interaction-base animation loop. Its exact 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACE90, and loops at 0x001242C4 to the post-prefix frame at 0x001242B8.
+  description: Primary collision-response interaction-base animation loop. Its exact 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACE90, and loops at 0x001242C4 to the post-prefix frame at 0x001242B8.
   evidence:
     - type84_interaction_base_b6_static_decompilation
     - interaction_spawn_type84_base_static_decompilation
     - animation_stream_decoder
 
 0x001242CA:
-  name: ACTOR_ANIM_TYPE84_BASE_B7
+  name: ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_SECONDARY
+  aliases: [ACTOR_ANIM_TYPE84_BASE_B7]
+  type: animation_stream
   size: 26
   confidence: decompiled
-  description: Selector-B7 Type-0x84 interaction-base animation loop. Its packed 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACECC, and loops at 0x001242DE to the post-prefix frame at 0x001242D2.
+  description: Secondary collision-response interaction-base animation loop. Its packed 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACECC, and loops at 0x001242DE to the post-prefix frame at 0x001242D2.
   evidence:
     - type84_interaction_base_animation_static_decompilation
     - interaction_spawn_type84_base_static_decompilation
     - animation_stream_decoder
 
 0x001242E4:
-  name: ACTOR_ANIM_TYPE84_BASE_B8
+  name: ACTOR_ANIM_INTERACTION_BASE_COLLISION_GATE_TERTIARY
+  aliases: [ACTOR_ANIM_TYPE84_BASE_B8]
+  type: animation_stream
   size: 26
   confidence: decompiled
-  description: Selector-B8 Type-0x84 interaction-base animation loop. Its packed 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACF08, and loops at 0x001242F8 to the post-prefix frame at 0x001242EC.
+  description: Tertiary collision-response interaction-base animation loop. Its packed 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACF08, and loops at 0x001242F8 to the post-prefix frame at 0x001242EC.
   evidence:
     - type84_interaction_base_animation_static_decompilation
     - interaction_spawn_type84_base_static_decompilation
     - animation_stream_decoder
 
 0x001242FE:
-  name: ACTOR_ANIM_TYPE84_BASE_B9
+  name: ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_PRIMARY
+  aliases: [ACTOR_ANIM_TYPE84_BASE_B9]
+  type: animation_stream
   size: 26
   confidence: decompiled
-  description: Selector-B9 Type-0x84 interaction-base animation loop. Its packed 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACF44, and loops at 0x00124312 to the post-prefix frame at 0x00124306.
+  description: Primary player-interaction response animation loop. Its packed 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACF44, and loops at 0x00124312 to the post-prefix frame at 0x00124306.
   evidence:
     - type84_interaction_base_animation_static_decompilation
     - interaction_spawn_type84_base_static_decompilation
     - animation_stream_decoder
 
 0x00124318:
-  name: ACTOR_ANIM_TYPE84_BASE_BA
+  name: ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_SECONDARY
+  aliases: [ACTOR_ANIM_TYPE84_BASE_BA]
+  type: animation_stream
   size: 26
   confidence: decompiled
-  description: Selector-BA Type-0x84 interaction-base animation loop. Its packed 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACF80, and loops at 0x0012432C to the post-prefix frame at 0x00124320.
+  description: Secondary player-interaction response animation loop. Its packed 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACF80, and loops at 0x0012432C to the post-prefix frame at 0x00124320.
   evidence:
     - type84_interaction_base_animation_static_decompilation
     - interaction_spawn_type84_base_static_decompilation
     - animation_stream_decoder
 
 0x00124332:
-  name: ACTOR_ANIM_TYPE84_BASE_CA
+  name: ACTOR_ANIM_INTERACTION_BASE_PLAYER_INTERACTION_UNCONDITIONAL
+  aliases: [ACTOR_ANIM_TYPE84_BASE_CA]
+  type: animation_stream
   size: 26
   confidence: decompiled
-  description: Selector-CA Type-0x84 interaction-base animation loop. Its packed 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACFBC, and loops at 0x00124346 to the post-prefix frame at 0x0012433A.
+  description: Unconditional player-interaction response animation loop. Its packed 26-byte region presents frame 0x1ADE, pushes parameter 0x001ACB7A, presents the frame three more times, pushes parameter 0x001ACFBC, and loops at 0x00124346 to the post-prefix frame at 0x0012433A.
   evidence:
     - type84_interaction_base_animation_static_decompilation
     - interaction_spawn_type84_base_static_decompilation
@@ -8487,7 +8498,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Shared type-0x84 interaction base loaded by six direct reverse-slot entries at 0x001B7110, 0x001B713C, 0x001B7160, 0x001B7184, 0x001B71A8, and 0x001B71C4; callers publish the specific ACTOR_ANIM_TYPE84_BASE_B7/B8/B9/BA/CA root and vertical placement after allocation.
+  description: Shared interaction base loaded by six direct reverse-slot entries at 0x001B7110, 0x001B713C, 0x001B7160, 0x001B7184, 0x001B71A8, and 0x001B71C4; callers publish the specific collision-gate or player-interaction response root and vertical placement after allocation.
   evidence:
     - ghidra_early_interaction_dispatch_block
     - actor_template_grid_xrefs
