@@ -444,6 +444,17 @@ mappings:
       - interaction_spawn_mid_family_static_decompilation
     description: Type-0x2B interaction stream that performs the child spawn and terminal response cycle.
 
+  - name: INTERACTION_RESPONSE_CYCLE
+    scope: role
+    symbol_addresses: [0x00120ACC, 0x00123A68, 0x001B7BD4, 0x001B7BFC]
+    technical_types: [0x2F]
+    confidence: decompiled
+    evidence:
+      - type2f_animation_static_decompilation
+      - actor_template_interaction_family_static_decompilation
+      - movement_stream_decoder
+    description: Interaction-response cycle movement, animation, parent template, and F5 child-template family.
+
   - name: LEVEL_ENTRY_SHARED
     scope: event
     symbol_addresses: [0x0012585C, 0x001B8138]

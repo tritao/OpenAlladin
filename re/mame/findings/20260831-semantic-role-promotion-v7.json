@@ -1,0 +1,37 @@
+{
+  "finding": "semantic-role-promotion-v7",
+  "status": "confirmed",
+  "scope": "Type-2F interaction-response cycle family",
+  "evidence": [
+    "type2f_animation_static_decompilation",
+    "actor_template_interaction_family_static_decompilation",
+    "movement_stream_decoder",
+    "animation_stream_decoder"
+  ],
+  "promotions": [
+    {
+      "address": "0x00120ACC",
+      "name": "ACTOR_MOVE_INTERACTION_RESPONSE_CYCLE",
+      "technical_alias": "ACTOR_MOVE_TYPE2F_INTERACTION_RESPONSE",
+      "reason": "Movement stream for the four-phase interaction-response cycle; its conditional state entries remain separately technical."
+    },
+    {
+      "address": "0x00123A68",
+      "name": "ACTOR_ANIM_INTERACTION_RESPONSE_CYCLE",
+      "technical_alias": "ACTOR_ANIM_TYPE2F_INTERACTION_LOOP",
+      "reason": "Packed animation loop that cycles the four response frames used by the direct reverse-slot interaction path."
+    },
+    {
+      "address": "0x001B7BD4",
+      "name": "ACTOR_TEMPLATE_INTERACTION_RESPONSE_CYCLE",
+      "technical_alias": "ACTOR_TEMPLATE_TYPE_2F_INTERACTION",
+      "reason": "Direct reverse-slot parent template selecting the promoted movement and animation cycle."
+    },
+    {
+      "address": "0x001B7BFC",
+      "name": "ACTOR_TEMPLATE_INTERACTION_RESPONSE_CYCLE_CHILD",
+      "technical_alias": "ACTOR_TEMPLATE_TYPE_2F_TYPE10_CHILD",
+      "reason": "F5-spawned child template sharing the promoted movement and animation cycle, with four resources."
+    }
+  ]
+}

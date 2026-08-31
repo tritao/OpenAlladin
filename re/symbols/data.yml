@@ -4121,11 +4121,12 @@
     - movement_stream_decoder
 
 0x00120ACC:
-  name: ACTOR_MOVE_TYPE2F_INTERACTION_RESPONSE
+  name: ACTOR_MOVE_INTERACTION_RESPONSE_CYCLE
+  aliases: [ACTOR_MOVE_TYPE2F_INTERACTION_RESPONSE]
   type: movement_stream
   size: 72
   confidence: decompiled
-  description: Type-0x2F interaction-response movement root selected by ACTOR_TEMPLATE_TYPE_2F_INTERACTION at 0x001B7BD4 and its child template at 0x001B7BFC. Its exact 72-byte owner applies the initial parameter/timer setup, three (+3, 0) phases, compares actor field 0x3D against 0x0087, 0x0084, and 0x0083, and loops from 0x00120B0E back to 0x00120AEA; the conditional state entries following the loop are represented separately.
+  description: Interaction-response movement cycle selected by ACTOR_TEMPLATE_INTERACTION_RESPONSE_CYCLE at 0x001B7BD4 and its child template at 0x001B7BFC. Its exact 72-byte owner applies the initial parameter/timer setup, three (+3, 0) phases, compares actor field 0x3D against 0x0087, 0x0084, and 0x0083, and loops from 0x00120B0E back to 0x00120AEA; the conditional state entries following the loop are represented separately.
   evidence:
     - actor_template_interaction_family_static_decompilation
     - type10_animation_static_decompilation
@@ -4385,10 +4386,12 @@
     - animation_stream_decoder
 
 0x00123A68:
-  name: ACTOR_ANIM_TYPE2F_INTERACTION_LOOP
+  name: ACTOR_ANIM_INTERACTION_RESPONSE_CYCLE
+  aliases: [ACTOR_ANIM_TYPE2F_INTERACTION_LOOP]
+  type: animation_stream
   size: 22
   confidence: decompiled
-  description: Type-0x2F interaction animation loop used by the direct reverse-slot interaction handlers. Its packed 22-byte body cycles the four frame references 0x1AEE, 0x1AF2, 0x1AF6, and 0x1AFA, then loops unconditionally back to its entry.
+  description: Interaction-response animation cycle used by the direct reverse-slot interaction handlers. Its packed 22-byte body cycles the four frame references 0x1AEE, 0x1AF2, 0x1AF6, and 0x1AFA, then loops unconditionally back to its entry.
   evidence:
     - type2f_animation_static_decompilation
     - actor_template_type2f_interaction
@@ -7901,11 +7904,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7BFC:
-  name: ACTOR_TEMPLATE_TYPE_2F_TYPE10_CHILD
+  name: ACTOR_TEMPLATE_INTERACTION_RESPONSE_CYCLE_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_2F_TYPE10_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2F child template supplied by the first F5 branch in ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN. It carries template bytes 0x01000000, movement stream 0x00120ACC, template word 0x6000, animation root 0x00123A68, four owned resources, and trailing flags 0x0200.
+  description: Interaction-response cycle child template supplied by the first F5 branch in ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN. It carries template bytes 0x01000000, movement stream ACTOR_MOVE_INTERACTION_RESPONSE_CYCLE, template word 0x6000, animation root ACTOR_ANIM_INTERACTION_RESPONSE_CYCLE, four owned resources, and trailing flags 0x0200.
   evidence:
     - type10-animation-static-targets
     - type10-animation-static-decompilation
@@ -8530,11 +8534,12 @@
     - actor_template_grid_xrefs
 
 0x001B7BD4:
-  name: ACTOR_TEMPLATE_TYPE_2F_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_RESPONSE_CYCLE
+  aliases: [ACTOR_TEMPLATE_TYPE_2F_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2F interaction template loaded by direct reverse-slot spawn entries at 0x001B6C96 and 0x001B6CA2; it uses movement stream 0x00120ACC, animation stream ACTOR_ANIM_TYPE2F_INTERACTION_LOOP, and four resources.
+  description: Interaction-response cycle template loaded by direct reverse-slot spawn entries at 0x001B6C96 and 0x001B6CA2; it uses movement stream ACTOR_MOVE_INTERACTION_RESPONSE_CYCLE, animation stream ACTOR_ANIM_INTERACTION_RESPONSE_CYCLE, and four resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
