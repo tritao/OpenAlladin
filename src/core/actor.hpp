@@ -14,6 +14,7 @@ enum class ActorAllocationPool : std::uint8_t {
     GameplayForward,
     GameplayReverse,
     AuxiliaryForward,
+    SceneResourceForward,
 };
 
 struct ActorSpawnOverrides {

@@ -66,6 +66,22 @@ struct SceneResourceStreamsResult {
     SceneResourceRunResult second;
 };
 
+struct SceneResourceActorRunResult {
+    bool valid = false;
+    bool presentation_scratch_observed = false;
+    RamAddress selected_record = 0;
+    RamAddress object_stream = 0;
+    RamAddress last_object_handler = 0;
+    std::uint16_t initial_x = 0;
+    std::uint16_t initial_y = 0;
+    std::uint16_t final_x = 0;
+    std::uint16_t final_y = 0;
+    std::size_t object_command_count = 0;
+    std::size_t actor_count = 0;
+    std::size_t last_actor_slot = 0;
+    SceneResourceRunResult setup_stream;
+};
+
 // SceneScript_CompleteToState1 at 0x001B315C. The script cursor and pending
 // byte are RAM contracts; the selected scene is then loaded from the ROM
 // level table without a native scene object.
@@ -113,6 +129,16 @@ SceneResourceRunResult scene_resource_process_command_stream_with_presentation_s
 // two-call orchestration used by the scene camera/resource path; the selected
 // ROM stream for each call is controlled by its real RAM latch.
 SceneResourceStreamsResult scene_resource_process_command_streams(
+    CoreRuntime& core,
+    const SceneResourceEffects& effects = {},
+    CoreTrace* trace = nullptr,
+    std::size_t instruction_budget = 1'000'000
+);
+
+// SceneResource_InstantiateActors at 0x001B2238. The selected mode record and
+// object-handler table remain ROM-owned; actor output is written directly to
+// the Genesis actor table through the recovered scene-resource template path.
+SceneResourceActorRunResult scene_resource_instantiate_actors(
     CoreRuntime& core,
     const SceneResourceEffects& effects = {},
     CoreTrace* trace = nullptr,

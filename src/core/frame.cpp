@@ -153,6 +153,12 @@ void step_frame(
         trace->scene_resource_presentation_scratch_observed = false;
         trace->scene_resource_actor_spawned = false;
         trace->scene_resource_actor_spawn_slot = 0;
+        trace->scene_resource_object_stream = 0;
+        trace->scene_resource_last_object_handler = 0;
+        trace->scene_resource_object_command_count = 0;
+        trace->scene_resource_object_actor_count = 0;
+        trace->scene_resource_last_object_actor_slot = 0;
+        trace->scene_resource_object_presentation_scratch_observed = false;
         trace_phase(*trace, kFrameEntry);
     }
 

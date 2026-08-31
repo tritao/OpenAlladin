@@ -44,7 +44,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         RamAddress address;
         std::uint8_t width;
     };
-    constexpr std::array<RawField, 62> fields = {{
+    constexpr std::array<RawField, 65> fields = {{
         {kPlayerX, 2}, {kPlayerY, 2}, {kWorldCameraX, 2}, {kWorldCameraY, 2},
         {kPlayerWorldX, 2}, {kPlayerWorldY, 2},
         {kCameraReferenceX, 2}, {kCameraReferenceY, 2},
@@ -80,6 +80,8 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         {kSceneResourceActorRecordCursor, 4},
         {kSceneResourceActorSpawnGate, 1},
         {kSceneResourceC000Source, 4},
+        {kSceneResourceMode, 1}, {kSceneResourceActorResource, 4},
+        {kSceneResourceActorXAdvance, 1},
     }};
     output << "[";
     for (std::size_t index = 0; index < fields.size(); ++index) {
@@ -200,6 +202,12 @@ void trace_begin(
     trace.scene_resource_presentation_scratch_observed = false;
     trace.scene_resource_actor_spawned = false;
     trace.scene_resource_actor_spawn_slot = 0;
+    trace.scene_resource_object_stream = 0;
+    trace.scene_resource_last_object_handler = 0;
+    trace.scene_resource_object_command_count = 0;
+    trace.scene_resource_object_actor_count = 0;
+    trace.scene_resource_last_object_actor_slot = 0;
+    trace.scene_resource_object_presentation_scratch_observed = false;
     trace.frame_atomic = false;
     output << "{\"type\":\"header\",\"format\":\"openaladdin-core-trace-v1\""
            << ",\"state_boundary\":\"game-loop\""
@@ -363,6 +371,18 @@ void trace_state(
            << (trace.scene_resource_actor_spawned ? "true" : "false")
            << ",\"scene_resource_actor_spawn_slot\":"
            << trace.scene_resource_actor_spawn_slot
+           << ",\"scene_resource_object_stream\":"
+           << trace.scene_resource_object_stream
+           << ",\"scene_resource_last_object_handler\":"
+           << trace.scene_resource_last_object_handler
+           << ",\"scene_resource_object_command_count\":"
+           << trace.scene_resource_object_command_count
+           << ",\"scene_resource_object_actor_count\":"
+           << trace.scene_resource_object_actor_count
+           << ",\"scene_resource_last_object_actor_slot\":"
+           << trace.scene_resource_last_object_actor_slot
+           << ",\"scene_resource_object_presentation_scratch_observed\":"
+           << (trace.scene_resource_object_presentation_scratch_observed ? "true" : "false")
            << "}"
            << ",\"scene\":{\"state\":" << static_cast<unsigned>(read8(ram, kSceneState))
            << ",\"level_exit_vdp_control\":" << trace.level_exit_vdp_control

@@ -18,6 +18,7 @@ SlotRange allocation_range(ActorAllocationPool pool) {
     case ActorAllocationPool::GameplayForward: return {1, 24, 1};
     case ActorAllocationPool::GameplayReverse: return {24, 1, -1};
     case ActorAllocationPool::AuxiliaryForward: return {25, 30, 1};
+    case ActorAllocationPool::SceneResourceForward: return {1, 31, 1};
     }
     return {1, 0, 1};
 }

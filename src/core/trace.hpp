@@ -70,6 +70,12 @@ struct CoreTrace {
     bool scene_resource_presentation_scratch_observed = false;
     bool scene_resource_actor_spawned = false;
     std::size_t scene_resource_actor_spawn_slot = 0;
+    RamAddress scene_resource_object_stream = 0;
+    RamAddress scene_resource_last_object_handler = 0;
+    std::size_t scene_resource_object_command_count = 0;
+    std::size_t scene_resource_object_actor_count = 0;
+    std::size_t scene_resource_last_object_actor_slot = 0;
+    bool scene_resource_object_presentation_scratch_observed = false;
     bool frame_atomic = false;
 };
 

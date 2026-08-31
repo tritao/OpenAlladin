@@ -403,6 +403,47 @@ int main() {
     assert(blocked_streams.first.status == SceneResourceRunStatus::StatusChanged);
     assert(blocked_streams.second.status == SceneResourceRunStatus::StatusChanged);
     write8(core.ram, kSceneResourceStatus, 0);
+
+    // SceneResource_InstantiateActors has a separate mode-record/object
+    // path. It runs the fixed setup stream first, then maps object bytes via
+    // ROM 0x4A18 and initializes the fixed scene actor template in RAM.
+    rom[0x00126692] = 0x00;
+    write_rom32(rom, 0x00126D7E, 0x00000800);
+    write_rom32(rom, 0x00000800, 0x00000900);
+    write_rom16(rom, 0x00000804, 0x0100);
+    write_rom16(rom, 0x00000806, 0x0200);
+    write_rom32(rom, 0x00000808, 0x00ABCDEF);
+    rom[0x00000900] = 0x21;
+    rom[0x00000901] = 0x20;
+    write_rom32(rom, 0x004A18 + 4, 0x00123456);
+    rom[0x001B7968] = 0x60;
+    write8(core.ram, kSceneResourceMode, 0);
+    write8(core.ram, kSceneResourcePresentationScratch, 0);
+    CoreTrace actor_stream_trace;
+    const SceneResourceActorRunResult actor_stream =
+        scene_resource_instantiate_actors(core, {}, &actor_stream_trace);
+    assert(actor_stream.valid);
+    assert(actor_stream.setup_stream.status == SceneResourceRunStatus::Finished);
+    assert(actor_stream.selected_record == 0x0800);
+    assert(actor_stream.object_stream == 0x0900);
+    assert(actor_stream.object_command_count == 1);
+    assert(actor_stream.actor_count == 1);
+    assert(actor_stream.last_actor_slot == 1);
+    assert(actor_stream.final_x == 0x0111);
+    assert(actor_stream.final_y == 0x0200);
+    assert(read32(core.ram, kSceneResourceActorResource) == 0x00ABCDEF);
+    assert(read8(core.ram, kSceneResourceActorXAdvance) == 0x11);
+    assert(actor_read8(actor_view(core.ram, 1), kActorTypeOffset) == 0x60);
+    assert(actor_read32(actor_view(core.ram, 1), kActorAnimationPcOffset)
+        == 0x00123456);
+    assert(actor_read32(actor_view(core.ram, 1), kActorMovementPcOffset)
+        == 0x0011F728);
+    assert(actor_read16(actor_view(core.ram, 1), kActorXOffset) == 0x0100);
+    assert(actor_read16(actor_view(core.ram, 1), kActorYOffset) == 0x0200);
+    assert(actor_stream_trace.scene_resource_object_stream == 0x0900);
+    assert(actor_stream_trace.scene_resource_object_command_count == 1);
+    assert(actor_stream_trace.scene_resource_object_actor_count == 1);
+
     write8(core.ram, kSceneResourceStatus, 1);
     const SceneResourceRunResult blocked_resource =
         scene_resource_process_command_stream_with_presentation_scratch(

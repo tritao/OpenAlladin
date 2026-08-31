@@ -462,6 +462,166 @@ SceneResourceStreamsResult scene_resource_process_command_streams(
     return result;
 }
 
+SceneResourceActorRunResult scene_resource_instantiate_actors(
+    CoreRuntime& core,
+    const SceneResourceEffects& effects,
+    CoreTrace* trace,
+    std::size_t instruction_budget
+) {
+    constexpr RamAddress kSceneResourceSetupStream = 0x00126692;
+    constexpr RamAddress kSceneResourceModeTable = 0x00126D7E;
+    constexpr RamAddress kSceneResourceObjectHandlerTable = 0x00004A18;
+    constexpr RamAddress kSceneResourceActorTemplate = 0x001B7968;
+    constexpr RamAddress kSceneResourceActorMovement = 0x0011F728;
+
+    SceneResourceActorRunResult result;
+    result.setup_stream = scene_resource_process_command_stream(
+        core, kSceneResourceSetupStream, 0x000A, 0x000E, effects, trace,
+        instruction_budget);
+
+    const std::size_t mode_entry = static_cast<std::size_t>(
+        read8(core.ram, kSceneResourceMode)) * 4;
+    if (!rom_can_read(core.rom, kSceneResourceModeTable
+                          + static_cast<RamAddress>(mode_entry), 4)) {
+        result.final_x = result.initial_x;
+        result.final_y = result.initial_y;
+        return result;
+    }
+    const RamAddress record = rom_read32(
+        core.rom, kSceneResourceModeTable
+            + static_cast<RamAddress>(mode_entry));
+    if (!rom_can_read(core.rom, record, 12)) return result;
+    result.selected_record = record;
+    result.object_stream = rom_read32(core.rom, record);
+    result.initial_x = rom_read16(core.rom, record + 4);
+    result.initial_y = rom_read16(core.rom, record + 6);
+    result.final_x = result.initial_x;
+    result.final_y = result.initial_y;
+    write32(core.ram, kSceneResourceActorResource,
+            rom_read32(core.rom, record + 8));
+    write8(core.ram, kSceneResourceActorXAdvance, 0x11);
+
+    const auto publish_object_trace = [&]() {
+        if (trace == nullptr) return;
+        trace->scene_resource_object_stream = result.object_stream;
+        trace->scene_resource_last_object_handler =
+            result.last_object_handler;
+        trace->scene_resource_object_command_count =
+            result.object_command_count;
+        trace->scene_resource_object_actor_count = result.actor_count;
+        trace->scene_resource_last_object_actor_slot =
+            result.last_actor_slot;
+        trace->scene_resource_object_presentation_scratch_observed =
+            result.presentation_scratch_observed;
+    };
+
+    RamAddress cursor = result.object_stream;
+    std::uint16_t x = result.initial_x;
+    std::uint16_t y = result.initial_y;
+    for (std::size_t instruction = 0;
+         instruction < instruction_budget;
+         ++instruction) {
+        std::uint8_t command = 0;
+        if (!read_stream8(core.rom, cursor, command)) return result;
+        if (command == 0x20) {
+            result.final_x = x;
+            result.final_y = y;
+            result.valid = true;
+            publish_object_trace();
+            return result;
+        }
+        if (command < 0x20) {
+            switch (command) {
+            case 0x00:
+                result.final_x = x;
+                result.final_y = y;
+                result.valid = true;
+                publish_object_trace();
+                return result;
+            case 0x01: {
+                std::uint8_t raw_delta = 0;
+                if (!read_stream8(core.rom, cursor, raw_delta)) return result;
+                x = static_cast<std::uint16_t>(
+                    x + static_cast<std::int16_t>(
+                        static_cast<std::int8_t>(raw_delta)));
+                continue;
+            }
+            case 0x02: {
+                std::uint8_t raw_delta = 0;
+                if (!read_stream8(core.rom, cursor, raw_delta)) return result;
+                y = static_cast<std::uint16_t>(
+                    y + static_cast<std::int16_t>(
+                        static_cast<std::int8_t>(raw_delta)));
+                continue;
+            }
+            case 0x07:
+                y = increment_low_byte(y);
+                x = static_cast<std::uint16_t>(x & 0xFF00U);
+                continue;
+            case 0x08:
+            case 0x09:
+            case 0x0A:
+            case 0x0B:
+                write16(core.ram, kSceneResourceTileBase,
+                        static_cast<std::uint16_t>((command - 0x08U)
+                                                   * 0x2000U));
+                continue;
+            case 0x0C: {
+                std::uint32_t pointer = 0;
+                if (!read_stream24(core.rom, cursor, pointer)) return result;
+                result.setup_stream.stream_pointer = pointer;
+                continue;
+            }
+            default:
+                publish_object_trace();
+                return result;
+            }
+        }
+
+        ++result.object_command_count;
+        const std::uint8_t object_index = static_cast<std::uint8_t>(
+            command - 0x20U);
+        const RamAddress handler_address = kSceneResourceObjectHandlerTable
+            + static_cast<RamAddress>(object_index) * 4;
+        result.last_object_handler = rom_can_read(
+            core.rom, handler_address, 4) ? rom_read32(
+                core.rom, handler_address) : 0;
+        if (read8(core.ram, kSceneResourcePresentationScratch) != 0) {
+            result.presentation_scratch_observed = true;
+            if (effects.object_command_noop_hook != nullptr) {
+                effects.object_command_noop_hook(effects.context);
+            }
+        }
+        if (result.last_object_handler != 0) {
+            const auto slot = actor_find_free_slot(
+                core.ram, ActorAllocationPool::SceneResourceForward);
+            if (!slot || !actor_initialize_from_template(
+                    core, *slot, kSceneResourceActorTemplate)) {
+                result.final_x = x;
+                result.final_y = y;
+                publish_object_trace();
+                return result;
+            }
+            const ActorView actor = actor_view(core.ram, *slot);
+            actor_write32(actor, kActorAnimationPcOffset,
+                          result.last_object_handler);
+            actor_write32(actor, kActorMovementPcOffset,
+                          kSceneResourceActorMovement);
+            actor_write16(actor, kActorXOffset, x);
+            actor_write16(actor, kActorYOffset, y);
+            ++result.actor_count;
+            result.last_actor_slot = *slot;
+        }
+        x = static_cast<std::uint16_t>(
+            x + read8(core.ram, kSceneResourceActorXAdvance));
+    }
+
+    result.final_x = x;
+    result.final_y = y;
+    publish_object_trace();
+    return result;
+}
+
 void scene_table_select_next_state(
     CoreRuntime& core,
     CoreTrace*
