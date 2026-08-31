@@ -1,0 +1,25 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "wall-collision-and-runtime-child-template-family",
+  "promotions": [
+    "ACTOR_ANIM_WALL_COLLISION_RESPONSE",
+    "ACTOR_TEMPLATE_COLLISION_WALL_RESPONSE_CHILD",
+    "ACTOR_TEMPLATE_ACTOR_COLLISION_CHILD_EFFECT",
+    "ACTOR_TEMPLATE_RUNTIME_EVENT_CHILD"
+  ],
+  "evidence": [
+    "ghidra_type34_handler_decompile",
+    "actor_type8d_response_stream_decode",
+    "type01_type84_child_animation_static_decompilation",
+    "actor_template_type84_runtime47_4c_child_static_decompilation",
+    "interaction_spawn_runtime47-4c-static-decompilation",
+    "mame_type_34_handler_overlap_trace"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_wall_collision_child_effect_and_runtime_event_roles"
+  }
+}

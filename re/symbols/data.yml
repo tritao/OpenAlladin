@@ -4497,7 +4497,7 @@
   aliases: [ACTOR_ANIM_TYPE84_RUNTIME47_4C]
   size: 64
   confidence: decompiled
-  description: Shared Type-0x84 child-spawn animation installed by the runtime type 0x47-0x4C interaction family. Its exact 64-byte region presents the 0x176A frame phases, conditionally executes the two F5 records for ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD with inline entries 0x00125B86 and 0x00125BA6, and loops from 0x00123E70 to its root.
+  description: Shared runtime-event child-spawn animation installed by the runtime type 0x47-0x4C interaction family. Its exact 64-byte region presents the 0x176A frame phases, conditionally executes the two F5 records for ACTOR_TEMPLATE_RUNTIME_EVENT_CHILD with inline entries 0x00125B86 and 0x00125BA6, and loops from 0x00123E70 to its root.
   evidence:
     - actor_template_type84_runtime47_4c_child_static_decompilation
     - interaction_spawn_runtime47-4c-static-decompilation
@@ -5330,10 +5330,11 @@
     - type34_wall_frame_manifest
 
 0x001240CE:
-  name: ACTOR_ANIM_TYPE_8D_WALL_RESPONSE
+  name: ACTOR_ANIM_WALL_COLLISION_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE_8D_WALL_RESPONSE]
   size: 198
   confidence: decompiled
-  description: Animation stream installed when the type-0x34 wall actor collides with the player. Its exact 198-byte packed prefix opens with six response frames, plays sound 0x09, emits four F5 child-entry records at 0x0012415E/0x00124166/0x00124170/0x0012417A, clears the actor, and reaches the shared Type-0x76 continuation at 0x00124194; the lossless control-flow walk totals 224 bytes because it traverses that separately owned continuation.
+  description: Wall-collision response animation installed when the type-0x34 wall actor collides with the player. Its exact 198-byte packed prefix opens with six response frames, plays sound 0x09, emits four F5 child-entry records at 0x0012415E/0x00124166/0x00124170/0x0012417A, clears the actor, and reaches the shared Type-0x76 continuation at 0x00124194; the lossless control-flow walk totals 224 bytes because it traverses that separately owned continuation.
   evidence:
     - ghidra_type34_handler_decompile
     - actor_type8d_response_stream_decode
@@ -6876,7 +6877,7 @@
   type: animation_stream
   size: 58
   confidence: decompiled
-  description: Shared Type-0x3A/0x3B interaction-response animation installed by the Type-0x23 collision pair and the Type-0x3A/0x3B level-event and interaction producers. Its exact 58-byte region applies the random opening gate, spawns ACTOR_TEMPLATE_TYPE84_CHILD, presents the 0x16E6-0x1702 sequence, and loops to its root.
+  description: Shared Type-0x3A/0x3B interaction-response animation installed by the Type-0x23 collision pair and the Type-0x3A/0x3B level-event and interaction producers. Its exact 58-byte region applies the random opening gate, spawns ACTOR_TEMPLATE_ACTOR_COLLISION_CHILD_EFFECT, presents the 0x16E6-0x1702 sequence, and loops to its root.
   evidence:
     - mid-actor-collision-animation-family-static-decompilation
     - actor_collision_handler_family_static_decompilation
@@ -7137,7 +7138,7 @@
   name: ACTOR_ANIM_TYPE01
   size: 32
   confidence: confirmed
-  description: Type-0x01 upper-resource animation. Its exact 32-byte region holds sprite frame 0x001F7DC0 twice, conditionally executes F5 with ACTOR_TEMPLATE_TYPE84_CHILD at signed offset (+22,-12), and loops from 0x00122DAC back to the entry; the adjacent 0x00122DB2 fragment is not folded into this root.
+  description: Type-0x01 upper-resource animation. Its exact 32-byte region holds sprite frame 0x001F7DC0 twice, conditionally executes F5 with ACTOR_TEMPLATE_ACTOR_COLLISION_CHILD_EFFECT at signed offset (+22,-12), and loops from 0x00122DAC back to the entry; the adjacent 0x00122DB2 fragment is not folded into this root.
   evidence:
     - ghidra_type01_child_chain_decompile
     - type01_type84_child_animation_static_decompilation
@@ -7664,11 +7665,12 @@
     - ghidra_type01_child_chain_decompile
 
 0x001B7D00:
-  name: ACTOR_TEMPLATE_TYPE84_CHILD
+  name: ACTOR_TEMPLATE_ACTOR_COLLISION_CHILD_EFFECT
+  aliases: [ACTOR_TEMPLATE_TYPE84_CHILD]
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Compact Type-0x84 child-effect template with no movement stream, animation ACTOR_ANIM_TYPE84_CHILD, and one owned resource.
+  description: Compact actor-collision child-effect template with no movement stream, animation ACTOR_ANIM_ACTOR_COLLISION_CHILD_EFFECT, and one owned resource.
   evidence:
     - ghidra_type01_child_chain_decompile
     - mame_type01_child_chain_trace
@@ -7915,7 +7917,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Compact actor response template selected by the type-0x34 player-collision handler; the exact 20-byte record has type byte 0x8D, movement pointer 0, animation pointer ACTOR_ANIM_TYPE_8D_WALL_RESPONSE, and resource count 7, with the handler installing it in the cleared source slot.
+  description: Compact actor response template selected by the type-0x34 player-collision handler; the exact 20-byte record has type byte 0x8D, movement pointer 0, animation pointer ACTOR_ANIM_WALL_COLLISION_RESPONSE, and resource count 7, with the handler installing it in the cleared source slot.
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - ghidra_type34_handler_decompile
@@ -7923,11 +7925,12 @@
     - mame_type_34_handler_overlap_trace
 
 0x001B7CEC:
-  name: ACTOR_TEMPLATE_TYPE_84_WALL_RESPONSE_CHILD
+  name: ACTOR_TEMPLATE_COLLISION_WALL_RESPONSE_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_WALL_RESPONSE_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 child template supplied by the four F5 records in ACTOR_ANIM_TYPE_8D_WALL_RESPONSE. It has no movement stream, template word 0x6000, animation root 0x0012415E, and two owned resources; each F5 payload selects a child animation entry within the same response family.
+  description: Collision wall-response child template supplied by the four F5 records in ACTOR_ANIM_WALL_COLLISION_RESPONSE. It has no movement stream, template word 0x6000, animation root 0x0012415E, and two owned resources; each F5 payload selects a child animation entry within the same response family.
   evidence:
     - type34-wall-response-static-targets
     - type34-wall-response-static-decompilation
@@ -8962,11 +8965,12 @@
     - actor_template_type84_type1a_presentation_variant_static_v1
 
 0x001B828C:
-  name: ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD
+  name: ACTOR_TEMPLATE_RUNTIME_EVENT_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 child template supplied by the two F5 records in the shared runtime-0x47-to-0x4C animation root at 0x00123E36; it carries record payload 0x000000FF, movement stream 0x00121256, template word 0x6000, default animation entry 0x00125B86 within ACTOR_ANIM_TYPE59_SCENE_EVENT, and no owned resources, while the second producer enters the embedded alternate at 0x00125BA6.
+  description: Runtime-event child template supplied by the two F5 records in the shared runtime-0x47-to-0x4C animation root at 0x00123E36; it carries record payload 0x000000FF, movement stream 0x00121256, template word 0x6000, default animation entry 0x00125B86 within ACTOR_ANIM_TYPE59_SCENE_EVENT, and no owned resources, while the second producer enters the embedded alternate at 0x00125BA6.
   evidence:
     - actor_template_type84_runtime47_4c_child_static_decompilation
     - interaction_spawn_runtime47-4c-static-decompilation
