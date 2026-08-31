@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type17-palette-semantic",
+    "purpose": "Replace the selector-and-runtime-type-only handler name with its exact type-0x17 creation and palette side-effect role."
+  },
+  "target": {
+    "address": "0x001B75D6",
+    "name": "InteractionSpawn_CreateType17WithPalette",
+    "legacy_name": "InteractionSpawn_RuntimeType17_2D_2E_2F_4E_4F",
+    "selectors": ["0x2D", "0x2E", "0x2F", "0x4E", "0x4F"],
+    "template": "ACTOR_TEMPLATE_TYPE_17_INTERACTION",
+    "spawn_helper": "LevelObjectSpawnEntry",
+    "palette_gate": "CAMERA_UPDATE_ACTIVE == 0",
+    "palette": "INTERACTION_PALETTE_SOURCE_1292B2",
+    "palette_helper": "Render_UploadPaletteBand2"
+  },
+  "evidence": [
+    "exact 68000 handler body",
+    "five direct interaction-table selector entries",
+    "type-0x17 actor-template consumer record",
+    "direct camera gate and palette upload call"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

@@ -6008,13 +6008,15 @@
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
 0x001B75D6:
-  name: InteractionSpawn_RuntimeType17_2D_2E_2F_4E_4F
+  name: InteractionSpawn_CreateType17WithPalette
+  aliases: [InteractionSpawn_RuntimeType17_2D_2E_2F_4E_4F]
   confidence: decompiled
-  description: Shared interaction handler for selectors 0x2D, 0x2E, 0x2F, 0x4E, and 0x4F that loads ACTOR_TEMPLATE_TYPE_17_INTERACTION at 0x001B8174 through LevelObjectSpawnEntry and, when allocation succeeds and 0x00FFF175 is clear, uploads palette data from 0x001292B2.
+  description: Shared interaction handler for selectors 0x2D, 0x2E, 0x2F, 0x4E, and 0x4F that creates the ACTOR_TEMPLATE_TYPE_17_INTERACTION actor through LevelObjectSpawnEntry and, when allocation succeeds and CAMERA_UPDATE_ACTIVE is clear, uploads INTERACTION_PALETTE_SOURCE_1292B2.
   evidence:
     - ghidra_disassembly_001B75D6
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+    - interaction_spawn_type17_palette_semantic_v1
 0x001B75F6:
   name: InteractionSpawn_RuntimeType84_30
   confidence: decompiled

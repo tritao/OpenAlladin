@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type17-palette-semantic-targets.json",
+  "promoted_symbols": ["InteractionSpawn_CreateType17WithPalette"],
+  "legacy_aliases": ["InteractionSpawn_RuntimeType17_2D_2E_2F_4E_4F"],
+  "contracts": [
+    "Selectors 0x2D, 0x2E, 0x2F, 0x4E, and 0x4F share the handler at 0x001B75D6.",
+    "The handler creates the ACTOR_TEMPLATE_TYPE_17_INTERACTION actor through LevelObjectSpawnEntry.",
+    "After successful allocation, it uploads INTERACTION_PALETTE_SOURCE_1292B2 only when CAMERA_UPDATE_ACTIVE is clear."
+  ],
+  "evidence": [
+    "Exact 68000 body at 0x001B75D6",
+    "Existing interaction selector dispatch manifest",
+    "Existing Type-0x17 actor-template and palette-source identities"
+  ],
+  "limitations": [
+    "The promoted name identifies the creation and palette behavior but does not assign a user-facing name to the Type-0x17 object.",
+    "The legacy selector-qualified name remains an alias for historical findings and references."
+  ],
+  "conclusion": "The shared five-selector Type-0x17 interaction handler now has a stable creation-and-palette identity while preserving its exact camera gate.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

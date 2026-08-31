@@ -286,6 +286,14 @@ def test_type3c_3e_3f_interaction_response_spawners_have_semantic_names_and_alia
         assert symbol.confidence == "decompiled"
 
 
+def test_type17_palette_interaction_spawn_has_semantic_name_and_legacy_alias():
+    symbol = SymbolStore().at(0x001B75D6, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "InteractionSpawn_CreateType17WithPalette"
+    assert "InteractionSpawn_RuntimeType17_2D_2E_2F_4E_4F" in symbol.aliases
+    assert symbol.confidence == "decompiled"
+
+
 def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
     expected = {
         0x001AF1AC: ("PlayerCollision_SpawnVerticalResponseActor", "ActorType13_PlayerCollisionHandler"),
