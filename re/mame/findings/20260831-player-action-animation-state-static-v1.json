@@ -1,0 +1,29 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-action-animation-state-static-targets.json",
+  "contracts": [
+    {
+      "address": "0x00FFF0DA",
+      "name": "PLAYER_ACTION_ANIMATION_STATE",
+      "evidence": "AnimationVM_RunActorPass clears the marker at 0x001AC7A2, Player_TerrainResponseStateMachine tests it at 0x001AA152, and the nine listed player action/response streams contain 38 ED 01 F0DA 0001 arm commands."
+    },
+    {
+      "address": "0x001AC7A2",
+      "name": "AnimationVM_RunActorPass",
+      "evidence": "The common actor AnimationVM pass clears PLAYER_ACTION_ANIMATION_STATE before traversing the actor table."
+    },
+    {
+      "address": "0x001AA152",
+      "name": "Player_TerrainResponseStateMachine",
+      "evidence": "The terrain response state machine tests PLAYER_ACTION_ANIMATION_STATE while selecting the settled idle/interaction path."
+    }
+  ],
+  "conclusion": "The player action-animation marker contract is statically closed: its common-pass clear, terrain-state consumer, and all known indirect VM arm commands are recorded.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

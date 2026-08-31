@@ -1113,6 +1113,16 @@ def test_real_player_terrain_response_latches_have_canonical_roles():
     assert "ED 01 F101 0001" in brake.description
 
 
+def test_real_player_action_animation_state_has_recovered_vm_producers():
+    symbols = SymbolStore()
+
+    state = symbols.at(0x00FFF0DA, include_ranges=False)
+    assert state is not None
+    assert state.name == "PLAYER_ACTION_ANIMATION_STATE"
+    assert "38 ED 01 F0DA 0001" in state.description
+    assert "0x001AC7A2" in state.description
+
+
 def test_real_interaction_anchor_pair_has_canonical_roles():
     symbols = SymbolStore()
 

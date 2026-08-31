@@ -2748,11 +2748,12 @@
   type: u8
   format: boolean
   confidence: decompiled
-  description: Player action-animation state marker cleared at the start of AnimationVM_RunActorPass and tested by Player_TerrainResponseStateMachine before selecting the idle/interaction animation path. No direct setter is present in the exported absolute-reference corpus, so the producer remains open.
+  description: Player action-animation state marker cleared at the start of AnimationVM_RunActorPass at 0x001AC7A2 and tested by Player_TerrainResponseStateMachine at 0x001AA152 before selecting the idle/interaction animation path. The AnimationVM action/response streams arm it with 38 ED 01 F0DA 0001 commands across the apple-throw, terrain-transition, transition-lock, terrain-timer, and airborne-response stream families.
   evidence:
     - ghidra_disassembly_001AC796
     - ghidra_disassembly_001A9D98
     - player-action-transition-animation-static-targets
+    - player_action_animation_state_static_v1
 
 0xFFF112:
   name: PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE
