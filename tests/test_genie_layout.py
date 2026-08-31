@@ -4661,7 +4661,7 @@ def test_random_parity_callback_is_exact():
 def test_scene_resource_loader_and_blank_wrapper_gaps_are_exact():
     symbols = SymbolStore()
     functions = {
-        0x001B47BE: (18, "SceneResource_LoadE000Resource12CE06"),
+        0x001B47BE: (18, "SceneResource_LoadSceneSetupSecondaryE000Graphics"),
         0x001B4CE6: (38, "SceneResource_RunBlankStream1277C5"),
         0x001B4E44: (38, "SceneResource_RunBlankStream127B60"),
     }
@@ -4673,8 +4673,8 @@ def test_scene_resource_loader_and_blank_wrapper_gaps_are_exact():
         assert function.end == address + size - 1
 
     streams = {
-        0x001277C5: (0x6F, "SCENE_RESOURCE_BLANK_STREAM_1277C5"),
-        0x00127B60: (0x72, "SCENE_RESOURCE_BLANK_STREAM_127B60"),
+        0x001277C5: (0x6F, "SCENE_RESOURCE_BLANK_STREAM_STATE_07"),
+        0x00127B60: (0x72, "SCENE_RESOURCE_BLANK_STREAM_STATE_04_PRELUDE"),
     }
     for address, (size, name) in streams.items():
         stream = symbols.at(address, include_ranges=False)

@@ -592,34 +592,46 @@
     - ghidra_scene_resource_transfer_targets
     - ghidra_disassembly_001B47F0
 0x001B477C:
-  name: SceneResource_LoadVRAMTriple12CCD8
+  name: SceneResource_LoadSceneSetupGraphicsTriple
+  aliases:
+    - SceneResource_LoadVRAMTriple12CCD8
   confidence: decompiled
-  description: Decompresses ROM sources 0x0012CCD8, 0x0012CD74, and 0x00136912 to VRAM destinations 0xC000, 0xE000, and 0x0000.
+  description: Setup-time wrapper that decompresses SCENE_SETUP_C000_GRAPHICS to VRAM 0xC000, SCENE_SETUP_E000_GRAPHICS to VRAM 0xE000, and SCENE_SHARED_BASE_GRAPHICS to VRAM 0x0000.
   evidence:
     - ghidra_disassembly_001B477C
     - ghidra_scene_resource_setup_targets
+    - scene_resource_setup_loader_identity_promotion_static_v1
 0x001B47AC:
-  name: SceneResource_LoadE000Resource12D0FA
+  name: SceneResource_LoadSharedGraphicsToE000
+  aliases:
+    - SceneResource_LoadE000Resource12D0FA
   confidence: decompiled
-  description: Decompresses ROM source 0x0012D0FA to VRAM destination 0xE000.
+  description: Setup-time wrapper that decompresses SCENE_SHARED_GRAPHICS_RESOURCE to VRAM 0xE000.
   evidence:
     - ghidra_disassembly_001B47AC
     - ghidra_scene_resource_setup_targets
+    - scene_resource_setup_loader_identity_promotion_static_v1
 0x001B47BE:
-  name: SceneResource_LoadE000Resource12CE06
+  name: SceneResource_LoadSceneSetupSecondaryE000Graphics
+  aliases:
+    - SceneResource_LoadE000Resource12CE06
   size: 18
   confidence: decompiled
-  description: Decompresses ROM source 0x0012CE06 to VRAM destination 0xE000 through RNC_To_VDP_Loader.
+  description: Compact setup-time wrapper that decompresses SCENE_SETUP_SECONDARY_E000_GRAPHICS to VRAM 0xE000 through RNC_To_VDP_Loader.
   evidence:
     - gnu_m68k_disassembly_001B47BE
     - scene_resource_setup_loader_gap_static_decompilation
+    - scene_resource_setup_loader_identity_promotion_static_v1
 0x001B47D0:
-  name: SceneResource_LoadC000ResourceAndBase136912
+  name: SceneResource_LoadCommonC000AndSharedBaseGraphics
+  aliases:
+    - SceneResource_LoadC000ResourceAndBase136912
   confidence: decompiled
-  description: Decompresses ROM source 0x0012F4EC to VRAM 0xC000 and ROM source 0x00136912 to VRAM 0x0000.
+  description: Setup-time wrapper that decompresses SCENE_COMMON_C000_GRAPHICS to VRAM 0xC000 and SCENE_SHARED_BASE_GRAPHICS to VRAM 0x0000.
   evidence:
     - ghidra_disassembly_001B47D0
     - ghidra_scene_resource_setup_targets
+    - scene_resource_setup_loader_identity_promotion_static_v1
 0x001B4920:
   name: SceneResource_LoadCommonVRAMPair
   confidence: decompiled

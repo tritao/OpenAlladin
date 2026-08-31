@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-resource-setup-loader-identities-semantic-targets.json",
+  "promoted_symbols": [
+    "SceneResource_LoadSceneSetupGraphicsTriple",
+    "SceneResource_LoadSharedGraphicsToE000",
+    "SceneResource_LoadSceneSetupSecondaryE000Graphics",
+    "SceneResource_LoadCommonC000AndSharedBaseGraphics"
+  ],
+  "legacy_aliases": [
+    "SceneResource_LoadVRAMTriple12CCD8",
+    "SceneResource_LoadE000Resource12D0FA",
+    "SceneResource_LoadE000Resource12CE06",
+    "SceneResource_LoadC000ResourceAndBase136912"
+  ],
+  "contracts": [
+    "0x001B477C loads SCENE_SETUP_C000_GRAPHICS to C000, SCENE_SETUP_E000_GRAPHICS to E000, and SCENE_SHARED_BASE_GRAPHICS to VRAM base 0.",
+    "0x001B47AC loads SCENE_SHARED_GRAPHICS_RESOURCE to E000.",
+    "0x001B47BE loads SCENE_SETUP_SECONDARY_E000_GRAPHICS to E000 through the compact RNC-to-VDP wrapper.",
+    "0x001B47D0 loads SCENE_COMMON_C000_GRAPHICS to C000 and SCENE_SHARED_BASE_GRAPHICS to VRAM base 0."
+  ],
+  "limitations": [
+    "These promotions identify exact source/destination behavior but do not assign the higher-level scene or menu selector that calls each setup wrapper.",
+    "The legacy source-address names remain aliases for historical findings and downstream references."
+  ],
+  "conclusion": "Four setup-time scene-resource loaders now have stable identities based on their exact VRAM destinations and canonical graphics resources.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

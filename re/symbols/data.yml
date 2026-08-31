@@ -447,7 +447,7 @@
   type: graphics_data
   size: 0x9B
   confidence: decompiled
-  description: RNC-compressed Genesis tile payload loaded to VRAM C000 by SceneResource_LoadVRAMTriple12CCD8 during scene setup. Its exact compressed extent ends at 0x0012CD72.
+  description: RNC-compressed Genesis tile payload loaded to VRAM C000 by SceneResource_LoadSceneSetupGraphicsTriple during scene setup. Its exact compressed extent ends at 0x0012CD72.
   evidence:
     - scene_rnc_graphics_blocks_static_v1
     - scene_resource_setup_loader_targets
@@ -457,7 +457,7 @@
   type: graphics_data
   size: 0x91
   confidence: decompiled
-  description: RNC-compressed Genesis tile payload loaded to VRAM E000 by SceneResource_LoadVRAMTriple12CCD8 during scene setup. Its exact compressed extent ends at 0x0012CE04.
+  description: RNC-compressed Genesis tile payload loaded to VRAM E000 by SceneResource_LoadSceneSetupGraphicsTriple during scene setup. Its exact compressed extent ends at 0x0012CE04.
   evidence:
     - scene_rnc_graphics_blocks_static_v1
     - scene_resource_setup_loader_targets

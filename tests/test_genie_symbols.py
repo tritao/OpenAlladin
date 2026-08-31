@@ -1908,6 +1908,32 @@ def test_real_scene_graphics_have_loader_specific_canonical_names():
     assert reset_graphics.size == 0x183
 
 
+def test_scene_setup_loaders_have_stable_destination_identities():
+    expected = {
+        0x001B477C: (
+            "SceneResource_LoadSceneSetupGraphicsTriple",
+            "SceneResource_LoadVRAMTriple12CCD8",
+        ),
+        0x001B47AC: (
+            "SceneResource_LoadSharedGraphicsToE000",
+            "SceneResource_LoadE000Resource12D0FA",
+        ),
+        0x001B47BE: (
+            "SceneResource_LoadSceneSetupSecondaryE000Graphics",
+            "SceneResource_LoadE000Resource12CE06",
+        ),
+        0x001B47D0: (
+            "SceneResource_LoadCommonC000AndSharedBaseGraphics",
+            "SceneResource_LoadC000ResourceAndBase136912",
+        ),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

@@ -1,0 +1,61 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-setup-loader-identities",
+    "purpose": "Replace source-address-bearing setup loader names with stable VRAM-destination and resource-role identities."
+  },
+  "targets": [
+    {
+      "address": "0x001B477C",
+      "name": "SceneResource_LoadSceneSetupGraphicsTriple",
+      "legacy_name": "SceneResource_LoadVRAMTriple12CCD8",
+      "range": "0x001B477C-0x001B47AB",
+      "size": 48,
+      "loads": [
+        { "source": "SCENE_SETUP_C000_GRAPHICS", "destination": "0x00C000" },
+        { "source": "SCENE_SETUP_E000_GRAPHICS", "destination": "0x00E000" },
+        { "source": "SCENE_SHARED_BASE_GRAPHICS", "destination": "0x000000" }
+      ]
+    },
+    {
+      "address": "0x001B47AC",
+      "name": "SceneResource_LoadSharedGraphicsToE000",
+      "legacy_name": "SceneResource_LoadE000Resource12D0FA",
+      "range": "0x001B47AC-0x001B47BD",
+      "size": 18,
+      "loads": [
+        { "source": "SCENE_SHARED_GRAPHICS_RESOURCE", "destination": "0x00E000" }
+      ]
+    },
+    {
+      "address": "0x001B47BE",
+      "name": "SceneResource_LoadSceneSetupSecondaryE000Graphics",
+      "legacy_name": "SceneResource_LoadE000Resource12CE06",
+      "range": "0x001B47BE-0x001B47CF",
+      "size": 18,
+      "loads": [
+        { "source": "SCENE_SETUP_SECONDARY_E000_GRAPHICS", "destination": "0x00E000" }
+      ]
+    },
+    {
+      "address": "0x001B47D0",
+      "name": "SceneResource_LoadCommonC000AndSharedBaseGraphics",
+      "legacy_name": "SceneResource_LoadC000ResourceAndBase136912",
+      "range": "0x001B47D0-0x001B47EF",
+      "size": 32,
+      "loads": [
+        { "source": "SCENE_COMMON_C000_GRAPHICS", "destination": "0x00C000" },
+        { "source": "SCENE_SHARED_BASE_GRAPHICS", "destination": "0x000000" }
+      ]
+    }
+  ],
+  "evidence": [
+    "exact setup-loader instruction bodies",
+    "explicit RNC source and VRAM destination operands",
+    "existing scene-resource setup loader decompilation",
+    "canonical graphics resource identities"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
