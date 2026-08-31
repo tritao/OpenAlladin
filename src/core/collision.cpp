@@ -8,6 +8,19 @@ namespace openaladdin::core {
 namespace {
 
 constexpr RamAddress kActorCollisionToggleFacing = 0x001AC60E;
+constexpr RamAddress kActorCollisionClearSource = 0x001ABF8E;
+constexpr RamAddress kActorCollisionType14 = 0x001AC614;
+constexpr RamAddress kActorCollisionType2B = 0x001AC63C;
+constexpr RamAddress kActorCollisionType2F = 0x001AC676;
+constexpr RamAddress kActorCollisionType30 = 0x001AC682;
+constexpr RamAddress kActorCollisionType2D2E31 = 0x001AC6A2;
+constexpr RamAddress kActorTemplateType84 = 0x001B7E40;
+constexpr RamAddress kActorTemplateType2DInteraction = 0x001B792C;
+constexpr RamAddress kActorTemplateType8D = 0x001B7CD8;
+constexpr RamAddress kActorTemplateCollisionResponse = 0x001B7940;
+constexpr RamAddress kActorAnimationType2B = 0x00123FF8;
+constexpr RamAddress kActorAnimationType30 = 0x00123024;
+constexpr RamAddress kActorAnimationType2D2E31 = 0x00122B6E;
 constexpr RamAddress kPlayerCollisionNoopType0D = 0x001AEB7A;
 constexpr RamAddress kPlayerCollisionNoopType2B = 0x001AEBFE;
 constexpr RamAddress kPlayerCollisionNoopType04 = 0x001AEDA6;
@@ -182,7 +195,7 @@ CollisionPassResult actor_collision_pass(CoreRuntime& core) {
             core, actor_read32(source, kActorFramePointerOffset),
             actor_read16(source, kActorXOffset),
             actor_read16(source, kActorYOffset),
-            actor_read8(source, kActorFacingXOffset));
+            0);
         if (!source_box.valid) continue;
 
         for (std::size_t receiver_slot = 1; receiver_slot <= 24;
@@ -195,7 +208,7 @@ CollisionPassResult actor_collision_pass(CoreRuntime& core) {
                 core, actor_read32(receiver, kActorFramePointerOffset),
                 actor_read16(receiver, kActorXOffset),
                 actor_read16(receiver, kActorYOffset),
-                actor_read8(receiver, kActorFacingXOffset));
+                0);
             if (!collision_overlaps(source_box, receiver_box)) continue;
 
             result.contact_count++;
@@ -223,6 +236,26 @@ bool actor_collision_toggle_facing(CoreRuntime& core, std::size_t actor_slot) {
     return true;
 }
 
+bool actor_collision_reinitialize_interaction(
+    CoreRuntime& core,
+    std::size_t source_slot,
+    std::size_t receiving_slot
+) {
+    const std::uint8_t source_type = actor_read8(
+        actor_view(core.ram, source_slot), kActorTypeOffset);
+    const RamAddress template_address = source_type == 0x2D
+        ? kActorTemplateType84 : kActorTemplateType2DInteraction;
+    if (!actor_initialize_from_template(
+            core, receiving_slot, template_address)) {
+        return false;
+    }
+    if ((read8(core.ram, kFramePhaseCounter) & 0x02U) != 0) {
+        actor_write8(actor_view(core.ram, receiving_slot),
+                     kActorFacingXOffset, 0xFF);
+    }
+    return true;
+}
+
 bool actor_collision_apply(
     CoreRuntime& core,
     std::size_t source_slot,
@@ -239,7 +272,70 @@ bool actor_collision_apply(
     if (!dispatch.in_range || dispatch.no_op) return false;
 
     if (dispatch.handler == kActorCollisionToggleFacing) {
-        return actor_collision_toggle_facing(core, receiving_slot);
+        return actor_collision_toggle_facing(core, source_slot);
+    }
+
+    if (dispatch.handler == kActorCollisionClearSource
+        || dispatch.handler == kActorCollisionType14
+        || dispatch.handler == kActorCollisionType2F) {
+        actor_clear_type_and_release(core, source_slot);
+        return actor_collision_reinitialize_interaction(
+            core, source_slot, receiving_slot);
+    }
+
+    if (dispatch.handler == kActorCollisionType2B) {
+        if (!actor_collision_reinitialize_interaction(
+                core, source_slot, receiving_slot)) {
+            return false;
+        }
+        const ActorView receiver = actor_view(core.ram, receiving_slot);
+        write8(core.ram, kActorCollisionEventFlag, 0xFF);
+        actor_write8(receiver, kActorTypeOffset, 0x84);
+        actor_write32(receiver, kActorAnimationPcOffset, kActorAnimationType2B);
+        actor_write8(receiver, kActorMovementFlagsOffset, 0x40);
+
+        const auto child = actor_find_free_slot(
+            core.ram, ActorAllocationPool::GameplayForward);
+        if (child && actor_initialize_from_template(
+                core, *child, kActorTemplateType8D)) {
+            const ActorView child_actor = actor_view(core.ram, *child);
+            actor_write16(child_actor, kActorXOffset,
+                          actor_read16(receiver, kActorXOffset));
+            actor_write16(child_actor, kActorYOffset,
+                          actor_read16(receiver, kActorYOffset));
+        }
+        return true;
+    }
+
+    if (dispatch.handler == kActorCollisionType30) {
+        actor_clear_type_and_release(core, source_slot);
+        actor_clear_owned_resources(core, receiving_slot);
+        if (!actor_initialize_from_template(
+                core, receiving_slot, kActorTemplateCollisionResponse)) {
+            return false;
+        }
+        actor_write32(actor_view(core.ram, receiving_slot),
+                      kActorAnimationPcOffset, kActorAnimationType30);
+        return true;
+    }
+
+    if (dispatch.handler == kActorCollisionType2D2E31) {
+        const ActorView source = actor_view(core.ram, source_slot);
+        const std::uint8_t source_type = actor_read8(
+            source, kActorTypeOffset);
+        if (source_type == 0x80) {
+            actor_write8(source, kActorTypeOffset, 0x84);
+            actor_write32(source, kActorAnimationPcOffset,
+                          kActorAnimationType2D2E31);
+            actor_write32(source, kActorMovementPcOffset, 0);
+            actor_write8(source, kActorAnimationTimerOffset, 0);
+        } else if (source_type != 0x82) {
+            return false;
+        }
+        const ActorView receiver = actor_view(core.ram, receiving_slot);
+        actor_write8(receiver, kActorTypeOffset, 0x84);
+        actor_write8(receiver, kActorMovementFlagsOffset, 0x40);
+        return true;
     }
 
     // Other handlers have table identity but their shared response/resource

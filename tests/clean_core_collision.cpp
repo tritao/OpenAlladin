@@ -76,13 +76,14 @@ int main() {
 
     const ActorView receiver = actor_view(core.ram, 4);
     actor_write8(receiver, kActorTypeOffset, 0x0D);
-    actor_write8(receiver, kActorFacingXOffset, 0x00);
-    actor_write8(receiver, kActorMovementFlagsOffset, 0x00);
+    const ActorView source_actor = actor_view(core.ram, 3);
+    actor_write8(source_actor, kActorFacingXOffset, 0x00);
+    actor_write8(source_actor, kActorMovementFlagsOffset, 0x00);
     assert(actor_collision_apply(core, 3, 4));
-    assert(actor_read8(receiver, kActorFacingXOffset) == 0xFF);
-    assert(actor_read8(receiver, kActorMovementFlagsOffset) == 0x40);
+    assert(actor_read8(source_actor, kActorFacingXOffset) == 0xFF);
+    assert(actor_read8(source_actor, kActorMovementFlagsOffset) == 0x40);
     assert(!actor_collision_apply(core, 3, 4));
-    assert(actor_read8(receiver, kActorFacingXOffset) == 0xFF);
+    assert(actor_read8(source_actor, kActorFacingXOffset) == 0xFF);
 
     // The pass uses the ROM frame records and recovered pools directly. A
     // player/common overlap publishes the candidate type, while an
@@ -116,8 +117,8 @@ int main() {
     assert(actor_result.contact_count == 1);
     assert(actor_result.dispatch.handler == 0x001AC60E);
     assert(actor_result.handler_applied);
-    assert(actor_read8(receiver, kActorFacingXOffset) == 0xFF);
-    assert(actor_read8(receiver, kActorMovementFlagsOffset) == 0x40);
+    assert(actor_read8(source, kActorFacingXOffset) == 0xFF);
+    assert(actor_read8(source, kActorMovementFlagsOffset) == 0x40);
 
     return 0;
 }

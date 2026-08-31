@@ -161,20 +161,21 @@ void actor_clear_owned_resources(CoreRuntime& core, std::size_t actor_slot) {
     actor_write32(actor, kActorSpriteVramBaseOffset, 0);
 }
 
+void actor_clear_type_and_release(CoreRuntime& core, std::size_t actor_slot) {
+    if (!is_actor_slot(actor_slot)) return;
+    const ActorView actor = actor_view(core.ram, actor_slot);
+    actor_clear_owned_resources(core, actor_slot);
+    actor_write8(actor, kActorTypeOffset, 0);
+}
+
 void actor_clear_and_release(CoreRuntime& core, std::size_t actor_slot) {
     if (!is_actor_slot(actor_slot)) return;
     const ActorView actor = actor_view(core.ram, actor_slot);
     const auto linked = actor_slot_for_address(actor_read32(
         actor, kActorLinkedRecordPointerOffset));
-    actor_clear_owned_resources(core, actor_slot);
-    for (std::size_t offset = 0; offset < kActorRecordSize; ++offset) {
-        actor_write8(actor, offset, 0);
-    }
+    actor_clear_type_and_release(core, actor_slot);
     if (linked && *linked != actor_slot) {
-        const ActorView linked_actor = actor_view(core.ram, *linked);
-        actor_clear_owned_resources(core, *linked);
-        actor_write8(linked_actor, kActorTypeOffset, 0);
-        actor_write32(linked_actor, kActorLinkedRecordPointerOffset, 0);
+        actor_clear_type_and_release(core, *linked);
     }
 }
 

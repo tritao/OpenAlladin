@@ -45,6 +45,7 @@ bool actor_allocate_sprite_resources(CoreRuntime& core, std::size_t actor_slot);
 void actor_clear_owned_resources(CoreRuntime& core, std::size_t actor_slot);
 
 // Shared actor cleanup used by terminal VM paths and later collision helpers.
+void actor_clear_type_and_release(CoreRuntime& core, std::size_t actor_slot);
 void actor_clear_and_release(CoreRuntime& core, std::size_t actor_slot);
 
 std::optional<std::size_t> actor_spawn_from_template(
