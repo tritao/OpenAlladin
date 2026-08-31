@@ -3015,13 +3015,15 @@
     - ghidra_far_transfer_targeted_decompile_v1
 
 0x001DBE:
-  name: PLAYER_COLLISION_HANDLER_TYPE_40
+  name: PLAYER_COLLISION_HANDLER_FAR_TRANSFER_SUPPORT_ACTOR
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_40]
   type: rom_pointer
-  confidence: confirmed
-  description: Player-collision dispatch pointer for actor type 0x40; its big-endian ROM value is 0x001AF468.
+  confidence: trace_validated
+  description: Player-collision dispatch pointer for the upper-route support actor's far-transfer cleanup path; its technical actor-type selector is 0x40 and its big-endian ROM value is 0x001AF468.
   evidence:
     - rom_handler_table_decode
     - mame_type40_far_transfer_trace
+    - level01_upper_band_inventory
 
 0x001D8E:
   name: PLAYER_COLLISION_HANDLER_WALL_RESPONSE_REPLACEMENT

@@ -3899,6 +3899,17 @@ def test_type2a_collision_entry_uses_vertical_bob_object_role():
     assert 0x001D66 in mappings["VERTICAL_BOB_OBJECT"].symbol_addresses
 
 
+def test_type40_collision_entry_uses_far_transfer_support_actor_role():
+    symbol = SymbolStore().at(0x001DBE, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "PLAYER_COLLISION_HANDLER_FAR_TRANSFER_SUPPORT_ACTOR"
+    assert "PLAYER_COLLISION_HANDLER_TYPE_40" in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert 0x001DBE in mappings["FAR_TRANSFER_SUPPORT_ACTOR"].symbol_addresses
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

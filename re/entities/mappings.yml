@@ -662,6 +662,17 @@ mappings:
       - animation_stream_decoder
     description: Selector-0x5C vertical-bob interaction state machine and its actor template.
 
+  - name: FAR_TRANSFER_SUPPORT_ACTOR
+    scope: actor
+    symbol_addresses: [0x001AF468, 0x001DBE]
+    technical_types: [0x40]
+    confidence: trace_validated
+    evidence:
+      - mame_type40_far_transfer_trace
+      - level01_upper_band_inventory
+      - ghidra_far_transfer_targeted_decompile_v1
+    description: Upper-route Type-0x40 support actor whose player-collision entry performs the far-transfer cleanup and reinitialization path.
+
   - name: COLLISION_REINITIALIZATION_RESPONSE
     scope: role
     symbol_addresses: [0x001B7E40]
