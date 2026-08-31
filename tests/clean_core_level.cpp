@@ -105,7 +105,10 @@ int main() {
     // The timed VM increments its byte tick first and dispatches only when
     // delay < tick. E8 + 0x1A wraps to table entry two.
     const std::size_t stream = 0x0100;
-    write_rom32(rom, 0x20C0 + 2 * 4, 0x001B76AA);
+    rom.resize(0x001B8200, 0);
+    bind_rom(core, RomView{rom.data(), rom.size()});
+    write_rom32(rom, 0x20C0 + 2 * 4, 0x001B766C);
+    rom[0x001B81D8] = 0x7D;
     rom[stream + 0] = 2;
     rom[stream + 1] = 0xE8;
     write_rom16(rom, stream + 2, 0x1234);
@@ -123,11 +126,16 @@ int main() {
     assert(event.command == 0xE8);
     assert(event.arg0 == 0x1234);
     assert(event.arg1 == 0xABCD);
-    assert(event.handler == 0x001B76AA);
+    assert(event.handler == 0x001B766C);
     assert(read32(core.ram, kLevelEventScriptCursor) == stream + 6);
     assert(read8(core.ram, kLevelEventTick) == 0);
     assert(event_trace.level_event_dispatched);
-    assert(event_trace.level_event_handler == 0x001B76AA);
+    assert(event_trace.level_event_handler == 0x001B766C);
+    assert(actor_read8(actor_view(core.ram, 1), kActorTypeOffset) == 0x7D);
+    assert(actor_read16(actor_view(core.ram, 1), kActorXOffset) == 0x1234);
+    assert(actor_read16(actor_view(core.ram, 1), kActorYOffset) == 0xABCD);
+    assert(actor_read16(actor_view(core.ram, 1), 0x1E) == 0x4000);
+    assert(actor_read8(actor_view(core.ram, 1), kActorFacingXOffset) == 0xFF);
 
     // A zero-delay terminator is observed in place; the ROM helper does not
     // clear or advance the cursor when it reaches it.
