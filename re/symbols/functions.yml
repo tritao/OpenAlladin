@@ -5456,7 +5456,8 @@
     - interaction_spawn_type5e84_pair_static_decompilation
     - interaction_spawn_type5e84_pair_semantic_v1
 0x001B69A6:
-  name: InteractionSpawn_Type5E84Pair_AnchorResponse
+  name: InteractionSpawn_CreatePairedAnchorResponse
+  aliases: [InteractionSpawn_Type5E84Pair_AnchorResponse]
   size: 90
   confidence: decompiled
   description: Type-0x5E plus Type-0x84 paired-spawn handler. Its exact body allocates the two linked records, installs ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE, and publishes the companion anchor at (base X - 0x20, base Y + 0x40). No active INTERACTION_HANDLER_TABLE entry or runtime sample targets this body, so it is retained as a complete unreferenced variant without assigning a selector.

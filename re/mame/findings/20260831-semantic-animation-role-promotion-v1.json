@@ -1,0 +1,31 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "remaining-animation-and-collision-role-identities",
+  "promotions": [
+    "PLAYER_COLLISION_ALTERNATE_RESPONSE_LATCH",
+    "InteractionSpawn_CreatePairedAnchorResponse",
+    "ACTOR_MOVE_RANDOM_STEP_POSITIVE",
+    "ACTOR_MOVE_RANDOM_STEP_NEGATIVE",
+    "ACTOR_ANIM_MOVING_CHILD_VARIANT_LOOP",
+    "ACTOR_ANIM_TERRAIN_SCENE5_VARIANT_A",
+    "ACTOR_ANIM_TERRAIN_SCENE5_VARIANT_B",
+    "ACTOR_ANIM_DIRECTIONAL_RESPONSE",
+    "ACTOR_ANIM_MENU_SECONDARY_PRESENTATION"
+  ],
+  "evidence": [
+    "player-collision-response-gates-static-decompilation",
+    "interaction_spawn_type5e84_unindexed_static_disassembly",
+    "direct-movement-response-streams-static-decompilation",
+    "actor_template_f5_moving_child_base_static_decompilation",
+    "terrain_scene5_spawn_response_static_decompilation",
+    "type0c_directional_response_animation_static_decompilation",
+    "actor_template_menu_secondary_static_decompilation"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_behavior_role"
+  }
+}

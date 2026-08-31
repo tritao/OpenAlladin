@@ -2646,7 +2646,8 @@
     - ghidra_disassembly_001B614C
 
 0xFFF179:
-  name: PLAYER_INTERACTION_TYPE3D_LATCH
+  name: PLAYER_COLLISION_ALTERNATE_RESPONSE_LATCH
+  aliases: [PLAYER_INTERACTION_TYPE3D_LATCH]
   type: u8
   format: boolean
   confidence: decompiled

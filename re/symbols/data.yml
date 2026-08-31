@@ -4104,7 +4104,8 @@
     - movement_stream_decoder
 
 0x001209F0:
-  name: ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A
+  name: ACTOR_MOVE_RANDOM_STEP_POSITIVE
+  aliases: [ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A]
   type: movement_stream
   size: 8
   confidence: decompiled
@@ -4115,7 +4116,8 @@
     - movement_stream_decoder
 
 0x001209F8:
-  name: ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B
+  name: ACTOR_MOVE_RANDOM_STEP_NEGATIVE
+  aliases: [ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B]
   type: movement_stream
   size: 8
   confidence: decompiled
@@ -5668,7 +5670,8 @@
     - animation_stream_decoder
 
 0x00124C3A:
-  name: ACTOR_ANIM_TYPE84_MOVING_CHILD_VARIANT_LOOP
+  name: ACTOR_ANIM_MOVING_CHILD_VARIANT_LOOP
+  aliases: [ACTOR_ANIM_TYPE84_MOVING_CHILD_VARIANT_LOOP]
   type: animation_stream
   size: 98
   confidence: decompiled
@@ -5822,7 +5825,8 @@
     - animation_stream_decoder
 
 0x001250CE:
-  name: ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_A
+  name: ACTOR_ANIM_TERRAIN_SCENE5_VARIANT_A
+  aliases: [ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_A]
   type: animation_stream
   size: 16
   confidence: decompiled
@@ -5833,7 +5837,8 @@
     - animation_stream_decoder
 
 0x001250DE:
-  name: ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_B
+  name: ACTOR_ANIM_TERRAIN_SCENE5_VARIANT_B
+  aliases: [ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_B]
   type: animation_stream
   size: 12
   confidence: decompiled
@@ -7245,7 +7250,8 @@
     - animation_stream_decoder
 
 0x00125966:
-  name: ACTOR_ANIM_TYPE0C_DIRECTIONAL_RESPONSE
+  name: ACTOR_ANIM_DIRECTIONAL_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE0C_DIRECTIONAL_RESPONSE]
   size: 64
   confidence: confirmed
   description: Type-0x0C directional response state selected by Actor_SelectDirectionalAnimation at 0x001ACBF2 from ACTOR_ANIM_TYPE0C_LEVEL_EVENT. Its 64-byte region republishes actor type 0x0C, clears the horizontal flip, presents the 0x13D2-0x13EA sequence, spawns the Type-0x2E directional child through the template at 0x001B8200, and returns to the Type-0x0C root at 0x00125952.
@@ -7478,7 +7484,8 @@
     - animation_stream_decoder
 
 0x00126118:
-  name: ACTOR_ANIM_MENU_TYPE84_SECONDARY
+  name: ACTOR_ANIM_MENU_SECONDARY_PRESENTATION
+  aliases: [ACTOR_ANIM_MENU_TYPE84_SECONDARY]
   size: 184
   confidence: decompiled
   description: Secondary Type-0x84 menu-presentation animation installed by ACTOR_TEMPLATE_MENU_TYPE_84_SECONDARY during Menu_RunOptionsAndSelectNextState. Its exact 184-byte region runs the 0x1376-0x138A frame sequence, uses F4 comparisons to enter the actor-field correction at 0x001261C0, and loops through the local entry at 0x0012612A.

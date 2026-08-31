@@ -3053,7 +3053,7 @@ def test_real_collision_and_presentation_state_have_canonical_roles():
 def test_real_actor_slot_and_camera_callback_state_have_canonical_roles():
     symbols = SymbolStore()
     expected = {
-        0x00FFF179: ("PLAYER_INTERACTION_TYPE3D_LATCH", "boolean", "decompiled"),
+        0x00FFF179: ("PLAYER_COLLISION_ALTERNATE_RESPONSE_LATCH", "boolean", "decompiled"),
         0x00FFF09E: ("CAMERA_SCROLL_RENDER_OFFSET", "integer", "decompiled"),
         0x00FF7E84: ("ACTOR_SLOT_1_X", "pixels", "confirmed"),
         0x00FF7E86: ("ACTOR_SLOT_1_Y", "pixels", "confirmed"),
@@ -3064,6 +3064,37 @@ def test_real_actor_slot_and_camera_callback_state_have_canonical_roles():
         assert symbol.name == name
         assert symbol.metadata["format"] == format_name
         assert symbol.confidence == confidence
+
+
+def test_remaining_animation_and_movement_roles_preserve_numeric_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x001209F0: ("ACTOR_MOVE_RANDOM_STEP_POSITIVE", "ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A"),
+        0x001209F8: ("ACTOR_MOVE_RANDOM_STEP_NEGATIVE", "ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B"),
+        0x00124C3A: ("ACTOR_ANIM_MOVING_CHILD_VARIANT_LOOP", "ACTOR_ANIM_TYPE84_MOVING_CHILD_VARIANT_LOOP"),
+        0x001250CE: ("ACTOR_ANIM_TERRAIN_SCENE5_VARIANT_A", "ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_A"),
+        0x001250DE: ("ACTOR_ANIM_TERRAIN_SCENE5_VARIANT_B", "ACTOR_ANIM_TYPE84_TERRAIN_SCENE5_VARIANT_B"),
+        0x00125966: ("ACTOR_ANIM_DIRECTIONAL_RESPONSE", "ACTOR_ANIM_TYPE0C_DIRECTIONAL_RESPONSE"),
+        0x00126118: ("ACTOR_ANIM_MENU_SECONDARY_PRESENTATION", "ACTOR_ANIM_MENU_TYPE84_SECONDARY"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+
+def test_remaining_collision_roles_preserve_numeric_aliases():
+    symbols = SymbolStore()
+    latch = symbols.at(0x00FFF179, include_ranges=False)
+    assert latch is not None
+    assert latch.name == "PLAYER_COLLISION_ALTERNATE_RESPONSE_LATCH"
+    assert "PLAYER_INTERACTION_TYPE3D_LATCH" in latch.aliases
+
+    helper = symbols.at(0x001B69A6, include_ranges=False)
+    assert helper is not None
+    assert helper.name == "InteractionSpawn_CreatePairedAnchorResponse"
+    assert "InteractionSpawn_Type5E84Pair_AnchorResponse" in helper.aliases
 
 
 def test_real_player_actor_coordinates_and_menu_gate_have_canonical_roles():
