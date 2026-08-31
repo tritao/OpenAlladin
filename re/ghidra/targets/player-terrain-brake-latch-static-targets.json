@@ -1,0 +1,62 @@
+{
+  "format": "openaladdin-player-terrain-brake-latch-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ram": {
+    "address": "0x00FFF101",
+    "name": "PLAYER_TERRAIN_BRAKE_STATE",
+    "consumer": {
+      "address": "0x001AA10A",
+      "function": "Player_TerrainResponseStateMachine",
+      "instruction": "tst.b (0x00fff101).l"
+    }
+  },
+  "animation_stream_commands": [
+    {
+      "address": "0x00121FDC",
+      "stream": "PLAYER_ANIM_SPECIAL_CAMERA_RUN",
+      "bytes": "ED01F1010000",
+      "effect": "clear"
+    },
+    {
+      "address": "0x0012200E",
+      "stream": "PLAYER_ANIM_RUN",
+      "bytes": "ED01F1010000",
+      "effect": "clear"
+    },
+    {
+      "address": "0x00122078",
+      "stream": "PLAYER_ANIM_RUN",
+      "bytes": "ED01F1010001",
+      "effect": "arm"
+    }
+  ],
+  "absolute_clear_writers": [
+    { "address": "0x001AA03A", "function": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001AA05A", "function": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001AA0CA", "function": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001AA0E8", "function": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001AA122", "function": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001AA12A", "function": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001AA1F6", "function": "Player_TerrainResponseStateMachine" },
+    { "address": "0x001ABCE4", "function": "Actor_PlayerCollisionPass" },
+    { "address": "0x001AD97A", "function": "Player_TerrainLandingResolver" },
+    { "address": "0x001AD9C6", "function": "Player_TerrainLandingResolver" }
+  ],
+  "evidence": [
+    "animation_stream_decoder",
+    "ghidra_decompile_player_movement_collision_targets",
+    "ghidra_disassembly_001ABB40",
+    "rom_byte_scan_ed_f101"
+  ],
+  "conclusion": "The brake latch has a recovered nonzero producer: PLAYER_ANIM_RUN arms 0x00FFF101 through the VM ED command at 0x00122078. The absolute Ghidra write inventory is clear-only, so its apparent missing setter was an export-model limitation rather than an absent ROM producer.",
+  "limitations": [
+    "The stream command is statically decoded; this record does not claim which gameplay route reaches the arm command in every frame.",
+    "The latch remains named by its settled-landing consumer contract rather than a user-facing action label."
+  ],
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

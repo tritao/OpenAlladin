@@ -1053,11 +1053,12 @@
   type: u8
   format: boolean
   confidence: decompiled
-  description: Player terrain-brake latch consumed by Player_TerrainResponseStateMachine to select PLAYER_ANIM_BRAKE after a settled landing; collision, landing, and terrain reset paths clear it. Its direct setter is not recovered as an absolute RAM write in the current database.
+  description: Player terrain-brake latch consumed by Player_TerrainResponseStateMachine to select PLAYER_ANIM_BRAKE after a settled landing. The absolute-reference writers are clear-only paths in Player_TerrainResponseStateMachine, Actor_PlayerCollisionPass, and Player_TerrainLandingResolver; the AnimationVM run streams clear it at 0x00121FDC and 0x0012200E and arm it with ED 01 F101 0001 at 0x00122078.
   evidence:
     - player_landing_response_animation_static
     - player_vertical_interaction_response_animation_static
     - ghidra_disassembly_001ABB40
+    - player_terrain_brake_latch_static_v1
 0xFFF003:
   name: PLAYER_INTERACTION_COUNTER
   type: u8

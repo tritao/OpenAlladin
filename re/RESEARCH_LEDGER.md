@@ -2356,6 +2356,24 @@ direct indirect-VM setters remain unresolved where Ghidra does not export an
 absolute write. No new runtime confidence or user-facing action labels are
 claimed.
 
+## Player terrain-brake AnimationVM producer (20260831)
+
+The previously missing nonzero producer for `PLAYER_TERRAIN_BRAKE_STATE` at
+`0x00FFF101` is now recovered from the AnimationVM command encoding. The
+`ED 01 F101 0000` commands at `0x00121FDC` in
+`PLAYER_ANIM_SPECIAL_CAMERA_RUN` and `0x0012200E` in `PLAYER_ANIM_RUN` clear
+the latch, while the `ED 01 F101 0001` command at `0x00122078` in
+`PLAYER_ANIM_RUN` arms it before the landing-response handoff. This explains
+why the Ghidra absolute-reference inventory contained only clear writers: the
+nonzero producer is an indirect VM stream write.
+
+The absolute clear set is also bounded: seven writes belong to
+`Player_TerrainResponseStateMachine`, one to `Actor_PlayerCollisionPass`, and
+two to `Player_TerrainLandingResolver`; the only consumer is the settled-
+landing test at `0x001AA10A`. The static contract is recorded in
+`re/mame/findings/20260831-player-terrain-brake-latch-static-v1.json` and its
+target manifest.
+
 ## Secondary interaction counter reset (20260828)
 
 InteractionCounter_ResetSecondaryDigits at `0x001AA664` resets the separate
@@ -3732,6 +3750,7 @@ valuable because it prevents repeating the same input family.
 | `20260830-actor-vm-continuations-static-v1` | recorded-static-decompilation | Named ACTOR_VM_COMMAND_CONTINUATION and ACTOR_VM_CURSOR_CLEAR_CONTINUATION at FF7D9A/FF7D9E and closed their pass-tail contract: AnimationVM installs 0x001AC842/0x001AC846, MovementVM installs 0x001AE048/0x001AE04C, and shared timer/loop or cursor-clear opcodes rewrite the saved return address through the matching pointer |
 | `20260830-player-interaction-animation-selector-static-v1` | recorded-static-decompilation | Named PLAYER_INTERACTION_ANIMATION_INDEX at FFF16A and confirmed the exact ten-entry PLAYER_INTERACTION_ANIMATION_TABLE extent and mask-based selector contract; retained the higher-level terrain/contact meaning as decompiled/static |
 | `20260830-player-terrain-response-latches-static-v1` | recorded-static-decompilation | Canonized the interaction marker, vertical push states, signed response phase, short response timer, left/right response latches, and brake latch used by the player terrain/collision state machine; retained indirect-VM setters and higher-level action labels as unresolved |
+| `20260831-player-terrain-brake-latch-static-v1` | recorded-static-decompilation | Closed PLAYER_TERRAIN_BRAKE_STATE: PLAYER_ANIM_RUN arms it through ED 01 F101 0001 at 0x00122078, two run/special-camera commands clear it, and the ten absolute Ghidra writers are clear-only terrain/collision paths |
 | `20260830-type7e-function-boundary-correction-v1` | tooling-validation | Corrected ActorType7E_PlayerCollisionHandler from the stale 358-byte overlapping symbol size to its exact 292-byte body ending at 0x001AFF3F before the separate mode-11 and mode-16 helpers |
 | `20260830-rnc-title-boundary-audit-correction-v2` | tooling-validation | Corrected the RNC manifest end interpretation: its exclusive 0x001434C3 endpoint means the title payload ends at 0x001434C2 and the zero at 0x001434C3 remains alignment padding before the next RNC header at 0x001434C4 |
 | `20260830-scene-resource-stream-boundary-correction-static-v1` | tooling-validation | Corrected SCENE_RESOURCE_BLANK_STREAM_STATE_03 to its 0x00127AEE-0x00127B5F terminator and separated the independently selected 0x00127B60-0x00127BD1 stream |

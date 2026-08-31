@@ -1107,6 +1107,11 @@ def test_real_player_terrain_response_latches_have_canonical_roles():
         assert symbol is not None
         assert symbol.name == name
 
+    brake = symbols.at(0x00FFF101, include_ranges=False)
+    assert brake is not None
+    assert "0x00122078" in brake.description
+    assert "ED 01 F101 0001" in brake.description
+
 
 def test_real_interaction_anchor_pair_has_canonical_roles():
     symbols = SymbolStore()

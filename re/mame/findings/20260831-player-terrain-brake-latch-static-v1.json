@@ -1,0 +1,34 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-terrain-brake-latch-static-targets.json",
+  "contracts": [
+    {
+      "address": "0x00FFF101",
+      "name": "PLAYER_TERRAIN_BRAKE_STATE",
+      "evidence": "Player_TerrainResponseStateMachine tests the latch at 0x001AA10A and selects PLAYER_ANIM_BRAKE when it is nonzero after a settled landing; all ten absolute Ghidra writers are clr.b instructions in the terrain response, player collision, and landing resolver paths."
+    },
+    {
+      "address": "0x00121FDC",
+      "name": "PLAYER_ANIM_SPECIAL_CAMERA_RUN",
+      "evidence": "The ED 01 F101 0000 command clears PLAYER_TERRAIN_BRAKE_STATE before the special-camera run frames."
+    },
+    {
+      "address": "0x0012200E",
+      "name": "PLAYER_ANIM_RUN",
+      "evidence": "The ED 01 F101 0000 command clears PLAYER_TERRAIN_BRAKE_STATE in the run stream's initial setup."
+    },
+    {
+      "address": "0x00122078",
+      "name": "PLAYER_ANIM_RUN",
+      "evidence": "The ED 01 F101 0001 command is the recovered nonzero producer that arms PLAYER_TERRAIN_BRAKE_STATE before the run stream enters the landing-response region."
+    }
+  ],
+  "conclusion": "The player terrain-brake latch contract is statically closed: its settled-landing consumer and absolute clear paths are known, and its nonzero producer is an AnimationVM ED command that is invisible to the absolute RAM-reference inventory.",
+  "confidence": "confirmed",
+  "status": "recorded-static-decompilation"
+}

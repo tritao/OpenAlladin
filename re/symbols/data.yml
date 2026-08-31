@@ -5787,10 +5787,11 @@
   name: PLAYER_ANIM_RUN
   size: 122
   confidence: confirmed
-  description: Player running animation stream entry selected by the player state logic. Its exact 122-byte entry region ends at 0x0012207F, immediately before the separately entered PLAYER_ANIM_LANDING_RESPONSE_SPAWN at 0x00122080; the run path contains its own shared loop and F5 child-spawn branches.
+  description: Player running animation stream entry selected by the player state logic. Its exact 122-byte entry region ends at 0x0012207F, immediately before the separately entered PLAYER_ANIM_LANDING_RESPONSE_SPAWN at 0x00122080; the run path contains its own shared loop and F5 child-spawn branches, clears PLAYER_TERRAIN_BRAKE_STATE at 0x0012200E, and arms it with ED 01 F101 0001 at 0x00122078 before the landing-response handoff.
   evidence:
     - ghidra_disassembly_001B1FFE
     - mame_player_animation_trace
+    - player_terrain_brake_latch_static_v1
 
 0x00121828:
   name: PLAYER_VERTICAL_ANIMATION_TABLE
@@ -6252,10 +6253,11 @@
   name: PLAYER_ANIM_SPECIAL_CAMERA_RUN
   size: 50
   confidence: confirmed
-  description: Special-camera locomotion stream selected by Player_SelectRunOrSpecialAnimation after a horizontal terrain response. It initializes player animation fields 0xF0B0 and 0xF101, presents the 0x072A-0x074A frame sequence, and loops back to its own entry at 0x00121FD4.
+  description: Special-camera locomotion stream selected by Player_SelectRunOrSpecialAnimation after a horizontal terrain response. It initializes player animation field 0xF0B0, clears PLAYER_TERRAIN_BRAKE_STATE with ED 01 F101 0000 at 0x00121FDC, presents the 0x072A-0x074A frame sequence, and loops back to its own entry at 0x00121FD4.
   evidence:
     - ghidra_player_run_or_special_selector
     - animation_stream_decoder
+    - player_terrain_brake_latch_static_v1
 
 0x00122080:
   name: PLAYER_ANIM_LANDING_RESPONSE_SPAWN
