@@ -1,0 +1,29 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "scene5-terrain-presentation-moving-interaction-and-level-event-animation-family",
+  "promotions": [
+    "ACTOR_ANIM_TERRAIN_SCENE5_RESPONSE_BASE",
+    "ACTOR_ANIM_PRESENTATION_CHILD_INLINE",
+    "ACTOR_ANIM_PRESENTATION_CHILD_SECONDARY",
+    "ACTOR_ANIM_MOVING_INTERACTION",
+    "ACTOR_ANIM_LEVEL_EVENT_CHILD_SHARED",
+    "ACTOR_TEMPLATE_MOVING_CHILD_BASE",
+    "ACTOR_TEMPLATE_PRESENTATION_CHILD_SECONDARY",
+    "ACTOR_TEMPLATE_LEVEL_EVENT_CHILD"
+  ],
+  "evidence": [
+    "terrain_scene5_spawn_response_static_decompilation",
+    "type30_presentation_child_stream_static_decompilation",
+    "actor_template_late_interaction_family_static_decompilation",
+    "actor_template_scene_level_family_static_decompilation",
+    "type52_level09_animation_static_decompilation",
+    "animation_stream_decoder"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_scene5_presentation_movement_and_level_event_roles"
+  }
+}

@@ -733,7 +733,7 @@ def test_canonical_actor_animation_family_has_exact_non_overlapping_ranges():
         0x00124F32: (0x00124F95, "ACTOR_ANIM_TYPE31_CHILD_SPAWN_PREFIX"),
         0x00124F96: (0x00125027, "ACTOR_ANIM_TYPE31_F5_CHILD_A"),
         0x00125028: (0x001250B9, "ACTOR_ANIM_TYPE31_F5_CHILD_B"),
-        0x001250EA: (0x00125109, "ACTOR_ANIM_TYPE30_PRESENTATION_CHILD_INLINE"),
+        0x001250EA: (0x00125109, "ACTOR_ANIM_PRESENTATION_CHILD_INLINE"),
     }
     owners = []
     for address, (end, name) in expected.items():
