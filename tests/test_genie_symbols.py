@@ -397,6 +397,29 @@ def test_type40_interaction_spawn_family_has_semantic_names_and_aliases():
         assert symbol.confidence == "decompiled"
 
 
+def test_late_compact_interaction_spawn_wrappers_have_semantic_names_and_aliases():
+    expected = {
+        0x001B744A: ("InteractionGate_CreateType44FromSelectorAB", "InteractionSpawn_RuntimeType44_AB"),
+        0x001B7454: ("InteractionSpawn_CreateType44Actor", "InteractionSpawn_RuntimeType44_50"),
+        0x001B7494: ("InteractionSpawn_CreateType5AActor", "InteractionSpawn_RuntimeType5A_8E"),
+        0x001B74B2: ("InteractionSpawn_CreateType5CFromType5ATemplate", "InteractionSpawn_RuntimeType5C_90"),
+        0x001B74C4: ("InteractionSpawn_CreateType5DFromType5ATemplate", "InteractionSpawn_RuntimeType5D_91"),
+        0x001B74D6: ("InteractionSpawn_CreateType01Actor", "InteractionSpawn_RuntimeType01_87"),
+        0x001B74E2: ("InteractionSpawn_CreateType4EWithFacingOverride", "InteractionSpawn_RuntimeType4E_BB"),
+        0x001B74F4: ("InteractionSpawn_CreateType4EActor", "InteractionSpawn_RuntimeType4E_A9"),
+        0x001B7500: ("InteractionSpawn_CreateType4FActor", "InteractionSpawn_RuntimeType4F_A6"),
+        0x001B75BE: ("InteractionSpawn_CreateType53WithPositionOffset", "InteractionSpawn_RuntimeType53_17"),
+        0x001B75F6: ("InteractionSpawn_CreateType84LevelEventActor", "InteractionSpawn_RuntimeType84_30"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence == "decompiled"
+
+
 def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
     expected = {
         0x001AF1AC: ("PlayerCollision_SpawnVerticalResponseActor", "ActorType13_PlayerCollisionHandler"),

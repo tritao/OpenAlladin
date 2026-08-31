@@ -1,0 +1,124 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-late-compact-semantic",
+    "purpose": "Promote the remaining compact interaction-spawn wrappers in the late dispatch-table run to stable creation identities."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selectors": ["0xAB", "0x50", "0x8E", "0x90", "0x91", "0x87", "0xBB", "0xA9", "0xA6", "0x17", "0x30"]
+  },
+  "handlers": [
+    {
+      "address": "0x001B744A",
+      "name": "InteractionGate_CreateType44FromSelectorAB",
+      "legacy_name": "InteractionSpawn_RuntimeType44_AB",
+      "selector": "0xAB",
+      "gate": "INTERACTION_GATE_TYPE44 at 0x00FFF16F != 0",
+      "template": "ACTOR_TEMPLATE_BASE_ZERO",
+      "runtime_type": "0x44",
+      "animation": "ACTOR_ANIM_TYPE44_INTERACTION at 0x00122C40",
+      "post_spawn": ["actor flag byte +0x29 = 1"]
+    },
+    {
+      "address": "0x001B7454",
+      "name": "InteractionSpawn_CreateType44Actor",
+      "legacy_name": "InteractionSpawn_RuntimeType44_50",
+      "selector": "0x50",
+      "template": "ACTOR_TEMPLATE_BASE_ZERO",
+      "runtime_type": "0x44",
+      "animation": "ACTOR_ANIM_TYPE44_INTERACTION at 0x00122C40",
+      "post_spawn": ["actor flag byte +0x29 = 1"]
+    },
+    {
+      "address": "0x001B7494",
+      "name": "InteractionSpawn_CreateType5AActor",
+      "legacy_name": "InteractionSpawn_RuntimeType5A_8E",
+      "selector": "0x8E",
+      "template": "ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT",
+      "allocator": "LevelObjectSpawnEntry"
+    },
+    {
+      "address": "0x001B74B2",
+      "name": "InteractionSpawn_CreateType5CFromType5ATemplate",
+      "legacy_name": "InteractionSpawn_RuntimeType5C_90",
+      "selector": "0x90",
+      "template": "ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT",
+      "runtime_type": "0x5C",
+      "allocator": "LevelObjectSpawnEntry"
+    },
+    {
+      "address": "0x001B74C4",
+      "name": "InteractionSpawn_CreateType5DFromType5ATemplate",
+      "legacy_name": "InteractionSpawn_RuntimeType5D_91",
+      "selector": "0x91",
+      "template": "ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT",
+      "runtime_type": "0x5D",
+      "allocator": "LevelObjectSpawnEntry"
+    },
+    {
+      "address": "0x001B74D6",
+      "name": "InteractionSpawn_CreateType01Actor",
+      "legacy_name": "InteractionSpawn_RuntimeType01_87",
+      "selector": "0x87",
+      "template": "ACTOR_TEMPLATE_TYPE01",
+      "allocator": "InteractionSpawn_ReverseSlot"
+    },
+    {
+      "address": "0x001B74E2",
+      "name": "InteractionSpawn_CreateType4EWithFacingOverride",
+      "legacy_name": "InteractionSpawn_RuntimeType4E_BB",
+      "selector": "0xBB",
+      "template": "ACTOR_TEMPLATE_TYPE_4E_INTERACTION",
+      "allocator": "InteractionSpawn_ReverseSlot",
+      "post_spawn": ["actor facing byte +0x09 = 0xFF"]
+    },
+    {
+      "address": "0x001B74F4",
+      "name": "InteractionSpawn_CreateType4EActor",
+      "legacy_name": "InteractionSpawn_RuntimeType4E_A9",
+      "selector": "0xA9",
+      "template": "ACTOR_TEMPLATE_TYPE_4E_INTERACTION",
+      "allocator": "InteractionSpawn_ReverseSlot"
+    },
+    {
+      "address": "0x001B7500",
+      "name": "InteractionSpawn_CreateType4FActor",
+      "legacy_name": "InteractionSpawn_RuntimeType4F_A6",
+      "selector": "0xA6",
+      "template": "ACTOR_TEMPLATE_TYPE_4F_INTERACTION",
+      "allocator": "InteractionSpawn_ReverseSlot"
+    },
+    {
+      "address": "0x001B75BE",
+      "name": "InteractionSpawn_CreateType53WithPositionOffset",
+      "legacy_name": "InteractionSpawn_RuntimeType53_17",
+      "selector": "0x17",
+      "template": "ACTOR_TEMPLATE_TYPE_53_INTERACTION",
+      "allocator": "LevelObjectSpawnEntry",
+      "post_spawn": ["actor X += 0x18", "actor Y -= 0x0E"]
+    },
+    {
+      "address": "0x001B75F6",
+      "name": "InteractionSpawn_CreateType84LevelEventActor",
+      "legacy_name": "InteractionSpawn_RuntimeType84_30",
+      "selector": "0x30",
+      "template": "ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT",
+      "allocator": "LevelObjectSpawnEntry",
+      "post_spawn": ["actor Y += 0x0C"]
+    }
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies and selector membership",
+    "Established actor-template and allocation-helper identities",
+    "Direct runtime-type, gate, facing, animation, and coordinate mutations",
+    "Existing late interaction and Type-0x52/0x53 static findings"
+  ],
+  "limitations": [
+    "The promoted names identify stable creation and wrapper roles but do not assign unresolved user-facing object identities.",
+    "The two Type-0x4E handlers retain separate identities because selector 0xBB adds a facing-byte override.",
+    "The Type-0x44 selector-0xAB function is a gate wrapper around the same direct creation contract as selector 0x50."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

@@ -5905,21 +5905,25 @@
     - interaction-spawn-type46-5a-response-static-decompilation
     - difficulty_counter_consumer_closure_static_v1
 0x001B744A:
-  name: InteractionSpawn_RuntimeType44_AB
+  name: InteractionGate_CreateType44FromSelectorAB
+  aliases: [InteractionSpawn_RuntimeType44_AB]
   confidence: decompiled
-  description: Interaction selector 0xAB handler that requires 0x00FFF16F set, uses the zero-type base through LevelObjectSpawnEntry, and promotes a successful allocation to runtime type 0x44 with animation root 0x00122C40 and actor byte +0x29 set to 1.
+  description: Interaction selector 0xAB gate that requires INTERACTION_GATE_TYPE44 at 0x00FFF16F set, then creates runtime type 0x44 from ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry with ACTOR_ANIM_TYPE44_INTERACTION at 0x00122C40 and actor byte +0x29 set to 1.
   evidence:
     - ghidra_disassembly_001B744A
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B7454:
-  name: InteractionSpawn_RuntimeType44_50
+  name: InteractionSpawn_CreateType44Actor
+  aliases: [InteractionSpawn_RuntimeType44_50]
   confidence: decompiled
-  description: Interaction selector 0x50 handler that uses the zero-type base through LevelObjectSpawnEntry and promotes a successful allocation to runtime type 0x44 with animation root 0x00122C40 and actor byte +0x29 set to 1.
+  description: Interaction selector 0x50 handler that allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry and publishes runtime type 0x44 with ACTOR_ANIM_TYPE44_INTERACTION at 0x00122C40 and actor byte +0x29 set to 1.
   evidence:
     - ghidra_disassembly_001B7454
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B7474:
   name: InteractionSpawn_RuntimeType45_AdjacentVariant
   size: 0x20
@@ -5930,13 +5934,15 @@
     - interaction-spawn-type46-5a-response-static-decompilation
     - actor_template_grid_xrefs
 0x001B7494:
-  name: InteractionSpawn_RuntimeType5A_8E
+  name: InteractionSpawn_CreateType5AActor
+  aliases: [InteractionSpawn_RuntimeType5A_8E]
   confidence: decompiled
-  description: Interaction selector 0x8E handler that loads ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT at 0x001B7A08 through LevelObjectSpawnEntry without an additional post-allocation mutation.
+  description: Interaction selector 0x8E handler that creates the ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT actor at 0x001B7A08 through LevelObjectSpawnEntry without an additional post-allocation mutation.
   evidence:
     - ghidra_disassembly_001B7494
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B74A0:
   name: InteractionSpawn_RuntimeType5B_AdjacentVariant
   size: 0x12
@@ -5947,53 +5953,65 @@
     - interaction-spawn-type46-5a-response-static-decompilation
     - actor_template_grid_xrefs
 0x001B74B2:
-  name: InteractionSpawn_RuntimeType5C_90
+  name: InteractionSpawn_CreateType5CFromType5ATemplate
+  aliases: [InteractionSpawn_RuntimeType5C_90]
   confidence: decompiled
-  description: Interaction selector 0x90 handler that loads the type-0x5A template at 0x001B7A08 through LevelObjectSpawnEntry and, on success, promotes the actor to runtime type 0x5C.
+  description: Interaction selector 0x90 handler that allocates ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT through LevelObjectSpawnEntry and, on success, publishes runtime type 0x5C.
   evidence:
     - ghidra_disassembly_001B74B2
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B74C4:
-  name: InteractionSpawn_RuntimeType5D_91
+  name: InteractionSpawn_CreateType5DFromType5ATemplate
+  aliases: [InteractionSpawn_RuntimeType5D_91]
   confidence: decompiled
-  description: Interaction selector 0x91 handler that loads the type-0x5A template at 0x001B7A08 through LevelObjectSpawnEntry and, on success, promotes the actor to runtime type 0x5D.
+  description: Interaction selector 0x91 handler that allocates ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT through LevelObjectSpawnEntry and, on success, publishes runtime type 0x5D.
   evidence:
     - ghidra_disassembly_001B74C4
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B74D6:
-  name: InteractionSpawn_RuntimeType01_87
+  name: InteractionSpawn_CreateType01Actor
+  aliases: [InteractionSpawn_RuntimeType01_87]
   confidence: decompiled
-  description: Interaction selector 0x87 handler that reverse-spawns from ACTOR_TEMPLATE_TYPE01 at 0x001B7A30 through InteractionSpawn_ReverseSlot.
+  description: Interaction selector 0x87 handler that reverse-spawns ACTOR_TEMPLATE_TYPE01 at 0x001B7A30 through InteractionSpawn_ReverseSlot.
   evidence:
     - ghidra_disassembly_001B74D6
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B74E2:
-  name: InteractionSpawn_RuntimeType4E_BB
+  name: InteractionSpawn_CreateType4EWithFacingOverride
+  aliases: [InteractionSpawn_RuntimeType4E_BB]
   confidence: decompiled
-  description: Interaction selector 0xBB handler that reverse-spawns from ACTOR_TEMPLATE_TYPE_4E_INTERACTION at 0x001B7F80 and, on success, sets the actor facing byte at offset 0x09 to 0xFF.
+  description: Interaction selector 0xBB handler that reverse-spawns ACTOR_TEMPLATE_TYPE_4E_INTERACTION at 0x001B7F80 and, on success, sets the actor facing byte at offset 0x09 to 0xFF.
   evidence:
     - ghidra_disassembly_001B74E2
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B74F4:
-  name: InteractionSpawn_RuntimeType4E_A9
+  name: InteractionSpawn_CreateType4EActor
+  aliases: [InteractionSpawn_RuntimeType4E_A9]
   confidence: decompiled
-  description: Interaction selector 0xA9 handler that reverse-spawns from ACTOR_TEMPLATE_TYPE_4E_INTERACTION at 0x001B7F80.
+  description: Interaction selector 0xA9 handler that reverse-spawns ACTOR_TEMPLATE_TYPE_4E_INTERACTION at 0x001B7F80.
   evidence:
     - ghidra_disassembly_001B74F4
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B7500:
-  name: InteractionSpawn_RuntimeType4F_A6
+  name: InteractionSpawn_CreateType4FActor
+  aliases: [InteractionSpawn_RuntimeType4F_A6]
   confidence: decompiled
-  description: Interaction selector 0xA6 handler that reverse-spawns from ACTOR_TEMPLATE_TYPE_4F_INTERACTION at 0x001B7F94.
+  description: Interaction selector 0xA6 handler that reverse-spawns ACTOR_TEMPLATE_TYPE_4F_INTERACTION at 0x001B7F94.
   evidence:
     - ghidra_disassembly_001B7500
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B750C:
   name: InteractionSpawn_CreateType52DifficultyVariant_5B
   aliases:
@@ -6072,13 +6090,15 @@
     - interaction-spawn-runtime52-presentation-static-decompilation
     - interaction_spawn_type52_semantic_v1
 0x001B75BE:
-  name: InteractionSpawn_RuntimeType53_17
+  name: InteractionSpawn_CreateType53WithPositionOffset
+  aliases: [InteractionSpawn_RuntimeType53_17]
   confidence: decompiled
-  description: Interaction selector 0x17 handler that uses ACTOR_TEMPLATE_TYPE_53_INTERACTION at 0x001B80E8 through LevelObjectSpawnEntry, then adds 0x18 to the actor X coordinate and subtracts 0x0E from Y.
+  description: Interaction selector 0x17 handler that allocates ACTOR_TEMPLATE_TYPE_53_INTERACTION at 0x001B80E8 through LevelObjectSpawnEntry, then adds 0x18 to the actor X coordinate and subtracts 0x0E from Y.
   evidence:
     - ghidra_disassembly_001B75BE
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B75D6:
   name: InteractionSpawn_CreateType17WithPalette
   aliases: [InteractionSpawn_RuntimeType17_2D_2E_2F_4E_4F]
@@ -6090,13 +6110,15 @@
     - interaction-spawn-runtime52-presentation-static-decompilation
     - interaction_spawn_type17_palette_semantic_v1
 0x001B75F6:
-  name: InteractionSpawn_RuntimeType84_30
+  name: InteractionSpawn_CreateType84LevelEventActor
+  aliases: [InteractionSpawn_RuntimeType84_30]
   confidence: decompiled
-  description: Interaction selector 0x30 handler that uses ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT at 0x001B8390 through LevelObjectSpawnEntry and adds 0x0C to the actor Y coordinate when allocation succeeds.
+  description: Interaction selector 0x30 handler that allocates ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT at 0x001B8390 through LevelObjectSpawnEntry and adds 0x0C to the actor Y coordinate when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B75F6
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+    - interaction_spawn_late_compact_semantic_v1
 0x001B26F0:
   name: Render_RunProgressivePaletteTransition
   confidence: decompiled

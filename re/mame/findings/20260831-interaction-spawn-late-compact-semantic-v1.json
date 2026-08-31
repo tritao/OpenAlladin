@@ -1,0 +1,55 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-late-compact-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionGate_CreateType44FromSelectorAB",
+    "InteractionSpawn_CreateType44Actor",
+    "InteractionSpawn_CreateType5AActor",
+    "InteractionSpawn_CreateType5CFromType5ATemplate",
+    "InteractionSpawn_CreateType5DFromType5ATemplate",
+    "InteractionSpawn_CreateType01Actor",
+    "InteractionSpawn_CreateType4EWithFacingOverride",
+    "InteractionSpawn_CreateType4EActor",
+    "InteractionSpawn_CreateType4FActor",
+    "InteractionSpawn_CreateType53WithPositionOffset",
+    "InteractionSpawn_CreateType84LevelEventActor"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_RuntimeType44_AB",
+    "InteractionSpawn_RuntimeType44_50",
+    "InteractionSpawn_RuntimeType5A_8E",
+    "InteractionSpawn_RuntimeType5C_90",
+    "InteractionSpawn_RuntimeType5D_91",
+    "InteractionSpawn_RuntimeType01_87",
+    "InteractionSpawn_RuntimeType4E_BB",
+    "InteractionSpawn_RuntimeType4E_A9",
+    "InteractionSpawn_RuntimeType4F_A6",
+    "InteractionSpawn_RuntimeType53_17",
+    "InteractionSpawn_RuntimeType84_30"
+  ],
+  "contracts": [
+    "Selectors 0xAB and 0x50 create Type-0x44 actors with the shared zero template, Type-0x44 animation, and actor flag initialization; selector 0xAB additionally requires INTERACTION_GATE_TYPE44.",
+    "Selector 0x8E creates the Type-0x5A template, while selectors 0x90 and 0x91 reuse it and publish runtime types 0x5C and 0x5D.",
+    "Selector 0x87 reverse-spawns the Type-0x01 template.",
+    "Selectors 0xBB and 0xA9 reverse-spawn the Type-0x4E template, with selector 0xBB forcing the facing byte to 0xFF; selector 0xA6 reverse-spawns the Type-0x4F template.",
+    "Selector 0x17 creates the Type-0x53 template and applies the exact (+0x18,-0x0E) actor position offset.",
+    "Selector 0x30 creates the Type-0x84 level-event template and applies the exact +0x0C actor Y offset."
+  ],
+  "evidence": [
+    "Exact handler bodies at 0x001B744A, 0x001B7454, 0x001B7494, 0x001B74B2, 0x001B74C4, 0x001B74D6, 0x001B74E2, 0x001B74F4, 0x001B7500, 0x001B75BE, and 0x001B75F6",
+    "INTERACTION_HANDLER_TABLE selector membership",
+    "Existing actor-template, Type-0x44, and Type-0x52/0x53 static contracts"
+  ],
+  "limitations": [
+    "No user-facing object identity is claimed for these runtime types or template-derived actors.",
+    "The canonical names preserve selector/override distinctions because the wrappers have materially different gates or mutations."
+  ],
+  "conclusion": "The remaining compact late interaction wrappers now have stable creation identities tied to their exact templates, selectors, gates, and post-allocation mutations.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
