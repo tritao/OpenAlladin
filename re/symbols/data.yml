@@ -1285,7 +1285,8 @@
   type: scene_resource_stream
   size: 0x56
   confidence: decompiled
-  description: Shared 86-byte menu and sound-test presentation command stream loaded directly by Menu_RunOptionsAndSelectNextState and SoundTest_RunScreen. It selects tile base 0x4000, renders two fixed 40-byte space rows with the encoded X/Y advances 0xD8 and 0x01, and terminates at 0x00128EB0; the following alignment byte and provisional palette source remain outside this stream.
+  review_status: closed
+  description: Shared 86-byte menu and sound-test presentation command stream loaded directly by Menu_RunOptionsAndSelectNextState and SoundTest_RunScreen. It selects tile base 0x4000, renders two fixed 40-byte space rows with the encoded X/Y advances 0xD8 and 0x01, and terminates at 0x00128EB0; the following alignment byte and separate palette source remain outside this stream.
   evidence:
     - menu_sound_test_shared_presentation_stream_static_decompilation
     - ghidra_menu_sound_test_stream_consumers
@@ -1657,6 +1658,7 @@
   type: scene_resource_stream
   size: 0x81
   confidence: decompiled
+  review_status: closed
   description: Exact unwrapped scene-resource presentation stream beginning with command 0x06 frame count 0x78, command 0x0E frame/palette preparation, and positioned text records through the NUL terminator at 0x00127570. Its command grammar, embedded response text, and boundary are decoded; no exported wrapper or runtime sample references this stream, so it is retained as an unreferenced static presentation asset.
   evidence:
     - scene_resource_command_table_static_decompilation
@@ -4114,6 +4116,7 @@
   type: movement_stream
   size: 10
   confidence: decompiled
+  review_status: closed
   description: Type-0x7C wide-random-offset event prelude selected by the adjacent template record at 0x001B81B0. Its exact ten-byte body applies a (0,-4) step, pushes ActorEvent_ApplyWideRandomOffsets at 0x001ACD5A, clears the actor state through opcode 0x82, and falls through into ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED at 0x0012118A. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
   evidence:
     - actor_template_level_event_record_partition
@@ -4997,6 +5000,7 @@
   type: movement_stream
   size: 90
   confidence: decompiled
+  review_status: closed
   description: Type-0x84 0x0F22 wall-response movement prefix selected by the actor-template record at 0x001B8304. Its exact 90-byte body performs two actor-flag-gated child-spawn phases using ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE, applies the encoded +0x0800 and (+0x0005,+0x000A) actor-field adjustments, then falls through to ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
   evidence:
     - type84_unreferenced_template_static_decompilation
@@ -7305,6 +7309,7 @@
   type: animation_stream
   size: 38
   confidence: decompiled
+  review_status: closed
   description: Type-0x84 0x0F22 wall-response animation loop selected by the actor-template record at 0x001B8304. Its exact 38-byte body presents the 0x0F22-0x0F4E frame sequence, uses the random gate at 0x00125D5A, and loops from 0x00125D78 back to its root. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
   evidence:
     - type84_unreferenced_template_static_decompilation
