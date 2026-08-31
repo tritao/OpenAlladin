@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-action-terrain-timer-continuation-static",
+    "purpose": "Bind the local continuation reached by the grounded terrain-timer action stream's interaction-flag branch and preserve its exact response behavior."
+  },
+  "targets": [
+    { "address": "0x00122910", "name": "PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED_CONTINUATION", "range": ["0x00122910", "0x0012295D"] },
+    { "address": "0x001228AC", "name": "PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED" },
+    { "address": "0x001A9502", "name": "Player_SelectActionAnimation" },
+    { "address": "0x00122082", "name": "PLAYER_ANIM_LANDING_RESPONSE_SPAWN" },
+    { "address": "0x001B7E40", "name": "ACTOR_TEMPLATE_TYPE_84" }
+  ],
+  "selection": {
+    "branch": "0x001228EE",
+    "source": "PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED",
+    "target": "PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED_CONTINUATION",
+    "condition": "F2 tests flag target 0x870009 and branches to 0x00122910 when the interaction flag is set."
+  },
+  "stream": {
+    "bytes": "F421F0C8000000122942F421F0C90000001229420AAEED01F0D800010AB2ED01F0D800010AB2ED01F0D80001EA0000122082F321F500001B7E40100800000000000000000A9E0A9EEA0000122082",
+    "size": 78,
+    "decoded": [
+      "F4 compares TERRAIN_STOP_RIGHT_MOTION and TERRAIN_RIGHT_INNER_PROBE against zero, branching to 0x00122942",
+      "0x0AAE/0x0AB2 response frames publish PLAYER_ACTION_RESPONSE_STATE_A through ED writes to 0x00FFF0D8",
+      "F3 plays sound 0x21 and F5 uses ACTOR_TEMPLATE_TYPE_84 at 0x001B7E40",
+      "EA terminators return through PLAYER_ANIM_LANDING_RESPONSE_SPAWN at 0x00122082"
+    ]
+  },
+  "conclusion": "The formerly generic 0x00122910-0x0012295D layout fragment is the producer-backed local continuation of the grounded terrain-timer action response, reached by the exact interaction-flag branch in PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED."
+}

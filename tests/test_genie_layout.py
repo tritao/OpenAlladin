@@ -2790,6 +2790,42 @@ def test_player_collision_animation_prelude_is_exact():
     assert decoded["instructions"][-1]["opcode"] == "0xF8"
 
 
+def test_player_action_terrain_timer_continuation_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x00122910, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED_CONTINUATION"
+    assert stream.end == 0x0012295D
+    assert stream.size == 78
+    assert stream.metadata["type"] == "animation_stream"
+
+    following = symbols.at(0x0012295E, include_ranges=False)
+    assert following is not None
+    assert following.name == "PLAYER_ANIM_ACTION_AIRBORNE"
+    assert stream.end + 1 == following.address
+
+    decoder_module = load_animation_decoder()
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = decoder_module.AnimationDecoder(
+        decoder_module.RomReader(rom_path.read_bytes())
+    )
+    decoded = decoder.decode_stream(
+        0x00122910,
+        max_instructions=64,
+        max_bytes=78,
+        follow_control_flow=False,
+        continue_after_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 78
+    assert decoded["stopped_reason"] == "byte_limit"
+    assert decoded["instructions"][0]["branch_target"] == "0x00122942"
+    assert decoded["instructions"][2]["reference"] == "0x0AAE"
+    assert decoded["instructions"][8]["branch_target"] == "0x00122082"
+    assert decoded["instructions"][9]["value"] == "0x21"
+    assert decoded["instructions"][10]["raw"] == "F500001B7E4010080000000000000000"
+    assert decoded["instructions"][-1]["branch_target"] == "0x00122082"
+
+
 def test_player_action_continuation_banks_are_exact():
     symbols = SymbolStore()
     cases = (

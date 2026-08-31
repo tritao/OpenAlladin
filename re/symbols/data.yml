@@ -6619,6 +6619,16 @@
     - ghidra_player_action_animation_selector
     - animation_stream_decoder
 
+0x00122910:
+  name: PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED_CONTINUATION
+  type: animation_stream
+  size: 78
+  confidence: confirmed
+  description: Branch continuation of PLAYER_ANIM_ACTION_TERRAIN_TIMER_GROUNDED entered by its F2 interaction-flag gate. Its exact 78-byte region tests the right-side terrain stop fields 0xF0C8 and 0xF0C9, publishes the 0x0AAE/0x0AB2 response frames with player action-response field 0xF0D8 set to 1, and on the gated branch plays sound 0x21, spawns the Type-0x84 response template, and returns through PLAYER_ANIM_LANDING_RESPONSE_SPAWN at 0x00122080.
+  evidence:
+    - player_action_state_animation_static_decompilation
+    - animation_stream_decoder
+
 0x0012295E:
   name: PLAYER_ANIM_ACTION_AIRBORNE
   size: 100
