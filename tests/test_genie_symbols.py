@@ -690,6 +690,20 @@ def test_actor_vm_orphan_runtime_finding_covers_all_five_ranges():
     assert any("not an exhaustive reachability proof" in item for item in finding["limitations"])
 
 
+def test_actor_vm_orphan_long_route_finding_records_duration_without_overclaiming():
+    finding = json.loads(
+        Path("re/mame/findings/20260831-actor-vm-orphans-long-route-runtime-negative-v1.json")
+        .read_text(encoding="utf-8")
+    )
+    assert finding["route"]["scenario"] == "long-gameplay-traversal"
+    assert finding["route"]["frames"] == 5000
+    assert finding["route"]["final_scene_state"] == 1
+    assert finding["route"]["rom_read_count"] == 0
+    assert len(finding["ranges"]) == 5
+    assert all(item["read_count"] == 0 for item in finding["ranges"])
+    assert any("multi-scene coverage" in item for item in finding["evidence"])
+
+
 def test_scene_graphics_resources_have_stable_state_and_destination_names():
     expected = {
         0x0012DA04: ("SCENE_STATE04_C000_GRAPHICS", "SCENE_RNC_GRAPHICS_0012DA04"),
