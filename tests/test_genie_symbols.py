@@ -1468,6 +1468,15 @@ def test_real_renderer_and_counter_word_ranges_cover_low_byte_references():
         assert symbol.name == name
 
 
+def test_real_actor_sprite_payload_buffer_has_canonical_role():
+    symbol = SymbolStore().at(0x00FF769A, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "RENDER_ACTOR_SPRITE_PAYLOAD_BUFFER_BASE"
+    assert symbol.kind == "ram"
+    assert symbol.metadata["format"] == "address"
+    assert symbol.confidence == "confirmed"
+
+
 def test_real_level07_spawn_cooldown_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF113, include_ranges=False)
     assert symbol is not None

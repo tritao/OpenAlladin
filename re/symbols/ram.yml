@@ -2727,6 +2727,17 @@
     - ghidra_disassembly_001AB7A4
     - ghidra_decompile_001AB7A4
 
+0xFF769A:
+  name: RENDER_ACTOR_SPRITE_PAYLOAD_BUFFER_BASE
+  type: sprite_payload_buffer
+  format: address
+  confidence: confirmed
+  description: Base of the actor-sprite VDP payload buffer. AnimationVM_RunActorPass supplies this address as the output cursor to Render_BuildActorSpritePayload, which emits 14-byte payload records and increments ACTOR_SPRITE_PAYLOAD_COUNT; Render_SubmitActorSprites streams the same buffer to the VDP.
+  evidence:
+    - ghidra_disassembly_001AC7C8
+    - ghidra_disassembly_001AC726
+    - ghidra_decompile_001AC726
+
 0xFFEFEC:
   name: RENDER_SPRITE_RECORD_COUNT
   type: u16

@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "focus": "Canonicalize the actor-sprite payload buffer passed from the AnimationVM pass into the VDP submission path.",
+  "targets": [
+    { "address": "0x001AC796", "name": "AnimationVM_RunActorPass", "buffer": "0x00FF769A", "count": "0x00FFEFEE" },
+    { "address": "0x001AC6D0", "name": "Render_BuildActorSpritePayload", "record_size": 14, "count": "0x00FFEFEE" },
+    { "address": "0x001AC726", "name": "Render_SubmitActorSprites", "buffer": "0x00FF769A", "count": "0x00FFEFEE" },
+    { "address": "0x00FF769A", "name": "RENDER_ACTOR_SPRITE_PAYLOAD_BUFFER_BASE" }
+  ],
+  "contracts": [
+    "AnimationVM_RunActorPass initializes its A3 output cursor from 0x00FF769A before processing actor animation frames.",
+    "Render_BuildActorSpritePayload emits one 14-byte payload record per expanded frame and increments the low byte of 0x00FFEFEE.",
+    "Render_SubmitActorSprites reads 0x00FF769A and streams the payload records counted by ACTOR_SPRITE_PAYLOAD_COUNT to VDP."
+  ],
+  "conclusion": "The anonymous work-RAM region at 0x00FF769A is the actor-sprite payload buffer shared by the AnimationVM renderer producer and VDP submission consumer."
+}
