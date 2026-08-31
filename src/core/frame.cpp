@@ -1,5 +1,7 @@
 #include "core/frame.hpp"
 
+#include "core/animation_vm.hpp"
+#include "core/movement_vm.hpp"
 #include "core/trace.hpp"
 
 namespace openaladdin::core {
@@ -95,6 +97,11 @@ void step_frame(
 
     for (const FrameService& service : kFrameServices) {
         if (trace != nullptr) trace_phase(*trace, service);
+        if (service.ordinal == 8) {
+            movement_vm_tick_actors(core);
+        } else if (service.ordinal == 30) {
+            animation_vm_tick_actors(core);
+        }
         if (service.ordinal == 2 || service.ordinal == 4
             || service.ordinal == 18 || service.ordinal == 28) {
             player_publish_world_coordinates(core, trace);

@@ -104,6 +104,18 @@ std::uint32_t actor_read32(ConstActorView actor, std::size_t offset) {
     return read32(*actor.ram, actor_address(actor.slot, offset));
 }
 
+std::uint8_t actor_read8(ActorView actor, std::size_t offset) {
+    return actor_read8(ConstActorView{actor.ram, actor.slot}, offset);
+}
+
+std::uint16_t actor_read16(ActorView actor, std::size_t offset) {
+    return actor_read16(ConstActorView{actor.ram, actor.slot}, offset);
+}
+
+std::uint32_t actor_read32(ActorView actor, std::size_t offset) {
+    return actor_read32(ConstActorView{actor.ram, actor.slot}, offset);
+}
+
 void actor_write8(ActorView actor, std::size_t offset, std::uint8_t value) {
     if (actor.ram == nullptr || offset >= kActorRecordSize) return;
     write8(*actor.ram, actor_address(actor.slot, offset), value);

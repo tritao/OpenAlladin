@@ -41,7 +41,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         RamAddress address;
         std::uint8_t width;
     };
-    constexpr std::array<RawField, 28> fields = {{
+    constexpr std::array<RawField, 32> fields = {{
         {kPlayerX, 2}, {kPlayerY, 2}, {kWorldCameraX, 2}, {kWorldCameraY, 2},
         {kPlayerWorldX, 2}, {kPlayerWorldY, 2},
         {kCameraReferenceX, 2}, {kCameraReferenceY, 2},
@@ -52,6 +52,10 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         {kGameDifficultyMode, 1}, {kSceneState, 1},
         {kGameDifficultyCounter, 1}, {kActiveSceneEntryGate, 1},
         {kCameraScrollX, 2}, {kCameraScrollY, 2},
+        {kGlobalPrngState, 4},
+        {kActorVmCommandContinuation, 4},
+        {kActorVmCursorClearContinuation, 4},
+        {kActorVmMovementPass, 1},
         {kPlayerTerrainBrakeState, 1}, {kPlayerTerrainLandingState, 1},
         {kPlayerTerrainBehavior, 1}, {kSceneScriptPending, 1},
         {kSceneVdpUpdateFlag, 1}, {kSceneTransitionEvent, 1},

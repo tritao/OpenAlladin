@@ -47,6 +47,10 @@ constexpr RamAddress kCameraScrollLeftPending = 0x00FFF0B9;
 constexpr RamAddress kCameraScrollRightPending = 0x00FFF0BA;
 constexpr RamAddress kCameraScrollUpPending = 0x00FFF0BB;
 constexpr RamAddress kCameraScrollDownPending = 0x00FFF0BC;
+constexpr RamAddress kGlobalPrngState = 0x00FF7DEA;
+constexpr RamAddress kActorVmCommandContinuation = 0x00FF7D9A;
+constexpr RamAddress kActorVmCursorClearContinuation = 0x00FF7D9E;
+constexpr RamAddress kActorVmMovementPass = 0x00FF7DA2;
 constexpr RamAddress kPlayerTerrainQueryResult = 0x00FFF156;
 constexpr RamAddress kPlayerTerrainPushRight = 0x00FFF07C;
 constexpr RamAddress kPlayerTerrainPushLeft = 0x00FFF07D;
@@ -83,6 +87,30 @@ constexpr RamAddress kPlayerMovementLoopTimer = kActorTableBase + 0x12;
 constexpr RamAddress kPlayerMovementCommandTimer = kActorTableBase + 0x36;
 constexpr RamAddress kPlayerMovementReturnPc = kActorTableBase + 0x38;
 constexpr RamAddress kPlayerFlags = kActorTableBase + 0x3C;
+
+// Offsets are the ROM record contract. Use actor_address(slot, offset) to
+// obtain the corresponding absolute Genesis RAM address.
+constexpr std::size_t kActorTypeOffset = 0x00;
+constexpr std::size_t kActorTimerOffset = 0x01;
+constexpr std::size_t kActorXOffset = 0x02;
+constexpr std::size_t kActorYOffset = 0x04;
+constexpr std::size_t kActorMovementFlagsOffset = 0x06;
+constexpr std::size_t kActorRuntimeField07Offset = 0x07;
+constexpr std::size_t kActorFacingXOffset = 0x09;
+constexpr std::size_t kActorMovementPcOffset = 0x0A;
+constexpr std::size_t kActorMovementLoopPcOffset = 0x0E;
+constexpr std::size_t kActorMovementLoopTimerOffset = 0x12;
+constexpr std::size_t kActorFramePointerOffset = 0x14;
+constexpr std::size_t kActorVelocityXOffset = 0x18;
+constexpr std::size_t kActorVelocityYOffset = 0x1A;
+constexpr std::size_t kActorAnimationPcOffset = 0x20;
+constexpr std::size_t kActorAnimationScratchOffset = 0x28;
+constexpr std::size_t kActorFacingYOffset = 0x35;
+constexpr std::size_t kActorMovementCommandTimerOffset = 0x36;
+constexpr std::size_t kActorAnimationTimerOffset = 0x37;
+constexpr std::size_t kActorMovementReturnPcOffset = 0x38;
+constexpr std::size_t kActorFlagsOffset = 0x3C;
+constexpr std::size_t kActorLinkedSlotOffset = 0x3E;
 
 // The gameplay image is the complete 68000 work-RAM address space. No
 // semantic field is stored elsewhere; these helpers are only named views.
@@ -141,6 +169,9 @@ ConstActorView actor_view(const GenesisRam& ram, std::size_t slot);
 std::uint8_t actor_read8(ConstActorView actor, std::size_t offset);
 std::uint16_t actor_read16(ConstActorView actor, std::size_t offset);
 std::uint32_t actor_read32(ConstActorView actor, std::size_t offset);
+std::uint8_t actor_read8(ActorView actor, std::size_t offset);
+std::uint16_t actor_read16(ActorView actor, std::size_t offset);
+std::uint32_t actor_read32(ActorView actor, std::size_t offset);
 void actor_write8(ActorView actor, std::size_t offset, std::uint8_t value);
 void actor_write16(ActorView actor, std::size_t offset, std::uint16_t value);
 void actor_write32(ActorView actor, std::size_t offset, std::uint32_t value);
