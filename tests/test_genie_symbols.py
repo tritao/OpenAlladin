@@ -493,6 +493,29 @@ def test_interaction_spawn_and_presentation_response_names_preserve_aliases():
     assert {"INTERACTION_RESPONSE_SPAWN", "INTERACTION_PRESENTATION_RESPONSE"} <= mappings.keys()
 
 
+def test_upper_and_shared_presentation_names_preserve_numeric_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00123358: ("ACTOR_ANIM_UPPER_INTERACTION", "ACTOR_ANIM_UPPER_TYPE20"),
+        0x001233CC: ("ACTOR_ANIM_UPPER_COLLISION_RESPONSE", "ACTOR_ANIM_TYPE20_COLLISION_RESPONSE"),
+        0x00124CE4: ("ACTOR_ANIM_PRESENTATION_SHARED", "ACTOR_ANIM_TYPE1A_PRESENTATION"),
+        0x001B7C10: ("ACTOR_TEMPLATE_UPPER_INTERACTION", "ACTOR_TEMPLATE_UPPER_TYPE20"),
+        0x001B7C24: ("ACTOR_TEMPLATE_UPPER_PROXIMITY_INTERACTION", "ACTOR_TEMPLATE_UPPER_TYPE1E"),
+        0x001B7FF8: ("ACTOR_TEMPLATE_PRESENTATION_SHARED", "ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE"),
+        0x001B800C: ("ACTOR_TEMPLATE_PRESENTATION_CHILD_INITIAL", "ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_CHILD"),
+        0x001B82DC: ("ACTOR_TEMPLATE_PRESENTATION_VARIANT", "ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert {"UPPER_INTERACTION", "PRESENTATION_SHARED"} <= mappings.keys()
+
+
 def test_actor_template_roles_promote_numeric_names_with_aliases():
     symbols = SymbolStore()
     expected = {

@@ -4681,10 +4681,11 @@
     - animation_stream_decoder
 
 0x00123358:
-  name: ACTOR_ANIM_UPPER_TYPE20
+  name: ACTOR_ANIM_UPPER_INTERACTION
+  aliases: [ACTOR_ANIM_UPPER_TYPE20]
   size: 116
   confidence: decompiled
-  description: Upper-route Type-0x20 animation family used by the direct interaction spawn and its actor-collision response. Its packed 116-byte region contains the callable 0x00123358 frame prelude, the main entry at 0x0012337A with X/Y proximity gates, the timer-0x8B response branch and child spawn, then loops through the local upper-interaction sequence before the separate collision-response entry at 0x001233CC.
+  description: Upper-route interaction animation family used by the direct interaction spawn and its actor-collision response. Its packed 116-byte region contains the callable 0x00123358 frame prelude, the main entry at 0x0012337A with X/Y proximity gates, the timer-0x8B response branch and child spawn, then loops through the local upper-interaction sequence before the separate collision-response entry at 0x001233CC.
   evidence:
     - upper_type20_animation_static_decompilation
     - actor_template_upper_type20
@@ -4692,11 +4693,12 @@
     - animation_stream_decoder
 
 0x001233CC:
-  name: ACTOR_ANIM_TYPE20_COLLISION_RESPONSE
+  name: ACTOR_ANIM_UPPER_COLLISION_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE20_COLLISION_RESPONSE]
   type: animation_stream
   size: 64
   confidence: decompiled
-  description: Type-0x20 actor-collision response animation installed by ActorType20_ActorCollisionHandler after its response threshold gate. Its exact 64-byte region clears the movement field, presents the 0x113A-0x1156 response sequence, performs the encoded actor-field test, and transfers through the local continuation back into ACTOR_ANIM_UPPER_TYPE20.
+  description: Upper actor-collision response animation installed by ActorType20_ActorCollisionHandler after its response threshold gate. Its exact 64-byte region clears the movement field, presents the 0x113A-0x1156 response sequence, performs the encoded actor-field test, and transfers through the local continuation back into ACTOR_ANIM_UPPER_INTERACTION.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - ghidra_upper_actor_response_targeted_decompile
@@ -5723,11 +5725,12 @@
     - actor_animation_stream_family_static_decompilation
 
 0x00124CE4:
-  name: ACTOR_ANIM_TYPE1A_PRESENTATION
+  name: ACTOR_ANIM_PRESENTATION_SHARED
+  aliases: [ACTOR_ANIM_TYPE1A_PRESENTATION]
   type: animation_stream
   size: 84
   confidence: decompiled
-  description: Shared type-0x1A/0x1B/0x1C presentation animation selected by ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE; ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT also points at this root. Its exact 84-byte body spawns the type-0x84 presentation child, pushes the 0x001ACBD8, 0x001ACB82, and 0x001ACB7A callback parameters, and loops through the local presentation response entries.
+  description: Shared presentation animation selected by ACTOR_TEMPLATE_PRESENTATION_SHARED; ACTOR_TEMPLATE_PRESENTATION_VARIANT also points at this root. Its exact 84-byte body spawns the presentation child, pushes the 0x001ACBD8, 0x001ACB82, and 0x001ACB7A callback parameters, and loops through the local presentation response entries.
   evidence:
     - actor_template_presentation_family_static_decompilation
     - actor_template_type84_type1a_presentation_child_static_v1
@@ -7825,21 +7828,23 @@
     - actor_response_template_field_closure_static_v1
 
 0x001B7C10:
-  name: ACTOR_TEMPLATE_UPPER_TYPE20
+  name: ACTOR_TEMPLATE_UPPER_INTERACTION
+  aliases: [ACTOR_TEMPLATE_UPPER_TYPE20]
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Upper interaction template used by the runtime type-0x20 spawn path; the caller initializes the record and then writes animation entry 0x0012337A within ACTOR_ANIM_UPPER_TYPE20 and runtime type 0x20.
+  description: Upper interaction template used by the runtime type-0x20 spawn path; the caller initializes the record and then writes animation entry 0x0012337A within ACTOR_ANIM_UPPER_INTERACTION and runtime type 0x20.
   evidence:
     - level01_upper_actor_response_targets
     - level01_upper_activation_trace
 
 0x001B7C24:
-  name: ACTOR_TEMPLATE_UPPER_TYPE1E
+  name: ACTOR_TEMPLATE_UPPER_PROXIMITY_INTERACTION
+  aliases: [ACTOR_TEMPLATE_UPPER_TYPE1E]
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Upper interaction template used by the direct runtime type-0x1E spawn path from interaction selector 0x11.
+  description: Upper proximity-interaction template used by the direct runtime type-0x1E spawn path from interaction selector 0x11.
   evidence:
     - level01_upper_actor_response_targets
     - level01_upper_activation_trace
@@ -8589,21 +8594,23 @@
     - actor_template_grid_xrefs
 
 0x001B7FF8:
-  name: ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE
+  name: ACTOR_TEMPLATE_PRESENTATION_SHARED
+  aliases: [ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Shared presentation source template loaded by the type-0x1A, type-0x1B, and type-0x1C spawn entries at 0x001B6636, 0x001B6654, and 0x001B6672; it has no movement stream, uses animation stream 0x00124CE4, and owns nine resources while callers publish the final type and placement.
+  description: Shared presentation source template loaded by the type-0x1A, type-0x1B, and type-0x1C spawn entries at 0x001B6636, 0x001B6654, and 0x001B6672; it has no movement stream, uses ACTOR_ANIM_PRESENTATION_SHARED at 0x00124CE4, and owns nine resources while callers publish the final type and placement.
   evidence:
     - ghidra_presentation_interaction_dispatch_block
     - actor_template_grid_xrefs
 
 0x001B800C:
-  name: ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_CHILD
+  name: ACTOR_TEMPLATE_PRESENTATION_CHILD_INITIAL
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 presentation child template supplied by the initial F5 command at 0x00124CE6 in the shared Type-0x1A/0x1B/0x1C presentation stream. It has no movement stream, template word 0x6000, continues at animation entry 0x00124CF8, owns four resources, and carries no trailing flags; the F5 payload bytes are all zero.
+  description: Initial presentation-child template supplied by the F5 command at 0x00124CE6 in the shared presentation stream. It has no movement stream, template word 0x6000, continues at animation entry 0x00124CF8, owns four resources, and carries no trailing flags; the F5 payload bytes are all zero.
   evidence:
     - actor_template_type84_type1a_presentation_child_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
@@ -8769,11 +8776,12 @@
     - animation_stream_decoder
 
 0x001B82DC:
-  name: ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT
+  name: ACTOR_TEMPLATE_PRESENTATION_VARIANT
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: "Exact 20-byte Type-0x84 presentation variant sharing ACTOR_ANIM_TYPE1A_PRESENTATION at 0x00124CE4 with ACTOR_TEMPLATE_TYPE_1A_PRESENTATION_BASE and its Type-0x84 child. It has no movement root, template word 0x0000, nine owned resources, and trailing flags 0x0400; no direct producer for this alternate record is claimed."
+  description: "Exact 20-byte presentation variant sharing ACTOR_ANIM_PRESENTATION_SHARED at 0x00124CE4 with ACTOR_TEMPLATE_PRESENTATION_SHARED and its initial presentation child. It has no movement root, template word 0x0000, nine owned resources, and trailing flags 0x0400; no direct producer for this alternate record is claimed."
   evidence:
     - actor_template_record_layout_static_decompilation
     - ghidra_actor_template_initializer_001AE30A

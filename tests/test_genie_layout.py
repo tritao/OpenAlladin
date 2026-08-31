@@ -2144,7 +2144,7 @@ def test_unreferenced_actor_template_records_are_exact_and_decoded():
     expected = {
         0x001B7990: ("ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM", 0x001B79A3),
         0x001B7A58: ("ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400", 0x001B7A6B),
-        0x001B82DC: ("ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT", 0x001B82EF),
+        0x001B82DC: ("ACTOR_TEMPLATE_PRESENTATION_VARIANT", 0x001B82EF),
     }
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     expected_bytes = {
@@ -3298,7 +3298,7 @@ def test_type37_interaction_response_animation_range_is_exact():
 def test_upper_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {
-        0x001233CC: (0x0012340B, "ACTOR_ANIM_TYPE20_COLLISION_RESPONSE"),
+            0x001233CC: (0x0012340B, "ACTOR_ANIM_UPPER_COLLISION_RESPONSE"),
         0x0012340C: (0x001234BD, "ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE"),
         0x001234BE: (0x001234F5, "ACTOR_ANIM_ACTOR_COLLISION_RESPONSE"),
         0x001234F6: (0x0012350B, "ACTOR_ANIM_ACTOR_COLLISION_LANDING_RECOVERY"),

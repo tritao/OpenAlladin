@@ -1,0 +1,29 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "upper-interaction-and-shared-presentation-identities",
+  "promotions": [
+    "ACTOR_ANIM_UPPER_INTERACTION",
+    "ACTOR_ANIM_UPPER_COLLISION_RESPONSE",
+    "ACTOR_TEMPLATE_UPPER_INTERACTION",
+    "ACTOR_TEMPLATE_UPPER_PROXIMITY_INTERACTION",
+    "ACTOR_ANIM_PRESENTATION_SHARED",
+    "ACTOR_TEMPLATE_PRESENTATION_SHARED",
+    "ACTOR_TEMPLATE_PRESENTATION_CHILD_INITIAL",
+    "ACTOR_TEMPLATE_PRESENTATION_VARIANT"
+  ],
+  "evidence": [
+    "upper_type20_animation_static_decompilation",
+    "level01_upper_actor_response_targets",
+    "level01_upper_activation_trace",
+    "actor_template_presentation_family_static_decompilation",
+    "actor_template_type84_type1a_presentation_child_static_decompilation",
+    "ghidra_presentation_interaction_dispatch_block"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role"
+  }
+}

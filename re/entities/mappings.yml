@@ -135,6 +135,28 @@ mappings:
     evidence: [upper_collision_response_animation_family_static_decompilation, actor-template-scene-resource-family-static-decompilation]
     description: Provisional upper collision-response role covering the actor template and its primary/alternate proximity-response streams.
 
+  - name: UPPER_INTERACTION
+    scope: role
+    symbol_addresses: [0x00123358, 0x001233CC, 0x001B7C10, 0x001B7C24]
+    technical_types: [0x1E, 0x20]
+    confidence: decompiled
+    evidence:
+      - upper_type20_animation_static_decompilation
+      - level01_upper_actor_response_targets
+      - level01_upper_activation_trace
+    description: Upper interaction templates and their normal/collision AnimationVM response paths.
+
+  - name: PRESENTATION_SHARED
+    scope: role
+    symbol_addresses: [0x00124CE4, 0x001B7FF8, 0x001B800C, 0x001B82DC]
+    technical_types: [0x1A, 0x1B, 0x1C, 0x84]
+    confidence: decompiled
+    evidence:
+      - actor_template_presentation_family_static_decompilation
+      - actor_template_type84_type1a_presentation_child_static_decompilation
+      - ghidra_presentation_interaction_dispatch_block
+    description: Shared presentation animation, source template, initial child, and alternate variant family.
+
   - name: COLLISION_RESPONSE_CHILD
     scope: role
     symbol_addresses: [0x001B8368]
