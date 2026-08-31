@@ -800,6 +800,15 @@ def test_menu_palette_containers_have_stable_names():
         assert legacy in symbol.aliases
 
 
+def test_type4b_latch_is_closed_as_proven_unconsumed():
+    function = SymbolStore().at(0x001AF060, include_ranges=False)
+    latch = SymbolStore().at(0x00FFF116, include_ranges=False)
+    assert function is not None
+    assert latch is not None
+    assert function.metadata["review_status"] == "closed"
+    assert latch.metadata["review_status"] == "closed"
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

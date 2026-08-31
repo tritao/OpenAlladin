@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-recorded-negative-evidence-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-type4b-latch-closure",
+    "purpose": "Close the Type-0x4B handler/latch review item after confirming that the canonical whole-ROM database contains no consumer."
+  },
+  "handler": {
+    "address": "0x001AF060",
+    "name": "PlayerCollision_LatchType4BInteraction",
+    "range": "0x001AF060-0x001AF08B",
+    "dispatch_entry": "PLAYER_COLLISION_HANDLER_TABLE Type-0x4B",
+    "callers": 0,
+    "incoming_xrefs": 0,
+    "behavior": "Sets PLAYER_INTERACTION_TYPE4B_LATCH, optionally queues audio command 0x67, and reinitializes the collision template."
+  },
+  "latch": {
+    "address": "0x00FFF116",
+    "name": "PLAYER_INTERACTION_TYPE4B_LATCH",
+    "writers": ["0x001AF060 PlayerCollision_LatchType4BInteraction"],
+    "readers": [],
+    "absolute_reference_readers": []
+  },
+  "evidence": [
+    "fresh whole-ROM instructions, xrefs, reads, and writes exports",
+    "dispatch-table membership for Type-0x4B",
+    "context query showing zero callers and no incoming function xrefs",
+    "exact single writer and zero exported readers for 0x00FFF116"
+  ],
+  "limitations": [
+    "This closes the current static-reference review item; a future indirect/hardware observation can reopen it."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

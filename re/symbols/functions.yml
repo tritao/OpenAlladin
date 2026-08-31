@@ -2218,6 +2218,7 @@
   aliases: [ActorType4B_PlayerCollisionHandler]
   size: 44
   confidence: decompiled
+  review_status: closed
   description: Player-collision Type-0x4B interaction-latch setter. It sets PLAYER_INTERACTION_TYPE4B_LATCH at 0x00FFF116, optionally queues audio command 0x67, and enters Actor_ReinitializeFromCollisionTemplate; no direct consumer of this latch is currently recovered.
   evidence:
     - rom_player_collision_handler_table_001CBE
