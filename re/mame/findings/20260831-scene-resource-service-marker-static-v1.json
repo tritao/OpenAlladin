@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "b35a9d84e930e50e39c9a97bb636ba2a684c71ac",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-resource-service-marker-static-targets.json",
+  "promoted_symbols": [
+    "SCENE_RESOURCE_SERVICE_MARKER"
+  ],
+  "contracts": [
+    "Frame_InputAndResourceService sets and clears byte 0x00FFF158 around its VDP/palette service body.",
+    "Interaction_UpdateResourceState sets and clears byte 0x00FFF158 around its mode-0x1B and mode-0x1C resource handoffs.",
+    "System_InitializeRuntime clears byte 0x00FFF158 at startup.",
+    "The exported whole-ROM database has no direct reader for 0x00FFF158."
+  ],
+  "evidence": [
+    "Exact 68000 service-marker writes in Frame_InputAndResourceService",
+    "Exact 68000 service-marker writes in Interaction_UpdateResourceState",
+    "Startup clear in System_InitializeRuntime",
+    "Whole-ROM writer and reader queries"
+  ],
+  "limitations": [
+    "The name describes the shared set/clear scope only; it is not promoted as a reader-backed gate or gameplay state.",
+    "No runtime reachability or higher-level external purpose is claimed."
+  ],
+  "conclusion": "The generated Unknown_00FFF158 identity is replaced by a stable shared scene/resource service-marker name while preserving the unresolved-reader limitation.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

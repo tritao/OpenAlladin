@@ -1455,6 +1455,15 @@ def test_real_frame_input_resource_service_gate_has_canonical_role():
     assert symbol.confidence == "decompiled"
 
 
+def test_real_scene_resource_service_marker_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF158, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "SCENE_RESOURCE_SERVICE_MARKER"
+    assert symbol.metadata["format"] == "boolean"
+    assert symbol.confidence == "decompiled"
+    assert "no direct reader" in symbol.description
+
+
 def test_real_scene_resource_rebuild_phase_counter_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF122, include_ranges=False)
     assert symbol is not None

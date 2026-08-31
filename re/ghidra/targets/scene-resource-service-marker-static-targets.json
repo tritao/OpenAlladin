@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-service-marker-static",
+    "purpose": "Name the shared scene/resource service marker at 0x00FFF158 without promoting it to a reader-backed gate."
+  },
+  "targets": [
+    {
+      "address": "0x001A91C6",
+      "name": "Frame_InputAndResourceService"
+    },
+    {
+      "address": "0x001B01AC",
+      "name": "Interaction_UpdateResourceState"
+    },
+    {
+      "address": "0x001AA344",
+      "name": "System_InitializeRuntime"
+    },
+    {
+      "address": "0x00FFF158",
+      "name": "SCENE_RESOURCE_SERVICE_MARKER"
+    }
+  ],
+  "contracts": [
+    "Frame_InputAndResourceService sets byte 0x00FFF158 before its VDP/palette service body and clears it on completion.",
+    "Interaction_UpdateResourceState sets byte 0x00FFF158 around its mode-0x1B and mode-0x1C resource handoffs and clears it before returning.",
+    "System_InitializeRuntime clears byte 0x00FFF158 at startup.",
+    "No current whole-ROM reader or stronger gate semantics is claimed."
+  ],
+  "conclusion": "0x00FFF158 has a stable shared scene/resource service-marker identity while its reader and precise external purpose remain explicitly open."
+}

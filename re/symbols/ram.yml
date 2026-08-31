@@ -2627,6 +2627,19 @@
     - ghidra_disassembly_001B437E
     - menu-options-presentation-targets
 
+0xFFF158:
+  name: SCENE_RESOURCE_SERVICE_MARKER
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Shared scene/resource service marker set to 0xFF while Frame_InputAndResourceService performs its VDP/palette handoff and while Interaction_UpdateResourceState enters the mode-0x1B or mode-0x1C resource handoff, then cleared on each return path. System_InitializeRuntime clears it at startup; no direct reader or stronger gate semantics are assigned.
+  evidence:
+    - ghidra_disassembly_001A91C6
+    - ghidra_disassembly_001B01AC
+    - ghidra_disassembly_001AA344
+    - frame_input_resource_service_gate_static_v1
+    - interaction_resource_delay_counter_static_decompilation
+
 0xFFEFFD:
   name: INPUT_EDGE_LATCH
   type: u8
