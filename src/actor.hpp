@@ -34,6 +34,10 @@ struct ActorState {
     std::uint32_t movement_return_pc = 0;
     std::uint8_t flags = 0;
     std::uint8_t interaction_state = 0;
+    // Raw actor-table byte at +0x01. The shared player-collision handlers use
+    // it as a short-lived response timer; it is distinct from the animation
+    // delay at +0x37 and from the host-side terminal countdown below.
+    std::uint8_t actor_timer = 0;
     std::uint8_t terminal_timer = 0;
     std::uint8_t movement_command_timer = 0;
     std::uint8_t animation_timer = 0;
@@ -148,6 +152,7 @@ public:
         std::uint8_t resource_count
     );
     void release_sprite_resources(ActorIndex slot);
+    bool transfer_sprite_resources(ActorIndex source, ActorIndex destination);
     std::optional<ActorResourceAllocation> resource_allocation(ActorIndex slot) const;
     const ActorSpriteResources& sprite_resources() const { return sprite_resources_; }
 
@@ -159,8 +164,14 @@ public:
     );
 
     bool was_culled_this_frame(std::size_t slot) const;
-    void write_checkpoint(std::ostream& output) const;
-    void read_checkpoint(std::istream& input);
+    void write_checkpoint(
+        std::ostream& output,
+        bool include_actor_timer = true
+    ) const;
+    void read_checkpoint(
+        std::istream& input,
+        bool include_actor_timer = true
+    );
 
 private:
     std::array<bool, 32> culled_this_frame_{};

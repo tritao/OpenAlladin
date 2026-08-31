@@ -38,6 +38,15 @@ void Mixer::write_ym2612(std::uint8_t port, std::uint8_t data) {
     ym2612_.write(port, data);
 }
 
+void Mixer::play_sample(std::span<const std::uint8_t> samples,
+                        std::uint32_t sample_rate) {
+    ym2612_.play_sample(samples, sample_rate);
+}
+
+void Mixer::stop_sample() {
+    ym2612_.stop_sample();
+}
+
 void Mixer::render(std::int16_t* interleaved_stereo, std::size_t frames) {
     render(interleaved_stereo, frames, output_rate_);
 }

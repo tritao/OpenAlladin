@@ -11,7 +11,8 @@ from typing import Any
 from genie.common import hashes, load_yaml, normalize_symbols, parse_int
 from genie.runtime import (
     EVENTS, EXPERIMENTS, EVENT_FORMAT, _event_detector_definitions,
-    _readiness_compare, _state_path_value,
+    _readiness_compare, _state_path_value, _event_state_path,
+    load_event_timeline,
 )
 from genie.core.mame.runner import run_shell_tool
 from genie.games.aladdin.mame.state import load_state_trace

@@ -7,8 +7,10 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <memory>
+#include <optional>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -59,6 +61,7 @@ struct Options {
     std::string checkpoint_vdp;
     int checkpoint_vdp_frame = -1;
     std::string checkpoint_camera;
+    std::string load_checkpoint;
 };
 
 std::vector<std::string> split_schedule(const std::string& schedule) {
@@ -107,10 +110,10 @@ void apply_scheduled_token(const std::string& token, openaladdin::InputState& in
             input.left = true;
         } else if (part == "right") {
             input.right = true;
-        } else if (part == "a" || part == "attack") {
-            input.attack_held = true;
-        } else if (part == "apple" || part == "throw") {
+        } else if (part == "a" || part == "apple" || part == "throw") {
             input.apple_pressed = true;
+        } else if (part == "b" || part == "attack" || part == "sword") {
+            input.attack_held = true;
         } else if (part == "c" || part == "jump" || part == "space") {
             input.jump_held = true;
             input.jump_pressed = true;
@@ -182,9 +185,9 @@ openaladdin::AnimationSelectorState parse_animation_selector(const std::string& 
     while (std::getline(stream, item, ',')) {
         fields.push_back(std::stoi(item));
     }
-    if (fields.size() != 25) {
+    if (fields.size() != 25 && fields.size() != 26) {
         throw std::runtime_error(
-            "--checkpoint-animation-selector expects 25 comma-separated fields"
+            "--checkpoint-animation-selector expects 25 or 26 comma-separated fields"
         );
     }
     openaladdin::AnimationSelectorState selector;
@@ -213,6 +216,9 @@ openaladdin::AnimationSelectorState parse_animation_selector(const std::string& 
     selector.response_timer = static_cast<std::uint8_t>(fields[22]);
     selector.interaction_pending = static_cast<std::uint8_t>(fields[23]);
     selector.state_lock = static_cast<std::uint8_t>(fields[24]);
+    if (fields.size() == 26) {
+        selector.action_response_field = static_cast<std::uint8_t>(fields[25]);
+    }
     return selector;
 }
 
@@ -283,6 +289,8 @@ Options parse_options(int argc, char** argv) {
             options.checkpoint_vdp_frame = std::stoi(argv[++i]);
         } else if (argument == "--checkpoint-camera" && i + 1 < argc) {
             options.checkpoint_camera = argv[++i];
+        } else if (argument == "--load-checkpoint" && i + 1 < argc) {
+            options.load_checkpoint = argv[++i];
         } else if (argument == "--help") {
             std::cout << "usage: openaladdin [--assets DIR] [--level-index N] [--sprites DIR] [--rom FILE] [--actor-records FILE] [--actor-timeline FILE] [--frames N] [--no-window] [--no-audio] [--sound-id ID] [--audio-trace PATH] [--scheduler-trace PATH] [--demo] [--render-checkpoint]\n"
                          "       [--state-output PATH] [--input-trace PATH] [--framebuffer-out PATH] [--framebuffer-frame N]\n"
@@ -297,6 +305,7 @@ Options parse_options(int argc, char** argv) {
                          "       [--checkpoint-facing-x-flip VALUE]\n"
                          "       [--checkpoint-vdp TRACE_DIR FRAME]\n"
                          "       [--checkpoint-camera X,Y[,REFERENCE_X,REFERENCE_Y,SCROLL_X,SCROLL_Y,SCENE_STATE]]\n"
+                         "       [--load-checkpoint PATH]\n"
                          "       --sound-id ID selects a ROM sound sequence (default: Level 01 music 0x49)\n"
                          "       --audio-trace PATH writes a deterministic native command/event/bus trace\n"
                          "       --scheduler-trace PATH writes recovered phase and writer provenance records\n";
@@ -335,6 +344,88 @@ std::vector<std::uint8_t> read_binary_file(const std::string& path) {
     return bytes;
 }
 
+constexpr char kDebugStatepointDirectory[] = "build/debug/statepoints";
+
+std::string statepoint_stem(int frame, int suffix = 0) {
+    std::ostringstream name;
+    name << "statepoint-" << std::setfill('0') << std::setw(6) << frame;
+    if (suffix != 0) {
+        name << '-' << std::setfill('0') << std::setw(2) << suffix;
+    }
+    return name.str();
+}
+
+std::filesystem::path save_debug_statepoint(
+    const openaladdin::Engine& engine,
+    const std::string& input_token
+) {
+    const std::filesystem::path directory(kDebugStatepointDirectory);
+    std::filesystem::create_directories(directory);
+
+    std::filesystem::path stem_path;
+    for (int suffix = 0; ; ++suffix) {
+        const auto candidate = directory / statepoint_stem(engine.frame(), suffix);
+        if (!std::filesystem::exists(candidate.string() + ".chk")) {
+            stem_path = candidate;
+            break;
+        }
+    }
+
+    const auto checkpoint_path = stem_path.string() + ".chk";
+    std::ofstream checkpoint(checkpoint_path, std::ios::binary);
+    if (!checkpoint) {
+        throw std::runtime_error("cannot open debug checkpoint: " + checkpoint_path);
+    }
+    engine.write_checkpoint(checkpoint);
+    if (!checkpoint) {
+        throw std::runtime_error("cannot write debug checkpoint: " + checkpoint_path);
+    }
+
+    const auto state_path = stem_path.string() + ".state.jsonl";
+    std::ofstream state(state_path);
+    if (!state) {
+        throw std::runtime_error("cannot open debug state: " + state_path);
+    }
+    engine.write_state(state, input_token);
+    if (!state) {
+        throw std::runtime_error("cannot write debug state: " + state_path);
+    }
+
+    const auto framebuffer_path = stem_path.string() + ".ppm";
+    engine.write_framebuffer_ppm(framebuffer_path);
+    return checkpoint_path;
+}
+
+std::optional<std::filesystem::path> latest_debug_statepoint() {
+    const std::filesystem::path directory(kDebugStatepointDirectory);
+    if (!std::filesystem::exists(directory)) return std::nullopt;
+
+    std::optional<std::filesystem::path> latest;
+    std::filesystem::file_time_type latest_time{};
+    for (const auto& entry : std::filesystem::directory_iterator(directory)) {
+        if (!entry.is_regular_file() || entry.path().extension() != ".chk") continue;
+        std::error_code error;
+        const auto modified = entry.last_write_time(error);
+        if (error) continue;
+        if (!latest || modified > latest_time) {
+            latest = entry.path();
+            latest_time = modified;
+        }
+    }
+    return latest;
+}
+
+void load_debug_statepoint(
+    openaladdin::Engine& engine,
+    const std::filesystem::path& path
+) {
+    std::ifstream checkpoint(path, std::ios::binary);
+    if (!checkpoint) {
+        throw std::runtime_error("cannot open debug checkpoint: " + path.string());
+    }
+    engine.read_checkpoint(checkpoint);
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -350,6 +441,9 @@ int main(int argc, char** argv) {
         openaladdin::Engine engine;
         engine.load(options.assets, options.sprites, options.rom, options.actor_records, options.actor_timeline);
         engine.set_scheduler_trace_enabled(!options.scheduler_trace.empty());
+        if (!options.load_checkpoint.empty()) {
+            load_debug_statepoint(engine, options.load_checkpoint);
+        }
         if (!options.checkpoint_terrain_behavior.empty()) {
             engine.set_checkpoint_terrain_behavior(
                 static_cast<std::uint8_t>(std::stoul(options.checkpoint_terrain_behavior, nullptr, 0))
@@ -430,6 +524,7 @@ int main(int argc, char** argv) {
 
         openaladdin::audio::Mixer mixer;
         openaladdin::audio::SdlAudioOutput audio_output(mixer);
+        std::vector<std::uint8_t> audio_rom;
         openaladdin::audio::Z80AudioBridge audio_bridge({
             [&audio_output, &audio_trace](std::uint8_t data) {
                 if (audio_trace) {
@@ -443,6 +538,13 @@ int main(int argc, char** argv) {
                 }
                 audio_output.write_ym2612(port, data);
             },
+            [&audio_output](std::span<const std::uint8_t> samples,
+                            std::uint32_t sample_rate) {
+                audio_output.play_sample(samples, sample_rate);
+            },
+            [&audio_output]() {
+                audio_output.stop_sample();
+            },
         });
         std::unique_ptr<openaladdin::audio::Z80SoundDriver> sound_driver;
         if (!options.no_audio && !options.render_only) {
@@ -452,7 +554,8 @@ int main(int argc, char** argv) {
                 try {
                     audio_output.open();
                     audio_bridge.reset();
-                    const auto audio_rom = read_binary_file(options.rom);
+                    audio_rom = read_binary_file(options.rom);
+                    audio_bridge.set_rom(audio_rom);
                     sound_driver = std::make_unique<openaladdin::audio::Z80SoundDriver>(
                         audio_rom,
                         [&audio_bridge, &audio_trace](const auto& event) {
@@ -582,6 +685,11 @@ int main(int argc, char** argv) {
 
         bool previous_jump = false;
         bool previous_attack = false;
+        bool previous_apple = false;
+        bool debug_overlay_enabled = false;
+        std::string debug_overlay_notice;
+        int debug_overlay_notice_until = -1;
+        std::optional<std::filesystem::path> last_statepoint;
         const std::vector<std::string> scheduled_inputs = split_schedule(options.input_schedule);
         int rendered_frames = 0;
         bool framebuffer_written = false;
@@ -623,6 +731,11 @@ int main(int argc, char** argv) {
             SDL_Event event{};
             std::ostringstream input_events;
             bool first_input_event = true;
+            bool jump_pressed_event = false;
+            bool attack_pressed_event = false;
+            bool apple_pressed_event = false;
+            bool save_statepoint_requested = false;
+            bool load_statepoint_requested = false;
             while (SDL_PollEvent(&event)) {
                 if (input_trace_file
                     && (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)) {
@@ -642,6 +755,54 @@ int main(int argc, char** argv) {
                 if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) {
                     engine.request_quit();
                 }
+                if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+                    const SDL_Scancode scancode = event.key.keysym.scancode;
+                    if (scancode == SDL_SCANCODE_F1) {
+                        debug_overlay_enabled = !debug_overlay_enabled;
+                    } else if (scancode == SDL_SCANCODE_F5) {
+                        save_statepoint_requested = true;
+                        debug_overlay_enabled = true;
+                    } else if (scancode == SDL_SCANCODE_F9) {
+                        load_statepoint_requested = true;
+                        debug_overlay_enabled = true;
+                    }
+                    jump_pressed_event = jump_pressed_event
+                        || scancode == SDL_SCANCODE_SPACE
+                        || scancode == SDL_SCANCODE_C;
+                    attack_pressed_event = attack_pressed_event
+                        || scancode == SDL_SCANCODE_Z
+                        || scancode == SDL_SCANCODE_B;
+                    apple_pressed_event = apple_pressed_event
+                        || scancode == SDL_SCANCODE_X;
+                }
+            }
+            bool loaded_statepoint = false;
+            if (load_statepoint_requested) {
+                try {
+                    const auto path = last_statepoint.has_value()
+                        ? last_statepoint
+                        : latest_debug_statepoint();
+                    if (!path) {
+                        throw std::runtime_error(
+                            "no debug statepoint found in "
+                            + std::string(kDebugStatepointDirectory));
+                    }
+                    load_debug_statepoint(engine, *path);
+                    last_statepoint = path;
+                    rendered_frames = engine.frame();
+                    previous_jump = false;
+                    previous_attack = false;
+                    previous_apple = false;
+                    debug_overlay_notice = "LOADED F" + std::to_string(engine.frame());
+                    debug_overlay_notice_until = rendered_frames + 180;
+                    loaded_statepoint = true;
+                    std::cerr << "openaladdin: loaded debug statepoint "
+                              << path->string() << '\n';
+                } catch (const std::exception& error) {
+                    debug_overlay_notice = "LOAD FAILED";
+                    debug_overlay_notice_until = rendered_frames + 180;
+                    std::cerr << "openaladdin: " << error.what() << '\n';
+                }
             }
             const std::uint8_t* keys = SDL_GetKeyboardState(nullptr);
             input.up = keys[SDL_SCANCODE_UP] || keys[SDL_SCANCODE_W];
@@ -649,21 +810,33 @@ int main(int argc, char** argv) {
             input.left = keys[SDL_SCANCODE_LEFT] || keys[SDL_SCANCODE_A];
             input.right = keys[SDL_SCANCODE_RIGHT] || keys[SDL_SCANCODE_D];
             const bool jump = keys[SDL_SCANCODE_SPACE] || keys[SDL_SCANCODE_C];
-            const bool attack = keys[SDL_SCANCODE_X] || keys[SDL_SCANCODE_Z];
+            // Match the Genesis control layout: B is sword, A throws an
+            // apple, and C jumps. Z/X are the conventional native keyboard
+            // equivalents for B/A; accepting physical B as well makes the
+            // Genesis label unambiguous when using a keyboard.
+            const bool attack = keys[SDL_SCANCODE_Z] || keys[SDL_SCANCODE_B];
+            const bool apple = keys[SDL_SCANCODE_X];
             bool jump_held = jump;
             bool attack_held = attack;
             bool scheduled_input = false;
-            input.jump_pressed = jump && !previous_jump;
+            // Keyboard state is sampled at the game boundary, so a short tap
+            // can otherwise disappear entirely between two samples. SDL's
+            // non-repeat keydown is the authoritative edge in that case;
+            // retain the state comparison for held keys and synthetic input.
+            input.jump_pressed = jump_pressed_event || (jump && !previous_jump);
             input.jump_held = jump;
             input.attack_held = attack;
-            input.attack_pressed = attack && !previous_attack;
+            input.attack_pressed = attack_pressed_event || (attack && !previous_attack);
+            input.apple_pressed = apple_pressed_event || (apple && !previous_apple);
+            input.apple_held = apple;
             if (options.input_schedule.empty()) {
                 previous_jump = jump;
                 previous_attack = attack;
+                previous_apple = apple;
             }
             std::string input_token;
 
-            if (!options.input_schedule.empty()) {
+            if (!loaded_statepoint && !options.input_schedule.empty()) {
                 scheduled_input = true;
                 input = openaladdin::InputState{};
                 input_token = rendered_frames < static_cast<int>(scheduled_inputs.size())
@@ -672,14 +845,18 @@ int main(int argc, char** argv) {
                 apply_scheduled_token(input_token, input);
                 jump_held = input.jump_pressed;
                 attack_held = input.attack_held;
+                const bool apple_held = input.apple_pressed;
                 input.jump_held = jump_held;
                 input.jump_pressed = jump_held && !previous_jump;
                 input.attack_pressed = attack_held && !previous_attack;
+                input.apple_pressed = apple_held && !previous_apple;
+                input.apple_held = apple_held;
                 previous_jump = jump_held;
                 previous_attack = attack_held;
+                previous_apple = apple_held;
             }
 
-            if (options.demo) {
+            if (!loaded_statepoint && options.demo) {
                 // Deterministic run/jump input for headless regression checks.
                 input.right = rendered_frames < 100;
                 input.jump_pressed = rendered_frames == 30;
@@ -696,7 +873,9 @@ int main(int argc, char** argv) {
                 if (input.jump_pressed) {
                     input_token = "jump";
                 } else if (input.attack_pressed) {
-                    input_token = "a";
+                    input_token = "b";
+                } else if (input.apple_pressed) {
+                    input_token = "apple";
                 } else if (input.left && !input.right) {
                     input_token = "left";
                 } else if (input.right && !input.left) {
@@ -704,7 +883,14 @@ int main(int argc, char** argv) {
                 }
             }
 
-            engine.update(input);
+            if (loaded_statepoint) {
+                input = openaladdin::InputState{};
+                input_token = "load";
+                jump_held = false;
+                attack_held = false;
+            } else {
+                engine.update(input);
+            }
             if (scheduler_file) {
                 engine.write_scheduler_trace(scheduler_file, input_token);
             }
@@ -715,10 +901,19 @@ int main(int argc, char** argv) {
                         const std::array<std::uint8_t, 1> sound_command{sound_id};
                         if (audio_trace) {
                             audio_trace->record_command(
+                                0x12,
+                                sound_command,
+                                sound_command_kind(sound_id),
+                                "prepare",
+                                sound_id);
+                        }
+                        sound_driver->enqueue_command(0x12, sound_command);
+                        if (audio_trace) {
+                            audio_trace->record_command(
                                 0x10,
                                 sound_command,
                                 sound_command_kind(sound_id),
-                                "enqueue",
+                                "send",
                                 sound_id);
                         }
                         sound_driver->enqueue_command(0x10, sound_command);
@@ -735,7 +930,30 @@ int main(int argc, char** argv) {
             if (state_file) {
                 engine.write_state(state_file, input_token);
             }
-            engine.render(renderer);
+            std::vector<std::string> debug_overlay;
+            if (debug_overlay_enabled) {
+                debug_overlay = engine.debug_overlay_lines();
+                debug_overlay.push_back("F1 HIDE F5 SAVE F9 LOAD");
+                if (!debug_overlay_notice.empty()
+                    && rendered_frames < debug_overlay_notice_until) {
+                    debug_overlay.push_back(debug_overlay_notice);
+                }
+            }
+            engine.render(renderer, debug_overlay);
+            if (save_statepoint_requested) {
+                try {
+                    const auto path = save_debug_statepoint(engine, input_token);
+                    last_statepoint = path;
+                    debug_overlay_notice = "SAVED F" + std::to_string(engine.frame());
+                    debug_overlay_notice_until = rendered_frames + 180;
+                    std::cerr << "openaladdin: saved debug statepoint "
+                              << path.string() << '\n';
+                } catch (const std::exception& error) {
+                    debug_overlay_notice = "SAVE FAILED";
+                    debug_overlay_notice_until = rendered_frames + 180;
+                    std::cerr << "openaladdin: " << error.what() << '\n';
+                }
+            }
             if (input_trace_file) {
                 const auto frame_end = std::chrono::steady_clock::now();
                 const auto work_us = std::chrono::duration_cast<std::chrono::microseconds>(
@@ -761,7 +979,11 @@ int main(int argc, char** argv) {
                                  << "},\"events\":[" << input_events.str() << "]}\n";
                 input_trace_file.flush();
             }
-            ++rendered_frames;
+            if (!loaded_statepoint) {
+                ++rendered_frames;
+            } else {
+                rendered_frames = engine.frame();
+            }
             if (!options.framebuffer_output.empty()
                 && options.framebuffer_frame >= 0
                 && engine.frame() == options.framebuffer_frame) {

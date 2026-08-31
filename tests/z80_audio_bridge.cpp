@@ -25,6 +25,8 @@ int main() {
         [&ym](std::uint8_t port, std::uint8_t data) {
             ym.push_back({port, data});
         },
+        {},
+        {},
     });
 
     const Z80SoundDriver::SoundEvent ym_note{
@@ -307,6 +309,62 @@ int main() {
     noise_stop.output = Z80SoundDriver::Output::Psg;
     bridge.handle(noise_stop);
     assert((psg == std::vector<std::uint8_t>{0xDF, 0xFF}));
+
+    // Type-1 records are YM2612 DAC samples. The bridge resolves the note
+    // selector through the ROM descriptor table instead of producing a PSG
+    // tone.
+    std::vector<std::uint8_t> sample_rom(
+        static_cast<std::size_t>(Z80SoundDriver::kSampleDescriptorTableBase)
+        + 0x100,
+        0);
+    const std::size_t descriptor =
+        Z80SoundDriver::kSampleDescriptorTableBase;
+    sample_rom[descriptor + 1] = 0x30;
+    sample_rom[descriptor + 6] = 4;
+    sample_rom[descriptor + 0x30] = 0x80;
+    sample_rom[descriptor + 0x31] = 0xFF;
+    sample_rom[descriptor + 0x32] = 0x40;
+    sample_rom[descriptor + 0x33] = 0x80;
+    bridge.set_rom(sample_rom);
+
+    std::vector<std::uint8_t> played_sample;
+    std::uint32_t played_rate = 0;
+    bool sample_stopped = false;
+    Z80AudioBridge sample_bridge({
+        {},
+        {},
+        [&played_sample, &played_rate](std::span<const std::uint8_t> samples,
+                                       std::uint32_t rate) {
+            played_sample.assign(samples.begin(), samples.end());
+            played_rate = rate;
+        },
+        [&sample_stopped]() { sample_stopped = true; },
+    });
+    sample_bridge.set_rom(sample_rom);
+
+    Z80SoundDriver::SoundEvent sample_patch{};
+    sample_patch.kind = Z80SoundDriver::SoundEvent::Kind::Control;
+    sample_patch.channel = 0;
+    sample_patch.opcode = 0x61;
+    sample_patch.has_patch_state = true;
+    sample_patch.patch_state[0] = 0x01;
+    sample_patch.output = Z80SoundDriver::Output::Dac;
+    sample_bridge.handle(sample_patch);
+
+    Z80SoundDriver::SoundEvent sample_note{};
+    sample_note.kind = Z80SoundDriver::SoundEvent::Kind::Note;
+    sample_note.channel = 0;
+    sample_note.opcode = 0x30;
+    sample_note.output = Z80SoundDriver::Output::Dac;
+    sample_bridge.handle(sample_note);
+    assert((played_sample == std::vector<std::uint8_t>{0x80, 0xFF, 0x40, 0x80}));
+    assert(played_rate == 10'560);
+
+    Z80SoundDriver::SoundEvent sample_stop = sample_note;
+    sample_stop.kind = Z80SoundDriver::SoundEvent::Kind::Control;
+    sample_stop.opcode = 0x60;
+    sample_bridge.handle(sample_stop);
+    assert(sample_stopped);
 
     std::cout << "z80 audio bridge: ok\n";
     return 0;

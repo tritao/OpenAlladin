@@ -63,11 +63,6 @@ std::optional<ActorIndex> ActorAnimationSystem::spawn_f5(
     if (!slot) return std::nullopt;
 
     reset(*slot);
-    if (command.apple_action) {
-        // The allocated projectile reaches the common actor table on the
-        // current boundary, but its first frame is consumed on the next one.
-        vm(*slot).defer_actor_service_then_every_phase();
-    }
     return slot;
 }
 

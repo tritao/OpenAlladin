@@ -19,7 +19,8 @@ constexpr std::uint8_t kActorDeathFrames = 43;
 constexpr std::uint8_t kActorSwordTerminalFrames = 19;
 constexpr std::uint32_t kPlayerCollisionHandlerTable = 0x001CBE;
 constexpr std::uint32_t kHandlerGuardShared = 0x001AE9C6;
-constexpr std::uint32_t kHandlerEnemySwordShared = 0x001AEE40;
+constexpr std::uint32_t kHandlerActionResponse = 0x001AEE40;
+constexpr std::uint32_t kHandlerProximityResponse = 0x001AE796;
 constexpr std::uint32_t kHandlerApplePickupShared = 0x001AF468;
 constexpr std::uint32_t kHandlerType3E = 0x001AF2B0;
 constexpr std::uint32_t kHandlerType3F = 0x001AF2FA;
@@ -159,9 +160,14 @@ bool native_player_handler(
 ) {
     switch (handler_address) {
     case kHandlerGuardShared:
-        return actor_type == kActorGuardType;
-    case kHandlerEnemySwordShared:
-        return actor_type == 0x2D;
+        return actor_type == kActorGuardType || actor_type == 0x2A;
+    case kHandlerActionResponse:
+        return actor_type == 0x2C || actor_type == 0x2D;
+    case kHandlerProximityResponse:
+        return actor_type == 0x1E
+            || actor_type == 0x21
+            || actor_type == 0x1F
+            || actor_type == 0x22;
     case kHandlerApplePickupShared:
         return actor_type == 0x35 || actor_type == 0x40;
     case kHandlerType3E:
@@ -511,6 +517,78 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
     );
     if (!player_box.valid || !actor_box.valid) return effects;
 
+    if (collision.handler.address == kHandlerProximityResponse
+        && (actor.type == 0x1E || actor.type == 0x21
+            || actor.type == 0x1F || actor.type == 0x22)) {
+        // PlayerCollision_HandleProximityResponse first restricts the contact
+        // to the side of the actor the player is facing, then uses FFF0D8 as
+        // its action/recovery gate. The unmarked branch replaces the source
+        // with the short type-0x84 response record; the marked recovery path
+        // is a separate Player_ProcessInteractionState route.
+        const std::uint16_t player_world_x = static_cast<std::uint16_t>(
+            state.camera.x + state.player.x);
+        const bool actor_is_ahead = input.facing_left
+            ? actor.x <= player_world_x
+            : actor.x > player_world_x;
+        if (!actor_is_ahead || !input.interaction_gate
+            || (actor.flags & 0x20U) != 0) {
+            return effects;
+        }
+
+        switch (actor.type) {
+        case 0x1E:
+            actor.animation_pc = 0x001234BE;
+            break;
+        case 0x21:
+            actor.animation_pc = 0x0012350C;
+            break;
+        case 0x1F:
+            actor.animation_pc = 0x0012384A;
+            break;
+        case 0x22:
+            actor.animation_pc = 0x0012387A;
+            break;
+        default:
+            return effects;
+        }
+        actor.type = kActorTerminalType;
+        actor.animation_timer = 0;
+        actor.movement_pc = 0;
+        actor.movement_command_timer = 0;
+        actor.flags = static_cast<std::uint8_t>(actor.flags & ~0x20U);
+
+        // The common tail distinguishes the first response contact from the
+        // terminal pass by the raw actor byte at +0x01. The first contact
+        // consumes its one-tick timer and returns through the player's idle
+        // response path; once that byte is clear, the same collision entry
+        // clears/reinitializes the record from the shared death template.
+        if (state.progress.difficulty_counter != 0 && actor.actor_timer != 0) {
+            --actor.actor_timer;
+            state.player.terrain_horizontal_response = 0;
+            state.player.terrain_response_timer_state = 0;
+            state.player.animation_selector.horizontal_response = 0;
+            state.player.animation_selector.response_timer = 0;
+            state.player.animation_selector.action_response_field = 0;
+            effects.player_idle_animation_reset = true;
+            return effects;
+        }
+
+        // The terminal branch consumes the held action as well. The ROM's
+        // following player pass clears FFF0D8/FFEFFF before the next held-B
+        // edge is eligible; leave no native sword latch behind while the
+        // death record is being serviced.
+        state.player.animation_selector.action_response_field = 0;
+        state.player.animation_selector.interaction_pending = 0;
+        state.player.attack_timer = 0;
+        terminalize(
+            state,
+            collision.actor,
+            kActorDeathAnimationStream,
+            kActorDeathFrames
+        );
+        return effects;
+    }
+
     if (collision.handler.address == kHandlerGuardShared
         && actor.type == kActorGuardType) {
         if (!input.sword_active) return effects;
@@ -531,21 +609,89 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         return effects;
     }
 
-    if (collision.handler.address == kHandlerEnemySwordShared
-        && actor.type == 0x2D) {
+    if (collision.handler.address == kHandlerGuardShared
+        && actor.type == 0x2A) {
+        // Type 0x2A shares ActorShared_PlayerCollisionHandler with guards,
+        // but it is not a sword target.  With FFF0D8 clear the shared routine
+        // falls through to Player_ProcessInteractionState, which arms the
+        // 0x28 player lock and leaves the selector handoff for the late
+        // animation boundary.  The native pass runs before that boundary,
+        // so publish the lock/camera delay now and reuse the existing pending
+        // selector application after the common VM.
+        if (input.interaction_gate
+            || state.player.animation_selector.interaction_lock != 0
+            || state.player.animation_selector.response_timer == 0) {
+            return effects;
+        }
+        // The live ROM publishes the grounded-response frame before this
+        // contact becomes eligible. The native collision pass is earlier in
+        // the scheduler, so keep this shared actor on the same frame-pointer
+        // boundary instead of accepting the one-frame-earlier run hitbox.
+        if (input.frame_pointer != 0x001EA34A) return effects;
+        state.player.animation_selector.interaction_lock = 0x28;
+        state.camera.update_delay = 7;
+        state.camera.vertical_threshold = 0x0190;
+        effects.player_collision_interaction_pending = true;
+        return effects;
+    }
+
+    if (collision.handler.address == kHandlerActionResponse
+        && (actor.type == 0x2C || actor.type == 0x2D)) {
         if (input.bounce_response_follow_active) return effects;
-        // The guard's type-0x2D child is the enemy sword/contact effect. It
-        // is still consumed on contact, but it must not cancel a player
-        // sword action that is already in flight: doing so retires the child
-        // and arms the generic player response before the player's stable
-        // sword stream reaches its F5 child-spawn command. At close range
-        // that made the attack look completely inert and prevented the
-        // player sword from ever entering the actor/actor hit pass.
+
+        // PlayerCollision_HandleActionResponse (0x001AEE40) has two sharply
+        // different paths. With FFF0D8 clear it clears/releases the source
+        // and falls into Player_ProcessInteractionState. With FFF0D8 set it
+        // turns the source into the auxiliary Type-0x7F response, copies the
+        // complete 66-byte actor record to the auxiliary pool, clears the
+        // original type byte, then creates the Type-0x84 response from
+        // template 0x001B7E40 in the first free gameplay record.
+        if (input.interaction_gate) {
+            const ActorIndex source_slot = collision.actor;
+            const std::uint16_t source_x = actor.x;
+            const std::uint16_t source_y = actor.y;
+
+            // The ROM writes these fields through A1 before copying the
+            // record to the auxiliary slot. The subsequent clear only
+            // touches the type byte, so the stale fields in the original
+            // slot must retain this mutated response state too.
+            actor.movement_flags = 0x40;
+            actor.movement_word_1a = -0x0A00;
+            actor.facing_x_flip = static_cast<std::uint8_t>(
+                actor.facing_x_flip ^ 0xFFU);
+            actor.movement_pc = 0x001209BE;
+
+            if (const auto auxiliary = actor_lifecycle_.allocate(
+                    ActorPool::AuxiliaryForward)) {
+                ActorState auxiliary_record = actor;
+                auxiliary_record.type = 0x7F;
+                state.actors[*auxiliary] = auxiliary_record;
+                state.actors.host_meta(*auxiliary) = {};
+                // The ROM copies the record rather than allocating a second
+                // sprite run. Move the source's ownership to its copy so the
+                // cleared source does not leak those tiles.
+                state.actors.transfer_sprite_resources(source_slot, *auxiliary);
+            }
+
+            // The clear at 0x001AEE7C only writes the type byte. retire()
+            // also releases the source's now-transferred resource run while
+            // preserving the remaining stale record bytes.
+            actor_lifecycle_.retire(source_slot);
+
+            if (const auto response = actor_lifecycle_.allocate(
+                    ActorPool::GameplayForward)) {
+                ActorState response_record = actor_lifecycle_.from_template(
+                    0x001B7E40);
+                response_record.x = source_x;
+                response_record.y = source_y;
+                (void)actor_lifecycle_.install(*response, response_record);
+            }
+            return effects;
+        }
+
         actor_lifecycle_.retire(collision.actor);
-        if (input.sword_active) return effects;
-        // Outside a sword action, the type-0x2D handler retires the actor,
-        // then arms the player interaction selector for the scheduler's
-        // post-VM handoff.
+        // The ungated tail routes through Player_ProcessInteractionState; the
+        // existing scheduler-facing latches preserve that recovered handoff.
         state.player.animation_selector.response_state_101 = 0;
         state.player.animation_selector.interaction_lock = 0x28;
         state.camera.update_delay = 7;
@@ -676,12 +822,14 @@ CollisionEffects CollisionSystem::dispatch_player_handler(
         actor.type = 0x66;
         actor.animation_pc = kType65ActorAnimationStream;
         actor.animation_timer = 0;
-        state.player.y = static_cast<int>(actor.y) - 0x1F - state.camera.y;
+        state.player.y = static_cast<int>(actor.y) - 0x19 - state.camera.y;
         state.player.vy = static_cast<std::int16_t>(-0x0500 + 0x003C);
         state.player.terrain_response_active = 0xFF;
         state.player.terrain_vertical_stop = 0;
         state.player.terrain_response_timer_state = 0;
-        state.player.terrain_jump_response_counter = 1;
+        if (state.player.terrain_jump_response_counter == 0) {
+            state.player.terrain_jump_response_counter = 1;
+        }
         state.player.animation_selector.response_timer = 0;
         effects.player_bounce_response_started = true;
         effects.player_animation_stream = kType65PlayerAnimationStream;
@@ -867,6 +1015,9 @@ CollisionEffects CollisionSystem::player_actor(
         if (handler_effects.player_animation_stream) {
             effects.player_animation_stream = handler_effects.player_animation_stream;
         }
+        effects.player_idle_animation_reset =
+            effects.player_idle_animation_reset
+            || handler_effects.player_idle_animation_reset;
         effects.sound_requests.insert(
             effects.sound_requests.end(),
             handler_effects.sound_requests.begin(),
@@ -915,21 +1066,39 @@ void CollisionSystem::terminalize(
         ? kActorDeathTemplate
         : kActorSwordDeathTemplate;
     const ActorState template_record = actor_lifecycle_.from_template(template_address);
+    terminal.movement_flags = template_record.movement_flags;
+    terminal.runtime_field_07 = template_record.runtime_field_07;
+    terminal.runtime_field_07_delay = template_record.runtime_field_07_delay;
     terminal.sprite_attribute = template_record.sprite_attribute;
     terminal.resource_count = template_record.resource_count;
     terminal.movement_pc = 0;
     terminal.animation_pc = animation_stream;
     terminal.frame_ptr = 0;
+    terminal.movement_word_18 = 0;
+    terminal.movement_word_1a = 0;
+    terminal.actor_timer = template_record.actor_timer;
     terminal.flags = 0;
-    terminal.facing_x_flip = 0;
+    terminal.facing_x_flip = animation_stream == kActorSwordDeathAnimationStream
+        ? 0xFF
+        : 0;
     terminal.facing_y_flip = 0;
-    terminal.terminal_timer = frames;
+    // The ROM death record is serviced by the actor animation VM itself. The
+    // native terminal countdown is only retained for generated sword effects,
+    // whose host-side lifecycle still needs the delayed hold.
+    terminal.terminal_timer = animation_stream == kActorDeathAnimationStream
+        ? 0
+        : frames;
     if (actor_lifecycle_.install(slot, terminal)) {
         // Collision terminalization replaces the ROM record in place. Keep
         // the native origin marker so a generated sword child follows the
         // generated-actor cadence, while fixture/static swords retain the
         // ordinary terminal hold.
         state.actors.host_meta(slot) = host_meta;
+        // Once the child has become the Type-0x84 terminal record it no
+        // longer belongs to the apple terrain probe. The ROM's terminal
+        // template has no such producer identity, and retaining it would
+        // apply an extra gravity step on the next actor- terrain pass.
+        state.actors.host_meta(slot).spawned_by_apple = false;
     }
 }
 
@@ -1011,15 +1180,109 @@ void CollisionSystem::actor_actor(GameState& state) {
             if (!overlap) continue;
 
             if (source.type == kActorSwordType
-                && !actors.host_meta(source_slot).spawned_by_apple
-                && target.type == kActorGuardType) {
-                terminalize(state, target_slot, kActorDeathAnimationStream, kActorDeathFrames);
+                && (target.type == 0x1E || target.type == 0x21
+                    || target.type == 0x1F || target.type == 0x22)) {
+                // The actor-collision table routes a Type-0x80 auxiliary
+                // child to the compact proximity-response family. This is
+                // distinct from the player-versus-actor handler at
+                // 0x001AE796: the target keeps its live record/resources,
+                // receives the response animation, and the source is
+                // consumed through the shared collision tail.
+                switch (target.type) {
+                case 0x1E:
+                    target.animation_pc = 0x001234BE;
+                    break;
+                case 0x21:
+                    target.animation_pc = 0x0012350C;
+                    break;
+                case 0x1F:
+                    target.animation_pc = 0x0012384A;
+                    break;
+                case 0x22:
+                    target.animation_pc = 0x0012387A;
+                    break;
+                default:
+                    continue;
+                }
+                target.type = kActorTerminalType;
+                target.animation_timer = 0;
+                target.movement_pc = 0;
+                target.movement_command_timer = 0;
+                if (target.actor_timer != 0) {
+                    --target.actor_timer;
+                } else {
+                    // The shared tail reinitializes the receiver when its
+                    // short response timer has already expired. Preserve
+                    // that branch for replayed interactions outside the
+                    // current corpus as well.
+                    terminalize(
+                        state,
+                        target_slot,
+                        kActorDeathAnimationStream,
+                        kActorDeathFrames
+                    );
+                }
+
+                // The ROM clears the source and the same frame's actor
+                // lifecycle service repopulates the slot with the compact
+                // Type-0x84 sword-response template. terminalize() owns the
+                // resource release/install boundary and the VM will consume
+                // the first 0x122DD8 frame at the normal service phase.
                 terminalize(
                     state,
                     source_slot,
                     kActorSwordDeathAnimationStream,
                     kActorSwordTerminalFrames
                 );
+                // The shared tail writes the sword child's facing byte after
+                // the template copy. Keep this explicit at the collision
+                // boundary; the following animation tick must observe FF.
+                actors[source_slot].facing_x_flip = 0xFF;
+            } else if ((source.type == kActorSwordType
+                        || source.type == 0x7F)
+                && target.type == kActorGuardType) {
+                // Apple projectiles are consumed by the guard contact but do
+                // not damage the guard. A player sword uses the same actor
+                // collision entry and terminalizes both records.
+                if (actors.host_meta(source_slot).spawned_by_apple) {
+                    terminalize(
+                        state,
+                        source_slot,
+                        kActorSwordDeathAnimationStream,
+                        kActorSwordTerminalFrames
+                    );
+                    continue;
+                }
+                if (source.type == 0x7F) {
+                    // The Type-0x7F player-collision response follows the
+                    // guard's actor-collision table entry. Both records are
+                    // reinitialized from their death templates, preserving
+                    // coordinates and movement-loop continuation fields;
+                    // unlike the generated sword terminal hold, the ROM
+                    // leaves no host-side countdown on these records.
+                    const ActorState source_replacement =
+                        actor_lifecycle_.initialize_record(
+                            source,
+                            kActorSwordDeathTemplate);
+                    const ActorState target_replacement =
+                        actor_lifecycle_.initialize_record(
+                            target,
+                            kActorDeathTemplate);
+                    (void)actor_lifecycle_.install(source_slot, source_replacement);
+                    (void)actor_lifecycle_.install(target_slot, target_replacement);
+                } else {
+                    terminalize(
+                        state,
+                        target_slot,
+                        kActorDeathAnimationStream,
+                        kActorDeathFrames);
+                    terminalize(
+                        state,
+                        source_slot,
+                        kActorSwordDeathAnimationStream,
+                        kActorSwordTerminalFrames
+                    );
+                }
             } else if (source.type == 0x7F && target.type == 0x1D) {
                 state.random.value = state.random.value * 13U + 7U;
                 const std::uint16_t source_x = source.x;

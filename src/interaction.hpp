@@ -117,7 +117,11 @@ public:
     );
 
     void clear_response_handoff();
-    bool finish_bounce_response(GameState& state, bool terrain_response_was_active);
+    bool finish_bounce_response(
+        GameState& state,
+        bool terrain_response_was_active,
+        bool jump_response_was_complete
+    );
     void hold_bounce_camera_delay(GameState& state, bool bounce_response_finished);
 
     void scan_refill_window(GameState& state, const Level& level, bool stable_fixture);

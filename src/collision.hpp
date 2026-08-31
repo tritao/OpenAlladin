@@ -71,6 +71,7 @@ struct CollisionEffects {
     // Some recovered handlers write the player animation PC and timer
     // directly rather than selecting a new action stream.
     bool player_animation_state_immediate = false;
+    bool player_idle_animation_reset = false;
     std::vector<std::uint8_t> sound_requests;
     // These are diagnostic parity edges, not Genesis state. They make a
     // colliding table entry visible until its recovered behavior is attached

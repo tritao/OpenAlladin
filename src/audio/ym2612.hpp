@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 
 namespace openaladdin::audio {
 
@@ -12,6 +13,10 @@ namespace openaladdin::audio {
 class Ym2612 {
 public:
     static constexpr std::uint32_t kDefaultClockHz = 7'670'454;
+    // The recovered Z80 sample service transfers about 176 DAC bytes per
+    // NTSC video frame (176 * 60 Hz). Samples in the ROM are unsigned 8-bit
+    // YM2612 DAC values and are therefore played at this rate.
+    static constexpr std::uint32_t kDacSampleRate = 10'560;
 
     explicit Ym2612(std::uint32_t clock_hz = kDefaultClockHz);
     ~Ym2612();
@@ -21,6 +26,9 @@ public:
 
     void reset();
     void write(std::uint8_t port, std::uint8_t data);
+    void play_sample(std::span<const std::uint8_t> samples,
+                     std::uint32_t sample_rate = kDacSampleRate);
+    void stop_sample();
     [[nodiscard]] std::uint8_t status();
 
     // Render at ymfm's native chip sample rate. Output is interleaved stereo

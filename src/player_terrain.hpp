@@ -18,12 +18,14 @@ struct TerrainInput {
     bool right = false;
     bool jump_pressed = false;
     bool jump_held = false;
+    bool attack_held = false;
 };
 
 struct TerrainResponseContext {
     int frame = 0;
     bool scene_transition = false;
     bool preserve_run_response_timer = false;
+    bool suppress_transition_root_response = false;
 };
 
 // Owns the player-facing terrain state machine's typed state transitions.

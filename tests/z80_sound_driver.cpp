@@ -47,6 +47,7 @@ struct Fixture {
         // 0x27-byte state from table + little-endian offset.
         rom[patch_table] = 0x20;
         rom[patch_table + 1] = 0x00;
+        rom[patch_data] = 0x01;  // type-1 YM2612 DAC sample
         rom[patch_data + 1] = 0x0A;
         rom[patch_data + 3] = 0x34;
         rom[patch_data + 4] = 0xE1;
@@ -92,8 +93,8 @@ int main() {
     assert(events[2].has_patch_state);
     assert(events[2].patch_state[1] == 0x0A);
     assert(events[2].patch_state[3] == 0x34);
-    assert(events[2].output == Z80SoundDriver::Output::Ym);
-    assert(events[3].output == Z80SoundDriver::Output::Ym);
+    assert(events[2].output == Z80SoundDriver::Output::Dac);
+    assert(events[3].output == Z80SoundDriver::Output::Dac);
     assert(events[3].kind == Z80SoundDriver::SoundEvent::Kind::Note);
     assert(events[3].opcode == 0x30);
     assert(events[3].operand_b == -0x618);

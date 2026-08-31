@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -19,7 +20,8 @@ namespace {
 // WORLD_Y - 0xF0, while the VDP sprite origin uses WORLD_Y - 0x100.
 constexpr int kPlayerVisualOffsetY = 0x100;
 
-constexpr std::uint32_t kCheckpointVersion = 11;
+constexpr std::uint32_t kCheckpointVersion = 13;
+constexpr std::uint32_t kCheckpointActorTimerVersion = 13;
 
 void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& selector) {
     writer.u8(selector.animation_gate);
@@ -47,9 +49,13 @@ void write_selector(checkpoint::Writer& writer, const AnimationSelectorState& se
     writer.u8(selector.response_timer);
     writer.u8(selector.interaction_pending);
     writer.u8(selector.state_lock);
+    writer.u8(selector.action_response_field);
 }
 
-AnimationSelectorState read_selector(checkpoint::Reader& reader) {
+AnimationSelectorState read_selector(
+    checkpoint::Reader& reader,
+    bool has_action_response_field
+) {
     AnimationSelectorState selector;
     selector.animation_gate = reader.u8();
     selector.terminal_transition = reader.u8();
@@ -76,6 +82,9 @@ AnimationSelectorState read_selector(checkpoint::Reader& reader) {
     selector.response_timer = reader.u8();
     selector.interaction_pending = reader.u8();
     selector.state_lock = reader.u8();
+    if (has_action_response_field) {
+        selector.action_response_field = reader.u8();
+    }
     return selector;
 }
 
@@ -118,7 +127,10 @@ void write_player_state(checkpoint::Writer& writer, const PlayerState& player) {
     writer.u8(player.attack_timer);
 }
 
-PlayerState read_player_state(checkpoint::Reader& reader) {
+PlayerState read_player_state(
+    checkpoint::Reader& reader,
+    bool has_action_response_field
+) {
     PlayerState player;
     player.x = reader.i32();
     player.y = reader.i32();
@@ -154,7 +166,7 @@ PlayerState read_player_state(checkpoint::Reader& reader) {
     player.terrain_response_latch = reader.u8();
     player.terrain_transition_gate = reader.u8();
     player.terrain_terminal_transition = reader.u8();
-    player.animation_selector = read_selector(reader);
+    player.animation_selector = read_selector(reader, has_action_response_field);
     player.attack_timer = reader.u8();
     return player;
 }
@@ -418,8 +430,12 @@ void Engine::update_dynamic_actor_culling() {
     // range until the scene-state coordinate basis is fully reconstructed.
     const int left = camera_.x - 0x50;
     const int right = camera_.x + 0x190;
-    const int top = camera_.y - 0x120;
-    const int bottom = camera_.y + RenderPipeline::kHeight + 0x120;
+    // MovementVM_TickActors culls non-player records outside the ROM's
+    // asymmetric vertical window: camera Y + 0xB0 through camera Y + 0x230.
+    // The interaction object at the upper edge of the opening level is the
+    // observable boundary that distinguishes this from a screen-sized box.
+    const int top = camera_.y + 0xB0;
+    const int bottom = camera_.y + 0x230;
     for (const std::size_t slot : actors_.cull_interaction_actors(left, right, top, bottom)) {
         // FUN_001AE0B0 clears/releases the record and follows its +0x3E link.
         // ActorSystem performs the spatial query; lifecycle owns the actual
@@ -595,6 +611,14 @@ void Engine::reset() {
     frame_runtime_.jump_landing_state_arm_now = false;
     frame_runtime_.terrain_fall_phase = false;
     frame_runtime_.contour_ground_motion = false;
+    frame_runtime_.terrain_response_horizontal_carry = false;
+    frame_runtime_.completed_jump_ground_response_latch = false;
+    frame_runtime_.completed_jump_ground_response_run_pending = false;
+    frame_runtime_.transition_root_response_retry_pending = false;
+    frame_runtime_.transition_root_cursor_motion_active = false;
+    frame_runtime_.terrain_action_selected_from_attack_edge = false;
+    frame_runtime_.terrain_action_stream_exit_pending = false;
+    frame_runtime_.terrain_action_hold_rearm_pending = false;
     actors_.reset();
     if (actors_.snapshot_mode()) {
         apply_actor_timeline(0);
@@ -656,6 +680,14 @@ void Engine::set_checkpoint(int x, int y, std::int16_t vx, std::int16_t vy, bool
     frame_runtime_.jump_landing_state_arm_now = false;
     frame_runtime_.terrain_fall_phase = false;
     frame_runtime_.contour_ground_motion = false;
+    frame_runtime_.terrain_response_horizontal_carry = false;
+    frame_runtime_.completed_jump_ground_response_latch = false;
+    frame_runtime_.completed_jump_ground_response_run_pending = false;
+    frame_runtime_.transition_root_response_retry_pending = false;
+    frame_runtime_.transition_root_cursor_motion_active = false;
+    frame_runtime_.terrain_action_selected_from_attack_edge = false;
+    frame_runtime_.terrain_action_stream_exit_pending = false;
+    frame_runtime_.terrain_action_hold_rearm_pending = false;
     frame_ = 0;
     frame_phase_ = 0;
     state_.frame.vblank_ready_latch = 0;
@@ -1044,6 +1076,114 @@ void Engine::write_framebuffer_ppm(const std::string& path) const {
     render_pipeline_.write_framebuffer_ppm(path);
 }
 
+std::vector<std::string> Engine::debug_overlay_lines() const {
+    const auto hex = [](std::uint32_t value, int width) {
+        std::ostringstream output;
+        output << std::uppercase << std::hex << std::setfill('0')
+               << std::setw(width) << value;
+        return output.str();
+    };
+    const auto byte = [&hex](std::uint8_t value) {
+        return hex(value, 2);
+    };
+    const auto pose = [this]() {
+        switch (animation_system_.player().pose()) {
+        case SpritePose::Idle: return std::string("IDLE");
+        case SpritePose::Run: return std::string("RUN");
+        case SpritePose::Brake: return std::string("BRAKE");
+        case SpritePose::Jump: return std::string("JUMP");
+        case SpritePose::Landing: return std::string("LAND");
+        }
+        return std::string("?");
+    };
+    const auto stream = [this]() {
+        switch (animation_system_.player().stream_kind()) {
+        case AnimationStreamKind::Locomotion: return std::string("LOCO");
+        case AnimationStreamKind::Response: return std::string("RESP");
+        case AnimationStreamKind::Action: return std::string("ACT");
+        }
+        return std::string("?");
+    };
+
+    std::vector<std::string> lines;
+    lines.reserve(13);
+    lines.push_back(
+        "F " + std::to_string(frame_)
+        + " PH " + byte(frame_phase_)
+        + " RNG " + hex(random_state_, 8)
+    );
+    lines.push_back(
+        "P " + hex(static_cast<std::uint32_t>(player_.x), 4)
+        + "," + hex(static_cast<std::uint32_t>(player_.y), 4)
+        + " W " + hex(static_cast<std::uint32_t>(player_world_x()), 4)
+        + "," + hex(static_cast<std::uint32_t>(player_world_y()), 4)
+    );
+    lines.push_back(
+        "V " + std::to_string(player_.vx)
+        + "," + std::to_string(player_.vy)
+        + " G " + (player_.grounded ? "1" : "0")
+        + " B " + (player_.ground_braking ? "1" : "0")
+    );
+    lines.push_back(
+        "T B" + byte(player_.terrain_behavior)
+        + " Q" + byte(player_.terrain_query_result)
+        + " L" + byte(player_.terrain_landing_state)
+        + " R" + byte(player_.terrain_response_active)
+        + " S" + byte(player_.terrain_state)
+    );
+    lines.push_back(
+        "AN " + stream()
+        + " " + pose()
+        + " PC " + hex(animation_system_.player().animation_pc(), 6)
+        + " PTR " + hex(animation_system_.player().frame_pointer(), 6)
+        + " TM " + std::to_string(animation_system_.player().timer())
+    );
+    const AnimationSelectorState& selector = player_.animation_selector;
+    lines.push_back(
+        "SEL G" + byte(selector.animation_gate)
+        + " R" + byte(selector.response_active)
+        + " D" + byte(selector.transition_state)
+        + " M" + byte(selector.transition_mode)
+        + " A" + byte(selector.action_response_field)
+    );
+    lines.push_back(
+        "CAM " + hex(static_cast<std::uint32_t>(camera_.x), 4)
+        + "," + hex(static_cast<std::uint32_t>(camera_.y), 4)
+        + " REF " + hex(static_cast<std::uint32_t>(camera_.reference_x), 4)
+        + "," + hex(static_cast<std::uint32_t>(camera_.reference_y), 4)
+    );
+    lines.push_back(
+        "SCN " + byte(static_cast<std::uint8_t>(scene_.scene_state()))
+        + " CUR " + hex(scene_.runtime().script_cursor, 6)
+        + " CD " + byte(scene_.runtime().script_countdown)
+        + " TR " + (scene_.is_transition() ? "1" : "0")
+    );
+    lines.push_back(
+        "I HP " + std::to_string(player_.health)
+        + " APP " + std::to_string(state_.interaction_state.primary_count())
+        + " TAR " + byte(state_.interaction_state.target_current)
+        + " RES " + byte(state_.interaction_state.response_current)
+    );
+
+    std::size_t active_actor_count = 0;
+    for (const ActorState& actor : actors_) {
+        if (actor.type != 0) ++active_actor_count;
+    }
+    lines.push_back("ACT " + std::to_string(active_actor_count) + "/32");
+    for (std::size_t slot = 1; slot < actors_.size() && lines.size() < 13; ++slot) {
+        const ActorState& actor = actors_[slot];
+        if (actor.type == 0) continue;
+        lines.push_back(
+            std::string("A") + (slot < 10 ? "0" : "") + std::to_string(slot)
+            + " T" + byte(actor.type)
+            + " XY" + hex(actor.x, 4) + "," + hex(actor.y, 4)
+            + " M" + hex(actor.movement_pc, 6)
+            + " AN" + hex(actor.animation_pc, 6)
+        );
+    }
+    return lines;
+}
+
 void Engine::write_state(std::ostream& output, const std::string& input_token) const {
     // This is the native side of the versioned atomic state contract. The
     // loaded ROM/assets are immutable; every mutable field that can affect a
@@ -1095,7 +1235,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
     output << "{\"type\":\"state\",\"format\":\"openaladdin-frame-state-v3\""
            << ",\"frame\":" << frame_
            << ",\"input\":\"" << input_token << "\""
-           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"interaction_state\",\"progress\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"x\",\"y\",\"sprite_attribute\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
+           << ",\"capture\":{\"boundary\":\"game-loop\",\"atomic\":true,\"atomic_fields\":[\"player\",\"camera\",\"terrain\",\"scene\",\"interaction_state\",\"progress\",\"actors\",\"scheduler\"],\"atomic_actor_fields\":[\"type\",\"actor_timer\",\"x\",\"y\",\"sprite_attribute\",\"runtime_field_07\",\"runtime_field_07_delay\",\"facing_x_flip\",\"facing_y_flip\",\"movement_pc\",\"movement_loop_pc\",\"movement_loop_timer\",\"movement_word_18\",\"movement_word_1a\",\"frame_ptr\",\"animation_pc\",\"movement_return_pc\",\"flags\",\"interaction_state\",\"terminal_timer\",\"movement_command_timer\",\"animation_timer\",\"resource_count\",\"interaction_resource_offset\",\"interaction_selector\",\"spawned_by_interaction\",\"spawned_by_animation\",\"spawned_by_apple\",\"linked_actor_slot\",\"vm_actor_record\"]}"
            << ",\"player\":{\"x\":" << player_.x
            << ",\"y\":" << player_.y
            << ",\"world_x\":" << player_world_x()
@@ -1157,6 +1297,8 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << static_cast<unsigned>(animation_selector.response_state_f0)
            << ",\"response_state_101\":"
            << static_cast<unsigned>(animation_selector.response_state_101)
+           << ",\"action_response_field\":"
+           << static_cast<unsigned>(animation_selector.action_response_field)
            << ",\"horizontal_response\":"
            << animation_selector.horizontal_response
            << ",\"response_timer\":"
@@ -1174,6 +1316,8 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"facing_left\":" << (animation_system_.player().facing_left() ? "true" : "false")
            << ",\"attack_timer\":" << static_cast<unsigned>(player_.attack_timer)
            << ",\"attack_active\":" << (player_.attack_timer != 0 ? "true" : "false")
+           << ",\"health\":" << static_cast<unsigned>(player_.health)
+           << ",\"hurt_cooldown\":" << static_cast<unsigned>(player_.hurt_cooldown)
            << ",\"terrain_behavior\":" << static_cast<unsigned>(player_.terrain_behavior)
            << ",\"terrain_query_result\":" << static_cast<unsigned>(player_.terrain_query_result)
            << ",\"terrain_push_right\":" << static_cast<unsigned>(player_.terrain_push_right)
@@ -1325,6 +1469,26 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
            << ",\"random_state\":" << random_state_
            << ",\"terrain_input_world_x\":" << frame_runtime_.terrain_input_world_x
            << ",\"terrain_input_world_y\":" << frame_runtime_.terrain_input_world_y
+           << ",\"terrain_response_horizontal_carry\":"
+           << (frame_runtime_.terrain_response_horizontal_carry ? "true" : "false")
+           << ",\"completed_jump_ground_response_latch\":"
+           << (frame_runtime_.completed_jump_ground_response_latch ? "true" : "false")
+           << ",\"completed_jump_ground_response_run_pending\":"
+           << (frame_runtime_.completed_jump_ground_response_run_pending ? "true" : "false")
+           << ",\"transition_root_response_retry_pending\":"
+           << (frame_runtime_.transition_root_response_retry_pending ? "true" : "false")
+           << ",\"transition_root_cursor_motion_active\":"
+           << (frame_runtime_.transition_root_cursor_motion_active ? "true" : "false")
+           << ",\"terrain_action_selected_from_attack_edge\":"
+           << (frame_runtime_.terrain_action_selected_from_attack_edge ? "true" : "false")
+           << ",\"terrain_action_stream_exit_pending\":"
+           << (frame_runtime_.terrain_action_stream_exit_pending ? "true" : "false")
+           << ",\"terrain_action_hold_rearm_pending\":"
+           << (frame_runtime_.terrain_action_hold_rearm_pending ? "true" : "false")
+           << ",\"sword_action_pending\":"
+           << (frame_runtime_.sword_action_pending ? "true" : "false")
+           << ",\"sword_action_pending_delay\":"
+           << static_cast<unsigned>(frame_runtime_.sword_action_pending_delay)
            << ",\"checkpoint_terrain_behavior_override\":"
            << (frame_runtime_.checkpoint_terrain_behavior_override ? "true" : "false")
            << ",\"checkpoint_terrain_behavior\":"
@@ -1410,6 +1574,7 @@ void Engine::write_state(std::ostream& output, const std::string& input_token) c
         );
         output << "{\"slot\":" << slot
                << ",\"type\":" << static_cast<unsigned>(actor.type)
+               << ",\"actor_timer\":" << static_cast<unsigned>(actor.actor_timer)
                << ",\"x\":" << actor.x
                << ",\"y\":" << actor.y
                << ",\"movement_flags\":" << static_cast<unsigned>(actor.movement_flags)
@@ -1466,7 +1631,7 @@ void Engine::write_checkpoint(std::ostream& output) const {
 
     scene_.write_checkpoint(output);
     interaction_map_.write_checkpoint(output);
-    actors_.write_checkpoint(output);
+    actors_.write_checkpoint(output, true);
     write_player_state(writer, player_);
     write_camera_state(writer, camera_);
     animation_system_.write_checkpoint(output);
@@ -1533,13 +1698,26 @@ void Engine::write_checkpoint(std::ostream& output) const {
     writer.u8(state_.player.hurt_cooldown);
     writer.u8(state_.frame.vblank_ready_latch);
     writer.u8(state_.frame.frame_wait_latch);
+    writer.boolean(frame_runtime_.terrain_response_horizontal_carry);
+    writer.boolean(frame_runtime_.terrain_action_selected_from_attack_edge);
+    writer.boolean(frame_runtime_.terrain_action_stream_exit_pending);
+    writer.boolean(frame_runtime_.terrain_action_hold_rearm_pending);
+    writer.boolean(frame_runtime_.sword_action_pending);
+    writer.u8(frame_runtime_.sword_action_pending_delay);
+    writer.boolean(frame_runtime_.completed_jump_ground_response_latch);
+    writer.boolean(frame_runtime_.completed_jump_ground_response_run_pending);
+    writer.boolean(frame_runtime_.transition_root_response_retry_pending);
+    writer.boolean(frame_runtime_.transition_root_cursor_motion_active);
 }
 
 void Engine::read_checkpoint(std::istream& input) {
     checkpoint::Reader reader(input);
     checkpoint::expect_magic(reader, "OACP", 4);
     const auto checkpoint_version = reader.u32();
-    if (checkpoint_version != 10 && checkpoint_version != kCheckpointVersion) {
+    if (checkpoint_version != 10
+        && checkpoint_version != 11
+        && checkpoint_version != 12
+        && checkpoint_version != kCheckpointVersion) {
         throw std::runtime_error("unsupported OpenAladdin checkpoint version");
     }
     if (reader.u32() != rom_bytes_.size()) {
@@ -1549,11 +1727,17 @@ void Engine::read_checkpoint(std::istream& input) {
         throw std::runtime_error("level does not match OpenAladdin checkpoint");
     }
 
-    scene_.read_checkpoint(input, checkpoint_version >= kCheckpointVersion);
+    scene_.read_checkpoint(input, checkpoint_version >= 11);
     scene_resources_.reset();
     interaction_map_.read_checkpoint(input);
-    actors_.read_checkpoint(input);
-    PlayerState player = read_player_state(reader);
+    actors_.read_checkpoint(
+        input,
+        checkpoint_version >= kCheckpointActorTimerVersion
+    );
+    PlayerState player = read_player_state(
+        reader,
+        checkpoint_version >= 12
+    );
     CameraState camera = read_camera_state(reader);
     animation_system_.read_checkpoint(input);
     const auto level_event_cursor = reader.u32();
@@ -1622,7 +1806,7 @@ void Engine::read_checkpoint(std::istream& input) {
         if (reader.has_more()) interaction_state.type3e_response_latch = reader.u8();
         if (reader.has_more()) interaction_state.type3f_response_latch = reader.u8();
         if (reader.has_more()) player.terrain_bounce_animation_state = reader.u8();
-        if (checkpoint_version >= kCheckpointVersion) {
+        if (checkpoint_version >= 11) {
             if (reader.has_more()) interaction_state.primary_digits = reader.u16();
             if (reader.has_more()) interaction_state.secondary_digits = reader.u16();
             if (reader.has_more()) progress.difficulty_counter = reader.u8();
@@ -1635,6 +1819,26 @@ void Engine::read_checkpoint(std::istream& input) {
         if (reader.has_more()) vblank_ready_latch = reader.u8();
         if (reader.has_more()) frame_wait_latch = reader.u8();
     }
+    bool terrain_response_horizontal_carry = false;
+    if (reader.has_more()) terrain_response_horizontal_carry = reader.boolean();
+    bool terrain_action_selected_from_attack_edge = false;
+    if (reader.has_more()) terrain_action_selected_from_attack_edge = reader.boolean();
+    bool terrain_action_stream_exit_pending = false;
+    if (reader.has_more()) terrain_action_stream_exit_pending = reader.boolean();
+    bool terrain_action_hold_rearm_pending = false;
+    if (reader.has_more()) terrain_action_hold_rearm_pending = reader.boolean();
+    bool sword_action_pending = false;
+    if (reader.has_more()) sword_action_pending = reader.boolean();
+    std::uint8_t sword_action_pending_delay = 0;
+    if (reader.has_more()) sword_action_pending_delay = reader.u8();
+    bool completed_jump_ground_response_latch = false;
+    if (reader.has_more()) completed_jump_ground_response_latch = reader.boolean();
+    bool completed_jump_ground_response_run_pending = false;
+    if (reader.has_more()) completed_jump_ground_response_run_pending = reader.boolean();
+    bool transition_root_response_retry_pending = false;
+    if (reader.has_more()) transition_root_response_retry_pending = reader.boolean();
+    bool transition_root_cursor_motion_active = false;
+    if (reader.has_more()) transition_root_cursor_motion_active = reader.boolean();
     if (vdp_checkpoint_loaded
         && (vdp_checkpoint_vram.size() != 0x10000
             || vdp_checkpoint_vsram.size() != 0x80)) {
@@ -1658,6 +1862,24 @@ void Engine::read_checkpoint(std::istream& input) {
     random_state_ = random_state;
     frame_runtime_.terrain_input_world_x = terrain_input_world_x;
     frame_runtime_.terrain_input_world_y = terrain_input_world_y;
+    frame_runtime_.terrain_response_horizontal_carry =
+        terrain_response_horizontal_carry;
+    frame_runtime_.completed_jump_ground_response_latch =
+        completed_jump_ground_response_latch;
+    frame_runtime_.completed_jump_ground_response_run_pending =
+        completed_jump_ground_response_run_pending;
+    frame_runtime_.transition_root_response_retry_pending =
+        transition_root_response_retry_pending;
+    frame_runtime_.transition_root_cursor_motion_active =
+        transition_root_cursor_motion_active;
+    frame_runtime_.terrain_action_selected_from_attack_edge =
+        terrain_action_selected_from_attack_edge;
+    frame_runtime_.terrain_action_stream_exit_pending =
+        terrain_action_stream_exit_pending;
+    frame_runtime_.terrain_action_hold_rearm_pending =
+        terrain_action_hold_rearm_pending;
+    frame_runtime_.sword_action_pending = sword_action_pending;
+    frame_runtime_.sword_action_pending_delay = sword_action_pending_delay;
     frame_runtime_.checkpoint_terrain_behavior_override = checkpoint_terrain_behavior_override;
     frame_runtime_.checkpoint_terrain_behavior = checkpoint_terrain_behavior;
     frame_runtime_.actor_movement_deferred.fill(false);
@@ -1677,7 +1899,10 @@ void Engine::read_checkpoint(std::istream& input) {
     level_event_sound_requests_ = level_event_sound_requests;
 }
 
-void Engine::render(SDL_Renderer* renderer) {
+void Engine::render(
+    SDL_Renderer* renderer,
+    const std::vector<std::string>& debug_overlay
+) {
     const bool rendered = render_pipeline_.render(
         state_,
         render_model_,
@@ -1694,7 +1919,8 @@ void Engine::render(SDL_Renderer* renderer) {
         renderer,
         render_pipeline_.framebuffer(),
         RenderPipeline::kWidth,
-        RenderPipeline::kHeight
+        RenderPipeline::kHeight,
+        debug_overlay
     );
 }
 }  // namespace openaladdin

@@ -153,6 +153,23 @@ the root `run.sh`, which performs an incremental native build before launch.
 Use `genie play mame` (or `--client mame`) for a windowed MAME session; pass
 `--headless` when running either client from automation.
 
+The native window has a small diagnostic aid for hard-to-reproduce states:
+
+- `F1` toggles the presentation-only state overlay. It shows the frame, local
+  and world player coordinates, velocities, terrain/animation selectors,
+  camera/scene state, inventory, RNG, and active actor records.
+- `F5` saves a replayable statepoint after the current frame.
+- `F9` restores the last statepoint saved in this run, or the newest one from
+  `build/debug/statepoints/` after restarting the program.
+
+Each F5 capture creates three files with the same stem: `.chk` is the complete
+binary checkpoint, `.state.jsonl` is the semantic state record, and `.ppm` is
+the rendered frame. The `.chk` can be loaded by a future native debug run, and
+the whole directory is useful evidence when reporting a strange transition.
+For a direct replay from a supplied checkpoint, use
+`build/openaladdin --load-checkpoint PATH` (add `--render-checkpoint` to only
+render it).
+
 The direct Python form remains equivalent:
 
 ```bash
@@ -427,6 +444,7 @@ SDL_VIDEODRIVER=dummy ./run.sh --no-window --frames 120
 Use `--demo` with that command to run a deterministic right-and-jump input
 sequence for smoke testing.
 
-Arrow keys or A/D apply horizontal input; Space or C jumps. The next runtime
-slice can add confirmed animation and movement VM interpreters without mixing
-those questions with graphics-format decoding.
+Arrow keys or A/D apply horizontal input; Z or B swings the sword, X throws
+an apple, and Space or C jumps. The next runtime slice can add confirmed
+animation and movement VM interpreters without mixing those questions with
+graphics-format decoding.

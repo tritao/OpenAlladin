@@ -99,6 +99,7 @@ def main() -> int:
         record = run_wrapper(base_environment(fake_mame, log, trace), directory)
         assert record["sdl_video_driver"] == "dummy"
         assert "-nowindow" not in record["argv"]
+        assert "-window" not in record["argv"]
         assert record["argv"][record["argv"].index("-video") + 1] == "none"
         assert record["argv"][record["argv"].index("-seconds_to_run") + 1] == "3"
 
@@ -107,6 +108,7 @@ def main() -> int:
         interactive_environment["OPENALADDIN_EXECUTION_PROFILE"] = "interactive"
         record = run_wrapper(interactive_environment, directory)
         assert record["sdl_video_driver"] == "x11"
+        assert "-window" in record["argv"]
         assert "-nothrottle" not in record["argv"]
         assert record["argv"][record["argv"].index("-sound") + 1] == "sdl"
 

@@ -36,6 +36,7 @@ public:
         Unknown,
         Ym,
         Psg,
+        Dac,
     };
 
     struct SoundEvent {

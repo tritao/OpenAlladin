@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 namespace openaladdin {
@@ -21,7 +22,8 @@ public:
         SDL_Renderer* renderer,
         const std::vector<std::uint32_t>& framebuffer,
         int width,
-        int height
+        int height,
+        const std::vector<std::string>& debug_overlay = {}
     );
 
 private:

@@ -33,20 +33,21 @@ def main() -> int:
         "--rom",
         str(ROOT / "rom/Disneys_Aladdin_U_p1.bin"),
         "--frames",
-        "425",
+        "470",
         "--state-output",
         str(OUTPUT),
         # The opening guard is reached by the same simple walk used for the
-        # MAME guard probe. Press A once while stopped just before its box.
+        # MAME guard probe. Press Genesis B once while stopped just before
+        # its box; B is the sword button and A is the apple button.
         "--input-schedule",
-        "none*1,right*390,a*1,none*40",
+        "none*1,right*390,b*1,none*78",
     ]
     environment = dict(os.environ)
     environment["SDL_VIDEODRIVER"] = "dummy"
     subprocess.run(command, cwd=ROOT, env=environment, check=True, stdout=subprocess.DEVNULL)
 
     frame_states = states(OUTPUT)
-    attack_frame = next(record for record in frame_states if record["input"] == "a")
+    attack_frame = next(record for record in frame_states if record["input"] == "b")
     assert attack_frame["player"]["attack_timer"] == 10
     assert attack_frame["player"]["world_x"] == 1273
     attack_boundary = frame_states[attack_frame["frame"] + 1]
@@ -63,9 +64,22 @@ def main() -> int:
             if previous_guard_type.get(4) == 0x0A and guard["type"] == 0x84:
                 guard_hit_frame = record["frame"]
                 assert guard["animation_pc"] == 0x00122FA2
+                assert guard["frame_ptr"] == 0
+                assert guard["collision_box"] is None
                 break
             previous_guard_type[4] = guard["type"]
     assert guard_hit_frame is not None, "the opening guard was never hit"
+
+    guard_retired = next(
+        record
+        for record in frame_states
+        if record["frame"] > guard_hit_frame
+        and not any(
+            actor["slot"] == 4 and actor["type"] != 0
+            for actor in record["actors"]
+        )
+    )
+    assert guard_retired["frame"] == guard_hit_frame + 43
 
     print("native first-guard sword: ok")
     return 0

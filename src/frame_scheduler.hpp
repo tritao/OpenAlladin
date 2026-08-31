@@ -35,7 +35,7 @@ struct InputState {
     bool jump_held = false;
     bool jump_pressed = false;
     // Sword input has the same controller-level/edge distinction. Keeping
-    // the held state here prevents a scheduled `a*2` replay from becoming
+    // the held state here prevents a scheduled `b*2` replay from becoming
     // two sword selections in the native loop.
     bool attack_held = false;
     bool attack_pressed = false;
@@ -44,6 +44,7 @@ struct InputState {
     // is exposed separately so physical controller replays can preserve the
     // distinct action selection.
     bool apple_pressed = false;
+    bool apple_held = false;
 };
 
 struct SchedulerPhase {
@@ -64,6 +65,16 @@ struct FrameRuntime {
     int terrain_input_world_x = 0;
     int terrain_input_world_y = 0;
     int last_ground_direction = 0;
+    bool terrain_response_horizontal_carry = false;
+    bool completed_jump_ground_response_latch = false;
+    bool completed_jump_ground_response_run_pending = false;
+    bool transition_root_response_retry_pending = false;
+    bool transition_root_cursor_motion_active = false;
+    bool terrain_action_selected_from_attack_edge = false;
+    bool terrain_action_stream_exit_pending = false;
+    bool terrain_action_hold_rearm_pending = false;
+    bool sword_action_pending = false;
+    std::uint8_t sword_action_pending_delay = 0;
     bool checkpoint_terrain_behavior_override = false;
     std::uint8_t checkpoint_terrain_behavior = 0;
     bool level_event_exit_started = false;

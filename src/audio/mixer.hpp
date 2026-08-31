@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
 #include "audio/sn76489.hpp"
 #include "audio/ym2612.hpp"
@@ -21,6 +22,9 @@ public:
     void reset();
     void write_psg(std::uint8_t data);
     void write_ym2612(std::uint8_t port, std::uint8_t data);
+    void play_sample(std::span<const std::uint8_t> samples,
+                     std::uint32_t sample_rate = Ym2612::kDacSampleRate);
+    void stop_sample();
 
     // Render interleaved signed 16-bit stereo at the configured callback
     // rate.

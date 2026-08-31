@@ -400,7 +400,7 @@ attack child.  At frame 1639, the child record had `x=0x0512`, `y=0x0333`,
 and frame pointer `0x001FDDB4` (Chopper frame 1338).
 
 The same scene provides a complete guard damage/death trace.  With the player
-approaching on `right` and timed `a` presses, slot 5 (`0x00FF7F8A`) remains a
+approaching on `right` and timed `b` presses, slot 5 (`0x00FF7F8A`) remains a
 type `0x0A` guard from frames 1596-1667 at fixed position
 `x=0x0530,y=0x0340`; its movement cursor is zero while its animation cursor
 walks through `0x0012542A`-`0x00125486`.  At frame 1668, the sword hit replaces
@@ -415,7 +415,7 @@ Reproduce the probe with:
 ```sh
 OPENALADDIN_CAPTURE_VDP=0 OPENALADDIN_TRACE_ACTORS=1 \
 OPENALADDIN_TRACE_FRAMES=1690 \
-OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*390,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*100' \
+OPENALADDIN_INPUT='none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*390,b*2,none*100' \
 OPENALADDIN_TRACE_DIR=build/re/guard-death \
   ./genie/mame/run.sh
 ```

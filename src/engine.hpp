@@ -69,10 +69,16 @@ public:
     // Return sound IDs emitted by the player and actor animation VMs since
     // the previous call. The caller submits them to the recovered Z80 driver.
     std::vector<std::uint8_t> take_sound_requests();
-    void render(SDL_Renderer* renderer);
+    void render(
+        SDL_Renderer* renderer,
+        const std::vector<std::string>& debug_overlay = {}
+    );
     // Write the last rendered native framebuffer without SDL window scaling.
     // This is the format used by the visual differential audit tools.
     void write_framebuffer_ppm(const std::string& path) const;
+    // Presentation-only diagnostic lines. They expose semantic state already
+    // captured by write_state(), without changing simulation state.
+    std::vector<std::string> debug_overlay_lines() const;
     void write_state(std::ostream& output, const std::string& input_token) const;
     void set_scheduler_trace_enabled(bool enabled);
     void write_scheduler_trace(std::ostream& output, const std::string& input_token) const;

@@ -15,6 +15,7 @@ python3 tests/native_actor_timeline.py
 python3 tests/native_actor_collision.py
 python3 tests/native_actor_actor_collision.py
 python3 tests/native_first_guard_sword.py
+python3 tests/native_guard_attack_parity.py
 python3 tests/native_animation_spawn.py
 python3 tests/native_sword_lifecycle.py
 ```
@@ -66,6 +67,9 @@ command handoff.
 `native_sword_lifecycle.py` runs a headless MAME injection and a native replay
 with the same checkpoint, then reports the first divergent sword field across
 50 frames. It also exercises the one-step `0x85`/`0x8C` cleanup path.
+`native_guard_attack_parity.py` replays the live opening guard encounter in
+both MAME and native, comparing the sword-triggered `0x0A` to `0x84` transition
+and the 43-frame terminal lifetime.
 
 ## Visual audit
 

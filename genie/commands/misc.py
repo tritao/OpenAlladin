@@ -33,6 +33,9 @@ def command_regression(args: argparse.Namespace) -> int:
     aligned = root_trace / "mame-aligned.jsonl"
     native_trace = root_trace / "native.jsonl"
     frame_limit = int(args.frames or experiment["frames"])
+    native_frame_offset = int(regression.get("native_frame_offset", 0))
+    if native_frame_offset < 0:
+        raise SystemExit("regression native_frame_offset must not be negative")
 
     environment = os.environ.copy()
     for key in (
@@ -101,6 +104,10 @@ def command_regression(args: argparse.Namespace) -> int:
         "--state-output", str(native_trace),
         "--input-schedule", compress_input_schedule(input_tokens),
     ]
+    if native_frame_offset:
+        native_command[native_command.index("--frames") + 1] = str(
+            compare_frames + native_frame_offset
+        )
     # A recorded terrain byte is the state at the checkpoint, not a global
     # fixture. Let the native resolver follow the player's position so a
     # replay can cross into a different behavior cell after the checkpoint.
@@ -118,7 +125,12 @@ def command_regression(args: argparse.Namespace) -> int:
     # compatibility trace before comparing so divergence context reports the
     # actual input at the matching boundary rather than an artificial one-frame
     # offset.
-    _relabel_state_trace_inputs(native_trace, input_tokens, "regression-input-alignment")
+    native_input_tokens = input_tokens + [input_tokens[-1]] * native_frame_offset
+    _relabel_state_trace_inputs(
+        native_trace,
+        native_input_tokens,
+        "regression-input-alignment",
+    )
 
     actor_table_compare = "actors" in fields
     state_fields = [field for field in fields if field != "actors"]
@@ -133,6 +145,8 @@ def command_regression(args: argparse.Namespace) -> int:
     state_status = 0
     if state_fields:
         compare_args: list[str] = [str(aligned), str(native_trace)]
+        if native_frame_offset:
+            compare_args.extend(["--right-frame-offset", str(native_frame_offset)])
         for field in state_fields:
             compare_args.extend(["--field", field])
         state_status = run_tool("core/mame/trace.py", compare_args)

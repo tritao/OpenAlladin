@@ -12,6 +12,8 @@ struct PlayerMotionInput {
     bool was_grounded = false;
     bool contour_ground_motion = false;
     bool terrain_response_was_active = false;
+    bool ignore_horizontal_collision_stop = false;
+    bool suppress_active_response_horizontal_motion = false;
 };
 
 struct PlayerMotionResult {

@@ -167,6 +167,13 @@ MAME_ARGS=(
     -sound "${SOUND_MODE}"
 )
 
+if [[ "${HEADLESS}" != "1" ]]; then
+    # Force a normal play session into a window even when the user's MAME
+    # configuration has fullscreen enabled. Headless sessions use SDL's dummy
+    # driver and do not need a display-mode flag.
+    MAME_ARGS+=( -window )
+fi
+
 if [[ "${EXECUTION_PROFILE}" == "analysis" ]]; then
     MAME_ARGS+=( -nothrottle )
 fi

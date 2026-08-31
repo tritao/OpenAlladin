@@ -160,11 +160,10 @@ def command_replay(args: argparse.Namespace) -> int:
         )
         native_frames = segment_frames
         scheduled_tokens = (
-            # Native writes the checkpoint as state frame 0, then applies one
-            # scheduled token before writing each subsequent state. The
-            # checkpoint token is therefore already represented by frame 0;
-            # consume source frame start+1 on the first native update.
-            _client_input_tokens(input_header, tokens[1:]) if tokens else []
+            # Native writes the checkpoint as state frame 0, then applies I[0]
+            # before writing state frame 1. The first segment token is the
+            # transition out of the checkpoint and must not be discarded.
+            _client_input_tokens(input_header, tokens[:segment_frames])
         )
     else:
         reference = run_dir / "state.jsonl"

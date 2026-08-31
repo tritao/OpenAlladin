@@ -67,6 +67,15 @@ int main() {
     assert_stereo(resampled);
     assert(has_signal(resampled));
 
+    const std::array<std::uint8_t, 4> sample{
+        0x80, 0xFF, 0x40, 0x80};
+    chip.reset();
+    chip.play_sample(sample);
+    std::array<std::int16_t, 256> sample_output{};
+    chip.render(sample_output.data(), sample_output.size() / 2, 48'000);
+    assert(has_signal(sample_output));
+    chip.stop_sample();
+
     bool rejected_bad_port = false;
     try {
         chip.write(4, 0);

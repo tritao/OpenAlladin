@@ -41,7 +41,7 @@ def main() -> int:
         "--checkpoint-camera",
         "1000,416,1000,416,0,0,1",
         "--input-schedule",
-        "a*1,none*45",
+        "b*1,none*45",
     ]
     environment = dict(os.environ)
     environment["SDL_VIDEODRIVER"] = "dummy"
@@ -51,7 +51,7 @@ def main() -> int:
 
     first = states[1]
     guard = next(actor for actor in first["actors"] if actor["slot"] == 5)
-    assert first["input"] == "a"
+    assert first["input"] == "b"
     assert first["player"]["attack_active"] is True
     assert states[0]["player"]["frame_ptr"] == 0x001EA794
     assert states[0]["player"]["collision_box"] == {
@@ -108,7 +108,7 @@ def main() -> int:
             "--checkpoint-camera",
             "1000,416,1000,416,0,0,1",
             "--input-schedule",
-            "a*1",
+            "b*1",
         ]
         subprocess.run(boundary_command, cwd=ROOT, env=environment, check=True, stdout=subprocess.DEVNULL)
         boundary_states = load_states(boundary_output)

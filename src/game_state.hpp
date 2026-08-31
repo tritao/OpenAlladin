@@ -52,8 +52,9 @@ struct CameraState {
 struct PlayerState {
     static constexpr std::uint8_t kDefaultHealth = 3;
     static constexpr std::uint8_t kMaximumHealth = 3;
-    // Keep the gameplay resource and its ROM response lockout together so
-    // one flame cannot drain multiple points while the same response is active.
+    // The ROM's hurt response is a stateful animation handoff. Keep the
+    // gameplay resource and its hit lockout together so one flame cannot
+    // drain multiple points while the same response is still active.
     std::uint8_t health = kDefaultHealth;
     std::uint8_t hurt_cooldown = 0;
 

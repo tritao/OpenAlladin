@@ -40,10 +40,46 @@ public:
         source_phase_ = 0;
         last_left_ = 0;
         last_right_ = 0;
+        sample_data_ = nullptr;
+        sample_size_ = 0;
+        sample_position_ = 0;
+        sample_phase_ = 0;
+        sample_rate_ = 0;
     }
 
     void write(std::uint8_t port, std::uint8_t data) {
         chip_.write(port, data);
+    }
+
+    void play_sample(std::span<const std::uint8_t> samples,
+                     std::uint32_t sample_rate) {
+        if (samples.empty() || sample_rate == 0) {
+            stop_sample();
+            return;
+        }
+
+        sample_data_ = samples.data();
+        sample_size_ = samples.size();
+        sample_position_ = 0;
+        sample_phase_ = 0;
+        sample_rate_ = sample_rate;
+
+        // The original type-1 path enables the YM2612 DAC before feeding it
+        // the first byte. The DAC is addressed through the low YM port.
+        chip_.write(0, 0x2b);
+        chip_.write(1, 0x80);
+        write_dac(sample_data_[0]);
+    }
+
+    void stop_sample() {
+        sample_data_ = nullptr;
+        sample_size_ = 0;
+        sample_position_ = 0;
+        sample_phase_ = 0;
+        sample_rate_ = 0;
+        // Hold the DAC at its unsigned midpoint so a completed sample does
+        // not leave a DC level in the YM output.
+        write_dac(0x80);
     }
 
     [[nodiscard]] std::uint8_t status() {
@@ -57,6 +93,17 @@ public:
     void render_native(std::int16_t* output, std::size_t frames) {
         std::array<ymfm::ym2612::output_data, kGenerationBatch> generated{};
         while (frames != 0) {
+            if (sample_active()) {
+                chip_.generate(generated.data(), 1);
+                last_left_ = clamp_sample(generated[0].data[0]);
+                last_right_ = clamp_sample(generated[0].data[1]);
+                output[0] = last_left_;
+                output[1] = last_right_;
+                output += 2;
+                --frames;
+                advance_sample_clock();
+                continue;
+            }
             const std::size_t count = std::min(frames, kGenerationBatch);
             chip_.generate(generated.data(), static_cast<std::uint32_t>(count));
             for (std::size_t frame = 0; frame < count; ++frame) {
@@ -95,6 +142,15 @@ private:
         std::array<ymfm::ym2612::output_data, kGenerationBatch>;
 
     void advance(std::size_t frames, GeneratedBuffer& generated) {
+        if (sample_active()) {
+            for (std::size_t frame = 0; frame < frames; ++frame) {
+                chip_.generate(generated.data(), 1);
+                last_left_ = clamp_sample(generated[0].data[0]);
+                last_right_ = clamp_sample(generated[0].data[1]);
+                advance_sample_clock();
+            }
+            return;
+        }
         while (frames != 0) {
             const std::size_t count = std::min(frames, kGenerationBatch);
             chip_.generate(generated.data(), static_cast<std::uint32_t>(count));
@@ -104,11 +160,42 @@ private:
         }
     }
 
+    [[nodiscard]] bool sample_active() const noexcept {
+        return sample_data_ != nullptr && sample_position_ < sample_size_;
+    }
+
+    void write_dac(std::uint8_t sample) {
+        chip_.write(0, 0x2a);
+        chip_.write(1, sample);
+    }
+
+    void advance_sample_clock() {
+        if (!sample_active()) {
+            return;
+        }
+        sample_phase_ += sample_rate_;
+        while (sample_phase_ >= native_sample_rate_) {
+            sample_phase_ -= native_sample_rate_;
+            ++sample_position_;
+            if (!sample_active()) {
+                write_dac(0x80);
+                sample_phase_ = 0;
+                return;
+            }
+            write_dac(sample_data_[sample_position_]);
+        }
+    }
+
     ymfm::ym2612 chip_;
     std::uint32_t native_sample_rate_;
     std::uint64_t source_phase_ = 0;
     std::int16_t last_left_ = 0;
     std::int16_t last_right_ = 0;
+    const std::uint8_t* sample_data_ = nullptr;
+    std::size_t sample_size_ = 0;
+    std::size_t sample_position_ = 0;
+    std::uint64_t sample_phase_ = 0;
+    std::uint32_t sample_rate_ = 0;
 };
 
 Ym2612::Ym2612(std::uint32_t clock_hz)
@@ -127,6 +214,15 @@ void Ym2612::write(std::uint8_t port, std::uint8_t data) {
         throw std::out_of_range("Ym2612 port must be in the range 0..3");
     }
     impl_->write(port, data);
+}
+
+void Ym2612::play_sample(std::span<const std::uint8_t> samples,
+                         std::uint32_t sample_rate) {
+    impl_->play_sample(samples, sample_rate);
+}
+
+void Ym2612::stop_sample() {
+    impl_->stop_sample();
 }
 
 std::uint8_t Ym2612::status() {

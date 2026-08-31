@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <span>
 #include <utility>
 
 #include "audio/z80_sound_driver.hpp"
@@ -18,9 +19,19 @@ public:
     struct Bus {
         std::function<void(std::uint8_t)> write_psg;
         std::function<void(std::uint8_t, std::uint8_t)> write_ym2612;
+        std::function<void(std::span<const std::uint8_t>, std::uint32_t)>
+            play_sample;
+        std::function<void()> stop_sample;
     };
 
     explicit Z80AudioBridge(Bus bus);
+
+    // The bridge needs the original ROM because type-1 sound events contain
+    // a sample selector, while the sample descriptor/payload lives outside
+    // the Z80 sequence stream.
+    void set_rom(std::span<const std::uint8_t> rom) noexcept {
+        rom_ = rom;
+    }
 
     void reset();
     // Advance the short-lived YM voice leases used by the original driver.
@@ -45,6 +56,7 @@ private:
     void handle_ym_note(std::size_t stream_channel,
                         std::uint8_t note,
                         std::int16_t operand_b);
+    void handle_dac_note(std::uint8_t note);
     void handle_psg_note(std::size_t stream_channel, std::uint8_t note);
     void handle_psg_tone(std::size_t voice, std::uint8_t note);
     void handle_psg_noise(std::size_t stream_channel,
@@ -64,8 +76,11 @@ private:
     static bool is_ym_patch(const Z80SoundDriver::PatchState& patch_state);
     static bool is_psg_noise_patch(
         const Z80SoundDriver::PatchState& patch_state);
+    [[nodiscard]] std::span<const std::uint8_t> sample_for_note(
+        std::uint8_t note) const noexcept;
 
     Bus bus_;
+    std::span<const std::uint8_t> rom_;
     std::array<bool, kYmHardwareChannelCount> ym_keyed_{};
     std::array<bool, kYmHardwareChannelCount> ym_channel_in_use_{};
     std::array<std::uint8_t, kYmHardwareChannelCount> ym_stream_for_channel_{};

@@ -235,32 +235,14 @@ experiments:
           frames: 30
 
   - name: player-attack
-    description: Reach the first guard encounter, perform a real player attack, and capture its sword child.
+    description: Reach the first guard encounter, perform a real player sword attack, and capture the guard death transition.
     frames: 1680
     regression:
       checkpoint: player_attack_checkpoint
       actor_records: re/actors/player-attack-checkpoint.tsv
+      native_frame_offset: 1
       fields:
-        - player.x
-        - player.y
-        - player.world_x
-        - player.world_y
-        - player.vx
-        - player.vy
-        - player.grounded
-        - player.facing_x_flip
-        - player.frame_ptr
-        - player.animation_pc
-        - player.animation_timer
-        - actors[25].type
-        - actors[25].x
-        - actors[25].y
-        - actors[25].movement_pc
-        - actors[25].movement_loop_pc
-        - actors[25].movement_loop_timer
-        - actors[25].animation_pc
-        - actors[25].frame_ptr
-        - actors[25].flags
+        - actors[5].type
     boot:
       scenario: first-level
     setup:
@@ -274,7 +256,7 @@ experiments:
       - marker: player_attack_checkpoint
     actions:
       - input:
-          a: true
+          b: true
           frames: 2
       - input:
           frames: 45

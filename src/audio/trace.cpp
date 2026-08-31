@@ -72,6 +72,8 @@ void AudioTrace::record_event(const Z80SoundDriver::SoundEvent& event) {
             return "ym";
         case Z80SoundDriver::Output::Psg:
             return "psg";
+        case Z80SoundDriver::Output::Dac:
+            return "dac";
         case Z80SoundDriver::Output::Unknown:
             return "unknown";
         }

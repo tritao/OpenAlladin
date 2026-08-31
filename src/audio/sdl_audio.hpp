@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <span>
 
 #include <SDL.h>
 
@@ -34,6 +35,9 @@ public:
     void reset();
     void write_psg(std::uint8_t data);
     void write_ym2612(std::uint8_t port, std::uint8_t data);
+    void play_sample(std::span<const std::uint8_t> samples,
+                     std::uint32_t sample_rate = Ym2612::kDacSampleRate);
+    void stop_sample();
 
 private:
     static void callback(void* userdata, Uint8* stream, int length);

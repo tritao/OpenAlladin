@@ -6,8 +6,13 @@ namespace openaladdin {
 
 namespace {
 
-void write_actor_state(checkpoint::Writer& writer, const ActorState& actor) {
+void write_actor_state(
+    checkpoint::Writer& writer,
+    const ActorState& actor,
+    bool include_actor_timer
+) {
     writer.u8(actor.type);
+    if (include_actor_timer) writer.u8(actor.actor_timer);
     writer.u16(actor.x);
     writer.u16(actor.y);
     writer.u8(actor.movement_flags);
@@ -35,9 +40,13 @@ void write_actor_state(checkpoint::Writer& writer, const ActorState& actor) {
     writer.i32(static_cast<std::int32_t>(actor.linked_actor_slot));
 }
 
-ActorState read_actor_state(checkpoint::Reader& reader) {
+ActorState read_actor_state(
+    checkpoint::Reader& reader,
+    bool include_actor_timer
+) {
     ActorState actor;
     actor.type = reader.u8();
+    if (include_actor_timer) actor.actor_timer = reader.u8();
     actor.x = reader.u16();
     actor.y = reader.u16();
     actor.movement_flags = reader.u8();
@@ -196,6 +205,19 @@ void ActorSystem::release_sprite_resources(ActorIndex slot) {
     }
 }
 
+bool ActorSystem::transfer_sprite_resources(
+    ActorIndex source,
+    ActorIndex destination
+) {
+    if (source >= size() || destination >= size() || source == destination) {
+        return false;
+    }
+    release_sprite_resources(destination);
+    resource_allocations_[destination] = resource_allocations_[source];
+    resource_allocations_[source].reset();
+    return true;
+}
+
 std::optional<ActorResourceAllocation> ActorSystem::resource_allocation(ActorIndex slot) const {
     if (slot >= size()) return std::nullopt;
     return resource_allocations_[slot];
@@ -227,15 +249,18 @@ bool ActorSystem::was_culled_this_frame(std::size_t slot) const {
     return slot < culled_this_frame_.size() && culled_this_frame_[slot];
 }
 
-void ActorSystem::write_checkpoint(std::ostream& output) const {
+void ActorSystem::write_checkpoint(
+    std::ostream& output,
+    bool include_actor_timer
+) const {
     checkpoint::Writer writer(output);
     writer.boolean(snapshot_mode_);
     for (std::size_t slot = 0; slot < templates_.size(); ++slot) {
-        write_actor_state(writer, templates_[slot]);
+        write_actor_state(writer, templates_[slot], include_actor_timer);
         write_host_meta(writer, {});
     }
     for (std::size_t slot = 0; slot < size(); ++slot) {
-        write_actor_state(writer, (*this)[slot]);
+        write_actor_state(writer, (*this)[slot], include_actor_timer);
         write_host_meta(writer, host_meta_[slot]);
     }
     for (const bool culled : culled_this_frame_) writer.boolean(culled);
@@ -252,7 +277,10 @@ void ActorSystem::write_checkpoint(std::ostream& output) const {
     }
 }
 
-void ActorSystem::read_checkpoint(std::istream& input) {
+void ActorSystem::read_checkpoint(
+    std::istream& input,
+    bool include_actor_timer
+) {
     checkpoint::Reader reader(input);
     const bool snapshot_mode = reader.boolean();
     Table templates{};
@@ -260,11 +288,11 @@ void ActorSystem::read_checkpoint(std::istream& input) {
     std::array<ActorHostMeta, 32> host_meta{};
     std::array<bool, 32> culled{};
     for (ActorState& actor : templates) {
-        actor = read_actor_state(reader);
+        actor = read_actor_state(reader, include_actor_timer);
         (void)read_host_meta(reader);
     }
     for (std::size_t slot = 0; slot < records.size(); ++slot) {
-        records[slot] = read_actor_state(reader);
+        records[slot] = read_actor_state(reader, include_actor_timer);
         host_meta[slot] = read_host_meta(reader);
     }
     for (bool& value : culled) value = reader.boolean();

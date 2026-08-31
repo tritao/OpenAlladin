@@ -30,6 +30,7 @@ ActorState ActorLifecycleSystem::from_template(std::uint32_t template_address) c
     // record with the following field map. The remaining destination fields
     // are intentionally untouched by initialize_record().
     actor.type = read8(template_address + 0x00);
+    actor.actor_timer = read8(template_address + 0x01);
     actor.movement_flags = read8(template_address + 0x02);
     actor.runtime_field_07 = read8(template_address + 0x03);
     actor.runtime_field_07_delay = read8(template_address + 0x04);

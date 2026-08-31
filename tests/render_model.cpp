@@ -57,6 +57,40 @@ int main() {
     assert(model.sprites().records[0].tile == 0x2002);
     assert(model.sprites().records[0].x == 0x0140);
 
+    // The checkpoint SAT uses one linked list for the HUD. The apple records
+    // are rewritten from gameplay inventory immediately before rendering,
+    // while preserving the original list links for one- and two-digit forms.
+    const auto write_sat_word = [&](std::size_t address, std::uint16_t value) {
+        vram[address] = static_cast<std::uint8_t>(value >> 8);
+        vram[address + 1] = static_cast<std::uint8_t>(value);
+    };
+    write_sat_word(sat_base + 2 * 8, 0x0140);
+    write_sat_word(sat_base + 2 * 8 + 2, 0x0503);
+    write_sat_word(sat_base + 2 * 8 + 4, 0xE6F3);
+    write_sat_word(sat_base + 2 * 8 + 6, 0x018E);
+    write_sat_word(sat_base + 3 * 8, 0x0148);
+    write_sat_word(sat_base + 3 * 8 + 2, 0x0004);
+    write_sat_word(sat_base + 3 * 8 + 4, 0xE6E0);
+    write_sat_word(sat_base + 3 * 8 + 6, 0x01A0);
+    write_sat_word(sat_base + 4 * 8, 0x0148);
+    write_sat_word(sat_base + 4 * 8 + 2, 0x0005);
+    write_sat_word(sat_base + 4 * 8 + 4, 0xE6E0);
+    write_sat_word(sat_base + 4 * 8 + 6, 0x01A8);
+    model.load_checkpoint(vram, vsram, palette, registers);
+    model.sync_checkpoint_apple_hud(9);
+    assert(model.sprites().records[2].y == 0x0140);
+    assert(model.sprites().records[3].tile == 0xE6F2);
+    assert(model.sprites().records[3].x == 0x01A0);
+    assert(model.sprites().records[4].y == 1);
+    model.sync_checkpoint_apple_hud(42);
+    assert(model.sprites().records[3].tile == 0xE6E8);
+    assert(model.sprites().records[4].tile == 0xE6E4);
+    assert(model.sprites().records[4].y == 0x0148);
+    model.sync_checkpoint_apple_hud(0);
+    assert(model.sprites().records[2].y == 1);
+    assert(model.sprites().records[3].y == 1);
+    assert(model.sprites().records[4].y == 1);
+
     const std::vector<std::uint8_t> write_rom{
         0x01, 0x04,  // x += 4
         0x02, 0x07,  // y += 7
@@ -145,7 +179,7 @@ int main() {
     );
     assert(model.preview_background_width() == 320);
     assert(model.preview_background_height() == 224);
-    assert(model.preview_sprites().size() == 16);
+    assert(model.preview_sprites().size() == 13);
     assert(model.preview_sprites().front().tile_address == 0x11EDE0);
     assert(model.preview_sprites().back().palette_line == 3);
 

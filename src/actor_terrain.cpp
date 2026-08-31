@@ -94,8 +94,11 @@ void ActorTerrainSystem::update(
                     0x001B792C
                 );
                 (void)lifecycle_.install(slot, replacement);
-                animation_.actors().vm(slot).clear_actor_service_boundary();
-                animation_.actors().vm(slot).defer_actor_service();
+                // This conversion occurs before the shared actor-animation
+                // pass. The replacement is therefore eligible for the next
+                // phase-gated service immediately; deferring it one more gate
+                // would make the apple's terminal animation one odd frame
+                // late (the original ticks it on the very next boundary).
                 state.actors.host_meta(slot).spawned_by_apple = false;
             }
             continue;

@@ -34,7 +34,7 @@ scenarios:
   - name: combat-and-death
     description: Enter the first stage, traverse into the guard encounter, and exercise the confirmed sword-hit/death path.
     frames: 1690
-    input: "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*390,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*18,a*2,none*100"
+    input: "none*320,start*5,none*200,start*5,none*170,start*5,none*200,start*5,none*150,start*5,none*180,right*390,b*2,none*100"
 
   - name: long-gameplay-traversal
     description: Long low-level traversal probe with repeated attack input; useful for discovering later scene/resource transitions.

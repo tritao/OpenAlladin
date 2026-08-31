@@ -64,6 +64,7 @@ struct AnimationSelectorState {
     std::uint8_t response_state_ef = 0;         // FFF0EF
     std::uint8_t response_state_f0 = 0;         // FFF0F0
     std::uint8_t response_state_101 = 0;        // FFF101
+    std::uint8_t action_response_field = 0;     // FFF0D8
     std::int16_t horizontal_response = 0;       // FFF0B0
     std::uint8_t response_timer = 0;            // FFF0CC
     std::uint8_t interaction_pending = 0;       // FFEFFF
@@ -135,6 +136,7 @@ public:
     bool set_frame(int sprite_frame);
     void set_frame_pointer(std::uint32_t frame_pointer);
     void set_animation_state(std::uint32_t animation_pc, int timer);
+    void select_vertical_band_animation(std::uint32_t world_y);
     // Some ROM selectors clear FF7E77 on the following VBlank, after
     // publishing the new stream root. Keep that boundary distinct from the
     // stream's scheduler service so the root remains visible for one frame.
@@ -185,8 +187,12 @@ public:
     void select_locomotion_entry(
         std::uint32_t stream_entry,
         bool defer_first_tick = false,
-        SpritePose pose = SpritePose::Jump
+        SpritePose pose = SpritePose::Jump,
+        bool publish_frame_pointer = false
     );
+    void arm_landing_reselect();
+    bool landing_idle_hold() const { return landing_reselect_pending_ == 4; }
+    void clear_landing_idle_hold();
     void select_response_stream(std::uint32_t stream_entry, int timer = 0);
     bool finished() const;
     bool select_player_interaction_state(const AnimationContext& context);
@@ -305,7 +311,9 @@ private:
     std::vector<std::uint8_t> sound_requests_;
     unsigned update_count_ = 0;
     bool landing_finished_ = false;
-    bool landing_reselect_pending_ = false;
+    // 1 means a normal landing root reselect (only while the cursor is still
+    // at the root); 2..4 carry the response-specific landing/re-entry phases.
+    std::uint8_t landing_reselect_pending_ = 0;
 };
 
 }  // namespace openaladdin

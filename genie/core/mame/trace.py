@@ -304,6 +304,12 @@ def main() -> int:
         action="store_true",
         help="compare only frames marked atomic in the left/reference trace",
     )
+    parser.add_argument(
+        "--right-frame-offset",
+        type=int,
+        default=0,
+        help="compare left frame N with right frame N plus this offset",
+    )
     args = parser.parse_args()
     left_header, left = load_states(args.genesis.resolve())
     right_header, right = load_states(args.openaladdin.resolve())
@@ -323,10 +329,24 @@ def main() -> int:
         right_atomic = require_atomic_trace(
             args.openaladdin.resolve(), right_header, right, label="right/replay"
         )
+    right_frame_offset = args.right_frame_offset
+    right_view = (
+        dict(right)
+        if right_frame_offset == 0
+        else {
+            frame - right_frame_offset: record
+            for frame, record in right.items()
+            if frame - right_frame_offset in left
+        }
+    )
+    right_atomic_view = {
+        frame - right_frame_offset
+        for frame in right_atomic
+    }
     if args.atomic_only:
-        if left_atomic != right_atomic:
-            missing_left = sorted(right_atomic - left_atomic)
-            missing_right = sorted(left_atomic - right_atomic)
+        if left_atomic != right_atomic_view:
+            missing_left = sorted(right_atomic_view - left_atomic)
+            missing_right = sorted(left_atomic - right_atomic_view)
             raise SystemExit(
                 "atomic frame sets differ: "
                 f"missing from left={missing_left[:5]} "
@@ -340,17 +360,17 @@ def main() -> int:
             )
         frames = sorted(left_atomic)
     else:
-        frames = sorted(set(left) | set(right))
+        frames = sorted(set(left) | set(right_view))
     for frame in frames:
-        if frame not in left or frame not in right:
+        if frame not in left or frame not in right_view:
             print(f"First divergence: frame {frame}")
             print("state record")
             print(f"  Genesis:      {'present' if frame in left else 'missing'}")
-            print(f"  OpenAladdin:  {'present' if frame in right else 'missing'}")
-            print_divergence_context(frame, left, right, frames)
+            print(f"  OpenAladdin:  {'present' if frame in right_view else 'missing'}")
+            print_divergence_context(frame, left, right_view, frames)
             return 1
         left_record = left[frame]
-        right_record = right[frame]
+        right_record = right_view[frame]
         if not args.fields:
             # The header is the schema authority. Older derived records can
             # still carry the v1 per-record label after a v2 header was added;
@@ -366,7 +386,7 @@ def main() -> int:
             left_record.pop("causal", None)
             right_record.pop("causal", None)
         difference = (
-            selected_difference(left[frame], right[frame], args.fields)
+            selected_difference(left_record, right_record, args.fields)
             if args.fields
             else first_difference(
                 left_record,

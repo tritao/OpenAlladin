@@ -84,6 +84,27 @@ void SdlAudioOutput::write_ym2612(std::uint8_t port, std::uint8_t data) {
     }
 }
 
+void SdlAudioOutput::play_sample(std::span<const std::uint8_t> samples,
+                                 std::uint32_t sample_rate) {
+    if (device_ != 0) {
+        SDL_LockAudioDevice(device_);
+    }
+    mixer_->play_sample(samples, sample_rate);
+    if (device_ != 0) {
+        SDL_UnlockAudioDevice(device_);
+    }
+}
+
+void SdlAudioOutput::stop_sample() {
+    if (device_ != 0) {
+        SDL_LockAudioDevice(device_);
+    }
+    mixer_->stop_sample();
+    if (device_ != 0) {
+        SDL_UnlockAudioDevice(device_);
+    }
+}
+
 void SdlAudioOutput::callback(void* userdata, Uint8* stream, int length) {
     auto* output = static_cast<SdlAudioOutput*>(userdata);
     if (output == nullptr || length <= 0) {

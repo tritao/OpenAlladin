@@ -37,6 +37,8 @@ constexpr std::uint32_t kResponseStreamEnd = 0x00121FD4;
 constexpr std::uint32_t kInteractionStopStream = 0x001226CE;
 constexpr std::uint32_t kInteractionSpecialStream = 0x001226B2;
 constexpr std::uint32_t kAppleActionStream = 0x001223DA;
+constexpr std::uint32_t kAppleTerrainTimerStream = 0x001225A2;
+constexpr std::uint32_t kAirborneActionStream = 0x0012262A;
 constexpr std::uint32_t kAppleFirstHeldCursor = 0x001223FA;
 constexpr std::uint32_t kAppleFirstCursorBoundary = 0x00122438;
 constexpr std::uint32_t kAppleSecondCursorBoundary = 0x0012245C;
@@ -428,7 +430,12 @@ std::uint32_t PlayerAnimationVm::dynamic_stream(const AnimationContext& context)
     // Player branch of AnimationVM_SelectState (0x001AD150). Landing is
     // selected by the recovered native physics boundary; the remaining tests
     // preserve the original global-state routing for future states.
-    if (pose_ == SpritePose::Landing) return kIdleStream;
+    // The held-Down transition state has priority over the stale landing pose
+    // while its action stream returns through F8. Genesis therefore enters
+    // the down cursor at 0x12231E instead of falling back to idle.
+    if (pose_ == SpritePose::Landing && read_memory8(0xFFF0DE) == 0) {
+        return kIdleStream;
+    }
     if (read_memory8(0xFFF0D7) != 0) return 0x00121964;
     if (read_memory8(0xFFF173) != 0) {
         const bool grounded = context.grounded_override
@@ -599,14 +606,19 @@ bool PlayerAnimationVm::command(
         );
         command.source_facing_x_flip = read_memory8(9);
         command.source_facing_y_flip = read_memory8(0x35);
-        command.apple_action = !actor_tick_ && stream_entry_ == kAppleActionStream;
+        command.apple_action = !actor_tick_
+            && (stream_entry_ == kAppleActionStream
+                || stream_entry_ == kAppleTerrainTimerStream
+                || stream_entry_ == kAirborneActionStream);
 
         const bool defer = !actor_tick_
             && ((command.mode == 0 && services != nullptr
                     && services->defer_player_spawns)
-                || (command.mode == 3 && services != nullptr
-                    && services->defer_mode3_spawns)
-                || command.apple_action);
+                || (command.mode == 3 && !command.apple_action
+                    && stream_entry_ != kAirborneActionStream
+                    && stream_entry_ != kAppleTerrainTimerStream
+                    && services != nullptr
+                    && services->defer_mode3_spawns));
         if (defer) {
             deferred_spawn_command_ = command;
         } else if (services != nullptr && services->spawn_f5) {
@@ -646,8 +658,19 @@ bool PlayerAnimationVm::command(
         // state machine; every other dynamic target is a locomotion stream.
         if (stream_kind_ != AnimationStreamKind::Locomotion && !is_response_root(cursor)) {
             stream_kind_ = AnimationStreamKind::Locomotion;
+            if (cursor == kIdleStream) {
+                pose_ = SpritePose::Idle;
+            } else if (cursor == kRunStream) {
+                pose_ = SpritePose::Run;
+            }
         }
-        if (pose_ == SpritePose::Landing) { pose_ = SpritePose::Idle; landing_finished_ = true; }
+        if (pose_ == SpritePose::Landing) {
+            pose_ = SpritePose::Idle;
+            landing_finished_ = true;
+            if (landing_reselect_pending_ == 3) {
+                landing_reselect_pending_ = 4;
+            }
+        }
         return false;
     case 0xF9:
         write_memory8(
@@ -834,6 +857,26 @@ void PlayerAnimationVm::set_animation_state(std::uint32_t animation_pc, int time
     landing_finished_ = false;
 }
 
+void PlayerAnimationVm::select_vertical_band_animation(std::uint32_t world_y) {
+    if (!rom_mode_) return;
+
+    // Player_SelectVerticalBandAnimation indexes this table with the
+    // two-pixel response coordinate before the terrain response applies its
+    // same-frame displacement. Keep the ROM table here rather than deriving
+    // the cursor sequence from observed replay frames.
+    static constexpr std::array<std::uint32_t, 16> kVerticalAnimationTable{
+        0x001218CA, 0x001218BC, 0x001218AE, 0x001218A0,
+        0x00121892, 0x00121884, 0x00121876, 0x00121868,
+        0x001218CA, 0x001218BC, 0x001218AE, 0x001218A0,
+        0x00121892, 0x00121884, 0x00121876, 0x00121868,
+    };
+    const std::uint8_t band = static_cast<std::uint8_t>((world_y >> 2) & 0x0F);
+    facing_left_ = band > 7;
+    set_animation_state(kVerticalAnimationTable[band], 0);
+    const std::uint16_t reference = read_rom16(animation_pc_);
+    set_frame_pointer(read_rom32(reference));
+}
+
 void PlayerAnimationVm::clear_animation_timer_next_update() {
     if (!rom_mode_) return;
     clear_timer_next_update_ = true;
@@ -926,6 +969,11 @@ bool PlayerAnimationVm::update_actor(
     ram_.bind_context(context);
     animation_pc_ = actor.animation_pc;
     timer_ = actor.animation_timer;
+    // ActorAnimationVM's FC/return path is stored in the live actor record at
+    // +0x38 by the ROM. Rehydrate the VM cursor before the tick and publish it
+    // back after the command stream so in-place response transitions retain
+    // the same return address.
+    return_pc_ = actor.movement_return_pc;
 
     actor_tick_ = true;
     RamContextScope context_scope(ram_);
@@ -937,6 +985,7 @@ bool PlayerAnimationVm::update_actor(
     actor.animation_pc = animation_pc_;
     actor.frame_ptr = frame_pointer_;
     actor.animation_timer = read_memory8(0x37);
+    actor.movement_return_pc = return_pc_;
     return false;
 }
 
@@ -1006,7 +1055,8 @@ void PlayerAnimationVm::select_locomotion_stream(
 void PlayerAnimationVm::select_locomotion_entry(
     std::uint32_t stream_entry,
     bool defer_first_tick,
-    SpritePose pose
+    SpritePose pose,
+    bool publish_frame_pointer
 ) {
     if (!rom_mode_) return;
     pose_ = pose;
@@ -1014,10 +1064,24 @@ void PlayerAnimationVm::select_locomotion_entry(
     stream_entry_ = stream_entry;
     animation_pc_ = stream_entry;
     timer_ = 0;
+    if (publish_frame_pointer) {
+        const std::uint16_t reference = read_rom16(stream_entry);
+        set_frame_pointer(read_rom32(reference));
+    }
     landing_finished_ = false;
     landing_reselect_pending_ = false;
     if (defer_first_tick) {
         ++update_count_;
+    }
+}
+
+void PlayerAnimationVm::arm_landing_reselect() {
+    if (rom_mode_) landing_reselect_pending_ = 2;
+}
+
+void PlayerAnimationVm::clear_landing_idle_hold() {
+    if (rom_mode_ && landing_reselect_pending_ == 4) {
+        landing_reselect_pending_ = 0;
     }
 }
 
@@ -1214,12 +1278,16 @@ void PlayerAnimationVm::update(
     const bool scheduler_service = scheduler_phase
         ? ((*scheduler_phase & 1U) != 0)
         : ((update_count_ & 1U) == 0);
-    if (pose_ == SpritePose::Landing && landing_reselect_pending_ && !scheduler_service) {
+    if (pose_ == SpritePose::Landing
+        && landing_reselect_pending_ != 0
+        && (landing_reselect_pending_ == 2
+            || animation_pc_ == kLandingStream)
+        && !scheduler_service) {
         // The gameplay state selector writes the landing root again on the
         // intervening frame; the VM then consumes its first frame on the next
         // actor tick. This one-frame root write is visible in FF7E60.
         animation_pc_ = kLandingStream;
-        landing_reselect_pending_ = false;
+        landing_reselect_pending_ = landing_reselect_pending_ == 2 ? 3 : 0;
     }
     if (scheduler_phase) {
         if (scheduler_service) tick_rom(context, services);
@@ -1275,7 +1343,7 @@ void PlayerAnimationVm::write_checkpoint(std::ostream& output) const {
     writer.byte_vector(sound_requests_);
     writer.u32(update_count_);
     writer.boolean(landing_finished_);
-    writer.boolean(landing_reselect_pending_);
+    writer.u8(landing_reselect_pending_);
 }
 
 void PlayerAnimationVm::read_checkpoint(std::istream& input) {
@@ -1329,7 +1397,10 @@ void PlayerAnimationVm::read_checkpoint(std::istream& input) {
     auto sound_requests = reader.byte_vector(4096);
     const auto update_count = reader.u32();
     const bool landing_finished = reader.boolean();
-    const bool landing_reselect_pending = reader.boolean();
+    const auto landing_reselect_pending = reader.u8();
+    if (landing_reselect_pending > 4) {
+        throw std::runtime_error("invalid landing reselect mode in OpenAladdin checkpoint");
+    }
     if (!rom_mode_ && step >= clip(static_cast<SpritePose>(pose)).steps.size()) {
         throw std::runtime_error("invalid animation VM clip step in OpenAladdin checkpoint");
     }

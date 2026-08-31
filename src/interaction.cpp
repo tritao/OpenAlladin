@@ -248,6 +248,7 @@ void InteractionSystem::update_player_selector(
 ) {
     if (stable_fixture || rom_ == nullptr || rom_->empty() || landing_event
         || desired_pose == SpritePose::Landing
+        || state.player.animation_selector.state_lock != 0
         || (!selector_pending_at_start
             && state.player.animation_selector.interaction_lock == 0)) {
         return;
@@ -280,13 +281,29 @@ void InteractionSystem::clear_response_handoff() {
 
 bool InteractionSystem::finish_bounce_response(
     GameState& state,
-    bool terrain_response_was_active
+    bool terrain_response_was_active,
+    bool jump_response_was_complete
 ) {
     const bool finished = runtime_.bounce_response_active
         && !runtime_.bounce_response_follow_active
         && terrain_response_was_active
         && state.player.terrain_response_active == 0;
     if (!finished) return false;
+
+    if (jump_response_was_complete) {
+        // A bounce reached from an already-complete jump response lands
+        // directly in the ordinary grounded handoff. It does not arm the
+        // separate interaction-response follow delay used by a fresh bounce.
+        runtime_.bounce_response_active = false;
+        runtime_.bounce_response_follow_active = false;
+        runtime_.bounce_camera_delay_hold_pending = false;
+        state.player.terrain_jump_response_counter = 0;
+        clear_response_handoff();
+        // The runtime response is complete, but the animation scheduler must
+        // still process the ordinary landing root rather than its generic
+        // bounce-finished run override.
+        return false;
+    }
 
     state.player.terrain_response_timer_state = 1;
     state.player.terrain_jump_response_counter = 0;

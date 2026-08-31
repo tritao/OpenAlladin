@@ -411,12 +411,21 @@ bool Z80SoundDriver::control_has_argument(std::uint8_t opcode) noexcept {
 
 Z80SoundDriver::Output Z80SoundDriver::classify_patch(
     const PatchState& patch_state) noexcept {
-    // YM records have a zeroed format/control byte at offset two. The byte at
-    // offset one varies between patches (for example, title patch 0x4B uses
-    // 0x02), so it is not a reliable YM discriminator.
-    return patch_state[0] == 0x00 && patch_state[2] == 0x00
-        ? Output::Ym
-        : Output::Psg;
+    // The first byte is the original driver's output-format selector. Type
+    // 0 is a YM/FM patch, type 1 is a YM2612 DAC sample, and types 2/3 are
+    // PSG paths. The byte at offset two is part of the type-0 patch shape,
+    // not a substitute for the format selector.
+    switch (patch_state[0]) {
+    case 0x00:
+        return Output::Ym;
+    case 0x01:
+        return Output::Dac;
+    case 0x02:
+    case 0x03:
+        return Output::Psg;
+    default:
+        return Output::Unknown;
+    }
 }
 
 }  // namespace openaladdin::audio

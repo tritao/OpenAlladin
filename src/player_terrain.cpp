@@ -51,6 +51,9 @@ void PlayerTerrainSystem::sample(GameState& state, const TerrainInput& input) co
     if (input.jump_pressed || input.jump_held) {
         player.terrain_query_result &= static_cast<std::uint8_t>(~0x20);
     }
+    if (input.attack_held) {
+        player.terrain_query_result &= static_cast<std::uint8_t>(~0x10);
+    }
 
     player.terrain_push_right = input.right ? 0xFF : 0;
     player.terrain_push_left = input.left ? 0xFF : 0;
@@ -67,6 +70,10 @@ void PlayerTerrainSystem::apply_response(
     // FUN_001A986E consumes the query latch published by the terrain handler.
     if (context.scene_transition || player.terrain_query_state_a == 0) {
         player.terrain_transition_gate = 0;
+        return;
+    }
+    if (context.suppress_transition_root_response
+        && player.terrain_response_active == 0) {
         return;
     }
     if (player.terrain_terminal_transition != 0) return;
@@ -187,13 +194,30 @@ void PlayerTerrainSystem::apply_contour(
         return;
     }
 
+    const bool new_ground_response_latch =
+        player.terrain_response_timer_state == 1
+        && player.terrain_jump_response_counter >= 10
+        && player.terrain_bounce_animation_state >= 0x2D;
+    const bool preserve_completed_response_counter =
+        player.terrain_jump_response_counter >= 10
+        && player.terrain_bounce_animation_state >= 0x2D
+        && (player.terrain_response_timer_state == 0xFF
+            || player.terrain_landing_state != 0);
+    const bool ground_response_was_armed = new_ground_response_latch;
     player.y = target_y;
     player.vy = 0;
     player.grounded = contour.contour == 1;
     player.terrain_landing_state = contour.contour;
     player.terrain_response_active = 0;
-    player.terrain_jump_response_counter = 0;
-    player.terrain_response_timer_state = 0;
+    if (!preserve_completed_response_counter) {
+        player.terrain_jump_response_counter = 0;
+    }
+    player.terrain_response_timer_state = ground_response_was_armed ? 0xFF : 0;
+    player.animation_selector.response_timer =
+        ground_response_was_armed ? 0xFF : 0;
+    if (new_ground_response_latch) {
+        camera.update_delay = 7;
+    }
     terrain_fall_phase = false;
 }
 

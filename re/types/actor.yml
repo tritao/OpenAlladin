@@ -5,6 +5,10 @@ fields:
     name: type
     type: u8
     description: Actor type/state byte copied from template byte +0; zero marks a free record and non-zero values are processed by common actor logic.
+  0x01:
+    name: actor_timer
+    type: u8
+    description: Short-lived actor response timer decremented by the shared player-collision response block; the template initializer copies this byte into the live record.
   0x02:
     name: x
     type: u16

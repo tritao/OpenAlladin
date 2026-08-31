@@ -183,6 +183,11 @@ def check_trace(
             for record in state_frames
             for actor in record["actors"]
         )
+        assert state_frames[0]["inventory"]["apple_count"] == 10
+        assert any(
+            record["inventory"]["apple_count"] == 9
+            for record in state_frames
+        )
         state_by_frame = {record["frame"]: record for record in state_frames}
         assert state_by_frame[31]["player"]["animation_pc"] == 0x001223E2
         assert state_by_frame[39]["player"]["animation_pc"] == 0x00122438
@@ -236,8 +241,8 @@ def main() -> int:
             "run": ("right*12", 12),
             "jump": ("right*30,jump*1,none*96", 127),
             "held_jump": ("right*30,jump*35,none*20", 85),
-            "sword": ("right*30,a*2,none*96", 128),
-            "apple": ("right*30,apple*1,none*128", 159),
+            "sword": ("right*30,b*2,none*96", 128),
+            "apple": ("right*30,a*1,none*128", 159),
         }
         for route, (schedule, frame_count) in cases.items():
             scheduler, state = run_case(directory, schedule, route, frame_count)

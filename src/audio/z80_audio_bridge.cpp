@@ -4,6 +4,8 @@
 #include <array>
 #include <cstddef>
 
+#include "audio/ym2612.hpp"
+
 namespace openaladdin::audio {
 namespace {
 
@@ -54,6 +56,9 @@ Z80AudioBridge::Z80AudioBridge(Bus bus)
 }
 
 void Z80AudioBridge::reset() {
+    if (bus_.stop_sample) {
+        bus_.stop_sample();
+    }
     for (const std::uint8_t hardware_channel : kYmChannelOrder) {
         key_off_ym(hardware_channel);
     }
@@ -102,11 +107,14 @@ void Z80AudioBridge::tick() {
 }
 
 void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
+    const bool use_dac = event.output == Z80SoundDriver::Output::Dac;
     const bool use_psg = event.output == Z80SoundDriver::Output::Psg
         || (event.output == Z80SoundDriver::Output::Unknown
             && event.channel >= kYmVoiceCount);
     if (event.kind == Z80SoundDriver::SoundEvent::Kind::Note) {
-        if (use_psg) {
+        if (use_dac) {
+            handle_dac_note(event.opcode);
+        } else if (use_psg) {
             handle_psg_note(event.channel, event.opcode);
         } else if (event.channel < kStreamChannelCount) {
             handle_ym_note(event.channel, event.opcode, event.operand_b);
@@ -126,10 +134,17 @@ void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
             has_ym_patch_[event.channel] = true;
             return;
         }
+        if (event.output == Z80SoundDriver::Output::Dac) {
+            return;
+        }
     }
 
     if (event.opcode == 0x60) {
-        if (use_psg) {
+        if (use_dac) {
+            if (bus_.stop_sample) {
+                bus_.stop_sample();
+            }
+        } else if (use_psg) {
             if (event.output == Z80SoundDriver::Output::Psg
                 && psg_noise_active_
                 && psg_noise_stream_ == event.channel) {
@@ -141,6 +156,14 @@ void Z80AudioBridge::handle(const Z80SoundDriver::SoundEvent& event) {
             release_ym_channel(event.channel);
         }
     }
+}
+
+void Z80AudioBridge::handle_dac_note(std::uint8_t note) {
+    const std::span<const std::uint8_t> sample = sample_for_note(note);
+    if (sample.empty() || !bus_.play_sample) {
+        return;
+    }
+    bus_.play_sample(sample, Ym2612::kDacSampleRate);
 }
 
 void Z80AudioBridge::write_ym_register(std::uint8_t hardware_channel,
@@ -438,6 +461,54 @@ bool Z80AudioBridge::is_psg_noise_patch(
     // of the patch control byte are also 3. The known animation SFX patch
     // (ID $69) is [03,07,1F,...].
     return patch_state[0] == 0x03 && (patch_state[1] & 0x03) == 0x03;
+}
+
+std::span<const std::uint8_t> Z80AudioBridge::sample_for_note(
+    std::uint8_t note) const noexcept {
+    // The type-1 handler normalizes the note around 0x30 before multiplying
+    // it by the 12-byte sample-descriptor width. All recovered type-1
+    // streams use the 0x30..0x4D selector range; rejecting other values keeps
+    // a malformed stream from reading outside the ROM.
+    if (note < 0x30 || note >= 0x30 + 30) {
+        return {};
+    }
+
+    constexpr std::size_t kDescriptorWidth = 12;
+    constexpr std::size_t kDescriptorOffsetField = 1;
+    constexpr std::size_t kDescriptorLengthField = 6;
+    constexpr std::size_t kDescriptorCount = 30;
+    const std::size_t sample_id = note - 0x30;
+    const std::size_t descriptor_address =
+        static_cast<std::size_t>(Z80SoundDriver::kSampleDescriptorTableBase)
+        + sample_id * kDescriptorWidth;
+    if (sample_id >= kDescriptorCount
+        || descriptor_address > rom_.size()
+        || rom_.size() - descriptor_address < kDescriptorWidth) {
+        return {};
+    }
+
+    const std::uint32_t relative_offset =
+        static_cast<std::uint32_t>(rom_[descriptor_address
+                                        + kDescriptorOffsetField])
+        | (static_cast<std::uint32_t>(rom_[descriptor_address
+                                          + kDescriptorOffsetField + 1])
+           << 8)
+        | (static_cast<std::uint32_t>(rom_[descriptor_address
+                                          + kDescriptorOffsetField + 2])
+           << 16);
+    const std::uint16_t length = static_cast<std::uint16_t>(
+        rom_[descriptor_address + kDescriptorLengthField]
+        | (static_cast<std::uint16_t>(
+               rom_[descriptor_address + kDescriptorLengthField + 1])
+           << 8));
+    const std::size_t payload_address =
+        static_cast<std::size_t>(Z80SoundDriver::kSampleDescriptorTableBase)
+        + relative_offset;
+    if (length == 0 || payload_address > rom_.size()
+        || rom_.size() - payload_address < length) {
+        return {};
+    }
+    return rom_.subspan(payload_address, length);
 }
 
 }  // namespace openaladdin::audio

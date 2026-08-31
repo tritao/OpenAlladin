@@ -618,6 +618,15 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
         add_test(
+            NAME native_guard_attack_parity
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    SDL_VIDEODRIVER=dummy
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_guard_attack_parity.py"
+                    "$<TARGET_FILE:openaladdin>")
+        set_tests_properties(native_guard_attack_parity PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
             NAME native_animation_spawn
             COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
                     ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_animation_spawn.py")
@@ -630,6 +639,15 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
                     SDL_VIDEODRIVER=dummy
                     ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_actor_render.py")
         set_tests_properties(native_actor_render PROPERTIES
+            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_test(
+            NAME native_apple_hud
+            COMMAND ${CMAKE_COMMAND} -E env ${_openaladdin_python_environment}
+                    SDL_VIDEODRIVER=dummy
+                    ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tests/native_apple_hud.py"
+                    "$<TARGET_FILE:openaladdin>")
+        set_tests_properties(native_apple_hud PROPERTIES
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
         add_test(
