@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type13-type14-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType13Interaction_28",
+    "InteractionSpawn_CreateType14Interaction_13"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_Type13_28",
+    "InteractionSpawn_Type14_13"
+  ],
+  "contracts": [
+    "The Type-0x13 and Type-0x14 creators retain exact selector, template, allocator, runtime-type, gate, palette, and audio contracts from the recorded static decompilation.",
+    "The Type-0x13 creator is linked to the bounded Type-0x13 interaction AnimationVM root, while the Type-0x14 creator is linked to the separate Type-0x14 presentation root."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "interaction_spawn_type13_type14_semantic_v1"
+  ],
+  "limitations": [
+    "No user-facing scene or object identity is claimed for these interaction actors.",
+    "Dynamic selector reachability remains unresolved."
+  ],
+  "conclusion": "The adjacent Type-0x13 and Type-0x14 interaction creators now have stable creation identities while preserving historical aliases and their exact template and AnimationVM contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

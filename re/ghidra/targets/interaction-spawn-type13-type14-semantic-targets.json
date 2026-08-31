@@ -1,0 +1,51 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type13-type14-semantic",
+    "purpose": "Promote the selector-0x28 Type-0x13 and selector-0x13 Type-0x14 interaction creators to stable creation identities while retaining their historical selector-qualified names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      {
+        "address": "0x001B6D1E",
+        "selectors": ["0x28"],
+        "name": "InteractionSpawn_CreateType13Interaction_28",
+        "legacy_name": "InteractionSpawn_Type13_28",
+        "template": "0x001B7F1C ACTOR_TEMPLATE_TYPE_13_INTERACTION",
+        "allocator": "0x001B5266 LevelObjectSpawnEntry",
+        "runtime_type": "0x13",
+        "gates": ["0x00FFF179 == 0", "PLAYER_WORLD_Y within 0x02AD-0x02F4"],
+        "post_spawn": "submit palette source 0x00129152 and optionally queue interaction audio command 0x32"
+      },
+      {
+        "address": "0x001B6D84",
+        "selectors": ["0x13"],
+        "name": "InteractionSpawn_CreateType14Interaction_13",
+        "legacy_name": "InteractionSpawn_Type14_13",
+        "template": "0x001B7F30 ACTOR_TEMPLATE_TYPE_14_INTERACTION",
+        "allocator": "0x001B5266 LevelObjectSpawnEntry",
+        "runtime_type": "0x14"
+      }
+    ]
+  },
+  "contracts": [
+    "Selector 0x28 creates the Type-0x13 interaction actor only when the interaction gate is clear and PLAYER_WORLD_Y lies in the recorded contact window.",
+    "The Type-0x13 creator submits its palette source after allocation and conditionally queues interaction audio command 0x32.",
+    "Selector 0x13 creates the Type-0x14 interaction actor from its dedicated template through LevelObjectSpawnEntry.",
+    "The Type-0x13 and Type-0x14 templates enter their separately bounded AnimationVM roots at 0x00124658 and 0x00124766."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "type13-interaction-animation-static-targets",
+    "type14-type84-presentation-animation-static-targets",
+    "Established Type-0x13 and Type-0x14 template and AnimationVM records"
+  ],
+  "limitations": [
+    "The names identify exact runtime types and interaction creation paths, not user-facing scene roles.",
+    "The Type-0x14 root's downstream Type-0x84 presentation-child behavior remains a separate animation-service identity.",
+    "Dynamic selector reachability remains unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
