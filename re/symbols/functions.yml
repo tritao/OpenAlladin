@@ -5716,7 +5716,8 @@
     - interaction_spawn_type79_type7a-static-decompilation
     - interaction_spawn_type79_type7a_semantic_v1
 0x001B6F76:
-  name: InteractionSpawn_GuardTemplate_14
+  name: InteractionSpawn_CreateGuardActor_14
+  aliases: [InteractionSpawn_GuardTemplate_14]
   confidence: decompiled
   description: Interaction selector 0x14 handler that enters LevelObjectSpawnEntry with the established guard actor template at 0x001B80AC.
   evidence:
@@ -5724,7 +5725,8 @@
     - interaction_spawn_late-level-object-family-targets
     - interaction_spawn_late-level-object-family-static-decompilation
 0x001B6F82:
-  name: InteractionSpawn_Type0B_3E
+  name: InteractionSpawn_CreateType0BLevelEvent_3E
+  aliases: [InteractionSpawn_Type0B_3E]
   confidence: decompiled
   description: Interaction selector 0x3E handler that requires nonzero 0x00FF7E21, spawns the type-0x0B level-event template, and refreshes palette resource 0x00129532 when 0x00FFF175 is clear.
   evidence:
@@ -5732,7 +5734,8 @@
     - interaction_spawn_late-level-object-family-targets
     - interaction_spawn_late-level-object-family-static-decompilation
 0x001B6FAE:
-  name: InteractionSpawn_Type0C_3C
+  name: InteractionSpawn_CreateType0CLevelEvent_3C
+  aliases: [InteractionSpawn_Type0C_3C]
   confidence: decompiled
   description: Interaction selector 0x3C handler that spawns the type-0x0C level-event template, refreshes palette resource 0x001294F2 except for the 0x00FF7E26 == 5 case, and writes 0x6000 to actor offset 0x1E for that special case.
   evidence:
@@ -5740,7 +5743,8 @@
     - interaction_spawn_late-level-object-family-targets
     - interaction_spawn_late-level-object-family-static-decompilation
 0x001B6FE2:
-  name: InteractionSpawn_Type0F_26
+  name: InteractionSpawn_CreateType0FInteraction_26
+  aliases: [InteractionSpawn_Type0F_26]
   confidence: decompiled
   description: Interaction selector 0x26 handler that forward-spawns the established type-0x0F interaction template.
   evidence:
@@ -5748,7 +5752,8 @@
     - interaction_spawn_late-level-object-family-targets
     - interaction_spawn_late-level-object-family-static-decompilation
 0x001B6FEE:
-  name: InteractionSpawn_Type0F_Facing_16
+  name: InteractionSpawn_CreateType0FInteractionFacing_16
+  aliases: [InteractionSpawn_Type0F_Facing_16]
   confidence: decompiled
   description: Interaction selector 0x16 handler that forward-spawns the type-0x0F interaction template and sets the spawned actor's facing byte when allocation succeeds.
   evidence:
@@ -5756,7 +5761,8 @@
     - interaction_spawn_late-level-object-family-targets
     - interaction_spawn_late-level-object-family-static-decompilation
 0x001B7000:
-  name: InteractionSpawn_Type16_1C
+  name: InteractionSpawn_CreateType16LevelObject_1C
+  aliases: [InteractionSpawn_Type16_1C]
   confidence: decompiled
   description: Interaction selector 0x1C handler that enters LevelObjectSpawnEntry with the established type-0x16 level-object template at 0x001B8020.
   evidence:
@@ -5764,7 +5770,8 @@
     - interaction_spawn_late-level-object-family-targets
     - interaction_spawn_late-level-object-family-static-decompilation
 0x001B700C:
-  name: InteractionSpawn_Type36_EA
+  name: InteractionSpawn_CreateType36Interaction_EA
+  aliases: [InteractionSpawn_Type36_EA]
   confidence: decompiled
   description: Interaction selector 0xEA handler that reverse-spawns the established type-0x36 interaction template at 0x001B80FC.
   evidence:

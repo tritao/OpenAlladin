@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-late-level-object-family-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateGuardActor_14",
+    "InteractionSpawn_CreateType0BLevelEvent_3E",
+    "InteractionSpawn_CreateType0CLevelEvent_3C",
+    "InteractionSpawn_CreateType0FInteraction_26",
+    "InteractionSpawn_CreateType0FInteractionFacing_16",
+    "InteractionSpawn_CreateType16LevelObject_1C",
+    "InteractionSpawn_CreateType36Interaction_EA"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_GuardTemplate_14",
+    "InteractionSpawn_Type0B_3E",
+    "InteractionSpawn_Type0C_3C",
+    "InteractionSpawn_Type0F_26",
+    "InteractionSpawn_Type0F_Facing_16",
+    "InteractionSpawn_Type16_1C",
+    "InteractionSpawn_Type36_EA"
+  ],
+  "contracts": [
+    "The seven handlers retain exact selector, template, allocator, gate, palette, special-field, and facing-byte behavior from the recorded static decompilation.",
+    "The Type-0x0B and Type-0x0C handlers are named as level-event creations, while Type-0x0F, Type-0x16, and Type-0x36 retain runtime-template-qualified interaction identities.",
+    "The Type-0x0F selector-0x16 variant is distinguished by its post-allocation facing-byte write."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "interaction_spawn_late_level_object_semantic_v1"
+  ],
+  "limitations": [
+    "No user-facing scene or object identity is claimed for these handlers.",
+    "Dynamic selector reachability remains unresolved."
+  ],
+  "conclusion": "The late level-object and interaction family now has stable creation identities while preserving historical aliases and exact direct side-effect contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

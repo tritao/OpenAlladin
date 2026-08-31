@@ -1,0 +1,94 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-late-level-object-family-semantic",
+    "purpose": "Promote the seven late level-object and interaction handlers to stable creation identities while retaining selector-qualified historical names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      {
+        "address": "0x001B6F76",
+        "selectors": ["0x14"],
+        "name": "InteractionSpawn_CreateGuardActor_14",
+        "legacy_name": "InteractionSpawn_GuardTemplate_14",
+        "template": "0x001B80AC ACTOR_TEMPLATE_GUARD",
+        "allocator": "0x001B5266 LevelObjectSpawnEntry"
+      },
+      {
+        "address": "0x001B6F82",
+        "selectors": ["0x3E"],
+        "name": "InteractionSpawn_CreateType0BLevelEvent_3E",
+        "legacy_name": "InteractionSpawn_Type0B_3E",
+        "template": "0x001B8228 ACTOR_TEMPLATE_TYPE_0B_LEVEL_EVENT",
+        "allocator": "0x001B5266 LevelObjectSpawnEntry",
+        "gate": "0x00FF7E21 != 0",
+        "palette_resource": "0x00129532 when 0x00FFF175 is clear"
+      },
+      {
+        "address": "0x001B6FAE",
+        "selectors": ["0x3C"],
+        "name": "InteractionSpawn_CreateType0CLevelEvent_3C",
+        "legacy_name": "InteractionSpawn_Type0C_3C",
+        "template": "0x001B81EC ACTOR_TEMPLATE_TYPE_0C_LEVEL_EVENT",
+        "allocator": "0x001B5266 LevelObjectSpawnEntry",
+        "palette_resource": "0x001294F2 unless 0x00FF7E26 == 5",
+        "special_case": "when 0x00FF7E26 == 5, write 0x6000 to actor offset 0x1E"
+      },
+      {
+        "address": "0x001B6FE2",
+        "selectors": ["0x26"],
+        "name": "InteractionSpawn_CreateType0FInteraction_26",
+        "legacy_name": "InteractionSpawn_Type0F_26",
+        "template": "0x001B7C74 ACTOR_TEMPLATE_TYPE_0F_INTERACTION",
+        "animation": "ACTOR_ANIM_TYPE0F_INTERACTION",
+        "allocator": "0x001B524E InteractionSpawn_ForwardSlot"
+      },
+      {
+        "address": "0x001B6FEE",
+        "selectors": ["0x16"],
+        "name": "InteractionSpawn_CreateType0FInteractionFacing_16",
+        "legacy_name": "InteractionSpawn_Type0F_Facing_16",
+        "template": "0x001B7C74 ACTOR_TEMPLATE_TYPE_0F_INTERACTION",
+        "allocator": "0x001B524E InteractionSpawn_ForwardSlot",
+        "post_spawn": "set spawned actor facing byte at offset 0x09"
+      },
+      {
+        "address": "0x001B7000",
+        "selectors": ["0x1C"],
+        "name": "InteractionSpawn_CreateType16LevelObject_1C",
+        "legacy_name": "InteractionSpawn_Type16_1C",
+        "template": "0x001B8020 ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT",
+        "allocator": "0x001B5266 LevelObjectSpawnEntry"
+      },
+      {
+        "address": "0x001B700C",
+        "selectors": ["0xEA"],
+        "name": "InteractionSpawn_CreateType36Interaction_EA",
+        "legacy_name": "InteractionSpawn_Type36_EA",
+        "template": "0x001B80FC ACTOR_TEMPLATE_TYPE_36_INTERACTION",
+        "allocator": "0x001B525E InteractionSpawn_ReverseSlot"
+      }
+    ]
+  },
+  "contracts": [
+    "Selector 0x14 enters LevelObjectSpawnEntry with the established guard template.",
+    "Selector 0x3E is gated by 0x00FF7E21, creates the Type-0x0B level-event actor, and conditionally refreshes palette resource 0x00129532.",
+    "Selector 0x3C creates the Type-0x0C level-event actor, conditionally refreshes palette resource 0x001294F2, and writes 0x6000 to actor offset 0x1E for the 0x00FF7E26 == 5 case.",
+    "Selectors 0x26 and 0x16 forward-spawn the Type-0x0F interaction template; selector 0x16 additionally writes the spawned actor facing byte.",
+    "Selector 0x1C enters LevelObjectSpawnEntry with the Type-0x16 level-object template.",
+    "Selector 0xEA reverse-spawns the Type-0x36 interaction template."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "interaction-spawn-late-level-object-family-targets",
+    "interaction-spawn-late-level-object-family-static-decompilation-v1",
+    "Established guard, level-event, Type-0x0F, Type-0x16, and Type-0x36 template records"
+  ],
+  "limitations": [
+    "The names identify exact runtime templates and direct handler behavior, not user-facing scene roles.",
+    "Dynamic reachability of the selectors remains unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
