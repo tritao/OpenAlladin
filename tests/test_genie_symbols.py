@@ -573,6 +573,27 @@ def test_level12_scene_and_terminal_terrain_names_preserve_aliases():
     assert {"LEVEL12_SCENE_EVENT", "TERMINAL_TERRAIN_TRANSITION"} <= mappings.keys()
 
 
+def test_terminal_interaction_family_names_preserve_numeric_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00125CC6: ("ACTOR_ANIM_TERMINAL_INTERACTION", "ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION"),
+        0x00125D12: ("ACTOR_ANIM_TERMINAL_INTERACTION_CHILD", "ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_CHILD"),
+        0x00126030: ("ACTOR_ANIM_TERMINAL_INTERACTION_RESPONSE", "ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE"),
+        0x001B82B4: ("ACTOR_TEMPLATE_TERMINAL_INTERACTION", "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION"),
+        0x001B82C8: ("ACTOR_TEMPLATE_TERMINAL_INTERACTION_CHILD", "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_CHILD"),
+        0x001B8458: ("ACTOR_TEMPLATE_TERMINAL_INTERACTION_RESPONSE", "ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_RESPONSE"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert mappings["TERMINAL_INTERACTION"].scope == "event"
+
+
 def test_random_collision_and_frame_response_names_preserve_aliases():
     symbols = SymbolStore()
     expected = {

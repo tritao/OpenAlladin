@@ -1,0 +1,23 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "terminal-interaction-identities",
+  "promotions": [
+    "ACTOR_ANIM_TERMINAL_INTERACTION",
+    "ACTOR_ANIM_TERMINAL_INTERACTION_CHILD",
+    "ACTOR_ANIM_TERMINAL_INTERACTION_RESPONSE",
+    "ACTOR_TEMPLATE_TERMINAL_INTERACTION",
+    "ACTOR_TEMPLATE_TERMINAL_INTERACTION_CHILD",
+    "ACTOR_TEMPLATE_TERMINAL_INTERACTION_RESPONSE"
+  ],
+  "evidence": [
+    "type84_terminal_interaction_static_decompilation",
+    "ghidra_scene_level_actor_block"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_event"
+  }
+}

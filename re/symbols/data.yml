@@ -7328,20 +7328,22 @@
     - animation_stream_decoder
 
 0x00125CC6:
-  name: ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION
+  name: ACTOR_ANIM_TERMINAL_INTERACTION
+  aliases: [ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION]
   size: 76
   confidence: decompiled
-  description: Type-0x84 terminal-interaction animation installed by the reverse-slot selector at 0x001B65D4. It spawns the two terminal child templates, waits for the global interaction state at 0x00FF7E28 to clear, plays sound 0x71, and loops from 0x00125CE8.
+  description: Terminal-interaction animation installed by the reverse-slot selector at 0x001B65D4. It spawns the two terminal child templates, waits for the global interaction state at 0x00FF7E28 to clear, plays sound 0x71, and loops from 0x00125CE8.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - interaction_spawn_early_family_static_decompilation
     - animation_stream_decoder
 
 0x00125D12:
-  name: ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_CHILD
+  name: ACTOR_ANIM_TERMINAL_INTERACTION_CHILD
+  aliases: [ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_CHILD]
   size: 70
   confidence: decompiled
-  description: Type-0x84 terminal-interaction child animation supplied by the F5 template at 0x001B82C8. It presents the shared 0x077E/0x06AE-0x06CE frame sequence, writes actor field 0xF117 to 1 and then 0, and loops from 0x00125D52.
+  description: Terminal-interaction child animation supplied by the F5 template at 0x001B82C8. It presents the shared 0x077E/0x06AE-0x06CE frame sequence, writes actor field 0xF117 to 1 and then 0, and loops from 0x00125D52.
   evidence:
     - type84_terminal_interaction_static_decompilation
     - animation_stream_decoder
@@ -7491,10 +7493,11 @@
     - animation_stream_decoder
 
 0x00126030:
-  name: ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_TERMINAL_INTERACTION_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE]
   size: 18
   confidence: decompiled
-  description: Three-frame Type-0x84 terminal-interaction response supplied by the F5 template at 0x001B8458. It presents paired 0x0F7A, 0x0F7E, and 0x0F82 frames and loops at 0x0012603C.
+  description: Three-frame terminal-interaction response supplied by the F5 template at 0x001B8458. It presents paired 0x0F7A, 0x0F7E, and 0x0F82 frames and loops at 0x0012603C.
   evidence:
     - type84_terminal_interaction_static_decompilation
     - animation_stream_decoder
@@ -8773,21 +8776,23 @@
     - actor_template_grid_xrefs
 
 0x001B82B4:
-  name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION
+  name: ACTOR_TEMPLATE_TERMINAL_INTERACTION
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 terminal-interaction template loaded by the reverse-slot entry at 0x001B65D4; it has no movement stream, uses animation stream 0x00125CC6, owns five resources, and carries the template's terminal flag byte.
+  description: Terminal-interaction template loaded by the reverse-slot entry at 0x001B65D4; it has no movement stream, uses ACTOR_ANIM_TERMINAL_INTERACTION at 0x00125CC6, owns five resources, and carries the template's terminal flag byte.
   evidence:
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
 
 0x001B82C8:
-  name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_CHILD
+  name: ACTOR_TEMPLATE_TERMINAL_INTERACTION_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 terminal-interaction child template supplied by the F5 command at 0x00125CC8. It has no movement stream, uses animation ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_CHILD, and owns fourteen resources.
+  description: Terminal-interaction child template supplied by the F5 command at 0x00125CC8. It has no movement stream, uses ACTOR_ANIM_TERMINAL_INTERACTION_CHILD, and owns fourteen resources.
   evidence:
     - type84_terminal_interaction_static_decompilation
     - animation_stream_decoder
@@ -8977,11 +8982,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8458:
-  name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_RESPONSE
+  name: ACTOR_TEMPLATE_TERMINAL_INTERACTION_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TERMINAL_INTERACTION_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 terminal-interaction response template supplied by the F5 command at 0x00125CD8. It has no movement stream, uses animation ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE, owns one resource, and carries the terminal flag byte 0xFF.
+  description: Terminal-interaction response template supplied by the F5 command at 0x00125CD8. It has no movement stream, uses ACTOR_ANIM_TERMINAL_INTERACTION_RESPONSE, owns one resource, and carries the terminal flag byte 0xFF.
   evidence:
     - type84_terminal_interaction_static_decompilation
     - animation_stream_decoder

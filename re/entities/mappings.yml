@@ -207,6 +207,16 @@ mappings:
       - actor_template_scene_level_family_static_decompilation
     description: Terminal-terrain transition animation and actor template that inherit the player position.
 
+  - name: TERMINAL_INTERACTION
+    scope: event
+    symbol_addresses: [0x00125CC6, 0x00125D12, 0x00126030, 0x001B82B4, 0x001B82C8, 0x001B8458]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - type84_terminal_interaction_static_decompilation
+      - ghidra_scene_level_actor_block
+    description: Terminal-interaction root, child, response, and actor-template family.
+
   - name: COLLISION_RESPONSE_CHILD
     scope: role
     symbol_addresses: [0x001B8368]
