@@ -1,6 +1,6 @@
 import json
 
-from genie.ghidra.vm_writes import find_vm_writers
+from genie.ghidra.vm_writes import find_movement_writers, find_vm_writers
 
 
 def test_find_vm_writers_decodes_ed_and_fa_global_commands(tmp_path):
@@ -51,4 +51,30 @@ def test_find_vm_writers_does_not_match_ed_inside_a_payload(tmp_path):
     assert [(item["address"], item["value"]) for item in writers] == [
         ("0x00000100", "0xED01"),
         ("0x00000106", "0x02"),
+    ]
+
+
+def test_find_movement_writers_decodes_actor_relative_commands(tmp_path):
+    rom = bytearray(0x220)
+    rom[0x100:0x10A] = bytes.fromhex(
+        "0000"
+        "8312001A0000"
+        "0000"
+    )
+    rom_path = tmp_path / "rom.bin"
+    rom_path.write_bytes(rom)
+    layout_path = tmp_path / "layout.json"
+    layout_path.write_text(json.dumps({
+        "ranges": [{
+            "start": "0x00000100",
+            "end": "0x00000109",
+            "class": "MOVEMENT_STREAM",
+            "name": "TEST_MOVEMENT",
+        }]
+    }))
+
+    writers = find_movement_writers(rom_path, layout_path, 0x001A)
+
+    assert [(item["address"], item["opcode"], item["value"]) for item in writers] == [
+        ("0x00000102", "0x83", "0x0000"),
     ]

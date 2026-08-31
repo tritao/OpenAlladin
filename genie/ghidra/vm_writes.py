@@ -8,16 +8,17 @@ from typing import Any
 
 from genie.common import parse_int
 from genie.games.aladdin.vm.animation import AnimationDecoder, RomReader
+from genie.games.aladdin.vm.movement import MovementDecoder
 
 
-def _stream_ranges(layout_path: Path) -> list[dict[str, Any]]:
+def _layout_ranges(layout_path: Path, range_class: str) -> list[dict[str, Any]]:
     document = json.loads(layout_path.read_text(encoding="utf-8"))
     ranges = document.get("ranges", document) if isinstance(document, dict) else document
     if not isinstance(ranges, list):
         raise ValueError(f"layout does not contain ranges: {layout_path}")
     result = []
     for item in ranges:
-        if not isinstance(item, dict) or str(item.get("class", "")).upper() != "ANIMATION_STREAM":
+        if not isinstance(item, dict) or str(item.get("class", "")).upper() != range_class:
             continue
         try:
             start = parse_int(item["start"])
@@ -27,6 +28,14 @@ def _stream_ranges(layout_path: Path) -> list[dict[str, Any]]:
         if start <= end:
             result.append({"start": start, "end": end, "name": item.get("name")})
     return sorted(result, key=lambda item: (item["start"], item["end"]))
+
+
+def _stream_ranges(layout_path: Path) -> list[dict[str, Any]]:
+    return _layout_ranges(layout_path, "ANIMATION_STREAM")
+
+
+def _movement_ranges(layout_path: Path) -> list[dict[str, Any]]:
+    return _layout_ranges(layout_path, "MOVEMENT_STREAM")
 
 
 def _command_shape(opcode: int, mode: int) -> tuple[int, int, str]:
@@ -107,4 +116,70 @@ def find_vm_writers(
                 "value": f"0x{value:0{width * 2}X}",
                 "bytes": raw[:4 + payload_size].hex().upper(),
             })
+    return results
+
+
+def find_movement_writers(
+    rom_path: Path,
+    layout_path: Path,
+    target_offset: int,
+) -> list[dict[str, Any]]:
+    """Find MovementVM commands writing actor-relative offset *target_offset*.
+
+    MovementVM reuses the AnimationVM ED/FA handlers, but its stream opcodes
+    are 0x83 and 0x90 and actor-relative addresses are offsets from the active
+    actor record.  The result therefore reports a field offset instead of a
+    single absolute RAM address.
+    """
+
+    rom = rom_path.read_bytes()
+    decoder = MovementDecoder(RomReader(rom))
+    streams = _movement_ranges(layout_path)
+    target_offset = parse_int(target_offset)
+    results: list[dict[str, Any]] = []
+    for stream in streams:
+        start = stream["start"]
+        end = min(stream["end"], len(rom) - 1)
+        if start > end:
+            continue
+        decoded = decoder.decode_stream(
+            start,
+            max_steps=max(1024, (end - start + 1) // 2 + 16),
+            max_bytes=end - start + 1,
+            follow_control_flow=False,
+            continue_after_control_flow=True,
+        )
+        for step in decoded["steps"]:
+            for instruction in step["commands"]:
+                opcode = int(str(instruction["opcode"]), 16)
+                if opcode not in (0x83, 0x90):
+                    continue
+                raw = bytes.fromhex(str(instruction["raw"]))
+                if len(raw) < 4:
+                    continue
+                mode = raw[1]
+                relative = (mode & 0x10) != 0 if opcode == 0x83 else (mode & 0x40) != 0
+                if not relative or int.from_bytes(raw[2:4], "big") != target_offset:
+                    continue
+                shared_opcode = 0xED if opcode == 0x83 else 0xFA
+                payload_size, width, operation = _command_shape(shared_opcode, mode)
+                if len(raw) < 4 + payload_size:
+                    continue
+                payload = raw[4:4 + payload_size]
+                value = int.from_bytes(payload, "big")
+                if width == 1:
+                    value &= 0xFF
+                address = parse_int(instruction["address"])
+                results.append({
+                    "address": f"0x{address:08X}",
+                    "stream": stream.get("name") or f"MovementStream_{start:08X}",
+                    "stream_range": f"0x{start:08X}-0x{stream['end']:08X}",
+                    "opcode": f"0x{opcode:02X}",
+                    "mode": f"0x{mode:02X}",
+                    "target_offset": f"0x{target_offset:04X}",
+                    "operation": operation,
+                    "width": width,
+                    "value": f"0x{value:0{width * 2}X}",
+                    "bytes": raw[:4 + payload_size].hex().upper(),
+                })
     return results

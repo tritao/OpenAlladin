@@ -59,7 +59,11 @@ it is a fast offline aid for closing RAM producer contracts:
 ```bash
 genie ghidra vm-writers 0x00FFF101
 genie ghidra vm-writers 0x00FFF0DA --json
+genie ghidra movement-writers 0x001A
 ```
+
+`movement-writers` reports actor-relative MovementVM writes, which is useful
+for tracing fields such as the actor vertical residual-motion word at `+0x1A`.
 
 Decompile one function on demand. The first request uses the disposable Ghidra
 project; later requests reuse the cached pseudocode:

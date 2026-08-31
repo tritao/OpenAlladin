@@ -1,0 +1,65 @@
+{
+  "format": "openaladdin-actor-vertical-motion-movement-writers-static-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "field": {
+    "address": "0x00FF7EDE",
+    "name": "ACTOR_SLOT_2_VERTICAL_MOTION",
+    "record_base": "0x00FF7E40 + (slot * 0x42)",
+    "slot": 2,
+    "offset": "0x1A",
+    "width": 2,
+    "meaning": "actor vertical residual-motion accumulator"
+  },
+  "encoding": {
+    "movement_write_opcode": "0x83",
+    "movement_arithmetic_opcode": "0x90",
+    "shared_handlers": {
+      "0x83": "0x001AC89A",
+      "0x90": "0x001AD314"
+    },
+    "actor_relative": "0x83 mode bit 0x10 or 0x90 mode bit 0x40"
+  },
+  "writers": [
+    { "address": "0x0011F6D8", "stream": "ACTOR_MOVE_SHARED_CHILD_ENTRY", "operation": "add", "value": "0x006E", "bytes": "9042001A006E" },
+    { "address": "0x0011F6E0", "stream": "ACTOR_MOVE_SHARED_CHILD_ENTRY", "operation": "add", "value": "0x006E", "bytes": "9042001A006E" },
+    { "address": "0x00120354", "stream": "ACTOR_MOVE_TYPE84_DEATH_TERMINAL", "operation": "add", "value": "0xFF88", "bytes": "9042001AFF88" },
+    { "address": "0x001205A2", "stream": "ACTOR_MOVE_TYPE6E_INTERACTION", "operation": "subtract", "value": "0x0064", "bytes": "90C2001A0064" },
+    { "address": "0x001205D0", "stream": "ACTOR_MOVE_TYPE6E_INTERACTION_SECONDARY", "operation": "subtract", "value": "0x0064", "bytes": "90C2001A0064" },
+    { "address": "0x00120612", "stream": "ACTOR_MOVE_TYPE6F_INTERACTION", "operation": "subtract", "value": "0x006E", "bytes": "90C2001A006E" },
+    { "address": "0x00120640", "stream": "ACTOR_MOVE_TYPE6F_INTERACTION_SECONDARY", "operation": "subtract", "value": "0x0064", "bytes": "90C2001A0064" },
+    { "address": "0x0012068E", "stream": "ACTOR_MOVE_TYPE70_INTERACTION", "operation": "subtract", "value": "0x0069", "bytes": "90C2001A0069" },
+    { "address": "0x001206EA", "stream": "ACTOR_MOVE_TYPE70_INTERACTION_SECONDARY", "operation": "subtract", "value": "0x0064", "bytes": "90C2001A0064" },
+    { "address": "0x00120736", "stream": "ACTOR_MOVE_TYPE71_INTERACTION", "operation": "subtract", "value": "0x006E", "bytes": "90C2001A006E" },
+    { "address": "0x00120764", "stream": "ACTOR_MOVE_TYPE71_INTERACTION_SECONDARY", "operation": "subtract", "value": "0x0064", "bytes": "90C2001A0064" },
+    { "address": "0x0012079A", "stream": "ACTOR_MOVE_TYPE71_INTERACTION_SECONDARY", "operation": "subtract", "value": "0x006E", "bytes": "90C2001A006E" },
+    { "address": "0x001207E2", "stream": "ACTOR_MOVE_TYPE71_INTERACTION_SECONDARY", "operation": "subtract", "value": "0x006E", "bytes": "90C2001A006E" },
+    { "address": "0x0012080A", "stream": "ACTOR_MOVE_TYPE71_INTERACTION_SECONDARY", "operation": "subtract", "value": "0x0020", "bytes": "90C2001A0020" },
+    { "address": "0x00120844", "stream": "ACTOR_MOVE_TYPE71_INTERACTION_SECONDARY", "operation": "subtract", "value": "0x0064", "bytes": "90C2001A0064" },
+    { "address": "0x00120886", "stream": "ACTOR_MOVE_TYPE72_INTERACTION", "operation": "add", "value": "0xFF9C", "bytes": "9042001AFF9C" },
+    { "address": "0x001208B4", "stream": "ACTOR_MOVE_TYPE72_INTERACTION_SECONDARY", "operation": "subtract", "value": "0x0064", "bytes": "90C2001A0064" },
+    { "address": "0x001208F6", "stream": "ACTOR_MOVE_TYPE73_INTERACTION", "operation": "subtract", "value": "0x006E", "bytes": "90C2001A006E" },
+    { "address": "0x00120924", "stream": "ACTOR_MOVE_TYPE73_INTERACTION_SECONDARY", "operation": "subtract", "value": "0x0064", "bytes": "90C2001A0064" },
+    { "address": "0x001211B4", "stream": "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED", "operation": "write", "value": "0x0000", "bytes": "8312001A0000" },
+    { "address": "0x00121248", "stream": "ACTOR_MOVE_GUARD_SWORD_ATTACK", "operation": "subtract", "value": "0x0C00", "bytes": "90C2001A0C00" },
+    { "address": "0x001213EA", "stream": "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX", "operation": "subtract", "value": "0x0600", "bytes": "90C2001A0600" },
+    { "address": "0x00121414", "stream": "ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX", "operation": "subtract", "value": "0x0800", "bytes": "90C2001A0800" },
+    { "address": "0x00121444", "stream": "ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX", "operation": "subtract", "value": "0x0A00", "bytes": "90C2001A0A00" }
+  ],
+  "evidence": [
+    "Lossless MovementDecoder output over all 85 layout-bounded movement streams",
+    "ghidra_disassembly_001ADB5C",
+    "ghidra_actor_template_initializer_001AE30A",
+    "actor_terrain_collision_loop_static_decompilation",
+    "movement-writers offline query"
+  ],
+  "limitations": [
+    "Actor-relative commands target the active actor record; the fixed slot-two address identifies the same +0x1A field when slot 2 is active.",
+    "The static writer inventory does not claim that every listed stream reaches slot 2 on the captured runtime route."
+  ],
+  "conclusion": "The actor vertical residual-motion field has an exact indirect MovementVM producer family: one actor-relative zero write and 23 actor-relative additions/subtractions across shared, interaction, collision, guard-sword, and wall-response streams."
+}

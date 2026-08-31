@@ -83,6 +83,19 @@ def build_parser() -> argparse.ArgumentParser:
     )
     vm_writers.add_argument("--json", action="store_true", dest="json_output")
     vm_writers.set_defaults(function=command_ghidra_vm_writers)
+    movement_writers = ghidra_commands.add_parser(
+        "movement-writers",
+        help="show encoded MovementVM writes to an actor-relative field",
+    )
+    movement_writers.add_argument("offset", type=lambda value: int(value, 0))
+    add_rom_argument(movement_writers)
+    movement_writers.add_argument(
+        "--layout",
+        type=Path,
+        default=ROOT / "build/re/full-rom/layout.json",
+    )
+    movement_writers.add_argument("--json", action="store_true", dest="json_output")
+    movement_writers.set_defaults(function=command_ghidra_movement_writers)
     decompile = ghidra_commands.add_parser(
         "decompile",
         help="decompile and cache one function or the semantic review queue",

@@ -22,7 +22,7 @@ from genie.ghidra import (
 from genie.ghidra.context import build_context
 from genie.ghidra.database import AnalysisDatabase, render_records
 from genie.ghidra.validate import validate_database
-from genie.ghidra.vm_writes import find_vm_writers
+from genie.ghidra.vm_writes import find_movement_writers, find_vm_writers
 from genie.ghidra.worklist import symbol_review_queue
 from genie.knowledge import validate_knowledge
 from genie.runtime import ROOT, resolve
@@ -153,6 +153,29 @@ def command_ghidra_vm_writers(args: argparse.Namespace) -> int:
         )
     if not writers:
         print("No AnimationVM global-RAM writers found")
+    return 0
+
+
+def command_ghidra_movement_writers(args: argparse.Namespace) -> int:
+    try:
+        writers = find_movement_writers(
+            resolve(args.rom),
+            resolve(args.layout),
+            args.offset,
+        )
+    except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        print(f"ERROR {error}")
+        return 1
+    if args.json_output:
+        print(json.dumps(writers, indent=2, sort_keys=True))
+        return 0
+    for writer in writers:
+        print(
+            f"{writer['address']} {writer['stream']} {writer['operation']}"
+            f" actor+{writer['target_offset']}={writer['value']} [{writer['bytes']}]"
+        )
+    if not writers:
+        print("No MovementVM actor-relative writers found")
     return 0
 
 
@@ -351,6 +374,7 @@ __all__ = [
     "command_ghidra_writers",
     "command_ghidra_readers",
     "command_ghidra_vm_writers",
+    "command_ghidra_movement_writers",
     "command_ghidra_xrefs",
     "command_ghidra_decompile",
     "command_ghidra_context",
