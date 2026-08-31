@@ -1,0 +1,44 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type52-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType52DifficultyVariant_5B",
+    "InteractionSpawn_CreateType52DifficultyVariant_5D",
+    "InteractionSpawn_CreateType52PresentationVariant_CB",
+    "InteractionSpawn_CreateType52PresentationVariant_CC",
+    "InteractionSpawn_CreateType52PresentationVariant_CD",
+    "InteractionSpawn_CreateType52PresentationVariant_CE",
+    "InteractionSpawn_CreateType52PresentationVariant_CF"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_RuntimeType52_5B",
+    "InteractionSpawn_RuntimeType52_5D",
+    "InteractionSpawn_RuntimeType52_CB",
+    "InteractionSpawn_RuntimeType52_CC",
+    "InteractionSpawn_RuntimeType52_CD",
+    "InteractionSpawn_RuntimeType52_CE",
+    "InteractionSpawn_RuntimeType52_CF"
+  ],
+  "contracts": [
+    "All seven handlers create runtime type 0x52 from ACTOR_TEMPLATE_TYPE_52 through InteractionSpawn_ReverseSlot.",
+    "Selectors 0x5B and 0x5D use GAME_DIFFICULTY_MODE at 0x00FF7E21 to choose their larger presentation streams, otherwise reusing the selector-0xCB path.",
+    "Selectors 0xCB through 0xCF install five consecutive 10-byte Type-0x52 presentation variants at 0x00125548 through 0x00125570."
+  ],
+  "evidence": [
+    "Exact handler bodies at 0x001B750C, 0x001B752E, 0x001B7550, 0x001B7566, 0x001B757C, 0x001B7592, and 0x001B75A8",
+    "INTERACTION_HANDLER_TABLE selector membership",
+    "Existing Type-0x52 animation and movement stream boundaries"
+  ],
+  "limitations": [
+    "No user-facing object identity is claimed for runtime type 0x52.",
+    "The semantic names preserve selector identity because the five compact presentation records have distinct frame/callback parameters."
+  ],
+  "conclusion": "The Type-0x52 selector family now has stable difficulty and presentation variant creation identities tied to exact template, allocator, gate, and AnimationVM contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

@@ -1,0 +1,79 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type52-semantic",
+    "purpose": "Promote the Type-0x52 selector family to stable difficulty and presentation variant creation identities."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selectors": ["0x5B", "0x5D", "0xCB", "0xCC", "0xCD", "0xCE", "0xCF"]
+  },
+  "shared_contract": {
+    "runtime_type": "0x52",
+    "template": "ACTOR_TEMPLATE_TYPE_52",
+    "allocator": "InteractionSpawn_ReverseSlot"
+  },
+  "handlers": [
+    {
+      "address": "0x001B750C",
+      "name": "InteractionSpawn_CreateType52DifficultyVariant_5B",
+      "legacy_name": "InteractionSpawn_RuntimeType52_5B",
+      "selector": "0x5B",
+      "difficulty_gate": "GAME_DIFFICULTY_MODE at 0x00FF7E21 != 0 selects ACTOR_ANIM_TYPE52_SELECTOR_5B at 0x0012557A; clear falls through to selector 0xCB"
+    },
+    {
+      "address": "0x001B752E",
+      "name": "InteractionSpawn_CreateType52DifficultyVariant_5D",
+      "legacy_name": "InteractionSpawn_RuntimeType52_5D",
+      "selector": "0x5D",
+      "difficulty_gate": "GAME_DIFFICULTY_MODE at 0x00FF7E21 != 0 selects ACTOR_ANIM_TYPE52_SELECTOR_5D at 0x00125634; clear falls through to selector 0xCB"
+    },
+    {
+      "address": "0x001B7550",
+      "name": "InteractionSpawn_CreateType52PresentationVariant_CB",
+      "legacy_name": "InteractionSpawn_RuntimeType52_CB",
+      "selector": "0xCB",
+      "animation": "ACTOR_ANIM_TYPE52_SELECTOR_CB at 0x00125548"
+    },
+    {
+      "address": "0x001B7566",
+      "name": "InteractionSpawn_CreateType52PresentationVariant_CC",
+      "legacy_name": "InteractionSpawn_RuntimeType52_CC",
+      "selector": "0xCC",
+      "animation": "ACTOR_ANIM_TYPE52_SELECTOR_CC at 0x00125552"
+    },
+    {
+      "address": "0x001B757C",
+      "name": "InteractionSpawn_CreateType52PresentationVariant_CD",
+      "legacy_name": "InteractionSpawn_RuntimeType52_CD",
+      "selector": "0xCD",
+      "animation": "ACTOR_ANIM_TYPE52_SELECTOR_CD at 0x0012555C"
+    },
+    {
+      "address": "0x001B7592",
+      "name": "InteractionSpawn_CreateType52PresentationVariant_CE",
+      "legacy_name": "InteractionSpawn_RuntimeType52_CE",
+      "selector": "0xCE",
+      "animation": "ACTOR_ANIM_TYPE52_SELECTOR_CE at 0x00125566"
+    },
+    {
+      "address": "0x001B75A8",
+      "name": "InteractionSpawn_CreateType52PresentationVariant_CF",
+      "legacy_name": "InteractionSpawn_RuntimeType52_CF",
+      "selector": "0xCF",
+      "animation": "ACTOR_ANIM_TYPE52_SELECTOR_CF at 0x00125570"
+    }
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies and selector membership",
+    "Shared ACTOR_TEMPLATE_TYPE_52 and reverse-slot allocation contract",
+    "Direct selector-specific AnimationVM roots",
+    "Existing Type-0x52 presentation and movement stream findings"
+  ],
+  "limitations": [
+    "The promoted names identify Type-0x52 creation and animation variant roles but do not assign a user-facing object identity.",
+    "GAME_DIFFICULTY_MODE remains a conservative state label; the two difficulty handlers' clear branch intentionally reuses selector 0xCB."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

@@ -346,6 +346,25 @@ def test_type20_21_22_interaction_spawn_handlers_have_semantic_names_and_aliases
     assert "InteractionHandler_Type21" in type21.aliases
 
 
+def test_type52_interaction_spawn_handlers_have_semantic_names_and_aliases():
+    expected = {
+        0x001B750C: ("InteractionSpawn_CreateType52DifficultyVariant_5B", "InteractionSpawn_RuntimeType52_5B"),
+        0x001B752E: ("InteractionSpawn_CreateType52DifficultyVariant_5D", "InteractionSpawn_RuntimeType52_5D"),
+        0x001B7550: ("InteractionSpawn_CreateType52PresentationVariant_CB", "InteractionSpawn_RuntimeType52_CB"),
+        0x001B7566: ("InteractionSpawn_CreateType52PresentationVariant_CC", "InteractionSpawn_RuntimeType52_CC"),
+        0x001B757C: ("InteractionSpawn_CreateType52PresentationVariant_CD", "InteractionSpawn_RuntimeType52_CD"),
+        0x001B7592: ("InteractionSpawn_CreateType52PresentationVariant_CE", "InteractionSpawn_RuntimeType52_CE"),
+        0x001B75A8: ("InteractionSpawn_CreateType52PresentationVariant_CF", "InteractionSpawn_RuntimeType52_CF"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence == "decompiled"
+
+
 def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
     expected = {
         0x001AF1AC: ("PlayerCollision_SpawnVerticalResponseActor", "ActorType13_PlayerCollisionHandler"),

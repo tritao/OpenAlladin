@@ -5979,61 +5979,82 @@
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
 0x001B750C:
-  name: InteractionSpawn_RuntimeType52_5B
+  name: InteractionSpawn_CreateType52DifficultyVariant_5B
+  aliases:
+    - InteractionSpawn_RuntimeType52_5B
   confidence: decompiled
-  description: Interaction selector 0x5B handler that uses the shared type-0x52 template at 0x001B80C0 through InteractionSpawn_ReverseSlot; when 0x00FF7E21 is nonzero it installs animation root 0x0012557A, otherwise it falls through to the selector-0xCB type-0x52 variant.
+  description: Interaction selector 0x5B handler that reverse-spawns ACTOR_TEMPLATE_TYPE_52 through InteractionSpawn_ReverseSlot; when GAME_DIFFICULTY_MODE at 0x00FF7E21 is nonzero it installs ACTOR_ANIM_TYPE52_SELECTOR_5B at 0x0012557A, otherwise it falls through to the selector-0xCB variant.
   evidence:
     - ghidra_disassembly_001B750C
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+    - interaction_spawn_type52_semantic_v1
 0x001B752E:
-  name: InteractionSpawn_RuntimeType52_5D
+  name: InteractionSpawn_CreateType52DifficultyVariant_5D
+  aliases:
+    - InteractionSpawn_RuntimeType52_5D
   confidence: decompiled
-  description: Interaction selector 0x5D handler that uses the shared type-0x52 template at 0x001B80C0 through InteractionSpawn_ReverseSlot; when 0x00FF7E21 is nonzero it installs animation root 0x00125634, otherwise it falls through to the selector-0xCB type-0x52 variant.
+  description: Interaction selector 0x5D handler that reverse-spawns ACTOR_TEMPLATE_TYPE_52 through InteractionSpawn_ReverseSlot; when GAME_DIFFICULTY_MODE at 0x00FF7E21 is nonzero it installs ACTOR_ANIM_TYPE52_SELECTOR_5D at 0x00125634, otherwise it falls through to the selector-0xCB variant.
   evidence:
     - ghidra_disassembly_001B752E
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+    - interaction_spawn_type52_semantic_v1
 0x001B7550:
-  name: InteractionSpawn_RuntimeType52_CB
+  name: InteractionSpawn_CreateType52PresentationVariant_CB
+  aliases:
+    - InteractionSpawn_RuntimeType52_CB
   confidence: decompiled
-  description: Interaction selector 0xCB handler that reverse-spawns the shared type-0x52 template at 0x001B80C0 and installs animation root 0x00125548 when allocation succeeds.
+  description: Interaction selector 0xCB handler that reverse-spawns ACTOR_TEMPLATE_TYPE_52 and installs ACTOR_ANIM_TYPE52_SELECTOR_CB at 0x00125548 when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B7550
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+    - interaction_spawn_type52_semantic_v1
 0x001B7566:
-  name: InteractionSpawn_RuntimeType52_CC
+  name: InteractionSpawn_CreateType52PresentationVariant_CC
+  aliases:
+    - InteractionSpawn_RuntimeType52_CC
   confidence: decompiled
-  description: Interaction selector 0xCC handler that reverse-spawns the shared type-0x52 template at 0x001B80C0 and installs animation root 0x00125552 when allocation succeeds.
+  description: Interaction selector 0xCC handler that reverse-spawns ACTOR_TEMPLATE_TYPE_52 and installs ACTOR_ANIM_TYPE52_SELECTOR_CC at 0x00125552 when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B7566
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+    - interaction_spawn_type52_semantic_v1
 0x001B757C:
-  name: InteractionSpawn_RuntimeType52_CD
+  name: InteractionSpawn_CreateType52PresentationVariant_CD
+  aliases:
+    - InteractionSpawn_RuntimeType52_CD
   confidence: decompiled
-  description: Interaction selector 0xCD handler that reverse-spawns the shared type-0x52 template at 0x001B80C0 and installs animation root 0x0012555C when allocation succeeds.
+  description: Interaction selector 0xCD handler that reverse-spawns ACTOR_TEMPLATE_TYPE_52 and installs ACTOR_ANIM_TYPE52_SELECTOR_CD at 0x0012555C when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B757C
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+    - interaction_spawn_type52_semantic_v1
 0x001B7592:
-  name: InteractionSpawn_RuntimeType52_CE
+  name: InteractionSpawn_CreateType52PresentationVariant_CE
+  aliases:
+    - InteractionSpawn_RuntimeType52_CE
   confidence: decompiled
-  description: Interaction selector 0xCE handler that reverse-spawns the shared type-0x52 template at 0x001B80C0 and installs animation root 0x00125566 when allocation succeeds.
+  description: Interaction selector 0xCE handler that reverse-spawns ACTOR_TEMPLATE_TYPE_52 and installs ACTOR_ANIM_TYPE52_SELECTOR_CE at 0x00125566 when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B7592
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+    - interaction_spawn_type52_semantic_v1
 0x001B75A8:
-  name: InteractionSpawn_RuntimeType52_CF
+  name: InteractionSpawn_CreateType52PresentationVariant_CF
+  aliases:
+    - InteractionSpawn_RuntimeType52_CF
   confidence: decompiled
-  description: Interaction selector 0xCF handler that reverse-spawns the shared type-0x52 template at 0x001B80C0 and installs animation root 0x00125570 when allocation succeeds.
+  description: Interaction selector 0xCF handler that reverse-spawns ACTOR_TEMPLATE_TYPE_52 and installs ACTOR_ANIM_TYPE52_SELECTOR_CF at 0x00125570 when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B75A8
     - interaction-spawn-runtime52-presentation-targets
     - interaction-spawn-runtime52-presentation-static-decompilation
+    - interaction_spawn_type52_semantic_v1
 0x001B75BE:
   name: InteractionSpawn_RuntimeType53_17
   confidence: decompiled
