@@ -74,6 +74,10 @@ def test_symbol_naming_identifies_type_oriented_collision_names():
     assert is_low_information_name("ActorType04_ActorCollisionHandler") is True
     assert is_low_information_name("ActorType02_08_09_ActorCollisionHandler") is True
     assert is_low_information_name("ActorType1E_PrepareRecoveryPlane") is True
+    assert is_low_information_name("InteractionSpawn_RuntimeType20") is True
+    assert is_low_information_name("InteractionSpawn_RuntimeType47_B1") is True
+    assert is_low_information_name("InteractionGate_RuntimeType40_AD") is True
+    assert is_low_information_name("InteractionSpawn_Type84Base_B6") is False
     assert is_low_information_name("Actor_ApplyTerminalCollisionResponse") is False
 
 

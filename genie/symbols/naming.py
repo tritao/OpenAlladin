@@ -10,6 +10,7 @@ _LOW_INFORMATION_RE = re.compile(
     r"^(?:"
     r"ActorType[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*_(?:Actor|Player)CollisionHandler"
     r"|ActorType[0-9A-Fa-f]+_PrepareRecoveryPlane"
+    r"|Interaction(?:Spawn|Gate)_RuntimeType[0-9A-Fa-f]+(?:_[0-9A-Fa-f]+)*"
     r")$"
 )
 
