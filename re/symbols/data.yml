@@ -1946,11 +1946,12 @@
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x001295F2:
-  name: INTERACTION_TYPE11_PALETTE_SOURCE
+  name: INTERACTION_COLLISION_RESPONSE_PALETTE
+  aliases: [INTERACTION_TYPE11_PALETTE_SOURCE]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x11 interaction handler.
+  description: Fixed 16-word palette source uploaded to palette band 2 by the interaction collision-response handler.
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x00129612:
@@ -4411,20 +4412,22 @@
     - animation_stream_decoder
 
 0x00123CF8:
-  name: ACTOR_ANIM_TYPE0F_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_RANDOM_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE0F_INTERACTION]
   size: 60
   confidence: decompiled
-  description: Type-0x0F interaction animation selected by the forward-slot consumers. Its packed 60-byte region presents the 0x1006 lead-in, executes the F5 child-spawn record for template 0x001B7C88, selects between timer-0x83 branches through random tests, and loops through the local 0x1006/0x100A/0x100E/0x1012 sequence.
+  description: Randomized interaction-response animation selected by the forward-slot consumers. Its packed 60-byte region presents the 0x1006 lead-in, executes the F5 child-spawn record for ACTOR_TEMPLATE_INTERACTION_RANDOM_CHILD at 0x001B7C88, selects between timer-0x83 branches through random tests, and loops through the local 0x1006/0x100A/0x100E/0x1012 sequence.
   evidence:
     - type0f_animation_static_decompilation
     - actor_template_type0f_interaction
     - animation_stream_decoder
 
 0x00123D34:
-  name: ACTOR_ANIM_TYPE84_TYPE0F_CHILD
+  name: ACTOR_ANIM_INTERACTION_RANDOM_CHILD
+  aliases: [ACTOR_ANIM_TYPE84_TYPE0F_CHILD]
   size: 174
   confidence: decompiled
-  description: Type-0x84 child animation installed by ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD. Its exact 174-byte region queues callbacks 0x001ACB7A and 0x001ACB82, uses player-X proximity and random gates to revisit local frame entries, clears the actor-facing flag, presents the 0x1B76-0x1B92 sequence, writes 0x00120A00 through ED, and loops to its root; the adjacent 0x00123DE2 self-loop is not folded into this stream.
+  description: Randomized interaction child animation installed by ACTOR_TEMPLATE_INTERACTION_RANDOM_CHILD. Its exact 174-byte region queues callbacks 0x001ACB7A and 0x001ACB82, uses player-X proximity and random gates to revisit local frame entries, clears the actor-facing flag, presents the 0x1B76-0x1B92 sequence, writes 0x00120A00 through ED, and loops to its root; the adjacent 0x00123DE2 self-loop is not folded into this stream.
   evidence:
     - animation_f5_child_template_family_static_v1
     - type0f_animation_static_decompilation
@@ -5574,11 +5577,12 @@
     - animation_stream_decoder
 
 0x00124B16:
-  name: ACTOR_ANIM_TYPE4E_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_FRAME_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE4E_INTERACTION]
   type: animation_stream
   size: 36
   confidence: decompiled
-  description: Type-0x4E interaction animation selected by ACTOR_TEMPLATE_TYPE_4E_INTERACTION. Its exact 36-byte loop presents the 0x1392-0x13CA frame sequence, clears actor state at the opening, publishes actor field 0x11 as 0x004E, and loops at 0x00124B16.
+  description: Interaction frame-response animation selected by ACTOR_TEMPLATE_INTERACTION_FRAME_RESPONSE. Its exact 36-byte loop presents the 0x1392-0x13CA frame sequence, clears actor state at the opening, publishes actor field 0x11 as 0x004E, and loops at 0x00124B16.
   evidence:
     - actor_template_type4e_family_static_decompilation
     - actor_animation_stream_family_static_decompilation
@@ -7712,11 +7716,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7C88:
-  name: ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD
+  name: ACTOR_TEMPLATE_INTERACTION_RANDOM_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 child template supplied by the F5 record in ACTOR_ANIM_TYPE0F_INTERACTION. It carries actor template word 0x6000, animation root 0x00123D34, one encoded placement word 0x1400, and two owned resources with no movement stream.
+  description: Randomized interaction child template supplied by the F5 record in ACTOR_ANIM_INTERACTION_RANDOM_RESPONSE. It carries actor template word 0x6000, animation root ACTOR_ANIM_INTERACTION_RANDOM_CHILD at 0x00123D34, one encoded placement word 0x1400, and two owned resources with no movement stream.
   evidence:
     - type0f-animation-static-targets
     - type0f-animation-static-decompilation
@@ -8240,11 +8245,12 @@
     - actor_template_grid_xrefs
 
 0x001B7E90:
-  name: ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE
+  name: ACTOR_TEMPLATE_INTERACTION_COLLISION_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x11 response template installed by ActorType11_ActorCollisionHandler after the source actor is cleared and reverse-spawned by InteractionSpawn_Type11WithPalette_1F at 0x001B6CB4; it has no movement stream, uses animation stream 0x00124518, and owns sixteen resources.
+  description: Interaction collision-response template installed by ActorType11_ActorCollisionHandler after the source actor is cleared and reverse-spawned by InteractionSpawn_Type11WithPalette_1F at 0x001B6CB4; it has no movement stream, uses animation stream 0x00124518, and owns sixteen resources.
   evidence:
     - ghidra_actor_type11_collision_handler
     - interaction_spawn_type11-palette-targets
@@ -9070,11 +9076,12 @@
     - actor_template_grid_xrefs
 
 0x001B7F80:
-  name: ACTOR_TEMPLATE_TYPE_4E_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_FRAME_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_4E_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x4E interaction template loaded through reverse-slot consumers at 0x001B74E2 and 0x001B74F4; it has no movement stream, uses animation stream 0x00124B16, and owns eleven resources, with the first consumer setting the initialized actor's facing byte to 0xFF after successful allocation.
+  description: Interaction frame-response template loaded through reverse-slot consumers at 0x001B74E2 and 0x001B74F4; it has no movement stream, uses ACTOR_ANIM_INTERACTION_FRAME_RESPONSE at 0x00124B16, and owns eleven resources, with the first consumer setting the initialized actor's facing byte to 0xFF after successful allocation.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
@@ -9101,11 +9108,12 @@
     - actor_template_grid_xrefs
 
 0x001B7C74:
-  name: ACTOR_TEMPLATE_TYPE_0F_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_RANDOM_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_0F_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x0F interaction template loaded by the forward-slot consumers at 0x001B6FE2 and 0x001B6FEE; it has no movement stream, uses animation stream ACTOR_ANIM_TYPE0F_INTERACTION, and owns five resources, with the latter consumer setting the initialized actor's facing byte to 0xFF after successful allocation.
+  description: Randomized interaction-response template loaded by the forward-slot consumers at 0x001B6FE2 and 0x001B6FEE; it has no movement stream, uses ACTOR_ANIM_INTERACTION_RANDOM_RESPONSE, and owns five resources, with the latter consumer setting the initialized actor's facing byte to 0xFF after successful allocation.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs

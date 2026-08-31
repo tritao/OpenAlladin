@@ -311,6 +311,37 @@ mappings:
       - interaction-spawn-type12-presentation-static-decompilation
     description: Interaction-presentation response animation, child movement, and child template family.
 
+  - name: INTERACTION_RANDOM_RESPONSE
+    scope: role
+    symbol_addresses: [0x00123CF8, 0x00123D34, 0x001B7C74, 0x001B7C88]
+    technical_types: [0x0F, 0x84]
+    confidence: decompiled
+    evidence:
+      - type0f-animation-static-decompilation
+      - animation-f5-child-template-family-static-v1
+    description: Randomized interaction response and its F5 child animation/template family.
+
+  - name: INTERACTION_COLLISION_RESPONSE_PALETTE
+    scope: role
+    symbol_addresses: [0x001295F2, 0x001B7E90]
+    technical_types: [0x11]
+    confidence: decompiled
+    evidence:
+      - ghidra_palette_band2_consumers
+      - interaction-spawn-type11-palette-static-v1
+      - ghidra_actor_type11_collision_handler
+    description: Type-0x11 interaction collision-response template and its palette-band-2 source.
+
+  - name: INTERACTION_FRAME_RESPONSE
+    scope: role
+    symbol_addresses: [0x00124B16, 0x001B7F80]
+    technical_types: [0x4E]
+    confidence: decompiled
+    evidence:
+      - actor-template-type4e-family-static-decompilation
+      - interaction_spawn_type46_5a_response_static_decompilation
+    description: Interaction frame-response animation and template family.
+
   - name: INTERACTION_GUARD_RESPONSE
     scope: role
     symbol_addresses: [0x00124658, 0x001B7F1C]

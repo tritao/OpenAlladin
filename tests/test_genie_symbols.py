@@ -573,6 +573,29 @@ def test_level12_scene_and_terminal_terrain_names_preserve_aliases():
     assert {"LEVEL12_SCENE_EVENT", "TERMINAL_TERRAIN_TRANSITION"} <= mappings.keys()
 
 
+def test_random_collision_and_frame_response_names_preserve_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00123CF8: ("ACTOR_ANIM_INTERACTION_RANDOM_RESPONSE", "ACTOR_ANIM_TYPE0F_INTERACTION"),
+        0x00123D34: ("ACTOR_ANIM_INTERACTION_RANDOM_CHILD", "ACTOR_ANIM_TYPE84_TYPE0F_CHILD"),
+        0x00124B16: ("ACTOR_ANIM_INTERACTION_FRAME_RESPONSE", "ACTOR_ANIM_TYPE4E_INTERACTION"),
+        0x001295F2: ("INTERACTION_COLLISION_RESPONSE_PALETTE", "INTERACTION_TYPE11_PALETTE_SOURCE"),
+        0x001B7C74: ("ACTOR_TEMPLATE_INTERACTION_RANDOM_RESPONSE", "ACTOR_TEMPLATE_TYPE_0F_INTERACTION"),
+        0x001B7C88: ("ACTOR_TEMPLATE_INTERACTION_RANDOM_CHILD", "ACTOR_TEMPLATE_TYPE_84_TYPE0F_CHILD"),
+        0x001B7E90: ("ACTOR_TEMPLATE_INTERACTION_COLLISION_RESPONSE", "ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE"),
+        0x001B7F80: ("ACTOR_TEMPLATE_INTERACTION_FRAME_RESPONSE", "ACTOR_TEMPLATE_TYPE_4E_INTERACTION"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert {"INTERACTION_RANDOM_RESPONSE", "INTERACTION_COLLISION_RESPONSE_PALETTE", "INTERACTION_FRAME_RESPONSE"} <= mappings.keys()
+
+
 def test_actor_template_roles_promote_numeric_names_with_aliases():
     symbols = SymbolStore()
     expected = {

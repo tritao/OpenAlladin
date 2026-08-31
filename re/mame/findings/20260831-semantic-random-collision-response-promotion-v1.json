@@ -1,0 +1,30 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "random-interaction-and-collision-response-identities",
+  "promotions": [
+    "ACTOR_ANIM_INTERACTION_RANDOM_RESPONSE",
+    "ACTOR_ANIM_INTERACTION_RANDOM_CHILD",
+    "ACTOR_TEMPLATE_INTERACTION_RANDOM_RESPONSE",
+    "ACTOR_TEMPLATE_INTERACTION_RANDOM_CHILD",
+    "INTERACTION_COLLISION_RESPONSE_PALETTE",
+    "ACTOR_TEMPLATE_INTERACTION_COLLISION_RESPONSE",
+    "ACTOR_ANIM_INTERACTION_FRAME_RESPONSE",
+    "ACTOR_TEMPLATE_INTERACTION_FRAME_RESPONSE"
+  ],
+  "evidence": [
+    "type0f-animation-static-decompilation",
+    "animation-f5-child-template-family-static-v1",
+    "ghidra_palette_band2_consumers",
+    "interaction-spawn-type11-palette-static-v1",
+    "ghidra_actor_type11_collision_handler",
+    "actor-template-type4e-family-static-decompilation",
+    "interaction_spawn_type46_5a_response_static_decompilation"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role"
+  }
+}
