@@ -2993,10 +2993,11 @@
     - ghidra_decompile_collision_damage_targets
 
 0x001CE6:
-  name: PLAYER_COLLISION_HANDLER_TYPE_0A
+  name: PLAYER_COLLISION_HANDLER_SHARED_ACTOR_RESPONSE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_0A]
   type: rom_pointer
   confidence: confirmed
-  description: Player-collision dispatch pointer for actor type 0x0A; its big-endian ROM value is 0x001AE9C6.
+  description: Player-collision dispatch pointer for the shared actor response handler; its technical actor-type selector is 0x0A and its big-endian ROM value is 0x001AE9C6.
   evidence:
     - rom_handler_table_decode
     - mame_guard_collision_watchpoint
@@ -3020,10 +3021,11 @@
     - mame_type40_far_transfer_trace
 
 0x001D8E:
-  name: PLAYER_COLLISION_HANDLER_TYPE_34
+  name: PLAYER_COLLISION_HANDLER_WALL_RESPONSE_REPLACEMENT
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_34]
   type: rom_pointer
   confidence: confirmed
-  description: Player-collision dispatch pointer for actor type 0x34; its big-endian ROM value is 0x001AF4D8.
+  description: Player-collision dispatch pointer for the wall-response replacement path; its technical actor-type selector is 0x34 and its big-endian ROM value is 0x001AF4D8.
   evidence:
     - rom_handler_table_decode
     - mame_type_34_wall_actor_probe
@@ -3038,64 +3040,71 @@
     - player_collision_table_correction
 
 0x001D6A:
-  name: PLAYER_COLLISION_HANDLER_TYPE_2B
+  name: PLAYER_COLLISION_HANDLER_NOOP
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_2B]
   type: rom_pointer
   confidence: confirmed
-  description: Player-collision dispatch pointer for actor type 0x2B; its big-endian ROM value is 0x001AEBFE, an empty return.
+  description: Player-collision dispatch pointer for the empty/no-op collision path; its technical actor-type selector is 0x2B and its big-endian ROM value is 0x001AEBFE.
   evidence:
     - rom_handler_table_decode
     - player_collision_table_correction
 
 0x001D6E:
-  name: PLAYER_COLLISION_HANDLER_TYPE_2C
+  name: PLAYER_COLLISION_HANDLER_RESPONSE_PAIR
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_2C]
   type: rom_pointer
   confidence: confirmed
-  description: Player-collision dispatch pointer for actor type 0x2C; its big-endian ROM value is 0x001AEECA, an interaction-gated handler entry.
+  description: Player-collision dispatch pointer for the interaction-gated response-pair path; its technical actor-type selector is 0x2C and its big-endian ROM value is 0x001AEECA.
   evidence:
     - rom_handler_table_decode
     - player_collision_table_correction
 
 0x001D72:
-  name: PLAYER_COLLISION_HANDLER_TYPE_2D
+  name: PLAYER_COLLISION_HANDLER_ACTION_RESPONSE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_2D]
   type: rom_pointer
   confidence: confirmed
-  description: Player-collision dispatch pointer for actor type 0x2D; its big-endian ROM value is 0x001AEE40, the transient cleanup/spawn handler.
+  description: Player-collision dispatch pointer for the action-response path; its technical actor-type selector is 0x2D and its big-endian ROM value is 0x001AEE40.
   evidence:
     - rom_handler_table_decode
     - player_collision_table_correction
 
 0x001CC2:
-  name: PLAYER_COLLISION_HANDLER_TYPE_01
+  name: PLAYER_COLLISION_HANDLER_PROXIMITY_BOUNCE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_01]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x01; its big-endian ROM value is 0x001AFD84.
+  description: Player-collision dispatch pointer for the proximity-bounce response; its technical actor-type selector is 0x01 and its big-endian ROM value is 0x001AFD84.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
 
 0x001CC6:
-  name: PLAYER_COLLISION_HANDLER_TYPE_02
+  name: PLAYER_COLLISION_HANDLER_GROUND_CONTACT
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_02]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x02; its big-endian ROM value is 0x001AFF82.
+  description: Player-collision dispatch pointer for the ground-contact response; its technical actor-type selector is 0x02 and its big-endian ROM value is 0x001AFF82.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
 
 0x001D8A:
-  name: PLAYER_COLLISION_HANDLER_TYPE_33
+  name: PLAYER_COLLISION_HANDLER_STANDARD_RESPONSE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_33]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x33; its big-endian ROM value is 0x001AF4A0.
+  description: Player-collision dispatch pointer for the standard response-counter/reinitialization path; its technical actor-type selector is 0x33 and its big-endian ROM value is 0x001AF4A0. The same handler body is shared by additional selectors whose table entries remain separately tracked.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
 
 0x001D9A:
-  name: PLAYER_COLLISION_HANDLER_TYPE_37
+  name: PLAYER_COLLISION_HANDLER_TIMED_RESPONSE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_37]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x37; its big-endian ROM value is 0x001AF344.
+  description: Player-collision dispatch pointer for the timed collision response; its technical actor-type selector is 0x37 and its big-endian ROM value is 0x001AF344. The same handler body is shared by the type-0x3C entry.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
@@ -3146,28 +3155,31 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001DC2:
-  name: PLAYER_COLLISION_HANDLER_TYPE_41
+  name: PLAYER_COLLISION_HANDLER_WALL_RESPONSE_SCENE_GATE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_41]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x41; its big-endian ROM value is 0x001AF3C2.
+  description: Player-collision dispatch pointer for the wall response with scene gate; its technical actor-type selector is 0x41 and its big-endian ROM value is 0x001AF3C2.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
 
 0x001DC6:
-  name: PLAYER_COLLISION_HANDLER_TYPE_42
+  name: PLAYER_COLLISION_HANDLER_PRIMARY_COUNTER
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_42]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x42; its big-endian ROM value is 0x001AF264.
+  description: Player-collision dispatch pointer for the primary interaction-counter response; its technical actor-type selector is 0x42 and its big-endian ROM value is 0x001AF264.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
 
 0x001E12:
-  name: PLAYER_COLLISION_HANDLER_TYPE_55
+  name: PLAYER_COLLISION_HANDLER_SURFACE_CONTACT
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_55]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x55; its big-endian ROM value is 0x001AF590.
+  description: Player-collision dispatch pointer for the terrain surface-contact response; its technical actor-type selector is 0x55 and its big-endian ROM value is 0x001AF590. The same handler body is shared by the type-0x56 and type-0x57 entries.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
@@ -3191,28 +3203,31 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001E1E:
-  name: PLAYER_COLLISION_HANDLER_TYPE_58
+  name: PLAYER_COLLISION_HANDLER_SURFACE_CONTACT_OFFSET
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_58]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x58; its big-endian ROM value is 0x001AF5F0.
+  description: Player-collision dispatch pointer for the offset terrain surface-contact response; its technical actor-type selector is 0x58 and its big-endian ROM value is 0x001AF5F0.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
 
 0x001E26:
-  name: PLAYER_COLLISION_HANDLER_TYPE_5A
+  name: PLAYER_COLLISION_HANDLER_LOWER_SURFACE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_5A]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x5A; its big-endian ROM value is 0x001AF53E.
+  description: Player-collision dispatch pointer for the lower-surface response selector; its technical actor-type selector is 0x5A and its big-endian ROM value is 0x001AF53E.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
 
 0x001E2A:
-  name: PLAYER_COLLISION_HANDLER_TYPE_5B
+  name: PLAYER_COLLISION_HANDLER_UPPER_SURFACE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_5B]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x5B; its big-endian ROM value is 0x001AF54A.
+  description: Player-collision dispatch pointer for the upper-surface response selector; its technical actor-type selector is 0x5B and its big-endian ROM value is 0x001AF54A.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
@@ -3236,28 +3251,31 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001E36:
-  name: PLAYER_COLLISION_HANDLER_TYPE_5E
+  name: PLAYER_COLLISION_HANDLER_ADOPT_ACTOR_POSITION
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_5E]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x5E; its big-endian ROM value is 0x001AF638.
+  description: Player-collision dispatch pointer for the actor-position adoption response; its technical actor-type selector is 0x5E and its big-endian ROM value is 0x001AF638.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
 
 0x001E3A:
-  name: PLAYER_COLLISION_HANDLER_TYPE_5F
+  name: PLAYER_COLLISION_HANDLER_VERTICAL_CONTACT
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_5F]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x5F; its big-endian ROM value is 0x001AF6AC.
+  description: Player-collision dispatch pointer for the vertical terrain-contact response; its technical actor-type selector is 0x5F and its big-endian ROM value is 0x001AF6AC.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
 
 0x001E3E:
-  name: PLAYER_COLLISION_HANDLER_TYPE_60
+  name: PLAYER_COLLISION_HANDLER_EXIT_PRESENTATION_UPDATE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_60]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x60; its big-endian ROM value is 0x001AF6DC.
+  description: Player-collision dispatch pointer for the exit-presentation actor update; its technical actor-type selector is 0x60 and its big-endian ROM value is 0x001AF6DC. The same handler body is shared by the type-0x61 entry.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation

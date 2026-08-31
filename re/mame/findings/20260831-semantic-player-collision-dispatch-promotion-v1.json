@@ -1,0 +1,39 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "player-collision-dispatch-pointer-family",
+  "promotions": [
+    "PLAYER_COLLISION_HANDLER_PROXIMITY_BOUNCE",
+    "PLAYER_COLLISION_HANDLER_GROUND_CONTACT",
+    "PLAYER_COLLISION_HANDLER_SHARED_ACTOR_RESPONSE",
+    "PLAYER_COLLISION_HANDLER_NOOP",
+    "PLAYER_COLLISION_HANDLER_RESPONSE_PAIR",
+    "PLAYER_COLLISION_HANDLER_ACTION_RESPONSE",
+    "PLAYER_COLLISION_HANDLER_STANDARD_RESPONSE",
+    "PLAYER_COLLISION_HANDLER_WALL_RESPONSE_REPLACEMENT",
+    "PLAYER_COLLISION_HANDLER_TIMED_RESPONSE",
+    "PLAYER_COLLISION_HANDLER_WALL_RESPONSE_SCENE_GATE",
+    "PLAYER_COLLISION_HANDLER_PRIMARY_COUNTER",
+    "PLAYER_COLLISION_HANDLER_SURFACE_CONTACT",
+    "PLAYER_COLLISION_HANDLER_SURFACE_CONTACT_OFFSET",
+    "PLAYER_COLLISION_HANDLER_LOWER_SURFACE",
+    "PLAYER_COLLISION_HANDLER_UPPER_SURFACE",
+    "PLAYER_COLLISION_HANDLER_ADOPT_ACTOR_POSITION",
+    "PLAYER_COLLISION_HANDLER_VERTICAL_CONTACT",
+    "PLAYER_COLLISION_HANDLER_EXIT_PRESENTATION_UPDATE"
+  ],
+  "evidence": [
+    "rom_handler_table_decode",
+    "player_collision_handler_family_extended_static_decompilation",
+    "ghidra_far_transfer_targeted_decompile_v1",
+    "mame_type_34_wall_actor_probe",
+    "player_collision_response_counter_family_static_decompilation"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained_in_descriptions": true,
+    "shared_target_entries_without_distinct_entity_evidence_deferred": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "decompiled_player_collision_handler_roles"
+  }
+}
