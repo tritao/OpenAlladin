@@ -397,9 +397,10 @@
     - ghidra_decompile_001B2916
     - ghidra_transition_render_targets
 0x001B2E70:
-  name: SceneResource_CopyFixedBlockToD000
+  name: SceneResource_CopyFixedWordsToD000
+  aliases: [SceneResource_CopyFixedBlockToD000]
   confidence: confirmed
-  description: Copies the fixed 0x800-word ROM block at 0x0011E0A0 to VRAM destination 0xD000 through VDP_CopyWordsToVRAM.
+  description: Copies the fixed 0x800-word ROM payload at 0x0011E0A0 to VRAM destination 0xD000 through VDP_CopyWordsToVRAM.
   evidence:
     - ghidra_disassembly_001B2E70
     - ghidra_scene_resource_transfer_targets
@@ -2042,11 +2043,11 @@
     - actor_template_death_84
     - player_collision_direct_entry_family_static_decompilation
 0x001AE9DA:
-  name: PlayerCollision_DelegateToActorBlock
-  aliases: [ActorType06_0F_PlayerCollisionHandler]
+  name: PlayerCollision_DelegateToSharedResponse
+  aliases: [PlayerCollision_DelegateToActorBlock, ActorType06_0F_PlayerCollisionHandler]
   size: 6
   confidence: confirmed
-  description: Shared six-byte player-collision trampoline for runtime actor types 0x06 and 0x0F. It delegates directly to Actor_HandlePlayerCollisionBlock at 0x001AEC00 and returns; the entry contains no direct player-coordinate, velocity, or scene-state write.
+  description: Shared six-byte player-collision trampoline for runtime actor types 0x06 and 0x0F. It delegates directly to Actor_ProcessSharedPlayerCollision at 0x001AEC00 and returns; the entry contains no direct player-coordinate, velocity, or scene-state write.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AE9DA
@@ -2578,9 +2579,10 @@
     - mame_bounce_actor_collision_trace
     - mame_campaign_bounce_sweep
 0x001AEC00:
-  name: Actor_HandlePlayerCollisionBlock
+  name: Actor_ProcessSharedPlayerCollision
+  aliases: [Actor_HandlePlayerCollisionBlock]
   confidence: confirmed
-  description: Shared player-collision response block. It checks the active collision state and actor-side position, decrements the actor timer at +0x01 when present, and routes terminal actor states through type-0x84 cleanup/initialization branches.
+  description: Shared player-collision response service. It checks the active collision state and actor-side position, decrements the actor timer at +0x01 when present, and routes terminal actor states through type-0x84 cleanup/initialization branches.
   evidence:
     - ghidra_disassembly_001AEC00
     - ghidra_decompile_collision_damage_targets

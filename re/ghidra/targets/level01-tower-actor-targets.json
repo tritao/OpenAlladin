@@ -14,7 +14,7 @@
     { "address": "0x001AE30A", "name": "Actor_InitializeFromTemplate" },
     { "address": "0x001AE64C", "name": "Type0x43PlayerInteractionHandler" },
     { "address": "0x001AE6BC", "name": "Actor_PublishInteractionValueA2" },
-    { "address": "0x001AEC00", "name": "Actor_HandlePlayerCollisionBlock" },
+    { "address": "0x001AEC00", "name": "Actor_ProcessSharedPlayerCollision" },
     { "address": "0x001ABD7E", "name": "Actor_ActorCollisionPass" }
   ],
   "memory_references": [

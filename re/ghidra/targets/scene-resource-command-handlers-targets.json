@@ -10,7 +10,7 @@
     { "address": "0x001B2412", "name": "SceneResource_PrepareFrameAndPalette" },
     { "address": "0x001B2432", "name": "SceneResource_InstantiateActorRecord" },
     { "address": "0x001B2E5A", "name": "VDP_CopyLevelF800Tilemap" },
-    { "address": "0x001B2E70", "name": "SceneResource_CopyFixedBlockToD000" }
+    { "address": "0x001B2E70", "name": "SceneResource_CopyFixedWordsToD000" }
   ],
   "memory_references": [
     { "address": "0x00FF7294", "name": "SCENE_RESOURCE_C000_SOURCE" },

@@ -15,7 +15,7 @@
     { "address": "0x001AE4F8", "name": "Player_ProcessInteractionState" },
     { "address": "0x001AE9C6", "name": "ActorType0A_PlayerCollisionHandler" },
     { "address": "0x001AE9D4", "name": "ActorType0A_PlayerCollisionAlternateEntry" },
-    { "address": "0x001AEC00", "name": "Actor_HandlePlayerCollisionBlock" },
+    { "address": "0x001AEC00", "name": "Actor_ProcessSharedPlayerCollision" },
     { "address": "0x001AF468", "name": "FarTransfer_PlayerCollisionHandler_1AF468" },
     { "address": "0x001AF978", "name": "ActorType6A_PlayerCollisionHandler" },
     { "address": "0x001AFBF4", "name": "Type65BouncePlayerCollisionHandler" },

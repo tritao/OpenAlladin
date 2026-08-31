@@ -227,7 +227,7 @@ def test_real_collision_trampolines_have_behavior_names_and_legacy_aliases():
     symbols = SymbolStore()
     expected = {
         0x001AE9D4: ("PlayerCollision_ProcessInteractionState", "ActorType7B_PlayerCollisionHandler", "trace_validated"),
-        0x001AE9DA: ("PlayerCollision_DelegateToActorBlock", "ActorType06_0F_PlayerCollisionHandler", "confirmed"),
+        0x001AE9DA: ("PlayerCollision_DelegateToSharedResponse", "ActorType06_0F_PlayerCollisionHandler", "confirmed"),
     }
     for address, (name, alias, confidence) in expected.items():
         symbol = symbols.at(address, include_ranges=False)
@@ -235,6 +235,22 @@ def test_real_collision_trampolines_have_behavior_names_and_legacy_aliases():
         assert symbol.name == name
         assert alias in symbol.aliases
         assert symbol.confidence == confidence
+
+
+def test_shared_player_collision_service_has_semantic_name_and_legacy_alias():
+    symbols = SymbolStore()
+
+    delegate = symbols.at(0x001AE9DA, include_ranges=False)
+    assert delegate is not None
+    assert delegate.name == "PlayerCollision_DelegateToSharedResponse"
+    assert "PlayerCollision_DelegateToActorBlock" in delegate.aliases
+    assert "ActorType06_0F_PlayerCollisionHandler" in delegate.aliases
+
+    service = symbols.at(0x001AEC00, include_ranges=False)
+    assert service is not None
+    assert service.name == "Actor_ProcessSharedPlayerCollision"
+    assert service.aliases == ("Actor_HandlePlayerCollisionBlock",)
+    assert service.confidence == "confirmed"
 
 
 def test_real_actor_terminal_interaction_has_semantic_name_and_legacy_alias():

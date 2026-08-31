@@ -16,7 +16,7 @@
       "range": ["0x001AE978", "0x001AE9A7"],
       "contract": {
         "dispatch": "Player-collision entry for actor type 0x15",
-        "shared_block": "Enters Actor_HandlePlayerCollisionBlock before the response branch",
+        "shared_block": "Enters Actor_ProcessSharedPlayerCollision before the response branch",
         "response": "When PLAYER_ACTION_RESPONSE_FIELD is clear, decrements INTERACTION_COUNTER_DIGITS three times, changes the source actor to Type-0x14, installs PLAYER_ANIM_STATE_1226CE, and clears PLAYER_ANIMATION_TIMER"
       },
       "evidence": [

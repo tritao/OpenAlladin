@@ -20,10 +20,10 @@
     {
       "address": "0x001AE9DA",
       "old_name": "ActorType06_0F_PlayerCollisionHandler",
-      "name": "PlayerCollision_DelegateToActorBlock",
-      "alias": "ActorType06_0F_PlayerCollisionHandler",
+      "name": "PlayerCollision_DelegateToSharedResponse",
+      "aliases": ["PlayerCollision_DelegateToActorBlock", "ActorType06_0F_PlayerCollisionHandler"],
       "range": ["0x001AE9DA", "0x001AE9DF"],
-      "target": "0x001AEC00 Actor_HandlePlayerCollisionBlock",
+      "target": "0x001AEC00 Actor_ProcessSharedPlayerCollision",
       "actor_types": ["0x06", "0x0F"]
     }
   ],

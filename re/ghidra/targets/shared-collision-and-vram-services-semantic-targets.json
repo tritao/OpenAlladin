@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "focus": {
+    "name": "shared-collision-and-vram-services",
+    "purpose": "Replace the remaining generic Block label on the shared player-collision service, clarify its compact dispatch trampoline, and name the fixed-word VRAM transfer by its exact payload."
+  },
+  "targets": [
+    {
+      "address": "0x001B2E70",
+      "name": "SceneResource_CopyFixedWordsToD000",
+      "legacy_names": ["SceneResource_CopyFixedBlockToD000"],
+      "range": ["0x001B2E70", "0x001B2E85"],
+      "contract": "Copy 0x800 words from ROM 0x0011E0A0 to VRAM destination 0xD000 through VDP_CopyWordsToVRAM."
+    },
+    {
+      "address": "0x001AE9DA",
+      "name": "PlayerCollision_DelegateToSharedResponse",
+      "legacy_names": ["PlayerCollision_DelegateToActorBlock", "ActorType06_0F_PlayerCollisionHandler"],
+      "range": ["0x001AE9DA", "0x001AE9DF"],
+      "actor_types": ["0x06", "0x0F"],
+      "contract": "Execute the six-byte BSR.W/RTS trampoline into Actor_ProcessSharedPlayerCollision without adding local player or scene-state writes."
+    },
+    {
+      "address": "0x001AEC00",
+      "name": "Actor_ProcessSharedPlayerCollision",
+      "legacy_names": ["Actor_HandlePlayerCollisionBlock"],
+      "range": ["0x001AEC00", "0x001AED23"],
+      "contract": "Process shared player-collision state, actor-side position and timer fields, and terminal type-0x84 cleanup/initialization branches."
+    }
+  ],
+  "contracts": [
+    "All promoted entries retain their exact fixed-ROM addresses, ranges, and callers.",
+    "The canonical names distinguish a VRAM word transfer, a dispatch trampoline, and the shared collision-response service.",
+    "Every prior canonical or dispatch-derived label remains available as an explicit alias."
+  ],
+  "evidence": [
+    "ghidra_disassembly_001B2E70",
+    "ghidra_disassembly_001AE9DA",
+    "ghidra_disassembly_001AEC00",
+    "scene-resource transfer targets",
+    "player-collision handler table at 0x001CBE",
+    "existing player-collision runtime traces"
+  ],
+  "limitations": [
+    "The shared collision-service name does not claim a user-facing actor type for every branch.",
+    "The VRAM-transfer name describes the fixed transfer contract and not the higher-level scene mode that calls it."
+  ]
+}
