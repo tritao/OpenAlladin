@@ -1,0 +1,38 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "movement-vm-interaction-and-response-roles",
+  "promotions": [
+    "ACTOR_MOVE_MENU_PRESENTATION",
+    "ACTOR_MOVE_PRESENTATION_CHILD_FIXED_OFFSET",
+    "ACTOR_MOVE_SHARED_STEP_PLUS2",
+    "ACTOR_MOVE_SHARED_STEP_PLUS1",
+    "ACTOR_MOVE_PROXIMITY_RESPONSE",
+    "ACTOR_MOVE_PROXIMITY_RESPONSE_CONDITION_ENTRY",
+    "ACTOR_MOVE_PROXIMITY_RESPONSE_UPDATE_ENTRY",
+    "ACTOR_MOVE_PROXIMITY_GATE",
+    "ACTOR_MOVE_TERRAIN_INTERACTION_RESPONSE",
+    "ACTOR_MOVE_INTERACTION_CHILD_RESPONSE_SHARED",
+    "ACTOR_MOVE_MOVING_INTERACTION",
+    "ACTOR_MOVE_INTERACTION_RESPONSE",
+    "ACTOR_MOVE_INTERACTION_RESPONSE_SHARED_TAIL",
+    "ACTOR_MOVE_LEVEL_EVENT_RESPONSE_CHILD"
+  ],
+  "evidence": [
+    "menu_transition_template_family_static_decompilation",
+    "shared-movement-root-family-static-decompilation",
+    "type1e_state46_movement_static_decompilation",
+    "level01_behavior46_lower_band_runtime",
+    "actor_runtime_type6e_73_movement_static_decompilation",
+    "actor_template_late_interaction_family_static_decompilation",
+    "type13_interaction_movement_static_decompilation",
+    "type7b_level11_animation_static_decompilation",
+    "movement_stream_decoder"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_movement_stream_and_entry_role"
+  }
+}

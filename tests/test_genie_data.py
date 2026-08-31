@@ -719,7 +719,7 @@ def test_data_context_exposes_animation_movement_publication(tmp_path):
     symbols = SymbolStore(symbols=(
         Symbol(
             0x1216DC,
-            "ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE",
+            "ACTOR_MOVE_INTERACTION_RESPONSE",
             "data",
             confidence="decompiled",
             size=42,
@@ -759,7 +759,7 @@ def test_data_context_exposes_bounded_movement_continuation(tmp_path):
     symbols = SymbolStore(symbols=(
         Symbol(
             0x12046C,
-            "ACTOR_MOVE_TYPE1E_STATE46_RESPONSE",
+            "ACTOR_MOVE_TERRAIN_INTERACTION_RESPONSE",
             "data",
             confidence="decompiled",
             size=118,

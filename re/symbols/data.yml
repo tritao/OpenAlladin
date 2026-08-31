@@ -3355,7 +3355,7 @@
   name: ACTOR_MOVE_SHARED_CHILD_ENTRY
   size: 42
   confidence: confirmed
-  description: Shared 42-byte movement prelude used by the Type-0x2D guard-sword child, Type-0x2E directional child, and Type-0x2C level-event child. It performs the initial timer/arithmetic phases, applies the (+7,+1) and (+7,0) steps, destroys or clears the actor on the terminal phase, tests the actor flag path, clears actor field 0x11, and clears the movement cursor at 0x0011F6FC. The adjacent ACTOR_MOVE_MENU_PRESENTATION_TYPE84 stream at 0x0011F6FE is independently owned.
+  description: Shared 42-byte movement prelude used by the guard-sword child, directional child, and level-event child. It performs the initial timer/arithmetic phases, applies the (+7,+1) and (+7,0) steps, destroys or clears the actor on the terminal phase, tests the actor flag path, clears actor field 0x11, and clears the movement cursor at 0x0011F6FC. The adjacent ACTOR_MOVE_MENU_PRESENTATION stream at 0x0011F6FE is independently owned.
   evidence:
     - actor_template_guard_sword_child
 
@@ -3543,42 +3543,46 @@
     - movement_stream_decoder
 
 0x0011F6FE:
-  name: ACTOR_MOVE_MENU_PRESENTATION_TYPE84
+  name: ACTOR_MOVE_MENU_PRESENTATION
+  aliases: [ACTOR_MOVE_MENU_PRESENTATION_TYPE84]
   size: 42
   confidence: confirmed
-  description: Type-0x84 menu-presentation movement loop installed by ACTOR_TEMPLATE_MENU_PRESENTATION. Its exact 42-byte region applies the zero, positive, and negative horizontal step profile and loops from the movement command at 0x0011F720 back to 0x0011F6FE.
+  description: Menu-presentation movement loop installed by ACTOR_TEMPLATE_MENU_PRESENTATION. Its exact 42-byte region applies the zero, positive, and negative horizontal step profile and loops from the movement command at 0x0011F720 back to 0x0011F6FE.
   evidence:
     - actor_template_menu_presentation_type84
     - menu_state_selection_decomp
     - movement_stream_decoder
 
 0x001216C6:
-  name: ACTOR_MOVE_TYPE07_MOVING_INTERACTION
+  name: ACTOR_MOVE_MOVING_INTERACTION
+  aliases: [ACTOR_MOVE_TYPE07_MOVING_INTERACTION]
   size: 22
   confidence: decompiled
-  description: Type-0x07 moving-interaction movement stream installed by ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION. Its exact 22-byte owner applies a zero-delta timer setup, then repeated (+1, 0) steps with flag clear and timer reload before looping through the local entry at 0x001216CE; the separately installed Type-0x13 response stream begins at 0x001216DC.
+  description: Moving-interaction movement stream installed by ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION. Its exact 22-byte owner applies a zero-delta timer setup, then repeated (+1, 0) steps with flag clear and timer reload before looping through the local entry at 0x001216CE; the separately installed interaction-response stream begins at 0x001216DC.
   evidence:
     - actor_template_late_interaction_family_static_decompilation
     - type13_interaction_movement_static_decompilation
     - movement_stream_decoder
 
 0x001216DC:
-  name: ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE
+  name: ACTOR_MOVE_INTERACTION_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE]
   type: movement_stream
   size: 42
   confidence: decompiled
-  description: Type-0x13 interaction-response movement stream installed by ACTOR_ANIM_TYPE13_INTERACTION through its actor movement field write at 0x001246D6. Its exact 42-byte owner contains the player-distance/actor-field gate, the local 0x001216DC loop, the alternate response branch at 0x001216F6, and the shared continuation target at 0x00121706.
+  description: Interaction-response movement stream installed by ACTOR_ANIM_TYPE13_INTERACTION through its actor movement field write at 0x001246D6. Its exact 42-byte owner contains the player-distance/actor-field gate, the local 0x001216DC loop, the alternate response branch at 0x001216F6, and the shared continuation target at 0x00121706.
   evidence:
     - type13_interaction_animation_static_decompilation
     - type13_interaction_movement_static_decompilation
     - movement_stream_decoder
 
 0x00121706:
-  name: ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE_SHARED_TAIL
+  name: ACTOR_MOVE_INTERACTION_RESPONSE_SHARED_TAIL
+  aliases: [ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE_SHARED_TAIL]
   type: movement_stream
   size: 10
   confidence: decompiled
-  description: Shared ten-byte Type-0x13 interaction-response movement tail targeted by the conditional branches in ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE. Its five signed delta pairs restore the Type-0x13 response presentation before the independently owned ACTOR_MOVE_INTERACTION_PRESENTATION_CHILD root at 0x00121710.
+  description: Shared ten-byte interaction-response movement tail targeted by the conditional branches in ACTOR_MOVE_INTERACTION_RESPONSE. Its five signed delta pairs restore the interaction response presentation before the independently owned ACTOR_MOVE_INTERACTION_PRESENTATION_CHILD root at 0x00121710.
   evidence:
     - type13_interaction_movement_static_decompilation
     - movement_stream_decoder
@@ -3599,7 +3603,7 @@
   type: movement_stream
   size: 28
   confidence: decompiled
-  description: Type-0x84 menu-presentation child-B movement entry supplied by ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_B at 0x001B7D50. Its exact 28-byte prefix repeats the staged timer/offset sequence and clears the actor state at 0x001216C2, then falls through into ACTOR_MOVE_TYPE07_MOVING_INTERACTION at 0x001216C6; shared continuation bytes are not claimed by this range.
+  description: Menu-presentation child-B movement entry supplied by ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_B at 0x001B7D50. Its exact 28-byte prefix repeats the staged timer/offset sequence and clears the actor state at 0x001216C2, then falls through into ACTOR_MOVE_MOVING_INTERACTION at 0x001216C6; shared continuation bytes are not claimed by this range.
   evidence:
     - menu_transition_template_family_static_decompilation
     - menu_scene_animation_static_decompilation
@@ -3617,11 +3621,12 @@
     - movement_stream_decoder
 
 0x0012171C:
-  name: ACTOR_MOVE_TYPE7B_RESPONSE_CHILD
+  name: ACTOR_MOVE_LEVEL_EVENT_RESPONSE_CHILD
+  aliases: [ACTOR_MOVE_TYPE7B_RESPONSE_CHILD]
   type: movement_stream
   size: 134
   confidence: decompiled
-  description: Type-0x7B response-child movement stream supplied by ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD at 0x001B83CC. Its exact 134-byte owner faces the player, advances through the timed positive horizontal phases, clears the actor at the terminal phase, applies the long negative vertical settle, and loops through the local entry at 0x00121788; the owner ends immediately before ACTOR_MOVE_SCENE_RESET.
+  description: Level-event response-child movement stream supplied by the response-child template at 0x001B83CC. Its exact 134-byte owner faces the player, advances through the timed positive horizontal phases, clears the actor at the terminal phase, applies the long negative vertical settle, and loops through the local entry at 0x00121788; the owner ends immediately before ACTOR_MOVE_SCENE_RESET.
   evidence:
     - type7b_level11_animation_static_decompilation
     - type74_terrain_exit_response_animation_static_decompilation
@@ -3761,10 +3766,11 @@
     - movement_stream_decoder
 
 0x001203C8:
-  name: ACTOR_MOVE_TYPE30_PRESENTATION_CHILD
+  name: ACTOR_MOVE_PRESENTATION_CHILD_FIXED_OFFSET
+  aliases: [ACTOR_MOVE_TYPE30_PRESENTATION_CHILD]
   size: 8
   confidence: decompiled
-  description: Type-0x30 presentation-child movement override supplied by the inline F5 payload at 0x00124966. Its lossless 8-byte stream applies a fixed (+4, +2) delta and loops unconditionally from 0x001203CE back to 0x001203C8.
+  description: Presentation-child movement override supplied by the inline F5 payload at 0x00124966. Its lossless 8-byte stream applies a fixed (+4, +2) delta and loops unconditionally from 0x001203CE back to 0x001203C8.
   evidence:
     - type30_presentation_child_stream_static_decompilation
     - actor_template_type30_presentation_child
@@ -3783,11 +3789,12 @@
     - movement_stream_decoder
 
 0x001203D8:
-  name: ACTOR_MOVE_TYPE84_SHARED_STEP_2
+  name: ACTOR_MOVE_SHARED_STEP_PLUS2
+  aliases: [ACTOR_MOVE_TYPE84_SHARED_STEP_2]
   type: movement_stream
   size: 8
   confidence: decompiled
-  description: Shared Type-0x84 movement root used by the two scene-initialization templates and the Type-0x84 collision-child F5 override. Its exact 8-byte stream applies a (+2, 0) delta and loops unconditionally back to 0x001203D8.
+  description: Shared movement root used by the scene-initialization templates and the collision-child F5 override. Its exact 8-byte stream applies a (+2, 0) delta and loops unconditionally back to 0x001203D8.
   evidence:
     - shared-movement-root-family-static-decompilation
     - actor_template_scene_level_family_static_decompilation
@@ -3795,11 +3802,12 @@
     - movement_stream_decoder
 
 0x001203E0:
-  name: ACTOR_MOVE_TYPE84_SHARED_STEP_1
+  name: ACTOR_MOVE_SHARED_STEP_PLUS1
+  aliases: [ACTOR_MOVE_TYPE84_SHARED_STEP_1]
   type: movement_stream
   size: 8
   confidence: decompiled
-  description: Shared Type-0x84 movement root supplied by ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD and its second F5 override. Its exact 8-byte stream applies a (+1, 0) delta and loops unconditionally back to 0x001203E0.
+  description: Shared movement root supplied by ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD and its second F5 override. Its exact 8-byte stream applies a (+1, 0) delta and loops unconditionally back to 0x001203E0.
   evidence:
     - shared-movement-root-family-static-decompilation
     - mid_actor_collision_animation_family_static_decompilation
@@ -3811,7 +3819,7 @@
   type: movement_stream
   size: 10
   confidence: decompiled
-  description: Ten-byte MovementVM linear-drift loop between ACTOR_MOVE_TYPE84_SHARED_STEP_1 and ACTOR_MOVE_LEVEL09_SPAWN. Its exact body applies a (+2, 0) step followed by a (+1, 0) step and an unconditional jump back to its own root; no external template, producer, or instruction reference currently selects this entry.
+  description: Ten-byte MovementVM linear-drift loop between ACTOR_MOVE_SHARED_STEP_PLUS1 and ACTOR_MOVE_LEVEL09_SPAWN. Its exact body applies a (+2, 0) step followed by a (+1, 0) step and an unconditional jump back to its own root; no external template, producer, or instruction reference currently selects this entry.
   evidence:
     - unreferenced_movement_streams_static_v1
     - actor_vm_orphan_identities_semantic_v1
@@ -3834,53 +3842,58 @@
     - movement_stream_decoder
 
 0x001203FA:
-  name: ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE
+  name: ACTOR_MOVE_PROXIMITY_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE]
   type: movement_stream
   size: 56
   confidence: decompiled
-  description: Type-0x15 proximity-response movement root installed by ACTOR_ANIM_TYPE14_INTERACTION at 0x001247F0. Its exact 56-byte owner contains the three-step response loop, conditional entries at 0x00120418 and 0x00120428, the encoded actor/animation update, and the terminal movement clear immediately before ACTOR_MOVE_TYPE1F_PROXIMITY_GATE.
+  description: Proximity-response movement root installed by ACTOR_ANIM_TYPE14_INTERACTION at 0x001247F0. Its exact 56-byte owner contains the three-step response loop, conditional entries at 0x00120418 and 0x00120428, the encoded actor/animation update, and the terminal movement clear immediately before ACTOR_MOVE_PROXIMITY_GATE.
   evidence:
     - shared-movement-root-family-static-decompilation
     - type14_type84_presentation_animation_static_decompilation
     - movement_stream_decoder
 
 0x00120418:
-  name: ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE_CONDITION_ENTRY
+  name: ACTOR_MOVE_PROXIMITY_RESPONSE_CONDITION_ENTRY
+  aliases: [ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE_CONDITION_ENTRY]
   type: movement_stream
-  alias_of: ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE
+  alias_of: ACTOR_MOVE_PROXIMITY_RESPONSE
   entry_offset: 30
   confidence: decompiled
-  description: Conditional Type-0x15 movement entry embedded in ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE. It aliases the parent owner and does not claim a second ROM range.
+  description: Conditional proximity-response movement entry embedded in ACTOR_MOVE_PROXIMITY_RESPONSE. It aliases the parent owner and does not claim a second ROM range.
   evidence:
     - shared-movement-root-family-static-decompilation
     - movement_stream_decoder
 
 0x00120428:
-  name: ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE_UPDATE_ENTRY
+  name: ACTOR_MOVE_PROXIMITY_RESPONSE_UPDATE_ENTRY
+  aliases: [ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE_UPDATE_ENTRY]
   type: movement_stream
-  alias_of: ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE
+  alias_of: ACTOR_MOVE_PROXIMITY_RESPONSE
   entry_offset: 46
   confidence: decompiled
-  description: Conditional Type-0x15 movement update entry embedded in ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE. It aliases the parent owner and does not claim a second ROM range.
+  description: Conditional proximity-response movement update entry embedded in ACTOR_MOVE_PROXIMITY_RESPONSE. It aliases the parent owner and does not claim a second ROM range.
   evidence:
     - shared-movement-root-family-static-decompilation
     - movement_stream_decoder
 
 0x00120432:
-  name: ACTOR_MOVE_TYPE1F_PROXIMITY_GATE
+  name: ACTOR_MOVE_PROXIMITY_GATE
+  aliases: [ACTOR_MOVE_TYPE1F_PROXIMITY_GATE]
   size: 58
   confidence: decompiled
-  description: Type-0x1F movement gate; its packed 58-byte state-machine region applies a fixed +2 horizontal delta, tests player X distance 0x40, actor field/flag values 0x0080 and 0x0081, and on the transition branch writes animation root 0x00123900 before clearing actor state and looping back.
+  description: Proximity movement gate; its packed 58-byte state-machine region applies a fixed +2 horizontal delta, tests player X distance 0x40, actor field/flag values 0x0080 and 0x0081, and on the transition branch writes animation root 0x00123900 before clearing actor state and looping back.
   evidence:
     - actor_type1f_movement_stream_static_decode
     - mame_actor_movement_cursor_trace
     - movement_stream_decoder
 
 0x0012046C:
-  name: ACTOR_MOVE_TYPE1E_STATE46_RESPONSE
+  name: ACTOR_MOVE_TERRAIN_INTERACTION_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE1E_STATE46_RESPONSE]
   size: 118
   confidence: decompiled
-  description: Type-0x1E actor movement response for terrain interaction state 0x46. Its packed 118-byte region applies the initial (+1, 0) delta, retains the state-0x46 loop through player-X distance 0x73 and actor flag/value tests, and selects the local animation cleanup roots 0x00123614 or 0x001237C6 before handing through the shared continuation at 0x001204F0.
+  description: Actor movement response for the terrain interaction path. Its packed 118-byte region applies the initial (+1, 0) delta, retains the interaction-state loop through player-X distance 0x73 and actor flag/value tests, and selects the local animation cleanup roots 0x00123614 or 0x001237C6 before handing through the shared continuation at 0x001204F0.
   evidence:
     - type1e_state46_movement_static_decompilation
     - level01_behavior46_lower_band_runtime
@@ -3890,7 +3903,7 @@
   name: ACTOR_MOVE_TYPE1E_PROXIMITY_TRANSITION_GATE
   size: 162
   confidence: decompiled
-  description: Type-0x1E actor movement gate following ACTOR_MOVE_TYPE1E_STATE46_RESPONSE. Its packed 162-byte region compares actor interaction state 0x46, tests player Y distance 0x40 and X distance 0x78, checks actor flag/value fields 0x0080 and 0x0081, and selects animation roots 0x00123614 or 0x001237C6 before clearing movement state.
+  description: Actor movement gate following ACTOR_MOVE_TERRAIN_INTERACTION_RESPONSE. Its packed 162-byte region compares actor interaction state 0x46, tests player Y distance 0x40 and X distance 0x78, checks actor flag/value fields 0x0080 and 0x0081, and selects animation roots 0x00123614 or 0x001237C6 before clearing movement state.
   evidence:
     - type1e_state46_movement_static_decompilation
     - level01_behavior46_lower_band_runtime
@@ -4240,7 +4253,7 @@
   type: animation_stream
   size: 50
   confidence: decompiled
-  description: Type-0x1E proximity-response movement handoff entered by the X-distance branch at 0x00123666 of ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE. Its exact 50-byte region presents the 0x1212-0x122E response cadence, publishes the shared ACTOR_MOVE_TYPE1E_STATE46_RESPONSE continuation at 0x001204DA, and loops from 0x0012360E to its internal 0x001235EC entry before the following Type-0x1E root.
+  description: Terrain-interaction proximity-response movement handoff entered by the X-distance branch at 0x00123666 of ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE. Its exact 50-byte region presents the 0x1212-0x122E response cadence, publishes the shared ACTOR_MOVE_TERRAIN_INTERACTION_RESPONSE continuation at 0x001204DA, and loops from 0x0012360E to its internal 0x001235EC entry before the following terrain-interaction root.
   evidence:
     - type1e_animation_static_decompilation
     - type1e_movement_static_decompilation
@@ -4284,7 +4297,7 @@
   name: ACTOR_ANIM_TYPE1E_STATE46_EXTENDED
   size: 132
   confidence: decompiled
-  description: Extended Type-0x1E state-0x46 response animation. Its packed 132-byte cycle presents the 0x11D2/0x11BE/0x11C2/0x11C6/0x11CA/0x11CE/0x11D6/0x11DA/0x11DE frame sequence, writes ACTOR_MOVE_TYPE1E_STATE46_RESPONSE to actor movement field +0x0A, queues callback 0x001ACC5E through FB, and returns after rechecking state 0x46.
+  description: Extended terrain-interaction response animation. Its packed 132-byte cycle presents the 0x11D2/0x11BE/0x11C2/0x11C6/0x11CA/0x11CE/0x11D6/0x11DA/0x11DE frame sequence, writes ACTOR_MOVE_TERRAIN_INTERACTION_RESPONSE to actor movement field +0x0A, queues callback 0x001ACC5E through FB, and returns after rechecking the interaction state.
   evidence:
     - type1e_animation_static_decompilation
     - type1e_movement_static_decompilation
@@ -4295,7 +4308,7 @@
   name: ACTOR_ANIM_TYPE1F_PROXIMITY_GATE
   size: 160
   confidence: decompiled
-  description: Type-0x1F proximity animation state machine paired with ACTOR_MOVE_TYPE1F_PROXIMITY_GATE. Its packed 160-byte region presents the 0x124A and 0x126A-0x1286 frame sequences, tests player X distances 0x4B and 0x40 plus actor flag/value fields, installs the movement root 0x00120432 on the active path, clears movement on the response path, and loops through the local callback sequence.
+  description: Proximity animation state machine paired with ACTOR_MOVE_PROXIMITY_GATE. Its packed 160-byte region presents the 0x124A and 0x126A-0x1286 frame sequences, tests player X distances 0x4B and 0x40 plus actor flag/value fields, installs the movement root 0x00120432 on the active path, clears movement on the response path, and loops through the local callback sequence.
   evidence:
     - type1f_animation_static_decompilation
     - type1f_movement_static_decompilation
@@ -5140,11 +5153,12 @@
     - animation_stream_decoder
 
 0x00121256:
-  name: ACTOR_MOVE_TYPE84_RUNTIME47_4C_CHILD_SHARED
+  name: ACTOR_MOVE_INTERACTION_CHILD_RESPONSE_SHARED
+  aliases: [ACTOR_MOVE_TYPE84_RUNTIME47_4C_CHILD_SHARED]
   type: movement_stream
   size: 106
   confidence: decompiled
-  description: Shared 106-byte MovementVM response bank installed by ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD at 0x001B828C. Its packed region contains the five random branch alternatives, signed response steps, and the local loop at 0x001212BA back to 0x001212B0, ending before the following defined pointer data.
+  description: Shared 106-byte MovementVM response bank installed by the interaction child template at 0x001B828C. Its packed region contains the five random branch alternatives, signed response steps, and the local loop at 0x001212BA back to 0x001212B0, ending before the following defined pointer data.
   evidence:
     - actor_template_type84_runtime47_4c_child_static_decompilation
     - movement_stream_decoder
@@ -5542,7 +5556,7 @@
   aliases: [ACTOR_ANIM_TYPE14_INTERACTION]
   size: 388
   confidence: decompiled
-  description: Interaction response animation selected by ACTOR_TEMPLATE_INTERACTION_WALL_RESPONSE through selector 0x13. Its packed root publishes actor field 0x11 as 0x0014, presents the 0x1A96-0x1AAA opening with player-X and random gates, changes the actor to type 0x15 with ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE at 0x001203FA for the response, and later publishes type 0x84, plays sound 0x42, and spawns ACTOR_TEMPLATE_WALL_RESPONSE. The terminal EA at 0x001248E4 enters the separately owned response tail at 0x001249F0.
+  description: Interaction response animation selected by ACTOR_TEMPLATE_INTERACTION_WALL_RESPONSE through selector 0x13. Its packed root publishes actor field 0x11 as 0x0014, presents the 0x1A96-0x1AAA opening with player-X and random gates, changes the actor to the proximity-response state with ACTOR_MOVE_PROXIMITY_RESPONSE at 0x001203FA for the response, and later publishes the collision-response state, plays sound 0x42, and spawns ACTOR_TEMPLATE_WALL_RESPONSE. The terminal EA at 0x001248E4 enters the separately owned response tail at 0x001249F0.
   evidence:
     - type14_type84_presentation_animation_static_decompilation
     - actor_template_type14_interaction
@@ -7994,7 +8008,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Selector-0x10 actor template for runtime type 0x1F; it uses movement stream ACTOR_MOVE_TYPE1F_PROXIMITY_GATE and animation stream ACTOR_ANIM_TYPE1F_PROXIMITY_GATE.
+  description: Selector-0x10 actor template for the proximity path; it uses movement stream ACTOR_MOVE_PROXIMITY_GATE and animation stream ACTOR_ANIM_TYPE1F_PROXIMITY_GATE.
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets
@@ -8186,7 +8200,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 collision-child template supplied by the two F5 records in ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE. Its default movement and animation roots are ACTOR_MOVE_TYPE84_SHARED_STEP_1 at 0x001203E0 and 0x00122B9C, while the F5 records provide the alternate child overrides ACTOR_MOVE_TYPE84_SHARED_STEP_2/0x00122B9C and ACTOR_MOVE_TYPE84_SHARED_STEP_1/0x00122BBC.
+  description: Collision-child template supplied by the two F5 records in ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE. Its default movement and animation roots are ACTOR_MOVE_SHARED_STEP_PLUS1 at 0x001203E0 and ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_PRIMARY at 0x00122B9C, while the F5 records provide the alternate child overrides ACTOR_MOVE_SHARED_STEP_PLUS2/0x00122B9C and ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_SECONDARY at 0x00122BBC.
   evidence:
     - mid-actor-collision-animation-family-static-decompilation
     - actor_collision_handler_family_static_decompilation
@@ -8908,7 +8922,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 scene-initialization template used by SceneResource_InitializeActiveScene for the fixed actor slot at 0x00FF7EC4; it uses ACTOR_MOVE_TYPE84_SHARED_STEP_2 at 0x001203D8, animation stream 0x00125DC4, and owns five resources before the caller sets the initial facing state.
+  description: Scene-initialization template used by SceneResource_InitializeActiveScene for the fixed actor slot at 0x00FF7EC4; it uses ACTOR_MOVE_SHARED_STEP_PLUS2 at 0x001203D8, animation stream 0x00125DC4, and owns five resources before the caller sets the initial facing state.
   evidence:
     - ghidra_scene_initialize_active_scene
     - actor_template_grid_xrefs
@@ -8930,7 +8944,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 scene-initialization template used by SceneResource_InitializeActiveScene for the primary gameplay actor slot at 0x00FF7E82; it uses ACTOR_MOVE_TYPE84_SHARED_STEP_2 at 0x001203D8, animation stream 0x001261D0, and owns sixteen resources before the caller sets the initial facing state.
+  description: Scene-initialization template used by SceneResource_InitializeActiveScene for the primary gameplay actor slot at 0x00FF7E82; it uses ACTOR_MOVE_SHARED_STEP_PLUS2 at 0x001203D8, animation stream 0x001261D0, and owns sixteen resources before the caller sets the initial facing state.
   evidence:
     - ghidra_scene_initialize_active_scene
     - actor_template_grid_xrefs

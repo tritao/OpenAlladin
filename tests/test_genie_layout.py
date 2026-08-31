@@ -1184,11 +1184,11 @@ def test_type07_and_type13_movement_partition_is_exact():
     type07 = symbols.at(0x001216C6, include_ranges=False)
     type13 = symbols.at(0x001216DC, include_ranges=False)
     tail = symbols.at(0x00121706, include_ranges=False)
-    assert type07 is not None and type07.name == "ACTOR_MOVE_TYPE07_MOVING_INTERACTION"
+    assert type07 is not None and type07.name == "ACTOR_MOVE_MOVING_INTERACTION"
     assert (type07.address, type07.end, type07.size) == (0x001216C6, 0x001216DB, 22)
-    assert type13 is not None and type13.name == "ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE"
+    assert type13 is not None and type13.name == "ACTOR_MOVE_INTERACTION_RESPONSE"
     assert (type13.address, type13.end, type13.size) == (0x001216DC, 0x00121705, 42)
-    assert tail is not None and tail.name == "ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE_SHARED_TAIL"
+    assert tail is not None and tail.name == "ACTOR_MOVE_INTERACTION_RESPONSE_SHARED_TAIL"
     assert (tail.address, tail.end, tail.size) == (0x00121706, 0x0012170F, 10)
     assert type07.end + 1 == type13.address
     assert type13.end + 1 == tail.address
@@ -1570,7 +1570,7 @@ def test_type84_runtime47_4c_child_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00121256, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE84_RUNTIME47_4C_CHILD_SHARED"
+    assert stream.name == "ACTOR_MOVE_INTERACTION_CHILD_RESPONSE_SHARED"
     assert stream.end == 0x001212BF
     assert stream.size == 106
     assert stream.metadata["type"] == "movement_stream"
@@ -1951,7 +1951,7 @@ def test_type4d_type7b_response_child_movement_streams_are_exact():
     symbols = SymbolStore()
     expected = {
         0x00121710: (0x0012171B, 12, "ACTOR_MOVE_INTERACTION_PRESENTATION_CHILD"),
-        0x0012171C: (0x001217A1, 134, "ACTOR_MOVE_TYPE7B_RESPONSE_CHILD"),
+        0x0012171C: (0x001217A1, 134, "ACTOR_MOVE_LEVEL_EVENT_RESPONSE_CHILD"),
     }
     for address, (end, size, name) in expected.items():
         stream = symbols.at(address, include_ranges=False)
@@ -2036,10 +2036,10 @@ def test_shared_movement_root_family_is_exact():
     symbols = SymbolStore()
     expected = {
         0x001203D0: (0x001203D7, "ACTOR_MOVE_LEVEL12_TERMINAL_EVENT"),
-        0x001203D8: (0x001203DF, "ACTOR_MOVE_TYPE84_SHARED_STEP_2"),
-        0x001203E0: (0x001203E7, "ACTOR_MOVE_TYPE84_SHARED_STEP_1"),
+        0x001203D8: (0x001203DF, "ACTOR_MOVE_SHARED_STEP_PLUS2"),
+        0x001203E0: (0x001203E7, "ACTOR_MOVE_SHARED_STEP_PLUS1"),
         0x001203F2: (0x001203F9, "ACTOR_MOVE_LEVEL09_SPAWN"),
-        0x001203FA: (0x00120431, "ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE"),
+        0x001203FA: (0x00120431, "ACTOR_MOVE_PROXIMITY_RESPONSE"),
     }
     for address, (end, name) in expected.items():
         symbol = symbols.at(address, include_ranges=False)
