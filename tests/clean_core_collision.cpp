@@ -158,5 +158,26 @@ int main() {
     assert(read16(core.ram, kWorkRamBase) == 0);
     assert(read8(core.ram, kPlayerInteractionType1BLatch) == 0xFF);
 
+    for (std::size_t slot = 1; slot <= 24; ++slot) {
+        actor_write8(actor_view(core.ram, slot), kActorTypeOffset, 0);
+    }
+    actor_write8(player, kActorFramePointerOffset, 0);
+    actor_write32(player, kActorFramePointerOffset, kPlayerFrame);
+    actor_write16(player, kActorXOffset, 100);
+    actor_write16(player, kActorYOffset, 100);
+    write_i16(core.ram, kPlayerVelocityY, 0x0100);
+    const ActorView settling_actor = actor_view(core.ram, 9);
+    actor_write8(settling_actor, kActorTypeOffset, 0x04);
+    actor_write8(settling_actor, kActorMovementFlagsOffset, 0x10);
+    actor_write32(settling_actor, kActorFramePointerOffset, kActorFrame);
+    actor_write16(settling_actor, kActorXOffset, 100);
+    actor_write16(settling_actor, kActorYOffset, 100);
+    const CollisionPassResult settle_result = player_collision_pass(core);
+    assert(settle_result.contact_count == 1);
+    assert(read_i16(core.ram, kPlayerVelocityY) == 0);
+    assert(read8(core.ram, kPlayerTerrainLandingState) == 0xFF);
+    assert(read8(core.ram, kPlayerInteractionMarker) == 0x04);
+    assert(read8(core.ram, kPlayerInteractionMode) == 0xFF);
+
     return 0;
 }

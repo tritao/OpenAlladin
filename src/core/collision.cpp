@@ -93,6 +93,51 @@ void clear_map_words_for_behaviors(
     }
 }
 
+void player_collision_settle(
+    CoreRuntime& core,
+    std::size_t actor_slot
+) {
+    const ActorView actor = actor_view(core.ram, actor_slot);
+    if ((actor_read8(actor, kActorMovementFlagsOffset) & 0x10U) == 0) {
+        return;
+    }
+    if (read8(core.ram, kPlayerCollisionResponseSuppress) != 0) {
+        return;
+    }
+    if (read8(core.ram, kPlayerTerrainResponseActive) != 0) {
+        if (read8(core.ram, kPlayerTerrainVerticalStop) == 0) return;
+        write8(core.ram, kPlayerTerrainResponseActive, 0);
+    }
+    if (read8(core.ram, kPlayerInteractionAnimationGate) != 0) return;
+
+    if (read16(core.ram, kPlayerVelocityY) != 0) {
+        write8(core.ram, kPlayerTerrainBrakeState, 0);
+        const std::uint8_t type = actor_read8(actor, kActorTypeOffset);
+        if (type >= 0x50 && type < 0x52) {
+            write32(core.ram, kPlayerAnimationPc, 0x00121964);
+        } else if (read8(core.ram, kCameraSpecialMode) != 0) {
+            write32(core.ram, kPlayerAnimationPc, 0x00121F74);
+        } else {
+            write32(core.ram, kPlayerAnimationPc, 0x001220AA);
+            if (read_i16(core.ram, kPlayerTerrainHorizontalResponse) == 0
+                && read8(core.ram, kPlayerTerrainBounceAnimationState)
+                    >= 0x28) {
+                write32(core.ram, kPlayerAnimationPc, 0x00121BB6);
+            }
+        }
+    }
+
+    write16(core.ram, kPlayerVelocityY, 0);
+    write8(core.ram, kPlayerAnimationTimer, 0);
+    write8(core.ram, kPlayerTerrainResponseTimer, 0);
+    write8(core.ram, kPlayerTerrainBounceAnimationState, 0);
+    write8(core.ram, kPlayerTerrainLandingState, 0xFF);
+    write8(core.ram, kPlayerInteractionMarker,
+           actor_read8(actor, kActorTypeOffset));
+    write8(core.ram, kPlayerInteractionMode, 0xFF);
+    player_publish_world_coordinates(core);
+}
+
 CollisionDispatch read_dispatch(
     const CoreRuntime& core,
     std::uint8_t actor_type,
@@ -176,8 +221,21 @@ bool collision_overlaps(const CollisionBox& first, const CollisionBox& second) {
 
 CollisionPassResult player_collision_pass(CoreRuntime& core) {
     CollisionPassResult result;
-    write8(core.ram, kPlayerCollisionResponseSuppress, 0);
     write8(core.ram, kPlayerCollisionCurrentActorType, 0);
+    if (read8(core.ram, kPlayerTerrainResponsePassTimer) != 0) {
+        write8(core.ram, kPlayerTerrainResponsePassTimer,
+               static_cast<std::uint8_t>(
+                   read8(core.ram, kPlayerTerrainResponsePassTimer) - 1));
+    }
+    if (read8(core.ram, kPlayerInteractionLock) != 0) {
+        write8(core.ram, kPlayerInteractionLock,
+               static_cast<std::uint8_t>(
+                   read8(core.ram, kPlayerInteractionLock) - 1));
+    }
+    write8(core.ram, kPlayerInteractionResponse,
+           read8(core.ram, kPlayerInteractionMarker));
+    write8(core.ram, kPlayerInteractionMarker, 0);
+    write8(core.ram, kPlayerInteractionMode, 0);
 
     const GenesisRam& ram = core.ram;
     const ConstActorView player = actor_view(ram, 0);
@@ -200,6 +258,7 @@ CollisionPassResult player_collision_pass(CoreRuntime& core) {
             actor_read8(actor, kActorFacingXOffset));
         if (!collision_overlaps(player_box, actor_box)) continue;
 
+        write8(core.ram, kPlayerCollisionResponseSuppress, 0);
         write8(core.ram, kPlayerCollisionCurrentActorType, type);
         result.contact_count++;
         result.source_slot = 0;
@@ -207,6 +266,7 @@ CollisionPassResult player_collision_pass(CoreRuntime& core) {
         result.dispatch = player_collision_dispatch(core, type);
         result.handler_applied = player_collision_apply(
             core, slot, result.dispatch);
+        player_collision_settle(core, slot);
     }
     return result;
 }
