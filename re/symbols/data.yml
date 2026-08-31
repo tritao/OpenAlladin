@@ -4110,11 +4110,12 @@
     - movement_stream_decoder
 
 0x001209BE:
-  name: ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE
+  name: ACTOR_MOVE_PLAYER_COLLISION_FOLLOWUP_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE]
   type: movement_stream
   size: 8
   confidence: decompiled
-  description: Type-0x7F player-collision response movement root written by ActorType2D_PlayerCollisionHandler at 0x001AEE66 after publishing actor type 0x7F. Its exact 8-byte stream applies a (+2, 0) delta and loops unconditionally back to 0x001209BE.
+  description: Follow-up player-collision response movement root written by ActorType2D_PlayerCollisionHandler at 0x001AEE66 after publishing the transient type 0x7F state. Its exact 8-byte stream applies a (+2, 0) delta and loops unconditionally back to its root.
   evidence:
     - direct-movement-response-streams-static-decompilation
     - ghidra_disassembly_001AEE40
@@ -5184,17 +5185,18 @@
   type: movement_stream
   size: 8
   confidence: decompiled
-  description: Exact eight-byte MovementVM entry containing a (+0, +1) unit vertical step and an unconditional self-loop at 0x001215DA. It is separated from the Type-0x62/0x63 player-collision owner and ACTOR_MOVE_TYPE29_PLAYER_COLLISION_RESPONSE; no direct producer reference has been recovered.
+  description: Exact eight-byte MovementVM entry containing a (+0, +1) unit vertical step and an unconditional self-loop at 0x001215DA. It is separated from the Type-0x62/0x63 player-collision owner and ACTOR_MOVE_PLAYER_COLLISION_STAGED_RESPONSE; no direct producer reference has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
     - movement_stream_decoder
 
 0x001215E0:
-  name: ACTOR_MOVE_TYPE29_PLAYER_COLLISION_RESPONSE
+  name: ACTOR_MOVE_PLAYER_COLLISION_STAGED_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE29_PLAYER_COLLISION_RESPONSE]
   type: movement_stream
   size: 56
   confidence: decompiled
-  description: Type-0x29 player-collision MovementVM root installed by ActorType29_PlayerCollisionHandler at 0x001AF43E. Its exact 56-byte region gates a collision-frame write on the actor flag, advances through the staged horizontal response, and ends at the terminal jump before the separate spawn sequence at 0x00121618.
+  description: Staged player-collision MovementVM root installed by ActorType29_PlayerCollisionHandler at 0x001AF43E. Its exact 56-byte region gates a collision-frame write on the actor flag, advances through the staged horizontal response, and ends at the terminal jump before the separate spawn sequence at 0x00121618.
   evidence:
     - type29_player_collision_response_static_v1
     - gnu_m68k_disassembly_001AF400
@@ -5213,11 +5215,12 @@
     - movement_stream_decoder
 
 0x00121C30:
-  name: ACTOR_ANIM_TYPE29_PLAYER_COLLISION_RESPONSE
+  name: ACTOR_ANIM_PLAYER_COLLISION_STAGED_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE29_PLAYER_COLLISION_RESPONSE]
   type: animation_stream
   size: 50
   confidence: decompiled
-  description: Type-0x29 player-collision AnimationVM root installed by ActorType29_PlayerCollisionHandler at 0x001AF432. It clears the actor animation state, presents the 0x06E6 and 0x06D6-0x074A response frames, and loops through the local 0x072A entry.
+  description: Staged player-collision AnimationVM root installed by ActorType29_PlayerCollisionHandler at 0x001AF432. It clears the actor animation state, presents the 0x06E6 and 0x06D6-0x074A response frames, and loops through the local 0x072A entry.
   evidence:
     - type29_player_collision_response_static_v1
     - gnu_m68k_disassembly_001AF400

@@ -658,6 +658,28 @@ mappings:
       - player_collision_response_entry_family_static_decompilation
     description: Player-collision MovementVM/AnimationVM paths that spawn staged collision-response children.
 
+  - name: PLAYER_COLLISION_STAGED_RESPONSE
+    scope: role
+    symbol_addresses: [0x001215E0, 0x00121C30]
+    technical_types: [0x29]
+    confidence: decompiled
+    evidence:
+      - type29_player_collision_response_static_v1
+      - movement_stream_decoder
+      - animation_stream_decoder
+    description: Paired staged player-collision MovementVM and AnimationVM response roots installed by the Type-0x29 collision handler.
+
+  - name: PLAYER_COLLISION_FOLLOWUP_RESPONSE
+    scope: role
+    symbol_addresses: [0x001209BE]
+    technical_types: [0x7F]
+    confidence: decompiled
+    evidence:
+      - direct_movement_response_streams_static_decompilation
+      - player_collision_action_response_static_decompilation
+      - movement_stream_decoder
+    description: Compact follow-up player-collision movement response entered after the Type-0x2D action path publishes its transient response state.
+
   - name: RANDOM_SPAWN_VARIANT
     scope: role
     symbol_addresses: [0x001241F8, 0x001B7DA0]

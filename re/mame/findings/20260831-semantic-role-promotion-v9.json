@@ -1,0 +1,32 @@
+{
+  "finding": "semantic-role-promotion-v9",
+  "status": "confirmed",
+  "scope": "player-collision response movement and animation roots",
+  "evidence": [
+    "type29_player_collision_response_static_v1",
+    "direct_movement_response_streams_static_decompilation",
+    "player_collision_action_response_static_decompilation",
+    "movement_stream_decoder",
+    "animation_stream_decoder"
+  ],
+  "promotions": [
+    {
+      "address": "0x001209BE",
+      "name": "ACTOR_MOVE_PLAYER_COLLISION_FOLLOWUP_RESPONSE",
+      "technical_alias": "ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE",
+      "reason": "Compact (+2, 0) MovementVM loop written by the Type-0x2D player-collision action path after it publishes transient response state."
+    },
+    {
+      "address": "0x001215E0",
+      "name": "ACTOR_MOVE_PLAYER_COLLISION_STAGED_RESPONSE",
+      "technical_alias": "ACTOR_MOVE_TYPE29_PLAYER_COLLISION_RESPONSE",
+      "reason": "Movement root installed by the Type-0x29 collision handler; the exact stream contains the staged horizontal response."
+    },
+    {
+      "address": "0x00121C30",
+      "name": "ACTOR_ANIM_PLAYER_COLLISION_STAGED_RESPONSE",
+      "technical_alias": "ACTOR_ANIM_TYPE29_PLAYER_COLLISION_RESPONSE",
+      "reason": "Paired AnimationVM root installed by the same Type-0x29 handler, with the exact response-frame sequence and local loop."
+    }
+  ]
+}

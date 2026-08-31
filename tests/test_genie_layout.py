@@ -1160,7 +1160,7 @@ def test_mid_actor_collision_animation_family_is_exact():
 def test_direct_movement_response_streams_are_exact():
     symbols = SymbolStore()
     expected = {
-        0x001209BE: (0x001209C5, "ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE"),
+        0x001209BE: (0x001209C5, "ACTOR_MOVE_PLAYER_COLLISION_FOLLOWUP_RESPONSE"),
         0x001209F0: (0x001209F7, "ACTOR_MOVE_RANDOM_STEP_POSITIVE"),
         0x001209F8: (0x001209FF, "ACTOR_MOVE_RANDOM_STEP_NEGATIVE"),
         0x00120A42: (0x00120ACB, "ACTOR_MOVE_LEVEL_EXIT"),
@@ -2315,14 +2315,14 @@ def test_type29_player_collision_response_streams_are_exact():
 
     movement = symbols.at(0x001215E0, include_ranges=False)
     assert movement is not None
-    assert movement.name == "ACTOR_MOVE_TYPE29_PLAYER_COLLISION_RESPONSE"
+    assert movement.name == "ACTOR_MOVE_PLAYER_COLLISION_STAGED_RESPONSE"
     assert movement.end == 0x00121617
     assert movement.size == 56
     assert movement.metadata["type"] == "movement_stream"
 
     animation = symbols.at(0x00121C30, include_ranges=False)
     assert animation is not None
-    assert animation.name == "ACTOR_ANIM_TYPE29_PLAYER_COLLISION_RESPONSE"
+    assert animation.name == "ACTOR_ANIM_PLAYER_COLLISION_STAGED_RESPONSE"
     assert animation.end == 0x00121C61
     assert animation.size == 50
     assert animation.metadata["type"] == "animation_stream"
