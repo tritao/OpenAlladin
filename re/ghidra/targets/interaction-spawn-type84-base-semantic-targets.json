@@ -1,0 +1,77 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type84-base-semantic",
+    "purpose": "Promote the six Type-0x84 interaction-base handlers to stable creation identities while retaining their gate and selector distinctions."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selectors": ["0xB6", "0xB7", "0xB8", "0xB9", "0xBA", "0xCA"]
+  },
+  "shared_contract": {
+    "template": "ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE",
+    "allocator": "InteractionSpawn_ReverseSlot",
+    "post_spawn": "subtract 8 from actor Y at offset +0x04"
+  },
+  "handlers": [
+    {
+      "address": "0x001B70F8",
+      "name": "InteractionSpawn_CreateType84Base_B6",
+      "legacy_name": "InteractionSpawn_Type84Base_B6",
+      "selector": "0xB6",
+      "gate": "PLAYER_COLLISION_GATE_TYPE47 != 0, PLAYER_COLLISION_GATE_TYPE48 == 0, PLAYER_COLLISION_GATE_TYPE49 == 0",
+      "animation": "ACTOR_ANIM_TYPE84_BASE_B6 at 0x001242B0"
+    },
+    {
+      "address": "0x001B712C",
+      "name": "InteractionSpawn_CreateType84Base_B7",
+      "legacy_name": "InteractionSpawn_Type84Base_B7",
+      "selector": "0xB7",
+      "gate": "PLAYER_COLLISION_GATE_TYPE48 != 0, PLAYER_COLLISION_GATE_TYPE49 == 0",
+      "animation": "ACTOR_ANIM_TYPE84_BASE_B7 at 0x001242CA"
+    },
+    {
+      "address": "0x001B7158",
+      "name": "InteractionSpawn_CreateType84Base_B8",
+      "legacy_name": "InteractionSpawn_Type84Base_B8",
+      "selector": "0xB8",
+      "gate": "PLAYER_COLLISION_GATE_TYPE49 != 0",
+      "animation": "ACTOR_ANIM_TYPE84_BASE_B8 at 0x001242E4"
+    },
+    {
+      "address": "0x001B717C",
+      "name": "InteractionSpawn_CreateType84Base_B9",
+      "legacy_name": "InteractionSpawn_Type84Base_B9",
+      "selector": "0xB9",
+      "gate": "base gate at 0x00FFF129 != 0",
+      "animation": "ACTOR_ANIM_TYPE84_BASE_B9 at 0x001242FE"
+    },
+    {
+      "address": "0x001B71A0",
+      "name": "InteractionSpawn_CreateType84Base_BA",
+      "legacy_name": "InteractionSpawn_Type84Base_BA",
+      "selector": "0xBA",
+      "gate": "base gate at 0x00FFF12A != 0",
+      "animation": "ACTOR_ANIM_TYPE84_BASE_BA at 0x00124318"
+    },
+    {
+      "address": "0x001B71C4",
+      "name": "InteractionSpawn_CreateType84Base_CA",
+      "legacy_name": "InteractionSpawn_Type84Base_CA",
+      "selector": "0xCA",
+      "animation": "ACTOR_ANIM_TYPE84_BASE_CA at 0x00124332"
+    }
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies and selector membership",
+    "Shared Type-0x84 interaction-base template and reverse-slot allocator",
+    "Per-selector gate conditions and AnimationVM roots",
+    "Common actor Y adjustment"
+  ],
+  "limitations": [
+    "The B9 and BA gate bytes retain conservative address-qualified descriptions because their upstream latch meanings remain unresolved.",
+    "The promoted names identify the shared Type-0x84 base creation role, not the user-facing scene or interaction meaning."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

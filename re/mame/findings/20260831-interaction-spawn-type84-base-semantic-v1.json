@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type84-base-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType84Base_B6",
+    "InteractionSpawn_CreateType84Base_B7",
+    "InteractionSpawn_CreateType84Base_B8",
+    "InteractionSpawn_CreateType84Base_B9",
+    "InteractionSpawn_CreateType84Base_BA",
+    "InteractionSpawn_CreateType84Base_CA"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_Type84Base_B6",
+    "InteractionSpawn_Type84Base_B7",
+    "InteractionSpawn_Type84Base_B8",
+    "InteractionSpawn_Type84Base_B9",
+    "InteractionSpawn_Type84Base_BA",
+    "InteractionSpawn_Type84Base_CA"
+  ],
+  "contracts": [
+    "Selectors B6 through CA reverse-spawn ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE through InteractionSpawn_ReverseSlot, install selector-specific animation roots, and subtract eight from actor Y.",
+    "B6/B7/B8 form the priority chain selected by PLAYER_COLLISION_GATE_TYPE47/48/49, respectively.",
+    "B9 and BA use their own nonzero gate bytes at 0x00FFF129 and 0x00FFF12A; CA is ungated in the handler body."
+  ],
+  "evidence": [
+    "Exact handler bodies at 0x001B70F8, 0x001B712C, 0x001B7158, 0x001B717C, 0x001B71A0, and 0x001B71C4",
+    "Existing Type-0x47/0x48/0x49 collision-gate closure",
+    "Existing Type-0x84 base AnimationVM stream closure"
+  ],
+  "limitations": [
+    "No user-facing object identity is claimed for this shared Type-0x84 interaction-base family.",
+    "Clear timing and upstream meaning for the B9/BA gate bytes remain unresolved."
+  ],
+  "conclusion": "The six Type-0x84 interaction-base handlers now have stable creation identities tied to exact selector, gate, animation, allocator, and Y-adjustment contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
