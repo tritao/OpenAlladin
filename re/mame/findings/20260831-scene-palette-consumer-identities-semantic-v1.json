@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-palette-consumer-identities-semantic-targets.json",
+  "promotions": [
+    { "address": "0x00129912", "old_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE07_C000_GRAPHICS", "alias": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912" },
+    { "address": "0x00129932", "old_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE04_C000_GRAPHICS", "alias": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932" },
+    { "address": "0x00129952", "old_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_SHARED_C000_GRAPHICS", "alias": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952" },
+    { "address": "0x00129972", "old_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE0B_C000_GRAPHICS", "alias": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972" },
+    { "address": "0x00129992", "old_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_SECONDARY_C000_GRAPHICS", "alias": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992" },
+    { "address": "0x001299B2", "old_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_PRIMARY_C000_GRAPHICS", "alias": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2" },
+    { "address": "0x00129A92", "old_name": "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92", "name": "SCENE_RESOURCE_PALETTE_BAND1_FOR_SHARED_STATE01_C000_GRAPHICS", "alias": "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92" },
+    { "address": "0x00129AB2", "old_name": "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2", "name": "SCENE_RESOURCE_PALETTE_BAND1_FOR_STATE07_04_0B_C000_GRAPHICS", "alias": "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2" }
+  ],
+  "conclusion": "Replaced address-bearing names for eight directly assigned scene-resource palette sources with stable canonical graphics-consumer identities while retaining legacy aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

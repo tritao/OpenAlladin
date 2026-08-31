@@ -2101,51 +2101,57 @@
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129912:
-  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912
+  name: SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE07_C000_GRAPHICS
+  aliases: [SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012D870 C000 resource frame.
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing SCENE_STATE07_C000_GRAPHICS.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129932:
-  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932
+  name: SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE04_C000_GRAPHICS
+  aliases: [SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012DA04 C000 resource frame.
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing SCENE_STATE04_C000_GRAPHICS.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129952:
-  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952
+  name: SCENE_RESOURCE_PALETTE_BAND0_FOR_SHARED_C000_GRAPHICS
+  aliases: [SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012DD76 C000 resource frame.
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing SCENE_SHARED_C000_GRAPHICS.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129972:
-  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972
+  name: SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE0B_C000_GRAPHICS
+  aliases: [SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012DF6C C000 resource frame.
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing SCENE_STATE0B_C000_GRAPHICS.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129992:
-  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992
+  name: SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_SECONDARY_C000_GRAPHICS
+  aliases: [SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012E176 C000 resource frame.
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing SCENE_STATE01_C000_GRAPHICS_SECONDARY.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x001299B2:
-  name: SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2
+  name: SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_PRIMARY_C000_GRAPHICS
+  aliases: [SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 0 while preparing the 0x0012E34A C000 resource frame.
+  description: Fixed 16-word palette source uploaded to palette band 0 while preparing SCENE_STATE01_C000_GRAPHICS_PRIMARY.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x001299D2:
@@ -2218,19 +2224,21 @@
     - palette_duplicate_bands_static_v1
 
 0x00129A92:
-  name: SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92
+  name: SCENE_RESOURCE_PALETTE_BAND1_FOR_SHARED_STATE01_C000_GRAPHICS
+  aliases: [SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Shared scene-resource palette source supplied as the band-1 input to the 0x0012DD76, 0x0012E176, and 0x0012E34A C000 resource frame preparations.
+  description: Shared scene-resource palette source supplied as the band-1 input to SCENE_SHARED_C000_GRAPHICS, SCENE_STATE01_C000_GRAPHICS_SECONDARY, and SCENE_STATE01_C000_GRAPHICS_PRIMARY.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129AB2:
-  name: SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2
+  name: SCENE_RESOURCE_PALETTE_BAND1_FOR_STATE07_04_0B_C000_GRAPHICS
+  aliases: [SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Shared scene-resource palette source supplied as the band-1 input to the 0x0012D870, 0x0012DA04, and 0x0012DF6C C000 resource frame preparations.
+  description: Shared scene-resource palette source supplied as the band-1 input to SCENE_STATE07_C000_GRAPHICS, SCENE_STATE04_C000_GRAPHICS, and SCENE_STATE0B_C000_GRAPHICS.
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129AD2:

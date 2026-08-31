@@ -731,6 +731,24 @@ def test_shared_scene_resources_have_stable_consumer_names():
         assert legacy in symbol.aliases
 
 
+def test_scene_palette_sources_have_stable_graphics_consumer_names():
+    expected = {
+        0x00129912: ("SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE07_C000_GRAPHICS", "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912"),
+        0x00129932: ("SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE04_C000_GRAPHICS", "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932"),
+        0x00129952: ("SCENE_RESOURCE_PALETTE_BAND0_FOR_SHARED_C000_GRAPHICS", "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952"),
+        0x00129972: ("SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE0B_C000_GRAPHICS", "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972"),
+        0x00129992: ("SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_SECONDARY_C000_GRAPHICS", "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992"),
+        0x001299B2: ("SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_PRIMARY_C000_GRAPHICS", "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2"),
+        0x00129A92: ("SCENE_RESOURCE_PALETTE_BAND1_FOR_SHARED_STATE01_C000_GRAPHICS", "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92"),
+        0x00129AB2: ("SCENE_RESOURCE_PALETTE_BAND1_FOR_STATE07_04_0B_C000_GRAPHICS", "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

@@ -1,0 +1,26 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-palette-consumer-identities",
+    "purpose": "Replace address-bearing scene-resource palette names with the canonical graphics consumers established by direct loader contracts."
+  },
+  "targets": [
+    { "address": "0x00129912", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE07_C000_GRAPHICS", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912", "range": "0x00129912-0x00129931", "consumer": "SCENE_STATE07_C000_GRAPHICS", "upload_band": 0 },
+    { "address": "0x00129932", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE04_C000_GRAPHICS", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932", "range": "0x00129932-0x00129951", "consumer": "SCENE_STATE04_C000_GRAPHICS", "upload_band": 0 },
+    { "address": "0x00129952", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_SHARED_C000_GRAPHICS", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952", "range": "0x00129952-0x00129971", "consumer": "SCENE_SHARED_C000_GRAPHICS", "upload_band": 0 },
+    { "address": "0x00129972", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE0B_C000_GRAPHICS", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972", "range": "0x00129972-0x00129991", "consumer": "SCENE_STATE0B_C000_GRAPHICS", "upload_band": 0 },
+    { "address": "0x00129992", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_SECONDARY_C000_GRAPHICS", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992", "range": "0x00129992-0x001299B1", "consumer": "SCENE_STATE01_C000_GRAPHICS_SECONDARY", "upload_band": 0 },
+    { "address": "0x001299B2", "name": "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_PRIMARY_C000_GRAPHICS", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2", "range": "0x001299B2-0x001299D1", "consumer": "SCENE_STATE01_C000_GRAPHICS_PRIMARY", "upload_band": 0 },
+    { "address": "0x00129A92", "name": "SCENE_RESOURCE_PALETTE_BAND1_FOR_SHARED_STATE01_C000_GRAPHICS", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92", "range": "0x00129A92-0x00129AB1", "consumers": ["SCENE_SHARED_C000_GRAPHICS", "SCENE_STATE01_C000_GRAPHICS_SECONDARY", "SCENE_STATE01_C000_GRAPHICS_PRIMARY"], "upload_band": 1 },
+    { "address": "0x00129AB2", "name": "SCENE_RESOURCE_PALETTE_BAND1_FOR_STATE07_04_0B_C000_GRAPHICS", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2", "range": "0x00129AB2-0x00129AD1", "consumers": ["SCENE_STATE07_C000_GRAPHICS", "SCENE_STATE04_C000_GRAPHICS", "SCENE_STATE0B_C000_GRAPHICS"], "upload_band": 1 }
+  ],
+  "evidence": [
+    "direct scene-resource loader assignments",
+    "fixed 16-word palette upload contracts",
+    "canonical RNC graphics identities for each C000 resource",
+    "exact non-overlapping palette ranges"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
