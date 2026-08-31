@@ -370,3 +370,33 @@ mappings:
       - actor_template_type31_f5_child_family_static_decompilation
       - actor_template_type31_f5_child_movement_static_decompilation
     description: Shared MovementVM path and paired templates for AnimationVM interaction children.
+
+  - name: HORIZONTAL_FACING_TOGGLE
+    scope: role
+    symbol_addresses: [0x00001EEE]
+    technical_types: [0x0D]
+    confidence: decompiled
+    evidence:
+      - rom_handler_table_decode
+      - actor_collision_handler_family_extended_static_decompilation
+    description: Actor-collision dispatch role that toggles horizontal facing.
+
+  - name: PLAYER_COLLISION_RECOVERY
+    scope: role
+    symbol_addresses: [0x00122DB2]
+    technical_types: [0x01, 0x84]
+    confidence: decompiled
+    evidence:
+      - player_collision_transfer_capable_mechanism_graph
+      - actor_collision_handler_family_static_decompilation
+    description: Shared player-collision recovery animation that restores the normal player actor state.
+
+  - name: PLAYER_COLLISION_CHILD_SPAWN
+    scope: role
+    symbol_addresses: [0x00121618, 0x00122E16]
+    technical_types: [0x03, 0x3E, 0x3F, 0x84]
+    confidence: decompiled
+    evidence:
+      - type3e_3f_player_collision_response_static_v1
+      - player_collision_response_entry_family_static_decompilation
+    description: Player-collision MovementVM/AnimationVM paths that spawn staged collision-response children.

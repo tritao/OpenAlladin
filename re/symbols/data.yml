@@ -3310,10 +3310,11 @@
     - ghidra_disassembly_001AC458
 
 0x001EEE:
-  name: ACTOR_COLLISION_HANDLER_TYPE_0D
+  name: ACTOR_COLLISION_HANDLER_HORIZONTAL_FACING_TOGGLE
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_0D]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x0D; its big-endian ROM value is 0x001AC60E, the horizontal-facing toggle entry.
+  description: Actor-collision dispatch pointer for the horizontal-facing toggle entry at 0x001AC60E.
   evidence:
     - rom_handler_table_decode
     - actor_collision_handler_family_extended_static_decompilation
@@ -4543,11 +4544,12 @@
     - animation_stream_decoder
 
 0x00122E16:
-  name: ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE
+  name: ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN
+  aliases: [ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE]
   type: animation_stream
   size: 202
   confidence: decompiled
-  description: Type-0x84 collision-response animation installed by ActorType03_PlayerCollisionHandler after it converts the source actor from runtime type 0x03. Its exact 202-byte region publishes type 0x84, spawns six ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD records with signed placements, plays sound 0x2D, invokes the shared child-event callback, and enters the embedded moving-child response sequence at 0x00122E96 before looping at 0x00122EAE.
+  description: Player-collision child-spawn animation installed by ActorType03_PlayerCollisionHandler after it converts the source actor to the transient collision-response state. Its exact 202-byte region spawns six ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD records with signed placements, plays sound 0x2D, invokes the shared child-event callback, and enters the embedded moving-child response sequence at 0x00122E96 before looping at 0x00122EAE.
   evidence:
     - player_collision_response_entry_family_static_decompilation
     - actor_template_f5_moving_child_base_static_decompilation
@@ -4557,10 +4559,10 @@
 0x00122E96:
   name: ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_ROOT
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE
+  alias_of: ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN
   entry_offset: 128
   confidence: decompiled
-  description: Embedded default root for ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD and ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE. It begins inside ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE and therefore does not claim a second ROM ownership range.
+  description: Embedded default root for ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD and ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE. It begins inside ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN and therefore does not claim a second ROM ownership range.
   evidence:
     - actor_template_f5_moving_child_base_static_decompilation
     - animation_f5_nested_child_family_static_decompilation
@@ -4600,10 +4602,11 @@
     - animation_stream_decoder
 
 0x00122DB2:
-  name: ACTOR_ANIM_TYPE84_TYPE01_RESPONSE
+  name: ACTOR_ANIM_PLAYER_COLLISION_RECOVERY
+  aliases: [ACTOR_ANIM_TYPE84_TYPE01_RESPONSE]
   size: 38
   confidence: decompiled
-  description: Shared Type-0x84 response animation installed by the Type-0x01 player-collision transition at 0x001AFD84 and the collision-response helper at 0x001ABF9C. Its exact 38-byte region plays sound 0x05, presents the 0x1632-0x164E sequence, writes actor type 0x01 through ED, and returns to ACTOR_ANIM_TYPE01 at 0x00122D92.
+  description: Shared player-collision recovery animation installed by the Type-0x01 player-collision transition at 0x001AFD84 and the collision-response helper at 0x001ABF9C. Its exact 38-byte region plays sound 0x05, presents the 0x1632-0x164E sequence, writes the recovered actor state through ED, and returns to ACTOR_ANIM_TYPE01 at 0x00122D92.
   evidence:
     - player_collision_transfer_capable_mechanism_graph
     - actor_collision_handler_family_static_decompilation
@@ -5081,11 +5084,12 @@
     - movement_stream_decoder
 
 0x00121618:
-  name: ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE
+  name: ACTOR_MOVE_PLAYER_COLLISION_CHILD_SPAWN
+  aliases: [ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE]
   type: movement_stream
   size: 108
   confidence: decompiled
-  description: Shared Type-0x3E/0x3F player-collision MovementVM root installed by ActorType3E_PlayerCollisionHandler and ActorType3F_PlayerCollisionHandler. Its exact 108-byte region queues event 0x29, issues six F5-style spawn/copy commands for ACTOR_TEMPLATE_TYPE_84_TYPE3E_3F_COLLISION_CHILD at 0x001B7B5C with staged signed placements, and loops from the final step at 0x0012166A before ACTOR_MOVE_MENU_PRESENTATION_CHILD_A.
+  description: Shared player-collision MovementVM root installed by ActorType3E_PlayerCollisionHandler and ActorType3F_PlayerCollisionHandler. Its exact 108-byte region queues event 0x29, issues six F5-style spawn/copy commands for ACTOR_TEMPLATE_TYPE_84_TYPE3E_3F_COLLISION_CHILD at 0x001B7B5C with staged signed placements, and loops from the final step at 0x0012166A before ACTOR_MOVE_MENU_PRESENTATION_CHILD_A.
   evidence:
     - type3e_3f_player_collision_response_static_v1
     - gnu_m68k_disassembly_001AF2B0
@@ -7882,7 +7886,7 @@
   animation_stream: 0x00122F80
   template_word: 0x6000
   resource_count: 0x01
-  description: Type-0x84 collision-response child template supplied by the six F5-style spawn/copy commands in ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE. Its exact 20-byte record carries template word 0x6000, shared animation ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE at 0x00122F80, one owned resource, and no movement stream; it ends immediately before ACTOR_TEMPLATE_TYPE_29_INTERACTION.
+  description: Collision-response child template supplied by the six F5-style spawn/copy commands in ACTOR_MOVE_PLAYER_COLLISION_CHILD_SPAWN. Its exact 20-byte record carries template word 0x6000, shared animation ACTOR_ANIM_TYPE84_SHARED_0F22_RESPONSE at 0x00122F80, one owned resource, and no movement stream; it ends immediately before ACTOR_TEMPLATE_TYPE_29_INTERACTION.
   evidence:
     - type3e_3f_player_collision_response_static_v1
     - gnu_m68k_disassembly_001AF2B0

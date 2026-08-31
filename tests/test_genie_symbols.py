@@ -315,6 +315,27 @@ def test_interaction_pair_movement_names_promote_roles_and_preserve_aliases():
     assert set(expected) <= set(pair_mapping.symbol_addresses)
 
 
+def test_player_collision_names_promote_roles_and_preserve_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00001EEE: ("ACTOR_COLLISION_HANDLER_HORIZONTAL_FACING_TOGGLE", "ACTOR_COLLISION_HANDLER_TYPE_0D"),
+        0x00121618: ("ACTOR_MOVE_PLAYER_COLLISION_CHILD_SPAWN", "ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE"),
+        0x00122DB2: ("ACTOR_ANIM_PLAYER_COLLISION_RECOVERY", "ACTOR_ANIM_TYPE84_TYPE01_RESPONSE"),
+        0x00122E16: ("ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN", "ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert mappings["HORIZONTAL_FACING_TOGGLE"].scope == "role"
+    assert mappings["PLAYER_COLLISION_RECOVERY"].scope == "role"
+    assert mappings["PLAYER_COLLISION_CHILD_SPAWN"].scope == "role"
+
+
 def test_terminal_transition_and_level_object_names_promote_roles_and_preserve_aliases():
     symbols = SymbolStore()
     expected = {

@@ -1074,7 +1074,7 @@ def test_mid_actor_animation_stream_ranges_are_exact():
         0x00122C40: (0x00122C65, "ACTOR_ANIM_TYPE44_INTERACTION"),
         0x00122C66: (0x00122CAB, "ACTOR_ANIM_TYPE46_SHARED_SPAWN"),
         0x00122D54: (0x00122D91, "ACTOR_ANIM_TYPE55_INTERACTION"),
-        0x00122DB2: (0x00122DD7, "ACTOR_ANIM_TYPE84_TYPE01_RESPONSE"),
+        0x00122DB2: (0x00122DD7, "ACTOR_ANIM_PLAYER_COLLISION_RECOVERY"),
         0x00122DD8: (0x00122DED, "ACTOR_ANIM_TYPE84_TYPE2D_INTERACTION_RESPONSE"),
         0x00122DEE: (0x00122DF1, "ACTOR_ANIM_TYPE84_MENU_PRESENTATION"),
         0x00122DF2: (0x00122E15, "ACTOR_ANIM_TYPE03_INTERACTION"),
@@ -2360,7 +2360,7 @@ def test_type3e_3f_player_collision_response_family_is_exact():
 
     movement = symbols.at(0x00121618, include_ranges=False)
     assert movement is not None
-    assert movement.name == "ACTOR_MOVE_TYPE3E_3F_PLAYER_COLLISION_RESPONSE"
+    assert movement.name == "ACTOR_MOVE_PLAYER_COLLISION_CHILD_SPAWN"
     assert movement.end == 0x00121683
     assert movement.size == 108
     assert movement.metadata["type"] == "movement_stream"
@@ -3211,7 +3211,7 @@ def test_scene_reset_secondary_animation_and_embedded_entry_are_exact():
 def test_type03_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {
-        0x00122E16: (0x00122EDF, "ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE"),
+        0x00122E16: (0x00122EDF, "ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN"),
         0x00122EE0: (0x00122EFD, "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_SPAWN_ENTRY"),
         0x00122EFE: (0x00122F37, "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_RESPONSE"),
     }
@@ -3227,7 +3227,7 @@ def test_type03_collision_response_animation_family_is_exact():
     root = symbols.at(0x00122E96, include_ranges=False)
     assert root is not None
     assert root.name == "ACTOR_ANIM_TYPE84_F5_MOVING_CHILD_ROOT"
-    assert root.metadata["alias_of"] == "ACTOR_ANIM_TYPE84_TYPE03_COLLISION_RESPONSE"
+    assert root.metadata["alias_of"] == "ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN"
     assert root.metadata["entry_offset"] == 128
 
     loop = symbols.at(0x00122F06, include_ranges=False)

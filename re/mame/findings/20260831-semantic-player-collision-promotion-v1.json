@@ -1,0 +1,23 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "player-collision-role-identities",
+  "promotions": [
+    "ACTOR_COLLISION_HANDLER_HORIZONTAL_FACING_TOGGLE",
+    "ACTOR_MOVE_PLAYER_COLLISION_CHILD_SPAWN",
+    "ACTOR_ANIM_PLAYER_COLLISION_RECOVERY",
+    "ACTOR_ANIM_PLAYER_COLLISION_CHILD_SPAWN"
+  ],
+  "evidence": [
+    "rom_handler_table_decode",
+    "actor_collision_handler_family_extended_static_decompilation",
+    "type3e_3f_player_collision_response_static_v1",
+    "player_collision_response_entry_family_static_decompilation"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role"
+  }
+}
