@@ -335,7 +335,10 @@ bool player_collision_apply(
 
     if (dispatch.handler == kPlayerHandlerType0C) {
         if (read8(core.ram, kPlayerActionResponseField) == 0) return false;
-        actor_clear_and_release(core, actor_slot);
+        // This body clears only the colliding record's type before calling
+        // Actor_ClearOwnedResources. The linked-record cleanup belongs to
+        // the neighboring Type-1A/1B/1C handlers.
+        actor_clear_type_and_release(core, actor_slot);
         return actor_initialize_from_template(
             core, actor_slot, kPlayerTemplateCollisionType84);
     }
