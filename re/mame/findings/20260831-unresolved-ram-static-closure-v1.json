@@ -1,0 +1,41 @@
+{
+  "format": "openaladdin-unresolved-ram-static-closure-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "08d65a1",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "queue": {
+    "command": "genie symbols unresolved --kind ram",
+    "result_before_closure": 4,
+    "result_after_closure": 1,
+    "remaining": "GAME_DIFFICULTY_COUNTER"
+  },
+  "closed_symbols": [
+    {
+      "address": "0x00FFF158",
+      "name": "SCENE_RESOURCE_SERVICE_MARKER",
+      "evidence": "Seven exact whole-ROM set/clear writes across Frame_InputAndResourceService, Interaction_UpdateResourceState, and System_InitializeRuntime; zero direct reads.",
+      "limitation": "No reader-backed gate or higher-level external purpose is claimed."
+    },
+    {
+      "address": "0x00FFF0E5",
+      "name": "INTERACTION_SPAWN_HANDOFF_MARKER",
+      "evidence": "Two exact terminal MovementVM writes and nine direct clr.b sites in the Type-0x5E/Type-0x84 spawn family; zero direct reads.",
+      "limitation": "The set/clear contract is closed, but an indirect or unseen consumer is not ruled out."
+    },
+    {
+      "address": "0x00FFF104",
+      "name": "INTERACTION_RESPONSE_FLAG",
+      "evidence": "One exact clear in InteractionSpawn_RuntimeType87_80 immediately before reverse-slot allocation; zero direct reads or additional writers.",
+      "limitation": "No runtime state-transition meaning is assigned beyond the clear-only dispatch contract."
+    }
+  ],
+  "remaining_open_question": {
+    "address": "0x00FF7E3C",
+    "name": "GAME_DIFFICULTY_COUNTER",
+    "reason": "The complete reader/writer contract and player-facing HUD projection are documented, but the exact lives-versus-continues wording remains unsupported by ROM text and separate from native health."
+  },
+  "conclusion": "The unresolved RAM queue now separates statically closed write-only contracts from the one remaining user-facing semantic question."
+}
