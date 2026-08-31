@@ -1,0 +1,65 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "level-and-scene-event-movement",
+  "promotions": [
+    {
+      "semantic_name": "LEVEL11_EVENT",
+      "technical_type": "0x7B",
+      "symbols": [
+        "ACTOR_MOVE_LEVEL11_EVENT",
+        "ACTOR_MOVE_LEVEL11_EVENT_DISTANCE_ENTRY",
+        "ACTOR_MOVE_LEVEL11_EVENT_COMPARE_TRANSITION"
+      ],
+      "evidence": ["type7b-level11-movement-static-decompilation"]
+    },
+    {
+      "semantic_name": "LEVEL_EXIT",
+      "technical_type": "0x75",
+      "symbols": ["ACTOR_MOVE_LEVEL_EXIT"],
+      "evidence": ["player-collision-transition-family-static-decompilation"]
+    },
+    {
+      "semantic_name": "LEVEL08_EXIT_PRESENTATION",
+      "technical_type": "0x60",
+      "symbols": ["ACTOR_MOVE_LEVEL08_EXIT_PRESENTATION"],
+      "evidence": ["level08-exit-movement-stream-static-decompilation"]
+    },
+    {
+      "semantic_name": "LEVEL09_SPAWN",
+      "technical_type": "0x50",
+      "symbols": ["ACTOR_MOVE_LEVEL09_SPAWN"],
+      "evidence": ["level09-type50-template-static-decompilation"]
+    },
+    {
+      "semantic_name": "LEVEL09_ENTRY",
+      "technical_type": "0x52",
+      "symbols": ["ACTOR_MOVE_LEVEL09_ENTRY"],
+      "evidence": ["type52-level09-animation-static-decompilation"]
+    },
+    {
+      "semantic_name": "LEVEL12_TERMINAL_EVENT",
+      "technical_type": "0x2F",
+      "symbols": ["ACTOR_MOVE_LEVEL12_TERMINAL_EVENT"],
+      "evidence": ["actor-template-special-event-family-static-decompilation"]
+    },
+    {
+      "semantic_name": "SCENE_TABLE_TRANSITION",
+      "technical_type": "0x84",
+      "symbols": ["ACTOR_MOVE_SCENE_TABLE_TRANSITION"],
+      "evidence": ["menu-transition-template-family-static-decompilation"]
+    },
+    {
+      "semantic_name": "SCENE_RESET",
+      "technical_type": "0x84",
+      "symbols": ["ACTOR_MOVE_SCENE_RESET"],
+      "evidence": ["actor-template-scene-level-family-static-decompilation"]
+    }
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "shared_type_84_roles_not_collapsed": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false
+  }
+}

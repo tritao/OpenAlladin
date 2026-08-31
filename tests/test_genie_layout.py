@@ -1156,7 +1156,7 @@ def test_direct_movement_response_streams_are_exact():
         0x001209BE: (0x001209C5, "ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE"),
         0x001209F0: (0x001209F7, "ACTOR_MOVE_TYPE84_RANDOM_VARIANT_A"),
         0x001209F8: (0x001209FF, "ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B"),
-        0x00120A42: (0x00120ACB, "ACTOR_MOVE_TYPE75_LEVEL_EXIT"),
+        0x00120A42: (0x00120ACB, "ACTOR_MOVE_LEVEL_EXIT"),
     }
     for address, (end, name) in expected.items():
         symbol = symbols.at(address, include_ranges=False)
@@ -1510,7 +1510,7 @@ def test_type84_death_terminal_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00120352, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE84_DEATH_TERMINAL"
+    assert stream.name == "ACTOR_MOVE_TERMINAL_DEATH"
     assert stream.end == 0x0012035F
     assert stream.size == 14
     assert stream.metadata["type"] == "movement_stream"
@@ -1608,7 +1608,7 @@ def test_type52_level09_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00121300, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE52_LEVEL09_ENTRY"
+    assert stream.name == "ACTOR_MOVE_LEVEL09_ENTRY"
     assert stream.end == 0x001213E1
     assert stream.size == 226
     assert stream.metadata["type"] == "movement_stream"
@@ -1735,7 +1735,7 @@ def test_type7b_level11_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x0012120E, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE7B_LEVEL11_EVENT"
+    assert stream.name == "ACTOR_MOVE_LEVEL11_EVENT"
     assert stream.end == 0x00121225
     assert stream.size == 24
     assert stream.metadata["type"] == "movement_stream"
@@ -1773,8 +1773,8 @@ def test_type7b_level11_movement_stream_is_exact():
 def test_type7b_level11_movement_alternate_entries_are_exact():
     symbols = SymbolStore()
     expected = {
-        0x00121226: (0x0012123D, 24, "ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_DISTANCE_ENTRY"),
-        0x0012123E: (0x0012123F, 2, "ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_COMPARE_TRANSITION"),
+        0x00121226: (0x0012123D, 24, "ACTOR_MOVE_LEVEL11_EVENT_DISTANCE_ENTRY"),
+        0x0012123E: (0x0012123F, 2, "ACTOR_MOVE_LEVEL11_EVENT_COMPARE_TRANSITION"),
     }
     for address, (end, size, name) in expected.items():
         stream = symbols.at(address, include_ranges=False)
@@ -1826,15 +1826,15 @@ def test_type7c_type7d_level_event_movement_family_is_exact():
 
     shared = symbols.at(0x0012118A, include_ranges=False)
     assert shared is not None
-    assert shared.name == "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED"
+    assert shared.name == "ACTOR_MOVE_LEVEL_EVENT_SHARED"
     assert shared.end == 0x0012120D
     assert shared.size == 132
     assert shared.metadata["type"] == "movement_stream"
 
     alias = symbols.at(0x001211C4, include_ranges=False)
     assert alias is not None
-    assert alias.name == "ACTOR_MOVE_TYPE7D_LEVEL_ENTRY"
-    assert alias.metadata["alias_of"] == "ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED"
+    assert alias.name == "ACTOR_MOVE_LEVEL_ENTRY"
+    assert alias.metadata["alias_of"] == "ACTOR_MOVE_LEVEL_EVENT_SHARED"
     assert alias.metadata["entry_offset"] == 58
 
     template = symbols.at(0x001B81B0, include_ranges=False)
@@ -1998,7 +1998,7 @@ def test_scene_table_transition_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001209C6, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE84_SCENE_TABLE_TRANSITION"
+    assert stream.name == "ACTOR_MOVE_SCENE_TABLE_TRANSITION"
     assert stream.end == 0x001209EF
     assert stream.size == 42
     assert stream.metadata["type"] == "movement_stream"
@@ -2035,10 +2035,10 @@ def test_scene_table_transition_movement_stream_is_exact():
 def test_shared_movement_root_family_is_exact():
     symbols = SymbolStore()
     expected = {
-        0x001203D0: (0x001203D7, "ACTOR_MOVE_TYPE2F_LEVEL12_TERMINAL_EVENT"),
+        0x001203D0: (0x001203D7, "ACTOR_MOVE_LEVEL12_TERMINAL_EVENT"),
         0x001203D8: (0x001203DF, "ACTOR_MOVE_TYPE84_SHARED_STEP_2"),
         0x001203E0: (0x001203E7, "ACTOR_MOVE_TYPE84_SHARED_STEP_1"),
-        0x001203F2: (0x001203F9, "ACTOR_MOVE_TYPE50_LEVEL09_SPAWN"),
+        0x001203F2: (0x001203F9, "ACTOR_MOVE_LEVEL09_SPAWN"),
         0x001203FA: (0x00120431, "ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE"),
     }
     for address, (end, name) in expected.items():
@@ -2227,7 +2227,7 @@ def test_type84_presentation_response_movement_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001214B2, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE84_PRESENTATION_RESPONSE"
+    assert stream.name == "ACTOR_MOVE_PRESENTATION_RESPONSE"
     assert stream.end == 0x00121529
     assert stream.size == 120
     assert stream.metadata["type"] == "movement_stream"
@@ -2257,7 +2257,7 @@ def test_level08_exit_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x0012152A, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION"
+    assert stream.name == "ACTOR_MOVE_LEVEL08_EXIT_PRESENTATION"
     assert stream.end == 0x00121597
     assert stream.size == 110
     assert stream.metadata["type"] == "movement_stream"
@@ -2542,10 +2542,10 @@ def test_interaction_anchor_callback_family_is_exact():
 def test_level_event_movement_stream_family_is_exact():
     symbols = SymbolStore()
     expected = {
-        0x00120FB4: (0x00120FDD, "ACTOR_MOVE_TYPE84_LEVEL_EVENT_VARIANT_B"),
+        0x00120FB4: (0x00120FDD, "ACTOR_MOVE_LEVEL_EVENT_VARIANT_B"),
         0x00120FDE: (0x00120FFD, "ACTOR_MOVE_TYPE17_INTERACTION"),
-        0x00120FFE: (0x00121033, "ACTOR_MOVE_TYPE46_LEVEL_EVENT_MODE_READY"),
-        0x00121082: (0x001210FD, "ACTOR_MOVE_TYPE2F_LEVEL_EVENT_MOVING_VARIANT"),
+        0x00120FFE: (0x00121033, "ACTOR_MOVE_LEVEL_EVENT_MODE_READY"),
+        0x00121082: (0x001210FD, "ACTOR_MOVE_LEVEL_EVENT_MOVING_VARIANT"),
     }
     for address, (end, name) in expected.items():
         symbol = symbols.at(address, include_ranges=False)
@@ -2968,7 +2968,7 @@ def test_type84_type0f_child_movement_response_is_exact():
 
     following = symbols.at(0x00120A42, include_ranges=False)
     assert following is not None
-    assert following.name == "ACTOR_MOVE_TYPE75_LEVEL_EXIT"
+    assert following.name == "ACTOR_MOVE_LEVEL_EXIT"
     assert stream.end + 1 == following.address
 
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
@@ -3321,7 +3321,7 @@ def test_upper_collision_response_animation_family_is_exact():
         0x0012342E: ("ACTOR_ANIM_TYPE1D_STATE_GATE", 34),
         0x00123450: ("ACTOR_ANIM_TYPE1D_MOVEMENT_RESPONSE", 68),
         0x00123458: ("ACTOR_ANIM_TYPE1D_MOVEMENT_LOOP", 76),
-        0x00123490: ("ACTOR_ANIM_TYPE1D_GUARD_SPAWN", 132),
+        0x00123490: ("ACTOR_ANIM_GUARD_SPAWN", 132),
     }
     for address, (name, offset) in aliases.items():
         alias = symbols.at(address, include_ranges=False)
@@ -3750,7 +3750,7 @@ def test_static_header_text_and_shared_palette_families_are_exact():
         0x00127E80: (0x00127E8B, "BONUS_LEVEL_LABEL_STREAM", "text_data"),
         0x00128E4F: (0x00128E5A, "MENU_PRESENTS_LABEL_STREAM", "text_data"),
         0x00129AD2: (0x00129B51, "SCENE_DISPATCH_PALETTE_SOURCE", "palette_data"),
-        0x00121034: (0x00121081, "ACTOR_MOVE_TYPE40_TYPE3A_LEVEL_EVENT_PRELUDE", "movement_stream"),
+        0x00121034: (0x00121081, "ACTOR_MOVE_LEVEL_EVENT_SHARED_PRELUDE", "movement_stream"),
     }
     for address, (end, name, symbol_type) in expected.items():
         symbol = symbols.at(address, include_ranges=False)

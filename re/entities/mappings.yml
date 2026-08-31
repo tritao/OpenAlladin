@@ -22,3 +22,107 @@ mappings:
       - type6c-animation-static-decompilation-v1
       - actor-runtime-type6a-trace
     description: The Type-0x69 through Type-0x6C animation/template family is the handhold interaction and its promoted response.
+
+  - name: TERMINAL_DEATH
+    scope: event
+    symbol_addresses: [0x00120352]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence: [type84-death-animation-static-decompilation]
+    description: Shared Type-0x84 terminal-death movement response.
+
+  - name: LEVEL12_TERMINAL_EVENT
+    scope: event
+    symbol_addresses: [0x001203D0]
+    technical_types: [0x2F]
+    confidence: decompiled
+    evidence: [actor-template-special-event-family-static-decompilation]
+    description: Level 12 final-scene terminal event movement.
+
+  - name: LEVEL09_SPAWN
+    scope: event
+    symbol_addresses: [0x001203F2]
+    technical_types: [0x50]
+    confidence: decompiled
+    evidence: [level09-type50-template-static-decompilation]
+    description: Level 09 callback-created spawn movement.
+
+  - name: SCENE_TABLE_TRANSITION
+    scope: event
+    symbol_addresses: [0x001209C6]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence: [menu-transition-template-family-static-decompilation]
+    description: Scene-table transition movement stream.
+
+  - name: LEVEL_EXIT
+    scope: event
+    symbol_addresses: [0x00120A42]
+    technical_types: [0x75]
+    confidence: decompiled
+    evidence: [player-collision-transition-family-static-decompilation]
+    description: Level-exit movement response installed by the type-0x74 collision path.
+
+  - name: LEVEL_EVENT_VARIANT_B
+    scope: event
+    symbol_addresses: [0x00120FB4]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence: [level-event-movement-stream-family-static-decompilation]
+    description: Level-event movement variant B.
+
+  - name: LEVEL_EVENT_MODE_READY
+    scope: event
+    symbol_addresses: [0x00120FFE]
+    technical_types: [0x46]
+    confidence: decompiled
+    evidence: [level-event-command-family-static-decompilation]
+    description: Level-event movement selected when the mode is ready.
+
+  - name: LEVEL_EVENT_SHARED
+    scope: event
+    symbol_addresses: [0x0012118A, 0x001211C4]
+    technical_types: [0x7C, 0x7D]
+    confidence: decompiled
+    evidence: [actor-template-level05-timed-static-decompilation, level07-type7c-template-targets]
+    description: Shared Level 05/07 event movement and Level-entry alias.
+
+  - name: LEVEL11_EVENT
+    scope: event
+    symbol_addresses: [0x0012120E, 0x00121226, 0x0012123E]
+    technical_types: [0x7B]
+    confidence: decompiled
+    evidence: [type7b-level11-movement-static-decompilation]
+    description: Level 11 event movement root and its distance/compare entries.
+
+  - name: LEVEL09_ENTRY
+    scope: event
+    symbol_addresses: [0x00121300]
+    technical_types: [0x52]
+    confidence: decompiled
+    evidence: [type52-level09-animation-static-decompilation]
+    description: Level 09 entry movement stream.
+
+  - name: PRESENTATION_RESPONSE
+    scope: event
+    symbol_addresses: [0x001214B2]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence: [type14-type84-presentation-animation-static-decompilation]
+    description: Shared Type-0x84 presentation-child movement response.
+
+  - name: LEVEL08_EXIT_PRESENTATION
+    scope: event
+    symbol_addresses: [0x0012152A]
+    technical_types: [0x60]
+    confidence: decompiled
+    evidence: [level08-exit-movement-stream-static-decompilation]
+    description: Level 08 exit-presentation movement.
+
+  - name: SCENE_RESET
+    scope: event
+    symbol_addresses: [0x001217A2]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence: [actor-template-scene-level-family-static-decompilation]
+    description: Scene reset movement loop.

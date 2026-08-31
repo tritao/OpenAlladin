@@ -220,7 +220,30 @@ def test_guard_and_handhold_numeric_identities_promote_to_semantic_names_with_al
 
     mappings = load_entity_mappings()
     assert validate_entity_mappings(mappings) == []
-    assert {mapping.name for mapping in mappings} == {"GUARD_SWORD_ATTACK", "HANDHOLD_INTERACTION"}
+    mapping_names = {mapping.name for mapping in mappings}
+    assert {"GUARD_SWORD_ATTACK", "HANDHOLD_INTERACTION"} <= mapping_names
+    assert "LEVEL11_EVENT" in mapping_names
+
+
+def test_level_event_movement_names_promote_roles_and_preserve_numeric_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00120352: ("ACTOR_MOVE_TERMINAL_DEATH", "ACTOR_MOVE_TYPE84_DEATH_TERMINAL"),
+        0x001203D0: ("ACTOR_MOVE_LEVEL12_TERMINAL_EVENT", "ACTOR_MOVE_TYPE2F_LEVEL12_TERMINAL_EVENT"),
+        0x001203F2: ("ACTOR_MOVE_LEVEL09_SPAWN", "ACTOR_MOVE_TYPE50_LEVEL09_SPAWN"),
+        0x001209C6: ("ACTOR_MOVE_SCENE_TABLE_TRANSITION", "ACTOR_MOVE_TYPE84_SCENE_TABLE_TRANSITION"),
+        0x00120A42: ("ACTOR_MOVE_LEVEL_EXIT", "ACTOR_MOVE_TYPE75_LEVEL_EXIT"),
+        0x0012120E: ("ACTOR_MOVE_LEVEL11_EVENT", "ACTOR_MOVE_TYPE7B_LEVEL11_EVENT"),
+        0x00121226: ("ACTOR_MOVE_LEVEL11_EVENT_DISTANCE_ENTRY", "ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_DISTANCE_ENTRY"),
+        0x0012123E: ("ACTOR_MOVE_LEVEL11_EVENT_COMPARE_TRANSITION", "ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_COMPARE_TRANSITION"),
+        0x0012152A: ("ACTOR_MOVE_LEVEL08_EXIT_PRESENTATION", "ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION"),
+        0x001217A2: ("ACTOR_MOVE_SCENE_RESET", "ACTOR_MOVE_TYPE84_SCENE_RESET"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
 
 
 def test_symbol_editor_promotes_and_annotates_a_tracked_symbol(tmp_path):

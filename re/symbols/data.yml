@@ -3614,7 +3614,7 @@
   type: movement_stream
   size: 134
   confidence: decompiled
-  description: Type-0x7B response-child movement stream supplied by ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD at 0x001B83CC. Its exact 134-byte owner faces the player, advances through the timed positive horizontal phases, clears the actor at the terminal phase, applies the long negative vertical settle, and loops through the local entry at 0x00121788; the owner ends immediately before ACTOR_MOVE_TYPE84_SCENE_RESET.
+  description: Type-0x7B response-child movement stream supplied by ACTOR_TEMPLATE_TYPE_7B_RESPONSE_CHILD at 0x001B83CC. Its exact 134-byte owner faces the player, advances through the timed positive horizontal phases, clears the actor at the terminal phase, applies the long negative vertical settle, and loops through the local entry at 0x00121788; the owner ends immediately before ACTOR_MOVE_SCENE_RESET.
   evidence:
     - type7b_level11_animation_static_decompilation
     - type74_terrain_exit_response_animation_static_decompilation
@@ -3716,7 +3716,8 @@
     - movement_stream_decoder
 
 0x00120352:
-  name: ACTOR_MOVE_TYPE84_DEATH_TERMINAL
+  name: ACTOR_MOVE_TERMINAL_DEATH
+  aliases: [ACTOR_MOVE_TYPE84_DEATH_TERMINAL]
   type: movement_stream
   size: 14
   confidence: decompiled
@@ -3756,7 +3757,8 @@
     - movement_stream_decoder
 
 0x001203D0:
-  name: ACTOR_MOVE_TYPE2F_LEVEL12_TERMINAL_EVENT
+  name: ACTOR_MOVE_LEVEL12_TERMINAL_EVENT
+  aliases: [ACTOR_MOVE_TYPE2F_LEVEL12_TERMINAL_EVENT]
   type: movement_stream
   size: 8
   confidence: decompiled
@@ -3795,7 +3797,7 @@
   type: movement_stream
   size: 10
   confidence: decompiled
-  description: Ten-byte MovementVM linear-drift loop between ACTOR_MOVE_TYPE84_SHARED_STEP_1 and ACTOR_MOVE_TYPE50_LEVEL09_SPAWN. Its exact body applies a (+2, 0) step followed by a (+1, 0) step and an unconditional jump back to its own root; no external template, producer, or instruction reference currently selects this entry.
+  description: Ten-byte MovementVM linear-drift loop between ACTOR_MOVE_TYPE84_SHARED_STEP_1 and ACTOR_MOVE_LEVEL09_SPAWN. Its exact body applies a (+2, 0) step followed by a (+1, 0) step and an unconditional jump back to its own root; no external template, producer, or instruction reference currently selects this entry.
   evidence:
     - unreferenced_movement_streams_static_v1
     - actor_vm_orphan_identities_semantic_v1
@@ -3806,7 +3808,8 @@
     - movement_stream_decoder
 
 0x001203F2:
-  name: ACTOR_MOVE_TYPE50_LEVEL09_SPAWN
+  name: ACTOR_MOVE_LEVEL09_SPAWN
+  aliases: [ACTOR_MOVE_TYPE50_LEVEL09_SPAWN]
   type: movement_stream
   size: 8
   confidence: decompiled
@@ -3880,7 +3883,8 @@
     - movement_stream_decoder
 
 0x001209C6:
-  name: ACTOR_MOVE_TYPE84_SCENE_TABLE_TRANSITION
+  name: ACTOR_MOVE_SCENE_TABLE_TRANSITION
+  aliases: [ACTOR_MOVE_TYPE84_SCENE_TABLE_TRANSITION]
   type: movement_stream
   size: 42
   confidence: decompiled
@@ -3894,7 +3898,7 @@
   type: movement_stream
   size: 66
   confidence: decompiled
-  description: Type-0x84 child movement response published by ACTOR_ANIM_TYPE84_TYPE0F_CHILD at 0x00123D8C. Its exact 66-byte owner applies the signed settle profile, gates the terminal phase on player-X distance 0x40, randomly returns to the root, and clears actor movement state at 0x00120A40 before ACTOR_MOVE_TYPE75_LEVEL_EXIT.
+  description: Type-0x84 child movement response published by ACTOR_ANIM_TYPE84_TYPE0F_CHILD at 0x00123D8C. Its exact 66-byte owner applies the signed settle profile, gates the terminal phase on player-X distance 0x40, randomly returns to the root, and clears actor movement state at 0x00120A40 before ACTOR_MOVE_LEVEL_EXIT.
   evidence:
     - type0f_child_animation_static_decompilation
     - type0f_child_movement_static_decompilation
@@ -4117,26 +4121,28 @@
   size: 10
   confidence: decompiled
   review_status: closed
-  description: Type-0x7C wide-random-offset event prelude selected by the adjacent template record at 0x001B81B0. Its exact ten-byte body applies a (0,-4) step, pushes ActorEvent_ApplyWideRandomOffsets at 0x001ACD5A, clears the actor state through opcode 0x82, and falls through into ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED at 0x0012118A. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
+  description: Type-0x7C wide-random-offset event prelude selected by the adjacent template record at 0x001B81B0. Its exact ten-byte body applies a (0,-4) step, pushes ActorEvent_ApplyWideRandomOffsets at 0x001ACD5A, clears the actor state through opcode 0x82, and falls through into ACTOR_MOVE_LEVEL_EVENT_SHARED at 0x0012118A. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
   evidence:
     - actor_template_level_event_record_partition
     - movement_stream_decoder
 
 0x0012118A:
-  name: ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED
+  name: ACTOR_MOVE_LEVEL_EVENT_SHARED
+  aliases: [ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED]
   type: movement_stream
   size: 132
   confidence: decompiled
-  description: Shared Type-0x7C level-event movement stream selected by ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN and ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN. Its exact 132-byte owner contains the flag-gated zero and (+3, 0) phases, event-parameter pushes, sound/event commands, timer setup, and the terminal 0x00121200 jump into the shared continuation at 0x001211FA; the owner ends immediately before ACTOR_MOVE_TYPE7B_LEVEL11_EVENT.
+  description: Shared Type-0x7C level-event movement stream selected by ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN and ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN. Its exact 132-byte owner contains the flag-gated zero and (+3, 0) phases, event-parameter pushes, sound/event commands, timer setup, and the terminal 0x00121200 jump into the shared continuation at 0x001211FA; the owner ends immediately before ACTOR_MOVE_LEVEL11_EVENT.
   evidence:
     - actor_template_level05_timed_static_decompilation
     - level07_type7c_template_targets
     - movement_stream_decoder
 
 0x001211C4:
-  name: ACTOR_MOVE_TYPE7D_LEVEL_ENTRY
+  name: ACTOR_MOVE_LEVEL_ENTRY
+  aliases: [ACTOR_MOVE_TYPE7D_LEVEL_ENTRY]
   type: movement_stream
-  alias_of: ACTOR_MOVE_TYPE7C_LEVEL_EVENT_SHARED
+  alias_of: ACTOR_MOVE_LEVEL_EVENT_SHARED
   entry_offset: 58
   confidence: decompiled
   description: Type-0x7D level-entry movement entry selected by ACTOR_TEMPLATE_TYPE_7D. It aliases the shared Type-0x7C owner and does not claim a second ROM range.
@@ -4145,7 +4151,8 @@
     - movement_stream_decoder
 
 0x0012120E:
-  name: ACTOR_MOVE_TYPE7B_LEVEL11_EVENT
+  name: ACTOR_MOVE_LEVEL11_EVENT
+  aliases: [ACTOR_MOVE_TYPE7B_LEVEL11_EVENT]
   type: movement_stream
   size: 24
   confidence: decompiled
@@ -4156,17 +4163,19 @@
     - movement_stream_decoder
 
 0x00121226:
-  name: ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_DISTANCE_ENTRY
+  name: ACTOR_MOVE_LEVEL11_EVENT_DISTANCE_ENTRY
+  aliases: [ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_DISTANCE_ENTRY]
   type: movement_stream
   size: 24
   confidence: decompiled
-  description: Type-0x7B Level-11 event distance-gate entry selected by the 0x0012121A player-X comparison. Its exact 24-byte body applies the signed (-119, +76) setup and timer 0x1D, repeats the actor-field 0xB2 compare, advances the delay, and jumps from 0x00121238 back to ACTOR_MOVE_TYPE7B_LEVEL11_EVENT at 0x0012120E.
+  description: Type-0x7B Level-11 event distance-gate entry selected by the 0x0012121A player-X comparison. Its exact 24-byte body applies the signed (-119, +76) setup and timer 0x1D, repeats the actor-field 0xB2 compare, advances the delay, and jumps from 0x00121238 back to ACTOR_MOVE_LEVEL11_EVENT at 0x0012120E.
   evidence:
     - type7b_level11_movement_static_decompilation
     - movement_stream_decoder
 
 0x0012123E:
-  name: ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_COMPARE_TRANSITION
+  name: ACTOR_MOVE_LEVEL11_EVENT_COMPARE_TRANSITION
+  aliases: [ACTOR_MOVE_TYPE7B_LEVEL11_EVENT_COMPARE_TRANSITION]
   type: movement_stream
   size: 2
   confidence: decompiled
@@ -4180,14 +4189,15 @@
   type: movement_stream
   size: 0x40
   confidence: decompiled
-  description: Exact decoder-bounded interaction-anchor response bank at 0x001212C0-0x001212FF. Its entries compare the interaction marker at 0x00FFF0D3, publish Actor_ApplyInteractionAnchorMovementStep and Actor_SetInteractionAnchorFromActor through the movement callback parameter convention, and clear actor state before ACTOR_MOVE_TYPE52_LEVEL09_ENTRY; no direct template or producer reference has been recovered.
+  description: Exact decoder-bounded interaction-anchor response bank at 0x001212C0-0x001212FF. Its entries compare the interaction marker at 0x00FFF0D3, publish Actor_ApplyInteractionAnchorMovementStep and Actor_SetInteractionAnchorFromActor through the movement callback parameter convention, and clear actor state before ACTOR_MOVE_LEVEL09_ENTRY; no direct template or producer reference has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
     - interaction_anchor_callback_static_v1
     - movement_stream_decoder
 
 0x00120A42:
-  name: ACTOR_MOVE_TYPE75_LEVEL_EXIT
+  name: ACTOR_MOVE_LEVEL_EXIT
+  aliases: [ACTOR_MOVE_TYPE75_LEVEL_EXIT]
   type: movement_stream
   size: 138
   confidence: decompiled
@@ -4900,7 +4910,8 @@
     - movement_stream_decoder
 
 0x00120FB4:
-  name: ACTOR_MOVE_TYPE84_LEVEL_EVENT_VARIANT_B
+  name: ACTOR_MOVE_LEVEL_EVENT_VARIANT_B
+  aliases: [ACTOR_MOVE_TYPE84_LEVEL_EVENT_VARIANT_B]
   type: movement_stream
   size: 42
   confidence: decompiled
@@ -4922,7 +4933,8 @@
     - movement_stream_decoder
 
 0x00120FFE:
-  name: ACTOR_MOVE_TYPE46_LEVEL_EVENT_MODE_READY
+  name: ACTOR_MOVE_LEVEL_EVENT_MODE_READY
+  aliases: [ACTOR_MOVE_TYPE46_LEVEL_EVENT_MODE_READY]
   type: movement_stream
   size: 54
   confidence: decompiled
@@ -4933,7 +4945,8 @@
     - movement_stream_decoder
 
 0x00121034:
-  name: ACTOR_MOVE_TYPE40_TYPE3A_LEVEL_EVENT_PRELUDE
+  name: ACTOR_MOVE_LEVEL_EVENT_SHARED_PRELUDE
+  aliases: [ACTOR_MOVE_TYPE40_TYPE3A_LEVEL_EVENT_PRELUDE]
   type: movement_stream
   size: 0x4E
   confidence: decompiled
@@ -4944,7 +4957,8 @@
     - movement_stream_decoder
 
 0x00121082:
-  name: ACTOR_MOVE_TYPE2F_LEVEL_EVENT_MOVING_VARIANT
+  name: ACTOR_MOVE_LEVEL_EVENT_MOVING_VARIANT
+  aliases: [ACTOR_MOVE_TYPE2F_LEVEL_EVENT_MOVING_VARIANT]
   type: movement_stream
   size: 124
   confidence: decompiled
@@ -4966,7 +4980,8 @@
     - movement_stream_decoder
 
 0x00121300:
-  name: ACTOR_MOVE_TYPE52_LEVEL09_ENTRY
+  name: ACTOR_MOVE_LEVEL09_ENTRY
+  aliases: [ACTOR_MOVE_TYPE52_LEVEL09_ENTRY]
   type: movement_stream
   size: 226
   confidence: decompiled
@@ -5010,11 +5025,12 @@
     - movement_stream_decoder
 
 0x001214B2:
-  name: ACTOR_MOVE_TYPE84_PRESENTATION_RESPONSE
+  name: ACTOR_MOVE_PRESENTATION_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE84_PRESENTATION_RESPONSE]
   type: movement_stream
   size: 120
   confidence: decompiled
-  description: Type-0x84 presentation-child movement response installed by ACTOR_ANIM_TYPE84_PRESENTATION_CHILD at 0x00124986. Its exact 120-byte owner applies the staged (+1,-1) through (+3,+1) trajectory with command-timer 0x87, conditionally enters the alternate settle at 0x00121502, writes the presentation terminal value through actor field 0x14, clears movement state, and ends immediately before ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION.
+  description: Type-0x84 presentation-child movement response installed by ACTOR_ANIM_TYPE84_PRESENTATION_CHILD at 0x00124986. Its exact 120-byte owner applies the staged (+1,-1) through (+3,+1) trajectory with command-timer 0x87, conditionally enters the alternate settle at 0x00121502, writes the presentation terminal value through actor field 0x14, clears movement state, and ends immediately before ACTOR_MOVE_LEVEL08_EXIT_PRESENTATION.
   evidence:
     - type14_type84_presentation_animation_static_decompilation
     - movement_stream_decoder
@@ -5094,7 +5110,8 @@
     - movement_stream_decoder
 
 0x0012152A:
-  name: ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION
+  name: ACTOR_MOVE_LEVEL08_EXIT_PRESENTATION
+  aliases: [ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION]
   type: movement_stream
   size: 110
   confidence: decompiled
@@ -5105,7 +5122,8 @@
     - movement_stream_decoder
 
 0x001217A2:
-  name: ACTOR_MOVE_TYPE84_SCENE_RESET
+  name: ACTOR_MOVE_SCENE_RESET
+  aliases: [ACTOR_MOVE_TYPE84_SCENE_RESET]
   size: 18
   confidence: decompiled
   description: Type-0x84 scene-reset movement loop installed by ACTOR_TEMPLATE_TYPE_84_SCENE_RESET. It applies five (+1, 0) steps followed by a (+1, -1) step and loops back to 0x001217A2; the following 0x001217B4 region is a separate actor movement entry.
@@ -8378,7 +8396,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x60 Level 08 exit-presentation template selected by Level08_ExitCallback; it uses ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION at 0x0012152A, default animation entry 0x00123130, owns eleven resources, and carries trailing flags 0x0200 before the caller copies the player position and publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350.
+  description: Type-0x60 Level 08 exit-presentation template selected by Level08_ExitCallback; it uses ACTOR_MOVE_LEVEL08_EXIT_PRESENTATION at 0x0012152A, default animation entry 0x00123130, owns eleven resources, and carries trailing flags 0x0200 before the caller copies the player position and publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350.
   evidence:
     - ghidra_level08_exit_routine
     - level08_exit_template_targets
@@ -8974,7 +8992,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x50 Level-09 spawn base selected by Level09_FrameCallback at 0x001B6186; its template supplies the type, base flags, template word 0x4000, and eleven resources, while the callback installs ACTOR_MOVE_TYPE50_LEVEL09_SPAWN at 0x001203F2, animation 0x00124B94, facing 0xFF, response byte 2, and the level-relative position.
+  description: Type-0x50 Level-09 spawn base selected by Level09_FrameCallback at 0x001B6186; its template supplies the type, base flags, template word 0x4000, and eleven resources, while the callback installs ACTOR_MOVE_LEVEL09_SPAWN at 0x001203F2, animation 0x00124B94, facing 0xFF, response byte 2, and the level-relative position.
   evidence:
     - ghidra_decompile_001B614C
     - level09_type50_template_targets
@@ -8995,7 +9013,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2F final-scene event template selected by Level12_FrameCallback at 0x001B62B6 when its event byte is 0x0D; it uses ACTOR_MOVE_TYPE2F_LEVEL12_TERMINAL_EVENT at 0x001203D0, animation stream ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
+  description: Type-0x2F final-scene event template selected by Level12_FrameCallback at 0x001B62B6 when its event byte is 0x0D; it uses ACTOR_MOVE_LEVEL12_TERMINAL_EVENT at 0x001203D0, animation stream ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
