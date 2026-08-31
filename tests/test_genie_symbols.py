@@ -1615,7 +1615,8 @@ def test_player_collision_latch_family_has_behavior_names_and_legacy_aliases():
         assert legacy in symbol.aliases
     latch = SymbolStore().at(0x00FFF116, include_ranges=False)
     assert latch is not None
-    assert latch.name == "PLAYER_INTERACTION_TYPE4B_LATCH"
+    assert latch.name == "PLAYER_INTERACTION_FOLLOWUP_LATCH"
+    assert "PLAYER_INTERACTION_TYPE4B_LATCH" in latch.aliases
 
 
 def test_player_level_exit_response_has_behavior_name_and_legacy_alias():
@@ -2926,19 +2927,21 @@ def test_real_player_collision_response_gates_have_canonical_roles():
     type3e = symbols.at(0x00FFF177, include_ranges=False)
     type3f = symbols.at(0x00FFF178, include_ranges=False)
     assert type3e is not None
-    assert type3e.name == "PLAYER_COLLISION_GATE_TYPE3E"
+    assert type3e.name == "PLAYER_COLLISION_FOLLOWUP_RESPONSE_GATE_PRIMARY"
+    assert "PLAYER_COLLISION_GATE_TYPE3E" in type3e.aliases
     assert type3e.metadata["format"] == "boolean"
     assert type3f is not None
-    assert type3f.name == "PLAYER_COLLISION_GATE_TYPE3F"
+    assert type3f.name == "PLAYER_COLLISION_FOLLOWUP_RESPONSE_GATE_SECONDARY"
+    assert "PLAYER_COLLISION_GATE_TYPE3F" in type3f.aliases
     assert type3f.metadata["format"] == "boolean"
 
 
 def test_real_type47_49_collision_gates_have_canonical_roles():
     symbols = SymbolStore()
     expected = {
-        0x00FFF126: "PLAYER_COLLISION_GATE_TYPE47",
-        0x00FFF127: "PLAYER_COLLISION_GATE_TYPE48",
-        0x00FFF128: "PLAYER_COLLISION_GATE_TYPE49",
+        0x00FFF126: "PLAYER_COLLISION_BASE_RESPONSE_GATE_B6",
+        0x00FFF127: "PLAYER_COLLISION_BASE_RESPONSE_GATE_B7",
+        0x00FFF128: "PLAYER_COLLISION_BASE_RESPONSE_GATE_B8",
     }
     for address, name in expected.items():
         symbol = symbols.at(address, include_ranges=False)
@@ -2990,7 +2993,8 @@ def test_real_palette_transition_step_has_canonical_role():
 def test_real_level09_type50_spawn_cooldown_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF118, include_ranges=False)
     assert symbol is not None
-    assert symbol.name == "LEVEL09_TYPE50_SPAWN_COOLDOWN"
+    assert symbol.name == "LEVEL09_PERIODIC_SPAWN_COOLDOWN"
+    assert "LEVEL09_TYPE50_SPAWN_COOLDOWN" in symbol.aliases
     assert symbol.metadata["type"] == "u8"
     assert symbol.metadata["format"] == "counter"
 
@@ -2998,7 +3002,8 @@ def test_real_level09_type50_spawn_cooldown_has_canonical_role():
 def test_real_level00_type13_palette_delay_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF124, include_ranges=False)
     assert symbol is not None
-    assert symbol.name == "LEVEL00_TYPE13_PALETTE_DELAY"
+    assert symbol.name == "LEVEL00_RESPONSE_PALETTE_DELAY"
+    assert "LEVEL00_TYPE13_PALETTE_DELAY" in symbol.aliases
     assert symbol.metadata["type"] == "u8"
     assert symbol.metadata["format"] == "countdown"
 
@@ -3015,7 +3020,8 @@ def test_real_scene_state8_transition_count_has_canonical_role():
 def test_real_actor_type42_collision_step_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF10A, include_ranges=False)
     assert symbol is not None
-    assert symbol.name == "ACTOR_TYPE42_COLLISION_STEP"
+    assert symbol.name == "PLAYER_COLLISION_CONTACT_STEP"
+    assert "ACTOR_TYPE42_COLLISION_STEP" in symbol.aliases
     assert symbol.metadata["type"] == "u8"
     assert symbol.metadata["format"] == "counter"
 
@@ -3023,13 +3029,13 @@ def test_real_actor_type42_collision_step_has_canonical_role():
 def test_real_collision_and_presentation_state_have_canonical_roles():
     symbols = SymbolStore()
     expected = {
-        0x00FFF10E: ("PLAYER_INTERACTION_TYPE1A_LATCH", "boolean"),
-        0x00FFF10F: ("PLAYER_INTERACTION_TYPE1B_LATCH", "boolean"),
-        0x00FFF110: ("PLAYER_INTERACTION_TYPE1C_LATCH", "boolean"),
-        0x00FFF123: ("INTERACTION_TYPE12_PRESENTATION_LATCH", "boolean"),
-        0x00FFF125: ("ACTOR_TYPE18_19_CONTACT_COUNT", "counter"),
-        0x00FFF129: ("PLAYER_INTERACTION_TYPE4A_LATCH", "boolean"),
-        0x00FFF12A: ("PLAYER_INTERACTION_TYPE4C_LATCH", "boolean"),
+        0x00FFF10E: ("PLAYER_DEATH_RESPONSE_LATCH", "boolean"),
+        0x00FFF10F: ("PLAYER_DEATH_RESPONSE_LATCH_VARIANT_A", "boolean"),
+        0x00FFF110: ("PLAYER_DEATH_RESPONSE_LATCH_VARIANT_B", "boolean"),
+        0x00FFF123: ("INTERACTION_PRESENTATION_ALTERNATE_LATCH", "boolean"),
+        0x00FFF125: ("PLAYER_COLLISION_CONTACT_COUNT", "counter"),
+        0x00FFF129: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_B9", "boolean"),
+        0x00FFF12A: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_BA", "boolean"),
         0x00FFF13E: ("MENU_PRESENTATION_TIMEOUT", "countdown"),
         0x00FFF154: ("RAW_TERRAIN_QUERY_STATE", "boolean"),
         0x00FFF570: ("SCENE_PRESENTATION_LATCH", "boolean"),
@@ -3170,10 +3176,10 @@ def test_real_collision_geometry_and_event_latches_have_canonical_roles():
         0x00FFF0DA: ("PLAYER_ACTION_ANIMATION_STATE", "boolean"),
         0x00FFF0F6: ("PLAYER_COLLISION_CURRENT_ACTOR_TYPE", "integer"),
         0x00FFF10B: ("LEVEL_EVENT_PRESENTATION_STATE", "integer"),
-        0x00FFF112: ("PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE", "boolean"),
+        0x00FFF112: ("PLAYER_COLLISION_PAIR_SPAWN_GATE", "boolean"),
         0x00FFF11A: ("LEVEL04_EVENT_38_PENDING", "boolean"),
-        0x00FFF11C: ("PLAYER_COLLISION_TYPE29_SPAWN_GATE", "boolean"),
-        0x00FFF11D: ("ACTOR_TYPE11_SURFACE_INTERACTION_BLOCK", "boolean"),
+        0x00FFF11C: ("PLAYER_COLLISION_RESPONSE_SPAWN_GATE", "boolean"),
+        0x00FFF11D: ("SURFACE_INTERACTION_BLOCK", "boolean"),
         0x00FFF12C: ("LEVEL04_EVENT_45_PENDING", "boolean"),
     }
     for address, (name, format_name) in expected.items():
@@ -3184,10 +3190,47 @@ def test_real_collision_geometry_and_event_latches_have_canonical_roles():
         assert symbol.confidence == "decompiled"
 
 
+def test_numeric_ram_identities_promote_behavior_roles_and_preserve_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00FFF105: ("UPPER_INTERACTION_LEVEL_OBJECT_GATE_PRIMARY", "INTERACTION_GATE_TYPE1F"),
+        0x00FFF106: ("UPPER_INTERACTION_LEVEL_OBJECT_GATE_SECONDARY", "INTERACTION_GATE_TYPE1D"),
+        0x00FFF107: ("UPPER_INTERACTION_UPPER_ROUTE_GATE", "INTERACTION_GATE_TYPE1E"),
+        0x00FFF10A: ("PLAYER_COLLISION_CONTACT_STEP", "ACTOR_TYPE42_COLLISION_STEP"),
+        0x00FFF10E: ("PLAYER_DEATH_RESPONSE_LATCH", "PLAYER_INTERACTION_TYPE1A_LATCH"),
+        0x00FFF10F: ("PLAYER_DEATH_RESPONSE_LATCH_VARIANT_A", "PLAYER_INTERACTION_TYPE1B_LATCH"),
+        0x00FFF110: ("PLAYER_DEATH_RESPONSE_LATCH_VARIANT_B", "PLAYER_INTERACTION_TYPE1C_LATCH"),
+        0x00FFF112: ("PLAYER_COLLISION_PAIR_SPAWN_GATE", "PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE"),
+        0x00FFF116: ("PLAYER_INTERACTION_FOLLOWUP_LATCH", "PLAYER_INTERACTION_TYPE4B_LATCH"),
+        0x00FFF118: ("LEVEL09_PERIODIC_SPAWN_COOLDOWN", "LEVEL09_TYPE50_SPAWN_COOLDOWN"),
+        0x00FFF11C: ("PLAYER_COLLISION_RESPONSE_SPAWN_GATE", "PLAYER_COLLISION_TYPE29_SPAWN_GATE"),
+        0x00FFF11D: ("SURFACE_INTERACTION_BLOCK", "ACTOR_TYPE11_SURFACE_INTERACTION_BLOCK"),
+        0x00FFF123: ("INTERACTION_PRESENTATION_ALTERNATE_LATCH", "INTERACTION_TYPE12_PRESENTATION_LATCH"),
+        0x00FFF124: ("LEVEL00_RESPONSE_PALETTE_DELAY", "LEVEL00_TYPE13_PALETTE_DELAY"),
+        0x00FFF125: ("PLAYER_COLLISION_CONTACT_COUNT", "ACTOR_TYPE18_19_CONTACT_COUNT"),
+        0x00FFF126: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_B6", "PLAYER_COLLISION_GATE_TYPE47"),
+        0x00FFF127: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_B7", "PLAYER_COLLISION_GATE_TYPE48"),
+        0x00FFF128: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_B8", "PLAYER_COLLISION_GATE_TYPE49"),
+        0x00FFF129: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_B9", "PLAYER_INTERACTION_TYPE4A_LATCH"),
+        0x00FFF12A: ("PLAYER_COLLISION_BASE_RESPONSE_GATE_BA", "PLAYER_INTERACTION_TYPE4C_LATCH"),
+        0x00FFF16F: ("TERRAIN_RESPONSE_INTERACTION_GATE_SPECIAL_A", "INTERACTION_GATE_TYPE44"),
+        0x00FFF170: ("TERRAIN_RESPONSE_INTERACTION_GATE_SPECIAL_B", "INTERACTION_GATE_TYPE3A"),
+        0x00FFF171: ("TERRAIN_RESPONSE_INTERACTION_GATE_SPECIAL_C", "INTERACTION_GATE_TYPE40"),
+        0x00FFF177: ("PLAYER_COLLISION_FOLLOWUP_RESPONSE_GATE_PRIMARY", "PLAYER_COLLISION_GATE_TYPE3E"),
+        0x00FFF178: ("PLAYER_COLLISION_FOLLOWUP_RESPONSE_GATE_SECONDARY", "PLAYER_COLLISION_GATE_TYPE3F"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+
 def test_real_type18_19_pair_spawn_gate_has_reset_contract():
     symbol = SymbolStore().at(0x00FFF112, include_ranges=False)
     assert symbol is not None
-    assert symbol.name == "PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE"
+    assert symbol.name == "PLAYER_COLLISION_PAIR_SPAWN_GATE"
+    assert "PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE" in symbol.aliases
     assert "0x00000276" in symbol.description
     assert "0x00FF0000-0x00FFFFFF" in symbol.description
     assert "no post-set explicit clear" in symbol.description

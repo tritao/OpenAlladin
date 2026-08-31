@@ -1,0 +1,49 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "numeric-ram-role-identities",
+  "promotions": [
+    "PLAYER_COLLISION_CONTACT_STEP",
+    "PLAYER_COLLISION_CONTACT_COUNT",
+    "PLAYER_DEATH_RESPONSE_LATCH",
+    "PLAYER_DEATH_RESPONSE_LATCH_VARIANT_A",
+    "PLAYER_DEATH_RESPONSE_LATCH_VARIANT_B",
+    "PLAYER_COLLISION_PAIR_SPAWN_GATE",
+    "PLAYER_COLLISION_RESPONSE_SPAWN_GATE",
+    "PLAYER_COLLISION_BASE_RESPONSE_GATE_B6",
+    "PLAYER_COLLISION_BASE_RESPONSE_GATE_B7",
+    "PLAYER_COLLISION_BASE_RESPONSE_GATE_B8",
+    "PLAYER_COLLISION_BASE_RESPONSE_GATE_B9",
+    "PLAYER_COLLISION_BASE_RESPONSE_GATE_BA",
+    "PLAYER_COLLISION_FOLLOWUP_RESPONSE_GATE_PRIMARY",
+    "PLAYER_COLLISION_FOLLOWUP_RESPONSE_GATE_SECONDARY",
+    "PLAYER_INTERACTION_FOLLOWUP_LATCH",
+    "INTERACTION_PRESENTATION_ALTERNATE_LATCH",
+    "SURFACE_INTERACTION_BLOCK",
+    "LEVEL00_RESPONSE_PALETTE_DELAY",
+    "LEVEL09_PERIODIC_SPAWN_COOLDOWN",
+    "UPPER_INTERACTION_LEVEL_OBJECT_GATE_PRIMARY",
+    "UPPER_INTERACTION_LEVEL_OBJECT_GATE_SECONDARY",
+    "UPPER_INTERACTION_UPPER_ROUTE_GATE",
+    "TERRAIN_RESPONSE_INTERACTION_GATE_SPECIAL_A",
+    "TERRAIN_RESPONSE_INTERACTION_GATE_SPECIAL_B",
+    "TERRAIN_RESPONSE_INTERACTION_GATE_SPECIAL_C"
+  ],
+  "evidence": [
+    "actor_type42_collision_step_static_decompilation",
+    "counter_and_interaction_response_family_static_decompilation",
+    "semantic_state_latches_static_decompilation",
+    "player_collision_response_gates_static_decompilation",
+    "interaction_spawn_type84_base_static_decompilation",
+    "level01_upper_interaction_static_decompilation",
+    "terrain_response_family_static_decompilation",
+    "level00_type13_palette_delay_static_decompilation",
+    "level09_type50_spawn_cooldown_static_decompilation"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_behavior_role"
+  }
+}
