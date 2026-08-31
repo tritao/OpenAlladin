@@ -1492,6 +1492,16 @@ def test_real_actor_sprite_payload_buffer_has_canonical_role():
     assert symbol.confidence == "confirmed"
 
 
+def test_real_interaction_response_flag_has_canonical_role():
+    symbol = SymbolStore().at(0x00FFF104, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "INTERACTION_RESPONSE_FLAG"
+    assert symbol.kind == "ram"
+    assert symbol.metadata["format"] == "boolean"
+    assert symbol.confidence == "decompiled"
+    assert "no direct reader" in symbol.description
+
+
 def test_real_level07_spawn_cooldown_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF113, include_ranges=False)
     assert symbol is not None

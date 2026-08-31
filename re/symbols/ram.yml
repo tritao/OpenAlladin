@@ -1124,6 +1124,16 @@
   evidence:
     - ghidra_unclassified_actor_collision_decompile
     - actor_collision_handler_family_static_decompilation
+0xFFF104:
+  name: INTERACTION_RESPONSE_FLAG
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Interaction-response flag cleared by InteractionSpawn_RuntimeType87_80 immediately before its reverse-slot actor spawn. The exported whole-ROM database has no direct reader or additional writer, so the canonical name describes the established dispatch-side clear contract without assigning an unseen consumer.
+  evidence:
+    - ghidra_disassembly_001B6F0C
+    - actor_template_interaction_dispatch_static_decompilation
+    - ghidra_context_00FFF104
 0xFFF101:
   name: PLAYER_TERRAIN_BRAKE_STATE
   type: u8

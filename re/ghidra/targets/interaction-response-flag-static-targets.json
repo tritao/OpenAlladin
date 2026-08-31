@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "focus": "Canonicalize the interaction-response flag cleared by the runtime Type-0x80/0x87 spawn handler.",
+  "targets": [
+    { "address": "0x001B6F0C", "name": "InteractionSpawn_RuntimeType87_80", "ram": "0x00FFF104", "template": "0x001B7C4C" },
+    { "address": "0x001B525E", "name": "InteractionSpawn_ReverseSlot" },
+    { "address": "0x00FFF104", "name": "INTERACTION_RESPONSE_FLAG" }
+  ],
+  "contracts": [
+    "InteractionSpawn_RuntimeType87_80 clears byte 0x00FFF104 before entering InteractionSpawn_ReverseSlot.",
+    "The target uses ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE at 0x001B7C4C and the reverse-slot actor allocator family.",
+    "The current whole-ROM reference set exports no direct reader or additional writer for 0x00FFF104."
+  ],
+  "conclusion": "The byte is a canonical interaction-response flag with a deliberately limited clear-only contract."
+}
