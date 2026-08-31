@@ -15,19 +15,19 @@
     "exit_callback_offset": "0x28"
   },
   "callbacks": [
-    { "level": 0, "frame": "0x001B5B66", "frame_name": "Level00_EnterRoutine", "exit": "0x001B63EA", "exit_name": "Level00_ExitRoutine" },
-    { "level": 1, "frame": "0x001B5B4A", "frame_name": "Level01_EnterRoutine", "exit": "0x001B6406", "exit_name": "Level01_ExitRoutine" },
-    { "level": 2, "frame": "0x001B5B94", "frame_name": "Level02_EnterRoutine", "exit": "0x001B6394", "exit_name": "Level02_ExitRoutine" },
-    { "level": 3, "frame": "0x001B5B9A", "frame_name": "Level03_EnterRoutine", "exit": "0x001B6414", "exit_name": "Level03_ExitRoutine" },
-    { "level": 4, "frame": "0x001B5B9C", "frame_name": "Level04_EnterRoutine", "exit": "0x001B642E", "exit_name": "Level04_ExitRoutine" },
-    { "level": 5, "frame": "0x001B5C20", "frame_name": "Level05_EnterRoutine", "exit": "0x001B6434", "exit_name": "Level05_ExitRoutine" },
-    { "level": 6, "frame": "0x001B5D3A", "frame_name": "Level06_EnterRoutine", "exit": "0x001B644E", "exit_name": "Level06_ExitRoutine" },
-    { "level": 7, "frame": "0x001B5D68", "frame_name": "Level07_EnterRoutine", "exit": "0x001B64C2", "exit_name": "Level07_ExitRoutine" },
-    { "level": 8, "frame": "0x001B6066", "frame_name": "Level08_EnterRoutine", "exit": "0x001B64D0", "exit_name": "Level08_ExitRoutine" },
-    { "level": 9, "frame": "0x001B614C", "frame_name": "Level09_EnterRoutine", "exit": "0x001B653E", "exit_name": "Level09_ExitRoutine" },
-    { "level": 10, "frame": "0x001B623A", "frame_name": "Level10_EnterRoutine", "exit": "0x001B6554", "exit_name": "Level10_ExitRoutine" },
-    { "level": 11, "frame": "0x001B6258", "frame_name": "Level11_EnterRoutine", "exit": "0x001B655C", "exit_name": "Level11_ExitRoutine" },
-    { "level": 12, "frame": "0x001B62B6", "frame_name": "Level12_EnterRoutine", "exit": "0x001B6562", "exit_name": "Level12_ExitRoutine" }
+    { "level": 0, "frame": "0x001B5B66", "frame_name": "Level00_FrameCallback", "exit": "0x001B63EA", "exit_name": "Level00_ExitCallback" },
+    { "level": 1, "frame": "0x001B5B4A", "frame_name": "Level01_FrameCallback", "exit": "0x001B6406", "exit_name": "Level01_ExitCallback" },
+    { "level": 2, "frame": "0x001B5B94", "frame_name": "Level02_FrameCallback", "exit": "0x001B6394", "exit_name": "Level02_ExitCallback" },
+    { "level": 3, "frame": "0x001B5B9A", "frame_name": "Level03_FrameCallback", "exit": "0x001B6414", "exit_name": "Level03_ExitCallback" },
+    { "level": 4, "frame": "0x001B5B9C", "frame_name": "Level04_FrameCallback", "exit": "0x001B642E", "exit_name": "Level04_ExitCallback" },
+    { "level": 5, "frame": "0x001B5C20", "frame_name": "Level05_FrameCallback", "exit": "0x001B6434", "exit_name": "Level05_ExitCallback" },
+    { "level": 6, "frame": "0x001B5D3A", "frame_name": "Level06_FrameCallback", "exit": "0x001B644E", "exit_name": "Level06_ExitCallback" },
+    { "level": 7, "frame": "0x001B5D68", "frame_name": "Level07_FrameCallback", "exit": "0x001B64C2", "exit_name": "Level07_ExitCallback" },
+    { "level": 8, "frame": "0x001B6066", "frame_name": "Level08_FrameCallback", "exit": "0x001B64D0", "exit_name": "Level08_ExitCallback" },
+    { "level": 9, "frame": "0x001B614C", "frame_name": "Level09_FrameCallback", "exit": "0x001B653E", "exit_name": "Level09_ExitCallback" },
+    { "level": 10, "frame": "0x001B623A", "frame_name": "Level10_FrameCallback", "exit": "0x001B6554", "exit_name": "Level10_ExitCallback" },
+    { "level": 11, "frame": "0x001B6258", "frame_name": "Level11_FrameCallback", "exit": "0x001B655C", "exit_name": "Level11_ExitCallback" },
+    { "level": 12, "frame": "0x001B62B6", "frame_name": "Level12_FrameCallback", "exit": "0x001B6562", "exit_name": "Level12_ExitCallback" }
   ],
   "scope": "Names the callback entry points proven by LEVEL_TABLE pointer fields. Descriptions summarize direct static behavior; callback reachability in a particular scene remains a separate runtime question."
 }

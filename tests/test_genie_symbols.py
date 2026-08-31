@@ -475,6 +475,43 @@ def test_terrain_auxiliary_flag_is_closed_as_unconsumed_static_state():
     assert any("indirect pointer-based" in item for item in finding["limitations"])
 
 
+def test_level_table_callbacks_have_phase_accurate_names_and_legacy_aliases():
+    expected = {
+        0x001B5B66: ("Level00_FrameCallback", "Level00_EnterRoutine"),
+        0x001B63EA: ("Level00_ExitCallback", "Level00_ExitRoutine"),
+        0x001B5B4A: ("Level01_FrameCallback", "Level01_EnterRoutine"),
+        0x001B6406: ("Level01_ExitCallback", "Level01_ExitRoutine"),
+        0x001B5B94: ("Level02_FrameCallback", "Level02_EnterRoutine"),
+        0x001B6394: ("Level02_ExitCallback", "Level02_ExitRoutine"),
+        0x001B5B9A: ("Level03_FrameCallback", "Level03_EnterRoutine"),
+        0x001B6414: ("Level03_ExitCallback", "Level03_ExitRoutine"),
+        0x001B5B9C: ("Level04_FrameCallback", "Level04_EnterRoutine"),
+        0x001B642E: ("Level04_ExitCallback", "Level04_ExitRoutine"),
+        0x001B5C20: ("Level05_FrameCallback", "Level05_EnterRoutine"),
+        0x001B6434: ("Level05_ExitCallback", "Level05_ExitRoutine"),
+        0x001B5D3A: ("Level06_FrameCallback", "Level06_EnterRoutine"),
+        0x001B644E: ("Level06_ExitCallback", "Level06_ExitRoutine"),
+        0x001B5D68: ("Level07_FrameCallback", "Level07_EnterRoutine"),
+        0x001B64C2: ("Level07_ExitCallback", "Level07_ExitRoutine"),
+        0x001B6066: ("Level08_FrameCallback", "Level08_EnterRoutine"),
+        0x001B64D0: ("Level08_ExitCallback", "Level08_ExitRoutine"),
+        0x001B614C: ("Level09_FrameCallback", "Level09_EnterRoutine"),
+        0x001B653E: ("Level09_ExitCallback", "Level09_ExitRoutine"),
+        0x001B623A: ("Level10_FrameCallback", "Level10_EnterRoutine"),
+        0x001B6554: ("Level10_ExitCallback", "Level10_ExitRoutine"),
+        0x001B6258: ("Level11_FrameCallback", "Level11_EnterRoutine"),
+        0x001B655C: ("Level11_ExitCallback", "Level11_ExitRoutine"),
+        0x001B62B6: ("Level12_FrameCallback", "Level12_EnterRoutine"),
+        0x001B6562: ("Level12_ExitCallback", "Level12_ExitRoutine"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.aliases == (alias,)
+
+
 def test_type84_base_interaction_spawn_handlers_have_semantic_names_and_aliases():
     expected = {
         0x001B70F8: ("InteractionSpawn_CreateType84Base_B6", "InteractionSpawn_Type84Base_B6"),

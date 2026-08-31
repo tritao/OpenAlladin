@@ -1,0 +1,58 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/level-callback-family-targets.json",
+  "promoted_symbol_count": 26,
+  "promoted_symbols": [
+    "Level00_FrameCallback", "Level00_ExitCallback",
+    "Level01_FrameCallback", "Level01_ExitCallback",
+    "Level02_FrameCallback", "Level02_ExitCallback",
+    "Level03_FrameCallback", "Level03_ExitCallback",
+    "Level04_FrameCallback", "Level04_ExitCallback",
+    "Level05_FrameCallback", "Level05_ExitCallback",
+    "Level06_FrameCallback", "Level06_ExitCallback",
+    "Level07_FrameCallback", "Level07_ExitCallback",
+    "Level08_FrameCallback", "Level08_ExitCallback",
+    "Level09_FrameCallback", "Level09_ExitCallback",
+    "Level10_FrameCallback", "Level10_ExitCallback",
+    "Level11_FrameCallback", "Level11_ExitCallback",
+    "Level12_FrameCallback", "Level12_ExitCallback"
+  ],
+  "legacy_aliases": [
+    "Level00_EnterRoutine", "Level00_ExitRoutine",
+    "Level01_EnterRoutine", "Level01_ExitRoutine",
+    "Level02_EnterRoutine", "Level02_ExitRoutine",
+    "Level03_EnterRoutine", "Level03_ExitRoutine",
+    "Level04_EnterRoutine", "Level04_ExitRoutine",
+    "Level05_EnterRoutine", "Level05_ExitRoutine",
+    "Level06_EnterRoutine", "Level06_ExitRoutine",
+    "Level07_EnterRoutine", "Level07_ExitRoutine",
+    "Level08_EnterRoutine", "Level08_ExitRoutine",
+    "Level09_EnterRoutine", "Level09_ExitRoutine",
+    "Level10_EnterRoutine", "Level10_ExitRoutine",
+    "Level11_EnterRoutine", "Level11_ExitRoutine",
+    "Level12_EnterRoutine", "Level12_ExitRoutine"
+  ],
+  "contracts": [
+    "LEVEL_TABLE at 0x00002C78 contains one per-frame callback pointer at offset 0x2C and one exit callback pointer at offset 0x28 for each of 13 levels.",
+    "The frame callbacks are invoked during active level service and the exit callbacks are invoked during level transition setup.",
+    "The renamed identities preserve the exact addresses, ranges, descriptions, and legacy aliases for every callback pair."
+  ],
+  "evidence": [
+    "level_callback_family_targets",
+    "level_table_enter_exit_targeted_decompile",
+    "LEVEL_TABLE pointer fields at 0x00002C78",
+    "per-level callback descriptions and cached decompilations"
+  ],
+  "limitations": [
+    "The names describe callback phase and level ownership; they do not claim that every callback is reached in every scene or route.",
+    "Older findings retain the historical EnterRoutine/ExitRoutine spelling as compatibility aliases."
+  ],
+  "conclusion": "All 26 level-table callback entry points now use phase-accurate semantic names, reducing the remaining generic Routine labels without changing ROM ownership or behavior.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

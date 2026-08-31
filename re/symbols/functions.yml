@@ -1676,14 +1676,16 @@
     - ghidra_level_transition_targeted_decompile
     - ghidra_memory_reference_scene_state
 0x001B5B4A:
-  name: Level01_EnterRoutine
+  name: Level01_FrameCallback
+  aliases: [Level01_EnterRoutine]
   confidence: confirmed
   description: Level-table entry-1 per-frame boundary predicate; when PLAYER_WORLD_X exceeds 0x1287 and PLAYER_WORLD_Y is below 0x01D6 it arms SCENE_SCRIPT_COUNTDOWN with 0xFF, then decrements the shared level timer at 0x00FFF103.
   evidence:
     - ghidra_level_transition_targeted_decompile
     - level_table_entry_1
 0x001B6406:
-  name: Level01_ExitRoutine
+  name: Level01_ExitCallback
+  aliases: [Level01_ExitRoutine]
   confidence: confirmed
   description: Level-table entry-1 exit callback; writes VDP control word 0x8B02 and invokes the common transition helper at 0x001B2E9A.
   evidence:
@@ -1699,7 +1701,8 @@
     - level08_event_vdp_targets
     - level08_event_vdp_static_decompilation
 0x001B6066:
-  name: Level08_EnterRoutine
+  name: Level08_FrameCallback
+  aliases: [Level08_EnterRoutine]
   confidence: decompiled
   description: Level-table entry-8 update; advances the level-8 event counters, emits two rotating VDP records from ROM table 0x0029E0, consumes timed records through the level-event dispatch table at 0x0020C0, and conditionally instantiates a camera-relative actor.
   evidence:
@@ -4368,84 +4371,96 @@
     - hud_display_frame_hooks_targets
     - hud_display_frame_hooks_static_decompilation
 0x001B5B66:
-  name: Level00_EnterRoutine
+  name: Level00_FrameCallback
+  aliases: [Level00_EnterRoutine]
   confidence: trace_validated
   description: Level-table entry-0 per-frame callback; counts down the level-0 resource timer, emits the associated presentation resource command when that timer expires, and decrements the shared level timer.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B63EA:
-  name: Level00_ExitRoutine
+  name: Level00_ExitCallback
+  aliases: [Level00_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-0 exit callback; selects scene-resource mode 0x17, prepares VDP control 0x8B02, and enters the common transition helper.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B5B94:
-  name: Level02_EnterRoutine
+  name: Level02_FrameCallback
+  aliases: [Level02_EnterRoutine]
   confidence: trace_validated
   description: Level-table entry-2 per-frame callback; dispatches one timed level-event command through LevelEvent_DispatchTimedCommand.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B6394:
-  name: Level02_ExitRoutine
+  name: Level02_ExitCallback
+  aliases: [Level02_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-2 exit callback; resets presentation state, selects scene-resource mode 0x0F, queues optional audio command 0x3A, and enters the common transition helper.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B5B9A:
-  name: Level03_EnterRoutine
+  name: Level03_FrameCallback
+  aliases: [Level03_EnterRoutine]
   confidence: confirmed
   description: Level-table entry-3 per-frame callback; an intentional RTS-only extension point with no observable state effect.
   evidence:
     - ghidra_disassembly_001B5B9A
     - level_callback_family_targets
 0x001B6414:
-  name: Level03_ExitRoutine
+  name: Level03_ExitCallback
+  aliases: [Level03_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-3 exit callback; enters the common transition helper, prepares VDP control 0x8B02, selects scene-resource mode 0x10, and runs the shared resource service.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B5B9C:
-  name: Level04_EnterRoutine
+  name: Level04_FrameCallback
+  aliases: [Level04_EnterRoutine]
   confidence: decompiled
   description: Level-table entry-4 per-frame callback; consumes two pending level-event flags, queues their optional audio commands, clears the flags, and arms the transition gate when the player reaches the configured coordinate window.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B642E:
-  name: Level04_ExitRoutine
+  name: Level04_ExitCallback
+  aliases: [Level04_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-4 exit callback; enters the common transition helper without additional actor or resource setup.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B5C20:
-  name: Level05_EnterRoutine
+  name: Level05_FrameCallback
+  aliases: [Level05_EnterRoutine]
   confidence: decompiled
   description: Level-table entry-5 per-frame callback; evaluates several player-coordinate event windows, performs the Level 05 timed type-0x7C actor spawn when its gate is reached, and updates the level event cadence state.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B6434:
-  name: Level05_ExitRoutine
+  name: Level05_ExitCallback
+  aliases: [Level05_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-5 exit callback; enters the common transition helper, arms the level-exit presentation flag, and selects scene-resource mode 0x18.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B5D3A:
-  name: Level06_EnterRoutine
+  name: Level06_FrameCallback
+  aliases: [Level06_EnterRoutine]
   confidence: decompiled
   description: Level-table entry-6 per-frame callback; dispatches one timed level-event command and clears the level-6 presentation scratch flag.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B644E:
-  name: Level06_ExitRoutine
+  name: Level06_ExitCallback
+  aliases: [Level06_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-6 exit callback; optionally allocates the type-0x74 exit actor at (0x00A0,0x01C0), publishes exit presentation state, queues optional audio command 0x3A, and selects scene-resource mode 0x0F.
   evidence:
@@ -4453,7 +4468,8 @@
     - level_callback_family_targets
     - actor_template_late_dispatch_family_static_decompilation
 0x001B5D68:
-  name: Level07_EnterRoutine
+  name: Level07_FrameCallback
+  aliases: [Level07_EnterRoutine]
   confidence: decompiled
   description: Level-table entry-7 per-frame callback; advances its cadence byte, evaluates coordinate windows, and conditionally allocates the level-7 presentation actor while maintaining the level transition gate.
   evidence:
@@ -4461,14 +4477,16 @@
     - level_callback_family_targets
     - level07_type7c_template_targets
 0x001B64C2:
-  name: Level07_ExitRoutine
+  name: Level07_ExitCallback
+  aliases: [Level07_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-7 exit callback; enters the common transition helper and prepares VDP control 0x8B02.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B64D0:
-  name: Level08_ExitRoutine
+  name: Level08_ExitCallback
+  aliases: [Level08_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-8 exit callback; prepares scene-resource VDP state, initializes ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT at 0x001B7DC8, copies the player position into the actor, publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350, and records the exit resource phase.
   evidence:
@@ -4476,7 +4494,8 @@
     - level_callback_family_targets
     - level08_exit_template_targets
 0x001B614C:
-  name: Level09_EnterRoutine
+  name: Level09_FrameCallback
+  aliases: [Level09_EnterRoutine]
   confidence: decompiled
   description: Level-table entry-9 per-frame callback; advances its event cadence, evaluates player-coordinate windows, conditionally spawns ACTOR_TEMPLATE_TYPE_50_LEVEL09_SPAWN_BASE into a backward slot before installing the level-specific movement/animation and position fields, and increments its bounded event counter.
   evidence:
@@ -4484,49 +4503,56 @@
     - level_callback_family_targets
     - level09_type50_template_targets
 0x001B653E:
-  name: Level09_ExitRoutine
+  name: Level09_ExitCallback
+  aliases: [Level09_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-9 exit callback; prepares VDP control 0x8B02, sets the scene transition presentation flag, and enters the common transition helper.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B623A:
-  name: Level10_EnterRoutine
+  name: Level10_FrameCallback
+  aliases: [Level10_EnterRoutine]
   confidence: decompiled
   description: Level-table entry-10 per-frame callback; arms the transition gate after the player reaches the level-10 X/Y boundary window.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B6554:
-  name: Level10_ExitRoutine
+  name: Level10_ExitCallback
+  aliases: [Level10_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-10 exit callback; prepares VDP control 0x8B02 before returning to the common transition path.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B6258:
-  name: Level11_EnterRoutine
+  name: Level11_FrameCallback
+  aliases: [Level11_EnterRoutine]
   confidence: decompiled
   description: Level-table entry-11 per-frame callback; when the player animation gate and coordinate window match, allocates the type-0x7B level-event actor from ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT at its fixed position and facing.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B655C:
-  name: Level11_ExitRoutine
+  name: Level11_ExitCallback
+  aliases: [Level11_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-11 exit callback; enters the common transition helper without additional actor setup.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B62B6:
-  name: Level12_EnterRoutine
+  name: Level12_FrameCallback
+  aliases: [Level12_EnterRoutine]
   confidence: decompiled
   description: Level-table entry-12 per-frame callback; dispatches the type-0x0D event path and conditionally creates the final-scene type-0x2F or type-0x59 presentation actor in its configured coordinate windows.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_callback_family_targets
 0x001B6562:
-  name: Level12_ExitRoutine
+  name: Level12_ExitCallback
+  aliases: [Level12_ExitRoutine]
   confidence: decompiled
   description: Level-table entry-12 exit callback; initializes the three fixed scene-setup actors at their recorded positions before returning to the level transition path.
   evidence:
