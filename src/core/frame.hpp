@@ -11,6 +11,7 @@
 namespace openaladdin::core {
 
 struct CoreTrace;
+struct CoreInput;
 
 struct CoreRuntime {
     GenesisRam ram{};
@@ -38,6 +39,14 @@ void bind_rom(CoreRuntime& core, RomView rom);
 void step_frame(
     CoreRuntime& core,
     std::uint64_t frame_number,
+    std::string_view input_token,
+    CoreTrace* trace = nullptr
+);
+
+void step_frame(
+    CoreRuntime& core,
+    std::uint64_t frame_number,
+    const CoreInput& input,
     std::string_view input_token,
     CoreTrace* trace = nullptr
 );

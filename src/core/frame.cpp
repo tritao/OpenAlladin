@@ -2,6 +2,8 @@
 
 #include "core/animation_vm.hpp"
 #include "core/movement_vm.hpp"
+#include "core/player.hpp"
+#include "core/terrain.hpp"
 #include "core/trace.hpp"
 
 namespace openaladdin::core {
@@ -85,6 +87,17 @@ void step_frame(
     std::string_view input_token,
     CoreTrace* trace
 ) {
+    step_frame(
+        core, frame_number, CoreInput{}, input_token, trace);
+}
+
+void step_frame(
+    CoreRuntime& core,
+    std::uint64_t frame_number,
+    const CoreInput& input,
+    std::string_view input_token,
+    CoreTrace* trace
+) {
     if (trace != nullptr) {
         trace->phase_count = 0;
         trace->write_count = 0;
@@ -97,8 +110,14 @@ void step_frame(
 
     for (const FrameService& service : kFrameServices) {
         if (trace != nullptr) trace_phase(*trace, service);
-        if (service.ordinal == 8) {
+        if (service.ordinal == 1) {
+            player_sample_input(core, input);
+        } else if (service.ordinal == 8) {
             movement_vm_tick_actors(core);
+        } else if (service.ordinal == 15) {
+            (void)terrain_resolve_player_cell(core);
+        } else if (service.ordinal == 17) {
+            player_integrate_motion(core);
         } else if (service.ordinal == 30) {
             animation_vm_tick_actors(core);
         }

@@ -1,5 +1,7 @@
 #include "core/trace.hpp"
 
+#include "core/terrain.hpp"
+
 #include <ostream>
 
 namespace openaladdin::core {
@@ -217,11 +219,17 @@ void trace_state(
            << ",\"transition_event\":" << static_cast<unsigned>(read8(ram, kSceneTransitionEvent))
            << "}"
            << ",\"terrain\":{\"query_result\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainQueryResult))
+           << ",\"query_input_raw\":" << static_cast<unsigned>(read8(ram, kTerrainQueryInputRaw))
            << ",\"push_right\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainPushRight))
            << ",\"push_left\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainPushLeft))
            << ",\"push_up\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainPushUp))
            << ",\"push_down\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainPushDown))
            << ",\"behavior\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainBehavior))
+           << ",\"surface_mode\":" << read16(ram, kPlayerTerrainSurfaceMode)
+           << ",\"surface_latch\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainSurfaceLatch))
+           << ",\"stop_left_motion\":" << static_cast<unsigned>(read8(ram, kTerrainStopLeftMotion))
+           << ",\"stop_right_motion\":" << static_cast<unsigned>(read8(ram, kTerrainStopRightMotion))
+           << ",\"stop_upward_motion\":" << static_cast<unsigned>(read8(ram, kTerrainStopUpwardMotion))
            << ",\"horizontal_response\":" << read_i16(ram, kPlayerTerrainHorizontalResponse)
            << ",\"response_active\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainResponseActive))
            << ",\"jump_response_counter\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainJumpResponseCounter))
@@ -230,6 +238,8 @@ void trace_state(
            << ",\"response_timer_state\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainResponseTimer))
            << ",\"state\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainState))
            << ",\"response_latch\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainResponseLatch))
+           << ",\"handler_pc\":" << terrain_handler_for_behavior(
+               read8(ram, kPlayerTerrainBehavior))
            << "}"
            << ",\"ram_bytes\":";
     write_ram_bytes(output, ram);

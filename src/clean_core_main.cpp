@@ -1,4 +1,5 @@
 #include "core/frame.hpp"
+#include "core/player.hpp"
 #include "core/trace.hpp"
 
 #include <cstdint>
@@ -155,6 +156,7 @@ int main(int argc, char** argv) {
             openaladdin::core::step_frame(
                 core,
                 static_cast<std::uint64_t>(frame + 1),
+                openaladdin::core::core_input_from_token(token),
                 token,
                 state ? &trace : nullptr);
         }
