@@ -416,6 +416,11 @@ VmRunResult animation_vm_run_actor(CoreRuntime& core, std::size_t actor_slot) {
 void animation_vm_tick_actors(CoreRuntime& core) {
     if (!rom_is_bound(core.rom)) return;
     write8(core.ram, kActorVmMovementPass, 0);
+    // AnimationVM_RunActorPass clears the player action-side state before
+    // walking the shared actor table. The streams republish it through ED;
+    // keeping the clear here preserves that real pass boundary.
+    write8(core.ram, kPlayerActionResponseStateB, 0);
+    write8(core.ram, kPlayerActionAnimationState, 0);
     if ((read8(core.ram, kFramePhaseCounter) & 1) == 0) return;
     for (std::size_t slot = 0; slot < kActorSlotCount; ++slot) {
         (void)animation_vm_run_actor(core, slot);

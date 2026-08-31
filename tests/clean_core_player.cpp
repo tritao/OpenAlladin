@@ -65,6 +65,34 @@ int main() {
     assert(no_op.no_op);
     assert(terrain_handler_for_behavior(0xFF) == 0x001B65BE);
 
+    // Player selectors publish roots and latches directly into actor zero and
+    // ordinary RAM. No native pose/action object is required.
+    auto player_actor = actor_view(core.ram, 0);
+    actor_write8(player_actor, kActorTypeOffset, 1);
+    write32(core.ram, kPlayerFramePointer, 1);
+    write32(core.ram, kPlayerAnimationPc, 0x00121D9A);
+    write8(core.ram, kPlayerTerrainLandingState, 1);
+    write_i16(core.ram, kPlayerVelocityY, 0);
+    player_select_locomotion_or_action(
+        core, CoreInput{false, false, false, true});
+    assert(read32(core.ram, kPlayerAnimationPc) == 0x00122006);
+    write_i16(core.ram, kPlayerVelocityY, 0);
+    player_select_action_animation(
+        core, CoreInput{false, false, false, false, false, false, true, true});
+    assert(read32(core.ram, kPlayerAnimationPc) == 0x0012271A);
+    assert(read8(core.ram, kPlayerInteractionPending) == 10);
+
+    write32(core.ram, kPlayerAnimationPc, 0x00122006);
+    write8(core.ram, kPlayerActionAnimationState, 0);
+    write8(core.ram, kPlayerTerrainResponseActive, 0);
+    write_i16(core.ram, kPlayerVelocityY, 0);
+    player_handle_jump_and_vertical_state(
+        core, CoreInput{false, false, false, false, true, true});
+    assert(read_i16(core.ram, kPlayerVelocityY) == -0x0200);
+    assert(read8(core.ram, kPlayerTerrainResponseActive) == 0xFF);
+    assert(read8(core.ram, kPlayerTerrainJumpResponseCounter) == 1);
+    assert(read32(core.ram, kPlayerAnimationPc) == 0x001221B0);
+
     // The new frame overload consumes input as an argument and publishes the
     // query before the recovered motion/integrator and later coordinate pass.
     write_i16(core.ram, kPlayerVelocityX, 0);

@@ -191,6 +191,10 @@ void trace_state(
            << ",\"facing_x_flip\":" << static_cast<unsigned>(read8(ram, kPlayerFacingXFlip))
            << ",\"animation_timer\":" << static_cast<unsigned>(read8(ram, kPlayerAnimationTimer))
            << ",\"actor_flags\":" << static_cast<unsigned>(read8(ram, kPlayerFlags))
+           << ",\"action_response_field\":" << static_cast<unsigned>(read8(ram, kPlayerActionResponseField))
+           << ",\"action_response_state_b\":" << static_cast<unsigned>(read8(ram, kPlayerActionResponseStateB))
+           << ",\"action_animation_state\":" << static_cast<unsigned>(read8(ram, kPlayerActionAnimationState))
+           << ",\"interaction_pending\":" << static_cast<unsigned>(read8(ram, kPlayerInteractionPending))
            << ",\"terrain_brake_state\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainBrakeState))
            << "}"
            << ",\"camera\":{\"x\":" << read16(ram, kWorldCameraX)

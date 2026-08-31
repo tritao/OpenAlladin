@@ -118,6 +118,11 @@ void step_frame(
             (void)terrain_resolve_player_cell(core);
         } else if (service.ordinal == 17) {
             player_integrate_motion(core);
+            player_handle_jump_and_vertical_state(core, input);
+        } else if (service.ordinal == 20) {
+            player_select_locomotion_or_action(core, input);
+        } else if (service.ordinal == 21) {
+            player_select_action_animation(core, input);
         } else if (service.ordinal == 30) {
             animation_vm_tick_actors(core);
         }
