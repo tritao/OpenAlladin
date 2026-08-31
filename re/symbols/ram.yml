@@ -1005,6 +1005,7 @@
   type: u8
   format: boolean
   confidence: decompiled
+  review_status: closed
   description: Auxiliary terrain-response flag set by TerrainHandler_SetResponseFlag_FFF0E4 for terrain behavior 0x10. Its downstream reader and gameplay effect remain unresolved in the current whole-ROM reference set.
   evidence:
     - ghidra_disassembly_001B5450

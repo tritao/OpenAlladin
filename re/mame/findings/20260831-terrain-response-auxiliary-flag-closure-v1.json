@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-recorded-negative-evidence-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "c2b557e",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "status": "recorded-static-review-closure",
+  "confidence": "decompiled",
+  "closure": {
+    "address": "0x00FFF0E4",
+    "name": "TERRAIN_RESPONSE_AUXILIARY_FLAG",
+    "writer": "0x001B5450 TerrainHandler_SetAuxiliaryResponseFlag",
+    "writer_count": 1,
+    "direct_reader_count": 0,
+    "runtime_observed": false,
+    "status": "closed-static-review"
+  },
+  "contracts": [
+    "The terrain response table entry at 0x00004594 dispatches behavior 0x10 to TerrainHandler_SetAuxiliaryResponseFlag at 0x001B5450.",
+    "The handler writes 0xFF to byte 0x00FFF0E4 and returns.",
+    "The whole-ROM database exports one writer and no direct reader for 0x00FFF0E4."
+  ],
+  "evidence": [
+    "terrain_response_auxiliary_flag_static_v1",
+    "terrain_response_family_static_v1",
+    "Exact whole-ROM memory writer and reader queries",
+    "Existing Level-01 and scene-transition runtime coverage"
+  ],
+  "limitations": [
+    "This closes the current static review as an unconsumed path; it does not prove that no indirect pointer-based or register-relative reader exists outside the exported absolute-reference set.",
+    "No higher-level gameplay meaning or runtime reachability is assigned.",
+    "Reopen if a future indirect table recovery or runtime trace observes a read of this byte."
+  ],
+  "conclusion": "TERRAIN_RESPONSE_AUXILIARY_FLAG is a fully named, write-only static terrain-response field for the current evidence set. The semantic review queue is now empty while the unresolved-indirect-read limitation remains explicit."
+}

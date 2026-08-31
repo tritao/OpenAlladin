@@ -460,6 +460,21 @@ def test_remaining_static_review_closure_preserves_bounded_limitations():
     assert "TERRAIN_RESPONSE_AUXILIARY_FLAG" in finding["conclusion"]
 
 
+def test_terrain_auxiliary_flag_is_closed_as_unconsumed_static_state():
+    symbol = SymbolStore().at(0x00FFF0E4, include_ranges=False)
+    assert symbol is not None
+    assert symbol.metadata["review_status"] == "closed"
+
+    finding = json.loads(
+        Path("re/mame/findings/20260831-terrain-response-auxiliary-flag-closure-v1.json")
+        .read_text(encoding="utf-8")
+    )
+    assert finding["closure"]["writer_count"] == 1
+    assert finding["closure"]["direct_reader_count"] == 0
+    assert finding["closure"]["runtime_observed"] is False
+    assert any("indirect pointer-based" in item for item in finding["limitations"])
+
+
 def test_type84_base_interaction_spawn_handlers_have_semantic_names_and_aliases():
     expected = {
         0x001B70F8: ("InteractionSpawn_CreateType84Base_B6", "InteractionSpawn_Type84Base_B6"),
