@@ -146,6 +146,10 @@ constexpr RamAddress kSceneScriptPending = 0x00FFF57C;
 constexpr RamAddress kSceneVdpUpdateFlag = 0x00FFF57D;
 constexpr RamAddress kSceneVdpClearFlag = 0x00FFF57E;
 constexpr RamAddress kSceneTransitionEvent = 0x00FFF57F;
+constexpr RamAddress kSceneResourceVdpStreamPtr = 0x00FFF140;
+constexpr RamAddress kSceneResourceVdpStreamEnd = 0x00FFF148;
+constexpr RamAddress kSceneResourceVdpStreamOffset = 0x00FFF14C;
+constexpr RamAddress kVdpCommandAddressLatch = 0x00FF8880;
 
 constexpr RamAddress kPlayerVelocityX = kActorTableBase + 0x18;
 constexpr RamAddress kPlayerVelocityY = kActorTableBase + 0x1A;

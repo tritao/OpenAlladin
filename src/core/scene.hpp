@@ -14,4 +14,12 @@ void scene_script_complete_to_state1(
     CoreTrace* trace = nullptr
 );
 
+// SceneResource_StreamVdpRecord at 0x001AE0F6. The stream cursor and command
+// address latch are RAM-visible; VDP FIFO and Z80 handoff timing stay outside
+// the gameplay core.
+void scene_resource_stream_vdp_record(
+    CoreRuntime& core,
+    CoreTrace* trace = nullptr
+);
+
 }  // namespace openaladdin::core

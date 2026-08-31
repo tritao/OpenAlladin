@@ -42,6 +42,8 @@ int main() {
     write_rom16(rom, kEntry + 0x04, 0x0400);
     write_rom16(rom, kEntry + 0x06, 0x0500);
     write_rom32(rom, kEntry + 0x24, 0x00123456);
+    write_rom32(rom, kEntry + 0x14, 0x00000500);
+    write_rom16(rom, kEntry + 0x18, 0x001C);
     write_rom32(rom, kEntry + 0x2C, 0x001B5B4A);
     write_rom16(rom, kEntry + 0x30, 0x012C);
     write_rom16(rom, kEntry + 0x32, 0x002D);
@@ -63,6 +65,8 @@ int main() {
     assert(read16(core.ram, kCameraHorizontalThreshold) == 0x0400);
     assert(read16(core.ram, kCameraVerticalThreshold) == 0x0500);
     assert(read32(core.ram, kLevelBackgroundBlockSource) == 0x00123456);
+    assert(read32(core.ram, kSceneResourceVdpStreamPtr) == 0x0500);
+    assert(read16(core.ram, kSceneResourceVdpStreamEnd) == 0x001C);
     assert(read32(core.ram, kLevelFrameCallback) == 0x001B5B4A);
     assert(read32(core.ram, kLevelCameraScrollCallback) == 0x001AAA88);
     assert(read16(core.ram, kLevelWidthTiles) == 0x012C);
@@ -235,6 +239,35 @@ int main() {
     assert(read8(core.ram, kSceneScriptPending) == 0);
     assert(actor_read8(actor_view(core.ram, 1), kActorTypeOffset) == 0);
     assert(read16(core.ram, kWorldCameraX) == 0x0200);
+
+    // SceneResource_StreamVdpRecord advances before selecting a 14-byte
+    // record and wraps at the level-table end offset.
+    write32(core.ram, kSceneResourceVdpStreamPtr, 0x0500);
+    write16(core.ram, kSceneResourceVdpStreamEnd, 0x001C);
+    write16(core.ram, kSceneResourceVdpStreamOffset, 0x0000);
+    write8(core.ram, kSceneScriptPending, 1);
+    write_rom32(rom, 0x0500 + 0x0E, 0x00654321);
+    write_rom16(rom, 0x0500 + 0x12, 0x0011);
+    write_rom16(rom, 0x0500 + 0x14, 0x0022);
+    write_rom16(rom, 0x0500 + 0x16, 0x0033);
+    write_rom16(rom, 0x0500 + 0x18, 0x0044);
+    write_rom16(rom, 0x0500 + 0x1A, 0x0055);
+    write_rom32(rom, 0x0500, 0x00123456);
+    write_rom16(rom, 0x0504, 0x0001);
+    write_rom16(rom, 0x0506, 0x0002);
+    write_rom16(rom, 0x0508, 0x0003);
+    write_rom16(rom, 0x050A, 0x0004);
+    write_rom16(rom, 0x050C, 0x0005);
+    CoreTrace scene_vdp_trace;
+    scene_resource_stream_vdp_record(core, &scene_vdp_trace);
+    assert(read16(core.ram, kSceneResourceVdpStreamOffset) == 0x000E);
+    assert(read32(core.ram, kVdpCommandAddressLatch) == 0x00654321);
+    assert(scene_vdp_trace.scene_vdp_record_emitted);
+    assert(scene_vdp_trace.scene_vdp_words[0] == 0x0011);
+    assert(scene_vdp_trace.scene_vdp_words[4] == 0x0055);
+    scene_resource_stream_vdp_record(core);
+    assert(read16(core.ram, kSceneResourceVdpStreamOffset) == 0);
+    assert(read32(core.ram, kVdpCommandAddressLatch) == 0x00123456);
 
     return 0;
 }

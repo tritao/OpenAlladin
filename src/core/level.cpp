@@ -222,6 +222,10 @@ bool level_load_from_scene_state(CoreRuntime& core, CoreTrace* trace) {
     publish16(core, trace, kCameraVerticalThreshold, player_y);
     publish32(core, trace, kLevelBackgroundBlockSource,
               rom_read32(core.rom, offset + kLevelBackgroundBlocksOffset));
+    publish32(core, trace, kSceneResourceVdpStreamPtr,
+              rom_read32(core.rom, offset + 0x14));
+    publish16(core, trace, kSceneResourceVdpStreamEnd,
+              rom_read16(core.rom, offset + 0x18));
     publish32(core, trace, kLevelFrameCallback,
               rom_read32(core.rom, offset + kLevelFrameCallbackOffset));
     publish32(core, trace, kLevelCameraScrollCallback,

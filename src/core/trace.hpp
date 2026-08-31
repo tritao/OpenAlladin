@@ -43,6 +43,9 @@ struct CoreTrace {
     std::size_t level08_vdp_record_count = 0;
     std::uint32_t level08_vdp_last_control = 0;
     std::uint16_t level08_vdp_last_data = 0;
+    bool scene_vdp_record_emitted = false;
+    std::uint32_t scene_vdp_command_address = 0;
+    std::array<std::uint16_t, 5> scene_vdp_words{};
     bool frame_atomic = false;
 };
 

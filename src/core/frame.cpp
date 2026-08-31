@@ -124,6 +124,9 @@ void step_frame(
         trace->level08_vdp_record_count = 0;
         trace->level08_vdp_last_control = 0;
         trace->level08_vdp_last_data = 0;
+        trace->scene_vdp_record_emitted = false;
+        trace->scene_vdp_command_address = 0;
+        trace->scene_vdp_words.fill(0);
         trace_phase(*trace, kFrameEntry);
     }
 
@@ -164,6 +167,8 @@ void step_frame(
             level_invoke_frame_callback(core, trace);
         } else if (service.ordinal == 30) {
             animation_vm_tick_actors(core);
+        } else if (service.ordinal == 35) {
+            scene_resource_stream_vdp_record(core, trace);
         } else if (service.ordinal == 37) {
             scene_script_complete_to_state1(core, trace);
         } else if (service.ordinal == 36) {
