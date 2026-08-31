@@ -1,0 +1,24 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "terminal-transition-and-level-object-identities",
+  "promotions": [
+    "ACTOR_ANIM_TERMINAL_TRANSITION_PRIMARY",
+    "ACTOR_ANIM_TERMINAL_TRANSITION_SECONDARY",
+    "ACTOR_TEMPLATE_TERMINAL_TRANSITION_PRIMARY",
+    "ACTOR_TEMPLATE_TERMINAL_TRANSITION_SECONDARY",
+    "ACTOR_TEMPLATE_TRANSITION_PRESENTATION",
+    "ACTOR_TEMPLATE_LEVEL_OBJECT_BASE"
+  ],
+  "evidence": [
+    "actor_template_bootstrap_targets",
+    "actor_template_terminal_transition_static_decompilation",
+    "ghidra_scene_resource_transition_presentation",
+    "ghidra_level_actor_spawn_block"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false
+  }
+}

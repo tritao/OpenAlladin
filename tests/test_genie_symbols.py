@@ -280,6 +280,28 @@ def test_shared_interaction_names_promote_roles_and_preserve_numeric_aliases():
     } <= mapping_names
 
 
+def test_terminal_transition_and_level_object_names_promote_roles_and_preserve_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00121CB0: ("ACTOR_ANIM_TERMINAL_TRANSITION_PRIMARY", "ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_PRIMARY"),
+        0x00121CCE: ("ACTOR_ANIM_TERMINAL_TRANSITION_SECONDARY", "ACTOR_ANIM_TYPE84_TERMINAL_TRANSITION_SECONDARY"),
+        0x001B7A08: ("ACTOR_TEMPLATE_LEVEL_OBJECT_BASE", "ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT"),
+        0x001B7B48: ("ACTOR_TEMPLATE_TRANSITION_PRESENTATION", "ACTOR_TEMPLATE_TRANSITION_TYPE_84"),
+        0x001B7878: ("ACTOR_TEMPLATE_TERMINAL_TRANSITION_SECONDARY", "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TRANSITION_SECONDARY"),
+        0x001B788C: ("ACTOR_TEMPLATE_TERMINAL_TRANSITION_PRIMARY", "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TRANSITION_PRIMARY"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = load_entity_mappings()
+    assert validate_entity_mappings(mappings) == []
+    mapping_names = {mapping.name for mapping in mappings}
+    assert {"TERMINAL_TRANSITION", "TRANSITION_PRESENTATION", "LEVEL_OBJECT_BASE"} <= mapping_names
+
+
 def test_actor_template_roles_promote_numeric_names_with_aliases():
     symbols = SymbolStore()
     expected = {

@@ -278,3 +278,33 @@ mappings:
       - ghidra_interaction_dispatch_block
       - actor_template_grid_xrefs
     description: Shared interaction template whose reverse-slot consumers select fixed position variants for Types 0x7B through 0x7E.
+
+  - name: TERMINAL_TRANSITION
+    scope: event
+    symbol_addresses: [0x00121CB0, 0x00121CCE, 0x001B7878, 0x001B788C]
+    technical_types: [0x84]
+    confidence: confirmed
+    evidence:
+      - actor_template_bootstrap_targets
+      - actor_template_terminal_transition_static_decompilation
+    description: Primary and secondary terminal-transition actor template/animation pairs used by the level-exit presentation.
+
+  - name: TRANSITION_PRESENTATION
+    scope: event
+    symbol_addresses: [0x001B7B48]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - ghidra_scene_resource_transition_presentation
+      - transition_presentation_animation_static_decompilation
+    description: Scene-resource transition-presentation actor template.
+
+  - name: LEVEL_OBJECT_BASE
+    scope: actor
+    symbol_addresses: [0x001B7A08]
+    technical_types: [0x5A, 0x5B, 0x5C, 0x5D]
+    confidence: decompiled
+    evidence:
+      - ghidra_level_actor_spawn_block
+      - actor_template_grid_xrefs
+    description: Shared zero-resource level-object template used by the Type-0x5A source and its Type-0x5C/0x5D promoted variants.
