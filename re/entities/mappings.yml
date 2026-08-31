@@ -424,6 +424,17 @@ mappings:
       - interaction-spawn-runtime3c-40-static-decompilation
     description: Shared Type-0x40 interaction animation and response stream.
 
+  - name: INTERACTION_RESPONSE_STANDARD
+    scope: role
+    symbol_addresses: [0x00122DD8, 0x001B792C]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - actor_template_collision_interaction_static_decompilation
+      - ghidra_actor_handle_type2d_interaction
+      - interaction_anchor_forward_spawn_static_decompilation
+    description: Standard interaction-response animation and the shared three-resource actor template used by Type-2D interaction handling.
+
   - name: INTERACTION_CHILD_SPAWN
     scope: role
     symbol_addresses: [0x00123E36]

@@ -1077,7 +1077,7 @@ def test_mid_actor_animation_stream_ranges_are_exact():
         0x00122C66: (0x00122CAB, "ACTOR_ANIM_INTERACTION_MULTI_CHILD_SPAWN"),
         0x00122D54: (0x00122D91, "ACTOR_ANIM_INTERACTION_POSITION_RESPONSE"),
         0x00122DB2: (0x00122DD7, "ACTOR_ANIM_PLAYER_COLLISION_RECOVERY"),
-        0x00122DD8: (0x00122DED, "ACTOR_ANIM_TYPE84_TYPE2D_INTERACTION_RESPONSE"),
+        0x00122DD8: (0x00122DED, "ACTOR_ANIM_INTERACTION_RESPONSE_STANDARD"),
         0x00122DEE: (0x00122DF1, "ACTOR_ANIM_MENU_PRESENTATION"),
         0x00122DF2: (0x00122E15, "ACTOR_ANIM_TYPE03_INTERACTION"),
     }
@@ -4916,7 +4916,8 @@ def test_interaction_anchor_forward_spawn_is_exact():
 
     template = symbols.at(0x001B792C, include_ranges=False)
     assert template is not None
-    assert template.name == "ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE"
+    assert template.name == "ACTOR_TEMPLATE_INTERACTION_RESPONSE_STANDARD"
+    assert template.aliases == ("ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE",)
 
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
     assert rom[0x001B5786:0x001B57C4] == bytes.fromhex(

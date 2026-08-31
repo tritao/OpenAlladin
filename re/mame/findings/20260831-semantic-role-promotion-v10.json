@@ -1,0 +1,25 @@
+{
+  "finding": "semantic-role-promotion-v10",
+  "status": "confirmed",
+  "scope": "standard Type-2D interaction-response template and animation",
+  "evidence": [
+    "actor_template_collision_interaction_static_decompilation",
+    "ghidra_actor_handle_type2d_interaction",
+    "interaction_anchor_forward_spawn_static_decompilation",
+    "animation_stream_decoder"
+  ],
+  "promotions": [
+    {
+      "address": "0x00122DD8",
+      "name": "ACTOR_ANIM_INTERACTION_RESPONSE_STANDARD",
+      "technical_alias": "ACTOR_ANIM_TYPE84_TYPE2D_INTERACTION_RESPONSE",
+      "reason": "Exact 22-byte response animation selected by the shared standard interaction-response template."
+    },
+    {
+      "address": "0x001B792C",
+      "name": "ACTOR_TEMPLATE_INTERACTION_RESPONSE_STANDARD",
+      "technical_alias": "ACTOR_TEMPLATE_TYPE_2D_INTERACTION_RESPONSE",
+      "reason": "Three-resource response template reused by Actor_HandleType2DInteraction, InteractionAnchor_ForwardSpawn, and response reinitialization paths."
+    }
+  ]
+}
