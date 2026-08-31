@@ -1,0 +1,52 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-mid-family-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType89RandomPair",
+    "InteractionSpawn_CreateType6A6BAtOffsetX8YMinus1",
+    "InteractionSpawn_CreateType69AtOffsetX8YMinus1",
+    "InteractionSpawn_CreateType6CResponseActor",
+    "InteractionSpawn_CreateType23Actor",
+    "InteractionSpawn_CreateType06AtOffsetX9Y7",
+    "InteractionSpawn_CreateType2BInteractionActor",
+    "InteractionSpawn_CreateType84AtOffsetX20YMinus1",
+    "InteractionSpawn_CreateType84AtOffsetX11Y6",
+    "InteractionSpawn_CreateType84ResponseActor",
+    "InteractionGate_CreateType5FWhenReady"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_Type89RandomPair",
+    "InteractionSpawn_Type6A6BOffset",
+    "InteractionSpawn_Type69Offset",
+    "InteractionSpawn_Type6C",
+    "InteractionSpawn_Type23",
+    "InteractionSpawn_Type06Offset",
+    "InteractionSpawn_Type2B",
+    "InteractionSpawn_Type84OffsetYMinus1",
+    "InteractionSpawn_Type84OffsetY6",
+    "InteractionSpawn_Type84Response",
+    "InteractionSpawn_Type5FWhenReady"
+  ],
+  "contracts": [
+    "The family retains its exact selector, template, allocator, runtime-type mutation, gate, animation, random-variation, facing, and coordinate contracts from the static evidence.",
+    "The two Type-0x84 offset handlers are distinguished by their exact offsets: (+0x14,-1) for selector 0xFD and (+0x0B,+6) for selector 0xFE.",
+    "The Type-0x6C path is a gated Type-0x69-template creation that installs ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE and applies (+0x0F,-1)."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "Established actor-template, AnimationVM, random-variation, reverse-slot, and interaction-helper contracts",
+    "interaction_spawn_mid_family_semantic_v1"
+  ],
+  "limitations": [
+    "No user-facing actor identity is claimed for this dispatch family.",
+    "Dynamic route reachability and the upstream lifecycle of several gate bytes remain unresolved."
+  ],
+  "conclusion": "The mid interaction dispatch family now has stable creation and gate identities while preserving all historical names as aliases and retaining exact static contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

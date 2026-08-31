@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-mid-family-semantic",
+    "purpose": "Promote the closed mid INTERACTION_HANDLER_TABLE family to stable creation and gate identities while retaining selector-qualified historical names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      { "address": "0x001B67C2", "selector": "0xD7", "name": "InteractionSpawn_CreateType89RandomPair", "legacy_name": "InteractionSpawn_Type89RandomPair" },
+      { "address": "0x001B6802", "selector": "0x0D", "name": "InteractionSpawn_CreateType6A6BAtOffsetX8YMinus1", "legacy_name": "InteractionSpawn_Type6A6BOffset" },
+      { "address": "0x001B681C", "selector": "0x2B", "name": "InteractionSpawn_CreateType69AtOffsetX8YMinus1", "legacy_name": "InteractionSpawn_Type69Offset" },
+      { "address": "0x001B6836", "selector": "0x70", "name": "InteractionSpawn_CreateType6CResponseActor", "legacy_name": "InteractionSpawn_Type6C" },
+      { "address": "0x001B6864", "selector": "0xD0-D5", "name": "InteractionSpawn_CreateType23Actor", "legacy_name": "InteractionSpawn_Type23" },
+      { "address": "0x001B6870", "selector": "0x5C", "name": "InteractionSpawn_CreateType06AtOffsetX9Y7", "legacy_name": "InteractionSpawn_Type06Offset" },
+      { "address": "0x001B688A", "selector": "0x6C", "name": "InteractionSpawn_CreateType2BInteractionActor", "legacy_name": "InteractionSpawn_Type2B" },
+      { "address": "0x001B6896", "selector": "0xFD", "name": "InteractionSpawn_CreateType84AtOffsetX20YMinus1", "legacy_name": "InteractionSpawn_Type84OffsetYMinus1" },
+      { "address": "0x001B68B0", "selector": "0xFE", "name": "InteractionSpawn_CreateType84AtOffsetX11Y6", "legacy_name": "InteractionSpawn_Type84OffsetY6" },
+      { "address": "0x001B68CA", "selector": "0xAA", "name": "InteractionSpawn_CreateType84ResponseActor", "legacy_name": "InteractionSpawn_Type84Response" },
+      { "address": "0x001B68D6", "selector": "0x82", "name": "InteractionGate_CreateType5FWhenReady", "legacy_name": "InteractionSpawn_Type5FWhenReady" }
+    ]
+  },
+  "contracts": [
+    "Selector 0xD7 attempts two Type-0x89 random-variant allocations and applies the established shared variation helper, with the second actor at Y+8 and reversed facing.",
+    "Selectors 0x0D, 0x2B, 0x70, 0x5C, 0xFD, and 0xFE preserve exact template, gate, runtime-type, animation, and coordinate-offset contracts from the static family evidence.",
+    "Selectors 0xD0-D5 create Type-0x23 through the reverse-slot path; 0x6C creates the Type-0x2B interaction actor; 0xAA creates the resource-free Type-0x84 response actor; and 0x82 gates the Type-0x5F creation path until its ready byte is clear."
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies at 0x001B67C2 through 0x001B68D6",
+    "INTERACTION_HANDLER_TABLE selector membership at ROM 0x004154",
+    "re/ghidra/targets/interaction-spawn-mid-family-targets.json",
+    "re/mame/findings/20260829-interaction-spawn-mid-family-static-v1.json"
+  ],
+  "limitations": [
+    "The names identify runtime actor types and exact handler contracts, not user-facing object or scene roles.",
+    "Selector reachability and the upstream meaning and clear timing of gate bytes remain unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

@@ -486,6 +486,29 @@ def test_early_interaction_spawn_family_has_semantic_names_and_aliases():
         assert symbol.confidence in {"confirmed", "decompiled", "trace_validated"}
 
 
+def test_mid_interaction_spawn_family_has_semantic_names_and_aliases():
+    expected = {
+        0x001B67C2: ("InteractionSpawn_CreateType89RandomPair", "InteractionSpawn_Type89RandomPair"),
+        0x001B6802: ("InteractionSpawn_CreateType6A6BAtOffsetX8YMinus1", "InteractionSpawn_Type6A6BOffset"),
+        0x001B681C: ("InteractionSpawn_CreateType69AtOffsetX8YMinus1", "InteractionSpawn_Type69Offset"),
+        0x001B6836: ("InteractionSpawn_CreateType6CResponseActor", "InteractionSpawn_Type6C"),
+        0x001B6864: ("InteractionSpawn_CreateType23Actor", "InteractionSpawn_Type23"),
+        0x001B6870: ("InteractionSpawn_CreateType06AtOffsetX9Y7", "InteractionSpawn_Type06Offset"),
+        0x001B688A: ("InteractionSpawn_CreateType2BInteractionActor", "InteractionSpawn_Type2B"),
+        0x001B6896: ("InteractionSpawn_CreateType84AtOffsetX20YMinus1", "InteractionSpawn_Type84OffsetYMinus1"),
+        0x001B68B0: ("InteractionSpawn_CreateType84AtOffsetX11Y6", "InteractionSpawn_Type84OffsetY6"),
+        0x001B68CA: ("InteractionSpawn_CreateType84ResponseActor", "InteractionSpawn_Type84Response"),
+        0x001B68D6: ("InteractionGate_CreateType5FWhenReady", "InteractionSpawn_Type5FWhenReady"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence == "decompiled"
+
+
 def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
     expected = {
         0x001AF1AC: ("PlayerCollision_SpawnVerticalResponseActor", "ActorType13_PlayerCollisionHandler"),

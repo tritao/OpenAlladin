@@ -5260,85 +5260,105 @@
     - interaction_spawn_early_family_static_decompilation
     - interaction_spawn_early_family_semantic_v1
 0x001B67C2:
-  name: InteractionSpawn_Type89RandomPair
+  name: InteractionSpawn_CreateType89RandomPair
+  aliases: [InteractionSpawn_Type89RandomPair]
   confidence: decompiled
   description: Interaction selector 0xD7 handler that attempts two type-0x89 random-variant allocations, applies the shared random position/animation variation to each successful actor, and offsets the second attempt by eight pixels vertically with reversed facing.
   evidence:
     - ghidra_disassembly_001B67C2
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 0x001B6802:
-  name: InteractionSpawn_Type6A6BOffset
+  name: InteractionSpawn_CreateType6A6BAtOffsetX8YMinus1
+  aliases: [InteractionSpawn_Type6A6BOffset]
   confidence: decompiled
   description: Interaction selector 0x0D handler that allocates the shared type-0x6A/0x6B template and applies the fixed offset (+0x08, -0x01) to the spawned actor.
   evidence:
     - ghidra_disassembly_001B6802
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 0x001B681C:
-  name: InteractionSpawn_Type69Offset
+  name: InteractionSpawn_CreateType69AtOffsetX8YMinus1
+  aliases: [InteractionSpawn_Type69Offset]
   confidence: decompiled
   description: Interaction selector 0x2B handler that allocates the type-0x69 interaction template and applies the fixed offset (+0x08, -0x01) to the spawned actor.
   evidence:
     - ghidra_disassembly_001B681C
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 0x001B6836:
-  name: InteractionSpawn_Type6C
+  name: InteractionSpawn_CreateType6CResponseActor
+  aliases: [InteractionSpawn_Type6C]
   confidence: decompiled
   description: Interaction selector 0x70 handler that, when its gate byte is clear, allocates from the type-0x69 template, promotes the actor to runtime type 0x6C, selects ACTOR_ANIM_TYPE6C_INTERACTION_RESPONSE at 0x00124034, and applies the offset (+0x0F, -0x01).
   evidence:
     - ghidra_disassembly_001B6836
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 0x001B6864:
-  name: InteractionSpawn_Type23
+  name: InteractionSpawn_CreateType23Actor
+  aliases: [InteractionSpawn_Type23]
   confidence: decompiled
   description: Interaction selectors 0xD0-0xD5 handler that allocates the type-0x23 interaction template through the reverse-slot path.
   evidence:
     - ghidra_disassembly_001B6864
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 0x001B6870:
-  name: InteractionSpawn_Type06Offset
+  name: InteractionSpawn_CreateType06AtOffsetX9Y7
+  aliases: [InteractionSpawn_Type06Offset]
   confidence: decompiled
   description: Interaction selector 0x5C handler that allocates the type-0x06 template and applies the fixed offset (+0x09, +0x07).
   evidence:
     - ghidra_disassembly_001B6870
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 0x001B688A:
-  name: InteractionSpawn_Type2B
+  name: InteractionSpawn_CreateType2BInteractionActor
+  aliases: [InteractionSpawn_Type2B]
   confidence: decompiled
   description: Interaction selector 0x6C handler that allocates the type-0x2B interaction template through the interaction helper; the template enters ACTOR_ANIM_TYPE2B_INTERACTION at 0x00123FE4.
   evidence:
     - ghidra_disassembly_001B688A
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 0x001B6896:
-  name: InteractionSpawn_Type84OffsetYMinus1
+  name: InteractionSpawn_CreateType84AtOffsetX20YMinus1
+  aliases: [InteractionSpawn_Type84OffsetYMinus1]
   confidence: decompiled
   description: Interaction selector 0xFD handler that allocates the shared type-0x84 interaction template and applies the fixed offset (+0x14, -0x01).
   evidence:
     - ghidra_disassembly_001B6896
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 0x001B68B0:
-  name: InteractionSpawn_Type84OffsetY6
+  name: InteractionSpawn_CreateType84AtOffsetX11Y6
+  aliases: [InteractionSpawn_Type84OffsetY6]
   confidence: decompiled
   description: Interaction selector 0xFE handler that allocates the shared type-0x84 interaction template and applies the fixed offset (+0x0B, +0x06).
   evidence:
     - ghidra_disassembly_001B68B0
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 0x001B68CA:
-  name: InteractionSpawn_Type84Response
+  name: InteractionSpawn_CreateType84ResponseActor
+  aliases: [InteractionSpawn_Type84Response]
   confidence: decompiled
   description: Interaction selector 0xAA handler that allocates the resource-free type-0x84 interaction-response template through the interaction helper.
   evidence:
     - ghidra_disassembly_001B68CA
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 
 0x001B6D1E:
   name: InteractionSpawn_Type13_28
@@ -5357,13 +5377,15 @@
     - type14_type84_presentation_animation_static_decompilation
     - ghidra_disassembly_001B6D84
 0x001B68D6:
-  name: InteractionSpawn_Type5FWhenReady
+  name: InteractionGate_CreateType5FWhenReady
+  aliases: [InteractionSpawn_Type5FWhenReady]
   confidence: decompiled
   description: Interaction selector 0x82 handler that waits for its gate byte at 0x00FFF11C, allocates the type-0x5F interaction template when clear, and applies the fixed offset (+0x0D, -0x0C).
   evidence:
     - ghidra_disassembly_001B68D6
     - interaction_spawn_mid_family_targets
     - interaction_spawn_mid_family_static_decompilation
+    - interaction_spawn_mid_family_semantic_v1
 0x001B68F6:
   name: InteractionSpawn_Type5E84Pair_E0
   confidence: decompiled
