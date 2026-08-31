@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-actor-vm-orphans-state08-runtime-audit-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "source_finding": "re/mame/findings/20260831-actor-vm-orphans-natural-route-runtime-negative-v1.json",
+  "status": "recorded-runtime-negative-evidence",
+  "confidence": "provisional",
+  "route": {
+    "scenario": "controlled-state08-selector",
+    "frames": 1900,
+    "input": "none*1900",
+    "trace_dir": "build/re/traces/actor-vm-orphans-state08-selector-20260831",
+    "capture_profile": "state",
+    "memory_poke": "frame 1640: 0x00FFF57A=0x0001:u16",
+    "rom_owned_transition": "SCENE_STATE changed from 0x01 to 0x08 at frame 1648 after the selector committed table index 1",
+    "rom_read_ranges": [
+      ["0x0011F800", "0x0011F8A3"],
+      ["0x001203E8", "0x001203F1"],
+      ["0x00123DE2", "0x00123DE9"],
+      ["0x001B7990", "0x001B79A3"],
+      ["0x001B7A58", "0x001B7A6B"]
+    ],
+    "rom_read_count": 0
+  },
+  "ranges": [
+    { "name": "ACTOR_MOVE_INTERACTION_ANCHOR_GRID_RESPONSE", "range": ["0x0011F800", "0x0011F8A3"], "read_count": 0 },
+    { "name": "ACTOR_MOVE_DRIFT_PLUS2_PLUS1_LOOP", "range": ["0x001203E8", "0x001203F1"], "read_count": 0 },
+    { "name": "ACTOR_ANIM_SINGLE_FRAME_SELF_LOOP", "range": ["0x00123DE2", "0x00123DE9"], "read_count": 0 },
+    { "name": "ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM", "range": ["0x001B7990", "0x001B79A3"], "read_count": 0 },
+    { "name": "ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400", "range": ["0x001B7A58", "0x001B7A6B"], "read_count": 0 }
+  ],
+  "evidence": [
+    "The narrow ROM taps covered every byte of all five actor VM/template ranges.",
+    "The probe exercised a second ROM scene through the ROM's own scene-table selector; SCENE_STATE was not directly poked.",
+    "The completed state-08 trace contains no matching rom_read records for any of the five ranges."
+  ],
+  "limitations": [
+    "This is one controlled state-08 scene selection, not exhaustive coverage of every scene or indirect selector.",
+    "The scene selection used a documented memory poke to SCENE_TABLE_INDEX before the ROM performed its own transition.",
+    "The external producer or selector for each range remains unresolved."
+  ],
+  "conclusion": "None of the five standalone actor VM/template ranges was read during the controlled ROM-owned transition into scene state 0x08. Further reachability work should inspect indirect selector/table data rather than repeat the verified Level 01 route."
+}

@@ -704,6 +704,20 @@ def test_actor_vm_orphan_long_route_finding_records_duration_without_overclaimin
     assert any("multi-scene coverage" in item for item in finding["evidence"])
 
 
+def test_actor_vm_orphan_state08_finding_proves_transition_without_overclaiming():
+    finding = json.loads(
+        Path("re/mame/findings/20260831-actor-vm-orphans-state08-runtime-negative-v1.json")
+        .read_text(encoding="utf-8")
+    )
+    assert finding["route"]["scenario"] == "controlled-state08-selector"
+    assert finding["route"]["frames"] == 1900
+    assert finding["route"]["rom_read_count"] == 0
+    assert "SCENE_STATE changed from 0x01 to 0x08" in finding["route"]["rom_owned_transition"]
+    assert len(finding["ranges"]) == 5
+    assert all(item["read_count"] == 0 for item in finding["ranges"])
+    assert any("not exhaustive" in item for item in finding["limitations"])
+
+
 def test_scene_graphics_resources_have_stable_state_and_destination_names():
     expected = {
         0x0012DA04: ("SCENE_STATE04_C000_GRAPHICS", "SCENE_RNC_GRAPHICS_0012DA04"),
