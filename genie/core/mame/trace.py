@@ -19,6 +19,7 @@ FORMATS = {
     "openaladdin-frame-state-v1",
     "openaladdin-frame-state-v2",
     "openaladdin-frame-state-v3",
+    "openaladdin-core-trace-v1",
 }
 
 

@@ -118,6 +118,26 @@ target_include_directories(openaladdin_core
 target_compile_features(openaladdin_core PUBLIC cxx_std_20)
 openaladdin_enable_warnings(openaladdin_core)
 
+# The recovered runtime is developed beside the native engine. This target is
+# intentionally independent of SDL, audio, assets, and the old semantic
+# projection so it can be exercised as a clean procedural core from day one.
+add_library(openaladdin_clean_core STATIC
+    src/core/frame.cpp
+    src/core/frame.hpp
+    src/core/ram.cpp
+    src/core/ram.hpp
+    src/core/rom.cpp
+    src/core/rom.hpp
+    src/core/trace.cpp
+    src/core/trace.hpp
+)
+target_include_directories(openaladdin_clean_core
+    PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
+target_compile_features(openaladdin_clean_core PUBLIC cxx_std_20)
+openaladdin_enable_warnings(openaladdin_clean_core)
+
 set(OPENALADDIN_YMFM_ROOT
     "${CMAKE_CURRENT_SOURCE_DIR}/external/mame/3rdparty/ymfm/src")
 if(NOT EXISTS "${OPENALADDIN_YMFM_ROOT}/ymfm_opn.cpp")
@@ -238,6 +258,14 @@ target_link_libraries(openaladdin PRIVATE
 )
 openaladdin_enable_warnings(openaladdin)
 
+# Deterministic replay client for the procedural core. This target is kept
+# beside the SDL client, but deliberately has no host-renderer or old-engine
+# dependency so core traces can be produced before presentation is ported.
+add_executable(openaladdin_clean_core_client src/clean_core_main.cpp)
+target_compile_features(openaladdin_clean_core_client PRIVATE cxx_std_20)
+target_link_libraries(openaladdin_clean_core_client PRIVATE openaladdin_clean_core)
+openaladdin_enable_warnings(openaladdin_clean_core_client)
+
 # Keep locally supplied SDL2 discoverable when the executable is launched
 # directly after a CMake build (for example by CTest or run.sh).
 if(TARGET SDL2::SDL2)
@@ -253,6 +281,12 @@ endif()
 
 include(CTest)
 if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
+    add_executable(clean_core_foundation_test tests/clean_core_foundation.cpp)
+    target_link_libraries(clean_core_foundation_test PRIVATE openaladdin_clean_core)
+    target_compile_features(clean_core_foundation_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(clean_core_foundation_test)
+    openaladdin_enable_test_assertions(clean_core_foundation_test)
+
     add_executable(sprite_renderer_test tests/sprite_renderer.cpp)
     target_link_libraries(sprite_renderer_test PRIVATE openaladdin_core)
     target_compile_features(sprite_renderer_test PRIVATE cxx_std_20)
@@ -394,6 +428,8 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     add_test(NAME sprite_renderer COMMAND sprite_renderer_test)
     set_tests_properties(sprite_renderer PROPERTIES
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    add_test(NAME clean_core_foundation COMMAND clean_core_foundation_test)
 
     add_test(NAME player_animation COMMAND player_animation_test)
     set_tests_properties(player_animation PROPERTIES

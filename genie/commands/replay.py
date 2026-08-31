@@ -153,6 +153,61 @@ def command_replay(args: argparse.Namespace) -> int:
             print(f"replay: MAME failed; trace {trace}", file=sys.stderr)
         return status
 
+    if args.client == "clean-core":
+        if segment:
+            raise SystemExit(
+                "clean-core replay does not support checkpoint segments yet; "
+                "replay the complete run while the new-core checkpoint format is pending"
+            )
+        trace = replay_dir / "state.jsonl"
+        clean_core_command = [
+            str(ROOT / "run-clean-core.sh"),
+            "--no-window",
+            "--no-audio",
+            "--rom", str(rom),
+            # The clean core's frame contract is direct: S[0] is the initial
+            # boundary and every recorded I[N] produces S[N+1].
+            "--frames", str(max(frame_count, 0)),
+            "--state-output", str(trace),
+            "--input-schedule",
+            readable_input_schedule(
+                _client_input_tokens(input_header, input_tokens(records))
+            ),
+        ]
+        status = subprocess.run(
+            clean_core_command,
+            cwd=ROOT,
+            env=os.environ.copy(),
+            check=False,
+        ).returncode
+        reference = run_dir / "state.jsonl"
+        if status == 0 and reference.is_file():
+            # This is the first narrow milestone gate. The skeleton owns the
+            # frame boundary and world-coordinate publication, so compare
+            # those fields now while later gameplay fields remain pending.
+            status = run_tool(
+                "core/mame/trace.py",
+                [
+                    str(reference),
+                    str(trace),
+                    "--allow-additional-fields",
+                    "--field", "player.x",
+                    "--field", "player.y",
+                    "--field", "player.world_x",
+                    "--field", "player.world_y",
+                    "--field", "player.vx",
+                    "--field", "player.vy",
+                    "--field", "camera.x",
+                    "--field", "camera.y",
+                ],
+            )
+        _update_replay_manifest(run_dir, manifest, args.client, trace, status)
+        if status == 0:
+            print(f"replay: clean-core trace {trace}")
+        else:
+            print(f"replay: clean-core failed; trace {trace}", file=sys.stderr)
+        return status
+
     trace = replay_dir / "state.jsonl"
     if segment:
         reference, initial_state, tokens, segment_frames = _prepare_segment_replay(

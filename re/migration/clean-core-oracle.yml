@@ -1,0 +1,62 @@
+format: openaladdin-clean-core-oracle-v1
+status: frozen-starting-point
+
+# The worktree contains unrelated, intentionally uncommitted research/runtime
+# changes. The clean-core migration is anchored to the commit below and must
+# not rewrite those changes in place.
+starting_commit: 1c075e107beeaedfdb3c9ebab1e7b160febef716
+starting_subject: Close resolved RAM symbol contracts
+rom:
+  path: rom/Disneys_Aladdin_U_p1.bin
+  sha256: 8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6
+
+references:
+  native_client: existing Engine runtime selected by genie replay --client native
+  clean_core_client: run-clean-core.sh -> openaladdin_clean_core_client
+  clean_core_trace: openaladdin-core-trace-v1 JSONL with numeric RAM address records
+  mame_state_trace: mame/state.synced.jsonl
+  mame_boot_trace: mame/trace_boot.jsonl
+  canonical_campaign: re/mame/campaigns/20260825-level01-canonical-v1.json
+  extended_campaign: re/mame/campaigns/20260826-level01-canonical-recording-v6.json
+  scheduler_campaign: re/mame/campaigns/20260827-scheduler-static-dynamic-v1.json
+
+# These are the required parity slices. The campaign references are the
+# existing recorded MAME corpus; new-core comparisons must preserve the same
+# frame/input/checkpoint contract and report the first divergent leaf.
+required_slices:
+  - boot_menu
+  - level01_entry
+  - run
+  - brake
+  - jump_landing
+  - sword
+  - apple
+  - terrain_launch_bounce
+  - collision_families
+  - interaction_spawns
+  - scene_transition
+  - level_exit
+
+comparison_contract:
+  source: MAME
+  targets:
+    - clean_core
+    - native
+  boundary: Game_FrameUpdateLoop
+  first_difference: field_then_frame
+  broad_re_investigation: disabled
+  reopen_re_only_when: existing_recovered_contract_cannot_explain_divergence
+
+first_milestone:
+  implementation: frame skeleton + GenesisRam + RomView + trace bridge
+  replay: genie replay RUN --client clean-core
+  differential_fields:
+    - player.x
+    - player.y
+    - player.world_x
+    - player.world_y
+    - player.vx
+    - player.vy
+    - camera.x
+    - camera.y
+  boundary: S[0] plus one S[N+1] for every recorded I[N]

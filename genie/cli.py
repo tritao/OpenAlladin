@@ -413,10 +413,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     replay = commands.add_parser(
         "replay",
-        help="replay a recorded run with MAME's native input or OpenAladdin",
+        help="replay a recorded run with MAME or a native runtime client",
     )
     replay.add_argument("name")
-    replay.add_argument("--client", choices=("mame", "native"), default="mame")
+    replay.add_argument(
+        "--client",
+        choices=("mame", "native", "clean-core"),
+        default="mame",
+    )
     replay.add_argument("--rom", type=Path)
     replay.add_argument("--segment", help="replay only a detected segment, starting from its checkpoint")
     replay.set_defaults(function=command_replay)
