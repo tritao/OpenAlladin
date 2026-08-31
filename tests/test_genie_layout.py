@@ -2929,9 +2929,9 @@ def test_type1e_proximity_movement_handoff_animation_is_exact():
 def test_type7a_interaction_roots_include_terminal_jumps():
     symbols = SymbolStore()
     cases = (
-        (0x00125A68, 0x00125A87, "ACTOR_ANIM_TYPE7A_INTERACTION_06", 32, "0x00125A70"),
-        (0x00125A88, 0x00125AA7, "ACTOR_ANIM_TYPE7A_INTERACTION_07", 32, "0x00125A90"),
-        (0x00125AA8, 0x00125AC7, "ACTOR_ANIM_TYPE7A_INTERACTION_08", 32, "0x00125AB0"),
+        (0x00125A68, 0x00125A87, "ACTOR_ANIM_INTERACTION_STATE_ONE", 32, "0x00125A70"),
+        (0x00125A88, 0x00125AA7, "ACTOR_ANIM_INTERACTION_STATE_FIFTY_FIVE", 32, "0x00125A90"),
+        (0x00125AA8, 0x00125AC7, "ACTOR_ANIM_INTERACTION_STATE_AB", 32, "0x00125AB0"),
     )
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
     rom = load_animation_decoder().RomReader(rom_path.read_bytes())

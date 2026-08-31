@@ -157,6 +157,16 @@ mappings:
       - ghidra_presentation_interaction_dispatch_block
     description: Shared presentation animation, source template, initial child, and alternate variant family.
 
+  - name: INTERACTION_STATE_RESPONSE
+    scope: role
+    symbol_addresses: [0x00125A68, 0x00125A88, 0x00125AA8, 0x00125AC8, 0x001B8264]
+    technical_types: [0x7A]
+    confidence: decompiled
+    evidence:
+      - interaction_spawn_type79_type7a_static_decompilation
+      - ghidra_scene_level_actor_block
+    description: Three selector-specific interaction-state animation roots, their shared response tail, and the common actor template.
+
   - name: COLLISION_RESPONSE_CHILD
     scope: role
     symbol_addresses: [0x001B8368]

@@ -516,6 +516,26 @@ def test_upper_and_shared_presentation_names_preserve_numeric_aliases():
     assert {"UPPER_INTERACTION", "PRESENTATION_SHARED"} <= mappings.keys()
 
 
+def test_interaction_state_response_names_preserve_numeric_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00125A68: ("ACTOR_ANIM_INTERACTION_STATE_ONE", "ACTOR_ANIM_TYPE7A_INTERACTION_06"),
+        0x00125A88: ("ACTOR_ANIM_INTERACTION_STATE_FIFTY_FIVE", "ACTOR_ANIM_TYPE7A_INTERACTION_07"),
+        0x00125AA8: ("ACTOR_ANIM_INTERACTION_STATE_AB", "ACTOR_ANIM_TYPE7A_INTERACTION_08"),
+        0x00125AC8: ("ACTOR_ANIM_INTERACTION_STATE_RESPONSE", "ACTOR_ANIM_TYPE7A_INTERACTION_RESPONSE"),
+        0x001B8264: ("ACTOR_TEMPLATE_INTERACTION_STATE_RESPONSE", "ACTOR_TEMPLATE_TYPE_7A_INTERACTION"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert mappings["INTERACTION_STATE_RESPONSE"].scope == "role"
+
+
 def test_actor_template_roles_promote_numeric_names_with_aliases():
     symbols = SymbolStore()
     expected = {

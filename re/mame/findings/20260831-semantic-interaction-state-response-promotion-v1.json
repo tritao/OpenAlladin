@@ -1,0 +1,22 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "interaction-state-response-identities",
+  "promotions": [
+    "ACTOR_ANIM_INTERACTION_STATE_ONE",
+    "ACTOR_ANIM_INTERACTION_STATE_FIFTY_FIVE",
+    "ACTOR_ANIM_INTERACTION_STATE_AB",
+    "ACTOR_ANIM_INTERACTION_STATE_RESPONSE",
+    "ACTOR_TEMPLATE_INTERACTION_STATE_RESPONSE"
+  ],
+  "evidence": [
+    "interaction_spawn_type79_type7a_static_decompilation",
+    "ghidra_scene_level_actor_block"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role"
+  }
+}

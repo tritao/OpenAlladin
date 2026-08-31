@@ -7184,40 +7184,44 @@
     - animation_stream_decoder
 
 0x00125A68:
-  name: ACTOR_ANIM_TYPE7A_INTERACTION_06
+  name: ACTOR_ANIM_INTERACTION_STATE_ONE
+  aliases: [ACTOR_ANIM_TYPE7A_INTERACTION_06]
   type: animation_stream
   size: 32
   confidence: decompiled
-  description: Type-0x7A interaction animation for selector 0x06. Its exact 32-byte owner publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 1, calls the shared Type-0x7A response tail at 0x00125AC8, and returns through the terminal jump at 0x00125A82 to its local response entry.
+  description: Interaction animation for selector 0x06. Its exact 32-byte owner publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 1, calls the shared interaction-state response tail at 0x00125AC8, and returns through the terminal jump at 0x00125A82 to its local response entry.
   evidence:
     - interaction_spawn_type79_type7a_static_decompilation
     - animation_stream_decoder
 
 0x00125A88:
-  name: ACTOR_ANIM_TYPE7A_INTERACTION_07
+  name: ACTOR_ANIM_INTERACTION_STATE_FIFTY_FIVE
+  aliases: [ACTOR_ANIM_TYPE7A_INTERACTION_07]
   type: animation_stream
   size: 32
   confidence: decompiled
-  description: Type-0x7A interaction animation for selector 0x07. Its exact 32-byte owner publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 0x55, calls the shared Type-0x7A response tail at 0x00125AC8, and returns through the terminal jump at 0x00125AA2 to its local response entry.
+  description: Interaction animation for selector 0x07. Its exact 32-byte owner publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 0x55, calls the shared interaction-state response tail at 0x00125AC8, and returns through the terminal jump at 0x00125AA2 to its local response entry.
   evidence:
     - interaction_spawn_type79_type7a_static_decompilation
     - animation_stream_decoder
 
 0x00125AA8:
-  name: ACTOR_ANIM_TYPE7A_INTERACTION_08
+  name: ACTOR_ANIM_INTERACTION_STATE_AB
+  aliases: [ACTOR_ANIM_TYPE7A_INTERACTION_08]
   type: animation_stream
   size: 32
   confidence: decompiled
-  description: Type-0x7A interaction animation for selector 0x08. Its exact 32-byte owner publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 0x00AB, calls the shared Type-0x7A response tail at 0x00125AC8, and returns through the terminal jump at 0x00125AC2 to its local response entry.
+  description: Interaction animation for selector 0x08. Its exact 32-byte owner publishes actor type 0x84, waits for global interaction state 0x00FF7E28 to equal 0x00AB, calls the shared interaction-state response tail at 0x00125AC8, and returns through the terminal jump at 0x00125AC2 to its local response entry.
   evidence:
     - interaction_spawn_type79_type7a_static_decompilation
     - animation_stream_decoder
 
 0x00125AC8:
-  name: ACTOR_ANIM_TYPE7A_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_INTERACTION_STATE_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE7A_INTERACTION_RESPONSE]
   size: 54
   confidence: decompiled
-  description: Shared Type-0x7A interaction response tail called by the selector 0x06, 0x07, and 0x08 roots. It plays sound 0x4E, publishes type 0x7A, presents the 0x1C82/0x1C86/0x1C8A/0x1C8E/0x1C92 sequence, promotes the actor to type 0x84, and returns through FC80 at 0x00125AFC.
+  description: Shared interaction-state response tail called by the selector 0x06, 0x07, and 0x08 roots. It plays sound 0x4E, publishes the interaction-state actor, presents the 0x1C82/0x1C86/0x1C8A/0x1C8E/0x1C92 sequence, promotes the actor to type 0x84, and returns through FC80 at 0x00125AFC.
   evidence:
     - interaction_spawn_type79_type7a_static_decompilation
     - animation_stream_decoder
@@ -8726,11 +8730,12 @@
     - actor_template_grid_xrefs
 
 0x001B8264:
-  name: ACTOR_TEMPLATE_TYPE_7A_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_STATE_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_7A_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x7A interaction template loaded by the backward-slot entries at 0x001B6F34, 0x001B6F4A, and 0x001B6F60; it has no movement stream, uses animation stream 0x00125A68, and owns three resources.
+  description: Interaction-state response template loaded by the backward-slot entries at 0x001B6F34, 0x001B6F4A, and 0x001B6F60; it has no movement stream, uses the selector-specific animation roots at 0x00125A68, 0x00125A88, and 0x00125AA8, and owns three resources.
   evidence:
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
