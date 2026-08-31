@@ -219,6 +219,36 @@ mappings:
       - actor_collision_handler_family_static_decompilation
     description: Shared interaction-response animation used by the Type-0x3A/0x3B producer family.
 
+  - name: INTERACTION_GUARD_RESPONSE
+    scope: role
+    symbol_addresses: [0x00124658, 0x001B7F1C]
+    technical_types: [0x13]
+    confidence: decompiled
+    evidence:
+      - type13-interaction-animation-static-decompilation
+      - interaction-spawn-type13-type14-semantic-targets
+    description: Selector-0x28 interaction response that gates a guard-sword child spawn.
+
+  - name: INTERACTION_WALL_RESPONSE
+    scope: role
+    symbol_addresses: [0x00124766, 0x001B7F30]
+    technical_types: [0x14]
+    confidence: decompiled
+    evidence:
+      - type14-type84-presentation-animation-static-decompilation
+      - interaction-spawn-type13-type14-semantic-targets
+    description: Selector-0x13 interaction response that transitions through proximity movement and spawns the wall-response actor.
+
+  - name: PRESENTATION_CHILD
+    scope: role
+    symbol_addresses: [0x001248EA, 0x001B7F44]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - type14-type84-presentation-animation-static-decompilation
+      - actor-template-type8b-presentation-response
+    description: Shared presentation child animation/template entered by the Type-0x8B family and the wall-response interaction tail.
+
   - name: INTERACTION_SHARED
     scope: role
     symbol_addresses: [0x00122C12]

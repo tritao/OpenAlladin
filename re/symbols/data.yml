@@ -5491,30 +5491,33 @@
     - animation_stream_decoder
 
 0x00124658:
-  name: ACTOR_ANIM_TYPE13_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_GUARD_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE13_INTERACTION]
   size: 270
   confidence: decompiled
-  description: Type-0x13 interaction animation selected by ACTOR_TEMPLATE_TYPE_13_INTERACTION through selector 0x28. Its packed 270-byte region publishes actor field 0x11 as 0x0013, presents the 0x1422-0x1446 opening, gates the 0x1402-0x141E response on actor fields and player X distance, installs and later clears movement stream 0x001216DC, spawns ACTOR_TEMPLATE_GUARD_SWORD_ATTACK, and loops through the local response paths.
+  description: Interaction response animation selected by ACTOR_TEMPLATE_INTERACTION_GUARD_RESPONSE through selector 0x28. Its packed 270-byte region publishes actor field 0x11 as 0x0013, presents the 0x1422-0x1446 opening, gates the 0x1402-0x141E response on actor fields and player X distance, installs and later clears movement stream 0x001216DC, spawns ACTOR_TEMPLATE_GUARD_SWORD_ATTACK, and loops through the local response paths.
   evidence:
     - type13_interaction_animation_static_decompilation
     - actor_template_type13_interaction
     - animation_stream_decoder
 
 0x00124766:
-  name: ACTOR_ANIM_TYPE14_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_WALL_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE14_INTERACTION]
   size: 388
   confidence: decompiled
-  description: Type-0x14 interaction animation selected by ACTOR_TEMPLATE_TYPE_14_INTERACTION through selector 0x13. Its packed root publishes actor field 0x11 as 0x0014, presents the 0x1A96-0x1AAA opening with player-X and random gates, changes the actor to type 0x15 with ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE at 0x001203FA for the response, and later publishes type 0x84, plays sound 0x42, and spawns ACTOR_TEMPLATE_WALL_RESPONSE. The terminal EA at 0x001248E4 enters the separately owned response tail at 0x001249F0.
+  description: Interaction response animation selected by ACTOR_TEMPLATE_INTERACTION_WALL_RESPONSE through selector 0x13. Its packed root publishes actor field 0x11 as 0x0014, presents the 0x1A96-0x1AAA opening with player-X and random gates, changes the actor to type 0x15 with ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE at 0x001203FA for the response, and later publishes type 0x84, plays sound 0x42, and spawns ACTOR_TEMPLATE_WALL_RESPONSE. The terminal EA at 0x001248E4 enters the separately owned response tail at 0x001249F0.
   evidence:
     - type14_type84_presentation_animation_static_decompilation
     - actor_template_type14_interaction
     - animation_stream_decoder
 
 0x001248EA:
-  name: ACTOR_ANIM_TYPE84_PRESENTATION_CHILD
+  name: ACTOR_ANIM_PRESENTATION_CHILD
+  aliases: [ACTOR_ANIM_TYPE84_PRESENTATION_CHILD]
   size: 324
   confidence: decompiled
-  description: Type-0x84 presentation child animation spawned by the type-0x8B presentation streams at 0x00124A4A, 0x00124A88, 0x00124ABE, and 0x00124AF4. Its packed region publishes actor type 0x84, presents the 0x19B6-0x19DE sequence, pushes the callback parameters 0x001ACB7A and 0x001ACB82, creates ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD, installs movement stream 0x001214B2, presents the 0x1A02-0x1A2E response, republishes type 0x84, and terminates with the 0x001B52FA callback parameter and F600. The Type-14 root enters only the final 0x001249F0-0x00124A2D tail through its own EA continuation.
+  description: Presentation child animation spawned by the type-0x8B presentation streams at 0x00124A4A, 0x00124A88, 0x00124ABE, and 0x00124AF4. Its packed region publishes actor type 0x84, presents the 0x19B6-0x19DE sequence, pushes the callback parameters 0x001ACB7A and 0x001ACB82, creates ACTOR_TEMPLATE_TYPE_30_PRESENTATION_CHILD, installs movement stream 0x001214B2, presents the 0x1A02-0x1A2E response, republishes type 0x84, and terminates with the 0x001B52FA callback parameter and F600. The wall-response interaction root enters only the final 0x001249F0-0x00124A2D tail through its own EA continuation.
   evidence:
     - type14_type84_presentation_animation_static_decompilation
     - actor_template_type8b_presentation_response
@@ -8524,32 +8527,35 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7F1C:
-  name: ACTOR_TEMPLATE_TYPE_13_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_GUARD_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_13_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x13 interaction template selected by InteractionSpawn_Type13_28 at 0x001B6D1E. It has no movement stream, uses ACTOR_ANIM_TYPE13_INTERACTION at 0x00124658, and owns seven resources before the handler applies its palette/audio side effects.
+  description: Guard-response interaction template selected by InteractionSpawn_Type13_28 at 0x001B6D1E. It has no movement stream, uses ACTOR_ANIM_INTERACTION_GUARD_RESPONSE at 0x00124658, and owns seven resources before the handler applies its palette/audio side effects.
   evidence:
     - type13_interaction_animation_static_decompilation
     - interaction_spawn_type13_static_decompilation
     - actor_template_grid_xrefs
 
 0x001B7F30:
-  name: ACTOR_TEMPLATE_TYPE_14_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_WALL_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_14_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x14 interaction template loaded by the selector-0x13 handler at 0x001B6D84. It has no movement stream, enters ACTOR_ANIM_TYPE14_INTERACTION at 0x00124766, and owns seven resources; the root's terminal branch publishes a type-0x84 response and enters the separately owned presentation-child tail.
+  description: Wall-response interaction template loaded by the selector-0x13 handler at 0x001B6D84. It has no movement stream, enters ACTOR_ANIM_INTERACTION_WALL_RESPONSE at 0x00124766, and owns seven resources; the root's terminal branch publishes a type-0x84 response and enters the separately owned presentation-child tail.
   evidence:
     - type14_type84_presentation_animation_static_decompilation
     - actor_template_grid_xrefs
 
 0x001B7F44:
-  name: ACTOR_TEMPLATE_TYPE_84_PRESENTATION_CHILD
+  name: ACTOR_TEMPLATE_PRESENTATION_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_PRESENTATION_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 presentation-child template supplied by the four F5 commands in the type-0x8B presentation roots at 0x00124A4A, 0x00124A88, 0x00124ABE, and 0x00124AF4. Its record has no default movement stream, uses ACTOR_ANIM_TYPE84_PRESENTATION_CHILD at 0x001248EA, and owns 0x13 resources before the child animation publishes its response fields.
+  description: Presentation-child template supplied by the four F5 commands in the type-0x8B presentation roots at 0x00124A4A, 0x00124A88, 0x00124ABE, and 0x00124AF4. Its record has no default movement stream, uses ACTOR_ANIM_PRESENTATION_CHILD at 0x001248EA, and owns 0x13 resources before the child animation publishes its response fields.
   evidence:
     - type14_type84_presentation_animation_static_decompilation
     - actor_template_type8b_presentation_response

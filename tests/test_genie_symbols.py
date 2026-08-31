@@ -450,6 +450,27 @@ def test_exit_and_transition_families_promote_semantic_names_and_preserve_aliase
     } <= mappings.keys()
 
 
+def test_interaction_response_family_promotes_semantic_roles_and_preserves_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00124658: ("ACTOR_ANIM_INTERACTION_GUARD_RESPONSE", "ACTOR_ANIM_TYPE13_INTERACTION"),
+        0x00124766: ("ACTOR_ANIM_INTERACTION_WALL_RESPONSE", "ACTOR_ANIM_TYPE14_INTERACTION"),
+        0x001248EA: ("ACTOR_ANIM_PRESENTATION_CHILD", "ACTOR_ANIM_TYPE84_PRESENTATION_CHILD"),
+        0x001B7F1C: ("ACTOR_TEMPLATE_INTERACTION_GUARD_RESPONSE", "ACTOR_TEMPLATE_TYPE_13_INTERACTION"),
+        0x001B7F30: ("ACTOR_TEMPLATE_INTERACTION_WALL_RESPONSE", "ACTOR_TEMPLATE_TYPE_14_INTERACTION"),
+        0x001B7F44: ("ACTOR_TEMPLATE_PRESENTATION_CHILD", "ACTOR_TEMPLATE_TYPE_84_PRESENTATION_CHILD"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert {"INTERACTION_GUARD_RESPONSE", "INTERACTION_WALL_RESPONSE", "PRESENTATION_CHILD"} <= mappings.keys()
+
+
 def test_actor_template_roles_promote_numeric_names_with_aliases():
     symbols = SymbolStore()
     expected = {
