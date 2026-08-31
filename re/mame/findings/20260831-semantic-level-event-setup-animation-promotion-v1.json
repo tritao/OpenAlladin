@@ -1,0 +1,39 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "level-event-exit-bootstrap-scene-setup-and-level-object-animation-family",
+  "promotions": [
+    "ACTOR_ANIM_LEVEL_EXIT_CHILD",
+    "ACTOR_ANIM_LEVEL11_EVENT",
+    "ACTOR_ANIM_PLAYER_BOOTSTRAP_OPENING",
+    "ACTOR_ANIM_LEVEL08_ENTRY",
+    "ACTOR_ANIM_SCENE_SETUP_FIXED",
+    "ACTOR_ANIM_SCENE_SETUP_COLLISION_CHILD_SPAWN",
+    "ACTOR_ANIM_SCENE_SETUP_MOVING_CHILD_VARIANT_LOOP",
+    "ACTOR_ANIM_SCENE_SETUP_PRIMARY",
+    "ACTOR_ANIM_SCENE_SETUP_SECONDARY",
+    "ACTOR_ANIM_INTERACTION_RESPONSE_SCENE5_ENTRY",
+    "ACTOR_ANIM_INTERACTION_RESPONSE_DEFAULT_ENTRY",
+    "ACTOR_ANIM_LEVEL_OBJECT_INTERACTION",
+    "ACTOR_ANIM_LEVEL_OBJECT_HORIZONTAL_PROXIMITY_GATE",
+    "ACTOR_ANIM_LEVEL_OBJECT_COLLISION_RESPONSE_SPAWN_SEQUENCE",
+    "ACTOR_TEMPLATE_LEVEL_EXIT_PRESENTATION_CHILD",
+    "ACTOR_TEMPLATE_PLAYER_BOOTSTRAP_CHILD",
+    "ACTOR_TEMPLATE_LEVEL11_EVENT_CHILD"
+  ],
+  "evidence": [
+    "exit_type84_child_animation_static_decompilation",
+    "type7b_level11_animation_static_decompilation",
+    "type84_opening_level08_animation_static_decompilation",
+    "actor_template_scene_setup_static_decompilation",
+    "actor_animation_collision_child_sequence_static_decompilation",
+    "actor_template_late_interaction_family_static_decompilation",
+    "animation_stream_decoder"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_level_event_scene_setup_and_level_object_roles"
+  }
+}
