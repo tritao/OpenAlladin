@@ -5636,37 +5636,45 @@
     - interaction_spawn_type8b-presentation-static-decompilation
     - interaction_spawn_type8b_presentation_semantic_v1
 0x001B6E7A:
-  name: InteractionSpawn_UpperTemplate_12
+  name: InteractionSpawn_CreateType20UpperActor_12
+  aliases: [InteractionSpawn_UpperTemplate_12]
   confidence: decompiled
   description: Interaction selector 0x12 handler that directly enters LevelObjectSpawnEntry with the shared upper-route template at 0x001B7C10.
   evidence:
     - ghidra_disassembly_001B6E7A
     - interaction_spawn_upper-gated-family-targets
     - interaction_spawn_upper-gated-family-static-decompilation
+    - interaction_spawn_upper_gated_family_semantic_v1
 0x001B6E86:
-  name: InteractionGate_Type1E_64
+  name: InteractionGate_CreateType1EUpperActor_64
+  aliases: [InteractionGate_Type1E_64]
   confidence: decompiled
   description: Interaction selector 0x64 gate wrapper that tests 0x00FFF107 and, when set, reverse-dispatches the type-0x1E upper-route template at 0x001B7C24 through LevelObjectSpawnEntry.
   evidence:
     - ghidra_disassembly_001B6E86
     - interaction_spawn_upper-gated-family-targets
     - interaction_spawn_upper-gated-family-static-decompilation
+    - interaction_spawn_upper_gated_family_semantic_v1
 0x001B6E9C:
-  name: InteractionGate_Type1F_63
+  name: InteractionGate_CreateType1FUpperActor_63
+  aliases: [InteractionGate_Type1F_63]
   confidence: decompiled
   description: Interaction selector 0x63 gate wrapper that tests 0x00FFF105 and, when set, reverse-dispatches the type-0x1F upper-route template at 0x001B7C38 through LevelObjectSpawnEntry.
   evidence:
     - ghidra_disassembly_001B6E9C
     - interaction_spawn_upper-gated-family-targets
     - interaction_spawn_upper-gated-family-static-decompilation
+    - interaction_spawn_upper_gated_family_semantic_v1
 0x001B6EA6:
-  name: InteractionSpawn_Type1F_10
+  name: InteractionSpawn_CreateType1FUpperActor_10
+  aliases: [InteractionSpawn_Type1F_10]
   confidence: decompiled
   description: Interaction selector 0x10 handler that directly enters LevelObjectSpawnEntry with the type-0x1F template at 0x001B7C38.
   evidence:
     - ghidra_disassembly_001B6EA6
     - interaction_spawn_upper-gated-family-targets
     - interaction_spawn_upper-gated-family-static-decompilation
+    - interaction_spawn_upper_gated_family_semantic_v1
 0x001B6F1E:
   name: InteractionSpawn_Type79_0A0C
   confidence: decompiled

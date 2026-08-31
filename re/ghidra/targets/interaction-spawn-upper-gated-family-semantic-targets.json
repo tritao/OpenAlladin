@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-upper-gated-family-semantic",
+    "purpose": "Promote the four upper-route Type-0x20/0x1E/0x1F interaction handlers to stable creation and gate identities while retaining selector-qualified historical names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      { "address": "0x001B6E7A", "selector": "0x12", "name": "InteractionSpawn_CreateType20UpperActor_12", "legacy_name": "InteractionSpawn_UpperTemplate_12", "template": "0x001B7C10 ACTOR_TEMPLATE_UPPER_TYPE20", "allocator": "LevelObjectSpawnEntry" },
+      { "address": "0x001B6E86", "selector": "0x64", "name": "InteractionGate_CreateType1EUpperActor_64", "legacy_name": "InteractionGate_Type1E_64", "gate": "0x00FFF107", "template": "0x001B7C24 ACTOR_TEMPLATE_UPPER_TYPE1E", "allocator": "LevelObjectSpawnEntry" },
+      { "address": "0x001B6E9C", "selector": "0x63", "name": "InteractionGate_CreateType1FUpperActor_63", "legacy_name": "InteractionGate_Type1F_63", "gate": "0x00FFF105", "template": "0x001B7C38 ACTOR_TEMPLATE_TYPE_1F", "allocator": "LevelObjectSpawnEntry" },
+      { "address": "0x001B6EA6", "selector": "0x10", "name": "InteractionSpawn_CreateType1FUpperActor_10", "legacy_name": "InteractionSpawn_Type1F_10", "template": "0x001B7C38 ACTOR_TEMPLATE_TYPE_1F", "allocator": "LevelObjectSpawnEntry" }
+    ]
+  },
+  "contracts": [
+    "Selector 0x12 directly enters LevelObjectSpawnEntry with the established upper Type-0x20 template.",
+    "Selector 0x64 creates the upper Type-0x1E actor only when 0x00FFF107 is nonzero; selector 0x63 creates the upper Type-0x1F actor only when 0x00FFF105 is nonzero.",
+    "Selector 0x10 directly creates the same Type-0x1F template without the selector-0x63 gate."
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "Direct template loads, LevelObjectSpawnEntry calls, and selector-specific gate tests",
+    "re/ghidra/targets/interaction-spawn-upper-gated-family-targets.json",
+    "re/mame/findings/20260829-interaction-spawn-upper-gated-family-static-v1.json"
+  ],
+  "limitations": [
+    "The names identify exact upper-route templates and gate contracts, not user-facing scene roles.",
+    "The upstream lifecycle and dynamic reachability of the gate bytes remain unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

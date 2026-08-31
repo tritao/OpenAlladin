@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-upper-gated-family-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType20UpperActor_12",
+    "InteractionGate_CreateType1EUpperActor_64",
+    "InteractionGate_CreateType1FUpperActor_63",
+    "InteractionSpawn_CreateType1FUpperActor_10"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_UpperTemplate_12",
+    "InteractionGate_Type1E_64",
+    "InteractionGate_Type1F_63",
+    "InteractionSpawn_Type1F_10"
+  ],
+  "contracts": [
+    "The four handlers retain exact upper-route template and LevelObjectSpawnEntry behavior.",
+    "Selectors 0x64 and 0x63 preserve their nonzero gate requirements at 0x00FFF107 and 0x00FFF105; selector 0x10 remains the direct ungated Type-0x1F path."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "interaction_spawn_upper_gated_family_semantic_v1"
+  ],
+  "limitations": [
+    "No user-facing actor or scene identity is claimed for the upper-route templates.",
+    "Gate-byte lifecycle and dynamic route reachability remain unresolved."
+  ],
+  "conclusion": "The upper-route Type-0x20/0x1E/0x1F interaction handlers now have stable creation and gate identities while preserving historical aliases and exact static contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
