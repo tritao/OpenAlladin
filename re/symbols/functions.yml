@@ -4106,45 +4106,52 @@
     - ghidra_actor_lifecycle_helpers_targets
 
 0x001ACE90:
-  name: InteractionSpawn_RuntimeType6E
+  name: InteractionSpawn_CreateType6EActor
+  aliases: [InteractionSpawn_RuntimeType6E]
   confidence: decompiled
-  description: Indirect interaction handler for runtime actor type 0x6E; avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes template 0x001B7904, installs movement root 0x00120584 into actor field +0x0A, and copies the source record's X/Y coordinates.
+  description: Interaction-spawn handler that creates runtime type-0x6E actors; it avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes ACTOR_TEMPLATE_TYPE_6E_73_BASE, installs ACTOR_MOVE_TYPE6E_INTERACTION into actor field +0x0A, and copies the source record's X/Y coordinates.
   evidence:
     - ghidra_disassembly_001ACE90
     - ghidra_actor_runtime_type6e_73_targets
+    - interaction_spawn_type6e_73_semantic_v1
 0x001ACECC:
-  name: InteractionSpawn_RuntimeType6F
+  name: InteractionSpawn_CreateType6FActor
+  aliases: [InteractionSpawn_RuntimeType6F]
   confidence: decompiled
-  description: Indirect interaction handler for runtime actor type 0x6F; avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes template 0x001B7904, installs movement root 0x001205F4 into actor field +0x0A, and copies the source record's X/Y coordinates.
+  description: Interaction-spawn handler that creates runtime type-0x6F actors; it avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes ACTOR_TEMPLATE_TYPE_6E_73_BASE, installs ACTOR_MOVE_TYPE6F_INTERACTION into actor field +0x0A, and copies the source record's X/Y coordinates.
   evidence:
     - ghidra_disassembly_001ACECC
     - ghidra_actor_runtime_type6e_73_targets
 0x001ACF08:
-  name: InteractionSpawn_RuntimeType70
+  name: InteractionSpawn_CreateType70Actor
+  aliases: [InteractionSpawn_RuntimeType70]
   confidence: decompiled
-  description: Indirect interaction handler for runtime actor type 0x70; avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes template 0x001B7904, installs movement root 0x00120664 into actor field +0x0A, and copies the source record's X/Y coordinates.
+  description: Interaction-spawn handler that creates runtime type-0x70 actors; it avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes ACTOR_TEMPLATE_TYPE_6E_73_BASE, installs ACTOR_MOVE_TYPE70_INTERACTION into actor field +0x0A, and copies the source record's X/Y coordinates.
   evidence:
     - ghidra_disassembly_001ACF08
     - ghidra_actor_runtime_type6e_73_targets
 0x001ACF44:
-  name: InteractionSpawn_RuntimeType71
+  name: InteractionSpawn_CreateType71Actor
+  aliases: [InteractionSpawn_RuntimeType71]
   confidence: decompiled
-  description: Indirect interaction handler for runtime actor type 0x71; avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes template 0x001B7904, installs movement root 0x0012070E into actor field +0x0A, and copies the source record's X/Y coordinates.
+  description: Interaction-spawn handler that creates runtime type-0x71 actors; it avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes ACTOR_TEMPLATE_TYPE_6E_73_BASE, installs ACTOR_MOVE_TYPE71_INTERACTION into actor field +0x0A, and copies the source record's X/Y coordinates.
   evidence:
     - ghidra_disassembly_001ACF44
     - ghidra_actor_runtime_type6e_73_targets
 0x001ACF80:
-  name: InteractionSpawn_RuntimeType72
+  name: InteractionSpawn_CreateType72Actor
+  aliases: [InteractionSpawn_RuntimeType72]
   confidence: decompiled
-  description: Indirect interaction handler for runtime actor type 0x72; avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes template 0x001B7904, installs movement root 0x00120868 into actor field +0x0A, and copies the source record's X/Y coordinates.
+  description: Interaction-spawn handler that creates runtime type-0x72 actors; it avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes ACTOR_TEMPLATE_TYPE_6E_73_BASE, installs ACTOR_MOVE_TYPE72_INTERACTION into actor field +0x0A, and copies the source record's X/Y coordinates.
   evidence:
     - ghidra_disassembly_001ACF80
     - ghidra_actor_runtime_type6e_73_targets
 0x001ACFBC:
-  name: InteractionSpawn_RuntimeType73
+  name: InteractionSpawn_CreateType73Actor
+  aliases: [InteractionSpawn_RuntimeType73]
   size: 60
   confidence: decompiled
-  description: Indirect interaction handler for runtime actor type 0x73; avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes template 0x001B7904, installs movement root 0x001208D8 into actor field +0x0A, and copies the source record's X/Y coordinates.
+  description: Interaction-spawn handler that creates runtime type-0x73 actors; it avoids duplicate type instances, allocates from the reverse auxiliary pool, initializes ACTOR_TEMPLATE_TYPE_6E_73_BASE, installs ACTOR_MOVE_TYPE73_INTERACTION into actor field +0x0A, and copies the source record's X/Y coordinates.
   evidence:
     - ghidra_disassembly_001ACFBC
     - ghidra_actor_runtime_type6e_73_targets

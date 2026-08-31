@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type6e-73-semantic",
+    "purpose": "Replace runtime-type-only handler names with their exact shared actor-creation lifecycle and per-type movement-root roles."
+  },
+  "shared_contract": {
+    "duplicate_check": "Actor_FindActorByType",
+    "allocator": "Actor_FindFreeSlotReverse20",
+    "initializer": "Actor_InitializeFromTemplate",
+    "template": "ACTOR_TEMPLATE_TYPE_6E_73_BASE",
+    "source_coordinates": "copy source record X/Y into actor offsets +0x02/+0x04",
+    "movement_field": "actor +0x0A"
+  },
+  "handlers": [
+    { "address": "0x001ACE90", "name": "InteractionSpawn_CreateType6EActor", "legacy_name": "InteractionSpawn_RuntimeType6E", "runtime_type": "0x6E", "movement": "ACTOR_MOVE_TYPE6E_INTERACTION" },
+    { "address": "0x001ACECC", "name": "InteractionSpawn_CreateType6FActor", "legacy_name": "InteractionSpawn_RuntimeType6F", "runtime_type": "0x6F", "movement": "ACTOR_MOVE_TYPE6F_INTERACTION" },
+    { "address": "0x001ACF08", "name": "InteractionSpawn_CreateType70Actor", "legacy_name": "InteractionSpawn_RuntimeType70", "runtime_type": "0x70", "movement": "ACTOR_MOVE_TYPE70_INTERACTION" },
+    { "address": "0x001ACF44", "name": "InteractionSpawn_CreateType71Actor", "legacy_name": "InteractionSpawn_RuntimeType71", "runtime_type": "0x71", "movement": "ACTOR_MOVE_TYPE71_INTERACTION" },
+    { "address": "0x001ACF80", "name": "InteractionSpawn_CreateType72Actor", "legacy_name": "InteractionSpawn_RuntimeType72", "runtime_type": "0x72", "movement": "ACTOR_MOVE_TYPE72_INTERACTION" },
+    { "address": "0x001ACFBC", "name": "InteractionSpawn_CreateType73Actor", "legacy_name": "InteractionSpawn_RuntimeType73", "runtime_type": "0x73", "movement": "ACTOR_MOVE_TYPE73_INTERACTION" }
+  ],
+  "evidence": [
+    "exact parallel 68000 handler bodies",
+    "shared duplicate-check, reverse-20 allocator, and template initializer path",
+    "direct per-type movement-root assignments",
+    "lossless movement-stream family boundaries"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

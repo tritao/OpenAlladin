@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type6e-73-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType6EActor",
+    "InteractionSpawn_CreateType6FActor",
+    "InteractionSpawn_CreateType70Actor",
+    "InteractionSpawn_CreateType71Actor",
+    "InteractionSpawn_CreateType72Actor",
+    "InteractionSpawn_CreateType73Actor"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_RuntimeType6E",
+    "InteractionSpawn_RuntimeType6F",
+    "InteractionSpawn_RuntimeType70",
+    "InteractionSpawn_RuntimeType71",
+    "InteractionSpawn_RuntimeType72",
+    "InteractionSpawn_RuntimeType73"
+  ],
+  "contracts": [
+    "Each handler suppresses a duplicate runtime type, allocates a reverse-20 actor slot, and initializes ACTOR_TEMPLATE_TYPE_6E_73_BASE.",
+    "Each successful allocation installs its runtime type and corresponding MovementVM root at actor field +0x0A, then copies the source record's X/Y coordinates.",
+    "The six roots enter the common ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE continuation after their per-type setup."
+  ],
+  "evidence": [
+    "Exact parallel 68000 bodies at 0x001ACE90-0x001ACFF7",
+    "Existing actor runtime type 0x6E-0x73 movement-family targets",
+    "Actor template initializer field map",
+    "Lossless MovementVM decoder output"
+  ],
+  "limitations": [
+    "The higher-level names identify actor creation and movement-family roles but do not assign user-facing object names to runtime types 0x6E-0x73.",
+    "The legacy runtime-type names remain aliases for historical findings and references."
+  ],
+  "conclusion": "The six runtime type 0x6E-0x73 interaction handlers now have stable actor-creation identities tied to their shared lifecycle and exact per-type movement roots.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
