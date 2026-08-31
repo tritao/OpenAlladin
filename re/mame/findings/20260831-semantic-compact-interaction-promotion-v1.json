@@ -1,0 +1,21 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "compact-interaction-response-and-multi-child-spawn-identities",
+  "promotions": [
+    "ACTOR_ANIM_INTERACTION_RESPONSE_COMPACT",
+    "ACTOR_ANIM_INTERACTION_MULTI_CHILD_SPAWN",
+    "ACTOR_TEMPLATE_INTERACTION_MULTI_CHILD_SPAWN"
+  ],
+  "evidence": [
+    "interaction_spawn_type46_5a_response_static_decompilation",
+    "actor_template_mid_dispatch_family_static_decompilation",
+    "mid-actor-animation-stream-extents-static-v1"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role"
+  }
+}

@@ -167,6 +167,26 @@ mappings:
       - ghidra_scene_level_actor_block
     description: Three selector-specific interaction-state animation roots, their shared response tail, and the common actor template.
 
+  - name: INTERACTION_COMPACT_RESPONSE
+    scope: role
+    symbol_addresses: [0x00122C40]
+    technical_types: [0x44]
+    confidence: decompiled
+    evidence:
+      - interaction_spawn_type46_5a_response_static_decompilation
+      - mid-actor-animation-stream-extents-static-v1
+    description: Compact interaction-response animation shared by the selector-0x50 and selector-0xAB producers.
+
+  - name: INTERACTION_MULTI_CHILD_SPAWN
+    scope: role
+    symbol_addresses: [0x00122C66, 0x001B79CC]
+    technical_types: [0x46]
+    confidence: decompiled
+    evidence:
+      - actor_template_mid_dispatch_family_static_decompilation
+      - interaction_spawn_type46_5a_response_static_decompilation
+    description: Shared interaction animation/template pair that spawns two child actors through F5 records.
+
   - name: COLLISION_RESPONSE_CHILD
     scope: role
     symbol_addresses: [0x001B8368]

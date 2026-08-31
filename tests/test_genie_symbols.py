@@ -536,6 +536,24 @@ def test_interaction_state_response_names_preserve_numeric_aliases():
     assert mappings["INTERACTION_STATE_RESPONSE"].scope == "role"
 
 
+def test_compact_interaction_response_names_preserve_numeric_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00122C40: ("ACTOR_ANIM_INTERACTION_RESPONSE_COMPACT", "ACTOR_ANIM_TYPE44_INTERACTION"),
+        0x00122C66: ("ACTOR_ANIM_INTERACTION_MULTI_CHILD_SPAWN", "ACTOR_ANIM_TYPE46_SHARED_SPAWN"),
+        0x001B79CC: ("ACTOR_TEMPLATE_INTERACTION_MULTI_CHILD_SPAWN", "ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert {"INTERACTION_COMPACT_RESPONSE", "INTERACTION_MULTI_CHILD_SPAWN"} <= mappings.keys()
+
+
 def test_actor_template_roles_promote_numeric_names_with_aliases():
     symbols = SymbolStore()
     expected = {
