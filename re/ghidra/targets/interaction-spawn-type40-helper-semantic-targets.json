@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type40-helper-semantic",
+    "purpose": "Replace the runtime-type-only helper name with its exact shared type-0x40 variant-spawn role."
+  },
+  "targets": [
+    {
+      "address": "0x001B7332",
+      "name": "InteractionSpawn_CreateType40Variant",
+      "legacy_name": "InteractionSpawn_RuntimeType40",
+      "range": "0x001B7332-0x001B7353",
+      "size": 34,
+      "allocator": "InteractionSpawn_AllocatePreserveRow",
+      "template": "ACTOR_TEMPLATE_BASE_ZERO",
+      "runtime_type": "0x40",
+      "animation": "ACTOR_ANIM_TYPE40_INTERACTION",
+      "post_init": ["clear actor byte +0x29"],
+      "caller": "InteractionSpawn_RuntimeType40_FourPosition_61",
+      "caller_behavior": "Selector 0x61 invokes this helper four times around X/Y coordinate adjustments."
+    }
+  ],
+  "evidence": [
+    "exact 68000 helper body",
+    "four direct calls from the selector-0x61 parent",
+    "canonical zero-type template and type-0x40 animation identities",
+    "existing static spawn-variation contracts"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

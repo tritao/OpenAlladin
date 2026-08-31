@@ -4184,12 +4184,14 @@
     - ghidra_disassembly_001B6794
     - ghidra_actor_spawn_variation_targets
 0x001B7332:
-  name: InteractionSpawn_RuntimeType40
+  name: InteractionSpawn_CreateType40Variant
+  aliases: [InteractionSpawn_RuntimeType40]
   confidence: decompiled
-  description: Interaction spawner that uses LevelObjectSpawnVariant with template 0x001B79B8, then assigns runtime actor type 0x40, animation root 0x00122C12, and a cleared actor byte at offset 0x29 when allocation succeeds.
+  description: Shared type-0x40 interaction-spawn variant helper used four times by the selector-0x61 multi-position producer. It uses LevelObjectSpawnVariant with ACTOR_TEMPLATE_BASE_ZERO, then assigns runtime actor type 0x40, ACTOR_ANIM_TYPE40_INTERACTION, and a cleared actor byte at offset 0x29 when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B7332
     - ghidra_actor_spawn_variation_targets
+    - interaction_spawn_type40_helper_semantic_v1
 
 0x001B634E:
   name: LevelEvent_DispatchTimedCommand

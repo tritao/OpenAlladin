@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type40-helper-semantic-targets.json",
+  "promoted_symbols": ["InteractionSpawn_CreateType40Variant"],
+  "legacy_aliases": ["InteractionSpawn_RuntimeType40"],
+  "contracts": [
+    "0x001B7332 is called four times by InteractionSpawn_RuntimeType40_FourPosition_61 at selector 0x61 around the base, X+0x0C, Y-0x0A, and base-again positions.",
+    "The helper calls InteractionSpawn_AllocatePreserveRow with ACTOR_TEMPLATE_BASE_ZERO and, on success, installs runtime type 0x40, ACTOR_ANIM_TYPE40_INTERACTION, and actor byte +0x29 = 0.",
+    "The name identifies the shared type-0x40 variant-spawn role without assigning a user-facing object identity."
+  ],
+  "evidence": [
+    "Exact 68000 body at 0x001B7332",
+    "Four direct parent calls",
+    "Existing actor-spawn variation and type-0x40 interaction findings"
+  ],
+  "limitations": [
+    "The higher-level object represented by the spawned type-0x40 actor remains intentionally unspecified.",
+    "The legacy runtime-type name remains an alias for historical findings and references."
+  ],
+  "conclusion": "The shared selector-0x61 type-0x40 spawn helper now has a stable creation/variant identity while preserving its exact allocator and post-initialization contract.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
