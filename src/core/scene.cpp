@@ -422,6 +422,23 @@ SceneResourceRunResult scene_resource_process_command_stream(
     return finish();
 }
 
+SceneResourceRunResult scene_resource_process_command_stream_with_presentation_scratch(
+    CoreRuntime& core,
+    RamAddress stream,
+    std::uint16_t initial_x,
+    std::uint16_t initial_y,
+    const SceneResourceEffects& effects,
+    CoreTrace* trace,
+    std::size_t instruction_budget
+) {
+    write8(core.ram, kSceneResourcePresentationScratch, 1);
+    const SceneResourceRunResult result = scene_resource_process_command_stream(
+        core, stream, initial_x, initial_y, effects, trace,
+        instruction_budget);
+    write8(core.ram, kSceneResourcePresentationScratch, 0);
+    return result;
+}
+
 void scene_table_select_next_state(
     CoreRuntime& core,
     CoreTrace*

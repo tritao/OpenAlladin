@@ -91,6 +91,19 @@ SceneResourceRunResult scene_resource_process_command_stream(
     std::size_t instruction_budget = 1'000'000
 );
 
+// SceneResource_ProcessCommandStreamWithPresentationScratch at 0x001B21E4.
+// The wrapper owns the FFEFFC lifetime exactly: set it for the nested VM,
+// then clear it before returning regardless of the VM result.
+SceneResourceRunResult scene_resource_process_command_stream_with_presentation_scratch(
+    CoreRuntime& core,
+    RamAddress stream,
+    std::uint16_t initial_x = 0,
+    std::uint16_t initial_y = 0,
+    const SceneResourceEffects& effects = {},
+    CoreTrace* trace = nullptr,
+    std::size_t instruction_budget = 1'000'000
+);
+
 // SceneTable_SelectNextState's table-selection tail at 0x001B3EDC. The
 // five six-byte records are ROM-owned; only the selected pointer, state byte,
 // and wrapping index are published into Genesis RAM.
