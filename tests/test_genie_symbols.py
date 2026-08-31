@@ -1733,6 +1733,15 @@ def test_real_collision_geometry_and_event_latches_have_canonical_roles():
         assert symbol.confidence == "decompiled"
 
 
+def test_real_type18_19_pair_spawn_gate_has_reset_contract():
+    symbol = SymbolStore().at(0x00FFF112, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE"
+    assert "0x00000276" in symbol.description
+    assert "0x00FF0000-0x00FFFFFF" in symbol.description
+    assert "no post-set explicit clear" in symbol.description
+
+
 def test_real_interaction_resource_completion_latches_have_canonical_roles():
     symbols = SymbolStore()
     expected = {

@@ -2770,12 +2770,13 @@
   type: u8
   format: boolean
   confidence: decompiled
-  description: Collision-to-interaction gate set when the shared Type-0x18/0x19 player-collision handler reaches its terminal response path. InteractionSpawn_Type5E84Pair_F9WhenReady tests it before allocating the Type-0x5E/Type-0x84 pair; the reset/clear producer remains outside the exported direct-reference set.
+  description: Collision-to-interaction gate set when the shared Type-0x18/0x19 player-collision handler reaches its terminal response path. InteractionSpawn_Type5E84Pair_F9WhenReady tests it before allocating the Type-0x5E/Type-0x84 pair. System_ResetBootstrap initializes the byte to zero through its exact 0x00FF0000-0x00FFFFFF full-work-RAM zero-fill loop at 0x00000276; no post-set explicit clear is present in the exported absolute-reference corpus.
   evidence:
     - ghidra_disassembly_001AEA48
     - ghidra_disassembly_001B6B5C
     - interaction-spawn-type5e84-pair-targets
     - interaction-spawn-type5e84-pair-movement-streams-static-targets
+    - player-collision-type18-19-gate-reset-static-v1
 
 0xFFF11A:
   name: LEVEL04_EVENT_38_PENDING

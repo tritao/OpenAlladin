@@ -1,0 +1,49 @@
+{
+  "format": "openaladdin-player-collision-type18-19-gate-reset-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ram": {
+    "address": "0x00FFF112",
+    "name": "PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE",
+    "set": {
+      "address": "0x001AEB36",
+      "function": "PlayerCollision_HandleInteractionProximityResponse",
+      "instruction": "move.b #0x1,(0x00fff112).l"
+    },
+    "consumer": {
+      "address": "0x001B6B5C",
+      "function": "InteractionSpawn_Type5E84Pair_F9WhenReady",
+      "instruction": "tst.b (0x00fff112).l"
+    },
+    "post_set_clear": {
+      "status": "unresolved",
+      "scope": "exported absolute-reference corpus"
+    }
+  },
+  "reset_initialization": {
+    "function": "System_ResetBootstrap",
+    "loop_store_address": "0x00000276",
+    "instruction": "move.l D0,-(A6)",
+    "zero_source": "D0 is zero after moveq #0,D0 at 0x0000024A",
+    "initial_address": "0x00000000",
+    "first_bus_address": "0x00FFFFFC",
+    "iterations": "0x4000 stores from D6=0x3FFF loaded by movem.w at 0x0000022E",
+    "covered_bus_range": ["0x00FF0000", "0x00FFFFFF"],
+    "includes_target": true
+  },
+  "evidence": [
+    "instructions.json exact records at 0x0000022E, 0x0000024A, 0x0000024C, 0x00000276, and 0x00000278",
+    "ghidra_decompile_0000021A",
+    "direct writer/reader query for 0x00FFF112"
+  ],
+  "conclusion": "PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE has an exact setter, consumer, and reset initialization. The post-set clear path remains intentionally unresolved.",
+  "limitations": [
+    "The reset loop proves startup zeroing but does not identify a later clear after the gate is set.",
+    "The static contract does not establish which runtime path reaches the Type-0x18/0x19 setter."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
