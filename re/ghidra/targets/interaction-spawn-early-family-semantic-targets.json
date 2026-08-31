@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-early-family-semantic",
+    "purpose": "Promote the closed early INTERACTION_HANDLER_TABLE family to stable creation and gate identities while retaining selector-qualified historical names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      { "address": "0x001B65C0", "selector": "0x20", "name": "InteractionSpawn_CreateType84WithYOffset10", "legacy_name": "InteractionSpawn_Type84OffsetY10" },
+      { "address": "0x001B65D4", "selector": "0x4B", "name": "InteractionSpawn_CreateType84TerminalActor", "legacy_name": "InteractionSpawn_Type84Terminal" },
+      { "address": "0x001B65E0", "selector": "0xA4", "name": "InteractionSpawn_CreateType32WithYOffset8", "legacy_name": "InteractionSpawn_Type32OffsetY8" },
+      { "address": "0x001B65F4", "selector": "0xF4", "name": "InteractionGate_CreateType62ByScene", "legacy_name": "InteractionGate_Type62ByScene" },
+      { "address": "0x001B65FE", "selector": "0xEF", "name": "InteractionSpawn_CreateType62ByScene", "legacy_name": "InteractionSpawn_Type62ByScene" },
+      { "address": "0x001B6622", "selector": "0xEE", "name": "InteractionSpawn_CreateType64WithXOffset16", "legacy_name": "InteractionSpawn_Type64OffsetX16" },
+      { "address": "0x001B6636", "selector": "0x35", "name": "InteractionSpawn_CreateType1AActorWithXYOffset16", "legacy_name": "InteractionSpawn_Type1AOffset" },
+      { "address": "0x001B6654", "selector": "0x36", "name": "InteractionSpawn_CreateType1BActorWithFacingAndXYOffset16", "legacy_name": "InteractionSpawn_Type1BOffset" },
+      { "address": "0x001B6672", "selector": "0x37", "name": "InteractionSpawn_CreateType1CActorWithYOffset16", "legacy_name": "InteractionSpawn_Type1COffset" },
+      { "address": "0x001B668A", "selector": "0x75", "name": "InteractionSpawn_CreateType58Actor", "legacy_name": "InteractionSpawn_Type58" },
+      { "address": "0x001B6696", "selector": "0x76", "name": "InteractionSpawn_CreateType58ActorWithAlternateAnimation", "legacy_name": "InteractionSpawn_Type58AlternateAnimation" },
+      { "address": "0x001B66AC", "selector": "0x7B", "name": "InteractionSpawn_CreateType55AtOffsetX8Y0", "legacy_name": "InteractionSpawn_Type55OffsetY0" },
+      { "address": "0x001B66C0", "selector": "0x7C", "name": "InteractionSpawn_CreateType55AtOffsetX8Y4", "legacy_name": "InteractionSpawn_Type55OffsetY4" },
+      { "address": "0x001B66D8", "selector": "0x7D", "name": "InteractionSpawn_CreateType55AtOffsetX8Y8", "legacy_name": "InteractionSpawn_Type55OffsetY8" },
+      { "address": "0x001B66F2", "selector": "0x7E", "name": "InteractionSpawn_CreateType55AtOffsetX8Y12", "legacy_name": "InteractionSpawn_Type55OffsetY12" },
+      { "address": "0x001B670C", "selector": "0x74", "name": "InteractionSpawn_CreateType74AtOffsetXMinus8Y4", "legacy_name": "InteractionSpawn_Type74Offset" },
+      { "address": "0x001B6726", "selector": "0x45", "name": "InteractionSpawn_CreateType07MovingInteractionActor", "legacy_name": "InteractionSpawn_Type07" },
+      { "address": "0x001B6732", "selector": "0x48", "name": "InteractionSpawn_CreateType8CLandingResponseActor", "legacy_name": "InteractionSpawn_Type8C" },
+      { "address": "0x001B673E", "selector": "0xD6", "name": "InteractionSpawn_CreateType76ViaLevelObjectSpawn", "legacy_name": "InteractionSpawn_Type76" },
+      { "address": "0x001B674A", "selector": "0xD8", "name": "InteractionSpawn_CreateType74TerrainResponseActor", "legacy_name": "InteractionSpawn_Type74" },
+      { "address": "0x001B6756", "selector": "0x8F", "name": "InteractionSpawn_CreateType84TerrainResponseByScene", "legacy_name": "InteractionSpawn_Type84TerrainResponseByScene" }
+    ]
+  },
+  "contracts": [
+    "The handlers load the established actor templates and use the existing forward, reverse-slot, variant, or LevelObjectSpawnEntry allocation contracts documented by the static family manifest.",
+    "Coordinate adjustments are preserved exactly: Type-0x84 +Y 0x0A, Type-0x32 +Y 0x08, Type-0x62 -Y 0x08, Type-0x64 +X 0x10, Type-0x1A/1B +X/+Y 0x10, Type-0x1C +Y 0x10, Type-0x55 (+X 0x08 and Y 0x00/0x04/0x08/0x0C), and Type-0x74 (-X 0x08, +Y 0x04).",
+    "The Type-0x62 scene gate, Type-0x1B facing override, Type-0x58 alternate animation root, and Type-0x84 scene/response selection remain explicit in the promoted descriptions."
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies at 0x001B65C0 through 0x001B6756",
+    "INTERACTION_HANDLER_TABLE selector membership at ROM 0x004154",
+    "re/ghidra/targets/interaction-spawn-early-family-targets.json",
+    "re/mame/findings/20260829-interaction-spawn-early-family-static-v1.json"
+  ],
+  "limitations": [
+    "The names identify runtime actor types and exact handler contracts, not user-facing object or scene roles.",
+    "The upstream meaning and clear timing of the selector-specific gate bytes remain outside this promotion."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

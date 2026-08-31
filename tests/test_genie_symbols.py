@@ -453,6 +453,39 @@ def test_type84_base_interaction_spawn_handlers_have_semantic_names_and_aliases(
         assert symbol.confidence == "decompiled"
 
 
+def test_early_interaction_spawn_family_has_semantic_names_and_aliases():
+    expected = {
+        0x001B65C0: ("InteractionSpawn_CreateType84WithYOffset10", "InteractionSpawn_Type84OffsetY10"),
+        0x001B65D4: ("InteractionSpawn_CreateType84TerminalActor", "InteractionSpawn_Type84Terminal"),
+        0x001B65E0: ("InteractionSpawn_CreateType32WithYOffset8", "InteractionSpawn_Type32OffsetY8"),
+        0x001B65F4: ("InteractionGate_CreateType62ByScene", "InteractionGate_Type62ByScene"),
+        0x001B65FE: ("InteractionSpawn_CreateType62ByScene", "InteractionSpawn_Type62ByScene"),
+        0x001B6622: ("InteractionSpawn_CreateType64WithXOffset16", "InteractionSpawn_Type64OffsetX16"),
+        0x001B6636: ("InteractionSpawn_CreateType1AActorWithXYOffset16", "InteractionSpawn_Type1AOffset"),
+        0x001B6654: ("InteractionSpawn_CreateType1BActorWithFacingAndXYOffset16", "InteractionSpawn_Type1BOffset"),
+        0x001B6672: ("InteractionSpawn_CreateType1CActorWithYOffset16", "InteractionSpawn_Type1COffset"),
+        0x001B668A: ("InteractionSpawn_CreateType58Actor", "InteractionSpawn_Type58"),
+        0x001B6696: ("InteractionSpawn_CreateType58ActorWithAlternateAnimation", "InteractionSpawn_Type58AlternateAnimation"),
+        0x001B66AC: ("InteractionSpawn_CreateType55AtOffsetX8Y0", "InteractionSpawn_Type55OffsetY0"),
+        0x001B66C0: ("InteractionSpawn_CreateType55AtOffsetX8Y4", "InteractionSpawn_Type55OffsetY4"),
+        0x001B66D8: ("InteractionSpawn_CreateType55AtOffsetX8Y8", "InteractionSpawn_Type55OffsetY8"),
+        0x001B66F2: ("InteractionSpawn_CreateType55AtOffsetX8Y12", "InteractionSpawn_Type55OffsetY12"),
+        0x001B670C: ("InteractionSpawn_CreateType74AtOffsetXMinus8Y4", "InteractionSpawn_Type74Offset"),
+        0x001B6726: ("InteractionSpawn_CreateType07MovingInteractionActor", "InteractionSpawn_Type07"),
+        0x001B6732: ("InteractionSpawn_CreateType8CLandingResponseActor", "InteractionSpawn_Type8C"),
+        0x001B673E: ("InteractionSpawn_CreateType76ViaLevelObjectSpawn", "InteractionSpawn_Type76"),
+        0x001B674A: ("InteractionSpawn_CreateType74TerrainResponseActor", "InteractionSpawn_Type74"),
+        0x001B6756: ("InteractionSpawn_CreateType84TerrainResponseByScene", "InteractionSpawn_Type84TerrainResponseByScene"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence in {"confirmed", "decompiled", "trace_validated"}
+
+
 def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
     expected = {
         0x001AF1AC: ("PlayerCollision_SpawnVerticalResponseActor", "ActorType13_PlayerCollisionHandler"),

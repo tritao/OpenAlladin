@@ -1,0 +1,72 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-early-family-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType84WithYOffset10",
+    "InteractionSpawn_CreateType84TerminalActor",
+    "InteractionSpawn_CreateType32WithYOffset8",
+    "InteractionGate_CreateType62ByScene",
+    "InteractionSpawn_CreateType62ByScene",
+    "InteractionSpawn_CreateType64WithXOffset16",
+    "InteractionSpawn_CreateType1AActorWithXYOffset16",
+    "InteractionSpawn_CreateType1BActorWithFacingAndXYOffset16",
+    "InteractionSpawn_CreateType1CActorWithYOffset16",
+    "InteractionSpawn_CreateType58Actor",
+    "InteractionSpawn_CreateType58ActorWithAlternateAnimation",
+    "InteractionSpawn_CreateType55AtOffsetX8Y0",
+    "InteractionSpawn_CreateType55AtOffsetX8Y4",
+    "InteractionSpawn_CreateType55AtOffsetX8Y8",
+    "InteractionSpawn_CreateType55AtOffsetX8Y12",
+    "InteractionSpawn_CreateType74AtOffsetXMinus8Y4",
+    "InteractionSpawn_CreateType07MovingInteractionActor",
+    "InteractionSpawn_CreateType8CLandingResponseActor",
+    "InteractionSpawn_CreateType76ViaLevelObjectSpawn",
+    "InteractionSpawn_CreateType74TerrainResponseActor",
+    "InteractionSpawn_CreateType84TerrainResponseByScene"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_Type84OffsetY10",
+    "InteractionSpawn_Type84Terminal",
+    "InteractionSpawn_Type32OffsetY8",
+    "InteractionGate_Type62ByScene",
+    "InteractionSpawn_Type62ByScene",
+    "InteractionSpawn_Type64OffsetX16",
+    "InteractionSpawn_Type1AOffset",
+    "InteractionSpawn_Type1BOffset",
+    "InteractionSpawn_Type1COffset",
+    "InteractionSpawn_Type58",
+    "InteractionSpawn_Type58AlternateAnimation",
+    "InteractionSpawn_Type55OffsetY0",
+    "InteractionSpawn_Type55OffsetY4",
+    "InteractionSpawn_Type55OffsetY8",
+    "InteractionSpawn_Type55OffsetY12",
+    "InteractionSpawn_Type74Offset",
+    "InteractionSpawn_Type07",
+    "InteractionSpawn_Type8C",
+    "InteractionSpawn_Type76",
+    "InteractionSpawn_Type74",
+    "InteractionSpawn_Type84TerrainResponseByScene"
+  ],
+  "contracts": [
+    "Selector 0x20 creates Type-0x84 with Y+0x0A; 0x4B creates the terminal Type-0x84 actor; and 0xA4 creates Type-0x32 with Y+0x08.",
+    "Selectors 0xF4/0xEF implement the Type-0x62 gate and scene-specific creation path, including Y-0x08 for the spawned actor.",
+    "Selectors 0xEE, 0x35-0x37, 0x75-0x7E, 0x74, 0x45, 0x48, 0xD6, 0xD8, and 0x8F preserve their exact template, allocation, animation, facing, gate, palette, and coordinate contracts from the static family evidence."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "Established actor-template, AnimationVM, reverse-slot, forward-slot, and LevelObjectSpawnEntry contracts",
+    "interaction_spawn_early_family_semantic_v1"
+  ],
+  "limitations": [
+    "No user-facing actor identity is claimed for this dispatch family.",
+    "Selector reachability and the upstream lifecycle of several gate bytes remain unresolved."
+  ],
+  "conclusion": "The early interaction dispatch family now has stable creation and gate identities while preserving all historical names as aliases and retaining exact static contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
