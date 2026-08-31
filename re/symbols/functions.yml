@@ -5838,29 +5838,35 @@
     - interaction_spawn_runtime3a-41-static-decompilation
     - interaction_spawn_type37_43_8a_84_34_semantic_v1
 0x001B72FC:
-  name: InteractionSpawn_RuntimeType40_FourPosition_61
+  name: InteractionSpawn_CreateType40FourPositionSet
+  aliases: [InteractionSpawn_RuntimeType40_FourPosition_61]
   confidence: decompiled
-  description: Interaction selector 0x61 handler that requires 0x00FFEFE0 to equal 0x3030, then calls InteractionSpawn_RuntimeType40 four times while adjusting the destination coordinates for the base, X plus 0x0C, Y minus 0x0A, and base-again positions.
+  description: Interaction selector 0x61 handler that requires INTERACTION_COUNTER_DIGITS at 0x00FFEFE0 to equal 0x3030, then calls InteractionSpawn_CreateType40Variant four times while adjusting the destination coordinates for the base, X plus 0x0C, Y minus 0x0A, and base-again positions.
   evidence:
     - ghidra_disassembly_001B72FC
     - interaction-spawn-runtime3c-40-targets
     - interaction-spawn-runtime3c-40-static-decompilation
+    - interaction_spawn_type40_semantic_v1
 0x001B7354:
-  name: InteractionGate_RuntimeType40_AD
+  name: InteractionGate_CreateType40FromSelectorAD
+  aliases: [InteractionGate_RuntimeType40_AD]
   confidence: decompiled
-  description: Interaction selector 0xAD gate that requires 0x00FFF171 set, then falls through to the selector-0x60 runtime-type-0x40 spawn body, which suppresses when 0x00FFEFE0 equals 0x3939 and otherwise uses the zero-type base with animation root 0x00122C12 and a cleared actor byte at offset 0x29.
+  description: Interaction selector 0xAD gate that requires INTERACTION_GATE_TYPE40 at 0x00FFF171 set, then falls through to the selector-0x60 Type-0x40 spawn body, which suppresses when INTERACTION_COUNTER_DIGITS equals 0x3939.
   evidence:
     - ghidra_disassembly_001B7354
     - interaction-spawn-runtime3c-40-targets
     - interaction-spawn-runtime3c-40-static-decompilation
+    - interaction_spawn_type40_semantic_v1
 0x001B735E:
-  name: InteractionSpawn_RuntimeType40_60
+  name: InteractionSpawn_CreateType40InteractionActor
+  aliases: [InteractionSpawn_RuntimeType40_60]
   confidence: decompiled
-  description: Interaction selector 0x60 handler that suppresses when 0x00FFEFE0 equals 0x3939, then uses the zero-type base through LevelObjectSpawnEntry and promotes a successful allocation to runtime type 0x40 with animation root 0x00122C12 and a cleared actor byte at offset 0x29.
+  description: Interaction selector 0x60 handler that suppresses when INTERACTION_COUNTER_DIGITS at 0x00FFEFE0 equals 0x3939, then allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry and publishes runtime type 0x40 with ACTOR_ANIM_TYPE40_INTERACTION at 0x00122C12 and actor byte +0x29 cleared.
   evidence:
     - ghidra_disassembly_001B735E
     - interaction-spawn-runtime3c-40-targets
     - interaction-spawn-runtime3c-40-static-decompilation
+    - interaction_spawn_type40_semantic_v1
 0x001B738A:
   name: InteractionSpawn_CreateType3CResponse
   aliases: [InteractionSpawn_RuntimeType3C_42]

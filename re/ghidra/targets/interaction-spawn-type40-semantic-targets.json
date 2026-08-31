@@ -1,0 +1,56 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type40-semantic",
+    "purpose": "Promote the selector 0x61 and 0xAD/0x60 Type-0x40 interaction paths to stable creation identities."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selectors": ["0x61", "0xAD", "0x60"]
+  },
+  "shared_contract": {
+    "runtime_type": "0x40",
+    "template": "ACTOR_TEMPLATE_BASE_ZERO",
+    "animation": "ACTOR_ANIM_TYPE40_INTERACTION at 0x00122C12",
+    "single_spawn_helper": "InteractionSpawn_CreateType40Variant at 0x001B7332"
+  },
+  "handlers": [
+    {
+      "address": "0x001B72FC",
+      "name": "InteractionSpawn_CreateType40FourPositionSet",
+      "legacy_name": "InteractionSpawn_RuntimeType40_FourPosition_61",
+      "selector": "0x61",
+      "gate": "INTERACTION_COUNTER_DIGITS at 0x00FFEFE0 == 0x3030",
+      "positions": ["base", "X + 0x0C", "Y - 0x0A", "base again"]
+    },
+    {
+      "address": "0x001B7354",
+      "name": "InteractionGate_CreateType40FromSelectorAD",
+      "legacy_name": "InteractionGate_RuntimeType40_AD",
+      "selector": "0xAD",
+      "gate": "INTERACTION_GATE_TYPE40 at 0x00FFF171 != 0",
+      "wrapper_for": "selector 0x60 body at 0x001B735E"
+    },
+    {
+      "address": "0x001B735E",
+      "name": "InteractionSpawn_CreateType40InteractionActor",
+      "legacy_name": "InteractionSpawn_RuntimeType40_60",
+      "selector": "0x60",
+      "gate": "INTERACTION_COUNTER_DIGITS at 0x00FFEFE0 != 0x3939",
+      "allocator": "LevelObjectSpawnEntry",
+      "post_spawn": ["runtime type 0x40", "actor byte +0x29 = 0"]
+    }
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies and selector membership",
+    "Existing Type-0x40 helper and ACTOR_TEMPLATE_BASE_ZERO contract",
+    "Direct Type-0x40 animation-root assignment",
+    "Selector-specific counter and gate conditions"
+  ],
+  "limitations": [
+    "The promoted names identify Type-0x40 creation and gate roles but do not assign a user-facing object identity.",
+    "The selector-0xAD body is a gate wrapper whose successful path falls through into selector 0x60."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
