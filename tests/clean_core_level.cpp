@@ -299,7 +299,7 @@ int main() {
         [](void* context) {
             ++static_cast<TileCapture*>(context)->service_frames;
         },
-        [](void* context) {
+        [](void* context, RamAddress) {
             ++static_cast<TileCapture*>(context)->c000_calls;
         },
         [](void* context) {

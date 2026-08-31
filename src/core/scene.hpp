@@ -27,7 +27,7 @@ struct SceneResourceEffects {
     void* context = nullptr;
     void (*write_tile)(void*, const SceneResourceTileWrite&) = nullptr;
     void (*service_frame)(void*) = nullptr;
-    void (*load_or_clear_c000)(void*) = nullptr;
+    void (*load_or_clear_c000)(void*, RamAddress) = nullptr;
     void (*prepare_frame_and_palette)(void*) = nullptr;
     void (*object_command_noop_hook)(void*) = nullptr;
 };
@@ -36,6 +36,7 @@ struct SceneResourceRunResult {
     SceneResourceRunStatus status = SceneResourceRunStatus::InvalidStream;
     RamAddress cursor = 0;
     RamAddress stream_pointer = 0;
+    RamAddress c000_source = 0;
     RamAddress last_handler = 0;
     std::uint8_t last_command = 0;
     std::uint16_t tile_x = 0;

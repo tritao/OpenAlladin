@@ -154,6 +154,7 @@ constexpr RamAddress kSceneResourceTileBase = 0x00FFEFF0;
 constexpr RamAddress kSceneResourcePresentationScratch = 0x00FFEFFC;
 constexpr RamAddress kSceneResourceActorRecordCursor = 0x00FF7282;
 constexpr RamAddress kSceneResourceActorSpawnGate = 0x00FFF0FF;
+constexpr RamAddress kSceneResourceC000Source = 0x00FF7294;
 
 constexpr RamAddress kPlayerVelocityX = kActorTableBase + 0x18;
 constexpr RamAddress kPlayerVelocityY = kActorTableBase + 0x1A;

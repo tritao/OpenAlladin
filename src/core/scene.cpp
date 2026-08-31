@@ -80,6 +80,7 @@ void publish_scene_resource_trace(
     trace->scene_resource_last_handler = result.last_handler;
     trace->scene_resource_cursor = result.cursor;
     trace->scene_resource_stream_pointer = result.stream_pointer;
+    trace->scene_resource_c000_source = result.c000_source;
     trace->scene_resource_tile_x = result.tile_x;
     trace->scene_resource_tile_y = result.tile_y;
     trace->scene_resource_tile_base = result.tile_base;
@@ -166,6 +167,7 @@ SceneResourceRunResult scene_resource_process_command_stream(
     RamAddress cursor = stream;
     std::uint16_t tile_x = initial_x;
     std::uint16_t tile_y = initial_y;
+    result.c000_source = read32(core.ram, kSceneResourceC000Source);
 
     const auto finish = [&]() {
         result.cursor = cursor;
@@ -348,7 +350,7 @@ SceneResourceRunResult scene_resource_process_command_stream(
         case 0x0D:
             result.c000_load_requested = true;
             if (effects.load_or_clear_c000 != nullptr) {
-                effects.load_or_clear_c000(effects.context);
+                effects.load_or_clear_c000(effects.context, result.c000_source);
             }
             break;
 
@@ -373,10 +375,13 @@ SceneResourceRunResult scene_resource_process_command_stream(
                 result.status = SceneResourceRunStatus::InvalidStream;
                 return finish();
             }
-            const auto slot = actor_spawn_from_template(
-                core, ActorAllocationPool::CommonForward,
-                template_address, x, y);
-            if (slot) {
+            const auto slot = actor_find_free_slot(
+                core.ram, ActorAllocationPool::CommonForward);
+            if (slot && actor_initialize_from_template(
+                    core, *slot, template_address)) {
+                const ActorView actor = actor_view(core.ram, *slot);
+                actor_write16(actor, kActorXOffset, x);
+                actor_write16(actor, kActorYOffset, y);
                 result.actor_spawned = true;
                 result.actor_spawn_slot = *slot;
             }

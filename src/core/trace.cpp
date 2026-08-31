@@ -44,7 +44,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         RamAddress address;
         std::uint8_t width;
     };
-    constexpr std::array<RawField, 61> fields = {{
+    constexpr std::array<RawField, 62> fields = {{
         {kPlayerX, 2}, {kPlayerY, 2}, {kWorldCameraX, 2}, {kWorldCameraY, 2},
         {kPlayerWorldX, 2}, {kPlayerWorldY, 2},
         {kCameraReferenceX, 2}, {kCameraReferenceY, 2},
@@ -79,6 +79,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         {kSceneResourceTileBase, 2}, {kSceneResourcePresentationScratch, 1},
         {kSceneResourceActorRecordCursor, 4},
         {kSceneResourceActorSpawnGate, 1},
+        {kSceneResourceC000Source, 4},
     }};
     output << "[";
     for (std::size_t index = 0; index < fields.size(); ++index) {
@@ -181,6 +182,7 @@ void trace_begin(
     trace.scene_resource_last_handler = 0;
     trace.scene_resource_cursor = 0;
     trace.scene_resource_stream_pointer = 0;
+    trace.scene_resource_c000_source = 0;
     trace.scene_resource_tile_x = 0;
     trace.scene_resource_tile_y = 0;
     trace.scene_resource_tile_base = 0;
@@ -322,6 +324,8 @@ void trace_state(
            << trace.scene_resource_cursor
            << ",\"scene_resource_stream_pointer\":"
            << trace.scene_resource_stream_pointer
+           << ",\"scene_resource_c000_source\":"
+           << trace.scene_resource_c000_source
            << ",\"scene_resource_tile_x\":"
            << trace.scene_resource_tile_x
            << ",\"scene_resource_tile_y\":"
