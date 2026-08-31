@@ -2836,15 +2836,17 @@
     - interaction-resource-milestones-static-targets
 
 0xFFF0F9:
-  name: INTERACTION_RESOURCE_COMPLETION_LATCH
+  name: INTERACTION_RESOURCE_COMPLETION_MARKER
+  aliases: [INTERACTION_RESOURCE_COMPLETION_LATCH]
   type: u8
   format: boolean
   confidence: decompiled
-  description: Interaction-resource completion latch set by Interaction_UpdateResourceState when INTERACTION_RESOURCE_PROGRESS_COUNTER reaches the terminal ASCII value 010; the service then adds 1000 to ACTOR_RESPONSE_COUNTER. No direct consumer is present in the exported absolute-reference corpus.
+  description: Write-only interaction-resource completion marker set to 0xFF by Interaction_UpdateResourceState at 0x001B0290 when INTERACTION_RESOURCE_PROGRESS_COUNTER reaches the terminal ASCII bytes 010\\0; the service then adds 1000 to ACTOR_RESPONSE_COUNTER. No direct read or clear is present in the exported absolute-reference corpus.
   evidence:
     - ghidra_disassembly_001B01AC
     - ghidra_decompile_001B01AC
     - interaction-resource-milestones-static-targets
+    - interaction-resource-completion-marker-static-v1
 
 0xFF7E5E:
   name: PLAYER_ACTOR_SPRITE_ATTRIBUTE_BASE

@@ -1746,7 +1746,7 @@ def test_real_interaction_resource_completion_latches_have_canonical_roles():
     symbols = SymbolStore()
     expected = {
         0x00FFF0F7: "INTERACTION_RESOURCE_FINALIZATION_GATE",
-        0x00FFF0F9: "INTERACTION_RESOURCE_COMPLETION_LATCH",
+        0x00FFF0F9: "INTERACTION_RESOURCE_COMPLETION_MARKER",
     }
     for address, name in expected.items():
         symbol = symbols.at(address, include_ranges=False)
@@ -1755,6 +1755,12 @@ def test_real_interaction_resource_completion_latches_have_canonical_roles():
         assert symbol.metadata["type"] == "u8"
         assert symbol.metadata["format"] == "boolean"
         assert symbol.confidence == "decompiled"
+
+    marker = symbols.at(0x00FFF0F9, include_ranges=False)
+    assert marker is not None
+    assert "INTERACTION_RESOURCE_COMPLETION_LATCH" in marker.aliases
+    assert "0x001B0290" in marker.description
+    assert "No direct read or clear" in marker.description
 
 
 def test_real_fixed_actor_render_and_terrain_fields_have_canonical_roles():

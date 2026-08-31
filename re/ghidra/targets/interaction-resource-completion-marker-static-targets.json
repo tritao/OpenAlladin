@@ -1,0 +1,53 @@
+{
+  "format": "openaladdin-interaction-resource-completion-marker-static-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ram": {
+    "address": "0x00FFF0F9",
+    "name": "INTERACTION_RESOURCE_COMPLETION_MARKER",
+    "legacy_alias": "INTERACTION_RESOURCE_COMPLETION_LATCH",
+    "writer": {
+      "address": "0x001B0290",
+      "function": "Interaction_UpdateResourceState",
+      "instruction": "st (0x00fff0f9).l",
+      "value": "0xFF"
+    },
+    "condition": {
+      "address": "0x001B0286",
+      "instruction": "cmpi.l #0x30313000,(A0)",
+      "object": "INTERACTION_RESOURCE_PROGRESS_COUNTER",
+      "meaning": "ASCII bytes 010\\0"
+    },
+    "post_write": {
+      "address": "0x001B0296",
+      "function": "Interaction_AddResponseCounter1000",
+      "effect": "adds 1000 to ACTOR_RESPONSE_COUNTER"
+    },
+    "read_or_clear": {
+      "status": "none found",
+      "scope": "exported whole-ROM absolute-reference corpus"
+    }
+  },
+  "reset_initialization": {
+    "function": "System_ResetBootstrap",
+    "loop_store_address": "0x00000276",
+    "covered_bus_range": ["0x00FF0000", "0x00FFFFFF"],
+    "includes_target": true
+  },
+  "evidence": [
+    "instructions.json exact records at 0x001B0286, 0x001B0290, and 0x001B0296",
+    "ghidra_decompile_001B01AC",
+    "direct writer/reader query for 0x00FFF0F9",
+    "player-collision-type18-19-gate-reset-static-v1"
+  ],
+  "conclusion": "The address formerly called INTERACTION_RESOURCE_COMPLETION_LATCH is more precisely a write-only completion marker in the exported ROM corpus: it is set to 0xFF at terminal progress and has no direct read or clear.",
+  "limitations": [
+    "The absence of a direct reader does not rule out an indirect consumer outside the exported absolute-reference set.",
+    "Runtime reachability of terminal resource completion is not established by this static record."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
