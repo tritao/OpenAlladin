@@ -246,6 +246,28 @@ def test_level_event_movement_names_promote_roles_and_preserve_numeric_aliases()
         assert alias in symbol.aliases
 
 
+def test_actor_template_roles_promote_numeric_names_with_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x001B7CC4: ("ACTOR_TEMPLATE_UPPER_COLLISION_RESPONSE", "ACTOR_TEMPLATE_COLLISION_TYPE_84"),
+        0x001B8368: ("ACTOR_TEMPLATE_COLLISION_RESPONSE_CHILD", "ACTOR_TEMPLATE_TYPE_3D_COLLISION_RESPONSE_CHILD"),
+        0x001B7CD8: ("ACTOR_TEMPLATE_WALL_RESPONSE", "ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE"),
+        0x001B7DF0: ("ACTOR_TEMPLATE_TERRAIN_RESPONSE_ALTERNATE", "ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE_ALT"),
+        0x001B78A0: ("ACTOR_TEMPLATE_INTERACTION_PAIR_BASE", "ACTOR_TEMPLATE_TYPE_5E_INTERACTION_PAIR_BASE"),
+        0x001B78C8: ("ACTOR_TEMPLATE_INTERACTION_PAIR_COMPANION", "ACTOR_TEMPLATE_TYPE_84_INTERACTION_PAIR_COMPANION"),
+        0x001B78F0: ("ACTOR_TEMPLATE_INTERACTION_BASE", "ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE"),
+        0x001B7F6C: ("ACTOR_TEMPLATE_PRESENTATION_RESPONSE", "ACTOR_TEMPLATE_TYPE_8B_PRESENTATION_RESPONSE"),
+        0x001B7A44: ("ACTOR_TEMPLATE_MENU_PRESENTATION", "ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84"),
+        0x001B8318: ("ACTOR_TEMPLATE_SCENE_INITIAL_PRIMARY", "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY"),
+        0x001B832C: ("ACTOR_TEMPLATE_SCENE_INITIAL_SECONDARY", "ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+
 def test_symbol_editor_promotes_and_annotates_a_tracked_symbol(tmp_path):
     _write_symbol_tree(tmp_path)
 

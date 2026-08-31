@@ -126,3 +126,75 @@ mappings:
     confidence: decompiled
     evidence: [actor-template-scene-level-family-static-decompilation]
     description: Scene reset movement loop.
+
+  - name: UPPER_COLLISION_RESPONSE
+    scope: event
+    symbol_addresses: [0x001B7CC4]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence: [actor-template-scene-resource-family-static-decompilation]
+    description: Shared Type-0x84 collision-response actor template.
+
+  - name: COLLISION_RESPONSE_CHILD
+    scope: event
+    symbol_addresses: [0x001B8368]
+    technical_types: [0x3D]
+    confidence: decompiled
+    evidence: [actor-template-scene-resource-family-static-decompilation]
+    description: Type-0x3D collision-response child template.
+
+  - name: WALL_RESPONSE
+    scope: event
+    symbol_addresses: [0x001B7CD8]
+    technical_types: [0x8D]
+    confidence: decompiled
+    evidence: [type84-0f22-wall-response-static-decompilation]
+    description: Type-0x8D wall-response child template.
+
+  - name: TERRAIN_RESPONSE
+    scope: event
+    symbol_addresses: [0x001B7DF0]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence: [actor-template-terrain-response-static-decompilation]
+    description: Alternate Type-0x84 terrain-response template.
+
+  - name: INTERACTION_PAIR
+    scope: event
+    symbol_addresses: [0x001B78A0, 0x001B78C8]
+    technical_types: [0x5E, 0x84]
+    confidence: decompiled
+    evidence: [early-interaction-dispatch-block, actor-template-grid-xrefs]
+    description: Type-0x5E interaction-pair source and its Type-0x84 companion.
+
+  - name: INTERACTION_BASE
+    scope: event
+    symbol_addresses: [0x001B78F0]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence: [early-interaction-dispatch-block]
+    description: Shared Type-0x84 interaction base template.
+
+  - name: PRESENTATION_RESPONSE_TEMPLATE
+    scope: event
+    symbol_addresses: [0x001B7F6C]
+    technical_types: [0x8B]
+    confidence: decompiled
+    evidence: [interaction-presentation-family-static-decompilation]
+    description: Shared Type-0x8B presentation-response template.
+
+  - name: MENU_PRESENTATION
+    scope: event
+    symbol_addresses: [0x001B7A44]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence: [menu-transition-template-family-static-decompilation]
+    description: Type-0x84 menu-presentation template.
+
+  - name: SCENE_INITIALIZATION
+    scope: event
+    symbol_addresses: [0x001B8318, 0x001B832C]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence: [actor-template-scene-level-family-static-decompilation]
+    description: Fixed-slot and primary-gameplay-slot scene initialization templates.

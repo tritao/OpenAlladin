@@ -1,0 +1,29 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "actor-template-role-identities",
+  "promotions": [
+    "ACTOR_TEMPLATE_COLLISION_RESPONSE",
+    "ACTOR_TEMPLATE_COLLISION_RESPONSE_CHILD",
+    "ACTOR_TEMPLATE_WALL_RESPONSE",
+    "ACTOR_TEMPLATE_TERRAIN_RESPONSE_ALTERNATE",
+    "ACTOR_TEMPLATE_INTERACTION_PAIR_BASE",
+    "ACTOR_TEMPLATE_INTERACTION_PAIR_COMPANION",
+    "ACTOR_TEMPLATE_INTERACTION_BASE",
+    "ACTOR_TEMPLATE_PRESENTATION_RESPONSE",
+    "ACTOR_TEMPLATE_MENU_PRESENTATION",
+    "ACTOR_TEMPLATE_SCENE_INITIAL_PRIMARY",
+    "ACTOR_TEMPLATE_SCENE_INITIAL_SECONDARY"
+  ],
+  "evidence": [
+    "actor-template-scene-resource-family-static-decompilation",
+    "early-interaction-dispatch-block",
+    "menu-transition-template-family-static-decompilation",
+    "actor-template-scene-level-family-static-decompilation"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false
+  }
+}

@@ -3540,7 +3540,7 @@
   name: ACTOR_MOVE_MENU_PRESENTATION_TYPE84
   size: 42
   confidence: confirmed
-  description: Type-0x84 menu-presentation movement loop installed by ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84. Its exact 42-byte region applies the zero, positive, and negative horizontal step profile and loops from the movement command at 0x0011F720 back to 0x0011F6FE.
+  description: Type-0x84 menu-presentation movement loop installed by ACTOR_TEMPLATE_MENU_PRESENTATION. Its exact 42-byte region applies the zero, positive, and negative horizontal step profile and loops from the movement command at 0x0011F720 back to 0x0011F6FE.
   evidence:
     - actor_template_menu_presentation_type84
     - menu_state_selection_decomp
@@ -4394,7 +4394,7 @@
   type: animation_stream
   size: 116
   confidence: decompiled
-  description: Type-0x84 child response animation supplied by ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD at 0x001B7C60. Its exact 116-byte region gates on the child state, spawns ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE at 0x001B7CD8, presents the 0x1882-0x18BE frame sequence, publishes actor type 0x7E and its encoded field, and clears actor state before the separate Type-0x0F root.
+  description: Type-0x84 child response animation supplied by ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD at 0x001B7C60. Its exact 116-byte region gates on the child state, spawns ACTOR_TEMPLATE_WALL_RESPONSE at 0x001B7CD8, presents the 0x1882-0x18BE frame sequence, publishes actor type 0x7E and its encoded field, and clears actor state before the separate Type-0x0F root.
   evidence:
     - actor_template_type84_type87_response_child_static_decompilation
     - animation_stream_decoder
@@ -4519,7 +4519,7 @@
   name: ACTOR_ANIM_TYPE84_MENU_PRESENTATION
   size: 4
   confidence: decompiled
-  description: Compact Type-0x84 menu-presentation entry installed by ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84. Its exact 4-byte body presents frame 0x16E2 and ends with EC 0x01 before the separately owned Type-0x03 interaction stream.
+  description: Compact Type-0x84 menu-presentation entry installed by ACTOR_TEMPLATE_MENU_PRESENTATION. Its exact 4-byte body presents frame 0x16E2 and ends with EC 0x01 before the separately owned Type-0x03 interaction stream.
   evidence:
     - actor_template_service_family_static_decompilation
     - animation_stream_decoder
@@ -4995,7 +4995,7 @@
   type: movement_stream
   size: 0x30
   confidence: decompiled
-  description: Exact decoder-bounded Type-0x8D wall-response child-spawn prefix immediately after the Type-0x52 stream and before ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX. Its 48-byte body applies a (0,-4) step, adjusts actor residual fields +0x18/+0x1A by +0x0500/+0x0600, gates a spawn through actor flag +0x07, publishes Camera_SetScrollDataCursor6952, selects ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE, and clears the source actor; no direct runtime producer has been recovered.
+  description: Exact decoder-bounded Type-0x8D wall-response child-spawn prefix immediately after the Type-0x52 stream and before ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX. Its 48-byte body applies a (0,-4) step, adjusts actor residual fields +0x18/+0x1A by +0x0500/+0x0600, gates a spawn through actor flag +0x07, publishes Camera_SetScrollDataCursor6952, selects ACTOR_TEMPLATE_WALL_RESPONSE, and clears the source actor; no direct runtime producer has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
     - type34_wall_response_static_decompilation
@@ -5019,7 +5019,7 @@
   size: 90
   confidence: decompiled
   review_status: closed
-  description: Type-0x84 0x0F22 wall-response movement prefix selected by the actor-template record at 0x001B8304. Its exact 90-byte body performs two actor-flag-gated child-spawn phases using ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE, applies the encoded +0x0800 and (+0x0005,+0x000A) actor-field adjustments, then falls through to ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
+  description: Type-0x84 0x0F22 wall-response movement prefix selected by the actor-template record at 0x001B8304. Its exact 90-byte body performs two actor-flag-gated child-spawn phases using ACTOR_TEMPLATE_WALL_RESPONSE, applies the encoded +0x0800 and (+0x0005,+0x000A) actor-field adjustments, then falls through to ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
   evidence:
     - type84_unreferenced_template_static_decompilation
     - movement_stream_decoder
@@ -5470,7 +5470,7 @@
   name: ACTOR_ANIM_TYPE14_INTERACTION
   size: 388
   confidence: decompiled
-  description: Type-0x14 interaction animation selected by ACTOR_TEMPLATE_TYPE_14_INTERACTION through selector 0x13. Its packed root publishes actor field 0x11 as 0x0014, presents the 0x1A96-0x1AAA opening with player-X and random gates, changes the actor to type 0x15 with ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE at 0x001203FA for the response, and later publishes type 0x84, plays sound 0x42, and spawns ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE. The terminal EA at 0x001248E4 enters the separately owned response tail at 0x001249F0.
+  description: Type-0x14 interaction animation selected by ACTOR_TEMPLATE_TYPE_14_INTERACTION through selector 0x13. Its packed root publishes actor field 0x11 as 0x0014, presents the 0x1A96-0x1AAA opening with player-X and random gates, changes the actor to type 0x15 with ACTOR_MOVE_TYPE15_PROXIMITY_RESPONSE at 0x001203FA for the response, and later publishes type 0x84, plays sound 0x42, and spawns ACTOR_TEMPLATE_WALL_RESPONSE. The terminal EA at 0x001248E4 enters the separately owned response tail at 0x001249F0.
   evidence:
     - type14_type84_presentation_animation_static_decompilation
     - actor_template_type14_interaction
@@ -7026,7 +7026,7 @@
   name: ACTOR_ANIM_TYPE84_COLLISION_RESPONSE
   size: 106
   confidence: decompiled
-  description: Shared Type-0x84 collision-response animation used by ACTOR_TEMPLATE_COLLISION_TYPE_84 and the scene-resource Type-0x84 record at 0x001B8408. Its exact 106-byte region presents the 0x0DC2-0x0DFE sequence with sound 0x2A, clears the source actor at 0x00123EC0, then cycles the 0x12C2-0x12DE response tail through 0x00123EC2.
+  description: Shared Type-0x84 collision-response animation used by ACTOR_TEMPLATE_COLLISION_RESPONSE and the scene-resource Type-0x84 record at 0x001B8408. Its exact 106-byte region presents the 0x0DC2-0x0DFE sequence with sound 0x2A, clears the source actor at 0x00123EC0, then cycles the 0x12C2-0x12DE response tail through 0x00123EC2.
   evidence:
     - actor_template_scene_resource_family_static_decompilation
     - actor_template_presentation_response_static_decompilation
@@ -7419,7 +7419,7 @@
   name: ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY
   size: 38
   confidence: decompiled
-  description: Fixed-slot scene-initialization animation for ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY. It presents the paired 0x070A-0x0726 frame sequence and loops at 0x00125DE4.
+  description: Fixed-slot scene-initialization animation for ACTOR_TEMPLATE_SCENE_INITIAL_PRIMARY. It presents the paired 0x070A-0x0726 frame sequence and loops at 0x00125DE4.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - ghidra_scene_initialize_active_scene
@@ -7438,7 +7438,7 @@
   name: ACTOR_ANIM_TYPE84_SCENE_INITIAL_SECONDARY
   size: 58
   confidence: decompiled
-  description: Primary-gameplay-slot scene-initialization animation for ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY. It presents the 0x09D2-0x0A06 frame sequence and loops through the embedded entry at 0x001261E0.
+  description: Primary-gameplay-slot scene-initialization animation for ACTOR_TEMPLATE_SCENE_INITIAL_SECONDARY. It presents the 0x09D2-0x0A06 frame sequence and loops through the embedded entry at 0x001261E0.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - ghidra_scene_initialize_active_scene
@@ -7727,7 +7727,8 @@
     - animation_stream_decoder
 
 0x001B7CD8:
-  name: ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE
+  name: ACTOR_TEMPLATE_WALL_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_8D_WALL_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -7942,7 +7943,8 @@
     - level01_upper_frontier_initializer_targets
 
 0x001B7CC4:
-  name: ACTOR_TEMPLATE_COLLISION_TYPE_84
+  name: ACTOR_TEMPLATE_UPPER_COLLISION_RESPONSE
+  aliases: [ACTOR_TEMPLATE_COLLISION_TYPE_84]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8057,7 +8059,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7A44:
-  name: ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84
+  name: ACTOR_TEMPLATE_MENU_PRESENTATION
+  aliases: [ACTOR_TEMPLATE_MENU_PRESENTATION_TYPE_84]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8311,7 +8314,8 @@
     - actor_template_grid_xrefs
 
 0x001B78A0:
-  name: ACTOR_TEMPLATE_TYPE_5E_INTERACTION_PAIR_BASE
+  name: ACTOR_TEMPLATE_INTERACTION_PAIR_BASE
+  aliases: [ACTOR_TEMPLATE_TYPE_5E_INTERACTION_PAIR_BASE]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8331,7 +8335,8 @@
     - actor_template_grid_xrefs
 
 0x001B78C8:
-  name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_PAIR_COMPANION
+  name: ACTOR_TEMPLATE_INTERACTION_PAIR_COMPANION
+  aliases: [ACTOR_TEMPLATE_TYPE_84_INTERACTION_PAIR_COMPANION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8351,7 +8356,8 @@
     - actor_template_grid_xrefs
 
 0x001B78F0:
-  name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE
+  name: ACTOR_TEMPLATE_INTERACTION_BASE
+  aliases: [ACTOR_TEMPLATE_TYPE_84_INTERACTION_BASE]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8413,7 +8419,8 @@
     - actor_template_grid_xrefs
 
 0x001B7DF0:
-  name: ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE_ALT
+  name: ACTOR_TEMPLATE_TERRAIN_RESPONSE_ALTERNATE
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE_ALT]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8506,7 +8513,8 @@
     - actor_template_grid_xrefs
 
 0x001B7F6C:
-  name: ACTOR_TEMPLATE_TYPE_8B_PRESENTATION_RESPONSE
+  name: ACTOR_TEMPLATE_PRESENTATION_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_8B_PRESENTATION_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8720,7 +8728,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8318:
-  name: ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY
+  name: ACTOR_TEMPLATE_SCENE_INITIAL_PRIMARY
+  aliases: [ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_PRIMARY]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8741,7 +8750,8 @@
     - actor_template_body_confidence_static_v1
 
 0x001B832C:
-  name: ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY
+  name: ACTOR_TEMPLATE_SCENE_INITIAL_SECONDARY
+  aliases: [ACTOR_TEMPLATE_TYPE_84_SCENE_INITIAL_SECONDARY]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8915,7 +8925,8 @@
     - actor_template_grid_xrefs
 
 0x001B8368:
-  name: ACTOR_TEMPLATE_TYPE_3D_COLLISION_RESPONSE_CHILD
+  name: ACTOR_TEMPLATE_COLLISION_RESPONSE_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_3D_COLLISION_RESPONSE_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
