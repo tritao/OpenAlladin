@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "ca433ce",
+  "mame_submodule_commit": "c04a5be3a8c3761744df29bebedcf5c71e6a71af",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-collision-animation-prelude-static-targets.json",
+  "promoted_symbols": ["PLAYER_ANIM_COLLISION_RESPONSE_PRELUDE"],
+  "contracts": [
+    "The exact owner is 0x001220AA-0x001220B7, with bytes 095EF422F0B0000000122080F800.",
+    "Actor_PlayerCollisionPass writes 0x001220AA to PLAYER_ANIMATION_PC at 0x001ABD16 after the collision response has passed the player vertical-velocity gate.",
+    "The F4 command compares PLAYER_ANIMATION_FIELD_B0 against zero and follows PLAYER_ANIM_LANDING_RESPONSE_SPAWN at 0x00122080 when equal; the terminal F8 command then re-enters the dynamic player-animation selector."
+  ],
+  "evidence": [
+    "Exact original bytes and gap-free layout ownership",
+    "Direct 68K assignment in Actor_PlayerCollisionPass",
+    "Lossless AnimationVM decoder output"
+  ],
+  "limitations": [
+    "The prelude's name identifies its collision-pass producer and control-flow role; the downstream F8 state selected at runtime remains governed by the existing player-state selector."
+  ],
+  "conclusion": "The formerly generic animation range at 0x001220AA now has a stable producer-backed player collision-response identity.",
+  "confidence": "confirmed",
+  "status": "recorded-semantic-promotion"
+}

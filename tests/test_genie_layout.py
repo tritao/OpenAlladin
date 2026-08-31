@@ -387,7 +387,7 @@ def test_scene_resource_actor_spawn_coordinates_have_exact_extent_and_terrain_bo
     symbols = SymbolStore()
     bank = symbols.at(0x00006744, include_ranges=False)
     assert bank is not None
-    assert bank.name == "SCENE_RESOURCE_ACTOR_SPAWN_COORDINATES_6744"
+    assert bank.name == "SCENE_RESOURCE_QUEUED_ACTOR_COORDINATES"
     assert bank.end == 0x0000683D
     assert bank.size == 250
     assert bank.metadata["type"] == "scene_resource_actor_coordinate_table"
@@ -545,7 +545,28 @@ def test_unindexed_rnc_graphics_resources_are_exactly_bounded():
     rom = rom_path.read_bytes()
     semantic_names = {
         0x0012D654: "SCENE_RESOURCE_PALETTE_1298F2_E000_GRAPHICS",
+        0x0012DA04: "SCENE_STATE04_C000_GRAPHICS",
+        0x0012E176: "SCENE_STATE01_C000_GRAPHICS_SECONDARY",
+        0x0012E34A: "SCENE_STATE01_C000_GRAPHICS_PRIMARY",
         0x0012E666: "SCENE_RESET_E000_GRAPHICS",
+        0x0012F39E: "SCENE_DISPATCH_E000_GRAPHICS",
+        0x0012F712: "SCENE_REBUILD_C000_GRAPHICS",
+        0x0012FA02: "SCENE_REBUILD_E000_GRAPHICS",
+        0x0012FF0F: "SCENE_ACTIVE_STATE01_C000_GRAPHICS",
+        0x0013013C: "SCENE_ACTIVE_STATE01_E000_GRAPHICS",
+        0x0013030B: "SCENE_ACTIVE_RESET_SHARED_GRAPHICS",
+        0x0013046F: "SCENE_ACTIVE_C000_GRAPHICS",
+        0x00130709: "MENU_WISH_PROMPT_GRAPHICS",
+        0x001307D5: "TITLE_E000_GRAPHICS",
+        0x00130EA1: "TITLE_C000_GRAPHICS_PRIMARY",
+        0x00131020: "TITLE_C000_GRAPHICS_SECONDARY",
+        0x001313FD: "SCENE_STATE_PRESENTATION_C000_STANDARD_GRAPHICS",
+        0x00131682: "SCENE_STATE_PRESENTATION_C000_SPECIAL_GRAPHICS",
+        0x00131830: "SCENE_SCRIPT_TRANSITION_C000_GRAPHICS",
+        0x001319EC: "SCENE_PRESENTATION_COMMON_BASE_GRAPHICS",
+        0x0013A892: "SCENE_REBUILD_BASE_GRAPHICS",
+        0x0013C374: "SCENE_GLOBAL_SHARED_BASE_GRAPHICS",
+        0x001401DA: "TITLE_BASE_GRAPHICS",
     }
 
     for start, end in resources:
@@ -554,7 +575,7 @@ def test_unindexed_rnc_graphics_resources_are_exactly_bounded():
         if start in semantic_names:
             assert symbol.name == semantic_names[start]
         else:
-            assert symbol.name.endswith(f"_{start:08X}")
+            assert symbol.name == semantic_names[start]
         assert symbol.end == end
         assert symbol.size == end - start + 1
         assert symbol.metadata["type"] == "graphics_data"
@@ -2280,7 +2301,7 @@ def test_type29_player_collision_response_streams_are_exact():
 
     function = symbols.at(0x001AF400, include_ranges=False)
     assert function is not None
-    assert function.name == "ActorType29_PlayerCollisionHandler"
+    assert function.name == "PlayerCollision_SpawnType29Response"
     assert function.end == 0x001AF467
     assert function.size == 104
 
@@ -2327,8 +2348,8 @@ def test_type3e_3f_player_collision_response_family_is_exact():
     symbols = SymbolStore()
 
     expected_functions = {
-        0x001AF2B0: (0x001AF2F9, "ActorType3E_PlayerCollisionHandler"),
-        0x001AF2FA: (0x001AF343, "ActorType3F_PlayerCollisionHandler"),
+        0x001AF2B0: (0x001AF2F9, "PlayerCollision_StartType3EResponse"),
+        0x001AF2FA: (0x001AF343, "PlayerCollision_StartType3FResponse"),
     }
     for address, (end, name) in expected_functions.items():
         function = symbols.at(address, include_ranges=False)
@@ -2373,29 +2394,29 @@ def test_type3e_3f_player_collision_response_family_is_exact():
 def test_extended_player_collision_handler_family_is_exact():
     symbols = SymbolStore()
     expected_functions = {
-        0x001AF21E: (0x001AF227, "ActorType3B_PlayerCollisionHandler"),
-        0x001AF264: (0x001AF2AF, "ActorType42_PlayerCollisionHandler"),
-        0x001AF344: (0x001AF383, "ActorType37_3C_PlayerCollisionHandler"),
-        0x001AF384: (0x001AF3C1, "ActorType3D_PlayerCollisionHandler"),
-        0x001AF3C2: (0x001AF3FF, "ActorType41_PlayerCollisionHandler"),
-        0x001AF4A0: (0x001AF4D7, "ActorType33_38_39_PlayerCollisionHandler"),
-        0x001AF53E: (0x001AF549, "ActorType5A_PlayerCollisionHandler"),
-        0x001AF54A: (0x001AF555, "ActorType5B_PlayerCollisionHandler"),
-        0x001AF556: (0x001AF561, "ActorType5C_PlayerCollisionHandler"),
-        0x001AF562: (0x001AF56B, "ActorType5D_PlayerCollisionHandler"),
-        0x001AF590: (0x001AF5EF, "ActorType55_56_57_PlayerCollisionHandler"),
-        0x001AF5F0: (0x001AF637, "ActorType58_PlayerCollisionHandler"),
-        0x001AF638: (0x001AF6AB, "ActorType5E_PlayerCollisionHandler"),
-        0x001AF6AC: (0x001AF6DB, "ActorType5F_PlayerCollisionHandler"),
-        0x001AF6DC: (0x001AF73F, "ActorType60_61_PlayerCollisionHandler"),
-        0x001AFD84: (0x001AFE1B, "ActorType01_PlayerCollisionHandler"),
+        0x001AF21E: (0x001AF227, "PlayerCollision_GateType3BResponse"),
+        0x001AF264: (0x001AF2AF, "PlayerCollision_AdvancePrimaryCounter"),
+        0x001AF344: (0x001AF383, "PlayerCollision_ApplyTimedResponse"),
+        0x001AF384: (0x001AF3C1, "PlayerCollision_ApplyCountedGateResponse"),
+        0x001AF3C2: (0x001AF3FF, "PlayerCollision_ApplyWallResponseWithSceneGate"),
+        0x001AF4A0: (0x001AF4D7, "PlayerCollision_ReinitializeResponseActor"),
+        0x001AF53E: (0x001AF549, "PlayerCollision_SetLowerSurfaceResponse"),
+        0x001AF54A: (0x001AF555, "PlayerCollision_SetUpperSurfaceResponse"),
+        0x001AF556: (0x001AF561, "PlayerCollision_CleanupType08Actors"),
+        0x001AF562: (0x001AF56B, "PlayerCollision_CleanupType09Actors"),
+        0x001AF590: (0x001AF5EF, "PlayerCollision_ResolveType55_57SurfaceContact"),
+        0x001AF5F0: (0x001AF637, "PlayerCollision_ResolveType58SurfaceContact"),
+        0x001AF638: (0x001AF6AB, "PlayerCollision_AdoptActorPosition"),
+        0x001AF6AC: (0x001AF6DB, "PlayerCollision_ResolveType5FVerticalContact"),
+        0x001AF6DC: (0x001AF73F, "PlayerCollision_UpdateExitPresentationActor"),
+        0x001AFD84: (0x001AFE1B, "PlayerCollision_StartProximityBounce"),
         0x001ABF9C: (0x001ABFCF, "Actor_InstallType01CollisionResponse"),
         0x001ABFD0: (0x001ABFEF, "Actor_ReinitializeCollisionResponseAfterType2D"),
         0x001B7474: (0x001B7493, "InteractionSpawn_RuntimeType45_AdjacentVariant"),
         0x001B74A0: (0x001B74B1, "InteractionSpawn_RuntimeType5B_AdjacentVariant"),
-            0x001AFE1C: (0x001AFF3F, "ActorType7E_PlayerCollisionHandler"),
-        0x001AFF82: (0x001AFFE3, "ActorType02_PlayerCollisionHandler"),
-        0x001AC60E: (0x001AC613, "ActorType0D_ActorCollisionHandler"),
+        0x001AFE1C: (0x001AFF3F, "PlayerCollision_ProcessSceneTransition"),
+        0x001AFF82: (0x001AFFE3, "PlayerCollision_ResolveType02GroundContact"),
+        0x001AC60E: (0x001AC613, "ActorCollision_ToggleFacing"),
     }
     for address, (end, name) in expected_functions.items():
         function = symbols.at(address, include_ranges=False)
@@ -2740,6 +2761,32 @@ def test_player_surface_recovery_animation_is_exact():
     assert decoded["stopped_reason"] == "dynamic_state_selection"
     assert decoded["instructions"][0]["reference"] == "0x0B16"
     assert decoded["instructions"][1]["target_fields"] == ["0x01", "0xF0", "0xE7"]
+    assert decoded["instructions"][-1]["opcode"] == "0xF8"
+
+
+def test_player_collision_animation_prelude_is_exact():
+    symbols = SymbolStore()
+    stream = symbols.at(0x001220AA, include_ranges=False)
+    assert stream is not None
+    assert stream.name == "PLAYER_ANIM_COLLISION_RESPONSE_PRELUDE"
+    assert stream.end == 0x001220B7
+    assert stream.size == 14
+    assert stream.metadata["type"] == "animation_stream"
+
+    rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
+    decoder = load_animation_decoder().AnimationDecoder(
+        load_animation_decoder().RomReader(rom_path.read_bytes())
+    )
+    decoded = decoder.decode_stream(
+        0x001220AA,
+        max_instructions=16,
+        max_bytes=14,
+        follow_control_flow=False,
+        continue_after_control_flow=True,
+    )
+    assert decoded["bytes_decoded"] == 14
+    assert decoded["instructions"][0]["reference"] == "0x095E"
+    assert decoded["instructions"][1]["branch_target"] == "0x00122080"
     assert decoded["instructions"][-1]["opcode"] == "0xF8"
 
 
@@ -3164,7 +3211,7 @@ def test_shared_type84_0f22_response_range_is_exact():
 
     following = symbols.at(0x00122FA2, include_ranges=False)
     assert following is not None
-    assert following.name == "ACTOR_ANIM_DEATH_122FA2"
+    assert following.name == "ACTOR_ANIM_TYPE84_TERMINAL_DEATH"
     assert symbol.end < following.address
 
 
@@ -3371,7 +3418,7 @@ def test_canonical_scene_resource_presentation_stream_ranges_are_exact_and_adjac
         (0x0012792B, 0x001279B6, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_0B"),
             (0x001279B7, 0x00127AED, "SCENE_RESOURCE_BLANK_STREAM_STATE_01"),
             (0x00127AEE, 0x00127B5F, "SCENE_RESOURCE_BLANK_STREAM_STATE_03"),
-            (0x00127B60, 0x00127BD1, "SCENE_RESOURCE_BLANK_STREAM_127B60"),
+            (0x00127B60, 0x00127BD1, "SCENE_RESOURCE_BLANK_STREAM_STATE_04_PRELUDE"),
             (0x00127BD2, 0x00127C41, "SCENE_RESOURCE_BLANK_STREAM_STATE_04_A"),
         (0x00127C42, 0x00127CB3, "SCENE_RESOURCE_BLANK_STREAM_STATE_0B"),
         (0x00127CB4, 0x00127D73, "SCENE_RESOURCE_BLANK_STREAM_STATE_04_B"),
@@ -3394,7 +3441,7 @@ def test_canonical_scene_transition_presentation_stream_has_exact_terminal():
     symbols = SymbolStore()
     symbol = symbols.at(0x0012622E, include_ranges=False)
     assert symbol is not None
-    assert symbol.name == "SCENE_TRANSITION_PRESENTATION_STREAM_12622E"
+    assert symbol.name == "SCENE_TRANSITION_MODE_PRESENTATION_STREAM"
     assert symbol.size == 0x2E4
     assert symbol.end == 0x00126511
     assert symbol.metadata["type"] == "scene_resource_stream"
@@ -3428,11 +3475,11 @@ def test_canonical_scene_transition_menu_streams_have_exact_terminals():
 def test_canonical_fixed_palette_sources_have_exact_upload_extents():
     symbols = SymbolStore()
     expected = (
-        (0x00129012, 0x00129031, "MENU_PALETTE_BAND_SOURCE_129012"),
+        (0x00129012, 0x00129031, "MENU_OPTIONS_PALETTE_BAND2_SOURCE"),
         (0x00129092, 0x001290B1, "LEVEL00_PALETTE_BAND_SOURCE"),
         (0x001290B2, 0x001290D1, "SCENE_RESOURCE_PALETTE_BAND_SOURCE"),
         (0x00129152, 0x00129171, "INTERACTION_TYPE13_PALETTE_SOURCE"),
-        (0x001292B2, 0x001292D1, "INTERACTION_PALETTE_SOURCE_1292B2"),
+        (0x001292B2, 0x001292D1, "INTERACTION_SHARED_PALETTE_SOURCE"),
         (0x001292F2, 0x00129311, "INTERACTION_TYPE8B_PALETTE_SOURCE"),
         (0x00129332, 0x00129351, "INTERACTION_TYPE7D_PALETTE_SOURCE"),
         (0x001294F2, 0x00129511, "INTERACTION_TYPE0C_PALETTE_SOURCE"),
@@ -3531,22 +3578,22 @@ def test_canonical_scene_resource_palette_sources_have_exact_loader_extents():
     symbols = SymbolStore()
     expected = (
         (0x001297F2, 0x00129811, "MENU_PALETTE_BAND1_SOURCE"),
-        (0x00129812, 0x00129831, "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812"),
+        (0x00129812, 0x00129831, "SCENE_RESOURCE_PALETTE_BAND2_FOR_C000_RESOURCE_VARIANT"),
         (0x00129832, 0x001298B1, "SCENE_REBUILD_TRANSITION_PALETTE_SOURCE"),
         (0x001298B2, 0x001298D1, "SCENE_RESOURCE_PALETTE_BAND3_SOURCE"),
-        (0x001298D2, 0x001298F1, "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2"),
-        (0x001298F2, 0x00129911, "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2"),
-        (0x00129912, 0x00129931, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129912"),
-        (0x00129932, 0x00129951, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129932"),
-        (0x00129952, 0x00129971, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129952"),
-        (0x00129972, 0x00129991, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129972"),
-        (0x00129992, 0x001299B1, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_129992"),
-        (0x001299B2, 0x001299D1, "SCENE_RESOURCE_PALETTE_BAND0_SOURCE_1299B2"),
-        (0x001299D2, 0x001299F1, "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2"),
+        (0x001298D2, 0x001298F1, "SCENE_RESOURCE_PALETTE_BAND2_FOR_COMMON_BASE_RESOURCE"),
+        (0x001298F2, 0x00129911, "SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_A"),
+        (0x00129912, 0x00129931, "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE07_C000_GRAPHICS"),
+        (0x00129932, 0x00129951, "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE04_C000_GRAPHICS"),
+        (0x00129952, 0x00129971, "SCENE_RESOURCE_PALETTE_BAND0_FOR_SHARED_C000_GRAPHICS"),
+        (0x00129972, 0x00129991, "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE0B_C000_GRAPHICS"),
+        (0x00129992, 0x001299B1, "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_SECONDARY_C000_GRAPHICS"),
+        (0x001299B2, 0x001299D1, "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_PRIMARY_C000_GRAPHICS"),
+        (0x001299D2, 0x001299F1, "SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_B"),
         (0x001299F2, 0x00129A11, "SCENE_RESET_PALETTE_BAND1_SOURCE"),
-        (0x00129A12, 0x00129A31, "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12"),
-        (0x00129A92, 0x00129AB1, "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129A92"),
-        (0x00129AB2, 0x00129AD1, "SCENE_RESOURCE_PALETTE_BAND1_SOURCE_129AB2"),
+        (0x00129A12, 0x00129A31, "SCENE_RESOURCE_PALETTE_BAND2_FOR_COMMON_VRAM_PAIR"),
+        (0x00129A92, 0x00129AB1, "SCENE_RESOURCE_PALETTE_BAND1_FOR_SHARED_STATE01_C000_GRAPHICS"),
+        (0x00129AB2, 0x00129AD1, "SCENE_RESOURCE_PALETTE_BAND1_FOR_STATE07_04_0B_C000_GRAPHICS"),
     )
     for start, end, name in expected:
         symbol = symbols.at(start, include_ranges=False)
@@ -3560,7 +3607,7 @@ def test_canonical_scene_resource_palette_sources_have_exact_loader_extents():
 def test_unreferenced_palette_data_has_exact_structural_extents():
     symbols = SymbolStore()
     expected = (
-        (0x00129312, 0x00129331, "PALETTE_BAND_VARIANT_OF_INTERACTION_TYPE7D_129312", "decompiled"),
+        (0x00129312, 0x00129331, "INTERACTION_TYPE7D_PALETTE_VARIANT_0660", "decompiled"),
         (0x00129A32, 0x00129A51, "PALETTE_DUPLICATE_OF_MENU_BAND_129012", "decompiled"),
         (0x00129A52, 0x00129A71, "PALETTE_DUPLICATE_OF_SCENE_TRANSITION_BAND4_129032", "decompiled"),
         (0x00129A72, 0x00129A91, "PALETTE_DUPLICATE_OF_SCENE_RESET_BAND4_129E60", "decompiled"),
@@ -3583,7 +3630,7 @@ def test_unreferenced_palette_data_has_exact_structural_extents():
     assert rom[0x00129A52:0x00129A72] == rom[0x00129032:0x00129052]
     assert rom[0x00129A72:0x00129A92] == rom[0x00129E60:0x00129E80]
 
-    assert symbols.at(0x00129A32, include_ranges=False).metadata["duplicate_of"] == "MENU_PALETTE_BAND_SOURCE_129012"
+    assert symbols.at(0x00129A32, include_ranges=False).metadata["duplicate_of"] == "MENU_OPTIONS_PALETTE_BAND2_SOURCE"
     assert symbols.at(0x00129A52, include_ranges=False).metadata["duplicate_address"] == 0x00129032
     assert symbols.at(0x00129A72, include_ranges=False).metadata["duplicate_address"] == 0x00129E60
 
@@ -3725,10 +3772,10 @@ def test_static_header_text_and_shared_palette_families_are_exact():
 def test_unreferenced_scene_palette_data_has_exact_structural_owners():
     symbols = SymbolStore()
     expected = (
-        (0x00128E4B, 0x00128E4C, "SCENE_RESOURCE_TILE_BASE_2000_COMMAND_128E4B", "scene_resource_stream", "decompiled"),
+        (0x00128E4B, 0x00128E4C, "SCENE_RESOURCE_TILE_BASE_2000_COMMAND", "scene_resource_stream", "decompiled"),
         (0x00128EB1, 0x00128EB1, "SCENE_SOUND_TEST_PALETTE_ALIGNMENT_PADDING", "padding_data", "confirmed"),
-        (0x00128EB2, 0x00128ED1, "PALETTE_ALL_0EEE_SOURCE_128EB2", "palette_data", "decompiled"),
-        (0x00128F52, 0x00128FD1, "MENU_OPTIONS_PALETTE_BANK_128F52", "palette_data", "decompiled"),
+        (0x00128EB2, 0x00128ED1, "PALETTE_UNIFORM_0EEE", "palette_data", "decompiled"),
+        (0x00128F52, 0x00128FD1, "MENU_OPTIONS_PALETTE_BANK", "palette_data", "decompiled"),
     )
     for start, end, name, symbol_type, confidence in expected:
         symbol = symbols.at(start, include_ranges=False)
@@ -3920,15 +3967,15 @@ def test_canonical_scene_resource_mode_streams_are_exact_and_contiguous():
 def test_canonical_scene_resource_presentation_streams_have_exact_terminals():
     symbols = SymbolStore()
     expected = (
-        (0x001270A8, 0x00127133, "SCENE_RESOURCE_PRESENTATION_STREAM_12E34A_1270A8"),
-        (0x00127134, 0x00127206, "SCENE_RESOURCE_PRESENTATION_STREAM_12E176_127134"),
-        (0x00127207, 0x00127337, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207"),
-        (0x00127338, 0x001273E8, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338"),
-        (0x001273E9, 0x001274EF, "SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9"),
+        (0x001270A8, 0x00127133, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_PRIMARY"),
+        (0x00127134, 0x00127206, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_SECONDARY"),
+        (0x00127207, 0x00127337, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_03"),
+        (0x00127338, 0x001273E8, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_00"),
+        (0x001273E9, 0x001274EF, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_04"),
         (0x001274F0, 0x00127570, "SCENE_RESOURCE_PRINCESS_RESPONSE_STREAM"),
-        (0x00127571, 0x001275ED, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571"),
-        (0x001275EE, 0x0012772C, "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE"),
-        (0x0012772D, 0x001277C4, "SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D"),
+        (0x00127571, 0x001275ED, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_PRIMARY"),
+        (0x001275EE, 0x0012772C, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_SECONDARY"),
+        (0x0012772D, 0x001277C4, "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_07"),
     )
     for start, end, name in expected:
         symbol = symbols.at(start, include_ranges=False)
@@ -3958,7 +4005,7 @@ def test_menu_palette_record_bank_has_exact_record_partition():
     symbols = SymbolStore()
     bank = symbols.at(0x001296B2, include_ranges=False)
     assert bank is not None
-    assert bank.name == "MENU_PALETTE_RECORD_BANK_1296B2"
+    assert bank.name == "MENU_OPTIONS_PALETTE_RECORD_BANK"
     assert bank.end == 0x001297F1
     assert bank.size == 0x140
     assert bank.metadata["type"] == "palette_data"
@@ -4147,23 +4194,23 @@ def test_menu_sound_test_shared_presentation_stream_has_exact_terminal():
 def test_extended_actor_collision_handler_dispatch_family_is_exact():
     symbols = SymbolStore()
     expected_functions = {
-        0x001ABF8E: (0x001ABF99, "ActorType02_08_09_ActorCollisionHandler"),
-        0x001ABF9A: (0x001ABF9B, "ActorType01_ActorCollisionHandler"),
-        0x001ABFF0: (0x001ABFF9, "ActorType23_ActorCollisionHandler"),
-        0x001AC03E: (0x001AC059, "ActorType24_ActorCollisionHandler"),
-        0x001AC05A: (0x001AC075, "ActorType25_ActorCollisionHandler"),
-        0x001AC076: (0x001AC07B, "ActorType26_ActorCollisionHandler"),
-        0x001AC07C: (0x001AC097, "ActorType27_ActorCollisionHandler"),
-        0x001AC098: (0x001AC0B9, "ActorType28_ActorCollisionHandler"),
-        0x001AC0EE: (0x001AC101, "ActorType03_ActorCollisionHandler"),
-        0x001AC102: (0x001AC1B3, "ActorType04_ActorCollisionHandler"),
-        0x001AC1B4: (0x001AC1CF, "ActorType05_ActorCollisionHandler"),
-        0x001AC2E0: (0x001AC2FB, "ActorType1F_ActorCollisionHandler"),
-        0x001AC2FC: (0x001AC317, "ActorType22_ActorCollisionHandler"),
-        0x001AC408: (0x001AC431, "ActorType1A_ActorCollisionHandler"),
-        0x001AC432: (0x001AC443, "ActorType1B_ActorCollisionHandler"),
-        0x001AC444: (0x001AC455, "ActorType1C_ActorCollisionHandler"),
-        0x001AC4DE: (0x001AC4E7, "ActorType18_19_ActorCollisionHandler"),
+        0x001ABF8E: (0x001ABF99, "ActorCollision_ClearSourceAndHandleType02_08_09"),
+        0x001ABF9A: (0x001ABF9B, "ActorCollision_NoopType01"),
+        0x001ABFF0: (0x001ABFF9, "ActorCollision_StartType23ResponsePair"),
+        0x001AC03E: (0x001AC059, "ActorCollision_SpawnType40CompanionFromType24"),
+        0x001AC05A: (0x001AC075, "ActorCollision_SpawnType40CompanionFromType25"),
+        0x001AC076: (0x001AC07B, "ActorCollision_EnterType84Response"),
+        0x001AC07C: (0x001AC097, "ActorCollision_SpawnType46CompanionFromType27"),
+        0x001AC098: (0x001AC0B9, "ActorCollision_SpawnType84CompanionFromType28"),
+        0x001AC0EE: (0x001AC101, "ActorCollision_InstallType03Response"),
+        0x001AC102: (0x001AC1B3, "ActorCollision_HandleDeathResponse"),
+        0x001AC1B4: (0x001AC1CF, "ActorCollision_InstallType05Response"),
+        0x001AC2E0: (0x001AC2FB, "ActorCollision_InstallType1FResponse"),
+        0x001AC2FC: (0x001AC317, "ActorCollision_InstallType22Response"),
+        0x001AC408: (0x001AC431, "ActorCollision_ProcessType1AInteraction"),
+        0x001AC432: (0x001AC443, "ActorCollision_TriggerType1BInteraction"),
+        0x001AC444: (0x001AC455, "ActorCollision_TriggerType1CInteraction"),
+        0x001AC4DE: (0x001AC4E7, "ActorCollision_PromoteSourceAndToggleFacing"),
     }
     for address, (end, name) in expected_functions.items():
         function = symbols.at(address, include_ranges=False)
@@ -4318,9 +4365,9 @@ def test_scene_resource_service_gap_closures_are_exact():
 def test_final_mechanical_function_closure_is_exact():
     symbols = SymbolStore()
     expected = {
-        0x001AF228: (0x001AF263, "ActorType3A_PlayerCollisionHandler"),
+        0x001AF228: (0x001AF263, "PlayerCollision_AdvanceSecondaryResponse"),
         0x001AE6B4: (0x001AE6BB, "Player_SuppressCollisionResponse"),
-        0x001AF562: (0x001AF56B, "ActorType5D_PlayerCollisionHandler"),
+        0x001AF562: (0x001AF56B, "PlayerCollision_CleanupType09Actors"),
         0x001AF56C: (0x001AF58F, "PlayerCollision_ClearMatchingActorTypeRecords"),
         0x001B03BE: (0x001B03F1, "InteractionCounter_DecrementSecondaryDigits"),
     }
@@ -4703,9 +4750,9 @@ def test_scene_resource_loader_and_blank_wrapper_gaps_are_exact():
 def test_camera_scroll_cursor_callback_family_is_exact():
     symbols = SymbolStore()
     callbacks = {
-        0x001B52D6: (12, "Camera_SetScrollDataCursor693E"),
-        0x001B52E2: (12, "Camera_SetScrollDataCursor6952"),
-        0x001B52EE: (12, "Camera_SetScrollDataCursor695A"),
+        0x001B52D6: (12, "Camera_SelectScrollDeltaProfileFull"),
+        0x001B52E2: (12, "Camera_SelectScrollDeltaProfileReduced"),
+        0x001B52EE: (12, "Camera_SelectScrollDeltaProfileTail"),
     }
     for address, (size, name) in callbacks.items():
         callback = symbols.at(address, include_ranges=False)

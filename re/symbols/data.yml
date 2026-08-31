@@ -2193,9 +2193,9 @@
   size: 0x20
   confidence: decompiled
   review_status: closed
-  duplicate_of: MENU_PALETTE_BAND_SOURCE_129012
+  duplicate_of: MENU_OPTIONS_PALETTE_BAND2_SOURCE
   duplicate_address: 0x00129012
-  description: Physical 16-word Genesis palette band that is byte-for-byte identical to MENU_PALETTE_BAND_SOURCE_129012 at 0x00129012. No direct consumer or higher-level presentation role is assigned to this duplicate copy.
+  description: Physical 16-word Genesis palette band that is byte-for-byte identical to MENU_OPTIONS_PALETTE_BAND2_SOURCE at 0x00129012. No direct consumer or higher-level presentation role is assigned to this duplicate copy.
   evidence:
     - unreferenced_palette_data_static_v1
     - scene_resource_palette_source_extents_static_v1
@@ -6283,6 +6283,17 @@
   evidence:
     - ghidra_player_terrain_landing_resolver
     - actor_template_f5_type84
+    - animation_stream_decoder
+
+0x001220AA:
+  name: PLAYER_ANIM_COLLISION_RESPONSE_PRELUDE
+  type: animation_stream
+  size: 14
+  confidence: confirmed
+  description: Player animation prelude selected directly by Actor_PlayerCollisionPass after a successful overlapping actor collision with nonzero player vertical velocity. Its exact 14-byte region presents frame 0x095E, branches to PLAYER_ANIM_LANDING_RESPONSE_SPAWN when PLAYER_ANIMATION_FIELD_B0 is clear, and otherwise enters dynamic player-animation state selection.
+  evidence:
+    - ghidra_disassembly_001ABB40
+    - player_collision_animation_selector_static_decompilation
     - animation_stream_decoder
 
 0x001220B8:

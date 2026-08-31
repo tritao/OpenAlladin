@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-animation-prelude-static",
+    "purpose": "Recover the generic player animation range selected directly by the player collision pass and bind its exact branch and state-selector behavior."
+  },
+  "targets": [
+    { "address": "0x001220AA", "name": "PLAYER_ANIM_COLLISION_RESPONSE_PRELUDE", "range": ["0x001220AA", "0x001220B7"] },
+    { "address": "0x001ABB40", "name": "Actor_PlayerCollisionPass" },
+    { "address": "0x00122080", "name": "PLAYER_ANIM_LANDING_RESPONSE_SPAWN" },
+    { "address": "0x00121F84", "name": "PLAYER_ANIM_LANDING_RECOVERY" }
+  ],
+  "selection": {
+    "instruction": "0x001ABD16",
+    "writer": "Actor_PlayerCollisionPass",
+    "assignment": "PLAYER_ANIMATION_PC = 0x001220AA",
+    "guard": "The assignment is the default collision-response prelude; PLAYER_ANIM_LANDING_RESPONSE_SPAWN is selected when PLAYER_ANIMATION_FIELD_B0 is clear, while PLAYER_ANIM_LANDING_RECOVERY may replace it for the additional state gate."
+  },
+  "stream": {
+    "bytes": "095EF422F0B0000000122080F800",
+    "size": 14,
+    "decoded": [
+      "frame 0x095E",
+      "F4 compare PLAYER_ANIMATION_FIELD_B0 against zero and branch to 0x00122080",
+      "F8 dynamic player-animation state selection"
+    ]
+  },
+  "conclusion": "The formerly generic 0x001220AA-0x001220B7 animation range is a player collision-response prelude directly selected by Actor_PlayerCollisionPass, not an unclassified stream fragment."
+}
