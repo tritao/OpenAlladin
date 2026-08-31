@@ -1815,8 +1815,8 @@
   evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
 
 0x00129332:
-  name: INTERACTION_TYPE7D_PALETTE_SOURCE
-  aliases: [LEVEL_PALETTE_SOURCE_STATE_07]
+  name: LEVEL07_EVENT_PALETTE_SOURCE
+  aliases: [INTERACTION_TYPE7D_PALETTE_SOURCE, LEVEL_PALETTE_SOURCE_STATE_07]
   type: palette_data
   size: 0x20
   confidence: decompiled
@@ -1913,7 +1913,7 @@
   type: palette_data
   size: 0x20
   confidence: decompiled
-  variant_of: INTERACTION_TYPE7D_PALETTE_SOURCE
+  variant_of: LEVEL07_EVENT_PALETTE_SOURCE
   variant_address: 0x00129332
   description: Exact 16-word Genesis palette band between INTERACTION_TYPE8B_PALETTE_SOURCE and INTERACTION_TYPE7D_PALETTE_SOURCE. Its final 15 words are byte-for-byte identical to INTERACTION_TYPE7D_PALETTE_SOURCE at 0x00129332; only the first word differs, 0x0660 here versus 0x000E there. The distinct first-word variant is recorded without assigning a higher-level selector.
   evidence:
@@ -1922,7 +1922,8 @@
     - scene_palette_body_confidence_static_v1
 
 0x001294F2:
-  name: INTERACTION_TYPE0C_PALETTE_SOURCE
+  name: INTERACTION_PALETTE_SOURCE_PLAYER_RESPONSE
+  aliases: [INTERACTION_TYPE0C_PALETTE_SOURCE]
   type: palette_data
   size: 0x20
   confidence: decompiled
@@ -1930,7 +1931,8 @@
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x00129532:
-  name: INTERACTION_TYPE0B_PALETTE_SOURCE
+  name: INTERACTION_PALETTE_SOURCE_COLLISION_RESPONSE
+  aliases: [INTERACTION_TYPE0B_PALETTE_SOURCE]
   type: palette_data
   size: 0x20
   confidence: decompiled
@@ -1955,7 +1957,8 @@
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x00129612:
-  name: INTERACTION_TYPE84_TERRAIN_PALETTE_SOURCE
+  name: TERRAIN_RESPONSE_PALETTE_SOURCE
+  aliases: [INTERACTION_TYPE84_TERRAIN_PALETTE_SOURCE]
   type: palette_data
   size: 0x20
   confidence: decompiled
@@ -4476,7 +4479,8 @@
     - animation_stream_decoder
 
 0x00123E76:
-  name: ACTOR_ANIM_TYPE84_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_INTERACTION_RESPONSE_SHORT
+  aliases: [ACTOR_ANIM_TYPE84_INTERACTION_RESPONSE]
   size: 8
   confidence: decompiled
   description: Compact Type-0x84 interaction-response animation installed by ACTOR_TEMPLATE_TYPE_84_INTERACTION_RESPONSE at 0x001B7C9C. Its exact 8-byte entry presents frames 0x0D8E and 0x17DE with EC 0x01 actor-state clears between the two phases, immediately before the separately owned collision-response stream.
@@ -4666,7 +4670,8 @@
     - animation_stream_decoder
 
 0x00123274:
-  name: ACTOR_ANIM_TYPE67_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_THRESHOLD
+  aliases: [ACTOR_ANIM_TYPE67_INTERACTION]
   size: 100
   confidence: decompiled
   description: Type-0x67 interaction animation selected by the direct forward-slot consumer. Its packed 100-byte region publishes type 0x67, clears actor state, spawns the template at 0x001B8188, presents the 0x1092/0x109E-0x10B2 frame sequence, conditionally repeats the child spawn after the 0x0068 comparison, and loops back to its entry.
@@ -5073,7 +5078,8 @@
     - movement_stream_decoder
 
 0x00121598:
-  name: ACTOR_MOVE_TYPE62_63_PLAYER_COLLISION_RESPONSE
+  name: ACTOR_MOVE_PLAYER_COLLISION_SETTLE_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE62_63_PLAYER_COLLISION_RESPONSE]
   type: movement_stream
   size: 64
   confidence: decompiled
@@ -5300,7 +5306,8 @@
     - type8d-type76-terminal-animation_static_decompilation
 
 0x00124194:
-  name: ACTOR_ANIM_TYPE76_INTERACTION
+  name: ACTOR_ANIM_TERMINAL_INTERACTION_SHARED
+  aliases: [ACTOR_ANIM_TYPE76_INTERACTION]
   size: 52
   confidence: decompiled
   description: Type-0x76 interaction animation and shared Type-0x8D response continuation. Its exact 52-byte region begins with the direct ACTOR_TEMPLATE_TYPE_76_INTERACTION entry, has the alternate entry at 0x00124198 used by Level_ExitAndTerminalTransition, publishes the type-0x84 response through the named actor-event callbacks, and loops from 0x001241C2 to 0x001241BA.
@@ -5436,7 +5443,8 @@
     - animation_stream_decoder
 
 0x00124408:
-  name: ACTOR_ANIM_TYPE8C_LANDING_RESPONSE
+  name: ACTOR_ANIM_LANDING_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE8C_LANDING_RESPONSE]
   size: 72
   confidence: decompiled
   description: Type-0x8C landing-response animation selected by ACTOR_TEMPLATE_TYPE_8C. Its packed 72-byte region plays sound 0x4C, presents the 0x1BD6-0x1BF2 ascent, writes actor field 0x11 to 0x007B, clears the actor, repeats the response frames, and loops from 0x0012444A to 0x00124436.
@@ -5591,7 +5599,8 @@
     - animation_stream_decoder
 
 0x00124B3A:
-  name: ACTOR_ANIM_TYPE4F_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_FRAME_RESPONSE_SECONDARY
+  aliases: [ACTOR_ANIM_TYPE4F_INTERACTION]
   type: animation_stream
   size: 52
   confidence: decompiled
@@ -5602,7 +5611,8 @@
     - animation_stream_decoder
 
 0x00124B6E:
-  name: ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE
+  name: ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_SHARED
+  aliases: [ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE]
   type: animation_stream
   size: 56
   confidence: decompiled
@@ -5616,7 +5626,7 @@
 0x00124B94:
   name: ACTOR_ANIM_TYPE50_LEVEL09_RESPONSE_ENTRY
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE
+  alias_of: ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_SHARED
   entry_offset: 38
   confidence: decompiled
   description: Embedded Level-09 type-0x50 response entry installed by Level09_FrameCallback. It begins at offset 38 inside ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE and therefore does not claim a second ROM ownership range.
@@ -5625,7 +5635,8 @@
     - actor_animation_stream_family_static_decompilation
 
 0x00124BA6:
-  name: ACTOR_ANIM_TYPE51_PLAYER_COLLISION_RESPONSE
+  name: ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_ENTRY
+  aliases: [ACTOR_ANIM_TYPE51_PLAYER_COLLISION_RESPONSE]
   type: animation_stream
   size: 54
   confidence: decompiled
@@ -5650,7 +5661,7 @@
   name: ACTOR_ANIM_TYPE84_MOVING_CHILD_SPAWN_PREFIX
   type: animation_stream
   confidence: decompiled
-  alias_of: ACTOR_ANIM_TYPE04_COLLISION_RESPONSE
+  alias_of: ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_ENTRY
   entry_offset: 2
   description: Nested F5 moving-child spawn entry inside ACTOR_ANIM_TYPE04_COLLISION_RESPONSE. It supplies ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD_BASE, presents the 0x14F6 response frames, writes actor field 0x11 as 0x0004, and returns to ACTOR_ANIM_TYPE04_SCENE_SETUP without claiming a second ROM ownership range.
   evidence:
@@ -5659,7 +5670,8 @@
     - animation_stream_decoder
 
 0x00124C18:
-  name: ACTOR_ANIM_TYPE04_COLLISION_RESPONSE
+  name: ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_ENTRY
+  aliases: [ACTOR_ANIM_TYPE04_COLLISION_RESPONSE]
   type: animation_stream
   size: 34
   confidence: decompiled
@@ -6761,7 +6773,8 @@
     - animation_stream_decoder
 
 0x00122B6E:
-  name: ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE
+  name: ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE]
   type: animation_stream
   size: 78
   confidence: decompiled
@@ -6774,7 +6787,7 @@
 0x00122B9C:
   name: ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_A
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE
+  alias_of: ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE
   entry_offset: 46
   confidence: decompiled
   description: Embedded first Type-0x84 collision-child animation entry selected by the first F5 record in ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE. It aliases the parent collision-response owner and does not claim a second ROM ownership range.
@@ -7043,7 +7056,8 @@
     - animation_stream_decoder
 
 0x0012570C:
-  name: ACTOR_ANIM_TYPE36_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_EXTENDED_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE36_INTERACTION]
   size: 336
   confidence: decompiled
   description: Type-0x36 interaction animation installed by ACTOR_TEMPLATE_TYPE_36_INTERACTION. Its packed region clears the actor state, spawns the encoded Type-0x84 and upper-route child records, applies the 0x0F22-0x0F4E frame/arithmetic response, jumps to the local 0x0F26 sequence at 0x001257C6, plays sound 0x2A, and terminates with F600 at 0x0012585A before the separately owned Level-entry stream.
@@ -7104,7 +7118,8 @@
     - animation_stream_decoder
 
 0x00123F10:
-  name: ACTOR_ANIM_TYPE37_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_INTERACTION_RESPONSE_DELAYED
+  aliases: [ACTOR_ANIM_TYPE37_INTERACTION_RESPONSE]
   type: animation_stream
   size: 110
   confidence: decompiled
@@ -7188,7 +7203,8 @@
     - animation_stream_decoder
 
 0x00125A4C:
-  name: ACTOR_ANIM_TYPE79_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_STATE_ROOT
+  aliases: [ACTOR_ANIM_TYPE79_INTERACTION]
   size: 28
   confidence: decompiled
   description: Type-0x79 reverse-slot interaction animation installed by InteractionSpawn_Type79_0A0C. It cycles frame references 0x1C46, 0x1C4A, 0x1C4E, and 0x1C52 with timer values 0x8B, 0x82, and 0x85 before looping at 0x00125A62.
@@ -7390,7 +7406,8 @@
     - animation_stream_decoder
 
 0x00125D7E:
-  name: ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_INTERACTION_RESPONSE_CHILDREN
+  aliases: [ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE]
   type: animation_stream
   size: 70
   confidence: decompiled

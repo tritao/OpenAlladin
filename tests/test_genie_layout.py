@@ -724,8 +724,8 @@ def test_canonical_actor_animation_family_has_exact_non_overlapping_ranges():
         0x00124AAA: (0x00124ADF, "ACTOR_ANIM_TYPE8B_PRESENTATION_F7"),
         0x00124AE0: (0x00124B15, "ACTOR_ANIM_TYPE8B_PRESENTATION_F8"),
         0x00124B16: (0x00124B39, "ACTOR_ANIM_INTERACTION_FRAME_RESPONSE"),
-        0x00124B3A: (0x00124B6D, "ACTOR_ANIM_TYPE4F_INTERACTION"),
-        0x00124BA6: (0x00124BDB, "ACTOR_ANIM_TYPE51_PLAYER_COLLISION_RESPONSE"),
+        0x00124B3A: (0x00124B6D, "ACTOR_ANIM_INTERACTION_FRAME_RESPONSE_SECONDARY"),
+        0x00124BA6: (0x00124BDB, "ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_ENTRY"),
         0x00124BDC: (0x00124C17, "ACTOR_ANIM_TYPE04_SCENE_SETUP"),
         0x00124C3A: (0x00124C9B, "ACTOR_ANIM_MOVING_CHILD_VARIANT_LOOP"),
         0x00124D50: (0x00124D5B, "ACTOR_ANIM_TYPE16_LEVEL_OBJECT_HORIZONTAL_GATE"),
@@ -747,7 +747,7 @@ def test_canonical_actor_animation_family_has_exact_non_overlapping_ranges():
     alias = symbols.at(0x00124B94, include_ranges=False)
     assert alias is not None
     assert alias.name == "ACTOR_ANIM_TYPE50_LEVEL09_RESPONSE_ENTRY"
-    assert alias.metadata["alias_of"] == "ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE"
+    assert alias.metadata["alias_of"] == "ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_SHARED"
 
 
 def test_type84_interaction_base_b6_animation_range_is_exact():
@@ -1034,7 +1034,7 @@ def test_type0f_child_and_type6e_default_animation_ranges_are_exact():
             0x00123DE2: (0x00123DE9, "ACTOR_ANIM_SINGLE_FRAME_SELF_LOOP"),
         0x00123DEA: (0x00123E35, "ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT"),
         0x00123E36: (0x00123E75, "ACTOR_ANIM_INTERACTION_CHILD_SPAWN"),
-        0x00123E76: (0x00123E7D, "ACTOR_ANIM_TYPE84_INTERACTION_RESPONSE"),
+        0x00123E76: (0x00123E7D, "ACTOR_ANIM_INTERACTION_RESPONSE_SHORT"),
     }
     owners = []
     for address, (end, name) in expected.items():
@@ -1099,7 +1099,7 @@ def test_player_action_transition_child_animation_is_exact():
     assert symbol.metadata["type"] == "animation_stream"
     collision_response = symbols.at(0x00122B6E, include_ranges=False)
     assert collision_response is not None
-    assert collision_response.name == "ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE"
+    assert collision_response.name == "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE"
 
 
 def test_type10_collision_response_animation_is_exact():
@@ -1121,7 +1121,7 @@ def test_type10_collision_response_animation_is_exact():
 def test_mid_actor_collision_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {
-        0x00122B6E: (0x00122BBB, "ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE"),
+        0x00122B6E: (0x00122BBB, "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE"),
         0x00122BBC: (0x00122BD7, "ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_B"),
         0x00122BD8: (0x00122C11, "ACTOR_ANIM_INTERACTION_RESPONSE_SHARED"),
         0x00122C12: (0x00122C1D, "ACTOR_ANIM_INTERACTION_SHARED"),
@@ -1140,7 +1140,7 @@ def test_mid_actor_collision_animation_family_is_exact():
     child = symbols.at(0x00122B9C, include_ranges=False)
     assert child is not None
     assert child.name == "ACTOR_ANIM_TYPE84_COLLISION_CHILD_VARIANT_A"
-    assert child.metadata["alias_of"] == "ACTOR_ANIM_TYPE84_TYPE2D2E31_COLLISION_RESPONSE"
+    assert child.metadata["alias_of"] == "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE"
     assert child.metadata["entry_offset"] == 46
 
     template = symbols.at(0x001B79A4, include_ranges=False)
@@ -2278,7 +2278,7 @@ def test_type62_63_player_collision_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00121598, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE62_63_PLAYER_COLLISION_RESPONSE"
+    assert stream.name == "ACTOR_MOVE_PLAYER_COLLISION_SETTLE_RESPONSE"
     assert stream.end == 0x001215D7
     assert stream.size == 64
     assert stream.metadata["type"] == "movement_stream"
@@ -2992,7 +2992,7 @@ def test_actor_type41_interaction_response_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00125D7E, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE"
+    assert stream.name == "ACTOR_ANIM_INTERACTION_RESPONSE_CHILDREN"
     assert stream.end == 0x00125DC3
     assert stream.size == 70
     assert stream.metadata["type"] == "animation_stream"
@@ -3285,7 +3285,7 @@ def test_type37_interaction_response_animation_range_is_exact():
     symbols = SymbolStore()
     symbol = symbols.at(0x00123F10, include_ranges=False)
     assert symbol is not None
-    assert symbol.name == "ACTOR_ANIM_TYPE37_INTERACTION_RESPONSE"
+    assert symbol.name == "ACTOR_ANIM_INTERACTION_RESPONSE_DELAYED"
     assert symbol.end == 0x00123F7D
     assert symbol.size == 110
 
@@ -3517,12 +3517,12 @@ def test_canonical_fixed_palette_sources_have_exact_upload_extents():
         (0x00129152, 0x00129171, "INTERACTION_TYPE13_PALETTE_SOURCE"),
         (0x001292B2, 0x001292D1, "INTERACTION_SHARED_PALETTE_SOURCE"),
         (0x001292F2, 0x00129311, "INTERACTION_TYPE8B_PALETTE_SOURCE"),
-        (0x00129332, 0x00129351, "INTERACTION_TYPE7D_PALETTE_SOURCE"),
-        (0x001294F2, 0x00129511, "INTERACTION_TYPE0C_PALETTE_SOURCE"),
-        (0x00129532, 0x00129551, "INTERACTION_TYPE0B_PALETTE_SOURCE"),
+        (0x00129332, 0x00129351, "LEVEL07_EVENT_PALETTE_SOURCE"),
+        (0x001294F2, 0x00129511, "INTERACTION_PALETTE_SOURCE_PLAYER_RESPONSE"),
+        (0x00129532, 0x00129551, "INTERACTION_PALETTE_SOURCE_COLLISION_RESPONSE"),
         (0x001295D2, 0x001295F1, "INTERACTION_TYPE12_PALETTE_SOURCE"),
         (0x001295F2, 0x00129611, "INTERACTION_COLLISION_RESPONSE_PALETTE"),
-        (0x00129612, 0x00129631, "INTERACTION_TYPE84_TERRAIN_PALETTE_SOURCE"),
+        (0x00129612, 0x00129631, "TERRAIN_RESPONSE_PALETTE_SOURCE"),
         (0x00129B52, 0x00129B71, "SCENE_TRANSITION_PALETTE_BAND_SOURCE"),
         (0x00129B72, 0x00129B91, "SCENE_TRANSITION_READY_PALETTE_SOURCE"),
     )
@@ -3671,7 +3671,7 @@ def test_unreferenced_palette_data_has_exact_structural_extents():
     assert symbols.at(0x00129A72, include_ranges=False).metadata["duplicate_address"] == 0x00129E60
 
     variant = symbols.at(0x00129312, include_ranges=False)
-    assert variant.metadata["variant_of"] == "INTERACTION_TYPE7D_PALETTE_SOURCE"
+    assert variant.metadata["variant_of"] == "LEVEL07_EVENT_PALETTE_SOURCE"
     assert variant.metadata["variant_address"] == 0x00129332
     assert rom[0x00129314:0x00129332] == rom[0x00129334:0x00129352]
     assert rom[0x00129312:0x00129314] == bytes.fromhex("0660")
@@ -3705,7 +3705,7 @@ def test_canonical_level_palette_sources_have_exact_transition_extents():
         (0x00129172, 0x001291F1, "LEVEL_PALETTE_SOURCE_STATE_03"),
         (0x001291F2, 0x00129271, "LEVEL_PALETTE_SOURCE_STATE_04"),
         (0x00129272, 0x001292F1, "LEVEL_PALETTE_SOURCE_STATE_05_06"),
-        (0x00129332, 0x001293B1, "INTERACTION_TYPE7D_PALETTE_SOURCE"),
+        (0x00129332, 0x001293B1, "LEVEL07_EVENT_PALETTE_SOURCE"),
         (0x001293B2, 0x00129431, "LEVEL_PALETTE_SOURCE_STATE_08"),
         (0x00129432, 0x001294B1, "LEVEL_PALETTE_SOURCE_STATE_09"),
         (0x001294B2, 0x00129531, "LEVEL_PALETTE_SOURCE_STATE_10"),
@@ -4429,7 +4429,7 @@ def test_actor_type04_collision_animation_entry_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00124C18, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_ANIM_TYPE04_COLLISION_RESPONSE"
+    assert stream.name == "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_ENTRY"
     assert stream.end == 0x00124C39
     assert stream.size == 34
     assert stream.metadata["type"] == "animation_stream"
@@ -4437,7 +4437,7 @@ def test_actor_type04_collision_animation_entry_is_exact():
     nested = symbols.at(0x00124C1A, include_ranges=False)
     assert nested is not None
     assert nested.name == "ACTOR_ANIM_TYPE84_MOVING_CHILD_SPAWN_PREFIX"
-    assert nested.metadata["alias_of"] == "ACTOR_ANIM_TYPE04_COLLISION_RESPONSE"
+    assert nested.metadata["alias_of"] == "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_ENTRY"
     assert nested.metadata["entry_offset"] == 2
 
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"

@@ -1,0 +1,46 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "decoded-animation-movement-and-palette-role-identities",
+  "promotions": [
+    "ACTOR_MOVE_PLAYER_COLLISION_SETTLE_RESPONSE",
+    "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE",
+    "ACTOR_ANIM_ACTOR_COLLISION_CHILD_RESPONSE_ENTRY",
+    "ACTOR_ANIM_INTERACTION_THRESHOLD",
+    "ACTOR_ANIM_INTERACTION_RESPONSE_SHORT",
+    "ACTOR_ANIM_INTERACTION_RESPONSE_DELAYED",
+    "ACTOR_ANIM_TERMINAL_INTERACTION_SHARED",
+    "ACTOR_ANIM_LANDING_RESPONSE",
+    "ACTOR_ANIM_INTERACTION_FRAME_RESPONSE_SECONDARY",
+    "ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_SHARED",
+    "ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_ENTRY",
+    "ACTOR_ANIM_INTERACTION_EXTENDED_RESPONSE",
+    "ACTOR_ANIM_INTERACTION_STATE_ROOT",
+    "ACTOR_ANIM_INTERACTION_RESPONSE_CHILDREN",
+    "LEVEL07_EVENT_PALETTE_SOURCE",
+    "INTERACTION_PALETTE_SOURCE_PLAYER_RESPONSE",
+    "INTERACTION_PALETTE_SOURCE_COLLISION_RESPONSE",
+    "TERRAIN_RESPONSE_PALETTE_SOURCE"
+  ],
+  "evidence": [
+    "player_collision_actor_relative_placement_family_static_decompilation",
+    "mid-actor-collision-animation-family-static-decompilation",
+    "type67_animation_static_decompilation",
+    "actor_template_interaction_dispatch_family_static_decompilation",
+    "interaction_spawn_runtime37_3b_type43_static_decompilation",
+    "type8d-type76-terminal-animation_static_decompilation",
+    "type8c_landing_animation_static_decompilation",
+    "player_collision_global_placement_static_decompilation",
+    "actor_template_late_interaction_family_static_decompilation",
+    "interaction_spawn_type79_type7a_static_decompilation",
+    "interaction_spawn_runtime3a-41_static_decompilation",
+    "fixed_palette_source_extents_static_v1",
+    "ghidra_palette_band2_consumers"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_behavior_role"
+  }
+}
