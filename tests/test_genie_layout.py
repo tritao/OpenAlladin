@@ -3339,6 +3339,13 @@ def test_upper_collision_response_animation_family_is_exact():
         assert alias.metadata["alias_of"] == "ACTOR_ANIM_UPPER_INTERACTION_RESPONSE"
         assert alias.metadata["entry_offset"] == offset
 
+    proximity = symbols.at(0x001235AC, include_ranges=False)
+    assert proximity is not None
+    assert proximity.name == "ACTOR_ANIM_UPPER_PROXIMITY_RESPONSE"
+    assert proximity.aliases == ("ACTOR_ANIM_TYPE_21_PROXIMITY",)
+    assert proximity.size == 54
+    assert proximity.metadata["type"] == "animation_stream"
+
 
 def test_upper_type1f_type22_collision_animation_family_is_exact():
     symbols = SymbolStore()

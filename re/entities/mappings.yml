@@ -140,7 +140,7 @@ mappings:
 
   - name: UPPER_COLLISION_RESPONSE
     scope: role
-    symbol_addresses: [0x001234BE, 0x001234F6, 0x0012350C, 0x00123544, 0x0012384A, 0x0012387A, 0x001238AA, 0x001238F8, 0x001B7CC4]
+    symbol_addresses: [0x001234BE, 0x001234F6, 0x0012350C, 0x00123544, 0x001235AC, 0x0012384A, 0x0012387A, 0x001238AA, 0x001238F8, 0x001B7CC4]
     technical_types: [0x1E, 0x1F, 0x21, 0x22, 0x84]
     confidence: decompiled
     evidence: [upper_collision_response_animation_family_static_decompilation, actor-template-scene-resource-family-static-decompilation]

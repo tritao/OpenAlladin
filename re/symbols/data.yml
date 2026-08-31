@@ -4280,10 +4280,12 @@
     - movement_stream_decoder
 
 0x001235AC:
-  name: ACTOR_ANIM_TYPE_21_PROXIMITY
+  name: ACTOR_ANIM_UPPER_PROXIMITY_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE_21_PROXIMITY]
+  type: animation_stream
   size: 54
   confidence: decompiled
-  description: Selector-0x1A type-0x21 animation stream. Its packed 54-byte region opens with frame 0x001F286A, clears or updates facing through F7, tests player Y distance 0x40, calls ACTOR_ANIM_PROXIMITY_SECONDARY, and selects the local random/callback branch before looping without installing actor movement.
+  description: Upper proximity-response animation stream installed by the selector-0x1A interaction handler for runtime type 0x21 and reached by its collision-response paths. Its packed 54-byte region opens with frame 0x001F286A, clears or updates facing through F7, tests player Y distance 0x40, calls ACTOR_ANIM_PROXIMITY_SECONDARY, and selects the local random/callback branch before looping without installing actor movement.
   evidence:
     - ghidra_type21_targeted_decompile
     - actor_type21_proximity_stream_decode

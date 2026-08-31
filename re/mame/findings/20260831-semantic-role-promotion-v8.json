@@ -1,0 +1,19 @@
+{
+  "finding": "semantic-role-promotion-v8",
+  "status": "confirmed",
+  "scope": "upper Type-0x21 proximity response animation",
+  "evidence": [
+    "ghidra_type21_targeted_decompile",
+    "actor_type21_proximity_stream_decode",
+    "type1e_animation_static_decompilation",
+    "mame_type21_settle_trace"
+  ],
+  "promotions": [
+    {
+      "address": "0x001235AC",
+      "name": "ACTOR_ANIM_UPPER_PROXIMITY_RESPONSE",
+      "technical_alias": "ACTOR_ANIM_TYPE_21_PROXIMITY",
+      "reason": "Selector-0x1A creates runtime type 0x21 with this stream, and Type-0x21 collision-response paths transfer back to it; the stream gates on player Y distance and calls the shared proximity body."
+    }
+  ]
+}
