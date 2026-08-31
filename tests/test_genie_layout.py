@@ -1690,7 +1690,7 @@ def test_type2f_interaction_movement_family_is_exact():
         0x00120ACC: (0x00120B13, 72, "ACTOR_MOVE_INTERACTION_RESPONSE_CYCLE"),
         0x00120B14: (0x00120B1F, 12, "ACTOR_MOVE_TYPE2F_INTERACTION_STATE84_ENTRY"),
         0x00120B20: (0x00120B2B, 12, "ACTOR_MOVE_TYPE2F_INTERACTION_STATE83_ENTRY"),
-        0x00120B2C: (0x00120B35, 10, "ACTOR_MOVE_TYPE2F_INTERACTION_STATE87_TRANSITION"),
+        0x00120B2C: (0x00120B35, 10, "ACTOR_MOVE_INTERACTION_RESPONSE_CLEANUP_HANDOFF"),
     }
     for address, (end, size, name) in expected.items():
         stream = symbols.at(address, include_ranges=False)

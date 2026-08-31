@@ -1,0 +1,25 @@
+{
+  "finding": "semantic-role-promotion-v11",
+  "status": "confirmed",
+  "scope": "Type-2F interaction cleanup handoff",
+  "evidence": [
+    "type2f_interaction_movement_static_v1",
+    "actor_template_interaction_family_static_decompilation",
+    "movement_stream_decoder",
+    "actor_terrain_collision_loop_static_decompilation"
+  ],
+  "promotions": [
+    {
+      "address": "0x00120B2C",
+      "name": "ACTOR_MOVE_INTERACTION_RESPONSE_CLEANUP_HANDOFF",
+      "technical_alias": "ACTOR_MOVE_TYPE2F_INTERACTION_STATE87_TRANSITION",
+      "reason": "The distinct 0x87 branch applies its final displacement sequence, clears actor state, and transfers to the compact interaction-response continuation at 0x00120B36."
+    }
+  ],
+  "deferred": [
+    {
+      "addresses": ["0x00120B14", "0x00120B20"],
+      "reason": "Both branches currently decode to the same reposition body; their selector values alone do not establish distinct gameplay roles."
+    }
+  ]
+}

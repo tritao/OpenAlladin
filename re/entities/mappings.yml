@@ -457,7 +457,7 @@ mappings:
 
   - name: INTERACTION_RESPONSE_CYCLE
     scope: role
-    symbol_addresses: [0x00120ACC, 0x00123A68, 0x001B7BD4, 0x001B7BFC]
+    symbol_addresses: [0x00120ACC, 0x00120B2C, 0x00123A68, 0x001B7BD4, 0x001B7BFC]
     technical_types: [0x2F]
     confidence: decompiled
     evidence:

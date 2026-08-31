@@ -4154,11 +4154,12 @@
     - movement_stream_decoder
 
 0x00120B2C:
-  name: ACTOR_MOVE_TYPE2F_INTERACTION_STATE87_TRANSITION
+  name: ACTOR_MOVE_INTERACTION_RESPONSE_CLEANUP_HANDOFF
+  aliases: [ACTOR_MOVE_TYPE2F_INTERACTION_STATE87_TRANSITION]
   type: movement_stream
   size: 10
   confidence: decompiled
-  description: Type-0x2F interaction movement transition selected when actor field 0x3D equals 0x0087. Its exact ten-byte prefix applies the (-125, +20), (0, +32), (0, +18), and (+58, -106) steps, clears actor state, and falls through into ACTOR_MOVE_TYPE64_INTERACTION at 0x00120B36; the Type-0x64 continuation is not claimed here.
+  description: Interaction-response cleanup handoff selected when actor field 0x3D equals 0x0087. Its exact ten-byte prefix applies the (-125, +20), (0, +32), (0, +18), and (+58, -106) steps, clears actor state, and falls through into ACTOR_MOVE_COMPACT_INTERACTION_RESPONSE at 0x00120B36; the continuation is not claimed here.
   evidence:
     - actor_template_interaction_family_static_decompilation
     - movement_stream_decoder
