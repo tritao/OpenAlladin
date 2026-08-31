@@ -32,4 +32,12 @@ void level_invoke_frame_callback(
     CoreTrace* trace = nullptr
 );
 
+// Level_InvokeExitCallback at 0x001AE1C2. The exit callback is selected
+// directly from the active ROM level-table record; it is not mirrored into
+// gameplay RAM.
+void level_invoke_exit_callback(
+    CoreRuntime& core,
+    CoreTrace* trace = nullptr
+);
+
 }  // namespace openaladdin::core

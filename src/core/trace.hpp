@@ -33,6 +33,8 @@ struct CoreTrace {
     std::size_t interaction_spawn_slot = 0;
     RamAddress camera_callback = 0;
     RamAddress frame_callback = 0;
+    RamAddress exit_callback = 0;
+    std::uint16_t level_exit_vdp_control = 0;
     bool level_event_dispatched = false;
     std::uint8_t level_event_command = 0;
     std::uint16_t level_event_arg0 = 0;

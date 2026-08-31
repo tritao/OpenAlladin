@@ -191,5 +191,31 @@ int main() {
     assert(level08_trace.level08_vdp_last_data == 0x0022);
     assert(read32(core.ram, kGlobalPrngState) == 384);
 
+    // Level_InvokeExitCallback selects the callback from table offset 0x28.
+    // Level 08 publishes its event stream and exit presentation actor through
+    // the same RAM/actor records used by the running core.
+    const std::size_t level08_entry = kLevelTableRomOffset
+        + 8 * kLevelTableEntrySize;
+    write_rom32(rom, level08_entry + 0x28, 0x001B64D0);
+    rom[0x001B7DC8] = 0x60;
+    write16(core.ram, kPlayerWorldX, 0x0600);
+    write16(core.ram, kPlayerWorldY, 0x0220);
+    write8(core.ram, kSceneState, 1);
+    // The callback identity is selected by SCENE_STATE, so select level 08
+    // for this direct exit-callback test.
+    write8(core.ram, kSceneState, 8);
+    CoreTrace exit_trace;
+    level_invoke_exit_callback(core, &exit_trace);
+    assert(exit_trace.exit_callback == 0x001B64D0);
+    assert(exit_trace.level_exit_vdp_control == 0x8B02);
+    assert(read32(core.ram, kLevel08EventCommandCursor) == 0x262F);
+    assert(read16(core.ram, kLevel08VdpScrollOffset) == 0x0140);
+    assert(actor_read8(actor_view(core.ram, 1), kActorTypeOffset) == 0x60);
+    assert(actor_read16(actor_view(core.ram, 1), kActorXOffset) == 0x0600);
+    assert(actor_read16(actor_view(core.ram, 1), kActorYOffset) == 0x0220);
+    assert(read32(core.ram, kPlayerAnimationPc) == 0x00122350);
+    assert(read16(core.ram, kLevel08EventCounterHigh) == 6);
+    assert(read8(core.ram, kCameraScrollApplyGate) == 0xFF);
+
     return 0;
 }

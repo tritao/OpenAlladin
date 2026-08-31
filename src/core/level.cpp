@@ -18,6 +18,7 @@ constexpr std::size_t kLevelCameraYOffset = 0x02;
 constexpr std::size_t kLevelPlayerXOffset = 0x04;
 constexpr std::size_t kLevelPlayerYOffset = 0x06;
 constexpr std::size_t kLevelBackgroundBlocksOffset = 0x24;
+constexpr std::size_t kLevelExitCallbackOffset = 0x28;
 constexpr std::size_t kLevelFrameCallbackOffset = 0x2C;
 constexpr std::size_t kLevelWidthOffset = 0x30;
 constexpr std::size_t kLevelHeightOffset = 0x32;
@@ -33,6 +34,8 @@ constexpr RamAddress kLevelCallback10 = 0x001B623A;
 
 constexpr RamAddress kLevel08RotatingVdpTable = 0x000029E0;
 constexpr RamAddress kLevel08Type84Template = 0x001B7EE0;
+constexpr RamAddress kLevel08ExitCallback = 0x001B64D0;
+constexpr RamAddress kLevel08ExitType60Template = 0x001B7DC8;
 
 void publish16(
     CoreRuntime& core,
@@ -162,6 +165,27 @@ void invoke_level08_frame_callback(CoreRuntime& core, CoreTrace* trace) {
     }
 }
 
+void invoke_level08_exit_callback(CoreRuntime& core, CoreTrace* trace) {
+    // Level08_ExitRoutine's VDP control write and resource transfer are a
+    // presentation boundary. Keep the selected control word observable while
+    // applying every gameplay-visible RAM/actor publication in order.
+    if (trace != nullptr) trace->level_exit_vdp_control = 0x8B02;
+    write32(core.ram, kLevel08EventCommandCursor, 0x0000262F);
+    write16(core.ram, kLevel08VdpScrollOffset, 0x0140);
+
+    const ActorView event_actor = actor_view(core.ram, 1);
+    if (actor_initialize_from_template(
+            core, 1, kLevel08ExitType60Template)) {
+        actor_write16(
+            event_actor, kActorXOffset, read16(core.ram, kPlayerWorldX));
+        actor_write16(
+            event_actor, kActorYOffset, read16(core.ram, kPlayerWorldY));
+    }
+    write32(core.ram, kPlayerAnimationPc, 0x00122350);
+    write16(core.ram, kLevel08EventCounterHigh, 6);
+    write8(core.ram, kCameraScrollApplyGate, 0xFF);
+}
+
 }  // namespace
 
 bool level_load_from_scene_state(CoreRuntime& core, CoreTrace* trace) {
@@ -254,6 +278,29 @@ void level_invoke_frame_callback(CoreRuntime& core, CoreTrace* trace) {
     default:
         // The callback identity remains in RAM and in the trace. More
         // involved level callbacks will be ported with their event contracts.
+        break;
+    }
+}
+
+void level_invoke_exit_callback(CoreRuntime& core, CoreTrace* trace) {
+    const std::uint8_t scene = read8(core.ram, kSceneState);
+    if (scene >= kLevelTableCount || !rom_is_bound(core.rom)) return;
+
+    const std::size_t offset = kLevelTableRomOffset
+        + static_cast<std::size_t>(scene) * kLevelTableEntrySize;
+    if (offset + kLevelTableEntrySize > core.rom.size) return;
+
+    const RamAddress callback = rom_read32(
+        core.rom, offset + kLevelExitCallbackOffset);
+    if (trace != nullptr) trace->exit_callback = callback;
+
+    switch (callback) {
+    case kLevel08ExitCallback:
+        invoke_level08_exit_callback(core, trace);
+        break;
+    default:
+        // Other exit identities remain observable and will be ported with
+        // their recovered transition/resource contracts.
         break;
     }
 }

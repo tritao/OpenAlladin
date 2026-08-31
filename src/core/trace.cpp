@@ -156,6 +156,8 @@ void trace_begin(
     trace.interaction_spawn_slot = 0;
     trace.camera_callback = 0;
     trace.frame_callback = 0;
+    trace.exit_callback = 0;
+    trace.level_exit_vdp_control = 0;
     trace.level_event_dispatched = false;
     trace.level_event_command = 0;
     trace.level_event_arg0 = 0;
@@ -253,6 +255,7 @@ void trace_state(
            << ",\"scroll_data_cursor\":" << read32(ram, kCameraScrollDataCursor)
            << ",\"level_scroll_callback\":" << trace.camera_callback
            << ",\"level_frame_callback\":" << trace.frame_callback
+           << ",\"level_exit_callback\":" << trace.exit_callback
            << ",\"event_cursor\":" << read32(ram, kLevelEventScriptCursor)
            << ",\"event_tick\":" << static_cast<unsigned>(read8(ram, kLevelEventTick))
            << ",\"event_dispatched\":" << (trace.level_event_dispatched ? "true" : "false")
@@ -270,6 +273,7 @@ void trace_state(
            << ",\"level08_vdp_last_data\":" << trace.level08_vdp_last_data
            << "}"
            << ",\"scene\":{\"state\":" << static_cast<unsigned>(read8(ram, kSceneState))
+           << ",\"level_exit_vdp_control\":" << trace.level_exit_vdp_control
            << ",\"script_cursor\":" << read32(ram, kSceneScriptCursor)
            << ",\"script_data_cursor\":" << read32(ram, kSceneScriptData)
            << ",\"table_index\":" << static_cast<unsigned>(read8(ram, kSceneTableIndex))
