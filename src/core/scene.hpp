@@ -61,6 +61,11 @@ struct SceneResourceRunResult {
     std::size_t actor_spawn_slot = 0;
 };
 
+struct SceneResourceStreamsResult {
+    SceneResourceRunResult first;
+    SceneResourceRunResult second;
+};
+
 // SceneScript_CompleteToState1 at 0x001B315C. The script cursor and pending
 // byte are RAM contracts; the selected scene is then loaded from the ROM
 // level table without a native scene object.
@@ -99,6 +104,16 @@ SceneResourceRunResult scene_resource_process_command_stream_with_presentation_s
     RamAddress stream,
     std::uint16_t initial_x = 0,
     std::uint16_t initial_y = 0,
+    const SceneResourceEffects& effects = {},
+    CoreTrace* trace = nullptr,
+    std::size_t instruction_budget = 1'000'000
+);
+
+// SceneResource_ProcessCommandStreams at 0x001B430C. This is the recovered
+// two-call orchestration used by the scene camera/resource path; the selected
+// ROM stream for each call is controlled by its real RAM latch.
+SceneResourceStreamsResult scene_resource_process_command_streams(
+    CoreRuntime& core,
     const SceneResourceEffects& effects = {},
     CoreTrace* trace = nullptr,
     std::size_t instruction_budget = 1'000'000

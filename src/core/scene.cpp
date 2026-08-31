@@ -439,6 +439,29 @@ SceneResourceRunResult scene_resource_process_command_stream_with_presentation_s
     return result;
 }
 
+SceneResourceStreamsResult scene_resource_process_command_streams(
+    CoreRuntime& core,
+    const SceneResourceEffects& effects,
+    CoreTrace* trace,
+    std::size_t instruction_budget
+) {
+    constexpr RamAddress kTransitionLabelOn = 0x00126512;
+    constexpr RamAddress kTransitionLabelOff = 0x00126516;
+
+    const RamAddress first_stream = read8(core.ram, kSceneTransitionEvent) != 0
+        ? kTransitionLabelOff : kTransitionLabelOn;
+    const RamAddress second_stream = read8(core.ram, kSceneVdpUpdateFlag) != 0
+        ? kTransitionLabelOff : kTransitionLabelOn;
+    SceneResourceStreamsResult result;
+    result.first = scene_resource_process_command_stream(
+        core, first_stream, 0x0015, 0x0010, effects, trace,
+        instruction_budget);
+    result.second = scene_resource_process_command_stream(
+        core, second_stream, 0x0019, 0x0012, effects, trace,
+        instruction_budget);
+    return result;
+}
+
 void scene_table_select_next_state(
     CoreRuntime& core,
     CoreTrace*

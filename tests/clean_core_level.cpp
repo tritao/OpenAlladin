@@ -335,6 +335,12 @@ int main() {
     write8(core.ram, kSceneResourceStatus, 0);
     vdp_build_tile_row_command_tables(core.ram, 0x40);
     core.vdp.vram[0xC100] = 0xAA;
+    rom[0x00126512] = 0x00;
+    rom[0x00126516] = 0x01;
+    rom[0x00126517] = 0x00;
+    rom[0x00126518] = 0x00;
+    write8(core.ram, kSceneTransitionEvent, 0);
+    write8(core.ram, kSceneVdpUpdateFlag, 1);
     write_rom32(rom, kSceneResourceCommandTable + 0x00, 0x001B2300);
     write_rom32(rom, kSceneResourceCommandTable + 0x03 * 4, 0x001B2314);
     write_rom32(rom, kSceneResourceCommandTable + 0x06 * 4, 0x001B2380);
@@ -380,6 +386,23 @@ int main() {
     assert(resource_trace.scene_resource_tile_write_count == 3);
     assert(resource_trace.scene_resource_last_vdp_data == 0xA7C3);
     assert(read8(core.ram, kSceneResourcePresentationScratch) == 0);
+    write8(core.ram, kSceneResourceTileBase, 0);
+    const SceneResourceStreamsResult streams =
+        scene_resource_process_command_streams(core);
+    assert(streams.first.status == SceneResourceRunStatus::Finished);
+    assert(streams.second.status == SceneResourceRunStatus::Finished);
+    assert(streams.first.cursor == 0x00126513);
+    assert(streams.second.cursor == 0x00126519);
+    assert(streams.first.tile_x == 0x0015);
+    assert(streams.first.tile_y == 0x0010);
+    assert(streams.second.tile_x == 0x0019);
+    assert(streams.second.tile_y == 0x0012);
+    write8(core.ram, kSceneResourceStatus, 1);
+    const SceneResourceStreamsResult blocked_streams =
+        scene_resource_process_command_streams(core);
+    assert(blocked_streams.first.status == SceneResourceRunStatus::StatusChanged);
+    assert(blocked_streams.second.status == SceneResourceRunStatus::StatusChanged);
+    write8(core.ram, kSceneResourceStatus, 0);
     write8(core.ram, kSceneResourceStatus, 1);
     const SceneResourceRunResult blocked_resource =
         scene_resource_process_command_stream_with_presentation_scratch(
