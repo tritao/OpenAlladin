@@ -1,0 +1,28 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "terrain-interaction-and-proximity-animation-roles",
+  "promotions": [
+    "PLAYER_ANIM_COLLISION_RESPONSE_ALTERNATE",
+    "ACTOR_ANIM_TERRAIN_INTERACTION_MOVEMENT_HANDOFF",
+    "ACTOR_ANIM_TERRAIN_INTERACTION_MOVEMENT_LOOP",
+    "ACTOR_ANIM_TERRAIN_INTERACTION_RESPONSE",
+    "ACTOR_ANIM_TERRAIN_INTERACTION_RESPONSE_EXTENDED",
+    "ACTOR_ANIM_PROXIMITY_GATE"
+  ],
+  "evidence": [
+    "type1e_animation_static_decompilation",
+    "type1e_movement_static_decompilation",
+    "level01_behavior46_lower_band_movement_decode",
+    "level01_upper_pair_animation_decode",
+    "level01_upper_pair_extended_interaction",
+    "actor_type1e_player_collision_handler",
+    "animation_stream_decoder"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_terrain_interaction_and_proximity_lifecycle_role"
+  }
+}

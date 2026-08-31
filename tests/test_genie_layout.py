@@ -2894,20 +2894,20 @@ def test_type1e_proximity_movement_handoff_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001235E2, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF"
+    assert stream.name == "ACTOR_ANIM_TERRAIN_INTERACTION_MOVEMENT_HANDOFF"
     assert stream.end == 0x00123613
     assert stream.size == 50
     assert stream.metadata["type"] == "animation_stream"
 
     loop = symbols.at(0x001235EC, include_ranges=False)
     assert loop is not None
-    assert loop.name == "ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_LOOP"
-    assert loop.metadata["alias_of"] == "ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF"
+    assert loop.name == "ACTOR_ANIM_TERRAIN_INTERACTION_MOVEMENT_LOOP"
+    assert loop.metadata["alias_of"] == "ACTOR_ANIM_TERRAIN_INTERACTION_MOVEMENT_HANDOFF"
     assert loop.metadata["entry_offset"] == 10
 
     following = symbols.at(0x00123614, include_ranges=False)
     assert following is not None
-    assert following.name == "ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE"
+    assert following.name == "ACTOR_ANIM_TERRAIN_INTERACTION_RESPONSE"
     assert stream.end + 1 == following.address
 
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"

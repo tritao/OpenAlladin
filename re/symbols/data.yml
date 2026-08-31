@@ -4249,11 +4249,12 @@
     - mame_type21_settle_trace
 
 0x001235E2:
-  name: ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF
+  name: ACTOR_ANIM_TERRAIN_INTERACTION_MOVEMENT_HANDOFF
+  aliases: [ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF]
   type: animation_stream
   size: 50
   confidence: decompiled
-  description: Terrain-interaction proximity-response movement handoff entered by the X-distance branch at 0x00123666 of ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE. Its exact 50-byte region presents the 0x1212-0x122E response cadence, publishes the shared ACTOR_MOVE_TERRAIN_INTERACTION_RESPONSE continuation at 0x001204DA, and loops from 0x0012360E to its internal 0x001235EC entry before the following terrain-interaction root.
+  description: Terrain-interaction proximity-response movement handoff entered by the X-distance branch at 0x00123666 of ACTOR_ANIM_TERRAIN_INTERACTION_RESPONSE. Its exact 50-byte region presents the 0x1212-0x122E response cadence, publishes the shared ACTOR_MOVE_TERRAIN_INTERACTION_RESPONSE continuation at 0x001204DA, and loops from 0x0012360E to its internal 0x001235EC entry before the following terrain-interaction root.
   evidence:
     - type1e_animation_static_decompilation
     - type1e_movement_static_decompilation
@@ -4261,12 +4262,13 @@
     - animation_stream_decoder
 
 0x001235EC:
-  name: ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_LOOP
+  name: ACTOR_ANIM_TERRAIN_INTERACTION_MOVEMENT_LOOP
+  aliases: [ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_LOOP]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF
+  alias_of: ACTOR_ANIM_TERRAIN_INTERACTION_MOVEMENT_HANDOFF
   entry_offset: 10
   confidence: decompiled
-  description: Internal Type-0x1E proximity-response movement-loop entry beginning after the handoff's movement publication. It aliases ACTOR_ANIM_TYPE1E_PROXIMITY_MOVEMENT_HANDOFF and does not claim a second ROM range.
+  description: Internal terrain-interaction proximity-response movement-loop entry beginning after the handoff's movement publication. It aliases ACTOR_ANIM_TERRAIN_INTERACTION_MOVEMENT_HANDOFF and does not claim a second ROM range.
   evidence:
     - type1e_animation_static_decompilation
     - level01_behavior46_lower_band_movement_decode
@@ -4283,10 +4285,11 @@
     - animation_stream_decoder
 
 0x00123614:
-  name: ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE
+  name: ACTOR_ANIM_TERRAIN_INTERACTION_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE]
   size: 434
   confidence: decompiled
-  description: Normal Type-0x1E proximity/interaction animation state machine. Its packed 434-byte region presents frame 0x11E2, tests actor state 0x46, player Y/X proximity, actor flag/value fields 0x0080 and 0x0081, calls ACTOR_ANIM_PROXIMITY_SECONDARY, and loops through local response substreams before returning.
+  description: Normal terrain-interaction proximity animation state machine. Its packed 434-byte region presents frame 0x11E2, tests the terrain interaction state, player Y/X proximity, actor flag/value fields 0x0080 and 0x0081, calls ACTOR_ANIM_PROXIMITY_SECONDARY, and loops through local response substreams before returning.
   evidence:
     - type1e_animation_static_decompilation
     - type1e_movement_static_decompilation
@@ -4294,7 +4297,8 @@
     - animation_stream_decoder
 
 0x001237C6:
-  name: ACTOR_ANIM_TYPE1E_STATE46_EXTENDED
+  name: ACTOR_ANIM_TERRAIN_INTERACTION_RESPONSE_EXTENDED
+  aliases: [ACTOR_ANIM_TYPE1E_STATE46_EXTENDED]
   size: 132
   confidence: decompiled
   description: Extended terrain-interaction response animation. Its packed 132-byte cycle presents the 0x11D2/0x11BE/0x11C2/0x11C6/0x11CA/0x11CE/0x11D6/0x11DA/0x11DE frame sequence, writes ACTOR_MOVE_TERRAIN_INTERACTION_RESPONSE to actor movement field +0x0A, queues callback 0x001ACC5E through FB, and returns after rechecking the interaction state.
@@ -4305,7 +4309,8 @@
     - animation_stream_decoder
 
 0x00123900:
-  name: ACTOR_ANIM_TYPE1F_PROXIMITY_GATE
+  name: ACTOR_ANIM_PROXIMITY_GATE
+  aliases: [ACTOR_ANIM_TYPE1F_PROXIMITY_GATE]
   size: 160
   confidence: decompiled
   description: Proximity animation state machine paired with ACTOR_MOVE_PROXIMITY_GATE. Its packed 160-byte region presents the 0x124A and 0x126A-0x1286 frame sequences, tests player X distances 0x4B and 0x40 plus actor flag/value fields, installs the movement root 0x00120432 on the active path, clears movement on the response path, and loops through the local callback sequence.
@@ -4808,7 +4813,7 @@
   type: animation_stream
   size: 56
   confidence: decompiled
-  description: Actor-collision response animation installed directly by ActorType1E_ActorCollisionHandler. Its exact 56-byte region publishes the transient collision-response state, presents the 0x11A6-0x11BA response cadence with sound 0x41, restores the source actor state, invokes the shared collision callback, and transfers to ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE.
+  description: Actor-collision response animation installed directly by ActorType1E_ActorCollisionHandler. Its exact 56-byte region publishes the transient collision-response state, presents the 0x11A6-0x11BA response cadence with sound 0x41, restores the source actor state, invokes the shared collision callback, and transfers to ACTOR_ANIM_TERRAIN_INTERACTION_RESPONSE.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - ghidra_type1e_handler_decompile
@@ -4820,7 +4825,7 @@
   type: animation_stream
   size: 22
   confidence: decompiled
-  description: Alternate compact actor-collision response entry written directly by ActorType1E_PlayerCollisionHandler on the landing/recovery path. It publishes and restores the transient/source actor state around two 0x11A2 frames, then transfers to ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE.
+  description: Alternate compact actor-collision response entry written directly by ActorType1E_PlayerCollisionHandler on the landing/recovery path. It publishes and restores the transient/source actor state around two 0x11A2 frames, then transfers to ACTOR_ANIM_TERRAIN_INTERACTION_RESPONSE.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - ghidra_type1e_targeted_decompile
@@ -4856,7 +4861,7 @@
   type: animation_stream
   size: 48
   confidence: decompiled
-  description: Player-collision proximity-response animation installed directly by ActorType1E_PlayerCollisionHandler. Its exact 48-byte region publishes the transient collision-response state, presents the 0x1232-0x1246 response cadence with sound 0x41, restores the source actor state, and transfers to ACTOR_ANIM_TYPE1F_PROXIMITY_GATE at 0x00123900.
+  description: Player-collision proximity-response animation installed directly by ActorType1E_PlayerCollisionHandler. Its exact 48-byte region publishes the transient collision-response state, presents the 0x1232-0x1246 response cadence with sound 0x41, restores the source actor state, and transfers to ACTOR_ANIM_PROXIMITY_GATE at 0x00123900.
   evidence:
     - upper_type1f_type22_collision_animation_static_decompilation
     - ghidra_type1e_targeted_decompile
@@ -4916,7 +4921,7 @@
   type: animation_stream
   size: 8
   confidence: decompiled
-  description: Alternate compact player-collision proximity-recovery prefix written directly by ActorType1E_PlayerCollisionHandler on the landing/recovery path. It presents the 0x125A/0x1256 lead-in and falls through directly into ACTOR_ANIM_TYPE1F_PROXIMITY_GATE at 0x00123900.
+  description: Alternate compact player-collision proximity-recovery prefix written directly by ActorType1E_PlayerCollisionHandler on the landing/recovery path. It presents the 0x125A/0x1256 lead-in and falls through directly into ACTOR_ANIM_PROXIMITY_GATE at 0x00123900.
   evidence:
     - upper_type1f_type22_collision_animation_static_decompilation
     - ghidra_type1e_targeted_decompile
@@ -6718,10 +6723,11 @@
     - animation_stream_decoder
 
 0x001228A0:
-  name: PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE_ALTERNATE
+  name: PLAYER_ANIM_COLLISION_RESPONSE_ALTERNATE
+  aliases: [PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE_ALTERNATE]
   size: 12
   confidence: confirmed
-  description: Alternate Type-0x1E player-collision response stream selected when the actor collision helper leaves the landing state active and player action-response field 0xF0D8 is not 1. It presents frame 0x0A9A followed by 0x0A8A/0x0A86, plays sound 0x21, and enters dynamic state selection.
+  description: Alternate player-collision response stream selected when the actor collision helper leaves the landing state active and player action-response field 0xF0D8 is not 1. It presents frame 0x0A9A followed by 0x0A8A/0x0A86, plays sound 0x21, and enters dynamic state selection.
   evidence:
     - actor_type1e_player_collision_handler
     - animation_stream_decoder
@@ -6731,7 +6737,7 @@
   type: animation_stream
   size: 148
   confidence: decompiled
-  description: Branch continuation of PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN. Its exact 148-byte region carries the repeated action-response writes and gates, the local response entries, the Type-0x84 child presentation/spawn phase, and the final dynamic player-animation selector before PLAYER_ANIM_TYPE1E_COLLISION_RESPONSE_ALTERNATE at 0x001228A0.
+  description: Branch continuation of PLAYER_ANIM_ACTION_TERRAIN_PUSH_DOWN. Its exact 148-byte region carries the repeated action-response writes and gates, the local response entries, the child presentation/spawn phase, and the final dynamic player-animation selector before PLAYER_ANIM_COLLISION_RESPONSE_ALTERNATE at 0x001228A0.
   evidence:
     - player_action_state_animation_static_decompilation
     - animation_stream_decoder
@@ -8008,7 +8014,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Selector-0x10 actor template for the proximity path; it uses movement stream ACTOR_MOVE_PROXIMITY_GATE and animation stream ACTOR_ANIM_TYPE1F_PROXIMITY_GATE.
+  description: Selector-0x10 actor template for the proximity path; it uses movement stream ACTOR_MOVE_PROXIMITY_GATE and animation stream ACTOR_ANIM_PROXIMITY_GATE.
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets
