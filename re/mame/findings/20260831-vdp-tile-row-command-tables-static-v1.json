@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "3fad70a5a4a93d9edc146bcecd4ec7a817cd3c49",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/vdp-tile-row-command-tables-static-targets.json",
+  "promoted_symbols": [
+    "VDP_TILE_ROW_COMMAND_TABLE_SELECTED",
+    "VDP_TILE_ROW_COMMAND_TABLE_SELECTED_MIRROR",
+    "VDP_TILE_ROW_COMMAND_TABLE_ALTERNATE"
+  ],
+  "contracts": [
+    "VDP_BuildTileRowCommandTables writes 32 longword entries to each promoted table.",
+    "The selected table at 0x00FF8680 and its mirror at 0x00FF8700 receive identical commands.",
+    "The alternate table at 0x00FF8780 receives the other plane sequence, with C000/E000 assignment controlled by VDP_TILE_PLANE_ORDER.",
+    "VDP_WriteTileWord and camera viewport/refill code consume entries from the selected table."
+  ],
+  "evidence": [
+    "Cached Ghidra decompilation of VDP_BuildTileRowCommandTables",
+    "Exact table-base/indexing instructions in VDP_WriteTileWord and camera refill paths",
+    "Whole-ROM context queries for all three table bases"
+  ],
+  "limitations": [
+    "The selected/alternate labels describe the runtime plane-order relationship and do not hard-code C000 or E000 ownership.",
+    "The selected mirror has no currently exported consumer beyond its builder write path."
+  ],
+  "conclusion": "The generated Unknown_00FF8680, Unknown_00FF8700, and Unknown_00FF8780 identities are replaced by stable VDP tile-row command-table names while preserving the dynamic plane-order contract.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

@@ -1439,6 +1439,22 @@ def test_real_level08_vdp_state_has_canonical_roles():
     assert order.metadata["format"] == "boolean"
 
 
+def test_real_vdp_tile_row_command_tables_have_canonical_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00FF8680: "VDP_TILE_ROW_COMMAND_TABLE_SELECTED",
+        0x00FF8700: "VDP_TILE_ROW_COMMAND_TABLE_SELECTED_MIRROR",
+        0x00FF8780: "VDP_TILE_ROW_COMMAND_TABLE_ALTERNATE",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.size == 0x80
+        assert symbol.metadata["format"] == "vdp_command_table"
+        assert symbol.confidence == "decompiled"
+
+
 def test_real_level07_spawn_cooldown_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF113, include_ranges=False)
     assert symbol is not None

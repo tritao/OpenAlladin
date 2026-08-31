@@ -252,6 +252,37 @@
     - ghidra_actor_table_layout
     - actor_allocation_initialization_static_decompilation
     - collision_pass_geometry_static_decompilation
+0xFF8680:
+  name: VDP_TILE_ROW_COMMAND_TABLE_SELECTED
+  type: u32_array
+  size: 0x80
+  format: vdp_command_table
+  confidence: decompiled
+  description: Selected-plane 32-entry VDP tile-row command table built by VDP_BuildTileRowCommandTables. VDP_WriteTileWord and camera viewport/refill paths index it by tile-row position; VDP_TILE_PLANE_ORDER determines whether its commands target the C000 or E000 plane.
+  evidence:
+    - ghidra_decompile_001B2142
+    - ghidra_decompile_001B21A8
+    - ghidra_context_00FF8680
+0xFF8700:
+  name: VDP_TILE_ROW_COMMAND_TABLE_SELECTED_MIRROR
+  type: u32_array
+  size: 0x80
+  format: vdp_command_table
+  confidence: decompiled
+  description: Duplicate 32-entry selected-plane VDP tile-row command table built alongside VDP_TILE_ROW_COMMAND_TABLE_SELECTED. The builder writes identical commands to both tables; no separate consumer is currently exported for this mirror.
+  evidence:
+    - ghidra_decompile_001B2142
+    - ghidra_context_00FF8700
+0xFF8780:
+  name: VDP_TILE_ROW_COMMAND_TABLE_ALTERNATE
+  type: u32_array
+  size: 0x80
+  format: vdp_command_table
+  confidence: decompiled
+  description: Alternate-plane 32-entry VDP tile-row command table built by VDP_BuildTileRowCommandTables. VDP_TILE_PLANE_ORDER swaps which plane base is represented by this table versus VDP_TILE_ROW_COMMAND_TABLE_SELECTED.
+  evidence:
+    - ghidra_decompile_001B2142
+    - ghidra_context_00FF8780
 0xFFF008:
   name: ACTOR_SPRITE_RESOURCE_SLOT_BITMAP
   type: u8[0x74]
