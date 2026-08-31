@@ -5676,37 +5676,45 @@
     - interaction_spawn_upper-gated-family-static-decompilation
     - interaction_spawn_upper_gated_family_semantic_v1
 0x001B6F1E:
-  name: InteractionSpawn_Type79_0A0C
+  name: InteractionSpawn_CreateType79InteractionActor_0A0C
+  aliases: [InteractionSpawn_Type79_0A0C]
   confidence: decompiled
   description: Interaction selectors 0x0A through 0x0C handler that reverse-spawns the type-0x79 interaction template and installs animation root 0x00125A4C when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B6F1E
     - interaction_spawn_type79_type7a-targets
     - interaction_spawn_type79_type7a-static-decompilation
+    - interaction_spawn_type79_type7a_semantic_v1
 0x001B6F34:
-  name: InteractionSpawn_Type7A_06
+  name: InteractionSpawn_CreateType7AInteractionActor_06
+  aliases: [InteractionSpawn_Type7A_06]
   confidence: decompiled
   description: Interaction selector 0x06 handler that uses the type-0x7A interaction template through the 0x40 helper and installs animation root 0x00125A68 when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B6F34
     - interaction_spawn_type79_type7a-targets
     - interaction_spawn_type79_type7a-static-decompilation
+    - interaction_spawn_type79_type7a_semantic_v1
 0x001B6F4A:
-  name: InteractionSpawn_Type7A_07
+  name: InteractionSpawn_CreateType7AInteractionActor_07
+  aliases: [InteractionSpawn_Type7A_07]
   confidence: decompiled
   description: Interaction selector 0x07 handler that uses the type-0x7A interaction template through the 0x40 helper and installs animation root 0x00125A88 when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B6F4A
     - interaction_spawn_type79_type7a-targets
     - interaction_spawn_type79_type7a-static-decompilation
+    - interaction_spawn_type79_type7a_semantic_v1
 0x001B6F60:
-  name: InteractionSpawn_Type7A_08
+  name: InteractionSpawn_CreateType7AInteractionActor_08
+  aliases: [InteractionSpawn_Type7A_08]
   confidence: decompiled
   description: Interaction selector 0x08 handler that uses the type-0x7A interaction template through the 0x40 helper and installs animation root 0x00125AA8 when allocation succeeds.
   evidence:
     - ghidra_disassembly_001B6F60
     - interaction_spawn_type79_type7a-targets
     - interaction_spawn_type79_type7a-static-decompilation
+    - interaction_spawn_type79_type7a_semantic_v1
 0x001B6F76:
   name: InteractionSpawn_GuardTemplate_14
   confidence: decompiled

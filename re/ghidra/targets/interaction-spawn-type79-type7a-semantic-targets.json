@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type79-type7a-semantic",
+    "purpose": "Promote the four Type-0x79/0x7A scene-interaction handlers to stable creation identities while retaining selector-qualified historical names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      { "address": "0x001B6F1E", "selectors": ["0x0A", "0x0B", "0x0C"], "name": "InteractionSpawn_CreateType79InteractionActor_0A0C", "legacy_name": "InteractionSpawn_Type79_0A0C", "template": "0x001B8250 ACTOR_TEMPLATE_TYPE_79_INTERACTION", "allocator": "InteractionSpawn_ReverseSlot", "animation_root": "0x00125A4C" },
+      { "address": "0x001B6F34", "selectors": ["0x06"], "name": "InteractionSpawn_CreateType7AInteractionActor_06", "legacy_name": "InteractionSpawn_Type7A_06", "template": "0x001B8264 ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "allocator": "InteractionSpawn_BackwardSlot", "animation_root": "0x00125A68" },
+      { "address": "0x001B6F4A", "selectors": ["0x07"], "name": "InteractionSpawn_CreateType7AInteractionActor_07", "legacy_name": "InteractionSpawn_Type7A_07", "template": "0x001B8264 ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "allocator": "InteractionSpawn_BackwardSlot", "animation_root": "0x00125A88" },
+      { "address": "0x001B6F60", "selectors": ["0x08"], "name": "InteractionSpawn_CreateType7AInteractionActor_08", "legacy_name": "InteractionSpawn_Type7A_08", "template": "0x001B8264 ACTOR_TEMPLATE_TYPE_7A_INTERACTION", "allocator": "InteractionSpawn_BackwardSlot", "animation_root": "0x00125AA8" }
+    ]
+  },
+  "gates": [
+    "The handlers retain their established allocation-success checks before post-allocation AnimationVM root writes."
+  ],
+  "contracts": [
+    "Selectors 0x0A-0x0C reverse-spawn the Type-0x79 interaction template and install AnimationVM root 0x00125A4C.",
+    "Selectors 0x06, 0x07, and 0x08 use the Type-0x7A interaction template through the backward-slot helper and install roots 0x00125A68, 0x00125A88, and 0x00125AA8 respectively."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "Established Type-0x79/0x7A templates, allocator contracts, and per-selector AnimationVM roots",
+    "re/ghidra/targets/interaction-spawn-type79-type7a-targets.json",
+    "re/mame/findings/20260829-interaction-spawn-type79-type7a-static-v1.json"
+  ],
+  "limitations": [
+    "The names identify exact runtime types and AnimationVM variants, not user-facing scene roles.",
+    "Dynamic reachability of the six selectors remains unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
