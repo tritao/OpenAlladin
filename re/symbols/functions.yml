@@ -1975,7 +1975,7 @@
   aliases:
     - InteractionSpawn_RuntimeType22_19
   confidence: decompiled
-  description: Selector-0x19 interaction handler that allocates ACTOR_TEMPLATE_TYPE_1F through LevelObjectSpawnEntry, clears the spawned actor movement state, installs the ACTOR_ANIM_TYPE22_PROXIMITY_LOOP entry at 0x001238B2, and publishes runtime actor type 0x22 when allocation succeeds.
+  description: Selector-0x19 interaction handler that allocates ACTOR_TEMPLATE_PROXIMITY_GATE through LevelObjectSpawnEntry, clears the spawned actor movement state, installs the ACTOR_ANIM_TYPE22_PROXIMITY_LOOP entry at 0x001238B2, and publishes runtime actor type 0x22 when allocation succeeds.
   evidence:
     - interaction_spawn_runtime22_static_decompilation
     - ghidra_disassembly_001B6EEE
@@ -5710,7 +5710,7 @@
   name: InteractionGate_CreateType1FUpperActor_63
   aliases: [InteractionGate_Type1F_63]
   confidence: decompiled
-  description: Interaction selector 0x63 gate wrapper that tests 0x00FFF105 and, when set, reverse-dispatches the type-0x1F upper-route template at 0x001B7C38 through LevelObjectSpawnEntry.
+  description: Interaction selector 0x63 gate wrapper that tests 0x00FFF105 and, when set, reverse-dispatches ACTOR_TEMPLATE_PROXIMITY_GATE at 0x001B7C38 through LevelObjectSpawnEntry.
   evidence:
     - ghidra_disassembly_001B6E9C
     - interaction_spawn_upper-gated-family-targets
@@ -5720,7 +5720,7 @@
   name: InteractionSpawn_CreateType1FUpperActor_10
   aliases: [InteractionSpawn_Type1F_10]
   confidence: decompiled
-  description: Interaction selector 0x10 handler that directly enters LevelObjectSpawnEntry with the type-0x1F template at 0x001B7C38.
+  description: Interaction selector 0x10 handler that directly enters LevelObjectSpawnEntry with ACTOR_TEMPLATE_PROXIMITY_GATE at 0x001B7C38.
   evidence:
     - ghidra_disassembly_001B6EA6
     - interaction_spawn_upper-gated-family-targets
@@ -6029,7 +6029,7 @@
   name: InteractionSpawn_CreateType34WallActor
   aliases: [InteractionSpawn_RuntimeType34_53]
   confidence: decompiled
-  description: Interaction selector 0x53 handler that allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry, publishes runtime type 0x34, installs ACTOR_ANIM_TYPE_34_WALL at 0x00122C1E and ACTOR_MOVE_TYPE34_WALL_OSCILLATION at 0x001217B4, and sets actor flag byte +0x29 to 6.
+  description: Interaction selector 0x53 handler that allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry, publishes runtime type 0x34, installs ACTOR_ANIM_WALL_OSCILLATION at 0x00122C1E and ACTOR_MOVE_WALL_OSCILLATION at 0x001217B4, and sets actor flag byte +0x29 to 6.
   evidence:
     - ghidra_disassembly_001B72D4
     - interaction_spawn_runtime3a-41-targets
@@ -6069,7 +6069,7 @@
   name: InteractionSpawn_CreateType3CResponse
   aliases: [InteractionSpawn_RuntimeType3C_42]
   confidence: decompiled
-  description: Interaction selector 0x42 handler that requires both PLAYER_COLLISION_GATE_TYPE3E and PLAYER_COLLISION_GATE_TYPE3F set, forward-spawns from ACTOR_TEMPLATE_BASE_ZERO, and initializes runtime type 0x3C with the shared exit-response animation entry, ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE, and actor byte +0x29 set to 1.
+  description: Interaction selector 0x42 handler that requires both PLAYER_COLLISION_GATE_TYPE3E and PLAYER_COLLISION_GATE_TYPE3F set, forward-spawns from ACTOR_TEMPLATE_BASE_ZERO, and initializes runtime type 0x3C with the shared exit-response animation entry, ACTOR_MOVE_SHARED_COLLISION_RESPONSE, and actor byte +0x29 set to 1.
   evidence:
     - ghidra_disassembly_001B738A
     - interaction-spawn-runtime3c-40-targets
@@ -6079,7 +6079,7 @@
   name: InteractionSpawn_CreateType3EResponse
   aliases: [InteractionSpawn_RuntimeType3E_5F]
   confidence: decompiled
-  description: Interaction selector 0x5F handler that requires PLAYER_COLLISION_GATE_TYPE3E clear, forward-spawns from ACTOR_TEMPLATE_BASE_ZERO, and initializes runtime type 0x3E with the shared exit-response animation entry, ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE, and actor byte +0x29 set to 1.
+  description: Interaction selector 0x5F handler that requires PLAYER_COLLISION_GATE_TYPE3E clear, forward-spawns from ACTOR_TEMPLATE_BASE_ZERO, and initializes runtime type 0x3E with the shared exit-response animation entry, ACTOR_MOVE_SHARED_COLLISION_RESPONSE, and actor byte +0x29 set to 1.
   evidence:
     - ghidra_disassembly_001B73C2
     - interaction-spawn-runtime3c-40-targets
@@ -6088,7 +6088,7 @@
   name: InteractionSpawn_CreateType3FResponse
   aliases: [InteractionSpawn_RuntimeType3F_41]
   confidence: decompiled
-  description: Interaction selector 0x41 handler that requires PLAYER_COLLISION_GATE_TYPE3E set and PLAYER_COLLISION_GATE_TYPE3F clear, forward-spawns from ACTOR_TEMPLATE_BASE_ZERO, and initializes runtime type 0x3F with the shared exit-response animation entry, ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE, and actor byte +0x29 set to 1.
+  description: Interaction selector 0x41 handler that requires PLAYER_COLLISION_GATE_TYPE3E set and PLAYER_COLLISION_GATE_TYPE3F clear, forward-spawns from ACTOR_TEMPLATE_BASE_ZERO, and initializes runtime type 0x3F with the shared exit-response animation entry, ACTOR_MOVE_SHARED_COLLISION_RESPONSE, and actor byte +0x29 set to 1.
   evidence:
     - ghidra_disassembly_001B73F2
     - interaction-spawn-runtime3c-40-targets

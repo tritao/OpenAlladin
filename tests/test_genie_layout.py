@@ -775,7 +775,7 @@ def test_runtime_type22_interaction_handler_is_canonical():
     assert handler is not None
     assert handler.name == "InteractionSpawn_CreateType22ProximityActor"
     assert handler.confidence == "decompiled"
-    assert "ACTOR_TEMPLATE_TYPE_1F" in handler.description
+    assert "ACTOR_TEMPLATE_PROXIMITY_GATE" in handler.description
     assert "0x001238B2" in handler.description
 
 
@@ -1135,7 +1135,10 @@ def test_mid_actor_collision_animation_family_is_exact():
         assert symbol.metadata["type"] == "animation_stream"
         owners.append((symbol.address, symbol.end))
     assert all(right + 1 == next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
-    assert symbols.at(0x00122C1E, include_ranges=False).name == "ACTOR_ANIM_TYPE_34_WALL"
+    wall_animation = symbols.at(0x00122C1E, include_ranges=False)
+    assert wall_animation is not None
+    assert wall_animation.name == "ACTOR_ANIM_WALL_OSCILLATION"
+    assert "ACTOR_ANIM_TYPE_34_WALL" in wall_animation.aliases
 
     child = symbols.at(0x00122B9C, include_ranges=False)
     assert child is not None
@@ -2072,7 +2075,8 @@ def test_shared_type3c_3d_3e_3f_movement_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x0012146C, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE"
+    assert stream.name == "ACTOR_MOVE_SHARED_COLLISION_RESPONSE"
+    assert "ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE" in stream.aliases
     assert stream.end == 0x001214B1
     assert stream.size == 70
     assert stream.metadata["type"] == "movement_stream"
@@ -3516,7 +3520,7 @@ def test_canonical_fixed_palette_sources_have_exact_upload_extents():
         (0x001290B2, 0x001290D1, "SCENE_RESOURCE_PALETTE_BAND_SOURCE"),
         (0x00129152, 0x00129171, "INTERACTION_TYPE13_PALETTE_SOURCE"),
         (0x001292B2, 0x001292D1, "INTERACTION_SHARED_PALETTE_SOURCE"),
-        (0x001292F2, 0x00129311, "INTERACTION_TYPE8B_PALETTE_SOURCE"),
+        (0x001292F2, 0x00129311, "INTERACTION_PRESENTATION_PALETTE_SOURCE"),
         (0x00129332, 0x00129351, "LEVEL07_EVENT_PALETTE_SOURCE"),
         (0x001294F2, 0x00129511, "INTERACTION_PALETTE_SOURCE_PLAYER_RESPONSE"),
         (0x00129532, 0x00129551, "INTERACTION_PALETTE_SOURCE_COLLISION_RESPONSE"),

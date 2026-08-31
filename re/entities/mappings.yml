@@ -33,7 +33,7 @@ mappings:
 
   - name: LEVEL12_TERMINAL_EVENT
     scope: event
-    symbol_addresses: [0x001203D0]
+    symbol_addresses: [0x001203D0, 0x00123A7E]
     technical_types: [0x2F]
     confidence: decompiled
     evidence: [actor-template-special-event-family-static-decompilation]
@@ -304,7 +304,7 @@ mappings:
 
   - name: WALL_OSCILLATION
     scope: role
-    symbol_addresses: [0x001217B4]
+    symbol_addresses: [0x001217B4, 0x00122C1E]
     technical_types: [0x34]
     confidence: trace_validated
     evidence:

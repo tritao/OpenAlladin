@@ -1900,11 +1900,12 @@
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x001292F2:
-  name: INTERACTION_TYPE8B_PALETTE_SOURCE
+  name: INTERACTION_PRESENTATION_PALETTE_SOURCE
+  aliases: [INTERACTION_TYPE8B_PALETTE_SOURCE]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x8B presentation-response handlers.
+  description: Fixed 16-word palette source uploaded to palette band 2 by the presentation-response handler family.
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x00129312:
@@ -1915,7 +1916,7 @@
   confidence: decompiled
   variant_of: LEVEL07_EVENT_PALETTE_SOURCE
   variant_address: 0x00129332
-  description: Exact 16-word Genesis palette band between INTERACTION_TYPE8B_PALETTE_SOURCE and INTERACTION_TYPE7D_PALETTE_SOURCE. Its final 15 words are byte-for-byte identical to INTERACTION_TYPE7D_PALETTE_SOURCE at 0x00129332; only the first word differs, 0x0660 here versus 0x000E there. The distinct first-word variant is recorded without assigning a higher-level selector.
+  description: Exact 16-word Genesis palette band between INTERACTION_PRESENTATION_PALETTE_SOURCE and INTERACTION_TYPE7D_PALETTE_SOURCE. Its final 15 words are byte-for-byte identical to INTERACTION_TYPE7D_PALETTE_SOURCE at 0x00129332; only the first word differs, 0x0660 here versus 0x000E there. The distinct first-word variant is recorded without assigning a higher-level selector.
   evidence:
     - unreferenced_palette_data_static_v1
     - fixed_palette_source_extents_static_v1
@@ -4390,10 +4391,11 @@
     - animation_stream_decoder
 
 0x00123A7E:
-  name: ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT
+  name: ACTOR_ANIM_LEVEL12_TERMINAL_EVENT
+  aliases: [ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT]
   size: 70
   confidence: decompiled
-  description: Type-0x2F Level-12 terminal-event animation selected by Level12_FrameCallback. Its packed 70-byte body presents the 0x1AEE/0x1AF2/0x1AF6/0x1AFA/0x1AFE sequence, delays through timer 0x0D, clears the actor, publishes type 0x84, clears actor movement, and loops through the terminal frame tail.
+  description: Level-12 terminal-event animation selected by Level12_FrameCallback. Its packed 70-byte body presents the 0x1AEE/0x1AF2/0x1AF6/0x1AFA/0x1AFE sequence, delays through timer 0x0D, clears the actor, publishes type 0x84, clears actor movement, and loops through the terminal frame tail.
   evidence:
     - type2f_animation_static_decompilation
     - actor_template_type2f_level12_event
@@ -5115,11 +5117,12 @@
     - movement_stream_decoder
 
 0x0012146C:
-  name: ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE
+  name: ACTOR_MOVE_SHARED_COLLISION_RESPONSE
+  aliases: [ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE]
   type: movement_stream
   size: 70
   confidence: decompiled
-  description: Shared Type-0x3C/0x3D/0x3E/0x3F actor response movement root selected by three interaction producers and the Type-0x3D collision-response template. Its exact 70-byte region contains the signed response trajectory from (+3, -1) through the negative and positive phases, then loops unconditionally from 0x001214AC back to 0x0012146C.
+  description: Shared actor collision-response movement root selected by three interaction producers and the Type-0x3D collision-response template. Its exact 70-byte region contains the signed response trajectory from (+3, -1) through the negative and positive phases, then loops unconditionally from 0x001214AC back to 0x0012146C.
   evidence:
     - shared_type3c_3d_3e_3f_movement_static_decompilation
     - interaction_spawn_runtime3c-40_static_decompilation
@@ -5133,7 +5136,7 @@
   size: 90
   confidence: decompiled
   review_status: closed
-  description: Wall-response movement prefix selected by the actor-template record at 0x001B8304. Its exact 90-byte body performs two actor-flag-gated child-spawn phases using ACTOR_TEMPLATE_WALL_RESPONSE, applies the encoded +0x0800 and (+0x0005,+0x000A) actor-field adjustments, then falls through to ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
+  description: Wall-response movement prefix selected by the actor-template record at 0x001B8304. Its exact 90-byte body performs two actor-flag-gated child-spawn phases using ACTOR_TEMPLATE_WALL_RESPONSE, applies the encoded +0x0800 and (+0x0005,+0x000A) actor-field adjustments, then falls through to ACTOR_MOVE_SHARED_COLLISION_RESPONSE at 0x0012146C. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
   evidence:
     - type84_unreferenced_template_static_decompilation
     - movement_stream_decoder
@@ -5322,10 +5325,11 @@
     - animation_stream_decoder
 
 0x00122C1E:
-  name: ACTOR_ANIM_TYPE_34_WALL
+  name: ACTOR_ANIM_WALL_OSCILLATION
+  aliases: [ACTOR_ANIM_TYPE_34_WALL]
   size: 34
   confidence: confirmed
-  description: Type-0x34 wall actor animation root. Its exact 34-byte region presents frame references 0x12E2, 0x12E6, 0x12EA, and 0x12EE with EE timer values 0x89, 0x83, and 0x82, takes the F0 random branch at 0x00122C28, and loops from 0x00122C3A to 0x00122C20.
+  description: Wall-actor oscillation animation root paired with ACTOR_MOVE_WALL_OSCILLATION. Its exact 34-byte region presents frame references 0x12E2, 0x12E6, 0x12EA, and 0x12EE with EE timer values 0x89, 0x83, and 0x82, takes the F0 random branch at 0x00122C28, and loops from 0x00122C3A to 0x00122C20.
   evidence:
     - mame_type_34_wall_actor_probe
     - actor_type_34_stream_decode
@@ -5539,7 +5543,7 @@
   aliases: [ACTOR_ANIM_TYPE8C_LANDING_RESPONSE]
   size: 72
   confidence: decompiled
-  description: Type-0x8C landing-response animation selected by ACTOR_TEMPLATE_TYPE_8C. Its packed 72-byte region plays sound 0x4C, presents the 0x1BD6-0x1BF2 ascent, writes actor field 0x11 to 0x007B, clears the actor, repeats the response frames, and loops from 0x0012444A to 0x00124436.
+  description: Landing-response animation selected by ACTOR_TEMPLATE_LANDING_RESPONSE. Its packed 72-byte region plays sound 0x4C, presents the 0x1BD6-0x1BF2 ascent, writes actor field 0x11 to 0x007B, clears the actor, repeats the response frames, and loops from 0x0012444A to 0x00124436.
   evidence:
     - type8c_landing_animation_static_decompilation
     - actor_template_type8c
@@ -6935,7 +6939,7 @@
   type: animation_stream
   size: 12
   confidence: decompiled
-  description: Compact Type-0x40 interaction animation installed by the selector-0x60/0xAD interaction producers and the level-event Type-0x40 producer. Its exact 12-byte region presents frames 0x16DE, 0x179A, and 0x1ADE with EC 0x01 clears between phases, ending immediately before ACTOR_ANIM_TYPE_34_WALL.
+  description: Compact Type-0x40 interaction animation installed by the selector-0x60/0xAD interaction producers and the level-event Type-0x40 producer. Its exact 12-byte region presents frames 0x16DE, 0x179A, and 0x1ADE with EC 0x01 clears between phases, ending immediately before ACTOR_ANIM_WALL_OSCILLATION.
   evidence:
     - mid-actor-collision-animation-family-static-decompilation
     - interaction-spawn-runtime3c-40-static-decompilation
@@ -8108,11 +8112,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7C38:
-  name: ACTOR_TEMPLATE_TYPE_1F
+  name: ACTOR_TEMPLATE_PROXIMITY_GATE
+  aliases: [ACTOR_TEMPLATE_TYPE_1F]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Selector-0x10 actor template for the proximity path; it uses movement stream ACTOR_MOVE_PROXIMITY_GATE and animation stream ACTOR_ANIM_PROXIMITY_GATE.
+  description: Actor template for the horizontal proximity gate path selected by interaction selector 0x10; it uses movement stream ACTOR_MOVE_PROXIMITY_GATE and animation stream ACTOR_ANIM_PROXIMITY_GATE.
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets
@@ -8174,11 +8179,12 @@
     - mame_terrain_handler_25_scene5_spawn_trace
 
 0x001B7E2C:
-  name: ACTOR_TEMPLATE_TYPE_8C
+  name: ACTOR_TEMPLATE_LANDING_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_8C]
   type: actor_template
   size: 20
   confidence: trace_validated
-  description: Type-0x8C landing-response template used by the terrain resolver's landing-state spawn path; its animation stream is ACTOR_ANIM_TYPE8C_LANDING_RESPONSE at 0x00124408.
+  description: Landing-response template used by the terrain resolver's landing-state spawn path; its animation stream is ACTOR_ANIM_LANDING_RESPONSE at 0x00124408.
   evidence:
     - player_terrain_experiments
     - level01_upper_frontier_initializer_targets
@@ -9177,7 +9183,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Fixed Type-0x84 scene/resource-rebuild wall actor template loaded by SceneResource_RebuildAfterInteraction into actor slot 0x00FF7F8A. It defaults to ACTOR_ANIM_TYPE_34_WALL at 0x00122C1E, owns six resources, and the caller installs movement stream 0x001217B4 before placing it at (0x0178,0x0194).
+  description: Fixed Type-0x84 scene/resource-rebuild wall actor template loaded by SceneResource_RebuildAfterInteraction into actor slot 0x00FF7F8A. It defaults to ACTOR_ANIM_WALL_OSCILLATION at 0x00122C1E, owns six resources, and the caller installs movement stream ACTOR_MOVE_WALL_OSCILLATION before placing it at (0x0178,0x0194).
   evidence:
     - actor_template_scene_rebuild_static_decompilation
     - ghidra_scene_resource_rebuild
@@ -9246,7 +9252,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x3D collision-response child template selected by ActorType13_ActorCollisionHandler and ActorType13_PlayerCollisionHandler; it uses ACTOR_MOVE_SHARED_TYPE3C_3D_3E_3F_RESPONSE at 0x0012146C, template word 0x6000, animation stream 0x00124390, and one resource before each handler copies the source position, applies a 0x20-pixel upward offset, and sets facing to 0xFF.
+  description: Type-0x3D collision-response child template selected by ActorType13_ActorCollisionHandler and ActorType13_PlayerCollisionHandler; it uses ACTOR_MOVE_SHARED_COLLISION_RESPONSE at 0x0012146C, template word 0x6000, animation stream 0x00124390, and one resource before each handler copies the source position, applies a 0x20-pixel upward offset, and sets facing to 0xFF.
   evidence:
     - ghidra_disassembly_001AC1D0
     - ghidra_disassembly_001AF1AC
@@ -9347,7 +9353,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2F final-scene event template selected by Level12_FrameCallback at 0x001B62B6 when its event byte is 0x0D; it uses ACTOR_MOVE_LEVEL12_TERMINAL_EVENT at 0x001203D0, animation stream ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
+  description: Type-0x2F final-scene event template selected by Level12_FrameCallback at 0x001B62B6 when its event byte is 0x0D; it uses ACTOR_MOVE_LEVEL12_TERMINAL_EVENT at 0x001203D0, animation stream ACTOR_ANIM_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
