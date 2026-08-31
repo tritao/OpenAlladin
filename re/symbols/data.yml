@@ -3847,7 +3847,7 @@
   type: movement_stream
   size: 8
   confidence: decompiled
-  description: Shared movement root supplied by ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD and its second F5 override. Its exact 8-byte stream applies a (+1, 0) delta and loops unconditionally back to 0x001203E0.
+  description: Shared movement root supplied by ACTOR_TEMPLATE_ACTOR_COLLISION_RESPONSE_CHILD and its second F5 override. Its exact 8-byte stream applies a (+1, 0) delta and loops unconditionally back to 0x001203E0.
   evidence:
     - shared-movement-root-family-static-decompilation
     - mid_actor_collision_animation_family_static_decompilation
@@ -3962,11 +3962,12 @@
     - movement_stream_decoder
 
 0x00120A00:
-  name: ACTOR_MOVE_TYPE84_TYPE0F_CHILD_RESPONSE
+  name: ACTOR_MOVE_INTERACTION_RANDOM_CHILD_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE84_TYPE0F_CHILD_RESPONSE]
   type: movement_stream
   size: 66
   confidence: decompiled
-  description: Type-0x84 child movement response published by ACTOR_ANIM_TYPE84_TYPE0F_CHILD at 0x00123D8C. Its exact 66-byte owner applies the signed settle profile, gates the terminal phase on player-X distance 0x40, randomly returns to the root, and clears actor movement state at 0x00120A40 before ACTOR_MOVE_LEVEL_EXIT.
+  description: Randomized interaction child movement response published by ACTOR_ANIM_INTERACTION_RANDOM_CHILD at 0x00123D8C. Its exact 66-byte owner applies the signed settle profile, gates the terminal phase on player-X distance 0x40, randomly returns to the root, and clears actor movement state at 0x00120A40 before ACTOR_MOVE_LEVEL_EXIT.
   evidence:
     - type0f_child_animation_static_decompilation
     - type0f_child_movement_static_decompilation
@@ -3977,7 +3978,7 @@
   type: movement_stream
   size: 70
   confidence: decompiled
-  description: Runtime type-0x6E interaction movement root installed by InteractionSpawn_RuntimeType6E into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  description: Interaction movement root installed by InteractionSpawn_RuntimeType6E into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the per-variant setup and child-spawn branch before entering ACTOR_MOVE_INTERACTION_SHARED_RESPONSE at 0x00120948.
   evidence:
     - actor_runtime_type6e_73_movement_static_decompilation
     - actor_runtime_type6e_73_targets
@@ -3998,7 +3999,7 @@
   type: movement_stream
   size: 70
   confidence: decompiled
-  description: Runtime type-0x6F interaction movement root installed by InteractionSpawn_RuntimeType6F into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  description: Interaction movement root installed by InteractionSpawn_RuntimeType6F into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the per-variant setup and child-spawn branch before entering ACTOR_MOVE_INTERACTION_SHARED_RESPONSE at 0x00120948.
   evidence:
     - actor_runtime_type6e_73_movement_static_decompilation
     - actor_runtime_type6e_73_targets
@@ -4019,7 +4020,7 @@
   type: movement_stream
   size: 88
   confidence: decompiled
-  description: Runtime type-0x70 interaction movement root installed by InteractionSpawn_RuntimeType70 into actor field +0x0A after the shared template initialization. Its exact 88-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  description: Interaction movement root installed by InteractionSpawn_RuntimeType70 into actor field +0x0A after the shared template initialization. Its exact 88-byte local body contains the per-variant setup and child-spawn branch before entering ACTOR_MOVE_INTERACTION_SHARED_RESPONSE at 0x00120948.
   evidence:
     - actor_runtime_type6e_73_movement_static_decompilation
     - actor_runtime_type6e_73_targets
@@ -4040,7 +4041,7 @@
   type: movement_stream
   size: 80
   confidence: decompiled
-  description: Runtime type-0x71 interaction movement root installed by InteractionSpawn_RuntimeType71 into actor field +0x0A after the shared template initialization. Its exact 80-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  description: Interaction movement root installed by InteractionSpawn_RuntimeType71 into actor field +0x0A after the shared template initialization. Its exact 80-byte local body contains the per-variant setup and child-spawn branch before entering ACTOR_MOVE_INTERACTION_SHARED_RESPONSE at 0x00120948.
   evidence:
     - actor_runtime_type6e_73_movement_static_decompilation
     - actor_runtime_type6e_73_targets
@@ -4061,7 +4062,7 @@
   type: movement_stream
   size: 70
   confidence: decompiled
-  description: Runtime type-0x72 interaction movement root installed by InteractionSpawn_RuntimeType72 into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  description: Interaction movement root installed by InteractionSpawn_RuntimeType72 into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the per-variant setup and child-spawn branch before entering ACTOR_MOVE_INTERACTION_SHARED_RESPONSE at 0x00120948.
   evidence:
     - actor_runtime_type6e_73_movement_static_decompilation
     - actor_runtime_type6e_73_targets
@@ -4082,7 +4083,7 @@
   type: movement_stream
   size: 70
   confidence: decompiled
-  description: Runtime type-0x73 interaction movement root installed by InteractionSpawn_RuntimeType73 into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the type-specific setup and child-spawn branch before entering ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE at 0x00120948.
+  description: Interaction movement root installed by InteractionSpawn_RuntimeType73 into actor field +0x0A after the shared template initialization. Its exact 70-byte local body contains the per-variant setup and child-spawn branch before entering ACTOR_MOVE_INTERACTION_SHARED_RESPONSE at 0x00120948.
   evidence:
     - actor_runtime_type6e_73_movement_static_decompilation
     - actor_runtime_type6e_73_targets
@@ -4099,11 +4100,12 @@
     - movement_stream_decoder
 
 0x00120948:
-  name: ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE
+  name: ACTOR_MOVE_INTERACTION_SHARED_RESPONSE
+  aliases: [ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE]
   type: movement_stream
   size: 118
   confidence: decompiled
-  description: Shared 118-byte MovementVM continuation reached by the runtime type-0x6E through 0x73 roots. Its exact body carries the timed vertical response and dynamic return through 0x001209B0, ending immediately before the independent ACTOR_MOVE_TYPE7F_PLAYER_COLLISION_RESPONSE stream at 0x001209BE.
+  description: Shared 118-byte MovementVM continuation reached by the six interaction-spawn movement roots. Its exact body carries the timed vertical response and dynamic return through 0x001209B0, ending immediately before the independent ACTOR_MOVE_PLAYER_COLLISION_FOLLOWUP_RESPONSE stream at 0x001209BE.
   evidence:
     - actor_runtime_type6e_73_movement_static_decompilation
     - actor_runtime_type6e_73_targets
@@ -4521,7 +4523,7 @@
   size: 8
   confidence: decompiled
   review_status: closed
-  description: Eight-byte AnimationVM single-frame self-loop containing frame reference 0x001ADE followed by EA back to its own entry. Its exact range is bounded between ACTOR_ANIM_TYPE84_TYPE0F_CHILD and ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT; the external template or producer that selects this default loop remains unresolved.
+  description: Eight-byte AnimationVM single-frame self-loop containing frame reference 0x001ADE followed by EA back to its own entry. Its exact range is bounded between ACTOR_ANIM_INTERACTION_RANDOM_CHILD and ACTOR_ANIM_INTERACTION_SHARED_BASE_DEFAULT; the external template or producer that selects this default loop remains unresolved.
   evidence:
     - type0f_child_and_type6e_default_animation_static_v1
     - unreferenced_animation_self_loop_static_v1
@@ -4534,10 +4536,11 @@
     - animation_stream_decoder
 
 0x00123DEA:
-  name: ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT
+  name: ACTOR_ANIM_INTERACTION_SHARED_BASE_DEFAULT
+  aliases: [ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT]
   size: 76
   confidence: decompiled
-  description: Default animation stream stored in ACTOR_TEMPLATE_INTERACTION_SHARED_BASE at 0x001B7904. Its exact 76-byte region plays sound 0x2C, presents the repeated 0x1652-0x168A frame sequence, and loops through the internal 0x00123E18 entry; the six runtime type 0x6E-0x73 spawners overwrite this template field with their per-type roots.
+  description: Default animation stream stored in ACTOR_TEMPLATE_INTERACTION_SHARED_BASE at 0x001B7904. Its exact 76-byte region plays sound 0x2C, presents the repeated 0x1652-0x168A frame sequence, and loops through the internal 0x00123E18 entry; the six interaction spawners overwrite this template field with their per-variant roots.
   evidence:
     - actor_runtime_type6e_73_static_decompilation
     - actor_template_type6e_73_base
@@ -4628,10 +4631,11 @@
     - animation_stream_decoder
 
 0x00122DF2:
-  name: ACTOR_ANIM_TYPE03_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_FRAME_CYCLE
+  aliases: [ACTOR_ANIM_TYPE03_INTERACTION]
   size: 36
   confidence: decompiled
-  description: Type-0x03 interaction animation installed by ACTOR_TEMPLATE_TYPE_03_INTERACTION. Its exact 36-byte region cycles the 0x1462-0x147A frame sequence and loops from 0x00122E10 back to the root.
+  description: Interaction frame-cycle animation installed by ACTOR_TEMPLATE_INTERACTION_FRAME_CYCLE. Its exact 36-byte region cycles the 0x1462-0x147A frame sequence and loops from 0x00122E10 back to the root.
   evidence:
     - actor_template_interaction_dispatch_family_static_decompilation
     - animation_stream_decoder
@@ -5125,11 +5129,12 @@
     - movement_stream_decoder
 
 0x001213E2:
-  name: ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX
+  name: ACTOR_MOVE_WALL_RESPONSE_CHILD_SPAWN_PREFIX
+  aliases: [ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX]
   type: movement_stream
   size: 0x30
   confidence: decompiled
-  description: Exact decoder-bounded Type-0x8D wall-response child-spawn prefix immediately after the Type-0x52 stream and before ACTOR_MOVE_TYPE84_0F22_WALL_RESPONSE_PREFIX. Its 48-byte body applies a (0,-4) step, adjusts actor residual fields +0x18/+0x1A by +0x0500/+0x0600, gates a spawn through actor flag +0x07, publishes Camera_SetScrollDataCursor6952, selects ACTOR_TEMPLATE_WALL_RESPONSE, and clears the source actor; no direct runtime producer has been recovered.
+  description: Exact decoder-bounded wall-response child-spawn prefix immediately after the Level 09 entry stream and before ACTOR_MOVE_WALL_RESPONSE_PREFIX. Its 48-byte body applies a (0,-4) step, adjusts actor residual fields +0x18/+0x1A by +0x0500/+0x0600, gates a spawn through actor flag +0x07, publishes Camera_SetScrollDataCursor6952, selects ACTOR_TEMPLATE_WALL_RESPONSE, and clears the source actor; no direct runtime producer has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
     - type34_wall_response_static_decompilation
@@ -5211,7 +5216,7 @@
   type: movement_stream
   size: 108
   confidence: decompiled
-  description: Shared player-collision MovementVM root installed by ActorType3E_PlayerCollisionHandler and ActorType3F_PlayerCollisionHandler. Its exact 108-byte region queues event 0x29, issues six F5-style spawn/copy commands for ACTOR_TEMPLATE_TYPE_84_TYPE3E_3F_COLLISION_CHILD at 0x001B7B5C with staged signed placements, and loops from the final step at 0x0012166A before ACTOR_MOVE_MENU_PRESENTATION_CHILD_A.
+  description: Shared player-collision MovementVM root installed by ActorType3E_PlayerCollisionHandler and ActorType3F_PlayerCollisionHandler. Its exact 108-byte region queues event 0x29, issues six F5-style spawn/copy commands for ACTOR_TEMPLATE_PLAYER_COLLISION_MOVING_CHILD at 0x001B7B5C with staged signed placements, and loops from the final step at 0x0012166A before ACTOR_MOVE_MENU_PRESENTATION_CHILD_A.
   evidence:
     - type3e_3f_player_collision_response_static_v1
     - gnu_m68k_disassembly_001AF2B0
@@ -5931,11 +5936,12 @@
     - animation_stream_decoder
 
 0x00124F32:
-  name: ACTOR_ANIM_TYPE31_CHILD_SPAWN_PREFIX
+  name: ACTOR_ANIM_INTERACTION_CHILD_SPAWN_PREFIX
+  aliases: [ACTOR_ANIM_TYPE31_CHILD_SPAWN_PREFIX]
   type: animation_stream
   size: 100
   confidence: decompiled
-  description: Type-0x31 child-spawn prefix immediately following the Type-0x16 sequence. Its exact 100-byte region sets the 0x8B timer/field phase, plays sound 0x37, issues five F5 records for the paired Type-0x31 templates, and terminates with F600 at 0x00124F94 before ACTOR_ANIM_TYPE31_F5_CHILD_A.
+  description: Interaction child-spawn prefix immediately following the Type-0x16 sequence. Its exact 100-byte region sets the 0x8B timer/field phase, plays sound 0x37, issues five F5 records for the paired interaction-child templates, and terminates with F600 at 0x00124F94 before ACTOR_ANIM_INTERACTION_CHILD_A.
   evidence:
     - actor_animation_collision_child_sequence_static_decompilation
     - actor_animation_stream_family_static_decompilation
@@ -5943,22 +5949,24 @@
     - animation_stream_decoder
 
 0x00124F96:
-  name: ACTOR_ANIM_TYPE31_F5_CHILD_A
+  name: ACTOR_ANIM_INTERACTION_CHILD_A
+  aliases: [ACTOR_ANIM_TYPE31_F5_CHILD_A]
   type: animation_stream
   size: 146
   confidence: decompiled
-  description: Type-0x31 child animation entry selected by ACTOR_TEMPLATE_INTERACTION_CHILD_A. Its exact 146-byte region presents the 0x199A-0x19A2 sequence, performs the shared F5 spawn, and loops through its deterministic frame-delay progression.
+  description: First interaction-child animation entry selected by ACTOR_TEMPLATE_INTERACTION_CHILD_A. Its exact 146-byte region presents the 0x199A-0x19A2 sequence, performs the shared F5 spawn, and loops through its deterministic frame-delay progression.
   evidence:
     - actor_template_type31_f5_child_family_static_decompilation
     - actor_animation_stream_family_static_decompilation
     - animation_stream_decoder
 
 0x00125028:
-  name: ACTOR_ANIM_TYPE31_F5_CHILD_B
+  name: ACTOR_ANIM_INTERACTION_CHILD_B
+  aliases: [ACTOR_ANIM_TYPE31_F5_CHILD_B]
   type: animation_stream
   size: 146
   confidence: decompiled
-  description: Paired Type-0x31 child animation entry selected by ACTOR_TEMPLATE_INTERACTION_CHILD_B. Its exact 146-byte region presents the 0x198E-0x1996 sequence, performs the shared F5 spawn, and loops through its distinct frame-delay progression.
+  description: Paired interaction-child animation entry selected by ACTOR_TEMPLATE_INTERACTION_CHILD_B. Its exact 146-byte region presents the 0x198E-0x1996 sequence, performs the shared F5 spawn, and loops through its distinct frame-delay progression.
   evidence:
     - actor_template_type31_f5_child_family_static_decompilation
     - actor_animation_stream_family_static_decompilation
@@ -6013,10 +6021,11 @@
     - animation_stream_decoder
 
 0x001EF4D4:
-  name: ACTOR_FRAME_TYPE_8D_WALL_RESPONSE
+  name: ACTOR_FRAME_CHOPPER_WALL_RESPONSE
+  aliases: [ACTOR_FRAME_TYPE_8D_WALL_RESPONSE]
   size: 18
   confidence: confirmed
-  description: First Chopper sprite-frame record used after ActorType34_PlayerCollisionHandler replaces the wall actor with type 0x8D. Its exact 18-byte record spans 0x001EF4D4-0x001EF4E5 and is followed by the next response frame at 0x001EF4E6.
+  description: First Chopper sprite-frame record used after ActorType34_PlayerCollisionHandler replaces the wall actor with the wall-response actor. Its exact 18-byte record spans 0x001EF4D4-0x001EF4E5 and is followed by the next response frame at 0x001EF4E6.
   evidence:
     - mame_type_34_handler_overlap_trace
     - type8d_wall_response_frame_manifest
@@ -6923,7 +6932,7 @@
   type: animation_stream
   size: 78
   confidence: decompiled
-  description: Type-0x84 collision-response animation installed by ActorType2D2E31_ActorCollisionHandler when the source actor is promoted from type 0x80 or the receiver is accepted from type 0x82. Its exact 78-byte region spawns two Type-0x84 child records through ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD, clears the source actor, applies the encoded actor-field adjustment and flag clear, then loops through the local response frames.
+  description: Collision-response animation installed by ActorType2D2E31_ActorCollisionHandler when the source actor is promoted from type 0x80 or the receiver is accepted from type 0x82. Its exact 78-byte region spawns two child records through ACTOR_TEMPLATE_ACTOR_COLLISION_RESPONSE_CHILD, clears the source actor, applies the encoded actor-field adjustment and flag clear, then loops through the local response frames.
   evidence:
     - mid-actor-collision-animation-family-static-decompilation
     - actor_collision_handler_family_static_decompilation
@@ -7037,19 +7046,21 @@
     - animation_stream_decoder
 
 0x001253E8:
-  name: ACTOR_ANIM_TYPE52_LEVEL09_ENTRY
+  name: ACTOR_ANIM_LEVEL09_ENTRY
+  aliases: [ACTOR_ANIM_TYPE52_LEVEL09_ENTRY]
   size: 18
   confidence: decompiled
-  description: Level-09 Type-0x52 entry animation installed by ACTOR_TEMPLATE_LEVEL09_ENTRY. Its compact region presents frame 0x13B2, waits on the encoded interaction field through the F4 gate targeting ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX at 0x001253FA, and loops from 0x001253F4 back to 0x001253E8.
+  description: Level-09 entry animation installed by ACTOR_TEMPLATE_LEVEL09_ENTRY. Its compact region presents frame 0x13B2, waits on the encoded interaction field through the F4 gate targeting ACTOR_ANIM_LEVEL09_RESPONSE_CLEAR at 0x001253FA, and loops from 0x001253F4 back to 0x001253E8.
   evidence:
     - type52_level09_animation_static_decompilation
     - animation_stream_decoder
 
 0x001253FA:
-  name: ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX
+  name: ACTOR_ANIM_LEVEL09_RESPONSE_CLEAR
+  aliases: [ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX]
   size: 2
   confidence: decompiled
-  description: Level-09 Type-0x52 response prefix entered by ACTOR_ANIM_TYPE52_LEVEL09_ENTRY through its F4 gate. The F600 command clears the actor and falls through to the separately owned ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD body at 0x001253FC; it has no independent loop.
+  description: Level-09 response-clear prefix entered by ACTOR_ANIM_LEVEL09_ENTRY through its F4 gate. The F600 command clears the actor and falls through to the separately owned ACTOR_ANIM_LEVEL_EVENT_CHILD body at 0x001253FC; it has no independent loop.
   evidence:
     - type52_level09_animation_static_decompilation
     - animation_stream_decoder
@@ -7092,7 +7103,7 @@
   type: movement_stream
   size: 44
   confidence: decompiled
-  description: Compact interaction-response movement stream installed by the ACTOR_TEMPLATE_TYPE_64 service record at 0x001B7FBC. Its exact 44-byte owner contains the timer, signed movement, random branch, and terminal delay sequence, ending with the local jump at 0x00120B5C back to 0x00120B38.
+  description: Compact interaction-response movement stream installed by the ACTOR_TEMPLATE_COMPACT_INTERACTION_RESPONSE at 0x001B7FBC. Its exact 44-byte owner contains the timer, signed movement, random branch, and terminal delay sequence, ending with the local jump at 0x00120B5C back to 0x00120B38.
   evidence:
     - actor_template_service_family_static_decompilation
     - movement_stream_decoder
@@ -7109,10 +7120,11 @@
     - movement_stream_decoder
 
 0x00120D7A:
-  name: ACTOR_MOVE_TYPE52_INTERACTION_BASE
+  name: ACTOR_MOVE_INTERACTION_VARIANT_BASE
+  aliases: [ACTOR_MOVE_TYPE52_INTERACTION_BASE]
   size: 102
   confidence: decompiled
-  description: Type-0x52 interaction movement stream installed by ACTOR_TEMPLATE_TYPE_52. Its packed 102-byte body presents the signed zero/vertical-step profile and loops through the local command at 0x00120DDA back to 0x00120D7A.
+  description: Base interaction-variant movement stream installed by ACTOR_TEMPLATE_INTERACTION_VARIANT_SHARED. Its packed 102-byte body presents the signed zero/vertical-step profile and loops through the local command at 0x00120DDA back to 0x00120D7A.
   evidence:
     - actor_template_service_family_static_decompilation
     - movement_stream_decoder
@@ -7128,74 +7140,82 @@
     - movement_stream_decoder
 
 0x0012548E:
-  name: ACTOR_ANIM_TYPE52_INTERACTION_BASE
+  name: ACTOR_ANIM_INTERACTION_VARIANT_BASE
+  aliases: [ACTOR_ANIM_TYPE52_INTERACTION_BASE]
   size: 186
   confidence: decompiled
-  description: Base Type-0x52 interaction animation installed by ACTOR_TEMPLATE_TYPE_52. Its packed region presents the 0x13A2-0x13B2 frame sequence, applies the encoded interaction gates, spawns the response children, and loops through 0x0012548E.
+  description: Base interaction-variant animation installed by ACTOR_TEMPLATE_INTERACTION_VARIANT_SHARED. Its packed region presents the 0x13A2-0x13B2 frame sequence, applies the encoded interaction gates, spawns the response children, and loops through 0x0012548E.
   evidence:
     - interaction_spawn_runtime52_presentation_static_decompilation
     - actor_template_service_family_static_decompilation
     - animation_stream_decoder
 
 0x00125548:
-  name: ACTOR_ANIM_TYPE52_SELECTOR_CB
+  name: ACTOR_ANIM_INTERACTION_CALLBACK_PRESENTATION_FRAME_13B2
+  aliases: [ACTOR_ANIM_TYPE52_SELECTOR_CB]
   size: 10
   confidence: decompiled
-  description: Selector-0xCB Type-0x52 presentation setup stream. It presents frame 0x13B2, pushes the encoded callback parameter, and clears the actor state.
+  description: Interaction callback presentation setup stream for frame 0x13B2. It pushes the encoded callback parameter and clears the actor state.
   evidence:
     - interaction_spawn_runtime52_presentation_static_decompilation
     - animation_stream_decoder
 
 0x00125552:
-  name: ACTOR_ANIM_TYPE52_SELECTOR_CC
+  name: ACTOR_ANIM_INTERACTION_CALLBACK_PRESENTATION_FRAME_13AE
+  aliases: [ACTOR_ANIM_TYPE52_SELECTOR_CC]
   size: 10
   confidence: decompiled
-  description: Selector-0xCC Type-0x52 presentation setup stream. It presents frame 0x13AE, pushes the encoded callback parameter, and clears the actor state.
+  description: Interaction callback presentation setup stream for frame 0x13AE. It pushes the encoded callback parameter and clears the actor state.
   evidence:
     - interaction_spawn_runtime52_presentation_static_decompilation
     - animation_stream_decoder
 
 0x0012555C:
-  name: ACTOR_ANIM_TYPE52_SELECTOR_CD
+  name: ACTOR_ANIM_INTERACTION_CALLBACK_PRESENTATION_FRAME_13AA
+  aliases: [ACTOR_ANIM_TYPE52_SELECTOR_CD]
   size: 10
   confidence: decompiled
-  description: Selector-0xCD Type-0x52 presentation setup stream. It presents frame 0x13AA, pushes the encoded callback parameter, and clears the actor state.
+  description: Interaction callback presentation setup stream for frame 0x13AA. It pushes the encoded callback parameter and clears the actor state.
   evidence:
     - interaction_spawn_runtime52_presentation_static_decompilation
     - animation_stream_decoder
 
 0x00125566:
-  name: ACTOR_ANIM_TYPE52_SELECTOR_CE
+  name: ACTOR_ANIM_INTERACTION_CALLBACK_PRESENTATION_FRAME_13A6
+  aliases: [ACTOR_ANIM_TYPE52_SELECTOR_CE]
   size: 10
   confidence: decompiled
-  description: Selector-0xCE Type-0x52 presentation setup stream. It presents frame 0x13A6, pushes the encoded callback parameter, and clears the actor state.
+  description: Interaction callback presentation setup stream for frame 0x13A6. It pushes the encoded callback parameter and clears the actor state.
   evidence:
     - interaction_spawn_runtime52_presentation_static_decompilation
     - animation_stream_decoder
 
 0x00125570:
-  name: ACTOR_ANIM_TYPE52_SELECTOR_CF
+  name: ACTOR_ANIM_INTERACTION_CALLBACK_PRESENTATION_FRAME_13A2
+  aliases: [ACTOR_ANIM_TYPE52_SELECTOR_CF]
   size: 10
   confidence: decompiled
-  description: Selector-0xCF Type-0x52 presentation setup stream. It presents frame 0x13A2, pushes the encoded callback parameter, and clears the actor state.
+  description: Interaction callback presentation setup stream for frame 0x13A2. It pushes the encoded callback parameter and clears the actor state.
   evidence:
     - interaction_spawn_runtime52_presentation_static_decompilation
     - animation_stream_decoder
 
 0x0012557A:
-  name: ACTOR_ANIM_TYPE52_SELECTOR_5B
+  name: ACTOR_ANIM_INTERACTION_DIFFICULTY_GATED_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE52_SELECTOR_5B]
   size: 186
   confidence: decompiled
-  description: Gated selector-0x5B Type-0x52 animation variant. Its packed region starts at frame 0x13A2, waits on the encoded actor-field comparison, spawns the response children, and loops through 0x0012557A.
+  description: Difficulty-gated interaction response animation selected by the selector-0x5B path. Its packed region starts at frame 0x13A2, waits on the encoded actor-field comparison, spawns the response children, and loops through 0x0012557A.
   evidence:
     - interaction_spawn_runtime52_presentation_static_decompilation
     - animation_stream_decoder
 
 0x00125634:
-  name: ACTOR_ANIM_TYPE52_SELECTOR_5D
+  name: ACTOR_ANIM_INTERACTION_DIFFICULTY_GATED_RESPONSE_ALTERNATE
+  aliases: [ACTOR_ANIM_TYPE52_SELECTOR_5D]
   size: 186
   confidence: decompiled
-  description: Gated selector-0x5D Type-0x52 animation variant. Its packed region follows the alternate 0x13A2-0x13B2 presentation and child-spawn sequence, then loops through 0x00125634.
+  description: Alternate difficulty-gated interaction response animation selected by the selector-0x5D path. Its packed region follows the alternate 0x13A2-0x13B2 presentation and child-spawn sequence, then loops through 0x00125634.
   evidence:
     - interaction_spawn_runtime52_presentation_static_decompilation
     - animation_stream_decoder
@@ -7423,7 +7443,7 @@
   aliases: [ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD]
   size: 46
   confidence: decompiled
-  description: Shared 0x1C56-0x1C7A level-event child-animation body selected directly by ACTOR_TEMPLATE_INTERACTION_RESPONSE_CHILD and ACTOR_TEMPLATE_LEVEL_EVENT_CHILD, and reached after ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX clears the Level-09 actor. It presents the paired frame sequence and loops from 0x00125424 to the local 0x00125404 entry.
+  description: Shared 0x1C56-0x1C7A level-event child-animation body selected directly by ACTOR_TEMPLATE_INTERACTION_RESPONSE_CHILD and ACTOR_TEMPLATE_LEVEL_EVENT_CHILD, and reached after ACTOR_ANIM_LEVEL09_RESPONSE_CLEAR clears the Level-09 actor. It presents the paired frame sequence and loops from 0x00125424 to the local 0x00125404 entry.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - type52_level09_animation_static_decompilation
@@ -7889,11 +7909,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7AD0:
-  name: ACTOR_TEMPLATE_TYPE_7F_TYPE36_CHILD
+  name: ACTOR_TEMPLATE_INTERACTION_EXTENDED_RESPONSE_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_7F_TYPE36_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x7F child template supplied by the four F5 records in ACTOR_ANIM_TYPE36_INTERACTION. It carries template bytes 0x40000000, no movement stream, template word 0x6000, animation root 0x00125776, and one owned resource; the F5 continuations select the child response entries.
+  description: Extended-interaction response child template supplied by the four F5 records in ACTOR_ANIM_INTERACTION_EXTENDED_RESPONSE. It carries template bytes 0x40000000, no movement stream, template word 0x6000, animation root 0x00125776, and one owned resource; the F5 continuations select the child response entries.
   evidence:
     - type36-interaction-animation-static-targets
     - type36-interaction-animation-static-decompilation
@@ -8087,11 +8108,12 @@
     - actor_runtime_type6a_trace
 
 0x001B7E40:
-  name: ACTOR_TEMPLATE_TYPE_84
+  name: ACTOR_TEMPLATE_COLLISION_REINITIALIZATION_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_84]
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Exact 20-byte Type-0x84 response template used by Actor_ReinitializeAsType84 and the type-0x2D collision transition. It has no movement root, template word 0x6000, animation root 0x00124498, sixteen owned resources, zero default-facing/flags fields, and a zero trailing record byte.
+  description: Exact 20-byte collision-reinitialization response template used by Actor_ReinitializeAsType84 and the action-response collision transition. It has no movement root, template word 0x6000, animation root 0x00124498, sixteen owned resources, zero default-facing/flags fields, and a zero trailing record byte.
   evidence:
     - actor_type84_reinitialize_targets
     - actor_type84_reinitialize_static_decompilation
@@ -8121,17 +8143,19 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7B34:
-  name: ACTOR_TEMPLATE_TYPE_06
+  name: ACTOR_TEMPLATE_VERTICAL_BOB_INTERACTION
+  aliases: [ACTOR_TEMPLATE_TYPE_06]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Selector-0x5C actor template for runtime type 0x06; it has no movement stream and uses animation stream ACTOR_ANIM_TYPE06_INTERACTION.
+  description: Vertical-bob interaction template selected by selector-0x5C; it has no movement stream and uses animation stream ACTOR_ANIM_VERTICAL_BOB_INTERACTION.
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets
 
 0x001B7B5C:
-  name: ACTOR_TEMPLATE_TYPE_84_TYPE3E_3F_COLLISION_CHILD
+  name: ACTOR_TEMPLATE_PLAYER_COLLISION_MOVING_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TYPE3E_3F_COLLISION_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8140,7 +8164,7 @@
   animation_stream: 0x00122F80
   template_word: 0x6000
   resource_count: 0x01
-  description: Collision-response child template supplied by the six F5-style spawn/copy commands in ACTOR_MOVE_PLAYER_COLLISION_CHILD_SPAWN. Its exact 20-byte record carries template word 0x6000, shared animation ACTOR_ANIM_COLLISION_RESPONSE_CHILD_SHARED at 0x00122F80, one owned resource, and no movement stream; it ends immediately before ACTOR_TEMPLATE_TYPE_29_INTERACTION.
+  description: Player-collision moving-child template supplied by the six F5-style spawn/copy commands in ACTOR_MOVE_PLAYER_COLLISION_CHILD_SPAWN. Its exact 20-byte record carries template word 0x6000, shared animation ACTOR_ANIM_COLLISION_RESPONSE_CHILD_SHARED at 0x00122F80, one owned resource, and no movement stream; it ends immediately before ACTOR_TEMPLATE_TYPE_29_INTERACTION.
   evidence:
     - type3e_3f_player_collision_response_static_v1
     - gnu_m68k_disassembly_001AF2B0
@@ -8314,8 +8338,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7990:
-  name: ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM
-  aliases: [ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10]
+  name: ACTOR_TEMPLATE_UNREFERENCED_RESOURCE10
+  aliases: [ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM, ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8344,7 +8368,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B79A4:
-  name: ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD
+  name: ACTOR_TEMPLATE_ACTOR_COLLISION_RESPONSE_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8366,8 +8391,8 @@
     - level01_upper_frontier_initializer_targets
 
 0x001B7A58:
-  name: ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400
-  aliases: [ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400]
+  name: ACTOR_TEMPLATE_UNREFERENCED_EMPTY_INIT
+  aliases: [ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400, ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8435,7 +8460,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Level-09 entry actor template initialized by Level09_FrameCallback; it carries movement stream 0x00121300 and animation stream ACTOR_ANIM_TYPE52_LEVEL09_ENTRY at 0x001253E8, with four resources and the encoded post-initialization flag word.
+  description: Level-09 entry actor template initialized by Level09_FrameCallback; it carries movement stream 0x00121300 and animation stream ACTOR_ANIM_LEVEL09_ENTRY at 0x001253E8, with four resources and the encoded post-initialization flag word.
   evidence:
     - type52_level09_animation_static_decompilation
     - level_callback_family_targets
@@ -8453,11 +8478,12 @@
     - actor_template_grid_xrefs
 
 0x001B7FBC:
-  name: ACTOR_TEMPLATE_TYPE_64
+  name: ACTOR_TEMPLATE_COMPACT_INTERACTION_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_64]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x64 actor template referenced by the upper-frontier interaction path; it uses movement stream 0x00120B36 and animation stream 0x00124CD8.
+  description: Compact interaction-response template referenced by the upper-frontier interaction path; it uses movement stream ACTOR_MOVE_COMPACT_INTERACTION_RESPONSE and animation stream ACTOR_ANIM_COMPACT_TERMINAL_INTERACTION.
   evidence:
     - level01_upper_frontier_initializer_targets
     - actor_template_grid_xrefs
@@ -8554,11 +8580,12 @@
     - actor_template_grid_xrefs
 
 0x001B7A6C:
-  name: ACTOR_TEMPLATE_TYPE_03_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_FRAME_CYCLE
+  aliases: [ACTOR_TEMPLATE_TYPE_03_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x03 interaction template loaded by the forward-slot spawn entry at 0x001B6C4E; it uses movement stream 0x0011F72C, animation stream 0x00122DF2, and eighteen resources.
+  description: Interaction frame-cycle template loaded by the forward-slot spawn entry at 0x001B6C4E; it uses movement stream 0x0011F72C, animation stream ACTOR_ANIM_INTERACTION_FRAME_CYCLE, and eighteen resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs

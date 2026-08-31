@@ -108,7 +108,7 @@ mappings:
 
   - name: LEVEL09_ENTRY
     scope: event
-    symbol_addresses: [0x00121300, 0x001B80D4]
+    symbol_addresses: [0x00121300, 0x001253E8, 0x001253FA, 0x001B80D4]
     technical_types: [0x52]
     confidence: decompiled
     evidence: [type52-level09-animation-static-decompilation]
@@ -198,6 +198,39 @@ mappings:
       - interaction_spawn_type46_5a_response_static_decompilation
     description: Shared interaction animation/template pair that spawns two child actors through F5 records.
 
+  - name: INTERACTION_FRAME_CYCLE
+    scope: role
+    symbol_addresses: [0x00122DF2, 0x001B7A6C]
+    technical_types: [0x03]
+    confidence: decompiled
+    evidence:
+      - actor_template_interaction_dispatch_family_static_decompilation
+      - animation_stream_decoder
+    description: Forward-slot interaction actor and its paired animation stream for the exact 0x1462-0x147A frame cycle.
+
+  - name: INTERACTION_VARIANT_BASE
+    scope: role
+    symbol_addresses: [0x00120D7A, 0x0012548E, 0x001B80C0]
+    technical_types: [0x52]
+    confidence: decompiled
+    evidence:
+      - interaction_spawn_runtime52_presentation_static_decompilation
+      - actor_template_service_family_static_decompilation
+      - movement_stream_decoder
+      - animation_stream_decoder
+    description: Shared interaction-variant actor template with its base MovementVM and AnimationVM streams.
+
+  - name: INTERACTION_EXTENDED_RESPONSE
+    scope: role
+    symbol_addresses: [0x0012570C, 0x001B7AD0]
+    technical_types: [0x36, 0x7F]
+    confidence: decompiled
+    evidence:
+      - type36-interaction-animation-static-targets
+      - type36-interaction-animation-static-decompilation
+      - ghidra_actor_template_initializer_001AE30A
+    description: Extended interaction response animation and its F5-created child template.
+
   - name: LEVEL12_SCENE_EVENT
     scope: event
     symbol_addresses: [0x00125AFE, 0x001B8278]
@@ -259,7 +292,7 @@ mappings:
 
   - name: WALL_RESPONSE
     scope: role
-    symbol_addresses: [0x001B7CD8]
+    symbol_addresses: [0x001213E2, 0x001B7CD8, 0x001EF4D4]
     technical_types: [0x8D]
     confidence: decompiled
     evidence: [type84-0f22-wall-response-static-decompilation]
@@ -355,7 +388,7 @@ mappings:
 
   - name: INTERACTION_RANDOM_RESPONSE
     scope: role
-    symbol_addresses: [0x00123CF8, 0x00123D34, 0x001B7C74, 0x001B7C88]
+    symbol_addresses: [0x00120A00, 0x00123CF8, 0x00123D34, 0x001B7C74, 0x001B7C88]
     technical_types: [0x0F, 0x84]
     confidence: decompiled
     evidence:
@@ -478,7 +511,7 @@ mappings:
 
   - name: INTERACTION_SHARED_BASE
     scope: role
-    symbol_addresses: [0x001B7904]
+    symbol_addresses: [0x00123DEA, 0x001B7904]
     technical_types: [0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73]
     confidence: decompiled
     evidence:
@@ -618,6 +651,39 @@ mappings:
       - level01_actor_type2a_decomp
     description: Upper-route moving object with a fixed vertical bob movement and animation pair.
 
+  - name: VERTICAL_BOB_INTERACTION
+    scope: role
+    symbol_addresses: [0x00123200, 0x001B7B34]
+    technical_types: [0x06]
+    confidence: decompiled
+    evidence:
+      - type06_animation_static_decompilation
+      - actor_template_type06
+      - animation_stream_decoder
+    description: Selector-0x5C vertical-bob interaction state machine and its actor template.
+
+  - name: COLLISION_REINITIALIZATION_RESPONSE
+    scope: role
+    symbol_addresses: [0x001B7E40]
+    technical_types: [0x84]
+    confidence: confirmed
+    evidence:
+      - actor_type84_reinitialize_targets
+      - actor_type84_reinitialize_static_decompilation
+      - actor_response_template_field_closure_static_v1
+    description: Collision-reinitialization response template used by the action-response transition.
+
+  - name: ACTOR_COLLISION_RESPONSE_CHILD
+    scope: role
+    symbol_addresses: [0x001B79A4]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - mid-actor-collision-animation-family-static-decompilation
+      - actor_collision_handler_family_static_decompilation
+      - ghidra_actor_template_initializer_001AE30A
+    description: Actor-collision response child template supplied by the paired F5 child animation records.
+
   - name: INTERACTION_SPAWN_RESPONSE
     scope: role
     symbol_addresses: [0x00124450, 0x001B79E0, 0x001B8098]
@@ -661,7 +727,7 @@ mappings:
 
   - name: PLAYER_COLLISION_CHILD_SPAWN
     scope: role
-    symbol_addresses: [0x00121618, 0x00122E16]
+    symbol_addresses: [0x00121618, 0x00122E16, 0x001B7B5C]
     technical_types: [0x03, 0x3E, 0x3F, 0x84]
     confidence: decompiled
     evidence:

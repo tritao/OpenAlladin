@@ -730,9 +730,9 @@ def test_canonical_actor_animation_family_has_exact_non_overlapping_ranges():
         0x00124C3A: (0x00124C9B, "ACTOR_ANIM_SCENE_SETUP_MOVING_CHILD_VARIANT_LOOP"),
         0x00124D50: (0x00124D5B, "ACTOR_ANIM_LEVEL_OBJECT_HORIZONTAL_PROXIMITY_GATE"),
         0x00124D5C: (0x00124F31, "ACTOR_ANIM_LEVEL_OBJECT_COLLISION_RESPONSE_SPAWN_SEQUENCE"),
-        0x00124F32: (0x00124F95, "ACTOR_ANIM_TYPE31_CHILD_SPAWN_PREFIX"),
-        0x00124F96: (0x00125027, "ACTOR_ANIM_TYPE31_F5_CHILD_A"),
-        0x00125028: (0x001250B9, "ACTOR_ANIM_TYPE31_F5_CHILD_B"),
+            0x00124F32: (0x00124F95, "ACTOR_ANIM_INTERACTION_CHILD_SPAWN_PREFIX"),
+            0x00124F96: (0x00125027, "ACTOR_ANIM_INTERACTION_CHILD_A"),
+            0x00125028: (0x001250B9, "ACTOR_ANIM_INTERACTION_CHILD_B"),
         0x001250EA: (0x00125109, "ACTOR_ANIM_PRESENTATION_CHILD_INLINE"),
     }
     owners = []
@@ -1034,7 +1034,7 @@ def test_type0f_child_and_type6e_default_animation_ranges_are_exact():
     expected = {
         0x00123D34: (0x00123DE1, "ACTOR_ANIM_INTERACTION_RANDOM_CHILD"),
             0x00123DE2: (0x00123DE9, "ACTOR_ANIM_SINGLE_FRAME_SELF_LOOP"),
-        0x00123DEA: (0x00123E35, "ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT"),
+            0x00123DEA: (0x00123E35, "ACTOR_ANIM_INTERACTION_SHARED_BASE_DEFAULT"),
         0x00123E36: (0x00123E75, "ACTOR_ANIM_INTERACTION_CHILD_SPAWN"),
         0x00123E76: (0x00123E7D, "ACTOR_ANIM_INTERACTION_RESPONSE_SHORT"),
     }
@@ -1079,7 +1079,7 @@ def test_mid_actor_animation_stream_ranges_are_exact():
         0x00122DB2: (0x00122DD7, "ACTOR_ANIM_PLAYER_COLLISION_RECOVERY"),
         0x00122DD8: (0x00122DED, "ACTOR_ANIM_INTERACTION_RESPONSE_STANDARD"),
         0x00122DEE: (0x00122DF1, "ACTOR_ANIM_MENU_PRESENTATION"),
-        0x00122DF2: (0x00122E15, "ACTOR_ANIM_TYPE03_INTERACTION"),
+            0x00122DF2: (0x00122E15, "ACTOR_ANIM_INTERACTION_FRAME_CYCLE"),
     }
     owners = []
     for address, (end, name) in expected.items():
@@ -1152,7 +1152,7 @@ def test_mid_actor_collision_animation_family_is_exact():
 
     template = symbols.at(0x001B79A4, include_ranges=False)
     assert template is not None
-    assert template.name == "ACTOR_TEMPLATE_TYPE84_COLLISION_CHILD"
+    assert template.name == "ACTOR_TEMPLATE_ACTOR_COLLISION_RESPONSE_CHILD"
     assert template.end == 0x001B79B7
     assert template.size == 20
 
@@ -1228,7 +1228,7 @@ def test_runtime_type6e_73_movement_family_is_exact():
         (0x0012070E, 0x0012075D, "ACTOR_MOVE_TYPE71_INTERACTION", 80),
         (0x00120868, 0x001208AD, "ACTOR_MOVE_TYPE72_INTERACTION", 70),
         (0x001208D8, 0x0012091D, "ACTOR_MOVE_TYPE73_INTERACTION", 70),
-        (0x00120948, 0x001209BD, "ACTOR_MOVE_RUNTIME_TYPE6E_73_SHARED_RESPONSE", 118),
+            (0x00120948, 0x001209BD, "ACTOR_MOVE_INTERACTION_SHARED_RESPONSE", 118),
     ]
     owners = []
     for address, end, name, size in expected:
@@ -1318,7 +1318,7 @@ def test_unindexed_movement_stream_bands_are_exact_with_evidence_confidence():
         (0x0011FAA8, 0x0011FD17, "ACTOR_MOVE_INTERACTION_PAIR_ANCHOR_RESPONSE", 0x270, "decompiled"),
         (0x001210FE, 0x0012117F, "ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE", 0x82, "decompiled"),
         (0x001212C0, 0x001212FF, "ACTOR_MOVE_INTERACTION_ANCHOR_RESPONSE_BANK", 0x40, "decompiled"),
-        (0x001213E2, 0x00121411, "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX", 0x30, "decompiled"),
+            (0x001213E2, 0x00121411, "ACTOR_MOVE_WALL_RESPONSE_CHILD_SPAWN_PREFIX", 0x30, "decompiled"),
         (0x001215D8, 0x001215DF, "ACTOR_MOVE_UNIT_VERTICAL_STEP_LOOP", 8, "decompiled"),
     ]
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
@@ -2150,8 +2150,8 @@ def test_type84_0f22_response_family_is_exact_with_template_reachability_unresol
 def test_unreferenced_actor_template_records_are_exact_and_decoded():
     symbols = SymbolStore()
     expected = {
-        0x001B7990: ("ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM", 0x001B79A3),
-        0x001B7A58: ("ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400", 0x001B7A6B),
+            0x001B7990: ("ACTOR_TEMPLATE_UNREFERENCED_RESOURCE10", 0x001B79A3),
+            0x001B7A58: ("ACTOR_TEMPLATE_UNREFERENCED_EMPTY_INIT", 0x001B7A6B),
         0x001B82DC: ("ACTOR_TEMPLATE_PRESENTATION_VARIANT", 0x001B82EF),
     }
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
@@ -2375,7 +2375,7 @@ def test_type3e_3f_player_collision_response_family_is_exact():
 
     template = symbols.at(0x001B7B5C, include_ranges=False)
     assert template is not None
-    assert template.name == "ACTOR_TEMPLATE_TYPE_84_TYPE3E_3F_COLLISION_CHILD"
+    assert template.name == "ACTOR_TEMPLATE_PLAYER_COLLISION_MOVING_CHILD"
     assert template.end == 0x001B7B6F
     assert template.size == 20
     assert template.metadata["type"] == "actor_template"
@@ -2970,7 +2970,7 @@ def test_type84_type0f_child_movement_response_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00120A00, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE84_TYPE0F_CHILD_RESPONSE"
+    assert stream.name == "ACTOR_MOVE_INTERACTION_RANDOM_CHILD_RESPONSE"
     assert stream.end == 0x00120A41
     assert stream.size == 66
     assert stream.metadata["type"] == "movement_stream"

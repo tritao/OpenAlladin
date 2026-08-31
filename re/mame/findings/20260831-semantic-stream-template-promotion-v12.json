@@ -1,0 +1,78 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "finding": "semantic-stream-template-promotion-v12",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "promoted_symbols": [
+    "ACTOR_MOVE_INTERACTION_RANDOM_CHILD_RESPONSE",
+    "ACTOR_MOVE_INTERACTION_SHARED_RESPONSE",
+    "ACTOR_MOVE_INTERACTION_VARIANT_BASE",
+    "ACTOR_MOVE_WALL_RESPONSE_CHILD_SPAWN_PREFIX",
+    "ACTOR_ANIM_INTERACTION_SHARED_BASE_DEFAULT",
+    "ACTOR_ANIM_INTERACTION_FRAME_CYCLE",
+    "ACTOR_ANIM_INTERACTION_CHILD_SPAWN_PREFIX",
+    "ACTOR_ANIM_INTERACTION_CHILD_A",
+    "ACTOR_ANIM_INTERACTION_CHILD_B",
+    "ACTOR_ANIM_LEVEL09_ENTRY",
+    "ACTOR_ANIM_LEVEL09_RESPONSE_CLEAR",
+    "ACTOR_ANIM_INTERACTION_VARIANT_BASE",
+    "ACTOR_ANIM_INTERACTION_CALLBACK_PRESENTATION_FRAME_13B2",
+    "ACTOR_ANIM_INTERACTION_CALLBACK_PRESENTATION_FRAME_13AE",
+    "ACTOR_ANIM_INTERACTION_CALLBACK_PRESENTATION_FRAME_13AA",
+    "ACTOR_ANIM_INTERACTION_CALLBACK_PRESENTATION_FRAME_13A6",
+    "ACTOR_ANIM_INTERACTION_CALLBACK_PRESENTATION_FRAME_13A2",
+    "ACTOR_ANIM_INTERACTION_DIFFICULTY_GATED_RESPONSE",
+    "ACTOR_ANIM_INTERACTION_DIFFICULTY_GATED_RESPONSE_ALTERNATE",
+    "ACTOR_FRAME_CHOPPER_WALL_RESPONSE",
+    "ACTOR_TEMPLATE_INTERACTION_EXTENDED_RESPONSE_CHILD",
+    "ACTOR_TEMPLATE_COLLISION_REINITIALIZATION_RESPONSE",
+    "ACTOR_TEMPLATE_VERTICAL_BOB_INTERACTION",
+    "ACTOR_TEMPLATE_PLAYER_COLLISION_MOVING_CHILD",
+    "ACTOR_TEMPLATE_UNREFERENCED_RESOURCE10",
+    "ACTOR_TEMPLATE_ACTOR_COLLISION_RESPONSE_CHILD",
+    "ACTOR_TEMPLATE_UNREFERENCED_EMPTY_INIT",
+    "ACTOR_TEMPLATE_COMPACT_INTERACTION_RESPONSE",
+    "ACTOR_TEMPLATE_INTERACTION_FRAME_CYCLE"
+  ],
+  "contracts": [
+    "The renamed streams and templates retain their original ROM ranges and technical names as aliases.",
+    "Level 09 entry and response-clear records are identified by their direct template, F4, and F600 control flow.",
+    "The Type-52 callback records are named by their decoded interaction-presentation role and frame payload, without assigning a user-facing entity identity.",
+    "The Type-31 pair is named from its two exact F5 child templates and distinct animation bodies.",
+    "The Chopper wall-response frame is named from the established Type-0x8D wall replacement path.",
+    "Unreferenced templates retain neutral reachability names because no producer or game entity is known."
+  ],
+  "evidence": [
+    "type0f_child_movement_static_decompilation",
+    "actor_runtime_type6e_73_movement_static_decompilation",
+    "type3e_3f_player_collision_response_static_v1",
+    "actor_template_interaction_dispatch_family_static_decompilation",
+    "actor_template_type31_f5_child_family_static_decompilation",
+    "type52_level09_animation_static_decompilation",
+    "interaction_spawn_runtime52_presentation_static_decompilation",
+    "type34_wall_response_frame_manifest",
+    "type36-interaction-animation-static-decompilation",
+    "actor_type84_reinitialize_static_decompilation",
+    "type06_animation_static_decompilation",
+    "mid-actor-collision-animation-family-static-decompilation",
+    "movement_stream_decoder",
+    "animation_stream_decoder",
+    "ghidra_actor_template_initializer_001AE30A"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "user_facing_entity_names_invented": false,
+    "semantic_scope": "evidence-backed stream, template, and frame roles"
+  },
+  "limitations": [
+    "The six per-runtime-type interaction movement roots and their secondary entries remain technical because static evidence does not identify their user-facing entities.",
+    "Several dispatch-table entries remain technical aliases when multiple selectors share one handler body and no selector-specific behavior is established."
+  ],
+  "status": "recorded-semantic-promotion"
+}
