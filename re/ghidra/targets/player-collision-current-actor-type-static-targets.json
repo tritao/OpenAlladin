@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "player-collision-current-actor-type-static",
+    "purpose": "Name the transient actor-type byte published by the player-collision pass without claiming an unresolved downstream reader."
+  },
+  "targets": [
+    {
+      "address": "0x001ABB40",
+      "name": "Actor_PlayerCollisionPass"
+    },
+    {
+      "address": "0x00FFF0F6",
+      "name": "PLAYER_COLLISION_CURRENT_ACTOR_TYPE"
+    },
+    {
+      "address": "0x00001CBE",
+      "name": "PLAYER_COLLISION_HANDLER_TABLE"
+    }
+  ],
+  "contracts": [
+    "Actor_PlayerCollisionPass clears byte 0x00FFF0F6 at 0x001ABB78.",
+    "After an overlap, Actor_PlayerCollisionPass copies the candidate actor type to 0x00FFF0F6 at 0x001ABC90 before indirect dispatch through PLAYER_COLLISION_HANDLER_TABLE.",
+    "No current whole-ROM reader or higher-level consumer is claimed."
+  ],
+  "conclusion": "0x00FFF0F6 has a stable transient player-collision actor-type identity while any downstream handler-visible role remains explicitly open."
+}

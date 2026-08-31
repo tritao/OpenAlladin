@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "9e1444bf585c23178b67b083c75b42a9c3fa6c59",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/player-collision-current-actor-type-static-targets.json",
+  "promoted_symbols": [
+    "PLAYER_COLLISION_CURRENT_ACTOR_TYPE"
+  ],
+  "contracts": [
+    "Actor_PlayerCollisionPass clears byte 0x00FFF0F6 at 0x001ABB78.",
+    "After an overlap, the pass writes the current common actor type at 0x001ABC90 before dispatch through PLAYER_COLLISION_HANDLER_TABLE at 0x00001CBE.",
+    "The exported whole-ROM database has no direct reader for 0x00FFF0F6."
+  ],
+  "evidence": [
+    "Exact 68000 disassembly of Actor_PlayerCollisionPass",
+    "Collision-pass geometry and dispatch analysis",
+    "Whole-ROM writer and reader queries"
+  ],
+  "limitations": [
+    "The name describes the clear/publication contract only; no unseen handler-visible consumer is assigned.",
+    "No runtime reachability or higher-level gameplay effect is claimed."
+  ],
+  "conclusion": "The generated Unknown_00FFF0F6 identity is replaced by a stable transient player-collision actor-type name while preserving the unresolved-reader limitation.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

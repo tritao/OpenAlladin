@@ -2402,6 +2402,17 @@
     - ghidra_player_collision_pass
     - final_mechanical_function_closure_static_decompilation
 
+0xFFF0F6:
+  name: PLAYER_COLLISION_CURRENT_ACTOR_TYPE
+  type: u8
+  format: integer
+  confidence: decompiled
+  description: Transient actor-type byte for the current player-collision candidate. Actor_PlayerCollisionPass clears it at entry and writes the overlapping common actor's type immediately before indirect dispatch through PLAYER_COLLISION_HANDLER_TABLE. No direct absolute reader is exported, so any handler-visible downstream role remains unresolved.
+  evidence:
+    - ghidra_disassembly_001ABB40
+    - ghidra_decompile_collision_damage_targets
+    - collision_pass_geometry_static_decompilation
+
 0xFFF10E:
   name: PLAYER_INTERACTION_TYPE1A_LATCH
   type: u8
