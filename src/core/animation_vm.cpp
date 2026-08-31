@@ -1,6 +1,7 @@
 #include "core/animation_vm.hpp"
 
 #include "core/actor.hpp"
+#include "core/camera.hpp"
 
 #include <cstdlib>
 
@@ -49,6 +50,18 @@ void decrement_ascii_counter(GenesisRam& ram) {
 void animation_callback(GenesisRam& ram, std::size_t slot, std::uint32_t callback) {
     const ActorView actor = actor_view(ram, slot);
     switch (callback) {
+    case 0x001B52D6:
+        camera_select_scroll_delta_profile(
+            ram, CameraScrollDeltaProfile::Full);
+        break;
+    case 0x001B52E2:
+        camera_select_scroll_delta_profile(
+            ram, CameraScrollDeltaProfile::Reduced);
+        break;
+    case 0x001B52EE:
+        camera_select_scroll_delta_profile(
+            ram, CameraScrollDeltaProfile::Tail);
+        break;
     case 0x001ACB5A:
         actor_write8(actor, kActorFlagsOffset,
                      static_cast<std::uint8_t>(actor_read8(actor, kActorFlagsOffset) | 0x10));

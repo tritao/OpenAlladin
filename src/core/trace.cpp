@@ -44,7 +44,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         RamAddress address;
         std::uint8_t width;
     };
-    constexpr std::array<RawField, 32> fields = {{
+    constexpr std::array<RawField, 43> fields = {{
         {kPlayerX, 2}, {kPlayerY, 2}, {kWorldCameraX, 2}, {kWorldCameraY, 2},
         {kPlayerWorldX, 2}, {kPlayerWorldY, 2},
         {kCameraReferenceX, 2}, {kCameraReferenceY, 2},
@@ -62,6 +62,12 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         {kPlayerTerrainBrakeState, 1}, {kPlayerTerrainLandingState, 1},
         {kPlayerTerrainBehavior, 1}, {kSceneScriptPending, 1},
         {kSceneVdpUpdateFlag, 1}, {kSceneTransitionEvent, 1},
+        {kCameraScrollLeftPending, 1}, {kCameraScrollRightPending, 1},
+        {kCameraScrollUpPending, 1}, {kCameraScrollDownPending, 1},
+        {kCameraUpdateDelay, 1}, {kCameraSpecialMode, 1},
+        {kCameraScrollApplyGate, 1}, {kCameraScrollDataCursor, 4},
+        {kInteractionRowPointer, 4}, {kInteractionHandlerX, 2},
+        {kInteractionHandlerY, 2},
     }};
     output << "[";
     for (std::size_t index = 0; index < fields.size(); ++index) {
@@ -218,6 +224,13 @@ void trace_state(
            << ",\"vertical_threshold\":" << read16(ram, kCameraVerticalThreshold)
            << ",\"scroll_x\":" << read_i16(ram, kCameraScrollX)
            << ",\"scroll_y\":" << read_i16(ram, kCameraScrollY)
+           << ",\"scroll_left_pending\":" << static_cast<unsigned>(read8(ram, kCameraScrollLeftPending))
+           << ",\"scroll_right_pending\":" << static_cast<unsigned>(read8(ram, kCameraScrollRightPending))
+           << ",\"scroll_up_pending\":" << static_cast<unsigned>(read8(ram, kCameraScrollUpPending))
+           << ",\"scroll_down_pending\":" << static_cast<unsigned>(read8(ram, kCameraScrollDownPending))
+           << ",\"update_delay\":" << static_cast<unsigned>(read8(ram, kCameraUpdateDelay))
+           << ",\"special_mode\":" << static_cast<unsigned>(read8(ram, kCameraSpecialMode))
+           << ",\"scroll_apply_gate\":" << static_cast<unsigned>(read8(ram, kCameraScrollApplyGate))
            << ",\"pixel_x\":" << read16(ram, kPlayerCameraPixelX)
            << ",\"pixel_y\":" << read16(ram, kPlayerCameraPixelY)
            << ",\"tile_x\":" << read16(ram, kCameraTileX)

@@ -1,6 +1,7 @@
 #include "core/frame.hpp"
 
 #include "core/animation_vm.hpp"
+#include "core/camera.hpp"
 #include "core/collision.hpp"
 #include "core/movement_vm.hpp"
 #include "core/player.hpp"
@@ -120,6 +121,8 @@ void step_frame(
         if (trace != nullptr) trace_phase(*trace, service);
         if (service.ordinal == 1) {
             player_sample_input(core, input);
+        } else if (service.ordinal == 19) {
+            camera_update_follow(core);
         } else if (service.ordinal == 8) {
             movement_vm_tick_actors(core);
         } else if (service.ordinal == 10) {
@@ -145,6 +148,8 @@ void step_frame(
             }
         } else if (service.ordinal == 30) {
             animation_vm_tick_actors(core);
+        } else if (service.ordinal == 36) {
+            camera_publish_scroll(core, trace);
         }
         if (service.ordinal == 2 || service.ordinal == 4
             || service.ordinal == 18 || service.ordinal == 28) {
