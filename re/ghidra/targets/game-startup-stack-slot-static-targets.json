@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-recorded-negative-evidence-target-v1",
+  "recorded_at": "2026-08-31",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "game-startup-stack-slot",
+    "purpose": "Close the apparent high-frequency DAT_00FFEFD4 RAM identity after confirming it is stack bookkeeping rather than persistent gameplay state."
+  },
+  "function": {
+    "address": "0x001A8A4A",
+    "name": "Game_InitializeAndEnterFrameLoop",
+    "stack_setup": "lea 0x00FFEFD8,SP",
+    "apparent_slot": "0x00FFEFD4 = SP-4"
+  },
+  "evidence": [
+    "All 42 exported writes to 0x00FFEFD4 originate from BSR/JSR return-address sites in Game_InitializeAndEnterFrameLoop.",
+    "The sole exported read at 0x001A8BA4 is the MOVEM restore after a nested call, so the address is also reused as a saved-register stack location.",
+    "No independent data/function reader or writer exists in the whole-ROM database."
+  ],
+  "conclusion": "DAT_00FFEFD4 is a Ghidra stack-analysis artifact at the startup stack window, not a canonical gameplay RAM variable."
+}

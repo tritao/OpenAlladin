@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-recorded-negative-evidence-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "73f0b338cb30006d6aa2b8e5d7eb07a78d7f8b84",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/game-startup-stack-slot-static-targets.json",
+  "closure": {
+    "address": "0x00FFEFD4",
+    "apparent_name": "DAT_00FFEFD4",
+    "stack_base": "0x00FFEFD8",
+    "role": "startup BSR/JSR return-address and nested MOVEM spill slot",
+    "exported_writers": 42,
+    "exported_readers": 1,
+    "independent_readers": [],
+    "independent_writers": [],
+    "status": "closed-as-stack-artifact"
+  },
+  "evidence": [
+    "Game_InitializeAndEnterFrameLoop sets SP to 0x00FFEFD8 at 0x001A8A4A.",
+    "Each apparent write is a call-return stack effect at SP-4, including the sole read as part of the nested MOVEM restore.",
+    "Fresh whole-ROM reference exports contain no independent semantic access."
+  ],
+  "limitations": [
+    "This closes the current static-review item and explains the cached Ghidra token; it does not change the generated deasm or claim a separate stack-frame model.",
+    "A future decompiler-specific stack rendering improvement may remove the token without adding a symbol."
+  ],
+  "conclusion": "DAT_00FFEFD4 is intentionally left without a canonical gameplay symbol because it denotes a reused stack location, not persistent game state.",
+  "confidence": "confirmed",
+  "status": "recorded-negative-evidence"
+}
