@@ -1,0 +1,43 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "actor-template-role-identities",
+  "promotions": [
+    "ACTOR_TEMPLATE_PLAYER_BOOTSTRAP",
+    "ACTOR_TEMPLATE_FRAME_PHASE_CHILD",
+    "ACTOR_TEMPLATE_SCENE_SETUP_SLOT_1",
+    "ACTOR_TEMPLATE_SCENE_SETUP_SLOT_2",
+    "ACTOR_TEMPLATE_SCENE_SETUP_SLOT_3",
+    "ACTOR_TEMPLATE_MENU_PRESENTATION_PRIMARY",
+    "ACTOR_TEMPLATE_MENU_PRESENTATION_SECONDARY",
+    "ACTOR_TEMPLATE_LEVEL08_ENTRY",
+    "ACTOR_TEMPLATE_LEVEL11_EVENT",
+    "ACTOR_TEMPLATE_LEVEL_ENTRY_ACTOR",
+    "ACTOR_TEMPLATE_LEVEL_ENTRY_VARIANT",
+    "ACTOR_TEMPLATE_SCENE_RESET",
+    "ACTOR_TEMPLATE_INTERACTION_RESPONSE_DEFAULT",
+    "ACTOR_TEMPLATE_INTERACTION_RESPONSE_SCENE5",
+    "ACTOR_TEMPLATE_LEVEL_OBJECT_VARIANT",
+    "ACTOR_TEMPLATE_MOVING_INTERACTION",
+    "ACTOR_TEMPLATE_INTERACTION_VARIANT_SHARED",
+    "ACTOR_TEMPLATE_MOVING_CHILD_F5"
+  ],
+  "evidence": [
+    "actor_template_bootstrap_targets",
+    "actor_frame_phase_child_static_decompilation",
+    "actor_template_scene_setup_static_decompilation",
+    "ghidra_menu_scene_table_transition",
+    "ghidra_level08_entry_routine",
+    "ghidra_level_table_enter_exit_targeted_decompile",
+    "ghidra_interaction_dispatch_block",
+    "ghidra_level_actor_spawn_block",
+    "ghidra_actor_template_initializer_001AE30A",
+    "animation_f5_nested_child_targets"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_producer_consumer_role"
+  }
+}

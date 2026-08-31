@@ -7776,7 +7776,8 @@
     - mame_type_2D_spawn_trace_1800
 
 0x001B81D8:
-  name: ACTOR_TEMPLATE_TYPE_7D
+  name: ACTOR_TEMPLATE_LEVEL_ENTRY_VARIANT
+  aliases: [ACTOR_TEMPLATE_TYPE_7D]
   type: actor_template
   size: 20
   confidence: confirmed
@@ -7786,7 +7787,8 @@
     - ghidra_actor_template_001B81D8
 
 0x001B8214:
-  name: ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT
+  name: ACTOR_TEMPLATE_LEVEL11_EVENT
+  aliases: [ACTOR_TEMPLATE_TYPE_7B_LEVEL11_EVENT]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -7968,7 +7970,8 @@
     - level01_upper_frontier_initializer_targets
 
 0x001B79F4:
-  name: ACTOR_TEMPLATE_TYPE_00_FRAME_PHASE_CHILD
+  name: ACTOR_TEMPLATE_FRAME_PHASE_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_00_FRAME_PHASE_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8042,7 +8045,8 @@
     - level01_upper_frontier_initializer_targets
 
 0x001B7D28:
-  name: ACTOR_TEMPLATE_MENU_TYPE_84
+  name: ACTOR_TEMPLATE_MENU_PRESENTATION_PRIMARY
+  aliases: [ACTOR_TEMPLATE_MENU_TYPE_84]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8199,7 +8203,8 @@
     - animation_stream_decoder
 
 0x001B7EE0:
-  name: ACTOR_TEMPLATE_LEVEL08_TYPE_84
+  name: ACTOR_TEMPLATE_LEVEL08_ENTRY
+  aliases: [ACTOR_TEMPLATE_LEVEL08_TYPE_84]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8209,7 +8214,8 @@
     - level01_upper_frontier_initializer_targets
 
 0x001B80C0:
-  name: ACTOR_TEMPLATE_TYPE_52
+  name: ACTOR_TEMPLATE_INTERACTION_VARIANT_SHARED
+  aliases: [ACTOR_TEMPLATE_TYPE_52]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8665,7 +8671,8 @@
     - actor_template_grid_xrefs
 
 0x001B7B98:
-  name: ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_A
+  name: ACTOR_TEMPLATE_SCENE_SETUP_SLOT_1
+  aliases: [ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_A]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8675,7 +8682,8 @@
     - actor_template_grid_xrefs
 
 0x001B7BAC:
-  name: ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_B
+  name: ACTOR_TEMPLATE_SCENE_SETUP_SLOT_2
+  aliases: [ACTOR_TEMPLATE_TYPE_84_SCENE_SETUP_B]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8685,7 +8693,8 @@
     - actor_template_grid_xrefs
 
 0x001B7BC0:
-  name: ACTOR_TEMPLATE_TYPE_04_SCENE_SETUP
+  name: ACTOR_TEMPLATE_SCENE_SETUP_SLOT_3
+  aliases: [ACTOR_TEMPLATE_TYPE_04_SCENE_SETUP]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8868,7 +8877,8 @@
     - actor_template_grid_xrefs
 
 0x001B8340:
-  name: ACTOR_TEMPLATE_TYPE_84_SCENE_RESET
+  name: ACTOR_TEMPLATE_SCENE_RESET
+  aliases: [ACTOR_TEMPLATE_TYPE_84_SCENE_RESET]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8983,7 +8993,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B846C:
-  name: ACTOR_TEMPLATE_MENU_TYPE_84_SECONDARY
+  name: ACTOR_TEMPLATE_MENU_PRESENTATION_SECONDARY
+  aliases: [ACTOR_TEMPLATE_MENU_TYPE_84_SECONDARY]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9051,7 +9062,8 @@
     - actor_template_grid_xrefs
 
 0x001B837C:
-  name: ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD
+  name: ACTOR_TEMPLATE_MOVING_CHILD_F5
+  aliases: [ACTOR_TEMPLATE_TYPE_84_F5_MOVING_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9148,7 +9160,8 @@
     - actor_template_grid_xrefs
 
 0x001B7FD0:
-  name: ACTOR_TEMPLATE_TYPE_62_DEFAULT_RESPONSE
+  name: ACTOR_TEMPLATE_INTERACTION_RESPONSE_DEFAULT
+  aliases: [ACTOR_TEMPLATE_TYPE_62_DEFAULT_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9158,7 +9171,8 @@
     - actor_template_grid_xrefs
 
 0x001B7FE4:
-  name: ACTOR_TEMPLATE_TYPE_62_SCENE5_RESPONSE
+  name: ACTOR_TEMPLATE_INTERACTION_RESPONSE_SCENE5
+  aliases: [ACTOR_TEMPLATE_TYPE_62_SCENE5_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9168,7 +9182,8 @@
     - actor_template_grid_xrefs
 
 0x001B8020:
-  name: ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT
+  name: ACTOR_TEMPLATE_LEVEL_OBJECT_VARIANT
+  aliases: [ACTOR_TEMPLATE_TYPE_16_LEVEL_OBJECT]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9200,7 +9215,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8070:
-  name: ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION
+  name: ACTOR_TEMPLATE_MOVING_INTERACTION
+  aliases: [ACTOR_TEMPLATE_TYPE_07_MOVING_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9242,7 +9258,8 @@
     - actor_template_grid_xrefs
 
 0x001B814C:
-  name: ACTOR_TEMPLATE_TYPE_42_LEVEL_ENTRY
+  name: ACTOR_TEMPLATE_LEVEL_ENTRY_ACTOR
+  aliases: [ACTOR_TEMPLATE_TYPE_42_LEVEL_ENTRY]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9286,7 +9303,8 @@
     - level07_type7c_template_targets
     - actor_template_grid_xrefs
 0x001B7864:
-  name: ACTOR_TEMPLATE_TYPE_83_PLAYER_BOOT
+  name: ACTOR_TEMPLATE_PLAYER_BOOTSTRAP
+  aliases: [ACTOR_TEMPLATE_TYPE_83_PLAYER_BOOT]
   type: actor_template
   size: 20
   confidence: decompiled
