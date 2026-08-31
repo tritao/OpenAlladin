@@ -3254,10 +3254,10 @@ def test_shared_type84_0f22_response_range_is_exact():
 def test_type87_interaction_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {
-        0x00123AC4: (0x00123AFF, "ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_A"),
-        0x00123B00: (0x00123B37, "ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_B"),
-        0x00123B38: (0x00123C83, "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE"),
-        0x00123C84: (0x00123CF7, "ACTOR_ANIM_TYPE84_TYPE87_RESPONSE_CHILD"),
+        0x00123AC4: (0x00123AFF, "ACTOR_ANIM_INTERACTION_PRESENTATION_PHASE_PRIMARY"),
+        0x00123B00: (0x00123B37, "ACTOR_ANIM_INTERACTION_PRESENTATION_PHASE_SECONDARY"),
+        0x00123B38: (0x00123C83, "ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_EXTENDED"),
+        0x00123C84: (0x00123CF7, "ACTOR_ANIM_INTERACTION_WALL_RESPONSE_CHILD"),
     }
     owners = []
     for address, (end, name) in expected.items():
@@ -3270,14 +3270,14 @@ def test_type87_interaction_response_animation_family_is_exact():
 
     collision = symbols.at(0x00123B66, include_ranges=False)
     assert collision is not None
-    assert collision.name == "ACTOR_ANIM_TYPE87_COLLISION_RESPONSE_ENTRY"
-    assert collision.metadata["alias_of"] == "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE"
+    assert collision.name == "ACTOR_ANIM_INTERACTION_COLLISION_RESPONSE_ENTRY"
+    assert collision.metadata["alias_of"] == "ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_EXTENDED"
     assert collision.metadata["entry_offset"] == 46
 
     loop = symbols.at(0x00123C6A, include_ranges=False)
     assert loop is not None
-    assert loop.name == "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE_LOOP"
-    assert loop.metadata["alias_of"] == "ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE"
+    assert loop.name == "ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_LOOP"
+    assert loop.metadata["alias_of"] == "ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_EXTENDED"
     assert loop.metadata["entry_offset"] == 306
 
 
@@ -3291,7 +3291,7 @@ def test_type37_interaction_response_animation_range_is_exact():
 
     following = symbols.at(0x00123F7E, include_ranges=False)
     assert following is not None
-    assert following.name == "ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX"
+    assert following.name == "ACTOR_ANIM_SCENE_RESOURCE_RESPONSE_PREFIX"
     assert symbol.end < following.address
 
 

@@ -4362,54 +4362,59 @@
     - animation_stream_decoder
 
 0x00123AC4:
-  name: ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_A
+  name: ACTOR_ANIM_INTERACTION_PRESENTATION_PHASE_PRIMARY
+  aliases: [ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_A]
   type: animation_stream
   size: 60
   confidence: decompiled
-  description: Shared Type-0x87 presentation helper called by the Type-0x87 interaction-response root and its terminal loop. Its exact 60-byte substream presents the 0x186A-0x18C2 frame sequence with timer phases 0x87 and 0x02, advances the frame delay, and returns through FC80 at 0x00123AFE.
+  description: Shared interaction-presentation helper called by the interaction-response root and its terminal loop. Its exact 60-byte substream presents the 0x186A-0x18C2 frame sequence with timer phases 0x87 and 0x02, advances the frame delay, and returns through FC80 at 0x00123AFE.
   evidence:
     - actor_template_type84_type87_response_child_static_decompilation
     - animation_stream_decoder
 
 0x00123B00:
-  name: ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_B
+  name: ACTOR_ANIM_INTERACTION_PRESENTATION_PHASE_SECONDARY
+  aliases: [ACTOR_ANIM_TYPE87_SHARED_PRESENTATION_PHASE_B]
   type: animation_stream
   size: 56
   confidence: decompiled
-  description: Shared Type-0x87 presentation helper called by the terminal loop of ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE. Its exact 56-byte substream presents the 0x18C6-0x18DE frame sequence with timer phases 0x85 and 0x8F, then returns through FC80 at 0x00123B36.
+  description: Shared interaction-presentation helper called by the terminal loop of ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_EXTENDED. Its exact 56-byte substream presents the 0x18C6-0x18DE frame sequence with timer phases 0x85 and 0x8F, then returns through FC80 at 0x00123B36.
   evidence:
     - actor_template_type84_type87_response_child_static_decompilation
     - animation_stream_decoder
 
 0x00123B38:
-  name: ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_EXTENDED
+  aliases: [ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE]
   type: animation_stream
   size: 332
   confidence: decompiled
-  description: Type-0x87 interaction-response animation installed by ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE. Its exact 332-byte region calls the shared presentation phase, spawns the Type-0x84 child and ACTOR_TEMPLATE_DEATH_84 records, gates a ten-record ACTOR_TEMPLATE_COLLISION_RESPONSE spawn sequence on player Y distance, applies the encoded actor offset, and loops through the shared presentation phases at 0x00123C6A.
+  description: Interaction-presentation response animation installed by ACTOR_TEMPLATE_INTERACTION_RESPONSE_EXTENDED. Its exact 332-byte region calls the shared presentation phases, spawns the interaction response child and death records, gates a ten-record ACTOR_TEMPLATE_COLLISION_RESPONSE spawn sequence on player Y distance, applies the encoded actor offset, and loops through the shared presentation phases at 0x00123C6A.
   evidence:
     - actor_template_interaction_dispatch_static_v1
     - actor_template_type84_type87_response_child_static_decompilation
     - animation_stream_decoder
 
 0x00123B66:
-  name: ACTOR_ANIM_TYPE87_COLLISION_RESPONSE_ENTRY
+  name: ACTOR_ANIM_INTERACTION_COLLISION_RESPONSE_ENTRY
+  aliases: [ACTOR_ANIM_TYPE87_COLLISION_RESPONSE_ENTRY]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE
+  alias_of: ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_EXTENDED
   entry_offset: 46
   confidence: decompiled
-  description: Embedded Type-0x87 collision-response entry beginning at offset 46 inside ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE. It performs the player-Y gate, ten collision-response F5 spawns, and the actor-relative offset before the shared presentation loop; it does not claim a second ROM ownership range.
+  description: Embedded interaction collision-response entry beginning at offset 46 inside ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_EXTENDED. It performs the player-Y gate, ten collision-response F5 spawns, and the actor-relative offset before the shared presentation loop; it does not claim a second ROM ownership range.
   evidence:
     - actor_template_interaction_dispatch_static_v1
     - animation_stream_decoder
 
 0x00123C6A:
-  name: ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE_LOOP
+  name: ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_LOOP
+  aliases: [ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE_LOOP]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE
+  alias_of: ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_EXTENDED
   entry_offset: 306
   confidence: decompiled
-  description: Embedded Type-0x87 response loop beginning at offset 306 inside ACTOR_ANIM_TYPE87_INTERACTION_RESPONSE. It calls both shared presentation phases, reloads timer 0x93 between the frame phases, and loops locally at 0x00123C7E; it does not claim a second ROM ownership range.
+  description: Embedded interaction-presentation response loop beginning at offset 306 inside ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_EXTENDED. It calls both shared presentation phases, reloads timer 0x93 between the frame phases, and loops locally at 0x00123C7E; it does not claim a second ROM ownership range.
   evidence:
     - actor_template_interaction_dispatch_static_v1
     - animation_stream_decoder
@@ -4426,11 +4431,12 @@
     - animation_stream_decoder
 
 0x00123C84:
-  name: ACTOR_ANIM_TYPE84_TYPE87_RESPONSE_CHILD
+  name: ACTOR_ANIM_INTERACTION_WALL_RESPONSE_CHILD
+  aliases: [ACTOR_ANIM_TYPE84_TYPE87_RESPONSE_CHILD]
   type: animation_stream
   size: 116
   confidence: decompiled
-  description: Type-0x84 child response animation supplied by ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD at 0x001B7C60. Its exact 116-byte region gates on the child state, spawns ACTOR_TEMPLATE_WALL_RESPONSE at 0x001B7CD8, presents the 0x1882-0x18BE frame sequence, publishes actor type 0x7E and its encoded field, and clears actor state before the separate Type-0x0F root.
+  description: Interaction wall-response child animation supplied by ACTOR_TEMPLATE_INTERACTION_WALL_RESPONSE_CHILD at 0x001B7C60. Its exact 116-byte region gates on the child state, spawns ACTOR_TEMPLATE_WALL_RESPONSE at 0x001B7CD8, presents the 0x1882-0x18BE frame sequence, publishes the wall-response state and its encoded field, and clears actor state before the separate interaction root.
   evidence:
     - actor_template_type84_type87_response_child_static_decompilation
     - animation_stream_decoder
@@ -7141,20 +7147,22 @@
     - animation_stream_decoder
 
 0x00123E7E:
-  name: ACTOR_ANIM_TYPE84_COLLISION_RESPONSE
+  name: ACTOR_ANIM_COLLISION_RESPONSE_SHARED
+  aliases: [ACTOR_ANIM_TYPE84_COLLISION_RESPONSE]
   size: 106
   confidence: decompiled
-  description: Shared Type-0x84 collision-response animation used by ACTOR_TEMPLATE_COLLISION_RESPONSE and the scene-resource Type-0x84 record at 0x001B8408. Its exact 106-byte region presents the 0x0DC2-0x0DFE sequence with sound 0x2A, clears the source actor at 0x00123EC0, then cycles the 0x12C2-0x12DE response tail through 0x00123EC2.
+  description: Shared collision-response animation used by ACTOR_TEMPLATE_COLLISION_RESPONSE and the scene-resource collision-response record at 0x001B8408. Its exact 106-byte region presents the 0x0DC2-0x0DFE sequence with sound 0x2A, clears the source actor at 0x00123EC0, then cycles the 0x12C2-0x12DE response tail through 0x00123EC2.
   evidence:
     - actor_template_scene_resource_family_static_decompilation
     - actor_template_presentation_response_static_decompilation
     - animation_stream_decoder
 
 0x00123F7E:
-  name: ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX
+  name: ACTOR_ANIM_SCENE_RESOURCE_RESPONSE_PREFIX
+  aliases: [ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX]
   size: 102
   confidence: decompiled
-  description: Type-0x84 scene-resource response prefix selected by ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E. It presents the 0x1726-0x1766 sequence, applies the encoded timer/random/actor-flag phases, spawns ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E at 0x00123FD2, clears the source at 0x00123FE2, and hands off to ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE at 0x00123FE4.
+  description: Scene-resource response prefix selected by ACTOR_TEMPLATE_SCENE_RESOURCE_RESPONSE. It presents the 0x1726-0x1766 sequence, applies the encoded timer/random/actor-flag phases, spawns ACTOR_TEMPLATE_SCENE_RESOURCE_COLLISION_RESPONSE at 0x00123FD2, clears the source at 0x00123FE2, and hands off to ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE at 0x00123FE4.
   evidence:
     - actor_template_scene_resource_family_static_decompilation
     - animation_stream_decoder
@@ -8363,11 +8371,12 @@
     - actor_template_grid_xrefs
 
 0x001B7C60:
-  name: ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD
+  name: ACTOR_TEMPLATE_INTERACTION_WALL_RESPONSE_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TYPE87_RESPONSE_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 child template supplied by the F5 record at 0x00123B44 inside the ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE animation root; it carries template payload 0x01000000, has no movement stream, uses animation entry 0x00123C84, owns twenty-four resources, and carries template word 0x6000.
+  description: Interaction wall-response child template supplied by the F5 record at 0x00123B44 inside ACTOR_TEMPLATE_INTERACTION_RESPONSE_EXTENDED; it carries template payload 0x01000000, has no movement stream, uses ACTOR_ANIM_INTERACTION_WALL_RESPONSE_CHILD at 0x00123C84, owns twenty-four resources, and carries template word 0x6000.
   evidence:
     - actor_template_type84_type87_response_child_static_decompilation
     - actor_template_interaction_dispatch_static_decompilation
@@ -9023,12 +9032,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8408:
-  name: ACTOR_TEMPLATE_TYPE84_COLLISION_RESPONSE
+  name: ACTOR_TEMPLATE_SCENE_RESOURCE_COLLISION_RESPONSE
   aliases: [ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 scene-resource actor record selected by command 0x0F at 0x00127194 in the 0x00127134 resource stream. It has no movement stream, uses ACTOR_ANIM_TYPE84_COLLISION_RESPONSE at 0x00123E7E, owns eighteen resources, and is instantiated at scene-resource position (0x00A0,0x01C8); the same record is also spawned by the F5 command at 0x00123FD2.
+  description: Scene-resource collision-response actor record selected by command 0x0F at 0x00127194 in the 0x00127134 resource stream. It has no movement stream, uses ACTOR_ANIM_COLLISION_RESPONSE_SHARED at 0x00123E7E, owns eighteen resources, and is instantiated at scene-resource position (0x00A0,0x01C8); the same record is also spawned by the F5 command at 0x00123FD2.
   evidence:
     - actor_template_scene_resource_family_static_decompilation
     - scene_resource_command_table_static_decompilation
@@ -9036,12 +9045,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B841C:
-  name: ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_RESPONSE
+  name: ACTOR_TEMPLATE_SCENE_RESOURCE_RESPONSE
   aliases: [ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 scene-resource actor record selected by command 0x0F at 0x0012781B in the 0x0012772D resource stream. It has no movement stream, uses ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX at 0x00123F7E, owns two resources, and is instantiated at scene-resource position (0x00F0,0x01A8); the prefix hands off to the established Type-0x2B interaction continuation.
+  description: Scene-resource response actor record selected by command 0x0F at 0x0012781B in the 0x0012772D resource stream. It has no movement stream, uses ACTOR_ANIM_SCENE_RESOURCE_RESPONSE_PREFIX at 0x00123F7E, owns two resources, and is instantiated at scene-resource position (0x00F0,0x01A8); the prefix hands off to the established Type-0x2B interaction continuation.
   evidence:
     - actor_template_scene_resource_family_static_decompilation
     - scene_resource_command_table_static_decompilation

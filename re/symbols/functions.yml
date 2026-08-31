@@ -1723,7 +1723,7 @@
   aliases:
     - Actor_EnterType84Animation12319C
   confidence: confirmed
-  description: Shared actor collision-response transition block that clears the current type, releases owned resources, performs the common actor cleanup, then installs type 0x84 with ACTOR_ANIM_TYPE84_COLLISION_RESPONSE and clears the animation timer.
+  description: Shared actor collision-response transition block that clears the current type, releases owned resources, performs the common actor cleanup, then installs the collision-response template with ACTOR_ANIM_COLLISION_RESPONSE_SHARED and clears the animation timer.
   evidence:
     - ghidra_disassembly_001AC0D2
     - ghidra_decompile_actor_combat_targets
@@ -3697,7 +3697,7 @@
   name: InteractionSpawn_CreateType87Response
   aliases: [InteractionSpawn_RuntimeType87_80]
   confidence: confirmed
-  description: Interaction selector 0x80 handler that clears INTERACTION_RESPONSE_FLAG, loads ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE, and reverse-spawns the runtime type-0x87 response actor through InteractionSpawn_ReverseSlot.
+  description: Interaction selector 0x80 handler that clears INTERACTION_RESPONSE_FLAG, loads ACTOR_TEMPLATE_INTERACTION_RESPONSE_EXTENDED, and reverse-spawns the interaction presentation-response actor through InteractionSpawn_ReverseSlot.
   evidence:
     - ghidra_level01_interaction_inventory_targeted_decompile
     - interaction_spawn_response_family_semantic_v1

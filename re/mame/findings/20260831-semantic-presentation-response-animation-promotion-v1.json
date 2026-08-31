@@ -1,0 +1,31 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "interaction-presentation-and-collision-response-animation-family",
+  "promotions": [
+    "ACTOR_ANIM_INTERACTION_PRESENTATION_PHASE_PRIMARY",
+    "ACTOR_ANIM_INTERACTION_PRESENTATION_PHASE_SECONDARY",
+    "ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_EXTENDED",
+    "ACTOR_ANIM_INTERACTION_COLLISION_RESPONSE_ENTRY",
+    "ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE_LOOP",
+    "ACTOR_ANIM_INTERACTION_WALL_RESPONSE_CHILD",
+    "ACTOR_ANIM_COLLISION_RESPONSE_SHARED",
+    "ACTOR_ANIM_SCENE_RESOURCE_RESPONSE_PREFIX",
+    "ACTOR_TEMPLATE_INTERACTION_WALL_RESPONSE_CHILD",
+    "ACTOR_TEMPLATE_SCENE_RESOURCE_COLLISION_RESPONSE",
+    "ACTOR_TEMPLATE_SCENE_RESOURCE_RESPONSE"
+  ],
+  "evidence": [
+    "actor_template_type84_type87_response_child_static_decompilation",
+    "actor_template_interaction_dispatch_static_v1",
+    "actor_template_scene_resource_family_static_decompilation",
+    "scene_resource_command_table_static_decompilation",
+    "animation_stream_decoder"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_interaction_presentation_and_collision_response_role"
+  }
+}
