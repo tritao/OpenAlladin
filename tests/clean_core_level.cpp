@@ -333,6 +333,7 @@ int main() {
     write16(core.ram, kSceneResourceTileBase, 0);
     write8(core.ram, kSceneResourcePresentationScratch, 1);
     write8(core.ram, kSceneResourceStatus, 0);
+    vdp_build_tile_row_command_tables(core.ram, 0x40);
     write_rom32(rom, kSceneResourceCommandTable + 0x00, 0x001B2300);
     write_rom32(rom, kSceneResourceCommandTable + 0x03 * 4, 0x001B2314);
     write_rom32(rom, kSceneResourceCommandTable + 0x06 * 4, 0x001B2380);
@@ -346,20 +347,25 @@ int main() {
     CoreTrace resource_trace;
     const SceneResourceRunResult resource_result =
         scene_resource_process_command_stream(
-            core, resource_stream, 0, 0, effects, &resource_trace);
+            core, resource_stream, 0, 1, effects, &resource_trace);
     assert(resource_result.status == SceneResourceRunStatus::Finished);
     assert(resource_result.cursor == resource_stream + 24);
     assert(resource_result.tile_x == 0xFF01);
-    assert(resource_result.tile_y == 0xFF00);
+    assert(resource_result.tile_y == 1);
     assert(resource_result.tile_base == 0x2000);
     assert(resource_result.tile_write_count == 3);
     assert(capture.writes.size() == 3);
     assert(capture.writes[0].x == 0xFFFF);
-    assert(capture.writes[0].y == 0xFFFF);
+    assert(capture.writes[0].y == 0);
     assert(capture.writes[1].x == 0xFF00);
+    assert(capture.writes[1].y == 0);
     assert(capture.writes[2].x == 0xFF00);
+    assert(capture.writes[2].y == 1);
     assert(capture.writes[2].tile_row == 3);
     assert(capture.writes[2].tile_base == 0x2000);
+    assert(capture.writes[2].vdp_control == 0xFE400003);
+    assert(capture.writes[2].vdp_data == 0xA7C3);
+    assert(capture.writes[2].vram_address == 0xBE40);
     assert(capture.service_frames == 2);
     assert(capture.c000_calls == 1);
     assert(capture.palette_calls == 1);
@@ -370,6 +376,7 @@ int main() {
     assert(resource_trace.scene_resource_processed);
     assert(resource_trace.scene_resource_last_handler == 0x001B2300);
     assert(resource_trace.scene_resource_tile_write_count == 3);
+    assert(resource_trace.scene_resource_last_vdp_data == 0xA7C3);
 
     return 0;
 }

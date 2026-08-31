@@ -18,6 +18,9 @@ struct SceneResourceTileWrite {
     std::uint16_t y = 0;
     std::uint8_t tile_row = 0;
     std::uint16_t tile_base = 0;
+    std::uint32_t vdp_control = 0;
+    std::uint16_t vdp_data = 0;
+    std::uint16_t vram_address = 0;
 };
 
 // Presentation effects leave the core through plain function pointers. The
@@ -39,6 +42,9 @@ struct SceneResourceRunResult {
     RamAddress c000_source = 0;
     RamAddress last_handler = 0;
     std::uint8_t last_command = 0;
+    std::uint32_t last_vdp_control = 0;
+    std::uint16_t last_vdp_data = 0;
+    std::uint16_t last_vram_address = 0;
     std::uint16_t tile_x = 0;
     std::uint16_t tile_y = 0;
     std::uint16_t tile_base = 0;

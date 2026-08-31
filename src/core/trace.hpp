@@ -53,6 +53,9 @@ struct CoreTrace {
     RamAddress scene_resource_cursor = 0;
     RamAddress scene_resource_stream_pointer = 0;
     RamAddress scene_resource_c000_source = 0;
+    std::uint32_t scene_resource_last_vdp_control = 0;
+    std::uint16_t scene_resource_last_vdp_data = 0;
+    std::uint16_t scene_resource_last_vram_address = 0;
     std::uint16_t scene_resource_tile_x = 0;
     std::uint16_t scene_resource_tile_y = 0;
     std::uint16_t scene_resource_tile_base = 0;

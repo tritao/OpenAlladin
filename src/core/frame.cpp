@@ -136,6 +136,9 @@ void step_frame(
         trace->scene_resource_cursor = 0;
         trace->scene_resource_stream_pointer = 0;
         trace->scene_resource_c000_source = 0;
+        trace->scene_resource_last_vdp_control = 0;
+        trace->scene_resource_last_vdp_data = 0;
+        trace->scene_resource_last_vram_address = 0;
         trace->scene_resource_tile_x = 0;
         trace->scene_resource_tile_y = 0;
         trace->scene_resource_tile_base = 0;

@@ -183,6 +183,9 @@ void trace_begin(
     trace.scene_resource_cursor = 0;
     trace.scene_resource_stream_pointer = 0;
     trace.scene_resource_c000_source = 0;
+    trace.scene_resource_last_vdp_control = 0;
+    trace.scene_resource_last_vdp_data = 0;
+    trace.scene_resource_last_vram_address = 0;
     trace.scene_resource_tile_x = 0;
     trace.scene_resource_tile_y = 0;
     trace.scene_resource_tile_base = 0;
@@ -320,6 +323,12 @@ void trace_state(
            << static_cast<unsigned>(trace.scene_resource_last_command)
            << ",\"scene_resource_last_handler\":"
            << trace.scene_resource_last_handler
+           << ",\"scene_resource_last_vdp_control\":"
+           << trace.scene_resource_last_vdp_control
+           << ",\"scene_resource_last_vdp_data\":"
+           << trace.scene_resource_last_vdp_data
+           << ",\"scene_resource_last_vram_address\":"
+           << trace.scene_resource_last_vram_address
            << ",\"scene_resource_cursor\":"
            << trace.scene_resource_cursor
            << ",\"scene_resource_stream_pointer\":"

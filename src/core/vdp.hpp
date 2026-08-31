@@ -45,13 +45,13 @@ void vdp_build_tile_row_command_tables(
 );
 
 // VDP_WriteTileWord at 0x001B21A8. D0 is the tile X word offset, D1 is the
-// selected tile-row command index, and D2 is the tile word ORed with the
+// vertical tile-row command index, and D2 is the tile word ORed with the
 // active scene-resource tile base.
 VdpTileWriteResult vdp_write_tile_word(
     const GenesisRam& ram,
     GenesisVdp& vdp,
     std::uint16_t tile_x,
-    std::uint16_t tile_row,
+    std::uint16_t tile_y,
     std::uint16_t tile_word
 );
 

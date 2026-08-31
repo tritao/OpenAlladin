@@ -78,6 +78,9 @@ void publish_scene_resource_trace(
     trace->scene_resource_status = static_cast<std::uint8_t>(result.status);
     trace->scene_resource_last_command = result.last_command;
     trace->scene_resource_last_handler = result.last_handler;
+    trace->scene_resource_last_vdp_control = result.last_vdp_control;
+    trace->scene_resource_last_vdp_data = result.last_vdp_data;
+    trace->scene_resource_last_vram_address = result.last_vram_address;
     trace->scene_resource_cursor = result.cursor;
     trace->scene_resource_stream_pointer = result.stream_pointer;
     trace->scene_resource_c000_source = result.c000_source;
@@ -184,9 +187,15 @@ SceneResourceRunResult scene_resource_process_command_stream(
         result.last_tile_y = y;
         result.last_tile_row = tile_row;
         ++result.tile_write_count;
+        const VdpTileWriteResult vdp_write = vdp_write_tile_word(
+            core.ram, core.vdp, x, y, tile_row);
+        result.last_vdp_control = vdp_write.control;
+        result.last_vdp_data = vdp_write.data;
+        result.last_vram_address = vdp_write.vram_address;
         if (effects.write_tile != nullptr) {
             effects.write_tile(effects.context, SceneResourceTileWrite{
-                x, y, tile_row, read16(core.ram, kSceneResourceTileBase)});
+                x, y, tile_row, read16(core.ram, kSceneResourceTileBase),
+                vdp_write.control, vdp_write.data, vdp_write.vram_address});
         }
     };
 

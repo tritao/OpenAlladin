@@ -75,12 +75,12 @@ VdpTileWriteResult vdp_write_tile_word(
     const GenesisRam& ram,
     GenesisVdp& vdp,
     std::uint16_t tile_x,
-    std::uint16_t tile_row,
+    std::uint16_t tile_y,
     std::uint16_t tile_word
 ) {
     VdpTileWriteResult result;
     const RamAddress table_entry = kVdpTileRowCommandTableSelected
-        + static_cast<RamAddress>(tile_row) * 4;
+        + static_cast<RamAddress>(tile_y) * 4;
     const std::uint32_t row_command = read32(ram, table_entry);
     result.table_entry_present = row_command != 0;
 
@@ -101,7 +101,7 @@ VdpTileWriteResult vdp_write_tile_word(
     const std::uint16_t plane = read8(ram, kVdpTilePlaneOrder) == 0
         ? kVdpPlaneC000 : kVdpPlaneE000;
     result.vram_address = static_cast<std::uint16_t>(
-        plane + static_cast<std::uint32_t>(tile_row) * vdp.tile_row_stride
+        plane + static_cast<std::uint32_t>(tile_y) * vdp.tile_row_stride
         + word_offset);
     vdp.control_latch = result.control;
     vdp.data_latch = result.data;
