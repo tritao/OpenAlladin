@@ -187,6 +187,26 @@ mappings:
       - interaction_spawn_type46_5a_response_static_decompilation
     description: Shared interaction animation/template pair that spawns two child actors through F5 records.
 
+  - name: LEVEL12_SCENE_EVENT
+    scope: event
+    symbol_addresses: [0x00125AFE, 0x001B8278]
+    technical_types: [0x59]
+    confidence: decompiled
+    evidence:
+      - actor_template_scene_level_family_static_decompilation
+      - ghidra_level12_scene_event_decompilation
+    description: Level 12 timed scene-event animation and primary actor template family.
+
+  - name: TERMINAL_TERRAIN_TRANSITION
+    scope: event
+    symbol_addresses: [0x00125C26, 0x001B82A0]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - ghidra_terrain_terminal_transition
+      - actor_template_scene_level_family_static_decompilation
+    description: Terminal-terrain transition animation and actor template that inherit the player position.
+
   - name: COLLISION_RESPONSE_CHILD
     scope: role
     symbol_addresses: [0x001B8368]

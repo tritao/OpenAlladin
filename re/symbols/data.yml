@@ -7302,20 +7302,22 @@
     - animation_stream_decoder
 
 0x00125AFE:
-  name: ACTOR_ANIM_TYPE59_SCENE_EVENT
+  name: ACTOR_ANIM_LEVEL12_SCENE_EVENT
+  aliases: [ACTOR_ANIM_TYPE59_SCENE_EVENT]
   size: 296
   confidence: decompiled
-  description: Type-0x59 scene-event animation region installed by the two Level 12 entry branches at 0x001B62FC and 0x001B6324. The primary entry at 0x00125AFE and alternate entry at 0x00125B42 each spawn the shared Type-0x59 template with distinct inline animation continuations, then run the timed scene-event frame/child-spawn sequence and hand off at 0x00125C24 to the separate ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN root.
+  description: Level 12 scene-event animation region installed by the two entry branches at 0x001B62FC and 0x001B6324. The primary entry at 0x00125AFE and alternate entry at 0x00125B42 each spawn the shared Level 12 scene-event template with distinct inline animation continuations, then run the timed scene-event frame/child-spawn sequence and hand off at 0x00125C24 to ACTOR_ANIM_TERMINAL_TERRAIN_TRANSITION.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - ghidra_level12_scene_event_decompilation
     - animation_stream_decoder
 
 0x00125C26:
-  name: ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN
+  name: ACTOR_ANIM_TERMINAL_TERRAIN_TRANSITION
+  aliases: [ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN]
   size: 44
   confidence: decompiled
-  description: Opening segment of the Type-0x84 terminal-terrain animation installed by TerrainHandler_TerminalTransition. It presents the 0x0F52-0x0F76 terminal sequence, plays sound 0x3C, clears the actor at 0x00125C50, and continues at PLAYER_ANIM_STATE_125C52.
+  description: Opening segment of the terminal-terrain transition animation installed by TerrainHandler_TerminalTransition. It presents the 0x0F52-0x0F76 terminal sequence, plays sound 0x3C, clears the actor at 0x00125C50, and continues at PLAYER_ANIM_STATE_125C52.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - ghidra_terrain_terminal_transition
@@ -8743,21 +8745,23 @@
     - actor_template_grid_xrefs
 
 0x001B8278:
-  name: ACTOR_TEMPLATE_TYPE_59_SCENE_EVENT
+  name: ACTOR_TEMPLATE_LEVEL12_SCENE_EVENT
+  aliases: [ACTOR_TEMPLATE_TYPE_59_SCENE_EVENT]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x59 scene-event template initialized into the primary actor slot by the two branches at 0x001B62FC and 0x001B6324; it has no movement stream, uses base animation stream 0x00125AFE, and owns four resources while callers publish the branch-specific animation root and position.
+  description: Level 12 scene-event template initialized into the primary actor slot by the two branches at 0x001B62FC and 0x001B6324; it has no movement stream, uses base animation stream ACTOR_ANIM_LEVEL12_SCENE_EVENT at 0x00125AFE, and owns four resources while callers publish the branch-specific animation root and position.
   evidence:
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
 
 0x001B82A0:
-  name: ACTOR_TEMPLATE_TYPE_84_TERMINAL_TERRAIN
+  name: ACTOR_TEMPLATE_TERMINAL_TERRAIN_TRANSITION
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TERMINAL_TERRAIN]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 terminal terrain template initialized by TerrainHandler_TerminalTransition after clearing the current actor; it has no movement stream, uses animation stream 0x00125C26, and owns five resources before inheriting the player position.
+  description: Terminal-terrain transition template initialized by TerrainHandler_TerminalTransition after clearing the current actor; it has no movement stream, uses ACTOR_ANIM_TERMINAL_TERRAIN_TRANSITION at 0x00125C26, and owns five resources before inheriting the player position.
   evidence:
     - ghidra_terrain_terminal_transition
     - actor_template_grid_xrefs

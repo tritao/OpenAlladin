@@ -554,6 +554,25 @@ def test_compact_interaction_response_names_preserve_numeric_aliases():
     assert {"INTERACTION_COMPACT_RESPONSE", "INTERACTION_MULTI_CHILD_SPAWN"} <= mappings.keys()
 
 
+def test_level12_scene_and_terminal_terrain_names_preserve_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00125AFE: ("ACTOR_ANIM_LEVEL12_SCENE_EVENT", "ACTOR_ANIM_TYPE59_SCENE_EVENT"),
+        0x00125C26: ("ACTOR_ANIM_TERMINAL_TERRAIN_TRANSITION", "ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN"),
+        0x001B8278: ("ACTOR_TEMPLATE_LEVEL12_SCENE_EVENT", "ACTOR_TEMPLATE_TYPE_59_SCENE_EVENT"),
+        0x001B82A0: ("ACTOR_TEMPLATE_TERMINAL_TERRAIN_TRANSITION", "ACTOR_TEMPLATE_TYPE_84_TERMINAL_TERRAIN"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert {"LEVEL12_SCENE_EVENT", "TERMINAL_TERRAIN_TRANSITION"} <= mappings.keys()
+
+
 def test_actor_template_roles_promote_numeric_names_with_aliases():
     symbols = SymbolStore()
     expected = {

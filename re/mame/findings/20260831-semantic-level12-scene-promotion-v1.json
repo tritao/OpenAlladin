@@ -1,0 +1,22 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "level12-scene-event-and-terminal-terrain-identities",
+  "promotions": [
+    "ACTOR_ANIM_LEVEL12_SCENE_EVENT",
+    "ACTOR_TEMPLATE_LEVEL12_SCENE_EVENT",
+    "ACTOR_ANIM_TERMINAL_TERRAIN_TRANSITION",
+    "ACTOR_TEMPLATE_TERMINAL_TERRAIN_TRANSITION"
+  ],
+  "evidence": [
+    "actor_template_scene_level_family_static_decompilation",
+    "ghidra_level12_scene_event_decompilation",
+    "ghidra_terrain_terminal_transition"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_event"
+  }
+}
