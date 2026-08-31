@@ -1,0 +1,48 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type1d-type1e-semantic",
+    "purpose": "Promote the confirmed upper-route Type-0x1D gate and direct Type-0x1E interaction creators to selector-qualified stable identities."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      {
+        "address": "0x001B6E70",
+        "selectors": ["0x65"],
+        "name": "InteractionGate_CreateType1DActor_65",
+        "legacy_name": "InteractionGate_Type1D",
+        "gate": "0x00FFF106 INTERACTION_GATE_TYPE1D != 0",
+        "allocator": "0x001B5266 LevelObjectSpawnEntry"
+      },
+      {
+        "address": "0x001B6E90",
+        "selectors": ["0x11"],
+        "name": "InteractionSpawn_CreateType1EActor_11",
+        "legacy_name": "InteractionSpawn_Type1E",
+        "template": "0x001B7C24 ACTOR_TEMPLATE_TYPE_1E",
+        "allocator": "0x001B5266 LevelObjectSpawnEntry"
+      }
+    ]
+  },
+  "contracts": [
+    "INTERACTION_HANDLER_TABLE entry 0x42E8 selects selector 0x65 and the Type-0x1D gate body at 0x001B6E70.",
+    "The selector-0x65 body enters LevelObjectSpawnEntry only when INTERACTION_GATE_TYPE1D is nonzero.",
+    "INTERACTION_HANDLER_TABLE entry 0x4198 selects selector 0x11 and the direct Type-0x1E body at 0x001B6E90.",
+    "The selector-0x11 body loads ACTOR_TEMPLATE_TYPE_1E at 0x001B7C24 and enters LevelObjectSpawnEntry directly; it bypasses the adjacent selector-0x64 gate wrapper at 0x001B6E86."
+  ],
+  "evidence": [
+    "Exact INTERACTION_HANDLER_TABLE entries at 0x004198 and 0x0042E8",
+    "ghidra_upper_interaction_targeted_decompile",
+    "mame_upper_activation_edge_trace",
+    "level01-upper-interaction-targets",
+    "level01-upper-dispatch-trace-v1"
+  ],
+  "limitations": [
+    "The names identify the confirmed runtime-template and gate contracts, not user-facing scene roles.",
+    "The Type-0x1D template's runtime conversion to Type-0x20 occurs in the adjacent upper actor path and is not assigned to this gate body's name.",
+    "Dynamic reachability outside the recorded upper-route trace remains unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

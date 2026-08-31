@@ -1,0 +1,33 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type1d-type1e-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionGate_CreateType1DActor_65",
+    "InteractionSpawn_CreateType1EActor_11"
+  ],
+  "legacy_aliases": [
+    "InteractionGate_Type1D",
+    "InteractionSpawn_Type1E"
+  ],
+  "contracts": [
+    "Selector 0x65 retains the INTERACTION_GATE_TYPE1D gate and LevelObjectSpawnEntry behavior.",
+    "Selector 0x11 retains direct Type-0x1E template selection from 0x001B7C24 and LevelObjectSpawnEntry allocation, independently of the adjacent selector-0x64 gate wrapper.",
+    "The selector-qualified names are corroborated by the exact handler-table entries and the recorded upper-route runtime dispatch trace."
+  ],
+  "evidence": [
+    "interaction_spawn_type1d_type1e_semantic_v1",
+    "Exact INTERACTION_HANDLER_TABLE entries and upper-route dispatch trace"
+  ],
+  "limitations": [
+    "No user-facing actor or scene role is claimed.",
+    "The Type-0x1D-to-Type-0x20 runtime conversion is documented on the adjacent Type-0x20 creator, not inferred here."
+  ],
+  "conclusion": "The confirmed upper-route Type-0x1D gate and direct Type-0x1E interaction creator now have stable selector-qualified identities while preserving historical aliases and exact allocation contracts.",
+  "confidence": "confirmed",
+  "status": "recorded-semantic-promotion"
+}

@@ -1927,19 +1927,23 @@
     - ghidra_camera_scroll_refill
     - ghidra_interaction_dispatch_callers
 0x001B6E70:
-  name: InteractionGate_Type1D
+  name: InteractionGate_CreateType1DActor_65
+  aliases: [InteractionGate_Type1D]
   confidence: confirmed
-  description: Interaction handler that checks INTERACTION_GATE_TYPE1D at 0x00FFF106 and invokes the level-object spawn entry when set.
+  description: Interaction selector 0x65 handler that checks INTERACTION_GATE_TYPE1D at 0x00FFF106 and invokes the level-object spawn entry when set.
   evidence:
     - ghidra_upper_interaction_targeted_decompile
     - mame_upper_activation_edge_trace
+    - interaction_spawn_type1d_type1e_semantic_v1
 0x001B6E90:
-  name: InteractionSpawn_Type1E
+  name: InteractionSpawn_CreateType1EActor_11
+  aliases: [InteractionSpawn_Type1E]
   confidence: confirmed
-  description: Direct interaction-table spawn body entered at 0x001B6E90; it selects actor template 0x001B7C24 and enters the level-object spawn entry. The adjacent gate-test wrapper begins at 0x001B6E86 and is not executed by this direct target.
+  description: Interaction selector 0x11 direct spawn body that selects actor template 0x001B7C24 and enters the level-object spawn entry. The adjacent selector-0x64 gate-test wrapper begins at 0x001B6E86 and is not executed by this direct target.
   evidence:
     - ghidra_upper_interaction_targeted_decompile
     - mame_upper_activation_edge_trace
+    - interaction_spawn_type1d_type1e_semantic_v1
 0x001B6EB2:
   name: InteractionSpawn_CreateType20UpperActor
   aliases:
